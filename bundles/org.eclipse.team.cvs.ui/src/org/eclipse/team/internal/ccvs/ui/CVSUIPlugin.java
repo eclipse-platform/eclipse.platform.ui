@@ -14,7 +14,10 @@ package org.eclipse.team.internal.ccvs.ui;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
@@ -46,14 +49,17 @@ import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.ui.model.CVSAdapterFactory;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryRoot;
+import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+
 /**
  * UI Plugin for CVS provider-specific workbench functionality.
  */
@@ -64,12 +70,14 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	public static final String ID = "org.eclipse.team.cvs.ui"; //$NON-NLS-1$
 	public static final String DECORATOR_ID = "org.eclipse.team.cvs.ui.decorator"; //$NON-NLS-1$
 	
+	/**
+	 * Property constant indicating the decorator configuration has changed. 
+	 */
+	public static final String P_DECORATORS_CHANGED = CVSUIPlugin.ID  + ".P_DECORATORS_CHANGED";	 //$NON-NLS-1$
+	
 	private Hashtable imageDescriptors = new Hashtable(20);
-
-	// timeout in milliseconds before displaying a progress monitor dialog
-	// (used for normally short-running interactive operations)
-	private static final int TIMEOUT = 2000;
-
+	private static List propertyChangeListeners = new ArrayList(5);
+	
 	/**
 	 * The singleton plug-in instance
 	 */
@@ -84,15 +92,6 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	public static final String EDIT = "edit"; //$NON-NLS-1$
 	public static final String HIGHJACK = "highjack"; //$NON-NLS-1$
 	
-	// Property change listener
-	IPropertyChangeListener listener = new IPropertyChangeListener() {
-		public void propertyChange(PropertyChangeEvent event) {
-			if (event.getProperty().equals(TeamUI.GLOBAL_IGNORES_CHANGED)) {
-				CVSLightweightDecorator.refresh();
-			}
-		}
-	};
-		
 	/**
 	 * CVSUIPlugin constructor
 	 * 
@@ -102,7 +101,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		super(descriptor);
 		plugin = this;
 	}
-
+	
 	/**
 	 * Creates an image and places it in the image registry.
 	 */
@@ -129,6 +128,30 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	}
 	
 	/**
+	 * Register for changes made to Team properties.
+	 */
+	public static void addPropertyChangeListener(IPropertyChangeListener listener) {
+		propertyChangeListeners.add(listener);
+	}
+	
+	/**
+	 * Deregister as a Team property changes.
+	 */
+	public static void removePropertyChangeListener(IPropertyChangeListener listener) {
+		propertyChangeListeners.remove(listener);
+	}
+	
+	/**
+	 * Broadcast a Team property change.
+	 */
+	public static void broadcastPropertyChange(PropertyChangeEvent event) {
+		for (Iterator it = propertyChangeListeners.iterator(); it.hasNext();) {
+			IPropertyChangeListener listener = (IPropertyChangeListener)it.next();			
+			listener.propertyChange(event);
+		}
+	}
+	
+	/**
 	 * Extract or convert to a TeamException
 	 */
 	public static TeamException asTeamException(InvocationTargetException e) {
@@ -149,8 +172,8 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	 * supplied operation will be run again.
 	 */
 	public static void runWithRefresh(Shell parent, IResource[] resources, 
-		IRunnableWithProgress runnable, IProgressMonitor monitor) 
-		throws InvocationTargetException, InterruptedException {
+									  IRunnableWithProgress runnable, IProgressMonitor monitor) 
+	throws InvocationTargetException, InterruptedException {
 		boolean firstTime = true;
 		while(true) {
 			try {
@@ -223,7 +246,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	 * @exception InterruptedException when the progress monitor is cancelled
 	 */
 	public static void runWithProgress(Shell parent, boolean cancelable,
-		final IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
+									   final IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
 		Utils.runWithProgress(parent, cancelable, runnable);
 	}
 	
@@ -240,7 +263,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	 * @exception InterruptedException when the progress monitor is cancelled
 	 */
 	public static void runWithProgress(final Shell parent, final boolean cancelable,
-		final IRunnableWithProgress runnable, int flags) throws InvocationTargetException, InterruptedException {
+									   final IRunnableWithProgress runnable, int flags) throws InvocationTargetException, InterruptedException {
 		
 		if ((flags & PERFORM_SYNC_EXEC) > 0) {
 			
@@ -269,7 +292,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 				display = parent.getDisplay();
 			}
 			display.syncExec(outerRunnable);
-
+			
 			// handle any exception
 			if (exception[0] != null) {
 				Exception e = exception[0];
@@ -313,7 +336,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		}
 		return plugin;
 	}
-
+	
 	/**
 	 * Returns the repository manager
 	 * 
@@ -336,7 +359,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	 */
 	private void initializeImages() {
 		URL baseURL = getDescriptor().getInstallURL();
-	
+		
 		// objects
 		createImageDescriptor(ICVSUIConstants.IMG_REPOSITORY, baseURL); 
 		createImageDescriptor(ICVSUIConstants.IMG_REFRESH, baseURL);
@@ -347,6 +370,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		createImageDescriptor(ICVSUIConstants.IMG_COLLAPSE_ALL, baseURL);
 		createImageDescriptor(ICVSUIConstants.IMG_COLLAPSE_ALL_ENABLED, baseURL);
 		createImageDescriptor(ICVSUIConstants.IMG_NEWLOCATION, baseURL);
+		createImageDescriptor(ICVSUIConstants.IMG_CVSLOGO, baseURL);
 		createImageDescriptor(ICVSUIConstants.IMG_TAG, baseURL);
 		createImageDescriptor(ICVSUIConstants.IMG_MODULE, baseURL);
 		createImageDescriptor(ICVSUIConstants.IMG_CLEAR, baseURL);
@@ -385,7 +409,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	public static void log(IStatus status) {
 		getPlugin().getLog().log(status);
 	}
-
+	
 	public static void log(CoreException e) {
 		log(e.getStatus().getSeverity(), Policy.bind("simpleInternal"), e); //$NON-NLS-1$
 	}
@@ -396,7 +420,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	public static void log(int severity, String message, Throwable e) {
 		log(new Status(severity, ID, 0, message, e));
 	}
-
+	
 	// flags to tailor error reporting
 	public static final int PERFORM_SYNC_EXEC = 1;
 	public static final int LOG_TEAM_EXCEPTIONS = 2;
@@ -515,7 +539,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 				flags = flags | PERFORM_SYNC_EXEC;
 			}
 		}
-
+		
 		// Create a runnable that will display the error status
 		final Shell shell = providedShell;
 		Runnable outerRunnable = new Runnable() {
@@ -533,7 +557,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 				}
 			}
 		};
-
+		
 		// Execute the above runnable as determined by the parameters
 		if (shell == null || (flags & PERFORM_SYNC_EXEC) > 0) {
 			Display display;
@@ -550,8 +574,8 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 			outerRunnable.run();
 		}
 	}
-
-
+	
+	
 	/**
 	 * Initializes the preferences for this plugin if necessary.
 	 */
@@ -598,8 +622,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		store.setDefault(ICVSUIConstants.PREF_SHOW_HASREMOTE_DECORATION, true);
 		store.setDefault(ICVSUIConstants.PREF_SHOW_DIRTY_DECORATION, false);
 		store.setDefault(ICVSUIConstants.PREF_SHOW_NEWRESOURCE_DECORATION, true);
-		store.setDefault(ICVSUIConstants.PREF_CALCULATE_DIRTY, true);
-		store.setDefault(ICVSUIConstants.PREF_SHOW_SYNCINFO_AS_TEXT, false);		
+		store.setDefault(ICVSUIConstants.PREF_CALCULATE_DIRTY, true);	
 		store.setDefault(ICVSUIConstants.PREF_PROMPT_ON_MIXED_TAGS, true);
 		store.setDefault(ICVSUIConstants.PREF_PROMPT_ON_SAVING_IN_SYNC, true);
 		store.setDefault(ICVSUIConstants.PREF_SAVE_DIRTY_EDITORS, ICVSUIConstants.OPTION_PROMPT);
@@ -625,14 +648,14 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		CVSProviderPlugin.getPlugin().setConfirmMoveTagEnabled(store.getBoolean(ICVSUIConstants.PREF_CONFIRM_MOVE_TAG));
 		CVSProviderPlugin.getPlugin().setDebugProtocol(CVSProviderPlugin.getPlugin().isDebugProtocol() || store.getBoolean(ICVSUIConstants.PREF_DEBUG_PROTOCOL));
 	}
-
+	
 	/**
 	 * @see Plugin#startup()
 	 */
 	public void startup() throws CoreException {
 		super.startup();
 		Policy.localize("org.eclipse.team.internal.ccvs.ui.messages"); //$NON-NLS-1$
-
+		
 		CVSAdapterFactory factory = new CVSAdapterFactory();
 		Platform.getAdapterManager().registerAdapters(factory, ICVSRemoteFile.class);
 		Platform.getAdapterManager().registerAdapters(factory, ICVSRemoteFolder.class);
@@ -642,12 +665,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		initializeImages();
 		initializePreferences();
 		
-		// if the global ignores list is changed then update decorators.
-		TeamUI.addPropertyChangeListener(listener);
-		
 		Console.startup();
-		// Commented out until we have fully ported the CVS console to the new API
-		//ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[] {new CVSOutputConsole()});
 	}
 	
 	public static IWorkingSet getWorkingSet(IResource[] resources, String name) {
@@ -666,15 +684,25 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	 */
 	public void shutdown() throws CoreException {
 		super.shutdown();
-		TeamUI.removePropertyChangeListener(listener);
 		try {
 			if (repositoryManager != null)
 				repositoryManager.shutdown();
 		} catch (TeamException e) {
 			throw new CoreException(e.getStatus());
 		}
-
+		
 		Console.shutdown();
 	}
 	
+	/**
+	 * @return Returns the cvsWorkspaceSynchronizeViewPage.
+	 */
+	public WorkspaceSynchronizeParticipant getCvsWorkspaceSynchronizeParticipant() {
+		ISynchronizeParticipant[] instances = TeamUI.getSynchronizeManager().find(WorkspaceSynchronizeParticipant.ID);
+		if(instances.length == 1) {
+			return (WorkspaceSynchronizeParticipant)instances[0];
+		} else {
+			return null;
+		}
+	}
 }

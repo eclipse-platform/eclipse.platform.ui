@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.team.tests.ccvs.core.subscriber;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import junit.framework.AssertionFailedError;
 
 import org.eclipse.core.resources.IProject;
@@ -19,6 +23,8 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.core.subscribers.TeamSubscriber;
+import org.eclipse.team.internal.ccvs.core.CVSMergeSubscriber;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
 
 /**
  * This class acts as the source for the sync info used by the subscriber tests.
@@ -28,7 +34,14 @@ import org.eclipse.team.core.subscribers.TeamSubscriber;
 public class SyncInfoSource {
 
 	protected static IProgressMonitor DEFAULT_MONITOR = new NullProgressMonitor();
-
+	protected List mergeSubscribers = new ArrayList();
+	
+	public CVSMergeSubscriber createMergeSubscriber(IProject project, CVSTag root, CVSTag branch) {
+		CVSMergeSubscriber subscriber = new CVSMergeSubscriber(new IResource[] { project }, root, branch);
+		mergeSubscribers.add(subscriber);
+		return subscriber;
+	}
+	
 	/**
 	 * Return the sync info for the given subscriber for the given resource.
 	 */
@@ -52,5 +65,11 @@ public class SyncInfoSource {
 			}
 		}
 	}
-	
+
+	public void tearDown() {
+		for (Iterator it = mergeSubscribers.iterator(); it.hasNext(); ) {
+			CVSMergeSubscriber s = (CVSMergeSubscriber) it.next();
+			s.cancel();
+		}
+	}
 }

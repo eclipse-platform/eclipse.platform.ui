@@ -22,7 +22,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.core.sync.IRemoteResource;
@@ -30,11 +29,12 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.UpdateOnlyMergableOperation;
-import org.eclipse.team.ui.sync.AndSyncInfoFilter;
-import org.eclipse.team.ui.sync.OrSyncInfoFilter;
-import org.eclipse.team.ui.sync.SyncInfoDirectionFilter;
-import org.eclipse.team.ui.sync.SyncInfoFilter;
-import org.eclipse.team.ui.sync.SyncInfoSet;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.ui.synchronize.actions.SyncInfoFilter;
+import org.eclipse.team.ui.synchronize.actions.SyncInfoSet;
+import org.eclipse.team.ui.synchronize.actions.SyncInfoFilter.AndSyncInfoFilter;
+import org.eclipse.team.ui.synchronize.actions.SyncInfoFilter.OrSyncInfoFilter;
+import org.eclipse.team.ui.synchronize.actions.SyncInfoFilter.SyncInfoDirectionFilter;
 
 /**
  * This update action will update all mergable resources first and then prompt the
@@ -261,8 +261,7 @@ public abstract class SafeUpdateAction extends CVSSubscriberAction {
 	 */
 	protected void warnAboutFailedResources(final SyncInfoSet syncSet) {
 		final int[] result = new int[] {Dialog.CANCEL};
-		final Shell shell = getShell();
-		shell.getDisplay().syncExec(new Runnable() {
+		TeamUIPlugin.getStandardDisplay().syncExec(new Runnable() {
 			public void run() {
 				MessageDialog.openInformation(shell, 
 								Policy.bind("SafeUpdateAction.warnFilesWithConflictsTitle"), //$NON-NLS-1$

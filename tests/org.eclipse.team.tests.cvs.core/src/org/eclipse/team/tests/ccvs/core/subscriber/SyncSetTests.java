@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.SyncInfo;
-import org.eclipse.team.internal.ui.sync.sets.SyncSet;
+import org.eclipse.team.internal.ui.synchronize.sets.SyncSet;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 
 

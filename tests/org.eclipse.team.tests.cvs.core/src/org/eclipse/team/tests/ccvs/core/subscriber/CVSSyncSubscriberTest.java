@@ -54,7 +54,7 @@ public abstract class CVSSyncSubscriberTest extends EclipseTest {
 	}
 	
 	protected TeamSubscriber getWorkspaceSubscriber() throws TeamException {
-		TeamSubscriber subscriber = TeamSubscriber.getSubscriberManager().getSubscriber(CVSProviderPlugin.CVS_WORKSPACE_SUBSCRIBER_ID);
+		TeamSubscriber subscriber = CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber();
 		if (subscriber == null) fail("The CVS sync subsciber is not registered");
 		return subscriber;
 	}

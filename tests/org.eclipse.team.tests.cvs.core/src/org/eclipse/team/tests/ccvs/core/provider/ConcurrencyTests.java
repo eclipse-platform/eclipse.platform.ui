@@ -33,7 +33,7 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.operations.FetchMembersOperation;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
-import org.eclipse.team.tests.ccvs.ui.unit.HeadlessCVSRunnableContext;
+import org.eclipse.team.tests.ccvs.ui.HeadlessCVSRunnableContext;
 
 public class ConcurrencyTests extends EclipseTest {
 

@@ -17,7 +17,7 @@ import org.eclipse.team.core.TeamException;
  * A ComparisonCriteria used by a <code>TeamSubscriber</code> to calculate the sync
  * state of the workspace resources. Subscribers are free to use the criteria
  * best suited for their environment. For example, an FTP subscriber could choose to use file
- * size or file size as compasison criterias.
+ * size or file timestamps as compasison criterias.
  * <p>
  * Aggregate criterias can be created for cases where a criteria is based on the result
  * of another criteria.</p>

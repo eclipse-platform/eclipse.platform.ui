@@ -12,7 +12,7 @@ package org.eclipse.team.internal.ccvs.ui.operations;
 
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.team.internal.ui.jobs.JobStatusHandler;
-import org.eclipse.team.ui.sync.SubscriberAction;
+import org.eclipse.team.ui.synchronize.actions.SubscriberAction;
 
 /**
  * This context uses the JobStatusHandler from SubscriberAction to ensure

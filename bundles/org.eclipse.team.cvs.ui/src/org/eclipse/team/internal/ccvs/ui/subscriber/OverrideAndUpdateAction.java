@@ -18,9 +18,9 @@ import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.ReplaceOperation;
-import org.eclipse.team.ui.sync.SyncInfoDirectionFilter;
-import org.eclipse.team.ui.sync.SyncInfoFilter;
-import org.eclipse.team.ui.sync.SyncInfoSet;
+import org.eclipse.team.ui.synchronize.actions.SyncInfoFilter;
+import org.eclipse.team.ui.synchronize.actions.SyncInfoSet;
+import org.eclipse.team.ui.synchronize.actions.SyncInfoFilter.SyncInfoDirectionFilter;
 
 /**
  * Runs an update command that will prompt the user for overwritting local

@@ -21,6 +21,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -387,8 +388,9 @@ public class CVSProjectPropertiesPage extends CVSPropertiesPage {
 				}
 			});
 			newLocation = null;
-			if (changeReadOnly[0])
-				CVSLightweightDecorator.refresh();
+			if (changeReadOnly[0]) {
+				CVSUIPlugin.broadcastPropertyChange(new PropertyChangeEvent(this, CVSUIPlugin.P_DECORATORS_CHANGED, null, null));
+			}
 		} catch (InvocationTargetException e) {
 			handle(e);
 		} catch (InterruptedException e) {

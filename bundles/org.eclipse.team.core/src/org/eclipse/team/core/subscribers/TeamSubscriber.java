@@ -14,11 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
-import org.eclipse.team.internal.core.SubscriberManager;
 
 /**
  * A TeamSubscriber provides synchronization between local resources and a remote location 
@@ -30,28 +28,6 @@ import org.eclipse.team.internal.core.SubscriberManager;
 abstract public class TeamSubscriber {
 	
 	private List listeners = new ArrayList(1);
-	
-	/**
-	 * Return the subscriber manager which provides access and control of the
-	 * team subscribers.
-	 * @return the subscriber manager
-	 */
-	public static ISubscriberManager getSubscriberManager() {
-		return SubscriberManager.getInstance();
-	}
-	
-	/**
-	 * Return the unique id that identified this subscriber.
-	 */
-	abstract public QualifiedName getId();
-	
-	/**
-	 * Return the name of this subscription, in a format that is suitable for 
-	 * display to an end user.
-	 * 
-	 * @return String representing the name of this subscription. 
-	 */
-	abstract public String getName();
 	
 	/**
 	 * Return the description of this subscription, in a format that is suitable for 
@@ -218,18 +194,6 @@ abstract public class TeamSubscriber {
 	abstract public boolean isThreeWay();
 	
 	/**
-	 * Returns if this subscription can be cancelled. This allows short-lived subscriptions to
-	 * be terminated at the users request. For example, this could be used to finish a merge
-	 * subscription once all changes have been merged. 
-	 */
-	abstract public boolean isCancellable();
-
-	/**
-	 * Cancels this subscription.
-	 */	
-	abstract public void cancel();
-	
-	/**
 	 * Adds a listener to this team subscriber. 
 	 * Has no effect if an identical listener is already registered.
 	 * <p>
@@ -270,7 +234,19 @@ abstract public class TeamSubscriber {
 		synchronized(listeners) {
 			allListeners = (ITeamResourceChangeListener[]) listeners.toArray(new ITeamResourceChangeListener[listeners.size()]);
 		}
-		((SubscriberManager)getSubscriberManager()).fireTeamResourceChange(allListeners, deltas);
+		// Notify the listeners safely so all will receive notification
+		for (int i = 0; i < allListeners.length; i++) {
+			final ITeamResourceChangeListener listener = allListeners[i];
+			Platform.run(new ISafeRunnable() {
+				public void handleException(Throwable exception) {
+					// don't log the exception....it is already being logged in Platform#run
+	}
+				public void run() throws Exception {
+					listener.teamResourceChanged(deltas);
+
+				}
+			});
+		}
 	}
 
 	/**
@@ -293,31 +269,4 @@ abstract public class TeamSubscriber {
 	public SyncInfo[] getAllOutOfSync(IResource[] resources, int depth, IProgressMonitor monitor) throws TeamException {
 		return null;
 	}
-	
-	/**
-	 * Returns <code>true</code> if you can release changes to this subscriber and 
-	 * <code>false</code> otherwise. 
-	 */
-	public boolean isReleaseSupported() {
-		return true;
 	}
-	
-	/**
-	 * Return true if the receiver is equal to object.
-	 * @return true if object is the same class as the receiver and has the same ID
-	 */
-	public boolean equals(Object object) {
-		if (object instanceof TeamSubscriber) {
-			TeamSubscriber subscriber = (TeamSubscriber) object;
-			return getId().equals(subscriber.getId());
-		}
-		return super.equals(object);
-	}
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	public int hashCode() {
-		return getId().hashCode();
-	}
-}

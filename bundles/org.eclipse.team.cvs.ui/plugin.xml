@@ -23,6 +23,25 @@
       <import plugin="org.eclipse.compare"/>
    </requires>
 
+<!-- *************** Synchronize View Participant **************** -->
+<extension
+         point="org.eclipse.team.ui.synchronizeParticipants">
+      <participant
+            name="CVS Workspace"
+            icon="icons/full/cview16/rep_editors_view.gif"
+            class="org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant"
+            type="static"
+            id="org.eclipse.team.cvs.ui.cvsworkspace-participant">
+      </participant>
+      <participant
+            name="CVS Merge"
+            icon="icons/full/obj16/prjversions_rep.gif"
+            class="org.eclipse.team.internal.ccvs.ui.subscriber.MergeSynchronizeParticipant"
+            type="dynamic"
+            id="org.eclipse.team.cvs.ui.cvsmerge-participant">
+      </participant>
+</extension>
+
 <!-- *************** Authenticator **************** -->
    <extension
          point="org.eclipse.team.cvs.core.authenticator">
@@ -264,7 +283,7 @@
                tooltip="%GenerateDiff.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.GenerateDiffFileAction"
                menubarPath="team.main/group1"
-               helpContextId="org.eclipse.team.cvs.ui.team_create_patch_action_context"
+               helpContextId="org.eclipse.team.cvs.ui.team_create__action_context"
                id="org.eclipse.team.ccvs.ui.GenerateDiff">
          </action>
          <action
@@ -556,47 +575,14 @@
          </action>
       </objectContribution>
    </extension>
-   
-      
-         
+                  
 <!-- ************* Subscriber Menus ************ -->
 	
 	<extension
 			point="org.eclipse.ui.popupMenus">
-		<objectContribution
-            objectClass="org.eclipse.team.ui.sync.ISynchronizeViewNode"
+		<viewerContribution
             id="org.eclipse.team.ccvs.ui.CVSWorkspaceSubscriberContributions"
-            adaptable="true">
-          
-        	<filter name="equals" value="org.eclipse.team.cvs.subscribers:workspace-subscriber" />
-            
-			<action
-               label="%CVSWorkspaceSubscriber.confirmMerged.label"
-               menubarPath="SubscriberActionsGroup2"
-               tooltip="%CVSWorkspaceSubscriber.confirmMerged.tooltip"
-               class="org.eclipse.team.internal.ccvs.ui.subscriber.SubscriberConfirmMergedAction"
-               helpContextId="org.eclipse.team.cvs.ui.workspace_subscriber_confirm_merged_action"
-               id="org.eclipse.team.ccvs.ui.CVSWorkspaceSubscriber.confirmMerged">
-            </action>
-  
-			<action
-				label="%CVSWorkspaceSubscriber.overcommit.label"
-				menubarPath="SubscriberActionsGroup2"
-				tooltip="%CVSWorkspaceSubscriber.overcommit.tooltip"
-				class="org.eclipse.team.internal.ccvs.ui.subscriber.OverrideAndCommitAction"
-				helpContextId="org.eclipse.team.cvs.ui.workspace_subscriber_overcommit_action"
-				id="org.eclipse.team.ccvs.ui.CVSWorkspaceSubscriber.overcommit">
-			</action>
-			
-			<action
-				label="%CVSWorkspaceSubscriber.overupdate.label"
-				menubarPath="SubscriberActionsGroup2"
-				tooltip="%CVSWorkspaceSubscriber.overupdate.tooltip"
-				class="org.eclipse.team.internal.ccvs.ui.subscriber.OverrideAndUpdateAction"
-				helpContextId="org.eclipse.team.cvs.ui.workspace_subscriber_overupdate_action"
-				id="org.eclipse.team.ccvs.ui.CVSWorkspaceSubscriber.overupdate">
-			</action>
-  
+            targetID="org.eclipse.team.cvs.ui.cvsworkspace-participant">
 			<action
 				label="%CVSWorkspaceSubscriber.commit.label"
 				menubarPath="SubscriberActionsGroup1"
@@ -606,7 +592,6 @@
 				helpContextId="org.eclipse.team.cvs.ui.workspace_subscriber_commit_action"
 				id="org.eclipse.team.ccvs.ui.CVSWorkspaceSubscriber.commit">
 			</action>
-
 			<action
 				label="%CVSWorkspaceSubscriber.update.label"
 				menubarPath="SubscriberActionsGroup1"
@@ -615,17 +600,77 @@
 				overrideActionId="org.eclipse.team.ccvs.ui.update"
 				helpContextId="org.eclipse.team.cvs.ui.workspace_subscriber_update_action"
 				id="org.eclipse.team.ccvs.ui.CVSWorkspaceSubscriber.update">
-			</action>
-		</objectContribution>
-        
-		<objectContribution
-			objectClass="org.eclipse.team.ui.sync.ISynchronizeViewNode"
-			id="org.eclipse.team.ccvs.ui.CVSMergeSubscriberContributions"
-			adaptable="true">
-    
-			<filter name="startsWith" value="org.eclipse.team.cvs.subscribers:merge-" />
-  
+			</action>		
 			<action
+               label="%CVSWorkspaceSubscriber.confirmMerged.label"
+               menubarPath="SubscriberActionsGroup2"
+               tooltip="%CVSWorkspaceSubscriber.confirmMerged.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.subscriber.SubscriberConfirmMergedAction"
+               helpContextId="org.eclipse.team.cvs.ui.workspace_subscriber_confirm_merged_action"
+               id="org.eclipse.team.ccvs.ui.CVSWorkspaceSubscriber.confirmMerged">
+            </action>
+			<action
+				label="%CVSWorkspaceSubscriber.overcommit.label"
+				menubarPath="SubscriberActionsGroup2"
+				tooltip="%CVSWorkspaceSubscriber.overcommit.tooltip"
+				class="org.eclipse.team.internal.ccvs.ui.subscriber.OverrideAndCommitAction"
+				helpContextId="org.eclipse.team.cvs.ui.workspace_subscriber_overcommit_action"
+				id="org.eclipse.team.ccvs.ui.CVSWorkspaceSubscriber.overcommit">
+			</action>						
+			<action
+				label="%CVSWorkspaceSubscriber.overupdate.label"
+				menubarPath="SubscriberActionsGroup2"
+				tooltip="%CVSWorkspaceSubscriber.overupdate.tooltip"
+				class="org.eclipse.team.internal.ccvs.ui.subscriber.OverrideAndUpdateAction"
+				helpContextId="org.eclipse.team.cvs.ui.workspace_subscriber_overupdate_action"
+				id="org.eclipse.team.ccvs.ui.CVSWorkspaceSubscriber.overupdate">
+			</action>
+         <action
+               label="%ShowHistoryAction.label"
+               tooltip="%ShowHistoryAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.ShowResourceInHistoryAction"
+               menubarPath="SubscriberActionsGroup3"
+               helpContextId="org.eclipse.team.cvs.ui.show_in_history_action_context"
+               id="org.eclipse.team.ccvs.ui.showHistory">
+         </action>
+         <action
+               label="%ShowAnnotationAction.label"
+               tooltip="%ShowAnnotationAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.ShowAnnotationAction"
+               menubarPath="SubscriberActionsGroup3"
+               helpContextId="org.eclipse.team.cvs.ui.get_annotate_action_context"
+               id="org.eclipse.team.ccvs.ui.showAnnotation">
+         </action>			  			
+         <action
+               label="%BranchAction.label"
+               tooltip="%BranchAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.BranchAction"
+               menubarPath="SubscriberActionsGroup3"
+               helpContextId="org.eclipse.team.cvs.ui.team_branch_action_context"
+               id="org.eclipse.team.ccvs.ui.branch">
+         </action>
+         <action
+               label="%GenerateDiff.label"
+               tooltip="%GenerateDiff.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.GenerateDiffFileAction"
+               menubarPath="SubscriberActionsGroup3"
+               helpContextId="org.eclipse.team.cvs.ui.team_create_patch_action_context"
+               id="org.eclipse.team.ccvs.ui.GenerateDiff">
+         </action>     
+         <action
+               label="%IgnoreAction.label"
+               tooltip="%IgnoreAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.IgnoreAction"
+               menubarPath="SubscriberActionsGroup3"
+               helpContextId="org.eclipse.team.cvs.ui.team_ignore_action_context"
+               id="org.eclipse.team.ccvs.ui.ignore">
+         </action>         
+		</viewerContribution>
+        
+		<viewerContribution
+            id="org.eclipse.team.ccvs.ui.CVSMergeSubscriberContributions"
+            targetID="org.eclipse.team.cvs.ui.cvsmerge-participant">			
+            <action
 				label="%CVSWorkspaceSubscriber.confirmMerged.label"
 				menubarPath="SubscriberActionsGroup1"
 				tooltip="%CVSWorkspaceSubscriber.confirmMerged.tooltip"
@@ -633,7 +678,6 @@
 				helpContextId="org.eclipse.team.cvs.ui.workspace_subscriber_confirm_merged_action"
 				id="org.eclipse.team.ccvs.ui.CVSMergeSubscriber.confirmMerged">
 			</action>         
-
 			<action
 				label="%CVSWorkspaceSubscriber.merge.label"
 				menubarPath="SubscriberActionsGroup1"
@@ -643,7 +687,7 @@
 				helpContextId="org.eclipse.team.cvs.ui.workspace_subscriber_merge_action"
 				id="org.eclipse.team.ccvs.ui.CVSMergeSubscriber.merge">
 			</action>
-		</objectContribution>
+		</viewerContribution>
 	</extension>
    
 <!-- ************** Views ********************** -->

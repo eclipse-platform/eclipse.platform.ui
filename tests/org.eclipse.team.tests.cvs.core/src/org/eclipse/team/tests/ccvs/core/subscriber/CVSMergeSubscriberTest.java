@@ -28,7 +28,7 @@ import org.eclipse.team.internal.ccvs.core.CVSMergeSubscriber;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
-import org.eclipse.team.ui.sync.SyncInfoSet;
+import org.eclipse.team.ui.synchronize.actions.SyncInfoSet;
 
 
 /**
@@ -82,12 +82,6 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 		action.getRunnable(new SyncInfoSet(infos)).run(DEFAULT_MONITOR);
 	}
 
-	private CVSMergeSubscriber createMergeSubscriber(IProject project, CVSTag root, CVSTag branch) {
-		CVSMergeSubscriber subscriber = new CVSMergeSubscriber(new IResource[] { project }, root, branch);
-		TeamSubscriber.getSubscriberManager().registerSubscriber(subscriber);
-		return subscriber;
-	}
-	
 	/**
 	 * Test the basic incoming changes cases
 	 * - incoming addition
@@ -110,7 +104,7 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 		changeResources(copy, new String[] {"file1.txt"}, true);
 		
 		// create a merge subscriber
-		CVSMergeSubscriber subscriber = createMergeSubscriber(project, root, branch);
+		CVSMergeSubscriber subscriber = getSyncInfoSource().createMergeSubscriber(project, root, branch);
 		
 		// check the sync states
 		assertSyncEquals("testIncomingChanges", subscriber, project, 
@@ -141,7 +135,7 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 				SyncInfo.OUTGOING  | SyncInfo.DELETION,
 				SyncInfo.OUTGOING | SyncInfo.ADDITION,
 				SyncInfo.IN_SYNC,
-				SyncInfo.OUTGOING | SyncInfo.ADDITION});
+				SyncInfo.OUTGOING | SyncInfo.ADDITION});		
 	}
 
 	public void testMergableConflicts() throws IOException, TeamException, CoreException, InvocationTargetException, InterruptedException {
@@ -168,7 +162,7 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 		appendText(project.getFile("file2.txt"), "first line\n", true);
 		
 		// create a merge subscriber
-		CVSMergeSubscriber subscriber = createMergeSubscriber(project, root, branch);
+		CVSMergeSubscriber subscriber = getSyncInfoSource().createMergeSubscriber(project, root, branch);
 		
 		// check the sync states
 		assertSyncEquals("testMergableConflicts", subscriber, project, 
@@ -221,7 +215,7 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 		appendText(project.getFile("file2.txt"), "conflict line\n", false);
 		
 		// create a merge subscriber
-		CVSMergeSubscriber subscriber = createMergeSubscriber(project, root, branch);
+		CVSMergeSubscriber subscriber = getSyncInfoSource().createMergeSubscriber(project, root, branch);
 		
 		// check the sync states
 		assertSyncEquals("testUnmergableConflicts", subscriber, project, 
@@ -289,7 +283,7 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 		commitProject(branchedProject);
 		
 		// create a merge subscriber
-		CVSMergeSubscriber subscriber = createMergeSubscriber(project, root, branch);
+		CVSMergeSubscriber subscriber = getSyncInfoSource().createMergeSubscriber(project, root, branch);
 
 		// check the sync states
 		assertSyncEquals("testLocalScrub", subscriber, project, 
@@ -325,44 +319,6 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 		commitProject(project);
 	}
 	
-	public void testCancel() throws CVSException, CoreException, IOException {
-		
-		// Create a test project
-		IProject project = createProject("testMergableConflicts", new String[] { "file1.txt", "file2.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
-		setContentsAndEnsureModified(project.getFile("file1.txt"), "some text\nwith several lines\n");
-		setContentsAndEnsureModified(project.getFile("file2.txt"), "some text\nwith several lines\n");
-		commitProject(project);
-
-		// Checkout and branch a copy
-		CVSTag root = new CVSTag("root_branch1", CVSTag.VERSION);
-		CVSTag branch = new CVSTag("branch1", CVSTag.BRANCH);
-		IProject branchedProject = branchProject(project, root, branch);
-		
-		// modify the branch
-		appendText(branchedProject.getFile("file1.txt"), "first line\n", true);
-		appendText(branchedProject.getFile("file2.txt"), "last line\n", false);
-		commitProject(branchedProject);
-		
-		// modify HEAD
-		appendText(project.getFile("file1.txt"), "last line\n", false);
-		commitProject(project);
-		// have one local change
-		appendText(project.getFile("file2.txt"), "first line\n", true);
-		
-		// create a merge subscriber
-		CVSMergeSubscriber subscriber = createMergeSubscriber(project, root, branch);
-		
-		// check the sync states
-		assertSyncEquals("testMergableConflicts", subscriber, project, 
-			new String[] { "file1.txt", "file2.txt"}, 
-			true, new int[] {
-				SyncInfo.CONFLICTING | SyncInfo.CHANGE, 
-				SyncInfo.CONFLICTING | SyncInfo.CHANGE});
-		
-		// cancel the subscriber
-		subscriber.cancel();			
-	}
-	
 	public void testBug37546MergeWantsToDeleteNewDirectories() throws CVSException, CoreException {		
 		IProject project = createProject("testBug37546", new String[]{"file1.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
 		setContentsAndEnsureModified(project.getFile("file1.txt"), "some text\nwith several lines\n");
@@ -382,7 +338,7 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 		addResources(project, new String[] {"folder4/", "folder4/d.txt"}, false);
 		
 		// create a merge subscriber
-		CVSMergeSubscriber subscriber = createMergeSubscriber(project, root, branch);
+		CVSMergeSubscriber subscriber = getSyncInfoSource().createMergeSubscriber(project, root, branch);
 		 
 		assertSyncEquals("testBug37546", subscriber, project, 
 				new String[]{"folder2/", "folder2/c.txt", "folder3/", "folder4/", "folder4/d.txt"}, true, 
@@ -411,7 +367,7 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 		 commitProject(branchedProject);
 	
 		 // create a merge subscriber
-		 CVSMergeSubscriber subscriber = createMergeSubscriber(project, root, branch);
+		 CVSMergeSubscriber subscriber = getSyncInfoSource().createMergeSubscriber(project, root, branch);
 		
 		RepositoryProvider.unmap(project);
 		assertProjectRemoved(subscriber, project);
@@ -445,7 +401,7 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 		appendText(project.getFile("file2.txt"), "conflict line\n", false);
 		
 		// create a merge subscriber
-		CVSMergeSubscriber subscriber = createMergeSubscriber(project, root, branch);
+		CVSMergeSubscriber subscriber = getSyncInfoSource().createMergeSubscriber(project, root, branch);
 		
 		// check the sync states
 		assertSyncEquals("testMarkAsMergedConflicts", subscriber, project, 
@@ -469,4 +425,12 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 				SyncInfo.IN_SYNC,
 				SyncInfo.IN_SYNC});				
 	} 
+	
+	/* (non-Javadoc)
+	 * @see junit.framework.TestCase#tearDown()
+	 */
+	protected void tearDown() throws Exception {
+		getSyncInfoSource().tearDown();
+		super.tearDown();
+	}
 }

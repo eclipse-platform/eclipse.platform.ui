@@ -42,12 +42,11 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 
-public class ShowAnnotationAction extends CVSAction {
+public class ShowAnnotationAction extends WorkspaceAction {
 
-/**
- * Action to open a CVS Annotate View
- */
-
+	/**
+	 * Action to open a CVS Annotate View
+	 */
 	public void execute(IAction action) throws InvocationTargetException, InterruptedException {
 		// Get the selected resource.
 		final ICVSResource cvsResource = getSingleSelectedCVSResource();
@@ -58,43 +57,43 @@ public class ShowAnnotationAction extends CVSAction {
 
 		final AnnotateListener listener = new AnnotateListener();
 		if (cvsResource == null) {
-			return;		
+			return;
 		}
 		// Get the selected revision
 		final String revision;
 		try {
 			ResourceSyncInfo info = cvsResource.getSyncInfo();
-			if(info == null) {
-				handle(new CVSException(Policy.bind("ShowAnnotationAction.noSyncInfo", cvsResource.getName())));
+			if (info == null) {
+				handle(new CVSException(Policy.bind("ShowAnnotationAction.noSyncInfo", cvsResource.getName()))); //$NON-NLS-1$
 				return;
 			}
 			revision = cvsResource.getSyncInfo().getRevision();
 		} catch (CVSException e) {
 			throw new InvocationTargetException(e);
 		}
-		
+
 		// Run the CVS Annotate action with a progress monitor
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				fetchAnnotation(listener, cvsResource, revision, monitor);
-			} 
+			}
 		}, true, PROGRESS_DIALOG);
 
-		
 		if (listener.hasError()) {
 			throw new InvocationTargetException(new CVSException(Policy.bind("ShowAnnotationAction.1", listener.getError()))); //$NON-NLS-1$
 		}
-		
+
 		// Open the view
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (window != null) {
 			try {
 				PlatformUI.getWorkbench().showPerspective("org.eclipse.team.cvs.ui.cvsPerspective", window); //$NON-NLS-1$
 			} catch (WorkbenchException e1) {
-				// If this does not work we will just open the view in the curren perspective.
+				// If this does not work we will just open the view in the
+				// curren perspective.
 			}
 		}
-		
+
 		try {
 			AnnotateView view = AnnotateView.openInActivePerspective();
 			view.showAnnotations(cvsResource, listener.getCvsAnnotateBlocks(), listener.getContents());
@@ -105,6 +104,7 @@ public class ShowAnnotationAction extends CVSAction {
 
 	/**
 	 * Send the CVS annotate command
+	 * 
 	 * @param listener
 	 * @param cvsResource
 	 * @param revision
@@ -112,14 +112,17 @@ public class ShowAnnotationAction extends CVSAction {
 	 * @throws InvocationTargetException
 	 */
 	private void fetchAnnotation(final AnnotateListener listener, final ICVSResource cvsResource, final String revision, IProgressMonitor monitor) throws InvocationTargetException {
-		
+
 		try {
 			monitor = Policy.monitorFor(monitor);
 			monitor.beginTask(null, 100);
 			ICVSFolder folder = cvsResource.getParent();
 			final FolderSyncInfo info = folder.getFolderSyncInfo();
 			ICVSRepositoryLocation location = CVSProviderPlugin.getPlugin().getRepository(info.getRoot());
-			Session session = new Session(location, folder, true /* output to console */);
+			Session session = new Session(location, folder, true /*
+																  * output to
+																  * console
+																  */);
 			session.open(Policy.subMonitorFor(monitor, 10), false /* read-only */);
 			try {
 				Command.QuietOption quietness = CVSProviderPlugin.getPlugin().getQuietness();
@@ -127,16 +130,12 @@ public class ShowAnnotationAction extends CVSAction {
 					CVSProviderPlugin.getPlugin().setQuietness(Command.VERBOSE);
 					final Command.LocalOption[] localOption;
 					if (revision == null) {
-						localOption = Command.NO_LOCAL_OPTIONS;	
+						localOption = Command.NO_LOCAL_OPTIONS;
 					} else {
-						localOption  = new Command.LocalOption[1];
+						localOption = new Command.LocalOption[1];
 						localOption[0] = Annotate.makeRevisionOption(revision);
 					}
-					IStatus status = Command.ANNOTATE.execute(
-						session,
-						Command.NO_GLOBAL_OPTIONS, 
-						localOption, new ICVSResource[] { cvsResource }, listener,
-						Policy.subMonitorFor(monitor, 90));
+					IStatus status = Command.ANNOTATE.execute(session, Command.NO_GLOBAL_OPTIONS, localOption, new ICVSResource[]{cvsResource}, listener, Policy.subMonitorFor(monitor, 90));
 					if (status.getCode() == CVSStatus.SERVER_ERROR) {
 						throw new CVSServerException(status);
 					}
@@ -156,13 +155,14 @@ public class ShowAnnotationAction extends CVSAction {
 	 * Ony enabled for single resource selection
 	 */
 	protected boolean isEnabled() throws TeamException {
-		return (selection.size() == 1);
+		ICVSResource resource = getSingleSelectedCVSResource();
+		return (resource != null && ! resource.isFolder());
 	}
 
 	/**
-	 * This action is called from one of a Resource Navigator a
-	 * CVS Resource Navigator or a History Log Viewer.  Return
-	 * the selected resource as an ICVSResource
+	 * This action is called from one of a Resource Navigator a CVS Resource
+	 * Navigator or a History Log Viewer. Return the selected resource as an
+	 * ICVSResource
 	 * 
 	 * @return ICVSResource
 	 */
@@ -172,22 +172,22 @@ public class ShowAnnotationAction extends CVSAction {
 		if (cvsResources.length == 1) {
 			return cvsResources[0];
 		}
-		
+
 		// Selected from a History Viewer
-		Object[] logEntries =  getSelectedResources(LogEntry.class);
+		Object[] logEntries = getSelectedResources(LogEntry.class);
 		if (logEntries.length == 1) {
 			LogEntry aLogEntry = (LogEntry) logEntries[0];
 			ICVSRemoteFile cvsRemoteFile = aLogEntry.getRemoteFile();
 			return cvsRemoteFile;
 		}
-		
+
 		// Selected from a Resource Navigator
-		 IResource[] resources = getSelectedResources();
-		 if (resources.length == 1) {
-			 IContainer parent = resources[0].getParent();
-			 ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor(parent);
-			 return CVSWorkspaceRoot.getCVSResourceFor(resources[0]);
-		 }
+		IResource[] resources = getSelectedResources();
+		if (resources.length == 1) {
+			IContainer parent = resources[0].getParent();
+			ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor(parent);
+			return CVSWorkspaceRoot.getCVSResourceFor(resources[0]);
+		}
 		return null;
 	}
 }

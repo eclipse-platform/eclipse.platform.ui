@@ -13,7 +13,7 @@ package org.eclipse.team.tests.ccvs.core.subscriber;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceUpdateAction;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
-import org.eclipse.team.ui.sync.SyncInfoSet;
+import org.eclipse.team.ui.synchronize.actions.SyncInfoSet;
 
 class TestUpdateAction extends WorkspaceUpdateAction {
 

@@ -22,6 +22,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -69,7 +70,6 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 	private Text addedFlag;
 	
 	private Button showDirty;
-	private Button showSyncInfoInLabel;
 	
 	class StringPair {
 		String s1;
@@ -178,11 +178,6 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		tabItem.setText(Policy.bind("CVSDecoratorPreferencesPage.generalTabFolder"));//$NON-NLS-1$
 		tabItem.setControl(createGeneralDecoratorPage(tabFolder));
 		
-		// synchronize decoration options
-		tabItem = new TabItem(tabFolder, SWT.NONE);
-		tabItem.setText(Policy.bind("CVSDecoratorPreferencesPage.synchronizeTabFolder"));//$NON-NLS-1$
-		tabItem.setControl(createSynchronizeDecoratorPage(tabFolder));
-				
 		initializeValues();
 		WorkbenchHelp.setHelp(tabFolder, IHelpContextIds.DECORATORS_PREFERENCE_PAGE);
 		Dialog.applyDialogFont(parent);
@@ -261,18 +256,6 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		return composite;
 	}
 	
-	private Control createSynchronizeDecoratorPage(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NULL);
-		GridLayout layout = new GridLayout();
-		composite.setLayout(layout);
-		GridData data = new GridData();
-		data.horizontalAlignment = GridData.FILL;
-		composite.setLayoutData(data);
-		createLabel(composite, Policy.bind("CVSDecoratorPreferencesPage.synchronizeDescription"), 1); //$NON-NLS-1$
-		showSyncInfoInLabel = createCheckBox(composite, Policy.bind("CVSDecoratorPreferencesPage.showSyncInfoInLabel")); //$NON-NLS-1$
-		return composite;
-	}
-		
 	private Label createLabel(Composite parent, String text, int span) {
 		Label label = new Label(parent, SWT.LEFT);
 		label.setText(text);
@@ -323,9 +306,6 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		imageShowNewResource.setSelection(store.getBoolean(ICVSUIConstants.PREF_SHOW_NEWRESOURCE_DECORATION));
 		
 		showDirty.setSelection(store.getBoolean(ICVSUIConstants.PREF_CALCULATE_DIRTY));
-		
-		showSyncInfoInLabel.setSelection(store.getBoolean(ICVSUIConstants.PREF_SHOW_SYNCINFO_AS_TEXT));
-	
 		setValid(true);
 	}
 
@@ -356,10 +336,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		
 		store.setValue(ICVSUIConstants.PREF_CALCULATE_DIRTY, showDirty.getSelection());
 		
-		store.setValue(ICVSUIConstants.PREF_SHOW_SYNCINFO_AS_TEXT, showSyncInfoInLabel.getSelection());		
-		
-		CVSLightweightDecorator.refresh();
-		
+		CVSUIPlugin.broadcastPropertyChange(new PropertyChangeEvent(this, CVSUIPlugin.P_DECORATORS_CHANGED, null, null));
 		CVSUIPlugin.getPlugin().savePluginPreferences();
 		return true;
 	}
@@ -384,8 +361,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		imageShowHasRemote.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_SHOW_HASREMOTE_DECORATION));
 		imageShowNewResource.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_SHOW_NEWRESOURCE_DECORATION));
 		
-		showDirty.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_CALCULATE_DIRTY));
-		showSyncInfoInLabel.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_SHOW_SYNCINFO_AS_TEXT));		
+		showDirty.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_CALCULATE_DIRTY));	
 	}
 
 	/**

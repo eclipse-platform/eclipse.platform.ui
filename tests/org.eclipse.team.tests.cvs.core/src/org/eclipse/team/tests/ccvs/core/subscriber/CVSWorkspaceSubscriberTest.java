@@ -43,7 +43,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberAction;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
-import org.eclipse.team.ui.sync.SyncInfoSet;
+import org.eclipse.team.ui.synchronize.actions.SyncInfoSet;
 
 /**
  * This class tests the CVSWorkspaceSubscriber

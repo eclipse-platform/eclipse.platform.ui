@@ -39,7 +39,7 @@ public class RefreshSubscriberJob extends WorkspaceJob {
 	 * Uniquely identifies this type of job. This is used for cancellation.
 	 */
 	private final static Object FAMILY_ID = new Object();
-
+	
 	/**
 	 * If true this job will be restarted when it completes 
 	 */
@@ -49,7 +49,7 @@ public class RefreshSubscriberJob extends WorkspaceJob {
 	 * If true a rescheduled refresh job should be retarted when cancelled
 	 */
 	/* internal use only */ boolean restartOnCancel = true; 
-
+	
 	/**
 	 * The schedule delay used when rescheduling a completed job 
 	 */
@@ -58,7 +58,7 @@ public class RefreshSubscriberJob extends WorkspaceJob {
 	/**
 	 * Time the job was run last in milliseconds.
 	 */
-	private long lastTimeRun = 0; 
+	protected long lastTimeRun = 0; 
 	
 	/**
 	 * The subscribers and roots to refresh. If these are changed when the job
@@ -87,15 +87,15 @@ public class RefreshSubscriberJob extends WorkspaceJob {
 			}
 		});
 	}
-
+	
 	public boolean shouldRun() {
 		return getSubscriber() != null;
 	}
-		
+	
 	public boolean belongsTo(Object family) {		
 		return family == getFamily();
 	}
-
+	
 	public static Object getFamily() {
 		return FAMILY_ID;
 	}
@@ -115,8 +115,8 @@ public class RefreshSubscriberJob extends WorkspaceJob {
 			if(subscriber == null || roots == null) {
 				return Status.OK_STATUS;
 			}
-					
-			monitor.beginTask(getTaskName(subscriber, roots), 100);
+			
+			monitor.beginTask(null, 100);
 			try {
 				// Only allow one refresh job at a time
 				// NOTE: It would be cleaner if this was done by a scheduling
@@ -127,7 +127,6 @@ public class RefreshSubscriberJob extends WorkspaceJob {
 					return Status.CANCEL_STATUS;
 				}
 				try {					
-					monitor.setTaskName(subscriber.getName());
 					subscriber.refresh(roots, IResource.DEPTH_INFINITE, Policy.subMonitorFor(monitor, 100));
 				} catch(TeamException e) {
 					status.merge(e.getStatus());
@@ -140,16 +139,11 @@ public class RefreshSubscriberJob extends WorkspaceJob {
 			return status.isOK() ? Status.OK_STATUS : (IStatus) status;
 		}
 	}
-
-	protected String getTaskName(TeamSubscriber subscriber, IResource[] roots) {
-		// Don't return a task name as the job name contains the subscriber and resource count
-		return null;
-	}
-
+	
 	protected IResource[] getResources() {
 		return resources;
 	}
-
+	
 	protected TeamSubscriber getSubscriber() {
 		return subscriber;
 	}
@@ -157,15 +151,31 @@ public class RefreshSubscriberJob extends WorkspaceJob {
 	protected long getScheduleDelay() {
 		return scheduleDelay;
 	}
-
+	
+	protected void start() {
+		if(getState() == Job.NONE) {
+			if(shouldReschedule()) {
+				schedule(getScheduleDelay());
+			}
+		}
+	}
+	
 	/**
 	 * Specify the interval in seconds at which this job is scheduled.
 	 * @param seconds delay specified in seconds
 	 */
 	public void setRefreshInterval(long seconds) {
+		boolean restart = false;
+		if(getState() == Job.SLEEPING) {
+			restart = true;
+			cancel();
+		}
 		scheduleDelay = seconds * 1000;
+		if(restart) {
+			start();
+		}
 	}
-
+	
 	/**
 	 * Returns the interval of this job in seconds. 
 	 * @return
@@ -173,7 +183,7 @@ public class RefreshSubscriberJob extends WorkspaceJob {
 	public long getRefreshInterval() {
 		return scheduleDelay / 1000;
 	}
-
+	
 	public void setRestartOnCancel(boolean restartOnCancel) {
 		this.restartOnCancel = restartOnCancel;
 	}

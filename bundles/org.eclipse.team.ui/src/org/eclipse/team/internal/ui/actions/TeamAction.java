@@ -37,6 +37,7 @@ import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.ui.IObjectActionDelegate;
+import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -55,7 +56,7 @@ import org.eclipse.ui.actions.ActionDelegate;
  * Team providers may also instantiate or subclass any of the  
  * subclasses of TeamAction provided in this package.
  */
-public abstract class TeamAction extends ActionDelegate implements IObjectActionDelegate {
+public abstract class TeamAction extends ActionDelegate implements IObjectActionDelegate, IViewActionDelegate {
 	// The current selection
 	protected IStructuredSelection selection;
 	
@@ -349,5 +350,11 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 			return null;
 		}
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
+	 */
+	public void init(IViewPart view) {
+		targetPart = view;
+	}
 }

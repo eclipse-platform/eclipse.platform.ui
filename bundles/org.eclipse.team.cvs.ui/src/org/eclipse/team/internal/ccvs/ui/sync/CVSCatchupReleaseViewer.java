@@ -43,10 +43,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.sync.ILocalSyncElement;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
-import org.eclipse.team.core.sync.RemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
@@ -305,14 +303,6 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 					Decoration decoration = new Decoration();
 					CVSLightweightDecorator.decorateTextLabel(resource, decoration, false /*don't show dirty*/, false /*don't show revisions*/);
 					label = decoration.prefix + label + decoration.suffix;
-				}
-				
-				if (CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_SHOW_SYNCINFO_AS_TEXT)) {
-					int syncKind = node.getKind();
-					if (syncKind != ILocalSyncElement.IN_SYNC) {
-						String syncKindString = RemoteSyncElement.kindToString(syncKind);
-						label = Policy.bind("CVSCatchupReleaseViewer.labelWithSyncKind", label, syncKindString); //$NON-NLS-1$
-					}
 				}
 				return label;
 			}								

@@ -28,6 +28,8 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -52,10 +54,11 @@ import org.eclipse.team.internal.ccvs.core.util.ResourceStateChangeListeners;
 import org.eclipse.team.internal.core.ExceptionCollector;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.ISharedImages;
+import org.eclipse.team.ui.TeamUI;
 
 public class CVSLightweightDecorator
 	extends LabelProvider
-	implements ILightweightLabelDecorator, IResourceStateChangeListener {
+	implements ILightweightLabelDecorator, IResourceStateChangeListener, IPropertyChangeListener {
 
 	// Images cached for better performance
 	private static ImageDescriptor dirty;
@@ -85,6 +88,30 @@ public class CVSLightweightDecorator
 		}
 	}
 
+	public static class Decoration implements IDecoration {
+		public String prefix, suffix;
+		public ImageDescriptor overlay;
+		
+		/**
+		 * @see org.eclipse.jface.viewers.IDecoration#addPrefix(java.lang.String)
+		 */
+		public void addPrefix(String prefix) {
+			this.prefix = prefix;
+		}
+		/**
+		 * @see org.eclipse.jface.viewers.IDecoration#addSuffix(java.lang.String)
+		 */
+		public void addSuffix(String suffix) {
+			this.suffix = suffix;
+		}
+		/**
+		 * @see org.eclipse.jface.viewers.IDecoration#addOverlay(org.eclipse.jface.resource.ImageDescriptor)
+		 */
+		public void addOverlay(ImageDescriptor overlay) {
+			this.overlay = overlay;
+		}
+	}
+	
 	static {
 		dirty = new CachedImageDescriptor(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_DIRTY_OVR));
 		checkedIn = new CachedImageDescriptor(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_CHECKEDIN_OVR));
@@ -97,6 +124,8 @@ public class CVSLightweightDecorator
 
 	public CVSLightweightDecorator() {
 		ResourceStateChangeListeners.getListener().addResourceStateChangeListener(this);
+		TeamUI.addPropertyChangeListener(this);
+		CVSUIPlugin.addPropertyChangeListener(this);
 		CVSProviderPlugin.broadcastDecoratorEnablementChanged(true /* enabled */);
 		exceptions = new ExceptionCollector(Policy.bind("CVSDecorator.exceptionMessage"), CVSUIPlugin.ID, IStatus.ERROR, CVSUIPlugin.getPlugin().getLog()); //$NON-NLS-1$
 	}
@@ -532,6 +561,8 @@ public class CVSLightweightDecorator
 	public void dispose() {
 		super.dispose();
 		CVSProviderPlugin.broadcastDecoratorEnablementChanged(false /* disabled */);
+		TeamUI.removePropertyChangeListener(this);
+		CVSUIPlugin.removePropertyChangeListener(this);
 	}
 	
 	/**
@@ -539,5 +570,17 @@ public class CVSLightweightDecorator
 	 */
 	private static void handleException(Exception e) {
 		exceptions.handleException(e);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+	 */
+	public void propertyChange(PropertyChangeEvent event) {
+		String prop = event.getProperty();
+		if(prop.equals(TeamUI.GLOBAL_IGNORES_CHANGED)) {
+			refresh();
+		} else if(prop.equals(CVSUIPlugin.P_DECORATORS_CHANGED)) {
+			refresh();
+		}		
 	}
 }

@@ -13,7 +13,7 @@ package org.eclipse.team.tests.ccvs.core.subscriber;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
 import org.eclipse.team.internal.ccvs.ui.subscriber.OverrideAndCommitAction;
-import org.eclipse.team.ui.sync.SyncInfoSet;
+import org.eclipse.team.ui.synchronize.actions.SyncInfoSet;
 
 public class TestOverrideAndCommit extends OverrideAndCommitAction {
 	

@@ -1,35 +1,27 @@
-/*
- * Created on Jun 26, 2003
- *
- * To change the template for this generated file go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
- */
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.team.internal.ui;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.ui.IKeyBindingService;
+import org.eclipse.team.ui.Utilities;
 
-/**
- * @author Jean-Michel Lemieux
- *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
- */
 public class Utils {
 
 	/**
@@ -181,67 +173,7 @@ public class Utils {
 		}
 	}
 	
-	public static void registerAction(IKeyBindingService kbs, IAction a, String id) {
-		if (kbs != null) {
-			a.setActionDefinitionId(id);
-			kbs.registerAction(a);
-		}
-	}
-	
-	/**
-	 * Initialize the given Action from a ResourceBundle.
-	 */
 	public static void initAction(IAction a, String prefix) {
-		
-		String labelKey= "label"; //$NON-NLS-1$
-		String tooltipKey= "tooltip"; //$NON-NLS-1$
-		String imageKey= "image"; //$NON-NLS-1$
-		String descriptionKey= "description"; //$NON-NLS-1$
-		
-		if (prefix != null && prefix.length() > 0) {
-			labelKey= prefix + labelKey;
-			tooltipKey= prefix + tooltipKey;
-			imageKey= prefix + imageKey;
-			descriptionKey= prefix + descriptionKey;
-		}
-	
-		String s = Policy.bind(labelKey);
-		if(s != null)
-			a.setText(s);
-		s = Policy.bind(tooltipKey);
-		if(s != null)
-			a.setToolTipText(s);
-		s = Policy.bind(descriptionKey);
-		if(s != null)
-			a.setDescription(s);
-	
-		String relPath= Policy.bind(imageKey);
-		if (relPath != null && ! relPath.equals(imageKey) && relPath.trim().length() > 0) {
-		
-			String cPath;
-			String dPath;
-			String ePath;
-		
-			if (relPath.indexOf("/") >= 0) { //$NON-NLS-1$
-				String path= relPath.substring(1);
-				cPath= 'c' + path;
-				dPath= 'd' + path;
-				ePath= 'e' + path;
-			} else {
-				cPath= "clcl16/" + relPath; //$NON-NLS-1$
-				dPath= "dlcl16/" + relPath; //$NON-NLS-1$
-				ePath= "elcl16/" + relPath; //$NON-NLS-1$
-			}
-		
-			ImageDescriptor id= TeamUIPlugin.getImageDescriptor(dPath);	// we set the disabled image first (see PR 1GDDE87)
-			if (id != null)
-				a.setDisabledImageDescriptor(id);
-			id= TeamUIPlugin.getImageDescriptor(cPath);
-			if (id != null)
-				a.setHoverImageDescriptor(id);
-			id= TeamUIPlugin.getImageDescriptor(ePath);
-			if (id != null)
-				a.setImageDescriptor(id);
-		}
+		Utilities.initAction(a, prefix, Policy.bundle);
 	}
 }

@@ -122,4 +122,8 @@ public class Policy {
 			return monitor;
 		return new InfiniteSubProgressMonitor(monitor, ticks);
 	}
+	
+	public static ResourceBundle getBundle() {
+		return bundle;
+	}
 }

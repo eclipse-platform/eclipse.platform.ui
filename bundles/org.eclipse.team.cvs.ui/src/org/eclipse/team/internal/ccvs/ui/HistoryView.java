@@ -86,7 +86,7 @@ import org.eclipse.team.internal.ccvs.ui.actions.MoveRemoteTagAction;
 import org.eclipse.team.internal.ccvs.ui.actions.OpenLogEntryAction;
 import org.eclipse.team.internal.ui.jobs.JobBusyCursor;
 import org.eclipse.team.internal.ui.jobs.JobStatusHandler;
-import org.eclipse.team.internal.ui.sync.compare.SyncInfoCompareInput;
+import org.eclipse.team.internal.ui.synchronize.compare.SyncInfoCompareInput;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IEditorInput;

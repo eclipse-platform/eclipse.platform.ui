@@ -53,6 +53,7 @@ public interface ICVSUIConstants {
 	
 	// wizards
 	public final String IMG_NEWLOCATION = "wizards/newlocation_wiz.gif"; //$NON-NLS-1$
+	public final String IMG_CVSLOGO = "wizards/newconnect_wiz.gif"; //$NON-NLS-1$
 	
 	// preferences
 	public final String PREF_SHOW_COMMENTS = "pref_show_comments"; //$NON-NLS-1$
@@ -97,8 +98,6 @@ public interface ICVSUIConstants {
 	public final String PREF_ADDED_FLAG = "pref_added_flag"; //$NON-NLS-1$
 	
 	public final String PREF_CALCULATE_DIRTY = "pref_calculate_dirty";	 //$NON-NLS-1$
-	
-	public final String PREF_SHOW_SYNCINFO_AS_TEXT = "pref_show_syncinfo_as_text"; //$NON-NLS-1$
 
 	// watch/edit preferences
 	public final String PREF_CHECKOUT_READ_ONLY = "pref_checkout_read_only"; //$NON-NLS-1$

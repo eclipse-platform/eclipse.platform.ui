@@ -67,7 +67,7 @@ import org.eclipse.team.internal.ccvs.ui.operations.CheckoutSingleProjectOperati
 import org.eclipse.team.internal.ccvs.ui.operations.ITagOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.TagInRepositoryOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.TagOperation;
-import org.eclipse.team.tests.ccvs.ui.unit.HeadlessCVSRunnableContext;
+import org.eclipse.team.tests.ccvs.ui.HeadlessCVSRunnableContext;
 
 public class EclipseTest extends EclipseWorkspaceTest {
 

@@ -47,18 +47,6 @@ public class TeamDelta {
 	 */	
 	public static final int PROVIDER_DECONFIGURED = 0x4;
 
-	/**
-	 * Delta kind constant (bit mask) indicating that a team provider has been de-configured on the resource.
-	 * @see IResourceDelta#getKind
-	 */	
-	public static final int SUBSCRIBER_CREATED = 0x8;
-	
-	/**
-	 * Delta kind constant (bit mask) indicating that a team provider has been de-configured on the resource.
-	 * @see IResourceDelta#getKind
-	 */	
-	public static final int SUBSCRIBER_DELETED = 0x10;
-
 	private TeamSubscriber subscriber; 
 	private int flags;
 	private IResource resource; 

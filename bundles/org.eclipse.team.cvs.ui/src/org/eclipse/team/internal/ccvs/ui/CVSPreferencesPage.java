@@ -22,6 +22,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -374,7 +375,9 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		
 		// changing the default keyword substitution mode for text files may affect
 		// information displayed in the decorators
-		if (! oldKSubst.equals(newKSubst)) CVSLightweightDecorator.refresh();
+		if (! oldKSubst.equals(newKSubst)) {
+			CVSUIPlugin.broadcastPropertyChange(new PropertyChangeEvent(this, CVSUIPlugin.P_DECORATORS_CHANGED, null, null));
+		}
 		
 		CVSUIPlugin.getPlugin().savePluginPreferences();
 		return true;

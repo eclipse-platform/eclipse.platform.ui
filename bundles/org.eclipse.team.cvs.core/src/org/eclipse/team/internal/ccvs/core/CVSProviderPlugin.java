@@ -38,7 +38,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.subscribers.TeamSubscriber;
 import org.eclipse.team.core.sync.RemoteContentsCache;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
@@ -80,7 +79,7 @@ public class CVSProviderPlugin extends Plugin {
 	// cvs plugin extension points and ids
 	public static final String ID = "org.eclipse.team.cvs.core"; //$NON-NLS-1$
 	
-	public static final QualifiedName CVS_WORKSPACE_SUBSCRIBER_ID = new QualifiedName(CVSSubscriberFactory.ID, "workspace-subscriber"); //$NON-NLS-1$
+	public static final QualifiedName CVS_WORKSPACE_SUBSCRIBER_ID = new QualifiedName("org.eclipse.team.cvs.ui.cvsworkspace-participant", "syncparticipant"); //$NON-NLS-1$
 	public static final String PT_AUTHENTICATOR = "authenticator"; //$NON-NLS-1$
 	public static final String PT_CONNECTIONMETHODS = "connectionmethods"; //$NON-NLS-1$
 	public static final String PT_FILE_MODIFICATION_VALIDATOR = "filemodificationvalidator"; //$NON-NLS-1$
@@ -136,7 +135,6 @@ public class CVSProviderPlugin extends Plugin {
 					CVS_WORKSPACE_SUBSCRIBER_ID, 
 					Policy.bind("CVSProviderPlugin.20"),   //$NON-NLS-1$
 					Policy.bind("CVSProviderPlugin.21")); //$NON-NLS-1$
-			TeamSubscriber.getSubscriberManager().registerSubscriber(cvsWorkspaceSubscriber);
 		}
 		return cvsWorkspaceSubscriber;
 	}

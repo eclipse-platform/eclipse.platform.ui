@@ -48,7 +48,7 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
 import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.team.internal.ui.dialogs.IPromptCondition;
-import org.eclipse.team.ui.sync.ISynchronizeViewNode;
+import org.eclipse.team.internal.ui.synchronize.views.SynchronizeViewNode;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -299,10 +299,6 @@ abstract public class CVSAction extends TeamAction {
 			Iterator elements = ((IStructuredSelection) selection).iterator();
 			while (elements.hasNext()) {
 				Object next = elements.next();
-				if(next instanceof ISynchronizeViewNode) {
-					resources.add(((ISynchronizeViewNode)next).getSyncInfo().getRemote());
-					continue;
-				}
 				if (next instanceof ICVSResource) {
 					resources.add(next);
 					continue;
@@ -481,4 +477,24 @@ abstract public class CVSAction extends TeamAction {
 		return CVSUIPlugin.getPlugin().getRepositoryManager();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.actions.TeamAction#getSelectedResources()
+	 */
+	protected IResource[] getSelectedResources() {
+		if(selection.isEmpty()) return new IResource[0];
+		Iterator it = selection.iterator();
+		List resources = new ArrayList();
+		while(it.hasNext()) {
+			Object element = it.next();
+			if(element instanceof SynchronizeViewNode) {
+				resources.add(((SynchronizeViewNode)element).getResource());
+			} else {
+				Object adapter = getAdapter(element, IResource.class);
+				if (adapter instanceof IResource) {
+					resources.add(adapter);
+}
+			}
+		}
+		return (IResource[]) resources.toArray(new IResource[resources.size()]);
+	}	
 }

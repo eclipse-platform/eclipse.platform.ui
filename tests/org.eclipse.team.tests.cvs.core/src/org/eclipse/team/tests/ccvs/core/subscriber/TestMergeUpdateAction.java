@@ -14,7 +14,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.internal.ccvs.ui.subscriber.MergeUpdateAction;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
-import org.eclipse.team.ui.sync.SyncInfoSet;
+import org.eclipse.team.ui.synchronize.actions.SyncInfoSet;
 
 
 class TestMergeUpdateAction extends MergeUpdateAction {

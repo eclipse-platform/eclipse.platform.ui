@@ -1,7 +1,7 @@
 package org.eclipse.team.tests.ccvs.core.subscriber;
 
 import org.eclipse.team.internal.ccvs.ui.subscriber.OverrideAndUpdateAction;
-import org.eclipse.team.ui.sync.SyncInfoSet;
+import org.eclipse.team.ui.synchronize.actions.SyncInfoSet;
 
 public class TestOverrideAndUpdate extends OverrideAndUpdateAction {	
 	

@@ -11,6 +11,7 @@
 package org.eclipse.team.internal.ui;
 
 
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -24,19 +25,25 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.internal.ui.jobs.RefreshSubscriberInputJob;
 import org.eclipse.team.internal.ui.jobs.RefreshSubscriberJob;
-import org.eclipse.team.internal.ui.sync.views.SyncViewerTableSorter;
+import org.eclipse.team.internal.ui.synchronize.views.SyncViewerTableSorter;
+import org.eclipse.team.internal.ui.synchronize.SynchronizeManager;
+import org.eclipse.team.internal.ui.synchronize.TeamSynchronizingPerspective;
 import org.eclipse.team.ui.ISharedImages;
-import org.eclipse.team.ui.sync.ISynchronizeView;
+import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.synchronize.TeamSubscriberParticipant;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -55,10 +62,6 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 	
 	// plugin id
 	public static final String PLUGIN_ID = "org.eclipse.team.ui"; //$NON-NLS-1$
-	
-	// extension points
-	public static final String PT_CONFIGURATION ="configurationWizards"; //$NON-NLS-1$
-	public static final String PT_DECORATORS = "decorators"; //$NON-NLS-1$	
 	
 	private static List propertyChangeListeners = new ArrayList(5);
 	
@@ -158,12 +161,13 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 		IPreferenceStore store = getPreferenceStore();
 		store.setDefault(IPreferenceIds.SYNCVIEW_BACKGROUND_SYNC, true);
 		store.setDefault(IPreferenceIds.SYNCVIEW_SCHEDULED_SYNC, false);
+		store.setDefault(IPreferenceIds.SYNCVIEW_VIEW_SYNCINFO_IN_LABEL, false);
 		store.setDefault(IPreferenceIds.SYNCVIEW_DELAY, 60 /* minutes */);
 		store.setDefault(IPreferenceIds.SYNCVIEW_COMPRESS_FOLDERS, true);
 		store.setDefault(IPreferenceIds.SYNCVIEW_VIEW_TABLESORT, SyncViewerTableSorter.COL_NAME);
 		store.setDefault(IPreferenceIds.SYNCVIEW_VIEW_TABLESORT_REVERSED, false);
-		store.setDefault(IPreferenceIds.SYNCVIEW_SELECTED_MODE, ISynchronizeView.BOTH_MODE);
-		store.setDefault(IPreferenceIds.SYNCVIEW_DEFAULT_PERSPECTIVE, "org.eclipse.team.internal.ui.sync.views.TeamSynchronizingPerspective"); //$NON-NLS-1$
+		store.setDefault(IPreferenceIds.SYNCVIEW_SELECTED_MODE, TeamSubscriberParticipant.BOTH_MODE);
+		store.setDefault(IPreferenceIds.SYNCVIEW_DEFAULT_PERSPECTIVE, TeamSynchronizingPerspective.ID);
 	}
 	
 	/**
@@ -210,6 +214,7 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 			// start once the platform has started and stabilized
 			refreshJob.schedule(20000 /* 20 seconds */);
 		}
+		((SynchronizeManager)TeamUI.getSynchronizeManager()).initialize();
 	}
 	
 	/* (non-Javadoc)
@@ -395,6 +400,29 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 		}
 	}
 
+	/**
+	 * Returns the standard display to be used. The method first checks, if
+	 * the thread calling this method has an associated display. If so, this
+	 * display is returned. Otherwise the method returns the default display.
+	 */
+	public static Display getStandardDisplay() {
+		Display display= Display.getCurrent();
+		if (display == null) {
+			display= Display.getDefault();
+		}
+		return display;		
+	}
+	
+	public static void run(IRunnableWithProgress runnable) {
+		try {
+			PlatformUI.getWorkbench().getActiveWorkbenchWindow().run(true, true, runnable);
+		} catch (InvocationTargetException e) {
+			Utils.handleError(getStandardDisplay().getActiveShell(), e, null, null);
+		} catch (InterruptedException e2) {
+			// Nothing to be done
+		}
+	}
+	
 	public void propertyChange(PropertyChangeEvent event) {		
 		// update the background sync delay
 		if(event.getProperty().equals(IPreferenceIds.SYNCVIEW_DELAY)) {

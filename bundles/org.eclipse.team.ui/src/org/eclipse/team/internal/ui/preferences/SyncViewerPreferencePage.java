@@ -47,8 +47,8 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 	private BooleanFieldEditor bkgScheduledRefresh = null;
 	private IntegerFieldEditor2 scheduledDelay = null;
 	private BooleanFieldEditor compressFolders = null;
-	private BooleanFieldEditor useBothMode = null;
-
+	private BooleanFieldEditor showSyncInLabels = null;
+	
 	private Group refreshGroup;
 	
 	private static class PerspectiveDescriptorComparator implements Comparator {
@@ -157,6 +157,8 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 
 		compressFolders = new BooleanFieldEditor(SYNCVIEW_COMPRESS_FOLDERS, Policy.bind("SyncViewerPreferencePage.9"), SWT.NONE, displayGroup); //$NON-NLS-1$
 		addField(compressFolders);
+		showSyncInLabels = new BooleanFieldEditor(SYNCVIEW_VIEW_SYNCINFO_IN_LABEL, Policy.bind("SyncViewerPreferencePage.19"), SWT.NONE, displayGroup); //$NON-NLS-1$
+		addField(showSyncInLabels);
 		
 		refreshGroup = createGroup(getFieldEditorParent(), Policy.bind("SyncViewerPreferencePage.11")); //$NON-NLS-1$
 		

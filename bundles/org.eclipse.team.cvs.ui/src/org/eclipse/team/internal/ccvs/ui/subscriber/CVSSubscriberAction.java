@@ -26,7 +26,6 @@ import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.internal.ccvs.core.CVSException;
@@ -42,8 +41,9 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.CVSBlockingRunnableContext;
 import org.eclipse.team.internal.ccvs.ui.operations.CVSSubscriberNonblockingContext;
 import org.eclipse.team.internal.ccvs.ui.operations.ICVSRunnableContext;
-import org.eclipse.team.ui.sync.SubscriberAction;
-import org.eclipse.team.ui.sync.SyncInfoSet;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.ui.synchronize.actions.SubscriberAction;
+import org.eclipse.team.ui.synchronize.actions.SyncInfoSet;
 
 public abstract class CVSSubscriberAction extends SubscriberAction {
 	
@@ -265,10 +265,9 @@ public abstract class CVSSubscriberAction extends SubscriberAction {
 	 */
 	protected boolean promptForOverwrite(final SyncInfoSet syncSet) {
 		final int[] result = new int[] {Dialog.CANCEL};
-		final Shell shell = getShell();
-		shell.getDisplay().syncExec(new Runnable() {
+		TeamUIPlugin.getStandardDisplay().syncExec(new Runnable() {
 			public void run() {
-				UpdateDialog dialog = new UpdateDialog(shell, syncSet);
+				UpdateDialog dialog = new UpdateDialog(getShell(), syncSet);
 				result[0] = dialog.open();
 			}
 		});

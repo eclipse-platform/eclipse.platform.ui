@@ -31,10 +31,10 @@ import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.ui.sync.OrSyncInfoFilter;
-import org.eclipse.team.ui.sync.SyncInfoDirectionFilter;
-import org.eclipse.team.ui.sync.SyncInfoFilter;
-import org.eclipse.team.ui.sync.SyncInfoSet;
+import org.eclipse.team.ui.synchronize.actions.SyncInfoFilter;
+import org.eclipse.team.ui.synchronize.actions.SyncInfoSet;
+import org.eclipse.team.ui.synchronize.actions.SyncInfoFilter.OrSyncInfoFilter;
+import org.eclipse.team.ui.synchronize.actions.SyncInfoFilter.SyncInfoDirectionFilter;
 
 /**
  * This action performs a "cvs update -j start -j end ..." to merge changes
@@ -99,7 +99,7 @@ public class MergeUpdateAction extends SafeUpdateAction {
 			// Assumption that all nodes are from the same subscriber.
 			currentSubcriber = nodes[0].getSubscriber();
 			if (!(currentSubcriber instanceof CVSMergeSubscriber)) {
-				throw new CVSException(Policy.bind("MergeUpdateAction.invalidSubscriber", currentSubcriber.getId().toString())); //$NON-NLS-1$
+				throw new CVSException(Policy.bind("MergeUpdateAction.invalidSubscriber", currentSubcriber.toString())); //$NON-NLS-1$
 			}
 			CVSTag startTag = ((CVSMergeSubscriber)currentSubcriber).getStartTag();
 			CVSTag endTag = ((CVSMergeSubscriber)currentSubcriber).getEndTag();

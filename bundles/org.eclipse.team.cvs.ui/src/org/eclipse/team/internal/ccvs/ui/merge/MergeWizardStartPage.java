@@ -116,6 +116,7 @@ public class MergeWizardStartPage extends CVSWizardPage {
 				getShell().getDisplay().syncExec(new Runnable() {
 					public void run() {
 						table.refresh();
+						setPageComplete(! table.getSelection().isEmpty());
 					}
 				});
 			}
