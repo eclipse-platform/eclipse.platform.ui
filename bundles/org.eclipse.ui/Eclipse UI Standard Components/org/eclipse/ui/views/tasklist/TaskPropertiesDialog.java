@@ -203,7 +203,7 @@ private void createDescriptionArea(Composite parent) {
 	composite.setLayout(layout);
 	Label label = new Label(composite, SWT.NONE);
 	label.setText(TaskListMessages.getString("TaskProp.description")); //$NON-NLS-1$
-	int style = SWT.SINGLE | SWT.WRAP | SWT.BORDER;
+	int style = SWT.SINGLE | SWT.BORDER;
 	if (!isTask()) {
 		style |= SWT.READ_ONLY;
 	}

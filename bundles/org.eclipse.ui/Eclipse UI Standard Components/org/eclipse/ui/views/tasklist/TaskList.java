@@ -766,6 +766,7 @@ void makeActions() {
 	propertiesAction = new TaskPropertiesAction(this, "properties"); //$NON-NLS-1$
 	propertiesAction.setText(TaskListMessages.getString("Properties.text")); //$NON-NLS-1$
 	propertiesAction.setToolTipText(TaskListMessages.getString("Properties.tooltip")); //$NON-NLS-1$
+	propertiesAction.setEnabled(false);
 }
 /**
  * The markers have changed.  Update the status line and title bar.
@@ -929,9 +930,13 @@ void selectionChanged(SelectionChangedEvent event) {
 		copyTaskAction.setEnabled(false);
 		removeTaskAction.setEnabled(false);
 		gotoTaskAction.setEnabled(false);
+		propertiesAction.setEnabled(false);
 		return;
 	};
 
+	// Can only open properties for a single task at a time
+	propertiesAction.setEnabled(selection.size() == 1);
+	
 	// Can always copy
 	copyTaskAction.setEnabled(true);
 
