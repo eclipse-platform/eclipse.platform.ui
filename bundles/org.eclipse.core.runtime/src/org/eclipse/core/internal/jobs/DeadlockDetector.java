@@ -141,8 +141,8 @@ class DeadlockDetector {
 			if (graph[i][index] > NO_STATE)
 				return (Thread) lockThreads.get(i);
 		}
-		toDebugString();
-		throw new IllegalStateException("Lock " + lock + " is involved in deadlock but is not owned by any thread."); //$NON-NLS-1$ //$NON-NLS-2$
+		//toDebugString();
+		throw new IllegalStateException("Lock " + lock + " is involved in deadlock but is not owned by any thread.");
 	}
 	/**
 	 * Returns the true index of the lock in the array.
@@ -215,10 +215,10 @@ class DeadlockDetector {
 		if (resize)
 			resizeGraph();
 
-		if (!(lock instanceof ILock)) {
-			locks.remove(lockIndex);
-			locks.add(lockIndex, lock);
-		}
+		//the rule this thread is acquiring may not be the rule
+		//it was waiting for, so replace the entry in the graph
+		if (!(lock instanceof ILock))
+			locks.set(lockIndex, lock);
 		if (graph[threadIndex][lockIndex] == WAITING_FOR_LOCK)
 			graph[threadIndex][lockIndex] = 1;
 		else
