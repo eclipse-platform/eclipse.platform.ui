@@ -371,12 +371,12 @@ public class OleEditor extends EditorPart {
 	private void handleWord() {
 		OleAutomation dispInterface = new OleAutomation(clientSite);
 		// Get Application
-		int[] appId = dispInterface.getIDsOfNames(new String[]{"Application"});
+		int[] appId = dispInterface.getIDsOfNames(new String[]{"Application"}); //$NON-NLS-1$
 		if (appId != null) {
 			Variant pVarResult = dispInterface.getProperty(appId[0]);
 			if (pVarResult != null) {
 				OleAutomation application = pVarResult.getAutomation();
-				int[] dispid = application.getIDsOfNames(new String[] {"DisplayScrollBars"});
+				int[] dispid = application.getIDsOfNames(new String[] {"DisplayScrollBars"}); //$NON-NLS-1$
 				if (dispid != null) {
 					Variant rgvarg = new Variant(true);
 					application.setProperty(dispid[0], rgvarg);
