@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.progress.IElementCollector;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
@@ -71,15 +72,10 @@ public class ConcurrencyTests extends EclipseTest {
 			}
 		};
 		
-		IJobChangeListener listener = new IJobChangeListener() {
-			public void aboutToRun(IJobChangeEvent event) {}
-			public void awake(IJobChangeEvent event) {}
+		IJobChangeListener listener = new JobChangeAdapter() {
 			public void done(IJobChangeEvent event) {
 				done[0] = true;
 			}
-			public void running(IJobChangeEvent event) {}
-			public void scheduled(IJobChangeEvent event) {}
-			public void sleeping(IJobChangeEvent event) {}
 		};
 		FetchMembersOperation operation = new FetchMembersOperation(null, folder, collector);
 		operation.setCVSRunnableContext(new HeadlessCVSRunnableContext(listener));

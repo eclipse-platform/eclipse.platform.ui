@@ -38,18 +38,18 @@ public class CVSDateFormatter {
 	static {
 		entryLineFormat.setTimeZone(TimeZone.getTimeZone("GMT")); //$NON-NLS-1$
 	}
-	static public Date serverStampToDate(String text) throws ParseException {
+	static synchronized public Date serverStampToDate(String text) throws ParseException {
 		serverFormat.setTimeZone(getTimeZone(text));
 		Date date = serverFormat.parse(text);
 		return date;
 	}
 
-	static public String dateToServerStamp(Date date) {
+	static synchronized public String dateToServerStamp(Date date) {
 		serverFormat.setTimeZone(TimeZone.getTimeZone("GMT"));//$NON-NLS-1$
 		return serverFormat.format(date) + " -0000"; //$NON-NLS-1$
 	}	
 	
-	static public Date entryLineToDate(String text) throws ParseException {
+	static synchronized public Date entryLineToDate(String text) throws ParseException {
 		try {
 			if (text.charAt(ENTRYLINE_TENS_DAY_OFFSET) == ' ') {
 				StringBuffer buf = new StringBuffer(text);
@@ -62,7 +62,7 @@ public class CVSDateFormatter {
 		return entryLineFormat.parse(text);
 	}
 
-	static public String dateToEntryLine(Date date) {
+	static synchronized public String dateToEntryLine(Date date) {
 		if (date == null) return ""; //$NON-NLS-1$
 		String passOne = entryLineFormat.format(date);
 		if (passOne.charAt(ENTRYLINE_TENS_DAY_OFFSET) != '0') return passOne;
@@ -71,7 +71,7 @@ public class CVSDateFormatter {
 		return passTwo.toString();
 	}
 	
-	static public String dateToNotifyServer(Date date) {
+	static synchronized public String dateToNotifyServer(Date date) {
 		serverFormat.setTimeZone(TimeZone.getTimeZone("GMT"));//$NON-NLS-1$
 		return serverFormat.format(date) + " GMT"; //$NON-NLS-1$
 	}

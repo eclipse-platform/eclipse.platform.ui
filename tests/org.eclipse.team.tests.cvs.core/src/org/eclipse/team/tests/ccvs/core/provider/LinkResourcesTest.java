@@ -71,7 +71,7 @@ public class LinkResourcesTest extends EclipseTest {
 	public void testLinkCVSFolder() throws CoreException, TeamException, IOException {
 		IProject source = createProject("testLinkSource", new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt" });
 		IProject sourceCopy = checkoutCopy(source, "copy");
-		EclipseSynchronizer.getInstance().flush(source, true, true, DEFAULT_MONITOR);
+		EclipseSynchronizer.getInstance().flush(source, true, DEFAULT_MONITOR);
 		IProject target = createProject("testLinkTarget", new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt" });
 		IFolder folder = target.getFolder("link");
 		folder.createLink(source.getLocation(), 0, null);
