@@ -135,6 +135,16 @@ BODY {
 					&nbsp;
 				</td>
 				<td align="middle" width="20">
+					<a href="#" onclick="parent.history.back();" onmouseover="window.status='<%=WebappResources.getString("back_tip", request)%>';return true;" onmouseout="window.status='';">
+						<img src="images/back.gif" alt='<%=WebappResources.getString("back_tip", request)%>' border="0" name="hide_nav">
+					</a>
+				</td>
+				<td align="middle" width="20">
+					<a href="#" onclick="parent.history.forward();" onmouseover="window.status='<%=WebappResources.getString("forward_tip", request)%>';return true;" onmouseout="window.status='';">
+						<img src="images/forward.gif" alt='<%=WebappResources.getString("forward_tip", request)%>' border="0" name="hide_nav">
+					</a>
+				</td>
+				<td align="middle" width="20">
 					<a href="#" onclick="toggleNav(this);" onmouseover="window.status='<%=WebappResources.getString("Toggle", request)%>';return true;" onmouseout="window.status='';">
 						<img src="images/hide_nav.gif" alt='<%=WebappResources.getString("Toggle", request)%>' border="0" name="hide_nav">
 					</a>
