@@ -304,14 +304,15 @@ public abstract class AbstractConsole implements IConsole {
      * Sets this console's type identifier.
      * 
      * @param typeIdentifier the type identifier for this console 
+     * @since 3.1
      */
     protected void setType(String typeIdentifier) {
         fType = typeIdentifier;
     }
     
-    /*
-     *  (non-Javadoc)
+    /**
      * @see org.eclipse.ui.console.IConsole#getType()
+     * @since 3.1
      */
     public String getType() {
         return fType;
