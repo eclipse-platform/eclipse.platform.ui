@@ -562,7 +562,16 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 * @see ShellListener#shellActivated(ShellEvent)
 		 */
 		public void shellActivated(ShellEvent e) {
-			handleActivation();
+			/*
+			 * Workaround for problem described in 
+			 * http://dev.eclipse.org/bugs/show_bug.cgi?id=11731
+			 * Will be removed when SWT has solved the problem.
+			 */
+			e.widget.getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					handleActivation();
+				}
+			});
 		}
 		
 		private void handleActivation() {
@@ -1990,6 +1999,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	protected void sanityCheckState(IEditorInput input) {
 		
 		IDocumentProvider p= getDocumentProvider();
+		if (p == null)
+			return;
 		
 		if (fModificationStamp == -1) 
 			fModificationStamp= p.getSynchronizationStamp(input);
@@ -2018,10 +2029,16 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			IDocumentProviderExtension extension= (IDocumentProviderExtension) provider;
 			try {
 				
+				boolean wasReadOnly= isEditorInputReadOnly();
+				
 				extension.validateState(input, getSite().getShell());
+				
 				if (fSourceViewer != null)
 					fSourceViewer.setEditable(isEditable());
-				
+					
+				if (wasReadOnly != isEditorInputReadOnly())
+					updateStateDependentActions();
+									
 			} catch (CoreException x) {
 				ILog log= Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog();		
 				log.log(x.getStatus());
