@@ -34,11 +34,6 @@ import org.eclipse.swt.widgets.TabItem;
 public class EmptyViewTab extends AbstractMemoryViewTab {
 
 	TextViewer fTextViewer;
-	TabItem fTabItem;
-	
-	private static final String PREFIX = "EmptyViewTab."; //$NON-NLS-1$
-	private static final String UNABLE_TO_CREATE = PREFIX + "Unable_to_create"; //$NON-NLS-1$
-	private static final String UNKNOWN = PREFIX + "Unknown"; //$NON-NLS-1$
 	
 	/**
 	 * @param newMemory
