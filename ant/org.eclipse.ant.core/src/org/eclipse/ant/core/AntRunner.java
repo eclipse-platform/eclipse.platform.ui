@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.*;
 
+import org.eclipse.ant.internal.core.*;
 import org.eclipse.ant.internal.core.AntClassLoader;
 import org.eclipse.ant.internal.core.AntCorePreferences;
 import org.eclipse.core.boot.IPlatformRunnable;
