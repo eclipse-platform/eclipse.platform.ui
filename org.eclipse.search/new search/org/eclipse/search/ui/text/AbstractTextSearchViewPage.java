@@ -77,14 +77,14 @@ import org.eclipse.ui.part.PageBook;
 /**
  * An abstract superclass for classes showing
  * <code>AbstractTextSearchResult</code> instances. This class assumes that
- * the input element (@see AbstractTextSearchViewPage#setInput(ISearchResult, Object)) is a subclass of
+ * the input element (see {@link AbstractTextSearchViewPage#setInput(ISearchResult,Object)}) is a subclass of
  * <code>AbstractTextSearchResult</code>. This results page supports a tree
  * and/or a table presentation of search results. Subclasses can determine which
  * presentations they want to support at construction time. Subclasses must
  * customize the viewers for each presentation with a label provider and a
  * content provider. <br>
- * @see #configureTableViewer(TableViewer)
- * @see #configureTreeViewer(TreeViewer))
+ * see {@link #configureTableViewer(TableViewer)}<br>
+ * see {@link #configureTreeViewer(TreeViewer))<br>
  * 
  * Changes in the search result are handled by updating the viewer in the
  * <code>elementsChanged()</code> and <code>clear()</code> methods.
@@ -229,9 +229,9 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	/**
 	 * Opens an editor on the given element and selects the given range of text.
 	 * The location of matches are automatically updated when a file is editor
-	 * through the file buffer infrastructure (@see
-	 * org.eclipse.core.filebuffers.ITextFileBufferManager). When a file buffer
-	 * is saved, the current positions are written back to the match.
+	 * through the file buffer infrastructure (see {@link org.eclipse.core.filebuffers.ITextFileBufferManager}). 
+	 * When a file buffer is saved, the current positions are written back to the 
+	 * match.
 	 * 
 	 * @param match
 	 *            The match to show

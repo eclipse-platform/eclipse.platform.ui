@@ -9,9 +9,9 @@
 package org.eclipse.search.ui;
 /**
  * A listener for changes to the set of search queries. Queries are added by running
- * them via the appropriate methods in the <code>NewSearchUI</code> facade class.
- * @see org.eclipse.search.ui.NewSearchUI#runQuery(ISearchQuery)
- * @see org.eclipse.search.ui.NewSearchUI#runQueryInForeground(IRunnableContext, ISearchQuery)
+ * them via the appropriate methods in the <code>NewSearchUI</code> facade class.<br>
+ * see {@link org.eclipse.search.ui.NewSearchUI#runQuery(ISearchQuery)}<br>
+ * see {@link org.eclipse.search.ui.NewSearchUI#runQueryInForeground(IRunnableContext, ISearchQuery) }<br>
  * The search UI determines when queries are rerun, stopped or deleted (and will notify
  * interested parties via this interface).
  * This interface may be implemented by clients.

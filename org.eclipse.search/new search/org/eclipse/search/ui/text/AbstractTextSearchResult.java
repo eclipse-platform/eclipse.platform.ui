@@ -27,18 +27,18 @@ import org.eclipse.ui.IEditorPart;
  * An abstract superclass for text-match based search results. This search
  * result implementation consists of a list of matches. No assumptions are made about
  * the kind of elements these matches are reported against. 
- * @see org.eclipse.search.ui.text.Match
+ * see {@link org.eclipse.search.ui.text.Match}
  * This class has abstract methods to map matches to both editors and files.
  * If a client implements the methods related to editors, matches will be highlighted
  * automatically in participating editors. Editors must implement or adapt to ITextEditor,
- * or they must adapt to IAnnotationModel in order for match highlighting to work.
- * @see #findContainedMatches(IEditorPart)
- * @see #isShownInEditor(Match, IEditorPart)
+ * or they must adapt to IAnnotationModel in order for match highlighting to work.<br>
+ * see {@link #findContainedMatches(IEditorPart)}<br>
+ * see {@link #isShownInEditor(Match,IEditorPart)}<br>
  * If a client implements the methods related to files, matches will be automatically
- * updated if the file is changed via the filebuffer infrastructure.
- * @see org.eclipse.core.filebuffers.FileBuffers
- * @see #findContainedMatches(IFile)
- * @see #getFile(Object)
+ * updated if the file is changed via the filebuffer infrastructure.<br>
+ * see {@link org.eclipse.core.filebuffers.FileBuffers}<br>
+ * see {@link #findContainedMatches(IFile)<br>
+ * see {@link #getFile(Object)<br>
  */
 public abstract class AbstractTextSearchResult implements ISearchResult {
 	private Map fElementsToMatches;
@@ -74,8 +74,9 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 			return (Match[]) matches.toArray(new Match[matches.size()]);
 		return EMPTY_ARRAY;
 	}
+	
 	/**
-	 * Adds a Match to this search result. This method does nothing if if the
+	 * Adds a Match to this search result. This method does nothing if the
 	 * Match is already present.
 	 * 
 	 * @param match The match to add.
@@ -93,7 +94,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 * Adds a number of Matches to this search result. This method does nothing for 
 	 * matches that are already present.
 	 * 
-	 * @param match The match to add.
+	 * @param matches the matches to add.
 	 */
 	public void addMatches(Match[] matches) {
 
@@ -134,6 +135,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 		}
 		return false;
 	}
+	
 	/**
 	 * Removes all matches from this search result.
 	 */
@@ -146,11 +148,12 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	private void doRemoveAll() {
 		fElementsToMatches.clear();
 	}
+	
 	/**
 	 * Removes the given match from this search result. This method has no
 	 * effect if the match is not found.
 	 * 
-	 * @param match The match to remove.
+	 * @param match the match to remove.
 	 */
 	public void removeMatch(Match match) {
 		boolean existed= false;
@@ -161,6 +164,12 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 			fireChange(getSearchResultEvent(match, MatchEvent.REMOVED));
 	}
 	
+	/**
+	 * Removes the given matches from this search result. This method has no
+	 * effect for matches that are not found
+	 * 
+	 * @param matches the matches to remove.
+	 */
 	public void removeMatches(Match[] matches) {
 		Set existing= new HashSet();
 		for (int i = 0; i < matches.length; i++) {
@@ -192,6 +201,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 			fListeners.add(l);
 		}
 	}
+	
 	/**
 	 * {@inheritDoc}
 	 */
