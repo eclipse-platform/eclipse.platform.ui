@@ -859,8 +859,7 @@ class FindReplaceDialog extends Dialog {
 	private int findAndSelect(int offset, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord, boolean regExSearch) {
 		if (fTarget instanceof IFindReplaceTargetExtension3)
 			return ((IFindReplaceTargetExtension3)fTarget).findAndSelect(offset, findString, forwardSearch, caseSensitive, wholeWord, regExSearch);
-		else
-			return fTarget.findAndSelect(offset, findString, forwardSearch, caseSensitive, wholeWord);
+		return fTarget.findAndSelect(offset, findString, forwardSearch, caseSensitive, wholeWord);
 	}
 
 	/**
@@ -930,11 +929,9 @@ class FindReplaceDialog extends Dialog {
 	 * @return the dialog's boundaries
 	 */
 	private Rectangle getDialogBoundaries() {
-		if (okToUse(getShell())) {
+		if (okToUse(getShell()))
 			return getShell().getBounds();
-		} else {
-			return fDialogPositionInit;
-		}
+		return fDialogPositionInit;
 	}
 	
 	/**

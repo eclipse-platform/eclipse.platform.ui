@@ -129,7 +129,7 @@ import org.eclipse.ui.INavigationLocation;
 import org.eclipse.ui.INavigationLocationProvider;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IReusableEditor;
-import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
@@ -167,8 +167,6 @@ import org.eclipse.ui.part.EditorPart;
  * registration even happens if a context menu id has been set via <code>setRulerContextMenuId</code>.
  * If no id is set while in compatibility mode, the menu is registered under
  * <code>DEFAULT_RULER_CONTEXT_MENU_ID</code>.</p>
- *
- * @see org.eclipse.ui.editors.text.TextEditor
  */
 public abstract class AbstractTextEditor extends EditorPart implements ITextEditor, IReusableEditor, ITextEditorExtension, ITextEditorExtension2, ITextEditorExtension3, INavigationLocationProvider {
 
@@ -181,16 +179,16 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	/** 
 	 * The caret width for the wide (double) caret.
+	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=21715.
 	 * Value: {@value}
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=21715
 	 * @since 3.0 
 	 */
 	private static final int WIDE_CARET_WIDTH= 2;
 
 	/** 
 	 * The caret width for the narrow (single) caret.
+	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=21715.
 	 * Value: {@value}
-	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=21715
 	 * @since 3.0 
 	 */
 	private static final int SINGLE_CARET_WIDTH= 1;
@@ -1492,9 +1490,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		new IdMapEntry(ITextEditorActionDefinitionIds.SELECT_WINDOW_START, ST.SELECT_WINDOW_START),
 		new IdMapEntry(ITextEditorActionDefinitionIds.SELECT_WINDOW_END, ST.SELECT_WINDOW_END),
 		// modification
-		new IdMapEntry(ITextEditorActionDefinitionIds.CUT, ST.CUT),
-		new IdMapEntry(ITextEditorActionDefinitionIds.COPY, ST.COPY),
-		new IdMapEntry(ITextEditorActionDefinitionIds.PASTE, ST.PASTE),
+		new IdMapEntry(IWorkbenchActionDefinitionIds.CUT, ST.CUT),
+		new IdMapEntry(IWorkbenchActionDefinitionIds.COPY, ST.COPY),
+		new IdMapEntry(IWorkbenchActionDefinitionIds.PASTE, ST.PASTE),
 		new IdMapEntry(ITextEditorActionDefinitionIds.DELETE_PREVIOUS, ST.DELETE_PREVIOUS),
 		new IdMapEntry(ITextEditorActionDefinitionIds.DELETE_NEXT, ST.DELETE_NEXT),
 		new IdMapEntry(ITextEditorActionDefinitionIds.DELETE_PREVIOUS_WORD, ST.DELETE_WORD_PREVIOUS),
@@ -1673,7 +1671,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	private boolean fCompatibilityMode= true;
 	/** 
-	 * The number of reentrances into error correction code while saving.
+	 * The number of re-entrances into error correction code while saving.
 	 * @since 2.0
 	 */
 	private int fErrorCorrectionOnSave;
@@ -1758,6 +1756,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	private Caret fInitialCaret;
 	
+
 	/**
 	 * Creates a new text editor. If not explicitly set, this editor uses
 	 * a <code>SourceViewerConfiguration</code> to configure its
@@ -1778,7 +1777,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	public IDocumentProvider getDocumentProvider() {
 		return fExplicitDocumentProvider;
 	}
-		
+			
 	/** 
 	 * Returns the editor's range indicator. May return <code>null</code> if no
 	 * range indicator is installed.
@@ -1936,9 +1935,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/**
-	 * Sets the keybinding scopes for this editor.
+	 * Sets the key binding scopes for this editor.
 	 * 
-	 * @param scopes a non-empty array of keybinding scope identifiers
+	 * @param scopes a non-empty array of key binding scope identifiers
 	 * @since 2.1
 	 */
 	protected void setKeyBindingScopes(String[] scopes) {
@@ -1950,7 +1949,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * Sets this editor's preference store. This method must be
 	 * called before the editor's control is created.
 	 * 
-	 * @param store the preference store or <code>null</code> to unset the 
+	 * @param store the preference store or <code>null</code> to remove the 
 	 * 		  preference store
 	 */
 	protected void setPreferenceStore(IPreferenceStore store) {
@@ -2213,7 +2212,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * Subclasses replacing <code>init</code> may choose to call this method in
 	 * their implementation.
 	 * 
-	 * @param window the site's workbench window
+	 * @param window the workbench window
 	 * @param site the editor's site
 	 * @param input the editor input for the editor being created
 	 * @throws PartInitException if {@link #doSetInput(IEditorInput)} fails or gets canceled
@@ -2246,7 +2245,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		};
 					
 		try {
-			window.run(false, true, runnable);
+			getSite().getWorkbenchWindow().getWorkbench().getProgressService().run(false, true, runnable);
 		} catch (InterruptedException x) {
 		} catch (InvocationTargetException x) {
 			Throwable t= x.getTargetException();
@@ -2263,11 +2262,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		setSite(site);
 		
-		IWorkbenchWindow window= getSite().getWorkbenchWindow();
-		internalInit(window, site, input);
-		
-		window.getPartService().addPartListener(fActivationListener);
-		window.getShell().addShellListener(fActivationListener);
+		internalInit(site.getWorkbenchWindow(),site, input);
+		site.getWorkbenchWindow().getPartService().addPartListener(fActivationListener);
+		site.getShell().addShellListener(fActivationListener);
 	}
 	
 	/**
@@ -2772,7 +2769,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		String title= ""; //$NON-NLS-1$
 		
 		if (input != null) {
-			IEditorRegistry editorRegistry = getEditorSite().getPage().getWorkbenchWindow().getWorkbench().getEditorRegistry();
+			IEditorRegistry editorRegistry= PlatformUI.getWorkbench().getEditorRegistry();
 			IEditorDescriptor editorDesc= editorRegistry.findEditor(getSite().getId());			
 			ImageDescriptor imageDesc= editorDesc != null ? editorDesc.getImageDescriptor() : null;
 
@@ -2781,7 +2778,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 		
 		setTitleImage(fTitleImage);
-		setTitle(title);
+		setPartName(title);
 		
 		firePropertyChange(PROP_DIRTY);
 		
@@ -2914,10 +2911,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		Display display= getSite().getShell().getDisplay();
 		display.asyncExec(new Runnable() {
 			public void run() {
-				if (fSourceViewer != null) {
-					// check whether editor has not been disposed yet
+				if (fSourceViewer != null)
 					getSite().getPage().closeEditor(AbstractTextEditor.this, save);
-				}
 			}
 		});
 	}
@@ -2934,9 +2929,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	public void dispose() {
 		
 		if (fActivationListener != null) {
-			IWorkbenchWindow window= getSite().getWorkbenchWindow();
-			window.getPartService().removePartListener(fActivationListener);
-			Shell shell= window.getShell();
+			getSite().getWorkbenchWindow().getPartService().removePartListener(fActivationListener);
+			Shell shell= getSite().getShell();
 			if (shell != null && !shell.isDisposed())
 				shell.removeShellListener(fActivationListener);
 			fActivationListener= null;
@@ -3068,7 +3062,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			fVerticalRuler= null;
 		
 		super.setInput(null);
-		
+				
 		super.dispose();
 	}
 	
@@ -3118,8 +3112,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	private String getSymbolicFontName() {
 		if (getConfigurationElement() != null)
 			return getConfigurationElement().getAttribute("symbolicFontName"); //$NON-NLS-1$
-		else
-			return null;
+		return null;
 	}
 
 	/**
@@ -3131,11 +3124,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	protected final String getFontPropertyPreferenceKey() {
 		String symbolicFontName= getSymbolicFontName();
-
 		if (symbolicFontName != null)
 			return symbolicFontName;
-		else
-		 	return JFaceResources.TEXT_FONT;
+		return JFaceResources.TEXT_FONT;
 	}
 	
 	/**
@@ -4026,32 +4017,32 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.Undo.", this, ITextOperationTarget.UNDO); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.UNDO_ACTION);
-		action.setActionDefinitionId(ITextEditorActionDefinitionIds.UNDO);
+		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.UNDO);
 		setAction(ITextEditorActionConstants.UNDO, action);
 		
 		action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.Redo.", this, ITextOperationTarget.REDO); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.REDO_ACTION);
-		action.setActionDefinitionId(ITextEditorActionDefinitionIds.REDO);
+		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.REDO);
 		setAction(ITextEditorActionConstants.REDO, action);
 		
 		action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.Cut.", this, ITextOperationTarget.CUT); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.CUT_ACTION);
-		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CUT);
+		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.CUT);
 		setAction(ITextEditorActionConstants.CUT, action);
 		
 		action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.Copy.", this, ITextOperationTarget.COPY, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.COPY_ACTION);
-		action.setActionDefinitionId(ITextEditorActionDefinitionIds.COPY);
+		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.COPY);
 		setAction(ITextEditorActionConstants.COPY, action);
 		
 		action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.Paste.", this, ITextOperationTarget.PASTE); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.PASTE_ACTION);
-		action.setActionDefinitionId(ITextEditorActionDefinitionIds.PASTE);
+		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.PASTE);
 		setAction(ITextEditorActionConstants.PASTE, action);
 		
 		action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.Delete.", this, ITextOperationTarget.DELETE); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.DELETE_ACTION);
-		action.setActionDefinitionId(ITextEditorActionDefinitionIds.DELETE);
+		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.DELETE);
 		setAction(ITextEditorActionConstants.DELETE, action);
 
 		action= new DeleteLineAction(EditorMessages.getResourceBundle(), "Editor.DeleteLine.", this, DeleteLineAction.WHOLE, false); //$NON-NLS-1$
@@ -4101,7 +4092,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.SelectAll.", this, ITextOperationTarget.SELECT_ALL, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SELECT_ALL_ACTION);
-		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SELECT_ALL);
+		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.SELECT_ALL);
 		setAction(ITextEditorActionConstants.SELECT_ALL, action);
 		
 		action= new ShiftAction(EditorMessages.getResourceBundle(), "Editor.ShiftRight.", this, ITextOperationTarget.SHIFT_RIGHT); //$NON-NLS-1$
@@ -4123,32 +4114,32 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.Print.", this, ITextOperationTarget.PRINT, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.PRINT_ACTION);
-		action.setActionDefinitionId(ITextEditorActionDefinitionIds.PRINT);
+		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.PRINT);
 		setAction(ITextEditorActionConstants.PRINT, action);
 		
 		action= new FindReplaceAction(EditorMessages.getResourceBundle(), "Editor.FindReplace.", this); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.FIND_ACTION);
-		action.setActionDefinitionId(ITextEditorActionDefinitionIds.FIND_REPLACE);
+		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_REPLACE);
 		setAction(ITextEditorActionConstants.FIND, action);
 
 		action= new FindNextAction(EditorMessages.getResourceBundle(), "Editor.FindNext.", this, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.FIND_NEXT_ACTION);
-		action.setActionDefinitionId(ITextEditorActionDefinitionIds.FIND_NEXT);
+		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_NEXT);
 		setAction(ITextEditorActionConstants.FIND_NEXT, action);
 
 		action= new FindNextAction(EditorMessages.getResourceBundle(), "Editor.FindPrevious.", this, false); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.FIND_PREVIOUS_ACTION);
-		action.setActionDefinitionId(ITextEditorActionDefinitionIds.FIND_PREVIOUS);
+		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_PREVIOUS);
 		setAction(ITextEditorActionConstants.FIND_PREVIOUS, action);
 
 		action= new IncrementalFindAction(EditorMessages.getResourceBundle(), "Editor.FindIncremental.", this, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.FIND_INCREMENTAL_ACTION);
-		action.setActionDefinitionId(ITextEditorActionDefinitionIds.FIND_INCREMENTAL);
+		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_INCREMENTAL);
 		setAction(ITextEditorActionConstants.FIND_INCREMENTAL, action);
 		
 		action= new IncrementalFindAction(EditorMessages.getResourceBundle(), "Editor.FindIncrementalReverse.", this, false); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.FIND_INCREMENTAL_REVERSE_ACTION);
-		action.setActionDefinitionId(ITextEditorActionDefinitionIds.FIND_INCREMENTAL_REVERSE);
+		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_INCREMENTAL_REVERSE);
 		setAction(ITextEditorActionConstants.FIND_INCREMENTAL_REVERSE, action);
 				
 		action= new SaveAction(EditorMessages.getResourceBundle(), "Editor.Save.", this); //$NON-NLS-1$
@@ -4162,7 +4153,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		action= new RevertToSavedAction(EditorMessages.getResourceBundle(), "Editor.Revert.", this); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.REVERT_TO_SAVED_ACTION);
-		action.setActionDefinitionId(ITextEditorActionDefinitionIds.REVERT_TO_SAVED);
+		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.REVERT_TO_SAVED);
 		setAction(ITextEditorActionConstants.REVERT_TO_SAVED, action);
 		
 		action= new GotoLineAction(EditorMessages.getResourceBundle(), "Editor.GotoLine.", this); //$NON-NLS-1$
@@ -4228,7 +4219,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					public void setSelection(ISelection selection) {
 					}
 				});
-		openProperties.setActionDefinitionId(ITextEditorActionDefinitionIds.PROPERTIES);
+		openProperties.setActionDefinitionId(IWorkbenchActionDefinitionIds.PROPERTIES);
 		setAction(ITextEditorActionConstants.PROPERTIES, openProperties);
 		
 		markAsContentDependentAction(ITextEditorActionConstants.UNDO, true);
@@ -4332,7 +4323,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	protected void rulerContextMenuAboutToShow(IMenuManager menu) {
 		
 		menu.add(new Separator(ITextEditorActionConstants.GROUP_REST));
-		menu.add(new Separator(ITextEditorActionConstants.MB_ADDITIONS));
+		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 
 		for (Iterator i = fRulerContextMenuListeners.iterator(); i.hasNext();)
 			((IMenuListener) i.next()).menuAboutToShow(menu);					
@@ -4355,9 +4346,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		menu.add(new Separator(ITextEditorActionConstants.GROUP_PRINT));
 		menu.add(new Separator(ITextEditorActionConstants.GROUP_EDIT));		
 		menu.add(new Separator(ITextEditorActionConstants.GROUP_FIND));	
-		menu.add(new Separator(ITextEditorActionConstants.GROUP_ADD));
+		menu.add(new Separator(IWorkbenchActionConstants.GROUP_ADD));
 		menu.add(new Separator(ITextEditorActionConstants.GROUP_REST));
-		menu.add(new Separator(ITextEditorActionConstants.MB_ADDITIONS));
+		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		menu.add(new Separator(ITextEditorActionConstants.GROUP_SAVE));
 		
 		if (isEditable()) {
@@ -4610,8 +4601,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 2.1
 	 */
 	protected void markInNavigationHistory() {
-		IWorkbenchPage page= getEditorSite().getPage();
-		page.getNavigationHistory().markLocation(this);
+		getSite().getPage().getNavigationHistory().markLocation(this);
 	}
 	
 	/**
@@ -4620,8 +4610,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 2.1
 	 */
 	protected void editorSaved() {
-		IWorkbenchPage page= getEditorSite().getPage();
-		INavigationLocation[] locations= page.getNavigationHistory().getLocations();
+		INavigationLocation[] locations= getSite().getPage().getNavigationHistory().getLocations();
 		IEditorInput input= getEditorInput();		
 		for (int i= 0; i < locations.length; i++) {
 			if (locations[i] instanceof TextSelectionNavigationLocation) {

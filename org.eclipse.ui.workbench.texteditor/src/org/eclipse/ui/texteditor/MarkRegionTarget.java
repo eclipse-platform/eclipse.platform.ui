@@ -116,10 +116,9 @@ public class MarkRegionTarget implements IMarkRegionTarget {
 		if (viewer instanceof ITextViewerExtension5) {
 			ITextViewerExtension5 extension= (ITextViewerExtension5) viewer;
 			return extension.modelOffset2WidgetOffset(offset) >= 0;
-		} else {
-			IRegion region= viewer.getVisibleRegion();
-			int vOffset= region.getOffset();
-			return (vOffset <= offset &&  offset <= vOffset + region.getLength());
 		}
+		IRegion region= viewer.getVisibleRegion();
+		int vOffset= region.getOffset();
+		return (vOffset <= offset &&  offset <= vOffset + region.getLength());
 	}
 }

@@ -234,8 +234,8 @@ public class TextNavigationAction extends Action {
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
 	}
 
-	/**
-	 * @deprecated
+	/*
+	 * @see org.eclipse.jface.action.IAction#setAccelerator(int)
 	 */
 	public void setAccelerator(int keycode) {
 	}

@@ -175,20 +175,18 @@ public class ContentAssistHandler {
 	 */
 	private void installCueLabelProvider() {
 		ILabelProvider labelProvider= new LabelProvider() {
-			/**
-			 * @inheritDoc
+			/*
+			 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
 			 */
 			public String getText(Object element) {
 				ICommandManager commandManager= PlatformUI.getWorkbench().getCommandSupport().getCommandManager();
 				ICommand command= commandManager.getCommand(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
 				List bindings= command.getKeySequenceBindings();
-				if (bindings.size() == 0) {
+				if (bindings.size() == 0)
 					return ContentAssistMessages.getString("ContentAssistHandler.contentAssistAvailable"); //$NON-NLS-1$
-				} else {
-					IKeySequenceBinding ksb= (IKeySequenceBinding) bindings.get(0);
-					Object[] args= { ksb.getKeySequence().format() };
-					return ContentAssistMessages.getFormattedString("ContentAssistHandler.contentAssistAvailableWithKeyBinding", args); //$NON-NLS-1$
-				}
+				IKeySequenceBinding ksb= (IKeySequenceBinding) bindings.get(0);
+				Object[] args= { ksb.getKeySequence().format() };
+				return ContentAssistMessages.getFormattedString("ContentAssistHandler.contentAssistAvailableWithKeyBinding", args); //$NON-NLS-1$
 			}
 		};
 		fContentAssistSubjectAdapter.setContentAssistCueProvider(labelProvider);

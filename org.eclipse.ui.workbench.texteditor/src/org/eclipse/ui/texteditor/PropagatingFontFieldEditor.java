@@ -16,12 +16,17 @@ import org.eclipse.swt.widgets.Composite;
 
 
 /**
- * @deprecated use WorkbenchChainedTextFontFieldEditor
+ * @deprecated no longer supported
  */
 public final class PropagatingFontFieldEditor extends WorkbenchChainedTextFontFieldEditor {
 	
 	/**
-	 * @deprecated use WorkbenchChainedTextFontFieldEditor
+	 * Creates a new propagating font field editor with the given parameters.
+	 * 
+	 * @param name the name
+	 * @param labelText the label
+	 * @param parent the parent control
+	 * @deprecated no longer supported
 	 */
 	public PropagatingFontFieldEditor(String name, String labelText, Composite parent) {
 		super(name, labelText, parent);

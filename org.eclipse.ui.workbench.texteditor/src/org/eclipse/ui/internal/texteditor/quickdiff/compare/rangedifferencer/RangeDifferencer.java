@@ -248,10 +248,13 @@ public final class RangeDifferencer {
 	//---- private methods
 
 	/**
-	 * Creates a Vector of DifferencesRanges out of the LinkedRangeDifference.
-	 * It coalesces adjacent changes.
-	 * In addition, indices are changed such that the ranges are 1) open, i.e,
-	 * the end of the range is not included, and 2) are zero based.
+	 * Creates an array <code>DifferencesRanges</code> out of the
+	 * <code>LinkedRangeDifference</code>. It coalesces adjacent changes. In
+	 * addition, indices are changed such that the ranges are 1) open, i.e, the
+	 * end of the range is not included, and 2) are zero based.
+	 * 
+	 * @param start the start difference
+	 * @return the created array of difference ranges
 	 */
 	private static RangeDifference[] createDifferencesRanges(LinkedRangeDifference start) {
 
@@ -312,14 +315,24 @@ public final class RangeDifferencer {
 	}
 
 	/**
-	 * Tests if two ranges are equal
+	 * Tests whether two ranges at the given indices are equal.
+	 * 
+	 * @param a the first comparator
+	 * @param ai the index of the first range
+	 * @param b the second comparator
+	 * @param bi the index of the second range
+	 * @return <code>true</code> if the ranges are equal, <code>false</code> otherwise
 	 */
 	private static boolean rangesEqual(IRangeComparator a, int ai, IRangeComparator b, int bi) {
 		return a.rangesEqual(ai, b, bi);
 	}
 
 	/**
-	 * Reverses the range differences
+	 * Reverses the list of range differences thus that the given start difference becomes the
+	 * end of the list.
+	 * 
+	 * @param start the start of the list
+	 * @return the reverted list
 	 */
 	private static LinkedRangeDifference reverseDifferences(LinkedRangeDifference start) {
 		LinkedRangeDifference ep, behind, ahead;

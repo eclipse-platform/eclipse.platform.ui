@@ -298,14 +298,14 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	 * @since 3.0
 	 */
 	private int findAndSelect(int offset, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord, boolean regExSearch) {
-		if (fTarget instanceof IFindReplaceTargetExtension3)
+		if (fTarget instanceof IFindReplaceTargetExtension3) {
 			try {
 				return ((IFindReplaceTargetExtension3)fTarget).findAndSelect(offset, findString, forwardSearch, caseSensitive, wholeWord, regExSearch);
 			} catch (PatternSyntaxException ex) {
 				return -1;
 			}
-		else
-			return fTarget.findAndSelect(offset, findString, forwardSearch, caseSensitive, wholeWord);
+		}
+		return fTarget.findAndSelect(offset, findString, forwardSearch, caseSensitive, wholeWord);
 	}
 	
 	//--------------- configuration handling --------------

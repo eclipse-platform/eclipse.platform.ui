@@ -76,23 +76,22 @@ public final class DiffRegion extends Annotation implements ILineDiffInfo {
 	 */
 	public int getRemovedLinesBelow() {
 		if (fOffset == fDifference.rightLength() - 1) {
-			if (getChangeType() != UNCHANGED) {
+			
+			if (getChangeType() != UNCHANGED)
 				return Math.max(fDifference.leftLength() - fDifference.rightLength(), 0);
-			} else {
-				for (ListIterator it= fList.listIterator(); it.hasNext();) {
-					if (fDifference.equals(it.next())) {
-						if (it.hasNext()) {
-							RangeDifference next= (RangeDifference) it.next();
-							if (next.rightLength() == 0)
-								return Math.max(next.leftLength() - next.rightLength(), 0);
-						}
-						return 0;
+			
+			for (ListIterator it= fList.listIterator(); it.hasNext();) {
+				if (fDifference.equals(it.next())) {
+					if (it.hasNext()) {
+						RangeDifference next= (RangeDifference) it.next();
+						if (next.rightLength() == 0)
+							return Math.max(next.leftLength() - next.rightLength(), 0);
 					}
+					break;
 				}
-				return 0;
 			}
-		} else
-			return 0;
+		}
+		return 0;
 	}
 
 	/*
@@ -101,32 +100,27 @@ public final class DiffRegion extends Annotation implements ILineDiffInfo {
 	public int getChangeType() {
 		if (fDifference.kind() == RangeDifference.NOCHANGE)
 			return UNCHANGED;
-		else {
-			if (fOffset >= fDifference.leftLength())
-				return ADDED;
-			else
-				return CHANGED;
-		}
+		if (fOffset >= fDifference.leftLength())
+			return ADDED;
+		return CHANGED;
 	}
 
 	/*
 	 * @see org.eclipse.jface.text.source.ILineDiffInfo#getRemovedLinesAbove()
 	 */
 	public int getRemovedLinesAbove() {
-		if (getChangeType() != UNCHANGED || fOffset != 0)
-			return 0;
-		else {
+		if (getChangeType() == UNCHANGED && fOffset == 0) {
 			for (ListIterator it= fList.listIterator(fList.size()); it.hasPrevious();) {
 				if (fDifference.equals(it.previous())) {
 					if (it.hasPrevious()) {
 						RangeDifference previous= (RangeDifference) it.previous();
 						return Math.max(previous.leftLength() - previous.rightLength(), 0);
-					} else
-						return 0;
+					}
+					break;
 				}
 			}
-			return 0;
 		}
+		return 0;
 	}
 
 	/*

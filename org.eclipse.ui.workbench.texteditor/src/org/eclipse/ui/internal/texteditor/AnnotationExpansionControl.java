@@ -666,12 +666,11 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 	public boolean isFocusControl() {
 		if (fComposite.isFocusControl())
 			return true;
-		else {
-			Control[] children= fComposite.getChildren();
-			for (int i= 0; i < children.length; i++) {
-				if (children[i].isFocusControl())
-					return true;
-			}
+
+		Control[] children= fComposite.getChildren();
+		for (int i= 0; i < children.length; i++) {
+			if (children[i].isFocusControl())
+				return true;
 		}
 		return false;
 	}

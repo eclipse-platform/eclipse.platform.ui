@@ -74,16 +74,15 @@ public final class Levenstein {
 			int minCellValue= Math.min(Math.min(fromAbove, fromLeft), minDiag);
 			int minCost= minCost(row, col, minCellValue);
 			
-			if (minCellValue == fromAbove || minCellValue == fromLeft) {
+			if (minCellValue == fromAbove || minCellValue == fromLeft)
 				return minCellValue;
-			} else {
-				Assert.isTrue(minCellValue == minDiag && fromAbove >= minDiag && fromLeft >= minDiag);
-				
-				int nextCharCost= rangesEqual(row, col) ? 0 : COST_CHANGE;
-				minCost= sum(minCost, nextCharCost);
-				int cost= minDiag + nextCharCost;
-				return cost;
-			}
+			
+			Assert.isTrue(minCellValue == minDiag && fromAbove >= minDiag && fromLeft >= minDiag);
+			
+			int nextCharCost= rangesEqual(row, col) ? 0 : COST_CHANGE;
+			minCost= sum(minCost, nextCharCost);
+			int cost= minDiag + nextCharCost;
+			return cost;
 		}
 	}
 	
@@ -105,16 +104,14 @@ public final class Levenstein {
 			// initialize first row, [0,i] = i if it is valid
 			if (minCost(fRowStart, column, Math.abs(column - fColStart)) > fMaxCost)
 				return Levenstein.SKIP;
-			else
-				return Math.abs(column - fColStart);
+			return Math.abs(column - fColStart);
 		}
 
 		private int computeNullColumn(int row) {
 			// initialize first column
 			if (minCost(row, fColStart, Math.abs(row - fRowStart)) > fMaxCost)
 				return Levenstein.SKIP;
-			else
-				return Math.abs(row - fRowStart);
+			return Math.abs(row - fRowStart);
 		}
 
 		private int computeInnerCell(int row, int col) {
@@ -134,13 +131,11 @@ public final class Levenstein {
 				
 				int nextCharCost= rangesEqual(row, col) ? 0 : Levenstein.COST_CHANGE;
 				minCost= Levenstein.sum(minCost, nextCharCost);
-				if (minCost > fMaxCost) {
+				if (minCost > fMaxCost)
 					return Levenstein.SKIP;
-				} else {
-					int cost= minDiag + nextCharCost;
-					fMaxCost= Math.min(fMaxCost, maxCost(row, col, cost)); 
-					return cost;
-				}
+				int cost= minDiag + nextCharCost;
+				fMaxCost= Math.min(fMaxCost, maxCost(row, col, cost)); 
+				return cost;
 			}
 		}
 	}
@@ -396,7 +391,7 @@ public final class Levenstein {
 			fPreviousRow= new int[columns];
 	}
 	
-	/**
+	/*
 	 * Fill the matrix, but do not allocate it.
 	 */
 	void internalEditDistance(int rStart, int rEnd, int lStart, int lEnd) {
@@ -432,7 +427,7 @@ public final class Levenstein {
 		}
 	}
 	
-	/**
+	/*
 	 * Fill the matrix, but do not allocate it.
 	 */
 	void internalReverseEditDistance(int rStart, int rEnd, int lStart, int lEnd) {
@@ -501,19 +496,16 @@ public final class Levenstein {
 		if (fStep < 0)
 			column--;
 		
-		if (fMatrix != null) {
+		if (fMatrix != null)
 			return fMatrix[row][column];
-		} else {
-			if (row == fRow)
-				return fCurrentRow[column];
-			else if (row == fRow - fStep
-					&& ((fStep > 0 && row >= fRowStart && row <= fRowEnd)
-					  || fStep < 0 && row <= fRowStart && row >= fRowEnd))
-				return fPreviousRow[column];
-			else
-				Assert.isTrue(false, "random access to matrix not allowed"); //$NON-NLS-1$
-		}
 		
+		if (row == fRow)
+			return fCurrentRow[column];
+		
+		if (row == fRow - fStep && ((fStep > 0 && row >= fRowStart && row <= fRowEnd) || fStep < 0 && row <= fRowStart && row >= fRowEnd))
+			return fPreviousRow[column];
+		
+		Assert.isTrue(false, "random access to matrix not allowed"); //$NON-NLS-1$
 		return SKIP; // dummy
 	}
 	
@@ -545,7 +537,7 @@ public final class Levenstein {
 		}
 	}
 	
-	/**
+	/*
 	 * Compares the two domain element ranges corresponding to the cell at
 	 * [r,l], that is the (zero-based) elements at r - 1 and l - 1.
 	 */
@@ -554,18 +546,17 @@ public final class Levenstein {
 		return fLeft.rangesEqual(l - 1, fRight, r - 1);
 	}
 
-	/**
+	/*
 	 * Adds two cell cost values, never exceeding SKIP.
 	 */
 	private static int sum(int c1, int c2) {
 		int sum= c1 + c2;
 		if (sum < 0)
 			return SKIP;
-		else
-			return sum;
+		return sum;
 	}
 	
-	/**
+	/*
 	 * Computes the best possible edit distance from cell [r,l] if getting
 	 * there has cost cCur.
 	 */
@@ -575,11 +566,10 @@ public final class Levenstein {
 		// the rest of the ranges has to be inserted / deleted
 		if (cCur == SKIP)
 			return SKIP;
-		else
-			return cCur + Math.abs((fRowEnd - r) - (fColEnd - l)) * COST_INSERT; // can be either insert or delete
+		return cCur + Math.abs((fRowEnd - r) - (fColEnd - l)) * COST_INSERT; // can be either insert or delete
 	}
 
-	/**
+	/*
 	 * Computes the worst possible edit distance from cell [r,l] if getting 
 	 * there has cost cCur. 
 	 */
@@ -588,8 +578,7 @@ public final class Levenstein {
 		// maximal additional cost is the maximum remaining columns / rows
 		if (cCur == SKIP)
 			return SKIP;
-		else
-			return cCur + Math.max(Math.abs(fRowEnd - r), Math.abs(fColEnd - l)) * COST_CHANGE;
+		return cCur + Math.max(Math.abs(fRowEnd - r), Math.abs(fColEnd - l)) * COST_CHANGE;
 	}
 	
 	/* classic implementation */
@@ -669,11 +658,10 @@ public final class Levenstein {
 	private RangeDifference getChange(RangeDifference difference) {
 		if (difference != null)
 			return difference;
-		else {
-			difference= new RangeDifference(RangeDifference.CHANGE);
-			fDiffs.add(0, difference);
-			return difference;
-		}
+		
+		difference= new RangeDifference(RangeDifference.CHANGE);
+		fDiffs.add(0, difference);
+		return difference;
 	}
 
 	/* hirschberg's algorithm */
@@ -701,8 +689,7 @@ public final class Levenstein {
 			fOptimalSplitValues[rStart]= false;
 			if (distance == SKIP)
 				return 1;
-			else
-				return distance;
+			return distance;
 		}
 //		else if (lEnd < lStart) {
 //			// left is empty // perhaps not necessary
@@ -818,11 +805,10 @@ public final class Levenstein {
 	private RangeDifference getChange(RangeDifference difference, int row, int column) {
 		if (difference != null)
 			return difference;
-		else {
-			difference= new RangeDifference(RangeDifference.CHANGE, row, 0, column, 0);
-			fDiffs.add(difference);
-			return difference;
-		}
+
+		difference= new RangeDifference(RangeDifference.CHANGE, row, 0, column, 0);
+		fDiffs.add(difference);
+		return difference;
 	}
 
 	/* pretty printing for debug output */

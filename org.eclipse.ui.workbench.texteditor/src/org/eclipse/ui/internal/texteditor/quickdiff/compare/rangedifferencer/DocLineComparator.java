@@ -256,28 +256,29 @@ public final class DocLineComparator implements IRangeComparator {
 			DocLineComparator dlc= (DocLineComparator) other;
 
 			if (fIgnoreWhiteSpace) {
-			
 				extract(thisIndex, fThisBuffer);
 				dlc.extract(otherIndex, fOtherBuffer);
 				return compare(fThisBuffer, fOtherBuffer);
-			
-			} else {
-				
-				int tlen= getLineLength(thisIndex);
-				int olen= dlc.getLineLength(otherIndex);
-				if (tlen == olen) {
-					extract(thisIndex, fThisBuffer);
-					dlc.extract(otherIndex, fOtherBuffer);
-					return fThisBuffer.equals(fOtherBuffer);
-				}
 			}
+				
+			int tlen= getLineLength(thisIndex);
+			int olen= dlc.getLineLength(otherIndex);
+			if (tlen == olen) {
+				extract(thisIndex, fThisBuffer);
+				dlc.extract(otherIndex, fOtherBuffer);
+				return fThisBuffer.equals(fOtherBuffer);
+			}
+			
 		}
 		return false;
 	}
 
 	/**
 	 * Aborts the comparison if the number of tokens is too large.
-	 *
+	 * 
+	 * @param length the current edit distance
+	 * @param max the maximal edit distance
+	 * @param other the comparator with which to compare
 	 * @return <code>true</code> to abort a token comparison
 	 */
 	public boolean skipRangeComparison(int length, int max, IRangeComparator other) {

@@ -192,8 +192,7 @@ public class AnnotationExpandHover implements IAnnotationHover, IAnnotationHover
 				// secondary: annotation importance 
 				if (p1.offset == p2.offset)
 					return getOrder(a2) - getOrder(a1);
-				else
-					return p1.offset - p2.offset;
+				return p1.offset - p2.offset;
 			}
 		}
 		
@@ -219,8 +218,7 @@ public class AnnotationExpandHover implements IAnnotationHover, IAnnotationHover
 				List messages= (List)value;
 				if  (messages.contains(message))
 					return true;
-				else
-					messages.add(message);
+				messages.add(message);
 			} else {
 				ArrayList messages= new ArrayList();
 				messages.add(value);

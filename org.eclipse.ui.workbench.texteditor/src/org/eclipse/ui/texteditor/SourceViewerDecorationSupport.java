@@ -352,9 +352,8 @@ public class SourceViewerDecorationSupport {
 				String key= info.getTextStylePreferenceKey();
 				if (key != null)
 					return fPreferenceStore.getString(key);
-				else
-					// legacy
-					return AnnotationPreference.STYLE_SQUIGGLES;
+				// legacy
+				return AnnotationPreference.STYLE_SQUIGGLES;
 			}
 		}
 		return AnnotationPreference.STYLE_NONE;

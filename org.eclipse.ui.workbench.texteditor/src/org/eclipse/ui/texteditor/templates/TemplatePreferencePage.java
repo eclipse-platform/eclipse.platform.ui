@@ -116,8 +116,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 					TemplateContextType type= fContextTypeRegistry.getContextType(template.getContextTypeId());
 					if (type != null)
 						return type.getName();
-					else
-						return template.getContextTypeId();
+					return template.getContextTypeId();
 				case 2:
 					return template.getDescription();
 				default:

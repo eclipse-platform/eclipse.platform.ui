@@ -12,6 +12,7 @@
 package org.eclipse.ui.texteditor;
 
 
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
 
 
@@ -190,14 +191,14 @@ public interface IAbstractTextEditorHelpContextIds {
 	 * Value: <code>"org.eclipse.ui.bookmark_action_context"</code>
 	 * @deprecated in 3.0 Use <code>org.eclipse.ui.texteditor.ITextEditorHelpContextIds.BOOKMARK_ACTION</code> instead.
 	 */
-	public static final String BOOKMARK_ACTION= PREFIX + ITextEditorActionConstants.BOOKMARK + ACTION_POSTFIX;
+	public static final String BOOKMARK_ACTION= PREFIX + IWorkbenchActionConstants.BOOKMARK + ACTION_POSTFIX;
 
 	/**
 	 * Help context id for the action.
 	 * Value: <code>"org.eclipse.ui.addTask_action_context"</code>
 	 * @deprecated in 3.0 Use <code>org.eclipse.ui.texteditor.ITextEditorHelpContextIds.ADD_TASK_ACTION</code> instead.
 	 */
-	public static final String ADD_TASK_ACTION= PREFIX + ITextEditorActionConstants.ADD_TASK + ACTION_POSTFIX;
+	public static final String ADD_TASK_ACTION= PREFIX + IWorkbenchActionConstants.ADD_TASK + ACTION_POSTFIX;
 
 	/**
 	 * Help context id for the action.

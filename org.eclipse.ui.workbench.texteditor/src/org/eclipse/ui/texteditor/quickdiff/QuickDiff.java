@@ -136,8 +136,8 @@ public class QuickDiff {
 			DocumentLineDiffer differ= new DocumentLineDiffer();
 			differ.setReferenceProvider(provider);
 			return differ;
-		} else
-			return null;
+		}
+		return null;
 	}
 
 }

@@ -96,8 +96,7 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction {
 		ISelection s= sp.getSelection();
 		if (s instanceof ITextSelection)
 			return (ITextSelection)s;
-		else
-			return null;
+		return null;
 	}
 
 	/**
@@ -112,11 +111,9 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction {
 		IDocumentProvider provider= getTextEditor().getDocumentProvider();
 		IEditorInput editorInput= getTextEditor().getEditorInput();
 		IAnnotationModel m= provider.getAnnotationModel(editorInput);
-		if (m instanceof IAnnotationModelExtension) {
+		if (m instanceof IAnnotationModelExtension)
 			return (IAnnotationModelExtension)m;
-		} else {
-			return null;
-		}
+		return null;
 	}
 
 	/**
@@ -129,8 +126,7 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction {
 		IAnnotationModelExtension extension= getModel();
 		if (extension != null)
 			return (ILineDiffer)extension.getAnnotationModel(IChangeRulerColumn.QUICK_DIFF_MODEL_ID);
-		else
-			return null;
+		return null;
 	}
 
 	/**
@@ -141,8 +137,7 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction {
 	protected IVerticalRulerInfo getRuler() {
 		if (getTextEditor() != null)
 			return (IVerticalRulerInfo)getTextEditor().getAdapter(IVerticalRulerInfo.class);
-		else
-			return null;
+		return null;
 	}
 
 	/**

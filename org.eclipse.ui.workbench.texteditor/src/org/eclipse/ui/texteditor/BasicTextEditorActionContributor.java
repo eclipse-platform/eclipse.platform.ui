@@ -30,7 +30,7 @@ import org.eclipse.ui.part.EditorActionBarContributor;
 
 
 /**
- * Manages the installation and uninstallation of global actions for
+ * Manages the installation and removal of global actions for
  * the same type of editors.
  * <p>
  * If instantiated and used as-is, this contributor connects to all of the workbench defined
@@ -40,7 +40,7 @@ import org.eclipse.ui.part.EditorActionBarContributor;
  * Subclasses may override the following methods:
  * <ul>
  *   <li><code>contributeToMenu</code> - extend to contribute to menu</li>
- *   <li><code>contributeToToolBar</code> - reimplement to contribute to toolbar</li>
+ *   <li><code>contributeToToolBar</code> - reimplement to contribute to tool bar</li>
  *   <li><code>contributeToStatusLine</code> - reimplement to contribute to status line</li>
  *   <li><code>setActiveEditor</code> - extend to react to editor changes</li>
  * </ul>
@@ -139,13 +139,13 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	public BasicTextEditorActionContributor() {
 		
 		fFindNext= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Editor.FindNext."); //$NON-NLS-1$
-		fFindNext.setActionDefinitionId(ITextEditorActionDefinitionIds.FIND_NEXT); 
+		fFindNext.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_NEXT); 
 		fFindPrevious= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Editor.FindPrevious."); //$NON-NLS-1$
-		fFindPrevious.setActionDefinitionId(ITextEditorActionDefinitionIds.FIND_PREVIOUS); 
+		fFindPrevious.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_PREVIOUS); 
 		fIncrementalFind= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Editor.FindIncremental."); //$NON-NLS-1$
-		fIncrementalFind.setActionDefinitionId(ITextEditorActionDefinitionIds.FIND_INCREMENTAL); 
+		fIncrementalFind.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_INCREMENTAL); 
 		fIncrementalFindReverse= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Editor.FindIncrementalReverse."); //$NON-NLS-1$
-		fIncrementalFindReverse.setActionDefinitionId(ITextEditorActionDefinitionIds.FIND_INCREMENTAL_REVERSE);
+		fIncrementalFindReverse.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_INCREMENTAL_REVERSE);
 		fGotoLine= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "Editor.GotoLine."); //$NON-NLS-1$
 		fGotoLine.setActionDefinitionId(ITextEditorActionDefinitionIds.LINE_GOTO);
 		
