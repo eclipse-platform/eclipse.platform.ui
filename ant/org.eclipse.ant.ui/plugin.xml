@@ -29,6 +29,7 @@
       <import plugin="org.eclipse.debug.ui"/>
       <import plugin="org.eclipse.jdt.debug.ui"/>
       <import plugin="org.eclipse.jdt.launching"/>
+      <import plugin="org.eclipse.core.runtime.compatibility"/>
    </requires>
 
 
