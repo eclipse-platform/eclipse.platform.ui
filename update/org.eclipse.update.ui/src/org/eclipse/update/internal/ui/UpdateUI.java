@@ -34,6 +34,7 @@ import org.eclipse.update.internal.model.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.AboutInfo;
 import org.eclipse.update.internal.ui.security.*;
+import org.osgi.framework.*;
 
 /**
  * The main plugin class to be used in the desktop.
@@ -58,8 +59,8 @@ public class UpdateUI extends AbstractUIPlugin {
 	/**
 	 * The constructor.
 	 */
-	public UpdateUI(IPluginDescriptor descriptor) {
-		super(descriptor);
+	public UpdateUI() {
+//		super(descriptor);
 		plugin = this;
 		try {
 			resourceBundle =
@@ -141,7 +142,10 @@ public class UpdateUI extends AbstractUIPlugin {
 		return resourceBundle;
 	}
 
-	public void startup() throws CoreException {
+	/* (non-Javadoc)
+	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
+	 */
+	public void start(BundleContext context) throws Exception {
 		super.startup();
 		readInfo();
 		model = new UpdateModel();
@@ -166,7 +170,10 @@ public class UpdateUI extends AbstractUIPlugin {
 		return appServerPort;
 	}
 
-	public void shutdown() throws CoreException {
+	/* (non-Javadoc)
+	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
+	 */
+	public void stop(BundleContext context) throws Exception {
 		model.shutdown();
 
 		if (labelProvider != null)
@@ -418,5 +425,4 @@ public class UpdateUI extends AbstractUIPlugin {
 	public static void setRemindOnCancel(boolean remind) {
 		remindOnCancel = remind; 
 	}
-
 }

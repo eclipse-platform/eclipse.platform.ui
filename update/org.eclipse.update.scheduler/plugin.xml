@@ -25,7 +25,6 @@
       <import plugin="org.eclipse.ui"/>
    </requires>
 
-
    <extension
          point="org.eclipse.ui.startup">
       <startup>

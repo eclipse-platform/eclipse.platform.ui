@@ -19,6 +19,7 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.plugin.*;
+import org.osgi.framework.*;
 
 /**
  * This plug-in is loaded on startup to fork a job that
@@ -93,12 +94,11 @@ public class UpdateScheduler extends AbstractUIPlugin implements IStartup {
 			}
 		}
 	}
-
+	
 	/**
 	 * The constructor.
 	 */
-	public UpdateScheduler(IPluginDescriptor descriptor) {
-		super(descriptor);
+	public UpdateScheduler() {
 		plugin = this;
 		try {
 			resourceBundle = ResourceBundle.getBundle("org.eclipse.update.internal.scheduler.UpdateSchedulerResources"); //$NON-NLS-1$
@@ -109,6 +109,22 @@ public class UpdateScheduler extends AbstractUIPlugin implements IStartup {
 		jobListener = new UpdateJobChangeAdapter();
 		Platform.getJobManager().addJobChangeListener(jobListener);
 	}
+
+//	/**
+//	 * The constructor.
+//	 */
+//	public UpdateScheduler(IPluginDescriptor descriptor) {
+//		super(descriptor);
+//		plugin = this;
+//		try {
+//			resourceBundle = ResourceBundle.getBundle("org.eclipse.update.internal.scheduler.UpdateSchedulerResources"); //$NON-NLS-1$
+//		} catch (MissingResourceException x) {
+//			resourceBundle = null;
+//		}
+//
+//		jobListener = new UpdateJobChangeAdapter();
+//		Platform.getJobManager().addJobChangeListener(jobListener);
+//	}
 
 	public ResourceBundle getResourceBundle() {
 		return resourceBundle;
@@ -211,11 +227,6 @@ public class UpdateScheduler extends AbstractUIPlugin implements IStartup {
 		return getDefault().getWorkbench().getActiveWorkbenchWindow();
 	}
 
-	public void startup() throws CoreException {
-		super.startup();
-		initializeDefaultPreferences();
-	}
-
 	private void initializeDefaultPreferences() {
 		Preferences pref = getPluginPreferences();
 		pref.setDefault(P_ENABLED, false);
@@ -223,9 +234,6 @@ public class UpdateScheduler extends AbstractUIPlugin implements IStartup {
 		pref.setDefault(P_DOWNLOAD, false);
 	}
 
-	public void shutdown() throws CoreException {
-		super.shutdown();
-	}
 
 	public void earlyStartup() {
 		scheduleUpdateJob();
@@ -352,5 +360,12 @@ public class UpdateScheduler extends AbstractUIPlugin implements IStartup {
 		}
 		job = new AutomaticUpdatesJob();
 		job.schedule(delay);
+	}
+	/* (non-Javadoc)
+	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
+	 */
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
+		initializeDefaultPreferences();
 	}
 }

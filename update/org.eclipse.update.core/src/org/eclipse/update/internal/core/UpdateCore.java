@@ -67,10 +67,10 @@ public class UpdateCore extends Plugin {
 	/**
 	 * The constructor.
 	 */
-	public UpdateCore(IPluginDescriptor descriptor) {
-		super(descriptor);
+	public UpdateCore() {
 		plugin = this;
 	}
+	
 
 	/**
 	 * Returns the shared instance.
@@ -86,56 +86,6 @@ public class UpdateCore extends Plugin {
 		if (connectionManager==null)
 			connectionManager = new ConnectionThreadManager();
 		return connectionManager;
-	}
-
-	/**
-	 * @see Plugin#startup()
-	 */
-	public void startup() throws CoreException {
-		super.startup();
-
-		Policy.localize("org.eclipse.update.internal.core.messages"); //$NON-NLS-1$
-		DEBUG = getBooleanDebugOption("org.eclipse.update.core/debug", false); //$NON-NLS-1$
-
-		if (DEBUG) {
-			DEBUG_SHOW_WARNINGS = getBooleanDebugOption("org.eclipse.update.core/debug/warning", false); //$NON-NLS-1$
-			DEBUG_SHOW_PARSING = getBooleanDebugOption("org.eclipse.update.core/debug/parsing", false); //$NON-NLS-1$
-			DEBUG_SHOW_INSTALL = getBooleanDebugOption("org.eclipse.update.core/debug/install", false); //$NON-NLS-1$
-			DEBUG_SHOW_CONFIGURATION = getBooleanDebugOption("org.eclipse.update.core/debug/configuration", false); //$NON-NLS-1$
-			DEBUG_SHOW_TYPE = getBooleanDebugOption("org.eclipse.update.core/debug/type", false); //$NON-NLS-1$
-			DEBUG_SHOW_WEB = getBooleanDebugOption("org.eclipse.update.core/debug/web", false); //$NON-NLS-1$
-			DEBUG_SHOW_IHANDLER = getBooleanDebugOption("org.eclipse.update.core/debug/installhandler", false); //$NON-NLS-1$
-			DEBUG_SHOW_RECONCILER = getBooleanDebugOption("org.eclipse.update.core/debug/reconciler", false); //$NON-NLS-1$
-		}
-		
-		//
-		try {
-			File logFile = getUpdateStateLocation();
-			if (logFile!=null)
-				log = new UpdateManagerLogWriter(logFile);
-		} catch (IOException e){
-			warn("",e);
-		}
-		
-		SiteManager.setHttpProxyInfo(
-			getPluginPreferences().getBoolean(HTTP_PROXY_ENABLE),
-			getPluginPreferences().getString(HTTP_PROXY_HOST),
-			getPluginPreferences().getString(HTTP_PROXY_PORT));
-	}
- 
-	/**
-	 * @see Plugin#shutdown()
-	 */
-	public void shutdown() throws CoreException {
-		super.shutdown();
-		
-		JarContentReference.shutdown(); // make sure we are not leaving jars open
-		Utilities.shutdown(); // cleanup temp area
-		if (log!=null)
-			log.shutdown();
-		if (connectionManager!=null)
-			connectionManager.shutdown();
-					
 	}
 
 	private boolean getBooleanDebugOption(String flag, boolean dflt) {
@@ -352,12 +302,48 @@ public class UpdateCore extends Plugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		this.context = context;
+
+		Policy.localize("org.eclipse.update.internal.core.messages"); //$NON-NLS-1$
+		DEBUG = getBooleanDebugOption("org.eclipse.update.core/debug", false); //$NON-NLS-1$
+
+		if (DEBUG) {
+			DEBUG_SHOW_WARNINGS = getBooleanDebugOption("org.eclipse.update.core/debug/warning", false); //$NON-NLS-1$
+			DEBUG_SHOW_PARSING = getBooleanDebugOption("org.eclipse.update.core/debug/parsing", false); //$NON-NLS-1$
+			DEBUG_SHOW_INSTALL = getBooleanDebugOption("org.eclipse.update.core/debug/install", false); //$NON-NLS-1$
+			DEBUG_SHOW_CONFIGURATION = getBooleanDebugOption("org.eclipse.update.core/debug/configuration", false); //$NON-NLS-1$
+			DEBUG_SHOW_TYPE = getBooleanDebugOption("org.eclipse.update.core/debug/type", false); //$NON-NLS-1$
+			DEBUG_SHOW_WEB = getBooleanDebugOption("org.eclipse.update.core/debug/web", false); //$NON-NLS-1$
+			DEBUG_SHOW_IHANDLER = getBooleanDebugOption("org.eclipse.update.core/debug/installhandler", false); //$NON-NLS-1$
+			DEBUG_SHOW_RECONCILER = getBooleanDebugOption("org.eclipse.update.core/debug/reconciler", false); //$NON-NLS-1$
+		}
+		
+		//
+		try {
+			File logFile = getUpdateStateLocation();
+			if (logFile!=null)
+				log = new UpdateManagerLogWriter(logFile);
+		} catch (IOException e){
+			warn("",e);
+		}
+		
+		SiteManager.setHttpProxyInfo(
+			getPluginPreferences().getBoolean(HTTP_PROXY_ENABLE),
+			getPluginPreferences().getString(HTTP_PROXY_HOST),
+			getPluginPreferences().getString(HTTP_PROXY_PORT));
 	}
 	/* (non-Javadoc)
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
+		
+		JarContentReference.shutdown(); // make sure we are not leaving jars open
+		Utilities.shutdown(); // cleanup temp area
+		if (log!=null)
+			log.shutdown();
+		if (connectionManager!=null)
+			connectionManager.shutdown();
+		
 		this.context = null;
 		if (pkgAdminTracker != null) {
 			pkgAdminTracker.close();
