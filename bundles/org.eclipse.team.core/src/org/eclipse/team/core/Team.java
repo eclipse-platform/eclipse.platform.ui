@@ -47,6 +47,8 @@ import org.eclipse.team.internal.core.TeamPlugin;
 /**
  * The Team class provides a global point of reference for the global ignore set
  * and the text/binary registry.
+ * 
+ * @since 2.0
  */
 public final class Team {
 	// File type constants
@@ -225,7 +227,7 @@ public final class Team {
 		}
 	}
 	
-	/**
+	/*
 	 * Utility method for removing a project nature from a project.
 	 * 
 	 * @param proj the project to remove the nature from
@@ -246,7 +248,7 @@ public final class Team {
 		}
 	}
 	
-	/**
+	/*
 	 * Utility method for adding a nature to a project.
 	 * 
 	 * @param proj the project to add the nature
