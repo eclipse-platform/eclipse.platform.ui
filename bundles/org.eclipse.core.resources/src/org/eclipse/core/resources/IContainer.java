@@ -253,6 +253,7 @@ public IResource[] members() throws CoreException;
  *   interest.
  * @exception CoreException if this request fails. Reasons include:
  * <ul>
+ * <li> This resource does not exist.</li>
  * <li> <code>includePhantoms</code> is <code>false</code> and
  *     this resource does not exist.</li>
  * <li> <code>includePhantoms</code> is <code>false</code> and
@@ -288,6 +289,7 @@ public IResource[] members(boolean includePhantoms) throws CoreException;
  * @return an array of members of this resource
  * @exception CoreException if this request fails. Reasons include:
  * <ul>
+ * <li> This resource does not exist.</li>
  * <li> the <code>INCLUDE_PHANTOMS</code> flag is not specified and
  *     this resource does not exist.</li>
  * <li> the <code>INCLUDE_PHANTOMS</code> flag is not specified and
