@@ -43,8 +43,11 @@ public class OleEditor extends EditorPart {
 		 * @see IResourceChangeListener#resourceChanged(IResourceChangeEvent)
 		 */
 		public void resourceChanged(IResourceChangeEvent event) {
+			IResourceDelta mainDelta = event.getDelta();
+			if(mainDelta == null)
+				return;
 			IResourceDelta affectedElement =
-				event.getDelta().findMember(resource.getFullPath());
+				mainDelta.findMember(resource.getFullPath());
 			if (affectedElement != null)
 				try {
 					processDelta(affectedElement);
