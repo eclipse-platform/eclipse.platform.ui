@@ -26,8 +26,8 @@ public class AntTargetContentProvider implements IStructuredContentProvider {
 	protected List elements = new ArrayList();
 	protected TableViewer viewer;
 	private boolean fFilterInternalTargets= false;
-	private int fNumFiltered= 0;
-	private int fNumTargets= 0;
+	private int fNumFilteredTargets= 0;
+	private int fNumTotalTargets= 0;
 
 	public void add(Object o) {
 		elements.add(o);
@@ -43,22 +43,21 @@ public class AntTargetContentProvider implements IStructuredContentProvider {
 	}
 
 	public Object[] getElements(Object inputElement) {
-		fNumTargets= elements.size();
-		fNumFiltered= 0;
-		if (fNumTargets == 0) {
+		fNumTotalTargets= elements.size();
+		fNumFilteredTargets= 0;
+		if (fNumTotalTargets == 0) {
 			return new Object[0];
 		} else {
 			if (!fFilterInternalTargets) {
-				return elements.toArray(new Object[fNumTargets]);
+				return elements.toArray(new Object[fNumTotalTargets]);
 			}
 			Iterator iter= elements.iterator();
 			while (iter.hasNext()) { 
 				if (isInternal((TargetInfo) iter.next())) {
-					fNumTargets--;
-					fNumFiltered++;
+					fNumFilteredTargets++;
 				}
 			}
-			Object[] targets= new Object[fNumTargets];
+			Object[] targets= new Object[getNumTargets()];
 			iter= elements.iterator();
 			int i= 0;
 			while (iter.hasNext()) {
@@ -140,7 +139,7 @@ public class AntTargetContentProvider implements IStructuredContentProvider {
 	 *  for targets
 	 */
 	public int getNumFiltered() {
-		return fNumFiltered;
+		return fNumFilteredTargets;
 	}
 	
 	/**
@@ -151,7 +150,7 @@ public class AntTargetContentProvider implements IStructuredContentProvider {
 	 *  were requested
 	 */
 	public int getNumTargets() {
-		return fNumTargets;
+		return fNumTotalTargets - fNumFilteredTargets;
 	}
 	
 	/**
@@ -162,5 +161,16 @@ public class AntTargetContentProvider implements IStructuredContentProvider {
 	 */
 	public void setFilterInternalTargets(boolean filter) {
 		fFilterInternalTargets= filter;
+	}
+	
+	/**
+	 * Sorts the targets by the given column.
+	 * @param column one of:
+	 *   0 - target name
+	 *   1 - target description
+	 *   anything else - default order (unsorted)
+	 */
+	public void sort(int column) {
+		
 	}
 }
