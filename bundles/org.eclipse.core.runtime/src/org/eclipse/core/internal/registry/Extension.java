@@ -11,6 +11,7 @@
 package org.eclipse.core.internal.registry;
 
 import org.eclipse.core.internal.runtime.CompatibilityHelper;
+import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.*;
 
 /**
@@ -143,7 +144,10 @@ public class Extension extends RegistryModelObject implements IExtension {
 		String s = getName();
 		if (s == null)
 			return ""; //$NON-NLS-1$
-		return ((BundleModel) getParent()).getResourceString(s);
+		String localized = ((BundleModel) getParent()).getResourceString(s);
+		if (localized != s)
+			setLocalizedName(localized);
+		return localized;
 	}
 	public String toString() {
 		return getUniqueIdentifier() + " -> " + getExtensionPointIdentifier(); //$NON-NLS-1$
@@ -163,5 +167,13 @@ public class Extension extends RegistryModelObject implements IExtension {
 	}
 	public String getExtensionPointUniqueIdentifier() {
 		return getExtensionPointIdentifier();
+	}
+	/**
+	 * Optimization to replace a non-localized key with its localized value.  Avoids having
+	 * to access resource bundles for further lookups.
+	 */
+	public void setLocalizedName(String value) {
+		name = value;
+		((ExtensionRegistry) InternalPlatform.getDefault().getRegistry()).setDirty(true);
 	}
 }

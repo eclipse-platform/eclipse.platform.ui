@@ -33,7 +33,7 @@ public class RegistryCacheReader {
 	private MultiStatus cacheReadProblems = null;
 	protected File cacheFile;
 
-	public static final byte REGISTRY_CACHE_VERSION = 2;
+	public static final byte REGISTRY_CACHE_VERSION = 3;
 	public static final byte NULL = 0;
 	public static final byte OBJECT = 1;
 	public static final byte INDEX = 2;
@@ -124,6 +124,7 @@ public class RegistryCacheReader {
 			addToObjectTable(result);
 			result.setSimpleIdentifier(readString(in, true));
 			result.setParent(readBundleModel(in));
+			result.setName(readString(in, false));
 			result.setExtensionPointIdentifier(readString(in, true));
 			result.setSubElements(readSubElements(result, in));
 			return result;
@@ -141,6 +142,7 @@ public class RegistryCacheReader {
 			result = cacheFactory.createExtensionPoint();
 			addToObjectTable(result);
 			result.setSimpleIdentifier(readString(in, true));
+			result.setName(readString(in,false));
 			result.setSchema(readString(in, true));
 			result.setParent(readBundleModel(in));
 

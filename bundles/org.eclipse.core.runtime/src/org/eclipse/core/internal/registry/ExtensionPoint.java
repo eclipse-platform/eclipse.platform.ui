@@ -78,7 +78,10 @@ public class ExtensionPoint extends RegistryModelObject implements IExtensionPoi
 		String s = getName();
 		if (s == null)
 			return ""; //$NON-NLS-1$
-		return ((BundleModel) getParent()).getResourceString(s);
+		String localized = ((BundleModel) getParent()).getResourceString(s);
+		if (localized != s)
+			setLocalizedName(localized);
+		return localized;
 	}
 	public String toString() {
 		return getUniqueIdentifier();

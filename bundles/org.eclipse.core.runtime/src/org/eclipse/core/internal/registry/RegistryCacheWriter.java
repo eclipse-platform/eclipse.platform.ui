@@ -90,6 +90,7 @@ public class RegistryCacheWriter {
 			out.writeByte(RegistryCacheReader.OBJECT);
 			writeStringOrNull(object.getSimpleIdentifier(), out);
 			writeBundleModel((BundleModel) object.getParent(), out);
+			writeStringOrNull(object.getName(), out);
 			writeStringOrNull(object.getExtensionPointIdentifier(), out);
 			writeSubElements(object, out);
 		} catch (IOException ioe) {
@@ -128,6 +129,7 @@ public class RegistryCacheWriter {
 			addToObjectTable(object);
 			out.writeByte(RegistryCacheReader.OBJECT);
 			writeStringOrNull(object.getSimpleIdentifier(), out);
+			writeStringOrNull(object.getName(), out);
 			writeStringOrNull(object.getSchema(), out);
 			BundleModel parent = (BundleModel) object.getParent();
 			if (parent != null)

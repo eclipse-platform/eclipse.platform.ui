@@ -24,7 +24,7 @@ import org.eclipse.core.internal.runtime.InternalPlatform;
 public abstract class RegistryModelObject {
 
 	// DTD properties (included in plug-in manifest)
-	private String name = null;
+	protected String name = null;
 
 	// transient properties (not included in plug-in manifest)
 	private int flags = 0;
@@ -137,5 +137,13 @@ public abstract class RegistryModelObject {
 
 	public RegistryModelObject getRegistry() {
 		return parent == null ? this : parent.getRegistry();
+	}
+	/**
+	 * Optimization to replace a non-localized key with its localized value.  Avoids having
+	 * to access resource bundles for further lookups.
+	 */
+	public void setLocalizedName(String value) {
+		name = value;
+		((ExtensionRegistry) InternalPlatform.getDefault().getRegistry()).setDirty(true);
 	}
 }

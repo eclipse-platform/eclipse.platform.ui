@@ -25,8 +25,6 @@ import org.osgi.framework.Bundle;
  */
 
 public class ConfigurationElement extends RegistryModelObject implements IConfigurationElement {
-	private static final String OLD_CONFIGURATION_ELEMENT_NAME = "org.eclipse.core.internal.plugins.ConfigurationElement"; //$NON-NLS-1$
-	
 	// DTD properties (included in plug-in manifest)
 	private String value = null;
 	private ConfigurationProperty[] properties = null;
@@ -206,7 +204,10 @@ public class ConfigurationElement extends RegistryModelObject implements IConfig
 		if (s == null)
 			return null;
 		BundleModel bundleModel = (BundleModel) ((Extension) getDeclaringExtension()).getParent();
-		return bundleModel.getResourceString(s);
+		String localized = bundleModel.getResourceString(s);
+		if (localized != s)
+			setLocalizedValue(localized);
+		return localized;
 	}
 	public String getValueAsIs() {
 		return value;
@@ -315,5 +316,13 @@ public class ConfigurationElement extends RegistryModelObject implements IConfig
 	public void setValue(String value) {
 		assertIsWriteable();
 		this.value = value;
+	}
+	/**
+	 * Optimization to replace a non-localized key with its localized value.  Avoids having
+	 * to access resource bundles for further lookups.
+	 */
+	public void setLocalizedValue(String value) {
+		this.value = value;
+		((ExtensionRegistry) InternalPlatform.getDefault().getRegistry()).setDirty(true);
 	}
 }
