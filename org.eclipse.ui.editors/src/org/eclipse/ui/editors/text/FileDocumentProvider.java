@@ -907,7 +907,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 				return encoding;
 			}
 		}
-		return null;
+		return super.getPersistedEncoding(element);
 	}
 
 	/**
