@@ -53,7 +53,6 @@ final class JFaceUtil {
             Policy.DEBUG_DIALOG_NO_PARENT = "true".equalsIgnoreCase(Platform.getDebugOption(Policy.JFACE + "/debug/dialog/noparent")); //$NON-NLS-1$ //$NON-NLS-2$
             Policy.TRACE_ACTIONS = "true".equalsIgnoreCase(Platform.getDebugOption(Policy.JFACE + "/trace/actions")); //$NON-NLS-1$ //$NON-NLS-2$
             Policy.TRACE_TOOLBAR = "true".equalsIgnoreCase(Platform.getDebugOption(Policy.JFACE + "/trace/toolbarDisposal")); //$NON-NLS-1$ //$NON-NLS-2$
-            Policy.SHOW_PREFERENCES_NEWLOOK = "true".equalsIgnoreCase(Platform.getDebugOption(Policy.JFACE + "/newlook/preferences/showNewLook"));//$NON-NLS-1$ //$NON-NLS-2$
         }
 
     }

@@ -45,14 +45,6 @@ public class Policy {
     public static boolean TRACE_ACTIONS = DEFAULT;
     
     /**
-     * A boolean to determine if we are showing the new look preferences
-     * dialog.
-     * 
-     * @since 3.1
-     */
-    public static boolean SHOW_PREFERENCES_NEWLOOK = DEFAULT;
-
-    /**
      * A flag to indicate whether toolbars are being traced.
      */
 
