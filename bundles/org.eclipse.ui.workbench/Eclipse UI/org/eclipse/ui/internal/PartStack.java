@@ -728,7 +728,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 
         showPart(newChild, oldPart);
 
-        if (oldChild == current) {
+        if (oldChild == current && !(newChild instanceof PartPlaceholder)) {
             setSelection(newChild);
         }
 
