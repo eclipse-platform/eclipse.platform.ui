@@ -53,7 +53,14 @@ function resizeContent()
 function displayTocFor(topic)
 {
 	parent.TabsFrame.showNavFrame("toc");
+	// remove the query, if any
+	var i = topic.indexOf('?');
+	if (i != -1)
+		topic = topic.substring(0, i);
+		
 	var selected = window.toc.selectTopic(topic);
+	if (!selected)
+		window.toc.location = "toc.jsp?topic="+topic;
 }
 
 </script>

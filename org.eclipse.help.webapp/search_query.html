@@ -31,9 +31,9 @@ function mouseout(img)
             <input type="text" class="txtInput" name="keyword" 
                    onblur="if (value == '') {value = 'search'}" 
                    onfocus="if (value == 'search') {value =''}" 
-                   maxlength=256>
+                   maxlength=256 style="width:75%">
                          
-            <input type="image" alt="Search" src="images/go.gif" class="normal" onmouseover="mouseover(this)" onmouseout="mouseout(this)">
+            <input style="width:22px;" type="image" alt="Search" src="images/go.gif" class="normal" onmouseover="mouseover(this)" onmouseout="mouseout(this)">
             
            <!--
             <input type="checkbox" name="fieldSearch" <%= request.getParameter("fieldSearch")!=null?"checked='true'":""%>>Search headings only

@@ -6,12 +6,33 @@
 %>
 
 <% 
-	// get the selected table of contents and generate the tree for it
+	Tocs tocs = (Tocs)application.getAttribute("org.eclipse.help.tocs");
+	if (tocs == null)
+		return;
+		
+	// table of contents to show
 	String tocHref = request.getParameter("toc");
-	Element selectedTOC = (Element)application.getAttribute(tocHref);
-	if (selectedTOC == null) return;
-	String label = selectedTOC.getAttribute("label");
-	session.setAttribute("org.eclipse.help.selectedTOC", selectedTOC);
+	// topic to show
+	String topic = request.getParameter("topic");
+	
+	Element selectedTOC = null;
+	String label = "";
+	
+	if ( tocHref == null || tocHref.equals(""))
+	{
+		if (topic != null && !topic.equals(""))
+			selectedTOC = tocs.findTocContainingTopic(topic);
+	}
+	else
+	{
+		selectedTOC = (Element)application.getAttribute(tocHref);
+	}
+		
+	if (selectedTOC != null)
+	{
+		label = selectedTOC.getAttribute("label");
+		session.setAttribute("org.eclipse.help.selectedTOC", selectedTOC);
+	}
 %>
 
 <html>
@@ -32,9 +53,20 @@
 	</span>
 <%
 	// Generate the tree
-	Tocs tocs = (Tocs)application.getAttribute("org.eclipse.help.tocs");
-	if (tocs != null)
-		tocs.generateTOC(selectedTOC, out);	
+	if (selectedTOC != null)
+	{
+		tocs.loadTOC(selectedTOC, out);	
+		
+		// Highlight topic
+		if (topic != null && !topic.equals(""))
+		{
+%>
+		<script language="JavaScript">
+	 		selectTopic('<%=topic%>');
+		</script>
+<%
+		}
+	}		
 %>
 
 </body>
