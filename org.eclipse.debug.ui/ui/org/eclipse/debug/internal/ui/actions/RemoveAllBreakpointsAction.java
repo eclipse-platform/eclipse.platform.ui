@@ -1,17 +1,14 @@
 package org.eclipse.debug.internal.ui.actions;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
  
 import org.eclipse.core.resources.IMarkerDelta;
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointListener;
 import org.eclipse.debug.core.IBreakpointManager;
@@ -27,29 +24,14 @@ import org.eclipse.ui.IWorkbenchWindow;
 public class RemoveAllBreakpointsAction extends AbstractRemoveAllActionDelegate implements IBreakpointListener {
 
 	protected void doAction() {
-		final IBreakpointManager breakpointManager= DebugPlugin.getDefault().getBreakpointManager();
-		final IBreakpoint[] breakpoints= breakpointManager.getBreakpoints();
-		final MultiStatus ms= new MultiStatus(DebugPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, ActionMessages.getString("RemoveAllBreakpointsAction.Breakpoint(s)_removal_failed_3"), null); //$NON-NLS-1$
-		IWorkspaceRunnable r = new IWorkspaceRunnable() {
-			public void run(IProgressMonitor pm) {
-				for (int i= 0; i < breakpoints.length; i++) {
-					try {
-						breakpointManager.removeBreakpoint(breakpoints[i], true);
-					} catch (CoreException e) {
-						ms.merge(e.getStatus());
-					}
-				}
-			}
-		};
+		IBreakpointManager breakpointManager= DebugPlugin.getDefault().getBreakpointManager();
+		IBreakpoint[] breakpoints= breakpointManager.getBreakpoints();
 		try {
-			ResourcesPlugin.getWorkspace().run(r, null);
+			breakpointManager.removeBreakpoints(breakpoints, true);
 		} catch (CoreException e) {
-			ms.merge(e.getStatus());
-		}
-		if (!ms.isOK()) {
 			IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
 			if (window != null) {
-				DebugUIPlugin.errorDialog(window.getShell(), ActionMessages.getString("RemoveAllBreakpointsAction.Removing_all_breakpoints_4"),ActionMessages.getString("RemoveAllBreakpointsAction.Exceptions_occurred_removing_breakpoints._5"), ms); //$NON-NLS-1$ //$NON-NLS-2$
+				DebugUIPlugin.errorDialog(window.getShell(), ActionMessages.getString("RemoveAllBreakpointsAction.Removing_all_breakpoints_4"),ActionMessages.getString("RemoveAllBreakpointsAction.Exceptions_occurred_removing_breakpoints._5"), e); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}
