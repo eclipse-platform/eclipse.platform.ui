@@ -23,7 +23,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
  * A text viewer turns a text widget into a document-based text widget.
  * It supports the following kinds of listeners:
  * <ul>
- * <li> viewport listeners to inform about changes of the viewer's viewport
+ * <li> view port listeners to inform about changes of the viewer's view port
  * <li> text listeners to inform about changes of the document and the subsequent viewer change
  * <li> text input listeners to inform about changes of the viewer's input document.
  * </ul>
@@ -65,7 +65,7 @@ public interface ITextViewer {
 	StyledText getTextWidget();
 	
 		
-	/* --------- plugins --------- */
+	/* --------- plug-ins --------- */
 		
 	/**
 	 * Sets this viewer's undo manager.
@@ -118,7 +118,7 @@ public interface ITextViewer {
 	/* ---------- listeners ------------- */
 		
 	/**
-	 * Adds the given viewport listener to this viewer. The listener
+	 * Adds the given view port listener to this viewer. The listener
 	 * is informed about all changes to the visible area of this viewer.
 	 * If the listener is already registered with this viewer, this call
 	 * has no effect.
@@ -128,7 +128,7 @@ public interface ITextViewer {
 	void addViewportListener(IViewportListener listener);
 	
 	/**
-	 * Removes the given listener from this viewer's set of viewport listeners.
+	 * Removes the given listener from this viewer's set of view port listeners.
 	 * If the listener is not registered with this viewer, this call has
 	 * no effect.
 	 *
@@ -176,7 +176,7 @@ public interface ITextViewer {
 		
 	/**
 	 * Sets the given document as the text viewer's model and updates the 
-	 * presentation accordingly. An approriate <code>TextEvent</code> is
+	 * presentation accordingly. An appropriate <code>TextEvent</code> is
 	 * issued. This text event does not carry a related document event.
 	 *
 	 * @param document the viewer's new input document
@@ -201,16 +201,16 @@ public interface ITextViewer {
 	void setEventConsumer(IEventConsumer consumer);
 		
 	/**
-	 * Sets the editable mode.
+	 * Sets the editable flag.
 	 *
-	 * @param editable the editable mode
+	 * @param editable the editable flag
 	 */
 	void setEditable(boolean editable);
 
 	/**
 	 * Returns whether the shown text can be manipulated.
 	 *
-	 * @return the viewer's editable mode
+	 * @return the viewer's editable flag
 	 */
 	boolean isEditable();
 	
@@ -219,7 +219,7 @@ public interface ITextViewer {
 	
 	/**
 	 * Sets the given document as this viewer's model and 
-	 * makes the specified region visible in the presentation. An approriate
+	 * makes the specified region visible in the presentation. An appropriate
 	 * <code>TextEvent</code> is issued. The text event does not carry a 
 	 * related document event. This method is a convenience method for
 	 * <code>setDocument(document);setVisibleRegion(offset, length)</code>.
@@ -400,7 +400,7 @@ public interface ITextViewer {
 	int getTopIndex();
 	
 	/**
-	 * Returns the document offset of the upper left corner of this viewer's viewport.
+	 * Returns the document offset of the upper left corner of this viewer's view port.
 	 *
 	 * @return the upper left corner offset
 	 */
@@ -415,7 +415,7 @@ public interface ITextViewer {
 	
 	/**
 	 * Returns the document offset of the lower right 
-	 * corner of this viewer's viewport. This is the visible character
+	 * corner of this viewer's view port. This is the visible character
 	 * with the highest character position. If the content of this viewer
 	 * is shorter, the position of the last character of the content is returned.
 	 *
