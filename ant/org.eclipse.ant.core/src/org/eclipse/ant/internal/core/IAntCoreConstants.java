@@ -28,4 +28,10 @@ public interface IAntCoreConstants {
 	public static final String PREFIX_TASK = "task."; //$NON-NLS-1$
 	public static final String PREFIX_TYPE = "type."; //$NON-NLS-1$
 	public static final String PREFIX_URL = "url."; //$NON-NLS-1$
+	
+	/**
+	 * Debug constant
+	 * @since 2.1
+	 */
+	public static boolean DEBUG_BUILDFILE_TIMING = false;
 }
