@@ -232,18 +232,48 @@ public class PropertySheetEntry implements IPropertySheetEntry {
         List descriptors = computeMergedPropertyDescriptors();
 
         // rebuild child entries using old when possible
-        childEntries = new PropertySheetEntry[descriptors.size()];
-        for (int i = 0; i < descriptors.size(); i++) {
+        childEntries = createChildEntriesArray(descriptors.size());
+		for (int i = 0; i < descriptors.size(); i++) {
             IPropertyDescriptor d = (IPropertyDescriptor) descriptors.get(i);
             // create new entry
-            PropertySheetEntry entry = new PropertySheetEntry();
-            entry.setDescriptor(d);
+            PropertySheetEntry entry = createChildEntry();
+			entry.setDescriptor(d);
             entry.setParent(this);
             entry.setPropertySourceProvider(propertySourceProvider);
             entry.refreshValues();
             childEntries[i] = entry;
         }
     }
+
+	/**
+	 * Factory method to create a new array instance of
+	 * <code>PropertySheetEntry</code>.
+	 * <p>
+	 * Subclasses may overwrite to create new array instance of their own class.
+	 * </p>
+	 * 
+	 * @param size
+	 * @return a new array of <code>PropertySheetEntry</code>
+     * @since 3.1
+	 */
+	protected PropertySheetEntry[] createChildEntriesArray(int size) {
+		return new PropertySheetEntry[size];
+	}
+
+	/**
+	 * Factory method to create a new child <code>PropertySheetEntry</code>
+	 * instance.
+	 * <p>
+	 * Subclasses may overwrite to create new instances of their own class.
+	 * </p>
+	 * 
+	 * @return a new <code>PropertySheetEntry</code> instance for the
+	 *         descriptor passed in
+     * @since 3.1
+	 */
+	protected PropertySheetEntry createChildEntry() {
+		return new PropertySheetEntry();
+	}
 
     /* (non-Javadoc)
      * Method declared on IPropertySheetEntry.
@@ -331,10 +361,12 @@ public class PropertySheetEntry implements IPropertySheetEntry {
     }
 
     /**
-     *  Returns the descriptor for this entry.
-     * @return IPropertyDescriptor
+     * Returns the descriptor for this entry.
+     *
+     * @return the descriptor for this entry
+     * @since 3.1 (was previously private)
      */
-    private IPropertyDescriptor getDescriptor() {
+    protected IPropertyDescriptor getDescriptor() {
         return descriptor;
     }
 
@@ -411,13 +443,24 @@ public class PropertySheetEntry implements IPropertySheetEntry {
     }
 
     /**
+     * Returns the parent of this entry.
+     * 
+     * @return the parent entry, or <code>null</code> if it has no parent
+     * @since 3.1
+     */
+    protected PropertySheetEntry getParent() {
+        return parent;
+    }
+    
+    /**
      * Returns an property source for the given object.
      *
      * @param object an object for which to obtain a property source or
      *  <code>null</code> if a property source is not available
      * @return an property source for the given object
+     * @since 3.1 (was previously private)
      */
-    private IPropertySource getPropertySource(Object object) {
+    protected IPropertySource getPropertySource(Object object) {
         if (sources.containsKey(object))
             return (IPropertySource) sources.get(object);
 
@@ -451,9 +494,11 @@ public class PropertySheetEntry implements IPropertySheetEntry {
 
     /**
      * Returns the value objects of this entry.
-     * @return Object[]
+     *
+     * @return the value objects of this entry
+     * @since 3.1 (was previously private)
      */
-    private Object[] getValues() {
+    public Object[] getValues() {
         return values;
     }
 
@@ -492,7 +537,7 @@ public class PropertySheetEntry implements IPropertySheetEntry {
         List entriesToDispose = new ArrayList(Arrays.asList(childEntries));
 
         // rebuild child entries using old when possible
-        childEntries = new PropertySheetEntry[descriptors.size()];
+        childEntries = createChildEntriesArray(descriptors.size());
         boolean entriesChanged = descriptors.size() != entryCache.size();
         for (int i = 0; i < descriptors.size(); i++) {
             IPropertyDescriptor d = (IPropertyDescriptor) descriptors.get(i);
@@ -505,7 +550,7 @@ public class PropertySheetEntry implements IPropertySheetEntry {
                 entriesToDispose.remove(entry);
             } else {
                 // create new entry
-                entry = new PropertySheetEntry();
+                entry = createChildEntry();
                 entry.setDescriptor(d);
                 entry.setParent(this);
                 entry.setPropertySourceProvider(propertySourceProvider);
@@ -525,9 +570,11 @@ public class PropertySheetEntry implements IPropertySheetEntry {
     }
 
     /**
-     * Refresh the entry tree from the root down
+     * Refresh the entry tree from the root down.
+     *
+     * @since 3.1 (was previously private)
      */
-    private void refreshFromRoot() {
+    protected void refreshFromRoot() {
         if (parent == null)
             refreshChildEntries();
         else
