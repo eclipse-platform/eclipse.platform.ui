@@ -473,7 +473,13 @@ private Perspective createPerspective(PerspectiveDescriptor desc) {
 		return null;
 	}
 }
-
+/**
+ * Open the tracker to allow the user to move
+ * the specified part using keyboard.
+ */
+public void openTracker(ViewPane pane) {
+	activePersp.openTracker(pane);
+}
 /**
  * Cycles the editors forward or backward.
  * 

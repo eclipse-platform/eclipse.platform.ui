@@ -274,7 +274,7 @@ protected void showPaneMenu(Control parent,Point point,boolean isFastView) {
 
 	// add restore item
 	item = new MenuItem(aMenu, SWT.NONE);
-	item.setText(WorkbenchMessages.getString("ViewPane.restore")); //$NON-NLS-1$
+	item.setText(WorkbenchMessages.getString("PartPane.restore")); //$NON-NLS-1$
 	item.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			if (isZoomed)
@@ -284,12 +284,19 @@ protected void showPaneMenu(Control parent,Point point,boolean isFastView) {
 		}
 	});
 	item.setEnabled(isZoomed || isFastView);
+	
+	//Add move menu
+	item = new MenuItem(aMenu, SWT.CASCADE);
+	item.setText(WorkbenchMessages.getString("PartPane.move")); //$NON-NLS-1$
+	Menu moveMenu = new Menu(aMenu);
+	item.setMenu(moveMenu);
+	addMoveItems(moveMenu);
 
 	addFastViewMenuItem(aMenu,isFastView);
 
 	// add maximize item
 	item = new MenuItem(aMenu, SWT.NONE);
-	item.setText(WorkbenchMessages.getString("ViewPane.maximize")); //$NON-NLS-1$
+	item.setText(WorkbenchMessages.getString("PartPane.maximize")); //$NON-NLS-1$
 	item.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			doZoom();
@@ -300,8 +307,8 @@ protected void showPaneMenu(Control parent,Point point,boolean isFastView) {
 	new MenuItem(aMenu, SWT.SEPARATOR);
 	
 	// add close item
-	item = new MenuItem(aMenu, SWT.CASCADE);
-	item.setText(WorkbenchMessages.getString("ViewPane.close")); //$NON-NLS-1$
+	item = new MenuItem(aMenu, SWT.NONE);
+	item.setText(WorkbenchMessages.getString("PartPane.close")); //$NON-NLS-1$
 	item.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			doHide();
@@ -313,8 +320,16 @@ protected void showPaneMenu(Control parent,Point point,boolean isFastView) {
 	aMenu.setLocation(point.x, point.y);
 	aMenu.setVisible(true);
 }
-
+/**
+ * Add the move items to the Move menu.
+ */
+protected void addMoveItems(Menu parent) {}
+/**
+ * Add the Fast View menu item to the part title menu.
+ */
 protected void addFastViewMenuItem(Menu parent,boolean isFastView) {}
-
+/**
+ * Pin this part.
+ */
 protected void doPin() {}
 }

@@ -338,6 +338,14 @@ public void enableDrag(ViewPane pane, IPartDropListener listener) {
 	}
 }
 /**
+ * Open the tracker to allow the user to move
+ * the specified part using keyboard.
+ */
+public void openTracker(LayoutPart part) {
+	CTabPartDragDrop dnd = (CTabPartDragDrop)mapPartToDragMonitor.get(part);
+	dnd.openTracker();
+}
+/**
  * Gets the presentation bounds.
  */
 public Rectangle getBounds() {

@@ -384,6 +384,15 @@ public boolean isDragAllowed(Point p) {
 	return false;
 }
 /**
+ * Open the tracker to allow the user to move
+ * the specified part using keyboard.
+ */
+public void openTracker(LayoutPart part) {
+	CTabPartDragDrop dnd = (CTabPartDragDrop)mapPartToDragMonitor.get(part);
+	dnd.openTracker();
+}
+
+/**
  * Returns true if this part is visible.  A part is visible if it has a control.
  */
 public boolean isVisible() {

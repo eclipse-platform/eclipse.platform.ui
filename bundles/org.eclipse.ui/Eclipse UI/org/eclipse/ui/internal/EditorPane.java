@@ -127,6 +127,33 @@ public void showFocus(boolean inFocus) {
 		this.workbook.tabFocusHide();
 }
 /**
+ * Add the Editor and Tab Group items to the Move menu.
+ */
+protected void addMoveItems(Menu moveMenu) {
+	MenuItem item = new MenuItem(moveMenu, SWT.NONE);
+	item.setText(WorkbenchMessages.getString("EditorPane.moveEditor")); //$NON-NLS-1$
+	item.addSelectionListener(new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			ILayoutContainer container = getContainer();
+			if (container instanceof EditorWorkbook)
+				((EditorWorkbook)container).openTracker(EditorPane.this);
+		}
+	});
+	item.setEnabled(!isZoomed());
+	item = new MenuItem(moveMenu, SWT.NONE);
+	item.setText(WorkbenchMessages.getString("EditorPane.moveFolder")); //$NON-NLS-1$
+	item.addSelectionListener(new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			ILayoutContainer container = getContainer();
+			if (container instanceof EditorWorkbook)
+				((EditorWorkbook)container).openTracker((EditorWorkbook)container);
+		}
+	});
+	item.setEnabled(!isZoomed() && (getContainer() instanceof EditorWorkbook));
+}
+
+
+/**
  * Update the title attributes for the pane.
  */
 public void updateTitles() {

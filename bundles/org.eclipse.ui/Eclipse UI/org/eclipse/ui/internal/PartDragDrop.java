@@ -287,6 +287,14 @@ public void mouseMove(MouseEvent e) {
 	if (!sourcePart.isDragAllowed(new Point(e.x,e.y)))
 		return;
 		
+	openTracker();
+}
+/**
+ * Open a tracker (a XOR rect on the screen) change
+ * the cursor indicanting where the part will be dropped 
+ * and notify the drag listeners.
+ */
+public void openTracker() {
 	// Create a tracker.  This is just an XOR rect on the screen.
 	// As it moves we notify the drag listeners.
 	final Display display= dragControl.getDisplay();	 						 	

@@ -196,6 +196,14 @@ private DetachedWindow[] collectDetachedWindows(Window[] windows) {
 	return result;
 }
 /**
+ * Open the tracker to allow the user to move
+ * the specified part using keyboard.
+ */
+public void openTracker(ViewPane pane) {
+	PartDragDrop dnd = (PartDragDrop)dragParts.get(pane);
+	dnd.openTracker();
+}
+/**
  * Answer a list of the view panes.
  */
 private void collectDragParts(List result, LayoutPart [] parts) {

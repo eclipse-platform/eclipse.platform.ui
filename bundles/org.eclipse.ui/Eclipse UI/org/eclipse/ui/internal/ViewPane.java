@@ -419,11 +419,15 @@ public void showPaneMenu() {
 	Rectangle bounds = titleLabel.getBounds();
 	showPaneMenu(titleLabel,new Point(0,bounds.height),isFastView());
 }
-
+/**
+ * Return true if this view is a fast view.
+ */
 private boolean isFastView() {
 	return ((WorkbenchPage)getPart().getSite().getPage()).isFastView(getViewPart());
 }
-
+/**
+ * Add the Fast View menu item to the view title menu.
+ */
 protected void addFastViewMenuItem(Menu parent,boolean isFastView) {
 	// add fast view item
 	MenuItem item = new MenuItem(parent, SWT.NONE);
@@ -434,6 +438,29 @@ protected void addFastViewMenuItem(Menu parent,boolean isFastView) {
 		}
 	});
 	item.setEnabled(!isFastView);
+}
+/**
+ * Add the View and Tab Group items to the Move menu.
+ */
+protected void addMoveItems(Menu moveMenu) {
+	MenuItem item = new MenuItem(moveMenu, SWT.NONE);
+	item.setText(WorkbenchMessages.getString("ViewPane.moveView")); //$NON-NLS-1$
+	item.addSelectionListener(new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			page.openTracker(ViewPane.this);
+		}
+	});
+	item.setEnabled(!isZoomed());
+	item = new MenuItem(moveMenu, SWT.NONE);
+	item.setText(WorkbenchMessages.getString("ViewPane.moveFolder")); //$NON-NLS-1$
+	item.addSelectionListener(new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			ILayoutContainer container = getContainer();
+			if (container instanceof PartTabFolder)
+				((PartTabFolder)container).openTracker((PartTabFolder)container);
+		}
+	});
+	item.setEnabled(!isZoomed() && (getContainer() instanceof PartTabFolder));
 }
 
 /**
