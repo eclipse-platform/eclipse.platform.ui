@@ -767,6 +767,9 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		return WorkbenchPlugin.getDefault().getWorkingSetManager();
 	}
 		
+	public void updateActiveGestureBindingService() {		
+	}
+
 	public void updateActiveKeyBindingService() {
 		IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
 		
