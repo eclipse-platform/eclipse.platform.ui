@@ -499,7 +499,7 @@ abstract public class AbstractReconciler implements IReconciler {
 	 * Starts the reconciler to reconcile the queued dirty-regions.
 	 * Clients may extend this method.
 	 */
-	protected synchronized  void startReconciling() {
+	protected synchronized void startReconciling() {
 		if (fThread == null)
 			return;
 			
