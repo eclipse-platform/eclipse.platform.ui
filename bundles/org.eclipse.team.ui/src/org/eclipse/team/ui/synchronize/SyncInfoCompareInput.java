@@ -106,6 +106,16 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 		return control;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		if (IFile.class.equals(adapter) && resource.getType() == IResource.FILE) {
+			return (IFile)resource;
+		}
+		return super.getAdapter(adapter);
+	}
+	
 	private static CompareConfiguration getDefaultCompareConfiguration() {
 		CompareConfiguration cc = new CompareConfiguration();
 		//cc.setProperty(CompareConfiguration.USE_OUTLINE_VIEW, true);
