@@ -6,6 +6,7 @@
    <title>Help System Extension Points</title>
 </head>
 <body text="#000000" bgcolor="#FFFFFF" link="#0000FF" vlink="#800080" alink="#FF0000">
+
 <center>
 <h1>
 Help System</h1></center>
@@ -36,42 +37,94 @@ The following extension points can be used to extend the help system:
 <a href="org_eclipse_help_toc.html">org.eclipse.help.toc</a></li>
 </ul>
 
-<p>
 <hr WIDTH="100%">
 <h1>
 Preferences</h1>
 The following preferences settings can be used with the help system:
 <ul>
 <li>
-<b>log_level</b>: denotes what kind of information gets written to 
-the help log. Use one of the following tree values.
-	<ul><li>0: log errors only </li>
-		<li>1: log errors and warnings </li>
-		<li>2: log errors, warnings and information (debug) messages</li>
-	</ul>
-	
-</li>
-<li><b>banner</b>: the help view allows application branding. If you want to show a company logo or any other things
-on top of the help view, specify your html page as <em>/pluginId/path/to/banner.html</em>. Currently, the default
-banner is /org.eclipse.help.webapp/banner.html. If you set this name to empty string then no banner is shown at all.
-</li>
-<li><b>banner_height</b>: the height of the banner area. Currently the default is 45. </li>
-<li><b>help_home</b>: The page to show inn the content area when opening help. Specify your html page as <em>/pluginId/path/to/home.html</em>. 
-    Currently, the default home is /org.eclipse.help/doc/help_home.html. </li>
-<li><b>linksView</b>: set to true or false to control the visibility of the related links view. Note: this option has no effect in the infocenter.</li>
-<li><b>bookmarksView</b>: set to true or false to control the visibility of the bookmarks view. Note: this option has no effect in the infocenter.</li>
-<li><b>baseTOCS</b>: ordered list of help TOC's (books) as they would appear on the bookshelf. All the other
- TOCS will be follow these books. Non-present TOC's on this list will be ignored. Use the location of each 
- TOC as <em>/pluginId/path/to/toc.xml</em>.</li>
-<li><b>imagesDirectory</b>: directory containing images used in the help view. Images must have the same
-       name as those in the org.eclipse.help.webapp plugin. Use the /pluginID/directory format. Default is "images".</li>
-<li><b>toolbarFont</b>: CSS font for toolbars. Default is "icon"</li>
-<li><b>viewFont</b>: CSS font for navigation views. Default is "icon"</li>
+<b>log_level</b>: denotes what kind of information gets written to the
+help log. Use one of the following tree values.</li>
+
+<ul>
+<li>
+0: log errors only</li>
+
+<li>
+1: log errors and warnings</li>
+
+<li>
+2: log errors, warnings and information (debug) messages</li>
 </ul>
 
-<p><br>
-<a href="hglegal2002.htm"><img src="ngibmcpy2002.gif" alt=
-"Copyright IBM Corp. and others 2000, 2002. All Rights Reserved." border="0"></a>
-</p>
+<li>
+<b>banner</b>: the help view allows application branding. If you want to
+show a company logo or any other things on top of the help view, specify
+your html page as <i>/pluginId/path/to/banner.html</i>. Currently, the
+default banner is /org.eclipse.help.webapp/banner.html. If you set this
+name to empty string then no banner is shown at all.</li>
+
+<li>
+<b>banner_height</b>: the height of the banner area. Currently the default
+is 45.</li>
+
+<li>
+<b>help_home</b>: The page to show inn the content area when opening help.
+Specify your html page as <i>/pluginId/path/to/home.html</i>. Currently,
+the default home is /org.eclipse.help/doc/help_home.html.</li>
+
+<li>
+<b>linksView</b>: set to true or false to control the visibility of the
+related links view. Note: this option has no effect in the infocenter.</li>
+
+<li>
+<b>bookmarksView</b>: set to true or false to control the visibility of
+the bookmarks view. Note: this option has no effect in the infocenter.</li>
+
+<li>
+<b>baseTOCS</b>: ordered list of help TOC's (books) as they would appear
+on the bookshelf. All the other TOCS will be follow these books. Non-present
+TOC's on this list will be ignored. Use the location of each TOC as <i>/pluginId/path/to/toc.xml</i>.</li>
+
+<li>
+<b>imagesDirectory</b>: directory containing images used in the help view.
+Images must have the same name as those in the org.eclipse.help.webapp
+plugin. Use the /pluginID/directory format. Default is "images".</li>
+
+<li>
+<b>advanced.toolbarBackground</b>: CSS background for toolbars.&nbsp; Value
+is used in browsers that display advanced help UI.&nbsp; Default is "ButtonFace"</li>
+
+<li>
+<b>advanced.viewBackground</b>: CSS background for navigation views.&nbsp;
+Value is used in browsers that display advanced help UI.&nbsp; Default
+is "Window"</li>
+
+<li>
+<b>advanced.toolbarFont</b>: CSS font for toolbars.&nbsp; Value is used
+in browsers that display advanced help UI.&nbsp; Default is "icon"</li>
+
+<li>
+<b>advanced.viewFont</b>: CSS font for navigation views.&nbsp; Value is
+used in browsers that display advanced help UI.&nbsp; Default is "icon"</li>
+
+<li>
+<b>basic.toolbarBackground</b>: background color for toolbars.&nbsp; Value
+is used in browsers displaying basic help UI.&nbsp; Default is "#D4D0C8"</li>
+
+<li>
+<b>basic.viewBackground</b>: background color for navigation views.&nbsp;
+Value is used in browsers displaying basic help UI.&nbsp; Default is "#FFFFFF"</li>
+
+<li>
+<b>basic.toolbarFont</b>: foreground text color for toolbars.&nbsp; Value
+is used in browsers displaying basic help UI.&nbsp; Default is "#000000"</li>
+
+<li>
+<b>basic.viewFont</b>: foreground text color for navigation views.&nbsp;
+Value is used in browsers displaying basic help UI.&nbsp; Default is "#000000"</li>
+</ul>
+
+<p><br><a href="hglegal2002.htm"><img SRC="ngibmcpy2002.gif" ALT="Copyright IBM Corp. and others 2000, 2002. All Rights Reserved." BORDER=0 ></a>
 </body>
 </html>
