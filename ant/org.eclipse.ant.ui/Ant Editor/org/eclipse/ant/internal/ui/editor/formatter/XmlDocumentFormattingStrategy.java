@@ -48,7 +48,7 @@ public class XmlDocumentFormattingStrategy extends ContextBasedFormattingStrateg
         super.format();
      	final IDocument document= (IDocument)fDocuments.removeFirst();
 		if (document != null) {
-	        // TODO allow formatting of regions, not just the entire document
+	        // TODO allow formatting of regions, not just the entire document; bug 75611
 	        String documentText = document.get();
 	        XmlDocumentFormatter formatter = new XmlDocumentFormatter();
 	        if (indent != -1) {
