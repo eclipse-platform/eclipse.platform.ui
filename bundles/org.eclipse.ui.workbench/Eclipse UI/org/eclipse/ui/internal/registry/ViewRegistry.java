@@ -13,14 +13,11 @@ package org.eclipse.ui.internal.registry;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.eclipse.core.commands.IParameterValues;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -38,8 +35,7 @@ import org.eclipse.ui.views.IViewRegistry;
 /**
  * The central manager for view descriptors.
  */
-public class ViewRegistry implements IViewRegistry, IExtensionRemovalHandler,
-		IExtensionAdditionHandler, IParameterValues {
+public class ViewRegistry implements IViewRegistry, IExtensionRemovalHandler, IExtensionAdditionHandler {
 	
 	private static String EXTENSIONPOINT_UNIQUE_ID = WorkbenchPlugin.PI_WORKBENCH + "." + IWorkbenchConstants.PL_VIEWS; //$NON-NLS-1$
 	
@@ -310,17 +306,5 @@ public class ViewRegistry implements IViewRegistry, IExtensionRemovalHandler,
     			reader.readSticky(element);
     		}			
         }
-	}
-
-	public final Map getParameterValues() {
-		final Map values = new HashMap();
-		
-		final IViewDescriptor[] views = getViews();
-		for (int i = 0; i < views.length; i++) {
-			final IViewDescriptor view = views[i];
-			values.put(view.getLabel(), view.getId());
-		}
-		
-		return values;
 	}
 }

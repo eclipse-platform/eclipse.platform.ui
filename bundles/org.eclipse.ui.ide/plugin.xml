@@ -463,7 +463,7 @@
       		<parameter
       			id="org.eclipse.ui.views.showView.viewId"
       			name="%command.showView.viewIdParameter"
-      			values="org.eclipse.ui.internal.registry.ViewRegistry" />
+      			values="org.eclipse.ui.internal.ide.registry.ViewParameterValues" />
       </command>
       <command
       		name="%Perspective.resourcePerspective"
