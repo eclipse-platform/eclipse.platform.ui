@@ -242,15 +242,17 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 			// switching dialog before opening the view.
 			Thread thread= new Thread(new Runnable() {
 				public void run() {
-					while (fPrompting) {
-						try {
-							Thread.sleep(100);
-						} catch (InterruptedException e) {
+					if (fPrompting) {
+						synchronized (PerspectiveManager.this) {
+							try {
+								PerspectiveManager.this.wait();
+							} catch (InterruptedException e) {
+							}
 						}
 					}
 					async(new Runnable() {
 						public void run() {
-							doShowDebugView();
+							doShowDebugView0();
 						}
 					});
 				}
@@ -258,6 +260,10 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 			thread.start();
 			return;
 		}
+		doShowDebugView0();
+	}
+	
+	private void doShowDebugView0() {
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (window != null) {
 			IWorkbenchPage page = window.getActivePage();
@@ -270,7 +276,6 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 			}
 		}
 	}
-	
 	/**
 	 * Carries out perspective switching as appropriate for
 	 * the given debug event. 
@@ -279,16 +284,16 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 	 */
 	private void doPerspectiveSwitch(DebugEvent event) {
 		// apply event filters
-		final ILaunch[] launch = new ILaunch[1];
+		ILaunch launch= null;
 		Object source = event.getSource();
 		if (source instanceof IDebugElement) {
-			launch[0] = ((IDebugElement)source).getLaunch();
+			launch = ((IDebugElement)source).getLaunch();
 		} else if (source instanceof IProcess) {
-			launch[0] = ((IProcess)source).getLaunch();
+			launch = ((IProcess)source).getLaunch();
 		}
 		String perspectiveId = null;
 		try {
-			perspectiveId = getPerspectiveId(launch[0]);
+			perspectiveId = getPerspectiveId(launch);
 		} catch (CoreException e) {
 			DebugUIPlugin.log(e);
 		}
@@ -313,7 +318,7 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 							shell.forceActive();
 						}
 					}
-					if (shouldSwitchPerspectiveForSuspend(targetId, launch[0])) {
+					if (shouldSwitchPerspectiveForSuspend(targetId)) {
 						switchToPerspective(targetId);
 					}
 				}
@@ -327,7 +332,7 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 	
 	/**
 	 * Returns whether or not the user wishes to switch to the specified
-	 * perspective when the given launch suspends.
+	 * perspective when a suspend occurs.
 	 * 
 	 * @param perspectiveName the name of the perspective that will be presented
 	 *  to the user for confirmation if they've asked to be prompted about
@@ -335,7 +340,7 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 	 * @return whether or not the user wishes to switch to the specified perspective
 	 *  automatically when the given launch suspends
 	 */
-	protected boolean shouldSwitchPerspectiveForSuspend(String perspectiveId, ILaunch launch) {
+	protected boolean shouldSwitchPerspectiveForSuspend(String perspectiveId) {
 		return shouldSwitchPerspective(perspectiveId, LaunchConfigurationsMessages.getString("PerspectiveManager.13"), IDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND); //$NON-NLS-1$
 	}
 	
@@ -383,7 +388,10 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 		}
 		fPrompting= true;
 		boolean answer= AlwaysNeverDialog.openQuestion(shell, LaunchConfigurationsMessages.getString("PerspectiveManager.12"), MessageFormat.format(message, new String[] { perspectiveName }), preferenceKey, DebugUIPlugin.getDefault().getPreferenceStore()); //$NON-NLS-1$
-		fPrompting= false;
+		synchronized (this) {
+			fPrompting= false;
+			notifyAll();
+		}
 		return answer;
 	}
 	
