@@ -163,6 +163,7 @@ public class DiscardSiteAction extends TargetAction {
 				// and from the target manager.
 				for (int i = 0; i < sites.length; i++) {
 					TargetManager.removeSite(sites[i]);
+					sites[i].dispose();
 				}					
 			}
 		} catch (TeamException e) {

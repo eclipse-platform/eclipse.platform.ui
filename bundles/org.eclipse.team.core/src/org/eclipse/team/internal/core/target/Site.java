@@ -114,4 +114,12 @@ public abstract class Site {
 	public String toString() {
 		return getDisplayName();
 	}
+	
+	/**
+	 * Should be called whenever a site is being deleted from the workspace.
+	 * This method removes the encrypted login info stored for the site.
+	 * @throws TeamException
+	 */
+	public abstract void dispose() throws TeamException;
+
 }
