@@ -20,7 +20,7 @@ import java.util.Set;
 public interface ITriggerPointAdvisor {
 
 	/**
-	 * Answer whether the activities bound to the contribtion should be enabled
+	 * Answer whether the activities bound to the contribution should be enabled
 	 * when triggered by the provided trigger point.
 	 * 
 	 * @param triggerPoint
