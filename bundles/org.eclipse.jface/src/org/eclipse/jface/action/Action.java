@@ -1051,4 +1051,18 @@ public abstract class Action implements IAction {
 	public void setAccelerator(int keycode) {
 		this.accelerator = keycode;
 	}
+	
+	/**
+	 * Reports the outcome of the running of this action via the
+	 * {@link IAction#RESULT} property.
+	 * 
+	 * @param success <code>true</code> if the action succeeded and 
+	 * <code>false</code> if the action failed or was not completed
+	 * @see IAction#RESULT
+	 * @since 3.0
+	 */
+	public final void notifyResult(boolean success) {
+		firePropertyChange(RESULT, null, Boolean.valueOf(success));
+	}
+
 }
