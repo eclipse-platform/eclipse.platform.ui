@@ -174,11 +174,11 @@ public class ProjectPreferences extends EclipsePreferences {
 	}
 
 	protected boolean isAlreadyLoaded(IEclipsePreferences node) {
-		return loadedNodes.contains(node.name());
+		return loadedNodes.contains(node.absolutePath());
 	}
 
 	protected void loaded() {
-		loadedNodes.add(name());
+		loadedNodes.add(absolutePath());
 	}
 
 	/*
