@@ -144,7 +144,6 @@ public class CVSPreferencesPage
 
 		createLabel(composite, Policy.bind("CVSPreferencePage.compressionLevel")); //$NON-NLS-1$
 		compressionLevelCombo = createCombo(composite);
-		compressionLevelCombo.setEnabled(false);
 		
 		historyTracksSelectionButton = createCheckBox(composite, Policy.bind("CVSPreferencePage.historyTracksSelection")); //$NON-NLS-1$
 		
