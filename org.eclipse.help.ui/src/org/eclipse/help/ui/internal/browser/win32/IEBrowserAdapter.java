@@ -52,6 +52,7 @@ public class IEBrowserAdapter implements IBrowser, Runnable {
 		}
 		String libraryPath =
 			getPath(PLUGIN_ID_SWT) + System.getProperty("java.library.path");
+		libraryPath=TString.change(libraryPath, "\"", "");
 		String classPath = getClassPath(PLUGIN_ID_HELPUI);
 		String stateLocation =
 			WorkbenchHelpPlugin.getDefault().getStateLocation().toString();
