@@ -22,6 +22,10 @@ import org.eclipse.ui.internal.util.Util;
  * represent unicode characters.
  * </p>
  * <p>
+ * <code>CharacterKey</code> objects are immutable. Clients are not permitted to 
+ * extend this class.
+ * </p>
+ * <p>
  * <em>EXPERIMENTAL</em>
  * </p>
  * 

@@ -22,6 +22,10 @@ import org.eclipse.ui.internal.util.Util;
  * keyboard recognized as neither modifier keys nor character keys.
  * </p>
  * <p>
+ * <code>SpecialKey</code> objects are immutable. Clients are not permitted to 
+ * extend this class.
+ * </p> 
+ * <p>
  * <em>EXPERIMENTAL</em>
  * </p>
  * 

@@ -23,6 +23,10 @@ import org.eclipse.ui.internal.util.Util;
  * combination with themselves and/or a 'natural key'.
  * </p>
  * <p>
+ * <code>ModifierKey</code> objects are immutable. Clients are not permitted to 
+ * extend this class.
+ * </p>
+ * <p>
  * <em>EXPERIMENTAL</em>
  * </p>
  * 

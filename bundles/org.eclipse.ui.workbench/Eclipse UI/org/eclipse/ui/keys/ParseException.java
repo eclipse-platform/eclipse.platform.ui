@@ -17,6 +17,10 @@ package org.eclipse.ui.keys;
  * and KeySequence objects from strings.
  * </p>
  * <p>
+ * <code>ParseException</code> objects are immutable. Clients are not permitted 
+ * to extend this class.
+ * </p> 
+ * <p>
  * <em>EXPERIMENTAL</em>
  * </p>
  * 

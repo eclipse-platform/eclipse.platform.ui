@@ -17,6 +17,10 @@ package org.eclipse.ui.keys;
  * known by convention as 'modifier keys'.
  * </p>
  * <p>
+ * <code>NaturalKey</code> objects are immutable. Clients are not permitted to 
+ * extend this class.
+ * </p> 
+ * <p>
  * <em>EXPERIMENTAL</em>
  * </p>
  * 
