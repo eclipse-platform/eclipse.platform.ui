@@ -209,15 +209,15 @@ public final class SystemSummaryDialog extends Dialog {
 			PluginDescriptor descriptor= (PluginDescriptor)i.next();
 			String[] args= new String[] {descriptor.getUniqueIdentifier(), descriptor.getVersionIdentifier().toString(), descriptor.getLabel()};
 			writer.println(IDEWorkbenchMessages.format("SystemSummary.descriptorIdVersion", args)); //$NON-NLS-1$
-			PluginFragmentModel[] fragments= descriptor.getFragments();
-			if (fragments != null) {
-				for(int j= 0, length= fragments.length; j < length; j++) {
-					PluginFragmentModel fragment= fragments[j];
-					writer.print('\t');
-					args= new String[] {fragment.getId(), fragment.getVersion(), fragment.getName()};
-					writer.println(IDEWorkbenchMessages.format("SystemSummary.fragmentIdVersion", args)); //$NON-NLS-1$
-				}
-			}
+//			PluginFragmentModel[] fragments= descriptor.getFragments();
+//			if (fragments != null) {
+//				for(int j= 0, length= fragments.length; j < length; j++) {
+//					PluginFragmentModel fragment= fragments[j];
+//					writer.print('\t');
+//					args= new String[] {fragment.getId(), fragment.getVersion(), fragment.getName()};
+//					writer.println(IDEWorkbenchMessages.format("SystemSummary.fragmentIdVersion", args)); //$NON-NLS-1$
+//				}
+//			}
 		}
 	}	
 	
