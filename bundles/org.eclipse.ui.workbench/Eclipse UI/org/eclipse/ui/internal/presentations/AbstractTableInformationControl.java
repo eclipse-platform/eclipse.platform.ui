@@ -479,6 +479,10 @@ public abstract class AbstractTableInformationControl {
 
 			if (element != null) {
 				String label = labelProvider.getText(element);
+				// remove the dirty prefix from the editor's label
+				String prefix = DefaultEditorPresentation.DIRTY_PREFIX;
+				if (label.startsWith(prefix))
+					label= label.substring(prefix.length());
 				if (fStringMatcher.match(label))
 					return element;
 			}
