@@ -40,7 +40,7 @@
 	}
 	
 	if (help_home != null)
-		help_home = "content/help:" + help_home;
+		help_home = escape("content/help:") + help_home;
 	else
 		help_home = "home.jsp";
 		
@@ -88,7 +88,11 @@
 		titleArray["toc"] = "<%=ContentStr%>";
 		titleArray["search"] = "<%=SearchStr%>";
 		titleArray["links"] = "<%=LinksStr%>";
-		</script>
+	
+		// Global for the help home page
+		var help_home = "<%=help_home%>";
+	
+	</script>
 		
 	<script language="JavaScript" src="help.js"></script>
 	
