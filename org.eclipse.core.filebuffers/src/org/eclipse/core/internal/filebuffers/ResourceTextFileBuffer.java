@@ -169,9 +169,12 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	 * @since 3.1
 	 */
 	public IContentType getContentType() throws CoreException {
+		InputStream stream= null;
 		try {
 			if (isDirty()) {
-				IContentDescription desc= Platform.getContentTypeManager().getDescriptionFor(new DocumentInputStream(getDocument()), fFile.getName(), NO_PROPERTIES);
+				stream= new DocumentInputStream(getDocument());
+				IContentDescription desc= Platform.getContentTypeManager().getDescriptionFor(stream, fFile.getName(), NO_PROPERTIES);
+				stream.close();
 				if (desc != null && desc.getContentType() != null)
 					return desc.getContentType();
 			}
@@ -181,6 +184,12 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			return null;
 		} catch (IOException x) {
 			throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.getFormattedString("FileBuffer.error.queryContentDescription", fFile.getFullPath().toOSString()), x)); //$NON-NLS-1$
+		} finally {
+			try {
+				if (stream != null)
+					stream.close();
+			} catch (IOException x) {
+			}
 		}
 	}
 	
@@ -346,9 +355,10 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			return fExplicitEncoding;
 		
 		// Probe content
+		InputStream stream= new DocumentInputStream(fDocument);
 		try {
 			QualifiedName[] options= new QualifiedName[] { IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK };
-			IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(new DocumentInputStream(fDocument), fFile.getName(), options);
+			IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(stream, fFile.getName(), options);
 			if (description != null) {
 				String encoding= description.getCharset();
 				if (encoding != null)
@@ -356,6 +366,11 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			} 
 		} catch (IOException ex) {
 			// try next strategy
+		} finally {
+			try {
+				stream.close();
+			} catch (IOException x) {
+			}
 		}
 		
 		// Use file's encoding if the file has a BOM

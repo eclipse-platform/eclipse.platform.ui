@@ -15,51 +15,160 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentListener;
+import org.eclipse.jface.text.ISynchronizable;
 
 /**
  * An <code>InputStream</code> that reads from an <code>IDocument</code>.
- * If no references to this stream are retained it does not have to be closed in
- * order to release backing resources.
+ * The input stream ensures that its content is the same as the document content
+ * when the stream was created.
+ * <p>
+ * Note that {@link InputStream#close()} must be called to release any acquired
+ * resources.
+ * </p>
  * 
  * @since 3.1
  */
 class DocumentInputStream extends InputStream {
 	
-	/** the document */
-	private IDocument fDocument;
-	
-	/** the document length */
-	private int fLength;
-	
-	/** the current offset */
-	private int fOffset= 0;
+	/**
+	 * Document based character sequence.
+	 */
+	private static class DocumentCharSequence implements CharSequence {
+
+		/** Document */
+		private IDocument fDocument;
+		
+		/**
+		 * Initialize with the sequence of characters in the given
+		 * document.
+		 * 
+		 * @param document the document
+		 */
+		public DocumentCharSequence(IDocument document) {
+			fDocument= document;
+		}
+		
+		/*
+		 * @see java.lang.CharSequence#length()
+		 */
+		public int length() {
+			return fDocument.getLength();
+		}
+
+		/*
+		 * @see java.lang.CharSequence#charAt(int)
+		 */
+		public char charAt(int index) {
+			try {
+				return fDocument.getChar(index);
+			} catch (BadLocationException x) {
+				throw new IndexOutOfBoundsException(x.getLocalizedMessage());
+			}
+		}
+
+		/*
+		 * @see java.lang.CharSequence#subSequence(int, int)
+		 */
+		public CharSequence subSequence(int start, int end) {
+			try {
+				return fDocument.get(start, end - start);
+			} catch (BadLocationException x) {
+				throw new IndexOutOfBoundsException(x.getLocalizedMessage());
+			}
+		}
+	}
 	
 	/**
-	 * Initializes the stream to read from the given document.
+	 * Internal document listener.
+	 */
+	private class InternalDocumentListener implements IDocumentListener {
+
+		/*
+		 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
+		 */
+		public void documentAboutToBeChanged(DocumentEvent event) {
+			handleDocumentAboutToBeChanged();
+		}
+
+		/*
+		 * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
+		 */
+		public void documentChanged(DocumentEvent event) {
+		}
+	}
+
+	/** Character sequence */
+	private CharSequence fCharSequence;
+	
+	/** Document length */
+	private int fLength;
+	
+	/** Current offset */
+	private int fOffset= 0;
+	
+	/** Document */
+	private IDocument fDocument;
+	
+	/** Document listener */
+	private IDocumentListener fDocumentListener= new InternalDocumentListener();
+	
+	/**
+	 * Initialize the stream to read from the given document.
 	 * 
 	 * @param document the document
 	 */
 	public DocumentInputStream(IDocument document) {
-		fDocument= document;
-		fLength= fDocument.getLength();
+		Object lock;
+		if (document instanceof ISynchronizable)
+			lock= ((ISynchronizable) document).getLockObject();
+		else
+			lock= document;
+		
+		synchronized (lock) {
+			fDocument= document;
+			fDocument.addDocumentListener(fDocumentListener);
+			fCharSequence= new DocumentCharSequence(fDocument);
+			fLength= fCharSequence.length();
+		}
 	}
-	
+
 	/*
 	 * @see java.io.InputStream#read()
 	 */
 	public int read() throws IOException {
 		try {
-			return fOffset < fLength ? fDocument.getChar(fOffset++) : -1;
-		} catch (BadLocationException x) {
-			throw new IOException(FileBuffersMessages.getString("DocumentInputStream.error.read")); //$NON-NLS-1$
+			return fOffset < fLength ? fCharSequence.charAt(fOffset++) : -1;
+		} catch (IndexOutOfBoundsException x) {
+			throw new IOException(FileBuffersMessages.getString("DocumentInputStream.error.read") + x.getLocalizedMessage()); //$NON-NLS-1$
 		}
 	}
 	
 	/*
 	 * @see java.io.InputStream#close()
 	 */
-	public void close() throws IOException {
+	public synchronized void close() throws IOException {
+		fCharSequence= null;
+		releaseDocument();
+	}
+
+	/**
+	 * Copies the document prior to modification and removes the document listener.
+	 */
+	private synchronized void handleDocumentAboutToBeChanged() {
+		fCharSequence= fDocument.get();
+		releaseDocument();
+	}
+
+	/**
+	 * Removes the document listener.
+	 */
+	private void releaseDocument() {
+		if (fDocument != null && fDocumentListener != null)
+			fDocument.removeDocumentListener(fDocumentListener);
 		fDocument= null;
+		fDocumentListener= null;
 	}
 }
