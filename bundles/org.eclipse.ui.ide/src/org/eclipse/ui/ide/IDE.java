@@ -201,7 +201,7 @@ public final class IDE {
 		}
 		
 		// get the marker resource file
-		if (marker.getResource() instanceof IFile) {
+		if (!(marker.getResource() instanceof IFile)) {
 			IDEWorkbenchPlugin.log("Open editor on marker failed; marker resource not an IFile"); //$NON-NLS-1$
 			return null;
 		}
