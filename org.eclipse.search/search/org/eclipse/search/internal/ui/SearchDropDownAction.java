@@ -26,11 +26,9 @@ class SearchDropDownAction extends Action implements IMenuCreator {
 
 	public static final int RESULTS_IN_DROP_DOWN= 10;
 
-	private SearchResultViewer fViewer;
 	private Menu fMenu;
 	
 	public SearchDropDownAction(SearchResultViewer viewer) {
-		fViewer= viewer;
 		setText(SearchMessages.getString("SearchResultView.previousSearches.text")); //$NON-NLS-1$
 		setToolTipText(SearchMessages.getString("SearchResultView.previousSearches.tooltip")); //$NON-NLS-1$
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_HISTORY);
@@ -40,8 +38,6 @@ class SearchDropDownAction extends Action implements IMenuCreator {
 	public void dispose() {
 		if (fMenu != null)
 			fMenu.dispose();
-		
-		fViewer= null;
 	}
 
 	public Menu getMenu(Menu parent) {
