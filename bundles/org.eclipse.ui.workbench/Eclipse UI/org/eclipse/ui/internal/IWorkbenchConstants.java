@@ -30,21 +30,13 @@ public interface IWorkbenchConstants {
 	public static final String PL_EDITOR ="editors"; //$NON-NLS-1$
 	public static final String PL_VIEWS ="views"; //$NON-NLS-1$
 	public static final String PL_POPUP_MENU ="popupMenus"; //$NON-NLS-1$
-	public static final String PL_IMPORT ="importWizards"; //$NON-NLS-1$
-	public static final String PL_EXPORT ="exportWizards"; //$NON-NLS-1$
-	public static final String PL_NEW ="newWizards"; //$NON-NLS-1$
 	public static final String PL_ELEMENT_FACTORY ="elementFactories"; //$NON-NLS-1$
 	public static final String PL_DROP_ACTIONS ="dropActions"; //$NON-NLS-1$
-	public static final String PL_MARKER_IMAGE_PROVIDER ="markerImageProviders"; //$NON-NLS-1$
-	public static final String PL_MARKER_HELP ="markerHelp"; //$NON-NLS-1$
-	public static final String PL_MARKER_RESOLUTION ="markerResolution"; //$NON-NLS-1$
 	public static final String PL_ACCELERATOR_CONFIGURATIONS ="acceleratorConfigurations"; //$NON-NLS-1$
 	public static final String PL_ACCELERATOR_SCOPES ="acceleratorScopes"; //$NON-NLS-1$
 	public static final String PL_ACCELERATOR_SETS ="acceleratorSets"; //$NON-NLS-1$
 	public static final String PL_ACTION_DEFINITIONS ="actionDefinitions"; //$NON-NLS-1$
-	public static final String PL_CAPABILITIES = "capabilities"; //$NON-NLS-1$
 	public static final String PL_WORKINGSETS = "workingSets"; //$NON-NLS-1$	
-	public static final String PL_PROJECT_NATURE_IMAGES ="projectNatureImages"; //$NON-NLS-1$
 	public static final String PL_STARTUP ="startup"; //$NON-NLS-1$
 		
 	// Key binding service defaults
