@@ -139,7 +139,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 		fExplicitEncoding= encoding;
 		fHasBOM= false;
 		try {
-			fFile.setCharset(encoding);
+			fFile.setCharset(encoding, null);
 			if (encoding == null)
 				fEncoding= fFile.getCharset();
 			setHasBOM();
@@ -240,7 +240,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 				// if we found an old encoding property, we try to migrate it to the new core.resources encoding support
 				try {
 					fExplicitEncoding= fEncoding;
-					fFile.setCharset(fEncoding);
+					fFile.setCharset(fEncoding, monitor);
 					// if successful delete old property
 					fFile.setPersistentProperty(ENCODING_KEY, null);
 				} catch (CoreException ex) {

@@ -882,7 +882,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 				if (encoding != null) {
 					// if we found an old encoding property, we try to migrate it to the new core.resources encoding support
 					try {
-						file.setCharset(encoding);
+						file.setCharset(encoding, getProgressMonitor());
 						// if successful delete old property
 						file.setPersistentProperty(ENCODING_KEY, null);
 					} catch (CoreException ex) {
@@ -914,7 +914,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			IFileEditorInput editorInput= (IFileEditorInput)element;
 			IFile file= editorInput.getFile();
 			if (file != null) {
-				file.setCharset(encoding);
+				file.setCharset(encoding, getProgressMonitor());
 				StorageInfo info= (StorageInfo)getElementInfo(element);
 				if (info != null) {
 					if (encoding == null)
