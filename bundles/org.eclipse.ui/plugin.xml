@@ -1179,11 +1179,11 @@
             scopeId="org.eclipse.ui.globalScope"
             configurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
          <accelerator
-               key="Ctrl+F4||Ctrl+X Ctrl+K"
+               key="Ctrl+X Ctrl+K"
                id="org.eclipse.ui.file.close">
          </accelerator>
          <accelerator
-               key="Ctrl+Shift+F4||Ctrl+X Ctrl+C"
+               key="Ctrl+X Ctrl+C"
                id="org.eclipse.ui.file.closeAll">
          </accelerator>
          <accelerator
@@ -1191,16 +1191,12 @@
                id="org.eclipse.ui.file.save">
          </accelerator>
          <accelerator
-               key="Ctrl+Shift+S||Ctrl+X S"
+               key="Ctrl+X S"
                id="org.eclipse.ui.file.saveAll">
          </accelerator>
          <accelerator
                key="Alt+F9 || Esc F9"
                id="org.eclipse.ui.file.print">
-         </accelerator>
-         <accelerator
-               key="Alt+ENTER"
-               id="org.eclipse.ui.file.properties">
          </accelerator>
          <accelerator
                key="F9||Ctrl+X U||Ctrl+Shift+-"
@@ -1251,26 +1247,6 @@
                id="org.eclipse.ui.edit.findReplace">
          </accelerator>
          <accelerator
-               key="Ctrl+Shift+R"
-               id="org.eclipse.ui.navigate.openResource">
-         </accelerator>
-         <accelerator
-               key="Ctrl+."
-               id="org.eclipse.ui.navigate.next">
-         </accelerator>
-         <accelerator
-               key="Ctrl+,"
-               id="org.eclipse.ui.navigate.previous">
-         </accelerator>
-         <accelerator
-               key="Alt+ARROW_LEFT"
-               id="org.eclipse.ui.navigate.backwardHistory">
-         </accelerator>
-         <accelerator
-               key="Alt+ARROW_RIGHT"
-               id="org.eclipse.ui.navigate.forwardHistory">
-         </accelerator>
-         <accelerator
                key="Ctrl+X Ctrl+B"
                id="org.eclipse.ui.window.switchToEditor">
          </accelerator>
@@ -1285,30 +1261,6 @@
          <accelerator
                key="F12"
                id="org.eclipse.ui.window.activateEditor">
-         </accelerator>
-         <accelerator
-               key="Ctrl+F6"
-               id="org.eclipse.ui.window.nextEditor">
-         </accelerator>
-         <accelerator
-               key="Ctrl+Shift+F6"
-               id="org.eclipse.ui.window.previousEditor">
-         </accelerator>
-         <accelerator
-               key="Ctrl+F7"
-               id="org.eclipse.ui.window.nextView">
-         </accelerator>
-         <accelerator
-               key="Ctrl+Shift+F7"
-               id="org.eclipse.ui.window.previousView">
-         </accelerator>
-         <accelerator
-               key="Ctrl+F8"
-               id="org.eclipse.ui.window.nextPerspective">
-         </accelerator>
-         <accelerator
-               key="Ctrl+Shift+F8"
-               id="org.eclipse.ui.window.previousPerspective">
          </accelerator>
          <accelerator
                key="Ctrl+S"
