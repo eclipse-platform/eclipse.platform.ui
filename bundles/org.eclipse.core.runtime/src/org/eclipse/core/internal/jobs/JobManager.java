@@ -392,8 +392,8 @@ public class JobManager implements IJobManager {
 		}
 		//spin until all jobs are completed
 		try {
-			monitor.beginTask(Policy.bind("jobs.waitForFamily"), jobCount); //$NON-NLS-1$
-			monitor.subTask(Policy.bind("jobs.waitForFamilySubTask", Integer.toString(jobCount))); //$NON-NLS-1$
+			monitor.beginTask(Policy.bind("jobs.waitFam"), jobCount); //$NON-NLS-1$
+			monitor.subTask(Policy.bind("jobs.waitFamSub", Integer.toString(jobCount))); //$NON-NLS-1$
 			int jobsLeft;
 			int reportedWorkDone = 0;
 			while ((jobsLeft = jobs.size()) > 0) {
@@ -401,7 +401,7 @@ public class JobManager implements IJobManager {
 				if (reportedWorkDone < actualWorkDone) {
 					monitor.worked(actualWorkDone - reportedWorkDone);
 					reportedWorkDone = actualWorkDone;
-					monitor.subTask(Policy.bind("jobs.waitForFamilySubTask", Integer.toString(jobsLeft))); //$NON-NLS-1$
+					monitor.subTask(Policy.bind("jobs.waitFamSub", Integer.toString(jobsLeft))); //$NON-NLS-1$
 				}
 				if (Thread.interrupted())
 					throw new InterruptedException();

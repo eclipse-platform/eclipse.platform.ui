@@ -11,7 +11,9 @@ package org.eclipse.core.internal.jobs;
 
 import java.util.ArrayList;
 
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.internal.runtime.InternalPlatform;
+import org.eclipse.core.internal.runtime.Policy;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 
 /**
@@ -82,6 +84,9 @@ class WorkerPool {
 				JobManager.debug("worker added to pool: " + worker); //$NON-NLS-1$
 			worker.start();
 			return;
+		} else if (threadCount > MAX_THREADS) {
+			String msg = Policy.bind("jobs.poolFull");//$NON-NLS-1$
+			InternalPlatform.log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, msg, null));
 		}
 	}
 	private synchronized void setBusyThreads(int value) {
