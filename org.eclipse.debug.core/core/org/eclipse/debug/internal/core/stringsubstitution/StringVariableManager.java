@@ -56,7 +56,7 @@ public class StringVariableManager implements IStringVariableManager {
 	private Map fDynamicVariables;
 	
 	/**
-	 * Value varialbes - maps variable names to variables.
+	 * Value variables - maps variable names to variables.
 	 */
 	private Map fValueVariables;
 	
@@ -232,7 +232,7 @@ public class StringVariableManager implements IStringVariableManager {
 	}
 
 	/**
-	 * Loads any persisted value varialbes from the preference store.
+	 * Loads any persisted value variables from the preference store.
 	 */
 	private void loadPersistedValueVariables() {
 		String variablesString= DebugPlugin.getDefault().getPluginPreferences().getString(PREF_VALUE_VARIABLES);
@@ -280,7 +280,7 @@ public class StringVariableManager implements IStringVariableManager {
 
 	/**
 	 * Loads contributed value variables. This is done after the persisted value
-	 * varaibles are restored. Any contributed variables with the same name are
+	 * variables are restored. Any contributed variables with the same name are
 	 * merged with existing persisted values.
 	 */
 	private void loadContributedValueVariables() {
@@ -410,7 +410,6 @@ public class StringVariableManager implements IStringVariableManager {
 		return (IValueVariable) fValueVariables.get(name);
 	}
 
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#addValueVariableListener(org.eclipse.debug.internal.core.stringsubstitution.IValueVariableListener)
 	 */
@@ -430,6 +429,8 @@ public class StringVariableManager implements IStringVariableManager {
 	 * 
 	 * @return memento representing the value variables currently registered
 	 * @throws IOException if an I/O exception occurs while creating the XML.
+	 * @throws ParserConfigurationException if an exception occurs while creating the XML document.
+	 * @throws TransformerException if an exception occurs while serializing the XML document.
 	 */
 	private String getValueVariablesAsXML() throws IOException, ParserConfigurationException, TransformerException {
 		IValueVariable[] variables = getValueVariables();
