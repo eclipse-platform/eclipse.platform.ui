@@ -69,7 +69,7 @@ public class SSHServerConnection implements IServerConnection {
 		String hostname = location.getHost();
 		String username = location.getUsername();
 		int port = location.getPort();
-		if (port == location.USE_DEFAULT_PORT)
+		if (port == ICVSRepositoryLocation.USE_DEFAULT_PORT)
 			port = DEFAULT_PORT;
 		// create the connection using host, username, and password
 		client = new Client(hostname, port, username, password, INVOKE_SVR_CMD, location.getTimeout());	
