@@ -133,30 +133,30 @@ public class DeferredTreeContentManager {
 				adapter.fetchDeferredChildren(parent, collector, monitor);
 				return Status.OK_STATUS;
 			}
-			
+
 			/**
 			 * Check if the object is equal to parent or one 
 			 * of parents children so that the job can be cancelled
 			 * if the parent is refreshed.
 			 */
 			public boolean belongsTo(Object family) {
-				if(parent.equals(family))
+				if (parent.equals(family))
 					return true;
 				return checkParent(family);
 			}
-			
+
 			/**
 			 * Check if the parent of element is equal to the 
 			 * parent used in this job.
 			 * @return boolean
 			 */
-			private boolean checkParent(Object element){
-				Object parent = adapter.getParent(element);
-				if(parent == null)
+			private boolean checkParent(Object element) {
+				Object elementParent = adapter.getParent(element);
+				if (elementParent == null)
 					return false;
-				if(parent.equals(element))
+				if (elementParent.equals(element))
 					return true;
-				return checkParent(parent);					
+				return checkParent(elementParent);
 			}
 		};
 		job.addJobChangeListener(new JobChangeAdapter() {
@@ -164,13 +164,13 @@ public class DeferredTreeContentManager {
 			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 			 */
 			public void done(IJobChangeEvent event) {
-				if(placeholder.isRemoved())
+				if (placeholder.isRemoved())
 					return;
 				//Clear the placeholder if it is still there
-				UIJob clearJob = new UIJob(ProgressMessages.getString("DeferredTreeContentManager.ClearJob")) { //$NON-NLS-1$
-					/* (non-Javadoc)
-					 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-					 */
+					UIJob clearJob = new UIJob(ProgressMessages.getString("DeferredTreeContentManager.ClearJob")) {//$NON-NLS-1$
+				/* (non-Javadoc)
+				 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+				 */
 					public IStatus runInUIThread(IProgressMonitor monitor) {
 						clearPlaceholder(placeholder);
 						return Status.OK_STATUS;
@@ -191,20 +191,20 @@ public class DeferredTreeContentManager {
 	 * @param children
 	 * @param monitor
 	 */
-	private void addChildren(
+	void addChildren(
 		final Object parent,
 		final Object[] children,
 		final PendingUpdateAdapter placeholder,
 		IProgressMonitor monitor) {
 
 			UIJob updateJob = new UIJob(ProgressMessages.getString("DeferredTreeContentManager.AddingChildren")) {//$NON-NLS-1$
-			/* (non-Javadoc)
-			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-			 */
-			public IStatus runInUIThread(IProgressMonitor monitor) {
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+			public IStatus runInUIThread(IProgressMonitor updateMonitor) {
 
 					//Cancel the job if the tree viewer got closed
-				if (treeViewer.getControl().isDisposed())
+	if (treeViewer.getControl().isDisposed())
 					return Status.CANCEL_STATUS;
 
 				clearPlaceholder(placeholder);
@@ -227,7 +227,7 @@ public class DeferredTreeContentManager {
 		return getAdapter(element) != null;
 	}
 
-	private void clearPlaceholder(PendingUpdateAdapter placeholder) {
+	void clearPlaceholder(PendingUpdateAdapter placeholder) {
 		if (!placeholder.isRemoved()) {
 			treeViewer.remove(placeholder);
 			placeholder.setRemoved(true);
