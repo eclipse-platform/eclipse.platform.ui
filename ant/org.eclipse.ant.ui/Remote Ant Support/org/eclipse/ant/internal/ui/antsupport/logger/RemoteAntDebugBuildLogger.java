@@ -173,6 +173,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	 * @see org.apache.tools.ant.BuildListener#buildStarted(org.apache.tools.ant.BuildEvent)
 	 */
 	public void buildStarted(BuildEvent event) {
+		fDebugMode= true;
 		super.buildStarted(event);
 		marshalMessage(-1, DebugMessageIds.BUILD_STARTED);
 		String requestPortProperty= event.getProject().getProperty("eclipse.connect.request_port"); //$NON-NLS-1$
@@ -206,7 +207,11 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	public void targetStarted(BuildEvent event) {
 		super.targetStarted(event);
 		fCurrentTarget= event.getTarget();
-		marshalMessage(-1, DebugMessageIds.TARGET_STARTED);
+		if (fDebugMode) {
+			marshalMessage(-1, DebugMessageIds.TARGET_STARTED + fCurrentTarget.getName());
+		} else {
+			marshalMessage(-1, DebugMessageIds.TARGET_STARTED);
+		}
 		//waitIfSuspended();
 	}
 	
@@ -216,7 +221,11 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	public void targetFinished(BuildEvent event) {
 		super.targetFinished(event);
 		fCurrentTarget= null;
-		marshalMessage(-1, DebugMessageIds.TARGET_FINISHED);
+		if (fDebugMode) {
+			marshalMessage(-1, DebugMessageIds.TARGET_FINISHED + event.getTarget().getName());
+		} else {
+			marshalMessage(-1, DebugMessageIds.TARGET_FINISHED);
+		}
 		//waitIfSuspended();
 	}
 	
@@ -227,8 +236,12 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 		super.taskStarted(event);
 		fCurrentTask= event.getTask();
 		fTasks.push(fCurrentTask);
+		if (fDebugMode) {
+			marshalMessage(-1, DebugMessageIds.TASK_STARTED + fCurrentTask.getTaskName());
+		} else {
+			marshalMessage(-1, DebugMessageIds.TASK_STARTED);
+		}
 		
-		marshalMessage(-1, DebugMessageIds.TASK_STARTED);
 		waitIfSuspended();
 	}
 	
@@ -239,7 +252,11 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 		super.taskFinished(event);
 		fTasks.pop();
 		fCurrentTask= null;
-		marshalMessage(-1, DebugMessageIds.TASK_FINISHED);
+		if (fDebugMode) {
+			marshalMessage(-1, DebugMessageIds.TASK_FINISHED + event.getTask().getTaskName());
+		} else {
+			marshalMessage(-1, DebugMessageIds.TASK_FINISHED);
+		}
 		waitIfSuspended();
 	}
 	
