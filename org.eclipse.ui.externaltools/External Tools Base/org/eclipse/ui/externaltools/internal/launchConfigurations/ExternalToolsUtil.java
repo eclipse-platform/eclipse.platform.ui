@@ -212,7 +212,7 @@ public class ExternalToolsUtil {
 	 * @throws CoreException if unable to access the associated attribute
 	 */
 	public static boolean isRefreshRecursive(ILaunchConfiguration configuration) throws CoreException {
-		return configuration.getAttribute(IExternalToolConstants.ATTR_REFRESH_RECURSIVE, false);
+		return configuration.getAttribute(IExternalToolConstants.ATTR_REFRESH_RECURSIVE, true);
 	}
 
 	/**

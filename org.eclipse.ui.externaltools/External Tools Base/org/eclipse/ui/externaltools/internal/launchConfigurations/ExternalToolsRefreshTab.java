@@ -148,7 +148,7 @@ public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab impl
 	private void updateRecursive(ILaunchConfiguration configuration) {
 		boolean recursive= true;
 		try {
-			recursive= configuration.getAttribute(IExternalToolConstants.ATTR_REFRESH_RECURSIVE, false);
+			recursive= configuration.getAttribute(IExternalToolConstants.ATTR_REFRESH_RECURSIVE, true);
 		} catch (CoreException ce) {
 			ExternalToolsPlugin.getDefault().log(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsRefreshTab.Exception_reading_launch_configuration_3"), ce); //$NON-NLS-1$
 		}
@@ -180,7 +180,7 @@ public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab impl
 			configuration.setAttribute(IExternalToolConstants.ATTR_REFRESH_SCOPE, (String)null);
 		}
 		
-		setAttribute(IExternalToolConstants.ATTR_REFRESH_RECURSIVE, configuration, recursiveField.getSelection(), false);
+		setAttribute(IExternalToolConstants.ATTR_REFRESH_RECURSIVE, configuration, recursiveField.getSelection(), true);
 	}
 
 	/**
