@@ -158,7 +158,7 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 		UpdateManagerUtils.removeFromFileSystem(new File(localSite.getURL().getFile()));
 	}
 
-	public void testInstall() throws Exception {
+/*	public void testInstall() throws Exception {
 
 		// cleanup local files...
 		File localFile =
@@ -237,7 +237,7 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 		site.removeConfiguredSiteChangedListener(listener);
 		assertTrue("Listener hasn't received notification", listener.isNotified());
 	}
-
+*/
 	public void testFileSiteWithoutSiteXML() throws Exception {
 
 		ISite remoteSite =

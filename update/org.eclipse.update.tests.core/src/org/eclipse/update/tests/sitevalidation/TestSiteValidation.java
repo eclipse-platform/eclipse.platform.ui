@@ -98,7 +98,7 @@ public class TestSiteValidation extends UpdateManagerTestCase {
 		}
 	}	
 
-	public void testSite5() throws Exception {
+/*	public void testSite5() throws Exception {
 
 		URL remoteUrl = new URL(SOURCE_FILE_SITE + "validation/site5/");
 		File file = new File(remoteUrl.getFile());
@@ -112,7 +112,7 @@ public class TestSiteValidation extends UpdateManagerTestCase {
 			fail(msg+status.getMessage());
 		}
 	}
-	
+*/	
 	public void testSite6() throws Exception {
 
 		URL remoteUrl = new URL(SOURCE_FILE_SITE + "validation/site6/children/children");

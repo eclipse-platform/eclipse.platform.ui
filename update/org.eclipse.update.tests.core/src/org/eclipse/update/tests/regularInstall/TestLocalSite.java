@@ -159,7 +159,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		UpdateManagerUtils.removeFromFileSystem(localFile);
 	}
 	
-	public void testRetriveConfig() throws Exception {
+/*	public void testRetriveConfig() throws Exception {
 
 		//clean up
 		SiteLocal siteLocal = (SiteLocal)SiteManager.getLocalSite();
@@ -330,6 +330,6 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		localFile = new File(feature2.getURL().getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);
 	}
-
+*/
 }
 

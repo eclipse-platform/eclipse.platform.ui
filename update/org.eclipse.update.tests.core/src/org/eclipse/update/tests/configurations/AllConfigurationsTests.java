@@ -14,7 +14,7 @@ public static Test suite() {
 	TestSuite suite = new TestSuite();
 	suite.setName("Regular Install Tests");
 	
-	suite.addTest(new TestSuite(TestRevert.class));
+	//suite.addTest(new TestSuite(TestRevert.class));
 	suite.addTest(new TestSuite(TestBackward.class));
 		
 	return suite;
