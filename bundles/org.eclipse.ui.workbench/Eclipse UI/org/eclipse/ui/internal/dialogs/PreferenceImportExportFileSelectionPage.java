@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.util.Util;
 
 /**
  * The page -- used for both importing and exporting -- that allows the user to
@@ -273,11 +274,15 @@ class PreferenceImportExportFileSelectionPage extends AbstractPreferenceImportEx
 	 * values.
 	 */
 	private void init() {
-		String lastFileName = WorkbenchPlugin.getDefault().getDialogSettings().get(WorkbenchPreferenceDialog.FILE_PATH_SETTING);
-		if (lastFileName == null) {
-			fileText.setText(System.getProperty("user.dir") + System.getProperty("file.separator") + WorkbenchMessages.getString("ImportExportPages.preferenceFileName") + PREFERENCE_EXT);  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-		} else {
-			fileText.setText(lastFileName);
+		if(export) {
+			String lastFileName = WorkbenchPlugin.getDefault().getDialogSettings().get(WorkbenchPreferenceDialog.FILE_PATH_SETTING);
+			if (lastFileName == null) {
+			    if (export) {
+			        fileText.setText(System.getProperty("user.dir") + System.getProperty("file.separator") + WorkbenchMessages.getString("ImportExportPages.preferenceFileName") + PREFERENCE_EXT);  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+			    }
+			} else if ((export) || (new File(lastFileName).exists())) {
+				fileText.setText(lastFileName);
+			}
 		}
 		
 		allItemsRadioButton.setSelection(true);
@@ -298,6 +303,9 @@ class PreferenceImportExportFileSelectionPage extends AbstractPreferenceImportEx
 				return false;
 			}
 		} else {
+			if(currentFile.getName().equals(Util.ZERO_LENGTH_STRING)) //$NON-NLS-1$
+				return false;
+			
 			if (!currentFile.exists()) {
 				setErrorMessage(WorkbenchMessages.getString("ImportExportPages.errorImportFileDoesNotExist")); //$NON-NLS-1$
 				return false;
