@@ -48,8 +48,9 @@ public class PresentationReconciler implements IPresentationReconciler {
 	/**
 	 * Internal listener class.
 	 */
-	class InternalListener implements ITextInputListener, IDocumentListener, ITextListener, 
-										IDocumentPartitioningListener, IDocumentPartitioningListenerExtension {
+	class InternalListener implements 
+			ITextInputListener, IDocumentListener, ITextListener, 
+			IDocumentPartitioningListener, IDocumentPartitioningListenerExtension {
 		
 		/*
 		 * @see ITextInputListener#inputDocumentAboutToBeChanged
@@ -135,14 +136,17 @@ public class PresentationReconciler implements IPresentationReconciler {
 		 * @see ITextListener#textChanged
 		 */
 		public void textChanged(TextEvent e) {
-		 	
+			
+	 		if (!e.getViewerRedrawState())
+	 			return;
+	 			
 		 	DocumentEvent de= e.getDocumentEvent();
 		 	
 		 	if (de == null) {
 		 		
 		 		IDocument d= fViewer.getDocument();
 		 		processDamage(new Region(0, d.getLength()), d);
-		 	
+		 		
 		 	} else {
 			 	
 			 	IRegion damage= getDamage(de);

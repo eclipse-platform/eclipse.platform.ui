@@ -70,7 +70,7 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 		 * @see ITextListener#textChanged(TextEvent)
 		 */
 		public void textChanged(TextEvent e) {
-			if (fTextViewer != null)
+			if (fTextViewer != null && e.getViewerRedrawState())
 				redraw();
 		}
 	};

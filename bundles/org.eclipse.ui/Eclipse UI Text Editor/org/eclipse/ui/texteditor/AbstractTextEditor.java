@@ -297,6 +297,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 */
 		public void textChanged(TextEvent event) {
 			
+			/*
+			 * Also works for text events which do not base on a DocumentEvent.
+			 * This way, if the visible document of the viewer changes, all content
+			 * dependent actions are updated as well.
+			 */
+							
 			if (fDisplay == null)
 				fDisplay= getSite().getShell().getDisplay();
 				

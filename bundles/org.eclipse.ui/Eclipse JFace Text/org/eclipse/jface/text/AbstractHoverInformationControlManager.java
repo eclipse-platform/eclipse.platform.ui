@@ -19,6 +19,8 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
+import org.eclipse.jface.util.Assert;
+
 
 /**
  * An information control manager that shows information on mouse hover events.
@@ -42,8 +44,8 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		private IInformationControl fInformationControl;
 		/** The subject area */
 		private Rectangle fSubjectArea;
-		/** The restarter */
-		private Restarter fRestarter= new Restarter();
+		/** Indicates whether this closer is active */
+		private boolean fIsActive= false;
 		
 		/**
 		 * Creates a new information control closer.
@@ -69,6 +71,10 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 * @see IInformationControlCloser#start(Rectangle)
 		 */
 		public void start(Rectangle subjectArea) {
+			
+			if (fIsActive)
+				return;
+			fIsActive= true;
 			
 			fSubjectArea= subjectArea;
 			
@@ -96,8 +102,11 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 */
 		protected void stop(boolean delayRestart) {
 			
-			if (fInformationControl != null)
-				fInformationControl.setVisible(false);
+			if (!fIsActive)
+				return;
+			fIsActive= false;
+			
+			hideInformationControl();
 			
 			if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
 				fSubjectControl.removeMouseListener(this);
@@ -105,9 +114,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 				fSubjectControl.removeMouseTrackListener(this);
 				fSubjectControl.removeControlListener(this);
 				fSubjectControl.removeKeyListener(this);
-			}
-			
-			fRestarter.start(fSubjectControl, delayRestart);
+			}			
 		}
 		
 		/*
@@ -175,166 +182,66 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	
 	
 	/**
-	 * Hover restarter.
-	 */
-	class Restarter implements Runnable, KeyListener {
-		
-		private Object fSyncPoint= new Object();
-		private Thread fThread;
-		private boolean fIsReset= false;
-		private Control fControl;
-		
-		
-		public Restarter() {
-		}
-		
-		/**
-		 * Starts this restarted on the given control.
-		 * @param control the control to watch
-		 * @param delayRestart indicates whether the restart should be delayed
-		 */
-		public void start(Control control, boolean delayRestart) {
-			
-			if (!delayRestart) {
-				setEnabled(true);
-				return;
-			}
-			
-			fControl= control;
-			fControl.addKeyListener(this);
-			
-			fThread= new Thread(this, JFaceTextMessages.getString("AbstractHoverInformationControlManager.hover.restarter")); //$NON-NLS-1$
-			fThread.setDaemon(true);
-			fThread.start();
-		}
-		
-		/*
-		 * @see KeyListener#keyPressed(KeyEvent)
-		 */
-		public void keyPressed(KeyEvent e) {
-			synchronized (fSyncPoint) {
-				fIsReset= true;
-			}
-		}
-
-		/*
-		 * @see KeyListener#keyReleased(KeyEvent)
-		 */
-		public void keyReleased(KeyEvent e) {
-		}
-		
-		/*
-		 * @see IRunnable#run
-		 */
-		public void run() {
-			try {
-				while (true) {
-					
-					synchronized (fSyncPoint) {
-						fSyncPoint.wait(1500);
-						if (fIsReset) {
-							fIsReset= false;
-							continue;
-						}
-					}
-					
-					break;
-				}
-			} catch (InterruptedException e) {
-			}
-			
-			fThread= null;
-			
-			if (fControl != null && !fControl.isDisposed()) {
-				Display d= fControl.getDisplay();
-				if (d != null) {
-					d.asyncExec(new Runnable() {
-						public void run() {
-							if (fControl != null && !fControl.isDisposed()) {
-								fControl.removeKeyListener(Restarter.this);
-								fControl= null;
-								setEnabled(true);
-							}
-						}
-					});
-				}
-			}
-		}
-	};
-	
-	
-	/**
 	 * The mouse tracker to be installed on the manager's subject control.
 	 */
-	class MouseTracker extends MouseTrackAdapter {
+	class MouseTracker extends MouseTrackAdapter implements MouseMoveListener {
 		
-		/** The radius of the circle in which mouse hover locations are considered equal. */
 		private final static int EPSILON= 3;
 		
-		/** Reset time of mouse hover location. */
-		private final static int RESET= 700;
+		private Rectangle fSubjectArea;
+		private Control fSubjectControl;
 		
-		/**
-		 * Resets the hover event location if nothing happend
-		 * since the timer has been started.
-		 */
-		private class Reset implements Runnable {
-			
-			private double fStartTicket;
-			
-			Reset(double ticket) {
-				fStartTicket= ticket;
-			}
-			
-			public void run() {
-				if (fStartTicket == fTicket && fHoverEventLocation != null) {
-					fHoverEventLocation.x= -1;
-					fHoverEventLocation.y= -1;					
-				}
-			}
-		};
-		
-		/** The current ticket for reset timers. */
-		private double fTicket;
-		
-		/**
-		 * Returns whether the given event ocurred within a cicle of <code>EPSILON</code>
-		 * pixels of the previous mouse hover location. In addition, the location of
-		 * the mouse event is remembered as the previous mouse hover location.
-		 * 
-		 * @param event the event to check
-		 * @return <code>false</code> if the event occured too close to the previous location
-		 */
-		private boolean isPreviousMouseHoverLocation(MouseEvent event) {
-			
-			fTicket= Math.random();
-			
-			boolean tooClose= false;	
-			
-			if (fHoverEventLocation.x != -1 && fHoverEventLocation.y != -1) {
-				tooClose= Math.abs(fHoverEventLocation.x - event.x) <= EPSILON;
-				tooClose= tooClose && (Math.abs(fHoverEventLocation.y - event.y) <= EPSILON);
-			}
-			
-			fHoverEventLocation.x= event.x;
-			fHoverEventLocation.y= event.y;
-			
-			Control c= getSubjectControl();
-			if (c != null && !c.isDisposed())
-				c.getDisplay().timerExec(RESET, new Reset(fTicket));
+		public MouseTracker() {
+		}
 				
-			return tooClose;
-		}		
+		public void setSubjectArea(Rectangle subjectArea) {
+			Assert.isNotNull(subjectArea);
+			fSubjectArea= subjectArea;
+		}
+		
+		public void start(Control subjectControl) {
+			fSubjectControl= subjectControl;
+			if (fSubjectControl != null && !fSubjectControl.isDisposed())
+				fSubjectControl.addMouseTrackListener(this);
+		}
+		
+		public void stop() {
+			if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
+				fSubjectControl.removeMouseTrackListener(this);
+				fSubjectControl.removeMouseMoveListener(this);
+			}
+		}
 		
 		/*
 		 * @see MouseTrackAdapter#mouseHover
 		 */
 		public void mouseHover(MouseEvent event) {
-			if ( !isPreviousMouseHoverLocation(event))
-				showInformation();
+			setEnabled(false);
+			
+			fHoverEventLocation= new Point(event.x, event.y);
+			
+			Rectangle r= new Rectangle(event.x - EPSILON, event.y - EPSILON, 2 * EPSILON, 2 * EPSILON );
+			if (r.x < 0) r.x= 0;
+			if (r.y < 0) r.y= 0;
+			setSubjectArea(r);
+			
+			if (fSubjectControl != null && !fSubjectControl.isDisposed())
+				fSubjectControl.addMouseMoveListener(this);
+			
+			doShowInformation();
+		}
+		
+		/*
+		 * @see MouseMoveListener#mouseMove(MouseEvent)
+		 */
+		public void mouseMove(MouseEvent event) {
+			if (!fSubjectArea.contains(event.x, event.y))  {
+				fSubjectControl.removeMouseMoveListener(this);
+				setEnabled(true);
+			}
 		}
 	};
-	
+		
 	/** The mouse tracker on the subject control */
 	private MouseTracker fMouseTracker= new MouseTracker();
 	
@@ -353,19 +260,27 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	}
 	
 	/*
+	 * @see AbstractInformationControlManager#presentInformation()
+	 */
+	protected void presentInformation() {
+		fMouseTracker.setSubjectArea(getSubjectArea());
+		super.presentInformation();
+	}
+	
+	/*
 	 * @see AbstractInformationControlManager#setEnabled(boolean)
 	 */
 	public void setEnabled(boolean enabled) {
-		boolean e= isEnabled();
+		
+		boolean was= isEnabled();
 		super.setEnabled(enabled);
-		if (e != isEnabled()) {
-			Control c= getSubjectControl();
-			if (c != null && !c.isDisposed()) {
-				if (isEnabled())
-					c.addMouseTrackListener(fMouseTracker);
-				else
-					c.removeMouseTrackListener(fMouseTracker);
-			}
+		boolean is= isEnabled();
+		
+		if (was != is) {
+			if (is)
+				fMouseTracker.start(getSubjectControl());
+			else
+				fMouseTracker.stop();
 		}
 	}
 	

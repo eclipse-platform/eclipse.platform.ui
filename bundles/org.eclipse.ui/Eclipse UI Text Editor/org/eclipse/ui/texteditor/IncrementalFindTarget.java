@@ -152,7 +152,13 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 	 */
 	public void setScope(IRegion scope) {
 	}
-
+	
+	/*
+	 * @see IFindReplaceTargetExtension#setReplaceAllMode(boolean)
+	 */
+	public void setReplaceAllMode(boolean replaceAll) {
+	}
+	
 	private void install() {
 		if (fInstalled)
 			return;

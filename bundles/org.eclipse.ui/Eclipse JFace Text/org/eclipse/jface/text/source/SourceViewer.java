@@ -337,7 +337,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 	 */
 	public boolean canDoOperation(int operation) {
 		
-		if (getTextWidget() == null)
+		if (getTextWidget() == null || !redraws())
 			return false;
 		
 		if (operation == CONTENTASSIST_PROPOSALS)
@@ -363,7 +363,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 	 */
 	public void doOperation(int operation) {
 		
-		if (getTextWidget() == null)
+		if (getTextWidget() == null || !redraws())
 			return;
 		
 		switch (operation) {

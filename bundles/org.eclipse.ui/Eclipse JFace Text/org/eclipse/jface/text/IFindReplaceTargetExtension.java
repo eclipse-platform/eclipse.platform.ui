@@ -71,4 +71,11 @@ public interface IFindReplaceTargetExtension {
 	 */
 	void setScopeHighlightColor(Color color);
 	
+	
+	/**
+	 * Sets the target's Replace All mode.
+	 * 
+	 * @param replaceAll <code>true</code> if this target should switch into Replace All mode.
+	 */
+	void setReplaceAllMode(boolean replaceAll); 
 }

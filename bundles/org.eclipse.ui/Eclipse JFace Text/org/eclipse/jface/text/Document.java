@@ -40,4 +40,25 @@ public class Document extends AbstractDocument {
 		getTracker().set(initialContent);
 		completeInitialization();
 	}
+	
+	/*
+	 * @see IDocumentExtension#startSequentialRewrite()
+	 */
+	public void startSequentialRewrite() {
+		ITextStore store= new SequentialRewriteTextStore(getStore());
+		setTextStore(store);
+	}
+	
+	/*
+	 * @see IDocumentExtension#stopSequentialRewrite()
+	 */
+	public void stopSequentialRewrite() {
+		if (getStore() instanceof SequentialRewriteTextStore) {
+			SequentialRewriteTextStore srws= (SequentialRewriteTextStore) getStore();
+			ITextStore source= srws.getSourceStore();
+			source.set(srws.get(0, srws.getLength()));
+			setTextStore(source);
+			srws.dispose();
+		}
+	}
 }

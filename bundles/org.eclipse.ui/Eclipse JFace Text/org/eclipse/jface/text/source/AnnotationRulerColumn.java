@@ -67,7 +67,8 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 		 * @see ITextListener#textChanged
 		 */
 		public void textChanged(TextEvent e) {
-			redraw();
+			if (e.getViewerRedrawState())
+				redraw();
 		}
 	};
 	

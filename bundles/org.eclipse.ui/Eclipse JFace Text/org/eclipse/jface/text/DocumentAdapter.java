@@ -11,7 +11,7 @@ import java.util.ArrayList;import java.util.Iterator;import java.util.List;i
 /**
  * Adapts an <code>IDocument</code> to the <code>StyledTextContent</code> interface.
  */
-class DocumentAdapter implements IDocumentAdapter, IDocumentListener {
+class DocumentAdapter implements IDocumentAdapter, IDocumentListener, IDocumentAdapterExtension {
 
 	/** The adapted document. */
 	private IDocument fDocument;
@@ -21,6 +21,8 @@ class DocumentAdapter implements IDocumentAdapter, IDocumentListener {
 	private DocumentEvent fEvent;
 	/** The line delimiter */
 	private String fLineDelimiter= null;
+	/** Indicates whether this adapter is forwarding document changes */
+	private boolean fIsForwarding= true;
 	
 	private boolean fInvalidateLineDelimiter;
 	
@@ -217,6 +219,10 @@ class DocumentAdapter implements IDocumentAdapter, IDocumentListener {
 	 * Sends a text changed event to all registered listeners.
 	 */
 	private void fireTextChanged() {
+		
+		if (!fIsForwarding)
+			return;
+			
 		TextChangedEvent event= new TextChangedEvent(this);
 				
 		if (fTextChangeListeners != null && fTextChangeListeners.size() > 0) {
@@ -230,6 +236,10 @@ class DocumentAdapter implements IDocumentAdapter, IDocumentListener {
 	 * Sends a text set event to all registered listeners.
 	 */
 	private void fireTextSet() {
+		
+		if (!fIsForwarding)
+			return;
+			
 		TextChangedEvent event = new TextChangedEvent(this);
 		
 		if (fTextChangeListeners != null && fTextChangeListeners.size() > 0) {
@@ -243,6 +253,10 @@ class DocumentAdapter implements IDocumentAdapter, IDocumentListener {
 	 * Sends the text changing event to all registered listeners.
 	 */
 	private void fireTextChanging() {    
+		
+		if (!fIsForwarding)
+			return;
+			
 		try {
 		    IDocument document= fEvent.getDocument();
 		    if (document == null)
@@ -264,5 +278,20 @@ class DocumentAdapter implements IDocumentAdapter, IDocumentListener {
 
 		} catch (BadLocationException e) {
 		}
-	}	
+	}
+	
+	/*
+	 * @see IDocumentAdapterExtension#resumeForwardingDocumentChanges()
+	 */
+	public void resumeForwardingDocumentChanges() {
+		fIsForwarding= true;
+		fireTextSet();
+	}
+	
+	/*
+	 * @see IDocumentAdapterExtension#stopForwardingDocumentChanges()
+	 */
+	public void stopForwardingDocumentChanges() {
+		fIsForwarding= false;
+	}
 }

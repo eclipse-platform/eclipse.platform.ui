@@ -60,6 +60,10 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 		 * @see ITextListener#textChanged(TextEvent)
 		 */
 		public void textChanged(TextEvent event) {
+			
+			if (!event.getViewerRedrawState())
+				return;
+			
 			if (fSensitiveToTextChanges || event.getDocumentEvent() == null) {
 				if (fCanvas != null && !fCanvas.isDisposed()) {
 					Display d= fCanvas.getDisplay();

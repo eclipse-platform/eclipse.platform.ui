@@ -32,18 +32,21 @@ public class TextEvent {
 	private String fReplacedText;
 	/** The original document event, may by null */
 	private DocumentEvent fDocumentEvent;
+	/** The redraw state of the viewer issuing this event */
+	private boolean fViewerRedrawState;
 	
 	/**
 	 * Creates a new <code>TextEvent</code> based on the specification.
 	 */
-	protected TextEvent(int offset, int length, String text, String replacedText, DocumentEvent event) {
+	protected TextEvent(int offset, int length, String text, String replacedText, DocumentEvent event, boolean viewerRedrawState) {
 		fOffset= offset;
 		fLength= length;
 		fText= text;
 		fReplacedText= replacedText;
 		fDocumentEvent= event;
+		fViewerRedrawState= viewerRedrawState;
 	}
-		
+			
 	/**
 	 * Returns the offset of the event.
 	 *
@@ -87,5 +90,14 @@ public class TextEvent {
 	 */
 	public DocumentEvent getDocumentEvent() {
 		return fDocumentEvent;
+	}
+	
+	/**
+	 * Returns the viewer's redraw state.
+	 * 
+	 * @return <code>true</code> if the viewer's redraw state is <code>true</code>
+	 */
+	public boolean getViewerRedrawState() {
+		return fViewerRedrawState;
 	}
 }

@@ -440,7 +440,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 	/**
 	 * MISSING
 	 */
-	private class FindReplaceRange implements LineBackgroundListener, ITextListener, IPositionUpdater {		
+	class FindReplaceRange implements LineBackgroundListener, ITextListener, IPositionUpdater {		
 
 		private final static String RANGE_CATEGORY= "org.eclipse.jface.text.TextViewer.find.range"; //$NON-NLS-1$
 
@@ -534,7 +534,8 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 		 * @see ITextListener#textChanged(TextEvent)
 		 */
 		public void textChanged(TextEvent event) {
-			paint();
+			if (event.getViewerRedrawState())
+				paint();
 		}
 
 		/*
@@ -565,8 +566,14 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 		 * @see IFindReplaceTarget#getSelectionText()
 		 */
 		public String getSelectionText() {
-			if (fTextWidget != null)
-				return fTextWidget.getSelectionText();
+			Point s= TextViewer.this.getSelectedRange();
+			if (s.x > -1 && s.y > -1) {
+				try {
+					IDocument document= TextViewer.this.getDocument();
+					return document.get(s.x, s.y);
+				} catch (BadLocationException x) {
+				}
+			}
 			return null;
 		}
 		
@@ -574,11 +581,15 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 		 * @see IFindReplaceTarget#replaceSelection(String)
 		 */
 		public void replaceSelection(String text) {
-			if (fTextWidget != null) {
-				Point s= fTextWidget.getSelectionRange();
-				fTextWidget.replaceTextRange(s.x, s.y, text);
-				if (text != null && text.length() > 0)
-					fTextWidget.setSelectionRange(s.x, text.length());
+			Point s= TextViewer.this.getSelectedRange();
+			if (s.x > -1 && s.y > -1) {
+				try {
+					IDocument document= TextViewer.this.getDocument();
+					document.replace(s.x, s.y, text);
+					if (text != null && text.length() > 0)
+						TextViewer.this.setSelectedRange(s.x, text.length());
+				} catch (BadLocationException x) {
+				}
 			}
 		}
 		
@@ -707,6 +718,19 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 			fScopeHighlightColor= color;
 		}
 
+		/*
+		 * @see IFindReplaceTargetExtension#setReplaceAllMode(boolean)
+		 */
+		public void setReplaceAllMode(boolean replaceAll) {
+			TextViewer.this.setRedraw(!replaceAll);
+			TextViewer.this.setSequentialRewriteMode(replaceAll);
+			if (fUndoManager != null) {
+				if (replaceAll)
+					fUndoManager.beginCompoundChange();
+				else
+					fUndoManager.endCompoundChange();
+			}
+		}
 	}
 	
 		
@@ -752,7 +776,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 	/** The viewer's find/replace target */
 	private IFindReplaceTarget fFindReplaceTarget;
 	/** The viewer widget token keeper */
-	private Object fWidgetTokenKeeper;
+	private IWidgetTokenKeeper fWidgetTokenKeeper;
 	/** The viewer's manager of verify key listeners */
 	private VerifyKeyListenersManager fVerifyKeyListenersManager= new VerifyKeyListenersManager();
 	/** The mark position. */
@@ -761,6 +785,10 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 	private final String MARK_POSITION_CATEGORY="__mark_category_" + hashCode();
 	/** The mark position updater */
 	private final IPositionUpdater fMarkPositionUpdater= new DefaultPositionUpdater(MARK_POSITION_CATEGORY);
+	/** The flag indicating the redraw behavior */
+	private int fRedrawCounter= 0;
+	/** The selection when working in non-redraw state */
+	private Point fDocumentSelection;
 	
 	/** Should the auto indent strategies ignore the next edit operation */
 	protected boolean  fIgnoreAutoIndent= false;
@@ -1121,24 +1149,29 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 	}
 	
 	/*
-	 * @see IWidgetTokenOwner#requestWidgetToken(Object)
+	 * @see IWidgetTokenOwner#requestWidgetToken(IWidgetTokenKeeper)
 	 */
-	public synchronized boolean requestWidgetToken(Object tokenRequester) {
-		return true;
-//		if (fTextWidget != null) {
-//			if (fWidgetTokenKeeper == null) {
-//				fWidgetTokenKeeper= tokenRequester;
-//				return true;
-//			}
-//			return (fWidgetTokenKeeper == tokenRequester);
-//		}
-//		return false;
+	public boolean requestWidgetToken(IWidgetTokenKeeper requester) {
+		if (fTextWidget != null) {
+			if (fWidgetTokenKeeper != null) {
+				if (fWidgetTokenKeeper == requester)
+					return true;
+				if (fWidgetTokenKeeper.requestWidgetToken(this)) {
+					fWidgetTokenKeeper= requester;
+					return true;
+				}
+			} else {
+				fWidgetTokenKeeper= requester;
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	/*
-	 * @see IWidgetTokenOwner#releaseWidgetToken(Object)
+	 * @see IWidgetTokenOwner#releaseWidgetToken(IWidgetTokenKeeper)
 	 */
-	public synchronized void releaseWidgetToken(Object tokenKeeper) {
+	public void releaseWidgetToken(IWidgetTokenKeeper tokenKeeper) {
 		if (fWidgetTokenKeeper == tokenKeeper)
 			fWidgetTokenKeeper= null;
 	}
@@ -1150,11 +1183,16 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 	 * @see ITextViewer#getSelectedRange
 	 */
 	public Point getSelectedRange() {
+		
+		if (!redraws())
+			return new Point(fDocumentSelection.x, fDocumentSelection.y);
+			
 		if (fTextWidget != null) {
 			Point p= fTextWidget.getSelectionRange();
 			int offset= getVisibleRegionOffset();			
 			return new Point(p.x + offset, p.y);
 		}
+		
 		return new Point(-1, -1);
 	}
 	
@@ -1162,6 +1200,12 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 	 * @see ITextViewer#setSelectedRange
 	 */
 	public void setSelectedRange(int offset, int length) {
+		
+		if (!redraws()) {
+			fDocumentSelection.x= offset;
+			fDocumentSelection.y= length;
+			return;
+		}
 		
 		if (fTextWidget == null)
 			return;
@@ -1302,9 +1346,11 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 	 * @param length the length of the newly selected range in the visible document
 	 */
 	protected void selectionChanged(int offset, int length) {
-		ISelection selection= new TextSelection(getDocument(), getVisibleRegionOffset() + offset, length);
-		SelectionChangedEvent event= new SelectionChangedEvent(this, selection);
-		fireSelectionChanged(event);
+		if (redraws()) {
+			ISelection selection= new TextSelection(getDocument(), getVisibleRegionOffset() + offset, length);
+			SelectionChangedEvent event= new SelectionChangedEvent(this, selection);
+			fireSelectionChanged(event);
+		}
 	}
 	
 	/**
@@ -1314,11 +1360,13 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 	 * @param length the length of the mark selection, may be negative if the caret is before the mark.
 	 */
 	protected void markChanged(int offset, int length) {
-		if (offset != -1)
-			offset += getVisibleRegionOffset();
-		ISelection selection= new MarkSelection(getDocument(), offset, length);
-		SelectionChangedEvent event= new SelectionChangedEvent(this, selection);
-		fireSelectionChanged(event);
+		if (redraws()) {
+			if (offset != -1)
+				offset += getVisibleRegionOffset();
+			ISelection selection= new MarkSelection(getDocument(), offset, length);
+			SelectionChangedEvent event= new SelectionChangedEvent(this, selection);
+			fireSelectionChanged(event);
+		}
 	}
 	
 	
@@ -1350,7 +1398,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 	 * Informs all registered text listeners about the change specified by the
 	 * widget command. This method does not use a robust iterator.
 	 *
-	 * @param cmd the widget command translated into a text event and sent to all text listeners
+	 * @param cmd the widget command translated into a text event sent to all text listeners
 	 */
 	protected void updateTextListeners(WidgetCommand cmd) {
 		
@@ -1360,14 +1408,13 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 			if (event instanceof ChildDocumentEvent)
 				event= ((ChildDocumentEvent) event).getParentEvent();
 				
-			TextEvent e= new TextEvent(cmd.start, cmd.length, cmd.text, cmd.preservedText, event);
+			TextEvent e= new TextEvent(cmd.start, cmd.length, cmd.text, cmd.preservedText, event, redraws());
 			for (int i= 0; i < fTextListeners.size(); i++) {
 				ITextListener l= (ITextListener) fTextListeners.get(i);
 				l.textChanged(e);
 			}
 		}
 	}
-	
 	
 	//---- Text input listeners
 	
@@ -1573,15 +1620,17 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 	 */
 	protected void updateViewportListeners(int origin) {
 		
-		int topPixel= fTextWidget.getTopPixel();
-		if (topPixel >= 0 && topPixel != fLastTopPixel) {
-			if (fViewportListeners != null) {
-				for (int i= 0; i < fViewportListeners.size(); i++) {
-					IViewportListener l= (IViewportListener) fViewportListeners.get(i);
-					l.viewportChanged(topPixel);
+		if (redraws()) {
+			int topPixel= fTextWidget.getTopPixel();
+			if (topPixel >= 0 && topPixel != fLastTopPixel) {
+				if (fViewportListeners != null) {
+					for (int i= 0; i < fViewportListeners.size(); i++) {
+						IViewportListener l= (IViewportListener) fViewportListeners.get(i);
+						l.viewportChanged(topPixel);
+					}
 				}
+				fLastTopPixel= topPixel;
 			}
-			fLastTopPixel= topPixel;
 		}
 	}
 	
@@ -1738,7 +1787,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 	 */
 	public void revealRange(int start, int length) {
 		
-		if (fTextWidget == null)
+		if (fTextWidget == null || !redraws())
 			return;
 		
 		int end= start + length;
@@ -2209,7 +2258,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 	 */
 	public boolean canDoOperation(int operation) {
 		
-		if (fTextWidget == null)
+		if (fTextWidget == null || !redraws())
 			return false;
 
 		switch (operation) {
@@ -2244,7 +2293,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 	 */
 	public void doOperation(int operation) {
 		
-		if (fTextWidget == null)
+		if (fTextWidget == null || !redraws())
 			return;
 
 		switch (operation) {
@@ -2469,14 +2518,17 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 		
 		if (fUndoManager != null)
 			fUndoManager.beginCompoundChange();
-						
+			
+		setRedraw(false);
+		setSequentialRewriteMode(true);
+		
 		try {
 			
 			Point selection= getSelectedRange();
 			IRegion block= getTextBlockFromSelection(selection);
-			ITypedRegion[] regions= getDocument().computePartitioning(block.getOffset(), block.getLength());
-			
 			IDocument d= getDocument();
+			ITypedRegion[] regions= d.computePartitioning(block.getOffset(), block.getLength());
+			
 			int[] lines= new int[regions.length * 2]; // [startline, endline, startline, endline, ...]
 			for (int i= 0, j= 0; i < regions.length; i++, j+= 2) {
 				// start line of region
@@ -2496,9 +2548,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 			} catch (BadPositionCategoryException ex) {
 				// should not happen
 			}
-			
-			fTextWidget.setRedraw(false);
-			
+									
 			// Perform the shift operation.
 			Map map= (useDefaultPrefixes ? fDefaultPrefixChars : fIndentChars);
 			for (int i= 0, j= 0; i < regions.length; i++, j += 2) {
@@ -2513,20 +2563,23 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 			
 			// Restore the selection.
 			setSelectedRange(rememberedSelection.getOffset(), rememberedSelection.getLength());
-			
+						
 			try {
 				d.removePositionUpdater(positionUpdater);
 				d.removePositionCategory(SHIFTING);			
 			} catch (BadPositionCategoryException ex) {
 				// should not happen
 			}
-			
-			fTextWidget.setRedraw(true);
-			
+						
 		} catch (BadLocationException x) {
 			if (TRACE_ERRORS)
 				System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.shift_1")); //$NON-NLS-1$
+		
 		} finally {
+			
+			setSequentialRewriteMode(false);
+			setRedraw(true);
+			
 			if (fUndoManager != null)
 				fUndoManager.endCompoundChange();
 		}
@@ -2605,13 +2658,15 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 					return;
 				}
 			}
-
+			
 			// ok - change the document
-			for (int i= occurrences.length - 1; i >= 0; i--) {
+			int decrement= 0;
+			for (int i= 0; i < occurrences.length; i++) {
 				IRegion r= occurrences[i];
-				d.replace(r.getOffset(), r.getLength(), ""); //$NON-NLS-1$
+				d.replace(r.getOffset() - decrement, r.getLength(), ""); //$NON-NLS-1$
+				decrement += r.getLength();
 			}
-
+			
 		} catch (BadLocationException x) {
 			if (TRACE_ERRORS)
 				System.out.println("TextViewer.shiftLeft: BadLocationException"); //$NON-NLS-1$
@@ -2681,9 +2736,13 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 			int pos= getVisibleDocument().search(offset, findString, forwardSearch, caseSensitive, wholeWord);
 			if (pos > -1) {
 				int length= findString.length();
-				fTextWidget.setSelectionRange(pos, length);
-				internalRevealRange(pos, pos + length);
-				selectionChanged(pos, length);
+				if (redraws()) {
+					fTextWidget.setSelectionRange(pos, length);
+					internalRevealRange(pos, pos + length);
+					selectionChanged(pos, length);
+				} else {
+					setSelectedRange(pos, length);
+				}
 			}
 			return pos + getVisibleRegionOffset();
 		} catch (BadLocationException x) {
@@ -2720,9 +2779,13 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 				pos= -1;
 
 			if (pos > -1) {
-				fTextWidget.setSelectionRange(pos, length);
-				internalRevealRange(pos, pos + length);
-				selectionChanged(pos, length);
+				if (redraws()) {
+					fTextWidget.setSelectionRange(pos, length);
+					internalRevealRange(pos, pos + length);
+					selectionChanged(pos, length);
+				} else {
+					setSelectedRange(pos, length);
+				}
 			}
 			return pos + getVisibleRegionOffset();
 		} catch (BadLocationException x) {
@@ -2746,7 +2809,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 	/*
 	 * @see ITextViewer#setTextColor 	 
 	 */
-	public void setTextColor(Color color, int start, int length, boolean controlRedraw) {		
+	public void setTextColor(Color color, int start, int length, boolean controlRedraw) {	
 		
 		if (fTextWidget != null) {
 									
@@ -2793,13 +2856,6 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 				
 			IRegion region= presentation.getCoverage();
 			fTextWidget.replaceStyleRanges(region.getOffset(), region.getLength(), ranges);
-			
-//			// use unoptimized StyledText
-//			while (e.hasNext()) {
-//				StyleRange r= (StyleRange) e.next();
-//				fTextWidget.setStyleRange(r);
-//			}
-			
 		}	
 	}
 	
@@ -2995,5 +3051,92 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 		if (fUndoManager != null)
 			fUndoManager.endCompoundChange();
 	}
-
+	
+	/**
+	 * Informs all text listeners about the change of the viewer's redraw state.
+	 */
+	private void fireRedrawChanged() {
+		fWidgetCommand.start= 0;
+		fWidgetCommand.length= 0;
+		fWidgetCommand.text= null;
+		fWidgetCommand.event= null;
+		updateTextListeners(fWidgetCommand);
+	}
+	
+	/**
+	 * Enables the redrawing of this text viewer. Subclasses may extend.
+	 */
+	protected void enabledRedrawing() {
+		if (fDocumentAdapter instanceof IDocumentAdapterExtension) {
+			IDocumentAdapterExtension extension= (IDocumentAdapterExtension) fDocumentAdapter;
+			int topIndex= getTopIndex();			
+			extension.resumeForwardingDocumentChanges();
+			if (topIndex > -1)
+				setTopIndex(topIndex);
+		}
+		
+		setSelectedRange(fDocumentSelection.x, fDocumentSelection.y);
+		revealRange(fDocumentSelection.x, fDocumentSelection.y);
+		
+		if (fTextWidget != null && !fTextWidget.isDisposed())
+			fTextWidget.setRedraw(true);
+			
+		fireRedrawChanged();
+	}
+	
+	/**
+	 * Disables the redrawing of this text viewer. Subclasses may extend.
+	 */
+	protected void disableRedrawing() {
+		
+		fDocumentSelection= getSelectedRange();
+		
+		if (fDocumentAdapter instanceof IDocumentAdapterExtension) {
+			IDocumentAdapterExtension extension= (IDocumentAdapterExtension) fDocumentAdapter;
+			extension.stopForwardingDocumentChanges();
+		}
+		
+		if (fTextWidget != null && !fTextWidget.isDisposed())
+			fTextWidget.setRedraw(false);
+			
+		fireRedrawChanged();
+	}
+	
+	/*
+	 * @see ITextViewerExtension#setRedraw(boolean)
+	 */
+	public final void setRedraw(boolean redraw) {
+		if (!redraw) {
+			if (fRedrawCounter == 0)
+				disableRedrawing();
+			++ fRedrawCounter;
+		} else {
+			-- fRedrawCounter;
+			if (fRedrawCounter == 0)
+				enabledRedrawing();
+		}
+	}
+	
+	/**
+	 * Returns whether this viewer redraws itself.
+	 * 
+	 * @return <code>true</code> if this viewer redraws itself
+	 */
+	protected final boolean redraws() {
+		return fRedrawCounter <= 0;
+	}
+	
+	/**
+	 * Sets the sequential rewrite mode of the viewer's document.
+	 */
+	protected final void setSequentialRewriteMode(boolean rewriteMode) {
+		IDocument document= getDocument();
+		if (document instanceof IDocumentExtension) {
+			IDocumentExtension extension= (IDocumentExtension) document;
+			if (rewriteMode)
+				extension.startSequentialRewrite();
+			else
+				extension.stopSequentialRewrite();
+		}
+	}
 }

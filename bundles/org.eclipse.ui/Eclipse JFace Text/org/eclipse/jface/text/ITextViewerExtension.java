@@ -81,5 +81,17 @@ public interface ITextViewerExtension {
 	 * are considered to be individually undoable.
 	 */
 	void endCompoundChange();
-
+	
+	/**
+	 * Enables/disables redrawing of this text viewer.  This temporarily disconnects
+	 * the viewer from its underlying StyledText widget. Thus, any direct manipulation
+	 * of the widget as well as calls to methods that change the viewer presentation 
+	 * state are not allowed. Only, the viewer selection may be changed using
+	 * <code>setSelectedRange</code>.  When redrawing is disabled the viewer does
+	 * not send out any selection or view port change notification.
+	 * 
+	 * When redrawing is enabled again, a selection change notification is sent out 
+	 * for the selected range and this range is revealed.
+	 */
+	void setRedraw(boolean redraw);
 }

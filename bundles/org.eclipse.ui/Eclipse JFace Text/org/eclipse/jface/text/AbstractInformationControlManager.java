@@ -307,6 +307,15 @@ abstract public class AbstractInformationControlManager {
 	}
 	
 	/**
+	 * Returns the actual subject area.
+	 * 
+	 * @return the actual subject area
+	 */
+	protected Rectangle getSubjectArea() {
+		return fSubjectArea;
+	}
+	
+	/**
 	 * Sets the enable state of this manager.
 	 * 
 	 * @param enabled the enable state
@@ -526,16 +535,23 @@ abstract public class AbstractInformationControlManager {
 	/**
 	 * Computes information to be displayed as well as the subject area
 	 * and initiates that this information is presented in the information control.
+	 * This happens only if this controller is enabled.
 	 */
 	public void showInformation() {
-		if (!fEnabled)
-			return;
-			
+		if (fEnabled)
+			doShowInformation();
+	}
+	
+	/**
+	 * Computes information to be displayed as well as the subject area
+	 * and initiates that this information is presented in the information control.
+	 */
+	protected void doShowInformation() {
 		fSubjectArea= null;
 		fInformation= null;
 		computeInformation();
 	}
-
+	
 	/**
 	 * Presents the information in the information control or hides the information
 	 * control if no information should be presented. The information has previously

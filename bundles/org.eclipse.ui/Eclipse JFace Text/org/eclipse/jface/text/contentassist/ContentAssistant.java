@@ -38,6 +38,7 @@ import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.IViewportListener;
+import org.eclipse.jface.text.IWidgetTokenKeeper;
 import org.eclipse.jface.text.IWidgetTokenOwner;
 
 import org.eclipse.ui.texteditor.ITextEditorExtension;
@@ -50,7 +51,7 @@ import org.eclipse.jface.util.Assert;
  * The standard implementation of the <code>IContentAssistant</code> interface.
  * Usually, clients instantiate this class and configure it before using it.
  */
-public class ContentAssistant implements IContentAssistant {
+public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 	
 	/**
 	 * A generic closer class used to monitor various 
@@ -1303,6 +1304,13 @@ public class ContentAssistant implements IContentAssistant {
 		if (p != null)
 			return p.getContextInformationAutoActivationCharacters();
 		return null;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.IWidgetTokenKeeper#requestWidgetToken(IWidgetTokenOwner)
+	 */
+	public boolean requestWidgetToken(IWidgetTokenOwner owner) {
+		return false;
 	}
 }
 

@@ -49,4 +49,14 @@ public interface IDocumentExtension {
 	 * operation otherwise.
 	 */
 	void resumePostNotificationProcessing();
+	
+	/**
+	 * Tells the document that it is about to be sequentially rewritten.
+	 */
+	void startSequentialRewrite();
+	
+	/**
+	 * Tells the document that the sequential rewrite has been finished.
+	 */
+	void stopSequentialRewrite();
 }

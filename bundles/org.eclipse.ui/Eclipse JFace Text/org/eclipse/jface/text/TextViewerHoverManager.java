@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Display;
  * that the used <code>ITextHover</code> objects must be capable of 
  * operating in a non-UI thread.
  */
-class TextViewerHoverManager extends AbstractHoverInformationControlManager {
+class TextViewerHoverManager extends AbstractHoverInformationControlManager implements IWidgetTokenKeeper {
 	
 	/** The text viewer */
 	private TextViewer fTextViewer;
@@ -259,6 +259,14 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager {
 			if (fTextViewer != null)
 				fTextViewer.releaseWidgetToken(this);
 		}
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.IWidgetTokenKeeper#requestWidgetToken(IWidgetTokenOwner)
+	 */
+	public boolean requestWidgetToken(IWidgetTokenOwner owner) {
+		super.hideInformationControl();
+		return true;
 	}
 }
 

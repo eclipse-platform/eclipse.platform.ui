@@ -33,6 +33,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.IViewportListener;
+import org.eclipse.jface.text.IWidgetTokenKeeper;
 import org.eclipse.jface.text.IWidgetTokenOwner;
 
 import org.eclipse.jface.util.Assert;
@@ -44,7 +45,7 @@ import org.eclipse.jface.util.Assert;
  * <code>showInformation</code>.<p>
  * Usually, clients instantiate this class and configure it before using it.
  */
-public class InformationPresenter extends AbstractInformationControlManager implements IInformationPresenter {
+public class InformationPresenter extends AbstractInformationControlManager implements IInformationPresenter, IWidgetTokenKeeper {
 	
 	/**
 	 * Internal information control closer. Listens to several events issued by its subject control
@@ -57,6 +58,8 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 		private Control fSubjectControl;
 		/** The information control */
 		private IInformationControl fInformationControl;
+		/** Indicates whether this closer is active */
+		private boolean fIsActive= false;
 		
 		/*
 		 * @see IInformationControlCloser#setSubjectControl(Control)
@@ -76,6 +79,11 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 		 * @see IInformationControlCloser#start(Rectangle)
 		 */
 		public void start(Rectangle informationArea) {
+			
+			if (fIsActive)
+				return;
+			fIsActive= true;
+			
 			if (fSubjectControl != null && ! fSubjectControl.isDisposed()) {
 				fSubjectControl.addControlListener(this);
 				fSubjectControl.addMouseListener(this);
@@ -93,13 +101,18 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 		 * @see IInformationControlCloser#stop()
 		 */
 		public void stop() {
+			
+			if (!fIsActive)
+				return;
+			fIsActive= false;
+			
 			fTextViewer.removeViewportListener(this);			
 			
-			if (fInformationControl != null) {
+			if (fInformationControl != null)
 				fInformationControl.removeFocusListener(this);
-				fInformationControl.setVisible(false);
-			}
-			
+				
+			hideInformationControl();
+						
 			if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
 				fSubjectControl.removeControlListener(this);
 				fSubjectControl.removeMouseListener(this);
@@ -344,7 +357,7 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 			}
 		}
 	}
-
+	
 	/*
 	 * @see AbstractInformationControlManager#handleInformationControlDisposed()
 	 */
@@ -357,6 +370,13 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 				owner.releaseWidgetToken(this);
 			}
 		}
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.IWidgetTokenKeeper#requestWidgetToken(IWidgetTokenOwner)
+	 */
+	public boolean requestWidgetToken(IWidgetTokenOwner owner) {
+		return false;
 	}
 }
 

@@ -24,15 +24,15 @@ public interface IWidgetTokenOwner {
 	 * @return <code>true</code> if requester aquires the token,
 	 * 	<code>false</code> otherwise
 	 */
-	boolean requestWidgetToken(Object requester);
+	boolean requestWidgetToken(IWidgetTokenKeeper requester);
 	
 	/**
 	 * The given token keeper releases the token to this
-	 * token owner. If the token has previously not been 
+	 * token owner. If the token has previously not been held
 	 * by the given token keeper, nothing happens. This
 	 * method is non-blocking.
 	 * 
 	 * @param tokenKeeper the token keeper
 	 */
-	void releaseWidgetToken(Object tokenKeeper);
+	void releaseWidgetToken(IWidgetTokenKeeper tokenKeeper);
 }

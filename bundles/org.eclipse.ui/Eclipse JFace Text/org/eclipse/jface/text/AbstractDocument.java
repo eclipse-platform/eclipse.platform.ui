@@ -1105,4 +1105,16 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension 
 		if (fStoppedCount == 0 && fReentranceCount == 0)
 			executePostNotificationChanges();
 	}
+	
+	/*
+	 * @see IDocumentExtension#startSequentialRewrite()
+	 */
+	public void startSequentialRewrite() {
+	}
+
+	/*
+	 * @see IDocumentExtension#stopSequentialRewrite()
+	 */
+	public void stopSequentialRewrite() {
+	}
 }

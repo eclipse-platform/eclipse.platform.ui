@@ -12,7 +12,15 @@ package org.eclipse.ui.texteditor;
 
 
 import java.util.ResourceBundle;
+
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.jface.text.ITextOperationTarget;
+
+import org.eclipse.ui.IWorkbenchPartSite;
+
 
 
 /**
@@ -52,8 +60,25 @@ public final class ShiftAction extends TextEditorAction implements IReadOnlyDepe
 	 * operation code.
 	 */
 	public void run() {
-		if (fOperationCode != -1 && fOperationTarget != null)
-			fOperationTarget.doOperation(fOperationCode);
+		if (fOperationCode != -1 && fOperationTarget != null) {
+			
+			ITextEditor editor= getTextEditor();
+			if (editor != null) {
+				
+				Display display= null;
+				
+				IWorkbenchPartSite site= editor.getSite();
+				Shell shell= site.getShell();
+				if (shell != null && !shell.isDisposed()) 
+					display= shell.getDisplay();
+			
+				BusyIndicator.showWhile(display, new Runnable() {
+					public void run() {
+						fOperationTarget.doOperation(fOperationCode);
+					}
+				});
+			}
+		}
 	}
 	
 	/*

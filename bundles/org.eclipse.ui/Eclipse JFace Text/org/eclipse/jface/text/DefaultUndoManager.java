@@ -7,7 +7,6 @@ package org.eclipse.jface.text;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -68,17 +67,37 @@ public class DefaultUndoManager implements IUndoManager {
 		
 		/**
 		 * Undo the change described by this command.
+		 * 
+		 * @param text the text widget to be modified
+		 */
+		protected void undoTextChange(StyledText text) {
+			text.replaceTextRange(fStart, fText.length(), fPreservedText);
+		}
+		
+		/**
+		 * Undo the change described by this command. Also selects and
+		 * reveals the change.
 		 *
 		 * @param text the text widget to be modified
 		 */
 		protected void undo(StyledText text) {
-			text.replaceTextRange(fStart, fText.length(), fPreservedText);
-			int length= fPreservedText == null ? 0 : fPreservedText.length();
 			
+			undoTextChange(text);
+			
+			int length= fPreservedText == null ? 0 : fPreservedText.length();
 			IRegion visible= fTextViewer.getVisibleRegion();
 			int offset= fStart + visible.getOffset();
 			fTextViewer.setSelectedRange(offset, length);
 			fTextViewer.revealRange(offset, length);
+		}
+		
+		/**
+		 * Redo the change described by this command.
+		 * 
+		 * @param text the text widget to be modified
+		 */
+		protected void redoTextChange(StyledText text) {
+			text.replaceTextRange(fStart, fEnd - fStart, fText);
 		}
 		
 		/**
@@ -88,9 +107,10 @@ public class DefaultUndoManager implements IUndoManager {
 		 * @param text the text widget to be modified
 		 */
 		protected void redo(StyledText text) {
-			text.replaceTextRange(fStart, fEnd - fStart, fText);
-			int length= fText == null ? 0 : fText.length();
 			
+			redoTextChange(text);
+			
+			int length= fText == null ? 0 : fText.length();
 			IRegion visible= fTextViewer.getVisibleRegion();
 			int offset= fStart + visible.getOffset();
 			fTextViewer.setSelectedRange(offset, length);
@@ -168,10 +188,32 @@ public class DefaultUndoManager implements IUndoManager {
 		 * @see TextCommand#undo
 		 */
 		protected void undo(StyledText text) {
-			ListIterator e= fCommands.listIterator(fCommands.size());
-			while (e.hasPrevious()) {
-				TextCommand c= (TextCommand) e.previous();
-				c.undo(text);
+			ITextViewerExtension extension= null;
+			if (fTextViewer instanceof ITextViewerExtension)
+				extension= (ITextViewerExtension) fTextViewer;
+				
+			if (extension != null)
+				extension.setRedraw(false);
+				
+			try {
+				
+				int size= fCommands.size();
+				if (size > 0) {
+					
+					TextCommand c;
+					
+					for (int i= size -1; i > 0;  --i) {
+						c= (TextCommand) fCommands.get(i);
+						c.undoTextChange(text);
+					}
+					
+					c= (TextCommand) fCommands.get(0);
+					c.undo(text);
+				}
+					
+			} finally {
+				if (extension != null)
+					extension.setRedraw(true);
 			}
 		}
 		
@@ -179,10 +221,33 @@ public class DefaultUndoManager implements IUndoManager {
 		 * @see TextCommand#redo
 		 */
 		protected void redo(StyledText text) {
-			ListIterator e= fCommands.listIterator();
-			while (e.hasNext()) {
-				TextCommand c= (TextCommand) e.next();
-				c.redo(text);
+			
+			ITextViewerExtension extension= null;
+			if (fTextViewer instanceof ITextViewerExtension)
+				extension= (ITextViewerExtension) fTextViewer;
+				
+			if (extension != null)
+				extension.setRedraw(false);
+			
+			try {
+				
+				int size= fCommands.size();
+				if (size > 0) {
+					
+					TextCommand c;
+					
+					for (int i= 0; i < size -1;  ++i) {
+						c= (TextCommand) fCommands.get(i);
+						c.redoTextChange(text);
+					}
+					
+					c= (TextCommand) fCommands.get(size -1);
+					c.redo(text);
+				}
+				
+			} finally {
+				if (extension != null)
+					extension.setRedraw(true);
 			}
 		}
 		
@@ -280,7 +345,8 @@ public class DefaultUndoManager implements IUndoManager {
 		 * @see ITextListener#textChanged
 		 */
 		public void textChanged(TextEvent e) {
-			processTextEvent(e);
+			if (e.getDocumentEvent() != null)
+				processTextEvent(e);
 		}
 	};
 	 
