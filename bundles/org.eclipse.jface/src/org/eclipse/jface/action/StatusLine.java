@@ -243,45 +243,24 @@ import org.eclipse.swt.widgets.*;
 	 * work units. 
 	 */
 	public void beginTask(String name, int totalWork) {
-		fStartTime= System.currentTimeMillis();
-		final long timestamp= fStartTime;
-		if (totalWork == UNKNOWN || totalWork == 0) {
-			Thread t= new Thread() {
-				public void run() {
-					try {
-						sleep(DELAY_PROGRESS);
-						StatusLine.this.startAnimatedTask(timestamp);
-					} catch (InterruptedException e) {
-					}
+		final long timestamp = System.currentTimeMillis();
+		fStartTime = timestamp;
+		final boolean animated = (totalWork == UNKNOWN || totalWork == 0);
+		// make sure the progress bar is made visible while
+		// the task is running. Fixes bug 32198 for the non-animated case.
+		Thread t= new Thread() {
+			public void run() {
+				try {
+					sleep(DELAY_PROGRESS);
+					StatusLine.this.startTask(timestamp, animated);
+				} catch (InterruptedException e) {
 				}
-			};
-			t.start();
-			
-		} else {
-			// make sure the progress bar is made visible while
-			// the task is running. Fixes bug 32198.
-			Thread t= new Thread() {
-				public void run() {
-					try {
-						sleep(DELAY_PROGRESS);
-						if (! fProgressIsVisible) {
-							fProgressBar.getDisplay().asyncExec(
-								new Runnable() {
-									public void run() {
-										if (fStartTime == timestamp)										
-											showProgress();
-									}
-								}
-							);
-						}
-					} catch (InterruptedException e) {
-					}
-				}
-			};
-			t.start();
+			}
+		};
+		t.start();
+		if (!animated) {
 			fProgressBar.beginTask(totalWork);
-		}
-		
+		}		
 		if (name == null)
 			fTaskName= "";//$NON-NLS-1$
 		else
@@ -449,7 +428,7 @@ import org.eclipse.swt.widgets.*;
 	 * @private
 	 */
 	protected void showButton() {
-		if (fToolBar != null) {
+		if (fToolBar != null && !fToolBar.isDisposed()) {
 			fToolBar.setVisible(true);
 			fToolBar.setEnabled(true);
 			fToolBar.setCursor(fStopButtonCursor);
@@ -461,11 +440,11 @@ import org.eclipse.swt.widgets.*;
 	 * @private
  	 */
 	protected void showProgress() {
-		if (! fProgressIsVisible) {
+		if (!fProgressIsVisible && !isDisposed()) {
 			fProgressIsVisible= true;
 			if (fCancelEnabled)
 				showButton();
-			if (fProgressBar != null)
+			if (fProgressBar != null && !fProgressBar.isDisposed())
 				fProgressBar.setVisible(true);
 			layout();
 		}
@@ -473,18 +452,24 @@ import org.eclipse.swt.widgets.*;
 	/**
 	 * @private
 	 */
-	void startAnimatedTask(final long timestamp) {
-		if (fProgressBar != null) {
-			fProgressBar.getDisplay().asyncExec(
-				new Runnable() {
-					public void run() {
-						if (fStartTime == timestamp) {
-							showProgress();
-							fProgressBar.beginAnimatedTask();
+	void startTask(final long timestamp, final boolean animated) {
+		if (!fProgressIsVisible && fStartTime == timestamp) {
+			if (fProgressBar != null && !fProgressBar.isDisposed()) {
+				fProgressBar.getDisplay().asyncExec(
+					new Runnable() {
+						public void run() {
+							if (fStartTime == timestamp) {
+								showProgress();
+								if (animated) {
+									if (fProgressBar != null && !fProgressBar.isDisposed()) {
+										fProgressBar.beginAnimatedTask();
+									}
+								}
+							}
 						}
 					}
-				}
-			);
+				);
+			}
 		}	
 	}
 	/**
