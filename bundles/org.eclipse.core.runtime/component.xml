@@ -25,19 +25,17 @@
    <type name="IPluginRegistry" implement="false" />
    <type name="IRegistryChangeEvent" implement="false" />
    <type name="Path" subclass="false" />
-   <type name="Platform" instantiate="false" subclass="false" />
-   <type name="Plugin" instantiate="false" />   
    <type name="PluginVersionIdentifier" subclass="false" />
    <type name="Preferences" subclass="false" />
    <type name="QualifiedName" subclass="false" />
  </package>
  
  <package name="org.eclipse.core.runtime.content">
-	<type name="BinarySignatureDescriber" instantiate="false" subclass="false" />
+	<type name="BinarySignatureDescriber" instantiate="false" />
 	<type name="IContentDescription" implement="false" />
 	<type name="IContentType" implement="false" />
 	<type name="IContentTypeManager" implement="false" />
-	<type name="XMLRootElementContentDescriber" instantiate="false" subclass="false" />
+	<type name="XMLRootElementContentDescriber" instantiate="false" />
  </package>
  
  <package name="org.eclipse.core.runtime.dynamicHelpers"/>
