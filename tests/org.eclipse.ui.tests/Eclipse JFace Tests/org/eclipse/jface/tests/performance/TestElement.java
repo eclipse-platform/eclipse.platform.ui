@@ -17,6 +17,7 @@ package org.eclipse.jface.tests.performance;
  *
  */
 public class TestElement {
+	
 	String name;
 
 	/**
@@ -33,7 +34,7 @@ public class TestElement {
 	 * @param index
 	 */
 	public TestElement(int index) {
-		name = "Element " + String.valueOf(index);
+		name = TestTreeElement.generateFirstEntry() + String.valueOf(index);
 	}
 
 	public String getText() {

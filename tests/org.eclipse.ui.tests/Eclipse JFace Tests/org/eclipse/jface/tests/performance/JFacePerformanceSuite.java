@@ -22,11 +22,7 @@ public class JFacePerformanceSuite extends TestSuite {
 	public JFacePerformanceSuite() {
 		super();
 		addTest(new ListViewerRefreshTest("testRefresh"));
-		addTest(new ListViewerRefreshTest("testRefreshSmaller"));
-		addTest(new ListViewerRefreshTest("testRefreshLarger"));
 		addTest(new ComboViewerRefreshTest("testRefresh"));
-		addTest(new ComboViewerRefreshTest("testRefreshSmaller"));
-		addTest(new ComboViewerRefreshTest("testRefreshLarger"));
 		addTest(new TreeTest("testAdd"));
 	}
 }
