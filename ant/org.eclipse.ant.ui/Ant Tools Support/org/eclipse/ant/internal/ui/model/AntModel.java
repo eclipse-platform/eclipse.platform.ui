@@ -697,7 +697,8 @@ public class AntModel implements IAntModel {
 			}
 		} else {
 			taskNode= newNotWellKnownTaskNode(newTask, attributes);
-			((AntTaskNode)fTaskToNode.get(parentTask)).addChildNode(taskNode);
+            AntTaskNode parentNode= (AntTaskNode)fTaskToNode.get(parentTask);
+			parentNode.addChildNode(taskNode);
 		}
 		fTaskToNode.put(newTask, taskNode);
 		
@@ -768,7 +769,6 @@ public class AntModel implements IAntModel {
             }
             newNode= new AntTaskNode(newTask, label);        
 		} else if(taskName.equalsIgnoreCase("delete")) { //$NON-NLS-1$
-			
         	String label = "delete "; //$NON-NLS-1$
             String file = attributes.getValue(IAntModelConstants.ATTR_FILE);
             if(file != null) {
@@ -814,6 +814,13 @@ public class AntModel implements IAntModel {
 		if (id != null) {
 			newNode.setId(id);
 		}
+        String taskName= newTask.getTaskName();
+        if ("attribute".equals(taskName) || "element".equals(taskName)) { //$NON-NLS-1$ //$NON-NLS-2$
+            String name= attributes.getValue("name"); //$NON-NLS-1$
+            if (name != null) {
+                newNode.setBaseLabel(name);
+            }
+        }
 		
 		setExternalInformation(newTask, newNode);
 		return newNode;
@@ -1571,6 +1578,27 @@ public class AntModel implements IAntModel {
     public AntDefiningTaskNode getDefininingTaskNode(String nodeName) {
         if (fTaskNameToDefiningNode != null) {
             return (AntDefiningTaskNode)fTaskNameToDefiningNode.get(nodeName);
+        }
+        return null;
+    }
+    
+    public AntTaskNode getMacroDefAttributeNode(String macroDefAttributeName) {
+        if (fTaskNameToDefiningNode == null) {
+            return null;
+        }
+        Iterator iter = fTaskNameToDefiningNode.values().iterator();
+        while(iter.hasNext()) {
+            AntDefiningTaskNode definingNode = (AntDefiningTaskNode) iter.next();
+            List attributes= definingNode.getChildNodes();
+            if (attributes != null) {
+                Iterator attributeItr= attributes.iterator();
+                while (attributeItr.hasNext()) {
+                    AntTaskNode attributeNode= (AntTaskNode) attributeItr.next();
+                    if (macroDefAttributeName.equals(attributeNode.getLabel())) {
+                        return attributeNode;
+                    }
+                }
+            }
         }
         return null;
     }

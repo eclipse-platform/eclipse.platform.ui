@@ -11,6 +11,7 @@
 package org.eclipse.ant.internal.ui.editor.text;
 
 import java.util.Iterator;
+import java.util.StringTokenizer;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -272,6 +273,29 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension {
                 } catch (BadLocationException e) {
                 }
                 region= new Region(start + 1, end - start - 1);
+            }
+        }
+        
+        if (region != null) {
+            try {
+                char c= document.getChar(region.getOffset() - 1);
+                if (c != '{') {
+                    //do not allow spaces in region as not a property
+                    String text= document.get(region.getOffset(), region.getLength());
+                    StringTokenizer tokenizer= new StringTokenizer(text, " "); //$NON-NLS-1$
+                    if (tokenizer.countTokens() != 1) {
+                        while(tokenizer.hasMoreTokens()) {
+                            String token= tokenizer.nextToken();
+                            int index= text.indexOf(token);
+                            if (region.getOffset() + index <= offset && region.getOffset() + index + token.length() >= offset) {
+                                region= new Region(region.getOffset() + index, token.length());
+                                break;
+                            }
+                        }
+                    }
+                    
+                }
+            } catch (BadLocationException e) {
             }
         }
             

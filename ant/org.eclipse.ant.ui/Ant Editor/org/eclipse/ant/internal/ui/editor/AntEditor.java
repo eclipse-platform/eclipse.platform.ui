@@ -697,9 +697,13 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 							if (path != null) {
 								return path;
 							}
+                            
+                            node= model.getDefininingTaskNode(text);
+                            if (node == null) {
+                                node= model.getMacroDefAttributeNode(text);
+                            }
 						}
 					} 
-					
 				}
 			}
 		}
