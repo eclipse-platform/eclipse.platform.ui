@@ -224,7 +224,7 @@ public class WorkingSetSelectionDialog extends SelectionDialog {
 		if (hasSelection && selection instanceof IStructuredSelection)
 			hasSingleSelection= ((IStructuredSelection)selection).size() == 1;
 		fDetailsButton.setEnabled(hasSingleSelection);
-		getOkButton().setEnabled(hasSingleSelection);
+		getOkButton().setEnabled(hasSingleSelection || !hasSelection);
 	}
 
 	private void removeSelectedWorkingSets() {

@@ -264,9 +264,16 @@ public class ScopePart {
 		if (fWorkingSet != null)
 			dialog.setInitialSelections(new IWorkingSet[] {fWorkingSet});
 		if (dialog.open() == dialog.OK) {
-			IWorkingSet workingSet= (IWorkingSet)dialog.getResult()[0];
-			setSelectedWorkingSet(workingSet);
-			return true;
+			Object[] result= dialog.getResult();
+			if (result.length == 1) {
+				setSelectedWorkingSet((IWorkingSet)result[0]);
+				return true;
+			}
+			fWorkingSetText.setText(""); //$NON-NLS-1$
+			fWorkingSet= null;
+			if (fScope == WORKING_SET_SCOPE)
+				setSelectedScope(WORKSPACE_SCOPE);
+			return false;
 		} else {
 			// test if selected working set has been removed
 			if (!Arrays.asList(SearchUI.getWorkingSets()).contains(fWorkingSet)) {
