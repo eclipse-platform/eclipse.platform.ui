@@ -159,6 +159,10 @@ public class IncludedFeatureReference extends IncludedFeatureReferenceModel impl
 			}
 		}
 
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS){
+			UpdateManagerPlugin.warn("Found best match feature:"+newRef+" for feature reference "+this.getURLString());
+		}
+
 		if (newRef != null)
 			return newRef;
 		else 

@@ -59,6 +59,8 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		setTimeline(now.getTime());
 		setCurrent(false);
 		resolve(newLocation, null);
+		// no need to parse file, all data are initialized
+		initialized = true;
 	}
 
 	/*

@@ -39,7 +39,7 @@ public class InstallConfigurationModel extends ModelObject {
 	configurationSites;
 
 	private long timeline;
-	private boolean initialized = false;
+	protected boolean initialized = false;
 
 	/**
 	 * default constructor. Create
@@ -233,6 +233,7 @@ public class InstallConfigurationModel extends ModelObject {
 	 * initialize the configurations from the persistent model.
 	 */
 	private void initialize() {
+		
 		try {
 			try {
 				URL resolvedURL = URLEncoder.encode(getURL());

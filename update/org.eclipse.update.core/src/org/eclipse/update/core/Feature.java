@@ -717,8 +717,13 @@ public class Feature extends FeatureModel implements IFeature {
 		if (allIncluded!=null){
 			for (int i = 0; i < allIncluded.length; i++) {
 				IIncludedFeatureReference included = allIncluded[i];
-				if (UpdateManagerUtils.isValidEnvironment(allIncluded[i]))
+				if (UpdateManagerUtils.isValidEnvironment(included))
 					list.add(included);
+				else{
+					if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS){
+						UpdateManagerPlugin.warn("Filtered out feature reference:"+included);
+					}
+				}
 			}
 		}
 		
