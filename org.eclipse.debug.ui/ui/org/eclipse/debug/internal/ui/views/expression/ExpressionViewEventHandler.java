@@ -139,17 +139,19 @@ public class ExpressionViewEventHandler extends VariablesViewEventHandler implem
 	public void expressionsChanged(final IExpression[] expressions) {
 		Runnable r = new Runnable() {
 			public void run() {
-				getTreeViewer().getControl().setRedraw(false);
-				for (int i = 0; i < expressions.length; i++) {
-					IExpression expression = expressions[i];
-					refresh(expression);
-					// update details if selected
-					IStructuredSelection selection = (IStructuredSelection)getViewer().getSelection();
-					if (selection.size() == 1 && selection.getFirstElement().equals(expression)) {
-						getVariablesView().populateDetailPane();	
+				if (isAvailable()) {
+					getTreeViewer().getControl().setRedraw(false);
+					for (int i = 0; i < expressions.length; i++) {
+						IExpression expression = expressions[i];
+						refresh(expression);
+						// update details if selected
+						IStructuredSelection selection = (IStructuredSelection)getViewer().getSelection();
+						if (selection.size() == 1 && selection.getFirstElement().equals(expression)) {
+							getVariablesView().populateDetailPane();	
+						}
 					}
+					getTreeViewer().getControl().setRedraw(true);
 				}
-				getTreeViewer().getControl().setRedraw(true);
 			}
 		};
 		getView().asyncExec(r);			
