@@ -38,7 +38,7 @@ public class TargetTests extends AbstractAntTest {
 	}
 	
 	/**
-	 * Ensures that target names are retrieved properly
+	 * Ensures that target descriptions are retrieved properly
 	 */
 	public void testTargetDescription() throws CoreException {
 		String[] targetDescriptions= getTargetDescriptions("TestForEcho.xml");
