@@ -441,11 +441,16 @@ public class ScopedPreferenceStore implements IPreferenceStore {
 	 * @see org.eclipse.jface.preference.IPreferenceStore#putValue(java.lang.String, java.lang.String)
 	 */
 	public void putValue(String name, String value) {
+		try {
+			//Do not notify listeners
+			silentRunning = true;
+			getStorePreferences().put(name, value);
+			
+		} finally{//Be sure that an exception does not stop property updates
+			silentRunning = false;
+		}
 		
-		//Do not notify listeners
-		silentRunning = true;
-		getStorePreferences().put(name, value);
-		silentRunning = false;
+		
 	}
 
 	/* (non-Javadoc)
