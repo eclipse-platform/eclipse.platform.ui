@@ -17,8 +17,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import org.eclipse.core.internal.boot.PlatformURLHandler;
-import org.eclipse.core.internal.registry.BundleModel;
-import org.eclipse.core.internal.registry.ExtensionRegistry;
 import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Policy;
@@ -32,23 +30,14 @@ public class PluginDescriptor implements IPluginDescriptor {
 	private volatile boolean activePending = false; // being activated
 	private boolean deactivated = false; // plugin deactivated due to startup errors
 	protected Plugin pluginObject = null; // plugin object
-	private ResourceBundle bundle = null; // plugin.properties
-	private Locale locale = null; // bundle locale
-	private boolean bundleNotFound = false; // marker to prevent unnecessary lookups
-	private Object[] cachedClasspath = null; // cached value of class loader's classpath
-	private org.osgi.framework.Bundle bundleOsgi;
+	private Bundle bundleOsgi;
 	
-	static final String PLUGIN_URL = PlatformURLHandler.PROTOCOL + PlatformURLHandler.PROTOCOL_SEPARATOR + "/" + PlatformURLPluginConnection.PLUGIN + "/"; //$NON-NLS-1$ //$NON-NLS-2$
-
-	// constants
-	static final String VERSION_SEPARATOR = "_"; //$NON-NLS-1$
-
-	private static final String DEFAULT_BUNDLE_NAME = "plugin"; //$NON-NLS-1$
-	private static final String KEY_PREFIX = "%"; //$NON-NLS-1$
-	private static final String KEY_DOUBLE_PREFIX = "%%"; //$NON-NLS-1$
-
 	private PluginClassLoader classLoader;
-
+	
+	// constants
+	static final String PLUGIN_URL = PlatformURLHandler.PROTOCOL + PlatformURLHandler.PROTOCOL_SEPARATOR + "/" + PlatformURLPluginConnection.PLUGIN + "/"; //$NON-NLS-1$ //$NON-NLS-2$
+	static final String VERSION_SEPARATOR = "_"; //$NON-NLS-1$
+	
 	synchronized public void doPluginDeactivation() {
 		pluginObject = null;
 		active = false;
@@ -193,59 +182,20 @@ public class PluginDescriptor implements IPluginDescriptor {
 	 * @see IPluginDescriptor
 	 */
 	public ResourceBundle getResourceBundle() throws MissingResourceException {
-		return getResourceBundle(Locale.getDefault());
+		return InternalPlatform.getDefault().getResourceBundle(bundleOsgi);
 	}
-	public ResourceBundle getResourceBundle(Locale targetLocale) throws MissingResourceException {
-		// we cache the bundle for a single locale 
-		if (bundle != null && targetLocale.equals(locale))
-			return bundle;
 
-		try {
-			BundleModel bundleModel = (BundleModel) ((ExtensionRegistry) InternalPlatform.getDefault().getRegistry()).getElement(bundleOsgi.getGlobalName());
-			bundle = bundleModel.getResourceBundle(targetLocale);
-		} catch (MissingResourceException e) {
-			bundleNotFound = true;
-			throw e;
-		}
-		return bundle;
-	}
 	/**
 	 * @see IPluginDescriptor
 	 */
 	public String getResourceString(String value) {
-		return getResourceString(value, null);
+		return InternalPlatform.getDefault().getResourceString(bundleOsgi, value);
 	}
 	/**
 	 * @see IPluginDescriptor
 	 */
 	public String getResourceString(String value, ResourceBundle b) {
-		String s = value.trim();
-		if (!s.startsWith(KEY_PREFIX))
-			return s;
-		if (s.startsWith(KEY_DOUBLE_PREFIX))
-			return s.substring(1);
-
-		int ix = s.indexOf(" "); //$NON-NLS-1$
-		String key = ix == -1 ? s : s.substring(0, ix);
-		String dflt = ix == -1 ? s : s.substring(ix + 1);
-
-		if (b == null) {
-			try {
-				b = getResourceBundle();
-			} catch (MissingResourceException e) {
-				// just return the default (dflt)
-			}
-		}
-
-		if (b == null)
-			return dflt;
-
-		try {
-			return b.getString(key.substring(1));
-		} catch (MissingResourceException e) {
-			//this will avoid requiring a bundle access on the next lookup
-			return "%" + dflt; //$NON-NLS-1$
-		}
+		return InternalPlatform.getDefault().getResourceString(bundleOsgi, value, b);
 	}
 	/**
 	 * @see IPluginDescriptor

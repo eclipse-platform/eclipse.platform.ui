@@ -117,7 +117,6 @@ public class BundleModel extends RegistryModelObject implements IRegistryElement
 
 		return (String[]) result.toArray(new String[result.size()]);
 	}
-
 	//Search for properties file the same way the ResourceBundle algorithm does it
 	private URL findProperties(Bundle bundle, String path) {
 		String[] nlVariants = NL_JAR_VARIANTS;
@@ -138,7 +137,6 @@ public class BundleModel extends RegistryModelObject implements IRegistryElement
 			return result;
 		return findInFragments(bundle, path + ".properties");
 	}
-
 	private URL findInPlugin(Bundle bundle, String filePath) {
 		try {
 			return bundle.getEntry(filePath);
@@ -147,7 +145,6 @@ public class BundleModel extends RegistryModelObject implements IRegistryElement
 			return null;
 		}
 	}
-
 	private URL findInFragments(Bundle bundle, String filePath) {
 		Bundle[] fragments = bundle.getFragments();
 		URL fileURL = null;
@@ -162,7 +159,6 @@ public class BundleModel extends RegistryModelObject implements IRegistryElement
 		}
 		return fileURL;
 	}
-
 	public ResourceBundle getResourceBundle(Locale targetLocale) throws MissingResourceException {
 		// we cache the bundle for a single locale 
 		if (resourceBundle != null && targetLocale.equals(locale))
@@ -205,6 +201,9 @@ public class BundleModel extends RegistryModelObject implements IRegistryElement
 		return resourceBundle;
 	}
 	public String getResourceString(String value) {
+		return getResourceString(value, null);
+	}
+	public String getResourceString(String value, ResourceBundle bundle) {
 
 		String s = value.trim();
 		if (!s.startsWith(KEY_PREFIX))
@@ -216,19 +215,19 @@ public class BundleModel extends RegistryModelObject implements IRegistryElement
 		String key = ix == -1 ? s : s.substring(0, ix);
 		String dflt = ix == -1 ? s : s.substring(ix + 1);
 
-		if (resourceBundle == null) {
+		if (bundle == null) {
 			try {
-				resourceBundle = getResourceBundle();
+				bundle = getResourceBundle();
 			} catch (MissingResourceException e) {
 				// just return the default (dflt)
 			}
 		}
 
-		if (resourceBundle == null)
+		if (bundle == null)
 			return dflt;
 
 		try {
-			return resourceBundle.getString(key.substring(1));
+			return bundle.getString(key.substring(1));
 		} catch (MissingResourceException e) {
 			//this will avoid requiring a bundle access on the next lookup
 			return "%" + dflt; //$NON-NLS-1$

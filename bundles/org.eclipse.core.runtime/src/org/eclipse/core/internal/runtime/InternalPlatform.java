@@ -15,6 +15,8 @@ import java.net.*;
 import java.util.*;
 import org.eclipse.core.internal.boot.*;
 import org.eclipse.core.internal.jobs.JobManager;
+import org.eclipse.core.internal.registry.BundleModel;
+import org.eclipse.core.internal.registry.ExtensionRegistry;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.osgi.service.debug.DebugOptions;
@@ -1203,16 +1205,13 @@ public final class InternalPlatform implements IPlatform {
 		return getStateLocation(bundle, true);
 	}
 	public ResourceBundle getResourceBundle(Bundle bundle) throws MissingResourceException {
-		//TODO
-		throw new NoSuchMethodError("getResourceBundleString");
+		return ((BundleModel) ((ExtensionRegistry) getRegistry()).getElement(bundle.getGlobalName())).getResourceBundle();
 	}
 	public String getResourceString(Bundle bundle, String value) {
-		//TODO
-		throw new NoSuchMethodError("getResourceBundleString");
+		return ((BundleModel) ((ExtensionRegistry) getRegistry()).getElement(bundle.getGlobalName())).getResourceString(value);
 	}
 	public String getResourceString(Bundle bundle, String value, ResourceBundle resourceBundle) {
-		//TODO
-		throw new NoSuchMethodError("getResourceBundleString");
+		return ((BundleModel) ((ExtensionRegistry) getRegistry()).getElement(bundle.getGlobalName())).getResourceString(value, resourceBundle);
 	}
 	public String getOSArch() {
 		return getEnvironmentInfoService().getOSArch();
