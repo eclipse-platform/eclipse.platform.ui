@@ -6,6 +6,8 @@ package org.eclipse.debug.internal.ui.views;
  */
  
 import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -30,19 +32,32 @@ public class ConsoleViewEventHandler extends AbstractDebugEventHandler {
 	 * @see AbstractDebugEventHandler#doHandleDebugEvent(DebugEvent)
 	 */
 	protected void doHandleDebugEvent(DebugEvent event) {
-		if (event.getSource().equals(getConsoleView().getProcess())) {
+		boolean update= false;
+		Object source= event.getSource();
+		IProcess process= getConsoleView().getProcess();
+		if (source.equals(process)) {
+			update= true;
+		} else {
+			if (process != null) {
+				Object obj = process.getAdapter(IDebugTarget.class);
+				if (source.equals(obj)) {
+					update= true;	
+				}
+			}
+		}
+		
+		if (update) {
 			getView().updateActions();
-			((ConsoleView)getView()).updateTitle();
+			getConsoleView().updateTitle();
 		}
 	}
 	
 	/**
-	 * Returns the console view
+	 * Returns the console view.
 	 * 
 	 * @return console view
 	 */
 	protected ConsoleView getConsoleView() {
 		return (ConsoleView)getView();
 	}
-
 }
