@@ -14,16 +14,16 @@
 
 <p><b><i>Description: </i></b>This extension point allows tools to handle the presentation
 aspects of a debug model. A debug model presentation is responsible for providing labels,
-images, and editors for elements in a specific debug model.</p>
+images and editors for elements in a specific debug model.</p>
 
 <p><b><i>Configuration Markup:</i></b> </p>
 
-<p><tt>&nbsp;&nbsp; &lt;!ATTLIST sectionParser</tt> <br>
+<p><tt>&nbsp;&nbsp; &lt;!ATTLIST debugModelPresentation</tt> <br>
 <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class&nbsp;&nbsp; &nbsp;&nbsp;CDATA #REQUIRED</tt> <tt>
 <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id &nbsp; &nbsp; &nbsp;&nbsp; CDATA #REQUIRED</tt> <tt>
 <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; detailsViewerConfiguration &nbsp; &nbsp; &nbsp;&nbsp; CDATA #IMPLIED</tt> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; detailsViewerConfiguration &nbsp; &nbsp; &nbsp;&nbsp; CDATA #IMPLIED</tt>&gt;
 <ul>
   <li><b>class</b> - fully qualifed name of a Java class that implements the <b>
   org.eclipse.debug.ui.IDebugModelPresentation</b></li>
@@ -45,8 +45,8 @@ images, and editors for elements in a specific debug model.</p>
 <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; point = &quot;org.eclipse.debug.ui.debugModelPresentations&quot;&gt;</tt> 
 <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;debugModelPresentation</tt> 
 <tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class = &quot;com.example.JavaModelPresentation&quot;&gt;</tt> 
-<tt>	     id = &quot;com.example.JavaDebugModel&quot;
-	&lt;/debugLabelProvider</tt> 
+<tt>	     id = &quot;com.example.JavaDebugModel&quot;&gt;
+	&lt;/debugModelPresentation&gt;</tt> 
 <tt>&nbsp;&nbsp; &lt;/extension&gt;</tt></pre>
 
 <p>In the example above, the class <tt>com.example.JavaModelPresentation</tt> will be used
