@@ -329,7 +329,6 @@ public final class Workbench implements IWorkbench {
 			Listener keyFilter = keyboard.getKeyDownFilter();
 			currentDisplay.removeFilter(SWT.KeyDown, keyFilter);
 			currentDisplay.removeFilter(SWT.Traverse, keyFilter);
-			currentDisplay.removeFilter(SWT.KeyUp, keyboard.getKeyUpFilter());
 			keyFilterDisabled = true;
 		}
 	}
@@ -340,7 +339,6 @@ public final class Workbench implements IWorkbench {
 			Listener keyFilter = keyboard.getKeyDownFilter();
 			currentDisplay.addFilter(SWT.KeyDown, keyFilter);
 			currentDisplay.addFilter(SWT.Traverse, keyFilter);
-			currentDisplay.addFilter(SWT.KeyUp, keyboard.getKeyUpFilter());
 			keyFilterDisabled = false;
 		}
 	}
