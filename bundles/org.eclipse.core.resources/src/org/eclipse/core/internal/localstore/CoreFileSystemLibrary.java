@@ -48,7 +48,7 @@ public abstract class CoreFileSystemLibrary {
 	/** instance of this library */
 	// The name convention is to get the plugin version at the time
 	// the library is changed.  
-	private static final String LIBRARY_NAME = "core_2_1_0a"; //$NON-NLS-1$
+	private static final String LIBRARY_NAME = "core_2_1_0b"; //$NON-NLS-1$
 	private static boolean hasNatives = false;
 	private static boolean isUnicode = false;
 
@@ -157,10 +157,7 @@ public abstract class CoreFileSystemLibrary {
 	 */
 	public static boolean copyAttributes(String source, String destination, boolean copyLastModified) {
 		if (hasNatives) 
-			// XXX: should remove parameter copyLastModified 
-			// It is not properly implemented on Windows, and has been ignored since it appeared (Rev. 1.10)
-			// Clients should call File#setLastModified(#getLastModified(String | long)) instead
-			return isUnicode ? internalCopyAttributesW(source.toCharArray(), destination.toCharArray(), false) : internalCopyAttributes(Convert.toPlatformBytes(source), Convert.toPlatformBytes(destination), false); 
+			return isUnicode ? internalCopyAttributesW(source.toCharArray(), destination.toCharArray(), copyLastModified) : internalCopyAttributes(Convert.toPlatformBytes(source), Convert.toPlatformBytes(destination), copyLastModified); 
 		return false; // not supported
 	}
 	/**
