@@ -24,6 +24,10 @@ import org.eclipse.jface.util.IPropertyChangeListener;
  * For example, in the Eclipse workbench, this mechanism is used to allow the
  * command architecture to override certain values in action contribution items.
  * </p>
+ * <p>
+ * This class is not intended to be called or extended by any external clients.
+ * This API is still under flux, and is expected to change in 3.1.
+ * </p>
  * 
  * @since 3.0
  */
