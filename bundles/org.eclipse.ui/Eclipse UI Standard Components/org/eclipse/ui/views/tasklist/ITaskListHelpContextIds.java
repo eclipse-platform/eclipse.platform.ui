@@ -1,9 +1,14 @@
 package org.eclipse.ui.views.tasklist;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+**********************************************************************/
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -24,6 +29,11 @@ import org.eclipse.ui.PlatformUI;
 	public static final String NEW_TASK_ACTION = PREFIX + "new_task_action_context"; //$NON-NLS-1$
 	public static final String REMOVE_TASK_ACTION = PREFIX + "remove_task_action_context"; //$NON-NLS-1$
 	public static final String GOTO_TASK_ACTION = PREFIX + "goto_task_action_context"; //$NON-NLS-1$
+	public static final String FILTERS_ACTION = PREFIX + "filters_action_context"; //$NON-NLS-1$
+	public static final String MARK_COMPLETED_ACTION = PREFIX + "mark_completed_action_context"; //$NON-NLS-1$
+	public static final String RESOLVE_MARKER_ACTION = PREFIX + "resolve_marker_action_context"; //$NON-NLS-1$
+	public static final String SELECT_ALL_TASKS_ACTION = PREFIX + "select_all_tasks_action_context"; //$NON-NLS-1$
+	public static final String TASK_PROPERTIES_ACTION = PREFIX + "task_properties_action_context"; //$NON-NLS-1$
 
 	// Dialogs
 	public static final String FILTERS_DIALOG = PREFIX + "task_filters_dialog_context"; //$NON-NLS-1$
