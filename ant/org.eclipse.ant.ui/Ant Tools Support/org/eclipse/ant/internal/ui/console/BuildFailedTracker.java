@@ -64,7 +64,9 @@ public class BuildFailedTracker implements IConsoleLineTracker {
 					int fileEnd = index + 3;
 					if (numberStart > 0 && fileEnd > 0) {
 						fileName = text.substring(fileStart, fileEnd).trim();
-						lineNumber = text.substring(numberStart, numberEnd).trim();
+						if (numberEnd > 0) {
+							lineNumber = text.substring(numberStart, numberEnd).trim();
+						}
 					}
 				}
 			} 
