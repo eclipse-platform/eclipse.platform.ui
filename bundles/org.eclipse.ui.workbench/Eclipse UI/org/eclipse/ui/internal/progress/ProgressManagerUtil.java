@@ -10,8 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.*;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
+
+import org.eclipse.ui.PlatformUI;
 
 /**
  * The ProgressUtil is a class that contains static utility methods used for the progress
@@ -37,19 +43,27 @@ class ProgressManagerUtil {
 	}
 
 	/**
-	 * Open a progress view in the current page. This method
-	 * must be called from the UI Thread as this works within
-	 * the UI.
-	 * @param IWorkbenchWindow the window to open the view in.
+	 * Sets the label provider for the viewer.
 	 */
-	static void openProgressView(IWorkbenchWindow window) {
-		try {
-			IWorkbenchPage activePage = window.getActivePage();
-			if (activePage != null)
-				activePage.showView(ProgressManager.PROGRESS_VIEW_NAME);
-		} catch (PartInitException exception) {
-			logException(exception);
-		}
+	static void initLabelProvider(ProgressTreeViewer viewer) {
+		viewer.setLabelProvider(new ProgressLabelProvider());
+
 	}
+	
+	/**
+	 * Return a viewer sorter for looking at the jobs.
+	 * @return
+	 */
+	static ViewerSorter getProgressViewerSorter() {
+		return new ViewerSorter() {
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+			 */
+			public int compare(Viewer testViewer, Object e1, Object e2) {
+				return ((Comparable) e1).compareTo(e2);
+			}
+		};
+	}
+	
 
 }

@@ -22,6 +22,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 public class AnimationItem {
 
 	IWorkbenchWindow window;
+	private ProgressFloatingWindow floatingWindow;
+	private boolean showingDetails = false;
 	Canvas imageCanvas;
 	GC imageCanvasGC;
 
@@ -68,7 +70,13 @@ public class AnimationItem {
 			 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
 			 */
 			public void mouseDoubleClick(MouseEvent arg0) {
-				ProgressManagerUtil.openProgressView(window);
+				if(showingDetails)
+					closeFloatingWindow();
+				else
+					openFloatingWindow();
+	
+				//Toggle the details flag
+				showingDetails = !showingDetails;
 			}
 			/* (non-Javadoc)
 			 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
@@ -150,5 +158,41 @@ public class AnimationItem {
 	public Rectangle getImageBounds() {
 		return AnimationManager.getInstance().getImageBounds();
 	}
+	
+	/**
+	 * Open a floating window for the receiver.
+	 * @param event
+	 */
+	void openFloatingWindow(){
+		floatingWindow = new ProgressFloatingWindow(window.getShell());
+		floatingWindow.open();
+	}
+	
+	/**
+	 * The animation has begun.
+	 */
+	void animationStart(){
+		if(showingDetails)
+			openFloatingWindow();
+	}
 
+	/**
+	 * The animation has ended.
+	 */
+	void animationDone(){
+		closeFloatingWindow();
+	}
+
+	/**
+	 * Close the floating window.
+	 */
+	private void closeFloatingWindow() {
+		if(floatingWindow != null){
+			floatingWindow.close();
+			floatingWindow = null;
+		}
+		
+	}
+	
+	
 }

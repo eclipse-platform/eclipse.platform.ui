@@ -21,7 +21,6 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -31,8 +30,9 @@ import org.eclipse.jface.viewers.ViewerSorter;
 
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.internal.ViewSite;
 import org.eclipse.ui.part.ViewPart;
+
+import org.eclipse.ui.internal.ViewSite;
 
 /**
  * The ProgressView is the class that shows the details of the
@@ -49,15 +49,12 @@ public class ProgressView extends ViewPart implements IViewPart {
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {
-		viewer =
-			new ProgressTreeViewer(
-				parent,
-				SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		viewer = new ProgressTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setUseHashlookup(true);
-		viewer.setSorter(getViewerSorter());
+		viewer.setSorter(ProgressManagerUtil.getProgressViewerSorter());
 
 		initContentProvider();
-		initLabelProvider();
+		ProgressManagerUtil.initLabelProvider(viewer);
 		initContextMenu();
 		initPulldownMenu();
 		getSite().setSelectionProvider(viewer);
@@ -79,14 +76,6 @@ public class ProgressView extends ViewPart implements IViewPart {
 	}
 
 	/**
-	 * Sets the label provider for the viewer.
-	 */
-	protected void initLabelProvider() {
-		viewer.setLabelProvider(new ProgressLabelProvider());
-
-	}
-
-	/**
 	 * Initialize the context menu for the receiver.
 	 */
 
@@ -102,10 +91,10 @@ public class ProgressView extends ViewPart implements IViewPart {
 
 		menuMgr.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager manager) {
-				
+
 				deleteAction.setEnabled(false);
 				JobInfo info = getSelectedInfo();
-				if (info == null) 
+				if (info == null)
 					return;
 			}
 		});
@@ -117,8 +106,7 @@ public class ProgressView extends ViewPart implements IViewPart {
 	}
 
 	private void initPulldownMenu() {
-		IMenuManager menuMgr =
-			((ViewSite) getSite()).getActionBars().getMenuManager();
+		IMenuManager menuMgr = ((ViewSite) getSite()).getActionBars().getMenuManager();
 		menuMgr.add(new Action(ProgressMessages.getString("ProgressView.VerboseAction"), IAction.AS_CHECK_BOX) { //$NON-NLS-1$
 
 			/* (non-Javadoc)
@@ -162,28 +150,12 @@ public class ProgressView extends ViewPart implements IViewPart {
 	JobInfo getSelectedInfo() {
 		IStructuredSelection selection = getSelection();
 		if (selection != null && selection.size() == 1) {
-			JobTreeElement element =
-				(JobTreeElement) selection.getFirstElement();
+			JobTreeElement element = (JobTreeElement) selection.getFirstElement();
 			if (element.isJobInfo())
 				return (JobInfo) element;
 		}
 		return null;
 
-	}
-
-	/**
-	 * Return a viewer sorter for looking at the jobs.
-	 * @return
-	 */
-	private ViewerSorter getViewerSorter() {
-		return new ViewerSorter() {
-			/* (non-Javadoc)
-			 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-			 */
-			public int compare(Viewer testViewer, Object e1, Object e2) {
-				return ((Comparable) e1).compareTo(e2);
-			}
-		};
 	}
 
 	/**
