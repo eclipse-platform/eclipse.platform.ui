@@ -3,18 +3,12 @@ package org.eclipse.help.internal.ui;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.help.internal.ui.win32.*;
-import org.eclipse.ui.*;
-import org.eclipse.help.internal.util.*;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.help.internal.ui.util.*;
-import org.eclipse.help.topics.*;
+import org.eclipse.help.internal.ui.util.WorkbenchResources;
 import org.eclipse.jface.action.Action;
-import org.eclipse.help.internal.ui.*;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.help.topics.ITopic;
 /**
  * PrintTopicTree action
- * To be used on win32 OS only.
  */
 public class PrintTopicTreeAction extends Action {
 	private ITopic rootTopic;
