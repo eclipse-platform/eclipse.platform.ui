@@ -134,8 +134,7 @@ public class CharsetTest extends EclipseWorkspaceTest {
 			file1.setCharset("FRED");
 			folder.setDefaultCharset("BAR");
 			project.close(null);
-			// now reopen the project and ensure the settings were not
-			// forgotten
+			// now reopen the project and ensure the settings were not forgotten
 			IProject projectB = workspace.getRoot().getProject(project.getName());
 			projectB.open(null);
 			assertExistsInWorkspace("0.9", getProjectEncodingSettings(projectB));
