@@ -10,16 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.decorators;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.progress.UIJob;
 
 /**
  * The DecorationScheduler is the class that handles the
@@ -44,7 +42,9 @@ public class DecorationScheduler {
 
 	private boolean shutdown = false;
 
-	private Thread decoratorUpdateThread;
+	private boolean scheduled = false;
+
+	Job decorationJob;
 
 	/**
 	 * Return a new instance of the receiver configured for
@@ -53,6 +53,7 @@ public class DecorationScheduler {
 	 */
 	DecorationScheduler(DecoratorManager manager) {
 		decoratorManager = manager;
+		createDecorationJob();
 	}
 
 	/**
@@ -99,21 +100,19 @@ public class DecorationScheduler {
 		Object adaptedElement,
 		boolean forceUpdate) {
 
-		//Lazily create the thread that calculates the decoration for a resource
-		if (decoratorUpdateThread == null) {
-			createDecoratorThread();
-			decoratorUpdateThread.start();
-		}
-
 		if (!awaitingDecorationValues.containsKey(element)) {
 			DecorationReference reference =
 				new DecorationReference(element, adaptedElement);
 			reference.setForceUpdate(forceUpdate);
 			awaitingDecorationValues.put(element, reference);
 			awaitingDecoration.add(element);
-			//Notify the receiver as the next method is
-			//synchronized on the receiver.
-			notifyAll();
+			if (shutdown || scheduled)
+				return;
+			else {
+				scheduled = true;
+				decorationJob.schedule();
+			}
+
 		}
 
 	}
@@ -157,11 +156,12 @@ public class DecorationScheduler {
 
 		//Don't bother if we are shutdown now
 		if (!shutdown) {
-			Display.getDefault().asyncExec(new Runnable() {
-				public void run() {
+
+			UIJob job = new UIJob() {
+				public IStatus runInUIThread(IProgressMonitor monitor) {
 
 					if (pendingUpdate.isEmpty())
-						return;
+						return Status.OK_STATUS;
 					synchronized (resultLock) {
 						//Get the elements awaiting update and then
 						//clear the list
@@ -178,8 +178,12 @@ public class DecorationScheduler {
 						if (awaitingDecoration.isEmpty())
 							resultCache.clear();
 					}
+					return Status.OK_STATUS;
 				}
-			});
+			};
+
+			job.setDisplay(Display.getDefault());
+			job.schedule();
 
 		}
 	}
@@ -193,154 +197,125 @@ public class DecorationScheduler {
 		synchronized (this) {
 			notifyAll();
 		}
-		try {
-			if (decoratorUpdateThread != null)
-				// Wait for the decorator thread to finish before returning.
-				decoratorUpdateThread.join();
-		} catch (InterruptedException e) {
-		}
 	}
 
 	/**
 	 * Get the next resource to be decorated.
 	 * @return IResource
 	 */
-	synchronized DecorationReference next() {
-		try {
-			if (shutdown)
-				return null;
+	synchronized DecorationReference nextElement() {
 
-			while (!shutdown && awaitingDecoration.isEmpty()) {
-				wait();
-			}
-			// We were awakened.
-			if (shutdown) {
-				// The decorator was awakened by the plug-in as it was shutting down.
-				return null;
-			}
-			Object element = awaitingDecoration.remove(0);
-
-			return (DecorationReference) awaitingDecorationValues.remove(
-				element);
-		} catch (InterruptedException e) {
+		if (shutdown || awaitingDecoration.isEmpty()) {
+			return null;
 		}
-		return null;
+		Object element = awaitingDecoration.remove(0);
+
+		return (DecorationReference) awaitingDecorationValues.remove(element);
 	}
 
 	/**
 	 * Create the Thread used for running decoration.
 	 */
-	private void createDecoratorThread() {
-		Runnable decorationRunnable = new Runnable() {
-			/* @see Runnable#run()
-				*/
-			public void run() {
-				while (true) {
-					try {
+	private void createDecorationJob() {
+		decorationJob = new Job() {
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+			 */
+			public IStatus run(IProgressMonitor monitor) {
+					//will block if there are no resources to be decorated
+				DecorationReference reference;
+				while ((reference = nextElement()) != null) {
 
-						// will block if there are no resources to be decorated
-						DecorationReference reference = next();
-						DecorationBuilder cacheResult = new DecorationBuilder();
+					DecorationBuilder cacheResult = new DecorationBuilder();
 
-						// if next() returned null, we are done and should shut down.
-						if (reference == null) {
-							return;
+					//Don't decorate if there is already a pending result
+					Object element = reference.getElement();
+					Object adapted = reference.getAdaptedElement();
+					boolean elementIsCached = true;
+					DecorationResult adaptedResult = null;
+
+					//Synchronize on the result lock as we want to
+					//be sure that we do not try and decorate during
+					//label update servicing.
+					synchronized (resultLock) {
+						elementIsCached = resultCache.containsKey(element);
+						if (elementIsCached) {
+							pendingUpdate.add(element);
+						}
+						if (adapted != null) {
+							adaptedResult =
+								(DecorationResult) resultCache.get(adapted);
+						}
+					}
+					if (!elementIsCached) {
+						//Just build for the resource first
+						if (adapted != null) {
+							if (adaptedResult == null) {
+								decoratorManager
+									.getLightweightManager()
+									.getDecorations(
+									adapted,
+									cacheResult);
+								if (cacheResult.hasValue()) {
+									adaptedResult = cacheResult.createResult();
+								}
+							} else {
+								// If we already calculated the decoration 
+								// for the adapted element, reuse the result.
+								cacheResult.applyResult(adaptedResult);
+								// Set adaptedResult to null to indicate that
+								// we do not need to cache the result again.
+								adaptedResult = null;
+							}
 						}
 
-						//Don't decorate if there is already a pending result
-						Object element = reference.getElement();
-						Object adapted = reference.getAdaptedElement();
-						boolean elementIsCached = true;
-						DecorationResult adaptedResult = null;
+						//Now add in the results for the main object
 
-						//Synchronize on the result lock as we want to
-						//be sure that we do not try and decorate during
-						//label update servicing.
-						synchronized (resultLock) {
-							elementIsCached = resultCache.containsKey(element);
-							if (elementIsCached) {
+						decoratorManager
+							.getLightweightManager()
+							.getDecorations(
+							element,
+							cacheResult);
+
+						//If we should update regardless then put a result anyways
+						if (cacheResult.hasValue()
+							|| reference.shouldForceUpdate()) {
+
+							//Synchronize on the result lock as we want to
+							//be sure that we do not try and decorate during
+							//label update servicing.
+							//Note: resultCache and pendingUpdate modifications
+							//must be done atomically.  
+							synchronized (resultLock) {
+								if (adaptedResult != null) {
+									resultCache.put(adapted, adaptedResult);
+								}
+								//Only add something to look up if it is interesting
+								if (cacheResult.hasValue()) {
+									resultCache.put(
+										element,
+										cacheResult.createResult());
+								}
+
+								//Add an update for only the original element to 
+								//prevent multiple updates and clear the cache.
 								pendingUpdate.add(element);
 							}
-							if (adapted != null) {
-								adaptedResult =
-									(DecorationResult) resultCache.get(adapted);
-							}
-						}
-						if (!elementIsCached) {
-							//Just build for the resource first
-							if (adapted != null) {
-								if (adaptedResult == null) {
-									decoratorManager
-										.getLightweightManager()
-										.getDecorations(
-										adapted,
-										cacheResult);
-									if (cacheResult.hasValue()) {
-										adaptedResult =
-											cacheResult.createResult();
-									}
-								} else {
-									// If we already calculated the decoration 
-									// for the adapted element, reuse the result.
-									cacheResult.applyResult(adaptedResult);
-									// Set adaptedResult to null to indicate that
-									// we do not need to cache the result again.
-									adaptedResult = null;
-								}
-							}
-
-							//Now add in the results for the main object
-
-							decoratorManager
-								.getLightweightManager()
-								.getDecorations(
-								element,
-								cacheResult);
-
-							//If we should update regardless then put a result anyways
-							if (cacheResult.hasValue()
-								|| reference.shouldForceUpdate()) {
-
-								//Synchronize on the result lock as we want to
-								//be sure that we do not try and decorate during
-								//label update servicing.
-								//Note: resultCache and pendingUpdate modifications
-								//must be done atomically.  
-								synchronized (resultLock) {
-									if (adaptedResult != null) {
-										resultCache.put(adapted, adaptedResult);
-									}
-									//Only add something to look up if it is interesting
-									if (cacheResult.hasValue()) {
-										resultCache.put(
-											element,
-											cacheResult.createResult());
-									}
-
-									//Add an update for only the original element to 
-									//prevent multiple updates and clear the cache.
-									pendingUpdate.add(element);
-								}
-							};
-						}
-
-						// Only notify listeners when we have exhausted the
-						// queue of decoration requests.
-						if (awaitingDecoration.isEmpty()) {
-							decorated();
-						}
-
-					} catch (Exception exception) {
-						//Catch and log any exceptions so that the thread does not die
-						exception.printStackTrace();
+						};
 					}
-				}
+
+					// Only notify listeners when we have exhausted the
+					// queue of decoration requests.
+					if (awaitingDecoration.isEmpty()) {
+						scheduled = false;
+						decorated();
+					}
+				}				
+				return Status.OK_STATUS;
 			};
 		};
 
-		decoratorUpdateThread = new Thread(decorationRunnable, "Decoration"); //$NON-NLS-1$
-		decoratorUpdateThread.setDaemon(true);
-		decoratorUpdateThread.setPriority(Thread.MIN_PRIORITY);
+		decorationJob.schedule();
 	}
 
 	/**
