@@ -17,8 +17,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Stack;
 
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.util.FileUtils;
 import org.eclipse.core.resources.IFile;
@@ -104,7 +102,7 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
     /**
      * Creates an instance.
      */
-    public OutlinePreparingHandler(File mainFileContainer) throws ParserConfigurationException {
+    public OutlinePreparingHandler(File mainFileContainer) {
         super();
         this.mainFileContainer= mainFileContainer;
     }

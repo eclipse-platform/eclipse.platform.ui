@@ -15,11 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
+import org.apache.xerces.parsers.SAXParser;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
@@ -144,16 +140,9 @@ public class AntModel {
 		// Create the parser
 		SAXParser tempParser;
 		try {
-			SAXParserFactory tempSAXParserFactory = SAXParserFactory.newInstance();
-			tempSAXParserFactory.setNamespaceAware(false);
-			tempParser = tempSAXParserFactory.newSAXParser();
-		} catch (ParserConfigurationException e) {
-			ExternalToolsPlugin.getDefault().log(e);
-			return null;
+			tempParser = new SAXParser();
+			tempParser.setFeature("http://xml.org/sax/features/namespaces", false);
 		} catch (SAXException e) {
-			ExternalToolsPlugin.getDefault().log(e);
-			return null;
-		} catch (FactoryConfigurationError e) {
 			ExternalToolsPlugin.getDefault().log(e);
 			return null;
 		}
@@ -161,19 +150,20 @@ public class AntModel {
 		// Create the handler
 		OutlinePreparingHandler tempHandler = null;
 		IPath location= fLocationProvider.getLocation();
-		try {
-			File tempParentFile = null;
-			if(location != null) {
-				tempParentFile = location.toFile().getParentFile();
-			}
-			tempHandler = new OutlinePreparingHandler(tempParentFile);
-			tempHandler.setProblemRequestor(fProblemRequestor);
-			tempHandler.setDocument(input);
-            
-		} catch (ParserConfigurationException e) {
-			ExternalToolsPlugin.getDefault().log(e);
-			return null;
+		File tempParentFile = null;
+		if(location != null) {
+			tempParentFile = location.toFile().getParentFile();
 		}
+
+		tempHandler = new OutlinePreparingHandler(tempParentFile);
+		tempHandler.setProblemRequestor(fProblemRequestor);
+		tempHandler.setDocument(input);
+		
+		tempParser.setContentHandler(tempHandler);
+		tempParser.setDTDHandler(tempHandler);
+		tempParser.setEntityResolver(tempHandler);
+		tempParser.setErrorHandler(tempHandler);
+//		tempParser.setLocale(...);
         
 		// Parse!
 		try {
@@ -184,7 +174,7 @@ public class AntModel {
 				tempInputSource.setSystemId(location.toOSString());
 			}
 			tempParser.setProperty("http://xml.org/sax/properties/lexical-handler", tempHandler); //$NON-NLS-1$
-			tempParser.parse(tempInputSource, tempHandler);
+			tempParser.parse(tempInputSource);
 		} catch(SAXParseException e) {
 			tempHandler.fixEndLocations(e);
 		} catch (SAXException e) {
