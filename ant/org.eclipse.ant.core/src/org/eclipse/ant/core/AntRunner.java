@@ -16,8 +16,6 @@ import java.net.URL;
 import java.util.*;
 
 import org.eclipse.ant.internal.core.*;
-import org.eclipse.ant.internal.core.AntClassLoader;
-import org.eclipse.ant.internal.core.AntCorePreferences;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformRunnable;
 import org.eclipse.core.runtime.*;
@@ -239,6 +237,7 @@ public TargetInfo[] getAvailableTargets() throws CoreException {
  *    reporting and cancellation are not desired
  */
 public void run(IProgressMonitor monitor) throws CoreException {
+	long startTime = System.currentTimeMillis();
 	try {
 		ClassLoader loader = getClassLoader();
 		Class classInternalAntRunner = loader.loadClass("org.eclipse.ant.internal.core.ant.InternalAntRunner"); //$NON-NLS-1$
@@ -292,6 +291,11 @@ public void run(IProgressMonitor monitor) throws CoreException {
 	} catch (Exception e) {
 		String message = (e.getMessage() == null) ? Policy.bind("error.buildFailed") : e.getMessage(); //$NON-NLS-1$
 		throw new CoreException(new Status(IStatus.ERROR, PI_ANTCORE, ERROR_RUNNING_SCRIPT, message, e));
+	} finally {
+		if (Policy.DEBUG_BUILDFILE_TIMING) {
+			long finishTime = System.currentTimeMillis();
+			System.out.println("Buildfile run took: " + (finishTime - startTime) + " milliseconds."); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 	}
 }
 

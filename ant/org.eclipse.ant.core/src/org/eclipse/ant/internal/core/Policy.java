@@ -13,12 +13,22 @@ package org.eclipse.ant.internal.core;
 import java.text.MessageFormat;
 import java.util.*;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.ant.core.AntCorePlugin;
+import org.eclipse.core.runtime.*;
 
 public class Policy {
 	private static final String bundleName = "org.eclipse.ant.internal.core.messages";//$NON-NLS-1$
 	private static ResourceBundle bundle = ResourceBundle.getBundle(bundleName, Locale.getDefault());
+
+	//debug constants
+	public static boolean DEBUG_BUILDFILE_TIMING = false;
+
+	static {
+		//init debug options
+		if (AntCorePlugin.getPlugin().isDebugging()) {
+			DEBUG_BUILDFILE_TIMING = "true".equalsIgnoreCase(Platform.getDebugOption(AntCorePlugin.PI_ANTCORE + "/buildfile/timing")); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
 
 /**
  * Lookup the message with the given ID in this catalog 
