@@ -42,16 +42,15 @@ import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.activities.IActivityManager;
-import org.eclipse.ui.commands.ActionHandler;
+import org.eclipse.ui.commands.CommandException;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandManager;
-import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.NotDefinedException;
+import org.eclipse.ui.commands.NotHandledException;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.commands.CommandManager;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.util.StatusLineContributionItem;
 import org.eclipse.ui.internal.util.Util;
@@ -396,6 +395,16 @@ public final class WorkbenchKeyboard {
         managedShells.remove(shell);
     }
 
+	private static boolean isEnabled(ICommand command) {
+	    try {
+	        return Boolean.TRUE.equals(command.getAttributeValue("enabled")); //$NON-NLS-1$
+	    } catch (NotHandledException eNotHandled) {		        
+	        return false;
+	    } catch (NotDefinedException eNotDefined) {
+	        return true;
+	    }
+	}    
+    
     /**
      * Performs the actual execution of the command by looking up the current
      * handler from the command manager. If there is a handler and it is
@@ -423,32 +432,35 @@ public final class WorkbenchKeyboard {
         resetState();
 
         // Dispatch to the handler.
-        Map handlersByCommandId = ((CommandManager) commandManager).getHandlersByCommandId();
-        IHandler handler = (IHandler) handlersByCommandId.get(commandId);
+        ICommand command = commandManager.getCommand(commandId);
 
         if (DEBUG && DEBUG_VERBOSE) {
-            if (handler == null) {
-                System.out.println("KEYS >>>     action  = null"); //$NON-NLS-1$
+            if (!command.isHandled()) {
+                System.out.println("KEYS >>>     not handled"); //$NON-NLS-1$
             } else {
-                System.out.println("KEYS >>>     action = " //$NON-NLS-1$
-                        + ((ActionHandler) handler).getAction());
-                System.out.println("KEYS >>>     action.isEnabled() = " //$NON-NLS-1$
-                        + ((ActionHandler) handler).getAction().isEnabled());
+                try {
+                    System.out.println("KEYS >>>     value for 'id' attribute = " //$NON-NLS-1$
+                            + command.getAttributeValue("id")); // $NON-NLS-1$
+                    System.out.println("KEYS >>>     value for 'enabled' attribute = " //$NON-NLS-1$
+                            + command.getAttributeValue("enabled")); // $NON-NLS-1$
+                } catch (CommandException eCommand) {
+                    System.out.println(eCommand);
+                }
             }
         }
 
-        if (handler != null && ((ActionHandler) handler).getAction().isEnabled()) {
+        if (command.isDefined() && command.isHandled() && isEnabled(command)) {
             try {
-                handler.execute(event);
-            } catch (Exception e) {
-                String message = "Action for command '" + commandId //$NON-NLS-1$
-                        + "' failed to execute properly."; //$NON-NLS-1$
+                command.execute(event);
+            } catch (CommandException eCommand) {
+                String message = "Command '" + commandId //$NON-NLS-1$
+                        + "' failed to execute properly."; //$NON-NLS-1$               
                 WorkbenchPlugin.log(message, new Status(IStatus.ERROR,
-                        WorkbenchPlugin.PI_WORKBENCH, 0, message, e));
+                        WorkbenchPlugin.PI_WORKBENCH, 0, message, eCommand));
             }
         }
 
-        return (handler != null);
+        return command.isHandled(); // TODO what is the purpose of returning this expression? should isDefined be considered as well?
     }
 
     /**

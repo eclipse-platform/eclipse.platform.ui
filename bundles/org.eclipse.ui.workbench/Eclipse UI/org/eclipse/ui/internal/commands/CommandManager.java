@@ -968,7 +968,9 @@ public final class CommandManager implements ICommandManager {
 					? commandDefinition.getDescription()
 					: null);
 		SortedSet imageBindings =
-			(SortedSet) imageBindingsByCommandId.get(command.getId());
+			(SortedSet) imageBindingsByCommandId.get(command.getId());				
+		IHandler handler = (IHandler) handlersByCommandId.get(command.getId());
+		boolean handlerChanged = command.setHandler(handler);
 		// TODO list to sortedset in api?
 		boolean imageBindingsChanged =
 			command.setImageBindings(
