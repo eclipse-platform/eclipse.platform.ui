@@ -135,8 +135,8 @@ public void createControl(Composite parent) {
 
 	resourceGroup = new ResourceAndContainerGroup(composite,this,WorkbenchMessages.getString("WizardNewFolderMainPage.folderName"), WorkbenchMessages.getString("WizardNewFolderMainPage.folderLabel"), false, SIZING_CONTAINER_GROUP_HEIGHT); //$NON-NLS-2$ //$NON-NLS-1$
 	resourceGroup.setAllowExistingResources(false);
+	createAdvancedControls(composite);
 	initializePage();
-	createAdvancedControls(composite);	
 	validatePage();
 	// Show description on opening
 	setErrorMessage(null);

@@ -140,9 +140,9 @@ public void createControl(Composite parent) {
 	resourceGroup = new ResourceAndContainerGroup(topLevel, this, getNewFileLabel(), WorkbenchMessages.getString("WizardNewFileCreationPage.file"), false, SIZING_CONTAINER_GROUP_HEIGHT); //$NON-NLS-1$
 	resourceGroup.setAllowExistingResources(false);
 	initialPopulateContainerNameField();
+	createAdvancedControls(topLevel);
 	if (initialFileName != null)
 		resourceGroup.setResource(initialFileName);
-	createAdvancedControls(topLevel);
 	validatePage();
 	// Show description on opening
 	setErrorMessage(null);
