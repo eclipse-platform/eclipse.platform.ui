@@ -11,7 +11,7 @@ appears in the run and/or debug cascade menus to launch the workbench selection 
       </documentation>
    </annotation>
 
-   <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.mxsd"/>
+   <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
 
    <element name="extension">
       <complexType>
