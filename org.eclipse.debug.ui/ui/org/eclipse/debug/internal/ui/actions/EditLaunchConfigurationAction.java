@@ -19,11 +19,13 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.actions.SelectionListenerAction;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Opens the launch configuration dialog on a single launch configuration, based
@@ -40,6 +42,7 @@ public class EditLaunchConfigurationAction extends SelectionListenerAction {
 	public EditLaunchConfigurationAction() {
 		super(""); //$NON-NLS-1$
 		setEnabled(false);
+		WorkbenchHelp.setHelp(this, IDebugHelpContextIds.EDIT_LAUNCH_CONFIGURATION_ACTION);
 	}
 
 	/**
