@@ -299,7 +299,7 @@ public class DefaultUndoManager implements IUndoManager {
 	/**
 	 * Represents pretended <code>UndoManager</code> state.
 	 */
-	class PretendedUndoManagerState {
+	static class PretendedUndoManagerState {
 		/** The counter in the undo stack */
 		protected int cmdCounter= -1;
 		/** The size of the undo stack */

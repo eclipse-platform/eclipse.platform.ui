@@ -27,7 +27,7 @@ import org.eclipse.jface.text.Position;
 
 
 /**
- * Standard implementation of {@link IAnnotationModel}and its extension
+ * Standard implementation of {@link IAnnotationModel} and its extension
  * interfaces. This class can directly be used by clients. Subclasses may adapt
  * this annotation model to other existing annotation mechanisms. This class
  * also implements {@link org.eclipse.jface.text.ISynchronizable}. All
@@ -35,6 +35,54 @@ import org.eclipse.jface.text.Position;
  * the model's lock object.
  */
 public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtension, ISynchronizable {
+	
+	/**
+	 * A single iterator builds its behavior based on a sequence of iterators.
+	 * 
+	 * @since 3.0
+	 */
+	private static class MetaIterator implements Iterator {
+		
+		/** The iterator over a list of iterators. */
+		private Iterator fSuperIterator;
+		/** The current iterator. */
+		private Iterator fCurrent; 
+		/** The current element. */
+		private Object fCurrentElement;
+		
+		
+		public MetaIterator(Iterator iterator) {
+			fSuperIterator= iterator;
+			fCurrent= (Iterator) fSuperIterator.next(); // there is at least one.
+		}
+		
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}
+
+		public boolean hasNext() {
+			if (fCurrentElement != null)
+				return true;
+			
+			if (fCurrent.hasNext()) {
+				fCurrentElement= fCurrent.next();
+				return true;
+			} else if (fSuperIterator.hasNext()) {
+				fCurrent= (Iterator) fSuperIterator.next();
+				return hasNext();
+			} else
+				return false;
+		}
+
+		public Object next() {
+			if (!hasNext())
+				throw new NoSuchElementException();
+			
+			Object element= fCurrentElement;
+			fCurrentElement= null;
+			return element;
+		}
+	}
 	
 	/**
 	 * Internal annotation model listener for forwarding annotation model changes from the attached models to the
@@ -504,44 +552,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			iterators.add(((IAnnotationModel) fAttachments.get(it.next())).getAnnotationIterator());
 		}
 		
-		final Iterator iter= iterators.iterator();
-		
-		// Meta iterator...
-		return new Iterator() {
-
-			/** The current iterator. */
-			private Iterator fCurrent= (Iterator) iter.next(); // there is at least one.
-			/** The current element. */
-			private Object fCurrentElement;
-			
-			public void remove() {
-				throw new UnsupportedOperationException();
-			}
-
-			public boolean hasNext() {
-				if (fCurrentElement != null)
-					return true;
-				
-				if (fCurrent.hasNext()) {
-					fCurrentElement= fCurrent.next();
-					return true;
-				} else if (iter.hasNext()) {
-					fCurrent= (Iterator) iter.next();
-					return hasNext();
-				} else
-					return false;
-			}
-
-			public Object next() {
-				if (!hasNext())
-					throw new NoSuchElementException();
-				
-				Object element= fCurrentElement;
-				fCurrentElement= null;
-				return element;
-			}
-			
-		};
+		return new MetaIterator(iterators.iterator());
 	}
 	
 	/**
