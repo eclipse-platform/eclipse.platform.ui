@@ -225,11 +225,11 @@ class ProjectionSummary {
 			if (projection.isCollapsed()) {
 				Position position= model.getPosition(projection);
 				if (position != null) {
-					IRegion summaryRegion= fProjectionViewer.computeCollapsedRegion(position);
-					if (summaryRegion != null) {
+					IRegion[] summaryRegions= fProjectionViewer.computeCollapsedRegions(position);
+					if (summaryRegions != null) {
 						Position summaryAnchor= fProjectionViewer.computeCollapsedRegionAnchor(position);
 						if (summaryAnchor != null)
-							createSummary(additions, summaryRegion, summaryAnchor);
+							createSummary(additions, summaryRegions, summaryAnchor);
 					}
 				}
 			}
@@ -256,7 +256,7 @@ class ProjectionSummary {
 		}
 	}
 	
-	private void createSummary(Map additions, IRegion summaryRange, Position summaryAnchor) {
+	private void createSummary(Map additions, IRegion[] summaryRegions, Position summaryAnchor) {
 		
 		int size= 0;
 		Map map= null;
@@ -284,7 +284,7 @@ class ProjectionSummary {
 			AnnotationBag bag= findBagForType(map, annotation.getType());
 			if (bag != null) {
 				Position position= model.getPosition(annotation);
-				if (includes(summaryRange, position))
+				if (includes(summaryRegions, position))
 					bag.add(annotation);
 			}
 		}
@@ -309,9 +309,12 @@ class ProjectionSummary {
 		return null;
 	}
 	
-	private boolean includes(IRegion range, Position position) {
-		if (position != null && !position.isDeleted())
-			return range.getOffset() <= position.getOffset() &&  position.getOffset() + position.getLength() <= range.getOffset() + range.getLength();
+	private boolean includes(IRegion[] regions, Position position) {
+		for (int i= 0; i < regions.length; i++) {
+			IRegion region= regions[i];
+			if (position != null && !position.isDeleted())
+				return region.getOffset() <= position.getOffset() &&  position.getOffset() + position.getLength() <= region.getOffset() + region.getLength();
+		}
 		return false;
 	}
 }

@@ -1132,13 +1132,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		try {
 			IDocument document= getDocument();
 			
-			int captionOffset;
-			if (position instanceof IProjectionPosition) {
-				IProjectionPosition projPosition= (IProjectionPosition) position;
-				captionOffset= projPosition.computeCaptionOffset(document);
-			} else {
-				captionOffset= position.getOffset();
-			}
+			int captionOffset= position.getOffset();
+			if (position instanceof IProjectionPosition)
+				captionOffset+= ((IProjectionPosition) position).computeCaptionOffset(document);
 			
 			IRegion lineInfo= document.getLineInformationOfOffset(captionOffset);
 			return new Position(lineInfo.getOffset() + lineInfo.getLength(), 0);
