@@ -69,21 +69,28 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate2#preLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public boolean preLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
-			if (mode.equals(ILaunchManager.RUN_MODE)  && configuration.supportsMode(ILaunchManager.DEBUG_MODE)) {
-				IBreakpointManager breakpointManager = DebugPlugin.getDefault().getBreakpointManager();
-				IBreakpoint[] breakpoints = breakpointManager.getBreakpoints();
-				if (breakpoints.length > 0) {
+		if (mode.equals(ILaunchManager.RUN_MODE)  && configuration.supportsMode(ILaunchManager.DEBUG_MODE)) {
+			IBreakpointManager breakpointManager = DebugPlugin.getDefault().getBreakpointManager();
+			if (!breakpointManager.isEnabled()) {
+				// no need to check breakpoints individually.
+				return true; 
+			}
+			IBreakpoint[] breakpoints = breakpointManager.getBreakpoints();
+			for (int i = 0; i < breakpoints.length; i++) {
+				if (breakpoints[i].isEnabled()) {
 					IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(promptStatus);
 					if (prompter != null) {
 						boolean lauchInDebugModeInstead = ((Boolean)prompter.handleStatus(switchToDebugPromptStatus, configuration)).booleanValue();
 						if (lauchInDebugModeInstead) { 
 							return false; //kill this launch
-						}
+						} 
 					}
-										
+					// if no user prompt, or user says to continue (no need to check other breakpoints)
+					return true;
 				}
 			}
-		
+		}	
+		// no enabled breakpoints... continue launch
 		return true;
 	}
 
