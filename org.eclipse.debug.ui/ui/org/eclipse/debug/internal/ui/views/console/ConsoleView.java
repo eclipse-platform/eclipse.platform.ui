@@ -247,24 +247,22 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 
 	/**
 	 * Adds the text manipulation actions to the <code>ConsoleViewer</code>
-	 * 
-	 * TODO: need to handle read-only case
 	 */
 	protected void fillContextMenu(IMenuManager menu) {
 		IDocument doc= getConsoleViewer().getDocument();
 		if (doc == null) {
 			return;
 		}
-//		if (doc.isReadOnly()) {
-//			menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.COPY));
-//			menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.SELECT_ALL));
-//		} else {
+		if (getConsoleViewer().isEditable()) {
 			updateAction(ITextEditorActionConstants.PASTE);
 			menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.CUT));
 			menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.COPY));
 			menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.PASTE));
 			menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.SELECT_ALL));
-//		}
+		} else {
+			menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.COPY));
+			menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.SELECT_ALL));			
+		}
 
 		menu.add(new Separator("FIND")); //$NON-NLS-1$
 		menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.FIND));
