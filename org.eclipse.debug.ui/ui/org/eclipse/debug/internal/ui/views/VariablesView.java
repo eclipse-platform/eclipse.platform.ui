@@ -593,13 +593,15 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		if (fTreeSelectionChangedListener == null) {
 			fTreeSelectionChangedListener = new ISelectionChangedListener() {
 				public void selectionChanged(SelectionChangedEvent event) {
-					getVariablesViewSelectionProvider().fireSelectionChanged(event);				
-					// if the detail pane is not visible, don't waste time retrieving details
-					if (getSashForm().getMaximizedControl() == getViewer().getControl()) {
-						return;
-					}	
-					IStructuredSelection selection = (IStructuredSelection)event.getSelection();
-					populateDetailPaneFromSelection(selection);
+					if (event.getSelectionProvider().equals(getVariablesViewSelectionProvider().getUnderlyingSelectionProvider())) {
+						getVariablesViewSelectionProvider().fireSelectionChanged(event);				
+						// if the detail pane is not visible, don't waste time retrieving details
+						if (getSashForm().getMaximizedControl() == getViewer().getControl()) {
+							return;
+						}	
+						IStructuredSelection selection = (IStructuredSelection)event.getSelection();
+						populateDetailPaneFromSelection(selection);
+					}
 				}					
 			};
 		}
@@ -653,8 +655,10 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		if (fDetailSelectionChangedListener == null) {
 			fDetailSelectionChangedListener = new ISelectionChangedListener() {
 				public void selectionChanged(SelectionChangedEvent event) {
-					getVariablesViewSelectionProvider().fireSelectionChanged(event);
-					updateSelectionDependentActions();				
+					if (event.getSelectionProvider().equals(getVariablesViewSelectionProvider().getUnderlyingSelectionProvider())) {
+						getVariablesViewSelectionProvider().fireSelectionChanged(event);
+						updateSelectionDependentActions();				
+					}
 				}
 			};
 		}
