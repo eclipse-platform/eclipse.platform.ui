@@ -13,7 +13,7 @@ package org.eclipse.ui;
  * type.  For instance, there may be 1 or more open Java Editors.  To avoid the 
  * creation of duplicate actions and action images the editor concept has been 
  * split into two.  An action contributor is responsable for the creation of 
- * actions.  The editor is responsable for action implementation.  Furthermore,
+ * actions.  The editor is responsible for action implementation.  Furthermore,
  * the contributor is shared by each open editor.  As a result of this design
  * there is only 1 set of actions for 1 or more open editors.
  * </p><p>
