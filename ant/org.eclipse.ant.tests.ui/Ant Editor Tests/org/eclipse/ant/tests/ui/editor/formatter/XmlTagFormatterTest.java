@@ -28,10 +28,11 @@ public class XmlTagFormatterTest extends AbstractAntUITest {
     // privates, I produce this example...
     private static class InnerClassFactory extends XmlTagFormatter {
 
-        public static class ParseException extends
-                XmlTagFormatter.ParseException {
+        public static class ParseException extends XmlTagFormatter.ParseException {
 
-            public ParseException(String message) {
+			private static final long serialVersionUID = 1L;
+
+			public ParseException(String message) {
                 super(message);
             }
         }

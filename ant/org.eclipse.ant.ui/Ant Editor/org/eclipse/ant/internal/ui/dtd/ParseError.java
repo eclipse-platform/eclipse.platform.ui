@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2003 Object Factory Inc.
+ * Copyright (c) 2002, 2004 Object Factory Inc.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *		Object Factory Inc. - Initial implementation
+ *		IBM Corporation - serial version id
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.dtd;
 
@@ -15,6 +16,8 @@ package org.eclipse.ant.internal.ui.dtd;
  */
 public class ParseError extends Exception {
 	
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Constructor for ParseError.
 	 * @param msg Message
