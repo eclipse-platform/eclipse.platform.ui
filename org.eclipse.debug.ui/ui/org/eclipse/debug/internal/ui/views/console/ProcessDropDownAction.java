@@ -12,6 +12,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.Action;
@@ -19,6 +20,7 @@ import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
@@ -116,9 +118,14 @@ class ProcessDropDownAction extends Action implements IMenuCreator, ILaunchListe
 	 * @see org.eclipse.debug.core.ILaunchListener#launchRemoved(org.eclipse.debug.core.ILaunch)
 	 */
 	public void launchRemoved(ILaunch launch) {
-		if (fMenu != null) {
-			fMenu.dispose();
-		}
+		Display display = DebugUIPlugin.getStandardDisplay();
+		display.asyncExec(new Runnable() {
+			public void run() {
+				if (fMenu != null) {
+					fMenu.dispose();
+				}
+			}
+		});
 	}
 
 }
