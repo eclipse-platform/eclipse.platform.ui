@@ -226,11 +226,11 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		}
 		if (itemsToTerminate) {
 			// Prompt the user to proceed with termination
-			if (!MessageDialog.openQuestion(getSite().getShell(), "Terminate and Remove", "Terminate and remove selected?")) {
+			if (!MessageDialog.openQuestion(getSite().getShell(), DebugUIViewsMessages.getString("LaunchView.Terminate_and_Remove_1"), DebugUIViewsMessages.getString("LaunchView.Terminate_and_remove_selected__2"))) { //$NON-NLS-1$ //$NON-NLS-2$
 				return;
 			}
 		}
-		MultiStatus status= new MultiStatus(DebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, "Exceptions occurred attempting to terminate and remove", null);
+		MultiStatus status= new MultiStatus(DebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, DebugUIViewsMessages.getString("LaunchView.Exceptions_occurred_attempting_to_terminate_and_remove_3"), null); //$NON-NLS-1$
 		iter= selection.iterator(); 
 		while (iter.hasNext()) {
 			try {
@@ -242,7 +242,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		if (!status.isOK()) {
 			IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
 			if (window != null) {
-				DebugUIPlugin.errorDialog(window.getShell(), "Terminate and Remove", "Terminate and remove failed", status);
+				DebugUIPlugin.errorDialog(window.getShell(), DebugUIViewsMessages.getString("LaunchView.Terminate_and_Remove_4"), DebugUIViewsMessages.getString("LaunchView.Terminate_and_remove_failed_5"), status); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
 				DebugUIPlugin.log(status);
 			}
