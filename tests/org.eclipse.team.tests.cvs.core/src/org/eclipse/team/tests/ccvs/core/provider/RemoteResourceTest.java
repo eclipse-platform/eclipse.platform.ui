@@ -208,6 +208,7 @@ public class RemoteResourceTest extends EclipseTest {
 	 	// Create a project with an empty file
 		IProject project = createProject("testEmptyFile", new String[] { "file.txt"});
 		IFile file = project.getFile("file.txt");
+		JUnitTestCase.waitMsec(1500);
 		file.setContents(new ByteArrayInputStream(new byte[0]), false, false, DEFAULT_MONITOR);
 		commitResources(project, new String[] {"file.txt"});
 		

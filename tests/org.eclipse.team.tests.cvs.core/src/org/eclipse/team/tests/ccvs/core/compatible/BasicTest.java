@@ -33,6 +33,7 @@ public class BasicTest extends JUnitTestCase {
 	public static Test suite() {
 		TestSuite suite = new TestSuite(BasicTest.class);
 		return new CompatibleTestSetup(suite);
+		//return new CompatibleTestSetup(new BasicTest("testBranchingWithLocalChanges"));
 	}
 	public void setUp() throws Exception {
 		env1.setUp();
@@ -228,7 +229,15 @@ public class BasicTest extends JUnitTestCase {
 		env2.execute("ci",new String[]{"-m","branch"},new String[]{"proj2"});	
 		env2.deleteFile("proj2");
 		env2.execute("co",new String[]{"-r","tag2"},new String[]{"proj2"});
+	}
 		
+	public void testBranchingWithLocalChanges() throws Exception {
+		// Try to branch of a workspace with local changes
+		env1.execute("co",EMPTY_ARGS,new String[]{"proj2"});
+		JUnitTestCase.waitMsec(1500);
+		env1.appendToFile("proj2/f1/b.txt","AppendIt");
+		env1.execute("tag",new String[]{"-b"},new String[]{"branch-with-changes","proj2"});
+		env1.execute("update",new String[]{"-r", "branch-with-changes"},new String[]{"proj2"});
 	}
 
 	public void testTag() throws Exception {

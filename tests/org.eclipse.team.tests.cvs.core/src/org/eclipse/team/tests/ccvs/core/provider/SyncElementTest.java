@@ -290,6 +290,7 @@ public class SyncElementTest extends EclipseTest {
 		JUnitTestCase.waitMsec(1500); // Wait so that timestamp of modified file differs from original
 		appendText(file, "\npostfix", false); // This will test merges (M)
 		file = project.getFile("folder1/a.txt");
+		JUnitTestCase.waitMsec(1500); // Wait so that timestamp of modified file differs from original
 		file.setContents(getRandomContents(), false, false, null); // This will test conflicts (C)
 
 		// Get the sync tree for the project

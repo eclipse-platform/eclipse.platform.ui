@@ -4,6 +4,7 @@ package org.eclipse.team.tests.ccvs.core.compatible;
  * All Rights Reserved.
  */
 import junit.framework.Test;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
@@ -31,9 +32,14 @@ public class CompatibleTestSetup extends CVSTestSetup {
 	 * For compatibility testing, we need to set up two repositories
 	 */
 	public void setUp() throws CVSException {
+		CVSProviderPlugin.getPlugin().setPruneEmptyDirectories(false);
 		if ((referenceClientRepository != null) && (eclipseClientRepository != null))
 			return;
 		referenceClientRepository = setupRepository(REFERENCE_CLIENT_REPOSITORY);
 		eclipseClientRepository = setupRepository(ECLIPSE_CLIENT_REPOSITORY);
+	}
+	
+	public void tearDown() throws CVSException {
+		CVSProviderPlugin.getPlugin().setPruneEmptyDirectories(true);
 	}
 }
