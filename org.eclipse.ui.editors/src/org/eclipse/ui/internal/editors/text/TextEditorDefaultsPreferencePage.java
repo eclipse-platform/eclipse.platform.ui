@@ -38,6 +38,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.jface.action.Action;
@@ -127,6 +128,26 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 			}
 		}
 
+		private class SpinnerInitializer extends Initializer {
+			private final Spinner fControl;
+			private final EnumeratedDomain fDomain;
+
+			public SpinnerInitializer(Preference preference, Spinner control, EnumeratedDomain domain) {
+				super(preference);
+				fControl= control;
+				fDomain= domain;
+			}
+			public void initialize() {
+				int value= fOverlayStore.getInt(fPreference.getKey());
+				EnumValue enumValue= fDomain.getValueByInteger(value);
+				if (enumValue != null) {
+					int index= fDomain.getIndex(enumValue);
+					if (index >= 0)
+						fControl.setSelection(index);
+				}
+			}
+		}
+
 		public Initializer create(Preference preference, Text control) {
 			return new TextInitializer(preference, control);
 		}
@@ -137,6 +158,10 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		
 		public Initializer create(Preference preference, Combo control, EnumeratedDomain domain) {
 			return new ComboInitializer(preference, control, domain);
+		}
+		
+		public Initializer create(Preference preference, Spinner control, EnumeratedDomain domain) {
+			return new SpinnerInitializer(preference, control, domain);
 		}
 	}
 	
@@ -272,6 +297,14 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 				return (EnumValue) value;
 			int integer= parseInteger(value);
 			return getValueByInteger(integer);
+		}
+
+		public EnumValue getMinimumValue() {
+			return getValueByIndex(0);
+		}
+		
+		public EnumValue getMaximumValue() {
+			return getValueByIndex(fItems.size() - 1);
 		}
 	}
 	
@@ -450,7 +483,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		Preference tabWidth= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH, label, null);
 		EnumeratedDomain tabWidthDomain= new EnumeratedDomain();
 		tabWidthDomain.addRange(1, 16);
-		addCombo(appearanceComposite, tabWidth, tabWidthDomain, 0);
+		addSpinner(appearanceComposite, tabWidth, tabWidthDomain, 0);
 
 		label= TextEditorMessages.getString("TextEditorPreferencePage.highlightCurrentLine"); //$NON-NLS-1$
 		Preference highlightCurrentLine= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE, label, null);
@@ -751,7 +784,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		super.dispose();
 	}
 	
-	private Button addCheckBox(Composite composite, final Preference preference, final Domain domain, int indentation) {		
+	Button addCheckBox(Composite composite, final Preference preference, final Domain domain, int indentation) {		
 		final Button checkBox= new Button(composite, SWT.CHECK);
 		checkBox.setText(preference.getName());
 		checkBox.setToolTipText(preference.getDescription());
@@ -775,7 +808,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		return checkBox;
 	}
 	
-	private Control[] addCombo(Composite composite, final Preference preference, final EnumeratedDomain domain, int indentation) {		
+	Control[] addCombo(Composite composite, final Preference preference, final EnumeratedDomain domain, int indentation) {		
 		Label labelControl= new Label(composite, SWT.NONE);
 		labelControl.setText(preference.getName());
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
@@ -805,6 +838,51 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		fInitializers.add(fInitializerFactory.create(preference, combo, domain));
 		
 		return new Control[] {labelControl, combo};
+	}
+
+	/**
+	 * Adds a spinner for the given preference and domain. Assumes that the
+	 * <code>EnumeratedDomain</code> contains only numeric values in a
+	 * continuous range, no custom entries (use <code>addCombo</code> in that
+	 * case).
+	 * 
+	 * @param composite the parent composite
+	 * @param preference the preference
+	 * @param domain its domain
+	 * @param indentation the indentation
+	 * @return the created controls, a <code>Label</code> and a
+	 *         <code>Spinner</code> control
+	 */
+	Control[] addSpinner(Composite composite, final Preference preference, final EnumeratedDomain domain, int indentation) {
+		Label labelControl= new Label(composite, SWT.NONE);
+		labelControl.setText(preference.getName());
+		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.horizontalIndent= indentation;
+		labelControl.setLayoutData(gd);
+
+		final Spinner spinner= new Spinner(composite, SWT.READ_ONLY | SWT.BORDER);
+		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		spinner.setLayoutData(gd);
+		spinner.setToolTipText(preference.getDescription());
+		spinner.setMinimum(domain.getMinimumValue().getIntValue());
+		spinner.setMaximum(domain.getMaximumValue().getIntValue());
+		spinner.setIncrement(1);
+		spinner.setPageIncrement(4);
+		
+		spinner.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				int index= spinner.getSelection();
+				EnumValue value= domain.getValueByInteger(index);
+				IStatus status= domain.validate(value);
+				if (!status.matches(IStatus.ERROR))
+					fOverlayStore.setValue(preference.getKey(), value.getIntValue());
+				updateStatus(status);
+			}
+		});
+		
+		fInitializers.add(fInitializerFactory.create(preference, spinner, domain));
+		
+		return new Control[] {labelControl, spinner};
 	}
 	
 	private Control[] addTextField(Composite composite, final Preference preference, final Domain domain, int textLimit, int indentation) {
