@@ -29,9 +29,6 @@ import org.eclipse.help.internal.workingset.*;
 public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 	private static final String COOKIE_NAME = "wset";
 	private static final int MAX_COOKIES = 15;
-	private static final int MAX_COOKIE_PAYLOAD =
-		4096 - "wset01=".length() - "81920<".length() - 1;
-
 	private HttpServletRequest request;
 	private HttpServletResponse response;
 
@@ -66,7 +63,7 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 	/**
 	 * Adds a new working set and saves it
 	 */
-	public void addWorkingSet(WorkingSet workingSet) {
+	public void addWorkingSet(WorkingSet workingSet) throws IOException {
 		if (workingSet == null || workingSets.contains(workingSet))
 			return;
 		workingSets.add(workingSet);
@@ -114,7 +111,10 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 	 */
 	public void removeWorkingSet(WorkingSet workingSet) {
 		workingSets.remove(workingSet);
-		saveState();
+		try {
+			saveState();
+		} catch (IOException ioe) {
+		}
 	}
 
 	private void restoreState() {
@@ -167,7 +167,7 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 	 * Saves the working sets in the persistence store (cookie)
 	 * format: curentWorkingSetName|name1&href11&href12|name2&href22
 	 */
-	private void saveState() {
+	private void saveState() throws IOException {
 		StringBuffer data = new StringBuffer();
 		data.append(URLCoder.encode(currentWorkingSet /*, "UTF8"*/
 		));
@@ -220,13 +220,15 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 					"InfocenterWorkingSetManager.saveState(): Too much data to save: "
 						+ data.toString());
 			}
+			throw ioe;
 		}
 	}
 
 	/**
 	 * * @param changedWorkingSet the working set that has changed
 	*/
-	public void workingSetChanged(WorkingSet changedWorkingSet) {
+	public void workingSetChanged(WorkingSet changedWorkingSet)
+		throws IOException {
 		saveState();
 	}
 
@@ -272,7 +274,10 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 
 	public void setCurrentWorkingSet(String workingSet) {
 		currentWorkingSet = workingSet;
-		saveState();
+		try {
+			saveState();
+		} catch (IOException ioe) {
+		}
 	}
 
 }
