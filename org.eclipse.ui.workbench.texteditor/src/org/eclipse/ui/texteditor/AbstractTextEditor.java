@@ -88,6 +88,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.window.IShellProvider;
 
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
@@ -146,7 +147,6 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.internal.ActionDescriptor;
 import org.eclipse.ui.internal.EditorPluginAction;
-import org.eclipse.ui.internal.commands.CommandManagerWrapper;
 import org.eclipse.ui.internal.texteditor.EditPosition;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 import org.eclipse.ui.operations.OperationHistoryActionHandler;
@@ -674,14 +674,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 						text.removeVerifyKeyListener(fActivationCodeTrigger);
 				}
 				
-//				if (fActions != null) {
-//					Iterator iter= fActions.values().iterator();
-//					while (iter.hasNext()) {
-//						IAction action= (IAction)iter.next();
-//						unregisterActionFromKeyActivation(action);
-//					}
-//				}
-				
 				fIsInstalled= false;
 				fKeyBindingService= null;
 			}
@@ -703,13 +695,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 * @since 2.0
 		 */
 		public void unregisterActionFromKeyActivation(IAction action) {
-			if (action.getActionDefinitionId() != null) {
+			if (action.getActionDefinitionId() != null)
 				fKeyBindingService.unregisterAction(action);
-				CommandManagerWrapper commandMgr= (CommandManagerWrapper)PlatformUI.getWorkbench().getCommandSupport().getCommandManager();
-				Map map= new HashMap(1);
-				map.put(action.getActionDefinitionId(), null);
-				commandMgr.setHandlersByCommandId(map);
-			}
 		}
 
 		/**
@@ -4178,14 +4165,13 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				OperationHistoryActionHandler action;
 				
 				// Create the undo action
-				action= new UndoActionHandler(getEditorSite().getWorkbenchWindow(), undoContext);
+				action= new UndoActionHandler(getEditorSite(), undoContext);
 				PlatformUI.getWorkbench().getHelpSystem().setHelp(action, IAbstractTextEditorHelpContextIds.UNDO_ACTION);
-				actionBars.setGlobalActionHandler(ActionFactory.UNDO.getId(),
-						action);
+				actionBars.setGlobalActionHandler(ActionFactory.UNDO.getId(), action);
 				setAction(ActionFactory.UNDO.getId(), action);
 				
 				// Create the redo action.
-				action= new RedoActionHandler(getEditorSite().getWorkbenchWindow(), undoContext);
+				action= new RedoActionHandler(getEditorSite(), undoContext);
 				PlatformUI.getWorkbench().getHelpSystem().setHelp(action, IAbstractTextEditorHelpContextIds.REDO_ACTION);
 				actionBars.setGlobalActionHandler(ActionFactory.REDO.getId(), action);
 				setAction(ActionFactory.REDO.getId(), action);
@@ -4402,7 +4388,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		setAction(ITextEditorActionConstants.HIPPIE_COMPLETION, action);
 		
 		PropertyDialogAction openProperties= new PropertyDialogAction(
-				getSite().getShell(),
+				new IShellProvider() {
+					public Shell getShell() {
+						return getSite().getShell();
+					}
+				},
 				new ISelectionProvider() {
 					public void addSelectionChangedListener(ISelectionChangedListener listener) {
 					}
