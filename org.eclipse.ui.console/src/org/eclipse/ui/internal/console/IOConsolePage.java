@@ -47,7 +47,6 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleConstants;
-import org.eclipse.ui.console.IConsolePageParticipant;
 import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.actions.ClearOutputAction;
@@ -76,7 +75,6 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
     private ScrollLockAction scrollLockAction;
     private Menu menu;
     private boolean readOnly;
-    private IConsolePageParticipant[] delegates;
     
 	// text selection listener, used to update selection dependant actions on selection changes
 	private ISelectionChangedListener selectionChangedListener =  new ISelectionChangedListener() {
@@ -99,7 +97,6 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
     public IOConsolePage(IOConsole console, IConsoleView view) {
         this.console = console;
         this.consoleView = view;
-        delegates = ConsolePlugin.getDefault().getConsoleManager().getPageParticipants(this.console);
     } 
 
     /*
@@ -114,11 +111,8 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
      *  (non-Javadoc)
      * @see org.eclipse.ui.part.IPageBookViewPage#init(org.eclipse.ui.part.IPageSite)
      */
-    public void init(IPageSite site) throws PartInitException {
-        for (int i = 0; i < delegates.length; i++) {
-            delegates[i].init(site, console);
-        }
-        this.site = site;
+    public void init(IPageSite pageSite) throws PartInitException {
+        site = pageSite;
     }
 
     /*
@@ -144,9 +138,8 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
 		createActions();
 		configureToolBar(getSite().getActionBars().getToolBarManager());
 		
-		IPageSite site= getSite();
-		site.registerContextMenu(ConsolePlugin.getUniqueIdentifier() + ".IOConsole", manager, viewer); //$NON-NLS-1$
-		site.setSelectionProvider(viewer);
+		getSite().registerContextMenu(ConsolePlugin.getUniqueIdentifier() + ".IOConsole", manager, viewer); //$NON-NLS-1$
+		getSite().setSelectionProvider(viewer);
 		
 		viewer.getSelectionProvider().addSelectionChangedListener(selectionChangedListener);
 		viewer.addTextListener(textListener);
@@ -160,10 +153,6 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
      * @see org.eclipse.ui.part.IPage#dispose()
      */
     public void dispose() {
-        for (int i = 0; i < delegates.length; i++) {
-            delegates[i].dispose();
-        }
-        delegates = null;
         console.removePropertyChangeListener(this);
         JFaceResources.getFontRegistry().removeListener(this);
         
@@ -305,55 +294,43 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
 	/**
 	 * Fill the context menu
 	 * 
-	 * @param menu menu
+	 * @param menuManager menu
 	 */
-	protected void contextMenuAboutToShow(IMenuManager menu) {
+	protected void contextMenuAboutToShow(IMenuManager menuManager) {
 		IDocument doc= viewer.getDocument();
 		if (doc == null) {
 			return;
 		}
 	 
 		if (!viewer.isReadOnly()) {
-		    menu.add((IAction)globalActions.get(ActionFactory.CUT.getId()));
+		    menuManager.add((IAction)globalActions.get(ActionFactory.CUT.getId()));
 		}
-		menu.add((IAction)globalActions.get(ActionFactory.COPY.getId()));
+		menuManager.add((IAction)globalActions.get(ActionFactory.COPY.getId()));
 		if (!viewer.isReadOnly()) {
-		    menu.add((IAction)globalActions.get(ActionFactory.PASTE.getId()));
+		    menuManager.add((IAction)globalActions.get(ActionFactory.PASTE.getId()));
 		}
-		menu.add((IAction)globalActions.get(ActionFactory.SELECT_ALL.getId()));
+		menuManager.add((IAction)globalActions.get(ActionFactory.SELECT_ALL.getId()));
 
-		menu.add(new Separator("FIND")); //$NON-NLS-1$
-		menu.add((IAction)globalActions.get(ActionFactory.FIND.getId()));
-		menu.add(new FollowHyperlinkAction(viewer));
-		menu.add(clearOutputAction);
-		menu.add(scrollLockAction);
-		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+		menuManager.add(new Separator("FIND")); //$NON-NLS-1$
+		menuManager.add((IAction)globalActions.get(ActionFactory.FIND.getId()));
+		menuManager.add(new FollowHyperlinkAction(viewer));
+		menuManager.add(clearOutputAction);
+		menuManager.add(scrollLockAction);
+		menuManager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		
-		for (int i = 0; i < delegates.length; i++) {
-		    delegates[i].contextMenuAboutToShow(menu);
-        }
+		// TODO: hack to let participants contribute to context menu
+		((ConsoleView)getConsoleView()).menuAboutToShow(menuManager);
 	}
 
 	protected void configureToolBar(IToolBarManager mgr) {
 		mgr.appendToGroup(IConsoleConstants.OUTPUT_GROUP, clearOutputAction);
 		mgr.appendToGroup(IConsoleConstants.OUTPUT_GROUP, scrollLockAction);
-		for (int i = 0; i < delegates.length; i++) {
-            delegates[i].configureToolBar(mgr);
-        }
 	}
 
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
      */
     public Object getAdapter(Class required) {
-        Object adapter = null;
-        for (int i = 0; i < delegates.length && adapter==null; i++) {
-             adapter = delegates[i].getAdapter(required);
-        }
-        
-        if (adapter != null) {
-            return adapter;
-        }
 		if (IFindReplaceTarget.class.equals(required)) {
 			return viewer.getFindReplaceTarget();
 		}

@@ -19,17 +19,19 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsolePageParticipant;
 import org.eclipse.ui.console.IConsoleView;
-import org.eclipse.ui.part.IPageSite;
+import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTargetList;
 import org.eclipse.ui.part.ShowInContext;
@@ -39,7 +41,7 @@ import org.eclipse.ui.part.ShowInContext;
  * 
  * @since 3.1
  */
-public class ProcessConsolePageParticipant implements IConsolePageParticipant, IShowInSource, IShowInTargetList, IDebugEventSetListener, ISelectionListener {
+public class ProcessConsolePageParticipant implements IConsolePageParticipant, IShowInSource, IShowInTargetList, IDebugEventSetListener, ISelectionListener, IMenuListener {
 
 	// scroll lock
 	private boolean fIsLocked = DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_CONSOLE_SCROLL_LOCK);
@@ -50,32 +52,36 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
 
     private ProcessConsole fConsole;
 
-    private IPageSite fSite;
+    private IPageBookViewPage fPage;
 
     private IConsoleView fView;
 		
     /* (non-Javadoc)
-     * @see org.eclipse.ui.console.IConsolePageParticipantDelegate#init(org.eclipse.ui.part.IPageSite)
+     * @see org.eclipse.ui.console.IConsolePageParticipant#init(IPageBookViewPage, IConsole)
      */
-    public void init(IPageSite site, IConsole console) {
-        fSite = site;
+    public void init(IPageBookViewPage page, IConsole console) {
+        fPage = page;
         fConsole = (ProcessConsole) console;
         fConsole.setAutoScroll(!fIsLocked);
         
         fRemoveTerminated = new ConsoleRemoveAllTerminatedAction();
         fTerminate = new ConsoleTerminateAction(fConsole);
         
-        fView = (IConsoleView)site.getPage().findView(IConsoleConstants.ID_CONSOLE_VIEW);
+        fView = (IConsoleView) fPage.getSite().getPage().findView(IConsoleConstants.ID_CONSOLE_VIEW);
         
         DebugPlugin.getDefault().addDebugEventListener(this);
-        fSite.getPage().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
+        fPage.getSite().getPage().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
+        
+        // contribute to toolbar
+        IActionBars actionBars = fPage.getSite().getActionBars();
+        configureToolBar(actionBars.getToolBarManager());
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.ui.console.IConsolePageParticipantDelegate#dispose()
+     * @see org.eclipse.ui.console.IConsolePageParticipant#dispose()
      */
-    public void dispose() {
-        fSite.getPage().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
+    public void dispose() {        
+        fPage.getSite().getPage().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 		DebugPlugin.getDefault().removeDebugEventListener(this);
 
 		if (fRemoveTerminated != null) {
@@ -89,17 +95,10 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
 		fConsole = null;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.console.IConsolePageParticipantDelegate#contextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
+    /**
+     * Contribute actions to the toolbar
      */
-    public void contextMenuAboutToShow(IMenuManager menu) {
-        menu.add(fTerminate);
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.console.IConsolePageParticipantDelegate#configureToolBar(org.eclipse.jface.action.IToolBarManager)
-     */
-    public void configureToolBar(IToolBarManager mgr) {
+    protected void configureToolBar(IToolBarManager mgr) {
 		mgr.appendToGroup(IConsoleConstants.LAUNCH_GROUP, fTerminate);
 		mgr.appendToGroup(IConsoleConstants.LAUNCH_GROUP, fRemoveTerminated);
     }
@@ -174,4 +173,12 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
             fView.display(fConsole);
         }
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.action.IMenuListener#menuAboutToShow(org.eclipse.jface.action.IMenuManager)
+     */
+    public void menuAboutToShow(IMenuManager manager) {
+        manager.add(fTerminate);
+        manager.add(fRemoveTerminated);
+    }
 }

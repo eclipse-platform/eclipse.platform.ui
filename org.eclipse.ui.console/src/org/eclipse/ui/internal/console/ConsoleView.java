@@ -15,21 +15,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsoleListener;
 import org.eclipse.ui.console.IConsoleManager;
+import org.eclipse.ui.console.IConsolePageParticipant;
 import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.IPage;
@@ -44,7 +44,7 @@ import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
  * 
  * @since 3.0
  */
-public class ConsoleView extends PageBookView implements IConsoleView, IConsoleListener, IPropertyChangeListener {
+public class ConsoleView extends PageBookView implements IConsoleView, IConsoleListener, IPropertyChangeListener, IMenuListener {
 	
 	/**
 	 * Whether this console is pinned.
@@ -65,6 +65,11 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	 * Map of consoles to dummy console parts (used to close pages)
 	 */
 	private Map fConsoleToPart;
+	
+	/**
+	 * Map of consoles to array of page participants
+	 */
+	private Map fConsoleToPageParticipants;
 	
 	/**
 	 * Map of parts to consoles
@@ -158,13 +163,21 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	 * @see org.eclipse.ui.part.PageBookView#doDestroyPage(org.eclipse.ui.IWorkbenchPart, org.eclipse.ui.part.PageBookView.PageRec)
 	 */
 	protected void doDestroyPage(IWorkbenchPart part, PageRec pageRecord) {
+	    IConsole console = (IConsole)fPartToConsole.get(part);
+	    
+		// dispose page participants
+		IConsolePageParticipant[] participants = (IConsolePageParticipant[]) fConsoleToPageParticipants.remove(console);
+		for (int i = 0; i < participants.length; i++) {
+            IConsolePageParticipant participant = participants[i];
+            // TODO: this should be done in a safe runnable
+            participant.dispose();
+        }
+
 		IPage page = pageRecord.page;
 		page.dispose();
 		pageRecord.dispose();
-		
-		IConsole console = (IConsole)fPartToConsole.get(part);
 		console.removePropertyChangeListener(this);
-				
+						
 		// empty cross-reference cache
 		fPartToConsole.remove(part);
 		fConsoleToPart.remove(console);
@@ -183,6 +196,16 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		initPage(page);
 		page.createControl(getPageBook());
 		console.addPropertyChangeListener(this);
+		
+		// initialize page participants
+		IConsolePageParticipant[] participants = ((ConsoleManager)getConsoleManager()).getPageParticipants(console);
+		fConsoleToPageParticipants.put(console, participants);
+		for (int i = 0; i < participants.length; i++) {
+            IConsolePageParticipant participant = participants[i];
+            // TODO: this should be done in a safe runnable
+            participant.init(page, console);
+        }
+		
 		PageRec rec = new PageRec(dummyPart, page);
 		return rec;
 	}
@@ -199,10 +222,19 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	 */
 	public void dispose() {
 		super.dispose();
-		ConsolePlugin.getDefault().getConsoleManager().removeConsoleListener(this);
+		getConsoleManager().removeConsoleListener(this);
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Returns the console manager.
+	 * 
+     * @return the console manager
+     */
+    private IConsoleManager getConsoleManager() {
+        return ConsolePlugin.getDefault().getConsoleManager();
+    }
+
+    /* (non-Javadoc)
 	 * @see org.eclipse.ui.part.PageBookView#createDefaultPage(org.eclipse.ui.part.PageBook)
 	 */
 	protected IPage createDefaultPage(PageBook book) {
@@ -223,7 +255,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 						if (isAvailable()) {
 							IConsole console = consoles[i];
 							// ensure it's still registered since this is done asynchronously
-							IConsole[] allConsoles = ConsolePlugin.getDefault().getConsoleManager().getConsoles();
+							IConsole[] allConsoles = getConsoleManager().getConsoles();
 							for (int j = 0; j < allConsoles.length; j++) {
                                 IConsole registered = allConsoles[j];
                                 if (registered.equals(console)) {
@@ -259,7 +291,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 								partClosed(part);
 							}
 							if (getConsole() == null) {
-								IConsole[] available = ConsolePlugin.getDefault().getConsoleManager().getConsoles();
+								IConsole[] available = getConsoleManager().getConsoles();
 								if (available.length > 0) {
 									display(available[available.length - 1]);
 								}
@@ -279,28 +311,9 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		super();
 		fConsoleToPart = new HashMap();
 		fPartToConsole = new HashMap();
+		fConsoleToPageParticipants = new HashMap();
 	}
 	
-	/**
-	 * Creates a pop-up menu on the given control. The menu
-	 * is registered with this view's site, such that other
-	 * plug-ins may contribute to the menu.
-	 * 
-	 * @param menuControl the control with which the pop-up
-	 *  menu will be associated with.
-	 */
-	protected void createContextMenu(Control menuControl) {
-		MenuManager menuMgr= new MenuManager("#PopUp"); //$NON-NLS-1$
-		menuMgr.setRemoveAllWhenShown(true);
-		Menu menu= menuMgr.createContextMenu(menuControl);
-		menuControl.setMenu(menu);
-
-		// register the context menu such that other plugins may contribute to it
-		if (getSite() != null) {
-			getSite().registerContextMenu(menuMgr, null);
-		}
-	}
-
 	protected void createActions() {
 		fPinAction = new PinConsoleAction(this);
 		fDisplayConsoleAction = new ConsoleDropDownAction(this);
@@ -387,44 +400,20 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	 * @see IWorkbenchPart#createPartControl(Composite)
 	 */
 	public void createPartControl(Composite parent) {
-		//registerPartListener();
 		super.createPartControl(parent);
 		createActions();
 		IToolBarManager tbm= getViewSite().getActionBars().getToolBarManager();
 		configureToolBar(tbm);
 		updateForExistingConsoles();
 		getViewSite().getActionBars().updateActionBars();
-//		Viewer viewer = getViewer();
-//		if (viewer != null) {
-//			createContextMenu(viewer.getControl());
-//		}
 		WorkbenchHelp.setHelp(parent, IConsoleHelpContextIds.CONSOLE_VIEW);
-//		if (viewer != null) {
-//			getViewer().getControl().addKeyListener(new KeyAdapter() {
-//				public void keyPressed(KeyEvent e) {
-//					handleKeyPressed(e);
-//				}
-//			});
-//			if (getViewer() instanceof StructuredViewer) {
-//				((StructuredViewer)getViewer()).addDoubleClickListener(this);	
-//			}
-//		}
-		// create the message page
-		//setMessagePage(new MessagePage());
-		//getMessagePage().createControl(getPageBook());
-		//initPage(getMessagePage());
-	
-//		if (fEarlyMessage != null) { //bug 28127
-//			showMessage(fEarlyMessage);
-//			fEarlyMessage= null;
-//		}
 	}
 	
 	/**
 	 * Initialize for existing consoles
 	 */
 	private void updateForExistingConsoles() {
-		IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager();
+		IConsoleManager manager = getConsoleManager();
 		// create pages for consoles
 		IConsole[] consoles = manager.getConsoles();
 		consolesAdded(consoles);
@@ -445,4 +434,45 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		}
 	}
 	
+    public Object getAdapter(Class key) {
+        Object adpater = super.getAdapter(key);
+        if (adpater == null) {
+            IConsole console = getConsole();
+            if (console != null) {
+                IConsolePageParticipant[] participants = (IConsolePageParticipant[]) fConsoleToPageParticipants.get(console);
+                for (int i = 0; i < participants.length; i++) {
+                    IConsolePageParticipant participant = participants[i];
+                    adpater = participant.getAdapter(key);
+                    if (adpater != null) {
+                        return adpater;
+                    }
+                }
+            }
+        }
+        return adpater;
+    }
+
+    /* (non-Javadoc)
+     * 
+     * TODO: This is an undocumented hack to allow page participants to fill a context menu.
+     * Not yet API. Page participants that are IMenuListeners will be consulted to add to the
+     * given context menu.
+     * 
+     * @see org.eclipse.jface.action.IMenuListener#menuAboutToShow(org.eclipse.jface.action.IMenuManager)
+     */
+    public void menuAboutToShow(IMenuManager manager) {
+        IConsole console = getConsole();
+        if (console != null) {
+            IConsolePageParticipant[] participants = (IConsolePageParticipant[]) fConsoleToPageParticipants.get(console);
+            for (int i = 0; i < participants.length; i++) {
+                IConsolePageParticipant participant = participants[i];
+                if (participant instanceof IMenuListener) {
+                    // TODO: should be done in a safe runnable
+                    ((IMenuListener)participant).menuAboutToShow(manager);
+                }
+            }
+        }
+        
+    }
+    
 }

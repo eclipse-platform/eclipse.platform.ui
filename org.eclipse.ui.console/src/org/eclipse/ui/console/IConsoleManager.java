@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.console;
 
-
-
 /**
- * Manages consoles.
+ * The console manager manages registered consoles.
  * <p>
  * Clients are not intended to implement this interface.
  * </p>
@@ -94,16 +92,4 @@ public interface IConsoleManager {
 	 */
 	public IPatternMatchListener[] getPatternMatchListeners(IConsole console);
 	
-	/**
-	 * Returns a collection of page participants which are enabled for the given 
-	 * console. The participants are new instances, intended to be used in a new
-	 * page for the given console. No methods on the participants have been called.
-	 * Clients are responsible for disposing the participants.
-	 * 
-	 * @param console the console for which page participants are requested
-	 * @return a collection of new page participants
-	 * @since 3.1
-	 */
-	public IConsolePageParticipant[] getPageParticipants(IConsole console);
-
 }

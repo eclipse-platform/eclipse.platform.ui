@@ -11,7 +11,7 @@
 package org.eclipse.ui.console;
 
 /**
- * A hyperlink in the console. Link behavior is implementation dependent.
+ * A hyperlink in a console. Link behavior is implementation dependent.
  * <p>
  * Clients may implement this interface.
  * </p>
