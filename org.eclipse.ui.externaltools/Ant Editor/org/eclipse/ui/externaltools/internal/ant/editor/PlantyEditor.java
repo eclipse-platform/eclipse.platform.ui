@@ -27,14 +27,13 @@ import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.externaltools.internal.ant.editor.outline.PlantyContentOutlinePage;
+import org.eclipse.ui.externaltools.internal.ant.editor.text.PlantyDocumentProvider;
+import org.eclipse.ui.externaltools.internal.ant.editor.xml.XmlElement;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.texteditor.ContentAssistAction;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
-
-import org.eclipse.ui.externaltools.internal.ant.editor.outline.PlantyContentOutlinePage;
-import org.eclipse.ui.externaltools.internal.ant.editor.text.PlantyDocumentProvider;
-import org.eclipse.ui.externaltools.internal.ant.editor.xml.XmlElement;
 
 /**
  * The actual editor implementation for Planty.
@@ -156,6 +155,13 @@ public class PlantyEditor extends TextEditor {
 //        }
         
         if (reference != null) {
+        	if (reference.isExternal() && !reference.isRootExternal()) {
+        		while (!reference.isRootExternal()) {
+					//no possible selection for this external element
+					//find the root external entity actually in the document
+        			reference= reference.getParentNode();
+        		}
+        	}
             
             StyledText  textWidget= null;
             
@@ -171,8 +177,9 @@ public class PlantyEditor extends TextEditor {
                 int offset= reference.getOffset();
                 int length= reference.getLength();
                 
-                if (offset < 0)
+                if (offset < 0) {
                     return;
+                }
                     
                 textWidget.setRedraw(false);
                 
@@ -180,44 +187,18 @@ public class PlantyEditor extends TextEditor {
 	                setHighlightRange(offset, length, moveCursor);
                 }
                 
-                if (!moveCursor)
+                if (!moveCursor) {
                     return;
+                }
 
                 offset= reference.getOffset()+1;
                 length= reference.getName().length();
                                             
-//                offset= -1;
-//                length= -1;
-                
-//                if (reference instanceof IMember) {
-//                    range= ((IMember) reference).getNameRange();
-//                    if (range != null) {
-//                        offset= range.getOffset();
-//                        length= range.getLength();
-//                    }
-//                } else if (reference instanceof IImportDeclaration) {
-//                    String name= ((IImportDeclaration) reference).getElementName();
-//                    if (name != null && name.length() > 0) {
-//                        String content= reference.getSource();
-//                        offset= range.getOffset() + content.indexOf(name);
-//                        length= name.length();
-//                    }
-//                } else if (reference instanceof IPackageDeclaration) {
-//                    String name= ((IPackageDeclaration) reference).getElementName();
-//                    if (name != null && name.length() > 0) {
-//                        String content= reference.getSource();
-//                        offset= range.getOffset() + content.indexOf(name);
-//                        length= name.length();
-//                    }
-//                }
-                
                 if (offset > -1 && length > 0) {
                     sourceViewer.revealRange(offset, length);
                     // Selected region begins one index after offset
                     sourceViewer.setSelectedRange(offset, length); 
                 }
-                
-            
             } catch (IllegalArgumentException x) {
             } finally {
                 if (textWidget != null)
@@ -237,8 +218,8 @@ public class PlantyEditor extends TextEditor {
 	 */
 	public void doSave(IProgressMonitor monitor) {
 		super.doSave(monitor);
-		if (page != null)
+		if (page != null) {
 			page.update();
+		}
 	}
-
 }
