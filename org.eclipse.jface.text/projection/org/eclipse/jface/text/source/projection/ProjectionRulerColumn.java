@@ -204,6 +204,14 @@ class ProjectionRulerColumn extends AnnotationRulerColumn {
 		}
 		super.setModel(model);
 	}
+	
+	/*
+	 * @see org.eclipse.jface.text.source.AnnotationRulerColumn#isDelegatingToParentRuler()
+	 * @since 3.0
+	 */
+	protected boolean isPropagatingMouseListener() {
+		return false;
+	}
 
 	/*
 	 * @see org.eclipse.jface.text.source.AnnotationRulerColumn#hasLineAnnotations(int)

@@ -180,6 +180,11 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	 * @since 3.0
 	 */
 	private Cursor fLastCursor;
+	/**
+	 * This ruler's mouse listener.
+	 * @since 3.0
+	 */
+	private MouseListener fMouseListener;
 	
 	/**
 	 * Constructs this column with the given arguments.
@@ -256,7 +261,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 
 		fHitDetectionCursor= new Cursor(parentControl.getDisplay(), SWT.CURSOR_HAND);
 
-		fCanvas= new Canvas(parentControl, SWT.NO_BACKGROUND);
+		fCanvas= createCanvas(parentControl);
 		
 		fCanvas.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent event) {
@@ -273,21 +278,35 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 			}
 		});
 		
-		fCanvas.addMouseListener(new MouseListener() {
+		fMouseListener= new MouseListener() {
 			public void mouseUp(MouseEvent event) {
-				fParentRuler.setLocationOfLastMouseButtonActivity(event.x, event.y);
-				mouseClicked(fParentRuler.getLineOfLastMouseButtonActivity());				
+				int lineNumber;
+				if (isPropagatingMouseListener()) {
+					fParentRuler.setLocationOfLastMouseButtonActivity(event.x, event.y);
+					lineNumber= fParentRuler.getLineOfLastMouseButtonActivity();
+				} else
+					lineNumber= fParentRuler.toDocumentLineNumber(event.y);
+				
+				mouseClicked(lineNumber);				
 			}
 			
 			public void mouseDown(MouseEvent event) {
-				fParentRuler.setLocationOfLastMouseButtonActivity(event.x, event.y);
+				if (isPropagatingMouseListener())
+					fParentRuler.setLocationOfLastMouseButtonActivity(event.x, event.y);
 			}
 			
 			public void mouseDoubleClick(MouseEvent event) {
-				fParentRuler.setLocationOfLastMouseButtonActivity(event.x, event.y);
-				mouseDoubleClicked(fParentRuler.getLineOfLastMouseButtonActivity());
+				int lineNumber;
+				if (isPropagatingMouseListener()) {
+					fParentRuler.setLocationOfLastMouseButtonActivity(event.x, event.y);
+					lineNumber= fParentRuler.getLineOfLastMouseButtonActivity();
+				} else
+					lineNumber= fParentRuler.toDocumentLineNumber(event.y);
+				
+				mouseDoubleClicked(lineNumber);
 			}
-		});
+		};
+		fCanvas.addMouseListener(fMouseListener);
 
 		fCanvas.addMouseMoveListener(new MouseMoveListener() {
 			/*
@@ -307,6 +326,30 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 		return fCanvas;
 	}
 	
+	private Canvas createCanvas(Composite parent) {
+		return new Canvas(parent, SWT.NO_BACKGROUND) {
+			/*
+			 * @see org.eclipse.swt.widgets.Control#addMouseListener(org.eclipse.swt.events.MouseListener)
+			 * @since 3.0
+			 */
+			public void addMouseListener(MouseListener listener) {
+				if (isPropagatingMouseListener() || listener == fMouseListener)
+					super.addMouseListener(listener);
+			}
+		};
+	}
+	
+	/**
+	 * Tells whether this ruler column propagates mouse listener
+	 * events to its parent.
+	 * 
+	 * @return <code>true</code> if propagating to parent
+	 * @since 3.0
+	 */
+	protected boolean isPropagatingMouseListener() {
+		return true;
+	}
+
 	/**
 	 * Hook method for a mouse double click event on the given ruler line.
 	 * 
