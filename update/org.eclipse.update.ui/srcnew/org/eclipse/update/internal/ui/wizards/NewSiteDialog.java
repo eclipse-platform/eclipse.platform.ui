@@ -99,8 +99,6 @@ public class NewSiteDialog extends Dialog {
 			UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 			SiteBookmark bookmark = new SiteBookmark(name.getText(), new URL(url.getText()), false);
 			model.addBookmark(bookmark);
-			//TODO Is the next line needed? 
-			OperationsManager.fireObjectsAdded(null, new Object[]{bookmark});
 			model.saveBookmarks();
 		} catch (MalformedURLException e) {
 		}

@@ -119,24 +119,27 @@ public class BookmarkUtil {
 			url = new URL(getAttribute(child, "url"));
 		} catch (MalformedURLException e) {
 		}
-		boolean webBookmark = false;
+
 		String web = getAttribute(child, "web");
-		if (web!=null && web.equals("true"))
-			webBookmark = true;
-		boolean selected = false;
+		boolean webBookmark = (web != null && web.equals("true"));
+
 		String sel = getAttribute(child, "selected");
-		if (sel!=null && sel.equals("true"))
-			selected = true;
+		boolean selected = (sel != null && sel.equals("true"));
+
 		SiteBookmark bookmark = new SiteBookmark(name, url, webBookmark, selected);
+
+		String local = getAttribute(child, "local");
+		bookmark.setLocal(local != null && local.equals("true"));
+
 		String ign = getAttribute(child, "ignored-categories");
-		if (ign!=null) {
+		if (ign != null) {
 			StringTokenizer stok = new StringTokenizer(ign, ",");
-			ArrayList array=new ArrayList();
+			ArrayList array = new ArrayList();
 			while (stok.hasMoreTokens()) {
 				String tok = stok.nextToken();
 				array.add(tok);
 			}
-			String [] ignArray = (String[])array.toArray(new String[array.size()]);
+			String[] ignArray = (String[]) array.toArray(new String[array.size()]);
 			bookmark.setIgnoredCategories(ignArray);
 		}
 		return bookmark;
@@ -204,6 +207,7 @@ public class BookmarkUtil {
 			String url = bookmark.getURL().toString();
 			String web = bookmark.isWebBookmark()?"true":"false";
 			String sel = bookmark.isSelected()?"true":"false";
+			String local = bookmark.isLocal() ? "true" : "false";
 			String [] ign = bookmark.getIgnoredCategories();
 			StringBuffer wign=null;
 			if (ign!=null) {
@@ -213,7 +217,7 @@ public class BookmarkUtil {
 					wign.append(ign[i]);
 				}
 			}
-			writer.print(indent + "<site name=\"" + name + "\" url=\"" + url + "\" web=\"" + web + "\" selected=\"" + sel + "\"");
+			writer.print(indent + "<site name=\"" + name + "\" url=\"" + url + "\" web=\"" + web + "\" selected=\"" + sel + "\" local=\"" + local + "\"");
 			if (wign!=null)
 				writer.print(" ignored-categories=\""+wign.toString()+"\"");
 			writer.println("/>");

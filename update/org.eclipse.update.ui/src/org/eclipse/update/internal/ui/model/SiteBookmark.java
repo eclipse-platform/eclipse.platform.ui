@@ -34,6 +34,7 @@ public class SiteBookmark extends NamedModelObject
 	private boolean selected;
 	private String [] ignoredCategories;
 	private boolean readOnly = false;
+	private boolean local = false;
 
 	public SiteBookmark() {
 	}
@@ -235,5 +236,12 @@ public class SiteBookmark extends NamedModelObject
 	public boolean isReadOnly() {
 		return readOnly;
 	}
-
+	
+	public void setLocal(boolean local) {
+		this.local = local;
+	}
+	
+	public boolean isLocal() {
+		return local;
+	}
 }

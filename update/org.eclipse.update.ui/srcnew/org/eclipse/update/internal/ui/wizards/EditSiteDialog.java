@@ -26,6 +26,7 @@ public class EditSiteDialog extends NewSiteDialog {
 	protected void initializeFields() {
 		name.setText(bookmark.getName());
 		url.setText(bookmark.getURL().toString());
+		url.setEditable(!bookmark.isLocal());
 	}
 
 	protected void update() {
