@@ -41,11 +41,6 @@ import org.eclipse.jface.util.Util;
  * <code>KeyStroke</code> objects are immutable. Clients are not permitted to
  * extend this class.
  * </p>
- * <p>
- * <em>EXPERIMENTAL</em>. The commands architecture is currently under
- * development for Eclipse 3.1. This class -- its existence, its name and its
- * methods -- are in flux. Do not use this class yet.
- * </p>
  * 
  * @since 3.1
  */

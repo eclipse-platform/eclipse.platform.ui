@@ -30,15 +30,10 @@ import org.eclipse.ui.internal.misc.Policy;
  * Provides services related to activating and deactivating handlers within the
  * workbench.
  * </p>
- * <p>
- * <em>EXPERIMENTAL</em>. The commands architecture is currently under
- * development for Eclipse 3.1. This class -- its existence, its name and its
- * methods -- are in flux. Do not use this class yet.
- * </p>
  * 
  * @since 3.1
  */
-public class HandlerService implements IHandlerService {
+public final class HandlerService implements IHandlerService {
 	
 	static {
 		Command.DEBUG_HANDLERS = Policy.DEBUG_HANDLERS_VERBOSE;

@@ -26,11 +26,6 @@ import java.util.Set;
  * possible to listen to changes in the collection of commands by attaching a
  * listener to the manager.
  * </p>
- * <p>
- * <em>EXPERIMENTAL</em>. The commands architecture is currently under
- * development for Eclipse 3.1. This class -- its existence, its name and its
- * methods -- are in flux. Do not use this class yet.
- * </p>
  * 
  * @see CommandManager#getCommand(String)
  * @since 3.1

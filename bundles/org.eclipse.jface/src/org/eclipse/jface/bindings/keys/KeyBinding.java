@@ -19,11 +19,6 @@ import org.eclipse.jface.bindings.TriggerSequence;
  * A keyboard shortcut. This is a binding between some keyboard input and the
  * triggering of a command. This object is immutable.
  * </p>
- * <p>
- * <em>EXPERIMENTAL</em>. The commands architecture is currently under
- * development for Eclipse 3.1. This class -- its existence, its name and its
- * methods -- are in flux. Do not use this class yet.
- * </p>
  * 
  * @since 3.1
  */

@@ -24,11 +24,6 @@ import java.util.Map;
  * dependent. In the Eclipse workbench, the trigger is an SWT event, and the
  * application context contains information about the selection and active part.
  * </p>
- * <p>
- * <em>EXPERIMENTAL</em>. The commands architecture is currently under
- * development for Eclipse 3.1. This class -- its existence, its name and its
- * methods -- are in flux. Do not use this class yet.
- * </p>
  * 
  * @since 3.1
  */

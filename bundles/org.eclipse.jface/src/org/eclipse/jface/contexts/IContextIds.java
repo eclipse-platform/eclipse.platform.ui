@@ -16,9 +16,7 @@ package org.eclipse.jface.contexts;
  * "ui" for historical reasons. These contexts exist as part of JFace.
  * </p>
  * <p>
- * <em>EXPERIMENTAL</em>. The commands architecture is currently under
- * development for Eclipse 3.1. This class -- its existence, its name and its
- * methods -- are in flux. Do not use this class yet.
+ * This interface should not be implemented or extended by clients.
  * </p>
  * 
  * @since 3.1

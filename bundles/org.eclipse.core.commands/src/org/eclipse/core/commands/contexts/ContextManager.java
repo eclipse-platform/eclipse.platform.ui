@@ -29,12 +29,7 @@ import org.eclipse.core.internal.commands.util.Util;
  * identifier.
  * </p>
  * <p>
- * This interface is not intended to be extended or implemented by clients.
- * </p>
- * <p>
- * <em>EXPERIMENTAL</em>. The commands architecture is currently under
- * development for Eclipse 3.1. This class -- its existence, its name and its
- * methods -- are in flux. Do not use this class yet.
+ * This class is not intended to be extended by clients.
  * </p>
  * 
  * @since 3.1

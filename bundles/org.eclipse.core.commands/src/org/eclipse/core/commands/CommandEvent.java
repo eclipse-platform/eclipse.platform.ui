@@ -18,16 +18,11 @@ import org.eclipse.core.commands.common.AbstractNamedHandleEvent;
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
- * <p>
- * <em>EXPERIMENTAL</em>. The commands architecture is currently under
- * development for Eclipse 3.1. This class -- its existence, its name and its
- * methods -- are in flux. Do not use this class yet.
- * </p>
  * 
  * @since 3.1
  * @see ICommandListener#commandChanged(CommandEvent)
  */
-public class CommandEvent extends AbstractNamedHandleEvent {
+public final class CommandEvent extends AbstractNamedHandleEvent {
 
 	/**
 	 * The bit used to represent whether the command has changed its category.

@@ -24,11 +24,6 @@ import org.eclipse.jface.util.Util;
  * A key formatter providing the Emacs-style accelerators using single letters
  * to represent the modifier keys.
  * </p>
- * <p>
- * <em>EXPERIMENTAL</em>. The commands architecture is currently under
- * development for Eclipse 3.1. This class -- its existence, its name and its
- * methods -- are in flux. Do not use this class yet.
- * </p>
  * 
  * @since 3.1
  */

@@ -30,11 +30,6 @@ import org.eclipse.ui.internal.util.Util;
  * <p>
  * A static class for accessing the registry and the preference store.
  * </p>
- * <p>
- * <em>EXPERIMENTAL</em>. The commands architecture is currently under
- * development for Eclipse 3.1. This class -- its existence, its name and its
- * methods -- are in flux. Do not use this class yet.
- * </p>
  * 
  * @since 3.1
  */

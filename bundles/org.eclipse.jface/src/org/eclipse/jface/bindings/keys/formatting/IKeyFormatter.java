@@ -21,11 +21,6 @@ import org.eclipse.jface.bindings.keys.KeyStroke;
  * user sees in the keys preference page and the menus, as well as the strings
  * that are used for persistent storage.
  * </p>
- * <p>
- * <em>EXPERIMENTAL</em>. The commands architecture is currently under
- * development for Eclipse 3.1. This class -- its existence, its name and its
- * methods -- are in flux. Do not use this class yet.
- * </p>
  * 
  * @since 3.1
  */

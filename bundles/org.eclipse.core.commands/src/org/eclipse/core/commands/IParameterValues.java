@@ -18,11 +18,6 @@ import java.util.Map;
  * The parameters for a command. This interface will only be consulted if the
  * parameters need to be displayed to the user. Otherwise, they will be ignored.
  * </p>
- * <p>
- * <em>EXPERIMENTAL</em>. The commands architecture is currently under
- * development for Eclipse 3.1. This class -- its existence, its name and its
- * methods -- are in flux. Do not use this class yet.
- * </p>
  * 
  * @since 3.1
  */

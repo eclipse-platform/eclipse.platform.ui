@@ -32,11 +32,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * <p>
  * This caches the context id, so that they can later be identified.
  * </p>
- * <p>
- * <em>EXPERIMENTAL</em>. The commands architecture is currently under
- * development for Eclipse 3.1. This class -- its existence, its name and its
- * methods -- are in flux. Do not use this class yet.
- * </p>
  * 
  * @since 3.1
  */

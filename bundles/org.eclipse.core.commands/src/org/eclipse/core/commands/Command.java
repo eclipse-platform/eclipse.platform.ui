@@ -44,11 +44,6 @@ import org.eclipse.core.internal.commands.util.Util;
  * <p>
  * Commands are mutable and will change as their definition changes.
  * </p>
- * <p>
- * <em>EXPERIMENTAL</em>. The commands architecture is currently under
- * development for Eclipse 3.1. This class -- its existence, its name and its
- * methods -- are in flux. Do not use this class yet.
- * </p>
  * 
  * @since 3.1
  */

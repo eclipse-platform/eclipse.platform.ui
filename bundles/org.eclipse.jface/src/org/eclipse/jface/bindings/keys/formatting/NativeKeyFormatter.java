@@ -27,15 +27,10 @@ import org.eclipse.swt.SWT;
  * format. This is typically what you would see on the menus for the given
  * platform and locale.
  * </p>
- * <p>
- * <em>EXPERIMENTAL</em>. The commands architecture is currently under
- * development for Eclipse 3.1. This class -- its existence, its name and its
- * methods -- are in flux. Do not use this class yet.
- * </p>
  * 
  * @since 3.1
  */
-public class NativeKeyFormatter extends AbstractKeyFormatter {
+public final class NativeKeyFormatter extends AbstractKeyFormatter {
 
 	/**
 	 * The key into the internationalization resource bundle for the delimiter

@@ -39,11 +39,6 @@ import org.eclipse.swt.widgets.Text;
  * Incomplete key strokes are only displayed until they are made complete or
  * their component key presses are released.
  * </p>
- * <p>
- * <em>EXPERIMENTAL</em>. The commands architecture is currently under
- * development for Eclipse 3.1. This class -- its existence, its name and its
- * methods -- are in flux. Do not use this class yet.
- * </p>
  * 
  * @since 3.1
  */

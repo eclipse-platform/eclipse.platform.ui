@@ -22,11 +22,6 @@ import org.eclipse.core.internal.commands.util.Util;
  * <code>ParameterizedCommand</code>, which is used to refer to a command
  * with a collection of parameterizations.
  * </p>
- * <p>
- * <em>EXPERIMENTAL</em>. The commands architecture is currently under
- * development for Eclipse 3.1. This class -- its existence, its name and its
- * methods -- are in flux. Do not use this class yet.
- * </p>
  * 
  * @since 3.1
  */

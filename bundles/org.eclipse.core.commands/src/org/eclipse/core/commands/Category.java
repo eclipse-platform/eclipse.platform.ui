@@ -23,15 +23,10 @@ import org.eclipse.core.internal.commands.util.Util;
  * category. The category has no functional effect, but may be used in graphical
  * tools that want to group the set of commands somehow.
  * </p>
- * <p>
- * <em>EXPERIMENTAL</em>. The commands architecture is currently under
- * development for Eclipse 3.1. This class -- its existence, its name and its
- * methods -- are in flux. Do not use this class yet.
- * </p>
  * 
  * @since 3.1
  */
-public class Category extends NamedHandleObject {
+public final class Category extends NamedHandleObject {
 
 	/**
 	 * A collection of objects listening to changes to this category. This

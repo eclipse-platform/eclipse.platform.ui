@@ -17,14 +17,6 @@ package org.eclipse.core.commands;
  * which only one will be active at any given moment in time. When the command
  * is asked to execute, it will simply pass that request on to its active
  * handler, if any.
- * <p>
- * This interface is not intended to be extended by clients.
- * </p>
- * <p>
- * <em>EXPERIMENTAL</em>. The commands architecture is currently under
- * development for Eclipse 3.1. This class -- its existence, its name and its
- * methods -- are in flux. Do not use this class yet.
- * </p>
  * 
  * @since 3.1
  */
