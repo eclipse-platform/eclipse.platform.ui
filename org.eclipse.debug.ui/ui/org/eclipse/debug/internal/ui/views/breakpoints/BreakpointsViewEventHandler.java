@@ -13,8 +13,10 @@ package org.eclipse.debug.internal.ui.views.breakpoints;
 
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
@@ -161,7 +163,8 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
 				public void run() {
 					if (fView.isAvailable()) {
 						CheckboxTreeViewer viewer = (CheckboxTreeViewer)fView.getViewer();
-						if (haveGroupsChanged(breakpoints, deltas)) {
+						Set changedGroups= getGroupsWithAdditions(breakpoints, deltas);
+						if (changedGroups.size() > 0) {
 							// If the groups has changed, completely refresh the view to
 							// pick up structural changes.
 							fView.getViewer().refresh();
@@ -171,8 +174,9 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
 							fView.updateObjects();
 							// Fire a selection change to update contributed actions
 							viewer.setSelection(viewer.getSelection());
-							for (int i = 0; i < breakpoints.length; i++) {
-								viewer.expandToLevel(breakpoints[i], AbstractTreeViewer.ALL_LEVELS);
+							Iterator iter= changedGroups.iterator();
+							while (iter.hasNext()) {
+								viewer.expandToLevel(iter.next(), AbstractTreeViewer.ALL_LEVELS);
 							}
 							fView.initializeCheckedState();
 							return;
@@ -211,7 +215,8 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
 		}
 	}
 	
-	private boolean haveGroupsChanged(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
+	private Set getGroupsWithAdditions(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
+		Set changedGroups= new HashSet();
 	    for (int i = 0; i < breakpoints.length; i++) {
 			IBreakpoint breakpoint = breakpoints[i];
 			IMarker marker= breakpoint.getMarker();
@@ -228,13 +233,13 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
 						if (newGroup == null || oldGroup == null || !newGroup.equals(oldGroup)) {
 							// one is null, one isn't => changed
 						    // both not null && !one.equals(other) => changed
-							return true;
+							changedGroups.add(newGroup);
 						}
 					}
 				}
 			}
 		}
-	    return false;
+	    return changedGroups;
 	}
 
 	/**
