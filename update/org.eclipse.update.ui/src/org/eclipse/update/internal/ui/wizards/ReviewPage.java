@@ -9,29 +9,28 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.ui.wizards;
-import java.net.URL;
+import java.lang.reflect.*;
+import java.net.*;
 import java.util.*;
-import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.operation.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.SWT;
+import org.eclipse.swt.*;
 import org.eclipse.swt.custom.*;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.dialogs.PropertyDialogAction;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.dialogs.*;
+import org.eclipse.ui.help.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.operations.*;
-import org.eclipse.update.internal.operations.UpdateUtils;
 import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.internal.ui.model.SimpleFeatureAdapter;
+import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.operations.*;
 import org.eclipse.update.search.*;
@@ -348,14 +347,20 @@ public class ReviewPage
 
 		filterCheck = new Button(client, SWT.CHECK);
 		filterCheck.setText(UpdateUI.getString("InstallWizard.ReviewPage.filterFeatures")); //$NON-NLS-1$
-		filterCheck.setSelection(true);
-		tableViewer.addFilter(filter);
+		filterCheck.setSelection(false);
+		//tableViewer.addFilter(filter);
 		filterCheck.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if (filterCheck.getSelection())
-					tableViewer.addFilter(filter);
-				else
+				if (filterCheck.getSelection()) {
+					// make sure model is local
+					if (downloadIncludedFeatures()) {
+						tableViewer.addFilter(filter);
+					} else {
+						filterCheck.setSelection(false);
+					}
+				} else {
 					tableViewer.removeFilter(filter);
+				}
 				pageChanged();
 			}
 		});
@@ -780,4 +785,57 @@ public class ReviewPage
 		}
 	}
 
+	/**
+	 * @return true, if completed, false if canceled by the user
+	 */
+	private boolean downloadIncludedFeatures() {
+		try {
+			Downloader downloader = new Downloader(jobs);
+			getContainer().run(true, true, downloader);
+			return !downloader.isCanceled();
+		} catch (InvocationTargetException ite) {
+		} catch (InterruptedException ie) {
+		}
+		return true;
+	}
+	/**
+	 * Runnable to resolve included feature references.
+	 */
+	class Downloader implements IRunnableWithProgress {
+		boolean canceled = false;
+		/**
+		 * List of IInstallFeatureOperation
+		 */
+		ArrayList operations;
+		public Downloader(ArrayList installOperations) {
+			operations = installOperations;
+		}
+		public boolean isCanceled() {
+			return canceled;
+		}
+		public void run(IProgressMonitor monitor)
+				throws InvocationTargetException, InterruptedException {
+			for (int i = 0; i < operations.size(); i++) {
+				IInstallFeatureOperation candidate = (IInstallFeatureOperation) operations
+						.get(i);
+				IFeature feature = candidate.getFeature();
+				try {
+					IFeatureReference[] irefs = feature
+							.getRawIncludedFeatureReferences();
+					for (int f = 0; f < irefs.length; f++) {
+						if (monitor.isCanceled()) {
+							canceled = true;
+							return;
+						}
+						IFeatureReference iref = irefs[f];
+						IFeature ifeature = iref.getFeature(monitor);
+					}
+				} catch (CoreException e) {
+				}
+			}
+			if (monitor.isCanceled()) {
+				canceled = true;
+			}
+		}
+	}
 }
