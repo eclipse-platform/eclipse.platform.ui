@@ -17,6 +17,7 @@ import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -217,52 +218,22 @@ public class ViewsPreferencePage
 		spacingComposite2.setLayout(spacingLayout2);
 		spacingComposite2.setFont(font);
 
-
-		// it is not possible to set the default value in workbench start up so it may need to happen now
-		if (store.isDefault(JFacePreferences.SCHEME_INACTIVE_TAB_BACKGROUND)) {
-			PreferenceConverter.setValue(store, JFacePreferences.SCHEME_INACTIVE_TAB_BACKGROUND, JFaceColors.getTabFolderBackground(composite.getDisplay()).getRGB());
-		}
-		colorSchemeTabBGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_INACTIVE_TAB_BACKGROUND, "Color Scheme Tab Background", spacingComposite2);
+		colorSchemeTabBGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_TAB_SELECTION_BACKGROUND, "Color Scheme Tab Background", spacingComposite2);
 		colorSchemeTabBGColorEditor.setPreferenceStore(doGetPreferenceStore());
+		// If the value is still the default, this means the use has been using system colors
+		// Or has not set this particular color from the default.
+		if (store.isDefault(JFacePreferences.SCHEME_TAB_SELECTION_BACKGROUND)) {
+			PreferenceConverter.setValue(store, JFacePreferences.SCHEME_TAB_SELECTION_BACKGROUND, JFaceColors.getTabFolderSelectionBackground(composite.getDisplay()).getRGB());
+		}
 		colorSchemeTabBGColorEditor.load();
 		
 		// it is not possible to set the default value in workbench start up so it may need to happen now
-		if (store.isDefault(JFacePreferences.SCHEME_INACTIVE_TAB_FOREGROUND)) {
-			PreferenceConverter.setValue(store, JFacePreferences.SCHEME_INACTIVE_TAB_FOREGROUND, JFaceColors.getTabFolderForeground(composite.getDisplay()).getRGB());
+		if (store.isDefault(JFacePreferences.SCHEME_TAB_SELECTION_FOREGROUND)) {
+			PreferenceConverter.setValue(store, JFacePreferences.SCHEME_TAB_SELECTION_FOREGROUND, JFaceColors.getTabFolderSelectionForeground(composite.getDisplay()).getRGB());
 		}		
-		colorSchemeTabFGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_INACTIVE_TAB_FOREGROUND, "Color Scheme Tab Foreground", spacingComposite2);
+		colorSchemeTabFGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_TAB_SELECTION_FOREGROUND, "Color Scheme Tab Foreground", spacingComposite2);
 		colorSchemeTabFGColorEditor.setPreferenceStore(doGetPreferenceStore());
 		colorSchemeTabFGColorEditor.load();
-		
-//		colorSchemeSelFGColorEditor.setPreferenceStore(doGetPreferenceStore());
-//		colorSchemeSelFGColorEditor.load();
-//		
-//		colorSchemeSelFGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_SELECTION_FOREGROUND_COLOR, "Color Scheme Selection Foreground", spacingComposite2);
-//
-//		colorSchemeSelFGColorEditor.setPreferenceStore(doGetPreferenceStore());
-//		colorSchemeSelFGColorEditor.load();
-//		
-//		
-//		colorSchemeBGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_BACKGROUND_COLOR, "Color Scheme Background", spacingComposite2);
-//
-//		colorSchemeBGColorEditor.setPreferenceStore(doGetPreferenceStore());
-//		colorSchemeBGColorEditor.load();
-//		
-//		colorSchemeFGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_FOREGROUND_COLOR, "Color Scheme Foreground", spacingComposite2);
-//
-//		colorSchemeFGColorEditor.setPreferenceStore(doGetPreferenceStore());
-//		colorSchemeFGColorEditor.load();
-//		
-//		colorSchemeSelBGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_SELECTION_BACKGROUND_COLOR, "Color Scheme Selection Background", spacingComposite2);
-//
-//		colorSchemeSelBGColorEditor.setPreferenceStore(doGetPreferenceStore());
-//		colorSchemeSelBGColorEditor.load();
-//		
-//		colorSchemeSelFGColorEditor = new ColorFieldEditor(JFacePreferences.SCHEME_SELECTION_FOREGROUND_COLOR, "Color Scheme Selection Foreground", spacingComposite2);
-//
-//		colorSchemeSelFGColorEditor.setPreferenceStore(doGetPreferenceStore());
-//		colorSchemeSelFGColorEditor.load();
-
 		
 		IPropertyChangeListener colorSettingsListener = new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
@@ -280,16 +251,15 @@ public class ViewsPreferencePage
 	}
 
 	void updateColorThemeDemo(Composite parentComposite) {
-		boolean defaultColor = !useDefault.getBooleanValue();
+		boolean defaultColor = useDefault.getBooleanValue();
 		
-		parentComposite.setEnabled(defaultColor);
-		colorSchemeTabBGColorEditor.setEnabled(defaultColor, parentComposite);
-		colorSchemeTabFGColorEditor.setEnabled(defaultColor, parentComposite);
-//			colorSchemeSelBGColorEditor.setEnabled(defaultColor, spacingComposite2);
-//			colorSchemeSelFGColorEditor.setEnabled(defaultColor, spacingComposite2);
-		
-		colorThemeDemo.resetColors();
-		
+		parentComposite.setEnabled(!defaultColor);
+		colorSchemeTabBGColorEditor.setEnabled(!defaultColor, parentComposite);
+		colorSchemeTabFGColorEditor.setEnabled(!defaultColor, parentComposite);
+		if (!defaultColor)
+			colorThemeDemo.setTabBGColor(new Color(parentComposite.getDisplay(), colorSchemeTabBGColorEditor.getColorSelector().getColorValue()));
+		else
+			colorThemeDemo.setTabBGColor(JFaceColors.getTabFolderBackground(parentComposite.getDisplay()));
 	}
 	
 	/**

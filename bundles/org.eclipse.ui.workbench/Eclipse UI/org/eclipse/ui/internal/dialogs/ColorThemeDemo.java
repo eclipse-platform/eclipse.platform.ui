@@ -113,6 +113,15 @@ public class ColorThemeDemo {
 	public void resetColors() {
 		ColorSchemeService.setTabColors(sampleTabFolder);
 	}
+
+	/**
+	 * @param color
+	 */
+	public void setTabBGColor(Color color) {
+		sampleTabFolder.setBackground(color);
+		sampleTabFolder.redraw();
+		
+	}
 	
 	
 	

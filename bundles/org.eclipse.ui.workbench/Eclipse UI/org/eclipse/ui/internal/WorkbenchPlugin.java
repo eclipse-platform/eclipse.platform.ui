@@ -398,10 +398,10 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		
 		//Set the default inactive tab background, if this value is the default then it is queried
 		// from JFaceColors
-		PreferenceConverter.setDefault(store, JFacePreferences.SCHEME_INACTIVE_TAB_BACKGROUND, PreferenceConverter.COLOR_DEFAULT_DEFAULT);
+		PreferenceConverter.setDefault(store, JFacePreferences.SCHEME_TAB_SELECTION_BACKGROUND, PreferenceConverter.COLOR_DEFAULT_DEFAULT);
 		//Set the default inactive tab foreground, if this value is the default then it is queried
 		// from JFaceColors
-		PreferenceConverter.setDefault(store, JFacePreferences.SCHEME_INACTIVE_TAB_FOREGROUND, PreferenceConverter.COLOR_DEFAULT_DEFAULT);
+		PreferenceConverter.setDefault(store, JFacePreferences.SCHEME_TAB_SELECTION_FOREGROUND, PreferenceConverter.COLOR_DEFAULT_DEFAULT);
 		
 		// Temporary option to enable wizard for project capability
 		store.setDefault("ENABLE_CONFIGURABLE_PROJECT_WIZARD", false); //$NON-NLS-1$

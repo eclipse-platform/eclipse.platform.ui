@@ -33,26 +33,31 @@ public class JFaceColors {
 
 	public static int STATUS_PERCENT = 100;
 
-	
-	static String SCHEME_BACKGROUND = "SCHEME_BACKGROUND"; //$NON-NLS-1$
-	static String SCHEME_FOREGROUND = "SCHEME_FOREGROUND";	 //$NON-NLS-1$
-	static String SCHEME_TAB_BACKGROUND = "SCHEME_TAB_BACKGROUND"; //$NON-NLS-1$
-	static String SCHEME_TAB_FOREGROUND = "SCHEME_TAB_FOREGROUND"; //$NON-NLS-1$
-	static String SCHEME_TAB_SELECTION_FOREGROUND = "SCHEME_TAB_SELECTION_FOREGROUND"; //$NON-NLS-1$
-	static String SCHEME_TAB_SELECTION_BACKGROUND = "SCHEME_TAB_SELECTION_BACKGROUND"; //$NON-NLS-1$
+	// declaration of constants use to key various color tables
+	public static String SCHEME_BACKGROUND = "SCHEME_BACKGROUND"; //$NON-NLS-1$
+	public static String SCHEME_FOREGROUND = "SCHEME_FOREGROUND";	 //$NON-NLS-1$
+	public static String SCHEME_TAB_BACKGROUND = "SCHEME_TAB_BACKGROUND"; //$NON-NLS-1$
+	public static String SCHEME_TAB_FOREGROUND = "SCHEME_TAB_FOREGROUND"; //$NON-NLS-1$
+	public static String SCHEME_TAB_SELECTION_FOREGROUND = "SCHEME_TAB_SELECTION_FOREGROUND"; //$NON-NLS-1$
+	public static String SCHEME_TAB_SELECTION_BACKGROUND = "SCHEME_TAB_SELECTION_BACKGROUND"; //$NON-NLS-1$
 	
 	private static Hashtable JFaceDefaultColorMap;
 	private static Hashtable UserColorMap;
 	
 
+	// Define the default Color Scheme mapping
+	// The Color Scheme by default is a mapping of specific OS colors to their use in the IDE
 	private static void initColors(Display d) {
-		JFaceDefaultColorMap = new Hashtable(4);
+		int origSize = 6;
+		JFaceDefaultColorMap = new Hashtable(origSize);
 		JFaceDefaultColorMap.put(SCHEME_BACKGROUND, d.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		JFaceDefaultColorMap.put(SCHEME_FOREGROUND, d.getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
 		JFaceDefaultColorMap.put(SCHEME_TAB_BACKGROUND, d.getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND));
 		JFaceDefaultColorMap.put(SCHEME_TAB_FOREGROUND, d.getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND));
 		JFaceDefaultColorMap.put(SCHEME_TAB_SELECTION_BACKGROUND, d.getSystemColor(SWT.COLOR_TITLE_BACKGROUND));
 		JFaceDefaultColorMap.put(SCHEME_TAB_SELECTION_FOREGROUND, d.getSystemColor(SWT.COLOR_TITLE_FOREGROUND));
+		
+		UserColorMap = new Hashtable();
 	}
 	
 	/**
@@ -108,6 +113,7 @@ public class JFaceColors {
 	/**
 	 * Get the default color to use for displaying active hyperlinks.
 	 */
+	
 	public static Color getActiveHyperlinkText(Display display) {
 		return getColorSetting(display,JFacePreferences.ACTIVE_HYPERLINK_COLOR);
 	}
@@ -121,17 +127,22 @@ public class JFaceColors {
 	} 
 	
 	/**
+	 * 
+	 * Get the Color used for Color Scheme Background.   
+	 * 
 	 * @param display
-	 * @return
+	 * @return Color   the color value mapped to the provided color key
 	 */
 	public static Color getSchemeBackground(Display display) {
 		return getColor(display, SCHEME_BACKGROUND);
 	}
 	
 	/**
-	 * @param display
-	 * @param scheme_background2
-	 * @return
+	 * Get a Color which maps to the key provided.
+	 *    
+	 * @param display  display to use to create a color if necessary
+	 * @param colorKey key constant for color look-up
+	 * @return Color   the color value mapped to the provided color key
 	 */
 	private static Color getColor(Display display, String colorKey) {
 		if (JFaceDefaultColorMap == null)
@@ -144,32 +155,43 @@ public class JFaceColors {
 	}
 
 	/**
-	 * @param scheme_background2
-	 * @return
+	 * Get a default Color which maps to the key, as opposed to a user over-ridden color
+	 * 
+	 * @param colorKey
+	 * @return Color   the color value mapped to the provided color key
 	 */
 	private static Color getDefaultColor(String colorKey) {
 		return (Color)JFaceDefaultColorMap.get(colorKey);
 	}
 
 	/**
+	 * 
+	 * Get the Color used for Color Scheme Tab Folder Background.   
+	 * 
 	 * @param display
-	 * @return
+	 * @return Color   the color value mapped to the provided color key
 	 */
 	public static Color getTabFolderBackground(Display display) {
 		return getColor(display, SCHEME_TAB_BACKGROUND);
 	}
-
+	
 	/**
+	 * 
+	 * Get the Color used for Color Scheme Selected Tab Folder Background.   
+	 * 
 	 * @param display
-	 * @return
+	 * @return Color   the color value mapped to the provided color key
 	 */
 	public static Color getTabFolderSelectionBackground(Display display) {
 		return getColor(display, SCHEME_TAB_SELECTION_BACKGROUND);
 	}
 	
 	/**
+	 * 
+	 * Get the Color used for Color Scheme Selected Tab Folder Foreground.   
+	 * 
 	 * @param display
-	 * @return
+	 * @return Color   the color value mapped to the provided color key
 	 */
 	public static Color getTabFolderSelectionForeground(Display display) {
 		return getColor(display, SCHEME_TAB_SELECTION_FOREGROUND);
@@ -177,15 +199,22 @@ public class JFaceColors {
 	
 
 	/**
+	 * 
+	 * Get the Color used for Color Scheme Tab Folder Foreground.   
+	 * 
 	 * @param display
-	 * @return
+	 * @return Color   the color value mapped to the provided color key
 	 */
 	public static Color getTabFolderForeground(Display display) {
 		return getColor(display, SCHEME_TAB_FOREGROUND);
 	}
 	
 	/**
-	 * Get the default foreground color to use for the color scheme.
+	 * 
+	 * Get the Color used for Color Scheme Foreground.   
+	 * 
+	 * @param display
+	 * @return Color   the color value mapped to the provided color key
 	 */
 	public static Color getSchemeForeground(Display display) {
 		return getColorSetting(display,JFacePreferences.SCHEME_FOREGROUND_COLOR);

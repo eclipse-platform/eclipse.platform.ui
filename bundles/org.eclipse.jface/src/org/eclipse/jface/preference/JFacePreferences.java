@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.preference;
 
+import org.eclipse.jface.resource.JFaceColors;
+
 /**
  * 
  * JFacePreferences is a class used to administer the preferences
@@ -26,20 +28,13 @@ public final class JFacePreferences {
 	//Do we use the System theme?
 	public static final String USE_DEFAULT_THEME = "USE_DEFAULT_THEME"; //$NON-NLS-1$
 	
-	//Identifier for the Color Scheme Inactive Tab Foreground Colour
-	public static final String SCHEME_INACTIVE_TAB_FOREGROUND = "SCHEME_INACTIVE_TAB_FOREGROUND";
-	//Identifier for the Color Scheme Inactive Tab Background Colour
-	public static final String SCHEME_INACTIVE_TAB_BACKGROUND = "SCHEME_INACTIVE_TAB_BACKGROUND";
-	//Identifier for the Color Scheme Background Colour
-	public static final String SCHEME_PARENT_BACKGROUND_COLOR = "SCHEME_PARENT_BACKGROUND_COLOR"; //$NON-NLS-1$
-	public static final String SCHEME_BACKGROUND_COLOR = "SCHEME_BACKGROUND_COLOR"; //$NON-NLS-1$
-	public static final String SCHEME_BORDER_COLOR = "SCHEME_BORDER_COLOR"; //$NON-NLS-1$
+	//Identifier for the Color Scheme Selected Tab Foreground Colour
+	public static final String SCHEME_TAB_SELECTION_FOREGROUND = JFaceColors.SCHEME_TAB_SELECTION_FOREGROUND;
+	//Identifier for the Color Scheme Selected Tab Background Colour
+	public static final String SCHEME_TAB_SELECTION_BACKGROUND = JFaceColors.SCHEME_TAB_SELECTION_BACKGROUND;
+	public static final String SCHEME_BACKGROUND_COLOR = JFaceColors.SCHEME_BACKGROUND; //$NON-NLS-1$
 	//Identifier for the Color Scheme Foreground Colour
-	public static final String SCHEME_FOREGROUND_COLOR = "SCHEME_FOREGROUND_COLOR"; //$NON-NLS-1$
-	//Identifier for the Color Scheme Selection Background Colour
-	public static final String SCHEME_SELECTION_BACKGROUND_COLOR = "SCHEME_SELECTION_BACKGROUND_COLOR"; //$NON-NLS-1$
-	//Identifier for the Color Scheme Selection Foreground Colour
-	public static final String SCHEME_SELECTION_FOREGROUND_COLOR = "SCHEME_SELECTION_FOREGROUND_COLOR"; //$NON-NLS-1$
+	public static final String SCHEME_FOREGROUND_COLOR = JFaceColors.SCHEME_FOREGROUND;
 	
 	private static IPreferenceStore preferenceStore;
 	/**

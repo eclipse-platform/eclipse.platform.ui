@@ -105,6 +105,11 @@ protected void doLoadDefault() {
 protected void doStore() {
 	PreferenceConverter.setValue(getPreferenceStore(), getPreferenceName(), colorSelector.getColorValue());
 }
+
+public ColorSelector getColorSelector() {
+	return colorSelector;
+}
+
 /**
  * Returns the change button for this field editor.
  *
