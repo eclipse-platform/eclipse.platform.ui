@@ -30,38 +30,20 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.window.Window;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
-import org.eclipse.ui.internal.WorkbenchImages;
-import org.eclipse.ui.internal.dialogs.SelectPerspectiveDialog;
 import org.eclipse.ui.internal.ide.model.WorkbenchAdapterBuilder;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 import org.eclipse.ui.progress.IProgressService;
@@ -585,62 +567,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
         // indicate that we want the Workench preference page to be prominent
         return WORKBENCH_PREFERENCE_CATEGORY_ID;
     }
-
-    /**
-     * Returns the workbench action builder for the given window 
-     * @param window
-     * @return WorkbenchActionBuilder
-     */
-    static WorkbenchActionBuilder getActionBuilder(IWorkbenchWindow window) {
-        IWorkbenchWindowConfigurer configurer = workbenchAdvisor
-                .getWorkbenchConfigurer().getWindowConfigurer(window);
-        return (WorkbenchActionBuilder) configurer.getData("ActionBuilder"); //$NON-NLS-1$
-    }
     
-    /* (non-Javadoc)
-	 * @see org.eclipse.ui.application.WorkbenchAdvisor#createEmptyWindowContents(org.eclipse.ui.application.IWorkbenchWindowConfigurer, org.eclipse.swt.widgets.Composite)
-	 */
-	public Control createEmptyWindowContents(final IWorkbenchWindowConfigurer configurer, Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayout(new GridLayout(2, false));
-		Display display = composite.getDisplay();
-		Color bgCol = display.getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND);
-		composite.setBackground(bgCol);
-        Label label = new Label(composite, SWT.WRAP);
-        label.setForeground(display.getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND));
-        label.setBackground(bgCol);
-        label.setFont(JFaceResources.getFontRegistry().getBold(JFaceResources.DEFAULT_FONT));
-        String msg = IDEWorkbenchMessages.getString("IDEWorkbenchAdvisor.noPerspective"); //$NON-NLS-1$
-        label.setText(msg);
-        ToolBarManager toolBarManager = new ToolBarManager();
-        // TODO: should obtain the open perspective action from ActionFactory
-        IAction openPerspectiveAction = new Action() {
-        	{ setToolTipText(IDEWorkbenchMessages.getString("IDEWorkbenchAdvisor.openPerspective")); //$NON-NLS-1$
-        	  setImageDescriptor(WorkbenchImages.getImageDescriptor(
-                    IWorkbenchGraphicConstants.IMG_ETOOL_NEW_PAGE));
-        	}
-        	public void run() {
-                SelectPerspectiveDialog dlg = new SelectPerspectiveDialog(configurer.getWindow().getShell(),
-                        configurer.getWindow().getWorkbench().getPerspectiveRegistry());
-                dlg.open();
-                if (dlg.getReturnCode() == Window.CANCEL)
-                    return;
-                IPerspectiveDescriptor desc = dlg.getSelection();
-                if (desc != null) {
-                    try {
-						configurer.getWindow().openPage(desc.getId(), getDefaultPageInput());
-					} catch (WorkbenchException e) {
-						IDEWorkbenchPlugin.log("Error opening page", e); //$NON-NLS-1$
-					}
-                }
-        	}
-        };
-        toolBarManager.add(openPerspectiveAction);
-        ToolBar toolBar = toolBarManager.createControl(composite);
-        toolBar.setBackground(bgCol);
-        return composite;
-	}
-
     /**
      * @return the workspace location string, or <code>null</code> if
      * the location is not being shown

@@ -19,10 +19,23 @@ import java.util.Map;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.window.Window;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IPageListener;
@@ -40,6 +53,9 @@ import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
+import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
+import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.dialogs.SelectPerspectiveDialog;
 import org.eclipse.ui.internal.ide.dialogs.WelcomeEditorInput;
 import org.eclipse.ui.part.EditorInputTransfer;
 import org.eclipse.ui.part.MarkerTransfer;
@@ -512,4 +528,50 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
         }
         return;
     }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.application.WorkbenchAdvisor#createEmptyWindowContents(org.eclipse.ui.application.IWorkbenchWindowConfigurer, org.eclipse.swt.widgets.Composite)
+     */
+    public Control createEmptyWindowContents(Composite parent) {
+        final IWorkbenchWindow window = getWindowConfigurer().getWindow();
+        Composite composite = new Composite(parent, SWT.NONE);
+        composite.setLayout(new GridLayout(2, false));
+        Display display = composite.getDisplay();
+        Color bgCol = display.getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND);
+        composite.setBackground(bgCol);
+        Label label = new Label(composite, SWT.WRAP);
+        label.setForeground(display.getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND));
+        label.setBackground(bgCol);
+        label.setFont(JFaceResources.getFontRegistry().getBold(JFaceResources.DEFAULT_FONT));
+        String msg = IDEWorkbenchMessages.getString("IDEWorkbenchAdvisor.noPerspective"); //$NON-NLS-1$
+        label.setText(msg);
+        ToolBarManager toolBarManager = new ToolBarManager();
+        // TODO: should obtain the open perspective action from ActionFactory
+        IAction openPerspectiveAction = new Action() {
+            { setToolTipText(IDEWorkbenchMessages.getString("IDEWorkbenchAdvisor.openPerspective")); //$NON-NLS-1$
+              setImageDescriptor(WorkbenchImages.getImageDescriptor(
+                    IWorkbenchGraphicConstants.IMG_ETOOL_NEW_PAGE));
+            }
+            public void run() {
+                SelectPerspectiveDialog dlg = new SelectPerspectiveDialog(window.getShell(),
+                        window.getWorkbench().getPerspectiveRegistry());
+                dlg.open();
+                if (dlg.getReturnCode() == Window.CANCEL)
+                    return;
+                IPerspectiveDescriptor desc = dlg.getSelection();
+                if (desc != null) {
+                    try {
+                        window.openPage(desc.getId(), wbAdvisor.getDefaultPageInput());
+                    } catch (WorkbenchException e) {
+                        IDEWorkbenchPlugin.log("Error opening page", e); //$NON-NLS-1$
+                    }
+                }
+            }
+        };
+        toolBarManager.add(openPerspectiveAction);
+        ToolBar toolBar = toolBarManager.createControl(composite);
+        toolBar.setBackground(bgCol);
+        return composite;
+    }
+
 }
