@@ -283,7 +283,7 @@ public class TagSelectionArea extends DialogArea {
      * Select the top element in the tag table
      */
     private void selectTopElement() {
-        if (tagTable.getTable().getItemCount() > 1) {
+        if (tagTable.getTable().getItemCount() > 0) {
             TableItem item = tagTable.getTable().getItem(0);
             tagTable.getTable().setSelection(new TableItem[] { item });
             tagTable.setSelection(tagTable.getSelection());
