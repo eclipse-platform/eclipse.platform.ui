@@ -88,36 +88,10 @@ Runtime     Binary      from    <a
                              <td>                                       
                               <b>WebSphere Application Server</b>       
                                                
-      <blockquote>Log into the Administrative Console, expand Resources,
-select "URL Providers" in the tree. &nbsp;In URL Providers document form
-click New button, input values:                           
-        <ul>
-             <li>                      Server Class Path: <tt>D:\eclipse\plugins\org.eclipse.help.webapp_2.0.0\eclipseurl.jar</tt></li>
-             <li>                      Name: <tt>help</tt></li>
-             <li>                      StreamHandler Class Name: <tt>org.eclipse.help.internal.proxy.protocol.help.Handler</tt></li>
-             <li>                      Protocol: <tt>help</tt></li>
-                             
-        </ul>
-   Click OK button. &nbsp;In URL Providers document form click New button,
- input values:                           
-        <ul>
-             <li>                      Server Class Path: <tt>D:\eclipse\plugins\org.eclipse.help.webapp_2.0.0\eclipseurl.jar</tt></li>
-             <li>Name: <tt>platform</tt></li>
-             <li>                      StreamHandler Class Name: <tt>org.eclipse.help.internal.proxy.protocol.platform.Handler</tt></li>
-             <li>Protocol: <tt>platform</tt></li>
-                             
-        </ul>
-                         Click OK button. &nbsp;In URL Providers document 
-form click New button, input values:                           
-        <ul>
-             <li>                      Server Class Path: <tt>D:\eclipse\plugins\org.eclipse.help.webapp_2.0.0\eclipseurl.jar</tt></li>
-             <li>                      Name: <tt>search</tt></li>
-             <li>                      StreamHandler Class Name: <tt>org.eclipse.help.internal.proxy.protocol.search.Handler</tt></li>
-             <li>                      Protocol: <tt>search</tt></li>
-                             
-        </ul>
-                         Click OK button.<br>
-                         </blockquote>
+      <blockquote>Log into the Administrative Console, expand Nodes -&gt;
+HOSTNAME -&gt; Application Servers -&gt; Default Server -&gt; Process Definition, 
+select "JVM Settings" in the tree. &nbsp;On JVM Settings form, type "<tt>D:\eclipse\plugins\org.eclipse.help.webapp_2.0.0\eclipseurl.jar</tt>"
+in the Classpath field. &nbsp;Click OK button.</blockquote>
                                                                         
                                              <b>Tomcat</b>              
                                                                         
