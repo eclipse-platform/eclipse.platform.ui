@@ -1,0 +1,128 @@
+package org.eclipse.debug.internal.ui.actions;
+
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IDebugPreferenceConstants;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationDialog;
+import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+
+/**
+ * Abstract action for opening the launch configuration
+ * dialog in run or debug mode.
+ */
+public abstract class OpenLaunchConfigurationsAction extends Action implements IWorkbenchWindowActionDelegate, IPropertyChangeListener {
+	
+	/**
+	 * Action when a delegate, otherwise <code>null</code>
+	 */
+	private IAction fAction;
+
+
+	/**
+	 * @see Action#Action()
+	 */
+	public OpenLaunchConfigurationsAction() {
+		super();
+	}
+
+	/**
+	 * @see Action#Action(String)
+	 */
+	protected OpenLaunchConfigurationsAction(String text) {
+		super(text);
+	}
+
+
+	/**
+	 * @see IWorkbenchWindowActionDelegate#dispose()
+	 */
+	public void dispose() {
+		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
+	}
+
+	/**
+	 * @see IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
+	 */
+	public void init(IWorkbenchWindow window) {
+		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
+	}
+
+	/**
+	 * @see IActionDelegate#run(IAction)
+	 */
+	public void run(IAction action) {
+		run();
+	}
+	
+	/**
+	 * @see IAction#run()
+	 */
+	public void run() {
+		IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
+		if (window != null) {
+			ISelection sel = window.getSelectionService().getSelection();
+			IStructuredSelection ss = null;
+			if (sel instanceof IStructuredSelection) {
+				ss = (IStructuredSelection)sel;
+			} else {
+				ss = new StructuredSelection();
+			}
+			LaunchConfigurationDialog dialog = new LaunchConfigurationDialog(window.getShell(), ss, getMode());
+			dialog.open();
+		}		
+	}
+
+	/**
+	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
+	 */
+	public void selectionChanged(IAction action, ISelection selection) {
+		fAction = action;
+		update();
+	}
+
+	/**
+	 * Returns the mode in which to open the launch configuration
+	 * dialog.
+	 * 
+	 * @return on of <code>RUN_MODE</code> or <code>DEBUG_MODE</code>
+	 * @see ILaunchManager#RUN_MODE
+	 * @see ILaunchManager#DEBUG_MODE
+	 */
+	protected abstract String getMode();
+	
+	/**
+	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
+	 */
+	public void propertyChange(PropertyChangeEvent event) {
+		if (event.getProperty().equals(IDebugPreferenceConstants.LAUNCHING_STYLE)) {
+			update();
+		}
+	}
+
+	/**
+	 * Update enabled state based on debug plug-in setting
+	 * for using launch configs/launchers.
+	 */
+	protected void update() {
+		IAction action = fAction;
+		if (action == null) {
+			action = this;
+		}
+		action.setEnabled(DebugUIPlugin.getDefault().usingConfigurationStyleLaunching());
+	}
+}

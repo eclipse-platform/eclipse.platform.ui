@@ -230,30 +230,38 @@
             toolbarPath="debug"
             id="org.eclipse.debug.internal.ui.actions.DebugDropDownAction">
       </action>
-       <action
+      <action
+            label="%RunConfigurations.label"
+            class="org.eclipse.debug.internal.ui.actions.OpenRunConfigurations"
+            menubarPath="org.eclipse.debug.ui.DebugMenu/menuGroup"
+            id="org.eclipse.debug.internal.ui.actions.OpenRunConfigurations">
+      </action>      
+      <action
+            label="%DebugConfigurations.label"
+            class="org.eclipse.debug.internal.ui.actions.OpenDebugConfigurations"
+            menubarPath="org.eclipse.debug.ui.DebugMenu/menuGroup"
+            id="org.eclipse.debug.internal.ui.actions.OpenDebugConfigurations">
+      </action>
+      <action
             label="%RunHistoryMenuAction.label"
-            icon="icons/full/ctool16/run_exc.gif"
             class="org.eclipse.debug.internal.ui.actions.RunHistoryMenuAction"
             menubarPath="org.eclipse.debug.ui.DebugMenu/menuGroup"
             id="org.eclipse.debug.internal.ui.actions.RunHistoryMenuAction">
       </action>
       <action
             label="%DebugHistoryMenuAction.label"
-            icon="icons/full/ctool16/debug_exc.gif"
             class="org.eclipse.debug.internal.ui.actions.DebugHistoryMenuAction"
     		menubarPath="org.eclipse.debug.ui.DebugMenu/menuGroup"
             id="org.eclipse.debug.internal.ui.actions.DebugHistoryMenuAction">
       </action>
        <action
             label="%RunWithAction.label"
-            icon="icons/full/ctool16/run_exc.gif"
             class="org.eclipse.debug.internal.ui.actions.RunWithAction"
             menubarPath="org.eclipse.debug.ui.DebugMenu/menuGroup"
             id="org.eclipse.debug.internal.ui.actions.RunWithAction">
       </action>
       <action
             label="%DebugWithAction.label"
-            icon="icons/full/ctool16/debug_exc.gif"
             class="org.eclipse.debug.internal.ui.actions.DebugWithAction"
     		menubarPath="org.eclipse.debug.ui.DebugMenu/menuGroup"
             id="org.eclipse.debug.internal.ui.actions.DebugWithAction">

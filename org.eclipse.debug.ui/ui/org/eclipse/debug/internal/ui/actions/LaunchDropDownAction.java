@@ -5,6 +5,8 @@ package org.eclipse.debug.internal.ui.actions;
  * All Rights Reserved.
  */
  
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationHistoryElement;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
@@ -99,6 +101,16 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 			}
 		
 			createMenuForAction(menu, new LaunchWithAction(getMode()), -1);
+			
+			if (DebugUIPlugin.getDefault().usingConfigurationStyleLaunching()) {	
+				IAction openAction = null;
+				if (getMode().equals(ILaunchManager.DEBUG_MODE)) {
+					openAction = new OpenDebugConfigurations();
+				} else {
+					openAction = new OpenRunConfigurations();
+				}
+				createMenuForAction(menu, openAction, -1);
+			}
 		}
 
 		return menu;

@@ -50,15 +50,6 @@ public class LaunchWithAction extends Action implements IMenuCreator, IWorkbench
 		setMode(mode);
 		String text= mode.equals(ILaunchManager.DEBUG_MODE) ? ActionMessages.getString("LaunchWithAction.Debug_1") : ActionMessages.getString("LaunchWithAction.Run_2"); //$NON-NLS-2$ //$NON-NLS-1$
 		setText(text);
-		ImageDescriptor descriptor= null;
-		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
-			descriptor= DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_ACT_DEBUG);
-		} else {
-			descriptor= DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_ACT_RUN);
-		}
-		if (descriptor != null) {
-			setImageDescriptor(descriptor);
-		}
 		setMenuCreator(this);
 	}
 	
