@@ -716,12 +716,7 @@ public void endOperation(boolean build, IProgressMonitor monitor) throws CoreExc
 			// At this time we need to rebalance the nested operations. It is necessary because
 			// build() and snapshot() should not fail if they are called.
 			workManager.rebalanceNestedOperations();
-			
-			//if nothing has happened at all in this operation, we don't need to do anything
-			if (!ElementTree.hasChanges(tree, operationTree, ResourceComparator.getComparator(true), true)) {
-				tree = operationTree;
-				return;
-			}	
+	
 			// If autobuild is on, give each open project a chance to build.  We have to tell each one
 			// because there is no way of knowing whether or not there is a relevant change
 			// for the project without computing the delta for each builder in each project relative
@@ -742,7 +737,7 @@ public void endOperation(boolean build, IProgressMonitor monitor) throws CoreExc
 			monitor = Policy.monitorFor(monitor);
 			monitor.subTask(Policy.bind("resources.updating"));
 			broadcastChanges(tree, IResourceChangeEvent.PRE_AUTO_BUILD, false, false, Policy.monitorFor(null));
-			if (isAutoBuilding() && getWorkManager().shouldBuild()) {
+			if (isAutoBuilding() && shouldBuild()) {
 				try {
 					getBuildManager().build(IncrementalProjectBuilder.AUTO_BUILD, monitor);
 				} catch (OperationCanceledException e) {
@@ -1405,6 +1400,9 @@ public void setWorkspaceLock(WorkspaceLock lock) {
 	workManager.setWorkspaceLock(lock);
 }
 
+private boolean shouldBuild() throws CoreException {
+	return getWorkManager().shouldBuild() && ElementTree.hasChanges(tree, operationTree, ResourceComparator.getComparator(false), true);
+}
 protected void shutdown(IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
