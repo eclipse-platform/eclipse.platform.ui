@@ -811,7 +811,9 @@ public class FormToolkit {
 	 * <code>SWT.LEFT_TO_RIGHT</code> and <code>SWT.RIGHT_TO_LEFT</code>.
 	 * 
 	 * @return orientation style for this toolkit, or <code>SWT.NULL</code> if
-	 *         not set.
+	 *         not set. The default orientation is inherited from
+	 *         the Window default orientation.
+	 * @see org.eclipse.jface.window.Window#getDefaultOrientation()
 	 * @since 3.1
 	 */
 
