@@ -29,6 +29,12 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 
 	/** The adapted document. */
 	private IDocument fDocument;
+	/** The document clone for the non-forwarding case. */
+	private IDocument fDocumentClone;
+	/** The original content */
+	private String fOriginalContent;
+	/** The original line delimiters */
+	private String[] fOriginalLineDelimiters;
 	/** The registered text change listeners */
 	private List fTextChangeListeners= new ArrayList(1);
 	/** 
@@ -80,6 +86,12 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 		fDocument= document;
 		fLineDelimiter= null;
 		
+		if (!fIsForwarding) {
+			fDocumentClone= null;
+			fOriginalContent= fDocument.get();
+			fOriginalLineDelimiters= fDocument.getLegalLineDelimiters();
+		}
+		
 		if (fDocument != null)
 			fDocument.addPrenotifiedDocumentListener(this);
 	}
@@ -107,9 +119,9 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 	 * @see IRepairableDocument#repairLineInformation()
 	 * @since 3.0
 	 */
-	private void repairLineInformation() {
-		if (fDocument instanceof IRepairableDocument) {
-			IRepairableDocument repairable= (IRepairableDocument) fDocument;
+	private void repairLineInformation(IDocument document) {
+		if (document instanceof IRepairableDocument) {
+			IRepairableDocument repairable= (IRepairableDocument) document;
 			repairable.repairLineInformation();
 		}
 	}
@@ -122,21 +134,36 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 	 * @throws BadLocationException if the line number is invalid for the adapted document
 	 * @since 3.0
 	 */
-	private String doGetLine(int line) throws BadLocationException {
-		IRegion r= fDocument.getLineInformation(line);
-		return fDocument.get(r.getOffset(), r.getLength());
+	private String doGetLine(IDocument document, int line) throws BadLocationException {
+		IRegion r= document.getLineInformation(line);
+		return document.get(r.getOffset(), r.getLength());
+	}
+	
+	private IDocument getDocumentForRead() {
+		if (!fIsForwarding) {
+			if (fDocumentClone == null) {
+				String content= fOriginalContent == null ? "" : fOriginalContent;
+				String[] delims= fOriginalLineDelimiters == null ? DefaultLineTracker.DELIMITERS : fOriginalLineDelimiters;
+				fDocumentClone= new DocumentClone(content, delims);
+			}
+			return fDocumentClone;
+		}
+		
+		return fDocument;
 	}
 	
 	/*
 	 * @see StyledTextContent#getLine(int)
 	 */
 	public String getLine(int line) {
+		
+		IDocument document= getDocumentForRead();
 		try {
-			return doGetLine(line);
+			return doGetLine(document, line);
 		} catch (BadLocationException x) {
-			repairLineInformation();
+			repairLineInformation(document);
 			try {
-				return doGetLine(line);
+				return doGetLine(document, line);
 			} catch (BadLocationException x2) {
 			}
 		}
@@ -149,12 +176,13 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 	 * @see StyledTextContent#getLineAtOffset(int)
 	 */
 	public int getLineAtOffset(int offset) {
+		IDocument document= getDocumentForRead();
 		try {
-			return fDocument.getLineOfOffset(offset);
+			return document.getLineOfOffset(offset);
 		} catch (BadLocationException x) {
-			repairLineInformation();
+			repairLineInformation(document);
 			try {
-				return fDocument.getLineOfOffset(offset);
+				return document.getLineOfOffset(offset);
 			} catch (BadLocationException x2) {
 			}
 		}
@@ -167,19 +195,20 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 	 * @see StyledTextContent#getLineCount()
 	 */
 	public int getLineCount() {
-		return fDocument.getNumberOfLines();
+		return getDocumentForRead().getNumberOfLines();
 	}
 	
 	/*
 	 * @see StyledTextContent#getOffsetAtLine(int)
 	 */
 	public int getOffsetAtLine(int line) {
+		IDocument document= getDocumentForRead();
 		try {
-			return fDocument.getLineOffset(line);
+			return document.getLineOffset(line);
 		} catch (BadLocationException x) {
-			repairLineInformation();
+			repairLineInformation(document);
 			try {
-				return fDocument.getLineOffset(line);
+				return document.getLineOffset(line);
 			} catch (BadLocationException x2) {
 			}
 		}
@@ -193,7 +222,7 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 	 */
 	public String getTextRange(int offset, int length) {
 		try {
-			return fDocument.get(offset, length);
+			return getDocumentForRead().get(offset, length);
 		} catch (BadLocationException x) {
 			SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 			return null;
@@ -222,7 +251,7 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 	 * @see StyledTextContent#getCharCount()
 	 */
 	public int getCharCount() {
-		return fDocument.getLength();
+		return getDocumentForRead().getLength();
 	}
 	
 	/*
@@ -362,6 +391,9 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 	 */
 	public void resumeForwardingDocumentChanges() {
 		fIsForwarding= true;
+		fDocumentClone= null;
+		fOriginalContent= null;
+		fOriginalLineDelimiters= null;
 		fireTextSet();
 	}
 	
@@ -370,6 +402,9 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 	 * @since 2.0
 	 */
 	public void stopForwardingDocumentChanges() {
+		fDocumentClone= null;
+		fOriginalContent= fDocument.get();
+		fOriginalLineDelimiters= fDocument.getLegalLineDelimiters();
 		fIsForwarding= false;
 	}
 }
