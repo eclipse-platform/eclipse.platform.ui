@@ -11,6 +11,9 @@ package org.eclipse.core.internal.jobs;
 
 import java.util.HashMap;
 import java.util.Stack;
+
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.LockListener;
 
@@ -49,8 +52,39 @@ public class LockManager {
 			lock.setDepth(depth);
 		}
 	}
+	/**
+	 * Wrapper class for notifying lock listeners to handle exceptions in third
+	 * party code.
+	 */
+	private class SafeLockListener extends LockListener implements ISafeRunnable {
+		private Thread lockOwner;
+		private boolean wait;
+		private LockListener listener;
+		SafeLockListener(LockListener listener) {
+			this.listener = listener;
+		}
+		public void handleException(Throwable exception) {
+		}
+		public void run() throws Exception {
+			if (wait)
+				wait = listener.aboutToWait(lockOwner);
+			else
+				listener.aboutToRelease();
+		}
+		public void aboutToRelease() {
+			wait = false;
+			Platform.run(this);
+		}
+		public boolean aboutToWait(Thread lockOwner) {
+			this.lockOwner = lockOwner;
+			wait = true;
+			Platform.run(this);
+			return wait;
+		}
+	}
+
 	//the lock listener for this lock manager
-	private LockListener lockListener;
+	protected LockListener lockListener;
 	/* 
 	 * The internal data structure that stores all the relationships 
 	 * between the locks and the threads that own them.
@@ -98,7 +132,7 @@ public class LockManager {
 			if (locks.isDeadlocked()) {
 				Thread candidate = locks.resolutionCandidate(thread, lock);
 				locks.reportDeadlock(thread, lock, candidate);
-				if(JobManager.DEBUG_DEADLOCK)
+				if (JobManager.DEBUG_DEADLOCK)
 					throw new IllegalStateException("Deadlock detected. Caused by thread " + thread.getName() + '.'); //$NON-NLS-1$
 				ISchedulingRule[] toSuspend = locks.contestedLocksForThread(candidate);
 				LockState[] suspended = new LockState[toSuspend.length];
@@ -186,6 +220,6 @@ public class LockManager {
 			toResume[i].resume();
 	}
 	public void setLockListener(LockListener listener) {
-		this.lockListener = listener;
+		this.lockListener =  listener == null ? null : new SafeLockListener(listener);
 	}
 }
