@@ -385,13 +385,10 @@ public class LaunchViewContextListener implements IContextListener, IPartListene
 			memento.putString(ATTR_VIEWS_TO_NOT_CLOSE, views.toString());
 		}
 	}
-
-	/**
-	 * @param memento
-	 */
+	
 	public void init(IMemento memento) {
-		initViewCollection(memento, ATTR_VIEWS_TO_NOT_CLOSE, viewIdsToNotClose);
-		initViewCollection(memento, ATTR_VIEWS_TO_NOT_OPEN, viewIdsToNotOpen);
+		initViewCollection(memento, ATTR_VIEWS_TO_NOT_CLOSE);
+		initViewCollection(memento, ATTR_VIEWS_TO_NOT_OPEN);
 	}
 	
 	/**
@@ -399,9 +396,8 @@ public class LaunchViewContextListener implements IContextListener, IPartListene
 	 * the given attribute, and stores them in the given collection
 	 * @param memento the memento
 	 * @param attribute the attribute of the view ids
-	 * @param collection the collection to store the view ids into.
 	 */
-	public void initViewCollection(IMemento memento, String attribute, Set collection) {
+	private void initViewCollection(IMemento memento, String attribute) {
 		String views = memento.getString(attribute);
 		if (views == null) {
 			return;
@@ -441,5 +437,4 @@ public class LaunchViewContextListener implements IContextListener, IPartListene
 			contextManager.setEnabledContextIds(new HashSet());
 		}
 	}
-
 }
