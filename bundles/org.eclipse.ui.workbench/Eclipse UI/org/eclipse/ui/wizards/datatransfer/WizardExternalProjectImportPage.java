@@ -102,12 +102,6 @@ public class WizardExternalProjectImportPage extends WizardPage {
 		setControl(composite);
 	}
 
-	private Listener nameModifyListener = new Listener() {
-		public void handleEvent(Event e) {
-			setPageComplete(validatePage());
-		}
-	};
-
 	/**
 	 * Creates the project location specification controls.
 	 *
@@ -152,8 +146,6 @@ public class WizardExternalProjectImportPage extends WizardPage {
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = SIZING_TEXT_FIELD_WIDTH;
 		projectNameField.setLayoutData(data);
-
-		projectNameField.addListener(SWT.Modify, nameModifyListener);
 	}
 	/**
 	 * Creates the project location specification controls.
@@ -275,28 +267,6 @@ public class WizardExternalProjectImportPage extends WizardPage {
 	private boolean validatePage() {
 		IWorkspace workspace = getWorkspace();
 
-		//If it is empty try to give something meaningful
-		if (getProjectNameFieldValue().equals("")) //$NON-NLS-1$
-			setProjectName(projectFile(locationPathField.getText()));
-
-		String projectFieldContents = getProjectNameFieldValue();
-				
-		//If it is still empty show the error
-		if (projectFieldContents.equals("")) { //$NON-NLS-1$
-			setErrorMessage(null);
-			setMessage(
-				DataTransferMessages.getString(
-					"WizardExternalProjectImportPage.projectNameEmpty")); //$NON-NLS-1$
-			return false;
-		}
-
-		IStatus nameStatus =
-			workspace.validateName(projectFieldContents, IResource.PROJECT);
-		if (!nameStatus.isOK()) {
-			setErrorMessage(nameStatus.getMessage());
-			return false;
-		}
-
 		String locationFieldContents = getProjectLocationFieldValue();
 
 		if (locationFieldContents.equals("")) { //$NON-NLS-1$
@@ -314,31 +284,23 @@ public class WizardExternalProjectImportPage extends WizardPage {
 					"WizardExternalProjectImportPage.locationError")); //$NON-NLS-1$
 			return false;
 		}
-		if (isPrefixOfRoot(getLocationPath())) {			
-			
-			//If the name does not match the last segment stop it
-			if(!checkDefaultProjectValue(locationFieldContents)){
-				setErrorMessage(
-					DataTransferMessages.getString(
-						"WizardExternalProjectImportPage.defaultLocationError")); //$NON-NLS-1$
-				return false;
-			}
-		}
-		else // Outside of the prefix so this is enabled
-			locationPathField.setEditable(true);
 
-		if (getProjectHandle().exists()) {
-			setErrorMessage(
-				DataTransferMessages.getString(
-					"WizardExternalProjectImportPage.projectExistsMessage")); //$NON-NLS-1$
-			return false;
-		}
-
-		if (projectFile(locationFieldContents) == null) {
+		File projectFile = projectFile(locationFieldContents);
+		if (projectFile == null) {
 			setErrorMessage(
 				DataTransferMessages.format(
 					"WizardExternalProjectImportPage.notAProject", //$NON-NLS-1$
 					new String[] { locationFieldContents }));
+			return false;
+		}
+		else{
+			setProjectName(projectFile);
+		}
+		
+		if (getProjectHandle().exists()) {
+			setErrorMessage(
+				DataTransferMessages.getString(
+					"WizardExternalProjectImportPage.projectExistsMessage")); //$NON-NLS-1$
 			return false;
 		}
 
@@ -351,21 +313,6 @@ public class WizardExternalProjectImportPage extends WizardPage {
 		return workspace;
 	}
 
-	/**
-	 * Check that the name of the project equals the last segment
-	 * of the location path - i.e. it is the default value.
-	 * If it is disable the name field and return true.
-	 * If not return false
-	 */
-	private boolean checkDefaultProjectValue(String locationFieldContents){
-		IPath locationPath = new Path(locationFieldContents);
-		if(locationPath.lastSegment().equals(getProjectNameFieldValue())){
-			projectNameField.setEditable(false);
-			return true;
-		}
-		projectNameField.setEditable(true);
-		return false;
-	}
 
 	/**
 	 * Return whether or not the specifed location is a prefix
