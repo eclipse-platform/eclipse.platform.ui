@@ -3,7 +3,7 @@
    id="org.eclipse.update.core.win32"
    name="%fragmentName"
    version="2.0.0"
-   provider-name="International Business Machine Corp."
+   provider-name="%providerName"
    plugin-id="org.eclipse.update.core"
    plugin-version="2.0.0"
    match="compatible">
