@@ -28,9 +28,6 @@ public abstract class SelectionDialog extends Dialog {
 	// a collection of the initially-selected elements
 	private List initialSelections;
 
-	// handle to ok button, for toggling of its enablement
-	private Button okButton;
-
 	// title of dialog
 	private String title;
 	
@@ -61,9 +58,8 @@ protected void configureShell(Shell shell) {
  * Method declared on Dialog.
  */
 protected void createButtonsForButtonBar(Composite parent) {
-	okButton = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
+	createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 	createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
-
 }
 /**
  * Creates the message area for this dialog.
@@ -103,7 +99,7 @@ protected String getMessage() {
  *  yet.
  */
 public Button getOkButton() {
-	return okButton;
+	return getButton(IDialogConstants.OK_ID);
 }
 /**
  * Returns the list of selections made by the user, or <code>null</code> if

@@ -22,8 +22,9 @@ public class CapabilityRegistryReader extends RegistryReader{
 	private static final String TAG_CAPABILITY = "capability";
 	private static final String TAG_CATEGORY = "category";
 	private static final String TAG_HANDLE_UI = "handleUI";
+	private static final String TAG_PERSPECTIVE_CHOICE = "perspectiveChoice";
 	
-	private static final String HANDLE_UI_ATT_ID = "id";
+	private static final String ATT_ID = "id";
 	
 	private CapabilityRegistry capabilityRegistry;
 	private Capability currentCapability;
@@ -42,6 +43,8 @@ public class CapabilityRegistryReader extends RegistryReader{
 			return readCategory(element);
 		if (name.equals(TAG_HANDLE_UI))
 			return readHandleUI(element);
+		if (name.equals(TAG_PERSPECTIVE_CHOICE))
+			return readPerspectiveChoice(element);
 		return false;
 	}
 	
@@ -85,14 +88,30 @@ public class CapabilityRegistryReader extends RegistryReader{
 	 * in the handleUI element.
 	 */
 	private boolean readHandleUI(IConfigurationElement element) {
-		String capabilityId = element.getAttribute(HANDLE_UI_ATT_ID);
+		String capabilityId = element.getAttribute(ATT_ID);
 		
 		if (capabilityId == null) {
-			logMissingAttribute(element, HANDLE_UI_ATT_ID);
+			logMissingAttribute(element, ATT_ID);
 		}
 		
 		if (currentCapability != null)
 			currentCapability.addHandleUI(capabilityId);		
+		return true;	
+	}
+	
+	/**
+	 * Reads perspectiveChoice elements. These elements contain the ids of
+	 * perspectives.
+	 */
+	private boolean readPerspectiveChoice(IConfigurationElement element) {
+		String perspId = element.getAttribute(ATT_ID);
+		
+		if (perspId == null) {
+			logMissingAttribute(element, ATT_ID);
+		}
+		
+		if (currentCapability != null)
+			currentCapability.addPerspectiveChoice(perspId);		
 		return true;	
 	}
 	

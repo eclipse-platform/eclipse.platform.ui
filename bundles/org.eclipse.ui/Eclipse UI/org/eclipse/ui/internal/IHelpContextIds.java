@@ -69,7 +69,7 @@ public interface IHelpContextIds {
 	
 	// Dialogs
 	public static final String ABOUT_DIALOG = PREFIX + "about_dialog_context"; //$NON-NLS-1$
-		public static final String ABOUT_PLUGINS_DIALOG = PREFIX + "about_plugins_dialog_context"; //$NON-NLS-1$
+	public static final String ABOUT_PLUGINS_DIALOG = PREFIX + "about_plugins_dialog_context"; //$NON-NLS-1$
 	public static final String ACTION_SET_SELECTION_DIALOG = PREFIX + "action_set_selection_dialog_context"; //$NON-NLS-1$
 	public static final String EDITOR_SELECTION_DIALOG = PREFIX + "editor_selection_dialog_context"; //$NON-NLS-1$
 	public static final String FILE_EXTENSION_DIALOG = PREFIX + "file_extension_dialog_context"; //$NON-NLS-1$
@@ -79,6 +79,7 @@ public interface IHelpContextIds {
 	public static final String SELECT_PERSPECTIVE_DIALOG = PREFIX + "select_perspective_dialog_context"; //$NON-NLS-1$
 	public static final String PROJECT_LOCATION_SELECTION_DIALOG = PREFIX + "project_location_selection_dialog_context"; //$NON-NLS-1$
 	public static final String SHOW_VIEW_DIALOG = PREFIX + "show_view_dialog_context"; //$NON-NLS-1$
+	public static final String SHOW_PROJECT_PERSPECTIVE_DIALOG = PREFIX + "show_project_perspective_dialog_context"; //$NON-NLS-1$
 	public static final String SAVE_AS_DIALOG = PREFIX + "save_as_dialog_context"; //$NON-NLS-1$
 	public static final String TYPE_FILTERING_DIALOG = PREFIX + "type_filtering_dialog_context"; //$NON-NLS-1$
 	public static final String CONTAINER_SELECTION_DIALOG = PREFIX + "container_selection_dialog_context"; //$NON-NLS-1$

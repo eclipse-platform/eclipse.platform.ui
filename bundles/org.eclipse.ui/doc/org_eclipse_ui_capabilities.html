@@ -31,11 +31,18 @@ extension point). For example, a "Web" capability needs the "Java" capability
 to compile servlets, but may want to present a much more simpler page to
 configure the "Java" capability or maybe not even present any pages about
 the "Java" capability and just add it with appropriate defaults.
+<p>Capabilities can specify which perspectives a user can switch to when
+added to the project. This allows the user to discover new perspectives
+that can take advantage of the new capabilities. Capabilities that handle
+the user interface for other capabilities also control the list of perspectives
+for these capabilities. For example, the "Web" capability handles the user
+interface for the "Java" capability it requires. The "Web" capability can
+choose to include the various Java perspectives, or not.
 <p>The categories defined by one plug-in can be referenced by other plug-ins
 using the
 <tt>category</tt> attribute.
-<p>Note the capability name presented to the user is the same as the value
-of the attribute "name" of the extension element of org.eclipse.core.resources.natures
+<p>Note the capability name presented to the user comes from the attribute
+"name" in the extension element of the org.eclipse.core.resources.natures
 extension point.
 <p><b><i>Since:</i></b> Release 2.0
 <p><b><i>Configuration Markup:</i></b>
@@ -54,7 +61,7 @@ CDATA #REQUIRED</tt>
 <b>name</b> - a translatable name of the category to be presented to the
 user.</li>
 </ul>
-<tt>&nbsp;&nbsp; &lt;!ELEMENT capability (handleUI*)></tt>
+<tt>&nbsp;&nbsp; &lt;!ELEMENT capability (handleUI)* (perspectiveChoice)*></tt>
 <br><tt>&nbsp;&nbsp; &lt;!ATTLIST capability</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 CDATA #REQUIRED</tt>
@@ -115,6 +122,15 @@ of another capability whose UI will be controlled by the UI of this capability.<
 <b>id</b> - the unique identifier of another capability for which its UI
 will be handled.</li>
 </ul>
+<tt>&nbsp;&nbsp; &lt;!ELEMENT perspectiveChoice EMPTY></tt>
+<br><tt>&nbsp;&nbsp; &lt;!ATTLIST perspectiveChoice</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp; CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp; ></tt>
+<ul>
+<li>
+<b>id</b> - the unique identifier of a perspective the user can switch
+to.</li>
+</ul>
 <b><i>Examples:</i></b>
 <p>Following is an example of capability configuration:
 <p><tt>&nbsp;&nbsp; &lt;extension point="org.eclipse.ui.capabilities"></tt>
@@ -136,6 +152,14 @@ your project into a winter wonderland!"></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 id="com.xyz.waterCapability"</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/handleUI></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;perspectiveChoice</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+id="com.xyz.skiPerspective"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/perspectiveChoice></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;perspectiveChoice</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+id="com.xyz.rainPerspective"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/perspectiveChoice></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/capability></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;capability</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id="com.xyz.waterCapability"</tt>
@@ -147,12 +171,21 @@ id="com.xyz.waterCapability"</tt>
 will be asked to supply a locale id."></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; description="Turn
 your project into a watery wonderland!"></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;perspectiveChoice</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+id="com.xyz.rainPerspective"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/perspectiveChoice></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;perspectiveChoice</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+id="com.xyz.drinkPerspective"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/perspectiveChoice></tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/capability></tt>
 <br><tt>&nbsp;&nbsp; &lt;/extension></tt>
 <p><b><i>API Information</i>: </b>The value of the <tt>installWizard</tt>
 attribute must represent a class that implements <tt>org.eclipse.ui.ICapabilityWizard</tt>
 interface. The IProject passed in the init method will exist and can be
-queried for the existance of other natures.
+queried for the existance of other natures. The capability install wizard
+must not close nor delete the project passed in the init method.
 <p><b><i>Supplied Implementation: </i></b>The workbench does not provide
 any capabilities.
 <p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2001.  All Rights Reserved." BORDER=0 height=12 width=195></a>

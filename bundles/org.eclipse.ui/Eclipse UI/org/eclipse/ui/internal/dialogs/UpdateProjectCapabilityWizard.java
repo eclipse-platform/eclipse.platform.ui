@@ -1,11 +1,18 @@
 package org.eclipse.ui.internal.dialogs;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2002 IBM Corp. and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+**********************************************************************/
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -15,7 +22,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.dialogs.InstallCapabilityStep.IProjectProvider;
 import org.eclipse.ui.internal.registry.Capability;
 import org.eclipse.ui.internal.registry.CapabilityRegistry;
 
@@ -24,7 +30,7 @@ import org.eclipse.ui.internal.registry.CapabilityRegistry;
  * the necessary information to configure new capabilities
  * on an existing project.
  */
-public class UpdateProjectCapabilityWizard extends MultiStepWizard implements IProjectProvider {
+public class UpdateProjectCapabilityWizard extends MultiStepCapabilityWizard {
 	private IProject project;
 	private Capability[] addCapabilities;
 	private Capability[] removeCapabilities;
@@ -116,6 +122,27 @@ public class UpdateProjectCapabilityWizard extends MultiStepWizard implements IP
 			return null;
 	}
 
+	/* (non-Javadoc)
+	 * Method declared on MultiStepWizard.
+	 */
+	protected String[] getPerspectiveChoices() {
+		ArrayList results = new ArrayList();
+		for (int i = 0; i < addCapabilities.length; i++) {
+			ArrayList ids = addCapabilities[i].getPerspectiveChoices();
+			if (ids != null) {
+				Iterator enum = ids.iterator();
+				while (enum.hasNext()) {
+					String id = (String)enum.next();
+					if (!results.contains(id))
+						results.add(id);
+				}
+			}
+		}
+		String[] ids = new String[results.size()];
+		results.toArray(ids);
+		return ids;
+	}
+	
 	/* (non-Javadoc)
 	 * Method declared on IProjectProvider.
 	 */

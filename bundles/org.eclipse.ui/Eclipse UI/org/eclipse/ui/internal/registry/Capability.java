@@ -48,6 +48,7 @@ public class Capability extends WorkbenchAdapter implements IAdaptable {
 	private ImageDescriptor icon;
 	private IConfigurationElement element;
 	private ArrayList handleUIs;
+	private ArrayList perspectiveChoices;
 	
 	/**
 	 * Creates an instance of <code>Capability</code> using the
@@ -94,6 +95,16 @@ public class Capability extends WorkbenchAdapter implements IAdaptable {
 		if (handleUIs == null)
 			handleUIs = new ArrayList(4);
 		handleUIs.add(capabilityId);	
+	}
+	
+	/**
+	 * Adds the id of a perspective for which this capability
+	 * wants to present as a choice in the user interface.
+	 */
+	public void addPerspectiveChoice(String perspId) {
+		if (perspectiveChoices == null)
+			perspectiveChoices = new ArrayList(4);
+		perspectiveChoices.add(perspId);	
 	}
 	
 	public String getId() {
@@ -189,5 +200,14 @@ public class Capability extends WorkbenchAdapter implements IAdaptable {
 	 */
 	public ArrayList getHandleUIs() {
 		return handleUIs;	
+	}
+	
+	/**
+	 * Returns a list of ids of perspectives for which this 
+	 * capability wants to present as choices, or <code>null</code>
+	 * if not applicable.
+	 */
+	public ArrayList getPerspectiveChoices() {
+		return perspectiveChoices;	
 	}
 }
