@@ -14,20 +14,24 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
 /**
- * The ProgressUtil is a class that contains static utility methods used for
- * the progress API.
+ * The ProgressUtil is a class that contains static utility methods used for the
+ * progress API.
  */
 class ProgressManagerUtil {
 	private static String PROGRESS_VIEW_ID = "org.eclipse.ui.views.ProgressView"; //$NON-NLS-1$
 	private static String NEW_PROGRESS_ID = "org.eclipse.ui.views.NewProgressView";//$NON-NLS-1$
 	public static long SHORT_OPERATION_TIME = 250;
+	private static String ellipsis = ProgressMessages
+			.getString("ProgressFloatingWindow.EllipsisValue"); //$NON-NLS-1$
 	/**
 	 * Return a status for the exception.
 	 * 
@@ -71,9 +75,9 @@ class ProgressManagerUtil {
 			}
 		};
 	}
-	
 	/**
 	 * Open the progress view in the supplied window.
+	 * 
 	 * @param window
 	 */
 	static void openProgressView(WorkbenchWindow window) {
@@ -89,18 +93,105 @@ class ProgressManagerUtil {
 			logException(exception);
 		}
 	}
-	
 	static boolean useNewProgress() {
-		return WorkbenchPlugin.getDefault().getPreferenceStore().getBoolean("USE_NEW_PROGRESS"); //$NON-NLS-1$
+		return WorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(
+				"USE_NEW_PROGRESS"); //$NON-NLS-1$
 	}
-	
 	/**
 	 * Return whether or not the progress view is missing.
+	 * 
 	 * @param window
 	 * @return true if there is no progress view.
 	 */
-	static boolean missingProgressView(WorkbenchWindow window){
-		return WorkbenchPlugin.getDefault().getViewRegistry().find(PROGRESS_VIEW_ID) == null;
+	static boolean missingProgressView(WorkbenchWindow window) {
+		return WorkbenchPlugin.getDefault().getViewRegistry().find(
+				PROGRESS_VIEW_ID) == null;
+	}
+	/**
+	 * Shorten the given text <code>t</code> so that its length doesn't exceed
+	 * the given width. The default implementation replaces characters in the
+	 * center of the original string with an ellipsis ("..."). Override if you
+	 * need a different strategy.
+	 * 
+	 * @param
+	 */
+	static String shortenText(String textValue, Control control) {
+		if (textValue == null)
+			return null;
+		Display display = control.getDisplay();
+		GC gc = new GC(display);
+		int maxWidth = control.getBounds().width - 5;
+		if (gc.textExtent(textValue).x < maxWidth) {
+			gc.dispose();
+			return textValue;
+		}
+		int length = textValue.length();
+		int ellipsisWidth = gc.textExtent(ellipsis).x;
+		//Find the second space seperator and start from there
+		int secondWord = findSecondWhitespace(textValue, gc, maxWidth);
+		int pivot = ((length - secondWord) / 2) + secondWord;
+		int start = pivot;
+		int end = pivot + 1;
+		while (start >= secondWord && end < length) {
+			String s1 = textValue.substring(0, start);
+			String s2 = textValue.substring(end, length);
+			int l1 = gc.textExtent(s1).x;
+			int l2 = gc.textExtent(s2).x;
+			if (l1 + ellipsisWidth + l2 < maxWidth) {
+				gc.dispose();
+				return s1 + ellipsis + s2;
+			}
+			start--;
+			end++;
+		}
+		gc.dispose();
+		return textValue;
+	}
+	
+	/**
+	 * Find the second index of a whitespace. Return the first
+	 * index if there isn't one or 0 if there is no space at
+	 * all.
+	 * @param textValue
+	 * @param gc. The GC to test max length
+	 * @param maxWidth. The maximim extent
+	 * @return int
+	 */
+	private static int findSecondWhitespace(String textValue, GC gc, int maxWidth) {
+		int firstCharacter = 0;
 		
+		char[] chars = textValue.toCharArray();
+		
+		//Find the first whitespace
+		for (int i = 0; i < chars.length; i++) {
+			if (Character.isWhitespace(chars[i])){
+				firstCharacter = i;
+				break;
+			}
+		}
+		
+		//If we didn't find it once don't continue
+		if(firstCharacter == 0)
+			return 0;
+		
+		//Initialize to firstCharacter in case there is no more whitespace
+		int secondCharacter = firstCharacter;
+		//Find the second whitespace
+		for (int i = firstCharacter; i < chars.length; i++) {
+			if (Character.isWhitespace(chars[i])){
+				secondCharacter = i;
+				break;
+			}
+		}
+		
+		//Check that we haven't gone over max width. Throw
+		//out an index that is too high
+		if(gc.textExtent(textValue.substring(0,secondCharacter)).x > maxWidth){
+			if(gc.textExtent(textValue.substring(0,firstCharacter)).x > maxWidth)
+				return 0;
+			else
+				return firstCharacter;
+		}
+		return secondCharacter;
 	}
 }
