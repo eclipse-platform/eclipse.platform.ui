@@ -14,15 +14,17 @@ import org.eclipse.debug.core.*;
 
 public class ProcessMonitor {
 	/**
-	 * The <code>IProcess</code> being monitored.
+	 * The underlying <code>java.lang.Process</code> being monitored.
+	 */
+	protected Process fOSProcess;	
+	/**
+	 * The <code>IProcess</code> which will be informed when this
+	 * monitor detects that the underlying process has terminated.
 	 */
 	protected RuntimeProcess fProcess;
+
 	/**
-	 * The <code>java.lang.Process</code> being monitored.
-	 */
-	protected Process fOSProcess;
-	/**
-	 * The <code>Thread</code> which is monitoring the process.
+	 * The <code>Thread</code> which is monitoring the underlying process.
 	 */
 	protected Thread fThread;
 	/**
@@ -36,21 +38,24 @@ public class ProcessMonitor {
 	}
 
 	/**
-	 * Monitors the process for termination
+	 * Monitors the underlying process for termination. When the underlying
+	 * process terminates (or if the monitoring thread is interrupted),
+	 * inform the <code>IProcess</code> that it has terminated.
 	 */
 	private void monitorProcess() {
 		while (fOSProcess != null) {
 			try {
 				fOSProcess.waitFor();
-				fOSProcess= null;
-				fProcess.terminated();  
 			} catch (InterruptedException ie) {
+			} finally {
+				fOSProcess = null;
+				fProcess.terminated();
 			}
 		}
 	}
 
 	/**
-	 * Starts monitoring the process to determine
+	 * Starts monitoring the underlying process to determine
 	 * if it has terminated.
 	 */
 	private void startMonitoring() {
@@ -63,10 +68,15 @@ public class ProcessMonitor {
 			fThread.start();
 		}
 	}
-
-	protected void stopMonitoring() {
-		fOSProcess = null;
+	
+	/**
+	 * Kills the monitoring thread.
+	 * 
+	 * This method is to be useful for dealing with the error
+	 * case of an underlying process which has not informed this
+	 * monitor of its termination.
+	 */
+	protected void killMonitoring() {
 		fThread.interrupt();
-		fProcess.terminated();
 	}
 }

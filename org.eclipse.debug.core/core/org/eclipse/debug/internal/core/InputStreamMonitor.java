@@ -12,10 +12,8 @@ import java.io.InputStream;
 
 /**
  * Monitors an input stream (connected to the output stream of
- * a system process). An notifies listeners of additions to the
+ * a system process) and notifies listeners of additions to the
  * stream.
- * 
- * @see IStreamMonitor
  */
 public class InputStreamMonitor implements IStreamMonitor {
 	/**
@@ -67,7 +65,7 @@ public class InputStreamMonitor implements IStreamMonitor {
 	/**
 	 * Causes the monitor to close all
 	 * communications between it and the
-	 * underlying stream.
+	 * underlying stream by waiting for the thread to terminate.
 	 */
 	protected void close() {
 		if (fThread != null) {

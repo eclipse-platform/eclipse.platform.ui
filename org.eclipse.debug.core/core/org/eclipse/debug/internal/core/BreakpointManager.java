@@ -28,6 +28,11 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	private final static int ADDED = 0;
 	private final static int REMOVED = 1;
 	private final static int CHANGED = 2;
+	
+	/**
+	 * String constants corresponding to XML extension keys
+	 */
+	private final static String CLASS = "class";
 
 	/**
 	 * A collection of breakpoint registered with this manager.
@@ -84,16 +89,24 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		
 		IMarker[] breakpoints= null;
 		IWorkspaceRoot root= getWorkspace().getRoot();
-		breakpoints= root.findMarkers(IDebugConstants.BREAKPOINT_MARKER, true, IResource.DEPTH_INFINITE);
-		
-		for (int i = 0; i < breakpoints.length; i++) {
-			IMarker marker= breakpoints[i];
+		loadBreakpoints(root);	
+	}
+	
+	/**
+	 * Loads all the breakpoints on the given resource.
+	 * 
+	 * @param resource the resource which contains the breakpoints
+	 */
+	private void loadBreakpoints(IResource resource) throws CoreException {
+		IMarker[] markers= resource.findMarkers(IDebugConstants.BREAKPOINT_MARKER, true, IResource.DEPTH_INFINITE);
+		for (int i = 0; i < markers.length; i++) {
+			IMarker marker= markers[i];
 			try {
 				createBreakpoint(marker);
 			} catch (DebugException e) {
 				logError(e);
 			}
-		}		
+		}	
 	}
 	
 	/**
@@ -191,8 +204,9 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * </ol>
 	 */
 	private IBreakpoint createBreakpoint(IMarker marker) throws DebugException {
-		if (fMarkersToBreakpoints.containsKey(marker)) {
-			return (IBreakpoint) fMarkersToBreakpoints.get(marker);
+		IBreakpoint breakpoint= (IBreakpoint) fMarkersToBreakpoints.get(marker);
+		if (breakpoint != null) {
+			return breakpoint;
 		}
 		try {
 			IConfigurationElement config = (IConfigurationElement)fBreakpointExtensions.get(marker.getType());
@@ -200,10 +214,10 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 				throw new DebugException(new Status(IStatus.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(), 
 					IDebugStatusConstants.CONFIGURATION_INVALID, MessageFormat.format(DebugCoreMessages.getString("BreakpointManager.Missing_breakpoint_definition"), new String[] {marker.getType()}), null)); //$NON-NLS-1$
 			}
-			IBreakpoint bp = (IBreakpoint)config.createExecutableExtension("class"); //$NON-NLS-1$
-			bp.setMarker(marker);
-			addBreakpoint(bp);
-			return bp;		
+			breakpoint = (IBreakpoint)config.createExecutableExtension(CLASS);
+			breakpoint.setMarker(marker);
+			addBreakpoint(breakpoint);
+			return breakpoint;		
 		} catch (CoreException e) {
 			throw new DebugException(e.getStatus());
 		}
@@ -275,22 +289,10 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 			}
 			return;
 		} else {
-			IMarker[] markers= null;
 			try {
-				markers= project.findMarkers(IDebugConstants.BREAKPOINT_MARKER, true, IResource.DEPTH_INFINITE);
+				loadBreakpoints(project);
 			} catch (CoreException e) {
 				logError(e);
-				return;
-			}
-
-			if (markers != null) {
-				for (int i= 0; i < markers.length; i++) {
-					try {
-						createBreakpoint(markers[i]);
-					} catch (DebugException e) {
-						logError(e);
-					}
-				}
 			}
 		}
 	}
@@ -312,7 +314,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		public boolean visit(IResourceDelta delta) {
 			if (0 != (delta.getFlags() & IResourceDelta.OPEN)) {
 				handleProjectResourceOpenStateChange(delta.getResource());
-				return true;
+				return false;
 			}
 			IMarkerDelta[] markerDeltas= delta.getMarkerDeltas();
 			for (int i= 0; i < markerDeltas.length; i++) {
@@ -340,7 +342,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		 */
 		protected void handleAddBreakpoint(IResourceDelta rDelta, final IMarker marker, IMarkerDelta mDelta) {
 			if (0 != (rDelta.getFlags() & IResourceDelta.MOVED_FROM)) {
-				// this breakpoint has actually been moved - removed from the Breakpoint manager and deleted
+				// this breakpoint has actually been moved - remove from the Breakpoint manager and delete
 				final IWorkspaceRunnable wRunnable= new IWorkspaceRunnable() {
 					public void run(IProgressMonitor monitor) {
 						try {

@@ -18,6 +18,7 @@ import java.io.InputStream;import java.io.OutputStream;import java.util.HashMa
 public class RuntimeProcess extends PlatformObject implements IProcess {
 
 	private static final int MAX_WAIT_FOR_DEATH_ATTEMPTS = 10;
+	private static final int TIME_TO_WAIT_FOR_THREAD_DEATH = 500; // ms
 	
 	/**
 	 * The system process
@@ -41,7 +42,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	private String fName;
 
 	/**
-	 * <code>true</code> when this process has been terminated
+	 * Whether this process has been terminated
 	 */
 	private boolean fTerminated;
 	
@@ -143,13 +144,13 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 				} catch (IllegalThreadStateException ie) {
 				}
 				try {
-					Thread.sleep(500);
+					Thread.sleep(TIME_TO_WAIT_FOR_THREAD_DEATH);
 				} catch (InterruptedException e) {
 				}
 				attempts++;
 			}
 			// clean-up
-			fMonitor.stopMonitoring();
+			fMonitor.killMonitoring();
 			IStatus status = new Status(IStatus.ERROR, IDebugConstants.PLUGIN_ID, IDebugStatusConstants.TARGET_REQUEST_FAILED, DebugCoreMessages.getString("RuntimeProcess.terminate_failed"), null);		 //$NON-NLS-1$
 			throw new DebugException(status);
 		}

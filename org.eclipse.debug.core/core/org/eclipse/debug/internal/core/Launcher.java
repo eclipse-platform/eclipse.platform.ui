@@ -23,18 +23,18 @@ public class Launcher implements ILauncher {
 	/**
 	 * The configuration element that defines this launcher handle
 	 */
-	protected IConfigurationElement fConfigElement = null;
+	private IConfigurationElement fConfigElement = null;
 	
 	/**
-	 * The underlying launcher, which is <code>null</code> until the
+	 * The underlying launcher, which is <code>null</code> until
 	 * it needs to be instantiated.
 	 */
-	protected ILauncherDelegate fDelegate = null;
+	private ILauncherDelegate fDelegate = null;
 	
 	/**
 	 * Cache of the modes this launcher supports
 	 */
-	protected Set fModes;
+	private Set fModes;
 	
 	/**
 	 * Constructs a handle for a launcher extension.
@@ -44,7 +44,7 @@ public class Launcher implements ILauncher {
 	}
 	
 	/**
-	 * @see ILauncher
+	 * @see ILauncher#getIdentifier()
 	 */
 	public String getIdentifier() {
 		return fConfigElement.getAttribute("id"); //$NON-NLS-1$
@@ -58,7 +58,7 @@ public class Launcher implements ILauncher {
 		if (fModes == null) {
 			String modes= fConfigElement.getAttribute("modes"); //$NON-NLS-1$
 			if (modes == null) {
-				return null;
+				return new HashSet(0);
 			}
 			StringTokenizer tokenizer= new StringTokenizer(modes, ","); //$NON-NLS-1$
 			fModes = new HashSet(tokenizer.countTokens());
@@ -70,14 +70,14 @@ public class Launcher implements ILauncher {
 	}
 	
 	/**
-	 * @see ILauncher.
+	 * @see ILauncher#getLabel()
 	 */
 	public String getLabel() {
 		return fConfigElement.getAttribute("label"); //$NON-NLS-1$
 	}
 	
 	/**
-	 * @see ILauncher
+	 * @see ILauncher#getPerspectiveIdentifier()
 	 */
 	public String getPerspectiveIdentifier() {
 		return fConfigElement.getAttribute("perspective"); //$NON-NLS-1$
@@ -98,7 +98,7 @@ public class Launcher implements ILauncher {
 	}
 		
 	/**
-	 * @see ILauncher
+	 * @see ILauncher#launch(Object[], String)
 	 */
 	public boolean launch(Object[] elements, String mode) {
 		return getDelegate().launch(elements, mode, this);
@@ -112,7 +112,7 @@ public class Launcher implements ILauncher {
 	}
 	
 	/**
-	 * @see ILanucher.
+	 * @see ILauncher#getIconPath()
 	 */
 	public String getIconPath() {
 		return fConfigElement.getAttribute("icon"); //$NON-NLS-1$

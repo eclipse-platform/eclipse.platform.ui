@@ -4,22 +4,33 @@ package org.eclipse.debug.internal.core;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
- 
-/**
- * Writes to an output stream, queueing output if the
- * output stream is blocked.
- */
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Vector;
 
+/**
+ * Writes to an output stream (connected to the input stream of
+ * a system process), queueing output if the output stream is blocked.
+ */
 public class OutputStreamMonitor {
 	
-	protected OutputStream fStream;
-	protected Vector fQueue;
-	protected Thread fThread; 
-	protected Object fLock;
+	/**
+	 * The output stream which is being written to.
+	 */
+	private OutputStream fStream;
+	/**
+	 * The queue of output.
+	 */
+	private Vector fQueue;
+	/**
+	 * The thread which writes to the output stream.
+	 */
+	private Thread fThread;
+	/**
+	 * A lock for ensuring that writes to the queue are contiguous
+	 */
+	private Object fLock;
 	
 	/**
 	 * Creates an output stream monitor on the
@@ -44,7 +55,7 @@ public class OutputStreamMonitor {
 	}
 
 	/**
-	 * Starts a <code>Thread</code> which writes the stream.
+	 * Starts a thread which writes the stream.
 	 */
 	public void startMonitoring() {
 		if (fThread == null) {
@@ -58,9 +69,8 @@ public class OutputStreamMonitor {
 	}
 	
 	/**
-	 * Causes the monitor to close all
-	 * communications between it and the
-	 * underlying stream.
+	 * Close all communications between this
+	 * monitor and the underlying stream.
 	 */
 	public void close() {
 		if (fThread != null) {
@@ -70,12 +80,18 @@ public class OutputStreamMonitor {
 		}
 	}
 	
+	/**
+	 * Continuously writes to the stream.
+	 */
 	protected void write() {
 		while (fThread != null) {
 			writeNext();
 		}	
 	}
 	
+	/**
+	 * Write the text in the queue to the stream.
+	 */
 	protected void writeNext() {
 		while (!fQueue.isEmpty()) {
 			String text = (String)fQueue.firstElement();
@@ -86,6 +102,7 @@ public class OutputStreamMonitor {
 					fStream.flush();
 				}
 			} catch (IOException e) {
+				DebugCoreUtils.logError(e);
 			}
 		}
 		try {
