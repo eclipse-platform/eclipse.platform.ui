@@ -309,7 +309,11 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 			 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 			 */
 			public int compare(Viewer viewer, Object e1, Object e2) {
-				return e1.toString().compareToIgnoreCase(e2.toString());
+				if (e1 instanceof AntProjectNode && e2 instanceof AntProjectNode
+					|| e1 instanceof AntTargetNode && e2 instanceof AntTargetNode) {
+					return e1.toString().compareToIgnoreCase(e2.toString());
+				} 
+				return 0;
 			}
 		});
 		
