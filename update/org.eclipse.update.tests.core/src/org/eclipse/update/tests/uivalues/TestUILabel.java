@@ -3,6 +3,7 @@ package org.eclipse.update.tests.uivalues;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.io.File;
 import java.net.URL;
 
 import org.eclipse.update.core.*;
@@ -36,8 +37,24 @@ public class TestUILabel extends UpdateManagerTestCase {
 			IFeature feature = remoteFeatures[i].getFeature();
 			System.out.println("feature:"+feature.getIdentifier()+"->"+feature.getLabel());
 			print(feature.getLicense(),"License");
-			print(feature.getCopyright(),"Copyright");
-			print(feature.getDescription(),"Description");						
+			print(feature.getCopyright(),"Copyright");			
+			print(feature.getDescription(),"Description");				
+			
+			URL url = feature.getLicense().getURL();
+			if (url!=null){
+				assertTrue((new File(url.getFile())).exists());
+			}
+
+			url = feature.getCopyright().getURL();
+			if (url!=null){
+				assertTrue((new File(url.getFile())).exists());
+			}
+			
+			url = feature.getDescription().getURL();
+			if (url!=null){
+				assertTrue((new File(url.getFile())).exists());
+			}
+			
 		}
 	}
 	

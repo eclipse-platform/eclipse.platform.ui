@@ -22,8 +22,8 @@ public class TestUpdateManagerUtilsAPI extends UpdateManagerTestCase {
 	}
 	
 	public void testgetURL() throws Exception {
-		URL url1 = new URL("http://www.eclipse.org/");
-		URL url2 = new URL("file://c:/hello/");
+		URL url1 = new URL("http://www.eclipse.org");
+		URL url2 = new URL("file://c:/hello");
 		URL url3 = new URL("file:/home/eclipse/");
 		URL url4 = new URL("ftp:/host:8080/path/");
 		URL url5 = new URL("jar:file:/tmp/100100!/");
