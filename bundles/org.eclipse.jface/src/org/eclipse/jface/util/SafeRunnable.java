@@ -23,15 +23,7 @@ import org.eclipse.jface.resource.JFaceResources;
  */
 public abstract class SafeRunnable implements ISafeRunnable {
 	private String message;
-	
-	/**
-	 * Since 3.0, ignore errors by default, since if there are many errors, the
-	 * user can get swamped with error dialogs.  Although JFace and apps like
-	 * the Workbench need to protect themselves, and can use this mechanism to do so,
-	 * it should not automatically harrass the user with error dialogs.
-	 * Errors are still logged by Platform.run.
-	 */
-	private static boolean ignoreErrors = true;
+	private static boolean ignoreErrors = false;
 
 /**
  * Creates a new instance of SafeRunnable with a default error message.
