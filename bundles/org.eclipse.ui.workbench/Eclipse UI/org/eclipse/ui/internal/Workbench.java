@@ -405,7 +405,9 @@ public class Workbench
 
 	private CommandManager commandManager;
 	private ContextManager contextManager;
-
+	private volatile boolean keyFilterEnabled;
+	private final Object keyFilterMutex = new Object();
+	
 	private IWorkbenchWindow activeWorkbenchWindow;
 	//private IActionService activeWorkbenchWindowActionService;
 	//private IContextActivationService activeWorkbenchWindowContextActivationService;
@@ -449,17 +451,29 @@ public class Workbench
 	}
 
 	public final void disableKeyFilter() {
-		final Display display = Display.getCurrent();
-		display.removeFilter(SWT.KeyDown, keyBindingFilter);
-		display.removeFilter(SWT.Traverse, keyBindingFilter);
+		synchronized (keyFilterMutex) {
+			final Display display = Display.getCurrent();
+			display.removeFilter(SWT.KeyDown, keyBindingFilter);
+			display.removeFilter(SWT.Traverse, keyBindingFilter);
+			keyFilterEnabled = true;
+		}
 	}
 
 	public final void enableKeyFilter() {
-		final Display display = Display.getCurrent();
-		display.addFilter(SWT.KeyDown, keyBindingFilter);
-		display.addFilter(SWT.Traverse, keyBindingFilter);
+		synchronized (keyFilterMutex) {
+			final Display display = Display.getCurrent();
+			display.addFilter(SWT.KeyDown, keyBindingFilter);
+			display.addFilter(SWT.Traverse, keyBindingFilter);
+			keyFilterEnabled = false;
+		}
 	}
-
+	
+	public final boolean isKeyFilterEnabled() {
+		synchronized (keyFilterMutex) {
+			return keyFilterEnabled;
+		}
+	}
+	
 	public String getName(String commandId) {
 		String name = null;
 		

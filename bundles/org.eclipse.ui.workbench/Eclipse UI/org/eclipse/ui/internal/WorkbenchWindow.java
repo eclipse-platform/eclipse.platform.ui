@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.SortedSet;
-import java.util.TreeMap;
+import java.util.TreeMap;   
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -1583,6 +1583,8 @@ public class WorkbenchWindow
 		boolean cancelable,
 		IRunnableWithProgress runnable)
 		throws InvocationTargetException, InterruptedException {
+		final boolean keyFilterEnabled = workbench.isKeyFilterEnabled();
+		
 		ToolBarManager shortcutBar = getShortcutBar();
 		Control shortcutBarControl = null;
 		if (shortcutBar != null)
@@ -1590,13 +1592,21 @@ public class WorkbenchWindow
 		boolean shortcutbarWasEnabled = false;
 		if (shortcutBarControl != null)
 			shortcutbarWasEnabled = shortcutBarControl.getEnabled();
+		
 		try {
 			if (shortcutBarControl != null && !shortcutBarControl.isDisposed())
 				shortcutBarControl.setEnabled(false);
+			 
+			if (keyFilterEnabled)
+				workbench.disableKeyFilter();
+
 			super.run(fork, cancelable, runnable);
 		} finally {
 			if (shortcutBarControl != null && !shortcutBarControl.isDisposed())
 				shortcutBarControl.setEnabled(shortcutbarWasEnabled);
+			
+			if (keyFilterEnabled)
+				workbench.enableKeyFilter();
 		}
 	}
 	/**
