@@ -67,7 +67,7 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		
 		if (event.getTarget() == null && event.getTarget() == null) {
 			// look for "Buildfile:" message
-			if (message.startsWith("Buildfile:")) {
+			if (message.startsWith("Buildfile:")) { //$NON-NLS-1$
 				String fileName = message.substring(10).trim();
 				IFile file = getFileForLocation(fileName);
 				if (file != null) {
@@ -102,15 +102,15 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 	private void getAdornedMessage(BuildEvent event, StringBuffer fullMessage) {
 		String name = event.getTask().getTaskName();
 		if (name == null) {
-			name = "null";
+			name = "null"; //$NON-NLS-1$
 		}
 		int size = LEFT_COLUMN_SIZE - (name.length() + 3);
 		for (int i = 0; i < size; i++) {
-			fullMessage.append(" ");
+			fullMessage.append(' ');
 		}
 		fullMessage.append('[');
 		fullMessage.append(name);
-		fullMessage.append("] ");
+		fullMessage.append("] "); //$NON-NLS-1$
 		int offset = fLength + Math.max(size, 0) + StringUtils.LINE_SEP.length();
 		int length = LEFT_COLUMN_SIZE - size - 1;
 		IConsoleHyperlink taskLink = getTaskLink(offset, length, event);
@@ -178,7 +178,7 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 			Location location = task.getLocation();
 			if (location != null) {
 				String path = location.toString().trim();
-				if (path.startsWith("file:")) {
+				if (path.startsWith("file:")) { //$NON-NLS-1$
 					// remove "file:"
 					path= path.substring(5, path.length());
 				}
