@@ -132,15 +132,26 @@ final class KeyBindingService implements INestableKeyBindingService {
     private boolean disposed;
     
     public void dispose() {
-        if (!disposed) {
-            disposed = true;        
-        	//System.out.print("disposing " + (new ArrayList(enabledSubmissions)).size() + " EnabledSubmissions");
-        	//System.out.println(" and " + handlerSubmissionsByCommandId.values().size() + " HandlerSubmissions");            
+        if (!disposed) {  
+            deactivateNestedService();
+            disposed = true;            
+
+            //System.out.print("disposing " + (new ArrayList(enabledSubmissions)).size() + " EnabledSubmissions");
+        	//System.out.println(" and " + handlerSubmissionsByCommandId.values().size() + " HandlerSubmissions");                                    
+            
             Workbench.getInstance().getContextSupport().removeEnabledSubmissions(new ArrayList(enabledSubmissions));        
         	enabledSubmissions.clear();
             Workbench.getInstance().getCommandSupport().removeHandlerSubmissions(new ArrayList(handlerSubmissionsByCommandId.values()));        
         	handlerSubmissionsByCommandId.clear();
-        	// TODO handle the nested stuff properly..
+        	
+        	for (Iterator iterator = nestedServices.values().iterator(); iterator.hasNext();) {
+                KeyBindingService keyBindingService = (KeyBindingService) iterator.next();
+                keyBindingService.dispose();
+            }
+        	
+            nestedEnabledSubmissions = null;
+            nestedHandlerSubmissions = null;
+            nestedServices.clear();
         }
     }
     
@@ -191,6 +202,8 @@ final class KeyBindingService implements INestableKeyBindingService {
      *            but nothing else happens.
      */
     private final void activateNestedService(final IKeyBindingService service) {
+        if (disposed) return;
+        
         /* If I have a parent, and I'm the active service, then deactivate so
     	 * that I can make changes.
     	 */
@@ -237,6 +250,8 @@ final class KeyBindingService implements INestableKeyBindingService {
      * and removes all the enabled submissions for the nested service.
      */
     private final void deactivateNestedService() {
+        if (disposed) return;
+        
         // Don't do anything if there is no active service.
         if (activeService == null) { return; }
 
@@ -280,6 +295,8 @@ final class KeyBindingService implements INestableKeyBindingService {
      *         this service. This list may be empty, but is never <code>null</code>.
      */
     private final List getEnabledSubmissions() {
+        if (disposed) return null;
+        
         final List submissions = new ArrayList(enabledSubmissions);
         if (activeService instanceof KeyBindingService) {
             final KeyBindingService nestedService = (KeyBindingService) activeService;
@@ -295,6 +312,8 @@ final class KeyBindingService implements INestableKeyBindingService {
      *         this service. This list may be empty, but is never <code>null</code>.
      */
     private final List getHandlerSubmissions() {
+        if (disposed) return null;
+        
         final List submissions = new ArrayList(handlerSubmissionsByCommandId
                 .values());
         if (activeService instanceof KeyBindingService) {
@@ -357,6 +376,8 @@ final class KeyBindingService implements INestableKeyBindingService {
      *            but may be empty.
      */
     private final void normalizeSites(final List submissionsToModify) {
+        if (disposed) return;
+        
         final int size = submissionsToModify.size();
         for (int i = 0; i < size; i++) {
             final Object submission = submissionsToModify.get(i);
