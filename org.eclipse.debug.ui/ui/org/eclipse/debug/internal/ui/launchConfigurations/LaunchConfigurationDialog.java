@@ -57,6 +57,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.ModifyEvent;
@@ -598,19 +599,39 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * 
 	 * @exception CoreException if unable to instantiate a tab group
 	 */
-	protected ILaunchConfigurationTabGroup createGroup(ILaunchConfigurationType configType) throws CoreException {
-		// initialize with default values
-		// build the new tabs
- 		ILaunchConfigurationTabGroup group = LaunchConfigurationPresentationManager.getDefault().getTabGroup(configType);
- 		group.createTabs(this, getMode());
- 		ILaunchConfigurationTab[] tabs = group.getTabs();
- 		for (int i = 0; i < tabs.length; i++) {
- 			tabs[i].setLaunchConfigurationDialog(this);
+	protected ILaunchConfigurationTabGroup createGroup(final ILaunchConfigurationType configType) throws CoreException {
+		// Use a final Object array to store the tab group and any exception that
+		// results from the Runnable
+		final Object[] finalArray = new Object[2]; 		
+ 		Runnable runnable = new Runnable() {
+ 			public void run() {
+		 		ILaunchConfigurationTabGroup tabGroup = null;
+				try {
+					tabGroup = LaunchConfigurationPresentationManager.getDefault().getTabGroup(configType);
+					finalArray[0] = tabGroup;
+				} catch (CoreException ce) {
+					finalArray[1] = ce;
+					return;
+				}
+		 		tabGroup.createTabs(LaunchConfigurationDialog.this, getMode());
+		 		ILaunchConfigurationTab[] tabs = tabGroup.getTabs();
+		 		for (int i = 0; i < tabs.length; i++) {
+		 			tabs[i].setLaunchConfigurationDialog(LaunchConfigurationDialog.this);
+		 		}
+ 			}
+ 		};
+ 		
+ 		// Creating the tabs can result in plugin loading, so we show the busy cursor
+ 		BusyIndicator.showWhile(getDisplay(), runnable);
+ 		
+ 		// Re-throw any CoreException if there was one
+ 		if (finalArray[1] != null) {
+ 			throw (CoreException)finalArray[1];
  		}
- 		return group;
+ 		
+ 		// Otherwise return the tab group
+ 		return (ILaunchConfigurationTabGroup)finalArray[0];
 	}
-	
-
 	
 	/**
 	 * Returns the selected IResource context from the workbench,
@@ -627,7 +648,6 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		}
 		return fResourceContext;		
 	}
-
 	
 	/**
 	 * Set the title area image based on the mode this dialog was initialized with
@@ -732,7 +752,12 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	}
 	
 	protected Display getDisplay() {
-		return getShell().getDisplay();
+		Shell shell = getShell();
+		if (shell != null) {
+			return shell.getDisplay();
+		} else {
+			return Display.getDefault();
+		}
 	}
 		
 	/**
