@@ -24,13 +24,13 @@
 
 
 <!-- Extension points -->
-   <extension-point id="consoleColorProviders" name="%ConsoleColorProvidersExtensionName"/>
-   <extension-point id="consoleLineTrackers" name="%ConsoleLineTrackersExtensionName"/>
+   <extension-point id="consoleColorProviders" name="%ConsoleColorProvidersExtensionName" schema="schema/consoleColorProviders.exsd"/>
+   <extension-point id="consoleLineTrackers" name="%ConsoleLineTrackersExtensionName" schema="schema/consoleLineTrackers.exsd"/>
    <extension-point id="debugActionGroups" name="%DebugActionGroupsExtensionName" schema="schema/debugActionGroups.exsd"/>
    <extension-point id="debugModelPresentations" name="%DebugModelPresentationExtensionName" schema="schema/debugModelPresentations.exsd"/>
    <extension-point id="launchConfigurationTabGroups" name="%LaunchConfigurationTabGroupExtensionName" schema="schema/launchConfigurationTabGroups.exsd"/>
    <extension-point id="launchConfigurationTypeImages" name="%LaunchConfigurationTypeImageExtensionName" schema="schema/launchConfigurationTypeImages.exsd"/>
-   <extension-point id="launchGroups" name="%LaunchGroupsExtensionName"/>
+   <extension-point id="launchGroups" name="%LaunchGroupsExtensionName" schema="schema/launchGroups.exsd"/>
    <extension-point id="launchShortcuts" name="%LaunchShortcutsName" schema="schema/launchShortcuts.exsd"/>
 
 <!-- Extensions -->
