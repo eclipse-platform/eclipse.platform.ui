@@ -70,7 +70,7 @@ public void addResourceChangeListener(IResourceChangeListener listener);
 /** 
  * Adds the given listener for the specified resource change events to this workspace.
  * Has no effect if an identical listener is already registered for these events.
- * After completion of this method, the given listener will be registered for exactly the
+ * After completion of this method, the given listener will be registered for exactly 
  * the specified events.  If they were previously registered for other events, they
  * will be deregistered.  
  * <p>
