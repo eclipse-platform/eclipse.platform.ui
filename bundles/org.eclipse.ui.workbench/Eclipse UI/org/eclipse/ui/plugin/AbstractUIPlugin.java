@@ -39,6 +39,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WWinPluginAction;
+import org.eclipse.ui.internal.Workbench;
 
 /**
  * Abstract base class for plug-ins that integrate with the Eclipse platform UI.
@@ -749,8 +750,9 @@ public abstract class AbstractUIPlugin extends Plugin {
 	 * </p>
 	 */
 	protected void refreshPluginActions() {
-		// If the workbench is not created yet, this call will fail.
-		PlatformUI.getWorkbench();
+		// If the workbench is not created yet, do nothing.
+		if (Workbench.getInstance() == null)
+			return;
 
 		// startup() is not guaranteed to be called in the UI thread,
 		// but refreshPluginActions must run in the UI thread, 
