@@ -44,7 +44,8 @@ public class UpdatesView
 		"UpdatesView.Popup.newLocalSite";
 	private static final String KEY_DELETE = "UpdatesView.Popup.delete";
 	private static final String KEY_REFRESH = "UpdatesView.Popup.refresh";
-	private static final String KEY_REFRESH_TOOLTIP = "UpdatesView.Popup.refresh.tooltip";
+	private static final String KEY_REFRESH_TOOLTIP =
+		"UpdatesView.Popup.refresh.tooltip";
 	private static final String KEY_LINK_EXTENSION =
 		"UpdatesView.Popup.linkExtension";
 	private static final String KEY_FILTER_FILES = "UpdatesView.menu.showFiles";
@@ -66,7 +67,7 @@ public class UpdatesView
 		"ConfirmDelete.multiple";
 	private static final String KEY_CONFIRM_DELETE_SINGLE =
 		"ConfirmDelete.single";
-		
+
 	private static final String P_FILTER = "UpdatesView.matchingFilter";
 
 	private Action propertiesAction;
@@ -130,7 +131,7 @@ public class UpdatesView
 		public boolean select(Viewer viewer, Object parent, Object child) {
 			if (child instanceof IFeatureAdapter) {
 				try {
-					child = ((IFeatureAdapter) child).getFeature();
+					child = getFeature((IFeatureAdapter) child);
 				} catch (CoreException e) {
 					UpdateUIPlugin.logException(e);
 				}
@@ -241,7 +242,7 @@ public class UpdatesView
 			}
 			if (obj instanceof IFeatureAdapter) {
 				try {
-					IFeature feature = ((IFeatureAdapter) obj).getFeature();
+					IFeature feature = getFeature((IFeatureAdapter) obj);
 					VersionedIdentifier versionedIdentifier =
 						(feature != null)
 							? feature.getVersionedIdentifier()
@@ -394,7 +395,8 @@ public class UpdatesView
 			}
 		};
 		refreshAction.setText(UpdateUIPlugin.getResourceString(KEY_REFRESH));
-		refreshAction.setToolTipText(UpdateUIPlugin.getResourceString(KEY_REFRESH_TOOLTIP));
+		refreshAction.setToolTipText(
+			UpdateUIPlugin.getResourceString(KEY_REFRESH_TOOLTIP));
 		refreshAction.setImageDescriptor(UpdateUIPluginImages.DESC_REFRESH_NAV);
 		refreshAction.setDisabledImageDescriptor(
 			UpdateUIPluginImages.DESC_REFRESH_NAV_D);
@@ -452,14 +454,16 @@ public class UpdatesView
 
 		viewer.addSelectionChangedListener(selectionListener);
 	}
-	
+
 	private boolean getStoredEnvironmentValue() {
-		IDialogSettings settings = UpdateUIPlugin.getDefault().getDialogSettings();
+		IDialogSettings settings =
+			UpdateUIPlugin.getDefault().getDialogSettings();
 		return !settings.getBoolean(P_FILTER);
 	}
-	
+
 	private void setStoredEnvironmentValue(boolean value) {
-		IDialogSettings settings = UpdateUIPlugin.getDefault().getDialogSettings();
+		IDialogSettings settings =
+			UpdateUIPlugin.getDefault().getDialogSettings();
 		settings.put(P_FILTER, !value);
 	}
 
@@ -724,27 +728,35 @@ public class UpdatesView
 
 	private Object[] getSiteCatalog(final SiteBookmark bookmark) {
 		if (!bookmark.isSiteConnected()) {
-			final CatalogBag bag = new CatalogBag();
-			BusyIndicator
-				.showWhile(viewer.getTree().getDisplay(), new Runnable() {
-				public void run() {
-					try {
-						bookmark.connect();
-						bag.catalog =
-							bookmark.getCatalog(
-								showCategoriesAction.isChecked());
-					} catch (CoreException e) {
-						UpdateUIPlugin.logException(e);
-					}
-				}
-			});
-			if (bag.catalog != null)
-				return bag.catalog;
+			Object[] result = getSiteCatalogWithIndicator(bookmark, true);
+			if (result != null)
+				return result;
 		}
 		if (bookmark.getSite() != null) {
-			return bookmark.getCatalog(showCategoriesAction.isChecked());
+			Object[] result = getSiteCatalogWithIndicator(bookmark, false);
+			if (result != null)
+				return result;
 		}
 		return new Object[0];
+	}
+
+	private Object[] getSiteCatalogWithIndicator(
+		final SiteBookmark bookmark,
+		final boolean connect) {
+		final CatalogBag bag = new CatalogBag();
+		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
+			public void run() {
+				try {
+					if (connect)
+						bookmark.connect();
+					bag.catalog =
+						bookmark.getCatalog(showCategoriesAction.isChecked());
+				} catch (CoreException e) {
+					UpdateUIPlugin.logException(e);
+				}
+			}
+		});
+		return bag.catalog;
 	}
 
 	private void showCategories(boolean show) {
@@ -834,6 +846,28 @@ public class UpdatesView
 			((Image) enum.nextElement()).dispose();
 		}
 		volumeLabelProvider.dispose();
+	}
+
+	private IFeature getFeature(final IFeatureAdapter adapter)
+		throws CoreException {
+		final IFeature[] result = new IFeature[1];
+		final CoreException[] exception = new CoreException[1];
+
+		BusyIndicator
+			.showWhile(viewer.getControl().getDisplay(), new Runnable() {
+			public void run() {
+				try {
+					result[0] = adapter.getFeature();
+					exception[0] = null;
+				} catch (CoreException e) {
+					exception[0] = e;
+				}
+			}
+		});
+		if (exception[0] != null) {
+			throw exception[0];
+		}
+		return result[0];
 	}
 
 }
