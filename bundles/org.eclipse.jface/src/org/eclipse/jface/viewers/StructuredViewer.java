@@ -892,10 +892,17 @@ public void refresh(final Object element, final boolean updateLabels) {
  * </p>
  */
 protected final void refreshItem(Widget widget, Object element) {
-	safeUpdateItem.widget = widget;
-	safeUpdateItem.object = element;
-	safeUpdateItem.fullMap = false;
-	Platform.run(safeUpdateItem);
+	try {
+		safeUpdateItem.widget = widget;
+		safeUpdateItem.object = element;
+		safeUpdateItem.fullMap = false;
+		Platform.run(safeUpdateItem);
+	}
+	finally {
+		// clean up
+		safeUpdateItem.widget = null;
+		safeUpdateItem.object = null;
+	}
 }
 /**
  * Removes the given open listener from this viewer.
@@ -1257,10 +1264,17 @@ public void update(Object element, String[] properties) {
  * @param element the element
  */
 protected final void updateItem(Widget widget, Object element) {
-	safeUpdateItem.widget = widget;
-	safeUpdateItem.object = element;
-	safeUpdateItem.fullMap = true;
-	Platform.run(safeUpdateItem);
+	try {
+		safeUpdateItem.widget = widget;
+		safeUpdateItem.object = element;
+		safeUpdateItem.fullMap = true;
+		Platform.run(safeUpdateItem);
+	}
+	finally {
+		// clean up
+		safeUpdateItem.widget = null;
+		safeUpdateItem.object = null;
+	}
 }
 /**
  * Updates the selection of this viewer.
