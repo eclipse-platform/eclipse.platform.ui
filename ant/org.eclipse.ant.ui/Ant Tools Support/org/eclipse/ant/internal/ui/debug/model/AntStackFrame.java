@@ -278,4 +278,27 @@ public class AntStackFrame extends AntDebugElement implements IStackFrame {
 	protected int getIdentifier() {
 		return fId;
 	}
+    
+    /**
+     * Returns the system, user or runtime property
+     * name, or <code>null</code> if unable to resolve a property with the name.
+     *
+     * @param propertyName the name of the variable to search for
+     * @return a property, or <code>null</code> if none
+     */
+    public AntProperty findProperty(String propertyName) {
+        IVariable[] groups= getVariables();
+        for (int i = 0; i < groups.length; i++) {
+            AntProperties propertiesGrouping = (AntProperties) groups[i];
+            AntPropertiesValue value= (AntPropertiesValue) propertiesGrouping.getValue();
+            IVariable[] properties= value.getVariables();
+            for (int j = 0; j < properties.length; j++) {
+                AntProperty property = (AntProperty) properties[j];
+                if (property.getName().equals(propertyName)) {
+                    return property;
+                }
+            }
+        }
+        return null;
+    } 
 }

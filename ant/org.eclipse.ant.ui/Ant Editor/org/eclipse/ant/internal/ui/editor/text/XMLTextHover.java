@@ -18,6 +18,9 @@ import org.apache.tools.ant.types.AbstractFileSet;
 import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.types.PatternSet;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
+import org.eclipse.ant.internal.ui.debug.model.AntProperty;
+import org.eclipse.ant.internal.ui.debug.model.AntStackFrame;
+import org.eclipse.ant.internal.ui.debug.model.AntValue;
 import org.eclipse.ant.internal.ui.editor.AntEditor;
 import org.eclipse.ant.internal.ui.editor.derived.HTMLPrinter;
 import org.eclipse.ant.internal.ui.editor.derived.HTMLTextPresenter;
@@ -26,6 +29,8 @@ import org.eclipse.ant.internal.ui.model.AntModel;
 import org.eclipse.ant.internal.ui.model.AntPropertyNode;
 import org.eclipse.ant.internal.ui.model.IAntModel;
 import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IDocument;
@@ -98,6 +103,7 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension {
 				return message;
 			}
 		}
+        
 		AntModel antModel= fEditor.getAntModel();
 		if (antModel == null) { //the ant model has not been created yet
 			return null;
@@ -116,6 +122,13 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension {
 			String value;
 			AntElementNode node= antModel.getNode(offset, false);
 			if (document.get(offset - 2, 2).equals("${") || node instanceof AntPropertyNode) { //$NON-NLS-1$
+                AntStackFrame frame= getFrame();
+                if (frame != null) {//active Ant debug session
+                    AntProperty property= frame.findProperty(text);
+                    if (property != null) {
+                        return ((AntValue)property.getValue()).getValueString();
+                    }
+                }
 				value= antModel.getPropertyValue(text);
 				if (value != null) {
 					return formatMessage(value);
@@ -280,4 +293,19 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension {
 		}
 		return null;
 	}
+    
+    /**
+     * Returns the stack frame in which to search for properties, or <code>null</code>
+     * if none.
+     * 
+     * @return the stack frame in which to search for properties, or <code>null</code>
+     * if none
+     */
+    private AntStackFrame getFrame() {
+        IAdaptable adaptable = DebugUITools.getDebugContext();
+        if (adaptable != null) {
+            return (AntStackFrame)adaptable.getAdapter(AntStackFrame.class); 
+        }
+        return null;
+    }
 }
