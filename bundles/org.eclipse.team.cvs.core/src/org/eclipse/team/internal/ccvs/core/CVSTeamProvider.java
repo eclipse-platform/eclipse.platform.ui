@@ -982,7 +982,11 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	 * @see ITeamProvider#validateEdit(IFile[], Object)
 	 */
 	public IStatus validateEdit(IFile[] files, Object context) {
-		return new CVSStatus(CVSStatus.OK, Policy.bind("ok")); //$NON-NLS-1$
+		//todo: we can assume that there is only one file due to the way FileModificationValidator is implemented
+		return
+			(files[0].isReadOnly())
+				? new CVSStatus(CVSStatus.ERROR, Policy.bind("FileModificationValidator.isReadOnly")) //$NON-NLS-1$
+				: new CVSStatus(CVSStatus.OK, Policy.bind("ok")); //$NON-NLS-1$
 	}
 
 	/*

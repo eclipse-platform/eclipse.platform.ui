@@ -16,6 +16,7 @@ import org.eclipse.team.core.TeamPlugin;
 
 public class FileModificationValidator implements IFileModificationValidator {
 	private static final Status OK = new Status(Status.OK, TeamPlugin.ID, Status.OK, "OK", null);
+	private static final Status READ_ONLY = new Status(Status.ERROR, TeamPlugin.ID, Status.ERROR, Policy.bind("FileModificationValidator.isReadOnly"), null);
 	
 	/*
 	 * @see IFileModificationValidator#validateEdit(IFile[], Object)
@@ -30,7 +31,10 @@ public class FileModificationValidator implements IFileModificationValidator {
 			IFile file = files[i];
 			ITeamProvider provider = manager.getProvider(file.getProject());
 			if (provider == null) {
-				result[i] = OK;
+				result[i] =
+					(file.isReadOnly())
+						? READ_ONLY
+						: OK;
 			} else {
 				fileArray[0] = file;
 				result[i] = provider.validateEdit(fileArray, context);
