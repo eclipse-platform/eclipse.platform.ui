@@ -80,6 +80,13 @@ public interface ILock {
 	 */
 	public void acquire();
 	/**
+	 * Returns the number of nested acquires on this lock that have not been released.
+	 * This is the number of times that release() must be called before the lock is
+	 * freed.
+	 * @return the number of nested acquires that have not been released.
+	 */
+	public int getDepth();
+	/**
 	 * Releases this lock. Locks must only be released by the thread that currently
 	 * owns the lock.
 	 */

@@ -173,6 +173,9 @@ public class OrderedLock implements ILock {
 	public synchronized Thread getCurrentOperationThread() {
 		return currentOperationThread;
 	}
+	public synchronized int getDepth()  {
+		return depth;
+	}
 
 	/* (non-Javadoc)
 	 * @see ILock#release
