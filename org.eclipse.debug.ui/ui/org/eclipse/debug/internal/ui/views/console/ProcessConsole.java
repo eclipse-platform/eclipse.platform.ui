@@ -346,16 +346,6 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         stream.setColor(color);
        
         synchronized (streamMonitor) {
-            try {
-                stream.write(streamMonitor.getContents());
-                if (streamMonitor instanceof IFlushableStreamMonitor) {
-                    IFlushableStreamMonitor monitor = (IFlushableStreamMonitor) streamMonitor;
-                    monitor.flushContents();
-                    monitor.setBuffered(false);
-                }
-            } catch (IOException e) {
-                DebugUIPlugin.log(e);
-            }
             StreamListener listener = new StreamListener(streamIdentifier, streamMonitor, stream);
             streamListeners.add(listener);            
         }
@@ -397,6 +387,7 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         private IOConsoleOutputStream stream;
         private IStreamMonitor streamMonitor;
         private String streamId;
+        private boolean flushed = false;
 
         public StreamListener(String streamIdentifier, IStreamMonitor monitor, IOConsoleOutputStream stream) {
             this.streamId = streamIdentifier;
@@ -409,11 +400,27 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
          * @see org.eclipse.debug.core.IStreamListener#streamAppended(java.lang.String, org.eclipse.debug.core.model.IStreamMonitor)
          */
         public void streamAppended(String text, IStreamMonitor monitor) {
-            try {
-                stream.write(text);
-            } catch (IOException e) {
-                DebugUIPlugin.log(e);
-            }
+        	if (flushed) {
+	            try {
+	                stream.write(text);
+	            } catch (IOException e) {
+	                DebugUIPlugin.log(e);
+	            }
+        	} else {
+        		synchronized (monitor) {
+	        		flushed = true;
+	        		try {
+						stream.write(monitor.getContents());
+					} catch (IOException e) {
+						DebugUIPlugin.log(e);
+					}
+	                if (streamMonitor instanceof IFlushableStreamMonitor) {
+	                    IFlushableStreamMonitor m = (IFlushableStreamMonitor) streamMonitor;
+	                    m.flushContents();
+	                    m.setBuffered(false);
+	                }
+        		}
+        	}
         }   
         
         public IStreamMonitor getStreamMonitor() {
@@ -421,7 +428,12 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         }
         
         public void dispose() {
-            streamMonitor.removeListener(this);
+        	synchronized (streamMonitor) {
+	            streamMonitor.removeListener(this);
+	            if (!flushed) {
+	        		streamAppended(null, streamMonitor);
+	        	}
+        	}
             try {
                 stream.close();
             } catch (IOException e) {
