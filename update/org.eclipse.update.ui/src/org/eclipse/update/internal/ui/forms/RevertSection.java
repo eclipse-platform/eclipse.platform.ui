@@ -180,4 +180,7 @@ public class RevertSection extends UpdateSection {
 		ILocalSite localSite = SiteManager.getLocalSite();
 		localSite.save();
 	}
+	public Control getFocusControl() {
+		return revertButton;
+	}
 }

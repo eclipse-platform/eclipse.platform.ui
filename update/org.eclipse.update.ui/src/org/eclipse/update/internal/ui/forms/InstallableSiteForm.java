@@ -57,6 +57,7 @@ protected void createContents(Composite parent) {
 	urlLabel = factory.createHeadingLabel(parent, null);
 	FormEngine desc = factory.createFormEngine(parent);
 	desc.load(UpdateUIPlugin.getResourceString(KEY_DESC), true, true);
+	setFocusControl(desc);
 	TableData td = new TableData();
 	td.align = TableData.FILL;
 	td.grabHorizontal=true;

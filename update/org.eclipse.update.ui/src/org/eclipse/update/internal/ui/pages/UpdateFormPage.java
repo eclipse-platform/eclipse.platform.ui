@@ -27,7 +27,7 @@ public boolean becomesInvisible(IFormPage newPage) {
 
 public void becomesVisible(IFormPage oldPage) {
 	update();
-	setFocus();
+	//setFocus();
 }
 
 public boolean contextMenuAboutToShow(IMenuManager manager) {

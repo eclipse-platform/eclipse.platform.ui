@@ -96,6 +96,7 @@ public class InstallConfigurationForm extends PropertyWebForm {
 		td.grabHorizontal = true;
 		td.valign = TableData.TOP;
 		control.setLayoutData(td);
+		setFocusControl(revertSection.getFocusControl());
 
 		registerSection(activitySection);
 		registerSection(revertSection);

@@ -80,6 +80,7 @@ protected void createContents(Composite parent) {
 	link.setText(UpdateUIPlugin.getResourceString(KEY_MORE_INFO));
 	factory.turnIntoHyperlink(link, listener);
 	link.setVisible(false);
+	setFocusControl(link);
 }
 
 public void expandTo(Object obj) {

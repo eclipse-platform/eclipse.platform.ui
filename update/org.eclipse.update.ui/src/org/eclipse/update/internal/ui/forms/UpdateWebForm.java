@@ -45,6 +45,6 @@ public class UpdateWebForm extends WebForm implements IUpdateForm {
 		focusControl = control;
 	}
 	public void setFocus() {
-		//if (focusControl!=null) focusControl.setFocus();
+		if (focusControl!=null) focusControl.setFocus();
 	}
 }

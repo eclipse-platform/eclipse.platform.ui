@@ -63,6 +63,7 @@ public class ExtensionRootForm extends UpdateWebForm {
 		engine.load(markup, true, true);
 		td = new TableData();
 		td.colspan = 3;
+		setFocusControl(engine);
 		engine.setLayoutData(td);
 	}
 
