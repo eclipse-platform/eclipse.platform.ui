@@ -31,7 +31,7 @@ public class Bug43597Test extends UITestCase {
 	 * Constructor for Bug43597Test.
 	 * 
 	 * @param name
-	 *           The name of the test
+	 *            The name of the test
 	 */
 	public Bug43597Test(String name) {
 		super(name);
@@ -57,13 +57,11 @@ public class Bug43597Test extends UITestCase {
 
 		// Set the text once, and get the font.
 		text.setText(metaCharacter); //$NON-NLS-1$
-		while (display.readAndDispatch());
 		Font fontBefore = text.getFont();
 
 		// Set the font again, and get the font afterward.
 		text.setText(""); //$NON-NLS-1$
 		text.setText(metaCharacter);
-		while (display.readAndDispatch());
 		Font fontAfter = text.getFont();
 
 		// Test.
