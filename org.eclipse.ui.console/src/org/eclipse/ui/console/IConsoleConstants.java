@@ -19,7 +19,7 @@ package org.eclipse.ui.console;
 public interface IConsoleConstants {
 	
 	/**
-	 * Consoleplug-in identifier (value <code>"org.eclipse.ui.console"</code>).
+	 * Console plug-in identifier (value <code>"org.eclipse.ui.console"</code>).
 	 */
 	public static final String PLUGIN_ID = ConsolePlugin.getUniqueIdentifier();
 	
@@ -29,7 +29,7 @@ public interface IConsoleConstants {
 	public static final String ID_CONSOLE_VIEW= "org.eclipse.ui.console.ConsoleView"; //$NON-NLS-1$
 	
 	/**
-	 * The name of the font to use for the Console. 
+	 * The name of the font to use for the Console (value <code>"org.eclipse.ui.console.ConsoleFont"</code>).
 	 */ 
 	public static final String CONSOLE_FONT= "org.eclipse.ui.console.ConsoleFont"; //$NON-NLS-1$
 	
@@ -46,7 +46,6 @@ public interface IConsoleConstants {
 		
 	/** 
 	 * Console view image identifier
-	 * 
 	 */
 	public static final String IMG_VIEW_CONSOLE= "IMG_VIEW_CONSOLE"; //$NON-NLS-1$
 	
