@@ -238,6 +238,7 @@ public class IntroURL implements IIntroURL {
             } else if (actionObject instanceof IAction) {
                 IAction action = (IAction) actionObject;
                 action.run();
+
             } else if (actionObject instanceof IActionDelegate) {
                 final IActionDelegate delegate = (IActionDelegate) actionObject;
                 if (delegate instanceof IWorkbenchWindowActionDelegate)
@@ -251,9 +252,10 @@ public class IntroURL implements IIntroURL {
                 };
                 proxy.run();
                 return true;
-            }
-            // we could not create the class.
-            return false;
+            } else
+                // we could not create the class.
+                return false;
+            return true;
         } catch (Exception e) {
             Log.error("Could not run action: " + className, e); //$NON-NLS-1$
             return false;
