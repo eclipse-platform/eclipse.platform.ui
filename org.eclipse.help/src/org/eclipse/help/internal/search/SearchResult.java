@@ -46,6 +46,7 @@ public class SearchResult {
 	 */
 	public void addHits(Hits hits, String analyzedWords) {
 		float scoreScale = 1.0f;
+		boolean scoreScaleSet = false;
 		String urlEncodedWords = URLCoder.encode(analyzedWords);
 		for (int h = 0; h < hits.length() && h < maxHits; h++) {
 			org.apache.lucene.document.Document doc;
@@ -56,19 +57,25 @@ public class SearchResult {
 			} catch (IOException ioe) {
 				return;
 			}
-			if (h == 0) {
-				if (score > 0) {
-					scoreScale = 1 / score;
-					score = 1;
-				}
-			} else {
-				score *= scoreScale;
-			}
 			String href = doc.get("name");
+
+			// book filtering
 			IToc toc = findTocForTopic(href);
 			if (scope != null && toc == null)
 				continue;
-			ITopic topic = toc==null? null : toc.getTopic(href);
+
+			// adjust score
+			if (!scoreScaleSet) {
+				if (score > 0) {
+					scoreScale = 0.99f / score;
+					score = 1;
+				}
+				scoreScaleSet = true;
+			} else {
+				score = score * scoreScale + 0.01f;
+			}
+
+			ITopic topic = toc == null ? null : toc.getTopic(href);
 
 			// Create topic
 			Element e = factory.createElement(ITopic.TOPIC);
@@ -79,17 +86,16 @@ public class SearchResult {
 			e.setAttribute(ITopic.HREF, href + "?resultof=" + urlEncodedWords);
 			// Set the document label
 			String label = doc.get("raw_title");
-			if ("".equals(label) && topic!=null) {
+			if ("".equals(label) && topic != null) {
 				label = topic.getLabel();
 			}
 			if (label == null || "".equals(label))
 				label = href;
 			e.setAttribute(ITopic.LABEL, label);
 			// Set the document toc
-			if (toc != null)
-			{
+			if (toc != null) {
 				e.setAttribute(IToc.TOC, toc.getHref());
-				e.setAttribute(IToc.TOC+IToc.LABEL, toc.getLabel());
+				e.setAttribute(IToc.TOC + IToc.LABEL, toc.getLabel());
 			}
 		}
 	}
