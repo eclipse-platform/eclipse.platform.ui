@@ -10,7 +10,7 @@ Contributors:
 *************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
-import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ResourceListSelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -28,8 +28,8 @@ public class OpenResourceDialog extends ResourceListSelectionDialog {
 /**
  * Creates a new instance of the class.
  */
-public OpenResourceDialog(Shell parentShell, IContainer container, int typesMask) {
-	super(parentShell, container, typesMask);
+public OpenResourceDialog(Shell parentShell, IResource resources[]) {
+	super(parentShell, resources);
 	setTitle(WorkbenchMessages.getString("OpenResourceDialog.title")); //$NON-NLS-1$
 	WorkbenchHelp.setHelp(parentShell, IHelpContextIds.OPEN_RESOURCE_DIALOG);
 }

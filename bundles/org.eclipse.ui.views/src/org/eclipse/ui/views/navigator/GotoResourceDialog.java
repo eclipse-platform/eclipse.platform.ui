@@ -10,7 +10,7 @@ Contributors:
 *************************************************************************/
 package org.eclipse.ui.views.navigator;
 
-import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ResourceListSelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -25,8 +25,8 @@ import org.eclipse.ui.help.WorkbenchHelp;
 /**
  * Creates a new instance of the class.
  */
-protected GotoResourceDialog(Shell parentShell, IContainer container, int typesMask) {
-	super(parentShell, container, typesMask);
+protected GotoResourceDialog(Shell parentShell, IResource resources[]) {
+	super(parentShell, resources);
 	setTitle(ResourceNavigatorMessages.getString("Goto.title")); //$NON-NLS-1$
 	WorkbenchHelp.setHelp(parentShell, INavigatorHelpContextIds.GOTO_RESOURCE_DIALOG);
 }
