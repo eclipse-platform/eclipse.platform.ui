@@ -169,8 +169,8 @@ public class StandbyPart {
     }
 
     private void doReturn() {
-        IIntroPart part = PlatformUI.getWorkbench().getIntro();
-        PlatformUI.getWorkbench().setIntroStandby(part, false);
+        IIntroPart part = PlatformUI.getWorkbench().getIntroManager().getIntro();
+        PlatformUI.getWorkbench().getIntroManager().setIntroStandby(part, false);
     }
 
     /**

@@ -108,7 +108,7 @@ public class IntroPlugin extends AbstractUIPlugin {
      *  
      */
     public static IIntroPart getIntroPart() {
-        IIntroPart introPart = PlatformUI.getWorkbench().getIntro();
+        IIntroPart introPart = PlatformUI.getWorkbench().getIntroManager().getIntro();
         return introPart;
     }
 
@@ -117,7 +117,7 @@ public class IntroPlugin extends AbstractUIPlugin {
      *  
      */
     public static IIntroPart showIntroPart(boolean standby) {
-        IIntroPart introPart = PlatformUI.getWorkbench().showIntro(
+        IIntroPart introPart = PlatformUI.getWorkbench().getIntroManager().showIntro(
                 PlatformUI.getWorkbench().getActiveWorkbenchWindow(), false);
         return introPart;
     }

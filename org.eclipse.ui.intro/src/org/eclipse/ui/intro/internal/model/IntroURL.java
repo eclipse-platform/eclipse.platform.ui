@@ -134,8 +134,8 @@ public class IntroURL {
 
     private void closeIntro() {
         // Relies on Workbench.
-        PlatformUI.getWorkbench().closeIntro(
-                PlatformUI.getWorkbench().getIntro());
+        PlatformUI.getWorkbench().getIntroManager().closeIntro(
+                PlatformUI.getWorkbench().getIntroManager().getIntro());
     }
 
     /**
@@ -148,7 +148,7 @@ public class IntroURL {
     private void handleStandbyStateChanged(String partId, String input) {
         // set intro to standby mode. we know we have a customizable part.
         CustomizableIntroPart introPart = getCustomizableIntroPart(true);
-        PlatformUI.getWorkbench().setIntroStandby(introPart, true);
+        PlatformUI.getWorkbench().getIntroManager().setIntroStandby(introPart, true);
         StandbyPart standbyPart = introPart.getStandbyPart();
 
         // Get the StandbyPartContent that maps to the given partId.
@@ -186,7 +186,7 @@ public class IntroURL {
         // should rely on Workbench api. If the Intro part was not open when
         // this method was called, the following line simply resets the part
         // into standby.
-        PlatformUI.getWorkbench().setIntroStandby(introPart, standby);
+        PlatformUI.getWorkbench().getIntroManager().setIntroStandby(introPart, standby);
     }
 
     /**
