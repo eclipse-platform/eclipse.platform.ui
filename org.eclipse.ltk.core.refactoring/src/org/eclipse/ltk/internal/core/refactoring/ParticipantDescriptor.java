@@ -31,6 +31,7 @@ public class ParticipantDescriptor {
 	private static final String ID= "id"; //$NON-NLS-1$
 	private static final String NAME= "name";  //$NON-NLS-1$
 	private static final String CLASS= "class"; //$NON-NLS-1$
+	private static final String PROCESS_ON_CANCEL= "processOnCancel";  //$NON-NLS-1$
 	
 	public ParticipantDescriptor(IConfigurationElement element) {
 		fConfigurationElement= element;
@@ -83,6 +84,13 @@ public class ParticipantDescriptor {
 	
 	public void disable() {
 		fEnabled= false;
+	}
+	
+	public boolean processOnCancel() {
+		String attr= fConfigurationElement.getAttribute(PROCESS_ON_CANCEL);
+		if (attr == null)
+			return false;
+		return Boolean.valueOf(attr).booleanValue();
 	}
 	
 	private boolean convert(EvaluationResult eval) {

@@ -255,11 +255,23 @@ public class CompositeChange extends Change {
 		pm.beginTask("", fChanges.size()); //$NON-NLS-1$
 		pm.setTaskName(RefactoringCoreMessages.getString("CompositeChange.performingChangesTask.name")); //$NON-NLS-1$
 		Change change= null;
+		boolean canceled= false;
 		try {
 			for (Iterator iter= fChanges.iterator(); iter.hasNext();) {
 				change= (Change)iter.next();
+				if (canceled && !internalProcessOnCancel(change))
+					continue;
+				
 				if (change.isEnabled()) {
-					Change undoChange= change.perform(new SubProgressMonitor(pm, 1));
+					Change undoChange= null;
+					try {
+						undoChange= change.perform(new SubProgressMonitor(pm, 1));
+					} catch(OperationCanceledException e) {
+						canceled= true;
+						if (!internalContinueOnCancel())
+							throw e;
+						undos= null;
+					}
 					if (undos != null) {
 						if (undoChange == null) {
 							undos= null;
@@ -285,6 +297,8 @@ public class CompositeChange extends Change {
 					}
 				});
 			}
+			if (canceled)
+				throw new OperationCanceledException();
 			if (undos != null) {
 				Collections.reverse(undos);
 				return createUndoChange((Change[]) undos.toArray(new Change[undos.size()]));
@@ -326,7 +340,7 @@ public class CompositeChange extends Change {
 	 * the refacotring framework.
 	 * <p>
 	 * The method gets called if one of the changes managed by this
-	 * composite change generates and exception when performed.
+	 * composite change generates an exception when performed.
 	 * </p>
 	 * 
 	 * @param change the change that caused the exception
@@ -334,6 +348,39 @@ public class CompositeChange extends Change {
 	 */
 	protected void internalHandleException(Change change, Throwable t) {
 		// do nothing
+	}
+
+	/**
+	 * Note: this is an internal method and should not be overridden outside of
+	 * the refacotring framework.
+	 * <p>
+	 * The method gets called if one of the changes managed by this
+	 * composite change generates an operation canceled exception when
+	 * performed.
+	 * </p>
+	 *
+	 * @return <code>true</code> if performing the change should
+	 *  continue on cancel; otherwise <code>false</code>
+	 */
+	protected boolean internalContinueOnCancel() {
+		return false;
+	}
+
+	/**
+	 * Note: this is an internal method and should not be overridden outside of
+	 * the refacotring framework.
+	 * <p>
+	 * The method gets called if the execution of this change got canceled,
+	 * but <code>internalContinueOnCancel</code> returned true. 
+	 * </p>
+	 *
+	 * @param change the change to perform
+	 *
+	 * @return <code>true</code> if the given change should be performed although
+	 *  the execution got canceled; otherwise <code>false</code>
+	 */
+	protected boolean internalProcessOnCancel(Change change) {
+		return false;
 	}
 
 	/**

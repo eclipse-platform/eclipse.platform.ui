@@ -60,12 +60,24 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 			fParticipantMap= map;
 		}
 		protected void internalHandleException(Change change, Throwable e) {
+			if (e instanceof OperationCanceledException)
+				return;
+				
 			RefactoringParticipant participant= (RefactoringParticipant)fParticipantMap.get(change);
 			if (participant != null) {
 				ParticipantDescriptor descriptor= participant.getDescriptor();
 				descriptor.disable();
 				RefactoringCorePlugin.logRemovedParticipant(descriptor, e);
 			}
+		}
+		protected boolean internalContinueOnCancel() {
+			return true;
+		}
+		protected boolean internalProcessOnCancel(Change change) {
+			RefactoringParticipant participant= (RefactoringParticipant)fParticipantMap.get(change);
+			if (participant == null)
+				return false;
+			return participant.getDescriptor().processOnCancel();
 		}
 	}
 	
