@@ -10,14 +10,20 @@
  *******************************************************************************/
 package org.eclipse.ui.preferences;
 
+import java.io.IOException;
+
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.*;
+
+import org.eclipse.jface.preference.IPersistentPreferenceStore;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.*;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.misc.Assert;
+
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * The ScopedPreferenceStore is an IPreferenceStore that uses the 
@@ -34,7 +40,7 @@ import org.eclipse.ui.internal.misc.Assert;
  * @see org.eclipse.core.runtime.preferences
  * @since 3.1
  */
-public class ScopedPreferenceStore implements IPreferenceStore {
+public class ScopedPreferenceStore implements IPreferenceStore, IPersistentPreferenceStore {
 
 	/**
 	 * Identity list of old listeners (element type: 
@@ -111,9 +117,9 @@ public class ScopedPreferenceStore implements IPreferenceStore {
 		};
 
 		getStorePreferences().addPreferenceChangeListener(preferencesListener);
-		getDefaultPreferences().addPreferenceChangeListener(preferencesListener);
-
-		Platform.getPreferencesService().getRootNode().addNodeChangeListener(getNodeChangeListener());
+		
+		Platform.getPreferencesService().getRootNode().addNodeChangeListener(
+				getNodeChangeListener());
 	}
 
 	/**
@@ -212,8 +218,9 @@ public class ScopedPreferenceStore implements IPreferenceStore {
 		// this store was created on. (and optionally the default)
 		if (searchContexts == null) {
 			if (includeDefault)
-				return new IEclipsePreferences[] {storeContext.getNode(nodeQualifier), defaultContext.getNode(nodeQualifier)};
-			return new IEclipsePreferences[] {storeContext.getNode(nodeQualifier)};
+				return new IEclipsePreferences[] { storeContext.getNode(nodeQualifier),
+						defaultContext.getNode(nodeQualifier) };
+			return new IEclipsePreferences[] { storeContext.getNode(nodeQualifier) };
 		}
 		// otherwise the user specified a search order so return the appropriate nodes
 		// based on it
@@ -249,7 +256,8 @@ public class ScopedPreferenceStore implements IPreferenceStore {
 		// Assert that the default was not included (we automatically add it to the end)
 		for (int i = 0; i < scopes.length; i++) {
 			if (scopes[i].equals(defaultContext))
-				Assert.isTrue(false, WorkbenchMessages.getString("ScopedPreferenceStore.DefaultAddedError")); //$NON-NLS-1$
+				Assert.isTrue(false, WorkbenchMessages
+						.getString("ScopedPreferenceStore.DefaultAddedError")); //$NON-NLS-1$
 		}
 
 		// Add the default to the search contexts
@@ -545,5 +553,17 @@ public class ScopedPreferenceStore implements IPreferenceStore {
 	 */
 	public void setValue(String name, boolean value) {
 		getStorePreferences().putBoolean(name, value);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.IPersistentPreferenceStore#save()
+	 */
+	public void save() throws IOException {
+		try {
+			getStorePreferences().flush();
+		} catch (BackingStoreException e) {
+			throw new IOException(e.getMessage());
+		}
+
 	}
 }
