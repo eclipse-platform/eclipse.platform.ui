@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.CoreException;
  * Extension interface for <code>IStreamContentAccessor</code>. Extends the original
  * concept of a <code>IStreamContentAccessor</code> to answer the Charset (encoding) used for the stream.
  * 
- * @since 3.0
+ * @deprecated Use <code>IEncodedStreamContentAccessor</code> instead
  */
 public interface IStreamContentAccessorExtension2 extends IStreamContentAccessor {
 	
