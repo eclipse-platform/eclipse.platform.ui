@@ -21,6 +21,7 @@ class ShowNextResultAction extends Action {
 		SearchPluginImages.setImageDescriptors(this, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_NEXT);
 		setToolTipText(SearchMessages.getString("SearchResultView.showNext.tooltip")); //$NON-NLS-1$
 		fViewer= viewer;
+		setActionDefinitionId("org.eclipse.ui.navigate.next"); //$NON-NLS-1$
 	}
 	
 	public void run() {
