@@ -6,6 +6,8 @@ package org.eclipse.help.internal.standalone;
 
 import java.util.List;
 
+import org.eclipse.help.internal.HelpPlugin;
+
 /**
  * This program is used to start or stop Eclipse
  * Infocenter application.
@@ -13,7 +15,7 @@ import java.util.List;
 public class StandaloneInfocenter extends EclipseController {
 	// ID of the application to run
 	private static final String INFOCENTER_APPLICATION_ID =
-		"org.eclipse.help.infocenterApplication";
+		HelpPlugin.PLUGIN_ID + ".infocenterApplication";
 
 	/**
 	 * Constructs help system

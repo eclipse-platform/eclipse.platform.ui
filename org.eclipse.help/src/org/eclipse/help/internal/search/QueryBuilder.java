@@ -9,6 +9,7 @@ import java.util.*;
 import org.apache.lucene.analysis.*;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.*;
+import org.eclipse.help.internal.HelpPlugin;
 /**
  * Build query acceptable by the search engine.
  */
@@ -136,7 +137,9 @@ public class QueryBuilder {
 								// Adding words should not be done when DefaultAnalyzer is used,
 								// because it does not perform stemming and common words removal
 								// which would result in common characters highlighted all over (bug 30263)
-								if (!analyzerDesc.getId().startsWith("org.eclipse.help#")) {
+								if (!analyzerDesc
+									.getId()
+									.startsWith(HelpPlugin.PLUGIN_ID + "#")) {
 									if (!highlightWords.contains(word)) {
 										highlightWords.add(word);
 									}

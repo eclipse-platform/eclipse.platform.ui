@@ -9,8 +9,7 @@ import org.eclipse.core.boot.BootLoader;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.appserver.WebappManager;
 import org.eclipse.help.internal.context.*;
-import org.eclipse.help.internal.util.*;
-
+import org.eclipse.help.internal.util.Resources;
 
 /**
  * This class is the default implementation of the pluggable help support.
@@ -20,7 +19,7 @@ import org.eclipse.help.internal.util.*;
 public class DefaultHelpSupport implements IHelp {
 
 	private int idCounter = 0;
-	
+
 	/**
 	 * BaseHelpViewer constructor.
 	 */
@@ -35,7 +34,8 @@ public class DefaultHelpSupport implements IHelp {
 		// Do not start help view if documentaton is not available, display error
 		if (getTocs().length == 0) {
 			// There is no documentation
-			HelpSystem.getDefaultErrorUtil().displayError(Resources.getString("WW001"));
+			HelpSystem.getDefaultErrorUtil().displayError(
+				Resources.getString("WW001"));
 			//Documentation is not installed.
 			return;
 		}
@@ -120,7 +120,8 @@ public class DefaultHelpSupport implements IHelp {
 		String topic) { // Do not start help view if documentaton is not available, display error
 		if (getTocs().length == 0) {
 			// There is no documentation
-			HelpSystem.getDefaultErrorUtil().displayError(Resources.getString("WW001"));
+			HelpSystem.getDefaultErrorUtil().displayError(
+				Resources.getString("WW001"));
 			//Documentation is not installed.
 			return;
 		}
@@ -194,8 +195,7 @@ public class DefaultHelpSupport implements IHelp {
 
 		try {
 			if (helpURL == null || helpURL.length() == 0) {
-				HelpSystem.getHelpBrowser().displayURL(
-					getBaseURL());
+				HelpSystem.getHelpBrowser().displayURL(getBaseURL());
 			} else if (
 				helpURL.startsWith("tab=")
 					|| helpURL.startsWith("toc=")
@@ -204,8 +204,7 @@ public class DefaultHelpSupport implements IHelp {
 				HelpSystem.getHelpBrowser().displayURL(
 					getBaseURL() + "?" + helpURL);
 			} else {
-				HelpSystem.getHelpBrowser().displayURL(
-					helpURL);
+				HelpSystem.getHelpBrowser().displayURL(helpURL);
 			}
 		} catch (Exception e) {
 			HelpSystem.getDefaultErrorUtil().displayError(e.getMessage());
@@ -242,7 +241,7 @@ public class DefaultHelpSupport implements IHelp {
 		if (context instanceof ContextProxy)
 			return ((ContextProxy) context).getID();
 		// TODO add code not to generate new ID for the same context
-		String id = "org.eclipse.help.ID" + idCounter++;
+		String id = HelpPlugin.PLUGIN_ID + ".ID" + idCounter++;
 		HelpSystem.getContextManager().addContext(id, context);
 		return id;
 	}

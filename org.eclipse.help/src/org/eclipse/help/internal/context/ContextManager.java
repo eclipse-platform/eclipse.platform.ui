@@ -7,12 +7,14 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.IContext;
+import org.eclipse.help.internal.HelpPlugin;
 /**
  * Maintains the list of contexts
  * and performs look-ups.
  */
 public class ContextManager {
-	public static final String CONTEXTS_EXTENSION = "org.eclipse.help.contexts";
+	public static final String CONTEXTS_EXTENSION =
+		HelpPlugin.PLUGIN_ID + ".contexts";
 	/**
 	 * Contexts, indexed by each plugin 
 	 */
@@ -82,15 +84,19 @@ public class ContextManager {
 		IExtension[] extensions = xpt.getExtensions();
 		for (int i = 0; i < extensions.length; i++) {
 			String definingPlugin =
-				extensions[i].getDeclaringPluginDescriptor().getUniqueIdentifier();
+				extensions[i]
+					.getDeclaringPluginDescriptor()
+					.getUniqueIdentifier();
 			IConfigurationElement[] contextContributions =
 				extensions[i].getConfigurationElements();
 			for (int j = 0; j < contextContributions.length; j++) {
 				if ("contexts".equals(contextContributions[j].getName())) {
-					String plugin = contextContributions[j].getAttribute("plugin");
+					String plugin =
+						contextContributions[j].getAttribute("plugin");
 					if (plugin == null || "".equals(plugin))
 						plugin = definingPlugin;
-					String fileName = contextContributions[j].getAttribute("file");
+					String fileName =
+						contextContributions[j].getAttribute("file");
 					// in v1 file attribute was called name
 					if (fileName == null)
 						fileName = contextContributions[j].getAttribute("name");
@@ -99,7 +105,8 @@ public class ContextManager {
 						pluginContextsFiles = new ArrayList();
 						contextsFiles.put(plugin, pluginContextsFiles);
 					}
-					pluginContextsFiles.add(new ContextsFile(definingPlugin, fileName, plugin));
+					pluginContextsFiles.add(
+						new ContextsFile(definingPlugin, fileName, plugin));
 				}
 			}
 		}

@@ -5,11 +5,11 @@
 package org.eclipse.help.internal.toc;
 import java.util.*;
 
-import org.eclipse.core.boot.*;
+import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.*;
+import org.eclipse.help.IToc;
 import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.util.*;
+import org.eclipse.help.internal.util.Resources;
 
 /**
  * Manages the navigation model. It keeps track of all the tables of contents.
@@ -172,7 +172,7 @@ public class TocManager {
 		// find extension point
 		IExtensionPoint xpt =
 			Platform.getPluginRegistry().getExtensionPoint(
-				"org.eclipse.help",
+				HelpPlugin.PLUGIN_ID,
 				"toc");
 		if (xpt == null)
 			return contributedTocFiles;

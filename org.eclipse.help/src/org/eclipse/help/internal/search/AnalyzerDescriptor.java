@@ -6,10 +6,10 @@ package org.eclipse.help.internal.search;
 
 import java.util.*;
 
-import org.apache.lucene.analysis.*;
+import org.apache.lucene.analysis.Analyzer;
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.util.*;
+import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.util.Resources;
 
 /**
  * Text Analyzer Descriptor.  Encapsulates Lucene Analyzer
@@ -87,7 +87,7 @@ public class AnalyzerDescriptor {
 		// find extension point
 		IConfigurationElement configElements[] =
 			Platform.getPluginRegistry().getConfigurationElementsFor(
-				"org.eclipse.help",
+				HelpPlugin.PLUGIN_ID,
 				"luceneAnalyzer");
 		for (int i = 0; i < configElements.length; i++) {
 			if (!configElements[i].getName().equals("analyzer"))
@@ -115,7 +115,7 @@ public class AnalyzerDescriptor {
 					this.luceneAnalyzer = (Analyzer) analyzer;
 					this.id = pluginId + "#" + pluginVersion;
 					this.lang = locale;
-					if ("org.eclipse.help".equals(pluginId)) {
+					if (HelpPlugin.PLUGIN_ID.equals(pluginId)) {
 						// The analyzer is contributed by help plugin.
 						// Continue in case there is another analyzer for the same locale
 						// let another analyzer take precendence over one from help
@@ -149,10 +149,10 @@ public class AnalyzerDescriptor {
 		}
 		// analyzers in org.eclipse.help plugin 2.0.1 and 2.0.2, and 2.1
 		// are compatible (logic unchanged), index can be preserved between them
-		if (analyzerId.compareTo("org.eclipse.help#2.0.1") >= 0
-			&& analyzerId.compareTo("org.eclipse.help#2.1.0") <= 0
-			&& id.compareTo("org.eclipse.help#2.0.1") >= 0
-			&& id.compareTo("org.eclipse.help#2.1.0") <= 0) {
+		if (analyzerId.compareTo(HelpPlugin.PLUGIN_ID + "#2.0.1") >= 0
+			&& analyzerId.compareTo(HelpPlugin.PLUGIN_ID + "#2.1.0") <= 0
+			&& id.compareTo(HelpPlugin.PLUGIN_ID + "#2.0.1") >= 0
+			&& id.compareTo(HelpPlugin.PLUGIN_ID + "#2.1.0") <= 0) {
 			return true;
 		}
 		return false;

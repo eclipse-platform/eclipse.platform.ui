@@ -6,6 +6,8 @@ package org.eclipse.help.internal.standalone;
 
 import java.util.List;
 
+import org.eclipse.help.internal.HelpPlugin;
+
 /**
  * This is a standalone help system. It takes care of 
  * launching the eclipse with its help system implementation,
@@ -31,7 +33,7 @@ public class StandaloneHelp extends EclipseController {
 	private static final int CONNECTION_RETRY_INTERVAL = 5 * 1000;
 	// ID of the application to run
 	private static final String HELP_APPLICATION_ID =
-		"org.eclipse.help.helpApplication";
+		HelpPlugin.PLUGIN_ID+".helpApplication";
 
 	/**
 	 * Constructs help system

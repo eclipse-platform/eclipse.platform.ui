@@ -8,6 +8,7 @@ import java.util.Hashtable;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.browser.*;
+import org.eclipse.help.internal.HelpPlugin;
 public class MozillaFactory implements IBrowserFactory, IExecutableExtension {
 	private String executable;
 	private String executableName;
@@ -74,7 +75,7 @@ public class MozillaFactory implements IBrowserFactory, IExecutableExtension {
 			throw new CoreException(
 				new Status(
 					IStatus.ERROR,
-					"org.eclipse.help.ui",
+					HelpPlugin.PLUGIN_ID,
 					IStatus.OK,
 					"MozillaFactory.dataMissing",
 					e));
