@@ -44,9 +44,8 @@ public class PreferencesServiceTest extends RuntimeTest {
 		IPreferencesService service = Platform.getPreferencesService();
 
 		// create test node hierarchy
-		IEclipsePreferences root = service.getRootNode();
 		String qualifier = getRandomString() + '1';
-		IEclipsePreferences test = root.node(new Path(TestScope.SCOPE).append(qualifier));
+		IEclipsePreferences test = new TestScope().getNode(qualifier);
 		String key = getRandomString() + 'k';
 		String value = getRandomString() + 'v';
 		String actual = test.get(key, null);
@@ -98,7 +97,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 		}
 
 		// verify
-		test = root.node(new Path(TestScope.SCOPE).append(qualifier));
+		test = new TestScope().getNode(qualifier);
 		actual = test.get(key, null);
 		assertEquals("5.0", value, actual);
 		actual = test.get(newKey, null);
@@ -133,7 +132,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 		}
 
 		// verify
-		test = root.node(new Path(TestScope.SCOPE).append(qualifier));
+		test = new TestScope().getNode(qualifier);
 		actual = test.get(key, null);
 		assertEquals("8.0", value, actual);
 		actual = test.get(newKey, null);
@@ -402,5 +401,27 @@ public class PreferencesServiceTest extends RuntimeTest {
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		Platform.getPreferencesService().getRootNode().node(TestScope.SCOPE).removeNode();
+	}
+
+	public void testGet() {
+		// TODO
+		if (true)
+			return;
+		IPreferencesService service = Platform.getPreferencesService();
+		String qualifier = getRandomString();
+		String key = new Path(getRandomString()).append(getRandomString()).toString();
+		Preferences node = service.getRootNode().node(TestScope.SCOPE).node(qualifier);
+		String value = getRandomString();
+		String actual = null;
+
+		// set a real value
+		node.put(key, value);
+		actual = node.get(key, null);
+		assertNotNull("1.0", actual);
+		assertEquals("1.1", value, actual);
+
+		actual = service.getString(qualifier, key, null, null);
+		assertNotNull("2.0", actual);
+		assertEquals("2.1", value, actual);
 	}
 }

@@ -11,15 +11,13 @@
 package org.eclipse.core.runtime.preferences;
 
 import java.util.EventObject;
-import org.eclipse.core.runtime.IPath;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
 /**
  * This interface describes Eclipse extensions to the preference
  * story. It provides means for both preference and node change
- * listeners as well as providing node navigation APIs which deal
- * in <code>IPath</code> objects.
+ * listeners.
  * <p>
  * Clients may implement this interface.
  * </p>
@@ -44,8 +42,8 @@ public interface IEclipsePreferences extends Preferences {
 		/**
 		 * Constructor for a new node change event object.
 		 * 
-		 * @param parent
-		 * @param child
+		 * @param parent the parent node
+		 * @param child the child node
 		 */
 		public NodeChangeEvent(Preferences parent, Preferences child) {
 			super(parent);
@@ -252,50 +250,19 @@ public interface IEclipsePreferences extends Preferences {
 	public void removePreferenceChangeListener(IPreferenceChangeListener listener);
 
 	/**
-	 * Return the preferences node with the given path. The given path must
-	 * not be <code>null</code>.
-	 * <p>
-	 * Functionally equivalent to calling "<code>return node(path.toString());</code>". 
-	 * See the spec of <code>Preferences#node(String)<code> for more details. 
-	 * </p><p>
-	 * Note that if the node does not yet exist and is created, then the appropriate
-	 * <code>INodeChangeEvent</code> must be sent to listeners who are
-	 * registered at this node.
-	 * </p>
-	 * @param path the path of the node
-	 * @return the node
-	 * @see org.osgi.service.prefs.Preferences#node(String)
-	 */
-	public IEclipsePreferences node(IPath path);
-
-	/**
-	 * Return the boolean value <code>true</code> if a node with the
-	 * given path exists in the preference node hierarchy. The given path
-	 * must not be <code>null</code>.
-	 * <p>
-	 * Functionally equivalent to calling "<code>return nodeExists(path.toString());</code>". 
-	 * See the spec of <code>Preferences#node(String)</code> for more details. 
-	 * </p>
-	 * @param path the path to the node
-	 * @return <code>true</code> if the node exists and <code>false</code> otherwise
-	 * @throws BackingStoreException if this method fails
-	 * @see org.osgi.service.prefs.Preferences#nodeExists(String)
-	 */
-	public boolean nodeExists(IPath path) throws BackingStoreException;
-
-	/**
 	 * Remove this node from the preference hierarchy. If this node is the scope
 	 * root, then do not remove this node, only remove this node's children.
 	 * <p>
-	 * Functionally equivalent to calling "<code>removeNode();</code>". 
-	 * See the spec of <code>Preferences#removeNode()<code> for more details. 
+	 * Functionally equivalent to calling "{@link Preferences#removeNode()};". 
+	 * See the spec of {@link Preferences#removeNode()} for more details. 
 	 * </p>
 	 * <p>
-	 * Implementors must send the appropriate <code>INodeChangeEvent</code>
+	 * Implementors must send the appropriate {@link NodeChangeEvent}
 	 * to listeners who are registered on this node's parent.
 	 * </p>
 	 * @throws BackingStoreException if there was a problem removing this node
 	 * @see org.osgi.service.prefs.Preferences#removeNode()
+	 * @see NodeChangeEvent
 	 */
 	public void removeNode() throws BackingStoreException;
 
@@ -303,17 +270,17 @@ public interface IEclipsePreferences extends Preferences {
 	 * Return the preferences node with the given path. The given path must
 	 * not be <code>null</code>.
 	 * <p>
-	 * Functionally equivalent to calling "<code>return node(path.toString());</code>". 
-	 * See the spec of <code>Preferences#node(String)<code> for more details. 
+	 * See the spec of {@link Preferences#node(String)} for more details. 
 	 * </p>
 	 * <p>
 	 * Note that if the node does not yet exist and is created, then the appropriate
-	 * <code>INodeChangeEvent</code> must be sent to listeners who are
+	 * {@link NodeChangeEvent} must be sent to listeners who are
 	 * registered at this node.
 	 * </p>
 	 * @param path the path of the node
 	 * @return the node
 	 * @see org.osgi.service.prefs.Preferences#node(String)
+	 * @see NodeChangeEvent
 	 */
 	public Preferences node(String path);
 

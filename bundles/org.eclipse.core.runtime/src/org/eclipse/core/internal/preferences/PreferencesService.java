@@ -223,7 +223,7 @@ public class PreferencesService implements IPreferencesService, IRegistryChangeL
 				current.setExportRoot();
 			} else {
 				IPath path = new Path(pathString);
-				IExportedPreferences current = (IExportedPreferences) result.node(path.removeLastSegments(1));
+				IExportedPreferences current = (IExportedPreferences) result.node(path.removeLastSegments(1).toString());
 				String key = path.lastSegment();
 				String value = properties.getProperty(pathString);
 				current.put(key, value);

@@ -138,7 +138,7 @@ public class DefaultPreferences extends EclipsePreferences {
 				value = translatePreference(value, translations);
 				if (InternalPlatform.DEBUG_PREFERENCES)
 					Policy.debug("Setting default preference: " + (new Path(absolutePath()).append(childPath).append(key)) + '=' + value); //$NON-NLS-1$
-				((EclipsePreferences) internalNode(childPath, false, null)).internalPut(key, value);
+				((EclipsePreferences) internalNode(childPath.toString(), false, null)).internalPut(key, value);
 			}
 		}
 	}
@@ -158,7 +158,7 @@ public class DefaultPreferences extends EclipsePreferences {
 	}
 
 	public IEclipsePreferences node(String childName, Plugin context) {
-		return internalNode(new Path(childName), true, context);
+		return internalNode(childName, true, context);
 	}
 
 	/*

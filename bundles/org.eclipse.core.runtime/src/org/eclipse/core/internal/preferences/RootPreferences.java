@@ -13,6 +13,7 @@ package org.eclipse.core.internal.preferences;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.osgi.service.prefs.BackingStoreException;
+import org.osgi.service.prefs.Preferences;
 
 /**
  * @since 3.0
@@ -78,18 +79,20 @@ public class RootPreferences extends EclipsePreferences {
 	}
 
 	/*
-	 * @see IEclipsePreferences#node(IPath)
+	 * @see Preferences#node(String)
 	 */
-	public IEclipsePreferences node(IPath path) {
-		if (path.segmentCount() == 0)
+	public Preferences node(String path) {
+		if (path.length() == 0 || (path.length() == 1 && path.charAt(0) == IPath.SEPARATOR))
 			return this;
-		String scope = path.segment(0);
+		int startIndex = path.charAt(0) == IPath.SEPARATOR ? 1 : 0;
+		int endIndex = path.indexOf(IPath.SEPARATOR, startIndex + 1);
+		String scope = path.substring(startIndex, endIndex == -1 ? path.length() : endIndex);
 		IEclipsePreferences child = getChild(scope, null);
 		if (child == null) {
 			child = new EclipsePreferences(this, scope);
 			addChild(scope, child);
 		}
-		return child.node(path.removeFirstSegments(1));
+		return child.node(endIndex == -1 ? "" : path.substring(endIndex + 1)); //$NON-NLS-1$
 	}
 
 	/*

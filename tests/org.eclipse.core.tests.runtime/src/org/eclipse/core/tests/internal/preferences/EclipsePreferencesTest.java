@@ -17,6 +17,7 @@ import junit.framework.TestSuite;
 import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.core.tests.runtime.RuntimeTest;
@@ -94,7 +95,7 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		// all test methods are named "test..."
 		return new TestSuite(EclipsePreferencesTest.class);
 		//				TestSuite suite = new TestSuite();
-		//				suite.addTest(new EclipsePreferencesTest("testBytes"));
+		//				suite.addTest(new EclipsePreferencesTest("test_55410"));
 		//				return suite;
 	}
 
@@ -999,21 +1000,7 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		newFile = newFile.append(EclipsePreferences.DEFAULT_PREFERENCES_DIRNAME).append(pluginID).addFileExtension(EclipsePreferences.PREFS_FILE_EXTENSION);
 		assertTrue("4.0", newFile.toFile().exists());
 		// then check to see if the value is in the file
-		Properties newProperties = new Properties();
-		InputStream input = null;
-		try {
-			input = new BufferedInputStream(new FileInputStream(newFile.toFile()));
-			newProperties.load(input);
-		} catch (IOException e) {
-			fail("4.1", e);
-		} finally {
-			if (input != null)
-				try {
-					input.close();
-				} catch (IOException e) {
-					// ignore
-				}
-		}
+		Properties newProperties = loadProperties(newFile);
 		actual = newProperties.getProperty(key);
 		assertEquals("4.2", value, actual);
 	}
@@ -1031,7 +1018,7 @@ public class EclipsePreferencesTest extends RuntimeTest {
 	 * 
 	 * Changed the makeDirty call to mark all parent nodes as dirty.
 	 */
-	public void test60590() {
+	public void test_60590() {
 		IEclipsePreferences root = Platform.getPreferencesService().getRootNode();
 		String one = getUniqueString();
 		String two = getUniqueString();
@@ -1056,5 +1043,75 @@ public class EclipsePreferencesTest extends RuntimeTest {
 			current = current.parent();
 		}
 		assertTrue("2.0." + count, count == 4);
+	}
+
+	/*
+	 * Bug 55410 - [runtime] prefs: keys and valid chars
+	 */
+	public void test_55410() {
+		String[] keys = new String[] {"my/key", "my:key", "my/long:key"};
+		String[] paths = new String[] {"my/path", "my:path"};
+		Preferences node = Platform.getPreferencesService().getRootNode().node(TestScope.SCOPE).node(getUniqueString());
+
+		// test keys
+		for (int i = 0; i < keys.length; i++) {
+			String key = keys[i];
+			String value = getUniqueString();
+			node.put(key, value);
+			assertEquals("1.0." + key, value, node.get(key, null));
+		}
+
+		// test paths
+		String root = node.absolutePath();
+		for (int i = 0; i < paths.length; i++) {
+			String path = paths[i];
+			String expected = root + IPath.SEPARATOR + path;
+			String actual = node.node(path).absolutePath();
+			assertEquals("2.0." + path, expected, actual);
+		}
+	}
+
+	public void testPersistence() {
+		//TODO
+		if (true)
+			return;
+		Preferences node = new InstanceScope().getNode(ResourcesPlugin.PI_RESOURCES);
+		String[] keys = new String[] {};
+		String[] values = new String[] {};
+		for (int i = 0; i < keys.length; i++) {
+			String key = keys[i];
+			String value = values[i];
+			node.put(key, value);
+		}
+		try {
+			node.flush();
+		} catch (BackingStoreException e) {
+			fail("0.0", e);
+		}
+
+		// verify what the preferences look like in the file
+		IPath location = null;
+		Properties properties = loadProperties(location);
+	}
+
+	private Properties loadProperties(IPath location) {
+		Properties result = new Properties();
+		if (!location.toFile().exists())
+			return result;
+		InputStream input = null;
+		try {
+			input = new FileInputStream(location.toFile());
+			result.load(input);
+		} catch (IOException e) {
+			fail("loadProperties", e);
+		} finally {
+			if (input != null)
+				try {
+					input.close();
+				} catch (IOException e) {
+					// ignore
+				}
+		}
+		return result;
 	}
 }

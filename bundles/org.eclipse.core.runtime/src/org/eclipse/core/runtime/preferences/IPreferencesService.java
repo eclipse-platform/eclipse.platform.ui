@@ -54,10 +54,10 @@ public interface IPreferencesService {
 	 * Use the canonical scope lookup order for finding the preference value. 
 	 * <p>
 	 * The semantics of this method are to calculate the appropriate 
-	 * <code>Preference</code> nodes in the preference hierarchy to use
-	 * and then call the <code>get(String, String, Preferences[])</code> 
+	 * {@link Preferences} nodes in the preference hierarchy to use
+	 * and then call the {@link #get(String, String, Preferences[])} 
 	 * method. The order of the nodes is calculated by consulting the default 
-	 * scope lookup order as set by <code>setDefaultLookupOrder(String, String)</code>.
+	 * scope lookup order as set by {@link #setDefaultLookupOrder(String, String, String[])}.
 	 * </p><p>
 	 * Callers may specify an array of scope context objects to aid in the 
 	 * determination of the correct nodes. For each entry in the lookup 

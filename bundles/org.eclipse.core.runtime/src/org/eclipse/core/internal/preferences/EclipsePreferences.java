@@ -42,6 +42,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	private static final String TRUE = "true"; //$NON-NLS-1$
 	protected static final String VERSION_KEY = "eclipse.preferences.version"; //$NON-NLS-1$
 	protected static final String VERSION_VALUE = "1"; //$NON-NLS-1$
+	protected static final String PATH_SEPARATOR = Character.toString(IPath.SEPARATOR);
 
 	private String cachedPath;
 	protected Map children;
@@ -68,8 +69,19 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * @see org.osgi.service.prefs.Preferences#absolutePath()
 	 */
 	public String absolutePath() {
-		if (cachedPath == null)
-			cachedPath = parent == null ? Path.ROOT.toString() : new Path(parent.absolutePath()).append(name()).toString();
+		if (cachedPath == null) {
+			if (parent == null)
+				cachedPath = PATH_SEPARATOR;
+			else {
+				String parentPath = parent.absolutePath();
+				// if the parent is the root then we don't have to add a separator
+				// between the parent path and our path
+				if (parentPath.length() == 1)
+					cachedPath = parentPath + name();
+				else
+					cachedPath = parentPath + PATH_SEPARATOR + name();
+			}
+		}
 		return cachedPath;
 	}
 
@@ -187,29 +199,35 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		return root == null ? null : root.append(DEFAULT_PREFERENCES_DIRNAME).append(qualifier).addFileExtension(PREFS_FILE_EXTENSION);
 	}
 
+	/*
+	 * Version 1 (current version)
+	 * path/key=value
+	 */
 	protected void convertFromProperties(Properties table) {
-		if (!VERSION_VALUE.equals(table.get(VERSION_KEY))) {
-			legacyConvertFromProperties(table);
-			return;
+		String version = table.getProperty(VERSION_KEY);
+		if (version == null || !VERSION_VALUE.equals(version)) {
+			// ignore for now
 		}
 		table.remove(VERSION_KEY);
 		for (Iterator i = table.keySet().iterator(); i.hasNext();) {
 			String key = (String) i.next();
 			String value = table.getProperty(key);
 			if (value != null) {
-				IPath childPath = new Path(key);
-				if (!childPath.isAbsolute() && childPath.segmentCount() > 0) {
-					key = childPath.lastSegment();
-					IPath child = childPath.removeLastSegments(1);
+				boolean isAbsolute = key.length() > 0 && key.charAt(0) == IPath.SEPARATOR;
+				if (!isAbsolute) {
+					int index = key.lastIndexOf(IPath.SEPARATOR);
+					String preferenceKey = index == -1 ? key : key.substring(index + 1);
+					String child = index == -1 ? "" : key.substring(0, index); //$NON-NLS-1$
 					//use internal methods to avoid notifying listeners
 					EclipsePreferences childNode = (EclipsePreferences) internalNode(child, false, null);
 					if (InternalPlatform.DEBUG_PREFERENCES)
-						Policy.debug("Setting preference: " + childNode.absolutePath() + '/' + key + '=' + value); //$NON-NLS-1$
-					childNode.internalPut(key, value);
-					childNode.makeDirty();
+						Policy.debug("Setting preference: " + childNode.absolutePath() + '/' + preferenceKey + '=' + value); //$NON-NLS-1$
+					String oldValue = childNode.internalPut(preferenceKey, value);
+					if (!value.equals(oldValue))
+						childNode.makeDirty();
 				} else {
 					if (InternalPlatform.DEBUG_PREFERENCES)
-						Policy.debug("Ignoring value: " + value + " for key: " + childPath + " for node: " + absolutePath()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						Policy.debug("Ignoring value: " + value + " for key: " + key + " for node: " + absolutePath()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				}
 			}
 		}
@@ -219,16 +237,19 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * Helper method to convert this node to a Properties file suitable
 	 * for persistence.
 	 */
-	protected Properties convertToProperties(Properties result, IPath prefix) throws BackingStoreException {
+	protected Properties convertToProperties(Properties result, String prefix) throws BackingStoreException {
 		// add the key/value pairs from this node
 		Properties temp = properties;
+		boolean addSeparator = prefix.length() != 0;
 		if (temp != null) {
 			synchronized (temp) {
 				String[] keys = (String[]) temp.keySet().toArray(EMPTY_STRING_ARRAY);
 				for (int i = 0; i < keys.length; i++) {
 					String value = temp.getProperty(keys[i], null);
-					if (value != null)
-						result.put(prefix.append(keys[i]).toString(), value);
+					if (value != null) {
+						String fullPath = addSeparator ? prefix + PATH_SEPARATOR + keys[i] : keys[i];
+						result.put(fullPath, value);
+					}
 				}
 			}
 		}
@@ -236,7 +257,8 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		IEclipsePreferences[] childNodes = getChildren();
 		for (int i = 0; i < childNodes.length; i++) {
 			EclipsePreferences child = (EclipsePreferences) childNodes[i];
-			child.convertToProperties(result, prefix.append(child.name()));
+			String fullPath = addSeparator ? prefix + PATH_SEPARATOR + child.name() : child.name();
+			child.convertToProperties(result, fullPath);
 		}
 		return result;
 	}
@@ -473,24 +495,25 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	}
 
 	/**
-	 * Implements the node(IPath) method, and optionally notifies listeners.
+	 * Implements the node(String) method, and optionally notifies listeners.
 	 */
-	protected IEclipsePreferences internalNode(IPath path, boolean notify, Plugin context) {
-		// use the root relative to this node instead of the global root
-		// in case we have a different hierarchy. (e.g. export)
-		if (path.isAbsolute())
-			return calculateRoot().node(path.makeRelative());
-
-		// TODO: handle relative paths correctly (.. refs)
+	protected IEclipsePreferences internalNode(String path, boolean notify, Plugin context) {
 
 		// illegal state if this node has been removed
 		checkRemoved();
 
 		// short circuit this node
-		if (path.isEmpty())
+		if (path.length() == 0)
 			return this;
 
-		String key = path.segment(0);
+		// if we have an absolute path use the root relative to 
+		// this node instead of the global root
+		// in case we have a different hierarchy. (e.g. export)
+		if (path.charAt(0) == IPath.SEPARATOR)
+			return (IEclipsePreferences) calculateRoot().node(path.substring(1));
+
+		int index = path.indexOf(IPath.SEPARATOR);
+		String key = index == -1 ? path : path.substring(0, index);
 		boolean added = false;
 		IEclipsePreferences child;
 		synchronized (this) {
@@ -503,7 +526,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		// notify listeners if a child was added
 		if (added && notify)
 			nodeAdded(child);
-		return child.node(path.removeFirstSegments(1));
+		return (IEclipsePreferences) child.node(index == -1 ? "" : path.substring(index + 1)); //$NON-NLS-1$
 	}
 
 	/**
@@ -556,34 +579,6 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		if (temp == null || temp.size() == 0)
 			return EMPTY_STRING_ARRAY;
 		return (String[]) temp.keySet().toArray(EMPTY_STRING_ARRAY);
-	}
-
-	private void legacyConvertFromProperties(Properties table) {
-		IPath fullPath = new Path(absolutePath());
-		for (Iterator i = table.keySet().iterator(); i.hasNext();) {
-			String key = (String) i.next();
-			String value = table.getProperty(key);
-			if (value != null) {
-				IPath childPath = new Path(key);
-				if (childPath.segmentCount() > 0) {
-					key = childPath.lastSegment();
-					IPath child = childPath.removeLastSegments(1);
-					// calculate the node relative to this node
-					if (fullPath.isPrefixOf(childPath)) {
-						child = child.removeFirstSegments(fullPath.segmentCount());
-						//use internal methods to avoid notifying listeners
-						EclipsePreferences childNode = (EclipsePreferences) internalNode(child, false, null);
-						if (InternalPlatform.DEBUG_PREFERENCES)
-							Policy.debug("Setting preference: " + childNode.absolutePath() + '/' + key + '=' + value); //$NON-NLS-1$
-						childNode.internalPut(key, value);
-						childNode.makeDirty();
-					} else {
-						if (InternalPlatform.DEBUG_PREFERENCES)
-							Policy.debug("Ignoring value: " + value + " for key: " + childPath + " for node: " + fullPath); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					}
-				}
-			}
-		}
 	}
 
 	protected void load() throws BackingStoreException {
@@ -651,17 +646,10 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	}
 
 	/*
-	 * @see org.eclipse.core.runtime.IEclipsePreferences#node(org.eclipse.core.runtime.IPath)
-	 */
-	public IEclipsePreferences node(IPath path) {
-		return internalNode(path, true, null);
-	}
-
-	/*
 	 * @see org.osgi.service.prefs.Preferences#node(java.lang.String)
 	 */
 	public Preferences node(String pathName) {
-		return internalNode(new Path(pathName), true, null);
+		return internalNode(pathName, true, null);
 	}
 
 	protected void nodeAdded(IEclipsePreferences child) {
@@ -685,32 +673,28 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	}
 
 	/*
-	 * @see org.eclipse.core.runtime.IEclipsePreferences#nodeExists(org.eclipse.core.runtime.IPath)
-	 */
-	public boolean nodeExists(IPath path) throws BackingStoreException {
-		// use the root relative to this node instead of the global root
-		// in case we have a different hierarchy. (e.g. export)
-		if (path.isAbsolute())
-			return calculateRoot().nodeExists(path.makeRelative());
-
-		// TODO: handle relative paths correctly (.. refs)
-
-		// short circuit for checking this node
-		if (path.isEmpty())
-			return !removed;
-		// illegal state if this node has been removed
-		checkRemoved();
-		IEclipsePreferences child = getChild(path.segment(0), null);
-		if (child == null)
-			return false;
-		return child.nodeExists(path.removeFirstSegments(1));
-	}
-
-	/*
 	 * @see org.osgi.service.prefs.Preferences#nodeExists(java.lang.String)
 	 */
-	public boolean nodeExists(String pathName) throws BackingStoreException {
-		return nodeExists(new Path(pathName));
+	public boolean nodeExists(String path) throws BackingStoreException {
+		// short circuit for checking this node
+		if (path.length() == 0)
+			return !removed;
+
+		// illegal state if this node has been removed.
+		// do this AFTER checking for the empty string.
+		checkRemoved();
+
+		// use the root relative to this node instead of the global root
+		// in case we have a different hierarchy. (e.g. export)
+		if (path.charAt(0) == IPath.SEPARATOR)
+			return calculateRoot().nodeExists(path.substring(1));
+
+		int index = path.indexOf(IPath.SEPARATOR);
+		String childName = index == -1 ? path : path.substring(0, index);
+		IEclipsePreferences child = getChild(childName, null);
+		if (child == null)
+			return false;
+		return child.nodeExists(index == -1 ? "" : path.substring(index + 1)); //$NON-NLS-1$
 	}
 
 	protected void nodeRemoved(IEclipsePreferences child) {
@@ -1047,7 +1031,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		}
 		if (InternalPlatform.DEBUG_PREFERENCES)
 			Policy.debug("Saving preferences to file: " + location); //$NON-NLS-1$
-		Properties table = convertToProperties(new Properties(), Path.EMPTY);
+		Properties table = convertToProperties(new Properties(), ""); //$NON-NLS-1$
 		if (table.isEmpty()) {
 			// nothing to save. delete existing file if one exists.
 			if (location.toFile().exists() && !location.toFile().delete()) {
@@ -1109,7 +1093,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 				String[] keys = node.keys();
 				for (int i = 0; i < keys.length; i++) {
 					buffer.append(node.absolutePath());
-					buffer.append(IPath.SEPARATOR);
+					buffer.append(PATH_SEPARATOR);
 					buffer.append(keys[i]);
 					buffer.append('=');
 					buffer.append(node.get(keys[i], "*default*")); //$NON-NLS-1$
