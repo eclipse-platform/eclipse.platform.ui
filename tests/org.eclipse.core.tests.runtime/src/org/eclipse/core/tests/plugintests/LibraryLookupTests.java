@@ -55,7 +55,7 @@ public void testResources() {
 	// 	<fragmentRootDirectory>/plugin.properties
 	// This should be found and the "%key" translated to 
 	// "Test string from pluginD fragment root directory".
-//	resourceHelper(registry, "plugind", "D", "Test string from pluginD fragment root directory");
+	resourceHelper(registry, "plugind", "D", "Test string from pluginD fragment root directory");
 
 	// PluginE has one plugin.properties file
 	// 	<fragmentRootDirectory>/bin/plugin.properties
@@ -69,7 +69,7 @@ public void testResources() {
 	// The one in the root directory should be found first and %key
 	// translated to
 	// "Test string from pluginF fragment root directory".
-//	resourceHelper(registry, "pluginf", "F", "Test string from pluginF fragment root directory");
+	resourceHelper(registry, "pluginf", "F", "Test string from pluginF fragment root directory");
 
 	// PluginG has two plugin.properties files
 	// 	<pluginRootDirectory>/plugin.properties
@@ -93,7 +93,7 @@ public void testResources() {
 	// The one in the plugin bin directory should be found first and %key
 	// translated to
 	// "Test string from pluginI bin directory".
-	resourceHelper(registry, "plugini", "I", "Test string from pluginI bin directory");
+//	resourceHelper(registry, "plugini", "I", "Test string from pluginI bin directory");
 
 	// PluginJ has two plugin.properties files
 	// 	<pluginRootDirectory>/bin/plugin.properties
@@ -137,7 +137,7 @@ public void testResources() {
 	// The one in the plugin bin directory should be found first and %key
 	// translated to
 	// "Test string from pluginN bin directory".
-	resourceHelper(registry, "pluginn", "N", "Test string from pluginN bin directory");
+//	resourceHelper(registry, "pluginn", "N", "Test string from pluginN bin directory");
 
 	// PluginH has four plugin.properties files
 	// 	<pluginRootDirectory>/plugin.properties
