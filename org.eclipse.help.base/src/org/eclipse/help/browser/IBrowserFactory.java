@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.help.browser;
 /**
- * Implementators of org.eclipse.help.browser
+ * Implementators of <code>org.eclipse.help.base.browser</code>
  * extension points must provide implementation of this
  * interface.
  * @since 2.1

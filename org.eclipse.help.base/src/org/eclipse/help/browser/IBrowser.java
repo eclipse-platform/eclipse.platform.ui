@@ -45,7 +45,7 @@ public interface IBrowser {
 	 */
 	public boolean isSetSizeSupported();
 	/**
-	 * Causes browser to be moved to the specified
+	 * Causes the browser to be moved to the specified
 	 * location.  If the actual browser is not visible,
 	 * the next time it becomes visible, it will be shown
 	 * at the give location
@@ -56,7 +56,7 @@ public interface IBrowser {
 	 */
 	public void setLocation(int x, int y);
 	/**
-	 * Causes browser to be resized to the specified
+	 * Causes the browser to be resized to the specified
 	 * size.  If the actual browser is not visible,
 	 * the next time it becomes visible, it will be shown
 	 * with the give size.

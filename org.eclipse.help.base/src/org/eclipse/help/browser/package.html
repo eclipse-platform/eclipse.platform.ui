@@ -7,14 +7,15 @@
    <title>Package-level Javadoc</title>
 </head>
 <body>
-Provides interfaces that need to be implemented by
-web browser adapters.
+Provides interfaces that need to be implemented by web browser adapters.
+
 <h2>
 Package Specification</h2>
-Help System, requires web browser to display help document.&nbsp; Since
+Base Help System, requires web browser to display help document.&nbsp; Since
 availability of web browsers differ from system to system, it is possible
-to configure browser adapters in addition to ones provided by Help System.&nbsp; The browser (or browser adapter) can be configured by
-providing extension for <tt>org.eclipse.help.browser</tt> extension point.&nbsp;
+to configure browser adapters in addition to ones provided with the base.&nbsp;
+The browser (or browser adapter) can be configured by
+providing extension for <tt>org.eclipse.help.base.browser</tt> extension point.&nbsp;
 If more than one browser is available on a user system, the default browser
 can be designated in Help preference page.
 <p>In general terms, implementing a web browser involves:
@@ -28,7 +29,7 @@ Providing a factory for managing of browsers on a particular system, by
 implementing <tt>IBrowserFactory</tt> interface.</li>
 
 <li>
-Declaring an extension of the <tt>org.eclipse.help.browser</tt> extension
+Declaring an extension of the <tt>org.eclipse.help.base.browser</tt> extension
 point that mentions the name of that factory class.</li>
 </ul>
 Note that browser factory will be created on every system.&nbsp; If the
