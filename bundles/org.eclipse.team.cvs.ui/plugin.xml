@@ -366,18 +366,21 @@
 				helpContextId="org.eclipse.team.cvs.ui.tag_configuration_overview"				
 				class="org.eclipse.team.internal.ccvs.ui.actions.ConfigureTagsFromRepoView"/>        
       </objectContribution>
+
       <objectContribution
             objectClass="org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation"
             id="org.eclipse.team.ccvs.ui.RemoteRootContributions">
          <action
                label="%CopyRepositoryNameAction.label"
                tooltip="%CopyRepositoryNameAction.tooltip"
+               menubarPath="miscGroup"
                class="org.eclipse.team.internal.ccvs.ui.actions.CopyRepositoryNameAction"
                id="org.eclipse.team.ccvs.ui.copyNames">
          </action>
          <action
                label="%RemoveRootAction.label"
                tooltip="%RemoveRootAction.tooltip"
+               menubarPath="miscGroup"
                class="org.eclipse.team.internal.ccvs.ui.actions.RemoveRootAction"
                id="org.eclipse.team.ccvs.ui.removeRoot">
          </action>
@@ -385,6 +388,7 @@
                label="%DefineBranchAction.label"
                icon="icons/full/clcl16/newstream_wiz.gif"
                tooltip="%DefineBranchAction.tooltip"
+               menubarPath="tagGroup"
                class="org.eclipse.team.internal.ccvs.ui.actions.DefineBranchAction"
                id="org.eclipse.team.ccvs.ui.defineBranch">
          </action>
@@ -392,6 +396,7 @@
 				id="org.eclipse.team.ccvs.ui.configureTagsOnBranchCategory"
 				label="%ConfigureTags.label"
 				tooltip="%ConfigureTags.label"
+                menubarPath="tagGroup"
 				icon="icons/full/clcl16/newstream_wiz.gif"
 				helpContextId="org.eclipse.team.cvs.ui.tag_configuration_overview"				
 				class="org.eclipse.team.internal.ccvs.ui.actions.ConfigureTagsFromRepoView"/>        
