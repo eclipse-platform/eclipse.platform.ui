@@ -411,6 +411,7 @@ public class DetailsForm extends PropertyWebForm {
 				}
 			}
 		} catch (CoreException e) {
+			UpdateUIPlugin.logException(e);
 		}
 		return (IFeature[]) features.toArray(new IFeature[features.size()]);
 	}
