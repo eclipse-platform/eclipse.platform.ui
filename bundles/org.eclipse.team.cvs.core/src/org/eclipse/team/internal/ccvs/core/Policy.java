@@ -23,6 +23,7 @@ public class Policy {
 	public static boolean DEBUG_METAFILE_CHANGES = false;
 	public static boolean DEBUG_CVS_PROTOCOL = false;
 	public static boolean DEBUG_STREAMS = false;
+	public static boolean DEBUG_THREADING = false;
 
 	static {
 		//init debug options
@@ -30,6 +31,7 @@ public class Policy {
 			DEBUG_METAFILE_CHANGES = "true".equalsIgnoreCase(Platform.getDebugOption(CVSProviderPlugin.ID + "/metafiles"));//$NON-NLS-1$ //$NON-NLS-2$
 			DEBUG_CVS_PROTOCOL = "true".equalsIgnoreCase(Platform.getDebugOption(CVSProviderPlugin.ID + "/cvsprotocol"));//$NON-NLS-1$ //$NON-NLS-2$
 			DEBUG_STREAMS = "true".equalsIgnoreCase(Platform.getDebugOption(CVSProviderPlugin.ID + "/streams"));//$NON-NLS-1$ //$NON-NLS-2$
+			DEBUG_THREADING = "true".equalsIgnoreCase(Platform.getDebugOption(CVSProviderPlugin.ID + "/threading"));//$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 

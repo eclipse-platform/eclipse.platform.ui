@@ -29,6 +29,7 @@ import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ReentrantLock;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
@@ -56,7 +57,8 @@ public class EclipseSynchronizer {
 	private static EclipseSynchronizer instance;
 	
 	// track resources that have changed in a given operation
-	private int nestingCount = 0;
+	private ReentrantLock lock = new ReentrantLock();
+	
 	private Set changedResources = new HashSet();
 	private Set changedFolders = new HashSet();
 	
@@ -225,7 +227,12 @@ public class EclipseSynchronizer {
 	 */
 	public String[] getIgnored(IContainer folder) throws CVSException {
 		if (folder.getType() == IResource.ROOT || ! folder.exists()) return NULL_IGNORES;
-		return cacheFolderIgnores(folder);
+		try {
+			beginOperation(null);
+			return cacheFolderIgnores(folder);
+		} finally {
+			endOperation(null);
+		}
 	}
 	
 	/**
@@ -239,21 +246,26 @@ public class EclipseSynchronizer {
 			throw new CVSException(IStatus.ERROR, CVSException.UNABLE,
 				Policy.bind("EclipseSynchronizer.ErrorSettingIgnorePattern", folder.getFullPath().toString())); //$NON-NLS-1$
 		}
-		String[] ignores = cacheFolderIgnores(folder);
-		if (ignores != null) {
-			String[] oldIgnores = ignores;
-			ignores = new String[oldIgnores.length + 1];
-			System.arraycopy(oldIgnores, 0, ignores, 0, oldIgnores.length);
-			ignores[oldIgnores.length] = pattern;
-		} else {
-			ignores = new String[] { pattern };
+		try {
+			beginOperation(null);
+			String[] ignores = cacheFolderIgnores(folder);
+			if (ignores != null) {
+				String[] oldIgnores = ignores;
+				ignores = new String[oldIgnores.length + 1];
+				System.arraycopy(oldIgnores, 0, ignores, 0, oldIgnores.length);
+				ignores[oldIgnores.length] = pattern;
+			} else {
+				ignores = new String[] { pattern };
+			}
+			setCachedFolderIgnores(folder, ignores);
+			SyncFileWriter.addCVSIgnoreEntries(folder, ignores);
+			// broadcast changes to unmanaged children - they are the only candidates for being ignored
+			List possibleIgnores = new ArrayList();
+			accumulateNonManagedChildren(folder, possibleIgnores);
+			CVSProviderPlugin.broadcastResourceStateChanges((IResource[])possibleIgnores.toArray(new IResource[possibleIgnores.size()]));
+		} finally {
+			endOperation(null);
 		}
-		setCachedFolderIgnores(folder, ignores);
-		SyncFileWriter.addCVSIgnoreEntries(folder, ignores);
-		// broadcast changes to unmanaged children - they are the only candidates for being ignored
-		List possibleIgnores = new ArrayList();
-		accumulateNonManagedChildren(folder, possibleIgnores);
-		CVSProviderPlugin.broadcastResourceStateChanges((IResource[])possibleIgnores.toArray(new IResource[possibleIgnores.size()]));
 	}
 	
 	/**
@@ -265,7 +277,8 @@ public class EclipseSynchronizer {
 	 */
 	public IResource[] members(IContainer folder) throws CVSException {
 		if (! folder.exists()) return new IResource[0];
-		try {
+		try {				
+			beginOperation(null);
 			if (folder.getType() == IResource.ROOT) return folder.members();
 			cacheResourceSyncForChildren(folder);
 			Collection infos = getCachedResourceSyncForChildren(folder);
@@ -284,6 +297,8 @@ public class EclipseSynchronizer {
 			return (IResource[])childResources.toArray(new IResource[childResources.size()]);
 		} catch (CoreException e) {
 			throw CVSException.wrapException(e);
+		} finally {
+			endOperation(null);
 		}
 	}
 	
@@ -293,8 +308,9 @@ public class EclipseSynchronizer {
 	 * @param monitor the progress monitor, may be null
 	 */
 	public void beginOperation(IProgressMonitor monitor) throws CVSException {
-		nestingCount += 1;
-		if (nestingCount == 1) {
+		lock.acquire();
+
+		if (lock.getNestingCount() == 1) {
 			prepareCache(monitor);
 		}		
 	}
@@ -314,15 +330,14 @@ public class EclipseSynchronizer {
 	public void endOperation(IProgressMonitor monitor) throws CVSException {		
 		try {
 			IStatus status = STATUS_OK;
-			if (nestingCount == 1) {
+			if (lock.getNestingCount() == 1) {
 				status = commitCache(monitor);
 			}
 			if (status != STATUS_OK) {
 				throw new CVSException(status);
 			}
 		} finally {
-			nestingCount -= 1;
-			Assert.isTrue(nestingCount>= 0);
+			lock.release();
 		}
 	}
 	
@@ -345,23 +360,36 @@ public class EclipseSynchronizer {
 	 * @param deep purge sync from child folders
 	 * @param monitor the progress monitor, may be null
 	 */
-	public void flush(IContainer root, boolean purgeCache, boolean deep, IProgressMonitor monitor)
-		throws CVSException {
+	public void flush(IContainer root, boolean purgeCache, boolean deep, IProgressMonitor monitor) throws CVSException {
 		// flush unwritten sync info to disk
-		IStatus status = STATUS_OK;
-		if (nestingCount != 0) status = commitCache(monitor);
-		
-		// purge from memory too if we were asked to
-		if (purgeCache) purgeCache(root, deep);
-
-		// prepare for the operation again if we cut the last one short
-		if (nestingCount != 0) prepareCache(monitor);
-		
-		if (status != STATUS_OK) {
-			throw new CVSException(status);
+		monitor = Policy.monitorFor(monitor);
+		monitor.beginTask(null, 10);
+		try {
+			beginOperation(Policy.subMonitorFor(monitor, 1));
+			
+			IStatus status = commitCache(Policy.subMonitorFor(monitor, 7));
+			
+			// purge from memory too if we were asked to
+			if (purgeCache) purgeCache(root, deep);
+	
+			// prepare for the operation again if we cut the last one short
+			prepareCache(Policy.subMonitorFor(monitor, 1));
+			
+			if (status != STATUS_OK) {
+				throw new CVSException(status);
+			}
+		} finally {
+			endOperation(Policy.subMonitorFor(monitor, 1));
+			monitor.done();
 		}
 	}
 	
+	/**
+	 * Called to notify the synchronizer that meta files have changed on disk, outside 
+	 * of the workbench. The cache will be flushed for this folder and it's immediate
+	 * children and appropriate state change events are broadcasts to state change
+	 * listeners.
+	 */
 	public void syncFilesChanged(IContainer[] roots) throws CVSException {
 		try {
 			for (int i = 0; i < roots.length; i++) {
