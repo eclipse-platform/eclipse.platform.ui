@@ -135,6 +135,7 @@ public void pageClosed(IWorkbenchPage page) {
  * this method if action availability has to be recalculated.
  */
 public void pageOpened(IWorkbenchPage page) {
+	// do nothing
 }
 
 /**
@@ -143,6 +144,8 @@ public void pageOpened(IWorkbenchPage page) {
  * deregisters the part and page listener adding by the constructor.
  * Subclasses should extend this method to do additional
  * cleanup.
+ * 
+ * @since 3.0
  */
 public void dispose() {
 	if (workbenchWindow == null) {
