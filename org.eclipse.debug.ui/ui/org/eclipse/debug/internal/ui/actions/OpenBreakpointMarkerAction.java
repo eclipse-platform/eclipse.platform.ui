@@ -32,6 +32,8 @@ import org.eclipse.ui.ide.IDE;
 public class OpenBreakpointMarkerAction extends SelectionProviderAction {
 
 	protected static DelegatingModelPresentation fgPresentation = new DelegatingModelPresentation();
+	private IBreakpoint breakpoint;
+	private IEditorInput input;
 	
 	public OpenBreakpointMarkerAction(ISelectionProvider selectionProvider) {
 		super(selectionProvider, ActionMessages.getString("OpenBreakpointMarkerAction.&Go_to_File_1")); //$NON-NLS-1$
@@ -62,9 +64,7 @@ public class OpenBreakpointMarkerAction extends SelectionProviderAction {
 			setEnabled(false);
 			return;
 		}
-		Iterator itr= selection.iterator();
-		IBreakpoint breakpoint= (IBreakpoint)itr.next();
-		IEditorInput input= fgPresentation.getEditorInput(breakpoint);
+		
 		IEditorPart part= null;
 		if (input != null) {
 			String editorId = fgPresentation.getEditorId(input, breakpoint);
@@ -85,8 +85,17 @@ public class OpenBreakpointMarkerAction extends SelectionProviderAction {
 	 */
 	public void selectionChanged(IStructuredSelection sel) {
 		if (sel.size() == 1) {
-			setEnabled(true);
+			Iterator itr= sel.iterator();
+			breakpoint= (IBreakpoint)itr.next();
+			input= fgPresentation.getEditorInput(breakpoint);
+			if (input != null) {
+				setEnabled(true);
+			} else {
+				setEnabled(false);
+			}
 		} else {
+			breakpoint = null;
+			input = null;
 			setEnabled(false);
 		}
 	}
