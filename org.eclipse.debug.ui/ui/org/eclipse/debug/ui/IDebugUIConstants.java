@@ -175,6 +175,16 @@ public interface IDebugUIConstants {
 	 */
 	public static final String PREF_SINGLE_CLICK_LAUNCHING = PLUGIN_ID + ".single_click_launching"; //$NON-NLS-1$
 	
+	/**
+	 * Boolean preference controlling whether the debugger re-uses non-dirty editors
+	 * that it opens when displaying source. When <code>true</code> the debugger
+	 * re-uses the same editor when showing source for a selected stack frame (unless
+	 * the editor is dirty).
+	 * 
+	 * @since 2.0
+	 */
+	public static final String PREF_REUSE_EDITOR = PLUGIN_ID + ".reuse_editor"; //$NON-NLS-1$	
+		
 	// Debug views
 	
 	/**

@@ -31,6 +31,8 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.SubContributionItem;
 import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -44,9 +46,11 @@ import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
+import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
@@ -56,7 +60,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-public class LaunchView extends AbstractDebugEventHandlerView implements ISelectionChangedListener, IPerspectiveListener, IPageListener {
+public class LaunchView extends AbstractDebugEventHandlerView implements ISelectionChangedListener, IPerspectiveListener, IPageListener, IPropertyChangeListener {
 	
 	/**
 	 * A marker for the source selection and icon for an
@@ -94,11 +98,27 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	private boolean fIsActive = true; 	
 	
 	/**
+	 * Editor to reuse
+	 */
+	private IEditorPart fEditor = null;
+	
+	/**
+	 * The restored editor index of the editor to re-use
+	 */
+	private int fEditorIndex = -1;
+	
+	/**
+	 * Whether to re-use editors
+	 */
+	private boolean fReuseEditor = DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_REUSE_EDITOR);
+	
+	/**
 	 * Creates a launch view and an instruction pointer marker for the view
 	 */
 	public LaunchView() {
 		try {
 			fInstructionPointer = ResourcesPlugin.getWorkspace().getRoot().createMarker(IInternalDebugUIConstants.INSTRUCTION_POINTER);
+			DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 		} catch (CoreException e) {
 			DebugUIPlugin.log(e);
 		}
@@ -205,7 +225,27 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		site.getWorkbenchWindow().addPageListener(this);
 		site.getWorkbenchWindow().addPerspectiveListener(this);
 	}
-	
+
+	/**
+	 * @see IViewPart#init(org.eclipse.ui.IViewSite, org.eclipse.ui.IMemento)
+	 */
+	public void init(IViewSite site, IMemento memento) throws PartInitException {
+		super.init(site, memento);
+		site.getPage().addPartListener(this);
+		site.getWorkbenchWindow().addPageListener(this);
+		site.getWorkbenchWindow().addPerspectiveListener(this);
+		if (fReuseEditor && memento != null) {
+			String index = memento.getString(IDebugUIConstants.PREF_REUSE_EDITOR);
+			if (index != null) {
+				try {
+					fEditorIndex = Integer.parseInt(index);
+				} catch (NumberFormatException e) {
+					DebugUIPlugin.log(e);
+				}
+			}
+		}
+	}
+		
 	/**
 	 * @see AbstractDebugView#configureToolBar(IToolBarManager)
 	 */
@@ -232,6 +272,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		setEditorId(null);
 		setEditorInput(null);
 		setStackFrame(null);
+		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 		super.dispose();
 	}
 	
@@ -271,20 +312,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		boolean expanded= tViewer.getExpandedState(o);
 		tViewer.setExpandedState(o, !expanded);
 	}
-
-	/**
-	 * When the perspective is changed back to a page containing
-	 * a debug view, we must update the actions and source.
-	 * 
-	 * @see IPartListener#partActivated(IWorkbenchPart)
-	 */
-	public void partActivated(IWorkbenchPart part) {
-		super.partActivated(part);
-		if (part == this) {
-			updateObjects();
-			showMarkerForCurrentSelection();
-		}		
-	}	
 		
 	/**
 	 * @see IPerspectiveListener#perspectiveActivated(IWorkbenchPage, IPerspectiveDescriptor)
@@ -318,6 +345,15 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 			setActive(true);
 			updateObjects();
 			showMarkerForCurrentSelection();
+		}
+	}
+	
+	/**
+	 * @see org.eclipse.ui.IPartListener#partClosed(org.eclipse.ui.IWorkbenchPart)
+	 */
+	public void partClosed(IWorkbenchPart part) {
+		if (part.equals(fEditor)) {
+			fEditor = null;
 		}
 	}
 	
@@ -482,24 +518,82 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 			return;
 		}
 		
-		IEditorPart editor = null;
-		try {
-			editor= page.getActiveEditor();
-			if (editor == null || !editor.getEditorInput().equals(input)) {
-				editor = page.openEditor(input, editorId, false);
+		if (fEditorIndex >= 0) {
+			// first restoration of editor re-use
+			IEditorPart[] editors = page.getEditors();
+			if (fEditorIndex < editors.length) {
+				fEditor = editors[fEditorIndex];
 			}
-		} catch (PartInitException e) {
-			DebugUIPlugin.errorDialog(DebugUIPlugin.getDefault().getShell(), 
-				DebugUIViewsMessages.getString("LaunchView.Error_1"),  //$NON-NLS-1$
-				DebugUIViewsMessages.getString("LaunchView.Exception_occurred_opening_editor_for_debugger._2"),  //$NON-NLS-1$
-				e);
-		}		
+			fEditorIndex = -1;
+		}
+		
+
+		//  if there is an editor in the debug page with the newInput
+		//     page bringToTop(editorAlreadyOpened)
+		//  else if editorToBeReused is null or 
+		//    if editorToBeReused is pinned or 
+		//    if editorToBeReused is dirty or 
+		//    if keep editors opened (debug preference)
+		//        editorToBeReused = page openEditor
+		//  else if editorToBeReused is instance of IReusableEditor
+		//        editorToBeReused.setInput(newInput)
+		//  else
+		//        page close editorToBeReused
+		//        editorToBeReused = page openEditor
+        		
+		IEditorPart editor = null;
+		if (fReuseEditor) {
+			IEditorPart[] editors = page.getEditors();
+			editor = page.getActiveEditor();
+			if (editor != null) {
+				if (!editor.getEditorInput().equals(input)) {
+					editor = null;
+				}
+			}
+			if (editor == null) {
+				for (int i = 0; i < editors.length; i++) {
+					if (editors[i].getEditorInput().equals(input)) {
+						editor = editors[i];
+						page.bringToTop(editor);
+						break;
+					}
+				}	
+			}
+			if (editor == null) {
+				if (fEditor == null || fEditor.isDirty() || page.isEditorPinned(fEditor)) {
+					editor = openEditor(page, input, editorId, false);
+					fEditor = editor;
+				} else if (fEditor instanceof IReusableEditor && editorId.equals(fEditor.getSite().getId())) {
+					((IReusableEditor)fEditor).setInput(input);
+					editor = fEditor;
+				} else {
+					page.closeEditor(fEditor, false);
+					editor = openEditor(page, input, editorId, false);
+					fEditor = editor;
+				}
+			}		
+		} else {
+			editor = openEditor(page, input, editorId, false);
+		}
+		
 		
 		if (editor != null && (lineNumber >= 0 || charStart >= 0)) {
 			//have an editor and either a lineNumber or a starting character
 			IMarker marker= getInstructionPointer(lineNumber, charStart, charEnd);
 			editor.gotoMarker(marker);
 		}
+	}
+	
+	protected IEditorPart openEditor(IWorkbenchPage page, IEditorInput input, String id, boolean activate) {
+		try {
+			return page.openEditor(input, id, false);
+		} catch (PartInitException e) {
+			DebugUIPlugin.errorDialog(DebugUIPlugin.getDefault().getShell(), 
+				DebugUIViewsMessages.getString("LaunchView.Error_1"),  //$NON-NLS-1$
+				DebugUIViewsMessages.getString("LaunchView.Exception_occurred_opening_editor_for_debugger._2"),  //$NON-NLS-1$
+				e);
+		}					
+		return null;
 	}
 
 	/**
@@ -726,4 +820,42 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	protected boolean isActive() {
 		return fIsActive && getViewer() != null;
 	}
+	
+	/**
+	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
+	 */
+	public void propertyChange(PropertyChangeEvent event) {
+		if (event.getProperty() == IDebugUIConstants.PREF_REUSE_EDITOR) {
+			fReuseEditor = DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_REUSE_EDITOR);
+		}
+	}
+
+	/**
+	 * @see IViewPart#saveState(IMemento)
+	 */
+	public void saveState(IMemento memento) {
+		super.saveState(memento);
+		if (fReuseEditor && fEditor != null) {
+			IWorkbenchWindow dwindow= getSite().getWorkbenchWindow();
+			if (dwindow == null) {
+				return;
+			}	
+			IWorkbenchPage page= dwindow.getActivePage();
+			if (page == null) {
+				return;
+			}
+			IEditorPart[] parts = page.getEditors();
+			int index = -1;
+			for (int i = 0; i < parts.length; i++) {
+				if (parts[i].equals(fEditor)) {
+					index = i;
+					break;
+				}
+			}
+			if (index >= 0) {	
+				memento.putString(IDebugUIConstants.PREF_REUSE_EDITOR, Integer.toString(index));
+			}
+		}
+	}
+
 }
