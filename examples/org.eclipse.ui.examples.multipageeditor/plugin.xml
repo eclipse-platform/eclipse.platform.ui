@@ -7,7 +7,7 @@
 <plugin
    name = "%Plugin.name"
    id = "org.eclipse.ui.examples.multipageeditor"
-   version = "1.9.0"
+   version = "2.0.0"
    provider-name = "Object Technology International, Inc.">
 
    <requires>

@@ -3,9 +3,9 @@
    id="org.eclipse.ui.win32"
    name="%fragmentName"
    provider-name="Object Technology International, Inc."
-   version="1.9.0"
+   version="2.0.0"
    plugin-id="org.eclipse.ui"
-   plugin-version="1.9.0">
+   plugin-version="2.0.0">
    
   <runtime>
     <library name="workbenchwin32.jar">

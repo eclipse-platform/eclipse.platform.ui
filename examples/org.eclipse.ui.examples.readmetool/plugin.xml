@@ -8,7 +8,7 @@
 <plugin
    name = "%Plugin.name"
    id = "org.eclipse.ui.examples.readmetool"
-   version = "1.9.0"
+   version = "2.0.0"
    provider-name = "Object Technology International, Inc."
    class="org.eclipse.ui.examples.readmetool.ReadmePlugin">
 
