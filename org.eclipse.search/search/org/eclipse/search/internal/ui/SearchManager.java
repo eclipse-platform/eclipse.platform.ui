@@ -11,15 +11,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.viewers.Viewer;
-
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IResource;
@@ -29,9 +20,20 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.viewers.Viewer;
+
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
+import org.eclipse.search.ui.IGroupByKeyComputer;
 import org.eclipse.search.ui.SearchUI;
 
 /**
@@ -163,6 +165,7 @@ public class SearchManager implements IResourceChangeListener {
 		ArrayList emptyEntries= new ArrayList(10);
 		boolean filesChanged= false;
 		boolean filesDeleted= false;
+		IGroupByKeyComputer groupByKeyComputer= getCurrentSearch().getGroupByKeyComputer();
 		while (iter.hasNext()) {
 			monitor.worked(1);
 			SearchResultViewEntry entry= (SearchResultViewEntry)iter.next();
@@ -173,8 +176,6 @@ public class SearchManager implements IResourceChangeListener {
 				filesDeleted= true;
 				continue;
 			}
-			if (!filesChanged && entry.getResource().getModificationStamp() != entry.getModificationStamp())
-				filesChanged= true;
 			while (attrPerMarkerIter.hasNext()) {
 				IMarker newMarker= null;
 				try {
@@ -185,11 +186,20 @@ public class SearchManager implements IResourceChangeListener {
 				}
 				try {
 					newMarker.setAttributes((Map)attrPerMarkerIter.next());
+					if (groupByKeyComputer !=null && groupByKeyComputer.computeGroupByKey(newMarker) == null) {
+						filesDeleted= true;						
+						newMarker.delete();
+						continue;
+					}
 				} catch (CoreException ex) {
 					ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.markerAttributeAccess.title"), SearchMessages.getString("Search.Error.markerAttributeAccess.message")); //$NON-NLS-2$ //$NON-NLS-1$
 				}
 				entry.add(newMarker);
 			}
+			if (entry.getMatchCount() == 0)
+				emptyEntries.add(entry);
+			else if (!filesChanged && entry.getResource().getModificationStamp() != entry.getModificationStamp())
+				filesChanged= true;
 		}
 		getCurrentResults().removeAll(emptyEntries);
 		monitor.worked(10);
