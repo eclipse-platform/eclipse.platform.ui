@@ -436,7 +436,6 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	protected ILaunchConfigurationWorkingCopy createConfigFromContext() {
 		ILaunchConfigurationType configType = determineConfigTypeFromContext();
 		if (configType == null) {
-			clearLaunchConfiguration();
 			return null;
 		}
 		
