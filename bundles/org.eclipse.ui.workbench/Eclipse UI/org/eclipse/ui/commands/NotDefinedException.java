@@ -23,6 +23,7 @@ public final class NotDefinedException extends CommandException {
 
     /**
      * Generated serial version UID for this class.
+     * 
      * @since 3.1
      */
     private static final long serialVersionUID = 3257572788998124596L;
@@ -35,5 +36,19 @@ public final class NotDefinedException extends CommandException {
      */
     public NotDefinedException(String s) {
         super(s);
+    }
+
+    /**
+     * Constructs a legacy <code>NotDefinedException</code> based on the new
+     * <code>NotDefinedException</code>.
+     * 
+     * @param e
+     *            The exception from which this exception should be created;
+     *            must not be <code>null</code>.
+     * @since 3.1
+     */
+    public NotDefinedException(
+            final org.eclipse.commands.misc.NotDefinedException e) {
+        super(e.getMessage(), e);
     }
 }

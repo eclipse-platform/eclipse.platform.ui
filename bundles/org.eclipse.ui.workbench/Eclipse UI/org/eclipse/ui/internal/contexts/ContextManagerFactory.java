@@ -11,6 +11,8 @@
 
 package org.eclipse.ui.internal.contexts;
 
+import org.eclipse.commands.contexts.ContextManager;
+
 /**
  * This class allows clients to broker instances of <code>IContextManager</code>.
  * <p>
@@ -23,14 +25,18 @@ public final class ContextManagerFactory {
 
     /**
      * Creates a new instance of <code>IMutableContextManager</code>.
-     *
+     * 
+     * @param contextManager
+     *            The context manager that this mutable context manager should
+     *            wrapper; must not be <code>null</code>.
      * @return a new instance of <code>IMutableContextManager</code>. Clients
      *         should not make assumptions about the concrete implementation
      *         outside the contract of the interface. Guaranteed not to be
      *         <code>null</code>.
      */
-    public static IMutableContextManager getMutableContextManager() {
-        return new MutableContextManager();
+    public static IMutableContextManager getMutableContextManager(
+            final ContextManager contextManager) {
+        return new MutableContextManager(contextManager);
     }
 
     private ContextManagerFactory() {

@@ -18,6 +18,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.commands.Command;
+import org.eclipse.commands.CommandManager;
+import org.eclipse.commands.contexts.ContextManager;
+import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -96,6 +100,11 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
                 && Policy.DEBUG_HANDLERS_VERBOSE;
         MutableCommandManager.DEBUG_HANDLERS_COMMAND_ID = Policy.DEBUG_HANDLERS_VERBOSE_COMMAND_ID;
         MutableCommandManager.DEBUG_COMMAND_EXECUTION = Policy.DEBUG_KEY_BINDINGS_VERBOSE;
+
+        Command.DEBUG_COMMAND_EXECUTION = Policy.DEBUG_KEY_BINDINGS_VERBOSE;
+        Command.DEBUG_HANDLERS = Policy.DEBUG_HANDLERS
+                && Policy.DEBUG_HANDLERS_VERBOSE;
+        Command.DEBUG_HANDLERS_COMMAND_ID = Policy.DEBUG_HANDLERS_VERBOSE_COMMAND_ID;
     }
 
     /**
@@ -146,7 +155,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
      * the active part is <code>null</code>.
      */
     private String activePartId;
-    
+
     /**
      * The currently active shell. This value is never <code>null</code>.
      */
@@ -261,14 +270,26 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
     /**
      * Constructs a new instance of <code>WorkbenchCommandSupport</code>
      * 
+     * @param bindingManager
+     *            The binding manager providing support for the command manager;
+     *            must not be <code>null</code>.
+     * @param commandManager
+     *            The command manager providing support for this command
+     *            manager; must not be <code>null</code>.
+     * @param contextManager
+     *            The context manager providing support for the command manager
+     *            and binding manager; must not be <code>null</code>.
      * @param workbenchToSupport
      *            The workbench for which the support should be created; must
      *            not be <code>null</code>.
      */
-    public WorkbenchCommandSupport(final Workbench workbenchToSupport) {
+    public WorkbenchCommandSupport(final Workbench workbenchToSupport,
+            final BindingManager bindingManager,
+            final CommandManager commandManager,
+            final ContextManager contextManager) {
         workbench = workbenchToSupport;
-        mutableCommandManager = CommandManagerFactory
-                .getMutableCommandManager();
+        mutableCommandManager = CommandManagerFactory.getMutableCommandManager(
+                bindingManager, commandManager, contextManager);
         KeyFormatterFactory.setDefault(SWTKeySupport
                 .getKeyFormatterForPlatform());
 
@@ -277,20 +298,22 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
                 activationListener);
 
         final List submissions = new ArrayList();
-        final MutableCommandManager commandManager = (MutableCommandManager) mutableCommandManager;
-        final Set handlers = commandManager.getDefinedHandlers();
-        final Iterator handlerItr = handlers.iterator();
+        final MutableCommandManager manager = (MutableCommandManager) mutableCommandManager;
+        final Set handlers = manager.getDefinedHandlers();
+        if (handlers != null) {
+            final Iterator handlerItr = handlers.iterator();
 
-        while (handlerItr.hasNext()) {
-            final HandlerProxy proxy = (HandlerProxy) handlerItr.next();
-            final String commandId = proxy.getCommandId();
-            final HandlerSubmission submission = new HandlerSubmission(null,
-                    null, null, commandId, proxy, Priority.LOW);
-            submissions.add(submission);
-        }
+            while (handlerItr.hasNext()) {
+                final HandlerProxy proxy = (HandlerProxy) handlerItr.next();
+                final String commandId = proxy.getCommandId();
+                final HandlerSubmission submission = new HandlerSubmission(
+                        null, null, null, commandId, proxy, Priority.LOW);
+                submissions.add(submission);
+            }
 
-        if (!submissions.isEmpty()) {
-            addHandlerSubmissions(submissions);
+            if (!submissions.isEmpty()) {
+                addHandlerSubmissions(submissions);
+            }
         }
         // TODO Should these be removed at shutdown? Is life cycle important?
     }
@@ -465,7 +488,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
                 while (submissionItr.hasNext()) {
                     final HandlerSubmission handlerSubmission = (HandlerSubmission) submissionItr
                             .next();
-                    
+
                     // Check if the site matches or is a wildcard.
                     final IWorkbenchSite siteToMatch = handlerSubmission
                             .getActiveWorkbenchPartSite();
@@ -497,8 +520,8 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
                     if (bestHandlerSubmission == null) {
                         bestHandlerSubmission = handlerSubmission;
                     } else {
-                        int compareTo = Util.compareIdentity(
-                                siteToMatch, bestHandlerSubmission
+                        int compareTo = Util.compareIdentity(siteToMatch,
+                                bestHandlerSubmission
                                         .getActiveWorkbenchPartSite());
                         final int currentMatch = compareWindows(shellToMatch,
                                 activeShell);

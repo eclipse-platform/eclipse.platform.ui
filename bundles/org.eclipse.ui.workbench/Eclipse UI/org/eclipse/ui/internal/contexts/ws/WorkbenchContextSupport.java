@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
+import org.eclipse.commands.contexts.ContextManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -220,11 +221,15 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
      * @param workbenchToSupport
      *            The workbench that needs to be supported by this instance;
      *            must not be <code>null</code>.
+     * @param contextManager
+     *            The context manager to be wrappered; must not be
+     *            <code>null</code>.
      */
-    public WorkbenchContextSupport(final Workbench workbenchToSupport) {
+    public WorkbenchContextSupport(final Workbench workbenchToSupport,
+            final ContextManager contextManager) {
         workbench = workbenchToSupport;
         mutableContextManager = ContextManagerFactory
-                .getMutableContextManager();
+                .getMutableContextManager(contextManager);
         proxyContextManager = new ProxyContextManager(mutableContextManager);
 
         // And hook up a shell activation filter.
@@ -332,13 +337,15 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
                         public void widgetDisposed(DisposeEvent e) {
                             registeredWindows.remove(null);
                             newShell.removeDisposeListener(this);
-                            
+
                             /*
-                             * In the case where a dispose has happened, we are expecting an
-                             * activation event to arrive at some point in the future. If we
-                             * process the submissions now, then we will update the
-                             * activeShell before checkWindowType is called. This means that
-                             * dialogs won't be recognized as dialogs.
+                             * In the case where a dispose has happened, we are
+                             * expecting an activation event to arrive at some
+                             * point in the future. If we process the
+                             * submissions now, then we will update the
+                             * activeShell before checkWindowType is called.
+                             * This means that dialogs won't be recognized as
+                             * dialogs.
                              */
                             final Iterator newSubmissionItr = newSubmissions
                                     .iterator();
@@ -546,7 +553,7 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
 
         } else {
             /*
-             * The shell is not registered, but has no parent.  It gets no key
+             * The shell is not registered, but has no parent. It gets no key
              * bindings.
              */
             return IWorkbenchContextSupport.TYPE_NONE;
@@ -690,7 +697,7 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
                     if (shellToMatch != null && shellToMatch != newActiveShell)
                         continue;
 
-                    // Check if the site matches or is a wildcard. 
+                    // Check if the site matches or is a wildcard.
                     final IWorkbenchSite siteToMatch = enabledSubmission
                             .getActiveWorkbenchPartSite();
                     if (siteToMatch != null
@@ -792,7 +799,7 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
             public void widgetDisposed(DisposeEvent e) {
                 registeredWindows.remove(shell);
                 shell.removeDisposeListener(this);
-                
+
                 /*
                  * In the case where a dispose has happened, we are expecting an
                  * activation event to arrive at some point in the future. If we

@@ -23,6 +23,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.commands.CommandManager;
+import org.eclipse.commands.contexts.ContextManager;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionDelta;
@@ -40,6 +42,7 @@ import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ExternalActionManager;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -825,8 +828,13 @@ public final class Workbench implements IWorkbench {
         workbenchActivitySupport = new WorkbenchActivitySupport();
         activityHelper = ActivityPersistanceHelper.getInstance();
 
-        workbenchContextSupport = new WorkbenchContextSupport(this);
-        workbenchCommandSupport = new WorkbenchCommandSupport(this);
+        commandManager = new CommandManager();
+        contextManager = new ContextManager();
+        bindingManager = new BindingManager(contextManager);
+        workbenchContextSupport = new WorkbenchContextSupport(this,
+                contextManager);
+        workbenchCommandSupport = new WorkbenchCommandSupport(this,
+                bindingManager, commandManager, contextManager);
         workbenchContextSupport.initialize(); // deferred key binding support
 
         workbenchCommandSupport.getCommandManager().addCommandManagerListener(
@@ -1991,6 +1999,36 @@ public final class Workbench implements IWorkbench {
     private WorkbenchCommandSupport workbenchCommandSupport;
 
     private WorkbenchContextSupport workbenchContextSupport;
+    
+    /**
+     * The single instance of the binding manager used by the workbench. This is
+     * initialized in <code>Workbench.init(Display)</code> and then never
+     * changed. This value will only be <code>null</code> if the
+     * initialization call has not yet completed.
+     * 
+     * @since 3.1
+     */
+    private BindingManager bindingManager;
+    
+    /**
+     * The single instance of the command manager used by the workbench. This is
+     * initialized in <code>Workbench.init(Display)</code> and then never
+     * changed. This value will only be <code>null</code> if the
+     * initialization call has not yet completed.
+     * 
+     * @since 3.1
+     */
+    private CommandManager commandManager;
+    
+    /**
+     * The single instance of the context manager used by the workbench. This is
+     * initialized in <code>Workbench.init(Display)</code> and then never
+     * changed. This value will only be <code>null</code> if the
+     * initialization call has not yet completed.
+     * 
+     * @since 3.1
+     */
+    private ContextManager contextManager;
 
     public IWorkbenchActivitySupport getActivitySupport() {
         return workbenchActivitySupport;

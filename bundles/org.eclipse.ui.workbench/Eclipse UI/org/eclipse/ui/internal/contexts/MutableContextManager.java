@@ -24,6 +24,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.WeakHashMap;
 
+import org.eclipse.commands.contexts.ContextManager;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.contexts.ContextEvent;
 import org.eclipse.ui.contexts.ContextManagerEvent;
@@ -103,6 +104,7 @@ public final class MutableContextManager extends AbstractContextManager
 
         /**
          * Generated serial version UID for this class.
+         * 
          * @since 3.1
          */
         private static final long serialVersionUID = 3257291326872892465L;
@@ -144,6 +146,8 @@ public final class MutableContextManager extends AbstractContextManager
 
     private Map contextDefinitionsById = new HashMap();
 
+    private final ContextManager contextManager;
+
     private IContextRegistry contextRegistry;
 
     private Map contextsById = new WeakHashMap();
@@ -152,15 +156,22 @@ public final class MutableContextManager extends AbstractContextManager
 
     private Set enabledContextIds = new HashSet();
 
-    public MutableContextManager() {
-        this(new ExtensionContextRegistry(Platform.getExtensionRegistry()));
+    public MutableContextManager(ContextManager contextManager) {
+        this(new ExtensionContextRegistry(Platform.getExtensionRegistry()),
+                contextManager);
     }
 
-    public MutableContextManager(IContextRegistry contextRegistry) {
+    public MutableContextManager(IContextRegistry contextRegistry,
+            ContextManager contextManager) {
         if (contextRegistry == null)
             throw new NullPointerException();
+        
+        if (contextManager == null) {
+            throw new NullPointerException("The context manager cannot be null"); //$NON-NLS-1$
+        }
 
         this.contextRegistry = contextRegistry;
+        this.contextManager = contextManager;
 
         this.contextRegistry
                 .addContextRegistryListener(new IContextRegistryListener() {
@@ -254,6 +265,7 @@ public final class MutableContextManager extends AbstractContextManager
     }
 
     public void setEnabledContextIds(Set enabledContextIds) {
+        contextManager.setActiveContextIds(enabledContextIds);
         enabledContextIds = Util.safeCopy(enabledContextIds, String.class);
         boolean contextManagerChanged = false;
         Map contextEventsByContextId = null;
