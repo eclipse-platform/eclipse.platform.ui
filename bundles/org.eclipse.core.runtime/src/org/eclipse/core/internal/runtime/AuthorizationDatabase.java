@@ -302,6 +302,8 @@ public class AuthorizationDatabase {
 			return;
 		try {
 			file.delete();
+			if ((!file.getParentFile().exists() && !file.getParentFile().mkdirs()) || !canWrite(file.getParentFile()))
+				throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_WRITE_METADATA, Policy.bind("meta.unableToWriteAuthorization", file.toString()), null)); //$NON-NLS-1$
 			file.createNewFile();
 			FileOutputStream out = new FileOutputStream(file);
 			try {
@@ -313,6 +315,26 @@ public class AuthorizationDatabase {
 			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_WRITE_METADATA, Policy.bind("meta.unableToWriteAuthorization", file.toString()), e)); //$NON-NLS-1$
 		}
 		needsSaving = false;
+	}
+
+	private static boolean canWrite(File installDir) {
+		if (!installDir.canWrite())
+			return false;
+
+		if (!installDir.isDirectory())
+			return false;
+
+		File fileTest = null;
+		try {
+			fileTest = File.createTempFile("writtableArea", null, installDir); //$NON-NLS-1$
+		} catch (IOException e) {
+			//If an exception occured while trying to create the file, it means that it is not writtable
+			return false;
+		} finally {
+			if (fileTest != null)
+				fileTest.delete();
+		}
+		return true;
 	}
 
 	private void save(OutputStream os) throws IOException {

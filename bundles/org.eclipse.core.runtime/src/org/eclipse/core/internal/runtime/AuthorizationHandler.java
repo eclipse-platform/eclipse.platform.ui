@@ -20,17 +20,17 @@ import org.eclipse.core.runtime.Platform;
 // This class factors out the management of the .keyring location
 public class AuthorizationHandler {
 	/* package */static final String F_KEYRING = ".keyring"; //$NON-NLS-1$
-	
+
 	//Authorization related informations
 	private static AuthorizationDatabase keyring = null;
 	private static long keyringTimeStamp;
 	private static String keyringFile = null;
 	private static String password = ""; //$NON-NLS-1$
-	
+
 	/**
 	 * Opens the password database (if any) initally provided to the platform at startup.
 	 */
-	private static void loadKeyring() {
+	private static void loadKeyring() throws CoreException {
 		if (keyring != null && new File(keyringFile).lastModified() == keyringTimeStamp)
 			return;
 		if (keyringFile == null) {
@@ -46,15 +46,12 @@ public class AuthorizationHandler {
 		if (keyring == null) {
 			//try deleting the file and loading again - format may have changed
 			new java.io.File(keyringFile).delete();
-			try {
-				keyring = new AuthorizationDatabase(keyringFile, password);
-			} catch (CoreException e) {
-				//don't bother logging a second failure
-			}
+			keyring = new AuthorizationDatabase(keyringFile, password);
+			//don't bother logging a second failure and let it flows to the callers
 		}
 		keyringTimeStamp = new File(keyringFile).lastModified();
 	}
-	
+
 	/**
 	 * @see org.eclipse.core.runtime.Platform
 	 */
@@ -86,8 +83,13 @@ public class AuthorizationHandler {
 	 * @see org.eclipse.core.runtime.Platform
 	 */
 	public static Map getAuthorizationInfo(URL serverUrl, String realm, String authScheme) {
-		loadKeyring();
-		Map info = keyring.getAuthorizationInfo(serverUrl, realm, authScheme);
+		Map info = null;
+		try {
+			loadKeyring();
+			info = keyring.getAuthorizationInfo(serverUrl, realm, authScheme);
+		} catch (CoreException e) {
+			// The error has already been logged in loadKeyring()
+		}
 		return info == null ? null : new HashMap(info);
 	}
 
@@ -95,10 +97,15 @@ public class AuthorizationHandler {
 	 * @see org.eclipse.core.runtime.Platform
 	 */
 	public static String getProtectionSpace(URL resourceUrl) {
-		loadKeyring();
+		try {
+			loadKeyring();
+		} catch (CoreException e) {
+			// The error has already been logged in loadKeyring()
+			return null;
+		}
 		return keyring.getProtectionSpace(resourceUrl);
 	}
-	
+
 	public static void setKeyringFile(String file) {
 		if (keyringFile != null)
 			throw new IllegalStateException(Policy.bind("meta.keyringFileAlreadySpecified", keyringFile)); //$NON-NLS-1$
