@@ -11,7 +11,6 @@
 
 package org.eclipse.debug.internal.ui.views.memory;
 
-import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.internal.core.memory.IMemoryRendering;
 import org.eclipse.debug.internal.core.memory.MemoryBlockManager;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
@@ -35,12 +34,6 @@ import org.eclipse.ui.PartInitException;
  */
 public class RemoveMemoryRenderingAction extends AbstractMemoryAction
 {
-	
-	private static final String PREFIX = "RemoveMemoryRenderingAction."; //$NON-NLS-1$
-	private static final String TITLE = PREFIX + "title"; //$NON-NLS-1$
-	private static final String REMOVE_MONITOR = PREFIX + "remove_block"; //$NON-NLS-1$
-	private static final String UNKNOWN = PREFIX + "Unknown"; //$NON-NLS-1$
-	
 	public RemoveMemoryRenderingAction()
 	{
 		// create action as drop down
@@ -64,11 +57,6 @@ public class RemoveMemoryRenderingAction extends AbstractMemoryAction
 		
 		if (topTab != null)
 		{
-			// get  memory block from tob view tab
-			IMemoryBlock mem = topTab.getMemoryBlock();
-			
-			// get rendering id
-			String renderingId = topTab.getRenderingId();
 			IMemoryRendering rendering = topTab.getRendering();
 			
 			if (rendering != null)
