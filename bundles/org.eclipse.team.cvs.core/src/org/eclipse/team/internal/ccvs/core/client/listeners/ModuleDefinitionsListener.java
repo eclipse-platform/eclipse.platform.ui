@@ -47,7 +47,7 @@ public class ModuleDefinitionsListener implements ICommandOutputListener {
 		// Use the module name as the key so that multi-line modules will be recorded properly
 		int firstSpace = line.indexOf(" "); //$NON-NLS-1$
 		if (firstSpace > -1) {
-			String module = line.substring(firstSpace);;
+			String module = line.substring(0, firstSpace);
 			moduleMap.put(module, line);
 		}
 		return OK;
