@@ -15,6 +15,7 @@ import org.eclipse.ui.views.navigator.*;
  * enabled state of a decorator.
  * 
  * @since 2.0
+ * @deprecated this action is no longer in use
  */
 public class LabelDecoratorAction extends Action {
 
@@ -33,12 +34,6 @@ public class LabelDecoratorAction extends Action {
 	/*
 	 * see @Action.run()
 	 */
-	public void run() {
-		//Toggle the enabled state of the decorator and then update the manager
-		boolean enabledState = decorator.isEnabled();
-		decorator.setEnabled(!enabledState);
-		setChecked(!enabledState);
-		WorkbenchPlugin.getDefault().getDecoratorManager().reset();
-	}
+	public void run() {}
 
 }
