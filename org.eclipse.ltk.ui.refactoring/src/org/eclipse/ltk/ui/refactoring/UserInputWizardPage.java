@@ -19,11 +19,11 @@ import org.eclipse.ltk.core.refactoring.CheckConditionsOperation;
 import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
 import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
+import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.internal.ui.refactoring.Assert;
 import org.eclipse.ltk.internal.ui.refactoring.ErrorWizardPage;
 import org.eclipse.ltk.internal.ui.refactoring.InternalAPI;
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringPreferences;
 
 /**
  * An abstract wizard page that is to be used to implement user input pages presented 
@@ -132,15 +132,16 @@ public abstract class UserInputWizardPage extends RefactoringWizardPage {
 	 */
 	protected boolean performFinish() {
 		RefactoringWizard wizard= getRefactoringWizard();
-		int threshold= RefactoringPreferences.getCheckPassedSeverity();
+		int threshold= RefactoringCore.getConditionCheckingFailedSeverity();
 		RefactoringStatus activationStatus= wizard.getInitialConditionCheckingStatus();
 		RefactoringStatus inputStatus= null;
 		RefactoringStatus status= new RefactoringStatus();
 		Refactoring refactoring= getRefactoring();
 		boolean result= false;
 		
-		if (activationStatus != null && activationStatus.getSeverity() > threshold) {
-			inputStatus= wizard.checkFinalConditions();
+		if (activationStatus != null && activationStatus.getSeverity() >= threshold) {
+			if (!activationStatus.hasFatalError())
+				inputStatus= wizard.checkFinalConditions();
 		} else {
 			CreateChangeOperation create= new CreateChangeOperation(
 				new CheckConditionsOperation(refactoring, CheckConditionsOperation.FINAL_CONDITIONS),
@@ -159,7 +160,7 @@ public abstract class UserInputWizardPage extends RefactoringWizardPage {
 		status.merge(activationStatus);
 		status.merge(inputStatus);
 		
-		if (status.getSeverity() > threshold) {
+		if (status.getSeverity() >= threshold) {
 			wizard.setConditionCheckingStatus(status);
 			IWizardPage nextPage= wizard.getPage(ErrorWizardPage.PAGE_NAME);
 			wizard.getContainer().showPage(nextPage);

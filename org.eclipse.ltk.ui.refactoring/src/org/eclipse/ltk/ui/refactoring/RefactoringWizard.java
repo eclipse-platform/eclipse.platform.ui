@@ -395,7 +395,7 @@ public abstract class RefactoringWizard extends Wizard {
 	/* package */ IWizardPage computeUserInputSuccessorPage(IWizardPage caller, IRunnableContext context) {
 		Change change= createChange(new CreateChangeOperation(
 			new CheckConditionsOperation(fRefactoring, CheckConditionsOperation.FINAL_CONDITIONS),
-			RefactoringStatus.OK), true, context);
+			RefactoringStatus.FATAL), true, context);
 		// Status has been updated since we have passed true
 		RefactoringStatus status= getConditionCheckingStatus();
 		
@@ -518,7 +518,30 @@ public abstract class RefactoringWizard extends Wizard {
 	 * @return whether the finish ended ok or not
 	 */
 	public final boolean internalPerformFinish(InternalAPI api, PerformChangeOperation op) {
-		return performRefactoring(op, fRefactoring, getContainer(), getContainer().getShell());
+		op.setUndoManager(RefactoringCore.getUndoManager(), fRefactoring.getName());
+		Shell parent= getContainer().getShell();
+		try{
+			getContainer().run(false, false, new WorkbenchRunnableAdapter(op, ResourcesPlugin.getWorkspace().getRoot()));
+		} catch (InvocationTargetException e) {
+			Throwable inner= e.getTargetException();
+			if (op.changeExecutionFailed()) {
+				ChangeExceptionHandler handler= new ChangeExceptionHandler(parent, fRefactoring);
+				if (inner instanceof RuntimeException) {
+					handler.handle(op.getChange(), (RuntimeException)inner);
+					return false;
+				} else if (inner instanceof CoreException) {
+					handler.handle(op.getChange(), (CoreException)inner);
+					return false;
+				}
+			}
+			ExceptionHandler.handle(e, parent, 
+				RefactoringUIMessages.getString("RefactoringWizard.refactoring"), //$NON-NLS-1$
+				RefactoringUIMessages.getString("RefactoringWizard.unexpected_exception_1")); //$NON-NLS-1$
+			return false;
+		} catch (InterruptedException e) {
+			return false;
+		}
+		return true;
 	}
 	
 	private Change createChange(CreateChangeOperation operation, boolean updateStatus, IRunnableContext context){
@@ -636,33 +659,4 @@ public abstract class RefactoringWizard extends Wizard {
 	private boolean checkActivationOnOpen() {
 		return (fFlags & CHECK_INITIAL_CONDITIONS_ON_OPEN) != 0;
 	}
-	
-	//---- Private helper methods --------------------------------------------------------
-	
-	private static boolean performRefactoring(PerformChangeOperation op, Refactoring refactoring, IRunnableContext execContext, Shell parent) {
-		op.setUndoManager(RefactoringCore.getUndoManager(), refactoring.getName());
-		try{
-			execContext.run(false, false, new WorkbenchRunnableAdapter(op, ResourcesPlugin.getWorkspace().getRoot()));
-		} catch (InvocationTargetException e) {
-			Throwable inner= e.getTargetException();
-			if (op.changeExecutionFailed()) {
-				ChangeExceptionHandler handler= new ChangeExceptionHandler(parent, refactoring);
-				if (inner instanceof RuntimeException) {
-					handler.handle(op.getChange(), (RuntimeException)inner);
-					return false;
-				} else if (inner instanceof CoreException) {
-					handler.handle(op.getChange(), (CoreException)inner);
-					return false;
-				}
-			}
-			ExceptionHandler.handle(e, parent, 
-				RefactoringUIMessages.getString("RefactoringWizard.refactoring"), //$NON-NLS-1$
-				RefactoringUIMessages.getString("RefactoringWizard.unexpected_exception_1")); //$NON-NLS-1$
-			return false;
-		} catch (InterruptedException e) {
-			return false;
-		} 
-		return true;
-	}	
-	
 }

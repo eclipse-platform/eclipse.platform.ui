@@ -9,11 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ltk.internal.ui.refactoring;
+package org.eclipse.ltk.internal.core.refactoring;
 
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
-public class RefactoringPreferences {
+public class RefactoringCorePreferences {
 
 	// private static final String CONDITION_CHECKING_FAILED_SEVERITY= "condidtionCheckingFailed"; //$NON-NLS-1$
 	

@@ -94,7 +94,7 @@ public class PerformRefactoringOperation implements IWorkspaceRunnable {
 		monitor.beginTask("", 10); //$NON-NLS-1$
 		CreateChangeOperation create= new CreateChangeOperation(
 			new CheckConditionsOperation(fRefactoring, fStyle),
-			RefactoringStatus.ERROR);
+			RefactoringStatus.FATAL);
 		create.run(new SubProgressMonitor(monitor, 6));
 		fPreconditionStatus= create.getConditionCheckingStatus();
 		if (fPreconditionStatus.hasFatalError()) {

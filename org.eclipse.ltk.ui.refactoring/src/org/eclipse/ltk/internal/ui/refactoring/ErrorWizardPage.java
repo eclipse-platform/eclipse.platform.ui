@@ -15,6 +15,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.IWizardPage;
 
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -122,14 +123,23 @@ public class ErrorWizardPage extends RefactoringWizardPage {
 	protected boolean performFinish() {
 		RefactoringWizard wizard= getRefactoringWizard();
 		Change change= wizard.getChange();
-		PerformChangeOperation op= null;
+		PerformChangeOperation operation= null;
 		if (change != null) {
-			op= new UIPerformChangeOperation(change);
+			operation= new UIPerformChangeOperation(change);
 		} else {
 			CreateChangeOperation ccop= new CreateChangeOperation(getRefactoring());
-			op= new UIPerformChangeOperation(ccop);
+			operation= new UIPerformChangeOperation(ccop);
 		}
-		return wizard.internalPerformFinish(InternalAPI.INSTANCE, op);
+		boolean result= wizard.internalPerformFinish(InternalAPI.INSTANCE, operation);
+		RefactoringStatus fValidationStatus= operation.getValidationStatus();
+		if (fValidationStatus != null && fValidationStatus.hasFatalError()) {
+			MessageDialog.openError(wizard.getShell(), wizard.getWindowTitle(), 
+				RefactoringUIMessages.getFormattedString(
+					"RefactoringUI.cannot_execute", //$NON-NLS-1$
+					fValidationStatus.getMessageMatchingSeverity(RefactoringStatus.FATAL)));
+			return false;
+		}
+		return result;
 	} 
 	
 	//---- Helpers ----------------------------------------------------------------------------------------

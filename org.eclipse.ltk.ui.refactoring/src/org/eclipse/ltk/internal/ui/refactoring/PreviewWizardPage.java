@@ -26,6 +26,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -40,10 +41,12 @@ import org.eclipse.ui.part.PageBook;
 
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
+import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.TextChange;
 import org.eclipse.ltk.internal.ui.refactoring.util.ViewerPane;
 import org.eclipse.ltk.ui.refactoring.ChangePreviewViewerInput;
 import org.eclipse.ltk.ui.refactoring.IChangePreviewViewer;
+import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizardPage;
 
 /**
@@ -162,7 +165,18 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 	 * Method defined in RefactoringWizardPage
 	 */
 	protected boolean performFinish() {
-		return getRefactoringWizard().internalPerformFinish(InternalAPI.INSTANCE, new UIPerformChangeOperation(fChange));
+		UIPerformChangeOperation operation= new UIPerformChangeOperation(fChange);
+		boolean result= getRefactoringWizard().internalPerformFinish(InternalAPI.INSTANCE, operation);
+		RefactoringStatus fValidationStatus= operation.getValidationStatus();
+		if (fValidationStatus != null && fValidationStatus.hasFatalError()) {
+			RefactoringWizard wizard= getRefactoringWizard();
+			MessageDialog.openError(wizard.getShell(), wizard.getWindowTitle(), 
+				RefactoringUIMessages.getFormattedString(
+					"RefactoringUI.cannot_execute", //$NON-NLS-1$
+					fValidationStatus.getMessageMatchingSeverity(RefactoringStatus.FATAL)));
+			return false;
+		}
+		return result;
 	} 
 	
 	/* (non-JavaDoc)

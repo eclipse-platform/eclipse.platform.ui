@@ -46,7 +46,7 @@ public class CreateChangeOperation implements IWorkspaceRunnable {
 	private Refactoring fRefactoring;
 	
 	private CheckConditionsOperation fCheckConditionOperation;
-	private int fCheckPassedSeverity;
+	private int fConditionCheckingFailedSeverity;
 	
 	private Change fChange;
 	
@@ -71,29 +71,30 @@ public class CreateChangeOperation implements IWorkspaceRunnable {
 	 * checking a change object is created or not.
 	 * 
 	 * @param operation the condition checking operation
-	 * @param checkPassedSeverity the check passed severity value. This value is used to 
-	 *  decide whether the condition check is interpreted as passed or not. The condition 
-	 *  check is considered to be passed if the refactoring status's severity is less or 
-	 *  equal than the given severity value. The given value must be smaller than {@link 
-	 *  RefactoringStatus#FATAL}.
+	 * @param checkFailedSeverity the severity from which on the condition checking is
+	 *  interpreted as failed. The passed value must be greater than {@link RefactoringStatus#OK}
+	 *  and less than or equal {@link RefactoringStatus#FATAL}. 
+	 *  The standard value from which on a condition check should is to be interpreted as
+	 *  failed can be accessed via {@link RefactoringCore#getConditionCheckingFailedSeverity()}.
+	 * 
 	 */
-	public CreateChangeOperation(CheckConditionsOperation operation, int checkPassedSeverity) {
+	public CreateChangeOperation(CheckConditionsOperation operation, int checkFailedSeverity) {
 		Assert.isNotNull(operation);
 		fCheckConditionOperation= operation;
 		fRefactoring= operation.getRefactoring();
-		Assert.isTrue (checkPassedSeverity < RefactoringStatus.FATAL);
-		fCheckPassedSeverity= checkPassedSeverity;
+		Assert.isTrue (checkFailedSeverity > RefactoringStatus.OK && checkFailedSeverity <= RefactoringStatus.FATAL);
+		fConditionCheckingFailedSeverity= checkFailedSeverity;
 	}
 	
 	/**
-	 * Returns the check passed severity.
+	 * Returns the condition checking failed severity used by this operation.
 	 * 
-	 * @return the check passed severity
+	 * @return the condition checking failed severity
 	 * 
 	 * @see RefactoringStatus
 	 */
-	public int getCheckPassedSeverity() {
-		return fCheckPassedSeverity;
+	public int getConditionCheckingFailedSeverity() {
+		return fConditionCheckingFailedSeverity;
 	}
 
 	/**
@@ -108,7 +109,7 @@ public class CreateChangeOperation implements IWorkspaceRunnable {
 				pm.subTask(""); //$NON-NLS-1$
 				fCheckConditionOperation.run(new SubProgressMonitor(pm, 4));
 				RefactoringStatus status= fCheckConditionOperation.getStatus();
-				if (status != null && status.getSeverity() <= fCheckPassedSeverity) {
+				if (status != null && status.getSeverity() < fConditionCheckingFailedSeverity) {
 					fChange= fRefactoring.createChange(new SubProgressMonitor(pm, 2));
 					fChange.initializeValidationData(new SubProgressMonitor(pm, 1));
 				} else {

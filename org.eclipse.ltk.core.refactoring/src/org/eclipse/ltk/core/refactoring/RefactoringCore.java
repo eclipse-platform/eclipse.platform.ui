@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring;
 
+import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePreferences;
 import org.eclipse.ltk.internal.core.refactoring.UndoManager;
 
 /**
@@ -39,6 +40,18 @@ public class RefactoringCore {
 		if (fgUndoManager == null)
 			fgUndoManager= createUndoManager();
 		return fgUndoManager;
+	}
+	
+	/**
+	 * When condition checking is performed for a refactoring then the
+	 * condition check is interpreted as failed if the refactoring status
+	 * severity return from the condition checking operation is equal
+	 * or greater than the value returned by this method. 
+	 * 
+	 * @return the condition checking failed severity
+	 */
+	public static int getConditionCheckingFailedSeverity() {
+		return RefactoringCorePreferences.getStopSeverity();
 	}
 	
 	/**

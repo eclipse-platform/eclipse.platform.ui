@@ -17,7 +17,6 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringPreferences;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringStatusDialog;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringWizardDialog;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringWizardDialog2;
@@ -45,18 +44,6 @@ public class RefactoringUI {
 	// the underscore in front of the name is on purpose to ensure correct 
 	// ordering of the action sets in the shared menu. 
 	public static final String REFACTORING_ACTION_SET= "_org.eclipse.ltk.ui.refactoring.actionSet.refactoring"; //$NON-NLS-1$
-	
-	/**
-	 * When condition checking is performed for a refactoring then the
-	 * condition check is interpreted as failed if the refactoring status
-	 * severity return from the condition checking operation is equal
-	 * or greater than the value returned by this method. 
-	 * 
-	 * @return the condition checking failed severity
-	 */
-	public static int getConditionCheckingFailedSeverity() {
-		return RefactoringPreferences.getStopSeverity();
-	}
 	
 	/**
 	 * Creates a dialog to present a {@link RefactoringStatus} to the user. Depending
