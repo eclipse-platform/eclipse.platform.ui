@@ -179,7 +179,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		/*
 		 * @see ISiteEntry#setSitePolicy(ISitePolicy)
 		 */
-		public void setSitePolicy(ISitePolicy policy) {				
+		public synchronized void setSitePolicy(ISitePolicy policy) {				
 			if (policy==null)
 				throw new IllegalArgumentException();
 			this.policy = policy;
@@ -330,14 +330,14 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			return (String[])plugins.toArray(new String[0]);
 		}
 		
-		private String[] getDetectedFeatures() {
+		private synchronized String[] getDetectedFeatures() {
 			if (features == null)
 				return detectFeatures();
 			else
 				return (String[])features.toArray(new String[0]);
 		}
 		
-		private String[] getDetectedPlugins() {
+		private synchronized String[] getDetectedPlugins() {
 			if (plugins == null)
 				return detectPlugins();
 			else 
@@ -355,7 +355,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			changeStampIsValid = true;
 		}
 		
-		private void computeFeaturesChangeStamp() {
+		private synchronized void computeFeaturesChangeStamp() {
 			if (featuresChangeStampIsValid)
 				return;
 				
@@ -366,7 +366,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 				debug(resolvedURL.toString()+" feature stamp: "+featuresChangeStamp+((featuresChangeStamp==lastFeaturesChangeStamp)?" [no changes]":" [was "+lastFeaturesChangeStamp+"]"));
 		}
 		
-		private void computePluginsChangeStamp() {
+		private synchronized void computePluginsChangeStamp() {
 			if (pluginsChangeStampIsValid)
 				return;
 				
@@ -414,6 +414,18 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		private boolean isExternallyLinkedSite() {
 			return (linkFileName!=null && !linkFileName.trim().equals(""));
 		}
+		
+		private synchronized void refresh() {
+			// reset computed values. Will be updated on next access.		
+			lastChangeStamp = changeStamp;
+			lastFeaturesChangeStamp = featuresChangeStamp;
+			lastPluginsChangeStamp = pluginsChangeStamp;
+			changeStampIsValid = false;
+			featuresChangeStampIsValid = false;
+			pluginsChangeStampIsValid = false;
+			features = null;
+			plugins = null;
+		}
 	}
 
 	public class SitePolicy implements IPlatformConfiguration.ISitePolicy {
@@ -452,7 +464,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		/*
 		 * @see ISitePolicy#setList(String[])
 		 */
-		public void setList(String[] list) {
+		public synchronized void setList(String[] list) {
 			if (list == null)
 				this.list = new String[0];
 			else
@@ -665,7 +677,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	/*
 	 * @see IPlatformConfiguration#configureSite(ISiteEntry, boolean)
 	 */
-	public void configureSite(ISiteEntry entry, boolean replace) {
+	public synchronized void configureSite(ISiteEntry entry, boolean replace) {
 
 		if (entry == null)
 			return;
@@ -684,7 +696,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	/*
 	 * @see IPlatformConfiguration#unconfigureSite(ISiteEntry)
 	 */
-	public void unconfigureSite(ISiteEntry entry) {
+	public synchronized void unconfigureSite(ISiteEntry entry) {
 		if (entry == null)
 			return;
 
@@ -723,7 +735,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	/*
 	 * @see IPlatformConfiguration#configureFeatureEntry(IFeatureEntry)
 	 */
-	public void configureFeatureEntry(IFeatureEntry entry) {
+	public synchronized void configureFeatureEntry(IFeatureEntry entry) {
 		if (entry == null)
 			return;
 
@@ -737,7 +749,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	/*
 	 * @see IPlatformConfiguration#unconfigureFeatureEntry(IFeatureEntry)
 	 */
-	public void unconfigureFeatureEntry(IFeatureEntry entry) {
+	public synchronized void unconfigureFeatureEntry(IFeatureEntry entry) {
 		if (entry == null)
 			return;
 
@@ -866,16 +878,6 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 						debug("   bad URL: "+e);
 				}
 			}
-			// add fragments entry for each site for 1.0 compatibility
-			try {
-				pathURL = new URL(((SiteEntry)sites[i]).getResolvedURL(),"fragments/");
-				path.add(pathURL);
-				if (DEBUG)
-					debug("   "+pathURL.toString());
-			} catch(MalformedURLException e) {
-				if (DEBUG)
-					debug("   bad URL: "+e);
-			}
 		}			
 		return (URL[])path.toArray(new URL[0]);
 	}
@@ -922,6 +924,26 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		if (this != BootLoader.getCurrentPlatformConfiguration())
 			transientConfig = value;
 	}
+	
+	/*
+	 * @see IPlatformConfiguration#refresh()
+	 */
+	public synchronized void refresh() {
+		// Reset computed values. Will be lazily refreshed
+		// on next access
+		ISiteEntry[] sites = getConfiguredSites();
+		for (int i = 0; i < sites.length; i++) {
+			// reset site entry
+			((SiteEntry)sites[i]).refresh();
+		}		
+		// reset configuration entry.
+		lastChangeStamp = changeStamp;
+		lastFeaturesChangeStamp = featuresChangeStamp;
+		lastPluginsChangeStamp = pluginsChangeStamp;
+		changeStampIsValid = false;
+		featuresChangeStampIsValid = false;
+		pluginsChangeStampIsValid = false;
+	}
 
 	/*
 	 * @see IPlatformConfiguration#save()
@@ -934,7 +956,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	/*
 	 * @see IPlatformConfiguration#save(URL)
 	 */
-	public void save(URL url) throws IOException {		
+	public synchronized void save(URL url) throws IOException {		
 		if (url == null)
 			throw new IOException(Policy.bind("cfig.unableToSave.noURL"));
 

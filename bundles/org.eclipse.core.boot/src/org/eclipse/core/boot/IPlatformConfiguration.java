@@ -459,6 +459,14 @@ public interface IPlatformConfiguration {
 	public void isTransient(boolean value);	
 	
 	/**
+	 * Called to refresh the configuration information. In particular,
+	 * causes change stamps to be recomputed based on the current
+	 * configuration state, and updates the lists of available plug-ins.
+	 * @since 2.0
+	 */	
+	public void refresh();
+	
+	/**
 	 * Called to save the configuration information
 	 * @since 2.0
 	 */	
