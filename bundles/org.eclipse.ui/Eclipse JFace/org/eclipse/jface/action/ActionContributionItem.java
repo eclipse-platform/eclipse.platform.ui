@@ -480,9 +480,7 @@ public void update(String propertyName) {
 		boolean checkChanged = (action.getStyle() == IAction.AS_CHECK_BOX) &&
 			(propertyName == null || propertyName.equals(Action.CHECKED));
 					
-		boolean b = true;
-		if (enableStateChanged)
-			b = action.isEnabled();
+		boolean shouldBeEnabled = action.isEnabled() && isEnabledAllowed();
 		
 		if (widget instanceof ToolItem) {
 			ToolItem ti = (ToolItem) widget;
@@ -492,9 +490,8 @@ public void update(String propertyName) {
 			if (tooltipTextChanged)
 				ti.setToolTipText(action.getToolTipText());
 				
-			if (enableStateChanged && ti.getEnabled() != b) {
-				if (!b || isEnabledAllowed())
-					ti.setEnabled(b);
+			if (enableStateChanged && ti.getEnabled() != shouldBeEnabled) {
+				ti.setEnabled(shouldBeEnabled);
 			}
 				
 			if (checkChanged) {
@@ -528,9 +525,8 @@ public void update(String propertyName) {
 			if (imageChanged) {
 				updateImages(false);
 			}
-			if (enableStateChanged && mi.getEnabled() != b) {
-				if (!b || isEnabledAllowed())
-					mi.setEnabled(b);
+			if (enableStateChanged && mi.getEnabled() != shouldBeEnabled) {
+				mi.setEnabled(shouldBeEnabled);
 			}
 	
 			if (checkChanged) {	
@@ -557,6 +553,7 @@ public void update(String propertyName) {
 			if (tooltipTextChanged)
 				button.setToolTipText(action.getToolTipText());
 				
+			boolean b = action.isEnabled();	
 			if (enableStateChanged && button.getEnabled() != b)
 				button.setEnabled(b);
 				
