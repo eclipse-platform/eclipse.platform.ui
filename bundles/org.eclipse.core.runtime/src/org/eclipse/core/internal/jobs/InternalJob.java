@@ -22,6 +22,10 @@ import org.eclipse.core.runtime.jobs.*;
 public abstract class InternalJob implements Comparable {
 	private static final JobManager manager = JobManager.getInstance();
 	private static int nextJobNumber = 0;
+	
+	//flag mask bits
+	private static final int M_STATE = 0xFF;
+	private static final int M_SYSTEM = 0x0100;
 
 	private final int jobNumber = nextJobNumber++;
 	private List listeners;
@@ -37,13 +41,12 @@ public abstract class InternalJob implements Comparable {
 	private InternalJob previous;
 	private int priority = Job.LONG;
 	private ISchedulingRule schedulingRule;
-	private boolean system = false;
 	/**
 	 * If the job is waiting, this represents the time the job should start by.  If
 	 * this job is sleeping, this represents the time the job should wake up.
 	 */
 	private long startTime;
-	private volatile int state = Job.NONE;
+	private volatile int flags = Job.NONE;
 	
 	protected InternalJob(String name)  {
 		Assert.isNotNull(name);
@@ -103,7 +106,7 @@ public abstract class InternalJob implements Comparable {
 		return startTime;
 	}
 	protected int getState() {
-		return state;
+		return flags & M_STATE;
 	}
 	void internalSetPriority(int newPriority) {
 		this.priority = newPriority;
@@ -122,7 +125,7 @@ public abstract class InternalJob implements Comparable {
 			return otherRule.isConflicting(schedulingRule);
 	}
 	protected boolean isSystem()  {
-		return system;
+		return (flags & M_SYSTEM) != 0;
 	}
 	protected void join() throws InterruptedException  {
 		manager.join(this);
@@ -182,10 +185,10 @@ public abstract class InternalJob implements Comparable {
 		startTime = time;
 	}
 	final void setState(int i) {
-		state = i;
+		flags = (flags & ~M_STATE) | i;
 	}
 	protected void setSystem(boolean value) {
-		this.system = value;
+		flags = value ? flags | M_SYSTEM : flags & ~M_SYSTEM;
 	}
 	protected boolean sleep() {
 		return manager.sleep(this);
