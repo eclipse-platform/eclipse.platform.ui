@@ -1085,9 +1085,6 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	
 	/**
 	 * Load comparator extensions.
-	 * 
-	 * @exception CoreException if an exception occurs reading
-	 *  the extensions
 	 */
 	private void initializeComparators() {
 		IPluginDescriptor descriptor= DebugPlugin.getDefault().getDescriptor();
