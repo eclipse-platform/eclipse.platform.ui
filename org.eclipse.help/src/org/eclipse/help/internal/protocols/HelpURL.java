@@ -53,7 +53,7 @@ public class HelpURL {
 		// NOTE: MAY NEED TO OVERRIDE FOR SearchURL or when there is a query string
 
 		// Check if the file is hypertext or plain text 
-		String file = url.toLowerCase();
+		String file = url.toLowerCase(Locale.US);
 		if (file.endsWith(".html") || file.endsWith(".htm"))
 			return "text/html";
 		else
