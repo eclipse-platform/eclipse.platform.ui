@@ -26,8 +26,8 @@
 
 <!-- Search extension point definitions -->
 
-<extension-point name="%searchPages" id="searchPages" schema="schema/searchPages.mxsd"/>
-<extension-point name="%searchResultSorters" id="searchResultSorters" schema="schema/searchResultSorters.mxsd"/>
+<extension-point name="%searchPages" id="searchPages" schema="schema/searchPages.exsd"/>
+<extension-point name="%searchResultSorters" id="searchResultSorters" schema="schema/searchResultSorters.exsd"/>
 
 
 <!-- Extensions -->
