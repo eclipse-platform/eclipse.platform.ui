@@ -1113,7 +1113,7 @@ private String getSplashPath(URL[] bootPath) {
  			path += suffix;
  			File splash = new File(path);
  			if (splash.exists())
- 				return path; // return the first match found
+ 				return splash.getAbsolutePath(); // return the first match found [20063]
  		}
  		
  		// try the next variant
