@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.*;
+import org.osgi.framework.*;
 
 /**
  * Singleton class to be called by clients to run a webapp.
@@ -100,13 +101,12 @@ public class WebappManager {
 	private static IPath getWebappPath(String pluginId, IPath path)
 		throws CoreException {
 
-		IPluginDescriptor descriptor =
-			Platform.getPluginRegistry().getPluginDescriptor(pluginId);
-		if (descriptor == null) {
+		Bundle bundle = Platform.getBundle(pluginId);
+		if (bundle == null) {
 			throw new CoreException(
 				new Status(
 					IStatus.ERROR,
-					AppserverPlugin.getID(),
+					AppserverPlugin.PLUGIN_ID,
 					IStatus.OK,
 					AppserverResources.getString(
 						"Appserver.cannotFindPlugin",
@@ -116,12 +116,12 @@ public class WebappManager {
 
 		// Note: we just look for one webapp directory.
 		//       If needed, may want to use the locale specific path.
-		URL webappURL = descriptor.find(path);
+		URL webappURL = Platform.find(bundle, path);
 		if (webappURL == null) {
 			throw new CoreException(
 				new Status(
 					IStatus.ERROR,
-					AppserverPlugin.getID(),
+					AppserverPlugin.PLUGIN_ID,
 					IStatus.OK,
 					AppserverResources.getString(
 						"Appserver.cannotFindPath",
@@ -136,7 +136,7 @@ public class WebappManager {
 			throw new CoreException(
 				new Status(
 					IStatus.ERROR,
-					AppserverPlugin.getID(),
+					AppserverPlugin.PLUGIN_ID,
 					IStatus.OK,
 					AppserverResources.getString(
 						"Appserver.cannotResolvePath",

@@ -85,7 +85,7 @@ public class HelpURLConnection extends URLConnection {
 			throw new IOException("Resource not found.");
 		}
 
-		if (plugin.equals(getAppserverImplPluginId())) {
+		if (plugin.getSymbolicName().equals(getAppserverImplPluginId())) {
 			// Do not return documents from app server implementation plug-in
 			throw new IOException("Resource not found.");
 		}
@@ -300,8 +300,7 @@ public class HelpURLConnection extends URLConnection {
 					appserverImplPluginId =
 						serverElement
 							.getDeclaringExtension()
-							.getDeclaringPluginDescriptor()
-							.getUniqueIdentifier();
+							.getNamespace();
 
 				}
 			}

@@ -24,7 +24,7 @@ public class AppserverPlugin extends Plugin {
 	private static AppserverPlugin plugin;
 	private static BundleContext bundleContext;
 	private IWebappServer appServer;
-	private IPluginDescriptor contributingServerPlugin;
+	private String contributingServerPlugin;
 	private boolean initialized = false;
 	private String hostAddress;
 	private int port;
@@ -73,17 +73,11 @@ public class AppserverPlugin extends Plugin {
 		getPluginPreferences().setDefault(PORT_KEY, 0);
 	}
 	/**
-	 * Obtains Tomcat plug-in ID
-	 */
-	public static String getID() {
-		return getDefault().getDescriptor().getUniqueIdentifier();
-	}
-	/**
-	 * Returns the plugin that contributes the server implementation
+	 * Returns the plugin ID that contributes the server implementation
 	 * 
-	 * @return IPluginDescriptor
+	 * @return String
 	 */
-	public IPluginDescriptor getContributingServerPlugin() {
+	public String getContributingServerPlugin() {
 		return contributingServerPlugin;
 	}
 	private void createWebappServer() throws CoreException {
@@ -91,8 +85,7 @@ public class AppserverPlugin extends Plugin {
 		// Initializes the app server by getting an instance via
 		// app-server the extension point
 		// get the app server extension from the system plugin registry
-		IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
-		IExtensionPoint point = pluginRegistry
+		IExtensionPoint point = Platform.getExtensionRegistry()
 				.getExtensionPoint(APP_SERVER_EXTENSION_ID);
 		if (point != null) {
 			IExtension[] extensions = point.getExtensions();
@@ -120,7 +113,7 @@ public class AppserverPlugin extends Plugin {
 							.createExecutableExtension(APP_SERVER_CLASS_ATTRIBUTE);
 					contributingServerPlugin = serverElement
 							.getDeclaringExtension()
-							.getDeclaringPluginDescriptor();
+							.getNamespace();
 				} catch (CoreException e) {
 					getLog().log(e.getStatus());
 					throw e;
@@ -153,7 +146,7 @@ public class AppserverPlugin extends Plugin {
 		} catch (Exception e) {
 		}
 		if (appServer == null)
-			throw new CoreException(new Status(IStatus.ERROR, getID(),
+			throw new CoreException(new Status(IStatus.ERROR, PLUGIN_ID,
 					IStatus.OK,
 					AppserverResources.getString("Appserver.start"), null));
 		appServer.start(port, hostAddress);

@@ -156,7 +156,7 @@ public class BrowserManager {
 		if (this.browsersDescriptors != null)
 			return this.browsersDescriptors;
 		Collection bDescriptors = new ArrayList();
-		IConfigurationElement configElements[] = Platform.getPluginRegistry()
+		IConfigurationElement configElements[] = Platform.getExtensionRegistry()
 				.getConfigurationElementsFor(HelpBasePlugin.PLUGIN_ID,
 						"browser");
 		for (int i = 0; i < configElements.length; i++) {
@@ -296,7 +296,6 @@ public class BrowserManager {
 	/**
 	 * Creates web browser
 	 */
-	// TODO deprecate createBrowser(void)
 	public IBrowser createBrowser() {
 		return createBrowser(true);
 	}
