@@ -1,11 +1,13 @@
 package org.eclipse.debug.internal.ui.preferences;
 
-import org.eclipse.debug.ui.IDebugUIConstants;
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+import org.eclipse.debug.ui.IDebugUIConstants;
  
 /**
  * Constants defining the keys to be used for accessing preferences
@@ -25,11 +27,6 @@ public interface IDebugPreferenceConstants {
 	public static final String CONSOLE_SYS_ERR_RGB= "Console.stdErrColor"; //$NON-NLS-1$
 	public static final String CONSOLE_SYS_OUT_RGB= "Console.stdOutColor"; //$NON-NLS-1$
 	public static final String CONSOLE_SYS_IN_RGB= "Console.stdInColor"; //$NON-NLS-1$
-			
-	/**
-	 * The name of the font to use for the Console
-	 **/
-	public static final String CONSOLE_FONT= "Console.font"; //$NON-NLS-1$
 	
 	/**
 	 * (boolean) Whether or not the text in the console will wrap

@@ -1,9 +1,11 @@
 package org.eclipse.debug.internal.ui;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
  
 public interface IInternalDebugUIConstants {
 	
@@ -43,5 +45,12 @@ public interface IInternalDebugUIConstants {
 	 * Editor Id for the "Source Not Found" editor
 	 */
 	public static final String ID_SOURCE_NOT_FOUND_EDITOR = "org.eclipse.debug.ui.NoSourceFoundEditor"; //$NON-NLS-1$
+	
+	/**
+	 * The name of the font to use for the Console. 
+	 * Since 2.1 this font is managed via the workbench font preference page
+	 * and is no longer stored as a debug preference.
+	 */ 
+ 	public static final String CONSOLE_FONT= "org.eclipse.debug.ui.ConsoleFont"; //$NON-NLS-1$
 	
 }

@@ -8,6 +8,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.ui.console.IConsoleColorProvider;
 import org.eclipse.debug.ui.console.IConsoleHyperlink;
@@ -114,7 +115,7 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 		JFaceResources.getFontRegistry().addListener(this);
 
-		getTextWidget().setFont(JFaceResources.getFont(IDebugPreferenceConstants.CONSOLE_FONT));
+		getTextWidget().setFont(JFaceResources.getFont(IInternalDebugUIConstants.CONSOLE_FONT));
 		getTextWidget().addMouseTrackListener(this);
 		getTextWidget().addPaintListener(this);
 		getTextWidget().addLineStyleListener(this);
@@ -203,11 +204,11 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 			propertyName.equals(IDebugPreferenceConstants.CONSOLE_SYS_ERR_RGB)) {
 				getTextWidget().redraw();
 			}
-		if (!propertyName.equals(IDebugPreferenceConstants.CONSOLE_FONT)) {
+		if (!propertyName.equals(IInternalDebugUIConstants.CONSOLE_FONT)) {
 			return;
 		}
 		
-		getTextWidget().setFont(JFaceResources.getFont(IDebugPreferenceConstants.CONSOLE_FONT));
+		getTextWidget().setFont(JFaceResources.getFont(IInternalDebugUIConstants.CONSOLE_FONT));
 	}
 	
 	/**
