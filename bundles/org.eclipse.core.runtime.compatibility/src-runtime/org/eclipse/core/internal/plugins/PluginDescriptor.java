@@ -16,6 +16,7 @@ import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.internal.boot.PlatformURLHandler;
 import org.eclipse.core.internal.registry.BundleModel;
@@ -302,18 +303,32 @@ public class PluginDescriptor implements IPluginDescriptor {
 		if (!isLegacy())
 			return new ILibrary[0];
 
-		String classpath = (String) bundleOsgi.getHeaders().get("Bundle-Classpath");
-		if (classpath == null)
-			return new ILibrary[0];
-
+		ArrayList allLibraries = new ArrayList();
+		ArrayList allBundes = new ArrayList();
+		allBundes.add(bundleOsgi);
+		Bundle[] fragments = bundleOsgi.getFragments();
+		if (fragments != null)
+			allBundes.addAll(Arrays.asList(fragments));
+		
+		for (Iterator iter = allBundes.iterator(); iter.hasNext();) {
+			Bundle element = (Bundle) iter.next();
+			String classpath = (String) element.getHeaders().get("Bundle-Classpath");
+			if (classpath != null)
+				allLibraries.addAll(splitClasspath(classpath));	
+		}
+		return (ILibrary[])(new ILibrary[allLibraries.size()]);
+	}
+	
+	private ArrayList splitClasspath(String classpath) {
 		StringTokenizer tokens = new StringTokenizer(classpath, ",");
 		ArrayList libraries = new ArrayList(tokens.countTokens());
 		while (tokens.hasMoreElements()) {
 			String element = (String) tokens.nextElement();
 			libraries.add(new Library(element.trim()));
 		}
-		return (ILibrary[]) libraries.toArray(new ILibrary[libraries.size()]);
+		return libraries;
 	}
+	
 	/**
 	 * @see IPluginDescriptor
 	 */
