@@ -186,10 +186,7 @@ public class AntTestChecker {
 		currentTask= null;
 	}
 	
-	/**
-	 * Returns the lastMessageLogged.
-	 * @return String
-	 */
+	
 	public String getLastMessageLogged() {
 		if (messages.isEmpty()) {
 			return null;
@@ -203,5 +200,9 @@ public class AntTestChecker {
 
 	public String getUserProperty(String name) {
 		return (String)userProperties.get(name);
+	}
+	
+	public List getMessages() {
+		return messages;
 	}
 }
