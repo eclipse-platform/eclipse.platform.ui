@@ -127,7 +127,6 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 
 	protected void doHandleSuspendEvent(Object element, DebugEvent event) {
 		if (element instanceof IThread) {
-			IThread thread = (IThread)element;
 			if (!event.isEvaluation()) {
 				doHandleSuspendThreadEvent((IThread)element);
 				return;
