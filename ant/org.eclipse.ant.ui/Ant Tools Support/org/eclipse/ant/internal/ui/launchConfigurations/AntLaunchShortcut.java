@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     John-Mason P. Shackelford - bug 34548
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
@@ -50,9 +51,7 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
-/**
- *
- */
+
 public class AntLaunchShortcut implements ILaunchShortcut {
 
 	private boolean fShowDialog= false;
@@ -141,32 +140,34 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 			}
 		}
 
-		if (configuration != null) {
-			if (fShowDialog) {
-				// Offer to save dirty editors before opening the dialog as the contents
-				// of an Ant editor often affect the contents of the dialog.
-				if (!DebugUITools.saveBeforeLaunch()) {
-					return;
+		if (configuration == null) {
+			antFileNotFound();
+		}
+		// ensure that the targets are selected in the launch configuration
+		try {
+			if (targetAttribute != null && ! targetAttribute.equals(configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, ""))) { //$NON-NLS-1$
+				String newName= DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(configuration.getName());		        
+				configuration= configuration.copy(newName);
+				((ILaunchConfigurationWorkingCopy) configuration).setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, targetAttribute);
+				if (fShowDialog) {
+					configuration= ((ILaunchConfigurationWorkingCopy) configuration).doSave();
 				}
-				IStatus status = new Status(IStatus.INFO, IAntUIConstants.PLUGIN_ID, IAntUIConstants.STATUS_INIT_RUN_ANT, "", null); //$NON-NLS-1$
-				DebugUITools.openLaunchConfigurationDialog(AntUIPlugin.getActiveWorkbenchWindow().getShell(), configuration, IExternalToolConstants.ID_EXTERNAL_TOOLS_LAUNCH_GROUP, status);
-			} else {
-				if (targetAttribute != null) {
-					String newName= DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(configuration.getName());
-					try {
-						configuration= configuration.copy(newName);
-						((ILaunchConfigurationWorkingCopy) configuration).setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, targetAttribute);
-					} catch (CoreException exception) {
-						reportError(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntLaunchShortcut.Exception_launching"), new String[] {file.getName()}), exception); //$NON-NLS-1$
-						return;
-					}
-				}
-				DebugUITools.launch(configuration, mode);
 			}
+		} catch (CoreException exception) {
+			reportError(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntLaunchShortcut.Exception_launching"), new String[] {file.getName()}), exception); //$NON-NLS-1$
 			return;
 		}
-		
-		antFileNotFound();
+		if (fShowDialog) {
+			// Offer to save dirty editors before opening the dialog as the contents
+			// of an Ant editor often affect the contents of the dialog.
+			if (!DebugUITools.saveBeforeLaunch()) {
+				return;
+			}
+			IStatus status = new Status(IStatus.INFO, IAntUIConstants.PLUGIN_ID, IAntUIConstants.STATUS_INIT_RUN_ANT, "", null); //$NON-NLS-1$
+			DebugUITools.openLaunchConfigurationDialog(AntUIPlugin.getActiveWorkbenchWindow().getShell(), configuration, IExternalToolConstants.ID_EXTERNAL_TOOLS_LAUNCH_GROUP, status);
+		} else {
+			DebugUITools.launch(configuration, mode);
+		}
 	}
 	
 	/**

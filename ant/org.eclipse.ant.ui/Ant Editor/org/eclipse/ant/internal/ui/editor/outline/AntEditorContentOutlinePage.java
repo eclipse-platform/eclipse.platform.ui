@@ -566,8 +566,8 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	}
 	
 	private void addRunTargetMenu(IMenuManager menuManager) {
-		//menuManager.add(this.runTargetImmediately);
-		//menuManager.add(this.runAnt);                   
+		menuManager.add(this.runTargetImmediately);
+		menuManager.add(this.runAnt);                   
 	}
 	
 	private boolean shouldAddRunTargetMenu() {
