@@ -12,17 +12,21 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import java.net.URL;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.update.internal.ui.model.IFeatureAdapter;
+import org.eclipse.update.internal.ui.model.IFeatureAdapter;
+
 /**
  * Bundle of all images used by the PDE plugin.
  */
 public class UpdateUIPluginImages {
-
+
+
 	private static final String NAME_PREFIX= UpdateUIPlugin.getPluginId()+".";
 	private static final int    NAME_PREFIX_LENGTH= NAME_PREFIX.length();
-
+
+
 	private final static URL BASE_URL = UpdateUIPlugin.getDefault().getDescriptor().getInstallURL();
-
+
+
 	private static ImageRegistry PLUGIN_REGISTRY;
 	
 	public final static String ICONS_PATH = "icons/full/";
@@ -41,23 +45,24 @@ public class UpdateUIPluginImages {
 	private static final String PATH_TOOL_DISABLED = ICONS_PATH + "dtool16/";
 	private static final String PATH_OVR = ICONS_PATH + "ovr16/";
 	private static final String PATH_WIZBAN = ICONS_PATH + "wizban/";
-
+	private static final String PATH_FORMS = ICONS_PATH + "forms/";
+
+
 	/**
 	 * Frequently used images
 	 */
 	public static final String IMG_FORM_BANNER = NAME_PREFIX+"FORM_BANNER";
 	public static final String IMG_FORM_UNDERLINE = NAME_PREFIX + "FORM_UNDERLINE";
 	public static final String IMG_UPDATES_OBJ = NAME_PREFIX + "UDATES_OBJ";
-
+
+
 	/**
 	 * OBJ16
 	 */
-	public static final ImageDescriptor DESC_ECLIPSE_OBJ = create(PATH_OBJ, "eclipse2_obj.gif");
+	public static final ImageDescriptor DESC_APP_OBJ = create(PATH_OBJ, "app_obj.gif");
 	public static final ImageDescriptor DESC_COMPUTER_OBJ = create(PATH_OBJ, "computer_obj.gif");
 	public static final ImageDescriptor DESC_FEATURE_OBJ = create(PATH_OBJ, "feature_obj.gif");
 	public static final ImageDescriptor DESC_UNCONF_FEATURE_OBJ = create(PATH_OBJ, "unconf_feature_obj.gif");
-	public static final ImageDescriptor DESC_UNINSTALL_OBJ = create(PATH_OBJ, "uninstall_obj.gif");
-	public static final ImageDescriptor DESC_UPDATES_OBJ = create(PATH_OBJ, "updates_obj.gif");
 	public static final ImageDescriptor DESC_SITE_OBJ = create(PATH_OBJ, "site_obj.gif");
 	public static final ImageDescriptor DESC_CONFIG_OBJ = create(PATH_OBJ, "config_obj.gif");
 	
@@ -68,23 +73,14 @@ public class UpdateUIPluginImages {
 	public static final ImageDescriptor DESC_INSTALLABLE_CO = create(PATH_OVR, "installable_co.gif");
 	public static final ImageDescriptor DESC_CURRENT_CO = create(PATH_OVR, "current_co.gif");
 	public static final ImageDescriptor DESC_ERROR_CO = create(PATH_OVR, "error_co.gif");
-
-	/**
-	 * TOOL16
-	 */
-	public static final ImageDescriptor DESC_SEARCH_PROGRESS_0 = create(PATH_TOOL, "search_progress0.gif");
-	public static final ImageDescriptor DESC_SEARCH_PROGRESS_1 = create(PATH_TOOL, "search_progress1.gif");
-	public static final ImageDescriptor DESC_SEARCH_PROGRESS_2 = create(PATH_TOOL, "search_progress2.gif");
-	public static final ImageDescriptor DESC_SEARCH_PROGRESS_3 = create(PATH_TOOL, "search_progress3.gif");
-	
-	
+
 	/**
 	 * VIEW16
 	 */
-	public static final ImageDescriptor DESC_HISTORY_VIEW = create(PATH_VIEW, "history.gif");
-	public static final ImageDescriptor DESC_MY_ECLIPSE_VIEW = create(PATH_VIEW, "myEclipse.gif");
-	public static final ImageDescriptor DESC_SITES_VIEW = create(PATH_VIEW, "sites.gif");
-
+
+	public static final ImageDescriptor DESC_CONFIGS_VIEW = create(PATH_VIEW, "configs.gif");
+	public static final ImageDescriptor DESC_SITES_VIEW = create(PATH_VIEW, "updates.gif");
+
 	/**
 	 * LCL
 	 */
@@ -112,10 +108,10 @@ public class UpdateUIPluginImages {
 	 */
 	public static final ImageDescriptor DESC_INSTALL_WIZ  = create(PATH_WIZBAN, "install_wiz.gif");
 	public static final ImageDescriptor DESC_INSTALL_BANNER  = create(PATH_WIZBAN, "def_wizban.jpg");
-	public static final ImageDescriptor DESC_FORM_BANNER  = create(PATH_WIZBAN, "form_banner.gif");
-	public static final ImageDescriptor DESC_FORM_UNDERLINE  = create(PATH_WIZBAN, "form_underline.gif");
-	public static final ImageDescriptor DESC_PROVIDER = create(PATH_WIZBAN, "provider.gif");
-	public static final ImageDescriptor DESC_ITEM = create(PATH_WIZBAN, "topic.gif");
+	public static final ImageDescriptor DESC_FORM_BANNER  = create(PATH_FORMS, "form_banner.gif");
+	public static final ImageDescriptor DESC_FORM_UNDERLINE  = create(PATH_FORMS, "form_underline.gif");
+	public static final ImageDescriptor DESC_PROVIDER = create(PATH_FORMS, "def_provider.gif");
+	public static final ImageDescriptor DESC_ITEM = create(PATH_FORMS, "topic.gif");
 	public static final ImageDescriptor DESC_NEW_BOOKMARK  = create(PATH_WIZBAN, "new_bookmark_wiz.gif");
 	public static final ImageDescriptor DESC_NEW_FOLDER  = create(PATH_WIZBAN, "new_folder_wiz.gif");
 	public static final ImageDescriptor DESC_NEW_SEARCH  = create(PATH_WIZBAN, "new_search_wiz.gif");
@@ -123,12 +119,14 @@ public class UpdateUIPluginImages {
 	private static ImageDescriptor create(String prefix, String name) {
 		return ImageDescriptor.createFromURL(makeImageURL(prefix, name));
 	}
-
+
+
 	public static Image get(String key) {
 		if (PLUGIN_REGISTRY==null) initialize();
 		return PLUGIN_REGISTRY.get(key);
 	}
-
+
+
 public static ImageDescriptor getImageDescriptorFromPlugin(
 	IPluginDescriptor pluginDescriptor, 
 	String subdirectoryAndFilename) {
@@ -141,7 +139,8 @@ public static ImageDescriptor getImageDescriptorFromPlugin(
 	}
 	return null;
 }
-
+
+
 public static Image getImageFromPlugin(
 	IPluginDescriptor pluginDescriptor,
 	String subdirectoryAndFilename) {
@@ -167,9 +166,9 @@ private static final void initialize() {
 	PLUGIN_REGISTRY = new ImageRegistry();
 	manage(IMG_FORM_BANNER, DESC_FORM_BANNER);
 	manage(IMG_FORM_UNDERLINE, DESC_FORM_UNDERLINE);
-	manage(IMG_UPDATES_OBJ, DESC_UPDATES_OBJ);
 }
-
+
+
 private static URL makeImageURL(String prefix, String name) {
 	String path = prefix + name;
 	URL url = null;
@@ -181,7 +180,8 @@ private static URL makeImageURL(String prefix, String name) {
 	}
 	return url;
 }
-public static Image manage(String key, ImageDescriptor desc) {
+
+public static Image manage(String key, ImageDescriptor desc) {
 	Image image = desc.createImage();
 	PLUGIN_REGISTRY.put(key, image);
 	return image;

@@ -45,14 +45,14 @@
       </category>
       <view
             name="%views.updates.label"
-            icon="icons/full/view16/sites.gif"
+            icon="icons/full/view16/updates.gif"
             category="org.eclipse.update.ui"
             class="org.eclipse.update.internal.ui.views.UpdatesView"
             id="org.eclipse.update.ui.UpdatesView">
       </view>
       <view
             name="%views.configuration.label"
-            icon="icons/full/view16/myEclipse.gif"
+            icon="icons/full/view16/configs.gif"
             category="org.eclipse.update.ui"
             class="org.eclipse.update.internal.ui.views.ConfigurationView"
             id="org.eclipse.update.ui.ConfigurationView">
@@ -66,7 +66,7 @@
       </view>
       <view
             name="%views.webBrowser.label"
-            icon="icons/full/view16/preview.gif"
+            icon="icons/full/view16/browser.gif"
             category="org.eclipse.update.ui"
             class="org.eclipse.update.internal.ui.views.WebBrowserView"
             id="org.eclipse.update.ui.WebBrowser">

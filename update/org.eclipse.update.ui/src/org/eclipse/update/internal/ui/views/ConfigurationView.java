@@ -308,7 +308,7 @@ public class ConfigurationView
 	}
 
 	public ConfigurationView() {
-		eclipseImage = UpdateUIPluginImages.DESC_ECLIPSE_OBJ.createImage();
+		eclipseImage = UpdateUIPluginImages.DESC_APP_OBJ.createImage();
 		featureImage = UpdateUIPluginImages.DESC_FEATURE_OBJ.createImage();
 		unconfFeatureImage = UpdateUIPluginImages.DESC_UNCONF_FEATURE_OBJ.createImage();
 		ImageDescriptor siteDesc = UpdateUIPluginImages.DESC_SITE_OBJ;

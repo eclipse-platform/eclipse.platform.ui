@@ -28,21 +28,18 @@ private static final String KEY_HISTORY_TITLE = "HomePage.history.title";
 private static final String KEY_HISTORY_DESC = "HomePage.history.desc";
 
 	Image itemImage;
-	Image historyImage;
 	Image myEclipseImage;
 	Image sitesImage;
 	
 public MainForm(UpdateFormPage page) {
 	super(page);
 	itemImage = UpdateUIPluginImages.DESC_ITEM.createImage();
-	historyImage = UpdateUIPluginImages.DESC_HISTORY_VIEW.createImage();
-	myEclipseImage = UpdateUIPluginImages.DESC_MY_ECLIPSE_VIEW.createImage();
+	myEclipseImage = UpdateUIPluginImages.DESC_CONFIGS_VIEW.createImage();
 	sitesImage = UpdateUIPluginImages.DESC_SITES_VIEW.createImage();
 }
 
 public void dispose() {
 	itemImage.dispose();
-	historyImage.dispose();
 	myEclipseImage.dispose();
 	sitesImage.dispose();
 	super.dispose();
@@ -154,7 +151,6 @@ protected void createContents(Composite parent) {
 	text = factory.createFormEngine(parent);
 	text.load(UpdateUIPlugin.getResourceString(KEY_HISTORY_DESC), true, false);
 	text.registerTextObject("action1", action);
-	text.registerTextObject("image1", historyImage);
 	td = new TableData();
 	td.grabHorizontal=true;
 	text.setLayoutData(td);
