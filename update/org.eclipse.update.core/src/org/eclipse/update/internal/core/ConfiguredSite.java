@@ -388,19 +388,11 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 	 * @see IConfiguredSite#unconfigure(IFeature)
 	 */
 	public boolean unconfigure(IFeature feature) throws CoreException {
-		// the first call should disable without checking for enabled parents
+		// the first call sould disable without checking for enable parent
 		return unconfigure(feature, true, false);
 	}
 
-	/**
-	 * 
-	 * @param feature
-	 * @param includePatches will cause patches of the given featues to be unconfigures as well
-	 * @param assertNoParents will result in failure if feature has parents that are configured
-	 * @return true if success
-	 * @throws CoreException
-	 */
-	private boolean unconfigure(IFeature feature, boolean includePatches, boolean assertNoParents) throws CoreException {
+	private boolean unconfigure(IFeature feature, boolean includePatches, boolean verifyEnableParent) throws CoreException {
 		IFeatureReference featureReference = getSite().getFeatureReference(feature);
 
 		if (featureReference == null) {
@@ -412,9 +404,9 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 		if (configPolicy == null)
 			return false;
 
-		// verify no parents are enabled
-		if (assertNoParents && hasConfiguredParents(feature)) {
-			UpdateCore.warn("The feature " + feature.getVersionedIdentifier() + " to disable is needed by another enabled feature.");
+		// verify no enable parent
+		if (verifyEnableParent && !validateNoConfiguredParents(feature)) {
+			UpdateCore.warn("The feature " + feature.getVersionedIdentifier() + " to disable is needed by another enable feature");
 			return false;
 		}
 
@@ -1195,20 +1187,17 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 		return false;
 	}
 
-	/**
-	 * Checks if configured/enabled parent include this feature
-	 * @param feature
-	 * @return true if the feature is included by other configured feature
-	 * @throws CoreException
-	 */
-	private boolean hasConfiguredParents(IFeature feature) throws CoreException {
+	/*
+	* we have to check that no configured/enable parent include this feature
+	*/
+	private boolean validateNoConfiguredParents(IFeature feature) throws CoreException {
 		if (feature == null) {
 			UpdateCore.warn("ConfigurationPolicy: validate Feature is null");
-			return false;
+			return true;
 		}
 
 		IFeatureReference[] parents = UpdateManagerUtils.getParentFeatures(feature, getConfiguredFeatures(), false);
-		return (parents.length > 0);
+		return (parents.length == 0);
 	}
 
 }

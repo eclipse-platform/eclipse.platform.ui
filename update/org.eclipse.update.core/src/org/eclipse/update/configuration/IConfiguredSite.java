@@ -189,11 +189,10 @@ public interface IConfiguredSite extends IAdaptable {
 	public void configure(IFeature feature) throws CoreException;
 
 	/**
-	 * Unconfigure the specified feature (and included features) from this site.
-	 * The unconfigured feature will be omitted on the next startup.
+	 * Unconfigure the specified feature from this site. The unconfigured
+	 * feature will be omitted on the next startup.
 	 * 
 	 * @param feature the feature
-	 * @return true if success
 	 * @since 2.0 
 	 * <p>
 	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
