@@ -195,10 +195,49 @@ function selectTopic(topic)
 		{
 			expandPathTo(links[i]);
 			highlightTopic(links[i]);
+			scrollIntoView(links[i]);
 			return true;
 		}
 	}
 	return false;
+}
+
+/**
+ * Scrolls the page to show the specified element
+ */
+function scrollIntoView(node)
+{
+	var nodeTop = node.offsetTop;
+	var nodeBottom = nodeTop + node.offsetHeight;
+	var pageTop = 0;
+	var pageBottom = 0;
+	
+	if (isIE)
+	{
+		pageTop = document.body.scrollTop; 
+		pageBottom = pageTop + document.body.clientHeight;
+	
+	} 
+	else if (isMozilla)
+	{
+		pageTop = window.pageYOffset;
+		pageBottom = pageTop + window.innerHeight - node.offsetHeight;
+	}
+	
+	var scroll = 0;
+	if (nodeTop >= pageTop )
+	{
+		if (nodeBottom <= pageBottom)
+			return; // already in view
+		else
+			scroll = nodeBottom - pageBottom;
+	}
+	else
+	{
+		scroll = nodeTop - pageTop;
+	}
+	
+	window.scrollBy(0, scroll);
 }
 
 function adjustMargins()
@@ -216,10 +255,8 @@ function adjustMargins()
 /**
  * Handles the onload event
  */
-function onloadHandler(toc, title)
+function onloadHandler(title)
 {
-	parent.parent.MainFrame.location="home.jsp?toc="+toc;
-
 	// little change for mozilla margins
 	if (isMozilla)
 		adjustMargins();
