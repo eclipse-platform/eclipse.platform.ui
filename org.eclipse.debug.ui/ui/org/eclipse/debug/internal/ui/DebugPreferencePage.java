@@ -54,8 +54,10 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 	 */
 	protected void createFieldEditors() {
 		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_SINGLE_CLICK_LAUNCHING, DebugUIMessages.getString("DebugPreferencePage.&Single-click_launching_2"), SWT.NONE, getFieldEditorParent()));  //$NON-NLS-1$
-		createSaveBeforeLaunchEditors(getFieldEditorParent());
 		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_BUILD_BEFORE_LAUNCH, DebugUIMessages.getString("DebugPreferencePage.auto_build_before_launch"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$		
+		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES, DebugUIMessages.getString("DebugPreferencePage.Remove_terminated_launches_when_a_new_launch_is_created_1"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
+		createSaveBeforeLaunchEditors(getFieldEditorParent());
+		
 		
 		String[][] perspectiveNamesAndIds = getPerspectiveNamesAndIds();
 		addField(new ComboFieldEditor(IDebugUIConstants.PREF_SHOW_DEBUG_PERSPECTIVE_DEFAULT,
@@ -67,7 +69,6 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 									   perspectiveNamesAndIds,
 									   getFieldEditorParent()));
 		
-		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES, DebugUIMessages.getString("DebugPreferencePage.Remove_terminated_launches_when_a_new_launch_is_created_1"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
 		addField(new RadioGroupFieldEditor(IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_ORIENTATION,
 											DebugUIMessages.getString("DebugPreferencePage.Orientation_of_detail_pane_in_variables_view_1"), //$NON-NLS-1$
 											1,
