@@ -80,9 +80,9 @@ public class ResourceExpander extends DefaultVariableExpander {
 	 * expand to paths relative to the workspace root.
 	 */
 	private boolean isPathVariable(String varTag) {
-		return varTag.equals(ILaunchVariableConstants.VAR_CONTAINER_PATH) ||
-				varTag.equals(ILaunchVariableConstants.VAR_PROJECT_PATH) ||
-				varTag.equals(ILaunchVariableConstants.VAR_RESOURCE_PATH);
+		return varTag.equals(ILaunchVariableManager.VAR_CONTAINER_PATH) ||
+				varTag.equals(ILaunchVariableManager.VAR_PROJECT_PATH) ||
+				varTag.equals(ILaunchVariableManager.VAR_RESOURCE_PATH);
 	}
 
 	/**

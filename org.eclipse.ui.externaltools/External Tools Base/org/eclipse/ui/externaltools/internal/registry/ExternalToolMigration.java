@@ -20,7 +20,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.variables.ILaunchVariableConstants;
+import org.eclipse.debug.core.variables.ILaunchVariableManager;
 import org.eclipse.debug.core.variables.LaunchVariableUtil;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
@@ -173,8 +173,8 @@ public final class ExternalToolMigration {
 		String location = (String) args.get(TAG_TOOL_LOCATION);
 		if (location != null) {
 			LaunchVariableUtil.VariableDefinition varDef = LaunchVariableUtil.extractVariableDefinition(location, 0);
-			if (ILaunchVariableConstants.VAR_WORKSPACE_LOC.equals(varDef.name)) {
-				location = LaunchVariableUtil.buildVariableTag(ILaunchVariableConstants.VAR_RESOURCE_LOC, varDef.argument);
+			if (ILaunchVariableManager.VAR_WORKSPACE_LOC.equals(varDef.name)) {
+				location = LaunchVariableUtil.buildVariableTag(ILaunchVariableManager.VAR_RESOURCE_LOC, varDef.argument);
 			}
 			config.setAttribute(IExternalToolConstants.ATTR_LOCATION, location);
 		}
