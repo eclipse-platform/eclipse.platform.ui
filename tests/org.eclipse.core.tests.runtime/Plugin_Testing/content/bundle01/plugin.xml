@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin
-  name="content.bundle01"
-  id="org.eclipse.foo"
+  name="org.eclipse.bundle01"
+  id="org.eclipse.bundle01"
   version="1.0"
   provider-name="Eclipse.org">
 	<extension point="org.eclipse.core.runtime.contentTypes">
-		<content-type id="bar"/>
+		<content-type id="missing"/>
 	</extension>	
 </plugin>

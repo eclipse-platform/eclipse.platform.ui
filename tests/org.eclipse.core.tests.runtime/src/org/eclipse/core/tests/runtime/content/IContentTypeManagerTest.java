@@ -14,11 +14,13 @@ import java.io.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.content.*;
-import org.eclipse.core.runtime.IPlatform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
+import org.eclipse.core.tests.runtime.DynamicPluginTest;
 import org.eclipse.core.tests.runtime.RuntimeTest;
+import org.osgi.framework.Bundle;
 
-public class IContentTypeManagerTest extends RuntimeTest {
+public class IContentTypeManagerTest extends DynamicPluginTest {
 	private final static String MINIMAL_XML = "<?xml version=\"1.0\"?><root/>";
 	private final static String XML_UTF_8 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><root/>";
 	private final static String XML_ISO_8859_1 = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><root/>";
@@ -54,8 +56,7 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		assertTrue("4.1", isText(contentTypeManager, xmlBasedSpecificNameContentType));
 		assertEquals("4.2", xmlContentType, xmlBasedSpecificNameContentType.getBaseType());
 		IContentType[] xmlTypes = contentTypeManager.findContentTypesFor("foo.xml");
-		assertEquals("5.0", 1, xmlTypes.length);
-		assertEquals("5.1", xmlContentType, xmlTypes[0]);
+		assertTrue("5.1", contains(xmlTypes, xmlContentType));
 		IContentType binaryContentType = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + '.' + "sample-binary");
 		assertNotNull("6.0", binaryContentType);
 		assertTrue("6.1", !isText(contentTypeManager, binaryContentType));
@@ -66,6 +67,14 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		IContentType myText = contentTypeManager.getContentType(PI_RUNTIME_TESTS + ".mytext");
 		assertNotNull("8.0", myText);
 		assertEquals("8.1", "BAR", myText.getDefaultCharset());
+		IContentType[] fooBarTypes = contentTypeManager.findContentTypesFor("foo.bar");
+		assertEquals("9.0", 2, fooBarTypes.length);
+		IContentType fooBar = contentTypeManager.getContentType(PI_RUNTIME_TESTS + ".fooBar");
+		assertNotNull("9.1", fooBar);
+		IContentType subFooBar = contentTypeManager.getContentType(PI_RUNTIME_TESTS + ".subFooBar");
+		assertNotNull("9.2", subFooBar);
+		assertTrue("9.3", contains(fooBarTypes, fooBar));
+		assertTrue("9.4", contains(fooBarTypes, subFooBar));
 	}
 
 	private boolean contains(Object[] array, Object element) {
@@ -133,25 +142,6 @@ public class IContentTypeManagerTest extends RuntimeTest {
 	}
 
 	/**
-	 * This test shows how we deal with orphan content types (content types
-	 * whose base types are missing): orphan types are considered invalid and do 
-	 * not appear in the catalog.
-	 */
-	public void testOrphanContentType() {
-		IContentTypeManager contentTypeManager = LocalContentTypeManager.getLocalContentTypeManager();
-		assertNull("1.0", contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + '.' + "orphan"));
-		assertEquals("1.1", 0, contentTypeManager.findContentTypesFor("foo.orphan").length);
-		assertEquals("1.2", 0, contentTypeManager.findContentTypesFor("orphan.orphan").length);
-		//test late addition of base type - it should become valid
-		LocalContentTypeManager localManager = ((LocalContentTypeManager) contentTypeManager);
-		IContentType newType = localManager.createContentType("org.eclipse.foo", "bar", "Foo Bar", null, null, null, null);
-		localManager.addContentType(newType);
-		assertNotNull("2.0", contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + '.' + "orphan"));
-		assertEquals("2.1", 1, contentTypeManager.findContentTypesFor("foo.orphan").length);
-		assertEquals("2.2", 1, contentTypeManager.findContentTypesFor("orphan.orphan").length);
-	}
-
-	/**
 	 * The fooBar content type is associated with the "foo.bar" file name and 
 	 * the "bar" file extension (what is bogus, anyway). This test ensures it 
 	 * does not appear twice in the list of content types associated with the 
@@ -161,10 +151,13 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		IContentTypeManager contentTypeManager = LocalContentTypeManager.getLocalContentTypeManager();
 		IContentType fooBarType = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + '.' + "fooBar");
 		assertNotNull("1.0", fooBarType);
+		IContentType subFooBarType = contentTypeManager.getContentType(RuntimeTest.PI_RUNTIME_TESTS + '.' + "subFooBar");
+		assertNotNull("1.1", subFooBarType);
 		// ensure we don't get fooBar twice 
 		IContentType[] fooBarAssociated = contentTypeManager.findContentTypesFor("foo.bar");
-		assertEquals("2.1", 1, fooBarAssociated.length);
-		assertEquals("2.2", fooBarType, fooBarAssociated[0]);
+		assertEquals("2.1", 2, fooBarAssociated.length);
+		assertTrue("2.2", contains(fooBarAssociated, fooBarType));
+		assertTrue("2.3", contains(fooBarAssociated, subFooBarType));
 	}
 
 	public void testIsKindOf() {
@@ -187,16 +180,87 @@ public class IContentTypeManagerTest extends RuntimeTest {
 	public void testFindContentType() throws Exception {
 		IContentTypeManager contentTypeManager = LocalContentTypeManager.getLocalContentTypeManager();
 		IContentType textContentType = contentTypeManager.getContentType(IPlatform.PI_RUNTIME + '.' + "text");
-		IContentType[] selected;
-		selected = contentTypeManager.findContentTypesFor(getInputStream("Just a test"), "file.txt");
-		assertEquals("1.0", 1, selected.length);
-		assertEquals("1.1", textContentType, selected[0]);
+		IContentType single = contentTypeManager.findContentTypeFor(getInputStream("Just a test"), "file.txt");
+		assertNotNull("1.0", single);
+		assertEquals("1.1", textContentType, single);
 		IContentType xmlContentType = contentTypeManager.getContentType(IPlatform.PI_RUNTIME + ".xml");
-		selected = contentTypeManager.findContentTypesFor(getInputStream(XML_UTF_8, "UTF-8"), "foo.xml");
-		assertEquals("2.0", 1, selected.length);
-		assertEquals("2.1", xmlContentType, selected[0]);
-		selected = contentTypeManager.findContentTypesFor(getInputStream(XML_UTF_8, "UTF-8"), null);
-		assertTrue("3.0", contains(selected, xmlContentType));
+		single = contentTypeManager.findContentTypeFor(getInputStream(XML_UTF_8, "UTF-8"), "foo.xml");
+		assertNotNull("2.0", single);
+		assertEquals("2.1", xmlContentType, single);
+		IContentType[] multiple = contentTypeManager.findContentTypesFor(getInputStream(XML_UTF_8, "UTF-8"), null);
+		assertTrue("3.0", contains(multiple, xmlContentType));
+	}
+
+	public void testAssociations() {
+		IContentType text = Platform.getContentTypeManager().getContentType((IPlatform.PI_RUNTIME + ".text"));
+		// associate a user-defined file spec
+		text.addFileSpec("ini", IContentType.FILE_EXTENSION_SPEC);
+		// test associations
+		assertTrue("0.1", text.isAssociatedWith("text.txt"));
+		assertTrue("0.2", text.isAssociatedWith("text.ini"));
+		assertTrue("0.3", text.isAssociatedWith("text.tkst"));
+		// check provider defined settings
+		String[] providerDefinedExtensions = text.getFileSpecs(IContentType.FILE_EXTENSION_SPEC | IContentType.IGNORE_USER_DEFINED);
+		assertTrue("1.0", contains(providerDefinedExtensions, "txt"));
+		assertTrue("1.1", !contains(providerDefinedExtensions, "ini"));
+		assertTrue("1.2", contains(providerDefinedExtensions, "tkst"));
+		// check user defined settings
+		String[] textUserDefinedExtensions = text.getFileSpecs(IContentType.FILE_EXTENSION_SPEC | IContentType.IGNORE_PRE_DEFINED);
+		assertTrue("2.0", !contains(textUserDefinedExtensions, "txt"));
+		assertTrue("2.1", contains(textUserDefinedExtensions, "ini"));
+		assertTrue("2.2", !contains(textUserDefinedExtensions, "tkst"));
+		// removing pre-defined file specs should not do anything
+		text.removeFileSpec("txt", IContentType.FILE_EXTENSION_SPEC);
+		assertTrue("3.0", contains(text.getFileSpecs(IContentType.FILE_EXTENSION_SPEC | IContentType.IGNORE_USER_DEFINED), "txt"));
+		assertTrue("3.1", text.isAssociatedWith("text.txt"));
+		assertTrue("3.2", text.isAssociatedWith("text.ini"));
+		assertTrue("3.3", text.isAssociatedWith("text.tkst"));
+		// removing user file specs is the normal case and has to work as expected
+		text.removeFileSpec("ini", IContentType.FILE_EXTENSION_SPEC);
+		assertTrue("4.0", !contains(text.getFileSpecs(IContentType.FILE_EXTENSION_SPEC | IContentType.IGNORE_PRE_DEFINED), "ini"));
+		assertTrue("4.1", text.isAssociatedWith("text.txt"));
+		assertTrue("4.2", !text.isAssociatedWith("text.ini"));
+		assertTrue("4.3", text.isAssociatedWith("text.tkst"));
+	}
+
+	/**
+	 * This test shows how we deal with orphan file associations (associations
+	 * whose content types are missing).
+	 */
+	public void testOrphanContentType() throws Exception {
+		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
+		IContentType orphan = contentTypeManager.getContentType(PI_RUNTIME_TESTS + ".orphan");
+		assertNull("0.8", orphan);
+		IContentType missing = contentTypeManager.getContentType("org.eclipse.bundle01.missing");
+		assertNull("0.9", missing);
+		assertEquals("1.1", 0, contentTypeManager.findContentTypesFor("foo.orphan").length);
+		assertEquals("1.2", 0, contentTypeManager.findContentTypesFor("orphan.orphan").length);
+		assertEquals("1.3", 0, contentTypeManager.findContentTypesFor("foo.orphan2").length);
+
+		//test late addition of content type - orphan2 should become visible
+		TestRegistryChangeListener listener = new TestRegistryChangeListener(Platform.PI_RUNTIME, ContentTypeBuilder.PT_CONTENTTYPES, null, null);
+		registerListener(listener, Platform.PI_RUNTIME);
+		Bundle installed = installBundle("content/bundle01");
+		try {
+			IRegistryChangeEvent event = listener.getEvent(10000);
+			assertNotNull("1.5", event);
+			assertNotNull("2.0", Platform.getBundle("org.eclipse.bundle01"));
+			orphan = contentTypeManager.getContentType(PI_RUNTIME_TESTS + ".orphan");
+			assertNotNull("2.1", orphan);
+			missing = contentTypeManager.getContentType("org.eclipse.bundle01.missing");
+			assertNotNull("2.2", missing);
+			// checks orphan's associations
+			assertEquals("3.0", 1, contentTypeManager.findContentTypesFor("foo.orphan").length);
+			assertEquals("3.1", orphan, contentTypeManager.findContentTypesFor("foo.orphan")[0]);
+			assertEquals("4.0", 1, contentTypeManager.findContentTypesFor("orphan.orphan").length);
+			assertEquals("4.1", orphan, contentTypeManager.findContentTypesFor("foo.orphan")[0]);
+			// check whether an orphan association was added to the dynamically added bundle
+			assertEquals("5.0", 1, contentTypeManager.findContentTypesFor("foo.orphan2").length);
+			assertEquals("5.1", missing, contentTypeManager.findContentTypesFor("foo.orphan2")[0]);
+		} finally {
+			//remove installed bundle
+			installed.uninstall();
+		}
 	}
 
 	private boolean isText(IContentTypeManager manager, IContentType candidate) {

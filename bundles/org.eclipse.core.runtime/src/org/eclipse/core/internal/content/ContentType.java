@@ -30,10 +30,84 @@ public class ContentType implements IContentType {
 	final static byte UNKNOWN = 3;
 	private static final int USER_DEFINED_SPEC = IGNORE_USER_DEFINED;
 	final static byte VALID = 1;
+
+	public static ContentType createContentType(ContentTypeManager manager, String namespace, String simpleId, String name, byte priority, String[] fileExtensions, String[] fileNames, String baseTypeId, String defaultCharset, IConfigurationElement describerElement) {
+		ContentType contentType = new ContentType(manager);
+		contentType.simpleId = simpleId;
+		contentType.namespace = namespace;
+		contentType.name = name;
+		contentType.priority = priority;
+		if ((fileExtensions != null && fileExtensions.length > 0) || (fileNames != null && fileNames.length > 0)) {
+			contentType.fileSpecs = new ArrayList(fileExtensions.length + fileNames.length);
+			for (int i = 0; i < fileNames.length; i++)
+				contentType.fileSpecs.add(createFileSpec(fileNames[i], FILE_NAME_SPEC | PRE_DEFINED_SPEC));
+			for (int i = 0; i < fileExtensions.length; i++)
+				contentType.fileSpecs.add(createFileSpec(fileExtensions[i], FILE_EXTENSION_SPEC | PRE_DEFINED_SPEC));
+		}
+		contentType.defaultCharset = defaultCharset;
+		contentType.describerElement = describerElement;
+		contentType.baseTypeId = baseTypeId;
+		return contentType;
+	}
+
+	static FileSpec createFileSpec(String fileSpec, int type) {
+		return new FileSpec(fileSpec, type);
+	}
+
+	private static String getPreferenceKey(int flags) {
+		if ((flags & FILE_EXTENSION_SPEC) != 0)
+			return CONTENT_TYPE_FILE_EXTENSIONS_PREF;
+		if ((flags & FILE_NAME_SPEC) != 0)
+			return CONTENT_TYPE_FILE_NAMES_PREF;
+		throw new IllegalArgumentException("Unknown type: " + flags); //$NON-NLS-1$
+	}
+
+	static String[] parseItems(String string) {
+		if (string == null)
+			return new String[0];
+		StringTokenizer tokenizer = new StringTokenizer(string, ","); //$NON-NLS-1$
+		if (!tokenizer.hasMoreTokens())
+			return new String[0];
+		String first = tokenizer.nextToken();
+		if (!tokenizer.hasMoreTokens())
+			return new String[] {first};
+		ArrayList items = new ArrayList();
+		items.add(first);
+		do {
+			items.add(tokenizer.nextToken());
+		} while (tokenizer.hasMoreTokens());
+		return (String[]) items.toArray(new String[items.size()]);
+	}
+
+	static String toListString(List list) {
+		if (list.isEmpty())
+			return ""; //$NON-NLS-1$
+		StringBuffer result = new StringBuffer();
+		for (Iterator i = list.iterator(); i.hasNext();) {
+			result.append(i.next());
+			result.append(',');
+		}
+		// ignore last comma
+		return result.substring(0, result.length() - 1);
+	}
+
+	static String toListString(Object[] list) {
+		if (list.length == 0)
+			return ""; //$NON-NLS-1$
+		StringBuffer result = new StringBuffer();
+		for (int i = 0; i < list.length; i++) {
+			result.append(list);
+			result.append(',');
+		}
+		// ignore last comma
+		return result.substring(0, result.length() - 1);
+	}
+
 	private ContentType aliasTarget;
 	private String baseTypeId;
-	private IConfigurationElement describerElement;
+	private IContentType[] children;
 	private String defaultCharset;
+	private IConfigurationElement describerElement;
 	private boolean failedDescriberCreation;
 	private List fileSpecs;
 	private ContentTypeManager manager;
@@ -75,6 +149,12 @@ public class ContentType implements IContentType {
 
 	String getBaseTypeId() {
 		return baseTypeId;
+	}
+
+	IContentType[] getChildren() {
+		if (children == null)
+			children = manager.getChildren(this);
+		return children;
 	}
 
 	/**
@@ -166,6 +246,10 @@ public class ContentType implements IContentType {
 		return validation;
 	}
 
+	boolean hasAnyFileSpec() {
+		return fileSpecs != null && !fileSpecs.isEmpty();
+	}
+
 	/** 
 	 * @param text the file spec string
 	 * @param typeMask FILE_NAME_SPEC or FILE_EXTENSION_SPEC
@@ -194,7 +278,7 @@ public class ContentType implements IContentType {
 
 	void internalRemoveFileSpec(String fileSpec, int typeMask) {
 		if (aliasTarget != null) {
-			aliasTarget.internalAddFileSpec(fileSpec, typeMask);
+			aliasTarget.internalRemoveFileSpec(fileSpec, typeMask);
 			return;
 		}
 		if (fileSpecs == null)
@@ -220,6 +304,7 @@ public class ContentType implements IContentType {
 		return (fileExtension == null) ? false : hasFileSpec(fileExtension, FILE_EXTENSION_SPEC);
 	}
 
+	//TODO this can be done better
 	public boolean isKindOf(IContentType another) {
 		if (aliasTarget != null)
 			return getTarget().isKindOf(another);
@@ -256,77 +341,5 @@ public class ContentType implements IContentType {
 
 	public String toString() {
 		return getId();
-	}
-
-	public static ContentType createContentType(ContentTypeManager manager, String namespace, String simpleId, String name, byte priority, String[] fileExtensions, String[] fileNames, String baseTypeId, String defaultCharset, IConfigurationElement describerElement) {
-		ContentType contentType = new ContentType(manager);
-		contentType.simpleId = simpleId;
-		contentType.namespace = namespace;
-		contentType.name = name;
-		contentType.priority = priority;
-		if ((fileExtensions != null && fileExtensions.length > 0) || (fileNames != null && fileNames.length > 0)) {
-			contentType.fileSpecs = new ArrayList(fileExtensions.length + fileNames.length);
-			for (int i = 0; i < fileNames.length; i++)
-				contentType.fileSpecs.add(createFileSpec(fileNames[i], FILE_NAME_SPEC | PRE_DEFINED_SPEC));
-			for (int i = 0; i < fileExtensions.length; i++)
-				contentType.fileSpecs.add(createFileSpec(fileExtensions[i], FILE_EXTENSION_SPEC | PRE_DEFINED_SPEC));
-		}
-		contentType.defaultCharset = defaultCharset;
-		contentType.describerElement = describerElement;
-		contentType.baseTypeId = baseTypeId;
-		return contentType;
-	}
-
-	static FileSpec createFileSpec(String fileSpec, int type) {
-		return new FileSpec(fileSpec, type);
-	}
-
-	private static String getPreferenceKey(int flags) {
-		if ((flags & FILE_EXTENSION_SPEC) != 0)
-			return CONTENT_TYPE_FILE_EXTENSIONS_PREF;
-		if ((flags & FILE_NAME_SPEC) != 0)
-			return CONTENT_TYPE_FILE_NAMES_PREF;
-		throw new IllegalArgumentException("Unknown type: " + flags); //$NON-NLS-1$
-	}
-
-	static String[] parseItems(String string) {
-		if (string == null)
-			return new String[0];
-		StringTokenizer tokenizer = new StringTokenizer(string, ","); //$NON-NLS-1$
-		if (!tokenizer.hasMoreTokens())
-			return new String[0];
-		String first = tokenizer.nextToken();
-		if (!tokenizer.hasMoreTokens())
-			return new String[] {first};
-		ArrayList items = new ArrayList();
-		items.add(first);
-		do {
-			items.add(tokenizer.nextToken());
-		} while (tokenizer.hasMoreTokens());
-		return (String[]) items.toArray(new String[items.size()]);
-	}
-
-	static String toListString(List list) {
-		if (list.isEmpty())
-			return ""; //$NON-NLS-1$
-		StringBuffer result = new StringBuffer();
-		for (Iterator i = list.iterator(); i.hasNext();) {
-			result.append(i.next());
-			result.append(',');
-		}
-		// ignore last comma
-		return result.substring(0, result.length() - 1);
-	}
-
-	static String toListString(Object[] list) {
-		if (list.length == 0)
-			return ""; //$NON-NLS-1$
-		StringBuffer result = new StringBuffer();
-		for (int i = 0; i < list.length; i++) {
-			result.append(list);
-			result.append(',');
-		}
-		// ignore last comma
-		return result.substring(0, result.length() - 1);
 	}
 }

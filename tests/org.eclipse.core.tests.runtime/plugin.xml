@@ -43,6 +43,10 @@
 			file-extensions="bar"
 			file-names="foo.bar"/>	
 		<content-type 
+			id="subFooBar" 
+			name="Sub Foo Bar" 
+			base-type="fooBar"/>			
+		<content-type 
 			id="xml-based-different-extension" 
 			name="XML Based with Different Extension" 
 			base-type="org.eclipse.core.runtime.xml" 
@@ -65,11 +69,11 @@
 		<content-type 
 			id="orphan" 
 			name="Orphan Type" 
-			base-type="org.eclipse.foo.bar"
+			base-type="org.eclipse.bundle01.missing"
 			file-extensions="orphan"
 			file-names="foo.orphan"/>
 		<file-association
-			content-type="org.eclipse.foo.bar" 		
+			content-type="org.eclipse.bundle01.missing" 					
 			file-extensions="orphan2"/>					
 	</extension>	
 
