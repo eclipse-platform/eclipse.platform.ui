@@ -47,7 +47,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * @version 19.09.2002
  * @author Alf Schiefelbein
  */
-public class PlantySaxDefaultHandler extends DefaultHandler {
+public class AntEditorSaxDefaultHandler extends DefaultHandler {
 
     /**
      * The locator that tells us the location of the currently parsed element 
@@ -114,20 +114,20 @@ public class PlantySaxDefaultHandler extends DefaultHandler {
 
 
     /**
-     * Creates an PlantySaxDefaultHandler, with the specified parameters.
+     * Creates an AntEditorSaxDefaultHandler, with the specified parameters.
      * 
      * @param aRowOfCursorPosition the startingRow where the cursor is located in the
      * document. The first startingRow is refered to with an index of '0'.
      * @param aColumnOfCursorPosition the startingColumn where the cursor is located in
      * the document. The first startingColumn is refered to with an index of '0'.
      */
-    public PlantySaxDefaultHandler(File mainFileContainer, int aRowOfCursorPosition, int aColumnOfCursorPosition) throws ParserConfigurationException {
+    public AntEditorSaxDefaultHandler(File mainFileContainer, int aRowOfCursorPosition, int aColumnOfCursorPosition) throws ParserConfigurationException {
         super();
 		if (ExternalToolsPlugin.getDefault() != null && ExternalToolsPlugin.getDefault().isDebugging()) {
-			ExternalToolsPlugin.getDefault().log("PlantySaxDefaultHandler(" +aRowOfCursorPosition+ ", "+aColumnOfCursorPosition+ ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			ExternalToolsPlugin.getDefault().log("AntEditorSaxDefaultHandler(" +aRowOfCursorPosition+ ", "+aColumnOfCursorPosition+ ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         }
         if(aRowOfCursorPosition < 0 || aColumnOfCursorPosition < 0) {
-            throw new IllegalArgumentException(MessageFormat.format(AntEditorMessages.getString("PlantySaxDefaultHandler.Invalid_cursor_position"), new String[]{Integer.toString(aRowOfCursorPosition), Integer.toString(aColumnOfCursorPosition)})); //$NON-NLS-1$
+            throw new IllegalArgumentException(MessageFormat.format(AntEditorMessages.getString("AntEditorSaxDefaultHandler.Invalid_cursor_position"), new String[]{Integer.toString(aRowOfCursorPosition), Integer.toString(aColumnOfCursorPosition)})); //$NON-NLS-1$
         }
         rowOfCursorPosition = aRowOfCursorPosition;
         columnOfCursorPosition = aColumnOfCursorPosition;
@@ -172,7 +172,7 @@ public class PlantySaxDefaultHandler extends DefaultHandler {
                     (tempLineNr == rowOfCursorPosition && tempColumnNr > columnOfCursorPosition) && !stillOpenElements.isEmpty()) {
                         parentElement = (Element)stillOpenElements.peek();
                         if (ExternalToolsPlugin.getDefault() != null && ExternalToolsPlugin.getDefault().isDebugging()) {
-							ExternalToolsPlugin.getDefault().log("PlantySaxDefaultHandler.checkForParentElement(): Parent element found: " +parentElement, null); //$NON-NLS-1$
+							ExternalToolsPlugin.getDefault().log("AntEditorSaxDefaultHandler.checkForParentElement(): Parent element found: " +parentElement, null); //$NON-NLS-1$
                         }
                         return true;
                     }
@@ -202,7 +202,7 @@ public class PlantySaxDefaultHandler extends DefaultHandler {
          */
         
 		 if (ExternalToolsPlugin.getDefault() != null && ExternalToolsPlugin.getDefault().isDebugging()) {
-			ExternalToolsPlugin.getDefault().log("PlantySaxDefaultHandler.startElement(" +aUri+ ", " +aLocalName+ ", "+aQualifiedName+ ", "+anAttributes+ ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			ExternalToolsPlugin.getDefault().log("AntEditorSaxDefaultHandler.startElement(" +aUri+ ", " +aLocalName+ ", "+aQualifiedName+ ", "+anAttributes+ ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
         }
         if(parsingFinished) {
             return;
@@ -214,7 +214,7 @@ public class PlantySaxDefaultHandler extends DefaultHandler {
         // Create a Dom Element
         String tempTagName = aLocalName.length() > 0 ? aLocalName : aQualifiedName;
         if(tempTagName == null || tempTagName.length() == 0) {
-            throw new PlantyException(AntEditorMessages.getString("PlantySaxDefaultHandler.Error_parsing")); //$NON-NLS-1$
+            throw new AntEditorException(AntEditorMessages.getString("AntEditorSaxDefaultHandler.Error_parsing")); //$NON-NLS-1$
         }
         // This code added to determine root element in a rational way bf
         if (rootElementName == null) {
@@ -236,7 +236,7 @@ public class PlantySaxDefaultHandler extends DefaultHandler {
         throws SAXException {
 
 		if (ExternalToolsPlugin.getDefault() != null && ExternalToolsPlugin.getDefault().isDebugging()) {
-			ExternalToolsPlugin.getDefault().log("PlantySaxDefaultHandler.endElement(" +aUri+ ", " +aLocalName+ ", "+aQualifiedName+ ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			ExternalToolsPlugin.getDefault().log("AntEditorSaxDefaultHandler.endElement(" +aUri+ ", " +aLocalName+ ", "+aQualifiedName+ ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
 
         if(parsingFinished) {

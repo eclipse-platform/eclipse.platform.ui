@@ -17,7 +17,7 @@ package org.eclipse.ui.externaltools.internal.ant.editor.text;
 import org.eclipse.swt.graphics.RGB;
 
 /**
- * The color constants used by Planty.
+ * The color constants used by the Ant Editor.
  */
 public interface IAntEditorColorConstants {
 	RGB XML_COMMENT =       new RGB(128,   0,   0);
@@ -27,9 +27,9 @@ public interface IAntEditorColorConstants {
 	RGB TAG=                new RGB(  0,   0, 128);
 	
 	
-	String P_XML_COMMENT = "planty.color.xml_comment"; //$NON-NLS-1$
-	String P_PROC_INSTR = "planty.color.instr"; //$NON-NLS-1$
-	String P_STRING = "planty.color.string"; //$NON-NLS-1$
-	String P_DEFAULT = "planty.color.default"; //$NON-NLS-1$
-	String P_TAG = "planty.color.tag"; //$NON-NLS-1$
+	String P_XML_COMMENT = "antEditor.color.xml_comment"; //$NON-NLS-1$
+	String P_PROC_INSTR = "antEditor.color.instr"; //$NON-NLS-1$
+	String P_STRING = "antEditor.color.string"; //$NON-NLS-1$
+	String P_DEFAULT = "antEditor.color.default"; //$NON-NLS-1$
+	String P_TAG = "antEditor.color.tag"; //$NON-NLS-1$
 }

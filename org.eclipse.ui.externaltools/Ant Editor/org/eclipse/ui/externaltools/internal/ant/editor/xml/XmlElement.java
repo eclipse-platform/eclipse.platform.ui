@@ -25,7 +25,7 @@ import org.apache.xerces.util.URI.MalformedURIException;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.ui.externaltools.internal.ant.editor.PlantyException;
+import org.eclipse.ui.externaltools.internal.ant.editor.AntEditorException;
 import org.eclipse.ui.externaltools.internal.ant.model.AntUtil;
 
 /**
@@ -199,12 +199,12 @@ public class XmlElement implements IAdaptable {
      * <P>
      * The specified element will have this assigned as its parent.
      * 
-     * @throws PlantyException if the specified child element allready
+     * @throws AntEditorException if the specified child element allready
      * has a parent.
      */
     public void addChildNode(XmlElement aChildElement) {
         if(aChildElement.getParentNode() != null) {
-            throw new PlantyException(MessageFormat.format(AntEditorXMLMessages.getString("XmlElement.XmlElement_cannot_be_added_as_a_child"), new String[]{aChildElement.toString(), aChildElement.getParentNode().toString()})); //$NON-NLS-1$
+            throw new AntEditorException(MessageFormat.format(AntEditorXMLMessages.getString("XmlElement.XmlElement_cannot_be_added_as_a_child"), new String[]{aChildElement.toString(), aChildElement.getParentNode().toString()})); //$NON-NLS-1$
         }
         aChildElement.parent = this;
         childNodes.add(aChildElement);

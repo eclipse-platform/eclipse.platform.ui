@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright (c) 2002, 2003 GEBIT Gesellschaft fuer EDV-Beratung
  * und Informatik-Technologien mbH, 
- * Berlin, Duesseldorf, Frankfurt (Germany) and others.
+ * Berlin, Duesseldorf, Frankfurt (Germany).
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,23 +9,29 @@
  * 
  * Contributors:
  *     GEBIT Gesellschaft fuer EDV-Beratung und Informatik-Technologien mbH - initial API and implementation
- * 	   IBM Corporation - bug 29148
  *******************************************************************************/
 
-package org.eclipse.ui.externaltools.internal.ant.editor.text;
+package org.eclipse.ui.externaltools.internal.ant.editor;
 
-/*
- * This file originates from an internal package of Eclipse's 
- * Manifest Editor. It has been copied by GEBIT to here in order to
- * permanently use those features. It has been renamed by GEBIT 
- * after copying.
+/**
+ * Exception that might be thrown in the Ant Editor context.
+ * 
+ * @author Alf Schiefelbein
  */
+public class AntEditorException extends RuntimeException {
 
-import org.eclipse.jface.text.rules.IWhitespaceDetector;
+    /**
+     * Constructor for AntEditorException.
+     */
+    public AntEditorException() {
+        super();
+    }
 
-public class PlantyWhitespaceDetector implements IWhitespaceDetector {
-
-	public boolean isWhitespace(char c) {
-		return (c == ' ' || c == '\t' || c == '\n' || c == '\r');
-	}
+    /**
+     * Constructor for AntEditorException.
+     * @param s
+     */
+    public AntEditorException(String s) {
+        super(s);
+    }
 }

@@ -29,7 +29,7 @@ import org.eclipse.ui.texteditor.RetargetTextEditorAction;
  * 
  * @author Alf Schiefelbein
  */
-public class PlantyActionContributor extends TextEditorActionContributor {
+public class AntEditorActionContributor extends TextEditorActionContributor {
 
 	protected RetargetTextEditorAction fContentAssistProposal;
 //    protected RetargetTextEditorAction fContentAssistTip;
@@ -37,7 +37,7 @@ public class PlantyActionContributor extends TextEditorActionContributor {
 	/**
 	 * Default constructor.
 	 */
-	public PlantyActionContributor() {
+	public AntEditorActionContributor() {
 		super();
 		fContentAssistProposal= new RetargetTextEditorAction(ResourceBundle.getBundle("org.eclipse.ui.externaltools.internal.ant.editor.AntEditorMessages"), "ContentAssistProposal."); //$NON-NLS-1$ //$NON-NLS-2$
 //        fContentAssistTip= new RetargetTextEditor(ResourceBundle.getBundle("org.eclipse.ui.externaltools.internal.ant.editor.AntEditorMessages"), "ContentAssistTip."); //$NON-NLS-1$

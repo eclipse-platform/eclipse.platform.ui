@@ -30,7 +30,7 @@ import org.xml.sax.SAXException;
  * @version 19.11.2002
  * @author Alf Schiefelbein
  */
-public class EnclosingTargetSearchingHandler extends PlantySaxDefaultHandler {
+public class EnclosingTargetSearchingHandler extends AntEditorSaxDefaultHandler {
 
 	/**
 	 * Whether the enclosing target element has been determined.
@@ -59,7 +59,7 @@ public class EnclosingTargetSearchingHandler extends PlantySaxDefaultHandler {
         throws SAXException {
 
 		if (ExternalToolsPlugin.getDefault() != null && ExternalToolsPlugin.getDefault().isDebugging()) {
-        	ExternalToolsPlugin.getDefault().log("PlantySaxDefaultHandler.endElement(" +aUri+ ", " +aLocalName+ ", "+aQualifiedName+ ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+        	ExternalToolsPlugin.getDefault().log("AntEditorSaxDefaultHandler.endElement(" +aUri+ ", " +aLocalName+ ", "+aQualifiedName+ ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
 
         if(parsingFinished) {
@@ -105,7 +105,7 @@ public class EnclosingTargetSearchingHandler extends PlantySaxDefaultHandler {
          */
         
 		 if (ExternalToolsPlugin.getDefault() != null && ExternalToolsPlugin.getDefault().isDebugging()) {
-			ExternalToolsPlugin.getDefault().log("PlantySaxDefaultHandler.startElement(" +aUri+ ", " +aLocalName+ ", "+aQualifiedName+ ", "+anAttributes+ ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			ExternalToolsPlugin.getDefault().log("AntEditorSaxDefaultHandler.startElement(" +aUri+ ", " +aLocalName+ ", "+aQualifiedName+ ", "+anAttributes+ ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
         }
         if(parsingFinished) {
             return;
@@ -117,7 +117,7 @@ public class EnclosingTargetSearchingHandler extends PlantySaxDefaultHandler {
         // Create a Dom Element
         String tempTagName = aLocalName.length() > 0 ? aLocalName : aQualifiedName;
         if(tempTagName == null || tempTagName.length() == 0) {
-            throw new PlantyException(AntEditorMessages.getString("EnclosingTargetSearchingHandler.Error_parsing")); //$NON-NLS-1$
+            throw new AntEditorException(AntEditorMessages.getString("EnclosingTargetSearchingHandler.Error_parsing")); //$NON-NLS-1$
         }
 		
 		if(tempTagName.equals("target")) { //$NON-NLS-1$

@@ -9,7 +9,7 @@
  * 
  * Contributors:
  *     GEBIT Gesellschaft fuer EDV-Beratung und Informatik-Technologien mbH - initial API and implementation
- * 	   IBM Corporation - bug 31796, bug 24108
+ * 	   IBM Corporation - bug 24108
  *******************************************************************************/
 
 package org.eclipse.ui.externaltools.internal.ant.editor.text;
@@ -24,29 +24,26 @@ package org.eclipse.ui.externaltools.internal.ant.editor.text;
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IToken;
-import org.eclipse.jface.text.rules.MultiLineRule;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.rules.SingleLineRule;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WhitespaceRule;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 
-public class PlantyTagScanner extends RuleBasedScanner {
+public class AntEditorProcInstrScanner extends RuleBasedScanner {
 
-    public PlantyTagScanner() {
-        IToken string = 
-        	new Token(
+    public AntEditorProcInstrScanner() {
+		IRule[] rules =new IRule[2];
+        IToken procInstr =
+            new Token(
                 new TextAttribute(
-                    ExternalToolsPlugin.getPreferenceColor(IAntEditorColorConstants.P_STRING)));
-                    
-		IRule[] rules =new IRule[3];
+                    ExternalToolsPlugin.getPreferenceColor(IAntEditorColorConstants.P_PROC_INSTR)));
 
-        // Add rule for single and double quotes
-        rules[0]= new MultiLineRule("\"", "\"", string, '\\'); //$NON-NLS-1$ //$NON-NLS-2$
-        rules[1]= new SingleLineRule("'", "'", string, '\\'); //$NON-NLS-1$ //$NON-NLS-2$
+        //Add rule for processing instructions
+        rules[0]= new SingleLineRule("<?", "?>", procInstr); //$NON-NLS-1$ //$NON-NLS-2$
 
         // Add generic whitespace rule.
-        rules[2]= new WhitespaceRule(new PlantyWhitespaceDetector());
+        rules[1]= new WhitespaceRule(new AntEditorWhitespaceDetector());
 
         setRules(rules);
     }

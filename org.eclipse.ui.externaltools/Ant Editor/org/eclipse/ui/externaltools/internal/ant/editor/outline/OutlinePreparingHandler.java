@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.ui.externaltools.internal.ant.editor.PlantyException;
+import org.eclipse.ui.externaltools.internal.ant.editor.AntEditorException;
 import org.eclipse.ui.externaltools.internal.ant.editor.xml.IAntEditorConstants;
 import org.eclipse.ui.externaltools.internal.ant.editor.xml.XmlAttribute;
 import org.eclipse.ui.externaltools.internal.ant.editor.xml.XmlElement;
@@ -164,7 +164,7 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
             tempElementName = aQualifiedName;
         }   
         else {
-            throw new PlantyException(AntOutlineMessages.getString("OutlinePreparingHandler.Error_Name")); //$NON-NLS-1$
+            throw new AntEditorException(AntOutlineMessages.getString("OutlinePreparingHandler.Error_Name")); //$NON-NLS-1$
         }
         String elementType= null;
         if(tempElementName.equalsIgnoreCase("target")) { //$NON-NLS-1$

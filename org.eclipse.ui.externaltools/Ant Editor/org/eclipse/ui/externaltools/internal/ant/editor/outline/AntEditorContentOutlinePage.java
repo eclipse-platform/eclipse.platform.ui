@@ -64,9 +64,9 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
 /**
- * Content outline page for planty.
+ * Content outline page for the Ant Editor.
  */
-public class PlantyContentOutlinePage extends ContentOutlinePage implements IShowInSource, IAdaptable {
+public class AntEditorContentOutlinePage extends ContentOutlinePage implements IShowInSource, IAdaptable {
 	
 	private static final int EXPAND_TO_LEVEL= 2;
 
@@ -83,7 +83,7 @@ public class PlantyContentOutlinePage extends ContentOutlinePage implements ISho
 	/**
 	 * The content provider for the objects shown in the outline view.
 	 */
-	private class PlantyContentProvider implements ITreeContentProvider {
+	private class ContentProvider implements ITreeContentProvider {
 
 		/**
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
@@ -141,7 +141,7 @@ public class PlantyContentOutlinePage extends ContentOutlinePage implements ISho
 	/**
 	 * The label provider for the objects shown in the outline view.
 	 */
-	private class PlantyLabelProvider implements ILabelProvider, IColorProvider {
+	private class LabelProvider implements ILabelProvider, IColorProvider {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(ILabelProviderListener)
 		 */
@@ -234,7 +234,7 @@ public class PlantyContentOutlinePage extends ContentOutlinePage implements ISho
 			XmlElement element= (XmlElement) aNode;
 			StringBuffer displayName= new StringBuffer(element.getDisplayName());
 			if (element.isExternal() && (!element.isRootExternal() || (element.getParentNode() != null && element.getParentNode().isExternal()))) {
-				displayName.append(AntOutlineMessages.getString("PlantyContentOutlinePage._[external]_1")); //$NON-NLS-1$
+				displayName.append(AntOutlineMessages.getString("AntEditorContentOutlinePage._[external]_1")); //$NON-NLS-1$
 			}
 			return displayName.toString();
 		}
@@ -276,9 +276,9 @@ public class PlantyContentOutlinePage extends ContentOutlinePage implements ISho
 	}
    
 	/**
-	 * Creates a new PlantyContentOutlinePage.
+	 * Creates a new AntEditorContentOutlinePage.
 	 */
-	public PlantyContentOutlinePage(XMLCore core, ITextEditor editor) {
+	public AntEditorContentOutlinePage(XMLCore core, ITextEditor editor) {
 		super();
 		fCore= core;
 		fEditor= editor;
@@ -313,12 +313,12 @@ public class PlantyContentOutlinePage extends ContentOutlinePage implements ISho
 		 * This content provider should be able to work on a dom like tree
 		 * structure that resembles the file contents.
 		 */
-		viewer.setContentProvider(new PlantyContentProvider());
+		viewer.setContentProvider(new ContentProvider());
 
 		/*
 		 * We probably also need our own label provider.
 		 */ 
-		viewer.setLabelProvider(new PlantyLabelProvider());
+		viewer.setLabelProvider(new LabelProvider());
 		if (fModel != null) {
 			setViewerInput(fModel);
 		}
@@ -445,7 +445,7 @@ public class PlantyContentOutlinePage extends ContentOutlinePage implements ISho
 			IResource resource= root.getFileForLocation(resourcePath);
 			if (resource != null && resource.getType() == IResource.FILE && resource.exists()) {
 				menu.add(new Separator("group.open")); //$NON-NLS-1$
-				IMenuManager submenu= new MenuManager(AntOutlineMessages.getString("PlantyContentOutlinePage.Open_With_1"));  //$NON-NLS-1$
+				IMenuManager submenu= new MenuManager(AntOutlineMessages.getString("AntEditorContentOutlinePage.Open_With_1"));  //$NON-NLS-1$
 				openWithMenu.setFile((IFile)resource);
 				submenu.add(openWithMenu);
 				menu.appendToGroup("group.open", submenu); //$NON-NLS-1$

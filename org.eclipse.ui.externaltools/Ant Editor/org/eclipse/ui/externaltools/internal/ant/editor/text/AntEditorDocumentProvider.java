@@ -45,7 +45,7 @@ import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
  * permanently use those features. It has been renamed and edited by GEBIT 
  * after copying.
  */
-public class PlantyDocumentProvider extends FileDocumentProvider {
+public class AntEditorDocumentProvider extends FileDocumentProvider {
 
 	protected class XMLAnnotationModel extends ResourceMarkerAnnotationModel implements IProblemRequestor {
 		
@@ -327,7 +327,7 @@ public class PlantyDocumentProvider extends FileDocumentProvider {
 	
 	private XMLCore fCore;
 
-	public PlantyDocumentProvider(XMLCore core) {
+	public AntEditorDocumentProvider(XMLCore core) {
 		super();
 		fCore= core;
 	}
@@ -335,10 +335,10 @@ public class PlantyDocumentProvider extends FileDocumentProvider {
     private IDocumentPartitioner createDocumentPartitioner() {
         DefaultPartitioner partitioner =
             new DefaultPartitioner(
-                new PlantyPartitionScanner(),
+                new AntEditorPartitionScanner(),
                 new String[] {
-                    PlantyPartitionScanner.XML_TAG,
-                    PlantyPartitionScanner.XML_COMMENT });
+                    AntEditorPartitionScanner.XML_TAG,
+                    AntEditorPartitionScanner.XML_COMMENT });
         return partitioner;
     }
 

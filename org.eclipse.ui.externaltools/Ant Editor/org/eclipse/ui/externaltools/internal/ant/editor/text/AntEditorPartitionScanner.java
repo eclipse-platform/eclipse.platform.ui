@@ -37,7 +37,7 @@ import org.eclipse.jface.text.rules.Token;
  * <li>XML_DEFAULT</li>
  * </ul>
  */
-public class PlantyPartitionScanner extends RuleBasedPartitionScanner {
+public class AntEditorPartitionScanner extends RuleBasedPartitionScanner {
 	public class MultiLineRuleWithEOF extends MultiLineRule {
 		public MultiLineRuleWithEOF(String startSequence, String endSequence, IToken token) {
 			super(startSequence, endSequence, token);
@@ -62,7 +62,7 @@ public class PlantyPartitionScanner extends RuleBasedPartitionScanner {
     /**
      * Creates an instance.
      */
-	public PlantyPartitionScanner() {
+	public AntEditorPartitionScanner() {
 
 		IPredicateRule[] rules =new IPredicateRule[2];
 

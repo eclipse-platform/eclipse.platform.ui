@@ -33,8 +33,8 @@ public class XMLReconcilingStrategy implements IReconcilingStrategy, IReconcilin
 	
 	private void internalReconcile() {
 		IDocumentProvider provider= fEditor.getDocumentProvider();
-		if (provider instanceof PlantyDocumentProvider) {
-			PlantyDocumentProvider documentProvider= (PlantyDocumentProvider) provider;
+		if (provider instanceof AntEditorDocumentProvider) {
+			AntEditorDocumentProvider documentProvider= (AntEditorDocumentProvider) provider;
 			AntModel model= documentProvider.getAntModel(fEditor.getEditorInput());
 			if (model != null)
 				model.reconcile();
