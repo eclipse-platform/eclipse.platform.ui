@@ -577,11 +577,12 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		if (isAutoManageViews()) {
 			fContextListener.launchesTerminated(launches);
 		}
-		if (getStackFrame() != null) {
-			ILaunch launch= getStackFrame().getLaunch();
+		IStackFrame frame = getStackFrame();
+		if (frame != null) {
+			ILaunch launch= frame.getLaunch();
 			for (int i = 0; i < launches.length; i++) {
 				ILaunch terminatedLaunch = launches[i];
-				if (launch.equals(terminatedLaunch)) {
+				if (terminatedLaunch.equals(launch)) {
 					setStackFrame(null);
 				}
 			}

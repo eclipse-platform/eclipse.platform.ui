@@ -535,7 +535,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 			ILaunch launch= fLastStackFrame.getLaunch();
 			for (int i = 0; i < launches.length; i++) {
 				ILaunch terminatedLaunch = launches[i];
-				if (launch.equals(terminatedLaunch)) {
+				if (terminatedLaunch.equals(launch)) {
 					fLastStackFrame= null;
 				}
 			}
