@@ -195,6 +195,7 @@ private static String extractAcceleratorText(String text) {
  *  <li><code>"TAB"</code></li>
  *  <li><code>"RETURN"</code></li>
  *  <li><code>"ENTER"</code></li>
+ *  <li><code>"ESC"</code></li>
  *  <li><code>"ESCAPE"</code></li>
  *  <li><code>"DELETE"</code></li>
  *  <li><code>"SPACE"</code></li>
@@ -365,6 +366,7 @@ private static void initKeyCodes() {
 	keyCodes.put("RETURN", new Integer(13));//$NON-NLS-1$
 	keyCodes.put("ENTER", new Integer(13));//$NON-NLS-1$
 	keyCodes.put("ESCAPE", new Integer(27));//$NON-NLS-1$
+	keyCodes.put("ESC", new Integer(27));//$NON-NLS-1$
 	keyCodes.put("DELETE", new Integer(127));//$NON-NLS-1$
 
 	keyCodes.put("SPACE", new Integer(' '));//$NON-NLS-1$
