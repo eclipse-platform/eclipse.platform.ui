@@ -52,6 +52,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
@@ -69,12 +70,10 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public class CommonTab extends AbstractLaunchConfigurationTab {
 		
 	// Local/shared UI widgets
-	private Label fLocalSharedLabel;
 	private Button fLocalRadioButton;
 	private Button fSharedRadioButton;
 	
 	// Shared location UI widgets
-	private Label fSharedLocationLabel;
 	private Text fSharedLocationText;
 	private Button fSharedLocationButton;
 	
@@ -107,20 +106,22 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		comp.setLayout(topLayout);
 		comp.setFont(font);
 		
-		Composite radioComp = new Composite(comp, SWT.NONE);
-		GridLayout radioLayout = new GridLayout();
-		radioLayout.marginHeight = 0;
-		radioLayout.marginWidth = 0;
-		radioComp.setLayout(radioLayout);
-		
-		setLocalSharedLabel(new Label(radioComp, SWT.NONE));
-		getLocalSharedLabel().setText(LaunchConfigurationsMessages.getString("CommonTab.Type_of_launch_configuration__2")); //$NON-NLS-1$
-		getLocalSharedLabel().setFont(font);
-		
-		setLocalRadioButton(new Button(radioComp, SWT.RADIO));
+		Group group = new Group(comp, SWT.NONE);
+		group.setFont(font);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 3;
+		group.setLayout(layout);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		group.setLayoutData(gd);
+		group.setText(LaunchConfigurationsMessages.getString("CommonTab.0")); //$NON-NLS-1$
+				
+		setLocalRadioButton(new Button(group, SWT.RADIO));
 		getLocalRadioButton().setText(LaunchConfigurationsMessages.getString("CommonTab.L&ocal_3")); //$NON-NLS-1$
 		getLocalRadioButton().setFont(font);
-		setSharedRadioButton(new Button(radioComp, SWT.RADIO));
+		gd = new GridData();
+		gd.horizontalSpan = 3;
+		getLocalRadioButton().setLayoutData(gd);
+		setSharedRadioButton(new Button(group, SWT.RADIO));
 		getSharedRadioButton().setText(LaunchConfigurationsMessages.getString("CommonTab.S&hared_4")); //$NON-NLS-1$
 		getSharedRadioButton().setFont(font);
 		getSharedRadioButton().addSelectionListener(new SelectionAdapter() {
@@ -128,31 +129,16 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 				handleSharedRadioButtonSelected();
 			}
 		});
-		
-		Composite locationComp = new Composite(comp, SWT.NONE);
-		GridLayout locationLayout = new GridLayout();
-		locationLayout.numColumns = 2;
-		locationLayout.marginHeight = 0;
-		locationLayout.marginWidth = 0;
-		locationComp.setLayout(locationLayout);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		locationComp.setLayoutData(gd);
-		locationComp.setFont(font);
-		
-		setSharedLocationLabel(new Label(locationComp, SWT.NONE));
-		getSharedLocationLabel().setText(LaunchConfigurationsMessages.getString("CommonTab.Location_of_shared_confi&guration__5")); //$NON-NLS-1$
 		gd = new GridData();
-		gd.horizontalSpan = 2;
-		getSharedLocationLabel().setLayoutData(gd);
-		getSharedLocationLabel().setFont(font);
-		
-		setSharedLocationText(new Text(locationComp, SWT.SINGLE | SWT.BORDER));
+		getSharedRadioButton().setLayoutData(gd);
+				
+		setSharedLocationText(new Text(group, SWT.SINGLE | SWT.BORDER));
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		getSharedLocationText().setLayoutData(gd);
 		getSharedLocationText().setFont(font);
 		getSharedLocationText().addModifyListener(fBasicModifyListener);
 		
-		setSharedLocationButton(createPushButton(locationComp, LaunchConfigurationsMessages.getString("CommonTab.&Browse_6"), null));	 //$NON-NLS-1$
+		setSharedLocationButton(createPushButton(group, LaunchConfigurationsMessages.getString("CommonTab.&Browse_6"), null));	 //$NON-NLS-1$
 		getSharedLocationButton().addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleSharedLocationButtonSelected();
@@ -240,22 +226,6 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		return fSharedLocationText;
 	}
 
-	private void setSharedLocationLabel(Label sharedLocationLabel) {
-		this.fSharedLocationLabel = sharedLocationLabel;
-	}
-
-	private Label getSharedLocationLabel() {
-		return fSharedLocationLabel;
-	}
-
-	private void setLocalSharedLabel(Label localSharedLabel) {
-		fLocalSharedLabel = localSharedLabel;
-	}
-
-	private Label getLocalSharedLabel() {
-		return fLocalSharedLabel;
-	}
-
  	private void setLocalRadioButton(Button button) {
  		fLocalRadioButton = button;
  	}
@@ -278,7 +248,6 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	}
 	
 	private void setSharedEnabled(boolean enable) {
-		getSharedLocationLabel().setEnabled(enable);
 		getSharedLocationText().setEnabled(enable);
 		getSharedLocationButton().setEnabled(enable);
 	}
@@ -353,6 +322,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	}
 	
 	private void updateSharedLocationFromConfig(ILaunchConfiguration config) {
+		getSharedLocationText().setText(""); //$NON-NLS-1$
 		IFile file = config.getFile();
 		if (file != null) {
 			IContainer parent = file.getParent();
