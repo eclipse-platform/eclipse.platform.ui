@@ -1185,6 +1185,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 	}
 	
 	/**
+	 * This method translates the contents of a file from binary into text (ASCII).
 	 * Fixes the line delimiters in the local file to reflect the platform's
 	 * native encoding.  Performs CR/LF -> LF or LF -> CR/LF conversion
 	 * depending on the platform but does not affect delimiters that are
@@ -1197,8 +1198,12 @@ public class CVSTeamProvider extends RepositoryProvider {
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 			InputStream is = new BufferedInputStream(file.getContents());
 			try {
+				// Always convert CR/LF into LFs
 				is = new CRLFtoLFInputStream(is);
-				if (useCRLF) is = new LFtoCRLFInputStream(is);
+				if (useCRLF) {
+					// For CR/LF platforms, translate LFs to CR/LFs
+					is = new LFtoCRLFInputStream(is);
+				}
 				for (int b; (b = is.read()) != -1;) bos.write(b);
 				bos.close();
 			} finally {
