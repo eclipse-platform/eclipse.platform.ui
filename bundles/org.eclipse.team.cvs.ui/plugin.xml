@@ -21,11 +21,6 @@
       <import plugin="org.eclipse.compare"/>
    </requires>
 
-<!-- *************** Help **************** -->
-   <extension point="org.eclipse.help.contexts"> 
-       <contexts file="help_contexts.xml" plugin="org.eclipse.team.cvs.ui"/> 
-   </extension>
-
 <!-- *************** Authenticator **************** -->
    <extension
          point="org.eclipse.team.cvs.core.authenticator">

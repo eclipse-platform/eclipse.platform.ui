@@ -24,11 +24,6 @@
 <extension-point id="configurationWizards" name="%configurationWizards"/>
 <extension-point id="targetConfigWizards" name="%targetWizards"/>
 
-<!-- *************** Help **************** -->
-   <extension point="org.eclipse.help.contexts"> 
-       <contexts file="help_contexts.xml" plugin="org.eclipse.team.ui"/> 
-   </extension>
-
 <!-- **************** PREFERENCES ******************* -->
    <extension
       point = "org.eclipse.ui.preferencePages">
