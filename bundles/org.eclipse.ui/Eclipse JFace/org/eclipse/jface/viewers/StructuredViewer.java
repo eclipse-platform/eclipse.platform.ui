@@ -357,6 +357,10 @@ protected Object getRoot() {
  * <p>
  */
 public ISelection getSelection() {
+	Control control = getControl();
+	if (control == null || control.isDisposed()) {
+		return StructuredSelection.EMPTY;
+	}
 	List list = getSelectionFromWidget();
 	return new StructuredSelection(list);
 }
@@ -674,6 +678,10 @@ public final void setInput(Object input) {
  * </p>
  */
 public void setSelection(ISelection selection, boolean reveal) {
+	Control control = getControl();
+	if (control == null || control.isDisposed()) {
+		return;
+	}
 	if (!inChange) {
 		setSelectionToWidget(selection, reveal);
 		updateSelection(getSelection());
