@@ -213,8 +213,8 @@ public final class WorkbenchKeyboard {
                 System.out.println(", stateMask = 0x" //$NON-NLS-1$
                         + Integer.toHexString(event.stateMask)
                         + ", keyCode = 0x" //$NON-NLS-1$
-                        + Integer.toHexString(event.keyCode)
-                        + ", character = 0x" //$NON-NLS-1$
+                        + Integer.toHexString(event.keyCode) + ", time = " //$NON-NLS-1$
+                        + Integer.toHexString(event.time) + ", character = 0x" //$NON-NLS-1$
                         + Integer.toHexString(event.character) + ")"); //$NON-NLS-1$
             }
 
@@ -225,9 +225,32 @@ public final class WorkbenchKeyboard {
     /**
      * The <code>KeyAssistDialog</code> displayed to the user to assist them
      * in completing a multi-stroke keyboard shortcut.
+     * 
      * @since 3.1
      */
     private KeyAssistDialog keyAssistDialog = null;
+
+    /**
+     * The single out-of-order listener used by the workbench. This listener is
+     * attached to one widget at a time, and is used to catch key down events
+     * after all processing is done. This technique is used so that some keys
+     * will have their native behaviour happen first.
+     * 
+     * @since 3.1
+     */
+    private final OutOfOrderListener outOfOrderListener = new OutOfOrderListener(
+            this);
+
+    /**
+     * The single out-of-order verify listener used by the workbench. This
+     * listener is attached to one</code> StyledText</code> at a time, and is
+     * used to catch verify events after all processing is done. This technique
+     * is used so that some keys will have their native behaviour happen first.
+     * 
+     * @since 3.1
+     */
+    private final OutOfOrderVerifyListener outOfOrderVerifyListener = new OutOfOrderVerifyListener(
+            outOfOrderListener);
 
     /**
      * The time at which the last timer was started. This is used to judge if a
@@ -488,13 +511,18 @@ public final class WorkbenchKeyboard {
                      * to verify the key as well; otherwise, we can't detect
                      * that useful work has been done.
                      */
-                    ((StyledText) widget)
-                            .addVerifyKeyListener(new OutOfOrderVerifyListener(
-                                    new OutOfOrderListener(this)));
+                    if (!outOfOrderVerifyListener.isActive(event.time)) {
+                        ((StyledText) widget)
+                                .addVerifyKeyListener(outOfOrderVerifyListener);
+                        outOfOrderVerifyListener.setActive(event.time);
+                    }
                 }
 
             } else {
-                widget.addListener(SWT.KeyDown, new OutOfOrderListener(this));
+                if (!outOfOrderListener.isActive(event.time)) {
+                    widget.addListener(SWT.KeyDown, outOfOrderListener);
+                    outOfOrderListener.setActive(event.time);
+                }
 
             }
 
