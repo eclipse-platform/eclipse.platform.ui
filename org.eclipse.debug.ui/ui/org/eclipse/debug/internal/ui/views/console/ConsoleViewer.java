@@ -260,26 +260,29 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 	}
 	
 	protected void paintDocument() {
-		final ConsoleDocumentPartitioner partitioner = (ConsoleDocumentPartitioner)getDocument().getDocumentPartitioner();
-		if (partitioner != null) {
-			Runnable r = new Runnable() {
-				public void run() {
-					IConsoleColorProvider contentProvider = partitioner.getContentProvider();
-					ITypedRegion[] regions = partitioner.computePartitioning(0, getDocument().getLength());
-					StyleRange[] styles = new StyleRange[regions.length];
-					for (int i = 0; i < regions.length; i++) {
-						StreamPartition partition = (StreamPartition)regions[i];
-						Color color = contentProvider.getColor(partition.getStreamIdentifier());
-						styles[i] = new StyleRange(partition.getOffset(), partition.getLength(), color, null);
-					}	
-					try {
-						getTextWidget().setStyleRanges(styles);
-					} catch (IllegalArgumentException e) {
-						// style ranges are out of bounds - likely an old/changed document.
+		IDocument document = getDocument();
+		if (document != null) {
+			final ConsoleDocumentPartitioner partitioner = (ConsoleDocumentPartitioner)document.getDocumentPartitioner();
+			if (partitioner != null) {
+				Runnable r = new Runnable() {
+					public void run() {
+						IConsoleColorProvider contentProvider = partitioner.getContentProvider();
+						ITypedRegion[] regions = partitioner.computePartitioning(0, getDocument().getLength());
+						StyleRange[] styles = new StyleRange[regions.length];
+						for (int i = 0; i < regions.length; i++) {
+							StreamPartition partition = (StreamPartition)regions[i];
+							Color color = contentProvider.getColor(partition.getStreamIdentifier());
+							styles[i] = new StyleRange(partition.getOffset(), partition.getLength(), color, null);
+						}	
+						try {
+							getTextWidget().setStyleRanges(styles);
+						} catch (IllegalArgumentException e) {
+							// style ranges are out of bounds - likely an old/changed document.
+						}
 					}
-				}
-			};
-			getControl().getDisplay().asyncExec(r);
+				};
+				getControl().getDisplay().asyncExec(r);
+			}
 		}
 	}
 
