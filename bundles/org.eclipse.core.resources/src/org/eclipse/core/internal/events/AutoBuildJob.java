@@ -11,10 +11,9 @@ package org.eclipse.core.internal.events;
 
 import org.eclipse.core.internal.resources.ICoreConstants;
 import org.eclipse.core.internal.resources.Workspace;
+import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 
@@ -32,7 +31,22 @@ class AutoBuildJob extends Job {
 	AutoBuildJob(Workspace workspace) {
 		super(ICoreConstants.MSG_EVENTS_BUILDING_0);
 		setRule(workspace.getRoot());
+		setSystem(!workspace.isAutoBuilding());
 		this.workspace = workspace;
+	}
+	/**
+	 * The workspace description has changed.  Update autobuild state.
+	 * @param wasAutoBuilding the old autobuild state
+	 * @param isAutoBuilding the new autobuild state
+	 */
+	public void autoBuildChanged(boolean wasAutoBuilding, boolean isAutoBuilding) {
+		//make the autobuild a system job if autobuild is off
+		setSystem(!isAutoBuilding);
+		//force a build if autobuild has been turned on
+		if (!forceBuild && !wasAutoBuilding && isAutoBuilding) {
+			forceBuild = true;
+			endTopLevel(false);
+		}
 	}
 	/**
 	 * Used to prevent auto-builds at the end of operations that contain
@@ -61,7 +75,7 @@ class AutoBuildJob extends Job {
 		}
 		//cancel the build job if another job is attempting to modify the workspace
 		//while the build job is running
-		return state == Job.RUNNING && Platform.getJobManager().currentJob() != this;
+		return state == Job.RUNNING && InternalPlatform.getDefault().getJobManager().currentJob() != this;
 	}
 	private void doBuild(IProgressMonitor monitor) throws CoreException, OperationCanceledException {
 		monitor = Policy.monitorFor(monitor);
@@ -89,17 +103,6 @@ class AutoBuildJob extends Job {
 		buildNeeded |= needsBuild;
 		long delay = Math.max(Policy.MIN_BUILD_DELAY, Policy.MAX_BUILD_DELAY + lastBuild - System.currentTimeMillis());
 		schedule(delay);
-	}
-	/**
-	 * Forces a build to occur at the end of the next top level operation. This
-	 * is used when workspace description changes neccessitate a build
-	 * regardless of the tree state.
-	 */
-	public synchronized void forceBuild() {
-		if (!forceBuild) {
-			forceBuild = true;
-			endTopLevel(false);
-		}
 	}
 	public IStatus run(IProgressMonitor monitor) {
 		//synchronized in case build starts during checkCancel

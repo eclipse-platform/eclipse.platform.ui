@@ -394,12 +394,12 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		autoBuildJob.endTopLevel(needsBuild);
 	}
 	/**
-	 * The workspace description has changed in a way that will require an autobuild
-	 * regardless of whether the workspace has changed.
-	 *
+	 * The workspace description has changed.  Update autobuild state.
+	 * @param wasAutoBuilding the old autobuild state
+	 * @param isAutoBuilding the new autobuild state
 	 */
-	public void forceAutoBuild() {
-		autoBuildJob.forceBuild();
+	public void autoBuildChanged(boolean wasAutoBuilding, boolean isAutoBuilding) {
+		autoBuildJob.autoBuildChanged(wasAutoBuilding, isAutoBuilding);
 	}
 	protected IncrementalProjectBuilder getBuilder(String builderName, IProject project, MultiStatus status) throws CoreException {
 		Hashtable builders = getBuilders(project);

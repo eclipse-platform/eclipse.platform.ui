@@ -1619,9 +1619,9 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		String[] newOrder = newDescription.getBuildOrder(false);
 		if (description.getBuildOrder(false) != null || newOrder != null)
 			buildOrder = null;
-		//if autobuild has just been turned on, indicate that a build is necessary
-		if (!description.isAutoBuilding() && newDescription.isAutoBuilding())
-			buildManager.forceAutoBuild();
+		//if autobuild state has changed, notify the build manager
+		if (description.isAutoBuilding() != newDescription.isAutoBuilding())
+			buildManager.autoBuildChanged(description.isAutoBuilding(), newDescription.isAutoBuilding());
 		description.copyFrom(newDescription);
 		Policy.setupAutoBuildProgress(description.isAutoBuilding());
 		ResourcesPlugin.getPlugin().savePluginPreferences();
