@@ -127,10 +127,14 @@ public abstract class AbstractListenerActionDelegate extends AbstractDebugAction
 				update(getAction(), getSelection());
 				break;
 			case DebugEvent.RESUME :
-				update(getAction(), getSelection());
+				if (!event.isEvaluation() || !((event.getDetail() & DebugEvent.EVALUATION_IMPLICIT) != 0)) {
+					update(getAction(), getSelection());
+				}
 				break;
 			case DebugEvent.SUSPEND :
-				update(getAction(), getSelection());
+				if (!event.isEvaluation() || !((event.getDetail() & DebugEvent.EVALUATION_IMPLICIT) != 0)) {
+					update(getAction(), getSelection());
+				}
 				break;
 		}
 	}		
