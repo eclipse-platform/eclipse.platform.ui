@@ -20,10 +20,6 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
@@ -42,7 +38,7 @@ import org.eclipse.team.internal.ccvs.ui.model.BranchTag;
 public class BranchWizard extends Wizard {
 	BranchWizardVersionPage versionPage;
 	BranchWizardBranchPage branchPage;
-	BranchWizardMethodPage methodPage;
+	//BranchWizardMethodPage methodPage;
 	IResource[] resources;
 	
 	public BranchWizard() {
@@ -55,8 +51,8 @@ public class BranchWizard extends Wizard {
 		addPage(versionPage);
 		branchPage = new BranchWizardBranchPage("branchPage", Policy.bind("BranchWizard.createABranch"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_BRANCH));
 		addPage(branchPage);
-		methodPage = new BranchWizardMethodPage("methodPage", Policy.bind("BranchWizard.createABranch"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_BRANCH));
-		addPage(methodPage);
+		//methodPage = new BranchWizardMethodPage("methodPage", Policy.bind("BranchWizard.createABranch"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_BRANCH));
+		//addPage(methodPage);
 	}
 	public boolean performFinish() {
 		final boolean[] result = new boolean[] {false};
@@ -71,7 +67,8 @@ public class BranchWizard extends Wizard {
 						if (versionString != null) {
 							versionTag = new CVSTag(versionString, CVSTag.VERSION);
 						}
-						boolean eclipseWay = methodPage.getEclipseWay();
+						boolean eclipseWay = true;
+						//boolean eclipseWay = methodPage.getEclipseWay();
 						
 						// To do: use the wizard's progress monitor
 						RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
@@ -145,26 +142,5 @@ public class BranchWizard extends Wizard {
 			list.add(resources[i]);
 		}
 		return result;
-	}
-	
-	/**
-	 * A helper method used by pages to display indented descriptions
-	 */
-	protected static Composite createDescriptionComposite(Composite parent, int parentColumns) {
-		Composite composite = new Composite(parent, SWT.NULL);
-	
-		// GridLayout
-		GridLayout layout = new GridLayout();
-		layout.marginWidth = 10;
-		layout.marginHeight = 0;
-		composite.setLayout(layout);
-	
-		// GridData
-		GridData data = new GridData();
-		data.verticalAlignment = GridData.FILL;
-		data.horizontalAlignment = GridData.FILL;
-		data.horizontalSpan = parentColumns;
-		composite.setLayoutData(data);
-		return composite;
 	}
 }
