@@ -131,34 +131,34 @@ public class Main {
 	private String baseLocation = null;
 	
 	// constants
-	private static final String APPLICATION = "-application";
-	private static final String BOOT = "-boot";
-	private static final String INSTALL = "-install";
-	private static final String INITIALIZE = "-initialize";
-	private static final String DEBUG = "-debug";
-	private static final String DEV = "-dev";
-	private static final String DATA = "-data";
-	private static final String CONFIGURATION = "-configuration";
-	private static final String FEATURE = "-feature";
-	private static final String SHOWSPLASH = "-showsplash";
-	private static final String ENDSPLASH = "-endsplash";
-	private static final String SPLASH_IMAGE = "splash.bmp";
-	private static final String PI_BOOT = "org.eclipse.core.boot";
-	private static final String BOOTLOADER = "org.eclipse.core.boot.BootLoader";
-	private static final String BOOTJAR = "boot.jar";
-	private static final String PLATFORM_URL = "platform:/base/";
+	private static final String APPLICATION = "-application"; //$NON-NLS-1$
+	private static final String BOOT = "-boot"; //$NON-NLS-1$
+	private static final String INSTALL = "-install"; //$NON-NLS-1$
+	private static final String INITIALIZE = "-initialize"; //$NON-NLS-1$
+	private static final String DEBUG = "-debug"; //$NON-NLS-1$
+	private static final String DEV = "-dev"; //$NON-NLS-1$
+	private static final String DATA = "-data"; //$NON-NLS-1$
+	private static final String CONFIGURATION = "-configuration"; //$NON-NLS-1$
+	private static final String FEATURE = "-feature"; //$NON-NLS-1$
+	private static final String SHOWSPLASH = "-showsplash"; //$NON-NLS-1$
+	private static final String ENDSPLASH = "-endsplash"; //$NON-NLS-1$
+	private static final String SPLASH_IMAGE = "splash.bmp"; //$NON-NLS-1$
+	private static final String PI_BOOT = "org.eclipse.core.boot"; //$NON-NLS-1$
+	private static final String BOOTLOADER = "org.eclipse.core.boot.BootLoader"; //$NON-NLS-1$
+	private static final String BOOTJAR = "boot.jar"; //$NON-NLS-1$
+	private static final String PLATFORM_URL = "platform:/base/"; //$NON-NLS-1$
 	
 	// constants: configuration file location
-	private static final String CONFIG_FILE = "platform.cfg";
-	private static final String ARG_USER_DIR = "user.dir";
+	private static final String CONFIG_FILE = "platform.cfg"; //$NON-NLS-1$
+	private static final String ARG_USER_DIR = "user.dir"; //$NON-NLS-1$
 	
 	// constants: configuration file elements
-	private static final String CFG_CORE_BOOT = "bootstrap." + PI_BOOT; 
-	private static final String CFG_FEATURE_ENTRY = "feature";
-	private static final String CFG_FEATURE_ENTRY_DEFAULT = "feature.default.id";
-	private static final String CFG_FEATURE_ENTRY_ID = "id";
-	private static final String CFG_FEATURE_ENTRY_ROOT = "root";
-	private static final String CFG_EOF = "eof";
+	private static final String CFG_CORE_BOOT = "bootstrap." + PI_BOOT;  //$NON-NLS-1$
+	private static final String CFG_FEATURE_ENTRY = "feature"; //$NON-NLS-1$
+	private static final String CFG_FEATURE_ENTRY_DEFAULT = "feature.default.id"; //$NON-NLS-1$
+	private static final String CFG_FEATURE_ENTRY_ID = "id"; //$NON-NLS-1$
+	private static final String CFG_FEATURE_ENTRY_ROOT = "root"; //$NON-NLS-1$
+	private static final String CFG_EOF = "eof"; //$NON-NLS-1$
 
 	// log file handling
 	protected static final String STARTUP = "!STARTUP ";//$NON-NLS-1$
@@ -184,7 +184,7 @@ protected Object basicRun(String[] args) throws Exception {
 	
 	// load the BootLoader and startup the platform
 	Class clazz = getBootLoader(bootPath);
-	Method method = clazz.getDeclaredMethod("run", new Class[] { String.class, URL.class, String.class, String[].class, Runnable.class });
+	Method method = clazz.getDeclaredMethod("run", new Class[] { String.class, URL.class, String.class, String[].class, Runnable.class }); //$NON-NLS-1$
 	try {
 		return method.invoke(clazz, new Object[] { application, pluginPathLocation, location, args, endSplashHandler });
 	} catch (InvocationTargetException e) {
@@ -253,13 +253,13 @@ protected String decode(String urlString) {
  * @param prop the initial comma-separated string
  */
 private String[] getArrayFromList(String prop) {
-	if (prop == null || prop.trim().equals(""))
+	if (prop == null || prop.trim().equals("")) //$NON-NLS-1$
 		return new String[0];
 	Vector list = new Vector();
-	StringTokenizer tokens = new StringTokenizer(prop, ",");
+	StringTokenizer tokens = new StringTokenizer(prop, ","); //$NON-NLS-1$
 	while (tokens.hasMoreTokens()) {
 		String token = tokens.nextToken().trim();
-		if (!token.equals(""))
+		if (!token.equals("")) //$NON-NLS-1$
 			list.addElement(token);
 	}
 	return list.isEmpty() ? new String[0] : (String[]) list.toArray(new String[0]);
@@ -295,10 +295,10 @@ protected URL[] getDevPath(URL base) throws MalformedURLException {
 	for (int i = 0; i < locations.length; i++) {
 		String spec = devBase + locations[i];
 		char lastChar = spec.charAt(spec.length() - 1);
-		if ((spec.endsWith(".jar") || (lastChar == '/' || lastChar == '\\')))
+		if ((spec.endsWith(".jar") || (lastChar == '/' || lastChar == '\\'))) //$NON-NLS-1$
 			url = new URL (spec);
 		else
-			url = new URL(spec + "/");
+			url = new URL(spec + "/"); //$NON-NLS-1$
 		//make sure URL exists before adding to path
 		if (new java.io.File(url.getFile()).exists())
 			result.add(url);
@@ -322,7 +322,7 @@ protected URL[] getBootPath(String base) throws MalformedURLException {
 	if (base != null) {
 		url = new URL(base);
 		if (debug)
-			System.out.println("Boot URL: " + url.toExternalForm());
+			System.out.println("Boot URL: " + url.toExternalForm()); //$NON-NLS-1$
 		return new URL[] {url};	
 	}
 	// search for boot in root location
@@ -334,9 +334,9 @@ protected URL[] getBootPath(String base) throws MalformedURLException {
 	url = new URL(url.getProtocol(), url.getHost(), url.getPort(), path);
 	result = getDevPath(url);
 	if (debug) {
-		System.out.println("Boot URL:");
+		System.out.println("Boot URL:"); //$NON-NLS-1$
 		for (int i = 0; i < result.length; i++)
-			System.out.println("    " + result[i].toExternalForm());	
+			System.out.println("    " + result[i].toExternalForm()); //$NON-NLS-1$
 	}
 	return result;
 }
@@ -354,12 +354,12 @@ protected String searchForBoot(String start) {
 		public boolean accept(File candidate) {
 			return candidate.isDirectory() &&
 				(candidate.getName().equals(PI_BOOT)
-				|| candidate.getName().startsWith(PI_BOOT + "_"));
+				|| candidate.getName().startsWith(PI_BOOT + "_")); //$NON-NLS-1$
 		}
 	};
-	File[] boots = new File(start, "plugins").listFiles(filter);
+	File[] boots = new File(start, "plugins").listFiles(filter); //$NON-NLS-1$
 	if (boots == null)
-		throw new RuntimeException("Could not find bootstrap code. Check location of boot plug-in or specify -boot.");
+		throw new RuntimeException("Could not find bootstrap code. Check location of boot plug-in or specify -boot."); //$NON-NLS-1$
 	String result = null;
 	Object maxVersion = null;
 	for (int i = 0; i < boots.length; i++) {
@@ -368,7 +368,7 @@ protected String searchForBoot(String start) {
 		String version;
 		Object currentVersion;
 		if (index == -1)
-			version = ""; // Note: directory with version suffix is always > than directory without version suffix
+			version = "";  //$NON-NLS-1$ // Note: directory with version suffix is always > than directory without version suffix
 		else
 			version = name.substring(index + 1);
 		currentVersion = getVersionElements(version);			
@@ -383,8 +383,8 @@ protected String searchForBoot(String start) {
 		}
 	}
 	if (result == null)
-		throw new RuntimeException("Could not find bootstrap code. Check location of boot plug-in or specify -boot.");
-	return result.replace(File.separatorChar, '/') + "/";
+		throw new RuntimeException("Could not find bootstrap code. Check location of boot plug-in or specify -boot."); //$NON-NLS-1$
+	return result.replace(File.separatorChar, '/') + "/"; //$NON-NLS-1$
 }
 
 /**
@@ -420,8 +420,8 @@ private int compareVersion(Object[] left, Object[] right) {
  * qualifier). Note, that returning anything else will cause exceptions in the caller.
  */
 private Object[] getVersionElements(String version) {
-	Object[] result = {new Integer(0), new Integer(0), new Integer(0), ""};
-	StringTokenizer t = new StringTokenizer(version, ".");
+	Object[] result = {new Integer(0), new Integer(0), new Integer(0), ""}; //$NON-NLS-1$
+	StringTokenizer t = new StringTokenizer(version, "."); //$NON-NLS-1$
 	String token;
 	int i = 0;
 	while(t.hasMoreTokens() && i<4) {
@@ -466,7 +466,7 @@ public static void main(String[] args) {
 	} catch (Throwable e) {
 		// try and take down the splash screen.
 		launcher.takeDownSplash();
-		log("Exception launching the Eclipse Platform:");
+		log("Exception launching the Eclipse Platform:"); //$NON-NLS-1$
 		log(e);
 		// FIXME: this is where we would return a special exit code
 		// if we wanted the executable to display a message to the user
@@ -485,7 +485,7 @@ public static void main(String[] args) {
  */
 public static void main(String argString) throws Exception {
 	Vector list = new Vector(5);
-	for (StringTokenizer tokens = new StringTokenizer(argString, " "); tokens.hasMoreElements();)
+	for (StringTokenizer tokens = new StringTokenizer(argString, " "); tokens.hasMoreElements();) //$NON-NLS-1$
 		list.addElement((String) tokens.nextElement());
 	main((String[]) list.toArray(new String[list.size()]));
 }
@@ -521,7 +521,7 @@ protected String[] processCommandLine(String[] args) throws Exception {
 		// If this is the last arg or there is a following arg (i.e., arg+1 has a leading -), 
 		// simply enable development mode.  Otherwise, assume that that the following arg is
 		// actually some additional development time class path entries.  This will be processed below.
-		if (args[i].equalsIgnoreCase(DEV) && ((i + 1 == args.length) || ((i + 1 < args.length) && (args[i + 1].startsWith("-"))))) {
+		if (args[i].equalsIgnoreCase(DEV) && ((i + 1 == args.length) || ((i + 1 < args.length) && (args[i + 1].startsWith("-"))))) { //$NON-NLS-1$
 			inDevelopmentMode = true;
 			// do not mark the arg as found so it will be passed through
 			continue;
@@ -534,7 +534,7 @@ protected String[] processCommandLine(String[] args) throws Exception {
 		}
 		// check for args with parameters. If we are at the last argument or if the next one
 		// has a '-' as the first character, then we can't have an arg with a parm so continue.
-		if (i == args.length - 1 || args[i + 1].startsWith("-")) 
+		if (i == args.length - 1 || args[i + 1].startsWith("-"))  //$NON-NLS-1$
 			continue;
 		String arg = args[++i];
 
@@ -657,15 +657,15 @@ private String[] processConfiguration(String[] passThruArgs) throws MalformedURL
 		
 	// attempt to locate configuration file
 	URL configURL = null;
-	if (configuration != null && !configuration.trim().equals("")) {
+	if (configuration != null && !configuration.trim().equals("")) { //$NON-NLS-1$
 		configuration = configuration.replace(File.separatorChar, '/');
 		if (configuration.equalsIgnoreCase(ARG_USER_DIR)) {
 			// configuration is in current working directory
-			String tmp = System.getProperty("user.dir");
+			String tmp = System.getProperty("user.dir"); //$NON-NLS-1$
 			if (!tmp.endsWith(File.separator))
 				tmp += File.separator;
-			configURL = new URL("file:" + tmp.replace(File.separatorChar,'/') + CONFIG_FILE);
-		} else if(configuration.endsWith("/")) {
+			configURL = new URL("file:" + tmp.replace(File.separatorChar,'/') + CONFIG_FILE); //$NON-NLS-1$
+		} else if(configuration.endsWith("/")) { //$NON-NLS-1$
 			// configuration specified as directory URL		
 			configURL = new URL(configuration + CONFIG_FILE);
 		} else {
@@ -687,7 +687,7 @@ private String[] processConfiguration(String[] passThruArgs) throws MalformedURL
 				urlString = resolve(urlString);
 				URL bootDir = new URL(urlString);
 				URL bootURL = new URL(bootDir, BOOTJAR);
-				if (bootDir.getProtocol().equals("file")) {
+				if (bootDir.getProtocol().equals("file")) { //$NON-NLS-1$
 					File dir = new File(bootDir.getFile());
 					if (dir.exists())
 						// verify boot dir ... otherwise will do default search for boot
@@ -739,8 +739,8 @@ private URL getRootURL() throws MalformedURLException {
 	URL	url = getClass().getProtectionDomain().getCodeSource().getLocation();
 	String path = decode(url.getFile());
 	path = new File(path).getAbsolutePath().replace(File.separatorChar,'/');
-	if (path.endsWith(".jar"))
-		path = path.substring(0, path.lastIndexOf("/")+1);
+	if (path.endsWith(".jar")) //$NON-NLS-1$
+		path = path.substring(0, path.lastIndexOf("/")+1); //$NON-NLS-1$
 	url = new URL(url.getProtocol(), url.getHost(), url.getPort(), path);
 	return url;
 }
@@ -755,10 +755,10 @@ private void loadConfiguration(URL url) {
 		String base = baseLocation;
 		if (base == null) {
 			// determine default workspace
-			base = System.getProperty("user.dir");
+			base = System.getProperty("user.dir"); //$NON-NLS-1$
 			if (!base.endsWith(File.separator))
 				base += File.separator;
-			base += "workspace" + File.separator;				
+			base += "workspace" + File.separator; //$NON-NLS-1$
 		} else {
 			base = base.replace('/',File.separatorChar);
 		}
@@ -768,18 +768,18 @@ private void loadConfiguration(URL url) {
 			base += File.separator;
 		
 		try {	
-			File cfg = new File(base + ".metadata" + File.separator + ".config" + File.separator + CONFIG_FILE);
+			File cfg = new File(base + ".metadata" + File.separator + ".config" + File.separator + CONFIG_FILE); //$NON-NLS-1$ //$NON-NLS-2$
 			if (!cfg.exists()) {
 				// look for configuration in install root (default)
 				String install = getRootURL().getFile().replace('/',File.separatorChar);
 				if (!install.endsWith(File.separator))
 					install += File.separator;
-				cfg = new File(install + ".config" + File.separator + CONFIG_FILE);
+				cfg = new File(install + ".config" + File.separator + CONFIG_FILE); //$NON-NLS-1$
 				if (!cfg.exists())
 					cfg = null;
 			}
 			if (cfg != null)
-				url = new URL("file", null, 0, cfg.getAbsolutePath());
+				url = new URL("file", null, 0, cfg.getAbsolutePath()); //$NON-NLS-1$
 		} catch(MalformedURLException e) {
 			// continue ...
 		}
@@ -789,11 +789,11 @@ private void loadConfiguration(URL url) {
 		try {
 			props = load(url);
 			if (debug)
-				System.out.println("Startup: using configuration " + url.toString());
+				System.out.println("Startup: using configuration " + url.toString()); //$NON-NLS-1$
 		} catch(IOException e) {
 			// continue ...
 			if (debug)
-				System.out.println("Startup: unable to load configuration\n" + e);
+				System.out.println("Startup: unable to load configuration\n" + e); //$NON-NLS-1$
 		}
 	}
 }
@@ -823,10 +823,10 @@ private Properties load(URL url) throws IOException {
 	
 	// load feature index
 	if (props != null) {
-		String id = props.getProperty(CFG_FEATURE_ENTRY+".0."+CFG_FEATURE_ENTRY_ID);
+		String id = props.getProperty(CFG_FEATURE_ENTRY+".0."+CFG_FEATURE_ENTRY_ID); //$NON-NLS-1$
 		for (int i=1; id != null; i++) {
 			featureIndex.put(id, Integer.toString(i-1));
-			id = props.getProperty(CFG_FEATURE_ENTRY+"."+i+"."+CFG_FEATURE_ENTRY_ID);
+			id = props.getProperty(CFG_FEATURE_ENTRY+"."+i+"."+CFG_FEATURE_ENTRY_ID); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
@@ -891,7 +891,7 @@ private void handleSplash(URL[] bootPath) {
 	// determine the splash path
 	String path  = getSplashPath(bootPath);
 	if (debug && path != null) {
-		System.out.println("Startup: splash path = "+path);
+		System.out.println("Startup: splash path = "+path); //$NON-NLS-1$
 	}
 		
 	// Parse the showsplash command into its separate arguments.
@@ -903,12 +903,12 @@ private void handleSplash(URL[] bootPath) {
 	// use the Runtime.getRuntime().exec( String[] ) method.
 	String[] cmd = new String[ (path != null ? 4 : 3) ];
 	int sIndex = 0;
-	int eIndex = showSplash.indexOf( " -show" );
+	int eIndex = showSplash.indexOf( " -show" ); //$NON-NLS-1$
 	if (eIndex == -1)
 		return; // invalid -showsplash command
 	cmd[0] = showSplash.substring( sIndex, eIndex );
 	sIndex = eIndex + 1;
-	eIndex = showSplash.indexOf( " ", sIndex );
+	eIndex = showSplash.indexOf( " ", sIndex ); //$NON-NLS-1$
 	if (eIndex == -1)
 		return; // invalid -showsplash command
 	cmd[1] = showSplash.substring( sIndex, eIndex );
@@ -964,7 +964,7 @@ private String getSplashPath(URL[] bootPath) {
 	// no feature path, default to current boot plugin
 	String temp = bootPath[0].getFile(); // take the first path element
 	temp = temp.replace('/', File.separatorChar);
-	int ix = temp.lastIndexOf("plugins"+File.separator);
+	int ix = temp.lastIndexOf("plugins"+File.separator); //$NON-NLS-1$
 	if (ix != -1) {
 		int pix = temp.indexOf(File.separator, ix+8);
 		if (pix != -1) {
@@ -991,12 +991,12 @@ private String getSplashPath(URL[] bootPath) {
  	// search the specified path
  	while (localePath != null) {
  		String suffix;
- 		if (localePath.equals("")) {
+ 		if (localePath.equals("")) { //$NON-NLS-1$
  			// look for nl'ed splash image
  			suffix = SPLASH_IMAGE;
  		} else {
  			// look for default splash image
- 			suffix = "nl" + File.separator + localePath + File.separator + SPLASH_IMAGE;
+ 			suffix = "nl" + File.separator + localePath + File.separator + SPLASH_IMAGE; //$NON-NLS-1$
  		}
  			
  		// check for file in searchPath
@@ -1011,12 +1011,12 @@ private String getSplashPath(URL[] bootPath) {
  		}
  		
  		// try the next variant
- 		if (localePath.equals(""))
+ 		if (localePath.equals("")) //$NON-NLS-1$
  			localePath = null;
  		else {
  			int ix = localePath.lastIndexOf(File.separator);
  			if (ix == -1)
- 				localePath = "";
+ 				localePath = ""; //$NON-NLS-1$
  			else
  				localePath = localePath.substring(0,ix);
  		}
@@ -1047,7 +1047,7 @@ private String getFeatureIdentifier() {
  */
 private String[] getFeatureRoot() {
 	String ix = featureIndex(getFeatureIdentifier());
-	String urlString = props.getProperty(CFG_FEATURE_ENTRY + "." + ix + "." + CFG_FEATURE_ENTRY_ROOT + ".0");
+	String urlString = props.getProperty(CFG_FEATURE_ENTRY + "." + ix + "." + CFG_FEATURE_ENTRY_ROOT + ".0"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	if (urlString == null)
 		return null;
 	
@@ -1057,14 +1057,14 @@ private String[] getFeatureRoot() {
 		try {	
 			urlString = resolve(urlString); // resolve platform relative URLs
 			url = new URL(urlString);
-			if (url.getProtocol().equals("file")) {
+			if (url.getProtocol().equals("file")) { //$NON-NLS-1$
 				result.add(url.getFile().replace('/', File.separatorChar));
 			} else
 				continue; // in the future may cache
 		} catch(MalformedURLException e) {
 			// skip bad entries
 		}
-		urlString = props.getProperty(CFG_FEATURE_ENTRY + "." + ix + "." + CFG_FEATURE_ENTRY_ROOT + "." + i);
+		urlString = props.getProperty(CFG_FEATURE_ENTRY + "." + ix + "." + CFG_FEATURE_ENTRY_ROOT + "." + i); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
 	if (result.size()>0)
@@ -1090,8 +1090,8 @@ private String getApplicationIdentifier() {
  private String resolve(String urlString) throws MalformedURLException { 	
  	if (urlString.startsWith(PLATFORM_URL)) {
  		String root = getRootURL().toExternalForm();
- 		if (!root.endsWith("/"))
- 			root += "/";
+ 		if (!root.endsWith("/")) //$NON-NLS-1$
+ 			root += "/"; //$NON-NLS-1$
  		String path = urlString.substring(PLATFORM_URL.length());
  		return root + path;
  	} else
