@@ -827,7 +827,7 @@ public void standardMoveFolder(IFolder source, IFolder destination, int updateFl
 		try {
 			moveInFileSystem(source.getLocation().toFile(), destination.getLocation().toFile(), updateFlags);
 		} catch (CoreException e) {
-			message = "Exception occured during file system move.";
+			message = Policy.bind("resources.errorMove");
 			IStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, destination.getFullPath(), message, e);
 			failed(status);
 			return;
