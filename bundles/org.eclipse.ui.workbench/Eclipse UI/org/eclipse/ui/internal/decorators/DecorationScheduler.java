@@ -285,12 +285,10 @@ public class DecorationScheduler {
 								if (adaptedResult != null) {
 									resultCache.put(adapted, adaptedResult);
 								}
-								//Only add something to look up if it is interesting
-								if (cacheResult.hasValue()) {
-									resultCache.put(
-										element,
-										cacheResult.createResult());
-								}
+								// Add the decoration even if it's empty in order to indicate that the decoration is ready
+								resultCache.put(
+									element,
+									cacheResult.createResult());
 
 								//Add an update for only the original element to 
 								//prevent multiple updates and clear the cache.
@@ -378,6 +376,15 @@ public class DecorationScheduler {
 
 		return job;
 	}
+	
+	/**
+	 * Return whether or not there is a decoration fro this element ready.
+	 * @param element
+	 * @return boolean true if the element is ready.
+	 */
+	public boolean isDecorationReady(Object element) {
+		return resultCache.get(element) != null;
+	 	}
 	
 
 }

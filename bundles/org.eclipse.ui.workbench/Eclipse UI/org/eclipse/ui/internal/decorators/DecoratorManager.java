@@ -28,7 +28,7 @@ import org.eclipse.ui.internal.*;
  * @since 2.0
  */
 public class DecoratorManager
-	implements ILabelDecorator, ILabelProviderListener, IDecoratorManager {
+	implements IDelayedLabelDecorator, ILabelProviderListener, IDecoratorManager {
 
 	/**
 	 * The family for the decorate job.
@@ -730,5 +730,30 @@ public class DecoratorManager
 		}
 			
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IDelayedLabelDecorator#prepareDecoration(java.lang.Object, java.lang.String)
+	 */
+	public boolean prepareDecoration(Object element, String originalText) {
+
+		
+		// Check if there is a decoration ready or if there is no lightweight decorators to be applied
+		if (scheduler.isDecorationReady(element) || !getLightweightManager().hasEnabledDefinitions()) {
+			return true;
+		}
+		
+		// Queue the decoration.
+		// Always force an update since old decoration may still be present
+		scheduler.queueForDecoration(element, getResourceAdapter(element), true,originalText);  // force update
+		
+		//If all that is there is deferred ones then defer decoration.
+		//For the sake of effeciency we do not test for enablement at this
+		//point and just abandon deferment if there are any to run right
+		//away
+		return fullDefinitions.length > 0;
+	
+	}
+	
+	
 
 }
