@@ -31,11 +31,20 @@ public class NestedPrintAction extends org.eclipse.jface.action.Action {
 
 		// if another nested printing operation is in progress, 
 		// disable Nested printing. This is because the printed transactions
-		// should be synchronized.
-		if (printingInProgress)
+		// should be synchronized. 
+		// OR if the topicRoot selection does not have any children, also
+		// disable nested printing. This can be revisited. Possibly provide
+		// a simple print action instead of disabling.
+		
+		Topic rootTopicObject = (Topic)selection.getFirstElement();
+		if (rootTopicObject instanceof Topic) {
+			if ( (((Topic)rootTopicObject).getChildrenList().isEmpty()) 
+				||(printingInProgress) )
+				setEnabled(false);
+			else 
+				setEnabled(true);
+		} else
 			setEnabled(false);
-		else
-			setEnabled(true);
 	}
 	/*
 	 * Create the Browser dedicated for nested printing. 

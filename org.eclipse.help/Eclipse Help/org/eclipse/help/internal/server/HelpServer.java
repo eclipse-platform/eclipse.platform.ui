@@ -137,7 +137,8 @@ public class HelpServer extends Thread {
 			} // Now loop back around and wait 
 			// for next client to be accepted. 
 		} catch (IOException e) {
-			Logger.logInfo(e.getMessage());
+			// commenting out for now to avoid platform not initialized problem.
+			//Logger.logInfo(e.getMessage());
 		} finally {
 		}
 	}
