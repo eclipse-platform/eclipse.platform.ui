@@ -18,11 +18,11 @@ import java.util.List;
 import org.eclipse.ant.internal.core.AntClassLoader;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
+import org.osgi.framework.BundleContext;
 
 /**
  * The plug-in runtime class for the Ant Core plug-in.
@@ -44,7 +44,7 @@ public class AntCorePlugin extends Plugin {
 	 * The preferences class for this plugin.
 	 */
 	private AntCorePreferences preferences;
-
+	
 	/**
 	 * Unique identifier constant (value <code>"org.eclipse.ant.core"</code>)
 	 * for the Ant Core plug-in.
@@ -158,22 +158,19 @@ public class AntCorePlugin extends Plugin {
 	 * <b>Clients must never explicitly instantiate a plug-in runtime class.</b>
 	 * </p>
 	 * 
-	 * @param descriptor the plug-in descriptor for the
-	 *   Ant Core plug-in
 	 */
-	public AntCorePlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
+	public AntCorePlugin() {
 		plugin = this;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugin#shutdown()
+	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
 	 */
-	public void shutdown() {
-		if (preferences == null) {
-			return;
+	public void stop(BundleContext context) throws Exception {
+		super.stop(context);
+		if (preferences != null) {
+			savePluginPreferences();
 		}
-		savePluginPreferences();
 	}
 
 	/**
