@@ -67,15 +67,10 @@ public class MenuManager extends ContributionManager implements IMenuManager {
 	 * by default.
 	 */
 	private boolean visible = true;
-
-	/**
-	 * Indicates this item is allowed to use accelerator in its manager;
-	 * <code>true</code> by default.
-	 */
-	private boolean acceleratorAllowed = true;
 	
 	private static String OLD_ACCELERATOR = "org.eclipse.jface.action.MenuManager.oldAccelerator";
 	private static String OLD_LABEL = "org.eclipse.jface.action.MenuManager.oldLabel";
+	private static String ACCELERATORS_ALLOWED = "org.eclipse.jface.action.MenuManager.accelerators_allowed";
 
 	
 /**
@@ -490,8 +485,6 @@ protected void update(boolean force, boolean recursive) {
 				// sub sub menus is lost.
 				if (recursive) {
 					if (src instanceof IMenuManager) {
-						if(src instanceof MenuManager)
-							((MenuManager)src).acceleratorAllowed = acceleratorAllowed;
 						((IMenuManager)src).updateAll(force);
 					}
 				}
@@ -511,15 +504,13 @@ protected void update(boolean force, boolean recursive) {
 				if (ci instanceof IMenuManager) {
 					IMenuManager mm = (IMenuManager) ci;
 					if (mm.isVisible()) {
-						if(mm instanceof MenuManager)
-							((MenuManager)mm).acceleratorAllowed = acceleratorAllowed;
 						mm.updateAll(force);
 					}
 				}
 			}
 		}
 	}
-	updateAccelerators(acceleratorAllowed);
+	updateAccelerators();
 }
 /* (non-Javadoc)
  * Method declared on IMenuManager.
@@ -540,89 +531,103 @@ private void updateMenuItem() {
 			menuItem.setEnabled(enabled);
 	}
 }
-	/*
-	 * Updates accelerators of menu items.
-	 */
-	public void updateAccelerators(boolean useAccelerators) {
-		acceleratorAllowed = useAccelerators;
-		Menu m = getMenu();
-		if (m != null) {
-			if (acceleratorAllowed) {
-				restoreAccelerators(m);
-			} else {
-				clearAccelerators(m);
-				if(m == m.getShell().getMenuBar()) {
-					Item items[] = m.getItems();
-					for (int i = 0; i < items.length; i++) {
-						Item item = items[i];
-						String oldLabel = item.getText();
-						int index = oldLabel.indexOf('&');
-						if(index >= 0) {
-							String newLabel;
-							if(index == 0)
-								newLabel = oldLabel.substring(1);
-							else
-								newLabel = oldLabel.substring(0,index) + oldLabel.substring(index + 1);
-							item.setText(newLabel);
-							item.setData(OLD_LABEL, oldLabel);
-						}
-					}	
-				}
-			}
-		}
-	}
-	/*
-	 * Temporarily clears the accelerators for the menu items of this menu.
-	 */
-	private void clearAccelerators(Menu menu) {
-		for (int j = 0; j < menu.getItemCount(); j++)
-			clearAccelerators(menu.getItem(j));
-	}
-	/*
-	 * Temporarily clears the accelerator for this menu item. If the menu item
-	 * is a menu, clears all accelerators of menu items of the menu and all its
-	 * submenus and their submenus, etc.).
-	 */
-	private void clearAccelerators(MenuItem item) {
-		if (item.getMenu() != null) {
-			clearAccelerators(item.getMenu());
+public boolean getAcceleratorsAllowed() {
+	if(menu == null)
+		return true;
+	Shell s = menu.getShell();
+	if((s == null) || (s.getMenuBar() == null))
+		return true;
+	Boolean b = (Boolean)s.getMenuBar().getData(ACCELERATORS_ALLOWED);
+	if(b == null)
+		return true;
+	return b.booleanValue();
+}
+public void setAcceleratorsAllowed(boolean b) {
+	menu.getShell().getMenuBar().setData(ACCELERATORS_ALLOWED,new Boolean(b));
+}
+/*
+ * Updates accelerators of menu items.
+ */
+private void updateAccelerators() {
+	Menu m = getMenu();
+	if (m != null) {
+		if (getAcceleratorsAllowed()) {
+			restoreAccelerators(m);
 		} else {
-			int oldAccelerator = item.getAccelerator();
-			if (oldAccelerator != 0) {
-				item.setData(OLD_ACCELERATOR, new Integer(oldAccelerator));
-				item.setAccelerator(0);
-
-				String fullLabel = item.getText();
-				int index = -1;
-				index = fullLabel.lastIndexOf('@');
-				if (index == -1)
-					index = fullLabel.lastIndexOf('\t');
-				if (index != -1) {
-					item.setData(OLD_LABEL, fullLabel);
-					item.setText(Action.removeAcceleratorText(fullLabel));
+			clearAccelerators(m);
+			if (m == m.getShell().getMenuBar()) {
+				Item items[] = m.getItems();
+				for (int i = 0; i < items.length; i++) {
+					Item item = items[i];
+					String oldLabel = item.getText();
+					int index = oldLabel.indexOf('&');
+					if (index >= 0) {
+						String newLabel;
+						if (index == 0)
+							newLabel = oldLabel.substring(1);
+						else
+							newLabel = oldLabel.substring(0, index) + oldLabel.substring(index + 1);
+						item.setText(newLabel);
+						item.setData(OLD_LABEL, oldLabel);
+					}
 				}
 			}
 		}
 	}
-	/*
-	 * Restores all accelerators which have been previously cleared.
-	 */
-	private void restoreAccelerators(Menu menu) {
-		for (int j = 0; j < menu.getItemCount(); j++)
-			restoreAccelerators(menu.getItem(j));
+}
+/*
+ * Temporarily clears the accelerators for the menu items of this menu.
+ */
+private void clearAccelerators(Menu menu) {
+	for (int j = 0; j < menu.getItemCount(); j++)
+		clearAccelerators(menu.getItem(j));
+}
+/*
+ * Temporarily clears the accelerator for this menu item. If the menu item
+ * is a menu, clears all accelerators of menu items of the menu and all its
+ * submenus and their submenus, etc.).
+ */
+private void clearAccelerators(MenuItem item) {
+	String text = item.getText();
+	if (item.getMenu() != null) {
+		clearAccelerators(item.getMenu());
+	} else {
+		int oldAccelerator = item.getAccelerator();
+		if (oldAccelerator != 0) {
+			item.setData(OLD_ACCELERATOR, new Integer(oldAccelerator));
+			item.setAccelerator(0);
+		}
+
+		String fullLabel = item.getText();
+		int index = -1;
+		index = fullLabel.lastIndexOf('@');
+		if (index == -1)
+			index = fullLabel.lastIndexOf('\t');
+		if (index != -1) {
+			item.setData(OLD_LABEL, fullLabel);
+			item.setText(Action.removeAcceleratorText(fullLabel));
+		}
 	}
-	/*
-	 * Restores all accelerators which have been previously cleared.
-	 */
-	private void restoreAccelerators(MenuItem item) {
-		if (item.getMenu() != null)
-			restoreAccelerators(item.getMenu());
-		
-		Integer acc = (Integer) item.getData(OLD_ACCELERATOR);
-		if (acc != null)
-			item.setAccelerator(acc.intValue());
-		String label = (String) item.getData(OLD_LABEL);
-		if (label != null)
-			item.setText(label);
-	}
+}
+/*
+ * Restores all accelerators which have been previously cleared.
+ */
+private void restoreAccelerators(Menu menu) {
+	for (int j = 0; j < menu.getItemCount(); j++)
+		restoreAccelerators(menu.getItem(j));
+}
+/*
+ * Restores all accelerators which have been previously cleared.
+ */
+private void restoreAccelerators(MenuItem item) {
+	if (item.getMenu() != null)
+		restoreAccelerators(item.getMenu());
+
+	Integer acc = (Integer) item.getData(OLD_ACCELERATOR);
+	if (acc != null)
+		item.setAccelerator(acc.intValue());
+	String label = (String) item.getData(OLD_LABEL);
+	if (label != null)
+		item.setText(label);
+}
 }

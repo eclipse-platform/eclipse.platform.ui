@@ -4,8 +4,9 @@ package org.eclipse.ui;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.swt.widgets.Event;
+
 import org.eclipse.jface.action.IAction;
+import org.eclipse.swt.events.KeyEvent;
 
 /**
  * The key binding service is responsible for invoking an action
@@ -51,7 +52,7 @@ public interface IKeyBindingService {
 	 * @return true if the key was consumed by the key binding service,
 	 * false if the editor is free to consume the key
 	 */
-	public boolean processKey(Event event);
+	public boolean processKey(KeyEvent event);
 	
 	/**
 	 * Registers an action with the key binding service. Thereafter, if the 

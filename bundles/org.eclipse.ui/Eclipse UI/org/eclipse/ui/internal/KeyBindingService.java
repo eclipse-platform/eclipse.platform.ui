@@ -8,7 +8,6 @@ import java.util.*;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
@@ -51,7 +50,7 @@ public class KeyBindingService implements IKeyBindingService {
 	/*
 	 * @see IKeyBindingService#processKey(Event)
 	 */
-	public boolean processKey(Event event) {
+	public boolean processKey(KeyEvent event) {
 		if(scope == null)
 			return false;
     	return scope.processKey(this,event);
@@ -64,6 +63,8 @@ public class KeyBindingService implements IKeyBindingService {
     		initializeMapping();
 		defIdToAction.put(action.getActionDefinitionId(),action);
 		allDefIdToAction.put(action.getActionDefinitionId(),action);
+		if(scope != null)
+			scope.registerAction(action.getAccelerator(),action);
     }
     
     public IAction getAction(String definitionId) {

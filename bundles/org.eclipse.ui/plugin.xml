@@ -178,9 +178,6 @@
         	id = "edit.findReplace"
         	key = "Ctrl+S" />
         <accelerator
-        	id = "edit.search"
-        	key = "Ctrl+H" />
-        <accelerator
         	id = "window.switchToEditor"
         	key = "Ctrl+X Ctrl+B" />
         <accelerator

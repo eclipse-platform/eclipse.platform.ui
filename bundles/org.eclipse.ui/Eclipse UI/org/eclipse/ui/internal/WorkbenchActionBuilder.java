@@ -522,7 +522,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		cutAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_CUT_EDIT_DISABLED));
 		cutAction.setAccelerator(SWT.CTRL | 'x');
 		partService.addPartListener(cutAction);
-		redoAction.setActionDefinitionId(cutActionDefId);
+		cutAction.setActionDefinitionId(cutActionDefId);
 		keyBindingService.registerGlobalAction(cutAction);
 
 		copyAction = new RetargetAction(IWorkbenchActionConstants.COPY, WorkbenchMessages.getString("Workbench.copy")); //$NON-NLS-1$
@@ -532,7 +532,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		copyAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_COPY_EDIT_DISABLED));
 		copyAction.setAccelerator(SWT.CTRL | 'c');
 		partService.addPartListener(copyAction);
-		redoAction.setActionDefinitionId(copyActionDefId);
+		copyAction.setActionDefinitionId(copyActionDefId);
 		keyBindingService.registerGlobalAction(copyAction);
 		
 		pasteAction = new RetargetAction(IWorkbenchActionConstants.PASTE, WorkbenchMessages.getString("Workbench.paste")); //$NON-NLS-1$
@@ -542,7 +542,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		pasteAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PASTE_EDIT_DISABLED));
 		pasteAction.setAccelerator(SWT.CTRL | 'v');
 		partService.addPartListener(pasteAction);
-		redoAction.setActionDefinitionId(pasteActionDefId);
+		pasteAction.setActionDefinitionId(pasteActionDefId);
 		keyBindingService.registerGlobalAction(pasteAction);
 		
 		printAction = new RetargetAction(IWorkbenchActionConstants.PRINT, WorkbenchMessages.getString("Workbench.print")); //$NON-NLS-1$
@@ -552,14 +552,14 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		printAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PRINT_EDIT_DISABLED));
 		printAction.setAccelerator(SWT.CTRL | 'p');
 		partService.addPartListener(printAction);
-		redoAction.setActionDefinitionId(printActionDefId);
+		printAction.setActionDefinitionId(printActionDefId);
 		keyBindingService.registerGlobalAction(printAction);
 
 		selectAllAction = new RetargetAction(IWorkbenchActionConstants.SELECT_ALL, WorkbenchMessages.getString("Workbench.selectAll")); //$NON-NLS-1$
 		selectAllAction.setToolTipText(WorkbenchMessages.getString("Workbench.selectAllToolTip")); //$NON-NLS-1$
 		selectAllAction.setAccelerator(SWT.CTRL | 'a');
 		partService.addPartListener(selectAllAction);
-		redoAction.setActionDefinitionId(selectAllActionDefId);
+		selectAllAction.setActionDefinitionId(selectAllActionDefId);
 		keyBindingService.registerGlobalAction(selectAllAction);
 
 		findAction = new RetargetAction(IWorkbenchActionConstants.FIND, WorkbenchMessages.getString("Workbench.findReplace")); //$NON-NLS-1$
@@ -569,7 +569,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		findAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_SEARCH_SRC_DISABLED));
 		findAction.setAccelerator(SWT.CONTROL | 'f');
 		partService.addPartListener(findAction);
-		redoAction.setActionDefinitionId(findActionDefId);
+		findAction.setActionDefinitionId(findActionDefId);
 		keyBindingService.registerGlobalAction(findAction);
 
 		closeAction = new CloseEditorAction(window);
@@ -642,7 +642,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		keyBindingService.registerGlobalAction(activateEditorAction);
 		
 		workbenchEditorsAction = new WorkbenchEditorsAction(window);
-		activateEditorAction.setActionDefinitionId(workbenchEditorsActionDefId);
+		workbenchEditorsAction.setActionDefinitionId(workbenchEditorsActionDefId);
 		keyBindingService.registerGlobalAction(workbenchEditorsAction);
 
 		decoratorFactory = new DecoratorActionFactory();

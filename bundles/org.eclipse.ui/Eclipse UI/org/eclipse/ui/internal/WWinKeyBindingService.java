@@ -59,7 +59,7 @@ public class WWinKeyBindingService {
 					}
 				}
 				MenuManager menuManager = window.getMenuManager();
-				menuManager.updateAccelerators(true);
+				menuManager.updateAll(true);
 			}
 		};
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
@@ -122,15 +122,18 @@ public class WWinKeyBindingService {
     	WorkbenchWindow w = (WorkbenchWindow)site.getPage().getWorkbenchWindow();
     	MenuManager menuManager = w.getMenuManager();
     	if(part instanceof IViewPart) {
-			menuManager.updateAccelerators(true);
+    		menuManager.setAcceleratorsAllowed(true);
     	} else if(part instanceof IEditorPart) {
     		KeyBindingService service = (KeyBindingService)((IEditorSite)site).getKeyBindingService();
     		AcceleratorConfiguration config = ((Workbench)w.getWorkbench()).getActiveAcceleratorConfiguration();
-    		if((config != null) && (!config.getId().equals(IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID)))
-				menuManager.updateAccelerators(!service.isParticipating());
-			else
-				menuManager.updateAccelerators(true);
+    		if((config != null) && (!config.getId().equals(IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID))) {
+    			boolean useAcc = !service.isParticipating();
+				menuManager.setAcceleratorsAllowed(useAcc);
+    		} else {
+				menuManager.setAcceleratorsAllowed(true);
+    		}
     	}
+		menuManager.updateAll(true);
     }
 	    	
     private static class PartListener implements IPartListener {
