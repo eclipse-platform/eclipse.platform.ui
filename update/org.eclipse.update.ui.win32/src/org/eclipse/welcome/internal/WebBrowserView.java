@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.update.internal.ui.win32.views;
+package org.eclipse.welcome.internal;
 
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.SWT;
@@ -19,7 +19,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.update.internal.ui.*;
 
 public class WebBrowserView extends ViewPart implements IEmbeddedWebBrowser {
 	// NL
@@ -113,7 +112,7 @@ public class WebBrowserView extends ViewPart implements IEmbeddedWebBrowser {
 
 	private void createNavBar(Composite parent) {
 		Label addressLabel = new Label(parent, SWT.NONE);
-		addressLabel.setText(UpdateUI.getString(KEY_ADDRESS));
+		addressLabel.setText(WelcomePortal.getString(KEY_ADDRESS));
 
 		addressCombo = new Combo(parent, SWT.DROP_DOWN | SWT.BORDER);
 		addressCombo.addModifyListener(new ModifyListener() {
@@ -176,22 +175,22 @@ public class WebBrowserView extends ViewPart implements IEmbeddedWebBrowser {
 			}
 		};
 		goAction.setEnabled(false);
-		goAction.setToolTipText(UpdateUI.getString(KEY_GO));
-		goAction.setImageDescriptor(UpdateUIImages.DESC_GO_NAV);
-		goAction.setDisabledImageDescriptor(UpdateUIImages.DESC_GO_NAV_D);
-		goAction.setHoverImageDescriptor(UpdateUIImages.DESC_GO_NAV_H);
+		goAction.setToolTipText(WelcomePortal.getString(KEY_GO));
+		goAction.setImageDescriptor(WelcomePortalImages.DESC_GO_NAV);
+		goAction.setDisabledImageDescriptor(WelcomePortalImages.DESC_GO_NAV_D);
+		goAction.setHoverImageDescriptor(WelcomePortalImages.DESC_GO_NAV_H);
 
 		stopAction = new Action() {
 			public void run() {
 				browser.stop();
 			}
 		};
-		stopAction.setToolTipText(UpdateUI.getString(KEY_STOP));
-		stopAction.setImageDescriptor(UpdateUIImages.DESC_STOP_NAV);
+		stopAction.setToolTipText(WelcomePortal.getString(KEY_STOP));
+		stopAction.setImageDescriptor(WelcomePortalImages.DESC_STOP_NAV);
 		stopAction.setDisabledImageDescriptor(
-			UpdateUIImages.DESC_STOP_NAV_D);
+			WelcomePortalImages.DESC_STOP_NAV_D);
 		stopAction.setHoverImageDescriptor(
-			UpdateUIImages.DESC_STOP_NAV_H);
+			WelcomePortalImages.DESC_STOP_NAV_H);
 		stopAction.setEnabled(false);
 
 		refreshAction = new Action() {
@@ -200,12 +199,12 @@ public class WebBrowserView extends ViewPart implements IEmbeddedWebBrowser {
 			}
 		};
 		refreshAction.setToolTipText(
-			UpdateUI.getString(KEY_REFRESH));
-		refreshAction.setImageDescriptor(UpdateUIImages.DESC_REFRESH_NAV);
+			WelcomePortal.getString(KEY_REFRESH));
+		refreshAction.setImageDescriptor(WelcomePortalImages.DESC_REFRESH_NAV);
 		refreshAction.setDisabledImageDescriptor(
-			UpdateUIImages.DESC_REFRESH_NAV_D);
+			WelcomePortalImages.DESC_REFRESH_NAV_D);
 		refreshAction.setHoverImageDescriptor(
-			UpdateUIImages.DESC_REFRESH_NAV_H);
+			WelcomePortalImages.DESC_REFRESH_NAV_H);
 		refreshAction.setEnabled(false);
 
 		backwardAction = new Action() {
@@ -215,13 +214,13 @@ public class WebBrowserView extends ViewPart implements IEmbeddedWebBrowser {
 		};
 		backwardAction.setEnabled(false);
 		backwardAction.setToolTipText(
-			UpdateUI.getString(KEY_BACKWARD));
+			WelcomePortal.getString(KEY_BACKWARD));
 		backwardAction.setImageDescriptor(
-			UpdateUIImages.DESC_BACKWARD_NAV);
+			WelcomePortalImages.DESC_BACKWARD_NAV);
 		backwardAction.setDisabledImageDescriptor(
-			UpdateUIImages.DESC_BACKWARD_NAV_D);
+			WelcomePortalImages.DESC_BACKWARD_NAV_D);
 		backwardAction.setHoverImageDescriptor(
-			UpdateUIImages.DESC_BACKWARD_NAV_H);
+			WelcomePortalImages.DESC_BACKWARD_NAV_H);
 
 		forwardAction = new Action() {
 			public void run() {
@@ -229,12 +228,12 @@ public class WebBrowserView extends ViewPart implements IEmbeddedWebBrowser {
 			}
 		};
 		forwardAction.setToolTipText(
-			UpdateUI.getString(KEY_FORWARD));
-		forwardAction.setImageDescriptor(UpdateUIImages.DESC_FORWARD_NAV);
+			WelcomePortal.getString(KEY_FORWARD));
+		forwardAction.setImageDescriptor(WelcomePortalImages.DESC_FORWARD_NAV);
 		forwardAction.setDisabledImageDescriptor(
-			UpdateUIImages.DESC_FORWARD_NAV_D);
+			WelcomePortalImages.DESC_FORWARD_NAV_D);
 		forwardAction.setHoverImageDescriptor(
-			UpdateUIImages.DESC_FORWARD_NAV_H);
+			WelcomePortalImages.DESC_FORWARD_NAV_H);
 		forwardAction.setEnabled(false);
 		toolBarManager.add(goAction);
 		toolBarManager.add(new Separator());

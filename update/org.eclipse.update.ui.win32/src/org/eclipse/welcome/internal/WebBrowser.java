@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.update.internal.ui.win32.views;
+package org.eclipse.welcome.internal;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.SWT;

@@ -1,23 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<fragment
+<plugin
    id="org.eclipse.update.ui.win32"
-   name="%fragmentNameWin"
+   name="%pluginName"
    version="2.1.0"
    provider-name="%providerName"
-   plugin-id="org.eclipse.update.ui"
-   plugin-version="2.1.0"
-   match="compatible">
+   class="org.eclipse.welcome.internal.WelcomePortal">
 
    <runtime>
       <library name="updateui32.jar">
          <export name="*"/>
-         <packages prefixes="org.eclipse.update.internal.ui.win32"/>
+         <packages prefixes="org.eclipse.welcome.internal"/>
       </library>
    </runtime>
-
    <requires>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.help.ui"/>
    </requires>
 
 
@@ -26,9 +24,9 @@
       <view
             name="%views.webBrowser.label"
             icon="icons/full/cview16/browser.gif"
-            category="org.eclipse.update.ui"
-            class="org.eclipse.update.internal.ui.win32.views.WebBrowserView"
+            class="org.eclipse.welcome.internal.WebBrowserView"
             id="org.eclipse.update.ui.WebBrowser">
       </view>
    </extension>
-</fragment>
+
+</plugin>

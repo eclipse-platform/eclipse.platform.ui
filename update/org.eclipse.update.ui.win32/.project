@@ -6,8 +6,8 @@
 		<project>org.eclipse.core.boot</project>
 		<project>org.eclipse.core.resources</project>
 		<project>org.eclipse.core.runtime</project>
+		<project>org.eclipse.help.ui</project>
 		<project>org.eclipse.ui</project>
-		<project>org.eclipse.update.ui</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
