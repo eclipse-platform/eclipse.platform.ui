@@ -11,10 +11,6 @@
 
 package org.eclipse.ui.internal;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -23,17 +19,10 @@ import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.RGB;
-
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.JFacePreferences;
@@ -44,7 +33,10 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.OpenStrategy;
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IPerspectiveRegistry;
@@ -54,8 +46,6 @@ import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.IWorkbenchPreferences;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
-
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.intro.IIntroRegistry;
 import org.eclipse.ui.internal.intro.IntroRegistry;
@@ -73,6 +63,7 @@ import org.eclipse.ui.internal.themes.FontDefinition;
 import org.eclipse.ui.internal.themes.IThemeRegistry;
 import org.eclipse.ui.internal.themes.ThemeRegistry;
 import org.eclipse.ui.internal.themes.ThemeRegistryReader;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * This class represents the TOP of the workbench UI world
@@ -622,63 +613,12 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	}
 
 	public void startup() throws CoreException {
-		/* The plugin org.eclipse.ui has being separed in
-		   several plugins. Copy the state files from 
-		   org.eclipse.ui to org.eclipse.ui.workbench */
-		
-		IPath locationPath = getStateLocation();
-		File newLocation = locationPath.toFile();
-		File oldLocation = new File(newLocation,"..//org.eclipse.ui"); //$NON-NLS-1$
-		try {
-			oldLocation = oldLocation.getCanonicalFile();
-		} catch (IOException e) {
-			// ignore
-		}		
-		String markerFileName = ".copiedStateFiles_Marker"; //$NON-NLS-1$
-		File markerFile = new File(oldLocation,markerFileName);
-		if(markerFile.exists())
-			return;
-			
-		try {
-			String list[] = newLocation.list();
-			if(list != null && list.length != 0)
-				return;
-
-			String oldList[] = oldLocation.list();
-			if(oldList == null || oldList.length == 0)
-				return;
-
-			byte b[] = new byte[1024];
-			for (int i = 0; i < oldList.length; i++) {
-				String string = oldList[i];
-				try {
-					File oldFile = new File(oldLocation,string);
-					FileInputStream in = new FileInputStream(oldFile);
-					FileOutputStream out = new FileOutputStream(new File(newLocation,string));
-					int read = in.read(b);
-					while(read >= 0) {
-						out.write(b,0,read);
-						read = in.read(b);
-					}
-					in.close();
-					out.close();
-					// Don't delete the old file since the public preferences and some 
-					// dialog settings are still read from org.eclipse.ui.
-					// See bug 33334. 
-					// oldFile.delete();
-				} catch (IOException e) {
-					new File(newLocation,string).delete();
-				}
-			}
-		} finally {
-			try { 
-				new FileOutputStream(markerFile).close(); 
-			} catch (IOException e) {
-				// ignore
-			}
-		}
+		// Previously this impl. managed migration from 2.0 to 2.1, which is no longer
+		// required.  However, that previous impl. didn't call the parent method, so
+		// this empty impl. has been left to continue to prevent the parent behaviour
+		// from being invoked.
 	}
-	
+
 	/**
 	 * Initializes product-specific information that comes from the
 	 * about.ini file of the primary feature.
