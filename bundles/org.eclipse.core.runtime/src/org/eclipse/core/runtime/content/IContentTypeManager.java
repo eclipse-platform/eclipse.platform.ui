@@ -11,6 +11,7 @@
 package org.eclipse.core.runtime.content;
 
 import java.io.*;
+import java.util.EventObject;
 import org.eclipse.core.runtime.QualifiedName;
 
 /**
@@ -24,6 +25,61 @@ import org.eclipse.core.runtime.QualifiedName;
  * @since 3.0
  */
 public interface IContentTypeManager {
+
+	/**
+	 * A listener to be used to receive content type change events.
+	 * <p>
+	 * Clients who reference the <code>org.eclipse.core.resources</code>
+	 * bundle are encouraged <em>not</em> to use this listener mechanism to
+	 * listen to content type changes. The Core Resources bundle will 
+	 * propagate changes to content types and notify clients appropriately
+	 * via the resource change mechanism.
+	 * </p>
+	 * <p>
+	 * Clients may implement this interface.
+	 * </p>
+	 */
+	public interface IContentTypeChangeListener {
+
+		/**
+		 * Notification that a content type has changed in the content type manager.
+		 * The given event object contains the content type which changed and must not
+		 * be <code>null</code>.
+		 * 
+		 * @param event the content type change event
+		 */
+		public void contentTypeChanged(ContentTypeChangeEvent event);
+	}
+
+	/**
+	 * An event object which describes the details of a change to a 
+	 * content type. 
+	 * <p>
+	 * Types of changes include a change in the file associations or 
+	 * a change in the encoding setting.
+	 * </p>
+	 */
+	public final class ContentTypeChangeEvent extends EventObject {
+
+		/**
+		 * Constructor for a new content type change event.
+		 * 
+		 * @param source the content type that changed
+		 */
+		public ContentTypeChangeEvent(IContentType source) {
+			super(source);
+		}
+
+		/**
+		 * Return the content type object associated with this change event.
+		 * 
+		 * @return the content type
+		 */
+		public IContentType getContentType() {
+			return (IContentType) source;
+		}
+	}
+
 	/**
 	 * Content type identifier constant for platform's primary 
 	 * text-based content type: <code>org.eclipse.core.runtime.text</code>. 
@@ -39,6 +95,17 @@ public interface IContentTypeManager {
 	 * </p>
 	 */
 	public final static String CT_TEXT = "org.eclipse.core.runtime.text"; //$NON-NLS-1$	
+
+	/**
+	 * Register the given listener for notification of content type changes.
+	 * Calling this method multiple times with the same listener has no effect. The
+	 * given listener argument must not be <code>null</code>.
+	 * 
+	 * @param listener the content type change listener to register
+	 * @see #removeContentTypeChangeListener(IContentTypeChangeListener)
+	 * @see IContentTypeChangeListener
+	 */
+	public void addContentTypeChangeListener(IContentTypeChangeListener listener);
 
 	/**
 	 * Returns the preferred content type for the given contents and file name.
@@ -172,4 +239,15 @@ public interface IContentTypeManager {
 	 * @see IContentDescription 
 	 */
 	public IContentDescription getDescriptionFor(Reader contents, String fileName, QualifiedName[] options) throws IOException;
+
+	/**
+	 * De-register the given listener from receiving notification of content type changes. 
+	 * Calling this method multiple times with the same listener has no
+	 * effect. The given listener argument must not be <code>null</code>.
+	 * 
+	 * @param listener the content type change listener to remove
+	 * @see #addContentTypeChangeListener(IContentTypeChangeListener)
+	 * @see IContentTypeChangeListener
+	 */
+	public void removeContentTypeChangeListener(IContentTypeChangeListener listener);
 }

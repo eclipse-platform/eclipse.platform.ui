@@ -368,4 +368,20 @@ public class ContentTypeManager implements IContentTypeManager {
 		builder.startup();
 		builder.buildContentTypes();
 	}
+
+	/* (non-Javadoc)
+	 * @see IContentTypeManager#addContentTypeChangeListener(IContentTypeChangeListener)
+	 */
+	public void addContentTypeChangeListener(IContentTypeChangeListener listener) {
+		// TODO https://bugs.eclipse.org/bugs/show_bug.cgi?id=67884
+		// Content type change events not reported
+	}
+
+	/* (non-Javadoc)
+	 * @see IContentTypeManager#removeContentTypeChangeListener(IContentTypeChangeListener)
+	 */
+	public void removeContentTypeChangeListener(IContentTypeChangeListener listener) {
+		// TODO https://bugs.eclipse.org/bugs/show_bug.cgi?id=67884
+		// Content type change events not reported
+	}
 }
