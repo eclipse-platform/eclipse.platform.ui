@@ -952,8 +952,20 @@ public void testValidateProjectLocation() {
 		fail("7.99", e);
 	}
 	try {
+		//indirect test: setting the project description may validate location, which shouldn't complain
+		IProjectDescription desc = open.getDescription();
+		desc.setReferencedProjects(new IProject[] {project});
+		open.setDescription(desc, IResource.FORCE, getMonitor());
+		
 		assertTrue("7.1", !workspace.validateProjectLocation(project, openProjectLocation).isOK());
 		assertTrue("7.2", !workspace.validateProjectLocation(project, closedProjectLocation).isOK());
+		
+		//for an existing project, it cannot overlap itself, but it its own location is valid
+		assertTrue("7.3", workspace.validateProjectLocation(open, openProjectLocation).isOK());
+		assertTrue("7.4", !workspace.validateProjectLocation(open, openProjectLocation.append("sub")).isOK());
+		
+	} catch (CoreException e) {
+		fail("7.5", e);
 	} finally {
 		//make sure we clean up project directories
 		try {
