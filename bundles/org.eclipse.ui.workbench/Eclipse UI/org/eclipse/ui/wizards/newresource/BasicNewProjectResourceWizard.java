@@ -466,12 +466,6 @@ public static void updatePerspective(IConfigurationElement configElement) {
 		return;
 	}
 
-	// open perspective in same window setting
-	if (perspSetting.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE)) {
-		openInNewPage(finalPersp);
-		return;
-	}
-
 	// replace active perspective	setting
 	if (perspSetting.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE)) {
 		replaceCurrentPerspective(finalPersp);
