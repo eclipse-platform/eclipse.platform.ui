@@ -127,6 +127,6 @@ public class ProjectCreationDecorator extends AbstractAntUITest {
 			
 		}
 				
-		config.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_CUSTOM_CLASSPATH, urlString.substring(0, urlString.length() - 1));
+		config.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_CUSTOM_CLASSPATH, urlString.toString());
 	}
 }
