@@ -489,7 +489,7 @@ public void testWriteProject() throws Throwable {
 	//write project in a runnable, otherwise tree will be locked
 	getWorkspace().run(new IWorkspaceRunnable() {
 		public void run(IProgressMonitor monitor) throws CoreException {
-			getLocalManager().write((Project) project, IResource.FORCE);
+			((Project)project).writeDescription(IResource.FORCE);
 		}
 	}, null);
 	assertTrue("2.2", location.toFile().isDirectory());
