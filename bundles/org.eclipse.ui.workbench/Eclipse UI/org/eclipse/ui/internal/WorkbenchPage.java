@@ -2793,107 +2793,114 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         if (oldPersp == newPersp)
             return;
 
-        if (newPersp != null) {
-            IStatus status = newPersp.restoreState();
-            if (status.getSeverity() != IStatus.OK) {
-                String title = WorkbenchMessages
-                        .getString("WorkbenchPage.problemRestoringTitle"); //$NON-NLS-1$
-                String msg = WorkbenchMessages
-                        .getString("WorkbenchPage.errorReadingState"); //$NON-NLS-1$
-                ErrorDialog.openError(getWorkbenchWindow().getShell(), title,
-                        msg, status);
-            }
-        }
+        window.largeUpdateStart();
+        try {
+	        
+	        if (newPersp != null) {
+	            IStatus status = newPersp.restoreState();
+	            if (status.getSeverity() != IStatus.OK) {
+	                String title = WorkbenchMessages
+	                        .getString("WorkbenchPage.problemRestoringTitle"); //$NON-NLS-1$
+	                String msg = WorkbenchMessages
+	                        .getString("WorkbenchPage.errorReadingState"); //$NON-NLS-1$
+	                ErrorDialog.openError(getWorkbenchWindow().getShell(), title,
+	                        msg, status);
+	            }
+	        }
+	
+	        // Deactivate active part.
+	
+	        // ensure the switcher is not showing any action sets
+	        // so it will reshow them in the new perspective
+	        actionSwitcher.updateTopEditor(null);
+	
+	        IWorkbenchPart oldActivePart = activePart;
+	        setActivePart(null);
+	
+	        // Deactivate the old layout
+	        if (oldPersp != null) {
+	            oldPersp.onDeactivate();
+	            window.selectPerspectiveShortcut(oldPersp.getDesc(), this, false);
+	        }
+	
+	        // Activate the new layout
+	        perspList.setActive(newPersp);
+	        if (newPersp != null) {
+	            newPersp.onActivate();
+	
+	            // Notify listeners of activation
+	            window.firePerspectiveActivated(this, newPersp.getDesc());
+	
+	            // Update the shortcut
+	            window.selectPerspectiveShortcut(newPersp.getDesc(), this, true);
+	        } else {
+	            //setActivePart(null);
+	            // No need to remember old active part since there
+	            // is no new active perspective to activate it in.
+	            oldActivePart = null;
+	        }
+	
+	        // Update the window
+	        window.updateActionSets();
+	        window.updateFastViewBar();
+	
+	        updateVisibility(oldPersp, newPersp);
+	
+	        // Reactivate active part.
+	        if (oldActivePart != null) {
+	            String id = oldActivePart.getSite().getId();
+	            oldPersp.setOldPartID(id);
+	            if (oldActivePart instanceof IEditorPart && isEditorAreaVisible()) {
+	                activate(oldActivePart);
+	            } else if (oldActivePart instanceof IViewPart) {
+	                IEditorPart ed = editorMgr.getVisibleEditor();
+	                if (ed != null)
+	                    actionSwitcher.updateTopEditor(ed);
+	                if (findView(id) != null) {
+	                    activate(oldActivePart);
+	                } else {
+	                    activateOldPart(newPersp);
+	                }
+	            } else {
+	                activateOldPart(newPersp);
+	            }
+	        } else { //no active part
+	            IEditorPart ed = editorMgr.getVisibleEditor();
+	            if (ed != null) {
+	                actionSwitcher.updateTopEditor(ed);
+	            } else {
+	                activateOldPart(newPersp);
+	            }
+	        }
+	        if (getActivePart() == null && activationList.getActive() != null) {
+	            activate(activationList.getActive());
+	        }
+	        if (editorPresentation != null)
+	            editorPresentation.showVisibleEditor();
 
-        // Deactivate active part.
-
-        // ensure the switcher is not showing any action sets
-        // so it will reshow them in the new perspective
-        actionSwitcher.updateTopEditor(null);
-
-        IWorkbenchPart oldActivePart = activePart;
-        setActivePart(null);
-
-        // Deactivate the old layout
-        if (oldPersp != null) {
-            oldPersp.onDeactivate();
-            window.selectPerspectiveShortcut(oldPersp.getDesc(), this, false);
-        }
-
-        // Activate the new layout
-        perspList.setActive(newPersp);
-        if (newPersp != null) {
-            newPersp.onActivate();
-
-            // Notify listeners of activation
-            window.firePerspectiveActivated(this, newPersp.getDesc());
-
-            // Update the shortcut
-            window.selectPerspectiveShortcut(newPersp.getDesc(), this, true);
-        } else {
-            // No need to remember old active part since there
-            // is no new active perspective to activate it in.
-            oldActivePart = null;
-        }
-
-        // Update the window
-        window.updateActionSets();
-        window.updateFastViewBar();
-
-        updateVisibility(oldPersp, newPersp);
-
-        // Reactivate active part.
-        if (oldActivePart != null) {
-            String id = oldActivePart.getSite().getId();
-            oldPersp.setOldPartID(id);
-            if (oldActivePart instanceof IEditorPart && isEditorAreaVisible()) {
-                activate(oldActivePart);
-            } else if (oldActivePart instanceof IViewPart) {
-                IEditorPart ed = editorMgr.getVisibleEditor();
-                if (ed != null)
-                    actionSwitcher.updateTopEditor(ed);
-                if (findView(id) != null) {
-                    activate(oldActivePart);
-                } else {
-                    activateOldPart(newPersp);
-                }
-            } else {
-                activateOldPart(newPersp);
-            }
-        } else { //no active part
-            IEditorPart ed = editorMgr.getVisibleEditor();
-            if (ed != null) {
-                actionSwitcher.updateTopEditor(ed);
-            } else {
-                activateOldPart(newPersp);
-            }
-        }
-        if (getActivePart() == null && activationList.getActive() != null) {
-            activate(activationList.getActive());
-        }
-        if (editorPresentation != null)
-            editorPresentation.showVisibleEditor();
-
-        if (newPersp != null && oldPersp != null) {
-            if (!stickyPerspectives.contains(newPersp.getDesc())) {
-                IViewRegistry viewReg = WorkbenchPlugin.getDefault()
-                        .getViewRegistry();
-                IStickyViewDescriptor[] stickyDescs = viewReg.getStickyViews();
-                for (int i = 0; i < stickyDescs.length; i++) {
-                    try {
-                        // show a sticky view if it was in the last perspective
-                        if (oldPersp.findView(stickyDescs[i].getId()) != null) {
-                            showView(stickyDescs[i].getId(), null,
-                                    IWorkbenchPage.VIEW_CREATE);
-                        }
-                    } catch (PartInitException e) {
-                        WorkbenchPlugin
-                                .log(
-                                        "Could not open view :" + stickyDescs[i].getId(), new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR, "Could not open view :" + stickyDescs[i].getId(), e)); //$NON-NLS-1$ //$NON-NLS-2$
-                    }
-                }
-                stickyPerspectives.add(newPersp.getDesc());
-            }
+	        if (newPersp != null && oldPersp != null) {
+	            if (!stickyPerspectives.contains(newPersp.getDesc())) {
+	                IViewRegistry viewReg = WorkbenchPlugin.getDefault()
+	                        .getViewRegistry();
+	                IStickyViewDescriptor[] stickyDescs = viewReg.getStickyViews();
+	                for (int i = 0; i < stickyDescs.length; i++) {
+	                    try {
+	                        // show a sticky view if it was in the last perspective
+	                        if (oldPersp.findView(stickyDescs[i].getId()) != null) {
+	                            showView(stickyDescs[i].getId(), null,
+	                                    IWorkbenchPage.VIEW_CREATE);
+	                        }
+	                    } catch (PartInitException e) {
+	                        WorkbenchPlugin
+	                                .log(
+	                                        "Could not open view :" + stickyDescs[i].getId(), new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR, "Could not open view :" + stickyDescs[i].getId(), e)); //$NON-NLS-1$ //$NON-NLS-2$
+	                    }
+	                }
+	                stickyPerspectives.add(newPersp.getDesc());
+	            }
+	        }
+        } finally {
+            window.largeUpdateEnd();
         }
     }
 

@@ -2022,6 +2022,13 @@ public final class Workbench implements IWorkbench {
         if (largeUpdates++ == 0) {
             workbenchCommandSupport.setProcessing(false);
             workbenchContextSupport.setProcessing(false);
+            final IWorkbenchWindow[] windows = getWorkbenchWindows();
+            for (int i = 0; i < windows.length; i++) {
+                IWorkbenchWindow window = windows[i];
+                if (window instanceof WorkbenchWindow) {
+                    ((WorkbenchWindow) window).largeUpdateStart();
+                }
+            }
         }
     }
 
@@ -2041,6 +2048,15 @@ public final class Workbench implements IWorkbench {
         if (--largeUpdates == 0) {
             workbenchCommandSupport.setProcessing(true);
             workbenchContextSupport.setProcessing(true);
+            
+            // Perform window-specific blocking.
+            final IWorkbenchWindow[] windows = getWorkbenchWindows();
+            for (int i = 0; i < windows.length; i++) {
+                IWorkbenchWindow window = windows[i];
+                if (window instanceof WorkbenchWindow) {
+                    ((WorkbenchWindow) window).largeUpdateEnd();
+                }
+            }
         }
     }
 }

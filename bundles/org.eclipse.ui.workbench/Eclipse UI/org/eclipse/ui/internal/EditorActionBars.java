@@ -438,7 +438,6 @@ public class EditorActionBars extends SubActionBars2 {
             if (toolBarContributionItem != null) {
                 toolBarContributionItem.setVisible(visible || !forceVisibility);
             }
-            coolBarManager.update(false);
         }
     }
 }

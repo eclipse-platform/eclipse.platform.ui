@@ -16,6 +16,7 @@ import java.util.Map;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.ExternalActionManager.ICallback;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IWorkbench;
@@ -96,6 +97,7 @@ public final class CommandCallback implements ICallback {
         };
 
         command.addCommandListener(commandListener);
+        Assert.isTrue(!registeredListeners.containsKey(listener));
         registeredListeners.put(listener, commandListener);
     }
 

@@ -11,9 +11,9 @@
 package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -96,7 +96,13 @@ public class ActionPresentation {
      */
     public void setActionSets(IActionSetDescriptor[] newArray) {
         // Convert array to list.
-        List newList = Arrays.asList(newArray);
+        HashSet newList = new HashSet();
+        
+        for (int i = 0; i < newArray.length; i++) {
+            IActionSetDescriptor descriptor = newArray[i];
+            
+            newList.add(descriptor);
+        }
         List oldList = new ArrayList(mapDescToRec.keySet());
 
         // Remove obsolete actions.
@@ -119,10 +125,11 @@ public class ActionPresentation {
         }
 
         // Add new actions.
-        iter = newList.iterator();
         ArrayList sets = new ArrayList();
-        while (iter.hasNext()) {
-            IActionSetDescriptor desc = (IActionSetDescriptor) iter.next();
+        
+        for (int i = 0; i < newArray.length; i++) {
+            IActionSetDescriptor desc = newArray[i];
+
             if (!mapDescToRec.containsKey(desc)) {
                 try {
                     SetRec rec;

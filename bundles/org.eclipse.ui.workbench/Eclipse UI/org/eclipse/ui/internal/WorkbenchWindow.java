@@ -13,6 +13,7 @@ package org.eclipse.ui.internal;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -319,16 +320,19 @@ public class WorkbenchWindow extends ApplicationWindow implements
      * support. This list may be empty, but it is never <code>null</code>.
      */
     private List handlerSubmissions = new ArrayList();
-
+    
+    /**
+     * The number of large updates that are currently going on. If this is
+     * number is greater than zero, then UI updateActionBars is a no-op.
+     * 
+     * @since 3.1
+     */
+    private int largeUpdates = 0;
+    
     void registerActionSets(IActionSet[] actionSets) {
-        // Remove the old handlers, and dispose them.
-        final Iterator oldHandlerItr = actionSetHandlersByCommandId.values()
-                .iterator();
-        while (oldHandlerItr.hasNext()) {
-            ((IHandler) oldHandlerItr.next()).dispose();
-        }
-        actionSetHandlersByCommandId.clear();
-
+        
+        HashMap newActionSetHandlersByCommandId = new HashMap();
+        
         /*
          * For each action in each action, create a new action handler. If there
          * are duplicates, then dispose of the earlier handler before clobbering
@@ -344,22 +348,49 @@ public class WorkbenchWindow extends ApplicationWindow implements
                     String commandId = pluginAction.getActionDefinitionId();
 
                     if (commandId != null) {
-                        final Object value = actionSetHandlersByCommandId
+                        ActionHandler value = (ActionHandler)actionSetHandlersByCommandId
                                 .get(commandId);
-                        if (value instanceof IHandler) {
-                            /*
-                             * This handler is about to get clobbered, so
-                             * dispose it.
-                             */
-                            ((IHandler) value).dispose();
+                        
+                        // If we don't have a compatible handler already, create a new one
+                        if (value == null || value.getAction() != pluginAction) {
+                            value = new ActionHandler(pluginAction);
                         }
-                        actionSetHandlersByCommandId.put(commandId,
-                                new ActionHandler(pluginAction));
 
+                        // In the bizarre event that we were given two IActions with the same
+                        // command ID, dispose the old one before we clobber it 
+                        ActionHandler clobberedHandler = (ActionHandler)newActionSetHandlersByCommandId.get(commandId);
+                        if (clobberedHandler != null && clobberedHandler != value) {
+                            clobberedHandler.dispose();
+                        }
+                        
+                        // We either had a suitable handler already or we created a new one
+                        // for the action. Add it to the new map.
+                        
+                        newActionSetHandlersByCommandId.put(commandId, value);                        
                     }
                 }
             }
         }
+        
+        // Dispose any unused entries
+        Collection entrySet = actionSetHandlersByCommandId.entrySet();
+        
+        Iterator iter = actionSetHandlersByCommandId.entrySet().iterator();
+        
+        while (iter.hasNext()) {
+            Map.Entry entry = (Map.Entry)iter.next();
+            
+            Object key = entry.getKey();
+            
+            // If the old handler isn't being reused, dispose it.
+            ActionHandler oldHandler = (ActionHandler)entry.getValue();
+            ActionHandler newHandler = (ActionHandler)newActionSetHandlersByCommandId.get(key);
+            if (oldHandler != newHandler) {
+                oldHandler.dispose();
+            }
+        }
+        
+        actionSetHandlersByCommandId = newActionSetHandlersByCommandId;
 
         /* Submit the new amalgamated list of action set handlers and global
          * handlers.
@@ -406,28 +437,47 @@ public class WorkbenchWindow extends ApplicationWindow implements
         Map handlersByCommandId = new HashMap();
         handlersByCommandId.putAll(actionSetHandlersByCommandId);
         handlersByCommandId.putAll(globalActionHandlersByCommandId);
-
-        // Create a low priority submission for each handler.
-        final List newHandlerSubmissions = new ArrayList();
+        
+        List toRemove = new ArrayList();
+        List newHandlers = new ArrayList(handlersByCommandId.size());
+        List toAdd = new ArrayList();
+        
+        Iterator existingIter = handlerSubmissions.iterator();
+        while (existingIter.hasNext()) {
+            HandlerSubmission next = (HandlerSubmission)existingIter.next();
+            
+            String cmdId = next.getCommandId();
+            
+            Object handler = handlersByCommandId.get(cmdId);
+            if (handler == next.getHandler()) {
+                handlersByCommandId.remove(cmdId);
+                newHandlers.add(next);
+            } else {
+                toRemove.add(next);
+            }
+        }
+        
         final Shell shell = getShell();
         if (shell != null) {
-
             for (Iterator iterator = handlersByCommandId.entrySet().iterator(); iterator
                     .hasNext();) {
                 Map.Entry entry = (Map.Entry) iterator.next();
                 String commandId = (String) entry.getKey();
                 IHandler handler = (IHandler) entry.getValue();
-                newHandlerSubmissions.add(new HandlerSubmission(null, shell,
-                        null, commandId, handler, Priority.LEGACY));
+                HandlerSubmission submission = new HandlerSubmission(null, shell,
+                        null, commandId, handler, Priority.LEGACY);
+                
+                toAdd.add(submission);
+                newHandlers.add(submission);
             }
         }
-
+        
         // Remove the old submissions, and the add the new ones.
         final IWorkbenchCommandSupport commandSupport = Workbench.getInstance()
                 .getCommandSupport();
-        commandSupport.removeHandlerSubmissions(handlerSubmissions);
-        handlerSubmissions = newHandlerSubmissions;
-        commandSupport.addHandlerSubmissions(newHandlerSubmissions);
+        commandSupport.removeHandlerSubmissions(toRemove);
+        handlerSubmissions = newHandlers;
+        commandSupport.addHandlerSubmissions(toAdd);
     }
 
     /*
@@ -2182,12 +2232,60 @@ public class WorkbenchWindow extends ApplicationWindow implements
      * update the action bars.
      */
     public void updateActionBars() {
-        if (updateDisabled)
+        if (updateDisabled || updatesDeferred()) {
             return;
+        }
         // updateAll required in order to enable accelerators on pull-down menus
         getMenuBarManager().updateAll(false);
         getCoolBarManager().update(false);
         getStatusLineManager().update(false);
+    }
+
+    /**
+     * Returns true iff we are currently deferring UI processing due to a large update
+     * @return true iff we are deferring UI updates.
+     * @since 3.1
+     */
+    private boolean updatesDeferred() {
+        return largeUpdates > 0;
+    }
+    
+    /**
+     * <p>
+     * Indicates the start of a large update within this window. This is used to
+     * disable CPU-intensive, change-sensitive services that were temporarily
+     * disabled in the midst of large changes. This method should always be
+     * called in tandem with <code>largeUpdateEnd</code>, and the event loop
+     * should not be allowed to spin before that method is called.
+     * </p>
+     * <p>
+     * Important: always use with <code>largeUpdateEnd</code>!
+     * </p>
+     * 
+     * @since 3.1
+     */
+    public final void largeUpdateStart() {
+        largeUpdates++;
+    }
+
+    /**
+     * <p>
+     * Indicates the end of a large update within this window. This is used to
+     * re-enable services that were temporarily disabled in the midst of large
+     * changes. This method should always be called in tandem with
+     * <code>largeUpdateStart</code>, and the event loop should not be
+     * allowed to spin before this method is called.
+     * </p>
+     * <p>
+     * Important: always protect this call by using <code>finally</code>!
+     * </p>
+     * 
+     * @since 3.1
+     */
+    public final void largeUpdateEnd() {
+        if (--largeUpdates == 0) {
+            updateActionBars();
+        }
     }
 
     /**

@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.commands;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.ui.commands.CommandEvent;
 import org.eclipse.ui.commands.ExecutionException;
@@ -35,8 +34,6 @@ final class Command implements ICommand {
 
     private List commandListeners;
 
-    private Set commandsWithListeners;
-
     private boolean defined;
 
     private String description;
@@ -57,10 +54,9 @@ final class Command implements ICommand {
 
     private transient String string;
 
-    Command(Set commandsWithListeners, String id) {
-        if (commandsWithListeners == null || id == null)
+    Command(String id) {
+        if (id == null)
             throw new NullPointerException();
-        this.commandsWithListeners = commandsWithListeners;
         this.id = id;
     }
 
@@ -71,7 +67,6 @@ final class Command implements ICommand {
             commandListeners = new ArrayList();
         if (!commandListeners.contains(commandListener))
             commandListeners.add(commandListener);
-        commandsWithListeners.add(this);
     }
 
     public int compareTo(Object object) {
@@ -221,8 +216,6 @@ final class Command implements ICommand {
             throw new NullPointerException();
         if (commandListeners != null) {
             commandListeners.remove(commandListener);
-            if (commandListeners.isEmpty())
-                commandsWithListeners.remove(this);
         }
     }
 

@@ -31,7 +31,9 @@ public abstract class AbstractHandler implements IHandler {
 
     /**
      * Those interested in hearing about changes to this instance of
-     * <code>IHandler</code>.
+     * <code>IHandler</code>. This member is null iff there are
+     * no listeners attached to this handler. (Most handlers don't
+     * have any listeners, and this optimization saves some memory.)
      */
     private List handlerListeners;
 
@@ -83,6 +85,18 @@ public abstract class AbstractHandler implements IHandler {
     public Map getAttributeValuesByName() {
         return Collections.EMPTY_MAP;
     }
+    
+    /**
+     * Returns true iff there is one or more IHandlerListeners attached to this
+     * AbstractHandler.
+     * 
+     * @return true iff there is one or more IHandlerListeners attached to this
+     *         AbstractHandler
+     * @since 3.1
+     */
+    protected final boolean hasListeners() {
+        return handlerListeners != null;
+    }
 
     /**
      * @see IHandler#removeHandlerListener(IHandlerListener)
@@ -90,7 +104,14 @@ public abstract class AbstractHandler implements IHandler {
     public void removeHandlerListener(IHandlerListener handlerListener) {
         if (handlerListener == null)
             throw new NullPointerException();
+        if (handlerListeners == null) {
+            return;
+        }
+        
         if (handlerListeners != null)
             handlerListeners.remove(handlerListener);
+        if (handlerListeners.isEmpty()) {
+            handlerListeners = null;
+        }
     }
 }

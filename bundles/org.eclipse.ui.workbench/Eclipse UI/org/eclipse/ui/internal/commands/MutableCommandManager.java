@@ -158,9 +158,7 @@ public final class MutableCommandManager implements IMutableCommandManager {
     private ICommandRegistry commandRegistry;
 
     private Map commandsById = new WeakHashMap();
-
-    private Set commandsWithListeners = new HashSet();
-
+    
     private Set definedCategoryIds = new HashSet();
 
     private Set definedCommandIds = new HashSet();
@@ -310,7 +308,7 @@ public final class MutableCommandManager implements IMutableCommandManager {
             throw new NullPointerException();
         Command command = (Command) commandsById.get(commandId);
         if (command == null) {
-            command = new Command(commandsWithListeners, commandId);
+            command = new Command(commandId);
             updateCommand(command);
             commandsById.put(commandId, command);
         }

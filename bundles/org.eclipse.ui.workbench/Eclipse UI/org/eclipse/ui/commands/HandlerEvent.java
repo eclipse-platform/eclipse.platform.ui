@@ -37,12 +37,25 @@ public final class HandlerEvent {
     private final IHandler handler;
 
     /**
+     * This is the cached result of getPreviousAttributeValuesByName. It is
+     * computed the first time getPreviousAttributeValuesByName is called.
+     */
+    private Map previousAttributeValuesByName;
+
+    /**
      * The map of previous attributes, if they changed.  If they did not change,
      * then this value is <code>null</code>.  The map's keys are the attribute
      * names (strings), and its value are any object.
+     * 
+     * This is the original map passed into the constructor. This object always
+     * returns a copy of this map, not the original. However the constructor of
+     * this object is called very frequently and the map is rarely requested,
+     * so we only copy the map the first time it is requested. 
+     * 
+     * @since 3.1
      */
-    private final Map previousAttributeValuesByName;
-
+    private final Map originalPreviousAttributeValuesByName;
+    
     /**
      * Creates a new instance of this class.
      * 
@@ -68,11 +81,9 @@ public final class HandlerEvent {
             throw new IllegalArgumentException();
 
         if (attributeValuesByNameChanged) {
-            this.previousAttributeValuesByName = Util.safeCopy(
-                    previousAttributeValuesByName, String.class, Object.class,
-                    false, true);
+            this.originalPreviousAttributeValuesByName = previousAttributeValuesByName;
         } else {
-            this.previousAttributeValuesByName = null;
+            this.originalPreviousAttributeValuesByName = null;
         }
 
         this.handler = handler;
@@ -101,6 +112,16 @@ public final class HandlerEvent {
      *         is <code>true</code>.
      */
     public Map getPreviousAttributeValuesByName() {
+        if (originalPreviousAttributeValuesByName == null) {
+            return null;
+        }
+        
+        if (previousAttributeValuesByName == null) {
+            previousAttributeValuesByName = Util.safeCopy(
+                    originalPreviousAttributeValuesByName, String.class, Object.class,
+                    false, true);
+        }
+        
         return previousAttributeValuesByName;
     }
 

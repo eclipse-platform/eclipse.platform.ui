@@ -30,7 +30,7 @@ import org.eclipse.ui.actions.RetargetAction;
 public final class ActionHandler extends AbstractHandler {
 
     /**
-     * The attribute name for the checked property of the wrapped action.  This
+     * The attribute name for the checked property of the wrapped action. This
      * indicates whether the action should be displayed with as a checked check
      * box.
      */
@@ -59,36 +59,39 @@ public final class ActionHandler extends AbstractHandler {
     private final static String ATTRIBUTE_HANDLED = "handled"; //$NON-NLS-1$
 
     /**
-     * The attribute name for the identifier of the wrapped action.  This is the
-     * action identifier, and not the command identifier. 
+     * The attribute name for the identifier of the wrapped action. This is the
+     * action identifier, and not the command identifier.
      */
     private final static String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
 
     /**
-     * The attribute name for the visual style of the wrapped action.  The style
+     * The attribute name for the visual style of the wrapped action. The style
      * can be things like a pull-down menu, a check box, a radio button or a
      * push button.
      */
     private final static String ATTRIBUTE_STYLE = "style"; //$NON-NLS-1$
 
     /**
-     * The wrapped action.  This value is never <code>null</code>.
+     * The wrapped action. This value is never <code>null</code>.
      */
     private final IAction action;
 
     /**
-     * The map of attributes values.  The keys are <code>String</code> values of
-     * the attribute names (given above).  The values can be any type of
+     * The map of attributes values. The keys are <code>String</code> values
+     * of the attribute names (given above). The values can be any type of
      * <code>Object</code>.
+     * 
+     * This map is always null if there are no IHandlerListeners registered.
+     *  
      */
     private Map attributeValuesByName;
 
     /**
      * The property change listener hooked on to the action. This is initialized
-     * in the constructor, and attached to the action. When the handler is
-     * disposed, it is removed.
+     * when the first listener is attached to this handler, and is removed when
+     * the handler is disposed or the last listener is removed.
      */
-    private final IPropertyChangeListener propertyChangeListener;
+    private IPropertyChangeListener propertyChangeListener;
 
     /**
      * Creates a new instance of this class given an instance of
@@ -102,25 +105,65 @@ public final class ActionHandler extends AbstractHandler {
             throw new NullPointerException();
 
         this.action = action;
-        this.attributeValuesByName = getAttributeValuesByNameFromAction();
+    }
 
-        propertyChangeListener = new IPropertyChangeListener() {
+    /**
+     * @see org.eclipse.ui.commands.IHandler#addHandlerListener(org.eclipse.ui.commands.IHandlerListener)
+     * @since 3.1
+     */
+    public void addHandlerListener(IHandlerListener handlerListener) {
+        if (!hasListeners()) {
+            attachListener();
+        }
 
-            public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-                String property = propertyChangeEvent.getProperty();
-				if (IAction.ENABLED.equals(property)
-						|| IAction.CHECKED.equals(property)
-						|| (SubActionBars.P_ACTION_HANDLERS.equals(property))) {
-                    Map previousAttributeValuesByName = attributeValuesByName;
-                    attributeValuesByName = getAttributeValuesByNameFromAction();
-                    if (!attributeValuesByName
-                            .equals(previousAttributeValuesByName))
-                        fireHandlerChanged(new HandlerEvent(ActionHandler.this,
-                                true, previousAttributeValuesByName));
+        super.addHandlerListener(handlerListener);
+    }
+
+    /**
+     * When a listener is attached to this handler, then this registers a
+     * listener with the underlying action.
+     * 
+     * @since 3.1
+     */
+    private final void attachListener() {
+        if (propertyChangeListener == null) {
+            attributeValuesByName = getAttributeValuesByNameFromAction();
+
+            propertyChangeListener = new IPropertyChangeListener() {
+                public void propertyChange(
+                        PropertyChangeEvent propertyChangeEvent) {
+                    String property = propertyChangeEvent.getProperty();
+                    if (IAction.ENABLED.equals(property)
+                            || IAction.CHECKED.equals(property)
+                            || (SubActionBars.P_ACTION_HANDLERS
+                                    .equals(property))) {
+
+                        Map previousAttributeValuesByName = attributeValuesByName;
+                        attributeValuesByName = getAttributeValuesByNameFromAction();
+                        if (!attributeValuesByName
+                                .equals(previousAttributeValuesByName))
+                            fireHandlerChanged(new HandlerEvent(
+                                    ActionHandler.this, true,
+                                    previousAttributeValuesByName));
+                    }
                 }
-            }
-        };
+            };
+        }
+
         this.action.addPropertyChangeListener(propertyChangeListener);
+    }
+
+    /**
+     * When no more listeners are registered, then this is used to removed the
+     * property change listener from the underlying action.
+     * 
+     * @since 3.1
+     *  
+     */
+    private final void detachListener() {
+        this.action.removePropertyChangeListener(propertyChangeListener);
+        propertyChangeListener = null;
+        attributeValuesByName = null;
     }
 
     /**
@@ -129,7 +172,9 @@ public final class ActionHandler extends AbstractHandler {
      * @see org.eclipse.ui.commands.IHandler#dispose()
      */
     public void dispose() {
-        action.removePropertyChangeListener(propertyChangeListener);
+        if (hasListeners()) {
+            action.removePropertyChangeListener(propertyChangeListener);
+        }
     }
 
     /**
@@ -149,9 +194,23 @@ public final class ActionHandler extends AbstractHandler {
     }
 
     /**
+     * Returns the action associated with this handler
+     * 
+     * @return the action associated with this handler (not null)
+     * @since 3.1
+     */
+    public IAction getAction() {
+        return action;
+    }
+
+    /**
      * @see IHandler#getAttributeValuesByName()
      */
     public Map getAttributeValuesByName() {
+        if (attributeValuesByName == null) {
+            return getAttributeValuesByNameFromAction();
+        }
+
         return attributeValuesByName;
     }
 
@@ -178,5 +237,17 @@ public final class ActionHandler extends AbstractHandler {
         map.put(ATTRIBUTE_ID, action.getId());
         map.put(ATTRIBUTE_STYLE, new Integer(action.getStyle()));
         return Collections.unmodifiableMap(map);
+    }
+
+    /**
+     * @see org.eclipse.ui.commands.IHandler#removeHandlerListener(org.eclipse.ui.commands.IHandlerListener)
+     * @since 3.1
+     */
+    public void removeHandlerListener(IHandlerListener handlerListener) {
+        super.removeHandlerListener(handlerListener);
+
+        if (!hasListeners()) {
+            detachListener();
+        }
     }
 }

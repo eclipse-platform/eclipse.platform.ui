@@ -316,7 +316,6 @@ public class ActionSetActionBars extends SubActionBars2 {
             }
 
         }
-        coolBarManager.update(false);
     }
 
 }
