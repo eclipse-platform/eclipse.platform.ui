@@ -124,7 +124,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	 * XML key used to store whether or not an ant project is an error node.
 	 * Persisting this data saved a huge amount of processing at startup.
 	 */
-	private String KEY_ERROR = "error"; //$NON-NLS-1$
+	private static final String KEY_ERROR = "error"; //$NON-NLS-1$
 	/**
 	 * XML key used to store an ant project's path
 	 */
@@ -132,19 +132,23 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	/**
 	 * XML tag used to identify an ant target in storage
 	 */
-	private String TAG_TARGET = "target"; //$NON-NLS-1$
+	private static final String TAG_TARGET = "target"; //$NON-NLS-1$
 	/**
 	 * XML key used to store an ant node's name
 	 */
-	private String KEY_NAME = "name"; //$NON-NLS-1$
+	private static final String KEY_NAME = "name"; //$NON-NLS-1$
+	/**
+	 * XML key used to store an ant project's default target name
+	 */
+	private static final String KEY_DEFAULT = "default"; //$NON-NLS-1$
 	/**
 	 * XML value for a boolean attribute whose value is <code>true</code>
 	 */
-	private String VALUE_TRUE = "true"; //$NON-NLS-1$
+	private static final String VALUE_TRUE = "true"; //$NON-NLS-1$
 	/**
 	 * XML value for a boolean attribute whose value is <code>false</code>
 	 */
-	private String VALUE_FALSE = "false"; //$NON-NLS-1$
+	private static final String VALUE_FALSE = "false"; //$NON-NLS-1$
 
 	/**
 	 * The sash form containing the project viewer and target viewer
@@ -902,6 +906,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 			IMemento projectMemento = projects[i];
 			String pathString = projectMemento.getString(KEY_PATH);
 			String nameString = projectMemento.getString(KEY_NAME);
+			String defaultTarget= projectMemento.getString(KEY_DEFAULT);
 			String errorString = projectMemento.getString(KEY_ERROR);
 
 			ProjectNode project = null;
@@ -911,6 +916,9 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 			project = new ProjectNode(nameString, pathString);
 			if (errorString != null && errorString.equals(VALUE_TRUE)) {
 				project.setIsErrorNode(true);
+			}
+			if (defaultTarget != null) {
+				project.setDefaultTargetName(defaultTarget);
 			}
 			projectNodes.add(project);
 		}
@@ -935,6 +943,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 			if (project.isErrorNode()) {
 				projectMemento.putString(KEY_ERROR, VALUE_TRUE);
 			} else {
+				projectMemento.putString(KEY_DEFAULT, project.getDefaultTarget().getName());
 				projectMemento.putString(KEY_ERROR, VALUE_FALSE);
 			}
 		}

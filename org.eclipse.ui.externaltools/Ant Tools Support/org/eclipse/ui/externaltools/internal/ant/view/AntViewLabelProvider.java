@@ -63,10 +63,18 @@ public class AntViewLabelProvider implements ILabelProvider {
 		if (element instanceof TargetNode) {
 			TargetNode node= (TargetNode)element;
 			StringBuffer name= new StringBuffer(node.getName());
-			if (node.equals(node.getProject().getDefaultTarget())) {
+			if (node.getName().equals(node.getProject().getDefaultTargetName())) {
 				name.append(AntViewMessages.getString("TargetNode.default")); //$NON-NLS-1$
 			} 
 			return name.toString();
+		} else if (element instanceof ProjectNode) {
+			ProjectNode project= (ProjectNode) element;
+			StringBuffer buffer= new StringBuffer(project.getName());
+			String defaultTarget= project.getDefaultTargetName();
+			if (defaultTarget != null) {
+				buffer.append(" [").append(defaultTarget).append(']');
+			}
+			return buffer.toString();
 		} else {
 			return element.toString();
 		}

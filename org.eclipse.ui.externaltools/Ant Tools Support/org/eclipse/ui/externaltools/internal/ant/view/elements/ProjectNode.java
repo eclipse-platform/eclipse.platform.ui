@@ -29,6 +29,7 @@ public class ProjectNode extends AntNode {
 	private String buildFileName;
 	private boolean isErrorNode= false;
 	
+	private String defaultTargetName;
 	/**
 	 * Creates a new project node with the given name and the given build file
 	 * name.
@@ -104,6 +105,33 @@ public class ProjectNode extends AntNode {
 			parseBuildFile();
 		}
 		return defaultTarget;
+	}
+	
+	/**
+	 * Returns the default target name. If this project has not been parsed yet, this
+	 * method will return the default target name specified via setDefaultTargetName(String)
+	 * or <code>null</code> if no default target name has been specified.
+	 * 
+	 * This method is intended to be used by clients who want to access the name of this
+	 * project's default target without parsing the build file.
+	 *   
+	 * @return String the name of the default target in this project.
+	 */
+	public String getDefaultTargetName() {
+		if (defaultTarget != null) {
+			return defaultTarget.getName();
+		}
+		return defaultTargetName;
+	}
+	
+	/**
+	 * Sets the name of this project node's default target.
+	 * 
+	 * @param name the name of this project node's default target
+	 * @see ProjectNode#getDefaultTargetName()
+	 */
+	public void setDefaultTargetName(String name) {
+		defaultTargetName= name;
 	}
 	
 	/**
