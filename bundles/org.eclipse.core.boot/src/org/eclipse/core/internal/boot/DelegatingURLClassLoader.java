@@ -356,7 +356,7 @@ protected String basicFindLibrary(String libName) {
 	String first = "";
 	String rest = "";
 	if (i == -1)
-		first = libName;
+		rest = libName;
 	else {	
 		first = libName.substring(0, i + 1);
 		rest = libName.substring(i + 1);
