@@ -42,6 +42,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -375,8 +376,11 @@ public class PlantyContentOutlinePage extends ContentOutlinePage implements ISho
 				if (event.getModel() == fModel && !getControl().isDisposed()) {
 					getControl().getDisplay().asyncExec(new Runnable() {
 						public void run() {
-							getTreeViewer().refresh();
-							updateTreeExpansion();
+							Control ctrl= getControl();
+							if (ctrl != null && !ctrl.isDisposed()) {
+								getTreeViewer().refresh();
+								updateTreeExpansion();
+							}
 						}
 					});
 				}
