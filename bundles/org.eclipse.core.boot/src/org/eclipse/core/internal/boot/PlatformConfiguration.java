@@ -11,6 +11,7 @@ import java.util.*;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.boot.IPlatformConfiguration.*;
+import sun.security.action.GetPropertyAction;
 
 public class PlatformConfiguration implements IPlatformConfiguration {
 
@@ -43,6 +44,8 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private static String cmdFeature = null;
 	private static String cmdApplication = null;
 	private static URL cmdPlugins = null;
+	private static boolean cmdInitialize = false;
+	private static boolean cmdFirstUse = false;
 	private static boolean cmdUpdate = false;
 	private static boolean cmdNoUpdate = true; // FIXME: (for 2.0) default to false when reconciler is moved to new layout
 	private static boolean cmdDev = false;
@@ -56,9 +59,11 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 
 	private static final String PLUGINS = "plugins";
 	private static final String FEATURES = "features";
-	private static final String CONFIG_FILE = "platform.cfg";
+	private static final String CONFIG_DIR = ".config";
+	private static final String CONFIG_FILE = CONFIG_DIR + "/platform.cfg";
 	private static final String CONFIG_FILE_INIT = "install.ini";
 	private static final String CONFIG_FILE_LOCK_SUFFIX = ".lock";
+	private static final String CHANGES_MARKER = ".newupdates"; 
 	private static final String LINKS = "links";
 	private static final String PLUGIN_XML = "plugin.xml";
 	private static final String FRAGMENT_XML = "fragment.xml";
@@ -86,7 +91,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	
 	private static final String INIT_DEFAULT_FEATURE_ID = "feature.default.id";
 	private static final String INIT_DEFAULT_FEATURE_APPLICATION = "feature.default.application";
-	private static final String DEFAULT_FEATURE_ID = "org.eclipse.sdk";
+	private static final String DEFAULT_FEATURE_ID = "org.eclipse.platform";
 	private static final String DEFAULT_FEATURE_APPLICATION = "org.eclipse.ui.workbench";
 	
 	private static final String CFG_VERSION = "version";
@@ -107,7 +112,10 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private static final String CMD_APPLICATION = "-application";
 	private static final String CMD_PLUGINS = "-plugins";
 	private static final String CMD_UPDATE = "-update";
+	private static final String CMD_INITIALIZE = "-initialize";
+	private static final String CMD_FIRSTUSE = "-firstuse";
 	private static final String CMD_NO_UPDATE = "-noupdate";
+	private static final String CMD_NEW_UPDATES = "-newUpdates"; 
 	private static final String CMD_DEV = "-dev"; // triggers -noupdate
 	
 	private static final String RECONCILER_APP = "org.eclipse.update.core.reconciler";
@@ -262,11 +270,9 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 				return new String[0];
 
 			// locate feature entries on site
-			long start = 0;
-			if (DEBUG)
-				start = (new Date()).getTime();
-			File root =
-				new File(resolvedURL.getFile().replace('/', File.separatorChar) + FEATURES);
+			File siteRoot = new File(resolvedURL.getFile().replace('/', File.separatorChar));
+			File root = new File(siteRoot, FEATURES);
+
 			String[] list = root.list();
 			String path;
 			File plugin;
@@ -279,8 +285,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 				features.add(FEATURES + "/" + path.replace(File.separatorChar, '/'));
 			}
 			if (DEBUG) {
-				long end = (new Date()).getTime();
-				debug(resolvedURL.toString()+" located  "+features.size()+" feature(s) in "+(end-start)+"ms");
+				debug(resolvedURL.toString()+" located  "+features.size()+" feature(s)");
 			}				
 				
 			return (String[])features.toArray(new String[0]);
@@ -300,9 +305,6 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 				return new String[0];
 								
 			// locate plugin entries on site
-			long start = 0;
-			if (DEBUG)
-				start = (new Date()).getTime();
 			File root =
 				new File(resolvedURL.getFile().replace('/', File.separatorChar) + PLUGINS);
 			String[] list = root.list();
@@ -320,8 +322,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 				plugins.add(PLUGINS + "/" + path.replace(File.separatorChar, '/'));
 			}
 			if (DEBUG) {
-				long end = (new Date()).getTime();
-				debug(resolvedURL.toString()+" located  "+plugins.size()+" plugin(s) in "+(end-start)+"ms");
+				debug(resolvedURL.toString()+" located  "+plugins.size()+" plugin(s)");
 			}								
 				
 			return (String[])plugins.toArray(new String[0]);
@@ -355,23 +356,33 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		private synchronized void computeFeaturesChangeStamp() {
 			if (featuresChangeStampIsValid)
 				return;
-				
+								
+			long start = 0;
+			if (DEBUG)
+				start = (new Date()).getTime();
 			String[] features = getFeatures();
 			featuresChangeStamp = computeStamp(features);
 			featuresChangeStampIsValid = true;
-			if (DEBUG) 
-				debug(resolvedURL.toString()+" feature stamp: "+featuresChangeStamp+((featuresChangeStamp==lastFeaturesChangeStamp)?" [no changes]":" [was "+lastFeaturesChangeStamp+"]"));
+			if (DEBUG) {
+				long end = (new Date()).getTime();
+				debug(resolvedURL.toString()+" feature stamp: "+featuresChangeStamp+((featuresChangeStamp==lastFeaturesChangeStamp)?" [no changes]":" [was "+lastFeaturesChangeStamp+"]") + " in "+(end-start)+"ms");
+			}
 		}
 		
 		private synchronized void computePluginsChangeStamp() {
 			if (pluginsChangeStampIsValid)
 				return;
-				
+					
+			long start = 0;
+			if (DEBUG)
+				start = (new Date()).getTime();
 			String[] plugins = getPlugins();
 			pluginsChangeStamp = computeStamp(plugins);
 			pluginsChangeStampIsValid = true;
-			if (DEBUG) 
-				debug(resolvedURL.toString()+" plugin stamp: "+pluginsChangeStamp+((pluginsChangeStamp==lastPluginsChangeStamp)?" [no changes]":" [was "+lastPluginsChangeStamp+"]"));
+			if (DEBUG) {
+				long end = (new Date()).getTime();
+				debug(resolvedURL.toString()+" plugin stamp: "+pluginsChangeStamp+((pluginsChangeStamp==lastPluginsChangeStamp)?" [no changes]":" [was "+lastPluginsChangeStamp+"]") + " in "+(end-start)+"ms");
+			}
 		}
 		
 		private long computeStamp(String[] targets) {
@@ -785,7 +796,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		}
 	}
 
-	private PlatformConfiguration(String configArg) throws IOException {
+	private PlatformConfiguration(String configArg, String metaPath) throws IOException {
 		this.sites = new HashMap();
 		this.externalLinkSites = new HashMap();
 		this.cfgdFeatures = new HashMap();
@@ -798,7 +809,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		}
 
 		// initialize configuration
-		initializeCurrent(configURL);
+		initializeCurrent(configURL, metaPath);
 		
 		// pick up any first-time default settings (relative to install location)
 		loadInitializationAttributes();		
@@ -807,6 +818,10 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		// files are usually provided by external installation programs. They are located
 		// relative to this configuration URL.
 		configureExternalLinks();
+		
+		// Validate sites in the configuration. Causes any sites that do not exist to
+		// be removed from the configuration
+		validateSites();
 		
 		// compute differences between configuration and actual content of the sites
 		// (base sites and link sites)
@@ -1003,9 +1018,15 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	 */
 	public String getApplicationIdentifier() {
 		
+		if (cmdInitialize) {
+			// we are running post-install initialization. Force
+			// running of the reconciler
+			return RECONCILER_APP;
+		}
+		
 		if (featuresChangeStamp != lastFeaturesChangeStamp) {
 			// we have detected feature changes ... see if we need to reconcile
-			boolean update = !(cmdNoUpdate || (cmdDev && !cmdUpdate));
+			boolean update = !cmdNoUpdate || cmdUpdate;
 			if (update)
 				return RECONCILER_APP;
 		}
@@ -1237,10 +1258,13 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		
 		// create current configuration
 		if (currentPlatformConfiguration == null)
-			currentPlatformConfiguration = new PlatformConfiguration(cmdConfiguration);
+			currentPlatformConfiguration = new PlatformConfiguration(cmdConfiguration, metaPath);
 				
 		// check if we will be forcing reconciliation
 		passthruArgs = checkForFeatureChanges(passthruArgs, currentPlatformConfiguration);
+		
+		// check if we should indicate new changes
+		passthruArgs = checkForNewUpdates(currentPlatformConfiguration, passthruArgs);
 				
 		return passthruArgs;
 	}
@@ -1261,9 +1285,24 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		}
 	}
 
-	private void initializeCurrent(URL url) throws IOException {
+	private synchronized void initializeCurrent(URL url, String metaPath) throws IOException {
 		
 		boolean concurrentUse = false;
+		
+		if (cmdInitialize) {
+			// we are running post-install initialization (-install command
+			// line argument). Ignore any configuration URL passed in. 
+			// Force the configuration to be saved in the install location.
+			// Allow an existing configuration to be re-initialized.
+			url = new URL(BootLoader.getInstallURL(),CONFIG_FILE); // if we fail here, return exception
+			concurrentUse = getConfigurationLock(url);
+			configureSite(getRootSite());
+			if (DEBUG)
+				debug("Initializing configuration " + url.toString());	
+			configLocation = url;
+			verifyPath(configLocation);	
+			return;
+		}
 
 		if (url != null) {		
 			// configuration URL was specified. Use it (if exists), or create one
@@ -1278,6 +1317,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 				if (DEBUG)
 					debug("Using configuration " + url.toString());
 			} catch(IOException e) {
+				cmdFirstUse = true;
 				configureSite(getRootSite());
 				if (DEBUG)
 					debug("Creating configuration " + url.toString());			
@@ -1287,29 +1327,53 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			return;
 			
 		} else {
-			// configuration URL was not specified. Default behavior is to use 
-			// configuration in user.dir
-			String tmp = System.getProperty("user.dir");
-			if (!tmp.endsWith(File.separator))
-				tmp += File.separator;
-			URL userdirURL = new URL("file:" + tmp.replace(File.separatorChar,'/') + CONFIG_FILE);
+			// configuration URL was not specified. Default behavior is to look
+			// for configuration in the workspace meta area. If not found, look
+			// for pre-initialized configuration in the installation location.
+			// If it is found it is used as the initial configuration. Otherwise
+			// a new configuration is created. In either case the resulting
+			// configuration is written into the platform .metadata area
 			
+			// first determine configuration location in .metadata
+			metaPath = metaPath.replace(File.separatorChar, '/');
+			if (!metaPath.endsWith("/"))
+				metaPath += "/";			
+			URL cfigURL = new URL("file",null,0,metaPath+CONFIG_FILE);	// if we fail here, return exception			
+
 			// check concurrent use lock
-			concurrentUse = getConfigurationLock(userdirURL);
+			concurrentUse = getConfigurationLock(cfigURL);
 			
-			// attempt to load configuration (may not actually exist)
+			// if we can load it, use it
 			try {
-				load(userdirURL);
-				configLocation = userdirURL;
+				load(cfigURL);
+				configLocation = cfigURL;
+				verifyPath(configLocation);	
 				if (DEBUG)
 					debug("Using configuration " + configLocation.toString());
-				return;
+				return;			
+			} catch(IOException e) {
+				cmdFirstUse = true; // we are creating new configuration
+			}
+			
+			// failed to load, see if we can find pre-initialized configuration
+			try {
+				url = new URL(BootLoader.getInstallURL(),CONFIG_FILE);
+				load(url);
+				// pre-initialized config loaded OK ... copy any remaining update metadata
+				copyInitializedState(BootLoader.getInstallURL(), metaPath, CONFIG_DIR);
+				configLocation = cfigURL; // config in .metadata is the right URL
+				verifyPath(configLocation);				
+				if (DEBUG) {
+					debug("Using configuration " + configLocation.toString());
+					debug("Initialized from    " + url.toString());
+				}
+				return;			
 			} catch(IOException e) {
 			}
 			
 			// if load failed, initialize with default site info
 			configureSite(getRootSite());
-			configLocation = userdirURL;
+			configLocation = cfigURL;
 			verifyPath(configLocation);
 			if (DEBUG)
 				debug("Creating configuration " + configLocation.toString());
@@ -1317,7 +1381,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		}
 	}
 	
-	private void initialize(URL url) throws IOException {
+	private synchronized void initialize(URL url) throws IOException {
 		if (url == null) {
 			if (DEBUG)
 				debug("Creating empty configuration object");
@@ -1347,6 +1411,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		if (!url.getProtocol().equals("file"))
 			return false;
 			
+		verifyPath(url);
 		String cfgName = url.getFile().replace('/',File.separatorChar);
 		String lockName = cfgName + CONFIG_FILE_LOCK_SUFFIX;
 		cfgLockFile = new File(lockName);
@@ -1519,6 +1584,72 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		configureSite(linkSite);
 		if (DEBUG)
 			debug("   "+(updateable?"R/W -> ":"R/O -> ")+siteURL.toString());
+	}
+	
+	private void validateSites() {
+								
+		// check to see if all sites are valid. Remove any sites that do not exist.
+		SiteEntry[] list = (SiteEntry[]) sites.values().toArray(new SiteEntry[0]);
+		for (int i = 0; i < list.length; i++) {
+			URL siteURL = list[i].getResolvedURL();
+			if (!supportsDetection(siteURL))
+				continue;	
+						
+			File siteRoot = new File(siteURL.getFile().replace('/', File.separatorChar));
+			if (!siteRoot.exists()) {
+				unconfigureSite(list[i]);
+				if (DEBUG)
+					debug("Site " + siteURL + " does not exist ... removing from configuration");
+			}
+		}
+	}
+	
+	private void copyInitializedState(URL source, String target, String dir) {		
+		try {
+			if (!source.getProtocol().equals("file"))
+				return; // need to be able to do "dir"
+			
+			copy(new File(source.getFile()), new File(target), dir);
+				
+		} catch(IOException e) {
+			// this is an optimistic copy. If we fail, the state will be reconciled
+			// when the update manager is triggered.
+		}	
+	}
+	
+	private void copy(File srcDir, File tgtDir, String extraPath) throws IOException {
+		File src = new File(srcDir, extraPath);
+		File tgt = new File(tgtDir, extraPath);
+		
+		if (src.isDirectory()) {
+			// copy content of directories
+			tgt.mkdir();
+			String[] list = src.list();
+			if (list==null)
+				return;
+			for (int i=0; i<list.length; i++) {
+				copy(srcDir, tgtDir, extraPath + File.separator + list[i]);
+			}
+		} else {
+			// copy individual files
+			FileInputStream is = null;
+			FileOutputStream os = null;
+			try {
+				is = new FileInputStream(src);
+				os = new FileOutputStream(tgt);
+				byte[] buff = new byte[1024];
+				int count = is.read(buff);
+				while (count != -1) {
+					os.write(buff, 0, count);
+					count = is.read(buff);
+				}
+			} catch(IOException e) {
+				// try to copy other files
+			} finally {
+				if (is != null) try { is.close(); } catch(IOException e) {}
+				if (os != null) try { os.close(); } catch(IOException e) {}
+			}			
+		}		
 	}
 	
 	private void load(URL url) throws IOException {		
@@ -2196,11 +2327,32 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		else {
 			// Will run reconciler.
 			// Re-insert -application argument with original app
-			String[] newArgs = new String[args.length+2];
+			int newArgCnt = cmdFirstUse ? 3 : 2;
+			String[] newArgs = new String[args.length+newArgCnt];
 			newArgs[0] = CMD_APPLICATION;
 			newArgs[1] = original;
-			System.arraycopy(args,0,newArgs,2,args.length);
+			if (cmdFirstUse)
+				newArgs[2] = CMD_FIRSTUSE;
+			System.arraycopy(args,0,newArgs,newArgCnt,args.length);
 			return newArgs;
+		}
+	}
+	
+	private static String[] checkForNewUpdates(IPlatformConfiguration cfg, String[] args) {
+		try {
+			URL markerURL = new URL(cfg.getConfigurationLocation(), CHANGES_MARKER);
+			File marker = new File(markerURL.getFile());
+			if (!marker.exists())
+				return args;
+				
+			// indicate -newUpdates	
+			marker.delete();
+			String[] newArgs = new String[args.length+1];
+			newArgs[0] = CMD_NEW_UPDATES;
+			System.arraycopy(args,0,newArgs,1,args.length);
+			return newArgs;
+		} catch(MalformedURLException e) {
+			return args;
 		}
 	}
 	
@@ -2223,6 +2375,12 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			if (args[i].equalsIgnoreCase(CMD_NO_UPDATE)) {
 				cmdNoUpdate = true;
 				found = true;
+			}
+			
+			// look for the initialization flag
+			if (args[i].equalsIgnoreCase(CMD_INITIALIZE)) {
+				cmdInitialize = true;
+				continue; // do not remove from command line
 			}
 
 			// look for the development mode flag ... triggers no-update

@@ -494,7 +494,10 @@ private static String[] initialize(URL pluginPathLocation/*R1.0 compatibility*/,
 	loadOptions();
 
 	// initialize eclipse URL handling
-	String metaPath = baseLocation + File.separator + META_AREA;
+	String metaPath = baseLocation.replace(File.separatorChar, '/');
+	if (!metaPath.endsWith("/"))
+		metaPath += "/";
+	metaPath += META_AREA;
 	PlatformURLHandlerFactory.startup(metaPath);
 	PlatformURLBaseConnection.startup(getInstallURL()); // past this point we can use eclipse:/platform/ URLs
 
