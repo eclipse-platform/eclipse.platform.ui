@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command;
+import org.eclipse.team.internal.ccvs.core.client.RLog;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.*;
@@ -356,7 +357,7 @@ public class RepositoryRoot extends PlatformObject {
         LogEntryCache logEntries = new LogEntryCache();
         RemoteLogOperation operation = new RemoteLogOperation(null, new ICVSRemoteResource[] { asRemoteResource(folder) }, null, null, logEntries) {
             protected Command.LocalOption[] getLocalOptions(CVSTag tag1,CVSTag tag2) {
-                Command.LocalOption[] options = super.getLocalOptions(tag1, tag2);
+                Command.LocalOption[] options = new Command.LocalOption[] {RLog.ONLY_INCLUDE_CHANGES};
                 if (recurse) 
                     return options;
                 Command.LocalOption[] newOptions = new Command.LocalOption[options.length + 1];
