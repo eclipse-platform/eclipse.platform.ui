@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
+import org.eclipse.team.core.subscribers.SyncInfo;
+import org.eclipse.team.ui.sync.SyncInfoDirectionFilter;
+import org.eclipse.team.ui.sync.SyncInfoFilter;
+
 /**
  * Runs an update command that will prompt the user for overwritting local
  * changes to files that have non-mergeable conflicts. All the prompting logic
@@ -22,5 +26,11 @@ public class OverrideAndUpdateAction extends WorkspaceUpdateAction {
 	protected boolean getOverwriteLocalChanges() {
 		// allow overriding of local changes with this update
 		return true;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.sync.SubscriberAction#getSyncInfoFilter()
+	 */
+	protected SyncInfoFilter getSyncInfoFilter() {
+		return new SyncInfoDirectionFilter(new int[] {SyncInfo.CONFLICTING, SyncInfo.OUTGOING});
 	}
 }
