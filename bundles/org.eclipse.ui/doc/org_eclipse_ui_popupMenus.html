@@ -41,6 +41,7 @@ at this level to the actual selection.
 CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; objectClass CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; nameFilter&nbsp; CDATA #IMPLIED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; adaptable&nbsp;&nbsp; (true|false) #IMPLIED</tt>
 <br><tt>&nbsp;&nbsp; ></tt>
 <ul>
 <li>
@@ -54,6 +55,11 @@ all the objects in the selection must subclass or implement.</li>
 <b>nameFilter</b> - an optional filter that will be applied against each
 object in the selection. No contribution will take place if there is no
 match.</li>
+
+<li>
+<b>adaptable</b> - a flag that indicates if types that adapt to IResource should
+use this object contribution. This flag is used only if objectClass conforms to
+IResource. Default value is false.</li>
 </ul>
 <tt>&nbsp;&nbsp; &lt;!ELEMENT viewerContribution (menu | action)*></tt>
 <br><tt>&nbsp;&nbsp; &lt;!ATTLIST viewerContribution</tt>

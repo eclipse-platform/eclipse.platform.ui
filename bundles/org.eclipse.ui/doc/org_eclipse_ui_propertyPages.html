@@ -35,15 +35,19 @@ at this level to the actual selection.
 <p><tt>&nbsp;&nbsp; &lt;!ELEMENT page (filter)*></tt>
 <br><tt>&nbsp;&nbsp; &lt;!ATTLIST page</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-CDATA #REQUIRED</tt>
+CDATA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-CDATA #REQUIRED</tt>
+CDATA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; icon&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-CDATA #IMPLIED</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; objectClass&nbsp; CDATA #REQUIRED</tt>
+CDATA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #IMPLIED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; objectClass&nbsp; CDATA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+#REQUIRED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-CDATA #REQUIRED</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; nameFilter&nbsp;&nbsp; CDATA #IMPLIED</tt>
+CDATA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; nameFilter&nbsp;&nbsp; CDATA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+#IMPLIED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; adaptable&nbsp;&nbsp;&nbsp; (true|false)&nbsp;
+#IMPLIED</tt>
 <br><tt>&nbsp;&nbsp; ></tt>
 <ul>
 <li>
@@ -68,6 +72,11 @@ interface.</li>
 <li>
 <b>nameFilter</b> - an optional attribute that allows registration conditional
 on wild card match applied to the target object name.</li>
+
+<li>
+<b>adaptable</b> - a flag that indicates if types that adapt to IResource should
+use this property page. This flag is used only if objectClass conforms to
+IResource. Default value is false.</li>
 </ul>
 <tt>&nbsp;&nbsp; &lt;!ELEMENT filter EMPTY></tt>
 <br><tt>&nbsp;&nbsp; &lt;!ATTLIST filter</tt>
