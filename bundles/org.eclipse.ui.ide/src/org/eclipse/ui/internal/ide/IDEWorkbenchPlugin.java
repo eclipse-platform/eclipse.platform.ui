@@ -55,7 +55,7 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 	/**
 	 * The IDE workbench plugin ID.
 	 */
-	public static String IDE_WORKBENCH = "org.eclipse.ui.ide";
+	public static final String IDE_WORKBENCH = "org.eclipse.ui.ide"; //$NON-NLS-1$
 
 	/**
 	 * Project image registry; lazily initialized.

@@ -46,7 +46,6 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * </p>
  */
 public class FileSystemExportWizard extends Wizard implements IExportWizard {
-	private IWorkbench workbench;
 	private IStructuredSelection selection;
 	private WizardFileSystemResourceExportPage1 mainPage;
 /**
@@ -88,20 +87,16 @@ private ImageDescriptor getImageDescriptor(String relativePath) {
  * Method declared on IWorkbenchWizard.
  */
 public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
-	this.workbench = workbench;
-	
-	
 	//Make it the current selection by default but look it up otherwise
-	
 	selection = currentSelection;
 	
-	if(currentSelection.isEmpty() && workbench.getActiveWorkbenchWindow() != null){
+	if (currentSelection.isEmpty() && workbench.getActiveWorkbenchWindow() != null){
 		IWorkbenchPage page = workbench.getActiveWorkbenchWindow().getActivePage();
-		if(page != null){
+		if( page != null){
 			IEditorPart currentEditor = page.getActiveEditor();
-			if(currentEditor != null){
+			if (currentEditor != null){
 				Object selectedResource = currentEditor.getEditorInput().getAdapter(IResource.class);
-				if(selectedResource != null)
+				if (selectedResource != null)
 				selection = new StructuredSelection(selectedResource);
 			}
 		}

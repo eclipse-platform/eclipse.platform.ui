@@ -18,7 +18,6 @@ import java.util.*;
  * Provides content for a tree viewer that shows only containers.
  */
 public class ContainerContentProvider implements ITreeContentProvider {
-	private Viewer viewer;
 	private boolean showClosedProjects = true;
 /**
  * Creates a new ResourceContentProvider.
@@ -90,7 +89,6 @@ public boolean hasChildren(Object element) {
  * @see IContentProvider#inputChanged
  */
 public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-	this.viewer = viewer;
 }
 /**
  * @see IContentProvider#isDeleted

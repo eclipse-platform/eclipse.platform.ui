@@ -24,7 +24,6 @@ import org.eclipse.ui.internal.IWorkbenchConstants;
  * @issue need own copy of RegistryReader
  */
 public class MarkerHelpRegistryReader extends RegistryReader {
-	private ArrayList markerQueries;
 	private MarkerHelpRegistry markerHelpRegistry;
 	private ArrayList currentAttributeNames;
 	private ArrayList currentAttributeValues;
@@ -50,9 +49,7 @@ public class MarkerHelpRegistryReader extends RegistryReader {
 	public void addHelp(MarkerHelpRegistry registry) {
 		IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
 		markerHelpRegistry = registry;
-		markerQueries = new ArrayList();
 		readRegistry(pluginRegistry, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_MARKER_HELP);
-		markerQueries = new ArrayList();
 		readRegistry(pluginRegistry, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_MARKER_RESOLUTION);
 	}
 
