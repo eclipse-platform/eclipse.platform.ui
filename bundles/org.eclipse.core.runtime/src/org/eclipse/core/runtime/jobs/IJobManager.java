@@ -193,7 +193,7 @@ public interface IJobManager {
 	 * @param provider the new provider, or <code>null</code> if no progress
 	 * is needed.
 	 */
-	public void setProgressProvider(IProgressProvider provider);
+	public void setProgressProvider(ProgressProvider provider);
 	/**
 	 * Requests that all jobs in the given job family be suspended.  Jobs currently 
 	 * waiting to be run will be removed from the queue and moved into the 

@@ -57,7 +57,7 @@ public class JobManager implements IJobManager {
 	 */
 	private WorkerPool pool;
 
-	private IProgressProvider progressProvider = null;
+	private ProgressProvider progressProvider = null;
 	/**
 	 * Jobs that are currently running. Should only be modified from changeState
 	 */
@@ -438,13 +438,12 @@ public class JobManager implements IJobManager {
 	 * NullProgressMonitor if no default monitor is available.
 	 */
 	private IProgressMonitor monitorFor(IProgressMonitor monitor) {
-//		if (monitor != null)
-//			return monitor;
-//		if (progressProvider != null)
-//			monitor = progressProvider.getDefaultMonitor();
+		if (monitor == null || (monitor instanceof NullProgressMonitor)) {
+			if (progressProvider != null)
+				monitor = progressProvider.getDefaultMonitor();
+		}
 		return Policy.monitorFor(monitor);
 	}
-
 	/* (non-Javadoc)
 	 * @see IJobManager#newLock(java.lang.String)
 	 */
@@ -606,7 +605,7 @@ public class JobManager implements IJobManager {
 	/* (non-Javadoc)
 	 * @see IJobManager#setProgressProvider(IProgressProvider)
 	 */
-	public void setProgressProvider(IProgressProvider provider) {
+	public void setProgressProvider(ProgressProvider provider) {
 		progressProvider = provider;
 	}
 	/* (non-Javadoc)
