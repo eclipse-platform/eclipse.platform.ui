@@ -20,6 +20,10 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IExpression;
@@ -958,26 +962,35 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 * Lazily instantiate and return a selection listener that populates the detail pane,
 	 * but only if the detail is currently visible. 
 	 */
-	protected ISelectionChangedListener getTreeSelectionChangedListener() {
-		if (fTreeSelectionChangedListener == null) {
-			fTreeSelectionChangedListener = new ISelectionChangedListener() {
-				public void selectionChanged(SelectionChangedEvent event) {
-					if (event.getSelectionProvider().equals(getVariablesViewer())) {
-						clearStatusLine();
-						getVariablesViewSelectionProvider().fireSelectionChanged(event);				
-						// if the detail pane is not visible, don't waste time retrieving details
-						if (getSashForm().getMaximizedControl() == getViewer().getControl()) {
-							return;
-						}	
-						IStructuredSelection selection = (IStructuredSelection)event.getSelection();
-						populateDetailPaneFromSelection(selection);
-						treeSelectionChanged(event);
-					}
-				}					
-			};
-		}
-		return fTreeSelectionChangedListener;
-	}
+    protected ISelectionChangedListener getTreeSelectionChangedListener() {
+        if (fTreeSelectionChangedListener == null) {
+            fTreeSelectionChangedListener = new ISelectionChangedListener() {
+                public void selectionChanged(final SelectionChangedEvent event) {
+                    if (event.getSelectionProvider().equals(getVariablesViewer())) {
+                        clearStatusLine();
+                        getVariablesViewSelectionProvider().fireSelectionChanged(event);				
+                        // if the detail pane is not visible, don't waste time retrieving details
+                        if (getSashForm().getMaximizedControl() == getViewer().getControl()) {
+                            return;
+                        }	
+                        
+                        Job job = new Job("Detail Pane Populate Job") {//$NON-NLS-1$
+                            protected IStatus run(IProgressMonitor monitor) {
+                                IStructuredSelection selection = (IStructuredSelection)event.getSelection();
+                                populateDetailPaneFromSelection(selection);
+                                return Status.OK_STATUS;
+                            } 
+                        };
+                        job.setSystem(true);
+                        job.schedule();
+                        
+                        treeSelectionChanged(event);
+                    }
+                }					
+            };
+        }
+        return fTreeSelectionChangedListener;
+    }
 	
 	/**
 	 * Selection in the variable tree changed. Perform any updates.
@@ -993,21 +1006,33 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 */
 	public void populateDetailPane() {
 		if (isDetailPaneVisible()) {
-			Viewer viewer = getViewer();
-			if (viewer != null) {
-				IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
-				populateDetailPaneFromSelection(selection);	
-			}	
-		}
-	}
+            Viewer viewer = getViewer();
+            if (viewer != null) {
+                final IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
+                Job job = new Job("Populate Detail Pane") {//$NON-NLS-1$
+                    protected IStatus run(IProgressMonitor monitor) {
+                        populateDetailPaneFromSelection(selection);
+                        return Status.OK_STATUS;
+                    }
+                };
+                job.setSystem(true);
+                job.schedule();
+            }
+        }
+    }
 	
 	/**
 	 * Show the details associated with the first of the selected variables in the 
 	 * detail pane.
 	 */
-	protected void populateDetailPaneFromSelection(IStructuredSelection selection) {
+	protected void populateDetailPaneFromSelection(final IStructuredSelection selection) {
+        Runnable runnable = new Runnable() {
+            public void run() {
+                getDetailDocument().set(""); //$NON-NLS-1$        
+            }
+        };
+        DebugUIPlugin.getStandardDisplay().asyncExec(runnable);
 		try {
-			getDetailDocument().set(""); //$NON-NLS-1$
 			if (!selection.isEmpty()) {
 				IValue val = null;
 				Object obj = selection.getFirstElement();
@@ -1015,6 +1040,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 					// no details for parititions
 					return;
 				}
+                
 				if (obj instanceof IVariable) {
 					val = ((IVariable)obj).getValue();
 				} else if (obj instanceof IExpression) {
@@ -1028,12 +1054,19 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 					return;
 				}
 				
-				setDebugModel(val.getModelIdentifier());
-				fValueSelection = selection;
-				fSelectionIterator = selection.iterator();
-				fSelectionIterator.next();
-				fLastValueDetail= val;
-				getModelPresentation().computeDetail(val, this);
+                final IValue finalVal = val;
+                runnable = new Runnable() {
+                    public void run() {
+                        getDetailDocument().set(""); //$NON-NLS-1$
+                        setDebugModel(finalVal.getModelIdentifier());
+                        fValueSelection = selection;
+                        fSelectionIterator = selection.iterator();
+                        fSelectionIterator.next();
+                        fLastValueDetail= finalVal;
+                        getModelPresentation().computeDetail(finalVal, VariablesView.this);        
+                    }
+                };
+                DebugUIPlugin.getStandardDisplay().asyncExec(runnable);
 			} 
 		} catch (DebugException de) {
 			DebugUIPlugin.log(de);
