@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.colors;
+package org.eclipse.ui.internal.presentation;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -25,7 +25,7 @@ public final class ColorUtils {
 	
 	/**
 	 * @param value the SWT constant <code>String</code>.
-	 * @return the value of the SWT constant, or <code>null</code> if it could 
+	 * @return the value of the SWT constant, or <code>SWT.COLOR_BLACK</code> if it could 
 	 * not be determined.
 	 */
 	private static String extractSWTConstant(String value) {
@@ -45,10 +45,10 @@ public final class ColorUtils {
 			}
 		} catch (IllegalArgumentException e) {
 			// no op - shouldnt happen.  We check for static before calling getInt(null)
-		} catch (IllegalAccessException e) {
+		} catch (IllegalAccessException e) {		    
 			// no op - shouldnt happen.  We check for public before calling getInt(null)
 		}
-		return null;
+		return formatSystemColor(SWT.COLOR_BLACK);
 	}	
 	
 	/**

@@ -26,13 +26,14 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.presentation.IPresentationDefinition;
 
 
 /**
  * The FontDefiniton is the representation of the fontDefinition
  * from the plugin.xml of a type.
  */
-public class FontDefinition {
+public class FontDefinition implements IPresentationDefinition {
 
 	/**
 	 * The FontPreferenceListener is a class that listens to 

@@ -23,10 +23,10 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.resource.GradientData;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -73,7 +73,6 @@ import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.colors.ColorDefinition;
 import org.eclipse.ui.internal.fonts.FontDefinition;
 import org.eclipse.ui.internal.misc.StatusUtil;
 
@@ -85,10 +84,10 @@ import org.eclipse.ui.internal.misc.StatusUtil;
 public final class ColorsAndFontsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
     
     private class PresentationLabelProvider extends LabelProvider implements IFontProvider {
-
-        private HashMap images = new HashMap();
         
         private HashMap fonts = new HashMap();
+
+        private HashMap images = new HashMap();
         
         private IPropertyChangeListener listener = new IPropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent event) {
@@ -102,6 +101,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
         public PresentationLabelProvider() {
             colorRegistry.addListener(listener);        
             fontRegistry.addListener(listener);
+            gradientRegistry.addListener(listener);
         }
     	
         /* (non-Javadoc)
@@ -111,6 +111,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
             super.dispose();
             colorRegistry.removeListener(listener);
             fontRegistry.removeListener(listener);
+            gradientRegistry.removeListener(listener);
             for (Iterator i = images.values().iterator(); i.hasNext();) {
                 ((Image) i.next()).dispose();
             }
@@ -119,49 +120,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
                 ((Font) i.next()).dispose();
             }            
         }
-    	
-    	/* (non-Javadoc)
-    	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
-    	 */
-    	public Image getImage(Object element) {
-    	    if (element instanceof ColorDefinition) {
-	    		Display display = presentationList.getControl().getDisplay();
-	    		
-    	        Color c = colorRegistry.get(((ColorDefinition)element).getId());
-    	        Image image = (Image) images.get(c);
-    	        if (image == null) {
-		    		//int size = presentationList.getControl().getFont().getFontData()[0].getHeight();
-		    		int size = 16;
-	    	        image = new Image(display, size, size);
-	    	        
-		    		GC gc = new GC(image);
-		    		gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
-		    		gc.setBackground(c);
-		    		gc.drawRectangle(0, 0, size - 1, size - 1);
-		    		gc.fillRectangle(1, 1, size - 2, size - 2);		    		
-		    		gc.dispose();
-	
-		    		images.put(c, image);
-    	        }
-	    		return image;
-    	        
-    	    }
-    	    else if (element instanceof FontDefinition) {
-    	    	return WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_WIZBAN_FONT);
-    	    }
-    	    return null;   	    
-    	}
-
-        /* (non-Javadoc)
-    	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
-    	 */
-    	public String getText(Object element) {
-    		if (element instanceof ColorDefinition)
-    			return ((ColorDefinition) element).getLabel();
-    		else if (element instanceof FontDefinition)
-    			return ((FontDefinition) element).getLabel();
-    		return ""; //$NON-NLS-1$
-    	}
         
     	
         /* (non-Javadoc)
@@ -188,6 +146,50 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
     	    }
             return null;
         }
+    	
+    	/* (non-Javadoc)
+    	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
+    	 */
+    	public Image getImage(Object element) {
+    	    if (element instanceof ColorDefinition) {
+	    		Display display = presentationList.getControl().getDisplay();
+	    		
+    	        Color c = colorRegistry.get(((ColorDefinition)element).getId());
+    	        Image image = (Image) images.get(c);
+    	        if (image == null) {
+		    		//int size = presentationList.getControl().getFont().getFontData()[0].getHeight();
+		    		int size = 16;
+	    	        image = new Image(display, size, size);
+	    	        
+		    		GC gc = new GC(image);
+		    		gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
+		    		gc.setBackground(c);
+		    		gc.drawRectangle(0, 0, size - 1, size - 1);
+		    		gc.fillRectangle(1, 1, size - 2, size - 2);		    			    	
+		    		gc.dispose();
+		    		
+		    		images.put(c, image);
+    	        }
+	    		return image;
+    	        
+    	    }
+    	    else if (element instanceof FontDefinition) {
+    	    	return WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_WIZBAN_FONT);
+    	    }
+    	    else if (element instanceof GradientDefinition) {
+    	    	return WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_WIZBAN_GRADIENT);
+    	    }
+    	    return null;   	    
+    	}
+
+        /* (non-Javadoc)
+    	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
+    	 */
+    	public String getText(Object element) {
+    		if (element instanceof IPresentationDefinition)
+    			return ((IPresentationDefinition) element).getLabel();
+    		return ""; //$NON-NLS-1$
+    	}
     }
     
 	/**
@@ -227,6 +229,8 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	 * UI session.  These changes should be made in the registry.
 	 */
 	private Map colorValuesToSet = new HashMap(7);	
+
+    private TableColumn column;
 	private Text commentText;
     
 	/**
@@ -253,6 +257,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
     private Composite fontControls;
 	private Map fontPreferencesToSet = new HashMap(7);
 	private TemporaryFontRegistry fontRegistry;
+	private TemporaryGradientRegistry gradientRegistry;
 	private Button fontResetButton;
     private Button fontSystemButton;
 	
@@ -262,6 +267,12 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	 * registry.
 	 */    
 	private Map fontValuesToSet = new HashMap(7);
+	
+	private Map gradientValuesToSet = new HashMap(7);
+	
+	private Map gradientPreferencesToSet = new HashMap(7);
+    
+    private Composite gradientControls;
 	
 	/**
 	 * The list of fonts and colors.
@@ -287,8 +298,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	 * The layout for the previewComposite.
 	 */
     private StackLayout stackLayout;
-
-    private TableColumn column;
 
 	/**
 	 * Create a new instance of the receiver. 
@@ -321,7 +330,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;		
 		label.setLayoutData(data);    	
-        categoryCombo = new Combo(mainColumn, SWT.NONE);
+        categoryCombo = new Combo(mainColumn, SWT.NONE | SWT.READ_ONLY);
         myApplyDialogFont(categoryCombo);
         
         PresentationCategory [] categories = PresentationCategory.getCategories();
@@ -349,13 +358,13 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		layout.marginWidth = 0;
 		composite.setLayout(layout);
 
-		Label label = new Label(composite, SWT.LEFT);
-		label.setText(RESOURCE_BUNDLE.getString("value")); //$NON-NLS-1$
-		myApplyDialogFont(label);
-		Dialog.applyDialogFont(label);
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 2;
-		label.setLayoutData(data);
+//		Label label = new Label(composite, SWT.LEFT);
+//		label.setText(RESOURCE_BUNDLE.getString("value")); //$NON-NLS-1$
+//		myApplyDialogFont(label);
+//		Dialog.applyDialogFont(label);
+//		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+//		data.horizontalSpan = 2;
+//		label.setLayoutData(data);
 
 		colorSelector = new ColorSelector(composite);
 		colorSelector.getButton().setLayoutData(new GridData());
@@ -432,6 +441,10 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		fontControls.setLayout(new FillLayout());
 		createFontControl();
 		
+		gradientControls = new Composite(controlArea, SWT.NONE);
+		fontControls.setLayout(new FillLayout());
+		createGradientControls();
+		
 		createCommentControl(controlColumn);
 
 		createDescriptionControl(mainColumn);
@@ -483,18 +496,26 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		layout.marginWidth = 0;
 		composite.setLayout(layout);
 
-		Label label = new Label(composite, SWT.LEFT);
-		label.setText(RESOURCE_BUNDLE.getString("value")); //$NON-NLS-1$
-		myApplyDialogFont(label);
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 2;
-		label.setLayoutData(data);
+//		Label label = new Label(composite, SWT.LEFT);
+//		label.setText(RESOURCE_BUNDLE.getString("value")); //$NON-NLS-1$
+//		myApplyDialogFont(label);
+//		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+//		data.horizontalSpan = 2;
+//		label.setLayoutData(data);
 		
 		fontSystemButton = createButton(composite, WorkbenchMessages.getString("FontsPreference.useSystemFont")); //$NON-NLS-1$
 
 		fontChangeButton = createButton(composite, JFaceResources.getString("openChange")); //$NON-NLS-1$
 
 		fontResetButton = createButton(composite, RESOURCE_BUNDLE.getString("reset")); //$NON-NLS-1$        
+    }
+
+    /**
+     * 
+     */
+    private void createGradientControls() {
+        // TODO Auto-generated method stub
+        
     }
 
 	/**
@@ -573,6 +594,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
         
         colorRegistry.dispose();
         fontRegistry.shutdown();
+        gradientRegistry.shutdown();
     }
 
 	/**
@@ -825,9 +847,12 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 						swapFontControls();
 						updateFontControls((FontDefinition) element);
 					}
+					else if (element instanceof GradientDefinition) {
+						swapGradientControls();
+						updateGradientControls((GradientDefinition) element);
+					}					
 				}
 			}
-
 		});
 
 		colorResetButton.addSelectionListener(new SelectionAdapter() {
@@ -905,6 +930,8 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	            workbench.getDisplay());
 	    fontRegistry = new TemporaryFontRegistry(
 	            JFaceResources.getFontRegistry());
+	    gradientRegistry = new TemporaryGradientRegistry(
+	            JFaceResources.getGradientRegistry());	            
 	}
 
 	/**
@@ -973,7 +1000,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 			}
 		}
 		return false;
-
     }
 	
 	/**
@@ -1264,6 +1290,14 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
     }
 
     /**
+     * 
+     */
+    protected void swapGradientControls() {
+        controlAreaLayout.topControl = gradientControls;
+        controlArea.layout();        
+    }
+
+    /**
      * Swap in no controls (empty the control area)
      */    
     protected void swapNoControls() {
@@ -1295,7 +1329,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 			        list.add(colorDefinitions[i]);
 			    }
 			}
-
 			
 			FontDefinition[] fontDefinitions = FontDefinition.getDefinitions();
             for (int i = 0; i < fontDefinitions.length; i++) {
@@ -1304,7 +1337,14 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 			        list.add(fontDefinitions[i]);
 			    }
 			}
-			
+
+			GradientDefinition[] gradientDefinitions = ColorDefinition.getGradientDefinitions();
+            for (int i = 0; i < gradientDefinitions.length; i++) {
+			    String catId = gradientDefinitions[i].getCategoryId();
+			    if ((catId == null && category == null) || (catId != null && category != null && category.getId().equals(catId))) {
+			        list.add(gradientDefinitions[i]);
+			    }
+			}
 			
 			defintions = new Object[list.size()];
 			list.toArray(defintions);
@@ -1322,7 +1362,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	                    previewControl = new Composite(previewComposite, SWT.NONE);
 	                    previewControl.setLayout(new FillLayout());
 	                    myApplyDialogFont(previewControl);
-	                    preview.createControl(previewControl, colorRegistry, fontRegistry);
+	                    preview.createControl(previewControl, colorRegistry, fontRegistry, gradientRegistry);
 	                    previewSet.add(preview);
                     }
                 } catch (CoreException e) {
@@ -1430,4 +1470,60 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 			((Control) iterator.next()).setFont(newFont);
 		}
 	}    
+
+    /**
+     * @param definition
+     */
+    protected void updateGradientControls(GradientDefinition definition) {
+		if (definition != null) {
+			// set controls enabled
+			String valueString = StringConverter.asString(getGradientValue(definition));
+			if (isDefault(definition)) {
+				commentText.setText(MessageFormat.format(RESOURCE_BUNDLE.getString("Gradients.currentlyDefault"), //$NON-NLS-1$
+					        	new Object[] {valueString})); 
+			} else
+				commentText.setText(MessageFormat.format(RESOURCE_BUNDLE.getString("Gradients.customValue"),  //$NON-NLS-1$
+						new Object [] {valueString}));
+
+			String description = definition.getDescription();
+			descriptionText.setText(description == null ? "" : description); //$NON-NLS-1$
+		} else {
+			// set controls enabled		
+		}
+        
+    }
+
+    /**
+     * @param definition
+     * @return
+     */
+    private GradientData getGradientValue(GradientDefinition definition) {
+		String id = definition.getId();
+		GradientData updatedGD = (GradientData) gradientPreferencesToSet.get(id);
+		if (updatedGD == null) {
+			updatedGD = (GradientData) gradientValuesToSet.get(id);
+			if (updatedGD == null)
+				updatedGD = JFaceResources.getGradientRegistry().getGradientData(id);
+		}
+		return updatedGD;
+    }
+
+    /**
+     * @param definition
+     * @return
+     */
+    private boolean isDefault(GradientDefinition definition) {
+		String id = definition.getId();
+
+        if (gradientPreferencesToSet.containsKey(id)) {			
+		    GradientData ourFontValue = (GradientData) gradientPreferencesToSet.get(id);
+		    if (ourFontValue.equals(PreferenceConverter.getDefaultGradient(getPreferenceStore(), id)))
+		    	return true;
+		} else {			
+		    GradientData ourFontValue = getGradientValue(definition);
+		    if (ourFontValue.equals(PreferenceConverter.getDefaultGradient(getPreferenceStore(), id))) 
+		        return true;
+		}
+		return false;
+    }
 }

@@ -19,8 +19,6 @@ import org.eclipse.jface.resource.GradientData;
 import org.eclipse.jface.resource.GradientRegistry;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.ui.internal.colors.ColorDefinition;
-import org.eclipse.ui.internal.colors.GradientDefinition;
 
 
 /**

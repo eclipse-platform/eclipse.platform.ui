@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.colors;
+package org.eclipse.ui.internal.presentation;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,7 +25,7 @@ import org.eclipse.ui.IPluginContribution;
  * 
  * @since 3.0
  */
-public class ColorDefinition implements IPluginContribution {
+public class ColorDefinition implements IPluginContribution, IPresentationDefinition {
 
 	//The elements for use by the preference page
 	private static ColorDefinition [] colorDefinitions;	

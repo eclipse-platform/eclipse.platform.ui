@@ -119,6 +119,7 @@ private final static void declareImage(String key, String path, boolean shared) 
 	try {
 		url = new URL(URL_BASIC, path);
 	} catch (MalformedURLException e) {
+	    //no-op
 	}
 	ImageDescriptor desc = ImageDescriptor.createFromURL(url);
 	declareImage(key, desc, shared);
@@ -249,6 +250,7 @@ private final static void declareImages() {
 	declareImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_TOFASTVIEW_SOURCE, PATH_DND+"tofastview_source.bmp", true); //$NON-NLS-1$
 	declareImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_TOFASTVIEW_MASK, PATH_DND+"tofastview_mask.bmp", true); //$NON-NLS-1$
 	declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_FONT, PATH_WIZBAN+"font.gif", true); //$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_GRADIENT, PATH_WIZBAN+"gradient.gif", true); //$NON-NLS-1$
 }
 
 /**

@@ -14,7 +14,7 @@ import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.internal.colors.ColorDefinition;
+import org.eclipse.ui.internal.presentation.ColorDefinition;
 import org.eclipse.ui.internal.presentation.DisposableColorRegistry;
 import org.eclipse.ui.internal.presentation.PresentationRegistryPopulator;
 

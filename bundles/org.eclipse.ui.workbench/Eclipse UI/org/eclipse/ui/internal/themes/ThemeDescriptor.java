@@ -14,8 +14,8 @@ import java.util.Collection;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.ui.internal.colors.ColorDefinition;
-import org.eclipse.ui.internal.colors.ColorDefinitionReader;
+import org.eclipse.ui.internal.presentation.ColorDefinition;
+import org.eclipse.ui.internal.presentation.ColorDefinitionReader;
 
 /**
  * Concrete implementation of a theme descriptor.

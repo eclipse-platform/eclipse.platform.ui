@@ -12,6 +12,7 @@ package org.eclipse.ui;
 
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
+import org.eclipse.jface.resource.GradientRegistry;
 import org.eclipse.swt.widgets.Composite;
 
 
@@ -25,8 +26,9 @@ public interface IPresentationPreview {
      * @param parent the Composite in which to create the example
      * @param colorRregistry the registry from which colors should be used
      * @param fontRregistry the registry from which font should be used
+     * @param gradientRegistry the registry from which gradients should be used
      */
-    void createControl(Composite parent, ColorRegistry colorRegistry, FontRegistry fontRegistry);
+    void createControl(Composite parent, ColorRegistry colorRegistry, FontRegistry fontRegistry, GradientRegistry gradientRegistry);
     
     /**
      * Dispose of resources used by this previewer.

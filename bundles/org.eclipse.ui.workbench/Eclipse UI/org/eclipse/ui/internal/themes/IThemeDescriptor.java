@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.themes;
 
-import org.eclipse.ui.internal.colors.ColorDefinition;
+import org.eclipse.ui.internal.presentation.ColorDefinition;
 
 /**
  * Interface for the Theme descriptors
