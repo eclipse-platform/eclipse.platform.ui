@@ -214,7 +214,7 @@ public class AntCorePlugin extends Plugin {
 	 * 
 	 * @return the new class loader
 	 */
-	protected ClassLoader getNewClassLoader() {
+	public ClassLoader getNewClassLoader() {
 		AntCorePreferences corePreferences = getPreferences();
 		URL[] urls = corePreferences.getURLs();
 		ClassLoader[] pluginLoaders = corePreferences.getPluginClassLoaders();

@@ -522,19 +522,31 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
         			addMacroDefProposals(taskName, prefix, proposals);
                 	
         		} else {
-	        		IntrospectionHelper helper= IntrospectionHelper.getHelper(antModel.getProjectNode().getProject(), taskClass);
-	        		Enumeration attributes= helper.getAttributes();
-		        	while (attributes.hasMoreElements()) {
-						String attribute = (String) attributes.nextElement();
-						if (prefix.length() == 0 || attribute.toLowerCase().startsWith(prefix)) {
-							String replacementString = attribute + "=\"\""; //$NON-NLS-1$
-							addAttributeProposal(taskName, prefix, proposals, attribute, replacementString, attribute, false);
+	        		IntrospectionHelper helper= getIntrospectionHelper(taskClass);
+	        		if (helper != null) {
+		        		Enumeration attributes= helper.getAttributes();
+			        	while (attributes.hasMoreElements()) {
+							String attribute = (String) attributes.nextElement();
+							if (prefix.length() == 0 || attribute.toLowerCase().startsWith(prefix)) {
+								String replacementString = attribute + "=\"\""; //$NON-NLS-1$
+								addAttributeProposal(taskName, prefix, proposals, attribute, replacementString, attribute, false);
+							}
 						}
-					}
+	        		}
         		}
         	}
         }
         return (ICompletionProposal[])proposals.toArray(new ICompletionProposal[proposals.size()]);
+    }
+    
+    private IntrospectionHelper getIntrospectionHelper(Class taskClass) {
+    	IntrospectionHelper helper= null;
+    	try {
+    		IntrospectionHelper.getHelper(antModel.getProjectNode().getProject(), taskClass);
+    	} catch (NoClassDefFoundError e) {
+			AntUIPlugin.log(MessageFormat.format(AntEditorMessages.getString("AntEditorCompletionProcessor.0"), new String[]{taskClass.getName()}), e); //$NON-NLS-1$
+		}
+    	return helper;
     }
 
     private void addMacroDefProposals(String taskName, String prefix, List proposals) {
@@ -622,16 +634,18 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
         } else { //possibly a user defined task or type
         	Class taskClass= getTaskClass(taskName);
         	if (taskClass != null) {
-        		IntrospectionHelper helper= IntrospectionHelper.getHelper(antModel.getProjectNode().getProject(), taskClass);
-        		Enumeration attributes= helper.getAttributes();
-	        	while (attributes.hasMoreElements()) {
-					String attribute= (String) attributes.nextElement();
-					if (attribute.equals(attributeName)) {
-						Class attributeType= helper.getAttributeType(attribute);
-						addAttributeValueProposalsForAttributeType(attributeType, prefix, proposals);
-						break;
+        		IntrospectionHelper helper= getIntrospectionHelper(taskClass);
+        		if (helper != null) {
+	        		Enumeration attributes= helper.getAttributes();
+		        	while (attributes.hasMoreElements()) {
+						String attribute= (String) attributes.nextElement();
+						if (attribute.equals(attributeName)) {
+							Class attributeType= helper.getAttributeType(attribute);
+							addAttributeValueProposalsForAttributeType(attributeType, prefix, proposals);
+							break;
+						}
 					}
-				}
+        		}
         	}
         }
         return (ICompletionProposal[])proposals.toArray(new ICompletionProposal[proposals.size()]);
@@ -780,16 +794,18 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 				//a nested element of a user defined task/type?
 				Class taskClass= getTaskClass(parentName);
 	        	if (taskClass != null) {
-	        		IntrospectionHelper helper= IntrospectionHelper.getHelper(antModel.getProjectNode().getProject(), taskClass);
-	        		Enumeration nested= helper.getNestedElements();
-	        		String nestedElement;
-		        	while (nested.hasMoreElements()) {
-						nestedElement = (String) nested.nextElement();
-						if (prefix.length() == 0 || nestedElement.toLowerCase().startsWith(prefix)) {
-							proposal = newCompletionProposal(document, prefix, nestedElement);
-							proposals.add(proposal);
-						}
-			        }
+	        		IntrospectionHelper helper= getIntrospectionHelper(taskClass);
+	        		if (helper != null) {
+		        		Enumeration nested= helper.getNestedElements();
+		        		String nestedElement;
+			        	while (nested.hasMoreElements()) {
+							nestedElement = (String) nested.nextElement();
+							if (prefix.length() == 0 || nestedElement.toLowerCase().startsWith(prefix)) {
+								proposal = newCompletionProposal(document, prefix, nestedElement);
+								proposals.add(proposal);
+							}
+				        }
+	        		}
 	        	}
 			}
         }
@@ -968,9 +984,11 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
         } else {
         	Class taskClass= getTaskClass(elementName);
         	if (taskClass != null) {
-        		IntrospectionHelper helper= IntrospectionHelper.getHelper(antModel.getProjectNode().getProject(), taskClass);
-        		Enumeration nested= helper.getNestedElements();
-        		return nested.hasMoreElements();
+        		IntrospectionHelper helper= getIntrospectionHelper(taskClass);
+        		if (helper != null) {
+        			Enumeration nested= helper.getNestedElements();
+        			return nested.hasMoreElements();
+        		}
     		}
         }
         return false;
