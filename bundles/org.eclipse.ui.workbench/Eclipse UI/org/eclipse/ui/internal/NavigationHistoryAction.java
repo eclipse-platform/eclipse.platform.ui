@@ -44,6 +44,13 @@ public class NavigationHistoryAction extends PageEventAction {
 	}
 	/* (non-Javadoc)
 	 * Method declared on PageEventAction.
+	 */		
+	public void pageClosed(IWorkbenchPage page) {
+		super.pageClosed(page);
+		setEnabled(false);
+	}
+	/* (non-Javadoc)
+	 * Method declared on PageEventAction.
 	 */	
 	public void pageActivated(IWorkbenchPage page) {
 		super.pageActivated(page);

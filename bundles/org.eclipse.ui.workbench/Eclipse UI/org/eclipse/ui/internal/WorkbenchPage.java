@@ -819,6 +819,8 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
 	if (isActive)
 		setPerspective(perspList.getNextActive());
 	disposePerspective(persp);
+	if (perspList.size() == 0)
+		close();
 }
 /**
  * Creates the client composite.
