@@ -1135,7 +1135,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		} else if (property.equals(LaunchViewContextListener.PREF_OPENED_VIEWS) && fContextListener != null) {
 			fContextListener.loadOpenedViews();
 		} else if (property.equals(LaunchViewContextListener.PREF_VIEWS_TO_NOT_OPEN) && fContextListener != null) {
-			fContextListener.loadViewsToNotOpen();
+			fContextListener.reloadViewsToNotOpen(((IStructuredSelection) getViewer().getSelection()).getFirstElement());
 		} else if (property.equals(IInternalDebugUIConstants.PREF_TRACK_VIEWS) && fContextListener != null) {
 			fContextListener.loadTrackViews();
 		}

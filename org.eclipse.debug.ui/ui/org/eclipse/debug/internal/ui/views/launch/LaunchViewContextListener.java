@@ -974,6 +974,18 @@ public class LaunchViewContextListener implements IContextManagerListener {
 		updateForSelection(selection);
 	}
 	
+	public void reloadViewsToNotOpen(Object selection) {
+		// Remove the context ids associated with the current selection
+		// so that updateForSelection(...) will open views
+		// as appropriate given the new view management settings.
+		String[] modelIds = getDebugModelIdsForSelection(selection);
+		List contextIds = getContextsForModels(modelIds);
+		lastEnabledIds.removeAll(contextIds);
+		
+		loadViewsToNotOpen();
+		updateForSelection(selection);
+	}
+	
 	/**
 	 * Parses the comma separated string into a list of strings
 	 * 
