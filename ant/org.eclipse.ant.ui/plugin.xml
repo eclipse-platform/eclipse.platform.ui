@@ -42,7 +42,7 @@
       <editor
             name="%AntEditor.name"
             icon="icons/full/obj16/ant_buildfile.gif"
-            filenames="build.xml"
+            filenames="build.xml,*.macrodef,*.ent"
             class="org.eclipse.ant.internal.ui.editor.AntEditor"
             contributorClass="org.eclipse.ant.internal.ui.editor.AntEditorActionContributor"
             id="org.eclipse.ant.ui.internal.editor.AntEditor">
