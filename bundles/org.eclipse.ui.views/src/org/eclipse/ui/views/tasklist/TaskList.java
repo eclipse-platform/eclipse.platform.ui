@@ -290,14 +290,13 @@ public class TaskList extends ViewPart {
 			layout.addColumnData(columnLayouts[i]);
 			TableColumn tc = new TableColumn(table, SWT.NONE, i);
 			tc.setResizable(columnLayouts[i].resizable);
-			tc.setText(columnHeaders[i]);
 
-			/*
 			if (i == 1)
 				tc.setImage(MarkerUtil.getImage("header_complete"));
 			else if (i == 2)
 				tc.setImage(MarkerUtil.getImage("header_priority"));
-			*/
+			else 
+				tc.setText(columnHeaders[i]);
 
 			tc.addSelectionListener(headerListener);
 		}
