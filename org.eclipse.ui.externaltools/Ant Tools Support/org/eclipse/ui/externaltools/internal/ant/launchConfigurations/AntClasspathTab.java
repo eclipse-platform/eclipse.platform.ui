@@ -427,10 +427,12 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab {
 				setErrorMessage(AntPreferencesMessages.getString("AntClasspathPage.Specified_ANT_HOME_does_not_contain_a___lib___directory_7")); //$NON-NLS-1$
 				return null;
 			}
+		} else {
+			setErrorMessage(AntPreferencesMessages.getString("AntClasspathPage.Specified_ANT_HOME_does_not_contain_a___lib___directory_7")); //$NON-NLS-1$
+			return null;
 		}
 
 		setErrorMessage(null);
-
 		return rootDir;
 	}
 
@@ -700,5 +702,26 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab {
 	 */
 	public Image getImage() {
 		return labelProvider.getClasspathImage();
+	}
+	/**
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#canSave()
+	 */
+	public boolean canSave() {
+		if (antHome.isEnabled()) {
+			return validateAntHome(antHome.getText()) != null;
+		} else {
+			return super.canSave();
+		}
+	}
+
+	/**
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	public boolean isValid(ILaunchConfiguration launchConfig) {
+		if (antHome.isEnabled()) {
+			return validateAntHome(antHome.getText()) != null;
+		} else {
+			return super.canSave();
+		}
 	}
 }

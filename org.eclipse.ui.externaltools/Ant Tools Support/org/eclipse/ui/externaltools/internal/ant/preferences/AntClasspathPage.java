@@ -247,9 +247,15 @@ public class AntClasspathPage extends AntPage {
 	
 	private File validateAntHome(String path) {
 		File rootDir= null;
-		if (path.length() > 0) {
-			rootDir = new File(path, "lib"); //$NON-NLS-1$
-			if (!rootDir.exists()) {
+		if (antHome.isEnabled()) {
+			if (path.length() > 0) {
+				rootDir = new File(path, "lib"); //$NON-NLS-1$
+				if (!rootDir.exists()) {
+					getPreferencePage().setErrorMessage(AntPreferencesMessages.getString("AntClasspathPage.Specified_ANT_HOME_does_not_contain_a___lib___directory_7")); //$NON-NLS-1$
+					getPreferencePage().setValid(false);
+					return null;
+				}
+			} else {
 				getPreferencePage().setErrorMessage(AntPreferencesMessages.getString("AntClasspathPage.Specified_ANT_HOME_does_not_contain_a___lib___directory_7")); //$NON-NLS-1$
 				getPreferencePage().setValid(false);
 				return null;
@@ -433,6 +439,7 @@ public class AntClasspathPage extends AntPage {
 		} else {
 			getPreferencePage().setMessage(null);
 			getPreferencePage().setErrorMessage(null);
+			getPreferencePage().setValid(true);
 		}
 	}
 			
