@@ -49,7 +49,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 	 * @param ruler the vertical ruler this manager connects to
 	 * @param annotationHover the annotation hover providing the information to be displayed
 	 * @param creator the information control creator
-	 * @deprecated As of 2.1, replaced by {@link AnnotationBarHoverManager#AnnotationBarHoverManager(ISourceViewer, IVerticalRulerInfo, IAnnotationHover, IInformationControlCreator)}
+	 * @deprecated As of 2.1, replaced by {@link AnnotationBarHoverManager#AnnotationBarHoverManager(IVerticalRulerInfo, ISourceViewer, IAnnotationHover, IInformationControlCreator)}
 	 */
 	public AnnotationBarHoverManager(ISourceViewer sourceViewer, IVerticalRuler ruler, IAnnotationHover annotationHover, IInformationControlCreator creator) {
 		this(ruler, sourceViewer, annotationHover, creator);
@@ -59,10 +59,11 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 	 * Creates an annotation hover manager with the given parameters. In addition,
 	 * the hovers anchor is RIGHT and the margin is 5 points to the right.
 	 *
-	 * @param sourceViewer the source viewer this manager connects to
 	 * @param ruler the vertical ruler this manager connects to
+	 * @param sourceViewer the source viewer this manager connects to
 	 * @param annotationHover the annotation hover providing the information to be displayed
 	 * @param creator the information control creator
+	 * @since 2.1
 	 */
 	public AnnotationBarHoverManager(IVerticalRulerInfo rulerInfo, ISourceViewer sourceViewer, IAnnotationHover annotationHover, IInformationControlCreator creator) {
 		super(creator);

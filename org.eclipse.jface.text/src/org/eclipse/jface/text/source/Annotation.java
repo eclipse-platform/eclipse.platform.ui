@@ -19,11 +19,11 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 
 /**
- * Abstract graphical annotation used in a vertical ruler.
- * Annotations are considered being located at layers. The
- * vertical ruler paints annotations starting with layer 0 upwards.
- * Thus an annotation of layer 5 will be drawn on top of all co-located
- * annotations at the layers 4 - 0. Subclasses must provide the annotations paint method.
+ * Abstract annotation managed by an <code>IAnnotationModel</code>.
+ * Annotations are considered being located at layers and are considered being painted
+ * starting with layer 0 upwards. Thus an annotation of layer 5 will be drawn on top of
+ * all co-located annotations at the layers 4 - 0. Subclasses must provide the annotations
+ * paint method.
  *
  * @see IVerticalRuler
  */
@@ -103,7 +103,7 @@ public abstract class Annotation {
 		drawImage(image, gc, canvas, r, align, SWT.CENTER);
 	}
 	
-	/*
+	/**
 	 * Returns the annotations drawing layer.
 	 *
 	 * @return the annotations drawing layer

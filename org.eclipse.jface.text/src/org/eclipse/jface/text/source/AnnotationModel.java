@@ -67,7 +67,7 @@ public class AnnotationModel implements IAnnotationModel {
 	}
 
 	/*
-	 * @see IAnnotationModel#addAnnotation
+	 * @see IAnnotationModel#addAnnotation(Annotation, Position)
 	 */
 	public void addAnnotation(Annotation annotation, Position position) {
 		addAnnotation(annotation, position, true);
@@ -95,7 +95,7 @@ public class AnnotationModel implements IAnnotationModel {
 	}
 
 	/*
-	 * @see IAnnotationModel#addAnnotationModelListener
+	 * @see IAnnotationModel#addAnnotationModelListener(IAnnotationModelListener)
 	 */
 	public void addAnnotationModelListener(IAnnotationModelListener listener) {
 		if (!fAnnotationModelListeners.contains(listener)) {
@@ -121,7 +121,7 @@ public class AnnotationModel implements IAnnotationModel {
 	}
 	
 	/*
-	 * @see IAnnotationModel#connect
+	 * @see IAnnotationModel#connect(IDocument)
 	 */
 	public void connect(IDocument document) {
 		Assert.isTrue(fDocument == null || fDocument == document);
@@ -142,18 +142,20 @@ public class AnnotationModel implements IAnnotationModel {
 	
 	/**
 	 * Hook method. Is called as soon as this model becomes connected to a document.
+	 * Subclasses may re-implement.
 	 */
 	protected void connected() {
 	}
 	
 	/**
 	 * Hook method. Is called as soon as this model becomes diconnected from its document.
+	 * Subclasses may re-implement.
 	 */
 	protected void disconnected() {
 	}
 	
 	/*
-	 * @see IAnnotationModel#disconnect
+	 * @see IAnnotationModel#disconnect(IDocument)
 	 */
 	public void disconnect(IDocument document) {
 		
@@ -249,7 +251,7 @@ public class AnnotationModel implements IAnnotationModel {
 	}
 	
 	/*
-	 * @see IAnnotationModel#getAnnotationsIterator
+	 * @see IAnnotationModel#getAnnotationsIterator()
 	 */
 	public Iterator getAnnotationIterator() {
 		return getAnnotationIterator(true);
@@ -273,7 +275,7 @@ public class AnnotationModel implements IAnnotationModel {
 	}
 	
 	/*
-	 * @see IAnnotationModel#getPosition
+	 * @see IAnnotationModel#getPosition(Annotation)
 	 */
 	public Position getPosition(Annotation annotation) {
 		return (Position) fAnnotations.get(annotation);
@@ -310,7 +312,7 @@ public class AnnotationModel implements IAnnotationModel {
 	}
 	
 	/*
-	 * @see IAnnotationModel#removeAnnotation
+	 * @see IAnnotationModel#removeAnnotation(Annotation)
 	 */
 	public void removeAnnotation(Annotation annotation) {
 		removeAnnotation(annotation, true);
@@ -339,7 +341,7 @@ public class AnnotationModel implements IAnnotationModel {
 	}
 	
 	/*
-	 * @see IAnnotationModel#removeAnnotationModelListener
+	 * @see IAnnotationModel#removeAnnotationModelListener(IAnnotationModelListener)
 	 */
 	public void removeAnnotationModelListener(IAnnotationModelListener listener) {
 		fAnnotationModelListeners.remove(listener);
