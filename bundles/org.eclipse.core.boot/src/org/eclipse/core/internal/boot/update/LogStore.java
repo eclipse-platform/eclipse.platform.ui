@@ -3,9 +3,7 @@ package org.eclipse.core.internal.boot.update;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-
-import java.io.*;
-import java.net.*;
+import java.io.File;import java.io.FileWriter;import java.io.IOException;import java.io.InputStream;import java.io.InputStreamReader;import java.io.LineNumberReader;import java.io.OutputStream;import java.net.URL;import java.net.URLConnection;import org.eclipse.core.internal.boot.Policy;
 /**
  * This class manages the loading, storing, parsing and creation of
  * the log entry tree.
@@ -65,7 +63,7 @@ public File createFile(URL url) throws LogStoreException {
 			return file;
 		}
 		catch (IOException ex) {
-			throw new LogStoreException(BootUpdateManagerStrings.getString("S_Unable_to_open_file"), strFilespec, null, -1, -1);
+			throw new LogStoreException(Policy.bind("S_Unable_to_open_file"), strFilespec, null, -1, -1);
 		}
 	}
 	
@@ -102,7 +100,7 @@ protected void handleAttribute() throws LogStoreException
 		
 		else if( character == '\n' || character == '\r' )
 		{
-			throw new LogStoreException( BootUpdateManagerStrings.getString("S_Unexpected_end_of_line"), _url.toString(), _strLine, _iLine, _iColumn );
+			throw new LogStoreException( Policy.bind("S_Unexpected_end_of_line"), _url.toString(), _strLine, _iLine, _iColumn );
 		}
 		
 		else
@@ -259,7 +257,7 @@ protected void handleElementEnd() throws LogStoreException
 
 		if( strElementName.equals( _parserElementCurrent.getName() ) == false )
 		{
-			throw new LogStoreException( BootUpdateManagerStrings.getString("S_Expecting_end_element") + ": </" + _parserElementCurrent._strName + ">", _url.toString(), _strLine, _iLine, _iColumn );
+			throw new LogStoreException( Policy.bind("S_Expecting_end_element") + ": </" + _parserElementCurrent._strName + ">", _url.toString(), _strLine, _iLine, _iColumn );
 		}
 			
 		_iColumn = iIndex + 1;
@@ -277,7 +275,7 @@ protected void handleElementEnd() throws LogStoreException
 
 	else
 	{
-		throw new LogStoreException( BootUpdateManagerStrings.getString("S_Expecting") +" \">\"", _url.toString(), _strLine, _iLine, _iColumn );
+		throw new LogStoreException( Policy.bind("S_Expecting") +" \">\"", _url.toString(), _strLine, _iLine, _iColumn );
 	}
 }
 /**
@@ -329,7 +327,7 @@ protected void handleElementStart() throws LogStoreException
 
 			else if( character == '\r' || character == '\n' )
 			{
-				throw new LogStoreException( BootUpdateManagerStrings.getString("S_Expecting") + " '>'", _url.toString(), _strLine, _iLine, _iColumn );
+				throw new LogStoreException( Policy.bind("S_Expecting") + " '>'", _url.toString(), _strLine, _iLine, _iColumn );
 			}
 			
 			else if( _strLine.indexOf( "/>", _iColumn ) == _iColumn )
@@ -516,7 +514,7 @@ public boolean load(Log log, URL url) throws LogStoreException {
 		while (_strLine != null);
 
 		if (_parserElementCurrent != null && _parserElementCurrent.getName().equals("root") == false) {
-			throw new LogStoreException(BootUpdateManagerStrings.getString("S_Expecting_end_element") + ": </" + _parserElementCurrent.getName() + ">", _url.toString(), _strLine, _iLine, _iColumn);
+			throw new LogStoreException(Policy.bind("S_Expecting_end_element") + ": </" + _parserElementCurrent.getName() + ">", _url.toString(), _strLine, _iLine, _iColumn);
 		}
 		try{inputStream.close();} catch(Exception x) {}
 		return true;
@@ -538,7 +536,7 @@ public boolean load(Log log, URL url) throws LogStoreException {
 		while (_strLine != null);
 
 		if (_parserElementCurrent != null) {
-			throw new LogStoreException(BootUpdateManagerStrings.getString("S_Expecting_end_element") + "< :/" + _parserElementCurrent.getName() + ">", _url.toString(), _strLine, _iLine, _iColumn);
+			throw new LogStoreException(Policy.bind("S_Expecting_end_element") + "< :/" + _parserElementCurrent.getName() + ">", _url.toString(), _strLine, _iLine, _iColumn);
 		}
 
 		return true;
@@ -646,7 +644,7 @@ public void saveAsFile(Log log, URL url) throws LogStoreException {
 		writer.close();
 	}
 	catch (IOException ex) {
-		throw new LogStoreException(BootUpdateManagerStrings.getString("S_Unable_to_write_to_file"), url.getFile(), null, -1, -1);
+		throw new LogStoreException(Policy.bind("S_Unable_to_write_to_file"), url.getFile(), null, -1, -1);
 	}
 
 	return;

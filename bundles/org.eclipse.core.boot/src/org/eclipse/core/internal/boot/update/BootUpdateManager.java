@@ -4,16 +4,7 @@ package org.eclipse.core.internal.boot.update;
  * All Rights Reserved.
  */
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.PropertyResourceBundle;
-import java.util.StringTokenizer;
-import java.util.Vector;
-
-import org.eclipse.core.internal.boot.LaunchInfo;
-import org.eclipse.core.internal.boot.LaunchInfo.Status;
-import org.eclipse.core.internal.boot.LaunchInfo.VersionedIdentifier;
+import java.io.IOException;import java.io.InputStream;import java.net.URL;import java.util.PropertyResourceBundle;import java.util.StringTokenizer;import java.util.Vector;import org.eclipse.core.internal.boot.LaunchInfo;import org.eclipse.core.internal.boot.Policy;import org.eclipse.core.internal.boot.LaunchInfo.Status;import org.eclipse.core.internal.boot.LaunchInfo.VersionedIdentifier;
 
 public class BootUpdateManager {
 /**
@@ -30,7 +21,7 @@ private static String createErrorString(IManifestDescriptor manifest, IManifestD
 	strbMessage.append(" ");
 	strbMessage.append(manifest.getVersionIdentifier());
 	strbMessage.append("\n");
-	strbMessage.append(BootUpdateManagerStrings.getString("S_This_component_cannot_be_installed_because_of_conflicts"));
+	strbMessage.append(Policy.bind("S_This_component_cannot_be_installed_because_of_conflicts"));
 	strbMessage.append("\n");
 	
 	for (int j = 0; j < manifestsConflicting.length; ++j) {

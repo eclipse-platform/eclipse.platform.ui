@@ -6,8 +6,7 @@ package org.eclipse.core.internal.boot.update;
 
 
 
-import java.net.*;
-import java.util.*;
+import java.net.URL;import java.net.URLClassLoader;import java.util.Locale;import java.util.MissingResourceException;import java.util.ResourceBundle;import org.eclipse.core.internal.boot.Policy;
 
 public class NLResourceHelper implements INLResourceHelper {
 	private ResourceBundle		fBundle=null;			// abc.properties
@@ -39,7 +38,7 @@ public java.util.ResourceBundle getResourceBundle(Locale locale) throws MissingR
 	// check if we already tried and failed
 	if (notFound) 
 		throw new MissingResourceException(
-			BootUpdateManagerStrings.getString("S_Resource_not_found") + ": " + fName + "_" + locale, 
+			Policy.bind("S_Resource_not_found") + ": " + fName + "_" + locale, 
 			fName + "_" + locale, 
 			"");
 
