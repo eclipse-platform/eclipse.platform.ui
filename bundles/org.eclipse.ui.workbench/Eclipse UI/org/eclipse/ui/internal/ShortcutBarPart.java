@@ -23,7 +23,6 @@ import org.eclipse.ui.IWorkbenchPart;
  * a PerspectivePresentation.  It is not intended to act as a real part.
  */
 public class ShortcutBarPart extends LayoutPart {
-	private ToolBarManager tbm;
 	private ToolBar toolbar;
 
 	/**
@@ -165,7 +164,6 @@ public class ShortcutBarPart extends LayoutPart {
 	 */
 	public ShortcutBarPart(ToolBarManager tbm) {
 		super("ShortcutBarPart"); //$NON-NLS-1$
-		this.tbm = tbm;
 		this.toolbar = tbm.getControl();
 		toolbar.setData((IPartDropTarget) this);
 		initDragAndDrop();
