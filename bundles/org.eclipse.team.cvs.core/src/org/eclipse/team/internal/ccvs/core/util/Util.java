@@ -544,4 +544,23 @@ public class Util {
 	public static String getVariablePattern(String pattern, String variableName) {
 		return "(" + variableName + ":" + pattern + ":" + variableName + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
+
+	/**
+	 * @param localRevision
+	 * @return
+	 */
+	public static int[] convertToDigits(String localRevision) {
+		try {
+			String digitStrings[] = localRevision.split("\\."); //$NON-NLS-1$
+			int[] digits = new int[digitStrings.length];
+			for (int i = 0; i < digitStrings.length; i++) {
+				String digitString = digitStrings[i];
+				digits[i] = Integer.parseInt(digitString);
+			}
+			return digits;
+		} catch (NumberFormatException e) {
+			CVSProviderPlugin.log(CVSException.wrapException(e));
+			return new int[0];
+		}
+	}
 }

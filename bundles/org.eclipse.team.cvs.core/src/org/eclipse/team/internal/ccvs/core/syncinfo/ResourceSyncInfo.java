@@ -92,6 +92,7 @@ public class ResourceSyncInfo {
 	// type of sync
 	protected int syncType = TYPE_REGULAR;
 	protected ResourceSyncInfo() {
+		// Added for use by subclasses
 	}
 	
 	public ResourceSyncInfo(byte[] entryLine) throws CVSException {
@@ -687,7 +688,6 @@ public class ResourceSyncInfo {
 	private static int startOfSlot(byte[] syncBytes, int slot) {
 		int count = 0;
 		for (int j = 0; j < syncBytes.length; j++) {
-			byte b = syncBytes[j];
 			if (syncBytes[j] == SEPARATOR_BYTE) {
 				count++;
 				if (count == slot) return j;
@@ -887,4 +887,67 @@ public class ResourceSyncInfo {
 		return syncType == TYPE_MERGED_WITH_CONFLICTS;
 	}
 	
+	
+	/**
+	 * Return <code>true</code> if the remoteBytes represents a later revision on the same
+	 * branch as localBytes. Return <code>false</code> if remoteBytes is the same or an earlier 
+	 * revision or if the bytes are on a separate branch (or tag)
+	 * @param remoteBytes
+	 * @param localBytes
+	 * @return
+	 */
+	public static boolean isLaterRevisionOnSameBranch(byte[] remoteBytes, byte[] localBytes) throws CVSException {
+		// If the two byte arrays are the same, then the remote isn't a later revision
+		if (remoteBytes == localBytes) return false;
+		//	If the tags differ, then the remote isn't a later revision
+		byte[] remoteTag = ResourceSyncInfo.getTagBytes(remoteBytes);
+		byte[] localTag = ResourceSyncInfo.getTagBytes(localBytes);
+		if (!Util.equals(remoteTag, localTag)) return false;
+		// If the revisions are the same, the remote isn't later
+		String remoteRevision = ResourceSyncInfo.getRevision(remoteBytes);
+		String localRevision = ResourceSyncInfo.getRevision(localBytes);
+		if (remoteRevision.equals(localRevision)) return false;
+		return isLaterRevision(remoteRevision, localRevision);
+	}
+
+	/**
+	 * Return true if the remoteRevision represents a later revision than the local revision
+	 * on the same branch.
+	 * @param remoteRevision
+	 * @param localRevision
+	 * @return
+	 */
+	public static boolean isLaterRevision(String remoteRevision, String localRevision) {
+		int localDigits[] = Util.convertToDigits(localRevision);
+		if (localDigits.length == 0) return false;
+		int remoteDigits[] = Util.convertToDigits(remoteRevision);
+		if (remoteDigits.length == 0) return false;
+		
+		if (localRevision.equals(ADDED_REVISION)) {
+			return (remoteDigits.length >= 2);
+		}
+		if (localDigits.length > remoteDigits.length) {
+			// If there are more digits in the local revision then there is
+			// no way that the remote is later on the same branch
+			return false;
+		}
+		if (localDigits.length < remoteDigits.length) {
+			// If there are more digits in the remote revision then all
+			// the leading digits must match
+			for (int i = 0; i < localDigits.length; i++) {
+				int localDigit = localDigits[i];
+				int remoteDigit = remoteDigits[i];
+				if (remoteDigit != localDigit) return false;
+			}
+			return true;
+		}
+		// They are the same length so the last digit must differ and all others must be the same
+		for (int i = 0; i < localDigits.length - 1; i++) {
+			int localDigit = localDigits[i];
+			int remoteDigit = remoteDigits[i];
+			if (remoteDigit != localDigit) return false;
+		}
+		// All the leading digits are equals so the remote is later if the last digit is greater
+		return localDigits[localDigits.length - 1] < remoteDigits[remoteDigits.length - 1] ;
+	}
 }

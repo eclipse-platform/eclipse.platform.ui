@@ -13,22 +13,15 @@ package org.eclipse.team.internal.ccvs.core;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceVisitor;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.subscribers.RemoteSynchronizer;
-import org.eclipse.team.core.subscribers.SyncInfo;
-import org.eclipse.team.core.subscribers.TeamDelta;
+import org.eclipse.team.core.subscribers.*;
+import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.OptimizedRemoteSynchronizer;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.ResourceStateChangeListeners;
 
 /**
@@ -47,7 +40,6 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 		// install sync info participant
 		remoteSynchronizer = new OptimizedRemoteSynchronizer(REMOTE_RESOURCE_KEY);
 		
-		// TODO: temporary proxy for CVS events
 		ResourceStateChangeListeners.getListener().addResourceStateChangeListener(this); 
 	}
 
@@ -78,22 +70,42 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 	 * @see org.eclipse.team.internal.ccvs.core.IResourceStateChangeListener#resourceSyncInfoChanged(org.eclipse.core.resources.IResource[])
 	 */
 	public void resourceSyncInfoChanged(IResource[] changedResources) {
-		
-		// TODO: hack for clearing the remote state when anything to the resource
-		// sync is changed. Should be able to set the *right* remote/base based on
-		// the sync being set.
+		internalResourceSyncInfoChanged(changedResources, true); 
+	}
+
+	private void internalResourceSyncInfoChanged(IResource[] changedResources, boolean canModifyWorkspace) {
 		// IMPORTANT NOTE: This will throw exceptions if performed during the POST_CHANGE delta phase!!!
 		for (int i = 0; i < changedResources.length; i++) {
 			IResource resource = changedResources[i];
 			try {
-				// TODO should use revision and tag to determine if remote is stale
-				// TODO outgoing deletions would require special handling
 				if (resource.getType() == IResource.FILE
 						&& (resource.exists() || resource.isPhantom())) {
-					remoteSynchronizer.removeSyncBytes(resource, IResource.DEPTH_ZERO);
+					byte[] remoteBytes = remoteSynchronizer.getSyncBytes(resource);
+					if (remoteBytes == null) {
+						if (remoteSynchronizer.isRemoteKnown(resource)) {
+							// The remote is known not to exist. If the local resource is
+							// managed then this information is stale
+							if (getBaseSynchronizer().hasRemote(resource)) {
+								if (canModifyWorkspace) {
+									remoteSynchronizer.removeSyncBytes(resource, IResource.DEPTH_ZERO);
+								} else {
+									// The revision  comparison will handle the stale sync bytes
+								}
+							}
+						}
+					} else {
+						byte[] localBytes = remoteSynchronizer.getBaseSynchronizer().getSyncBytes(resource);
+						if (localBytes == null || !isLaterRevision(remoteBytes, localBytes)) {
+							if (canModifyWorkspace) {
+								remoteSynchronizer.removeSyncBytes(resource, IResource.DEPTH_ZERO);
+							} else {
+								// The getRemoteResource method handles the stale sync bytes
+							}
+						}
+					}
 				} else if (resource.getType() == IResource.FOLDER) {
 					// If the base has sync info for the folder, purge the remote bytes
-					if (getBaseSynchronizer().hasRemote(resource)) {
+					if (getBaseSynchronizer().hasRemote(resource) && canModifyWorkspace) {
 						remoteSynchronizer.removeSyncBytes(resource, IResource.DEPTH_ZERO);
 					}
 				}
@@ -102,35 +114,25 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 			}
 		}		
 		
-		fireTeamResourceChange(TeamDelta.asSyncChangedDeltas(this, changedResources)); 
+		fireTeamResourceChange(TeamDelta.asSyncChangedDeltas(this, changedResources));
+	}
+
+	private boolean isLaterRevision(byte[] remoteBytes, byte[] localBytes) {
+		try {
+			return ResourceSyncInfo.isLaterRevisionOnSameBranch(remoteBytes, localBytes);
+		} catch (CVSException e) {
+			CVSProviderPlugin.log(e);
+			return false;
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.core.IResourceStateChangeListener#externalSyncInfoChange(org.eclipse.core.resources.IResource[])
 	 */
 	public void externalSyncInfoChange(IResource[] changedResources) {
-		for (int i = 0; i < changedResources.length; i++) {
-			IResource resource = changedResources[i];
-			try {
-				// User may need to Refresh with Remote if there is remote bytes for a
-				// changed file
-				if (resource.getType() == IResource.FILE
-						&& (resource.exists() || resource.isPhantom())) {
-					if (remoteSynchronizer.getSyncBytes(resource) != null) {
-						// TODO: it would be nice to be able to start a refresh job
-						// but this needs refactoring
-						// The following is a temporary measure (see bug 43774)
-						CVSProviderPlugin.log(new CVSStatus(IStatus.WARNING, "The incoming changes of CVS Workspace subscriber in the Synchronize view may be stale. Perform a Refresh with Remote on resource " + resource.getFullPath().toString()));
-					}
-				}
-			} catch (TeamException e) {
-				CVSProviderPlugin.log(e);
-			}
-		}		
-		
-		fireTeamResourceChange(TeamDelta.asSyncChangedDeltas(this, changedResources)); 
+		internalResourceSyncInfoChanged(changedResources, false);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.core.IResourceStateChangeListener#resourceModified(org.eclipse.core.resources.IResource[])
 	 */
@@ -249,4 +251,23 @@ public class CVSWorkspaceSubscriber extends CVSSyncTreeSubscriber implements IRe
 	private boolean hasIncomingChange(IResource resource) throws TeamException {
 		return remoteSynchronizer.isRemoteKnown(resource);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.subscribers.TeamSubscriber#getRemoteResource(org.eclipse.core.resources.IResource)
+	 */
+	public IRemoteResource getRemoteResource(IResource resource) throws TeamException {
+		IRemoteResource remote =  super.getRemoteResource(resource);
+		if (resource.getType() == IResource.FILE && remote instanceof ICVSRemoteFile) {
+			byte[] remoteBytes = ((ICVSRemoteFile)remote).getSyncBytes();
+			byte[] localBytes = CVSWorkspaceRoot.getCVSFileFor((IFile)resource).getSyncBytes();
+			if (localBytes != null && remoteBytes != null) {
+				if (!ResourceSyncInfo.isLaterRevisionOnSameBranch(remoteBytes, localBytes)) {
+					// The remote bytes are stale so ignore the remote and use the base
+					return getBaseResource(resource);
+				}
+			}
+		}
+		return remote;
+	}
+
 }
