@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dnd;
 
+import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * @since 3.0
@@ -34,6 +37,9 @@ public class WindowDropTarget extends AbstractTestDropTarget {
 	 * @see org.eclipse.ui.tests.dnd.TestDropTarget#getLocation()
 	 */
 	public Point getLocation() {
-		return DragOperations.getPoint(getPage().getWorkbenchWindow().getShell().getBounds(), side);
+		Shell shell = getPage().getWorkbenchWindow().getShell();
+		Rectangle clientArea = shell.getClientArea();
+		
+		return DragOperations.getPoint(Geometry.toDisplay(shell, clientArea), side);
 	}
 }
