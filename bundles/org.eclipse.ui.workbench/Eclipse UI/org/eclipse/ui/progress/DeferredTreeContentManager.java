@@ -269,16 +269,10 @@ public class DeferredTreeContentManager {
 				if (!placeholder.isRemoved()) {
 					Control control = treeViewer.getControl();
 					
-					//Workaround for Bug 42175
-					TreeItem top = null;
-					Tree tree = null;
-					if(control instanceof Tree){
-						tree = (Tree) control;
-						top = tree.getTopItem();						
-					}
+					if(control.isDisposed())
+						return Status.CANCEL_STATUS;
+					
 					treeViewer.remove(placeholder);
-					if(top != null)
-						tree.setTopItem(top);
 					placeholder.setRemoved(true);
 				}
 				return Status.OK_STATUS;
