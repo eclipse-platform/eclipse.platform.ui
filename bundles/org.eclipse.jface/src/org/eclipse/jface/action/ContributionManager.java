@@ -164,7 +164,7 @@ public IContributionItem[] getItems() {
 	return items;
 }
 /**
- * The <code>ContributionManager</code> implemenatation of this
+ * The <code>ContributionManager</code> implementation of this
  * method declared on <code>IContributionManager</code> returns
  * the current overrides. If there is no overrides it lazily creates
  * one which overrides no item state.
