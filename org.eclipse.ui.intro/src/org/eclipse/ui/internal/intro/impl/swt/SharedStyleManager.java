@@ -63,7 +63,18 @@ public class SharedStyleManager {
      * @return
      */
     public String getProperty(String key) {
-        return properties.getProperty(key);
+        return doGetProperty(properties, key);
+    }
+
+    /*
+     * Utility method to trim properties retrieval.
+     */
+    protected String doGetProperty(Properties aProperties, String key) {
+        String value = aProperties.getProperty(key);
+        if (value != null)
+            // trim the properties as trailing balnnks cause problems.
+            value = value.trim();
+        return value;
     }
 
 

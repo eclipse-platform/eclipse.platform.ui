@@ -123,6 +123,8 @@ public class RootPageForm implements IIntroConstants {
         }
 
         private void updateDescription(String text) {
+            if (text == null)
+                text = "";
             descriptionLabel.setText(text);
             descriptionLabel.getParent().layout();
         }
@@ -188,13 +190,15 @@ public class RootPageForm implements IIntroConstants {
         GridLayout layout = new GridLayout();
         // separate links a bit more.
         layout.horizontalSpacing = 20;
-        layout.verticalSpacing = 20;
+        layout.verticalSpacing = rootPageStyleManager.getVerticalLinkSpacing();
         // set number of columns.
         int numColumns = rootPageStyleManager.getPageNumberOfColumns();
         numColumns = numColumns < 1 ? numChildren : numColumns;
         layout.numColumns = numColumns;
         contentComposite.setLayout(layout);
         for (int i = 0; i < children.length; i++) {
+            if (((AbstractBaseIntroElement) children[i]).isFiltered())
+                continue;
             if (children[i].getType() == AbstractIntroElement.GROUP)
                 createGroupContent(contentComposite, (IntroGroup) children[i]);
             else if (children[i].getType() == AbstractIntroElement.LINK)
@@ -206,16 +210,16 @@ public class RootPageForm implements IIntroConstants {
      * Creates content of the root page.
      */
     private void createGroupContent(Composite parent, IntroGroup group) {
+        AbstractIntroElement[] children = (AbstractIntroElement[]) group
+                .getChildrenOfType(AbstractIntroElement.GROUP
+                        | AbstractIntroElement.LINK);
+        int numChildren = children.length;
         // setup page composite/layout
         Composite contentComposite = toolkit.createComposite(parent);
         GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
         gd.horizontalSpan = rootPageStyleManager.getColSpan(group);
         gd.verticalSpan = rootPageStyleManager.getRowSpan(group);
         contentComposite.setLayoutData(gd);
-        AbstractIntroElement[] children = (AbstractIntroElement[]) group
-                .getChildrenOfType(AbstractIntroElement.GROUP
-                        | AbstractIntroElement.LINK);
-        int numChildren = children.length;
         GridLayout layout = new GridLayout();
         // separate links a bit more.
         layout.horizontalSpacing = 20;
@@ -225,6 +229,8 @@ public class RootPageForm implements IIntroConstants {
         layout.numColumns = numColumns;
         contentComposite.setLayout(layout);
         for (int i = 0; i < children.length; i++) {
+            if (((AbstractBaseIntroElement) children[i]).isFiltered())
+                continue;
             if (children[i].getType() == AbstractIntroElement.GROUP)
                 createGroupContent(contentComposite, (IntroGroup) children[i]);
             else if (children[i].getType() == AbstractIntroElement.LINK)

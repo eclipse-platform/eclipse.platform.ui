@@ -59,7 +59,7 @@ public class PageStyleManager extends SharedStyleManager {
     // Override parent method to include alt styles.
     public String getProperty(String key) {
         Properties aProperties = findProperty(key);
-        return aProperties.getProperty(key);
+        return super.doGetProperty(aProperties, key);
     }
 
 

@@ -225,7 +225,7 @@ public class PageWidgetFactory {
             control = container;
         } else {
             ImageHyperlink imageLink = toolkit.createImageHyperlink(parent,
-                    SWT.WRAP);
+                    SWT.WRAP | SWT.CENTER);
             imageLink.setImage(linkImage);
             TableWrapData td = new TableWrapData();
             td.grabHorizontal = true;
