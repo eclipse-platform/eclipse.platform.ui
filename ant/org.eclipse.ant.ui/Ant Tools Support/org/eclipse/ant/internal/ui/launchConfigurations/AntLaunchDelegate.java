@@ -362,7 +362,6 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		
 		ILaunchConfigurationWorkingCopy copy= configuration.getWorkingCopy();
 		copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, commandLine.toString());
-		copy.setAttribute(IProcess.ATTR_PROCESS_TYPE, IAntLaunchConfigurationConstants.ID_ANT_PROCESS_TYPE);
 		JavaLocalApplicationLaunchConfigurationDelegate delegate= new JavaLocalApplicationLaunchConfigurationDelegate();
 		delegate.launch(copy, ILaunchManager.RUN_MODE, launch, monitor);
 		IProcess[] processes= launch.getProcesses();

@@ -97,5 +97,10 @@ public interface IAntUIConstants {
 	 * Used for Ant Build logging.
 	 * @see org.eclipse.ant.ui,internal.antsupport.logger.AntProcessBuildLogger#logMessage(String, BuildEvent, -1)
 	  */
-	public static final int LEFT_COLUMN_SIZE = 15;			
+	public static final int LEFT_COLUMN_SIZE = 15;
+	
+	/**
+	 * Id of the IProcessFactory to use when creating processes for remote Ant builds.
+	 */
+	public static final String REMOTE_ANT_PROCESS_FACTORY_ID= "org.eclipse.ant.ui.remoteAntProcessFactory"; //$NON-NLS-1$
 }
