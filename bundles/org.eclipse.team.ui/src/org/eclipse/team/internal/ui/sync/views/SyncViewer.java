@@ -31,6 +31,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
@@ -116,7 +117,7 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 	/*
 	 * viewer type constants
 	 */ 
-	private int currentViewType = TABLE_VIEW;
+	private int currentViewType;
 	
 	/*
 	 * Array of SubscriberInput objects. There is one of these for each subscriber
@@ -138,8 +139,6 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 	private Image refreshingImg;
 	private Image initialImg; 
 	private Image viewImage;
-	
-	private static final String VIEWER_TYPE_MEMENTO_KEY = "viewerType"; // $NON-NLS-1$
 
 	private IPropertyChangeListener propertyListener = new IPropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent event) {
@@ -151,7 +150,12 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 	};
 	
 	public SyncViewer() {
-		TeamUIPlugin.getPlugin().getPreferenceStore().addPropertyChangeListener(propertyListener);
+		IPreferenceStore store = TeamUIPlugin.getPlugin().getPreferenceStore();
+		store.addPropertyChangeListener(propertyListener);
+		currentViewType = store.getInt(IPreferenceIds.SYNCVIEW_VIEW_TYPE);
+		if (currentViewType != TREE_VIEW) {
+			currentViewType = TABLE_VIEW;
+		}
 	}
 
 	public Image getTitleImage() {
@@ -210,6 +214,7 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 			ISelection s = viewer.getSelection();
 			if (composite == null || composite.isDisposed()) return;
 			currentViewType = viewerType;
+			TeamUIPlugin.getPlugin().getPreferenceStore().setValue(IPreferenceIds.SYNCVIEW_VIEW_TYPE, currentViewType);
 			disposeChildren(composite);
 			createViewer(composite);
 			composite.layout();
@@ -572,12 +577,6 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
 		this.memento = memento;
-		if (memento != null) {
-			Integer i = memento.getInteger(VIEWER_TYPE_MEMENTO_KEY);
-			if (i != null) {
-				currentViewType = i.intValue();
-			}
-		}
 	}
 
 	/* (non-Javadoc)
@@ -585,7 +584,6 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 	 */
 	public void saveState(IMemento memento) {
 		super.saveState(memento);
-		memento.putInteger(VIEWER_TYPE_MEMENTO_KEY, getViewerType());
 		actions.save(memento);
 	}
 	

@@ -18,4 +18,5 @@ public interface IPreferenceIds {
 	public static final String SYNCVIEW_SCHEDULED_SYNC = PREFIX + "scheduled_sync"; //$NON-NLS-1$
 	public static final String SYNCVIEW_DELAY = PREFIX + "scheduled_sync_delay"; //$NON-NLS-1$
 	public static final String SYNCVIEW_COMPRESS_FOLDERS = PREFIX + "compress_folders"; //$NON-NLS-1$
+	public static final String SYNCVIEW_VIEW_TYPE = PREFIX + "view_type"; //$NON-NLS-1$
 }
