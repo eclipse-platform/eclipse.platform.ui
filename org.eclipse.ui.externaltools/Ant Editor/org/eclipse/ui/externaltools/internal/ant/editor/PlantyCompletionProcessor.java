@@ -52,6 +52,7 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -535,13 +536,18 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
                 }
                  
                 String tempReplacementString = "${"+tempPropertyName+"}"; //$NON-NLS-1$ //$NON-NLS-2$
+                org.eclipse.swt.graphics.Image tempImage = null;
+                if(!PlantyEditor.junitTestRun) {
+	                tempImage = ExternalToolsImages.getImage(IExternalToolsUIConstants.IMAGE_ID_PROPERTY);
+                }
+                
                 ICompletionProposal tempProposal = 
                     new CompletionProposal(
                         tempReplacementString, 
                         tempReplacementOffset, 
                         tempReplacementLength, 
                         tempReplacementString.length(), 
-						ExternalToolsImages.getImage(IExternalToolsUIConstants.IMAGE_ID_PROPERTY),
+						tempImage,
                         tempPropertyName, null, 
                         tempAdditPropInfo);
                 tempProposals.add(tempProposal);
@@ -569,6 +575,11 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
 		// through a child sequence. This works for the Ant
 		// 1.5 DTD but not in general. I kept the assumption. bf
         LinkedList tempProposals = new LinkedList();
+        Image tempImage = null;
+        if(!PlantyEditor.junitTestRun) {
+	        ExternalToolsImages.getImage(IExternalToolsUIConstants.IMAGE_ID_TASK);
+        }
+
         if (aParentTaskElement == null) {
         	// DTDs do not designate a root element.
         	// The previous code must have looked for an element that
@@ -578,7 +589,10 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
         	// roots, etc. The right answer is to get
         	// the root element from the document. If there isn't
         	// one, we assume "project". bf
-			String tempRootElementName = lastDefaultHandler.rootElementName;
+            String tempRootElementName = null;
+	       	if(lastDefaultHandler != null) {
+                tempRootElementName = lastDefaultHandler.rootElementName;
+        	}
 			if (tempRootElementName == null)
 				tempRootElementName = aPrefix + "project";
 			IElement tempRootElement = dtd.getElement(tempRootElementName);
@@ -602,7 +616,7 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
 					tempReplacementOffset, 
 					tempReplacementLength, 
 					tempRootElementName.length()+2, 
-					ExternalToolsImages.getImage(IExternalToolsUIConstants.IMAGE_ID_TASK), 
+					tempImage, 
 					tempRootElementName, 
 					null, 
 					tempProposalInfo);
@@ -640,7 +654,7 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
 							tempReplacementOffset, 
 							tempReplacementLength, 
 							tempElementName.length()+2, 
-							ExternalToolsImages.getImage(IExternalToolsUIConstants.IMAGE_ID_TASK), 
+							tempImage, 
 							tempElementName, 
 							null, 
 							tempProposalInfo);
@@ -1162,7 +1176,8 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
         } while (!curtarget.getName().equals(tempTargetName));
 
         
-        return tempTable;
+        // Need to reget it since tempTable hasn't been updated with Ant 1.5
+        return tempProject.getProperties();
     }
 
     protected File getEditedFile() {

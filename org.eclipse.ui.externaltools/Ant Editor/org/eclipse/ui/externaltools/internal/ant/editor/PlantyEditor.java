@@ -41,6 +41,12 @@ import org.eclipse.ui.externaltools.internal.ant.editor.xml.XmlElement;
 public class PlantyEditor extends TextEditor {
 
 	/**
+	 * Hack that helps run the tests outside of a running workbench. 
+	 * TODO: very ugly Junit Flag. better way should be found
+	 */
+	public static boolean junitTestRun = false;
+
+	/**
 	 * The tab width
 	 */
 	public static final int TAB_WIDTH = 4;

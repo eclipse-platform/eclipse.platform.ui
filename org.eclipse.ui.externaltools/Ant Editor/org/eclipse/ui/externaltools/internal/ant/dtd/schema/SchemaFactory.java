@@ -81,8 +81,10 @@ public class SchemaFactory implements DeclHandler {
 				attr.setType(type);
 			else if (type.startsWith("NOTATION")) //$NON-NLS-1$
 				enum = parseValues(type.substring("NOTATION".length()+1), ','); //$NON-NLS-1$
-			else
+			else {
+			    type = stripSurroundingParentheses(type);
 				enum = parseValues(type, '|');
+			}
 			attr.setEnum(enum);
 			
 			attr.setRequired(valueDefault == null || !valueDefault.equals("#IMPLIED")); //$NON-NLS-1$
@@ -90,6 +92,23 @@ public class SchemaFactory implements DeclHandler {
 			attr.setDefault(value);
 		}
 	}
+	
+
+    /**
+     * Strips the surrounding parentheses from <code>aString</code>.
+     * <P>
+     * i.e.: (true|false) -> true|false
+     */
+    private String stripSurroundingParentheses(String aString) {
+        if(aString.startsWith("(")) {
+            aString = aString.substring(1);
+        }
+        if(aString.endsWith(")")) {
+            aString = aString.substring(0, aString.length()-1);
+        }
+        return aString;
+    }
+	
 	
 	/**
 	 * @param eName Element name

@@ -102,7 +102,7 @@ public class PlantySaxDefaultHandler extends DefaultHandler {
      */
     public PlantySaxDefaultHandler(int aRowOfCursorPosition, int aColumnOfCursorPosition) throws ParserConfigurationException {
         super();
-        if (ExternalToolsPlugin.getDefault().isDebugging()) {
+		if (ExternalToolsPlugin.getDefault() != null && ExternalToolsPlugin.getDefault().isDebugging()) {
 			ExternalToolsPlugin.getDefault().log("PlantySaxDefaultHandler(" +aRowOfCursorPosition+ ", "+aColumnOfCursorPosition+ ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         }
         if(aRowOfCursorPosition < 0 || aColumnOfCursorPosition < 0) {
@@ -149,7 +149,7 @@ public class PlantySaxDefaultHandler extends DefaultHandler {
                 if(tempLineNr> rowOfCursorPosition ||
                     (tempLineNr == rowOfCursorPosition && tempColumnNr > columnOfCursorPosition)) {
                         parentElement = (Element)stillOpenElements.peek();
-                        if (ExternalToolsPlugin.getDefault().isDebugging()) {
+                        if (ExternalToolsPlugin.getDefault() != null && ExternalToolsPlugin.getDefault().isDebugging()) {
 							ExternalToolsPlugin.getDefault().log("PlantySaxDefaultHandler.checkForParentElement(): Parent element found: " +parentElement, null); //$NON-NLS-1$
                         }
                         return true;
@@ -179,7 +179,7 @@ public class PlantySaxDefaultHandler extends DefaultHandler {
          * string as local name.
          */
         
-        if (ExternalToolsPlugin.getDefault().isDebugging()) {
+		 if (ExternalToolsPlugin.getDefault() != null && ExternalToolsPlugin.getDefault().isDebugging()) {
 			ExternalToolsPlugin.getDefault().log("PlantySaxDefaultHandler.startElement(" +aUri+ ", " +aLocalName+ ", "+aQualifiedName+ ", "+anAttributes+ ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
         }
         if(parsingFinished) {
@@ -212,7 +212,7 @@ public class PlantySaxDefaultHandler extends DefaultHandler {
     public void endElement(String aUri, String aLocalName, String aQualifiedName)
         throws SAXException {
 
-		if (ExternalToolsPlugin.getDefault().isDebugging()) {
+			if (ExternalToolsPlugin.getDefault() != null && ExternalToolsPlugin.getDefault().isDebugging()) {
 			ExternalToolsPlugin.getDefault().log("PlantySaxDefaultHandler.endElement(" +aUri+ ", " +aLocalName+ ", "+aQualifiedName+ ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
 

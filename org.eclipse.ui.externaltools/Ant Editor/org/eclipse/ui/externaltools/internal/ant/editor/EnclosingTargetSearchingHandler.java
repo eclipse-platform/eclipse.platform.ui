@@ -51,7 +51,7 @@ public class EnclosingTargetSearchingHandler extends PlantySaxDefaultHandler {
     public void endElement(String aUri, String aLocalName, String aQualifiedName)
         throws SAXException {
 
-		if (ExternalToolsPlugin.getDefault().isDebugging()) {
+		if (ExternalToolsPlugin.getDefault() != null && ExternalToolsPlugin.getDefault().isDebugging()) {
         	ExternalToolsPlugin.getDefault().log("PlantySaxDefaultHandler.endElement(" +aUri+ ", " +aLocalName+ ", "+aQualifiedName+ ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
 
@@ -100,7 +100,7 @@ public class EnclosingTargetSearchingHandler extends PlantySaxDefaultHandler {
          * string as local name.
          */
         
-        if (ExternalToolsPlugin.getDefault().isDebugging()) {
+		 if (ExternalToolsPlugin.getDefault() != null && ExternalToolsPlugin.getDefault().isDebugging()) {
 			ExternalToolsPlugin.getDefault().log("PlantySaxDefaultHandler.startElement(" +aUri+ ", " +aLocalName+ ", "+aQualifiedName+ ", "+anAttributes+ ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
         }
         if(parsingFinished) {
@@ -177,7 +177,7 @@ public class EnclosingTargetSearchingHandler extends PlantySaxDefaultHandler {
             Element tempElement = (Element)stillOpenElements.pop();
             if(tempElement.getTagName().equals("target")) { //$NON-NLS-1$
                 parentElement = tempElement;
-                if (ExternalToolsPlugin.getDefault().isDebugging()) {
+				if (ExternalToolsPlugin.getDefault() != null && ExternalToolsPlugin.getDefault().isDebugging()) {
 					ExternalToolsPlugin.getDefault().log("EnclosingTargetSearchingHandler.checkForParentElement(): Enclosing target element found: " +parentElement, null); //$NON-NLS-1$
                 }
             }
