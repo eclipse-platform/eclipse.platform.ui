@@ -87,10 +87,13 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.IFindReplaceTargetExtension;
 import org.eclipse.jface.text.IMarkRegionTarget;
+import org.eclipse.jface.text.ISelectionValidator;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.ITextInputListener;
@@ -130,13 +133,12 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.part.EditorActionBarContributor;
-import org.eclipse.ui.part.EditorPart;
-
 import org.eclipse.ui.internal.ActionDescriptor;
 import org.eclipse.ui.internal.EditorPluginAction;
 import org.eclipse.ui.internal.texteditor.EditPosition;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
+import org.eclipse.ui.part.EditorActionBarContributor;
+import org.eclipse.ui.part.EditorPart;
 
 
 
@@ -175,8 +177,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 2.0
 	 */
 	private static final String TAG_CONTRIBUTION_TYPE= "editorContribution"; //$NON-NLS-1$
-	
-	/** 
+
+	/**
 	 * The caret width for the wide (double) caret.
 	 * Value: {@value}
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=21715
@@ -206,7 +208,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {}
 		public void inputDocumentChanged(IDocument oldInput, IDocument newInput) { inputChanged= true; }
 	}
-	
+
 	/**
 	 * Internal element state listener.
 	 */
@@ -503,8 +505,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			if (getFontPropertyPreferenceKey().equals(property)) {
 				initializeViewerFont(fSourceViewer);
 				updateCaret();
-			}
 		}
+	}
 	}
 
 	/**
@@ -815,14 +817,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * Action to toggle the insert mode. The action is checked if smart mode is
 	 * turned on.
 	 * 
-	 * @since 2.1
+	 *  @since 2.1
 	 */
 	class ToggleInsertModeAction extends ResourceAction {
 	
 		public ToggleInsertModeAction(ResourceBundle bundle, String prefix) {
 			super(bundle, prefix, IAction.AS_CHECK_BOX);
 		}
-
+		
 		/*
 		 * @see org.eclipse.jface.action.IAction#run()
 		 */
@@ -835,9 +837,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 */
 		public boolean isChecked() {
 			return fInsertMode == SMART_INSERT;
-		}
 	}
-	
+	}
+
 	/**
 	 * Action to toggle the overwrite mode.
 	 *  @since 3.0
@@ -1111,7 +1113,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * Editor specific selection provider which wraps the source viewer's selection provider.
 	 * @since 2.1
 	 */
-	class SelectionProvider implements IPostSelectionProvider {
+	class SelectionProvider implements IPostSelectionProvider, ISelectionValidator {
 	
 		/*
 		 * @see org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener(ISelectionChangedListener)
@@ -1166,7 +1168,134 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				}
 			}
 		}
+
+		/*
+		 * @see org.eclipse.jface.text.IPostSelectionValidator#isValid()
+		 * @since 3.0
+		 */
+		public boolean isValid(ISelection postSelection) {
+			return fSelectionListener != null && fSelectionListener.isValid(postSelection);
+		}
 	}
+	
+	
+	/**
+	 * Internal implementation class for a change listener.
+	 * @since 3.0
+	 */
+	protected abstract class AbstractSelectionChangedListener implements ISelectionChangedListener  {
+
+		/**
+		 * Installs this selection changed listener with the given selection provider. If
+		 * the selection provider is a post selection provider, post selection changed
+		 * events are the preferred choice, otherwise normal selection changed events
+		 * are requested.
+		 * 
+		 * @param selectionProvider
+		 */
+		public void install(ISelectionProvider selectionProvider) {
+			if (selectionProvider == null)
+				return;
+				
+			if (selectionProvider instanceof IPostSelectionProvider)  {
+				IPostSelectionProvider provider= (IPostSelectionProvider) selectionProvider;
+				provider.addPostSelectionChangedListener(this);
+			} else  {
+				selectionProvider.addSelectionChangedListener(this);
+			}
+		}
+
+		/**
+		 * Removes this selection changed listener from the given selection provider.
+		 * 
+		 * @param selectionProvider the selection provider
+		 */
+		public void uninstall(ISelectionProvider selectionProvider) {
+			if (selectionProvider == null)
+				return;
+			
+			if (selectionProvider instanceof IPostSelectionProvider)  {
+				IPostSelectionProvider provider= (IPostSelectionProvider) selectionProvider;
+				provider.removePostSelectionChangedListener(this);
+			} else  {
+				selectionProvider.removeSelectionChangedListener(this);
+			}			
+		}
+	}
+
+	/**
+	 * This selection listener allows the SelectionProvider to implement {@link ISelectionValidator}.
+	 * 
+	 * @since 3.0
+	 */
+	private class SelectionListener extends AbstractSelectionChangedListener implements IDocumentListener {
+		
+		private IDocument fDocument;
+		private final Object INVALID_SELECTION= new Object();
+		private Object fPostSelection= INVALID_SELECTION;
+		
+		/*
+		 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
+		 */
+		public synchronized void selectionChanged(SelectionChangedEvent event) {
+			fPostSelection= event.getSelection();
+		}
+
+		/*
+		 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
+		 * @since 3.0
+		 */
+		public synchronized void documentAboutToBeChanged(DocumentEvent event) {
+			fPostSelection= INVALID_SELECTION;
+		}
+
+		/*
+		 * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
+		 * @since 3.0
+		 */
+		public void documentChanged(DocumentEvent event) {
+		}
+		
+		public synchronized boolean isValid(ISelection selection) {
+			return fPostSelection != INVALID_SELECTION && fPostSelection == selection;
+		}
+		
+		public void setDocument(IDocument document) {
+			if (fDocument != null)
+				fDocument.removeDocumentListener(this);
+
+			fDocument= document;
+			if (fDocument != null)
+				fDocument.addDocumentListener(this);
+		}
+		
+		/*
+		 * @see org.eclipse.ui.texteditor.AbstractTextEditor.AbstractSelectionChangedListener#install(org.eclipse.jface.viewers.ISelectionProvider)
+		 * @since 3.0
+		 */
+		public void install(ISelectionProvider selectionProvider) {
+			super.install(selectionProvider);
+
+			if (selectionProvider != null)
+				selectionProvider.addSelectionChangedListener(this);
+		}
+		
+		/*
+		 * @see org.eclipse.ui.texteditor.AbstractTextEditor.AbstractSelectionChangedListener#uninstall(org.eclipse.jface.viewers.ISelectionProvider)
+		 * @since 3.0
+		 */
+		public void uninstall(ISelectionProvider selectionProvider) {
+			if (selectionProvider != null)
+				selectionProvider.removeSelectionChangedListener(this);
+			
+			if (fDocument != null) {
+				fDocument.removeDocumentListener(this);
+				fDocument= null;
+			}
+			super.uninstall(selectionProvider);
+		}
+	}
+
 	
 	/**
 	 * Key used to look up font preference.
@@ -1335,6 +1464,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 2.1
 	 */
 	private SelectionProvider fSelectionProvider= new SelectionProvider();
+	/**
+	 * The editor's selection listener.
+	 * @since 3.0
+	 */
+	private SelectionListener fSelectionListener;
 	/** The editor's font. */
 	private Font fFont;	/** 
 	 * The editor's foreground color.
@@ -1491,7 +1625,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 2.1
 	 */
 	private String[] fKeyBindingScopes;
-	/**
+	/** 
 	 * Whether the overwrite mode can be turned on.
 	 * @since 3.0
 	 */
@@ -1526,6 +1660,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 3.0
 	 */
 	private Caret fDefaultCaret;
+	
 	
 	/**
 	 * Creates a new text editor. If not explicitly set, this editor uses
@@ -2240,6 +2375,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			
 		getSite().setSelectionProvider(getSelectionProvider());
 		
+		fSelectionListener= new SelectionListener();
+		fSelectionListener.install(getSelectionProvider());
+		fSelectionListener.setDocument(getDocumentProvider().getDocument(getEditorInput()));		
+		
 		initializeActivationCodeTrigger();
 		
 		createNavigationActions();
@@ -2578,6 +2717,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				initializeSourceViewer(input);
 				
 			updateStatusField(ITextEditorActionConstants.STATUS_CATEGORY_ELEMENT_STATE);
+			
+			if (fSelectionListener != null)
+				fSelectionListener.setDocument(getDocumentProvider().getDocument(input));
 		}
 	}
 	
@@ -2699,7 +2841,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			fActivationCodeTrigger.uninstall();
 			fActivationCodeTrigger= null;
 		}
-		
+
+		if (fSelectionListener != null)  {
+			fSelectionListener.uninstall(getSelectionProvider());
+			fSelectionListener= null;
+		}
+
 		disposeDocumentProvider();
 		
 		if (fSourceViewer != null) {
@@ -2759,7 +2906,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		if (fConfiguration != null)
 			fConfiguration= null;
-		
+
 		super.setInput(null);		
 		
 		super.dispose();
@@ -4370,7 +4517,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		InsertMode newMode= (InsertMode) legalModes.get(i);				
 		setInsertMode(newMode);
 	}
-	
+
 	private void toggleOverwriteMode() {
 		if (fIsOverwriteModeEnabled) {
 			fIsOverwriting= !fIsOverwriting;
@@ -4397,13 +4544,13 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			legalModes.remove(mode);
 		}
 	}
-	
+
 	protected void enableOverwriteMode(boolean enable) {
 		if (fIsOverwriting && !enable)
 			toggleOverwriteMode();
 		fIsOverwriteModeEnabled= enable;
 	}
-
+	
 	private Caret createOverwriteCaret(StyledText styledText) {
 		Caret caret= new Caret(styledText, SWT.NULL);
 		GC gc= new GC(styledText);
@@ -4421,7 +4568,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		caret.setSize(width, caret.getSize().y);
 		return caret;
 	}
-	
+		
 	private Image createRawInsertModeCaretImage(StyledText styledText) {
 		
 		PaletteData caretPalette= new PaletteData(new RGB[] {new RGB (0,0,0), new RGB (255,255,255)});
@@ -4435,7 +4582,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		gc.setLineWidth(width);
 		gc.drawLine(0, widthOffset, imageData.width, widthOffset);
 		gc.drawLine(widthOffset, 0, widthOffset, imageData.height - 1);
-		gc.drawLine(0, imageData.height - 1, imageData.width - 1, imageData.height - 1);
+		gc.drawLine(0, imageData.height -1, imageData.width -1, imageData.height -1);
 		gc.dispose();
 			
 		return bracketImage;
@@ -4452,7 +4599,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			
 		return caret;
 	}
-	
+
 	private void updateCaret() {
 		
 		if (getSourceViewer() == null)
