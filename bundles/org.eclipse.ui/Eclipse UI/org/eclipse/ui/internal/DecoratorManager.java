@@ -59,16 +59,13 @@ public class DecoratorManager
 	/**
 	 * Restore the stored values from the preference
 	 * store and register the receiver as a listener
-	 * for all of the enabled decorators.
+	 * for all of the enabled decorators. The 
+	 * DecoratorDefinitions will do the creation
+	 * of decorators and update of listeners.
 	 */
 
 	public void restoreListeners() {
 		applyDecoratorsPreference();
-		for (int i = 0; i < definitions.length; i++) {
-			//Add a listener if it is an enabled option
-			if (definitions[i].isEnabled())
-				definitions[i].addListener(this);
-		}
 	}
 
 	/**

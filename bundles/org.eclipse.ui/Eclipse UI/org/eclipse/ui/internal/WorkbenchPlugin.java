@@ -433,6 +433,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IWorkbenchPreferenceConstants.ALTERNATE_OPEN_NEW_PERSPECTIVE, IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
 		store.setDefault(IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE, IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
 		store.setDefault(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID, IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID);
+		
+		store.addPropertyChangeListener(new PlatformUIPreferenceListener());
 	}
 
 	private void initializeFont(String fontKey, FontRegistry registry, IPreferenceStore store) {

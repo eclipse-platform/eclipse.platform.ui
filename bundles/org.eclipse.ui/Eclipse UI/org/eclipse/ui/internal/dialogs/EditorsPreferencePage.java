@@ -104,6 +104,8 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 			String enc = encodingCombo.getText();
 			resourcePrefs.setValue(ResourcesPlugin.PREF_ENCODING, enc);
 		}
+		
+		ResourcesPlugin.getPlugin().savePluginPreferences();
 
 		acceleratorPerformOk(store);		
 		
