@@ -10,30 +10,23 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.ui.IInputProvider;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * 
  * @since 3.0
  */
 public class NavigatorDescriptor {
-	private static final String TAG_CONTENT = "content"; //$NON-NLS-1$
+	private static final String CHILD_CONTENT = "content"; //$NON-NLS-1$
+	private static final String CHILD_ROOT_CONTENT = "rootContent"; //$NON-NLS-1$
 	private static final String ATT_TARGET_ID = "targetId"; //$NON-NLS-1$
-	private static final String ATT_INPUT = "input"; //$NON-NLS-1$	
 
 	private String targetId;
-	private String input;
 	private IConfigurationElement configElement;
-	private ContentDescriptor contentDescriptor;
+	private NavigatorContentDescriptor contentDescriptor;
+	private NavigatorRootContentDescriptor rootContentDescriptor;
 
 /**
  * Creates a descriptor from a configuration element.
@@ -47,26 +40,14 @@ public NavigatorDescriptor(IConfigurationElement configElement) throws Workbench
 }
 /**
  */
-public ContentDescriptor getContentDescriptor() {
+public NavigatorContentDescriptor getContentDescriptor() {
 	return contentDescriptor;
+}
+public NavigatorRootContentDescriptor getRootContentDescriptor() {
+	return rootContentDescriptor;
 }
 public ITreeContentProvider getContentProvider() {
 	return contentDescriptor.createContentProvider();
-}
-/**
- */
-public IInputProvider getInputProvider() {
-	Object inputProvider = null;
-
-	if (input == null)
-		return null;
-	try {
-		inputProvider = WorkbenchPlugin.createExtension(configElement, ATT_INPUT);
-	} catch (CoreException exception) {
-		WorkbenchPlugin.log("Unable to create input provider: " + //$NON-NLS-1$
-			input, exception.getStatus());
-	}
-	return (IInputProvider) inputProvider;		
 }
 /**
  */
@@ -74,13 +55,7 @@ public String getTargetId() {
 	return targetId;
 }
 
-/**
- */
-public String[] getNatures() {
-	List natures = contentDescriptor.getNatures();
-	return (String[]) natures.toArray(new String[natures.size()]);
-}
-	/*
+/*
 	 * Performance: Should create a lookup table indexed by nature.
 	 */
 	/*public IStructuredContentProvider getContentProvider(IProjectNature[] natures) {
@@ -128,16 +103,13 @@ public String[] getNatures() {
 	*/
 private void readConfigElement() throws WorkbenchException {
 	targetId = configElement.getAttribute(ATT_TARGET_ID);
-	input = configElement.getAttribute(ATT_INPUT);
 			
-	IConfigurationElement [] children = configElement.getChildren(TAG_CONTENT);
+	IConfigurationElement[] children = configElement.getChildren(CHILD_CONTENT);
 	if (children.length > 0)
-		contentDescriptor = new ContentDescriptor(children[0]);
-	else
-		throw new WorkbenchException(
-			"Unable to process element: " +//$NON-NLS-1$
-			TAG_CONTENT +
-			" in navigator extension: " +//$NON-NLS-1$
-			configElement.getDeclaringExtension().getUniqueIdentifier());				
+		contentDescriptor = new NavigatorContentDescriptor(children[0]);
+
+	children = configElement.getChildren(CHILD_ROOT_CONTENT);
+	if (children.length > 0)
+		rootContentDescriptor = new NavigatorRootContentDescriptor(children[0]);
 }
 }

@@ -10,61 +10,34 @@
  *******************************************************************************/
 package org.eclipse.ui.views.navigator;
 
-import java.util.Iterator;
-import java.util.Set;
-import java.util.TreeSet;
-
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.internal.ActionExpression;
-import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.registry.NavigatorContentDescriptor;
-import org.eclipse.ui.internal.registry.NavigatorRegistry;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * Provides tree contents for objects that have the IWorkbenchAdapter
  * adapter registered. 
  */
-public class NavigatorContentProvider implements ITreeContentProvider, IResourceChangeListener {
-	private Navigator navigator;
-	private NavigatorRegistry registry = WorkbenchPlugin.getDefault().getNavigatorRegistry();
-	private String partId;
-		
-public NavigatorContentProvider(Navigator navigator) {
-	partId = navigator.getSite().getId();
-	this.navigator = navigator;
-}
-/**
- * Note: This method is for internal use only. Clients should not call this method.
- */
-protected static Object[] concatenate(Object[] a1, Object[] a2) {
-	int a1Len= a1.length;
-	int a2Len= a2.length;
-	Object[] res= new Object[a1Len + a2Len];
-	System.arraycopy(a1, 0, res, 0, a1Len);
-	System.arraycopy(a2, 0, res, a1Len, a2Len); 
-	return res;
-}
+public class ProjectContentProvider implements ITreeContentProvider, IResourceChangeListener {
+	protected Viewer viewer;
 
 /* (non-Javadoc)
  * Method declared on IContentProvider.
  */
 public void dispose() {
-	if (navigator.getViewer() != null) {
-		Object obj = navigator.getViewer().getInput();
+	if (viewer != null) {
+		Object obj = viewer.getInput();
 		if (obj instanceof IWorkspace) {
 			IWorkspace workspace = (IWorkspace) obj;
 			workspace.removeResourceChangeListener(this);
@@ -90,62 +63,42 @@ protected IWorkbenchAdapter getAdapter(Object o) {
  * Method declared on ITreeContentProvider.
  */
 public Object[] getChildren(Object element) {
-	NavigatorContentDescriptor[] descriptors = registry.getDescriptors(partId);
-	Object[] elements = new Object[0];
-	NavigatorContentDescriptor defaultContentDescriptor = null;
-	NavigatorContentDescriptor contentDescriptor = null;
-	int priority = 0;
-	
-	for (int i = 0; i < descriptors.length; i++) {
-		NavigatorContentDescriptor descriptor = descriptors[i];
-		ActionExpression enablement = descriptor.getEnableExpression(); 
-		
-		if (enablement == null)
-			defaultContentDescriptor = descriptor;
-		else
-		if (enablement.isEnabledFor(element) && descriptor.getPriority() > priority) {
-			priority = descriptor.getPriority();
-			contentDescriptor = descriptor;
-		}
-	}
-	if (contentDescriptor == null)
-		contentDescriptor = defaultContentDescriptor;
-		
-	if (contentDescriptor != null) {
-		elements = contentDescriptor.createContentProvider().getChildren(element);
-		setContentName(element, contentDescriptor.getName());
-	}
-	return elements;	
-}
-private IProject getProject(Object element) {
-	IProject project = null;
-	if (element instanceof IProject) {
-		project = (IProject) element;
-	}
-	else 
-	if (element instanceof IAdaptable) {
-		project = (IProject) ((IAdaptable) element).getAdapter(IProject.class);
-	}	
-	return project;
-}
-private IResource getResource(Object element) {
-	IResource resource = null;
-	if (element instanceof IResource) {
-		resource = (IResource) element;
-	}
-	else 
-	if (element instanceof IAdaptable) {
-		resource = (IResource) ((IAdaptable) element).getAdapter(IResource.class);
-	}	
-	return resource;
+	return new Object[0];
 }
 /* (non-Javadoc)
  * Method declared on IStructuredContentProvider.
  */
 public Object[] getElements(Object element) {
-	ITreeContentProvider contentProvider = registry.getRootContentProvider(partId);
+	IWorkbenchAdapter adapter;
 	
-	return contentProvider.getElements(element);
+	adapter = getAdapter(getInput(element));
+	if (adapter != null) {
+		return adapter.getChildren(element);
+	}
+	return new Object[0];
+}
+IAdaptable getInput(Object element) {
+	IResource resource = null;
+
+	if (element instanceof IResource) {
+		resource = (IResource) element;
+	} else if (element instanceof IAdaptable){
+		resource = (IResource) ((IAdaptable) element).getAdapter(IResource.class);
+	}
+	if (resource != null) {
+		switch (resource.getType()) {
+			case IResource.FILE :
+				return resource.getParent();
+			case IResource.FOLDER :
+			case IResource.PROJECT :
+			case IResource.ROOT :
+				return (IContainer) resource;
+			default :
+				// Unknown resource type.  Fall through.
+				break;
+		}
+	}
+	return ResourcesPlugin.getWorkspace().getRoot();	
 }
 /* (non-Javadoc)
  * Method declared on ITreeContentProvider.
@@ -161,15 +114,13 @@ public Object getParent(Object element) {
  * Method declared on ITreeContentProvider.
  */
 public boolean hasChildren(Object element) {
-	return getChildren(element).length > 0;
+	return false;
 }
 /* (non-Javadoc)
  * Method declared on IContentProvider.
  */
 public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-	if (navigator.getViewer() != viewer)
-		return;
-	
+	this.viewer = viewer;
 	IWorkspace oldWorkspace = null;
 	IWorkspace newWorkspace = null;
 	if (oldInput instanceof IWorkspace) {
@@ -196,7 +147,6 @@ public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
  * Process a resource delta.  
  */
 protected void processDelta(IResourceDelta delta) {
-	TreeViewer viewer = navigator.getViewer();
 	// This method runs inside a syncExec.  The widget may have been destroyed
 	// by the time this is run.  Check for this and do nothing if so.
 	Control ctrl = viewer.getControl();
@@ -214,7 +164,7 @@ protected void processDelta(IResourceDelta delta) {
 		delta.getAffectedChildren(IResourceDelta.CHANGED);
 	for (int i = 0; i < affectedChildren.length; i++) {
 		if ((affectedChildren[i].getFlags() & IResourceDelta.TYPE) != 0) {
-			viewer.refresh(resource);
+			((StructuredViewer) viewer).refresh(resource);
 			return;
 		}
 	}
@@ -226,11 +176,11 @@ protected void processDelta(IResourceDelta delta) {
 	if ((changeFlags
 		& (IResourceDelta.OPEN | IResourceDelta.SYNC))
 		!= 0) {
-		viewer.update(resource, null);
+		((StructuredViewer) viewer).update(resource, null);
 	}
 	// Replacing a resource may affect its label and its children
 	if ((changeFlags & IResourceDelta.REPLACED) != 0) {
-		viewer.refresh(resource, true);
+		((StructuredViewer) viewer).refresh(resource, true);
 		return;
 	}
 
@@ -247,7 +197,11 @@ protected void processDelta(IResourceDelta delta) {
 		Object[] affected = new Object[affectedChildren.length];
 		for (int i = 0; i < affectedChildren.length; i++)
 			affected[i] = affectedChildren[i].getResource();
-		viewer.remove(affected);
+		if (viewer instanceof AbstractTreeViewer) {
+			((AbstractTreeViewer) viewer).remove(affected);
+		} else {
+			((StructuredViewer) viewer).refresh(resource);
+		}
 	}
 
 	// Handle added children. Issue one update for all insertions.
@@ -256,7 +210,12 @@ protected void processDelta(IResourceDelta delta) {
 		Object[] affected = new Object[affectedChildren.length];
 		for (int i = 0; i < affectedChildren.length; i++)
 			affected[i] = affectedChildren[i].getResource();
-		viewer.add(resource, affected);
+		if (viewer instanceof AbstractTreeViewer) {
+			((AbstractTreeViewer) viewer).add(resource, affected);
+		}
+		else {
+			((StructuredViewer) viewer).refresh(resource);
+		}
 	}
 }
 /**
@@ -267,7 +226,7 @@ protected void processDelta(IResourceDelta delta) {
  */
 public void resourceChanged(final IResourceChangeEvent event) {
 	final IResourceDelta delta = event.getDelta();
-	Control ctrl = navigator.getViewer().getControl();
+	Control ctrl = viewer.getControl();
 	if (ctrl != null && !ctrl.isDisposed()) {
 		// Do a sync exec, not an async exec, since the resource delta
 		// must be traversed in this method.  It is destroyed
@@ -277,22 +236,6 @@ public void resourceChanged(final IResourceChangeEvent event) {
 				processDelta(delta);
 			}
 		});
-	}
-}
-private void setContentName(Object[] elements, String name) {
-	for (int i = 0; i < elements.length; i++) {
-		setContentName(elements[i], name);
-	}
-}
-private void setContentName(Object element, String name) {
-	IResource resource = getResource(element);
-	if (resource != null) {
-		try {
-			resource.setSessionProperty(new QualifiedName(null, "contentProvider"), name);
-		}
-		catch (CoreException e) {
-			// TODO: handle exception
-		}
 	}
 }
 }

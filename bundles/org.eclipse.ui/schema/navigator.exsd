@@ -47,24 +47,14 @@
       </annotation>
       <complexType>
          <sequence>
-            <element ref="content"/>
+            <element ref="content" minOccurs="0" maxOccurs="1"/>
+            <element ref="rootContent" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="targetId" type="string" use="required">
             <annotation>
                <documentation>
                   Part id of the targeted Navigator view part. E.g., org.eclipse.ui.views.Navigator
                </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="input" type="string">
-            <annotation>
-               <documentation>
-                  The input element provider. Used to query root elements from the content provider defined in the &lt;code&gt;content&lt;/code&gt; tag. 
-To query root elements the Navigator will pass the workspace root (&lt;code&gt;IWorkspaceRoot&lt;/code&gt;) to the input provider declared here and use the result to get the root elements from the content provider.
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.ui.IInputProvider"/>
-               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -78,7 +68,7 @@ To query root elements the Navigator will pass the workspace root (&lt;code&gt;I
       </annotation>
       <complexType>
          <sequence>
-            <element ref="nature" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="enablement" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -97,28 +87,138 @@ To query root elements the Navigator will pass the workspace root (&lt;code&gt;I
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  Content provider class implementing &lt;code&gt;org.eclipse.jface.viewers.ITreeContentProvider&lt;/code&gt;
+                  Content provider class implementing &lt;code&gt;&lt;/code&gt;
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jface.viewers.ITreeContentProvider"/>
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="priority" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
-   <element name="nature">
+   <element name="enablement">
       <annotation>
          <documentation>
-            A nature that the content provider supplies projects for.
+            This element is used to define the enablement for the action.
          </documentation>
       </annotation>
+      <complexType>
+         <choice>
+            <element ref="and"/>
+            <element ref="or"/>
+            <element ref="not"/>
+            <element ref="objectState"/>
+         </choice>
+      </complexType>
+   </element>
+
+   <element name="and">
+      <annotation>
+         <documentation>
+            This element represent a boolean AND operation on the result of evaluating it&apos;s two sub-element expressions.
+         </documentation>
+      </annotation>
+      <complexType>
+         <choice minOccurs="2" maxOccurs="2">
+            <element ref="and"/>
+            <element ref="or"/>
+            <element ref="not"/>
+            <element ref="objectState"/>
+         </choice>
+      </complexType>
+   </element>
+
+   <element name="or">
+      <annotation>
+         <documentation>
+            This element represent a boolean OR operation on the result of evaluating it&apos;s two sub-element expressions.
+         </documentation>
+      </annotation>
+      <complexType>
+         <choice minOccurs="2" maxOccurs="2">
+            <element ref="and"/>
+            <element ref="or"/>
+            <element ref="not"/>
+            <element ref="objectState"/>
+         </choice>
+      </complexType>
+   </element>
+
+   <element name="not">
+      <annotation>
+         <documentation>
+            This element represent a boolean NOT operation on the result of evaluating it&apos;s sub-element expressions.
+         </documentation>
+      </annotation>
+      <complexType>
+         <choice>
+            <element ref="and"/>
+            <element ref="or"/>
+            <element ref="not"/>
+            <element ref="objectState"/>
+         </choice>
+      </complexType>
+   </element>
+
+   <element name="objectState">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
+         <documentation>
+            This element is used to evaluate the attribute state of each object in the current selection. If each object in the selection has the specified attribute state, the expression is evaluated as true. To evaluate this type of expression, each object in the selection must implement, or adapt to, &lt;samp&gt;org.eclipse.ui.IActionFilter&lt;/samp&gt; interface.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the name of an object&apos;s attribute. Acceptable names reflect the object type, and should be publicly declared by the plug-in where the object type is declared.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="value" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the required value of the object&apos;s attribute. The acceptable values for the object&apos;s attribute should be publicly declared.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="rootContent">
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  Nature id of the supplied projects.
+                  
                </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.jface.viewers.ITreeContentProvider"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

@@ -10,34 +10,26 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.ui.model.WorkbenchContentProvider;
 
 /**
  */
 public class NavigatorRegistry {
 	private Map navigators;
+	private Map rootContentDescriptors;
 
-	private class NatureComparator implements Comparator {
-		public int compare(Object arg0, Object arg1) {
-			if (arg0 instanceof NavigatorDescriptor == false || arg1 instanceof NavigatorDescriptor == false)
-				return 0;
-			
-			NavigatorDescriptor descriptor0 = (NavigatorDescriptor) arg0;
-			NavigatorDescriptor descriptor1 = (NavigatorDescriptor) arg1;
-			
-			return descriptor1.getNatures().length - descriptor0.getNatures().length; 
-		}
-	}
-		
-/**
+	/**
  * Create a new ViewRegistry.
  */
 public NavigatorRegistry() {
 	navigators = new HashMap();
+	rootContentDescriptors = new HashMap();
 }
 
 /**
@@ -45,28 +37,18 @@ public NavigatorRegistry() {
 public void add(NavigatorDescriptor descriptor) {
 	String targetId = descriptor.getTargetId();
 	Set descriptors = (Set) navigators.get(targetId);
+	NavigatorRootContentDescriptor rootContentDescriptor = descriptor.getRootContentDescriptor();
+	NavigatorContentDescriptor contentDescriptor = descriptor.getContentDescriptor();
 	
-	if (descriptors == null) {
-		descriptors = new TreeSet(new NatureComparator());
-		navigators.put(targetId, descriptors);
-	}
-	List newNatures = descriptor.getContentDescriptor().getNatures();
-	if (newNatures.isEmpty() == false) {		
-		Iterator iterator = descriptors.iterator();
-		while (iterator.hasNext()) {
-			NavigatorDescriptor element = (NavigatorDescriptor) iterator.next();
-			List natures = element.getContentDescriptor().getNatures();
-			if (natures.isEmpty()) {
-				// no content provider for given natures. Extension adds content for new/different natures
-				break;
-			}
-			if (natures.containsAll(newNatures) && natures.size() == newNatures.size()) {
-				// extension adds content for natures that already have a content provider
-				return;
-			}
+	if (contentDescriptor != null) {
+		if (descriptors == null) {
+			descriptors = new HashSet();
+			navigators.put(targetId, descriptors);
 		}
+		descriptors.add(contentDescriptor);
 	}
-	descriptors.add(descriptor);	
+	if (rootContentDescriptor != null)
+		rootContentDescriptors.put(targetId, rootContentDescriptor);	
 }
 /**
  * Find a descriptor in the registry.
@@ -74,73 +56,18 @@ public void add(NavigatorDescriptor descriptor) {
 private Collection find(String targetId) {
 	return (Collection) navigators.get(targetId);	
 }
-private ContentDescriptor findBestContent(List contentDescriptors, String[] natureIds)  {
-	Iterator iterator = contentDescriptors.iterator();
-	ContentDescriptor bestDescriptor = null;
-	int bestAvailableNatureCount = 0;
-	int bestExtraNatureCount = Integer.MAX_VALUE;
+public ITreeContentProvider getRootContentProvider(String partId) {
+	NavigatorRootContentDescriptor rootDescriptor = (NavigatorRootContentDescriptor) rootContentDescriptors.get(partId);
+	
+	if (rootDescriptor != null)
+		return rootDescriptor.createContentProvider();
 		
-	while (iterator.hasNext()) {
-		ContentDescriptor descriptor = (ContentDescriptor) iterator.next();
-		List targetNatures = descriptor.getNatures();
-		int availableNatureCount = 0;
-
-		for (int i = 0; i < natureIds.length; i++) {
-			if (targetNatures.contains(natureIds[i]))
-				availableNatureCount++;
-		}
-		if (availableNatureCount > bestAvailableNatureCount) {
-			bestDescriptor = descriptor;
-			bestAvailableNatureCount = availableNatureCount;
-			bestExtraNatureCount = targetNatures.size() - availableNatureCount;
-		}
-		else 
-		if (availableNatureCount > 0 && 
-				availableNatureCount == bestAvailableNatureCount &&
-				targetNatures.size() - availableNatureCount < bestExtraNatureCount) {
-			//content descriptor supports same number of natures as current best descriptor
-			//but has fewer extra natures that are not requested. Prefer this one.
-			bestDescriptor = descriptor;
-			bestAvailableNatureCount = availableNatureCount;
-			bestExtraNatureCount = targetNatures.size() - availableNatureCount;
-		}
-	}
-	return bestDescriptor;
+	return null;
 }
-public ITreeContentProvider getContentProvider(String targetId, String[] natureIds) {
-	Collection descriptors = find(targetId);	//TODO: handle null descriptor
-	Iterator iterator = descriptors.iterator();
-	ContentDescriptor bestContent = null;
-	List naturesList = new ArrayList();
-	List contentDescriptors = new ArrayList();
-	
-	for (int i = 0; i < natureIds.length; i++)
-		naturesList.add(natureIds[i]);
-	
-	while (iterator.hasNext() && bestContent == null)  {
-		NavigatorDescriptor descriptor = (NavigatorDescriptor) iterator.next();	
-		ContentDescriptor contentDescriptor = descriptor.getContentDescriptor();
-		if (naturesList.isEmpty()) {
-			if (contentDescriptor.getNatures().isEmpty())
-				bestContent = contentDescriptor;
-		}
-		else
-		if (contentDescriptor.getNatures().containsAll(naturesList))
-			bestContent = contentDescriptor;
-		else 
-			contentDescriptors.add(contentDescriptor);
-	}
-	if (bestContent == null && naturesList.isEmpty() == false) {	
-		bestContent = findBestContent(contentDescriptors, natureIds);
-	}
-	if (bestContent != null)
-		return bestContent.createContentProvider();
-	return new WorkbenchContentProvider();
-}
-public NavigatorDescriptor[] getDescriptors(String partId) {
+public NavigatorContentDescriptor[] getDescriptors(String partId) {
 	Collection descriptors = find(partId);
 	
-	return (NavigatorDescriptor[]) descriptors.toArray(new NavigatorDescriptor[descriptors.size()]); //TODO: handle null descriptor (no extension for targeted view)
+	return (NavigatorContentDescriptor[]) descriptors.toArray(new NavigatorContentDescriptor[descriptors.size()]); //TODO: handle null descriptor (no extension for targeted view)
 }
 
 /*
