@@ -15,7 +15,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.ListIterator;
 
+import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.CoolBar;
@@ -23,8 +27,6 @@ import org.eclipse.swt.widgets.CoolItem;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
-
-import org.eclipse.jface.util.Assert;
 
 /**
  * A cool bar manager is a contribution manager which realizes itself and its items
@@ -120,9 +122,30 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
 			coolBar.setLocked(false);
 			coolBar.addListener(SWT.Resize, new Listener() {
 				public void handleEvent(Event event) {
-					coolBar.getParent().layout();
+					coolBar.getShell().layout(true);
+					
 				}
 			});
+			
+			coolBar.getShell().addListener(SWT.Resize, new Listener() {
+				public void handleEvent(Event event) {
+					coolBar.getShell().layout(false);
+					
+					//TODO: Temporary code for resize issues
+					FormData data = (FormData) coolBar.getParent().getLayoutData();
+					if(data == null)
+						return;
+					FormAttachment attach = data.left;
+					int width = coolBar.getShell().getClientArea().width;
+					if (attach != null && attach.control != null) {
+						Rectangle rect = attach.control.getBounds();
+						width -= rect.x + rect.width;
+					}
+					data.width = width;
+					
+				}
+			});
+				
 			update(false);
 		}
 		return coolBar;
