@@ -3,12 +3,10 @@
 <schema targetNamespace="org.eclipse.debug.core">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.debug.core" id="memoryRenderings" name="Rendering Extension"/>
+         <meta.schema plugin="org.eclipse.debug.core" id="memoryRenderings" name="Memory Renderings"/>
       </appInfo>
       <documentation>
-         This in an internal extension point that allows plugins to define renderings for memory blocks. This extension point is being released for internal use only in Eclipse 3.0, and may become public API in a future release. A rendering is a UI representation of a memory block.  In addition to the HEX representation created by default in the Memory View, a memory block can be presented in other formats.  For example, the raw data of a memory block can be rendered in to text and displayed as ASCII strings.  The data can also be rendered into numerical values and displayed as integer or decimal numbers.
-
-This extension point allows plugins to define renderings suitable for their needs.  They can also define their own rendering views to display the renderings they define.
+         Allows plug-ins to contribute renderings for memory blocks. A rendering translates raw bytes of a memory block into text that can be displayed in the memory view. The debug platform provides a HEX memory rendering. NOTE: this extension point was provided in the 3.0 release as experimental API, subject to change, and became public API in the 3.1 release.
       </documentation>
    </annotation>
 
@@ -16,8 +14,8 @@ This extension point allows plugins to define renderings suitable for their need
       <complexType>
          <choice>
             <element ref="rendering" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="default_renderings" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="rendering_binding" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="default_renderings" minOccurs="0" maxOccurs="unbounded"/>
          </choice>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -46,33 +44,31 @@ This extension point allows plugins to define renderings suitable for their need
    <element name="rendering">
       <annotation>
          <documentation>
-            This element defines a rendering.  A rendering is comprised of an id, a name, optionally, a rendering factory, and a list of rendering properties.
+            This element defines a rendering.  A rendering is comprised of an id, a name, an optional rendering factory, and an optional list of rendering properties.
          </documentation>
       </annotation>
       <complexType>
          <sequence>
-            <choice>
-               <element ref="rendering_property" minOccurs="0" maxOccurs="unbounded"/>
-            </choice>
+            <element ref="rendering_property" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="renderingId" type="string" use="required">
             <annotation>
                <documentation>
-                  Required unique identifier for the rendering.
+                  unique identifier for this rendering
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  Required name of the rendering
+                  human-readable name of this rendering
                </documentation>
             </annotation>
          </attribute>
          <attribute name="renderingFactory" type="string">
             <annotation>
                <documentation>
-                  Optional field for specifying a class that implements IRenderingFactory.  IRenderingFactory is for creating an IMemoryRendering object.  If this field is not defined, then a default rendering factory will be used.  MemoryRendering will be created and stored in the memory rendering manager.
+                  optional fully qualified name of the Java class that implements &lt;code&gt;org.eclipse.debug.core.memory.IMemoryRenderingFactory&lt;/code&gt;.  When unspecified, a default rendering factory will be used.
                </documentation>
             </annotation>
          </attribute>
@@ -82,52 +78,21 @@ This extension point allows plugins to define renderings suitable for their need
    <element name="rendering_property">
       <annotation>
          <documentation>
-            For specifying rendering specific properties.
+            Specifies rendering specific properties.
          </documentation>
       </annotation>
       <complexType>
-         <attribute name="renderingId" type="string" use="required">
-            <annotation>
-               <documentation>
-                  Rendering this property belongs to.  The rendering must be defined before the property.
-               </documentation>
-            </annotation>
-         </attribute>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  Name of the property
+                  human-readable name of this property
                </documentation>
             </annotation>
          </attribute>
          <attribute name="value" type="string" use="required">
             <annotation>
                <documentation>
-                  Value of this property
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="default_renderings">
-      <annotation>
-         <documentation>
-            Default renderings to create when an object of &quot;memoryBlockClass&quot; is created.
-         </documentation>
-      </annotation>
-      <complexType>
-         <attribute name="memoryBlockClass" type="string" use="required">
-            <annotation>
-               <documentation>
-                  Name of the memory block class.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="renderingIds" type="string" use="required">
-            <annotation>
-               <documentation>
-                  List of renderings to be created when a memory block of type &quot;memboryBlockClass&quot; is created.  Sepcify rendering ids and delimit them with comma.  The rendering will not be added if its rendering id is not one of the listed valid renderings specified in rendering_binding.
+                  value of this property
                </documentation>
             </annotation>
          </attribute>
@@ -137,21 +102,59 @@ This extension point allows plugins to define renderings suitable for their need
    <element name="rendering_binding">
       <annotation>
          <documentation>
-            Binds a memory block with a list of renderings.  Allows plugins to define a list of valid renderings for their memory blocks.
+            Binds a type of memory block with available renderings.
          </documentation>
       </annotation>
       <complexType>
-         <attribute name="memoryBlockClass" type="string" use="required">
+         <attribute name="memoryBlockTypeId" type="string" use="required">
             <annotation>
                <documentation>
-                  Class name of the memory block to bind the renderings to.
+                  identifies the type of memory block this binding is for. Corresponds to the identifier returned by &lt;code&gt;IExtendedMemoryBlock.getMemoryBlockType()&lt;/code&gt;.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="renderingIds" type="string" use="required">
             <annotation>
                <documentation>
-                  List of renderings valid for the memory block.  Delimit rendering ids with comma.
+                  comma delimited list of memory renderings available for the associated type of memory block
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="memoryBlockClass" type="string">
+            <annotation>
+               <documentation>
+                  fully qualified name of the Java class implementing a memory block. This attribute is &lt;b&gt;deprecated&lt;/b&gt; in release 3.1, and a &lt;code&gt;memoryBlockTypeId&lt;/code&gt; must be provided instead.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="default_renderings">
+      <annotation>
+         <documentation>
+            Specifies the default renderings to create for a specific type of memory block.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="memoryBlockTypeId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  identifies the type of memory block this default renderings list is for. Corresponds to the identifier returned by &lt;code&gt;IExtendedMemoryBlock.getMemoryBlockType()&lt;/code&gt;.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="renderingIds" type="string" use="required">
+            <annotation>
+               <documentation>
+                  comma delimited list of of memory renderings to be created by default for memory blocks of the associated type.  Memory renderings are specified via their &lt;code&gt;renderingId&lt;/code&gt;. An equivalent rendering binding must exist for a default rendering to be considered.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="memoryBlockClass" type="string">
+            <annotation>
+               <documentation>
+                  fully qualified name of the Java class implementing a memory block. This attribute is &lt;b&gt;deprecated&lt;/b&gt; in release 3.1, and a &lt;code&gt;memoryBlockTypeId&lt;/code&gt; must be provided instead.
                </documentation>
             </annotation>
          </attribute>
