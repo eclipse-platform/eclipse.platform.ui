@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin
-  name="Eclipse Core Runtime"
+  name="Core Runtime"
   id="org.eclipse.core.runtime"
   version="0.9"
   provider-name="Object Technology International, Inc.">
