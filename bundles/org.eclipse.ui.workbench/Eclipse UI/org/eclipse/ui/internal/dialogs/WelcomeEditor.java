@@ -61,6 +61,9 @@ public class WelcomeEditor extends EditorPart {
 	private boolean mouseDown = false;
 	private boolean dragEvent = false;
 	
+	private StyledText firstText, lastText;
+	private boolean nextTabAbortTraversal, previousTabAbortTraversal = false;
+	
 	
 /**
  * Create a new instance of the welcome editor
@@ -221,9 +224,17 @@ private void addListeners(StyledText styledText) {
 			case SWT.TRAVERSE_TAB_NEXT:
 				// Handle Ctrl-Tab
 				if ((e.stateMask & SWT.CTRL) != 0) {
-					StyledText nextText = nextText(text);
-					focusOn(nextText,0);
-					e.doit = true;
+					if (e.widget == lastText)
+						return;
+					else {
+						e.doit = false;
+						nextTabAbortTraversal = true;
+						lastText.traverse(SWT.TRAVERSE_TAB_NEXT);
+						return;
+					}
+				}
+				if (nextTabAbortTraversal) {
+					nextTabAbortTraversal = false;
 					return;
 				}
 				// Find the next link in current widget, if applicable
@@ -246,9 +257,17 @@ private void addListeners(StyledText styledText) {
 			case SWT.TRAVERSE_TAB_PREVIOUS:
 				// Handle Ctrl-Shift-Tab
 				if ((e.stateMask & SWT.CTRL) != 0) {
-					StyledText previousText = previousText(text);
-					focusOn(previousText,0);
-					e.doit = true;
+					if (e.widget == firstText)
+						return;
+					else {
+						e.doit = false;
+						previousTabAbortTraversal = true;
+						firstText.traverse(SWT.TRAVERSE_TAB_PREVIOUS);
+						return;
+					}
+				}
+				if (previousTabAbortTraversal) {
+					previousTabAbortTraversal = false;
 					return;
 				}
 				// Find the previous link in current widget, if applicable
@@ -404,6 +423,7 @@ private Composite createInfoArea(Composite parent) {
 		gd.horizontalSpan = 2;
 		spacer.setLayoutData(gd);
 	}
+	firstText = sampleStyledText;
 
 	// Create the welcome items
 	WelcomeItem[] items = getItems();
@@ -438,6 +458,7 @@ private Composite createInfoArea(Composite parent) {
 		gd.horizontalSpan = 2;
 		spacer.setLayoutData(gd);
 	}
+	lastText = sampleStyledText;
 	this.scrolledComposite.setContent(infoArea);
 	Point p = infoArea.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 	this.scrolledComposite.setMinHeight(p.y);
