@@ -135,10 +135,7 @@ public class InternalAntRunner {
     	try {
     		new InternalAntRunner().run(getArrayList(args));
     	} catch (Throwable t) {
-    		 String message = t.getMessage();
-	        if (message != null) {
-	            System.err.println(message);
-	        }
+    	    t.printStackTrace();
     		System.exit(1);
     	}
 		System.exit(0);
@@ -306,7 +303,6 @@ public class InternalAntRunner {
 		PrintStream originalOut = System.out;
 		InputStream originalIn= System.in;
 		
-		SecurityManager originalSM= System.getSecurityManager();
 		scriptExecuted= true;
 		try {
 			if (argList != null && (argList.remove("-projecthelp") || argList.remove("-p"))) { //$NON-NLS-1$ //$NON-NLS-2$
@@ -381,8 +377,6 @@ public class InternalAntRunner {
 				printArguments(getCurrentProject());
 			}
 			
-			System.setSecurityManager(new AntSecurityManager(originalSM));
-			
 			if (targets == null) {
                 targets= new Vector(1);
             }
@@ -390,17 +384,12 @@ public class InternalAntRunner {
 			    targets.add(getCurrentProject().getDefaultTarget());
 			}
 			getCurrentProject().executeTargets(targets);
-		} catch (AntSecurityException e) {
-			//expected
-		} catch (Throwable e) {
+        } catch (Throwable e) {
 			error = e;
 		} finally {
 			System.setErr(originalErr);
 			System.setOut(originalOut);
 			System.setIn(originalIn);
-			if (System.getSecurityManager() instanceof AntSecurityManager) {
-				System.setSecurityManager(originalSM);
-			}
 			
 			if (!projectHelp) {				
 				fireBuildFinished(getCurrentProject(), error);
