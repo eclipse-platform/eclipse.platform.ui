@@ -11,7 +11,13 @@
 package org.eclipse.ui.examples.rcp.browser;
 
 import org.eclipse.jface.util.Assert;
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
@@ -34,6 +40,36 @@ public class BrowserAdvisor extends WorkbenchAdvisor {
 		// do nothing
 	}
 
+	public void createWindowContents(IWorkbenchWindowConfigurer configurer, Shell shell) {
+	    Menu menuBar = configurer.createMenuBar();
+	    shell.setMenuBar(menuBar);
+	    
+	    GridLayout shellLayout = new GridLayout();
+	    shellLayout.marginWidth = 0;
+	    shellLayout.marginHeight = 0;
+	    shellLayout.verticalSpacing = 0;
+	    shell.setLayout(shellLayout);
+
+		if (!"carbon".equals(SWT.getPlatform())) { //$NON-NLS-1$
+		    Label sep1 = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
+		    sep1.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+		}
+	    Control coolBar = configurer.createCoolBarControl(shell);
+	    coolBar.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+
+	    Label sep2 = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
+	    sep2.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+	    
+	    Control pageComposite = configurer.createPageComposite(shell);
+	    pageComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
+
+	    Label sep3 = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
+	    sep3.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+	    Control statusLine = configurer.createStatusLineControl(shell);
+	    statusLine.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+	    shell.layout(true);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.application.WorkbenchAdvisor
 	 */

@@ -30,7 +30,8 @@
       <perspective
             name="Browser Example"
             class="org.eclipse.ui.examples.rcp.browser.BrowserPerspectiveFactory"
-            id="org.eclipse.ui.examples.rcp.browser.browserPerspective">
+            id="org.eclipse.ui.examples.rcp.browser.browserPerspective"
+            fixed="true">
       </perspective>
    </extension>
    <extension
