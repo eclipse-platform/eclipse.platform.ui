@@ -9,6 +9,7 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 
@@ -249,7 +250,7 @@ public interface ILaunchManager {
 	
 	/**
 	 * Returns the default launch configuration type for the given project,
-	 * or <code>null</code> unspecified.
+	 * or <code>null</code> if unspecified.
 	 * The default launch configuration is stored as a persistent property
 	 * with a project.
 	 *
@@ -277,6 +278,54 @@ public interface ILaunchManager {
 	 * @since 2.0
 	 */
 	public void setDefaultLaunchConfigurationType(IProject project, ILaunchConfigurationType type) throws CoreException;	
+
+	/**
+	 * Returns the default launch configuration type for the specified resource, 
+	 * or <code>null</code> if there is none.
+	 * 
+	 * @param resource the resource whose default launch configuration type will be returned
+	 * @since 2.0
+	 */
+	public ILaunchConfigurationType getDefaultLaunchConfigurationType(IResource resource);
+
+	/**
+	 * Returns the default launch configuration type for the specified file extension, 
+	 * or <code>null</code> if there is none.
+	 * 
+	 * @param fileExtension the file extension whose associated default launch configuration type 
+	 *  will be returned
+	 * @since 2.0
+	 */
+	public ILaunchConfigurationType getDefaultLaunchConfigurationType(String fileExtension);
+
+	/**
+	 * Return an array of Strings representing all file extensions that have been registered
+	 * by launch configuration types.
+	 * 
+	 * @since 2.0
+	 */
+	public String[] getAllRegisteredFileExtensions();
+
+	/**
+	 * Return an array of launch configuration types that are capable of launching resources
+	 * with the specified file extension, or <code>null</code> if there are none.
+	 * 
+	 * @param fileExtension the file extension that all of the returned launch configuration types
+	 *  are capable of launching
+	 * @since 2.0
+	 */
+	public ILaunchConfigurationType[] getAllLaunchConfigurationTypesFor(String fileExtension);
+
+	/**
+	 * Set the specified launch configuration type as the default for resources with the specified
+	 * file extension.
+	 * 
+	 * @param fileExtension the file extension whose default launch configuration type is being set
+	 * @param configType the launch configuration type that is being set as the default for 
+	 *  resources with the specified file extension
+	 * @since 2.0
+	 */
+	public void setDefaultLaunchConfigurationType(String fileExtension, ILaunchConfigurationType configType);
 }
 
 

@@ -38,7 +38,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IActionDelegate;
+import org.eclipse.ui.IActionDelegateWithEvent;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -47,13 +47,13 @@ import org.eclipse.ui.IWorkbenchWindow;
 /**
  * This is the debug action which appears in the desktop menu and toolbar.
  */
-public abstract class ExecutionAction extends Action implements IActionDelegate {
+public abstract class ExecutionAction extends Action implements IActionDelegateWithEvent {
 	
 	
 	/**
-	 * @see IAction#runWithEvent(Event)
+	 * @see IActionDelegateWithEvent#runWithEvent(IAction, Event)
 	 */
-	public void runWithEvent(Event event) {
+	public void runWithEvent(IAction action, Event event) {
 		boolean controlHeld = (event.stateMask & SWT.CONTROL) != 0;
 		if (controlHeld) {
 			runLaunchConfiguration();
@@ -66,8 +66,9 @@ public abstract class ExecutionAction extends Action implements IActionDelegate 
 	 * @see IAction#run()
 	 */
 	public void run() {
+		int i = 0;
 		//runLaunchConfiguration();
-		runOldStyleLaunch();
+		//runOldStyleLaunch();
 	}
 	
 	private void runLaunchConfiguration() {
@@ -343,17 +344,16 @@ public abstract class ExecutionAction extends Action implements IActionDelegate 
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action) {
-		run();
 	}
 	
 	/**
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
-	}	
-	
+	}
+
 	/**
-	 * @see IViewActionDelegate#init(IAction, ISelection)
+	 * @see IViewActionDelegate#init(IViewPart)
 	 */
 	public void init(IViewPart part) {
 	}

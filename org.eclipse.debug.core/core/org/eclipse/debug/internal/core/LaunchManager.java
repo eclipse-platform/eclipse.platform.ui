@@ -64,7 +64,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
- * Manages registered launches.
+ * Manages launch configurations, launch configuration types, and registered launches.
  *
  * @see ILaunchManager
  */
@@ -75,6 +75,16 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * extensions.
 	 */
 	private List fLaunchConfigurationTypes = new ArrayList(5);
+	
+	/**
+	 * Table of default launch configuration types keyed by file extension.
+	 */
+	private HashMap fDefaultLaunchConfigurationTypes = new HashMap(5);
+	
+	/**
+	 * Table of lists of launch configuration types keyed by file extension.
+	 */
+	private HashMap fLaunchConfigurationTypesByFileExtension = new HashMap(5);
 	
 	/**
 	 * Launch configuration cache. Keys are <code>IPath</code>,
@@ -254,6 +264,44 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		}
 		return type;
 	}	
+	
+	/**
+	 * @see ILaunchManager#getDefaultLaunchConfigurationType(IResource)
+	 */
+	public ILaunchConfigurationType getDefaultLaunchConfigurationType(IResource resource) {
+		return getDefaultLaunchConfigurationType(resource.getFileExtension());
+	}
+	
+	/**
+	 * @see ILaunchManager#getDefaultLaunchConfigurationType(String)
+	 */
+	public ILaunchConfigurationType getDefaultLaunchConfigurationType(String fileExtension) {
+		return (ILaunchConfigurationType) fDefaultLaunchConfigurationTypes.get(fileExtension);		
+	}
+	
+	/**
+	 * @see ILaunchManager#getAllRegisteredFileExtensions()
+	 */
+	public String[] getAllRegisteredFileExtensions() {
+		Object[] objectArray = fLaunchConfigurationTypesByFileExtension.keySet().toArray();
+		String[] stringArray = new String[objectArray.length];
+		for (int i = 0; i < objectArray.length; i++) {
+			stringArray[i] = (String) objectArray[i];
+		}
+		return stringArray;
+	}
+	
+	/**
+	 * @see ILaunchManager#getAllLaunchConfigurationTypesFor(String)
+	 */
+	public ILaunchConfigurationType[] getAllLaunchConfigurationTypesFor(String fileExtension) {
+		Object[] objectArray = ((List)fLaunchConfigurationTypesByFileExtension.get(fileExtension)).toArray();
+		ILaunchConfigurationType[] configTypeArray = new ILaunchConfigurationType[objectArray.length];
+		for (int i = 0; i < objectArray.length; i++) {
+			configTypeArray[i] = (ILaunchConfigurationType) objectArray[i];
+		}
+		return configTypeArray;
+	}
 		
 	/**
 	 * Returns the launcher with the given id, or <code>null</code>.
@@ -354,6 +402,13 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		}
 		resource.setPersistentProperty(new QualifiedName(DebugPlugin.PLUGIN_ID, DEFAULT_LAUNCH_CONFIGURATION_TYPE), id);
 	}	
+	
+	/**
+	 * @see ILaunchManager#setDefaultLaunchConfigurationType(String, ILaunchConfigurationType)
+	 */
+	public void setDefaultLaunchConfigurationType(String fileExtension, ILaunchConfigurationType configType) {
+		fDefaultLaunchConfigurationTypes.put(fileExtension, configType);
+	}
 
 	/**
 	 * Terminates/Disconnects any active debug targets/processes.
@@ -382,6 +437,10 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		IPath path = new Path(DebugPlugin.getDefault().getStateLocation() + ".launchindex"); //$NON-NLS-1$
 		persistIndex(configs, path);
 		
+		// persist the mapping of file extensions to default config types
+		path = new Path(DebugPlugin.getDefault().getStateLocation() + ".defaultlaunchconfigs"); //$NON-NLS-1$
+		persistDefaultConfigTypeMap(path);
+		
 		fLaunchConfigurationTypes.clear();
 		fLaunchConfigurationIndex.clear();
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
@@ -398,11 +457,18 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		IExtensionPoint extensionPoint= descriptor.getExtensionPoint(DebugPlugin.EXTENSION_POINT_LAUNCH_CONFIGURATION_TYPES);
 		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
 		for (int i= 0; i < infos.length; i++) {
-			fLaunchConfigurationTypes.add(new LaunchConfigurationType(infos[i]));
+			IConfigurationElement configurationElement = infos[i];
+			LaunchConfigurationType configType = new LaunchConfigurationType(configurationElement); 			
+			fLaunchConfigurationTypes.add(configType);
+			addFileExtensions(configurationElement, configType);
 		}		
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
+
+		// restore the user-specified mapping of file extensions to default config types
+		IPath defaultConfigMapPath = new Path(DebugPlugin.getDefault().getStateLocation() + ".defaultlaunchconfigs"); //$NON-NLS-1$
+		restoreDefaultConfigTypeMap(defaultConfigMapPath);
 		
-		// restore project launch configuration indicies
+		// restore project launch configuration indices
 		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		for (int i = 0; i < projects.length; i++) {
 			if (projects[i].isOpen()) {
@@ -410,8 +476,206 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			}
 		}	
 		// restore local launch configuration index	
-		IPath path = new Path(DebugPlugin.getDefault().getStateLocation() + ".launchindex"); //$NON-NLS-1$
-		restoreIndex(path);		
+		IPath launchIndexPath = new Path(DebugPlugin.getDefault().getStateLocation() + ".launchindex"); //$NON-NLS-1$
+		restoreIndex(launchIndexPath);		
+	}
+	
+	/**
+	 * For the given configuration element, retrieve all file extensions it has registered, 
+	 * and for each one that claims to be the default, add the config type as the default 
+	 * config type for the file extension.
+	 */
+	protected void addFileExtensions(IConfigurationElement configElement, LaunchConfigurationType configType) {
+		IConfigurationElement[] children = configElement.getChildren("fileExtension");
+		for (int i = 0; i < children.length; i++) {
+			IConfigurationElement fileExtensionElement = children[i];
+			String fileExtension = fileExtensionElement.getAttribute("extension");
+			String defaultValue = fileExtensionElement.getAttribute("default");
+			addOneFileExtension(fileExtension, defaultValue, configType);
+		}
+	}
+	
+	/**
+	 * Populate internal data structures for the given config type and its file extension.
+	 */
+	protected void addOneFileExtension(String fileExtension, String defaultValue, LaunchConfigurationType configType) {
+		List configTypeList = (List)fLaunchConfigurationTypesByFileExtension.get(fileExtension);
+		if (configTypeList == null) {
+			configTypeList = new ArrayList(5);
+			fLaunchConfigurationTypesByFileExtension.put(fileExtension, configTypeList);
+		}
+		configTypeList.add(configType);
+		
+		if (defaultValue.equalsIgnoreCase("true")) {
+			fDefaultLaunchConfigurationTypes.put(fileExtension, configType);
+		}
+	}
+	
+	/**
+	 * Load the user-specified mapping of file extensions to default config types.
+	 */
+	protected void restoreDefaultConfigTypeMap(IPath path) throws CoreException {
+		InputStream stream = null;
+		try {
+			File file = path.toFile();
+			if (!file.exists()) {
+				// no map to restore
+				return;
+			}
+			stream = new FileInputStream(file);
+			Element root = null;
+			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			root = parser.parse(new InputSource(stream)).getDocumentElement();
+			updateDefaultConfigTypesFromXML(root);
+		} catch (FileNotFoundException e) {
+			throw new DebugException(
+				new Status(Status.ERROR, DebugPlugin.getDefault().getDefault().getDescriptor().getUniqueIdentifier(),
+				 DebugException.REQUEST_FAILED, MessageFormat.format("{0} occurred while reading default configuration type map", new String[]{e.toString()}), e) 
+			);					
+		} catch (SAXException e) {
+			throw new DebugException(
+				new Status(Status.ERROR, DebugPlugin.getDefault().getDefault().getDescriptor().getUniqueIdentifier(),
+				 DebugException.REQUEST_FAILED, MessageFormat.format("{0} occurred while reading default configuration type map", new String[]{e.toString()}), e) 
+			);
+		} catch (ParserConfigurationException e) {
+			throw new DebugException(
+				new Status(Status.ERROR, DebugPlugin.getDefault().getDefault().getDescriptor().getUniqueIdentifier(),
+				 DebugException.REQUEST_FAILED, MessageFormat.format("{0} occurred while reading default configuration type map", new String[]{e.toString()}), e) 
+			);		
+		} catch (IOException e) {
+			throw new DebugException(
+				new Status(Status.ERROR, DebugPlugin.getDefault().getDefault().getDescriptor().getUniqueIdentifier(),
+				 DebugException.REQUEST_FAILED, MessageFormat.format("{0} occurred while reading default configuration type map", new String[]{e.toString()}), e) 
+			);										
+		} finally {
+			if (stream != null) {
+				try {
+					stream.close();
+				} catch (IOException e) {
+					throw new DebugException(
+						new Status(Status.ERROR, DebugPlugin.getDefault().getDefault().getDescriptor().getUniqueIdentifier(),
+						 DebugException.REQUEST_FAILED, MessageFormat.format("{0} occurred while reading default configuration type map", new String[]{e.toString()}), e) 
+					);																	
+				}
+			}
+		}			
+	}
+	
+	/**
+	 * Update the table of default config types based on the entries underneath the specified root node.
+	 */
+	protected void updateDefaultConfigTypesFromXML(Element root) throws CoreException {
+		DebugException invalidFormat = 
+			new DebugException(
+				new Status(
+				 Status.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
+				 DebugException.REQUEST_FAILED, "Invalid default configuration type map", null 
+				)
+			);		
+			
+		if (!root.getNodeName().equalsIgnoreCase("defaultLaunchConfigTypes")) { //$NON-NLS-1$
+			throw invalidFormat;
+		}
+		
+		// read each default configuration 
+		List configs = new ArrayList(4);	
+		NodeList list = root.getChildNodes();
+		int length = list.getLength();
+		for (int i = 0; i < length; ++i) {
+			Node node = list.item(i);
+			short type = node.getNodeType();
+			if (type == Node.ELEMENT_NODE) {
+				Element entry = (Element) node;
+				String nodeName = entry.getNodeName();
+				if (!nodeName.equalsIgnoreCase("defaultLaunchConfigType")) { //$NON-NLS-1$
+					throw invalidFormat;
+				}
+				String fileExtension = entry.getAttribute("fileExtension"); //$NON-NLS-1$
+				if (fileExtension == null) {
+					throw invalidFormat;
+				}
+				// Make sure the file extension was registered by some config type
+				List configList = (List) fLaunchConfigurationTypesByFileExtension.get(fileExtension);
+				if (configList == null) {
+					continue;
+				}
+				String defaultConfigTypeID = entry.getAttribute("launchConfigTypeID"); //$NON-NLS-1$
+				if (defaultConfigTypeID == null) {
+					throw invalidFormat;					
+				}
+				ILaunchConfigurationType configType = getLaunchConfigurationType(defaultConfigTypeID);
+				// Make sure the config type has been registered
+				if (configType == null) {
+					continue;
+				}
+				fDefaultLaunchConfigurationTypes.put(fileExtension, configType);
+			}
+		}		
+	}
+	
+	/**
+	 * Persists the mapping of file extensions to default configuration types in a file at the 
+	 * specified path.
+	 */
+	protected void persistDefaultConfigTypeMap(IPath path) throws CoreException {
+		String xml = null;
+		try {
+			xml = getDefaultConfigTypesAsXML();
+		} catch (IOException e) {
+			throw new DebugException(
+				new Status(
+				 Status.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
+				 DebugException.REQUEST_FAILED, MessageFormat.format("{0} occurred generating default launch configuration map file", new String[]{e.toString()}), null //$NON-NLS-1$
+				)
+			);					
+		}
+		
+		try {
+			File file = path.toFile();
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+			FileOutputStream stream = new FileOutputStream(file);
+			stream.write(xml.getBytes());
+			stream.close();
+		} catch (IOException e) {
+			throw new DebugException(
+				new Status(
+				 Status.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
+				 DebugException.REQUEST_FAILED, MessageFormat.format("{0} occurred generating default launch configuration map file", new String[]{e.toString()}), null //$NON-NLS-1$
+				)
+			);				
+		}		
+	}
+	
+	/**
+	 * Convert the map of file extensions to default config types into an String of XML.
+	 */
+	protected String getDefaultConfigTypesAsXML() throws IOException {
+		Document doc = new DocumentImpl();
+		Element configRootElement = doc.createElement("defaultLaunchConfigTypes"); //$NON-NLS-1$
+		doc.appendChild(configRootElement);
+		
+		Iterator iterator = fDefaultLaunchConfigurationTypes.keySet().iterator();
+		while (iterator.hasNext()) {
+			String fileExtension = (String) iterator.next();
+			ILaunchConfigurationType configType = getDefaultLaunchConfigurationType(fileExtension);
+			Element element = doc.createElement("defaultLaunchConfigType"); //$NON-NLS-1$
+			element.setAttribute("fileExtension", fileExtension); //$NON-NLS-1$
+			element.setAttribute("launchConfigTypeID", configType.getIdentifier()); //$NON-NLS-1$
+			configRootElement.appendChild(element);
+		}
+
+		// produce a String output
+		StringWriter writer = new StringWriter();
+		OutputFormat format = new OutputFormat();
+		format.setIndenting(true);
+		Serializer serializer =
+			SerializerFactory.getSerializerFactory(Method.XML).makeSerializer(
+				writer,
+				format);
+		serializer.asDOMSerializer().serialize(doc);
+		return writer.toString();					
 	}
 	
 	/**
@@ -894,7 +1158,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	}		
 	
 	/**
-	 * The specified project has just openned - restore its
+	 * The specified project has just opened - restore its
 	 * launch configuration index.
 	 * 
 	 * @param project the project that has been openned

@@ -378,32 +378,19 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	 * Attempt to determine the launch config type most closely associated
 	 * with the current workbench selection.
 	 */
-	protected ILaunchConfigurationType determineConfigTypeFromSelection() {
-		
-		IProject project = null;
+	protected ILaunchConfigurationType determineConfigTypeFromSelection() {		
+		IResource resource = null;
 		Object workbenchSelection = getWorkbenchSelection();
 		if (workbenchSelection instanceof IResource) {
-			project = ((IResource)workbenchSelection).getProject();
+			resource = (IResource)workbenchSelection;
 		} else if (workbenchSelection instanceof IAdaptable) {
-			IResource resource = (IResource) ((IAdaptable)workbenchSelection).getAdapter(IResource.class);
-			if (resource != null) {
-				project = resource.getProject();
-			}
+			resource = (IResource) ((IAdaptable)workbenchSelection).getAdapter(IResource.class);
 		}
 		ILaunchConfigurationType type = null;
-		if (project != null) {
-			try {
-				type = getLaunchManager().getDefaultLaunchConfigurationType(project);
-			} catch (CoreException ce) {
-				return null;
-			}
+		if (resource != null) {
+			type = getLaunchManager().getDefaultLaunchConfigurationType(resource);
 		}
-		return type;
-		
-		/*   //MAJOR HACK for quick&dirty testing
-		ILaunchConfigurationType[] types = getLaunchManager().getLaunchConfigurationTypes();		
-		return types[1];
-		*/   //END OF MAJOR HACK		
+		return type;		
 	}
 	
 	/**

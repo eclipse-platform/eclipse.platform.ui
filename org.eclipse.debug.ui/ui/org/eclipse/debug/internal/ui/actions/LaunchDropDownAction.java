@@ -12,15 +12,18 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.ui.IActionDelegateWithEvent;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate;
 
 /**
  * Superclass of run & debug pulldown actions.
  */
-public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDelegate {
+public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDelegate,
+														  IActionDelegateWithEvent {
 	
 	private ExecutionAction fLaunchAction;
 	
@@ -93,6 +96,13 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 	}
 	
 	/**
+	 * @see IActionDelegateWithEvent#runWithEvent(IAction, Event)
+	 */
+	public void runWithEvent(IAction action, Event event) {
+		getLaunchAction().runWithEvent(action, event);
+	}
+
+	/**
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection){
@@ -121,5 +131,6 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 	protected void setLaunchAction(ExecutionAction launchAction) {
 		fLaunchAction = launchAction;
 	}
+	
 }
 
