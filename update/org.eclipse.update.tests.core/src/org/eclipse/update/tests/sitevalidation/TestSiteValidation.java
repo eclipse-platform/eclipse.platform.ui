@@ -42,7 +42,7 @@ public class TestSiteValidation extends UpdateManagerTestCase {
 
 	public void testSite1() throws Exception {
 
-		URL remoteUrl = new URL(TARGET_FILE_SITE + "validation/site1");
+		URL remoteUrl = new URL(TARGET_FILE_SITE + "validation/site1/eclipse");
 		File file = new File(remoteUrl.getFile());
 		ILocalSite local = SiteManager.getLocalSite();
 		IInstallConfiguration currentConfig = local.getCurrentConfiguration();
@@ -60,7 +60,7 @@ public class TestSiteValidation extends UpdateManagerTestCase {
 	
 	public void testSite2() throws Exception {
 
-		URL remoteUrl = new URL(SOURCE_FILE_SITE + "validation/site2/");
+		URL remoteUrl = new URL(SOURCE_FILE_SITE + "validation/site2/eclipse/");
 		File file = new File(remoteUrl.getFile());
 		ILocalSite local = SiteManager.getLocalSite();
 		IInstallConfiguration currentConfig = local.getCurrentConfiguration();
@@ -85,14 +85,14 @@ public class TestSiteValidation extends UpdateManagerTestCase {
 
 	public void testSite3() throws Exception {
 
-		URL remoteUrl = new URL(SOURCE_FILE_SITE + "validation/site3");
+		URL remoteUrl = new URL(SOURCE_FILE_SITE + "validation/site3/eclipse/");
 		File file = new File(remoteUrl.getFile());
 		ILocalSite local = SiteManager.getLocalSite();
 		IInstallConfiguration currentConfig = local.getCurrentConfiguration();
 		IConfiguredSite configuredSite = currentConfig.createConfiguredSite(file);
 		IStatus status = configuredSite.verifyUpdatableStatus();
 
-		UpdateManagerUtils.removeFromFileSystem(new File(file,".eclipseUM"));
+//		UpdateManagerUtils.removeFromFileSystem(new File(file,".eclipseUM"));
 
 		String msg = "The site "+file+" should not be updatable.";
 		if (status.isOK()){
@@ -105,7 +105,7 @@ public class TestSiteValidation extends UpdateManagerTestCase {
 
 	public void testSite4() throws Exception {
 
-		URL remoteUrl = new URL(SOURCE_FILE_SITE + "validation/site4");
+		URL remoteUrl = new URL(SOURCE_FILE_SITE + "validation/site4/eclipse/");
 		File file = new File(remoteUrl.getFile());
 		ILocalSite local = SiteManager.getLocalSite();
 		IInstallConfiguration currentConfig = local.getCurrentConfiguration();
@@ -146,7 +146,7 @@ public class TestSiteValidation extends UpdateManagerTestCase {
 	
 	public void testSite6() throws Exception {
 
-		URL remoteUrl = new URL(SOURCE_FILE_SITE + "validation/site6/children/children");
+		URL remoteUrl = new URL(SOURCE_FILE_SITE + "validation/site6/children/children/eclipse/");
 		File file = new File(remoteUrl.getFile());
 		if (!file.exists()) file.mkdirs();
 		ILocalSite local = SiteManager.getLocalSite();
