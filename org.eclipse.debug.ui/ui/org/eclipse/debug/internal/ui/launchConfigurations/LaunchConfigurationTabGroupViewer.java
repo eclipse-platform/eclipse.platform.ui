@@ -36,6 +36,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -166,6 +167,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * @return the composite used for launch configuration editing
 	 */
 	private void createControl(Composite parent) {
+		Font font = parent.getFont();
 		fViewerControl = new Composite(parent, SWT.NONE);
 		GridLayout outerCompLayout = new GridLayout();
 		outerCompLayout.numColumns = 1;
@@ -189,10 +191,12 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		nameLabel.setText(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.&Name__16")); //$NON-NLS-1$
 		gd = new GridData(GridData.BEGINNING);
 		nameLabel.setLayoutData(gd);
-
+		nameLabel.setFont(font);
+		
 		Text nameText = new Text(container, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		nameText.setLayoutData(gd);
+		nameText.setFont(font);
 		setNameWidget(nameText);
 
 		getNameWidget().addModifyListener(
@@ -221,6 +225,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		setTabFolder(tabFolder);
 		gd = new GridData(GridData.FILL_BOTH);
 		tabFolder.setLayoutData(gd);
+		tabFolder.setFont(font);
 		getTabFolder().addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				if (!isInitializingTabs()) {
@@ -241,6 +246,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		getApplyButton().setText(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.&Apply_17")); //$NON-NLS-1$
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		getApplyButton().setLayoutData(gd);
+		getApplyButton().setFont(font);
 		SWTUtil.setButtonDimensionHint(getApplyButton());
 		getApplyButton().addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
@@ -252,6 +258,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		getRevertButton().setText(LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Revert_2"));   //$NON-NLS-1$
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		getRevertButton().setLayoutData(gd);
+		getRevertButton().setFont(font);
 		SWTUtil.setButtonDimensionHint(getRevertButton());
 		getRevertButton().addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {

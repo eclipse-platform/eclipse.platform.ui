@@ -27,6 +27,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -42,7 +43,7 @@ import org.eclipse.ui.model.WorkbenchViewerSorter;
  * Preference page to display the available debug action groups, and
  * solicits a list of selections from the user.
  */
-public class DebugActionGroupsPreferencePage  extends PreferencePage implements IWorkbenchPreferencePage {
+public class DebugActionGroupsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	// widgets.
 	private CheckboxTableViewer fDebugActionGroupViewer;
 	private Label actionLabel;
@@ -69,6 +70,7 @@ public class DebugActionGroupsPreferencePage  extends PreferencePage implements 
 	 * @see PreferencePage#createContents(Composite)
 	 */
 	protected Control createContents(Composite parent) {
+		Font font = parent.getFont();
 		Composite composite = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -84,7 +86,7 @@ public class DebugActionGroupsPreferencePage  extends PreferencePage implements 
 		// description
 		Label descLabel = new Label(composite, SWT.WRAP);
 		descLabel.setText(DebugPreferencesMessages.getString("DebugActionGroupsPreferencePage.Select_the_action_groups_to_be_displayed_in_Debug_views_1")); //$NON-NLS-1$
-		descLabel.setFont(parent.getFont());
+		descLabel.setFont(font);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
 		descLabel.setLayoutData(data);
@@ -102,7 +104,7 @@ public class DebugActionGroupsPreferencePage  extends PreferencePage implements 
 		// ...second the label
 		Label selectionLabel = new Label(actionSetGroup, SWT.NONE);
 		selectionLabel.setText(DebugPreferencesMessages.getString("DebugActionGroupsPreferencePage.&Available_Debug_Action_Groups__2")); //$NON-NLS-1$
-		selectionLabel.setFont(parent.getFont());
+		selectionLabel.setFont(font);
 
 		// ...third the checkbox list
 		Table viewActionSetTable= new Table(actionSetGroup, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
@@ -112,11 +114,13 @@ public class DebugActionGroupsPreferencePage  extends PreferencePage implements 
 		columnLayoutData[0]= new ColumnWeightData(100);		
 		tableLayout.addColumnData(columnLayoutData[0]);
 		viewActionSetTable.setLayout(tableLayout);
+		viewActionSetTable.setFont(font);
 		new TableColumn(viewActionSetTable, SWT.NONE);
 
 		fDebugActionGroupViewer = new CheckboxTableViewer(viewActionSetTable);
 		data = new GridData(GridData.FILL_BOTH);
 		fDebugActionGroupViewer.getTable().setLayoutData(data);
+		fDebugActionGroupViewer.getTable().setFont(font);
 		fDebugActionGroupViewer.setLabelProvider(new DebugActionGroupsLabelProvider());
 		IContentProvider contentProvider= new DebugActionGroupsContentProvider(fDebugActionGroupViewer);
 		fDebugActionGroupViewer.setContentProvider(contentProvider);
@@ -155,11 +159,13 @@ public class DebugActionGroupsPreferencePage  extends PreferencePage implements 
 		// ...second the label
 		actionLabel = new Label(actionGroup, SWT.NONE);
 		actionLabel.setText(DebugPreferencesMessages.getString("DebugActionGroupsPreferencePage.Actions_in_Group__3")); //$NON-NLS-1$
+		actionLabel.setFont(font);
 
 		// ...third the list of actions
 		actionViewer = new TableViewer(actionGroup, SWT.BORDER);
 		data = new GridData(GridData.FILL_BOTH);
 		actionViewer.getTable().setLayoutData(data);
+		actionViewer.getTable().setFont(font);
 		actionViewer.setLabelProvider(new DebugActionGroupsLabelProvider());
 		actionViewer.setContentProvider(new DebugActionGroupsActionContentProvider());
 		actionViewer.setSorter(new WorkbenchViewerSorter());

@@ -43,6 +43,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -141,6 +142,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 * @see ILaunchConfigurationTab#createControl(Composite)
 	 */
 	public void createControl(Composite parent) {
+		Font font = parent.getFont();
 		
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
@@ -158,11 +160,14 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		
 		setLocalSharedLabel(new Label(radioComp, SWT.NONE));
 		getLocalSharedLabel().setText(LaunchConfigurationsMessages.getString("CommonTab.Type_of_launch_configuration__2")); //$NON-NLS-1$
+		getLocalSharedLabel().setFont(font);
 		
 		setLocalRadioButton(new Button(radioComp, SWT.RADIO));
 		getLocalRadioButton().setText(LaunchConfigurationsMessages.getString("CommonTab.L&ocal_3")); //$NON-NLS-1$
+		getLocalRadioButton().setFont(font);
 		setSharedRadioButton(new Button(radioComp, SWT.RADIO));
 		getSharedRadioButton().setText(LaunchConfigurationsMessages.getString("CommonTab.S&hared_4")); //$NON-NLS-1$
+		getSharedRadioButton().setFont(font);
 		getSharedRadioButton().addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleSharedRadioButtonSelected();
@@ -177,16 +182,19 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		locationComp.setLayout(locationLayout);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		locationComp.setLayoutData(gd);
+		locationComp.setFont(font);
 		
 		setSharedLocationLabel(new Label(locationComp, SWT.NONE));
 		getSharedLocationLabel().setText(LaunchConfigurationsMessages.getString("CommonTab.Location_of_shared_confi&guration__5")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		getSharedLocationLabel().setLayoutData(gd);
+		getSharedLocationLabel().setFont(font);
 		
 		setSharedLocationText(new Text(locationComp, SWT.SINGLE | SWT.BORDER));
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		getSharedLocationText().setLayoutData(gd);
+		getSharedLocationText().setFont(font);
 		getSharedLocationText().addModifyListener(fBasicModifyListener);
 		
 		setSharedLocationButton(createPushButton(locationComp, LaunchConfigurationsMessages.getString("CommonTab.&Browse_6"), null));	 //$NON-NLS-1$
@@ -203,6 +211,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		
 		setSwitchToLabel(new Label(comp, SWT.HORIZONTAL | SWT.LEFT));
 		getSwitchToLabel().setText(LaunchConfigurationsMessages.getString("CommonTab.Switch_to/Open_perspective_when_launched_in__7")); //$NON-NLS-1$
+		getSwitchToLabel().setFont(font);
 		gd = new GridData();
 		gd.horizontalAlignment = GridData.BEGINNING;
 		gd.horizontalSpan = 3;
@@ -217,19 +226,23 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		
 		setRunPerspectiveLabel(new Label(perspComp, SWT.NONE));
 		getRunPerspectiveLabel().setText(LaunchConfigurationsMessages.getString("CommonTab.Run_mode_8")); //$NON-NLS-1$
+		getRunPerspectiveLabel().setFont(font);
 		
 		setRunPerspectiveCombo(new Combo(perspComp, SWT.DROP_DOWN | SWT.READ_ONLY));
 		gd = new GridData(GridData.GRAB_HORIZONTAL);
 		getRunPerspectiveCombo().setLayoutData(gd);
+		getRunPerspectiveCombo().setFont(font);
 		fillWithPerspectives(getRunPerspectiveCombo());
 		getRunPerspectiveCombo().addModifyListener(fBasicModifyListener);
 		
 		setDebugPerspectiveLabel(new Label(perspComp, SWT.NONE));
 		getDebugPerspectiveLabel().setText(LaunchConfigurationsMessages.getString("CommonTab.Debug_mode_9")); //$NON-NLS-1$
+		getDebugPerspectiveLabel().setFont(font);
 		
 		setDebugPerspectiveCombo(new Combo(perspComp, SWT.DROP_DOWN |SWT.READ_ONLY));
 		gd = new GridData(GridData.GRAB_HORIZONTAL);
-		getDebugPerspectiveCombo().setLayoutData(gd);		
+		getDebugPerspectiveCombo().setLayoutData(gd);
+		getDebugPerspectiveCombo().setFont(font);
 		fillWithPerspectives(getDebugPerspectiveCombo());				
 		getDebugPerspectiveCombo().addModifyListener(fBasicModifyListener);
 		
@@ -244,18 +257,21 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		favLayout.numColumns = 2;
 		favLayout.makeColumnsEqualWidth = true;
 		favComp.setLayout(favLayout);
+		favComp.setFont(font);
 		
 		Label favLabel = new Label(favComp, SWT.HORIZONTAL | SWT.LEFT);
 		favLabel.setText(LaunchConfigurationsMessages.getString("CommonTab.Display_in_favorites_menu__10")); //$NON-NLS-1$
 		gd = new GridData(GridData.BEGINNING);
 		gd.horizontalSpan = 2;
 		favLabel.setLayoutData(gd);
+		favLabel.setFont(font);
 		
 		fFavoritesTable = CheckboxTableViewer.newCheckList(favComp, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
 		Control table = fFavoritesTable.getControl();
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan = 1;
 		table.setLayoutData(gd);
+		table.setFont(font);
 		fFavoritesTable.setContentProvider(new FavoritesContentProvider());
 		fFavoritesTable.setLabelProvider(new FavoritesLabelProvider());
 		fFavoritesTable.addCheckStateListener(

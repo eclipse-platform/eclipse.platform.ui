@@ -27,6 +27,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -76,6 +77,8 @@ public class LaunchConfigurationWorkingSetPage extends WizardPage implements IWo
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
+		Font font = parent.getFont();
+		
 		initializeDialogUnits(parent);
 		
 		Composite composite= new Composite(parent, SWT.NONE);
@@ -87,9 +90,11 @@ public class LaunchConfigurationWorkingSetPage extends WizardPage implements IWo
 		label.setText(LaunchConfigurationsMessages.getString("LaunchConfigurationWorkingSetPage.Working_set_name_2"));  //$NON-NLS-1$
 		GridData gd= new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
 		label.setLayoutData(gd);
-
+		label.setFont(font);
+		
 		fWorkingSetName= new Text(composite, SWT.SINGLE | SWT.BORDER);
 		fWorkingSetName.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+		fWorkingSetName.setFont(font);
 		fWorkingSetName.addModifyListener(
 			new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
@@ -103,11 +108,13 @@ public class LaunchConfigurationWorkingSetPage extends WizardPage implements IWo
 		label.setText(LaunchConfigurationsMessages.getString("LaunchConfigurationWorkingSetPage.Working_set_content_3"));  //$NON-NLS-1$
 		gd= new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
 		label.setLayoutData(gd);
-
+		label.setFont(font);
+		
 		fTree= new CheckboxTreeViewer(composite, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		gd= new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL);
 		gd.heightHint= convertHeightInCharsToPixels(15);
 		fTree.getControl().setLayoutData(gd);
+		fTree.getTree().setFont(font);
 		
 		fTreeContentProvider= new LaunchConfigurationTreeContentProvider(null, getShell());
 		fTree.setContentProvider(fTreeContentProvider);

@@ -85,6 +85,7 @@ public class ComboFieldEditor extends FieldEditor {
 		gd = new GridData();
 		gd.horizontalSpan = numColumns;
 		control.setLayoutData(gd);
+		control.setFont(parent.getFont());
 	}
 
 	/**

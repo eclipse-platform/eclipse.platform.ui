@@ -31,6 +31,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -101,6 +102,7 @@ public class LaunchHistoryPreferenceTab {
 	 * Creates the control for this tab
 	 */
 	protected Control createControl(Composite parent) {
+		Font font = parent.getFont();
 		Composite topComp = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -113,7 +115,8 @@ public class LaunchHistoryPreferenceTab {
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		favoritesLabel.setLayoutData(gd);
-	
+		favoritesLabel.setFont(font);
+		
 		setFavoritesTable(new TableViewer(topComp, SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION));
 		getFavoritesTable().setContentProvider(new FavoritesContentProvider());
 		getFavoritesTable().setLabelProvider(DebugUITools.newDebugModelPresentation());
@@ -124,6 +127,7 @@ public class LaunchHistoryPreferenceTab {
 		});
 		gd = new GridData(GridData.FILL_BOTH);
 		getFavoritesTable().getTable().setLayoutData(gd);
+		getFavoritesTable().getTable().setFont(font);
 		getFavoritesTable().setInput(DebugUIPlugin.getDefault());
 		
 		Composite buttonComp = new Composite(topComp, SWT.NONE);
@@ -140,7 +144,8 @@ public class LaunchHistoryPreferenceTab {
 			}
 		});
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
-		addFav.setLayoutData(gd);		
+		addFav.setLayoutData(gd);
+		addFav.setFont(font);	
 		SWTUtil.setButtonDimensionHint(addFav);
 		
 		fRemoveFavoritesButton = SWTUtil.createPushButton(buttonComp, DebugPreferencesMessages.getString("LaunchHistoryPreferenceTab.Re&move_2"), null); //$NON-NLS-1$
@@ -151,6 +156,7 @@ public class LaunchHistoryPreferenceTab {
 		});
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
 		fRemoveFavoritesButton.setLayoutData(gd);
+		fRemoveFavoritesButton.setFont(font);
 		SWTUtil.setButtonDimensionHint(fRemoveFavoritesButton);
 		fRemoveFavoritesButton.setEnabled(false);
 		
@@ -162,6 +168,7 @@ public class LaunchHistoryPreferenceTab {
 		});
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
 		fMoveUpButton.setLayoutData(gd);
+		fMoveUpButton.setFont(font);
 		SWTUtil.setButtonDimensionHint(fMoveUpButton);
 		fMoveUpButton.setEnabled(false);
 		
@@ -173,6 +180,7 @@ public class LaunchHistoryPreferenceTab {
 		});
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
 		fMoveDownButton.setLayoutData(gd);
+		fMoveDownButton.setFont(font);
 		SWTUtil.setButtonDimensionHint(fMoveDownButton);
 		fMoveDownButton.setEnabled(false);
 		
@@ -187,6 +195,7 @@ public class LaunchHistoryPreferenceTab {
 		});
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
 		fMakeRecentButton.setLayoutData(gd);
+		fMakeRecentButton.setFont(font);
 		SWTUtil.setButtonDimensionHint(fMakeRecentButton);
 		fMakeRecentButton.setEnabled(false);
 	
@@ -197,6 +206,7 @@ public class LaunchHistoryPreferenceTab {
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		recent.setLayoutData(gd);
+		recent.setFont(font);
 	
 		setRecentTable(new TableViewer(topComp, SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION));
 		getRecentTable().setContentProvider(new RecentContentProvider());
@@ -208,6 +218,7 @@ public class LaunchHistoryPreferenceTab {
 		});
 		gd = new GridData(GridData.FILL_BOTH);
 		getRecentTable().getTable().setLayoutData(gd);
+		getRecentTable().getTable().setFont(font);
 		getRecentTable().setInput(DebugUIPlugin.getDefault());
 		
 		buttonComp = new Composite(topComp, SWT.NONE);
@@ -225,6 +236,7 @@ public class LaunchHistoryPreferenceTab {
 		});
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
 		fAddToFavoritesButton.setLayoutData(gd);
+		fAddToFavoritesButton.setFont(font);
 		SWTUtil.setButtonDimensionHint(fAddToFavoritesButton);
 		fAddToFavoritesButton.setEnabled(false);
 		
@@ -236,6 +248,7 @@ public class LaunchHistoryPreferenceTab {
 		});
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
 		fRemoveRecentButton.setLayoutData(gd);
+		fRemoveRecentButton.setFont(font);
 		SWTUtil.setButtonDimensionHint(fRemoveRecentButton);
 		fRemoveRecentButton.setEnabled(false);				
 				
