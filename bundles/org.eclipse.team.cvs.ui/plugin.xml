@@ -103,7 +103,7 @@
 				menubarPath="compareWithMenu/compareWithGroup"
 				class="org.eclipse.team.internal.ccvs.ui.actions.DiffAction"/>
 			<action 
-				id="org.eclipse.team.ccvs.ui.compareWithStream"
+				id="org.eclipse.team.ccvs.ui.compareWithRemote"
 				label="%CompareWithRemoteAction.label"
 				tooltip="%CompareWithRemoteAction.tooltip"
 				menubarPath="compareWithMenu/compareWithGroup"
@@ -132,6 +132,16 @@
 				tooltip="Synchronize"
 				menubarPath="team.main/advancedGroup"
 				class="org.eclipse.team.internal.ccvs.ui.actions.SyncAction"/>
+		</objectContribution>
+		<objectContribution
+			id="org.eclipse.team.ccvs.ui.IProjectContributions"
+			objectClass="org.eclipse.core.resources.IProject">
+			<action 
+				id="org.eclipse.team.ccvs.ui.compareWithVersion"
+				label="%CompareWithVersionAction.label"
+				tooltip="%CompareWithVersionAction.tooltip"
+				menubarPath="compareWithMenu/compareWithGroup"
+				class="org.eclipse.team.internal.ccvs.ui.actions.CompareWithVersionAction"/>
 		</objectContribution>
 		<objectContribution 
 			id="org.eclipse.team.ccvs.ui.RemoteFolderContributions" 
