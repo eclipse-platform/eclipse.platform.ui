@@ -6,9 +6,6 @@ package org.eclipse.update.core;
 
 public interface IVerificationResult {
 	
-	
-	
-	
 	/**
 	 * verification codes
 	 */
@@ -17,8 +14,10 @@ public interface IVerificationResult {
 	static final int TYPE_ENTRY_SIGNED_RECOGNIZED = 3;
 	static final int TYPE_ENTRY_ALREADY_ACCEPTED = 4;	
 	static final int TYPE_ENTRY_SIGNED_UNRECOGNIZED = 5;
+	
 	static final int UNKNOWN_ERROR = 6;
 	static final int VERIFICATION_CANCELLED = 7;
+	static final int TYPE_ENTRY_UNRECOGNIZED = 8;
 		
 	/**
 	 * Sets the exception that may have occured while verifying

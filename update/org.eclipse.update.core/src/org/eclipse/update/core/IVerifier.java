@@ -17,6 +17,6 @@ public interface IVerifier {
 	/**
 	 * Throws CoreException if the verification was unsucessful and the installation should not continue
 	 */
-	IVerificationResult verify(IFeature feature,ContentReference[] references,InstallMonitor monitor) throws CoreException;
+	IVerificationResult verify(IFeature feature,ContentReference reference,InstallMonitor monitor) throws CoreException;
 
 }

@@ -197,26 +197,26 @@ public class JarVerifier implements IVerifier {
 	}
 
 	/*
-	* @see IFeatureVerification#verify(IFeature feature,ContentReference[], InstallMonitor)
+	* @see IVerifier#verify(IFeature feature,ContentReference, InstallMonitor)
 	*/
-	public IVerificationResult verify(IFeature feature, ContentReference[] references, InstallMonitor monitor) throws CoreException {
-		if (references == null || references.length == 0)
-			return null;
+	public IVerificationResult verify(IFeature feature, ContentReference reference, InstallMonitor monitor) throws CoreException {
+		if (reference == null )
+			return result;
 
 		setMonitor(monitor);
-		for (int i = 0; i < references.length; i++) {
-			if (references[i] instanceof JarContentReference) {
-				JarContentReference jarReference = (JarContentReference) references[i];
+			if (reference instanceof JarContentReference) {
+				JarContentReference jarReference = (JarContentReference) reference;
 				try {
 					File jarFile = jarReference.asFile(); 
-					initializeVariables(jarFile, feature, references[i]);
+					initializeVariables(jarFile, feature, reference);
 					return verify(jarFile.getAbsolutePath());
 				} catch (IOException e){
 					throw Utilities.newCoreException("Unable to access JAR file:"+jarReference.toString(),e);
 				}
 			}
-		}
-		return null;
+	
+		result.setVerificationCode(IVerificationResult.TYPE_ENTRY_UNRECOGNIZED);
+		return result;
 	}
 
 	/**
@@ -331,7 +331,16 @@ public class JarVerifier implements IVerifier {
 				else
 					result.setVerificationCode(IVerificationResult.TYPE_ENTRY_NOT_SIGNED);
 			} else {
-				result.setResultException(new Exception("The File is not a valid JAR file. The file does not contain a Manifest." + file));
+				Exception e = new Exception("The File is not a valid JAR file. The file does not contain a Manifest." + file);
+				result.setResultException(e);
+				result.setVerificationCode(IVerificationResult.TYPE_ENTRY_NOT_SIGNED);				
+				
+				// DEBUG
+				if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS){
+					IStatus status = Utilities.newCoreException(e.getMessage(),e).getStatus();					
+					UpdateManagerPlugin.getPlugin().getLog().log(status);
+				}
+				
 			}
 		} catch (SecurityException e) {
 			// Jar file is signed
