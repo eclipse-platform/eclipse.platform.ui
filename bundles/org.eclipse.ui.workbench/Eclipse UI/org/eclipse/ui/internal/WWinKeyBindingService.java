@@ -43,11 +43,7 @@ import org.eclipse.ui.internal.registry.IActionSet;
  * @author
  */
 public class WWinKeyBindingService {
-	/* A number increased whenever the action mapping changes so
-	 * its children can keep their mapping in sync with the ones in
-	 * the parent.
-	 */
-	private long updateNumber = 0;
+
 	/* Maps all global actions definition ids to the action */
 	private HashMap globalActionDefIdToAction = new HashMap();
 	/* Maps all action sets definition ids to the action */
@@ -205,14 +201,12 @@ public class WWinKeyBindingService {
 	 * Register a global action in this service
 	 */	
 	public void registerGlobalAction(IAction action) {
-		updateNumber++;
 		globalActionDefIdToAction.put(action.getActionDefinitionId(),action);
 	}
 	/**
 	 * Register all action from the specifed action set.
 	 */	
 	public void registerActionSets(IActionSet sets[]) {
-		updateNumber++;
 		actionSetDefIdToAction.clear();
 		
 		for (int i=0; i<sets.length; i++) {
@@ -233,16 +227,11 @@ public class WWinKeyBindingService {
 	}
 
 	/**
-	 * Return the update number used to keep children and parent in sync.
-	 */
-	public long getUpdateNumber() {
-		return updateNumber;
-	}
-	/**
 	 * Returns a Map with all action registered in this service.
 	 */
 	public HashMap getMapping() {
-		HashMap result = (HashMap)globalActionDefIdToAction.clone();
+		// TBD: this could be a performance problem.
+		HashMap result = (HashMap) globalActionDefIdToAction.clone();
 		result.putAll(actionSetDefIdToAction);
 		return result;
 	}
