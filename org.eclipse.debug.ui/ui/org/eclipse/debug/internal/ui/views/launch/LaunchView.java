@@ -186,7 +186,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	public LaunchView() {
 		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
-		contextListener= new LaunchViewContextListener(this);
 	}
 	
 	/* (non-Javadoc)
@@ -417,7 +416,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 				}
 			}
 		}
-		contextListener.init(memento);
 	}
 		
 	/* (non-Javadoc)
@@ -637,7 +635,9 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * @see org.eclipse.ui.IPartListener#partOpened(org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void partOpened(IWorkbenchPart part) {
-		if (part == this) {
+		if (part == this) {		   
+            contextListener= new LaunchViewContextListener(LaunchView.this);
+            contextListener.init(getMemento());
 			updateContextListener();
 		}
 	}
