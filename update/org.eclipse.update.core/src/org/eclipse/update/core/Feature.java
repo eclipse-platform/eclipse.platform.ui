@@ -667,11 +667,13 @@ public class Feature extends FeatureModel implements IFeature {
 				? Policy.bind("Feature.NoURL")
 				: getURL().toExternalForm();
 		//$NON-NLS-1$
-		return Policy.bind(
+		String verString = Policy.bind(
 			"Feature.FeatureVersionToString",
 			URLString,
 			getVersionedIdentifier().toString());
 		//$NON-NLS-1$
+		String label = getLabel()==null?"":getLabel();
+		return verString+" ["+label+"]";
 	}
 
 	/*
@@ -859,7 +861,21 @@ public class Feature extends FeatureModel implements IFeature {
 	  * returns true f the same feature is installed on the site
 	  */
 	private boolean featureAlreadyInstalled(ISite targetSite){
-		IFeatureReference ref = targetSite.getFeatureReference(this);
-		return (ref!=null);
+		
+		IFeatureReference[] references = targetSite.getFeatureReferences();
+		IFeatureReference currentReference = null;
+		for (int i = 0; i < references.length; i++) {
+			currentReference = references[i];
+			// do not compare URL
+			try {
+				if (this.equals(currentReference.getFeature()))
+					return true;
+			} catch (CoreException e){
+				UpdateManagerPlugin.warn(null,e);
+			}
+		}
+		
+		UpdateManagerPlugin.warn("ValidateAlreadyInstalled:Feature "+this+" not found on site"+this.getURL());
+		return false;
 	}
 }

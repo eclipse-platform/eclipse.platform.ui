@@ -393,7 +393,7 @@ public class ConfiguredSite
 			getSite().getFeatureReference(feature);
 
 		if (featureReference==null){
-			UpdateManagerPlugin.warn("Unable to retrieve Feature Reference for feature"+feature,new Exception());
+			UpdateManagerPlugin.warn("Unable to retrieve Feature Reference for feature"+feature);
 			return false;
 		}
 
@@ -403,7 +403,7 @@ public class ConfiguredSite
 			
 		boolean sucessfullyUnconfigured=false;
 		try {
-		 sucessfullyUnconfigured = configPolicy.unconfigure(featureReference);
+			sucessfullyUnconfigured = configPolicy.unconfigure(featureReference);
 		} catch (CoreException e){
 			URL url = featureReference.getURL();
 			String urlString = (url!=null)?url.toExternalForm():"<no feature reference url>";			
@@ -431,7 +431,7 @@ public class ConfiguredSite
 		} else {
 			URL url = featureReference.getURL();
 			String urlString = (url!=null)?url.toExternalForm():"<no feature reference url>";	
-			UpdateManagerPlugin.warn("Unable to unconfigure:"+urlString,new Exception());
+			UpdateManagerPlugin.warn("Unable to unconfigure:"+urlString);
 			return false;
 		}
 	}
@@ -1083,27 +1083,27 @@ public class ConfiguredSite
 	private boolean containsMarker(String marker){
 		ISite site = getSite();
 		if (site==null) {
-			UpdateManagerPlugin.warn("The site is null",null);			
+			UpdateManagerPlugin.warn("Contains Markers:The site is null");			
 			 return false;
 		}
 		
 		URL url = site.getURL();
 		if (url == null) {
-			UpdateManagerPlugin.warn("Site URL is null",null);	
+			UpdateManagerPlugin.warn("Contains Markers:Site URL is null");	
 			return false;
 		}
 		if (!"file".equalsIgnoreCase(url.getProtocol())){
-			UpdateManagerPlugin.warn("Non file protocol",null);
+			UpdateManagerPlugin.warn("Contains Markers:Non file protocol");
 			return false;
 		}
 		File file = new File(url.getFile());
 		if (!file.exists()){
-			UpdateManagerPlugin.warn("The site doesn't exist:"+file,null);
+			UpdateManagerPlugin.warn("Contains Markers:The site doesn't exist:"+file);
 			return false;			
 		}
 		File extension = new File(file,marker);
 		if (!extension.exists()){
-			UpdateManagerPlugin.warn("The extensionfile does not exist:"+extension,null);
+			UpdateManagerPlugin.warn("Contains Markers:The extensionfile does not exist:"+extension);
 			return false;									
 		}
 		return true;			
@@ -1115,7 +1115,7 @@ public class ConfiguredSite
 	public boolean isNativelyLinked() throws CoreException {
 		String platformString = getPlatformURLString();
 		if (platformString==null){
-			UpdateManagerPlugin.warn("Unable to retrieve platformString",null);
+			UpdateManagerPlugin.warn("Unable to retrieve platformString");
 			return false;									
 		}
 		

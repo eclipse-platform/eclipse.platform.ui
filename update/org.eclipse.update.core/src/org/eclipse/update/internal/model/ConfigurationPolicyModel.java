@@ -126,7 +126,7 @@ public class ConfigurationPolicyModel extends ModelObject {
 		if (!found) {
 			list.add(feature);
 		} else {
-			UpdateManagerPlugin.warn("Feature Reference :"+feature+" already part of the list.",new Exception());
+			UpdateManagerPlugin.warn("Feature Reference :"+feature+" already part of the list.");
 		}
 	}
 
@@ -153,7 +153,7 @@ public class ConfigurationPolicyModel extends ModelObject {
 		if (unconfiguredFeatureReferences != null) {
 			boolean success = remove(feature, unconfiguredFeatureReferences);
 			if (!success)
-				UpdateManagerPlugin.warn("Unable to remove from unconfigured: "+feature.getURLString());			
+				UpdateManagerPlugin.warn("Feature not part of Unconfigured list: "+feature.getURLString());			
 		}
 
 	}
@@ -178,7 +178,7 @@ public class ConfigurationPolicyModel extends ModelObject {
 		if (configuredFeatureReferences != null) {
 			boolean success = remove(feature, configuredFeatureReferences);
 			if (!success)
-				UpdateManagerPlugin.warn("Unable to remove from configured: "+feature.getURLString());				
+				UpdateManagerPlugin.warn("Feature not part of Configured list: "+feature.getURLString());				
 		}
 	}
 
@@ -190,13 +190,13 @@ public class ConfigurationPolicyModel extends ModelObject {
 		if (unconfiguredFeatureReferences!=null){
 			boolean success = remove(feature, unconfiguredFeatureReferences);
 			if (!success)
-				UpdateManagerPlugin.warn("Unable to remove from unconfigured: "+feature.getURLString());							
+				UpdateManagerPlugin.warn(feature.getURLString()+" not part of unconfigured list.");							
 		}
 
 		if (configuredFeatureReferences != null) {
 			boolean success = remove(feature, configuredFeatureReferences);
 			if (!success)
-				UpdateManagerPlugin.warn("Unable to remove from unconfigured: "+feature.getURLString());							
+				UpdateManagerPlugin.warn(feature.getURLString()+" not part of configured list.");							
 		}
 	}
 	

@@ -146,11 +146,10 @@ public class SiteStatusAnalyzer  {
 		if(cSite!=null){
 			IFeatureReference ref = cSite.getSite().getFeatureReference(feature);
 			if (ref!=null){
-				if (!cSite.getConfigurationPolicy().isConfigured(ref)){
+				if (!cSite.getConfigurationPolicy().isConfigured(ref))
 					return createStatus(IStatus.OK,IFeature.STATUS_HAPPY,"",null);
-				} else {
-					UpdateManagerPlugin.warn("Unable to find reference for feature"+feature+" in site "+cSite.getSite());
-				}
+			} else {
+				UpdateManagerPlugin.warn("Unable to find reference for feature "+feature+" in site "+cSite.getSite().getURL());
 			}
 		} else {
 			UpdateManagerPlugin.warn("Unable to find the configured site in which "+feature+" resides.");
@@ -192,10 +191,10 @@ public class SiteStatusAnalyzer  {
 			try {
 				childFeature = children[i].getFeature();
 			} catch (CoreException e){
-				UpdateManagerPlugin.warn("Error retrieving feature:"+children[i],new Exception());
+				UpdateManagerPlugin.warn("Error retrieving feature:"+children[i]);
 			}
 			if (childFeature==null){
-				UpdateManagerPlugin.warn("Feature is null for:"+children[i],new Exception());
+				UpdateManagerPlugin.warn("getFeatureStatus: Feature is null for:"+children[i]);
 				// Unable to find children feature, broken
 				String msg1 = Policy.bind("SiteLocal.NestedFeatureUnavailable",new Object[]{children[i].getURL()});
 				multiTemp.add(createStatus(IStatus.ERROR,IFeature.STATUS_UNHAPPY,msg1,null));
@@ -252,7 +251,6 @@ public class SiteStatusAnalyzer  {
 					pluginName=ids[k].getLabel();
 					if (featureID.getVersion().isPerfect(compareID.getVersion())) {
 						found = true;
-						UpdateManagerPlugin.warn("Found the plugin plugin on the path:" + compareID.toString());						
 					} else {
 						// there is a plugin with a different version on the path
 						// log it

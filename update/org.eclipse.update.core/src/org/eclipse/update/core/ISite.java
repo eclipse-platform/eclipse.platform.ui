@@ -98,7 +98,8 @@ public interface ISite extends IAdaptable {
 	public IFeatureReference[] getFeatureReferences();
 
 	/**
-	 * Returns a reference to the specified feature on this site.
+	 * Returns a reference to the specified feature if 
+	 * it is installed on this site.
 	 * 
 	 * @param feature feature
 	 * @return feature reference, or <code>null</code> if this feature

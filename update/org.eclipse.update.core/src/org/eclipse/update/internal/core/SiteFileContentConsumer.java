@@ -138,9 +138,8 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 	 */
 	public IFeatureReference close() throws CoreException {
 
-		if (closed){
+		if (closed)
 			UpdateManagerPlugin.warn("Attempt to close a closed SiteFileContentConsumer",new Exception());
-		}			
 
 		// create a new Feature reference to be added to the site
 		FeatureReference ref = new FeatureReference();

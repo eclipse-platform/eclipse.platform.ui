@@ -8,7 +8,9 @@ import java.net.URL;
 import java.util.*;
 
 import org.eclipse.core.boot.IPlatformConfiguration;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.update.configuration.IActivity;
 import org.eclipse.update.configuration.IConfiguredSite;
 import org.eclipse.update.core.*;
@@ -184,30 +186,33 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 		boolean success = false;
 		Throwable originalException = null;
 
+
 		// do the unconfigure action
 		try {
-			handler.unconfigureInitiated();
-
-			ConfigurationActivity activity =
-				new ConfigurationActivity(IActivity.ACTION_UNCONFIGURE);
-			activity.setLabel(
-				feature.getVersionedIdentifier().toString());
+			
+			ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_UNCONFIGURE);
+			activity.setLabel(feature.getVersionedIdentifier().toString());
 			activity.setDate(new Date());
 
-			addUnconfiguredFeatureReference((FeatureReferenceModel) featureReference);
+			InstallConfiguration installConfig = ((InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration());
+				
+			// Throws an exception if the feature has 
+			// a configured parent
+			if (validateNoConfiguredParents(feature)){
+				handler.unconfigureInitiated();
 
-			// everything done ok
-			activity.setStatus(IActivity.STATUS_OK);
-			(
-				(InstallConfiguration) SiteManager
-					.getLocalSite()
-					.getCurrentConfiguration())
-					.addActivityModel(
-				(ConfigurationActivityModel) activity);
+				addUnconfiguredFeatureReference((FeatureReferenceModel) featureReference);
 
-			handler.completeUnconfigure();
-
-			success = true;
+				handler.completeUnconfigure();	
+				
+				// everything done ok
+				activity.setStatus(IActivity.STATUS_OK);
+				installConfig.addActivityModel((ConfigurationActivityModel) activity);
+				success = true;
+			} else {
+				activity.setStatus(IActivity.STATUS_NOK);				
+				installConfig.addActivityModel((ConfigurationActivityModel) activity);				
+			}			
 		} catch (Throwable t) {
 			originalException = t;
 		} finally {
@@ -230,7 +235,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 		if (!success){
 			URL url = featureReference.getURL();
 			String urlString = (url!=null)?url.toExternalForm():"<no feature reference url>";			
-			UpdateManagerPlugin.warn("Unable to unconfigure:"+urlString,new Exception());			
+			UpdateManagerPlugin.warn("Unable to unconfigure:"+urlString);			
 		}
 		return success;
 	}
@@ -503,4 +508,29 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 		}
 	}
 	
+	/*
+	 * 
+	 */
+	 private boolean validateNoConfiguredParents(IFeature feature) throws CoreException {
+	 	if (feature==null){
+	 		UpdateManagerPlugin.warn("ConfigurationPolicy: validate Feature is null");
+	 		return true;
+	 	}
+
+	 	IFeatureReference[] parents = UpdateManagerUtils.getParentFeatures(feature, getConfiguredFeatures());
+	 	if (parents.length==0)
+	 		return true;
+	 		
+		String msg = Policy.bind("ConfigurationPolicy.UnableToDisable",feature.getLabel());
+		UpdateManagerPlugin.warn(msg); 		
+	 	IFeature parentFeature = null;
+	 	for (int i = 0; i < parents.length; i++) { 
+	 		try {
+				parentFeature = parents[i].getFeature();
+	 		} catch (CoreException e){}
+	 		String featureLabel = (parentFeature==null)?parents[i].getURL().toExternalForm():parentFeature.getLabel();
+			UpdateManagerPlugin.warn(Policy.bind("ConfigurationPolicy.ParentIsEnable",featureLabel));	
+		}
+	 	return false; 
+	 }
 }

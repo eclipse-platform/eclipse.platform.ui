@@ -51,9 +51,7 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 		String pluginPath = null;
 
 		if (closed) {
-			UpdateManagerPlugin.warn(
-				"Attempt to store in a closed SiteFilePluginContentConsumer",
-				new Exception());
+			UpdateManagerPlugin.warn("Attempt to store in a closed SiteFilePluginContentConsumer",new Exception());
 			return;
 		}
 
@@ -127,9 +125,7 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 	public void close() throws CoreException {
 
 		if (closed) {
-			UpdateManagerPlugin.warn(
-				"Attempt to close a closed SiteFilePluginContentConsumer",
-				new Exception());
+			UpdateManagerPlugin.warn("Attempt to close a closed SiteFilePluginContentConsumer",new Exception());
 			return;
 		}
 
@@ -165,9 +161,7 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 	public void abort() throws CoreException {
 
 		if (closed) {
-			UpdateManagerPlugin.warn(
-				"Attempt to abort a closed SiteFilePluginContentConsumer",
-				new Exception());
+			UpdateManagerPlugin.warn("Attempt to abort a closed SiteFilePluginContentConsumer",new Exception());
 			return;
 		}
 

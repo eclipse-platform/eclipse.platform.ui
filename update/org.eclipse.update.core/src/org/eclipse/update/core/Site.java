@@ -192,10 +192,11 @@ public class Site extends SiteModel implements ISite {
 		IFeatureReference currentReference = null;
 		for (int i = 0; i < references.length; i++) {
 			currentReference = references[i];
-			// do not compare the URL 
 			if (UpdateManagerUtils.sameURL(feature.getURL(), currentReference.getURL()))
 				return currentReference;
 		}
+		
+		UpdateManagerPlugin.warn("Feature "+feature+" not found on site"+this.getURL());
 		return null;
 	}
 

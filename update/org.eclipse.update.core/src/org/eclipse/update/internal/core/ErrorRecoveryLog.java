@@ -151,7 +151,7 @@ public class ErrorRecoveryLog {
 		File logFile = null;
 		try {
 			if (!open) {
-				UpdateManagerPlugin.warn("Internal Error: The Error/Recovery log is not open:"+logEntry,new Exception());				
+				UpdateManagerPlugin.warn("Internal Error: The Error/Recovery log is not open:"+logEntry);				
 				return;
 			}
 

@@ -381,56 +381,12 @@ public class UpdateManagerUtils {
 	}	
 	
 	/*
-	 * returns the list of Features that are parent of 
+	 * returns the list of FeatureRference that are parent of 
 	 * the Feature or an empty array if no parent found
 	 * @param child
 	 * @param possiblesParent
 	 */ 
-	 public static IFeature[] getParentFeatures(IFeature child,IFeature[] possiblesParent) throws CoreException {
-	 	if (child==null)
-	 		return new IFeature[0];
-	 	
-	 	IFeature currentParent;
-	 	List parentList = new ArrayList();
-	 	IFeatureReference[] children = null;
-	 	IFeature compareFeature = null;
-	 	for (int i = 0; i < possiblesParent.length; i++) {
-			children = possiblesParent[i].getIncludedFeatureReferences();
-			for (int j = 0; j < children.length; j++) {
-				try {
-					compareFeature = children[j].getFeature();
-				} catch (CoreException e){};
-				if (child.equals(compareFeature)){
-					parentList.add(possiblesParent[i]);
-				}
-			}
-		}
-		
-		IFeature[] parents = new IFeature[0];
-		if (parentList.size()>0){
-			parents = new IFeature[parentList.size()];
-			parentList.toArray(parents);
-		}
-		return parents;		
-	 }
-	 
-	/*
-	 * returns the list of Features that are parent of 
-	 * the Feature or an empty array if no parent found
-	 * @param child
-	 * @param possiblesParent
-	 */ 
-	 public static IFeatureReference[] getParentFeatures(IFeatureReference child,IFeatureReference[] possiblesParent) throws CoreException {
-
-	 	if (child==null)
-	 		return new IFeatureReference[0];
-	 	
-	 	IFeature childFeature = null;
-	 	try {
-	 		childFeature = child.getFeature();
-	 	} catch (CoreException e) {
-	 		UpdateManagerPlugin.warn(null,e);
-	 	}
+	 public static IFeatureReference[] getParentFeatures(IFeature childFeature,IFeatureReference[] possiblesParent) throws CoreException {
 
 	 	if (childFeature==null)
 	 		return new IFeatureReference[0];
@@ -462,5 +418,29 @@ public class UpdateManagerUtils {
 			parentList.toArray(parents);
 		}
 		return parents;		
+	 }
+	 
+	/*
+	 * returns the list of Features that are parent of 
+	 * the Feature or an empty array if no parent found
+	 * @param child
+	 * @param possiblesParent
+	 */ 
+	 public static IFeatureReference[] getParentFeatures(IFeatureReference child,IFeatureReference[] possiblesParent) throws CoreException {
+
+	 	if (child==null)
+	 		return new IFeatureReference[0];
+	 	
+	 	IFeature childFeature = null;
+	 	try {
+	 		childFeature = child.getFeature();
+	 	} catch (CoreException e) {
+	 		UpdateManagerPlugin.warn(null,e);
+	 	}
+
+	 	if (childFeature==null)
+	 		return new IFeatureReference[0];
+	 		 	
+	 	return getParentFeatures(childFeature,possiblesParent);	
 	 }	 
 }

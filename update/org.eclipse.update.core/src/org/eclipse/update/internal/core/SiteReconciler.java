@@ -675,7 +675,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 	 	try {
 	 		platformURL = new URL(platformString);
 	 	} catch (MalformedURLException e){
-	 		UpdateManagerPlugin.warn("unable to resolve platform:/base/. Check you are running a Platform",e);
+	 		UpdateManagerPlugin.warn("Unable to resolve platform:/base/. Check you are running a Platform",e);
 	 		return true;
 	 	}
 	 	URL resolvedCurrentBaseURL=null;
