@@ -92,7 +92,14 @@ public class EditorList {
 				if (e.button == 1) {
 					TableItem[] items = editorsTable.getSelection();
 					if (items.length > 0) {
-						saveAction.setEnabled(true);
+						saveAction.setEnabled(false);
+						for (int i = 0; i < items.length; i++) {
+							Adapter editor = (Adapter)items[i].getData();
+							if (editor.isDirty()) {
+								saveAction.setEnabled(true);
+								break;
+							}
+						}
 						closeAction.setEnabled(true); 
 						
 						if (items.length == 1) {
@@ -250,8 +257,10 @@ public class EditorList {
 			pmd.open();
 			for (int i = 0; i < items.length; i++) {
 				Adapter editor = (Adapter)items[i].getData();
-				editor.save(pmd.getProgressMonitor());
-				updateItem(items[i], editor);
+				if (editor.isDirty()) {
+					editor.save(pmd.getProgressMonitor());
+					updateItem(items[i], editor);
+				}
 			}
 			pmd.close();
 			destroyControl();
