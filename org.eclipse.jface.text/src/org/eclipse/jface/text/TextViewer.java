@@ -2211,13 +2211,22 @@ public class TextViewer extends Viewer implements
 				
 				if (endLine > startLine) {
 					// reveal the beginning of the range in the start line
-					IRegion line= doc.getLineInformation(startLine);
-					startPixel= getWidthInPixels(line.getOffset(), start - line.getOffset());
-					endPixel= getWidthInPixels(line.getOffset(), line.getLength());
+//					IRegion line= doc.getLineInformation(startLine);
+//					startPixel= getWidthInPixels(line.getOffset(), start - line.getOffset());
+//					endPixel= getWidthInPixels(line.getOffset(), line.getLength());
+					
+					IRegion extent= getExtent(start, start);
+					startPixel= extent.getOffset();
+					endPixel= startPixel;
+					
 				} else {
-					int lineStart= doc.getLineOffset(startLine);
-					startPixel= getWidthInPixels(lineStart, start - lineStart);
-					endPixel= getWidthInPixels(lineStart, end - lineStart);
+//					int lineStart= doc.getLineOffset(startLine);
+//					startPixel= getWidthInPixels(lineStart, start - lineStart);
+//					endPixel= getWidthInPixels(lineStart, end - lineStart);
+					
+					IRegion extent= getExtent(start, end);
+					startPixel= extent.getOffset();
+					endPixel= startPixel + extent.getLength();
 				}
 				
 				int visibleStart= fTextWidget.getHorizontalPixel();
@@ -2259,6 +2268,24 @@ public class TextViewer extends Viewer implements
 		Point extent= gc.textExtent(text);
 		gc.dispose();
 		return extent.x;
+	}
+	
+	final protected IRegion getExtent(int start, int end) {
+		Point left= fTextWidget.getLocationAtOffset(start);
+		Point right= new Point(left.x, left.y);
+
+		for (int i= start +1; i <= end; i++) {
+
+			Point p= fTextWidget.getLocationAtOffset(i);
+
+			if (left.x > p.x)
+				left.x= p.x;
+
+			if (right.x  < p.x)
+				right.x= p.x;
+		}
+
+		return  new Region(left.x, right.x - left.x);
 	}
 	
 	/**
