@@ -9,8 +9,11 @@ import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
@@ -66,6 +69,7 @@ public class SearchResultViewer extends TableViewer {
 	private int fMarkerToShow;
 	private boolean fHandleNextSelectionChangedEvent= true;
 	private boolean fCurrentMatchRemoved= false;
+	private Color fPotentialMatchBgColor;
 	
 	/*
 	 * These static fields will go away when support for 
@@ -79,6 +83,8 @@ public class SearchResultViewer extends TableViewer {
 		
 		fOuterPart= outerPart;
 		Assert.isNotNull(fOuterPart);
+
+		fPotentialMatchBgColor= new Color(SearchPlugin.getDefault().getActiveWorkbenchShell().getDisplay(), SearchPreferencePage.getPotentialMatchBackgroundColor());
 		
 		setUseHashlookup(true);
 		setContentProvider(new SearchResultContentProvider());
@@ -133,6 +139,17 @@ public class SearchResultViewer extends TableViewer {
 		
 		// Register menu
 		fOuterPart.getSite().registerContextMenu(menuMgr, this);
+	}
+
+	/**
+	 * @see StructuredViewer#doUpdateItem(Widget, Object, boolean)
+	 */
+	protected void doUpdateItem(Widget item, Object element, boolean fullMap) {
+		super.doUpdateItem(item, element, fullMap);
+		if (((SearchResultViewEntry)element).isPotentialMatch()) {
+		    TableItem ti = (TableItem) item;
+		    ti.setBackground(fPotentialMatchBgColor);
+		}
 	}
 
 	private void handleSelectionChanged(boolean updateMarkerToShow) {
@@ -432,6 +449,15 @@ public class SearchResultViewer extends TableViewer {
 	}
 
 	/**
+	 * Updates the background color for potential matches.
+	 */
+	void updatedPotentialMatchBgColor() {
+		fPotentialMatchBgColor.dispose();
+		fPotentialMatchBgColor= new Color(SearchPlugin.getDefault().getActiveWorkbenchShell().getDisplay(), SearchPreferencePage.getPotentialMatchBackgroundColor());
+		refresh();
+	}
+
+	/**
 	 * Update the title
 	 */
 	protected void updateTitle() {
@@ -468,6 +494,7 @@ public class SearchResultViewer extends TableViewer {
 		Menu menu= getTable().getMenu();
 		if (menu != null)
 			menu.dispose();
+		fPotentialMatchBgColor.dispose();
 		super.handleDispose(event);
 	}
 

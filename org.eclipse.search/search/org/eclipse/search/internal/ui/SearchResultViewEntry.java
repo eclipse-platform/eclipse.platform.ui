@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.search.ui.ISearchResultViewEntry;
+import org.eclipse.search.ui.SearchUI;
 
 /**
  * Represents an entry in the search result view
@@ -54,6 +55,12 @@ public class SearchResultViewEntry implements ISearchResultViewEntry {
 		if (fMarkers == null && fMarker != null)
 			return 1;
 		return 0;
+	}
+
+	boolean isPotentialMatch() {
+		if (fMarker != null)
+			return fMarker.getAttribute(SearchUI.POTENTIAL_MATCH, false);
+		return false;
 	}
 	
 	List getAttributesPerMarker() {
