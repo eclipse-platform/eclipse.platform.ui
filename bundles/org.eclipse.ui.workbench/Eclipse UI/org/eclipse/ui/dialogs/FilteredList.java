@@ -69,7 +69,7 @@ public class FilteredList extends Composite {
 
 	private Table fList;
 	private ILabelProvider fRenderer;
-	private boolean fMatchEmtpyString= true;
+	private boolean fMatchEmptyString= true;
 	private boolean fIgnoreCase;
 	private boolean fAllowDuplicates;
 	private String fFilter= ""; //$NON-NLS-1$
@@ -181,7 +181,7 @@ public class FilteredList extends Composite {
 		fIgnoreCase= ignoreCase;		
 		fSorter= new TwoArrayQuickSorter(new LabelComparator(ignoreCase));
 		fAllowDuplicates= allowDuplicates;
-		fMatchEmtpyString= matchEmptyString;
+		fMatchEmptyString= matchEmptyString;
 	}
 
 	/**
@@ -435,7 +435,7 @@ public class FilteredList extends Composite {
      * @return returns the number of elements after filtering.
 	 */
 	private int filter() {
-		if (((fFilter == null) || (fFilter.length() == 0)) && !fMatchEmtpyString)
+		if (((fFilter == null) || (fFilter.length() == 0)) && !fMatchEmptyString)
 			return 0;
 		
 		fFilterMatcher.setFilter(fFilter.trim(), fIgnoreCase, false);
@@ -564,6 +564,79 @@ public class FilteredList extends Composite {
 				fRunnable.run();
 			}		
 		}
+	}
+
+	/**
+	 * Returns whether or not duplicates are allowed.
+	 * @return boolean
+	 */
+	public boolean allowsDuplicates() {
+		return fAllowDuplicates;
+	}
+
+	/**
+	 * Returns whether or not case should be ignored.
+	 * @return boolean
+	 */
+	public boolean ignoresCase() {
+		return fIgnoreCase;
+	}
+
+	/**
+	 * Returns whether empty filter strings should filter everything or nothing.
+	 * @return boolean true if the should filter everything out
+	 */
+	public boolean shouldMatchEmptyString() {
+		return fMatchEmptyString;
+	}
+
+	/**
+	 * Returns the label provider for the items.
+	 * @return ILabelProvider
+	 */
+	public ILabelProvider getLabelProvider() {
+		return fRenderer;
+	}
+
+	/**
+	 * Sets whether or not duplicates are allowed.
+	 * If this value is set the items should be set 
+	 * again for this value to take effect.
+	 * @param allowDuplicates true indicates duplicates are allowed
+	 */
+	public void setAllowDuplicates(boolean allowDuplicates) {
+		this.fAllowDuplicates = allowDuplicates;
+	}
+
+	/**
+	 * Sets whether or not case should be ignored
+	 * If this value is set the items
+	 * should be set again for this value to take effect.
+	 * @param ignoreCase True if case should be ignored.
+	 */
+	public void setIgnoreCase(boolean ignoreCase) {
+		this.fIgnoreCase = ignoreCase;
+	}
+
+	/**
+	 * Sets whether empty filter strings should filter everything or nothing.
+	 * If this value is set the items should be set again for this value to take
+	 * effect.
+	 * @param fMatchEmptyString The fMatchEmptyString to set
+	 */
+	public void setMatchEmptyString(boolean shouldMatchEmptyString) {
+		this.fMatchEmptyString = shouldMatchEmptyString;
+	}
+
+	/**
+	 * Sets the label provider.
+	 * If this value is set the items
+	 * should be set again for this value to take effect.
+
+	 * @param fRenderer The fRenderer to set
+	 */
+	public void setLabelProvider(ILabelProvider labelProvider) {
+		this.fRenderer = labelProvider;
 	}
 
 }
