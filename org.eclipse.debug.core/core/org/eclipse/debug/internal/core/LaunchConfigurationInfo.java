@@ -208,6 +208,9 @@ public class LaunchConfigurationInfo {
 		while (keys.hasNext()) {
 			String key = (String)keys.next();
 			Object value = getAttributeTable().get(key);
+			if (value == null) {
+				continue;
+			}
 			Element element = null;
 			String valueString = null;
 			if (value instanceof String) {
@@ -219,7 +222,7 @@ public class LaunchConfigurationInfo {
 			} else if (value instanceof Boolean) {
 				valueString = ((Boolean)value).toString();
 				element = doc.createElement("booleanAttribute"); //$NON-NLS-1$
-			}
+			} 
 			element.setAttribute("key", key); //$NON-NLS-1$
 			element.setAttribute("value", valueString); //$NON-NLS-1$
 			configRootElement.appendChild(element);
