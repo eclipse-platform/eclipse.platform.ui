@@ -53,7 +53,10 @@ public class TopicsPage extends NavigationPage implements IMenuListener {
 
 		viewer.setInput(view);
 		// create the pop-up menus in the viewer
-		createPopUpMenus();
+		// For now, do this only for win32. 
+		if (System.getProperty("os.name").startsWith("Win")) {
+			createPopUpMenus();
+		}
 		WorkbenchHelp.setHelp(
 			viewer.getControl(),
 			new String[] {
@@ -103,11 +106,9 @@ public class TopicsPage extends NavigationPage implements IMenuListener {
 		if (!(selection instanceof IStructuredSelection))
 			return; // should never be here. This is gauranteed by Viewer.
 
-		// Show nested printing menu only on win32 platform, and only
-		// if one topic is selected.
+		// Show nested printing and only if one topic is selected.
 		// make sure to have lazy creation of the printing Browser. 
-		if (System.getProperty("os.name").startsWith("Win")
-			&& ((IStructuredSelection) selection).size() == 1) {
+		if (((IStructuredSelection) selection).size() == 1) {
 			mgr.add(new NestedPrintAction((IStructuredSelection) selection));
 			mgr.add(new Separator());
 			mgr.update(true);
