@@ -100,7 +100,7 @@ public class DiffTreeViewer extends TreeViewer {
 				IDiffElement input= (IDiffElement) element;
 				
 				int kind= input.getKind();
-				if (!fIgnoreLeftIsLocal && fLeftIsLocal) {
+				if (fLeftIsLocal) {
 					switch (kind & Differencer.DIRECTION_MASK) {
 					case Differencer.LEFT:
 						kind= (kind &~ Differencer.LEFT) | Differencer.RIGHT;
@@ -130,7 +130,6 @@ public class DiffTreeViewer extends TreeViewer {
 
 	private ResourceBundle fBundle;
 	private CompareConfiguration fCompareConfiguration;
-	boolean fIgnoreLeftIsLocal= true;
 	private boolean fLeftIsLocal;
 	private ViewerFilter fViewerFilter;
 	private IPropertyChangeListener fPropertyChangeListener;

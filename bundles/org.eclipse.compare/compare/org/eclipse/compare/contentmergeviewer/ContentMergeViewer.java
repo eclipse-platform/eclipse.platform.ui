@@ -548,8 +548,8 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 			Object ancestor= content.getAncestorContent(input);
 			if (input instanceof ICompareInput)	
 				fIsThreeWay= (((ICompareInput)input).getKind() & Differencer.DIRECTION_MASK) != 0;
-			else 
-				fIsThreeWay= true;	// ancestor != null;
+			else
+				fIsThreeWay= ancestor != null;
 				
 			if (fAncestorItem != null)
 				fAncestorItem.setVisible(fIsThreeWay);
