@@ -125,6 +125,7 @@ public class SyncAllAction extends SyncAction implements IWorkbenchWindowActionD
 		if (!resource.isAccessible()) return false;
 		ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
 		if (cvsResource.isManaged()) return true;
+		if (!cvsResource.exists()) return false;
 		if (cvsResource.isFolder() && ((ICVSFolder) cvsResource).isCVSFolder()) return true;
 		if (cvsResource.isIgnored()) return false;
 		return cvsResource.getParent().isCVSFolder();
