@@ -9,7 +9,6 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
 
-import org.eclipse.core.runtime.*;
 import org.eclipse.help.IHelp;
 import org.eclipse.help.internal.*;
 /**
@@ -19,9 +18,7 @@ import org.eclipse.help.internal.*;
  *  href - may be provided if comand==displayHelp
  */
 public class ControlServlet extends HttpServlet {
-	private static final String HELP_SYSTEM_EXTENSION_ID =
-		"org.eclipse.help.support";
-	private static final String HELP_SYSTEM_CLASS_ATTRIBUTE = "class";
+
 	private IHelp helpSupport = null;
 	private boolean shuttingDown = false;
 
@@ -32,27 +29,7 @@ public class ControlServlet extends HttpServlet {
 	public void init() throws ServletException {
 		super.init();
 		if (HelpSystem.getMode() == HelpSystem.MODE_STANDALONE) {
-			IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
-			IExtensionPoint point =
-				pluginRegistry.getExtensionPoint(HELP_SYSTEM_EXTENSION_ID);
-			if (point != null) {
-				IExtension[] extensions = point.getExtensions();
-				if (extensions.length != 0) {
-					// There should only be one extension/config element so we just take the first
-					IConfigurationElement[] elements =
-						extensions[0].getConfigurationElements();
-					if (elements.length != 0) { // Instantiate the app server
-						try {
-							helpSupport =
-								(IHelp) elements[0].createExecutableExtension(
-									HELP_SYSTEM_CLASS_ATTRIBUTE);
-						} catch (CoreException e) {
-							// may need to change this
-							HelpPlugin.getDefault().getLog().log(e.getStatus());
-						}
-					}
-				}
-			}
+			helpSupport = HelpSystem.getHelpSupport();
 		}
 	}
 

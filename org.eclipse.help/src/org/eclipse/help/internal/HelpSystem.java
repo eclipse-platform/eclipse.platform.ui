@@ -7,6 +7,7 @@ import java.util.*;
 
 import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.help.*;
 import org.eclipse.help.browser.*;
 import org.eclipse.help.internal.appserver.WebappManager;
 import org.eclipse.help.internal.browser.*;
@@ -24,6 +25,10 @@ public final class HelpSystem {
 
 	private final static String WEBAPP_EXTENSION_ID = "org.eclipse.help.webapp";
 	private static final String WEBAPP_DEFAULT_ATTRIBUTE = "default";
+
+	private static final String HELP_SUPPORT_EXTENSION_ID =
+		"org.eclipse.help.support";
+	private static final String HELP_SUPPORT_CLASS_ATTRIBUTE = "class";
 
 	public final static String LOG_LEVEL_KEY = "log_level";
 	public final static String BANNER_KEY = "banner";
@@ -45,8 +50,9 @@ public final class HelpSystem {
 	private boolean webappStarted = false;
 	private IErrorUtil defaultErrorMessenger;
 	private IBrowser browser;
-
+	private IHelp helpSupport = null;
 	private boolean webappRunning = false;
+
 	/**
 	 * HelpSystem constructor comment.
 	 */
@@ -93,6 +99,7 @@ public final class HelpSystem {
 	public static WorkingSetManager getWorkingSetManager() {
 		return getWorkingSetManager(BootLoader.getNL());
 	}
+	
 	public static WorkingSetManager getWorkingSetManager(String locale) {
 		if (getInstance().workingSetManagers == null) {
 			getInstance().workingSetManagers = new HashMap();
@@ -104,6 +111,19 @@ public final class HelpSystem {
 			getInstance().workingSetManagers.put(locale, wsmgr);
 		}
 		return wsmgr;
+	}
+
+	public static synchronized IBrowser getHelpBrowser() {
+		if (getInstance().browser == null)
+			getInstance().browser =
+				BrowserManager.getInstance().createBrowser();
+		return getInstance().browser;
+	}
+
+	public static synchronized IHelp getHelpSupport() {
+		if (getInstance().helpSupport == null)
+			getInstance().helpSupport = getInstance().initHelpSupport();
+		return getInstance().helpSupport;
 	}
 	/**
 	 */
@@ -125,10 +145,10 @@ public final class HelpSystem {
 		WebappManager.stop("help");
 		if (getMode() != MODE_WORKBENCH)
 			WebappManager.stop("helpControl");
-			
+
 		// close any browsers created
 		BrowserManager.getInstance().closeAll();
-		
+
 		Logger.shutdown();
 	}
 	/**
@@ -215,7 +235,7 @@ public final class HelpSystem {
 	public static void setDefaultErrorUtil(IErrorUtil em) {
 		getInstance().defaultErrorMessenger = em;
 	}
-	
+
 	/**
 	 * Returns the default error messenger. When no UI is present, all
 	 * errors are sent to System.out.
@@ -224,7 +244,7 @@ public final class HelpSystem {
 	public static IErrorUtil getDefaultErrorUtil() {
 		return getInstance().defaultErrorMessenger;
 	}
-	
+
 	/**
 	 * Returns the plugin id that defines the help webapp
 	 */
@@ -264,9 +284,38 @@ public final class HelpSystem {
 		return "org.eclipse.help.webapp";
 	}
 
-	public static synchronized IBrowser getHelpBrowser() {
-		if (getInstance().browser == null)
-			getInstance().browser = BrowserManager.getInstance().createBrowser();
-		return getInstance().browser;
+	/**
+	 * Instantiate the help support
+	 */
+	private IHelp initHelpSupport() {
+		if (helpSupport == null) {
+			IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
+			IExtensionPoint point =
+				pluginRegistry.getExtensionPoint(HELP_SUPPORT_EXTENSION_ID);
+			if (point != null) {
+				IExtension[] extensions = point.getExtensions();
+				if (extensions.length != 0) {
+					// There should only be one extension/config element so we just take the first
+					IConfigurationElement[] elements =
+						extensions[0].getConfigurationElements();
+					if (elements.length != 0) { // Instantiate the help support
+						try {
+							helpSupport =
+								(IHelp) elements[0].createExecutableExtension(
+									HELP_SUPPORT_CLASS_ATTRIBUTE);
+						} catch (CoreException e) {
+							// may need to change this
+							HelpPlugin.getDefault().getLog().log(e.getStatus());
+						}
+					} 
+				}
+			}
+		}
+		
+		// if no extension point found or instantiated, use default impl
+		if (helpSupport == null)
+			helpSupport = new DefaultHelpSupport();
+			
+		return helpSupport;
 	}
 }
