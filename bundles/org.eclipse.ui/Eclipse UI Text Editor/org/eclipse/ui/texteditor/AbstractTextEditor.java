@@ -874,6 +874,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				getSite().registerContextMenu(partId + ".EditorContext", manager, getSelectionProvider());
 		}
 		
+		if (fEditorContextMenuId == null)
+			fEditorContextMenuId= DEFAULT_EDITOR_CONTEXT_MENU_ID;
+		
 		
 		Control ruler= fVerticalRuler.getControl();
 		id= fRulerContextMenuId != null ? fRulerContextMenuId : DEFAULT_RULER_CONTEXT_MENU_ID;
@@ -894,6 +897,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			if (partId != null)
 				getSite().registerContextMenu(partId + ".RulerContext", manager, getSelectionProvider());
 		}
+		
+		if (fRulerContextMenuId == null)
+			fRulerContextMenuId= DEFAULT_RULER_CONTEXT_MENU_ID;
 		
 		createActions();
 		
