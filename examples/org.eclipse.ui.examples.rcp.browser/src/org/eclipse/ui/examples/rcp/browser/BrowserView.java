@@ -52,7 +52,7 @@ public class BrowserView extends ViewPart {
 	 * Debug flag.  When true, status and progress messages are sent to the
 	 * console in addition to the status line.
 	 */
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 	
 	private Browser browser;
 	private Text location;
