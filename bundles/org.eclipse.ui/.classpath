@@ -2,8 +2,6 @@
 <classpath>
     <classpathentry kind="var" path="JRE_LIB" rootpath="JRE_SRCROOT" sourcepath="JRE_SRC"/>
     <classpathentry kind="var"
-        path="ECLIPSE_HOME/plugins/org.eclipse.swt/swt.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.swt/swtsrc.zip"/>
-    <classpathentry kind="var"
         path="ECLIPSE_HOME/plugins/org.eclipse.help/help.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.help/helpsrc.zip"/>
     <classpathentry kind="var"
         path="ECLIPSE_HOME/plugins/org.eclipse.core.resources/resources.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.core.resources/resourcessrc.zip"/>
@@ -13,6 +11,9 @@
         path="ECLIPSE_HOME/plugins/org.apache.xerces/xerces.jar" sourcepath="ECLIPSE_HOME/plugins/org.apache.xerces/xercessrc.zip"/>
     <classpathentry kind="var"
         path="ECLIPSE_HOME/plugins/org.eclipse.core.boot/boot.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.core.boot/bootsrc.zip"/>
+    <classpathentry exported="true" kind="var"
+        path="ECLIPSE_HOME/plugins/org.eclipse.swt/ws/win32/swt.jar"
+        rootpath="" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.swt/ws/win32/swtsrc.zip"/>
     <classpathentry kind="src" path="Eclipse JFace"/>
     <classpathentry kind="src" path="Eclipse JFace Text"/>
     <classpathentry kind="src" path="Eclipse UI"/>
