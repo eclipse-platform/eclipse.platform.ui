@@ -194,4 +194,31 @@ public class Update extends Command {
 		}
 	}
 
+	/**
+	 * @see org.eclipse.team.internal.ccvs.core.client.Command#doExecute(org.eclipse.team.internal.ccvs.core.client.Session, org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption, org.eclipse.team.internal.ccvs.core.client.Command.LocalOption, java.lang.String, org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected IStatus doExecute(
+			Session session,
+			GlobalOption[] globalOptions,
+			LocalOption[] localOptions,
+			String[] arguments,
+			ICommandOutputListener listener,
+			IProgressMonitor monitor)
+			throws CVSException {
+			
+		session.setIgnoringLocalChanges(IGNORE_LOCAL_CHANGES.isElementOf(localOptions));
+		try {
+			return super.doExecute(
+				session,
+				globalOptions,
+				localOptions,
+				arguments,
+				listener,
+				monitor);
+		} finally {
+			session.setIgnoringLocalChanges(false);
+		}
+
+	}
+
 }

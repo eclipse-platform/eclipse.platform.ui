@@ -111,6 +111,9 @@ public class Session {
 	private Collection /* of ICVSFile */ textTransferOverrideSet = null;
 	private boolean hasBeenConnected = false;
 	private Map caseMappings;
+	
+	// state need to indicate whether 
+	private boolean ignoringLocalChanges = false;
 
 	// The resource bundle key that provides the file sending message
 	private String sendFileTitleKey;
@@ -1122,4 +1125,19 @@ public class Session {
 		}
 		return globalOptions;
 	}
+	/**
+	 * Method setIgnoringLocalChanges.
+	 * @param b
+	 */
+	protected void setIgnoringLocalChanges(boolean b) {
+		ignoringLocalChanges = b;
+	}
+	/**
+	 * Returns the ignoringLocalChanges.
+	 * @return boolean
+	 */
+	protected boolean isIgnoringLocalChanges() {
+		return ignoringLocalChanges;
+	}
+
 }

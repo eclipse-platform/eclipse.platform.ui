@@ -37,6 +37,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor;
 import org.eclipse.team.internal.ccvs.core.IResourceStateChangeListener;
 import org.eclipse.team.internal.ccvs.core.client.Command;
+import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
@@ -125,7 +126,7 @@ public class IsModifiedTests extends EclipseTest {
 	public static Test suite() {
 		TestSuite suite = new TestSuite(IsModifiedTests.class);
 		return new CVSTestSetup(suite);
-		//return new CVSTestSetup(new IsModifiedTests("testFileAdditions"));
+		//return new CVSTestSetup(new IsModifiedTests("testUpdateIgnoreLocal"));
 	}
 
 	/**
@@ -504,6 +505,19 @@ public class IsModifiedTests extends EclipseTest {
 		// can't commit because of merge
 		// commitProject(project);
 		// assertModificationState(project, null, false);
+	}
+	
+	public void testUpdateIgnoreLocal() throws TeamException, CoreException, IOException {
+		// Create a test project, import it into cvs and check it out
+		IProject project = createProject("testUpdateIgnoreLocal", new String[] { "changed.txt", "merged.txt", "deleted.txt", "folder1/", "folder1/a.txt" });
+
+		// modifiy a file
+		setContentsAndEnsureModified(project.getFile("changed.txt"));
+		assertModificationState(project, new String[] {".", "changed.txt"}, true);
+		
+		// peform un update -C
+		getProvider(project).update(new IResource[] {project}, new Command.LocalOption[] {Update.IGNORE_LOCAL_CHANGES}, null, true /*createBackups*/, DEFAULT_MONITOR);
+		assertModificationState(project, null, false);
 	}
 	
 	public void testExternalModifications() {

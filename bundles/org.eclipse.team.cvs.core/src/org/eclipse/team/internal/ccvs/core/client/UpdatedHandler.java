@@ -125,7 +125,7 @@ class UpdatedHandler extends ResponseHandler {
 		newInfoWithTimestamp.setTimeStamp(modTime);
 		if(handlerType==HANDLE_MERGED) {
 			newInfoWithTimestamp.setMerged();
-		} else if(handlerType==HANDLE_UPDATE_EXISTING || handlerType==HANDLE_CREATED) {
+		} else if (!session.isIgnoringLocalChanges() && (handlerType==HANDLE_UPDATE_EXISTING || handlerType==HANDLE_CREATED)) {
 			// both these cases result in an unmodified file.
 			// reporting is handled by the FileModificationManager
 			newInfoWithTimestamp.reported();
