@@ -165,6 +165,8 @@ final class WWinKeyBindingService {
 		Manager.getInstance().getKeyMachine().setMode(Sequence.create());
 		keyModeContributionItem.setText(""); //$NON-NLS-1$	
 		updateAccelerators();
+		MenuManager menuManager = workbenchWindow.getMenuManager();
+		menuManager.update(IAction.TEXT);		
 	}
 
 	IAction getAction(String command) {
@@ -207,6 +209,8 @@ final class WWinKeyBindingService {
 		else {
 			keyModeContributionItem.setText(KeySupport.formatSequence(childMode, true));
 			updateAccelerators();
+			MenuManager menuManager = workbenchWindow.getMenuManager();
+			menuManager.update(IAction.TEXT);			
 		}
 	}
 
@@ -236,28 +240,26 @@ final class WWinKeyBindingService {
 			globalActionsCommandIdToActionMap.put(command, globalAction);
 	}
 
-	void update(IWorkbenchPart part) {
-		if (part == null)
-			return;
-   		
-		activeKeyBindingService = (KeyBindingService) part.getSite().getKeyBindingService();
-		clear();
+	void update(IWorkbenchPart workbenchPart) {
 		String[] scopes = new String[] { "" }; //$NON-NLS-1$
+
+		if (workbenchPart != null) {
+			activeKeyBindingService = (KeyBindingService) workbenchPart.getSite().getKeyBindingService();
 		
-		if (activeKeyBindingService != null)
-			scopes = activeKeyBindingService.getScopes();
-		
+			if (activeKeyBindingService != null)
+				scopes = activeKeyBindingService.getScopes();
+		}
+
 		try {
-			if (Manager.getInstance().getKeyMachine().setScopes(scopes)) {
-				MenuManager menuManager = workbenchWindow.getMenuManager();
-				menuManager.update(IAction.TEXT);				
-			}
+			Manager.getInstance().getKeyMachine().setScopes(scopes);
 		} catch (IllegalArgumentException eIllegalArgument) {
 			System.err.println(eIllegalArgument);
 		}
+
+		clear();
 	}
 
-	void updateAccelerators() {
+	private void updateAccelerators() {
 		SequenceMachine keyMachine = Manager.getInstance().getKeyMachine();      		
 		Sequence mode = keyMachine.getMode();
 		List strokes = mode.getStrokes();

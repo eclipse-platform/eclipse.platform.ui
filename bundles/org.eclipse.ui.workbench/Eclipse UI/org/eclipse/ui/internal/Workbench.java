@@ -47,6 +47,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -675,7 +676,6 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			WWinKeyBindingService wWinKeyBindingService = ((WorkbenchWindow) workbenchWindow).getKeyBindingService();
 	
 			if (wWinKeyBindingService != null) {
-				wWinKeyBindingService.clear();
 				IWorkbenchPage activePage = workbenchWindow.getActivePage();
 					
 				if (activePage != null) {
@@ -686,10 +686,9 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 						return;
 					}
 				}
-			}
-
-			MenuManager menuManager = ((WorkbenchWindow) workbenchWindow).getMenuManager();
-			menuManager.updateAll(true);
+			}		
+			
+			wWinKeyBindingService.clear();
 		}
 	}
 		
