@@ -238,22 +238,26 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	public void launchAdded(final ILaunch newLaunch) {
 		Runnable r= new Runnable() {
 			public void run() {		
-				if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES)) {
-					ILaunchManager lManager= DebugPlugin.getDefault().getLaunchManager();
-					Object[] launches= lManager.getLaunches();
-					for (int i= 0; i < launches.length; i++) {
-						ILaunch launch= (ILaunch)launches[i];
-						if (launch != newLaunch && launch.isTerminated()) {
-							lManager.removeLaunch(launch);
-						}
-					}
-				}
+				removeTerminatedLaunches(newLaunch);
 				insert(newLaunch);
 				getLaunchView().autoExpand(newLaunch, false, true);
 			}
 		};
 
 		getView().syncExec(r);
+	}
+	
+	protected void removeTerminatedLaunches(ILaunch newLaunch) {
+		if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES)) {
+			ILaunchManager lManager= DebugPlugin.getDefault().getLaunchManager();
+			Object[] launches= lManager.getLaunches();
+			for (int i= 0; i < launches.length; i++) {
+				ILaunch launch= (ILaunch)launches[i];
+				if (launch != newLaunch && launch.isTerminated()) {
+					lManager.removeLaunch(launch);
+				}
+			}
+		}
 	}
 
 	/**
