@@ -127,11 +127,6 @@ private CTabFolder createContainer(Composite parent) {
 			pageChange(newPageIndex);
 		}
 	});
-	container.addMouseListener(new MouseAdapter() {
-		public void mouseDown(MouseEvent e) {
-			container.setFocus();
-		}
-	});
 	return container;
 }
 /**
