@@ -74,7 +74,7 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 		}
 		for (int i = 0; i < commands.length; i++) {
 			if (ID.equals(commands[i].getBuilderName())){
-				ILaunchConfiguration config = BuilderUtils.configFromBuildCommandArgs(getProject(), commands[i].getArguments());
+				ILaunchConfiguration config = BuilderUtils.configFromBuildCommandArgs(getProject(), commands[i].getArguments(), new String[1]);
 				if (config != null && buildKindCompatible(kind, config) && configEnabled(config)) {
 					if (kind == FULL_BUILD) {
 						launchBuild(kind, config, monitor);

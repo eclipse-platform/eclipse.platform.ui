@@ -45,6 +45,10 @@ public class BuilderUtils {
 
 	public static final String BUILDER_FOLDER_NAME= ".externalToolBuilders"; //$NON-NLS-1$
 	
+	public static final String VERSION_1_0= "1.0"; //$NON-NLS-1$
+	public static final String VERSION_2_1= "2.1"; //$NON-NLS-1$
+	public static final String VERSION_3_0= "3.0"; //$NON-NLS-1$
+	
 	// Extension point constants.
 	private static final String TAG_CONFIGURATION_MAP= "configurationMap"; //$NON-NLS-1$
 	private static final String TAG_SOURCE_TYPE= "sourceType"; //$NON-NLS-1$
@@ -59,23 +63,27 @@ public class BuilderUtils {
 	 * @return a launch configuration, a launch configuration working copy, or
 	 * <code>null</code> if not possible.
 	 */
-	public static ILaunchConfiguration configFromBuildCommandArgs(IProject project, Map commandArgs) {
+	public static ILaunchConfiguration configFromBuildCommandArgs(IProject project, Map commandArgs, String[] version) {
 		String configHandle = (String) commandArgs.get(LAUNCH_CONFIG_HANDLE);
 		if (configHandle == null) {
-			// Probably an old-style external tool. Try to migrate.
+			// Probably an old-style (Eclipse 1.0 or 2.0) external tool. Try to migrate.
+			version[0]= VERSION_1_0;
 			return ExternalToolMigration.configFromArgumentMap(commandArgs);
 		}
 		ILaunchManager manager= DebugPlugin.getDefault().getLaunchManager();
 		ILaunchConfiguration configuration= null;
 		try {
 			// First, treat the configHandle as a memento. This is the format
-			// used before 3.0
+			// used in Eclipse 2.1.
 			configuration = manager.getLaunchConfiguration(configHandle);
 		} catch (CoreException e) {
 		}
-		if (configuration == null) {
+		if (configuration != null) {
+			version[0]= VERSION_2_1;
+		} else {
 			// If the memento failed, try treating the handle as a file name.
 			// This is the format used in 3.0.
+			version[0]= VERSION_3_0;
 			IPath path= new Path(BUILDER_FOLDER_NAME).append(configHandle);
 			IFile file= project.getFile(path);
 			if (file.exists()) {

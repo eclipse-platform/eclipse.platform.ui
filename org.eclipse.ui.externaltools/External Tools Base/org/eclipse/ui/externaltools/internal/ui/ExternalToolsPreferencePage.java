@@ -11,9 +11,9 @@
 package org.eclipse.ui.externaltools.internal.ui;
 
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -31,7 +31,8 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class ExternalToolsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
-	private Button promptForMigrationButton;
+	private Button promptForToolMigrationButton;
+	private Button promptForProjectMigrationButton;
 	
 	public ExternalToolsPreferencePage() {
 		setPreferenceStore(ExternalToolsPlugin.getDefault().getPreferenceStore());
@@ -42,8 +43,6 @@ public class ExternalToolsPreferencePage extends PreferencePage implements IWork
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite parent) {
-		Font font = parent.getFont();
-
 		WorkbenchHelp.setHelp(parent, IExternalToolsHelpContextIds.EXTERNAL_TOOLS_PREFERENCE_PAGE);
 		//The main composite
 		Composite composite = new Composite(parent, SWT.NULL);
@@ -51,15 +50,26 @@ public class ExternalToolsPreferencePage extends PreferencePage implements IWork
 		layout.marginHeight=0;
 		layout.marginWidth=0;
 		composite.setLayout(layout);
-		composite.setFont(font);
+		composite.setFont(parent.getFont());
 				
-		promptForMigrationButton= new Button(composite, SWT.CHECK | SWT.LEFT);
-		promptForMigrationButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
-		promptForMigrationButton.setFont(font);
-		promptForMigrationButton.setText(ExternalToolsUIMessages.getString("ExternalToolsPreferencePage.Prompt_before_migrating_3")); //$NON-NLS-1$
-		promptForMigrationButton.setSelection(getPreferenceStore().getBoolean(IPreferenceConstants.PROMPT_FOR_MIGRATION));
+		promptForToolMigrationButton= createCheckButton(composite, ExternalToolsUIMessages.getString("ExternalToolsPreferencePage.Prompt_before_migrating_3"), IPreferenceConstants.PROMPT_FOR_TOOL_MIGRATION); //$NON-NLS-1$
+		promptForProjectMigrationButton= createCheckButton(composite, ExternalToolsUIMessages.getString("ExternalToolsPreferencePage.1"), IPreferenceConstants.PROMPT_FOR_PROJECT_MIGRATION); //$NON-NLS-1$
+		
+		applyDialogFont(composite);
 		
 		return composite;
+	}
+	
+	/**
+	 * Returns a new check button with the given label for the given preference.
+	 */
+	private Button createCheckButton(Composite parent, String label, String preferenceKey) {
+		Button button= new Button(parent, SWT.CHECK | SWT.LEFT);
+		button.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
+		button.setFont(parent.getFont());
+		button.setText(label);
+		button.setSelection(getPreferenceStore().getBoolean(preferenceKey));
+		return button;
 	}
 	
 	/**
@@ -72,7 +82,8 @@ public class ExternalToolsPreferencePage extends PreferencePage implements IWork
 	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */
 	public boolean performOk() {
-		getPreferenceStore().setValue(IPreferenceConstants.PROMPT_FOR_MIGRATION, promptForMigrationButton.getSelection());
+		getPreferenceStore().setValue(IPreferenceConstants.PROMPT_FOR_TOOL_MIGRATION, promptForToolMigrationButton.getSelection());
+		getPreferenceStore().setValue(IPreferenceConstants.PROMPT_FOR_PROJECT_MIGRATION, promptForProjectMigrationButton.getSelection());
 		return super.performOk();
 	}
 
@@ -80,7 +91,8 @@ public class ExternalToolsPreferencePage extends PreferencePage implements IWork
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
-		promptForMigrationButton.setSelection(getPreferenceStore().getDefaultBoolean(IPreferenceConstants.PROMPT_FOR_MIGRATION));
+		promptForToolMigrationButton.setSelection(getPreferenceStore().getDefaultBoolean(IPreferenceConstants.PROMPT_FOR_TOOL_MIGRATION));
+		promptForToolMigrationButton.setSelection(getPreferenceStore().getDefaultBoolean(IPreferenceConstants.PROMPT_FOR_PROJECT_MIGRATION));
 		super.performDefaults();
 	}
 }

@@ -110,7 +110,8 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 	 * Method declared in AbstractUIPlugin.
 	 */
 	protected void initializeDefaultPreferences(IPreferenceStore prefs) {
-		prefs.setDefault(IPreferenceConstants.PROMPT_FOR_MIGRATION, true);
+		prefs.setDefault(IPreferenceConstants.PROMPT_FOR_TOOL_MIGRATION, true);
+		prefs.setDefault(IPreferenceConstants.PROMPT_FOR_PROJECT_MIGRATION, true);
 	}
 
 	/**

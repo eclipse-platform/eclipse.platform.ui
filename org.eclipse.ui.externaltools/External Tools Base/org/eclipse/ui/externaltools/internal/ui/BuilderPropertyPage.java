@@ -41,6 +41,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
@@ -193,8 +194,15 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			handleException(e);
 		}
 	
+		boolean projectNeedsMigration= false;
 		for (int i = 0; i < commands.length; i++) {
-			ILaunchConfiguration config = BuilderUtils.configFromBuildCommandArgs(project, commands[i].getArguments());
+			String[] version= new String[] {""}; //$NON-NLS-1$
+			ILaunchConfiguration config = BuilderUtils.configFromBuildCommandArgs(project, commands[i].getArguments(), version);
+			if (BuilderUtils.VERSION_2_1.equals(version[0])) { //$NON-NLS-1$
+				// Storing the .project file of a project with 2.1 configs, will
+				// edit the file in a way that isn't backwards compatible.
+				projectNeedsMigration= true;
+			}
 			Object element= null;
 			if (config != null) {
 				if (!config.isWorkingCopy() && !config.exists()) {
@@ -218,6 +226,25 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			if (element != null) {
 				viewer.add(element);
 				viewer.setChecked(element, isEnabled(element));
+			}
+		}
+		if (projectNeedsMigration) {
+			IPreferenceStore store= ExternalToolsPlugin.getDefault().getPreferenceStore();
+			boolean prompt= store.getBoolean(IPreferenceConstants.PROMPT_FOR_PROJECT_MIGRATION);
+			boolean proceed= true;
+			if (prompt) {
+				MessageDialogWithToggle dialog= MessageDialogWithToggle.openYesNoQuestion(getShell(), ExternalToolsUIMessages.getString("BuilderPropertyPage.0"), ExternalToolsUIMessages.getString("BuilderPropertyPage.1"), ExternalToolsUIMessages.getString("BuilderPropertyPage.2"), false, null, null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				proceed= dialog.getReturnCode() == IDialogConstants.YES_ID;
+				store.setValue(IPreferenceConstants.PROMPT_FOR_PROJECT_MIGRATION, !dialog.getToggleState());
+			}
+			if (!proceed) {
+				// Open the page read-only
+				viewer.getTable().setEnabled(false);
+				downButton.setEnabled(false);
+				editButton.setEnabled(false);
+				importButton.setEnabled(false);
+				newButton.setEnabled(false);
+				removeButton.setEnabled(false);
 			}
 		}
 	}
@@ -635,7 +662,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 	 * @return boolean whether or not the user wishes to proceed with migration
 	 */
 	private boolean shouldProceedWithMigration() {
-		if (!ExternalToolsPlugin.getDefault().getPreferenceStore().getBoolean(IPreferenceConstants.PROMPT_FOR_MIGRATION)) {
+		if (!ExternalToolsPlugin.getDefault().getPreferenceStore().getBoolean(IPreferenceConstants.PROMPT_FOR_TOOL_MIGRATION)) {
 			// User has asked not to be prompted
 			return true;
 		}
@@ -646,7 +673,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 			ExternalToolsUIMessages.getString("BuilderPropertyPage.Prompt"), //$NON-NLS-1$
 			false,
 			ExternalToolsPlugin.getDefault().getPreferenceStore(), 
-			IPreferenceConstants.PROMPT_FOR_MIGRATION);
+			IPreferenceConstants.PROMPT_FOR_TOOL_MIGRATION);
 		return dialog.getReturnCode() == IDialogConstants.YES_ID;
 	}
 
