@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.team.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.core.TeamException;
@@ -77,7 +77,7 @@ public class AddToWorkspaceAction extends TeamAction {
 						}
 						projects[i] = project;
 					}
-					CVSTeamProvider.checkout(folders, projects, monitor);
+					CVSProviderPlugin.getProvider().checkout(folders, projects, monitor);
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
 				}

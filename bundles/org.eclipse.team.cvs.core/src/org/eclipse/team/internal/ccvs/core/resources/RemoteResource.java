@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.team.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
+import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Client;
 import org.eclipse.team.internal.ccvs.core.Policy;
@@ -130,7 +130,7 @@ public abstract class RemoteResource extends PlatformObject implements ICVSRemot
 	
 	
 	protected PrintStream getPrintStream() {
-		return CVSTeamProvider.getPrintStream();
+		return CVSProviderPlugin.getProvider().getPrintStream();
 	}
 
 	/*

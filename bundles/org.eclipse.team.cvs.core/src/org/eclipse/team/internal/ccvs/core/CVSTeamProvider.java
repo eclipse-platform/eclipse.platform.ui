@@ -158,9 +158,9 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	 * @see ITeamNature#configureProvider(Properties)
 	 */
 	public void configureProvider(Properties configuration) throws TeamException {
-		// For now, perform an impiort and checkout.
+		// For now, perform an import and checkout.
 		// NOTE: We'll need to revisit this once we start using the Team test framework
-		importAndCheckoutProject(project, configuration, Policy.monitorFor(null));
+		CVSProviderPlugin.getProvider().importAndCheckout(project, configuration, Policy.monitorFor(null));
 	}
 			
 	/**
@@ -389,131 +389,6 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	 	if (!isChildResource(resource))
 	 		throw new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSTeamProvider.invalidResource", new Object[] {resource.getFullPath().toString(), project.getName()}), null));
 	 }
-	 
-	/**
-	 * Checkout a CVS module.
-	 * 
-	 * The provided project represents the target project. Any existing contents
-	 * may or may not get overwritten. If project is <code>null</code> then a project
-	 * will be created based on the provided "module" property. If there is no
-	 * "module" property, then the project name will be used as the module to
-	 * check out. If both are absent, an exception is thrown.
-	 * 
-	 * After the successful completion of this method, the project will exist
-	 * and be open.
-	 * 
-	 * The supported properties are:
-	 * 	 connection The connection method to be used
-	 *   user The username for the connection
-	 *   password The password used for the connection (optional)
-	 *   host The host where the repository resides
-	 *   port The port to connect to (optional)
-	 *   root The server directory where the repository is located
-	 *   module The name of the module to be checked out (optional)
-	 *   tag The tag to be used in the checkout request (optional)
-	 */
-	public static void checkout(IProject project, Properties configuration, IProgressMonitor monitor) throws TeamException {
-
-		CVSRepositoryLocation location = buildRepository(configuration);
-		checkout(location, project, configuration.getProperty("module"), configuration.getProperty("tag"), monitor);
-	}
-	
-	/**
-	 * Checout the provider remote resources into the local workspace.
-	 * The local project naming is the same as the above checkout.
-	 */
-	public static void checkout(final ICVSRemoteResource[] resources, final IProject[] projects, final IProgressMonitor monitor) throws TeamException {
-
-		final TeamException[] eHolder = new TeamException[1];
-		try {
-			IWorkspaceRunnable workspaceRunnable = new IWorkspaceRunnable() {
-				public void run(IProgressMonitor pm) throws CoreException {
-					try {
-						for (int i=0;i<resources.length;i++) {
-							IProject project = null;
-							RemoteResource resource = (RemoteResource)resources[i];
-							if (projects != null) 
-								project = projects[i];
-							checkout(resource.getRepository(), project, resource.getRemotePath(), null, monitor);
-						}
-					}
-					catch (TeamException e) {
-						// Pass it outside the workspace runnable
-						eHolder[0] = e;
-					}
-					// CoreException and OperationCanceledException are propagated
-				}
-			};
-			ResourcesPlugin.getWorkspace().run(workspaceRunnable, monitor);
-		} catch (CoreException e) {
-			throw wrapException(e);
-		}
-		
-		// Re-throw the TeamException, if one occurred
-		if (eHolder[0] != null) {
-			throw eHolder[0];
-		}
-	}
-	
-	private static void checkout(ICVSRepositoryLocation repository, IProject project, String sourceModule, String tag, IProgressMonitor monitor) throws TeamException {
-		try {
-			
-			// Create the project if one wasn't passed.
-			// NOTE: This will need to be fixed for module alias support
-			if (project == null)
-				project = ResourcesPlugin.getWorkspace().getRoot().getProject(new Path(sourceModule).lastSegment());
-				
-			// Get the location of the workspace root
-			IManagedFolder root = Client.getManagedFolder(ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile());
-			
-			// Build the local options
-			List localOptions = new ArrayList();
-			String module = project.getName();
-			if (sourceModule != null) {
-				localOptions.add(Client.DEEP_OPTION);
-				localOptions.add(module);
-				module = sourceModule;
-			}
-			if (tag != null) {
-				localOptions.add(Client.TAG_OPTION );
-				localOptions.add(tag);
-			}
-				
-			// Perform a checkout
-			Client.execute(
-					Client.CHECKOUT,
-					new String[0],
-					(String[])localOptions.toArray(new String[localOptions.size()]),
-					new String[]{module},
-					root,
-					monitor,
-					getPrintStream(),
-					(CVSRepositoryLocation)repository,
-					null);
-					
-			// Create, open and/or refresh the project
-			if (!project.exists())
-				project.create(monitor);
-			if (!project.isOpen())
-				project.open(monitor);
-			else
-				project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-			
-			// Get the meta file
-			ProjectDescriptionManager.updateProjectIfNecessary(project, monitor);
-			
-			// Register the project with Team
-			TeamPlugin.getManager().setProvider(project, CVSProviderPlugin.NATURE_ID, null, monitor);
-			
-			// Cache the repository userinfo
-			((CVSRepositoryLocation)repository).updateCache();
-			
-			snapshot(monitor);
-			
-		} catch (CoreException e) {
-			throw wrapException(e);
-		}
-	}
 		
 	/**
 	 * @see ITeamProvider#delete(IResource[], int, IProgressMonitor)
@@ -767,33 +642,6 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	}
 	
 	/*
-	 * Returns all patterns in the given project that should be treated as binary
-	 */
-	private static String[] getBinaryFilePatterns(IProject project) throws TeamException {
-		final IFileTypeRegistry registry = TeamPlugin.getFileTypeRegistry();
-		final Set result = new HashSet();
-		try {
-			project.accept(new IResourceVisitor() {
-				public boolean visit(IResource resource) {
-					if (resource.getType() == IResource.FILE) {
-						String extension = resource.getFileExtension();
-						if (extension == null) {
-							result.add(resource.getName());
-						} else if (!("true".equals(registry.getValue(extension, "isAscii")))) {
-							result.add("*." + extension);
-						}
-					}
-					// Always return true and let the depth determine if children are visited
-					return true;
-				}
-			}, IResource.DEPTH_INFINITE, false);
-		} catch (CoreException e) {
-			throw wrapException(e);
-		}
-		return (String[])result.toArray(new String[result.size()]);
-	}
-	
-	/*
 	 * Get the corresponding managed child for the given resource.
 	 */
 	private IManagedResource getChild(IResource resource) throws CVSException {
@@ -812,25 +660,11 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	}
 	
 	/**
-	 * Get the names of the registered connection methods.
-	 */
-	public static String[] getConnectionMethods() {
-		IConnectionMethod[] methods = CVSRepositoryLocation.getPluggedInConnectionMethods();
-		String[] result = new String[methods.length];
-		for (int i=0;i<methods.length;i++)
-			result[i] = methods[i].getName();
-		return result;
-	}
-	
-	/**
 	 * Get the print stream to which information from CVS commands
 	 * is sent.
 	 */
-	public static PrintStream getPrintStream() {
-		if (printStream == null)
-			return System.out;
-		else
-			return printStream;
+	private PrintStream getPrintStream() {
+		return CVSProviderPlugin.getProvider().getPrintStream();
 	}
 	
 	/** 
@@ -847,22 +681,6 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			new RemoteFile((RemoteFolder)getRemoteResource(resource.getParent()), managed.getName(), ((IManagedFile)managed).getFileInfo().getVersion());
 		}
 		return null;
-	}
-	
-	/** 
-	 * Get the remote root (i.e. CVS repository) associated with
-	 * the provided parameters.
-	 * 
-	 * The supported properties are:
-	 * 	 connection The connection method to be used
-	 *   user The username for the connection
-	 *   password The password used for the connection (optional)
-	 *   host The host where the repository resides
-	 *   port The port to connect to (optional)
-	 *   root The server directory where the repository is located
-	 */
-	public static ICVSRemoteFolder getRemoteRoot(Properties configuration) throws TeamException {
-		return new RemoteFolder(buildRepository(configuration), Path.EMPTY, null);
 	}
 	
 	/**
@@ -987,74 +805,6 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	}
 	
 	/**
-	 * Import a project into a CVS repository and then check out a local copy.
-	 * 
-	 * Consideration: What if the project already exists?
-	 * 
-	 * The supported properties are:
-	 * 	 connection The connection method to be used
-	 *   user The username for the connection
-	 *   password The password used for the connection (optional)
-	 *   host The host where the repository resides
-	 *   port The port to connect to (optional)
-	 *   root The server directory where the repository is located
-	 *   message The message to be attached (optional)
-	 *   vendor The vendor tag (optional)
-	 *   tag The version tag (optional)
-	 */
-	public static void importAndCheckoutProject(IProject project, Properties configuration, IProgressMonitor monitor) throws TeamException {
-		CVSRepositoryLocation location = buildRepository(configuration);
-		// Get the location of the workspace root
-		IManagedFolder root = Client.getManagedFolder(project.getLocation().toFile());
-	
-		// Create the meta-file
-		ProjectDescriptionManager.writeProjectDescription(project, monitor);
-
-		// Get the message
-		String message = configuration.getProperty("message");
-		if (message == null)
-			message = Policy.bind("CVSTeamProvider.initialImport");
-			
-		// Get the vendor
-		String vendor = configuration.getProperty("vendor");
-		if (vendor == null)
-			vendor = location.getUsername();
-			
-		// Get the vendor
-		String tag = configuration.getProperty("tag");
-		if (tag == null)
-			tag = "start";
-			
-		// Build the local options
-		List localOptions = new ArrayList();
-		localOptions.add(Client.MESSAGE_OPTION);
-		localOptions.add(message);
-		// Create filters for all known text files
-		String[] patterns = getBinaryFilePatterns(project);
-		for (int i=0;i<patterns.length;i++) {
-			localOptions.add(Client.WRAPPER_OPTION);
-			localOptions.add(patterns[i] + " -k 'b'");
-		}
-
-		// Perform a import
-		Client.execute(
-				Client.IMPORT,
-				new String[] {},
-				(String[])localOptions.toArray(new String[localOptions.size()]),
-				new String[]{configuration.getProperty("module"), vendor, tag},
-				root,
-				monitor,
-				getPrintStream(),
-				location,
-				null);
-		
-		// NOTE: we should check to see the results of the import
-		
-		// perform the checkout
-		checkout(location, project, configuration.getProperty("module"), configuration.getProperty("tag"), monitor);
-	}
-	
-	/**
 	 * @see ITeamProvider#move(IResource, IPath, IProgressMonitor)
 	 */
 	public void moved(IPath source, IResource resource, IProgressMonitor progress)
@@ -1122,13 +872,6 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			};
 		});
 		return true;
-	}
-	
-	/**
-	 * Ste the stream to which CVS command output is sent
-	 */
-	public static void setPrintStream(PrintStream out) {
-		printStream = out;
 	}
 	
 	/**

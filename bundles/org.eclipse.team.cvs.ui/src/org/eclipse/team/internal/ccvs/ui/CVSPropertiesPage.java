@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.IUserInfo;
 import org.eclipse.team.core.TeamException;
@@ -140,7 +141,7 @@ public class CVSPropertiesPage extends PropertyPage {
 		provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(project);
 		if (provider == null) return;
 		
-		String[] methods = CVSTeamProvider.getConnectionMethods();
+		String[] methods = CVSProviderPlugin.getProvider().getSupportedConnectionMethods();
 		for (int i = 0; i < methods.length; i++) {
 			methodType.add(methods[i]);
 		}

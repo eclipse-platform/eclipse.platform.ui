@@ -12,7 +12,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.team.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
@@ -72,7 +72,7 @@ public class ConfigurationWizard extends ConnectionWizard implements IConfigurat
 					if (properties.getProperty("module") == null) {
 						properties.setProperty("module", project.getName());
 					}
-					CVSTeamProvider.importAndCheckoutProject(project, properties, monitor);
+					CVSProviderPlugin.getProvider().importAndCheckout(project, properties, monitor);
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
 				}		

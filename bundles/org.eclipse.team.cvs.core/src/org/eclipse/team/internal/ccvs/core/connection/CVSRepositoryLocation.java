@@ -18,10 +18,9 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.ccvs.core.IConnectionMethod;
-import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.ccvs.core.IUserAuthenticator;
 import org.eclipse.team.ccvs.core.IUserInfo;
 import org.eclipse.team.internal.ccvs.core.CVSException;
@@ -332,7 +331,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	}
 	
 	public static boolean validateConnectionMethod(String methodName) {
-		String[] methods = CVSTeamProvider.getConnectionMethods();
+		String[] methods = CVSProviderPlugin.getProvider().getSupportedConnectionMethods();
 		for (int i=0;i<methods.length;i++) {
 			if (methodName.equals(methods[i]))
 				return true;

@@ -13,8 +13,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.team.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
@@ -78,7 +77,7 @@ public class CheckoutWizard extends ConnectionWizard {
 					if (project.exists()) {
 						// Make sure the user understands they will overwrite the project.
 					}
-					CVSTeamProvider.checkout(project, properties, monitor);
+					CVSProviderPlugin.getProvider().checkout(project, properties, monitor);
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
 				}

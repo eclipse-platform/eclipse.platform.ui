@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.team.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
@@ -152,7 +152,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	 */
 	public void startup() throws CoreException {
 		Policy.localize("org.eclipse.team.internal.ccvs.ui.messages");
-		CVSTeamProvider.setPrintStream(new PrintStream(new ConsoleOutputStream()));
+		CVSProviderPlugin.getProvider().setPrintStream(new PrintStream(new ConsoleOutputStream()));
 
 		CVSAdapterFactory factory = new CVSAdapterFactory();
 		Platform.getAdapterManager().registerAdapters(factory, ICVSRemoteFile.class);

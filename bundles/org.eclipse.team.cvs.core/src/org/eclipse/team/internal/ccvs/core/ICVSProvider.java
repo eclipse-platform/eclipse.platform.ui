@@ -5,11 +5,10 @@ package org.eclipse.team.ccvs.core;
  * All Rights Reserved.
  */
  
+import java.io.PrintStream;
 import java.util.Properties;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
@@ -100,6 +99,11 @@ public interface ICVSProvider {
 	public ICVSRepositoryLocation[] getKnownRepositories();
 		
 	/**
+	 * Get the stream to which command message and error output is sent
+	 */
+	public PrintStream getPrintStream();
+	
+	/**
 	 * Get the names of the registered connection methods.
 	 */
 	public String[] getSupportedConnectionMethods();
@@ -121,5 +125,10 @@ public interface ICVSProvider {
 	 *   tag The version tag (optional)
 	 */
 	public void importAndCheckout(IProject project, Properties configuration, IProgressMonitor monitor) throws TeamException;
+	
+	/**
+	 * Set the print stream to which command message and error output is sent
+	 */
+	public void setPrintStream(PrintStream out);
 }
 
