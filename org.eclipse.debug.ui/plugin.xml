@@ -549,7 +549,7 @@
 			id="org.eclipse.debug.ui.actions.SelectAllAction"
 			label="%SelectAll.label"
 			menubarPath="breakpointGroup"
-			class="org.eclipse.debug.internal.ui.actions.SelectAllAction">
+			class="org.eclipse.debug.internal.ui.actions.SelectAllBreakpointsAction">
 		</action>
 	</viewerContribution>
 <!-- Contributions to Variables View Popup Menu -->	
@@ -563,6 +563,12 @@
 			helpContextId = "copy_variables_to_clipboard_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.CopyVariablesToClipboardActionDelegate"
 			label="%CopyVariablesToClipboardAction.label">
+		</action>
+		<action
+			id="org.eclipse.debug.ui.actions.SelectAllAction"
+			label="%SelectAll.label"
+			menubarPath="variableGroup"
+			class="org.eclipse.debug.internal.ui.actions.SelectAllVariablesAction">
 		</action>
 	</viewerContribution>
 <!-- Contributions to Expression View Popup Menu -->
@@ -591,7 +597,12 @@
 			class = "org.eclipse.debug.internal.ui.actions.CopyVariablesToClipboardActionDelegate"
 			label="%CopyVariablesToClipboardAction.label">
 		</action>
-		
+		<action
+			id="org.eclipse.debug.ui.actions.SelectAllAction"
+			label="%SelectAll.label"
+			menubarPath="expressionGroup"
+			class="org.eclipse.debug.internal.ui.actions.SelectAllExpressionsAction">
+		</action>
 	</viewerContribution>
 <!-- Contributions to Console View popup menu -->
 	<viewerContribution

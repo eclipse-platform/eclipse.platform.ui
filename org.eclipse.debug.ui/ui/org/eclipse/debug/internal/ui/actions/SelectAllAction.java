@@ -79,6 +79,8 @@ public abstract class SelectAllAction extends AbstractListenerActionDelegate {
 			return;
 		}
 		((TreeViewer) viewer).getTree().selectAll();
+		//ensure that the selection change callback is fired
+		viewer.setSelection(viewer.getSelection());
 	}
 	
 	protected abstract void update();
