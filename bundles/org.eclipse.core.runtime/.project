@@ -3,9 +3,6 @@
 	<name>org.eclipse.core.runtime</name>
 	<comment></comment>
 	<projects>
-		<project>org.eclipse.osgi</project>
-		<project>org.eclipse.osgi.services</project>
-		<project>org.eclipse.osgi.util</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
