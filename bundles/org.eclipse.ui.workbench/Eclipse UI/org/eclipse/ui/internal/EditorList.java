@@ -467,7 +467,7 @@ private class SaveAction extends Action {
 			}
 		}
 		
-		if (dirtyEditorList != null) {
+		if (dirtyEditorList.size() != 0) {
 			EditorManager.saveAll(dirtyEditorList, false, window);
 		}
 		destroyControl();
@@ -505,7 +505,7 @@ private class CloseAction extends Action {
 		}
 	
 		boolean result = true;
-		if (dirtyEditorList != null) {
+		if (dirtyEditorList.size() != 0) {
 			result = EditorManager.saveAll(dirtyEditorList, true, window);
 		}
 		
