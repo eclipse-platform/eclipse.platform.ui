@@ -16,31 +16,39 @@ import org.eclipse.ui.*;
 public interface IWorkbenchPartReference {
 	/**
 	 * Returns the IEditorPart referenced by this object.
-	 * Returns null if the editors was not instanciated or
+	 * Returns <code>null</code> if the editors was not instantiated or
 	 * it failed to be restored. Tries to restore the editor
 	 * if <code>restore</code> is true.
 	 */
 	public IWorkbenchPart getPart(boolean restore);
+
 	/**
-	 * @see IWorkbenchPart
+	 * @see IWorkbenchPart#getTitle
 	 */	
 	public String getTitle();
+
 	/**
-	 * @see IWorkbenchPart
+	 * @see IWorkbenchPart#getTitleImage
 	 */	
 	public Image getTitleImage();
+
 	/**
-	 * @see IWorkbenchPart
+	 * @see IWorkbenchPart#getTitleToolTip
 	 */		
 	public String getTitleToolTip();
 
-	public String getId();
 	/**
-	 * @see IWorkbenchPart
+	 * @see IWorkbenchPartSite#getId
+	 */		
+	public String getId();
+
+	/**
+	 * @see IWorkbenchPart#addPropertyListener
 	 */
 	public void addPropertyListener(IPropertyListener listener);
+	
 	/**
-	 * @see IWorkbenchPart
+	 * @see IWorkbenchPart#removePropertyListener
 	 */
 	public void removePropertyListener(IPropertyListener listener);
 }
