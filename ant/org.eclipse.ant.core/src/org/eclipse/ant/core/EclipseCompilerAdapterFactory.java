@@ -49,11 +49,11 @@ public static CompilerAdapter getCompiler(String compilerType, Task task) throws
 			Class clazz = declaration.getDeclaringExtension().getDeclaringPluginDescriptor().getPluginClassLoader().loadClass(className);
 			return (CompilerAdapter) clazz.newInstance();
 		} catch (ClassNotFoundException e) {
-			throw new BuildException(className + " notfound", e);
+			throw new BuildException(Policy.bind("exception.classNotFound",className), e);
 		} catch (ClassCastException e) {
-			throw new BuildException(className + " is not a compiler adapter", e);
+			throw new BuildException(Policy.bind("exception.classNotCompiler",className), e);
 		} catch (Exception e) {
-			throw new BuildException("Exception creating " + className, e);
+			throw new BuildException(Policy.bind("exception.creationProblem",className), e);
 		}
 	}
 }

@@ -114,7 +114,7 @@ public class CommaPatternSet extends PatternSet {
 	 */
 	public void append(PatternSet other, Project p) {
 		if (isReference()) {
-			throw new BuildException("Cannot append to a reference");
+			throw new BuildException(Policy.bind("exception.cannotAppendToReference"));
 		}
 
 		String[] incl = other.getIncludePatterns(p);
@@ -183,12 +183,10 @@ public class CommaPatternSet extends PatternSet {
 		}
 		
 		Object o = ref.getReferencedObject(p);
-		if (!(o instanceof PatternSet)) {
-			String msg = ref.getRefId()+" doesn\'t denote a patternset";
-			throw new BuildException(msg);
-		} else {
+		if (!(o instanceof PatternSet))
+			throw new BuildException(Policy.bind("exception.notAPatternSet",ref.getRefId()));
+		else
 			return (PatternSet) o;
-		}
 	}
 	/**
 	 * helper for FileSet.
@@ -253,9 +251,7 @@ public class CommaPatternSet extends PatternSet {
 				line = patternReader.readLine();
 			}
 		} catch(IOException ioe)  {
-			String msg = "An error occured while reading from pattern file: " 
-				+ patternfile;
-			throw new BuildException(msg, ioe);
+			throw new BuildException(Policy.bind("exception.patternFile",patternfile.toString()),ioe);
 		}
 	}
 	/**
@@ -281,13 +277,10 @@ public class CommaPatternSet extends PatternSet {
 	 * @param excl The file to fetch the exclude patterns from.  
 	 */
 	 public void setExcludesfile(File excl) throws BuildException {
-		 if (isReference()) {
+		 if (isReference())
 			 throw tooManyAttributes();
-		 }
-		 if (!excl.exists()) {
-			 throw new BuildException("Excludesfile "+excl.getAbsolutePath()
-									  +" not found.");
-		 }
+		 if (!excl.exists())
+			 throw new BuildException(Policy.bind("exception.missingExcludesFile",excl.getAbsolutePath()));
 		 this.excl = excl;
 	 }
 public void setId(String value) {
@@ -315,13 +308,10 @@ public void setId(String value) {
 	 * @param incl The file to fetch the include patterns from.  
 	 */
 	 public void setIncludesfile(File incl) throws BuildException {
-		 if (isReference()) {
+		 if (isReference())
 			 throw tooManyAttributes();
-		 }
-		 if (!incl.exists()) {
-			 throw new BuildException("Includesfile "+incl.getAbsolutePath()
-									  +" not found.");
-		 }
+		 if (!incl.exists())
+			 throw new BuildException(Policy.bind("exception.missingIncludesFile",incl.getAbsolutePath()));
 		 this.incl = incl;
 	 }
 	/**

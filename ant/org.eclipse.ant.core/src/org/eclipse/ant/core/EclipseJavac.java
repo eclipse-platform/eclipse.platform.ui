@@ -31,7 +31,7 @@ import org.apache.tools.ant.taskdefs.compilers.CompilerAdapter;
  */
 
 public class EclipseJavac extends Javac {
-	private static final String FAIL_MSG = "Compile failed, messages should have been provided.";
+	
 /**
  * Executes the task.
  */
@@ -39,18 +39,15 @@ public void execute() throws BuildException {
 	// first off, make sure that we've got a srcdir
 
 	Path src = getSrcdir();
-	if (src == null) {
-		throw new BuildException("srcdir attribute must be set!", location);
-	}
+	if (src == null)
+		throw new BuildException(Policy.bind("exception.missingSrcAttribute"), location);
 	String[] list = src.list();
-	if (list.length == 0) {
-		throw new BuildException("srcdir attribute must be set!", location);
-	}
+	if (list.length == 0)
+		throw new BuildException(Policy.bind("exception.missingSrcAttribute"), location);
 
 	File destDir = getDestdir();
-	if (destDir != null && !destDir.isDirectory()) {
-		throw new BuildException("destination directory \"" + destDir + "\" does not exist or is not a directory", location);
-	}
+	if (destDir != null && !destDir.isDirectory())
+		throw new BuildException(Policy.bind("exception.missingDestinationDir",destDir.toString()), location);
 
 	// scan source directories and dest directory to build up 
 	// compile lists
@@ -58,7 +55,7 @@ public void execute() throws BuildException {
 	for (int i = 0; i < list.length; i++) {
 		File srcDir = (File) project.resolveFile(list[i]);
 		if (!srcDir.exists()) {
-			throw new BuildException("srcdir \"" + srcDir.getPath() + "\" does not exist!", location);
+			throw new BuildException(Policy.bind("exception.missingSourceDir",srcDir.getPath()), location);
 		}
 
 		DirectoryScanner ds = this.getDirectoryScanner(srcDir);
@@ -82,7 +79,7 @@ public void execute() throws BuildException {
 	if (compileList.length > 0) {
 
 		CompilerAdapter adapter = EclipseCompilerAdapterFactory.getCompiler(compiler, this);
-		log("Compiling " + compileList.length + " source file" + (compileList.length == 1 ? "" : "s") + (destDir != null ? " to " + destDir : ""));
+		log(Policy.bind("info.compiling"));
 
 		// now we need to populate the compiler adapter
 		adapter.setJavac(this);
@@ -90,9 +87,9 @@ public void execute() throws BuildException {
 		// finally, lets execute the compiler!!
 		if (!adapter.execute()) {
 			if (failOnError) {
-				throw new BuildException(FAIL_MSG, location);
+				throw new BuildException(Policy.bind("error.compileFailed"), location);
 			} else {
-				log(FAIL_MSG, Project.MSG_ERR);
+				log(Policy.bind("error.compileFailed"), Project.MSG_ERR);
 			}
 		}
 	}

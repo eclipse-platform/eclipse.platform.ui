@@ -85,6 +85,8 @@ public class EclipseAnt extends Ant {
 	private String antFile = null;
 	private String target = null;
 	private String output = null;
+	
+	private final static String DEFAULT_ANTFILE = "build.xml";
 
 	Vector properties=new Vector();
 	Project p1;
@@ -124,18 +126,18 @@ public class EclipseAnt extends Ant {
 			}
 			
 			if (antFile == null) 
-				antFile = "build.xml";
+				antFile = DEFAULT_ANTFILE;
 
 			File file = new File(antFile);
 			if (!file.isAbsolute()) {
 				antFile = (new File(dir, antFile)).getAbsolutePath();
 				file = (new File(antFile)) ;
-				if( ! file.isFile() ) {
-				  throw new BuildException("Build file " + file + " not found.");
+				if(!file.isFile() ) {
+				  throw new BuildException(Policy.bind("exception.buildFileNotFound",file.toString()));
 				}
 			}
 
-			p1.setUserProperty( "ant.file" , antFile );
+			p1.setUserProperty("ant.file", antFile );
 			ProjectHelper.configureProject(p1, new File(antFile));
 			
 			if (target == null) {
@@ -147,7 +149,7 @@ public class EclipseAnt extends Ant {
 				p1.getProperty("ant.file").equals(project.getProperty("ant.file")) &&
 				target.equals(this.getOwningTarget().getName())) { 
 
-				throw new BuildException("ant task calling its own parent target");
+				throw new BuildException(Policy.bind("exception.antTaskCallingParentTarget"));
 			}
 
 			p1.executeTarget(target);
@@ -177,8 +179,8 @@ public class EclipseAnt extends Ant {
 				logger.setErrorPrintStream(out);
 				p1.addBuildListener(logger);
 			}
-			catch( IOException ex ) {
-				log( "Ant: Can't set output to " + output );
+			catch(IOException ex) {
+				log(Policy.bind("exception.cannotSetOutput",output));
 			}
 		}
 

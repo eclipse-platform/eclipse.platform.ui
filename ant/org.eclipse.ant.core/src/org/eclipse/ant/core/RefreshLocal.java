@@ -42,7 +42,7 @@ public void execute() throws BuildException {
 	// deal with the single resource
 	if (resource != null) {
 		if (!resource.exists())
-			throw new BuildException("Resource " + resource + " not found");
+			throw new BuildException(Policy.bind("exception.resourceNotFound",resource.toString()));
 		try {
 			resource.refreshLocal(depth, null);
 			return;
@@ -56,7 +56,7 @@ protected void refreshResources(String[] resources) throws BuildException {
 	for (int i = 0; i < resources.length; i++) {
 		IResource target = root.findMember(resources[i]);
 		if (target == null)
-			throw new BuildException("Resource " + resources[i] + " not found");
+			throw new BuildException(Policy.bind("exception.resourceNotFound",resources[i].toString()));
 		try {
 			target.refreshLocal(depth, null);
 		} catch (CoreException e) {

@@ -136,7 +136,7 @@ public class AntRunner implements IPlatformRunnable {
 				BuildListener listener= (BuildListener) Class.forName(className).newInstance();
 				project.addBuildListener(listener);
 			} catch (Exception exc) {
-				throw new BuildException("Unable to instantiate listener " + className, exc);
+				throw new BuildException(Policy.bind("exception.cannotCreateListener",className), exc);
 			}
 		}
 	}
@@ -149,10 +149,10 @@ public class AntRunner implements IPlatformRunnable {
 			try {
 				logger= (BuildLogger) (Class.forName(loggerClassname).newInstance());
 			} catch (ClassCastException e) {
-				System.err.println("The specified logger class " + loggerClassname + " does not implement the BuildLogger interface");
+				System.err.println(Policy.bind("exception.loggerDoesNotImplementInterface",loggerClassname));
 				throw new RuntimeException();
 			} catch (Exception e) {
-				System.err.println("Unable to instantiate specified logger class " + loggerClassname + " : " + e.getClass().getName());
+				System.err.println(Policy.bind("exception.cannotCreateLogger",loggerClassname));
 				throw new RuntimeException();
 			}
 		} else {
@@ -180,12 +180,11 @@ public class AntRunner implements IPlatformRunnable {
 	 * @exception BuildException    Failed to locate a build file
 	 */
 	private File findBuildFile(String start, String suffix) throws BuildException {
-		if (msgOutputLevel >= Project.MSG_INFO) {
-			System.out.println("Searching for " + suffix + " ...");
-		}
+		if (msgOutputLevel >= Project.MSG_INFO)
+			System.out.println(Policy.bind("info.searchingFor",suffix));
 
-		File parent= new File(new File(start).getAbsolutePath());
-		File file= new File(parent, suffix);
+		File parent = new File(new File(start).getAbsolutePath());
+		File file = new File(parent, suffix);
 
 		// check if the target file exists in the current directory
 		while (!file.exists()) {
@@ -194,9 +193,8 @@ public class AntRunner implements IPlatformRunnable {
 
 			// if parent is null, then we are at the root of the fs,
 			// complain that we can't find the build file.
-			if (parent == null) {
-				throw new BuildException("Could not locate a build file!");
-			}
+			if (parent == null)
+				throw new BuildException(Policy.bind("exception.noBuildFile"));
 
 			// refresh our file handle
 			file= new File(parent, suffix);
@@ -229,9 +227,8 @@ public class AntRunner implements IPlatformRunnable {
 		file= new File(filename);
 		filename= file.getParent();
 
-		if (filename != null && msgOutputLevel >= Project.MSG_VERBOSE) {
-			System.out.println("Searching in " + filename);
-		}
+		if (filename != null && msgOutputLevel >= Project.MSG_VERBOSE)
+			System.out.println(Policy.bind("info.searchingIn",filename));
 
 		return (filename == null) ? null : new File(filename);
 	}
@@ -312,8 +309,8 @@ public static void main(String argString) throws Exception {
 				}
 			}
 		}
-		printTargets(topNames, topDescriptions, "Main targets:", maxLength);
-		printTargets(subNames, null, "Subtargets:", 0);
+		printTargets(topNames, topDescriptions, Policy.bind("label.mainTargets"), maxLength);
+		printTargets(subNames, null, Policy.bind("label.subTargets"), 0);
 	}
 	/**
 	 * Prints the usage of how to use this class to System.out
@@ -355,10 +352,10 @@ public static void main(String argString) throws Exception {
 			msg.append(lSep);
 			System.out.println(msg.toString());
 		} catch (IOException ioe) {
-			System.err.println("Could not load the version information.");
+			System.err.println(Policy.bind("exception.cannotLoadVersionInfo"));
 			System.err.println(ioe.getMessage());
 		} catch (NullPointerException npe) {
-			System.err.println("Could not load the version information.");
+			System.err.println(Policy.bind("exception.cannotLoadVersionInfo"));
 		}
 	}
 	protected void processCommandLine(String[] args) throws BuildException {
@@ -393,12 +390,10 @@ public static void main(String argString) throws Exception {
 					System.setOut(out);
 					System.setErr(out);
 				} catch (IOException ioe) {
-					String msg= "Cannot write on the specified log file. " + "Make sure the path exists and you have write permissions.";
-					System.out.println(msg);
+					System.out.println(Policy.bind("exception.cannotWriteToLog"));
 					return;
 				} catch (ArrayIndexOutOfBoundsException aioobe) {
-					String msg= "You must specify a log file when " + "using the -log argument";
-					System.out.println(msg);
+					System.out.println(Policy.bind("exception.missingLogFile"));
 					return;
 				}
 			} else if (arg.equals("-buildfile") || arg.equals("-file") || arg.equals("-f")) {
@@ -406,8 +401,7 @@ public static void main(String argString) throws Exception {
 					buildFile= new File(args[i + 1]);
 					i++;
 				} catch (ArrayIndexOutOfBoundsException aioobe) {
-					String msg= "You must specify a buildfile when " + "using the -buildfile argument";
-					System.out.println(msg);
+					System.out.println(Policy.bind("exception.missingBuildFile"));
 					return;
 				}
 			} else if (arg.equals("-listener")) {
@@ -415,8 +409,7 @@ public static void main(String argString) throws Exception {
 					listeners.addElement(args[i + 1]);
 					i++;
 				} catch (ArrayIndexOutOfBoundsException aioobe) {
-					String msg= "You must specify a classname when " + "using the -listener argument";
-					System.out.println(msg);
+					System.out.println(Policy.bind("exception.missingClassName"));
 					return;
 				}
 			} else if (arg.startsWith("-D")) {
@@ -444,57 +437,51 @@ public static void main(String argString) throws Exception {
 				definedProps.put(name, value);
 			} else if (arg.equals("-logger")) {
 				if (loggerClassname != null) {
-					System.out.println("Only one logger class may be specified.");
+					System.out.println(Policy.bind("exception.multipleLoggers"));
 					return;
 				}
 				loggerClassname= args[++i];
-			} else if (arg.equals("-emacs")) {
-				emacsMode= true;
-			} else if (arg.equals("-projecthelp")) {
-				// set the flag to display the targets and quit
-				projectHelp= true;
-			} else if (arg.equals("-find")) {
+			} else if (arg.equals("-emacs"))
+				emacsMode = true;
+			else if (arg.equals("-projecthelp"))
+				projectHelp= true; // set the flag to display the targets and quit
+			else if (arg.equals("-find")) {
 				// eat up next arg if present, default to build.xml
-				if (i < args.length - 1) {
+				if (i < args.length - 1)
 					searchForThis= args[++i];
-				} else {
+				else
 					searchForThis= DEFAULT_BUILD_FILENAME;
-				}
 			} else if (arg.startsWith("-")) {
 				// we don't have any more args to recognize!
-				String msg= "Unknown argument: " + arg;
-				System.out.println(msg);
+				System.out.println(Policy.bind("exception.unknownArgument",arg));
 				printUsage();
 				return;
-			} else {
-				// if it's no other arg, it may be the target
-				targets.addElement(arg);
-			}
+			} else 
+				targets.addElement(arg); // if it's no other arg, it may be the target
 
 		}
 
 		// if buildFile was not specified on the command line,
 		if (buildFile == null) {
 			// but -find then search for it
-			if (searchForThis != null) {
+			if (searchForThis != null)
 				buildFile= findBuildFile(".", searchForThis);
-			} else {
+			else
 				buildFile= new File(DEFAULT_BUILD_FILENAME);
-			}
 		}
 
 		// make sure buildfile exists
 		if (!buildFile.getAbsoluteFile().exists()) {
-			System.out.println("Buildfile: " + buildFile + " does not exist!");
-			throw new BuildException("Build failed");
+			System.out.println(Policy.bind("exception.buildFileNotFound",buildFile.toString()));
+			throw new BuildException(Policy.bind("error.buildFailed"));
 		}
 
 		// make sure it's not a directory (this falls into the ultra
 		// paranoid lets check everything catagory
 
 		if (buildFile.isDirectory()) {
-			System.out.println("What? Buildfile: " + buildFile + " is a dir!");
-			throw new BuildException("Build failed");
+			System.out.println(Policy.bind("exception.buildFileIsDirectory",buildFile.toString()));
+			throw new BuildException(Policy.bind("error.buildFailed"));
 		}
 
 		readyToRun= true;
@@ -530,22 +517,20 @@ public static void main(String argString) throws Exception {
 	 * @param args Command line args.
 	 */
 	public Object run(Object argArray, BuildListener listener) throws Exception {
-		clientListener= listener;
+		clientListener = listener;
 		return run(argArray);
 	}
 	/**
 	 * Executes the build.
 	 */
 	private void runBuild() throws BuildException {
-		if (!readyToRun) {
+		if (!readyToRun)
 			return;
-		}
 
 		// track when we started
 
-		if (msgOutputLevel >= Project.MSG_INFO) {
-			System.out.println("Buildfile: " + buildFile);
-		}
+		if (msgOutputLevel >= Project.MSG_INFO)
+			System.out.println(Policy.bind("label.buildFile",buildFile.toString()));
 
 		EclipseProject project= new EclipseProject();
 
@@ -577,11 +562,11 @@ public static void main(String argString) throws Exception {
 				Class.forName("javax.xml.parsers.SAXParserFactory");
 				ProjectHelper.configureProject(project, buildFile);
 			} catch (NoClassDefFoundError ncdfe) {
-				throw new BuildException("No JAXP compliant XML parser found. See http://java.sun.com/xml for the\nreference implementation.", ncdfe);
+				throw new BuildException(Policy.bind("exception.noParser"),ncdfe);
 			} catch (ClassNotFoundException cnfe) {
-				throw new BuildException("No JAXP compliant XML parser found. See http://java.sun.com/xml for the\nreference implementation.", cnfe);
+				throw new BuildException(Policy.bind("exception.noParser"),cnfe);
 			} catch (NullPointerException npe) {
-				throw new BuildException("No JAXP compliant XML parser found. See http://java.sun.com/xml for the\nreference implementation.", npe);
+				throw new BuildException(Policy.bind("exception.noParser"),npe);
 			}
 
 			// make sure that we have a target to execute
