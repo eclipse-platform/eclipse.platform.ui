@@ -12,7 +12,7 @@ public class AntLaunchWizardPage extends WizardPage implements ICheckStateListen
 	private EclipseProject project;
 	private TargetsListLabelProvider labelProvider = new TargetsListLabelProvider();
 	private String initialTargetSelections[];
-	private Button showLogOnSuccess;
+	private Button showLogOnSuccess;	private Text argumentsField;
 	
 	private final static int SIZING_SELECTION_WIDGET_HEIGHT = 200;
 	private final static int SIZING_SELECTION_WIDGET_WIDTH = 200;
@@ -57,7 +57,7 @@ public class AntLaunchWizardPage extends WizardPage implements ICheckStateListen
 		listViewer.setInput(project);
 		
 		new Label(composite,SWT.NONE).setText(Policy.bind("wizard.argumentsLabel"));
-		Text argumentsField = new Text(composite,SWT.BORDER);
+		argumentsField = new Text(composite,SWT.BORDER);
 		argumentsField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		showLogOnSuccess = new Button(composite, SWT.CHECK);
@@ -96,6 +96,6 @@ public class AntLaunchWizardPage extends WizardPage implements ICheckStateListen
 
 	public void setInitialTargetSelections(String value[]) {
 		initialTargetSelections = value;
-	}
+	}		/**	 * Returns the arguments that the user may have entered to run the ant file.	 * 	 * @return String the arguments	 */	public String getArgumentsFromField() {		return argumentsField.getText();	}
 	
 }
