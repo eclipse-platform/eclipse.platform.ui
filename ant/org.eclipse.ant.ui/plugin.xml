@@ -476,5 +476,9 @@
             class="org.eclipse.ant.internal.ui.editor.text.AntDocumentSetupParticipant">
       </participant>
    </extension>
+   
+   <extension point="org.eclipse.core.runtime.preferences">
+		<initializer class="org.eclipse.ant.internal.ui.model.AntUIPreferenceInitializer"/>
+	</extension>
     
 </plugin>
