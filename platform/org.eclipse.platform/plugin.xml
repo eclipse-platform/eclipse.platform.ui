@@ -64,8 +64,11 @@
             -->
             <launchBar 	
             	location="right" 
-            	bg="#dedcf5" 
+            	bg="#c6c3e8" 
             	>
+               <handle
+                     close="true"
+                     image="css/graphics/contentpage/handle.gif"/>
                <shortcut
                      icon="css/graphics/icons/etool/overview.gif"
                      tooltip="%shortcut.overview.tooltip"
