@@ -106,8 +106,9 @@ public class InternalSiteManager {
 			monitor.worked(4); // only one attempt
 		} else {
 			try {
+				monitor.worked(3);
 				site = attemptCreateSite(DEFAULT_SITE_TYPE, siteURL, monitor);
-				monitor.worked(4);
+				monitor.worked(1);
 			} catch (CoreException preservedException) {
 				if (!monitor.isCanceled()) {
 					// attempt a retry is the protocol is file, with executbale type
@@ -146,12 +147,13 @@ public class InternalSiteManager {
 	 * attempt to create a type with the type found in the site.xml
 	 */
 	private static ISite attemptCreateSite(String guessedTypeSite, URL siteURL, IProgressMonitor monitor) throws CoreException {
-		if (monitor != null) monitor = new NullProgressMonitor();
+		if (monitor == null) monitor = new NullProgressMonitor();
 		ISite site = null;
 
 		try {
+			monitor.worked(1);
 			site = createSite(guessedTypeSite, siteURL, monitor);
-			monitor.worked(2); // if no error, occurs the retry branch doesn't need to be executed
+			monitor.worked(1); // if no error, occurs the retry branch doesn't need to be executed
 		} catch (InvalidSiteTypeException e) {
 			if (monitor.isCanceled()) return null;
 
@@ -206,8 +208,7 @@ public class InternalSiteManager {
 		try {
 			if (monitor != null)
 				monitor.worked(1);
-			site = factory.createSite(url);
-
+			site = createSite(factory, url, monitor);
 		} catch (CoreException e) {
 			if (monitor != null && monitor.isCanceled())
 				return null;
@@ -230,7 +231,7 @@ public class InternalSiteManager {
 				try {
 					if (monitor != null)
 						monitor.worked(1);
-					site = factory.createSite(urlRetry);
+					site = createSite(factory, urlRetry, monitor);
 				} catch (CoreException e1) {
 					throw Utilities.newCoreException(Policy.bind("InternalSiteManager.UnableToAccessURL", url.toExternalForm()), url.toExternalForm(), urlRetry.toExternalForm(), e, e1);
 					//$NON-NLS-1$
@@ -253,7 +254,7 @@ public class InternalSiteManager {
 				try {
 					if (monitor != null)
 						monitor.worked(1);
-					site = factory.createSite(urlRetry);
+					site = createSite(factory, urlRetry, monitor);
 				} catch (CoreException e1) {
 					throw Utilities.newCoreException(Policy.bind("InternalSiteManager.UnableToAccessURL", url.toExternalForm()), url.toExternalForm(), urlRetry.toExternalForm(), e, e1);
 					//$NON-NLS-1$
@@ -261,6 +262,13 @@ public class InternalSiteManager {
 			}
 		}
 		return site;
+	}
+	
+	private static ISite createSite(ISiteFactory factory, URL url, IProgressMonitor monitor) throws CoreException, InvalidSiteTypeException {
+		if (factory instanceof ISiteFactoryExtension)
+			return ((ISiteFactoryExtension)factory).createSite(url, monitor);
+		else
+			return factory.createSite(url);
 	}
 
 	/*

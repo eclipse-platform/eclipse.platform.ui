@@ -41,11 +41,10 @@ public class UpdateCore extends Plugin {
 	//log
 	private static UpdateManagerLogWriter log;
 	private static final String LOG_FILE=".install-log";
-
-	// web install
-	private static String appServerHost =null;
-	private static int appServerPort = 0;
 	
+	//Connection manager
+	private ConnectionThreadManager connectionManager;
+
 	public static String HTTP_PROXY_HOST = "org.eclipse.update.core.proxy.host";
 	public static String HTTP_PROXY_PORT = "org.eclipse.update.core.proxy.port";
 	public static String HTTP_PROXY_ENABLE = "org.eclipse.update.core.proxy.enable";
@@ -64,19 +63,14 @@ public class UpdateCore extends Plugin {
 	public static UpdateCore getPlugin() {
 		return plugin;
 	}
-
+	
 	/**
-	 * Returns the host identifier for the web app server
+	 * Returns the manager that manages URL connection threads.
 	 */
-	public static String getWebAppServerHost() {
-		return appServerHost;
-	}
-
-	/**
-	 * Returns the port identifier for the web app server
-	 */
-	public static int getWebAppServerPort() {
-		return appServerPort;
+	public ConnectionThreadManager getConnectionManager() {
+		if (connectionManager==null)
+			connectionManager = new ConnectionThreadManager();
+		return connectionManager;
 	}
 
 	/**
@@ -124,6 +118,8 @@ public class UpdateCore extends Plugin {
 		Utilities.shutdown(); // cleanup temp area
 		if (log!=null)
 			log.shutdown();
+		if (connectionManager!=null)
+			connectionManager.shutdown();
 					
 	}
 

@@ -71,7 +71,8 @@ public class SiteManager {
 	 * 
 	 * @param siteURL site URL
 	 * @param monitor the progress monitor
-	 * @return site object for the url
+	 * @return site object for the url or <samp>null</samp> in case a 
+	 * user canceled the connection in the progress monitor.
 	 * @exception CoreException
 	 * @since 2.1 
 	 */
@@ -105,7 +106,8 @@ public class SiteManager {
 	 * @param siteURL site URL
 	 * @param usesCache <code>false</code> if the cache should be refreshed, and the site entirely reparsed, <code>false</code> otherwise.
 	 * @param monitor the progress monitor
-	 * @return site object for the url
+	 * @return site object for the url or <samp>null</samp> in case a 
+	 * user canceled the connection in the progress monitor.
 	 * @exception CoreException
 	 * @since 2.1
 	 */

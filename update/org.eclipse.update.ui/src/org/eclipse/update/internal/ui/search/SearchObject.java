@@ -332,6 +332,8 @@ public class SearchObject extends NamedModelObject {
 			monitor.worked(1);
 			return status;
 		}
+		// If frozen connection was canceled, there will be no site.
+		if (site==null) return null;
 		text = UpdateUI.getFormattedMessage(KEY_CHECKING, 
 					siteAdapter.getLabel());
 		monitor.getWrappedProgressMonitor().subTask(text);

@@ -7,13 +7,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.*;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.InvalidSiteTypeException;
 import org.eclipse.update.core.model.SiteModelFactory;
 
-public class SiteURLFactory extends BaseSiteFactory {
-
+public class SiteURLFactory extends BaseSiteFactory implements ISiteFactoryExtension {
+	
+	/*
+	 * For backward compatibility.
+	 */
+	public ISite createSite(URL url) throws CoreException, InvalidSiteTypeException {
+		return createSite(url, null);
+	}
 	/*
 	 * @see ISiteFactory#createSite(URL, boolean)
 	 * 
@@ -33,7 +40,7 @@ public class SiteURLFactory extends BaseSiteFactory {
 	 * 
 	 * 3 open the stream	 
 	 */
-	public ISite createSite(URL url) throws CoreException, InvalidSiteTypeException {
+	public ISite createSite(URL url, IProgressMonitor monitor) throws CoreException, InvalidSiteTypeException {
 		Site site = null;
 		InputStream siteStream = null;
 	
@@ -43,8 +50,10 @@ public class SiteURLFactory extends BaseSiteFactory {
 			URL resolvedURL = URLEncoder.encode(url);
 			Response response = UpdateCore.getPlugin().get(resolvedURL);
 			UpdateManagerUtils.checkConnectionResult(response, resolvedURL);
-			siteStream = response.getInputStream();
-	
+			siteStream = response.getInputStream(monitor);
+			// the stream can be null if the user cancels the connection
+			if (siteStream==null) return null;
+
 			SiteModelFactory factory = (SiteModelFactory) this;
 			site = (Site) factory.parseSite(siteStream);
 	

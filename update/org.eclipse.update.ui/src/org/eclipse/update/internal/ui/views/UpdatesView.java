@@ -1122,7 +1122,8 @@ public class UpdatesView
 			public void run(IProgressMonitor monitor)
 				throws InvocationTargetException {
 				try {
-					monitor.beginTask(UpdateUI.getString("UpdatesView.connecting"), 2);
+					monitor.beginTask(UpdateUI.getString("UpdatesView.connecting"), 3);
+					monitor.worked(1);
 
 					if (connect)
 						bookmark.connect(new SubProgressMonitor(monitor, 1));

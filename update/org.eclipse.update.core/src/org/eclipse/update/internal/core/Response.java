@@ -1,20 +1,19 @@
 package org.eclipse.update.internal.core;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.*;
-import java.net.URL;
-import java.net.URLConnection;
+
+import org.eclipse.core.runtime.*;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 public class Response {
-
-	private URL url;
-	private InputStream in;
-	private URLConnection connection;
+	
+	protected URL url;
+	protected InputStream in;
+	protected URLConnection connection;
 
 	/**
 	 * 
@@ -31,7 +30,7 @@ public class Response {
 		super();
 		this.url = url;
 	}
-
+	
 	/**
 	 * Method getInputStream.
 	 * @return InputStream
@@ -41,10 +40,13 @@ public class Response {
 			connection = url.openConnection();
 			this.in = connection.getInputStream();
 		}
-
 		return in;
+	}	
+	
+	public InputStream getInputStream(IProgressMonitor monitor) throws IOException, CoreException {
+		return getInputStream();
 	}
-
+	
 	/**
 	 * Method getContentLength.
 	 * @return long
@@ -79,7 +81,8 @@ public class Response {
 		if (connection != null) {
 			if (connection instanceof HttpURLConnection)
 				try {
-					return ((HttpURLConnection) connection).getResponseMessage();
+					return ((HttpURLConnection) connection)
+						.getResponseMessage();
 				} catch (IOException e) {
 					UpdateCore.warn("", e);
 				}
