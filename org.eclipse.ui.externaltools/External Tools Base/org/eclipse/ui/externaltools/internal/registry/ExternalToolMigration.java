@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,10 +33,6 @@ import org.eclipse.ui.externaltools.internal.ui.ExternalToolsUIMessages;
  * and migrating it to create a new external tool.
  */
 public final class ExternalToolMigration {
-	/*
-	 * Ant tags
-	 */
-	
 	/**
 	 * Structure to represent a variable definition within a
 	 * source string.
@@ -358,9 +354,8 @@ public final class ExternalToolMigration {
 			} catch (CoreException e) {
 				ExternalToolsPlugin.getDefault().log(ExternalToolsUIMessages.getString("ExternalToolMigration.37"), e); //$NON-NLS-1$
 			}
-			ILaunchConfigurationWorkingCopy workingCopy;
 			try {
-				workingCopy= config.getWorkingCopy();
+				ILaunchConfigurationWorkingCopy workingCopy= config.getWorkingCopy();
 				if (runInBackground != ExternalToolsBuilderTab.DEFAULT_LAUNCH_IN_BACKGROUND) {
 					// Only store the config value if it is not the default. This is
 					// to be consistent with the way the UI stores attributes.
