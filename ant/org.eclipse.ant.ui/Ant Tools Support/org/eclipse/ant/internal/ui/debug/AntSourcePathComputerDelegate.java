@@ -45,22 +45,28 @@ public class AntSourcePathComputerDelegate extends JavaSourcePathComputer {
 		String path = configuration.getAttribute(IExternalToolConstants.ATTR_LOCATION, (String)null);
 		path= VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(path);
         List sourceContainers= new ArrayList();
-		ISourceContainer sourceContainer = null;
+		ISourceContainer folderContainer = null;
+		IProject project= null;
 		if (path != null) {
 			IResource resource = AntUtil.getFileForLocation(path, null);
 			if (resource != null) {
 				IContainer container = resource.getParent();
 				if (container.getType() == IResource.PROJECT) {
-					sourceContainer = new ProjectSourceContainer((IProject)container, false);
+					project= (IProject)container;
 				} else if (container.getType() == IResource.FOLDER) {
-					sourceContainer = new FolderSourceContainer(container, false);
+					folderContainer = new FolderSourceContainer(container, true);
+					project= container.getProject();
 				}
 			}
 		}
-		if (sourceContainer == null) {
-			sourceContainer = new WorkspaceSourceContainer();
+		
+		if (folderContainer != null) {
+			sourceContainers.add(folderContainer);
 		}
-        sourceContainers.add(sourceContainer);
+		if (project != null) {
+			sourceContainers.add(new ProjectSourceContainer(project, false));
+		}
+        sourceContainers.add(new WorkspaceSourceContainer());
         
         ISourceContainer[] classpathContainers= super.computeSourceContainers(configuration, monitor);
         sourceContainers.addAll(Arrays.asList(classpathContainers));
