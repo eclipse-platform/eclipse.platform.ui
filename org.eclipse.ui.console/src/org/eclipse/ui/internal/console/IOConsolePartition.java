@@ -108,6 +108,15 @@ public class IOConsolePartition implements ITypedRegion {
     }
     
     /**
+     * Sets this partitions length
+     * 
+     * @param length
+     */
+    public void setLength(int length) {
+    	this.length = length;
+    }
+    
+    /**
      * Returns the data contained in this partition.
      * @return The data contained in this partition.
      */
