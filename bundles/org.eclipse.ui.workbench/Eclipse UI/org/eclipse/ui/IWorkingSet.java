@@ -96,4 +96,14 @@ public interface IWorkingSet extends IPersistableElement {
      * @param name the name of the working set
      */
     public void setName(String name);
+    
+    /**
+     * Returns whether this working set can be edited or not. To make
+     * a working set editable the attribute <code>pageClass</code> of
+     * the extension defining a working set must be provided.
+     * 
+     * @return <code>true</code> if the working set can be edit; otherwise
+     *  <code>false</code>
+     */
+    public boolean isEditable();
 }

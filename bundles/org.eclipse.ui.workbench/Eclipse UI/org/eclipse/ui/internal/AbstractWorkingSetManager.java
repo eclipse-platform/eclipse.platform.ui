@@ -27,6 +27,7 @@ import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.wizard.IWizard;
 
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
@@ -39,6 +40,7 @@ import org.eclipse.ui.dialogs.IWorkingSetEditWizard;
 import org.eclipse.ui.dialogs.IWorkingSetPage;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 import org.eclipse.ui.internal.dialogs.WorkingSetEditWizard;
+import org.eclipse.ui.internal.dialogs.WorkingSetNewWizard;
 import org.eclipse.ui.internal.dialogs.WorkingSetSelectionDialog;
 import org.eclipse.ui.internal.registry.WorkingSetDescriptor;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
@@ -436,6 +438,19 @@ public abstract class AbstractWorkingSetManager implements IWorkingSetManager, B
         return new WorkingSetSelectionDialog(parent, multi);
     }
     
+    /**
+	 * {@inheritDoc}
+	 */
+	public IWizard createWorkingSetNewWizard() {
+		WorkingSetDescriptor[] descriptors= WorkbenchPlugin.getDefault().
+			getWorkingSetRegistry().getWorkingSetDescriptors();
+		for (int i= 0; i < descriptors.length; i++) {
+			if (descriptors[i].getPageClassName() != null)
+				return new WorkingSetNewWizard();
+		}
+		return null;
+	}
+    
     //---- working set delta handling -------------------------------------------------
     
 	public synchronized void bundleChanged(BundleEvent event) {
@@ -445,8 +460,10 @@ public abstract class AbstractWorkingSetManager implements IWorkingSetManager, B
         	.getWorkingSetRegistry().getDescriptorsForNamespace(event.getBundle().getSymbolicName());
 		for (int i= 0; i < descriptors.length; i++) {
 			WorkingSetDescriptor descriptor= descriptors[i];
-			IWorkingSetUpdater updater= getUpdater(descriptor);
 			List workingSets= getWorkingSetsForId(descriptor.getId());
+			if (workingSets.size() == 0)
+				continue;
+			IWorkingSetUpdater updater= getUpdater(descriptor);
 			for (Iterator iter= workingSets.iterator(); iter.hasNext();) {
 				IWorkingSet workingSet= (IWorkingSet)iter.next();
 				if (!updater.contains(workingSet))

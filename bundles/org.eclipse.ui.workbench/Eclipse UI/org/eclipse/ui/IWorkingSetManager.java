@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.wizard.IWizard;
 
 import org.eclipse.ui.dialogs.IWorkingSetEditWizard;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
@@ -157,6 +158,31 @@ public interface IWorkingSetManager {
      */
     public IWorkingSetEditWizard createWorkingSetEditWizard(
             IWorkingSet workingSet);
+    
+    /**
+     * Creates a working set new wizard. The wizard will allow creating new
+     * working sets. Returns <code>null</code> if there aren't any working set
+     *  definitions that support creation of working sets.
+     * <p>
+     * Example:
+     * <code>
+     *   IWizard wizard= workingSetManager.createWorkingSetNewWizard();
+     *   if (wizard != null) {  
+     *	     WizardDialog dialog = new WizardDialog(shell, wizard);
+     *
+     *	     dialog.create();		
+     *	     if (dialog.open() == Window.OK) {		
+     *		    ...
+     *       }
+     *   }
+     * </code>
+     * </p>
+     * 
+     * @return the working set new wizard or <code>null</code>
+     * 
+     * @since 3.1
+     */
+    public IWizard createWorkingSetNewWizard();
 
     /**
      * @deprecated use createWorkingSetSelectionDialog(parent, true) instead

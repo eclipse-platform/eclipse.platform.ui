@@ -101,6 +101,20 @@ public class WorkingSet implements IAdaptable, IWorkingSet {
     }
 
     /**
+	 * {@inheritDoc}
+	 */
+	public boolean isEditable() {
+		WorkingSetRegistry registry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
+		String id= getId();
+		if (id == null)
+			return false;
+		WorkingSetDescriptor descriptor= registry.getWorkingSetDescriptor(id);
+		if (descriptor == null)
+			return false;
+		return descriptor.getPageClassName() != null;
+	}
+    
+    /**
      * Returns the receiver if the requested type is either IWorkingSet 
      * or IPersistableElement.
      * 
