@@ -8,7 +8,7 @@
  * Contributors:
  * IBM - Initial API and implementation
  ******************************************************************************/
-package org.eclipse.ui.internal;
+package org.eclipse.ui.internal.decorators;
 
 import java.util.Arrays;
 

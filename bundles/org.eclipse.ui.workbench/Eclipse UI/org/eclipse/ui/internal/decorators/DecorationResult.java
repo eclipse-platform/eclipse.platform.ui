@@ -1,4 +1,4 @@
-package org.eclipse.ui.internal;
+package org.eclipse.ui.internal.decorators;
 
 import java.util.List;
 import java.util.ListIterator;

@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.decorators.*;
 
 /**
  * The DecoratorsPreferencePage is the preference page for enabling and disabling

@@ -1,4 +1,4 @@
-package org.eclipse.ui.internal;
+package org.eclipse.ui.internal.decorators;
 
 /*******************************************************************************
  * Copyright (c) 2002 IBM Corporation and others.
@@ -18,6 +18,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
+import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 
 /**

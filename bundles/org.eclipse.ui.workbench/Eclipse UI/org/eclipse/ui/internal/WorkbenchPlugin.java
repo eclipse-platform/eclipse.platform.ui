@@ -19,6 +19,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.*;
+import org.eclipse.ui.internal.decorators.*;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.registry.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;

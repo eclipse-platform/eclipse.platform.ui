@@ -1,4 +1,4 @@
-package org.eclipse.ui.internal;
+package org.eclipse.ui.internal.decorators;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -11,6 +11,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IContributorResourceAdapter;
 import org.eclipse.ui.IDecoratorManager;
+import org.eclipse.ui.internal.*;
 
 /**
  * The DecoratorManager is the class that handles all of the

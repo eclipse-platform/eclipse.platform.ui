@@ -1,10 +1,12 @@
-package org.eclipse.ui.internal;
+package org.eclipse.ui.internal.decorators;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
+import org.eclipse.ui.internal.ActionDescriptor;
+import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.dialogs.DialogUtil;
 import org.eclipse.ui.internal.model.WorkbenchAdapter;
 import org.eclipse.ui.model.*;

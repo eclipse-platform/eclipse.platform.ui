@@ -1,4 +1,4 @@
-package org.eclipse.ui.internal;
+package org.eclipse.ui.internal.decorators;
 
 /*******************************************************************************
  * Copyright (c) 2002 IBM Corporation and others.

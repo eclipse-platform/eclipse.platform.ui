@@ -25,7 +25,9 @@ public class ActionExpression {
 	final static String ATT_AND ="and";  //$NON-NLS-1$
 	final static String ATT_NOT = "not"; //$NON-NLS-1$
 	final static String ATT_OBJECT_STATE = "objectState"; //$NON-NLS-1$
-	final static String ATT_OBJECT_CLASS = "objectClass"; //$NON-NLS-1$
+	
+	//Make this public as it is used in the decorators
+	final public static String ATT_OBJECT_CLASS = "objectClass"; //$NON-NLS-1$
 	final static String ATT_PLUG_IN_STATE = "pluginState"; //$NON-NLS-1$
 	final static String ATT_SYSTEM_PROPERTY = "systemProperty"; //$NON-NLS-1$	
 	

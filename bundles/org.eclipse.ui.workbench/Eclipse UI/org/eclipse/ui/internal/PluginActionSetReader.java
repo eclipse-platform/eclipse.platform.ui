@@ -5,6 +5,7 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.core.runtime.*;
+import org.eclipse.ui.internal.decorators.*;
 import org.eclipse.ui.internal.registry.*;
 import java.util.*;
 

@@ -15,9 +15,9 @@ import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.internal.DecoratorDefinition;
-import org.eclipse.ui.internal.DecoratorManager;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.decorators.DecoratorDefinition;
+import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.tests.navigator.TestDecoratorContributor;
 import org.eclipse.ui.tests.util.UITestCase;
 

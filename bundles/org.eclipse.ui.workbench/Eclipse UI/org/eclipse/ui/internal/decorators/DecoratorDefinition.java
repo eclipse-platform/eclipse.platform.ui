@@ -1,4 +1,4 @@
-package org.eclipse.ui.internal;
+package org.eclipse.ui.internal.decorators;
 
 /*******************************************************************************
  * Copyright (c) 2002 IBM Corporation and others.
@@ -14,6 +14,7 @@ import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.ui.internal.ActionExpression;
 
 /**
  * The DecoratorDefinition is the class that holds onto
