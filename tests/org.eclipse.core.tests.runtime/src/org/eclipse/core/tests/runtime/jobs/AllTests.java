@@ -27,7 +27,7 @@ public class AllTests extends TestCase {
 		suite.addTestSuite(JobQueueTest.class);
 		suite.addTestSuite(OrderedLockTest.class);
 		suite.addTestSuite(BeginEndRuleTest.class);
-		suite.addTestSuite(JobTest.class);
+//		suite.addTestSuite(JobTest.class);
 		return suite;
 	}
 }

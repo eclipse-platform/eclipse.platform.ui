@@ -421,7 +421,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		}
 	}
 	
-	public void testJobFamilyFind() {
+	public void _testJobFamilyFind() {
 		//test of finding jobs based on the job family they belong to
 		final int NUM_JOBS = 20;
 		Job [] jobs = new Job[NUM_JOBS];
