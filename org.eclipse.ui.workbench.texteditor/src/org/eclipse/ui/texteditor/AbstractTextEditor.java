@@ -18,9 +18,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -28,7 +30,6 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IPluginPrerequisite;
-import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -469,6 +470,15 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	static class ConfigurationElementComparator implements Comparator {
 		
+		private Map fDescriptorMapping;
+		private Set fDescriptorSet;
+		private Map fPrereqsMapping;
+		
+		public ConfigurationElementComparator(IConfigurationElement[] elements) {
+			Assert.isNotNull(elements);
+			initialize(elements);
+		}
+
 		/*
 		 * @see Comparator#compare(java.lang.Object, java.lang.Object)
 		 * @since 2.0
@@ -496,36 +506,62 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 * @return <code>true</code> if <code>element0</code> depends on <code>element1</code>.
 		 * @since 2.0
 		 */
-		private static boolean dependsOn(IConfigurationElement element0, IConfigurationElement element1) {
-			IPluginDescriptor descriptor0= element0.getDeclaringExtension().getDeclaringPluginDescriptor();
-			IPluginDescriptor descriptor1= element1.getDeclaringExtension().getDeclaringPluginDescriptor();
+		private boolean dependsOn(IConfigurationElement element0, IConfigurationElement element1) {
+			if (element0 == null || element1 == null)
+				return false;
+
+			IPluginDescriptor pluginDesc0= (IPluginDescriptor)fDescriptorMapping.get(element0);
+			IPluginDescriptor pluginDesc1= (IPluginDescriptor)fDescriptorMapping.get(element1);
 			
-			return dependsOn(descriptor0, descriptor1);
+			// performance tuning - code below would give same result
+			if (pluginDesc0.getUniqueIdentifier().equals(pluginDesc1.getUniqueIdentifier()))
+				return false;
+			
+			Set prereqUIds0= (Set)fPrereqsMapping.get(pluginDesc0);
+			
+			return prereqUIds0.contains(pluginDesc1.getUniqueIdentifier());
 		}
 		
 		/**
-		 * Returns whether one plug-in depends on the other plugin. 
+		 * Initialize this comarator.
 		 * 
-		 * @param descriptor0 descriptor of the first plug-in
-		 * @param descriptor1 descriptor of the second plug-in
-		 * @return <code>true</code> if <code>descriptor0</code> depends on <code>descriptor1</code>.
-		 * @since 2.0
+		 * @param elements an array of Java editor hover descriptors
 		 */
-		private static boolean dependsOn(IPluginDescriptor descriptor0, IPluginDescriptor descriptor1) {
-
-			IPluginRegistry registry= Platform.getPluginRegistry();
-			IPluginPrerequisite[] prerequisites= descriptor0.getPluginPrerequisites();
-
-			for (int i= 0; i < prerequisites.length; i++) {
-				IPluginPrerequisite prerequisite= prerequisites[i];
-				String id= prerequisite.getUniqueIdentifier();			
-				IPluginDescriptor descriptor= registry.getPluginDescriptor(id);
-				
-				if (descriptor != null && (descriptor.equals(descriptor1) || dependsOn(descriptor, descriptor1)))
-					return true;
+		private void initialize(IConfigurationElement[] elements) {
+			int length= elements.length;
+			fDescriptorMapping= new HashMap(length);
+			fPrereqsMapping= new HashMap(length);
+			fDescriptorSet= new HashSet(length);
+			
+			for (int i= 0; i < length; i++) {
+				IPluginDescriptor descriptor= elements[i].getDeclaringExtension().getDeclaringPluginDescriptor();
+				fDescriptorMapping.put(elements[i], descriptor);
+				fDescriptorSet.add(descriptor);
 			}
 			
-			return false;
+			Iterator iter= fDescriptorSet.iterator();
+			while (iter.hasNext()) {
+				IPluginDescriptor descriptor= (IPluginDescriptor)iter.next();
+				List toTest= new ArrayList(fDescriptorSet);
+				toTest.remove(descriptor);
+				Set prereqUIds= new HashSet(Math.max(0, toTest.size() - 1));
+				fPrereqsMapping.put(descriptor, prereqUIds);
+				
+				IPluginPrerequisite[] prereqs= descriptor.getPluginPrerequisites();
+				int i= 0;
+				while (i < prereqs.length && !toTest.isEmpty()) {
+					String prereqUId= prereqs[i].getUniqueIdentifier();
+					for (int j= 0; j < toTest.size();) {
+						IPluginDescriptor toTest_j= (IPluginDescriptor)toTest.get(j);
+						if (toTest_j.getUniqueIdentifier().equals(prereqUId)) {
+							toTest.remove(toTest_j);
+							prereqUIds.add(toTest_j.getUniqueIdentifier());
+						} else
+							j++;
+					}
+					i++;
+				}
+			}
 		}
 	}
 	
@@ -3366,10 +3402,13 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					}
 				}
 			}
-			Collections.sort(actions, new ConfigurationElementComparator());
-
-			if (actions.size() != 0) {
-				IConfigurationElement element= (IConfigurationElement) actions.get(0);
+			int actionSize= actions.size();
+			if (actionSize > 0) {
+				if (actionSize > 1) {
+					IConfigurationElement[] actionArray= (IConfigurationElement[])actions.toArray(new IConfigurationElement[actionSize]);
+					Collections.sort(actions, new ConfigurationElementComparator(actionArray));
+				}
+				IConfigurationElement element= (IConfigurationElement)actions.get(0);
 				String defId = element.getAttribute(ActionDescriptor.ATT_DEFINITION_ID);
 				return new EditorPluginAction(element, "class", this, defId, IAction.AS_UNSPECIFIED); //$NON-NLS-1$			
 			}
