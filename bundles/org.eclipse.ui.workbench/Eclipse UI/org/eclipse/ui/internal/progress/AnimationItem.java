@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.progress;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashSet;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
@@ -449,7 +450,7 @@ public class AnimationItem {
 	private IJobChangeListener getJobListener() {
 		return new JobChangeAdapter() {
 
-			int jobCount = 0;
+			HashSet jobs = new HashSet();
 
 			/* (non-Javadoc)
 			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#aboutToRun(org.eclipse.core.runtime.jobs.IJobChangeEvent)
@@ -462,27 +463,27 @@ public class AnimationItem {
 			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 			 */
 			public void done(IJobChangeEvent event) {
-				decrementJobCount(event.getJob());
+				if (jobs.contains(event.getJob())) {
+					decrementJobCount(event.getJob());
+				}
 			}
 
 			private void incrementJobCount(Job job) {
 				//Don't count the animate job itself
 				if (job.isSystem())
 					return;
-
-				if (jobCount == 0)
+				if (jobs.size() == 0)
 					setAnimated(true);
-				jobCount++;
+				jobs.add(job);
 			}
 
 			private void decrementJobCount(Job job) {
 				//Don't count the animate job itself
 				if (job.isSystem())
 					return;
-				if (jobCount == 1)
+				jobs.remove(job);
+				if(jobs.isEmpty())
 					setAnimated(false);
-				if(jobCount > 0)
-					jobCount--;
 			}
 
 		};
