@@ -8,6 +8,7 @@ package org.eclipse.help.internal.contributors.xml;
 
 import java.util.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.util.*;
 import org.eclipse.help.internal.contributors.*;
 import org.eclipse.help.internal.contributions.*;
@@ -117,6 +118,12 @@ public class HelpContributionManager implements ContributionManager {
 	 * @return boolean
 	 */
 	public boolean hasNewContributions() {
+		if (HelpSystem.isClient())
+			// contributions might have changed on a client
+			// but it is ignored, as caller should
+			// obtain everything from the server
+			return false;
+			
 		if (pluginVersions == null) {
 			// see what has changed since last time
 			pluginVersions =

@@ -11,7 +11,7 @@ import java.util.*;
 import org.eclipse.help.internal.HelpSystem;
 
 /**
- * Persistant Hashtable with keys and values of type String.
+ * Persistent Hashtable with keys and values of type String.
  */
 public class PersistentMap extends Hashtable {
 	public static final String columnSeparator = "|";
@@ -23,12 +23,7 @@ public class PersistentMap extends Hashtable {
 	 * @param name name of the table;
 	 */
 	public PersistentMap(String name) {
-		super();
-		this.name = name;
-		file =
-			new File(HelpSystem.getPlugin().getStateLocation().toFile(), name + ".tab");
-		tempfile =
-			new File(HelpSystem.getPlugin().getStateLocation().toFile(), name + "_.tab");
+		this(HelpSystem.getPlugin().getStateLocation().toFile().getPath(), name);
 	}
 	/**
 	 * Creates empty table for use by Help Plugin.

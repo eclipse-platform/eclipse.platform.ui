@@ -82,10 +82,7 @@ public final class HelpSystem {
 	 */
 	public static ContributionManager getContributionManager() {
 		if (getInstance().contributionManager == null) {
-			if (isClient())
-				getInstance().contributionManager = new HelpContributionManagerProxy();
-			else
-				getInstance().contributionManager = new HelpContributionManager();
+			getInstance().contributionManager = new HelpContributionManager();
 		}
 		return getInstance().contributionManager;
 	}

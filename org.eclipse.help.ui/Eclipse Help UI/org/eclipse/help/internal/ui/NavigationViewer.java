@@ -40,14 +40,7 @@ public class NavigationViewer implements ISelectionProvider {
 
 		// Create a list of available Info Sets
 		infoSetIds = new ArrayList();
-		ContributionManager cmgr = HelpSystem.getContributionManager();
-		Iterator infoSetContributors =
-			cmgr.getContributionsOfType(ViewContributor.INFOSET_ELEM);
-		while (infoSetContributors.hasNext()) {
-			String infoSet = ((InfoSet) infoSetContributors.next()).getID();
-			if (infoSet != null)
-				infoSetIds.add(infoSet);
-		}
+		infoSetIds.addAll(HelpSystem.getNavigationManager().getInfoSetIds());
 
 		createControl(parent);
 	}

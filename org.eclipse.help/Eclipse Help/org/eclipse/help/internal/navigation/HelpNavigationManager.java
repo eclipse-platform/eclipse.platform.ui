@@ -13,7 +13,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.help.internal.contributors.*;
 import org.eclipse.help.internal.contributions.*;
 import org.eclipse.help.internal.contributors.xml.*;
-import org.eclipse.help.internal.util.*;
+import org.eclipse.help.internal.util.Logger;
 
 /**
  * Manages the navigation model. It generates it and it reas it back
@@ -23,46 +23,39 @@ import org.eclipse.help.internal.util.*;
 public class HelpNavigationManager {
 	private NavigationModel currentModel;
 	private Map navigationModels = new HashMap(/* of NavigationModel */);
+	
+	// Map that keeps track of all the infosets available
+	private InfosetsMap infosetsMap = null;
 
 	public final static String INFOSETS_FILE = "infosets";
 
-	private String currentInfosetId;
-
-	private Collection validInfosetIds = new ArrayList();
+	private String currentInfosetId = null;
 
 	/**
-	 * HelpNavigationManager constructor comment.
+	 * HelpNavigationManager constructor.
 	 */
 	public HelpNavigationManager() {
 		super();
 
-		try {
-			// build collection of all valid (installed) infosets
+		try {			
 			ContributionManager cmgr = HelpSystem.getContributionManager();
-			Iterator infoSetContributors =
-				cmgr.getContributionsOfType(ViewContributor.INFOSET_ELEM);
-			while (infoSetContributors.hasNext()) {
-				InfoSet infoset = (InfoSet) infoSetContributors.next();
-				String infosetId = infoset.getID();
-				if (infosetId == null)
-					continue;
-				//if (!infoset.isStandalone() || !isEmpty(infosetId))
-				validInfosetIds.add(infosetId);
-			}
-
-			// build all the info sets: build the structure and generate the xml's
-			// Note: it is cheaper to do all the info sets now, since we've taken the hit to
-			//       to some extra processing in parsing actions, etc.
-			//       Also, in most cases there is only one info set.
 			if (cmgr.hasNewContributions()) {
+				// build all the info sets: build the structure and generate the xml's
+				// Note: it is cheaper to do all the info sets now, since we've taken the hit to
+				//       to some extra processing in parsing actions, etc.
+				//       Also, in most cases there is only one info set.
+				
 				// suggest memory cleanup, as we're going to use a bit of it
 				System.gc();
 
-				createNavigationModels();
+				createNavigationModels(); // it will initialize infosetsIds
 				cmgr.versionContributions();
 
 				// attemp to cleanup all the memory no longer needed
 				//System.gc();
+			}else{
+				// initialize infosetsIds
+				getInfoSetIds();
 			}
 		} catch (Exception e) {
 			Logger.logError(e.getMessage(), e);
@@ -71,10 +64,8 @@ public class HelpNavigationManager {
 	private void createNavigationModels() {
 		try {
 			// Keep track of all the infosets available
-			PersistentMap infosetsMap = new PersistentMap(INFOSETS_FILE);
-
-			ContributionManager cmgr = HelpSystem.getContributionManager();
-			InfosetBuilder builder = new InfosetBuilder(cmgr);
+			infosetsMap = new InfosetsMap(INFOSETS_FILE);
+			InfosetBuilder builder = new InfosetBuilder(HelpSystem.getContributionManager());
 			// merges all topics into views 
 			Map infosets = builder.buildInformationSets();
 			for (Iterator it = infosets.values().iterator(); it.hasNext();) {
@@ -140,8 +131,8 @@ public class HelpNavigationManager {
 						cmgr.getContributionsOfType(ViewContributor.INFOSET_ELEM);
 			if (infoSetContributors.hasNext()) 
 				setCurrentInfoSet(((InfoSet) infoSetContributors.next()).getID());*/
-			if (validInfosetIds.size() > 0)
-				setCurrentInfoSet((String) validInfosetIds.iterator().next());
+			if (infosetsMap.size() > 0)
+				setCurrentInfoSet((String) infosetsMap.keys().nextElement());
 		}
 		return currentModel;
 	}
@@ -156,6 +147,19 @@ public class HelpNavigationManager {
 			return (InfoSet) navModel.getRootElement();
 	}
 	/**
+	 * @return Collection of infosetIds available, not including
+	 * ones that do not have navigation
+	 * (i.e. standalone included elsewhere)
+	 */
+	public Collection getInfoSetIds() {
+		if(infosetsMap!=null)
+			return infosetsMap.keySet();
+	
+		infosetsMap = new InfosetsMap(INFOSETS_FILE);
+		infosetsMap.restore();
+		return infosetsMap.keySet();
+	}
+	/**
 	 * Returns the navigation model for an infoset
 	 */
 	public NavigationModel getNavigationModel(String id) {
@@ -164,7 +168,7 @@ public class HelpNavigationManager {
 
 		// First check the cache
 		NavigationModel m = (NavigationModel) navigationModels.get(id);
-		if (m == null && validInfosetIds.contains(id)) {
+		if (m == null && infosetsMap.containsKey(id)) {
 			m = new NavigationModel(id);
 			navigationModels.put(id, m);
 		}
@@ -174,7 +178,7 @@ public class HelpNavigationManager {
 	 * Sets the current model
 	 */
 	public void setCurrentInfoSet(String infosetId) {
-		if (validInfosetIds.contains(infosetId)) {
+		if (infosetsMap.containsKey(infosetId)) {
 			// Set global infoset and navigation model
 			currentInfosetId = infosetId;
 			// Set the current navigation model.
