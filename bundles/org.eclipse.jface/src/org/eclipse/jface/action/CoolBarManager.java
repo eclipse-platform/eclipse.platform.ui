@@ -549,7 +549,10 @@ public class CoolBarManager extends ContributionManager implements
      * </p>
      */
     public void refresh() {
-
+        if (!coolBarExist()) {
+            return;
+        }
+        
         // Retreives the list of contribution items as an array list
         ArrayList contributionList = getItemList();
 
