@@ -340,7 +340,7 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 			
 			IContainer container = (IContainer)getIResource();
 			
-			// TODO: Added optimization to avoid loading sync info if possible
+			// Added optimization to avoid loading sync info if possible
 			// This will place a modified indicator on non-cvs folders
 			// (i.e. the call to getModifiedState will cache a session property)
 			int state = EclipseSynchronizer.getInstance().getModificationState(getIResource());
@@ -356,7 +356,7 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 				// caching as go. This will recursively determined the modified state
 				// for all child resources until a modified child is found.
 				modified = calculateAndSaveChildModificationStates(monitor);
-				setModified(modified);
+				EclipseSynchronizer.getInstance().setModified(this, modified);
 			} else {
 				modified = (state == ICVSFile.DIRTY);
 			}
@@ -375,7 +375,7 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 		// if the folder has sync info, it was handled is setFolderInfo
 		// otherwise, flush the ancestors to recalculate
 		if (info == null) {
-			setModified(true);
+			EclipseSynchronizer.getInstance().setDirtyIndicator(getIResource(), true);
 		}
 	}
 	

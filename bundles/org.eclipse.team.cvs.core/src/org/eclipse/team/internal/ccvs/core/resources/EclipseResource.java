@@ -260,14 +260,4 @@ abstract class EclipseResource implements ICVSResource, Comparable {
 	 * lock
 	 */
 	protected abstract void run(final ICVSRunnable job, IProgressMonitor monitor) throws CVSException;
-
-	/**
-	 * Sets the modified status of the receiver. This is done to ensure that any
-	 * cached state kept by it or its parents is updated properly. The invoked method
-	 * (setDirtyIndicator) will adjust the parent dirty state if the modification
-	 * state of the resource has changed. 
-	 */
-	protected void setModified(boolean modified) throws CVSException {
-		EclipseSynchronizer.getInstance().setDirtyIndicator(getIResource(), modified);
-	}
 }
