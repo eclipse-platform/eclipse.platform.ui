@@ -10,5 +10,6 @@
     <classpathentry kind="src" path="/org.eclipse.core.runtime"/>
     <classpathentry kind="var" path="ECLIPSE_HOME/startup.jar"/>
     <classpathentry kind="var" path="JRE_LIB" rootpath="JRE_SRCROOT" sourcepath="JRE_SRC"/>
+    <classpathentry kind="src" path="Benchmark Tests"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>
