@@ -203,7 +203,7 @@ public class PerspectiveBarManager extends ToolBarManager {
 	}
 	
 	private void updateCoolBar() {
-		if (coolBar != null && !coolBar.isDisposed()) {
+/*		if (coolBar != null && !coolBar.isDisposed()) {
 	    	// this is not ideal to be reaching in and setting the coolitem size
 	    	// based on it's only child.
 	    	if (coolBar.getItemCount() > 0) {
@@ -212,6 +212,7 @@ public class PerspectiveBarManager extends ToolBarManager {
 	    		item.setSize(item.computeSize (s.x, s.y));
 	    	}
 		}
+*/
     }
 
     void setParent(CoolBar cool) {

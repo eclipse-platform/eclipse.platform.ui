@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CBanner;
@@ -22,6 +23,7 @@ import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
@@ -65,6 +67,8 @@ public class PerspectiveSwitcher {
 	private PerspectiveBarManager perspectiveBar;
 	private CoolBar perspectiveCoolBar;
 	private CacheWrapper perspectiveCoolBarWrapper;
+	private CoolItem coolItem;
+	private CacheWrapper toolbarWrapper;
 
 	// The menus are cached, so the radio buttons should not be disposed until
 	// the switcher is disposed.
@@ -72,12 +76,13 @@ public class PerspectiveSwitcher {
 	private Menu genericMenu;
 	private List radioButtons = new ArrayList(4);
 
-	private IntModel location;
-	private int oldLocation = INITIAL;
-	private static final int INITIAL = 0;
+	private static final int INITIAL = -1;
 	private static final int TOP_RIGHT = 1;
 	private static final int TOP_LEFT = 2;
 	private static final int LEFT = 3;
+	
+	private int currentLocation = INITIAL;
+	
 	private static final int SEPARATOR_LENGTH = 20;
 	
 	private Listener popupListener = new Listener() {
@@ -92,10 +97,6 @@ public class PerspectiveSwitcher {
 	    this.window = window;
 	    this.topBar = topBar;
 	    this.style = style;
-
-	    location = new IntModel(convertLocation(PrefUtil
-                .getAPIPreferenceStore().getString(
-                        IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR)));
 	}
 
 	private static int convertLocation(String preference) {
@@ -113,14 +114,8 @@ public class PerspectiveSwitcher {
 	public void createControl(Composite parent) {
 	    Assert.isTrue(this.parent == null);
 	    this.parent = parent;
-
-	    location.addChangeListener(new IChangeListener() {
-            public void update(boolean changed) {
-                createControlForLocation();
-                oldLocation = location.get();
-                showPerspectiveBar();
-            }
-        });
+	    // set the initial location read from the preference
+	    setPerspectiveBarLocation(PrefUtil.getAPIPreferenceStore().getString(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR));
 	}
 
 	public void addPerspectiveShortcut(IPerspectiveDescriptor perspective, WorkbenchPage workbenchPage) {
@@ -129,8 +124,7 @@ public class PerspectiveSwitcher {
 
 		perspectiveBar.add(new PerspectiveBarContributionItem(perspective, workbenchPage));
 		perspectiveBar.update(false);
-		if (perspectiveBar.getControl() != null)
-		    LayoutUtil.resize(perspectiveBar.getControl());
+		setCoolItemSize(coolItem);
 	}
 
 	public IContributionItem findPerspectiveShortcut(IPerspectiveDescriptor perspective, WorkbenchPage page) {
@@ -156,19 +150,21 @@ public class PerspectiveSwitcher {
 		if (item != null) {
 			perspectiveBar.remove(item);
 			perspectiveBar.update(false);
-
-			if (location.get() == TOP_RIGHT || location.get() == TOP_LEFT)
-			    topBar.layout(true);
+			setCoolItemSize(coolItem);
 		}
 	}
 
 	public void setPerspectiveBarLocation(String preference) {
+		// return if the control has not been created.  createControl(...) will
+		// handle updating the state in that case
+		if (parent == null) 
+			return;
 	    int newLocation = convertLocation(preference);
-	    if (newLocation == oldLocation)
+	    if (newLocation == currentLocation)
 	        return;
-
-	    oldLocation = location.get();
-	    location.set(newLocation);
+	    createControlForLocation(newLocation);
+        currentLocation = newLocation;
+        showPerspectiveBar();
 	}
 
 	/**
@@ -176,7 +172,7 @@ public class PerspectiveSwitcher {
 	 * be used unless the control has been successfully created. 
 	 */
  	private void showPerspectiveBar() {
- 	    switch(location.get())
+ 	    switch(currentLocation)
  	    {
  	    case TOP_LEFT:
  			topBar.setRight(null);
@@ -207,7 +203,7 @@ public class PerspectiveSwitcher {
 
 	    perspectiveBar.update(force);
 
-		if (location.get() == LEFT) {
+		if (currentLocation == LEFT) {
 			ToolItem[] items = perspectiveBar.getControl().getItems();
 			boolean shouldExpand = items.length > 0;
 			if (shouldExpand != trimVisible) {
@@ -247,6 +243,12 @@ public class PerspectiveSwitcher {
 	}
 
 	private void disposeChildControls() {
+
+		if (toolbarWrapper != null) {
+			toolbarWrapper.dispose();
+			toolbarWrapper = null;
+	    }
+	    
 	    if (perspectiveBar != null) {
 	        perspectiveBar.dispose();
 	        perspectiveBar = null;
@@ -276,20 +278,20 @@ public class PerspectiveSwitcher {
 	 * the location attribute.
 	 * @param newLocation
 	 */
-	private void createControlForLocation() {
+	private void createControlForLocation(int newLocation) {
 	    // if there is a control, then perhaps it can be reused
 		if (perspectiveBar != null && perspectiveBar.getControl() != null
                 && !perspectiveBar.getControl().isDisposed()) {
-            if (oldLocation == LEFT && location.get() == LEFT)
+            if (newLocation == LEFT && currentLocation == LEFT)
                 return;
-            if ((oldLocation == TOP_LEFT || oldLocation == TOP_RIGHT)
-                    && (location.get() == TOP_LEFT || location.get() == TOP_RIGHT))
+            if ((newLocation == TOP_LEFT || newLocation == TOP_RIGHT)
+                    && (currentLocation == TOP_LEFT || currentLocation == TOP_RIGHT))
                 return;
         }
 
 		// otherwise dispose the current controls and make new ones
 		disposeChildControls();
-	    if (location.get() == LEFT)
+	    if (newLocation == LEFT)
 		    createControlForLeft();
 		else
 	        createControlForTop();
@@ -318,14 +320,14 @@ public class PerspectiveSwitcher {
 		trimVisible = false;
 		perspectiveBar.getControl().setLayoutData(trimLayoutData);
 	}
-
+			
  	private void createControlForTop() {
  	    perspectiveBar = createBarManager(SWT.HORIZONTAL);
 
 		perspectiveCoolBarWrapper = new CacheWrapper(topBar);
 		perspectiveCoolBar = new CoolBar(perspectiveCoolBarWrapper.getControl(), SWT.FLAT);
-		final CoolItem coolItem = new CoolItem(perspectiveCoolBar, SWT.DROP_DOWN);
-		final CacheWrapper toolbarWrapper = new CacheWrapper(perspectiveCoolBar); 
+		coolItem = new CoolItem(perspectiveCoolBar, SWT.DROP_DOWN);
+		toolbarWrapper = new CacheWrapper(perspectiveCoolBar); 
 		perspectiveBar.createControl(toolbarWrapper.getControl());
 		coolItem.setControl(toolbarWrapper.getControl());
 		perspectiveCoolBar.setLocked(true);
@@ -335,26 +337,8 @@ public class PerspectiveSwitcher {
 		// adjust the toolbar size to display as many items as possible
 		perspectiveCoolBar.addControlListener(new ControlAdapter() {
 			public void controlResized(ControlEvent e) {
-				
-				// Would it be possible to fit the toolbar in this space if we wrapped it? 
-				Rectangle area = perspectiveCoolBar.getClientArea();
-
-				// Determine the difference in size betwen the coolitem's client area and the coolbar's bounds
-				Point offset = coolItem.computeSize(0,0);
-				
-				Point wrappedSize = toolbarWrapper.getControl().computeSize(area.width - offset.x, SWT.DEFAULT);
-
-				// If everything will fit, set it to the wrapped size
-				if (wrappedSize.y <= area.height - offset.y) { 
-					coolItem.setSize(wrappedSize.x + offset.x, wrappedSize.y + offset.y);
-					return;
-				}
-				
-				// Set the cool item to be 1 pixel larger than the coolbar, in order to force a chevron
-				// to appear
-				coolItem.setSize(wrappedSize.x + offset.x + 1, area.height + offset.y);
-				}
-
+				setCoolItemSize(coolItem);
+			}
 		});
 		
 		coolItem.addSelectionListener(new SelectionAdapter() {
@@ -366,10 +350,36 @@ public class PerspectiveSwitcher {
 			}
 		});
 		coolItem.setMinimumSize(0, 0);
-
 		perspectiveBar.getControl().addListener(SWT.MenuDetect, popupListener);
  	}
 
+ 	/**
+	 * @param coolItem
+	 * @param toolbarWrapper
+	 */
+	private void setCoolItemSize(final CoolItem coolItem) {
+		// there is no coolItem when the bar is on the left
+		if (currentLocation == LEFT)
+			return;
+		
+		ToolBar toolbar = perspectiveBar.getControl();
+		if (toolbar == null) 
+			return;
+		
+		Rectangle area = perspectiveCoolBar.getClientArea();
+		int rowHeight = toolbar.getItem(0).getBounds().height;
+		int rows = rowHeight <= 0 ? 1 : (int)Math.max(1, Math.floor(area.height / rowHeight));
+		if (rows == 1 || (toolbar.getStyle() & SWT.WRAP) == 0) {
+			Point p = toolbar.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+			coolItem.setSize(coolItem.computeSize(p.x, p.y));
+			return;
+		}
+		Point offset = coolItem.computeSize(0,0);
+		Point wrappedSize = toolbar.computeSize(area.width - offset.x, SWT.DEFAULT);
+		int h = rows * rowHeight;
+		int w = wrappedSize.y <= h ? wrappedSize.x : wrappedSize.x + 1;
+		coolItem.setSize(coolItem.computeSize(w, h));
+	}
 	private void showPerspectiveBarPopup(Point pt) {
 	    if (perspectiveBar == null)
 	        return;
@@ -393,12 +403,11 @@ public class PerspectiveSwitcher {
 
 			// set the state of the menu items to match the preferences
 			genericMenu.getItem(1).setSelection(PrefUtil.getAPIPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR));
+			updateLocationItems(genericMenu.getItem(0).getMenu(), currentLocation);
 
 			// Show popup menu.
-			if (genericMenu != null) {
-			    genericMenu.setLocation(pt.x, pt.y);
-			    genericMenu.setVisible(true);
-			}
+			genericMenu.setLocation(pt.x, pt.y);
+			genericMenu.setVisible(true);
 			return;
 		}
 
@@ -446,14 +455,14 @@ public class PerspectiveSwitcher {
 			popupMenu = menu;
 		}
 		popupMenu.setData(toolItem);
-
+		
+		// set the state of the menu items to match the preferences
 		popupMenu.getItem(4).setSelection(PrefUtil.getAPIPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR));
+		updateLocationItems(popupMenu.getItem(3).getMenu(),currentLocation);
 		
 		// Show popup menu.
-		if (popupMenu != null) {
-			popupMenu.setLocation(pt.x, pt.y);
-			popupMenu.setVisible(true);
-		}
+		popupMenu.setLocation(pt.x, pt.y);
+		popupMenu.setVisible(true);
 	}
 
 	/**
@@ -474,19 +483,68 @@ public class PerspectiveSwitcher {
 
 	    return barManager;
 	}
+	
+	private void updateLocationItems(Menu parent, int newLocation) {
+		MenuItem left;
+		MenuItem topLeft;
+		MenuItem topRight;
+		
+		topRight = parent.getItem(0);
+		topLeft = parent.getItem(1);
+		left = parent.getItem(2);
+		
+		
+		if (newLocation == LEFT) {
+			left.setSelection(true);
+			topRight.setSelection(false);
+			topLeft.setSelection(false);			
+		} else if (newLocation == TOP_LEFT) {
+			topLeft.setSelection(true);
+			left.setSelection(false);
+			topRight.setSelection(false);
+		} else {
+			topRight.setSelection(true);
+			left.setSelection(false);
+			topLeft.setSelection(false);
+		}
+	}
 
 	private void addDockOnSubMenu(Menu menu) {
 	    MenuItem item = new MenuItem(menu, SWT.CASCADE);
 	    item.setText(WorkbenchMessages.getString("PerspectiveSwitcher.dockOn")); //$NON-NLS-1$
 
-	    Menu subMenu = new Menu(item);
+	    final Menu subMenu = new Menu(item);
 
-	    RadioMenu radio = new RadioMenu(subMenu, location);
-		radio.addMenuItem(WorkbenchMessages.getString("PerspectiveSwitcher.topRight"), new Integer(TOP_RIGHT)); //$NON-NLS-1$
-		radio.addMenuItem(WorkbenchMessages.getString("PerspectiveSwitcher.topLeft"), new Integer(TOP_LEFT)); //$NON-NLS-1$
-		radio.addMenuItem(WorkbenchMessages.getString("PerspectiveSwitcher.left"), new Integer(LEFT)); //$NON-NLS-1$
-		radioButtons.add(radio);
+		final MenuItem menuItemTopRight = new MenuItem(subMenu, SWT.RADIO);
+		menuItemTopRight.setText(WorkbenchMessages.getString("PerspectiveSwitcher.topRight")); //$NON-NLS-1$
+		
+		final MenuItem menuItemTopLeft = new MenuItem(subMenu, SWT.RADIO);
+		menuItemTopLeft.setText(WorkbenchMessages.getString("PerspectiveSwitcher.topLeft")); //$NON-NLS-1$
 
+		final MenuItem menuItemLeft = new MenuItem(subMenu, SWT.RADIO);
+		menuItemLeft.setText(WorkbenchMessages.getString("PerspectiveSwitcher.left")); //$NON-NLS-1$
+	
+		SelectionListener listener = new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				MenuItem item = (MenuItem)e.widget;
+				String pref = null;
+				if (item.equals(menuItemLeft)) {
+					updateLocationItems(subMenu, LEFT);
+					pref = IWorkbenchPreferenceConstants.LEFT;
+				} else if (item.equals(menuItemTopLeft)) {
+					updateLocationItems(subMenu, TOP_LEFT);
+					pref = IWorkbenchPreferenceConstants.TOP_LEFT;
+				} else {
+					updateLocationItems(subMenu, TOP_RIGHT);
+					pref = IWorkbenchPreferenceConstants.TOP_RIGHT;
+				}
+				IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
+				apiStore.setValue(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR, pref);
+			}};
+
+		menuItemTopRight.addSelectionListener(listener);
+		menuItemTopLeft.addSelectionListener(listener);
+		menuItemLeft.addSelectionListener(listener);
 		item.setMenu(subMenu);
 	}
 

@@ -121,4 +121,14 @@ public class CacheWrapper {
 	public Composite getControl() {
 		return proxy;
 	}
+	
+	/**
+	 * Dispose of any widgets created by this wrapper.
+	 */
+	public void dispose() {
+		if (proxy != null) {
+			proxy.dispose();
+			proxy = null;
+		}
+	}
 }
