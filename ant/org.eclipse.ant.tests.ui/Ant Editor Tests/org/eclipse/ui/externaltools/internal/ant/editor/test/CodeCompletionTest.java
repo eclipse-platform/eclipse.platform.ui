@@ -330,9 +330,9 @@ public class CodeCompletionTest extends TestCase {
         try {
             org.eclipse.ui.externaltools.internal.ant.editor.utils.ProjectHelper.configureProject(tempProject, tempFile, tempStrBuf.toString());  // File will be parsed here
         }
-        catch(BuildException e) {
-            e.printStackTrace();
-            // ignore a build exception on purpose 
+        catch (BuildException e) {
+            //ignore a build exception on purpose
+			//as the document does not start and end within the same entity
         }    
         tempTable = tempProject.getProperties();
         assertEquals("valA", tempTable.get("propA"));
