@@ -77,7 +77,7 @@
           point="org.eclipse.ui.workbench.texteditor.markerAnnotationSpecification">
       <specification
       		annotationType="org.eclipse.ui.workbench.texteditor.error"
-            label="Problems"
+            label="%problems.label"
             markerType="org.eclipse.core.resources.problemmarker"
             markerSeverity="2"
             textPreferenceKey="errorIndication"
@@ -91,7 +91,7 @@
       </specification>
       <specification
       		annotationType="org.eclipse.ui.workbench.texteditor.warning"
-            label="Warnings"
+            label="%warnings.label"
             markerType="org.eclipse.core.resources.problemmarker"
             markerSeverity="1"
             textPreferenceKey="warningIndication"
@@ -105,7 +105,7 @@
       </specification>
       <specification
       		annotationType="org.eclipse.ui.workbench.texteditor.info"
-            label="Infos"
+            label="%infos.label"
             markerType="org.eclipse.core.resources.problemmarker"
             textPreferenceKey="infoIndication"
             textPreferenceValue="false"
@@ -118,7 +118,7 @@
       </specification>
       <specification
       		annotationType="org.eclipse.ui.workbench.texteditor.task"
-            label="Tasks"
+            label="%tasks.label"
             markerType="org.eclipse.core.resources.taskmarker"
             textPreferenceKey="taskIndication"
             textPreferenceValue="false"
@@ -131,7 +131,7 @@
       </specification>
       <specification
       		annotationType="org.eclipse.ui.workbench.texteditor.bookmark"
-            label="Bookmarks"
+            label="%bookmarks.label"
             markerType="org.eclipse.core.resources.bookmark"
             textPreferenceKey="bookmarkIndication"
             textPreferenceValue="false"
