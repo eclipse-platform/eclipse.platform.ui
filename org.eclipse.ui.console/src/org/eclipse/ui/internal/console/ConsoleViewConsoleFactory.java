@@ -33,7 +33,7 @@ public class ConsoleViewConsoleFactory implements IConsoleFactory {
             IWorkbenchPage page = window.getActivePage();
             if (page != null) {
                 try {
-                    String secondaryId = ConsoleMessages.getString("ConsoleViewConsoleFactory.0") + counter; //$NON-NLS-1$
+                    String secondaryId = "Console View #" + counter; //$NON-NLS-1$
                     page.showView(IConsoleConstants.ID_CONSOLE_VIEW, secondaryId, 1);
                     counter++;
                 } catch (PartInitException e) {
