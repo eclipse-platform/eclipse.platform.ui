@@ -10,11 +10,18 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.decorators;
 
-
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.util.SafeRunnable;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.ui.internal.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
+import org.eclipse.jface.viewers.IDecoration;
+import org.eclipse.jface.viewers.ILightweightLabelDecorator;
+import org.eclipse.ui.internal.ActionExpression;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 
 /**
@@ -78,7 +85,7 @@ class LightweightDecoratorDefinition extends DecoratorDefinition {
 					new DeclarativeDecorator(definingElement, iconLocation);
 			else {
 
-				Platform.run(new SafeRunnable(WorkbenchMessages.format("DecoratorManager.ErrorActivatingDecorator", new String[] { getName()})) { //$NON-NLS-1$
+				Platform.run(new ISafeRunnable() {
 					public void run() {
 						try {
 							decorator =
@@ -94,6 +101,13 @@ class LightweightDecoratorDefinition extends DecoratorDefinition {
 						} catch (CoreException exception) {
 							exceptions[0] = exception;
 						}
+					}
+
+					/* (non-Javadoc)
+					 * Method declared on ISafeRunnable.
+					 */
+					public void handleException(Throwable e) {
+						//Do nothing as Core will handle the logging
 					}
 				});
 			}
