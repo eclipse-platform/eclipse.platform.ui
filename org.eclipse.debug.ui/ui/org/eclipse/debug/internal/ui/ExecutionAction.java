@@ -47,6 +47,11 @@ public abstract class ExecutionAction extends Action {
 	 */
 	public void run() {
 		
+		// hook for launch configurations - OFF
+//		if (runLaunchConfiguration()) {
+//			return;
+//		}
+		
 		if (!DebugUIPlugin.saveAndBuild()) {
 			return;
 		}
@@ -318,11 +323,12 @@ public abstract class ExecutionAction extends Action {
 		IWorkbenchWindow dwindow= DebugUIPlugin.getActiveWorkbenchWindow();
 		IStructuredSelection selection= resolveSelection(dwindow);
 		IProject[] projects = resolveProjects(selection);
-		if (projects != null && projects.length == 1) {
-			lcd.setContext(projects[0]);
-		} else {
+// only allow workspace context		
+//		if (projects != null && projects.length == 1) {
+//			lcd.setContext(projects[0]);
+//		} else {
 			lcd.setContext(ResourcesPlugin.getWorkspace().getRoot());
-		}
+//		}
 		
 		if (lcd.open() == Window.CANCEL) {
 			return true;

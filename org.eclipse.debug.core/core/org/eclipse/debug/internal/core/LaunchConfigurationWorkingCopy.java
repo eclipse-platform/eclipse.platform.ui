@@ -64,6 +64,11 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 * Whether this configuration is to be local or shared.
 	 */
 	private boolean fLocal;
+	
+	/**
+	 * Suppress change notification until created
+	 */
+	private boolean fSuppressChange = true;
 
 	/**
 	 * Constructs a working for the specified lanuch 
@@ -78,6 +83,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		super(original.getLocation());
 		setOriginal(original);
 		setLocal(original.isLocal());
+		fSuppressChange = false;
 	}
 	
 	/**
@@ -96,6 +102,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		setLocal(local);
 		setInfo(new LaunchConfigurationInfo());
 		getInfo().setType(type);
+		fSuppressChange = false;
 	}	
 
 	/**
@@ -282,14 +289,18 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 */
 	private void setDirty() {
 		fDirty = true;
-		getLaunchManager().notifyChanged(this);
+		if (!suppressChangeNotification()) {
+			getLaunchManager().notifyChanged(this);
+		}	
 	}
 		
 	/**
 	 * @see ILaunchConfigurationWorkingCopy#rename(String)
 	 */
 	public void rename(String name) {
-		setNewName(name);
+		if (!getName().equals(name)) {
+			setNewName(name);
+		}
 	}
 
 	/**
@@ -298,10 +309,8 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 * @param name the new name for this configuration
 	 */
 	private void setNewName(String name) {
-		if (!getName().equals(name)) {
-			fName = name;
-			setDirty();
-		}
+		fName = name;
+		setDirty();
 	}
 	
 	/**
@@ -446,5 +455,12 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		return null;
 	}	
 	
+	/**
+	 * Returns whether change notification should be
+	 * suppressed
+	 */
+	protected boolean suppressChangeNotification() {
+		return fSuppressChange;
+	}
 }
 

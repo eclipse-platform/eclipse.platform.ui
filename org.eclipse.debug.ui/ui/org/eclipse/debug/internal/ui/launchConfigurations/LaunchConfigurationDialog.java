@@ -216,13 +216,15 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		Composite composite = (Composite)super.createDialogArea(parent);
 		GridLayout topLevelLayout = (GridLayout) composite.getLayout();
 		topLevelLayout.numColumns = 2;
-		
+
+// only allow workspace context		
 		// Build the project/workspace selection area
 		// and put it into the composite.		
-		Composite projectSelectionArea = createProjectSelectionArea(composite);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		projectSelectionArea.setLayoutData(gd);
+		
+//		Composite projectSelectionArea = createProjectSelectionArea(composite);
+//		gd = new GridData(GridData.FILL_HORIZONTAL);
+//		gd.horizontalSpan = 2;
+//		projectSelectionArea.setLayoutData(gd);
 		
 		// Build the launch configuration selection area
 		// and put it into the composite.
@@ -516,21 +518,22 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	 */
 	public void setContext(IResource context) {
 		fResource = context;
-		if (isVisible()) {
+		if (isVisible()) {			
 			getTreeViewer().setInput(context);
-			if (context instanceof IProject) {
-				getProjectButton().setSelection(true);
-				getProjectTextWidget().setEnabled(true);
-				getProjectBrowseButton().setEnabled(true);
-				if (!context.getName().equals(getProjectTextWidget().getText())) {
-					getProjectTextWidget().setText(context.getName());
-				}
-			} else if (context instanceof IWorkspaceRoot) {
-				getWorkspaceButton().setSelection(true);
-				getProjectBrowseButton().setSelection(false);
-				getProjectTextWidget().setEnabled(false);
-				getProjectBrowseButton().setEnabled(false);
-			}
+// currently, only allow workspace context			
+//			if (context instanceof IProject) {
+//				getProjectButton().setSelection(true);
+//				getProjectTextWidget().setEnabled(true);
+//				getProjectBrowseButton().setEnabled(true);
+//				if (!context.getName().equals(getProjectTextWidget().getText())) {
+//					getProjectTextWidget().setText(context.getName());
+//				}
+//			} else if (context instanceof IWorkspaceRoot) {
+//				getWorkspaceButton().setSelection(true);
+//				getProjectBrowseButton().setSelection(false);
+//				getProjectTextWidget().setEnabled(false);
+//				getProjectBrowseButton().setEnabled(false);
+//			}
 		}
 	}
 	
@@ -799,12 +802,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
  		IStructuredSelection selection = (IStructuredSelection)event.getSelection();
  		fSelection = selection;
  		
- 		// save current configuration
- 		if (getWorkingCopy() != null && getWorkingCopy().isDirty()) {
- 			// prompt for save before moving on
- 			System.out.println("dirty");
- 		}
- 			
+ 		// XXX: prompt for save of current configuration 			
  		
  		// enable buttons
  		boolean singleSelection = selection.size() == 1;
@@ -963,7 +961,11 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		 		setTabs(tabs);		
 			}
 			
-	 		fWorkingCopy = config.getWorkingCopy();
+			if (config.isWorkingCopy()) {
+		 		fWorkingCopy = (ILaunchConfigurationWorkingCopy)config;
+			} else {
+				fWorkingCopy = config.getWorkingCopy();
+			}
 	 		// update the name field
 	 		getNameTextWidget().setText(config.getName());
 	 		// update the tabs with the new working copy
@@ -1116,7 +1118,14 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		if (obj instanceof ILaunchConfiguration) {
 			
 		} else {
-
+			ILaunchConfigurationType type = (ILaunchConfigurationType)obj;
+			try {
+				ILaunchConfigurationWorkingCopy wc = type.newInstance(getProject(), "name", true);
+				setLaunchConfiguration(wc);
+			} catch (CoreException e) {
+				 DebugUIPlugin.errorDialog(getShell(), "Error", "Exception occurred creating new launch configuration.",e.getStatus());
+	 			return;
+			}
 		}
 	}	
 	
