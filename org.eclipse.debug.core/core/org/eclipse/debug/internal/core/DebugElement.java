@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.core;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugElement;
@@ -132,4 +135,28 @@ public abstract class DebugElement extends PlatformObject implements IDebugEleme
 	protected void fireTerminateEvent() {
 		fireEvent(new DebugEvent(this, DebugEvent.TERMINATE));
 	}	
+	
+	/**
+	 * Throws a debug exception with a status code of <code>TARGET_REQUEST_FAILED</code>.
+	 * 
+	 * @param message exception message
+	 * @param e underlying exception or <code>null</code>
+	 * @throws DebugException
+	 */
+	protected void requestFailed(String message, Throwable e) throws DebugException {
+		throw new DebugException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), 
+				DebugException.TARGET_REQUEST_FAILED, message, e));
+	}
+	
+	/**
+	 * Throws a debug exception with a status code of <code>NOT_SUPPORTED</code>.
+	 * 
+	 * @param message exception message
+	 * @param e underlying exception or <code>null</code>
+	 * @throws DebugException
+	 */
+	protected void notSupported(String message, Throwable e) throws DebugException {
+		throw new DebugException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), 
+				DebugException.NOT_SUPPORTED, message, e));
+	}		
 }
