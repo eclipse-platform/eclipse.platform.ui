@@ -29,7 +29,7 @@ build Java applications that can compete with native applications on any
 platform. This tutorial is designed to get you started building RCP applications
 quickly.</p>
 <p><b>By Ed Burnette, SAS Institute Inc.</b><br>
-<font size="-1">June 29, 2004</font></p>
+<font size="-1">June 30, 2004</font></p>
 <hr width="100%">
 <h2>Introduction</h2>
 <p>Try this experiment: Show Eclipse to some friends or co-workers who haven't
@@ -65,6 +65,13 @@ subsequent pages, enter a Project name such as <b>org.eclipse.ui.tutorials.rcp.p
 indicate you want a Java project, and
 enter a Plug-in Id (this should match the project name).
 </p>
+<p>
+<img src="images/note.gif" alt="Note: " width="62" height="13">
+Don't select the Alternate Format option that says
+Create an OSGi bundle manifest for the plug-in.
+See the section on Compatibility and migration for more details.
+</p>
+
 <p>
 The generated plug-in class that you may be familiar with in previous
 releases is no longer required in Eclipse 3.0.
@@ -451,8 +458,8 @@ All these files can be found in the
 For fully branding a program with a splash screen, custom icons, and so forth
 you'll need to set up some configuration files and use
 the eclipse.exe launcher.
-See the online help under Platform Plug-in Developer Guide >
-Programmer's Guide > Packaging and delivering Eclipse based products
+See the online help under Platform Plug-in Developer Guide &gt;
+Programmer's Guide &gt; Packaging and delivering Eclipse based products
 for more information.
 </p>
 
@@ -503,7 +510,7 @@ with the <code>-console</code> command line option.
 This will allow you to enter OSGi console commands to diagnose the problem.
 After the error occurs again, go to the console window and enter the
 <code>ss</code> command.
-You'll see one or more bundles which were installed but not resolved.
+You'll see one or more plug-ins (bundles) which were installed but not resolved.
 Pick one of them (in the above message it would be number 13), and enter the
 <code>diag <i>nnn</i></code> command, where <i>nnn</i>
 is the bundle number. For example, "<b>diag 13</b>".
@@ -545,12 +552,13 @@ RCP SDK, so you have to copy it from the regular Eclipse SDK.
 </dl>
 
 
-<h2>Compatibility, OSGi, and MANIFEST.MF</h2>
+<h2>Compatibility and migration</h2>
 <p>
 Astute readers will notice a new 3.0 version comment in plugin.xml
 and a few references in Eclipse
-wizards and documentation to OSGi and a new bundle manifest file
+wizards and documentation to OSGi and an optional manifest file
 called MANIFEST.MF.
+What's all that about?
 For the most part this is transparent and RCP
 developers don't have to worry about it.
 But just in case, let's take a few moments to discuss these changes
@@ -560,28 +568,37 @@ from Eclipse 2.1.
 The 3.0 tag in plugin.xml
 (<code>&lt;?eclipse version=&quot;3.0&quot;?&gt;</code>)
 says whether or not the plugin.xml itself is in 3.0 form.
-For 3.0 there were various changes to the plugins
+For Eclipse 3.0 there were various changes to the plugins
 (code moved, new plugins, etc.) and various extension points moved.
 The presence of the 3.0 tag tells the runtime that it does not
 need to do any "munging" of the plugin.xml to map the old
 form/names onto the new form/names. 
 </p>
 <p>
-If you include the 3.0 tag but still need to reference
-the deprecated 2.1 APIs, you can manually include an optional
-compatibility layer plug-in
-(<code>org.eclipse.core.runtime.compatibility</code>).
-Since the examples in these tutorials only work in 3.0 they don't need the
-compatibility layer.
+If you need to convert a version 2.1 plug-in to 3.0, we suggest you
+use the PDE 3.0 migration wizard instead of doing it manually.
+To run it from the Package Explorer, right click on plugin.xml
+and select PDE Tools &gt; Migrate to 3.0.
+After you do this the plug-in will not function in earlier
+versions of Eclipse.
+The tool does all the munging to use a compatibility layer
+(<code>org.eclipse.core.runtime.compatibility</code>),
+updates your classpaths, and so forth.
+Later you can consult the Eclipse 3.0 Plug-in Migration Guide
+(see the references or online help)
+for assistance in converting any deprecated API calls.
+After all the old calls have been removed you can replace
+the compatibility layer with the regular runtime code
+(<code>org.eclipse.core.runtime</code>).
 </p>
 <p>
-Eclipse 3.0 also introduced a new run-time system based on OSGi standards that
-uses bundles and a new manifest file to implement plug-ins.
+Finally, Eclipse 3.0  introduced a new run-time system based on OSGi standards that
+uses bundles and a new manifest file (MANIFEST.MF) to implement plug-ins.
 The use of MANIFEST.MF, in normal circumstances, is completely optional.
 You will notice that almost all of the 3.0 SDK plug-ins do NOT have one
-yet all are marked as 3.0 and many do not require compatibility.
-The only reason you might want to have a MANIFEST.MF is if you need to
-use a particular OSGi capability that is not exposed through the plugin.xml
+yet all are marked as 3.0 and many do not require the compatibility layer.
+The only reason you would want to have a MANIFEST.MF is if you need to
+use a particular OSGi capability that is not exposed through plugin.xml
 (for example, import-package).
 Otherwise it's recommended at this time that you don't have one.
 </p>
@@ -602,10 +619,8 @@ to download the source to your workspace.
 RCP Tutorial Part 2</a><br>
 <a href="http://dev.eclipse.org/viewcvs/index.cgi/%7echeckout%7e/org.eclipse.ui.tutorials.rcp.part3/html/tutorial3.html">
 RCP Tutorial Part 3</a><br>
-<a href="http://dev.eclipse.org/viewcvs/index.cgi/%7Echeckout%7E/platform-ui-home/rcp-proposal/rich_client_platform_facilities.html">
-Rich Client Platform Facilities</a><br>
-<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=36967">Bug 36967 - [Plan
-Item] Enable Eclipse to be used as a rich client platform</a><br>
+<a href="http://dev.eclipse.org/viewcvs/index.cgi/%7Echeckout%7E/platform-ui-home/rcp/index.html">
+Eclipse Rich Client Platform</a><br>
 <a href="http://dev.eclipse.org/viewcvs/index.cgi/%7Echeckout%7E/org.eclipse.ui.examples.rcp.browser/readme.html">RCP Browser example
 (project org.eclipse.ui.examples.rcp.browser)</a><br>
 <a href="http://www.eclipse.org/articles/Article-PDE-does-plugins/PDE-intro.html">PDE
@@ -614,8 +629,8 @@ Does Plug-ins</a><br>
 to Internationalize your Eclipse Plug-in</a><br>
 <a href="http://www.eclipse.org/articles/Article-Plug-in-architecture/plugin_architecture.html">Notes
 on the Eclipse Plug-in Architecture</a><br>
-<a href="http://dev.eclipse.org/viewcvs/index.cgi/~checkout~/platform-core-home/runtime/adoption.html">
-Eclipse 3.0 Runtime Adoption Guide</a><br>
+<a href="http://dev.eclipse.org/viewcvs/index.cgi/%7Echeckout%7E/org.eclipse.platform.doc.isv/porting/eclipse_3_0_porting_guide.html">
+Eclipse 3.0 Plug-in Migration Guide</a><br>
 </p>
 <p><small>IBM is trademark of International Business Machines Corporation in the
 United States, other countries, or both.</small></p>
