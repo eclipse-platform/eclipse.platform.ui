@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.search.ui.text;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -19,6 +20,17 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -26,7 +38,6 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.text.Position;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
@@ -44,9 +55,21 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.search.internal.ui.CopyToClipboardAction;
-import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.internal.ui.SearchPluginImages;
+
+import org.eclipse.jface.text.Position;
+
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
+import org.eclipse.ui.part.IPageSite;
+import org.eclipse.ui.part.Page;
+import org.eclipse.ui.part.PageBook;
+import org.eclipse.ui.progress.UIJob;
+
 import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.search.ui.IQueryListener;
 import org.eclipse.search.ui.ISearchQuery;
@@ -56,6 +79,11 @@ import org.eclipse.search.ui.ISearchResultPage;
 import org.eclipse.search.ui.ISearchResultViewPart;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.SearchResultEvent;
+
+import org.eclipse.search.internal.ui.CopyToClipboardAction;
+import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.internal.ui.SearchPluginImages;
+
 import org.eclipse.search2.internal.ui.InternalSearchUI;
 import org.eclipse.search2.internal.ui.SearchMessages;
 import org.eclipse.search2.internal.ui.SearchView;
@@ -71,26 +99,7 @@ import org.eclipse.search2.internal.ui.basic.views.ShowPreviousResultAction;
 import org.eclipse.search2.internal.ui.basic.views.TableViewerNavigator;
 import org.eclipse.search2.internal.ui.basic.views.TreeViewerNavigator;
 import org.eclipse.search2.internal.ui.text.AnnotationManagers;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
-import org.eclipse.ui.part.IPageSite;
-import org.eclipse.ui.part.Page;
-import org.eclipse.ui.part.PageBook;
-import org.eclipse.ui.progress.UIJob;
+
 /**
  * An abstract base implementation for classes showing
  * <code>AbstractTextSearchResult</code> instances. This class assumes that
@@ -190,7 +199,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	private MenuManager fMenu;
 	private ISearchResult fInput;
 	// Actions
-	private Action fCopyToClipboardAction;
+	private CopyToClipboardAction fCopyToClipboardAction;
 	private Action fRemoveSelectedMatches;
 	private Action fRemoveCurrentMatch;
 	private Action fRemoveAllResultsAction;
@@ -232,6 +241,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		fRemoveCurrentMatch = new RemoveMatchAction(this);
 		fShowNextAction = new ShowNextResultAction(this);
 		fShowPreviousAction = new ShowPreviousResultAction(this);
+		fCopyToClipboardAction = new CopyToClipboardAction();
 		createLayoutActions();
 		fBatchedUpdates = new HashSet();
 		fListener = new ISearchResultListener() {
@@ -239,6 +249,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 				handleSearchResultsChanged(e);
 			}
 		};
+
 	}
 
 	private void initLayout() {
@@ -613,11 +624,17 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			fViewer = viewer;
 			configureTreeViewer(viewer);
 		}
+		
+		fCopyToClipboardAction.setViewer(fViewer);
+		
+
+		
 		IToolBarManager tbm = getSite().getActionBars().getToolBarManager();
 		tbm.removeAll();
 		SearchView.createStandardGroups(tbm);
 		fillToolbar(tbm);
 		tbm.update(false);
+		
 		fViewer.addOpenListener(new IOpenListener() {
 			public void open(OpenEvent event) {
 				handleOpen(event);
@@ -715,7 +732,6 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	}
 
 	private void connectViewer(ISearchResult search) {
-		fCopyToClipboardAction = new CopyToClipboardAction(fViewer);
 		fViewer.setInput(search);
 	}
 
@@ -909,6 +925,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	}
 
 	private void initActionDefinitionIDs(IWorkbenchWindow window) {
+		fCopyToClipboardAction.setActionDefinitionId(getActionDefinitionId(window, ActionFactory.COPY));
 		fRemoveSelectedMatches.setActionDefinitionId(getActionDefinitionId(window, ActionFactory.DELETE));
 		fShowNextAction.setActionDefinitionId(getActionDefinitionId(window, ActionFactory.NEXT));
 		fShowPreviousAction.setActionDefinitionId(getActionDefinitionId(window, ActionFactory.PREVIOUS));
@@ -938,6 +955,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			actionBars.setGlobalActionHandler(ActionFactory.NEXT.getId(), fShowNextAction);
 			actionBars.setGlobalActionHandler(ActionFactory.PREVIOUS.getId(), fShowPreviousAction);
 			actionBars.setGlobalActionHandler(ActionFactory.DELETE.getId(), fRemoveSelectedMatches);
+			actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(), fCopyToClipboardAction);
 		}
 		if (getLayout() == FLAG_LAYOUT_TREE) {
 			addTreeActions(tbm);

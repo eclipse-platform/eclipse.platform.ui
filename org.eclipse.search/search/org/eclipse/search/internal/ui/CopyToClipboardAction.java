@@ -33,10 +33,21 @@ public class CopyToClipboardAction extends Action {
 	private StructuredViewer fViewer;
 	
 	public CopyToClipboardAction(StructuredViewer viewer) {
+		this();
 		Assert.isNotNull(viewer);
 		fViewer= viewer;
+	}
+	
+	public CopyToClipboardAction() {
 		setText(SearchMessages.getString("CopyToClipboardAction.label")); //$NON-NLS-1$
 		setToolTipText(SearchMessages.getString("CopyToClipboardAction.tooltip")); //$NON-NLS-1$
+	}
+	
+	/**
+	 * @param viewer The viewer to set.
+	 */
+	public void setViewer(StructuredViewer viewer) {
+		fViewer= viewer;
 	}
 
 	/*
@@ -44,7 +55,7 @@ public class CopyToClipboardAction extends Action {
 	 */	
 	public void run() {
 		Shell shell= SearchPlugin.getActiveWorkbenchShell();
-		if (shell == null)
+		if (shell == null || fViewer == null)
 			return;
 
 		ILabelProvider labelProvider= (ILabelProvider)fViewer.getLabelProvider();
