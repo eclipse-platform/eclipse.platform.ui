@@ -118,7 +118,10 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 	 */
 	public void addKeyListener(KeyListener keyListener) {
 		fKeyListeners.add(keyListener);
-		if (DEBUG) System.out.println("AbstractControlContentAssistSubjectAdapter#addKeyListener()"); //$NON-NLS-1$
+		
+		if (DEBUG)
+			System.out.println("AbstractControlContentAssistSubjectAdapter#addKeyListener()"); //$NON-NLS-1$
+		
 		installControlListener();
 	}
 
@@ -127,9 +130,13 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 	 */
 	public void removeKeyListener(KeyListener keyListener) {
 		boolean deleted= fKeyListeners.remove(keyListener);
-		if (DEBUG && !deleted)
-			System.out.println("removeKeyListener -> wasn't here"); //$NON-NLS-1$
-		if (DEBUG) System.out.println("AbstractControlContentAssistSubjectAdapter#removeKeyListener() -> " + fKeyListeners.size()); //$NON-NLS-1$
+		
+		if (DEBUG) {
+			if (!deleted)
+				System.out.println("removeKeyListener -> wasn't here"); //$NON-NLS-1$
+			System.out.println("AbstractControlContentAssistSubjectAdapter#removeKeyListener() -> " + fKeyListeners.size()); //$NON-NLS-1$
+		}
+		
 		uninstallControlListener();
 	}
 
@@ -145,7 +152,10 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 	 */
 	public boolean appendVerifyKeyListener(final VerifyKeyListener verifyKeyListener) {
 		fVerifyKeyListeners.add(verifyKeyListener);
-		if (DEBUG) System.out.println("AbstractControlContentAssistSubjectAdapter#appendVerifyKeyListener() -> " + fVerifyKeyListeners.size()); //$NON-NLS-1$
+		
+		if (DEBUG)
+			System.out.println("AbstractControlContentAssistSubjectAdapter#appendVerifyKeyListener() -> " + fVerifyKeyListeners.size()); //$NON-NLS-1$
+		
 		installControlListener();
 		return true;
 	}
@@ -155,7 +165,10 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 	 */
 	public boolean prependVerifyKeyListener(final VerifyKeyListener verifyKeyListener) {
 		fVerifyKeyListeners.add(0, verifyKeyListener);
-		if (DEBUG) System.out.println("AbstractControlContentAssistSubjectAdapter#prependVerifyKeyListener() -> " + fVerifyKeyListeners.size()); //$NON-NLS-1$
+		
+		if (DEBUG)
+			System.out.println("AbstractControlContentAssistSubjectAdapter#prependVerifyKeyListener() -> " + fVerifyKeyListeners.size()); //$NON-NLS-1$
+		
 		installControlListener();
 		return true;
 	}
@@ -165,7 +178,10 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 	 */
 	public void removeVerifyKeyListener(VerifyKeyListener verifyKeyListener) {
 		fVerifyKeyListeners.remove(verifyKeyListener);
-		if (DEBUG) System.out.println("AbstractControlContentAssistSubjectAdapter#removeVerifyKeyListener() -> " + fVerifyKeyListeners.size()); //$NON-NLS-1$
+		
+		if (DEBUG)
+			System.out.println("AbstractControlContentAssistSubjectAdapter#removeVerifyKeyListener() -> " + fVerifyKeyListeners.size()); //$NON-NLS-1$
+		
 		uninstallControlListener();
 	}
 
@@ -174,7 +190,8 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 	 */
 	public void setEventConsumer(IEventConsumer eventConsumer) {
 		// this is not supported
-		if (DEBUG) System.out.println("AbstractControlContentAssistSubjectAdapter#setEventConsumer()"); //$NON-NLS-1$
+		if (DEBUG)
+			System.out.println("AbstractControlContentAssistSubjectAdapter#setEventConsumer()"); //$NON-NLS-1$
 	}
 
 	/**
@@ -189,7 +206,9 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 	 * passing them to <code>fVerifyKeyListeners</code> and <code>fKeyListeners</code>.
 	 */
 	private void installControlListener() {
-		if (DEBUG) System.out.println("AbstractControlContentAssistSubjectAdapter#installControlListener() -> k: " + fKeyListeners.size() + ", v: " + fVerifyKeyListeners.size()); //$NON-NLS-1$ //$NON-NLS-2$
+		if (DEBUG)
+			System.out.println("AbstractControlContentAssistSubjectAdapter#installControlListener() -> k: " + fKeyListeners.size() + ", v: " + fVerifyKeyListeners.size()); //$NON-NLS-1$ //$NON-NLS-2$
+		
 		if (fControlListener != null)
 			return;
 	
@@ -201,17 +220,23 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 				KeyEvent keyEvent= new KeyEvent(e);
 				switch (e.type) {
 					case SWT.Traverse :
-						if (DEBUG) dump("before traverse", e, verifyEvent); //$NON-NLS-1$
+						
+						if (DEBUG)
+							dump("before traverse", e, verifyEvent); //$NON-NLS-1$
+						
 						verifyEvent.doit= true;
 						for (Iterator iter= fVerifyKeyListeners.iterator(); iter.hasNext(); ) {
 							((VerifyKeyListener) iter.next()).verifyKey(verifyEvent);
 							if (! verifyEvent.doit) {
 								e.detail= SWT.TRAVERSE_NONE;
 								e.doit= true;
-								if (DEBUG) dump("traverse eaten by verify", e, verifyEvent); //$NON-NLS-1$
+								if (DEBUG)
+									dump("traverse eaten by verify", e, verifyEvent); //$NON-NLS-1$
 								return;
 							}
-							if (DEBUG) dump("traverse ok", e, verifyEvent); //$NON-NLS-1$
+							
+							if (DEBUG)
+								dump("traverse ok", e, verifyEvent); //$NON-NLS-1$
 						}
 						break;
 					
@@ -220,11 +245,15 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 							((VerifyKeyListener) iter.next()).verifyKey(verifyEvent);
 							if (! verifyEvent.doit) {
 								e.doit= verifyEvent.doit;
-								if (DEBUG) dump("keyDown eaten by verify", e, verifyEvent); //$NON-NLS-1$
+								if (DEBUG)
+									dump("keyDown eaten by verify", e, verifyEvent); //$NON-NLS-1$
 								return;
 							}
 						}
-						if (DEBUG) dump("keyDown ok", e, verifyEvent); //$NON-NLS-1$
+					
+						if (DEBUG)
+							dump("keyDown ok", e, verifyEvent); //$NON-NLS-1$
+						
 						for (Iterator iter= fKeyListeners.iterator(); iter.hasNext();) {
 							((KeyListener) iter.next()).keyPressed(keyEvent);
 						}
@@ -266,7 +295,9 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 		};
 		getControl().addListener(SWT.Traverse, fControlListener);
 		getControl().addListener(SWT.KeyDown, fControlListener);
-		if (DEBUG) System.out.println("AbstractControlContentAssistSubjectAdapter#installControlListener() - installed"); //$NON-NLS-1$
+		
+		if (DEBUG)
+			System.out.println("AbstractControlContentAssistSubjectAdapter#installControlListener() - installed"); //$NON-NLS-1$
 	}
 
 	/**
@@ -276,13 +307,18 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 	 */
 	private void uninstallControlListener() {
 		if (fControlListener == null || fKeyListeners.size() + fVerifyKeyListeners.size() != 0) {
-			if (DEBUG) System.out.println("AbstractControlContentAssistSubjectAdapter#uninstallControlListener() -> k: " + fKeyListeners.size() + ", v: " + fVerifyKeyListeners.size()); //$NON-NLS-1$ //$NON-NLS-2$
+			
+			if (DEBUG)
+				System.out.println("AbstractControlContentAssistSubjectAdapter#uninstallControlListener() -> k: " + fKeyListeners.size() + ", v: " + fVerifyKeyListeners.size()); //$NON-NLS-1$ //$NON-NLS-2$
+			
 			return;
 		}
 		getControl().removeListener(SWT.Traverse, fControlListener);
 		getControl().removeListener(SWT.KeyDown, fControlListener);
 		fControlListener= null;
-		if (DEBUG) System.out.println("AbstractControlContentAssistSubjectAdapter#uninstallControlListener() - done"); //$NON-NLS-1$
+		
+		if (DEBUG)
+			System.out.println("AbstractControlContentAssistSubjectAdapter#uninstallControlListener() - done"); //$NON-NLS-1$
 	}
 	
 	/**
