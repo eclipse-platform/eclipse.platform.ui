@@ -46,13 +46,11 @@ import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.part.ViewPart;
 
 /**
- * The history view allows browsing of an array of versions of
- * a resource.
+ * The history view allows browsing of an array of resource revisions
  */
 public class HistoryView extends ViewPart implements IMenuListener, ISelectionListener {
 	private IRemoteFile remoteFile;
 	
-	private HashMap infoMap = new HashMap(30);
 	private TableViewer viewer;
 	private OpenRemoteFileAction openAction;
 
@@ -102,7 +100,7 @@ public class HistoryView extends ViewPart implements IMenuListener, ISelectionLi
 	 * Adds the action contributions for this view.
 	 */
 	protected void contributeActions() {
-		//double click
+		// double click
 		openAction = new OpenRemoteFileAction();
 		viewer.getTable().addListener(SWT.MouseDoubleClick, new Listener() {
 			public void handleEvent(Event e) {
@@ -112,7 +110,7 @@ public class HistoryView extends ViewPart implements IMenuListener, ISelectionLi
 		});
 		
 		
-		//popup menu
+		// popup menu
 		MenuManager menuMgr = new MenuManager();
 		Menu menu = menuMgr.createContextMenu(viewer.getTable());
 		menuMgr.addMenuListener(this);
