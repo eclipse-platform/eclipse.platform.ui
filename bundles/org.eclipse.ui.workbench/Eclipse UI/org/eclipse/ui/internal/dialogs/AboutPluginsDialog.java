@@ -56,6 +56,7 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 		{ WorkbenchMessages.getString("AboutPluginsDialog.provider"), //$NON-NLS-1$
 		WorkbenchMessages.getString("AboutPluginsDialog.pluginName"), //$NON-NLS-1$
 		WorkbenchMessages.getString("AboutPluginsDialog.version"), //$NON-NLS-1$
+		WorkbenchMessages.getString("AboutPluginsDialog.pluginId"), //$NON-NLS-1$
 	};
 
 	private IPluginDescriptor[] info;
@@ -212,7 +213,8 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 			{
 				convertHorizontalDLUsToPixels(120),
 				convertHorizontalDLUsToPixels(180),
-				convertHorizontalDLUsToPixels(105)};
+				convertHorizontalDLUsToPixels(70),
+				convertHorizontalDLUsToPixels(70)};
 		for (int i = 0; i < columnTitles.length; i++) {
 			TableColumn tableColumn = new TableColumn(vendorInfo, SWT.NULL);
 			tableColumn.setWidth(columnWidths[i]);
@@ -231,7 +233,8 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 			String provider = info[i].getProviderName();
 			String pluginName = info[i].getLabel();
 			String version = info[i].getVersionIdentifier().toString();
-			String[] row = { provider, pluginName, version };
+			String pluginId = info[i].getUniqueIdentifier();
+			String[] row = { provider, pluginName, version, pluginId };
 			TableItem item = new TableItem(vendorInfo, SWT.NULL);
 			item.setText(row);
 		}
@@ -336,10 +339,13 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 				sortByProvider();
 				break;
 			case 1:
-				sortById();
+				sortByName();
 				break;
-			case 2:
+			case 2: 
 				sortByVersion();
+				break;
+			case 3:
+				sortById();
 				break;
 		}
 
@@ -360,7 +366,8 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 			String provider = info[i].getProviderName();
 			String pluginName = info[i].getLabel();
 			String version = info[i].getVersionIdentifier().toString();
-			String [] row = { provider, pluginName, version };
+			String pluginId = info[i].getUniqueIdentifier();			
+			String [] row = { provider, pluginName, version, pluginId };
 			items[i].setText(row);
 		}
 		// Maintain the original selection
@@ -397,15 +404,15 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 				Collator coll = Collator.getInstance(Locale.getDefault());
 				public int compare(Object a, Object b) {
 					IPluginDescriptor d1, d2;
-					String provider1, provider2, pluginId1, pluginId2;
+					String provider1, provider2, name1, name2;
 					d1 = (IPluginDescriptor) a;
 					provider1 = d1.getProviderName();
-					pluginId1 = d1.getLabel();
+					name1 = d1.getLabel();
 					d2 = (IPluginDescriptor) b;
 					provider2 = d2.getProviderName();
-					pluginId2 = d2.getLabel();
+					name2 = d2.getLabel();
 					if (provider1.equals(provider2))
-						return coll.compare(pluginId1, pluginId2);
+						return coll.compare(name1, name2);
 					else
 						return coll.compare(provider1, provider2);
 				}
@@ -415,7 +422,7 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 	/**
 	 * Sort the rows of the table based on unique plugin id.
 	 */	
-	private void sortById(){
+	private void sortByName(){
 		/* If sorting in reverse, info array is already sorted forward by
 		 * key so the info array simply needs to be reversed.
 		 */
@@ -432,12 +439,12 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 				Collator coll = Collator.getInstance(Locale.getDefault());
 				public int compare(Object a, Object b) {
 					IPluginDescriptor d1, d2;
-					String pluginId1, pluginId2;
+					String name1, name2;
 					d1 = (IPluginDescriptor) a;
-					pluginId1 = d1.getLabel();
+					name1 = d1.getLabel();
 					d2 = (IPluginDescriptor) b;
-					pluginId2 = d2.getLabel();
-					return coll.compare(pluginId1, pluginId2);
+					name2 = d2.getLabel();
+					return coll.compare(name1, name2);
 				}
 			});
 		}
@@ -464,20 +471,55 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 				Collator coll = Collator.getInstance(Locale.getDefault());
 				public int compare(Object a, Object b) {
 					IPluginDescriptor d1, d2;
-					String version1, version2, pluginId1, pluginId2;
+					String version1, version2, name1, name2;
 					d1 = (IPluginDescriptor) a;
 					version1 = d1.getVersionIdentifier().toString();
-					pluginId1 = d1.getLabel();
+					name1 = d1.getLabel();
 					d2 = (IPluginDescriptor) b;
 					version2 = d2.getVersionIdentifier().toString();
-					pluginId2 = d2.getLabel();
+					name2 = d2.getLabel();
 					if (version1.equals(version2))
-						return coll.compare(pluginId1, pluginId2);
+						return coll.compare(name1, name2);
 					else
 						return coll.compare(version1, version2);
 				}
 			});
 		}
 	}
-
+	/**
+	 * Sort the rows of the table based on the plugin id.
+	 * Secondary criteria is unique plugin id.
+	 */
+	private void sortById(){
+		/* If sorting in reverse, info array is already sorted forward by
+		 * key so the info array simply needs to be reversed.
+		 */
+		if (reverseSort){
+			java.util.List infoList = Arrays.asList(info);
+			Collections.reverse(infoList);
+			for (int i=0; i< info.length; i++){
+				info[i] = (IPluginDescriptor)infoList.get(i);
+			}
+		}
+		else {
+			// Sort ascending
+			Arrays.sort(info, new Comparator() {
+				Collator coll = Collator.getInstance(Locale.getDefault());
+				public int compare(Object a, Object b) {
+					IPluginDescriptor d1, d2;
+					String pluginId1, pluginId2, name1, name2;
+					d1 = (IPluginDescriptor) a;
+					pluginId1 = d1.getUniqueIdentifier();
+					name1 = d1.getLabel();
+					d2 = (IPluginDescriptor) b;
+					pluginId2 = d2.getUniqueIdentifier();
+					name2 = d2.getLabel();
+					if (pluginId1.equals(pluginId2))
+						return coll.compare(name1, name2);
+					else
+						return coll.compare(pluginId1, pluginId2);
+				}
+			});
+		}
+	}
 }

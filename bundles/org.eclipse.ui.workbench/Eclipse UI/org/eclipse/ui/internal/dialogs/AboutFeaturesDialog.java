@@ -96,6 +96,7 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 		{ WorkbenchMessages.getString("AboutFeaturesDialog.provider"), //$NON-NLS-1$
 		WorkbenchMessages.getString("AboutFeaturesDialog.featureName"), //$NON-NLS-1$
 		WorkbenchMessages.getString("AboutFeaturesDialog.version"), //$NON-NLS-1$
+		WorkbenchMessages.getString("AboutFeaturesDialog.featureId"), //$NON-NLS-1$
 	};
 
 	private AboutInfo[] featuresInfo;
@@ -487,9 +488,10 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 		/* create table headers */
 		int[] columnWidths =
 			{
-				convertHorizontalDLUsToPixels(125),
-				convertHorizontalDLUsToPixels(190),
-				convertHorizontalDLUsToPixels(110)};
+				convertHorizontalDLUsToPixels(120),
+				convertHorizontalDLUsToPixels(180),
+				convertHorizontalDLUsToPixels(70),
+				convertHorizontalDLUsToPixels(70)};
 		for (int i = 0; i < columnTitles.length; i++) {
 			TableColumn tableColumn = new TableColumn(table, SWT.NULL);
 			tableColumn.setWidth(columnWidths[i]);
@@ -511,13 +513,16 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 			String provider = featuresInfo[i].getProviderName();
 			String featureName = featuresInfo[i].getFeatureLabel();
 			String version = featuresInfo[i].getVersion();
+			String featureId = featuresInfo[i].getFeatureId();
 			if (provider == null)
 				provider = ""; //$NON-NLS-1$
 			if (featureName == null)
 				featureName = ""; //$NON-NLS-1$
 			if (version == null)
 				version = ""; //$NON-NLS-1$
-			String[] row = { provider, featureName, version };
+			if (featureId == null)
+				featureId = ""; //$NON-NLS-1$				
+			String[] row = { provider, featureName, version, featureId };
 			TableItem item = new TableItem(table, SWT.NULL);
 			item.setText(row);
 			item.setData(featuresInfo[i]);
@@ -562,6 +567,9 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 			case 2:
 				sortByVersion();
 				break;
+			case 3:
+				sortByFeatureId();	
+				break;
 		}
 
 		refreshTable(column);
@@ -581,13 +589,16 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 			String provider = featuresInfo[i].getProviderName();
 			String featureName = featuresInfo[i].getFeatureLabel();
 			String version = featuresInfo[i].getVersion();
+			String featureId = featuresInfo[i].getFeatureId();			
 			if (provider == null)
 				provider = ""; //$NON-NLS-1$
 			if (featureName == null)
 				featureName = ""; //$NON-NLS-1$
 			if (version == null)
 				version = ""; //$NON-NLS-1$
-			String[] row = { provider, featureName, version };
+			if (featureId == null)
+				featureId = ""; //$NON-NLS-1$
+			String[] row = { provider, featureName, version, featureId };
 			items[i].setText(row);
 			items[i].setData(featuresInfo[i]);
 		}
@@ -726,5 +737,48 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 			});
 		}
 	}
-	
+	/**
+	 * Sort the rows of the table based on the feature Id.
+	 * Secondary criteria is unique plugin id.
+	 */
+	private void sortByFeatureId(){
+		/* If sorting in reverse, info array is already sorted forward by
+		 * key so the info array simply needs to be reversed.
+		 */
+		if (reverseSort){
+			java.util.List infoList = Arrays.asList(featuresInfo);
+			Collections.reverse(infoList);
+			for (int i=0; i< featuresInfo.length; i++){
+				featuresInfo[i] = (AboutInfo)infoList.get(i);
 			}
+		}
+		else {
+			// Sort ascending
+			Arrays.sort(featuresInfo, new Comparator() {
+				Collator coll = Collator.getInstance(Locale.getDefault());
+				public int compare(Object a, Object b) {
+					AboutInfo i1, i2;
+					String featureId1, featureId2, name1, name2;
+					i1 = (AboutInfo)a;
+					featureId1 = i1.getFeatureId();
+					name1 = i1.getFeatureLabel();
+					if (featureId1 == null)
+					featureId1 = ""; //$NON-NLS-1$
+					if (name1 == null)
+						name1 = ""; //$NON-NLS-1$
+					i2 = (AboutInfo)b;
+					featureId2 = i2.getFeatureId();
+					name2 = i2.getFeatureLabel();
+					if (featureId2 == null)
+						featureId2 = ""; //$NON-NLS-1$
+					if (name2 == null)
+						name2 = ""; //$NON-NLS-1$
+					if (featureId1.equals(featureId2))
+						return coll.compare(name1, name2);
+					else
+						return coll.compare(featureId1, featureId2);
+				}
+			});
+		}
+	}		
+}
