@@ -34,7 +34,7 @@ public class AntTemplateProposal extends TemplateProposal {
 			int replaceOffset= getReplaceOffset();
 			if (offset >= replaceOffset) {
 				String content= document.get(replaceOffset, offset - replaceOffset);
-                if (content.length() ==0) {
+                if (content.length() == 0) {
                     return true;
                 }
 				if (content.charAt(0) == '<') {
