@@ -400,9 +400,27 @@ public class DebugUITools {
 	 * @since 2.1
 	 */
 	public static int openLaunchConfigurationPropertiesDialog(Shell shell, ILaunchConfiguration configuration, String groupIdentifier) {
+		return openLaunchConfigurationPropertiesDialog(shell, configuration, groupIdentifier, null);
+	}
+	
+	/**
+	 * Open the launch configuration properties dialog on the specified launch
+	 * configuration.
+	 *
+	 * @param shell the parent shell for the launch configuration dialog
+	 * @param configuration the configuration to display
+	 * @param group identifier of the launch group the launch configuration
+	 * belongs to
+	 * @param status the status to display, or <code>null</code> if none
+	 * @return the return code from opening the launch configuration dialog -
+	 *  one  of <code>Window.OK</code> or <code>Window.CANCEL</code>
+	 * @since 3.0
+	 */
+	public static int openLaunchConfigurationPropertiesDialog(Shell shell, ILaunchConfiguration configuration, String groupIdentifier, IStatus status) {
 		LaunchGroupExtension group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(groupIdentifier);
 		if (group != null) {
 			LaunchConfigurationPropertiesDialog dialog = new LaunchConfigurationPropertiesDialog(shell, configuration, group);
+			dialog.setInitialStatus(status);
 			return dialog.open();
 		} else {
 			return Window.CANCEL;
