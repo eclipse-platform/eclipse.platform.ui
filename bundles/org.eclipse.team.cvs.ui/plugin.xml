@@ -342,6 +342,7 @@
 		point = "org.eclipse.ui.preferencePages">
 			<page id="org.eclipse.team.cvs.ui.CVSPreferences"
 				class="org.eclipse.team.internal.ccvs.ui.CVSPreferencesPage"
+				category="org.eclipse.team.ui.TextPreferences"
 				name="%PreferencePage.name">
 			</page>
 	</extension>
