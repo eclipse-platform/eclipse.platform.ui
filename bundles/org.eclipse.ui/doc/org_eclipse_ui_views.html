@@ -29,11 +29,11 @@ CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp; ></tt>
 <ul>
 <li>
-<b>id</b> - a unique name that will be used to identify this category</li>
+<b>id</b> - a unique name that will be used to identify this category.</li>
 
 <li>
 <b>name</b> - a translatable name that will be used in the UI for this
-category</li>
+category.</li>
 
 <li>
 <b>parentCategory</b> - an optional path composed of category IDs separated
@@ -56,11 +56,11 @@ CDATA #OPTIONAL</tt>
 <br><tt>&nbsp;&nbsp; ></tt>
 <ul>
 <li>
-<b>id</b> - a unique name that will be used to identify this view</li>
+<b>id</b> - a unique name that will be used to identify this view.</li>
 
 <li>
 <b>name</b> - a translatable name that will be used in the UI for this
-view</li>
+view.</li>
 
 <li>
 <b>category</b> - an optional attribute that is composed of the category
@@ -99,14 +99,14 @@ If no value is supplied, a default ratio will be used.</li>
 <br><tt>&nbsp;&nbsp; &lt;/extension></tt>
 
 <p><b><i>API Information:</i></b> The value of the <tt>class</tt> attribute
-must be a fully qualified name of the class that implements <tt>org.eclipse.ui.IViewPart.&nbsp;</tt>
+must be a fully qualified name of a Java class that implements <tt>org.eclipse.ui.IViewPart.&nbsp;</tt>
 It is common practice to subclass<tt> org.eclipse.ui.part.ViewPart</tt>
 when developing a new view.
 
 <p><b><i>Supplied Implementation</i></b>: The workbench provides a number
 of standard views including Navigator, Properties, Outline and Tasks. From
 the user point of view, these views are no different from any other view
-provided by the plug-ins. All the views can be shown from the View submenu.
+provided by the plug-ins. All the views can be shown from the "Show View" submenu of the "Window" menu.
 The position of a view is persistent: it is saved when the view is closed
 and restored when the view is reopened in a single session.&nbsp; The position
 is also persisted between workbench sessions.

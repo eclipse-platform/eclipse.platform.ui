@@ -15,7 +15,7 @@ Perspective Extensions</h1></center>
 registered by other plug-ins. A perspective defines the initial contents
 of the window action bars (menu and toolbar) and the initial set of views
 and their layout within a workbench page.&nbsp; Other plug-ins may contribute
-actions or views to the perspective which appear when the perspective is
+actions and views to the perspective. These actions and views appear when the perspective is
 selected.&nbsp; Optional additions by other plug-ins are appended to the
 initial definition.
 <p><b><i>Configuration Markup:</i></b>
@@ -47,7 +47,7 @@ CDATA #REQUIRED</tt>
 <ul>
 <li>
 <b>id</b> - the unique identifier of the view which will be added to the
-perspective's "Show View" submenu of the "Perspective" menu.</li>
+perspective's "Show View" submenu of the "Window" menu.</li>
 </ul>
 <tt>&nbsp;&nbsp; &lt;!ELEMENT newWizardShortcut EMPTY></tt>
 <br><tt>&nbsp;&nbsp; &lt;!ATTLIST newWizardShortcut</tt>
@@ -67,7 +67,7 @@ CDATA #REQUIRED</tt>
 <ul>
 <li>
 <b>id</b> - the unique identifier of the perspective which will be added
-to the perspective's "Open" submenu of the "Perspective" menu.</li>
+to the perspective's "Open Perspective" submenu of the "Window" menu.</li>
 </ul>
 <tt>&nbsp;&nbsp; &lt;!ELEMENT view EMPTY></tt>
 <br><tt>&nbsp;&nbsp; &lt;!ATTLIST view</tt>
@@ -98,8 +98,8 @@ by <tt>relationship</tt>.</li>
 <tt>relative</tt>.&nbsp;
 The following values are supported:</li>
 
-<ul>&nbsp;
-<br><b>fast</b> - the view extension will be created as a fast view.
+<ul>
+<b>fast</b> - the view extension will be created as a fast view.
 <br><b>stack</b> - the view extension will be stacked with the relative
 view in a folder.
 <br><b>left, right, top, bottom</b> - the view extension will be placed

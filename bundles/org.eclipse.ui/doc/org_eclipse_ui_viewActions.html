@@ -27,11 +27,11 @@ CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp; ></tt>
 <blockquote>
 <li>
-<b>id</b> - a unique identifier that can be used to reference this contribution</li>
+<b>id</b> - a unique identifier that can be used to reference this contribution.</li>
 
 <li>
 <b>targetID</b> - the unique identifier of the view (as specified in the
-registry) into which the contribution is made</li>
+registry) into which the contribution is made.</li>
 </blockquote>
 <tt>&nbsp;&nbsp; &lt;!ELEMENT menu (separator)+></tt>
 <br><tt>&nbsp;&nbsp; &lt;!ATTLIST menu</tt>
@@ -44,7 +44,7 @@ CDATA #IMPLIED</tt>
 <br><tt>&nbsp;&nbsp; ></tt>
 <ul>
 <li>
-<b>id</b> - a unique identifier that can be used to reference this menu</li>
+<b>id</b> - a unique identifier that can be used to reference this menu.</li>
 
 <li>
 <b>label</b> - the text label of the new menu. The label should include
@@ -154,7 +154,7 @@ F1 while the menu item is highlighted will display help for the given context
 id.</li>
 
 <li>
-<b>class</b> - name of the fully qualified class that implements <tt>org.eclipse.ui.IViewActionDelegate</tt>.</li>
+<b>class</b> - a fully qualified name of a class that implements <tt>org.eclipse.ui.IViewActionDelegate</tt>.</li>
 
 <li>
 <b>enablesFor</b> - a value indicating the selection count which must be
@@ -208,7 +208,7 @@ which are specified using the ampersand ('&amp;') character in front
 of a mnemonic character in the translatable text. Since ampersand is not
 allowed in XML strings, use <tt>&amp;amp;</tt> character entity.</li>
 
-If two or more actions are contributed to a menu or toolbar by a single
+<p>If two or more actions are contributed to a menu or toolbar by a single
 extension the actions will appear in the reverse order of how they are
 listed in the plugin.xml file. This behavior is admittedly unintuitive.&nbsp;
 However, it was discovered after the&nbsp; Eclipse Platform API was frozen.&nbsp;

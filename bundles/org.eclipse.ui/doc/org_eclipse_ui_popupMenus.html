@@ -47,7 +47,7 @@ CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp; ></tt>
 <ul>
 <li>
-<b>id</b> - a unique identifier that can be used to reference this contribution</li>
+<b>id</b> - a unique identifier that can be used to reference this contribution.</li>
 
 <li>
 <b>objectClass</b> - a fully qualified name of the class or interface that
@@ -81,7 +81,7 @@ CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp; ></tt>
 <ul>
 <li>
-<b>id</b> - a unique identifier that can be used to reference this contribution</li>
+<b>id</b> - a unique identifier that can be used to reference this contribution.</li>
 
 <li>
 <b>targetID</b> - the unique identifier of a popup menu inside a view,
@@ -114,7 +114,7 @@ CDATA #IMPLIED</tt>
 <br><tt>&nbsp;&nbsp; ></tt>
 <ul>
 <li>
-<b>id</b> - a unique identifier that can be used to reference this submenu</li>
+<b>id</b> - a unique identifier that can be used to reference this submenu.</li>
 
 <li>
 <b>label</b> - the text label of the new menu. The label should include
@@ -363,13 +363,13 @@ itself as the <tt>targetID</tt> for the action extension.</li>
 
 <li>
 If the target part has more than one context menu a unique id should be
-defined for each.&nbsp; Prefix each id with the view id and publish these
+defined for each.&nbsp; Prefix each id with the part id and publish these
 id's within the javadoc for the target part.&nbsp; Register each menu at
 runtime by calling <tt>registerContextMenu(String, MenuManager, ISelectionProvider)</tt>.
 Extenders will use the unique menu id as the <tt>targetID</tt> for the
 action extension.</li>
 </ul>
-Any pop-up menu which is registered with the workbench also should contain
+Any pop-up menu which is registered with the workbench should also contain
 a standard insertion point with id <tt>IWorkbenchActionConstants.MB_ADDITIONS</tt>.&nbsp;
 Other plug-ins will use this value as a reference point for insertion.&nbsp;
 The insertion point may be defined by adding a <tt>GroupMarker</tt> to
@@ -382,9 +382,9 @@ will retrieve the filter for the selection by testing to see if it implements
 If that fails, the workbench will ask for a filter through the <tt>IAdaptable</tt>
 mechanism.
 
-<p><b><i>Supplied Implementation: </i></b>The workbench view have built-in
+<p><b><i>Supplied Implementation: </i></b>The workbench views have built-in
 pop-up menus that already come loaded with a number of actions. Plug-ins
-can contribute to these menus. If a viewer has reserved slots for these
+can contribute to these menus. If a view has reserved slots for these
 contributions and they are made public, slot names can be used as paths.
 Otherwise, actions and submenus will be added at the end of the pop-up
 menu.

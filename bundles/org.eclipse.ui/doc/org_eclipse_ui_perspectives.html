@@ -13,7 +13,7 @@ Perspectives</h1></center>
 <p><b><i>Description: </i></b>This extension point is used to add perspective
 factories to the workbench.&nbsp; A perspective factory is used to define
 the initial layout and visible action sets for a perspective.&nbsp; The
-user can select a perspective by invoking the "Open" submenu of the "Perspective"
+user can select a perspective by invoking the "Open Perspective" submenu of the "Window"
 menu.
 <p><b><i>Configuration Markup:</i></b>
 <p><tt>&nbsp;&nbsp; &lt;!ELEMENT perspective (description?)></tt>
@@ -74,14 +74,14 @@ opens a page or window with no specified perspective.&nbsp; The default
 perspective is defined as a property within the plugin_customization.ini, as shown below.&nbsp;
 The user may also override this perspective from the workbench perspectives preference page.
 <p><tt>&nbsp;&nbsp;&nbsp; defaultPerspectiveId = org.eclipse.ui.resourcePerspective</tt>
-<p>The perspectives which appear in the "Open" menu are shortcuts for perspective
+<p>The perspectives which appear in the "Open Perspective" menu are shortcuts for perspective
 selection.&nbsp; This set is defined by the active perspective itself,
 and extensions made through the <a href="org_eclipse_ui_perspectiveExtensions.html">perspectiveExtensions</a>
 extension point.
 
 <p><b><i>Supplied Implementation: </i></b>The workbench provides a "Resource
 Perspective".&nbsp; Additional perspectives may be added by plug-ins. They
-are selected using the Open submenu of the Perspective menu.
+are selected using the "Open Perspective" submenu of the "Window" menu.
 
 <p><a href="hglegal2002.htm"><img SRC="ngibmcpy2002.gif" ALT="Copyright IBM Corporation and others 2000, 2002." BORDER=0</a>
 
