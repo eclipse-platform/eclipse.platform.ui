@@ -18,6 +18,7 @@ import org.eclipse.help.internal.HelpPlugin;
 public class BrowserManager {
 	public static final String DEFAULT_BROWSER_ID_KEY = "default_browser";
 	private static BrowserManager instance;
+	private boolean initialized = false;
 	private BrowserDescriptor defaultBrowserDesc;
 	private BrowserDescriptor[] browsersDescriptors;
 	private Collection browsers = new ArrayList();
@@ -25,6 +26,13 @@ public class BrowserManager {
 	 * Private Constructor
 	 */
 	private BrowserManager() {
+	}
+	/**
+	 * Initialize
+	 */
+	private void init() {
+		initialized = true;
+
 		// Find all available browsers
 		browsersDescriptors = createBrowserDescriptors();
 		// 1. set default browser from preferences
@@ -37,7 +45,10 @@ public class BrowserManager {
 			// No default browser in properties!
 			// Set default browser to prefered implementation
 			if (System.getProperty("os.name").startsWith("Win")) {
-				if (Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.help.ui") != null)
+				if (Platform
+					.getPluginRegistry()
+					.getPluginDescriptor("org.eclipse.help.ui")
+					!= null)
 					setDefaultBrowserID("org.eclipse.help.ui.iexplorer");
 				else
 					setDefaultBrowserID("org.eclipse.help.custombrowser");
@@ -151,6 +162,9 @@ public class BrowserManager {
 	 * Obtains browsers descriptors.
 	 */
 	public BrowserDescriptor[] getBrowserDescriptors() {
+		if (!initialized) {
+			init();
+		}
 		return this.browsersDescriptors;
 	}
 	/**
@@ -158,6 +172,9 @@ public class BrowserManager {
 	 * @return Returns a String or null if not set
 	 */
 	public String getDefaultBrowserID() {
+		if (!initialized) {
+			init();
+		}
 		if (defaultBrowserDesc == null)
 			return null;
 		return defaultBrowserDesc.getID();
@@ -169,6 +186,9 @@ public class BrowserManager {
 	 * @param defaultBrowserID The defaultAdapterID to set
 	 */
 	public void setDefaultBrowserID(String defaultAdapterID) {
+		if (!initialized) {
+			init();
+		}
 		for (int i = 0; i < browsersDescriptors.length; i++) {
 			if (browsersDescriptors[i].getID().equals(defaultAdapterID)) {
 				defaultBrowserDesc = browsersDescriptors[i];
@@ -180,6 +200,9 @@ public class BrowserManager {
 	 * Creates web browser
 	 */
 	public IBrowser createBrowser() {
+		if (!initialized) {
+			init();
+		}
 		return new DefaultBrowser(
 			createBrowserAdapter(),
 			getDefaultBrowserID());
@@ -187,7 +210,7 @@ public class BrowserManager {
 	/**
 	 * Creates web browser
 	 */
-	IBrowser createBrowserAdapter() {
+	private IBrowser createBrowserAdapter() {
 		IBrowser browser = defaultBrowserDesc.getFactory().createBrowser();
 		browsers.add(browser);
 		return browser;
@@ -196,6 +219,10 @@ public class BrowserManager {
 	 * Closes all browsers created
 	 */
 	public void closeAll() {
+		if (!initialized) {
+			// nothing to do, do not initialize
+			return;
+		}
 		for (Iterator it = browsers.iterator(); it.hasNext();) {
 			IBrowser browser = (IBrowser) it.next();
 			browser.close();
