@@ -14,6 +14,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.*;
+import org.eclipse.ui.internal.OpenNewWindowAction;
 
 public class OpenActionFactory extends ActionFactory {
 
@@ -68,37 +69,30 @@ public class OpenActionFactory extends ActionFactory {
 	 * @param menu the context sensitive menu
 	 * @param selection the current selection in the project explorer
 	 */
-	protected void fillOpenToMenu(
-		IMenuManager menu,
-		IStructuredSelection selection) {
-		// If one file is selected get it.
-		// Otherwise, do not show the "open with" menu.
+	protected void fillOpenToMenu(IMenuManager menu, IStructuredSelection selection) {
+
+		// Only supported if one and only one container
+		// resource selected (i.e project or folder).		
 		if (selection.size() != 1)
 			return;
 		IAdaptable element = (IAdaptable) selection.getFirstElement();
 		if (!(element instanceof IContainer))
 			return;
 
+		// Add the open New Window action
 		// Create a menu flyout.
-		MenuManager submenu =
-			new MenuManager(
-				ResourceNavigatorMessages.getString("ResourceNavigator.openPerspective"));
-		//$NON-NLS-1$
-		submenu.add(new OpenPerspectiveMenu(site.getWorkbenchWindow(), element));
-		menu.add(submenu);
-
+		menu.add(new OpenNewWindowAction(site.getWorkbenchWindow(), element));
 	}
+	
 	/**
 	 * Add "open with" actions to the context sensitive menu.
 	 * @param menu the context sensitive menu
 	 * @param selection the current selection in the project explorer
 	 */
-	protected void fillOpenWithMenu(
-		IMenuManager menu,
-		IStructuredSelection selection) {
+	protected void fillOpenWithMenu(IMenuManager menu, IStructuredSelection selection) {
 
 		// If one file is selected get it.
-		// Otherwise, do not show the "open with" menu.
+		// Otherwise, do not show the "Open With" menu.
 		if (selection.size() != 1)
 			return;
 
