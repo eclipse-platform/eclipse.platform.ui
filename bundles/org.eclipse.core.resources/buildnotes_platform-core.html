@@ -18,6 +18,19 @@ Eclipse SDK Build 20031008 (M4)
   <a href="http://dev.eclipse.org/viewcvs/index.cgi/%7Echeckout%7E/platform-core-home/plan_dynamic_plugins.html">
   plan item page</a> for more info on this.
   </li>
+  <li>
+  Support was added for progress monitors that provide feedback when the current
+  thread is blocked due to ongoing background activity.  See the new type 
+  IProgressMonitorWithBlocking for more details.
+  </li>
+  <li>
+  A new preference was added to the runtime plugin for specifying a performance
+  setting (Platform.PREF_PLATFORM_PERFORMANCE).  Users set the value of this preference
+  depending on the speed of their computer.  Any component can use this setting to 
+  determine if CPU-intensive features should be enabled.  The platform job scheduler 
+  will use this value to decide how much concurrent background activity it will allow.  
+  This API is experimental and still under development.
+  </li>
 </ul>
 <h3>Other highlights</h3>
 <ul>
