@@ -109,9 +109,8 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 		if (page == null) {
 			setTitle(Policy.bind("SynchronizeView.1")); //$NON-NLS-1$
 		} else {
-			setTitle(Policy.bind("SynchronizeView.2") + page.getName()); //$NON-NLS-1$
+			setTitle(Policy.bind("SynchronizeView.2", page.getName())); //$NON-NLS-1$
 		}
-		setTitle("This is a big bad boy...");
 	}
 
 	/* (non-Javadoc)
