@@ -5,10 +5,7 @@ package org.eclipse.ui.examples.javaeditor.java;
  * All Rights Reserved.
  */
 
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.DefaultAutoIndentStrategy;
-import org.eclipse.jface.text.DocumentCommand;
-import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.*;
 
 /**
  * Auto indent strategy sensitive to brackets.

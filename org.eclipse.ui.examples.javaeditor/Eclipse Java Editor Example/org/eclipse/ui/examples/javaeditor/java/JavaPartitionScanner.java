@@ -7,18 +7,8 @@ package org.eclipse.ui.examples.javaeditor.java;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.eclipse.jface.text.rules.EndOfLineRule;
-import org.eclipse.jface.text.rules.ICharacterScanner;
-import org.eclipse.jface.text.rules.IPredicateRule;
-import org.eclipse.jface.text.rules.IRule;
-import org.eclipse.jface.text.rules.IToken;
-import org.eclipse.jface.text.rules.IWordDetector;
-import org.eclipse.jface.text.rules.MultiLineRule;
-import org.eclipse.jface.text.rules.RuleBasedPartitionScanner;
-import org.eclipse.jface.text.rules.RuleBasedScanner;
-import org.eclipse.jface.text.rules.SingleLineRule;
-import org.eclipse.jface.text.rules.Token;
-import org.eclipse.jface.text.rules.WordRule;
+
+import org.eclipse.jface.text.rules.*;
 
 /**
  * This scanner recognizes the JavaDoc comments and Java multi line comments.

@@ -5,7 +5,6 @@ package org.eclipse.ui.examples.javaeditor;
  * All Rights Reserved.
  */
 
-import java.util.ResourceBundle;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.MenuManager;

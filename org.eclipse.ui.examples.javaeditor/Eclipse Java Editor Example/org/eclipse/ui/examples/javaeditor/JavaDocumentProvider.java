@@ -9,7 +9,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.rules.DefaultPartitioner;
-import org.eclipse.jface.text.rules.RuleBasedPartitioner;
 import org.eclipse.ui.editors.text.FileDocumentProvider;
 import org.eclipse.ui.examples.javaeditor.java.JavaPartitionScanner;
 

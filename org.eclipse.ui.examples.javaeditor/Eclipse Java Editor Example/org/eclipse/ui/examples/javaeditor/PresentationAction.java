@@ -5,7 +5,6 @@ package org.eclipse.ui.examples.javaeditor;
  * All Rights Reserved.
  */
 
-import java.util.ResourceBundle;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.TextEditorAction;
 

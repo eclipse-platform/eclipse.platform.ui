@@ -5,9 +5,8 @@ package org.eclipse.ui.examples.javaeditor.util;
  * All Rights Reserved.
  */
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
+
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
