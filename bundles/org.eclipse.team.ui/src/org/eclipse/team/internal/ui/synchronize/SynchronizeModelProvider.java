@@ -49,7 +49,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
  */
 public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeListener, ISynchronizeModelProvider, IResourceChangeListener {
 
-	private static boolean DEBUG = true;
+	private static boolean DEBUG = false;
 	
 	// Flags to indicate if tree control should be updated while building the model.
 	private boolean refreshViewer;
