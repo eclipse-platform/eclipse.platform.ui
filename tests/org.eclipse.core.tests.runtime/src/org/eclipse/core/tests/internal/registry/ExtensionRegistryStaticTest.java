@@ -16,7 +16,6 @@ import java.util.Arrays;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.tests.harness.BundleTestingHelper;
 import org.eclipse.core.tests.runtime.RuntimeTestsPlugin;
 import org.osgi.framework.Bundle;
@@ -262,9 +261,41 @@ public class ExtensionRegistryStaticTest extends TestCase {
 		assertNotNull("1.3", xp.getExtension("71826B.B1"));
 	}
 
-	//Test the configuration elements
-	//Test the configuration elements third level
+	public void testJ() throws MalformedURLException, BundleException, IOException {
+		//Test the third level configuration elements
+		Bundle bundle01 = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testI");
+		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle01});
+		
+		IExtension ext = Platform.getExtensionRegistry().getExtension("testI.ext1");
+		IConfigurationElement ce = ext.getConfigurationElements()[0];
+		assertEquals(ce.getName(), "ce");
+		assertNotNull(ce.getValue());
+		assertEquals(ce.getChildren()[0].getName(), "ce2");
+		assertNull(ce.getChildren()[0].getValue());
+		assertEquals(ce.getChildren()[0].getChildren()[0].getName(), "ce3");
+		assertNull(ce.getChildren()[0].getChildren()[0].getValue());
+		assertEquals(ce.getChildren()[0].getChildren()[1].getName(), "ce3");
+		assertNull(ce.getChildren()[0].getChildren()[1].getValue());
+		assertEquals(ce.getChildren()[0].getChildren()[0].getChildren()[0].getName(), "ce4");
+		assertNotNull(ce.getChildren()[0].getChildren()[0].getChildren()[0].getValue());
+	}
 
+	public void testJbis() {
+		//Test the third level configuration elements from cache
+		IExtension ext = Platform.getExtensionRegistry().getExtension("testI.ext1");
+		IConfigurationElement ce = ext.getConfigurationElements()[0];
+		assertEquals(ce.getName(), "ce");
+		assertNotNull(ce.getValue());
+		assertEquals(ce.getChildren()[0].getName(), "ce2");
+		assertNull(ce.getChildren()[0].getValue());
+		assertEquals(ce.getChildren()[0].getChildren()[0].getName(), "ce3");
+		assertNull(ce.getChildren()[0].getChildren()[0].getValue());
+		assertEquals(ce.getChildren()[0].getChildren()[1].getName(), "ce3");
+		assertNull(ce.getChildren()[0].getChildren()[1].getValue());
+		assertEquals(ce.getChildren()[0].getChildren()[0].getChildren()[0].getName(), "ce4");
+		assertNotNull(ce.getChildren()[0].getChildren()[0].getChildren()[0].getValue());
+	}
+	
 	//Test the cache readAll
 
 	//test various methods on a delta object
@@ -289,6 +320,8 @@ public class ExtensionRegistryStaticTest extends TestCase {
 		sameSession.addTest(new ExtensionRegistryStaticTest("testG"));
 		sameSession.addTest(new ExtensionRegistryStaticTest("testH"));
 		sameSession.addTest(new ExtensionRegistryStaticTest("test71826"));
+		sameSession.addTest(new ExtensionRegistryStaticTest("testJ"));
+		sameSession.addTest(new ExtensionRegistryStaticTest("testJbis"));
 		return sameSession;
 	}
 }
