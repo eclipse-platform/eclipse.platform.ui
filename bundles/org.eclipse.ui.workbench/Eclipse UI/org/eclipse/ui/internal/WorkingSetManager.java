@@ -7,16 +7,18 @@ package org.eclipse.ui.internal;
 import java.io.*;
 import java.util.*;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
-import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
+import org.eclipse.ui.dialogs.*;
+import org.eclipse.ui.internal.dialogs.WorkingSetEditWizard;
 import org.eclipse.ui.internal.dialogs.WorkingSetSelectionDialog;
+import org.eclipse.ui.internal.registry.WorkingSetRegistry;
 
 /**
  * A working set manager stores working sets and provides property 
@@ -78,6 +80,28 @@ public class WorkingSetManager implements IWorkingSetManager {
 	public IWorkingSet createWorkingSet(String name, IAdaptable[] elements) {
 		return new WorkingSet(name, elements);
 	}
+	/**
+	 * @see org.eclipse.ui.IWorkingSetManager#createWorkingSetEditWizard(org.eclipse.ui.IWorkingSet)
+	 * @since 2.1
+	 */
+	public IWorkingSetEditWizard createWorkingSetEditWizard(IWorkingSet workingSet) {
+		String editPageId = ((WorkingSet) workingSet).getEditPageId();
+		WorkingSetRegistry registry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
+		IWorkingSetPage editPage = null;
+				
+		if (editPageId != null) {
+			editPage = registry.getWorkingSetPage(editPageId);
+		}						
+		if (editPage == null) {
+			editPage = registry.getDefaultWorkingSetPage();
+			if (editPage == null) {
+				return null;
+			}
+		}
+		WorkingSetEditWizard editWizard = new WorkingSetEditWizard(editPage);
+		editWizard.setSelection(workingSet);
+		return editWizard;
+	}	
 	/**
 	 * @deprecated use createWorkingSetSelectionDialog(parent, true) instead
 	 */

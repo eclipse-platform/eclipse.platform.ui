@@ -233,7 +233,7 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements IWorki
 		dialog.create();		
 		WorkbenchHelp.setHelp(dialog.getShell(), IHelpContextIds.WORKING_SET_NEW_WIZARD);
 		if (dialog.open() == Window.OK) {
-			IWorkingSetManager manager = WorkbenchPlugin.getDefault().getWorkingSetManager();
+			IWorkingSetManager manager = WorkbenchPlugin.getDefault().getWorkingSetManager();			
 			IWorkingSet workingSet = wizard.getSelection();
 
 			listViewer.add(workingSet);
@@ -249,22 +249,9 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements IWorki
 	 * @see org.eclipse.ui.IWorkingSetPage
 	 */
 	private void editSelectedWorkingSet() {
+		IWorkingSetManager manager = WorkbenchPlugin.getDefault().getWorkingSetManager();			
 		WorkingSet editWorkingSet = (WorkingSet) getSelectedWorkingSets().get(0);		
-		String editPageId = ((WorkingSet) editWorkingSet).getEditPageId();
-		
-		if (editPageId == null) {
-			return;
-		}
-		WorkingSetRegistry registry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
-		IWorkingSetPage editPage = registry.getWorkingSetPage(editPageId);
-						
-		if (editPage == null) {
-			editPage = registry.getDefaultWorkingSetPage();
-			if (editPage == null) {
-				return;
-			}
-		}
-		WorkingSetEditWizard wizard = new WorkingSetEditWizard(editPage);
+		IWorkingSetEditWizard wizard = manager.createWorkingSetEditWizard(editWorkingSet);
 		WizardDialog dialog = new WizardDialog(getShell(), wizard);
 		WorkingSet originalWorkingSet = (WorkingSet) editedWorkingSets.get(editWorkingSet);
 		boolean firstEdit = originalWorkingSet == null;
@@ -277,8 +264,7 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements IWorki
 		else {
 			editedWorkingSets.remove(editWorkingSet);
 		}
-		dialog.create();		
-		wizard.setSelection(editWorkingSet);
+		dialog.create();
 		WorkbenchHelp.setHelp(dialog.getShell(), IHelpContextIds.WORKING_SET_EDIT_WIZARD);
 		if (dialog.open() == Window.OK) {		
 			editWorkingSet = (WorkingSet) wizard.getSelection();

@@ -7,6 +7,7 @@ package org.eclipse.ui;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.dialogs.IWorkingSetEditWizard;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 
 /**
@@ -90,6 +91,30 @@ public interface IWorkingSetManager {
 	 * @return a new working set with the specified name and content
 	 */
 	public IWorkingSet createWorkingSet(String name, IAdaptable[] elements);
+	/**
+	 * Creates a working set edit wizard for the specified working set.
+	 * The caller is responsible for creating and opening a wizard dialog.
+	 *
+	 * Example:
+	 * <code>
+	 *  IWorkingSetEditWizard wizard = workingSetManager.createWorkingSetEditWizard(workingSet);
+	 *	WizardDialog dialog = new WizardDialog(shell, wizard);
+	 *
+	 *	dialog.create();		
+	 *	if (dialog.open() == Window.OK) {		
+	 *		workingSet = wizard.getSelection();
+	 *	}
+	 * </code>
+	 * 
+	 * @param workingSet working set to create a working set edit wizard 
+	 * 	for.
+	 * @return a working set edit wizard to edit the specified working set. 
+	 * 	If the specific edit wizard for the working set could not be loaded 
+	 * 	a default IResource based wizard will be returned. 
+	 * 	If the default edit wizard can not be loaded null is returned.
+	 * @since 2.1
+	 */
+	public IWorkingSetEditWizard createWorkingSetEditWizard(IWorkingSet workingSet);
 	/**
 	 * @deprecated use createWorkingSetSelectionDialog(parent, true) instead
 	 */
