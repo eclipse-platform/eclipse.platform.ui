@@ -174,8 +174,6 @@ protected final void createDestinationGroup(Composite parent) {
  */
 protected void createFileSelectionGroup(Composite parent) {
 	
-	int availableRows = DialogUtil.availableRows(parent);
-
 	//Just create with a dummy root.
 	this.selectionGroup =
 		new ResourceTreeAndListGroup(
@@ -186,7 +184,7 @@ protected void createFileSelectionGroup(Composite parent) {
 			getFileProvider(),
 			new WorkbenchLabelProvider(),
 			SWT.NONE,
-			availableRows > 50);
+			DialogUtil.inRegularFontMode(parent));
 
 	ICheckStateListener listener = new ICheckStateListener() {
 		public void checkStateChanged(CheckStateChangedEvent event) {

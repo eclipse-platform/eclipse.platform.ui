@@ -271,8 +271,6 @@ public abstract class WizardExportResourcesPage
 				input.add(projects[i]);
 		}
 
-		int availableRows = DialogUtil.availableRows(parent);
-		
 		this.resourceGroup =
 			new ResourceTreeAndListGroup(
 				parent,
@@ -282,7 +280,7 @@ public abstract class WizardExportResourcesPage
 				getResourceProvider(IResource.FILE),
 				new WorkbenchLabelProvider(),
 				SWT.NONE,
-				availableRows > 50);
+				DialogUtil.inRegularFontMode(parent));
 
 	}
 	/*
