@@ -73,6 +73,10 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	// static variables for extension points
 	private static IUserAuthenticator authenticator;
 	private static IConnectionMethod[] pluggedInConnectionMethods = null;
+	
+	// Locks for ensuring that authentication to a host is serialized
+	// so that invalid passwords do not result in account lockout
+	private static Map hostLocks = new HashMap(); 
 
 	private IConnectionMethod method;
 	private String user;
@@ -721,53 +725,62 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 * of a CVSRepositoryLocation per remote location thus this method is called
 	 * for any connection made to this remote location.
 	 */
-	public synchronized Connection openConnection(IProgressMonitor monitor) throws CVSException {
-		
-		try {
-			// Allow two ticks in case of a retry
-			monitor.beginTask(Policy.bind("CVSRepositoryLocation.openingConnection", getHost()), 2);//$NON-NLS-1$
-			
-			// If we have a username and password, use them to attempt a connection
-			if ((user != null) && (password != null)) {
-				return createConnection(password, monitor);
+	public Connection openConnection(IProgressMonitor monitor) throws CVSException {
+		Object hostLock;
+		synchronized(hostLocks) {
+			hostLock = hostLocks.get(getHost());
+			if (hostLock == null) {
+				hostLock = new Object();
+				hostLocks.put(getHost(), hostLock);
 			}
-			
-			// Get the repository in order to ensure that the location is known by CVS.
-			// (The get will record the location if it's not already recorded.
-			if (!KnownRepositories.getInstance().isKnownRepository(getLocation())) {
-				KnownRepositories.getInstance().addRepository(this, true /* broadcast */);
-			}
-			
-			while (true) {
-				try {
-					// The following will throw an exception if authentication fails
-					String password = this.password;
-					if (password == null) {
-						// If the instance has no password, obtain it from the cache
-						password = retrievePassword();
-					}
-					if (user == null) {
-						// This is possible if the cache was cleared somehow for a location with a mutable username
-						throw new CVSAuthenticationException(new CVSStatus(IStatus.ERROR, CVSAuthenticationException.RETRY, Policy.bind("CVSRepositoryLocation.usernameRequired"))); //$NON-NLS-1$
-					}
-					if (password == null)
-						password = "";//$NON-NLS-1$ 
+		}
+		synchronized(hostLock) {
+			try {
+				// Allow two ticks in case of a retry
+				monitor.beginTask(Policy.bind("CVSRepositoryLocation.openingConnection", getHost()), 2);//$NON-NLS-1$
+				
+				// If we have a username and password, use them to attempt a connection
+				if ((user != null) && (password != null)) {
 					return createConnection(password, monitor);
-				} catch (CVSAuthenticationException ex) {
-					if (ex.getStatus().getCode() == CVSAuthenticationException.RETRY) {
-						String message = ex.getMessage();
-						IUserAuthenticator authenticator = getAuthenticator();
-						if (authenticator == null) {
-							throw new CVSAuthenticationException(Policy.bind("Client.noAuthenticator"), CVSAuthenticationException.NO_RETRY);//$NON-NLS-1$ 
+				}
+				
+				// Get the repository in order to ensure that the location is known by CVS.
+				// (The get will record the location if it's not already recorded.
+				if (!KnownRepositories.getInstance().isKnownRepository(getLocation())) {
+					KnownRepositories.getInstance().addRepository(this, true /* broadcast */);
+				}
+				
+				while (true) {
+					try {
+						// The following will throw an exception if authentication fails
+						String password = this.password;
+						if (password == null) {
+							// If the instance has no password, obtain it from the cache
+							password = retrievePassword();
 						}
-						authenticator.promptForUserInfo(this, this, message);
-					} else {
-						throw ex;
+						if (user == null) {
+							// This is possible if the cache was cleared somehow for a location with a mutable username
+							throw new CVSAuthenticationException(new CVSStatus(IStatus.ERROR, CVSAuthenticationException.RETRY, Policy.bind("CVSRepositoryLocation.usernameRequired"))); //$NON-NLS-1$
+						}
+						if (password == null)
+							password = "";//$NON-NLS-1$ 
+						return createConnection(password, monitor);
+					} catch (CVSAuthenticationException ex) {
+						if (ex.getStatus().getCode() == CVSAuthenticationException.RETRY) {
+							String message = ex.getMessage();
+							IUserAuthenticator authenticator = getAuthenticator();
+							if (authenticator == null) {
+								throw new CVSAuthenticationException(Policy.bind("Client.noAuthenticator"), CVSAuthenticationException.NO_RETRY);//$NON-NLS-1$ 
+							}
+							authenticator.promptForUserInfo(this, this, message);
+						} else {
+							throw ex;
+						}
 					}
 				}
+			} finally {
+				monitor.done();
 			}
-		} finally {
-			monitor.done();
 		}
 	}
 	
