@@ -750,21 +750,16 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		if (ref != null)
 			view = ref.getView(true);
 		if (view != null) {
-			if (mode == VIEW_ACTIVATE)			
-				activate(view);
-			else if (mode == VIEW_VISIBLE)
-				bringToTop(view);
+			busyShowView(view, mode);
 			return view;
 		}
 
 		// Show the view.
 		view = persp.showView(viewID, secondaryID);
 		if (view != null) {
-			zoomOutIfNecessary(view);
-			if (mode == VIEW_ACTIVATE)			
-				activate(view);
-			else if (mode == VIEW_VISIBLE)
-				bringToTop(view);
+			zoomOutIfNecessary(view);			
+			busyShowView(view, mode);
+			
 			window.firePerspectiveChanged(
 				this,
 				getPerspective(),
@@ -774,6 +769,31 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		}
 		return view;
 	}
+	
+	/*
+	 * Performs showing of the view in the given mode.
+	 */
+	private void busyShowView(IViewPart part, int mode) {
+		if (mode == VIEW_ACTIVATE)			
+			activate(part);
+		else if (mode == VIEW_VISIBLE){
+		    IWorkbenchPartReference ref = getActivePartReference();
+		    // if there is no active part or it's not a view, bring to top
+		    if (ref == null || !(ref instanceof IViewReference))
+		        bringToTop(part);
+		    else {
+		    	// otherwise check to see if the we're in the same stack as the active view
+		        IViewReference activeView = (IViewReference) ref;
+			    IViewReference [] viewStack = getViewReferenceStack(part);
+			    for (int i = 0; i < viewStack.length; i++) {
+                    if (viewStack[i].equals(activeView))
+                        return;
+                }
+			    bringToTop(part);
+		    }			    
+		}
+	}
+	
 	/**
 	 * Returns whether a part exists in the current page.
 	 */
@@ -3254,6 +3274,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 			return parts.indexOf(getReference(part));
 		}
 		/*
+		 * Returns the index of the part reference within the activation list.  
+		 * The higher the index, the more recent it was used.
+		 */
+		int indexOf(IWorkbenchPartReference ref) {
+		    return parts.indexOf(ref);
+		}
+		/*
 		 * Remove a part from the list
 		 */
 		boolean remove(IWorkbenchPartReference ref) {
@@ -3466,10 +3493,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		perspList.add(persp);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPage#getViewStack(org.eclipse.ui.IViewPart)
+	/**
+	 * Find the stack of view references stacked with this view part.
+	 * 
+	 * @param part the part
+	 * @return the stack of references
+	 * @since 3.0
 	 */
-	public IViewPart [] getViewStack(IViewPart part) {
+	private IViewReference [] getViewReferenceStack(IViewPart part) {
 		// Sanity check.
 		Perspective persp = getActivePerspective();
 		if (persp == null || !certifyPart(part))
@@ -3482,7 +3513,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 			for (int i = 0; i < folder.getChildren().length; i++) {
 				LayoutPart layoutPart = folder.getChildren()[i];
 				if (layoutPart instanceof ViewPane) {					
-					IViewPart view = findView(((ViewPane)layoutPart).getViewReference().getId());
+					IViewReference view = ((ViewPane)layoutPart).getViewReference();
 					if (view != null)
 						list.add(view);
 				}
@@ -3491,15 +3522,31 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 			// sort the list by activation order
 			Collections.sort(list, new Comparator() {
                 public int compare(Object o1, Object o2) {
-                    int pos1 = (-1) * activationList.indexOf((IWorkbenchPart) o1);
-                    int pos2 = (-1) * activationList.indexOf((IWorkbenchPart) o2);
+                    int pos1 = (-1) * activationList.indexOf((IWorkbenchPartReference) o1);
+                    int pos2 = (-1) * activationList.indexOf((IWorkbenchPartReference) o2);
                     return pos1 - pos2;
                 }});
 			
-			return (IViewPart []) list.toArray(new IViewPart [list.size()]);
+			return (IViewReference []) list.toArray(new IViewReference [list.size()]);
 		}
 		
-		return new IViewPart [] {part};
+		return new IViewReference [] {findViewReference(part.getSite().getId(), part.getViewSite().getSecondaryId())};	    
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPage#getViewStack(org.eclipse.ui.IViewPart)
+	 */
+	public IViewPart [] getViewStack(IViewPart part) {
+	    IViewReference [] refStack = getViewReferenceStack(part);
+	    if (refStack == null)
+	        return null;
+	    
+	    IViewPart [] stack = new IViewPart[refStack.length];
+	    for (int i = 0; i < refStack.length; i++) {
+            stack[i] = findView(refStack[i].getId());
+        }
+	        
+	    return stack;
 	}
 	/**
 	 * Allow for programmatically resizing a part.

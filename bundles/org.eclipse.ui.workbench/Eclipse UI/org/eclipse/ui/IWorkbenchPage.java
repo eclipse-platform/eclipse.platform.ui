@@ -145,22 +145,28 @@ public interface IWorkbenchPage extends IPartService, ISelectionService, ICompat
 	public static final String CHANGE_WORKING_SET_REPLACE = "workingSetReplace"; //$NON-NLS-1$	 
 
 	/**
-	 * Show view mode that indicates the view should be made visible and activated.
+	 * Show view mode that indicates the view should be made visible and 
+	 * activated.  Use of this mode has the same effect as calling 
+	 * {@link #showView(String)}.
 	 * 
 	 * @since 3.0
 	 */
 	public static final int VIEW_ACTIVATE = 1;
 
 	/**
-	 * Show view mode that indicates the view should be made visible.
+	 * Show view mode that indicates the view should be made visible.  If the
+	 * view is opened in the container that contains the active view then this 
+	 * has the same effect as <code>VIEW_CREATE</code>.
 	 * 
 	 * @since 3.0
 	 */	
 	public static final int VIEW_VISIBLE = 2;
 	
 	/**
-	 * Show view mode that indicates the view should be made created but not necessarily be made 
-	 * visible.
+	 * Show view mode that indicates the view should be made created but not 
+	 * necessarily be made visible.  It will only be made visible in the event 
+	 * that it is opened in its own container.  In other words, only if it is 
+	 * not stacked with another view.
 	 * 
 	 * @since 3.0
 	 */

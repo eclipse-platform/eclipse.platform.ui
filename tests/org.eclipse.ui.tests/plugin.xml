@@ -51,6 +51,12 @@
             class="org.eclipse.ui.tests.dnd.DragDropPerspectiveFactory"
             id="org.eclipse.ui.tests.dnd.dragdrop">
       </perspective>
+      <perspective
+            name="View Arrangement Perspective"
+            icon="icons/anything.gif"
+            class="org.eclipse.ui.tests.api.ViewPerspective"
+            id="org.eclipse.ui.tests.api.ViewPerspective">
+      </perspective>      
    </extension>
 <!-- Utils End -->
    <extension

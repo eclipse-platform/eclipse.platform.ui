@@ -30,6 +30,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.WorkbenchPage;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.TestPlugin;
@@ -68,6 +69,7 @@ public class IWorkbenchPageTest extends UITestCase {
 			proj = null;
 		}
 	}
+
 	
 	/**
 	 *	tests both of the following:	
@@ -1144,12 +1146,14 @@ public class IWorkbenchPageTest extends UITestCase {
 	 * view is not the active part.
 	 *
 	 */
-	public void testView_CREATE() {
+	public void testView_CREATE1() {
 	    WorkbenchPage page = (WorkbenchPage) fActivePage;
 	    try {
+	        
+	        page.setPerspective(WorkbenchPlugin.getDefault().getPerspectiveRegistry().findPerspectiveWithId("org.eclipse.ui.tests.api.ViewPerspective"));
+	        
 		    //create a part to be active
-		    IViewPart activePart = page.showView(MockViewPart.ID);
-		    
+		    IViewPart activePart = page.showView(MockViewPart.ID);		    
 		    IViewPart createdPart = page.showView(MockViewPart.ID2, null, IWorkbenchPage.VIEW_CREATE);
 		    
 		    IViewPart [] stack = page.getViewStack(activePart);
@@ -1158,10 +1162,154 @@ public class IWorkbenchPageTest extends UITestCase {
 		    assertEquals(activePart, stack[0]);
 		    assertEquals(createdPart, stack[1]);
 		    
+		    assertFalse(page.isPartVisible(createdPart));
+		    
 		    assertEquals(activePart, page.getActivePart());
 	    }
 	    catch (PartInitException e) {
 	        fail(e.getMessage());
 	    }
 	}
+	
+	/**
+	 * Test the VIEW_CREATE parameter for showView.  Ensures that the created
+	 * view is not the active part and is not visible
+	 */
+	public void testView_CREATE2() {
+	    WorkbenchPage page = (WorkbenchPage) fActivePage;
+	    try {
+	        
+	        page.setPerspective(WorkbenchPlugin.getDefault().getPerspectiveRegistry().findPerspectiveWithId("org.eclipse.ui.tests.api.ViewPerspective"));
+	        
+		    //create a part to be active
+		    IViewPart activePart = page.showView(MockViewPart.ID3);		    
+		    IViewPart createdPart = page.showView(MockViewPart.ID2, null, IWorkbenchPage.VIEW_CREATE);
+		    
+		    IViewPart [] stack = page.getViewStack(createdPart);
+		    assertEquals(2, stack.length);
+		    
+		    assertEquals(page.findView(MockViewPart.ID), stack[0]);
+		    assertEquals(createdPart, stack[1]);
+		    
+		    assertFalse(page.isPartVisible(createdPart));
+		    
+		    assertEquals(activePart, page.getActivePart());
+	    }
+	    catch (PartInitException e) {
+	        fail(e.getMessage());
+	    }
+	}
+
+	/**
+	 * Test the VIEW_CREATE parameter for showView.  Ensures that the created
+	 * view is not the active part and is visible.
+	 */
+	public void testView_CREATE3() {
+	    WorkbenchPage page = (WorkbenchPage) fActivePage;
+	    try {
+	        
+	        page.setPerspective(WorkbenchPlugin.getDefault().getPerspectiveRegistry().findPerspectiveWithId("org.eclipse.ui.tests.api.ViewPerspective"));
+	        
+		    //create a part to be active
+		    IViewPart activePart = page.showView(MockViewPart.ID3);		    
+		    IViewPart createdPart = page.showView(MockViewPart.ID4, null, IWorkbenchPage.VIEW_CREATE);
+		    
+		    IViewPart [] stack = page.getViewStack(createdPart);
+		    assertEquals(1, stack.length);
+		    
+		    assertEquals(createdPart, stack[0]);
+		    
+		    assertTrue(page.isPartVisible(createdPart));
+		    
+		    assertEquals(activePart, page.getActivePart());
+	    }
+	    catch (PartInitException e) {
+	        fail(e.getMessage());
+	    }
+	}	
+	
+	/**
+	 * Test the VIEW_VISIBLE parameter for showView, opening the view in the 
+	 * stack containing the active view.  Ensures that the created view is not 
+	 * the active part and is not visible.
+	 */
+	public void testView_VISIBLE1() {
+	    WorkbenchPage page = (WorkbenchPage) fActivePage;
+	    try {
+		    page.setPerspective(WorkbenchPlugin.getDefault().getPerspectiveRegistry().findPerspectiveWithId("org.eclipse.ui.tests.api.ViewPerspective"));
+
+		    //create a part to be active
+		    IViewPart activePart = page.showView(MockViewPart.ID);
+		    IViewPart createdPart = page.showView(MockViewPart.ID2, null, IWorkbenchPage.VIEW_VISIBLE);		    
+		    IViewPart [] stack = page.getViewStack(activePart);
+		    assertEquals(2, stack.length);
+		    
+		    assertEquals(activePart, stack[0]);
+		    assertEquals(createdPart, stack[1]);
+		    
+		    assertFalse(page.isPartVisible(createdPart));
+		    
+		    assertEquals(activePart, page.getActivePart());
+	    }
+	    catch (PartInitException e) {
+	        fail(e.getMessage());
+	    }
+	}
+	
+	/**
+	 * Test the VIEW_VISIBLE parameter for showView, opening the view in the 
+	 * stack that does not contain the active view.  Ensures that the created 
+	 * view is not the active part but is the top part in its stack.
+	 */
+	public void testView_VISIBLE2() {
+	    WorkbenchPage page = (WorkbenchPage) fActivePage;
+	    try {
+		    page.setPerspective(WorkbenchPlugin.getDefault().getPerspectiveRegistry().findPerspectiveWithId("org.eclipse.ui.tests.api.ViewPerspective"));
+
+		    //create a part to be active
+		    IViewPart activePart = page.showView(MockViewPart.ID3);
+		    
+		    IViewPart createdPart = page.showView(MockViewPart.ID2, null, IWorkbenchPage.VIEW_VISIBLE);		    
+		    IViewPart [] stack = page.getViewStack(createdPart);
+		    assertEquals(2, stack.length);
+		    
+		    assertEquals(createdPart, stack[0]);
+		    assertEquals(page.findView(MockViewPart.ID), stack[1]);
+		    
+		    assertTrue(page.isPartVisible(createdPart));
+		    
+		    assertEquals(activePart, page.getActivePart());
+	    }
+	    catch (PartInitException e) {
+	        fail(e.getMessage());
+	    }
+	}	
+	
+	/**
+	 * Test the VIEW_VISIBLE parameter for showView, opening the view in its 
+	 * own stack.  Ensures that the created view is not active part but is the 
+	 * top part in its stack.
+	 */
+	public void testView_VISIBLE3() {
+	    WorkbenchPage page = (WorkbenchPage) fActivePage;
+	    try {
+		    page.setPerspective(WorkbenchPlugin.getDefault().getPerspectiveRegistry().findPerspectiveWithId("org.eclipse.ui.tests.api.ViewPerspective"));
+
+		    //create a part to be active
+		    IViewPart activePart = page.showView(MockViewPart.ID3);
+		    
+		    IViewPart createdPart = page.showView(MockViewPart.ID4, null, IWorkbenchPage.VIEW_VISIBLE);		    
+		    IViewPart [] stack = page.getViewStack(createdPart);
+		    assertEquals(1, stack.length);
+		    
+		    assertEquals(createdPart, stack[0]);
+		    
+		    assertTrue(page.isPartVisible(createdPart));
+		    
+		    assertEquals(activePart, page.getActivePart());
+	    }
+	    catch (PartInitException e) {
+	        fail(e.getMessage());
+	    }
+	}		
 }
