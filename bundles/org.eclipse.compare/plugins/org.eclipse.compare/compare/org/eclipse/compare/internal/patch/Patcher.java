@@ -47,7 +47,9 @@ public class Patcher {
 	// patch options
 	private int fStripPrefixSegments;
 	private int fFuzz;
-	private boolean fIgnoreWhitespace;
+	private boolean fIgnoreWhitespace= false;
+	private boolean fIgnoreLineDelimiter= true;
+	private boolean fPreserveLineDelimiters= false;
 	private boolean fReverse= false;
 	
 	
@@ -910,13 +912,27 @@ public class Patcher {
 	}
 
 	/**
-	 * Concatenates all strings found in the gievn List.
+	 * Concatenates all strings found in the given List.
 	 */
 	private String createString(List lines) {
 		StringBuffer sb= new StringBuffer();
 		Iterator iter= lines.iterator();
-		while (iter.hasNext())
-			sb.append((String)iter.next());
+		if (fPreserveLineDelimiters) {
+			while (iter.hasNext())
+				sb.append((String)iter.next());
+		} else {
+			String lineSeparator= System.getProperty("line.separator"); //$NON-NLS-1$
+			while (iter.hasNext()) {
+				String line= (String)iter.next();
+				int l= length(line);
+				if (l < line.length()) {	// line has delimiter
+					sb.append(line.substring(0, l));
+					sb.append(lineSeparator);
+				} else {
+					sb.append(line);
+				}
+			}
+		}
 		return sb.toString();
 	}
 
@@ -924,12 +940,13 @@ public class Patcher {
 		if (failedHunks.size() <= 0)
 			return null;
 		
+		String lineSeparator= System.getProperty("line.separator"); //$NON-NLS-1$
 		StringBuffer sb= new StringBuffer();
 		Iterator iter= failedHunks.iterator();
 		while (iter.hasNext()) {
 			Hunk hunk= (Hunk) iter.next();
 			sb.append(hunk.getRejectedDescription());
-			sb.append('\n');
+			sb.append(lineSeparator);
 			sb.append(hunk.getContent());
 		}
 		return sb.toString();
@@ -965,23 +982,37 @@ public class Patcher {
 	
 	/**
 	 * Compares two strings.
-	 * If fIgnoreWhitespace is true whitespace and line endings are ignored.
+	 * If fIgnoreWhitespace is true whitespace is ignored.
 	 */
 	private boolean linesMatch(String line1, String line2) {
 		if (fIgnoreWhitespace)
 			return stripWhiteSpace(line1).equals(stripWhiteSpace(line2));
+		if (fIgnoreLineDelimiter) {
+			int l1= length(line1);
+			int l2= length(line2);
+			if (l1 != l2)
+				return false;
+			return line1.regionMatches(0, line2, 0, l1);
+		}
 		return line1.equals(line2);
 	}
 	
 	/**
-	 * Returns the length (exluding end-of-line characters) of the given string.
+	 * Returns the length (exluding a line delimiter CR, LF, CR/LF)
+	 * of the given string.
 	 */
 	/* package */ static int length(String s) {
 		int l= s.length();
-		if (l > 0 && s.charAt(l-1) == '\n')
-			l--;
-		if (l > 1 && s.charAt(l-2) == '\r')
-			l--;
+		if (l > 0) {
+			char c= s.charAt(l-1);
+			if (c == '\r')
+				return l-1;
+			if (c == '\n') {
+				if (l > 1 && s.charAt(l-2) == '\r')
+					return l-2;
+				return l-1;
+			}
+		}
 		return l;
 	}
 }
