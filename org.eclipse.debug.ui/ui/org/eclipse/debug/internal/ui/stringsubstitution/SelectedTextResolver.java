@@ -13,10 +13,9 @@ package org.eclipse.debug.internal.ui.stringsubstitution;
 
 import org.eclipse.core.variables.IDynamicVariable;
 import org.eclipse.core.variables.IDynamicVariableResolver;
-import org.eclipse.jface.text.ITextSelection;
 
 public class SelectedTextResolver implements IDynamicVariableResolver {
-	SelectedResourceManager selectedResourceManager;
+	private SelectedResourceManager selectedResourceManager;
 	
 	public SelectedTextResolver() {
 		selectedResourceManager = SelectedResourceManager.getDefault();
@@ -26,10 +25,10 @@ public class SelectedTextResolver implements IDynamicVariableResolver {
 	 * @see org.eclipse.core.variables.IDynamicVariableResolver#resolveValue(org.eclipse.core.variables.IDynamicVariable, java.lang.String)
 	 */
 	public String resolveValue(IDynamicVariable variable, String argument) {
-		ITextSelection selection = selectedResourceManager.getSelectedText();
+		String selection = selectedResourceManager.getSelectedText();
 		String selectedText = argument;
-		if (selection != null && selection.getLength() > 0) {
-			selectedText = selection.getText();
+		if (selection != null && selection.length() > 0) {
+			selectedText = selection;
 		}
 		return selectedText;
 	}

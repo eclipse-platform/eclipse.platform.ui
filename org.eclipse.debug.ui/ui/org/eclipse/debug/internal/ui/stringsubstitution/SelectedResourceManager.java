@@ -36,7 +36,7 @@ public class SelectedResourceManager implements IWindowListener, ISelectionListe
 	private static SelectedResourceManager fgDefault;
 	
 	private IResource fSelectedResource = null;
-	private ITextSelection fSelectedText = null;
+	private String fSelectedText = null;
 	
 	private SelectedResourceManager() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
@@ -127,14 +127,15 @@ public class SelectedResourceManager implements IWindowListener, ISelectionListe
 			fSelectedResource = selectedResource;
 		}
 		
-		if (selection instanceof ITextSelection)
-			fSelectedText = (ITextSelection)selection;
+		if (selection instanceof ITextSelection) {
+			fSelectedText = ((ITextSelection)selection).getText();
+		}
 	}
 	
 	/**
 	 * Returns the currently selected resource in the active workbench window,
 	 * or <code>null</code> if none. If an editor is active, the resource adapater
-	 * assocaited with the editor is returned.
+	 * associated with the editor is returned.
 	 * 
 	 * @return selected resource or <code>null</code>
 	 */
@@ -143,12 +144,12 @@ public class SelectedResourceManager implements IWindowListener, ISelectionListe
 	}
 	
 	/**
-	 * Returns the current text selection, or <code>null</code> if
+	 * Returns the current text selection as a <code>String</code>, or <code>null</code> if
 	 * none.
 	 * 
-	 * @return the current text selection or <code>null</code>
+	 * @return the current text selection as a <code>String</code> or <code>null</code>
 	 */
-	public ITextSelection getSelectedText() {
+	public String getSelectedText() {
 		return fSelectedText;
 	}
 }
