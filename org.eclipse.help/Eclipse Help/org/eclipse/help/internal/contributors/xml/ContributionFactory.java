@@ -30,7 +30,7 @@ public class ContributionFactory {
 				e = new HelpAction(atts);
 			else
 				if (name.equals(TopicContributor.TOPICS_ELEM))
-					e = new HelpContribution(atts);
+					e = new HelpTopic(atts); // create a topic too
 				else
 					if (name.equals(ActionContributor.INSERT_ELEM))
 						e = new HelpInsert(atts);
