@@ -83,9 +83,6 @@ public class PlantySourceViewerConfiguration extends SourceViewerConfiguration {
         IInformationControlCreator creator = getInformationControlCreator(true);
         assistant.setInformationControlCreator(creator);
 
-		// TODO: Determine how to configure code assist without JDT
-        //IPreferenceStore store = JavaPlugin.getDefault().getPreferenceStore();
-        //ContentAssistPreference.configure(assistant, store);
         return assistant;
     }
 
