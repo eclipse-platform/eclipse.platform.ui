@@ -14,9 +14,12 @@ package org.eclipse.ui.internal;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
-
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
-
+import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ViewForm2;
 import org.eclipse.swt.events.FocusAdapter;
@@ -36,20 +39,13 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Sash;
-
-import org.eclipse.jface.action.ContributionItem;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.util.SafeRunnable;
-
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.part.WorkbenchPart;
-
 import org.eclipse.ui.internal.misc.UIStats;
+import org.eclipse.ui.part.WorkbenchPart;
 
 
 /**
@@ -434,8 +430,8 @@ final public void showPaneMenu(Control parent, Point point) {
 		paneMenuManager = new MenuManager();
 		paneMenuManager.add(new PaneContribution());			
 	}
+	
 	Menu aMenu = paneMenuManager.createContextMenu(parent);
-	// open menu    
 	aMenu.setLocation(point.x, point.y);
 	aMenu.setVisible(true);
 }

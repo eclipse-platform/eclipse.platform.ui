@@ -310,15 +310,15 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 				doZoom();
 			}
 
-			public void mouseDown(MouseEvent e) {
-				EditorPane visibleEditor = getVisibleEditor();
+			public void mouseDown(MouseEvent event) {
+			    EditorPane visibleEditor = getVisibleEditor();
+				
 				if (visibleEditor != null) {
-					// switch to the editor
 					CTabItem2 item = getTab(visibleEditor);
 					visibleEditor.setFocus();
 					Rectangle bounds = item.getBounds();
 
-					if ((e.button == 3) /*&& overImage(item, e.x)*/ && bounds.contains(e.x, e.y)) {
+					if (event.button == 3 && bounds.contains(event.x, event.y)) {
 					    visibleEditor.showPaneMenu();
 					}
 				}
@@ -329,15 +329,15 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 		tabFolder.addListener(SWT.MenuDetect, new Listener() {
 			public void handleEvent(Event event) {
 				EditorPane visibleEditor = getVisibleEditor();
-				if (event.type == SWT.MenuDetect && visibleEditor != null) {
+				
+				if (visibleEditor != null) {
 				    CTabItem2 item = getTab(visibleEditor);
 					visibleEditor.setFocus();					
 					Rectangle bounds = item.getBounds();					
-					Point pt = tabFolder.toControl(event.x, event.y);
+					Point point = tabFolder.toControl(event.x, event.y);
 					
-					if ((event.button == 3) && bounds.contains(pt.x, pt.y)) {
-					    visibleEditor.showPaneMenu(tabFolder, new Point(event.x, event.y));
-					}
+					if (bounds.contains(point.x, point.y))
+					    visibleEditor.showPaneMenu();
 				}
 			}
 		});
@@ -537,7 +537,7 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 		EditorPane visibleEditor = getVisibleEditor();
 		if (visibleEditor != null) {
 			CTabItem2 item = getTab(visibleEditor);
-			Rectangle bounds = item.getBounds();
+			Rectangle bounds = item.getBounds();							
 			visibleEditor.showPaneMenu(
 				tabFolder,
 				tabFolder.toDisplay(new Point(bounds.x, bounds.y + bounds.height)));
