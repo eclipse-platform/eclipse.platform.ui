@@ -335,14 +335,33 @@ public class LaunchHistory implements ILaunchListener, IPropertyChangeListener, 
 				if (fav) {
 					addFavorite(configuration);
 					return true;
+				} else {
+					removeFavorite(configuration);
+					return false;
 				}
 			} else if (favoriteGroups.contains(getLaunchGroup().getIdentifier())) {
 				addFavorite(configuration);
 				return true;
+			} else {
+				removeFavorite(configuration);
+				return false;
 			}
 		} catch (CoreException e) {
 		}		
 		return false;
+	}
+	
+	/**
+	 * Revmoves the given config from the favorites list, if needed.
+	 * 
+	 * @param configuration
+	 */
+	protected void removeFavorite(ILaunchConfiguration configuration) {
+		if (fFavorites.contains(configuration)) {
+			fFavorites.remove(configuration);
+			setDirty();
+			save();
+		}
 	}
 
 	/**
