@@ -22,22 +22,18 @@ import java.net.URL;
 
 public class TargetPage extends WizardPage {
 	private TableViewer tableViewer;
+	private IInstallConfiguration config;
+	private Image siteImage;
 	
 	
 class TableContentProvider extends DefaultContentProvider 
 							implements IStructuredContentProvider {
+
 	/**
 	 * @see IStructuredContentProvider#getElements(Object)
 	 */
 	public Object[] getElements(Object parent) {
-		try {
-		   ILocalSite localSite = SiteManager.getLocalSite();
-		   return localSite.getCurrentConfiguration().getConfigurationSites();
-		}
-		catch (CoreException e) {
-			UpdateUIPlugin.logException(e);
-		}
-		return new Object[0];
+	   return config.getConfigurationSites();
 	}
 }	
 
@@ -47,7 +43,7 @@ class TableLabelProvider extends LabelProvider implements
 	 * @see ITableLabelProvider#getColumnImage(Object, int)
 	 */
 	public Image getColumnImage(Object obj, int col) {
-		return null;
+		return siteImage;
 	}
 
 	/**
@@ -69,10 +65,20 @@ class TableLabelProvider extends LabelProvider implements
 	/**
 	 * Constructor for ReviewPage
 	 */
-	public TargetPage() {
+	public TargetPage(IInstallConfiguration config) {
 		super("Target");
 		setTitle("Install Location");
 		setDescription("Choose the location where the feature will be installed.");
+		this.config = config;
+		siteImage = UpdateUIPluginImages.DESC_SITE_OBJ.createImage();
+	}
+	
+	public void dispose() {
+		if (siteImage!=null) {
+			siteImage.dispose();
+			siteImage = null;
+		}
+		super.dispose();
 	}
 
 	/**
@@ -122,25 +128,21 @@ class TableLabelProvider extends LabelProvider implements
 		table.setFocus();
 	}
 	private void selectFirstTarget() {
-		try {
-			ILocalSite localSite = SiteManager.getLocalSite();
-			IConfigurationSite [] sites = localSite.getCurrentConfiguration().getConfigurationSites();
-			IConfigurationSite firstSite = null;
-			for (int i=0; i<sites.length; i++) {
-				IConfigurationSite csite = sites[i];
-				if (csite.isInstallSite()) {
-					firstSite = csite;
-					break;
-				}
-				
+		IConfigurationSite [] sites = config.getConfigurationSites();
+		IConfigurationSite firstSite = null;
+		for (int i=0; i<sites.length; i++) {
+			IConfigurationSite csite = sites[i];
+			if (csite.isInstallSite()) {
+				firstSite = csite;
+				break;
 			}
-			if (firstSite!=null) {
-				tableViewer.setSelection(new StructuredSelection(firstSite));
-			}
+			
 		}
-		catch (CoreException e) {
+		if (firstSite!=null) {
+			tableViewer.setSelection(new StructuredSelection(firstSite));
 		}
 	}
+
 	private void addTargetLocation() {
 	}
 	

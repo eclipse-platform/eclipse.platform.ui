@@ -18,6 +18,7 @@ public class InstallWizard extends Wizard {
 	private TargetPage targetPage;
 	private ChecklistJob job;
 	private boolean successfulInstall=false;
+	private IInstallConfiguration config;
 
 	public InstallWizard(ChecklistJob job) {
 		setDialogSettings(UpdateUIPlugin.getDefault().getDialogSettings());
@@ -47,7 +48,9 @@ public class InstallWizard extends Wizard {
 			public void run(IProgressMonitor monitor) {
 				try {
 					successfulInstall=false;
+					makeConfigurationCurrent();
 					performInstall(targetSite, monitor);
+					saveLocalSite();
 					successfulInstall = true;
 				} catch (CoreException e) {
 					UpdateUIPlugin.logException(e);
@@ -74,8 +77,30 @@ public class InstallWizard extends Wizard {
 		if (hasLicense()) {
 			addPage(new LicensePage(job));
 		}
-		targetPage = new TargetPage();
+		config = createInstallConfiguration();
+		targetPage = new TargetPage(config);
 		addPage(targetPage);
+	}
+	
+	private IInstallConfiguration createInstallConfiguration() {
+		try {
+			ILocalSite localSite = SiteManager.getLocalSite();
+			return localSite.cloneCurrentConfiguration(null, null);
+		}
+		catch (CoreException e) {
+			UpdateUIPlugin.logException(e);
+			return null;
+		}
+	}
+	
+	private void makeConfigurationCurrent() throws CoreException {
+		ILocalSite localSite = SiteManager.getLocalSite();
+		localSite.addConfiguration(config);
+	}
+	
+	private void saveLocalSite() throws CoreException {
+		ILocalSite localSite = SiteManager.getLocalSite();
+		localSite.save();
 	}
 	
 	public boolean canFinish() {
