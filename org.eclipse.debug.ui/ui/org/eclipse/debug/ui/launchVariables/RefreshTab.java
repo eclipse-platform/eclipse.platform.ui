@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -273,10 +274,13 @@ public class RefreshTab extends AbstractLaunchConfigurationTab implements IVaria
 	 * 
 	 * @param configuration launch configuration
 	 * @param context context used to expand variables
-	 * @param monitor progress monitor
+	 * @param monitor progress monitor which may be <code>null</code>
 	 * @throws CoreException if an exception occurrs while refreshing resources
 	 */
 	public static void refreshResources(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
+		if (monitor == null) {
+			monitor = new NullProgressMonitor();
+		}
 		IResource[] resources= getResourcesForRefreshScope(configuration, monitor);
 		if (resources == null || resources.length == 0){
 			return;

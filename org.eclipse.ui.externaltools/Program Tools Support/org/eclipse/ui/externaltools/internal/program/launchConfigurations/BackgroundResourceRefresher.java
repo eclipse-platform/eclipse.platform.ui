@@ -11,25 +11,20 @@
 package org.eclipse.ui.externaltools.internal.program.launchConfigurations;
 
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.ui.launchVariables.RefreshTab;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 
 /**
- * Refreshes resources as specified by a lanunch configuration, when 
+ * Refreshes resources as specified by a launch configuration, when 
  * an associated process terminates.
  */
-public class BackgroundResourceRefresher implements IDebugEventSetListener, Runnable, IRunnableWithProgress  {
+public class BackgroundResourceRefresher implements IDebugEventSetListener, Runnable  {
 
 	private ILaunchConfiguration fConfiguration;
 	private IProcess fProcess;
@@ -76,30 +71,15 @@ public class BackgroundResourceRefresher implements IDebugEventSetListener, Runn
 	}
 	
 	/** 
-	 * Creates a dialog to run the refresh
+	 * Refreshes the resources.
 	 * 
 	 * @see java.lang.Runnable#run()
 	 */
 	public void run() {
-		ProgressMonitorDialog dialog = new ProgressMonitorDialog(ExternalToolsPlugin.getStandardDisplay().getActiveShell());
 		try {
-			dialog.run(true, true, this);
-		} catch (InvocationTargetException e) {
-			// report the exception
-		} catch (InterruptedException e) {
-		}
-	}
-	/**
-	 * Peforms the refresh
-	 * 
-	 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-		try {
-			RefreshTab.refreshResources(fConfiguration, monitor);
+			RefreshTab.refreshResources(fConfiguration, null);
 		} catch (CoreException e) {
-			throw new InvocationTargetException(e);
-		}				
+			ExternalToolsPlugin.getDefault().log(e);
+		}		
 	}
-
 }
