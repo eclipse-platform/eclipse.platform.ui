@@ -416,6 +416,17 @@ public void delete(boolean deleteContent, boolean force, IProgressMonitor monito
 						getLocalManager().getStore().delete(getLocation().toFile(), status);
 					else
 						getLocalManager().delete(this, force, false, false, Policy.monitorFor(null));
+					// delete the project directory on disk if it is in the default content area.
+					ProjectInfo projectInfo = (ProjectInfo) getResourceInfo(false, false);
+					if (projectInfo != null) {
+						IProjectDescription description = projectInfo.getDescription();
+						if (description != null) {
+							IPath contentLocation = description.getLocation();
+							if (contentLocation == null)
+								// project still exists in the workspace at this point so #getLocation will not return null
+								getLocation().toFile().delete();
+						}
+					}
 				} catch (CoreException e) {
 					if (info != null) {
 						getPropertyManager().closePropertyStore(this);
