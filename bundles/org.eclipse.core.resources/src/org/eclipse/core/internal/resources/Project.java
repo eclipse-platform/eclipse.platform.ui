@@ -666,8 +666,9 @@ public void setDescription(IProjectDescription description, int updateFlags, IPr
 			}
 			workspace.beginOperation(true);
 			workspace.changing(this);
-			MultiStatus status = basicSetDescription((ProjectDescription) description);
 			writeDescription(updateFlags);
+			//only set the description if we succeeded in writing it
+			MultiStatus status = basicSetDescription((ProjectDescription) description);
 			info = getResourceInfo(false, true);
 			info.incrementContentId();
 			workspace.updateModificationStamp(info);
