@@ -233,7 +233,9 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		getSite().getPage().removePartListener(this);
 		getSite().getWorkbenchWindow().removePerspectiveListener(this);
 		getSite().getWorkbenchWindow().removePageListener(this);
-		getEventHandler().dispose();
+		if (getEventHandler() != null) {
+			getEventHandler().dispose();
+		}
 		super.dispose();
 	}
 	

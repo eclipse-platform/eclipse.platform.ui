@@ -503,6 +503,12 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 	 * @see IViewPart#saveState(IMemento)
 	 */
 	public void saveState(IMemento memento) {
+		if (getMemento() != null) {
+			//this view was never fully created
+			//persist the old values.
+			memento.putMemento(getMemento());
+			return;
+		}
 		IToolBarManager tbm= getViewSite().getActionBars().getToolBarManager();
 		IContributionItem[] items= tbm.getItems();
 		for (int i = 0; i < items.length; i++) {
