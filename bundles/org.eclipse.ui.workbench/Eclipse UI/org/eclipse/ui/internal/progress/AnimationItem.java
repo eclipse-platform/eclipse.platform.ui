@@ -26,7 +26,6 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.progress.UIJob;
-import org.eclipse.ui.internal.progress.ProgressMessages;
 
 public class AnimationItem {
 
@@ -253,25 +252,13 @@ public class AnimationItem {
 	 */
 	void setAnimated(final boolean bool) {
 
-		boolean started = animated;
 		animated = bool;
-
-		if (!started && bool)
-			animate();
-		else {
-			//Clear the image
-			UIJob clearJob = new UIJob(ProgressMessages.getString("AnimationItem.RedrawJob")) { //$NON-NLS-1$
-				/* (non-Javadoc)
-				 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-				 */
-				public IStatus runInUIThread(IProgressMonitor monitor) {
-					if (!imageCanvas.isDisposed())
-						imageCanvas.redraw();
-					return Status.OK_STATUS;
-				}
-			};
-			clearJob.setSystem(true);
-			clearJob.schedule();
+		if (bool) {
+			Image image = getImage();
+			ImageData[] imageDataArray = getImageData();
+			if (isAnimated() && image != null && imageDataArray.length > 1) {
+				getAnimateJob().schedule();
+			}
 		}
 	}
 
@@ -292,35 +279,6 @@ public class AnimationItem {
 		Platform.getJobManager().removeJobChangeListener(listener);
 	}
 
-	/**
-	 * Animate the image in the canvas if required.
-	 */
-	private void animate() {
-		Image image = getImage();
-		ImageData[] imageDataArray = getImageData();
-		if (isAnimated() && image != null && imageDataArray.length > 1) {
-			//Clear out the old job
-			if (animateJob != null)
-				animateJob.cancel();
-
-			animateJob = new Job(ProgressMessages.getString("AnimateJob.JobName")) {//$NON-NLS-1$
-				/* (non-Javadoc)
-				 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-				 */
-				public IStatus run(IProgressMonitor monitor) {
-					try {
-						animateLoop(monitor);
-						return Status.OK_STATUS;
-					} catch (SWTException exception) {
-						return exceptionStatus(exception);
-					}
-				}
-			};
-			animateJob.setSystem(true);
-			animateJob.setPriority(Job.DECORATE);
-			animateJob.schedule();
-		}
-	}
 	/**
 	 * Loop through all of the images in a multi-image file
 	 * and display them one after another.
@@ -507,13 +465,6 @@ public class AnimationItem {
 				decrementJobCount(event.getJob());
 			}
 
-			/* (non-Javadoc)
-			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#sleeping(org.eclipse.core.runtime.jobs.IJobChangeEvent)
-			 */
-			public void sleeping(IJobChangeEvent event) {
-				decrementJobCount(event.getJob());
-			}
-
 			private void incrementJobCount(Job job) {
 				//Don't count the animate job itself
 				if (job.isSystem())
@@ -530,7 +481,8 @@ public class AnimationItem {
 					return;
 				if (jobCount == 1)
 					setAnimated(false);
-				jobCount--;
+				if(jobCount > 0)
+					jobCount--;
 			}
 
 		};
@@ -545,5 +497,46 @@ public class AnimationItem {
 		} catch (PartInitException exception) {
 			logException(exception);
 		}
+	}
+
+	private Job getAnimateJob() {
+		if (animateJob == null) {
+				animateJob = new Job(ProgressMessages.getString("AnimateJob.JobName")) {//$NON-NLS-1$
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+				public IStatus run(IProgressMonitor monitor) {
+					try {
+						animateLoop(monitor);
+						return Status.OK_STATUS;
+					} catch (SWTException exception) {
+						return exceptionStatus(exception);
+					}
+				}
+			};
+			animateJob.setSystem(true);
+			animateJob.setPriority(Job.DECORATE);
+			animateJob.addJobChangeListener(new JobChangeAdapter() {
+				/* (non-Javadoc)
+				 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
+				 */
+				public void done(IJobChangeEvent event) {
+					//Clear the image
+						UIJob clearJob = new UIJob(ProgressMessages.getString("AnimationItem.RedrawJob")) {//$NON-NLS-1$
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+		 */
+						public IStatus runInUIThread(IProgressMonitor monitor) {
+							if (!imageCanvas.isDisposed())
+								imageCanvas.redraw();
+							return Status.OK_STATUS;
+						}
+					};
+					clearJob.setSystem(true);
+					clearJob.schedule();
+				}
+			});
+		}
+		return animateJob;
 	}
 }
