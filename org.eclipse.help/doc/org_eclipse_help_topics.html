@@ -44,7 +44,7 @@ is what goes into the plugin.xml file)<b>:</b></i>
 <p><tt>&nbsp;&nbsp;&nbsp; &lt;!ELEMENT topics EMPTY></tt>
 <br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST topics file CDATA #REQUIRED></tt>
 <br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST topics type (toc | tocsection)
-#IMPLIED></tt>
+#DEFAULT tocsection></tt>
 <ul>
 <li>
 <b>file<i> </i></b>- the name of the topics file which contains the table
@@ -69,7 +69,7 @@ file)<b>:</b></i>
 <br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST topic label CDATA #REQUIRED ></tt>
 <br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST topic href CDATA #IMPLIED ></tt><tt></tt>
 <p><tt>&nbsp;&nbsp;&nbsp; &lt;!ELEMENT anchor EMPTY ></tt>
-<br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST anchor id CDATA&nbsp; #REQUIRED
+<br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST anchor id ID&nbsp; #REQUIRED
 ></tt><tt></tt>
 <p><tt>&nbsp;&nbsp;&nbsp; &lt;!ELEMENT link EMPTY ></tt>
 <br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST link topics CDATA #REQUIRED ></tt>

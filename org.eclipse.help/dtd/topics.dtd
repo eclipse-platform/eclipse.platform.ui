@@ -9,7 +9,7 @@
 <!ATTLIST topic href CDATA #IMPLIED >
 
 <!ELEMENT anchor EMPTY >
-<!ATTLIST anchor id CDATA  #REQUIRED >
+<!ATTLIST anchor id ID #REQUIRED >
 
 <!ELEMENT link EMPTY >
 <!ATTLIST link topics CDATA #REQUIRED >
