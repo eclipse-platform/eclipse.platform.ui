@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <TASKS>
 	<TASK NAME="ant">
 		<DESCRIPTION>&lt;p&gt;Runs Ant on a supplied buildfile. This can be used to build subprojects.&lt;/p&gt;
