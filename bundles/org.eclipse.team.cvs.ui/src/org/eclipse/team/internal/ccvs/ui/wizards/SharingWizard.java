@@ -92,6 +92,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 		if (doesCVSDirectoryExist()) {
 			autoconnectPage = new ConfigurationWizardAutoconnectPage("autoconnectPage", Policy.bind("SharingWizard.autoConnectTitle"), sharingImage); //$NON-NLS-1$ //$NON-NLS-2$
 			autoconnectPage.setProject(project);
+			autoconnectPage.setDescription(Policy.bind("SharingWizard.autoConnectTitleDescription"));
 			addPage(autoconnectPage);
 		} else {
 			FolderSyncInfo info = getRepositoryInfoFromOneO(project);
@@ -99,19 +100,24 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 				// The project is from 1.0 and has sharing info
 				autoconnectPage = new ConfigurationWizardAutoconnectPage("autoconnectPage", Policy.bind("SharingWizard.autoConnectOneOTitle"), sharingImage); //$NON-NLS-1$ //$NON-NLS-2$
 				autoconnectPage.setSharing(info);
+				autoconnectPage.setDescription(Policy.bind("SharingWizard.autoConnectTitleDescription"));
 				addPage(autoconnectPage);
 			} else {
 				ICVSRepositoryLocation[] locations = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownRoots();
 				if (locations.length > 0) {
 					locationPage = new RepositorySelectionPage("importPage", Policy.bind("SharingWizard.importTitle"), sharingImage); //$NON-NLS-1$ //$NON-NLS-2$
+					locationPage.setDescription(Policy.bind("SharingWizard.importTitleDescription"));
 					addPage(locationPage);
 				}
 				createLocationPage = new ConfigurationWizardMainPage("createLocationPage", Policy.bind("SharingWizard.enterInformation"), sharingImage); //$NON-NLS-1$ //$NON-NLS-2$
+				createLocationPage.setDescription(Policy.bind("SharingWizard.enterInformationDescription"));
 				addPage(createLocationPage);
 				createLocationPage.setDialogSettings(getDialogSettings());
 				modulePage = new ModuleSelectionPage("modulePage", Policy.bind("SharingWizard.enterModuleName"), sharingImage); //$NON-NLS-1$ //$NON-NLS-2$
+				modulePage.setDescription(Policy.bind("SharingWizard.enterModuleNameDescription"));
 				addPage(modulePage);
 				finishPage = new SharingWizardFinishPage("finishPage", Policy.bind("SharingWizard.readyToFinish"), sharingImage); //$NON-NLS-1$ //$NON-NLS-2$
+				finishPage.setDescription(Policy.bind("SharingWizard.readyToFinishDescription"));
 				addPage(finishPage);
 			}
 		}
