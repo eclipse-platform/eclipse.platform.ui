@@ -98,13 +98,13 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		// initialize configuration
 		initializeCurrent(configPath);
 
-		// pick up any first-time default settings (relative to install location)
-		loadInitializationAttributes();
-
 		// Detect external links. These are "soft link" to additional sites. The link
 		// files are usually provided by external installation programs. They are located
 		// relative to this configuration URL.
 		configureExternalLinks();
+
+		// pick up any first-time default settings (relative to install location)
+		loadInitializationAttributes();
 
 		// Validate sites in the configuration. Causes any sites that do not exist to
 		// be removed from the configuration
@@ -931,8 +931,6 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		String link;
 		boolean updateable = true;
 		URL siteURL;
-		SiteEntry linkSite;
-		ISitePolicy linkSitePolicy = createSitePolicy(DEFAULT_POLICY_TYPE, DEFAULT_POLICY_LIST);
 
 		// parse out link information
 		if (path.startsWith(LINK_READ + " ")) { //$NON-NLS-1$
@@ -961,11 +959,12 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			Utils.debug("  bad URL " + e); //$NON-NLS-1$
 			return;
 		}
-
+		
 		// process the link
-		linkSite = (SiteEntry) externalLinkSites.get(siteURL);
+		SiteEntry linkSite = (SiteEntry) externalLinkSites.get(siteURL);
 		if (linkSite == null) {
 			// this is a link to a new target so create site for it
+			ISitePolicy linkSitePolicy = createSitePolicy(DEFAULT_POLICY_TYPE, DEFAULT_POLICY_LIST);
 			linkSite = (SiteEntry) createSiteEntry(siteURL, linkSitePolicy);
 		}
 		// update site entry if needed
@@ -995,6 +994,11 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 				Utils.debug("Site " + siteURL + " does not exist ... removing from configuration"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			
+			// If multiple paths are defined in the same link file
+			// or if the path changes, the old site will still be kept.
+			// A better algorithm could be implemented by keeping track 
+			// of the previous content of the link file.
+			// TODO do the above
 			String linkName = list[i].getLinkFileName();
 			if (linkName != null) {
 				File linkFile = new File(linkName);
@@ -1149,15 +1153,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 				}
 			}
 		}
-		if (config != null) {
-			SiteEntry[] sites = config.getSites();
-			for (int i=0; i<sites.length; i++) {
-				configureSite(sites[i]);
-				IFeatureEntry[] features = sites[i].getFeatureEntries();
-				for (int j=0; j<features.length; j++)
-					configureFeatureEntry(features[j]);
-			}
-		}
+
 		return config;
 	}
 	
@@ -1211,10 +1207,8 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 				// bug 26896 : setup optimistic reconciliation if the primary feature has changed or is new
 				// create entry if not exists
 				fe = createFeatureEntry(initId, null, initPluginId, null, true, application, null);
-			} else
-				// update existing entry with new info
-				fe = createFeatureEntry(initId, fe.getFeatureVersion(), fe.getFeaturePluginIdentifier(), fe.getFeaturePluginVersion(), fe.canBePrimary(), application, fe.getFeatureRootURLs());
-			configureFeatureEntry(fe);
+				configureFeatureEntry(fe);
+			} 
 			if (config != null)
 				config.setDefaultFeature(initId);
 			if (ConfigurationActivator.DEBUG) {
