@@ -3,6 +3,8 @@ package org.eclipse.update.internal.ui.model;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.net.URL;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.ui.model.IWorkbenchAdapter;
@@ -21,6 +23,14 @@ public class FeatureReferenceAdapter extends FeatureAdapter {
 	
 	public IFeature getFeature() throws CoreException {
 		return featureRef.getFeature();
+	}
+	
+	public ISite getSite() {
+		return featureRef.getSite();
+	}
+	
+	public URL getURL() {
+		return featureRef.getURL();
 	}
 
 	public IFeatureAdapter[] getIncludedFeatures() {

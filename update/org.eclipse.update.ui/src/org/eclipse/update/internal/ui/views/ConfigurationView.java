@@ -425,7 +425,7 @@ public class ConfigurationView
 					}
 				}
 			} catch (CoreException e) {
-				UpdateUIPlugin.logException(e);
+				//UpdateUIPlugin.logException(e);
 				return errorFeatureImage;
 			}
 		}

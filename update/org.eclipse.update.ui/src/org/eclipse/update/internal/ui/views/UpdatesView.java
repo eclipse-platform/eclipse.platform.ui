@@ -83,6 +83,7 @@ public class UpdatesView
 	private Image siteImage;
 	private Image installSiteImage;
 	private Image featureImage;
+	private Image errorFeatureImage;
 	private Image categoryImage;
 	private Image discoveryImage;
 	private Image bookmarkFolderImage;
@@ -130,11 +131,7 @@ public class UpdatesView
 	class EnvironmentFilter extends ViewerFilter {
 		public boolean select(Viewer viewer, Object parent, Object child) {
 			if (child instanceof IFeatureAdapter) {
-				try {
-					child = getFeature((IFeatureAdapter) child);
-				} catch (CoreException e) {
-					UpdateUIPlugin.logException(e);
-				}
+				child = getFeature((IFeatureAdapter) child);
 			}
 			if (child instanceof IFeature) {
 				return EnvironmentUtil.isValidEnvironment((IFeature) child);
@@ -241,20 +238,14 @@ public class UpdatesView
 				return feature.getLabel();
 			}
 			if (obj instanceof IFeatureAdapter) {
-				try {
-					IFeature feature = getFeature((IFeatureAdapter) obj);
-					VersionedIdentifier versionedIdentifier =
-						(feature != null)
-							? feature.getVersionedIdentifier()
-							: null;
-					String version = "";
-					if (versionedIdentifier != null)
-						version = versionedIdentifier.getVersion().toString();
-					String label = (feature != null) ? feature.getLabel() : "";
-					return label + " " + version;
-				} catch (CoreException e) {
-					UpdateUIPlugin.logException(e);
-				}
+				IFeature feature = getFeature((IFeatureAdapter) obj);
+				VersionedIdentifier versionedIdentifier =
+					(feature != null) ? feature.getVersionedIdentifier() : null;
+				String version = "";
+				if (versionedIdentifier != null)
+					version = versionedIdentifier.getVersion().toString();
+				String label = (feature != null) ? feature.getLabel() : "";
+				return label + " " + version;
 			}
 			if (obj instanceof MyComputerDirectory) {
 				MyComputerDirectory dir = (MyComputerDirectory) obj;
@@ -308,7 +299,13 @@ public class UpdatesView
 			if (obj instanceof SearchObject) {
 				return getSearchObjectImage((SearchObject) obj);
 			}
-			if (obj instanceof IFeature || obj instanceof IFeatureAdapter) {
+			if (obj instanceof IFeature)
+				return featureImage;
+			if (obj instanceof IFeatureAdapter) {
+				IFeatureAdapter adapter = (IFeatureAdapter) obj;
+				IFeature feature = getFeature(adapter);
+				if (feature instanceof MissingFeature)
+					return errorFeatureImage;
 				return featureImage;
 			}
 			return super.getImage(obj);
@@ -830,12 +827,22 @@ public class UpdatesView
 			UpdateUIPluginImages.DESC_BFOLDER_OBJ.createImage();
 		categoryImage = UpdateUIPluginImages.DESC_CATEGORY_OBJ.createImage();
 		computerImage = UpdateUIPluginImages.DESC_COMPUTER_OBJ.createImage();
+		ImageDescriptor desc =
+			new OverlayIcon(
+				UpdateUIPluginImages.DESC_FEATURE_OBJ,
+				new ImageDescriptor[][] { {
+			}, {
+			}, {
+				UpdateUIPluginImages.DESC_ERROR_CO }
+		});
+		errorFeatureImage = desc.createImage();
 		volumeLabelProvider = new VolumeLabelProvider();
 	}
 	private void disposeImages() {
 		siteImage.dispose();
 		installSiteImage.dispose();
 		featureImage.dispose();
+		errorFeatureImage.dispose();
 		discoveryImage.dispose();
 		bookmarkFolderImage.dispose();
 		categoryImage.dispose();
@@ -848,8 +855,7 @@ public class UpdatesView
 		volumeLabelProvider.dispose();
 	}
 
-	private IFeature getFeature(final IFeatureAdapter adapter)
-		throws CoreException {
+	private IFeature getFeature(final IFeatureAdapter adapter) {
 		final IFeature[] result = new IFeature[1];
 		final CoreException[] exception = new CoreException[1];
 
@@ -861,12 +867,16 @@ public class UpdatesView
 					exception[0] = null;
 				} catch (CoreException e) {
 					exception[0] = e;
+					result[0] =
+						new MissingFeature(adapter.getSite(), adapter.getURL());
 				}
 			}
 		});
+		/*
 		if (exception[0] != null) {
 			throw exception[0];
 		}
+		*/
 		return result[0];
 	}
 

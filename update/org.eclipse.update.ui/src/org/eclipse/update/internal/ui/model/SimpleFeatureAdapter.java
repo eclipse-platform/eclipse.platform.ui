@@ -4,6 +4,8 @@
  */
 package org.eclipse.update.internal.ui.model;
 
+import java.net.URL;
+
 import org.eclipse.update.core.*;
 import org.eclipse.core.runtime.CoreException;
 
@@ -19,6 +21,14 @@ public class SimpleFeatureAdapter extends FeatureAdapter {
 	
 	public IFeature getFeature() throws CoreException {
 		return feature;
+	}
+	
+	public URL getURL() {
+		return feature.getURL();
+	}
+	
+	public ISite getSite() {
+		return feature.getSite();
 	}
 	
 	public IFeatureAdapter[] getIncludedFeatures() {

@@ -4,6 +4,8 @@
  */
 package org.eclipse.update.internal.ui.model;
 
+import java.net.URL;
+
 import org.eclipse.update.core.*;
 import org.eclipse.core.runtime.CoreException;
 
@@ -12,6 +14,8 @@ import org.eclipse.core.runtime.CoreException;
  * @author
  */
 public interface IFeatureAdapter {
+	public URL getURL();
+	public ISite getSite();
 	public IFeature getFeature() throws CoreException;
 	public IFeatureAdapter [] getIncludedFeatures();
 	public boolean hasIncludedFeatures();

@@ -406,12 +406,16 @@ public class DetailsForm extends PropertyWebForm {
 					currentFeature = (IFeature) obj;
 					refresh();
 				} else if (obj instanceof IFeatureAdapter) {
+					IFeatureAdapter adapter = (IFeatureAdapter)obj;
 					try {
-						currentFeature = ((IFeatureAdapter) obj).getFeature();
-						currentAdapter = (IFeatureAdapter) obj;
-						refresh();
+						currentAdapter = adapter;
+						currentFeature = adapter.getFeature();
 					} catch (CoreException e) {
-						UpdateUIPlugin.logException(e);
+						//UpdateUIPlugin.logException(e);
+						currentFeature = new MissingFeature(adapter.getSite(), adapter.getURL());
+					}
+					finally {
+						refresh();
 					}
 				} else {
 					currentFeature = null;
