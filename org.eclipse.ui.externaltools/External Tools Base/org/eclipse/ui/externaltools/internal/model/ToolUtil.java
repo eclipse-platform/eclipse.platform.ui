@@ -213,6 +213,7 @@ public final class ToolUtil {
 				path= variable.getExpander().getPath(varDef.name, varDef.argument, context);
 			} catch (CoreException exception) {
 				status.merge(exception.getStatus());
+				return null;
 			}
 			buffer.append(path.toOSString());
 			start= varDef.end;
