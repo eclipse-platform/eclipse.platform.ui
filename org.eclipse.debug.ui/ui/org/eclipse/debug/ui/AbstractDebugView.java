@@ -705,6 +705,5 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	public void showViewer() {
 		getPageBook().showPage(getDefaultPage().getControl());
 	}
-	
 }	
 
