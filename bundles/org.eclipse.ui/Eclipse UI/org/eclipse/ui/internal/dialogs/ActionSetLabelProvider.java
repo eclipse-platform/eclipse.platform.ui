@@ -4,9 +4,10 @@ package org.eclipse.ui.internal.dialogs;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.ui.internal.registry.*;
-import org.eclipse.ui.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.registry.*;
 
 public class ActionSetLabelProvider extends LabelProvider {
 
