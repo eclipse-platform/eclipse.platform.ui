@@ -132,18 +132,14 @@ public class RefreshSubscriberJob extends WorkspaceJob {
 		monitor.beginTask(Policy.bind("RefreshSubscriber.runTitle", subscriber.getName()), 100); //$NON-NLS-1$
 		try {
 			lastTimeRun = System.currentTimeMillis();
-			TeamSubscriber[] subscribers = new TeamSubscriber[] {subscriber};
-			for (int i = 0; i < subscribers.length; i++) {
-				TeamSubscriber s = subscribers[i];
-				if(monitor.isCanceled()) {
-					return Status.CANCEL_STATUS;
-				}
-				try {					
-					monitor.setTaskName(s.getName());
-					s.refresh(roots, IResource.DEPTH_INFINITE, Policy.subMonitorFor(monitor, 100));
-				} catch(TeamException e) {
-					status.merge(e.getStatus());
-				}
+			if(monitor.isCanceled()) {
+				return Status.CANCEL_STATUS;
+			}
+			try {					
+				monitor.setTaskName(subscriber.getName());
+				subscriber.refresh(roots, IResource.DEPTH_INFINITE, Policy.subMonitorFor(monitor, 100));
+			} catch(TeamException e) {
+				status.merge(e.getStatus());
 			}
 		} catch(OperationCanceledException e2) {
 			return Status.CANCEL_STATUS;
