@@ -32,25 +32,25 @@ public interface IProcess extends IAdaptable, ITerminate {
 	/**
 	 * Returns a human-readable label for this process.
 	 *
-	 * @return a label
+	 * @return a label for this process
 	 */
-	String getLabel();
+	public String getLabel();
 	/**
-	 * Returns the <code>ILaunch</code> this element originated from, or
+	 * Returns the launch this element originated from, or
 	 * <code>null</code> if this element has not yet been registered with
-	 * an <code>ILaunch</code>. This is a convenience method for
+	 * an launch. This is a convenience method for
 	 * <code>ILaunchManager.findLaunch(IProcess)</code>.
 	 *
 	 * @return the launch this process is contained in
 	 */
-	ILaunch getLaunch();
+	public ILaunch getLaunch();
 	/**
 	 * Returns a proxy to the standard input, output, and error streams 
 	 * for this process, or <code>null</code> if not supported.
 	 *
 	 * @return a streams proxy, or <code>null</code> if not supported
 	 */
-	IStreamsProxy getStreamsProxy();
+	public IStreamsProxy getStreamsProxy();
 	
 	/**
 	 * Sets the value of a client defined attribute.
@@ -58,7 +58,7 @@ public interface IProcess extends IAdaptable, ITerminate {
 	 * @param key the attribute key
 	 * @param value the attribute value
 	 */
-	void setAttribute(String key, String value);
+	public void setAttribute(String key, String value);
 	
 	/**
 	 * Returns the value of a client defined attribute.
@@ -66,7 +66,7 @@ public interface IProcess extends IAdaptable, ITerminate {
 	 * @param key the attribute key
 	 * @return value the attribute value, or <code>null</code> if undefined
 	 */
-	String getAttribute(String key);
+	public String getAttribute(String key);
 
 }
 

@@ -23,7 +23,7 @@ import org.eclipse.debug.core.ILauncher;
  * &lt;extension point="org.eclipse.debug.core.launchers"&gt;
  *   &lt;launcher 
  *      id="com.example.ExampleIdentifier"
- *      class="com.example.ExmapleLauncher"
+ *      class="com.example.ExampleLauncher"
  *      modes="run, debug"
  *      label="Example Launcher"
  *      wizard="com.example.ExampleLaunchWizard"
@@ -64,17 +64,17 @@ import org.eclipse.debug.core.ILauncher;
  */
 public interface ILauncherDelegate {
 	/**
-	 * Notifies this launcher delegate to launch in the given mode,
-	 * register the resulting launch with  the launch manager.
+	 * Notifies this launcher delegate to launch in the given mode, and
+	 * registers the resulting launch with  the launch manager.
 	 * Returns <code>true</code> if successful, otherwise <code>false</code>.
 	 * This typically results in the creation of one or more processes and/or
-	 * a debug target. The collection of elements provides context for 
+	 * a debug target. The collection of elements provides context for the 
 	 * launch. The determination of which or how many objects to launch
 	 * is launcher dependent. This method blocks until the launch is
 	 * complete. The given launcher is the owner of this delegate.
 	 * <p>
 	 * For example, when the debug UI invokes a launcher, the
-	 * collection of elements passed in represent the selected elements
+	 * collection of elements passed in could represent the selected elements
 	 * in the UI, and the mode specified will be run or debug (depending on
 	 * which launch button was pressed). A launcher will generally examine the 
 	 * element collection to determine what to launch. For example, if the
@@ -103,7 +103,7 @@ public interface ILauncherDelegate {
 	 * @see IProcess
 	 * @see org.eclipse.debug.core.ILaunchManager#registerLaunch
 	 */
-	boolean launch(Object[] elements, String mode, ILauncher launcher);
+	public boolean launch(Object[] elements, String mode, ILauncher launcher);
 	
 	/**
 	 * Returns a memento for an object that this delegate has launched, such
@@ -115,9 +115,9 @@ public interface ILauncherDelegate {
 	 *		or <code>null</code> if unable to create a memento for
 	 * 		the element
 	 * 
-	 * @see #getObject
+	 * @see #getLaunchObject
 	 */
-	String getLaunchMemento(Object element);
+	public String getLaunchMemento(Object element);
 	
 	/**
 	 * Returns the object represented by the given memento, or <code>null</code>
@@ -127,9 +127,9 @@ public interface ILauncherDelegate {
 	 * @param memento a memento created by this delegate
 	 * @return the object represented by the memento, or <code>null</code>
 	 * 
-	 * @see #getMemento
+	 * @see #getLaunchMemento
 	 */
-	Object getLaunchObject(String memento);
+	public Object getLaunchObject(String memento);
 }
 
 
