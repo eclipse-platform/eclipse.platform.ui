@@ -28,6 +28,6 @@ public class LiveHelpURLConnection extends URLConnection {
 		return liveHelpURL.openStream();
 	}
 	public String getContentType() {
-		return "application/octet-stream";
+		return "text/html";
 	}
 }
