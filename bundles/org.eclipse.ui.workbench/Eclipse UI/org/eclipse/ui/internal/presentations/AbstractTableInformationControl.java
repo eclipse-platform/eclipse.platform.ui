@@ -205,8 +205,12 @@ public abstract class AbstractTableInformationControl {
 		final Table table = fTableViewer.getTable();
 		table.addKeyListener(new KeyListener() {
 			public void keyPressed(KeyEvent e) {
-				if (e.character == 0x1B) // ESC
+				if (e.character == SWT.ESC)
 					dispose();
+				else if (e.character == SWT.DEL) {
+				    deleteSelectedElements();
+				    fTableViewer.refresh();
+				}
 			}
 			public void keyReleased(KeyEvent e) {
 				// do nothing
@@ -392,9 +396,18 @@ public abstract class AbstractTableInformationControl {
 		return ((IStructuredSelection) fTableViewer.getSelection())
 			.getFirstElement();
 	}
+	
+	/**
+	 * Implementers can modify
+	 */
+	protected IStructuredSelection getSelectedElements() {
+		return (IStructuredSelection) fTableViewer.getSelection();
+	}
 
 	protected abstract void gotoSelectedElement();
 
+	protected abstract void deleteSelectedElements();
+	
 	/**
 	 * Selects the first element in the table which matches the current filter
 	 * pattern.

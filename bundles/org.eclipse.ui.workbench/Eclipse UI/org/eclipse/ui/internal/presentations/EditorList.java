@@ -11,7 +11,10 @@
 
 package org.eclipse.ui.internal.presentations;
 
+import java.util.Iterator;
+
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -108,14 +111,28 @@ public class EditorList extends AbstractTableInformationControl {
     }
 
     protected void gotoSelectedElement() {
-        Object selection = getSelectedElement();
+        Object selectedElement = getSelectedElement();
 
-        if (selection != null) {
+        if (selectedElement != null) {
             EditorPresentation editorPresentation = (EditorPresentation) getTableViewer()
                     .getInput();
-            editorPresentation.setSelection((CTabItem) selection);
+            editorPresentation.setSelection((CTabItem) selectedElement);
         }
         
         dispose();
+    }
+    
+    protected void deleteSelectedElements() {
+        IStructuredSelection structuredSelection = getSelectedElements();
+        
+        if (structuredSelection != null) {
+            EditorPresentation editorPresentation = (EditorPresentation) getTableViewer()
+            .getInput();
+            
+            for (Iterator iterator = structuredSelection.iterator(); iterator.hasNext();) {
+    			IPresentablePart presentablePart = editorPresentation.getPartForTab((CTabItem) iterator.next());    			
+    			editorPresentation.close(presentablePart);                
+            }
+        }
     }
 }

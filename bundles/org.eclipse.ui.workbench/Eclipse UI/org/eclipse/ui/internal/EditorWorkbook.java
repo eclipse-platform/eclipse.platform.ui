@@ -253,6 +253,9 @@ public class EditorWorkbook extends LayoutPart implements ILayoutContainer {
         if (active) {
             showPart(newChild, position);
         }
+        
+        // TODO added this. necessary?
+        ((EditorPane) newChild).setWorkbook(this);
     }
 
     /**
