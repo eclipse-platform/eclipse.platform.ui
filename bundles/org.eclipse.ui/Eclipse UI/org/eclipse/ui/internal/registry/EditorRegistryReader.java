@@ -40,7 +40,7 @@ public class EditorRegistryReader extends RegistryReader {
  *
  * Warning:
  * The registry must be passed in because this method is called during the
- * process of setting up the registry and it this time it has not been
+ * process of setting up the registry and at this time it has not been
  * safely setup with the plugin.
  */
 protected void addEditors(boolean readAll, EditorRegistry registry) {
