@@ -10,7 +10,67 @@
 <h1> Eclipse Platform Build Notes<br>
   Workbench</h1>
 
-
+<!-- I20040413 -->
+<p>Integration Build (Tuesday, March 30th, 2004)</p>
+<h2>What's new in this drop</h2>
+<h2>Other highlights</h2>
+<h2>Breaking API Changes</h2>
+<ul>
+	<li>org.eclipse.ui.IThemePreview has been moved into the org.eclipse.ui.themes package.
+</ul>
+<h2>Known deficiencies. </h2>
+<h2>Problem reports fixed</h2>
+<ul xmlns:bz="http://www.bugzilla.org/rdf#">	
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=20150">20150</a> [Key Bindings] "Ctrl+Space" lost to code assist</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=21708">21708</a> [Viewers] Combo should support a Viewer</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=31835">31835</a> [Tasks] Task list too eager to come to front</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=35766">35766</a> [MenuMgmt] EditorActionBars - ContributionItems not being disposed of properly</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=38412">38412</a> [Actions] Tree &amp; Table cell editors too small</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=39223">39223</a> Open/Close Project locks for several minutes</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=40636">40636</a> [Dialogs] org.eclipse.ui.dialogs.FilteredList$Label can throw NullPointerException</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=41164">41164</a> [Dialogs] Need to move ResourceSelectionDialog to the new Job API</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=44814">44814</a> [RCP] launcher requires only 1.3 VM</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=45336">45336</a> [Problems View] Remove the show on new problems option from the pref page</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=46154">46154</a> Move to new progress API</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=47054">47054</a> Help "About" page is empty</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=49040">49040</a> IllegalStateException: Job manager has been shut down</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=49117">49117</a> [Plan Item] Workbench needs hooks for new welcome support</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=49700">49700</a> [Dialogs] creating working set leaks an image</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=51282">51282</a> [RCP] WorkbenchAdvisor.preShutdown not called</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=52159">52159</a> [ActivityMgmt] Activity entry in window menu needs to be defined in object contribution</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=52436">52436</a> [Problems View] Problems view opens up in Compare view</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=53105">53105</a> [Themes/Fonts/Colors] Theme API needs to piggyback on existing font/color API and so does workbench</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=53249">53249</a> [Editor Mgmt] NPE in TabbedEditorWorkbook$1.maximize</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=54748">54748</a> progress, background operations, and novice users</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=55090">55090</a> [Progress] How to show busy in multiple instances of the same view</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=55106">55106</a> [Intro] Finalize API</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=55162">55162</a> IPresentablePart needs to be able to opt out of done state</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=55735">55735</a> [Progress] Double-clicking on statusline progress icon has no effect</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=55755">55755</a> Using latest build the error log view is missing</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=55918">55918</a> [Wizards] New wizard description text area is white on linux</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=56039">56039</a> [Font/Colours] Hard to find definition of "mapped to" font</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=56281">56281</a> [ViewMgmt] View message is now the full title instead of the string between ()'s</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=56336">56336</a> [KeyBindings] The Alt + - System Menu</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=56446">56446</a> New-&gt;Other... opens "new project" wizard</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=56484">56484</a> [Fonts/Colors] Theme API cannot rely on JFaceResources.</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=56489">56489</a> [KeyBindings] New key bindings missing from Milestone 8</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=56844">56844</a> Write drag-and-drop test suites</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=56961">56961</a> [Workbench] EarlyStartupRunnable.getExecutableExtension() references runtime internals</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=56977">56977</a> [DynamicUI] testFindPerspectiveWithId failed in nightly builds</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=57273">57273</a> [Activities] Configure Activities dialog; Java tree entries</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=57384">57384</a> [RCP] Main window not active on startup, IWindowListeners never receive windowActivated</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=57437">57437</a> Preferences&gt;Workbench&gt;Colors and Fonts issues</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=57456">57456</a> [Activities] New Wizard should show items from enabled actiivties by default</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=57532">57532</a> IllegalStateException disposing theme manager</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=57579">57579</a> [Progress] Run in Background should animate to progress indicator</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=57586">57586</a> Markers views title turns bold too often</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=57722">57722</a> [Intro] Exception in Intro on startup</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=57847">57847</a> [Fonts/Colors] TreeViewer in prefs page does not honour dialog font</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=57851">57851</a> [Progress] NPE in WorkbenchSiteProgressService</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=57880">57880</a> [DND] NPE in drag and drop prevents window from redrawing</li>
+    <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=57907">57907</a> [Progress] NPE in workbenchsiteprogressmanager</li>
+</ul>
+<hr SIZE="0" WIDTH="100%">
 <!-- I20040330 -->
 <p>Integration Build (Tuesday, March 30th, 2004)</p>
 <h2>What's new in this drop</h2>
