@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.io.*;
+import java.util.*;
 import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
@@ -32,8 +32,9 @@ public class ProjectPreferences extends EclipsePreferences {
 	// cache
 	private int segmentCount = 0;
 	private String qualifier;
-	private String projectName;
+	private IProject project;
 	private EclipsePreferences loadLevel;
+	private IFile file;
 	// cache which nodes have been loaded from disk
 	private static Set loadedNodes = new HashSet();
 	private static IResourceChangeListener listener = createListener();
@@ -51,7 +52,18 @@ public class ProjectPreferences extends EclipsePreferences {
 
 	private ProjectPreferences(IEclipsePreferences parent, String name) {
 		super(parent, name);
-		initialize();
+		// cache the segment count
+		IPath path = new Path(absolutePath());
+		segmentCount = path.segmentCount();
+		if (segmentCount < 2)
+			return;
+		// cache the project name
+		String scope = path.segment(0);
+		if (ProjectScope.SCOPE.equals(scope))
+			project = ResourcesPlugin.getWorkspace().getRoot().getProject(path.segment(1));
+		// cache the qualifier
+		if (segmentCount > 2)
+			qualifier = path.segment(2);
 	}
 
 	/*
@@ -63,9 +75,9 @@ public class ProjectPreferences extends EclipsePreferences {
 	 * of the project life-cycle.
 	 */
 	protected IPath getLocation() {
-		if (projectName == null || qualifier == null)
+		if (project == null || qualifier == null)
 			return null;
-		IPath path = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName).getLocation();
+		IPath path = project.getLocation();
 		return computeLocation(path, qualifier);
 	}
 
@@ -160,25 +172,6 @@ public class ProjectPreferences extends EclipsePreferences {
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.PRE_DELETE | IResourceChangeEvent.PRE_BUILD);
 	}
 
-	/*
-	 * Parse this node's absolute path and initialize some cached values for
-	 * later use.
-	 */
-	private void initialize() {
-		// cache the segment count
-		IPath path = new Path(absolutePath());
-		segmentCount = path.segmentCount();
-		if (segmentCount < 2)
-			return;
-		// cache the project name
-		String scope = path.segment(0);
-		if (ProjectScope.SCOPE.equals(scope))
-			projectName = path.segment(1);
-		// cache the qualifier
-		if (segmentCount > 2)
-			qualifier = path.segment(2);
-	}
-
 	protected boolean isAlreadyLoaded(IEclipsePreferences node) {
 		return loadedNodes.contains(node.name());
 	}
@@ -192,7 +185,7 @@ public class ProjectPreferences extends EclipsePreferences {
 	 */
 	protected IEclipsePreferences getLoadLevel() {
 		if (loadLevel == null) {
-			if (projectName == null || qualifier == null)
+			if (project == null || qualifier == null)
 				return null;
 			// Make it relative to this node rather than navigating to it from the root.
 			// Walk backwards up the tree starting at this node.
@@ -207,5 +200,110 @@ public class ProjectPreferences extends EclipsePreferences {
 
 	protected EclipsePreferences internalCreate(IEclipsePreferences nodeParent, String nodeName, Plugin context) {
 		return new ProjectPreferences(nodeParent, nodeName);
+	}
+
+	private IFile getFile() {
+		if (file == null) {
+			if (project == null || qualifier == null)
+				return null;
+			file = project.getFile(new Path(DEFAULT_PREFERENCES_DIRNAME).append(qualifier).addFileExtension(PREFS_FILE_EXTENSION));
+		}
+		return file;
+	}
+
+	protected void save() throws BackingStoreException {
+		IFile localFile = getFile();
+		if (localFile == null) {
+			if (Policy.DEBUG_PREFERENCES)
+				Policy.debug("Not saving preferences since there is no file for node: " + absolutePath()); //$NON-NLS-1$
+			return;
+		}
+		Properties table = convertToProperties(new Properties(), Path.EMPTY);
+		if (table.isEmpty()) {
+			// nothing to save. delete existing file if one exists.
+			if (localFile.exists()) {
+				if (Policy.DEBUG_PREFERENCES)
+					Policy.debug("Deleting preference file: " + localFile.getFullPath()); //$NON-NLS-1$
+				try {
+					localFile.delete(true, null);
+				} catch (CoreException e) {
+					String message = Policy.bind("preferences.deleteException", localFile.getFullPath().toString()); //$NON-NLS-1$
+					log(new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, IStatus.WARNING, message, null));
+				}
+			}
+			return;
+		}
+		table.put(VERSION_KEY, VERSION_VALUE);
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		try {
+			table.store(output, null);
+		} catch (IOException e) {
+			String message = Policy.bind("preferences.saveProblems", absolutePath()); //$NON-NLS-1$
+			log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e));
+			throw new BackingStoreException(message);
+		} finally {
+			try {
+				output.close();
+			} catch (IOException e) {
+				// ignore
+			}
+		}
+		InputStream input = new BufferedInputStream(new ByteArrayInputStream(output.toByteArray()));
+		try {
+			if (localFile.exists()) {
+				if (Policy.DEBUG_PREFERENCES)
+					Policy.debug("Setting preference file contents for: " + localFile.getFullPath()); //$NON-NLS-1$
+				// set the contents
+				localFile.setContents(input, IResource.KEEP_HISTORY, null);
+			} else {
+				// create the file
+				IFolder folder = (IFolder) localFile.getParent();
+				if (!folder.exists()) {
+					if (Policy.DEBUG_PREFERENCES)
+						Policy.debug("Creating parent preference directory: " + folder.getFullPath()); //$NON-NLS-1$
+					folder.create(IResource.NONE, true, null);
+				}
+				if (Policy.DEBUG_PREFERENCES)
+					Policy.debug("Creating preference file: " + localFile.getFullPath()); //$NON-NLS-1$
+				localFile.create(input, IResource.NONE, null);
+			}
+		} catch (CoreException e) {
+			String message = Policy.bind("preferences.saveProblems", localFile.getFullPath().toString()); //$NON-NLS-1$
+			log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e));
+			throw new BackingStoreException(message);
+		}
+	}
+
+	protected void load() throws BackingStoreException {
+		IFile localFile = getFile();
+		if (localFile == null || !localFile.exists()) {
+			if (Policy.DEBUG_PREFERENCES)
+				Policy.debug("Unable to determine preference file or file does not exist for node: " + absolutePath()); //$NON-NLS-1$
+			return;
+		}
+		if (Policy.DEBUG_PREFERENCES)
+			Policy.debug("Loading preferences from file: " + localFile.getFullPath()); //$NON-NLS-1$
+		Properties fromDisk = new Properties();
+		InputStream input = null;
+		try {
+			input = new BufferedInputStream(localFile.getContents());
+			fromDisk.load(input);
+		} catch (CoreException e) {
+			String message = Policy.bind("preferences.loadException", localFile.getFullPath().toString()); //$NON-NLS-1$
+			log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e));
+			throw new BackingStoreException(message);
+		} catch (IOException e) {
+			String message = Policy.bind("preferences.loadException", localFile.getFullPath().toString()); //$NON-NLS-1$
+			log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e));
+			throw new BackingStoreException(message);
+		} finally {
+			if (input != null)
+				try {
+					input.close();
+				} catch (IOException e) {
+					// ignore
+				}
+		}
+		convertFromProperties(fromDisk);
 	}
 }

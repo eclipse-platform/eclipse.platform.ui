@@ -50,6 +50,7 @@ public class Policy {
 	public static boolean DEBUG_BUILD_DELTA = false;
 	public static boolean DEBUG_NATURES = false;
 	public static boolean DEBUG_HISTORY = false;
+	public static boolean DEBUG_PREFERENCES = false;
 
 	public static boolean MONITOR_BUILDERS = false;
 	public static boolean MONITOR_LISTENERS = false;
@@ -86,6 +87,7 @@ public class Policy {
 			DEBUG_BUILD_DELTA = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/build/delta")); //$NON-NLS-1$ 
 			DEBUG_NATURES = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/natures")); //$NON-NLS-1$ 
 			DEBUG_HISTORY = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/history")); //$NON-NLS-1$ 
+			DEBUG_PREFERENCES = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/preferences")); //$NON-NLS-1$
 
 			MONITOR_BUILDERS = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/monitor/builders")); //$NON-NLS-1$ 
 			MONITOR_LISTENERS = sTrue.equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/monitor/listeners")); //$NON-NLS-1$ 
