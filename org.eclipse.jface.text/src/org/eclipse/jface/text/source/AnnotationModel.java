@@ -220,7 +220,8 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 * @since 3.0
 	 */
 	protected void removePosition(IDocument document, Position pos) {
-		document.removePosition(pos);
+		if (document != null)
+			document.removePosition(pos);
 	}
 
 	/*
