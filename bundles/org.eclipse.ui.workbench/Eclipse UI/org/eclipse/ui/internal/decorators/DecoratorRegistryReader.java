@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ActionExpression;
 import org.eclipse.ui.internal.registry.RegistryReader;
-import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 
 /**
  * The DecoratorRegistryReader is the class that reads the
@@ -33,19 +32,20 @@ class DecoratorRegistryReader extends RegistryReader {
 	static Collection values;
 	static Collection ids;
 
-	private static String EXTENSION_ID = "decorators"; //$NON-NLS-1$
-	private static String ATT_LABEL = "label"; //$NON-NLS-1$
-	private static String ATT_ADAPTABLE = "adaptable"; //$NON-NLS-1$
-	private static String ATT_ID = "id"; //$NON-NLS-1$
-	private static String ATT_DESCRIPTION = "description"; //$NON-NLS-1$
-	private static String ATT_ICON = "icon"; //$NON-NLS-1$
-	private static String ATT_QUADRANT = "quadrant"; //$NON-NLS-1$
-	private static String ATT_LOCATION = "location"; //$NON-NLS-1$
-	private static String ATT_ENABLED = "state"; //$NON-NLS-1$
-	private static String CHILD_ENABLEMENT = "enablement"; //$NON-NLS-1$
-	private static String P_TRUE = "true"; //$NON-NLS-1$
-	private static String ATT_OBJECT_CLASS = "objectClass"; //$NON-NLS-1$
-	private static String ATT_LIGHTWEIGHT = "lightweight"; //$NON-NLS-1$
+	private static final String EXTENSION_ID = "decorators"; //$NON-NLS-1$
+	/* package */ static final String ATT_CLASS = "class";//$NON-NLS-1$
+	private static final String ATT_LABEL = "label"; //$NON-NLS-1$
+	private static final String ATT_ADAPTABLE = "adaptable"; //$NON-NLS-1$
+	private static final String ATT_ID = "id"; //$NON-NLS-1$
+	private static final String ATT_DESCRIPTION = "description"; //$NON-NLS-1$
+	private static final String ATT_ICON = "icon"; //$NON-NLS-1$
+	private static final String ATT_QUADRANT = "quadrant"; //$NON-NLS-1$
+	private static final String ATT_LOCATION = "location"; //$NON-NLS-1$
+	private static final String ATT_ENABLED = "state"; //$NON-NLS-1$
+	private static final String CHILD_ENABLEMENT = "enablement"; //$NON-NLS-1$
+	private static final String P_TRUE = "true"; //$NON-NLS-1$
+	private static final String ATT_OBJECT_CLASS = "objectClass"; //$NON-NLS-1$
+	private static final String ATT_LIGHTWEIGHT = "lightweight"; //$NON-NLS-1$
 
 	//Constants for quadrants
 	public static final int TOP_LEFT = 0;
@@ -109,7 +109,7 @@ class DecoratorRegistryReader extends RegistryReader {
 			enablementExpression = new ActionExpression(enablement[0]);
 
 		boolean noClass =
-			element.getAttribute(WizardsRegistryReader.ATT_CLASS) == null;
+			element.getAttribute(ATT_CLASS) == null;
 
 		//Lightweight or Full? It is lightweight if it is declared lightweight or if there is no class
 		if (P_TRUE.equals(element.getAttribute(ATT_LIGHTWEIGHT)) || noClass) {

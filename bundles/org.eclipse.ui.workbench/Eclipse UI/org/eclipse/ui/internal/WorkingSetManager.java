@@ -311,7 +311,7 @@ public class WorkingSetManager implements IWorkingSetManager {
 			WorkbenchPlugin.log("Unable to restore working set - no factory ID."); //$NON-NLS-1$
 			return null;
 		}
-		IElementFactory factory = WorkbenchPlugin.getDefault().getElementFactory(factoryID);
+		IElementFactory factory = PlatformUI.getWorkbench().getElementFactory(factoryID);
 		if (factory == null) {
 			WorkbenchPlugin.log("Unable to restore working set - cannot instantiate factory: " + factoryID); //$NON-NLS-1$
 			return null;

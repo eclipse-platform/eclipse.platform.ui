@@ -8,27 +8,44 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.internal;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
-import java.util.*;
+import java.util.Hashtable;
 import java.util.zip.CRC32;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.Assert;
+import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.internal.IniFileReader;
+import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
- * The about info class;
- * <p>
- * The information within this object is obtained from the about "ini" file".
+ * The information within this object is obtained from the about INI file.
  * This file resides within an install configurations directory and must be a 
  * standard java property file.  
+ * <p>
+ * This class is not intended to be instantiated or subclassed by clients.
  * </p>
  */
-public class AboutInfo extends NewConfigurationInfo {
+public final class AboutInfo {
+	private final static String INI_FILENAME = "about.ini"; //$NON-NLS-1$
+	private final static String PROPERTIES_FILENAME = "about.properties"; //$NON-NLS-1$
+	private final static String MAPPINGS_FILENAME = "about.mappings"; //$NON-NLS-1$
+	
+	private final static int BYTE_ARRAY_SIZE = 2048;
 
+	private String featureId;
+	private PluginVersionIdentifier versionId;
+	private IPluginDescriptor pluginDescriptor;
+	private String featurePluginLabel;
+	private String providerName;
 	private String appName;
 	private ImageDescriptor windowImage;
 	private ImageDescriptor aboutImage;
@@ -37,22 +54,100 @@ public class AboutInfo extends NewConfigurationInfo {
 	private URL welcomePageURL;
 	private String welcomePerspective;
 	private String tipsAndTricksHref;
-	private String featureImageName;
+	private URL featureImageURL;
 	private Long featureImageCRC;
 	private boolean calculatedImageCRC = false;
-	private final static int BYTE_ARRAY_SIZE = 2048;
 
-	/**
+	/*
 	 * Constructs a new instance of the about info.
 	 */
-	public AboutInfo(String featureId, PluginVersionIdentifier versionId) {
-		super(featureId, versionId, "about.ini", "about.properties", "about.mappings"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	private AboutInfo(String featureId, PluginVersionIdentifier versionId) {
+		super();
+		this.featureId = featureId;
+		this.versionId = versionId;
 	}
 
 	/**
+	 * Returns the configuration information for the feature with the 
+	 * given id.
+	 * 
+	 * @param featureId 
+	 * @return the configuration information for all features
+	 */
+	public static AboutInfo readFeatureInfo(String featureId) {
+		Assert.isNotNull(featureId);
+		AboutInfo info = new AboutInfo(featureId, null);
+		if (featureId != null) {
+			IniFileReader reader = new IniFileReader(featureId, INI_FILENAME, PROPERTIES_FILENAME, MAPPINGS_FILENAME);
+			IStatus status = reader.load();
+			if (!status.isOK()) {
+				return null;
+			}
+			Hashtable runtimeMappings  = new Hashtable();
+			String featureVersion = info.getVersion();
+			if (featureVersion == null)
+				featureVersion = WorkbenchMessages.getString("AboutInfo.NoVersion"); //$NON-NLS-1$
+			runtimeMappings.put("{featureVersion}", featureVersion); //$NON-NLS-1$
+
+			info.pluginDescriptor = reader.getPluginDescriptor();
+			info.featurePluginLabel = reader.getFeaturePluginLabel();
+			info.providerName = reader.getProviderName();
+			info.appName = reader.getString("appName", true, runtimeMappings); //$NON-NLS-1$
+			info.aboutText = reader.getString("aboutText", true, runtimeMappings); //$NON-NLS-1$
+			info.windowImage = reader.getImage("windowImage"); //$NON-NLS-1$
+			info.aboutImage = reader.getImage("aboutImage"); //$NON-NLS-1$
+			info.featureImage = reader.getImage("featureImage"); //$NON-NLS-1$
+			info.featureImageURL = reader.getURL("featureImage"); //$NON-NLS-1$
+			info.welcomePageURL = reader.getURL("welcomePage"); //$NON-NLS-1$
+			info.welcomePerspective = reader.getString("welcomePerspective", false, runtimeMappings); //$NON-NLS-1$
+			info.tipsAndTricksHref = reader.getString("tipsAndTricksHref", false, runtimeMappings); //$NON-NLS-1$
+		}
+		return info;
+	}
+
+	/**
+	 * Creates and loads the about information for the specified feature.
+	 * 
+	 * @param featureId the feature id to read the about information from, or <code>null</code>
+	 * @param versionId the version id of the feature, or <code>null</code>
+	 * @return the initialized about information for the specified feature
+	 * @deprecated
+	 * @issue consider making this method internal so that regular plug-ins cannot call
+	 */
+	public final static AboutInfo create(String featureId, PluginVersionIdentifier versionId) throws WorkbenchException {
+		AboutInfo info = new AboutInfo(featureId, versionId);
+		if (featureId != null) {
+			IniFileReader reader = new IniFileReader(featureId, INI_FILENAME, PROPERTIES_FILENAME, MAPPINGS_FILENAME);
+			IStatus status = reader.load();
+			if (!status.isOK()) {
+				throw new WorkbenchException(status);
+			}
+			Hashtable runtimeMappings  = new Hashtable();
+			String featureVersion = info.getVersion();
+			if (featureVersion == null)
+				featureVersion = WorkbenchMessages.getString("AboutInfo.NoVersion"); //$NON-NLS-1$
+			runtimeMappings.put("{featureVersion}", featureVersion); //$NON-NLS-1$
+
+			info.pluginDescriptor = reader.getPluginDescriptor();
+			info.featurePluginLabel = reader.getFeaturePluginLabel();
+			info.providerName = reader.getProviderName();
+			info.appName = reader.getString("appName", true, runtimeMappings); //$NON-NLS-1$
+			info.aboutText = reader.getString("aboutText", true, runtimeMappings); //$NON-NLS-1$
+			info.windowImage = reader.getImage("windowImage"); //$NON-NLS-1$
+			info.aboutImage = reader.getImage("aboutImage"); //$NON-NLS-1$
+			info.featureImage = reader.getImage("featureImage"); //$NON-NLS-1$
+			info.featureImageURL = reader.getURL("featureImage"); //$NON-NLS-1$
+			info.welcomePageURL = reader.getURL("welcomePage"); //$NON-NLS-1$
+			info.welcomePerspective = reader.getString("welcomePerspective", false, runtimeMappings); //$NON-NLS-1$
+			info.tipsAndTricksHref = reader.getString("tipsAndTricksHref", false, runtimeMappings); //$NON-NLS-1$
+		}
+		return info;
+	}
+	
+	/**
 	 * Returns the descriptor for an image which can be shown in an "about" dialog 
-	 * for this product.
-	 * Products designed to run "headless" typically would not have such an image.
+	 * for this product. Products designed to run "headless" typically would not 
+	 * have such an image.
 	 * 
 	 * @return the descriptor for an about image, or <code>null</code> if none
 	 */
@@ -62,8 +157,7 @@ public class AboutInfo extends NewConfigurationInfo {
 
 	/**
 	 * Returns the descriptor for an image which can be shown in an "about features" 
-	 * dialog.
-	 * Products designed to run "headless" typically would not have such an image.
+	 * dialog. Products designed to run "headless" typically would not have such an image.
 	 * 
 	 * @return the descriptor for a feature image, or <code>null</code> if none
 	 */
@@ -77,7 +171,10 @@ public class AboutInfo extends NewConfigurationInfo {
 	 * @return the name of the feature image, or <code>null</code> if none
 	 */
 	public String getFeatureImageName() {
-		return featureImageName;
+		if (featureImageURL != null)
+			return featureImageURL.getFile();
+		else
+			return null;
 	}
 
 	/**
@@ -86,7 +183,7 @@ public class AboutInfo extends NewConfigurationInfo {
 	 * @return the CRC of the feature image, or <code>null</code> if none
 	 */
 	public Long getFeatureImageCRC() {
-		if (!calculatedImageCRC && featureImageName != null) {
+		if (!calculatedImageCRC && featureImageURL != null) {
 			featureImageCRC = calculateFeatureImageCRC();
 			calculatedImageCRC = true;
 		}
@@ -97,20 +194,14 @@ public class AboutInfo extends NewConfigurationInfo {
 	 * Calculate a CRC for the feature image
 	 */
 	private Long calculateFeatureImageCRC() {
-		URL url = null;
-		if (featureImageName != null) {
-			IPluginDescriptor desc = getDescriptor();
-			if(desc == null)
-				return null;
-			url = desc.find(new Path("$nl$").append(featureImageName)); //$NON-NLS-1$
-		}
-		if (url == null)
+		if (featureImageURL == null)
 			return null;
+			
 		// Get the image bytes
 		InputStream in = null;
 		ByteArrayOutputStream out = null;
 		try {
-			in = url.openStream();	
+			in = featureImageURL.openStream();	
 			out = new ByteArrayOutputStream();
 			byte[] buffer = new byte[BYTE_ARRAY_SIZE];
 			int readResult = BYTE_ARRAY_SIZE;
@@ -140,16 +231,22 @@ public class AboutInfo extends NewConfigurationInfo {
 		}
 	}	
 		
-
 	/**
-	 * Returns a label for the feature, we use the descriptor label
+	 * Returns a label for the feature plugn, or <code>null</code>.
 	 */
 	public String getFeatureLabel() {
-		if (getDescriptor() == null)
-			return null;
-		return getDescriptor().getLabel();
+		return featurePluginLabel;
 	}
 
+	/**
+	 * Returns the ID for this feature, or <code>null</code>
+	 * 
+	 * @return the feature ID, or <code>null</code>
+	 */
+	public String getFeatureId() {
+		return featureId;
+	}
+	
 	/**
 	 * Returns the text to show in an "about" dialog for this product.
 	 * Products designed to run "headless" typically would not have such text.
@@ -161,7 +258,7 @@ public class AboutInfo extends NewConfigurationInfo {
 	}
 
 	/**
-	 * Returns the app name or <code>null</code>.
+	 * Returns the application name or <code>null</code>.
 	 * Note this is never shown to the user.
 	 * It is used to initialize the SWT Display.
 	 * <p>
@@ -169,7 +266,7 @@ public class AboutInfo extends NewConfigurationInfo {
 	 * to set the name used for resource lookup.
 	 * </p>
 	 *
-	 * @return the app name, or <code>null</code>
+	 * @return the application name, or <code>null</code>
 	 * 
 	 * @see org.eclipse.swt.widgets.Display#setAppName
 	 */
@@ -178,16 +275,23 @@ public class AboutInfo extends NewConfigurationInfo {
 	}
 
 	/**
+	 * Returns the descriptor for the corresponding plug-in of this feature.
+	 * 
+	 * @return the plug-in descriptor or <code>null</code> if none found
+	 * @issue this method is unnecessary; clients can get plug-in descriptor from the plug-in registry using plug-in id
+	 */
+	public IPluginDescriptor getPluginDescriptor() {
+		return pluginDescriptor;
+	}
+	
+	/**
 	 * Returns the product name or <code>null</code>.
 	 * This is shown in the window title and the About action.
 	 *
 	 * @return the product name, or <code>null</code>
 	 */
 	public String getProductName() {
-		IPluginDescriptor desc = getDescriptor();
-		if (desc == null)
-			return null;
-		return desc.getLabel();
+		return featurePluginLabel;
 	}
 
 	/**
@@ -196,22 +300,28 @@ public class AboutInfo extends NewConfigurationInfo {
 	 * @return the provider name, or <code>null</code>
 	 */
 	public String getProviderName() {
-		IPluginDescriptor desc = getDescriptor();
-		if (desc == null)
-			return null;
-		return desc.getProviderName();
+		return providerName;
 	}
 
 	/**
-	 * Returns the version or <code>null</code>.
+	 * Returns the version as text or <code>null</code>.
 	 *
-	 * @return the version, or <code>null</code>
+	 * @return the version as text, or <code>null</code>
 	 */
 	public String getVersion() {
-		PluginVersionIdentifier versionId = getVersionId();
 		if (versionId == null)
 			return null;
 		return versionId.toString();
+	}
+
+	/**
+	 * Returns the plug-in version identifier or <code>null</code>.
+	 *
+	 * @return the plug-in version identifier, or <code>null</code>
+	 * @issue this method is probably unnecessary; clients can get plug-in version ids from the plug-in registry using plug-in id
+	 */
+	public PluginVersionIdentifier getVersionId() {
+		return versionId;
 	}
 
 	/**
@@ -225,12 +335,12 @@ public class AboutInfo extends NewConfigurationInfo {
 	}
 
 	/**
-	 * Returns the id of a perspective in which to show the welcome page.
+	 * Returns the ID of a perspective in which to show the welcome page.
 	 * May be <code>null</code>.
 	 * 
 	 * @return the welcome page perspective id, or <code>null</code> if none
 	 */
-	public String getWelcomePerspective() {
+	public String getWelcomePerspectiveId() {
 		return welcomePerspective;
 	}
 
@@ -252,137 +362,4 @@ public class AboutInfo extends NewConfigurationInfo {
 	public ImageDescriptor getWindowImage() {
 		return windowImage;
 	}
-	
-	/**
-	 * Reads the ini file.
-	 */
-	protected void readINIFile(URL iniURL, URL propertiesURL, URL mappingsURL)
-		throws CoreException {
-
-		Properties ini = new Properties();
-		InputStream is = null;
-		try {
-			is = iniURL.openStream();
-			ini.load(is);
-		} catch (IOException e) {
-			reportINIFailure(e, "Cannot read about info file " + iniURL); //$NON-NLS-1$
-			return;
-		} finally {
-			try {
-				if (is != null)
-					is.close();
-			} catch (IOException e) {
-			}
-		}
-
-		PropertyResourceBundle bundle = null;
-
-		if (propertiesURL != null) {
-			InputStream bundleStream = null;
-			try {
-				bundleStream = propertiesURL.openStream();
-				bundle = new PropertyResourceBundle(bundleStream);
-			} catch (IOException e) {
-				reportINIFailure(e, "Cannot read about properties file " + propertiesURL);  //$NON-NLS-1$
-				bundle = null;
-			} finally {
-				try {
-					if (bundleStream != null)
-						bundleStream.close();
-				} catch (IOException e) {
-				}
-			}
-		}
-
-		PropertyResourceBundle mappingsBundle = null;
-
-		if (mappingsURL != null) {
-			InputStream bundleStream = null;
-			try {
-				bundleStream = mappingsURL.openStream();
-				mappingsBundle = new PropertyResourceBundle(bundleStream);
-			} catch (IOException e) {
-				reportINIFailure(e, "Cannot read about mappings file " + mappingsURL);  //$NON-NLS-1$
-				mappingsBundle = null;
-			} finally {
-				try {
-					if (bundleStream != null)
-						bundleStream.close();
-				} catch (IOException e) {
-				}
-			}
-		}
-
-		// Create the mappings array
-		ArrayList mappingsList = new ArrayList();
-		if (mappingsBundle != null) {
-			boolean found = true;
-			int i = 0;
-			while (found) {
-				try {
-					mappingsList.add(mappingsBundle.getString(Integer.toString(i)));
-				} catch (MissingResourceException e) {
-					found = false;
-				}
-				i++;
-			}
-		}
-		String[] mappingsArray = (String[])mappingsList.toArray(new String[mappingsList.size()]);
-
-		Hashtable runtimeMappings  = new Hashtable();
-		String featureVersion = getVersion();
-		if (featureVersion==null)
-			featureVersion=WorkbenchMessages.getString("AboutDialog.notSpecified"); //$NON-NLS-1$
-		runtimeMappings.put("{featureVersion}", featureVersion); //$NON-NLS-1$
-
-		windowImage = getImage(ini, "windowImage"); //$NON-NLS-1$
-
-		aboutText = (String) ini.get("aboutText"); //$NON-NLS-1$
-		aboutText = getResourceString(aboutText, bundle, mappingsArray, runtimeMappings);
-		
-		aboutImage = getImage(ini, "aboutImage"); //$NON-NLS-1$
-
-		featureImageName = (String) ini.get("featureImage"); //$NON-NLS-1$
-		featureImage = getImage(ini, "featureImage"); //$NON-NLS-1$
-
-		welcomePageURL = getURL(ini, "welcomePage"); //$NON-NLS-1$
-		welcomePerspective = (String) ini.get("welcomePerspective"); //$NON-NLS-1$
-
-		tipsAndTricksHref = (String) ini.get("tipsAndTricksHref"); //$NON-NLS-1$
-
-		appName = (String) ini.get("appName"); //$NON-NLS-1$
-		appName = getResourceString(appName, bundle, mappingsArray, null);
-
-	}
-
-	/**
-	 * Returns a URL for the given key, or <code>null</code>.
-	 * 
-	 * @return a URL for the given key, or <code>null</code>
-	 */
-	private URL getURL(Properties ini, String key) {
-		URL url = null;
-		String fileName = (String) ini.get(key);
-		if (fileName != null) {
-			IPluginDescriptor desc = getDescriptor();
-			if(desc == null)
-				return null;
-			url = desc.find(new Path(fileName));
-		}
-		return url;
-	}
-
-	/**
-	 * Returns an image descriptor for the given key, or <code>null</code>.
-	 * 
-	 * @return an image descriptor for the given key, or <code>null</code>
-	 */
-	private ImageDescriptor getImage(Properties ini, String key) {
-		URL url = getURL(ini, key);
-		if (url != null) {
-			return ImageDescriptor.createFromURL(url);
-		}
-		return null;
-	}
-
 }

@@ -13,7 +13,7 @@ package org.eclipse.ui.internal.dialogs;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.internal.model.AdaptableList;
+import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 /**
  * Instances of this class are a collection of WizardCollectionElements,
@@ -165,3 +165,4 @@ public String toString() {
 	return buf.toString();
 }
 }
+

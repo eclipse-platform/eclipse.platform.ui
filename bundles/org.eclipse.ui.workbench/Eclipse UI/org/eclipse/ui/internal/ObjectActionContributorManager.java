@@ -10,11 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.ISelection;
@@ -320,8 +318,14 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
 	 * themselves so as to prevent double registration of actions.
 	 */
 	private Class getCommonResourceClass(List objects) {
-		if (objects == null || objects.size() == 0)
+		if (objects == null || objects.size() == 0) {
 			return null;
+		}
+		Class resourceClass = ObjectContributorManager.getResourceClass();
+		if (resourceClass == null) {
+			// resources plug-in not loaded - no resources. period.
+			return null;
+		}
 
 		List testList = new ArrayList();
 
@@ -329,17 +333,20 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
 			Object object = objects.get(i);
 
 			if (object instanceof IAdaptable) {
-				if (object instanceof IResource)
+				if (resourceClass.isInstance(object)) {
 					continue;
+				}
 
-				IResource resource = getAdaptedResource((IAdaptable) object);
+				Object resource = getAdaptedResource((IAdaptable) object);
 
-				if (resource == null)
+				if (resource == null) {
 					//Not a resource and does not adapt. No common resource class
 					return null;
+				}
 				testList.add(resource);
-			} else
+			} else {
 				return null;
+			}
 		}
 
 		return getCommonClass(testList);

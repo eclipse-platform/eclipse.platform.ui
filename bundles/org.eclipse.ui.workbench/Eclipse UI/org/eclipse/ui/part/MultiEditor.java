@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.part;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -68,6 +67,8 @@ public abstract class MultiEditor extends EditorPart {
 	 * The <code>MultiEditor</code> implementation of this 
 	 * method extends the <code>EditorPart</code> implementation,
 	 * and disposes any inner editors.  Subclasses may extend.
+	 * 
+	 * @since 3.0
 	 */
 	public void dispose() {
 		super.dispose();
@@ -81,12 +82,6 @@ public abstract class MultiEditor extends EditorPart {
 	 * @see IEditorPart#doSaveAs()
 	 */
 	public void doSaveAs() {
-	}
-
-	/*
-	 * @see IEditorPart#gotoMarker(IMarker)
-	 */
-	public void gotoMarker(IMarker marker) {
 	}
 
 	/*
@@ -130,18 +125,21 @@ public abstract class MultiEditor extends EditorPart {
 		innerEditors[activeEditorIndex].setFocus();
 		updateGradient(innerEditors[activeEditorIndex]);
 	}
+	
 	/**
 	 * Returns the active inner editor.
 	 */
 	public final IEditorPart getActiveEditor() {
 		return innerEditors[activeEditorIndex];
 	}
+	
 	/**
 	 * Returns an array with all inner editors.
 	 */
 	public final IEditorPart[] getInnerEditors() {
 		return innerEditors;
 	}
+	
 	/**
 	 * Set the inner editors.
 	 * 
@@ -151,8 +149,12 @@ public abstract class MultiEditor extends EditorPart {
 		innerEditors = children;
 		activeEditorIndex = 0;
 	}
+	
 	/**
-	 * Set the active editor.
+	 * Activates the given nested editor.
+	 * 
+	 * @param part the nested editor
+	 * @since 3.0
 	 */
 	protected void activateEditor(IEditorPart part) {
 		IEditorPart oldEditor = getActiveEditor();
@@ -162,8 +164,12 @@ public abstract class MultiEditor extends EditorPart {
 		((WorkbenchPage) innerSite.getPage()).requestActivation(e);
 		updateGradient(oldEditor);
 	}
-	/*
-	 * Return the index of the specified editor
+	
+	/**
+	 * Returns the index of the given nested editor.
+	 * 
+	 * @return the index of the nested editor
+	 * @since 3.0
 	 */
 	protected int getIndex(IEditorPart editor) {
 		for (int i = 0; i < innerEditors.length; i++) {
@@ -172,8 +178,9 @@ public abstract class MultiEditor extends EditorPart {
 		}
 		return -1;
 	}
+	
 	/**
-	 * Update the gradient in the title bar.
+	 * Updates the gradient in the title bar.
 	 */
 	public void updateGradient(IEditorPart editor) {
 		boolean activeEditor = editor == getSite().getPage().getActiveEditor();

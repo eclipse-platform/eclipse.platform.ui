@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -75,7 +76,7 @@ public PerspectivePresentation(WorkbenchPage workbenchPage, RootLayoutContainer 
 }
 /* temp method. Should be deleted it */
 private void initDETACHABLE() {
-	String commandLineArgs[] = ((Workbench)PlatformUI.getWorkbench()).getCommandLineArgs();
+	String commandLineArgs[] = Platform.getCommandLineArgs();
 	for (int i = 0; i < commandLineArgs.length; i++) {
 		if (commandLineArgs[i].equalsIgnoreCase("-detach")) { //$NON-NLS-1$
 			return;

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.part;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ui.*;
 
@@ -116,16 +115,6 @@ public String getTitleToolTip() {
 	else
 		return editorInput.getToolTipText();
 }
-/* (non-Javadoc)
- * Sets the cursor and selection state for this editor to the passage defined
- * by the given marker.
- * <p>
- * Subclasses may override.  For greater details, see <code>IEditorPart</code>
- * </p>
- *
- * @see IEditorPart
- */
-public abstract void gotoMarker(IMarker marker);
 /* (non-Javadoc)
  * Initializes the editor part with a site and input.
  * <p>

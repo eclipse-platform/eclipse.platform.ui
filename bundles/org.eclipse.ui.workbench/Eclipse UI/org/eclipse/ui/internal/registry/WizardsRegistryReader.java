@@ -10,24 +10,29 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IPluginRegistry;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.WizardCollectionElement;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
-import org.eclipse.ui.internal.model.AdaptableList;
+import org.eclipse.ui.model.AdaptableList;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  *  Instances access the registry that is provided at creation time
  *  in order to determine the contained Wizards
  */
 public class WizardsRegistryReader extends RegistryReader {
-	protected AdaptableList wizards;
+	private AdaptableList wizards;
 	private String pluginPoint;
 
 	protected final static String TAG_WIZARD = "wizard";//$NON-NLS-1$
 
 	protected final static String ATT_NAME = "name";//$NON-NLS-1$
+	// @issue we should have an IExtensionConstants class with all these attribute names, element names, attribute values (like true, false, etc).
 	public final static String ATT_CLASS = "class";//$NON-NLS-1$
 	protected final static String ATT_ICON = "icon";//$NON-NLS-1$
 	protected final static String ATT_ID = "id";//$NON-NLS-1$
@@ -44,15 +49,15 @@ public WizardsRegistryReader(String pluginPointId) {
  * Adds new wizard to the provided collection. Override to
  * provide more logic.
  */
-protected void addNewElementToResult(WorkbenchWizardElement wizard, IConfigurationElement config, AdaptableList result) {
-	result.add(wizard);
+protected void addNewElementToResult(WorkbenchWizardElement wizard, IConfigurationElement config) {
+	wizards.add(wizard);
 }
 /**
  * Creates empty element collection. Overrider to fill
  * initial elements, if needed.
  */
-protected AdaptableList createEmptyWizardCollection() {
-	return new AdaptableList();
+protected void createEmptyWizardCollection() {
+	wizards = new AdaptableList();
 }
 /**
  * Returns a new WorkbenchWizardElement configured according to the parameters
@@ -78,7 +83,7 @@ protected WorkbenchWizardElement createWizardElement(IConfigurationElement eleme
  *	Returns the first wizard with a given id.
  */
 public WorkbenchWizardElement findWizard(String id) {
-	Object [] wizards = getWizards().getChildren();
+	Object [] wizards = getWizardCollectionElements();
 	for (int nX = 0; nX < wizards.length; nX ++) {
 		WizardCollectionElement collection = (WizardCollectionElement)wizards[nX];
 		WorkbenchWizardElement element = collection.findWizard(id,true);
@@ -94,8 +99,9 @@ public WorkbenchWizardElement findWizard(String id) {
  * requires non-trivial work.  
  */
 public AdaptableList getWizards() {
-	if (wizards == null)
+	if (!areWizardsRead()) {
 		readWizards();
+	}
 	return wizards;
 }
 /**
@@ -116,7 +122,11 @@ protected boolean initializeWizard(WorkbenchWizardElement element, IConfiguratio
 	String iconName = config.getAttribute(ATT_ICON);
 	if (iconName != null) {
 		IExtension extension = config.getDeclaringExtension();
-		element.setImageDescriptor(WorkbenchImages.getImageDescriptorFromExtension(extension, iconName));
+		String extendingPluginId =
+			extension.getDeclaringPluginDescriptor().getUniqueIdentifier();
+		ImageDescriptor image =
+			AbstractUIPlugin.imageDescriptorFromPlugin(extendingPluginId, iconName);
+		element.setImageDescriptor(image);
 	}
 	// ensure that a class was specified
 	if (element.getConfigurationElement() == null) {
@@ -133,17 +143,29 @@ protected boolean readElement(IConfigurationElement element) {
 		return false;
 	WorkbenchWizardElement wizard = createWizardElement(element);
 	if (wizard != null)
-	   addNewElementToResult(wizard, element, wizards);
+	   addNewElementToResult(wizard, element);
 	return true;
 }
 /**
  * Reads the wizards in a registry.  
  */
 protected void readWizards() {
-	if (wizards == null) {
-		wizards = createEmptyWizardCollection();
+	if (!areWizardsRead()) {
+		createEmptyWizardCollection();
 		IPluginRegistry pregistry = Platform.getPluginRegistry();
-		readRegistry(pregistry, PlatformUI.PLUGIN_ID, pluginPoint);
+		readRegistry(pregistry, WorkbenchPlugin.PI_WORKBENCH, pluginPoint);
 	}
+}
+/**
+ * Returns whether the wizards have been read already
+ */
+protected boolean areWizardsRead() {
+	return wizards != null;
+}
+protected Object[] getWizardCollectionElements() {
+	if (!areWizardsRead()) {
+		readWizards();
+	}
+	return wizards.getChildren();
 }
 }

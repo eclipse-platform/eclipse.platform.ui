@@ -11,15 +11,20 @@
 package org.eclipse.ui.internal.registry;
 
 import java.text.Collator;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.dialogs.WizardCollectionElement;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
-import org.eclipse.ui.internal.misc.Sorter;
-import org.eclipse.ui.internal.model.AdaptableList;
+import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  *	Instances of this class provide a simple API to the workbench for
@@ -29,6 +34,7 @@ import org.eclipse.ui.internal.model.AdaptableList;
 public class NewWizardsRegistryReader extends WizardsRegistryReader {
 	
 	private boolean projectsOnly;
+	private WizardCollectionElement wizardElements = null;
 	private ArrayList deferWizards = null;
 	private ArrayList deferCategories = null;
 	
@@ -41,6 +47,7 @@ public class NewWizardsRegistryReader extends WizardsRegistryReader {
 	private final static String		UNCATEGORIZED_WIZARD_CATEGORY_LABEL = WorkbenchMessages.getString("NewWizardsRegistryReader.otherCategory");//$NON-NLS-1$
 	private final static String		CATEGORY_SEPARATOR = "/";//$NON-NLS-1$
 	private final static String		ATT_CATEGORY = "category";//$NON-NLS-1$
+	// @issue project-specific attribute and behavior
 	private final static String ATT_PROJECT = "project";//$NON-NLS-1$
 	private final static String STR_TRUE = "true";//$NON-NLS-1$
 
@@ -65,6 +72,17 @@ public class NewWizardsRegistryReader extends WizardsRegistryReader {
 			return category;
 		}
 	}
+	
+	private static final Comparator comparer = new Comparator() {
+		private Collator collator = Collator.getInstance();
+
+		public int compare(Object arg0, Object arg1) {
+			String s1 = ((CategoryNode)arg0).getPath();
+			String s2 = ((CategoryNode)arg1).getPath();
+			return collator.compare(s1, s2);
+		}
+	}; 
+
 /**
  * Constructs a new reader.  All wizards are read, including projects.
  */
@@ -87,7 +105,7 @@ public NewWizardsRegistryReader(boolean projectsOnly) {
  * <code>readWizards</code>.
  * </p>
  */
-protected void addNewElementToResult(WorkbenchWizardElement element, IConfigurationElement config, AdaptableList result) {
+protected void addNewElementToResult(WorkbenchWizardElement element, IConfigurationElement config) {
 	deferWizard(element);
 }
 /**
@@ -108,8 +126,8 @@ protected WizardCollectionElement createCollectionElement(WizardCollectionElemen
  * Creates empty element collection. Overrider to fill
  * initial elements, if needed.
  */
-protected AdaptableList createEmptyWizardCollection() {
-	return new WizardCollectionElement("root", "root", null);//$NON-NLS-2$//$NON-NLS-1$
+protected void createEmptyWizardCollection() {
+	wizardElements = new WizardCollectionElement("root", "root", null);//$NON-NLS-2$//$NON-NLS-1$
 }
 /**
  * Returns a new WorkbenchWizardElement configured according to the parameters
@@ -166,20 +184,11 @@ private void finishCategories() {
 	for (int i=0; i < deferCategories.size(); i++) {
 		flatArray[i] = new CategoryNode((Category)deferCategories.get(i));
 	}
-	Sorter sorter = new Sorter() {
-		private Collator collator = Collator.getInstance();
-		
-		public boolean compare(Object o1, Object o2) {
-			String s1 = ((CategoryNode)o1).getPath();
-			String s2 = ((CategoryNode)o2).getPath();
-			return collator.compare(s2, s1) > 0;
-		}
-	};
-	Object [] sortedCategories = sorter.sort(flatArray);
+	Collections.sort(Arrays.asList(flatArray), comparer);
 
 	// Add each category.
-	for (int nX = 0; nX < sortedCategories.length; nX ++) {
-		Category cat = ((CategoryNode)sortedCategories[nX]).getCategory();
+	for (int nX = 0; nX < flatArray.length; nX ++) {
+		Category cat = ((CategoryNode)flatArray[nX]).getCategory();
 		finishCategory(cat);
 	}
 
@@ -190,10 +199,8 @@ private void finishCategories() {
  * Save new category definition.
  */
 private void finishCategory(Category category) {
-	WizardCollectionElement currentResult = (WizardCollectionElement) wizards;
-	
 	String[] categoryPath = category.getParentPath();
-	WizardCollectionElement parent = currentResult; 		// ie.- root
+	WizardCollectionElement parent = wizardElements; 		// ie.- root
 
 	// Traverse down into parent category.	
 	if (categoryPath != null) {
@@ -225,13 +232,12 @@ private void finishCategory(Category category) {
  *	@param extension 
  *	@param currentResult WizardCollectionElement
  */
-private void finishWizard(WorkbenchWizardElement element, IConfigurationElement config, AdaptableList result) {
-	WizardCollectionElement currentResult = (WizardCollectionElement)result;
+private void finishWizard(WorkbenchWizardElement element, IConfigurationElement config) {
 	StringTokenizer familyTokenizer = new StringTokenizer(getCategoryStringFor(config),CATEGORY_SEPARATOR);
 
 	// use the period-separated sections of the current Wizard's category
 	// to traverse through the NamedSolution "tree" that was previously created
-	WizardCollectionElement currentCollectionElement = currentResult; // ie.- root
+	WizardCollectionElement currentCollectionElement = wizardElements; // ie.- root
 	boolean moveToOther = false;
 	
 	while (familyTokenizer.hasMoreElements()) {
@@ -247,7 +253,7 @@ private void finishWizard(WorkbenchWizardElement element, IConfigurationElement 
 	}
 	
 	if (moveToOther)
-		moveElementToUncategorizedCategory(currentResult, element);
+		moveElementToUncategorizedCategory(wizardElements, element);
 	else
 		currentCollectionElement.add(element);
 }
@@ -260,7 +266,7 @@ private void finishWizards() {
 		while (iter.hasNext()) {
 			WorkbenchWizardElement wizard = (WorkbenchWizardElement)iter.next();
 			IConfigurationElement config = wizard.getConfigurationElement();
-			finishWizard(wizard, config, wizards);
+			finishWizard(wizard, config);
 		}
 		deferWizards = null;
 	}
@@ -285,7 +291,7 @@ protected String getCategoryStringFor(IConfigurationElement config) {
  *	@param childName java.lang.String
  */
 protected WizardCollectionElement getChildWithID(WizardCollectionElement parent, String id) {
-	Object[] children = parent.getChildren();
+	Object[] children = parent.getChildren(null);
 	for (int i = 0; i < children.length; ++i) {
 		WizardCollectionElement currentChild = (WizardCollectionElement)children[i];
 		if (currentChild.getId().equals(id))
@@ -308,7 +314,7 @@ protected void moveElementToUncategorizedCategory(WizardCollectionElement root, 
  * Removes the empty categories from a wizard collection. 
  */
 private void pruneEmptyCategories(WizardCollectionElement parent) {
-	Object [] children = parent.getChildren();
+	Object [] children = parent.getChildren(null);
 	for (int nX = 0; nX < children.length; nX ++) {
 		WizardCollectionElement child = (WizardCollectionElement)children[nX];
 		pruneEmptyCategories(child);
@@ -342,9 +348,32 @@ protected void readWizards() {
 	super.readWizards();
 	finishCategories();
 	finishWizards();
-	if (wizards != null) {
-		WizardCollectionElement parent = (WizardCollectionElement)wizards;
-		pruneEmptyCategories(parent);
+	if (wizardElements != null) {
+		pruneEmptyCategories(wizardElements);
 	}
+}
+/**
+ * Returns whether the wizards have been read already
+ */
+protected boolean areWizardsRead() {
+	return wizardElements != null;
+}
+/**
+ * Returns a list of wizards, project and not.
+ *
+ * The return value for this method is cached since computing its value
+ * requires non-trivial work.  
+ */
+public WizardCollectionElement getWizardElements() {
+	if (!areWizardsRead()) {
+		readWizards();
+	}
+	return wizardElements;
+}
+protected Object[] getWizardCollectionElements() {
+	if (!areWizardsRead()) {
+		readWizards();
+	}
+	return wizardElements.getChildren();
 }
 }

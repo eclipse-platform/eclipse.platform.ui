@@ -10,11 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
+
 import java.util.StringTokenizer;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.Wizard;
+
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchActivityHelper;
@@ -39,14 +41,17 @@ public class NewWizard extends Wizard {
 	 * Create the wizard pages
 	 */
 	public void addPages() {
-		NewWizardsRegistryReader rdr = new NewWizardsRegistryReader(projectsOnly);
-		WizardCollectionElement wizards = (WizardCollectionElement) rdr.getWizards();
+		NewWizardsRegistryReader rdr =
+			new NewWizardsRegistryReader(projectsOnly);
+		WizardCollectionElement wizards = rdr.getWizardElements();
 
 		if (categoryId != null) {
 			WizardCollectionElement categories = wizards;
-			StringTokenizer familyTokenizer = new StringTokenizer(categoryId, CATEGORY_SEPARATOR);
+			StringTokenizer familyTokenizer =
+				new StringTokenizer(categoryId, CATEGORY_SEPARATOR);
 			while (familyTokenizer.hasMoreElements()) {
-				categories = getChildWithID(categories, familyTokenizer.nextToken());
+				categories =
+					getChildWithID(categories, familyTokenizer.nextToken());
 				if (categories == null)
 					break;
 			}
@@ -54,16 +59,20 @@ public class NewWizard extends Wizard {
 				wizards = categories;
 		}
 
-		mainPage = new NewWizardSelectionPage(this.workbench, this.selection, wizards);
+		mainPage =
+			new NewWizardSelectionPage(this.workbench, this.selection, wizards);
 		addPage(mainPage);
 	}
 	/**
 	 * Returns the child collection element for the given id
 	 */
-	private WizardCollectionElement getChildWithID(WizardCollectionElement parent, String id) {
-		Object[] children = parent.getChildren();
+	private WizardCollectionElement getChildWithID(
+		WizardCollectionElement parent,
+		String id) {
+		Object[] children = parent.getChildren(null);
 		for (int i = 0; i < children.length; ++i) {
-			WizardCollectionElement currentChild = (WizardCollectionElement) children[i];
+			WizardCollectionElement currentChild =
+				(WizardCollectionElement) children[i];
 			if (currentChild.getId().equals(id))
 				return currentChild;
 		}
@@ -92,7 +101,9 @@ public class NewWizard extends Wizard {
 	/**
 	 *	Lazily create the wizards pages
 	 */
-	public void init(IWorkbench aWorkbench, IStructuredSelection currentSelection) {
+	public void init(
+		IWorkbench aWorkbench,
+		IStructuredSelection currentSelection) {
 		this.workbench = aWorkbench;
 		this.selection = currentSelection;
 

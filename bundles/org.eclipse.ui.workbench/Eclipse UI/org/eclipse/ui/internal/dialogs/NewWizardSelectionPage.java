@@ -16,6 +16,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.dialogs.NewWizardNewPage;
+import org.eclipse.ui.internal.dialogs.WizardCollectionElement;
+import org.eclipse.ui.internal.dialogs.WorkbenchWizardSelectionPage;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 /**

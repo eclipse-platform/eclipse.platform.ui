@@ -35,13 +35,13 @@ public int compare(Viewer viewer, Object e1, Object e2) {
 		String str1 = DialogUtil.removeAccel(((IViewDescriptor)e1).getLabel());
 		String str2 = DialogUtil.removeAccel(((IViewDescriptor)e2).getLabel());
 		return collator.compare(str1, str2);
-	} else if (e1 instanceof ICategory) {
+	} else if (e1 instanceof Category) {
 		if (e1 == viewReg.getMiscCategory())
 			return 1;
 		if (e2 == viewReg.getMiscCategory())
 			return -1;
-		String str1 = DialogUtil.removeAccel(((ICategory)e1).getLabel());
-		String str2 = DialogUtil.removeAccel(((ICategory)e2).getLabel());
+		String str1 = DialogUtil.removeAccel(((Category)e1).getLabel());
+		String str2 = DialogUtil.removeAccel(((Category)e2).getLabel());
 		return collator.compare(str1, str2);
 	}
 	return 0;

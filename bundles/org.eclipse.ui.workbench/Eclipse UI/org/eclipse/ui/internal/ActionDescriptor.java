@@ -11,10 +11,16 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
+
 /**
  * When 'action' tag is found in the registry, an object of this
  * class is created. It creates the appropriate action object
@@ -158,14 +164,21 @@ public ActionDescriptor(IConfigurationElement actionElement, int targetType, Obj
 		}
 	}
 	
+	IExtension extension = actionElement.getDeclaringExtension();
+	String extendingPluginId =
+		extension.getDeclaringPluginDescriptor().getUniqueIdentifier();
+	
 	if (icon != null) {
-		action.setImageDescriptor(WorkbenchImages.getImageDescriptorFromExtension(actionElement.getDeclaringExtension(), icon));
+		action.setImageDescriptor(
+			AbstractUIPlugin.imageDescriptorFromPlugin(extendingPluginId, icon));
 	}
 	if (hoverIcon != null) {
-		action.setHoverImageDescriptor(WorkbenchImages.getImageDescriptorFromExtension(actionElement.getDeclaringExtension(), hoverIcon));
+		action.setHoverImageDescriptor(
+			AbstractUIPlugin.imageDescriptorFromPlugin(extendingPluginId, hoverIcon));
 	}
 	if (disabledIcon != null) {
-		action.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptorFromExtension(actionElement.getDeclaringExtension(), disabledIcon));
+		action.setDisabledImageDescriptor(
+			AbstractUIPlugin.imageDescriptorFromPlugin(extendingPluginId, disabledIcon));
 	}
 	
 	if(accelerator != null)

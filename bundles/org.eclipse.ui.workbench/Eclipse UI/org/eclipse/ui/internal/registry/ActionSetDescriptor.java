@@ -11,16 +11,18 @@
 package org.eclipse.ui.internal.registry;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.model.WorkbenchAdapter;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * ActionSetDescriptor
  */
-public class ActionSetDescriptor extends WorkbenchAdapter
-	implements IActionSetDescriptor, IAdaptable
+public class ActionSetDescriptor
+	implements IActionSetDescriptor, IAdaptable, IWorkbenchAdapter
 {
+	private static final Object[] NO_CHILDREN = new Object[0];
+
 	private String id;
 	private String label;
 	private String category;
@@ -146,5 +148,17 @@ public boolean isInitiallyVisible() {
  */
 public void setCategory(String id) {
 	category = id;
+}
+/* (non-Javadoc)
+ * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
+ */
+public ImageDescriptor getImageDescriptor(Object object) {
+	return null;
+}
+/* (non-Javadoc)
+ * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
+ */
+public Object getParent(Object o) {
+	return null;
 }
 }

@@ -11,8 +11,10 @@
 package org.eclipse.ui;
 
 import org.eclipse.core.runtime.IAdaptable;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
+
 import org.eclipse.ui.activities.IActivationService;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IObjectActivityManager;
@@ -50,7 +52,7 @@ import org.eclipse.ui.roles.IRoleManager;
  * This interface is not intended to be implemented by clients.
  * </p>
  *
- * @see org.eclipse.ui.plugin.AbstractUIPlugin#getWorkbench()
+ * @see org.eclipse.ui.PlatformUI#getWorkbench
  */
 public interface IWorkbench {
 /**
@@ -117,14 +119,17 @@ public IPreferenceStore getPreferenceStore();
  */
 public ISharedImages getSharedImages();
 /**
- * Returns the marker help registry for the workbench.
+ * Returns the number of open main windows associated with this workbench.
+ * Note that wizards and dialogs are not included in this list since they
+ * are not considered main windows.
  * 
- * @since 2.0
- * @return the marker help registry
+ * @return the number of open windows
+ * @since 3.0
+ * @issue Use getWorkbenchWindows().length?
  */
-public IMarkerHelpRegistry getMarkerHelpRegistry();
+public int getWorkbenchWindowCount();
 /**
- * Returns a list of the open main windows associated with this workbench.
+* Returns a list of the open main windows associated with this workbench.
  * Note that wizards and dialogs are not included in this list since they
  * are not considered main windows.
  *
@@ -317,6 +322,16 @@ public IDecoratorManager getDecoratorManager();
  * @return boolean false if the operation was cancelled.
  */
 public boolean saveAllEditors(boolean confirm);
+
+/**
+ * Returns the element factory with the given id.
+
+ * @param factoryId the id of the element factory
+ * @return the elment factory, or <code>null</code> if none
+ * @see IElementFactory
+ * @since 3.0
+ */
+public IElementFactory getElementFactory(String factoryId);
 
 /**
  * Get the manager for a given id, optionally creating it if it 

@@ -11,10 +11,13 @@
 package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.core.runtime.CoreException;
+
+import org.eclipse.swt.widgets.Composite;
+
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardNode;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.swt.widgets.Composite;
+
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -24,8 +27,8 @@ import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.model.AdaptableList;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
+import org.eclipse.ui.model.AdaptableList;
 
 /**
  * The import wizard allows the user to choose which nested import wizard to run.
@@ -54,7 +57,7 @@ public class ImportWizard extends Wizard {
 			};
 		}
 	}
-
+	
 	/**
 	 * Creates the wizard's pages lazily.
 	 */

@@ -8,23 +8,25 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.*;
-
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.viewers.ISelection;
-
-import org.eclipse.ui.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -44,14 +46,31 @@ public class NavigationHistoryAction extends PageEventAction implements IWorkben
 	 */
 	public NavigationHistoryAction(IWorkbenchWindow window,boolean forward) {
 		super("",window); //$NON-NLS-1$
-		if(forward) {
+		ISharedImages sharedImages = window.getWorkbench().getSharedImages();
+		if (forward) {
 			setText(WorkbenchMessages.getString("NavigationHistoryAction.forward.text")); //$NON-NLS-1$
 			setToolTipText(WorkbenchMessages.getString("NavigationHistoryAction.forward.toolTip")); //$NON-NLS-1$
+			// @issue missing action id
 			WorkbenchHelp.setHelp(this, IHelpContextIds.NAVIGATION_HISTORY_FORWARD);
+			setImageDescriptor(
+				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD));
+			setHoverImageDescriptor(
+				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD_HOVER));
+			setDisabledImageDescriptor(
+				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD_DISABLED));
+			setActionDefinitionId("org.eclipse.ui.navigate.forwardHistory"); //$NON-NLS-1$
 		} else {
 			setText(WorkbenchMessages.getString("NavigationHistoryAction.backward.text")); //$NON-NLS-1$
 			setToolTipText(WorkbenchMessages.getString("NavigationHistoryAction.backward.toolTip")); //$NON-NLS-1$
+			// @issue missing action id
 			WorkbenchHelp.setHelp(this, IHelpContextIds.NAVIGATION_HISTORY_BACKWARD);
+			setImageDescriptor(
+				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_BACK));
+			setHoverImageDescriptor(
+				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_BACK_HOVER));
+			setDisabledImageDescriptor(
+				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_BACK_DISABLED));
+			setActionDefinitionId("org.eclipse.ui.navigate.backwardHistory"); //$NON-NLS-1$
 		}
 		// WorkbenchHelp.setHelp(this, IHelpContextIds.CLOSE_ALL_PAGES_ACTION);
 		setEnabled(false);
@@ -65,7 +84,15 @@ public class NavigationHistoryAction extends PageEventAction implements IWorkben
 		super.pageClosed(page);
 		setEnabled(false);
 	}
+
+	/* (non-Javadoc)
+	 * Method declared on ActionFactory.IWorkbenchAction.
+	 */
 	public void dispose() {
+		if (getWorkbenchWindow() == null) {
+			// already disposed
+			return;
+		}
 		if (historyMenu != null) {
 			for (int i=0; i<historyMenu.getItemCount(); i++) {
 				MenuItem menuItem = historyMenu.getItem(i);
@@ -74,10 +101,13 @@ public class NavigationHistoryAction extends PageEventAction implements IWorkben
 			historyMenu.dispose();
 			historyMenu = null;
 		}
+		super.dispose();
 	}
+
 	public Menu getMenu(Menu parent) {
 		return null;
 	}
+
 	public Menu getMenu(Control parent) {
 		dispose();
 		historyMenu = new Menu(parent);
@@ -137,34 +167,45 @@ public class NavigationHistoryAction extends PageEventAction implements IWorkben
 	
 	public void init(IWorkbenchWindow window){
 	}
+
 	/* (non-Javadoc)
 	 * Method declared on PageEventAction.
 	 */	
 	public void pageActivated(IWorkbenchPage page) {
 		super.pageActivated(page);
 		NavigationHistory nh = (NavigationHistory)page.getNavigationHistory();
-		if(forward)
+		if(forward) {
 			nh.setForwardAction(this);
-		else
+		} else {
 			nh.setBackwardAction(this);
+		}
 	}
+
 	/* (non-Javadoc)
 	 * Method declared on IAction.
 	 */
 	public void run() {
-		WorkbenchPage page = (WorkbenchPage)getActivePage();
+		if (getWorkbenchWindow() == null) {
+			// action has been disposed
+			return;
+		}
+		IWorkbenchPage page = getActivePage();
 		if (page != null) {
 			NavigationHistory nh = (NavigationHistory)page.getNavigationHistory();
-			if(forward)
+			if(forward) {
 				nh.forward();
-			else
+			} else {
 				nh.backward();
+			}
 		}
 	}
+
 	public void run(IAction action) {
 	}
+
 	public void selectionChanged(IAction action, ISelection selection) {
 	}
+
 	public void update() {
 		// Set the enabled state of the action and set the tool tip text.  The tool tip
 		// text is set to reflect the item that one will move back/forward to.

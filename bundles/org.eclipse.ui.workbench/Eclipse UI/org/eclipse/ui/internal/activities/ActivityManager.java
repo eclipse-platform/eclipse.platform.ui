@@ -25,6 +25,9 @@ import java.util.WeakHashMap;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.Platform;
+
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.DisposedException;
 import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.IActivityEvent;
 import org.eclipse.ui.activities.IActivityManager;
@@ -289,5 +292,13 @@ public final class ActivityManager implements IActivityManager {
 		}
 		
 		return activityEventsByActivityId;			
+	}
+	
+	public Set getActiveActivityIds() {
+		try {
+			return PlatformUI.getWorkbench().getActivationService().getActiveActivityIds();
+		} catch (DisposedException e) {
+			return new HashSet();
+		}
 	}
 }

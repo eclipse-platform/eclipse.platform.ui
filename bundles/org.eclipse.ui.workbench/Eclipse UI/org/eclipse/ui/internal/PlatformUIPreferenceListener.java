@@ -22,6 +22,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.fonts.FontDefinition;
 
 /**
@@ -51,7 +52,7 @@ public class PlatformUIPreferenceListener implements IPropertyChangeListener {
 		if (IWorkbenchPreferenceConstants
 			.DEFAULT_PERSPECTIVE_ID
 			.equals(propertyName)) {
-			IWorkbench workbench = WorkbenchPlugin.getDefault().getWorkbench();
+			IWorkbench workbench = PlatformUI.getWorkbench();
 			
 			workbench.getPerspectiveRegistry().setDefaultPerspective((String) event.getNewValue());
 		}

@@ -18,8 +18,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.model.AdaptableList;
+import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
+import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 
 /**
@@ -73,7 +77,9 @@ public void init(IWorkbench aWorkbench,IStructuredSelection currentSelection) {
 	this.selection = currentSelection;
 	
 	setWindowTitle(WorkbenchMessages.getString("ExportWizard.title")); //$NON-NLS-1$
-	setDefaultPageImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_WIZBAN_EXPORT_WIZ));
+	setDefaultPageImageDescriptor(
+		WorkbenchImages.getImageDescriptor(
+			IWorkbenchGraphicConstants.IMG_WIZBAN_EXPORT_WIZ));
 	setNeedsProgressMonitor(true);
 }
 /**

@@ -39,10 +39,13 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
+import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
+import org.eclipse.ui.internal.dialogs.WorkbenchWizardNode;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.model.WorkbenchAdapter;
+import org.eclipse.ui.internal.dialogs.DialogUtil;
 import org.eclipse.ui.model.IWorkbenchAdapter;
-import org.eclipse.ui.model.WorkbenchContentProvider;
+import org.eclipse.ui.model.BaseWorkbenchContentProvider;
+import org.eclipse.ui.model.WorkbenchAdapter;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
@@ -52,7 +55,6 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 class NewWizardNewPage
 	implements ISelectionChangedListener, IDoubleClickListener {
 	private WizardCollectionElement wizardCategories;
-	private IWorkbench workbench;
 	private NewWizardSelectionPage page;
 	private IDialogSettings settings;
 
@@ -78,7 +80,6 @@ class NewWizardNewPage
 		IWorkbench aWorkbench,
 		WizardCollectionElement wizardCategories) {
 		this.page = mainPage;
-		this.workbench = aWorkbench;
 		this.wizardCategories = wizardCategories;
 	}
 	public void activate() {
@@ -127,7 +128,7 @@ class NewWizardNewPage
 		}
 
 		categoryTreeViewer.getTree().setLayoutData(data);
-		categoryTreeViewer.setContentProvider(new WorkbenchContentProvider());
+		categoryTreeViewer.setContentProvider(new BaseWorkbenchContentProvider());
 		categoryTreeViewer.setLabelProvider(new WorkbenchLabelProvider());
 		categoryTreeViewer.setSorter(NewWizardCollectionSorter.INSTANCE);
 		categoryTreeViewer.addSelectionChangedListener(this);
@@ -229,7 +230,7 @@ class NewWizardNewPage
 	 */
 	protected IContentProvider getWizardProvider() {
 		//want to get the wizards of the collection element
-		return new WorkbenchContentProvider() {
+		return new BaseWorkbenchContentProvider() {
 			public Object[] getChildren(Object o) {
 				if (o instanceof WizardCollectionElement) {
 					return ((WizardCollectionElement) o).getWizards();
@@ -435,7 +436,7 @@ class NewWizardNewPage
 			//If the element has no wizard then it is an empty category
 			//and we should collapse
 			if (element.getWizards().length == 0) {
-				Object[] children = element.getChildren();
+				Object[] children = element.getChildren(null);
 				elements = new WizardCollectionElement[children.length];
 				System.arraycopy(children, 0, elements, 0, elements.length);
 			} else

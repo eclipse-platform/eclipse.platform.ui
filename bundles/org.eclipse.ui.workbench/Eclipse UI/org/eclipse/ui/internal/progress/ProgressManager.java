@@ -49,7 +49,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.Workbench;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.progress.IProgressManager;
 import org.eclipse.ui.progress.UIJob;
 
@@ -392,7 +391,7 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 	 */
 				public IStatus runInUIThread(IProgressMonitor monitor) {
 
-					IWorkbench workbench = WorkbenchPlugin.getDefault().getWorkbench();
+					IWorkbench workbench = PlatformUI.getWorkbench();
 
 					//Abort on shutdown
 					if (workbench instanceof Workbench && ((Workbench) workbench).isClosing())

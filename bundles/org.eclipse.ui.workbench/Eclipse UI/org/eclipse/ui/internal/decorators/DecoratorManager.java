@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.decorators;
 
+import java.lang.reflect.Method;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
@@ -17,7 +18,6 @@ import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.IContributorResourceAdapter;
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.internal.*;
 
@@ -241,23 +241,39 @@ public class DecoratorManager
 	 */
 	private Object getResourceAdapter(Object element) {
 
-		//Get any adaptions to IResource
+		//Get any adaptions to IResource (when resources are available)
 		if (element instanceof IAdaptable) {
 			IAdaptable adaptable = (IAdaptable) element;
-			Object resourceAdapter =
-				adaptable.getAdapter(IContributorResourceAdapter.class);
+			Class contributorResourceAdapterClass = ObjectContributorManager.getIContributorResourceAdapterClass();
+			if (contributorResourceAdapterClass == null) {
+				return null;
+			}
+			Object resourceAdapter = adaptable.getAdapter(contributorResourceAdapterClass);
 			if (resourceAdapter == null)
-				resourceAdapter =
-					DefaultContributorResourceAdapter.getDefault();
+				// reflective equivalent of
+				//    resourceAdapter = DefaultContributorResourceAdapter.getDefault();
+				try {
+					Class c = ObjectContributorManager.getDefaultContributorResourceAdapterClass();
+					Method m = c.getDeclaredMethod("getDefault", new Class[0]); //$NON-NLS-1$
+					resourceAdapter = m.invoke(null, new Object[0]);
+				} catch (Exception e) {
+					// shouldn't happen - but play it safe
+					return null;
+				}
 
-			Object adapted =
-				(
-					(
-						IContributorResourceAdapter) resourceAdapter)
-							.getAdaptedResource(
-					adaptable);
-			if (adapted != element)
+			Object adapted;
+			// reflective equivalent of
+			//    adapted = ((IContributorResourceAdapter) resourceAdapter).getAdaptedResource(adaptable);
+			try {
+				Method m = contributorResourceAdapterClass.getDeclaredMethod("getAdaptedResource", new Class[] {IAdaptable.class});  //$NON-NLS-1$
+				adapted = m.invoke(resourceAdapter, new Object[] {adaptable});
+			} catch (Exception e) {
+				// shouldn't happen - but play it safe
+				return null;
+			}
+			if (adapted != element) {
 				return adapted; //Avoid applying decorator twice
+			}
 		}
 		return null;
 	}

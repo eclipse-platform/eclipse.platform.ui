@@ -38,6 +38,7 @@ import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.window.Window;
 
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IObjectActivityManager;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -273,7 +274,7 @@ public class WorkbenchPreferenceDialog extends PreferenceDialog {
 	 */
 	protected void createTreeItemFor(Widget parent, IPreferenceNode node) {
         IObjectActivityManager prefManager =
-			WorkbenchPlugin.getDefault().getWorkbench()
+			PlatformUI.getWorkbench()
         		.getObjectActivityManager(
         			IWorkbenchConstants.PL_PREFERENCES, false);
         if (prefManager != null) {

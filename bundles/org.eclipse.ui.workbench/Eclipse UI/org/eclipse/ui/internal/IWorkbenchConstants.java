@@ -35,16 +35,8 @@ public interface IWorkbenchConstants {
 	public static final String PL_NEW ="newWizards"; //$NON-NLS-1$
 	public static final String PL_ELEMENT_FACTORY ="elementFactories"; //$NON-NLS-1$
 	public static final String PL_DROP_ACTIONS ="dropActions"; //$NON-NLS-1$
-	public static final String PL_MARKER_IMAGE_PROVIDER ="markerImageProviders"; //$NON-NLS-1$
-	public static final String PL_MARKER_HELP ="markerHelp"; //$NON-NLS-1$
-	public static final String PL_MARKER_RESOLUTION ="markerResolution"; //$NON-NLS-1$
-	public static final String PL_CAPABILITIES = "capabilities"; //$NON-NLS-1$
 	public static final String PL_WORKINGSETS = "workingSets"; //$NON-NLS-1$	
-	
-	/**
-	 * @deprecated Extension point no longer applicable with new project capability
-	 */
-	public static final String PL_PROJECT_NATURE_IMAGES ="projectNatureImages"; //$NON-NLS-1$
+	public static final String PL_STARTUP ="startup"; //$NON-NLS-1$
 		
 	/**
 	 * @deprecated
@@ -77,13 +69,8 @@ public interface IWorkbenchConstants {
 	// Identifier of workbench info properties page
 	public static final String WORKBENCH_PROPERTIES_PAGE_INFO = PlatformUI.PLUGIN_ID + ".propertypages.info.file"; //$NON-NLS-1$
 	
-	// Default layout.
-	public static final String DEFAULT_LAYOUT_ID = PlatformUI.PLUGIN_ID + ".resourcePerspective";       //$NON-NLS-1$
-
 	// Various editor.
-	public static final String DEFAULT_EDITOR_ID = PlatformUI.PLUGIN_ID + ".DefaultTextEditor"; //$NON-NLS-1$
 	public static final String OLE_EDITOR_ID = PlatformUI.PLUGIN_ID + ".OleEditor"; //$NON-NLS-1$
-	public static final String SYSTEM_EDITOR_ID = PlatformUI.PLUGIN_ID + ".SystemEditor"; //$NON-NLS-1$
 
 	// Default view category.
 	public static final String DEFAULT_CATEGORY_ID = PlatformUI.PLUGIN_ID;
@@ -145,8 +132,6 @@ public interface IWorkbenchConstants {
 	public static final String TAG_IMAGE = "image"; //$NON-NLS-1$
 	public static final String TAG_LAUNCHER = "launcher"; //$NON-NLS-1$
 	public static final String TAG_PLUGING = "plugin"; //$NON-NLS-1$
-	public static final String TAG_INTERNAL = "internal"; //$NON-NLS-1$
-	public static final String TAG_OPEN_IN_PLACE = "open_in_place"; //$NON-NLS-1$
 	public static final String TAG_PROGRAM_NAME = "program_name"; //$NON-NLS-1$
 	public static final String TAG_FAST_VIEWS = "fastViews"; //$NON-NLS-1$
 	public static final String TAG_VIEW_STATE = "viewState"; //$NON-NLS-1$
@@ -174,6 +159,7 @@ public interface IWorkbenchConstants {
 	public static final String TAG_REMOVED = "removed";//$NON-NLS-1$
 	public static final String TAG_HISTORY_LABEL = "historyLabel";//$NON-NLS-1$
 	public static final String TAG_LOCKED = "locked";//$NON-NLS-1$
+	public static final String TAG_OPEN_MODE = "openMode"; //$NON-NLS-1$
 	
 	//Progress indicator
 	public static final String SHOW_PROGRESS_INDICATOR = "showProgressIndicator";	 //$NON-NLS-1$

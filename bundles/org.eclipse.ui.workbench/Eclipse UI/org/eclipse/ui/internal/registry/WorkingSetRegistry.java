@@ -21,6 +21,7 @@ import org.eclipse.ui.dialogs.IWorkingSetPage;
  */
 public class WorkingSetRegistry {
 	// used in Workbench plugin.xml for default workingSet extension
+	// @issue this is an IDE specific working set page!
 	private static final String DEFAULT_PAGE_ID = "org.eclipse.ui.resourceWorkingSetPage"; //$NON-NLS-1$
 	
 	private HashMap workingSetDescriptors = new HashMap();
@@ -41,6 +42,7 @@ public class WorkingSetRegistry {
 	 * @return the default working set page.
 	 */
 	public IWorkingSetPage getDefaultWorkingSetPage() {
+		// @issue this will return the IDE resource working set page... not good for generic workbench
 		WorkingSetDescriptor descriptor = (WorkingSetDescriptor) workingSetDescriptors.get(DEFAULT_PAGE_ID);
 
 		if (descriptor != null) {
