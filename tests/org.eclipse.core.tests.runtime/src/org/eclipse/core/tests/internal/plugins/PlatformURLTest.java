@@ -1,21 +1,18 @@
 package org.eclipse.core.tests.internal.plugins;
 
-import junit.framework.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.boot.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.*;
-import org.eclipse.core.internal.plugins.PluginClassLoader;
-import java.io.*;
 import java.util.*;
+
 import org.eclipse.core.internal.boot.PlatformURLConnection;
 import org.eclipse.core.internal.boot.PlatformURLHandler;
-import org.eclipse.core.tests.harness.*;
-import org.eclipse.core.internal.plugins.InternalFactory;
 import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.internal.runtime.Policy;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.tests.harness.WorkspaceSessionTest;
 /**
  */
-public class PlatformURLTest extends EclipseWorkspaceTest {
+public class PlatformURLTest extends WorkspaceSessionTest {
 public PlatformURLTest() {
 	super(null);
 }
@@ -54,7 +51,7 @@ public URL createURL(String id, URL base, String spec, boolean success) {
 	return url;
 
 }
-public void platformURLLoaderTest() {
+public void testPlatformURLLoader() {
 
 	IPluginRegistry registry = InternalPlatform.getPluginRegistry();
 
@@ -92,7 +89,7 @@ public void platformURLLoaderTest() {
 	c = null;
 
 }
-public void platformURLResolveTest() {
+public void testPlatformURLResolve() {
 
 	IPluginRegistry registry = InternalPlatform.getPluginRegistry();
 
@@ -236,7 +233,7 @@ public void platformURLResolveTest() {
 	assertTrue("4.3.1", localURL.getProtocol().equals(PlatformURLHandler.JAR));
 
 }
-public void platformURLTest() {
+public void testPlatformURL() {
 
 	IPluginRegistry registry = InternalPlatform.getPluginRegistry();
 
@@ -393,7 +390,7 @@ public String getResourceStringFromURL(String id, URL url, String key, boolean s
 	return result;
 
 }
-public void getResourceStringTest() {
+public void testGetResourceString() {
 
 	IPluginRegistry registry = InternalPlatform.getPluginRegistry();
 
@@ -408,7 +405,7 @@ public void getResourceStringTest() {
 	assertNotNull("0.3", pluginD);
 
 	// check locale (test files setup for en_US)
-	assertTrue(Locale.getDefault().toString().equals("en_US"));
+	assertTrue(Locale.getDefault().toString().equals("en_CA"));
 
 	// resource strings - no lookup
 	String s1 = "Hello World";
@@ -424,7 +421,7 @@ public void getResourceStringTest() {
 
 	assertTrue("3.0", pluginA.getResourceString(key).equals(s3));
 	assertTrue("3.1", pluginB.getResourceString(key).equals(s3 + " en"));
-	assertTrue("3.2", pluginC.getResourceString(key).equals(s3 + " en_US"));
+	assertTrue("3.2", pluginC.getResourceString(key).equals(s3 + " en_CA"));
 	assertTrue("3.3", pluginD.getResourceString(key).equals(key));
 
 	assertTrue("4.0", pluginA.getResourceString(bad).equals(bad));
@@ -439,7 +436,7 @@ public void getResourceStringTest() {
 
 	assertTrue("6.0", pluginA.getResourceString(key + " " + s1).equals(s3));
 	assertTrue("6.1", pluginB.getResourceString(key + " " + s1).equals(s3 + " en"));
-	assertTrue("6.2", pluginC.getResourceString(key + " " + s1).equals(s3 + " en_US"));
+	assertTrue("6.2", pluginC.getResourceString(key + " " + s1).equals(s3 + " en_CA"));
 	assertTrue("6.3", pluginD.getResourceString(key + " " + s1).equals(s1));
 
 	// resource strings - specified bundle
@@ -480,13 +477,5 @@ public void getResourceStringTest() {
 	assertTrue("10.5", pluginD.getResourceString(bad + " " + s1, bundle).equals(s1));
 	assertTrue("10.6", pluginD.getResourceString(key + " " + s1, bundle).equals("resource.properties " + s3));
 
-}
-public static Test suite() {
-	TestSuite suite = new TestSuite();
-	suite.addTest(new PlatformURLTest("getResourceStringTest"));
-	suite.addTest(new PlatformURLTest("platformURLTest"));
-	suite.addTest(new PlatformURLTest("platformURLResolveTest"));
-	suite.addTest(new PlatformURLTest("platformURLLoaderTest"));
-	return suite;
 }
 }

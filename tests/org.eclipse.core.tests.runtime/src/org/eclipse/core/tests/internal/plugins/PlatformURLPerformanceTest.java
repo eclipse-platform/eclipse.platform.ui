@@ -1,17 +1,17 @@
 package org.eclipse.core.tests.internal.plugins;
 
 import java.io.InputStream;
-import java.net.*;
-import junit.framework.*;
-import org.eclipse.core.internal.plugins.InternalFactory;
+import java.net.URL;
+import java.net.URLClassLoader;
+
 import org.eclipse.core.internal.plugins.PluginDescriptor;
 import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.internal.runtime.Policy;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IPluginRegistry;
+import org.eclipse.core.tests.harness.WorkspaceSessionTest;
 /**
  */
-public class PlatformURLPerformanceTest extends EclipseWorkspaceTest {
+public class PlatformURLPerformanceTest extends WorkspaceSessionTest {
 public PlatformURLPerformanceTest() {
 	super(null);
 }
@@ -48,7 +48,7 @@ public long doLoad(String urls, String clazz, int count) {
 	
 	return time;
 }
-public void platformURLCompareTest() {
+public void testPlatformURLCompareTest() {
 
 	// -cp file:some.jar
 	// -cp jar:file:some.jar!/
@@ -99,7 +99,7 @@ public void platformURLCompareTest() {
 
 	doLoad(pathFile, clazz, count);
 }
-public void platformURLCompareTestLocal() {
+public void testPlatformURLCompareTestLocal() {
 
 	// -cp file:some.jar
 	// -cp jar:file:some.jar!/
@@ -148,7 +148,11 @@ public void platformURLCompareTestLocal() {
 
 	doLoad(pathFile, clazz, count);
 }
-public void platformURLCompareTestServer() {
+public void xxxtestPlatformURLCompareTestServer() {
+	
+	// Ignore this test for now as it relies on a server which
+	// no longer exists.  Need to find some universal way of
+	// testing this.
 
 	// -cp jar:http:some.jar!/
 	// -cp platform:/test/some.jar!/
@@ -214,11 +218,5 @@ public void platformURLCompareTestServer() {
 	doLoad(pathEclipse, clazz, count);
 
 	doLoad(pathJar, clazz, count);
-}
-public static Test suite() {
-	TestSuite suite = new TestSuite();
-	suite.addTest(new PlatformURLPerformanceTest("platformURLCompareTestLocal"));
-//	suite.addTest(new PlatformURLPerformanceTest("platformURLCompareTestServer"));
-	return suite;
 }
 }

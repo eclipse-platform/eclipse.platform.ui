@@ -1,24 +1,19 @@
 package org.eclipse.core.tests.internal.plugins;
 
-import junit.framework.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.boot.*;
-import java.net.*;
-import org.eclipse.core.internal.plugins.PluginClassLoader;
-import org.eclipse.core.tests.harness.*;
-import org.eclipse.core.internal.plugins.InternalFactory;
+
 import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.internal.runtime.Policy;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.tests.harness.WorkspaceSessionTest;
 /**
  */
-public class ActivationTest_Base extends EclipseWorkspaceTest {
+public class ActivationTest_Base extends WorkspaceSessionTest {
 public ActivationTest_Base() {
 	super(null);
 }
 public ActivationTest_Base(String name) {
 	super(name);
 }
-public void baseTest() {
+public void testBase() {
 
 	IPluginRegistry registry = InternalPlatform.getPluginRegistry();
 
@@ -69,10 +64,5 @@ public void baseTest() {
 	assertTrue("4.2", pdC.isPluginActivated());
 	assertTrue("4.3", p.getClass().getName().equals("org.eclipse.core.tests.internal.plugin.c.PluginClass"));
 
-}
-public static Test suite() {
-	TestSuite suite = new TestSuite();
-	suite.addTest(new ActivationTest_Base("baseTest"));
-	return suite;
 }
 }

@@ -1,24 +1,24 @@
 package org.eclipse.core.tests.internal.plugins;
 
-import junit.framework.*;
-import org.eclipse.core.runtime.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Enumeration;
+import java.util.Vector;
+
 import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.tests.harness.*;
-import java.net.*;
-import java.io.*;
-import java.util.*;
-import org.eclipse.core.internal.plugins.InternalFactory;
-import org.eclipse.core.internal.runtime.Policy;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.tests.harness.WorkspaceSessionTest;
 /**
  */
-public class LoaderTest extends EclipseWorkspaceTest {
+public class LoaderTest extends WorkspaceSessionTest {
 public LoaderTest() {
 	super(null);
 }
 public LoaderTest(String name) {
 	super(name);
 }
-public void baseTest() {
+public void testBase() {
 
 	IPluginRegistry registry = InternalPlatform.getPluginRegistry();
 
@@ -353,14 +353,14 @@ public Class load(ClassLoader loader, String name, boolean success, String msg) 
 	}
 	return result;
 }
-public static Test suite() {
-	TestSuite suite = new TestSuite();
-	suite.addTest(new LoaderTest("baseTest"));
-//	suite.addTest(new LoaderTest("xmlTest"));
-//	suite.addTest(new LoaderTest("getResourceTest"));
-//	suite.addTest(new LoaderTest("getResourcesTest"));
-	return suite;
-}
+//public static Test suite() {
+//	TestSuite suite = new TestSuite();
+//	suite.addTest(new LoaderTest("baseTest"));
+////	suite.addTest(new LoaderTest("xmlTest"));
+////	suite.addTest(new LoaderTest("getResourceTest"));
+////	suite.addTest(new LoaderTest("getResourcesTest"));
+//	return suite;
+//}
 public void xmlTest() {
 
 	// xml class

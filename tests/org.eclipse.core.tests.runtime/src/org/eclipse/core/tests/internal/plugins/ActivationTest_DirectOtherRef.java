@@ -1,24 +1,21 @@
 package org.eclipse.core.tests.internal.plugins;
 
-import junit.framework.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.boot.*;
-import java.net.*;
+
+import org.eclipse.core.boot.IPlatformRunnable;
 import org.eclipse.core.internal.plugins.PluginClassLoader;
-import org.eclipse.core.tests.harness.*;
-import org.eclipse.core.internal.plugins.InternalFactory;
 import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.internal.runtime.Policy;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.tests.harness.WorkspaceSessionTest;
 /**
  */
-public class ActivationTest_DirectOtherRef extends EclipseWorkspaceTest {
+public class ActivationTest_DirectOtherRef extends WorkspaceSessionTest {
 public ActivationTest_DirectOtherRef() {
 	super(null);
 }
 public ActivationTest_DirectOtherRef(String name) {
 	super(name);
 }
-public void extensionDirectReferenceToOtherClassTest() {
+public void testExtensionDirectReferenceToOtherClassTest() {
 
 	IPluginRegistry registry = InternalPlatform.getPluginRegistry();
 
@@ -81,10 +78,5 @@ public void extensionDirectReferenceToOtherClassTest() {
 	assertTrue("7.1", !pluginB.isPluginActivated());
 	assertTrue("7.2", pluginC.isPluginActivated());
 
-}
-public static Test suite() {
-	TestSuite suite = new TestSuite();
-	suite.addTest(new ActivationTest_DirectOtherRef("extensionDirectReferenceToOtherClassTest"));
-	return suite;
 }
 }

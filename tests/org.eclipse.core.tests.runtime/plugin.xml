@@ -6,6 +6,7 @@
   provider-name="Object Technology International, Inc.">
 
   <requires>
+    <import plugin="org.eclipse.core.runtime"/>
     <import plugin="org.eclipse.core.tests.harness"/>
     <import plugin="org.junit"/>
     <import plugin="org.apache.xerces"/>
@@ -51,25 +52,34 @@
    <test id="internal.core.plugins.BasicXMLTest">
       <run class="org.eclipse.core.tests.internal.plugins.BasicXMLTest"/>
     </test>
-   <test id="internal.core.plugins.ActivationTest_Base">
+   <test id="org.eclipse.core.tests.internal.plugins.ActivationTest_Base">
       <run class="org.eclipse.core.tests.internal.plugins.ActivationTest_Base"/>
     </test>
-   <test id="internal.core.plugins.ActivationTest_DirectOtherRef">
+   <test id="org.eclipse.core.tests.internal.plugins.ActivationTest_DirectOtherRef">
       <run class="org.eclipse.core.tests.internal.plugins.ActivationTest_DirectOtherRef"/>
     </test>
-   <test id="internal.plugins.PlatformURLPerformanceTest">
+   <test id="org.eclipse.core.tests.internal.plugins.ActivationTest_DirectPluginRef">
+      <run class="org.eclipse.core.tests.internal.plugins.ActivationTest_DirectPluginRef"/>
+    </test>
+   <test id="org.eclipse.core.tests.internal.plugins.ActivationTest_IndirectRef">
+      <run class="org.eclipse.core.tests.internal.plugins.ActivationTest_IndirectRef"/>
+    </test>
+   <test id="org.eclipse.core.tests.internal.plugins.ActivationTest_NoRef">
+      <run class="org.eclipse.core.tests.internal.plugins.ActivationTest_NoRef"/>
+    </test>
+   <test id="org.eclipse.core.tests.internal.plugins.PlatformURLPerformanceTest">
       <run class="org.eclipse.core.tests.internal.plugins.PlatformURLPerformanceTest"/>
     </test>
-   <test id="internal.plugins.PlatformURLPerformanceTestConnection">
+   <test id="org.eclipse.core.tests.internal.plugins.PlatformURLPerformanceTestConnection">
       <run class="org.eclipse.core.tests.internal.plugins.PlatformURLPerformanceTestConnection"/>
     </test>
-   <test id="internal.plugins.PlatformURLTest">
+   <test id="org.eclipse.core.tests.internal.plugins.PlatformURLTest">
       <run class="org.eclipse.core.tests.internal.plugins.PlatformURLTest"/>
     </test>
-   <test id="internal.plugins.LoaderTest">
+   <test id="org.eclipse.core.tests.internal.plugins.LoaderTest">
       <run class="org.eclipse.core.tests.internal.plugins.LoaderTest"/>
     </test>
-   <test id="internal.plugins.GetPluginPathTest">
+   <test id="org.eclipse.core.tests.internal.plugins.GetPluginPathTest">
       <run class="org.eclipse.core.tests.internal.plugins.GetPluginPathTest"/>
     </test>
 
@@ -105,21 +115,6 @@
       <run class="org.eclipse.core.tests.plugintests.PluginTests"/>
     </test>
 
-   <test id="internal.plugins.ActivationTest_Base">
-      <run class="org.eclipse.core.tests.internal.plugins.ActivationTest_Base"/>
-    </test>
-   <test id="internal.plugins.ActivationTest_DirectOtherRef">
-      <run class="org.eclipse.core.tests.internal.plugins.ActivationTest_DirectOtherRef"/>
-    </test>
-   <test id="internal.plugins.ActivationTest_DirectPluginRef">
-      <run class="org.eclipse.core.tests.internal.plugins.ActivationTest_DirectPluginRef"/>
-    </test>
-   <test id="internal.plugins.ActivationTest_IndirectRef">
-      <run class="org.eclipse.core.tests.internal.plugins.ActivationTest_IndirectRef"/>
-    </test>
-   <test id="internal.plugins.ActivationTest_NoRef">
-      <run class="org.eclipse.core.tests.internal.plugins.ActivationTest_NoRef"/>
-    </test>
    <test id="internal.plugins.PluginResolveTest_1">
       <run class="org.eclipse.core.tests.internal.plugins.PluginResolveTest_1"/>
     </test>

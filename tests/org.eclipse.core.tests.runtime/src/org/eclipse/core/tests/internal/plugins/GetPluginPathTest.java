@@ -1,14 +1,12 @@
 package org.eclipse.core.tests.internal.plugins;
 
 import java.io.*;
-import junit.framework.*;
 import org.eclipse.core.internal.plugins.PluginDescriptor;
 import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.internal.runtime.PlatformMetaArea;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.tests.harness.WorkspaceSessionTest;
 
-public class GetPluginPathTest extends EclipseWorkspaceTest {
+public class GetPluginPathTest extends WorkspaceSessionTest {
 	
 public GetPluginPathTest() {
 	super(null);
@@ -16,7 +14,7 @@ public GetPluginPathTest() {
 public GetPluginPathTest(String name) {
 	super(name);
 }
-public void getRelevantStrings() {
+public void testGetRelevantStrings() {
 	String basePath = null;
 	String pluginPath = null;
 	String pluginName = "org.eclipse.core.tests.runtime";
@@ -50,11 +48,6 @@ public void getRelevantStrings() {
 		} catch (IOException ioe) {
 		}
 	}
-}
-public static Test suite() {
-	TestSuite suite = new TestSuite();
-	suite.addTest(new GetPluginPathTest("getRelevantStrings"));
-	return suite;
 }
 }
 
