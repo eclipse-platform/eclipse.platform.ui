@@ -62,11 +62,13 @@ public class EditorHistory {
 			remove(newItem.getInput());
 		}
 
-		// Add the new item.
-		if (fifoList.size() >= MAX_SIZE) {
-			fifoList.remove(MAX_SIZE);
+		// Remove the oldest one
+		if (fifoList.size() == MAX_SIZE) {
+			fifoList.remove(MAX_SIZE - 1);
 		}
-		fifoList.add(index, newItem);
+		
+		// Add the new item.
+		fifoList.add(index < MAX_SIZE ? index : MAX_SIZE - 1, newItem);
 	}
 	
 	/**
