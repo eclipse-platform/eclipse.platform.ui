@@ -19,10 +19,6 @@ import org.eclipse.swt.widgets.Display;
  * Re-runs or re-debugs the last launch.
  */
 public class RelaunchLastAction extends Action implements IWorkbenchWindowActionDelegate {
-
-	public RelaunchLastAction() {
-		super("&Re-Run/Debug@F10");
-	}
 	
 	/**
 	 * @see IAction
@@ -64,6 +60,5 @@ public class RelaunchLastAction extends Action implements IWorkbenchWindowAction
 	 */
 	public void selectionChanged(IAction action, ISelection selection){
 	}
-
 }
 

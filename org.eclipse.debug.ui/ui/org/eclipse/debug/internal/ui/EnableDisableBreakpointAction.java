@@ -26,6 +26,7 @@ public class EnableDisableBreakpointAction extends SelectionProviderAction imple
 	private final static String ENABLE= PREFIX + TEXT + ".enable";
 	private final static String DISABLE= PREFIX + TEXT + ".disable";
 	private final static String ERROR= PREFIX + "error.";
+	private final static String STATUS= PREFIX + "status.message";
 	/**
 	 * Creates the action to enable/disable breakpoints
 	 */
@@ -53,7 +54,7 @@ public class EnableDisableBreakpointAction extends SelectionProviderAction imple
 		}
 
 		IBreakpointManager manager= getBreakpointManager();
-		MultiStatus ms= new MultiStatus(DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(), IDebugStatusConstants.REQUEST_FAILED, "Enable/Disable breakpoint(s) failed", null);
+		MultiStatus ms= new MultiStatus(DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(), IDebugStatusConstants.REQUEST_FAILED, DebugUIUtils.getResourceString(STATUS), null);
 		while (enum.hasNext()) {
 			IMarker breakpoint= (IMarker) enum.next();
 			boolean enabled= manager.isEnabled(breakpoint);

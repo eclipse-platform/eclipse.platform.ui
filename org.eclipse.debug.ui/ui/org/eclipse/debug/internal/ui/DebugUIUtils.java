@@ -64,6 +64,8 @@ public class DebugUIUtils {
 	 */
 	public static void logError(Exception e) {
 		if (DebugUIPlugin.getDefault().isDebugging()) {
+			// this message is intentionally not internationalized, as an exception may
+			// be due to the resource bundle itself
 			System.out.println("Internal error logged from UI: ");
 			e.printStackTrace();
 			System.out.println();
