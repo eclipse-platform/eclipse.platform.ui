@@ -79,6 +79,18 @@ IMG {
  
 <script language="JavaScript">
 
+
+<%
+for (int i=0; i<views.length; i++) {
+%>
+	var <%=views[i].getName()%> = new Image();
+	<%=views[i].getName()%>.src = "<%=views[i].getOnImage()%>";
+	var e_<%=views[i].getName()%> = new Image();
+	e_<%=views[i].getName()%>.src = "<%=views[i].getImage()%>";
+<%
+}
+%>
+
 var lastTab = "";
 /* 
  * Switch tabs.
@@ -88,6 +100,11 @@ function showTab(tab)
 	if (tab == lastTab) 
 		return;
 		
+	//reset the image
+	var oldimg = "e_"+lastTab;
+	if (document.getElementById("img"+lastTab))
+		document.getElementById("img"+lastTab).src = eval(oldimg).src;
+	
 	lastTab = tab;
 	
  	// show the appropriate pressed tab
@@ -114,6 +131,8 @@ function showTab(tab)
 					buttons[i+1].className = "separator";
 		}
  	 }
+ 	 // set the image
+	document.getElementById("img"+tab).src = eval(tab).src;
 }
 </script>
 
@@ -148,7 +167,8 @@ function showTab(tab)
 	         onmouseout="window.status='';">
 	         <img alt="<%=title%>" 
 	              title="<%=title%>" 
-	              src="<%=views[i].getImageURL()%>"
+	              src="<%=views[i].getImage()%>"
+	              id="img<%=views[i].getName()%>"
 	              height="16"
 	         >
 	     </a>

@@ -23,7 +23,20 @@ public class View {
 		return url;
 	}
 	
-	public String getImageURL() {
+	/**
+	 * Returns the enabled gray image
+	 * @return String
+	 */
+	public String getImage() {
+		int i = imageURL.lastIndexOf('/');
+		return imageURL.substring(0, i) + "/e_"+ imageURL.substring(i+1);
+	}
+	
+	/**
+	 * Returns the image when selected
+	 * @return String
+	 */
+	public String getOnImage() {
 		return imageURL;
 	}
 }
