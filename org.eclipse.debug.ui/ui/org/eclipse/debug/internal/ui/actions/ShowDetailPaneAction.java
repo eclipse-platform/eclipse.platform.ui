@@ -1,9 +1,11 @@
 package org.eclipse.debug.internal.ui.actions;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2003 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+*********************************************************************/
 
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -40,7 +42,7 @@ public class ShowDetailPaneAction extends Action {
 	 * Ask the VariablesView to toggle its detail pane and reset this action's
 	 * tooltip as appropriate.
 	 */
-	private void toggleDetailPane(final boolean on) {
+	private void toggleDetailPane(boolean on) {
 		getVariablesView().toggleDetailPane(on);
 	}
 
