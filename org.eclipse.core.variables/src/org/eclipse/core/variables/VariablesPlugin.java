@@ -29,6 +29,11 @@ public class VariablesPlugin extends Plugin {
 	public static final int INTERNAL_ERROR = 120;		
 	
 	/**
+	 * Status code indicating a variable reference cycle error.
+	 */
+	public static final int REFERENCE_CYCLE_ERROR = 130;
+	
+	/**
 	 * The single instance of this plug-in runtime class.
 	 */
 	private static VariablesPlugin plugin;

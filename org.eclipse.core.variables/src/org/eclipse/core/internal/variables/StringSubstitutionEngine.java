@@ -11,6 +11,10 @@
 package org.eclipse.core.internal.variables;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Stack;
 
 import org.eclipse.core.runtime.CoreException;
@@ -65,7 +69,7 @@ public class StringSubstitutionEngine {
 		public String getText() {
 			return fText.toString();
 		}
-		
+	
 	}
 	
 	/**
@@ -76,28 +80,54 @@ public class StringSubstitutionEngine {
 	 * @param manager registry of variables
 	 * @return the resulting string with all variables recursively
 	 *  substituted
-	 * @exception CoreException if unable to resolve a referenced variable
+	 * @exception CoreException if unable to resolve a referenced variable or if a cycle exists
+	 *  in referenced variables
 	 */
 	public String performStringSubstitution(String expression, boolean reportUndefinedVariables, IStringVariableManager manager) throws CoreException {
 		substitute(expression, reportUndefinedVariables, manager);
+		List resolvedVariableSets = new ArrayList();
 		while (fSubs) {
-			substitute(fResult.toString(), reportUndefinedVariables, manager);
+			HashSet resolved = substitute(fResult.toString(), reportUndefinedVariables, manager);			
+			
+			for(int i=resolvedVariableSets.size()-1; i>=0; i--) {
+				
+				HashSet prevSet = (HashSet)resolvedVariableSets.get(i);
+
+				if (prevSet.equals(resolved)) {
+					HashSet conflictingSet = new HashSet();
+					for (; i<resolvedVariableSets.size(); i++)
+						conflictingSet.addAll((HashSet)resolvedVariableSets.get(i));
+					
+					StringBuffer problemVariableList = new StringBuffer();
+					for (Iterator it=conflictingSet.iterator(); it.hasNext(); ) {
+						problemVariableList.append(it.next().toString());
+						problemVariableList.append(", "); //$NON-NLS-1$
+					}
+					problemVariableList.setLength(problemVariableList.length()-2); //truncate the last ", "
+					throw new CoreException(new Status(IStatus.ERROR, VariablesPlugin.getUniqueIdentifier(), VariablesPlugin.REFERENCE_CYCLE_ERROR, MessageFormat.format(VariablesMessages.getString("StringSubstitutionEngine.4"), new String[]{problemVariableList.toString()}), null)); //$NON-NLS-1$
+				}				
+			}		
+			
+			resolvedVariableSets.add(resolved);			
 		}
 		return fResult.toString();
 	}
-
+	
 	/**
-	 * Makes a substitution pass of the given expression and returns
-	 * whether any substitutions were made.
+	 * Makes a substitution pass of the given expression returns a Set of the variables that were resolved in this
+	 *  pass
 	 *  
 	 * @param expression source expression
 	 * @param reportUndefinedVariables whether to report undefined variables as an error
 	 * @exception CoreException if unable to resolve a variable
 	 */
-	private void substitute(String expression, boolean reportUndefinedVariables, IStringVariableManager manager) throws CoreException {
+	private HashSet substitute(String expression, boolean reportUndefinedVariables, IStringVariableManager manager) throws CoreException {
 		fResult = new StringBuffer(expression.length());
 		fStack = new Stack();
 		fSubs = false;
+		
+		HashSet resolvedVariables = new HashSet();
+
 		int pos = 0;
 		int state = SCAN_FOR_START;
 		while (pos < expression.length()) {
@@ -112,6 +142,7 @@ public class StringSubstitutionEngine {
 						}
 						pos = start + 2;
 						state = SCAN_FOR_END;
+
 						fStack.push(new VariableReference());						
 					} else {
 						// done - no more variables
@@ -137,11 +168,14 @@ public class StringSubstitutionEngine {
 								tos.append(expression.substring(pos, start));
 							}
 							pos = start + 2;
-							fStack.push(new VariableReference());
+							fStack.push(new VariableReference());	
 						} else {
 							// end of variable reference
 							VariableReference tos = (VariableReference)fStack.pop();
-							tos.append(expression.substring(pos, end));
+							String substring = expression.substring(pos, end);							
+							tos.append(substring);
+							resolvedVariables.add(substring);
+							
 							pos = end + 1;
 							String value = resolve(tos, reportUndefinedVariables, manager);
 							if (value == null) {
@@ -173,6 +207,9 @@ public class StringSubstitutionEngine {
 				var.append(tos.getText());
 			}
 		}
+		
+
+		return resolvedVariables;
 	}
 
 	/**
