@@ -694,7 +694,10 @@ public class NewConfigurationView
 			}
 		};
 		try {
-			getViewSite().getWorkbenchWindow().run(true, false, op);
+			if (getViewSite().getWorkbenchWindow().getShell().isVisible())
+				getViewSite().getWorkbenchWindow().run(true, false, op);
+			else
+				op.run(new NullProgressMonitor());
 		} catch (InterruptedException e) {
 		} catch (InvocationTargetException e) {
 		} finally {

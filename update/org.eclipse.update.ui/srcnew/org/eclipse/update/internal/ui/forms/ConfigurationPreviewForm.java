@@ -55,11 +55,13 @@ public class ConfigurationPreviewForm extends WebForm implements IUpdateModelCha
 
 	public void initialize(Object model) {
 		super.initialize(model);
+		/*
 		if (isWhiteBackground()) {
 			setHeadingImage(UpdateUIImages.get(UpdateUIImages.IMG_FORM_BANNER));
 			setHeadingUnderlineImage(
 				UpdateUIImages.get(UpdateUIImages.IMG_FORM_UNDERLINE));
 		}
+		*/
 		refreshSize();
 	}
 	private boolean isWhiteBackground() {
