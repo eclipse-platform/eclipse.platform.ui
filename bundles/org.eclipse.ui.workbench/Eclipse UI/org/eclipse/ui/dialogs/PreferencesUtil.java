@@ -37,8 +37,8 @@ public final class PreferencesUtil {
 	 *            The identifier of the preference page to open; may be
 	 *            <code>null</code>. If it is <code>null</code>, then the
 	 *            preference page is not selected or modified in any way.
-	 * @param filteredIds
-	 *            The ids of the other pages to be highlighted using the same
+	 * @param displayedIds
+	 *            The ids of the other pages to be displayed using the same
 	 *            filtering criterea as search. If this is <code>null</code>,
 	 *            then the all preference pages are shown.
 	 * @param data
@@ -50,12 +50,12 @@ public final class PreferencesUtil {
 	 * @since 3.1
 	 */
 	public static final PreferenceDialog createPreferenceDialogOn(
-			String preferencePageId, String[] filteredIds, Object data) {
+			String preferencePageId, String[] displayedIds, Object data) {
 		WorkbenchPreferenceDialog dialog = WorkbenchPreferenceDialog
 				.createDialogOn(preferencePageId);
 		dialog.setPageData(data);
-		if (filteredIds != null)
-			dialog.setSearchResults(filteredIds);
+		if (displayedIds != null)
+			dialog.setSearchResults(displayedIds);
 
 		if (data != null) {
 			IPreferencePage page = dialog.getCurrentPage();
