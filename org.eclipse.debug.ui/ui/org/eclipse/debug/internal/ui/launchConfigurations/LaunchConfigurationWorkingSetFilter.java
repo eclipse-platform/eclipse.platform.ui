@@ -9,7 +9,6 @@ http://www.eclipse.org/legal/cpl-v10.html
  
 import java.util.HashSet;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.ILaunchConfiguration;
