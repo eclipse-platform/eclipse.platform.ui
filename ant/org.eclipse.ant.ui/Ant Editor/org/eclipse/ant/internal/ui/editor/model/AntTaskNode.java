@@ -97,7 +97,10 @@ public class AntTaskNode extends AntElementNode {
 			getTask().maybeConfigure();
 			nodeSpecificConfigure();
 		} catch (BuildException be) {
-			getAntModel().handleBuildException(be, this);
+			//TODO Currently we hide this exception as a user may have defined a property nested element
+			//that has a different syntax than the built in property task
+			//see bug 52040. All back to having a classloader for parsing/resolving the buildfile
+			//getAntModel().handleBuildException(be, this);
 		}
 	}
 
