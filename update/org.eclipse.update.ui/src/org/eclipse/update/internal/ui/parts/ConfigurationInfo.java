@@ -14,9 +14,10 @@ package org.eclipse.update.internal.ui.parts;
 import java.net.*;
 import java.util.*;
 
-import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.*;
+import org.eclipse.update.internal.configurator.*;
+import org.eclipse.update.configurator.*;
 
 /**
  * Configuation info class;
@@ -48,7 +49,7 @@ public abstract class ConfigurationInfo {
 	 */
 	public void readINIFile() throws CoreException {
 		// determine the identifier of the "dominant" application 
-		IPlatformConfiguration conf = BootLoader.getCurrentPlatformConfiguration();
+		IPlatformConfiguration conf = ConfigurationActivator.getCurrentPlatformConfiguration();
 		String configName = conf.getPrimaryFeatureIdentifier();
 		if (configName == null) {
 			reportINIFailure(null, "Unknown configuration identifier"); //$NON-NLS-1$

@@ -13,13 +13,13 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.model.*;
-
+import org.eclipse.update.configurator.*;
+import org.eclipse.update.internal.configurator.ConfigurationActivator;
 
 /**
  * This class manages the reconciliation.
@@ -61,7 +61,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 	 */
 	public boolean reconcile(boolean isOptimistic) throws CoreException {
 
-		IPlatformConfiguration platformConfig = BootLoader.getCurrentPlatformConfiguration();
+		IPlatformConfiguration platformConfig = ConfigurationActivator.getCurrentPlatformConfiguration();
 		IPlatformConfiguration.ISiteEntry[] newSiteEntries = platformConfig.getConfiguredSites();
 		IInstallConfiguration newInstallConfiguration = siteLocal.createNewInstallConfiguration();
 

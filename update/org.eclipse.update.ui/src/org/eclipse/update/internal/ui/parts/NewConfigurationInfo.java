@@ -15,9 +15,10 @@ import java.net.*;
 import java.text.*;
 import java.util.*;
 
-import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.internal.*;
+import org.eclipse.update.internal.configurator.*;
+import org.eclipse.update.configurator.*;
 
 /**
  * Configuation info class;
@@ -113,7 +114,7 @@ public abstract class NewConfigurationInfo {
 	 */
 	public IPluginDescriptor getDescriptor() {
 		if(desc == null) {
-			IPlatformConfiguration platformConfiguration = BootLoader.getCurrentPlatformConfiguration();
+			IPlatformConfiguration platformConfiguration = ConfigurationActivator.getCurrentPlatformConfiguration();
 			IPlatformConfiguration.IFeatureEntry feature = platformConfiguration.findConfiguredFeatureEntry(featureId);
 			if(feature == null)
 				return null;

@@ -14,10 +14,11 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.configurator.*;
+import org.eclipse.update.configurator.*;
 
 
 /**
@@ -221,7 +222,7 @@ public class UpdateCore extends Plugin {
 	 */
 	private static File getUpdateStateLocation() throws IOException {
 		
-		IPlatformConfiguration config = BootLoader.getCurrentPlatformConfiguration();		
+		IPlatformConfiguration config = ConfigurationActivator.getCurrentPlatformConfiguration();		
 		URL configurationLocation = config.getConfigurationLocation();
 		if (configurationLocation==null){
 			warn("Unable to retrieve location for update manager log file");

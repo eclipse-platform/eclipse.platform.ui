@@ -16,7 +16,6 @@ import java.net.*;
 import java.net.URLEncoder;
 import java.util.*;
 
-import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.browser.*;
 import org.eclipse.help.internal.browser.*;
@@ -29,6 +28,8 @@ import org.eclipse.ui.internal.*;
 import org.eclipse.ui.plugin.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.configurator.*;
+import org.eclipse.update.internal.configurator.ConfigurationActivator;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.model.*;
 import org.eclipse.update.internal.ui.model.*;
@@ -314,7 +315,7 @@ public class UpdateUI extends AbstractUIPlugin {
 	private void readInfo() {
 		// determine the identifier of the "dominant" application 
 		IPlatformConfiguration conf =
-			BootLoader.getCurrentPlatformConfiguration();
+			ConfigurationActivator.getCurrentPlatformConfiguration();
 		String versionedFeatureId = conf.getPrimaryFeatureIdentifier();
 
 		if (versionedFeatureId == null) {

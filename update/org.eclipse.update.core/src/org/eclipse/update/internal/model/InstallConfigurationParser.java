@@ -14,10 +14,11 @@ import java.net.*;
 import java.util.*;
 import javax.xml.parsers.*;
 
-import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
+import org.eclipse.update.internal.configurator.*;
+import org.eclipse.update.configurator.*;
 import org.eclipse.update.internal.core.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
@@ -148,7 +149,7 @@ public class InstallConfigurationParser extends DefaultHandler {
 		// check if the site exists and is updatable
 		// update configSite
 		URL	urlToCheck = new URL(configSite.getPlatformURLString());
-	 	IPlatformConfiguration runtimeConfig = BootLoader.getCurrentPlatformConfiguration();			
+	 	IPlatformConfiguration runtimeConfig = ConfigurationActivator.getCurrentPlatformConfiguration();			
 	 	IPlatformConfiguration.ISiteEntry entry = runtimeConfig.findConfiguredSite(urlToCheck);	 
 	 	if (entry!=null){	
 		 	configSite.setUpdatable(entry.isUpdateable());

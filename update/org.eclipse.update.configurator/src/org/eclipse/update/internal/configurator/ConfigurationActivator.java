@@ -26,6 +26,8 @@ import org.osgi.util.tracker.*;
 public class ConfigurationActivator implements BundleActivator {
 
 	public static String PI_CONFIGURATOR = "org.eclipse.update.configurator";
+	public static final String INSTALL_LOCATION = "osgi.installLocation";
+	
 	// debug options
 	public static String OPTION_DEBUG = PI_CONFIGURATOR + "/debug";
 	// debug values
@@ -40,6 +42,9 @@ public class ConfigurationActivator implements BundleActivator {
 	private BundleListener reconcilerListener;
 	private IPlatform platform;
 	private PlatformConfiguration configuration;
+	
+	// Install location
+	private static URL installURL;
 	
 	// Location of the configuration data
 	private String configArea;
@@ -61,6 +66,7 @@ public class ConfigurationActivator implements BundleActivator {
 	
 		if (lastTimeStamp==configuration.getChangeStamp() && !(application.equals(PlatformConfiguration.RECONCILER_APP) || System.getProperties().get("osgi.dev") != null)) {
 			Utils.debug("Same last time stamp *****");
+			
 			if (System.getProperty("eclipse.application") == null) {
 				Utils.debug("no eclipse.application, setting it and returning");
 				System.setProperty("eclipse.application", application);
@@ -82,10 +88,12 @@ public class ConfigurationActivator implements BundleActivator {
 		// we can now log to the log file for this bundle
 		Utils.setLog(platform.getLog(context.getBundle()));
 		
-		URL installURL = platform.getInstallURL();
+		installURL = platform.getInstallURL();
 		configArea = platform.getConfigurationMetadataLocation().toOSString();
 		configurationFactorySR = context.registerService(IPlatformConfigurationFactory.class.getName(), new PlatformConfigurationFactory(), null);
 		configuration = getPlatformConfiguration(allArgs, installURL, configArea);
+		if (configuration == null)
+			throw Utils.newCoreException("Cannot create configuration in " + configArea, null);
 
 		try {
 			DataInputStream stream = new DataInputStream(new FileInputStream(configArea + "/last.config.stamp"));
@@ -377,5 +385,56 @@ public class ConfigurationActivator implements BundleActivator {
 		return context;
 	}
 	
+	/**
+	 * Returns the current platform configuration. This method replaces the one we used
+	 * to call on BootLoader.
+	 * 
+	 * @return platform configuration used in current instance of platform
+	 * @since 3.0
+	 */
+	public static IPlatformConfiguration getCurrentPlatformConfiguration() {
+		// acquire factory service first
+		ServiceReference configFactorySR = context.getServiceReference(IPlatformConfigurationFactory.class.getName());
+		if (configFactorySR == null)
+			throw new IllegalStateException();
+		IPlatformConfigurationFactory configFactory = (IPlatformConfigurationFactory) context.getService(configFactorySR);
+		if (configFactory == null)
+			throw new IllegalStateException();
+		// get the configuration using the factory
+		IPlatformConfiguration currentConfig = configFactory.getCurrentPlatformConfiguration();
+		context.ungetService(configFactorySR);
+		return currentConfig;
+	}
 	
+	/**
+	 * Returns a platform configuration object, optionally initialized with previously saved
+	 * configuration information. We will use this method instead of the old one in BootLoader.
+	 * 
+	 * @param url location of previously save configuration information. If <code>null</code>
+	 * is specified, an empty configuration object is returned
+	 * @return platform configuration used in current instance of platform
+	 */
+	public static IPlatformConfiguration getPlatformConfiguration(URL url) throws IOException {
+		// acquire factory service first
+		ServiceReference configFactorySR = context.getServiceReference(IPlatformConfigurationFactory.class.getName());
+		if (configFactorySR == null)
+			throw new IllegalStateException();
+		IPlatformConfigurationFactory configFactory = (IPlatformConfigurationFactory) context.getService(configFactorySR);
+		if (configFactory == null)
+			throw new IllegalStateException();
+		// get the configuration using the factory
+		IPlatformConfiguration config = configFactory.getPlatformConfiguration(url);
+		context.ungetService(configFactorySR);
+		return config;
+	}
+	
+	public static URL getInstallURL() {
+		if (installURL == null)
+			try {
+				installURL = new URL((String) System.getProperty(INSTALL_LOCATION)); //$NON-NLS-1$
+			} catch (MalformedURLException e) {
+				//This can't fail because the location was set coming in
+			}
+			return installURL;
+	}
 }

@@ -15,10 +15,11 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.configurator.ConfigurationActivator;
+import org.eclipse.update.configurator.*;
 
 /**
  * Update manager reconciler application.
@@ -66,7 +67,7 @@ public class UpdateManagerReconciler implements org.eclipse.core.runtime.IPlatfo
 		processCommandLine((String[]) args);
 
 		// obtain current platform configuration and save stamps
-		IPlatformConfiguration cfg = BootLoader.getCurrentPlatformConfiguration();
+		IPlatformConfiguration cfg = ConfigurationActivator.getCurrentPlatformConfiguration();
 		// URL[] originalPluginPath = cfg.getPluginPath();
 
 		// perform reconciliation
