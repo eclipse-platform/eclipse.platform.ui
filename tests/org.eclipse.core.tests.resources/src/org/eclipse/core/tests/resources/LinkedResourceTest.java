@@ -354,6 +354,7 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 						return false;
 					if (!source.getLocation().equals(destination.getLocation()))
 						return false;
+					assertEquals("1.0", source.getRawLocation(), destination.getRawLocation());
 				}
 				return true;
 			}
@@ -429,6 +430,7 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 						return false;
 					if (!source.getLocation().equals(destination.getLocation()))
 						return false;
+					assertEquals("1.0", source.getRawLocation(), destination.getRawLocation());
 				}
 				return true;
 			}
