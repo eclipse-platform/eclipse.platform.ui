@@ -23,6 +23,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
@@ -176,7 +177,12 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 			syncBytes = ResourceSyncInfo.convertToDeletion(syncBytes);
 		}
 		if (!ResourceSyncInfo.isFolder(oldBytes)) {
-			oldBytes = ResourceSyncInfo.convertToDeletion(oldBytes);
+			try {
+				oldBytes = ResourceSyncInfo.convertToDeletion(oldBytes);
+			} catch (CVSException e) {
+				CVSProviderPlugin.log(e);
+				return false;
+			}
 		}
 		return Util.equals(syncBytes, oldBytes);
 	}
