@@ -24,7 +24,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.internal.ViewSite;
 import org.eclipse.ui.part.ViewPart;
 /**
  * The ProgressView is the class that shows the details of the current
@@ -84,7 +83,7 @@ public class ProgressView extends ViewPart implements IViewPart {
 		viewer.getTree().setMenu(menu);
 	}
 	private void initPulldownMenu() {
-		IMenuManager menuMgr = ((ViewSite) getSite()).getActionBars().getMenuManager();
+		IMenuManager menuMgr = getViewSite().getActionBars().getMenuManager();
 		menuMgr.add(new Action(ProgressMessages.getString("ProgressView.VerboseAction"), //$NON-NLS-1$
 				IAction.AS_CHECK_BOX) {
 					/*
