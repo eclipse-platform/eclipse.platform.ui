@@ -79,14 +79,6 @@ import org.eclipse.ui.internal.themes.ThemeRegistryReader;
 
 class ExtensionEventHandler implements IRegistryChangeListener {
 	
-	private class ChangeRecord {
-		public ChangeRecord(String pluginId, String contribution) {
-			this.pluginId = pluginId;
-			this.contribution = contribution;
-		}
-		public String pluginId;
-		public String contribution;
-	}
 	private static final String TAG_CATEGORY="category";//$NON-NLS-1$
 	private static final String ATT_TARGET_ID="targetID";//$NON-NLS-1$
 	private static final String TAG_PART="part";//$NON-NLS-1$
@@ -300,8 +292,12 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 		}
 		// We may need to reset this perspective as new wizards are added
 		// to the menu.
-		
-		changeList.add(new ChangeRecord(ext.getDeclaringPluginDescriptor().getUniqueIdentifier(), ExtensionEventHandlerMessages.getString("ExtensionEventHandler.newWizards"))); //$NON-NLS-1$
+		changeList.add(
+			MessageFormat.format(
+				ExtensionEventHandlerMessages.getString("ExtensionEventHandler.change_format"), //$NON-NLS-1$ 
+				new Object[] {
+					ext.getDeclaringPluginDescriptor().getUniqueIdentifier(),  
+					ExtensionEventHandlerMessages.getString("ExtensionEventHandler.newWizards")})); //$NON-NLS-1$ 
 	}
 	
 	private void loadPropertyPages(IExtension ext) {
@@ -795,7 +791,12 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 				continue;
 			if (id.equals(currentId)) {
 				// Display message
-				changeList.add(new ChangeRecord(ext.getDeclaringPluginDescriptor().getUniqueIdentifier(), ExtensionEventHandlerMessages.getString("ExtensionEventHandler.newPerspectiveExtension"))); //$NON-NLS-1$
+			changeList.add(
+				MessageFormat.format(
+					ExtensionEventHandlerMessages.getString("ExtensionEventHandler.change_format"), //$NON-NLS-1$ 
+					new Object[] {
+						ext.getDeclaringPluginDescriptor().getUniqueIdentifier(),  
+						ExtensionEventHandlerMessages.getString("ExtensionEventHandler.newPerspectiveExtension")})); //$NON-NLS-1$ 				
 				break;
 			}
 		}
@@ -827,9 +828,14 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 		IConfigurationElement[] elements = ext.getConfigurationElements();
 		for(int i=0; i<elements.length; i++)
 			reader.readElement(elements[i]);
-		
-		ChangeRecord record = new ChangeRecord(ext.getDeclaringPluginDescriptor().getUniqueIdentifier(), ExtensionEventHandlerMessages.getString("ExtensionEventHandler.new_action_set"));
-		changeList.add(record);		
+			
+		changeList.add(
+			MessageFormat.format(
+				ExtensionEventHandlerMessages.getString("ExtensionEventHandler.change_format"), //$NON-NLS-1$ 
+				new Object[] {
+					ext.getDeclaringPluginDescriptor().getUniqueIdentifier(),  
+					ExtensionEventHandlerMessages.getString("ExtensionEventHandler.new_action_set")})); //$NON-NLS-1$ 
+			
 /*
 		IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
 		for (int i = 0; i < windows.length; i++) {
@@ -870,11 +876,10 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 
 		StringBuffer message = new StringBuffer(ExtensionEventHandlerMessages.getString("ExtensionEventHandler.following_changes")); //$NON-NLS-1$
 		
-		MessageFormat lineFormat = new MessageFormat(ExtensionEventHandlerMessages.getString("ExtensionEventHandler.change_format")); //$NON-NLS-1$
 		for (Iterator i = changeList.iterator(); i.hasNext();) {
-			ChangeRecord record = (ChangeRecord) i.next();
-			lineFormat.format(new Object[] {record.pluginId, record.contribution}, message, null);
+			message.append(i.next());
 		}
+		
 		message.append(ExtensionEventHandlerMessages.getString("ExtensionEventHandler.need_to_reset")); //$NON-NLS-1$
 		resetCurrentPerspective(parentShell, window, message.toString());
 	}
