@@ -46,6 +46,14 @@ public final class CompareUI {
 	 * @since 2.0
 	 */
 	public static final String PLUGIN_ID= "org.eclipse.compare"; //$NON-NLS-1$
+	
+	/**
+	 * The id of the Compare Preference Page
+	 * (value <code>"org.eclipse.compare.internal.ComparePreferencePage"</code>).
+	 * 
+	 * @since 3.1
+	 */
+	public static final String PREFERENCE_PAGE_ID= "org.eclipse.compare.internal.ComparePreferencePage"; //$NON-NLS-1$
 
 	/**
 	 * Image descriptor for the disabled icon of the 'Next' tool bar button.
