@@ -84,7 +84,7 @@ import org.eclipse.compare.internal.*;
 				
 			for (int i= 0; i < diffs.length; i++) {
 				Diff diff= diffs[i];
-				if (diff.fIsEnabled) {
+				if (diff.isEnabled()) {
 					IPath path= fPatcher.getPath(diff);
 					createPath(fRoot, rootFolder, path, diff, false);
 					

@@ -152,12 +152,16 @@ import org.eclipse.compare.structuremergeviewer.*;
 					TreeItem ti= (TreeItem) e.item;
 					Object data= e.item.getData();
 					if (e.detail == SWT.CHECK) {
-						boolean enabled= ti.getChecked();
+						boolean checked= ti.getChecked();
 						if (data instanceof Hunk) {
-							((Hunk)data).fIsEnabled= enabled;
+							Hunk hunk= (Hunk) data;
+							checked= checked && hunk.fMatches;
+							hunk.setEnabled(checked);
+							ti.setChecked(checked);
 							updateGrayedState(ti);
 						} else if (data instanceof Diff) {
-							((Diff)data).fIsEnabled= enabled;
+							Diff diff= (Diff) data;
+							diff.setEnabled(checked && diff.fMatches);
 							updateCheckedState(ti);
 						}
 					} else {
@@ -367,6 +371,7 @@ import org.eclipse.compare.structuremergeviewer.*;
 		for (int i= 0; i < children.length; i++) {
 			TreeItem item= children[i];
 			Diff diff= (Diff) item.getData();
+			diff.fMatches= false;
 			String error= null;
 			
 			boolean create= false;	
@@ -377,10 +382,9 @@ import org.eclipse.compare.structuremergeviewer.*;
 					p= p.removeFirstSegments(strip);
 				file= existsInSelection(p);
 				if (file == null) {
-					diff.fIsEnabled= true;
+					diff.fMatches= true;
 				} else {
 					// file already exists
-					diff.fIsEnabled= false;					
 					error= PatchMessages.getString("PreviewPatchPage.FileExists.error"); //$NON-NLS-1$
 				}
 				create= true;
@@ -389,12 +393,11 @@ import org.eclipse.compare.structuremergeviewer.*;
 				if (strip > 0 && strip < p.segmentCount())
 					p= p.removeFirstSegments(strip);
 				file= existsInSelection(p);
-				diff.fIsEnabled= file != null;
+				diff.fMatches= file != null;
 				if (file != null) {
-					diff.fIsEnabled= true;
+					diff.fMatches= true;
 				} else {
 					// file doesn't exist
-					diff.fIsEnabled= false;					
 					error= PatchMessages.getString("PreviewPatchPage.FileDoesNotExist.error"); //$NON-NLS-1$
 				}
 			}			
@@ -415,9 +418,9 @@ import org.eclipse.compare.structuremergeviewer.*;
 				String hunkError= null;
 				if (failed)
 					hunkError= PatchMessages.getString("PreviewPatchPage.NoMatch.error"); //$NON-NLS-1$
-				hunk.fIsEnabled= diff.fIsEnabled && !failed;
-				hunkItems[h].setChecked(hunk.fIsEnabled);
-				if (hunk.fIsEnabled) {
+				hunk.setEnabled(diff.isEnabled() && !failed);
+				hunkItems[h].setChecked(hunk.isEnabled());
+				if (hunk.isEnabled()) {
 					checkedSubs++;
 					checked= true;
 				}

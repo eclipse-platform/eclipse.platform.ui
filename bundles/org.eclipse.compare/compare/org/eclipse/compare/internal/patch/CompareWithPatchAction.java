@@ -27,11 +27,13 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.IActionDelegate;
+import org.eclipse.ui.actions.GlobalBuildAction;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
 import org.eclipse.compare.internal.*;
+
 
 public class CompareWithPatchAction implements IActionDelegate {
 
@@ -160,7 +162,7 @@ public class CompareWithPatchAction implements IActionDelegate {
 	
 	private void triggerBuild() {
 		if (fSavedFiles && ResourcesPlugin.getWorkspace().getDescription().isAutoBuilding()) {
-			new GlobalBuildAction(CompareUIPlugin.getActiveWorkbench(), IncrementalProjectBuilder.INCREMENTAL_BUILD).run();
+			new GlobalBuildAction(CompareUIPlugin.getActiveWorkbench(), CompareUIPlugin.getShell(), IncrementalProjectBuilder.INCREMENTAL_BUILD).run();
 		}
 	}
 }

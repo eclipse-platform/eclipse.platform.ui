@@ -273,7 +273,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	 * compare editor on the result.
 	 *
 	 * @param input the input on which to open the compare editor
-	 * @see ICompareEditorInput
+	 * @see CompareEditorInput
 	 */
 	public void openCompareEditor(CompareEditorInput input) {
 		
@@ -298,7 +298,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	 * compare dialog on the result.
 	 *
 	 * @param input the input on which to open the compare editor
-	 * @see ICompareEditorInput
+	 * @see CompareEditorInput
 	 */
 	public void openCompareDialog(final CompareEditorInput input) {
 				

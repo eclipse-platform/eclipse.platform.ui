@@ -25,7 +25,9 @@ public class Patcher {
 	
 	private static final String DEV_NULL= "/dev/null"; //$NON-NLS-1$
 	
-	private static final String MARKER_TYPE= "org.eclipse.compare.rejectedPatchMarker";
+	private static final String REJECT_FILE_EXTENSION= ".rej"; //$NON-NLS-1$
+	
+	private static final String MARKER_TYPE= "org.eclipse.compare.rejectedPatchMarker";	//$NON-NLS-1$
 
 	// diff formats
 	private static final int CONTEXT= 0;
@@ -569,7 +571,7 @@ public class Patcher {
 		}
 	}
 	
-		//---- applying a patch file
+	//---- applying a patch file
 	
 	/**
 	 * Tries to patch the given lines with the specified Diff.
@@ -581,6 +583,7 @@ public class Patcher {
 		Iterator iter= diff.fHunks.iterator();
 		while (iter.hasNext()) {
 			Hunk hunk= (Hunk) iter.next();
+			hunk.fMatches= false;
 			shift= patch(hunk, lines, shift, failedHunks);
 		}
 	}
@@ -644,7 +647,12 @@ public class Patcher {
 		}
 		return shift;
 	}
-		
+	
+	/**
+	 * Tries to apply the given hunk on the specified lines.
+	 * The parameter shift is added to the line numbers given
+	 * in the hunk.
+	 */
 	private boolean tryPatch(Hunk hunk, List lines, int shift) {
 		int pos= hunk.fOldStart + shift;
 		int contextMatches= 0;
@@ -721,17 +729,16 @@ public class Patcher {
 				lines.add(pos,  line);
 				pos++;
 			} else
-				Assert.isTrue(false, "doPatch: unknown control charcter: " + controlChar); //$NON-NLS-1$
+				Assert.isTrue(false, "doPatch: unknown control character: " + controlChar); //$NON-NLS-1$
 		}
+		hunk.fMatches= true;
 		return hunk.fNewLength - hunk.fOldLength;
 	}
 
 	public void applyAll(IResource target, IProgressMonitor pm) {
 		
 		final int WORK_UNIT= 10;
-		
-		if (DEBUG) System.out.println("applyAll: start"); //$NON-NLS-1$
-		
+				
 		IFile file= null;	// file to be patched
 		IContainer container= null;
 		if (target instanceof IContainer)
@@ -740,8 +747,7 @@ public class Patcher {
 			file= (IFile) target;
 			container= file.getParent();
 		} else {
-			System.out.println("applyAll: not yet implemented"); //$NON-NLS-1$
-			return;
+			Assert.isTrue(false);
 		}
 		
 		if (pm != null)
@@ -752,7 +758,7 @@ public class Patcher {
 			int workTicks= WORK_UNIT;
 			
 			Diff diff= fDiffs[i];
-			if (diff.fIsEnabled) {
+			if (diff.isEnabled()) {
 				
 				IPath path= getPath(diff);
 				if (pm != null)
@@ -768,7 +774,7 @@ public class Patcher {
 				case Differencer.ADDITION:
 					// patch it and collect rejected hunks
 					result= apply(diff, file, true, failed);
-					updateFile(createString(result), file, new SubProgressMonitor(pm, workTicks));
+					store(createString(result), file, new SubProgressMonitor(pm, workTicks));
 					workTicks-= WORK_UNIT;
 					break;
 				case Differencer.DELETION:
@@ -778,7 +784,7 @@ public class Patcher {
 				case Differencer.CHANGE:
 					// patch it and collect rejected hunks
 					result= apply(diff, file, false, failed);
-					updateFile(createString(result), file, new SubProgressMonitor(pm, workTicks));
+					store(createString(result), file, new SubProgressMonitor(pm, workTicks));
 					workTicks-= WORK_UNIT;
 					break;
 				}
@@ -787,12 +793,12 @@ public class Patcher {
 					IPath pp= null;
 					if (path.segmentCount() > 1) {
 						pp= path.removeLastSegments(1);
-						pp= pp.append(path.lastSegment() + ".rej");	//$NON-NLS-1$
+						pp= pp.append(path.lastSegment() + REJECT_FILE_EXTENSION);
 					} else
-						pp= new Path(path.lastSegment() + ".rej");	//$NON-NLS-1$
+						pp= new Path(path.lastSegment() + REJECT_FILE_EXTENSION);
 					file= createPath(container, pp);
 					if (file != null) {
-						updateFile(getRejected(failed), file, pm);
+						store(getRejected(failed), file, pm);
 						try {
 							IMarker marker= file.createMarker(MARKER_TYPE);
 							marker.setAttribute(marker.MESSAGE, PatchMessages.getString("Patcher.Marker.message"));	//$NON-NLS-1$
@@ -826,8 +832,11 @@ public class Patcher {
 		// IWorkspace.validateEdit(IFile[], Object context);
 	}
 	
-	List apply(Diff diff, IFile file, boolean create, List failedHunks) {
-		
+	/**
+	 * Reads the contents from the given file and returns them as
+	 * a List of lines.
+	 */
+	private List load(IFile file, boolean create) {
 		List lines= null;
 		if (!create && file != null) {
 			// read current contents
@@ -836,9 +845,7 @@ public class Patcher {
 				is= file.getContents();
 				BufferedReader reader= new BufferedReader(new InputStreamReader(is));
 				lines= new LineReader(reader).readLines();
-				if (DEBUG) System.out.println("    creating reader successful"); //$NON-NLS-1$
 			} catch(CoreException ex) {
-				if (DEBUG) System.out.println("    reading contents: " + ex); //$NON-NLS-1$
 			} finally {
 				if (is != null)
 					try {
@@ -850,27 +857,19 @@ public class Patcher {
 		
 		if (lines == null)
 			lines= new ArrayList();
-
-		patch(diff, lines, failedHunks);
-				
 		return lines;
 	}
 	
-	String getRejected(List failedHunks) {
-		if (failedHunks.size() <= 0)
-			return null;
+	List apply(Diff diff, IFile file, boolean create, List failedHunks) {
 		
-		StringBuffer sb= new StringBuffer();
-		Iterator iter= failedHunks.iterator();
-		while (iter.hasNext()) {
-			Hunk hunk= (Hunk) iter.next();
-			sb.append(hunk.getRejectedDescription());
-			sb.append('\n');
-			sb.append(hunk.getContent());
-		}
-		return sb.toString();
+		List lines= load(file, create);
+		patch(diff, lines, failedHunks);
+		return lines;
 	}
 	
+	/**
+	 * Deletes the given file.
+	 */
 	private void deleteFile(IFile file, IProgressMonitor pm) {
 		try {
 			file.delete(true, true, pm);
@@ -881,16 +880,10 @@ public class Patcher {
 		}
 	}
 	
-	private String createString(List lines) {
-		// convert the result into a String
-		StringBuffer sb= new StringBuffer();
-		Iterator iter= lines.iterator();
-		while (iter.hasNext())
-			sb.append((String)iter.next());
-		return sb.toString();
-	}
-
-	private void updateFile(String contents, IFile file, IProgressMonitor pm) {
+	/**
+	 * Converts the string into bytes and stores them in the given file.
+	 */
+	private void store(String contents, IFile file, IProgressMonitor pm) {
 		
 		// and save it
 		InputStream is= new ByteArrayInputStream(contents.getBytes());
@@ -913,16 +906,49 @@ public class Patcher {
 		}
 	}
 
-	private IFile createPath(IContainer folder, IPath path) {
+	/**
+	 * Concatenates all strings found in the gievn List.
+	 */
+	private String createString(List lines) {
+		StringBuffer sb= new StringBuffer();
+		Iterator iter= lines.iterator();
+		while (iter.hasNext())
+			sb.append((String)iter.next());
+		return sb.toString();
+	}
+
+	String getRejected(List failedHunks) {
+		if (failedHunks.size() <= 0)
+			return null;
+		
+		StringBuffer sb= new StringBuffer();
+		Iterator iter= failedHunks.iterator();
+		while (iter.hasNext()) {
+			Hunk hunk= (Hunk) iter.next();
+			sb.append(hunk.getRejectedDescription());
+			sb.append('\n');
+			sb.append(hunk.getContent());
+		}
+		return sb.toString();
+	}
+	
+	/**
+	 * Ensures that a file with the given path exists in
+	 * the given container. Folder are created as necessary.
+	 */
+	private IFile createPath(IContainer container, IPath path) {
 		if (path.segmentCount() > 1) {
-			IFolder f= folder.getFolder(path.uptoSegment(1));
-			//System.out.println("createPath: " + f + " " + f.exists());
+			IFolder f= container.getFolder(path.uptoSegment(1));
 			return createPath(f, path.removeFirstSegments(1));
 		}
 		// a leaf
-		return folder.getFile(path);
+		return container.getFile(path);
 	}
 
+	/**
+	 * Returns the given string with all whitespace characters removed.
+	 * Whitespace is defined by <code>Character.isWhitespace(...)</code>.
+	 */
 	private static String stripWhiteSpace(String s) {
 		StringBuffer sb= new StringBuffer();
 		int l= s.length();

@@ -16,7 +16,8 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 	IPath fOldPath, fNewPath;
 	long fOldDate, fNewDate;	// if 0: no file
 	List fHunks= new ArrayList();
-	boolean fIsEnabled= true;
+	boolean fMatches= false;
+	private boolean fIsEnabled2= true;
 	String fRejected;
 
 	
@@ -25,6 +26,14 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 		fOldDate= oldPath == null ? 0 : oldDate;
 		fNewPath= newPath;
 		fNewDate= newPath == null ? 0 : newDate;	
+	}
+	
+	boolean isEnabled() {
+		return fIsEnabled2;
+	}
+	
+	void setEnabled(boolean b) {
+		fIsEnabled2= b;
 	}
 	
 	void reverse() {

@@ -18,7 +18,8 @@ import org.eclipse.jface.util.Assert;
 	int fOldStart, fOldLength;
 	int fNewStart, fNewLength;
 	String[] fLines;
-	boolean fIsEnabled= true;
+	boolean fMatches= false;
+	private boolean fIsEnabled2= true;
 	
 	
 	/* package */ Hunk(Diff parent, int[] oldRange, int[] newRange, List lines) {
@@ -39,6 +40,14 @@ import org.eclipse.jface.util.Assert;
 		fNewLength= newRange[1];
 		
 		fLines= (String[]) lines.toArray(new String[lines.size()]);
+	}
+	
+	boolean isEnabled() {
+		return fIsEnabled2;
+	}
+	
+	void setEnabled(boolean b) {
+		fIsEnabled2= b;
 	}
 	
 	void reverse() {
