@@ -41,7 +41,7 @@ public class SystemMenuCloseAllEditors extends Action implements ISelfUpdatingAc
     		return;
     	}
     	
-    	setEnabled(editorPane.getPage().getEditors().length >= 1);
+    	setEnabled(editorPane.getPage().getEditorReferences().length >= 1);
     }
     
     public boolean shouldBeVisible() {

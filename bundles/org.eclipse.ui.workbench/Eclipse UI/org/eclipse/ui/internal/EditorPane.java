@@ -189,7 +189,7 @@ protected void addCloseOthersItem (Menu menu) {
 			doHideOthers();
 		}
 	});	
-	item.setEnabled(getPage().getEditors().length > 1);
+	item.setEnabled(getPage().getEditorReferences().length > 1);
 }
 
 /**
@@ -203,7 +203,7 @@ protected void addCloseAllItem (Menu menu) {
 			doHideAll();
 		}
 	});	
-	item.setEnabled(getPage().getEditors().length >= 1);
+	item.setEnabled(getPage().getEditorReferences().length >= 1);
 }
 
 /**
