@@ -106,24 +106,10 @@ public final class ViewIntroAdapterPart extends ViewPart {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPart#getTitle()
-	 */
-	public String getTitle() {
-		return introPart.getTitle();
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPart#getTitleImage()
 	 */
 	public Image getTitleImage() {
 		return introPart.getTitleImage();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPart#getTitleToolTip()
-	 */
-	public String getTitleToolTip() {
-		return introPart.getTitleToolTip();
 	}
 
 	/* (non-Javadoc)

@@ -67,13 +67,6 @@ The life cycle is as follows:
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="name" type="string" use="required">
-            <annotation>
-               <documentation>
-                  a translatable name for this introduction that will be shown to the user in the UI
-               </documentation>
-            </annotation>
-         </attribute>
          <attribute name="icon" type="string">
             <annotation>
                <documentation>
@@ -143,7 +136,6 @@ in order to inherit the default functionality.  This class implements the introd
   &lt;extension point=&quot;org.eclipse.ui.intro&quot;&gt;
      &lt;intro
         id=&quot;com.example.xyz.intro.custom&quot;
-        name=&quot;Welcome to XYZ&quot;
         class=&quot;com.example.xyz.intro.IntroPart&quot;/&gt;
      &lt;introProductBinding
         productId=&quot;com.example.xyz.Product&quot;
