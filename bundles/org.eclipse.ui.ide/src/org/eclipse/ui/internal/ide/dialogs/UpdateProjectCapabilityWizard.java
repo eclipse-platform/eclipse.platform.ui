@@ -20,7 +20,6 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.registry.Capability;
@@ -230,7 +229,7 @@ public class UpdateProjectCapabilityWizard extends MultiStepCapabilityWizard {
      * Sets the image banner for the wizard
      */
     protected void initializeDefaultPageImageDescriptor() {
-        ImageDescriptor desc = WorkbenchImages.getWorkbenchImageDescriptor("wizban/newprj_wiz.gif");//$NON-NLS-1$
+        ImageDescriptor desc = IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/newprj_wiz.gif");//$NON-NLS-1$
      
         setDefaultPageImageDescriptor(desc);
       

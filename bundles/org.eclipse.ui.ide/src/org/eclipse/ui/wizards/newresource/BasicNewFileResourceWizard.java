@@ -19,8 +19,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.WizardNewFileCreationPage;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.ide.DialogUtil;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.wizards.newresource.ResourceMessages;
 
 /**
@@ -77,7 +77,7 @@ public class BasicNewFileResourceWizard extends BasicNewResourceWizard {
      * Method declared on BasicNewResourceWizard.
      */
     protected void initializeDefaultPageImageDescriptor() {
-       ImageDescriptor desc = WorkbenchImages.getWorkbenchImageDescriptor("wizban/newfile_wiz.gif");//$NON-NLS-1$
+       ImageDescriptor desc = IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/newfile_wiz.gif");//$NON-NLS-1$
 	   setDefaultPageImageDescriptor(desc);
     }
 

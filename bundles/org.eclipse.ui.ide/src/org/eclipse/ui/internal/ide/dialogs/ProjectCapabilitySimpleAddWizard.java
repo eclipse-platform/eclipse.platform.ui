@@ -15,8 +15,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 public class ProjectCapabilitySimpleAddWizard extends Wizard {
     private ProjectCapabilitySimpleSelectionPage mainPage;
@@ -62,7 +62,7 @@ public class ProjectCapabilitySimpleAddWizard extends Wizard {
      * Sets the image banner for the wizard
      */
     protected void initializeDefaultPageImageDescriptor() {
-		ImageDescriptor desc = WorkbenchImages.getWorkbenchImageDescriptor("wizban/newprj_wiz.gif");//$NON-NLS-1$
+		ImageDescriptor desc = IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/newprj_wiz.gif");//$NON-NLS-1$
         setDefaultPageImageDescriptor(desc);
     }
 

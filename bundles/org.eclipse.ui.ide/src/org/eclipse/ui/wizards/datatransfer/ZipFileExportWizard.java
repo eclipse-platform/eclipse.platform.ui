@@ -14,7 +14,6 @@ import java.util.List;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
@@ -22,7 +21,7 @@ import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.wizards.datatransfer.DataTransferMessages;
 import org.eclipse.ui.internal.wizards.datatransfer.WizardArchiveFileResourceExportPage1;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -76,13 +75,6 @@ public class ZipFileExportWizard extends Wizard implements IExportWizard {
         addPage(mainPage);
     }
 
-    /**
-     * Returns the image descriptor with the given relative path.
-     */
-    private ImageDescriptor getImageDescriptor(String relativePath) {
-		return WorkbenchImages.getWorkbenchImageDescriptor(relativePath);
-    }
-
     /* (non-Javadoc)
      * Method declared on IWorkbenchWizard.
      */
@@ -94,7 +86,7 @@ public class ZipFileExportWizard extends Wizard implements IExportWizard {
         }
 
         setWindowTitle(DataTransferMessages.DataTransfer_export);
-        setDefaultPageImageDescriptor(getImageDescriptor("wizban/exportzip_wiz.gif"));//$NON-NLS-1$
+        setDefaultPageImageDescriptor(IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/exportzip_wiz.gif"));//$NON-NLS-1$
         setNeedsProgressMonitor(true);
     }
 

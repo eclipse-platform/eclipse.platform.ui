@@ -60,7 +60,6 @@ import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.eclipse.ui.dialogs.WizardNewProjectReferencePage;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.IPreferenceConstants;
-import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -299,7 +298,7 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
      * (non-Javadoc) Method declared on BasicNewResourceWizard.
      */
     protected void initializeDefaultPageImageDescriptor() {
-		ImageDescriptor desc = WorkbenchImages.getWorkbenchImageDescriptor("wizban/newprj_wiz.gif");//$NON-NLS-1$
+		ImageDescriptor desc = IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/newprj_wiz.gif");//$NON-NLS-1$
         setDefaultPageImageDescriptor(desc);
     }
 

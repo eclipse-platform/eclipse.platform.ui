@@ -18,7 +18,7 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 
@@ -86,7 +86,7 @@ public class PreferencesImportWizard extends Wizard implements IImportWizard {
 
         setWindowTitle("Title"); //$NON-NLS-1$
         setDefaultPageImageDescriptor(
-				WorkbenchImages.getWorkbenchImageDescriptor("wizban/importdir_wiz.gif"));//$NON-NLS-1$
+				IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/importdir_wiz.gif"));//$NON-NLS-1$
         setNeedsProgressMonitor(true);
     }
 

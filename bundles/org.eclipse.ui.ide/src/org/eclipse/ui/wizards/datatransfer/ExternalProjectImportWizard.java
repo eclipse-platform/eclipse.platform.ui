@@ -14,7 +14,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.wizards.datatransfer.DataTransferMessages;
 import org.eclipse.ui.internal.wizards.datatransfer.WizardProjectsImportPage;
 
@@ -66,7 +66,7 @@ public class ExternalProjectImportWizard extends Wizard implements
     public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
         setWindowTitle(DataTransferMessages.DataTransfer_importTitle);
         setDefaultPageImageDescriptor(
-				WorkbenchImages.getWorkbenchImageDescriptor("wizban/importdir_wiz.gif")); //$NON-NLS-1$
+				IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/importdir_wiz.gif")); //$NON-NLS-1$
 
     }
 

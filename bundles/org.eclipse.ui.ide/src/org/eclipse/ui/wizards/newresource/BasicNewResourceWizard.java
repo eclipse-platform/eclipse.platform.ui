@@ -26,7 +26,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.part.ISetSelectionTarget;
 
 /**
@@ -97,7 +97,7 @@ public abstract class BasicNewResourceWizard extends Wizard implements
      * </p>
      */
     protected void initializeDefaultPageImageDescriptor() {
-		ImageDescriptor desc = WorkbenchImages.getWorkbenchImageDescriptor("wizban/new_wiz.gif");//$NON-NLS-1$
+		ImageDescriptor desc = IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/new_wiz.gif");//$NON-NLS-1$
         setDefaultPageImageDescriptor(desc);
     }
 

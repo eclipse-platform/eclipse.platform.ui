@@ -17,7 +17,7 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -102,7 +102,7 @@ public class PreferencesExportWizard extends Wizard implements IExportWizard {
 //        }
 
         setWindowTitle(PreferencesMessages.PreferencesExportWizard_export);
-        setDefaultPageImageDescriptor(WorkbenchImages.getWorkbenchImageDescriptor("wizban/exportdir_wiz.gif"));//$NON-NLS-1$
+        setDefaultPageImageDescriptor(IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/exportdir_wiz.gif"));//$NON-NLS-1$
         setNeedsProgressMonitor(true);
     }
 

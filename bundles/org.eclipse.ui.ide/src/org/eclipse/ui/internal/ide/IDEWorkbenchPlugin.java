@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.internal.ide.registry.CapabilityRegistry;
 import org.eclipse.ui.internal.ide.registry.MarkerImageProviderRegistry;
@@ -71,6 +72,8 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
     public static final String PL_CAPABILITIES = "capabilities"; //$NON-NLS-1$
 
     public static final String PL_PROJECT_NATURE_IMAGES = "projectNatureImages"; //$NON-NLS-1$
+	
+	private final static String ICONS_PATH = "$nl$/icons/full/";//$NON-NLS-1$
 
     /**
      * Project image registry; lazily initialized.
@@ -314,4 +317,14 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
         IProduct product = Platform.getProduct();
         return product == null ? null : new AboutInfo(product);
     }
+	
+	/**
+	 * Get the workbench image with the given path relative to
+	 * ICON_PATH.
+	 * @param relativePath
+	 * @return ImageDescriptor
+	 */
+	public static ImageDescriptor getIDEImageDescriptor(String relativePath){
+		return imageDescriptorFromPlugin(IDE_WORKBENCH, ICONS_PATH + relativePath);
+	}
 }

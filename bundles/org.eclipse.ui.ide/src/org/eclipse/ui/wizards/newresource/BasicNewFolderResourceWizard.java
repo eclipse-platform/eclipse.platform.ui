@@ -15,7 +15,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.dialogs.WizardNewFolderMainPage;
-import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.wizards.newresource.ResourceMessages;
 
 /**
@@ -70,7 +70,7 @@ public class BasicNewFolderResourceWizard extends BasicNewResourceWizard {
      * Method declared on BasicNewResourceWizard.
      */
     protected void initializeDefaultPageImageDescriptor() {
-      ImageDescriptor desc = WorkbenchImages.getWorkbenchImageDescriptor("wizban/newfolder_wiz.gif");//$NON-NLS-1$
+      ImageDescriptor desc = IDEWorkbenchPlugin.getIDEImageDescriptor("wizban/newfolder_wiz.gif");//$NON-NLS-1$
       setDefaultPageImageDescriptor(desc);
        
     }
