@@ -51,6 +51,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private ClosePageAction closePageAction;
 	private CloseAllPagesAction closeAllPagesAction;
 	private ReuseEditorAction reuseEditorAction;
+	private HistoryAction historyAction;
 
 	// menus
 	private OpenPerspectiveMenu openPerspMenu;
@@ -168,11 +169,13 @@ private void createMenuBar() {
 	popup.add(importResourcesAction);
 	popup.add(exportResourcesAction);
 	popup.add(new GroupMarker(IWorkbenchActionConstants.IMPORT_EXT));
+
 	popup.add(
 		new ReopenEditorMenu(
 			window,
 			((Workbench) (window.getWorkbench())).getEditorHistory(),
 			true));
+	popup.add(historyAction);
 	popup.add(new GroupMarker(IWorkbenchActionConstants.MRU));
 	popup.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	popup.add(new Separator());
@@ -441,6 +444,7 @@ private void makeActions() {
 	aboutAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD));
 
 	openPreferencesAction = new OpenPreferencesAction(window);
+	historyAction = new HistoryAction(window);
 
 	addBookmarkAction = new RetargetAction(IWorkbenchActionConstants.BOOKMARK, WorkbenchMessages.getString("Workbench.addBookMark")); //$NON-NLS-1$
 	addBookmarkAction.setToolTipText(WorkbenchMessages.getString("Workbench.addBookMarkToolTip")); //$NON-NLS-1$

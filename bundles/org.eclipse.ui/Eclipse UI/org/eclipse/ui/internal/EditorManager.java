@@ -357,6 +357,7 @@ private IEditorPart openEditor(EditorDescriptor desc, IEditorInput input)
 			// Record the happy event.
 			Workbench wb = (Workbench)window.getWorkbench();
 			wb.getEditorHistory().add(input, desc);
+			wb.getWorkbenchHistory().add(input, desc);
 			return reusableEditor;
 		}
 		return openInternalEditor(desc, input, true,null);
@@ -453,6 +454,7 @@ private void openInternalEditor(final IEditorPart part, final EditorDescriptor d
 				// Record the happy event.
 				Workbench wb = (Workbench)window.getWorkbench();
 				wb.getEditorHistory().add(input, desc);
+				wb.getWorkbenchHistory().add(input, desc);
 				
 				page.firePartOpened(part);
 			} catch (PartInitException e) {

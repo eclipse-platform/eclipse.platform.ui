@@ -124,4 +124,9 @@ public IWorkbenchWindow openWorkbenchWindow(String perspID, IAdaptable input)
  */
 public IWorkbenchWindow openWorkbenchWindow(IAdaptable input)
 	throws WorkbenchException;
+	
+public IWorkbenchPage openPage(String perspID,IAdaptable input) 
+	throws WorkbenchException;
+public IWorkbenchPage openPage(IAdaptable input) 
+	throws WorkbenchException;
 }

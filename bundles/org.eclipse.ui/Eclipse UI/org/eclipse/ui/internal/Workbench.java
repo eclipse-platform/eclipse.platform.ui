@@ -47,6 +47,7 @@ public class Workbench implements IWorkbench,
 	private static final String DEFAULT_WORKBENCH_STATE_FILENAME = "workbench.xml";//$NON-NLS-1$
 	private WindowManager windowManager;
 	private EditorHistory editorHistory;
+	private WorkbenchHistory workbenchHistory;
 	private boolean runEventLoop;
 	private boolean isStarting = false;
 	private boolean isClosing = false;
@@ -237,6 +238,15 @@ public EditorHistory getEditorHistory() {
 		editorHistory = new EditorHistory();
 	}
 	return editorHistory;
+}
+/**
+ * Returns the editor history.
+ */
+public WorkbenchHistory getWorkbenchHistory() {
+	if (workbenchHistory == null) {
+		workbenchHistory = new  WorkbenchHistory(20);
+	}
+	return workbenchHistory;
 }
 /**
  * Returns the editor registry for the workbench.
@@ -557,6 +567,45 @@ public IWorkbenchWindow openWorkbenchWindow(IAdaptable input)
 	return openWorkbenchWindow(getPerspectiveRegistry().getDefaultPerspective(), 
 		input);
 }
+
+/**
+ * Opens a new page. 
+ */
+public IWorkbenchPage openPage(String perspID,IAdaptable input) 
+	throws WorkbenchException 
+{
+	String openBehavior =
+		WorkbenchPlugin.getDefault().getPreferenceStore().getString(
+			IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE);
+
+	if (openBehavior.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW)) {
+		IWorkbenchWindow ww = openWorkbenchWindow(perspID,input);
+		return ww.getActivePage();
+	} else if (openBehavior.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE)) {
+		return getActiveWorkbenchWindow().openPage(input);
+	} else if (openBehavior.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE)) {
+	// Add the default perspective first.
+		IPerspectiveRegistry reg =
+			WorkbenchPlugin.getDefault().getPerspectiveRegistry();
+		IPerspectiveDescriptor defDesc =
+			reg.findPerspectiveWithId(IWorkbenchConstants.DEFAULT_LAYOUT_ID);
+		if (defDesc != null) {
+			IWorkbenchPage page = getActiveWorkbenchWindow().getActivePage();
+			if (page != null)
+				page.setPerspective(defDesc);
+			return page;
+		}
+	}
+	return null;
+}
+/**
+ * Opens a new page. 
+ */
+public IWorkbenchPage openPage(IAdaptable input)
+	throws WorkbenchException 
+{
+	return openPage(getPerspectiveRegistry().getDefaultPerspective(),input);
+}
 /**
  * Reads the product info.
  * The product info contains the product name, product images,
@@ -592,7 +641,7 @@ private XMLMemento recordWorkbenchState() {
 /**
  * @see IPersistable
  */
-public void restoreState(IMemento memento) {
+private void restoreState(IMemento memento) {
 	// Get the child windows.
 	IMemento [] children = memento.getChildren(IWorkbenchConstants.TAG_WINDOW);
 	
@@ -664,7 +713,7 @@ private void runEventLoop() {
 /**
  * @see IPersistable
  */
-public void saveState(IMemento memento) {
+private void saveState(IMemento memento) {
 	// Save the version number.
 	memento.putString(IWorkbenchConstants.TAG_VERSION, VERSION_STRING);
 	

@@ -62,6 +62,8 @@ public WorkbenchPage(WorkbenchWindow w, String layoutID, IAdaptable input)
 	if (layoutID == null)
 		throw new WorkbenchException(WorkbenchMessages.getString("WorkbenchPage.UndefinedPerspective")); //$NON-NLS-1$
 	init(w, layoutID, input);
+	Workbench wb = (Workbench)window.getWorkbench();
+	wb.getWorkbenchHistory().add(input, getPerspective());
 }
 /**
  * Constructs an old page from data stored in a persistance file.
@@ -76,6 +78,8 @@ public WorkbenchPage(WorkbenchWindow w, IMemento memento, IAdaptable input)
 	super();
 	init(w, null, input);
 	restoreState(memento);
+	Workbench wb = (Workbench)window.getWorkbench();
+	wb.getWorkbenchHistory().add(input, getPerspective());
 }
 /**
  * Activates a part.  The part will be brought to the front and given focus.
