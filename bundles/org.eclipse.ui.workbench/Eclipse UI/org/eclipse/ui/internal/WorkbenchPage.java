@@ -1817,7 +1817,8 @@ public void reuseEditor(IReusableEditor editor,IEditorInput input) {
 public IEditorPart openEditor(IFile file) 
 	throws PartInitException
 {
-	return openEditor(new FileEditorInput(file),null,true,false,null, false);
+	// funnel through IWorkbenchPage.openEditor(IEditorInput,String,boolean)
+	return openEditor(new FileEditorInput(file), null, true);
 }
 /**
  * See IWorkbenchPage.
@@ -1825,7 +1826,8 @@ public IEditorPart openEditor(IFile file)
 public IEditorPart openEditor(IFile file, String editorID)
 	throws PartInitException 
 {
-	return openEditor(new FileEditorInput(file),editorID,true,true,file, false);
+	// funnel through IWorkbenchPage.openEditor(IEditorInput,String,boolean)
+	return openEditor(new FileEditorInput(file), editorID, true);
 }
 /**
  * See IWorkbenchPage.
@@ -1833,7 +1835,8 @@ public IEditorPart openEditor(IFile file, String editorID)
 public IEditorPart openEditor(IFile file, String editorID,boolean activate)
 	throws PartInitException 
 {
-	return openEditor(new FileEditorInput(file),editorID,activate,editorID != null,file, false);
+	// N.B. all IWorkbenchPage.openEditor(IFile,*) methods funnel through here
+	return openEditor(new FileEditorInput(file),editorID,activate,editorID != null,false);
 }
 /**
  * See IWorkbenchPage.
@@ -1841,6 +1844,7 @@ public IEditorPart openEditor(IFile file, String editorID,boolean activate)
 public IEditorPart openEditor(IMarker marker)
 	throws PartInitException
 {
+	// funnel through IWorkbenchPage.openEditor(IMarker,boolean)
 	return openEditor(marker, true);
 }
 /**
@@ -1849,6 +1853,7 @@ public IEditorPart openEditor(IMarker marker)
 public IEditorPart openEditor(IMarker marker, boolean activate) 
 	throws PartInitException 
 {
+	// N.B. all IWorkbenchPage.openEditor(IMarker,*) methods funnel through here
 	return openMarker(marker, activate, false);
 }
 /**
@@ -1857,6 +1862,7 @@ public IEditorPart openEditor(IMarker marker, boolean activate)
 public IEditorPart openEditor(IEditorInput input, String editorID) 
 	throws PartInitException
 {
+	// funnel through IWorkbenchPage.openEditor(IEditorInput,String,boolean)
 	return openEditor(input, editorID, true);
 }
 /**
@@ -1865,7 +1871,8 @@ public IEditorPart openEditor(IEditorInput input, String editorID)
 public IEditorPart openEditor(IEditorInput input, String editorID, boolean activate) 
 	throws PartInitException
 {
-	return openEditor(input,editorID,activate,true,null, false);
+	// N.B. all IWorkbenchPage.openEditor(IEditorInput,*) methods funnel through here
+	return openEditor(input,editorID,activate,true,false);
 }
 /**
  * Method openInternalEditor.
@@ -1874,7 +1881,7 @@ public IEditorPart openEditor(IEditorInput input, String editorID, boolean activ
  */
 public IEditorPart openInternalEditor(IEditorInput input, String editorId)
 	throws PartInitException {
-	return openEditor(input,editorId,true,true,null, true);
+	return openEditor(input,editorId,true,true,true);
 
 }
 /**
@@ -1909,9 +1916,9 @@ private IEditorPart openMarker(IMarker marker, boolean activate, boolean forceIn
 	// Create a new editor.
 	IEditorPart editor = null;
 	if (editorID == null)
-		editor = openEditor(new FileEditorInput(file),null,activate,false,null, forceInternal);
+		editor = openEditor(new FileEditorInput(file),null,activate,false,forceInternal);
 	else
-		editor = openEditor(new FileEditorInput(file),editorID,activate,true,file, forceInternal);
+		editor = openEditor(new FileEditorInput(file),editorID,activate,true,forceInternal);
 
 	// Goto the bookmark.
 	if (editor != null)
@@ -1924,12 +1931,12 @@ private IEditorPart openMarker(IMarker marker, boolean activate, boolean forceIn
  */
 public IEditorPart openInternalEditor(IFile file)
 	throws PartInitException {
-	return openEditor(new FileEditorInput(file),null,true,false,null, true);
+	return openEditor(new FileEditorInput(file),null,true,false,true);
 }
 /**
  * See IWorkbenchPage.
  */
-private IEditorPart openEditor(final IEditorInput input,final String editorID,final boolean activate,final boolean useEditorID,final IFile file,final boolean forceInternal) throws PartInitException {
+private IEditorPart openEditor(final IEditorInput input,final String editorID,final boolean activate,final boolean useEditorID, final boolean forceInternal) throws PartInitException {
 	final IEditorPart result[] = new IEditorPart[1];
 	final PartInitException ex[] = new PartInitException[1];
 	BusyIndicator.showWhile(
@@ -1937,7 +1944,7 @@ private IEditorPart openEditor(final IEditorInput input,final String editorID,fi
 		new Runnable() {
 			public void run() {
 				try {
-					result[0] = busyOpenEditor(input,editorID,activate,useEditorID,file,forceInternal);
+					result[0] = busyOpenEditor(input,editorID,activate,useEditorID,forceInternal);
 				} catch (PartInitException e) {
 					ex[0] = e;
 				}
@@ -1950,7 +1957,7 @@ private IEditorPart openEditor(final IEditorInput input,final String editorID,fi
 /**
  * See IWorkbenchPage.openEditor
  */
-private IEditorPart busyOpenEditor(IEditorInput input, String editorID, boolean activate,boolean useEditorID,IFile file, boolean forceInternal) throws PartInitException {			
+private IEditorPart busyOpenEditor(IEditorInput input, String editorID, boolean activate,boolean useEditorID, boolean forceInternal) throws PartInitException {			
 	// If an editor already exists for the input use it.
 	IEditorPart editor = getEditorManager().findEditor(input);
 	if (editor != null) {

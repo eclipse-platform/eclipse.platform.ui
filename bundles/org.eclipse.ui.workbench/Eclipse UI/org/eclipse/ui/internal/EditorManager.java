@@ -13,7 +13,10 @@ package org.eclipse.ui.internal;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableContext;
@@ -319,6 +322,16 @@ public class EditorManager {
 	 * @see IWorkbenchPage.
 	 */
 	private IEditorReference openEditorFromInput(IEditorReference ref,IEditorInput editorInput, boolean setVisible, boolean forceInternal) throws PartInitException {
+		/* @issue This method reaches into editor input. This method ends up determining
+		 * the editorID to use in the case where the API entry was
+		 * IWorkbenchPage.openEditor(IFile). By forcing the original caller to use
+		 * IWorkbenchPage.openEditor(IEditorInput input,String editorID) instead,
+		 * they will be forced to convert the IFile to an IEditorInput and to
+		 * determine the the appropriate editorID up front. Once that happens,
+		 * this method will no longer be needed, because all incoming API requests
+		 * will say which editor to use. So this method can be deleted (along
+		 * with its egregious behavior).
+		 */ 
 		if (!(editorInput instanceof IFileEditorInput))
 			throw new PartInitException(
 				WorkbenchMessages.format(
@@ -420,6 +433,12 @@ public class EditorManager {
 	 * See IWorkbenchPage.
 	 */	
 	public IEditorReference openEditor(String editorId,IEditorInput input,boolean setVisible, boolean forceInternal) throws PartInitException {
+		/* @issue This method is called only from WorkbenchPage.busyOpenEditor.
+		 * Once call has editorID==null; this is used only when the IEditorInput
+		 * needs to be used to determine the editorID, and this only happens
+		 * when the original API call was IWorkbenchPage.openEditor(IFile) or
+		 * IWorkbenchPage.openEditor(IMarker,*)
+		 */
 		if(editorId == null) {
 			return openEditorFromInput(new Editor(),input,setVisible, forceInternal);
 		} else {
@@ -429,6 +448,9 @@ public class EditorManager {
 				throw new PartInitException(WorkbenchMessages.format("EditorManager.unknownEditorIDMessage", new Object[] { editorId })); //$NON-NLS-1$
 			}
 			IEditorReference result = openEditorFromDescriptor(new Editor(),desc, input, forceInternal);
+			/* @issue This method should not know about file editor inputs.
+			 * 
+			 */
 			if(input instanceof IFileEditorInput) {
 				IFile file = ((IFileEditorInput)input).getFile();
 				if(file != null) {
