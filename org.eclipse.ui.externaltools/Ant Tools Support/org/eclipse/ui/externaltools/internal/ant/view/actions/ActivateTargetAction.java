@@ -51,6 +51,7 @@ public class ActivateTargetAction extends Action implements IUpdate {
 			Object data= iter.next();
 			if (!(data instanceof TargetNode) || ((TargetNode) data).isErrorNode()) {
 				enabled= false;
+				break;
 			}
 		}
 		setEnabled(enabled);
