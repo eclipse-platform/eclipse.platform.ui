@@ -11,7 +11,6 @@
 package org.eclipse.ant.internal.ui.preferences;
 
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -19,16 +18,12 @@ import java.util.List;
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.Type;
-import org.eclipse.ant.internal.ui.model.AntUIImages;
-import org.eclipse.ant.internal.ui.model.IAntUIConstants;
 import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
@@ -42,7 +37,7 @@ public class AntTypesPage extends AntPage {
 	private static final int EDIT_TYPE_BUTTON = IDialogConstants.CLIENT_ID + 2;
 	private static final int REMOVE_BUTTON = IDialogConstants.CLIENT_ID + 3;
 
-	private final AntTypesLabelProvider labelProvider = new AntTypesLabelProvider();
+	private final AntObjectLabelProvider labelProvider = new AntObjectLabelProvider();
 	/**
 	 * Creates an instance.
 	 */
@@ -153,52 +148,7 @@ public class AntTypesPage extends AntPage {
 		return labelProvider;
 	}
 
-		/**
-	 * Label provider for type elements
-	 */
-	private static final class AntTypesLabelProvider extends LabelProvider implements ITableLabelProvider {
-		/**
-		 * Creates an instance.
-		 */
-		public AntTypesLabelProvider() {
-		}
-		
 		/* (non-Javadoc)
-		 * Method declared on IBaseLabelProvider.
-		 */
-		public void dispose() {
-		}
-		
-		/* (non-Javadoc)
-		 * Method declared on ITableLabelProvider.
-		 */
-		public Image getColumnImage(Object element, int columnIndex) {
-			return getTypeImage();
-		}
-		
-		/* (non-Javadoc)
-		 * Method declared on ITableLabelProvider.
-		 */
-		public String getColumnText(Object element, int columnIndex) {
-			Type type = (Type) element;
-			StringBuffer text= new StringBuffer(type.getTypeName());
-			text.append(" ("); //$NON-NLS-1$
-			text.append(type.getLibrary().getFile());
-			text.append(": "); //$NON-NLS-1$
-			text.append(type.getClassName());
-			text.append(')');
-			if (type.isDefault()) {
-				text.append(MessageFormat.format(AntPreferencesMessages.getString("AntTypesPage.10"), new String[]{type.getPluginLabel()})); //$NON-NLS-1$
-			}
-			return text.toString();
-		}
-		
-		public Image getTypeImage() {
-			return AntUIImages.getImage(IAntUIConstants.IMG_ANT_TYPE);
-		}
-	}
-	
-	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.preferences.AntPage#initialize()
 	 */
 	protected void initialize() {

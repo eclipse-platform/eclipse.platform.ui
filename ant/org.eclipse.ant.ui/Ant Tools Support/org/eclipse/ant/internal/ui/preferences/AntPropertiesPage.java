@@ -17,8 +17,6 @@ import java.util.List;
 
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.Property;
-import org.eclipse.ant.internal.ui.model.AntUIImages;
-import org.eclipse.ant.internal.ui.model.IAntUIConstants;
 import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
@@ -53,7 +51,7 @@ public class AntPropertiesPage implements IAntBlockContainer {
 	protected TabItem createTabItem(TabFolder folder) {
 		TabItem item = new TabItem(folder, SWT.NONE);
 		item.setText(AntPreferencesMessages.getString("AntPropertiesPage.title")); //$NON-NLS-1$
-		item.setImage(AntUIImages.getImage(IAntUIConstants.IMG_PROPERTY));
+		item.setImage(AntObjectLabelProvider.getPropertyImage());
 		item.setData(this);
 		item.setControl(createContents(folder));
 		return item;

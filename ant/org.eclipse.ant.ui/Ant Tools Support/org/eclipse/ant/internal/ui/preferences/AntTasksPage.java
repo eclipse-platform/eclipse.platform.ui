@@ -11,7 +11,6 @@
 package org.eclipse.ant.internal.ui.preferences;
 
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -23,15 +22,11 @@ import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.PlatformUI;
 
 /**
  * Sub-page that allows the user to enter custom tasks
@@ -42,7 +37,7 @@ public class AntTasksPage extends AntPage {
 	private static final int EDIT_TASK_BUTTON = IDialogConstants.CLIENT_ID + 2;
 	private static final int REMOVE_BUTTON = IDialogConstants.CLIENT_ID + 3;
 
-	private final AntTasksLabelProvider labelProvider = new AntTasksLabelProvider();
+	private final AntObjectLabelProvider labelProvider = new AntObjectLabelProvider();
 	/**
 	 * Creates an instance.
 	 */
@@ -152,57 +147,6 @@ public class AntTasksPage extends AntPage {
 		return labelProvider;
 	}
 
-	/**
-	 * Label provider for task elements
-	 */
-	private static final class AntTasksLabelProvider extends LabelProvider implements ITableLabelProvider {
-		private Image taskImage;
-	
-		/**
-		 * Creates an instance.
-		 */
-		public AntTasksLabelProvider() {
-		}
-		
-		/* (non-Javadoc)
-		 * Method declared on IBaseLabelProvider.
-		 */
-		public void dispose() {
-			// Task image is shared, do not dispose.
-			taskImage = null;
-		}
-		
-		/* (non-Javadoc)
-		 * Method declared on ITableLabelProvider.
-		 */
-		public Image getColumnImage(Object element, int columnIndex) {
-			return getTaskImage();
-		}
-		
-		/* (non-Javadoc)
-		 * Method declared on ITableLabelProvider.
-		 */
-		public String getColumnText(Object element, int columnIndex) {
-			Task task = (Task) element;
-			StringBuffer text= new StringBuffer(task.getTaskName());
-			text.append(" ("); //$NON-NLS-1$
-			text.append(task.getLibrary().getFile());
-			text.append(": "); //$NON-NLS-1$
-			text.append(task.getClassName());
-			text.append(')');
-			if (task.isDefault()) {
-				text.append(MessageFormat.format(AntPreferencesMessages.getString("AntTasksPage.10"), new String[]{task.getPluginLabel()})); //$NON-NLS-1$
-			}
-			return text.toString();
-		}
-		
-		public Image getTaskImage() {
-			if (taskImage == null) {
-				taskImage = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJS_TASK_TSK);
-			}
-			return taskImage;
-		}
-	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.preferences.AntPage#initialize()
 	 */
