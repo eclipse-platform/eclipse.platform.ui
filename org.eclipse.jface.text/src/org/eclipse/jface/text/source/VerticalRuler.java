@@ -294,13 +294,14 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 					int startLine= doc.getLineOfOffset(offset);
 					if (startLine < topLine)
 						startLine= topLine;
-					startLine -= topLine;
 					
 					int endLine= startLine;
 					if (length > 0)
 						endLine= doc.getLineOfOffset(offset + length - 1);
 					if (endLine > bottomLine)
 						endLine= bottomLine;
+					
+					startLine -= topLine;
 					endLine -= topLine;
 					
 					r.x= 0;
