@@ -11,7 +11,9 @@ package org.eclipse.core.internal.jobs;
 
 import java.util.*;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
 
@@ -62,26 +64,32 @@ public class JobListeners implements IJobChangeListener {
 	 * Process the given doit for all global listeners and all local listeners
 	 * on the given job.
 	 */
-	private void doNotify(IListenerDoit doit, Job job, IStatus result) {
-		//notify all global listeners
-		int size = global.size();
-		for (int i = 0; i < size; i++) {
-			//note: tolerate concurrent modification
-			IJobChangeListener listener = (IJobChangeListener) global.get(i);
-			if (listener != null)
-				doit.notify(listener, job, result);
-		}
-		//notify all local listeners
-		List local = ((InternalJob) job).getListeners();
-		if (local != null) {
-			size = local.size();
-			for (int i = 0; i < size; i++) {
-				//note: tolerate concurrent modification
-				IJobChangeListener listener = (IJobChangeListener) global.get(i);
-				if (listener != null)
-					doit.notify(listener, job, result);
+	private void doNotify(final IListenerDoit doit, final Job job, final IStatus result) {
+		Platform.run(new ISafeRunnable() {
+			public void handleException(Throwable exception) {
 			}
-		}
+			public void run() throws Exception {
+				//notify all global listeners
+				int size = global.size();
+				for (int i = 0; i < size; i++) {
+					//note: tolerate concurrent modification
+					IJobChangeListener listener = (IJobChangeListener) global.get(i);
+					if (listener != null)
+						doit.notify(listener, job, result);
+				}
+				//notify all local listeners
+				List local = ((InternalJob) job).getListeners();
+				if (local != null) {
+					size = local.size();
+					for (int i = 0; i < size; i++) {
+						//note: tolerate concurrent modification
+						IJobChangeListener listener = (IJobChangeListener) global.get(i);
+						if (listener != null)
+							doit.notify(listener, job, result);
+					}
+				}
+			}
+		});
 	}
 	public void add(IJobChangeListener listener) {
 		global.add(listener);
