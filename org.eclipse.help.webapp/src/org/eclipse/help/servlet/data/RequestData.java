@@ -3,12 +3,10 @@
  * All Rights Reserved.
  */
 package org.eclipse.help.servlet.data;
-import java.util.Locale;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
-import org.eclipse.core.boot.*;
+import org.eclipse.core.boot.BootLoader;
 import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.servlet.*;
 
