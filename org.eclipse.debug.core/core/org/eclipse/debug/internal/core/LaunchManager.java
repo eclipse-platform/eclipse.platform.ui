@@ -957,14 +957,10 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	protected void projectOpened(IProject project) throws CoreException {
 		List configs = findLaunchConfigurations(project);
 		if (!configs.isEmpty()) {
-			List allList = getAllLaunchConfigurations();
 			Iterator iterator = configs.iterator();
 			while (iterator.hasNext()) {
 				ILaunchConfiguration config = (ILaunchConfiguration) iterator.next();
-				if (!allList.contains(config)) {
-					allList.add(config);
-					launchConfigurationAdded(config);
-				}
+				launchConfigurationAdded(config);
 			}			
 		}
 	}
@@ -979,13 +975,10 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	protected void projectClosed(IProject project) throws CoreException {
 		List configs = getLaunchConfigurations(project);
 		if (!configs.isEmpty()) {
-			List allList = getAllLaunchConfigurations();
 			Iterator iterator = configs.iterator();
 			while (iterator.hasNext()) {
 				ILaunchConfiguration configuration = (ILaunchConfiguration)iterator.next();
-				if (allList.remove(configuration)) {
-					launchConfigurationDeleted(configuration);
-				}
+				launchConfigurationDeleted(configuration);
 			}
 		}
 	}	
