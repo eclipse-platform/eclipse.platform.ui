@@ -1170,6 +1170,15 @@ private static LaunchInfo restoreProfileSummary(LaunchInfo info, Properties summ
 	return info;
 }
 
+private void resetInfoURL() {
+	try {
+		URL info = new URL(baseUrl,INSTALLDIR+LAUNCH_PROFILE);
+		infoUrl = info;
+	} catch(MalformedURLException e) {
+		// if we can't construct a good URL leave things asis
+	}
+}
+
 synchronized public void revertTo(History history) {
 
 	if (history == null)
@@ -1477,7 +1486,9 @@ static void startup(URL base) {
 
 	if (profile == null) {
 		// restore profile
-		profile = restoreProfile(base);
+		LaunchInfo newProfile = restoreProfile(base);
+		newProfile.resetInfoURL(); // make sure info url is always == active profile (however restored)
+		profile = newProfile;
 
 		// check if update will be enabled
 		profile.checkUpdateEnabled();		
@@ -1614,7 +1625,7 @@ synchronized private void store() throws IOException {
 
 	// check to see if we need to clone history
 	if (newHistory) {
-		if (active.exists()) {
+		if (active.exists()) { // active may not exists if we recovered from temp or history
 			String suffix = this.id; // id for history
 			File history = new File(dir,LAUNCH_PROFILE_NAME+"_"+suffix+"."+LAUNCH_PROFILE_EXT);
 			if (history.exists()) {
@@ -1630,8 +1641,10 @@ synchronized private void store() throws IOException {
 			if (!bak.delete())
 				return;
 		}
-		if (!active.renameTo(bak))
-			return;
+		if (active.exists()) { // active may not exists if we recovered from temp or history
+			if (!active.renameTo(bak))
+				return;
+		}
 	}
 
 	// activate new state
