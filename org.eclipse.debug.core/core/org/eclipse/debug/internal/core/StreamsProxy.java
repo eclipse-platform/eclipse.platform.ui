@@ -9,40 +9,38 @@ import org.eclipse.debug.core.model.IStreamMonitor;
 import org.eclipse.debug.core.model.IStreamsProxy;
 import java.io.IOException;
 
-/**
- * @see IStreamsProxy
- */
 public class StreamsProxy implements IStreamsProxy {
 	/**
 	 * The monitor for the input stream (connected to standard out of the process)
 	 */
-	protected InputStreamMonitor fInputMonitor;
+	private InputStreamMonitor fInputMonitor;
 	/**
-	 * The monitor for the error stream.
+	 * The monitor for the error stream (connected to standard error of the process)
 	 */
-	protected InputStreamMonitor fErrorMonitor;
+	private InputStreamMonitor fErrorMonitor;
 	/**
-	 * The monitor for the output stream (connected to standard in of the process).
+	 * The monitor for the output stream (connected to standard in of the process)
 	 */
-	protected OutputStreamMonitor fOutputMonitor;
+	private OutputStreamMonitor fOutputMonitor;
 	/**
 	 * Records the open/closed state of communications with
 	 * the underlying streams.
 	 */
-	protected boolean fClosed= false;
+	private boolean fClosed= false;
 	/**
 	 * Creates a <code>StreamsProxy</code> on the streams
 	 * of the given <code>IProcess</code>.
 	 */
 	public StreamsProxy(RuntimeProcess process) {
-		if (process != null) {
-			fInputMonitor= new InputStreamMonitor(process.getInputStream());
-			fErrorMonitor= new InputStreamMonitor(process.getErrorStream());
-			fOutputMonitor= new OutputStreamMonitor(process.getOutputStream());
-			fInputMonitor.startMonitoring();
-			fErrorMonitor.startMonitoring();
-			fOutputMonitor.startMonitoring();
+		if (process == null) {
+			return;
 		}
+		fInputMonitor= new InputStreamMonitor(process.getInputStream());
+		fErrorMonitor= new InputStreamMonitor(process.getErrorStream());
+		fOutputMonitor= new OutputStreamMonitor(process.getOutputStream());
+		fInputMonitor.startMonitoring();
+		fErrorMonitor.startMonitoring();
+		fOutputMonitor.startMonitoring();
 	}
 
 	/**
@@ -50,7 +48,7 @@ public class StreamsProxy implements IStreamsProxy {
 	 * communications between it and the
 	 * underlying streams.
 	 */
-	public void close() {
+	protected void close() {
 		fClosed= true;
 		fInputMonitor.close();
 		fErrorMonitor.close();
@@ -58,21 +56,21 @@ public class StreamsProxy implements IStreamsProxy {
 	}
 
 	/**
-	 * @see IStreamsProxy
+	 * @see IStreamsProxy#getErrorStreamMonitor()
 	 */
 	public IStreamMonitor getErrorStreamMonitor() {
 		return fErrorMonitor;
 	}
 
 	/**
-	 * @see IStreamsProxy
+	 * @see IStreamsProxy#getOutputStreamMonitor()
 	 */
 	public IStreamMonitor getOutputStreamMonitor() {
 		return fInputMonitor;
 	}
 
 	/**
-	 * @see IStreamsProxy
+	 * @see IStreamsProxy#write(String)
 	 */
 	public void write(String input) throws IOException {
 		if (!fClosed) {

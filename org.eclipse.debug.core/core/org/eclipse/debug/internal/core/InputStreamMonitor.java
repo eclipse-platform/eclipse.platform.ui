@@ -21,33 +21,33 @@ public class InputStreamMonitor implements IStreamMonitor {
 	/**
 	 * The input stream being monitored.
 	 */
-	protected InputStream fStream;
+	private InputStream fStream;
 
 	/**
 	 * A collection of listeners
 	 */
-	protected ListenerList fListeners= new ListenerList(1);
+	private ListenerList fListeners= new ListenerList(1);
 
 	/**
 	 * The local copy of the stream contents
 	 */
-	protected StringBuffer fContents;
+	private StringBuffer fContents;
 
 	/**
 	 * The thread which reads from the stream
 	 */
-	protected Thread fThread;
+	private Thread fThread;
 
 	/**
 	 * The size of the read buffer
 	 */
-	protected static final int BUFFER_SIZE= 8192;
+	private static final int BUFFER_SIZE= 8192;
 
 	/**
 	 * The number of milliseconds to pause
 	 * between reads.
 	 */
-	protected static final long DELAY= 50L;
+	private static final long DELAY= 50L;
 	/**
 	 * Creates an input stream monitor on the
 	 * given input stream.
@@ -69,8 +69,9 @@ public class InputStreamMonitor implements IStreamMonitor {
 	 * communications between it and the
 	 * underlying stream.
 	 */
-	public void close() {
+	protected void close() {
 		if (fThread != null) {
+			fListeners= new ListenerList(0);
 			Thread thread= fThread;
 			fThread= null;
 			try {
@@ -84,7 +85,7 @@ public class InputStreamMonitor implements IStreamMonitor {
 	 * Notifies the listeners that text has
 	 * been appended to the stream.
 	 */
-	public void fireStreamAppended(String text) {
+	private void fireStreamAppended(String text) {
 		if (text == null)
 			return;
 		Object[] copiedListeners= fListeners.getListeners();
@@ -94,7 +95,7 @@ public class InputStreamMonitor implements IStreamMonitor {
 	}
 
 	/**
-	 * @see IStreamMonitor
+	 * @see IStreamMonitor#getContents()
 	 */
 	public String getContents() {
 		return fContents.toString();
@@ -124,6 +125,8 @@ public class InputStreamMonitor implements IStreamMonitor {
 					}
 				}
 			} catch (IOException ioe) {
+				DebugCoreUtils.logError(ioe);
+				return;
 			}
 			try {
 				Thread.sleep(DELAY);
@@ -133,16 +136,16 @@ public class InputStreamMonitor implements IStreamMonitor {
 	}
 
 	/**
-	 * @see IStreamMonitor
+	 * @see IStreamMonitor#removeListener(IStreamListener)
 	 */
 	public void removeListener(IStreamListener listener) {
 		fListeners.remove(listener);
 	}
 
 	/**
-	 * Starts a <code>Thread</code> which reads the stream.
+	 * Starts a thread which reads from the stream
 	 */
-	public void startMonitoring() {
+	protected void startMonitoring() {
 		if (fThread == null) {
 			fThread= new Thread(new Runnable() {
 				public void run() {

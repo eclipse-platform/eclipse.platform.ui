@@ -22,32 +22,33 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	/**
 	 * The system process
 	 */
-	protected Process fProcess;
+	private Process fProcess;
 	
 	/**
-	 * Process monitor
+	 * The monitor which listens for this runtime process' system process
+	 * to terminate.
 	 */
-	protected ProcessMonitor fMonitor;
+	private ProcessMonitor fMonitor;
 	
 	/**
 	 * The streams proxy for this process
 	 */
-	protected StreamsProxy fStreamsProxy;
+	private StreamsProxy fStreamsProxy;
 
 	/**
 	 * The name of the process
 	 */
-	protected String fName;
+	private String fName;
 
 	/**
-	 * <code>true</code> when this process has been termianted
+	 * <code>true</code> when this process has been terminated
 	 */
-	protected boolean fTerminated;
+	private boolean fTerminated;
 	
 	/**
-	 * Table of cleint defined attributes
+	 * Table of client defined attributes
 	 */
-	protected HashMap fAttributes;
+	private HashMap fAttributes;
 
 	/**
 	 * Constructs a RuntimeProcess on the given system process
@@ -68,7 +69,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	}
 
 	/**
-	 * @see IProcess
+	 * @see ITerminate#canTerminate()
 	 */
 	public boolean canTerminate() {
 		return !fTerminated;
@@ -78,7 +79,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	 * Returns the error stream of the underlying system process (connected
 	 * to the standard error of the process).
 	 */
-	public InputStream getErrorStream() {
+	protected InputStream getErrorStream() {
 		return fProcess.getErrorStream();
 	}
 
@@ -86,45 +87,48 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	 * Returns the input stream of the underlying system process (connected
 	 * to the standard out of the process).
 	 */
-	public InputStream getInputStream() {
+	protected InputStream getInputStream() {
 		return fProcess.getInputStream();
-	}
-
-	/**
-	 * @see IProcess
-	 */
-	public String getLabel() {
-		return fName;
-	}
-
-	/**
-	 * @see IProcess
-	 */
-	public ILaunch getLaunch() {
-		return DebugPlugin.getDefault().getLaunchManager().findLaunch(this);
 	}
 
 	/**
 	 * Returns the output stream of the underlying system process (connected
 	 * to the standard in of the process).
 	 */
-	public OutputStream getOutputStream() {
+	protected OutputStream getOutputStream() {
 		return fProcess.getOutputStream();
 	}
+	
+	/**
+	 * @see IProcess#getLabel()
+	 */
+	public String getLabel() {
+		return fName;
+	}
 
-	public Process getSystemProcess() {
+	/**
+	 * @see IProcess#getLaunch()
+	 */
+	public ILaunch getLaunch() {
+		return DebugPlugin.getDefault().getLaunchManager().findLaunch(this);
+	}
+
+	/**
+	 * Returns the underlying system process
+	 */
+	protected Process getSystemProcess() {
 		return fProcess;
 	}
 
 	/**
-	 * @see IProcess
+	 * @see ITerminate#isTerminated()
 	 */
 	public boolean isTerminated() {
 		return fTerminated;
 	}
 
 	/**
-	 * @see IProcess
+	 * @see ITerminate#terminate()
 	 */
 	public void terminate() throws DebugException {
 		if (!isTerminated()) {
@@ -133,7 +137,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 			while (attempts < MAX_WAIT_FOR_DEATH_ATTEMPTS) {
 				try {
 					if (fProcess != null) {
-						fProcess.exitValue();
+						fProcess.exitValue(); // throws exception if process not exited
 					}
 					return;
 				} catch (IllegalThreadStateException ie) {
@@ -155,13 +159,16 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	 * Notification that the system process associated with this process
 	 * has terminated.
 	 */
-	public void terminated() {
+	protected void terminated() {
 		fStreamsProxy.close();
 		fTerminated= true;
 		fProcess= null;
 		fireTerminateEvent();
 	}
 		
+	/**
+	 * @see IProcess#getStreamsProxy()
+	 */
 	public IStreamsProxy getStreamsProxy() {
 		return fStreamsProxy;
 	}
@@ -169,14 +176,14 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	/**
 	 * Fire a debug event marking the creation of this element.
 	 */
-	public void fireCreationEvent() {
+	private void fireCreationEvent() {
 		fireEvent(new DebugEvent(this, DebugEvent.CREATE));
 	}
 
 	/**
 	 * Fire a debug event
 	 */
-	public void fireEvent(DebugEvent event) {
+	private void fireEvent(DebugEvent event) {
 		DebugPlugin manager= DebugPlugin.getDefault();
 		if (manager != null) {
 			manager.fireDebugEvent(event);
@@ -186,12 +193,12 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	/**
 	 * Fire a debug event marking the termination of this process.
 	 */
-	public void fireTerminateEvent() {
+	private void fireTerminateEvent() {
 		fireEvent(new DebugEvent(this, DebugEvent.TERMINATE));
 	}
 
 	/**
-	 * @see IProcess
+	 * @see IProcess#setAttribute(String, String)
 	 */
 	public void setAttribute(String key, String value) {
 		if (fAttributes == null) {
@@ -201,7 +208,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	}
 	
 	/**
-	 * @see IProcess
+	 * @see IProcess#getAttribute(String)
 	 */
 	public String getAttribute(String key) {
 		if (fAttributes == null) {

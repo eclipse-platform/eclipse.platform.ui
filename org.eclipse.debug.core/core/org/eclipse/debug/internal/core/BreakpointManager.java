@@ -33,35 +33,35 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * A collection of breakpoint registered with this manager.
 	 *
 	 */
-	protected Vector fBreakpoints;
+	private Vector fBreakpoints;
 	
 	/**
 	 * A table of breakpoint extension points, keyed by
 	 * marker type
 	 */
-	protected HashMap fBreakpointExtensions;
+	private HashMap fBreakpointExtensions;
 	
 	/**
 	 * Collection of markers that associates markers to breakpoints
 	 */	
-	protected HashMap fMarkers;
+	private HashMap fMarkersToBreakpoints;
 
 	/**
 	 * Collection of breakpoint listeners.
 	 */
-	protected ListenerList fBreakpointListeners= new ListenerList(6);
+	private ListenerList fBreakpointListeners= new ListenerList(6);
 
 	/**
 	 * Singleton resource delta visitor
 	 */
-	protected static BreakpointManagerVisitor fgVisitor;
+	private static BreakpointManagerVisitor fgVisitor;
 
 	/**
 	 * Constructs a new breakpoint manager.
 	 */
 	public BreakpointManager() {
 		fBreakpoints= new Vector(15);
-		fMarkers= new HashMap(15);	
+		fMarkersToBreakpoints= new HashMap(15);	
 		fBreakpointExtensions = new HashMap(15);	
 	}
 
@@ -98,7 +98,11 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		getWorkspace().removeResourceChangeListener(this);
 	}
 
-	protected void initBreakpointExtensions() {
+	/**
+	 * Find the defined breakpoint extensions and cache them for use in recreating
+	 * breakpoints from markers.
+	 */
+	private void initBreakpointExtensions() {
 		IExtensionPoint ep= DebugPlugin.getDefault().getDescriptor().getExtensionPoint(IDebugConstants.EXTENSION_POINT_BREAKPOINTS);
 		IConfigurationElement[] elements = ep.getConfigurationElements();
 		for (int i= 0; i < elements.length; i++) {
@@ -108,28 +112,21 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	}
 
 	/**
-	 * Convenience method to get the launch manager.
-	 */
-	protected ILaunchManager getLaunchManager() {
-		return DebugPlugin.getDefault().getLaunchManager();
-	}
-	
-	/**
 	 * Convenience method to get the workspace
 	 */
-	protected IWorkspace getWorkspace() {
+	private IWorkspace getWorkspace() {
 		return ResourcesPlugin.getWorkspace();
 	}
 
 	/**
-	 * @see IBreakpointManager
+	 * @see IBreakpointManager#getBreakpoint(IMarker)
 	 */
 	public IBreakpoint getBreakpoint(IMarker marker) {
-		return (IBreakpoint)fMarkers.get(marker);
+		return (IBreakpoint)fMarkersToBreakpoints.get(marker);
 	}
 
 	/**
-	 * @see IBreakpointManager
+	 * @see IBreakpointManager#getBreakpoints()
 	 */
 	public IBreakpoint[] getBreakpoints() {
 		Breakpoint[] temp= new Breakpoint[fBreakpoints.size()];
@@ -138,27 +135,23 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	}
 	
 	/**
-	 * @see IBreakpointManager
+	 * @see IBreakpointManager#getBreakpoints(String)
 	 */
 	public IBreakpoint[] getBreakpoints(String modelIdentifier) {
-		Vector temp= new Vector(fBreakpoints.size());
-		if (!fBreakpoints.isEmpty()) {
-			Iterator breakpoints= fBreakpoints.iterator();
-			while (breakpoints.hasNext()) {
-				IBreakpoint breakpoint= (IBreakpoint) breakpoints.next();
-				String id= breakpoint.getModelIdentifier();
-				if (id != null && id.equals(modelIdentifier)) {
-					temp.add(breakpoint);
-				}
+		ArrayList temp= new ArrayList(fBreakpoints.size());
+		Iterator breakpoints= fBreakpoints.iterator();
+		while (breakpoints.hasNext()) {
+			IBreakpoint breakpoint= (IBreakpoint) breakpoints.next();
+			String id= breakpoint.getModelIdentifier();
+			if (id != null && id.equals(modelIdentifier)) {
+				temp.add(breakpoint);
 			}
 		}
-		Breakpoint[] m= new Breakpoint[temp.size()];
-		temp.copyInto(m);
-		return m;
-	}	
+		return (IBreakpoint[]) temp.toArray();
+	}
 
 	/**
-	 * @see IBreakpointManager
+	 * @see IBreakpointManager#isRegistered(IBreakpoint)
 	 */
 	public boolean isRegistered(IBreakpoint breakpoint) {
 		return fBreakpoints.contains(breakpoint);
@@ -166,11 +159,11 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 
 	
 	/**
-	 * Remove the given breakpoint
+	 * @see IBreakpointManager#removeBreakpoint(IBreakpoint, boolean)
 	 */
 	public void removeBreakpoint(IBreakpoint breakpoint, boolean delete) throws CoreException {
 		if (fBreakpoints.remove(breakpoint)) {
-			fMarkers.remove(breakpoint.getMarker());
+			fMarkersToBreakpoints.remove(breakpoint.getMarker());
 			fireUpdate(breakpoint, null, REMOVED);
 			if (delete) {
 				breakpoint.delete();
@@ -179,12 +172,23 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	}
 	
 	/**
-	 * @see IBreakpointManager
+	 * Create a breakpoint for the given marker. The created breakpoint
+	 * is of the type specified in the breakpoint extension associated
+	 * with the given marker type.
+	 * 
+	 * @return a breakpoint on this marker
+	 * @exception DebugException if breakpoint creation fails. Reasons for 
+	 *  failure include:
+	 * <ol>
+	 * <li>The breakpoint manager cannot determine what kind of breakpoint
+	 *     to instantiate for the given marker type</li>
+	 * <li>A lower level exception occurred while accessing the given marker</li>
+	 * </ol>
 	 */
-	public IBreakpoint createBreakpoint(IMarker marker) throws DebugException {
-		if (fMarkers.containsKey(marker)) {
-			return (IBreakpoint) fMarkers.get(marker);
-		}	
+	private IBreakpoint createBreakpoint(IMarker marker) throws DebugException {
+		if (fMarkersToBreakpoints.containsKey(marker)) {
+			return (IBreakpoint) fMarkersToBreakpoints.get(marker);
+		}
 		try {
 			IConfigurationElement config = (IConfigurationElement)fBreakpointExtensions.get(marker.getType());
 			if (config == null) {
@@ -201,13 +205,13 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	}	
 
 	/**
-	 * @see IBreakpointManager
+	 * @see IBreakpointManager#addBreakpoint(IBreakpoint)
 	 */
 	public void addBreakpoint(IBreakpoint breakpoint) throws DebugException {
 		if (!fBreakpoints.contains(breakpoint)) {
 			verifyBreakpoint(breakpoint);
 			fBreakpoints.add(breakpoint);
-			fMarkers.put(breakpoint.getMarker(), breakpoint);
+			fMarkersToBreakpoints.put(breakpoint.getMarker(), breakpoint);
 			fireUpdate(breakpoint, null, ADDED);
 		}			
 	}
@@ -216,7 +220,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * Verifies that the breakpoint marker has the minimal required attributes,
 	 * and throws a debug exception if not.
 	 */
-	protected void verifyBreakpoint(IBreakpoint breakpoint) throws DebugException {
+	private void verifyBreakpoint(IBreakpoint breakpoint) throws DebugException {
 		try {
 			String id= breakpoint.getModelIdentifier();
 			if (id == null) {
@@ -249,7 +253,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * A project has been opened or closed.  Updates the breakpoints for
 	 * that project
 	 */
-	protected void handleProjectResourceOpenStateChange(IResource project) {
+	private void handleProjectResourceOpenStateChange(IResource project) {
 		if (!project.isAccessible()) {
 			//closed
 			Enumeration breakpoints= fBreakpoints.elements();
@@ -287,9 +291,9 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	}
 
 	/**
-	 * Logs errors
+	 * An exception has occurred. Make a note of it in the log file.
 	 */
-	protected void logError(Exception e) {
+	private void logError(Exception e) {
 		DebugCoreUtils.logError(e);
 	}
 
@@ -298,7 +302,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 */
 	class BreakpointManagerVisitor implements IResourceDeltaVisitor {
 		/**
-		 * @see IResourceDeltaVisitor
+		 * @see IResourceDeltaVisitor#visit(org.eclipse.core.resources.IResourceDelta)
 		 */
 		public boolean visit(IResourceDelta delta) {
 			if (0 != (delta.getFlags() & IResourceDelta.OPEN)) {
@@ -332,6 +336,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		protected void handleAddBreakpoint(IResourceDelta rDelta, final IMarker marker, IMarkerDelta mDelta) {
 			if (0 != (rDelta.getFlags() & IResourceDelta.MOVED_FROM)) {
 				// this breakpoint has actually been moved - removed from the Breakpoint manager and deleted
+				final IWorkspace workspace= getWorkspace();
 				final IWorkspaceRunnable wRunnable= new IWorkspaceRunnable() {
 					public void run(IProgressMonitor monitor) {
 						try {
@@ -389,14 +394,14 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	}
 
 	/**
-	 * @see IBreakpointManager
+	 * @see IBreakpointManager#addBreakpointListener(IBreakpointListener)
 	 */
 	public void addBreakpointListener(IBreakpointListener listener) {
 		fBreakpointListeners.add(listener);
 	}
 
 	/**
-	 * @see IBreakpointManager
+	 * @see IBreakpointManager#removeBreakpointListener(IBreakpointListener)
 	 */
 	public void removeBreakpointListener(IBreakpointListener listener) {
 		fBreakpointListeners.remove(listener);
@@ -405,10 +410,10 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	/**
 	 * Notifies listeners of the add/remove/change
 	 */
-	protected void fireUpdate(IBreakpoint breakpoint, IMarkerDelta delta, int update) {
-		Object[] copiedListeners= fBreakpointListeners.getListeners();
+	private void fireUpdate(IBreakpoint breakpoint, IMarkerDelta delta, int update) {
+		IBreakpointListener[] copiedListeners= (IBreakpointListener[]) fBreakpointListeners.getListeners();
 		for (int i= 0; i < copiedListeners.length; i++) {
-			IBreakpointListener listener = (IBreakpointListener)copiedListeners[i];
+			IBreakpointListener listener = copiedListeners[i];
 			switch (update) {
 				case ADDED:
 					listener.breakpointAdded(breakpoint);
