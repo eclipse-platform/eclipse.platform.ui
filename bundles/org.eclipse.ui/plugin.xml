@@ -806,7 +806,7 @@
       <keyBinding
             platform="carbon"
             commandId="org.eclipse.ui.navigate.previous"
-            keySequence="Command+,"
+            keySequence="Command+Shift+."
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
