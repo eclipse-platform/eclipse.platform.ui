@@ -14,23 +14,31 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.internal.*;
 
 /**
- * This class calls eclipse API's directly, so it should only be
- * instantiated in the workbench scenario, not in the infocenter.
+ * This class manages bookmarks.
  */
 public class BookmarksData extends RequestData {
-
+	public final static int NONE = 0;
+	public final static int ADD = 1;
+	public final static int REMOVE =2;
+	
 	public BookmarksData(ServletContext context, HttpServletRequest request) {
 		super(context, request);
 
-		// see if anything is to be added
-		addBookmark();
-		// see if anything is to be removd
-		removeBookmark();
+		switch(getOperation()) {
+			case ADD:
+				addBookmark();
+				break;
+			case REMOVE:
+				removeBookmark();
+				break;
+			default:
+				break;
+		}
 	}
 
 	public void addBookmark() {
-		String bookmarkURL = request.getParameter("add");
-		if (bookmarkURL != null && bookmarkURL.length() > 0) {
+		String bookmarkURL = request.getParameter("bookmark");
+		if (bookmarkURL != null && bookmarkURL.length() > 0 && !bookmarkURL.equals("about:blank")) {
 			String title = request.getParameter("title");
 			Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
 			String bookmarks = prefs.getString(HelpSystem.BOOKMARKS);
@@ -47,8 +55,8 @@ public class BookmarksData extends RequestData {
 	}
 
 	public void removeBookmark() {
-		String bookmarkURL = request.getParameter("remove");
-		if (bookmarkURL != null && bookmarkURL.length() > 0) {
+		String bookmarkURL = request.getParameter("bookmark");
+		if (bookmarkURL != null && bookmarkURL.length() > 0 && !bookmarkURL.equals("about:blank")) {
 			String title = request.getParameter("title");
 			Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
 			String bookmarks = prefs.getString(HelpSystem.BOOKMARKS);
@@ -85,5 +93,15 @@ public class BookmarksData extends RequestData {
 			return topics;
 		}
 		return new Topic[0];
+	}
+	
+	private int getOperation() {
+		String op = request.getParameter("operation");
+		if ("add".equals(op))
+			return ADD;
+		else if ("remove".equals(op))
+			return REMOVE;
+		else
+			return NONE;
 	}
 }
