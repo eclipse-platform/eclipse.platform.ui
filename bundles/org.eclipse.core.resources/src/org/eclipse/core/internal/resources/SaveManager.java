@@ -136,8 +136,20 @@ protected void broadcastLifecycle(final int lifecycle, Map contexts, final Multi
 	}
 }
 protected void cleanMasterTable() {
-	String pluginId = ResourcesPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-	IPath location = workspace.getMetaArea().getSafeTableLocationFor(pluginId);
+	//remove tree file entries for everything except closed projects
+	for (Iterator it = masterTable.keySet().iterator(); it.hasNext();) {
+		String key = (String) it.next();
+		if (!key.endsWith(LocalMetaArea.F_TREE))
+			continue;
+		String prefix = key.substring(0, key.length() - LocalMetaArea.F_TREE.length());
+		//always save the root tree entry
+		if (prefix.equals(Path.ROOT.toString()))
+			continue;
+		IProject project = workspace.getRoot().getProject(prefix);
+		if (!project.exists() || project.isOpen())
+			it.remove();
+	}
+	IPath location = workspace.getMetaArea().getSafeTableLocationFor(ResourcesPlugin.PI_RESOURCES);
 	IPath backup = workspace.getMetaArea().getBackupLocationFor(location);
 	try {
 		saveMasterTable(backup);
@@ -348,9 +360,6 @@ protected boolean isOldPluginTree(String pluginId) {
 	long deltaAge = System.currentTimeMillis() - getDeltaExpiration(pluginId);
 	return deltaAge > workspace.internalGetDescription().getDeltaExpiration();
 }
-protected int readVersionNumber(DataInputStream input) throws IOException {
-	return input.readInt();
-}
 /**
  * Remove marks from current save participants. This marks prevent them to receive their
  * deltas when they register themselves as save participants.
@@ -395,7 +404,7 @@ public void removeParticipant(Plugin plugin) {
 }
 protected void removeUnusedSafeTables() {
 	List valuables = new ArrayList(10);
-	IPath location = workspace.getMetaArea().getSafeTableLocationFor(ResourcesPlugin.getPlugin().getDescriptor().getUniqueIdentifier());
+	IPath location = workspace.getMetaArea().getSafeTableLocationFor(ResourcesPlugin.PI_RESOURCES);
 	valuables.add(location.lastSegment()); // add master table
 	for (Enumeration enum = masterTable.keys(); enum.hasMoreElements();) {
 		String key = (String) enum.nextElement();
@@ -546,8 +555,7 @@ protected void restoreMarkers(IResource resource, boolean generateDeltas, IProgr
 protected void restoreMasterTable() throws CoreException {
 	long start = System.currentTimeMillis();
 	masterTable = new Properties();
-	String pluginId = ResourcesPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-	IPath location = workspace.getMetaArea().getSafeTableLocationFor(pluginId);
+	IPath location = workspace.getMetaArea().getSafeTableLocationFor(ResourcesPlugin.PI_RESOURCES);
 	java.io.File target = location.toFile();
 	if (!target.exists()) {
 		location = workspace.getMetaArea().getBackupLocationFor(location);
@@ -786,8 +794,7 @@ protected void restoreTree(Workspace workspace, IProgressMonitor monitor) throws
 	}
 }
 protected void saveMasterTable() throws CoreException {
-	String pluginId = ResourcesPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-	saveMasterTable(workspace.getMetaArea().getSafeTableLocationFor(pluginId));
+	saveMasterTable(workspace.getMetaArea().getSafeTableLocationFor(ResourcesPlugin.PI_RESOURCES));
 }
 protected void saveMasterTable(IPath location) throws CoreException {
 	long start = System.currentTimeMillis();
@@ -1031,8 +1038,7 @@ protected ElementTree[] sortTrees(ElementTree[] trees) {
 }
 public void startup(IProgressMonitor monitor) throws CoreException {
 	restore(monitor);
-	String pluginId = ResourcesPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-	java.io.File masterTable = workspace.getMetaArea().getSafeTableLocationFor(pluginId).toFile();
+	java.io.File masterTable = workspace.getMetaArea().getSafeTableLocationFor(ResourcesPlugin.PI_RESOURCES).toFile();
 	if (!masterTable.exists())
 		masterTable.getParentFile().mkdirs();
 }
@@ -1236,15 +1242,15 @@ public IStatus save(int kind, Project project, IProgressMonitor monitor) throws 
 	String endMessage = null;
 	if (Policy.DEBUG_SAVE) {
 		switch (kind) {
-			case ISaveContext.FULL_SAVE:
+			case ISaveContext.FULL_SAVE :
 				System.out.println("Full save on workspace: starting..."); //$NON-NLS-1$
 				endMessage = "Full save on workspace: "; //$NON-NLS-1$
 				break;
-			case ISaveContext.SNAPSHOT:
+			case ISaveContext.SNAPSHOT :
 				System.out.println("Snapshot: starting..."); //$NON-NLS-1$
 				endMessage = "Snapshot: "; //$NON-NLS-1$
 				break;
-			case ISaveContext.PROJECT_SAVE:
+			case ISaveContext.PROJECT_SAVE :
 				System.out.println("Save on project " + project.getFullPath() + ": starting..."); //$NON-NLS-1$ //$NON-NLS-2$
 				endMessage = "Save on project " + project.getFullPath() + ": "; //$NON-NLS-1$ //$NON-NLS-2$
 				break;
@@ -1270,16 +1276,25 @@ public IStatus save(int kind, Project project, IProgressMonitor monitor) throws 
 						saveTree(contexts, Policy.subMonitorFor(monitor, 1));
 						// reset the snapshot state.
 						initSnap(null);
+						//save master table right after saving tree to ensure correct tree number is saved
+						cleanMasterTable();
 						// save all of the markers and all sync info in the workspace
 						persistMarkers = 0l;
 						persistSyncInfo = 0l;
 						visitAndSave(workspace.getRoot());
+						monitor.worked(1);
 						if (Policy.DEBUG_SAVE) {
 							Policy.debug(false, "Total Save Markers: " + persistMarkers + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 							Policy.debug(false, "Total Save Sync Info: " + persistSyncInfo + "ms"); //$NON-NLS-1$	 //$NON-NLS-2$
-						}					
+						}
 						// reset the snap shot files
 						resetSnapshots(workspace.getRoot());
+						//remove unused files
+						removeUnusedSafeTables();
+						removeUnusedTreeFiles();
+						workspace.getFileSystemManager().getHistoryStore().clean();
+						// write out all metainfo (e.g., workspace/project descriptions) 
+						saveMetaInfo(workspace, Policy.subMonitorFor(monitor, 1));
 						break;
 					case ISaveContext.SNAPSHOT :
 						snapTree(workspace.getElementTree(), Policy.subMonitorFor(monitor, 1));
@@ -1287,17 +1302,22 @@ public IStatus save(int kind, Project project, IProgressMonitor monitor) throws 
 						persistMarkers = 0l;
 						persistSyncInfo = 0l;
 						visitAndSnap(workspace.getRoot());
+						monitor.worked(1);
 						if (Policy.DEBUG_SAVE) {
 							Policy.debug(false, "Total Snap Markers: " + persistMarkers + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 							Policy.debug(false, "Total Snap Sync Info: " + persistSyncInfo + "ms"); //$NON-NLS-1$	 //$NON-NLS-2$
-						}					
+						}
 						collapseTrees();
 						clearSavedDelta();
+						// write out all metainfo (e.g., workspace/project descriptions) 
+						saveMetaInfo(workspace, Policy.subMonitorFor(monitor, 1));
 						break;
 					case ISaveContext.PROJECT_SAVE :
 						writeTree(project, IResource.DEPTH_INFINITE);
+						monitor.worked(1);
 						// save markers and sync info 
 						visitAndSave(project);
+						monitor.worked(1);
 						// reset the snapshot file
 						resetSnapshots(project);
 						IStatus result = saveMetaInfo(project, null);
@@ -1306,22 +1326,13 @@ public IStatus save(int kind, Project project, IProgressMonitor monitor) throws 
 						monitor.worked(1);
 						break;
 				}
-				if (kind == ISaveContext.FULL_SAVE || kind == ISaveContext.SNAPSHOT) {
-					// write out all metainfo (e.g., workspace/project descriptions) 
-					saveMetaInfo(workspace, Policy.subMonitorFor(monitor, 1));
-					// save all of the markers and all sync info in the workspace
-					monitor.worked(1);
-				} else {
-					monitor.worked(2);
-				}
 				// save contexts
 				commit(contexts);
 				if (kind == ISaveContext.FULL_SAVE)
 					removeClearDeltaMarks();
-				// commit ResourcesPlugin master table
+				//this must be done after commiting save contexts to update participant save numbers
 				saveMasterTable();
 				broadcastLifecycle(DONE_SAVING, contexts, warnings, Policy.subMonitorFor(monitor, 1));
-				// as this save operation was successful, we may need to update its participants' save numbers
 				if (Policy.DEBUG_SAVE && endMessage != null)
 					System.out.println(endMessage + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$
 				return warnings;
@@ -1335,12 +1346,6 @@ public IStatus save(int kind, Project project, IProgressMonitor monitor) throws 
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
-			if (kind == ISaveContext.FULL_SAVE) {
-				removeUnusedSafeTables();
-				removeUnusedTreeFiles();
-				cleanMasterTable();
-				workspace.getFileSystemManager().getHistoryStore().clean();
-			}
 			workspace.endOperation(false, null);
 		}
 	} finally {
