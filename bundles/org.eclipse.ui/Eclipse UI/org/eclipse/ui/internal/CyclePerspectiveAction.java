@@ -8,6 +8,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.dialogs.PerspLabelProvider;
 /**
  * Implements a action to enable the user switch between perspectives
@@ -35,11 +36,13 @@ protected void setText() {
 		setText(WorkbenchMessages.getString("CyclePerspectiveAction.next.text")); //$NON-NLS-1$
 		setToolTipText(WorkbenchMessages.getString("CyclePerspectiveAction.next.toolTip")); //$NON-NLS-1$
 		setAccelerator(SWT.CTRL | SWT.F8);
+		WorkbenchHelp.setHelp(this, IHelpContextIds.CYCLE_PERSPECTIVE_FORWARD_ACTION);
 	}
 	else {
 		setText(WorkbenchMessages.getString("CyclePerspectiveAction.prev.text")); //$NON-NLS-1$
 		setToolTipText(WorkbenchMessages.getString("CyclePerspectiveAction.prev.toolTip")); //$NON-NLS-1$
 		setAccelerator(SWT.CTRL | SWT.SHIFT | SWT.F8);
+		WorkbenchHelp.setHelp(this, IHelpContextIds.CYCLE_PERSPECTIVE_BACKWARD_ACTION);
 	}
 }
 /** 

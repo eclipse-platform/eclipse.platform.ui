@@ -5,6 +5,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * This is the abstract superclass for NextEditorAction and PrevEditorAction.
@@ -26,11 +27,13 @@ protected void setText() {
 		setText(WorkbenchMessages.getString("CycleEditorAction.next.text")); //$NON-NLS-1$
 		setToolTipText(WorkbenchMessages.getString("CycleEditorAction.next.toolTip")); //$NON-NLS-1$
 		setAccelerator(SWT.CTRL | SWT.F6);
+		WorkbenchHelp.setHelp(this, IHelpContextIds.CYCLE_EDITOR_FORWARD_ACTION);
 	}
 	else {
 		setText(WorkbenchMessages.getString("CycleEditorAction.prev.text")); //$NON-NLS-1$
 		setToolTipText(WorkbenchMessages.getString("CycleEditorAction.prev.toolTip")); //$NON-NLS-1$
 		setAccelerator(SWT.CTRL | SWT.SHIFT | SWT.F6);
+		WorkbenchHelp.setHelp(this, IHelpContextIds.CYCLE_EDITOR_BACKWARD_ACTION);
 	}
 }
 

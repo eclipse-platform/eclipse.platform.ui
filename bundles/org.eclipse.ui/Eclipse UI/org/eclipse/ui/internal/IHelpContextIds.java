@@ -88,6 +88,14 @@ public interface IHelpContextIds {
 	public static final String CELL_SELECT_ALL_ACTION = PREFIX + "cell_select_all_action_context"; //$NON-NLS-1$
 	public static final String CELL_UNDO_ACTION = PREFIX + "cell_undo_action_context"; //$NON-NLS-1$
 	public static final String CELL_REDO_ACTION = PREFIX + "cell_redo_action_context"; //$NON-NLS-1$
+	public static final String SHOW_PART_PANE_MENU_ACTION = PREFIX + "show_part_pane_menu_action_context"; //$NON-NLS-1$
+	public static final String CYCLE_PART_FORWARD_ACTION = PREFIX + "cycle_part_forward_action_context"; //$NON-NLS-1$
+	public static final String CYCLE_PART_BACKWARD_ACTION = PREFIX + "cycle_part_backward_action_context"; //$NON-NLS-1$
+	public static final String CYCLE_EDITOR_FORWARD_ACTION = PREFIX + "cycle_editor_forward_action_context"; //$NON-NLS-1$
+	public static final String CYCLE_EDITOR_BACKWARD_ACTION = PREFIX + "cycle_editor_backward_action_context"; //$NON-NLS-1$
+	public static final String CYCLE_PERSPECTIVE_FORWARD_ACTION = PREFIX + "cycle_perspective_forward_action_context"; //$NON-NLS-1$
+	public static final String CYCLE_PERSPECTIVE_BACKWARD_ACTION = PREFIX + "cycle_perspective_backward_action_context"; //$NON-NLS-1$
+	public static final String ACTIVATE_EDITOR_ACTION = PREFIX + "activate_editor_action_context"; //$NON-NLS-1$
 		
 	// Dialogs
 	public static final String ABOUT_DIALOG = PREFIX + "about_dialog_context"; //$NON-NLS-1$

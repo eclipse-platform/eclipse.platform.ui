@@ -4,7 +4,7 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.WorkbenchPart;
 import org.eclipse.ui.actions.*;
 
@@ -22,6 +22,7 @@ public ShowPartPaneMenuAction(WorkbenchWindow window) {
 	super(""); //$NON-NLS-1$
 	initText();
 	window.getPartService().addPartListener(this);
+	WorkbenchHelp.setHelp(this, IHelpContextIds.SHOW_PART_PANE_MENU_ACTION);
 }
 /**
  * Initialize the menu text and tooltip.

@@ -2,6 +2,7 @@ package org.eclipse.ui.internal;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Activates the most recently used editor in the current window.
@@ -17,6 +18,7 @@ protected ActivateEditorAction(IWorkbenchWindow window) {
 	setAccelerator(SWT.F12);
 	window.getPartService().addPartListener(this);
 	updateState();
+	WorkbenchHelp.setHelp(this, IHelpContextIds.ACTIVATE_EDITOR_ACTION);
 }
 
 public void pageActivated(IWorkbenchPage page) {
