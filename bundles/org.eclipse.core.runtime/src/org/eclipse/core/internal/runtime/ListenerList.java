@@ -18,18 +18,34 @@ package org.eclipse.core.internal.runtime;
  * with the trust that they will not modify the underlying array.
  * <p>
  * N.B.: This class is similar to other ListenerLists available throughout
- * Eclipse code base, except that it uses equality instead of identity
- * to compare listeners. This does not compromise efficiency (since 
- * listeners addition/removal is not a frequent operation) and provides
- * more flexibility to clients.  
+ * Eclipse code base, except this implementation allows the client to compare
+ * listeners using either equality or identity.
  * </p>
  * @since 3.0
  */
 public class ListenerList {
+
 	/**
 	 * The empty array singleton instance.
 	 */
 	private static final Object[] EmptyArray = new Object[0];
+	/**
+	 * Mode constant (value 0) indicating that listeners should be compared
+	 * using equality.
+	 */
+	public static final int EQUALITY = 0;
+	/**
+	 * Mode constant (value 1) indicating that listeners should be compared
+	 * using identity.
+	 */
+	public static final int IDENTITY = 1;
+	
+	/**
+	 * Indicates the comparison mode used to determine if two
+	 * listeners are equivalent
+	 */
+	private final int compareMode;
+
 	/**
 	 * The list of listeners.  Initially <code>null</code> but initialized
 	 * to an array of size capacity the first time a listener is added.
@@ -41,7 +57,14 @@ public class ListenerList {
 	 * Creates a listener list.
 	 */
 	public ListenerList() {
-		super();
+		this(EQUALITY);
+	}
+
+	/**
+	 * Creates a listener list using the provided comparison mode.
+	 */
+	public ListenerList(int mode) {
+		this.compareMode = mode;
 	}
 
 	/**
@@ -57,10 +80,10 @@ public class ListenerList {
 	public synchronized void add(Object listener) {
 		if (listener == null)
 			throw new IllegalArgumentException();
-		// check for duplicates using equality
+		// check for duplicates 
 		final int oldSize = listeners.length;
 		for (int i = 0; i < oldSize; ++i)
-			if (listener.equals(listeners[i]))
+			if (same(listener, listeners[i]))
 				return;
 		// Thread safety: create new array to avoid affecting concurrent readers
 		Object[] newListeners = new Object[oldSize+1];
@@ -112,7 +135,7 @@ public class ListenerList {
 			throw new IllegalArgumentException();
 		int oldSize = listeners.length;
 		for (int i = 0; i < oldSize; ++i) {
-			if (listener.equals(listeners[i])) {
+			if (same(listener, listeners[i])) {
 				if (oldSize == 1) {
 					listeners = EmptyArray;
 				} else {
@@ -126,6 +149,15 @@ public class ListenerList {
 				return;
 			}
 		}
+	}
+
+	/**
+	 * Returns <code>true</code> if the two listeners are the
+	 * same based on the specified comparison mode, and <code>false</code>
+	 * otherwise.
+	 */
+	private boolean same(Object listener1, Object listener2) {
+		return compareMode == IDENTITY ? listener1 == listener2 : listener1.equals(listener2);
 	}
 
 	/**
