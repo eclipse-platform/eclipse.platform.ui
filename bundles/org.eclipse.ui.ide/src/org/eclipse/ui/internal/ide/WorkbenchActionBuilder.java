@@ -1567,8 +1567,7 @@ public final class WorkbenchActionBuilder {
         // this can be triggered by property or resource change notifications
         Runnable update = new Runnable() {
             public void run() {
-                Shell shell = window.getShell();
-                if (isDisposed || shell == null || shell.isDisposed())
+                if (isDisposed)
                 	return;
 		    	IWorkspace workspace = ResourcesPlugin.getWorkspace();
 				IProject[] projects = workspace.getRoot().getProjects();
