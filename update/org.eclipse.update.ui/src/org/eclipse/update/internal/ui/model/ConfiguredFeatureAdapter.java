@@ -38,12 +38,20 @@ public class ConfiguredFeatureAdapter
 	}
 	public IFeatureAdapter[] getIncludedFeatures() {
 		try {
-			IFeatureReference[] included = getFeature().getIncludedFeatureReferences();
+			IFeatureReference[] included =
+				getFeature().getIncludedFeatureReferences();
 			ConfiguredFeatureAdapter[] result =
 				new ConfiguredFeatureAdapter[included.length];
 			for (int i = 0; i < included.length; i++) {
+				IFeature feature;
+				try {
+					feature = included[i].getFeature();
+				} catch (CoreException e) {
+					feature = new MissingFeature(getSite(), getURL());
+				}
+
 				result[i] =
-					new ConfiguredFeatureAdapter(adapter, included[i].getFeature(), configured);
+					new ConfiguredFeatureAdapter(adapter, feature, configured);
 				result[i].setIncluded(true);
 			}
 			return result;

@@ -221,20 +221,21 @@ public class ConfigurationView
 		}
 
 		private Object[] getConfiguredFeatures(IConfiguredSiteAdapter adapter) {
-			try {
-				IConfiguredSite csite = adapter.getConfigurationSite();
-				IFeatureReference[] refs = csite.getConfiguredFeatures();
-				ArrayList result = new ArrayList();
-				for (int i = 0; i < refs.length; i++) {
-					IFeature feature = refs[i].getFeature();
-					result.add(
-						new ConfiguredFeatureAdapter(adapter, feature, true));
+			IConfiguredSite csite = adapter.getConfigurationSite();
+			IFeatureReference[] refs = csite.getConfiguredFeatures();
+			ArrayList result = new ArrayList();
+			for (int i = 0; i < refs.length; i++) {
+				IFeatureReference ref = refs[i];
+				IFeature feature;
+				try {
+					feature = ref.getFeature();
+				} catch (CoreException e) {
+					feature = new MissingFeature(ref.getSite(), ref.getURL());
 				}
-				return getRootFeatures(result);
-			} catch (CoreException e) {
-				UpdateUIPlugin.logException(e);
-				return new Object[0];
+				result.add(
+					new ConfiguredFeatureAdapter(adapter, feature, true));
 			}
+			return getRootFeatures(result);
 		}
 
 		private Object[] getAllFeatures(IConfiguredSiteAdapter adapter) {
@@ -289,7 +290,15 @@ public class ConfigurationView
 				IFeatureReference[] included =
 					feature.getIncludedFeatureReferences();
 				for (int i = 0; i < included.length; i++) {
-					IFeature childFeature = included[i].getFeature();
+					IFeature childFeature;
+					try {
+						childFeature = included[i].getFeature();
+					} catch (CoreException e) {
+						childFeature =
+							new MissingFeature(
+								included[i].getSite(),
+								included[i].getURL());
+					}
 					children.add(childFeature);
 				}
 			} catch (CoreException e) {
@@ -306,23 +315,17 @@ public class ConfigurationView
 					return true;
 			}
 			return false;
-		} /**
-																																	 * @see ITreeContentProvider#getParent(Object)
-																																	 */
+		}
 		public Object getParent(Object child) {
 			return null;
-		} /**
-																																	 * @see ITreeContentProvider#hasChildren(Object)
-																																	 */
+		}
 		public boolean hasChildren(Object parent) {
 			if (parent instanceof ConfiguredFeatureAdapter) {
 				return ((ConfiguredFeatureAdapter) parent)
 					.hasIncludedFeatures();
 			}
 			return true;
-		} /**
-																																	 * @see IStructuredContentProvider#getElements(Object)
-																																	 */
+		}
 		public Object[] getElements(Object input) {
 			return getChildren(input);
 		}
@@ -402,8 +405,11 @@ public class ConfigurationView
 			}
 			ILocalSite localSite = getLocalSite();
 			try {
+				IFeature feature = adapter.getFeature();
+				if (feature instanceof MissingFeature)
+					return errorFeatureImage;
 				IStatus status =
-					localSite.getFeatureStatus(adapter.getFeature());
+					localSite.getFeatureStatus(feature);
 				int code = status.getCode();
 				if (configured) {
 					switch (code) {
@@ -862,28 +868,28 @@ public class ConfigurationView
 			UpdateUIPlugin.logException(e);
 		}
 	} /**
-																 * @see IInstallConfigurationChangedListener#installSiteAdded(ISite)
-																 */
+																						 * @see IInstallConfigurationChangedListener#installSiteAdded(ISite)
+																						 */
 	public void installSiteAdded(IConfiguredSite csite) {
 		asyncRefresh();
 	} /**
-																 * @see IInstallConfigurationChangedListener#installSiteRemoved(ISite)
-																 */
+																						 * @see IInstallConfigurationChangedListener#installSiteRemoved(ISite)
+																						 */
 	public void installSiteRemoved(IConfiguredSite site) {
 		asyncRefresh();
 	} /**
-																 * @see IConfiguredSiteChangedListener#featureInstalled(IFeature)
-																 */
+																						 * @see IConfiguredSiteChangedListener#featureInstalled(IFeature)
+																						 */
 	public void featureInstalled(IFeature feature) {
 		asyncRefresh();
 	} /**
-																 * @see IConfiguredSiteChangedListener#featureUninstalled(IFeature)
-																 */
+																						 * @see IConfiguredSiteChangedListener#featureUninstalled(IFeature)
+																						 */
 	public void featureRemoved(IFeature feature) {
 		asyncRefresh();
 	} /**
-																 * @see IConfiguredSiteChangedListener#featureUConfigured(IFeature)
-																 */
+																						 * @see IConfiguredSiteChangedListener#featureUConfigured(IFeature)
+																						 */
 	public void featureConfigured(IFeature feature) {
 	};
 	/**

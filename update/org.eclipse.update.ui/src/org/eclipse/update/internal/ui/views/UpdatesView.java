@@ -724,17 +724,12 @@ public class UpdatesView
 	}
 
 	private Object[] getSiteCatalog(final SiteBookmark bookmark) {
-		if (!bookmark.isSiteConnected()) {
-			Object[] result = getSiteCatalogWithIndicator(bookmark, true);
-			if (result != null)
-				return result;
-		}
-		if (bookmark.getSite() != null) {
-			Object[] result = getSiteCatalogWithIndicator(bookmark, false);
-			if (result != null)
-				return result;
-		}
-		return new Object[0];
+		Object[] result =
+			getSiteCatalogWithIndicator(bookmark, !bookmark.isSiteConnected());
+		if (result != null)
+			return result;
+		else
+			return new Object[0];
 	}
 
 	private Object[] getSiteCatalogWithIndicator(
