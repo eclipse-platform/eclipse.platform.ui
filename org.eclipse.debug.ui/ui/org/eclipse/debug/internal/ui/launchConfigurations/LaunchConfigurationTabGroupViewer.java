@@ -141,9 +141,23 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		createControl(parent);
 	}
 	
+	/**
+	 * Cleanup
+	 */
 	public void dispose() {
-		disposeExistingTabs();
+		disposeTabGroup();
 	}
+
+	/**
+	 * Dispose the active tab group, if any.
+	 */
+	protected void disposeTabGroup() {
+		if (getTabGroup() != null) {
+			getTabGroup().dispose();
+			setTabGroup(null);
+			setTabType(null);
+		}
+	}	
 	
 	/**
 	 * Creates this viewer's control This area displays the name of the launch
@@ -886,11 +900,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		for (int i = 0; i < oldTabs.length; i++) {
 			oldTabs[i].dispose();
 		}
-		if (getTabGroup() != null) {
-			getTabGroup().dispose();
-		}
-		setTabGroup(null);
-		setTabType(null);
+		disposeTabGroup();
 		setDisposingTabs(false);
 	}	
 	

@@ -1153,7 +1153,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	protected void handleClosePressed() {
 		if (canDiscardCurrentConfig()) {
-			getTabViewer().dispose();
 			cancelPressed();
 		}
 	}
