@@ -75,7 +75,7 @@ public class AntThread extends AntDebugElement implements IThread {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IThread#getStackFrames()
 	 */
-	public IStackFrame[] getStackFrames() {
+	public synchronized IStackFrame[] getStackFrames() {
 		if (isSuspended()) {
 			if (fFrames.size() == 0) {
 				getStackFrames0();
@@ -120,7 +120,7 @@ public class AntThread extends AntDebugElement implements IThread {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IThread#getTopStackFrame()
 	 */
-	public IStackFrame getTopStackFrame() {
+	public synchronized IStackFrame getTopStackFrame() {
 		if (isSuspended()) {
 			if (fFrames.size() == 0) {
 				getStackFrames0();
