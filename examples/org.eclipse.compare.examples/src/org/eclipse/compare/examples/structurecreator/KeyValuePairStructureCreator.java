@@ -92,9 +92,8 @@ public class KeyValuePairStructureCreator implements IStructureCreator {
 			return null;
 		
 		IStreamContentAccessor sca= (IStreamContentAccessor) input;
-		
 		try {
-			String contents= Util.readString(sca.getContents());
+			String contents= Util.readString(sca);
 			if (contents == null)
 				contents= ""; //$NON-NLS-1$
 			Document doc= new Document(contents);

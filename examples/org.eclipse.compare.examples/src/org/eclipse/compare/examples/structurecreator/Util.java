@@ -13,7 +13,10 @@ package org.eclipse.compare.examples.structurecreator;
 import java.io.*;
 import java.util.*;
 
+import org.eclipse.compare.IStreamContentAccessor;
+import org.eclipse.compare.IStreamContentAccessorExtension2;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 
 
 public class Util {
@@ -36,7 +39,7 @@ public class Util {
 	 * (<code>ResourcesPlugin.getEncoding()</code>).
 	 * Returns null if an error occurred.
 	 */
-	static String readString(InputStream is) {
+	private static String readString(InputStream is, String encoding) {
 		if (is == null)
 			return null;
 		BufferedReader reader= null;
@@ -44,7 +47,7 @@ public class Util {
 			StringBuffer buffer= new StringBuffer();
 			char[] part= new char[2048];
 			int read= 0;
-			reader= new BufferedReader(new InputStreamReader(is, ResourcesPlugin.getEncoding()));
+			reader= new BufferedReader(new InputStreamReader(is, encoding));
 
 			while ((read= reader.read(part)) != -1)
 				buffer.append(part, 0, read);
@@ -62,5 +65,15 @@ public class Util {
 			}
 		}
 		return null;
+	}
+
+	static String readString(IStreamContentAccessor sa) throws CoreException {
+		InputStream is= sa.getContents();
+		String encoding= null;
+		if (sa instanceof IStreamContentAccessorExtension2)
+			encoding= ((IStreamContentAccessorExtension2)sa).getCharset();
+		if (encoding == null)
+			encoding= ResourcesPlugin.getEncoding();
+		return readString(is, encoding);
 	}
 }
