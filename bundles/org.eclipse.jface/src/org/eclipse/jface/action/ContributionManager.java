@@ -152,14 +152,6 @@ public IContributionItem find(String id) {
 /* (non-Javadoc)
  * Method declared on IContributionManager.
  */
-public IContributionItem getItemAt(int index) {
-	if (index >= contributions.size())
-		throw new IndexOutOfBoundsException("getting item at " + index); //$NON-NLS-1$
-	return (IContributionItem) contributions.get(index);
-}
-/* (non-Javadoc)
- * Method declared on IContributionManager.
- */
 public IContributionItem[] getItems() {
 	IContributionItem[] items = new IContributionItem[contributions.size()];
 	contributions.toArray(items);

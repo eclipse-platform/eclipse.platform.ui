@@ -116,8 +116,8 @@ public void setActionSets(IActionSetDescriptor [] newArray) {
 	}
 	// We process action sets in two passes for coolbar purposes.  First we process base contributions
 	// (i.e., actions that the action set contributes to its toolbar), then we process adjunct contributions
-	// (i.e., actions that the action set contributes to other toolbars).  Therefore, process the action
-	// sets as a group.
+	// (i.e., actions that the action set contributes to other toolbars).  This type of processing is
+	// necessary in order to handle beforeGroup specification of adjunct contributions.
 	PluginActionSetBuilder.processActionSets(sets, window);
 	
 	iter = sets.iterator();
