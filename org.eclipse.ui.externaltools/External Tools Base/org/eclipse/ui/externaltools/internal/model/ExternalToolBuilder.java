@@ -266,13 +266,18 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 	}
     
     protected void clean(IProgressMonitor monitor) throws CoreException {
-        ICommand command= getCommand();
+	    ICommand command= getCommand();
         ILaunchConfiguration config= BuilderUtils.configFromBuildCommandArgs(getProject(), command.getArguments(), new String[1]);
+    	if (!configEnabled(config)) {
+	    	return;
+	    }
+        
         if ((!config.getAttribute(IExternalToolConstants.ATTR_TRIGGERS_CONFIGURED, false))) {
             //old behavior
             super.clean(monitor);
             return;
-        } 
-        launchBuild(IncrementalProjectBuilder.CLEAN_BUILD, config, monitor);
+        }
+	
+		launchBuild(IncrementalProjectBuilder.CLEAN_BUILD, config, monitor);
     }
 }
