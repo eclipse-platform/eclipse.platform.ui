@@ -47,8 +47,8 @@ public class RepositoryProviderTests extends TeamTest {
 	}
 	
 	public void testGetProviderGeneric() throws CoreException, TeamException {
-		IProject project = getUniqueTestProject("testGetProviderGeneric");
-		IProject project2 = getUniqueTestProject("testGetProviderGeneric");
+		IProject project = getUniqueTestProject("testGetProviderGeneric1");
+		IProject project2 = getUniqueTestProject("testGetProviderGeneric2");
 		
 		// test that adding a non-team nature will not return a provider
 		Team.addNatureToProject(project, RepositoryProviderOtherSport.NATURE_ID, null);
