@@ -139,8 +139,9 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * Loads all the breakpoints on the given resource.
 	 * 
 	 * @param resource the resource which contains the breakpoints
+	 * @param notify whether to notify of the breakpoint additions
 	 */
-	private void loadBreakpoints(IResource resource) throws CoreException {
+	private void loadBreakpoints(IResource resource, boolean notify) throws CoreException {
 		initBreakpointExtensions();
 		IMarker[] markers= getPersistedMarkers(resource);
 		List added = new ArrayList();
@@ -155,7 +156,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 				DebugPlugin.log(e);
 			}
 		}
-		addBreakpoints((IBreakpoint[])added.toArray(new IBreakpoint[added.size()]));
+		addBreakpoints((IBreakpoint[])added.toArray(new IBreakpoint[added.size()]), notify);
 	}
 	
 	/**
@@ -299,7 +300,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	private void initializeBreakpoints() {
 		setBreakpoints(new Vector(10));
 		try {
-			loadBreakpoints(getWorkspace().getRoot());
+			loadBreakpoints(getWorkspace().getRoot(), false);
 			getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_BUILD);
 		} catch (CoreException ce) {
 			DebugPlugin.log(ce);
@@ -417,6 +418,16 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * @see IBreakpointManager#addBreakpoints(IBreakpoint[])
 	 */
 	public void addBreakpoints(IBreakpoint[] breakpoints) throws CoreException {
+	    addBreakpoints(breakpoints, true);
+	}	
+	
+	/**
+	 * Registers the given breakpoints and notifies listeners if specified.
+	 * 
+	 * @param breakpoints the breakpoints to register
+	 * @param notify whether to notify listeners of the add
+	 */
+	private void addBreakpoints(IBreakpoint[] breakpoints, boolean notify) throws CoreException {
 		List added = new ArrayList(breakpoints.length);
 		final List update = new ArrayList();
 		for (int i = 0; i < breakpoints.length; i++) {
@@ -433,7 +444,9 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 				}
 			}	
 		}
-		fireUpdate(added, null, ADDED);
+		if (notify) {
+		    fireUpdate(added, null, ADDED);
+		}
 		if (!update.isEmpty()) {
 			IWorkspaceRunnable r = new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) throws CoreException {
@@ -451,7 +464,9 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 			fSuppressChange.addAll(update);
 			getWorkspace().run(r, null, 0, null);
 			fSuppressChange.removeAll(update);
-			fireUpdate(update, null, ADDED);
+			if (notify) {
+			    fireUpdate(update, null, ADDED);
+			}
 		}			
 	}	
 	
@@ -657,7 +672,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 				return;
 			} 
 			try {
-				loadBreakpoints(project);
+				loadBreakpoints(project, true);
 			} catch (CoreException e) {
 				DebugPlugin.log(e);
 			}
