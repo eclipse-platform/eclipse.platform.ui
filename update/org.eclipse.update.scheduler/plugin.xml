@@ -27,7 +27,7 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            name="Automatic Updates"
+            name="%automaticUpdatesPrefPage"
             category="org.eclipse.update.internal.ui.preferences.MainPreferencePage"
             class="org.eclipse.update.internal.scheduler.preferences.AutomaticUpdatesPreferencePage"
             id="org.eclipse.update.scheduler.AutomaticUpdatesPreferencePage">
