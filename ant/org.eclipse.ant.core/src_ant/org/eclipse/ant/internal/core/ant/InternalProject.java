@@ -59,9 +59,9 @@ public class InternalProject extends Project {
 			taskClass = Class.forName("org.apache.tools.ant.taskdefs.Taskdef"); //$NON-NLS-1$
 			addTaskDefinition("taskdef", taskClass); //$NON-NLS-1$
 		} catch (NoClassDefFoundError e) {
-			throw new BuildException(InternalAntMessages.getString("InternalAntRunner.Missing_Class"), e); //$NON-NLS-1$
+			throw new BuildException(InternalAntMessages.InternalAntRunner_Missing_Class, e); //$NON-NLS-1$
 		} catch (ClassNotFoundException c) {
-			throw new BuildException(InternalAntMessages.getString("InternalAntRunner.Missing_Class"), c); //$NON-NLS-1$
+			throw new BuildException(InternalAntMessages.InternalAntRunner_Missing_Class, c); //$NON-NLS-1$
 		}
 
 		setSystemProperties();
@@ -118,7 +118,7 @@ public class InternalProject extends Project {
 			thrown = ncdfe;
 		}
 		if (thrown != null) {
-			String message= MessageFormat.format(InternalAntMessages.getString("InternalProject.0"), new String[]{typeName, thrown.toString()}); //$NON-NLS-1$
+			String message= MessageFormat.format(InternalAntMessages.InternalProject_0, new String[]{typeName, thrown.toString()}); //$NON-NLS-1$
 			throw new BuildException(message, thrown);
 		}
 		// this line is actually unreachable

@@ -247,7 +247,7 @@ public class AntRunner implements IPlatformRunnable {
 			//not possible to reach this line
 			return new TargetInfo[0];
 		} catch (Exception e) {
-			String message = (e.getMessage() == null) ? InternalCoreAntMessages.getString("AntRunner.Build_Failed._3") : e.getMessage(); //$NON-NLS-1$
+			String message = (e.getMessage() == null) ? InternalCoreAntMessages.AntRunner_Build_Failed__3 : e.getMessage(); //$NON-NLS-1$
 			throw new CoreException(new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_BUILD, message, e));
 		} finally {
 			Thread.currentThread().setContextClassLoader(originalClassLoader);
@@ -290,7 +290,7 @@ public class AntRunner implements IPlatformRunnable {
 	 */
 	public void run(IProgressMonitor monitor) throws CoreException {
 		if (buildRunning) {
-			IStatus status= new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_BUILD, MessageFormat.format(InternalCoreAntMessages.getString("AntRunner.Already_in_progess"), new String[]{buildFileLocation}), null); //$NON-NLS-1$
+			IStatus status= new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_BUILD, MessageFormat.format(InternalCoreAntMessages.AntRunner_Already_in_progess, new String[]{buildFileLocation}), null); //$NON-NLS-1$
 			throw new CoreException(status);
 		}
 		buildRunning= true;
@@ -360,7 +360,7 @@ public class AntRunner implements IPlatformRunnable {
 		} catch (InvocationTargetException e) {
 			handleInvocationTargetException(runner, classInternalAntRunner, e);
 		} catch (Exception e) {
-			String message = (e.getMessage() == null) ? InternalCoreAntMessages.getString("AntRunner.Build_Failed._3") : e.getMessage(); //$NON-NLS-1$
+			String message = (e.getMessage() == null) ? InternalCoreAntMessages.AntRunner_Build_Failed__3 : e.getMessage(); //$NON-NLS-1$
 			IStatus status= new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_BUILD, message, e);
 			throw new CoreException(status);
 		} finally {
@@ -420,7 +420,7 @@ public class AntRunner implements IPlatformRunnable {
 		if (message == null) {
 			//error did not result from a BuildException
 			internalError= true;
-			message = (realException.getMessage() == null) ? InternalCoreAntMessages.getString("AntRunner.Build_Failed._3") : realException.getMessage(); //$NON-NLS-1$
+			message = (realException.getMessage() == null) ? InternalCoreAntMessages.AntRunner_Build_Failed__3 : realException.getMessage(); //$NON-NLS-1$
 		}
 		IStatus status= new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_BUILD, message, realException);
 		if (internalError) {
@@ -434,10 +434,10 @@ public class AntRunner implements IPlatformRunnable {
 		String message;
 		if (missingClassName != null) {
 			missingClassName= missingClassName.replace('/', '.');
-			message= InternalCoreAntMessages.getString("AntRunner.Could_not_find_one_or_more_classes._Please_check_the_Ant_classpath._2"); //$NON-NLS-1$
+			message= InternalCoreAntMessages.AntRunner_Could_not_find_one_or_more_classes__Please_check_the_Ant_classpath__2; //$NON-NLS-1$
 			message= MessageFormat.format(message, new String[]{missingClassName});
 		} else {
-			message= InternalCoreAntMessages.getString("AntRunner.Could_not_find_one_or_more_classes._Please_check_the_Ant_classpath._1"); //$NON-NLS-1$
+			message= InternalCoreAntMessages.AntRunner_Could_not_find_one_or_more_classes__Please_check_the_Ant_classpath__1; //$NON-NLS-1$
 		}
 		IStatus status= new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_BUILD, message, e);
 		AntCorePlugin.getPlugin().getLog().log(status);

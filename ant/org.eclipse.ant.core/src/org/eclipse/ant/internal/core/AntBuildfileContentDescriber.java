@@ -66,7 +66,7 @@ public final class AntBuildfileContentDescriber extends XMLContentDescriber impl
 			return INVALID;
 		} catch (ParserConfigurationException e) {
 			// some bad thing happened - force this describer to be disabled
-			String message = InternalCoreAntMessages.getString("AntBuildfileContentDescriber.0"); //$NON-NLS-1$
+			String message = InternalCoreAntMessages.AntBuildfileContentDescriber_0; //$NON-NLS-1$
             AntCorePlugin.getPlugin().getLog().log(new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, 0, message, e));
 			throw new RuntimeException(message);
 		}

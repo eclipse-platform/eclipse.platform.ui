@@ -1,33 +1,46 @@
-/*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+/**********************************************************************
+ * Copyright (c) 2005 IBM Corporation and others. All rights reserved.   This
+ * program and the accompanying materials are made available under the terms of
+ * the Eclipse Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
 package org.eclipse.ant.internal.core;
 
+import org.eclipse.osgi.util.NLS;
 
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+public class InternalCoreAntMessages extends NLS {
+	private static final String BUNDLE_NAME = "org.eclipse.ant.internal.core.InternalCoreAntMessages";//$NON-NLS-1$
+	//
+	// Copyright (c) 2000, 2005 IBM Corporation and others.
+	// All rights reserved. This program and the accompanying materials
+	// are made available under the terms of the Eclipse Public License v1.0
+	// which accompanies this distribution, and is available at
+	// http://www.eclipse.org/legal/epl-v10.html
+	//
+	// Contributors:
+	//     IBM Corporation - initial API and implementation
+	//
 
-public class InternalCoreAntMessages {
+	public static String AntCorePreferences_Malformed_URL__1;
+	public static String AntCorePreferences_Library_not_specified_for___0__4;
+	public static String AntCorePreferences_No_library_for_task;
+	public static String AntCorePreferences_No_library_for_type;
+	public static String AntCorePreferences_8;
+	public static String AntCorePreferences_6;
+	public static String AntCorePreferences_0;
+	public static String AntCorePreferences_1;
 
-	private static final String BUNDLE_NAME = "org.eclipse.ant.internal.core.InternalCoreAntMessages"; //$NON-NLS-1$
+	public static String AntRunner_Could_not_find_one_or_more_classes__Please_check_the_Ant_classpath__1;
+	public static String AntRunner_Could_not_find_one_or_more_classes__Please_check_the_Ant_classpath__2;
+	public static String AntRunner_Build_Failed__3;
+	public static String AntRunner_Already_in_progess;
+	public static String AntBuildfileContentDescriber_0;
 
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
-
-	private InternalCoreAntMessages() {
-	}
-
-	public static String getString(String key) {
-		try {
-			return RESOURCE_BUNDLE.getString(key);
-		} catch (MissingResourceException e) {
-			return '!' + key + '!';
-		}
+	static {
+		// load message values from bundle file
+		NLS.initializeMessages(BUNDLE_NAME, InternalCoreAntMessages.class);
 	}
 }
