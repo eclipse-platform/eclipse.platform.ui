@@ -108,7 +108,7 @@ public class TargetNode extends AntNode {
 	 */
 	public String getName() {
 		StringBuffer name= new StringBuffer(super.getName());
-		if (getProject().getDefaultTarget().equals(this)) {
+		if (this.equals(getProject().getDefaultTarget())) {
 			name.append(AntViewElementsMessages.getString("TargetNode.default")); //$NON-NLS-1$
 		} 
 		
