@@ -17,15 +17,25 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.AboutInfo;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
 
 /**
  * Displays information about the product.
@@ -89,7 +99,7 @@ public class AboutDialog extends ProductInfoDialog {
 		super.configureShell(newShell);
 		String name = primaryInfo.getProductName();
 		if (name != null)
-			newShell.setText(WorkbenchMessages.format("AboutDialog.shellTitle", new Object[] { name })); //$NON-NLS-1$
+			newShell.setText(IDEWorkbenchMessages.format("AboutDialog.shellTitle", new Object[] { name })); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(newShell, IHelpContextIds.ABOUT_DIALOG);
 	}
 	/**
@@ -102,9 +112,9 @@ public class AboutDialog extends ProductInfoDialog {
 	protected void createButtonsForButtonBar(Composite parent) {
 		parent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		createButton(parent, FEATURES_ID, WorkbenchMessages.getString("AboutDialog.featureInfo"), false); //$NON-NLS-1$
-		createButton(parent, PLUGINS_ID, WorkbenchMessages.getString("AboutDialog.pluginInfo"), false); //$NON-NLS-1$
-		createButton(parent, INFO_ID, WorkbenchMessages.getString("AboutDialog.systemInfo"), false); //$NON-NLS-1$
+		createButton(parent, FEATURES_ID, IDEWorkbenchMessages.getString("AboutDialog.featureInfo"), false); //$NON-NLS-1$
+		createButton(parent, PLUGINS_ID, IDEWorkbenchMessages.getString("AboutDialog.pluginInfo"), false); //$NON-NLS-1$
+		createButton(parent, INFO_ID, IDEWorkbenchMessages.getString("AboutDialog.systemInfo"), false); //$NON-NLS-1$
 
 		Label l = new Label(parent, SWT.NONE);
 		l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));

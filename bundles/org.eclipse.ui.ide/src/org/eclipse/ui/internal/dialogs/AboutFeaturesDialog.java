@@ -55,8 +55,8 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.AboutInfo;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.update.configuration.IConfiguredSite;
 import org.eclipse.update.configuration.IInstallConfiguration;
 import org.eclipse.update.configuration.ILocalSite;
@@ -91,11 +91,11 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 	
 	private Map cachedImages = new HashMap();
 
-	private String columnTitles[] =
-		{ WorkbenchMessages.getString("AboutFeaturesDialog.provider"), //$NON-NLS-1$
-		WorkbenchMessages.getString("AboutFeaturesDialog.featureName"), //$NON-NLS-1$
-		WorkbenchMessages.getString("AboutFeaturesDialog.version"), //$NON-NLS-1$
-		WorkbenchMessages.getString("AboutFeaturesDialog.featureId"), //$NON-NLS-1$
+	private String columnTitles[] = {
+		IDEWorkbenchMessages.getString("AboutFeaturesDialog.provider"), //$NON-NLS-1$
+		IDEWorkbenchMessages.getString("AboutFeaturesDialog.featureName"), //$NON-NLS-1$
+		IDEWorkbenchMessages.getString("AboutFeaturesDialog.version"), //$NON-NLS-1$
+		IDEWorkbenchMessages.getString("AboutFeaturesDialog.featureId"), //$NON-NLS-1$
 	};
 
 	private AboutInfo[] featureInfos;
@@ -141,8 +141,8 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 					}
 					MessageDialog.openInformation(
 						getShell(), 
-						WorkbenchMessages.getString("AboutFeaturesDialog.noInfoTitle"), //$NON-NLS-1$
-						WorkbenchMessages.getString("AboutFeaturesDialog.noInformation")); //$NON-NLS-1$
+						IDEWorkbenchMessages.getString("AboutFeaturesDialog.noInfoTitle"), //$NON-NLS-1$
+						IDEWorkbenchMessages.getString("AboutFeaturesDialog.noInformation")); //$NON-NLS-1$
 				}
 				return;
 			}
@@ -161,8 +161,8 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 							getShell(), 
 							primaryInfo,
 							descriptors,
-							WorkbenchMessages.getString("AboutFeaturesDialog.pluginInfoTitle"), //$NON-NLS-1$
-							WorkbenchMessages.format("AboutFeaturesDialog.pluginInfoMessage",	new Object[] {info.getFeatureLabel()}), //$NON-NLS-1$
+							IDEWorkbenchMessages.getString("AboutFeaturesDialog.pluginInfoTitle"), //$NON-NLS-1$
+							IDEWorkbenchMessages.format("AboutFeaturesDialog.pluginInfoMessage",	new Object[] {info.getFeatureLabel()}), //$NON-NLS-1$
 							IHelpContextIds.ABOUT_FEATURES_PLUGINS_DIALOG);
 					d.open();
 				}				
@@ -180,7 +180,7 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 		String title = primaryInfo.getProductName();
 		if (title != null) { 
 		newShell.setText(
-			WorkbenchMessages.format(
+			IDEWorkbenchMessages.format(
 				"AboutFeaturesDialog.shellTitle",	//$NON-NLS-1$
 				new Object[] {title}));
 		}
@@ -198,8 +198,8 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 	protected void createButtonsForButtonBar(Composite parent) {
 		parent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	
-		moreButton = createButton(parent, MORE_ID, WorkbenchMessages.getString("AboutFeaturesDialog.moreInfo"), false); //$NON-NLS-1$
-		pluginsButton = createButton(parent, PLUGINS_ID, WorkbenchMessages.getString("AboutFeaturesDialog.pluginsInfo"), false); //$NON-NLS-1$
+		moreButton = createButton(parent, MORE_ID, IDEWorkbenchMessages.getString("AboutFeaturesDialog.moreInfo"), false); //$NON-NLS-1$
+		pluginsButton = createButton(parent, PLUGINS_ID, IDEWorkbenchMessages.getString("AboutFeaturesDialog.pluginsInfo"), false); //$NON-NLS-1$
 
 		Label l = new Label(parent, SWT.NONE);
 		l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -343,8 +343,8 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 		if (reg == null) {
 			MessageDialog.openError(
 				getShell(), 
-				WorkbenchMessages.getString("AboutFeaturesDialog.errorTitle"), //$NON-NLS-1$
-				WorkbenchMessages.getString("AboutFeaturesDialog.unableToObtainFeatureInfo")); //$NON-NLS-1$
+				IDEWorkbenchMessages.getString("AboutFeaturesDialog.errorTitle"), //$NON-NLS-1$
+				IDEWorkbenchMessages.getString("AboutFeaturesDialog.unableToObtainFeatureInfo")); //$NON-NLS-1$
 			return featuresMap;
 		}
 		
@@ -357,8 +357,8 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 				} catch (CoreException e) {
 					MessageDialog.openError(
 						getShell(), 
-						WorkbenchMessages.getString("AboutFeaturesDialog.errorTitle"), //$NON-NLS-1$
-						WorkbenchMessages.getString("AboutFeaturesDialog.unableToObtainFeatureInfo")); //$NON-NLS-1$
+						IDEWorkbenchMessages.getString("AboutFeaturesDialog.errorTitle"), //$NON-NLS-1$
+						IDEWorkbenchMessages.getString("AboutFeaturesDialog.unableToObtainFeatureInfo")); //$NON-NLS-1$
 				}
 			}
 		});
@@ -467,7 +467,7 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 			setItem(scan(aboutText));
 		}
 		if (getItem() == null)
-			text.setText(WorkbenchMessages.getString("AboutFeaturesDialog.noInformation")); //$NON-NLS-1$
+			text.setText(IDEWorkbenchMessages.getString("AboutFeaturesDialog.noInformation")); //$NON-NLS-1$
 		else {
 			text.setText(getItem().getText());	
 			text.setCursor(null);

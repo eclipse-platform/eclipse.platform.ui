@@ -41,9 +41,9 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.AboutInfo;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
 
 /**
  * Displays information about the product plugins.
@@ -70,10 +70,10 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 	private String helpContextId;
 
 	private String columnTitles[] = {
-		WorkbenchMessages.getString("AboutPluginsDialog.provider"), //$NON-NLS-1$
-		WorkbenchMessages.getString("AboutPluginsDialog.pluginName"), //$NON-NLS-1$
-		WorkbenchMessages.getString("AboutPluginsDialog.version"), //$NON-NLS-1$
-		WorkbenchMessages.getString("AboutPluginsDialog.pluginId"), //$NON-NLS-1$
+		IDEWorkbenchMessages.getString("AboutPluginsDialog.provider"), //$NON-NLS-1$
+		IDEWorkbenchMessages.getString("AboutPluginsDialog.pluginName"), //$NON-NLS-1$
+		IDEWorkbenchMessages.getString("AboutPluginsDialog.version"), //$NON-NLS-1$
+		IDEWorkbenchMessages.getString("AboutPluginsDialog.pluginId"), //$NON-NLS-1$
 	};
 
 	private IPluginDescriptor[] info;
@@ -132,7 +132,7 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 		if (title == null) {
 			title = primaryInfo.getProductName();
 			if (title != null) { 
-				title = WorkbenchMessages.format(
+				title = IDEWorkbenchMessages.format(
 						"AboutPluginsDialog.shellTitle",	//$NON-NLS-1$
 						new Object[] {title});
 			}
@@ -154,7 +154,7 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 	protected void createButtonsForButtonBar(Composite parent) {
 		parent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	
-		moreInfo = createButton(parent, MORE_ID, WorkbenchMessages.getString("AboutPluginsDialog.moreInfo"), false); //$NON-NLS-1$
+		moreInfo = createButton(parent, MORE_ID, IDEWorkbenchMessages.getString("AboutPluginsDialog.moreInfo"), false); //$NON-NLS-1$
 
 		// set initial enablement
 		moreInfo.setEnabled(tableHasSelection() & selectionHasInfo());
@@ -284,9 +284,9 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 			int i = vendorInfo.getSelectionIndex();
 			IPluginDescriptor desc = info[i];
 			URL infoURL = desc.find(new Path(PLUGININFO));
-			if (infoURL == null && WorkbenchPlugin.DEBUG) {
+			if (infoURL == null && IDEWorkbenchPlugin.DEBUG) {
 				// only report ini problems if the -debug command line argument is used
-				WorkbenchPlugin.log("Problem reading plugin info for: " + desc.getLabel()); //$NON-NLS-1$
+				IDEWorkbenchPlugin.log("Problem reading plugin info for: " + desc.getLabel()); //$NON-NLS-1$
 			} 
 			return infoURL != null;
 	}
@@ -325,8 +325,8 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 		if (infoURL == null) {
 			MessageDialog.openError(
 				getShell(), 
-				WorkbenchMessages.getString("AboutPluginsDialog.errorTitle"), //$NON-NLS-1$
-				WorkbenchMessages.format("AboutPluginsDialog.unableToOpenFile", new Object[] {PLUGININFO, desc.getUniqueIdentifier()})); //$NON-NLS-1$
+				IDEWorkbenchMessages.getString("AboutPluginsDialog.errorTitle"), //$NON-NLS-1$
+				IDEWorkbenchMessages.format("AboutPluginsDialog.unableToOpenFile", new Object[] {PLUGININFO, desc.getUniqueIdentifier()})); //$NON-NLS-1$
 			return;
 		}
 
