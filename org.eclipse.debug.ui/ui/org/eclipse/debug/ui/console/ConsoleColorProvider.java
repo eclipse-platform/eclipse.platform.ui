@@ -34,7 +34,7 @@ public class ConsoleColorProvider implements IConsoleColorProvider {
 	/**
 	 * @see IConsoleColorProvider#connect(IProcess, IConsole)
 	 */
-	public void connect(IProcess process, IConsole 	console) {
+	public void connect(IProcess process, IConsole console) {
 		fProcess = process;
 		fConsole = console;
 		IStreamsProxy streamsProxy = fProcess.getStreamsProxy();
