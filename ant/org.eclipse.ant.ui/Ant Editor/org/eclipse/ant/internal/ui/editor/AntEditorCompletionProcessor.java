@@ -101,9 +101,8 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 			if (type1 != type2) {
 				if (type1 > type2) {
 					return 1;
-				}  else {
-					return -1;
-				}
+				}  
+				return -1;
 			}
 			String string1 = ((ICompletionProposal)o1).getDisplayString();
 			String string2 = ((ICompletionProposal)o2).getDisplayString();
@@ -112,9 +111,8 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 		private int getProposalType(Object o){
 		    if(o instanceof AntCompletionProposal){
 		        return ((AntCompletionProposal) o).getType();
-		    } else {
-		    	return AntCompletionProposal.TASK_PROPOSAL;    
-		    }
+		    } 
+		    return AntCompletionProposal.TASK_PROPOSAL;    
 		}
  	};
 	
@@ -224,10 +222,11 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 	 */
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer refViewer, int documentOffset) {
         this.viewer = refViewer;   
+        ICompletionProposal[] matchingProposals= determineProposals();
         ICompletionProposal[] matchingTemplateProposals = determineTemplateProposals(refViewer, documentOffset);
-        ICompletionProposal[] merged= mergeProposals(determineProposals(), matchingTemplateProposals);
         currentPrefix= null;
-        return merged;
+        currentProposalMode= -1;
+        return mergeProposals(matchingProposals, matchingTemplateProposals);
     }
 	
 	private ICompletionProposal[] determineTemplateProposals(ITextViewer refViewer, int documentOffset) {
@@ -836,9 +835,9 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
        if (rootElement != null && rootElementName.toLowerCase().startsWith(prefix)) {
        		ICompletionProposal proposal = newCompletionProposal(document, prefix, rootElementName);
 			return new ICompletionProposal[] {proposal};
-		} else {
-			return NO_PROPOSALS;
 		}
+       
+       return NO_PROPOSALS;
    } 
 
     private void createProposals(IDocument document, String prefix, List proposals, Map tasks) {
@@ -981,16 +980,15 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
         IElement element = dtd.getElement(elementName);
         if (element != null) {
         	return !element.isEmpty();
-        } else {
-        	Class taskClass= getTaskClass(elementName);
-        	if (taskClass != null) {
-        		IntrospectionHelper helper= getIntrospectionHelper(taskClass);
-        		if (helper != null) {
-        			Enumeration nested= helper.getNestedElements();
-        			return nested.hasMoreElements();
-        		}
+        } 
+        Class taskClass= getTaskClass(elementName);
+    	if (taskClass != null) {
+    		IntrospectionHelper helper= getIntrospectionHelper(taskClass);
+    		if (helper != null) {
+    			Enumeration nested= helper.getNestedElements();
+    			return nested.hasMoreElements();
     		}
-        }
+		}
         return false;
     }
     
@@ -1073,7 +1071,9 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
      * Returns the current proposal mode.
      */
     protected int determineProposalMode(IDocument document, int aCursorPosition, String aPrefix) {
-
+    	if (currentProposalMode != -1) {
+    		return currentProposalMode;
+    	}
     	if (document.getLength() == 0 || (document.getLength() == 1 && document.get().equals("<"))) { //$NON-NLS-1$
     		return PROPOSAL_MODE_BUILDFILE;
     	}
@@ -1227,13 +1227,13 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
     protected boolean isKnownElement(String elementName) {
     	if (elementName.equals("target") || elementName.equals("project")) { //$NON-NLS-1$ //$NON-NLS-2$
     		return true;
-    	} else {
-    		AntProjectNode node= antModel.getProjectNode();
-        	if (node != null) {
-        		Project antProject= node.getProject();
-        		return ComponentHelper.getComponentHelper(antProject).getDefinition(elementName) != null; 
-        	}
+    	} 
+		AntProjectNode node= antModel.getProjectNode();
+    	if (node != null) {
+    		Project antProject= node.getProject();
+    		return ComponentHelper.getComponentHelper(antProject).getDefinition(elementName) != null; 
     	}
+    	
         return false;
     }
 
@@ -1506,7 +1506,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 	 * @see org.eclipse.jface.text.templates.TemplateCompletionProcessor#getContextType(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
 	 */
 	protected TemplateContextType getContextType(ITextViewer textViewer, IRegion region) {
-		 switch (currentProposalMode) {
+		 switch (determineProposalMode(textViewer.getDocument(), cursorPosition, getCurrentPrefix())) {
             case PROPOSAL_MODE_TASK_PROPOSAL:
             	return AntTemplateAccess.getDefault().getContextTypeRegistry().getContextType(TaskContextType.TASK_CONTEXT_TYPE);
             case PROPOSAL_MODE_BUILDFILE:
