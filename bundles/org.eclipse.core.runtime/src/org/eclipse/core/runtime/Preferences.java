@@ -300,7 +300,7 @@ public class Preferences {
 		 * Creates a listener list with an initial capacity of 3.
 		 */
 		public ListenerList() {
-			this(3);
+			this(1);
 		}
 
 		/**
