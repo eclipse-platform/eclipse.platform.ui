@@ -57,6 +57,7 @@ public class CVSLightweightDecorator
 	private static ImageDescriptor checkedOut;
 	private static ImageDescriptor merged;
 	private static ImageDescriptor newResource;
+	private static ImageDescriptor readOnlyFile;
 
 	/*
 	 * Define a cached image descriptor which only creates the image data once
@@ -82,6 +83,7 @@ public class CVSLightweightDecorator
 		checkedOut = new CachedImageDescriptor(TeamImages.getImageDescriptor(ISharedImages.IMG_CHECKEDIN_OVR));
 		merged = new CachedImageDescriptor(CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_MERGED));
 		newResource = new CachedImageDescriptor(CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_QUESTIONABLE));
+		readOnlyFile = new CachedImageDescriptor(CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_READ_ONLY));
 	}
 
 	public CVSLightweightDecorator() {
@@ -249,6 +251,8 @@ public class CVSLightweightDecorator
 					} else {
 						if(showRevisions)
 							bindings.put(CVSDecoratorConfiguration.FILE_REVISION, fileInfo.getRevision());
+						if (resource.isReadOnly())
+							bindings.put(CVSDecoratorConfiguration.READ_ONLY_FLAG, store.getString(ICVSUIConstants.PREF_READ_ONLY_FLAG));
 					}
 					KSubstOption option = fileInfo.getKeywordMode() != null ?
 						fileInfo.getKeywordMode() :
@@ -375,6 +379,12 @@ public class CVSLightweightDecorator
 			}
 		}
 
+		boolean showReadOnly = store.getBoolean(ICVSUIConstants.PREF_SHOW_READ_ONLY_DECORATION);
+		
+		if (showReadOnly && resource.getType() == IResource.FILE && resource.isReadOnly() && CVSWorkspaceRoot.hasRemote(resource)) {
+			return readOnlyFile;
+		}
+		
 		boolean showHasRemote = store.getBoolean(ICVSUIConstants.PREF_SHOW_HASREMOTE_DECORATION);
 		
 		// Simplest is that is has remote.

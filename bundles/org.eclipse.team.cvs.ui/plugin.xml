@@ -597,6 +597,7 @@
       </view>
        <view
             name="%EditorsView.name"
+            icon="icons/full/cview16/history_view.gif"
             category="org.eclipse.team.ccvs.ui"
             class="org.eclipse.team.internal.ccvs.ui.EditorsView"
             id="org.eclipse.team.ccvs.ui.EditorsView">

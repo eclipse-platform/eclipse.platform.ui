@@ -48,6 +48,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 	private Button imageShowHasRemote;
 	private Button imageShowAdded;
 	private Button imageShowNewResource;
+	private Button imageShowReadOnly;
 	
 	private Text fileTextFormat;
 	private Text fileTextFormatExample;
@@ -60,6 +61,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 	
 	private Text dirtyFlag;
 	private Text addedFlag;
+	private Text readOnlyFlag;
 	
 	private Button showDirty;
 	private Button showSyncInfoInLabel;
@@ -128,6 +130,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 			bindings.put(CVSDecoratorConfiguration.FILE_REVISION, "1.34"); //$NON-NLS-1$
 			bindings.put(CVSDecoratorConfiguration.DIRTY_FLAG, dirtyFlag.getText());
 			bindings.put(CVSDecoratorConfiguration.ADDED_FLAG, addedFlag.getText());
+			bindings.put(CVSDecoratorConfiguration.READ_ONLY_FLAG, readOnlyFlag.getText());
 			bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_HOST, location.getHost());
 			bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_METHOD, location.getMethod().getName());
 			bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_USER, location.getUsername());
@@ -220,6 +223,16 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 				updateExamples();
 			}
 		});
+		createLabel(fileTextGroup, "", 1); // spacer //$NON-NLS-1$
+
+		createLabel(fileTextGroup, Policy.bind("CVSDecorationPreferencePage.readOnlyText"), 1); //$NON-NLS-1$
+		readOnlyFlag = new Text(fileTextGroup, SWT.BORDER);
+		readOnlyFlag.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		readOnlyFlag.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				updateExamples();
+			}
+		});
 
 		return fileTextGroup;	
 	}
@@ -238,6 +251,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		imageShowHasRemote = createCheckBox(imageGroup, Policy.bind("Show_has_&remote_26")); //$NON-NLS-1$
 		imageShowAdded = createCheckBox(imageGroup, Policy.bind("S&how_is_added_27")); //$NON-NLS-1$
 		imageShowNewResource = createCheckBox(imageGroup, Policy.bind("CVSDecoratorPreferencesPage.newResources")); //$NON-NLS-1$
+		imageShowReadOnly = createCheckBox(imageGroup, Policy.bind("CVSDecoratorPreferencesPage.readOnlyIcon")); //$NON-NLS-1$
 		
 		return imageGroup;
 	}
@@ -309,11 +323,13 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		
 		addedFlag.setText(store.getString(ICVSUIConstants.PREF_ADDED_FLAG));
 		dirtyFlag.setText(store.getString(ICVSUIConstants.PREF_DIRTY_FLAG));
+		readOnlyFlag.setText(store.getString(ICVSUIConstants.PREF_READ_ONLY_FLAG));
 		
 		imageShowDirty.setSelection(store.getBoolean(ICVSUIConstants.PREF_SHOW_DIRTY_DECORATION));
 		imageShowAdded.setSelection(store.getBoolean(ICVSUIConstants.PREF_SHOW_ADDED_DECORATION));
 		imageShowHasRemote.setSelection(store.getBoolean(ICVSUIConstants.PREF_SHOW_HASREMOTE_DECORATION));
 		imageShowNewResource.setSelection(store.getBoolean(ICVSUIConstants.PREF_SHOW_NEWRESOURCE_DECORATION));
+		imageShowReadOnly.setSelection(store.getBoolean(ICVSUIConstants.PREF_SHOW_READ_ONLY_DECORATION));
 		
 		showDirty.setSelection(store.getBoolean(ICVSUIConstants.PREF_CALCULATE_DIRTY));
 		
@@ -341,11 +357,13 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		
 		store.setValue(ICVSUIConstants.PREF_ADDED_FLAG, addedFlag.getText());
 		store.setValue(ICVSUIConstants.PREF_DIRTY_FLAG, dirtyFlag.getText());
+		store.setValue(ICVSUIConstants.PREF_READ_ONLY_FLAG, readOnlyFlag.getText());
 		
 		store.setValue(ICVSUIConstants.PREF_SHOW_DIRTY_DECORATION, imageShowDirty.getSelection());
 		store.setValue(ICVSUIConstants.PREF_SHOW_ADDED_DECORATION, imageShowAdded.getSelection());
 		store.setValue(ICVSUIConstants.PREF_SHOW_HASREMOTE_DECORATION, imageShowHasRemote.getSelection());
 		store.setValue(ICVSUIConstants.PREF_SHOW_NEWRESOURCE_DECORATION, imageShowNewResource.getSelection());
+		store.setValue(ICVSUIConstants.PREF_SHOW_READ_ONLY_DECORATION, imageShowReadOnly.getSelection());
 		
 		store.setValue(ICVSUIConstants.PREF_CALCULATE_DIRTY, showDirty.getSelection());
 		
@@ -371,11 +389,13 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		
 		addedFlag.setText(store.getDefaultString(ICVSUIConstants.PREF_ADDED_FLAG));
 		dirtyFlag.setText(store.getDefaultString(ICVSUIConstants.PREF_DIRTY_FLAG));
+		readOnlyFlag.setText(store.getDefaultString(ICVSUIConstants.PREF_READ_ONLY_FLAG));
 		
 		imageShowDirty.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_SHOW_DIRTY_DECORATION));
 		imageShowAdded.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_SHOW_ADDED_DECORATION));
 		imageShowHasRemote.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_SHOW_HASREMOTE_DECORATION));
 		imageShowNewResource.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_SHOW_NEWRESOURCE_DECORATION));
+		imageShowReadOnly.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_SHOW_READ_ONLY_DECORATION));
 		
 		showDirty.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_CALCULATE_DIRTY));
 		showSyncInfoInLabel.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_SHOW_SYNCINFO_AS_TEXT));		
@@ -459,6 +479,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		bindings.put(CVSDecoratorConfiguration.FILE_REVISION, Policy.bind("last_revision_loaded_into_workspace_45")); //$NON-NLS-1$
 		bindings.put(CVSDecoratorConfiguration.DIRTY_FLAG, Policy.bind("flag_indicating_that_the_file_has_outgoing_changes_46")); //$NON-NLS-1$
 		bindings.put(CVSDecoratorConfiguration.ADDED_FLAG, Policy.bind("flag_indicating_that_the_file_has_been_added_to_the_server_47")); //$NON-NLS-1$
+		bindings.put(CVSDecoratorConfiguration.READ_ONLY_FLAG, Policy.bind("flag_indicating_that_the_file_is_read_only")); //$NON-NLS-1$
 		return bindings;
 	}
 }

@@ -21,6 +21,7 @@ public interface ICVSUIConstants {
 	public final String IMG_MERGEABLE_CONFLICT = "ovr16/confauto_ov.gif"; //$NON-NLS-1$
 	public final String IMG_QUESTIONABLE = "ovr16/question_ov.gif"; //$NON-NLS-1$
 	public final String IMG_MERGED = "ovr16/merged_ov.gif"; //$NON-NLS-1$
+	public final String IMG_READ_ONLY = "ovr16/readonly_ov.gif"; //$NON-NLS-1$
 	
 	// objects
 	public final String IMG_REPOSITORY = "obj16/repository_rep.gif"; //$NON-NLS-1$
@@ -82,9 +83,11 @@ public interface ICVSUIConstants {
 	public final String PREF_SHOW_ADDED_DECORATION = "pref_show_added"; //$NON-NLS-1$
 	public final String PREF_SHOW_HASREMOTE_DECORATION = "pref_show_hasremote"; //$NON-NLS-1$
 	public final String PREF_SHOW_NEWRESOURCE_DECORATION = "pref_show_newresource"; //$NON-NLS-1$
+	public final String PREF_SHOW_READ_ONLY_DECORATION = "pref_show_read_only"; //$NON-NLS-1$
 	
 	public final String PREF_DIRTY_FLAG = "pref_dirty_flag"; //$NON-NLS-1$
 	public final String PREF_ADDED_FLAG = "pref_added_flag"; //$NON-NLS-1$
+	public final String PREF_READ_ONLY_FLAG = "pref_read_only_flag"; //$NON-NLS-1$
 	
 	public final String PREF_CALCULATE_DIRTY = "pref_calculate_dirty";	 //$NON-NLS-1$
 	
@@ -127,6 +130,7 @@ public interface ICVSUIConstants {
 	// preference options
 	public final int OPTION_NEVER = 1; //$NON-NLS-1$
 	public final int OPTION_PROMPT = 2; //$NON-NLS-1$
-	public final int OPTION_AUTOMATIC = 3; //$NON-NLS-1$
+	public final int OPTION_AUTOMATIC = 3;
+
 }
 

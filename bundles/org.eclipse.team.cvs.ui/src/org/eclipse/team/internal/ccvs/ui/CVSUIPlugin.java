@@ -291,6 +291,7 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 		createImageDescriptor(ICVSUIConstants.IMG_MERGEABLE_CONFLICT, baseURL);
 		createImageDescriptor(ICVSUIConstants.IMG_QUESTIONABLE, baseURL);
 		createImageDescriptor(ICVSUIConstants.IMG_MERGED, baseURL);
+		createImageDescriptor(ICVSUIConstants.IMG_READ_ONLY, baseURL);
 		
 		// special
 		createImageDescriptor("glyphs/glyph1.gif", baseURL);  //$NON-NLS-1$
@@ -501,13 +502,12 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 		
 		store.setDefault(ICVSUIConstants.PREF_ADDED_FLAG, CVSDecoratorConfiguration.DEFAULT_ADDED_FLAG);
 		store.setDefault(ICVSUIConstants.PREF_DIRTY_FLAG, CVSDecoratorConfiguration.DEFAULT_DIRTY_FLAG);
-				
+		store.setDefault(ICVSUIConstants.PREF_READ_ONLY_FLAG, CVSDecoratorConfiguration.DEFAULT_READ_ONLY_FLAG);	
 		store.setDefault(ICVSUIConstants.PREF_SHOW_ADDED_DECORATION, true);
 		store.setDefault(ICVSUIConstants.PREF_SHOW_HASREMOTE_DECORATION, true);
 		store.setDefault(ICVSUIConstants.PREF_SHOW_DIRTY_DECORATION, false);
 		store.setDefault(ICVSUIConstants.PREF_SHOW_NEWRESOURCE_DECORATION, true);
-		store.setDefault(ICVSUIConstants.PREF_ADDED_FLAG, CVSDecoratorConfiguration.DEFAULT_ADDED_FLAG);
-		store.setDefault(ICVSUIConstants.PREF_DIRTY_FLAG, CVSDecoratorConfiguration.DEFAULT_DIRTY_FLAG);
+		store.setDefault(ICVSUIConstants.PREF_SHOW_READ_ONLY_DECORATION, false);
 		store.setDefault(ICVSUIConstants.PREF_CALCULATE_DIRTY, true);
 		store.setDefault(ICVSUIConstants.PREF_SHOW_SYNCINFO_AS_TEXT, false);		
 		store.setDefault(ICVSUIConstants.PREF_PROMPT_ON_MIXED_TAGS, true);
