@@ -156,9 +156,16 @@ public class ContentTypeManager implements IContentTypeManager, IRegistryChangeL
 		if (catalog == null)
 			// nothing to discard			
 			return;
-		catalog = null;
+		invalidate();
 		if (ContentTypeManager.DEBUGGING)
 			Policy.debug("Event caused content type registry to be discarded: " + event); //$NON-NLS-1$
+	}
+
+	/**
+	 * Causes a new catalog to be built afresh next time an API call is made.
+	 */
+	void invalidate() {
+		catalog = null;
 	}
 
 	/* (non-Javadoc)

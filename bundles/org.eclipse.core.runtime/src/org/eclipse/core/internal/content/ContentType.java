@@ -290,24 +290,35 @@ public final class ContentType implements IContentType {
 		ContentType aliasTarget = getTarget(catalog, false);
 		if (aliasTarget != null)
 			return aliasTarget.getDescriber(catalog);
-		// if "" is specified no describer should be created
-		if ("".equals(contentTypeElement.getAttributeAsIs(DESCRIBER_ELEMENT))) //$NON-NLS-1$
+		try {
+			// if "" is specified no describer should be created
+			if ("".equals(contentTypeElement.getAttributeAsIs(DESCRIBER_ELEMENT))) //$NON-NLS-1$
+				return null;
+			synchronized (this) {
+				if (describer != null)
+					return describer;
+				if (contentTypeElement.getChildren(DESCRIBER_ELEMENT).length > 0 || contentTypeElement.getAttributeAsIs(DESCRIBER_ELEMENT) != null)
+					try {
+						return describer = (IContentDescriber) contentTypeElement.createExecutableExtension(DESCRIBER_ELEMENT);
+					} catch (CoreException ce) {
+						// the content type definition was invalid. Ensure we don't
+						// try again, and this content type does not accept any
+						// contents
+						return invalidateDescriber(ce);
+					}
+			}
+		} catch (InvalidRegistryObjectException e) {
+			/*
+			 * This should only happen if  an API call is made after the registry has changed and before
+			 * the corresponding registry change event has been broadcast.  
+			 */
+			// the configuration element is stale - need to rebuild the catalog
+			manager.invalidate();
+			// bad timing - next time the client asks for a describer, s/he will have better luck
 			return null;
-		synchronized (this) {
-			if (describer != null)
-				return describer;
-			if (contentTypeElement.getChildren(DESCRIBER_ELEMENT).length > 0 || contentTypeElement.getAttributeAsIs(DESCRIBER_ELEMENT) != null)
-				try {
-					return describer = (IContentDescriber) contentTypeElement.createExecutableExtension(DESCRIBER_ELEMENT);
-				} catch (CoreException ce) {
-					// the content type definition was invalid. Ensure we don't
-					// try again, and this content type does not accept any
-					// contents
-					return invalidateDescriber(ce);
-				}
 		}
 		ContentType baseType = getBaseType(catalog);
-		return baseType == null ? null : baseType.getDescriber(catalog);
+		return baseType == null ? null : baseType.getDescriber(catalog);		
 	}
 
 	/**
