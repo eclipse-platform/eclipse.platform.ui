@@ -25,12 +25,17 @@ public interface IEditorMatchingStrategy {
     /**
      * Returns whether the editor represented by the given editor reference 
      * matches the given editor input.
+     * <p>
+     * Implementations should inspect the given editor input first, 
+     * and try to reject it early before calling <code>IEditorReference.getEditorInput()</code>,
+     * since that method may be expensive. 
+     * </p>
      * 
-     * @param editorInput the input for the open editor to match against
+     * @param editorRef the editor reference to match against
      * @param input the editor input to match
      * @return <code>true</code> if the editor matches the given editor input,
      *   <code>false</code> if it does not match
      */
-    boolean matches(IEditorInput editorInput, IEditorInput input);
+    boolean matches(IEditorReference editorRef, IEditorInput input);
     
 }

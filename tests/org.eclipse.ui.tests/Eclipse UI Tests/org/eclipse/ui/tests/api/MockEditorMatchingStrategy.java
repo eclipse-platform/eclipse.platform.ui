@@ -15,6 +15,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorMatchingStrategy;
+import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.ResourceUtil;
 
 /**
@@ -25,13 +27,19 @@ import org.eclipse.ui.ide.ResourceUtil;
  */
 public class MockEditorMatchingStrategy implements IEditorMatchingStrategy {
 
-    public boolean matches(IEditorInput editorInput, IEditorInput input) {
+    public boolean matches(IEditorReference editorRef, IEditorInput input) {
         IFile inputFile = ResourceUtil.getFile(input);
         if (inputFile != null && inputFile.getParent() instanceof IProject) {
             String name = inputFile.getName();
             if (name.equals("plugin.xml") || name.equals("MANIFEST.MF") || name.equals("build.properties")) {
-                IFile editorFile = ResourceUtil.getFile(editorInput);
-                return inputFile.getProject().equals(editorFile.getProject());
+                try {
+                    IEditorInput editorInput = editorRef.getEditorInput();
+                    IFile editorFile = ResourceUtil.getFile(editorInput);
+                    return inputFile.getProject().equals(editorFile.getProject());
+                } catch (PartInitException e) {
+                    e.printStackTrace();
+                    return false;
+                }
             }
         }
         return false;

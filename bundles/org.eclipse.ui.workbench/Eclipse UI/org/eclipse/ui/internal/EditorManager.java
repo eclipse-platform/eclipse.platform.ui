@@ -469,15 +469,9 @@ public class EditorManager implements IExtensionChangeHandler {
             if (desc != null) {
                 IEditorMatchingStrategy matchingStrategy = desc.getEditorMatchingStrategy();
                 if (matchingStrategy != null) {
-                    // We're handling this one here, so remove it from the list.
-                    i.remove();
-                    try {
-                        IEditorInput editorInput = editor.getEditorInput();
-                        if (matchingStrategy.matches(editorInput, input)) {
-                            return editor.getEditor(true);
-                        }
-                    } catch (PartInitException e) {
-                        WorkbenchPlugin.log("Error restoring input for editor with id " + editor.getId(), e); //$NON-NLS-1$
+                    i.remove(); // We're handling this one here, so remove it from the list.
+                    if (matchingStrategy.matches(editor, input)) {
+                        return editor.getEditor(true);
                     }
                 }
             }
@@ -488,8 +482,7 @@ public class EditorManager implements IExtensionChangeHandler {
             Editor editor = (Editor) i.next();
             IEditorPart part = (IEditorPart) editor.getPart(false);
             if (part != null) {
-                // We're handling this one here, so remove it from the list.
-                i.remove();
+                i.remove(); // We're handling this one here, so remove it from the list.
                 if (part.getEditorInput() != null && part.getEditorInput().equals(input)) {
                     return part;
                 }
