@@ -926,7 +926,8 @@ public class EclipseWorkspaceTest extends TestCase {
 	 * Returns the test suite for this test class.
 	 */
 	public static Test suite() {
-		return new TestSuite();
+		// subclasses must provide their own suite method
+		throw new UnsupportedOperationException("Every test class must provide a suite() method");
 	}
 
 	/**

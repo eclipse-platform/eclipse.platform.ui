@@ -30,7 +30,7 @@ public class AllTests extends TestCase {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite();
+		TestSuite suite = new TestSuite(AllTests.class.getName());
 		suite.addTest(EclipsePreferencesTest.suite());
 		suite.addTest(PreferencesServiceTest.suite());
 		suite.addTest(IScopeContextTest.suite());

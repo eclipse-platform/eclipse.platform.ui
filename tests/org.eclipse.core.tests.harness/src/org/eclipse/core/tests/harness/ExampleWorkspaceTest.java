@@ -42,7 +42,7 @@ public class ExampleWorkspaceTest extends EclipseWorkspaceTest {
 	 * Returns the test suite for this test class.
 	 */
 	public static Test suite() {
-		TestSuite suite = new TestSuite();
+		TestSuite suite = new TestSuite(ExampleWorkspaceTest.class.getName());
 		suite.addTest(new ExampleWorkspaceTest("testProjectCreation"));
 		suite.addTest(new ExampleWorkspaceTest("testFolderCreation"));
 		suite.addTest(new ExampleWorkspaceTest("testFileCreation"));

@@ -30,7 +30,7 @@ public class AutomatedTests extends TestCase {
 	 * Add all of the AllTests suites for each package to be tested.
 	 */
 	public static Test suite() {
-		TestSuite suite = new TestSuite();
+		TestSuite suite = new TestSuite(AutomatedTests.class.getName());
 		suite.addTest(org.eclipse.core.tests.runtime.AllTests.suite());
 		suite.addTest(org.eclipse.core.tests.runtime.compatibility.AllTests.suite());
 		suite.addTest(org.eclipse.core.tests.runtime.content.AllTests.suite());
