@@ -3062,7 +3062,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if (fConfiguration != null)
 			fConfiguration= null;
 		
-		super.setInput(null);		
+		if (fVerticalRuler != null)
+			fVerticalRuler= null;
+		
+		super.setInput(null);
 		
 		super.dispose();
 	}
