@@ -894,6 +894,20 @@ public abstract class Action implements IAction {
     public boolean isEnabled() {
         return enabled;
     }
+    
+    /**
+     * Whether this action is handled. In the default case, this is always
+     * <code>true</code>. However, if your action delegates some of its
+     * behaviour to some other object, then this should answer whether such an
+     * object is currently available.
+     * 
+     * @return <code>true</code> if all of the action's behaviour is
+     *         available; <code>false</code> otherwise.
+     * @since 3.1
+     */
+    public boolean isHandled() {
+        return true;
+    }
 
     /**
      * Convenience method for removing any optional accelerator text from the given string.
