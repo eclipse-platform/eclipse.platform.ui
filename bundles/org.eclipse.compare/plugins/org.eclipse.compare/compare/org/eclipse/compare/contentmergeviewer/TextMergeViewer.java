@@ -99,6 +99,17 @@ import org.eclipse.compare.rangedifferencer.RangeDifferencer;
  * @see org.eclipse.compare.IStreamContentAccessor
  */
 public class TextMergeViewer extends ContentMergeViewer  {
+	
+	private static final String[] GLOBAL_ACTIONS= {
+			' ' + IWorkbenchActionConstants.UNDO,
+			' ' + IWorkbenchActionConstants.REDO,
+			' ' + IWorkbenchActionConstants.CUT,
+			'r' + IWorkbenchActionConstants.COPY,
+			' ' + IWorkbenchActionConstants.PASTE,
+			' ' + IWorkbenchActionConstants.DELETE,
+			'r' + IWorkbenchActionConstants.SELECT_ALL,
+			'r' + IWorkbenchActionConstants.FIND
+		};
 		
 	private static final String MY_UPDATER= "my_updater";
 	
@@ -492,6 +503,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	}
 	
 	/* package */ boolean internalSetFocus() {
+		//System.out.println("internalSetFocus: ");
 		if (fFocusPart != null) {
 			StyledText st= fFocusPart.getTextWidget();
 			if (st != null)
@@ -635,18 +647,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		return action;
 	}
 	
-	void connectGlobalActions(MergeSourceViewer part) {
-		String[] GLOBAL_ACTIONS= {
-			' ' + IWorkbenchActionConstants.UNDO,
-			' ' + IWorkbenchActionConstants.REDO,
-			' ' + IWorkbenchActionConstants.CUT,
-			'r' + IWorkbenchActionConstants.COPY,
-			' ' + IWorkbenchActionConstants.PASTE,
-			' ' + IWorkbenchActionConstants.DELETE,
-			'r' + IWorkbenchActionConstants.SELECT_ALL,
-			'r' + IWorkbenchActionConstants.FIND
-		};
-		
+	void connectGlobalActions2(MergeSourceViewer part) {
+		System.out.println("connectGlobalActions: " + part);
 		IActionBars actionBars= CompareEditor.findActionBars(fComposite);
 		if (actionBars != null) {
 			for (int i= 0; i < GLOBAL_ACTIONS.length; i++) {
@@ -655,12 +657,12 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				Action action= null;
 				if (part != null && (part.isEditable() || tag == 'r'))
 						action= getAction(part, name);
-				if (action instanceof IUpdate) {
-					((IUpdate)action).update();
-					if (!action.isEnabled())
-						action= null;
-				}
+					
 				actionBars.setGlobalActionHandler(name, action);
+
+//				if (action instanceof IUpdate) {
+//					((IUpdate)action).update();
+//				}	
 			}
 			actionBars.updateActionBars();
 		}
@@ -1117,10 +1119,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		if (count <= 0)
 			return tc.getTokenStart(start);
 		int index= start + count - 1;
-		int l= tc.getTokenLength(index);
-		if (l < 0)
-			System.out.println("getTokenEnd: l < 0");
-		return tc.getTokenStart(index) + l;
+		return tc.getTokenStart(index) + tc.getTokenLength(index);
 	}
 	
 	/**
@@ -1131,7 +1130,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				IDocument rightDoc, String d,
 				IDocument leftDoc, String s) {
 
-		
 		int ancestorStart= 0;
 		int ancestorEnd= 0;
 		ITokenComparator sa= null;
@@ -1507,7 +1505,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			IPreferenceStore ps= CompareUIPlugin.getDefault().getPreferenceStore();
 			
 			boolean b= ps.getBoolean(ComparePreferencePage.SYNCHRONIZE_SCROLLING);
-			
 			//boolean b= Utilities.getBoolean(getCompareConfiguration(), SYNC_SCROLLING, true);
 			if (b != fSynchronizedScrolling)
 				toggleSynchMode();
@@ -1964,10 +1961,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			fCurrentDiff= d;
 		}
 		
-		if (d != null && !d.fIsToken) {
-			updateDiffBackground(oldDiff);
-			updateDiffBackground(fCurrentDiff);
-		}
+		updateDiffBackground(oldDiff);
+		updateDiffBackground(fCurrentDiff);
 		
 		updateControls();
 		invalidateLines();
