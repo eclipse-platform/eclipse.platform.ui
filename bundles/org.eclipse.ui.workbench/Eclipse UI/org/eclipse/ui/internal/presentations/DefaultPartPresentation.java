@@ -348,24 +348,12 @@ public class DefaultPartPresentation extends StackPresentation {
 		
 		for (int idx = 0; idx < parts.length; idx++) {
 			String id = parts[idx].getString(IWorkbenchConstants.TAG_ID);
-			String activNumString = parts[idx].getString(ACTIV_ID);
-			int activNum = 0;
-			if (activNumString != null)
-				activNum = Integer.parseInt(activNumString);
 			
 			if (id != null) {
 				IPresentablePart part = serializer.getPart(id);
 				
 				if (part != null) {
-					try {
-						activationListChange = false;
-						addPart(part, tabFolder.getItemCount());
-						int activListSize = activationList.size();
-						activationList.add(activNum <= activListSize ? activNum : activListSize, part);
-					}
-					finally {
-						activationListChange = true;
-					}
+					addPart(part, tabFolder.getItemCount());
 				}
 			} 
 		}
@@ -386,8 +374,6 @@ public class DefaultPartPresentation extends StackPresentation {
 			
 			IMemento childMem = memento.createChild(IWorkbenchConstants.TAG_PART);
 			childMem.putString(IWorkbenchConstants.TAG_ID, context.getId(next));
-			int idx = activationList.indexOf(next);
-			childMem.putString(ACTIV_ID, Integer.toString(idx));
 		}
 	}
 	
@@ -857,10 +843,18 @@ public class DefaultPartPresentation extends StackPresentation {
 					break;
 				
 				lruPart = getPartForTab(lruItem);
-				removePart(lruPart);
-				// decrement the index of the item being added as the removal 
-				// is always of an item with a lower index then the item being added on the right
-				addPart(lruPart, --idx+1);
+				// do not update the activation order of the part that will
+				// be removed and added after the new item
+				try {
+					activationListChange = false;
+					removePart(lruPart);
+					// decrement the index of the item being added as the removal 
+					// is always of an item with a lower index then the item being added on the right
+					addPart(lruPart, --idx+1);
+				}
+				finally {
+					activationListChange = true;
+				}
 			}
 		}
 	}
@@ -985,10 +979,12 @@ public class DefaultPartPresentation extends StackPresentation {
 			CTabItem item = getTab(toSelect);
 			if (item != null)
 				// If the item is not currently visible, move it
-				// to the last visible position on the right
-				if (!item.isShowing() && tabFolder.getItemCount() > 1)
-				{
-					try {
+				// to last visible position on the right
+				// When loading the workbench, all tabs are invisible
+				// we don't want to change tab ordering in this case
+				if (isVisibleTabs()) {
+					if (!item.isShowing() && tabFolder.getItemCount() > 1) {
+						try {
 						activationListChange = false;
 						// Save a list of the visible items in LRU order
 						List lruList = getVisibleItemsLRUList();
@@ -1007,9 +1003,10 @@ public class DefaultPartPresentation extends StackPresentation {
 						cookie.add(new Integer(idx));
 						
 						addPart(toSelect, cookie);
-					}
-					finally {
-						activationListChange = true;
+						}
+						finally {
+							activationListChange = true;
+						}
 					}
 				}
 			current = toSelect;
@@ -1026,6 +1023,22 @@ public class DefaultPartPresentation extends StackPresentation {
 		if (oldPart != null) {
 			oldPart.setVisible(false);
 		}
+	}
+	
+	/**
+	 * @return <code>true</code> if at least one tab is visible
+	 * <code>false</code> otherwise
+	 */
+	private boolean isVisibleTabs() {
+		boolean result = false;
+		for (int i = 0; i < tabFolder.getItemCount(); i++) {
+			CTabItem item = tabFolder.getItem(i);
+			if (item.isShowing()) {
+				result = true;
+				break;
+			}
+		}
+		return result;
 	}
 	
 	public IPresentablePart getCurrentPart() {
