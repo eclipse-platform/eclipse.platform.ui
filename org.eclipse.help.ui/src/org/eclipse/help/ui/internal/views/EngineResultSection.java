@@ -15,17 +15,33 @@ import java.util.ArrayList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.internal.search.federated.ISearchEngineResult;
-import org.eclipse.help.ui.internal.*;
+import org.eclipse.help.ui.internal.HelpUIPlugin;
+import org.eclipse.help.ui.internal.HelpUIResources;
+import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.FormColors;
-import org.eclipse.ui.forms.events.*;
+import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
-import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.events.IExpansionListener;
+import org.eclipse.ui.forms.widgets.FormText;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ImageHyperlink;
+import org.eclipse.ui.forms.widgets.Section;
+import org.eclipse.ui.forms.widgets.TableWrapData;
+import org.eclipse.ui.forms.widgets.TableWrapLayout;
+import org.eclipse.ui.internal.forms.widgets.FormUtil;
 import org.osgi.framework.Bundle;
 
 public class EngineResultSection {
@@ -305,16 +321,18 @@ public class EngineResultSection {
 				// navContainer.setBackground(container.getDisplay().getSystemColor(SWT.COLOR_GREEN));
 				GridLayout glayout = new GridLayout();
 				glayout.numColumns = 3;
+				glayout.horizontalSpacing = 0;
 				// glayout.makeColumnsEqualWidth=true;
 				navContainer.setLayout(glayout);
 				Label sep = toolkit.createLabel(navContainer, null,
 						SWT.SEPARATOR | SWT.HORIZONTAL);
 				GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 				gd.horizontalSpan = 3;
+				gd.widthHint = 2;
 				sep.setLayoutData(gd);
 				prevLink = toolkit.createImageHyperlink(navContainer, SWT.NULL);
 
-				prevLink.setText("Previous " + HITS_PER_PAGE + " hits");
+				prevLink.setText("Previous " + HITS_PER_PAGE);
 				prevLink.setImage(PlatformUI.getWorkbench().getSharedImages()
 						.getImage(ISharedImages.IMG_TOOL_BACK));
 				prevLink.addHyperlinkListener(new HyperlinkAdapter() {
@@ -324,12 +342,14 @@ public class EngineResultSection {
 					}
 				});
 				Label space = toolkit.createLabel(navContainer, null);
-				space.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+				gd = new GridData(GridData.FILL_HORIZONTAL);
+				gd.widthHint = 5;
+				space.setLayoutData(gd);
 				nextLink = toolkit
 						.createImageHyperlink(navContainer, SWT.RIGHT);
 				int remainder = Math.min(hits.size() - resultOffset
-						- HITS_PER_PAGE, HITS_PER_PAGE);
-				nextLink.setText("Next " + remainder + " hits");
+						- HITS_PER_PAGE-HITS_PER_PAGE, HITS_PER_PAGE);
+				nextLink.setText("Next " + remainder);
 				nextLink.setImage(PlatformUI.getWorkbench().getSharedImages()
 						.getImage(ISharedImages.IMG_TOOL_FORWARD));
 				nextLink.setLayoutData(new GridData(
@@ -349,9 +369,6 @@ public class EngineResultSection {
 				prevLink.getParent().dispose();
 			}
 		}
-	}
-
-	private void addArrow(Composite parent, boolean left, boolean visible) {
 	}
 
 	private String getSummary(ISearchEngineResult hit) {
@@ -419,8 +436,9 @@ public class EngineResultSection {
 	}
 
 	public void dispose() {
-		searchResults.setMenu(null);
-		section.setMenu(null);
-		section.dispose();
+		if (!section.isDisposed()) {
+			FormUtil.recursiveSetMenu(section, null);
+			section.dispose();
+		}
 	}
 }
