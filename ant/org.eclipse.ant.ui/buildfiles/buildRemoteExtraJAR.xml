@@ -20,7 +20,7 @@
 		<delete dir="${temp.folder}/lib/remoteAnt.jar.bin"/>
 		<mkdir dir="${temp.folder}/lib/remoteAnt.jar.bin"/>
 		<!-- compile the source code -->
-		<javac target="1.4" source="1.4" destdir="${temp.folder}/lib/remoteAnt.jar.bin" failonerror="true" verbose="false" debug="on" includeJavaRuntime= "yes" includeAntRuntime="no"
+		<javac target="1.1" destdir="${temp.folder}/lib/remoteAnt.jar.bin" failonerror="true" verbose="false" debug="on" includeJavaRuntime= "yes" includeAntRuntime="no"
 			 	bootclasspath="${bootclasspath}" 
 			 	classpath="${basedir}/../org.apache.ant/lib/ant.jar;
 			 	${eclipse.home}/plugins/org.apache.ant${ant_version.suffix}/lib/ant.jar;">
