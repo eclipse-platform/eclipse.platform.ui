@@ -27,12 +27,21 @@ package org.eclipse.ui.contexts;
 public interface IContext extends Comparable {
 
 	/**
+	 * Registers an IContextListener instance with this context.
+	 *
+	 * @param contextListener the IContextListener instance to register.
+	 * @throws NullPointerException
+	 */	
+	// TODO void addContextListener(IContextListener contextListener);
+
+	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
 	String getDescription();
-		
+		// TODO throws NotDefinedException()
+	
 	/**
 	 * JAVADOC
 	 * 
@@ -46,6 +55,7 @@ public interface IContext extends Comparable {
 	 * @return
 	 */	
 	String getName();
+		// TODO throws NotDefinedException()
 
 	/**
 	 * JAVADOC
@@ -53,6 +63,7 @@ public interface IContext extends Comparable {
 	 * @return
 	 */	
 	String getParentId();
+		// TODO throws NotDefinedException()
 
 	/**
 	 * JAVADOC
@@ -60,4 +71,19 @@ public interface IContext extends Comparable {
 	 * @return
 	 */	
 	boolean isActive();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	// TODO boolean isDefined();
+	
+	/**
+	 * Unregisters an IContextListener instance with this context.
+	 *
+	 * @param contextListener the IContextListener instance to unregister.
+	 * @throws NullPointerException
+	 */
+	// TODO void removeContextListener(IContextListener contextListener);
 }
