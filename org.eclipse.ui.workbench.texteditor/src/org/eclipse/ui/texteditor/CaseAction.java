@@ -23,10 +23,7 @@ import org.eclipse.jface.text.source.ISourceViewer;
  * Action that converts the current selection to lower case or upper case.
  * @since 3.0
  */
-public class CaseAction extends ResourceAction implements IUpdate {
-
-	/** The editor we are working on. */
-	private AbstractTextEditor fEditor;
+public class CaseAction extends TextEditorAction implements IUpdate {
 
 	/** <code>true</code> if this action converts to upper case, <code>false</code> otherwise. */
 	private boolean fToUpper;
@@ -45,8 +42,7 @@ public class CaseAction extends ResourceAction implements IUpdate {
 	 * @see ResourceAction#ResourceAction(ResourceBundle, String)
 	 */
 	public CaseAction(ResourceBundle bundle, String prefix, AbstractTextEditor editor, boolean toUpper) {
-		super(bundle, prefix);
-		fEditor= editor;
+		super(bundle, prefix, editor);
 		fToUpper= toUpper;
 		update();
 	}
@@ -55,13 +51,14 @@ public class CaseAction extends ResourceAction implements IUpdate {
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
-		if (fEditor == null)
+		ITextEditor editor= getTextEditor();
+		if (editor == null)
 			return;
 		
-		if (!isEnabled())
+		if (!validateEditorInputState())
 			return;
 
-		ISourceViewer viewer= fEditor.getSourceViewer();
+		ISourceViewer viewer= ((AbstractTextEditor) editor).getSourceViewer();
 		if (viewer == null)
 			return;
 
@@ -112,18 +109,4 @@ public class CaseAction extends ResourceAction implements IUpdate {
 		st.showSelection();
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.IUpdate#update()
-	 */
-	public void update() {
-		boolean enabled= true;
-		if (fEditor != null) {
-			if (fEditor.isEditorInputReadOnly()) {
-				enabled= false;
-			}
-		} else {
-			enabled= false;
-		}
-		setEnabled(enabled);
-	}
 }
