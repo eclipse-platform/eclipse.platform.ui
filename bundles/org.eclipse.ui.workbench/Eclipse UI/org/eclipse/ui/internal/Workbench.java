@@ -332,8 +332,8 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	}
 
 	/**
-	 * Check if the -newUpdates command line argument is present
-	 * and if so, open the udpates dialog
+	 * Checks if the -newUpdates command line argument is present
+	 * and if so, opens the update manager.
 	 */
 	private void checkUpdates() {
 		boolean newUpdates = false;
@@ -344,21 +344,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			}
 		}
 
-		if (newUpdates)
-			showUpdatesDialog();
-	}
-	/**
-	 * Show the new updates dialog
-	 */
-	private void showUpdatesDialog() {
-		Shell shell = null;
-		IWorkbenchWindow window = getActiveWorkbenchWindow();
-		if (window != null) // should never be null
-			shell = window.getShell();
-		if (MessageDialog.openQuestion(
-				shell, 
-				WorkbenchMessages.getString("Updates.title"), //$NON-NLS-1$
-		WorkbenchMessages.getString("Updates.message"))) { //$NON-NLS-1$
+		if (newUpdates) {
 			try {
 				SiteManager.handleNewChanges();
 			} catch (CoreException ex) {
