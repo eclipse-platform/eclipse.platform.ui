@@ -242,6 +242,7 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IDEInternalPreferences.SAVE_ALL_BEFORE_BUILD, false);
 		store.setDefault(IDEInternalPreferences.SAVE_INTERVAL, 5); //5 minutes
 		store.setDefault(IDEInternalPreferences.WELCOME_DIALOG, true);
+		store.setDefault(IDEInternalPreferences.INTRO, true);
 		store.setDefault(IDEInternalPreferences.REFRESH_WORKSPACE_ON_STARTUP, false);
 		store.setDefault(IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW, true);
 		store.setDefault(IDEInternalPreferences.SHOW_TASKS_ON_BUILD, true);
