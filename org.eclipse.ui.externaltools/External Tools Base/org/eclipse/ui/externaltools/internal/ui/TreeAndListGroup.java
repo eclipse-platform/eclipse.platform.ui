@@ -184,7 +184,9 @@ public class TreeAndListGroup implements ISelectionChangedListener {
 		});
 		listViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
-				notifyDoubleClickListeners(event);
+				if (!event.getSelection().isEmpty()) {
+					notifyDoubleClickListeners(event);
+				}
 			}
 		});
 	}

@@ -175,7 +175,9 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 		
 		variableTable.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
-				handleEditButtonPressed();
+				if (!variableTable.getSelection().isEmpty()) {
+					handleEditButtonPressed();
+				}
 			}
 		});
 		variableTable.getTable().addKeyListener(new KeyAdapter() {

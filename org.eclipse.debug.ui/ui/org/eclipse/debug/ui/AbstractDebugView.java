@@ -719,7 +719,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 */
 	public void doubleClick(DoubleClickEvent event) {
 		IAction action = getAction(DOUBLE_CLICK_ACTION);
-		if (action != null && action.isEnabled()) {
+		if (action != null && !event.getSelection().isEmpty() && action.isEnabled()) {
 			action.run();
 		}
 	}	

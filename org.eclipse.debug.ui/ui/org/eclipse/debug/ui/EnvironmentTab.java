@@ -264,7 +264,9 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		});
 		environmentTable.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
-				handleEnvEditButtonSelected();
+				if (!environmentTable.getSelection().isEmpty()) {
+					handleEnvEditButtonSelected();
+				}
 			}
 		});
 		// Create columns
