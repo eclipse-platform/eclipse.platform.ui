@@ -12,8 +12,6 @@ Contributors:
 package org.eclipse.jface.text.source;
 
 
-import java.text.NumberFormat;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.DisposeEvent;
@@ -408,17 +406,16 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 		try {
 			
 			gc.setFont(fCanvas.getFont());
-			NumberFormat nf= NumberFormat.getInstance();
 			
 			fIndentation= new int[fCachedNumberOfDigits + 1];
 			
-			double number= Math.pow(10, fCachedNumberOfDigits) - 1;
-			Point p= gc.stringExtent(nf.format(number));
+			Float number= new Float(Math.pow(10, fCachedNumberOfDigits) - 1);
+			Point p= gc.stringExtent(Integer.toString(number.intValue()));
 			fIndentation[0]= p.x;
 			
 			for (int i= 1; i <= fCachedNumberOfDigits; i++) {
-				number= Math.pow(10, i) - 1;
-				p= gc.stringExtent(nf.format(number));
+				number= new Float(Math.pow(10, i) - 1);
+				p= gc.stringExtent(Integer.toString(number.intValue()));
 				fIndentation[i]= fIndentation[0] - p.x;
 			}
 		
@@ -586,7 +583,6 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 		fScrollPos= fCachedTextWidget.getTopPixel();
 		int canvasheight= fCanvas.getSize().y;
 
-		NumberFormat nf= NumberFormat.getInstance();
 		int y= ((topLine - firstLine) * lineheight) - fScrollPos + fCachedTextViewer.getTopInset();
 		for (int line= topLine; line <= bottomLine; line++, y+= lineheight) {
 			
@@ -595,7 +591,7 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 				
 			String s= Integer.toString(line + 1);
 			int indentation= fIndentation[s.length()];
-			gc.drawString(nf.format(line + 1), indentation, y);
+			gc.drawString(s, indentation, y);
 		}
 	}
 	
@@ -641,8 +637,6 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 		fScrollPos= fCachedTextWidget.getTopPixel();
 		int canvasheight= fCanvas.getSize().y;
 
-		NumberFormat nf= NumberFormat.getInstance();
-
 		int y= (widgetTopLine * lineheight) - fScrollPos + fCachedTextViewer.getTopInset();
 		for (int modelLine= topLine; modelLine <= bottomLine; modelLine++) {
 
@@ -655,7 +649,7 @@ public final class LineNumberRulerColumn implements IVerticalRulerColumn {
 
 			String s= Integer.toString(modelLine + 1);
 			int indentation= fIndentation[s.length()];
-			gc.drawString(nf.format(modelLine + 1), indentation, y);
+			gc.drawString(s, indentation, y);
 			y+= lineheight;
 		}
 	}
