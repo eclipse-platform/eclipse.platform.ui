@@ -20,10 +20,14 @@ import java.util.*;
  */
 
 public abstract class InternalBuilder {
+	
+	private static final IProject[] EMPTY_PROJECT_ARRAY = new IProject[0];
+	
 	private IProject project;
 	private ElementTree oldState;
 	private IPluginDescriptor pluginDescriptor;
-	private IProject[] interestingProjects;
+	private IProject[] interestingProjects = EMPTY_PROJECT_ARRAY;
+	
 /**
  * 
  */
