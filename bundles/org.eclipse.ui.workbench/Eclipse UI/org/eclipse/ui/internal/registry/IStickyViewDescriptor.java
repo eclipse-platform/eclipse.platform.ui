@@ -44,4 +44,18 @@ public interface IStickyViewDescriptor {
      * @return the location
      */
     public int getLocation();
+    
+    /**
+     * Return whether this view should be closeable.
+     * 
+     * @return whether this view should be closeeable
+     */
+    public boolean isCloseable();
+    
+    /**
+     * Return whether this view should be moveable.
+     * 
+     * @return whether thsi view should be moveable
+     */
+    public boolean isMoveable();
 }

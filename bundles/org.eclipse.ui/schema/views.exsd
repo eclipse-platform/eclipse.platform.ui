@@ -201,6 +201,20 @@ Since 3.0
                </restriction>
             </simpleType>
          </attribute>
+         <attribute name="closeable" type="boolean">
+            <annotation>
+               <documentation>
+                  optional attribute that specifies wether the view should be closeable.  If absent it will be closeable.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="moveable" type="boolean">
+            <annotation>
+               <documentation>
+                  optional attribute that specifies wether the view should be moveable.  If absent it will be moveable.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

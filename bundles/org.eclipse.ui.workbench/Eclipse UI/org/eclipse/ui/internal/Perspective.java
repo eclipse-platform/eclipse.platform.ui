@@ -34,6 +34,7 @@ import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveFactory;
 import org.eclipse.ui.IPlaceholderFolderLayout;
+import org.eclipse.ui.IViewLayout;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IViewSite;
@@ -601,9 +602,10 @@ private void loadPredefinedPersp(
 										.getDefault()
 										.getViewRegistry()
 										.getStickyViews();
-	for (int i = 0; i < descs.length; i++) {	    
-	    String id = descs[i].getId();
-        switch(descs[i].getLocation()) {
+	for (int i = 0; i < descs.length; i++) {	    	    
+	    IStickyViewDescriptor stickyViewDescriptor = descs[i];
+        String id = stickyViewDescriptor.getId();
+        switch(stickyViewDescriptor.getLocation()) {
 	    	case IPageLayout.RIGHT:
 	    	    if (stickyFolderRight == null)
 	    	        stickyFolderRight = layout.createPlaceholderFolder(
@@ -640,7 +642,12 @@ private void loadPredefinedPersp(
 	    	                IPageLayout.ID_EDITOR_AREA);
 	    	    stickyFolderBottom.addPlaceholder(id);
 	    		break;
-	    }    	
+	    }
+        
+        //should never be null as we've just added the view above
+        IViewLayout viewLayout = layout.getViewLayout(id);
+        viewLayout.setCloseable(stickyViewDescriptor.isCloseable());  
+        viewLayout.setMoveable(stickyViewDescriptor.isMoveable());
     }
 
 	// Run layout engine.

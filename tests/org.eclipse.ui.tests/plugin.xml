@@ -163,11 +163,15 @@
       </view>
       <stickyView
             id="org.eclipse.ui.tests.api.StickyViewRight1"
-            location="RIGHT">
+            location="RIGHT"
+            closeable="true"
+            moveable="true">
       </stickyView>
       <stickyView
             id="org.eclipse.ui.tests.api.StickyViewRight2"
-            location="RIGHT">
+            location="RIGHT"
+            closeable="false"
+            moveable="false">
       </stickyView>
 
       <view
