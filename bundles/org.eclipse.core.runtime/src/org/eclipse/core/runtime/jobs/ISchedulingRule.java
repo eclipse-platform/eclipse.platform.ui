@@ -48,8 +48,8 @@ public interface ISchedulingRule {
 	public boolean contains(ISchedulingRule rule);
 	/**
 	 * Returns whether this scheduling rule is compatible with another scheduling rule.
-	 * If <code>false</code> is returned, then no job with this rule will be run at the 
-	 * same time as a job with the conflicting rule.  If <code>true</code> is returned, 
+	 * If <code>true</code> is returned, then no job with this rule will be run at the 
+	 * same time as a job with the conflicting rule.  If <code>false</code> is returned, 
 	 * then the job manager is free to run jobs with these rules at the same time.
 	 * <p>
 	 * Implementations of this method must obey the rules of an equivalence relation
