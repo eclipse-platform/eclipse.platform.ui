@@ -64,7 +64,7 @@ import org.eclipse.team.ccvs.core.ILogEntry;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
-import org.eclipse.team.internal.ccvs.ui.actions.OpenRemoteFileAction;
+import org.eclipse.team.internal.ccvs.ui.actions.OpenLogEntryAction;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -86,7 +86,7 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 	private TextViewer textViewer;
 	private TableViewer tagViewer;
 	
-	private OpenRemoteFileAction openAction;
+	private OpenLogEntryAction openAction;
 	private IAction toggleTextAction;
 	private IAction toggleListAction;
 	private TextViewerAction copyAction;
@@ -174,7 +174,7 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 		refreshAction.setToolTipText(Policy.bind("HistoryView.refresh"));
 		
 		// Double click open action
-		openAction = new OpenRemoteFileAction();
+		openAction = new OpenLogEntryAction();
 		tableViewer.getTable().addListener(SWT.DefaultSelection, new Listener() {
 			public void handleEvent(Event e) {
 				openAction.selectionChanged(null, tableViewer.getSelection());

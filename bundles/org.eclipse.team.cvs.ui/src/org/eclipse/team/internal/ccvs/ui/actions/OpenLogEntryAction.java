@@ -1,7 +1,7 @@
 package org.eclipse.team.internal.ccvs.ui.actions;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 
@@ -12,6 +12,8 @@ import java.util.Iterator;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -29,33 +31,33 @@ public class OpenLogEntryAction extends TeamAction {
 	/**
 	 * Returns the selected remote files
 	 */
-	protected ICVSRemoteFile[] getSelectedRemoteFiles() {
-		ArrayList resources = null;
+	protected ILogEntry[] getSelectedLogEntries() {
+		ArrayList entries = null;
 		if (!selection.isEmpty()) {
-			resources = new ArrayList();
+			entries = new ArrayList();
 			Iterator elements = ((IStructuredSelection) selection).iterator();
 			while (elements.hasNext()) {
 				Object next = elements.next();
 				if (next instanceof ILogEntry) {
-					resources.add(((ILogEntry)next).getRemoteFile());
+					entries.add((ILogEntry)next);
 					continue;
 				}
 				if (next instanceof IAdaptable) {
 					IAdaptable a = (IAdaptable) next;
-					Object adapter = a.getAdapter(ICVSRemoteFile.class);
-					if (adapter instanceof ICVSRemoteFile) {
-						resources.add(adapter);
+					Object adapter = a.getAdapter(ILogEntry.class);
+					if (adapter instanceof ILogEntry) {
+						entries.add(adapter);
 						continue;
 					}
 				}
 			}
 		}
-		if (resources != null && !resources.isEmpty()) {
-			ICVSRemoteFile[] result = new ICVSRemoteFile[resources.size()];
-			resources.toArray(result);
+		if (entries != null && !entries.isEmpty()) {
+			ILogEntry[] result = new ILogEntry[entries.size()];
+			entries.toArray(result);
 			return result;
 		}
-		return new ICVSRemoteFile[0];
+		return new ILogEntry[0];
 	}
 	/*
 	 * @see IActionDelegate#run(IAction)
@@ -64,10 +66,14 @@ public class OpenLogEntryAction extends TeamAction {
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				IWorkbenchPage page = CVSUIPlugin.getPlugin().getWorkbench().getActiveWorkbenchWindow().getActivePage();
-				ICVSRemoteFile[] files = getSelectedRemoteFiles();
-				for (int i = 0; i < files.length; i++) {
+				final ILogEntry[] entries = getSelectedLogEntries();
+				for (int i = 0; i < entries.length; i++) {
 					try {
-						page.openEditor(new RemoteFileEditorInput(files[i]), "org.eclipse.ui.DefaultTextEditor");
+						if (entries[i].isDeletion()) {
+							MessageDialog.openError(getShell(), Policy.bind("OpenLogEntryAction.deletedTitle"), Policy.bind("OpenLogEntryAction.deleted"));
+						} else {
+							page.openEditor(new RemoteFileEditorInput(entries[i].getRemoteFile()), "org.eclipse.ui.DefaultTextEditor");
+						}
 					} catch (PartInitException e) {
 						throw new InvocationTargetException(e);
 					}
@@ -79,8 +85,8 @@ public class OpenLogEntryAction extends TeamAction {
 	 * @see TeamAction#isEnabled()
 	 */
 	protected boolean isEnabled() throws TeamException {
-		ICVSRemoteFile[] resources = getSelectedRemoteFiles();
-		if (resources.length == 0) return false;
+		ILogEntry[] entries = getSelectedLogEntries();
+		if (entries.length == 0) return false;
 		return true;
 	}
 	/** (Non-javadoc)

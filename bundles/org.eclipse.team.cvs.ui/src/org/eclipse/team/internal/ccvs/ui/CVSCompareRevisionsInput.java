@@ -392,12 +392,7 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 		DiffNode diffRoot = new DiffNode(Differencer.NO_CHANGE);
 		for (int i = 0; i < editions.length; i++) {		
 			ITypedElement left = new ResourceNode(resource);
-			ITypedElement right;
-//			if (editions[i].isTeamStreamResource()) {
-//				right = new ResourceEditionNode(editions[i].getRemoteFile());
-//			} else {
-				right = new ResourceRevisionNode(editions[i]);
-//			}
+			ITypedElement right = new ResourceRevisionNode(editions[i]);
 			diffRoot.add(new VersionCompareDiffNode(left, right));
 		}
 		return diffRoot;		
