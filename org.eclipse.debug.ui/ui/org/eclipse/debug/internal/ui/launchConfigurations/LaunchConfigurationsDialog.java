@@ -18,6 +18,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
@@ -40,11 +41,16 @@ import org.eclipse.jface.dialogs.ControlEnableState;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.IPageChangeProvider;
+import org.eclipse.jface.dialogs.IPageChangedListener;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.PageChangedEvent;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -76,7 +82,7 @@ import org.eclipse.ui.PlatformUI;
 /**
  * The dialog used to edit and launch launch configurations.
  */
-public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaunchConfigurationDialog {
+public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaunchConfigurationDialog, IPageChangeProvider {
 
 	/**
 	 * Keep track of the currently visible dialog instance
@@ -148,6 +154,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	private ProgressMonitorPart fProgressMonitorPart;
 	private Cursor waitCursor;
 	private Cursor arrowCursor;
+	private ListenerList changeListeners = new ListenerList(3);
 	
 	/**
 	 * The number of 'long-running' operations currently taking place in this dialog
@@ -890,6 +897,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	protected void handleTabSelectionChanged() {
 		updateMessage();
+		firePageChanged(new PageChangedEvent(this, getSelectedPage()));
 	}
 	 	 	
  	private void setProgressMonitorPart(ProgressMonitorPart part) {
@@ -1654,4 +1662,37 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		}
 		ErrorDialog.openError(getShell(), title, null, status);
 	}
+
+	public Object getSelectedPage() {
+		return getActiveTab();
+	}
+
+	public void addPageChangedListener(IPageChangedListener listener) {
+		changeListeners.add(listener);
+	}
+
+	public void removePageChangedListener(IPageChangedListener listener) {
+		changeListeners.remove(listener);
+	}
+
+	/**
+     * Notifies any selection changed listeners that the selected page
+     * has changed.
+     * Only listeners registered at the time this method is called are notified.
+     *
+     * @param event a selection changed event
+     *
+     * @see IPageChangedListener#pageChanged
+     */
+    protected void firePageChanged(final PageChangedEvent event) {
+        Object[] listeners = changeListeners.getListeners();
+        for (int i = 0; i < listeners.length; ++i) {
+            final IPageChangedListener l = (IPageChangedListener) listeners[i];
+            Platform.run(new SafeRunnable() {
+                public void run() {
+                    l.pageChanged(event);
+                }
+            });
+        }
+    }
 }
