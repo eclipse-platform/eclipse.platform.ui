@@ -80,4 +80,11 @@ public class DebugHistoryMenuAction extends DebugDropDownAction implements IMenu
 			fTopMenu.removeMenuListener(getDebugActionSetMenuListener());
 		}
 	}
+
+	/**
+	 * @see org.eclipse.debug.internal.ui.actions.LaunchDropDownAction#createTopSeparator(Menu)
+	 */
+	protected void createTopSeparator(Menu menu) {
+	}
+	
 }

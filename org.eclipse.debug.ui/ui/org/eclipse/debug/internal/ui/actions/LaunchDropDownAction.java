@@ -175,7 +175,7 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 		}
 		
 		if (favoriteList.length > 0 || historyList.length > 0) {
-			new MenuItem(menu, SWT.SEPARATOR);
+			createTopSeparator(menu);
 		}
 		
 		// Add any favorites
@@ -201,6 +201,14 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 		}
 
 		return menu;		
+	}
+	
+	/**
+	 * Create a separator at the top of the history/favorites area.  This method may
+	 * be overridden to prevent a separator from being placed at the top.
+	 */
+	protected void createTopSeparator(Menu menu) {
+		new MenuItem(menu, SWT.SEPARATOR);
 	}
 	
 	/**

@@ -80,4 +80,11 @@ public class RunHistoryMenuAction extends RunDropDownAction implements IMenuCrea
 			fTopMenu.removeMenuListener(getDebugActionSetMenuListener());
 		}
 	}
+
+	/**
+	 * @see org.eclipse.debug.internal.ui.actions.LaunchDropDownAction#createTopSeparator(Menu)
+	 */
+	protected void createTopSeparator(Menu menu) {
+	}
+	
 }
