@@ -39,7 +39,6 @@ private void open() {
 
 private void recreate() {
 	close();
-	String name = location.toOSString();
 	// Rename the problematic store for future analysis.
 	location.toFile().renameTo(location.append(".001").toFile());
 	location.toFile().delete();

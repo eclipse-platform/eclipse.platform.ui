@@ -238,7 +238,6 @@ class IndexNode extends IndexedStoreObject {
 	 * Places a cursor at the first entry of a node.
 	 */
 	void findFirstEntry(IndexCursor cursor) throws IndexedStoreException {
-		int i;
 		if (numberOfEntries == 0) {
 			cursor.reset();
 		} else if (!isLeaf()) {

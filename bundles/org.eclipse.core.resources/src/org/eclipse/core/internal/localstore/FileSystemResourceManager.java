@@ -122,7 +122,6 @@ public IPath locationFor(IResource target) {
 			return getProjectDefaultLocation(project);
 		default:
 			//first get the location of the project (without the project name)
-			IPath projectLocation = null;
 			description = ((Project)target.getProject()).internalGetDescription();
 			if (description != null && description.getLocation() != null) {
 				return description.getLocation().append(target.getProjectRelativePath());

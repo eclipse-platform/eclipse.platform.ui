@@ -155,7 +155,6 @@ public class ObjectStore implements Observer {
 			addToCache(object);
 			ObjectAddress address = object.getAddress();
 			int pageNumber = address.getPageNumber();
-			int objectNumber = address.getObjectNumber();
 			ObjectPage page = acquireObjectPage(pageNumber);
 			if (reservations.contains(address)) {
 				page.insertObject(object);
@@ -333,7 +332,6 @@ public class ObjectStore implements Observer {
 		StoredObject object = (StoredObject)modifiedObjects.get(address);
 		boolean inStore = !reservations.contains(address);
 		if (object != null) {
-			int bytesUsed = object.length() + ObjectHeader.SIZE;
 			reservations.remove(address);
 			modifiedObjects.remove(address);
 		}

@@ -63,12 +63,10 @@ class LogReader {
 	protected Map getModifiedPages() throws PageStoreException {
 		Map modifiedPages = new TreeMap();
 		if (in == null) return modifiedPages;
-		Buffer buffer = new Buffer(pageBuffer);
 		Field f4 = new Field(b4);
 		readBuffer(b4);
 		int numberOfPages = f4.getInt();
 		int recordSize = 4 + Page.SIZE;
-		int bytesAvailable = bytesAvailable();
 		if (bytesAvailable() != (numberOfPages * recordSize)) return modifiedPages;
 		for (int i = 0; i < numberOfPages; i++) {
 			readBuffer(b4);
