@@ -209,13 +209,5 @@
             id="org.eclipse.ui.externaltools.workingSetComparator">
       </launchConfigurationComparator>
    </extension>
-   <extension
-         point="org.eclipse.debug.core.launchConfigurationComparators">
-      <launchConfigurationComparator
-            attribute="org.eclipse.ui.externaltools.ATTR_REFRESH_SCOPE"
-            class="org.eclipse.ui.externaltools.internal.launchConfigurations.WorkingSetComparator"
-            id="org.eclipse.ui.externaltools.workingSetComparator">
-      </launchConfigurationComparator>
-   </extension>
 
 </plugin>
