@@ -976,8 +976,11 @@ protected boolean showPage(IPreferenceNode node) {
  * Shows the "Page Flipping abort" dialog.
  */
 private void showPageFlippingAbortDialog() {
-	MessageDialog dialog = new MessageDialog(getShell(), JFaceResources.getString("AbortPageFlippingDialog.title"), null, JFaceResources.getString("AbortPageFlippingDialog.message"), MessageDialog.WARNING, new String[] { IDialogConstants.OK_LABEL }, 0);//$NON-NLS-2$//$NON-NLS-1$
-	dialog.open();
+	MessageDialog.
+		openError(
+			getShell(),
+			JFaceResources.getString("AbortPageFlippingDialog.title"),
+			JFaceResources.getString("AbortPageFlippingDialog.message"));
 }
 /**
  * Updates this dialog's controls to reflect the current page.
