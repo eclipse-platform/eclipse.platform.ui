@@ -1,114 +1,135 @@
 package org.eclipse.ui.internal;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
-import java.util.*;
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
+
+import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.jface.action.*;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IActionDelegate2;
+import org.eclipse.ui.IEditorActionBarContributor;
+import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
 
 /**
  * This class reads the registry for extensions that plug into
  * 'editorActions' extension point.
  */
 public class EditorActionBuilder extends PluginActionBuilder {
-	private static final String TAG_CONTRIBUTION_TYPE = "editorContribution";//$NON-NLS-1$
-	public class ExternalContributor implements IEditorActionBarContributor {
-		private List cache;
-		public ExternalContributor(List cache) {
-			this.cache = cache;
+	private static final String TAG_CONTRIBUTION_TYPE = "editorContribution"; //$NON-NLS-1$
+	
+	/**
+	 * The constructor.
+	 */
+	public EditorActionBuilder() {
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared on PluginActionBuilder.
+	 */
+	protected ActionDescriptor createActionDescriptor(IConfigurationElement element) {
+		return new ActionDescriptor(element, ActionDescriptor.T_EDITOR);
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared on PluginActionBuilder.
+	 */
+	protected BasicContribution createContribution() {
+		return new EditorContribution();
+	}
+
+	/**
+	 * Reads and apply all external contributions for this editor's ID
+	 * registered in 'editorActions' extension point.
+	 */
+	public IEditorActionBarContributor readActionExtensions(IEditorDescriptor desc, IActionBars bars) {
+		ExternalContributor ext = null;
+		readContributions(desc.getId(), TAG_CONTRIBUTION_TYPE, IWorkbenchConstants.PL_EDITOR_ACTIONS);
+		if (cache != null) {
+			ext = new ExternalContributor(cache);
+			cache = null;
 		}
+		return ext;
+	}
+
+
+	/**
+	 * Helper class to collect the menus and actions defined within a
+	 * contribution element.
+	 */
+	private static class EditorContribution extends BasicContribution {
 		public void dispose() {
-			for (int i = 0; i < cache.size(); i++) {
-				Object obj = cache.get(i);
-				if (obj instanceof ActionDescriptor) {
-					PluginAction proxy = ((ActionDescriptor)obj).getAction();
+			if (actions != null) {
+				for (int i = 0; i < actions.size(); i++) {
+					PluginAction proxy = ((ActionDescriptor) actions.get(i)).getAction();
 					if (proxy.getDelegate() instanceof IActionDelegate2)
-						((IActionDelegate2)proxy.getDelegate()).dispose();
-				}
-			}
-		};
-		public ActionDescriptor[] getExtendedActions() {
-			if(cache == null)
-				return new ActionDescriptor[0];
-			ArrayList result = new ArrayList(cache.size());
-			for (Iterator iter = cache.iterator(); iter.hasNext();) {
-				Object element = (Object) iter.next();
-				if (element instanceof ActionDescriptor) {
-					result.add(element);
-				}
-			}
-			return (ActionDescriptor[])result.toArray(new ActionDescriptor[result.size()]);
-		}
-		public void init(IActionBars bars, IWorkbenchPage page) {
-			contributeToMenu(bars.getMenuManager());
-			contributeToToolBar(bars.getToolBarManager());
-			contributeToStatusLine(bars.getStatusLineManager());
-		}
-		public void contributeToMenu(IMenuManager menu) {
-			for (int i = 0; i < cache.size(); i++) {
-				Object obj = cache.get(i);
-				if (obj instanceof IConfigurationElement) {
-					IConfigurationElement menuElement = (IConfigurationElement) obj;
-					contributeMenu(menuElement, menu, false);
-				} else
-					if (obj instanceof ActionDescriptor) {
-						ActionDescriptor ad = (ActionDescriptor) obj;
-						contributeMenuAction(ad, menu, false);
-					}
-			}
-		}
-		public void contributeToToolBar(IToolBarManager manager) {
-			for (int i = 0; i < cache.size(); i++) {
-				Object obj = cache.get(i);
-				if (obj instanceof ActionDescriptor) {
-					ActionDescriptor ad = (ActionDescriptor) obj;
-					contributeToolbarAction(ad, manager, true);
+						 ((IActionDelegate2) proxy.getDelegate()).dispose();
 				}
 			}
 		}
-		public void setActiveEditor(IEditorPart editor) {
-			for (int i=0; i<cache.size(); i++) {
-				Object obj = cache.get(i);
-				if (obj instanceof ActionDescriptor) {
-					ActionDescriptor ad = (ActionDescriptor) obj;
-					EditorPluginAction action = (EditorPluginAction)ad.getAction();
+		
+		public void editorChanged(IEditorPart editor) {
+			if (actions != null) {
+				for (int i = 0; i < actions.size(); i++) {
+					ActionDescriptor ad = (ActionDescriptor) actions.get(i);
+					EditorPluginAction action = (EditorPluginAction) ad.getAction();
 					action.editorChanged(editor);
 				}
 			}
 		}
-		public void contributeToStatusLine(IStatusLineManager manager) {
+	}
+
+	/**
+	 * Helper class that will populate the menu and toobar with the external
+	 * editor contributions.
+	 */
+	protected static class ExternalContributor implements IEditorActionBarContributor {
+		private ArrayList cache;
+		
+		public ExternalContributor(ArrayList cache) {
+			this.cache = cache;
+		}
+		
+		public void dispose() {
+			for (int i = 0; i < cache.size(); i++) {
+				((EditorContribution)cache.get(i)).dispose();
+			}
+		};
+		
+		public ActionDescriptor[] getExtendedActions() {
+			ArrayList results = new ArrayList();
+			for (int i = 0; i < cache.size(); i++) {
+				EditorContribution ec = (EditorContribution)cache.get(i);
+				if (ec.actions != null)
+					results.addAll(ec.actions);
+			}
+			return (ActionDescriptor[]) results.toArray(new ActionDescriptor[results.size()]);
+		}
+		
+		public void init(IActionBars bars, IWorkbenchPage page) {
+			for (int i = 0; i < cache.size(); i++) {
+				((EditorContribution)cache.get(i)).contribute(
+					bars.getMenuManager(),
+					false,
+					bars.getToolBarManager(),
+					true);
+			}
+		}
+		
+		public void setActiveEditor(IEditorPart editor) {
+			for (int i = 0; i < cache.size(); i++) {
+				((EditorContribution)cache.get(i)).editorChanged(editor);
+			}
 		}
 	}
-/**
- * The constructor.
- */
-public EditorActionBuilder() {
-}
-/**
- * This factory method returns a new ActionDescriptor for the
- * configuration element.  It should be implemented by subclasses.
- */
-protected ActionDescriptor createActionDescriptor(IConfigurationElement element) {
-	return new ActionDescriptor(element, ActionDescriptor.T_EDITOR);
-}
-/**
- * Reads editor contributor if specified directly in the 'editor' extension point,
- * and all external contributions for this editor's ID registered in
- * 'editorActions' extension point. 
- */
-public IEditorActionBarContributor readActionExtensions(IEditorDescriptor desc, IActionBars bars)
-{
-	ExternalContributor ext = null;
-	readContributions(desc.getId(), TAG_CONTRIBUTION_TYPE, 
-		IWorkbenchConstants.PL_EDITOR_ACTIONS);
-	if (cache != null) {
-		ext = new ExternalContributor(cache);
-		cache = null;
-	}
-	return ext;
-}
 }

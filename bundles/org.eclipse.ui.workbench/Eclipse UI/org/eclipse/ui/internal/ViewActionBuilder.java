@@ -1,62 +1,74 @@
 package org.eclipse.ui.internal;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
+
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewPart;
 
 /**
- *
+ * This class reads the registry for extensions that plug into
+ * 'viewActions' extension point.
  */
 public class ViewActionBuilder extends PluginActionBuilder {
+	public static final String TAG_CONTRIBUTION_TYPE = "viewContribution"; //$NON-NLS-1$
+
 	private IViewPart targetPart;
-	public static final String TAG_CONTRIBUTION_TYPE = "viewContribution";//$NON-NLS-1$
-/**
- *
- */
-public ViewActionBuilder() {}
-/**
- * contributeToPart method comment.
- */
-protected void contributeToPart(IViewPart part) {
-	if (cache != null) {
+
+	/**
+	 * Basic constructor
+	 */
+	public ViewActionBuilder() {
+	}
+	
+	/**
+	 * Contribute the external menus and actions applicable for this view part.
+	 */
+	private void contributeToPart(IViewPart part) {
 		IActionBars bars = part.getViewSite().getActionBars();
 		contribute(bars.getMenuManager(), bars.getToolBarManager(), true);
 	}
-}
-/**
- * This factory method returns a new ActionDescriptor for the
- * configuration element.  It should be implemented by subclasses.
- */
-protected ActionDescriptor createActionDescriptor(org.eclipse.core.runtime.IConfigurationElement element) {
-	return new ActionDescriptor(element, ActionDescriptor.T_VIEW, targetPart);
-}
-/**
- * Return all extendedn actions. */
-public ActionDescriptor[] getExtendedActions() {
-	if(cache == null)
-		return new ActionDescriptor[0];
-	ArrayList result = new ArrayList(cache.size());
-	for (Iterator iter = cache.iterator(); iter.hasNext();) {
-		Object element = (Object) iter.next();
-		if (element instanceof ActionDescriptor) {
-			result.add(element);
-		}
+	
+	/* (non-Javadoc)
+	 * Method declared on PluginActionBuilder.
+	 */
+	protected ActionDescriptor createActionDescriptor(org.eclipse.core.runtime.IConfigurationElement element) {
+		return new ActionDescriptor(element, ActionDescriptor.T_VIEW, targetPart);
 	}
-	return (ActionDescriptor[])result.toArray(new ActionDescriptor[result.size()]);
-}
-/**
- *
- */
-public void readActionExtensions(IViewPart viewPart) {
-	targetPart = viewPart;
-	readContributions(viewPart.getSite().getId(), TAG_CONTRIBUTION_TYPE, 
-		IWorkbenchConstants.PL_VIEW_ACTIONS);
-	contributeToPart(targetPart);
-}
+	
+	/**
+	 * Return all extended actions.
+	 */
+	public ActionDescriptor[] getExtendedActions() {
+		if (cache == null)
+			return new ActionDescriptor[0];
+
+		ArrayList results = new ArrayList();
+		for (int i = 0; i < cache.size(); i++) {
+			BasicContribution bc = (BasicContribution)cache.get(i);
+			if (bc.actions != null)
+				results.addAll(bc.actions);
+		}
+		return (ActionDescriptor[]) results.toArray(new ActionDescriptor[results.size()]);
+	}
+	
+	/**
+	 * Reads and apply all external contributions for this view's ID registered
+	 * in 'viewActions' extension point.
+	 */
+	public void readActionExtensions(IViewPart viewPart) {
+		targetPart = viewPart;
+		readContributions(viewPart.getSite().getId(), TAG_CONTRIBUTION_TYPE, IWorkbenchConstants.PL_VIEW_ACTIONS);
+		contributeToPart(targetPart);
+	}
 }
