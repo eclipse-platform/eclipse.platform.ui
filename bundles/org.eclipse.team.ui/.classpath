@@ -3,10 +3,10 @@
     <classpathentry kind="var" path="JRE_LIB" rootpath="JRE_SRCROOT" sourcepath="JRE_SRC"/>
     <classpathentry kind="src" path="src"/>
     <classpathentry kind="src" path="/org.eclipse.team.core"/>
-    <classpathentry kind="src" path="/org.eclipse.compare"/>
     <classpathentry kind="src" path="/org.eclipse.core.resources"/>
     <classpathentry kind="src" path="/org.eclipse.ui"/>
     <classpathentry kind="src" path="/org.eclipse.core.runtime"/>
     <classpathentry kind="src" path="/org.eclipse.swt"/>
+    <classpathentry kind="src" path="/org.eclipse.compare"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>
