@@ -78,7 +78,7 @@ protected Control createDialogArea(Composite parent) {
 	// Run super.
 	Composite composite = (Composite)super.createDialogArea(parent);
 	
-		// Add perspective list.
+	// Add perspective list.
 	list = new TableViewer(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 	list.setLabelProvider(new PerspLabelProvider());
 	list.setContentProvider(new PerspContentProvider());
