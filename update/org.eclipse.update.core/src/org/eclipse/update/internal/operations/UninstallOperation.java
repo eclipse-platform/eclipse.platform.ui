@@ -34,30 +34,42 @@ public class UninstallOperation extends FeatureOperation implements IUninstallFe
 		if (targetSite == null)
 			targetSite = UpdateUtils.getConfigSite(feature, SiteManager.getLocalSite().getCurrentConfiguration());
 
-			if (targetSite != null) {
-				targetSite.remove(feature, pm);
-			} else {
-				// we should do something here
-				String message =
-					Policy.bind(
-						"OperationsManager.error.uninstall", //$NON-NLS-1$
-						feature.getLabel());
-				IStatus status =
-					new Status(
-						IStatus.ERROR,
-						UpdateUtils.getPluginId(),
-						IStatus.OK,
-						message,
-						null);
-				throw new CoreException(status);
-			}
+		// Restart not needed
+		boolean restartNeeded = false;
 
+		if (targetSite != null) {
+			// if needed, unconfigure the feature first
+			if (targetSite.isConfigured(feature)) {
+				IStatus status = OperationsManager.getValidator().validatePendingUnconfig(feature);
+				if (status != null && status.getCode() == IStatus.ERROR)
+					throw new CoreException(status);
+				if (unconfigure(feature, targetSite))
+					restartNeeded = true;
+				else
+					throw Utilities.newCoreException(Policy.bind("OperationsManager.error.uninstall", feature.getVersionedIdentifier().toString()), null); //$NON-NLS-1$
+			}
+			targetSite.remove(feature, pm);
+		} else {
+			// we should do something here
+			String message =
+				Policy.bind(
+					"OperationsManager.error.uninstall", //$NON-NLS-1$
+					feature.getLabel());
+			IStatus status =
+				new Status(
+					IStatus.ERROR,
+					UpdateUtils.getPluginId(),
+					IStatus.OK,
+					message,
+					null);
+			throw new CoreException(status);
+		}
 
 		markProcessed();
 		if (listener != null)
 			listener.afterExecute(this, null);
 
-		boolean restartNeeded = SiteManager.getLocalSite().save();
+		restartNeeded = SiteManager.getLocalSite().save() && restartNeeded;
 
 		// notify the model
 		OperationsManager.fireObjectChanged(feature, UNINSTALL);

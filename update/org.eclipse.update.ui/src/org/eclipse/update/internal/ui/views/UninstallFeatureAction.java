@@ -30,7 +30,16 @@ public class UninstallFeatureAction extends Action {
 
 	public void run() {
 		try {
-			if (adapter == null || !confirm())
+			IStatus status = OperationsManager.getValidator().validatePlatformConfigValid();
+			if (status != null)
+				throw new CoreException(status);
+			
+			if (adapter == null || !confirm(UpdateUI.getString("FeatureUninstallAction.uninstallQuestion"))) //$NON-NLS-1$))
+				return;
+
+			// If current config is broken, confirm with the user to continue
+			if (OperationsManager.getValidator().validateCurrentState() != null &&
+					!confirm(UpdateUI.getString("Actions.brokenConfigQuestion"))) //$NON-NLS-1$
 				return;
 
 			IOperation uninstallOperation =
@@ -55,9 +64,11 @@ public class UninstallFeatureAction extends Action {
 		}
 	}
 
-	private boolean confirm() {
-		return MessageDialog.openConfirm(UpdateUI.getActiveWorkbenchShell(), UpdateUI.getString("FeatureUninstallAction.dialogTitle"), //$NON-NLS-1$
-		UpdateUI.getString("FeatureUninstallAction.uninstallQuestion")); //$NON-NLS-1$
+	private boolean confirm(String message) {
+		return MessageDialog.openConfirm(
+			UpdateUI.getActiveWorkbenchShell(),
+			UpdateUI.getString("FeatureUninstallAction.dialogTitle"), //$NON-NLS-1$
+			message);
 	}
 
 	public void setFeature(ConfiguredFeatureAdapter adapter) {
@@ -69,8 +80,8 @@ public class UninstallFeatureAction extends Action {
 		if (adapter == null)
 			return false;
 		
-		if (adapter.isConfigured())
-			return false;
+//		if (adapter.isConfigured())
+//			return false;
 			
 		try {
 			if (InstallRegistry.getInstance().get("feature_"+adapter.getFeature(null).getVersionedIdentifier()) == null) //$NON-NLS-1$

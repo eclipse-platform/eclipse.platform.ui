@@ -939,17 +939,19 @@ public class ConfigurationView
 		Object obj = ssel.getFirstElement();
 		if (obj instanceof IFeatureAdapter) {
 			try {
-				ConfiguredFeatureAdapter adapter =
-					(ConfiguredFeatureAdapter) obj;
+				ConfiguredFeatureAdapter adapter = (ConfiguredFeatureAdapter) obj;
 				IFeature feature = adapter.getFeature(null);
-				boolean enable =
-					(adapter.isOptional() || !adapter.isIncluded());
+				
 				boolean missing = feature instanceof MissingFeature;
+				boolean enable = !missing && ((adapter.isOptional() || !adapter.isIncluded()));
 
 				featureStateAction.setFeature(adapter);
-				featureStateAction.setEnabled(enable && !missing);
+				featureStateAction.setEnabled(enable);
+				
+				uninstallFeatureAction.setFeature(adapter);
+				uninstallFeatureAction.setEnabled(enable && uninstallFeatureAction.canUninstall());
 
-				if (enable && !missing && adapter.isConfigured()) {
+				if (enable && adapter.isConfigured()) {
 					IFeature[] features = UpdateUtils.getInstalledFeatures(feature, false);
 					swapVersionAction.setEnabled(features.length > 1);
 					if (features.length > 1) {
@@ -968,12 +970,8 @@ public class ConfigurationView
 					installOptFeatureAction.setEnabled(
 						mf.isOptional() && mf.getOriginatingSiteURL() != null);
 					installOptFeatureAction.setFeature(mf);
-					uninstallFeatureAction.setEnabled(false);
 				} else {
 					installOptFeatureAction.setEnabled(false);
-					uninstallFeatureAction.setFeature(adapter);
-					uninstallFeatureAction.setEnabled(
-						enable && uninstallFeatureAction.canUninstall());
 				}
 			} catch (CoreException ex) {
 				UpdateUI.logException(ex);

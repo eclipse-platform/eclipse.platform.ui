@@ -51,48 +51,13 @@ public abstract class FeatureOperation extends Operation implements IFeatureOper
 		this.targetSite = targetSite;
 	}
 	
-//	void ensureUnique()
-//		throws CoreException {
-//		
-//		// Only need to check features that patch other features.	
-//		boolean patch = false;
-//		if (targetSite == null)
-//			targetSite = feature.getSite().getCurrentConfiguredSite();
-//		IImport[] imports = feature.getImports();
-//		for (int i = 0; i < imports.length; i++) {
-//			if (imports[i].isPatch()) {
-//				patch = true;
-//				break;
-//			}
-//		}
-//		if (!patch)
-//			return;
-//			
-//		IFeature localFeature =
-//			UpdateUtils.getLocalFeature(targetSite, feature);
-//		ArrayList oldFeatures = new ArrayList();
-//		// First collect all older active features that
-//		// have the same ID as new features marked as 'unique'.
-//		UpdateUtils.collectOldFeatures(localFeature, targetSite, oldFeatures);
-//		// Now unconfigure old features to enforce uniqueness
-//		for (int i = 0; i < oldFeatures.size(); i++) {
-//			IFeature oldFeature = (IFeature) oldFeatures.get(i);
-//			unconfigure(config, oldFeature);
-//		}
-//	}
 
-	static void configure(IInstallConfiguration config, IFeature feature)
-		throws CoreException {
-		IConfiguredSite site = UpdateUtils.getConfigSite(feature, config);
-		if (site != null) {
-			site.configure(feature);
-		}
-	}
-
-	static boolean unconfigure(IFeature feature)
+	static boolean unconfigure(IFeature feature, IConfiguredSite site)
 		throws CoreException {
 		IInstallConfiguration config = SiteManager.getLocalSite().getCurrentConfiguration();
-		IConfiguredSite site = UpdateUtils.getConfigSite(feature, config);
+		if (site == null)
+			site = UpdateUtils.getConfigSite(feature, config);
+		
 		if (site != null) {
 			PatchCleaner cleaner = new PatchCleaner(site, feature);
 			boolean result = site.unconfigure(feature);

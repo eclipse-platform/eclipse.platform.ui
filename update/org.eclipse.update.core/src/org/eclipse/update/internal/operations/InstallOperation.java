@@ -79,7 +79,7 @@ public class InstallOperation
 			if (oldFeature != null) { //&& isOptionalDelta()) {
 				preserveOptionalState();
 
-				boolean oldSuccess = unconfigure(oldFeature);
+				boolean oldSuccess = unconfigure(oldFeature, null); // pick any site containing old feature
 				if (!oldSuccess) {
 					IInstallConfiguration config = SiteManager.getLocalSite().getCurrentConfiguration();
 					if (!UpdateUtils.isNestedChild(config, oldFeature)) {
