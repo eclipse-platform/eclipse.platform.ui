@@ -865,6 +865,11 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
  			fTabViewer.setInput(newInput);
  			setInitializingTabs(false);
  			refreshStatus();
+ 			// bug 14758 - if the newly selected config is dirty, save its changes
+ 			if (fTabViewer.isDirty()) {
+ 				fTabViewer.handleApplyPressed();
+ 			} 
+ 			// bug 14758			
  			ILaunchConfigurationTabGroup newGroup = getTabGroup();
  			if (!isEqual(group, newGroup)) {
  				resize();
