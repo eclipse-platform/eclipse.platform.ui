@@ -28,6 +28,7 @@ public class BinaryCompareViewer extends AbstractViewer {
 	private Text fControl;
 	private ICompareInput fInput;
 	private ResourceBundle fBundle;
+	private boolean fLeftIsLocal;
 	
 	
 	public BinaryCompareViewer(Composite parent, CompareConfiguration cc) {
@@ -38,6 +39,8 @@ public class BinaryCompareViewer extends AbstractViewer {
 		fControl.setEditable(false);
 		fControl.setData(CompareUI.COMPARE_VIEWER_TITLE, Utilities.getString(fBundle, "title")); //$NON-NLS-1$
 		CompareNavigator.hookNavigation(fControl);
+		
+		fLeftIsLocal= Utilities.getBoolean(cc, "LEFT_IS_LOCAL", false); //$NON-NLS-1$
 	}
 
 	public Control getControl() {
@@ -51,6 +54,7 @@ public class BinaryCompareViewer extends AbstractViewer {
 			InputStream left= null;
 			InputStream right= null;
 			
+			String message= null;
 			try {
 				left= getStream(fInput.getLeft());
 				right= getStream(fInput.getRight());
@@ -62,8 +66,7 @@ public class BinaryCompareViewer extends AbstractViewer {
 						int r= right.read();
 						if (l != r) {
 							String format= Utilities.getString(fBundle, "diffMessageFormat"); //$NON-NLS-1$
-							String msg= MessageFormat.format(format, new String[] { Integer.toString(pos) } );
-							fControl.setText(msg);
+							message= MessageFormat.format(format, new String[] { Integer.toString(pos) } );
 							break;
 						}
 						if (l == EOF)
@@ -71,16 +74,22 @@ public class BinaryCompareViewer extends AbstractViewer {
 						pos++;
 					}
 				} else if (left == null && right == null) {
-					fControl.setText(Utilities.getString(fBundle, "deleteConflictMessage")); //$NON-NLS-1$
+					message= Utilities.getString(fBundle, "deleteConflictMessage"); //$NON-NLS-1$
 				} else if (left == null) {
-					fControl.setText(Utilities.getString(fBundle, "addedMessage")); //$NON-NLS-1$
+					if (fLeftIsLocal)
+						message= Utilities.getString(fBundle, "deletedMessage"); //$NON-NLS-1$
+					else
+						message= Utilities.getString(fBundle, "addedMessage"); //$NON-NLS-1$
 				} else if (right == null) {
-					fControl.setText(Utilities.getString(fBundle, "deletedMessage")); //$NON-NLS-1$
+					if (fLeftIsLocal)
+						message= Utilities.getString(fBundle, "addedMessage"); //$NON-NLS-1$
+					else
+						message= Utilities.getString(fBundle, "deletedMessage"); //$NON-NLS-1$
 				}
 			} catch (CoreException ex) {
-				fControl.setText(Utilities.getString(fBundle, "errorMessage")); //$NON-NLS-1$
+				message= Utilities.getString(fBundle, "errorMessage"); //$NON-NLS-1$
 			} catch (IOException ex) {
-				fControl.setText(Utilities.getString(fBundle, "errorMessage")); //$NON-NLS-1$
+				message= Utilities.getString(fBundle, "errorMessage"); //$NON-NLS-1$
 			} finally {
 				if (left != null) {
 					try {
@@ -95,6 +104,8 @@ public class BinaryCompareViewer extends AbstractViewer {
 					}
 				}			
 			}
+			if (message != null)
+				fControl.setText(message);				
 		}
 	}
 
