@@ -715,7 +715,7 @@ public class ViewsPreferencePage extends PreferencePage implements
         viewBottomButton.setSelection(viewTopValue == SWT.BOTTOM);
         viewAlignment = viewTopValue;
 
-        perspBarLocation = store
+        perspBarLocation = apiStore
                 .getDefaultString(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR);
         perspLeftButton.setSelection(IWorkbenchPreferenceConstants.LEFT
                 .equals(perspBarLocation));
