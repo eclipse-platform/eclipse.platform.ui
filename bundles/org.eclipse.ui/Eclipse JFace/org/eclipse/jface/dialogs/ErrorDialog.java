@@ -181,6 +181,7 @@ protected Control createDialogArea(Composite parent) {
  * </p>
  * 
  * @return the image to display beside the message
+ * @since 2.0
  */
 protected Image getImage() {
 	return JFaceResources.getImageRegistry().get(DLG_IMG_ERROR);
