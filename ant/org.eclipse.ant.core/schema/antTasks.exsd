@@ -106,7 +106,7 @@ for the library containing the task.
 &lt;p&gt;
 &lt;pre&gt;
    &lt;extension point="org.eclipse.ant.core.antTasks"&gt;
-      &lt;antTask name="coolTask" class="com.example.CoolTask"/&gt;
+      &lt;antTask name="coolTask" class="com.example.CoolTask" library="lib/antSupport.jar"/&gt;
    &lt;/extension&gt; 
 &lt;/pre&gt;
 &lt;/p&gt;

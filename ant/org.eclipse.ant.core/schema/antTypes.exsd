@@ -107,7 +107,7 @@ for the library containing the type.
 &lt;p&gt;
 &lt;pre&gt;
    &lt;extension point="org.eclipse.ant.core.antTypes"&gt;
-      &lt;antType name="coolType" class="com.example.CoolType"/&gt;
+      &lt;antType name="coolType" class="com.example.CoolType" library="lib/antSupport.jar"/&gt;
    &lt;/extension&gt; 
 &lt;/pre&gt;
 &lt;/p&gt;
