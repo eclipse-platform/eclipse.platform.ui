@@ -764,10 +764,6 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	public void flush() throws BackingStoreException {
 		// illegal state if this node has been removed
 		checkRemoved();
-		internalFlush();
-	}
-
-	protected void internalFlush() throws BackingStoreException {
 		// do nothing...subclasses to provide implementation
 	}
 

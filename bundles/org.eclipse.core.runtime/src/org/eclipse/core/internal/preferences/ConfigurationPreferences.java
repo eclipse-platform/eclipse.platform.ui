@@ -69,6 +69,7 @@ public class ConfigurationPreferences extends EclipsePreferences {
 	 * @see org.osgi.service.prefs.Preferences#flush()
 	 */
 	public void flush() throws BackingStoreException {
+		super.flush();
 		if (location == null) {
 			if (InternalPlatform.DEBUG_PREFERENCES)
 				System.out.println("Unable to determine location of preference file for node: " + absolutePath()); //$NON-NLS-1$

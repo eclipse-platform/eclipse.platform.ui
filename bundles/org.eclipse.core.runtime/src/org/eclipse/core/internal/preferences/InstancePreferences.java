@@ -54,13 +54,14 @@ public class InstancePreferences extends EclipsePreferences {
 	/*
 	 * @see org.osgi.service.prefs.Preferences#flush()
 	 */
-	protected void internalFlush() throws BackingStoreException {
+	public void flush() throws BackingStoreException {
+		super.flush();
 		// TODO move this to superclass?
 		if (!isLoadLevel()) {
 			// flush children
 			for (Iterator i = children.values().iterator(); i.hasNext();) {
-				EclipsePreferences child = (EclipsePreferences) i.next();
-				child.internalFlush();
+				IEclipsePreferences child = (IEclipsePreferences) i.next();
+				child.flush();
 			}
 			return;
 		}

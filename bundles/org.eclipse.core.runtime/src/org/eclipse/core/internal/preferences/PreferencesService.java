@@ -33,7 +33,7 @@ public class PreferencesService implements IPreferencesService {
 			ConfigurationScope.SCOPE, //
 			UserScope.SCOPE, //
 			DefaultScope.SCOPE};
-	private static IPreferencesService instance = new PreferencesService();
+	private static IPreferencesService instance = null;
 	private static Map defaultsRegistry = new HashMap();
 	private static Map scopeRegistry = new HashMap();
 	private static RootPreferences root = new RootPreferences();
@@ -42,11 +42,14 @@ public class PreferencesService implements IPreferencesService {
 	private static final char EXPORT_ROOT_PREFIX = '!';
 	private static final float EXPORT_VERSION = 3;
 
-	static {
+	private PreferencesService() {
+		super();
 		initializeScopes();
 	}
 
 	public static IPreferencesService getDefault() {
+		if (instance == null)
+			instance = new PreferencesService();
 		return instance;
 	}
 
