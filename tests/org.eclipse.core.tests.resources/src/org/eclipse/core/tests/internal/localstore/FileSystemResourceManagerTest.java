@@ -47,6 +47,7 @@ public void testContainerFor() throws Throwable {
 		getLocalManager().containerForLocation(null);
 		fail("1.1");
 	} catch (RuntimeException e) {
+		// expected
 	}
 
 	/* test normal conditions under default mapping */
@@ -96,7 +97,7 @@ public void testCreateFile() throws Throwable {
 	assertTrue("1.3", file.isLocal(IResource.DEPTH_ZERO));
 	assertEquals("1.4", CoreFileSystemLibrary.getLastModified(file.getLocation().toOSString()), ((Resource) file).getResourceInfo(false, false).getLocalSyncInfo());
 	try {
-		assertTrue("1.5", compareContent(getContents(originalContent), getLocalManager().read((org.eclipse.core.internal.resources.File) file, true, null)));
+		assertTrue("1.5", compareContent(getContents(originalContent), getLocalManager().read(file, true, null)));
 	} catch (CoreException e) {
 		fail("1.6", e);
 	}
@@ -110,6 +111,7 @@ public void testFileFor() throws Throwable {
 		getLocalManager().fileForLocation(null);
 		fail("1.1");
 	} catch (RuntimeException e) {
+		// expected
 	}
 
 	/* test normal conditions under default mapping */
@@ -155,12 +157,9 @@ public void testIsLocal() throws Throwable {
 	final IFolder folder = project.getFolder("Folder1");
 	IWorkspaceRunnable operation = new IWorkspaceRunnable() {
 		public void run(IProgressMonitor monitor) throws CoreException {
-
 			IResource[] members = folder.members();
-
-			for (int i = 0; i < members.length; i++) {
+			for (int i = 0; i < members.length; i++)
 				((Resource) members[i]).getResourceInfo(false, true).clear(M_LOCAL_EXISTS);
-			}
 		}
 	};
 	getWorkspace().run(operation, null);
@@ -180,7 +179,7 @@ public void testLocationFor() throws Throwable {
 
 	/* test project */
 	IPath location = projects[0].getLocation();
-	assertTrue("2.1", location.equals(getLocalManager().locationFor((Project) projects[0])));
+	assertTrue("2.1", location.equals(getLocalManager().locationFor(projects[0])));
 	assertTrue("2.2", location.equals(Platform.getLocation().append(projects[0].getName())));
 }
 /**
@@ -281,7 +280,7 @@ public void testWriteFile() {
 	}
 	original = getContents(originalContent);
 	try {
-		assertTrue("1.1", compareContent(original, getLocalManager().read((org.eclipse.core.internal.resources.File) file, true, null)));
+		assertTrue("1.1", compareContent(original, getLocalManager().read(file, true, null)));
 	} catch (CoreException e) {
 		fail("1.2", e);
 	}
@@ -295,7 +294,7 @@ public void testWriteFile() {
 	}
 	another = getContents(anotherContent);
 	try {
-		assertTrue("2.1", compareContent(another, getLocalManager().read((org.eclipse.core.internal.resources.File) file, true, null)));
+		assertTrue("2.1", compareContent(another, getLocalManager().read(file, true, null)));
 	} catch (CoreException e) {
 		fail("2.2", e);
 	}
@@ -309,7 +308,7 @@ public void testWriteFile() {
 	}
 	original = getContents(originalContent);
 	try {
-		assertTrue("3.1", compareContent(original, getLocalManager().read((org.eclipse.core.internal.resources.File) file, true, null)));
+		assertTrue("3.1", compareContent(original, getLocalManager().read(file, true, null)));
 	} catch (CoreException e) {
 		fail("3.2", e);
 	}
@@ -321,11 +320,13 @@ public void testWriteFile() {
 		write(file, another, false, null);
 		fail("4.0", null);
 	} catch (CoreException e) {
+		// expected
 	}
 	try {
 		file.setContents(another, false, false, null);
 		fail("4.3");
 	} catch (CoreException e) {
+		// expected
 	}
 	try {
 		file.setContents(another, true, false, null);
@@ -340,6 +341,7 @@ public void testWriteFile() {
 		write(file, another, false, null);
 		fail("5.0");
 	} catch (CoreException e) {
+		// expected
 	}
 
 	/* remove trash */
@@ -407,7 +409,7 @@ public void testWriteProject() throws Throwable {
 	final IProject project = projects[0];
 
 	/* remove project location and write */
-	IPath location = getLocalManager().locationFor((Project) project);
+	IPath location = getLocalManager().locationFor(project);
 	ensureDoesNotExistInFileSystem(project);
 	assertTrue("2.1", !location.toFile().isDirectory());
 	//write project in a runnable, otherwise tree will be locked
@@ -431,7 +433,7 @@ protected void write(final IFile file, final InputStream contents, final boolean
 protected void write(final IFolder folder, final boolean force, IProgressMonitor monitor) throws CoreException {
 	IWorkspaceRunnable operation = new IWorkspaceRunnable() {
 		public void run(IProgressMonitor monitor) throws CoreException {
-			getLocalManager().write((Folder) folder, force, null);
+			getLocalManager().write(folder, force, null);
 		}
 	};
 	getWorkspace().run(operation, null);
