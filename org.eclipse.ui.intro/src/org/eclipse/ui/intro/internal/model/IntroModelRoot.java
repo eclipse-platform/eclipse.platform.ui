@@ -270,7 +270,9 @@ public class IntroModelRoot extends AbstractIntroContainer {
     /**
      * Updates the inherited styles based on the merge-style attribute. If we
      * are including a shared div, or if we are including an element from the
-     * same page, do nothing.
+     * same page, do nothing. For inherited alt-styles, we have to cache the pd
+     * from which we inherited the styles to be able to access resources in
+     * that plugin.
      * 
      * @param include
      * @param target
@@ -289,9 +291,13 @@ public class IntroModelRoot extends AbstractIntroContainer {
         if (style != null)
             targetContainer.getParentPage().addStyle(style);
 
+        // for alt-style cache pd for loading resources.
         style = extension.getAltStyle();
-        if (style != null)
-            targetContainer.getParentPage().addAltStyle(style);
+        if (style != null) {
+            IPluginDescriptor pd = extension.getConfigurationElement()
+                    .getDeclaringExtension().getDeclaringPluginDescriptor();
+            targetContainer.getParentPage().addAltStyle(style, pd);
+        }
     }
 
     /**

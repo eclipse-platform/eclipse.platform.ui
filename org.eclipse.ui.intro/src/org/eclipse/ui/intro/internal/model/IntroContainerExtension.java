@@ -34,8 +34,9 @@ public class IntroContainerExtension extends IntroElement {
 		style = element.getAttribute(STYLE_ATTRIBUTE);
 		altStyle = element.getAttribute(ALT_STYLE_ATTRIBUTE);
 
-		// Resolve style. The ALT style need not be resolved.
+		// Resolve.
 		style = IntroModelRoot.getPluginLocation(style, element);
+		altStyle = IntroModelRoot.getPluginLocation(altStyle, element);
 	}
 
 	/**

@@ -23,7 +23,8 @@ import org.eclipse.ui.intro.internal.util.*;
 
 public class FormStyleManager {
 
-    private Properties properties;
+    private Properties pageProperties;
+    private Hashtable altStyleProperties = new Hashtable();
     private AbstractIntroPage page;
     private IPluginDescriptor pd;
 
@@ -36,10 +37,10 @@ public class FormStyleManager {
     public FormStyleManager(IntroModelRoot modelRoot) {
         pd = modelRoot.getConfigurationElement().getDeclaringExtension()
                 .getDeclaringPluginDescriptor();
-        properties = new Properties();
+        pageProperties = new Properties();
         String sharedStyle = modelRoot.getPresentation().getStyle();
         if (sharedStyle != null)
-            load(sharedStyle);
+            load(pageProperties, sharedStyle);
     }
 
     /**
@@ -53,13 +54,25 @@ public class FormStyleManager {
         this.page = page;
         pd = page.getConfigurationElement().getDeclaringExtension()
                 .getDeclaringPluginDescriptor();
-        properties = new Properties(sharedProperties);
+        pageProperties = new Properties(sharedProperties);
         String altStyle = page.getAltStyle();
         if (altStyle != null)
-            load(altStyle);
+            load(pageProperties, altStyle);
+
+        // AltStyles hastable has alt-styles as keys, the plugin descriptors as
+        // values.
+        Hashtable altStyles = page.getAltStyles();
+        Enumeration styles = altStyles.keys();
+        while (styles.hasMoreElements()) {
+            String style = (String) styles.nextElement();
+            Properties inheritedProperties = new Properties();
+            IPluginDescriptor pd = (IPluginDescriptor) altStyles.get(style);
+            load(inheritedProperties, style);
+            altStyleProperties.put(inheritedProperties, pd);
+        }
     }
 
-    private void load(String style) {
+    private void load(Properties properties, String style) {
         if (style == null)
             return;
         try {
@@ -72,8 +85,41 @@ public class FormStyleManager {
         }
     }
 
+
     public String getProperty(String key) {
-        return properties.getProperty(key);
+        Properties aProperties = findProperty(key);
+        return aProperties.getProperty(key);
+    }
+
+    /**
+     * Finds the plugin descriptor from which as shared styles was loaded.
+     * 
+     * @param key
+     * @return
+     */
+    private IPluginDescriptor getAltStylePd(String key) {
+        Properties aProperties = findProperty(key);
+        return (IPluginDescriptor) altStyleProperties.get(aProperties);
+    }
+
+    /**
+     * Finds a Properties that represents an inherited shared style, or this
+     * current pages style.
+     * 
+     * @param key
+     * @return
+     */
+    private Properties findProperty(String key) {
+        // search inherited properties first.
+        Enumeration inheritedPageProperties = altStyleProperties.keys();
+        while (inheritedPageProperties.hasMoreElements()) {
+            Properties aProperties = (Properties) inheritedPageProperties
+                    .nextElement();
+            if (aProperties.containsKey(key))
+                return aProperties;
+        }
+        // search the page and shared properties last.
+        return pageProperties;
     }
 
     private String createImageKey(AbstractIntroPage page, IntroLink link,
@@ -132,8 +178,6 @@ public class FormStyleManager {
     public Image getImage(IntroLink link, String qualifier) {
         String key = createImageKey(page, link, qualifier);
         String pageKey = createImageKey(page, null, qualifier);
-        IPluginDescriptor pd = page.getConfigurationElement()
-                .getDeclaringExtension().getDeclaringPluginDescriptor();
         String defaultKey = (page instanceof IntroHomePage) ? ImageUtil.ROOT_LINK
                 : ImageUtil.LINK;
         return getImage(key, pageKey, defaultKey);
@@ -141,15 +185,20 @@ public class FormStyleManager {
 
     public Image getImage(String key, String defaultPageKey, String defaultKey) {
         String currentKey = key;
-        String value = properties.getProperty(currentKey);
+        String value = getProperty(currentKey);
         if (value == null && defaultPageKey != null) {
             currentKey = defaultPageKey;
-            value = properties.getProperty(defaultPageKey);
+            value = getProperty(defaultPageKey);
         }
         if (value != null) {
             if (ImageUtil.hasImage(currentKey))
                 return ImageUtil.getImage(currentKey);
-            // try to register the image
+            // try to register the image.
+            IPluginDescriptor pd = getAltStylePd(currentKey);
+            if (pd == null)
+                // it means that we are getting a key defined in this page's
+                // styles. (ie: not an inherited style).
+                pd = this.pd;
             ImageUtil.registerImage(currentKey, pd, value);
             Image image = ImageUtil.getImage(currentKey);
             if (image != null)
@@ -165,6 +214,6 @@ public class FormStyleManager {
      * @return Returns the properties.
      */
     protected Properties getProperties() {
-        return properties;
+        return pageProperties;
     }
 }

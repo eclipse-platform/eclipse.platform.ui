@@ -341,7 +341,9 @@ public abstract class AbstractIntroContainer extends IntroElement {
     /**
      * Updates the inherited styles based on the merge-style attribute. If we
      * are including a shared div, or if we are including an element from the
-     * same page, do nothing.
+     * same page, do nothing. For inherited alt-styles, we have to cache the pd
+     * from which we inherited the styles to be able to access resources in
+     * that plugin.
      * 
      * @param include
      * @param target
@@ -365,9 +367,13 @@ public abstract class AbstractIntroContainer extends IntroElement {
         if (style != null)
             getParentPage().addStyle(style);
 
+        // for alt-style cache pd for loading resources.
         style = target.getParentPage().getAltStyle();
-        if (style != null)
-            getParentPage().addAltStyle(style);
+        if (style != null) {
+            IPluginDescriptor pd = target.getConfigurationElement()
+                    .getDeclaringExtension().getDeclaringPluginDescriptor();
+            getParentPage().addAltStyle(style, pd);
+        }
     }
 
     /*

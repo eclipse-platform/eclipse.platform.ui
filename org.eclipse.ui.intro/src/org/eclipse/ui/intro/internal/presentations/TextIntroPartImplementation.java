@@ -10,14 +10,17 @@
  *******************************************************************************/
 package org.eclipse.ui.intro.internal.presentations;
 
+import java.util.*;
+
+import org.eclipse.core.runtime.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.intro.internal.*;
 import org.eclipse.ui.intro.internal.model.*;
 
 /**
- * This is an Text based implementation of an Intro Part. It is used for
- * debugging.
+ * This is an Text based implementation of an Intro Part. It simply walks the
+ * model and prints the content of pages. It is used for debugging.
  */
 public class TextIntroPartImplementation extends AbstractIntroPart {
 
@@ -95,9 +98,17 @@ public class TextIntroPartImplementation extends AbstractIntroPart {
         for (int i = 0; i < styles.length; i++)
             text.append(styles[i] + "\n\t\t\t");
         text.append("\n\tpage alt-styles are = ");
-        String[] altStyles = page.getAltStyles();
-        for (int i = 0; i < styles.length; i++)
-            text.append(altStyles[i] + "\n\t\t\t");
+
+        Hashtable altStylesHashtable = page.getAltStyles();
+        Enumeration altStyles = altStylesHashtable.keys();
+        while (altStyles.hasMoreElements()) {
+            String altStyle = (String) altStyles.nextElement();
+
+            IPluginDescriptor pd = (IPluginDescriptor) altStylesHashtable
+                    .get(altStyle);
+            text.append(altStyle + " from " + pd.getUniqueIdentifier());
+            text.append("\n\t\t");
+        }
     }
 
     private void printPageChildren(AbstractIntroPage page, StringBuffer text) {

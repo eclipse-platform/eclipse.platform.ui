@@ -47,10 +47,12 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * <li>If an extension is extending a shared div, merging the styles of
      * this extension into the target is ignored. Shared divs do not have
      * styles.</li>
+     * <li>Shared hastable has alt-styles as keys, the plugin descriptors as
+     * values.</li>
      * </ul>
      */
     private Vector styles;
-    private Vector altStyles;
+    private Hashtable altStyles;
 
     /**
      *  
@@ -100,7 +102,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      */
     public String[] getStyles() {
         // call get children first to resolve includes and populate styles
-        // vector. Resolving children will initialize the style vestors.
+        // vector. Resolving children will initialize the style vectors.
         getChildren();
         String[] stylesArray = new String[styles.size()];
         styles.copyInto(stylesArray);
@@ -109,20 +111,21 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
 
     /**
      * Gets all the inherited alt-styles of this page (ie: styles for the SWT
-     * presentation). Note: this call needs to get all the children of this
-     * page, and so its will resolve this page. might be expensive.
+     * presentation). A hashtable is returned that has inhertied alt-styles as
+     * keys, and plugin descriptors as values. This is needed to be able to
+     * load resources from the inherited target plugin. Note: this call needs
+     * to get all the children of this page, and so its will resolve this page.
+     * might be expensive.
      * 
      * @return Returns all the inherited styles of this page. Returns an empty
-     *         array if page is not expandable, does not have any includes, or
-     *         has includes that do not merge styles.
+     *         hashtable if page is not expandable, does not have any includes,
+     *         or has includes that do not merge styles.
      */
-    public String[] getAltStyles() {
-        // call get children first to resolve includes and populate styles
-        // vector. Resolving children will initialize the style vestors.
+    public Hashtable getAltStyles() {
+        // call get children first to resolve includes and populate hashtable.
+        // Resolving children will initialize the style vectors.
         getChildren();
-        String[] altStylesArray = new String[altStyles.size()];
-        altStyles.copyInto(altStylesArray);
-        return altStylesArray;
+        return altStyles;
     }
 
     /**
@@ -144,11 +147,11 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * 
      * @param altStyle
      */
-    protected void addAltStyle(String altStyle) {
+    protected void addAltStyle(String altStyle, IPluginDescriptor pd) {
         initStylesVectors();
-        if (altStyles.contains(altStyle))
+        if (altStyles.containsKey(altStyle))
             return;
-        altStyles.add(altStyle);
+        altStyles.put(altStyle, pd);
     }
 
     /*
@@ -177,7 +180,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
             styles = new Vector();
         if (altStyles == null)
             // delay creation until needed.
-            altStyles = new Vector();
+            altStyles = new Hashtable();
     }
 
     /**
