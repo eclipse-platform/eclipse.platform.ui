@@ -26,7 +26,6 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.debug.core.model.IThread;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -136,8 +135,7 @@ public class RunToLineHandler implements IDebugEventSetListener, IBreakpointMana
                         fResumee.resume();
                     } catch (DebugException e) {
                         cancel();
-                        DebugUIPlugin.log(e);
-                        return Status.CANCEL_STATUS;
+                        return e.getStatus();
                     }
                 }
                 return Status.OK_STATUS;
