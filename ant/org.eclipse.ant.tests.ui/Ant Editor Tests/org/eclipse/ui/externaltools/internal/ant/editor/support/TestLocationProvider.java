@@ -9,17 +9,23 @@ http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.externaltools.internal.ant.editor.outline.ILocationProvider;
 
 
 public class TestLocationProvider implements ILocationProvider {
 
+	private String buildFileName;
+	
+	public TestLocationProvider(String buildFileName) {
+		this.buildFileName= buildFileName;
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.externaltools.internal.ant.editor.outline.ILocationProvider#getLocation()
 	 */
 	public IPath getLocation() {
 		// TODO Auto-generated method stub
-		return null;
+		return new Path(buildFileName);
 	}
 }

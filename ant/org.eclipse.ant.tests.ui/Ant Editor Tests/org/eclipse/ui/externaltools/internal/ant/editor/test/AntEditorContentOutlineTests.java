@@ -240,8 +240,7 @@ public class AntEditorContentOutlineTests extends TestCase {
 		assertTrue(root.isErrorNode());
 		XmlElement errorNode= (XmlElement)root.getChildNodes().get(0);
 		assertTrue(errorNode.isErrorNode());
-		//different parsers use different error messages.
-		///assertTrue(errorNode.getDisplayName().equals("Document root element is missing. line: 1"));
+		assertTrue(errorNode.getDisplayName().equals("Premature end of file."));
 	}		
 
 	
@@ -295,7 +294,7 @@ public class AntEditorContentOutlineTests extends TestCase {
     
 	private AntModel getAntModel(String fileName) {
 		currentDocument= getDocument(fileName);
-		AntModel model= new AntModel(XMLCore.getDefault(), currentDocument, null, new TestLocationProvider());
+		AntModel model= new AntModel(XMLCore.getDefault(), currentDocument, null, new TestLocationProvider(fileName));
 		model.reconcile();
 		return model;
 	}
