@@ -1613,29 +1613,22 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		/*
 		 * Special case 2: the selection's offset is right at the offset of a
 		 * collapsed region. We include the collapsed region if it starts at a 
-		 * line start.
+		 * line start, but only if the selection has a length > 0.
 		 */
-		if (widgetSelection.x == 0) {
-			/*
-			 * It this happens at the beginning of a document, then offset 0
-			 * is folded away. We assume to be at the beginning of that folded
-			 * region in that case, which is model offset 0, unless the
-			 * selection has no length. In that case, we leave it where it is
-			 * (putting the caret on position 0 of the first visible line does
-			 * not cover the entire folded region).
-			 */
-			if (widgetSelection.y != 0)
+		if (widgetSelection.y != widgetSelection.y) {
+			if (widgetSelection.x == 0) {
 				modelOffset= 0;
-		} else {
-			int modelExclusiveStart= widgetOffset2ModelOffset(widgetSelection.x - 1);
-			if (modelExclusiveStart < modelOffset - 1) {
-				IDocument document= getDocument();
-				try {
-					IRegion modelLine= document.getLineInformationOfOffset(modelOffset);
-					if (modelLine.getOffset() == modelOffset)
-						modelOffset= modelExclusiveStart + 1;
-				} catch (BadLocationException e) {
-					// ignore
+			} else {
+				int modelExclusiveStart= widgetOffset2ModelOffset(widgetSelection.x - 1);
+				if (modelExclusiveStart < modelOffset - 1) {
+					IDocument document= getDocument();
+					try {
+						IRegion modelLine= document.getLineInformationOfOffset(modelOffset);
+						if (modelLine.getOffset() == modelOffset)
+							modelOffset= modelExclusiveStart + 1;
+					} catch (BadLocationException e) {
+						// ignore
+					}
 				}
 			}
 		}
