@@ -90,8 +90,8 @@ public class IndexedStoreException extends Exception {
 	 */
 	private static void initializeMessages() {
 		messages[GenericError] = bind("indexedStore.genericError");
-		messages[EntryKeyLengthError] = bind("indexedStore.");
-		messages[EntryNotRemoved] = bind("indexedStore.entryKeyLengthError");
+		messages[EntryKeyLengthError] = bind("indexedStore.entryKeyLengthError");
+		messages[EntryNotRemoved] = bind("indexedStore.entryNotRemoved");
 		messages[EntryValueLengthError] = bind("indexedStore.entryValueLengthError");
 		messages[EntryValueNotUpdated] = bind("indexedStore.entryValueNotUpdated");
 		messages[IndexNodeNotRetrieved] = bind("indexedStore.indexNodeNotRetrieved");
