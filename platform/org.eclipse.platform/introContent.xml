@@ -22,8 +22,8 @@
       </group>
     </group>
     <group id="action-links">
-      <link url="http://org.eclipse.ui.intro/showStandby?partId=org.eclipse.ui.intro.contextHelp" label="Workbench" id="workbench">
-        <text>Go to the workbench but stay around helping me as I browse</text>
+      <link url="http://org.eclipse.ui.intro/close" label="Workbench" id="workbench">
+        <text>Go to the workbench</text>
       </link>
     </group>
   </page>
