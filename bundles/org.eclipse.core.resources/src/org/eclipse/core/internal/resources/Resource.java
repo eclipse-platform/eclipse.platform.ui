@@ -197,7 +197,7 @@ public IStatus checkCopyRequirements(IPath destination, int destinationType, int
 		message = Policy.bind("resources.copyDestNotSub", getFullPath().toString()); //$NON-NLS-1$
 		status.add(new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), message));
 	}
-	checkValidPath(destination, destinationType);
+	checkValidPath(destination, destinationType, false);
 
 	ResourceInfo info = getResourceInfo(false, false);
 	int flags = getFlags(info);
@@ -339,7 +339,7 @@ protected IStatus checkMoveRequirements(IPath destination, int destinationType, 
 		message = Policy.bind("resources.moveDestNotSub", getFullPath().toString()); //$NON-NLS-1$
 		status.add(new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), message));
 	}
-	checkValidPath(destination, destinationType);
+	checkValidPath(destination, destinationType, false);
 
 	ResourceInfo info = getResourceInfo(false, false);
 	int flags = getFlags(info);
@@ -406,8 +406,8 @@ protected IStatus checkMoveRequirements(IPath destination, int destinationType, 
  *
  * @exception CoreException if the path is not valid
  */
-public void checkValidPath(IPath path, int type) throws CoreException {
-	IStatus result = workspace.validatePath(path.toString(), type);
+public void checkValidPath(IPath path, int type, boolean lastSegmentOnly) throws CoreException {
+	IStatus result = workspace.validatePath(path, type, lastSegmentOnly);
 	if (!result.isOK())
 		throw new ResourceException(result);
 }
@@ -539,7 +539,7 @@ public void createLink(IPath localLocation, int updateFlags, IProgressMonitor mo
 	try {
 		String message = Policy.bind("resources.creatingLink", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
-		checkValidPath(path, FOLDER);
+		checkValidPath(path, FOLDER, true);
 		try {
 			workspace.prepareOperation();
 			assertLinkRequirements(localLocation, updateFlags);
@@ -1262,6 +1262,8 @@ public void touch(IProgressMonitor monitor) throws CoreException {
  * the given path, or null if no such resource exists.
  */
 public IResource findExistingResourceVariant(IPath target) {
+	if (!workspace.tree.includesIgnoreCase(target))
+		return null;
 	IPath result = Path.ROOT;
 	int segmentCount = target.segmentCount();
 	for (int i = 0; i < segmentCount; i++) {
@@ -1308,6 +1310,9 @@ public boolean isDerived(int flags) {
  * @see IResource#isLinked()
  */
 public boolean isLinked() {
+	//only resources at depth two can be linked
+	if (path.segmentCount() != 2)
+		return false;
 	ResourceInfo info = getResourceInfo(false, false);
 	return info != null && info.isSet(M_LINK);
 }

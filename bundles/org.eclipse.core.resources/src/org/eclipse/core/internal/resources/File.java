@@ -98,11 +98,12 @@ public IFolder changeToFolder() throws CoreException {
  */
 public void create(InputStream content, int updateFlags, IProgressMonitor monitor)	throws CoreException {
 	final boolean force = (updateFlags & IResource.FORCE) != 0;
+	final boolean monitorNull = monitor == null;
 	monitor = Policy.monitorFor(monitor);
 	try {
-		String message = Policy.bind("resources.creating", getFullPath().toString()); //$NON-NLS-1$
+		String message = monitorNull ? "" : Policy.bind("resources.creating", getFullPath().toString()); //$NON-NLS-1$ //$NON-NLS-2$
 		monitor.beginTask(message, Policy.totalWork);
-		checkValidPath(path, FILE);
+		checkValidPath(path, FILE, true);
 		try {
 			workspace.prepareOperation();
 			checkDoesNotExist();
@@ -152,15 +153,15 @@ public void create(InputStream content, int updateFlags, IProgressMonitor monito
 			boolean local = content != null;
 			if (local) {
 				try {
-					internalSetContents(content, location, force, false, false, Policy.subMonitorFor(monitor, Policy.opWork * 40 / 100));
+					internalSetContents(content, location, force, false, false, Policy.subMonitorFor(monitor, Policy.opWork * 60 / 100));
 				} catch (CoreException e) {
 					// a problem happened creating the file on disk, so delete from the workspace and disk
 					workspace.deleteResource(this);
-					location.toFile().delete();
+					localFile.delete();
 					throw e; // rethrow
 				}
 			}
-			setLocal(local, DEPTH_ZERO, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
+			internalSetLocal(local, DEPTH_ZERO);
 			if (!local)
 				getResourceInfo(true, true).setModificationStamp(IResource.NULL_STAMP);
 		} catch (OperationCanceledException e) {

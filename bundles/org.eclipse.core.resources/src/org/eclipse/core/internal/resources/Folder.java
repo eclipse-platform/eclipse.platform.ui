@@ -77,7 +77,7 @@ public void create(int updateFlags, boolean local, IProgressMonitor monitor) thr
 	try {
 		String message = Policy.bind("resources.creating", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
-		checkValidPath(path, FOLDER);
+		checkValidPath(path, FOLDER, true);
 		try {
 			workspace.prepareOperation();
 			IPath location = getLocalManager().locationFor(this);

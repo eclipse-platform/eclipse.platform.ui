@@ -212,7 +212,7 @@ public void create(IProjectDescription description, IProgressMonitor monitor) th
 	monitor = Policy.monitorFor(monitor);
 	try {
 		monitor.beginTask(Policy.bind("resources.create"), Policy.totalWork); //$NON-NLS-1$
-		checkValidPath(path, PROJECT);
+		checkValidPath(path, PROJECT, false);
 		try {
 			workspace.prepareOperation();
 			checkDoesNotExist();

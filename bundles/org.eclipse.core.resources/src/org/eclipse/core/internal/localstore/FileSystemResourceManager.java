@@ -615,13 +615,14 @@ public void write(IFile target, IPath location, InputStream content, boolean for
 			String message = Policy.bind("localstore.locationUndefined", target.getFullPath().toString()); //$NON-NLS-1$
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, target.getFullPath(), message, null);
 		}
-		java.io.File localFile = location.toFile();
-		long stat = CoreFileSystemLibrary.getStat(localFile.getAbsolutePath());
+		final String locationString = location.toOSString();
+		long stat = CoreFileSystemLibrary.getStat(locationString);
 		if (CoreFileSystemLibrary.isReadOnly(stat)) {
 			String message = Policy.bind("localstore.couldNotWriteReadOnly", target.getFullPath().toString()); //$NON-NLS-1$
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, target.getFullPath(), message, null);
 		}
 		long lastModified = CoreFileSystemLibrary.getLastModified(stat);
+		final java.io.File localFile = new java.io.File(locationString);
 		if (force) {
 			if (append && !target.isLocal(IResource.DEPTH_ZERO) && !localFile.exists()) {
 				// force=true, local=false, existsInFileSystem=false
@@ -655,11 +656,11 @@ public void write(IFile target, IPath location, InputStream content, boolean for
 			uuid = historyStore.addState(target.getFullPath(), location, lastModified, false);
 		getStore().write(localFile, content, append, monitor);
 		// get the new last modified time and stash in the info
-		lastModified = CoreFileSystemLibrary.getLastModified(localFile.getAbsolutePath());
+		lastModified = CoreFileSystemLibrary.getLastModified(locationString);
 		ResourceInfo info = ((Resource) target).getResourceInfo(false, true);
 		updateLocalSync(info, lastModified);
 		if (uuid != null)
-			CoreFileSystemLibrary.copyAttributes(historyStore.getFileFor(uuid).getAbsolutePath(), localFile.getAbsolutePath(), false);
+			CoreFileSystemLibrary.copyAttributes(historyStore.getFileFor(uuid).getAbsolutePath(), locationString, false);
 	} finally {
 		try {
 			content.close();

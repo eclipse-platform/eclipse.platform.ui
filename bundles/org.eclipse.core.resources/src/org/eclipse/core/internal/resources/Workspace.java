@@ -1952,6 +1952,21 @@ public IStatus validateNatureSet(String[] natureIds) {
  * @see IWorkspace#validatePath
  */
 public IStatus validatePath(String path, int type) {
+	/* path must not be null */
+	if (path == null) {
+		String message = Policy.bind("resources.pathNull"); //$NON-NLS-1$
+		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
+	}
+	return validatePath(new Path(path), type, false);
+}
+/**
+ * Validates that the given workspace path is valid for the given type.  If 
+ * <code>lastSegmentOnly</code> is true, it is assumed that all segments except
+ * the last one have previously been validated.  This is an optimization for validating
+ * a leaf resource when it is known that the parent exists (and thus its parent path
+ * must already be valid).
+ */
+public IStatus validatePath(IPath path, int type, boolean lastSegmentOnly) {
 	String message;
 
 	/* path must not be null */
@@ -1961,54 +1976,55 @@ public IStatus validatePath(String path, int type) {
 	}
 
 	/* path must not have a device separator */
-	if (path.indexOf(IPath.DEVICE_SEPARATOR) != -1) {
-		message = Policy.bind("resources.invalidCharInPath", String.valueOf(IPath.DEVICE_SEPARATOR), path); //$NON-NLS-1$
+	if (path.getDevice() != null) {
+		message = Policy.bind("resources.invalidCharInPath", String.valueOf(IPath.DEVICE_SEPARATOR), path.toString()); //$NON-NLS-1$
 		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 	}
 
 	/* path must not be the root path */
-	IPath testPath = new Path(path);
-	if (testPath.isRoot()) {
+	if (path.isRoot()) {
 		message = Policy.bind("resources.invalidRoot"); //$NON-NLS-1$
 		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 	}
 
 	/* path must be absolute */
-	if (!testPath.isAbsolute()) {
-		message = Policy.bind("resources.mustBeAbsolute", path); //$NON-NLS-1$
+	if (!path.isAbsolute()) {
+		message = Policy.bind("resources.mustBeAbsolute", path.toString()); //$NON-NLS-1$
 		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 	}
 
 	/* validate segments */
-	int numberOfSegments = testPath.segmentCount();
+	int numberOfSegments = path.segmentCount();
 	if ((type & IResource.PROJECT) != 0) {
 		if (numberOfSegments == ICoreConstants.PROJECT_SEGMENT_LENGTH) {
-			return validateName(testPath.segment(0), IResource.PROJECT);
+			return validateName(path.segment(0), IResource.PROJECT);
 		} else
 			if (type == IResource.PROJECT) {
-				message = Policy.bind("resources.projectPath",path); //$NON-NLS-1$
+				message = Policy.bind("resources.projectPath",path.toString()); //$NON-NLS-1$
 				return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 			}
 	}
-	if ((type & (IResource.FILE | IResource.FOLDER)) != 0)
-		if (numberOfSegments >= ICoreConstants.MINIMUM_FILE_SEGMENT_LENGTH) {
-			IStatus status = validateName(testPath.segment(0), IResource.PROJECT);
-			if (!status.isOK())
-				return status;
-			int fileFolderType = type &= ~IResource.PROJECT;
-			int segmentCount = testPath.segmentCount();
-			// ignore first segment (the project)
-			for (int i = 1; i < segmentCount; i++) {
-				status = validateName(testPath.segment(i), fileFolderType);
-				if (!status.isOK())
-					return status;
-			}
-			return ResourceStatus.OK_STATUS;
-		} else {
-			message = Policy.bind("resources.resourcePath",path); //$NON-NLS-1$
+	if ((type & (IResource.FILE | IResource.FOLDER)) != 0) {
+		if (numberOfSegments < ICoreConstants.MINIMUM_FILE_SEGMENT_LENGTH) {
+			message = Policy.bind("resources.resourcePath",path.toString()); //$NON-NLS-1$
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 		}
-	message = Policy.bind("resources.invalidPath", path); //$NON-NLS-1$
+		int fileFolderType = type &= ~IResource.PROJECT;
+		int segmentCount = path.segmentCount();
+		if (lastSegmentOnly)
+			return validateName(path.segment(segmentCount-1), fileFolderType);
+		IStatus status = validateName(path.segment(0), IResource.PROJECT);
+		if (!status.isOK())
+			return status;
+		// ignore first segment (the project)
+		for (int i = 1; i < segmentCount; i++) {
+			status = validateName(path.segment(i), fileFolderType);
+			if (!status.isOK())
+				return status;
+		}
+		return ResourceStatus.OK_STATUS;
+	}
+	message = Policy.bind("resources.invalidPath", path.toString()); //$NON-NLS-1$
 	return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 }
 /**
@@ -2123,6 +2139,8 @@ protected void validateSave(final IFile file) throws CoreException {
 	if (!status[0].isOK())
 		throw new ResourceException(status[0]);
 }
+
+
 
 
 
