@@ -28,6 +28,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -69,6 +70,7 @@ final class DialogCustomize extends Dialog {
 		KeySequence keySequence;
 		String scopeId;
 		String configurationId;
+		
 		int difference = DIFFERENCE_NONE;
 		boolean conflict;
 		String alternateActionId;
@@ -79,7 +81,14 @@ final class DialogCustomize extends Dialog {
 
 		String scopeId;
 		String configurationId;
-		Map pluginMap;
+		Set customSet;
+		Set defaultSet;
+		
+		int difference = DIFFERENCE_NONE;
+		String actionId;
+		boolean conflict;
+		String alternateActionId;
+		boolean alternateConflict;
 	}
 
 	private String defaultConfigurationId;
@@ -108,7 +117,7 @@ final class DialogCustomize extends Dialog {
 	private Label labelKeySequence;
 	private Combo comboKeySequence;
 	private Table tableKeySequence;
-	//private Button buttonBrowseSelectedAction;
+	private Button buttonBrowseSelectedAction;
 	private Group groupState;
 	private Label labelScope; 
 	private Combo comboScope;
@@ -415,6 +424,10 @@ final class DialogCustomize extends Dialog {
 		change(false);
 	}
 
+	private void selectedButtonShowConflicts() {
+		// TBD add dialog to display the plugin map for selected row in tableAction
+	}
+
 	private void selectedComboAction() {
 		update();
 	}
@@ -470,24 +483,8 @@ final class DialogCustomize extends Dialog {
 								Map pluginMap = (Map) entry3.getValue();													
 								Set customSet = new HashSet();
 								Set defaultSet = new HashSet();						
-								Iterator iterator4 = pluginMap.entrySet().iterator(); 
-		
-								while (iterator4.hasNext()) {
-									Map.Entry entry4 = (Map.Entry) iterator4.next();
-									String pluginId = (String) entry4.getKey();
-									Map actionMap = (Map) entry4.getValue();
-									Iterator iterator5 = actionMap.keySet().iterator();
-									
-									while (iterator5.hasNext()) {
-										String actionId2 = (String) iterator5.next();
-										
-										if (pluginId == null)
-											customSet.add(actionId2);
-										else 
-											defaultSet.add(actionId2);									
-									}
-								}
-		
+								buildPluginSets(pluginMap, customSet, defaultSet);
+
 								if (customSet.isEmpty()) {
 									if (defaultSet.contains(actionId)) {
 										ActionRecord actionRecord = new ActionRecord();
@@ -584,14 +581,282 @@ final class DialogCustomize extends Dialog {
 							Map pluginMap = (Map) entry2.getValue();			
 							KeySequenceRecord keySequenceRecord = new KeySequenceRecord();
 							keySequenceRecord.scopeId = scopeId2;
-							keySequenceRecord.configurationId = configurationId2;
-							keySequenceRecord.pluginMap = pluginMap;			
+							keySequenceRecord.configurationId = configurationId2;							
+							Set customSet = new HashSet();
+							Set defaultSet = new HashSet();						
+							buildPluginSets(pluginMap, customSet, defaultSet);
+							
+							keySequenceRecord.customSet = customSet;
+							keySequenceRecord.defaultSet = defaultSet;							
+							
+							boolean customConflict = false;
+							String customActionId = null;
+							boolean defaultConflict = false;
+							String defaultActionId = null;	
+
+							if (customSet.size() > 1)
+								customConflict = true;
+							else if (!customSet.isEmpty())				
+								customActionId = (String) customSet.iterator().next();
+
+							if (defaultSet.size() > 1)
+								defaultConflict = true;
+							else if (!defaultSet.isEmpty())				
+								defaultActionId = (String) defaultSet.iterator().next();
+
+							if (customSet.isEmpty()) {
+								keySequenceRecord.actionId = defaultActionId;															
+							
+								if (defaultConflict)
+									keySequenceRecord.conflict = true;
+							} else {
+								keySequenceRecord.actionId = customActionId;															
+
+								if (customConflict)
+									keySequenceRecord.conflict = true;									
+
+								if (defaultSet.isEmpty())
+									keySequenceRecord.difference = DIFFERENCE_ADD;
+								else {
+									keySequenceRecord.difference = DIFFERENCE_CHANGE;									
+									keySequenceRecord.alternateActionId = defaultActionId;
+									keySequenceRecord.alternateConflict = defaultConflict;																		
+								}
+							}
+
 							keySequenceRecords.add(keySequenceRecord);
 						}												
 					}	
 				}								
 			}			
 		}
+	}
+
+	private void buildPluginSets(Map pluginMap, Set customSet, Set defaultSet) {
+		Iterator iterator = pluginMap.entrySet().iterator(); 
+
+		while (iterator.hasNext()) {
+			Map.Entry entry = (Map.Entry) iterator.next();
+			String pluginId = (String) entry.getKey();
+			Map actionMap = (Map) entry.getValue();
+			Iterator iterator2 = actionMap.keySet().iterator();
+	
+			while (iterator2.hasNext()) {
+				String actionId = (String) iterator2.next();
+		
+				if (pluginId == null)
+					customSet.add(actionId);
+				else 
+					defaultSet.add(actionId);									
+			}
+		}
+	}
+
+	private void buildTableAction() {
+		tableAction.removeAll();
+		//int select = -1;
+
+		for (int i = 0; i < actionRecords.size(); i++) {
+			ActionRecord actionRecord = (ActionRecord) actionRecords.get(i);
+	
+			//if (Util.equals(scopeId, actionRecord) && Util.equals(configurationId, actionRecord.configurationId))
+			//	select = i;				
+	
+			Scope scope = (Scope) registryScopeMap.get(actionRecord.scopeId);
+			Configuration configuration = (Configuration) registryConfigurationMap.get(actionRecord.configurationId);			
+			TableItem tableItem = new TableItem(tableAction, SWT.NULL);					
+			
+			switch (actionRecord.difference) {
+				case DIFFERENCE_ADD:
+					tableItem.setImage(0, ImageFactory.getImage("plus"));
+					break;
+	
+				case DIFFERENCE_CHANGE:
+					tableItem.setImage(0, ImageFactory.getImage("change"));
+					break;
+	
+				case DIFFERENCE_MINUS:
+					tableItem.setImage(0, ImageFactory.getImage("minus"));
+					break;
+	
+				case DIFFERENCE_NONE:
+					break;				
+			}
+						
+			tableItem.setText(1, scope != null ? scope.getLabel().getName() : "(" + actionRecord.scopeId + ")");
+			tableItem.setText(2, configuration != null ? configuration.getLabel().getName() : "(" + actionRecord.configurationId + ")");
+			boolean conflict = actionRecord.conflict || actionRecord.alternateConflict;
+			StringBuffer stringBuffer = new StringBuffer();
+	
+			if (actionRecord.keySequence != null)
+				stringBuffer.append(keyManager.getTextForKeySequence(actionRecord.keySequence));
+	
+			if (actionRecord.conflict)
+				stringBuffer.append(" " + ACTION_CONFLICT);
+
+			if (actionRecord.difference == DIFFERENCE_CHANGE) {
+				stringBuffer.append(" (was: ");
+				String alternateActionName = null;
+					
+				if (actionRecord.alternateActionId == null) 
+					alternateActionName = ACTION_UNDEFINED;
+				else {
+					Action action = (Action) registryActionMap.get(actionRecord.alternateActionId);
+						
+					if (action != null)
+						alternateActionName = action.getLabel().getName();
+					else
+						alternateActionName = "[" + actionRecord.alternateActionId + "]";
+				}
+									
+				stringBuffer.append(alternateActionName);
+	
+				if (actionRecord.alternateConflict) {
+					conflict = true;
+					stringBuffer.append(" " + ACTION_CONFLICT);
+				}
+	
+				stringBuffer.append(')');
+			} else if (actionRecord.difference == DIFFERENCE_MINUS) {
+				stringBuffer.append(" (now: ");
+					
+				String alternateActionName = null;
+					
+				if (actionRecord.alternateActionId == null) 
+					alternateActionName = ACTION_UNDEFINED;
+				else {
+					Action action = (Action) registryActionMap.get(actionRecord.alternateActionId);
+						
+					if (action != null)
+						alternateActionName = action.getLabel().getName();
+					else
+						alternateActionName = "[" + actionRecord.alternateActionId + "]";
+				}
+									
+				stringBuffer.append(alternateActionName);
+					
+				if (actionRecord.alternateConflict)
+					stringBuffer.append(" " + ACTION_CONFLICT);
+
+				stringBuffer.append(')');
+			}
+	
+			tableItem.setText(3, stringBuffer.toString());
+	
+			if (actionRecord.difference == DIFFERENCE_MINUS) {
+				if (conflict)
+					tableItem.setForeground(new Color(getShell().getDisplay(), 192, 128, 128));	
+				else 
+					tableItem.setForeground(new Color(getShell().getDisplay(), 128, 128, 128));	
+			} else if (conflict)
+				tableItem.setForeground(new Color(getShell().getDisplay(), 192, 0, 0));	
+		}			
+	
+		//if (select >= 0)
+		//	tableAction.select(select);
+	}
+	
+	private void buildTableKeySequence() {
+		String scopeId = getScopeId();
+		String configurationId = getConfigurationId();	
+
+		tableKeySequence.removeAll();
+		int select = -1;
+	
+		for (int i = 0; i < keySequenceRecords.size(); i++) {
+			KeySequenceRecord keySequenceRecord = (KeySequenceRecord) keySequenceRecords.get(i);
+	
+			if (Util.equals(scopeId, keySequenceRecord.scopeId) && Util.equals(configurationId, keySequenceRecord.configurationId))
+				select = i;				
+	
+			Scope scope = (Scope) registryScopeMap.get(keySequenceRecord.scopeId);
+			Configuration configuration = (Configuration) registryConfigurationMap.get(keySequenceRecord.configurationId);			
+			TableItem tableItem = new TableItem(tableKeySequence, SWT.NULL);					
+			
+			switch (keySequenceRecord.difference) {
+				case DIFFERENCE_ADD:
+					tableItem.setImage(0, ImageFactory.getImage("plus"));
+					break;
+	
+				case DIFFERENCE_CHANGE:
+					tableItem.setImage(0, ImageFactory.getImage("change"));
+					break;
+	
+				case DIFFERENCE_MINUS:
+					tableItem.setImage(0, ImageFactory.getImage("minus"));
+					break;
+	
+				case DIFFERENCE_NONE:
+					break;				
+			}
+
+			tableItem.setText(1, scope != null ? scope.getLabel().getName() : "(" + keySequenceRecord.scopeId + ")");
+			tableItem.setText(2, configuration != null ? configuration.getLabel().getName() : "(" + keySequenceRecord.configurationId + ")");
+			boolean conflict = keySequenceRecord.conflict || keySequenceRecord.alternateConflict;
+			StringBuffer stringBuffer = new StringBuffer();
+
+			String actionName = null;
+					
+			if (keySequenceRecord.actionId == null) 
+				actionName = ACTION_UNDEFINED;
+			else {
+				Action action = (Action) registryActionMap.get(keySequenceRecord.actionId);
+						
+				if (action != null)
+					actionName = action.getLabel().getName();
+				else
+					actionName = "[" + keySequenceRecord.actionId + "]";
+			}
+			
+			stringBuffer.append(actionName);
+
+			if (keySequenceRecord.conflict)
+				stringBuffer.append(" " + ACTION_CONFLICT);
+
+			if (keySequenceRecord.difference == DIFFERENCE_CHANGE) {
+				stringBuffer.append(" (was: ");
+				String alternateActionName = null;
+					
+				if (keySequenceRecord.alternateActionId == null) 
+					alternateActionName = ACTION_UNDEFINED;
+				else {
+					Action action = (Action) registryActionMap.get(keySequenceRecord.alternateActionId);
+						
+					if (action != null)
+						alternateActionName = action.getLabel().getName();
+					else
+						alternateActionName = "[" + keySequenceRecord.alternateActionId + "]";
+				}
+									
+				stringBuffer.append(alternateActionName);
+	
+				if (keySequenceRecord.alternateConflict) {
+					conflict = true;
+					stringBuffer.append(" " + ACTION_CONFLICT);
+				}
+	
+				stringBuffer.append(')');
+			}
+	
+			tableItem.setText(3, stringBuffer.toString());
+
+			if (keySequenceRecord.difference == DIFFERENCE_MINUS) {
+				if (conflict)
+					tableItem.setForeground(new Color(getShell().getDisplay(), 192, 128, 128));	
+				else 
+					tableItem.setForeground(new Color(getShell().getDisplay(), 128, 128, 128));	
+			} else if (conflict)
+				tableItem.setForeground(new Color(getShell().getDisplay(), 192, 0, 0));	
+		}
+			
+		if (select >= 0)
+			tableKeySequence.select(select);
+	}
+
+	private void selectTableAction(KeySequence keySequence, String scopeId, String configurationId) {	
+	}
+
+	private void selectTableKeySequence(String scopeId, String configurationId) {		
 	}
 
 	private void update() {
@@ -609,111 +874,7 @@ final class DialogCustomize extends Dialog {
 			buildActionRecords(tree, actionId, actionRecords);
 		}
 
-		tableAction.removeAll();
-		//int select = -1;
-
-		for (int i = 0; i < actionRecords.size(); i++) {
-			ActionRecord actionRecord = (ActionRecord) actionRecords.get(i);
-
-			//if (Util.equals(scopeId, actionRecord) && Util.equals(configurationId, actionRecord.configurationId))
-			//	select = i;				
-
-			Scope scope = (Scope) registryScopeMap.get(actionRecord.scopeId);
-			Configuration configuration = (Configuration) registryConfigurationMap.get(actionRecord.configurationId);			
-			TableItem tableItem = new TableItem(tableAction, SWT.NULL);					
-			tableItem.setText(1, scope != null ? scope.getLabel().getName() : "(" + actionRecord.scopeId + ")");
-			tableItem.setText(2, configuration != null ? configuration.getLabel().getName() : "(" + actionRecord.configurationId + ")");
-
-			switch (actionRecord.difference) {
-				case DIFFERENCE_ADD:
-					tableItem.setImage(0, ImageFactory.getImage("plus"));
-					break;
-
-				case DIFFERENCE_CHANGE:
-					tableItem.setImage(0, ImageFactory.getImage("change"));
-					break;
-
-				case DIFFERENCE_MINUS:
-					tableItem.setImage(0, ImageFactory.getImage("minus"));
-					break;
-
-				case DIFFERENCE_NONE:
-					break;				
-			}
-
-			boolean conflict = false;
-			StringBuffer stringBuffer = new StringBuffer();
-
-			if (actionRecord.keySequence != null)
-				stringBuffer.append(keyManager.getTextForKeySequence(actionRecord.keySequence));
-
-			if (actionRecord.conflict) {
-				conflict = true;
-				stringBuffer.append(" [conflict]");
-			}
-			
-			if (actionRecord.difference == DIFFERENCE_CHANGE) {
-				stringBuffer.append(" (was: ");
-				String alternateActionName = null;
-				
-				if (actionRecord.alternateActionId == null) 
-					alternateActionName = "undefined";
-				else {
-					Action action = (Action) registryActionMap.get(actionRecord.alternateActionId);
-					
-					if (action != null)
-						alternateActionName = action.getLabel().getName();
-					else
-						alternateActionName = "[" + actionRecord.alternateActionId + "]";
-				}
-								
-				stringBuffer.append(alternateActionName);
-
-				if (actionRecord.alternateConflict) {
-					conflict = true;
-					stringBuffer.append(" [conflict]");
-				}
-
-				stringBuffer.append(')');
-			} else if (actionRecord.difference == DIFFERENCE_MINUS) {
-				stringBuffer.append(" (now: ");
-				
-				String alternateActionName = null;
-				
-				if (actionRecord.alternateActionId == null) 
-					alternateActionName = "undefined";
-				else {
-					Action action = (Action) registryActionMap.get(actionRecord.alternateActionId);
-					
-					if (action != null)
-						alternateActionName = action.getLabel().getName();
-					else
-						alternateActionName = "[" + actionRecord.alternateActionId + "]";
-				}
-								
-				stringBuffer.append(alternateActionName);
-				
-				if (actionRecord.alternateConflict) {
-					conflict = true;
-					stringBuffer.append(" [conflict]");
-				}
-
-				stringBuffer.append(')');
-			}
-
-			tableItem.setText(3, stringBuffer.toString());
-
-			if (actionRecord.difference == DIFFERENCE_MINUS) {
-				if (conflict)
-					tableItem.setForeground(new Color(getShell().getDisplay(), 192, 128, 128));	
-				else 
-					tableItem.setForeground(new Color(getShell().getDisplay(), 128, 128, 128));	
-			} else if (conflict)
-				tableItem.setForeground(new Color(getShell().getDisplay(), 192, 0, 0));	
-		}			
-
-		//if (select >= 0)
-		//	tableAction.select(select);
+		buildTableAction();
 
 		KeySequence keySequence = null;
 		String name = comboKeySequence.getText();		
@@ -725,122 +886,30 @@ final class DialogCustomize extends Dialog {
 
 		buildKeySequenceRecords(tree, keySequence, keySequenceRecords);
 
+		buildTableKeySequence();
+			
 		String scopeId = getScopeId();
-		String configurationId = getConfigurationId();		
+		String configurationId = getConfigurationId();	
 
-		tableKeySequence.removeAll();
-		int select = -1;
-
-		for (int i = 0; i < keySequenceRecords.size(); i++) {
-			KeySequenceRecord keySequenceRecord = (KeySequenceRecord) keySequenceRecords.get(i);
-
-			if (Util.equals(scopeId, keySequenceRecord.scopeId) && Util.equals(configurationId, keySequenceRecord.configurationId))
-				select = i;				
-
-			Scope scope = (Scope) registryScopeMap.get(keySequenceRecord.scopeId);
-			Configuration configuration = (Configuration) registryConfigurationMap.get(keySequenceRecord.configurationId);			
-			TableItem tableItem = new TableItem(tableKeySequence, SWT.NULL);					
-			tableItem.setText(1, scope != null ? scope.getLabel().getName() : "(" + keySequenceRecord.scopeId + ")");
-			tableItem.setText(2, configuration != null ? configuration.getLabel().getName() : "(" + keySequenceRecord.configurationId + ")");
-			Map pluginMap = keySequenceRecord.pluginMap;
-
-			boolean customConflict = false;
-			String customAction = null;
-			
-			Map actionMap = (Map) pluginMap.get(null);							
-
-			if (actionMap != null) {
-				Set bindingSet = (Set) actionMap.values().iterator().next();
-				
-				if (actionMap.size() > 1 || bindingSet.size() > 1) {
-					customConflict = true;
-					customAction = ACTION_CONFLICT;
-				} else {
-					Binding binding = (Binding) bindingSet.iterator().next();	
-					String actionId = binding.getAction();
-				
-					if (actionId == null)
-						customAction = ACTION_UNDEFINED;
-					else
-						for (int j = 0; j < actions.size(); j++) {
-							Action action = (Action) actions.get(j);		
-							
-							if (action.getLabel().getId().equals(actionId)) {
-								customAction = action.getLabel().getName();
-								break;		
-							}
-						}		
-				}
-			}
-
-			boolean defaultConflict = false;
-			String defaultAction = null;			
-			pluginMap = new HashMap(pluginMap);
-			pluginMap.remove(null);
-	
-			if (pluginMap.size() > 0) {
-				actionMap = (Map) pluginMap.values().iterator().next();	
-				Set bindingSet = (Set) actionMap.values().iterator().next();
-						
-				if (pluginMap.size() > 1 || actionMap.size() > 1 || bindingSet.size() > 1) {
-					defaultConflict = true;
-					defaultAction = ACTION_CONFLICT;				
-				} else {
-					Binding binding = (Binding) bindingSet.iterator().next();	
-					String actionId = binding.getAction();
-				
-					if (actionId == null)
-						defaultAction = ACTION_UNDEFINED;
-					else
-						for (int j = 0; j < actions.size(); j++) {
-							Action action = (Action) actions.get(j);		
-							
-							if (action.getLabel().getId().equals(actionId)) {
-								defaultAction = action.getLabel().getName();
-								break;		
-							}
-						}		
-				}
-			}
-				
-			if (defaultAction == null && customAction != null)
-				tableItem.setImage(0, ImageFactory.getImage("plus"));
-			else if (defaultAction != null && customAction != null)
-				tableItem.setImage(0, ImageFactory.getImage("change"));
-				
-			if (customAction != null) {				
-				tableItem.setText(3, customAction);
-			
-				if (customConflict)
-					tableItem.setImage(3, ImageFactory.getImage("exclamation"));			
-			} else if (defaultAction != null) {
-				tableItem.setText(3, defaultAction);
-			
-				if (defaultConflict)
-					tableItem.setImage(3, ImageFactory.getImage("exclamation"));			
-			} 
-		}
-		
-		if (select >= 0)
-			tableKeySequence.select(select);
-			
-		Map pluginMap = Collections.EMPTY_MAP;
+		Set customSet = Collections.EMPTY_SET;
+		Set defaultSet = Collections.EMPTY_SET;
 		Iterator iterator = keySequenceRecords.iterator();
 		
 		while (iterator.hasNext()) {
 			KeySequenceRecord keySequenceRecord = (KeySequenceRecord) iterator.next();
 
 			if (Util.equals(scopeId, keySequenceRecord.scopeId) && Util.equals(configurationId, keySequenceRecord.configurationId)) {							
-				pluginMap = keySequenceRecord.pluginMap;
+				customSet = keySequenceRecord.customSet;
+				defaultSet = keySequenceRecord.defaultSet;
 				break;
 			}			
 		}
 
-		setPluginMap(pluginMap);
+		setAction(customSet, defaultSet);
 
 		boolean bValidKeySequence = keySequence != null && keySequence.getKeyStrokes().size() >= 1;
 		tableKeySequence.setEnabled(bValidKeySequence);
-		//buttonBrowseSelectedAction.setEnabled(bValidKeySequence); //TBD + table has selection
+		buttonBrowseSelectedAction.setEnabled(bValidKeySequence); //TBD + table has selection
 		groupState.setEnabled(bValidKeySequence);
 		labelScope.setEnabled(bValidKeySequence);
 		comboScope.setEnabled(bValidKeySequence);
@@ -977,17 +1046,15 @@ final class DialogCustomize extends Dialog {
 		tableColumn.setText(Messages.getString("DialogCustomize.HeaderAction"));
 		tableColumn.setWidth(250);	
 
-		/*
 		buttonBrowseSelectedAction = new Button(groupBrowseKeySequence, SWT.CENTER | SWT.PUSH);
 		buttonBrowseSelectedAction.setFont(font);
 		gridData = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		gridData.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 		gridData.horizontalSpan = 3;				
-		widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 		buttonBrowseSelectedAction.setText(Messages.getString("DialogCustomize.ButtonBrowseSelectedAction"));
 		gridData.widthHint = Math.max(widthHint, buttonBrowseSelectedAction.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x) + SPACE;
 		buttonBrowseSelectedAction.setLayoutData(gridData);		
-		*/
 		
 		Composite compositeStateAndAction = new Composite(groupBrowseKeySequence, SWT.NULL);
 		gridLayout = createGridLayout();
@@ -1070,6 +1137,12 @@ final class DialogCustomize extends Dialog {
 			}	
 		});
 
+		tableAction.addMouseListener(new MouseAdapter() {
+			public void mouseDoubleClick(MouseEvent e) {
+				selectedButtonShowConflicts();	
+			}			
+		});		
+
 		tableAction.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				int i = tableAction.getSelectionIndex();
@@ -1131,13 +1204,11 @@ final class DialogCustomize extends Dialog {
 			}	
 		});
 
-		/*
 		buttonBrowseSelectedAction.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				selectedButtonBrowseSelectedAction();
 			}	
 		});
-		*/
 
 		comboScope.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -1171,6 +1242,66 @@ final class DialogCustomize extends Dialog {
 
 		update();
 	}
+
+	private void setAction(Set customSet, Set defaultSet) {		
+		comboCustom.deselectAll();
+		buttonDefault.setSelection(customSet.isEmpty());
+		buttonCustom.setSelection(!customSet.isEmpty());									
+
+		boolean customConflict = false;
+		String customActionId = null;
+		boolean defaultConflict = false;
+		String defaultActionId = null;	
+
+		if (customSet.size() > 1)
+			customConflict = true;
+		else if (!customSet.isEmpty())				
+			customActionId = (String) customSet.iterator().next();
+
+		if (defaultSet.size() > 1)
+			defaultConflict = true;
+		else if (!defaultSet.isEmpty())				
+			defaultActionId = (String) defaultSet.iterator().next();
+
+		comboCustom.setText(customActionId != null ? customActionId : "");
+
+		if (!customSet.isEmpty()) {
+			if (customConflict)
+				comboCustom.setText(ACTION_CONFLICT);
+			else {			
+				if (customActionId == null)
+					comboCustom.select(0);
+				else
+					for (int i = 0; i < actions.size(); i++) {
+						Action action = (Action) actions.get(i);		
+								
+						if (action.getLabel().getId().equals(customActionId)) {
+							comboCustom.select(i + 1);
+							break;		
+						}
+					}			
+			}
+		}
+
+		textDefault.setText(defaultActionId != null ? defaultActionId : "");
+
+		if (defaultConflict)
+			textDefault.setText(ACTION_CONFLICT);
+		else {
+			if (defaultActionId == null)
+				textDefault.setText(ACTION_UNDEFINED);
+			else {
+				for (int j = 0; j < actions.size(); j++) {
+					Action action = (Action) actions.get(j);		
+								
+					if (action.getLabel().getId().equals(defaultActionId)) {
+						textDefault.setText(action.getLabel().getName());
+						break;		
+					}
+				}
+			}
+		}	
+	}
 	
 	private void setConfigurationId(String configurationId) {				
 		comboConfiguration.clearSelection();
@@ -1199,64 +1330,6 @@ final class DialogCustomize extends Dialog {
 		}	
 	}	
 	
-	private void setPluginMap(Map pluginMap) {		
-		comboCustom.deselectAll();
-		Map actionMap = (Map) pluginMap.get(null);
-		buttonDefault.setSelection(actionMap == null);
-		buttonCustom.setSelection(actionMap != null);									
-
-		if (actionMap != null) {
-			Set bindingSet = (Set) actionMap.values().iterator().next();
-			
-			if (actionMap.size() > 1 || bindingSet.size() > 1)
-				comboCustom.setText(ACTION_CONFLICT);
-			else {
-				Binding binding = (Binding) bindingSet.iterator().next();	
-				String actionId = binding.getAction();
-			
-				if (actionId == null)
-					comboCustom.select(0);
-				else
-					for (int i = 0; i < actions.size(); i++) {
-						Action action = (Action) actions.get(i);		
-						
-						if (action.getLabel().getId().equals(actionId)) {
-							comboCustom.select(i + 1);
-							break;		
-						}
-					}		
-			}
-		} 
-
-		pluginMap = new HashMap(pluginMap);
-		pluginMap.remove(null);
-
-		if (pluginMap.size() > 0) {
-			actionMap = (Map) pluginMap.values().iterator().next();	
-			Set bindingSet = (Set) actionMap.values().iterator().next();
-					
-			if (pluginMap.size() > 1 || actionMap.size() > 1 || bindingSet.size() > 1)
-				textDefault.setText(ACTION_CONFLICT);
-			else {
-				Binding binding = (Binding) bindingSet.iterator().next();	
-				String actionId = binding.getAction();
-			
-				if (actionId == null)
-					textDefault.setText(ACTION_UNDEFINED);
-				else
-					for (int i = 0; i < actions.size(); i++) {
-						Action action = (Action) actions.get(i);		
-						
-						if (action.getLabel().getId().equals(actionId)) {
-							textDefault.setText(action.getLabel().getName());
-							break;		
-						}
-					}		
-			}
-		} else
-			textDefault.setText(ACTION_UNDEFINED);	
-	}
-
 	private void setScopeId(String scopeId) {				
 		comboScope.clearSelection();
 		comboScope.deselectAll();
