@@ -38,7 +38,7 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 	private transient IExtensionLinker linker;
 	private transient RegistryCacheReader reader = null;
 	private transient boolean isDirty = false;
-	
+
 	class ListenerInfo {
 		IRegistryChangeListener listener;
 		String filter;
@@ -53,7 +53,7 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 			return another instanceof ListenerInfo && ((ListenerInfo) another).listener == this.listener;
 		}
 	}
-	
+
 	public void add(IRegistryElement[] elements) {
 		synchronized (this) {
 			isDirty = true;
@@ -327,7 +327,7 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 		}
 		return null;
 	}
-	
+
 	/*
 	 * Records an extension addition/removal.
 	 */
@@ -464,10 +464,10 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 		DEBUG = debugOption == null ? false : debugOption.equalsIgnoreCase("true"); //$NON-NLS-1$		
 		if (DEBUG)
 			addRegistryChangeListener(new IRegistryChangeListener() {
-			public void registryChanged(IRegistryChangeEvent event) {
-				System.out.println(event);
-			}
-		});
+				public void registryChanged(IRegistryChangeEvent event) {
+					System.out.println(event);
+				}
+			});
 
 	}
 	private final static class ExtensionEventDispatcherJob extends Job {
@@ -478,8 +478,8 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 			}
 			public boolean isConflicting(ISchedulingRule rule) {
 				return rule == this;
-			}			
-		};		
+			}
+		};
 		private Object[] listenerInfos;
 		private Map deltas;
 		public ExtensionEventDispatcherJob(Object[] listenerInfos, Map deltas) {
