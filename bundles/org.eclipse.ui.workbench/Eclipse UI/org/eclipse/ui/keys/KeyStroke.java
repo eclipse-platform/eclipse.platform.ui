@@ -63,9 +63,10 @@ public final class KeyStroke implements Comparable {
 	public final static String FF = "FF"; //$NON-NLS-1$
 	public final static String HOME = "HOME"; //$NON-NLS-1$
 	public final static String INSERT = "INSERT"; //$NON-NLS-1$
-	public final static char KEY_DELIMITER = '+'; //$NON-NLS-1$
+	public final static char KEY_DELIMITER = '\u002B'; //$NON-NLS-1$
 	public final static String KEY_DELIMITERS = KEY_DELIMITER + ""; //$NON-NLS-1$
 	public final static String LF = "LF"; //$NON-NLS-1$
+	public final static String NUL = "NUL"; //$NON-NLS-1$
 	public final static String PAGE_DOWN = "PAGE_DOWN"; //$NON-NLS-1$
 	public final static String PAGE_UP = "PAGE_UP"; //$NON-NLS-1$
 	public final static String PLUS = "PLUS"; //$NON-NLS-1$
@@ -86,11 +87,12 @@ public final class KeyStroke implements Comparable {
 		escapeKeyLookup.put(BS, CharacterKey.getInstance('\b'));
 		escapeKeyLookup.put(CR, CharacterKey.getInstance('\r'));
 		escapeKeyLookup.put(DEL, CharacterKey.getInstance('\u007F'));
-		escapeKeyLookup.put(ESC, CharacterKey.getInstance('\u001b'));
+		escapeKeyLookup.put(ESC, CharacterKey.getInstance('\u001B'));
 		escapeKeyLookup.put(FF, CharacterKey.getInstance('\f'));
 		escapeKeyLookup.put(LF, CharacterKey.getInstance('\n'));
-		escapeKeyLookup.put(PLUS, CharacterKey.getInstance('+'));
-		escapeKeyLookup.put(SPACE, CharacterKey.getInstance(' '));
+		escapeKeyLookup.put(NUL, CharacterKey.getInstance('\0'));
+		escapeKeyLookup.put(PLUS, CharacterKey.getInstance('\u002B'));
+		escapeKeyLookup.put(SPACE, CharacterKey.getInstance('\u0020'));
 		escapeKeyLookup.put(TAB, CharacterKey.getInstance('\t'));
 		modifierKeyLookup.put(ALT, ModifierKey.ALT);
 		modifierKeyLookup.put(COMMAND, ModifierKey.COMMAND);
@@ -308,7 +310,9 @@ public final class KeyStroke implements Comparable {
 
 		String name = naturalKey.toString();
 
-		if ("\b".equals(name)) //$NON-NLS-1$
+		if ("\0".equals(name)) //$NON-NLS-1$
+			string = NUL;
+		else if ("\b".equals(name)) //$NON-NLS-1$
 			string = BS;
 		else if ("\t".equals(name)) //$NON-NLS-1$
 			string = TAB;
@@ -318,11 +322,11 @@ public final class KeyStroke implements Comparable {
 			string = FF;
 		else if ("\r".equals(name)) //$NON-NLS-1$	
 			string = CR;
-		else if ("\u001b".equals(name)) //$NON-NLS-1$	
+		else if ("\u001B".equals(name)) //$NON-NLS-1$	
 			string = ESC;
-		else if (" ".equals(name)) //$NON-NLS-1$	ss
+		else if ("\u0020".equals(name)) //$NON-NLS-1$
 			string = SPACE;
-		else if ("+".equals(name)) //$NON-NLS-1$	
+		else if ("\u002B".equals(name)) //$NON-NLS-1$	
 			string = PLUS;
 		else if ("\u007F".equals(name)) //$NON-NLS-1$	
 			string = DEL;

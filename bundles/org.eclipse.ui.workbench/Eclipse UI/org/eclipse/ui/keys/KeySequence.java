@@ -33,8 +33,8 @@ import org.eclipse.ui.internal.util.Util;
  */
 public final class KeySequence implements Comparable {
 
-	public final static char KEY_STROKE_DELIMITER = ' '; 
-	public final static String KEY_STROKE_DELIMITERS = KEY_STROKE_DELIMITER + "\b\t\n\f\r\u001b\u007F"; //$NON-NLS-1$
+	public final static char KEY_STROKE_DELIMITER = '\u0020'; 
+	public final static String KEY_STROKE_DELIMITERS = KEY_STROKE_DELIMITER + "\0\b\t\n\f\r\u001B\u007F"; //$NON-NLS-1$
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = KeySequence.class.getName().hashCode();

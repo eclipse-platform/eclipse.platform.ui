@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<editmodel:ClassDiagramEditModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:editmodel="editmodel.xmi" id="CMCLARENcmclarenorgeclipseuiworkbench9" metadata="nsuml-1.4" initialized="true" showWireOptions="1">
+  <children xsi:type="editmodel:ClassEditModel" location="50,50" size="275,301" id="CMCLARENcmclarenorgeclipseuiworkbench815" runTimeClassModel="CMCLARENcmclarenorgeclipseuiworkbench847;CMCLARENcmclarenorgeclipseuiworkbench844;CMCLARENcmclarenorgeclipseuiworkbench840;CMCLARENcmclarenorgeclipseuiworkbench833;CMCLARENcmclarenorgeclipseuiworkbench828;CMCLARENcmclarenorgeclipseuiworkbench863;CMCLARENcmclarenorgeclipseuiworkbench869;CMCLARENcmclarenorgeclipseuiworkbench837;CMCLARENcmclarenorgeclipseuiworkbench826;CMCLARENcmclarenorgeclipseuiworkbench850;CMCLARENcmclarenorgeclipseuiworkbench861;CMCLARENcmclarenorgeclipseuiworkbench822;CMCLARENcmclarenorgeclipseuiworkbench859;CMCLARENcmclarenorgeclipseuiworkbench835;CMCLARENcmclarenorgeclipseuiworkbench856;CMCLARENcmclarenorgeclipseuiworkbench818;CMCLARENcmclarenorgeclipseuiworkbench829;CMCLARENcmclarenorgeclipseuiworkbench871;CMCLARENcmclarenorgeclipseuiworkbench853;CMCLARENcmclarenorgeclipseuiworkbench824;CMCLARENcmclarenorgeclipseuiworkbench865;CMCLARENcmclarenorgeclipseuiworkbench816;CMCLARENcmclarenorgeclipseuiworkbench820;CMCLARENcmclarenorgeclipseuiworkbench831">
+    <children xsi:type="editmodel:CompartmentEditModel" size="185,36">
+      <children xsi:type="editmodel:AttributeEditModel" id="CMCLARENcmclarenorgeclipseuiworkbench816"/>
+      <children xsi:type="editmodel:AttributeEditModel" id="CMCLARENcmclarenorgeclipseuiworkbench818"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="252,216">
+      <children xsi:type="editmodel:MethodEditModel" id="CMCLARENcmclarenorgeclipseuiworkbench853"/>
+      <children xsi:type="editmodel:MethodEditModel" id="CMCLARENcmclarenorgeclipseuiworkbench856"/>
+      <children xsi:type="editmodel:MethodEditModel" id="CMCLARENcmclarenorgeclipseuiworkbench859"/>
+      <children xsi:type="editmodel:MethodEditModel" id="CMCLARENcmclarenorgeclipseuiworkbench844"/>
+      <children xsi:type="editmodel:MethodEditModel" id="CMCLARENcmclarenorgeclipseuiworkbench835"/>
+      <children xsi:type="editmodel:MethodEditModel" id="CMCLARENcmclarenorgeclipseuiworkbench840"/>
+      <children xsi:type="editmodel:MethodEditModel" id="CMCLARENcmclarenorgeclipseuiworkbench847"/>
+      <children xsi:type="editmodel:MethodEditModel" id="CMCLARENcmclarenorgeclipseuiworkbench837"/>
+      <children xsi:type="editmodel:MethodEditModel" id="CMCLARENcmclarenorgeclipseuiworkbench861"/>
+      <children xsi:type="editmodel:MethodEditModel" id="CMCLARENcmclarenorgeclipseuiworkbench863"/>
+      <children xsi:type="editmodel:MethodEditModel" id="CMCLARENcmclarenorgeclipseuiworkbench865"/>
+      <children xsi:type="editmodel:MethodEditModel" id="CMCLARENcmclarenorgeclipseuiworkbench869"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsReturnType="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showStaticAttributes="true" showPublicMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showStaticInnerClasses="true"/>
+  </children>
+  <classDiagramPreferences xsi:type="editmodel:UMLClassDiagramPreference" showMethodsParameterTypes="true" showMethodsReturnType="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showStaticAttributes="true" showPublicMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showStaticInnerClasses="true" showInterfaceStereotype="true" showClassStereotype="true" showPackageStereotype="true"/>
+</editmodel:ClassDiagramEditModel>
