@@ -2,19 +2,19 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.ui">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.ui" id="acceleratorConfigurations" name="Accelerator Configurations"/>
-   </appInfo>
-   <documentation>
-      This extension point is used to register accelerator configuration extensions. Accelerator configurations are configurations to which accelerator sets may be registered. The workbench allows the user to select an accelerator configuration from the Workbench preference page. Only one accelerator configuration may be active at a time. 
+      <appInfo>
+         <meta.schema plugin="org.eclipse.ui" id="acceleratorConfigurations" name="Accelerator Configurations"/>
+      </appInfo>
+      <documentation>
+         This extension point is used to register accelerator configuration extensions. Accelerator configurations are configurations to which accelerator sets may be registered. The workbench allows the user to select an accelerator configuration from the Workbench preference page. Only one accelerator configuration may be active at a time. 
 &lt;p&gt;
-An accelerator configuration represents a general style or theme of accelerators for Workbench actions. For example, the Workbench provides the "Emacs" accelerator configuration. When the "Emacs" accelerator configuration is active, accelerators belonging to accelerator sets registered to the "Emacs" configuration are active. These accelerators are defined to mimic the accelerators in Emacs (a popular text editor amongst developers). 
+An accelerator configuration represents a general style or theme of accelerators for Workbench actions. For example, the Workbench provides the &quot;Emacs&quot; accelerator configuration. When the &quot;Emacs&quot; accelerator configuration is active, accelerators belonging to accelerator sets registered to the &quot;Emacs&quot; configuration are active. These accelerators are defined to mimic the accelerators in Emacs (a popular text editor amongst developers). 
 &lt;p&gt;
-An accelerator set registers with an accelerator configuration by listing the configuration's id as the value of its "configurationId" attribute (see the Accelerator Sets extension point). Many accelerator sets can be registered to the same accelerator configuration. 
+An accelerator set registers with an accelerator configuration by listing the configuration&apos;s id as the value of its &quot;configurationId&quot; attribute (see the Accelerator Sets extension point). Many accelerator sets can be registered to the same accelerator configuration. 
 &lt;p&gt;
-Note the accelerator configuration name presented to the user is the same as the value of the attribute "name" of the extension element of org.eclipse.ui.acceleratorConfigurations extension point.
-   </documentation>
-</annotation>
+Note the accelerator configuration name presented to the user is the same as the value of the attribute &quot;name&quot; of the extension element of org.eclipse.ui.acceleratorConfigurations extension point.
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -88,16 +88,16 @@ Note the accelerator configuration name presented to the user is the same as the
          Following is an example of an accelerator configuration extension: 
 &lt;p&gt;
 &lt;pre&gt;
-   &lt;extension point="org.eclipse.ui.acceleratorConfigurations"&gt; 
+   &lt;extension point=&quot;org.eclipse.ui.acceleratorConfigurations&quot;&gt; 
       &lt;acceleratorConfiguration 
-        id="org.eclipse.ui.viAcceleratorConfiguration" 
-        name="VI" 
-        description="VI style accelerator configuration"&gt; 
+        id=&quot;org.eclipse.ui.viAcceleratorConfiguration&quot; 
+        name=&quot;VI&quot; 
+        description=&quot;VI style accelerator configuration&quot;&gt; 
       &lt;/acceleratorConfiguration&gt; 
       &lt;acceleratorConfiguration 
-        id="org.eclipse.ui.jonDoeAcceleratorConfiguration" 
-        name="Jon Doe" 
-        description="Jon Doe's personal accelerator configuration"&gt; 
+        id=&quot;org.eclipse.ui.jonDoeAcceleratorConfiguration&quot; 
+        name=&quot;Jon Doe&quot; 
+        description=&quot;Personal accelerator configuration for Jon Doe&quot;&gt; 
       &lt;/acceleratorConfiguration&gt; 
    &lt;/extension&gt;
 &lt;/pre&gt;
