@@ -12,10 +12,14 @@ package org.eclipse.compare;
 
 import java.util.ResourceBundle;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.compare.internal.CompareNavigator;
+import org.eclipse.compare.internal.CompareMessages;
 import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.Utilities;
+
 
 /**
  * A <code>NavigationAction</code> is used to navigate through the individual
@@ -54,9 +58,28 @@ public class NavigationAction extends Action {
 
 	public void run() {
 		if (fCompareEditorInput != null) {
-			Object adapter= fCompareEditorInput.getAdapter(CompareNavigator.class);
-			if (adapter instanceof CompareNavigator)
-				((CompareNavigator)adapter).selectChange(fNext);
+			Object adapter= fCompareEditorInput.getAdapter(ICompareNavigator.class);
+			if (adapter instanceof ICompareNavigator) {
+				boolean atEnd= ((ICompareNavigator)adapter).selectChange(fNext);
+				Shell shell= CompareUIPlugin.getShell();
+				if (atEnd && shell != null) {
+					
+					Display display= shell.getDisplay();
+					if (display != null)
+						display.beep();
+
+					String title;
+					String message;
+					if (fNext) {
+						title= CompareMessages.getString("CompareNavigator.atEnd.title"); //$NON-NLS-1$
+						message= CompareMessages.getString("CompareNavigator.atEnd.message"); //$NON-NLS-1$
+					} else {
+						title= CompareMessages.getString("CompareNavigator.atBeginning.title"); //$NON-NLS-1$
+						message= CompareMessages.getString("CompareNavigator.atBeginning.message"); //$NON-NLS-1$
+					}
+					MessageDialog.openInformation(shell, title, message);
+				}
+			}
 		}
 	}
 	

@@ -163,7 +163,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 * see IAdaptable.getAdapter
 	 */
 	public Object getAdapter(Class adapter) {
-		if (CompareNavigator.class.equals(adapter)) {
+		if (ICompareNavigator.class.equals(adapter) || CompareNavigator.class.equals(adapter)) {
 			if (fNavigator == null)
 				fNavigator= new CompareNavigator(
 					new CompareViewerSwitchingPane[] {

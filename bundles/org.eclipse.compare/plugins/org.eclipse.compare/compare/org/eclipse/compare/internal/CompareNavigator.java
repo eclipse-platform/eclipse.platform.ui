@@ -11,11 +11,7 @@
 package org.eclipse.compare.internal;
 
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.dialogs.MessageDialog;
-
 import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.compare.*;
 
@@ -23,7 +19,7 @@ import org.eclipse.compare.*;
  * Supports cross-pane navigation through differences.
  * XXX: Design is as it is because the feature had to be added without touching API.
  */
-public class CompareNavigator {
+public class CompareNavigator implements ICompareNavigator {
 	
 	private boolean fLastDirection= true;
 	private CompareViewerSwitchingPane[] fPanes;
@@ -38,7 +34,7 @@ public class CompareNavigator {
 		return fPanes;
 	}
 	
-	public void selectChange(boolean next) {
+	public boolean selectChange(boolean next) {
 		
 		fLastDirection= next;
 
@@ -63,30 +59,12 @@ public class CompareNavigator {
 				// at end of this navigator
 				continue;
 			} else // not at end
-				return;
+				return false;
 		}
-		// beep
-		if (fPanes[0] != null) {
-			Control c= fPanes[0].getContent();
-			if (c != null) {
-				Display display= c.getDisplay();
-				if (display != null)
-					display.beep();
-
-				String title;
-				String message;
-				if (next) {
-					title= CompareMessages.getString("CompareNavigator.atEnd.title"); //$NON-NLS-1$
-					message= CompareMessages.getString("CompareNavigator.atEnd.message"); //$NON-NLS-1$
-				} else {
-					title= CompareMessages.getString("CompareNavigator.atBeginning.title"); //$NON-NLS-1$
-					message= CompareMessages.getString("CompareNavigator.atBeginning.message"); //$NON-NLS-1$
-				}
-				MessageDialog.openInformation(c.getShell(), title, message);
-			}
-		}
+		
+		return true;
 	}
-
+	
 	private static INavigatable getNavigator(CompareViewerSwitchingPane pane) {
 		if (pane == null)
 			return null;

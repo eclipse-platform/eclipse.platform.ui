@@ -46,7 +46,7 @@ public class CompareEditorContributor extends EditorActionBarContributor {
 		WorkbenchHelp.setHelp(fPrevious, ICompareContextIds.GLOBAL_PREVIOUS_DIFF_ACTION);
 		
 		fToolbarNext= new NavigationAction(bundle, true);
-		WorkbenchHelp.setHelp(fToolbarNext,ICompareContextIds.NEXT_DIFF_ACTION);
+		WorkbenchHelp.setHelp(fToolbarNext, ICompareContextIds.NEXT_DIFF_ACTION);
 		
 		fToolbarPrevious= new NavigationAction(bundle, false);
 		WorkbenchHelp.setHelp(fToolbarPrevious, ICompareContextIds.PREVIOUS_DIFF_ACTION);
