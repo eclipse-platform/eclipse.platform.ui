@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * as possible to allow for optimization of remote operations.
  * 
  * <p>
- * NOTE: This API is work in progress and will likely change before the final API freeze.
+ * This class may be subclassed by clients.
  * </p>
  * 
  * @since 3.1

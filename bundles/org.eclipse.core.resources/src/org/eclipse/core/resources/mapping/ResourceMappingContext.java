@@ -24,9 +24,10 @@ package org.eclipse.core.resources.mapping;
  * the implementor can assume that the context is a local context.
  * 
  * <p>
- * NOTE: This API is work in progress and will likely change before the final API freeze.
+ * This class may be subclassed by clients; this class is not intended to be 
+ * instantiated directly.
  * </p>
- * 
+
  * @since 3.1
  * 
  * @see ResourceMapping

@@ -26,10 +26,11 @@ import org.eclipse.core.runtime.*;
  * contains a set of resources and a depth. This allows clients (such a repository providers)
  * to do optimal traversals of the resources w.r.t. the operation that is being performed
  * on the model object.
- * <p>
- * NOTE: This API is work in progress and will likely change before the final API freeze.
- * </p>
  * 
+ * <p>
+ * This class may be subclassed by clients.
+ * </p>
+
  * @see IResource
  * @see ResourceTraversal
  * @since 3.1

@@ -22,10 +22,11 @@ import org.eclipse.core.runtime.CoreException;
  * The flags of the traversal indicate which special resources should be
  * included or excluded from the traversal. The flags used are the same as
  * those passed to the <code>IResource#accept(IResourceVisitor, int, int)</code> method.
- * <p>
- * NOTE: This API is work in progress and will likely change before the final API freeze.
- * </p>
  * 
+ * <p>
+ * This class may be instantiated or subclassed by clients.
+ * </p>
+
  * @see org.eclipse.core.resources.IResource
  * @since 3.1
  */
