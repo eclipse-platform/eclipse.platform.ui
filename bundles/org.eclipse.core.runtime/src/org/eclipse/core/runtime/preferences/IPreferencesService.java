@@ -21,9 +21,12 @@ import org.osgi.service.prefs.Preferences;
  * precedence lookup order, querying the preference store for values using this order,
  * accessing the root of the preference store node hierarchy, and importing/exporting
  * preferences.
- * 
+ * <p>
+ * The default-default preference search look-up order as defined by the plaform
+ * is: project, instance, configuration, default.
+ * </p><p>
  * This interface is not intended to be implemented by clients.
- * 
+ * </p>
  * @since 3.0
  */
 public interface IPreferencesService {
