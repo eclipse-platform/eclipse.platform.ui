@@ -698,7 +698,7 @@
 	  	  	toolbarPath="Normal/CVS"
 	  		 label="%CVSActionSet.newLabel"
 	  		 tooltip="%CVSActionSet.newTooltip"
-	  		 icon="icons/full/ctool16/checkout.gif"
+	  		 icon="icons/full/wizards/newconnect_wiz.gif"
 	  		 class="org.eclipse.team.internal.ccvs.ui.actions.NewRepositoryAction"
 	  		 id="org.eclipse.team.cvs.ui.actions.NewRepositoryAction"> 
 	  	    </action>
