@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.debug.core;
 
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IWatchExpression;
+import org.eclipse.debug.core.model.IWatchExpressionDelegate;
 
 /**
  * The expression manager manages the collection of registered
@@ -138,6 +139,19 @@ public interface IExpressionManager {
 	 * @since 2.1
 	 */
 	public void removeExpressionListener(IExpressionsListener listener);
+	
+	/**
+	 * Returns a new watch expression delegate for the given debug
+	 * model or <code>null</code> if no delegate is available.
+	 * 
+	 * @param id the unique identifier of a debug model for which a
+	 *  watch expression delegate has been contributed
+	 * @return a watch expression delegate associated with the given model
+	 * 		or <code>null</code> if none
+	 * @since 3.0
+	 * @see IWatchExpressionDelegate
+	 */
+	public IWatchExpressionDelegate newWatchExpressionDelegate(String id);
 }
 
 
