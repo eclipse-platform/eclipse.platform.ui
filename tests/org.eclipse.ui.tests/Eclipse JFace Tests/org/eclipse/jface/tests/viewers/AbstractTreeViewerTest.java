@@ -190,4 +190,17 @@ public void testExpandElement() {
 		assertTrue(widget instanceof Item);
 		assertEquals("changed label", first2.getID()+" "+newLabel, ((Item)widget).getText());
 	}
+	
+	/**
+	 * Regression test for Bug 26698 [Viewers] stack overflow during debug session, causing IDE to crash
+	 * Problem was:
+	 *   - node A has child A
+	 *   - setExpanded with A in the list caused an infinite recursion 
+	 */
+	public void testSetExpandedWithCycle() {
+		TestElement first= fRootElement.getFirstChild();
+		first.addChild(first, new TestModelChange(TestModelChange.INSERT, first, first));
+		fTreeViewer.setExpandedElements(new Object[] { first });
+
+	}
 }

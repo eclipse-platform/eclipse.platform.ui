@@ -907,7 +907,9 @@ private void internalSetExpanded(HashSet expandedElements, Widget widget) {
 		Item item = items[i];
 		Object data = item.getData();
 		if (data != null) {
-			boolean expanded = expandedElements.contains(data);
+			// remove the element to avoid an infinite loop
+			// if the same element appears on a child item
+			boolean expanded = expandedElements.remove(data);
 			if (expanded != getExpanded(item)) {
 				if (expanded) {
 					createChildren(item);
