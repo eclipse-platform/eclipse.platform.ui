@@ -31,8 +31,6 @@ import org.xml.sax.*;
  */
 
 public class UpdatePolicy {
-	private static final String KEY_MAP = "url-map";
-	private static final String KEY_FALLBACK = "try-embedded";
 	private static final String TAG_POLICY = "update-policy";
 	private static final String TAG_URL_MAP = "url-map";
 	private static final String ATT_URL = "url";
