@@ -19,6 +19,9 @@ import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
+import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 
@@ -27,9 +30,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
  */
 public class DebugContentProvider extends BasicContentProvider implements IDebugEventListener, ILaunchListener, ITreeContentProvider {
 	
-	/**
-	 * Constructs a new content provider.
-	 */
 	public DebugContentProvider() {
 		DebugPlugin plugin= DebugPlugin.getDefault();
 		plugin.addDebugEventListener(this);
@@ -61,6 +61,8 @@ public class DebugContentProvider extends BasicContentProvider implements IDebug
 
 	/**
 	 * Returns the <code>ILaunch</code>es for the <code>ILaunchManager</code>
+	 * 
+	 * @see IStructuredContentProvider#getElements(Object)
 	 */
 	public Object[] getElements(Object element) {
 		if (element instanceof ILaunchManager) {
@@ -70,7 +72,7 @@ public class DebugContentProvider extends BasicContentProvider implements IDebug
 	}
 
 	/**
-	 * @see org.eclipse.jface.viewer.ITreeContentProvider
+	 * @see ITreeContentProvider#getParent(Object)
 	 */
 	public Object getParent(Object item) {
 		if (item instanceof IStackFrame) {
@@ -105,10 +107,11 @@ public class DebugContentProvider extends BasicContentProvider implements IDebug
 				insert(element);
 				break;
 			case DebugEvent.TERMINATE :
-				clearSourceSelection();
 				if (element instanceof IThread) {
+					clearSourceSelection((IThread)element);
 					remove(element);
 				} else {
+					clearSourceSelection(null);
 					Object parent = getParent(element);
 					refresh(parent);
 				}
@@ -133,7 +136,7 @@ public class DebugContentProvider extends BasicContentProvider implements IDebug
 				return;
 			}
 		}
-		clearSourceSelection();
+		clearSourceSelection(null);
 		if (event.getDetail() != DebugEvent.STEP_START) {
 			refresh(element);
 			if (element instanceof IThread) {
@@ -202,7 +205,7 @@ public class DebugContentProvider extends BasicContentProvider implements IDebug
 	}
 
 	/**
-	 * @see ITreeContentProvider
+	 * @see ITreeContentProvider#hasChildren(Object)
 	 */
 	public boolean hasChildren(Object item) {
 		if (item instanceof IStackFrame) {
@@ -222,7 +225,7 @@ public class DebugContentProvider extends BasicContentProvider implements IDebug
 	}
 
 	/**
-	 * @see ILaunchListener
+	 * @see ILaunchListener#launchRegistered(ILaunch)
 	 */
 	public void launchDeregistered(final ILaunch launch) {
 		Runnable r= new Runnable() {
@@ -274,6 +277,8 @@ public class DebugContentProvider extends BasicContentProvider implements IDebug
 	/**
 	 * Unregisters this content provider from the debug model so that
 	 * this object can be garbage-collected.
+	 * 
+	 * @see IContentProvider#dispose()
 	 */
 	public void dispose() {
 		super.dispose();
@@ -285,8 +290,22 @@ public class DebugContentProvider extends BasicContentProvider implements IDebug
 	/**
 	 * Clear the selection in the editor - must be called in UI thread
 	 */
-	private void clearSourceSelection() {
+	private void clearSourceSelection(IThread thread) {
 		if (fViewer != null) {
+			if (thread != null) {
+				IStructuredSelection selection= (IStructuredSelection)fViewer.getSelection();
+				Object element= selection.getFirstElement();
+				if (element instanceof IStackFrame) {
+					IStackFrame stackFrame = (IStackFrame) element;
+					if (!stackFrame.getThread().equals(thread)) {
+						//do not clear the source selection
+						//a thread has terminated that is not the
+						//parent of the currently selected stack frame
+						return;
+					}
+				}
+			}
+		
 			((LaunchesViewer)fViewer).clearSourceSelection();
 		}
 	}
