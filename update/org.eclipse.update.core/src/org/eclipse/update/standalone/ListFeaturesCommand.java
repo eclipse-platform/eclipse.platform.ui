@@ -61,22 +61,30 @@ public class ListFeaturesCommand extends ScriptedCommand {
 	/**
 	 */
 	public boolean run(IProgressMonitor monitor) {
-			try {
-				if (sites != null) {
-					for (int i=0; i<sites.length; i++) {
-						System.out.println("Site:" + sites[i].getSite().getURL());
-						IFeatureReference[] features = sites[i].getFeatureReferences();
-						for (int f=0; f<features.length; f++) {
-							boolean configured = sites[i].isConfigured(features[f].getFeature(null));
-							System.out.println("  Feature: " + features[f].getVersionedIdentifier() + "  " + (configured ? "enabled" : "disabled"));
-						}
+		try {
+			if (sites != null) {
+				for (int i = 0; i < sites.length; i++) {
+					System.out.println("Site: " + sites[i].getSite().getURL());
+					IFeatureReference[] features = sites[i]
+							.getFeatureReferences();
+					for (int f = 0; f < features.length; f++) {
+						boolean configured = sites[i].isConfigured(features[f]
+								.getFeature(null));
+						System.out.println("  Feature: "
+								+ features[f].getVersionedIdentifier()
+										.getIdentifier()
+								+ " "
+								+ features[f].getVersionedIdentifier()
+										.getVersion() + "  "
+								+ (configured ? "enabled" : "disabled"));
 					}
 				}
-				return true;
-			} catch (CoreException e) {
-				StandaloneUpdateApplication.exceptionLogged();
-				UpdateCore.log(e);
-				return false;
 			}
+			return true;
+		} catch (CoreException e) {
+			StandaloneUpdateApplication.exceptionLogged();
+			UpdateCore.log(e);
+			return false;
+		}
 	}
 }
