@@ -67,20 +67,17 @@ public class WorkbenchWindowConfigurerTest extends TestCase {
                 assertTrue(windowConfig.getShowMenuBar());
                 assertFalse(windowConfig.getShowPerspectiveBar());
                 assertTrue(windowConfig.getShowStatusLine());
-                assertTrue(windowConfig.getShowTitleBar());
 
                 windowConfig.setTitle(tempTitle);
                 windowConfig.setShowCoolBar(false);
                 windowConfig.setShowMenuBar(false);
                 windowConfig.setShowPerspectiveBar(true);
                 windowConfig.setShowStatusLine(false);
-                windowConfig.setShowTitleBar(false);
                 assertEquals(tempTitle, windowConfig.getTitle());
                 assertFalse(windowConfig.getShowCoolBar());
                 assertFalse(windowConfig.getShowMenuBar());
                 assertTrue(windowConfig.getShowPerspectiveBar());
                 assertFalse(windowConfig.getShowStatusLine());
-                assertFalse(windowConfig.getShowTitleBar());
 
                 // *** title is orginally null, but cannot set it back to null,
                 // should that
@@ -90,7 +87,6 @@ public class WorkbenchWindowConfigurerTest extends TestCase {
                 windowConfig.setShowMenuBar(true);
                 windowConfig.setShowPerspectiveBar(false);
                 windowConfig.setShowStatusLine(true);
-                windowConfig.setShowTitleBar(true);
             }
         };
 
