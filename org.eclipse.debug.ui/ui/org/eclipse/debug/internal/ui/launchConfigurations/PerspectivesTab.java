@@ -77,6 +77,9 @@ public class PerspectivesTab extends AbstractLaunchConfigurationTab implements I
 	
 	private Button fRestoreDefaults;
 	
+	/**
+	 * A selection adapter which responds to widget selections in this tab
+	 */
 	private SelectionAdapter fSelectionAdapter= new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			Object source= e.getSource();
@@ -300,6 +303,14 @@ public class PerspectivesTab extends AbstractLaunchConfigurationTab implements I
 		}
 	}
 	
+	/**
+	 * Updates the configuration based on the user's selection in the
+	 * perspective combo by setting the given configurations perspective
+	 * attribute.
+	 * 
+	 * @param combo the combo widget
+	 * @param workingCopy the launch configuration to update
+	 */
 	protected void updateConfigFromCombo(Combo combo, ILaunchConfigurationWorkingCopy workingCopy) {
 		if (!fInitializing) {
 			String mode = (String)combo.getData();
@@ -349,6 +360,23 @@ public class PerspectivesTab extends AbstractLaunchConfigurationTab implements I
 	 */
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
 		// do nothing on deactivation
+	}
+
+	/**
+	 * Returns the description associated with the current launch configuration
+	 * type in the current mode or <code>null</code> if none.
+	 * 
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getMessage()
+	 */
+	public String getMessage() {
+		String description = super.getMessage();
+		if(fType != null) {
+			String mode = getLaunchConfigurationDialog().getMode();
+			LaunchConfigurationPresentationManager manager = LaunchConfigurationPresentationManager.getDefault();
+			LaunchConfigurationTabGroupExtension extension = manager.getExtension(fType.getAttribute("id"), mode); //$NON-NLS-1$
+			description = extension.getDescription(mode);
+		}		
+		return description;
 	}
 
 }

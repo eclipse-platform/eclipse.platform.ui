@@ -25,7 +25,6 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.SWTUtil;
-import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
@@ -143,6 +142,12 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * Controls when the redraw flag is set on the visible area
 	 */
 	private boolean fRedraw = true;
+
+	/**
+	 * The description of the currently selected launch configuration or
+	 * launch configuration type or <code>null</code> if none.
+	 */
+	private String fDescription = null;
 
 	/**
 	 * Constructs a viewer in the given composite, contained by the given
@@ -596,7 +601,9 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		if (!getVisibleArea().isVisible()) {
 			getVisibleArea().setVisible(true);
 		}
-				
+		
+		fDescription = getDescription(null);
+		
 		refreshStatus();		
 	}	
 	
@@ -623,7 +630,31 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		showTabsFor(group);
 		setTabGroup(group);
 		setTabType(configType);
+		
+		fDescription = getDescription(configType);
 	}	
+
+	/**
+	 * Returns the description of the given configuration type
+	 * in the current mode or <code>null</code> if none.
+	 * 
+	 * @param configType the config type
+	 * @return the description of the given configuration type or <code>null</code>
+	 */
+	private String getDescription(ILaunchConfigurationType configType) {
+		String description = null;
+		if(configType != null) {
+			String mode = fDialog.getMode();
+			LaunchConfigurationPresentationManager manager = LaunchConfigurationPresentationManager.getDefault();
+			LaunchConfigurationTabGroupExtension extension = manager.getExtension(configType.getAttribute("id"), mode); //$NON-NLS-1$
+			description = extension.getDescription(mode);
+		}
+	
+		if (description == null)
+			description = ""; //$NON-NLS-1$
+		
+		return description;
+	}
 	
 	/**
 	 * Populate the tabs in the configuration edit area for the shared info
@@ -976,18 +1007,28 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	
 	/**
 	 * Returns the current message or <code>null</code> if none.
+	 * @return Returns an appropriate message for display to user. The message returned will be:
+	 * The message defined by the visible tab,
+	 * or The tab group description for the particular launch mode,
+	 * or The generic tab group description,
+	 * or <code>null</code> if no message is defined 
 	 */
-	public String getMesssage() {
+	public String getMessage() {
 		if (isInitializingTabs()) {
 			return null;
 		}
 		
+		String message = fDescription;
+		
 		ILaunchConfigurationTab tab = getActiveTab();
-		if (tab == null) {
-			return null;
-		} else {
-			return tab.getMessage();
+		if (tab != null) {
+			String tabMessage = tab.getMessage();
+			if (tabMessage != null) {
+				message = tabMessage;
+			}
 		}
+		
+		return message;
 	}	
 		
 	/**

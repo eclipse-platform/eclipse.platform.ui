@@ -796,6 +796,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 			}
  			}
  			getTabViewer().setInput(newInput);
+
  			// bug 14758 - if the newly selected config is dirty, save its changes
  			if (getTabViewer().isDirty()) {
  				getTabViewer().handleApplyPressed();
@@ -1439,7 +1440,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	public void updateMessage() {
 		setErrorMessage(getTabViewer().getErrorMesssage());
-		setMessage(getTabViewer().getMesssage());				
+		setMessage(getTabViewer().getMessage());				
 	}
 	
 	/**

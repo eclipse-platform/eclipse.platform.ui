@@ -164,6 +164,33 @@ public class LaunchConfigurationTabGroupExtension {
 		return (ILaunchConfigurationTabGroup)getConfigurationElement().createExecutableExtension("class"); //$NON-NLS-1$
 	}
 
-
+	/**
+	 * Returns this tab group's description in the given mode.
+	 *
+	 * @param mode the mode
+	 * @return a description of the Launch Mode if available. If not available, attempts to return
+	 * a description of the Launch Configuration. If no appropriate description is found an empty string is returned.
+	 */
+	public String getDescription(String mode) {
+		String description = null;
+		
+		IConfigurationElement[] children = fConfig.getChildren("launchMode"); //$NON-NLS-1$
+		if (children!= null && children.length != 0) {
+			for (int i=0; i<children.length; i++) {
+				IConfigurationElement child = children[i];
+				if (child.getAttribute("mode").equals(mode)) { //$NON-NLS-1$
+					description = child.getAttribute("description"); //$NON-NLS-1$
+				}
+			}
+		} 
+		if (description == null){
+			description = fConfig.getAttribute("description"); //$NON-NLS-1$
+		}
+		
+		if (description == null)
+			description = ""; //$NON-NLS-1$
+		
+		return description;
+	}
 }
 
