@@ -380,7 +380,8 @@ public static ImageDescriptor getImageDescriptorFromExtension(IExtension extensi
 /**
  * Convenience Method.
  * Return an ImageDescriptor whose path relative to the plugin described 
- * by <code>pluginDescriptor</code> is <code>subdirectoryAndFilename</code>.
+ * by <code>pluginDescriptor</code> or one of its fragments is 
+ * <code>subdirectoryAndFilename</code>.
  * Returns <code>null</code>if no image could be found.
  *
  * This method is convenience and only intended for use by the workbench because it
@@ -395,12 +396,14 @@ public static ImageDescriptor getImageDescriptorFromExtension(IExtension extensi
  * Note:
  * This consults the plugin for extension and obtains its installation location.
  * all requested images are assumed to be in a directory below and relative to that
- * plugins installation directory.
+ * plugins installation directory or one of its fragments.
  */
 public static ImageDescriptor getImageDescriptorFromPlugin(IPluginDescriptor pluginDescriptor, String subdirectoryAndFilename) {
-
+	URL fullPathString = pluginDescriptor.find(new Path(subdirectoryAndFilename));
+	if (fullPathString != null) {
+		return ImageDescriptor.createFromURL(fullPathString);
+	}
 	URL path = pluginDescriptor.getInstallURL();
-	URL fullPathString = null;
 	try {
 		fullPathString = new URL(path,subdirectoryAndFilename);
 		return ImageDescriptor.createFromURL(fullPathString);
