@@ -42,7 +42,7 @@ public class FileLabelProvider extends LabelProvider {
 			return ""; //$NON-NLS-1$
 		IResource resource= ((ISearchResultViewEntry) element).getResource();
 
-		if (resource == null)
+		if (resource == null || !resource.exists())
 			return SearchMessages.getString("SearchResultView.removed_resource"); //$NON-NLS-1$
 		
 		StringBuffer buf;
@@ -50,10 +50,10 @@ public class FileLabelProvider extends LabelProvider {
 			buf= new StringBuffer(fWorkbenchLabelProvider.getText(resource));
 			if (fOrder == SHOW_LABEL_PATH) {
 				buf.append(fgSeparatorString);					
-				buf.append(resource.getFullPath().removeLastSegments(1).toString());
+				buf.append(resource.getFullPath().removeLastSegments(1).makeRelative().toString());
 			}
 		} else {
-			buf= new StringBuffer(resource.getFullPath().removeLastSegments(1).toString());
+			buf= new StringBuffer(resource.getFullPath().removeLastSegments(1).makeRelative().toString());
 			if (fOrder == SHOW_PATH_LABEL) {
 				buf.append(fgSeparatorString);
 				buf.append(fWorkbenchLabelProvider.getText(resource));

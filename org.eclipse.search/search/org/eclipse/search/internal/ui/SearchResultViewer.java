@@ -115,7 +115,7 @@ class SearchResultViewer extends TableViewer {
 						ISearchResultViewEntry entry= (ISearchResultViewEntry)getTable().getItem(getTable().getSelectionIndex()).getData();
 						IPath path= entry.getResource().getFullPath();
 						if (path != null)
-							location= path.toString();
+							location= path.makeRelative().toString();
 					}
 					setStatusLineMessage(location);
 				}
