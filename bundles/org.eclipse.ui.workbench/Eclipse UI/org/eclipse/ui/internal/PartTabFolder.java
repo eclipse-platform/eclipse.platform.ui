@@ -22,6 +22,8 @@ import org.eclipse.ui.presentations.IPresentablePart;
 /**
  * Manages a set of ViewPanes that are docked into the workbench window. The container for a PartTabFolder
  * is always a PartSashContainer (or null), and its children are always either PartPlaceholders or ViewPanes.
+ * This contains the real behavior and state for stacks of views, although the widgets for the tabs are contributed
+ * using a StackPresentation.
  * 
  * TODO: eliminate PartTabFolder and EditorWorkbook. PartStack should be general enough to handle editors 
  * and views without any specialization for editors and views. The differences should be in the 
