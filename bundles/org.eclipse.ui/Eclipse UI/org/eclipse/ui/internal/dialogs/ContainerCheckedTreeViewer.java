@@ -2,7 +2,7 @@
  * (c) Copyright IBM Corp. 2000, 2001, 2002.
  * All Rights Reserved.
  */
-package org.eclipse.jface.viewers;
+package org.eclipse.ui.internal.dialogs;
 
 
 import java.util.ArrayList;

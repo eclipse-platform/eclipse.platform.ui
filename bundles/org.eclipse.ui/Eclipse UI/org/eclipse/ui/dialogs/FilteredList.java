@@ -23,10 +23,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
+import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ILabelProvider;
 
-import org.eclipse.jface.util.Assert;
-import org.eclipse.ui.internal.misc.StringMatcher;;
+import org.eclipse.ui.internal.misc.StringMatcher;
 
 /**
  * A composite widget which holds a list of elements for user selection.

@@ -4,12 +4,13 @@
  */
 package org.eclipse.ui.dialogs;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
-import java.util.List;
-import java.util.Arrays;
 import org.eclipse.jface.viewers.ILabelProvider;
 
 /**

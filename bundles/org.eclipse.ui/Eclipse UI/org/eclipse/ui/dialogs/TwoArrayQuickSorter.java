@@ -5,6 +5,7 @@
 package org.eclipse.ui.dialogs;
 
 import java.util.Comparator;
+
 import org.eclipse.jface.util.Assert;
 
 /**
