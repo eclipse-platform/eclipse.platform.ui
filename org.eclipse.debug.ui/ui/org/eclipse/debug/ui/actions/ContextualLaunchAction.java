@@ -164,14 +164,12 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 		action.setEnabled(false);
 	}
 
-	/**
-	 * Fill pull down menu with the pages of the JTabbedPane
-	 */
-	private void fillMenu(Menu menu) {
-		// lookup appropriate launch config types and build launch actions for them.
-		// Retrieve the current perspective and the registered shortcuts
-		String activePerspID = getActivePerspectiveID();
-		if (activePerspID == null || fSelection == null) {
+    /**
+     * Fills the menu with applicable launch shortcuts
+     * @param menu The menu to fill
+     */
+	protected void fillMenu(Menu menu) {
+		if (fSelection == null) {
 			return;
 		}
 		
@@ -282,24 +280,6 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 		item.fill(menu, -1);
 	}
 
-	/**
-	 * Return the ID of the currently active perspective.
-	 * 
-	 * @return the active perspective ID or <code>null</code> if there is none.
-	 */
-	private String getActivePerspectiveID() {
-		IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
-		if (window != null) {
-			IWorkbenchPage page = window.getActivePage();
-			if (page != null) {
-				IPerspectiveDescriptor persp = page.getPerspective();
-				if (persp != null) {
-					return persp.getId();
-				}
-			}
-		}
-		return null;
-	}
 	/**
 	 * Returns the launch configuration manager.
 	*
