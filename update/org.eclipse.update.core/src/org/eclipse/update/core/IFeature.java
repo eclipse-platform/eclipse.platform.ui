@@ -297,7 +297,6 @@ public interface IFeature extends IPluginContainer {
 	 * Download Size of the feature in Kilo-Bytes
 	 * @return the size of the archive to be downloaded
 	 * @since 2.0 
-	 * @deprecated
 	 */
 
 	long getDownloadSize() ;
@@ -306,7 +305,6 @@ public interface IFeature extends IPluginContainer {
 	 * Install Size of the feature in KiloBytes
 	 * @return the size of the plug-in when installed
 	 * @since 2.0 
-	 * @deprecated 
 	 */
 
 	long getInstallSize() ;

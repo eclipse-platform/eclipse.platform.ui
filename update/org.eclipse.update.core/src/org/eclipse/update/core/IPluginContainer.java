@@ -16,9 +16,6 @@ import org.eclipse.core.runtime.*;
  * logically or physically manage the archives that contain
  * plug-ins.
  */
-// VK: why are we keeping this interface just for the 2 methods?
-//     is there ever a case where IPluginContainer is a useful
-//     general abstraction?
 
 public interface IPluginContainer extends IAdaptable {
 	/**
