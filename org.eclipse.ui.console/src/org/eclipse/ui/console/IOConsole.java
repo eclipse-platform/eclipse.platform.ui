@@ -518,7 +518,7 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
         	String text = null;
         	int prevBaseOffset = -1;
         	if (doc != null && !monitor.isCanceled()) {
-        	    boolean allDone = true;
+        	    boolean allDone = partitionerFinished;
 	        	int endOfSearch = doc.getLength();
 	        	int indexOfLastChar = endOfSearch;
 	        	if (indexOfLastChar > 0) {
@@ -597,18 +597,21 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
 		            	}
 					}
 					prevBaseOffset = baseOffset;
-					int lastLineOfDoc = doc.getNumberOfLines() - 1;
-					try {
-						if (doc.getLineLength(lastLineOfDoc) == 0) {
-							// if the last line is empty, do not consider it
-							lastLineOfDoc--;
+					if (allDone) {
+						int lastLineOfDoc = doc.getNumberOfLines() - 1;
+						try {
+							if (doc.getLineLength(lastLineOfDoc) == 0) {
+								// if the last line is empty, do not consider it
+								lastLineOfDoc--;
+							}
+						} catch (BadLocationException e) {
+						    ConsolePlugin.log(e);
+							allDone = false;
 						}
-					} catch (BadLocationException e) {
-						allDone = false;
+						allDone = allDone && (lastLineToSearch >= lastLineOfDoc);
 					}
-					allDone = allDone && (lastLineToSearch >= lastLineOfDoc);
 		        }
-	        	if (allDone && partitionerFinished && !monitor.isCanceled()) {
+	        	if (allDone && !monitor.isCanceled()) {
 	        	    firePropertyChange(this, IOConsole.P_CONSOLE_OUTPUT_COMPLETE, null, null);
 	        	    cancel(); // cancels this job if it has already been re-scheduled
 	        	}
