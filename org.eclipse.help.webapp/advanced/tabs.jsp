@@ -33,7 +33,7 @@ BODY {
 <% 
 if (data.isMozilla()){
 %>
-	height:22px;
+	height:21px;
 <%
 }
 %>
@@ -50,7 +50,7 @@ if (data.isMozilla()){
 }
 
 .pressed {
-	font-size:5px;<%-- needed to verticaly center icon image --%>
+	font-size:5px;<%-- needed to verticaly center icon image (on IE--%>
 	margin:0px;
 	padding:0px;
 	cursor:default;
@@ -74,9 +74,20 @@ if (data.isMozilla()){
 
 A {
 	text-decoration:none;
-	writing-mode:tb-rl;
 	vertical-align:middle;
 	height:16px;
+	width:16px;
+<% 
+if (data.isIE()){
+%>
+	writing-mode:tb-rl; <%-- needed to verticaly center icon image on IE--%>
+<%
+} else {
+%>
+	display:block;<%-- needed to verticaly center icon image (remove extra pixels below) on Mozilla--%>
+<%
+}
+%>
 }
 
 IMG {
@@ -84,6 +95,7 @@ IMG {
 	margin:0px;
 	padding:0px;
 	height:16px;
+	width:16px;
 }
 
 </style>
