@@ -16,6 +16,7 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -86,12 +87,16 @@ public class WizardExternalProjectImportPage extends WizardPage {
 	 * Method declared on IDialogPage.
 	 */
 	public void createControl(Composite parent) {
+		
+		initializeDialogUnits(parent);
+		
 		Composite composite = new Composite(parent, SWT.NULL);
 
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.NEW_PROJECT_WIZARD_PAGE);
 
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		composite.setFont(parent.getFont());
 
 		createProjectNameGroup(composite);
 		createProjectLocationGroup(composite);
@@ -115,12 +120,14 @@ public class WizardExternalProjectImportPage extends WizardPage {
 		layout.numColumns = 3;
 		projectGroup.setLayout(layout);
 		projectGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		projectGroup.setFont(parent.getFont());
 
 		// new project label
 		Label projectContentsLabel = new Label(projectGroup, SWT.NONE);
 		projectContentsLabel.setText(
 			DataTransferMessages.getString(
 				"WizardExternalProjectImportPage.projectContentsLabel")); //$NON-NLS-1$
+		projectContentsLabel.setFont(parent.getFont());
 
 		createUserSpecifiedProjectLocationGroup(projectGroup);
 	}
@@ -130,22 +137,28 @@ public class WizardExternalProjectImportPage extends WizardPage {
 	 * @param parent the parent composite
 	 */
 	private final void createProjectNameGroup(Composite parent) {
+		
+		Font dialogFont = parent.getFont();
+		
 		// project specification group
 		Composite projectGroup = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
+		projectGroup.setFont(dialogFont);
 		projectGroup.setLayout(layout);
 		projectGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		// new project label
 		Label projectLabel = new Label(projectGroup, SWT.NONE);
 		projectLabel.setText(DataTransferMessages.getString("WizardExternalProjectImportPage.nameLabel")); //$NON-NLS-1$
+		projectLabel.setFont(dialogFont);
 
 		// new project name entry field
 		projectNameField = new Text(projectGroup, SWT.BORDER | SWT.READ_ONLY);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = SIZING_TEXT_FIELD_WIDTH;
 		projectNameField.setLayoutData(data);
+		projectNameField.setFont(dialogFont);
 	}
 	/**
 	 * Creates the project location specification controls.
@@ -154,17 +167,23 @@ public class WizardExternalProjectImportPage extends WizardPage {
 	 * @param boolean - the initial enabled state of the widgets created
 	 */
 	private void createUserSpecifiedProjectLocationGroup(Composite projectGroup) {
+		
+		Font dialogFont = projectGroup.getFont();
 
 		// project location entry field
 		this.locationPathField = new Text(projectGroup, SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = SIZING_TEXT_FIELD_WIDTH;
 		this.locationPathField.setLayoutData(data);
+		this.locationPathField.setFont(dialogFont);
 
 		// browse button
 		this.browseButton = new Button(projectGroup, SWT.PUSH);
 		this.browseButton.setText(
 			DataTransferMessages.getString("WizardExternalProjectImportPage.browseLabel")); //$NON-NLS-1$
+		this.browseButton.setFont(dialogFont);
+		setButtonLayoutData(this.browseButton);
+		
 		this.browseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				handleLocationBrowseButtonPressed();
@@ -265,7 +284,6 @@ public class WizardExternalProjectImportPage extends WizardPage {
 	 *   <code>false</code> if at least one is invalid
 	 */
 	private boolean validatePage() {
-		IWorkspace workspace = getWorkspace();
 
 		String locationFieldContents = getProjectLocationFieldValue();
 
