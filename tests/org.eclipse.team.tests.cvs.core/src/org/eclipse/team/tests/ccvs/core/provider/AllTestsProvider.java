@@ -33,8 +33,8 @@ public class AllTestsProvider extends EclipseTest {
 		TestSuite suite = new TestSuite();
 		//suite.addTestSuite(ModuleTest.class);
 		suite.addTest(ImportTest.suite());
-		suite.addTest(CVSProviderTest.suite());
 		suite.addTest(RemoteResourceTest.suite());
+		suite.addTest(CVSProviderTest.suite());
 		suite.addTest(SyncElementTest.suite());
 		suite.addTest(ResourceDeltaTest.suite());
 		suite.addTest(WatchEditTest.suite());
