@@ -55,7 +55,6 @@ public class FormEngineLayout extends Layout implements ILayoutExtension {
 	private Point computeLoading(FormEngine engine) {
 		GC gc = new GC(engine);
 		gc.setFont(engine.getFont());
-		FontMetrics fm = gc.getFontMetrics();
 		String loadingText = engine.getLoadingText();
 		Point size = gc.textExtent(loadingText);
 		gc.dispose();
