@@ -12,7 +12,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.connection.Connection;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.response.*;
 
 public class StatusMessageHandler extends ResponseHandler {
@@ -39,7 +39,7 @@ public class StatusMessageHandler extends ResponseHandler {
 	public void handle(
 		Connection context,
 		PrintStream messageOutput,
-		IManagedFolder mRoot,
+		ICVSFolder mRoot,
 		IProgressMonitor monitor)
 			throws CVSException {
 		String line = context.readLine();

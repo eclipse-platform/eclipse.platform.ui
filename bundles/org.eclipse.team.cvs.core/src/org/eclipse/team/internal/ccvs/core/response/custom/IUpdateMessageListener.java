@@ -26,4 +26,6 @@ public interface IUpdateMessageListener {
 	 * file information
 	 */
 	public void fileInformation(char type, String filename) throws CVSException;
+	
+	public void fileDoesNotExist(String filename);
 }

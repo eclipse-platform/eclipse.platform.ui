@@ -9,7 +9,7 @@ import java.io.PrintStream;
 
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.connection.Connection;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.response.ResponseHandler;
 
 
@@ -40,7 +40,7 @@ class ValidRequestHandler extends ResponseHandler {
 	public void handle(
 		Connection connection,
 		PrintStream monitor,
-		IManagedFolder mRoot)
+		ICVSFolder mRoot)
 		throws CVSException {
 			
 		// Set the ValidRequests of the requestSender

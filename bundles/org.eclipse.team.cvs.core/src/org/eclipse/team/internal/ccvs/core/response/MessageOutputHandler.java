@@ -10,7 +10,7 @@ import java.io.PrintStream;
 
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.connection.Connection;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 
 /**
  * The MessageOutputHandler sends the whoole line (incl. read token)
@@ -37,7 +37,7 @@ class MessageOutputHandler extends ResponseHandler {
 	public void handle(
 		Connection connection,
 		PrintStream messageOutput,
-		IManagedFolder mRoot) 
+		ICVSFolder mRoot) 
 		throws CVSException {
 		
 		messageOutput.println(connection.readLine());

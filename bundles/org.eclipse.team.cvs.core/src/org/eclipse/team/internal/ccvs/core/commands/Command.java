@@ -8,14 +8,12 @@ package org.eclipse.team.internal.ccvs.core.commands;
 import java.io.PrintStream;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Client;
 import org.eclipse.team.internal.ccvs.core.Policy;
-import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.requests.RequestSender;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedResource;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.response.ResponseDispatcher;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 
@@ -33,7 +31,7 @@ abstract class Command implements ICommand {
 	private String[] localOptions;
 	private String[] arguments;
 	
-	private IManagedFolder mRoot;
+	private ICVSFolder mRoot;
 	
 	protected final ResponseDispatcher responseDispatcher;
 	protected final RequestSender requestSender;
@@ -63,7 +61,7 @@ abstract class Command implements ICommand {
 		String[] globalOptions, 
 		String[] localOptions, 
 		String[] arguments, 
-		IManagedFolder mRoot,
+		ICVSFolder mRoot,
 		IProgressMonitor monitor, 
 		PrintStream messageOut) 
 			throws CVSException {
@@ -220,7 +218,7 @@ abstract class Command implements ICommand {
 	 * 
 	 * @return Returns a ICVSResource
 	 */
-	protected IManagedFolder getRoot() throws CVSException {
+	protected ICVSFolder getRoot() throws CVSException {
 		
 		if (!mRoot.isFolder()) {
 			throw new CVSException(Policy.bind("Command.invalidRoot", new Object[] {mRoot.toString()}));
@@ -235,7 +233,7 @@ abstract class Command implements ICommand {
 	 * 
 	 * If there are no arguments gives the root folder back only.
 	 */
-	protected IManagedResource[] getWorkResources() throws CVSException {
+	protected ICVSResource[] getWorkResources() throws CVSException {
 		return getWorkResources(0);
 	}
 	
@@ -247,56 +245,30 @@ abstract class Command implements ICommand {
 	 * 
 	 * @see Command#getWorkResources()
 	 */
-	protected IManagedResource[] getWorkResources(int skip) throws CVSException {
+	/**
+	 * Work like getWorkResources() but do not look at the first 
+	 * skip elements when creating the resources (this is useful when
+	 * the first skip arguments of a command are not files but something
+	 * else)
+	 * 
+	 * @see Command#getWorkResources()
+	 */
+	protected ICVSResource[] getWorkResources(int skip) throws CVSException {
 		
-		IManagedResource[] result;
+		ICVSResource[] result;
 		
 		Assert.isTrue(arguments.length >= skip);
 		
 		if (arguments.length == skip) {
-			return new IManagedResource[]{mRoot};
-		}
-		
-		result = new IManagedResource[arguments.length - skip];
-		
-		for (int i = skip; i<arguments.length; i++) {
-			result[i - skip] = mRoot.getChild(arguments[i]);
-		}
-		
-		return result;
-	}
-	
-	/**
-	 * Get the resource that you are working with. This is a folder
-	 * most of the time, but could be a file on some operations as 
-	 * well.
-	 * 
-	 * It does also garantee that the WorkResource is a cvsFolder,
-	 * or (if it is a file) does live in a cvsFolder. 
-	 * 
-	 * This does not apply to every operation (e.g. would not work on a 
-	 * checkout)
-	 * 
-	 * @deprecated
-	 */
-	protected IManagedResource getWorkResource(String relativeFolderPath) throws CVSException {
-		
-		IManagedResource workResource;
-		IManagedFolder contextFolder;
-		
-		workResource = getRoot().getChild(relativeFolderPath);
-		
-		if (workResource.isFolder()) {
-			contextFolder = (IManagedFolder)workResource;
+			result = new ICVSResource[]{mRoot};
 		} else {
-			contextFolder = workResource.getParent();
+			result = new ICVSResource[arguments.length - skip];
+			for (int i = skip; i<arguments.length; i++) {
+				result[i - skip] = mRoot.getChild(arguments[i]);
+			}
 		}
-		
-		if (!contextFolder.isCVSFolder()) {
-			throw new CVSException(Policy.bind("Command.invalidResource", new Object[] {contextFolder.toString()}));
-		}
-		
-		return workResource;
+				
+		return result;
 	}
 	
 	/**
@@ -311,7 +283,7 @@ abstract class Command implements ICommand {
 	 * @param emptyFolders sends the folder-entrie even if there is no file 
 	 		  to send in it
 	 */
-	protected void sendFileStructure(IManagedResource mResource, 
+	protected void sendFileStructure(ICVSResource mResource, 
 									IProgressMonitor monitor,
 									boolean modifiedOnly,
 									boolean emptyFolders) throws CVSException {
@@ -328,12 +300,14 @@ abstract class Command implements ICommand {
 	/**
 	 * Send an array of Resources.
 	 * 
-	 * @see Command#sendFileStructure(IManagedResource,IProgressMonitor,boolean,boolean,boolean)
+	 * @see Command#sendFileStructure(ICVSResource,IProgressMonitor,boolean,boolean,boolean)
 	 */
-	protected void sendFileStructure(IManagedResource[] mResources, 
+	protected void sendFileStructure(ICVSResource[] mResources, 
 									IProgressMonitor monitor,
 									boolean modifiedOnly,
 									boolean emptyFolders) throws CVSException {
+		
+		checkArgumentsManaged(mResources);
 		
 		for (int i=0; i<mResources.length; i++) {
 			sendFileStructure(mResources[i],
@@ -341,38 +315,30 @@ abstract class Command implements ICommand {
 								modifiedOnly,
 								emptyFolders);
 		}
-	}					
+	}
 
 	/**
 	 * Checks that all the workResources are managed Resources.
 	 * (For folders we check isCVSFolder, because of a project-folder
 	 * that is not managed, because it is not registerd in the 
 	 * parent-folder<br>
-	 * To be used this way: Assert.isTrue(allArgumentsManaged())
 	 * 
-	 * @throws AssertionFailedException if not all the arguments are
+	 * @throws CVSException if not all the arguments are
 	 *          managed
-	 */
-	protected boolean allResourcesManaged() throws RuntimeException {
-
-		IManagedResource[] mWorkResources;		
-
-		try {
-			mWorkResources = getWorkResources();
-		
-			for (int i=0; i<mWorkResources.length; i++) {
-				if (mWorkResources[i].isFolder()) {
-					Assert.isTrue(((IManagedFolder) mWorkResources[i]).isCVSFolder());
-				} else {
-					Assert.isTrue(mWorkResources[i].isManaged());
-				}	
-			}
-		} catch (CVSException e) {
-			Assert.isTrue(false);
-		}
-					  		
-		return true;
-	}
+	 */	
+	protected void checkArgumentsManaged(ICVSResource[] mWorkResources) throws CVSException {
 	
+		for (int i=0; i<mWorkResources.length; i++) {
+			if (mWorkResources[i].isFolder()) {
+				if (!((ICVSFolder) mWorkResources[i]).isCVSFolder()) {
+					throw new CVSException("Argument " + mWorkResources[i].getName() + "is not managed");
+				}
+			} else {
+				if (!mWorkResources[i].isManaged()) {
+					throw new CVSException("Argument " + mWorkResources[i].getName() + "is not managed");
+				}					
+			}	
+		}	
+	}
 }
 

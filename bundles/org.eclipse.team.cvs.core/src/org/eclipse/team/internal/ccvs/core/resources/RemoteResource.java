@@ -5,24 +5,19 @@ package org.eclipse.team.internal.ccvs.core.resources;
  * All Rights Reserved.
  */
  
-import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Client;
 import org.eclipse.team.internal.ccvs.core.Policy;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedResource;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedVisitor;
+import org.eclipse.team.internal.ccvs.core.util.Assert;
 
 /**
  * The purpose of this class and its subclasses is to implement the corresponding
@@ -30,21 +25,29 @@ import org.eclipse.team.internal.ccvs.core.resources.api.IManagedVisitor;
  * resources that reside in a CVS repository but have not necessarily been loaded
  * locally.
  */
-public abstract class RemoteResource extends PlatformObject implements ICVSRemoteResource, IManagedResource {
+public abstract class RemoteResource extends PlatformObject implements ICVSRemoteResource, ICVSResource {
 
-	protected String name;
-	protected String tag;
+	protected ResourceSyncInfo info;
+	protected RemoteFolder parent;
 
-	protected RemoteResource(String name, String tag) {
-		this.name = name;
-		this.tag = tag;
+	protected RemoteResource(RemoteFolder parent, String name, CVSTag tag, boolean isFolder) {
+		info = new ResourceSyncInfo(name, isFolder);
+		info.setTag(tag);
+		this.parent = parent;
 	}
 	
 	/**
 	 * @see ICVSRemoteResource#getName()
 	 */
 	public String getName() {
-		return name;
+		return info.getName();
+	}
+
+	/**
+	 * @see ICVSRemoteResource#getParent()
+	 */
+	public ICVSRemoteResource getRemoteParent() {
+		return parent;
 	}
 
 	/*
@@ -52,9 +55,10 @@ public abstract class RemoteResource extends PlatformObject implements ICVSRemot
 	 */
 	protected List getLocalOptionsForTag() {
 		List localOptions = new ArrayList();
-		if ((tag != null) && (!tag.equals("HEAD"))) {
+		CVSTag tag = info.getTag();
+		if ((tag != null) && (tag.getType() != tag.HEAD)) { 
 			localOptions.add(Client.TAG_OPTION);
-			localOptions.add(tag);
+			localOptions.add(tag.getName()); 
 		}
 		return localOptions;
 	}
@@ -64,14 +68,14 @@ public abstract class RemoteResource extends PlatformObject implements ICVSRemot
 	public abstract ICVSRepositoryLocation getRepository();
 	
 	/*
-	 * @see IManagedResource#delete()
+	 * @see ICVSResource#delete()
 	 */
 	public void delete() {
 		// XXX we should know how to delete a remote?
 	}
 
 	/*
-	 * @see IManagedResource#exists()
+	 * @see ICVSResource#exists()
 	 */
 	public boolean exists() {
 		// XXX perform silent checkout to test if this remote handle actually has a corresponding remote
@@ -80,60 +84,47 @@ public abstract class RemoteResource extends PlatformObject implements ICVSRemot
 	}
 
 	/*
-	 * @see IManagedResource#getParent()
+	 * @see ICVSResource#getParent()
 	 */
-	public IManagedFolder getParent() {
+	public ICVSFolder getParent() {
 		throw new UnsupportedOperationException(Policy.bind("RemoteManagedResource.invalidOperation"));
 	}
 
 	/*
-	 * @see IManagedResource#isIgnored()
+	 * @see ICVSResource#isIgnored()
 	 */
 	public boolean isIgnored() throws CVSException {
 		return false;
 	}
 
 	/*
-	 * @see IManagedResource#isManaged()
+	 * @see ICVSResource#isManaged()
 	 */
 	public boolean isManaged() throws CVSException {
 		return true;
 	}
 
 	/*
-	 * @see IManagedResource#unmanage()
+	 * @see ICVSResource#unmanage()
 	 */
 	public void unmanage() throws CVSException {
 		throw new CVSException(Policy.bind("RemoteManagedResource.invalidOperation"));
 	}
-	
+
 	protected PrintStream getPrintStream() {
 		return CVSProviderPlugin.getProvider().getPrintStream();
 	}
-
+	
 	/*
-	 * @see IManagedResource#showDirty()
+	 * @see ICVSResource#getSyncInfo()
 	 */
-	public boolean showDirty() throws CVSException {
-		return false;
+	public ResourceSyncInfo getSyncInfo() {
+		return info;
 	}
-
 	/*
-	 * @see IManagedResource#clearDirty(boolean)
+	 * @see ICVSResource#setSyncInfo(ResourceSyncInfo)
 	 */
-	public void clearDirty(boolean up) throws CVSException {
-	}
-
-	/*
-	 * @see IManagedResource#showManaged()
-	 */
-	public boolean showManaged() throws CVSException {
-		return true;
-	}
-
-	/*
-	 * @see IManagedResource#clearManaged()
-	 */
-	public void clearManaged() throws CVSException {
+	public void setSyncInfo(ResourceSyncInfo info) {
+		//this.info = info;
 	}
 }

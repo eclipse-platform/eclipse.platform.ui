@@ -12,9 +12,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.connection.ResourceStatus;
-import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 
 /**
  * This is an exception that is thrown by the cvs-adaptor
@@ -110,6 +110,17 @@ public class CVSException extends TeamException {
 				CVSProviderPlugin.ID,
 				UNABLE,
 				message,
+				e));
+	}
+	/*
+	 * Static helper methods for creating exceptions
+	 */
+	public static CVSException wrapException(Exception e) {
+		return new CVSException(new Status(
+				IStatus.ERROR,
+				CVSProviderPlugin.ID,
+				UNABLE,
+				e.getMessage(),
 				e));
 	}
 }

@@ -11,7 +11,7 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.connection.Connection;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 
 /**
@@ -35,7 +35,7 @@ class DefaultHandler extends ResponseHandler {
 	public void handle(
 		Connection connection,
 		PrintStream messageOutput,
-		IManagedFolder mRoot)
+		ICVSFolder mRoot)
 		throws CVSException {
 		
 		// FIXME look wether we need this or if the connection has

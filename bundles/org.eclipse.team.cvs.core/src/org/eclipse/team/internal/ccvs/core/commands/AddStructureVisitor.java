@@ -12,8 +12,8 @@ import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.requests.RequestSender;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFile;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 
 /**
  * This is a visitor that is specially created for the add-command.<br>
@@ -27,8 +27,8 @@ public class AddStructureVisitor extends AbstractStructureVisitor {
 	
 	private boolean forceSend = false;
 	private Set visitedFolders = new HashSet();
-	private IManagedFolder lastVisitedFolder;
-	private IManagedFolder mRoot;
+	private ICVSFolder lastVisitedFolder;
+	private ICVSFolder mRoot;
 	private RequestSender requestSender;
 	
 	/**
@@ -39,7 +39,7 @@ public class AddStructureVisitor extends AbstractStructureVisitor {
 	 */
 	public AddStructureVisitor(
 		RequestSender requestSender,
-		IManagedFolder mRoot,
+		ICVSFolder mRoot,
 		IProgressMonitor monitor) {
 		super(requestSender, mRoot, monitor);
 		this.mRoot = mRoot;
@@ -47,9 +47,9 @@ public class AddStructureVisitor extends AbstractStructureVisitor {
 	}
 
 	/**
-	 * @see IManagedVisitor#visitFile(IManagedFile)
+	 * @see ICVSResourceVisitor#visitFile(IManagedFile)
 	 */
-	public void visitFile(IManagedFile mFile) throws CVSException {
+	public void visitFile(ICVSFile mFile) throws CVSException {
 		
 		if (!mFile.getParent().equals(lastVisitedFolder)) {
 			forceSend = true;
@@ -63,9 +63,9 @@ public class AddStructureVisitor extends AbstractStructureVisitor {
 	}
 
 	/**
-	 * @see IManagedVisitor#visitFolder(IManagedFolder)
+	 * @see ICVSResourceVisitor#visitFolder(ICVSFolder)
 	 */
-	public void visitFolder(IManagedFolder mFolder) throws CVSException {
+	public void visitFolder(ICVSFolder mFolder) throws CVSException {
 		
 		Assert.isNotNull(mFolder);
 		

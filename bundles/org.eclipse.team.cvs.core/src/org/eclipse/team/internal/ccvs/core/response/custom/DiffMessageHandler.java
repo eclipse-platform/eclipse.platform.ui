@@ -11,7 +11,7 @@ import java.io.PrintStream;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.connection.Connection;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.response.ResponseHandler;
 
 public class DiffMessageHandler extends ResponseHandler {
@@ -40,7 +40,7 @@ public class DiffMessageHandler extends ResponseHandler {
 	public void handle(
 		Connection context,
 		PrintStream messageOutput,
-		IManagedFolder mRoot,
+		ICVSFolder mRoot,
 		IProgressMonitor monitor)
 			throws CVSException {
 				

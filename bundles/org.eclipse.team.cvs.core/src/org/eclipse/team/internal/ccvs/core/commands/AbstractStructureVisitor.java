@@ -8,28 +8,30 @@ package org.eclipse.team.internal.ccvs.core.commands;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.requests.RequestSender;
-import org.eclipse.team.internal.ccvs.core.resources.api.FileProperties;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFile;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedVisitor;
+import org.eclipse.team.internal.ccvs.core.resources.CVSEntryLineTag;
+import org.eclipse.team.internal.ccvs.core.resources.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSResourceVisitor;
+import org.eclipse.team.internal.ccvs.core.resources.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 
 /**
- * An IManagedVisitor that is superclass to all IManagedVisitor's used
+ * An ICVSResourceVisitor that is superclass to all ICVSResourceVisitor's used
  * by Command and it's subclasses.
  * Provides helper methods to send files and folders with modifications
  * to the server.
  */
-abstract class AbstractStructureVisitor implements IManagedVisitor {
+abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 
 	private final RequestSender requestSender;
-	private final IManagedFolder mRoot;
+	private final ICVSFolder mRoot;
 	private final IProgressMonitor monitor;
 	//The last folder that has already been sent to the server during this visit
-	private IManagedFolder lastFolderSend;
+	private ICVSFolder lastFolderSend;
 	
 	public AbstractStructureVisitor(RequestSender requestSender,
-									IManagedFolder mRoot,
+									ICVSFolder mRoot,
 									IProgressMonitor monitor) {
 										
 		this.requestSender = requestSender;
@@ -44,14 +46,14 @@ abstract class AbstractStructureVisitor implements IManagedVisitor {
 	 * If this folder was send last, it is not resend again (there is 
 	 * no advantage of doing so).
 	 */
-	void sendFolder(IManagedFolder mFolder, 
+	void sendFolder(ICVSFolder mFolder, 
 					boolean constructFolder,
 					boolean sendQuestionable)
 					throws CVSException{
 
 		String local;
 		String remote;
-		String tag;
+		CVSEntryLineTag tag;
 		
 		// Do not send the same folder twice
 		if (mFolder.equals(lastFolderSend)) {
@@ -81,20 +83,23 @@ abstract class AbstractStructureVisitor implements IManagedVisitor {
 		
 		remote = mFolder.getRemoteLocation(mRoot);
 		
-		if (remote != null) {
-			requestSender.sendDirectory(local, remote);
-		} 
+		if (remote == null) {
+			return;
+		}
 		
-		if (mFolder.getFolderInfo() != null) { 
+		requestSender.sendDirectory(local, remote);
+		
+		FolderSyncInfo info = mFolder.getFolderSyncInfo();
+		if (info != null) { 
 			
-			if (mFolder.getFolderInfo().getStaticFolder()) {
+			if (info.getIsStatic()) {
 				requestSender.sendStaticDirectory();
 			}
 			
-			tag = mFolder.getFolderInfo().getTag();
+			tag = info.getTag();
 			
 			if (tag != null) {
-				requestSender.sendSticky(tag);
+				requestSender.sendSticky(tag.toEntryLineFormat());
 			} 
 		}
 	
@@ -106,15 +111,15 @@ abstract class AbstractStructureVisitor implements IManagedVisitor {
 	 * Send a file up to the server.
 	 * If it is modified send the content as well.
 	 */
-	void sendFile(IManagedFile mFile, 
+	void sendFile(ICVSFile mFile, 
 					boolean sendQuestionable,
 					String mode) throws CVSException {
 		
 		boolean binary = mode!=null && 
-						mode.indexOf(FileProperties.BINARY_TAG)!=-1;
+						mode.indexOf(ResourceSyncInfo.BINARY_TAG)!=-1;
 		
 		if (mFile.isManaged()) {
-			requestSender.sendEntry(mFile.getFileInfo().getEntryLineForServer());
+			requestSender.sendEntry(mFile.getSyncInfo().getEntryLine(false));
 		} else if (sendQuestionable) {
 			requestSender.sendQuestionable(mFile.getName());
 			return;

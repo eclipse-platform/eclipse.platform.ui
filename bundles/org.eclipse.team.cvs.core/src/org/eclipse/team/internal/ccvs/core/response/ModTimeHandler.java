@@ -11,7 +11,7 @@ import java.text.ParseException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.connection.Connection;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.util.FileDateFormat;
 import org.eclipse.team.internal.ccvs.core.util.ServerDateFormat;
 
@@ -35,12 +35,12 @@ class ModTimeHandler extends ResponseHandler {
 	}
 
 	/**
-	 * @see IResponseHandler#handle(Connection, OutputStream, IManagedFolder)
+	 * @see IResponseHandler#handle(Connection, OutputStream, ICVSFolder)
 	 */
 	public void handle(
 		Connection connection,
 		PrintStream messageOutput,
-		IManagedFolder mRoot)
+		ICVSFolder mRoot)
 		throws CVSException {
 		
 		String unConverted = connection.readLine();

@@ -15,25 +15,22 @@ import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSProvider;
+import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.ccvs.core.IConnectionMethod;
-import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.core.IFileTypeRegistry;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteResource;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
 import org.eclipse.team.internal.ccvs.core.util.ProjectDescriptionManager;
 
 public class CVSProvider implements ICVSProvider {
@@ -69,13 +66,13 @@ public class CVSProvider implements ICVSProvider {
 		repository.append(":");
 		String user = configuration.getProperty("user");
 		if (user == null)
-			throw new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSProvider.noUser"), null));
+			throw new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSTeamProvider.noUser"), null));
 		else 
 			repository.append(user);
 		repository.append("@");
 		String host = configuration.getProperty("host");
 		if (host == null)
-			throw new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSProvider.noHost"), null));
+			throw new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSTeamProvider.noHost"), null));
 		else 
 			repository.append(host);
 		String port = configuration.getProperty("port");
@@ -86,7 +83,7 @@ public class CVSProvider implements ICVSProvider {
 		repository.append(":");
 		String root = configuration.getProperty("root");
 		if (root == null)
-			throw new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSProvider.noRoot"), null));
+			throw new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSTeamProvider.noRoot"), null));
 		else 
 			repository.append(root);
 		
@@ -119,7 +116,7 @@ public class CVSProvider implements ICVSProvider {
 		ICVSRepositoryLocation repository,
 		IProject project,
 		String sourceModule,
-		String tag,
+		CVSTag tag,
 		IProgressMonitor monitor)
 		throws TeamException {
 			
@@ -131,7 +128,7 @@ public class CVSProvider implements ICVSProvider {
 				project = ResourcesPlugin.getWorkspace().getRoot().getProject(new Path(sourceModule).lastSegment());
 				
 			// Get the location of the workspace root
-			IManagedFolder root = Client.getManagedFolder(ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile());
+			ICVSFolder root = Client.getManagedFolder(ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile());
 			
 			// Build the local options
 			List localOptions = new ArrayList();
@@ -141,9 +138,10 @@ public class CVSProvider implements ICVSProvider {
 				localOptions.add(module);
 				module = sourceModule;
 			}
+			// XXX Needs to be updated for date tags
 			if (tag != null) {
 				localOptions.add(Client.TAG_OPTION );
-				localOptions.add(tag);
+				localOptions.add(tag.getName());
 			}
 				
 			// Perform a checkout
@@ -189,7 +187,7 @@ public class CVSProvider implements ICVSProvider {
 			
 		CVSRepositoryLocation location = buildRepository(configuration, false);
 		try {
-			checkout(location, project, configuration.getProperty("module"), configuration.getProperty("tag"), monitor);
+			checkout(location, project, configuration.getProperty("module"), getTagFromProperties(configuration), monitor);
 		} catch (TeamException e) {
 			// The checkout may have triggered password caching
 			// Therefore, if this is a newly created location, we want to clear its cache
@@ -336,7 +334,7 @@ public class CVSProvider implements ICVSProvider {
 		CVSRepositoryLocation location = buildRepository(configuration, false);
 		try {
 			importProject(location, project, configuration, monitor);
-			checkout(location, project, configuration.getProperty("module"), configuration.getProperty("tag"), monitor);
+			checkout(location, project, configuration.getProperty("module"), getTagFromProperties(configuration), monitor);
 		} catch (TeamException e) {
 			// The checkout may have triggered password caching
 			// Therefore, if this is a newly created location, we want to clear its cache
@@ -349,6 +347,15 @@ public class CVSProvider implements ICVSProvider {
 		addToCache(location);
 	}
 		
+	private CVSTag getTagFromProperties(Properties configuration) {
+		String date = configuration.getProperty("date");
+		String tagName = configuration.getProperty("tag");
+		if (tagName == null)
+			tagName = configuration.getProperty("branch");
+		if (tagName == null)
+			return CVSTag.DEFAULT;
+		return new CVSTag(tagName, CVSTag.BRANCH);
+	}
 	public void importProject(
 		ICVSRepositoryLocation location,
 		IProject project,
@@ -357,7 +364,7 @@ public class CVSProvider implements ICVSProvider {
 		throws TeamException {
 			
 			// Get the location of the workspace root
-			IManagedFolder root = Client.getManagedFolder(project.getLocation().toFile());
+			ICVSFolder root = Client.getManagedFolder(project.getLocation().toFile());
 		
 			// Create the meta-file
 			ProjectDescriptionManager.writeProjectDescription(project, monitor);
@@ -406,7 +413,7 @@ public class CVSProvider implements ICVSProvider {
 					null);
 			
 			// NOTE: we should check to see the results of the import
-	}
+		}
 
 	public static void initialize() {
 		if (instance == null)

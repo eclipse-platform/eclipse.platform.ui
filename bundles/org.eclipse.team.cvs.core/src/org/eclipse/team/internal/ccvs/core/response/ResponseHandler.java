@@ -10,8 +10,9 @@ import java.io.PrintStream;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.connection.Connection;
-import org.eclipse.team.internal.ccvs.core.resources.api.FolderProperties;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
+import org.eclipse.team.internal.ccvs.core.resources.CVSEntryLineTag;
+import org.eclipse.team.internal.ccvs.core.resources.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
 /**
@@ -36,7 +37,7 @@ public abstract class ResponseHandler implements IResponseHandler {
 	 */
 	public void handle(Connection connection, 
 							PrintStream messageOutput,
-							IManagedFolder mRoot,
+							ICVSFolder mRoot,
 							IProgressMonitor monitor) 
 							throws CVSException {
 		
@@ -49,7 +50,7 @@ public abstract class ResponseHandler implements IResponseHandler {
 	 */
 	public void handle(Connection connection, 
 							PrintStream messageOutput,
-							IManagedFolder mRoot) 
+							ICVSFolder mRoot) 
 							throws CVSException {
 		throw new UnsupportedOperationException();
 	}
@@ -62,7 +63,7 @@ public abstract class ResponseHandler implements IResponseHandler {
 	 * Otherwise these parameters are ignored.
 	 */
 	protected static void createFolder(Connection connection,
-										IManagedFolder mRoot,
+										ICVSFolder mRoot,
 										String local,
 										String remote,
 										String tag,
@@ -71,30 +72,30 @@ public abstract class ResponseHandler implements IResponseHandler {
 										boolean setStatic) 
 										throws CVSException {
 		
-		FolderProperties folderProperties;
-		IManagedFolder mFolder;
+		FolderSyncInfo info;
+		ICVSFolder mFolder;
 		
 		mFolder = mRoot.getFolder(local);
 		
 		if (mFolder.exists() && mFolder.isCVSFolder()) {
-			folderProperties = mFolder.getFolderInfo();	
+			info = mFolder.getFolderSyncInfo();	
 		} else {
 			mFolder.mkdir();
-			folderProperties = new FolderProperties();
-			folderProperties.setRoot(connection.getCVSRoot().getLocation());
-			folderProperties.setRepository(Util.getRelativePath(connection.getRootDirectory(),
+			info = new FolderSyncInfo();
+			info.setRoot(connection.getCVSRoot().getLocation());
+			info.setRepository(Util.getRelativePath(connection.getRootDirectory(),
 									  							remote));
 		}
 		
-		if (setTag) {
-			folderProperties.setTag(tag);
+		if ((setTag) && (tag != null)) {
+			info.setTag(new CVSEntryLineTag(tag));
 		}
 		
 		if (setStatic) {
-			folderProperties.setStaticFolder(staticFolder);
+			info.setIsStatic(staticFolder);
 		}
 		
-		mFolder.setFolderInfo(folderProperties);
+		mFolder.setFolderSyncInfo(info);
 	}
 }
 

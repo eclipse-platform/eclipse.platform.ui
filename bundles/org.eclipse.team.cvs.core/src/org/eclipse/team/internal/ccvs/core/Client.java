@@ -9,40 +9,19 @@ import java.io.File;
 import java.io.PrintStream;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.commands.CommandDispatcher;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.Connection;
 import org.eclipse.team.internal.ccvs.core.requests.RequestSender;
-import org.eclipse.team.internal.ccvs.core.resources.ResourceFactory;
-import org.eclipse.team.internal.ccvs.core.resources.api.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFile;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedResource;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.resources.LocalFile;
+import org.eclipse.team.internal.ccvs.core.resources.LocalFolder;
 import org.eclipse.team.internal.ccvs.core.response.IResponseHandler;
 import org.eclipse.team.internal.ccvs.core.response.ResponseDispatcher;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
-/**
- * An generic cvs client that can execute a request and can handle
- * responses. It is called like the according to the specification 
- * of cvs-command line clients. You have to give the execute method
- * the command, all the parameters, a stream to pipe the messages from
- * the server to and a monitor.<br>
- * After the client has established a connection to a server it
- * uses the client / server negotiation protcol to tell the server
- * which response can be handled by the client. Additionally the
- * server tells the client which requests can the handle by the
- * server. The list of responses that can be handled by the client
- * is determined by the registered handlers.<br>
- * <p>
- * Although not documented, the client must have a handler for at
- * least the following responses: "ok", "error", "Checked-in",
- * "Updated", "Merged", "Removed", "M" text and "E" text.
- * <p>
- * The client installs handlers for all must responses.
- */
 public class Client {
 
 	public static final String CURRENT_LOCAL_FOLDER = ".";
@@ -115,7 +94,7 @@ public class Client {
 						String[] globalOptions, 
 						String[] localOptions, 
 						String[] arguments,
-						IManagedFolder mRoot,
+						ICVSFolder mRoot,
 						IProgressMonitor monitor, 
 						PrintStream messageOut,
 						Connection connection,
@@ -163,13 +142,13 @@ public class Client {
 	 * @param repository represents an abstract cvs-repository. If it is null
 	 * 		   connection-infrmation is searced in the globalOptions and in the
 	 * 		   filesystem
-	 * @see Client#execute(String,String[],String[],String[],IManagedFolder,IProgressMonitor,PrintStream,Connection,IResponseHandler[],boolean)
+	 * @see Client#execute(String,String[],String[],String[],ICVSFolder,IProgressMonitor,PrintStream,Connection,IResponseHandler[],boolean)
 	 */
 	public static void execute(String request, 
 						String[] globalOptions, 
 						String[] localOptions, 
 						String[] arguments,
-						IManagedFolder mRoot, 
+						ICVSFolder mRoot, 
 						IProgressMonitor monitor,
 						PrintStream messageOut,
 						CVSRepositoryLocation repository,
@@ -209,14 +188,14 @@ public class Client {
 	 * way to call the client. It is equal to the call:<br>
 	 * execute(request,globalOptions,localOptions,arguments,mRoot,monitor,messageOut,null,null);<br>
 	 * 
-	 * @see Client#execute(String,String[],String[],String[],IManagedFolder,IProgressMonitor,PrintStream,CVSRepositoryLocation,IResponseHandler[])
-	 * @see Client#execute(String,String[],String[],String[],IManagedFolder,IProgressMonitor,PrintStream,Connection,IResponseHandler[],boolean)
+	 * @see Client#execute(String,String[],String[],String[],ICVSFolder,IProgressMonitor,PrintStream,CVSRepositoryLocation,IResponseHandler[])
+	 * @see Client#execute(String,String[],String[],String[],ICVSFolder,IProgressMonitor,PrintStream,Connection,IResponseHandler[],boolean)
 	 */
 	public static void execute(String request, 
 						String[] globalOptions, 
 						String[] localOptions, 
 						String[] arguments,
-						IManagedFolder mRoot,
+						ICVSFolder mRoot,
 						IProgressMonitor monitor, 
 						PrintStream messageOut) 
 						throws CVSException {
@@ -231,66 +210,19 @@ public class Client {
 			null,
 			null);
 	}
-	
-	/**
-	 * @see Client#(String,String[],String[],String[],ICVSFolder,IProgressMonitor,OutputStream,Connection) 
-	 */
-	public static void execute(String request, 
-						String[] globalOptions, 
-						String[] localOptions, 
-						String[] arguments,
-						ICVSFolder root,
-						IProgressMonitor monitor, 
-						PrintStream messageOut) 
-						throws CVSException {
-		execute(request,
-				globalOptions,
-				localOptions,
-				arguments,
-				ResourceFactory.getManaged(root),
-				monitor,
-				messageOut);
-	}
-
 
 	/**
-	 * @see Client#(String,String[],String[],String[],ICVSFolder,IProgressMonitor,OutputStream,Connection) 
-	 */
-	public static void execute(String request, 
-						String[] globalOptions, 
-						String[] localOptions, 
-						String[] arguments,
-						File root,
-						IProgressMonitor monitor, 
-						PrintStream messageOut) 
-						throws CVSException {
-		execute(request,
-				globalOptions,
-				localOptions,
-				arguments,
-				ResourceFactory.getManagedFolder(root),
-				monitor,
-				messageOut);
-	}
-	
-	/**
-	 * Gives you an ManagedFolder for a absolut path in
-	 * platform dependend style
+	 * Gives you an LocalFolder for a absolute path in
+	 * platform dependend style.
 	 * 
 	 * @throws CVSException on path.indexOf("CVS") != -1
 	 * @throws CVSException on internal IOExeption
 	 */
-	public static IManagedFolder getManagedFolder(String folder) throws CVSException {
-		return ResourceFactory.getManagedFolder(folder);
+	public static ICVSFolder getManagedFolder(File folder) throws CVSException {
+		return new LocalFolder(folder);
 	}
-	public static IManagedFolder getManagedFolder(File folder) throws CVSException {
-		return ResourceFactory.getManagedFolder(folder);
-	}
-	public static IManagedResource getManagedResource(File file) throws CVSException {
-		return ResourceFactory.getManaged(file);
-	}
-	public static IManagedFile getManagedFile(File file) throws CVSException {
-		return ResourceFactory.getManagedFile(file);
+	public static ICVSFile getManagedFile(File file) throws CVSException {
+		return new LocalFile(file);
 	}
 	
 	/**
@@ -302,7 +234,7 @@ public class Client {
 	private static void initialize(ResponseDispatcher responseDispatcher,
 							RequestSender requestSender,
 							Connection connection, 
-							IManagedFolder mRoot, 
+							ICVSFolder mRoot, 
 							IProgressMonitor monitor,
 							PrintStream messageOut) 
 							throws CVSException {
@@ -338,7 +270,7 @@ public class Client {
 	 * This has to be rewritten in a nicer style.
 	 */
 	private static CVSRepositoryLocation getRepository(String[] globalOptions, 
-										IManagedFolder mFolder) 
+										ICVSFolder mFolder) 
 										throws CVSException {
 		
 		String repoName = null;
@@ -353,7 +285,7 @@ public class Client {
 		
 		// look if we have got an root-entrie in the root-folder
 		if (repoName == null && mFolder.exists() && mFolder.isCVSFolder()) {
-			repoName = mFolder.getFolderInfo().getRoot();
+			repoName = mFolder.getFolderSyncInfo().getRoot();
 		}
 		
 		if (repoName == null) {

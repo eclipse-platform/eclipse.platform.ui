@@ -22,5 +22,17 @@ public interface ICVSRemoteResource extends IRemoteResource {
 	 * Return the repository
 	 */
 	public ICVSRepositoryLocation getRepository();
+	
+	/**
+	 * Returns the parent of this remote resource or <code>null</code> if the
+	 * remote resource does not have a parent.
+	 */
+	public ICVSRemoteResource getRemoteParent();
+	
+	/**
+	 * Does the remote resource represented by this handle exist on the server. This
+	 * method may contact the server and be long running.
+	 */
+	public boolean exists();
 }
 

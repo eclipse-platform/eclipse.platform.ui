@@ -43,7 +43,7 @@ public interface ILogEntry extends IAdaptable {
 	/**
 	 * Get the tags associated with the revision
 	 */
-	public ICVSTag[] getTags();
+	public CVSTag[] getTags();
 	
 	/**
 	 * Get the remote file for this entry

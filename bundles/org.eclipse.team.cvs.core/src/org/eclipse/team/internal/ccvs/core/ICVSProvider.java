@@ -37,7 +37,7 @@ public interface ICVSProvider {
 	 * After the successful completion of this method, the project will exist
 	 * and be open.
 	 */
-	public void checkout(ICVSRepositoryLocation repository, IProject project, String sourceModule, String tag, IProgressMonitor monitor) throws TeamException;
+	public void checkout(ICVSRepositoryLocation repository, IProject project, String sourceModule, CVSTag tag, IProgressMonitor monitor) throws TeamException;
 
 	/**
 	 * Checkout a CVS module.

@@ -13,8 +13,8 @@ import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.requests.RequestSender;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFile;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.util.StringMatcher;
 
 /**
@@ -45,7 +45,7 @@ class ImportStructureVisitor extends AbstractStructureVisitor {
 	 */
 	public ImportStructureVisitor(
 		RequestSender requestSender,
-		IManagedFolder mRoot,
+		ICVSFolder mRoot,
 		IProgressMonitor monitor,
 		String mode,
 		String[] ignores,
@@ -105,9 +105,9 @@ class ImportStructureVisitor extends AbstractStructureVisitor {
 	}	
 	
 	/**
-	 * @see IManagedVisitor#visitFile(IManagedFile)
+	 * @see ICVSResourceVisitor#visitFile(IManagedFile)
 	 */
-	public void visitFile(IManagedFile mFile) throws CVSException {
+	public void visitFile(ICVSFile mFile) throws CVSException {
 		
 		String mode = this.mode;
 		
@@ -124,9 +124,9 @@ class ImportStructureVisitor extends AbstractStructureVisitor {
 	}
 
 	/**
-	 * @see IManagedVisitor#visitFolder(IManagedFolder)
+	 * @see ICVSResourceVisitor#visitFolder(ICVSFolder)
 	 */
-	public void visitFolder(IManagedFolder mFolder) throws CVSException {
+	public void visitFolder(ICVSFolder mFolder) throws CVSException {
 		
 		if (ignoreMatcher != null && ignoreMatcher.match(mFolder.getName())) {
 			return;

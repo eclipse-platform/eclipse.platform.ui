@@ -10,9 +10,9 @@ import java.io.PrintStream;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.connection.Connection;
-import org.eclipse.team.internal.ccvs.core.resources.api.FileProperties;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFile;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
+import org.eclipse.team.internal.ccvs.core.resources.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 
 /**
  * Response to a "Checked-in" form the server.
@@ -34,7 +34,7 @@ class CheckedIn extends ResponseHandler {
 	public void handle(
 		Connection connection,
 		PrintStream messageOutput,
-		IManagedFolder mRoot)
+		ICVSFolder mRoot)
 		throws CVSException {
 
 		String entryLine;
@@ -43,9 +43,9 @@ class CheckedIn extends ResponseHandler {
 		String fileName;
 		boolean changeFile;
 		
-		IManagedFile mFile;
-		IManagedFolder mParent;
-		FileProperties fileInfo;
+		ICVSFile mFile;
+		ICVSFolder mParent;
+		ResourceSyncInfo fileInfo;
 		
 		// Read the info associated with the Updated response
 		localDirectory = connection.readLine();
@@ -65,7 +65,7 @@ class CheckedIn extends ResponseHandler {
 		// haven't got anything from the server we do not need
 		// to. Saveing permissions is only cashing information
 		// from the server.
-		changeFile = mFile.getFileInfo() == null;
+		changeFile = mFile.getSyncInfo() == null;
 		
 		// If the file is not on disk then we have got an removed
 		// file and therefore a file that is dirty after the check-in
@@ -73,20 +73,19 @@ class CheckedIn extends ResponseHandler {
 		changeFile = changeFile || !mFile.exists();
 		
 		if (changeFile) {
-			fileInfo = new FileProperties();
+			fileInfo = new ResourceSyncInfo(entryLine, null);
 		} else {
-			fileInfo = mFile.getFileInfo();
+			fileInfo = mFile.getSyncInfo();
+			fileInfo.setEntryLine(entryLine);
 		}
 
-		fileInfo.setEntryLine(entryLine);
-		
 		if (changeFile) {
 			fileInfo.setTimeStamp(DUMMY_TIMESTAMP);
 		} else {
 			fileInfo.setTimeStamp(mFile.getTimeStamp());
 		}			
 
-		mFile.setFileInfo(fileInfo);
+		mFile.setSyncInfo(fileInfo);
 		
 		Assert.isTrue(changeFile == mFile.isDirty());
 

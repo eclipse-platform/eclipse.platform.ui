@@ -5,16 +5,16 @@ package org.eclipse.team.internal.ccvs.core.commands;
  * All Rights Reserved.
  */
 
-import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Client;
 import org.eclipse.team.internal.ccvs.core.requests.RequestSender;
-import org.eclipse.team.internal.ccvs.core.resources.api.FolderProperties;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedResource;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedVisitor;
+import org.eclipse.team.internal.ccvs.core.resources.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSResourceVisitor;
 import org.eclipse.team.internal.ccvs.core.response.ResponseDispatcher;
+import org.eclipse.team.internal.ccvs.core.util.Assert;
 
 class Add extends Command {
 
@@ -47,7 +47,7 @@ class Add extends Command {
 	 */
 	protected boolean canTraverse() {
 
-		IManagedResource[] mWorkResources;		
+		ICVSResource[] mWorkResources;		
 
 		try {
 			mWorkResources = getWorkResources();
@@ -67,8 +67,8 @@ class Add extends Command {
 	 */
 	protected void sendRequestsToServer(IProgressMonitor monitor) throws CVSException {
 		
-		IManagedResource[] mWorkResources;
-		IManagedVisitor vistor;
+		ICVSResource[] mWorkResources;
+		ICVSResourceVisitor vistor;
 		
 		Assert.isTrue(getArguments().length != 0); 
 		
@@ -94,9 +94,8 @@ class Add extends Command {
 	 */
 	protected void finished(boolean succsess) throws CVSException {
 				
-		IManagedFolder mFolder;
-		IManagedResource[] mWorkResources;
-		FolderProperties folderInfo;
+		ICVSFolder mFolder;
+		ICVSResource[] mWorkResources;
 		
 		mWorkResources = getWorkResources();
 				
@@ -107,13 +106,14 @@ class Add extends Command {
 		for (int i=0; i<mWorkResources.length; i++) {
 			if (mWorkResources[i].isFolder()) {
 				
-				mFolder = (IManagedFolder) mWorkResources[i];
+				mFolder = (ICVSFolder) mWorkResources[i];
 				
-				folderInfo = mFolder.getParent().getFolderInfo();
+				FolderSyncInfo folderInfo = mFolder.getParent().getFolderSyncInfo();
+				
 				folderInfo.setRepository(folderInfo.getRepository() + 
 										Client.SERVER_SEPARATOR + mFolder.getName());
-				mFolder.setFolderInfo(folderInfo);
 				
+				mFolder.setFolderSyncInfo(folderInfo);				
 			}
 		}
 

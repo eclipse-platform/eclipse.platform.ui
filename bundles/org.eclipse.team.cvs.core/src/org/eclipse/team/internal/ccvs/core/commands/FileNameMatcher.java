@@ -5,22 +5,22 @@ package org.eclipse.team.internal.ccvs.core.commands;
  * All Rights Reserved.
  */
 
-import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.resources.api.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.resources.api.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.util.Assert;
+import org.eclipse.team.internal.ccvs.core.util.FileUtil;
 import org.eclipse.team.internal.ccvs.core.util.StringMatcher;
 
 /**
  * A FileNameMatcher associates a String with a String pattern
  * (e.g. a filename).
+ * 
+ * XXX How is this classed used, and is it a general .cvsignore
+ * mechanism or a generic filename matcher?
  */
 public class FileNameMatcher {
 	
@@ -41,9 +41,10 @@ public class FileNameMatcher {
 		for (int i = 0; i < patterns.length; i++) {
 			register(patterns[i],TRUE);
 		}
+		register("CVS", TRUE);
 	}
 	
-	void register(String pattern, String result) {
+	public void register(String pattern, String result) {
 		
 		Assert.isTrue(matchers.size() == results.size());
 		
@@ -81,13 +82,12 @@ public class FileNameMatcher {
 	 * Return a file name matcher build from the .cvsignore file
 	 * in the provided directory or null if no such file exists
 	 */
-	public static FileNameMatcher getIgnoreMatcherFor(ICVSFolder folder) throws CVSException, IOException {
-		ICVSFile cvsignore = folder.createFile(IGNORE_FILE);
-		if (!cvsignore.exists())
-			return null;
-		return new FileNameMatcher(cvsignore.getContent());
-
-	}
-
-	
+	public static FileNameMatcher getIgnoreMatcherFor(File folder) throws CVSException {		
+		File cvsignore = new File(folder, IGNORE_FILE);
+		if (!cvsignore.exists()) {
+			return new FileNameMatcher(new String[0]);			
+		} else {
+			return new FileNameMatcher(FileUtil.readLines(cvsignore));
+		}
+	}	
 }

@@ -17,7 +17,7 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.connection.Connection;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 
 /**
  * The ResponseContainer manages the respones of the server and
@@ -131,7 +131,7 @@ public class ResponseDispatcher {
 	public void handle(String responseToken,
 							Connection connection, 
 							PrintStream messageOutput,
-							IManagedFolder mRoot,
+							ICVSFolder mRoot,
 							IProgressMonitor monitor) 
 							throws CVSException {
 		
@@ -193,7 +193,7 @@ public class ResponseDispatcher {
 	 * Does the work with the monitor
 	 */	
 	public void manageResponse(IProgressMonitor monitor, 
-								IManagedFolder mRoot,
+								ICVSFolder mRoot,
 								PrintStream messageOutput) 
 								throws CVSException {
 

@@ -12,7 +12,7 @@ import org.eclipse.team.internal.ccvs.core.CVSDiffException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.requests.RequestSender;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.response.ResponseDispatcher;
 
 class Diff extends AbstractMessageCommand {
@@ -35,7 +35,7 @@ class Diff extends AbstractMessageCommand {
 		String[] globalOptions, 
 		String[] localOptions, 
 		String[] arguments, 
-		IManagedFolder mRoot,
+		ICVSFolder mRoot,
 		IProgressMonitor monitor, 
 		PrintStream messageOut) 
 			throws CVSException {

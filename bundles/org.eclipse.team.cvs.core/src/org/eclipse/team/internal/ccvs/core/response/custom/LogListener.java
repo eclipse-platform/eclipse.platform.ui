@@ -7,6 +7,7 @@ package org.eclipse.team.internal.ccvs.core.response.custom;
  
 import java.util.List;
 
+import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 
 public class LogListener implements ILogListener {

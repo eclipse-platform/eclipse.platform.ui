@@ -11,13 +11,13 @@ import java.util.Set;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.requests.RequestSender;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFile;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 
 /**
  * This visitor send the fileStructure to the requestSender.
  * 
- * If accepted by an IManagedResource:<br>
+ * If accepted by an ICVSResource:<br>
  * Send all Directory under mResource as arguments to the server<br>
  * If accepted by a file:<br>
  * Send the file to the server<br>
@@ -44,7 +44,7 @@ class FileStructureVisitor extends AbstractStructureVisitor {
  	 	to send in it
 	 */	
 	public FileStructureVisitor(RequestSender requestSender,
-									IManagedFolder mRoot,
+									ICVSFolder mRoot,
 									IProgressMonitor monitor,
 									boolean modifiedOnly,
 									boolean emptyFolders) {
@@ -57,9 +57,9 @@ class FileStructureVisitor extends AbstractStructureVisitor {
 	}
 	
 	/**
-	 * @see IManagedVisitor#visitFile(IManagedFile)
+	 * @see ICVSResourceVisitor#visitFile(IManagedFile)
 	 */
-	public void visitFile(IManagedFile mFile) throws CVSException {
+	public void visitFile(ICVSFile mFile) throws CVSException {
 		
 		// We assume, that acceptChildren() does call all the files
 		// and then the folder or first all the folders and then the
@@ -72,12 +72,12 @@ class FileStructureVisitor extends AbstractStructureVisitor {
 	}
 
 	/**
-	 * @see IManagedVisitor#visitFolder(IManagedFolder)
+	 * @see ICVSResourceVisitor#visitFolder(ICVSFolder)
 	 */
-	public void visitFolder(IManagedFolder mFolder) throws CVSException {
+	public void visitFolder(ICVSFolder mFolder) throws CVSException {
 		
-		IManagedFile[] files;
-		IManagedFolder[] folders;
+		ICVSFile[] files;
+		ICVSFolder[] folders;
 		
 		if (emptyFolders) {
 			// If we want to send empty folder, that just send it when
@@ -114,7 +114,7 @@ class FileStructureVisitor extends AbstractStructureVisitor {
 		}
 	}
 	
-	private void sendFile(IManagedFile mFile) throws CVSException {
+	private void sendFile(ICVSFile mFile) throws CVSException {
 		
 		// Only if we know about the file, it is added to the
 		// list of sended files, Questionables do not go into
@@ -126,22 +126,22 @@ class FileStructureVisitor extends AbstractStructureVisitor {
 		// Send the folder if it hasn't been send so far
 		sendFolder(mFile.getParent());
 		
-		if (mFile.getFileInfo() == null) {
+		if (mFile.getSyncInfo() == null) {
 			sendFile(mFile,true,null);
 		} else {
-			sendFile(mFile,true,mFile.getFileInfo().getKeywordMode());
+			sendFile(mFile,true,mFile.getSyncInfo().getKeywordMode());
 		}
 	}
 	
-	private void sendFolder(IManagedFolder mFolder) throws CVSException{
+	private void sendFolder(ICVSFolder mFolder) throws CVSException{
 		sendFolder(mFolder,false,true);
 	}
 	
 	/**
 	 * Return all the files that have been send to the server
 	 */
-	public IManagedFile[] getSentFiles() {
-		return (IManagedFile[]) sentFiles.toArray(new IManagedFile[sentFiles.size()]);
+	public ICVSFile[] getSentFiles() {
+		return (ICVSFile[]) sentFiles.toArray(new ICVSFile[sentFiles.size()]);
 	}
 }
 

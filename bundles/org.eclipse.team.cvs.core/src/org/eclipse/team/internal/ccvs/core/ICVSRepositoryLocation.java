@@ -60,7 +60,7 @@ public interface ICVSRepositoryLocation  extends IAdaptable {
 	 * 
 	 * @param tag the context in which to return the members (e.g. branch or version).
 	 */
-	public ICVSRemoteResource[] members(String tag, IProgressMonitor progress)  throws CVSException;
+	public ICVSRemoteResource[] members(CVSTag tag, IProgressMonitor progress)  throws CVSException;
 	
 	/**
 	 * Return the conection timeout value in milliseconds.

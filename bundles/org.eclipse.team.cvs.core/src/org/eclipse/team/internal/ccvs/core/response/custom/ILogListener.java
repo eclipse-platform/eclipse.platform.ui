@@ -1,5 +1,5 @@
 package org.eclipse.team.internal.ccvs.core.response.custom;
-import org.eclipse.team.internal.ccvs.core.response.*;
+import org.eclipse.team.ccvs.core.CVSTag;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.

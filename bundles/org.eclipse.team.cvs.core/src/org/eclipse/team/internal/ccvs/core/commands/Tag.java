@@ -8,7 +8,7 @@ package org.eclipse.team.internal.ccvs.core.commands;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.requests.RequestSender;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedResource;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.response.ResponseDispatcher;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 
@@ -48,7 +48,7 @@ public class Tag extends Command {
 					  getRoot().isCVSFolder()); 
 		
 		// Get the folders we want to work on, ignoring the first argument
-		IManagedResource[] mWorkResources = getWorkResources(1);
+		ICVSResource[] mWorkResources = getWorkResources(1);
 		
 		// Send all folders that are already managed to the server
 		sendFileStructure(mWorkResources,monitor,false,false);

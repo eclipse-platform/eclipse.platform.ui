@@ -10,7 +10,7 @@ import java.io.PrintStream;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.connection.Connection;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 
 /**
  * The UnsupportedHandler throws an error whenever
@@ -39,7 +39,7 @@ class UnsupportedHandler extends ResponseHandler {
 	public void handle(
 		Connection connection,
 		PrintStream monitor,
-		IManagedFolder mRoot)
+		ICVSFolder mRoot)
 		throws CVSException {
 		throw new CVSException(Policy.bind("UnsupportedHandler.message"));
 	}

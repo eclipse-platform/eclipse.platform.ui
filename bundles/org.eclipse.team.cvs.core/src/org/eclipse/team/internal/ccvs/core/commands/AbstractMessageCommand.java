@@ -9,7 +9,7 @@ import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.requests.RequestSender;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedResource;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.response.ResponseDispatcher;
 
 /**
@@ -37,12 +37,8 @@ abstract class AbstractMessageCommand extends Command {
 	protected void sendRequestsToServer(IProgressMonitor monitor)
 		throws CVSException {
 			
-		IManagedResource[] mWorkResources;
+		ICVSResource[] mWorkResources;
 
-		// NOTE: We could save ourselves a bit if work by getting
-		// the resources first and passing them as arguments
-		Assert.isTrue(allResourcesManaged());
-		
 		// Get the folders we want to work on
 		mWorkResources = getWorkResources();
 		

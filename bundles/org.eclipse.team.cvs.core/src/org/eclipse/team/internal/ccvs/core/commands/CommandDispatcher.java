@@ -12,7 +12,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.requests.RequestSender;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.response.ResponseDispatcher;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 
@@ -88,7 +88,7 @@ public class CommandDispatcher {
 					String[] globalOptions, 
 					String[] localOptions, 
 					String[] arguments, 
-					IManagedFolder mRoot,
+					ICVSFolder mRoot,
 					IProgressMonitor monitor, 
 					PrintStream messageOut) throws CVSException {
 		

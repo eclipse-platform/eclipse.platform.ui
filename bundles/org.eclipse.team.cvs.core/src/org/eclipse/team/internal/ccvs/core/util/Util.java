@@ -243,30 +243,6 @@ public class Util {
 		return result.toString();
 	}
 	
-//	/**
-//	 * not used
-//	 */
-//	public static IProgressMonitor monitorFor(IProgressMonitor monitor) {
-//		if (monitor == null)
-//			return new NullProgressMonitor();
-//		return monitor;
-//	}
-//
-//	/**
-//	 * not used
-//	 */
-//	public static IProgressMonitor subMonitorFor(
-//		IProgressMonitor monitor,
-//		int ticks,
-//		int style) {
-//		if (monitor == null)
-//			return new NullProgressMonitor();
-//		if (monitor instanceof NullProgressMonitor)
-//			return monitor;
-//		return new SubProgressMonitor(monitor, ticks, style);
-//	}
-
-
 	/**
 	 * Get the extention of the path of resource
 	 * relative to the path of root

@@ -11,32 +11,32 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Client;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.Connection;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderTree;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteResource;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFile;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
+import org.eclipse.team.internal.ccvs.core.resources.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.response.IResponseHandler;
 import org.eclipse.team.internal.ccvs.core.response.custom.IStatusListener;
 import org.eclipse.team.internal.ccvs.core.response.custom.IUpdateMessageListener;
 import org.eclipse.team.internal.ccvs.core.response.custom.StatusMessageHandler;
 import org.eclipse.team.internal.ccvs.core.response.custom.UpdateErrorHandler;
 import org.eclipse.team.internal.ccvs.core.response.custom.UpdateMessageHandler;
-import org.omg.CORBA.UNKNOWN;
 
 /*
  * This class is responsible for building a remote tree that shows the repository
@@ -56,11 +56,11 @@ public class RemoteFolderTreeBuilder {
 	
 	private List errors;
 	
-	private IManagedFolder root;
+	private ICVSFolder root;
 	private RemoteFolderTree remoteRoot;
 	private CVSRepositoryLocation repository;
 	
-	private String tag;
+	private CVSTag tag;
 	
 	private String[] updateLocalOptions;
 	
@@ -71,7 +71,7 @@ public class RemoteFolderTreeBuilder {
 	
 	private static Map EMPTY_MAP = new HashMap();
 	
-	private RemoteFolderTreeBuilder(CVSRepositoryLocation repository, IManagedFolder root, String tag) {
+	private RemoteFolderTreeBuilder(CVSRepositoryLocation repository, ICVSFolder root, CVSTag tag) {
 		this.repository = repository;
 		this.root = root;
 		this.tag = tag;
@@ -82,18 +82,18 @@ public class RemoteFolderTreeBuilder {
 		// Build the local options
 		List localOptions = new ArrayList();
 		localOptions.add("-d");
-		if ((tag != null) && (!tag.equals("HEAD"))) {
+		if ((tag != null) && (tag.getType() != tag.HEAD)) {
 			localOptions.add(Client.TAG_OPTION);
-			localOptions.add(tag);
+			localOptions.add(tag.getName());
 		}
 		updateLocalOptions = (String[])localOptions.toArray(new String[localOptions.size()]);
 	}
 	
-	public static RemoteFolderTree buildRemoteTree(CVSRepositoryLocation repository, IContainer root, String tag, IProgressMonitor monitor) throws CVSException {
+	public static RemoteFolderTree buildRemoteTree(CVSRepositoryLocation repository, IContainer root, CVSTag tag, IProgressMonitor monitor) throws CVSException {
 		return buildRemoteTree(repository, Client.getManagedFolder(root.getLocation().toFile()), tag, monitor);
 	}
 	
-	public static RemoteFolderTree buildRemoteTree(CVSRepositoryLocation repository, IManagedFolder root, String tag, IProgressMonitor monitor) throws CVSException {
+	public static RemoteFolderTree buildRemoteTree(CVSRepositoryLocation repository, ICVSFolder root, CVSTag tag, IProgressMonitor monitor) throws CVSException {
 		RemoteFolderTreeBuilder builder = new RemoteFolderTreeBuilder(repository, root, tag);
  		return builder.buildTree(monitor);
 	}
@@ -102,12 +102,11 @@ public class RemoteFolderTreeBuilder {
 		Connection connection = repository.openConnection();
 		try {
 			fetchDelta(connection, monitor);
-			remoteRoot = new RemoteFolderTree(repository, new Path(root.getFolderInfo().getRepository()), tag);
+			remoteRoot = new RemoteFolderTree(null, repository, new Path(root.getFolderSyncInfo().getRepository()), tag);
 			buildRemoteTree(connection, root, remoteRoot, Path.EMPTY, monitor);
 			fetchFileRevisions(connection, remoteRoot, (String[])changedFiles.toArray(new String[changedFiles.size()]), monitor);
 			return remoteRoot;
 		} catch (CVSException e) {
-			// throw CVSTeamProvider.wrapException(e, errors);
 			if (!errors.isEmpty()) {
 				PrintStream out = getPrintStream();
 				for (int i=0;i<errors.size();i++)
@@ -122,66 +121,62 @@ public class RemoteFolderTreeBuilder {
 	/*
 	 * Build the remote tree from the local tree and the recorded deltas.
 	 * 
-	 * If the remote is null, it is created from the local.
-	 * If the local is null, the remote is used.
-	 * 
 	 * The localPath is used to retrieve deltas from the recorded deltas
 	 * 
 	 */
-	private RemoteFolderTree buildRemoteTree(Connection connection, IManagedFolder local, RemoteFolderTree remote, IPath localPath, IProgressMonitor monitor) throws CVSException {
-		
-		// Pre-create the resulting tree so it can be used as the parent in RemoteFile creation
-		RemoteFolderTree tree;
-		if (remote == null)
-			tree = new RemoteFolderTree(repository, new Path(local.getFolderInfo().getRepository()), tag);
-		else
-			tree = remote;
+	private void buildRemoteTree(Connection connection, ICVSFolder local, RemoteFolderTree remote, IPath localPath, IProgressMonitor monitor) throws CVSException {
 		
 		// Create a map to contain the created children
 		Map children = new HashMap();
 		
-		// Check if we have a local copy corresponding to the remote folder
-		Map deltas;
+		// If there's no corresponding local resource then we need to fetch its contents in order to populate the deltas
 		if (local == null) {
-			// This is a new folder. We need to fetch its contents in order to populate the deltas
 			fetchNewDirectory(connection, remote, localPath, monitor);
-			deltas = (Map)fileDeltas.get(localPath);
-			if (deltas == null)
-				deltas = EMPTY_MAP;
-		} else {
-			// This is an existing folder. The deltas will already be populated
-			deltas = (Map)fileDeltas.get(localPath);
-			if (deltas == null)
-				deltas = EMPTY_MAP;
+		}
+		
+		// Fetch the delta's for the folder
+		Map deltas = deltas = (Map)fileDeltas.get(localPath);
+		if (deltas == null)
+			deltas = EMPTY_MAP;
+		
+		// If there is a local, use the local children to start buidling the remote children
+		if (local != null) {
 			// Build the child folders corresponding to local folders
-			IManagedFolder[] folders = local.getFolders();
+			ICVSFolder[] folders = local.getFolders();
 			for (int i=0;i<folders.length;i++) {
 				if (deltas.get(folders[i].getName()) != DELETED)
-					children.put(folders[i].getName(), new RemoteFolderTree(repository, new Path(folders[i].getFolderInfo().getRepository()), tag));
+					children.put(folders[i].getName(), new RemoteFolderTree(remote, repository, new Path(folders[i].getFolderSyncInfo().getRepository()), tag));
 			}
 			// Build the child files corresponding to local files
-			IManagedFile[] files = local.getFiles();
+			ICVSFile[] files = local.getFiles();
 			for (int i=0;i<files.length;i++) {
-				if (deltas.get(files[i].getName()) != DELETED)
-					children.put(files[i].getName(), new RemoteFile(tree, files[i].getName(), files[i].getFileInfo().getVersion()));
+				ICVSFile file = files[i];
+				if (deltas.get(file.getName()) != DELETED) {
+					ResourceSyncInfo info = file.getSyncInfo();
+					// if there is no sync info then there isn't a remote file for this local file on the
+					// server.
+					if(info!=null) {
+						children.put(file.getName(), new RemoteFile(remote, file.getName(), info.getRevision(), tag));
+					}
+				}
 			}
 		}
 		
-		// Build the children for new resources from the deltas
+		// Build the children for new or out-of-date resources from the deltas
 		Iterator i = deltas.keySet().iterator();
 		while (i.hasNext()) {
 			String name = (String)i.next();
 			String revision = (String)deltas.get(name);
 			if (revision == FOLDER) {
-				// NOTE: getRemotePath() should just return an IPath
-				children.put(name, new RemoteFolderTree(repository, new Path(tree.getRemotePath()).append(name), tag));
+				// XXX should getRemotePath() return an IPath instead of a String?
+				children.put(name, new RemoteFolderTree(remote, repository, new Path(remote.getRemotePath()).append(name), tag));
 			} else if (revision == ADDED) {
-				children.put(name, new RemoteFile(tree, name, UNKNOWN));
+				children.put(name, new RemoteFile(remote, name, tag));
 			} else if (revision == UNKNOWN) {
 				// This should have been created from the local resources.
 				// If it wasn't, we'll add it!
 				if (!children.containsKey(name))
-					children.put(name, new RemoteFile(tree, name, UNKNOWN));
+					children.put(name, new RemoteFile(remote, name, tag));
 			} else if (revision == DELETED) {
 				// This should have been deleted while creating from the local resources.
 				// If it wasn't, delete it now.
@@ -193,16 +188,18 @@ public class RemoteFolderTreeBuilder {
 		}
 
 		// Add the children to the remote folder tree
-		tree.setChildren((ICVSRemoteResource[])children.values().toArray(new ICVSRemoteResource[children.size()]));
+		remote.setChildren((ICVSRemoteResource[])children.values().toArray(new ICVSRemoteResource[children.size()]));
 		
-		// We have to delay building the children to support the proper fetching of new directories
+		// We have to delay building the child folders to support the proper fetching of new directories
+		// due to the fact that the same CVS home directory (i.e. the same root directory) must
+		// be used for all requests sent over the same connection
 		Iterator childIterator = children.entrySet().iterator();
 		while (childIterator.hasNext()) {
 			Map.Entry entry = (Map.Entry)childIterator.next();
 			if (((RemoteResource)entry.getValue()).isFolder()) {
 				RemoteFolderTree remoteFolder = (RemoteFolderTree)entry.getValue();
 				String name = (String)entry.getKey();
-				IManagedFolder localFolder;
+				ICVSFolder localFolder;
 				if (deltas.get(name) == FOLDER)
 					localFolder = null;
 				else
@@ -210,7 +207,6 @@ public class RemoteFolderTreeBuilder {
 				buildRemoteTree(connection, localFolder, remoteFolder, localPath.append(name), monitor);
 			}
 		}
-		return tree;
 	}
 	
 	/*
@@ -293,6 +289,8 @@ public class RemoteFolderTreeBuilder {
 				changedFiles.add(filename);
 				recordDelta(new Path(filename), ADDED);
 			}
+			public void fileDoesNotExist(String filename) {
+			}
 		};
 
 		// NOTE: Should use the path relative to the remoteRoot
@@ -342,8 +340,11 @@ public class RemoteFolderTreeBuilder {
 			new IResponseHandler[] {new StatusMessageHandler(listener)},
 			false);
 		
-		if (count[0] != fileNames.length)
-			throw new CVSException(Policy.bind("RemoteFolder.errorFetchingRevisions"));
+		// XXX we can't make this check because it may be valid to call this method
+		// without any file names (e.g. fileNames array empty) which would run the
+		// status on all files.
+		//if (count[0] != fileNames.length)
+		//	throw new CVSException(Policy.bind("RemoteFolder.errorFetchingRevisions"));
 	}
 
 
@@ -370,7 +371,7 @@ public class RemoteFolderTreeBuilder {
 	}
 	
 	private void updateRevision(RemoteFolder root, IPath path, String revision) throws CVSException {
-		((RemoteFile)root.getFile(path.toString())).setRevision(revision);
+		((RemoteFile)root.getFile(path.toString())).getSyncInfo().setRevision(revision);
 	}
 }
 

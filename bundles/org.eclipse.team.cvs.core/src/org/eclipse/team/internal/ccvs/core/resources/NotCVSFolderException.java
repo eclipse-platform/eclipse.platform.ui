@@ -1,4 +1,4 @@
-package org.eclipse.team.internal.ccvs.core.resources.api;
+package org.eclipse.team.internal.ccvs.core.resources;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -8,17 +8,18 @@ package org.eclipse.team.internal.ccvs.core.resources.api;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.connection.ResourceStatus;
-import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 
 /**
- * This exception represents the attemp to access a file/folder
- * that did not exist.
+ * This Exception indicates that you have tried to call
+ * a CVSFolder-Specific function on a folder that is not
+ * (yet) a cvs-folder.
  */
-public class CVSFileNotFoundException extends CVSException {
-
-	public CVSFileNotFoundException(
+public class NotCVSFolderException extends CVSException {
+	
+	public NotCVSFolderException(
 		int severity,
 		int code,
 		IPath path,
@@ -26,35 +27,35 @@ public class CVSFileNotFoundException extends CVSException {
 		Throwable exception) {
 		super(new ResourceStatus(severity, code, path, message, exception));
 	}
-	public CVSFileNotFoundException(
+	public NotCVSFolderException(
 		int severity,
 		int code,
 		IPath path,
 		String message) {
 		this(severity, code, path, message, null);
 	}
-	public CVSFileNotFoundException(
+	public NotCVSFolderException(
 		int severity,
 		int code,
 		IPath path,
 		Throwable exception) {
 		this(severity, code, path, null, exception);
 	}
-	public CVSFileNotFoundException(
+	public NotCVSFolderException(
 		int severity,
 		int code,
 		String message,
 		Exception e) {
 		super(new Status(severity, CVSProviderPlugin.ID, code, message, null));
 	}
-	public CVSFileNotFoundException(
+	public NotCVSFolderException(
 		int severity,
 		int code,
 		String message) {
 		this(severity, code, message, null);
 	}
 
-	public CVSFileNotFoundException(
+	public NotCVSFolderException(
 		int severity,
 		int code,
 		Exception e) {
@@ -62,20 +63,20 @@ public class CVSFileNotFoundException extends CVSException {
 
 	}
 
-	public CVSFileNotFoundException(String message) {
+	public NotCVSFolderException(String message) {
 		super(new Status(IStatus.ERROR, CVSProviderPlugin.ID, IStatus.ERROR, message, null));
 	}
 
-	public CVSFileNotFoundException(String message, IPath path) {
+	public NotCVSFolderException(String message, IPath path) {
 		this(message, path, null);
 	}
 
-	public CVSFileNotFoundException(String message, IPath path, Throwable throwable) {
+	public NotCVSFolderException(String message, IPath path, Throwable throwable) {
 		this(new ResourceStatus(IStatus.ERROR, path, message, throwable));
 	}
-	public CVSFileNotFoundException(IStatus status) {
+	public NotCVSFolderException(IStatus status) {
 		super(status);
 	}
-
 }
+
 

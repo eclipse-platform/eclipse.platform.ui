@@ -7,13 +7,10 @@ package org.eclipse.team.internal.ccvs.core.response;
 
 import java.io.PrintStream;
 
-import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.connection.Connection;
-import org.eclipse.team.internal.ccvs.core.resources.api.FolderProperties;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
-import org.eclipse.team.internal.ccvs.core.requests.RequestSender;
-import org.eclipse.team.internal.ccvs.core.util.Util;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.util.Assert;
 
 /**
  * Response to the Clear-static-directory and the Set-static-directory
@@ -49,12 +46,12 @@ class StickyHandler extends ResponseHandler {
 	}
 
 	/**
-	 * @see IResponseHandler#handle(Connection, PrintStream, IManagedFolder)
+	 * @see IResponseHandler#handle(Connection, PrintStream, ICVSFolder)
 	 */
 	public void handle(
 		Connection connection,
 		PrintStream messageOutput,
-		IManagedFolder mRoot)
+		ICVSFolder mRoot)
 		throws CVSException {
 		
 		String localDirectory;

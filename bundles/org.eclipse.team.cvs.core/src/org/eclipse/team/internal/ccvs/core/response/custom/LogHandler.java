@@ -10,10 +10,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.connection.Connection;
+import org.eclipse.team.internal.ccvs.core.resources.CVSEntryLineTag;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
 import org.eclipse.team.internal.ccvs.core.response.ResponseHandler;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 
@@ -68,7 +70,7 @@ public class LogHandler extends ResponseHandler {
 	public void handle(
 		Connection context,
 		PrintStream messageOutput,
-		IManagedFolder mRoot,
+		ICVSFolder mRoot,
 		IProgressMonitor monitor)
 			throws CVSException {
 				
@@ -159,7 +161,7 @@ public class LogHandler extends ResponseHandler {
 					tagRev = tagRev.substring(0, lastDot);
 				}
 				if (tagRev.equals(revision)) {
-					int type = isBranch ? CVSTag.BRANCH_TAG : CVSTag.VERSION_TAG;
+					int type = isBranch ? CVSTag.BRANCH : CVSTag.VERSION;
 					thisRevisionTags.add(new CVSTag(tagName, type));
 				}
 			}

@@ -10,8 +10,8 @@ import java.io.PrintStream;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.connection.Connection;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFile;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 
 /**
  * This class responds to the Removed-response of the server<br>
@@ -29,18 +29,18 @@ class RemoveEntry extends ResponseHandler {
 	}
 
 	/**
-	 * @see IResponseHandler#handle(Connection, PrintStream, IManagedFolder)
+	 * @see IResponseHandler#handle(Connection, PrintStream, ICVSFolder)
 	 */
 	public void handle(
 		Connection connection,
 		PrintStream messageOutput,
-		IManagedFolder mRoot)
+		ICVSFolder mRoot)
 		throws CVSException {
 
 		String fileName;
 
-		IManagedFolder mParent;
-		IManagedFile mFile;
+		ICVSFolder mParent;
+		ICVSFile mFile;
 			
 		// Read the info associated with the Updated response
 		String localDirectory = connection.readLine();
@@ -54,7 +54,7 @@ class RemoveEntry extends ResponseHandler {
 		// NOTE: Should we do something here other than throw a run-time exception
 		Assert.isTrue(mParent.exists() && !mFile.exists());
 		
-		mFile.setFileInfo(null);
+		mFile.unmanage();
 	}
 
 }

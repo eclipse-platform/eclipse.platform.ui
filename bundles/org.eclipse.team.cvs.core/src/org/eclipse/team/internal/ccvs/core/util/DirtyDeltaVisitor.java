@@ -10,7 +10,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Client;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFile;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
 
 public class DirtyDeltaVisitor extends ResourceDeltaVisitor {
 
@@ -35,7 +35,7 @@ public class DirtyDeltaVisitor extends ResourceDeltaVisitor {
 	}
 
 	private void clear(IResource resource) {
-		IManagedFile mFile;
+		ICVSFile mFile;
 		
 		if (!(resource instanceof IFile)) {
 			return;
@@ -43,7 +43,6 @@ public class DirtyDeltaVisitor extends ResourceDeltaVisitor {
 		
 		try {
 			mFile = Client.getManagedFile(resource.getLocation().toFile());
-			mFile.clearDirty(true);	
 		} catch (CVSException e) {
 			Assert.isTrue(false);
 		}

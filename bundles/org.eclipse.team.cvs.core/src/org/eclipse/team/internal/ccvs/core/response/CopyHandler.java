@@ -10,8 +10,8 @@ import java.io.PrintStream;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.connection.Connection;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFile;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 
 /**
  * Reacts on the "Copy-file"-Response of the server.
@@ -30,19 +30,19 @@ class CopyHandler extends ResponseHandler {
 	}
 
 	/**
-	 * @see IResponseHandler#handle(Connection, PrintStream, IManagedFolder)
+	 * @see IResponseHandler#handle(Connection, PrintStream, ICVSFolder)
 	 */
 	public void handle(
 		Connection connection,
 		PrintStream messageOutput,
-		IManagedFolder mRoot)
+		ICVSFolder mRoot)
 		throws CVSException {
 		
 		String fileName;
 		
-		IManagedFolder mParent;
-		IManagedFile mFile;
-		IManagedFile mNewFile;
+		ICVSFolder mParent;
+		ICVSFile mFile;
+		ICVSFile mNewFile;
 		
 		// Read the info associated with the Updated response
 		String localDirectory = connection.readLine();
@@ -54,7 +54,7 @@ class CopyHandler extends ResponseHandler {
 		mParent = mRoot.getFolder(localDirectory);
 		mFile = mParent.getFile(fileName);
 
-		Assert.isTrue(mParent.exists() && mParent.isCVSFolder());
+		Assert.isTrue(mParent.exists());
 		Assert.isTrue(mFile.exists() && mFile.isManaged());
 		
 		// Move the file to newFile (we know we do not need the

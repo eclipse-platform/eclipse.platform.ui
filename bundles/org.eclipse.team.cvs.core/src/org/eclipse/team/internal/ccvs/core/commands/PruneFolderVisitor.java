@@ -6,34 +6,32 @@ package org.eclipse.team.internal.ccvs.core.commands;
  */
 
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFile;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedVisitor;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSResourceVisitor;
 
 /**
  * Goes recursivly through the folders checks if they are empyty
  * and deletes them. Of course it is starting at the leaves of the
  * recusion (the folders that do not have subfolders).
  */
-public class PruneFolderVisitor implements IManagedVisitor {
+public class PruneFolderVisitor implements ICVSResourceVisitor {
 
 	/**
-	 * @see IManagedVisitor#visitFile(IManagedFile)
+	 * @see ICVSResourceVisitor#visitFile(IManagedFile)
 	 */
-	public void visitFile(IManagedFile file) throws CVSException {
+	public void visitFile(ICVSFile file) throws CVSException {
 	}
 
 	/**
-	 * @see IManagedVisitor#visitFolder(IManagedFolder)
+	 * @see ICVSResourceVisitor#visitFolder(ICVSFolder)
 	 */
-	public void visitFolder(IManagedFolder folder) throws CVSException {
+	public void visitFolder(ICVSFolder folder) throws CVSException {
 		folder.acceptChildren(this);
 		if (folder.getFiles().length == 0 && 
 			folder.getFolders().length == 0) {
-			folder.setFolderInfo(null);
+			folder.unmanage();
 			folder.delete();
 		}
 	}
-
 }
-

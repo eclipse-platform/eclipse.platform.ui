@@ -12,9 +12,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.connection.Connection;
-import org.eclipse.team.internal.ccvs.core.resources.api.FileProperties;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFile;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
+import org.eclipse.team.internal.ccvs.core.resources.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
@@ -72,7 +72,7 @@ class Updated extends ResponseHandler {
 
 	public void handle(Connection connection, 
 							PrintStream messageOutput,
-							IManagedFolder mRoot,
+							ICVSFolder mRoot,
 							IProgressMonitor monitor) 
 							throws CVSException {
 							
@@ -81,9 +81,9 @@ class Updated extends ResponseHandler {
 		boolean binary;
 		boolean readOnly;
 		
-		IManagedFile mFile;
-		IManagedFolder mParent;
-		FileProperties fileInfo;
+		ICVSFile mFile;
+		ICVSFolder mParent;
+		ResourceSyncInfo fileInfo;
 		
 		InputStream in;
 				
@@ -106,13 +106,13 @@ class Updated extends ResponseHandler {
 		fileName = repositoryFilename.substring(
 						repositoryFilename.lastIndexOf(SERVER_DELIM) + 1);
 		mParent = mRoot.getFolder(localDirectory);
-		Assert.isTrue(mParent.exists() && mParent.isCVSFolder());
+		Assert.isTrue(mParent.exists());
 		mFile = mParent.getFile(fileName);
 		
 		in = connection.getResponseStream();
 
-		fileInfo = new FileProperties(entry, permissions);
-		binary = fileInfo.getKeywordMode().indexOf(FileProperties.BINARY_TAG) != -1;
+		fileInfo = new ResourceSyncInfo(entry, permissions);
+		binary = fileInfo.getKeywordMode().indexOf(ResourceSyncInfo.BINARY_TAG) != -1;
 		readOnly = permissions.indexOf(READ_ONLY_FLAG) == -1;
 		
 		mFile.receiveFrom(in,monitor,size,binary,readOnly);
@@ -125,7 +125,7 @@ class Updated extends ResponseHandler {
 		} else {
 			fileInfo.setTimeStamp(RESULT_OF_MERGE + mFile.getTimeStamp());
 		}			
-		mFile.setFileInfo(fileInfo);
+		mFile.setSyncInfo(fileInfo);
 
 		Assert.isTrue(mFile.isDirty()!=upToDate);
 	}

@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.ccvs.core.IConnectionMethod;
@@ -67,7 +68,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	public static final char COLON = ':';
 	public static final char HOST_SEPARATOR = '@';
 	public static final char PORT_SEPARATOR = '#';
-	public static final boolean STANDALONE_MODE = (System.getProperty("cvs.standalone")==null)?false:(new Boolean(System.getProperty("cvs.standalone")).booleanValue());
+	public static final boolean STANDALONE_MODE = (System.getProperty("eclipse.cvs.standalone")==null)?false:(new Boolean(System.getProperty("eclipse.cvs.standalone")).booleanValue());
 	
 	/*
 	 * Create a CVSRepositoryLocation from its composite parts.
@@ -178,9 +179,9 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	/*
 	 * @see ICVSRepositoryLocation#getRemoteFolder(IPath, String)
 	 */
-	public ICVSRemoteResource[] members(String tag, IProgressMonitor progress) throws CVSException {		
+	public ICVSRemoteResource[] members(CVSTag tag, IProgressMonitor progress) throws CVSException {		
 		try {
-			RemoteFolder root = new RemoteFolder(this, Path.EMPTY, tag);
+			RemoteFolder root = new RemoteFolder(null, this, Path.EMPTY, tag);
 			return (ICVSRemoteResource[])root.members(progress);
 		} catch(TeamException e) {
 			throw new CVSException(e.getStatus());

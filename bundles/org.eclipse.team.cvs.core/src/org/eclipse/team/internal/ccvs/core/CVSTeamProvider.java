@@ -17,41 +17,39 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.IFileTypeRegistry;
 import org.eclipse.team.core.ITeamNature;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
-import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.CVSDiffException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSRemoteSyncElement;
+import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.Client;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
+import org.eclipse.team.internal.ccvs.core.resources.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSResourceVisitor;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
-import org.eclipse.team.internal.ccvs.core.resources.RemoteResource;
-import org.eclipse.team.internal.ccvs.core.resources.api.FolderProperties;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFile;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedResource;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedVisitor;
+import org.eclipse.team.internal.ccvs.core.resources.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.response.IResponseHandler;
 import org.eclipse.team.internal.ccvs.core.response.custom.DiffErrorHandler;
 import org.eclipse.team.internal.ccvs.core.response.custom.DiffMessageHandler;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
-import org.eclipse.team.internal.ccvs.core.util.ProjectDescriptionManager;
+import org.eclipse.team.internal.ccvs.core.util.RemoteFolderTreeBuilder;
 
 /**
  * This class acts as both the ITeamNature and the ITeamProvider instances
@@ -85,7 +83,7 @@ import org.eclipse.team.internal.ccvs.core.util.ProjectDescriptionManager;
 public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 
 	// Instance variables
-	private IManagedFolder managedProject;
+	private ICVSFolder managedProject;
 	private IProject project;
 	private String comment = "";
 	
@@ -235,7 +233,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		
 		// Visit the children of the resources using the depth in order to
 		// determine which folders, text files and binary files need to be added
-		final List folders = new ArrayList(resources.length);
+		final Set folders = new HashSet(resources.length);
 		final List textfiles = new ArrayList(resources.length);
 		final List binaryfiles = new ArrayList(resources.length);
 		final IFileTypeRegistry registry = TeamPlugin.getFileTypeRegistry();
@@ -636,7 +634,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	/*
 	 * Get the corresponding managed child for the given resource.
 	 */
-	private IManagedResource getChild(IResource resource) throws CVSException {
+	private ICVSResource getChild(IResource resource) throws CVSException {
 		if (resource.equals(project))
 			return managedProject;
 		return managedProject.getChild(resource.getFullPath().removeFirstSegments(1).toString());
@@ -648,7 +646,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	 */
 	public String getConnectionMethod(IResource resource) throws TeamException {
 		checkIsChild(resource);
-		return CVSRepositoryLocation.fromString(managedProject.getFolderInfo().getRoot()).getMethod().getName();
+		return CVSRepositoryLocation.fromString(managedProject.getFolderSyncInfo().getRoot()).getMethod().getName();
 	}
 	
 	/**
@@ -664,38 +662,40 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	 */
 	public ICVSRemoteResource getRemoteResource(IResource resource) throws TeamException {
 		checkIsChild(resource);
-		IManagedResource managed = getChild(resource);
+		ICVSResource managed = getChild(resource);
 		if (managed.isFolder()) {
-			IManagedFolder folder = (IManagedFolder)managed;
-			return new RemoteFolder(CVSRepositoryLocation.fromString(folder.getFolderInfo().getRoot()), new Path(folder.getFolderInfo().getRepository()), folder.getFolderInfo().getTag());
+			ICVSFolder folder = (ICVSFolder)managed;
+			FolderSyncInfo syncInfo = folder.getFolderSyncInfo();
+			return new RemoteFolder(null, CVSRepositoryLocation.fromString(syncInfo.getRoot()), new Path(syncInfo.getRepository()), syncInfo.getTag());
 		} else {
 			// NOTE: This may not provide a proper parent!
-			return new RemoteFile((RemoteFolder)getRemoteResource(resource.getParent()), managed.getName(), ((IManagedFile)managed).getFileInfo().getVersion());
+			return new RemoteFile((RemoteFolder)getRemoteResource(resource.getParent()), managed.getName(), ((ICVSFile)managed).getSyncInfo().getRevision(), new CVSTag());
 		}
 	}
 	
-	public IRemoteSyncElement getRemoteSyncTree(IResource resource, String tag, IProgressMonitor progress) throws TeamException {
+	public IRemoteSyncElement getRemoteSyncTree(IResource resource, CVSTag tag, IProgressMonitor progress) throws TeamException {
 		checkIsChild(resource);
-		IManagedResource managed = getChild(resource);
+		ICVSResource managed = getChild(resource);
 		
-		// XXX: there must be a quicker way of determining is a folder/file has a remote (e.g. in one round trip
-		// at the time of this call).
 		ICVSRemoteResource remote;
-		try {
-			if(resource.getType()!=IResource.PROJECT) {
-				RemoteFolder remoteParent = (RemoteFolder)getRemoteResource(resource.getParent());
-				remoteParent.getMembers(progress);
-				// if an exception is thrown then just ignore
-				remote = (ICVSRemoteResource)remoteParent.getChild(resource.getName());						
-			} else {
-				remote = (RemoteFolder)getRemoteResource(resource);
-			}
-		} catch(CVSException e) {
-			remote = null;
-		}
 		
-		IManagedFolder localParent = managed.isFolder() ? (IManagedFolder)managed : managed.getParent();			
-		return new CVSRemoteSyncElement(resource, null, remote, localParent);
+		if(resource.getType()!=IResource.FILE) {
+			remote = getRemoteResource(resource);
+			try {
+				ICVSRepositoryLocation location = remote.getRepository();
+				remote = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)location, (ICVSFolder)managed, tag, progress);		
+			} catch(CVSException e) {
+				throw new TeamException(new CVSStatus(IStatus.ERROR, 0, resource.getProjectRelativePath(), "Error retreiving remote resource tree", e));
+			}
+			
+		} else {
+			// XXX 
+			remote = getRemoteResource(resource);
+			if(!remote.exists()) {
+				remote = null;
+			}
+		}
+		return new CVSRemoteSyncElement(resource, null, remote);
 	}
 	
 	/**
@@ -705,7 +705,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	 */ 
 	public IUserInfo getUserInfo(IResource resource) throws TeamException {
 		checkIsChild(resource);
-		CVSRepositoryLocation location = CVSRepositoryLocation.fromString(managedProject.getFolderInfo().getRoot());
+		CVSRepositoryLocation location = CVSRepositoryLocation.fromString(managedProject.getFolderSyncInfo().getRoot());
 		location.setUserMuteable(true);
 		return location;
 	}
@@ -720,8 +720,9 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			// A depth of zero is only valid for files
 			if ((depth != IResource.DEPTH_ZERO) || (resources[i].getType() == IResource.FILE)) {
 				IPath cvsPath = resources[i].getFullPath().removeFirstSegments(1);
-				if (cvsPath.segmentCount() == 0)
+				if (cvsPath.segmentCount() == 0) {
 					arguments.add(".");
+				}
 				else
 					arguments.add(cvsPath.toString());
 			}
@@ -740,16 +741,20 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			if (resource.equals(project))
 				return isManaged(resource);
 				
-			IManagedResource child = getChild(resource);
-			if (!child.showManaged())
-				return false;
-			if (resource.getType() == IResource.FOLDER) {
-				// if it's managed and its a folder than it exists remotely
-				return true;
-			} else {
-				// NOTE: This seems rather adhoc!
-				return !((IManagedFile)child).getFileInfo().getVersion().equals("0");
+			ICVSResource child = getChild(resource);
+			if(child.isManaged()) {
+				if(child.isFolder()) { 
+					return true;
+				} else {
+					ResourceSyncInfo info = child.getSyncInfo();					
+					if(info.getRevision().equals("0")) {
+						return false;
+					} else {
+						return true;
+					}
+				}
 			}
+			return false;					
 		} catch (TeamException e) {
 			// Shouldn't have got an exception. Since we did, log it and return false
 			CVSProviderPlugin.log(e);
@@ -779,21 +784,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	private boolean isChildResource(IResource resource) {
 		return resource.getProject().getName().equals(managedProject.getName());
 	}
-	
-	/**
-	 * @see ITeamSynch#isDirty(IResource)
-	 * XXX to be removed when sync methods are removed from ITeamProvider
-	 */
-	public boolean isDirty(IResource resource) {
-		try {
-			IManagedResource r = getChild(resource);
-			return r.showDirty();
-		} catch (CVSException e) {
-			Assert.isTrue(false);
-			return true;
-		}
-	}
-	
+			
 	/**
 	 * Return whether the given resource is managed. 
 	 * 
@@ -811,8 +802,8 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			// Is returning false enough or should we throw an exception
 			return false;
 			
-		// Get the IManagedResource corresponding to the resource and check if its managed
-		return getChild(resource).showManaged();
+		// Get the ICVSResource corresponding to the resource and check if its managed
+		return getChild(resource).isManaged();
 	}
 	
 	/**
@@ -873,12 +864,12 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		location.updateCache();
 		location.setMethod(methodName);
 		final String root = location.getLocation();
-		managedProject.accept(new IManagedVisitor() {
-			public void visitFile(IManagedFile file) throws CVSException {};
-			public void visitFolder(IManagedFolder folder) throws CVSException {
-				FolderProperties info = folder.getFolderInfo();
+		managedProject.accept(new ICVSResourceVisitor() {
+			public void visitFile(ICVSFile file) throws CVSException {};
+			public void visitFolder(ICVSFolder folder) throws CVSException {
+				FolderSyncInfo info = folder.getFolderSyncInfo();
 				info.setRoot(root);
-				folder.setFolderInfo(info);
+				folder.setFolderSyncInfo(info);
 				folder.acceptChildren(this);
 			};
 		});
@@ -1067,20 +1058,35 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	 * XXX to be removed when sync methods are removed from ITeamProvider
 	 */
 	public boolean isOutOfDate(IResource resource) {
+		Assert.isTrue(false);
 		return false;
 	}
-	
 	/*
-	 * @see IFileModificationValidator#validateEdit(IFile[], Object)
+	 * @see ITeamProvider#isDirty(IResource)
 	 */
-	public IStatus validateEdit(IFile[] files, Object context) {
-		return new Status(Status.OK, TeamPlugin.ID, Status.OK, "OK", null);
+	public boolean isDirty(IResource resource) {
+		try {
+			ICVSResource cvsResource = getChild(resource);
+			if(cvsResource.isFolder()) {
+				return false;
+			} else {
+				return ((ICVSFile)cvsResource).isDirty();
+			}
+		} catch(CVSException e) {
+			return true;
+		}
 	}
 	/*
-	 * @see IFileModificationValidator#validateSave(IFile)
+	 * @see ITeamProvider#validateEdit(IFile[], Object)
+	 */
+	public IStatus validateEdit(IFile[] files, Object context) {
+		return new CVSStatus(IStatus.OK, "");
+	}
+
+	/*
+	 * @see ITeamProvider#validateSave(IFile)
 	 */
 	public IStatus validateSave(IFile file) {
-		return new Status(Status.OK, TeamPlugin.ID, Status.OK, "OK", null);
-	}	
+		return new CVSStatus(IStatus.OK, "");
+	}
 }
-

@@ -8,7 +8,7 @@ package org.eclipse.team.internal.ccvs.core.commands;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedResource;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.requests.RequestSender;
 import org.eclipse.team.internal.ccvs.core.response.ResponseDispatcher;
 
@@ -45,10 +45,8 @@ class Remove extends Command {
 	protected void sendRequestsToServer(IProgressMonitor monitor) 
 													throws CVSException {
 		
-		IManagedResource[] mWorkResources;
+		ICVSResource[] mWorkResources;
 		
-		Assert.isTrue(allResourcesManaged());
-
 		// Get the folders we want to work on
 		mWorkResources = getWorkResources();
 		

@@ -10,8 +10,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Client;
 import org.eclipse.team.internal.ccvs.core.requests.RequestSender;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedResource;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedVisitor;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSResourceVisitor;
 import org.eclipse.team.internal.ccvs.core.response.ResponseDispatcher;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
@@ -41,20 +41,18 @@ class Update extends Command {
 	 * MV: Special case handling for the "." argument.
 	 * 
 	 */
-//	protected IManagedResource[] getWorkResources() throws CVSException {
+//	protected ICVSResource[] getWorkResources() throws CVSException {
 //		// NIK: Do we need this handling ?
 //		// MV: You tell me!
 //		if ((getArguments().length == 1) && (getArguments()[0].equals(".")))
-//			return new IManagedResource[]{getRoot()};
+//			return new ICVSResource[]{getRoot()};
 //		return super.getWorkResources();
 //	}
 		
 	public void sendRequestsToServer(IProgressMonitor monitor) throws CVSException {
 
-		IManagedResource[] mWorkResources;
-		
-		Assert.isTrue(allResourcesManaged());
-		
+		ICVSResource[] mWorkResources;
+
 		// Get the folders we want to work on
 		mWorkResources = getWorkResources();
 		
@@ -77,9 +75,9 @@ class Update extends Command {
 	protected void finished(boolean success) throws CVSException {
 		if (success && Util.isOption(getLocalOptions(), Client.PRUNE_OPTION)) {
 			// Get the folders we want to work on
-			IManagedResource[] mWorkResources = getWorkResources();
+			ICVSResource[] mWorkResources = getWorkResources();
 			// Delete empty directories
-			IManagedVisitor visitor = new PruneFolderVisitor();
+			ICVSResourceVisitor visitor = new PruneFolderVisitor();
 			for (int i=0; i<mWorkResources.length; i++) {
 				mWorkResources[i].accept(visitor);
 			}

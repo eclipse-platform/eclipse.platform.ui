@@ -10,8 +10,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Client;
 import org.eclipse.team.internal.ccvs.core.requests.RequestSender;
-import org.eclipse.team.internal.ccvs.core.resources.api.FileProperties;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedVisitor;
+import org.eclipse.team.internal.ccvs.core.resources.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSResourceVisitor;
 import org.eclipse.team.internal.ccvs.core.response.ResponseDispatcher;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
@@ -36,7 +36,7 @@ class Import extends Command {
 	 	String mode = null;
 	 	String[] wrappers;
 	 	String[] ignores;
-	 	IManagedVisitor visitor;
+	 	ICVSResourceVisitor visitor;
 	 	
 		// If the arguments are not three, the server is going to
 		// reject the request
@@ -46,8 +46,8 @@ class Import extends Command {
 
 		// At this point we need to know wether we need to send	the file
 		// as a binary. The server will set the mode properly based on the wrapper option.
-		if (Util.isOption(getLocalOptions(),FileProperties.BINARY_TAG)) {
-			mode = FileProperties.BINARY_TAG;
+		if (Util.isOption(getLocalOptions(),ResourceSyncInfo.BINARY_TAG)) {
+			mode = ResourceSyncInfo.BINARY_TAG;
 		}
 
 		ignores = Util.getOptions(getLocalOptions(),Client.IGNORE_OPTION,false);

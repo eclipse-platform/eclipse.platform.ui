@@ -10,7 +10,7 @@ import java.io.PrintStream;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.connection.Connection;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.response.ResponseHandler;
 import org.eclipse.team.internal.ccvs.core.resources.*;
 
@@ -42,7 +42,7 @@ public class UpdateMessageHandler extends ResponseHandler {
 	 */
 	public void handle(Connection connection, 
 						PrintStream messageOutput,
-						IManagedFolder mRoot,
+						ICVSFolder mRoot,
 						IProgressMonitor monitor) throws CVSException {
 		String line = connection.readLine();
 		if (updateMessageListener == null)

@@ -7,13 +7,14 @@ package org.eclipse.team.internal.ccvs.core.requests;
 
 import java.util.StringTokenizer;
 
-import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.connection.Connection;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFile;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.resources.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.response.IResponseHandler;
+import org.eclipse.team.internal.ccvs.core.util.Assert;
 
 /**
  * The reqest-sender is the only way to send messages to the 
@@ -232,7 +233,7 @@ public class RequestSender {
 	 * It does also acctually upload the file.<br>
 	 * NOTE: The entry line has to be send before calling this method
 	 */
-	public void sendModified(IManagedFile file, IProgressMonitor monitor, boolean binary)
+	public void sendModified(ICVSFile file, IProgressMonitor monitor, boolean binary)
 		throws CVSException {
 		
 		// boolean binary;
@@ -246,11 +247,12 @@ public class RequestSender {
 		// Does not send the entryLinde !!
 		connection.writeLine(MODIFIED, file.getName());					
 		
-		if (file.getFileInfo() == null || 
-			file.getFileInfo().getPermissions() == null) {
+		ResourceSyncInfo info = file.getSyncInfo();
+		if (info == null || 
+			info.getPermissions() == null) {
 			connection.writeLine(STANDARD_PERMISSION);
 		} else {
-			connection.writeLine(file.getFileInfo().getPermissions());
+			connection.writeLine(info.getPermissions());
 		} 
 
 		String progressTitle =

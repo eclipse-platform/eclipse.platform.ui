@@ -9,7 +9,7 @@ import java.io.PrintStream;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 
 /**
  * Represents a command of the cvs-client.
@@ -34,7 +34,7 @@ interface ICommand {
 	void execute(String[] globalOptions, 
 					String[] localOptions, 
 					String[] arguments, 
-					IManagedFolder mRoot,
+					ICVSFolder mRoot,
 					IProgressMonitor monitor, 
 					PrintStream messageOut)
 					throws CVSException;

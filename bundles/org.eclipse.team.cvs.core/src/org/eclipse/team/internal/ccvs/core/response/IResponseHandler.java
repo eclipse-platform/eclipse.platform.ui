@@ -10,7 +10,7 @@ import java.io.PrintStream;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.connection.Connection;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 
 /**
  * Represents an handler for a specific response of the 
@@ -33,7 +33,7 @@ public interface IResponseHandler {
 	 */
 	public void handle(Connection connection, 
 							PrintStream messageOutput,
-							IManagedFolder mRoot,
+							ICVSFolder mRoot,
 							IProgressMonitor monitor) 
 							throws CVSException;
 }

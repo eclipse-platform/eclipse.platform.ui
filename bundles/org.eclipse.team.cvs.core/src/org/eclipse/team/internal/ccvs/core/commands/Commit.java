@@ -8,8 +8,8 @@ package org.eclipse.team.internal.ccvs.core.commands;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.requests.RequestSender;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFile;
-import org.eclipse.team.internal.ccvs.core.resources.api.IManagedResource;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.response.ResponseDispatcher;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 
@@ -43,16 +43,15 @@ class Commit extends Command {
 	 */		
 	public void sendRequestsToServer(IProgressMonitor monitor) throws CVSException {
 		
-		IManagedResource[] mWorkResources;
+		ICVSResource[] mWorkResources;
 		FileStructureVisitor visitor;
-		IManagedFile[] changedFiles;
-		
-		Assert.isTrue(allResourcesManaged());
+		ICVSFile[] changedFiles;
 
 		visitor = new FileStructureVisitor(requestSender,getRoot(),monitor,true,false);
 
 		// Get the folders we want to work on
 		mWorkResources = getWorkResources();
+		checkArgumentsManaged(mWorkResources);
 		
 		// Send all changed files to the server	
 		for (int i = 0; i < mWorkResources.length; i++) {

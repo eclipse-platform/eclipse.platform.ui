@@ -7,6 +7,7 @@ package org.eclipse.team.internal.ccvs.core.resources;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.core.TeamException;
@@ -18,14 +19,14 @@ import org.eclipse.team.core.TeamException;
  */
 public class RemoteFolderTree extends RemoteFolder  {
 	
-	public RemoteFolderTree(ICVSRepositoryLocation repository, IPath repositoryRelativePath, String tag) {
-		super(repository, repositoryRelativePath, tag);
+	public RemoteFolderTree(RemoteFolder parent, ICVSRepositoryLocation repository, IPath repositoryRelativePath, CVSTag tag) {
+		super(parent, repository, repositoryRelativePath, tag);
 	}
 
 	/* 
 	 * Override of inherited method which persists the children
 	 */
-	public ICVSRemoteResource[] getMembers(String tagName, IProgressMonitor monitor) throws TeamException {
+	public ICVSRemoteResource[] getMembers(CVSTag tagName, IProgressMonitor monitor) throws TeamException {
 		if (getChildren() == null)
 			setChildren(super.getMembers(tagName, monitor));
 		return getChildren();
