@@ -95,6 +95,13 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 	public String getName() {
 		return name;
 	}
+	/**
+	 * Returns the id of the working set page that was used to
+	 * create the receiver.
+	 * 
+	 * @return the id of the working set page.
+	 * @see org.eclipse.ui.dialogs.IWorkingSetPage
+	 */
 	public String getEditPageId() {
 		return editPageId;
 	}
@@ -180,6 +187,13 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 		this.elements = new IAdaptable[elements.length];
 		System.arraycopy(elements, 0, this.elements, 0, elements.length);
 	}
+	/**
+	 * Sets the id of the working set page that was used to 
+	 * create the receiver.
+	 * 
+	 * @param pageId the id of the working set page.
+	 * @see org.eclipse.ui.dialogs.IWorkingSetPage
+	 */
 	public void setEditPageId(String pageId) {
 		editPageId = pageId;
 	}

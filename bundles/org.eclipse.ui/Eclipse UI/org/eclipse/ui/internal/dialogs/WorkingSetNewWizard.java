@@ -53,7 +53,8 @@ public class WorkingSetNewWizard extends Wizard {
 	 */	
 	public void addPages() {
 		super.addPages();
-		workingSetTypePage = new WorkingSetTypePage(this);
+		workingSetTypePage = new WorkingSetTypePage();
+		workingSetTypePage.setWizard(this);
 		addPage(workingSetTypePage);
 	}		
 	/**

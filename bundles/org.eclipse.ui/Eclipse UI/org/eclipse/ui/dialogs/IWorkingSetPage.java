@@ -25,6 +25,10 @@ import org.eclipse.ui.IWorkingSet;
  * want to provide a special wizard page for a particular 
  * working set element type.
  * </p>
+ * <p>
+ * Clients implementing this interface may subclass from 
+ * org.eclipse.jface.wizard.WizardPage.
+ * </p>
  *
  * @since 2.0
  */

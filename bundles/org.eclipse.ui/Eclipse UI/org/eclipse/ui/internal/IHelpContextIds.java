@@ -123,6 +123,7 @@ public interface IHelpContextIds {
 	public static final String EXPORT_WIZARD_SELECTION_WIZARD_PAGE = PREFIX + "export_wizard_selection_wizard_page_context"; //$NON-NLS-1$
 	public static final String IMPORT_WIZARD_SELECTION_WIZARD_PAGE = PREFIX + "import_wizard_selection_wizard_page_context"; //$NON-NLS-1$
 	public static final String WORKING_SET_RESOURCE_PAGE = PREFIX + "working_set_resource_page"; //$NON-NLS-1$	
+	public static final String WORKING_SET_TYPE_PAGE = PREFIX + "working_set_type_page"; //$NON-NLS-1$	
 
 	// Wizards
 	public static final String NEW_WIZARD = PREFIX + "new_wizard_context"; //$NON-NLS-1$
