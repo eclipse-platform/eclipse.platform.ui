@@ -25,6 +25,9 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -35,8 +38,8 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.about.ISystemSummarySection;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
@@ -47,7 +50,11 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  */
 public final class AboutSystemDialog extends ProductInfoDialog {
 
+    private Text text;
+    
     private final static int BROWSE_ERROR_LOG_BUTTON = IDialogConstants.CLIENT_ID;
+
+    private final static int COPY_TO_CLIPBOARD_BUTTON = IDialogConstants.CLIENT_ID + 1;
 
     public AboutSystemDialog(Shell parentShell) {
         super(parentShell);
@@ -73,6 +80,9 @@ public final class AboutSystemDialog extends ProductInfoDialog {
         createButton(parent, BROWSE_ERROR_LOG_BUTTON, WorkbenchMessages
                 .getString("AboutSystemDialog.browseErrorLogName"), false); //$NON-NLS-1$
 
+        createButton(parent, COPY_TO_CLIPBOARD_BUTTON, WorkbenchMessages
+                .getString("AboutSystemDialog.copyToClipboardName"), false); //$NON-NLS-1$
+
         new Label(parent, SWT.NONE).setLayoutData(new GridData(
                 GridData.FILL_HORIZONTAL));
         GridLayout layout = (GridLayout) parent.getLayout();
@@ -89,7 +99,7 @@ public final class AboutSystemDialog extends ProductInfoDialog {
     protected Control createDialogArea(Composite parent) {
         Composite outer = (Composite) super.createDialogArea(parent);
 
-        Text text = new Text(outer, SWT.MULTI | SWT.BORDER | SWT.READ_ONLY
+        text = new Text(outer, SWT.MULTI | SWT.BORDER | SWT.READ_ONLY
                 | SWT.V_SCROLL | SWT.NO_FOCUS | SWT.H_SCROLL);
         text.setBackground(parent.getDisplay().getSystemColor(
                 SWT.COLOR_LIST_BACKGROUND));
@@ -193,6 +203,9 @@ public final class AboutSystemDialog extends ProductInfoDialog {
         case BROWSE_ERROR_LOG_BUTTON:
             openErrorLogBrowser();
             break;
+        case COPY_TO_CLIPBOARD_BUTTON:
+            runCopyToClipboard();
+            break;
         }
         super.buttonPressed(buttonId);
     }
@@ -210,5 +223,20 @@ public final class AboutSystemDialog extends ProductInfoDialog {
                 .getString("AboutSystemDialog.noLogTitle"), //$NON-NLS-1$
                 WorkbenchMessages.format("AboutSystemDialog.noLogMessage", //$NON-NLS-1$
                         new String[] { filename }));
+    }
+
+    private void runCopyToClipboard() {
+        if (text == null)
+            return;
+
+        Clipboard clipboard = null;
+        try {
+            clipboard = new Clipboard(getShell().getDisplay());
+            clipboard.setContents(new Object[] { text.getText() },
+                    new Transfer[] { TextTransfer.getInstance() });
+        } finally {
+            if (clipboard != null)
+                clipboard.dispose();
+        }
     }
 }
