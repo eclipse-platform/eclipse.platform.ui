@@ -224,7 +224,7 @@ public class DebugSelectionManager implements IPageListener {
 		}
 	}
 
-	/*
+	/**
 	 * @see IPageListener#pageOpened(IWorkbenchPage)
 	 */
 	public void pageOpened(IWorkbenchPage page) {
@@ -247,7 +247,6 @@ public class DebugSelectionManager implements IPageListener {
 				sp.partOpened(view);
 			}
 		}
-			
 	}
 	
 	/**
@@ -266,7 +265,6 @@ public class DebugSelectionManager implements IPageListener {
 				return sp.getSelection();
 			}
 		}
-		return new StructuredSelection();
+		return StructuredSelection.EMPTY;
 	}
-
 }
