@@ -48,7 +48,7 @@ public class DetachedWindow extends Window   {
 		setShellStyle( //SWT.CLOSE | SWT.MIN | SWT.MAX | 
 			SWT.RESIZE );
 		this.page = workbenchPage;
-		folder = new PartTabFolder(page, SWT.NONE);
+		folder = new PartTabFolder(page, false);
 	}
 	/**
 	 * Adds a visual part to this window.
