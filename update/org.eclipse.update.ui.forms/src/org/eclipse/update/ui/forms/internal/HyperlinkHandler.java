@@ -94,11 +94,11 @@ public class HyperlinkHandler
 		IHyperlinkListener action =
 			(IHyperlinkListener) hyperlinkListeners.get(link);
 		if (action != null) {
-			link.setCursor(busyCursor);
+			link.setCursor(getBusyCursor());
 			action.linkActivated(link);
 			if (!link.isDisposed())
 				link.setCursor(
-					isHyperlinkCursorUsed() ? hyperlinkCursor : null);
+					isHyperlinkCursorUsed() ? getHyperlinkCursor() : null);
 		}
 	}
 
@@ -109,7 +109,7 @@ public class HyperlinkHandler
 			linkExited(fl);
 		}
 		if (isHyperlinkCursorUsed())
-			link.setCursor(hyperlinkCursor);
+			link.setCursor(getHyperlinkCursor());
 		if (activeBackground != null)
 			link.setBackground(activeBackground);
 		if (activeForeground != null)
