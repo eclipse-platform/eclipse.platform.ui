@@ -119,7 +119,7 @@ the same manifest or another.
 <p>The href attribute is relative to the plug-in that the manifest file
 belongs to.&nbsp; If you need to access a file in another plug-in, you
 can use the syntax
-<p><tt>&lt;topic label="topic in another plug-in" href="../other.plugin.id/concepts/some_other_file.html"
+<p><tt>&lt;topic label="topic in another plug-in" href="/other.plugin.id/concepts/some_other_file.html"
 /></tt>
 <p><b><i>2.&nbsp; Topics as containers</i></b>
 <br>The next most common use of a topic is to use it as a container for
@@ -131,13 +131,12 @@ file as well.
 /></tt>
 <br><tt>&nbsp; ...</tt>
 <br><tt>&lt;/topic></tt>
-<p>If you leave the label off the topic, it acts as a "pure" container,
-used either as an anchor for other topics to insert around, or to simplify
-inserting a group of topics into a specific point in the merged navigation.
 <p><b><i>3.&nbsp; Topics as insertion points</i></b>
 <br>Topics can be used as insertion points.&nbsp; They provide a logical
 place for other topics to try and merge around.&nbsp; To act as an insertion
 point, the topic must have an id attribute.
+<br>&nbsp;
+<br>&nbsp;
 <p><b>The infoset element</b>
 <p><font color="#000000">An information set is an entry point into a documentation
 web: a collection of all the online documentation that can be displayed
@@ -182,7 +181,7 @@ its willingness to be an insertion point by providing an id. Views are
 required to have id's.&nbsp; Only fully qualified ids are use as references.
 <font color="#000000">For
 example, the fully qualified topic id of the topic &lt;topic id="concepts"
-label="Concepts">&nbsp; in the org.eclipse.help.examples.ex1
+label="concepts">&nbsp; in the org.eclipse.help.examples.ex1
 </font>plug-in<font color="#000000">
 is org.eclipse.help.examples.ex1.concepts.</font>
 <p>Since the insertion points are typically located in other plug-ins,
@@ -210,8 +209,13 @@ point at the same level in the navigation tree)</li>
 As the next sibling of the insertion point (i.e., just after the insertion
 point at the same level in the navigation tree)</li>
 </ul>
-Alternative insertion options are provided, when previous ones could not
-be performed. The nested insert subelements of the insert element provide
+Currently, a topic can only be inserted once in an infoview; it can, however,
+be inserted in multiple infoviews. This means, that if a parent topic,
+and thus, its subtree, is inserted into an infoset, none of its children
+can be reinserted in the same infoview. Basically, insertion creates indivisible
+partitions for a specific infoview.
+<p>Alternative insertion options are provided, when previous ones could
+not be performed. The nested insert subelements of the insert element provide
 these alternatives. This can be thought of as a "fall-back" mechanism where
 if an insert action fails, the nested insert action will be executed. Once
 the first choice insertion point has been satisfied, the other alternative
@@ -304,8 +308,8 @@ hierarchy :
 <p><tt>&nbsp;&lt;insert from="org.eclipse.help.examples.ex1.aSampleId"</tt>
 <br><tt>&nbsp;&nbsp; to="org.eclipse.help.examples.ex1.samples" as="child"/></tt>
 <br><tt>&lt;/actions></tt>
-<br><tt></tt>&nbsp;
-<br><tt></tt>&nbsp;</blockquote>
+<br>&nbsp;
+<br>&nbsp;</blockquote>
 Here is the resulting documentation hierarchy in the Eclipse Workbench
 :
 <br>&nbsp;
