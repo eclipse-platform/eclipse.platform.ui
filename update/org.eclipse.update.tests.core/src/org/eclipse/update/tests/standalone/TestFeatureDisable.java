@@ -14,7 +14,7 @@ package org.eclipse.update.tests.standalone;
 import java.io.*;
 import java.util.*;
 
-import org.eclipse.core.boot.*;
+import org.eclipse.core.runtime.IPlatformRunnable;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.standalone.*;
