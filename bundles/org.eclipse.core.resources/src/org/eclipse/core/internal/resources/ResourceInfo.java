@@ -280,7 +280,6 @@ protected void setSyncInfo(HashMap syncInfo) {
 	this.syncInfo = syncInfo;
 }
 public synchronized void setSyncInfo(QualifiedName id, byte[] value) {
-	// thread safety: (Concurrency001)
 	if (value == null) {
 		//delete sync info
 		if (syncInfo == null)
