@@ -62,6 +62,11 @@ function removeBookmark()
 
 <body>
  
+<%
+if(data.getBookmarks().length == 0) {
+	out.write(ServletResources.getString("addBookmark", request));
+} else {
+%>
 <table id='list'  cellspacing='0' >
 
 <%
@@ -91,6 +96,10 @@ function removeBookmark()
 <div id="menu">
 	<div class="unselectedMenuItem" onmouseover="this.className='selectedMenuItem'" onmouseout="this.className='unselectedMenuItem'" onclick="removeBookmark()"><%=ServletResources.getString("RemoveBookmark",request)%></div>
 </div>
+
+<%
+}
+%>
 
 </body>
 </html>
