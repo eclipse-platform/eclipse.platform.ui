@@ -325,7 +325,7 @@ public class CodeCompletionTest extends TestCase {
         tempStrBuf.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
         tempStrBuf.append("<project name=\"testproject\" basedir=\".\" default=\"main\">");
         tempStrBuf.append("<property name=\"propA\" value=\"valA\" />\n");
-        tempStrBuf.append("<property file=\"builorg.eclipse.ui.externaltools.internal.ant.editores\" />\n");
+		tempStrBuf.append("<property file=\"buildtest1.properties\" />\n");
         tempStrBuf.append("<target name=\"main\" depends=\"properties\">\n");
         try {
             org.eclipse.ui.externaltools.internal.ant.editor.utils.ProjectHelper.configureProject(tempProject, tempFile, tempStrBuf.toString());  // File will be parsed here
