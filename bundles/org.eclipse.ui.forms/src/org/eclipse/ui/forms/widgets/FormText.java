@@ -1033,10 +1033,11 @@ public final class FormText extends Canvas {
 
 	private void handleFocusChange() {
 		if (hasFocus) {
-			model.traverseLinks(true);
+			if (model.getSelectedLink()==null)
+				model.traverseLinks(true);
 			enterLink(model.getSelectedLink(), SWT.NULL);
 			paintFocusTransfer(null, model.getSelectedLink());
-			ensureVisible(model.getSelectedLink());
+			//ensureVisible(model.getSelectedLink());
 		} else {
 			paintFocusTransfer(model.getSelectedLink(), null);
 			model.selectLink(null);
@@ -1103,14 +1104,15 @@ public final class FormText extends Canvas {
 		}
 		if (!isDisposed() && model.linkExists(link)) {
 			setCursor(model.getHyperlinkSettings().getHyperlinkCursor());
-			IHyperlinkSegment selectedLink = model.getSelectedLink();
-			if (selectedLink!=link) {
-				if (selectedLink != null)
-					exitLink(selectedLink, SWT.NULL);
-				model.selectLink(link);
-				enterLink(link, SWT.NULL);
-				paintFocusTransfer(selectedLink, link);
-			}
+			//IHyperlinkSegment selectedLink = model.getSelectedLink();
+			//if (selectedLink!=link) {
+				//if (selectedLink != null)
+					//exitLink(selectedLink, SWT.NULL);
+				//model.selectLink(link);
+				//enterLink(link, SWT.NULL);
+				//paintFocusTransfer(selectedLink, link);
+				
+			//}
 		}
 	}
 
@@ -1143,6 +1145,8 @@ public final class FormText extends Canvas {
 
 		Paragraph[] paragraphs = model.getParagraphs();
 		IHyperlinkSegment selectedLink = model.getSelectedLink();
+		if (getDisplay().getFocusControl()!=this)
+			selectedLink = null;
 		for (int i = 0; i < paragraphs.length; i++) {
 			Paragraph p = paragraphs[i];
 			p.paint(textGC, repaintRegion, resourceTable, selectedLink, selData);
