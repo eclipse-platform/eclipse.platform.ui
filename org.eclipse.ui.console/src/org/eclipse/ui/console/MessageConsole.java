@@ -19,7 +19,10 @@ import org.eclipse.ui.internal.console.MessageConsolePartitioner;
 import org.eclipse.ui.part.IPageBookViewPage;
 
 /**
- * A console that displays messages.
+ * A console that displays messages. A message console may have one or
+ * more streams connected to it (<code>MessageConsoleStream</code>).
+ * Text written to streams is buffered and processed in a background
+ * thread.
  * <p>
  * Clients may instantiate this class.
  * </p>
@@ -45,6 +48,7 @@ public class MessageConsole extends AbstractConsole {
 	// document partitioner
 	private MessageConsolePartitioner fPartitioner = null;
 		
+
 	/** 
 	 * Constructs a new message console.
 	 * 
@@ -56,7 +60,53 @@ public class MessageConsole extends AbstractConsole {
 		super(name, imageDescriptor);
 		fPartitioner = new MessageConsolePartitioner();
 	}
+	
+	/**
+	 * Returns the maximum number of characters that the console will display at
+	 * once. This is analagous to the size of the text buffer this console
+	 * maintains.
+	 * 
+	 * @return the maximum number of characters that the console will display
+	 */
+	public int getHighWaterMark() {
+		return fPartitioner.getHighWaterMark();
+	}
 
+	/**
+	 * Sets the text buffer size for this console. The high water mark indicates
+	 * the maximum number of characters stored in the buffer. The low water mark
+	 * indicates the number of characters remaining in the buffer when the high
+	 * water mark is exceeded.
+	 * 
+	 * @param low the number of characters remaining in the buffer when the high
+	 *  water mark is exceeded
+	 * @param high the maximum number of characters this console will cache in
+	 *  its text buffer
+	 * @exception IllegalArgumentException if low >= high
+	 */
+	public void setWaterMarks(int low, int high) {
+		fPartitioner.setWaterMarks(low, high);
+	}
+		
+	/**
+	 * Returns the number of characters that will remain in this console
+	 * when its high water mark is exceeded.
+	 *  
+	 * @return the number of characters that will remain in this console
+	 *  when its high water mark is exceeded
+	 */
+	public int getLowWaterMark() {
+		return fPartitioner.getLowWaterMark();
+	}
+		
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.console.AbstractConsole#dispose()
+	 */
+	protected void dispose() {
+		fPartitioner.disconnect();
+	}
+	
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.console.IConsole#createPage(org.eclipse.ui.console.IConsoleView)
 	 */
