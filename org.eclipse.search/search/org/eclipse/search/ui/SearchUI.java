@@ -50,7 +50,7 @@ public final class SearchUI {
 
 	/** 
 	 * Potential match marker attribute
-	 * (value <code>"org.eclipse.search.potentialMatch"</code>).
+	 * (value <code>"potentialMatch"</code>).
 	 *  <p>
 	 * This optional marker attribute tells whether a marker is
 	 * a potential or an exact match.
@@ -58,12 +58,12 @@ public final class SearchUI {
 	 * </p>
 	 * <p>
 	 * Potential matches are shown with a different background color in
-	 * the Search view.
+	 * the Search view. The color can be changed in the Search preferences.
 	 * </p>
 	 *
 	 * @see org.eclipse.core.resources.IMarker#getAttribute
 	 */
-	public static final String POTENTIAL_MATCH= "org.eclipse.search.potentialMatch"; //$NON-NLS-1$
+	public static final String POTENTIAL_MATCH= "potentialMatch"; //$NON-NLS-1$
 
 	/** 
 	 * Id of the Search result view
