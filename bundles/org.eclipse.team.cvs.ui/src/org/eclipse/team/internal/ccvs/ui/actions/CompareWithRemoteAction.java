@@ -6,6 +6,7 @@ package org.eclipse.team.internal.ccvs.ui.actions;
  */
  
 import org.eclipse.compare.CompareUI;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -13,6 +14,7 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -77,6 +79,16 @@ public class CompareWithRemoteAction extends CompareWithTagAction {
 				try {
 					if(getTag(resource) == null) {
 						return false;
+					}
+					// Don't enable if there are sticky file revisions in the lineup
+					if (resources[i].getType() == IResource.FILE) {
+						ICVSFile file = CVSWorkspaceRoot.getCVSFileFor((IFile)resources[i]);
+						ResourceSyncInfo info = file.getSyncInfo();
+						if (info != null && info.getTag() != null) {
+							String revision = info.getRevision();
+							String tag = info.getTag().getName();
+							if (revision.equals(tag)) return false;
+						}
 					}
 				} catch(CVSException e) {
 					return false;

@@ -64,6 +64,7 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
 import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class CVSCompareRevisionsInput extends CompareEditorInput {
 	IFile resource;
@@ -293,6 +294,12 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 				getRevisionAction.setEnabled(ss.size() == 1);
 			}	
 		});
+		
+		// Add F1 help.
+		WorkbenchHelp.setHelp(table, IHelpContextIds.COMPARE_REVISIONS_VIEW);
+		WorkbenchHelp.setHelp(getContentsAction, IHelpContextIds.GET_FILE_CONTENTS_ACTION);
+		WorkbenchHelp.setHelp(getRevisionAction, IHelpContextIds.GET_FILE_REVISION_ACTION);
+		
 		return viewer;
 	}
 	/**
@@ -418,7 +425,7 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 				// recompute the labels on the viewer
 				viewer.refresh();
 			}
-		};		
+		};
 	}
 	public boolean isSaveNeeded() {
 		return false;

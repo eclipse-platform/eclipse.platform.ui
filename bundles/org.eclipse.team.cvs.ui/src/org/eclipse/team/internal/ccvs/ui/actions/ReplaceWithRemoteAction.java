@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -19,6 +20,9 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.internal.ccvs.core.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ui.IPromptCondition;
 import org.eclipse.team.internal.ui.PromptingDialog;
@@ -65,6 +69,16 @@ public class ReplaceWithRemoteAction extends CVSAction {
 			CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(resources[i].getProject(), CVSProviderPlugin.getTypeId());
 			if (provider == null) return false;
 			if (!provider.hasRemote(resources[i])) return false;
+			// Don't enable if there are sticky file revisions in the lineup
+			if (resources[i].getType() == IResource.FILE) {
+				ICVSFile file = CVSWorkspaceRoot.getCVSFileFor((IFile)resources[i]);
+				ResourceSyncInfo info = file.getSyncInfo();
+				if (info != null && info.getTag() != null) {
+					String revision = info.getRevision();
+					String tag = info.getTag().getName();
+					if (revision.equals(tag)) return false;
+				}
+			}
 		}
 		return true;
 	}
