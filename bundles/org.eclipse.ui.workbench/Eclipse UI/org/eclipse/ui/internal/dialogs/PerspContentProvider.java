@@ -21,6 +21,7 @@ import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IObjectActivityManager;
 import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 
 public class PerspContentProvider implements IStructuredContentProvider {
     /**
@@ -48,8 +49,8 @@ public class PerspContentProvider implements IStructuredContentProvider {
      * Return the list of perspective descriptors in the supplied registry
      * filtered for roles if appropriate. 
      * 
-     * @param registry 
-     * @return IPerspectiveDescriptor[] the active descriptors
+     * @param registry the registry to use as the source.
+     * @return IPerspectiveDescriptor[] the active descriptors.
      */
     IPerspectiveDescriptor[] filteredPerspectives(IPerspectiveRegistry registry) {
         IObjectActivityManager manager = PlatformUI.getWorkbench().getObjectActivityManager(IWorkbenchConstants.PL_PERSPECTIVES, false);
@@ -61,8 +62,15 @@ public class PerspContentProvider implements IStructuredContentProvider {
             
         Collection filtered = new ArrayList();
         for (int i = 0; i < descriptors.length; i++) {
-            if (activePerspectives.contains(descriptors[i].getId())) {
-                filtered.add(descriptors[i]);
+            IPerspectiveDescriptor descriptor = descriptors[i];
+            // only filter on registry perspectives.  Custom perspectives should never be filtered.
+            if (((PerspectiveDescriptor)descriptor).isPredefined()) {
+                if (activePerspectives.contains(descriptor.getId())) {
+                    filtered.add(descriptor);
+                }                
+            }
+            else {
+                filtered.add(descriptor);
             }
         }
             
