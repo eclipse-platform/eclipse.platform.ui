@@ -71,9 +71,8 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 					clearSourceSelection(null);
 					Object parent = ((ITreeContentProvider)getTreeViewer().getContentProvider()).getParent(element);
 					refresh(parent);
-					//fire a selection change so the "Terminate" action can update
-					getView().getSite().getSelectionProvider().setSelection(getViewer().getSelection());
 				}
+				updateButtons();
 				break;
 			case DebugEvent.RESUME :
 				doHandleResumeEvent(event, element);
@@ -83,6 +82,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 				break;
 			case DebugEvent.CHANGE :
 				refresh(element);
+				updateButtons();
 				break;
 		}
 	}
@@ -189,6 +189,15 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		fStackFrameCountByThread.put(thread, oldStackFrameCountObject);
 	}
 	
+	/**
+	 * Helper method to update the buttons of the viewer - must be called in UI thread
+	 * Fires a selection change such that the toolbar and debug menu actions can
+	 * update.
+	 */
+	protected void updateButtons() { 
+		getView().getSite().getSelectionProvider().setSelection(getViewer().getSelection());
+	}
+
 	/**
 	 * @see ILaunchListener#launchRemoved(ILaunch)
 	 */
