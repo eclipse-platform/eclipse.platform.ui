@@ -364,8 +364,6 @@ public class KeyManager {
 					bindingSet.add(Binding.create(binding.getAction(), binding.getConfiguration(), binding.getKeySequence(), binding.getPlugin(),
 						binding.getRank() + bestMatch, binding.getScope()));								
 				}				
-			
-				System.out.println(bestMatch);
 			}
 		}					
 
