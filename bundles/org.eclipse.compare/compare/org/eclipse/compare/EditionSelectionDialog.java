@@ -215,19 +215,15 @@ public class EditionSelectionDialog extends ResizableDialog {
 	 */
 	public EditionSelectionDialog(Shell parent, ResourceBundle bundle) {
 		super(parent, bundle);
-		
-		fCompareConfiguration= new CompareConfiguration();
-		fCompareConfiguration.setLeftEditable(false);
-		fCompareConfiguration.setRightEditable(false);
-				
-		String iconName= Utilities.getString(fBundle, "dateIcon", "obj16/day_obj.gif"); //$NON-NLS-2$ //$NON-NLS-1$
-		ImageDescriptor id= CompareUIPlugin.getImageDescriptor(iconName);
-		if (id != null)
-			fDateImage= id.createImage();
-		iconName= Utilities.getString(fBundle, "timeIcon", "obj16/resource_obj.gif"); //$NON-NLS-1$ //$NON-NLS-2$
-		id= CompareUIPlugin.getImageDescriptor(iconName);
-		if (id != null)
-			fTimeImage= id.createImage();
+	}
+	
+	private CompareConfiguration getCompareConfiguration() {
+		if (fCompareConfiguration == null) {
+			fCompareConfiguration= new CompareConfiguration();
+			fCompareConfiguration.setLeftEditable(false);
+			fCompareConfiguration.setRightEditable(false);
+		}
+		return fCompareConfiguration;
 	}
 		
 	/**
@@ -368,9 +364,9 @@ public class EditionSelectionDialog extends ResizableDialog {
 			// set the left and right labels for the compare viewer
 			String targetLabel= getTargetLabel(target, fTargetPair.getItem());
 			if (fTargetIsRight)
-				fCompareConfiguration.setRightLabel(targetLabel);
+				getCompareConfiguration().setRightLabel(targetLabel);
 			else
-				fCompareConfiguration.setLeftLabel(targetLabel);
+				getCompareConfiguration().setLeftLabel(targetLabel);
 			
 			if (structureCreator != null && ppath != null) {	// extract sub element
 				
@@ -664,8 +660,15 @@ public class EditionSelectionDialog extends ResizableDialog {
 	protected Image getEditionImage(ITypedElement selectedEdition, ITypedElement item) {
 		if (selectedEdition instanceof ResourceNode)
 			return selectedEdition.getImage();
-		if (selectedEdition instanceof HistoryItem)
+		if (selectedEdition instanceof HistoryItem) {
+			if (fTimeImage == null) {
+				String iconName= Utilities.getString(fBundle, "timeIcon", "obj16/resource_obj.gif"); //$NON-NLS-1$ //$NON-NLS-2$
+				ImageDescriptor id= CompareUIPlugin.getImageDescriptor(iconName);
+				if (id != null)
+					fTimeImage= id.createImage();
+			}
 			return fTimeImage;
+		}
 		return null;
 	}
 	
@@ -685,10 +688,18 @@ public class EditionSelectionDialog extends ResizableDialog {
 		vsplitter.addDisposeListener(
 			new DisposeListener() {
 				public void widgetDisposed(DisposeEvent e) {
-					if (fDateImage != null)
+					if (fCompareConfiguration != null) {
+						fCompareConfiguration.dispose();
+						fCompareConfiguration= null;
+					}
+					if (fDateImage != null) {
 						fDateImage.dispose();
-					if (fTimeImage != null)
-						fTimeImage.dispose();
+						fDateImage= null;
+					}
+					if (fTimeImage != null) {
+						fTimeImage.dispose();						
+						fTimeImage= null;
+					}
 				}
 			}
 		);
@@ -739,7 +750,7 @@ public class EditionSelectionDialog extends ResizableDialog {
 				fStructuredComparePane= new CompareViewerSwitchingPane(hsplitter, SWT.BORDER | SWT.FLAT, true) {
 					protected Viewer getViewer(Viewer oldViewer, Object input) {
 						if (input instanceof ICompareInput)
-							return CompareUIPlugin.findStructureViewer(oldViewer, (ICompareInput)input, this, fCompareConfiguration);
+							return CompareUIPlugin.findStructureViewer(oldViewer, (ICompareInput)input, this, getCompareConfiguration());
 						return null;
 					}
 				};
@@ -784,7 +795,7 @@ public class EditionSelectionDialog extends ResizableDialog {
 		
 		fContentPane= new CompareViewerSwitchingPane(vsplitter, SWT.BORDER | SWT.FLAT) {
 			protected Viewer getViewer(Viewer oldViewer, Object input) {
-				return CompareUIPlugin.findContentViewer(oldViewer, input, this, fCompareConfiguration);	
+				return CompareUIPlugin.findContentViewer(oldViewer, input, this, getCompareConfiguration());	
 			}
 		};
 		vsplitter.setWeights(new int[] { 30, 70 });
@@ -978,6 +989,12 @@ public class EditionSelectionDialog extends ResizableDialog {
 		Date date= new Date(ldate);
 		if (lastDay == null || day != dayNumber(((Date)lastDay.getData()).getTime())) {
 			lastDay= new TreeItem(fEditionTree, SWT.NONE);
+			if (fDateImage == null) {
+				String iconName= Utilities.getString(fBundle, "dateIcon", "obj16/day_obj.gif"); //$NON-NLS-2$ //$NON-NLS-1$
+				ImageDescriptor id= CompareUIPlugin.getImageDescriptor(iconName);
+				if (id != null)
+					fDateImage= id.createImage();
+			}
 			lastDay.setImage(fDateImage);
 			String df= DateFormat.getDateInstance().format(date);
 			long today= dayNumber(System.currentTimeMillis());
@@ -1089,6 +1106,7 @@ public class EditionSelectionDialog extends ResizableDialog {
 				fContentPane.setText(editionLabel);
 				fContentPane.setImage(editionImage);
 			} else {
+				getCompareConfiguration();
 				if (fTargetIsRight) {
 					fCompareConfiguration.setLeftLabel(editionLabel);
 					fCompareConfiguration.setLeftImage(editionImage);
