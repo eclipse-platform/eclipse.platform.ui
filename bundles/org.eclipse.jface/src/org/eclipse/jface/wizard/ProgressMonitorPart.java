@@ -11,6 +11,9 @@
 package org.eclipse.jface.wizard;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
+import org.eclipse.core.runtime.IStatus;
+
 import org.eclipse.jface.dialogs.ProgressIndicator;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.resource.JFaceResources;
@@ -26,7 +29,7 @@ import org.eclipse.swt.widgets.*;
  * <code>ProgressMonitorDialog</code> this class only implements
  * <code>IProgressMonitor</code>.
  */
-public class ProgressMonitorPart extends Composite implements IProgressMonitor {
+public class ProgressMonitorPart extends Composite implements IProgressMonitorWithBlocking {
 
 	protected Label fLabel;
 	protected String fTaskName;
@@ -34,6 +37,8 @@ public class ProgressMonitorPart extends Composite implements IProgressMonitor {
 	protected ProgressIndicator fProgressIndicator;
 	protected Control fCancelComponent;
 	protected boolean fIsCanceled;
+	
+	protected IStatus blockedStatus;
 	
 	protected Listener fCancelListener= new Listener() {
 		public void handleEvent(Event e) {
@@ -206,20 +211,53 @@ public class ProgressMonitorPart extends Composite implements IProgressMonitor {
 	 * Updates the label with the current task and subtask names.
 	 */
 	protected void updateLabel() {
+		if(blockedStatus == null){
+			String text = taskLabel();
+			fLabel.setText(text);
+		}
+		else
+			fLabel.setText(blockedStatus.getMessage());
+		
+		//Force an update as we are in the UI Thread
+		fLabel.update();
+	}
+	
+	
+
+	/**
+	 * Return the label for showing tasks
+	 * @return
+	 */
+	private String taskLabel() {
 		String text = fSubTaskName == null ? "" : fSubTaskName; //$NON-NLS-1$
 		if (fTaskName != null && fTaskName.length() > 0) {
 			text = JFaceResources.format("Set_SubTask", new Object[] {fTaskName, text});//$NON-NLS-1$
 		}
-		fLabel.setText(escapeMetaCharacters(text));
-		//Force an update as we are in the UI Thread
-		fLabel.update();
+		return escapeMetaCharacters(text);
 	}
-
 	/**
 	 * Implements <code>IProgressMonitor.worked</code>.
 	 * @see IProgressMonitor#worked(int)
 	 */
 	public void worked(int work) {
 		internalWorked(work);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IProgressMonitorWithBlocking#clearBlocked()
+	 */
+	public void clearBlocked() {
+		blockedStatus = null;
+		updateLabel();
+
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IProgressMonitorWithBlocking#setBlocked(org.eclipse.core.runtime.IStatus)
+	 */
+	public void setBlocked(IStatus reason) {
+		blockedStatus = reason;
+		updateLabel();
+
 	}
 }
