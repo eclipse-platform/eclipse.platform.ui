@@ -28,6 +28,9 @@ public class AntTargetsGroupPropertyPage extends ExternalToolGroupPropertyPage {
 	/*
 	 * (non-Javadoc)
 	 * Method declared on DialogPage.
+	 * 
+	 * When the page is brought up, reset the file location. This makes
+	 * sure the page can reinitialize itself if the file location has changed.
 	 */
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
