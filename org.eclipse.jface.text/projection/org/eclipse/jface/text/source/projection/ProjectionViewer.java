@@ -1554,8 +1554,8 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			IRegion matchRegion= getFindReplaceDocumentAdapter().find(startPosition, findString, forwardSearch, caseSensitive, wholeWord, regExSearch);
 			if (matchRegion != null) {
 				exposeModelRange(matchRegion);
+				revealRange(matchRegion.getOffset(), matchRegion.getLength());
 				setSelectedRange(matchRegion.getOffset(), matchRegion.getLength());
-				textWidget.showSelection();
 				return matchRegion.getOffset();
 			}
 			
@@ -1592,8 +1592,8 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				int length= matchRegion.getLength();
 				if (rangeOffset <= offset && offset + length <= rangeOffset + rangeLength) {
 					exposeModelRange(matchRegion);
+					revealRange(offset, length);
 					setSelectedRange(offset, length);
-					textWidget.showSelection();
 					return offset;
 				}
 			}
