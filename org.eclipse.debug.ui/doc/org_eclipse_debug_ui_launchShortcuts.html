@@ -14,8 +14,8 @@
 
 <p><b><i>Description: </i></b>This extension point provides
 support for selection sensitive launching. Extensions register a shortcut which appears
-in the run and/or debug cascade menus to lanuch the workbench selection or active
-edtior.</p>
+in the run and/or debug cascade menus to launch the current workbench selection or active
+editor.</p>
 
 <p><b><i>Configuration Markup:</i></b> </p>
 
@@ -34,7 +34,7 @@ edtior.</p>
 <li><code>modes</code> specifies a comma separated list of modes this shortcut supports.</li>
 <li><code>class</code> specifies the fully qualified name of a class which implements
  <code>org.eclipse.debug.ui.ILaunchShortcut</code>.</li>
-<li><code>label</code> specifies a label used to render this shortcut.</li> 
+<li><code>label</code> specifies a translatable label used to render this shortcut.</li> 
 <li><code>icon</code> specifies a plug-in relative path to an image used to render this
  shortcut.</li> 
 </ul>
@@ -70,6 +70,11 @@ edtior.</p>
 <p>In the above example, a launch shortcut will be shown in the run and debug cascade menus
 with the label "Example Launch Shortcut", in the
 JavaPerspective and the DebugPerspective.
+</p>
+
+<p><b><i>API Information: </i></b>Value of the attribute <b>class</b> must be a fully
+qualified name of a Java class that implements the interface <b>
+org.eclipse.debug.ui.ILaunchShortcut</b>.
 </p>
 
 <p><a href="hglegal.htm"><img src="ngibmcpy.gif" alt="Copyright IBM Corp. 2000, 2001. All Rights Reserved."
