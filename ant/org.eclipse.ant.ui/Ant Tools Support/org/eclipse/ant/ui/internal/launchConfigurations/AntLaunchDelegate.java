@@ -40,7 +40,7 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
 import org.eclipse.ui.externaltools.internal.program.launchConfigurations.BackgroundResourceRefresher;
-import org.eclipse.ui.externaltools.internal.variable.ExpandVariableContext;
+import org.eclipse.debug.ui.variables.ExpandVariableContext;
 
 /**
  * Launch delegate for ant builds

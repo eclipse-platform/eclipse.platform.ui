@@ -17,6 +17,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.ui.variables.IVariableConstants;
+import org.eclipse.debug.ui.variables.VariableUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -25,7 +27,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsLaunchConfigurationMessages;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsMainTab;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
-import org.eclipse.ui.externaltools.internal.model.ToolUtil;
 import org.eclipse.ui.externaltools.internal.ui.FileSelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
 
@@ -111,7 +112,7 @@ public class AntMainTab extends ExternalToolsMainTab {
 			return;
 		}
 		StringBuffer buf = new StringBuffer();
-		ToolUtil.buildVariableTag(IExternalToolConstants.VAR_WORKSPACE_LOC, file.getFullPath().toString(), buf);
+		VariableUtil.buildVariableTag(IVariableConstants.VAR_WORKSPACE_LOC, file.getFullPath().toString(), buf);
 		String text= buf.toString();
 		if (text != null) {
 			locationField.setText(text);

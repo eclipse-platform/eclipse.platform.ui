@@ -35,6 +35,9 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchShortcut;
+import org.eclipse.debug.ui.variables.ExpandVariableContext;
+import org.eclipse.debug.ui.variables.IVariableConstants;
+import org.eclipse.debug.ui.variables.VariableUtil;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -46,8 +49,6 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
-import org.eclipse.ui.externaltools.internal.model.ToolUtil;
-import org.eclipse.ui.externaltools.internal.variable.ExpandVariableContext;
 
 /**
  *
@@ -217,7 +218,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 		try {
 			ILaunchConfigurationWorkingCopy workingCopy = type.newInstance(null, name);
 			StringBuffer buf = new StringBuffer();
-			ToolUtil.buildVariableTag(IExternalToolConstants.VAR_WORKSPACE_LOC, file.getFullPath().toString(), buf);
+			VariableUtil.buildVariableTag(IVariableConstants.VAR_WORKSPACE_LOC, file.getFullPath().toString(), buf);
 			workingCopy.setAttribute(IExternalToolConstants.ATTR_LOCATION, buf.toString());
 			
 			// set default for common settings

@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
+import org.eclipse.debug.ui.variables.VariableContextManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -57,7 +58,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.model.ToolUtil;
-import org.eclipse.ui.externaltools.internal.model.VariableContextManager;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 public class AntTargetsTab extends AbstractLaunchConfigurationTab {
