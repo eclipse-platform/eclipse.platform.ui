@@ -121,7 +121,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 				if(ref == null)
 					return;
 				if(Boolean.TRUE.equals(event.getNewValue())) {
-					String label = "visible::" + ref.getTitle();
+					String label = "visible::" + ref.getTitle(); //$NON-NLS-1$
 					try {
 						UIStats.start(UIStats.NOTIFY_PART_LISTENERS,label);
 						partListeners2.firePartVisible(ref);
@@ -129,7 +129,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 						UIStats.end(UIStats.NOTIFY_PART_LISTENERS,label);
 					}
 				} else {
-					String label = "hidden::" + ref.getTitle();
+					String label = "hidden::" + ref.getTitle(); //$NON-NLS-1$
 					try {
 						UIStats.start(UIStats.NOTIFY_PART_LISTENERS,label);
 						partListeners2.firePartHidden(ref);
@@ -521,7 +521,7 @@ public void bringToTop(IWorkbenchPart part) {
 	if (isZoomed() && partChangeAffectsZoom(getReference(part)))
 		return;
 	
-	String label = part != null ? part.getTitle() : "none";
+	String label = part != null ? part.getTitle() : "none"; //$NON-NLS-1$
 	boolean broughtToTop = false;
 	try {
 		UIStats.start(UIStats.BRING_PART_TO_TOP,label);
@@ -962,7 +962,7 @@ private Perspective createPerspective(PerspectiveDescriptor desc) {
 			MessageDialog.openError(
 				window.getShell(), 
 				WorkbenchMessages.getString("Error"), //$NON-NLS-1$
-				WorkbenchMessages.format("Workbench.showPerspectiveError",new String[]{desc.getId()}));
+				WorkbenchMessages.format("Workbench.showPerspectiveError",new String[]{desc.getId()})); //$NON-NLS-1$
 		}
 		return null;
 	} finally {
@@ -1164,7 +1164,7 @@ public IViewPart findView(String id) {
  * Fire part activation out.
  */
 private void firePartActivated(IWorkbenchPart part) {
-	String label = "activate::" + (part != null ? part.getTitle() : "none");
+	String label = "activate::" + (part != null ? part.getTitle() : "none"); //$NON-NLS-1$ //$NON-NLS-2$
 	try {
 		UIStats.start(UIStats.NOTIFY_PART_LISTENERS,label);
 		partListeners.firePartActivated(part);
@@ -1178,7 +1178,7 @@ private void firePartActivated(IWorkbenchPart part) {
  * Fire part brought to top out.
  */
 private void firePartBroughtToTop(IWorkbenchPart part) {
-	String label = "bringToTop::" + (part != null ? part.getTitle() : "none");
+	String label = "bringToTop::" + (part != null ? part.getTitle() : "none"); //$NON-NLS-1$ //$NON-NLS-2$
 	try {
 		UIStats.start(UIStats.NOTIFY_PART_LISTENERS,label);
 		partListeners.firePartBroughtToTop(part);
@@ -1192,7 +1192,7 @@ private void firePartBroughtToTop(IWorkbenchPart part) {
  * Fire part close out.
  */
 private void firePartClosed(IWorkbenchPartReference ref) {
-	String label = "close" + ref.getTitle();
+	String label = "close" + ref.getTitle(); //$NON-NLS-1$
 	try {
 		UIStats.start(UIStats.NOTIFY_PART_LISTENERS,label);		
 		IWorkbenchPart part = ref.getPart(false);
@@ -1209,7 +1209,7 @@ private void firePartClosed(IWorkbenchPartReference ref) {
  * Fire part deactivation out.
  */
 private void firePartDeactivated(IWorkbenchPart part) {
-	String label = "deactivate" + (part != null ? part.getTitle() : "none");
+	String label = "deactivate" + (part != null ? part.getTitle() : "none"); //$NON-NLS-1$ //$NON-NLS-2$
 	try {
 		UIStats.start(UIStats.NOTIFY_PART_LISTENERS,label);		
 		partListeners.firePartDeactivated(part);
@@ -1223,7 +1223,7 @@ private void firePartDeactivated(IWorkbenchPart part) {
  * Fire part open out.
  */
 public void firePartOpened(IWorkbenchPart part) {
-	String label = "deactivate" + (part != null ? part.getTitle() : "none");
+	String label = "deactivate" + (part != null ? part.getTitle() : "none"); //$NON-NLS-1$ //$NON-NLS-2$
 	try {
 		UIStats.start(UIStats.NOTIFY_PART_LISTENERS,label);		
 		partListeners.firePartOpened(part);
@@ -1237,7 +1237,7 @@ public void firePartOpened(IWorkbenchPart part) {
  * Fire part input changed out.
  */
 private void firePartInputChanged(IWorkbenchPart part) {
-	String label = "inputChanged" + (part != null ? part.getTitle() : "none");
+	String label = "inputChanged" + (part != null ? part.getTitle() : "none"); //$NON-NLS-1$ //$NON-NLS-2$
 	try {
 		UIStats.start(UIStats.NOTIFY_PART_LISTENERS,label);			
 		partListeners2.firePartInputChanged(getReference(part));
@@ -1941,9 +1941,9 @@ private IEditorPart openEditor(IEditorInput input, String editorID, boolean acti
 			if(editor.isDirty()) {
 				MessageDialog dialog = new MessageDialog(
 					getWorkbenchWindow().getShell(),
-					WorkbenchMessages.getString("Save"), 
+					WorkbenchMessages.getString("Save"),  //$NON-NLS-1$
 					null,	// accept the default window icon
-					WorkbenchMessages.format("WorkbenchPage.editorAlreadyOpenedMsg",new String[]{input.getName()}), 
+					WorkbenchMessages.format("WorkbenchPage.editorAlreadyOpenedMsg",new String[]{input.getName()}),  //$NON-NLS-1$
 					MessageDialog.QUESTION, 
 					new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL}, 
 					0);	
@@ -2169,14 +2169,14 @@ public void resetPerspective() {
 public IStatus restoreState(IMemento memento,IPerspectiveDescriptor activeDescritor) {
 	// Restore working set
 	String pageName = memento.getString(IWorkbenchConstants.TAG_LABEL);
-	String label = pageName == null ? "" : "::" + pageName;
+	String label = pageName == null ? "" : "::" + pageName; //$NON-NLS-1$ //$NON-NLS-2$
 	
 	try {
-		UIStats.start(UIStats.RESTORE_WORKBENCH,"WorkbenchPage" + label);
-		if(pageName == null) pageName = "";
+		UIStats.start(UIStats.RESTORE_WORKBENCH,"WorkbenchPage" + label); //$NON-NLS-1$
+		if(pageName == null) pageName = ""; //$NON-NLS-1$
 		MultiStatus result = new MultiStatus(
 			PlatformUI.PLUGIN_ID,IStatus.OK,
-			WorkbenchMessages.format("WorkbenchPage.unableToRestorePerspective",new String[]{pageName}),
+			WorkbenchMessages.format("WorkbenchPage.unableToRestorePerspective",new String[]{pageName}), //$NON-NLS-1$
 			null);
 	
 		String workingSetName = memento.getString(IWorkbenchConstants.TAG_WORKING_SET);
@@ -2224,7 +2224,7 @@ public IStatus restoreState(IMemento memento,IPerspectiveDescriptor activeDescri
 			activePerspective = createPerspective((PerspectiveDescriptor)activeDescritor);
 			if(activePerspective == null) {
 				result.merge(new Status(IStatus.ERROR,PlatformUI.PLUGIN_ID,0,
-					WorkbenchMessages.format("Workbench.showPerspectiveError",new String[]{activeDescritor.getId()}),
+					WorkbenchMessages.format("Workbench.showPerspectiveError",new String[]{activeDescritor.getId()}), //$NON-NLS-1$
 					null));			
 			}
 		}
@@ -2263,7 +2263,7 @@ public IStatus restoreState(IMemento memento,IPerspectiveDescriptor activeDescri
 			navigationHistory.markEditor(getActiveEditor());
 		return result;
 	} finally {
-		UIStats.end(UIStats.RESTORE_WORKBENCH,"WorkbenchPage" + label);
+		UIStats.end(UIStats.RESTORE_WORKBENCH,"WorkbenchPage" + label); //$NON-NLS-1$
 	}
 }
 /**
@@ -2342,7 +2342,7 @@ public IStatus saveState(IMemento memento) {
 
 	MultiStatus result = new MultiStatus(
 		PlatformUI.PLUGIN_ID,IStatus.OK,
-		WorkbenchMessages.format("WorkbenchPage.unableToSavePerspective",new String[]{getLabel()}),
+		WorkbenchMessages.format("WorkbenchPage.unableToSavePerspective",new String[]{getLabel()}), //$NON-NLS-1$
 		null);
 				
 	// Save editor manager.
@@ -2387,7 +2387,7 @@ private void setActivePart(IWorkbenchPart newPart) {
 
 	//No need to change the history if the active editor is becoming the active part
 	boolean markLocation = newPart != lastActiveEditor;
-	String label = newPart != null ? newPart.getTitle() : "none";
+	String label = newPart != null ? newPart.getTitle() : "none"; //$NON-NLS-1$
 	try {
 		UIStats.start(UIStats.ACTIVATE_PART,label);
 		// Notify perspective.  It may deactivate fast view.

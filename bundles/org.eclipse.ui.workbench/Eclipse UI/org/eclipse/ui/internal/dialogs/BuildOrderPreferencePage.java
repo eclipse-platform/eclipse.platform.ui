@@ -376,7 +376,7 @@ public class BuildOrderPreferencePage
 		maxItersComposite.setLayoutData(gd);
 		maxItersComposite.setFont(composite.getFont());
 
-		maxItersField = new IntegerFieldEditor("", WorkbenchMessages.getString("BuildOrderPreference.maxIterationsLabel"), maxItersComposite) {
+		maxItersField = new IntegerFieldEditor("", WorkbenchMessages.getString("BuildOrderPreference.maxIterationsLabel"), maxItersComposite) { //$NON-NLS-1$ //$NON-NLS-2$
 			protected void doLoad() {
 				Text text = getTextControl();
 				if (text != null) {
