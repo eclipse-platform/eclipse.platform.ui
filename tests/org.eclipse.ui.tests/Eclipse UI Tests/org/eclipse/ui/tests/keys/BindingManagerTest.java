@@ -63,8 +63,8 @@ public final class BindingManagerTest extends UITestCase {
 		 * 
 		 * @see org.eclipse.jface.bindings.IBindingManagerListener#bindingManagerChanged(org.eclipse.jface.bindings.BindingManagerEvent)
 		 */
-		public void bindingManagerChanged(BindingManagerEvent event) {
-			this.event = event;
+		public void bindingManagerChanged(BindingManagerEvent e) {
+			this.event = e;
 		}
 
 		/**
@@ -486,8 +486,62 @@ public final class BindingManagerTest extends UITestCase {
 				secondScheme);
 	}
 
-	public final void testIsPartialMatch() {
-		// TODO Implement this test case.
+	/**
+	 * Tests that this method returns <code>true</code> when expected. In the
+	 * first scenario, there is one perfect match bindings and a partial match
+	 * binding. In the second scenario, there are two partial match bindings. In
+	 * the third scenario, we are checking that all bindings match an empty
+	 * trigger sequence.
+	 * 
+	 * @throws NotDefinedException
+	 *             If the scheme we try to activate is not defined.
+	 * @throws ParseException
+	 *             If the hard-coded strings aren't constructed properly.
+	 */
+	public final void testIsPartialMatch() throws NotDefinedException,
+			ParseException {
+		// GENERAL SET-UP
+		final Context context = contextManager.getContext("na");
+		context.define("name", "description", null);
+		final Scheme scheme = bindingManager.getScheme("na");
+		scheme.define("name", "description", null);
+		bindingManager.setActiveScheme("na");
+		final Set activeContextIds = new HashSet();
+		activeContextIds.add("na");
+		contextManager.setActiveContextIds(activeContextIds);
+
+		// SCENARIO 1
+		final KeySequence perfectMatch = KeySequence.getInstance("CTRL+F");
+		final Binding perfectMatchBinding = new KeyBinding(perfectMatch,
+				"perfect", "na", "na", null, null, null, Binding.SYSTEM);
+		final KeySequence partialMatch1 = KeySequence
+				.getInstance("CTRL+F CTRL+F");
+		final Binding partialMatchBinding1 = new KeyBinding(partialMatch1,
+				"partial1", "na", "na", null, null, null, Binding.SYSTEM);
+		final Set bindings = new HashSet();
+		bindings.add(perfectMatchBinding);
+		bindings.add(partialMatchBinding1);
+		bindingManager.setBindings(bindings);
+		assertTrue("A perfect match should not be counted as partial",
+				!bindingManager.isPartialMatch(perfectMatch));
+
+		// SCENARIO 2
+		final KeySequence partialMatch2 = KeySequence
+				.getInstance("CTRL+F CTRL+F CTRL+F");
+		final Binding partialMatchBinding2 = new KeyBinding(partialMatch2,
+				"partial2", "na", "na", null, null, null, Binding.SYSTEM);
+		bindings.clear();
+		bindings.add(partialMatchBinding1);
+		bindings.add(partialMatchBinding2);
+		bindingManager.setBindings(bindings);
+		assertTrue("Two partial matches should count as a partial",
+				bindingManager.isPartialMatch(perfectMatch));
+
+		// SCENARIO 3
+		bindings.add(perfectMatchBinding);
+		bindingManager.setBindings(bindings);
+		assertTrue("An empty sequence matches everything partially",
+				bindingManager.isPartialMatch(KeySequence.getInstance()));
 	}
 
 	/**
@@ -548,8 +602,55 @@ public final class BindingManagerTest extends UITestCase {
 				.isPerfectMatch(KeySequence.getInstance()));
 	}
 
-	public final void testRemoveBindings() {
-		// TODO Implement this test case.
+	/**
+	 * Tests that you can remove binding, and that it will change the active
+	 * bindings as well.
+	 * 
+	 * @throws NotDefinedException
+	 *             If the scheme we try to activate is not defined.
+	 */
+	public final void testRemoveBindings() throws NotDefinedException {
+		// GENERAL SET-UP
+		final Context context = contextManager.getContext("na");
+		context.define("name", "description", null);
+		final Scheme scheme = bindingManager.getScheme("na");
+		scheme.define("name", "description", null);
+		bindingManager.setActiveScheme("na");
+		final Set activeContextIds = new HashSet();
+		activeContextIds.add("na");
+		contextManager.setActiveContextIds(activeContextIds);
+
+		// ADD SOME BINDINGS
+		final Binding binding1 = new TestBinding("command1", "na", "na", null,
+				null, Binding.SYSTEM);
+		bindingManager.addBinding(binding1);
+		final Binding binding2 = new TestBinding("command2", "na", "na", "zh",
+				null, Binding.SYSTEM);
+		bindingManager.addBinding(binding2);
+		final Binding binding3 = new TestBinding("command3", "na", "na", null,
+				"gtk", Binding.SYSTEM);
+		bindingManager.addBinding(binding3);
+		final Binding binding4 = new TestBinding("command4", "na", "na", null,
+				"gtk", Binding.USER);
+		bindingManager.addBinding(binding4);
+		assertNotNull("There should be three active bindings", bindingManager
+				.getActiveBindingsFor("command1"));
+		assertNotNull("There should be three active bindings", bindingManager
+				.getActiveBindingsFor("command2"));
+		assertNotNull("There should be three active bindings", bindingManager
+				.getActiveBindingsFor("command4"));
+
+		// REMOVE SOME BINDINGS
+		bindingManager.removeBindings(TestBinding.TRIGGER_SEQUENCE, "na", "na",
+				null, "gtk", null, Binding.USER);
+		assertEquals("There should be three bindings left", 3, bindingManager
+				.getBindings().size());
+		assertNotNull("There should be three active bindings", bindingManager
+				.getActiveBindingsFor("command1"));
+		assertNotNull("There should be three active bindings", bindingManager
+				.getActiveBindingsFor("command2"));
+		assertNotNull("There should be three active bindings", bindingManager
+				.getActiveBindingsFor("command3"));
 	}
 
 	public final void testSetActiveScheme() {
