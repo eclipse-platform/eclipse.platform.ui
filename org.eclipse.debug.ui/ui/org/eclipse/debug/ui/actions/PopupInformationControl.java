@@ -11,9 +11,11 @@
 
 package org.eclipse.debug.ui.actions;
 
+import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
@@ -38,6 +40,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.CommandEvent;
+import org.eclipse.ui.commands.ICommand;
+import org.eclipse.ui.commands.ICommandListener;
+import org.eclipse.ui.commands.ICommandManager;
+import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.contexts.EnabledSubmission;
 
 /**
@@ -86,7 +93,7 @@ public class PopupInformationControl implements IInformationControl, IInformatio
 	 * Debug hover scope 
 	 */
 	private List hoverScope = Collections.singletonList(new EnabledSubmission(null, null, "org.eclipse.debug.ui.debugging.popups")); //$NON-NLS-1$
-
+	
 	/**
 	 * Default action used to close popup
 	 */
@@ -96,6 +103,12 @@ public class PopupInformationControl implements IInformationControl, IInformatio
 	 * The part this popup is parented by
 	 */
 	private IWorkbenchPart parentPart = null;
+
+	private ICommandListener commandListener;
+
+	private ICommand command;
+
+	private Label label;
 	/**
 	 * Creates a popup to display information provided by adapter
 	 * Style is set to SWT.NONE
@@ -106,7 +119,7 @@ public class PopupInformationControl implements IInformationControl, IInformatio
 	public PopupInformationControl(Shell parent, IPopupInformationControlAdapter adapter) {
 		this(parent, SWT.NONE, adapter, null);
 	}
-
+	
 	/**
 	 * Creates a popup to display information provided by adapter
 	 * @param parent the shell to parent the popup
@@ -146,7 +159,7 @@ public class PopupInformationControl implements IInformationControl, IInformatio
 		Display display = shell.getDisplay();
 		shell.setForeground(display.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
 		shell.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-	
+		
 		addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				dispose();
@@ -168,18 +181,32 @@ public class PopupInformationControl implements IInformationControl, IInformatio
 			Label separator= new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL | SWT.LINE_DOT);
 			separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			
-			Label label = new Label(shell, SWT.SHADOW_NONE | SWT.RIGHT);
-			label.setText(action.getText());
+			label = new Label(shell, SWT.SHADOW_NONE | SWT.RIGHT);
+			label.setText(closeAction.getText());
 			label.setToolTipText(action.getDescription());
 			label.setForeground(display.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
 			label.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 			label.setEnabled(false);
-			label.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			label.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL));
 		}
 		
-
+		ICommandManager commandManager= PlatformUI.getWorkbench().getCommandSupport().getCommandManager();
+		command = commandManager.getCommand(closeAction.getActionDefinitionId());
+		
+		commandListener = new ICommandListener() {
+			public void commandChanged(CommandEvent commandEvent) {
+				List keyBindings = command.getKeySequenceBindings();
+				if (keyBindings != null && keyBindings.size() > 0) {
+					IKeySequenceBinding lastBinding = (IKeySequenceBinding)keyBindings.get(keyBindings.size()-1);
+					label.setText(MessageFormat.format(DebugUIMessages.getString("PopupInformationControl.1"), new String[] {lastBinding.getKeySequence().format(), closeAction.getText()})); //$NON-NLS-1$
+					label.getParent().layout();
+				}				
+			}
+		};
+		
+		command.addCommandListener(commandListener);	
 	}
-
+	
 	/**
 	 * Adds the given listener to the list of dispose listeners.
 	 * @param listener The listener to be added
@@ -217,7 +244,8 @@ public class PopupInformationControl implements IInformationControl, IInformatio
 	 * Disposes this control
 	 */
 	public void dispose() {		
-		register();
+		deregister();
+		command.removeCommandListener(commandListener);
 		shell= null;
 	}
 	
@@ -246,7 +274,7 @@ public class PopupInformationControl implements IInformationControl, IInformatio
 			parentPart.getSite().getKeyBindingService().registerAction(closeAction);
 		}
 	}	
-
+	
 	/**
 	 * Removes the given listener from the list of dispose listeners
 	 * @param listener The listener to be removed
@@ -254,7 +282,7 @@ public class PopupInformationControl implements IInformationControl, IInformatio
 	public void removeDisposeListener(DisposeListener listener) {
 		shell.removeDisposeListener(listener);
 	}
-
+	
 	/**
 	 * Removes the focus listener from the list of focus listeners
 	 * @param listener The listener to be removed
@@ -262,7 +290,7 @@ public class PopupInformationControl implements IInformationControl, IInformatio
 	public void removeFocusListener(FocusListener listener) {
 		shell.removeFocusListener(listener);
 	}
-
+	
 	/**
 	 * Sets the background colour of the control
 	 * @param background The new background colour.
@@ -270,7 +298,7 @@ public class PopupInformationControl implements IInformationControl, IInformatio
 	public void setBackgroundColor(Color background) {
 		shell.setBackground(background);
 	}
-
+	
 	/**
 	 * Sets the keyboard focus to this information control
 	 */
@@ -285,7 +313,7 @@ public class PopupInformationControl implements IInformationControl, IInformatio
 	public void setForegroundColor(Color foreground) {
 		shell.setForeground(foreground);
 	}
-
+	
 	/**
 	 * Sets the location of this control
 	 * @param location The location the control will be placed
@@ -312,7 +340,7 @@ public class PopupInformationControl implements IInformationControl, IInformatio
 		this.maxWidth = 300;
 		this.maxHeight = 175;
 	}
-
+	
 	/**
 	 * Sets the control's visibility
 	 * @param visible A value of true set the control visible, false sets it to be invisible
@@ -325,7 +353,7 @@ public class PopupInformationControl implements IInformationControl, IInformatio
 			deregister();
 		}
 	}
-
+	
 	/**
 	 * Returns true if the receiver has the user-interface focus, and false otherwise. 
 	 * @return true if the receiver has the user-interface focus, and false otherwise. 
@@ -365,11 +393,12 @@ public class PopupInformationControl implements IInformationControl, IInformatio
 	 */
 	private class WrappedAction implements IAction {
 		IAction realAction;
+
 		
 		WrappedAction(IAction action) {
 			realAction = action;			
 		}
-
+		
 		public void addPropertyChangeListener(IPropertyChangeListener listener) {
 			realAction.addPropertyChangeListener(listener);
 		}
@@ -469,5 +498,5 @@ public class PopupInformationControl implements IInformationControl, IInformatio
 			realAction.setAccelerator(keycode);
 		}
 	}
-
+	
 }
