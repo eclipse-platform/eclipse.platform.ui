@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2003 Object Factory Inc.
+ * Copyright (c) 2002, 2004 Object Factory Inc.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,7 +31,7 @@ public class Model implements IModel {
 	protected IAtom fLeaf;
 	protected boolean fMixed;
 	
-	protected static final IModel[] fEmptyContents = new IModel[0];
+	private static final IModel[] fEmptyContents = new IModel[0];
 	
 	public Model(int kind) {
 		fKind = kind;
@@ -71,7 +71,7 @@ public class Model implements IModel {
 		fLeaf = leaf;
 	}
 
-	protected static final String[] fOps = {"?",",","|","&","!!!"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+	private static final String[] fOps = {"?",",","|","&","!!!"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 
 	private Nfm qualifyNfm(Nfm nfm) {
 		if (nfm == null)
