@@ -250,7 +250,7 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 	 * @see ICVSResource#isIgnored()
 	 */
 	public boolean isIgnored() throws CVSException {
-		if (isCVSFolder() && (resource.getType() == IResource.PROJECT || isManaged())) {
+		if (EclipseSynchronizer.getInstance().isManagedCVSFolder((IContainer)resource)) {
 			// A CVS folder is not ignored if it is a project or if it is managed
 			return false;
 		}		
