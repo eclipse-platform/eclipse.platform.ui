@@ -110,19 +110,17 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 		WorkbenchHelp.setHelp(getControl(), IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_REFRESH_TAB);
 		
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		mainComposite.setLayout(layout);
 		mainComposite.setLayoutData(gd);
 		mainComposite.setFont(parent.getFont());
 		
-		createVerticalSpacer(mainComposite, 2);
+		createVerticalSpacer(mainComposite, 1);
 		
 		fRefreshButton = new Button(mainComposite, SWT.CHECK);
 		fRefreshButton.setFont(mainComposite.getFont());
 		fRefreshButton.setText(LaunchVariableMessages.getString("RefreshTab.31")); //$NON-NLS-1$
 		gd = new GridData(GridData.BEGINNING);
-		gd.horizontalSpan = 2;
 		fRefreshButton.setLayoutData(gd);
 		fRefreshButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
