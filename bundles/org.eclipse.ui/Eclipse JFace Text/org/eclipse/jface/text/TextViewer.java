@@ -578,6 +578,8 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 				return isEditable();
 			case SELECT_ALL:
 				return true;
+			case PRINT:
+				return true;
 			case SHIFT_RIGHT:
 			case SHIFT_LEFT:
 				return isEditable() && fIndentChars != null && isBlockSelected();
@@ -783,6 +785,9 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 				 */
 				setSelectedRange(getVisibleRegionOffset(), getVisibleDocument().getLength());
 				break;
+			case PRINT:
+				printContents();
+				break;
 			case SHIFT_RIGHT:
 				shift(false, true);
 				break;
@@ -797,6 +802,24 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 				break;
 		}
 	}
+	
+	protected void printContents() {
+		//this will look something like fTextWidget.print();
+		//for now, do something to make sure it works
+		 org.eclipse.swt.widgets.Shell shell = new org.eclipse.swt.widgets.Shell();
+         shell.setLayout(new org.eclipse.swt.layout.FillLayout());
+         shell.setSize(200, 100);
+         
+         StyledText widget = new StyledText(shell, 10);
+         widget.setText("This is the StyledText widget.");
+
+         shell.open();
+         Display display = shell.getDisplay();
+         while (!shell.isDisposed()) {
+         	if (!display.readAndDispatch()) display.sleep();
+         }
+    }
+	
 	/**
 	 * @see IFindReplaceTarget#findAndSelect(int, String, boolean, boolean, boolean)
 	 */

@@ -69,6 +69,11 @@ public interface ITextOperationTarget {
 	 */
 	static final int STRIP_PREFIX=	11;
 	
+	/** 
+	 * Text operation code for printing the complete text.
+	 */
+	static final int PRINT =	15;
+
 		
 	
 	/**

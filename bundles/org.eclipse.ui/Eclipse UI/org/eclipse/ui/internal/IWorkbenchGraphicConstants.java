@@ -50,6 +50,10 @@ public interface IWorkbenchGraphicConstants {
 	public final static String IMG_CTOOL_SAVEALL_EDIT_HOVER = "IMG_CTOOL_SAVEALL_EDIT_HOVER" ; //$NON-NLS-1$
 	public final static String IMG_CTOOL_SAVEALL_EDIT_DISABLED = "IMG_CTOOL_SAVEALL_EDIT_DISABLED" ; //$NON-NLS-1$
 	
+	public final static String IMG_CTOOL_PRINT_EDIT = "IMG_CTOOL_PRINT_EDIT" ; 
+	public final static String IMG_CTOOL_PRINT_EDIT_HOVER = "IMG_CTOOL_PRINT_EDIT_HOVER" ; 
+	public final static String IMG_CTOOL_PRINT_EDIT_DISABLED = "IMG_CTOOL_PRINT_EDIT_DISABLED" ; 
+
 	public final static String IMG_CTOOL_UNDO_EDIT = "IMG_CTOOL_UNDO_EDIT" ; //$NON-NLS-1$
 	public final static String IMG_CTOOL_UNDO_EDIT_HOVER = "IMG_CTOOL_UNDO_EDIT_HOVER" ; //$NON-NLS-1$
 	public final static String IMG_CTOOL_UNDO_EDIT_DISABLED = "IMG_CTOOL_UNDO_EDIT_DISABLED" ; //$NON-NLS-1$
@@ -77,7 +81,6 @@ public interface IWorkbenchGraphicConstants {
 	public final static String IMG_CTOOL_SEARCH_SRC = "IMG_CTOOL_SEARCH_SRC" ; //$NON-NLS-1$
 	public final static String IMG_CTOOL_SEARCH_SRC_HOVER = "IMG_CTOOL_SEARCH_SRC_HOVER" ; //$NON-NLS-1$
 	public final static String IMG_CTOOL_SEARCH_SRC_DISABLED = "IMG_CTOOL_SEARCH_SRC_DISABLED" ; //$NON-NLS-1$
-
 
 	public final static String IMG_CTOOL_REFRESH_NAV = "IMG_CTOOL_REFRESH_NAV"; //$NON-NLS-1$
 	public final static String IMG_CTOOL_REFRESH_NAV_HOVER = "IMG_CTOOL_REFRESH_NAV_HOVER"; //$NON-NLS-1$
