@@ -675,11 +675,22 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		if (workbenchWindow != null && workbenchWindow instanceof WorkbenchWindow) {
 			WWinKeyBindingService wWinKeyBindingService = ((WorkbenchWindow) workbenchWindow).getKeyBindingService();
 	
-			if (wWinKeyBindingService != null)
+			if (wWinKeyBindingService != null) {
 				wWinKeyBindingService.clear();
-	
+				IWorkbenchPage activePage = workbenchWindow.getActivePage();
+					
+				if (activePage != null) {
+					IWorkbenchPart activePart = activePage.getActivePart();
+							
+					if (activePart != null) {
+						wWinKeyBindingService.update(activePart, true);
+						return;
+					}
+				}
+			}
+
 			MenuManager menuManager = ((WorkbenchWindow) workbenchWindow).getMenuManager();
-			menuManager.update(IAction.TEXT);
+			menuManager.updateAll(true);
 		}
 	}
 		

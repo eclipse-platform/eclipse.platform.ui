@@ -202,35 +202,10 @@ public class WWinKeyBindingService {
 				window.getShell().removeShellListener(shellListener);				
 				window.getShell().addShellListener(shellListener);				
 			}
-		});
-		
-		propertyListener = new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				if (event.getProperty().equals("org.eclipse.ui.commands")) { //$NON-NLS-1$
-					IWorkbenchPage page = window.getActivePage();
-					
-					if (page != null) {
-						IWorkbenchPart part = page.getActivePart();
-						
-						if (part != null) {
-							update(part, true);
-							return;
-						}
-					}
-
-					MenuManager menuManager = window.getMenuManager();
-					menuManager.updateAll(true);
-				}
-			}
-		};
-		
-		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		store.addPropertyChangeListener(propertyListener);
+		});		
 	}
 
 	public void dispose() {
-		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		store.removePropertyChangeListener(propertyListener);
 	}
 
 	public void registerGlobalAction(IAction action) {
