@@ -268,7 +268,10 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	 * This method is equivalent to <code>collapseToLevel(ALL_LEVELS)</code>.
 	 */
 	public void collapseAll() {
-		collapseToLevel(getRoot(), ALL_LEVELS);
+		Object root = getRoot();
+		if (root != null) {
+			collapseToLevel(root, ALL_LEVELS);
+		}
 	}
 	/**
 	 * Collapses the subtree rooted at the given element to the given level.
