@@ -27,7 +27,7 @@ import org.eclipse.update.internal.search.*;
 public class UpdateSearchScope {
 	private Vector sites;
 	private URL updateMapURL;
-	private boolean enableFeatureProvidedSite = true;
+	private boolean isFeatureProvidedSiteEnabled = true;
 	
 	private static class UpdateSearchSite
 		extends UpdateSiteAdapter
@@ -105,8 +105,8 @@ public class UpdateSearchScope {
 	 * This method returns true if those sites are also searched.
 	 * @return true if update site provided by features are also searched. Default is true.
 	 */
-	public boolean isEnabledFeatureProvidedSite(){
-		return enableFeatureProvidedSite;
+	public boolean isFeatureProvidedSiteEnabled(){
+		return isFeatureProvidedSiteEnabled;
 	}
 
 	/**
@@ -114,7 +114,7 @@ public class UpdateSearchScope {
 	 * If disabled, only sites added by addSearchSite() are searched.
 	 * @param enable false to disable searching of feature provided sites. By default, these sites are searched.
 	 */
-	public void enableFeatureProvidedSite(boolean enable){
-		this.enableFeatureProvidedSite = enable;
+	public void setFeatureProvidedSiteEnabled(boolean enable){
+		this.isFeatureProvidedSiteEnabled = enable;
 	}
 }
