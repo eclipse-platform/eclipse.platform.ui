@@ -92,7 +92,9 @@ public class SiteBookmark extends NamedModelObject
 		monitor.beginTask("", 2);
 		monitor.subTask(UpdateUI.getFormattedMessage("SiteBookmark.connecting", url.toString()));
 		site = SiteManager.getSite(url, useCache, new SubProgressMonitor(monitor, 1));
-		createCatalog(new SubProgressMonitor(monitor, 1));
+		if (site!=null) createCatalog(new SubProgressMonitor(monitor, 1));
+		else
+			catalog = new Vector();
 	}
 	
 	private void createCatalog(IProgressMonitor monitor) {
