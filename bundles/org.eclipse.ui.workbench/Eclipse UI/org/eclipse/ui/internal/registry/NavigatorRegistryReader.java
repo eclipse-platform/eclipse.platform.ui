@@ -36,7 +36,7 @@ protected boolean readElement(IConfigurationElement element) {
 	if (element.getName().equals(TAG_VIEW)) {
 		try {
 			NavigatorDescriptor desc = new NavigatorDescriptor(element);
-			if (desc.getRootContentDescriptor() != null) 
+			if (desc.getRootDescriptor() != null) 
 				registry.add(desc);
 			else 
 				descriptors.add(desc);

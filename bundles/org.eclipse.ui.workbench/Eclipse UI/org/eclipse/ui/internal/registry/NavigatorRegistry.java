@@ -17,33 +17,33 @@ import org.eclipse.ui.internal.ActionExpression;
 /**
  */
 public class NavigatorRegistry {
-	// keyed by target id, value = rootContentDescriptor
-	private Map rootContentDescriptors;
+	// keyed by target id
+	private Map rootDescriptors;
 /**
  * Create a new ViewRegistry.
  */
 public NavigatorRegistry() {
-	rootContentDescriptors = new HashMap();
+	rootDescriptors = new HashMap();
 }
 
 /**
  */
 protected void add(NavigatorDescriptor descriptor) {
-	NavigatorRootContentDescriptor rootContentDescriptor = descriptor.getRootContentDescriptor();
+	NavigatorRootDescriptor rootDescriptor = descriptor.getRootDescriptor();
 	NavigatorContentDescriptor contentDescriptor = descriptor.getContentDescriptor();
 	String viewTargetId = descriptor.getTargetId();
 	
-	if (rootContentDescriptor != null)
-		rootContentDescriptors.put(viewTargetId, rootContentDescriptor);	
+	if (rootDescriptor != null)
+		rootDescriptors.put(viewTargetId, rootDescriptor);	
 	else 
-		rootContentDescriptor = getRootContentDescriptor(viewTargetId);
+		rootDescriptor = getRootDescriptor(viewTargetId);
 		
 	if (contentDescriptor != null) {
-		rootContentDescriptor.addSubContentDescriptor(contentDescriptor);
+		rootDescriptor.addDelegateDescriptor(contentDescriptor);
 	}
 }
-public NavigatorContentDescriptor getContentProviderDescriptor(NavigatorRootContentDescriptor root, Object element) {
-	ArrayList descriptors = getChildContentDescriptors(root);
+public NavigatorContentDescriptor getContentDescriptor(NavigatorRootDescriptor root, Object element) {
+	ArrayList descriptors = getDelegateDescriptors(root);
 	NavigatorContentDescriptor contentDescriptor = null;
 	int priority = -1;
 	
@@ -59,11 +59,11 @@ public NavigatorContentDescriptor getContentProviderDescriptor(NavigatorRootCont
 	}
 	return contentDescriptor;	
 }
-public ArrayList getChildContentDescriptors(NavigatorRootContentDescriptor root) {
-	return root.getChildContentDescriptors();
+public ArrayList getDelegateDescriptors(NavigatorRootDescriptor root) {
+	return root.getDelegateDescriptors();
 }
-public NavigatorRootContentDescriptor getRootContentDescriptor(String partId) {
-	return (NavigatorRootContentDescriptor) rootContentDescriptors.get(partId);
+public NavigatorRootDescriptor getRootDescriptor(String partId) {
+	return (NavigatorRootDescriptor) rootDescriptors.get(partId);
 }
 
 }

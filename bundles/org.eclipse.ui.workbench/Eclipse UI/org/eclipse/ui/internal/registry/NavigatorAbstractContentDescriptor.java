@@ -10,26 +10,24 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
-import org.eclipse.core.runtime.CoreException;
+import java.util.ArrayList;
+
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.ui.INavigatorTreeContentProvider;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * 
  * @since 3.0
  */
 public class NavigatorAbstractContentDescriptor {
-	private static final String ATT_ID = "id"; //$NON-NLS-1$
-	private static final String ATT_NAME = "name"; //$NON-NLS-1$	
-	private static final String ATT_CLASS = "class"; //$NON-NLS-1$	
+	public static final String ATT_ID = "id"; //$NON-NLS-1$
+	public static final String ATT_NAME = "name"; //$NON-NLS-1$	
+	public static final String ATT_CLASS = "class"; //$NON-NLS-1$	
 
 	private String id;	
 	private String name;
 	private String className;
 	private IConfigurationElement configElement;
-	private INavigatorTreeContentProvider contentProvider = null;
 	
 	/**
 	 * Creates a descriptor from a configuration element.
@@ -40,17 +38,6 @@ public class NavigatorAbstractContentDescriptor {
 		super();
 		this.configElement = configElement;
 	}
-	public INavigatorTreeContentProvider createContentProvider() {
-		if  (contentProvider != null) return contentProvider;
-
-		try {
-			contentProvider = (INavigatorTreeContentProvider)WorkbenchPlugin.createExtension(configElement, ATT_CLASS);
-		} catch (CoreException exception) {
-			WorkbenchPlugin.log("Unable to create content provider: " + //$NON-NLS-1$
-				className, exception.getStatus());
-		}
-		return contentProvider;		
-	}
 	/**
 	 */
 	public String getId() {
@@ -59,7 +46,7 @@ public class NavigatorAbstractContentDescriptor {
 	public String getClassName() {
 		return className;
 	}
-	protected IConfigurationElement getConfigurationElement() {
+	public IConfigurationElement getConfigurationElement() {
 		return configElement;
 	}
 	/**
@@ -84,5 +71,21 @@ public class NavigatorAbstractContentDescriptor {
 				" in navigator extension: " +//$NON-NLS-1$
 				configElement.getDeclaringExtension().getUniqueIdentifier());				
 		}
+	}
+	protected ArrayList delegateDescriptors = new ArrayList();
+	protected void addDelegateDescriptor(NavigatorContentDescriptor descriptor) {
+		delegateDescriptors.add(descriptor);
+	}
+	/**
+	 */
+	protected NavigatorAbstractContentDescriptor findDescriptor(String contentProviderId) {
+		for (int i=0; i<delegateDescriptors.size(); i++) {
+			NavigatorContentDescriptor descriptor = (NavigatorContentDescriptor)delegateDescriptors.get(i);
+			if (descriptor.getId().equals(contentProviderId)) return descriptor;
+		}
+		return null;
+	}
+	protected ArrayList getDelegateDescriptors() {
+		return delegateDescriptors;
 	}
 }

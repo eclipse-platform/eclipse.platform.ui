@@ -8,11 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui;
+package org.eclipse.ui.views.navigator;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 
 /**
  */
-public interface INavigatorTreeContentProvider extends ITreeContentProvider {
+public interface INavigatorContentProvider extends ITreeContentProvider {
+	public void init (NavigatorContentHandler provider, String id);
 }

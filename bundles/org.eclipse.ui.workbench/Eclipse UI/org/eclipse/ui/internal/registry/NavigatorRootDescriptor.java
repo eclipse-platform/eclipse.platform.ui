@@ -19,30 +19,14 @@ import org.eclipse.ui.WorkbenchException;
  * 
  * @since 3.0
  */
-public class NavigatorRootContentDescriptor extends NavigatorAbstractContentDescriptor {
-	private ArrayList childContentDescriptors = new ArrayList();
+public class NavigatorRootDescriptor extends NavigatorAbstractContentDescriptor {
 	/**
 	 * Creates a descriptor from a configuration element.
 	 * 
 	 * @param configElement configuration element to create a descriptor from
 	 */
-	public NavigatorRootContentDescriptor(IConfigurationElement configElement) throws WorkbenchException {
+	public NavigatorRootDescriptor(IConfigurationElement configElement) throws WorkbenchException {
 		super(configElement);
 		readConfigElement();
-	}
-	protected void addSubContentDescriptor(NavigatorContentDescriptor descriptor) {
-		childContentDescriptors.add(descriptor);
-	}
-	/**
-	 */
-	protected NavigatorAbstractContentDescriptor findContentDescriptor(String contentProviderId) {
-		for (int i=0; i<childContentDescriptors.size(); i++) {
-			NavigatorContentDescriptor descriptor = (NavigatorContentDescriptor)childContentDescriptors.get(i);
-			if (descriptor.getId().equals(contentProviderId)) return descriptor;
-		}
-		return null;
-	}
-	protected ArrayList getChildContentDescriptors() {
-		return childContentDescriptors;
 	}
 }

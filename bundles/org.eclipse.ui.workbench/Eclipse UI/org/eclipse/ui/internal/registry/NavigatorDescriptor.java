@@ -25,7 +25,7 @@ public class NavigatorDescriptor {
 	private String targetId;
 	private IConfigurationElement configElement;
 	private NavigatorContentDescriptor contentDescriptor;
-	private NavigatorRootContentDescriptor rootContentDescriptor;
+	private NavigatorRootDescriptor rootContentDescriptor;
 
 /**
  * Creates a descriptor from a configuration element.
@@ -42,7 +42,7 @@ public NavigatorDescriptor(IConfigurationElement configElement) throws Workbench
 public NavigatorContentDescriptor getContentDescriptor() {
 	return contentDescriptor;
 }
-public NavigatorRootContentDescriptor getRootContentDescriptor() {
+public NavigatorRootDescriptor getRootDescriptor() {
 	return rootContentDescriptor;
 }
 public String getTargetId() {
@@ -57,6 +57,6 @@ private void readConfigElement() throws WorkbenchException {
 
 	children = configElement.getChildren(CHILD_ROOT_CONTENT);
 	if (children.length > 0)
-		rootContentDescriptor = new NavigatorRootContentDescriptor(children[0]);
+		rootContentDescriptor = new NavigatorRootDescriptor(children[0]);
 }
 }

@@ -90,7 +90,7 @@ public class Navigator extends ViewPart {
 	 * @since 2.0
 	 */
 	protected void initContentProvider(TreeViewer viewer) {
-		NavigatorContentProvider contentProvider = new NavigatorContentProvider(this);
+		NavigatorContentHandler contentProvider = new NavigatorContentHandler(this);
 		viewer.setContentProvider(contentProvider);
 	}
 

@@ -10,11 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ui.views.navigator;
 
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.ui.INavigatorTreeContentProvider;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 
 /**
  */
-public class ResourceContentProvider extends WorkbenchContentProvider implements INavigatorTreeContentProvider {
+public class ResourceContentProvider extends WorkbenchContentProvider implements INavigatorContentProvider {
+	String id;
+	NavigatorContentHandler provider;
+	
+	public void init (NavigatorContentHandler provider, String id) {
+		this.provider = provider;
+		this.id = id;
+	}
 }
