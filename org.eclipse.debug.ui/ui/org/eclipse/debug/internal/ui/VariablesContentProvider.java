@@ -48,10 +48,7 @@ public class VariablesContentProvider extends BasicContentProvider implements ID
 			}
 			return children;
 		} catch (DebugException de) {
-			// XXX: temp fix to bug 6518
-			// do not log the error - we could be retrieving variable
-			// values when the stack frame's thread is not suspended
-			//DebugUIPlugin.logError(de);
+			DebugUIPlugin.logError(de);
 		}
 		return new Object[0];
 	}
@@ -74,6 +71,16 @@ public class VariablesContentProvider extends BasicContentProvider implements ID
 	 * @see BasicContentProvider#doHandleDebug(Event)
 	 */
 	protected void doHandleDebugEvent(DebugEvent event) {
+		// if the stack frame which is an input to this view
+		// is no longer valid (i.e. its thread has resumed), do
+		// not update (bug 6518)
+		Object input = fViewer.getInput();
+		if (input instanceof IStackFrame) {
+			if (!((IStackFrame)input).getThread().isSuspended()) {
+				return;
+			}
+		}
+		
 		switch (event.getKind()) {
 			case DebugEvent.SUSPEND:
 			case DebugEvent.CHANGE:
