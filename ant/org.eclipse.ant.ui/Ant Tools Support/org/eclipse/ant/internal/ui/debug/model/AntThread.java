@@ -234,9 +234,18 @@ public class AntThread extends AntDebugElement implements IThread {
 	    fRefreshProperties= true;
 	    fOldFrames= new ArrayList(fFrames);
         fFrames.clear();
+        setPropertiesValid(false);
 	    setStepping(stepping);
 	    setBreakpoints(null);
 		fireResumeEvent(detail);
+    }
+
+    private void setPropertiesValid(boolean valid) {
+        if (fUserProperties != null) {
+            fUserProperties.setValid(valid);
+            fSystemProperties.setValid(valid);
+            fRuntimeProperties.setValid(valid);
+        }
     }
 
     /* (non-Javadoc)
@@ -351,9 +360,9 @@ public class AntThread extends AntDebugElement implements IThread {
 	    		initializePropertyGroups();
 	    	}
 	    	
-	    	List userProperties= ((AntPropertiesValue)fUserProperties.getValue()).getProperties();
-	    	List systemProperties= ((AntPropertiesValue)fSystemProperties.getValue()).getProperties();
-	    	List runtimeProperties= ((AntPropertiesValue)fRuntimeProperties.getValue()).getProperties();
+	    	List userProperties= ((AntPropertiesValue)fUserProperties.getLastValue()).getProperties();
+	    	List systemProperties= ((AntPropertiesValue)fSystemProperties.getLastValue()).getProperties();
+	    	List runtimeProperties= ((AntPropertiesValue)fRuntimeProperties.getLastValue()).getProperties();
 	    	//0 PROPERTIES message
 	    	//1 propertyName length
 	    	//2 propertyName
@@ -388,6 +397,7 @@ public class AntThread extends AntDebugElement implements IThread {
 	    	}
 	    } finally {
             fRefreshProperties= false;
+            setPropertiesValid(true);
 	        //wake up the call from getVariables
 	    	notifyAll();
 	    }

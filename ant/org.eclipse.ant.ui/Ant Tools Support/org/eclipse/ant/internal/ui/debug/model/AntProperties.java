@@ -17,6 +17,7 @@ public class AntProperties extends AntDebugElement implements IVariable {
 	
 	private IValue fValue;
 	private String fName;
+    private boolean fValid= true;
 
 	public AntProperties(AntDebugTarget target, String name) {
 		super(target);
@@ -26,9 +27,19 @@ public class AntProperties extends AntDebugElement implements IVariable {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IVariable#getValue()
 	 */
-	public IValue getValue() {
-		return fValue;
+	public synchronized IValue getValue() {
+        while (!fValid) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+            }
+        }
+ 		return fValue;
 	}
+    
+    protected IValue getLastValue() {
+        return fValue;
+    }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IVariable#getName()
@@ -84,4 +95,9 @@ public class AntProperties extends AntDebugElement implements IVariable {
 	public boolean verifyValue(IValue value) {
 		return false;
 	}
+
+    protected synchronized void setValid(boolean valid) {
+        fValid= valid;        
+        notifyAll();
+    }
 }
