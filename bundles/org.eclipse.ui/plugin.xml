@@ -546,6 +546,11 @@
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
+            commandId="org.eclipse.ui.file.refresh"
+            keySequence="F5"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
             commandId="org.eclipse.ui.edit.undo"
             keySequence="Ctrl+Z"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
