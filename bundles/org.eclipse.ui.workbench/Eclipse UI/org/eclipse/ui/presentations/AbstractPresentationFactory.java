@@ -83,9 +83,6 @@ public abstract class AbstractPresentationFactory {
      * @param role
      *            one of the ROLE_* constants indicating the role of this
      *            presentation
-     * @param flags
-     *            the <em>bitwise OR</em> of one or more of SWT.SINGLE,
-     *            SWT.MULTI, SWT.MIN, SWT.MAX, SWT.MOVE
      * @param perspectiveId
      *            the id of the perspective containing this presentation
      * @param folderId
@@ -95,7 +92,7 @@ public abstract class AbstractPresentationFactory {
      * @return a newly created part presentation
      */
     public abstract StackPresentation createPresentation(Composite parent,
-            IStackPresentationSite site, int role, int flags,
+            IStackPresentationSite site, int role, 
             String perspectiveId, String folderId);
     
     /**
