@@ -55,10 +55,6 @@ public class LaunchConfigurationDialog extends LaunchConfigurationPropertiesDial
 	 * @see ILaunchConfigurationDialog#updateButtons()
 	 */
 	public void updateButtons() {
-		if (isInitializingTabs()) {
-			return;
-		}
-				
 		// Launch button
 		getTabViewer().refresh();
 		getButton(ID_LAUNCH_BUTTON).setEnabled(getTabViewer().canLaunch());

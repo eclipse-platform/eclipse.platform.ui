@@ -218,28 +218,12 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 	 * @see ILaunchConfigurationDialog#updateButtons()
 	 */
 	public void updateButtons() {
-		if (isInitializingTabs()) {
-			return;
-		}
-				
 		// apply/revert buttons
 		getTabViewer().refresh();
 		getButton(IDialogConstants.OK_ID).setEnabled(getTabViewer().canSave());
 		
 	}
-	
-
-	/**
-	 * @see ILaunchConfigurationDialog#updateMessage()
-	 */
-	public void updateMessage() {
-		if (isInitializingTabs()) {
-			return;
-		}
-		setErrorMessage(getTabViewer().getErrorMesssage());
-		setMessage(getTabViewer().getMesssage());				
-	}
-	
+		
 	/**
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */

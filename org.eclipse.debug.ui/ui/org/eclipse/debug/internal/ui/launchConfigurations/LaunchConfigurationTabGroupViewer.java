@@ -383,6 +383,10 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * @see org.eclipse.jface.viewers.Viewer#refresh()
 	 */
 	public void refresh() {
+		if (isInitializingTabs()) {
+			return;
+		}
+		
 		ILaunchConfigurationTab[] tabs = getTabs();
 		if (!isInitializingTabs() && tabs != null) {
 			// update the working copy from the active tab
@@ -830,6 +834,9 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * </p>
 	 */
 	public boolean canSave() {
+		if (isInitializingTabs()) {
+			return false;
+		}
 		// First make sure that name doesn't prevent saving the config
 		try {
 			verifyName();
@@ -854,6 +861,10 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * @see ILaunchConfigurationDialog#canLaunch()
 	 */
 	public boolean canLaunch() {
+		if(isInitializingTabs()) {
+			return false;
+		}
+		
 		if (getActiveTab() instanceof PerspectivesTab) {
 			return false;
 		}
@@ -883,6 +894,10 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * Returns the current error message or <code>null</code> if none.
 	 */
 	public String getErrorMesssage() {
+		if (isInitializingTabs()) {
+			return null;
+		}
+		
 		if (getWorkingCopy() == null) {
 			return null;
 		}
@@ -941,6 +956,10 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * Returns the current message or <code>null</code> if none.
 	 */
 	public String getMesssage() {
+		if (isInitializingTabs()) {
+			return null;
+		}
+		
 		ILaunchConfigurationTab tab = getActiveTab();
 		if (tab == null) {
 			return null;

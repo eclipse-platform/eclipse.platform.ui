@@ -117,12 +117,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * Tab edit area
 	 */
 	private LaunchConfigurationTabGroupViewer fTabViewer;
-	
-	/**
-	 * True while setting the input to the tab viewer
-	 */
-	private boolean fInitializingTabs;
-	
+		
 	/**
 	 * The launch configuration edit area.
 	 */
@@ -858,9 +853,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 				}
 	 			}
  			}
- 			setInitializingTabs(true);
  			getTabViewer().setInput(newInput);
- 			setInitializingTabs(false);
  			refreshStatus();
  			// bug 14758 - if the newly selected config is dirty, save its changes
  			if (getTabViewer().isDirty()) {
@@ -974,15 +967,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	protected void handleTabSelectionChanged(SelectionChangedEvent event) {
 		refreshStatus();
 	}
-	 	
- 	private void setInitializingTabs(boolean init) {
- 		fInitializingTabs = init;
- 	}
- 	
- 	protected boolean isInitializingTabs() {
- 		return fInitializingTabs;
- 	}
- 	
+	 	 	
  	private void setProgressMonitorPart(ProgressMonitorPart part) {
  		fProgressMonitorPart = part;
  	}
@@ -1484,10 +1469,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @see ILaunchConfigurationDialog#updateButtons()
 	 */
 	public void updateButtons() {
-		if (isInitializingTabs()) {
-			return;
-		}
-				
 		// New & Delete buttons
  		getButtonActionNew().setEnabled(getNewAction().isEnabled());
 		getButtonActionDelete().setEnabled(getDeleteAction().isEnabled());
@@ -1508,9 +1489,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @see ILaunchConfigurationDialog#updateMessage()
 	 */
 	public void updateMessage() {
-		if (isInitializingTabs()) {
-			return;
-		}
 		setErrorMessage(getTabViewer().getErrorMesssage());
 		setMessage(getTabViewer().getMesssage());				
 	}
