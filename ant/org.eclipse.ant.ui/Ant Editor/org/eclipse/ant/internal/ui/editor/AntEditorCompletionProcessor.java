@@ -18,7 +18,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -28,10 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -51,7 +46,11 @@ import org.eclipse.ant.internal.ui.dtd.IElement;
 import org.eclipse.ant.internal.ui.dtd.ISchema;
 import org.eclipse.ant.internal.ui.dtd.ParseError;
 import org.eclipse.ant.internal.ui.dtd.Parser;
-import org.eclipse.ant.internal.ui.editor.utils.ProjectHelper;
+import org.eclipse.ant.internal.ui.editor.model.AntElementNode;
+import org.eclipse.ant.internal.ui.editor.model.AntProjectNode;
+import org.eclipse.ant.internal.ui.editor.model.AntTargetNode;
+import org.eclipse.ant.internal.ui.editor.model.AntTaskNode;
+import org.eclipse.ant.internal.ui.editor.outline.AntModel;
 import org.eclipse.ant.internal.ui.model.AntUIImages;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
@@ -70,9 +69,6 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 
 /**
  * The text completion processor for the Ant Editor.
@@ -143,16 +139,15 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
      * The provider for all task and attribute descriptions.
      */
 	private TaskDescriptionProvider descriptionProvider = TaskDescriptionProvider.getDefault();
-	private AntEditorSaxDefaultHandler lastDefaultHandler;
 	
 	private String errorMessage;
 	
-	private ProjectHelper projectHelper;
+	private AntModel antModel;
 	
 	/**
 	 * Constructor for AntEditorCompletionProcessor.
 	 */
-	public AntEditorCompletionProcessor() {
+	public AntEditorCompletionProcessor(AntModel model) {
 		super();
 		if(dtd == null) {
 	        try {
@@ -163,7 +158,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 				AntUIPlugin.log(e);
 			}
 		}
-		projectHelper= new ProjectHelper();
+		antModel= model;
 	}
 
     /**
@@ -266,13 +261,13 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
                 }
                 break;
             case PROPOSAL_MODE_TASK_PROPOSAL:
-				proposals= getTaskProposals(document, findParentElement(document, lineNumber, columnNumber), prefix);
+				proposals= getTaskProposals(document, getParentName(document, lineNumber, columnNumber), prefix);
             	if (proposals.length == 0) {
 				   errorMessage= AntEditorMessages.getString("AntEditorCompletionProcessor.29"); //$NON-NLS-1$
             	}
 				break;
             case PROPOSAL_MODE_TASK_PROPOSAL_CLOSING:
-                proposals= getClosingTaskProposals(findNotClosedParentElement(document, lineNumber, columnNumber), prefix);
+                proposals= getClosingTaskProposals(getNotClosedTaskName(document, lineNumber, columnNumber), prefix);
             	if (proposals.length == 0) {
 				   errorMessage= AntEditorMessages.getString("AntEditorCompletionProcessor.30"); //$NON-NLS-1$
             	}
@@ -325,15 +320,12 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 
 	private ICompletionProposal[] getDependsValueProposals(IDocument document, String prefix) {
 		List possibleDependencies = new ArrayList();
-		Element element = findEnclosingTargetElement(document, lineNumber, columnNumber);
-		String currentTargetName = null;
-		if(element == null 
-				|| (currentTargetName = element.getAttribute("name")) == null //$NON-NLS-1$
-				|| currentTargetName.length() == 0) {
+		String currentTargetName= getEnclosingTargetName(document, lineNumber, columnNumber);
+		if(currentTargetName == null) {
 			return new ICompletionProposal[0];
 		}
 			
-		Map targets= findTargets(document);
+		Map targets= getTargets();
 		Set targetNames= targets.keySet();
 		Iterator itr= targetNames.iterator();
 		Enumeration dependencies= null;
@@ -522,42 +514,21 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 
 
     /**
-     * Returns all possible attributes for the specified parent task element.
+     * Returns all possible attributes for the specified parent name.
      * <P>
-     * No completions will be returned if <code>aParentTaskElement</code> is 
+     * No completions will be returned if <code>parentName</code> is 
      * not known.
      * 
-     * @param aWholeDocumentString the entire document up to the cursor position 
-     * 
-     * @param aParentTaskName name of the parent(surrounding) task or 
+     * @param document the entire document 
+     * @param parentName name of the parent(surrounding) element or 
      * <code>null</code> if completion should be done for the root element.
-     * 
      * @param aPrefix prefix, that all proposals should start with. The prefix
      * may be an empty string.
      */
-    protected ICompletionProposal[] getTaskProposals(IDocument document, Element aParentTaskElement, String aPrefix) {
-		// The code this replaced assumed that child elements
-		// are unordered; there was no provision for walking
-		// through a child sequence. This works for the Ant
-		// 1.5 DTD but not in general. I kept the assumption. bf
+    protected ICompletionProposal[] getTaskProposals(IDocument document, String parentName, String aPrefix) {
         List proposals = new ArrayList();
-     
-        if (aParentTaskElement == null) {
-        	// DTDs do not designate a root element.
-        	// The previous code must have looked for an element that
-        	// was not in the content model of any other element.
-        	// This test doesn't work with a DTD used to validate
-        	// document partitions, a DTD with multiple candidate
-        	// roots, etc. The right answer is to get
-        	// the root element from the document. If there isn't
-        	// one, we assume "project". bf
-            String rootElementName = null;
-	       	if (lastDefaultHandler != null) {
-                rootElementName = lastDefaultHandler.rootElementName;
-        	}
-			if (rootElementName == null) {
-				rootElementName = "project"; //$NON-NLS-1$
-			}
+        if (parentName == null) {
+            String rootElementName= "project"; //$NON-NLS-1$
 			IElement rootElement = dtd.getElement(rootElementName);
 			if(rootElement != null && rootElementName.toLowerCase().startsWith(aPrefix)) {
 				additionalProposalOffset= 0;
@@ -565,7 +536,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 				proposals.add(proposal);
 			}
         } else {
-			IElement parent = dtd.getElement(aParentTaskElement.getTagName());
+			IElement parent = dtd.getElement(parentName);
 			if (parent != null) {
 				IDfm dfm = parent.getDfm();
 				String[] accepts = dfm.getAccepts();
@@ -601,22 +572,19 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 	}
 
 	/**
-     * Returns the one possible completion for the specified unclosed task 
-     * element.
+     * Returns the one possible completion for the specified unclosed task .
      * 
-     * @param unclosedTaskElement the task element that hasn't been closed 
+     * @param unclosedTaskName the task that hasn't been closed 
      * last
-     * 
-     * @param aPrefix prefix, that the one possible proposals should start 
+     * @param prefix The prefix that the one possible proposal should start 
      * with. The prefix may be an empty string.
-     * 
      * @return array which may contain either one or none proposals
      */
-    private ICompletionProposal[] getClosingTaskProposals(Element unclosedTaskElement, String prefix) {
+    private ICompletionProposal[] getClosingTaskProposals(String unclosedTaskName, String prefix) {
 		ICompletionProposal[] proposals= null;
-        if(unclosedTaskElement != null) {
-            if(unclosedTaskElement.getTagName().toLowerCase().startsWith(prefix)) {
-                String replaceString = unclosedTaskElement.getTagName();
+        if(unclosedTaskName != null) {
+            if(unclosedTaskName.toLowerCase().startsWith(prefix)) {
+                String replaceString = unclosedTaskName;
                 proposals= new ICompletionProposal[1];
                 proposals[0]= new AntCompletionProposal(replaceString + '>', cursorPosition - prefix.length(), prefix.length(), replaceString.length()+1, null, replaceString, null, AntCompletionProposal.TASK_PROPOSAL);
             }
@@ -918,77 +886,26 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
      * 
      * @return the parent task element or <code>null</code> if not found.
      */
-    protected Element findParentElement(IDocument document, int aLineNumber, int aColumnNumber) {
-        return parseEditedFileSearchingForParent(document, aLineNumber, aColumnNumber).getParentElement(true);      
+    protected String getParentName(IDocument document, int aLineNumber, int aColumnNumber) {
+    	if (document.getLength() == 0) {
+    		return null;
+    	}
+    	AntProjectNode project= getProjectNode();
+    	int offset= getOffset(document, aLineNumber, aColumnNumber);
+    	if(offset == -1) {
+    		return null;
+    	}
+    	AntElementNode node= project.getNode(offset);
+    	if (node == null) {
+    		return ""; //$NON-NLS-1$
+    	} else if (node instanceof AntTaskNode) {
+    		return ((AntTaskNode)node).getName();
+    	} else if (node instanceof AntTargetNode) {
+    		return "target"; //$NON-NLS-1$
+    	} else {
+    		return "project"; //$NON-NLS-1$
+    	}
     }
-    
-
-    /**
-     * Parses the actually edited file as far as possible.
-     * <P>
-     * The returned handler can be asked about what happened while parsing
-     * the document.
-     * 
-     * @return the handler that has been used for parsing or <code>null</code>
-     * if parsing couldn't be done because of some error.
-     */
-    private AntEditorSaxDefaultHandler parseEditedFileSearchingForParent(IDocument document, int aLineNumber, int aColumnNumber) {
-		SAXParser parser = getSAXParser();
-		if(parser == null){
-			return null;
-		}
-        
-		//Set the handler
-		AntEditorSaxDefaultHandler handler = null;
-		File editedFile= getEditedFile();
-		try {
-			File parent = null;
-			if(editedFile != null) {
-				parent = editedFile.getParentFile();
-			}
-			handler = new AntEditorSaxDefaultHandler(document, parent, aLineNumber, aColumnNumber);
-		} catch (ParserConfigurationException e) {
-			AntUIPlugin.log(e);
-		}
-        
-	    parse(document, parser, handler, editedFile);
-	    
-        lastDefaultHandler = handler;
-        return handler;
-    }    
-
-
-
-	private void parse(IDocument document, SAXParser parser, AntEditorSaxDefaultHandler handler, File editedFile) {
-		InputSource inputSource = new InputSource(new StringReader(document.get()));
-		if (editedFile != null) {
-			//needed for resolving relative external entities
-			inputSource.setSystemId(editedFile.getAbsolutePath());
-		}
-		
-		try {
-			parser.parse(inputSource, handler);
-		} catch(SAXParseException e) {
-		   // Ignore since that happens always if the edited file is not valid. We try to handle that.
-		} catch (SAXException e) {
-			AntUIPlugin.log(e);
-		} catch (IOException e) {
-			//ignore since can happen when user has incorrect paths / protocols for external entities
-		}
-	}
-
-	private SAXParser getSAXParser() {
-		SAXParser parser = null;
-		try {
-			parser = SAXParserFactory.newInstance().newSAXParser();
-		} catch (ParserConfigurationException e) {
-			AntUIPlugin.log(e);
-		} catch (SAXException e) {
-			AntUIPlugin.log(e);
-		}
-		return parser;
-	}
-
 
     /**
      * Parses the actually edited file as far as possible.
@@ -1000,22 +917,20 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
     private Map findPropertiesFromDocument(IDocument document) {
 		/*
 		 * What is implemented here:
-		 * - We first use the ant plug-in to create a Project instance.
-		 * - We determine the enclosing parent task element
-		 * - We determine the dependency Vector for the parent task element
-		 * - We work our way through the dependency Vector and execute the
+		 * - Retrieve the project from the Ant model
+		 * - Determine the enclosing parent task element
+		 * - Determine the dependency Vector for the parent task element
+		 * - Work through the dependency Vector and execute the
 		 *   Property relevant tasks.
 		 */
 
-    	Project project= parseAndConfigureProject(document);
+    	Project project= getProjectNode().getProject();
     	Map properties = project.getProperties();
         
         // Determine the parent
-        Element element = findEnclosingTargetElement(document, lineNumber, columnNumber);
-        String targetName = null;
-        if(element == null 
-        		|| (targetName = element.getAttribute("name")) == null //$NON-NLS-1$
-        		|| targetName.length() == 0) {
+    	String targetName = getEnclosingTargetName(document, lineNumber, columnNumber);
+         
+        if(targetName == null) {
         	return properties;
         }
         List sortedTargets = null;
@@ -1101,50 +1016,15 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
         return project.getProperties();
     }
     
-    /**
-     * Parses the actually edited file as far as possible.
-     * <P>
-     * We use the parsing facilities of the ant plug-in here.
-     * 
-     * @return a map with all the found properties
-     */
-    private Map findTargets(IDocument document) {
-    	Project project = parseAndConfigureProject(document);    
+    private Map getTargets() {
+    	Project project = getProjectNode().getProject();  
     	return project.getTargets();
     }
 
-    /**
-	 * @param document
-	 * @return
-	 */
-	private Project parseAndConfigureProject(IDocument document) {
-		// Create an initialized project
-    	Project project = new Project();
-    	project.init();
-
-    	/* 
-    	 * Ant's parsing facilities always works on a file, therefore we need
-    	 * to determine the actual location of the file. Though the file 
-    	 * contents will not be parsed. We parse the passed document string.
-    	 */
-    	File file = getEditedFile();
-    	String filePath= ""; //$NON-NLS-1$
-    	if (file != null) {
-    		filePath= file.getAbsolutePath();
-    	}
-    	project.setUserProperty("ant.file", filePath); //$NON-NLS-1$
-
-    	try {
-    		projectHelper.setBuildFile(file);
-    		projectHelper.parse(project, document.get());  // File will be parsed here
-    		projectHelper.getImportStack().removeAllElements();
-    		projectHelper.setBuildFile(null);
-    	}
-    	catch(BuildException e) {
-    		// ignore a build exception on purpose, since we also parse invalid
-    		// build files.
-    	}
-		return project;
+	private AntProjectNode getProjectNode() {
+		AntElementNode[] nodes= antModel.getRootElements();
+		AntProjectNode projectNode= (AntProjectNode)nodes[0];
+		return projectNode;
 	}
 
     protected File getEditedFile() {
@@ -1161,54 +1041,53 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
         String  projectRelativeFilePath = input.getFile().getFullPath().removeFirstSegments(1).makeRelative().toString();
         return new File(projectPath + File.separator + projectRelativeFilePath);
     }
-
-    /**
-     * Finds the parent task element in respect to the cursor position which
-     * that has not been closed yet.
-     * 
-     * @return the not closed parent task element or <code>null</code> if not 
-     * found.
-     */
-    private Element findNotClosedParentElement(IDocument document, int aLineNumber, int aColumnNumber) {
-        AntEditorSaxDefaultHandler handler = parseEditedFileSearchingForParent(document, aLineNumber, aColumnNumber);
-        if(handler != null) {
-            // A not closed parent element can only be found by guessing.
-            if(handler.getParentElement(false) == null) {
-                return handler.getParentElement(true);
-            }
-        }
-        return null;
+    
+    private String getNotClosedTaskName(IDocument document, int taskLineNumber, int taskColumnNumber) {
+    	Iterator openElements= antModel.getStillOpenElement();
+    	int offset= getOffset(document, taskLineNumber, taskColumnNumber);
+    	while (openElements.hasNext()) {
+    		AntElementNode element = (AntElementNode) openElements.next();
+    		AntElementNode containingNode= element.getNode(offset);
+    		if (element.equals(containingNode)) {
+    			return element.getName();
+    		}
+		}
+    	return null;
     }
 
     /**
-     * Finds the enclosing target element in respect to the cursor position. 
+     * Finds the enclosing target in respect to the cursor position and returns its name  
      * 
-     * @return the enclosing target element or <code>null</code> if not found.
+     * @return the name of the enclosing target or <code>null</code> if not found.
      */
- 	private Element findEnclosingTargetElement(IDocument document, int aLineNumber, int aColumnNumber) {
+ 	private String getEnclosingTargetName(IDocument document, int aLineNumber, int aColumnNumber) {
 
-        // Get a new SAX Parser
-        SAXParser parser = getSAXParser();
-        if (parser == null) {
-        	return null;
-        }
-        
-        // Set the handler
-        EnclosingTargetSearchingHandler handler = null;
-		File editedFile= getEditedFile();
-        try {
-		   File parent = null;
-		   if(editedFile != null) {
-			   parent = editedFile.getParentFile();
-		   }
-            handler = new EnclosingTargetSearchingHandler(document, parent, aLineNumber, aColumnNumber);
-        } catch (ParserConfigurationException e) {
-            AntUIPlugin.log(e);
-        }
-        
-		parse(document, parser, handler, editedFile);
-
-		return handler.getParentElement(true);
+       AntProjectNode project= getProjectNode();
+       int offset= getOffset(document, aLineNumber, aColumnNumber);
+       if(offset == -1) {
+       		return null;
+       }
+       AntElementNode node= project.getNode(offset);
+       if (node instanceof AntTaskNode) {
+       		node= (AntTargetNode)node.getParentNode();
+       } else if (node instanceof AntProjectNode) {
+       		node= null;
+       }
+       String targetName = null;
+       if(node == null 
+       		|| (targetName = ((AntTargetNode)node).getTarget().getName()) == null
+			|| targetName.length() == 0) {
+       		return null;
+       }
+       return targetName;
+ 	}
+ 	
+ 	private int getOffset(IDocument document, int line, int column) {
+ 		try {
+			return document.getLineOffset(line ) + column - 1;
+		} catch (BadLocationException e) {
+			return -1;
+		}
  	}
 	
 	/**

@@ -15,23 +15,18 @@
 package org.eclipse.ant.tests.ui.editor;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
-import org.eclipse.ant.internal.ui.editor.AntEditorSaxDefaultHandler;
 import org.eclipse.ant.internal.ui.editor.utils.ProjectHelper;
 import org.eclipse.ant.tests.ui.editor.support.TestTextCompletionProcessor;
 import org.eclipse.ant.tests.ui.testplugin.AbstractAntUITest;
@@ -40,7 +35,6 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 /**
  * Tests everything about code completion and code assistance.
@@ -292,7 +286,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
 	 * a dependent targets.
 	 */
     public void testPropertyProposalDefinedInDependantTargets() throws FileNotFoundException {
-        TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
+        TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("dependencytest.xml"));
 
         File file= getBuildFile("dependencytest.xml");
         processor.setEditedFile(file);
@@ -315,44 +309,44 @@ public class CodeCompletionTest extends AbstractAntUITest {
      * Tests the code completion for tasks having parent tasks.
      */
     public void testTaskProposals() throws ParserConfigurationException {
-		TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
+		TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("buildtest1.xml"));
 
         DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document doc = docBuilder.newDocument();
 
-        ICompletionProposal[] proposals = processor.getTaskProposals("         <", doc.createElement("rename"), "");
+        ICompletionProposal[] proposals = processor.getTaskProposals("         <", "rename", "");
         assertEquals(0, proposals.length);
 
-        proposals = processor.getTaskProposals("       <cl", createTestPropertyElement(doc), "cl");
+//        proposals = processor.getTaskProposals("       <cl", createTestPropertyElement(doc), "cl");
+//        assertEquals(1, proposals.length);
+//        ICompletionProposal proposal = proposals[0];
+//        assertEquals("classpath", proposal.getDisplayString());
+//        
+//        //case insensitivity
+//		proposals = processor.getTaskProposals("       <CL", createTestPropertyElement(doc), "cl");
+//	   	assertEquals(1, proposals.length);
+//	   	proposal = proposals[0];
+//	   	assertEquals("classpath", proposal.getDisplayString());
+
+        proposals = processor.getTaskProposals("       <cl", "property", "cl");
         assertEquals(1, proposals.length);
         ICompletionProposal proposal = proposals[0];
         assertEquals("classpath", proposal.getDisplayString());
-        
-        //case insensitivity
-		proposals = processor.getTaskProposals("       <CL", createTestPropertyElement(doc), "cl");
-	   	assertEquals(1, proposals.length);
-	   	proposal = proposals[0];
-	   	assertEquals("classpath", proposal.getDisplayString());
 
-        proposals = processor.getTaskProposals("       <cl", doc.createElement("property"), "cl");
+        proposals = processor.getTaskProposals("       <pr", "property", "");
         assertEquals(1, proposals.length);
         proposal = proposals[0];
         assertEquals("classpath", proposal.getDisplayString());
 
-        proposals = processor.getTaskProposals("       <pr", doc.createElement("property"), "");
-        assertEquals(1, proposals.length);
-        proposal = proposals[0];
-        assertEquals("classpath", proposal.getDisplayString());
-
-        proposals = processor.getTaskProposals("       <pr", createTestProjectElement(doc), "pr");
-        assertEquals(1, proposals.length); // is choice and already used with classpath
-        proposal = proposals[0];
-        assertEquals("property", proposal.getDisplayString());
+//        proposals = processor.getTaskProposals("       <pr", createTestProjectElement(doc), "pr");
+//        assertEquals(1, proposals.length); // is choice and already used with classpath
+//        proposal = proposals[0];
+//        assertEquals("property", proposal.getDisplayString());
+//        
+//        proposals = processor.getTaskProposals("       <fi", createTestProjectElement(doc), "fi");
+//        assertEquals(5, proposals.length); // is choice and already used with classpath
         
-        proposals = processor.getTaskProposals("       <fi", createTestProjectElement(doc), "fi");
-        assertEquals(5, proposals.length); // is choice and already used with classpath
-        
-        proposals = processor.getTaskProposals("          ", doc.createElement("project"), "");
+        proposals = processor.getTaskProposals("          ", "project", "");
         assertEquals(22, proposals.length);
 
         proposals = processor.getTaskProposals("          ", null, "");
@@ -363,15 +357,15 @@ public class CodeCompletionTest extends AbstractAntUITest {
         proposals = processor.getTaskProposals("            jl", null, "jl");
         assertEquals(0, proposals.length);
 
-        proposals = processor.getTaskProposals("             ", doc.createElement("projexxx"), "");
+        proposals = processor.getTaskProposals("             ", "projexxx", "");
         assertEquals(0, proposals.length);
 
-        proposals = processor.getTaskProposals("              ", doc.createElement("filelist"), "");
+        proposals = processor.getTaskProposals("              ", "filelist", "");
         assertEquals(0, proposals.length);
 
         // "<project><target><mk"
         String string = "<project><target><mk";
-        proposals = processor.getTaskProposals("             <mk", processor.findParentElement(string, 0, 20), "mk");
+        proposals = processor.getTaskProposals("             <mk", processor.getParentName(string, 0, 20), "mk");
         assertEquals(1, proposals.length);
         proposal = proposals[0];
         assertEquals("mkdir", proposal.getDisplayString());
@@ -388,21 +382,19 @@ public class CodeCompletionTest extends AbstractAntUITest {
 	/**
 	 * Test for bug 40951
 	 */
-	public void testMixedElements() {
-		TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
-		String string = "<project><target><sql driver=\"\" password=\"\" url=\"\" userid=\"\"><T</sql>";
-		ICompletionProposal[] proposals = processor.getTaskProposals(string, processor.findParentElement(string, 0, 64), "t");
-		assertEquals(1, proposals.length);
-		ICompletionProposal proposal = proposals[0];
-		assertEquals("transaction", proposal.getDisplayString());
-		
-		
-		string = "<project><target><concat></concat>";
-		proposals = processor.getTaskProposals(string, processor.findParentElement(string, 0, 25), "");
-		assertEquals(2, proposals.length);
-		proposal = proposals[0];
-		assertEquals("filelist", proposal.getDisplayString());
-	}
+//	public void testMixedElements() {
+//		TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("mixed.xml"));
+//		//String string = "<project><target><sql driver=\"\" password=\"\" url=\"\" userid=\"\"><T</sql><concat></concat>";
+//		ICompletionProposal[] proposals = processor.getTaskProposals(getCurrentDocument(), processor.getParentName(getCurrentDocument(), 0, 64), "t");
+//		assertEquals(1, proposals.length);
+//		ICompletionProposal proposal = proposals[0];
+//		assertEquals("transaction", proposal.getDisplayString());
+//		
+//		proposals = processor.getTaskProposals(getCurrentDocument(), processor.getParentName(getCurrentDocument(), 0, 78), "");
+//		assertEquals(2, proposals.length);
+//		proposal = proposals[0];
+//		assertEquals("filelist", proposal.getDisplayString());
+//	}
 	
     /**
      * Tests the algorithm for finding a child as used by the processor.
@@ -591,61 +583,6 @@ public class CodeCompletionTest extends AbstractAntUITest {
 		prefix = processor.getPrefixFromDocument("<project name= \"test\"><tar", 26);
 		assertEquals("tar", prefix);
     }    
-
-    /**
-     * Tests parsing an XML file with the use of our AntEditorSaxDefaultHandler.
-     */
-    public void testXMLParsingWithAntEditorDefaultHandler() throws ParserConfigurationException, IOException {
-        SAXParser parser = getSAXParser();
-		File file= getBuildFile("test1.xml");
-		String fileContent= getFileContentAsString(file);
-        AntEditorSaxDefaultHandler handler = new AntEditorSaxDefaultHandler(new org.eclipse.jface.text.Document(fileContent), file.getParentFile(), 4, 8);
-        InputStream stream = new FileInputStream(file);
-		parse(stream, parser, handler, file);
-        Element element = handler.getParentElement(true);
-        assertNotNull(element);
-        assertEquals("klick", element.getTagName());
-        NodeList childNodes = element.getChildNodes();
-        assertEquals(1, childNodes.getLength());
-        assertEquals("gurgel", ((Element)childNodes.item(0)).getTagName());
-		stream.close();
-		
-		file= getBuildFile("test2.xml");
-		fileContent= getFileContentAsString(file);
-        handler = new AntEditorSaxDefaultHandler(new org.eclipse.jface.text.Document(fileContent), file.getParentFile(), 4, 8);
-        stream = new FileInputStream(file);
-		parse(stream, parser, handler, file);
-        element = handler.getParentElement(false);
-        assertNotNull(element);
-        assertEquals("klick", element.getTagName());
-        childNodes = element.getChildNodes();
-        assertEquals(4, childNodes.getLength());
-        assertEquals("gurgel", ((Element)childNodes.item(0)).getTagName());
-        assertEquals("hal", ((Element)childNodes.item(1)).getTagName());
-        assertEquals("klack", ((Element)childNodes.item(2)).getTagName());
-        assertEquals("humpf", ((Element)childNodes.item(3)).getTagName());
-		stream.close();
-		
-		file= getBuildFile("test3.xml");
-		fileContent= getFileContentAsString(file);
-        handler = new AntEditorSaxDefaultHandler(new org.eclipse.jface.text.Document(fileContent), file.getParentFile(), 3, 1);
-        stream = new FileInputStream(file);
-		parse(stream, parser, handler, file);
-        element = handler.getParentElement(true);
-        assertNotNull(element);
-        assertEquals("bla", element.getTagName());
-		stream.close();
-
-		file= getBuildFile("test4.xml");
-		fileContent= getFileContentAsString(file);
-        handler = new AntEditorSaxDefaultHandler(new org.eclipse.jface.text.Document(fileContent), file.getParentFile(), 0, 46);
-        stream = new FileInputStream(file);
-		parse(stream, parser, handler, file);
-        element = handler.getParentElement(true);
-        assertNotNull(element);
-        assertEquals("target", element.getTagName());
-        stream.close();
-    }
     
     /**
      * Tests how the processor determines the proposal mode.

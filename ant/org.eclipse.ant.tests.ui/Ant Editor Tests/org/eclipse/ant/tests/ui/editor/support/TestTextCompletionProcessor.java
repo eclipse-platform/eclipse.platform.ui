@@ -17,6 +17,7 @@ import java.io.IOException;
 import junit.framework.Assert;
 
 import org.eclipse.ant.internal.ui.editor.AntEditorCompletionProcessor;
+import org.eclipse.ant.internal.ui.editor.outline.AntModel;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.w3c.dom.Element;
@@ -25,6 +26,13 @@ public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
 
 	private File editedFile;
 
+	public TestTextCompletionProcessor(AntModel model) {
+		super(model);
+	}
+	
+	public TestTextCompletionProcessor() {
+		super(null);
+	}
     public ICompletionProposal[] getAttributeProposals(String aTaskName, String aPrefix) {
     	cursorPosition= aTaskName.length();
         return super.getAttributeProposals(aTaskName, aPrefix);
@@ -34,17 +42,26 @@ public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
         return super.findChildElementNamedOf(anElement, aChildElementName);
     }
 
-    public ICompletionProposal[] getTaskProposals(String text, Element aParentTaskElement, String aPrefix) {
+    public ICompletionProposal[] getTaskProposals(String text, String parentName, String aPrefix) {
     	cursorPosition= Math.max(0, text.length() - 1);
-        return super.getTaskProposals(new Document(text), aParentTaskElement, aPrefix);
+        return super.getTaskProposals(new Document(text), parentName, aPrefix);
+    }
+    
+    public ICompletionProposal[] getTaskProposals(Document document, String parentName, String aPrefix) {
+    	cursorPosition= Math.max(0, document.getLength() - 1);
+    	return super.getTaskProposals(document, parentName, aPrefix);
     }
 
     public int determineProposalMode(String text, int aCursorPosition, String aPrefix) {
         return super.determineProposalMode(new Document(text), aCursorPosition, aPrefix);
     }
 
-    public Element findParentElement(String text, int aLineNumber, int aColumnNumber) {
-        return super.findParentElement(new Document(text), aLineNumber, aColumnNumber);
+    public String getParentName(String text, int aLineNumber, int aColumnNumber) {
+        return super.getParentName(new Document(text), aLineNumber, aColumnNumber);
+    }
+    
+    public String getParentName(Document doc, int aLineNumber, int aColumnNumber) {
+    	return super.getParentName(doc, aLineNumber, aColumnNumber);
     }
 
     public String getPrefixFromDocument(String aDocumentText, int anOffset) {

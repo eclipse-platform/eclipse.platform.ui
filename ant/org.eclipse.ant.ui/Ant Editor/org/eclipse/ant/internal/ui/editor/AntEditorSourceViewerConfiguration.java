@@ -77,7 +77,7 @@ public class AntEditorSourceViewerConfiguration extends SourceViewerConfiguratio
      */
     public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
         contentAssistant= new ContentAssistant();
-        AntEditorCompletionProcessor processor = new AntEditorCompletionProcessor(); 
+        AntEditorCompletionProcessor processor = new AntEditorCompletionProcessor(fEditor.getAntModel()); 
 		contentAssistant.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
 		contentAssistant.setContentAssistProcessor(processor, AntEditorPartitionScanner.XML_TAG);
         
