@@ -522,7 +522,6 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 			 * XXX:
 			 * This is a workaround for a corresponding bug in Java readers and writer,
 			 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
-			 * </p>
 			 */
 			if (fHasBOM && CHARSET_UTF_8.equals(encoding)) {
 				int n= 0;
