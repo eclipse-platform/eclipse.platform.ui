@@ -19,6 +19,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.runtime.Platform;
+
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.PaintEvent;
@@ -51,6 +53,12 @@ import org.eclipse.jface.text.TextPresentation;
  * @since 2.1
  */
 public class AnnotationPainter implements IPainter, PaintListener, IAnnotationModelListener, IAnnotationModelListenerExtension, ITextPresentationListener {	
+	
+	/**
+	 * Tells whether this class is in debug mode.
+	 * @since 3.0
+	 */
+	private static boolean DEBUG= "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.jface.text/debug/AnnotationPainter"));  //$NON-NLS-1$//$NON-NLS-2$
 	
 	/** 
 	 * The presentation information (decoration) for an annotation.  Each such
@@ -230,11 +238,15 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 				if (event == null || event.isWorldChange()) {
 					isWorldChange= true;
 					
+					if (DEBUG && event == null)
+						System.out.println("AP: INTERNAL CHANGE"); //$NON-NLS-1$
+					
 					fDecorationsMap.clear();
 					fHighlightedDecorationsMap.clear();
 
 					e= fModel.getAnnotationIterator();
-					
+
+
 				} else {
 					
 					// Remove annotations
@@ -325,6 +337,14 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		}
 	}
 	
+	/**
+	 * Updates the remembered highlight ranges.
+	 * 
+	 * @param highlightAnnotationRangeStart the start of the range
+	 * @param highlightAnnotationRangeEnd	the end of the range
+	 * @param isWorldChange					tells whether the range belongs to a annotation model event reporting a world change
+	 * @since 3.0
+	 */
 	private void updateHighlightRanges(int highlightAnnotationRangeStart, int highlightAnnotationRangeEnd, boolean isWorldChange) {
 		if (highlightAnnotationRangeStart != Integer.MAX_VALUE) {
 			
@@ -336,24 +356,19 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 				maxRangeEnd= Math.max(maxRangeEnd, fTotalHighlightAnnotationRange.offset + fTotalHighlightAnnotationRange.length);
 			}
 			
+			if (fTotalHighlightAnnotationRange == null)
+				fTotalHighlightAnnotationRange= new Position(0);
+			if (fCurrentHighlightAnnotationRange == null)
+				fCurrentHighlightAnnotationRange= new Position(0);
+				
 			if (isWorldChange) {
-				if (fTotalHighlightAnnotationRange == null)
-					fTotalHighlightAnnotationRange= new Position(0);
 				fTotalHighlightAnnotationRange.offset= highlightAnnotationRangeStart;
 				fTotalHighlightAnnotationRange.length= highlightAnnotationRangeEnd - highlightAnnotationRangeStart;
-				
-				if (fCurrentHighlightAnnotationRange == null)
-					fCurrentHighlightAnnotationRange= new Position(0);
 				fCurrentHighlightAnnotationRange.offset= maxRangeStart;
 				fCurrentHighlightAnnotationRange.length= maxRangeEnd - maxRangeStart;
 			} else {
-				if (fTotalHighlightAnnotationRange == null)
-					fTotalHighlightAnnotationRange= new Position(0);
 				fTotalHighlightAnnotationRange.offset= maxRangeStart;
 				fTotalHighlightAnnotationRange.length= maxRangeEnd - maxRangeStart;
-				
-				if (fCurrentHighlightAnnotationRange == null)
-					fCurrentHighlightAnnotationRange= new Position(0);
 				fCurrentHighlightAnnotationRange.offset=highlightAnnotationRangeStart;
 				fCurrentHighlightAnnotationRange.length= highlightAnnotationRangeEnd - highlightAnnotationRangeStart;
 			}
@@ -374,6 +389,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * Adapts the given position to the document length.
 	 * 
 	 * @param position the position to adapt
+	 * @since 3.0
 	 */
 	private void adaptToDocumentLength(Position position) {
 		if (position == null)
@@ -542,6 +558,10 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	    
 		if (fSourceViewer instanceof ITextViewerExtension2) {
 			IRegion r= new Region(fCurrentHighlightAnnotationRange.getOffset(), fCurrentHighlightAnnotationRange.getLength());
+
+			if (DEBUG)
+				System.out.println("AP: invalidating offset: " + r.getOffset() + ", length= " + r.getLength()); //$NON-NLS-1$ //$NON-NLS-2$
+			
 			((ITextViewerExtension2)fSourceViewer).invalidateTextPresentation(r.getOffset(), r.getLength());
 		} else {
 			fSourceViewer.invalidateTextPresentation();
@@ -553,7 +573,15 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * @since 3.0
 	 */
 	public synchronized void applyTextPresentation(TextPresentation tp) {
+
+		if (fHighlightedDecorationsMap == null || fHighlightedDecorationsMap.isEmpty())
+			return;
+
 		IRegion region= tp.getExtent();
+		
+		if (DEBUG)
+			System.out.println("AP: applying text presentation offset: " + region.getOffset() + ", length= " + region.getLength()); //$NON-NLS-1$ //$NON-NLS-2$
+
 		for (int layer= 0, maxLayer= 1;	layer < maxLayer; layer++) {
 			
 			for (Iterator iter= fHighlightedDecorationsMap.values().iterator(); iter.hasNext();) {
@@ -577,6 +605,9 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * @see IAnnotationModelListener#modelChanged(IAnnotationModel)
 	 */
 	public synchronized void modelChanged(final IAnnotationModel model) {
+		if (DEBUG)
+			System.err.println("AP: OLD API of AnnotationModelListener called"); //$NON-NLS-1$
+
 		modelChanged(new AnnotationModelEvent(model));
 	}
 	    
@@ -590,6 +621,14 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 				updatePainting(event);
 			} else {
 				Display d= fTextWidget.getDisplay();
+				if (DEBUG && event != null && event.isWorldChange()) {
+					System.out.println("AP: WORLD CHANGED, stack trace follows:"); //$NON-NLS-1$
+					try {
+						throw new Throwable();
+					} catch (Throwable t) {
+						t.printStackTrace(System.out);
+					}
+				}
 				if (d != null) {
 					d.asyncExec(new Runnable() {
 						public void run() {

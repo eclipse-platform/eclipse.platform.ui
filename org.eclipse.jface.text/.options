@@ -1,0 +1,4 @@
+# Debugging options for the org.eclipse.jface.text plug-in
+
+# Prints debug information related to AnnotationPainter
+org.eclipse.jface.text/debug/AnnotationPainter= true
