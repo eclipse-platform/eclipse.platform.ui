@@ -315,7 +315,7 @@ public class Project extends Container implements IProject {
 		delete(updateFlags, monitor);
 	}
 
-	protected void fixupAfterMoveSource() throws CoreException {
+	protected void fixupAfterMoveSource() {
 		workspace.deleteResource(this);
 	}
 
@@ -331,7 +331,7 @@ public class Project extends Container implements IProject {
 	/* (non-Javadoc)
 	 * @see IContainer#getDefaultCharset(boolean)
 	 */
-	public String getDefaultCharset(boolean checkImplicit) throws CoreException {
+	public String getDefaultCharset(boolean checkImplicit) {
 		// non-existing resources default to parent's charset
 		if (!exists())
 			return checkImplicit ? ResourcesPlugin.getEncoding() : null;
@@ -777,6 +777,10 @@ public class Project extends Container implements IProject {
 				workspace.flushBuildOrder();
 				info = (ProjectInfo) getResourceInfo(false, true);
 				info.set(M_OPEN);
+				//clear the unknown children immediately to avoid background refresh
+				boolean unknownChildren = info.isSet(M_CHILDREN_UNKNOWN);
+				if (unknownChildren)
+					info.clear(M_CHILDREN_UNKNOWN);
 				// the M_USED flag is used to indicate the difference between opening a project
 				// for the first time and opening it from a previous close (restoring it from disk)
 				boolean used = info.isSet(M_USED);
@@ -791,8 +795,7 @@ public class Project extends Container implements IProject {
 				}
 				startup();
 				//request a refresh if the project has unknown members on disk
-				if (!used && info.isSet(M_CHILDREN_UNKNOWN)) {
-					info.clear(M_CHILDREN_UNKNOWN);
+				if (!used && unknownChildren) {
 					//refresh either in background or foreground
 					if ((updateFlags & IResource.BACKGROUND_REFRESH) != 0) {
 						workspace.refreshManager.refresh(this);
