@@ -60,7 +60,6 @@ Workbench window by the user customizing a perspective.
          <sequence>
             <element ref="menu" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="action" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="description" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -317,14 +316,6 @@ If omitted and the action appears in the toolbar, the Workbench will use a place
             </annotation>
          </attribute>
       </complexType>
-   </element>
-
-   <element name="description" type="string">
-      <annotation>
-         <documentation>
-            This optional element contains, in it's body, translatable text providing a short description of the action set.
-         </documentation>
-      </annotation>
    </element>
 
    <annotation>

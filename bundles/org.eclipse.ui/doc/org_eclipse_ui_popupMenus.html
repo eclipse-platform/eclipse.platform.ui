@@ -1,5 +1,12 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <HEAD><meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<STYLE type="text/css">
+div.dtd-fragment {
+	width: 100%;
+	border: none;
+	background-color: #eee;
+}
+</STYLE>
 </HEAD>
 <HTML>
 <BODY>
@@ -19,52 +26,66 @@ An action's enablement and/or visibility can be defined using the elements <samp
 <p>
 The syntax is the same for the <samp>enablement</samp> and <samp>visibility</samp> elements. Both contain only one boolean expression sub-element. In the simplest case, this will be an <samp>objectClass</samp>, <samp>objectState</samp>, <samp>pluginState</samp>, or <samp>systemProperty</samp> element. In the more complex case, the <samp>and</samp>, <samp>or</samp>, and <samp>not</samp> elements can be combined to form a boolean expression. Both the <samp>and</samp>, and <samp>or</samp> elements must contain 2 sub-elements. The <samp>not</samp> element must contain only 1 sub-element.
 </p><p><b><i>Configuration Markup:</i></b><p>
-<p><samp>&nbsp;&nbsp; &lt;!ELEMENT extension (objectContribution+ , viewerContribution+)&gt;</samp>
-<br><br><samp>&nbsp;&nbsp; &lt;!ATTLIST extension</samp>
+<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT <a name="e.extension">extension</a> (<a href="#e.objectContribution">objectContribution</a> , <a href="#e.viewerContribution">viewerContribution</a>)&gt;</font></samp>
+<br><br><samp><font color="#800000">&nbsp;&nbsp; &lt;!ATTLIST extension</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;point&nbsp;CDATA #REQUIRED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;&nbsp;CDATA #IMPLIED</samp>
-<br><samp>&nbsp;&nbsp; &gt;</samp>
+<br><samp>&nbsp;&nbsp; &gt;</font></samp>
 <ul>
-<li><b>point</b> - a fully qualified identifier of the target extension point</li><li><b>id</b> - an optional identifier of the extension instance</li><li><b>name</b> - an optional name of the extension instance</li></ul>
-<p><samp>&nbsp;&nbsp; &lt;!ELEMENT objectContribution (filter* , visibility? , menu* , action*)&gt;</samp>
+<li><b>point</b> - a fully qualified identifier of the target extension point</li>
+<li><b>id</b> - an optional identifier of the extension instance</li>
+<li><b>name</b> - an optional name of the extension instance</li>
+</ul>
+<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT <a name="e.objectContribution">objectContribution</a> (<a href="#e.filter">filter</a>* , <a href="#e.visibility">visibility</a>? , <a href="#e.menu">menu</a>* , <a href="#e.action">action</a>*)&gt;</font></samp>
 <p>&nbsp;&nbsp; This element is used to define a group of actions and/or menus for any viewer context menus for which the objects of the specified type are selected.</p>
 <p></p>
-<samp>&nbsp;&nbsp; &lt;!ATTLIST objectContribution</samp>
+<samp><font color="#800000">&nbsp;&nbsp; &lt;!ATTLIST objectContribution</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;objectClass&nbsp;CDATA #REQUIRED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nameFilter&nbsp;&nbsp;CDATA #IMPLIED</samp>
-<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;adaptable&nbsp;&nbsp;&nbsp;(true | false) "false""false"</samp>
-<br><samp>&nbsp;&nbsp; &gt;</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;adaptable&nbsp;&nbsp;&nbsp;(true | false) "false"</samp>
+<br><samp>&nbsp;&nbsp; &gt;</font></samp>
 <ul>
-<li><b>id</b> - a unique identifier used to reference this contribution</li><li><b>objectClass</b> - a fully qualified name of the class or interface that all objects in the 
-selection must subclass or implement.</li><li><b>nameFilter</b> - an optional wild card filter for the name that can be applied to all objects in the selection. No contribution will take place if there is no match.</li><li><b>adaptable</b> - a flag that indicates if types that adapt to IResource should use this object contribution. This flag is used only if objectClass adapts to IResource.  Default value is false.</li></ul>
-<p><samp>&nbsp;&nbsp; &lt;!ELEMENT viewerContribution (visibility? , menu* , action*)&gt;</samp>
+<li><b>id</b> - a unique identifier used to reference this contribution</li>
+<li><b>objectClass</b> - a fully qualified name of the class or interface that all objects in the 
+selection must subclass or implement.</li>
+<li><b>nameFilter</b> - an optional wild card filter for the name that can be applied to all objects in the selection. No contribution will take place if there is no match.</li>
+<li><b>adaptable</b> - a flag that indicates if types that adapt to IResource should use this object contribution. This flag is used only if objectClass adapts to IResource.  Default value is false.</li>
+</ul>
+<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT <a name="e.viewerContribution">viewerContribution</a> (<a href="#e.visibility">visibility</a>? , <a href="#e.menu">menu</a>* , <a href="#e.action">action</a>*)&gt;</font></samp>
 <p>&nbsp;&nbsp; This element is used to define a group of actions and/or menus for a specific view or editor part context menu.</p>
 <p></p>
-<samp>&nbsp;&nbsp; &lt;!ATTLIST viewerContribution</samp>
+<samp><font color="#800000">&nbsp;&nbsp; &lt;!ATTLIST viewerContribution</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;targetID&nbsp;CDATA #REQUIRED</samp>
-<br><samp>&nbsp;&nbsp; &gt;</samp>
+<br><samp>&nbsp;&nbsp; &gt;</font></samp>
 <ul>
-<li><b>id</b> - a unique identifier used to reference this contribution</li><li><b>targetID</b> - the unique identifier of a context menu inside a view or editor part.</li></ul>
-<p><samp>&nbsp;&nbsp; &lt;!ELEMENT action (selection* , enablement?)&gt;</samp>
+<li><b>id</b> - a unique identifier used to reference this contribution</li>
+<li><b>targetID</b> - the unique identifier of a context menu inside a view or editor part.</li>
+</ul>
+<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT <a name="e.action">action</a> (<a href="#e.selection">selection</a>* , <a href="#e.enablement">enablement</a>?)&gt;</font></samp>
 <p>&nbsp;&nbsp; This element defines an action that the user can invoke in the UI.</p>
 <p></p>
-<samp>&nbsp;&nbsp; &lt;!ATTLIST action</samp>
+<samp><font color="#800000">&nbsp;&nbsp; &lt;!ATTLIST action</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;label&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;menubarPath&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;icon&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;helpContextId&nbsp;CDATA #IMPLIED</samp>
-<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;style&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(push|radio|toggle) #IMPLIED</samp>
-<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;state&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) "false"#IMPLIED</samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;style&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(push|radio|toggle) </samp>
+<br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;state&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) </samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enablesFor&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</samp>
-<br><samp>&nbsp;&nbsp; &gt;</samp>
+<br><samp>&nbsp;&nbsp; &gt;</font></samp>
 <ul>
-<li><b>id</b> - a unique identifier used as a reference for this action.</li><li><b>label</b> - a translatable name used as the menu item text. The name can include mnenomic information.</li><li><b>menubarPath</b> - a slash-delimited path ('/') used to specify the location of this action in the context menu. Each token in the path, except the last one, must represent a valid identifier of an existing menu in the hierarchy. The last token represents the named group into which this action will be added. If the path is omitted, this action will be added to the standard additions group defined by <samp>IWorkbenchActionConstants.MB_ADDITIONS</samp>.</li><li><b>icon</b> - a relative path of an icon used to visually represent the action in its context.
-The path is relative to the location of the plugin.xml file of the contributing plug-in.</li><li><b>helpContextId</b> - a unique identifier indicating the help context for this action. If the action appears as a menu item, then pressing F1 while the menu item is highlighted will display help.</li><li><b>style</b> - an optional attribute to define the user interface style type for the action. If defined, the attribute value will be one of the following:
+<li><b>id</b> - a unique identifier used as a reference for this action.</li>
+<li><b>label</b> - a translatable name used as the menu item text. The name can include mnenomic information.</li>
+<li><b>menubarPath</b> - a slash-delimited path ('/') used to specify the location of this action in the context menu. Each token in the path, except the last one, must represent a valid identifier of an existing menu in the hierarchy. The last token represents the named group into which this action will be added. If the path is omitted, this action will be added to the standard additions group defined by <samp>IWorkbenchActionConstants.MB_ADDITIONS</samp>.</li>
+<li><b>icon</b> - a relative path of an icon used to visually represent the action in its context.
+The path is relative to the location of the plugin.xml file of the contributing plug-in.</li>
+<li><b>helpContextId</b> - a unique identifier indicating the help context for this action. If the action appears as a menu item, then pressing F1 while the menu item is highlighted will display help.</li>
+<li><b>style</b> - an optional attribute to define the user interface style type for the action. If defined, the attribute value will be one of the following:
     <table border="0" width="80%">
       <tr>
  <td valign="top" width="25"></td>
@@ -81,7 +102,10 @@ The path is relative to the location of the plugin.xml file of the contributing 
         <td valign="top" nowrap><b>toggle</b></td>
         <td valign="top">- as a checked style menu item or as a toggle tool item. The initial value is specified by the <samp>state</samp> attribute.</td>
       </tr>
-    </table></li><li><b>state</b> - an optional attribute indicating the initial state (either <samp>true</samp> or <samp>false</samp>), used when the <samp>style</samp> attribute has the value <samp>radio</samp> or <samp>toggle</samp>.</li><li><b>class</b> - a name of the fully qualified class that implements <samp>org.eclipse.ui.IObjectActionDelegate</samp> (for object contributions), <samp>org.eclipse.ui.IViewActionDelegate</samp> (for viewer contributions to a view part), or <samp>org.eclipse.ui.IEditorActionDelegate</samp> (for viewer contributions to an editor part).  For backwards compatibility, <samp>org.eclipse.ui.IActionDelegate</samp> may be implemented for object contributions.</li><li><b>enablesFor</b> - a value indicating the selection count which must be met to enable the action.
+    </table></li>
+<li><b>state</b> - an optional attribute indicating the initial state (either <samp>true</samp> or <samp>false</samp>), used when the <samp>style</samp> attribute has the value <samp>radio</samp> or <samp>toggle</samp>.</li>
+<li><b>class</b> - a name of the fully qualified class that implements <samp>org.eclipse.ui.IObjectActionDelegate</samp> (for object contributions), <samp>org.eclipse.ui.IViewActionDelegate</samp> (for viewer contributions to a view part), or <samp>org.eclipse.ui.IEditorActionDelegate</samp> (for viewer contributions to an editor part).  For backwards compatibility, <samp>org.eclipse.ui.IActionDelegate</samp> may be implemented for object contributions.</li>
+<li><b>enablesFor</b> - a value indicating the selection count which must be met to enable the action.
 If this attribute is specified and the condition is met, the action is enabled.
 If the condition is not met, the action is disabled.
 If no attribute is specified, the action is enabled for any number of items selected.
@@ -124,136 +148,153 @@ The following attribute formats are supported:
 The enablement criteria for an action extension are initially defined 
 by <samp>enablesFor</samp>, <samp>selection</samp> and <samp>enablement</samp>.  However, once the action
 delegate has been instantiated it may control the action enable state directly 
-within its <samp>selectionChanged</samp> method.</li></ul>
-<p><samp>&nbsp;&nbsp; &lt;!ELEMENT filter EMPTY&gt;</samp>
+within its <samp>selectionChanged</samp> method.</li>
+</ul>
+<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT <a name="e.filter">filter</a> EMPTY&gt;</font></samp>
 <p>&nbsp;&nbsp; This element is used to evaluate the attribute state of each object in the current selection. A match only if each object in the selection has the specified attribute state. Each object in the selection must implement, or adapt to,</p>
 <p></p>
-<samp>&nbsp;&nbsp; &lt;!ATTLIST filter</samp>
+<samp><font color="#800000">&nbsp;&nbsp; &lt;!ATTLIST filter</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;&nbsp;CDATA #REQUIRED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;value&nbsp;CDATA #REQUIRED</samp>
-<br><samp>&nbsp;&nbsp; &gt;</samp>
+<br><samp>&nbsp;&nbsp; &gt;</font></samp>
 <ul>
-<li><b>name</b> - the name of an object's attribute. Acceptable names reflect the object type, and should be publicly declared by the plug-in where the object type is declared.</li><li><b>value</b> - the required value of the object's attribute. The acceptable values for the object's attribute should be publicly declared.</li></ul>
-<p><samp>&nbsp;&nbsp; &lt;!ELEMENT menu (separator+ , groupMarker*)&gt;</samp>
+<li><b>name</b> - the name of an object's attribute. Acceptable names reflect the object type, and should be publicly declared by the plug-in where the object type is declared.</li>
+<li><b>value</b> - the required value of the object's attribute. The acceptable values for the object's attribute should be publicly declared.</li>
+</ul>
+<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT <a name="e.menu">menu</a> (<a href="#e.separator">separator</a>+ , <a href="#e.groupMarker">groupMarker</a>*)&gt;</font></samp>
 <p>&nbsp;&nbsp; This element is used to defined a new menu.</p>
 <p></p>
-<samp>&nbsp;&nbsp; &lt;!ATTLIST menu</samp>
+<samp><font color="#800000">&nbsp;&nbsp; &lt;!ATTLIST menu</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;label&nbsp;CDATA #REQUIRED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;path&nbsp;&nbsp;CDATA #IMPLIED</samp>
-<br><samp>&nbsp;&nbsp; &gt;</samp>
+<br><samp>&nbsp;&nbsp; &gt;</font></samp>
 <ul>
-<li><b>id</b> - a unique identifier that can be used to reference this menu.</li><li><b>label</b> - a translatable name used by the Workbench for this new menu. The name should include mnemonic information.</li><li><b>path</b> - the location of the new menu starting from the root of the menu. Each token in the path must refer to an existing menu, except the last token which should represent a named group in the last menu in the path. If omitted, the new menu will be added to the <samp>additions</samp> named group of the menu.</li></ul>
-<p><samp>&nbsp;&nbsp; &lt;!ELEMENT separator EMPTY&gt;</samp>
+<li><b>id</b> - a unique identifier that can be used to reference this menu.</li>
+<li><b>label</b> - a translatable name used by the Workbench for this new menu. The name should include mnemonic information.</li>
+<li><b>path</b> - the location of the new menu starting from the root of the menu. Each token in the path must refer to an existing menu, except the last token which should represent a named group in the last menu in the path. If omitted, the new menu will be added to the <samp>additions</samp> named group of the menu.</li>
+</ul>
+<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT <a name="e.separator">separator</a> EMPTY&gt;</font></samp>
 <p>&nbsp;&nbsp; This element is used to create a menu separator in the new menu.</p>
 <p></p>
-<samp>&nbsp;&nbsp; &lt;!ATTLIST separator</samp>
+<samp><font color="#800000">&nbsp;&nbsp; &lt;!ATTLIST separator</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;CDATA #REQUIRED</samp>
-<br><samp>&nbsp;&nbsp; &gt;</samp>
+<br><samp>&nbsp;&nbsp; &gt;</font></samp>
 <ul>
-<li><b>name</b> - the name of the menu separator. This name can later be referenced as the last token in a menu path. Therefore, a separator also serve as named group into which actions and menus can be added.</li></ul>
-<p><samp>&nbsp;&nbsp; &lt;!ELEMENT groupMarker EMPTY&gt;</samp>
-<p>&nbsp;&nbsp; This element is used to create a named group in the new menu. It has no visual representation in the new menu, unlike the</p>
+<li><b>name</b> - the name of the menu separator. This name can later be referenced as the last token in a menu path. Therefore, a separator also serve as named group into which actions and menus can be added.</li>
+</ul>
+<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT <a name="e.groupMarker">groupMarker</a> EMPTY&gt;</font></samp>
+<p>&nbsp;&nbsp; This element is used to create a named group in the new menu. It has no visual representation in the new menu, unlike the <samp>separator</samp> element.</p>
 <p></p>
-<samp>&nbsp;&nbsp; &lt;!ATTLIST groupMarker</samp>
+<samp><font color="#800000">&nbsp;&nbsp; &lt;!ATTLIST groupMarker</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;CDATA #REQUIRED</samp>
-<br><samp>&nbsp;&nbsp; &gt;</samp>
+<br><samp>&nbsp;&nbsp; &gt;</font></samp>
 <ul>
-<li><b>name</b> - the name of the group marker. This name can later be referenced as the last token in the menu path. It serves as named group into which actions and menus can be added.</li></ul>
-<p><samp>&nbsp;&nbsp; &lt;!ELEMENT selection EMPTY&gt;</samp>
-<p>&nbsp;&nbsp; This element is used to help determine the action enablement based on the current selection. Ignored if the</p>
+<li><b>name</b> - the name of the group marker. This name can later be referenced as the last token in the menu path. It serves as named group into which actions and menus can be added.</li>
+</ul>
+<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT <a name="e.selection">selection</a> EMPTY&gt;</font></samp>
+<p>&nbsp;&nbsp; This element is used to help determine the action enablement based on the current selection. Ignored if the <samp>enablement</samp> element is specified.</p>
 <p></p>
-<samp>&nbsp;&nbsp; &lt;!ATTLIST selection</samp>
+<samp><font color="#800000">&nbsp;&nbsp; &lt;!ATTLIST selection</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;class&nbsp;CDATA #REQUIRED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;&nbsp;CDATA #IMPLIED</samp>
-<br><samp>&nbsp;&nbsp; &gt;</samp>
+<br><samp>&nbsp;&nbsp; &gt;</font></samp>
 <ul>
-<li><b>class</b> - a fully qualified name of the class or interface that each object in the selection must implement in order to enable the action.</li><li><b>name</b> - an optional wild card filter for the name that can be applied to all objects in the selection. If specified and the match fails, the action will be disabled.</li></ul>
-<p><samp>&nbsp;&nbsp; &lt;!ELEMENT enablement (and | or | not | objectClass | objectState | pluginState | systemProperty)&gt;</samp>
+<li><b>class</b> - a fully qualified name of the class or interface that each object in the selection must implement in order to enable the action.</li>
+<li><b>name</b> - an optional wild card filter for the name that can be applied to all objects in the selection. If specified and the match fails, the action will be disabled.</li>
+</ul>
+<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT <a name="e.enablement">enablement</a> (<a href="#e.and">and</a> | <a href="#e.or">or</a> | <a href="#e.not">not</a> | <a href="#e.objectClass">objectClass</a> | <a href="#e.objectState">objectState</a> | <a href="#e.pluginState">pluginState</a> | <a href="#e.systemProperty">systemProperty</a>)&gt;</font></samp>
 <p>&nbsp;&nbsp; This element is used to define the enablement for the action.</p>
-<p><samp>&nbsp;&nbsp; &lt;!ELEMENT visibility (and | or | not | objectClass | objectState | pluginState | systemProperty)&gt;</samp>
+<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT <a name="e.visibility">visibility</a> (<a href="#e.and">and</a> | <a href="#e.or">or</a> | <a href="#e.not">not</a> | <a href="#e.objectClass">objectClass</a> | <a href="#e.objectState">objectState</a> | <a href="#e.pluginState">pluginState</a> | <a href="#e.systemProperty">systemProperty</a>)&gt;</font></samp>
 <p>&nbsp;&nbsp; This element is used to define the visibility for the action.</p>
-<p><samp>&nbsp;&nbsp; &lt;!ELEMENT and (and | or | not | objectClass | objectState | pluginState | systemProperty)&gt;</samp>
+<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT <a name="e.and">and</a> (<a href="#e.and">and</a> | <a href="#e.or">or</a> | <a href="#e.not">not</a> | <a href="#e.objectClass">objectClass</a> | <a href="#e.objectState">objectState</a> | <a href="#e.pluginState">pluginState</a> | <a href="#e.systemProperty">systemProperty</a>)&gt;</font></samp>
 <p>&nbsp;&nbsp; This element represent a boolean AND operation on the result of evaluating it's two sub-element expressions.</p>
-<p><samp>&nbsp;&nbsp; &lt;!ELEMENT or (and | or | not | objectClass | objectState | pluginState | systemProperty)&gt;</samp>
+<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT <a name="e.or">or</a> (<a href="#e.and">and</a> | <a href="#e.or">or</a> | <a href="#e.not">not</a> | <a href="#e.objectClass">objectClass</a> | <a href="#e.objectState">objectState</a> | <a href="#e.pluginState">pluginState</a> | <a href="#e.systemProperty">systemProperty</a>)&gt;</font></samp>
 <p>&nbsp;&nbsp; This element represent a boolean OR operation on the result of evaluating it's two sub-element expressions.</p>
-<p><samp>&nbsp;&nbsp; &lt;!ELEMENT not (and | or | not | objectClass | objectState | pluginState | systemProperty)&gt;</samp>
+<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT <a name="e.not">not</a> (<a href="#e.and">and</a> | <a href="#e.or">or</a> | <a href="#e.not">not</a> | <a href="#e.objectClass">objectClass</a> | <a href="#e.objectState">objectState</a> | <a href="#e.pluginState">pluginState</a> | <a href="#e.systemProperty">systemProperty</a>)&gt;</font></samp>
 <p>&nbsp;&nbsp; This element represent a boolean NOT operation on the result of evaluating it's sub-element expressions.</p>
-<p><samp>&nbsp;&nbsp; &lt;!ELEMENT objectClass EMPTY&gt;</samp>
+<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT <a name="e.objectClass">objectClass</a> EMPTY&gt;</font></samp>
 <p>&nbsp;&nbsp; This element is used to evaluate the class or interface of each object in the current selection. If each object in the selection implements the specified class or interface, the expression is evaluated as true.</p>
 <p></p>
-<samp>&nbsp;&nbsp; &lt;!ATTLIST objectClass</samp>
+<samp><font color="#800000">&nbsp;&nbsp; &lt;!ATTLIST objectClass</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;CDATA #REQUIRED</samp>
-<br><samp>&nbsp;&nbsp; &gt;</samp>
+<br><samp>&nbsp;&nbsp; &gt;</font></samp>
 <ul>
-<li><b>name</b> - a fully qualified name of a class or interface.  The expression is evaluated as true only if all objects within the selection implement this class or interface.</li></ul>
-<p><samp>&nbsp;&nbsp; &lt;!ELEMENT objectState EMPTY&gt;</samp>
-<p>&nbsp;&nbsp; This element is used to evaluate the attribute state of each object in the current selection. If each object in the selection has the specified attribute state, the expression is evaluated as true. To evaluate this type of expression, each object in the selection must implement, or adapt to,</p>
+<li><b>name</b> - a fully qualified name of a class or interface.  The expression is evaluated as true only if all objects within the selection implement this class or interface.</li>
+</ul>
+<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT <a name="e.objectState">objectState</a> EMPTY&gt;</font></samp>
+<p>&nbsp;&nbsp; This element is used to evaluate the attribute state of each object in the current selection. If each object in the selection has the specified attribute state, the expression is evaluated as true. To evaluate this type of expression, each object in the selection must implement, or adapt to, <samp>org.eclipse.ui.IActionFilter</samp> interface.</p>
 <p></p>
-<samp>&nbsp;&nbsp; &lt;!ATTLIST objectState</samp>
+<samp><font color="#800000">&nbsp;&nbsp; &lt;!ATTLIST objectState</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;&nbsp;CDATA #REQUIRED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;value&nbsp;CDATA #REQUIRED</samp>
-<br><samp>&nbsp;&nbsp; &gt;</samp>
+<br><samp>&nbsp;&nbsp; &gt;</font></samp>
 <ul>
-<li><b>name</b> - the name of an object's attribute. Acceptable names reflect the object type, and should be publicly declared by the plug-in where the object type is declared.</li><li><b>value</b> - the required value of the object's attribute. The acceptable values for the object's attribute should be publicly declared.</li></ul>
-<p><samp>&nbsp;&nbsp; &lt;!ELEMENT pluginState EMPTY&gt;</samp>
-<p>&nbsp;&nbsp; This element is used to evaluate the state of a plug-in. The state of the plug-in may be</p>
+<li><b>name</b> - the name of an object's attribute. Acceptable names reflect the object type, and should be publicly declared by the plug-in where the object type is declared.</li>
+<li><b>value</b> - the required value of the object's attribute. The acceptable values for the object's attribute should be publicly declared.</li>
+</ul>
+<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT <a name="e.pluginState">pluginState</a> EMPTY&gt;</font></samp>
+<p>&nbsp;&nbsp; This element is used to evaluate the state of a plug-in. The state of the plug-in may be one of the following: <samp>installed</samp> or <samp>activated</samp>.</p>
 <p></p>
-<samp>&nbsp;&nbsp; &lt;!ATTLIST pluginState</samp>
+<samp><font color="#800000">&nbsp;&nbsp; &lt;!ATTLIST pluginState</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;value&nbsp;(installed|activated) "installed"</samp>
-<br><samp>&nbsp;&nbsp; &gt;</samp>
+<br><samp>&nbsp;&nbsp; &gt;</font></samp>
 <ul>
-<li><b>id</b> - the identifier of a plug-in which may or may not exist in the plug-in registry.</li><li><b>value</b> - the required state of the plug-in. The state of the plug-in may be <samp>installed</samp> or <samp>activated</samp>.</li></ul>
-<p><samp>&nbsp;&nbsp; &lt;!ELEMENT systemProperty EMPTY&gt;</samp>
-<p>&nbsp;&nbsp; This element is used to evaluate the state of some system property.  The property value is retrieved from</p>
+<li><b>id</b> - the identifier of a plug-in which may or may not exist in the plug-in registry.</li>
+<li><b>value</b> - the required state of the plug-in. The state of the plug-in may be one of the following: <samp>installed</samp> or <samp>activated</samp>.</li>
+</ul>
+<p><samp><font color="#800000">&nbsp;&nbsp; &lt;!ELEMENT <a name="e.systemProperty">systemProperty</a> EMPTY&gt;</font></samp>
+<p>&nbsp;&nbsp; This element is used to evaluate the state of some system property.  The property value is retrieved from the <samp>java.lang.System</samp>.</p>
 <p></p>
-<samp>&nbsp;&nbsp; &lt;!ATTLIST systemProperty</samp>
+<samp><font color="#800000">&nbsp;&nbsp; &lt;!ATTLIST systemProperty</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name&nbsp;&nbsp;CDATA #REQUIRED</samp>
 <br><samp>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;value&nbsp;CDATA #REQUIRED</samp>
-<br><samp>&nbsp;&nbsp; &gt;</samp>
+<br><samp>&nbsp;&nbsp; &gt;</font></samp>
 <ul>
-<li><b>name</b> - the name of the system property.</li><li><b>value</b> - the required value of the system property.</li></ul>
+<li><b>name</b> - the name of the system property.</li>
+<li><b>value</b> - the required value of the system property.</li>
+</ul>
 <b><i>Examples: </i></b>The following is an example of a pop-up menu extension point: 
 <p>
 <pre>
-   &lt;extension point=&quot;org.eclipse.ui.popupMenus&quot;&gt; 
-      &lt;objectContribution 
-         id=&quot;com.xyz.C1&quot; 
-         objectClass=&quot;org.eclipse.core.resources.IFile&quot; 
-         nameFilter=*.java&quot;&gt; 
-         &lt;menu
-            id=&quot;com.xyz.xyzMenu&quot; 
-            path=&quot;additions&quot; 
-            label=&quot;&amp;amp;XYZ Java Tools&quot;&gt; 
-            &lt;separator name=&quot;group1&quot;/&gt; 
-         &lt;/menu&gt; 
-         &lt;action
-            id=&quot;com.xyz.runXYZ&quot; 
-            label=&quot;&amp;amp;Run XYZ Tool&quot;
-            style=&quot;push&quot;
-            menubarPath=&quot;com.xyz.xyzMenu/group1&quot; 
-            icon=&quot;icons/runXYZ.gif&quot; 
-            helpContextId=&quot;com.xyz.run_action_context&quot; 
-            class=&quot;com.xyz.actions.XYZToolActionDelegate&quot; 
-            enablesFor=&quot;1&quot;&gt; 
-         &lt;/action&gt; 
-      &lt;/objectContribution&gt; 
-      &lt;viewerContribution 
-         id=&quot;com.xyz.C2&quot; 
-         targetID=&quot;org.eclipse.ui.views.TaskList&quot;&gt; 
-         &lt;action
-            id=&quot;com.xyz.showXYZ&quot; 
-            label=&quot;&amp;amp;Show XYZ&quot;
-            style=&quot;toggle&quot;
-            state=&quot;true&quot;
-            menubarPath=&quot;additions&quot; 
-            icon=&quot;icons/showXYZ.gif&quot; 
-            helpContextId=&quot;com.xyz.show_action_context&quot; 
-            class=&quot;com.xyz.actions.XYZShowActionDelegate&quot;&gt; 
-         &lt;/action&gt; 
-      &lt;/viewerContribution&gt; 
-   &lt;/extension&gt; 
+   <font color="#000080">&lt;extension point=<font color="#008000">&quot;org.eclipse.ui.popupMenus&quot;</font>&gt;</font> 
+      <font color="#000080">&lt;objectContribution 
+         id=<font color="#008000">&quot;com.xyz.C1&quot;</font> 
+         objectClass=<font color="#008000">&quot;org.eclipse.core.resources.IFile&quot;</font> 
+         nameFilter=*.java<font color="#008000">&quot;&gt;</font> 
+         <font color="#000080">&lt;menu
+            id=<font color="#008000">&quot;com.xyz.xyzMenu&quot;</font> 
+            path=<font color="#008000">&quot;additions&quot;</font> 
+            label=<font color="#008000">&quot;&amp;amp;XYZ Java Tools&quot;</font>&gt;</font> 
+            <font color="#000080">&lt;separator name=<font color="#008000">&quot;group1&quot;</font>/&gt;</font> 
+         <font color="#000080">&lt;/menu&gt;</font> 
+         <font color="#000080">&lt;action
+            id=<font color="#008000">&quot;com.xyz.runXYZ&quot;</font> 
+            label=<font color="#008000">&quot;&amp;amp;Run XYZ Tool&quot;</font>
+            style=<font color="#008000">&quot;push&quot;</font>
+            menubarPath=<font color="#008000">&quot;com.xyz.xyzMenu/group1&quot;</font> 
+            icon=<font color="#008000">&quot;icons/runXYZ.gif&quot;</font> 
+            helpContextId=<font color="#008000">&quot;com.xyz.run_action_context&quot;</font> 
+            class=<font color="#008000">&quot;com.xyz.actions.XYZToolActionDelegate&quot;</font> 
+            enablesFor=<font color="#008000">&quot;1&quot;</font>&gt;</font> 
+         <font color="#000080">&lt;/action&gt;</font> 
+      <font color="#000080">&lt;/objectContribution&gt;</font> 
+      <font color="#000080">&lt;viewerContribution 
+         id=<font color="#008000">&quot;com.xyz.C2&quot;</font> 
+         targetID=<font color="#008000">&quot;org.eclipse.ui.views.TaskList&quot;</font>&gt;</font> 
+         <font color="#000080">&lt;action
+            id=<font color="#008000">&quot;com.xyz.showXYZ&quot;</font> 
+            label=<font color="#008000">&quot;&amp;amp;Show XYZ&quot;</font>
+            style=<font color="#008000">&quot;toggle&quot;</font>
+            state=<font color="#008000">&quot;true&quot;</font>
+            menubarPath=<font color="#008000">&quot;additions&quot;</font> 
+            icon=<font color="#008000">&quot;icons/showXYZ.gif&quot;</font> 
+            helpContextId=<font color="#008000">&quot;com.xyz.show_action_context&quot;</font> 
+            class=<font color="#008000">&quot;com.xyz.actions.XYZShowActionDelegate&quot;</font>&gt;</font> 
+         <font color="#000080">&lt;/action&gt;</font> 
+      <font color="#000080">&lt;/viewerContribution&gt;</font> 
+   <font color="#000080">&lt;/extension&gt;</font> 
 </pre>
 </p>
 In the example above, the specified object contribution action will only enable for a single selection (<samp>enablesFor</samp> attribute). In addition, each object in the selection must implement the specified interface (<samp>IFile</samp>) and must be a Java file. This action will be added into a submenu previously created. This contribution 
@@ -264,46 +305,46 @@ In contrast, the viewer contribution above will only appear in the Tasks view co
 The following is an example of the filter mechanism. In this case the action will only appear for IMarkers which are completed and have high priority. 
 <p>
 <pre>
-   &lt;extension point=&quot;org.eclipse.ui.popupMenus&quot;&gt; 
-      &lt;objectContribution 
-         id=&quot;com.xyz.C3&quot; 
-         objectClass=&quot;org.eclipse.core.resources.IMarker&quot;&gt; 
-         &lt;filter name=&quot;done&quot; value=&quot;true&quot;/&gt; 
-         &lt;filter name=&quot;priority&quot; value=&quot;2&quot;/&gt; 
-         &lt;action
-            id=&quot;com.xyz.runXYZ&quot; 
-            label=&quot;High Priority Completed Action Tool&quot; 
-            icon=&quot;icons/runXYZ.gif&quot; 
-            class=&quot;com.xyz.actions.MarkerActionDelegate&quot;&gt; 
-         &lt;/action&gt; 
-      &lt;/objectContribution&gt; 
-   &lt;/extension&gt; 
+   <font color="#000080">&lt;extension point=<font color="#008000">&quot;org.eclipse.ui.popupMenus&quot;</font>&gt;</font> 
+      <font color="#000080">&lt;objectContribution 
+         id=<font color="#008000">&quot;com.xyz.C3&quot;</font> 
+         objectClass=<font color="#008000">&quot;org.eclipse.core.resources.IMarker&quot;</font>&gt;</font> 
+         <font color="#000080">&lt;filter name=<font color="#008000">&quot;done&quot;</font> value=<font color="#008000">&quot;true&quot;</font>/&gt;</font> 
+         <font color="#000080">&lt;filter name=<font color="#008000">&quot;priority&quot;</font> value=<font color="#008000">&quot;2&quot;</font>/&gt;</font> 
+         <font color="#000080">&lt;action
+            id=<font color="#008000">&quot;com.xyz.runXYZ&quot;</font> 
+            label=<font color="#008000">&quot;High Priority Completed Action Tool&quot;</font> 
+            icon=<font color="#008000">&quot;icons/runXYZ.gif&quot;</font> 
+            class=<font color="#008000">&quot;com.xyz.actions.MarkerActionDelegate&quot;</font>&gt;</font> 
+         <font color="#000080">&lt;/action&gt;</font> 
+      <font color="#000080">&lt;/objectContribution&gt;</font> 
+   <font color="#000080">&lt;/extension&gt;</font> 
 </pre>
 </p>
 The following is an other example of using the visibility element: 
 <p>
 <pre>
-   &lt;extension point=&quot;org.eclipse.ui.popupMenus&quot;&gt; 
-      &lt;viewerContribution 
-         id=&quot;com.xyz.C4&quot; 
-         targetID=&quot;org.eclipse.ui.views.TaskList&quot;&gt;
-         &lt;visibility&gt;
-            &lt;and&gt;
-               &lt;pluginState id=&quot;com.xyz&quot; value=&quot;activated&quot;/&gt;
-               &lt;systemProperty name=&quot;ADVANCED_MODE&quot; value=&quot;true&quot;/&gt;
-            &lt;/and&gt;
-         &lt;/visibility&gt;
-         &lt;action
-            id=&quot;com.xyz.showXYZ&quot; 
-            label=&quot;&amp;amp;Show XYZ&quot;
-            style=&quot;push&quot;
-            menubarPath=&quot;additions&quot; 
-            icon=&quot;icons/showXYZ.gif&quot; 
-            helpContextId=&quot;com.xyz.show_action_context&quot; 
-            class=&quot;com.xyz.actions.XYZShowActionDelegate&quot;&gt; 
-         &lt;/action&gt; 
-      &lt;/viewerContribution&gt; 
-   &lt;/extension&gt; 
+   <font color="#000080">&lt;extension point=<font color="#008000">&quot;org.eclipse.ui.popupMenus&quot;</font>&gt;</font> 
+      <font color="#000080">&lt;viewerContribution 
+         id=<font color="#008000">&quot;com.xyz.C4&quot;</font> 
+         targetID=<font color="#008000">&quot;org.eclipse.ui.views.TaskList&quot;</font>&gt;</font>
+         <font color="#000080">&lt;visibility&gt;</font>
+            <font color="#000080">&lt;and&gt;</font>
+               <font color="#000080">&lt;pluginState id=<font color="#008000">&quot;com.xyz&quot;</font> value=<font color="#008000">&quot;activated&quot;</font>/&gt;</font>
+               <font color="#000080">&lt;systemProperty name=<font color="#008000">&quot;ADVANCED_MODE&quot;</font> value=<font color="#008000">&quot;true&quot;</font>/&gt;</font>
+            <font color="#000080">&lt;/and&gt;</font>
+         <font color="#000080">&lt;/visibility&gt;</font>
+         <font color="#000080">&lt;action
+            id=<font color="#008000">&quot;com.xyz.showXYZ&quot;</font> 
+            label=<font color="#008000">&quot;&amp;amp;Show XYZ&quot;</font>
+            style=<font color="#008000">&quot;push&quot;</font>
+            menubarPath=<font color="#008000">&quot;additions&quot;</font> 
+            icon=<font color="#008000">&quot;icons/showXYZ.gif&quot;</font> 
+            helpContextId=<font color="#008000">&quot;com.xyz.show_action_context&quot;</font> 
+            class=<font color="#008000">&quot;com.xyz.actions.XYZShowActionDelegate&quot;</font>&gt;</font> 
+         <font color="#000080">&lt;/action&gt;</font> 
+      <font color="#000080">&lt;/viewerContribution&gt;</font> 
+   <font color="#000080">&lt;/extension&gt;</font> 
 </pre>
 </p>
 <p>
@@ -380,19 +421,19 @@ If two or more actions are contributed to a menu by a single extension the actio
 <p>
 The <samp>selection</samp> and <samp>enablement</samp> elements are mutually exclusive. The <samp>enablement</samp> element can replace the <samp>selection</samp> element using the sub-elements <samp>objectClass</samp> and <samp>objectState</samp>. For example, the following:
 <pre>
- &lt;selection
-  class=&quot;org.eclipse.core.resources.IFile&quot;
-  name=&quot;*.java&quot;&gt;
- &lt;/selection&gt;
+ <font color="#000080">&lt;selection
+  class=<font color="#008000">&quot;org.eclipse.core.resources.IFile&quot;</font>
+  name=<font color="#008000">&quot;*.java&quot;</font>&gt;</font>
+ <font color="#000080">&lt;/selection&gt;</font>
 </pre>
 can be expressed using:
 <pre>
- &lt;enablement&gt;
-  &lt;and&gt;
-   &lt;objectClass name=&quot;org.eclipse.core.resources.IFile&quot;/&gt;
-   &lt;objectState name=&quot;extension&quot; value=&quot;java&quot;/&gt;
-  &lt;/and&gt;
- &lt;/enablement&gt;
+ <font color="#000080">&lt;enablement&gt;</font>
+  <font color="#000080">&lt;and&gt;</font>
+   <font color="#000080">&lt;objectClass name=<font color="#008000">&quot;org.eclipse.core.resources.IFile&quot;</font>/&gt;</font>
+   <font color="#000080">&lt;objectState name=<font color="#008000">&quot;extension&quot;</font> value=<font color="#008000">&quot;java&quot;</font>/&gt;</font>
+  <font color="#000080">&lt;/and&gt;</font>
+ <font color="#000080">&lt;/enablement&gt;</font>
 </pre><p>
 <b><i>Supplied Implementation: </i></b>The workbench views have built-in context menus 
 that already come loaded with a number of actions. 
@@ -401,7 +442,9 @@ has reserved slots for these contributions and they
 are made public, slot names can be used as paths. 
 Otherwise, actions and submenus will be added at 
 the end of the pop-up menu.<p>
+<font size="-1" color="#336699">
 Copyright (c) 2000, 2003 IBM Corporation and others.
 All rights reserved.   This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html<p>
+</font>
 </BODY>
 </HTML>

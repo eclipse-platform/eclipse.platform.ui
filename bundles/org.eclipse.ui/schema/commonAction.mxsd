@@ -74,7 +74,7 @@
             <meta.element labelAttribute="name"/>
          </appInfo>
          <documentation>
-            This element is used to create a named group in the new menu. It has no visual representation in the new menu, unlike the <samp>separator</samp> element.
+            This element is used to create a named group in the new menu. It has no visual representation in the new menu, unlike the &lt;samp&gt;separator&lt;/samp&gt; element.
          </documentation>
       </annotation>
       <complexType>
@@ -94,7 +94,7 @@
             <meta.element labelAttribute="class"/>
          </appInfo>
          <documentation>
-            This element is used to help determine the action enablement based on the current selection. Ignored if the <samp>enablement</samp> element is specified for the action. When more than one of this element is specified, it means 'one-of'.
+            This element is used to help determine the action enablement based on the current selection. Ignored if the &lt;samp&gt;enablement&lt;/samp&gt; element is specified.
          </documentation>
       </annotation>
       <complexType>

@@ -21,8 +21,8 @@ The syntax is the same for the &lt;samp&gt;enablement&lt;/samp&gt; and &lt;samp&
       </annotation>
       <complexType>
          <choice>
-            <element ref="and" minOccurs="2" maxOccurs="2"/>
-            <element ref="or" minOccurs="2" maxOccurs="2"/>
+            <element ref="and"/>
+            <element ref="or"/>
             <element ref="not"/>
             <element ref="objectClass"/>
             <element ref="objectState"/>
@@ -40,8 +40,8 @@ The syntax is the same for the &lt;samp&gt;enablement&lt;/samp&gt; and &lt;samp&
       </annotation>
       <complexType>
          <choice>
-            <element ref="and" minOccurs="2" maxOccurs="2"/>
-            <element ref="or" minOccurs="2" maxOccurs="2"/>
+            <element ref="and"/>
+            <element ref="or"/>
             <element ref="not"/>
             <element ref="objectClass"/>
             <element ref="objectState"/>
@@ -54,13 +54,13 @@ The syntax is the same for the &lt;samp&gt;enablement&lt;/samp&gt; and &lt;samp&
    <element name="and">
       <annotation>
          <documentation>
-            This element represent a boolean AND operation on the result of evaluating it's two sub-element expressions.
+            This element represent a boolean AND operation on the result of evaluating it&apos;s two sub-element expressions.
          </documentation>
       </annotation>
       <complexType>
          <choice minOccurs="2" maxOccurs="2">
-            <element ref="and" minOccurs="2" maxOccurs="2"/>
-            <element ref="or" minOccurs="2" maxOccurs="2"/>
+            <element ref="and"/>
+            <element ref="or"/>
             <element ref="not"/>
             <element ref="objectClass"/>
             <element ref="objectState"/>
@@ -73,13 +73,13 @@ The syntax is the same for the &lt;samp&gt;enablement&lt;/samp&gt; and &lt;samp&
    <element name="or">
       <annotation>
          <documentation>
-            This element represent a boolean OR operation on the result of evaluating it's two sub-element expressions.
+            This element represent a boolean OR operation on the result of evaluating it&apos;s two sub-element expressions.
          </documentation>
       </annotation>
       <complexType>
          <choice minOccurs="2" maxOccurs="2">
-            <element ref="and" minOccurs="2" maxOccurs="2"/>
-            <element ref="or" minOccurs="2" maxOccurs="2"/>
+            <element ref="and"/>
+            <element ref="or"/>
             <element ref="not"/>
             <element ref="objectClass"/>
             <element ref="objectState"/>
@@ -92,13 +92,13 @@ The syntax is the same for the &lt;samp&gt;enablement&lt;/samp&gt; and &lt;samp&
    <element name="not">
       <annotation>
          <documentation>
-            This element represent a boolean NOT operation on the result of evaluating it's sub-element expressions.
+            This element represent a boolean NOT operation on the result of evaluating it&apos;s sub-element expressions.
          </documentation>
       </annotation>
       <complexType>
          <choice>
-            <element ref="and" minOccurs="2" maxOccurs="2"/>
-            <element ref="or" minOccurs="2" maxOccurs="2"/>
+            <element ref="and"/>
+            <element ref="or"/>
             <element ref="not"/>
             <element ref="objectClass"/>
             <element ref="objectState"/>
@@ -137,7 +137,7 @@ The syntax is the same for the &lt;samp&gt;enablement&lt;/samp&gt; and &lt;samp&
             <meta.element labelAttribute="name"/>
          </appInfo>
          <documentation>
-            This element is used to evaluate the attribute state of each object in the current selection. If each object in the selection has the specified attribute state, the expression is evaluated as true. To evaluate this type of expression, each object in the selection must implement, or adapt to, <samp>org.eclipse.ui.IActionFilter</samp>.
+            This element is used to evaluate the attribute state of each object in the current selection. If each object in the selection has the specified attribute state, the expression is evaluated as true. To evaluate this type of expression, each object in the selection must implement, or adapt to, &lt;samp&gt;org.eclipse.ui.IActionFilter&lt;/samp&gt; interface.
          </documentation>
       </annotation>
       <complexType>
@@ -164,7 +164,7 @@ The syntax is the same for the &lt;samp&gt;enablement&lt;/samp&gt; and &lt;samp&
             <meta.element labelAttribute="id"/>
          </appInfo>
          <documentation>
-            This element is used to evaluate the state of a plug-in. The state of the plug-in may be
+            This element is used to evaluate the state of a plug-in. The state of the plug-in may be one of the following: &lt;samp&gt;installed&lt;/samp&gt; or &lt;samp&gt;activated&lt;/samp&gt;.
          </documentation>
       </annotation>
       <complexType>
@@ -178,7 +178,7 @@ The syntax is the same for the &lt;samp&gt;enablement&lt;/samp&gt; and &lt;samp&
          <attribute name="value" use="default" value="installed">
             <annotation>
                <documentation>
-                  the required state of the plug-in. The state of the plug-in may be &lt;samp&gt;installed&lt;/samp&gt; or &lt;samp&gt;activated&lt;/samp&gt;.
+                  the required state of the plug-in. The state of the plug-in may be one of the following: &lt;samp&gt;installed&lt;/samp&gt; or &lt;samp&gt;activated&lt;/samp&gt;.
                </documentation>
             </annotation>
             <simpleType>
@@ -199,7 +199,7 @@ The syntax is the same for the &lt;samp&gt;enablement&lt;/samp&gt; and &lt;samp&
             <meta.element labelAttribute="name"/>
          </appInfo>
          <documentation>
-            This element is used to evaluate the state of some system property.  The property value is retrieved from
+            This element is used to evaluate the state of some system property.  The property value is retrieved from the &lt;samp&gt;java.lang.System&lt;/samp&gt;.
          </documentation>
       </annotation>
       <complexType>
