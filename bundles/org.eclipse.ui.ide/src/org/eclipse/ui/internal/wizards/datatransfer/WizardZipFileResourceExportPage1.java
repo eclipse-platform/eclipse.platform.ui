@@ -8,112 +8,99 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.wizards.datatransfer;
+package org.eclipse.ui.internal.wizards.datatransfer;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Group;
+
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.FileDialog;
+
+import org.eclipse.ui.help.WorkbenchHelp;
+
 
 /**
  *	Page 1 of the base resource export-to-zip Wizard
- * WizardFileSystemExportPage1
- * @deprecated use WizardZipFileResourceExportPage1
  */
-/*package*/class WizardZipFileExportPage1 extends WizardFileSystemExportPage1 {
+public class WizardZipFileResourceExportPage1 extends
+        WizardFileSystemResourceExportPage1 {
 
     // widgets
-    protected Button overwriteExistingFileCheckbox;
-
-    protected Button createDirectoryStructureCheckbox;
-
     protected Button compressContentsCheckbox;
 
-    // constants
-    protected static final int COMBO_HISTORY_LENGTH = 5;
-
     // dialog store id constants
-    private final static String STORE_DESTINATION_NAMES_ID = "WizardZipFileExportPage1.STORE_DESTINATION_NAMES_ID";//$NON-NLS-1$
+    private final static String STORE_DESTINATION_NAMES_ID = "WizardZipFileResourceExportPage1.STORE_DESTINATION_NAMES_ID"; //$NON-NLS-1$
 
-    private final static String STORE_OVERWRITE_EXISTING_FILE_ID = "WizardZipFileExportPage1.STORE_OVERWRITE_EXISTING_FILE_ID";//$NON-NLS-1$
+    private final static String STORE_CREATE_STRUCTURE_ID = "WizardZipFileResourceExportPage1.STORE_CREATE_STRUCTURE_ID"; //$NON-NLS-1$
 
-    private final static String STORE_CREATE_STRUCTURE_ID = "WizardZipFileExportPage1.STORE_CREATE_STRUCTURE_ID";//$NON-NLS-1$
-
-    private final static String STORE_COMPRESS_CONTENTS_ID = "WizardZipFileExportPage1.STORE_COMPRESS_CONTENTS_ID";//$NON-NLS-1$
+    private final static String STORE_COMPRESS_CONTENTS_ID = "WizardZipFileResourceExportPage1.STORE_COMPRESS_CONTENTS_ID"; //$NON-NLS-1$
 
     /**
-     *	Create an instance of this class.  Note that this constructor
-     *	is here primarily to keep the JarFileExportPage1 subclass happy
+     *	Create an instance of this class. 
      *
      *	@param name java.lang.String
      */
-    protected WizardZipFileExportPage1(String name,
+    protected WizardZipFileResourceExportPage1(String name,
             IStructuredSelection selection) {
         super(name, selection);
     }
 
     /**
-     *	Create an instance of this class
+     * Create an instance of this class
+     * @param IStructuredSelection selection
      */
-    public WizardZipFileExportPage1(IStructuredSelection selection) {
-        this("zipFileExportPage1", selection);//$NON-NLS-1$
+    public WizardZipFileResourceExportPage1(IStructuredSelection selection) {
+        this("zipFileExportPage1", selection); //$NON-NLS-1$
         setTitle(DataTransferMessages.getString("ZipExport.exportTitle")); //$NON-NLS-1$
         setDescription(DataTransferMessages.getString("ZipExport.description")); //$NON-NLS-1$
+    }
+
+    /** (non-Javadoc)
+     * Method declared on IDialogPage.
+     */
+    public void createControl(Composite parent) {
+        super.createControl(parent);
+        WorkbenchHelp.setHelp(getControl(),
+                IDataTransferHelpContextIds.ZIP_FILE_EXPORT_WIZARD_PAGE);
     }
 
     /**
      *	Create the export options specification widgets.
      *
-     *	@param parent org.eclipse.swt.widgets.Composite
      */
-    protected void createOptionsGroup(Composite parent) {
-        // options group
-        Composite optionsGroup = new Composite(parent, SWT.NONE);
-        GridLayout layout = new GridLayout();
-        layout.marginHeight = 0;
-        optionsGroup.setLayout(layout);
-        optionsGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL
-                | GridData.GRAB_HORIZONTAL));
+    protected void createOptionsGroupButtons(Group optionsGroup) {
 
-        // overwrite... checkbox
-        overwriteExistingFileCheckbox = new Button(optionsGroup, SWT.CHECK
-                | SWT.LEFT);
-        overwriteExistingFileCheckbox.setText(DataTransferMessages
-                .getString("ZipExport.overwriteFile")); //$NON-NLS-1$
-
-        // create directory structure checkbox
-        createDirectoryStructureCheckbox = new Button(optionsGroup, SWT.CHECK
-                | SWT.LEFT);
-        createDirectoryStructureCheckbox.setText(DataTransferMessages
-                .getString("ExportFile.createDirectoryStructure")); //$NON-NLS-1$
-
+        Font font = optionsGroup.getFont();
         // compress... checkbox
         compressContentsCheckbox = new Button(optionsGroup, SWT.CHECK
                 | SWT.LEFT);
         compressContentsCheckbox.setText(DataTransferMessages
                 .getString("ZipExport.compressContents")); //$NON-NLS-1$
+        compressContentsCheckbox.setFont(font);
+
+        createDirectoryStructureOptions(optionsGroup, font);
 
         // initial setup
-        createDirectoryStructureCheckbox.setSelection(true);
+        createDirectoryStructureButton.setSelection(true);
+        createSelectionOnlyButton.setSelection(false);
         compressContentsCheckbox.setSelection(true);
     }
 
     /**
      * Returns a boolean indicating whether the directory portion of the
      * passed pathname is valid and available for use.
-     *
-     * @return boolean
      */
     protected boolean ensureTargetDirectoryIsValid(String fullPathname) {
         int separatorIndex = fullPathname.lastIndexOf(File.separator);
@@ -128,8 +115,6 @@ import org.eclipse.swt.widgets.FileDialog;
     /**
      * Returns a boolean indicating whether the passed File handle is
      * is valid and available for use.
-     *
-     * @return boolean
      */
     protected boolean ensureTargetFileIsValid(File targetFile) {
         if (targetFile.exists() && targetFile.isDirectory()) {
@@ -140,14 +125,11 @@ import org.eclipse.swt.widgets.FileDialog;
         }
 
         if (targetFile.exists()) {
-            if (!overwriteExistingFileCheckbox.getSelection()
-                    && targetFile.canWrite()) {
+            if (targetFile.canWrite()) {
                 if (!queryYesNoQuestion(DataTransferMessages
                         .getString("ZipExport.alreadyExists"))) //$NON-NLS-1$
                     return false;
-            }
-
-            if (!targetFile.canWrite()) {
+            } else {
                 displayErrorDialog(DataTransferMessages
                         .getString("ZipExport.alreadyExistsError")); //$NON-NLS-1$
                 giveFocusToDestination();
@@ -160,9 +142,7 @@ import org.eclipse.swt.widgets.FileDialog;
 
     /**
      * Ensures that the target output file and its containing directory are
-     * both valid and able to be used.  Answer a boolean indicating these.
-     *
-     * @return boolean
+     * both valid and able to be used.  Answer a boolean indicating validity.
      */
     protected boolean ensureTargetIsValid() {
         String targetPath = getDestinationValue();
@@ -179,11 +159,9 @@ import org.eclipse.swt.widgets.FileDialog;
     /**
      *  Export the passed resource and recursively export all of its child resources
      *  (iff it's a container).  Answer a boolean indicating success.
-     *
-     *  @return boolean
      */
     protected boolean executeExportOperation(ZipFileExportOperation op) {
-        op.setCreateLeadupStructure(createDirectoryStructureCheckbox
+        op.setCreateLeadupStructure(createDirectoryStructureButton
                 .getSelection());
         op.setUseCompression(compressContentsCheckbox.getSelection());
 
@@ -192,7 +170,7 @@ import org.eclipse.swt.widgets.FileDialog;
         } catch (InterruptedException e) {
             return false;
         } catch (InvocationTargetException e) {
-            displayErrorDialog(e.getTargetException().getMessage());
+            displayErrorDialog(e.getTargetException());
             return false;
         }
 
@@ -210,18 +188,19 @@ import org.eclipse.swt.widgets.FileDialog;
     }
 
     /**
-     *	The Finish button was pressed.  Try to do the required work now and answer
-     *	a boolean indicating success.  If false is returned then the wizard will
-     *	not close.
-     *
-     *	@return boolean
+     * The Finish button was pressed.  Try to do the required work now and answer
+     * a boolean indicating success.  If false is returned then the wizard will
+     * not close.
+     * @returns boolean
      */
     public boolean finish() {
         if (!ensureTargetIsValid())
             return false;
 
-        List resourcesToExport = getSelectedResources();
+        List resourcesToExport = getWhiteCheckedResources();
 
+        //Save dirty editors if possible but do not stop if not all are saved
+        saveDirtyEditors();
         // about to invoke the operation so save our state
         saveWidgetValues();
 
@@ -237,9 +216,7 @@ import org.eclipse.swt.widgets.FileDialog;
     }
 
     /**
-     *	Answer the string to display in self as the destination type
-     *
-     *	@return java.lang.String
+     *	Answer the string to display in the receiver as the destination type
      */
     protected String getDestinationLabel() {
         return DataTransferMessages.getString("ZipExport.destinationLabel"); //$NON-NLS-1$
@@ -247,30 +224,41 @@ import org.eclipse.swt.widgets.FileDialog;
 
     /**
      *	Answer the contents of self's destination specification widget.  If this
-     *	value does not have the required suffix then add it first.
-     *
-     *	@return java.lang.String
+     *	value does not have a suffix then add it first.
      */
     protected String getDestinationValue() {
-        String requiredSuffix = getOutputSuffix();
+        String idealSuffix = getOutputSuffix();
         String destinationText = super.getDestinationValue();
 
-        if (!destinationText.toLowerCase().endsWith(
-                requiredSuffix.toLowerCase()))
-            destinationText += requiredSuffix;
+        // only append a suffix if the destination doesn't already have a . in 
+        // its last path segment.  
+        // Also prevent the user from selecting a directory.  Allowing this will 
+        // create a ".zip" file in the directory
+        if (destinationText.length() != 0
+                && !destinationText.endsWith(File.separator)) {
+            int dotIndex = destinationText.lastIndexOf('.');
+            if (dotIndex != -1) {
+                // the last path seperator index
+                int pathSepIndex = destinationText.lastIndexOf(File.separator);
+                if (pathSepIndex != -1 && dotIndex < pathSepIndex) {
+                    destinationText += idealSuffix;
+                }
+            } else {
+                destinationText += idealSuffix;
+            }
+        }
 
         return destinationText;
     }
 
     /**
-     *	Answer the suffix that files exported from this wizard must have.
+     *	Answer the suffix that files exported from this wizard should have.
      *	If this suffix is a file extension (which is typically the case)
      *	then it must include the leading period character.
      *
-     *	@return java.lang.String
      */
     protected String getOutputSuffix() {
-        return ".zip";//$NON-NLS-1$
+        return ".zip"; //$NON-NLS-1$
     }
 
     /**
@@ -279,8 +267,9 @@ import org.eclipse.swt.widgets.FileDialog;
      */
     protected void handleDestinationBrowseButtonPressed() {
         FileDialog dialog = new FileDialog(getContainer().getShell(), SWT.SAVE);
-        dialog.setFilterExtensions(new String[] { "*.jar;*.zip" });//$NON-NLS-1$
-
+        dialog.setFilterExtensions(new String[] { "*.zip", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
+        dialog.setText(DataTransferMessages
+                .getString("ZipExport.selectDestinationTitle")); //$NON-NLS-1$
         String currentSourceString = getDestinationValue();
         int lastSeparatorIndex = currentSourceString
                 .lastIndexOf(File.separator);
@@ -289,8 +278,10 @@ import org.eclipse.swt.widgets.FileDialog;
                     lastSeparatorIndex));
         String selectedFileName = dialog.open();
 
-        if (selectedFileName != null)
+        if (selectedFileName != null) {
+            setErrorMessage(null);
             setDestinationValue(selectedFileName);
+        }
     }
 
     /**
@@ -305,19 +296,12 @@ import org.eclipse.swt.widgets.FileDialog;
                     .getArray(STORE_DESTINATION_NAMES_ID);
             if (directoryNames == null)
                 directoryNames = new String[0];
-            String[] newDirectoryNames = new String[directoryNames.length + 1];
-            System.arraycopy(directoryNames, 0, newDirectoryNames, 1,
-                    directoryNames.length);
-            newDirectoryNames[0] = getDestinationValue();
 
+            directoryNames = addToHistory(directoryNames, getDestinationValue());
             settings.put(STORE_DESTINATION_NAMES_ID, directoryNames);
 
-            // options
-            settings.put(STORE_OVERWRITE_EXISTING_FILE_ID,
-                    overwriteExistingFileCheckbox.getSelection());
-
             settings.put(STORE_CREATE_STRUCTURE_ID,
-                    createDirectoryStructureCheckbox.getSelection());
+                    createDirectoryStructureButton.getSelection());
 
             settings.put(STORE_COMPRESS_CONTENTS_ID, compressContentsCheckbox
                     .getSelection());
@@ -341,15 +325,22 @@ import org.eclipse.swt.widgets.FileDialog;
             for (int i = 0; i < directoryNames.length; i++)
                 addDestinationItem(directoryNames[i]);
 
-            // options
-            overwriteExistingFileCheckbox.setSelection(settings
-                    .getBoolean(STORE_OVERWRITE_EXISTING_FILE_ID));
+            boolean setStructure = settings
+                    .getBoolean(STORE_CREATE_STRUCTURE_ID);
 
-            createDirectoryStructureCheckbox.setSelection(settings
-                    .getBoolean(STORE_CREATE_STRUCTURE_ID));
+            createDirectoryStructureButton.setSelection(setStructure);
+            createSelectionOnlyButton.setSelection(!setStructure);
 
             compressContentsCheckbox.setSelection(settings
                     .getBoolean(STORE_COMPRESS_CONTENTS_ID));
         }
     }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.wizards.datatransfer.WizardFileSystemResourceExportPage1#destinationEmptyMessage()
+     */
+    protected String destinationEmptyMessage() {
+        return DataTransferMessages.getString("ZipExport.destinationEmpty"); //$NON-NLS-1$
+    }
+
 }

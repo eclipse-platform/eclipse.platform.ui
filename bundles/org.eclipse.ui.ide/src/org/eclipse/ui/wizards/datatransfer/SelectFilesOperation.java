@@ -19,6 +19,8 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.ui.dialogs.FileSystemElement;
 
+import org.eclipse.ui.internal.wizards.datatransfer.DataTransferMessages;
+
 /**
  *	Operation responsible for traversing a specified file system position
  *	recursively and building

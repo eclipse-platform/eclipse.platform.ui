@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.wizards.datatransfer;
+package org.eclipse.ui.internal.wizards.datatransfer;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -56,15 +56,19 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.dialogs.FileSystemElement;
 import org.eclipse.ui.dialogs.WizardResourceImportPage;
 import org.eclipse.ui.help.WorkbenchHelp;
+
 import org.eclipse.ui.internal.ide.dialogs.IElementFilter;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
+
 import org.eclipse.ui.model.WorkbenchContentProvider;
+import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
+import org.eclipse.ui.wizards.datatransfer.IImportStructureProvider;
+import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 
 /**
  *	Page 1 of the base resource import-from-file-system Wizard
  */
-/*package*/
-class WizardFileSystemResourceImportPage1 extends WizardResourceImportPage
+public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPage
         implements Listener {
     // widgets
     protected Combo sourceNameField;

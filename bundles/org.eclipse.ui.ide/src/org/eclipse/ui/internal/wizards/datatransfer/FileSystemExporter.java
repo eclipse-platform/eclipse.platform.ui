@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.wizards.datatransfer;
+package org.eclipse.ui.internal.wizards.datatransfer;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.IPath;
 /**
  * Helper class for exporting resources to the file system.
  */
-/*package*/class FileSystemExporter {
+public class FileSystemExporter {
     /**
      *  Creates the specified file system directory at <code>destinationPath</code>.
      *  This creates a new file system directory.

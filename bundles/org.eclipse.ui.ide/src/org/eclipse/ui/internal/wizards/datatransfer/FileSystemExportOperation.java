@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.wizards.datatransfer;
+package org.eclipse.ui.internal.wizards.datatransfer;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,11 +31,11 @@ import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 
+
 /**
  *	Operation for exporting the contents of a resource to the local file system.
  */
-/*package*/
-class FileSystemExportOperation implements IRunnableWithProgress {
+public class FileSystemExportOperation implements IRunnableWithProgress {
     private IPath path;
 
     private IProgressMonitor monitor;

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.wizards.datatransfer;
+package org.eclipse.ui.internal.wizards.datatransfer;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,6 +28,9 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.dialogs.FileSystemElement;
+import org.eclipse.ui.wizards.datatransfer.ImportOperation;
+import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
+
 
 /**
  *	Page 1 of the base resource import-from-zip Wizard.
@@ -37,7 +40,7 @@ import org.eclipse.ui.dialogs.FileSystemElement;
  *	references.
  * @deprecated use WizardZipFileResourceImportPage1
  */
-/*package*/class WizardZipFileImportPage1 extends WizardFileSystemImportPage1
+public class WizardZipFileImportPage1 extends WizardFileSystemImportPage1
         implements ISelectionChangedListener, Listener {
     private ZipFileStructureProvider providerCache;
 

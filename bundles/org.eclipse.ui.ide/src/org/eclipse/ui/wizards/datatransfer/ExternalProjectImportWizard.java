@@ -22,6 +22,9 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
+import org.eclipse.ui.internal.wizards.datatransfer.DataTransferMessages;
+import org.eclipse.ui.internal.wizards.datatransfer.WizardProjectsImportPage;
+
 /**
  * Standard workbench wizard for importing projects defined
  * outside of the currently defined projects into Eclipse.
@@ -45,7 +48,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class ExternalProjectImportWizard extends Wizard implements
         IImportWizard {
-    private WizardExternalProjectImportPage mainPage;
+    private WizardProjectsImportPage mainPage;
 
     /**
      * Constructor for ExternalProjectImportWizard.
@@ -59,7 +62,7 @@ public class ExternalProjectImportWizard extends Wizard implements
      */
     public void addPages() {
         super.addPages();
-        mainPage = new WizardExternalProjectImportPage();
+        mainPage = new WizardProjectsImportPage();
         addPage(mainPage);
     }
 
@@ -101,7 +104,7 @@ public class ExternalProjectImportWizard extends Wizard implements
      * Method declared on IWizard.
      */
     public boolean performFinish() {
-        return (mainPage.createExistingProject() != null);
+        return mainPage.createProjects();
     }
 
 }

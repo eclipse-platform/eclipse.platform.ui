@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.wizards.datatransfer;
+package org.eclipse.ui.internal.wizards.datatransfer;
 
 import java.text.MessageFormat;
 import java.util.MissingResourceException;
@@ -17,8 +17,8 @@ import java.util.ResourceBundle;
 /**
  * Utility class which helps managing messages
  */
-class DataTransferMessages {
-    private static final String RESOURCE_BUNDLE = "org.eclipse.ui.wizards.datatransfer.messages";//$NON-NLS-1$
+public class DataTransferMessages {
+    private static final String RESOURCE_BUNDLE = "org.eclipse.ui.internal.wizards.datatransfer.messages";//$NON-NLS-1$
 
     private static ResourceBundle bundle = ResourceBundle
             .getBundle(RESOURCE_BUNDLE);

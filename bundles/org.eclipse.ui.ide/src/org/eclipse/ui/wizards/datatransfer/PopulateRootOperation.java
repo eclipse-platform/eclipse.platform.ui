@@ -17,6 +17,8 @@ import java.util.List;
 import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.ui.dialogs.FileSystemElement;
 
+import org.eclipse.ui.internal.wizards.datatransfer.MinimizedFileSystemElement;
+
 /**
  * The PopulateFilesOperation is an operation used to populate a FileSystemElement one
  * level deep rather than the whole way.

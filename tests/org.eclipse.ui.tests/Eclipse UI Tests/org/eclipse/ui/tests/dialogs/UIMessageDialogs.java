@@ -14,13 +14,16 @@ import java.util.ResourceBundle;
 
 import junit.framework.TestCase;
 
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.internal.WorkbenchMessages;
+
 import org.eclipse.ui.tests.util.DialogCheck;
+
+import org.eclipse.ui.internal.WorkbenchMessages;
 
 public class UIMessageDialogs extends TestCase {
     private static final String DUMMY_RESOURCE = "Dummy.resource";
@@ -289,20 +292,6 @@ public class UIMessageDialogs extends TestCase {
                 .getString("PropertyDialog.messageTitle"), WorkbenchMessages
                 .format("PropertyDialog.noPropertyMessage",
                         new Object[] { "DummyPropertyPage" }));
-        DialogCheck.assertDialog(dialog, this);
-    }
-
-    public void testNoSelectedExportResources() {
-        Dialog dialog = getInformationDialog(DataTransferMessagesCopy
-                .getString("DataTransfer.information"),
-                DataTransferMessagesCopy.getString("FileExport.noneSelected"));
-        DialogCheck.assertDialog(dialog, this);
-    }
-
-    public void testNoSelectedImportResources() {
-        Dialog dialog = getInformationDialog(DataTransferMessagesCopy
-                .getString("DataTransfer.information"),
-                DataTransferMessagesCopy.getString("FileImport.noneSelected"));
         DialogCheck.assertDialog(dialog, this);
     }
 

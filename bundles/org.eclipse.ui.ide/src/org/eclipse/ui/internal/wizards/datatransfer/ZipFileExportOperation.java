@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.wizards.datatransfer;
+package org.eclipse.ui.internal.wizards.datatransfer;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -27,13 +27,13 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
+
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  *	Operation for exporting a resource and its children to a new .zip file
  */
-/*package*/
-class ZipFileExportOperation implements IRunnableWithProgress {
+public class ZipFileExportOperation implements IRunnableWithProgress {
     private ZipFileExporter exporter;
 
     private String destinationFilename;

@@ -54,9 +54,9 @@ public class UiTestSuite extends TestSuite {
      * Construct the test suite.
      */
     public UiTestSuite() {
+    	addTest(new UIAutomatedSuite());
     	addTest(new TestSuite(NestedSyncExecDeadlockTest.class));
         addTest(new ApiTestSuite());
-        addTest(new UIAutomatedSuite());
         addTest(new PropertySheetTestSuite());
         addTest(new InternalTestSuite());
         addTest(new NavigatorTestSuite());

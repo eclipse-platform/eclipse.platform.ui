@@ -8,13 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.wizards.datatransfer;
+package org.eclipse.ui.internal.wizards.datatransfer;
 
 /**
  *	This utility class converts a passed byte array into a Base 64 encoded
  *	String according to the specification in RFC1521 section 5.2
  */
-/*package*/class Base64Encoder {
+public class Base64Encoder {
     private static final String mappings = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";//$NON-NLS-1$
 
     private static final String filler = "=";//$NON-NLS-1$

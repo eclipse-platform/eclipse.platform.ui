@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.wizards.datatransfer;
+package org.eclipse.ui.internal.wizards.datatransfer;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -16,12 +16,13 @@ import java.util.List;
 
 import org.eclipse.ui.dialogs.FileSystemElement;
 import org.eclipse.ui.model.AdaptableList;
+import org.eclipse.ui.wizards.datatransfer.IImportStructureProvider;
 
 /**
  * The <code>MinimizedFileSystemElement</code> is a <code>FileSystemElement</code> that knows
  * if it has been populated or not.
  */
-class MinimizedFileSystemElement extends FileSystemElement {
+public class MinimizedFileSystemElement extends FileSystemElement {
     private boolean populated = false;
 
     /**
@@ -30,7 +31,7 @@ class MinimizedFileSystemElement extends FileSystemElement {
      * @param parent the containing parent
      * @param isDirectory indicated if this could have children or not
      */
-    MinimizedFileSystemElement(String name, FileSystemElement parent,
+    public MinimizedFileSystemElement(String name, FileSystemElement parent,
             boolean isDirectory) {
         super(name, parent, isDirectory);
     }
@@ -101,7 +102,7 @@ class MinimizedFileSystemElement extends FileSystemElement {
     /**
      * Set whether or not population has happened for the receiver to true.
      */
-    void setPopulated() {
+   public void setPopulated() {
         this.populated = true;
     }
 }

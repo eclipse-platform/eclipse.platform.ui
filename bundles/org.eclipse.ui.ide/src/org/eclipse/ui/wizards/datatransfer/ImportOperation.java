@@ -41,6 +41,8 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.ContainerGenerator;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 
+import org.eclipse.ui.internal.wizards.datatransfer.DataTransferMessages;
+
 /**
  * An operation which does the actual work of copying objects from the local file
  * system into the workspace.

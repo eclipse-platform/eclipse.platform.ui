@@ -14,13 +14,16 @@ import java.util.ResourceBundle;
 
 import junit.framework.TestCase;
 
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.internal.WorkbenchMessages;
+
 import org.eclipse.ui.tests.util.DialogCheck;
+
+import org.eclipse.ui.internal.WorkbenchMessages;
 
 public class UIMessageDialogsAuto extends TestCase {
     private static final String DUMMY_RESOURCE = "Dummy.resource";
@@ -289,19 +292,6 @@ public class UIMessageDialogsAuto extends TestCase {
         DialogCheck.assertDialogTexts(dialog, this);
     }
 
-    public void testNoSelectedExportResources() {
-        Dialog dialog = getInformationDialog(DataTransferMessagesCopy
-                .getString("DataTransfer.information"),
-                DataTransferMessagesCopy.getString("FileExport.noneSelected"));
-        DialogCheck.assertDialogTexts(dialog, this);
-    }
-
-    public void testNoSelectedImportResources() {
-        Dialog dialog = getInformationDialog(DataTransferMessagesCopy
-                .getString("DataTransfer.information"),
-                DataTransferMessagesCopy.getString("FileImport.noneSelected"));
-        DialogCheck.assertDialogTexts(dialog, this);
-    }
 
     public void testOperationNotAvailable() {
         Dialog dialog = getInformationDialog(WorkbenchMessages

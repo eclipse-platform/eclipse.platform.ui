@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.wizards.datatransfer;
+package org.eclipse.ui.internal.wizards.datatransfer;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,6 +27,9 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchContentProvider;
+import org.eclipse.ui.wizards.datatransfer.ImportOperation;
+import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
+
 
 /**
  *	Page 1 of the base resource import-from-zip Wizard.
@@ -35,8 +38,7 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
  *	all references to .zip in this class are equally applicable to .jar
  *	references.
  */
-/*package*/
-class WizardZipFileResourceImportPage1 extends
+public class WizardZipFileResourceImportPage1 extends
         WizardFileSystemResourceImportPage1 implements Listener {
     private ZipFileStructureProvider providerCache;
 

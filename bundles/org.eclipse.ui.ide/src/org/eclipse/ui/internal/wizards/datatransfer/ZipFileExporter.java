@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.wizards.datatransfer;
+package org.eclipse.ui.internal.wizards.datatransfer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
@@ -25,10 +25,11 @@ import java.util.zip.ZipOutputStream;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 
+
 /**
  *	Exports resources to a .zip file
  */
-/*package*/class ZipFileExporter {
+public class ZipFileExporter {
     private ZipOutputStream outputStream;
 
     private StringBuffer manifestContents;

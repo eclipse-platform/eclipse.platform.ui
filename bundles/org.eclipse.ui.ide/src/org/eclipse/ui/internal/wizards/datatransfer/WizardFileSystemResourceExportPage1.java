@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,18 +8,24 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.wizards.datatransfer;
+package org.eclipse.ui.internal.wizards.datatransfer;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -27,45 +33,49 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Widget;
-import org.eclipse.ui.dialogs.WizardExportPage;
+import org.eclipse.ui.dialogs.WizardExportResourcesPage;
+import org.eclipse.ui.help.WorkbenchHelp;
+
 
 /**
  *	Page 1 of the base resource export-to-file-system Wizard
- *  @deprecated use WizardFileSystemResourceExportPage1
  */
-/*package*/class WizardFileSystemExportPage1 extends WizardExportPage
-        implements Listener {
+public class WizardFileSystemResourceExportPage1 extends
+        WizardExportResourcesPage implements Listener {
 
     // widgets
     private Combo destinationNameField;
 
     private Button destinationBrowseButton;
 
-    private Button overwriteExistingFilesCheckbox;
+    protected Button overwriteExistingFilesCheckbox;
 
-    private Button createDirectoryStructureCheckbox;
+    protected Button createDirectoryStructureButton;
 
-    private Button createDirectoriesForSelectedContainersCheckbox;
-
-    // constants
-    private static final int SIZING_TEXT_FIELD_WIDTH = 250;
+    protected Button createSelectionOnlyButton;
 
     // dialog store id constants
-    private static final String STORE_DESTINATION_NAMES_ID = "WizardFileSystemExportPage1.STORE_DESTINATION_NAMES_ID";//$NON-NLS-1$
+    private static final String STORE_DESTINATION_NAMES_ID = "WizardFileSystemResourceExportPage1.STORE_DESTINATION_NAMES_ID"; //$NON-NLS-1$
 
-    private static final String STORE_OVERWRITE_EXISTING_FILES_ID = "WizardFileSystemExportPage1.STORE_OVERWRITE_EXISTING_FILES_ID";//$NON-NLS-1$
+    private static final String STORE_OVERWRITE_EXISTING_FILES_ID = "WizardFileSystemResourceExportPage1.STORE_OVERWRITE_EXISTING_FILES_ID"; //$NON-NLS-1$
 
-    private static final String STORE_CREATE_STRUCTURE_ID = "WizardFileSystemExportPage1.STORE_CREATE_STRUCTURE_ID";//$NON-NLS-1$
+    private static final String STORE_CREATE_STRUCTURE_ID = "WizardFileSystemResourceExportPage1.STORE_CREATE_STRUCTURE_ID"; //$NON-NLS-1$
 
-    private static final String STORE_CREATE_DIRECTORIES_FOR_SPECIFIED_CONTAINER_ID = "WizardFileSystemExportPage1.STORE_CREATE_DIRECTORIES_FOR_SPECIFIED_CONTAINER_ID";//$NON-NLS-1$
+    //messages
+    private static final String SELECT_DESTINATION_MESSAGE = DataTransferMessages
+            .getString("FileExport.selectDestinationMessage"); //$NON-NLS-1$
+
+    private static final String SELECT_DESTINATION_TITLE = DataTransferMessages
+            .getString("FileExport.selectDestinationTitle"); //$NON-NLS-1$
 
     /**
      *	Create an instance of this class
      */
-    protected WizardFileSystemExportPage1(String name,
+    protected WizardFileSystemResourceExportPage1(String name,
             IStructuredSelection selection) {
         super(name, selection);
     }
@@ -73,8 +83,8 @@ import org.eclipse.ui.dialogs.WizardExportPage;
     /**
      *	Create an instance of this class
      */
-    public WizardFileSystemExportPage1(IStructuredSelection selection) {
-        this("fileSystemExportPage1", selection);//$NON-NLS-1$
+    public WizardFileSystemResourceExportPage1(IStructuredSelection selection) {
+        this("fileSystemExportPage1", selection); //$NON-NLS-1$
         setTitle(DataTransferMessages.getString("DataTransfer.fileSystemTitle")); //$NON-NLS-1$
         setDescription(DataTransferMessages
                 .getString("FileExport.exportLocalFileSystem")); //$NON-NLS-1$
@@ -95,6 +105,8 @@ import org.eclipse.ui.dialogs.WizardExportPage;
     public void createControl(Composite parent) {
         super.createControl(parent);
         giveFocusToDestination();
+        WorkbenchHelp.setHelp(getControl(),
+                IDataTransferHelpContextIds.FILE_SYSTEM_EXPORT_WIZARD_PAGE);
     }
 
     /**
@@ -103,6 +115,8 @@ import org.eclipse.ui.dialogs.WizardExportPage;
      *	@param parent org.eclipse.swt.widgets.Composite
      */
     protected void createDestinationGroup(Composite parent) {
+
+        Font font = parent.getFont();
         // destination specification group
         Composite destinationSelectionGroup = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout();
@@ -110,9 +124,11 @@ import org.eclipse.ui.dialogs.WizardExportPage;
         destinationSelectionGroup.setLayout(layout);
         destinationSelectionGroup.setLayoutData(new GridData(
                 GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL));
+        destinationSelectionGroup.setFont(font);
 
-        new Label(destinationSelectionGroup, SWT.NONE)
-                .setText(getDestinationLabel());
+        Label destinationLabel = new Label(destinationSelectionGroup, SWT.NONE);
+        destinationLabel.setText(getDestinationLabel());
+        destinationLabel.setFont(font);
 
         // destination name entry field
         destinationNameField = new Combo(destinationSelectionGroup, SWT.SINGLE
@@ -123,55 +139,69 @@ import org.eclipse.ui.dialogs.WizardExportPage;
                 | GridData.GRAB_HORIZONTAL);
         data.widthHint = SIZING_TEXT_FIELD_WIDTH;
         destinationNameField.setLayoutData(data);
+        destinationNameField.setFont(font);
 
         // destination browse button
         destinationBrowseButton = new Button(destinationSelectionGroup,
                 SWT.PUSH);
         destinationBrowseButton.setText(DataTransferMessages
                 .getString("DataTransfer.browse")); //$NON-NLS-1$
-        destinationBrowseButton.setLayoutData(new GridData(
-                GridData.HORIZONTAL_ALIGN_FILL));
         destinationBrowseButton.addListener(SWT.Selection, this);
+        destinationBrowseButton.setFont(font);
+        setButtonLayoutData(destinationBrowseButton);
 
         new Label(parent, SWT.NONE); // vertical spacer
     }
 
     /**
-     *	Create the export options specification widgets.
-     *
-     *	@param parent org.eclipse.swt.widgets.Composite
+     * Create the buttons in the options group.
      */
-    protected void createOptionsGroup(Composite parent) {
-        // options group
-        Composite optionsGroup = new Composite(parent, SWT.NONE);
-        GridLayout layout = new GridLayout();
-        layout.marginHeight = 0;
-        optionsGroup.setLayout(layout);
-        optionsGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL
-                | GridData.GRAB_HORIZONTAL));
 
+    protected void createOptionsGroupButtons(Group optionsGroup) {
+
+        Font font = optionsGroup.getFont();
+        createOverwriteExisting(optionsGroup, font);
+
+        createDirectoryStructureOptions(optionsGroup, font);
+    }
+
+    /**
+     * Create the buttons for the group that determine if the entire or
+     * selected directory structure should be created.
+     * @param optionsGroup
+     * @param font
+     */
+    protected void createDirectoryStructureOptions(Group optionsGroup, Font font) {
+        // create directory structure radios
+        createDirectoryStructureButton = new Button(optionsGroup, SWT.RADIO
+                | SWT.LEFT);
+        createDirectoryStructureButton.setText(DataTransferMessages
+                .getString("FileExport.createDirectoryStructure")); //$NON-NLS-1$
+        createDirectoryStructureButton.setSelection(false);
+        createDirectoryStructureButton.setFont(font);
+
+        // create directory structure radios
+        createSelectionOnlyButton = new Button(optionsGroup, SWT.RADIO
+                | SWT.LEFT);
+        createSelectionOnlyButton.setText(DataTransferMessages
+                .getString("FileExport.createSelectedDirectories"));//$NON-NLS-1$
+        createSelectionOnlyButton.setSelection(true);
+        createSelectionOnlyButton.setFont(font);
+    }
+
+    /**
+     * Create the button for checking if we should ask if we are going to
+     * overwrite existing files.
+     * @param optionsGroup
+     * @param font
+     */
+    protected void createOverwriteExisting(Group optionsGroup, Font font) {
         // overwrite... checkbox
         overwriteExistingFilesCheckbox = new Button(optionsGroup, SWT.CHECK
                 | SWT.LEFT);
         overwriteExistingFilesCheckbox.setText(DataTransferMessages
                 .getString("ExportFile.overwriteExisting")); //$NON-NLS-1$
-
-        // create directory structure checkbox
-        createDirectoryStructureCheckbox = new Button(optionsGroup, SWT.CHECK
-                | SWT.LEFT);
-        createDirectoryStructureCheckbox.setText(DataTransferMessages
-                .getString("ExportFile.createDirectoryStructure")); //$NON-NLS-1$
-        createDirectoryStructureCheckbox.addListener(SWT.Selection, this);
-
-        // create directory for container checkbox
-        createDirectoriesForSelectedContainersCheckbox = new Button(
-                optionsGroup, SWT.CHECK | SWT.LEFT);
-        createDirectoriesForSelectedContainersCheckbox
-                .setText(DataTransferMessages
-                        .getString("ExportFile.createDirectoriesForSelected")); //$NON-NLS-1$
-
-        // initial setup
-        createDirectoryStructureCheckbox.setSelection(true);
+        overwriteExistingFilesCheckbox.setFont(font);
     }
 
     /**
@@ -222,10 +252,7 @@ import org.eclipse.ui.dialogs.WizardExportPage;
      *  @return boolean
      */
     protected boolean executeExportOperation(FileSystemExportOperation op) {
-        op
-                .setCreateContainerDirectories(createDirectoriesForSelectedContainersCheckbox
-                        .getSelection());
-        op.setCreateLeadupStructure(createDirectoryStructureCheckbox
+        op.setCreateLeadupStructure(createDirectoryStructureButton
                 .getSelection());
         op.setOverwriteFiles(overwriteExistingFilesCheckbox.getSelection());
 
@@ -234,7 +261,7 @@ import org.eclipse.ui.dialogs.WizardExportPage;
         } catch (InterruptedException e) {
             return false;
         } catch (InvocationTargetException e) {
-            displayErrorDialog(e.getTargetException().getMessage());
+            displayErrorDialog(e.getTargetException());
             return false;
         }
 
@@ -262,15 +289,16 @@ import org.eclipse.ui.dialogs.WizardExportPage;
         if (!ensureTargetIsValid(new File(getDestinationValue())))
             return false;
 
-        List resourcesToExport = getSelectedResources();
+        List resourcesToExport = getWhiteCheckedResources();
 
+        //Save dirty editors if possible but do not stop if not all are saved
+        saveDirtyEditors();
         // about to invoke the operation so save our state
         saveWidgetValues();
 
         if (resourcesToExport.size() > 0)
-            return executeExportOperation(new FileSystemExportOperation(
-                    getSourceResource(), resourcesToExport,
-                    getDestinationValue(), this));
+            return executeExportOperation(new FileSystemExportOperation(null,
+                    resourcesToExport, getDestinationValue(), this));
 
         MessageDialog.openInformation(getContainer().getShell(),
                 DataTransferMessages.getString("DataTransfer.information"), //$NON-NLS-1$
@@ -285,7 +313,7 @@ import org.eclipse.ui.dialogs.WizardExportPage;
      *	@return java.lang.String
      */
     protected String getDestinationLabel() {
-        return DataTransferMessages.getString("DataTransfer.directory"); //$NON-NLS-1$
+        return DataTransferMessages.getString("FileExport.toDirectory"); //$NON-NLS-1$
     }
 
     /**
@@ -311,19 +339,20 @@ import org.eclipse.ui.dialogs.WizardExportPage;
     protected void handleDestinationBrowseButtonPressed() {
         DirectoryDialog dialog = new DirectoryDialog(getContainer().getShell(),
                 SWT.SAVE);
-        dialog.setMessage(DataTransferMessages
-                .getString("DataTransfer.selectDestination")); //$NON-NLS-1$
+        dialog.setMessage(SELECT_DESTINATION_MESSAGE);
+        dialog.setText(SELECT_DESTINATION_TITLE);
         dialog.setFilterPath(getDestinationValue());
         String selectedDirectoryName = dialog.open();
 
-        if (selectedDirectoryName != null)
+        if (selectedDirectoryName != null) {
+            setErrorMessage(null);
             setDestinationValue(selectedDirectoryName);
+        }
     }
 
     /**
-     *	Handle all events and enablements for widgets in this page
-     *
-     *	@param e org.eclipse.swt.widgets.Event
+     * Handle all events and enablements for widgets in this page
+     * @param e Event
      */
     public void handleEvent(Event e) {
         Widget source = e.widget;
@@ -331,7 +360,7 @@ import org.eclipse.ui.dialogs.WizardExportPage;
         if (source == destinationBrowseButton)
             handleDestinationBrowseButtonPressed();
 
-        super.handleEvent(e);
+        updatePageCompletion();
     }
 
     /**
@@ -355,11 +384,7 @@ import org.eclipse.ui.dialogs.WizardExportPage;
                     overwriteExistingFilesCheckbox.getSelection());
 
             settings.put(STORE_CREATE_STRUCTURE_ID,
-                    createDirectoryStructureCheckbox.getSelection());
-
-            settings.put(STORE_CREATE_DIRECTORIES_FOR_SPECIFIED_CONTAINER_ID,
-                    createDirectoriesForSelectedContainersCheckbox
-                            .getSelection());
+                    createDirectoryStructureButton.getSelection());
 
         }
     }
@@ -385,32 +410,78 @@ import org.eclipse.ui.dialogs.WizardExportPage;
             overwriteExistingFilesCheckbox.setSelection(settings
                     .getBoolean(STORE_OVERWRITE_EXISTING_FILES_ID));
 
-            createDirectoryStructureCheckbox.setSelection(settings
-                    .getBoolean(STORE_CREATE_STRUCTURE_ID));
-
-            createDirectoriesForSelectedContainersCheckbox
-                    .setSelection(settings
-                            .getBoolean(STORE_CREATE_DIRECTORIES_FOR_SPECIFIED_CONTAINER_ID));
+            boolean createDirectories = settings
+                    .getBoolean(STORE_CREATE_STRUCTURE_ID);
+            createDirectoryStructureButton.setSelection(createDirectories);
+            createSelectionOnlyButton.setSelection(!createDirectories);
         }
     }
 
     /**
-     *	Set the contents of self's destination specification widget to
+     *	Set the contents of the receivers destination specification widget to
      *	the passed value
      *
-     *	@param value java.lang.String
      */
     protected void setDestinationValue(String value) {
         destinationNameField.setText(value);
     }
 
     /**
-     *	Answer a boolean indicating whether self's destination specification
+     *	Answer a boolean indicating whether the receivers destination specification
      *	widgets currently all contain valid values.
-     *
-     *	@return boolean
      */
     protected boolean validateDestinationGroup() {
-        return !getDestinationValue().equals("");//$NON-NLS-1$
+        String destinationValue = getDestinationValue();
+        if (destinationValue.length() == 0) {
+            setMessage(destinationEmptyMessage());
+            return false;
+        }
+
+        String conflictingContainer = getConflictingContainerNameFor(destinationValue);
+        if (conflictingContainer == null)
+            setErrorMessage(null);
+        else {
+            setErrorMessage(DataTransferMessages.format(
+                    "FileExport.conflictingContainer", //$NON-NLS-1$
+                    new Object[] { conflictingContainer }));
+            giveFocusToDestination();
+            return false;
+        }
+
+        return true;
     }
+
+    /**
+     * Get the message used to denote an empty destination.
+     */
+    protected String destinationEmptyMessage() {
+        return DataTransferMessages.getString("FileExport.destinationEmpty"); //$NON-NLS-1$
+    }
+
+    /**
+     * Returns the name of a container with a location that encompasses targetDirectory.
+     * Returns null if there is no conflict.
+     * 
+     * @param targetDirectory the path of the directory to check.
+     * @return the conflicting container name or <code>null</code>
+     */
+    protected String getConflictingContainerNameFor(String targetDirectory) {
+
+        IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+        IPath testPath = new Path(targetDirectory);
+
+        if (root.getLocation().isPrefixOf(testPath))
+            return DataTransferMessages.getString("FileExport.rootName"); //$NON-NLS-1$
+
+        IProject[] projects = root.getProjects();
+
+        for (int i = 0; i < projects.length; i++) {
+            if (projects[i].getLocation().isPrefixOf(testPath))
+                return projects[i].getName();
+        }
+
+        return null;
+
+    }
+
 }

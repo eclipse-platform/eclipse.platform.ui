@@ -29,6 +29,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
+import org.eclipse.ui.internal.wizards.datatransfer.DataTransferMessages;
+import org.eclipse.ui.internal.wizards.datatransfer.WizardFileSystemResourceExportPage1;
+
 /**
  * Standard workbench wizard for exporting resources from the workspace
  * to the local file system.

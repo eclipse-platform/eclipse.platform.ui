@@ -15,13 +15,18 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+
 import org.eclipse.jface.operation.ModalContext;
+
+import org.eclipse.ui.internal.wizards.datatransfer.DataTransferMessages;
+import org.eclipse.ui.internal.wizards.datatransfer.MinimizedFileSystemElement;
+
 
 /**
  * The PopulateElementOperation has a MinimizedFileSystemElement as an object as this is
  * just filled in.
  */
-class PopulateElementOperation extends PopulateRootOperation {
+public class PopulateElementOperation extends PopulateRootOperation {
     /**
      * Create a new <code>PopulateElementsOperation</code>.
      * @param rootObject the object to be populated

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.wizards.datatransfer;
+package org.eclipse.ui.internal.wizards.datatransfer;
 
 import org.eclipse.ui.PlatformUI;
 
@@ -20,7 +20,7 @@ import org.eclipse.ui.PlatformUI;
  * </p>
  * 
  */
-/*package*/interface IDataTransferHelpContextIds {
+public interface IDataTransferHelpContextIds {
     public static final String PREFIX = PlatformUI.PLUGIN_ID + "."; //$NON-NLS-1$
 
     // Wizard pages
