@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -488,7 +489,7 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 	private int findIndexOfSubstringAfterIndex(String aSourceString, String aSubString, int aStartIndex) {
 		int tempIndex = aSourceString.indexOf(aSubString, aStartIndex);
 		if(tempIndex == -1) {
-			throw new PlantyException("Substring '"+aSubString+"' cannot be found in the specified source string.");
+			throw new PlantyException(MessageFormat.format(AntOutlineMessages.getString("PlantyContentOutlinePage.Substing_not_found"), new String[]{aSubString})); //$NON-NLS-1$
 		}
 		return tempIndex;
 	}		

@@ -131,7 +131,7 @@ public class OutlinePreparingHandler extends DefaultHandler {
             tempElementName = aQualifiedName;
         }   
         else {
-            throw new PlantyException("Error when parsing document: Neither a local name nor qualified of an element specified");
+            throw new PlantyException(AntOutlineMessages.getString("OutlinePreparingHandler.Error_Name")); //$NON-NLS-1$
         }
         if(tempElementName.equalsIgnoreCase("target") || tempElementName.equalsIgnoreCase("project")) { //$NON-NLS-1$ //$NON-NLS-2$
         	tempElement = new XmlElement(tempElementName) {
@@ -381,7 +381,7 @@ public class OutlinePreparingHandler extends DefaultHandler {
 		int lineNumber= exception.getLineNumber();
 		StringBuffer message= new StringBuffer(exception.getMessage());
 		if (lineNumber != -1){
-			message.append(" line: " + lineNumber);
+			message.append(AntOutlineMessages.getString("OutlinePreparingHandler._line___2") + lineNumber); //$NON-NLS-1$
 		}
 
 		XmlElement errorNode= new XmlElement(message.toString());
