@@ -1536,11 +1536,14 @@ public final class Workbench implements IWorkbench {
 		    if (!display.isDisposed()) {
 		        handler.handleException(e);
 		    }
-	        
+		    else {
+		        String msg = "Exception in Workbench.runUI after display was disposed"; //$NON-NLS-1$
+		        WorkbenchPlugin.log(msg, new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 1, msg, e));
+		    }
 		} finally {
 			// mandatory clean up
 			if (!display.isDisposed()) {
-				display.removeListener(SWT.CLOSE, closeListener);
+				display.removeListener(SWT.Close, closeListener);
 			}
 		}
 
@@ -2248,6 +2251,6 @@ public final class Workbench implements IWorkbench {
      * <code>false</code> if it has been terminated. 
      */
     public boolean isRunning() {
-        return !runEventLoop;
+        return runEventLoop;
     }
 }
