@@ -67,12 +67,6 @@ public class AppserverPlugin extends Plugin {
 		bundleContext = context;
 	}
 	/**
-	 * Initializes the default preferences settings for this plug-in.
-	 */
-	protected void initializeDefaultPluginPreferences() {
-		getPluginPreferences().setDefault(PORT_KEY, 0);
-	}
-	/**
 	 * Returns the plugin ID that contributes the server implementation
 	 * 
 	 * @return String
