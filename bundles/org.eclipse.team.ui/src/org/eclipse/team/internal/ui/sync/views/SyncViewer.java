@@ -492,12 +492,13 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 		
 		// cancel and wait 
 		RefreshSubscriberInputJob job = TeamUIPlugin.getPlugin().getRefreshJob();
+		
 		job.cancel();
-		try {
-			job.join();
-		} catch (InterruptedException e) {
-			// continue with shutdown
-		}
+//		try {
+//			job.join();
+//		} catch (InterruptedException e) {
+//			// continue with shutdown
+//		}
 		job.setSubscriberInput(null);
 		
 		TeamProvider.removeListener(this);
