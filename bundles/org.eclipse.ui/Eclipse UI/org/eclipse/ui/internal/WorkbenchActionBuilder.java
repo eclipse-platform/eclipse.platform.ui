@@ -795,8 +795,10 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		openPreferencesAction = new OpenPreferencesAction(window);
 
 		addBookmarkAction = new RetargetAction(IWorkbenchActionConstants.BOOKMARK, WorkbenchMessages.getString("Workbench.addBookMark")); //$NON-NLS-1$
-		addBookmarkAction.setToolTipText(WorkbenchMessages.getString("Workbench.addBookMarkToolTip")); //$NON-NLS-1$
 		partService.addPartListener(addBookmarkAction);
+		addBookmarkAction.setToolTipText(WorkbenchMessages.getString("Workbench.addBookMarkToolTip")); //$NON-NLS-1$
+		addBookmarkAction.setActionDefinitionId(addBookmarkActionDefId);
+		keyBindingService.registerGlobalAction(addBookmarkAction);
 
 		deleteAction = new RetargetAction(IWorkbenchActionConstants.DELETE, WorkbenchMessages.getString("Workbench.delete")); //$NON-NLS-1$
 		deleteAction.setToolTipText(WorkbenchMessages.getString("Workbench.deleteToolTip")); //$NON-NLS-1$
