@@ -84,19 +84,6 @@ public class Hyperlink extends AbstractHyperlink {
 		});
 	}
 
-	/**
-	 * @param href
-	 */
-	public void setHref(Object href) {
-		setData("href", href);
-	}
-	/**
-	 * @return
-	 */
-	public Object getHref() {
-		return getData("href");
-	}
-
 	public void setUnderlined(boolean underlined) {
 		this.underlined = underlined;
 		redraw();

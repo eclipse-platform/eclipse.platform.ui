@@ -190,9 +190,18 @@ public abstract class AbstractHyperlink extends Canvas {
 			return;
 		handleActivate();
 	}
-
+	
+	/**
+	 * @param href
+	 */
+	public void setHref(Object href) {
+		setData("href", href);
+	}
+	/**
+	 * @return
+	 */
 	public Object getHref() {
-		return null;
+		return getData("href");
 	}
 
 	public String getText() {
