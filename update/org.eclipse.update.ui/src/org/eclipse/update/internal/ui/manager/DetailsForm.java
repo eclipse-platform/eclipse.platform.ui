@@ -338,11 +338,11 @@ private String getInstalledVersion(IFeature feature) {
 	try {
 		ILocalSite localSite = SiteManager.getLocalSite();
 	   	IInstallConfiguration config = localSite.getCurrentConfiguration();
-	   	ISite [] isites = config.getInstallSites();
+	   	IConfigurationSite [] isites = config.getConfigurationSites();
 	   	String id = feature.getIdentifier().getIdentifier();
 	   	StringBuffer buf = new StringBuffer();
 	   	for (int i=0; i<isites.length; i++) {
-			ISite isite = isites[i];
+			ISite isite = isites[i].getSite();
 			IFeature[] result = UpdateUIPlugin.searchSite(id, isite);
 			for (int j=0; j<result.length; j++) {
 				IFeature installedFeature = result[j];

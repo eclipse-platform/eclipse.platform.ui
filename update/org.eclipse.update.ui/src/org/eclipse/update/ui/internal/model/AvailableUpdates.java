@@ -166,9 +166,9 @@ class SearchAdapter extends MonitorAdapter {
 			Vector candidates = new Vector();
 			ILocalSite localSite = SiteManager.getLocalSite();
 			IInstallConfiguration config = localSite.getCurrentConfiguration();
-			ISite [] isites = config.getInstallSites();
+			IConfigurationSite [] isites = config.getConfigurationSites();
 			for (int i=0; i<isites.length; i++) {
-				ISite isite = isites[i];
+				ISite isite = isites[i].getSite();
 				IFeatureReference [] refs = isite.getFeatureReferences();
 				for (int j=0; j<refs.length; j++) {
 					IFeatureReference ref = refs[j];

@@ -18,7 +18,7 @@ import java.net.URL;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.events.*;
 public class InstallableSiteForm extends UpdateWebForm {
-	private ISite currentSite;
+	private IConfigurationSite currentSite;
 	private Label urlLabel;
 	
 public InstallableSiteForm(UpdateFormPage page) {
@@ -64,17 +64,18 @@ protected void createContents(Composite parent) {
 }
 
 public void expandTo(Object obj) {
-	if (obj instanceof ISite) {
-		inputChanged((ISite)obj);
+	if (obj instanceof IConfigurationSite) {
+		inputChanged((IConfigurationSite)obj);
 	}
 }
 
-private void inputChanged(ISite site) {
+private void inputChanged(IConfigurationSite csite) {
+	ISite site = csite.getSite();
 	urlLabel.setText(site.getURL().toString());
 	urlLabel.getParent().layout();
 	((Composite)getControl()).layout();
 	getControl().redraw();
-	currentSite = site;
+	currentSite = csite;
 }
 
 private void performNewLocation() {

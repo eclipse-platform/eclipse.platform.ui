@@ -18,6 +18,7 @@ import org.eclipse.update.internal.ui.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.ICategory;
+import org.eclipse.update.core.IConfigurationSite;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.core.IImport;
 import org.eclipse.update.core.IInfo;
@@ -93,8 +94,9 @@ class LocalSiteProvider extends DefaultContentProvider
 		if (parent instanceof ILocalSite) {
 			return openLocalSite();
 		}
-		if (parent instanceof ISite) {
-			return getSiteFeatures((ISite)parent);
+		if (parent instanceof IConfigurationSite) {
+			IConfigurationSite csite = (IConfigurationSite)parent;
+			return getSiteFeatures(csite.getSite());
 		}
 		if (parent instanceof AvailableUpdates) {
 			return ((AvailableUpdates)parent).getChildren(parent);
@@ -126,7 +128,7 @@ class LocalSiteProvider extends DefaultContentProvider
 	public Object getParent(Object child) {
 		if (child instanceof IFeature)
 		   return ((IFeature)child).getSite();
-		if (child instanceof ISite)
+		if (child instanceof IConfigurationSite)
 		   return getLocalSite();
 		return null;
 	}
@@ -159,8 +161,9 @@ class LocalSiteLabelProvider extends LabelProvider {
 		if (obj instanceof ILocalSite) {
 			return "Current Configuration";
 		}
-		if (obj instanceof ISite) {
-			ISite site = (ISite)obj;
+		if (obj instanceof IConfigurationSite) {
+			IConfigurationSite csite = (IConfigurationSite)obj;
+			ISite site = csite.getSite();
 			return site.getURL().toString();
 		}
 		if (obj instanceof IFeature) {
@@ -177,7 +180,7 @@ class LocalSiteLabelProvider extends LabelProvider {
 		   return updatesImage;
 		if (obj instanceof IFeature)
 		   return featureImage;
-		if (obj instanceof ISite)
+		if (obj instanceof IConfigurationSite)
 		   return siteImage;
 		if (obj instanceof UpdateSearchSite)
 		   return siteImage;
@@ -218,7 +221,7 @@ private Object [] openLocalSite() {
 	try {
 		ILocalSite localSite = SiteManager.getLocalSite();
 		IInstallConfiguration config = localSite.getCurrentConfiguration();
-		Object [] result = config.getInstallSites();
+		Object [] result = config.getConfigurationSites();
 		if (!initialized) {
 			config.addInstallConfigurationChangedListener(this);
 			initialized = true;
@@ -258,9 +261,9 @@ private void registerListeners() {
 	   	ILocalSite localSite = SiteManager.getLocalSite();
 		IInstallConfiguration config = localSite.getCurrentConfiguration();
 		config.addInstallConfigurationChangedListener(this);
-		ISite [] isites = config.getInstallSites();
+		IConfigurationSite [] isites = config.getConfigurationSites();
 		for (int i=0; i<isites.length; i++) {
-			ISite site = isites[i];
+			ISite site = isites[i].getSite();
 			site.addSiteChangedListener(this);
 		}
 	}
@@ -274,9 +277,9 @@ private void unregisterListeners() {
 	   	ILocalSite localSite = SiteManager.getLocalSite();
 		IInstallConfiguration config = localSite.getCurrentConfiguration();
 		config.removeInstallConfigurationChangedListener(this);
-		ISite [] isites = config.getInstallSites();
+		IConfigurationSite [] isites = config.getConfigurationSites();
 		for (int i=0; i<isites.length; i++) {
-			ISite site = isites[i];
+			ISite site = isites[i].getSite();
 			site.removeSiteChangedListener(this);
 		}
 	}
@@ -288,27 +291,27 @@ private void unregisterListeners() {
 	/**
 	 * @see IInstallConfigurationChangedListener#installSiteAdded(ISite)
 	 */
-	public void installSiteAdded(ISite site) {
-		viewer.add(getLocalSite(), site);
+	public void installSiteAdded(IConfigurationSite csite) {
+		viewer.add(getLocalSite(), csite);
 	}
 
 	/**
 	 * @see IInstallConfigurationChangedListener#installSiteRemoved(ISite)
 	 */
-	public void installSiteRemoved(ISite site) {
+	public void installSiteRemoved(IConfigurationSite site) {
 		viewer.remove(site);
 	}
 
 	/**
 	 * @see IInstallConfigurationChangedListener#linkedSiteAdded(ISite)
 	 */
-	public void linkedSiteAdded(ISite site) {
+	public void linkedSiteAdded(IConfigurationSite site) {
 	}
 
 	/**
 	 * @see IInstallConfigurationChangedListener#linkedSiteRemoved(ISite)
 	 */
-	public void linkedSiteRemoved(ISite site) {
+	public void linkedSiteRemoved(IConfigurationSite site) {
 	}
 
 	/**
@@ -332,4 +335,18 @@ private void unregisterListeners() {
 		viewer.remove(feature);
 	}
 
+	/*
+	 * @see IInstallConfigurationChangedListener#featureAdded(IConfigurationSite, IFeature)
+	 */
+	public void featureAdded(IConfigurationSite site, IFeature feature) {
+		// should be removed as soon as deprecated
+	}
+
+	/*
+	 * @see IInstallConfigurationChangedListener#featureRemoved(IConfigurationSite, IFeature)
+	 */
+	public void featureRemoved(IConfigurationSite site, IFeature feature) {
+		// should be removed as soon as deprecated in the interface
+	}
+
 }

@@ -32,7 +32,7 @@ class TableContentProvider extends DefaultContentProvider
 	public Object[] getElements(Object parent) {
 		try {
 		   ILocalSite localSite = SiteManager.getLocalSite();
-		   return localSite.getCurrentConfiguration().getInstallSites();
+		   return localSite.getCurrentConfiguration().getConfigurationSites();
 		}
 		catch (CoreException e) {
 			UpdateUIPlugin.logException(e);
@@ -54,8 +54,9 @@ class TableLabelProvider extends LabelProvider implements
 	 * @see ITableLabelProvider#getColumnText(Object, int)
 	 */
 	public String getColumnText(Object obj, int col) {
-		if (obj instanceof ISite && col==0) {
-			ISite site = (ISite)obj;
+		if (obj instanceof IConfigurationSite && col==0) {
+			IConfigurationSite csite = (IConfigurationSite)obj;
+			ISite site = csite.getSite();
 			URL url = site.getURL();
 			return url.toString();
 		}
@@ -123,9 +124,18 @@ class TableLabelProvider extends LabelProvider implements
 	private void selectFirstTarget() {
 		try {
 			ILocalSite localSite = SiteManager.getLocalSite();
-			ISite [] sites = localSite.getCurrentConfiguration().getInstallSites();
-			if (sites.length>0) {
-				tableViewer.setSelection(new StructuredSelection(sites[0]));
+			IConfigurationSite [] sites = localSite.getCurrentConfiguration().getConfigurationSites();
+			IConfigurationSite firstSite = null;
+			for (int i=0; i<sites.length; i++) {
+				IConfigurationSite csite = sites[i];
+				if (csite.isInstallSite()) {
+					firstSite = csite;
+					break;
+				}
+				
+			}
+			if (firstSite!=null) {
+				tableViewer.setSelection(new StructuredSelection(firstSite));
 			}
 		}
 		catch (CoreException e) {
@@ -134,9 +144,9 @@ class TableLabelProvider extends LabelProvider implements
 	private void addTargetLocation() {
 	}
 	
-	public ISite getTargetSite() {
+	public IConfigurationSite getTargetSite() {
 		IStructuredSelection sel = (IStructuredSelection)tableViewer.getSelection();
 		if (sel.isEmpty()) return null;
-		return (ISite)sel.getFirstElement();
+		return (IConfigurationSite)sel.getFirstElement();
 	}
 }

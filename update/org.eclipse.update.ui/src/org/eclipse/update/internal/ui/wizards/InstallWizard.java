@@ -43,7 +43,7 @@ public class InstallWizard extends Wizard {
 	 */
 	public boolean performFinish() {
 		IRunnableWithProgress operation = new IRunnableWithProgress() {
-		final ISite targetSite = targetPage.getTargetSite();
+		final IConfigurationSite targetSite = targetPage.getTargetSite();
 			public void run(IProgressMonitor monitor) {
 				try {
 					successfulInstall=false;
@@ -89,9 +89,10 @@ public class InstallWizard extends Wizard {
 	public IWizardPage getNextPage(IWizardPage page) {
 		return super.getNextPage(page);
 	}
-	private void performInstall(ISite targetSite, IProgressMonitor monitor) throws CoreException {
+	private void performInstall(IConfigurationSite targetSite, IProgressMonitor monitor) throws CoreException {
 		IFeature feature = job.getFeature();
-	   	targetSite.install(feature, monitor);
+		ISite site = targetSite.getSite();
+	   	site.install(feature, monitor);
 	}
 }
 
