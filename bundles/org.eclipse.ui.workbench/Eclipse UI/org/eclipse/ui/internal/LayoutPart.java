@@ -25,6 +25,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.skins.IPresentablePart;
 
 /**
  * A presentation part is used to build the presentation for the
@@ -278,6 +279,11 @@ abstract public class LayoutPart implements IWorkbenchDropTarget {
 		return UNDEFINED;
 	}
 
+	public IPresentablePart getPresentablePart() {
+		// TODO: write me
+		return null;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.IWorkbenchDropTarget#targetPartFor(org.eclipse.ui.internal.IWorkbenchDragSource)
 	 */

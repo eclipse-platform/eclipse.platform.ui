@@ -52,6 +52,8 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.internal.dnd.AbstractDragSource;
 import org.eclipse.ui.internal.dnd.DragUtil;
+import org.eclipse.ui.internal.skins.IPresentablePart;
+import org.eclipse.ui.internal.skins.newlook.PresentableViewPart;
 import org.eclipse.ui.internal.themes.IThemeDescriptor;
 import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
 import org.eclipse.ui.internal.util.Util;
@@ -70,6 +72,8 @@ import org.eclipse.ui.part.WorkbenchPart;
  * part.
  */
 public class ViewPane extends PartPane implements IPropertyListener {
+	private PresentableViewPart presentableAdapter = new PresentableViewPart(this);
+	
 	private CLabel titleLabel;
 	private CLabel status;
 
@@ -1274,5 +1278,12 @@ public class ViewPane extends PartPane implements IPropertyListener {
 		}
 
 		super.setContainer(container);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.LayoutPart#getPresentablePart()
+	 */
+	public IPresentablePart getPresentablePart() {
+		return presentableAdapter;
 	}
 }

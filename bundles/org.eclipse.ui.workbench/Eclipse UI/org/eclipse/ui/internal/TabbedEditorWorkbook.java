@@ -25,8 +25,8 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabFolder2Adapter;
+import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.ControlAdapter;
@@ -63,6 +63,7 @@ import org.eclipse.ui.internal.dnd.AbstractDragSource;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.IDragOverListener;
 import org.eclipse.ui.internal.dnd.IDropTarget;
+import org.eclipse.ui.internal.skins.newlook.BasicStackPresentation;
 
 public class TabbedEditorWorkbook extends EditorWorkbook {
 
@@ -160,7 +161,7 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 		EditorPane visibleEditor = getVisibleEditor();
 		if (visibleEditor == null || getControl() == null)
 			return;
-		Rectangle bounds = PartTabFolder.calculatePageBounds(tabFolder);
+		Rectangle bounds = BasicStackPresentation.calculatePageBounds(tabFolder);
 		visibleEditor.setBounds(bounds);
 		visibleEditor.moveAbove(tabFolder);
 	}

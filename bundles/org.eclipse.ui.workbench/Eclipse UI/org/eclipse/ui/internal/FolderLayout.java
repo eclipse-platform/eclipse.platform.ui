@@ -62,12 +62,11 @@ public class FolderLayout implements IFolderLayout {
 		}
 
 		// Create the placeholder.
-		LayoutPart newPart = new PartPlaceholder(viewId);
+		PartPlaceholder newPart = new PartPlaceholder(viewId);
 		linkPartToPageLayout(viewId, newPart);
 
 		// Add it to the folder layout.
-		String label = desc.getLabel();
-		folder.add(label, folder.getItemCount(), newPart);
+		folder.add(newPart);
 	}
 
 	/* (non-Javadoc)

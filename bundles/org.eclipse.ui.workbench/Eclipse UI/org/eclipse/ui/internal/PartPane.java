@@ -70,7 +70,7 @@ public abstract class PartPane extends LayoutPart
 		public Sash top;
 		public Sash bottom;
 	}
-	private class PaneContribution extends ContributionItem {
+	/* package */ class PaneContribution extends ContributionItem {
 		public boolean isDynamic() {
 			return true;
 		}
@@ -88,6 +88,10 @@ public abstract class PartPane extends LayoutPart
 		}
 	}
 	
+	
+	/* package */ PaneContribution createPaneContribution() {
+		return new PaneContribution();
+	}
 /**
  * Construct a pane for a part.
  */

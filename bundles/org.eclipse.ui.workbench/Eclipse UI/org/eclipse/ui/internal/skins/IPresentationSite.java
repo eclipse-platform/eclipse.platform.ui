@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.skins;
 
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.graphics.Point;
 
 /**
  * 
@@ -31,13 +31,20 @@ public interface IPresentationSite {
 	public void setState(int newState);
 	
 	/**
+	 * Returns the current state of the site (one of the STATE_* constants)
+	 * 
+	 * @return the current state of the site (one of the STATE_* constants)
+	 */
+	public int getState();
+	
+	/**
 	 * Begins dragging the given part
 	 * 
 	 * @param beingDragged
 	 * @param keyboard true iff the drag was initiated via mouse dragging,
 	 * and false if the drag may be using the keyboard
 	 */
-	public void dragStart(IPresentablePart beingDragged, boolean keyboard);
+	public void dragStart(IPresentablePart beingDragged, Point initialPosition, boolean keyboard);
 	
 	/**
 	 * Closes the given part
@@ -55,11 +62,18 @@ public interface IPresentationSite {
 	public void dragStart(boolean keyboard);
 
 	/**
-	 * This method is invoked by the IPartStack to notify its container about
-	 * the controls that can be dragged over to cause stacking to occur. 
+	 * Returns true iff this site will allow the given part to be closed
 	 * 
-	 * @param dropTarget
-	 * @param dragListener
+	 * @param toClose part to test
+	 * @return true iff the part may be closed
 	 */
-	public void addDragListener(Control dropTarget, StackDragListener dragListener);
+	public boolean isClosable(IPresentablePart toClose);
+	
+	/**
+	 * Returns true iff this site will allow the given part to be moved
+	 *
+	 * @param toMove part to test
+	 * @return true iff the part may be moved
+	 */
+	public boolean isMovable(IPresentablePart toMove);
 }

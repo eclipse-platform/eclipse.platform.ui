@@ -21,7 +21,7 @@ import org.eclipse.swt.graphics.Rectangle;
 public final class StackDropResult {
 	
 	private Rectangle snapRectangle;
-	private IPresentablePart dragPart;
+	private int tabIndex;
 	
 	/**
 	 * Creates a drag status object
@@ -31,9 +31,9 @@ public final class StackDropResult {
 	 * @param dragPart part being dragged over (or null if the dragged part
 	 * can be added anywhere)
 	 */
-	public StackDropResult(Rectangle snapRectangle, IPresentablePart dragPart) {
+	public StackDropResult(Rectangle snapRectangle, int tabIndex) {
 		this.snapRectangle = snapRectangle;
-		this.dragPart = dragPart;
+		this.tabIndex = tabIndex;
 	}
 	
 	/**
@@ -54,7 +54,7 @@ public final class StackDropResult {
 	 * @return the part that will be replaced by this drop operation (or null if
 	 * the dragged part can be added anywhere in the stack)
 	 */
-	public IPresentablePart dragControl() {
-		return dragPart;
+	public int getDropIndex() {
+		return tabIndex;
 	}
 }

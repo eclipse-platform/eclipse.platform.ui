@@ -48,7 +48,7 @@ public abstract class AbstractPresentationFactory {
 	 * @param flags any combination of SWT.MIN, SWT.MAX, and SWT.CLOSE
 	 * @return a newly created part stack
 	 */
-	public PartPresentation createFastViewPresentation(Composite parent, 
+	public Presentation createFastViewPresentation(Composite parent, 
 			IPartPresentationSite container, IPresentablePart thePart, int flags) {
 		return null;
 	}
@@ -61,7 +61,7 @@ public abstract class AbstractPresentationFactory {
 	 * 
 	 * @since 3.0
 	 */
-	public PartPresentation createDetachedViewPresentation(Composite parent, 
+	public Presentation createDetachedViewPresentation(Composite parent, 
 			IPartPresentationSite container, IPresentablePart thePart, int flags) {
 		return null;
 	}

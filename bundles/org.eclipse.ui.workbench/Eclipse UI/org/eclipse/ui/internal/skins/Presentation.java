@@ -11,8 +11,10 @@
 package org.eclipse.ui.internal.skins;
 
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Control;
 
 
 /**
@@ -77,4 +79,25 @@ abstract class Presentation {
 	 */
 	public abstract IMenuManager getSystemMenuManager();
 	
+	/**
+	 * Sets the state of the presentation. That is, notifies the presentation
+	 * that is has been minimized, maximized, or restored. Note that this method
+	 * is the only way that a presentation is allowed to change its state.
+	 * <p>
+	 * If a presentation wishes to minimize itself, it must call setState
+	 * on its associated IPresentationSite. If the site chooses to respond
+	 * to the state change, it will call this method at the correct time.
+	 * The presentation should not call this method directly. 
+	 * </p>
+	 * 
+	 * @param state one of the IPresentationSite.STATE_* constants.
+	 */
+	public abstract void setState(int state);
+	
+	/**
+	 * Returns the control for this presentation
+	 * 
+	 * @return the control for this presentation (not null)
+	 */
+	public abstract Control getControl();
 }

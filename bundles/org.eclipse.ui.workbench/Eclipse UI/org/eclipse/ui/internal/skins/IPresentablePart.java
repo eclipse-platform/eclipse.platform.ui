@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.skins;
 
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.ui.IPropertyListener;
@@ -21,28 +19,14 @@ import org.eclipse.ui.IPropertyListener;
  * is essentially the same as IWorkbenchPart, except it does not provide access
  * to lifecycle events and allows repositioning of the part.
  * 
- * TODO: Write a common base class for ISkinnablePart and IWorkbenchPart. 
+ * TODO: Write a common base class for IPresentablePart and IWorkbenchPart. 
  * 
  * Not intended to be implemented by clients.
  * 
  * @since 3.0
  */
 public interface IPresentablePart {
-	
-	/**
-	 * Returns true iff this part can be closed
-	 * 
-	 * @return true iff this part can be closed
-	 */
-	public boolean isClosable();
-	
-	/**
-	 * Returns true iff this part can be moved
-	 * 
-	 * @return true iff this part can be moved
-	 */
-	public boolean isMovable();
-	
+		
 	/**
 	 * Sets the bounds of this part.
 	 *  
@@ -138,25 +122,5 @@ public interface IPresentablePart {
 	 * @return true iff the part is dirty
 	 */
 	public boolean isDirty();
-	
-	/**
-	 * Sets the toolbar manager that the part will use to create its local
-	 * toolbar. Note that a different presentation might be used to display
-	 * this part in each perspective. The 
-	 * <code>IContributionItem</code>s in this menu manager will be removed
-	 * whenever this presentation is invisible, and will be moved into whatever
-	 * menu manager is currently visible.
-	 */
-	public void setToolBarManager(IToolBarManager toolBarManager);
-	
-	/**
-	 * Sets the menu manager that the part will use for its local menu.
-	 * Note that a different presentation might be used to display
-	 * this part in each perspective. The 
-	 * <code>IContributionItem</code>s in this menu manager will be removed
-	 * whenever this presentation is invisible, and will be moved into whatever
-	 * menu manager is currently visible.
-	 */
-	public void setMenuManager(IMenuManager menuManager);
 	
 }

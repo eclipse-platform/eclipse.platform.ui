@@ -331,7 +331,7 @@ public class PageLayout implements IPageLayout {
 		PartTabFolder folder = new PartTabFolder(rootLayoutContainer.page);
 		folder.setID(folderId);
 		// @issue should the folder capture the current theme?
-		folder.setTheme(theme);
+		//folder.setTheme(theme);
 		addPart(folder, folderId, relationship, ratio, refId);
 
 		// Create a wrapper.

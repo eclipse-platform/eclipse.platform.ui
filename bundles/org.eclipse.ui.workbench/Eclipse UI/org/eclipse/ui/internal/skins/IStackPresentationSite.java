@@ -19,5 +19,10 @@ package org.eclipse.ui.internal.skins;
  * @since 3.0
  */
 public interface IStackPresentationSite extends IPresentationSite {
- 
+	/**
+	 * Makes the given part active
+	 * 
+	 * @param toSelect
+	 */
+	public void selectPart(IPresentablePart toSelect);
 }

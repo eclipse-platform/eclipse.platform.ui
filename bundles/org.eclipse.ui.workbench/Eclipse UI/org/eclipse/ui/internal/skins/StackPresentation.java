@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.skins;
 
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Control;
+
 
 /**
  * @since 3.0
@@ -43,4 +46,16 @@ public abstract class StackPresentation extends Presentation {
 	 * @param toSelect the new active part (not null)
 	 */
 	public abstract void selectPart(IPresentablePart toSelect);
+	
+	/**
+	 * This method is invoked whenever a part is dragged over the stack's control.
+	 * It returns a StackDropResult if and only if the part may be dropped in this
+	 * location.
+	 *
+	 * @param currentControl the control being dragged over
+	 * @param location cursor location (display coordinates)
+	 * @return a StackDropResult or null if the presentation does not have
+	 * a drop target in this location.
+	 */
+	public abstract StackDropResult dragOver(Control currentControl, Point location);
 }
