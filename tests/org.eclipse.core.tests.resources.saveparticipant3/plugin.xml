@@ -4,7 +4,7 @@
   name="Save Participant 3"
   id="org.eclipse.core.tests.resources.saveparticipant3"
   class="org.eclipse.core.tests.resources.saveparticipant3.SaveParticipant3Plugin"
-  version="2.1.0"
+  version="3.0.0"
   provider-name="Eclipse.org">
 
   <requires>
