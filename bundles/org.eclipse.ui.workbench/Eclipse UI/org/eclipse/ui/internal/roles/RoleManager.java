@@ -15,6 +15,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -88,14 +89,14 @@ public class RoleManager {
 			}
 			FileReader reader = new FileReader(xmlDefinition);
 			XMLMemento memento = XMLMemento.createReadRoot(reader);
-			Activity [] activityArray = RoleParser.readActivityDefinitions(memento);
-			for(int i = 0; i < activityArray.length; i++){
-				activities.put(activityArray[i].getId(),activityArray[i]);
+			Activity[] activityArray = RoleParser.readActivityDefinitions(memento);
+			for (int i = 0; i < activityArray.length; i++) {
+				activities.put(activityArray[i].getId(), activityArray[i]);
 			}
-			
+
 			patternBindings = RoleParser.readPatternBindings(memento);
-			
-			roles = RoleParser.readRoleDefinitions(memento,activities);
+
+			roles = RoleParser.readRoleDefinitions(memento, activities);
 
 		} catch (IOException e) {
 			reportError(e);
@@ -179,9 +180,13 @@ public class RoleManager {
 		while (bindingsPatterns.hasMoreElements()) {
 			String next = (String) bindingsPatterns.nextElement();
 			if (id.matches(next)) {
-				Activity activity = getActivity((String) patternBindings.get(next));
-				if (activity != null)
-					return activity.isEnabled();
+				Iterator activityIds = ((Collection) patternBindings.get(next)).iterator();
+				while (activityIds.hasNext()) {
+					Activity activity = getActivity((String) activityIds.next());
+					if (activity != null)
+						return activity.isEnabled();
+				}
+
 			}
 		}
 
@@ -226,25 +231,29 @@ public class RoleManager {
 		else
 			return null;
 	}
-	
+
 	/** 
 	 * Enable any activity for which there is a pattern
 	 * binding that matches id.
 	 * @param id
 	 */
-	public void enableActivities(String id){
-		
+	public void enableActivities(String id) {
+
 		Iterator patternIterator = patternBindings.keySet().iterator();
-		
-		while(patternIterator.hasNext()){
+
+		while (patternIterator.hasNext()) {
 			String next = (String) patternIterator.next();
-			if(id.matches(next)){
-				String mappingId = (String) patternBindings.get(next);
-				Activity activity = getActivity(mappingId);
-				if(activity != null)
-					activity.setEnabled(true);
+			if (id.matches(next)) {
+				Iterator mappingIds = ((Collection) patternBindings.get(next)).iterator();
+				while (mappingIds.hasNext()) {
+					String mappingId = (String) mappingIds.next();
+					Activity activity = getActivity(mappingId);
+					if (activity != null)
+						activity.setEnabled(true);
+				}
+
 			}
 		}
-		
+
 	}
 }

@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.roles;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -170,7 +171,14 @@ final class RoleParser {
 		for (int i = 0; i < mementos.length; i++) {
 			String id = mementos[i].getString(TAG_ID);
 			String pattern = mementos[i].getString(TAG_PATTERN);
-			patterns.put(pattern,id);
+			Collection ids;
+			if(patterns.containsKey(pattern))
+				ids = (Collection) patterns.get(id);
+			else
+				ids = new ArrayList();
+			
+			ids.add(id);
+			patterns.put(pattern,ids);
 		}
 
 		return patterns;
