@@ -10,10 +10,12 @@ Contributors:
 **********************************************************************/
 package org.eclipse.ui.externaltools.internal.ant.editor.text;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IFileEditorInput;
 
 /**
  * PlantyDocumentProvider.java
@@ -25,9 +27,14 @@ public class PlantyDocumentProviderNew extends PlantyDocumentProvider {
 	}
 
 	public IDocument createDocument(Object element) throws CoreException {
-		IDocument document;
-		if (element instanceof IEditorInput) {
+		PartiallySynchronizedDocument document;
+		if (element instanceof IEditorInput) {			
 			document= new PartiallySynchronizedDocument();
+			if (element instanceof IFileEditorInput){
+				IFile file= ((IFileEditorInput)element).getFile();
+				document.setLocation(file.getLocation());
+			}
+			
 			if (setDocumentContent(document, (IEditorInput) element, getEncoding(element))) {
 				initializeDocument(document);
 			}
@@ -37,7 +44,7 @@ public class PlantyDocumentProviderNew extends PlantyDocumentProvider {
 		return document;
 	}
 	
-	protected void initializeDocument(IDocument document) {
+	private void initializeDocument(IDocument document) {
 		IDocumentPartitioner partitioner= createDocumentPartitioner();
 		document.setDocumentPartitioner(partitioner);
 		partitioner.connect(document);
