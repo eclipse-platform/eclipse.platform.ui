@@ -23,34 +23,29 @@
 
    <extension-point id="markerAnnotationSpecification" name="%markerAnnotationSpecification.label" schema="schema/markerAnnotationSpecification.exsd"/>
 
-<!-- action definitions -->
+<!-- commands and their bindings -->   
    <extension
-         point="org.eclipse.ui.actionDefinitions">
-      <actionDefinition
+         point="org.eclipse.ui.commands">
+      <command
+			category="org.eclipse.ui.category.navigate"
             name="%goToLastEditPosition.label"
             description="%goToLastEditPosition.description"
             id="org.eclipse.ui.edit.text.gotoLastEditPosition">
-      </actionDefinition>
+      </command>
+      <keyBinding
+            string="Ctrl+Q"
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.ui.edit.text.gotoLastEditPosition"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+            string="Ctrl+Q"
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.ui.edit.text.gotoLastEditPosition"
+            configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
+      </keyBinding>
    </extension>
-   <extension
-         point="org.eclipse.ui.acceleratorSets">
-      <acceleratorSet
-            scopeId="org.eclipse.ui.globalScope"
-            configurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
-         <accelerator
-               key="Ctrl+Q"
-               id="org.eclipse.ui.edit.text.gotoLastEditPosition">
-         </accelerator>
-      </acceleratorSet>
-      <acceleratorSet
-            scopeId="org.eclipse.ui.globalScope"
-            configurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
-         <accelerator
-               key="Ctrl+Q"
-               id="org.eclipse.ui.edit.text.gotoLastEditPosition">
-         </accelerator>
-      </acceleratorSet>
-   </extension>
+   
 <!-- action sets -->
    <extension
          point="org.eclipse.ui.actionSets">
