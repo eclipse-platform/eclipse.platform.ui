@@ -257,7 +257,8 @@ function getPreviousLink(currentLink){
 		String title = ServletResources.getString(views[i].getName(), request);
 		if (i != 0) {
 %>
-	<td width="1px" class="separator"><div style="width:0px;"></div></td><%-- div inside separator cell fixes top separator pixel that was not white on IE --%>
+	<td width="1px" class="separator"><div style="width:1px;height:1px;display:block;"></div></td>
+	<%-- div inside separator cell fixes top separator pixel that was not white on IE, or first separator not displayed when frame width happens to be even number of pixels --%>
 <%
 		}
 %>
