@@ -12,6 +12,14 @@ package org.eclipse.update.ui.forms.internal;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 
+/**
+ * 
+ * @author dejan
+ *
+ * To change the template for this generated type comment go to
+ * Window - Preferences - Java - Code Generation - Code and Comments
+ */
+
 public class TableData {
 	public static final int LEFT = 1;
 	public static final int CENTER = 2;

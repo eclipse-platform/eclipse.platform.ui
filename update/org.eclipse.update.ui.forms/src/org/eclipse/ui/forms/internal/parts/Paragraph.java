@@ -14,8 +14,7 @@ import java.io.*;
 import java.util.*;
 
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.update.ui.forms.internal.HyperlinkSettings;
-import org.eclipse.ui.forms.parts.*;
+import org.eclipse.ui.forms.HyperlinkSettings;
 
 /**
  * @version 	1.0
@@ -101,8 +100,7 @@ public class Paragraph {
 		String fontId) {
 		HyperlinkSegment hs = new HyperlinkSegment(text, settings, fontId);
 		hs.setWordWrapAllowed(false);
-		hs.setActionId(RichText.URL_HANDLER_ID);
-		hs.setArg(text);
+		hs.setHref(text);
 		addSegment(hs);
 	}
 

@@ -17,7 +17,8 @@ import javax.xml.parsers.*;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.update.ui.forms.internal.*;
+import org.eclipse.ui.forms.*;
+import org.eclipse.update.ui.forms.internal.FormsPlugin;
 import org.w3c.dom.*;
 import org.xml.sax.*;
 
@@ -282,12 +283,7 @@ public class RichTextModel {
 		Node href = atts.getNamedItem("href");
 		if (href != null) {
 			String value = href.getNodeValue();
-			segment.setActionId(value);
-		}
-		Node arg = atts.getNamedItem("arg");
-		if (arg != null) {
-			String value = arg.getNodeValue();
-			segment.setArg(value);
+			segment.setHref(value);
 		}
 		return segment;
 	}

@@ -13,18 +13,15 @@ package org.eclipse.ui.forms.internal.parts;
 import java.util.Hashtable;
 
 import org.eclipse.swt.graphics.*;
-import org.eclipse.update.ui.forms.internal.HyperlinkSettings;
-import org.eclipse.ui.forms.parts.*;
+import org.eclipse.ui.forms.HyperlinkSettings;
 
 /**
  * @version 	1.0
  * @author
  */
 public class HyperlinkSegment
-	extends TextSegment
-	implements IRichTextHyperlink {
-	private String actionId;
-	private String arg;
+	extends TextSegment {
+	private String href;
 	private HyperlinkSettings settings;
 	
 	public HyperlinkSegment(String text, HyperlinkSettings settings, String fontId) {
@@ -32,27 +29,16 @@ public class HyperlinkSegment
 		this.settings = settings;
 		underline = settings.getHyperlinkUnderlineMode()==HyperlinkSettings.UNDERLINE_ALWAYS;
 	}
-	
-	/*
-	 * @see IHyperlinkSegment#getListener(Hashtable)
-	 */
-	public RichTextHyperlinkAction getAction(Hashtable objectTable) {
-		if (actionId==null) return null;
-		Object obj = objectTable.get(actionId);
-		if (obj==null) return null;
-		if (obj instanceof RichTextHyperlinkAction) return (RichTextHyperlinkAction)obj;
-		return null;
-	}
-	
+
 	/*
 	 * @see IObjectReference#getObjectId()
 	 */
-	public String getObjectId() {
-		return actionId;
+	public String getHref() {
+		return href;
 	}
 	
-	void setActionId(String id) {
-		this.actionId = id;
+	void setHref(String href) {
+		this.href = href;
 	}
 	public void paint(GC gc, int width, Locator locator, Hashtable objectTable, boolean selected) {
 		setColor(settings.getForeground());
@@ -84,25 +70,4 @@ public class HyperlinkSegment
 			}
 		}
 	}
-	/**
-	 * @return
-	 */
-	public String getArg() {
-		return arg;
-	}
-
-	/**
-	 * @param string
-	 */
-	public void setArg(String string) {
-		arg = string;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.update.ui.forms.richtext.IRichTextHyperlink#getHref()
-	 */
-	public String getHref() {
-		return getObjectId();
-	}
-
 }

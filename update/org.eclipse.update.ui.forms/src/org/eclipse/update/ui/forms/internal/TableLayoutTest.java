@@ -9,17 +9,21 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.ui.forms.internal;
-import java.io.InputStream;
-import java.net.URL;
-
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.forms.parts.*;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 
 public class TableLayoutTest {
 
@@ -137,7 +141,7 @@ public static void main (String [] args) {
      exp.getControl().setLayoutData(td);
      
 	 StatusLineManager manager = new StatusLineManager();
-     addFormEngine(c, factory, manager);
+     //addFormEngine(c, factory, manager);
      //addFormEngine(c, factory, manager);
      //addFormEngine(c, factory, manager);
      
@@ -186,27 +190,10 @@ public static void main (String [] args) {
      display.dispose ();
 }
 
+/*
+
 public static void addFormEngine(Composite c, FormWidgetFactory factory, IStatusLineManager manager) {
      new Label(c, SWT.NULL);
-/*
-     FormEngine html = new FormEngine(c, SWT.WRAP);
-     html.setHyperlinkSettings(factory.getHyperlinkHandler());
-     HTTPAction action = new HTTPAction();
-     action.setStatusLineManager(manager);
-     URL i1URL = TableLayoutTest.class.getResource("image1.gif");
-     ImageDescriptor id1 = ImageDescriptor.createFromURL(i1URL);
-     html.registerTextObject("urlHandler", action);
-     html.registerTextObject("image1", id1.createImage());
-     //html.setBackground(factory.getBackgroundColor());
-     html.setForeground(factory.getForegroundColor());
-     InputStream is = TableLayoutTest.class.getResourceAsStream("index.xml");
-     //html.setParagraphsSeparated(false);
-     html.load(is, true);
-     TableData td = new TableData();
-     td.colspan = 1;
-     td.align = TableData.FILL;
-     html.setLayoutData(td);
-*/
      RichText html = new RichText(c, SWT.WRAP);
      html.setHyperlinkSettings(factory.getHyperlinkHandler());
      RichTextHTTPAction action = new RichTextHTTPAction(manager);
@@ -224,6 +211,7 @@ public static void addFormEngine(Composite c, FormWidgetFactory factory, IStatus
      td.align = TableData.FILL;
      html.setLayoutData(td);
 }
+*/
 
 public static void addRow(Composite c) {
 	Composite row = new Composite(c, SWT.WRAP);

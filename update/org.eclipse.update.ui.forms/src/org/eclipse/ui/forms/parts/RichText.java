@@ -12,18 +12,54 @@ package org.eclipse.ui.forms.parts;
 
 import java.io.InputStream;
 import java.util.Hashtable;
+import java.util.Vector;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.accessibility.*;
+import org.eclipse.swt.accessibility.ACC;
+import org.eclipse.swt.accessibility.Accessible;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleControlAdapter;
+import org.eclipse.swt.accessibility.AccessibleControlEvent;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.dnd.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.update.ui.forms.internal.*;
-import org.eclipse.ui.forms.internal.parts.*;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.events.MouseTrackListener;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.FontMetrics;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.ui.forms.internal.parts.HyperlinkSegment;
+import org.eclipse.ui.forms.internal.parts.Locator;
+import org.eclipse.ui.forms.internal.parts.Paragraph;
+import org.eclipse.ui.forms.internal.parts.ParagraphSegment;
+import org.eclipse.ui.forms.internal.parts.RichTextModel;
+import org.eclipse.ui.forms.internal.parts.TextSegment;
+import org.eclipse.update.ui.forms.internal.AbstractSectionForm;
+import org.eclipse.update.ui.forms.internal.FormsPlugin;
+import org.eclipse.ui.forms.HyperlinkSettings;
+import org.eclipse.update.ui.forms.internal.ILayoutExtension;
 
 public class RichText extends Canvas {
 	/**
@@ -44,7 +80,8 @@ public class RichText extends Canvas {
 	private boolean hasFocus;
 	private boolean paragraphsSeparated = true;
 	private RichTextModel model;
-	private Hashtable objectTable = new Hashtable();
+	private Vector listeners;
+	private Hashtable imageTable = new Hashtable();
 
 	private HyperlinkSegment entered;
 	private boolean mouseDown = false;
@@ -128,7 +165,7 @@ public class RichText extends Canvas {
 				if (segments.length > 0) {
 					for (int j = 0; j < segments.length; j++) {
 						ParagraphSegment segment = segments[j];
-						segment.advanceLocator(gc, wHint, loc, objectTable);
+						segment.advanceLocator(gc, wHint, loc, imageTable);
 						width = Math.max(width, loc.width);
 					}
 					loc.y += loc.rowHeight;
@@ -316,26 +353,19 @@ public class RichText extends Canvas {
 	
 	
 	/**
-	 * Registers the object referenced by the provided key. Objects referenced
-	 * by keys are hyperlink handlers and images.
+	 * Registers the image referenced by the provided key. 
 	 * <p>
 	 * For <samp>img</samp> tags, an object of a type <samp>Image</samp>
 	 * must be registered using the key equivalent to the value of the <samp>
 	 * href</samp> attribute.
-	 * <p>
-	 * For <samp>a</samp> tags, an object of a type <samp>HyperlinkAction
-	 * </samp> must be registered using the key equivalent to the value of the
-	 * <samp>href</samp> attribute.
-	 * 
 	 * @param key
 	 *            unique key that matches the value of the <samp>href</samp>
 	 *            attribute.
-	 * @param value
-	 *            an object of a type <samp>Image</samp> for image tags,
-	 *            <samp>HyperlinkAction</samp> for hyperlink tags.
+	 * @param image
+	 *            an object of a type <samp>Image</samp>.
 	 */
-	public void registerTextObject(String key, Object value) {
-		objectTable.put(key, value);
+	public void setImage(String key, Image image) {
+		imageTable.put(key, image);
 	}
 	/**
 	 * Renders the provided text. Text can be rendered as-is, or by parsing the
@@ -416,6 +446,26 @@ public class RichText extends Canvas {
 	 */
 	public void setHyperlinkSettings(HyperlinkSettings settings) {
 		model.setHyperlinkSettings(settings);
+	}
+	
+	/**
+	 * Adds a listener that will handle hyperlink events.
+	 * @param listener
+	 */
+	public void addHyperlinkListener(HyperlinkListener listener) {
+		if (listeners == null)
+			listeners = new Vector();
+		if (!listeners.contains(listener))
+			listeners.add(listener);
+	}
+	/**
+	 * Removes the hyperlink listener.
+	 * @param listener
+	 */
+	public void removeHyperlinkListener(HyperlinkListener listener) {
+		if (listeners == null)
+			return;
+		listeners.remove(listener);
 	}
 	
 	/**
@@ -586,19 +636,25 @@ public class RichText extends Canvas {
 	}
 
 	private void enterLink(HyperlinkSegment link) {
-		if (link == null)
+		if (link == null || listeners==null)
 			return;
-		RichTextHyperlinkAction action = link.getAction(objectTable);
-		if (action != null)
-			action.linkEntered(link);
+		int size = listeners.size();
+		HyperlinkEvent e = new HyperlinkEvent(this, link.getHref(), link.getText());
+		for (int i = 0; i < size; i++) {
+			HyperlinkListener listener = (HyperlinkListener) listeners.get(i);
+			listener.linkEntered(e);
+		}
 	}
 
 	private void exitLink(HyperlinkSegment link) {
-		if (link == null)
+		if (link == null || listeners==null)
 			return;
-		RichTextHyperlinkAction action = link.getAction(objectTable);
-		if (action != null)
-			action.linkExited(link);
+		int size = listeners.size();
+		HyperlinkEvent e = new HyperlinkEvent(this, link.getHref(), link.getText());
+		for (int i = 0; i < size; i++) {
+			HyperlinkListener listener = (HyperlinkListener) listeners.get(i);
+			listener.linkExited(e);
+		}
 	}
 
 	private void paintLinkHover(HyperlinkSegment link, boolean hover) {
@@ -627,9 +683,14 @@ public class RichText extends Canvas {
 
 	private void activateLink(HyperlinkSegment link) {
 		setCursor(model.getHyperlinkSettings().getBusyCursor());
-		RichTextHyperlinkAction action = link.getAction(objectTable);
-		if (action != null)
-			action.linkActivated(link);
+		if (listeners!=null) {
+			int size = listeners.size();
+			HyperlinkEvent e = new HyperlinkEvent(this, link.getHref(), link.getText());
+			for (int i = 0; i < size; i++) {
+				HyperlinkListener listener = (HyperlinkListener) listeners.get(i);
+				listener.linkActivated(e);
+			}
+		}
 		if (!isDisposed())
 			setCursor(model.getHyperlinkSettings().getHyperlinkCursor());
 	}
@@ -673,7 +734,7 @@ public class RichText extends Canvas {
 			loc.indent = p.getIndent();
 			loc.resetCaret();
 			loc.rowHeight = 0;
-			p.paint(gc, width, loc, lineHeight, objectTable, selectedLink);
+			p.paint(gc, width, loc, lineHeight, imageTable, selectedLink);
 		}
 	}
 	private int getParagraphSpacing(int lineHeight) {

@@ -19,7 +19,6 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.update.ui.forms.internal.engine.FormEngine;
-import org.eclipse.ui.forms.parts.RichText;
 
 public class FormWidgetFactory {
 	public static final String KEY_DRAW_BORDER = "FormWidgetFactory.drawBorder";
@@ -271,19 +270,6 @@ public class FormWidgetFactory {
 		return engine;
 	}
 	
-	public RichText createRichText(Composite parent, boolean trackFocus) {
-		RichText engine = new RichText(parent, SWT.WRAP);
-		engine.setBackground(backgroundColor);
-		engine.setForeground(foregroundColor);
-		engine.marginWidth = 1;
-		engine.marginHeight = 0;
-		engine.setHyperlinkSettings(getHyperlinkHandler());
-		if (trackFocus) engine.addFocusListener(visibilityHandler);
-		engine.addKeyListener(keyboardHandler);
-		engine.setMenu(parent.getMenu());
-		return engine;
-	}
-
 	public Label createSeparator(Composite parent, int style) {
 		Label label = new Label(parent, SWT.SEPARATOR | style);
 		label.setBackground(backgroundColor);
