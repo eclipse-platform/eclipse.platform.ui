@@ -13,7 +13,6 @@ package org.eclipse.team.internal.ccvs.ui.actions;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
@@ -21,6 +20,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.HasProjectMetaFileOperation;
 import org.eclipse.team.internal.ccvs.ui.wizards.CheckoutAsWizard;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Add a remote resource to the workspace. Current implementation:
@@ -45,7 +45,7 @@ public class CheckoutAsAction extends AddToWorkspaceAction {
 	
 	protected boolean allowProjectConfiguration(ICVSRemoteFolder[] folders) throws CVSException, InterruptedException {
 		if (folders.length != 1) return false;
-		return !HasProjectMetaFileOperation.hasMetaFile(getShell(), folders[0], new ProgressMonitorDialog(shell));	
+		return !HasProjectMetaFileOperation.hasMetaFile(getShell(), folders[0], PlatformUI.getWorkbench().getActiveWorkbenchWindow());	
 	}
 	
 	/*
