@@ -1,12 +1,11 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2002.
+ * (c) Copyright IBM Corp. 2000, 2003.
  * All Rights Reserved.
  */
 package org.eclipse.help.internal.context;
 import java.util.*;
 
-import org.eclipse.help.internal.util.Resources;
-import org.xml.sax.Attributes;
+import org.xml.sax.*;
 /**
  * Object in hierarchy of context contributions
  */
@@ -25,7 +24,7 @@ public abstract class ContextsNode {
 	 * Internal representation of &lt;b&gt; - unlikely to occur in a text
 	 */
 	public static final String BOLD_TAG = "<@#$b>";
-	public static final String DESC_TXT_BOLD = Resources.getString("bold_tag_name");
+	public static final String DESC_TXT_BOLD = "b";
 	protected List children = new ArrayList();
 	/**
 	 * When a builder builds the contexts, each node
