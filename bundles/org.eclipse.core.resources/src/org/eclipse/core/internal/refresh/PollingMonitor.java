@@ -54,6 +54,7 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 	 * The maximum duration of a single polling iteration
 	 */
 	private static final long MAX_DURATION = 100;
+	private static final long HOT_ROOT_DECAY = 90000;
 	/**
 	 * Creates a new polling monitor.
 	 */
@@ -87,18 +88,18 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 		if (RefreshManager.DEBUG)
 			System.out.println(RefreshManager.DEBUG_PREFIX+"started polling"); //$NON-NLS-1$
 		//refresh the hot root if applicable
-//		if (time - hotRootTime > HOT_ROOT_DECAY)
-//			hotRoot = null;
-//		pollHotRoot();
+		if (time - hotRootTime > HOT_ROOT_DECAY)
+			hotRoot = null;
+		else if (hotRoot != null)
+			poll(hotRoot);
 		//process roots that have not yet been refreshed this iteration
+		final long loopStart = System.currentTimeMillis();
 		while (!toRefresh.isEmpty()) {
 			if (monitor.isCanceled())
-				return Status.CANCEL_STATUS;
-			IResource next = (IResource)toRefresh.remove(toRefresh.size()-1);
-			if (!next.isSynchronized(IResource.DEPTH_INFINITE))
-				manager.refresh(next);
+				break;
+			poll((IResource)toRefresh.remove(toRefresh.size()-1));
 			//stop the iteration if we have exceed maximum duration
-			if (System.currentTimeMillis() - time > MAX_DURATION)
+			if (System.currentTimeMillis() - loopStart > MAX_DURATION)
 				break;
 		}
 		time = System.currentTimeMillis() - time;
@@ -111,6 +112,19 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 			System.out.println(RefreshManager.DEBUG_PREFIX+"rescheduling polling job in: " + delay/1000 + " seconds"); //$NON-NLS-1$ //$NON-NLS-2$
 		schedule(delay);
 		return Status.OK_STATUS;
+	}
+	/**
+	 * @param hotRoot2
+	 */
+	private void poll(IResource resource) {
+		if (resource.isSynchronized(IResource.DEPTH_INFINITE))
+			return;
+		//submit refresh request
+		manager.refresh(resource);
+		hotRoot = resource;
+		hotRootTime = System.currentTimeMillis();
+		if (RefreshManager.DEBUG)
+			System.out.println(RefreshManager.DEBUG_PREFIX+"new hot root: " + resource); //$NON-NLS-1$
 	}
 	/* (non-Javadoc)
 	 * @see Job#shouldRun
@@ -125,6 +139,8 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 	 */
 	private synchronized void beginIteration() {
 		toRefresh.addAll(resourceRoots);
+		if (hotRoot != null)
+			toRefresh.remove(hotRoot);
 	}
 	/*
 	 * @see org.eclipse.core.resources.refresh.IRefreshMonitor#unmonitor(IContainer)
