@@ -58,6 +58,13 @@ class KeyBindingState {
 		return (!firstStroke.getModifierKeys().isEmpty());
 
 	}
+
+	/**
+	 * The workbench window associated with this state. The state can only
+	 * exist for one window. When the focus leaves this window then the mode
+	 * must automatically be reset.
+	 */
+	private IWorkbenchWindow associatedWindow;
 	/**
 	 * Whether the key sequence should be completely cleared when this state is
 	 * told to reset itself. Otherwise, the key sequence will only reset part
@@ -98,6 +105,19 @@ class KeyBindingState {
 		collapseFully = true;
 		safeToReset = true;
 		workbench = workbenchToNotify;
+		associatedWindow = workbench.getActiveWorkbenchWindow();
+	}
+
+	/**
+	 * An accessor for the workbench window associated with this state. This
+	 * should never be <code>null</code>, as the setting follows the last
+	 * workbench window to have focus.
+	 * 
+	 * @return The workbench window to which the key binding architecture is
+	 *         currently attached; should never be <code>null</code>.
+	 */
+	IWorkbenchWindow getAssociatedWindow() {
+		return associatedWindow;
 	}
 
 	/**
@@ -154,6 +174,16 @@ class KeyBindingState {
 	}
 
 	/**
+	 * A mutator for the workbench window to which this state is associated.
+	 * 
+	 * @param window
+	 *            The workbench window to associated; should never be <code>null</code>.
+	 */
+	void setAssociatedWindow(IWorkbenchWindow window) {
+		associatedWindow = window;
+	}
+
+	/**
 	 * A mutator for whether the state should collapse the state of the mode
 	 * completely when next asked (i.e., remove all key strokes).
 	 * 
@@ -201,15 +231,16 @@ class KeyBindingState {
 	}
 
 	/**
-	 * Updates the text of the status lines with the current mode.
+	 * Updates the text of the status line of the associated shell with the
+	 * current sequence.
 	 */
 	private void updateStatusLines() {
-		// Format the mode into text.
 		String text = getCurrentSequence().format();
-		// Update each open window's status line.
 		IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
 		for (int i = 0; i < windows.length; i++) {
-			updateStatusLine(windows[i], text);
+			if (windows[i].equals(getAssociatedWindow())) {
+				updateStatusLine(windows[i], text);
+			}
 		}
 	}
 }
