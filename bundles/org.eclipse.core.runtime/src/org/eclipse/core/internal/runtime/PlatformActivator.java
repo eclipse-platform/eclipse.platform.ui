@@ -47,6 +47,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 	private ServiceReference urlServiceReference;
 	private ServiceReference logServiceReference;
 	private ServiceReference packageAdminReference;
+	private ServiceRegistration entryLocatorRegistration;
 	private long registryStamp;
 
 	public static BundleContext getContext() {
@@ -179,6 +180,8 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 	public void stop(BundleContext runtimeContext) throws IOException {
 		// Stop the registry
 		stopRegistry(runtimeContext);
+		// unregister the EntryLocator to prevent the Framework from calling it
+		unregisterEntryLocator();
 		environmentInfoServiceReleased(environmentServiceReference);
 		urlServiceReleased(urlServiceReference);
 		logServiceReleased(logServiceReference);
@@ -353,6 +356,13 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 				return Platform.find(context.getBundle(), propertiesPath);
 			}
 		};
-		context.registerService(EntryLocator.class.getName(), systemResources, null);
+		entryLocatorRegistration = context.registerService(EntryLocator.class.getName(), systemResources, null);
+	}
+
+	private void unregisterEntryLocator() {
+		if (entryLocatorRegistration != null) {
+			entryLocatorRegistration.unregister();
+			entryLocatorRegistration = null;
+		}
 	}
 }
