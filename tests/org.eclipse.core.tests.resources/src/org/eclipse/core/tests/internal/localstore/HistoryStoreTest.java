@@ -2026,7 +2026,7 @@ public void testBug28603() {
 	} catch (CoreException e) {
 		fail("0.0", e);
 	}
-	System.out.println("Maximum number of file states = " + ResourcesPlugin.getWorkspace().getDescription().getMaxFileStates());
+//	System.out.println("Maximum number of file states = " + ResourcesPlugin.getWorkspace().getDescription().getMaxFileStates());
 	
 	IFileState[] states = null;
 	try {
@@ -2036,32 +2036,30 @@ public void testBug28603() {
 	}
 	assertEquals("1.1", 3, states.length);
 
-	HistoryStore store = ((Resource)ResourcesPlugin.getWorkspace().getRoot()).getLocalManager().getHistoryStore();
-
 	for (int i=0; i<10; i++) {
-		long start = System.currentTimeMillis();	
+//		long start = System.currentTimeMillis();	
 		
 		try {
 			states = file1.getHistory(getMonitor());
 		} catch (CoreException e) {
 			fail("2.0", e);
 		}
-		System.out.println("file1 states: " + states.length);
+//		System.out.println("file1 states: " + states.length);
 		try {
 			file1.move(file2.getFullPath(), true, true, getMonitor());
 		} catch (CoreException e) {
 			fail("2.1", e);
 		}
-		long stop = System.currentTimeMillis();
-		System.out.println("\nmove: " + file1.getFullPath() + " to " + file2.getFullPath() + " took: " + (stop - start) + "ms");
+//		long stop = System.currentTimeMillis();
+//		System.out.println("\nmove: " + file1.getFullPath() + " to " + file2.getFullPath() + " took: " + (stop - start) + "ms");
 		
 		try {
 			states = file2.getHistory(getMonitor());
 		} catch (CoreException e) {
 			fail("2.2", e);
 		}
-		System.out.println("file2 states: " + states.length);
-		start = System.currentTimeMillis();	
+//		System.out.println("file2 states: " + states.length);
+//		start = System.currentTimeMillis();	
 		try {
 			file2.move(file1.getFullPath(), true, true, getMonitor());
 		} catch (CoreException e) {
@@ -2072,12 +2070,11 @@ public void testBug28603() {
 		} catch (CoreException e) {
 			fail("2.4", e);
 		}
-		System.out.println("file1 states: " + states.length);
+//		System.out.println("file1 states: " + states.length);
 
-		stop = System.currentTimeMillis();
-		System.out.println("move: " + file2.getFullPath() + " to " + file1.getFullPath() + " took: " + (stop - start) + "ms");
+//		stop = System.currentTimeMillis();
+//		System.out.println("move: " + file2.getFullPath() + " to " + file1.getFullPath() + " took: " + (stop - start) + "ms");
 	}
-		
 }
 protected void addToHistory(String message, HistoryStore store, IPath path, InputStream input) {
 	IPath localLocation = getRandomLocation();
