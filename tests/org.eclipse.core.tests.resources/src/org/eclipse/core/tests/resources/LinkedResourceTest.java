@@ -16,7 +16,8 @@ import junit.framework.TestSuite;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.tests.harness.*;
+import org.eclipse.core.tests.harness.CancelingProgressMonitor;
+import org.eclipse.core.tests.harness.FussyProgressMonitor;
 
 /**
  * Tests the following API methods:
@@ -36,25 +37,29 @@ import org.eclipse.core.tests.harness.*;
  * the location is obtained using <code>IResource#getLocation()</code>.
  */
 public class LinkedResourceTest extends ResourceTest {
-	protected IProject existingProject;
-	protected IProject otherExistingProject;
+	protected String childName = "File.txt";
 	protected IProject closedProject;
-	protected IProject nonExistingProject;
-	protected IFolder existingFolderInExistingProject;
-	protected IFolder existingFolderInExistingFolder;
-	protected IFolder nonExistingFolderInExistingProject;
-	protected IFolder nonExistingFolderInOtherExistingProject;
-	protected IFolder nonExistingFolderInNonExistingProject;
-	protected IFolder nonExistingFolderInExistingFolder;
-	protected IFolder nonExistingFolderInNonExistingFolder;
 	protected IFile existingFileInExistingProject;
+	protected IFolder existingFolderInExistingFolder;
+	protected IFolder existingFolderInExistingProject;
+	protected IPath existingLocation;
+	protected IProject existingProject;
+	protected IPath localFile;
+	protected IFile nonExistingFileInExistingFolder;
 	protected IFile nonExistingFileInExistingProject;
 	protected IFile nonExistingFileInOtherExistingProject;
-	protected IFile nonExistingFileInExistingFolder;
-	protected IPath existingLocation;
+	protected IFolder nonExistingFolderInExistingFolder;
+	protected IFolder nonExistingFolderInExistingProject;
+	protected IFolder nonExistingFolderInNonExistingFolder;
+	protected IFolder nonExistingFolderInNonExistingProject;
+	protected IFolder nonExistingFolderInOtherExistingProject;
 	protected IPath nonExistingLocation;
-	protected IPath localFile;
-	protected String childName = "File.txt";
+	protected IProject nonExistingProject;
+	protected IProject otherExistingProject;
+
+	public static Test suite() {
+		return new TestSuite(LinkedResourceTest.class);
+	}
 
 	public LinkedResourceTest() {
 		super();
@@ -64,10 +69,6 @@ public class LinkedResourceTest extends ResourceTest {
 		super(name);
 	}
 
-	public static Test suite() {
-		return new TestSuite(LinkedResourceTest.class);
-	}
-
 	protected void doCleanup() throws Exception {
 		ensureExistsInWorkspace(new IResource[] {existingProject, otherExistingProject, closedProject, existingFolderInExistingProject, existingFolderInExistingFolder, existingFileInExistingProject}, true);
 		closedProject.close(getMonitor());
@@ -75,6 +76,12 @@ public class LinkedResourceTest extends ResourceTest {
 		ensureDoesNotExistInFileSystem(resolvePath(nonExistingLocation).toFile());
 		resolvePath(existingLocation).toFile().mkdirs();
 		createFileInFileSystem(resolvePath(localFile), getRandomContents());
+	}
+
+	private byte[] getFileContents(IFile file) throws CoreException {
+		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		transferData(new BufferedInputStream(file.getContents()), bout);
+		return bout.toByteArray();
 	}
 
 	/**
@@ -299,21 +306,13 @@ public class LinkedResourceTest extends ResourceTest {
 		new TestPerformer("LinkedResourceTest.testCopyFile") {
 			protected static final String CANCELED = "canceled";
 
-			public boolean shouldFail(Object[] args, int count) {
-				IResource destination = (IResource) args[0];
-				boolean isDeep = ((Boolean) args[1]).booleanValue();
-				IProgressMonitor monitor = (IProgressMonitor) args[2];
-				if (monitor instanceof CancelingProgressMonitor)
-					return false;
-				IResource parent = destination.getParent();
-				if (!isDeep && (parent == null || parent.getType() != IResource.PROJECT))
-					return true;
-				if (!parent.isAccessible())
-					return true;
-				if (destination.exists())
-					return true;
-				//passed all failure cases so it should suceed
-				return false;
+			public void cleanUp(Object[] args, int count) {
+				super.cleanUp(args, count);
+				try {
+					doCleanup();
+				} catch (Exception e) {
+					fail("invocation " + count + " failed to cleanup", e);
+				}
 			}
 
 			public Object invokeMethod(Object[] args, int count) throws Exception {
@@ -331,6 +330,23 @@ public class LinkedResourceTest extends ResourceTest {
 				if (monitor instanceof FussyProgressMonitor)
 					((FussyProgressMonitor) monitor).sanityCheck();
 				return null;
+			}
+
+			public boolean shouldFail(Object[] args, int count) {
+				IResource destination = (IResource) args[0];
+				boolean isDeep = ((Boolean) args[1]).booleanValue();
+				IProgressMonitor monitor = (IProgressMonitor) args[2];
+				if (monitor instanceof CancelingProgressMonitor)
+					return false;
+				IResource parent = destination.getParent();
+				if (!isDeep && (parent == null || parent.getType() != IResource.PROJECT))
+					return true;
+				if (!parent.isAccessible())
+					return true;
+				if (destination.exists())
+					return true;
+				//passed all failure cases so it should suceed
+				return false;
 			}
 
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
@@ -358,15 +374,6 @@ public class LinkedResourceTest extends ResourceTest {
 				}
 				return true;
 			}
-
-			public void cleanUp(Object[] args, int count) {
-				super.cleanUp(args, count);
-				try {
-					doCleanup();
-				} catch (Exception e) {
-					fail("invocation " + count + " failed to cleanup", e);
-				}
-			}
 		}.performTest(inputs);
 	}
 
@@ -378,6 +385,32 @@ public class LinkedResourceTest extends ResourceTest {
 		Object[][] inputs = new Object[][] {destinationResources, deepCopy, monitors};
 		new TestPerformer("LinkedResourceTest.testCopyFolder") {
 			protected static final String CANCELED = "canceled";
+
+			public void cleanUp(Object[] args, int count) {
+				super.cleanUp(args, count);
+				try {
+					doCleanup();
+				} catch (Exception e) {
+					fail("invocation " + count + " failed to cleanup", e);
+				}
+			}
+
+			public Object invokeMethod(Object[] args, int count) throws Exception {
+				IResource destination = (IResource) args[0];
+				boolean isDeep = ((Boolean) args[1]).booleanValue();
+				IProgressMonitor monitor = (IProgressMonitor) args[2];
+				if (monitor instanceof FussyProgressMonitor)
+					((FussyProgressMonitor) monitor).prepare();
+				try {
+					source.createLink(existingLocation, IResource.NONE, null);
+					source.copy(destination.getFullPath(), isDeep ? IResource.NONE : IResource.SHALLOW, monitor);
+				} catch (OperationCanceledException e) {
+					return CANCELED;
+				}
+				if (monitor instanceof FussyProgressMonitor)
+					((FussyProgressMonitor) monitor).sanityCheck();
+				return null;
+			}
 
 			public boolean shouldFail(Object[] args, int count) {
 				IResource destination = (IResource) args[0];
@@ -398,23 +431,6 @@ public class LinkedResourceTest extends ResourceTest {
 				return false;
 			}
 
-			public Object invokeMethod(Object[] args, int count) throws Exception {
-				IResource destination = (IResource) args[0];
-				boolean isDeep = ((Boolean) args[1]).booleanValue();
-				IProgressMonitor monitor = (IProgressMonitor) args[2];
-				if (monitor instanceof FussyProgressMonitor)
-					((FussyProgressMonitor) monitor).prepare();
-				try {
-					source.createLink(existingLocation, IResource.NONE, null);
-					source.copy(destination.getFullPath(), isDeep ? IResource.NONE : IResource.SHALLOW, monitor);
-				} catch (OperationCanceledException e) {
-					return CANCELED;
-				}
-				if (monitor instanceof FussyProgressMonitor)
-					((FussyProgressMonitor) monitor).sanityCheck();
-				return null;
-			}
-
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
 				IResource destination = (IResource) args[0];
 				boolean isDeep = ((Boolean) args[1]).booleanValue();
@@ -439,15 +455,6 @@ public class LinkedResourceTest extends ResourceTest {
 					assertEquals("1.0", source.getRawLocation(), destination.getRawLocation());
 				}
 				return true;
-			}
-
-			public void cleanUp(Object[] args, int count) {
-				super.cleanUp(args, count);
-				try {
-					doCleanup();
-				} catch (Exception e) {
-					fail("invocation " + count + " failed to cleanup", e);
-				}
 			}
 		}.performTest(inputs);
 	}
@@ -589,6 +596,7 @@ public class LinkedResourceTest extends ResourceTest {
 				existingProject.copy(destination.getFullPath(), IResource.FORCE, getMonitor());
 				fail("6.6");
 			} catch (CoreException e) {
+				e.printStackTrace();
 				//should fail
 			}
 			assertTrue("6.7", destination.exists());
@@ -637,12 +645,6 @@ public class LinkedResourceTest extends ResourceTest {
 		} catch (CoreException e1) {
 			fail("2.99", e1);
 		}
-	}
-
-	private byte[] getFileContents(IFile file) throws CoreException {
-		ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		transferData(new BufferedInputStream(file.getContents()), bout);
-		return bout.toByteArray();
 	}
 
 	public void testDeepMoveProjectWithLinks() {
@@ -730,6 +732,31 @@ public class LinkedResourceTest extends ResourceTest {
 		new TestPerformer("LinkedResourceTest.testLinkFile") {
 			protected static final String CANCELED = "cancelled";
 
+			public void cleanUp(Object[] args, int count) {
+				super.cleanUp(args, count);
+				try {
+					doCleanup();
+				} catch (Exception e) {
+					fail("invocation " + count + " failed to cleanup", e);
+				}
+			}
+
+			public Object invokeMethod(Object[] args, int count) throws Exception {
+				IFile file = (IFile) args[0];
+				IPath location = (IPath) args[1];
+				IProgressMonitor monitor = (IProgressMonitor) args[2];
+				if (monitor instanceof FussyProgressMonitor)
+					((FussyProgressMonitor) monitor).prepare();
+				try {
+					file.createLink(location, IResource.NONE, monitor);
+				} catch (OperationCanceledException e) {
+					return CANCELED;
+				}
+				if (monitor instanceof FussyProgressMonitor)
+					((FussyProgressMonitor) monitor).sanityCheck();
+				return null;
+			}
+
 			public boolean shouldFail(Object[] args, int count) {
 				IResource resource = (IResource) args[0];
 				IPath location = (IPath) args[1];
@@ -762,22 +789,6 @@ public class LinkedResourceTest extends ResourceTest {
 				return false;
 			}
 
-			public Object invokeMethod(Object[] args, int count) throws Exception {
-				IFile file = (IFile) args[0];
-				IPath location = (IPath) args[1];
-				IProgressMonitor monitor = (IProgressMonitor) args[2];
-				if (monitor instanceof FussyProgressMonitor)
-					((FussyProgressMonitor) monitor).prepare();
-				try {
-					file.createLink(location, IResource.NONE, monitor);
-				} catch (OperationCanceledException e) {
-					return CANCELED;
-				}
-				if (monitor instanceof FussyProgressMonitor)
-					((FussyProgressMonitor) monitor).sanityCheck();
-				return null;
-			}
-
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
 				IFile resource = (IFile) args[0];
 				IPath location = (IPath) args[1];
@@ -793,15 +804,6 @@ public class LinkedResourceTest extends ResourceTest {
 					return false;
 				return true;
 			}
-
-			public void cleanUp(Object[] args, int count) {
-				super.cleanUp(args, count);
-				try {
-					doCleanup();
-				} catch (Exception e) {
-					fail("invocation " + count + " failed to cleanup", e);
-				}
-			}
 		}.performTest(inputs);
 	}
 
@@ -815,6 +817,31 @@ public class LinkedResourceTest extends ResourceTest {
 		Object[][] inputs = new Object[][] {interestingResources, interestingLocations, monitors};
 		new TestPerformer("LinkedResourceTest.testLinkFolder") {
 			protected static final String CANCELED = "cancelled";
+
+			public void cleanUp(Object[] args, int count) {
+				super.cleanUp(args, count);
+				try {
+					doCleanup();
+				} catch (Exception e) {
+					fail("invocation " + count + " failed to cleanup", e);
+				}
+			}
+
+			public Object invokeMethod(Object[] args, int count) throws Exception {
+				IFolder folder = (IFolder) args[0];
+				IPath location = (IPath) args[1];
+				IProgressMonitor monitor = (IProgressMonitor) args[2];
+				if (monitor instanceof FussyProgressMonitor)
+					((FussyProgressMonitor) monitor).prepare();
+				try {
+					folder.createLink(location, IResource.NONE, monitor);
+				} catch (OperationCanceledException e) {
+					return CANCELED;
+				}
+				if (monitor instanceof FussyProgressMonitor)
+					((FussyProgressMonitor) monitor).sanityCheck();
+				return null;
+			}
 
 			public boolean shouldFail(Object[] args, int count) {
 				IResource resource = (IResource) args[0];
@@ -847,22 +874,6 @@ public class LinkedResourceTest extends ResourceTest {
 				return false;
 			}
 
-			public Object invokeMethod(Object[] args, int count) throws Exception {
-				IFolder folder = (IFolder) args[0];
-				IPath location = (IPath) args[1];
-				IProgressMonitor monitor = (IProgressMonitor) args[2];
-				if (monitor instanceof FussyProgressMonitor)
-					((FussyProgressMonitor) monitor).prepare();
-				try {
-					folder.createLink(location, IResource.NONE, monitor);
-				} catch (OperationCanceledException e) {
-					return CANCELED;
-				}
-				if (monitor instanceof FussyProgressMonitor)
-					((FussyProgressMonitor) monitor).sanityCheck();
-				return null;
-			}
-
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
 				IFolder resource = (IFolder) args[0];
 				IPath location = (IPath) args[1];
@@ -879,17 +890,46 @@ public class LinkedResourceTest extends ResourceTest {
 					return false;
 				return true;
 			}
-
-			public void cleanUp(Object[] args, int count) {
-				super.cleanUp(args, count);
-				try {
-					doCleanup();
-				} catch (Exception e) {
-					fail("invocation " + count + " failed to cleanup", e);
-				}
-			}
 		}.performTest(inputs);
 
+	}
+
+	/**
+	 * Tests the timestamp of a linked file when the local file is created or
+	 * deleted. See bug 34150 for more details.
+	 */
+	public void testModificationStamp() {
+		IPath location = getRandomLocation();
+		IFile linkedFile = nonExistingFileInExistingProject;
+		try {
+			try {
+				linkedFile.createLink(location, IResource.ALLOW_MISSING_LOCAL, getMonitor());
+			} catch (CoreException e) {
+				fail("1.99", e);
+			}
+			assertEquals("1.0", IResource.NULL_STAMP, linkedFile.getModificationStamp());
+			//create local file
+			try {
+				resolvePath(location).toFile().createNewFile();
+				linkedFile.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+			} catch (CoreException e) {
+				fail("2.91", e);
+			} catch (IOException e) {
+				fail("2.92", e);
+			}
+			assertTrue("2.0", linkedFile.getModificationStamp() > 0);
+
+			//delete local file
+			ensureDoesNotExistInFileSystem(resolvePath(location).toFile());
+			try {
+				linkedFile.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+			} catch (CoreException e) {
+				fail("3.99", e);
+			}
+			assertEquals("4.0", IResource.NULL_STAMP, linkedFile.getModificationStamp());
+		} finally {
+			Workspace.clear(resolvePath(location).toFile());
+		}
 	}
 
 	public void testMoveFile() {
@@ -901,21 +941,13 @@ public class LinkedResourceTest extends ResourceTest {
 		new TestPerformer("LinkedResourceTest.testMoveFile") {
 			protected static final String CANCELED = "cancelled";
 
-			public boolean shouldFail(Object[] args, int count) {
-				IResource destination = (IResource) args[0];
-				boolean isDeep = ((Boolean) args[1]).booleanValue();
-				IProgressMonitor monitor = (IProgressMonitor) args[2];
-				if (monitor instanceof CancelingProgressMonitor)
-					return false;
-				IResource parent = destination.getParent();
-				if (!isDeep && (parent == null || parent.getType() != IResource.PROJECT))
-					return true;
-				if (!parent.isAccessible())
-					return true;
-				if (destination.exists())
-					return true;
-				//passed all failure case so it should suceed
-				return false;
+			public void cleanUp(Object[] args, int count) {
+				super.cleanUp(args, count);
+				try {
+					doCleanup();
+				} catch (Exception e) {
+					fail("invocation " + count + " failed to cleanup", e);
+				}
 			}
 
 			public Object invokeMethod(Object[] args, int count) throws Exception {
@@ -933,6 +965,23 @@ public class LinkedResourceTest extends ResourceTest {
 				if (monitor instanceof FussyProgressMonitor)
 					((FussyProgressMonitor) monitor).sanityCheck();
 				return null;
+			}
+
+			public boolean shouldFail(Object[] args, int count) {
+				IResource destination = (IResource) args[0];
+				boolean isDeep = ((Boolean) args[1]).booleanValue();
+				IProgressMonitor monitor = (IProgressMonitor) args[2];
+				if (monitor instanceof CancelingProgressMonitor)
+					return false;
+				IResource parent = destination.getParent();
+				if (!isDeep && (parent == null || parent.getType() != IResource.PROJECT))
+					return true;
+				if (!parent.isAccessible())
+					return true;
+				if (destination.exists())
+					return true;
+				//passed all failure case so it should suceed
+				return false;
 			}
 
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
@@ -959,15 +1008,6 @@ public class LinkedResourceTest extends ResourceTest {
 				}
 				return true;
 			}
-
-			public void cleanUp(Object[] args, int count) {
-				super.cleanUp(args, count);
-				try {
-					doCleanup();
-				} catch (Exception e) {
-					fail("invocation " + count + " failed to cleanup", e);
-				}
-			}
 		}.performTest(inputs);
 	}
 
@@ -979,20 +1019,13 @@ public class LinkedResourceTest extends ResourceTest {
 		new TestPerformer("LinkedResourceTest.testMoveFolder") {
 			protected static final String CANCELED = "cancelled";
 
-			public boolean shouldFail(Object[] args, int count) {
-				IResource destination = (IResource) args[1];
-				IProgressMonitor monitor = (IProgressMonitor) args[2];
-				if (monitor instanceof CancelingProgressMonitor)
-					return false;
-				IResource parent = destination.getParent();
-				if (parent == null || parent.getType() != IResource.PROJECT)
-					return true;
-				if (!parent.isAccessible())
-					return true;
-				if (destination.exists())
-					return true;
-				//passed all failure case so it should suceed
-				return false;
+			public void cleanUp(Object[] args, int count) {
+				super.cleanUp(args, count);
+				try {
+					doCleanup();
+				} catch (Exception e) {
+					fail("invocation " + count + " failed to cleanup", e);
+				}
 			}
 
 			public Object invokeMethod(Object[] args, int count) throws Exception {
@@ -1012,6 +1045,22 @@ public class LinkedResourceTest extends ResourceTest {
 				return null;
 			}
 
+			public boolean shouldFail(Object[] args, int count) {
+				IResource destination = (IResource) args[1];
+				IProgressMonitor monitor = (IProgressMonitor) args[2];
+				if (monitor instanceof CancelingProgressMonitor)
+					return false;
+				IResource parent = destination.getParent();
+				if (parent == null || parent.getType() != IResource.PROJECT)
+					return true;
+				if (!parent.isAccessible())
+					return true;
+				if (destination.exists())
+					return true;
+				//passed all failure case so it should suceed
+				return false;
+			}
+
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
 				IResource destination = (IResource) args[1];
 				IProgressMonitor monitor = (IProgressMonitor) args[2];
@@ -1024,15 +1073,6 @@ public class LinkedResourceTest extends ResourceTest {
 				if (!resolvePath(existingLocation).equals(destination.getLocation()))
 					return false;
 				return true;
-			}
-
-			public void cleanUp(Object[] args, int count) {
-				super.cleanUp(args, count);
-				try {
-					doCleanup();
-				} catch (Exception e) {
-					fail("invocation " + count + " failed to cleanup", e);
-				}
 			}
 		}.performTest(inputs);
 	}
@@ -1196,5 +1236,4 @@ public class LinkedResourceTest extends ResourceTest {
 			//should fail
 		}
 	}
-
 }
