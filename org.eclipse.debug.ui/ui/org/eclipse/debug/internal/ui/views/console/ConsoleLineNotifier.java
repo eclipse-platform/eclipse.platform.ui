@@ -80,8 +80,12 @@ public class ConsoleLineNotifier {
 		processNewLines();
 	}
 	
+	/**
+	 * Notification the console's stream has been closed
+	 */
 	public void streamClosed() {
 		fClosed= true;
+		processNewLines();
 	}
 	
 	/**

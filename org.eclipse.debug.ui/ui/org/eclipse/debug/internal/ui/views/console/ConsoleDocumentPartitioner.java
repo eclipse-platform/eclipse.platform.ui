@@ -97,6 +97,15 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 		}
 	}
 	
+	/**
+	 * A stream entry representing stream closure
+	 */
+	class StreamClosedEntry extends StreamEntry {
+		StreamClosedEntry(String streamIdentifier) {
+			super("", streamIdentifier); //$NON-NLS-1$
+		}
+	}
+	
 	class StreamListener implements IStreamListener {
 		
 		private String fStreamIdentifier;
@@ -121,7 +130,7 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 		}
 		
 		public void streamClosed(IStreamMonitor monitor) {
-			ConsoleDocumentPartitioner.this.streamAppended("", fStreamIdentifier);
+			ConsoleDocumentPartitioner.this.streamClosed(fStreamIdentifier);
 		}
 		
 		public void connect() {
@@ -321,10 +330,6 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 		}
 		addPendingLinks();
 		String text = event.getText();
-		if (text.length() == 0) {
-			// We append an empty string when the stream is closed
-			fLineNotifier.streamClosed();
-		}
 		if (isAppendInProgress()) {
 			// stream input
 			addPartition(new OutputPartition(fLastStreamIdentifier, event.getOffset(), text.length()));
@@ -552,8 +557,13 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 			int processed = 0;
 			int amount = 0;
 			String[] lds = fDocument.getLegalLineDelimiters();
+			boolean closed= false;
 			while (!fKilled && processed < fQueue.size() && amount < 8096) {
 				StreamEntry entry = (StreamEntry)fQueue.get(processed);
+				if (entry instanceof StreamClosedEntry) {
+					// Note that the stream has been closed and finish processing previous text
+					closed= true;
+				}
 				if (prev == null || prev.getStreamIdentifier().equals(entry.getStreamIdentifier())) {
 					String text = entry.getText();
 					if (buffer == null) {
@@ -599,6 +609,16 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 			}
 			if (buffer != null) {
 				appendToDocument(buffer.toString(), prev.getStreamIdentifier());
+			}
+			if (closed) {
+				Display display= DebugUIPlugin.getStandardDisplay();
+				if (display != null) {
+					display.asyncExec(new Runnable() {
+						public void run() {
+							fLineNotifier.streamClosed();
+						}
+					});
+				}
 			}
 			for (int i = 0; i < processed; i++) {
 				fQueue.remove(0);
@@ -759,6 +779,14 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	 */
 	protected void streamAppended(String text, String streamIdentifier) {
 		fQueue.add(new StreamEntry(text, streamIdentifier));
+	}
+	
+	/**
+	 * System out or System error has been closed.
+	 * Adds a new "stream closed" entry to the queue.
+	 */
+	protected void streamClosed(String streamIdentifier) {
+		fQueue.add(new StreamClosedEntry(streamIdentifier));
 	}
 					
 	/**
