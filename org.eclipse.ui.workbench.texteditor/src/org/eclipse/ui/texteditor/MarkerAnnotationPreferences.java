@@ -181,6 +181,39 @@ public class MarkerAnnotationPreferences {
 		if (s != null && s.trim().length() > 0)
 			b= StringConverter.asBoolean(s, false);
 		info.setContributesToHeader(b);
+
+		s= element.getAttribute("showInNextPrevDropdownToolbarActionKey");  //$NON-NLS-1$
+		if (s != null && s.trim().length() == 0)
+			s= null;
+		info.setShowInNextPrevDropdownToolbarActionKey(s);
+
+		b= false;
+		s= element.getAttribute("showInNextPrevDropdownToolbarAction");  //$NON-NLS-1$
+		if (s != null && s.trim().length() > 0)
+			b= StringConverter.asBoolean(s, false);
+		info.setShowInNextPrevDropdownToolbarAction(b);
+
+		s= element.getAttribute("isGoToNextNavigationTargetKey");  //$NON-NLS-1$
+		if (s != null && s.trim().length() == 0)
+			s= null;
+		info.setIsGoToNextNavigationTargetKey(s);
+
+		b= false;
+		s= element.getAttribute("isGoToNextNavigationTarget");  //$NON-NLS-1$
+		if (s != null && s.trim().length() > 0)
+			b= StringConverter.asBoolean(s, false);
+		info.setIsGoToNextNavigationTarget(b);
+
+		s= element.getAttribute("isGoToPreviousNavigationTargetKey");  //$NON-NLS-1$
+		if (s != null && s.trim().length() == 0)
+			s= null;
+		info.setIsGoToPreviousNavigationTargetKey(s);
+
+		b= false;
+		s= element.getAttribute("isGoToPreviousNavigationTarget");  //$NON-NLS-1$
+		if (s != null && s.trim().length() > 0)
+			b= StringConverter.asBoolean(s, false);
+		info.setIsGoToPreviousNavigationTarget(b);
 		
 		return info;
 	}

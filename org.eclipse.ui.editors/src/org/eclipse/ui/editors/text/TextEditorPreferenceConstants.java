@@ -331,6 +331,12 @@ public class TextEditorPreferenceConstants {
 			store.setDefault(info.getTextPreferenceKey(), info.getTextPreferenceValue());
 			store.setDefault(info.getOverviewRulerPreferenceKey(), info.getOverviewRulerPreferenceValue());
 			PreferenceConverter.setDefault(store, info.getColorPreferenceKey(), info.getColorPreferenceValue());
+			if (info.getShowInNextPrevDropdownToolbarActionKey() != null)
+				store.setDefault(info.getShowInNextPrevDropdownToolbarActionKey(), info.isShowInNextPrevDropdownToolbarAction());
+			if (info.getIsGoToNextNavigationTargetKey() != null)
+				store.setDefault(info.getIsGoToNextNavigationTargetKey(), info.isGoToNextNavigationTarget());
+			if (info.getIsGoToPreviousNavigationTargetKey() != null)
+				store.setDefault(info.getIsGoToPreviousNavigationTargetKey(), info.isGoToPreviousNavigationTarget());			
 		}
 	}
 }

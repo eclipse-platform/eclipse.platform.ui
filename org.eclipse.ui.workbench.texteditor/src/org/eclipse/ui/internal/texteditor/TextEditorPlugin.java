@@ -17,10 +17,13 @@ import java.util.Set;
 import org.eclipse.core.runtime.IPluginDescriptor;
 
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.preference.IPreferenceStore;
 
 import org.eclipse.jface.text.Assert;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.texteditor.AnnotationPreference;
+import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 
 /**
  * The plug-in runtime class for the text editor UI plug-in (id <code>"org.eclipse.ui.workbench.texteditor"</code>).
@@ -69,6 +72,25 @@ public final class TextEditorPlugin extends AbstractUIPlugin {
 	 * Text editor UI plug-in Id (value <code>"org.eclipse.ui.workbench.texteditor"</code>).
 	 */
 	public static final String PLUGIN_ID= "org.eclipse.ui.workbench.texteditor"; //$NON-NLS-1$
+
+	/*
+	 * @see AbstractUIPlugin#initializeDefaultPluginPreferences()
+	 */
+	protected void initializeDefaultPluginPreferences() {
+		// Initialize next/prev annotation preferences
+		IPreferenceStore store= getPreferenceStore();
+		MarkerAnnotationPreferences preferences= new MarkerAnnotationPreferences();
+		Iterator e= preferences.getAnnotationPreferences().iterator();
+		while (e.hasNext()) {
+			AnnotationPreference info= (AnnotationPreference) e.next();
+			if (info.getShowInNextPrevDropdownToolbarActionKey() != null)
+				store.setDefault(info.getShowInNextPrevDropdownToolbarActionKey(), info.isShowInNextPrevDropdownToolbarAction());
+			if (info.getIsGoToNextNavigationTargetKey() != null)
+				store.setDefault(info.getIsGoToNextNavigationTargetKey(), info.isGoToNextNavigationTarget());
+			if (info.getIsGoToPreviousNavigationTargetKey() != null)
+				store.setDefault(info.getIsGoToPreviousNavigationTargetKey(), info.isGoToPreviousNavigationTarget());			
+		}
+	}
 
 	/**
 	 * Returns the last edit position.

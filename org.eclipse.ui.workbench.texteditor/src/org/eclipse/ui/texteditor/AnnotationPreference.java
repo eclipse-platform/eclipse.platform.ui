@@ -28,6 +28,12 @@ import org.eclipse.swt.graphics.RGB;
  * <li> whether the annotation type should be presented in the header of the overview ruler
  * <li> the marker type if the annotation type is derived from an <code>IMarker</code>
  * <li> the severity of the marker if the annotation type is derived from an <code>IMarker</code>
+ * <li> the preference key for the visibility in the next/previous navigation toolbar drop down action
+ * <li> the default value for the visibility in the next/previous navigation toolbar drop down action
+ * <li> the preference key for go to next navigation enablement
+ * <li> the default value for go to next navigation enablement
+ * <li> the preference key for got to previous navigation enablement
+ * <li> the default value for got to previous navigation enablement
  * </ul>
  * 
  * @since 2.1
@@ -58,7 +64,38 @@ public class AnnotationPreference {
 	private int fPresentationLayer;
 	/** Indicates whether the annotation type contributed to the overview ruler's header */
 	private boolean fContributesToHeader;
+	/**
+	 * The preference key for the visibility in the next/previous drop down toolbar action.
+	 * @since 3.0
+	 */
+	private String fShowInNextPrevDropdownToolbarActionKey;
+	/**
+	 * The default value for the visibility in the next/previous drop down toolbar action.
+	 * @since 3.0
+	 */
+	private boolean fShowInNextPrevDropdownToolbarAction;
+	/**
+	 * The preference key for go to next navigation enablement.
+	 * @since 3.0
+	 */
+	private String fIsGoToNextNavigationTargetKey;
+	/**
+	 * The default value for go to next navigation enablement.
+	 * @since 3.0
+	 */
+	private boolean fIsGoToNextNavigationTarget;
+	/**
+	 * The preference key for go to previous navigation enablement.
+	 * @since 3.0
+	 */
+	private String fIsGoToPreviousNavigationTargetKey;
+	/**
+	 * The default value for go to previous navigation enablement.
+	 * @since 3.0
+	 */
+	private boolean fIsGoToPreviousNavigationTarget;
 	
+
 	/**
 	 * Creates a new uninitialized annotation preference.
 	 */
@@ -308,5 +345,124 @@ public class AnnotationPreference {
 	 */
 	public void setContributesToHeader(boolean contributesToHeader) {
 		fContributesToHeader= contributesToHeader;
+	}
+	/**
+	 * Returns the default value for go to next navigation enablement.
+	 * 
+	 * @return <code>true</code> if enabled by default
+	 * @since 3.0
+	 */
+	public boolean isGoToNextNavigationTarget() {
+		return fIsGoToNextNavigationTarget;
+	}
+
+	/**
+	 * Sets the default value for go to next navigation enablement.
+	 * 
+	 * @param isGoToNextNavigationTarget <code>true</code> if enabled by default
+	 * @since 3.0
+	 */
+	public void setIsGoToNextNavigationTarget(boolean isGoToNextNavigationTarget) {
+		fIsGoToNextNavigationTarget= isGoToNextNavigationTarget;
+	}
+
+	/**
+	 * Returns the preference key for go to next navigation enablement.
+	 * 
+	 * @return the preference key or <code>null</code> if the key is undefined
+	 * @since 3.0
+	 */
+	public String getIsGoToNextNavigationTargetKey() {
+		return fIsGoToNextNavigationTargetKey;
+	}
+
+	/**
+	 * Sets the preference key for go to next navigation enablement.
+	 * 
+	 * @param isGoToNextNavigationTargetKey <code>true</code> if enabled by default
+	 * @since 3.0
+	 */
+	public void setIsGoToNextNavigationTargetKey(String isGoToNextNavigationTargetKey) {
+		fIsGoToNextNavigationTargetKey= isGoToNextNavigationTargetKey;
+	}
+
+	/**
+	 * Returns the default value for go to previous navigation enablement.
+	 * 
+	 * @return <code>true</code> if enabled by default
+	 * @since 3.0
+	 */
+	public boolean isGoToPreviousNavigationTarget() {
+		return fIsGoToPreviousNavigationTarget;
+	}
+
+	/**
+	 * Sets the default value for go to previous navigation enablement.
+	 * 
+	 * @param isGoToPreviousNavigationTarget <code>true</code> if enabled by default
+	 * @since 3.0
+	 */
+	public void setIsGoToPreviousNavigationTarget(boolean isGoToPreviousNavigationTarget) {
+		fIsGoToPreviousNavigationTarget= isGoToPreviousNavigationTarget;
+	}
+
+	/**
+	 * Returns the preference key for go to previous navigation enablement.
+	 * 
+	 * @return the preference key or <code>null</code> if the key is undefined
+	 * @since 3.0
+	 */
+	public String getIsGoToPreviousNavigationTargetKey() {
+		return fIsGoToPreviousNavigationTargetKey;
+	}
+
+	/**
+ 	 * Sets the preference key for go to previous navigation enablement.
+ 	 * 
+ 	 * @param isGoToPreviousNavigationTargetKey the preference key
+	 * @since 3.0
+	 */
+	public void setIsGoToPreviousNavigationTargetKey(String isGoToPreviousNavigationTargetKey) {
+		fIsGoToPreviousNavigationTargetKey= isGoToPreviousNavigationTargetKey;
+	}
+
+	/**	
+	 * Returns the preference key for the visibility in the next/previous drop down toolbar action.
+	 * 
+	 * @return the preference key or <code>null</code> if the key is undefined
+	 * @since 3.0
+	 */
+	public String getShowInNextPrevDropdownToolbarActionKey() {
+		return fShowInNextPrevDropdownToolbarActionKey;
+	}
+
+	/**
+	 * Sets the preference key for the visibility in the next/previous drop down toolbar action.
+	 * 
+	 * @param showInNextPrevDropdownToolbarActionKey the preference key
+	 * @since 3.0
+	 */
+	public void setShowInNextPrevDropdownToolbarActionKey(String showInNextPrevDropdownToolbarActionKey) {
+		fShowInNextPrevDropdownToolbarActionKey= showInNextPrevDropdownToolbarActionKey;
+	}
+	
+	/**
+	 * Returns the default value for the visibility in the next/previous drop down toolbar action.
+	 * 
+	 * @return <code>true</code> if enabled by default
+	 * @since 3.0
+	 */
+	public boolean isShowInNextPrevDropdownToolbarAction() {
+		return fShowInNextPrevDropdownToolbarAction;
+	}
+
+	/**
+	 * Sets the default value for the visibility in the next/previous drop down toolbar action.
+	 * 
+	 * @param showInNextPrevDropdownToolbarAction <code>true</code> if enabled by default
+	 * @since 3.0
+	 */
+	public void setShowInNextPrevDropdownToolbarAction(boolean showInNextPrevDropdownToolbarAction) {
+		fShowInNextPrevDropdownToolbarAction= showInNextPrevDropdownToolbarAction;
 	}
 }

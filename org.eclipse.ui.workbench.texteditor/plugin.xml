@@ -222,23 +222,25 @@
 			tooltip="%goToPreviousAnnotation.tooltip"
 			toolbarPath="org.eclipse.ui.workbench.navigate/history.group"
 			retarget="true"
+			style="pulldown"
 			allowLabelUpdate="true"
             definitionId="org.eclipse.ui.navigate.previous"
 			icon="icons/full/etool16/prev_nav.gif"
             disabledIcon="icons/full/dtool16/prev_nav.gif"
             hoverIcon="icons/full/ctool16/prev_nav.gif"
-			class="org.eclipse.ui.internal.texteditor.NextPreviousPulldownActionDelegate"/>
+			class="org.eclipse.ui.internal.texteditor.PreviousPulldownActionDelegate"/>
 		<action id="org.eclipse.ui.edit.text.gotoNextAnnotation"
 			label="%goToNextAnnotation.label"
 			tooltip="%goToNextAnnotation.tooltip"
 			toolbarPath="org.eclipse.ui.workbench.navigate/history.group"
             retarget="true"
+			style="pulldown"
 			allowLabelUpdate="true"
             definitionId="org.eclipse.ui.navigate.next"
 			icon="icons/full/etool16/next_nav.gif"
             disabledIcon="icons/full/dtool16/next_nav.gif"
-            hoverIcon="icons/full/ctool16/next_nav.gif"			
-			class="org.eclipse.ui.internal.texteditor.NextPreviousPulldownActionDelegate"/>
+            hoverIcon="icons/full/ctool16/next_nav.gif"
+			class="org.eclipse.ui.internal.texteditor.NextPulldownActionDelegate"/>
       </actionSet>
    </extension>
 <!-- marker annotation types -->
@@ -256,7 +258,13 @@
             colorPreferenceKey="errorIndicationColor"
             colorPreferenceValue="255,0,128"
             presentationLayer="6"
-            contributesToHeader="true">
+            contributesToHeader="true"
+            showInNextPrevDropdownToolbarActionKey="showErrorInNextPrevDropdownToolbarAction"
+            showInNextPrevDropdownToolbarAction="true"
+            isGoToNextNavigationTargetKey="isErrorGoToNextNavigationTarget"
+            isGoToNextNavigationTarget="true"
+            isGoToPreviousNavigationTargetKey="isErrorGoToPreviousNavigationTarget"
+            isGoToPreviousNavigationTarget="true">
       </specification>
       <specification
       		annotationType="org.eclipse.ui.workbench.texteditor.warning"
@@ -270,7 +278,13 @@
             colorPreferenceKey="warningIndicationColor"
             colorPreferenceValue="244,200,45"
             presentationLayer="5"
-            contributesToHeader="true">
+            contributesToHeader="true"
+            showInNextPrevDropdownToolbarActionKey="showWarningInNextPrevDropdownToolbarAction"
+            showInNextPrevDropdownToolbarAction="true"
+            isGoToNextNavigationTargetKey="isWarningGoToNextNavigationTarget"
+            isGoToNextNavigationTarget="true"
+            isGoToPreviousNavigationTargetKey="isWarningGoToPreviousNavigationTarget"
+            isGoToPreviousNavigationTarget="true">
       </specification>
       <specification
       		annotationType="org.eclipse.ui.workbench.texteditor.info"
@@ -283,7 +297,13 @@
             colorPreferenceKey="infoIndicationColor"
             colorPreferenceValue="244,200,45"
             presentationLayer="4"
-            contributesToHeader="false">
+            contributesToHeader="false"
+            showInNextPrevDropdownToolbarActionKey="showInfoInNextPrevDropdownToolbarAction"
+            showInNextPrevDropdownToolbarAction="true"
+            isGoToNextNavigationTargetKey="isInfoGoToNextNavigationTarget"
+            isGoToNextNavigationTarget="false"
+            isGoToPreviousNavigationTargetKey="isInfoGoToPreviousNavigationTarget"
+            isGoToPreviousNavigationTarget="false">
       </specification>
       <specification
       		annotationType="org.eclipse.ui.workbench.texteditor.task"
@@ -296,7 +316,13 @@
             colorPreferenceKey="taskIndicationColor"
             colorPreferenceValue="0,128,255"
             presentationLayer="2"
-            contributesToHeader="false">
+            contributesToHeader="false"
+            showInNextPrevDropdownToolbarActionKey="showTaskInNextPrevDropdownToolbarAction"
+            showInNextPrevDropdownToolbarAction="true"
+            isGoToNextNavigationTargetKey="isTaskGoToNextNavigationTarget"
+            isGoToNextNavigationTarget="false"
+            isGoToPreviousNavigationTargetKey="isTaskGoToPreviousNavigationTarget"
+            isGoToPreviousNavigationTarget="false">
       </specification>
       <specification
       		annotationType="org.eclipse.ui.workbench.texteditor.bookmark"
@@ -309,7 +335,13 @@
             colorPreferenceKey="bookmarkIndicationColor"
             colorPreferenceValue="34,164,99"
             presentationLayer="1"
-            contributesToHeader="false">
+            contributesToHeader="false"
+            showInNextPrevDropdownToolbarActionKey="showBookmarkInNextPrevDropdownToolbarAction"
+            showInNextPrevDropdownToolbarAction="true"
+            isGoToNextNavigationTargetKey="isBookmarkGoToNextNavigationTarget"
+            isGoToNextNavigationTarget="false"
+            isGoToPreviousNavigationTargetKey="isBookmarkGoToPreviousNavigationTarget"
+            isGoToPreviousNavigationTarget="false">
       </specification>
    </extension>
 </plugin>
