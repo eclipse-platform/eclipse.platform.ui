@@ -1329,28 +1329,18 @@ public class CustomizePerspectiveDialog extends Dialog {
 
         // fill the menu structure table
         if (element != actionSetMenuViewer.getInput()) {
-            try {
-                actionSetMenuViewer.getControl().setRedraw(false);
-                actionSetMenuViewer.setInput(menubarStructure.getElements());
-                if (menubarStructure.children.size() > 0) {
-                    actionSetMenuViewer
-                            .reveal(menubarStructure.children.get(0));
-                }
-            } finally {
-                actionSetMenuViewer.getControl().setRedraw(true);
+            actionSetMenuViewer.setInput(menubarStructure.getElements());
+            if (menubarStructure.children.size() > 0) {
+                actionSetMenuViewer
+                        .reveal(menubarStructure.children.get(0));
             }
         }
         // fill the toolbar structure table
         if (element != actionSetToolbarViewer.getInput()) {
-            try {
-                actionSetToolbarViewer.getControl().setRedraw(false);
-                actionSetToolbarViewer.setInput(toolbarStructure.getElements());
-                if (toolbarStructure.children.size() > 0) {
-                    actionSetToolbarViewer.reveal(toolbarStructure.children
-                            .get(0));
-                }
-            } finally {
-                actionSetToolbarViewer.getControl().setRedraw(true);
+            actionSetToolbarViewer.setInput(toolbarStructure.getElements());
+            if (toolbarStructure.children.size() > 0) {
+                actionSetToolbarViewer.reveal(toolbarStructure.children
+                        .get(0));
             }
         }
         selectedActionSet = element;
