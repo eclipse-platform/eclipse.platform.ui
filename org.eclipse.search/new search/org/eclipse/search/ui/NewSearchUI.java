@@ -141,6 +141,7 @@ public class NewSearchUI {
 	public static ISearchQuery[] getQueries() {
 		return InternalSearchUI.getInstance().getQueries();
 	}
+	
 	/**
 	 * Returns whether the given query is currently running. Queries may be run
 	 * by client request or by actions in the search UI.
@@ -155,7 +156,17 @@ public class NewSearchUI {
 		return InternalSearchUI.getInstance().isQueryRunning(query);
 	}
 	
-	
+	/**
+	 * Sends a 'cancel' command to the given query running in background.
+	 * The call has no effect if the query is not running, not in background or is not cancelable. 
+	 * 
+	 * @param query
+	 *            the query
+	 * @since 3.1
+	 */
+	public static void cancelQuery(ISearchQuery query) {
+		InternalSearchUI.getInstance().cancelSearch(query);
+	}
 	
 	/**
 	 * Search Plug-in Id (value <code>"org.eclipse.search"</code>).
