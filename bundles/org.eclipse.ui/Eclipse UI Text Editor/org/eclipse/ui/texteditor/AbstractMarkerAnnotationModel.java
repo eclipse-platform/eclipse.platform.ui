@@ -374,7 +374,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 	 */
 	private void catchupWithMarkers() throws CoreException {
 		
-		for (Iterator e= fAnnotations.keySet().iterator(); e.hasNext();) {
+		for (Iterator e=getAnnotationIterator(false); e.hasNext();) {
 			Annotation a= (Annotation) e.next();
 			if (a instanceof MarkerAnnotation)
 				removeAnnotation(a, false);
