@@ -13,8 +13,6 @@ import java.util.*;
 import org.eclipse.core.internal.runtime.Assert;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 
@@ -25,7 +23,7 @@ import org.eclipse.core.runtime.jobs.Job;
  */
 class ImplicitJobs {
 	/**
-	 * Cached of unused instance that can be reused 
+	 * Cached unused instance that can be reused 
 	 */
 	private ThreadJob jobCache = null;
 	protected JobManager manager;
