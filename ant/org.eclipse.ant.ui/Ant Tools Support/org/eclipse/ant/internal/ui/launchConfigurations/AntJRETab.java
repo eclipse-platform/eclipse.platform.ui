@@ -59,27 +59,17 @@ public class AntJRETab extends JavaJRETab {
 	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		Control control= getControl();
+		Control control= fJREBlock.getControl();
 		Label label= new Label((Composite) control, SWT.NULL);
 		GridData data = new GridData(GridData.BEGINNING);
 		data.horizontalSpan = 3;
 		label.setLayoutData(data);
-		label.setFont(parent.getFont());
 		
-		Composite update= new Composite((Composite) control, SWT.NONE);
-		//data = new GridData(GridData.BEGINNING);
-		//data.horizontalSpan = 3;
-		update.setLayoutData(data);
-		
-		label= new Label(update, SWT.NULL);
+		label= new Label((Composite) control, SWT.NULL);
 		label.setText(AntLaunchConfigurationMessages.getString("AntJRETab.9")); //$NON-NLS-1$
 		label.setFont(parent.getFont());
 		
-		//label= new Label((Composite) control, SWT.NULL);
-	//			label.setText(AntLaunchConfigurationMessages.getString("AntJRETab.9")); //$NON-NLS-1$
-//				label.setFont(parent.getFont());
-		
-		updateClasspathButton= new Button(update, SWT.PUSH);
+		updateClasspathButton= new Button((Composite) control, SWT.PUSH);
 		updateClasspathButton.setFont(parent.getFont());
 		updateClasspathButton.setText(AntLaunchConfigurationMessages.getString("AntJRETab.10")); //$NON-NLS-1$
 		updateClasspathButton.addSelectionListener(new SelectionAdapter(){
