@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     QNX Software Systems - Mikhail Khodjaiants - Registers View (Bug 53640)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.variables;
 
@@ -40,6 +41,7 @@ import org.eclipse.debug.internal.ui.actions.ToggleDetailPaneAction;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandlerView;
+import org.eclipse.debug.internal.ui.views.AbstractViewerState;
 import org.eclipse.debug.internal.ui.views.DebugViewDecoratingLabelProvider;
 import org.eclipse.debug.internal.ui.views.DebugViewInterimLabelProvider;
 import org.eclipse.debug.internal.ui.views.DebugViewLabelDecorator;
@@ -278,7 +280,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 * in the variables view when there is no state to go on for the
 	 * current stack frame being displayed.
 	 */
-	private ViewerState fLastState = null;
+	private AbstractViewerState fLastState = null;
 	
 	/**
 	 * Remembers which viewer (tree viewer or details viewer) had focus, so we
@@ -345,7 +347,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 
 		if (current != null) {
 			// save state
-			fLastState = new ViewerState(getVariablesViewer());
+			fLastState = getViewerState();
 			fSelectionStates.put(current, fLastState);
 		}		
 		
@@ -357,7 +359,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		
 		// restore state
 		if (frame != null) {
-			ViewerState state = (ViewerState)fSelectionStates.get(frame);
+			AbstractViewerState state = (AbstractViewerState)fSelectionStates.get(frame);
 			if (state == null) {
 				// attempt to restore selection/expansion based on last frame
 				state = fLastState;
@@ -1345,4 +1347,12 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		}
 	}
 
+	/**
+	 * Returns the memento of the expanded and selected items in the viewer.
+	 * 
+	 * @return the memento of the expanded and selected items in the viewer
+	 */
+	protected AbstractViewerState getViewerState() {
+		return new ViewerState(getVariablesViewer());
+	}
 }

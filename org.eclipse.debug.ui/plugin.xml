@@ -95,6 +95,13 @@
             class="org.eclipse.debug.internal.ui.views.expression.ExpressionView"
             id="org.eclipse.debug.ui.ExpressionView">
       </view>
+      <view
+            name="%RegistersView.name"
+            icon="icons/full/cview16/register_view.gif"
+            category="org.eclipse.debug.ui"
+            class="org.eclipse.debug.internal.ui.views.registers.RegistersView"
+            id="org.eclipse.debug.ui.RegisterView">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
@@ -644,6 +651,19 @@
                id="org.eclipse.debug.ui.expresssionsView.toolbar.detailPaneWordWrap">
          </action>
       </viewContribution>
+      <viewContribution
+            targetID="org.eclipse.debug.ui.RegistersView"
+            id="org.eclipse.debug.ui.registersView.toolbar">
+         <action
+               label="%DetailPaneWordWrapAction.label"
+               style="toggle"
+               helpContextId="detail_pane_word_wrap_action_context"
+               tooltip="%DetailPaneWordWrapAction.tooltip"
+               class="org.eclipse.debug.internal.ui.views.variables.DetailPaneWordWrapAction"
+               menubarPath="viewActions"
+               id="org.eclipse.debug.ui.variableViewActions.toolbar.detailPaneWordWrap">
+         </action>
+      </viewContribution>
    </extension>
    <extension
          point="org.eclipse.ui.popupMenus">
@@ -1016,6 +1036,29 @@
                class="org.eclipse.debug.internal.ui.actions.SelectAllExpressionsAction"
                menubarPath="expressionGroup"
                id="org.eclipse.debug.ui.actions.SelectAllExpressionsAction">
+         </action>
+      </viewerContribution>
+      <viewerContribution
+            targetID="org.eclipse.debug.ui.RegistersView"
+            id="org.eclipse.debug.ui.registersView.popupMenu">
+<!-- Variable Group -->
+         <action
+               menubarPath="variableGroup"
+               class="org.eclipse.debug.internal.ui.actions.CopyVariablesToClipboardActionDelegate"
+               icon="icons/full/clcl16/copy_edit_co.gif"
+               label="%CopyVariablesToClipboardAction.label"
+               id="org.eclipse.debug.ui.debugview.popupMenu.copyVariablesToClipboard"
+               helpContextId="copy_variables_to_clipboard_action_context">
+            <selection
+                  class="org.eclipse.debug.core.model.IDebugElement">
+            </selection>
+         </action>
+         <action
+               class="org.eclipse.debug.internal.ui.actions.SelectAllVariablesAction"
+               label="%SelectAll.label"
+               menubarPath="variableGroup"
+               helpContextId="select_all_variables_action_context"
+               id="org.eclipse.debug.ui.actions.SelectAllVariablesAction">
          </action>
       </viewerContribution>
    </extension>

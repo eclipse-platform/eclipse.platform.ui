@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     QNX Software Systems - Mikhail Khodjaiants - Registers View (Bug 53640)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui;
 
@@ -28,6 +29,8 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IDisconnect;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.model.IRegister;
+import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.core.model.IThread;
@@ -71,7 +74,11 @@ public class DefaultLabelProvider implements ILabelProvider {
 		if (element instanceof IDebugElement) {
 			// Group elements into debug elements and non-debug elements
 			// to reduce the number of instanceof checks performed
-			if (element instanceof IVariable) {
+			if (element instanceof IRegister) {
+				return IDebugUIConstants.IMG_OBJS_REGISTER;
+			} else if (element instanceof IRegisterGroup) {
+				return IDebugUIConstants.IMG_OBJS_REGISTER_GROUP;
+			} else if (element instanceof IVariable) {
 				if (element instanceof IndexedVariablePartition) {
 					return IInternalDebugUIConstants.IMG_OBJS_ARRAY_PARTITION;
 				} else {
@@ -169,6 +176,8 @@ public class DefaultLabelProvider implements ILabelProvider {
 					label.append((((IDebugTarget)element).getName()));
 				} else if (element instanceof IExpression) {
 					label.append(getExpressionText((IExpression)element));
+				} else if (element instanceof IRegisterGroup) {
+					label.append(getRegisterGroupText((IRegisterGroup)element));
 				} 
 			} else {
 				if (element instanceof IMarker) {
@@ -299,6 +308,16 @@ public class DefaultLabelProvider implements ILabelProvider {
 			buffer.append(variable.getName());
 			buffer.append(" = "); //$NON-NLS-1$
 			buffer.append(value.getValueString());
+		} catch (DebugException de) {
+			DebugUIPlugin.log(de);
+		}
+		return buffer.toString();
+	}
+	
+	protected String getRegisterGroupText(IRegisterGroup registerGroup) {
+		StringBuffer buffer= new StringBuffer();
+		try {
+			buffer.append(registerGroup.getName());
 		} catch (DebugException de) {
 			DebugUIPlugin.log(de);
 		}

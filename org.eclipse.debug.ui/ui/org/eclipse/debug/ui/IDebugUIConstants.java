@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     QNX Software Systems - Mikhail Khodjaiants - Registers View (Bug 53640)
  *******************************************************************************/
 package org.eclipse.debug.ui;
 
@@ -278,6 +279,12 @@ public interface IDebugUIConstants {
 	public static final String ID_EXPRESSION_VIEW= "org.eclipse.debug.ui.ExpressionView"; //$NON-NLS-1$
 		
 	/**
+	 * Register view identifier (value <code>"org.eclipse.debug.ui.RegisterView"</code>).
+	 * @since 3.0
+	 */
+	public static final String ID_REGISTER_VIEW= "org.eclipse.debug.ui.RegisterView"; //$NON-NLS-1$
+		
+	/**
 	 * Console view identifier (value <code>"org.eclipse.debug.ui.ConsoleView"</code>).
 	 * @deprecated Use org.eclipse.ui.console.IConsoleConstants.ID_CONSOLE_VIEW 
 	 * @since 3.0
@@ -477,6 +484,20 @@ public interface IDebugUIConstants {
 	 * @since 2.0
 	 */
 	public static final String IMG_OBJS_VARIABLE= "IMG_OBJS_VARIABLE"; //$NON-NLS-1$
+
+	/**
+	 * Generic identifier of register group image.
+	 * 
+	 * @since 3.0
+	 */
+	public static final String IMG_OBJS_REGISTER_GROUP= "IMG_OBJS_REGISTER_GROUP"; //$NON-NLS-1$
+
+	/**
+	 * Generic register image identifier.
+	 * 
+	 * @since 3.0
+	 */
+	public static final String IMG_OBJS_REGISTER= "IMG_OBJS_REGISTER"; //$NON-NLS-1$
 
 	// views
 	
@@ -692,6 +713,17 @@ public interface IDebugUIConstants {
 	 * Identifier for a property group in a menu (value <code>"propertyGroup"</code>).
 	 */
 	public static final String PROPERTY_GROUP = "propertyGroup"; //$NON-NLS-1$
+	
+	/** 
+	 * Identifier for an empty group preceding a
+	 * register group in a menu (value <code>"emptyRegisterGroup"</code>).
+	 */
+	public static final String EMPTY_REGISTER_GROUP = "emptyRegisterGroup"; //$NON-NLS-1$
+	
+	/**
+	 * Identifier for a register group in a menu (value <code>"registerGroup"</code>).
+	 */
+	public static final String REGISTER_GROUP = "registerGroup"; //$NON-NLS-1$
 	
 	/**
 	 * Id for the popup menu associated with the variables (tree viewer) part of the VariableView
