@@ -101,31 +101,6 @@ public class Manager {
 		return path;			
 	}
 
-	private static Path pathForKeyConfiguration(String id, Map keyConfigurationMap) {
-		Path path = null;
-
-		if (id != null) {
-			List pathItems = new ArrayList();
-
-			while (id != null) {	
-				if (pathItems.contains(id))
-					return null;
-							
-				Configuration keyConfiguration = (Configuration) keyConfigurationMap.get(id);
-				
-				if (keyConfiguration == null)
-					return null;
-							
-				pathItems.add(0, id);
-				id = keyConfiguration.getParent();
-			}
-		
-			path = Path.create(pathItems);
-		}
-		
-		return path;			
-	}
-
 	static Path pathForLocale(String locale) {
 		Path path = null;
 
@@ -334,12 +309,18 @@ public class Manager {
 		return pathForPlatform(SYSTEM_PLATFORM);
 	}
 
+	private Machine gestureMachine;	
 	private Machine keyMachine;	
 	
 	private Manager() {
 		super();
+		gestureMachine = Machine.create();
 		keyMachine = Machine.create();
 		initializeConfigurations();		
+	}
+
+	public Machine getGestureMachine() {
+		return gestureMachine;
 	}
 
 	public Machine getKeyMachine() {
