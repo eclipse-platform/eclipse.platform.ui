@@ -62,11 +62,6 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	private boolean fKilled= false;
 	
 	/**
-	 * Safe runnable use to notify when content appended.
-	 */
-	private ContentNotifier fNotifier = null;
-	
-	/**
 	 * Creates an output stream monitor on the
 	 * given stream (connected to system out or err).
 	 */
@@ -204,10 +199,7 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	}
 
 	private ContentNotifier getNotifier() {
-		if (fNotifier == null) {
-			fNotifier = new ContentNotifier();
-		}
-		return fNotifier;
+		return new ContentNotifier();
 	}
 	
 	class ContentNotifier implements ISafeRunnable {
@@ -236,7 +228,9 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 			for (int i= 0; i < copiedListeners.length; i++) {
 				fListener = (IStreamListener) copiedListeners[i];
 				Platform.run(this);
-			}			
+			}
+			fListener = null;
+			fText = null;		
 		}
 	}
 }

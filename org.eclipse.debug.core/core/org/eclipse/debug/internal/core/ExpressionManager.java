@@ -45,14 +45,10 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 	 */
 	private ListenerList fListeners = null;
 	
-	private ExpressionNotifier fExpressionNotifier = null;
-	
 	/**
 	 * List of (multi) expressions listeners
 	 */
 	private ListenerList fExpressionsListeners = null;	
-	
-	private ExpressionsNotifier fExpressionsNotifier = null;
 	
 	// Constants for add/remove/change notification
 	private static final int ADDED = 1;
@@ -240,10 +236,7 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 	}
 	
 	private ExpressionNotifier getExpressionNotifier() {
-		if (fExpressionNotifier == null) {
-			fExpressionNotifier = new ExpressionNotifier();
-		}
-		return fExpressionNotifier;
+		return new ExpressionNotifier();
 	}
 	
 	/**
@@ -299,14 +292,13 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 					}
 				}			
 			}
+			fListener = null;
+			fExpression = null;
 		}
 	}
 	
 	private ExpressionsNotifier getExpressionsNotifier() {
-		if (fExpressionsNotifier == null) {
-			fExpressionsNotifier = new ExpressionsNotifier();
-		}
-		return fExpressionsNotifier;
+		return new ExpressionsNotifier();
 	}
 	
 	/**
@@ -359,7 +351,9 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 					fListener = (IExpressionsListener)copiedListeners[i];
 					Platform.run(this);
 				}
-			}					
+			}	
+			fExpressions = null;
+			fListener = null;				
 		}
 	}		
 

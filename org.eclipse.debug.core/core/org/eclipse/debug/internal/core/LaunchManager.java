@@ -126,14 +126,10 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 */
 	private ListenerList fListeners= new ListenerList(5);
 	
-	private LaunchNotifier fLaunchNotifier = null;
-	
 	/**
 	 * Collection of "plural" listeners.
 	 * @since 2.1	 */
 	private ListenerList fLaunchesListeners = new ListenerList(5);
-	
-	private LaunchesNotifier fLaunchesNotifier = null;
 	
 	/**
 	 * Visitor used to process resource deltas,
@@ -145,8 +141,6 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * Launch configuration listeners
 	 */
 	private ListenerList fLaunchConfigurationListeners = new ListenerList(5);
-	
-	private ConfigurationNotifier fConfigurationNotifier = null;
 	
 	/**
 	 * Table of source locator extensions. Keys
@@ -1195,10 +1189,7 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	}
 
 	private LaunchNotifier getLaunchNotifier() {
-		if (fLaunchNotifier == null) {
-			fLaunchNotifier = new LaunchNotifier();
-		}
-		return fLaunchNotifier;
+		return new LaunchNotifier();
 	}
 	
 	/**
@@ -1252,15 +1243,14 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			for (int i= 0; i < copiedListeners.length; i++) {
 				fListener = (ILaunchListener)copiedListeners[i];
 				Platform.run(this);
-			}			
+			}	
+			fLaunch = null;
+			fListener = null;		
 		}
 	}
 	
 	private LaunchesNotifier getLaunchesNotifier() {
-		if (fLaunchesNotifier == null) {
-			fLaunchesNotifier = new LaunchesNotifier();
-		}
-		return fLaunchesNotifier;
+		return new LaunchesNotifier();
 	}
 	
 	/**
@@ -1337,15 +1327,15 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			for (int i= 0; i < copiedListeners.length; i++) {
 				fListener = (ILaunchesListener)copiedListeners[i];
 				Platform.run(this);
-			}						
+			}	
+			fLaunches = null;
+			fRegistered = null;
+			fListener = null;			
 		}
 	}
 	
 	protected ConfigurationNotifier getConfigurationNotifier() {
-		if (fConfigurationNotifier == null) {
-			fConfigurationNotifier = new ConfigurationNotifier();
-		}
-		return fConfigurationNotifier;
+		return new ConfigurationNotifier();
 	}
 	
 	/**
@@ -1398,7 +1388,9 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 					fListener = (ILaunchConfigurationListener)listeners[i];
 					Platform.run(this);
 				}
-			}			
+			}
+			fConfiguration = null;
+			fListener = null;			
 		}
 	}			
 }

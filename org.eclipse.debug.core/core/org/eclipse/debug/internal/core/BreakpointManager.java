@@ -97,22 +97,12 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * Collection of breakpoint listeners.
 	 */
 	private ListenerList fBreakpointListeners= new ListenerList(6);
-	
-	/**
-	 * Notifier that uses a safe runnable to dispatch changes.
-	 */
-	private BreakpointNotifier fBreakpointNotifier = null;
-	
+		
 	/**
 	 * Collection of (multi) breakpoint listeners.
 	 */
 	private ListenerList fBreakpointsListeners= new ListenerList(6);	
 	
-	/**
-	 * Notifier that uses a safe runnable to dispatch changes
-	 */
-	private BreakpointsNotifier fBreakpointsNotifier = null;
-
 	/**
 	 * Singleton resource delta visitor which handles marker
 	 * additions, changes, and removals.
@@ -720,10 +710,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	}
 
 	private BreakpointNotifier getBreakpointNotifier() {
-		if (fBreakpointNotifier == null) {
-			fBreakpointNotifier = new BreakpointNotifier();
-		}
-		return fBreakpointNotifier;
+		return new BreakpointNotifier();
 	}
 	
 	/**
@@ -779,15 +766,15 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 					fDelta = deltas[j];
 					Platform.run(this);				
 				}
-			}			
+			}
+			fListener = null;
+			fDelta = null;
+			fBreakpoint = null;			
 		}
 	}
 	
 	private BreakpointsNotifier getBreakpointsNotifier() {
-		if (fBreakpointsNotifier == null) {
-			fBreakpointsNotifier = new BreakpointsNotifier();
-		}
-		return fBreakpointsNotifier;
+		return new BreakpointsNotifier();
 	}
 	
 	/**
@@ -842,6 +829,9 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 				fListener = (IBreakpointsListener)copiedListeners[i];
 				Platform.run(this);
 			}
+			fDeltas = null;
+			fBreakpoints = null;
+			fListener = null;
 		}
 	}	
 }
