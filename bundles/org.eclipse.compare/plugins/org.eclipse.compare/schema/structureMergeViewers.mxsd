@@ -1,0 +1,138 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.compare">
+<annotation>
+   <appInfo>
+      <meta.schema plugin="org.eclipse.compare" id="structureMergeViewers" name="StructureMerge Viewers"/>
+   </appInfo>
+   <documentation>
+      This extension point allows to plug in a compare/merge 
+viewer for structured content. The viewer must extend 
+&lt;samp&gt;org.eclipse.jface.viewers.Viewer&lt;/samp&gt;. 
+However since viewers don't have a default 
+constructor the extension point must implement a 
+factory object for viewers: the interface 
+&lt;samp&gt;org.eclipse.compare.IViewerCreator&lt;/samp&gt;.
+   </documentation>
+</annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="viewer" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="viewer">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute=""/>
+         </appInfo>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a unique identifier that can be used to reference the viewer
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  name of a class that implements a factory for the 
+content merge viewer and implements 
+&lt;samp&gt;org.eclipse.compare.IViewerCreator&lt;/samp&gt;
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.jface.viewers.Viewer:org.eclipse.compare.IViewerCreator"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="extensions" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a comma separated list of file extensions e.g . "zip, jar"
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example of compare/merge viewer 
+for zip files (extension "zip"): 
+&lt;p&gt;
+&lt;pre&gt;
+&lt;extension point = "org.eclipse.compare.structureMergeViewers"&gt; 
+     &lt;viewer 
+         id="org.eclipse.compare.ZipCompareViewer" 
+         class="org.eclipse.compare.ZipCompareViewerCreator" 
+         extensions="zip" 
+    /&gt; 
+&lt;/extension&gt; 
+&lt;/pre&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         The Compare UI plugin defines a structure compare 
+viewer for zip archives.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         &lt;p&gt;
+&lt;a href="hglegal.htm"&gt;
+ &lt;img SRC="ngibmcpy.gif"
+   ALT="Copyright IBM Corp. 2000, 2003. All Rights Reserved."
+   BORDER=0 height=14 width=324&gt;&lt;/a&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+</schema>

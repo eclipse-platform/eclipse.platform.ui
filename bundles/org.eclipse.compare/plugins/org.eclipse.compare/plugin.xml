@@ -26,20 +26,28 @@
 <!-- Compare extension point definitions -->
 
 	<extension-point
+		id="structureCreators"
 		name="%structureCreators"
-		id="structureCreators"/>
+		schema="schema/structureCreators.mxsd"
+	/>
 		
 	<extension-point
+		id="structureMergeViewers"
 		name="%structureMergeViewers"
-		id="structureMergeViewers"/>
+		schema="schema/structureMergeViewers.mxsd"
+	/>
 		
 	<extension-point
+		id="contentMergeViewers"
 		name="%contentMergeViewers"
-		id="contentMergeViewers"/>
-
+		schema="schema/contentMergeViewers.mxsd"
+	/>
+		
 	<extension-point
+		id="contentViewers"
 		name="%contentViewers"
-		id="contentViewers"/>
+		schema="schema/contentViewers.mxsd"
+	/>
 
 <!-- Extensions -->
 

@@ -1,0 +1,134 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.compare">
+<annotation>
+   <appInfo>
+      <meta.schema plugin="org.eclipse.compare" id="structureCreators" name="Structure Creators"/>
+   </appInfo>
+   <documentation>
+      This extension point allows to plug in an object 
+that produces a tree structure of 
+&lt;samp&gt;IStructureComparator&lt;/samp&gt; for a given content.
+   </documentation>
+</annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="structureCreator" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="structureCreator">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute=""/>
+         </appInfo>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a unique identifier that can be used to reference the structure creator
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  name of a class that implements the structure creator 
+and implements 
+&lt;samp&gt;org.eclipse.compare.structuremergeviewer.IStructureComparator&lt;/samp&gt;
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.compare.structuremergeviewer.IStructureComparator"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="extensions" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a comma separated list of file extensions e.g . "java, properties"
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example of a structure creator for 
+java files (extension "java"): 
+&lt;p&gt;
+&lt;pre&gt;
+&lt;extension point = "org.eclipse.compare.structureCreators"&gt; 
+     &lt;structureCreator 
+         id="org.eclipse.compare.JavaStructureCreator" 
+         class="org.eclipse.compare.JavaStructureCreator" 
+         extensions="java" 
+    /&gt; 
+&lt;/extension&gt; 
+&lt;/pre&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         The Compare UI plugin defines a structure 
+creator for zip archives.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         &lt;p&gt;
+&lt;a href="hglegal.htm"&gt;
+ &lt;img SRC="ngibmcpy.gif"
+   ALT="Copyright IBM Corp. 2000, 2003. All Rights Reserved."
+   BORDER=0 height=14 width=324&gt;&lt;/a&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+</schema>
