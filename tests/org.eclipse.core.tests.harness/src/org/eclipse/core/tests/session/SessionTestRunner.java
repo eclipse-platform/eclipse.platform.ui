@@ -208,19 +208,9 @@ public class SessionTestRunner {
 		// to prevent changes in the protocol from breaking us, 
 		// force the version we know we can work with 
 		setup.setEclipseArgument("version", "3");
-		if (SetupManager.inDebugMode()) {
-			System.out.print("Command line: ");
-			System.out.println(setup.toCommandLineString());
-		}
 		IStatus outcome = Status.OK_STATUS;
 		try {
-			ProcessController process = new ProcessController(setup.getTimeout(), setup.getCommandLine());
-			process.forwardErrorOutput(System.err);
-			process.forwardOutput(System.out);
-			//if necessary to interact with the spawned process, this would have
-			// to be done
-			//process.forwardInput(System.in);
-			int returnCode = process.execute();
+			int returnCode = setup.run();
 			if (returnCode != 0)
 				outcome = new Status(IStatus.WARNING, Platform.PI_RUNTIME, returnCode, "Process returned non-zero code: " + returnCode + "\n\tCommand: " + setup, null);
 		} catch (Exception e) {

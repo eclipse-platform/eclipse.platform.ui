@@ -24,6 +24,7 @@ public class SetupManager {
 		 * All serializable objects should have a stable serialVersionUID
 		 */
 		private static final long serialVersionUID = 1L;
+
 		public SetupException(String message, Throwable cause) {
 			super(message, cause);
 		}
@@ -180,7 +181,7 @@ public class SetupManager {
 			setupFiles[found] = new File(setupFileNames[i]);
 			if (!setupFiles[found].isFile()) {
 				System.out.println("No setup files found at '" + setupFiles[i].getAbsolutePath() + "'. ");
-				continue;				
+				continue;
 			}
 			found++;
 		}

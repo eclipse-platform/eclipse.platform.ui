@@ -26,6 +26,7 @@ public class ProcessController {
 		 * All serializable objects should have a stable serialVersionUID
 		 */
 		private static final long serialVersionUID = 1L;
+
 		public TimeOutException() {
 			super();
 		}
@@ -52,7 +53,7 @@ public class ProcessController {
 	 * @param timeout the maximum time the process should take to run 
 	 * @param params the parameters to be passed to the controlled process
 	 */
-	public ProcessController(long timeout, String[]  params) {
+	public ProcessController(long timeout, String[] params) {
 		this.timeLimit = timeout;
 		this.params = params;
 	}

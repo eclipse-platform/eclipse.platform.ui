@@ -96,7 +96,7 @@ public class TestDescriptor extends TestCase {
 	}
 
 	public void setSetup(Setup setup) {
-		this.setup = setup;
+		this.setup = setup == null ? null : (Setup) setup.clone();
 	}
 
 	public void setTestRunner(SessionTestRunner testRunner) {
@@ -104,6 +104,6 @@ public class TestDescriptor extends TestCase {
 	}
 
 	public String toString() {
-	    return getName() + "(" + getTestClass() + ")";
-	}	
+		return getName() + "(" + getTestClass() + ")";
+	}
 }

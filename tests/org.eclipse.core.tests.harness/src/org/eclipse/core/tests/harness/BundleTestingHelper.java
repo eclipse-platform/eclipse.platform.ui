@@ -51,6 +51,7 @@ public class BundleTestingHelper {
 	 * all the requested bundles we need to do a refresh and want to ensure that 
 	 * everything is done before returning.
 	 * @param bundles
+	 * TODO remove this since all we wanted was to resolve bundles, what is done by #resolveBundles in this class 
 	 */
 	//copied from EclipseStarter
 	public static void refreshPackages(BundleContext context, Bundle[] bundles) {
@@ -90,6 +91,19 @@ public class BundleTestingHelper {
 		context.removeFrameworkListener(listener);
 		context.ungetService(packageAdminRef);
 	}
+
+	public static void resolveBundles(BundleContext context, Bundle[] bundles) {
+		ServiceReference packageAdminRef = context.getServiceReference(PackageAdmin.class.getName());
+		PackageAdmin packageAdmin = null;
+		if (packageAdminRef != null) {
+			packageAdmin = (PackageAdmin) context.getService(packageAdminRef);
+			if (packageAdmin == null)
+				return;
+		}
+		packageAdmin.resolveBundles(bundles);
+		context.ungetService(packageAdminRef);
+	}
+
 	public static void runWithBundles(String tag, Runnable runnable, BundleContext context, String[] locations, TestRegistryChangeListener listener) {
 		if (listener != null)
 			listener.register();
@@ -106,7 +120,7 @@ public class BundleTestingHelper {
 				}
 			if (listener != null)
 				listener.reset();
-			BundleTestingHelper.refreshPackages(context, installed);
+			BundleTestingHelper.resolveBundles(context, installed);
 			if (listener != null) {
 				IRegistryChangeEvent event = listener.getEvent(installed.length * 10000);
 				// ensure the contributions were properly added
@@ -124,7 +138,7 @@ public class BundleTestingHelper {
 					} catch (BundleException e) {
 						CoreTest.fail(tag + ".tearDown.1." + locations[i], e);
 					}
-				BundleTestingHelper.refreshPackages(context, installed);
+				BundleTestingHelper.resolveBundles(context, installed);
 				if (listener != null) {
 					IRegistryChangeEvent event = listener.getEvent(installed.length * 10000);
 					// ensure the contributions were properly added

@@ -95,12 +95,12 @@ public class PerformanceSessionTestSuite extends SessionTestSuite {
 		try {
 			fillTestDescriptor(descriptor);
 		} catch (SetupException e) {
-			Throwable cause = e.getCause() == null ? e : e.getCause(); 
+			Throwable cause = e.getCause() == null ? e : e.getCause();
 			result.addError(descriptor.getTest(), cause);
 			return;
 		}
 		descriptor.getSetup().setSystemProperty("eclipse.perf.dbloc", System.getProperty("eclipse.perf.dbloc"));
-		descriptor.getSetup().setSystemProperty("eclipse.perf.config", System.getProperty("eclipse.perf.config"));		
+		descriptor.getSetup().setSystemProperty("eclipse.perf.config", System.getProperty("eclipse.perf.config"));
 		// run test cases n-1 times
 		ConsolidatedTestResult consolidated = new ConsolidatedTestResult(result);
 		for (int i = 0; !consolidated.shouldStop() && i < timesToRun - 1; i++)
@@ -108,7 +108,7 @@ public class PerformanceSessionTestSuite extends SessionTestSuite {
 		if (consolidated.shouldStop())
 			return;
 		// for the n-th run, enable assertions
-		descriptor.getSetup().setSystemProperty("eclipse.perf.assertAgainst", System.getProperty("eclipse.perf.assertAgainst"));		
+		descriptor.getSetup().setSystemProperty("eclipse.perf.assertAgainst", System.getProperty("eclipse.perf.assertAgainst"));
 		descriptor.run(consolidated);
 	}
 }

@@ -19,6 +19,7 @@ public class SessionTestSuite extends TestSuite {
 	public static final String UI_TEST_APPLICATION = "org.eclipse.pde.junit.runtime.uitestapplication"; //$NON-NLS-1$	
 	protected String applicationId = CORE_TEST_APPLICATION;
 	private Set crashTests = new HashSet();
+	// the id for the plug-in whose classloader ought to be used to load the test case class
 	protected String pluginId;
 	private Setup setup;
 	protected SessionTestRunner testRunner;
@@ -69,16 +70,29 @@ public class SessionTestSuite extends TestSuite {
 			setup = newSetup();
 		return setup;
 	}
-	
-	protected Setup newSetup() throws SetupException {
-		return  SetupManager.getInstance().getDefaultSetup();
-	}
-	
 
 	protected SessionTestRunner getTestRunner() {
 		if (testRunner == null)
 			testRunner = new SessionTestRunner();
 		return testRunner;
+	}
+
+	protected Test[] getTests(boolean sort) {
+		Test[] allTests = new Test[testCount()];
+		Enumeration e = tests();
+		for (int i = 0; i < allTests.length; i++)
+			allTests[i] = (Test) e.nextElement();
+		if (sort)
+			Arrays.sort(allTests, new Comparator() {
+				public int compare(Object o1, Object o2) {
+					return ((TestCase) o1).getName().compareTo(((TestCase) o2).getName());
+				}
+			});
+		return allTests;
+	}
+
+	protected Setup newSetup() throws SetupException {
+		return SetupManager.getInstance().getDefaultSetup();
 	}
 
 	protected void runSessionTest(TestDescriptor test, TestResult result) {
@@ -119,6 +133,7 @@ public class SessionTestSuite extends TestSuite {
 	public void setApplicationId(String applicationId) {
 		this.applicationId = applicationId;
 	}
+
 	void setSetup(Setup setup) {
 		this.setup = setup;
 	}

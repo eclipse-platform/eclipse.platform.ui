@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.tests.session;
 
-import java.util.*;
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestResult;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.tests.harness.FileSystemHelper;
 import org.eclipse.core.tests.session.SetupManager.SetupException;
@@ -62,15 +62,7 @@ public class WorkspaceSessionTestSuite extends SessionTestSuite {
 				return;
 			}
 			// we have to sort the tests cases 			
-			Test[] allTests = new Test[testCount()];
-			Enumeration e = tests();
-			for (int i = 0; i < allTests.length; i++)
-				allTests[i] = (Test) e.nextElement();
-			Arrays.sort(allTests, new Comparator() {
-				public int compare(Object o1, Object o2) {
-					return ((TestCase) o1).getName().compareTo(((TestCase) o2).getName());
-				}
-			});
+			Test[] allTests = getTests(true);
 			// now run the tests in order
 			for (int i = 0; i < allTests.length && !result.shouldStop(); i++)
 				runTest(allTests[i], result);

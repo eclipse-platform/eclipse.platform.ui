@@ -11,10 +11,12 @@
 package org.eclipse.core.tests.session;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
+import org.eclipse.core.tests.session.ProcessController.TimeOutException;
 
 /*
  * Implementation note: vmArguments and eclipseArguments are HashMap (and not
@@ -100,12 +102,13 @@ public class Setup implements Cloneable {
 	 */
 	static Setup getDefaultSetup(SetupManager manager) {
 		Setup defaultSetup = new Setup(manager);
+		defaultSetup.setSystemProperty(InternalPlatform.PROP_CONSOLE_LOG, System.getProperty(InternalPlatform.PROP_CONSOLE_LOG, "true"));
 		if (Setup.getDefaultVMLocation() != null)
 			defaultSetup.setEclipseArgument(VM, Setup.getDefaultVMLocation());
 		if (Setup.getDefaultConfiguration() != null)
 			defaultSetup.setEclipseArgument(CONFIGURATION, Setup.getDefaultConfiguration());
 		if (Setup.getDefaultDebugOption() != null)
-			defaultSetup.setEclipseArgument(DEBUG, Setup.getDefaultDebugOption());
+			defaultSetup.setSystemProperty(InternalPlatform.PROP_DEBUG, Setup.getDefaultDebugOption());
 		if (Setup.getDefaultDevOption() != null)
 			defaultSetup.setEclipseArgument(DEV, Setup.getDefaultDevOption());
 		if (Setup.getDefaultInstallLocation() != null)
@@ -350,12 +353,29 @@ public class Setup implements Cloneable {
 		systemProperties.putAll(variation.systemProperties);
 	}
 
+	public int run() throws InterruptedException, IOException, TimeOutException {
+		if (SetupManager.inDebugMode()) {
+			System.out.print("Command line: ");
+			System.out.println(toCommandLineString());
+		}
+		ProcessController process = new ProcessController(getTimeout(), getCommandLine());
+		process.forwardErrorOutput(System.err);
+		process.forwardOutput(System.out);
+		//if necessary to interact with the spawned process, this would have
+		// to be done
+		//process.forwardInput(System.in);
+		return process.execute();
+	}
+
 	void setBaseSetups(String[] baseSetups) {
 		this.baseSetups = baseSetups;
 	}
 
 	public void setEclipseArgument(String key, String value) {
-		eclipseArguments.put(key, value);
+		if (value == null)
+			eclipseArguments.remove(key);
+		else
+			eclipseArguments.put(key, value);
 	}
 
 	public void setEclipseArguments(Map newArguments) {
@@ -385,7 +405,10 @@ public class Setup implements Cloneable {
 	}
 
 	public void setSystemProperty(String key, String value) {
-		systemProperties.put(key, value);
+		if (value == null)
+			systemProperties.remove(key);
+		else
+			systemProperties.put(key, value);
 	}
 
 	public void setTimeout(int timeout) {
@@ -393,7 +416,10 @@ public class Setup implements Cloneable {
 	}
 
 	public void setVMArgument(String key, String value) {
-		vmArguments.put(key, value);
+		if (value == null)
+			vmArguments.remove(key);
+		else
+			vmArguments.put(key, value);
 	}
 
 	public void setVMArguments(Map newArguments) {
