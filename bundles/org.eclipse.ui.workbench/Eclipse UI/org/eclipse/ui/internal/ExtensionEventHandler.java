@@ -64,6 +64,7 @@ import org.eclipse.ui.internal.registry.EditorRegistryReader;
 import org.eclipse.ui.internal.registry.IActionSet;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.IViewRegistry;
+import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 import org.eclipse.ui.internal.registry.PerspectiveRegistryReader;
 import org.eclipse.ui.internal.registry.PreferencePageRegistryReader;
@@ -165,7 +166,7 @@ public class ExtensionEventHandler implements IRegistryChangeListener {
 	private void appear(IExtensionPoint extPt, IExtension ext) {
 		String name = extPt.getSimpleIdentifier();
 		if (name.equalsIgnoreCase(IWorkbenchConstants.PL_NEW)) {
-//			NewWizardsRegistryReader.addExtension(ext);
+			loadNewWizards(ext);
 			return;
 		}
 		if (name.equalsIgnoreCase(IWorkbenchConstants.PL_VIEWS)) {
@@ -265,6 +266,19 @@ public class ExtensionEventHandler implements IRegistryChangeListener {
 		Collection fonts = reader.getValues();
 		FontDefinition [] fontDefs = (FontDefinition []) fonts.toArray(new FontDefinition [fonts.size()]);
 		workbench.initializeFonts(fontDefs);
+	}
+	
+	private void loadNewWizards(IExtension ext) {
+		IConfigurationElement [] elements = ext.getConfigurationElements();
+		for (int i = 0; i < elements.length; i++) {
+			NewWizardsRegistryReader reader = new NewWizardsRegistryReader();
+			reader.readElement(elements[i]);
+		}
+		// We may need to reset this perspective as new wizards are added
+		// to the menu.
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		MessageDialog.openInformation(window.getShell(), ExtensionEventHandlerMessages.getString("ExtensionEventHandler.newPerspectiveExtensionTitle"), //$NON-NLS-1$
+				ExtensionEventHandlerMessages.getString("ExtensionEventHandler.newWizards"));  //$NON-NLS-1$
 	}
 	
 	private void loadPropertyPages(IExtension ext) {
