@@ -17,9 +17,7 @@ import java.util.Map;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.util.BundleUtility;
 
 /**
  * Manages images and image descriptors.
@@ -70,7 +68,7 @@ public class ImageFactory {
 		ImageDescriptor imageDescriptor = (ImageDescriptor) map.get(path);
 
 		if (imageDescriptor == null) {
-			imageDescriptor =ImageDescriptor.createFromURL(BundleUtility.find(IDEWorkbenchPlugin.IDE_WORKBENCH, WorkbenchImages.ICONS_PATH + path));
+			imageDescriptor =IDEWorkbenchPlugin.getIDEImageDescriptor(path);
 			map.put(path, imageDescriptor);
 		}
 

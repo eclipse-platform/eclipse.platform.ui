@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.views;
 
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -26,6 +27,8 @@ public final class ViewsPlugin extends AbstractUIPlugin {
      * Views UI plug-in id (value <code>"org.eclipse.ui.views"</code>).
      */
     public static final String PLUGIN_ID = "org.eclipse.ui.views"; //$NON-NLS-1$
+	
+	private final static String ICONS_PATH = "$nl$/icons/full/";//$NON-NLS-1$
 
     private static ViewsPlugin instance;
 
@@ -47,4 +50,14 @@ public final class ViewsPlugin extends AbstractUIPlugin {
         super();
         instance = this;
     }
+	
+	/**
+	 * Get the workbench image with the given path relative to
+	 * ICON_PATH.
+	 * @param relativePath
+	 * @return ImageDescriptor
+	 */
+	public static ImageDescriptor getViewImageDescriptor(String relativePath){
+		return imageDescriptorFromPlugin(PLUGIN_ID, ICONS_PATH + relativePath);
+	}
 }

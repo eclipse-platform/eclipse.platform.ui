@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.IBundleGroupProvider;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.runtime.Status;
@@ -46,7 +47,6 @@ import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.model.WorkbenchAdapterBuilder;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
-import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.update.core.SiteManager;
 import org.osgi.framework.Bundle;
@@ -550,7 +550,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
      */
     private void declareWorkbenchImage(Bundle ideBundle, String symbolicName,
             String path, boolean shared) {
-		URL url = BundleUtility.find(ideBundle, path);
+		URL url = Platform.find(ideBundle, new Path(path));
         ImageDescriptor desc = ImageDescriptor.createFromURL(url);
         getWorkbenchConfigurer().declareImage(symbolicName, desc, shared);
     }

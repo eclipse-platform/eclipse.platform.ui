@@ -27,10 +27,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.dialogs.WizardStep;
-import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 
 /**
@@ -39,8 +38,7 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
  */
 public class WizardStepGroup {
 	
-	private static final String ICON_PATH = "$nl$/icons/full/elcl16/"; //$NON-NLS-1$
-    private Image doneImage;
+	 private Image doneImage;
 
     private Image currentImage;
 
@@ -113,7 +111,7 @@ public class WizardStepGroup {
      */
     private Image createImage(String iconFileName) {
         ImageDescriptor desc = 
-			ImageDescriptor.createFromURL(BundleUtility.find(PlatformUI.PLUGIN_ID, ICON_PATH + iconFileName));
+			IDEWorkbenchPlugin.getIDEImageDescriptor(iconFileName);
        
         return desc.createImage();
     }
@@ -123,7 +121,7 @@ public class WizardStepGroup {
      */
     private Image getCurrentImage() {
         if (currentImage == null) {
-            currentImage = createImage("step_current.gif"); //$NON-NLS-1$
+            currentImage = createImage("elcl16/step_current.gif"); //$NON-NLS-1$
         }
         return currentImage;
     }
@@ -133,7 +131,7 @@ public class WizardStepGroup {
      */
     private Image getDoneImage() {
         if (doneImage == null) {
-            doneImage = createImage("step_done.gif"); //$NON-NLS-1$
+            doneImage = createImage("elcl16/step_done.gif"); //$NON-NLS-1$
         }
         return doneImage;
     }

@@ -17,7 +17,6 @@ import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -43,7 +42,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.IContextComputer;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
-import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.views.ViewsPlugin;
 import org.eclipse.ui.internal.views.properties.PropertiesMessages;
 import org.eclipse.ui.part.CellEditorActionHandler;
 import org.eclipse.ui.part.Page;
@@ -241,15 +240,6 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
     }
 
     /**
-     * Returns the image descriptor with the given relative path.
-     * @param relativePath The path relative to the workspace root
-     * @return ImageDescriptor the descriptor for the receiver
-     */
-    private ImageDescriptor getImageDescriptor(String relativePath) {
-       return WorkbenchImages.getWorkbenchImageDescriptor(relativePath);
-    }
-
-    /**
      * Handles a selection change in the entry table.
      *
      * @param selection the new selection
@@ -323,9 +313,9 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
         defaultsAction.setText(PropertiesMessages.Defaults_text);
         defaultsAction.setToolTipText(PropertiesMessages.Defaults_toolTip);
         defaultsAction
-                .setImageDescriptor(getImageDescriptor("elcl16/defaults_ps.gif")); //$NON-NLS-1$
+                .setImageDescriptor(ViewsPlugin.getViewImageDescriptor("elcl16/defaults_ps.gif")); //$NON-NLS-1$
         defaultsAction
-                .setDisabledImageDescriptor(getImageDescriptor("dlcl16/defaults_ps.gif")); //$NON-NLS-1$
+                .setDisabledImageDescriptor(ViewsPlugin.getViewImageDescriptor("dlcl16/defaults_ps.gif")); //$NON-NLS-1$
         defaultsAction.setEnabled(false);
 
         // Show Advanced Properties
@@ -333,7 +323,7 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
         filterAction.setText(PropertiesMessages.Filter_text);
         filterAction.setToolTipText(PropertiesMessages.Filter_toolTip);
         filterAction
-                .setImageDescriptor(getImageDescriptor("elcl16/filter_ps.gif")); //$NON-NLS-1$
+                .setImageDescriptor(ViewsPlugin.getViewImageDescriptor("elcl16/filter_ps.gif")); //$NON-NLS-1$
         filterAction.setChecked(false);
 
         // Show Categories
@@ -341,7 +331,7 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
         categoriesAction.setText(PropertiesMessages.Categories_text);
         categoriesAction.setToolTipText(PropertiesMessages.Categories_toolTip);
         categoriesAction
-                .setImageDescriptor(getImageDescriptor("elcl16/tree_mode.gif")); //$NON-NLS-1$
+                .setImageDescriptor(ViewsPlugin.getViewImageDescriptor("elcl16/tree_mode.gif")); //$NON-NLS-1$
         categoriesAction.setChecked(true);
 
         // Copy	
