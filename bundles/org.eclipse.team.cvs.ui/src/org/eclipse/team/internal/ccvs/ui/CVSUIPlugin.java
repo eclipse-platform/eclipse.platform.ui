@@ -220,8 +220,6 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	 */
 	public void shutdown() throws CoreException {
 		super.shutdown();
-		// We must notify all running decorators to shut down.
-		CVSDecorator.shutdownAll();
 		try {
 			repositoryManager.shutdown();
 		} catch (TeamException e) {

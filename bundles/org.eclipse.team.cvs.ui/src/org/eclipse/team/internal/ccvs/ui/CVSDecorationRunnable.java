@@ -13,6 +13,7 @@ import java.util.Map;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -93,7 +94,7 @@ public class CVSDecorationRunnable implements Runnable {
 			// between the time the decoration event was posted to the thread and the time
 			// the thread processes the decoration.
 			ITeamProvider provider = TeamPlugin.getManager().getProvider(resource);
-			if(provider==null || !(provider instanceof CVSTeamProvider)) {
+			if(!resource.exists() || provider==null || !(provider instanceof CVSTeamProvider)) {
 				continue;
 			}
 
@@ -117,9 +118,18 @@ public class CVSDecorationRunnable implements Runnable {
 
 	private CVSDecoration computeTextLabelFor(IResource resource, boolean isDirty, ITeamProvider provider) {
 		Map bindings = new HashMap(3);
-		String format;
+		String format = "";
 		IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
+		
+		IPath resourceLocation = resource.getLocation();
 		int type = resource.getType();
+		
+		// if the resource does not have a location then return. This can happen if the resource
+		// has been deleted after we where asked to decorate it.
+		if(resourceLocation==null) {
+			return new CVSDecoration(format, bindings, null);
+		}
+		
 		if(type==IResource.FOLDER) {
 			format = store.getString(ICVSUIConstants.PREF_FOLDERTEXT_DECORATION);
 		} else if(type==IResource.PROJECT) {
@@ -136,7 +146,7 @@ public class CVSDecorationRunnable implements Runnable {
 			switch (type) {
 				case IResource.FOLDER : 
 				case IResource.PROJECT :
-					ICVSFolder folder = new LocalFolder(resource.getLocation().toFile());
+					ICVSFolder folder = new LocalFolder(resourceLocation.toFile());
 					FolderSyncInfo folderInfo = folder.getFolderSyncInfo();
 					if (folderInfo != null) {
 						CVSTag tag = folderInfo.getTag();
@@ -153,7 +163,7 @@ public class CVSDecorationRunnable implements Runnable {
 					break;
 				case IResource.FILE :
 					format = store.getString(ICVSUIConstants.PREF_FILETEXT_DECORATION);
-					ICVSFile file = new LocalFile(resource.getLocation().toFile());
+					ICVSFile file = new LocalFile(resourceLocation.toFile());
 					ResourceSyncInfo fileInfo = file.getSyncInfo();
 					if (fileInfo != null) {
 						CVSTag tag = fileInfo.getTag();
@@ -209,6 +219,11 @@ public class CVSDecorationRunnable implements Runnable {
 					// a project can't be dirty, continue with its children
 					if (resource.getType() == IResource.PROJECT) {
 						return true;
+					}
+					
+					// if the resource does not exist in the workbench or on the file system, stop searching.
+					if(!resource.exists()) {
+						return false;
 					}
 
 					ICVSResource cvsResource;

@@ -48,8 +48,6 @@ import org.eclipse.team.core.TeamPlugin;
  */
 public class CVSDecorator extends LabelProvider implements ILabelDecorator, IResourceStateChangeListener, IDecorationNotifier {
 
-	public static List decorators = new ArrayList();
-	
 	// Resources that need an icon and text computed for display to the user, no order
 	private Set decoratorNeedsUpdating = Collections.synchronizedSet(new HashSet());
 
@@ -64,13 +62,12 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 	public CVSDecorator() {
 		decoratorUpdateThread = new Thread(new CVSDecorationRunnable(this), "CVS");
 		decoratorUpdateThread.start();
-		decorators.add(this);
 		TeamPlugin.getManager().addResourceStateChangeListener(this);
 	}
 
 	public String decorateText(String text, Object o) {
 		IResource resource = getResource(o);
-		if (resource == null || resource.getType() == IResource.ROOT)
+		if (resource == null || text == null || resource.getType() == IResource.ROOT)
 			return text;
 		if (getCVSProviderFor(resource) == null)
 			return text;
@@ -96,7 +93,7 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 
 	public Image decorateImage(Image image, Object o) {
 		IResource resource = getResource(o);
-		if (resource == null || resource.getType() == IResource.ROOT)
+		if (resource == null || image == null || resource.getType() == IResource.ROOT)
 			return image;
 		if (getCVSProviderFor(resource) == null)
 			return image;
@@ -143,8 +140,11 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 	 * @see IDecorationNotifier#notify(IResource, CVSDecoration)
 	 */
 	public synchronized void decorated(IResource resource, CVSDecoration decoration) {
-		cache.put(resource, decoration);
-		postLabelEvents(new LabelProviderChangedEvent[] { new LabelProviderChangedEvent(this, resource)});
+		// ignore resources that aren't in the workbench anymore.
+		if(resource.exists()) {
+			cache.put(resource, decoration);
+			postLabelEvents(new LabelProviderChangedEvent[] { new LabelProviderChangedEvent(this, resource)});
+		}
 	}
 
 	/*
@@ -271,13 +271,7 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 		}
 	} 
 	
-	public static void shutdownAll() {
-		Iterator it = CVSDecorator.decorators.iterator();
-		while (it.hasNext()) {
-			((CVSDecorator)it.next()).shutdown();
-		}
-	}
-	public void shutdown() {
+	private void shutdown() {
 		shutdown = true;
 		// Wake the thread up if it is asleep.
 		synchronized (this) {
@@ -288,5 +282,18 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 			decoratorUpdateThread.join();
 		} catch (InterruptedException e) {
 		}
+	}
+
+	/*
+	 * @see IBaseLabelProvider#dispose()
+	 */
+	public void dispose() {
+		super.dispose();
+		shutdown();
+		
+		TeamPlugin.getManager().removeResourceStateChangeListener(this);
+		
+		decoratorNeedsUpdating.clear();
+		cache.clear();
 	}
 }
