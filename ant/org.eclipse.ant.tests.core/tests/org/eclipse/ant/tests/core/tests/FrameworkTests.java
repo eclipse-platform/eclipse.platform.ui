@@ -77,9 +77,15 @@ public class FrameworkTests extends AbstractAntTest {
 	
 	/**
 	 * Ensures that tasks like javac work when includeAntRuntime is specified
-	 * bug 20857
+	 * bug 20857.
+	 * This test will just return if the tests are conducted on a JRE (no tools.jar).
 	 */
 	public void testIncludeAntRuntime() throws CoreException {
+		URL toolsURL= AntCorePlugin.getPlugin().getPreferences().getToolsJarURL();
+		if (toolsURL == null) {
+			//running on a JRE where tools.jar could not be found
+			return;
+		}
 		run("javac.xml", new String[]{"build","refresh"}, false); //standard compiler
 		assertSuccessful();
 		IFile classFile= getProject().getFolder("temp.folder").getFolder("javac.bin").getFile("AntTestTask.class");
