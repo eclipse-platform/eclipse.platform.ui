@@ -133,6 +133,9 @@ function onloadHandler() {
 <%}%>
 	document.getElementById("workingSet").focus();
 	enableOK();
+<%-- event handlers that call enableOK() are not invoked properly on Japanese --%>
+	setInterval("enableOK()", 250);
+
 }
 
 function sizeButtons() {
