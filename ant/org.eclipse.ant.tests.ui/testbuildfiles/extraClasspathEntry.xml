@@ -1,0 +1,12 @@
+<project name="ExtraClasspathEntry in separate VM"
+         default="Extension Point Task"
+         basedir="."
+ >
+    <taskdef name="separateVMTask" classname="org.eclipse.ant.tests.ui.support.tasks.AntTestTask">
+    </taskdef>
+    <target name="Extension Point Task"
+            description= "Ensure that an extra classpath entry designated as not requiring the Eclipse runtime shows up in a separate VM build"
+     >
+        <separateVMTask/>
+    </target>
+</project>

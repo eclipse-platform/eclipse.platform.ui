@@ -61,6 +61,7 @@ public class ProjectCreationDecorator extends AbstractAntUITest {
 			createLaunchConfiguration("build");
 			createLaunchConfiguration("bad");
 			createLaunchConfigurationForSeparateVM("echoingSepVM");
+			createLaunchConfigurationForSeparateVM("extraClasspathEntry");
 		} finally {
 			//do not show the Ant build failed error dialog
 			AntUIPlugin.getDefault().getPreferenceStore().setValue(IAntUIPreferenceConstants.ANT_ERROR_DIALOG, false);
@@ -83,7 +84,7 @@ public class ProjectCreationDecorator extends AbstractAntUITest {
 		config.setAttribute(DebugPlugin.ATTR_PROCESS_FACTORY_ID, IAntUIConstants.REMOTE_ANT_PROCESS_FACTORY_ID);
 		 
 		setVM(config);
-		setClasspath(config);
+		//setClasspath(config);
 				
 		config.doSave();
 	}
@@ -126,6 +127,7 @@ public class ProjectCreationDecorator extends AbstractAntUITest {
 			}
 			
 		}
+		prefs.getRemoteExtraClasspathURLs();
 				
 		config.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_CUSTOM_CLASSPATH, urlString.toString());
 	}
