@@ -2362,11 +2362,9 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	}
 	
 	/**
-	 * Returns the currently active tab
-	 * 
-	 * @return launch configuration tab
+	 * @see ILaunchConfigurationDialog#getActiveTab()
 	 */
-	protected ILaunchConfigurationTab getActiveTab() {
+	public ILaunchConfigurationTab getActiveTab() {
 		TabFolder folder = getTabFolder();
 		ILaunchConfigurationTab[] tabs = getTabs();
 		if (folder != null && tabs != null) {

@@ -74,6 +74,14 @@ public interface ILaunchConfigurationDialog extends IRunnableContext {
 	public ILaunchConfigurationTab[] getTabs();
 	
 	/**
+	 * Returns the currently active <code>ILaunchConfigurationTab</code>
+	 * being displayed, or <code>null</code> if there is none.
+	 * 
+	 * @return currently active <code>ILaunchConfigurationTab</code>, or <code>null</code>.
+	 */
+	public ILaunchConfigurationTab getActiveTab();
+	
+	/**
 	 * Returns the mode in which this dialog was opened -
 	 * run or debug.
 	 * 
