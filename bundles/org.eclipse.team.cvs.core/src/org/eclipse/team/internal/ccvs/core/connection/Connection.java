@@ -235,7 +235,6 @@ public class Connection {
 			out.write(b, off, len);
 			if (newline)
 				out.write(NEWLINE);
-			out.flush();
 			
 		} catch (IOException e) {
 			throw new CVSCommunicationException(e);

@@ -150,6 +150,8 @@ public class Session {
 			
 			// tell the server the names of the responses we can handle
 			connection.writeLine("Valid-responses " + makeResponseList()); //$NON-NLS-1$
+			// Flush in order to recieve the valid requests
+			connection.flush();
 	
 			// ask for the set of valid requests
 			IStatus status = Request.VALID_REQUESTS.execute(this, Policy.subMonitorFor(monitor, 40));
