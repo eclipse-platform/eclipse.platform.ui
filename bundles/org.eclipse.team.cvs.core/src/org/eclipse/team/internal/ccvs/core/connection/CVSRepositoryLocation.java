@@ -199,9 +199,13 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 * The port is included if it is not the default port.
 	 */
 	public String getLocation() {
+		return getLocation(false);
+	}
+	
+	public String getLocation(boolean forDisplay) {
 		return COLON + method.getName() + COLON + 
 			(userFixed?(user +
-				(passwordFixed?(COLON + password):"")//$NON-NLS-1$ 
+				((passwordFixed && !forDisplay)?(COLON + password):"")//$NON-NLS-1$ 
 					+ HOST_SEPARATOR):"") +//$NON-NLS-1$ 
 			host + COLON +
 			((port == USE_DEFAULT_PORT)?"":(new Integer(port).toString())) + //$NON-NLS-1$ 
@@ -383,7 +387,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 * Implementation of inherited toString()
 	 */
 	public String toString() {
-		return getLocation();
+		return getLocation(true);
 	}
 	
 	public boolean equals(Object o) {

@@ -168,18 +168,18 @@ public class CVSTestSetup extends TestSetup {
 	}
 
 	protected CVSRepositoryLocation setupRepository(String location) throws CVSException {
-
-		// Give some info about which repository the tests are running with
-		System.out.println("Connecting to: " + location);
 		
 		// Validate that we can connect, also creates and caches the repository location. This
 		// is important for the UI tests.
 		CVSRepositoryLocation repository = (CVSRepositoryLocation)CVSProviderPlugin.getPlugin().getRepository(location);
-		//CVSRepositoryLocation repository = CVSRepositoryLocation.fromString(location);
+
+		// Give some info about which repository the tests are running with
+		System.out.println("Connecting to: " + repository.toString());
+		
 		try {
 			repository.validateConnection(new NullProgressMonitor());
 		} catch (CVSException e) {
-			System.out.println("Unable to connect to remote repository: " + repository.getLocation());
+			System.out.println("Unable to connect to remote repository: " + repository.toString());
 			throw e;
 		}
 		
