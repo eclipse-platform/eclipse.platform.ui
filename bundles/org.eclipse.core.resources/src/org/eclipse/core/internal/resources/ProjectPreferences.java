@@ -13,8 +13,6 @@ package org.eclipse.core.internal.resources;
 import java.util.HashSet;
 import java.util.Set;
 import org.eclipse.core.internal.preferences.EclipsePreferences;
-import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -155,30 +153,6 @@ public class ProjectPreferences extends EclipsePreferences {
 		// cache the qualifier
 		if (segmentCount > 2)
 			qualifier = path.segment(2);
-	}
-
-	/*
-	 * @see org.osgi.service.prefs.Preferences#sync()
-	 */
-	public void sync() throws BackingStoreException {
-		// TODO install a resource change listener on the preference file to
-		// automatically get changes into the running instance.
-		IPath location = getLocation();
-		if (location == null) {
-			if (InternalPlatform.DEBUG_PREFERENCES)
-				Policy.debug("Unable to determine location of preference file for node: " + absolutePath()); //$NON-NLS-1$
-			return;
-		}
-		IEclipsePreferences node = getLoadLevel();
-		if (node == null) {
-			if (InternalPlatform.DEBUG_PREFERENCES)
-				Policy.debug("Preference node is not a load root: " + absolutePath()); //$NON-NLS-1$
-			return;
-		}
-		if (node instanceof EclipsePreferences) {
-			((EclipsePreferences) node).load(location);
-			node.flush();
-		}
 	}
 
 	protected boolean isAlreadyLoaded(IEclipsePreferences node) {
