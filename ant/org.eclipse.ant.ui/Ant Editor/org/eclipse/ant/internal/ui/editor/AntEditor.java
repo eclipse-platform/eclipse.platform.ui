@@ -613,34 +613,52 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 			if (node != null) {
 				setSelection(node, true);
 				return;
-			} 
+			}
+			
+			node= getAntModel().getTargetNode(text);
+			if (node != null) {
+				if (node.isExternal()) {
+					String path= node.getFilePath();
+					errorMessage= openInEditor(path);
+					if (errorMessage == null) {
+						return;
+					}
+				} else {
+					setSelection(node, true);
+				}
+				return;
+			}
+			
 			String path= getAntModel().getEntityPath(text);
 			if (path != null) {
-				IFile file= AntUtil.getFileForLocation(path, null);
-				if (file.exists()) {
-					try {
-						openInEditor(file, isActivePart());
-						return;
-					} catch (PartInitException e) {
-						errorMessage= e.getLocalizedMessage();
-					}
+				errorMessage= openInEditor(path);
+				if (errorMessage == null) {
+					return;
 				}
 			}
 		}
-		if (errorMessage == null) {
+		
+		if (errorMessage == null || errorMessage.length() == 0) {
 			errorMessage= AntEditorMessages.getString("AntEditor.3"); //$NON-NLS-1$
 		}
 		setStatusLineErrorMessage(errorMessage);
 		getSite().getShell().getDisplay().beep();
 	}
 	
-	private void openInEditor(IFile file, boolean activate) throws PartInitException {
-		if (file != null) {
-			IWorkbenchPage p= getEditorSite().getPage();
-			if (p != null) {
-				IDE.openEditor(p, file, activate);
+	private String openInEditor(String path) {
+		IFile file= AntUtil.getFileForLocation(path, null);
+		if (file != null && file.exists()) {
+			try {
+				IWorkbenchPage p= getEditorSite().getPage();
+				if (p != null) {
+					IDE.openEditor(p, file, isActivePart());
+				}
+				return null;
+			} catch (PartInitException e) {
+				return e.getLocalizedMessage();
 			}
 		}
+		return ""; //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)

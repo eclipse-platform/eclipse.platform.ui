@@ -1143,18 +1143,32 @@ public class AntModel {
 	public void setClassLoader(ClassLoader loader) {
 		fgClassLoader= loader;
 	}
-
 	
-	public String getTargetDescription(String targetRename) {
+	public String getTargetDescription(String targetName) {
+		AntTargetNode target= getTargetNode(targetName);
+		if (target != null) {
+			return target.getTarget().getDescription();
+		}
+		return null;
+	}
+	
+	public AntTargetNode getTargetNode(String targetName ) {
 		AntProjectNode projectNode= getProjectNode();
 		if (projectNode == null) {
 			return null;
 		}
-		Project project= projectNode.getProject();
-		Map targets= project.getTargets();
-		Target target= (Target)targets.get(targetRename);
-		if (target != null) {
-			return target.getDescription();
+		if (projectNode.hasChildren()) {
+			List possibleTargets= projectNode.getChildNodes();
+			Iterator iter= possibleTargets.iterator();
+			while (iter.hasNext()) {
+				AntElementNode node = (AntElementNode) iter.next();
+				if (node instanceof AntTargetNode) {
+					AntTargetNode targetNode = (AntTargetNode) node;
+					if (targetName.equalsIgnoreCase(targetNode.getTarget().getName())) {
+						return targetNode;
+					}
+				}
+			}
 		}
 		return null;
 	}
