@@ -319,11 +319,20 @@ public void testIsUNC() {
 	assertTrue("3.0", !new Path("c:/a/b").isUNC());
 	assertTrue("3.1", !new Path("c:a/b").isUNC());
 	assertTrue("3.2", !new Path("/F/../").isUNC());
+
+	assertTrue("4.0", !new Path("c://a/").isUNC());
+	assertTrue("4.1", !new Path("c:\\/a/b").isUNC());
+	assertTrue("4.2", !new Path("c:\\\\").isUNC());
 		
 	// positive
-	assertTrue("4.0", new Path("//").isUNC());
-	assertTrue("4.1", new Path("//a").isUNC());
-	assertTrue("4.2", new Path("//a/b").isUNC());
+	assertTrue("5.0", new Path("//").isUNC());
+	assertTrue("5.1", new Path("//a").isUNC());
+	assertTrue("5.2", new Path("//a/b").isUNC());
+	
+	assertTrue("6.0", new Path("c://a/").setDevice(null).isUNC());
+	assertTrue("6.1", new Path("c:\\/a/b").setDevice(null).isUNC());
+	assertTrue("6.2", new Path("c:\\\\").setDevice(null).isUNC());
+
 }
 public void testLastSegment() {
 
@@ -441,6 +450,16 @@ public void testMakeUNC() {
 		result = path.makeUNC(false);
 		assertTrue("1.3." + path, !result.isUNC());
 		assertEquals("1.4." + path, (String) expectedNon.get(i), result.toString());
+	}
+}
+/**
+ * This test is for bizarre cases that previously caused errors.
+ */
+public void testRegression() {
+	try {
+		new Path("C:\\/eclipse");
+	} catch (Exception e) {
+		fail("1.0", e);
 	}
 }
 public void testRemoveFirstSegments() {
