@@ -23,7 +23,7 @@ public class TagListener implements ICommandOutputListener {
 		// Received a warning in the form:
 		// W folder/file : v1 already exists on version 1.2 : NOT MOVING tag to version 1.3
 		if( line.charAt(0) == 'W' ) {
-			return new CVSStatus(CVSStatus.WARNING, CVSStatus.TAG_ALREADY_EXISTS, line.substring(2));
+			return new CVSStatus(CVSStatus.WARNING, CVSStatus.TAG_ALREADY_EXISTS, commandRoot, line.substring(2));
 		}
 			
 		return OK;
@@ -44,7 +44,7 @@ public class TagListener implements ICommandOutputListener {
 			return OK;
 		}
 			
-		return new CVSStatus(CVSStatus.ERROR, CVSStatus.ERROR_LINE, line);
+		return new CVSStatus(CVSStatus.ERROR, CVSStatus.ERROR_LINE, commandRoot, line);
 	}
 
 }

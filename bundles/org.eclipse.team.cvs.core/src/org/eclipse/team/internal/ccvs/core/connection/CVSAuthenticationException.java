@@ -17,11 +17,9 @@ public class CVSAuthenticationException extends CVSException {
 	 * @param detail  a message that describes the exception in detail.
 	 */
 	public CVSAuthenticationException(String detail) {
-		super(
-			Policy.bind("CVSAuthenticationException.detail", new Object[] { detail }), //$NON-NLS-1$ 
-			null,
-			null);
+		super(Policy.bind("CVSAuthenticationException.detail", new Object[] { detail })); //$NON-NLS-1$ 
 	}
+	
 	/**
 	 * Creates a new <code>CVSAuthenticationException</code>
 	 * 
@@ -38,18 +36,5 @@ public class CVSAuthenticationException extends CVSException {
 	 */
 	public CVSAuthenticationException(IStatus status) {
 		super(status);
-	}
-	/**
-	 * Creates a new <code>CVSAuthenticationException</code>
-	 * 
-	 * @param cvsroot the cvs server.
-	 * @param throwable the exception that has caused the authentication
-	 *  failure.
-	 */
-	public CVSAuthenticationException(String cvsroot, Throwable throwable) {
-		super(
-			Policy.bind("CVSAuthenticationException.normal", new Object[] { cvsroot }),//$NON-NLS-1$ 
-			null,
-			null);
 	}
 }

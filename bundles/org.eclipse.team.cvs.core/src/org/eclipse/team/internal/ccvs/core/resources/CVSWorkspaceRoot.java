@@ -82,7 +82,7 @@ public class CVSWorkspaceRoot {
 		ICVSFolder parent = managed.getParent();
 		FolderSyncInfo syncInfo = parent.getFolderSyncInfo();
 		if (syncInfo == null) {
-			throw new CVSException(new CVSStatus(CVSStatus.ERROR, resource.getFullPath(), Policy.bind("CVSTeamProvider.unmanagedParent", resource.getFullPath().toString()), null)); //$NON-NLS-1$
+			throw new CVSException(new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSTeamProvider.unmanagedParent", resource.getFullPath().toString()), null)); //$NON-NLS-1$
 		}
 		ICVSRepositoryLocation location = CVSProvider.getInstance().getRepository(parent.getFolderSyncInfo().getRoot());
 		// XXX We build and fetch the whole tree from the parent. We could restrict the search to just the desired child
@@ -96,7 +96,7 @@ public class CVSWorkspaceRoot {
 			}
 			// The types need to match or we're in trouble
 			if (remote != null && !(remote.isContainer() == managed.isFolder()))
-				throw new CVSException(new CVSStatus(CVSStatus.ERROR, resource.getFullPath(), Policy.bind("CVSTeamProvider.typesDiffer", resource.getFullPath().toString()), null)); //$NON-NLS-1$
+				throw new CVSException(new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSTeamProvider.typesDiffer", resource.getFullPath().toString()), null)); //$NON-NLS-1$
 		}
 		return remote;
 	}
@@ -115,7 +115,7 @@ public class CVSWorkspaceRoot {
 				// If there's no base for the file, get the repository location from the parent
 				ICVSRemoteResource parent = CVSWorkspaceRoot.getRemoteResourceFor(resource.getParent());
 				if (parent == null) {
-					throw new CVSException(new CVSStatus(CVSStatus.ERROR, resource.getFullPath(), Policy.bind("CVSTeamProvider.unmanagedParent", resource.getFullPath().toString()), null)); //$NON-NLS-1$
+					throw new CVSException(new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSTeamProvider.unmanagedParent", resource.getFullPath().toString()), null)); //$NON-NLS-1$
 				}
 				location = parent.getRepository();
 			} else {

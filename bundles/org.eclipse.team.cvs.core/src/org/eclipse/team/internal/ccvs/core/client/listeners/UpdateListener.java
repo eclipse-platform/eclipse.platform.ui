@@ -142,7 +142,7 @@ public class UpdateListener implements ICommandOutputListener {
 						updateMessageListener.fileDoesNotExist(commandRoot, filename);
 					}
 				}
-				return new CVSStatus(CVSStatus.WARNING, CVSStatus.CONFLICT, line);
+				return new CVSStatus(CVSStatus.WARNING, CVSStatus.CONFLICT, commandRoot, line);
 			} else if (message.startsWith("warning:")) { //$NON-NLS-1$
 				/*
 				 * We can get the following conflict warnings
@@ -155,13 +155,13 @@ public class UpdateListener implements ICommandOutputListener {
 						updateMessageListener.fileDoesNotExist(commandRoot, filename);
 					}
 				}
-				return new CVSStatus(CVSStatus.WARNING, CVSStatus.CONFLICT, line);
+				return new CVSStatus(CVSStatus.WARNING, CVSStatus.CONFLICT, commandRoot, line);
 			} else if (message.startsWith("conflicts")) { //$NON-NLS-1$
 				// This line is info only. The server doesn't report an error.
-				return new CVSStatus(IStatus.INFO, CVSStatus.CONFLICT, line);
+				return new CVSStatus(IStatus.INFO, CVSStatus.CONFLICT, commandRoot, line);
 			} else if (!message.startsWith("cannot open directory") //$NON-NLS-1$
 					&& !message.startsWith("nothing known about")) { //$NON-NLS-1$
-				return new CVSStatus(CVSStatus.ERROR, CVSStatus.ERROR_LINE, line);
+				return new CVSStatus(CVSStatus.ERROR, CVSStatus.ERROR_LINE, commandRoot, line);
 			}
 		} else if (line.startsWith(SERVER_ABORTED_PREFIX)) {
 			// Strip the prefix from the line
@@ -169,11 +169,11 @@ public class UpdateListener implements ICommandOutputListener {
 			if (message.startsWith("no such tag")) { //$NON-NLS-1$
 				// This is reported from CVS when a tag is used on the update there are no files in the directory
 				// To get the folders, the update request should be re-issued for HEAD
-				return new CVSStatus(CVSStatus.WARNING, CVSStatus.NO_SUCH_TAG, line);
+				return new CVSStatus(CVSStatus.WARNING, CVSStatus.NO_SUCH_TAG, commandRoot, line);
 			} else {
-				return new CVSStatus(CVSStatus.ERROR, CVSStatus.ERROR_LINE, line);
+				return new CVSStatus(CVSStatus.ERROR, CVSStatus.ERROR_LINE, commandRoot, line);
 			}
 		}
-		return new CVSStatus(CVSStatus.ERROR, CVSStatus.ERROR_LINE, line);
+		return new CVSStatus(CVSStatus.ERROR, CVSStatus.ERROR_LINE, commandRoot, line);
 	}
 }

@@ -30,8 +30,8 @@ public class CVSStatus extends Status {
 	public static final int SERVER_IS_UNKNOWN = -22;
 	
 	// Path for resource related status
-	private IPath path;
-	
+	private ICVSFolder commandRoot;
+
 	public CVSStatus(int severity, int code, String message, Throwable t) {
 		super(severity, CVSProviderPlugin.ID, code, message, t);
 	}
@@ -40,16 +40,27 @@ public class CVSStatus extends Status {
 		this(severity, code, message, null);
 	}
 	
-	public CVSStatus(int severity, IPath path, String message, Throwable t) {
+	public CVSStatus(int severity, int code, ICVSFolder commandRoot, String message) {
+		this(severity, code, message, null);
+		this.commandRoot = commandRoot;
+	}
+	
+	public CVSStatus(int severity, String message, Throwable t) {
 		this(severity, message);
-		this.path = path;
 	}
 	
 	public CVSStatus(int severity, String message) {
 		this(severity, severity, message, null);
 	}
-	
-	public IPath getPath() {
-		return path;
+	/**
+	 * @see IStatus#getMessage()
+	 */
+	public String getMessage() {
+		String message = super.getMessage();
+		if (commandRoot != null) {
+			message = Policy.bind("CVSStatus.messageWithRoot", commandRoot.getName(), message);
+		}
+		return message;
 	}
+
 }

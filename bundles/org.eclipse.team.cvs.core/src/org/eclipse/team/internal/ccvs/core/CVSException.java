@@ -44,10 +44,6 @@ public class CVSException extends TeamException {
 		this(IStatus.ERROR, UNABLE, message, e);
 	}
 
-	public CVSException(String message, IPath path, Throwable throwable) {
-		this(new CVSStatus(IStatus.ERROR, path, message, throwable));
-	}
-
 	public CVSException(IStatus status) {
 		super(status);
 	}

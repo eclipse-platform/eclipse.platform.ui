@@ -62,7 +62,7 @@ public class StatusListener implements ICommandOutputListener {
 		if (line.startsWith("cvs server: conflict:")) {//$NON-NLS-1$
 			// We get this because we made up an entry line to send to the server
 			// Therefore, we make this a warning!!!
-			return new CVSStatus(CVSStatus.WARNING, CVSStatus.CONFLICT, line);
+			return new CVSStatus(CVSStatus.WARNING, CVSStatus.CONFLICT, commandRoot, line);
 		}
 		if (line.startsWith("cvs server: Examining")) {//$NON-NLS-1$
 			isFolder = true;
@@ -78,6 +78,6 @@ public class StatusListener implements ICommandOutputListener {
 			isFolder = false;
 			return OK;
 		}
-		return new CVSStatus(CVSStatus.ERROR, CVSStatus.ERROR_LINE, line);
+		return new CVSStatus(CVSStatus.ERROR, CVSStatus.ERROR_LINE, commandRoot, line);
 	}
 }

@@ -15,7 +15,7 @@ public class CVSCommunicationException extends CVSException {
 	 * given message.
 	 */
 	public CVSCommunicationException(String message) {
-		super(message, null, null);
+		super(message);
 	}
 	/**
 	 * Create a new <code>CVSCommunicationException.
@@ -24,8 +24,8 @@ public class CVSCommunicationException extends CVSException {
 	 * @param the caught exception that has caused the communication
 	 *  exception.
 	 */
-	public CVSCommunicationException(String message, Throwable throwable) {
-		super(message, null, throwable);
+	public CVSCommunicationException(String message, Exception e) {
+		super(message, e);
 	}
 	/**
 	 * Create a new <code>CVSCommunicationException.
@@ -33,8 +33,8 @@ public class CVSCommunicationException extends CVSException {
 	 * @param the caught exception that has caused the communication
 	 *  exception.
 	 */
-	public CVSCommunicationException(Throwable throwable) {
-		this(getMessageFor(throwable), throwable);
+	public CVSCommunicationException(Exception e) {
+		this(getMessageFor(e), e);
 	}
 	
 	public static String getMessageFor(Throwable throwable) {
