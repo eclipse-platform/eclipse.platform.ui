@@ -35,8 +35,6 @@ public class UrlUtil {
 	// Locales that infocenter can serve in addition to the default locale.
 	// null indicates that infocenter can serve every possible client locale.
 	private static Collection locales;
-	// Indicates whether Right to Left direction is set
-	private static boolean rtl = false;
 
 	/**
 	 * Encodes string for embedding in JavaScript source
@@ -380,7 +378,6 @@ public class UrlUtil {
 			return;
 		}
 		initializeLocales();
-		initializeRTL();
 	}
 	/**
 	 *  
@@ -442,24 +439,14 @@ public class UrlUtil {
 			}
 		}
 	}
-	private static void initializeRTL() {
-		String[] args = Platform.getCommandLineArgs();
-		for (int i = 0; i < args.length; i++) {
-			if ("-dir".equalsIgnoreCase(args[i]) //$NON-NLS-1$
-					&& ((i + 1) < args.length)
-					&& "rtl".equalsIgnoreCase(args[i + 1])) { //$NON-NLS-1$
-				rtl = true;
-				break;
-			}
-		}
-	}
 	public static boolean isRTL(HttpServletRequest request,
 			HttpServletResponse response) {
-		if (defaultLocale == null) {
-			initializeNL();
+		if (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_INFOCENTER) {
+			// TODO a better job determining RTL for infocenter
+			// String locale = getLocale(request, response);
+			// ...
+			// return ...
 		}
-		// TODO the RTL variable is set from command line, all clients get the
-		// same
-		return rtl;
+		return BaseHelpSystem.isRTL();
 	}
 }

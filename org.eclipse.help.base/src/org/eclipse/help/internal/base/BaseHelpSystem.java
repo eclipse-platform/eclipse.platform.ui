@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.help.internal.base;
 
+import java.util.*;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.browser.*;
 import org.eclipse.help.internal.appserver.*;
@@ -58,12 +60,15 @@ public final class BaseHelpSystem {
 	private HelpDisplay helpDisplay = null;
 
 	private boolean webappRunning = false;
+	
+	private boolean rtl = false;
 
 	/**
 	 * Constructor.
 	 */
 	private BaseHelpSystem() {
 		super();
+		rtl = initializeRTL();
 	}
 
 	public static BaseHelpSystem getInstance() {
@@ -297,6 +302,40 @@ public final class BaseHelpSystem {
 		}
 		String name = product.getName();
 		return name == null ? "" : name; //$NON-NLS-1$
+	}
+	private static boolean initializeRTL() {
+		// from property
+		String orientation = System.getProperty("eclipse.orientation");
+		if ("rtl".equals(orientation)) {
+			return true;
+		} else if ("ltr".equals(orientation)) {
+			return false;
+		}
+		// from comand line
+		String[] args = Platform.getCommandLineArgs();
+		for (int i = 0; i < args.length; i++) {
+			if ("-dir".equalsIgnoreCase(args[i]) //$NON-NLS-1$
+					&& ((i + 1) < args.length)
+					&& "rtl".equalsIgnoreCase(args[i + 1])) { //$NON-NLS-1$
+				return true;
+			}
+		}
+		// guess from default locale
+		String locale = Platform.getNL();
+		if (locale == null) {
+			locale = Locale.getDefault().toString();
+		}
+		if (locale.startsWith("ar") || locale.startsWith("fa")
+				|| locale.startsWith("he") || locale.startsWith("iw")) {
+			return true;
+		} else {
+			return false;
+		}
+
+	}
+
+	public static boolean isRTL() {
+		return getInstance().rtl;
 	}
 
 }

@@ -43,7 +43,12 @@ public class EmbeddedBrowser {
 	 */
 	public EmbeddedBrowser() {
 		store = HelpUIPlugin.getDefault().getPluginPreferences();
-		shell = new Shell();
+		int style = SWT.SHELL_TRIM;
+		if (BaseHelpSystem.isRTL())
+			style |= SWT.RIGHT_TO_LEFT;
+		else
+			style |= SWT.LEFT_TO_RIGHT;
+		shell = new Shell(style);
 		initializeShell(shell);
 		shell.addControlListener(new ControlListener() {
 			public void controlMoved(ControlEvent e) {
@@ -132,9 +137,14 @@ public class EmbeddedBrowser {
 	 *            Shell or null
 	 */
 	public EmbeddedBrowser(WindowEvent event, Shell parent) {
-		if (parent == null)
-			shell = new Shell();
-		else
+		if (parent == null){
+			int style = SWT.SHELL_TRIM;
+			if (BaseHelpSystem.isRTL())
+				style |= SWT.RIGHT_TO_LEFT;
+			else
+				style |= SWT.LEFT_TO_RIGHT;
+			shell = new Shell(style);
+		} else
 			shell = new Shell(parent, SWT.PRIMARY_MODAL | SWT.DIALOG_TRIM);
 		initializeShell(shell);
 		Browser browser = new Browser(shell, SWT.NONE);
