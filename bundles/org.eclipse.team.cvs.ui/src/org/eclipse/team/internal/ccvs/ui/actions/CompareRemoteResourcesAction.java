@@ -47,7 +47,7 @@ public class CompareRemoteResourcesAction extends CVSAction {
 	}
 
 	protected boolean isSameFolder(ICVSRemoteResource[] editions) {
-		return editions[0].getRepository().equals(editions[1].getRepository())
+		return editions[0].isContainer() && editions[0].getRepository().equals(editions[1].getRepository())
 				&& editions[0].getRepositoryRelativePath().equals(editions[1].getRepositoryRelativePath());
 	}
 	
