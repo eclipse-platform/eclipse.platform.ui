@@ -13,13 +13,11 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.dialogs.*;
 import org.eclipse.update.internal.search.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.search.*;
-import org.eclipse.update.internal.ui.UpdateUI;
 
 public class SitePage extends BannerPage implements ISearchProvider {
 
@@ -30,10 +28,16 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		public Object[] getElements(Object parent) {
 			UpdateModel model = UpdateUI.getDefault().getUpdateModel();
 			Object[] bookmarks = model.getBookmarkLeafs();
-			Object[] sitesToVisit = discoveryFolder.getChildren(discoveryFolder);
+			Object[] sitesToVisit =
+				discoveryFolder.getChildren(discoveryFolder);
 			Object[] all = new Object[bookmarks.length + sitesToVisit.length];
 			System.arraycopy(bookmarks, 0, all, 0, bookmarks.length);
-			System.arraycopy(sitesToVisit, 0, all, bookmarks.length, sitesToVisit.length);
+			System.arraycopy(
+				sitesToVisit,
+				0,
+				all,
+				bookmarks.length,
+				sitesToVisit.length);
 			return all;
 		}
 
@@ -41,7 +45,9 @@ public class SitePage extends BannerPage implements ISearchProvider {
 			if (parent instanceof SiteBookmark) {
 				final SiteBookmark bookmark = (SiteBookmark) parent;
 				final Object[] children =
-					getSiteCatalogWithIndicator(bookmark, !bookmark.isSiteConnected());
+					getSiteCatalogWithIndicator(
+						bookmark,
+						!bookmark.isSiteConnected());
 				treeViewer.getControl().getDisplay().asyncExec(new Runnable() {
 					public void run() {
 						if (children.length > 0)
@@ -54,15 +60,14 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		}
 
 		public Object getParent(Object element) {
-			if (element instanceof SiteCategory) 
-				return ((SiteCategory)element).getBookmark();
+			if (element instanceof SiteCategory)
+				return ((SiteCategory) element).getBookmark();
 			return null;
 		}
 
 		public boolean hasChildren(Object element) {
 			return (element instanceof SiteBookmark);
 		}
-		
 
 	}
 
@@ -102,19 +107,12 @@ public class SitePage extends BannerPage implements ISearchProvider {
 			checkItems();
 		}
 	}
-	
-	class LocalSiteContentProvider extends MyComputerContentProvider {
-		public Object[] getChildren(Object parent) {
-			if (parent instanceof MyComputerDirectory) {
-				return ((MyComputerDirectory) parent).getChildren(parent, false, true);
-			}
-			return super.getChildren(parent);
-		}
-	}
+
 	private static DiscoveryFolder discoveryFolder = new DiscoveryFolder();
 	private CheckboxTreeViewer treeViewer;
 	private Button addSiteButton;
 	private Button addLocalButton;
+	private Button addLocalZippedButton;
 	private Button editButton;
 	private Button removeButton;
 	private Button envFilterCheck;
@@ -124,14 +122,16 @@ public class SitePage extends BannerPage implements ISearchProvider {
 	private ModelListener modelListener;
 
 	/**
-	 * @param name
-	 */
+	 * @param name */
 	public SitePage(SearchRunner searchRunner) {
 		super("SitePage"); //$NON-NLS-1$
 		setTitle(UpdateUI.getString("SitePage.title")); //$NON-NLS-1$
 		setDescription(UpdateUI.getString("SitePage.desc")); //$NON-NLS-1$
 		UpdateUI.getDefault().getLabelProvider().connect(this);
-		searchRequest = new UpdateSearchRequest(new SiteSearchCategory(), new UpdateSearchScope());
+		searchRequest =
+			new UpdateSearchRequest(
+				new SiteSearchCategory(),
+				new UpdateSearchScope());
 		searchRequest.addFilter(new BackLevelFilter());
 		envFilter = new EnvironmentFilter();
 		this.searchRunner = searchRunner;
@@ -139,9 +139,10 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		UpdateUI.getDefault().getUpdateModel().addUpdateModelChangedListener(
 			modelListener);
 	}
-	
+
 	private void toggleEnvFilter(boolean add) {
-		if (add) searchRequest.addFilter(envFilter);
+		if (add)
+			searchRequest.addFilter(envFilter);
 		else
 			searchRequest.removeFilter(envFilter);
 		searchRunner.setNewSearchNeeded(true);
@@ -149,28 +150,32 @@ public class SitePage extends BannerPage implements ISearchProvider {
 
 	public void dispose() {
 		UpdateUI.getDefault().getLabelProvider().disconnect(this);
-		UpdateUI.getDefault().getUpdateModel().removeUpdateModelChangedListener(
+		UpdateUI
+			.getDefault()
+			.getUpdateModel()
+			.removeUpdateModelChangedListener(
 			modelListener);
 		super.dispose();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.update.internal.ui.wizards.BannerPage#createContents(org.eclipse.swt.widgets.Composite)
+	/*
+	 * (non-Javadoc) @see
+	 * org.eclipse.update.internal.ui.wizards.BannerPage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite parent) {
 		Composite client = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		client.setLayout(layout);
-		
+
 		Label label = new Label(client, SWT.NULL);
 		label.setText(UpdateUI.getString("SitePage.label")); //$NON-NLS-1$
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
-		
+
 		createTreeViewer(client);
-		
+
 		Composite buttonContainer = new Composite(client, SWT.NULL);
 		buttonContainer.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 		layout = new GridLayout();
@@ -180,7 +185,8 @@ public class SitePage extends BannerPage implements ISearchProvider {
 
 		addSiteButton = new Button(buttonContainer, SWT.PUSH);
 		addSiteButton.setText(UpdateUI.getString("SitePage.addUpdateSite")); //$NON-NLS-1$
-		addSiteButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+		addSiteButton.setLayoutData(
+			new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 		SWTUtil.setButtonDimensionHint(addSiteButton);
 		addSiteButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -190,14 +196,26 @@ public class SitePage extends BannerPage implements ISearchProvider {
 
 		addLocalButton = new Button(buttonContainer, SWT.PUSH);
 		addLocalButton.setText(UpdateUI.getString("SitePage.addLocalSite")); //$NON-NLS-1$
-		addLocalButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+		addLocalButton.setLayoutData(
+			new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 		SWTUtil.setButtonDimensionHint(addLocalButton);
 		addLocalButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleAddLocal();
 			}
 		});
-		
+
+		addLocalZippedButton = new Button(buttonContainer, SWT.PUSH);
+		addLocalZippedButton.setText(UpdateUI.getString("SitePage.addLocalZippedSite")); //$NON-NLS-1$
+		addLocalZippedButton.setLayoutData(
+			new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+		SWTUtil.setButtonDimensionHint(addLocalZippedButton);
+		addLocalZippedButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleAddLocalZipped();
+			}
+		});
+
 		editButton = new Button(buttonContainer, SWT.PUSH);
 		editButton.setText(UpdateUI.getString("SitePage.edit")); //$NON-NLS-1$
 		editButton.setEnabled(false);
@@ -220,7 +238,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 				handleRemove();
 			}
 		});
-		
+
 		envFilterCheck = new Button(client, SWT.CHECK);
 		envFilterCheck.setText(UpdateUI.getString("SitePage.ignore")); //$NON-NLS-1$
 		envFilterCheck.setSelection(true);
@@ -235,13 +253,15 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		envFilterCheck.setLayoutData(gd);
 
 		Dialog.applyDialogFont(parent);
-		
+
 		return client;
 	}
 
 	private void createTreeViewer(Composite parent) {
 		treeViewer =
-			new CheckboxTreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+			new CheckboxTreeViewer(
+				parent,
+				SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		treeViewer.getTree().setLayoutData(new GridData(GridData.FILL_BOTH));
 		treeViewer.setContentProvider(new TreeContentProvider());
 		treeViewer.setLabelProvider(new TreeLabelProvider());
@@ -255,21 +275,27 @@ public class SitePage extends BannerPage implements ISearchProvider {
 				if (element instanceof SiteBookmark)
 					handleSiteChecked((SiteBookmark) element, e.getChecked());
 				else if (element instanceof SiteCategory) {
-					handleCategoryChecked((SiteCategory) element, e.getChecked());
+					handleCategoryChecked(
+						(SiteCategory) element,
+						e.getChecked());
 				}
 			}
 		});
 
-		treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+		treeViewer
+			.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent e) {
 				handleSelectionChanged((IStructuredSelection) e.getSelection());
 			}
 		});
-		
+
 		treeViewer.addFilter(new ViewerFilter() {
-			public boolean select(Viewer viewer, Object parentElement, Object element) {
+			public boolean select(
+				Viewer viewer,
+				Object parentElement,
+				Object element) {
 				if (element instanceof SiteBookmark)
-					return !((SiteBookmark)element).isWebBookmark();
+					return !((SiteBookmark) element).isWebBookmark();
 				return true;
 			}
 		});
@@ -297,51 +323,34 @@ public class SitePage extends BannerPage implements ISearchProvider {
 	}
 
 	private void handleAddLocal() {
-			
-		ElementTreeSelectionDialog dialog =
-			new ElementTreeSelectionDialog(
-				getShell(),
-				new MyComputerLabelProvider(),
-				new LocalSiteContentProvider());
-		dialog.setInput(new MyComputer());
-		dialog.setAllowMultiple(false);
-		dialog.addFilter(new ViewerFilter() {
-			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				return !(element instanceof MyComputerFile);
-			}
-		});
-		
-		dialog.setValidator(new ISelectionStatusValidator() {
-			public IStatus validate(Object[] selection) {
-				if (selection.length == 1 && selection[0] instanceof SiteBookmark)
-					return new Status(
-						IStatus.OK,
-						UpdateUI.getPluginId(),
-						IStatus.OK,
-						"", //$NON-NLS-1$
-						null);
-				return new Status(
-					IStatus.ERROR,
-					UpdateUI.getPluginId(),
-					IStatus.ERROR,
-					"", //$NON-NLS-1$
-					null);
-			}
-		});
-		dialog.setTitle(UpdateUI.getString("SitePage.dialogTitle")); //$NON-NLS-1$
-		dialog.setMessage(UpdateUI.getString("SitePage.dialogMessage")); //$NON-NLS-1$
-		if (dialog.open() == ElementTreeSelectionDialog.OK) {
+		SiteBookmark siteBookmark = LocalSiteSelector.getLocaLSite(getShell());
+		if (siteBookmark != null) {
 			UpdateModel model = UpdateUI.getDefault().getUpdateModel();
-			model.addBookmark((SiteBookmark) dialog.getFirstResult());
+			model.addBookmark(siteBookmark);
 			model.saveBookmarks();
 			updateSearchRequest();
 		}
+		return;
+	}
+
+	private void handleAddLocalZipped() {
+		SiteBookmark siteBookmark =
+			LocalSiteSelector.getLocaLZippedSite(getShell());
+		if (siteBookmark != null) {
+			UpdateModel model = UpdateUI.getDefault().getUpdateModel();
+			model.addBookmark(siteBookmark);
+			model.saveBookmarks();
+			updateSearchRequest();
+		}
+		return;
 	}
 
 	private void handleRemove() {
-		BusyIndicator.showWhile(treeViewer.getControl().getDisplay(), new Runnable() {
+		BusyIndicator
+			.showWhile(treeViewer.getControl().getDisplay(), new Runnable() {
 			public void run() {
-				UpdateModel updateModel = UpdateUI.getDefault().getUpdateModel();
+				UpdateModel updateModel =
+					UpdateUI.getDefault().getUpdateModel();
 				IStructuredSelection ssel =
 					(IStructuredSelection) treeViewer.getSelection();
 				SiteBookmark bookmark = (SiteBookmark) ssel.getFirstElement();
@@ -356,27 +365,34 @@ public class SitePage extends BannerPage implements ISearchProvider {
 	private void handleEdit() {
 		IStructuredSelection ssel =
 			(IStructuredSelection) treeViewer.getSelection();
-		SiteBookmark bookmark = (SiteBookmark) ssel.getFirstElement();		
+		SiteBookmark bookmark = (SiteBookmark) ssel.getFirstElement();
 		EditSiteDialog dialog = new EditSiteDialog(getShell(), bookmark);
 		dialog.create();
-		String title = bookmark.isLocal() ? UpdateUI.getString("SitePage.dialogEditLocal") : UpdateUI.getString("SitePage.dialogEditUpdateSite"); //$NON-NLS-1$ //$NON-NLS-2$
+		String title = bookmark.isLocal() ? UpdateUI.getString("SitePage.dialogEditLocal") : UpdateUI.getString("SitePage.dialogEditUpdateSite"); //$NON-NLS-1$
+																																				  // //$NON-NLS-2$
 		dialog.getShell().setText(title);
-		dialog.open();		
+		dialog.open();
 	}
-	
+
 	private void handleSiteChecked(SiteBookmark bookmark, boolean checked) {
 		bookmark.setSelected(checked);
 		if (checked) {
 			bookmark.setIgnoredCategories(new String[0]);
 		} else {
-			Object[] cats = ((TreeContentProvider)treeViewer.getContentProvider()).getChildren(bookmark);
+			Object[] cats =
+				(
+					(TreeContentProvider) treeViewer
+						.getContentProvider())
+						.getChildren(
+					bookmark);
 			ArrayList result = new ArrayList();
 			for (int i = 0; i < cats.length; i++) {
 				if (cats[i] instanceof SiteCategory) {
-					result.add(((SiteCategory)cats[i]).getFullName());
+					result.add(((SiteCategory) cats[i]).getFullName());
 				}
 			}
-			bookmark.setIgnoredCategories((String[]) result.toArray(new String[result.size()]));
+			bookmark.setIgnoredCategories(
+				(String[]) result.toArray(new String[result.size()]));
 		}
 		treeViewer.setSubtreeChecked(bookmark, checked);
 		treeViewer.setGrayed(bookmark, false);
@@ -404,15 +420,21 @@ public class SitePage extends BannerPage implements ISearchProvider {
 			for (int i = 0; i < cats.length; i++) {
 				if (cats[i] instanceof SiteCategory) {
 					SiteCategory category = (SiteCategory) cats[i];
-					treeViewer.setChecked(category, !imap.contains(category.getFullName()));
+					treeViewer.setChecked(
+						category,
+						!imap.contains(category.getFullName()));
 				}
 			}
-			treeViewer.setGrayed(bookmark, ignored.length > 0 && ignored.length < cats.length);
+			treeViewer.setGrayed(
+				bookmark,
+				ignored.length > 0 && ignored.length < cats.length);
 		}
 		searchRunner.setNewSearchNeeded(true);
 	}
 
-	private void handleCategoryChecked(SiteCategory category, boolean checked) {
+	private void handleCategoryChecked(
+		SiteCategory category,
+		boolean checked) {
 		SiteBookmark bookmark = category.getBookmark();
 		String[] ignored = bookmark.getIgnoredCategories();
 		ArrayList array = new ArrayList();
@@ -426,11 +448,15 @@ public class SitePage extends BannerPage implements ISearchProvider {
 			array.add(category.getFullName());
 		}
 
-		bookmark.setIgnoredCategories((String[]) array.toArray(new String[array.size()]));
+		bookmark.setIgnoredCategories(
+			(String[]) array.toArray(new String[array.size()]));
 		searchRunner.setNewSearchNeeded(true);
 
 		Object[] children =
-			((TreeContentProvider) treeViewer.getContentProvider()).getChildren(
+			(
+				(TreeContentProvider) treeViewer
+					.getContentProvider())
+					.getChildren(
 				category.getBookmark());
 		treeViewer.setChecked(bookmark, array.size() < children.length);
 		bookmark.setSelected(array.size() < children.length);
@@ -444,7 +470,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		boolean enable = false;
 		Object item = ssel.getFirstElement();
 		if (item instanceof SiteBookmark) {
-			enable = !((SiteBookmark)item).isReadOnly();
+			enable = !((SiteBookmark) item).isReadOnly();
 		}
 		editButton.setEnabled(enable);
 		removeButton.setEnabled(enable);
@@ -455,12 +481,15 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		Object[] checked = treeViewer.getCheckedElements();
 
 		UpdateSearchScope scope = new UpdateSearchScope();
-		int nsites=0;
+		int nsites = 0;
 
 		for (int i = 0; i < checked.length; i++) {
 			if (checked[i] instanceof SiteBookmark) {
-				SiteBookmark bookmark = (SiteBookmark)checked[i];
-				scope.addSearchSite(bookmark.getLabel(), bookmark.getURL(), bookmark.getIgnoredCategories());
+				SiteBookmark bookmark = (SiteBookmark) checked[i];
+				scope.addSearchSite(
+					bookmark.getLabel(),
+					bookmark.getURL(),
+					bookmark.getIgnoredCategories());
 				nsites++;
 			}
 		}
@@ -489,7 +518,8 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		final CatalogBag bag = new CatalogBag();
 
 		IRunnableWithProgress op = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException {
+			public void run(IProgressMonitor monitor)
+				throws InvocationTargetException {
 				try {
 					monitor.beginTask("", 3); //$NON-NLS-1$
 					monitor.worked(1);
@@ -499,7 +529,9 @@ public class SitePage extends BannerPage implements ISearchProvider {
 					else
 						monitor.worked(1);
 					bag.catalog =
-						bookmark.getCatalog(true, new SubProgressMonitor(monitor, 1));
+						bookmark.getCatalog(
+							true,
+							new SubProgressMonitor(monitor, 1));
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
 				} finally {
