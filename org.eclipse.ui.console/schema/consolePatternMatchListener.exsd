@@ -74,6 +74,13 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="matchContext" type="string">
+            <annotation>
+               <documentation>
+                  Allows extension to decide whether a pattern should be matched against the entire document of each line of the document individually. Acceptable values are &quot;line&quot; and &quot;document&quot;. If not explicitly specified, &quot;line&quot; matching is assumed.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

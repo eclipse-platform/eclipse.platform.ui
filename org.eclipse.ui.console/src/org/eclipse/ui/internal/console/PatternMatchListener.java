@@ -39,7 +39,14 @@ public class PatternMatchListener implements IPatternMatchListener {
     public int getCompilerFlags() {
         return fExtension.getCompilerFlags();
     }
-
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.console.IPatternMatchListener#getMatchContext()
+     */
+    public String getMatchContext() {
+        return fExtension.getMatchContext();
+    }
+    
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IPatternMatchListener#matchFound(org.eclipse.ui.console.PatternMatchEvent)
      */

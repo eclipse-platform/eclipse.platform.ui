@@ -18,6 +18,10 @@ import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
@@ -450,26 +454,67 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
         synchronized(patterns) {
             for (Iterator iter = patterns.iterator(); iter.hasNext();) {
                 CompiledPatternMatchListener pattern = (CompiledPatternMatchListener) iter.next();
-                int start = Math.min(pattern.end, event.fOffset);
                 try {
-                    testForMatch(pattern, start);
+                    testForMatch(pattern, event.fOffset);
                 } catch (BadLocationException e) {
                 }
             }
         }
     }
     
-    private void testForMatch(CompiledPatternMatchListener compiled, int documentOffset) throws BadLocationException {
-        IDocument document = getDocument();
-        String contents = document.get(documentOffset, document.getLength()-documentOffset);
-        Matcher matcher = compiled.pattern.matcher(contents);
-        IPatternMatchListener notifier = compiled.listener;
-        while(matcher.find()) {
-            String group = matcher.group();
-            int matchOffset = documentOffset + matcher.start();
-            notifier.matchFound(new PatternMatchEvent(this, matchOffset, group.length()));
-            compiled.end = matcher.end() + documentOffset;
+    private void testForMatch(CompiledPatternMatchListener compiled, int eventOffset) throws BadLocationException {
+        String matchContext = compiled.listener.getMatchContext();
+        if (IPatternMatchListener.LINE_MATCH.equals(matchContext)) {
+            matchByLine(compiled, eventOffset);
+        } else {
+            matchByDocument(compiled, eventOffset);
         }
+    }
+    private void matchByLine(final CompiledPatternMatchListener compiled, final int eventOffset) throws BadLocationException {
+        IDocument document = getDocument();
+        final IPatternMatchListener notifier = compiled.listener;
+        int curLine = document.getLineOfOffset(eventOffset);
+        int numLines = document.getNumberOfLines();
+        for(; curLine<numLines; curLine++) {
+            final int start = document.getLineOffset(curLine);
+            final String line = document.get(start, document.getLineLength(curLine));
+            Job job = new Job("Pattern Match Job") { //$NON-NLS-1$
+                protected IStatus run(IProgressMonitor monitor) {
+                    Matcher matcher = compiled.pattern.matcher(line);
+                    while(matcher.find()) {
+                        String group = matcher.group();
+                        int matchOffset = start + matcher.start();
+                        notifier.matchFound(new PatternMatchEvent(IOConsole.this, matchOffset, group.length()));
+                    }
+                    return Status.OK_STATUS;
+                }
+                
+            };
+            job.setSystem(true);
+            job.schedule();
+            
+        }
+    }
+    
+    private void matchByDocument(final CompiledPatternMatchListener compiled, final int eventOffset) throws BadLocationException {
+        final int start = Math.min(compiled.end, eventOffset);
+        IDocument document = getDocument();
+        final String contents = document.get(start, document.getLength()-start);
+        Job job = new Job("Pattern Match Job") { //$NON-NLS-1$
+            protected IStatus run(IProgressMonitor monitor) {
+                Matcher matcher = compiled.pattern.matcher(contents);
+                IPatternMatchListener notifier = compiled.listener;
+                while(matcher.find()) {
+                    String group = matcher.group();
+                    int matchOffset = eventOffset + matcher.start();
+                    notifier.matchFound(new PatternMatchEvent(IOConsole.this, matchOffset, group.length()));
+                    compiled.end = matcher.end() + start;
+                }
+                return Status.OK_STATUS;
+            } 
+        };
+        job.setSystem(true);
+        job.schedule();
     }
 
     private class CompiledPatternMatchListener {

@@ -30,6 +30,7 @@ public class PatternMatchListenerExtension implements IPluginContribution {
     private Expression fEnablementExpression;
     private String fPattern;
     private int fFlags = -1;
+    private String fMatchContext;
    
     public PatternMatchListenerExtension(IConfigurationElement extension) {
         fConfig = extension;
@@ -108,6 +109,19 @@ public class PatternMatchListenerExtension implements IPluginContribution {
         return fFlags;
     }
 
+    /**
+     * @return
+     */
+    public String getMatchContext() {
+        if (fMatchContext == null) {
+            fMatchContext = fConfig.getAttributeAsIs("matchContext"); //$NON-NLS-1$
+            if (fMatchContext == null) {
+                fMatchContext = "line"; //$NON-NLS-1$
+            }
+        }
+        return fMatchContext;
+    }
+    
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPluginContribution#getLocalId()
      */
