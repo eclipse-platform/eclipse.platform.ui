@@ -193,7 +193,7 @@ if(buttons.length > 0){
 			</div>
 		
 		
-		<div style="position:absolute; top:2px; <%=isRTL?"left":"right"%>:0px;">
+		<div style="position:absolute; top:1px; <%=isRTL?"left":"right"%>:0px;">
 		<table width="100%" border="0" cellspacing="1" cellpadding="0" height="100%">
 			<tr>
 				<td align="<%=isRTL?"left":"right"%>">
