@@ -343,7 +343,7 @@ public abstract class WorkbenchAdvisor {
 	 * bars of the given workbench window; the
 	 * remaining flags indicate which combination of
 	 * the menu bar (<code>FILL_MENU_BAR</code>),
-	 * the tool bar (<code>FILL_TOOL_BAR</code>),
+	 * the tool bar (<code>FILL_COOL_BAR</code>),
 	 * and the status line (<code>FILL_STATUS_LINE</code>) are to be filled.
 	 * <p>
 	 * If <code>flags</code> does include <code>FILL_PROXY</code>, then this
@@ -367,7 +367,7 @@ public abstract class WorkbenchAdvisor {
 	 * @param configurer the action bar configurer object
 	 * @param flags bit mask composed from the constants
 	 * {@link #FILL_MENU_BAR FILL_MENU_BAR}</code>,
-	 * {@link #FILL_TOOL_BAR FILL_TOOL_BAR}</code>,
+	 * {@link #FILL_COOL_BAR FILL_COOL_BAR}</code>,
 	 * {@link #FILL_STATUS_LINE FILL_STATUS_LINE}</code>,
 	 * and {@link #FILL_PROXY FILL_PROXY}</code>
 	 * @issue should 1st param be IWorkbenchWindowConfigurer to be more consistent with other methods?
