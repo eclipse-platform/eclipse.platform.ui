@@ -114,10 +114,10 @@ public abstract class WorkbenchAdvisor {
 	
 	/**
 	 * Bit flag for {@link #fillActionBars fillActionBars} indicating that the
-	 * operation is supposed to fill (or describe) the workbench window's tool
+	 * operation is supposed to fill (or describe) the workbench window's cool
 	 * bar.
 	 */
-	public static final int FILL_TOOL_BAR = 0x04;
+	public static final int FILL_COOL_BAR = 0x04;
 
 	/**
 	 * Bit flag for {@link #fillActionBars fillActionBars} indicating that the

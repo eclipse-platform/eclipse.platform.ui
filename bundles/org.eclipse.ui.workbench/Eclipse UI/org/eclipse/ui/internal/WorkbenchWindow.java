@@ -214,7 +214,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 */
 	private static final int FILL_ALL_ACTION_BARS =
 		WorkbenchAdvisor.FILL_MENU_BAR
-			| WorkbenchAdvisor.FILL_TOOL_BAR
+			| WorkbenchAdvisor.FILL_COOL_BAR
 			| WorkbenchAdvisor.FILL_STATUS_LINE;
 
 	/**
@@ -284,8 +284,9 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 					coolBar.setBounds(clientArea.x, clientArea.y, coolBarWidth, height);
 					clientArea.y += height;
 					clientArea.height -= height;
-				} else
+				} else {
 					getCoolBarControl().setBounds(0, 0, 0, 0);
+				}
 			}
 
 			//Layout side seperator
@@ -346,8 +347,9 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 							clientArea.width - width,
 							statusLineSize.y);
 						clientArea.height -= statusLineSize.y + VGAP;
-					} else
+					} else {
 						getStatusLineManager().getControl().setBounds(0, 0, 0, 0);
+					}
 				}
 			}
 
@@ -370,8 +372,9 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 						clientArea.width -= width + VGAP;
 					}
 				}
-			} else
+			} else {
 				getShortcutBar().getControl().setBounds(0, 0, 0, 0);
+			}
 
 			Control sep3 = getSeparator3();
 
@@ -380,17 +383,18 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 					Point sep3Size = sep3.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
 					sep3.setBounds(clientArea.x, clientArea.y, sep3Size.x, clientArea.height);
 					clientArea.x += sep3Size.x;
-				} else
+				} else {
 					sep3.setBounds(0, 0, 0, 0);
+				}
 			}
 
-			if (getClientComposite() != null)
+			if (getClientComposite() != null) {
 				getClientComposite().setBounds(
 					clientArea.x + CLIENT_INSET,
 					clientArea.y + CLIENT_INSET + VGAP,
 					clientArea.width - (2 * CLIENT_INSET),
 					clientArea.height - VGAP - (2 * CLIENT_INSET));
-
+			}
 		}
 	}
 
@@ -712,6 +716,9 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 */
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
+		if (!getWindowConfigurer().getShowMenuBar()) {
+			shell.setMenuBar(null);
+		}
 		String title = getWindowConfigurer().basicGetTitle();
 		if (title != null) {
 			shell.setText(title);
@@ -1572,7 +1579,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 
 		// Find the index that this item should be inserted in
 		for (int i = insertIndex + 1; i < items.length; i++) {
-			IContributionItem item = (IContributionItem) items[i];
+			IContributionItem item = items[i];
 			String testId = item.getId();
 
 			if (item.isGroupMarker())

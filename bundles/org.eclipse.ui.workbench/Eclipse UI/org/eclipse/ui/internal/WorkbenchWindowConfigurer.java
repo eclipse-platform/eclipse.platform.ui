@@ -14,16 +14,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.action.ICoolBarManager;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.ICoolBarManager;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.preference.IPreferenceStore;
+
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.application.IActionBarConfigurer;
@@ -267,7 +269,19 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
 	 */
 	public void setShowMenuBar(boolean show) {
 		showMenuBar = show;
-		// @issue need to be able to reconfigure after window's controls created
+		WorkbenchWindow win = (WorkbenchWindow) getWindow();
+		Shell shell = win.getShell();
+		if (shell != null) {
+			boolean showing = shell.getMenuBar() != null;
+			if (show != showing) {
+				if (show) {
+					shell.setMenuBar(win.getMenuBarManager().getMenu());
+				}
+				else {
+					shell.setMenuBar(null);
+				}
+			}
+		}
 	}
 
 	/* (non-javadoc)

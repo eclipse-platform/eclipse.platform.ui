@@ -61,7 +61,7 @@ public class BrowserActionBuilder {
 		if ((flags & WorkbenchAdvisor.FILL_MENU_BAR) != 0) {
 			fillMenuBar(configurer.getMenuManager());
 		}
-		if ((flags & WorkbenchAdvisor.FILL_TOOL_BAR) != 0) {
+		if ((flags & WorkbenchAdvisor.FILL_COOL_BAR) != 0) {
 			fillCoolBar(configurer.getCoolBarManager());
 		}
 	}

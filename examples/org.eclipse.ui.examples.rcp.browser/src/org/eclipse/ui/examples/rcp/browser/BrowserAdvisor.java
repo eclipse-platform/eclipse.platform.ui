@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.examples.rcp.browser;
 
-import org.eclipse.swt.widgets.Display;
-
 import org.eclipse.jface.util.Assert;
 
 import org.eclipse.ui.IWorkbenchWindow;
@@ -46,7 +44,7 @@ public class BrowserAdvisor extends WorkbenchAdvisor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.application.WorkbenchAdvisor
 	 */
-	public void preWindowOpen(final IWorkbenchWindowConfigurer configurer) {
+	public void preWindowOpen(IWorkbenchWindowConfigurer configurer) {
 		configurer.setShowShortcutBar(false);
 		configurer.setTitle("Browser Example");
 	}

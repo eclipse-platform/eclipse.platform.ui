@@ -1111,7 +1111,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 			if ((flags & FILL_MENU_BAR) != 0) {
 				actionBuilder.populateMenuBar(actionConfigurer);
 			}
-			if ((flags & FILL_TOOL_BAR) != 0) {
+			if ((flags & FILL_COOL_BAR) != 0) {
 				actionBuilder.populateCoolBar(actionConfigurer);
 			}
 		} else {
