@@ -12,16 +12,15 @@ package org.eclipse.core.tests.runtime.jobs;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import junit.framework.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.jobs.IProgressProvider;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.ProgressProvider;
 import org.eclipse.core.tests.harness.FussyProgressMonitor;
 
 /**
  * Dispatches fussy progress monitors, and sanity checks them when finished.
  */
-public class FussyProgressProvider extends Assert implements IProgressProvider {
+public class FussyProgressProvider extends ProgressProvider {
 	private ArrayList monitors = new ArrayList();
 	public IProgressMonitor createMonitor(Job job) {
 		IProgressMonitor result = new FussyProgressMonitor();
@@ -32,5 +31,8 @@ public class FussyProgressProvider extends Assert implements IProgressProvider {
 		for (Iterator it = monitors.iterator(); it.hasNext();) {
 			((FussyProgressMonitor) it.next()).sanityCheck();
 		}
+	}
+	public IProgressMonitor getDefaultMonitor() {
+		return createMonitor(null);
 	}
 }
