@@ -259,8 +259,7 @@ public class TaskLinkManager {
 			IFile file = AntUtil.getFileForLocation(fileName, null);
 			if (file != null) {
 				FileLink link = new FileLink(file, null,  -1, -1, -1);
-				console.addLink(link, offset + 11, fileName.length()); //$NON-NLS-1$
-				//fBuildFileParent= file.getLocation().toFile().getParentFile();
+				console.addLink(link, offset + 11, fileName.length());
 				return true;
 			}
 		}
