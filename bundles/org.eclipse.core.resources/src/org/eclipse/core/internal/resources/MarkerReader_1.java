@@ -98,7 +98,7 @@ private Map readAttributes(DataInputStream input) throws IOException {
 		if (value != null)
 			result.put(key, value);
 	}
-	return result;
+	return result.isEmpty() ? null : result;
 }
 private MarkerInfo readMarkerInfo(DataInputStream input, List readTypes) throws IOException, CoreException {
 	MarkerInfo info = new MarkerInfo();
