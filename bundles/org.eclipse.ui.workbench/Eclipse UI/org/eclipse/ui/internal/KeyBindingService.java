@@ -6,8 +6,9 @@ package org.eclipse.ui.internal;
 import java.util.HashMap;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.swt.events.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.ui.IKeyBindingService;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.misc.Assert;
 
 /** 
@@ -112,7 +113,7 @@ public class KeyBindingService implements IKeyBindingService {
 	 * @see IKeyBindingService#getActiveAcceleratorConfigurationId()
 	 */
     public String getActiveAcceleratorConfigurationId() {
-    	return ((Workbench) PlatformUI.getWorkbench()).getActiveAcceleratorConfiguration().getLabel().getId();
+    	return ((Workbench) PlatformUI.getWorkbench()).getActiveAcceleratorConfiguration().getId();
     }
 
 	/*

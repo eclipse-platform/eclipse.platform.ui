@@ -630,6 +630,7 @@
       </acceleratorConfiguration>
       <acceleratorConfiguration
             name="%EmacsAcceleratorConfiguration.name"
+            parent="org.eclipse.ui.defaultAcceleratorConfiguration"
             parentConfiguration="org.eclipse.ui.defaultAcceleratorConfiguration"
             description="%EmacsAcceleratorConfiguration.description"
             id="org.eclipse.ui.emacsAcceleratorConfiguration">
@@ -644,6 +645,7 @@
       </acceleratorScope>
       <acceleratorScope
             name="%TextEditorAcceleratorScope.name"
+            parent="org.eclipse.ui.globalScope"
             parentScope="org.eclipse.ui.globalScope"
             description="%TextEditorAcceleratorScope.description"
             id="org.eclipse.ui.textEditorScope">
