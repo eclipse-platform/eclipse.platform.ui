@@ -330,8 +330,8 @@ public abstract class BackgroundEventHandler {
 	 */
 	protected boolean isReadyForDispatch(boolean wait) {		
 		long duration = System.currentTimeMillis() - timeOfLastDispatch;
-		if((dispatchCount < DISPATCH_THRESHOLD && duration >= DISPATCH_DELAY) ||
-				duration >= LONG_DISPATCH_DELAY) {
+		if((dispatchCount < DISPATCH_THRESHOLD && duration >= getShortDispatchDelay()) ||
+				duration >= getLongDispatchDelay()) {
 			return true;
 		}
 		synchronized(this) {
@@ -347,7 +347,28 @@ public abstract class BackgroundEventHandler {
 		return isQueueEmpty();
 	}
 
+    /**
+	 * Return the value that is used to determine how often
+	 * the events are dispatched (i.e. how often the UI is
+	 * updated) for the first 3 cycles. The default value is 1.5 seconds.
+	 * After the first 3 cycles, a longer delay is used
+     * @return the dispatch delay used for the first 3 cycles.
+     */
+    protected long getShortDispatchDelay() {
+        return DISPATCH_DELAY;
+    }
+    
 	/**
+	 * Return the value that is used to determine how often
+	 * the events are dispatched (i.e. how often the UI is
+	 * updated) after the first 3 cycles. The default value is 10 seconds.
+     * @return the dispatch delay used after the first 3 cycles.
+     */
+    protected long getLongDispatchDelay() {
+        return LONG_DISPATCH_DELAY;
+    }
+
+    /**
 	 * Handle the exception by recording it in the errors list.
 	 * @param e
 	 */
