@@ -1,8 +1,10 @@
 package org.eclipse.ui.actions;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
+ * Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+ * This file is made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
  */
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -388,11 +390,16 @@ public class CopyFilesAndFoldersOperation {
 				dialog.setBlockOnOpen(true);
 				dialog.open();
 				if (dialog.getReturnCode() == Window.CANCEL) {
-					throw new OperationCanceledException();
+					returnValue[0] = null;
 				}
-				returnValue[0] = dialog.getValue();
+				else {
+					returnValue[0] = dialog.getValue();
+				}
 			}
 		});
+		if (returnValue[0] == null) {
+			throw new OperationCanceledException();
+		}
 		return prefix.append(returnValue[0]);
 	}
 
