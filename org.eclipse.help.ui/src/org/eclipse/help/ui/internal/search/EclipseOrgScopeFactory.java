@@ -25,9 +25,10 @@ public class EclipseOrgScopeFactory implements ISearchScopeFactory {
      */
     public ISearchScope createSearchScope(IPreferenceStore store) {
         String type = store.getString(ENGINE_ID);
-        if (type == null || !type.equals(Google.NEWS))
-            type = Google.WEB;
-        return new Google.Scope(type);
+        if (type == null)
+            type = EclipseOrg.ALL;
+
+        return new EclipseOrg.Scope(type);
     }
 
 }
