@@ -20,18 +20,13 @@ import org.eclipse.debug.ui.console.ConsoleColorProvider;
 import org.eclipse.debug.ui.console.IConsole;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.widgets.Widget;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.console.IConsoleConstants;
+import org.eclipse.ui.console.IOConsoleOutputStream;
 
 
 public class AntConsoleColorProvider extends ConsoleColorProvider implements IPropertyChangeListener {
 
+    
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.console.IConsoleColorProvider#getColor(java.lang.String)
@@ -87,40 +82,30 @@ public class AntConsoleColorProvider extends ConsoleColorProvider implements IPr
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
-		if (affectsAntConsole(event.getProperty())) {
+	    final String streamId = getStreamId(event.getProperty());
+		if (streamId != null) {
 			AntUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
 				public void run() {
-					IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow() ;
-					if (window != null) {
-						IWorkbenchPage page = window.getActivePage();
-						if (page != null) {
-							IWorkbenchPart part = page.findView(IConsoleConstants.ID_CONSOLE_VIEW);
-							if (part != null) {
-								Widget textWidget = (Widget)part.getAdapter(Widget.class);
-								if (textWidget instanceof StyledText) {
-									((StyledText)textWidget).redraw();
-								}
-							}
-						}
-					}
+				    IOConsoleOutputStream stream = getConsole().getStream(streamId);
+				    stream.setColor(getColor(streamId));
 				}
 			});
 		}
 	}
 
-	private boolean affectsAntConsole(String property) {
-		if (IAntUIPreferenceConstants.CONSOLE_DEBUG_COLOR.equals(property)) {
-			return true;
-		} else if (IAntUIPreferenceConstants.CONSOLE_ERROR_COLOR.equals(property)) {
-			return true;
-		} else if (IAntUIPreferenceConstants.CONSOLE_INFO_COLOR.equals(property)) {
-			return true;
-		} else if (IAntUIPreferenceConstants.CONSOLE_VERBOSE_COLOR.equals(property)) {
-			return true;
-		} else if (IAntUIPreferenceConstants.CONSOLE_WARNING_COLOR.equals(property)) {
-			return true;
+	private String getStreamId(String colorId) {
+		if (IAntUIPreferenceConstants.CONSOLE_DEBUG_COLOR.equals(colorId)) {
+			return AntStreamsProxy.ANT_DEBUG_STREAM;
+		} else if (IAntUIPreferenceConstants.CONSOLE_ERROR_COLOR.equals(colorId)) {
+			return IDebugUIConstants.ID_STANDARD_ERROR_STREAM;
+		} else if (IAntUIPreferenceConstants.CONSOLE_INFO_COLOR.equals(colorId)) {
+			return IDebugUIConstants.ID_STANDARD_OUTPUT_STREAM;
+		} else if (IAntUIPreferenceConstants.CONSOLE_VERBOSE_COLOR.equals(colorId)) {
+			return AntStreamsProxy.ANT_VERBOSE_STREAM;
+		} else if (IAntUIPreferenceConstants.CONSOLE_WARNING_COLOR.equals(colorId)) {
+			return AntStreamsProxy.ANT_WARNING_STREAM;
 		}
-		return false;
+		return null;
 	}
 	
 	/* (non-Javadoc)
