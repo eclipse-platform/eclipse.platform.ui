@@ -70,10 +70,10 @@ public class WelcomeEditor extends EditorPart {
 	
 	private KeyListener welcomeListener = new KeyListener(){
 		
-		public void keyPressed(KeyEvent e){
-			//Ignore a key press
+		public void keyReleased(KeyEvent e){
+			//Ignore a key release
 		}
-		public void keyReleased(KeyEvent event){
+		public void keyPressed (KeyEvent event){
 			
 			StyledText text = lastNavigatedText;
 			if(event.character == '\t' && event.stateMask == SWT.NULL){
@@ -81,13 +81,7 @@ public class WelcomeEditor extends EditorPart {
 				if(nextRange == null){
 					if(text != null)
 						text.setSelection(0,0);
-					StyledText newText = nextText(text);
-					if(newText == null)
-						return;
-					newText.setFocus();
-					newText.setCaretOffset(0);
-					scrolledComposite.setOrigin(0,newText.getLocation().y);
-					lastNavigatedText = newText;
+					focusOn(nextText(text));
 				}
 				else{
 					text.setSelection(nextRange.start,nextRange.start + nextRange.length);
@@ -111,12 +105,34 @@ public class WelcomeEditor extends EditorPart {
 				return;
 			}	
 			
+			if(event.keyCode == SWT.PAGE_DOWN){
+				focusOn(nextText(text));
+				return;
+			}
+			
+			if(event.keyCode == SWT.PAGE_UP){
+				focusOn(previousText(text));
+				return;
+			}
+			
+		}
+		
+		/**
+		 * Update the welcome page to start at the
+		 * beginning of the text.
+		 */
+		private void focusOn(StyledText newText){
+			if(newText == null)
+				return;
+			newText.setFocus();
+			newText.setCaretOffset(0);
+			scrolledComposite.setOrigin(0,newText.getLocation().y);
+			lastNavigatedText = newText;
 		}
 		
 		/**
 		 * Find the next text 
-		 */
-		
+		 */		
 		private StyledText nextText(StyledText text){
 			int index = 0;
 			if(text == null)
@@ -131,7 +147,22 @@ public class WelcomeEditor extends EditorPart {
 				return (StyledText)  texts.get(0);						
 		}
 		
-		
+		/**
+		 * Find the previous text 
+		 */		
+		private StyledText previousText(StyledText text){
+			int index = 0;
+			if(text == null)
+				return (StyledText) texts.get(0);
+			else
+				index = texts.indexOf(text);
+				
+			//If we are not at the end....
+			if(index == 0)
+				return (StyledText) texts.get(texts.size() - 1);
+			else
+				return (StyledText)  texts.get(index - 1);						
+		}
 	
 		/**
 		 * Find the next range after the current 
