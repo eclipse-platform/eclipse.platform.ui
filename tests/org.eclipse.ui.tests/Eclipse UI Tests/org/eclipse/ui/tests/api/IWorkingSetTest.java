@@ -29,11 +29,18 @@ public class IWorkingSetTest extends UITestCase {
 		fWorkspace = ResourcesPlugin.getWorkspace();		
 		fWorkingSet = workingSetManager.createWorkingSet(WORKING_SET_NAME_1, new IAdaptable[] {fWorkspace.getRoot()});
 	}
-	public void testGetName() throws Throwable {
-		assertEquals(WORKING_SET_NAME_1, fWorkingSet.getName());
-	}
 	public void testGetElements() throws Throwable {
 		assertEquals(fWorkspace.getRoot(), fWorkingSet.getElements()[0]);		
+	}
+	public void testGetId() throws Throwable {
+		assertEquals(null, fWorkingSet.getId());
+		fWorkingSet.setId("bogusId");
+		assertEquals("bogusId", fWorkingSet.getId());				
+		fWorkingSet.setId(null);
+		assertEquals(null, fWorkingSet.getId());
+	}
+	public void testGetName() throws Throwable {
+		assertEquals(WORKING_SET_NAME_1, fWorkingSet.getName());
 	}
 	public void testSetElements() throws Throwable {
 		boolean exceptionThrown = false;
@@ -57,6 +64,13 @@ public class IWorkingSetTest extends UITestCase {
 
 		fWorkingSet.setElements(new IAdaptable[] {});
 		assertEquals(0, fWorkingSet.getElements().length);
+	}
+	public void testSetId() throws Throwable {
+		assertEquals(null, fWorkingSet.getId());
+		fWorkingSet.setId("bogusId");
+		assertEquals("bogusId", fWorkingSet.getId());
+		fWorkingSet.setId(null);
+		assertEquals(null, fWorkingSet.getId());
 	}
 	public void testSetName() throws Throwable {
 		boolean exceptionThrown = false;
