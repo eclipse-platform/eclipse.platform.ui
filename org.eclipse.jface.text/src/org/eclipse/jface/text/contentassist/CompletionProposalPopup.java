@@ -238,7 +238,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 			});
 		}
 		
-		fProposalShell.setBackground(control.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+		if (!"carbon".equals(SWT.getPlatform()))
+			fProposalShell.setBackground(control.getDisplay().getSystemColor(SWT.COLOR_BLACK));
 		
 		Color c= fContentAssistant.getProposalSelectorBackground();
 		if (c == null)
