@@ -67,6 +67,8 @@ public class ConsoleManager implements IConsoleManager {
 	
     private IWindowListener fWindowListener;
     
+    private boolean fUpdating = false;
+    
 	/**
 	 * Notifies a console listener of additions or removals
 	 */
@@ -265,17 +267,25 @@ public class ConsoleManager implements IConsoleManager {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.console.IConsoleManager#warnOfContentChange(org.eclipse.ui.console.IConsole)
 	 */
-	public void warnOfContentChange(IConsole console) {
-		IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if (window != null) {
-			IWorkbenchPage page= window.getActivePage();
-			if (page != null) {
-				IConsoleView consoleView= (IConsoleView)page.findView(IConsoleConstants.ID_CONSOLE_VIEW);
-				if (consoleView != null) {
-					consoleView.warnOfContentChange(console);
-				}
-			}
+	public void warnOfContentChange(final IConsole console) {
+		if (!fUpdating) {
+			fUpdating = true;
+			ConsolePlugin.getStandardDisplay().asyncExec(new Runnable(){
+				public void run() {
+					IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+					if (window != null) {
+						IWorkbenchPage page= window.getActivePage();
+						if (page != null) {
+							IConsoleView consoleView= (IConsoleView)page.findView(IConsoleConstants.ID_CONSOLE_VIEW);
+							if (consoleView != null) {
+								consoleView.warnOfContentChange(console);
+							}
+						} 
+					}				
+				}			
+			});
 		}
+		fUpdating = false;
 	}
 
     /* (non-Javadoc)

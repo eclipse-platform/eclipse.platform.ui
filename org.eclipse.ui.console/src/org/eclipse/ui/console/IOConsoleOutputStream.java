@@ -202,7 +202,9 @@ public class IOConsoleOutputStream extends OutputStream {
         }
         partitioner.streamAppended(this, encodedString);
         if (activateOnWrite) {
-            console.activate();
+        	console.activate();
+        } else {
+        	ConsolePlugin.getDefault().getConsoleManager().warnOfContentChange(console);
         }
     }
 
