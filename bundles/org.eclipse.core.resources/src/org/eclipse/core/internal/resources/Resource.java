@@ -1130,7 +1130,9 @@ public void setPersistentProperty(QualifiedName key, String value) throws CoreEx
  * @see IResource
  */
 public void setReadOnly(boolean readonly) {
-	CoreFileSystemLibrary.setReadOnly(getLocation().toOSString(), readonly);
+	IPath location = getLocation();
+	if (location != null)
+		CoreFileSystemLibrary.setReadOnly(location.toOSString(), readonly);
 }
 /**
  * @see IResource
