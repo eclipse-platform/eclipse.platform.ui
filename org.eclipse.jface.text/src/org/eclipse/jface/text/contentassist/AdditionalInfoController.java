@@ -83,7 +83,7 @@ class AdditionalInfoController extends AbstractInformationControlManager impleme
 		super(creator);
 		fDelay= delay;
 		setAnchor(ANCHOR_RIGHT);
-		setFallbackAnchors(new Anchor[] { ANCHOR_LEFT, ANCHOR_BOTTOM, ANCHOR_RIGHT });
+		setFallbackAnchors(new Anchor[] { ANCHOR_RIGHT, ANCHOR_LEFT, ANCHOR_BOTTOM });
 	}
 	
 	/*
