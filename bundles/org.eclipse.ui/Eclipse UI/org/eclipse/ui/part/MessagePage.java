@@ -36,7 +36,7 @@ public void createControl(Composite parent) {
 	msgLabel = new Label(pgComp, SWT.LEFT | SWT.WRAP);
 	msgLabel.setText(message);
 	
-	GridData gridData = new GridData(GridData.FILL_BOTH);
+	GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 	msgLabel.setLayoutData(gridData);
 }
 /* (non-Javadoc)
