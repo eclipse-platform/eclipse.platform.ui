@@ -70,12 +70,6 @@ public class UpdatesView
 	private static final String KEY_RESTART_TITLE = "UpdatesView.restart.title";
 	private static final String KEY_RESTART_MESSAGE =
 		"UpdatesView.restart.message";
-	private static final String KEY_CONFIRM_DELETE = "ConfirmDelete.title";
-	private static final String KEY_CONFIRM_DELETE_MULTIPLE =
-		"ConfirmDelete.multiple";
-	private static final String KEY_CONFIRM_DELETE_SINGLE =
-		"ConfirmDelete.single";
-
 	private static final String P_FILTER = "UpdatesView.matchingFilter";
 
 	private Action propertiesAction;
@@ -828,10 +822,9 @@ public class UpdatesView
 	private void performDelete() {
 		ISelection selection = viewer.getSelection();
 		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection ssel = (IStructuredSelection) selection;
-			if (!confirmDeletion(ssel))
+			if (!confirmDeletion())
 				return;
-			doDelete(ssel);
+			doDelete((IStructuredSelection)selection);
 		}
 	}
 
@@ -1009,28 +1002,6 @@ public class UpdatesView
 		} catch (CoreException e) {
 			UpdateUIPlugin.logException(e);
 		}
-	}
-
-	private boolean confirmDeletion(IStructuredSelection ssel) {
-		String title = UpdateUIPlugin.getResourceString(KEY_CONFIRM_DELETE);
-		String message;
-
-		if (ssel.size() > 1) {
-			message =
-				UpdateUIPlugin.getFormattedMessage(
-					KEY_CONFIRM_DELETE_MULTIPLE,
-					"" + ssel.size());
-		} else {
-			Object obj = ssel.getFirstElement().toString();
-			message =
-				UpdateUIPlugin.getFormattedMessage(
-					KEY_CONFIRM_DELETE_SINGLE,
-					obj.toString());
-		}
-		return MessageDialog.openConfirm(
-			viewer.getControl().getShell(),
-			title,
-			message);
 	}
 
 	private Object[] getRootElements(UpdateModel model) {
