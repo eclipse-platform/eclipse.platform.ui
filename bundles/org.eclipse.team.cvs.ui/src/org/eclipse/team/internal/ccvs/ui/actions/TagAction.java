@@ -94,7 +94,7 @@ public abstract class TagAction extends WorkspaceAction {
 				null,
 				null);
 			
-			if (confirmDialog.getReturnCode() == IDialogConstants.OK_ID)  {
+			if (confirmDialog.getReturnCode() == IDialogConstants.YES_ID)  {
 				store.setValue(ICVSUIConstants.PREF_CONFIRM_MOVE_TAG, !confirmDialog.getToggleState());
 			} else  {
 				return null;
