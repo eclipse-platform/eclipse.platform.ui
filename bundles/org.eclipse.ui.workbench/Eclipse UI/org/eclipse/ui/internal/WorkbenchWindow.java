@@ -270,7 +270,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 * @return int
 	 */
 	protected int perspectiveBarStyle() {
-		return SWT.FLAT | SWT.WRAP | SWT.HORIZONTAL;
+		return SWT.FLAT | SWT.WRAP | SWT.RIGHT | SWT.HORIZONTAL;
 	}	
 
 	private Map actionSetHandlersByCommandId = new HashMap();
