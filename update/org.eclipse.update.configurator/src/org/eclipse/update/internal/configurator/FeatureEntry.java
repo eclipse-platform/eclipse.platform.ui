@@ -46,6 +46,7 @@ public class FeatureEntry
 	private AboutInfo branding;
 	private SiteEntry site;
 	private ResourceBundle resourceBundle;
+	private boolean fullyParsed;
 
 	public FeatureEntry(String id, String version, String pluginIdentifier, String pluginVersion, boolean primary, String application, URL[] root) {
 		if (id == null)
@@ -184,11 +185,8 @@ public class FeatureEntry
 	 * @see org.eclipse.core.runtime.IBundleGroup#getBundles()
 	 */
 	public Bundle[] getBundles() {
-		if (plugins == null) {
-			plugins = new ArrayList();
-			FullFeatureParser parser = new FullFeatureParser(this);
-			parser.parse();
-		}
+		if (plugins == null)
+			fullParse();
 		
 		ArrayList bundles = new ArrayList(plugins.size());
 		for (int i=0; i<plugins.size(); i++) {
@@ -204,12 +202,8 @@ public class FeatureEntry
 	 * @see org.eclipse.core.runtime.IBundleGroup#getDescription()
 	 */
 	public String getDescription() {
-		if (description == null) {
-			if (plugins == null) 
-				plugins = new ArrayList();
-			FullFeatureParser parser = new FullFeatureParser(this);
-			parser.parse();
-		}
+		if (description == null)
+			fullParse();
 		return description;
 	}
 	/* (non-Javadoc)
@@ -324,7 +318,10 @@ public class FeatureEntry
 	
 	public String getLicenseURL() {
 		if (licenseURL == null)
+			fullParse();
+		if (licenseURL == null)
 			return null;
+		
 		String resolvedURL = Utils.getResourceString(getResourceBundle(), licenseURL);
 		if (resolvedURL.startsWith("http://"))
 			return resolvedURL;
@@ -335,5 +332,15 @@ public class FeatureEntry
 				return resolvedURL;
 			}
 		}
+	}
+	
+	private void fullParse() {
+		if (fullyParsed)
+			return;
+		fullyParsed = true;
+		if (plugins == null) 
+			plugins = new ArrayList();
+		FullFeatureParser parser = new FullFeatureParser(this);
+		parser.parse();
 	}
 }
