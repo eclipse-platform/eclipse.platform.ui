@@ -390,12 +390,6 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	public Image getImage() {
 		return ExternalToolsImages.getImage(IExternalToolConstants.IMG_TAB_ANT_TARGETS);
 	}
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#canSave()
-	 */
-	public boolean canSave() {
-		return isValid(null);
-	}
 
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)

@@ -179,17 +179,6 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab implements I
 	public Image getImage() {
 		return antClasspathBlock.getClasspathImage();
 	}
-	
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#canSave()
-	 */
-	public boolean canSave() {
-		if (antClasspathBlock.isAntHomeEnabled()) {
-			return antClasspathBlock.validateAntHome();
-		} else {
-			return super.canSave();
-		}
-	}
 
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)

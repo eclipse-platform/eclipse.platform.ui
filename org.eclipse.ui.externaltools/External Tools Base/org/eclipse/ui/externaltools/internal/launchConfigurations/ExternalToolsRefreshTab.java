@@ -246,9 +246,4 @@ public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab impl
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		return getErrorMessage() == null;
 	}
-	
-	public boolean canSave() {
-		return getErrorMessage() == null;
-	}
-
 }
