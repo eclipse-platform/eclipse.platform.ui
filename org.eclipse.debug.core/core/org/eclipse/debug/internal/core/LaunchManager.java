@@ -64,6 +64,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugException;
@@ -98,7 +99,7 @@ import org.xml.sax.SAXException;
  *
  * @see ILaunchManager
  */
-public class LaunchManager implements ILaunchManager, IResourceChangeListener {
+public class LaunchManager extends PlatformObject implements ILaunchManager, IResourceChangeListener {
 	
 	/**
 	 * Collection of defined launch configuration type

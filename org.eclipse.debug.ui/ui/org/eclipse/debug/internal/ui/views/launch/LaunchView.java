@@ -68,7 +68,6 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -225,7 +224,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 				}
 			}
 		});
-		lv.setContentProvider(createContentProvider());
+		lv.setContentProvider(new DeferredContentProvider(lv, getSite()));
 		final DelegatingModelPresentation presentation = new DelegatingModelPresentation();
 		DebugViewDecoratingLabelProvider labelProvider= new DebugViewDecoratingLabelProvider(lv, new DebugViewInterimLabelProvider(presentation), new DebugViewLabelDecorator(presentation));
 		lv.setLabelProvider(labelProvider);
@@ -346,7 +345,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 			if (elements[i] instanceof ILaunch) {
 				IStackFrame frame = findFrame((ILaunch)elements[i]);
 				if (frame != null) {
-					autoExpand(frame, false, true);
+					autoExpand(frame, true);
 				}
 			}
 		}
@@ -426,8 +425,10 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
-		if (getViewer() != null) {
-			getViewer().removeSelectionChangedListener(this);
+	    LaunchViewer viewer = (LaunchViewer) getViewer();
+		if (viewer != null) {
+			viewer.removeSelectionChangedListener(this);
+			viewer.cancelJobs();
 		}
 		if (fContextListener != null) {
 			fContextListener.dispose();
@@ -452,14 +453,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		setEditorId(null);
 		setEditorInput(null);
 		setStackFrame(null);
-	}
-	
-	/**
-	 * Creates and returns the content provider to use for
-	 * the viewer of this view.
-	 */
-	protected IStructuredContentProvider createContentProvider() {
-		return new LaunchViewContentProvider();
 	}
 	
 	/**
@@ -927,48 +920,20 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * Auto-expand and select the given element - must be called in UI thread.
 	 * This is used to implement auto-expansion-and-select on a SUSPEND event.
 	 */
-	public void autoExpand(Object element, boolean refreshNeeded, boolean selectNeeded) {
-		Object selectee = element;
-		Object[] children= null;
+	public void autoExpand(Object element, boolean selectNeeded) {
+	    boolean refresh = false;
 		if (element instanceof IThread) {
-			if (!refreshNeeded) {
-				refreshNeeded= threadRefreshNeeded((IThread)element);
-			}
-			// try the top stack frame
-			try {
-				selectee = ((IThread)element).getTopStackFrame();
-			} catch (DebugException de) {
-			}
-			if (selectee == null) {
-				selectee = element;
-			}
-		} else if (element instanceof ILaunch) {
-			IDebugTarget dt = ((ILaunch)element).getDebugTarget();
-			if (dt != null) {
-				selectee= dt;
-				try {
-					children= dt.getThreads();
-				} catch (DebugException de) {
-					DebugUIPlugin.log(de);
-				}
-			} else {
-				IProcess[] processes= ((ILaunch)element).getProcesses();
-				if (processes.length != 0) {
-					selectee= processes[0];
-				}		
-			}
+			refresh = threadRefreshNeeded((IThread)element);
 		}
-		if (refreshNeeded) {
+		if (refresh) {
 			//ensures that the child item exists in the viewer widget
 			//set selection only works if the child exists
 			getStructuredViewer().refresh(element);
 		}
+		LaunchViewer launchViewer = (LaunchViewer)getViewer();
+        launchViewer.deferExpansion(element);
 		if (selectNeeded) {
-			getViewer().setSelection(new StructuredSelection(selectee), true);
-		}
-		if (children != null && children.length > 0) {
-			//reveal the thread children of a debug target
-			getStructuredViewer().reveal(children[0]);
+			launchViewer.setDeferredSelection(element);
 		}
 	}
 	

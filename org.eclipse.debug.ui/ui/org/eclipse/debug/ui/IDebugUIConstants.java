@@ -928,15 +928,7 @@ public interface IDebugUIConstants {
 	 * @since 3.0
 	 */
 	public static final String EXTENSION_POINT_OBJECT_BROWSERS = "objectBrowsers";	 //$NON-NLS-1$
-	
-	/**
-	 * Debug view content providers extension point identifier
-	 * (value <code>"debugViewContentProviders"</code>).
-	 * 
-	 * @since 3.1
-	 */
-	public static final String EXTENSION_POINT_DEBUG_VIEW_CONTENT_PROVIDERS= "debugViewContentProviders";	 //$NON-NLS-1$
-	
+		
 	/**
 	 * Launch variable components extension point identifier (value
 	 * <code>"launchVariableComponents"</code>). The launch variable

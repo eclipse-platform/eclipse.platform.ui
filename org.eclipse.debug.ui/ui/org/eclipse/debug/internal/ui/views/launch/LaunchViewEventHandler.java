@@ -28,7 +28,6 @@ import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
 
 /**
  * Handles debug events, updating the launch view and viewer.
@@ -70,8 +69,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 				case DebugEvent.CREATE :
 					insert(source);
 					if (source instanceof IDebugTarget) {
-						ILaunch launch= ((IDebugTarget)source).getLaunch();
-						getLaunchView().autoExpand(launch, false, true);
+						getLaunchView().autoExpand(source, true);
 					}
 					break;
 				case DebugEvent.TERMINATE :
@@ -205,7 +203,8 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 				}
 				getLaunchViewer().update(new Object[] {thread, frame}, null);
 				if (!evaluationEvent) {
-					getLaunchViewer().setSelection(new StructuredSelection(frame));
+				    getLaunchViewer().deferExpansion(thread);
+					getLaunchViewer().setDeferredSelection(frame);
 				} else if (wasTimedOut) {
 					getLaunchView().showEditorForCurrentSelection();
 				}
@@ -214,13 +213,12 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		} catch (DebugException e) {
 		}
 		
-		// Auto-expand the thread. Only select the thread if this wasn't the end
-		// of an evaluation		
-		
-		getLaunchView().autoExpand(thread, true, !evaluationEvent);
-		
 		try {
 			fLastStackFrame = thread.getTopStackFrame();
+			// Auto-expand the thread. Only select the thread if this wasn't the end
+			// of an evaluation
+			getLaunchView().autoExpand(thread, false);
+			getLaunchView().autoExpand(fLastStackFrame, !evaluationEvent);
 		} catch (DebugException e) {
 			fLastStackFrame = null;
 		}
@@ -449,7 +447,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 					}
 					for (int i = 0; i < launches.length; i++) {
 						if (launches[i].hasChildren()) {
-							getLaunchView().autoExpand(launches[i], false, i == (launches.length - 1));
+							getLaunchView().autoExpand(launches[i], false);
 						}
 					}					
 
@@ -474,7 +472,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 					}
 					for (int i = 0; i < launches.length; i++) {
 						if (launches[i].hasChildren()) {
-							getLaunchView().autoExpand(launches[i], false, i == (launches.length - 1));
+							getLaunchView().autoExpand(launches[i], false);
 						}						
 					}
 				}
@@ -507,7 +505,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 							IThread[] threads= target.getThreads();
 							for (int i=0; i < threads.length; i++) {
 								if (threads[i].isSuspended()) {
-									getLaunchView().autoExpand(threads[i], false, true);
+									getLaunchView().autoExpand(threads[i].getTopStackFrame(), true);
 									return;
 								}
 							}						
@@ -515,7 +513,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 							DebugUIPlugin.log(de);
 						}
 						
-						getLaunchView().autoExpand(target.getLaunch(), false, true);
+						getLaunchView().autoExpand(target.getLaunch(), true);
 					}
 				}
 			}

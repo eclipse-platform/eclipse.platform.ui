@@ -21,8 +21,6 @@ import java.util.Map.Entry;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
-import org.eclipse.core.expressions.ExpressionConverter;
-import org.eclipse.core.expressions.ExpressionTagNames;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -36,7 +34,6 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
-import org.eclipse.jface.viewers.ITreeContentProvider;
 
 /**
  * Manages contributed launch configuration tabs
@@ -67,17 +64,7 @@ public class LaunchConfigurationPresentationManager {
 	 *  @since 3.1
 	 */
 	private Map fDebugViewContentProviderExpressions;
-	
-	/**
-	 * Collection of debug view content provider elements in 
-	 * plug-in XML. Entries are keyed by content provider extension id
-	 * (<code>String</code>) and values are expressions
-	 * (<code>IConfigurationElements</code>).
-	 *  
-	 *  @since 3.1
-	 */
-	private Map fDebugViewContentProviders;	
-		
+			
 	/**
 	 * Constructs the singleton launch configuration presentation
 	 * manager.
@@ -85,7 +72,6 @@ public class LaunchConfigurationPresentationManager {
 	private LaunchConfigurationPresentationManager() {
 		fgDefault = this;
 		initializeTabGroupExtensions();
-		initializeDebugViewContentProviderExtensions();
 	}
 
 	/**
@@ -145,53 +131,6 @@ public class LaunchConfigurationPresentationManager {
 			}
 		}
 	}	
-	
-	/**
-	 * Caches the configuration elements for debug model content providers,
-	 * by debug model.
-	 */
-	private void initializeDebugViewContentProviderExtensions() {
-		fDebugViewContentProviderExpressions = new Hashtable();
-		fDebugViewContentProviders = new Hashtable();
-		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_DEBUG_VIEW_CONTENT_PROVIDERS);
-		IConfigurationElement[] extensions = extensionPoint.getConfigurationElements();
-		for (int i = 0; i < extensions.length; i++) {
-			IConfigurationElement element = extensions[i];
-			if (attributeExists(element, "id")) { //$NON-NLS-1$
-				if (attributeExists(element, "class")) { //$NON-NLS-1$
-				    IConfigurationElement[] elements = element.getChildren(ExpressionTagNames.ENABLEMENT);
-					IConfigurationElement enablement = elements.length > 0 ? elements[0] : null; 
-					if (enablement == null) {
-					    // invalid ext
-						IExtension extension = element.getDeclaringExtension();
-						IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.STATUS_INVALID_EXTENSION_DEFINITION,
-								 MessageFormat.format("Extension {0} missing required enablement element",new String[]{extension.getUniqueIdentifier()}), null); //$NON-NLS-1$
-						DebugUIPlugin.log(status);
-					} else {
-						try {
-                            Expression expression = ExpressionConverter.getDefault().perform(enablement);
-                            fDebugViewContentProviderExpressions.put(element.getAttribute("id"), expression); //$NON-NLS-1$
-    						fDebugViewContentProviders.put(element.getAttribute("id"), element); //$NON-NLS-1$
-                        } catch (CoreException e) {
-                            DebugUIPlugin.log(e);
-                        }
-						
-					}
-				}
-			}
-		}
-	}	
-	
-	private boolean attributeExists(IConfigurationElement element, String attribute) {
-		if (element.getAttribute(attribute) == null) {
-			IExtension extension = element.getDeclaringExtension();
-			IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.STATUS_INVALID_EXTENSION_DEFINITION,
-					 MessageFormat.format("Extension {0} missing required attribute {1}",new String[]{extension.getUniqueIdentifier(), attribute}), null); //$NON-NLS-1$
-					DebugUIPlugin.log(status);
-			return false;
-		}
-		return true;
-	}
 	
 	/**
 	 * Returns the tab group for the given launch configuration type and mode.
@@ -268,33 +207,6 @@ public class LaunchConfigurationPresentationManager {
 		LaunchConfigurationTabGroupExtension extension = manager.getExtension(configType.getAttribute("id"), mode); //$NON-NLS-1$
 		return extension.getDescription(mode);
 	}	
-	
-	/**
-	 * Returns a new content provider for the content provider with the given
-	 * id, or <code>null</code> if none.
-	 * 
-	 * @param id content provider identifier
-	 * @return a new content provider or <code>null</code>
-	 */
-	public ITreeContentProvider newDebugViewContentProvider(String id) {
-		IConfigurationElement element = (IConfigurationElement) fDebugViewContentProviders.get(id);
-		if (element != null) {
-			try {
-				Object object = element.createExecutableExtension("class"); //$NON-NLS-1$
-				if (object instanceof ITreeContentProvider) {
-					ITreeContentProvider provider = (ITreeContentProvider) object;
-					return provider;
-				} 
-				IExtension extension = element.getDeclaringExtension();
-				IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.STATUS_INVALID_EXTENSION_DEFINITION,
-					MessageFormat.format("'class' attribute for extension {0} must specify an instance of ITreeContentProvider",new String[]{extension.getUniqueIdentifier()}), null); //$NON-NLS-1$
-				DebugUIPlugin.log(status);
-			} catch (CoreException e) {
-				DebugUIPlugin.log(e);
-			}
-		}
-		return null;
-	}
 	
 	/**
 	 * Returns the identifier of a debug view content provider extension applicable

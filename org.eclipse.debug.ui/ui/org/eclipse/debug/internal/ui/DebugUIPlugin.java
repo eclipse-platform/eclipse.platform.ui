@@ -47,10 +47,14 @@ import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.PerspectiveManager;
 import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
 import org.eclipse.debug.internal.ui.views.console.ProcessConsoleManager;
+import org.eclipse.debug.internal.ui.views.launch.DebugElementAdapterFactory;
+import org.eclipse.debug.internal.ui.views.launch.DebugElementWorkbenchAdapter;
+import org.eclipse.debug.internal.ui.views.launch.DeferredContentAdapterFactory;
 import org.eclipse.debug.internal.ui.views.memory.IMemoryBlockViewSynchronizer;
 import org.eclipse.debug.internal.ui.views.memory.MemoryBlockViewSynchronizer;
 import org.eclipse.debug.ui.DebugUITools;
@@ -318,6 +322,9 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			if (fMemBlkViewSynchronizer != null){
 				fMemBlkViewSynchronizer.shutdown();
 			}
+			
+			DebugElementWorkbenchAdapter.dispose();
+			
 		} finally {
 			super.stop(context);
 		}
@@ -333,9 +340,14 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 		
 		IAdapterManager manager= Platform.getAdapterManager();
-		DebugUIPropertiesAdapterFactory propertiesFactory = new DebugUIPropertiesAdapterFactory();
+		DebugElementAdapterFactory propertiesFactory = new DebugElementAdapterFactory();
 		manager.registerAdapters(propertiesFactory, IDebugElement.class);
 		manager.registerAdapters(propertiesFactory, IProcess.class);
+		manager.registerAdapters(propertiesFactory, ILaunch.class);
+		manager.registerAdapters(propertiesFactory, ILaunchManager.class);
+		DeferredContentAdapterFactory factory = new DeferredContentAdapterFactory();
+		manager.registerAdapters(factory, IDebugTarget.class);
+		manager.registerAdapters(factory, IThread.class);
 		DebugUIAdapterFactory uiFactory = new DebugUIAdapterFactory();
 		manager.registerAdapters(uiFactory, ILaunchConfiguration.class);
 		manager.registerAdapters(uiFactory, ILaunchConfigurationType.class);
