@@ -44,9 +44,6 @@ public class HelpURL {
 		}
 	}
 	/**
-	 * Insert the method's description here.
-	 * 
-	 * @return long
 	 */
 	public long getContentSize() {
 		return contentSize;

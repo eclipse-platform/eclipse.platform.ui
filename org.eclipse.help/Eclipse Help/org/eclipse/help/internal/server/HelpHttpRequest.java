@@ -66,9 +66,6 @@ public class HelpHttpRequest {
 		return (version != null && version.indexOf("HTTP/") != -1);
 	}
 	/**
-	 * Insert the method's description here.
-	 * 
-	 * @param req com.ibm.itp.help.server.HelpContentManager
 	 */
 	public void processRequest(HelpHttpResponse response) {
 		readHeader();
@@ -121,7 +118,6 @@ public class HelpHttpRequest {
 					+ helpURL);
 	}
 	/**
-	 * Insert the method's description here.
 	 * 
 	 */
 	protected void readBody() {
@@ -139,7 +135,6 @@ public class HelpHttpRequest {
 		}
 	}
 	/**
-	 * Insert the method's description here.
 	 * 
 	 */
 	protected void readHeader() {

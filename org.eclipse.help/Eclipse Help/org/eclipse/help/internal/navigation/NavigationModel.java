@@ -77,8 +77,6 @@ public class NavigationModel {
 		return urlToTopicMap.keySet();
 	}
 	/**
-	 * Insert the method's description here.
-	 * @return java.lang.String
 	 */
 	public String getID() {
 		return infosetID;

@@ -364,7 +364,6 @@ public class EmbeddedHelpView extends ViewPart {
 				HelpSystem.getNavigationManager().setCurrentInfoSet(infoSet.getID());
 		} catch (Exception e) {
 			// unexpected error, it should not happen.
-			// This is to guard agains platform UI bugs.
 		}
 	}
 	/**

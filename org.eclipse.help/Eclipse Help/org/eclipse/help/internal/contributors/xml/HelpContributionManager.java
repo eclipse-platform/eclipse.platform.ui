@@ -131,8 +131,6 @@ public class HelpContributionManager implements ContributionManager {
 		return pluginVersions.detectChange();
 	}
 	/**
-	 * Insert the method's description here.
-	 * 
 	 */
 	public void versionContributions() {
 		pluginVersions.save();
