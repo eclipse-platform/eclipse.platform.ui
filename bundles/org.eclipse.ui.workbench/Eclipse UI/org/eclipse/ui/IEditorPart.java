@@ -47,7 +47,7 @@ import org.eclipse.core.resources.IMarker;
  * are managed by the platform's adapter manager.
  * </p>
  *
- * @see org.eclipse.ui.IWorkbenchPage#openEditor()
+ * @see org.eclipse.ui.IWorkbenchPage#openEditor(IEditorInput, String)
  * @see org.eclipse.ui.part.EditorPart
  */
 public interface IEditorPart extends IWorkbenchPart, ISaveablePart {
