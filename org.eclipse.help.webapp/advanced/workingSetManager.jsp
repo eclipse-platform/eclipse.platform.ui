@@ -40,7 +40,7 @@ TD, TR {
 
 #workingSetContainer {
 	background:Window;
-	border:1px solid ThreeDShadow;
+	border: 2px inset <%=prefs.getViewBackground()%>;
 	margin:0px 5px;
 	padding:5px;
 	overflow:auto;

@@ -48,14 +48,13 @@ TD, TR {
 
 
 #workingSet {
-	border:1px solid WindowText;
 	width:100%;
 	font:icon;
 }
 
 #booksContainer {
 	background:Window;
-	border:1px solid ThreeDShadow;
+	border:	2px inset <%=prefs.getViewBackground()%>;;
 	margin:10px;
 	padding-left:5px;
 	overflow:auto;
