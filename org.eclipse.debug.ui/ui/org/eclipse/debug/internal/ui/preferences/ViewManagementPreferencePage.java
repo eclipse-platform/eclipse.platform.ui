@@ -69,6 +69,7 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 		Composite composite= new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		composite.setFont(parent.getFont());
 		
 		createPerspectiveViewer(composite);
 		
