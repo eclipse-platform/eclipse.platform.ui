@@ -290,7 +290,7 @@ public class CVSProjectPropertiesPage extends PropertyPage {
 			if (syncInfo == null) return;
 			String label = syncInfo.getRepository();
 			if (label.equals(FolderSyncInfo.VIRTUAL_DIRECTORY)) {
-				label = Policy.bind("CVSPropertiesPage.virtualModule", label);
+				label = Policy.bind("CVSPropertiesPage.virtualModule", label); //$NON-NLS-1$
 			}
 			moduleLabel.setText(label);
 		} catch (TeamException e) {

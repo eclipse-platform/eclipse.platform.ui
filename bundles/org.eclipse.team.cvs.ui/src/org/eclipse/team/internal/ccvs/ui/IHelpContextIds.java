@@ -25,7 +25,7 @@ public interface IHelpContextIds {
 	public static final String USER_VALIDATION_DIALOG = PREFIX + "user_validation_dialog_context"; //$NON-NLS-1$
 	public static final String RELEASE_COMMENT_DIALOG = PREFIX + "release_comment_dialog_context"; //$NON-NLS-1$
 	public static final String BRANCH_DIALOG = PREFIX + "branch_dialog_context"; //$NON-NLS-1$
-	public static final String RESOURCE_SELECTION_DIALOG = PREFIX + "resource_selection_dialog_context"; //$NON-NLS-1$
+	public static final String PROJECT_SELECTION_DIALOG = PREFIX + "project_selection_dialog_context"; //$NON-NLS-1$
 	
 	// Different uses of the TagSelectionDialog
 	public static final String REPLACE_TAG_SELECTION_DIALOG = PREFIX + "replace_tag_selection_dialog_context"; //$NON-NLS-1$
@@ -61,6 +61,8 @@ public interface IHelpContextIds {
 	public static final String KEYWORD_SUBSTITUTION_CHANGED_PAGE = PREFIX + "keyword_substituton_changed_page_context"; //$NON-NLS-1$
 	public static final String MERGE_START_PAGE = PREFIX + "merge_start_page_context"; //$NON-NLS-1$
 	public static final String MERGE_END_PAGE = PREFIX + "merge_end_page_context"; //$NON-NLS-1$
+	public static final String CHECKOUT_INTO_RESOURCE_SELECTION_PAGE = PREFIX + "checkout_into_resource_selection_page_context"; //$NON-NLS-1$
+	public static final String CHECKOUT_INTO_CONFIGURATION_PAGE = PREFIX + "checkout_into_configuration_page_context"; //$NON-NLS-1$
 
 	// Preference Pages
 	public static final String PREF_REPOSITORIES_ARE_BINARY = PREFIX + "repositories_are_binary_pref"; //$NON-NLS-1$

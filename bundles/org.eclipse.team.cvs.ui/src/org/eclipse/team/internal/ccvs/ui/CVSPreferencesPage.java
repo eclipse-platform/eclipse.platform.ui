@@ -342,7 +342,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		// Text mode processed separately to avoid empty string in properties file.
 		String mode =((KSubstOption)ksubstOptions.get(ksubstCombo.getSelectionIndex())).toMode();
 		if (mode.length() == 0) {
-			mode = "-kkv";
+			mode = "-kkv"; //$NON-NLS-1$
 		}
 		store.setValue(ICVSUIConstants.PREF_TEXT_KSUBST, mode);
 		store.setValue(ICVSUIConstants.PREF_CONSIDER_CONTENTS, considerContentsInCompare.getSelection());

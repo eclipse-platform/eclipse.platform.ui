@@ -50,8 +50,8 @@ public class ProjectSelectionDialog extends ListSelectionDialog {
 	
 	// dialogs settings that are persistent between workbench sessions
 	private IDialogSettings settings;
-	private static final String USE_WORKING_SET = "UseWorkingSet";
-	private static final String SELECTED_WORKING_SET = "SelectedWorkingSet";
+	private static final String USE_WORKING_SET = "UseWorkingSet"; //$NON-NLS-1$
+	private static final String SELECTED_WORKING_SET = "SelectedWorkingSet"; //$NON-NLS-1$
 	
 	/*
 	 * Used to update the mru list box when working sets are 
@@ -178,7 +178,7 @@ public class ProjectSelectionDialog extends ListSelectionDialog {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		WorkbenchHelp.setHelp(newShell, IHelpContextIds.RESOURCE_SELECTION_DIALOG);
+		WorkbenchHelp.setHelp(newShell, IHelpContextIds.PROJECT_SELECTION_DIALOG);
 	}
 	/**
 	 * Returns the selected working set or null if none is selected.

@@ -295,7 +295,7 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 	}
 
 	public static void log(CVSException e) {
-		getPlugin().getLog().log(new Status(e.getStatus().getSeverity(), CVSUIPlugin.ID, 0, Policy.bind("simpleInternal"), e));;
+		getPlugin().getLog().log(new Status(e.getStatus().getSeverity(), CVSUIPlugin.ID, 0, Policy.bind("simpleInternal"), e));; //$NON-NLS-1$
 	}
 		
 	/**

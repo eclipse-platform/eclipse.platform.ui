@@ -116,7 +116,7 @@ public class ReleaseCommentDialog extends Dialog {
 		
 		// add a description label
 		Label label = new Label(composite, SWT.LEFT);
-		label.setText(Policy.bind("ReleaseCommentDialog.unaddedResources")); 
+		label.setText(Policy.bind("ReleaseCommentDialog.unaddedResources"));  //$NON-NLS-1$
 	
 		// add the selectable checkbox list
 		listViewer = CheckboxTableViewer.newCheckList(composite, SWT.BORDER);
@@ -155,7 +155,7 @@ public class ReleaseCommentDialog extends Dialog {
 		data.grabExcessHorizontalSpace = true;
 		composite.setData(data);
 	
-		Button selectButton = createButton(buttonComposite, IDialogConstants.SELECT_ALL_ID, Policy.bind("ReleaseCommentDialog.selectAll"), false);
+		Button selectButton = createButton(buttonComposite, IDialogConstants.SELECT_ALL_ID, Policy.bind("ReleaseCommentDialog.selectAll"), false); //$NON-NLS-1$
 		SelectionListener listener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				listViewer.setAllChecked(true);
@@ -163,7 +163,7 @@ public class ReleaseCommentDialog extends Dialog {
 		};
 		selectButton.addSelectionListener(listener);
 	
-		Button deselectButton = createButton(buttonComposite, IDialogConstants.DESELECT_ALL_ID, Policy.bind("ReleaseCommentDialog.deselectAll"), false);
+		Button deselectButton = createButton(buttonComposite, IDialogConstants.DESELECT_ALL_ID, Policy.bind("ReleaseCommentDialog.deselectAll"), false); //$NON-NLS-1$
 		listener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				listViewer.setAllChecked(false);
