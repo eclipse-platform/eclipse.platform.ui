@@ -13,6 +13,7 @@ package org.eclipse.core.resources;
 import java.util.Map;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 /**
  * Workspaces are the basis for Eclipse Platform resource management.  There 
@@ -760,6 +761,23 @@ public IStatus move(IResource[] resources, IPath destination, int updateFlags, I
  * @see IProject#move
  */
 public IProjectDescription newProjectDescription(String projectName);
+/**
+ * Returns a new scheduling rule on a resource.  Two resource scheduling rules
+ * will be conflicting if and only if the resource of one rule is a child of, or equal to,
+ *  the resource of the other rule.
+ * <p>
+ * Resource scheduling rules can be attached to <code>WorkspaceJob</code>
+ * subclasses, or can be used when batching changes with the method
+ * <code>Workspace.run</code>.
+ * 
+ * @return a resource scheduling rule
+ * @see WorkspaceJob
+ * @see #run
+ * @since 3.0
+ */
+public ISchedulingRule newSchedulingRule(IResource resource);
+
+
 /** 
  * Removes the given resource change listener from this workspace.
  * Has no effect if an identical listener is not registered.
@@ -804,10 +822,43 @@ public void removeSaveParticipant(Plugin plugin);
  * If this method is called in the dynamic scope of another such
  * call, this method simply runs the action.
  * </p>
+ * <p>
+ * The supplied scheduling rule is used to determine whether this operation can be
+ * run simultaneously with workspace changes in other threads.  Use the
+ * method <code>newSchedulingRule</code> to create a rule that specifies
+ * modification of a particular resource.  If the scheduling rule conflicts with another 
+ * workspace change that is currently running, the calling thread will be blocked until 
+ * that change completes.
+ * </p>
+ * <p>
+ * If the action attempts to make changes to the workspace that were not specified
+ * in the scheduling rule, it will fail.  If no scheduling rule is supplied, then any attempt
+ * to change the workspace will fail.
+ * </p>
+ * 
+ * @param action the action to perform
+ * @param rule the scheduling rule to use when running this operation, or
+ * <code>null</code> if there are no scheduling restrictions for this operation.
+ * @param monitor a progress monitor, or <code>null</code> if progress
+ *    reporting and cancellation are not desired
+ * @exception CoreException if the operation failed.
+ * 
+ * @see #newSchedulingRule
+ * @since 3.0
+ */
+public void run(IWorkspaceRunnable action, ISchedulingRule rule, IProgressMonitor monitor) throws CoreException;
+/**
+ * Runs the given action as an atomic workspace operation.
+ * <p>
+ * This is a convenience method, fully equivalent to:
+ * <pre>
+ *   workspace.run(action, workspace.newSchedulingRule(workspace.getRoot()), monitor);
+ * </pre>
+ * </p>
  *
  * @param action the action to perform
  * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancellation are not desired
+ *    reporting and cancelation are not desired
  * @exception CoreException if the operation failed.
  */
 public void run(IWorkspaceRunnable action, IProgressMonitor monitor) throws CoreException;
@@ -1046,6 +1097,10 @@ public void setDescription(IWorkspaceDescription description) throws CoreExcepti
  * Clients should not call this method.
  * </p>
  * @param lock the lock to install on this workspace.
+ * 
+ * @deprecated it is no longer possible to override the workspace lock behavior.
+ * This functionality is now provided in the platform API by implementing the
+ * org.eclipse.core.runtime.jobs.ILockListener interface.
  */
 public void setWorkspaceLock(WorkspaceLock lock);
 /**

@@ -24,10 +24,10 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.resources.team.TeamHook;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 
 public class Workspace extends PlatformObject implements IWorkspace, ICoreConstants {
-
 	protected WorkspacePreferences description;
 	protected LocalMetaArea localMetaArea;
 	protected boolean openFlag = false;
@@ -41,15 +41,21 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	protected PathVariableManager pathVariableManager;
 	protected PropertyManager propertyManager;
 	protected MarkerManager markerManager;
-	protected WorkManager workManager;
+	/**
+	 * Work manager should never be accessed directly because accessor
+	 * asserts that workspace is still open.
+	 */
+	protected WorkManager _workManager;
 	protected AliasManager aliasManager;
 	protected long nextNodeId = 1;
 	protected long nextModificationStamp = 0;
 	protected long nextMarkerId = 0;
 	protected Synchronizer synchronizer;
 	protected IProject[] buildOrder = null;
-	protected boolean forceBuild = false;
 	protected IWorkspaceRoot defaultRoot = new WorkspaceRoot(Path.ROOT, this);
+	
+	//jobs
+	protected AutoBuildJob autoBuildJob;
 
 	protected final HashSet lifecycleListeners = new HashSet(10);
 
@@ -87,14 +93,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * would fail and be logged in our SafeRunnable wrappers, not affecting the
 	 * normal workspace operation.
 	 */
-	protected boolean treeLocked;
-	
-	/**
-	 * We need to override the tree lock mechanism when synchronizing the tree
-	 * to create a workspace tree visitor.  In this case we need the tree to be
-	 * unlocked, but we know that nothing will modify the tree.
-	 */
-	protected volatile boolean overrideTreeLock = false;
+	protected boolean treeLocked = false;
 
 	/** indicates if the workspace crashed in a previous session */
 	protected boolean crashed = false;
@@ -106,6 +105,7 @@ public Workspace() {
 	tree.immutable();
 	treeLocked = true;
 	tree.setTreeData(newElement(IResource.ROOT));
+	autoBuildJob = new AutoBuildJob(this);
 }
 /**
  * Adds a listener for internal workspace lifecycle events.  There is no way to
@@ -148,17 +148,13 @@ public void beginOperation(boolean createNewTree) throws CoreException {
 			newWorkingTree();
 		return;
 	}
-	if (createNewTree) {
-		// stash the current tree as the basis for this operation.
-		operationTree = tree;
+	// stash the current tree as the basis for this operation.
+	operationTree = tree;
+	if (createNewTree && tree.isImmutable())
 		newWorkingTree();
-	}
 }
-private void broadcastChanges(ElementTree currentTree, int type, boolean lockTree, boolean updateState, IProgressMonitor monitor) {
-	if (operationTree == null)
-		return;
-	monitor.subTask(MSG_RESOURCES_UPDATING); 
-	notificationManager.broadcastChanges(currentTree, type, lockTree, updateState);
+protected void broadcastChanges(int type, boolean lockTree) throws CoreException {
+	notificationManager.broadcastChanges(tree, type, lockTree);
 }
 /**
  * Broadcasts an internal workspace lifecycle event to interested
@@ -183,7 +179,7 @@ public void build(int trigger, IProgressMonitor monitor) throws CoreException {
 			//building may close the tree, but we are still inside an operation so open it
 			if (tree.isImmutable())
 				newWorkingTree();
-			getWorkManager().avoidAutoBuild();
+			autoBuildJob.avoidBuild();
 			endOperation(false, Policy.subMonitorFor(monitor, Policy.buildWork));
 		}
 	} finally {
@@ -200,11 +196,11 @@ public void checkpoint(boolean build) {
 		if (!getWorkManager().isCurrentOperation())
 			return;
 		immutable = tree.isImmutable();
-		broadcastChanges(tree, IResourceChangeEvent.PRE_AUTO_BUILD, false, false, Policy.monitorFor(null));
+		broadcastChanges(IResourceChangeEvent.PRE_AUTO_BUILD, false);
 		if (build && isAutoBuilding())
 			getBuildManager().build(IncrementalProjectBuilder.AUTO_BUILD, Policy.monitorFor(null));
-		broadcastChanges(tree, IResourceChangeEvent.POST_AUTO_BUILD, false, false, Policy.monitorFor(null));
-		broadcastChanges(tree, IResourceChangeEvent.POST_CHANGE, true, true, Policy.monitorFor(null));
+		broadcastChanges(IResourceChangeEvent.POST_AUTO_BUILD, false);
+		broadcastChanges(IResourceChangeEvent.POST_CHANGE, true);
 		getMarkerManager().resetMarkerDeltas();
 	} catch (CoreException e) {
 		// ignore any CoreException.  There shouldn't be any as the buildmanager and notification manager
@@ -500,7 +496,7 @@ public IStatus copy(IResource[] resources, IPath destination, int updateFlags, I
 		monitor.beginTask(message, totalWork);
 		Assert.isLegal(resources != null);
 		if (resources.length == 0)
-			return ResourceStatus.OK_STATUS;
+			return Status.OK_STATUS;
 		// to avoid concurrent changes to this array
 		resources = (IResource[]) resources.clone();
 		IPath parentPath = null;
@@ -552,7 +548,7 @@ public IStatus copy(IResource[] resources, IPath destination, int updateFlags, I
 		}
 		if (status.matches(IStatus.ERROR))
 			throw new ResourceException(status);
-		return status.isOK() ? ResourceStatus.OK_STATUS : (IStatus) status;
+		return status.isOK() ? Status.OK_STATUS : (IStatus) status;
 	} finally {
 		monitor.done();
 	}
@@ -647,7 +643,7 @@ public int countResources(IPath root, int depth, final boolean phantom) {
 		case IResource.DEPTH_INFINITE:
 			final int[] count = new int[1];
 			IElementContentVisitor visitor = new IElementContentVisitor() {
-				public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
+				public boolean visitElement(ElementTree aTree, IPathRequestor requestor, Object elementContents) {
 					if (phantom || !((ResourceInfo)elementContents).isSet(M_PHANTOM))
 						count[0]++;
 					return true;
@@ -839,67 +835,41 @@ public void dumpStats() {
  */
 public void endOperation(boolean build, IProgressMonitor monitor) throws CoreException {
 	WorkManager workManager = getWorkManager();
+	// This is done in a try finally to ensure that we always decrement the operation count
+	// and release the workspace lock.  This must be done at the end because snapshot
+	// and "hasChanges" comparison have to happen without interference from other threads.
+	boolean hasTreeChanges = false;
 	try {
 		workManager.setBuild(build);
 		// if we are not exiting a top level operation then just decrement the count and return
-		if (workManager.getPreparedOperationDepth() > 1) 
+		if (workManager.getPreparedOperationDepth() > 1)
 			return;
-			
-		// do the following in a try/finally to ensure that the operation tree is null'd at the end
+		// do the following in a try/finally to ensure that the operation tree is nulled at the end
 		// as we are completing a top level operation.
 		try {
-			// if the tree is locked we likely got here in some finally block after a failed begin.
-			// Since the tree is locked, nothing could have been done so there is nothing to do.
-			Assert.isTrue(!(isTreeLocked() && workManager.shouldBuild()), "The tree should not be locked."); //$NON-NLS-1$
 			// check for a programming error on using beginOperation/endOperation
 			Assert.isTrue(workManager.getPreparedOperationDepth() > 0, "Mismatched begin/endOperation"); //$NON-NLS-1$
-	
+
 			// At this time we need to rebalance the nested operations. It is necessary because
 			// build() and snapshot() should not fail if they are called.
 			workManager.rebalanceNestedOperations();
 
-			// If autobuild is on, give each open project a chance to build.  We have to tell each one
-			// because there is no way of knowing whether or not there is a relevant change
-			// for the project without computing the delta for each builder in each project relative
-			// to its last built state.  If we have guaranteed corelation between the notification delta
-			// and the last time autobuild was done, then we could look at the notification delta and
-			// see which projects had changed and only build them.  Currently there is no such
-			// guarantee.   
-			// Note that  building a project when there is actually nothing to do is not free but
-			// is should not be too expensive.  The computed delta will be empty and so the builder itself
-			// will not actually be run.  This does require however the delta computation.
-			//
-			// This is done in a try finally to ensure that we always decrement the operation count.
-			// The operationCount cannot be decremented before this as the build must be done
-			// inside an operation.  Note that we only ever get here if we are at a top level operation.
-			// As such, the operationCount will always be 0 (zero) after this.
-			OperationCanceledException cancel = null;
-			CoreException signal = null;
-			monitor = Policy.monitorFor(monitor);
-			monitor.subTask(MSG_RESOURCES_UPDATING); //$NON-NLS-1$
-			boolean hasTreeChanges = operationTree != null && ElementTree.hasChanges(tree, operationTree, ResourceComparator.getComparator(false), true);
-			broadcastChanges(tree, IResourceChangeEvent.PRE_AUTO_BUILD, false, false, Policy.monitorFor(null));
-			if (isAutoBuilding() && shouldBuild(hasTreeChanges)) {
-				try {
-					getBuildManager().build(IncrementalProjectBuilder.AUTO_BUILD, monitor);
-				} catch (OperationCanceledException e) {
-					cancel = e;
-				} catch (CoreException sig) {
-					signal = sig;
-				}
-			}
-			broadcastChanges(tree, IResourceChangeEvent.POST_AUTO_BUILD, false, false, Policy.monitorFor(null));
-			broadcastChanges(tree, IResourceChangeEvent.POST_CHANGE, true, true, Policy.monitorFor(null));
-			getMarkerManager().resetMarkerDeltas();
-			// Perform a snapshot if we are sufficiently out of date.  Be sure to make the tree immutable first
+			//find out if any operation has potentially modified the tree
+			hasTreeChanges = workManager.shouldBuild();
+			//double check if the tree has actually changed
+			if (hasTreeChanges)
+				hasTreeChanges = operationTree != null && ElementTree.hasChanges(tree, operationTree, ResourceComparator.getComparator(false), true);
+			autoBuildJob.endTopLevel(hasTreeChanges);
+
+			broadcastChanges(IResourceChangeEvent.PRE_AUTO_BUILD, false);
+			if (isAutoBuilding() && autoBuildJob.shouldBuild())
+				getBuildManager().build(IncrementalProjectBuilder.AUTO_BUILD, Policy.subMonitorFor(monitor, Policy.opWork));
+			broadcastChanges(IResourceChangeEvent.POST_AUTO_BUILD, false);
+			broadcastChanges(IResourceChangeEvent.POST_CHANGE, true);
+
 			tree.immutable();
+			// Perform a snapshot if we are sufficiently out of date.  Be sure to make the tree immutable first
 			saveManager.snapshotIfNeeded(hasTreeChanges);
-			//make sure the monitor subtask message is cleared.
-			monitor.subTask(""); //$NON-NLS-1$
-			if (cancel != null)
-				throw cancel;
-			if (signal != null)
-				throw signal;
 		} finally {
 			// make sure that the tree is immutable.  Only do this if we are ending a top-level operation.
 			tree.immutable();
@@ -1121,11 +1091,11 @@ protected TeamHook getTeamHook() {
  * this method.
  */
 public WorkManager getWorkManager() throws CoreException {
-	if (workManager == null) {
+	if (_workManager == null) {
 		String message = Policy.bind("resources.shutdown"); //$NON-NLS-1$
 		throw new ResourceException(new ResourceStatus(IResourceStatus.INTERNAL_ERROR, null, message));
 	}
-	return workManager;
+	return _workManager;
 }
 /**
  * A file modification validator hasn't been initialized. Check the extension point and 
@@ -1142,7 +1112,7 @@ protected void initializeValidator() {
 	// the #setContents (e.g. don't throw an exception)
 	if (configs.length > 1) {
 		//XXX: shoud provide a meaningful status code
-		IStatus status = new ResourceStatus(IResourceStatus.ERROR, 1, null, Policy.bind("resources.oneValidator"), null); //$NON-NLS-1$
+		IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Policy.bind("resources.oneValidator"), null); //$NON-NLS-1$
 		ResourcesPlugin.getPlugin().getLog().log(status);
 		return;
 	}
@@ -1154,7 +1124,7 @@ protected void initializeValidator() {
 		shouldValidate = true;
 	} catch (CoreException e) {
 		//XXX: shoud provide a meaningful status code
-		IStatus status = new ResourceStatus(IResourceStatus.ERROR, 1, null, Policy.bind("resources.initValidator"), e); //$NON-NLS-1$
+		IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Policy.bind("resources.initValidator"), e); //$NON-NLS-1$
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
 }
@@ -1173,7 +1143,7 @@ protected void initializeMoveDeleteHook() {
 		// can only have one defined at a time. log a warning
 		if (configs.length > 1) {
 			//XXX: shoud provide a meaningful status code
-			IStatus status = new ResourceStatus(IResourceStatus.ERROR, 1, null, Policy.bind("resources.oneHook"), null); //$NON-NLS-1$
+			IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Policy.bind("resources.oneHook"), null); //$NON-NLS-1$
 			ResourcesPlugin.getPlugin().getLog().log(status);
 			return;
 		}
@@ -1184,7 +1154,7 @@ protected void initializeMoveDeleteHook() {
 			moveDeleteHook = (IMoveDeleteHook) config.createExecutableExtension("class"); //$NON-NLS-1$
 		} catch (CoreException e) {
 			//XXX: shoud provide a meaningful status code
-			IStatus status = new ResourceStatus(IResourceStatus.ERROR, 1, null, Policy.bind("resources.initHook"), e); //$NON-NLS-1$
+			IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Policy.bind("resources.initHook"), e); //$NON-NLS-1$
 			ResourcesPlugin.getPlugin().getLog().log(status);
 		}
 	} finally {
@@ -1208,7 +1178,7 @@ protected void initializeTeamHook() {
 		// can only have one defined at a time. log a warning
 		if (configs.length > 1) {
 			//XXX: shoud provide a meaningful status code
-			IStatus status = new ResourceStatus(IResourceStatus.ERROR, 1, null, Policy.bind("resources.oneTeamHook"), null); //$NON-NLS-1$
+			IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Policy.bind("resources.oneTeamHook"), null); //$NON-NLS-1$
 			ResourcesPlugin.getPlugin().getLog().log(status);
 			return;
 		}
@@ -1219,7 +1189,7 @@ protected void initializeTeamHook() {
 			teamHook = (TeamHook) config.createExecutableExtension("class"); //$NON-NLS-1$
 		} catch (CoreException e) {
 			//XXX: shoud provide a meaningful status code
-			IStatus status = new ResourceStatus(IResourceStatus.ERROR, 1, null, Policy.bind("resources.initTeamHook"), e); //$NON-NLS-1$
+			IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Policy.bind("resources.initTeamHook"), e); //$NON-NLS-1$
 			ResourcesPlugin.getPlugin().getLog().log(status);
 		}
 	} finally {
@@ -1274,8 +1244,6 @@ protected boolean isOverlapping(IPath location1, IPath location2, boolean bothDi
 	return one.isPrefixOf(two) || (bothDirections && two.isPrefixOf(one));
 }
 public boolean isTreeLocked() {
-	if (overrideTreeLock)
-		return false;
 	return treeLocked;
 }
 /**
@@ -1325,7 +1293,7 @@ public IStatus move(IResource[] resources, IPath destination, int updateFlags, I
 		monitor.beginTask(message, totalWork);
 		Assert.isLegal(resources != null);
 		if (resources.length == 0)
-			return ResourceStatus.OK_STATUS;
+			return Status.OK_STATUS;
 		resources = (IResource[]) resources.clone(); // to avoid concurrent changes to this array
 		IPath parentPath = null;
 		message = Policy.bind("resources.moveProblem"); //$NON-NLS-1$
@@ -1375,7 +1343,7 @@ public IStatus move(IResource[] resources, IPath destination, int updateFlags, I
 		}
 		if (status.matches(IStatus.ERROR))
 			throw new ResourceException(status);
-		return status.isOK() ? (IStatus) ResourceStatus.OK_STATUS : (IStatus) status;
+		return status.isOK() ? (IStatus) Status.OK_STATUS : (IStatus) status;
 	} finally {
 		monitor.done();
 	}
@@ -1456,6 +1424,16 @@ public Resource newResource(IPath path, int type) {
 	Assert.isLegal(false);
 	// will never get here because of assertion.
 	return null;
+}
+/**
+ * Returns a new scheduling rule on a resource.  Two resource scheduling rules
+ * will be conflicting if and only if the resource of one rule is a child of, or equal to,
+ *  the resource of the other rule.
+ * 
+ * @return a resource scheduling rule
+ */
+public ISchedulingRule newSchedulingRule(IResource resource) {
+	return _workManager.newSchedulingRule(resource);
 }
 /**
  * Opens a new mutable element tree layer, thus allowing 
@@ -1546,7 +1524,7 @@ public IStatus open(IProgressMonitor monitor) throws CoreException {
 				return e.getStatus();
 			}
 		}
-		return ResourceStatus.OK_STATUS;
+		return Status.OK_STATUS;
 	} finally {
 		description.setAutoBuilding(oldBuildFlag);
 	}
@@ -1554,12 +1532,17 @@ public IStatus open(IProgressMonitor monitor) throws CoreException {
 /**
  * Called before checking the pre-conditions of an operation.
  */
-public void prepareOperation() throws CoreException {
-	getWorkManager().checkIn();
+public void prepareOperation(ISchedulingRule rule) throws CoreException {
+	//ask the autobuild to cancel, and it should quickly give up its lock
+	autoBuildJob.checkCancel();
+	getWorkManager().checkIn(rule);
 	if (!isOpen()) {
 		String message = Policy.bind("resources.workspaceClosed"); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.OPERATION_FAILED, null, message, null);
 	}
+}
+public void prepareOperation() throws CoreException {
+	prepareOperation(newSchedulingRule(getRoot()));
 }
 
 protected boolean refreshRequested() {
@@ -1582,17 +1565,14 @@ public void removeSaveParticipant(Plugin plugin) {
 	Assert.isNotNull(plugin, "Plugin must not be null"); //$NON-NLS-1$
 	saveManager.removeParticipant(plugin);
 }
-/**
- * @see IWorkspace#run
- */
-public void run(IWorkspaceRunnable job, IProgressMonitor monitor) throws CoreException {
+public void run(IWorkspaceRunnable action, ISchedulingRule rule, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
 		monitor.beginTask(null, Policy.totalWork);
 		try {
-			prepareOperation();
+			prepareOperation(rule);
 			beginOperation(true);
-			job.run(Policy.subMonitorFor(monitor, Policy.opWork, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
+			action.run(Policy.subMonitorFor(monitor, Policy.opWork, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
 		} catch (OperationCanceledException e) {
 			getWorkManager().operationCanceled();
 			throw e;
@@ -1602,6 +1582,12 @@ public void run(IWorkspaceRunnable job, IProgressMonitor monitor) throws CoreExc
 	} finally {
 		monitor.done();
 	}
+}
+/**
+ * @see IWorkspace#run
+ */
+public void run(IWorkspaceRunnable job, IProgressMonitor monitor) throws CoreException {
+	run(job, newSchedulingRule(getRoot()), monitor);
 }
 /** 
  * @see IWorkspace
@@ -1615,7 +1601,7 @@ public IStatus save(boolean full, IProgressMonitor monitor) throws CoreException
 		// it is OK to start the save because it will wait until the other thread
 		// is finished. Otherwise, someone in this thread has tried to do a save
 		// inside of an operation (which is not allowed by the spec).
-		if (getWorkManager().getCurrentOperationThread() == Thread.currentThread()) {
+		if (getWorkManager().isCurrentOperation()) {
 			message = Policy.bind("resources.saveOp"); //$NON-NLS-1$
 			throw new ResourceException(IResourceStatus.OPERATION_FAILED, null, message, null);
 		} 
@@ -1628,7 +1614,7 @@ public IStatus save(boolean full, IProgressMonitor monitor) throws CoreException
 		beginOperation(false);
 		saveManager.requestSnapshot();
 		message = Policy.bind("resources.snapRequest"); //$NON-NLS-1$
-		return new ResourceStatus(IResourceStatus.OK, message);
+		return new ResourceStatus(IStatus.OK, message);
 	} finally {
 		endOperation(false, null);
 	}
@@ -1649,7 +1635,7 @@ public void setDescription(IWorkspaceDescription value) throws CoreException {
 		buildOrder = null;
 	//if autobuild has just been turned on, indicate that a build is necessary
 	if (!description.isAutoBuilding() && newDescription.isAutoBuilding())
-		forceBuild = true;
+		autoBuildJob.forceBuild();
 	description.copyFrom(newDescription);
 	Policy.setupAutoBuildProgress(description.isAutoBuilding());
 	ResourcesPlugin.getPlugin().savePluginPreferences();
@@ -1657,22 +1643,16 @@ public void setDescription(IWorkspaceDescription value) throws CoreException {
 public void setTreeLocked(boolean locked) {
 	treeLocked = locked;
 }
+/**
+ * @deprecated
+ */
 public void setWorkspaceLock(WorkspaceLock lock) {
-	workManager.setWorkspaceLock(lock);
 }
 
-private boolean shouldBuild(boolean hasTreeChanges) throws CoreException {
-	//check if workspace description changes necessitate a build
-	if (forceBuild) {
-		forceBuild = false;
-		return true;
-	}
-	return hasTreeChanges && getWorkManager().shouldBuild();
-}
 protected void shutdown(IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		IManager[] managers = { buildManager, notificationManager, propertyManager, pathVariableManager, fileSystemManager, markerManager, saveManager, workManager, aliasManager};
+		IManager[] managers = { buildManager, notificationManager, propertyManager, pathVariableManager, fileSystemManager, markerManager, saveManager, _workManager, aliasManager};
 		monitor.beginTask(null, managers.length);
 		String message = Policy.bind("resources.shutdownProblems"); //$NON-NLS-1$
 		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, null);
@@ -1686,7 +1666,7 @@ protected void shutdown(IProgressMonitor monitor) throws CoreException {
 					manager.shutdown(Policy.subMonitorFor(monitor, 1));
 				} catch (Exception e) {
 					message = Policy.bind("resources.shutdownProblems"); //$NON-NLS-1$
-					status.add(new Status(Status.ERROR, ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, e));
+					status.add(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, e));
 				}
 			}
 		}
@@ -1698,7 +1678,8 @@ protected void shutdown(IProgressMonitor monitor) throws CoreException {
 		markerManager = null;
 		synchronizer = null;
 		saveManager = null;
-		workManager = null;
+		_workManager = null;
+		autoBuildJob.cancel();
 		if (!status.isOK())
 			throw new CoreException(status);
 	} finally {
@@ -1713,8 +1694,8 @@ public String[] sortNatureSet(String[] natureIds) {
 }
 protected void startup(IProgressMonitor monitor) throws CoreException {
 	// ensure the tree is locked during the startup notification
-	workManager = new WorkManager(this);
-	workManager.startup(null);
+	_workManager = new WorkManager(this);
+	_workManager.startup(null);
 	fileSystemManager = new FileSystemResourceManager(this);
 	fileSystemManager.startup(monitor);
 	propertyManager = new PropertyManager(this);
@@ -1735,7 +1716,7 @@ protected void startup(IProgressMonitor monitor) throws CoreException {
 	//must start after save manager, because (read) access to tree is needed
 	aliasManager = new AliasManager(this);
 	aliasManager.startup(null);
-	
+
 	treeLocked = false; // unlock the tree.
 }
 /** 
@@ -1746,7 +1727,7 @@ public String toDebugString() {
 	final StringBuffer buffer = new StringBuffer("\nDump of " + toString() + ":\n"); //$NON-NLS-1$ //$NON-NLS-2$
 	buffer.append("  parent: " + tree.getParent()); //$NON-NLS-1$
 	IElementContentVisitor visitor = new IElementContentVisitor() {
-		public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
+		public boolean visitElement(ElementTree aTree, IPathRequestor requestor, Object elementContents) {
 			buffer.append("\n  " + requestor.requestPath() + ": " + elementContents); //$NON-NLS-1$ //$NON-NLS-2$
 			return true;
 		}
@@ -1772,7 +1753,7 @@ public IStatus validateEdit(final IFile[] files, final Object context) {
 				result.add(new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, filePath, message));
 			}
 		}
-		return result.isOK() ? ResourceStatus.OK_STATUS : (IStatus) result;
+		return result.isOK() ? Status.OK_STATUS : (IStatus) result;
 	}
 	// first time through the validator hasn't been initialized so try and create it
 	if (validator == null) 
@@ -1780,7 +1761,7 @@ public IStatus validateEdit(final IFile[] files, final Object context) {
 	// we were unable to initialize the validator. Validation has been turned off and 
 	// a warning has already been logged so just return.
 	if (validator == null)
-		return ResourceStatus.OK_STATUS;
+		return Status.OK_STATUS;
 	// otherwise call the API and throw an exception if appropriate
 	final IStatus[] status = new IStatus[1];
 	ISafeRunnable body = new ISafeRunnable() {
@@ -1788,7 +1769,7 @@ public IStatus validateEdit(final IFile[] files, final Object context) {
 			status[0] = validator.validateEdit(files, context);
 		}
 		public void handleException(Throwable exception) {
-			status[0]  = new ResourceStatus(IResourceStatus.ERROR, null, Policy.bind("resources.errorValidator"), exception); //$NON-NLS-1$
+			status[0]  = new ResourceStatus(IStatus.ERROR, null, Policy.bind("resources.errorValidator"), exception); //$NON-NLS-1$
 		}
 	};
 	Platform.run(body);
@@ -1865,7 +1846,7 @@ public IStatus validateLinkLocation(IResource resource, IPath unresolvedLocation
 	// conflict with any project locations or linked resource locations
 	IProject[] projects = getRoot().getProjects();
 	for (int i = 0; i < projects.length; i++) {
-		IProject project = (IProject) projects[i];
+		IProject project = projects[i];
 		// since we are iterating over the project in the workspace, we
 		// know that they have been created before and must have a description
 		IProjectDescription desc  = ((Project) project).internalGetDescription();
@@ -1895,7 +1876,7 @@ public IStatus validateLinkLocation(IResource resource, IPath unresolvedLocation
 			}				
 		}
 	}
-	return ResourceStatus.OK_STATUS;
+	return Status.OK_STATUS;
 }
 /**
  * @see IWorkspace#validateName
@@ -1940,7 +1921,7 @@ public IStatus validateName(String segment, int type) {
 		message = Policy.bind("resources.invalidName", segment); //$NON-NLS-1$
 		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 	}
-	return ResourceStatus.OK_STATUS;
+	return Status.OK_STATUS;
 }
 /**
  * @see IWorkspace#validateNatureSet(String[])
@@ -2022,7 +2003,7 @@ public IStatus validatePath(IPath path, int type, boolean lastSegmentOnly) {
 			if (!status.isOK())
 				return status;
 		}
-		return ResourceStatus.OK_STATUS;
+		return Status.OK_STATUS;
 	}
 	message = Policy.bind("resources.invalidPath", path.toString()); //$NON-NLS-1$
 	return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
@@ -2034,7 +2015,7 @@ public IStatus validateProjectLocation(IProject context, IPath unresolvedLocatio
 	String message;
 	// the default default is ok for all projects
 	if (unresolvedLocation == null) {
-		return ResourceStatus.OK_STATUS;
+		return Status.OK_STATUS;
 	}
 	//check the standard path name restrictions
 	IPath location = getPathVariableManager().resolvePath(unresolvedLocation);
@@ -2065,7 +2046,7 @@ public IStatus validateProjectLocation(IProject context, IPath unresolvedLocatio
 	// conflict with any of their already defined locations.
 	IProject[] projects = getRoot().getProjects();
 	for (int j = 0; j < projects.length; j++) {
-		IProject project = (IProject) projects[j];
+		IProject project = projects[j];
 		// since we are iterating over the project in the workspace, we
 		// know that they have been created before and must have a description
 		IProjectDescription desc  = ((Project) project).internalGetDescription();
@@ -2102,7 +2083,7 @@ public IStatus validateProjectLocation(IProject context, IPath unresolvedLocatio
 			}
 		}
 	}
-	return ResourceStatus.OK_STATUS;
+	return Status.OK_STATUS;
 }
 /**
  * Internal method. To be called only from the following methods:
@@ -2132,16 +2113,11 @@ protected void validateSave(final IFile file) throws CoreException {
 			status[0] = validator.validateSave(file);
 		}
 		public void handleException(Throwable exception) {
-			status[0]  = new ResourceStatus(IResourceStatus.ERROR, null, Policy.bind("resources.errorValidator"), exception); //$NON-NLS-1$
+			status[0]  = new ResourceStatus(IStatus.ERROR, null, Policy.bind("resources.errorValidator"), exception); //$NON-NLS-1$
 		}
 	};
 	Platform.run(body);
 	if (!status[0].isOK())
 		throw new ResourceException(status[0]);
 }
-
-
-
-
-
 }

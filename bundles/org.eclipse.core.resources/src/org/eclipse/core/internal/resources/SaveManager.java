@@ -40,10 +40,14 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 	 */
 	protected static final int NO_OP_THRESHOLD = 20;
 
+	/**
+	 * The minimum delay, in milliseconds, between workspace snapshots
+	 */
+	private static final long MIN_SNAPSHOT_DELAY= 1000 * 30L;//30 seconds
+
 	protected boolean snapshotRequested;
 	
-
-	protected DelayedSnapshotRunnable snapshotRunnable;	
+	protected DelayedSnapshotJob snapshotJob;
 	
 	/** plugins that participate on a workspace save */
 	protected HashMap saveParticipants;
@@ -121,7 +125,7 @@ protected void broadcastLifecycle(final int lifecycle, Map contexts, final Multi
 				}
 				public void handleException(Throwable e) {
 					String message = Policy.bind("resources.saveProblem"); //$NON-NLS-1$
-					IStatus status = new Status(Status.WARNING, ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, e);
+					IStatus status = new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, e);
 					warnings.add(status);
 
 					/* Remove entry for defective plug-in from this save operation */
@@ -831,7 +835,7 @@ protected IStatus saveMetaInfo(Project project, IProgressMonitor monitor) throws
 	}
 	if (Policy.DEBUG_SAVE_METAINFO)
 		System.out.println("Save metainfo for " + project.getFullPath() + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	return ResourceStatus.OK_STATUS;
+	return Status.OK_STATUS;
 }
 /**
  * Writes the metainfo (e.g. descriptions) of the given workspace and
@@ -895,9 +899,9 @@ void setPluginsSavedState(HashMap savedStates) {
 	this.savedStates = savedStates;
 }
 public void shutdown(IProgressMonitor monitor) {
-	if (snapshotRunnable != null) {
-		snapshotRunnable.cancel();
-		snapshotRunnable= null;
+	if (snapshotJob != null) {
+		snapshotJob.cancel();
+		snapshotJob= null;
 	}
 }
 /**
@@ -909,9 +913,9 @@ public void snapshotIfNeeded(boolean hasTreeChanges) throws CoreException {
 	if (!workspace.internalGetDescription().isSnapshotEnabled() && !snapshotRequested)
 		return;
 	if (snapshotRequested || operationCount >= workspace.internalGetDescription().getOperationsPerSnapshot()) {
-		if (snapshotRunnable != null) {
-			snapshotRunnable.cancel();
-			snapshotRunnable = null;
+		if (snapshotJob != null) {
+			snapshotJob.cancel();
+			snapshotJob = null;
 		}
 		try {
 			EventStats.startSnapshot();
@@ -927,13 +931,11 @@ public void snapshotIfNeeded(boolean hasTreeChanges) throws CoreException {
 		if (hasTreeChanges) {
 			operationCount++;
 			long interval = workspace.internalGetDescription().getSnapshotInterval();
-			if (snapshotRunnable == null && interval > 0) {
-				if (ResourcesPlugin.getPlugin().isDebugging()) {
-					System.out.println("Starting snapshot delay thread"); //$NON-NLS-1$
-				}
-				snapshotRunnable = new DelayedSnapshotRunnable(this, interval);
-				Thread t = new Thread(snapshotRunnable, "Snapshot"); //$NON-NLS-1$
-				t.start();
+			if (snapshotJob == null) {
+				if (ResourcesPlugin.getPlugin().isDebugging())
+					System.out.println("Scheduling workspace snapshot"); //$NON-NLS-1$
+				snapshotJob = new DelayedSnapshotJob(this);
+				snapshotJob.schedule(Math.max(interval, MIN_SNAPSHOT_DELAY));
 			}
 		} else {
 			//increment the operation count if we've had a sufficient number of no-ops
@@ -1069,7 +1071,7 @@ protected void writeTree(Map statesToSave, DataOutputStream output, IProgressMon
 				Map.Entry entry = (Map.Entry) i.next();
 				String pluginId = (String) entry.getKey();
 				output.writeUTF(pluginId);
-				trees.add((ElementTree) entry.getValue()); // tree
+				trees.add(entry.getValue()); // tree
 				setDeltaExpiration(pluginId, lastTreeTimestamp);
 			}
 			monitor.worked(Policy.totalWork * 10 / 100);
@@ -1193,7 +1195,7 @@ public Object readElement(IPath path, DataInput input) throws IOException {
 	// read the flags and pull out the type.  
 	int flags = input.readInt();
 	int type = (flags & ICoreConstants.M_TYPE) >> ICoreConstants.M_TYPE_START;
-	ResourceInfo info = (ResourceInfo) workspace.newElement(type);
+	ResourceInfo info = workspace.newElement(type);
 	info.readFrom(flags, input);
 	return info;
 }
@@ -1266,7 +1268,7 @@ public IStatus save(int kind, Project project, IProgressMonitor monitor) throws 
 		String message = Policy.bind("resources.saving.0"); //$NON-NLS-1$
 		monitor.beginTask(message, 6);
 		message = Policy.bind("resources.saveWarnings"); //$NON-NLS-1$
-		MultiStatus warnings = new MultiStatus(ResourcesPlugin.PI_RESOURCES, Status.WARNING, message, null);
+		MultiStatus warnings = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.WARNING, message, null);
 		try {
 			workspace.prepareOperation();
 			workspace.beginOperation(false);
@@ -1350,7 +1352,7 @@ public IStatus save(int kind, Project project, IProgressMonitor monitor) throws 
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
-			workspace.endOperation(false, null);
+			workspace.endOperation(false, Policy.monitorFor(null));
 		}
 	} finally {
 		monitor.done();

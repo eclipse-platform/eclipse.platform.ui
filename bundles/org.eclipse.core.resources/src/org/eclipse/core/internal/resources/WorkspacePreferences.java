@@ -43,6 +43,8 @@ public class WorkspacePreferences extends WorkspaceDescription {
 			super.setSnapshotInterval(preferences.getInt(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL));
 		if (preferences.contains(ResourcesPlugin.PREF_MAX_BUILD_ITERATIONS))
 			super.setMaxBuildIterations(preferences.getInt(ResourcesPlugin.PREF_MAX_BUILD_ITERATIONS));
+		if (preferences.contains(ResourcesPlugin.PREF_MAX_BUILD_ITERATIONS))
+			super.setMaxNotifyDelay(preferences.getInt(ResourcesPlugin.PREF_MAX_NOTIFICATION_DELAY));
 		// This property listener ensures we are being updated properly when changes
 		// are done directly to the preference store.
 		preferences.addPropertyChangeListener(new Preferences.IPropertyChangeListener() {
@@ -201,6 +203,8 @@ public class WorkspacePreferences extends WorkspaceDescription {
 		else if (property.equals(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL)) 
 			super.setSnapshotInterval(preferences.getLong(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL));
 		else if (property.equals(ResourcesPlugin.PREF_MAX_BUILD_ITERATIONS)) 
-			super.setMaxBuildIterations(preferences.getInt(ResourcesPlugin.PREF_MAX_BUILD_ITERATIONS));		
+			super.setMaxBuildIterations(preferences.getInt(ResourcesPlugin.PREF_MAX_BUILD_ITERATIONS));
+		else if (property.equals(ResourcesPlugin.PREF_MAX_NOTIFICATION_DELAY))
+			super.setMaxNotifyDelay(preferences.getLong(ResourcesPlugin.PREF_MAX_NOTIFICATION_DELAY));
 	}
 }

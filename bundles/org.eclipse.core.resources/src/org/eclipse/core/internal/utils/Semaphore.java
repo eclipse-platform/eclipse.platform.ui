@@ -39,6 +39,6 @@ public synchronized void release() {
 }
 // for debug only
 public String toString() {
-	return runnable.toString();
+	return String.valueOf(runnable);
 }
 }

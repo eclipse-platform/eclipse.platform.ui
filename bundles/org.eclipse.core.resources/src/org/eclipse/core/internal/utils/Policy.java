@@ -16,11 +16,12 @@ import java.text.MessageFormat;
 import java.util.*;
 
 public class Policy {
+	public static final long AUTO_BUILD_DELAY = 500;
 	private static String bundleName = "org.eclipse.core.internal.utils.messages";//$NON-NLS-1$
 	private static ResourceBundle bundle = ResourceBundle.getBundle(bundleName, Locale.getDefault());
 	
-	private static final int autoBuildOpWork = 70;
-	private static final int autoBuildBuildWork = 30;
+	private static final int autoBuildOpWork = 99;
+	private static final int autoBuildBuildWork = 1;
 	private static final int manualBuildOpWork = 99;
 	private static final int manualBuildBuildWork = 1;
 
@@ -39,7 +40,7 @@ public class Policy {
 	public static final long defaultMaxFileStateSize = 1024 * 1024l; // 1 Mb
 	public static final int defaultMaxFileStates = 50;
 	public static final int defaultMaxBuildIterations = 10;
-	
+	public static final long defaultMaxNotifyDelay= 10000;// 10 seconds
 
 	//debug constants
 	public static boolean DEBUG_BUILD_FAILURE = false;

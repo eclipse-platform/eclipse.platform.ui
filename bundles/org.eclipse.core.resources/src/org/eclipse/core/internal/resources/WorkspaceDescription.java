@@ -17,17 +17,18 @@ import org.eclipse.core.resources.IWorkspaceDescription;
  * @see IWorkspaceDescription
  */
 public class WorkspaceDescription extends ModelObject implements IWorkspaceDescription {
-	protected Workspace workspace;
 	protected boolean autoBuilding = Policy.defaultAutoBuild;
-	// thread safety: (Concurrency004)
-	protected volatile long fileStateLongevity = Policy.defaultFileStateLongevity;
-	// thread safety: (Concurrency004)
-	protected volatile long maxFileStateSize = Policy.defaultMaxFileStateSize;
-	protected int maxBuildIterations = Policy.defaultMaxBuildIterations;
-	protected int maxFileStates = Policy.defaultMaxFileStates;
 	protected String[] buildOrder = null;
 	// thread safety: (Concurrency004)
+	protected volatile long fileStateLongevity = Policy.defaultFileStateLongevity;
+	protected int maxBuildIterations = Policy.defaultMaxBuildIterations;
+	protected int maxFileStates = Policy.defaultMaxFileStates;
+	// thread safety: (Concurrency004)
+	protected volatile long maxFileStateSize = Policy.defaultMaxFileStateSize;
+	protected long maxNotifyDelay = Policy.defaultMaxNotifyDelay;
+	// thread safety: (Concurrency004)
 	private volatile long snapshotInterval = Policy.defaultSnapshotInterval;
+	protected Workspace workspace;
 
 	public WorkspaceDescription(String name) {
 		super(name);
@@ -69,6 +70,9 @@ public class WorkspaceDescription extends ModelObject implements IWorkspaceDescr
 	 */
 	public long getMaxFileStateSize() {
 		return maxFileStateSize;
+	}
+	public long getMaxNotifyDelay() {
+		return maxNotifyDelay;
 	}
 	public int getOperationsPerSnapshot() {
 		return Policy.defaultOperationsPerSnapshot;
@@ -126,6 +130,9 @@ public class WorkspaceDescription extends ModelObject implements IWorkspaceDescr
 	 */
 	public void setMaxFileStateSize(long size) {
 		maxFileStateSize = size;
+	}
+	public void setMaxNotifyDelay(long maxNotifyDelay) {
+		this.maxNotifyDelay = maxNotifyDelay;
 	}
 	/**
 	 * @see IWorkspaceDescription

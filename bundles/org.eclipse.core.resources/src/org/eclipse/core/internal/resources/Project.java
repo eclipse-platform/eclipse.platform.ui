@@ -33,7 +33,7 @@ protected Project(IPath path, Workspace container) {
 protected MultiStatus basicSetDescription(ProjectDescription description) {
 	String message = Policy.bind("resources.projectDesc"); //$NON-NLS-1$
 	MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_WRITE_METADATA, message, null);
-	ProjectDescription current = (ProjectDescription) internalGetDescription();
+	ProjectDescription current = internalGetDescription();
 	current.setComment(description.getComment());
 	// set the build order before setting the references or the natures
 	current.setBuildSpec(description.getBuildSpec(true));
@@ -66,7 +66,7 @@ public void build(int kind, String builderName, Map args, IProgressMonitor monit
 		//building may close the tree, but we are still inside an operation so open it
 		if (workspace.getElementTree().isImmutable())
 			workspace.newWorkingTree();
-		workspace.getWorkManager().avoidAutoBuild();
+		workspace.autoBuildJob.avoidBuild();
 		workspace.endOperation(false, null);
 	}
 }
@@ -87,7 +87,7 @@ public void build(int trigger, IProgressMonitor monitor) throws CoreException {
 		//building may close the tree, but we are still inside an operation so open it
 		if (workspace.getElementTree().isImmutable())
 			workspace.newWorkingTree();
-		workspace.getWorkManager().avoidAutoBuild();
+		workspace.autoBuildJob.avoidBuild();
 		workspace.endOperation(false, null);
 	}
 }
@@ -139,6 +139,8 @@ public void close(IProgressMonitor monitor) throws CoreException {
 		String msg = Policy.bind("resources.closing.1", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(msg, Policy.totalWork);
 		try {
+			// Do this before the prepare to allow lifecycle participants to change the tree.
+			workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_CLOSE, this));
 			workspace.prepareOperation();
 			ResourceInfo info = getResourceInfo(false, false);
 			int flags = getFlags(info);
@@ -149,8 +151,6 @@ public void close(IProgressMonitor monitor) throws CoreException {
 			// Signal that this resource is about to be closed.  Do this at the very 
 			// beginning so that infrastructure pieces have a chance to do clean up 
 			// while the resources still exist.
-			// Do this before the begin to prevent lifecycle participants to change the tree.
-			workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_CLOSE, this));
 			workspace.beginOperation(true);
 			// flush the build order early in case there is a problem
 			workspace.flushBuildOrder();

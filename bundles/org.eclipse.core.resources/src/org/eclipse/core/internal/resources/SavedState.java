@@ -60,13 +60,13 @@ public class SavedState implements ISavedState {
 				workspace.beginOperation(true);
 				ResourceDelta delta = ResourceDeltaFactory.computeDelta(workspace, oldTree, newTree, Path.ROOT, false);
 				forgetTrees(); // free trees to prevent memory leak
-				workspace.getNotificationManager().broadcastChanges(listener, IResourceChangeEvent.POST_AUTO_BUILD, delta, false);
+				workspace.getNotificationManager().broadcastChanges(listener, IResourceChangeEvent.POST_AUTO_BUILD, delta);
 			} finally {
 				workspace.endOperation(false, null);
 			}
 		} catch (CoreException e) {
 			// this is unlikelly to happen, so, just log it
-			ResourceStatus status = new ResourceStatus(IResourceStatus.WARNING, null, e.getMessage(), e);
+			ResourceStatus status = new ResourceStatus(IStatus.WARNING, null, e.getMessage(), e);
 			ResourcesPlugin.getPlugin().getLog().log(status);
 		}
 	}

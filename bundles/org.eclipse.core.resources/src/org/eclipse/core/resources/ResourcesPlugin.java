@@ -99,6 +99,13 @@ public final class ResourcesPlugin extends Plugin {
 	private static final String PREF_DESCRIPTION_PREFIX = "description."; //$NON-NLS-1$
 
 	/**
+	 * Name of a preference for configuring the maximum amount of time in millseconds
+	 * between a workspace change and the subsequent resource change notification.
+	 * @since 3.0
+	 */
+	public static final String PREF_MAX_NOTIFICATION_DELAY = "maxnotifydelay"; //$NON-NLS-1$
+
+	/**
 	 * Name of a preference for configuring whether the workspace performs auto-
 	 * builds.
 	 * @since 2.1
