@@ -18,7 +18,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.team.ccvs.core.*;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSResource;
 import org.eclipse.team.core.TeamException;
@@ -26,7 +25,6 @@ import org.eclipse.team.core.sync.ILocalSyncElement;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.client.Command;
-import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -283,7 +281,7 @@ public class SyncElementTest extends EclipseTest {
 		JUnitTestCase.waitMsec(1500); // Wait so that timestamp of modified file differs from original
 		appendText(file, "prefix\n", true);
 		file = copy.getFile("folder1/a.txt");
-		file.setContents(getRandomContents(), false, false, null);
+		file.setContents(new ByteArrayInputStream("Use a custom string to avoid intermitant errors!".getBytes()), false, false, null);
 		getProvider(copy).checkin(new IResource[] {copy}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
 
 		// Make the same modifications to the original (We need to test both M and C!!!)

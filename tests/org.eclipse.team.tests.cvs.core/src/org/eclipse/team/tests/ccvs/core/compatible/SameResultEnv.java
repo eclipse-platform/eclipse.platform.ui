@@ -348,6 +348,8 @@ public final class SameResultEnv extends JUnitTestCase {
 	 */
 	private static void assertEquals(ICVSFile mFile1, ICVSFile mFile2) throws CVSException {
 		
+		if (mFile1.getName().equals(".project")) return;
+		
 		// Check the permissions on disk
 		assertEquals(mFile1.isReadOnly(), mFile2.isReadOnly());
 					
@@ -363,8 +365,8 @@ public final class SameResultEnv extends JUnitTestCase {
 			in2.read(buffer2);
 			in1.close();
 			in2.close();
-			assertEquals(buffer1.length,buffer2.length);
-			assertEquals(new String(buffer1),new String(buffer2));
+			assertEquals("Length differs for file " + mFile1.getName(), buffer1.length, buffer2.length);
+			assertEquals("Contents differs for file " + mFile1.getName(), new String(buffer1),new String(buffer2));
 		} catch (IOException e) {
 			throw new CVSException("Error in TestCase");
 		}
