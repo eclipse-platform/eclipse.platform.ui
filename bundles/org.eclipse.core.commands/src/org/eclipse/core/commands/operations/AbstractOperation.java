@@ -36,6 +36,11 @@ public abstract class AbstractOperation implements IOperation {
 
 	private String fLabel = ""; //$NON-NLS-1$
 
+	/**
+	 * Construct an operation that has the specified label.
+	 * 
+	 * @param label - the label to be used for the operation.
+	 */
 	public AbstractOperation(String label) {
 		fLabel = label;
 	}

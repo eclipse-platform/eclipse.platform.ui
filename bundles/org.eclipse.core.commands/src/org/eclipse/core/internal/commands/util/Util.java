@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.core.commands.misc;
+package org.eclipse.core.internal.commands.util;
 
 import java.util.Collections;
 import java.util.HashMap;

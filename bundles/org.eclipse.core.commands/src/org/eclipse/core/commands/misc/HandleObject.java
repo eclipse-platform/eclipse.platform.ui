@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.commands.misc;
 
+import org.eclipse.core.internal.commands.util.Util;
+
 /**
  * <p>
  * An object that can exist in one of two states: defined and undefined. This is

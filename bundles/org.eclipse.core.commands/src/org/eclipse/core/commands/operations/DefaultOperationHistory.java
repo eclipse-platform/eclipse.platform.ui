@@ -8,26 +8,20 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.core.internal.commands.operations;
+package org.eclipse.core.commands.operations;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.commands.operations.IOperation;
-import org.eclipse.core.commands.operations.IOperationApprover;
-import org.eclipse.core.commands.operations.IOperationHistory;
-import org.eclipse.core.commands.operations.IOperationHistoryListener;
-import org.eclipse.core.commands.operations.OperationContext;
-import org.eclipse.core.commands.operations.OperationHistoryEvent;
-import org.eclipse.core.commands.operations.OperationStatus;
+import org.eclipse.core.internal.commands.util.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 /**
  * <p>
- * A base implementation of IOperationHistory. OperationHistory implements a
+ * A base implementation of IOperationHistory. DefaultOperationHistory implements a
  * strict linear undo and redo model. The most recently added operation is
  * available for undo, and the most recently undone operation is available for
  * redo.
@@ -40,7 +34,7 @@ import org.eclipse.core.runtime.Status;
  * 
  * @since 3.1
  */
-public class OperationHistory implements IOperationHistory {
+public class DefaultOperationHistory implements IOperationHistory {
 
 	protected static IStatus NOTHING_TO_REDO_STATUS = new OperationStatus(
 			IStatus.INFO, OperationStatus.NOTHING_TO_REDO,

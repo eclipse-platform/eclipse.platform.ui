@@ -32,19 +32,26 @@ public class ObjectOperationContext extends OperationContext {
 
 	private Object fObject;
 
-	public ObjectOperationContext(Object o) {
+	/**
+	 * Construct an operation context that represents the given object.
+	 * 
+	 * @param object -
+	 *            the object to be represented.
+	 */
+	public ObjectOperationContext(Object object) {
 		super();
-		fObject = o;
-	}
-
-	public boolean acceptOperation(IOperation operation) {
-		return true;
+		fObject = object;
 	}
 
 	public String getLabel() {
 		return fObject.toString();
 	}
 
+	/**
+	 * Return the object that is represented by this context.
+	 * 
+	 * @return - the object represented by this context.
+	 */
 	public Object getObject() {
 		return fObject;
 	}
@@ -53,6 +60,13 @@ public class ObjectOperationContext extends OperationContext {
 		return fApprover;
 	}
 
+	/**
+	 * Set the IContextOperationApprover that approves the undo or redo of
+	 * operations that have this context.
+	 * 
+	 * @param approver -
+	 *            the operation approver to be used for this context
+	 */
 	public void setOperationApprover(IContextOperationApprover approver) {
 		fApprover = approver;
 	}

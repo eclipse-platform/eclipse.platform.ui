@@ -19,7 +19,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.commands.misc.Util;
+import org.eclipse.core.internal.commands.util.Util;
 
 /**
  * <p>

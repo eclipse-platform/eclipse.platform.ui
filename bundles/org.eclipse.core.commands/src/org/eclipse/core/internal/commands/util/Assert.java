@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.core.internal.commands.operations;
+package org.eclipse.core.internal.commands.util;
 
 /**
  * Used to sanity check runtime conditions. Assertion failures typically occur

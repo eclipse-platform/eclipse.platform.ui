@@ -11,9 +11,9 @@
 package org.eclipse.ui.tests.operations;
 
 import org.eclipse.core.commands.operations.AbstractOperation;
-import org.eclipse.core.commands.operations.OperationStatus;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 /**
  * @since 3.1
@@ -38,7 +38,7 @@ public class TestOperation extends AbstractOperation {
 
 	public IStatus execute(IProgressMonitor monitor) {
 		fExecutionCount++;
-		return OperationStatus.OK_STATUS;
+		return Status.OK_STATUS;
 
 	}
 
@@ -56,7 +56,7 @@ public class TestOperation extends AbstractOperation {
 
 	public IStatus undo(IProgressMonitor monitor) {
 		fExecutionCount--;
-		return OperationStatus.OK_STATUS;
+		return Status.OK_STATUS;
 
 	}
 

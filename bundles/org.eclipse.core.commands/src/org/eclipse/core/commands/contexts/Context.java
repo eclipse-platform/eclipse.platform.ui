@@ -17,7 +17,7 @@ import java.util.Set;
 
 import org.eclipse.core.commands.misc.NamedHandleObject;
 import org.eclipse.core.commands.misc.NotDefinedException;
-import org.eclipse.core.commands.misc.Util;
+import org.eclipse.core.internal.commands.util.Util;
 
 /**
  * <p>

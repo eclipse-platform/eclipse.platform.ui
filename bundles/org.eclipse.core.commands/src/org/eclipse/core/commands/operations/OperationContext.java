@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.commands.operations;
 
+import org.eclipse.core.internal.commands.util.Assert;
+
 /**
  * <p>
  * A simple, lightweight operation context that can be used to tag any
@@ -37,10 +39,16 @@ public class OperationContext {
 	 * method should be overridden by contexts that have complex rules for
 	 * whether they should be assigned to a particular operation.
 	 * 
+	 * @param operation -
+	 *            the operation to be checked
+	 * 
 	 * @return a boolean indicating whether this context should be assigned to
 	 *         the operation.
 	 */
 	public boolean acceptOperation(IOperation operation) {
+		Assert.isNotNull(operation);
+		
+		// Always accept any operation
 		return true;
 	}
 

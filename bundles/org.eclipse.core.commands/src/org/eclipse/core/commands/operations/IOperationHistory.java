@@ -155,6 +155,10 @@ public interface IOperationHistory {
 	 * @param operation
 	 *            the operation to be executed and then added to the history
 	 * 
+	 * @param monitor
+	 *            the progress monitor to be used (or <code>null</code>)
+	 *            during the operation.
+	 * 
 	 * @return the IStatus indicating whether the execution succeeded.
 	 * 
 	 * The severity code in the returned status describes whether the operation

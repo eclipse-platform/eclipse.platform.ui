@@ -12,7 +12,7 @@ package org.eclipse.core.commands;
 
 import java.util.Map;
 
-import org.eclipse.core.commands.misc.Util;
+import org.eclipse.core.internal.commands.util.Util;
 
 /**
  * An instance of this class describes changes to an instance of

@@ -12,7 +12,7 @@ package org.eclipse.core.commands.operations;
 
 /**
  * <p>
- * OperationHistoryEvent is used to communicate changes to an OperationHistory,
+ * OperationHistoryEvent is used to communicate changes to a DefaultOperationHistory,
  * including operations added and removed from the history, and the execution,
  * undo, and redo of operations.
  * </p>
@@ -120,6 +120,16 @@ public final class OperationHistoryEvent {
 
 	private IOperation operation;
 
+	/**
+	 * Construct an event for the specified operation history.
+	 * 
+	 * @param code -
+	 *            the event code to be used.
+	 * @param history -
+	 *            the history triggering the event.
+	 * @param operation -
+	 *            the operation involved in the event.
+	 */
 	public OperationHistoryEvent(int code, IOperationHistory history,
 			IOperation operation) {
 		if (history == null)

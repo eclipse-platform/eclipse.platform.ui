@@ -14,13 +14,13 @@ package org.eclipse.ui.tests.operations;
 import junit.framework.TestCase;
 
 import org.eclipse.core.commands.operations.ContextConsultingOperationApprover;
+import org.eclipse.core.commands.operations.DefaultOperationHistory;
 import org.eclipse.core.commands.operations.IOperation;
 import org.eclipse.core.commands.operations.IOperationApprover;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.LinearUndoEnforcer;
 import org.eclipse.core.commands.operations.ObjectOperationContext;
 import org.eclipse.core.commands.operations.OperationStatus;
-import org.eclipse.core.internal.commands.operations.OperationHistory;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
@@ -48,7 +48,7 @@ public class OperationsAPITest extends TestCase {
 	}
 
 	protected void setUp() throws Exception {
-		history = new OperationHistory();
+		history = new DefaultOperationHistory();
 		history.setLimit(10);
 		c1 = new ObjectOperationContext("c1");
 		c2 = new ObjectOperationContext("c2");

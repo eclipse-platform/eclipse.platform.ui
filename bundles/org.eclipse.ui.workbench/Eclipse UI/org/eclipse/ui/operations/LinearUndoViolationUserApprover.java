@@ -14,7 +14,6 @@ import org.eclipse.core.commands.operations.IOperation;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.LinearUndoViolationDetector;
 import org.eclipse.core.commands.operations.OperationContext;
-import org.eclipse.core.commands.operations.OperationStatus;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -25,7 +24,8 @@ import org.eclipse.ui.part.WorkbenchPart;
 /**
  * <p>
  * An operation approver that prompts the user to see if linear undo violations
- * are permitted.
+ * are permitted.  A linear undo violation is detected when an operation being undone or
+ * redone shares a context with an operation appearing more recently in the history.
  * </p>
  * <p>
  * Note: This class/interface is part of a new API under development. It has
@@ -41,10 +41,16 @@ import org.eclipse.ui.part.WorkbenchPart;
 public class LinearUndoViolationUserApprover extends
 		LinearUndoViolationDetector {
 
-	private boolean fFlushConflictingChangesOnProceed = true;
+	private boolean fFlushMoreRecentOperations = true;
 
 	private WorkbenchPart fPart;
 
+	/**
+	 * Create a LinearUndoViolationUserApprover associated with the specified
+	 * workbench part.
+	 * 
+	 * @param part - the part that should be used for prompting the user.
+	 */
 	public LinearUndoViolationUserApprover(WorkbenchPart part) {
 		super();
 		fPart = part;
@@ -73,7 +79,7 @@ public class LinearUndoViolationUserApprover extends
 			}
 			return Status.OK_STATUS;
 		case 1: // don't redo the other changes, and flush them if requested
-			if (fFlushConflictingChangesOnProceed) {
+			if (fFlushMoreRecentOperations) {
 				IOperation opToRemove;
 				while (operation != (opToRemove = history
 						.getRedoOperation(context))) {
@@ -119,7 +125,7 @@ public class LinearUndoViolationUserApprover extends
 			}
 			return Status.OK_STATUS;
 		case 1: // don't undo the other changes, and flush them if requested
-			if (fFlushConflictingChangesOnProceed) {
+			if (fFlushMoreRecentOperations) {
 				IOperation opToRemove;
 				while (operation != (opToRemove = history
 						.getUndoOperation(context))) {
@@ -128,10 +134,22 @@ public class LinearUndoViolationUserApprover extends
 			}
 			return Status.OK_STATUS;
 		case 2: // cancel
-			return OperationStatus.CANCEL_STATUS;
+			return Status.CANCEL_STATUS;
 		}
 
 		return Status.OK_STATUS;
+	}
+	/**
+	 * Set whether more recent operations than the operation in question
+	 * should be flushed before proceeding with an undo or redo.  This flag
+	 * is only consulted when the user chooses to proceed with an undo or redo
+	 * that is "underneath" more recent related operations in the history.
+	 * 
+	 * @param flush - <code>true</code> if more recent operations should be
+	 */
+	
+	public void flushMoreRecentOperations(boolean flush) {
+		fFlushMoreRecentOperations = flush;
 	}
 
 }

@@ -12,10 +12,10 @@
 package org.eclipse.ui.operations;
 
 import org.eclipse.core.commands.operations.ContextConsultingOperationApprover;
+import org.eclipse.core.commands.operations.DefaultOperationHistory;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.LinearUndoEnforcer;
 import org.eclipse.core.commands.operations.OperationContext;
-import org.eclipse.core.internal.commands.operations.OperationHistory;
 import org.eclipse.ui.internal.WorkbenchOperationContext;
 
 /**
@@ -73,7 +73,7 @@ public class WorkbenchOperationSupport implements IWorkbenchOperationSupport {
 	public IOperationHistory getOperationHistory() {
 		if (operationHistory == null) {
 			// create the operation history
-			operationHistory = new OperationHistory();
+			operationHistory = new DefaultOperationHistory();
 			/*
 			 * install an operation approver that consults an operation's
 			 * context prior to performing an operation

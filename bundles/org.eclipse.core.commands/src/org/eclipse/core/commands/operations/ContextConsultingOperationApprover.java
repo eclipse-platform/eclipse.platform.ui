@@ -31,34 +31,14 @@ import org.eclipse.core.runtime.Status;
  */
 public class ContextConsultingOperationApprover implements IOperationApprover {
 
-	/**
-	 * Return true if the specified context should be consulted as part of
-	 * approving the operation redo. The default is to always consult the
-	 * context if it has installed an operation approver.
-	 */
-	protected boolean consultContextForRedo(OperationContext context,
-			IOperationHistory history, IOperation operation) {
-		return context.getOperationApprover() != null;
-	}
-
-	/**
-	 * Return true if the specified context should be consulted as part of
-	 * approving the operation undo. The default is to always consult the
-	 * context if it has installed an operation approver.
-	 */
-	protected boolean consultContextForUndo(OperationContext context,
-			IOperationHistory history, IOperation operation) {
-		return context.getOperationApprover() != null;
-	}
-
 	public IStatus proceedRedoing(IOperation operation,
 			IOperationHistory history) {
 		OperationContext[] contexts = operation.getContexts();
 		for (int i = 0; i < contexts.length; i++) {
 			OperationContext context = contexts[i];
-			if (consultContextForRedo(context, history, operation)) {
-				IStatus approval = context.getOperationApprover()
-						.proceedRedoing(operation, context, history);
+			IContextOperationApprover approver = context.getOperationApprover();
+			if (approver != null) {
+				IStatus approval = approver.proceedRedoing(operation, context, history);
 				if (!approval.isOK())
 					return approval;
 			}
@@ -71,9 +51,9 @@ public class ContextConsultingOperationApprover implements IOperationApprover {
 		OperationContext[] contexts = operation.getContexts();
 		for (int i = 0; i < contexts.length; i++) {
 			OperationContext context = contexts[i];
-			if (consultContextForUndo(context, history, operation)) {
-				IStatus approval = context.getOperationApprover()
-						.proceedUndoing(operation, context, history);
+			IContextOperationApprover approver = context.getOperationApprover();
+			if (approver != null) {
+				IStatus approval = approver.proceedUndoing(operation, context, history);
 				if (!approval.isOK())
 					return approval;
 			}
