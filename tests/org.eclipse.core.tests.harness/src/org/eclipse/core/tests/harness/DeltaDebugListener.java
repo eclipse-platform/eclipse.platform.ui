@@ -41,7 +41,7 @@ public void resourceChanged(IResourceChangeEvent event) {
 		// XXX: dropping exceptions
 	}
 }
-protected boolean visit(IResourceDelta change) throws CoreException {
+protected boolean visit(IResourceDelta change) {
 	System.out.println(((ResourceDelta) change).toDebugString());
 	return true;
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,14 +12,14 @@ package org.eclipse.core.tests.harness;
 
 import java.io.*;
 import junit.framework.*;
+
 import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
 /**
- * Tests which use the Eclipse Platform workspace.
+ * Tests that use the Eclipse Platform workspace.
  */
-
 public class EclipseWorkspaceTest extends TestCase {
 	//constants for nature sets	
 	protected static final String SET_STATE = "org.eclipse.core.tests.resources.stateSet";
@@ -91,13 +91,9 @@ public class EclipseWorkspaceTest extends TestCase {
 	 * Assert that the given resource does not exist in the local store.
 	 */
 	public void assertDoesNotExistInFileSystem(String message, IResource resource) {
-		try {
-			if (existsInFileSystem(resource)) {
-				String formatted = message == null ? "" : message + " ";
-				fail(formatted + resource.getFullPath() + " unexpectedly exists in the file system");
-			}
-		} catch (CoreException e) {
-			assertTrue(e.toString(), false);
+		if (existsInFileSystem(resource)) {
+			String formatted = message == null ? "" : message + " ";
+			fail(formatted + resource.getFullPath() + " unexpectedly exists in the file system");
 		}
 	}
 	/**
@@ -168,13 +164,9 @@ public class EclipseWorkspaceTest extends TestCase {
 	 * correct Path -> File mapping.
 	 */
 	public void assertExistsInFileSystem(String message, IResource resource) {
-		try {
-			if (!existsInFileSystem(resource)) {
-				String formatted = message == null ? "" : message + " ";
-				fail(formatted + resource.getFullPath() + " unexpectedly does not exist in the file system");
-			}
-		} catch (CoreException e) {
-			assertTrue(e.toString(), false);
+		if (!existsInFileSystem(resource)) {
+			String formatted = message == null ? "" : message + " ";
+			fail(formatted + resource.getFullPath() + " unexpectedly does not exist in the file system");
 		}
 	}
 	/**
@@ -368,7 +360,7 @@ public class EclipseWorkspaceTest extends TestCase {
 		FileOutputStream output = new FileOutputStream(file);
 		transferData(contents, output);
 	}
-	public IResource[] createHierarchy() throws CoreException {
+	public IResource[] createHierarchy() {
 		IResource[] result = buildResources();
 		ensureExistsInWorkspace(result, true);
 		return result;
@@ -554,7 +546,7 @@ public class EclipseWorkspaceTest extends TestCase {
 			fail("#ensureExistsInWorkspace(IResource): " + resource.getFullPath(), e);
 		}
 	}
-	private boolean existsInFileSystem(IResource resource) throws CoreException {
+	private boolean existsInFileSystem(IResource resource) {
 		IPath path = resource.getLocation();
 		if (path == null)
 			path = computeDefaultLocation(resource);
