@@ -594,6 +594,7 @@ public class EditDialog extends TitleAreaDialog {
 			this.root = root;
 			setShellStyle(getShellStyle() | SWT.RESIZE);
 			setTitle(ToolMessages.getString("EditDialog.browseWorkspaceTitle")); //$NON-NLS-1$
+			WorkbenchHelp.setHelp(parent, IHelpContextIds.RESOURCE_SELECTION_DIALOG);
 		}
 
 		/* (non-Javadoc)
@@ -642,6 +643,7 @@ public class EditDialog extends TitleAreaDialog {
 		public VariableSelectionDialog(Shell parent) {
 			super(parent);
 			setTitle(ToolMessages.getString("EditDialog.browseVarTitle")); //$NON-NLS-1$
+			WorkbenchHelp.setHelp(parent, IHelpContextIds.VARIABLE_SELECTION_DIALOG);
 		}
 
 		/* (non-Javadoc)
@@ -760,6 +762,8 @@ public class EditDialog extends TitleAreaDialog {
 		public RefreshSelectionDialog(Shell parent) {
 			super(parent);
 			setTitle(ToolMessages.getString("EditDialog.browseRefreshTitle")); //$NON-NLS-1$
+			WorkbenchHelp.setHelp(parent, IHelpContextIds.REFRESH_SELECTION_DIALOG);
+
 		}
 
 		/* (non-Javadoc)
@@ -842,6 +846,7 @@ public class EditDialog extends TitleAreaDialog {
 		public ProjectSelectionDialog(Shell parent) {
 			super(parent);
 			setTitle(ToolMessages.getString("EditDialog.browseProjectTitle")); //$NON-NLS-1$
+			WorkbenchHelp.setHelp(parent, IHelpContextIds.PROJECT_SELECTION_DIALOG);
 		}
 
 		/* (non-Javadoc)
@@ -888,6 +893,7 @@ public class EditDialog extends TitleAreaDialog {
 			super(parent);
 			this.targetList = targetList;
 			setTitle(ToolMessages.getString("EditDialog.varAntTargetLabel")); //$NON-NLS-1$
+			WorkbenchHelp.setHelp(parent, IHelpContextIds.TARGET_SELECTION_DIALOG);
 		}
 		
 		public void checkStateChanged(CheckStateChangedEvent e) {

@@ -18,6 +18,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.externaltools.internal.core.ToolMessages;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 import org.eclipse.jface.dialogs.Dialog;
 
@@ -58,6 +59,7 @@ public class AddTaskDialog extends Dialog {
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText(title);
+		WorkbenchHelp.setHelp(newShell, IHelpContextIds.ADD_TASK_DIALOG);
 	}
 	/**
 	 * @see Dialog#createButtonsForButtonBar(Composite)

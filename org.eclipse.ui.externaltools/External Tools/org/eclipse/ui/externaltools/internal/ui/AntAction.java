@@ -18,6 +18,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.externaltools.internal.core.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Action to run an ant build file.
@@ -38,6 +39,7 @@ public class AntAction extends Action {
 		this.window = window;
 		setText(file.getName());
 		setToolTipText(file.getFullPath().toOSString());
+		WorkbenchHelp.setHelp(this, IHelpContextIds.ANT_ACTION);
 	}
 
 	/* (non-Javadoc)
@@ -71,6 +73,7 @@ public class AntAction extends Action {
 		wizard.setNeedsProgressMonitor(true);
 		WizardDialog dialog = new WizardDialog(window.getShell(), wizard);
 		dialog.create();
+		WorkbenchHelp.setHelp(dialog.getShell(), IHelpContextIds.ANT_LAUNCH_WIZARD);		
 		dialog.open();
 	}
 }

@@ -20,6 +20,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.externaltools.internal.core.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * First page of the run Ant wizard. Allows the user to pick
@@ -66,6 +67,8 @@ public class AntLaunchWizardPage extends WizardPage {
 	 * Method declared on IWizardPage.
 	 */
 	public void createControl(Composite parent) {
+		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.ANT_LAUNCH_WIZARD_PAGE);		
+		
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));

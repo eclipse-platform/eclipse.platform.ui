@@ -20,6 +20,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.externaltools.internal.core.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 import java.util.List;
 /**
@@ -47,6 +48,8 @@ public class AntPreferencePage
 	public void init(IWorkbench workbench) {
 	}
 	protected Control createContents(Composite parent) {
+		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.ANT_PREFERENCE_PAGE);
+
 		TabFolder folder = new TabFolder(parent, SWT.NONE);
 		folder.setLayout(new GridLayout());
 		folder.setLayoutData(new GridData(GridData.FILL_BOTH));

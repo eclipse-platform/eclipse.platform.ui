@@ -14,6 +14,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.externaltools.internal.core.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * A page to set the preferences for the console
@@ -36,13 +37,7 @@ public class LogConsolePreferencePage
 	}
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-
-		// should do something here with the help..	
-		/*
-		WorkbenchHelp.setHelp(
-			parent,
-			new Object[] { IAntHelpContextIds.ANT_CONSOLE_PREFERENCE_PAGE });
-		*/
+		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.LOG_CONSOLE_PREFERENCE_PAGE);
 	}
 	/**
 	 * Create all field editors for this page
