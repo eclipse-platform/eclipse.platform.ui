@@ -28,18 +28,26 @@ public class StandaloneUpdateApplication implements IPlatformRunnable {
 				return EXIT_ERROR;
 			loggedException = false;
 			boolean result = cmd.run();
-			if (loggedException) {
-				String log = Platform.getLogFileLocation().toOSString();
-				System.out.println(
-					"Errors(s) occurred during command execution.  Please check "
-						+ log
-						+ " log file for details.");
-			}
+			String log = Platform.getLogFileLocation().toOSString();
 			if (result) {
-				System.out.println("Command completed successfully.");
+				if (loggedException) {
+					System.out.println(
+						"Command completed with errors.  Please check "
+							+ log
+							+ " log file for details.");
+				} else {
+					System.out.println("Command completed successfully.");
+				}
 				return IPlatformRunnable.EXIT_OK;
 			} else {
-				System.out.println("Command failed.");
+				if (loggedException) {
+					System.out.println(
+						"Command failed.  Please check "
+							+ log
+							+ " log file for details.");
+				} else {
+					System.out.println("Command failed.");
+				}
 				return EXIT_ERROR;
 			}
 		}
