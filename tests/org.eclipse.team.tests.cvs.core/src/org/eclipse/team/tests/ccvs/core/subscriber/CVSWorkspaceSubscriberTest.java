@@ -32,15 +32,19 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.subscribers.ContentComparisonCriteria;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.core.subscribers.TeamDelta;
 import org.eclipse.team.core.subscribers.TeamSubscriber;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberAction;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.ui.synchronize.actions.SyncInfoSet;
@@ -129,6 +133,10 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 	
 	private void assertSyncEquals(String string, IProject project, String[] strings, boolean refresh, int[] kinds) throws CoreException, TeamException {
 		assertSyncEquals(string, getSubscriber(), project, strings, refresh, kinds);
+	}
+	
+	private void assertSyncEquals(IProject project, String[] strings, boolean refresh, int[] kinds) throws CoreException, TeamException {
+		assertSyncEquals(getName(), getSubscriber(), project, strings, refresh, kinds);
 	}
 	
 	private void assertSyncEquals(String message, IResource resource, int syncKind) throws TeamException {
@@ -778,7 +786,22 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 	/*
 	 * Test the creation and sync of an empty local project that has remote contents
 	 */
-	public void testSyncOnEmptyProject() throws TeamException {
+	public void testSyncOnEmptyProject() throws TeamException, CoreException {
+		IProject project = createProject(new String[] { "file1.txt", "folder1/file2.txt"});
+		
+		// Make a new folder and map it to the same project
+		IProject newProject = getUniqueTestProject("empty-" + getName());
+		FolderSyncInfo info = CVSWorkspaceRoot.getCVSFolderFor(project).getFolderSyncInfo();
+		CVSWorkspaceRoot.getCVSFolderFor(newProject).setFolderSyncInfo(info);
+		RepositoryProvider.map(newProject, CVSProviderPlugin.getTypeId());
+		
+		// Assert that all resources are incoming additions
+		assertSyncEquals(newProject, 
+				new String[] { "file1.txt", "folder1/", "folder1/file2.txt"}, 
+				true, new int[] {
+					SyncInfo.INCOMING | SyncInfo.ADDITION,
+					SyncInfo.INCOMING | SyncInfo.ADDITION,
+					SyncInfo.INCOMING | SyncInfo.ADDITION});
 	}
 	
 	/*
@@ -912,92 +935,82 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 	/* 
 	 * Test changes using a granularity of contents
 	 */
-//	 public void testGranularityContents() throws TeamException, CoreException, IOException {
-//		// Create a test project (which commits it as well)
-//		IProject project = createProject("testGranularityContents", new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
-//		
-//		// Checkout a copy and make some modifications
-//		IProject copy = checkoutCopy(project, "-copy");
-//		appendText(copy.getFile("file1.txt"), "same text", false);
-//		setContentsAndEnsureModified(copy.getFile("folder1/a.txt"));
-//		commitProject(copy);
-//
-//		// Make the same modifications to the original
-//		appendText(project.getFile("file1.txt"), "same text", false);
-//		setContentsAndEnsureModified(project.getFile("folder1/a.txt"), "unique text");
-//		
-//		// Get the sync tree for the project
-//		String oldId = getSubscriber().getCurrentComparisonCriteria().getId();
-//		// TODO: There should be a better way to handle the selection of comparison criteria
-//		getSubscriber().setCurrentComparisonCriteria("org.eclipse.team.comparisoncriteria.content");
-//		assertSyncEquals("testGranularityContents", project, 
-//			new String[] { "file1.txt", "folder1/", "folder1/a.txt"}, 
-//			true, new int[] {
-//				SyncInfo.IN_SYNC,
-//				SyncInfo.IN_SYNC,
-//				SyncInfo.CONFLICTING | SyncInfo.CHANGE });
-//		getSubscriber().setCurrentComparisonCriteria(oldId);
-//
-//	 }
+	 public void testGranularityContents() throws TeamException, CoreException, IOException {
+		// Create a test project (which commits it as well)
+		IProject project = createProject(new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
+		
+		// Checkout a copy and make some modifications
+		IProject copy = checkoutCopy(project, "-copy");
+		appendText(copy.getFile("file1.txt"), "same text", false);
+		setContentsAndEnsureModified(copy.getFile("folder1/a.txt"), " unique text"); // whitespace difference
+		commitProject(copy);
+
+		// Make the same modifications to the original
+		appendText(project.getFile("file1.txt"), "same text", false);
+		setContentsAndEnsureModified(project.getFile("folder1/a.txt"), "unique text"); // whitespace difference
+		
+		// Get the sync tree for the project
+		String oldId = getSubscriber().getCurrentComparisonCriteria().getId();
+		try {
+			getSubscriber().setCurrentComparisonCriteria(ContentComparisonCriteria.ID_DONTIGNORE_WS);
+			assertSyncEquals("testGranularityContents", project, 
+				new String[] { "file1.txt", "folder1/", "folder1/a.txt"}, 
+				true, new int[] {
+					SyncInfo.IN_SYNC,
+					SyncInfo.IN_SYNC,
+					SyncInfo.CONFLICTING | SyncInfo.CHANGE });
+			getSubscriber().setCurrentComparisonCriteria(ContentComparisonCriteria.ID_IGNORE_WS);
+			// TODO: Should not need to reset after a comparison criteria change (bug 46678)
+			getSyncInfoSource().reset(getSubscriber());
+			assertSyncEquals("testGranularityContents", project, 
+					new String[] { "file1.txt", "folder1/", "folder1/a.txt"}, 
+					true, new int[] {
+						SyncInfo.IN_SYNC,
+						SyncInfo.IN_SYNC,
+						SyncInfo.IN_SYNC });
+		} finally {
+			getSubscriber().setCurrentComparisonCriteria(oldId);
+		}
+
+	 }
 	 
-//	 public void testSimpleMerge() throws TeamException, CoreException, IOException {
-//		// Create a test project (which commits it as well)
-//		IProject project = createProject("testSimpleMerge", new String[] { "file1.txt", "file2.txt", "file3.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
-//	
-//		// Checkout and modify a copy
-//		IProject copy = checkoutCopy(project, "-copy");
-//		copy.refreshLocal(IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
-//		
-//		tagProject(project, new CVSTag("v1", CVSTag.VERSION));
-//		tagProject(project, new CVSTag("branch1", CVSTag.BRANCH));
-//		
-//		getProvider(copy).update(new IResource[] {copy}, Command.NO_LOCAL_OPTIONS,
-//			new CVSTag("branch1", CVSTag.BRANCH), true /*createBackups*/, DEFAULT_MONITOR);
-//		
-//		// make changes on the branch		
-//		addResources(copy, new String[] {"addition.txt", "folderAddition/", "folderAddition/new.txt"}, true);
-//		deleteResources(copy, new String[] {"folder1/b.txt"}, true);
-//		changeResources(copy, new String[] {"file1.txt", "file2.txt"}, true);
-//		
-//		// make change to workspace working on HEAD
-//		changeResources(project, new String[] {"file2.txt"}, false);
-//		changeResources(project, new String[] {"file3.txt"}, true);
-//		
-//		IRemoteResource base = CVSWorkspaceRoot.getRemoteTree(project, new CVSTag("v1", CVSTag.VERSION), DEFAULT_MONITOR);
-//		IRemoteResource remote = CVSWorkspaceRoot.getRemoteTree(project, new CVSTag("branch1", CVSTag.BRANCH), DEFAULT_MONITOR);
-//		SyncInfo tree = new CVSRemoteSyncElement(true /*three way*/, project, base, remote);
-//		
-//		// watch for empty directories and the prune option!!!
-//		assertSyncEquals("testSimpleMerge sync check", tree,
-//						 new String[] { "addition.txt", "folderAddition/", "folderAddition/new.txt", 
-//										 "folder1/b.txt", "file1.txt", "file2.txt", "file3.txt"},
-//						 new int[] { SyncInfo.INCOMING | SyncInfo.ADDITION,
-//									  SyncInfo.INCOMING | SyncInfo.ADDITION,
-//									  SyncInfo.INCOMING | SyncInfo.ADDITION,
-//									  SyncInfo.INCOMING | SyncInfo.DELETION,
-//									  SyncInfo.INCOMING | SyncInfo.CHANGE,
-//									  SyncInfo.CONFLICTING | SyncInfo.CHANGE,
-//									  SyncInfo.OUTGOING | SyncInfo.CHANGE });				 			  					 			  
-//	 }
-//	 
-//	 public void testSyncOnBranch() throws TeamException, CoreException, IOException {
-//	 	
-//		// Create a test project and a branch
-//		IProject project = createProject("testSyncOnBranch", new String[] { "file1.txt", "file2.txt", "file3.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
-//		CVSTag branch = new CVSTag("branch1", CVSTag.BRANCH);
-//		tagProject(project, branch);
-//		getProvider(project).update(new IResource[] {project}, Command.NO_LOCAL_OPTIONS, branch, true /*createBackups*/, DEFAULT_MONITOR);
-//
-//		// Checkout and modify a copy
-//		IProject copy = checkoutCopy(project, branch);
-//		addResources(copy, new String[] {"addition.txt", "folderAddition/", "folderAddition/new.txt"}, true);
-//		deleteResources(copy, new String[] {"folder1/b.txt"}, true);
-//		changeResources(copy, new String[] {"file1.txt", "file2.txt"}, true);
-//		
-//		// Sync on the original and assert the result equals the copy
-//		SyncInfo tree = CVSWorkspaceRoot.getRemoteSyncTree(project, null, DEFAULT_MONITOR);
-//		assertEquals(Path.EMPTY, (ICVSResource)tree.getRemote(), CVSWorkspaceRoot.getCVSResourceFor(copy), false, false);
-//	 }
+	 public void testSyncOnBranch() throws TeamException, CoreException, IOException {
+	 	
+		// Create a test project and a branch
+		IProject project = createProject(new String[] { "file1.txt", "file2.txt", "file3.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
+		CVSTag branch = new CVSTag("branch1", CVSTag.BRANCH);
+		tagProject(project, branch, false /* force */);
+		getProvider(project).update(new IResource[] {project}, Command.NO_LOCAL_OPTIONS, branch, true /*createBackups*/, DEFAULT_MONITOR);
+
+		// Checkout and modify a copy
+		IProject copy = checkoutCopy(project, branch);
+		addResources(copy, new String[] {"addition.txt", "folderAddition/", "folderAddition/new.txt"}, true);
+		deleteResources(copy, new String[] {"folder1/b.txt"}, true);
+		changeResources(copy, new String[] {"file1.txt", "file2.txt"}, true);
+		
+		// Sync on the original and assert the result equals the copy
+		assertSyncEquals(project, new String[] { 
+				"file1.txt", 
+				"file2.txt", 
+				"file3.txt", 
+				"folder1/", 
+				"folder1/a.txt", 
+				"folder1/b.txt",
+				"addition.txt", 
+				"folderAddition/", 
+				"folderAddition/new.txt"}, 
+			true, 
+			new int[] {
+				SyncInfo.INCOMING | SyncInfo.CHANGE,
+				SyncInfo.INCOMING | SyncInfo.CHANGE,
+				SyncInfo.IN_SYNC,
+				SyncInfo.IN_SYNC,
+				SyncInfo.IN_SYNC,
+				SyncInfo.INCOMING | SyncInfo.DELETION,
+				SyncInfo.INCOMING | SyncInfo.ADDITION,
+				SyncInfo.INCOMING | SyncInfo.ADDITION,
+				SyncInfo.INCOMING | SyncInfo.ADDITION});
+	 }
 	 
 	public void testRenameProject() throws TeamException, CoreException, IOException {
 		String[] resourceNames = new String[] { "changed.txt", "folder1/", "folder1/a.txt" };

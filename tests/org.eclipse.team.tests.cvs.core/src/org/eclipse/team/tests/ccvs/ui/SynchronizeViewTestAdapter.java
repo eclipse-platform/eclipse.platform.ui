@@ -135,4 +135,12 @@ public class SynchronizeViewTestAdapter extends SyncInfoSource {
 		super.refresh(subscriber, resource);
 		waitForEventNotification(getInput(subscriber));
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.tests.ccvs.core.subscriber.SyncInfoSource#reset()
+	 */
+	public void reset(TeamSubscriber subscriber) throws TeamException {
+		super.reset(subscriber);
+		getInput(subscriber).reset();
+	}
+
 }

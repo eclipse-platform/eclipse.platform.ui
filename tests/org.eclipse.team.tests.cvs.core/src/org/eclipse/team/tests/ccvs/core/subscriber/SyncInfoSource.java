@@ -72,4 +72,12 @@ public class SyncInfoSource {
 			s.cancel();
 		}
 	}
+
+	/**
+	 * Recalculate a sync info from scratch
+	 */
+	public void reset(TeamSubscriber subscriber) throws TeamException {
+		// Do nothing
+		
+	}
 }

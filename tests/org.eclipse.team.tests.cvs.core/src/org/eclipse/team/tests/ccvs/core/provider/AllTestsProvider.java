@@ -30,7 +30,6 @@ public class AllTestsProvider extends EclipseTest {
 		suite.addTest(ImportTest.suite());
 		suite.addTest(RemoteResourceTest.suite());
 		suite.addTest(CVSProviderTest.suite());
-		suite.addTest(SyncElementTest.suite());
 		suite.addTest(ResourceDeltaTest.suite());
 		suite.addTest(WatchEditTest.suite());
 		suite.addTest(LinkResourcesTest.suite());
