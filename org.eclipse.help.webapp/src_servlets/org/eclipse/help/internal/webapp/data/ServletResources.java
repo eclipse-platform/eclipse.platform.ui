@@ -38,4 +38,13 @@ public class ServletResources {
 	public static String getString(String name, HttpServletRequest request) {
 		return WebappResources.getString(name, request.getLocale());
 	}
+
+	/**
+	 * Returns a string from a property file.
+	 * It uses 'name' as a the key to retrieve from the webapp.properties file.
+	 * @param request HttpServletRequest or null; default locale will be used if null passed
+	 */
+	public static String getString(String name, String replace0, HttpServletRequest request) {
+		return WebappResources.getString(name, request.getLocale(), replace0);
+	}
 }

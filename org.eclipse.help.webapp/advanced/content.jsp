@@ -62,8 +62,8 @@ function onloadHandler(e)
 
 
 <frameset id="contentFrameset" onload="onloadHandler()" rows='<%=data.isIE()?"24,*":"27,*"%>'  frameborder="0" framespacing="0" border=0 spacing=0>
-	<frame name="ContentToolbarFrame" src='<%="contentToolbar.jsp"+data.getQuery()%>'  marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize=0>
-	<frame name="ContentViewFrame" src='<%=data.getContentURL()%>'  marginwidth="10" marginheight="0" frameborder="0" >
+	<frame name="ContentToolbarFrame" title="<%=ServletResources.getString("aViewToolbar", ServletResources.getString("topic", request), request)%>" src='<%="contentToolbar.jsp"+data.getQuery()%>'  marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize=0>
+	<frame name="ContentViewFrame" title="<%=ServletResources.getString("aView", ServletResources.getString("topic", request), request)%>" src='<%=data.getContentURL()%>'  marginwidth="10" marginheight="0" frameborder="0" >
 </frameset>
 
 </html>

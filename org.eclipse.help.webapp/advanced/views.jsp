@@ -99,7 +99,8 @@ function showView(view)
 %>
  	<iframe frameborder="0" 
  		    class="<%=className%>"  
- 		    name="<%=views[i].getName()%>" 
+ 		    name="<%=views[i].getName()%>"
+ 		    title="<%=ServletResources.getString("ignore", views[i].getName(), request)%>"
  		    id="<%=views[i].getName()%>" 
  		    src='<%="view.jsp?view="+views[i].getName()+"&"+request.getQueryString()%>'>
  	</iframe> 
@@ -107,7 +108,7 @@ function showView(view)
 	}
 %>	
 
- <iframe frameborder="0" style="visibility:hidden" tabindex="-1" name="temp" id="temp"></iframe>
+ <iframe frameborder="0" style="visibility:hidden" tabindex="-1" name="temp" id="temp" title="<%=ServletResources.getString("ignore", "temp", request)%>"></iframe>
  
 </body>
 </html>
