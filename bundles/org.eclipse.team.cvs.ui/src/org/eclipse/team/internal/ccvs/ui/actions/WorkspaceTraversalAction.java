@@ -10,17 +10,20 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.actions;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.*;
-import org.eclipse.core.resources.mapping.ResourceMapping;
-import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.subscribers.Subscriber;
+import org.eclipse.team.core.subscribers.SubscriberResourceMappingContext;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.ui.PlatformUI;
 
 
 /**
@@ -76,4 +79,55 @@ public abstract class WorkspaceTraversalAction extends WorkspaceAction {
         return (IResource[]) result.toArray(new IResource[result.size()]);
     }
 
+    protected Subscriber getWorkspaceSubscriber() {
+        return CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber();
+    }
+    
+    protected IResource[] getResourcesToCompare(final Subscriber subscriber) throws InvocationTargetException {
+        return getResourcesToCompare(getCVSResourceMappings(), subscriber);
+    }
+    
+    public static IResource[] getResourcesToCompare(final ResourceMapping[] mappings, final Subscriber subscriber) throws InvocationTargetException {
+        // Determine what resources need to be synchronized.
+        // Use a resource mapping context to include any relevant remote resources
+        final IResource[][] resources = new IResource[][] { null };
+        try {
+            PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
+                public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+                    try {
+                        resources[0] = getRootTraversalResources(
+                                mappings, 
+                                SubscriberResourceMappingContext.getCompareContext(subscriber), 
+                                monitor);
+                    } catch (CoreException e) {
+                        throw new InvocationTargetException(e);
+                    }
+                }
+            
+            });
+        } catch (InterruptedException e) {
+            // Canceled
+            return null;
+        }
+        return resources[0];
+    }
+    
+    public static IResource[] getProjects(IResource[] resources) {
+        Set projects = new HashSet();
+        for (int i = 0; i < resources.length; i++) {
+            IResource resource = resources[i];
+            projects.add(resource.getProject());
+        }
+        return (IResource[]) projects.toArray(new IResource[projects.size()]);
+    }
+    
+    public static boolean isLogicalModel(ResourceMapping[] mappings) {
+        for (int i = 0; i < mappings.length; i++) {
+            ResourceMapping mapping = mappings[i];
+            if (! (mapping.getModelObject() instanceof IResource) ) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.team.internal.ccvs.core.CVSMergeSubscriber;
@@ -23,6 +25,7 @@ import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.internal.ccvs.ui.actions.WorkspaceTraversalAction;
 import org.eclipse.team.internal.ccvs.ui.operations.UpdateOperation;
 import org.eclipse.team.internal.ccvs.ui.subscriber.MergeSynchronizeParticipant;
 import org.eclipse.team.internal.ccvs.ui.tags.TagSource;
@@ -34,10 +37,12 @@ public class MergeWizard extends Wizard {
     MergeWizardPage page;
 	IResource[] resources;
     private final IWorkbenchPart part;
+    private final ResourceMapping[] mappings;
     
-	public MergeWizard(IWorkbenchPart part, IResource[] resources) {
+	public MergeWizard(IWorkbenchPart part, IResource[] resources, ResourceMapping[] mappings) {
         this.part = part;
         this.resources = resources;
+        this.mappings = mappings;
     }
 
 	public void addPages() {
@@ -59,7 +64,7 @@ public class MergeWizard extends Wizard {
 		
 		if (startTag == null || !page.isPreview()) {
 		    // Perform the update (merge) in the background
-		    UpdateOperation op = new UpdateOperation(getPart(), resources, getLocalOptions(startTag, endTag), null);
+		    UpdateOperation op = new UpdateOperation(getPart(), mappings, getLocalOptions(startTag, endTag), null);
 		    try {
                 op.run();
             } catch (InvocationTargetException e) {
@@ -69,6 +74,12 @@ public class MergeWizard extends Wizard {
             }
 		} else {
 			// First check if there is an existing matching participant, if so then re-use it
+            try {
+                resources = getAllResources(startTag, endTag);
+            } catch (InvocationTargetException e) {
+                // Log and continue with the original resources
+                CVSUIPlugin.log(IStatus.ERROR, "An error occurred while detemrining if extra resources should be included in the merge", e.getTargetException()); //$NON-NLS-1$
+            }
 			MergeSynchronizeParticipant participant = MergeSynchronizeParticipant.getMatchingParticipant(resources, startTag, endTag);
 			if(participant == null) {
 				CVSMergeSubscriber s = new CVSMergeSubscriber(resources, startTag, endTag);
@@ -80,6 +91,16 @@ public class MergeWizard extends Wizard {
 		return true;
 	}
 	
+    private IResource[] getAllResources(CVSTag startTag, CVSTag endTag) throws InvocationTargetException {
+        // Only do the extra work if the model is a logical model (i.e. not IResource)
+        if (!WorkspaceTraversalAction.isLogicalModel(mappings))
+            return resources;
+        CVSMergeSubscriber s = new CVSMergeSubscriber(WorkspaceTraversalAction.getProjects(resources), startTag, endTag);
+        IResource[] allResources = WorkspaceTraversalAction.getResourcesToCompare(mappings, s);
+        s.cancel();
+        return allResources;
+    }
+
     private Command.LocalOption[] getLocalOptions(CVSTag startTag, CVSTag endTag) {
         List options = new ArrayList();
         if (startTag != null) {

@@ -37,7 +37,7 @@ import org.eclipse.ui.PlatformUI;
 public class SyncAction extends WorkspaceTraversalAction {
 	
 	public void execute(IAction action) throws InvocationTargetException {
-		final IResource[] resources = getResourcesToSync();
+        IResource[] resources = getResourcesToCompare(getWorkspaceSubscriber());
 		if (resources == null || resources.length == 0) return;
 		
 		if(isSingleFile(resources)) {
@@ -53,8 +53,8 @@ public class SyncAction extends WorkspaceTraversalAction {
 			participant.refresh(resources, getTargetPart().getSite());
 		}
 	}
-	
-	/**
+
+    /**
 	 * Refresh the subscriber directly and show the resulting synchronization state in a compare editor. If there
 	 * is no difference the user is prompted.
 	 * 
@@ -93,10 +93,6 @@ public class SyncAction extends WorkspaceTraversalAction {
 
 	public static boolean isSingleFile(IResource[] resources) {
 		return resources.length == 1 && resources[0].getType() == IResource.FILE;
-	}
-	
-	protected IResource[] getResourcesToSync() {
-		return getSelectedResources();
 	}
 	
 	/**

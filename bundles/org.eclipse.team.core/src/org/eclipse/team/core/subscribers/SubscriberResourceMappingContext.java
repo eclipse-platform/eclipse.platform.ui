@@ -108,6 +108,24 @@ public class SubscriberResourceMappingContext extends ResourceMappingContext {
     }
 
     /**
+     * Return a resource mapping context suitable for comparison operations.
+     * Comparisons require that any out-of-sync resources have contents
+     * that differ.
+     * @return a resource mapping context suitable for compare operations
+     */
+    public static ResourceMappingContext getCompareContext(Subscriber subscriber) {
+        return new SubscriberResourceMappingContext(subscriber, new SyncInfoFilter() {
+            public boolean select(SyncInfo info, IProgressMonitor monitor) {
+                if (info != null) {
+                    return info.getKind() != SyncInfo.IN_SYNC;
+                }
+                return false;
+            }
+        
+        });
+    }
+    
+    /**
      * Create a resource mapping context for the given subscriber
      * @param subscriber the subscriber
      * @param contentDiffFilter filter that is used to determine if the remote contents differ 

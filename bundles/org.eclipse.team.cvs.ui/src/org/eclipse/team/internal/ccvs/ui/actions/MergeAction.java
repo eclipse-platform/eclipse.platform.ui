@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.wizards.MergeWizard;
 
-public class MergeAction extends WorkspaceAction {
+public class MergeAction extends WorkspaceTraversalAction {
 
 	/*
 	 * @see CVSAction#execute()
@@ -25,7 +25,7 @@ public class MergeAction extends WorkspaceAction {
 		final Shell shell = getShell();
 		shell.getDisplay().syncExec(new Runnable() {
 			public void run() {
-				MergeWizard wizard = new MergeWizard(getTargetPart(), getSelectedResources());
+				MergeWizard wizard = new MergeWizard(getTargetPart(), getSelectedResources(), getCVSResourceMappings());
 				WizardDialog dialog = new WizardDialog(shell, wizard);
 				dialog.open();
 			}

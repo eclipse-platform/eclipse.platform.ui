@@ -17,7 +17,7 @@ import org.eclipse.team.internal.ccvs.ui.wizards.ModeWizard;
 /**
  * TagAction tags the selected resources with a version tag specified by the user.
  */
-public class SetKeywordSubstitutionAction extends WorkspaceAction {
+public class SetKeywordSubstitutionAction extends WorkspaceTraversalAction {
 
 	/*
 	 * @see IActionDelegate#run(IAction)
