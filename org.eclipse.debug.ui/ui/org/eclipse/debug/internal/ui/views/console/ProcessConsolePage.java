@@ -16,7 +16,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
-
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
@@ -24,6 +23,7 @@ import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.FollowHyperlinkAction;
 import org.eclipse.debug.internal.ui.actions.KeyBindingFollowHyperlinkAction;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
@@ -88,7 +88,7 @@ public class ProcessConsolePage implements IPageBookViewPage, ISelectionListener
 	private ProcessConsole fConsole;
 	
 	// scroll lock
-	private boolean fIsLocked = false;
+	private boolean fIsLocked = DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_CONSOLE_SCROLL_LOCK);
 	
 	// text selection listener
 	private ISelectionChangedListener fTextListener =  new ISelectionChangedListener() {
@@ -210,6 +210,10 @@ public class ProcessConsolePage implements IPageBookViewPage, ISelectionListener
 			fRemoveTerminated.dispose();
 		}
 		
+		if (fScrollLockAction != null) {
+			fScrollLockAction.dispose();
+		}
+		
 		if (fMenu != null && !fMenu.isDisposed()) {
 			fMenu.dispose();
 			fMenu= null;
@@ -287,7 +291,7 @@ public class ProcessConsolePage implements IPageBookViewPage, ISelectionListener
 		fKeyBindingFollowLinkAction.setActionDefinitionId("org.eclipse.jdt.ui.edit.text.java.open.editor"); //$NON-NLS-1$
 		getConsoleView().getSite().getKeyBindingService().registerAction(fKeyBindingFollowLinkAction);
 		
-		fScrollLockAction = new ScrollLockAction(getConsoleViewer());
+		fScrollLockAction = new ScrollLockAction();
 		fScrollLockAction.setChecked(fIsLocked);
 		getConsoleViewer().setAutoScroll(!fIsLocked);
 						

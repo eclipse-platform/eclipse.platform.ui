@@ -12,6 +12,7 @@ package org.eclipse.debug.internal.ui.views.console;
 
 
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.ui.console.IConsoleColorProvider;
 import org.eclipse.debug.ui.console.IConsoleHyperlink;
@@ -190,6 +191,8 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 			getTextWidget().setFont(JFaceResources.getFont(IConsoleConstants.CONSOLE_FONT));
 		} else if (propertyName.equals(IDebugPreferenceConstants.CONSOLE_TAB_WIDTH)) {
 			getTextWidget().setTabs(DebugUIPlugin.getDefault().getPluginPreferences().getInt(IDebugPreferenceConstants.CONSOLE_TAB_WIDTH));
+		} else if (propertyName.equals(IInternalDebugUIConstants.PREF_CONSOLE_SCROLL_LOCK)) {
+			setAutoScroll(DebugUIPlugin.getDefault().getPluginPreferences().getBoolean(IInternalDebugUIConstants.PREF_CONSOLE_SCROLL_LOCK));
 		}
 	}
 	
