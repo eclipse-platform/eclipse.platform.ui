@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,7 @@ public class DebugViewInterimLabelProvider implements ILabelProvider {
 	/**
 	 * The text label returned by this label provider (value: "...").
 	 */
-	public final static String PENDING_LABEL= "...";
+	public final static String PENDING_LABEL= "..."; //$NON-NLS-1$
 	
 	/**
 	 * The debug model presentation used for computing images.
@@ -87,5 +87,4 @@ public class DebugViewInterimLabelProvider implements ILabelProvider {
 	public void removeListener(ILabelProviderListener listener) {
 		presentation.removeListener(listener);
 	}
-
 }
