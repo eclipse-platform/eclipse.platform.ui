@@ -447,7 +447,7 @@ public class AntModel {
 		}
 	}
 
-	public void handleBuildException(BuildException e, AntElementNode node) {
+	public void handleBuildException(BuildException e, AntElementNode node, int severity) {
 		try {
 			if (node != null) {
 				markHierarchy(node, true);
@@ -466,7 +466,9 @@ public class AntModel {
 					if (getProjectNode() != null) {
 						length= getProjectNode().getSelectionLength();
 						nonWhitespaceOffset= getProjectNode().getOffset();
-						getProjectNode().setIsErrorNode(true);
+						if (severity == XMLProblem.SEVERTITY_ERROR) {
+							getProjectNode().setIsErrorNode(true);
+						}
 					} else {
 						return;
 					}
@@ -480,9 +482,13 @@ public class AntModel {
 					}
 				}
 			}
-			notifyProblemRequestor(e, nonWhitespaceOffset, length, XMLProblem.SEVERTITY_ERROR);
+			notifyProblemRequestor(e, nonWhitespaceOffset, length, severity);
 		} catch (BadLocationException e1) {
 		}
+	}
+	
+	public void handleBuildException(BuildException e, AntElementNode node) {
+		handleBuildException(e, node, XMLProblem.SEVERTITY_ERROR);
 	}
 
 	protected File getEditedFile() {
