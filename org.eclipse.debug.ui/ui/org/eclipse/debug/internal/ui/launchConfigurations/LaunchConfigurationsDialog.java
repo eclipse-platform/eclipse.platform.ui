@@ -571,9 +571,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		setButtonActionNew(new ButtonActionNew(newButton.getText(), newButton));
 		
 		final Button deleteButton = SWTUtil.createPushButton(buttonComposite, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Dele&te_14"), null); //$NON-NLS-1$
-		gd= (GridData)deleteButton.getLayoutData();
-		gd.horizontalAlignment= GridData.BEGINNING;
-		gd.grabExcessHorizontalSpace= true;
 		setButtonActionDelete(new ButtonActionDelete(deleteButton.getText(), deleteButton));
 		
 		AbstractLaunchConfigurationAction.IConfirmationRequestor requestor =
