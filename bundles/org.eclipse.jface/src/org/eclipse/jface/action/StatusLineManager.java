@@ -25,13 +25,17 @@ import org.eclipse.swt.widgets.Control;
  * sophisticated layout is required.
  * </p>
  */
-public class StatusLineManager extends ContributionManager implements IStatusLineManager {
+public class StatusLineManager extends ContributionManager implements IStatusLineWithProgressManager {
 
 	/**
 	 * The status line control; <code>null</code> before
 	 * creation and after disposal.
 	 */
 	private StatusLine statusLine = null;
+	
+	private String lastMessage;
+	private Image lastImage;
+	
 /**
  * Creates a new status line manager.
  * Use the <code>createControl</code> method to create the 
@@ -83,7 +87,69 @@ public Control getControl() {
  * Method declared on IStatusLineManager
  */
 public IProgressMonitor getProgressMonitor() {
-	return statusLine;
+	
+	return new IProgressMonitor(){
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.IProgressMonitor#beginTask(java.lang.String, int)
+		 */
+		public void beginTask(String name, int totalWork) {
+			statusLine.beginTask(name,totalWork);
+
+		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.IProgressMonitor#done()
+		 */
+		public void done() {
+			statusLine.done();
+			clearProgress();
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.IProgressMonitor#internalWorked(double)
+		 */
+		public void internalWorked(double work) {
+			statusLine.internalWorked(work);
+
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.IProgressMonitor#isCanceled()
+		 */
+		public boolean isCanceled() {
+			return statusLine.isCanceled();
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.IProgressMonitor#setCanceled(boolean)
+		 */
+		public void setCanceled(boolean value) {
+			statusLine.setCanceled(value);
+
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.IProgressMonitor#setTaskName(java.lang.String)
+		 */
+		public void setTaskName(String name) {
+			statusLine.setTaskName(name);
+
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.IProgressMonitor#subTask(java.lang.String)
+		 */
+		public void subTask(String name) {
+			statusLine.subTask(name);
+
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.IProgressMonitor#worked(int)
+		 */
+		public void worked(int work) {
+			statusLine.worked(work);
+		}
+	};
 }
 /* (non-Javadoc)
  * Method declared on IStatueLineManager
@@ -118,6 +184,7 @@ public void setErrorMessage(Image image, String message) {
 public void setMessage(String message) {
 	if (statusLineExist())
 		statusLine.setMessage(message);
+	lastMessage = message;
 }
 /* (non-Javadoc)
  * Method declared on IStatusLineManager.
@@ -125,6 +192,8 @@ public void setMessage(String message) {
 public void setMessage(Image image, String message) {
 	if (statusLineExist())
 		statusLine.setMessage(image, message);
+	lastMessage = message;
+	lastImage = image;
 }
 
 /**
@@ -213,7 +282,7 @@ public void update(boolean force) {
 				Control previousControl = ws[srcIx - 1];
 				
 				for (int i = 0; i < items.length; ++i) {
-					src= (IContributionItem) items[i];
+					src= items[i];
 					
 					// if not active skip this one
 					if (!src.isVisible())
@@ -260,4 +329,21 @@ public void update(boolean force) {
 		}
 	}
 }
+
+/* (non-Javadoc)
+ * @see org.eclipse.jface.action.IStatusLineWithProgressManager#clearProgress()
+ */
+public void clearProgress() {
+	statusLine.setMessage(lastImage,lastMessage);
+
+}
+
+/* (non-Javadoc)
+ * @see org.eclipse.jface.action.IStatusLineWithProgressManager#setProgressMessage(java.lang.String)
+ */
+public void setProgressMessage(String message) {
+	if (statusLineExist())
+		statusLine.setMessage(message);
+}
+
 }
