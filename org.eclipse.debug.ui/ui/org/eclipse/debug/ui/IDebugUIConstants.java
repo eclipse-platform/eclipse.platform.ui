@@ -647,6 +647,6 @@ public interface IDebugUIConstants {
 	 * 
 	 * @since 2.1
 	 */
-	public static final String EXTENSION_POINT_CONSOLE_DOCUMENT_CONTENT_PROVIDERS = "consoleDocumentContentProviders";	 //$NON-NLS-1$
+	public static final String EXTENSION_POINT_CONSOLE_CONTENT_PROVIDERS = "consoleContentProviders";	 //$NON-NLS-1$
 		
 }

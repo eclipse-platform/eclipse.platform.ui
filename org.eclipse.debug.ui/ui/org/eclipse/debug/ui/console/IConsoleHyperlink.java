@@ -1,4 +1,4 @@
-package org.eclipse.debug.internal.ui.views.console;
+package org.eclipse.debug.ui.console;
 
 /**********************************************************************
 Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
@@ -10,8 +10,17 @@ http://www.eclipse.org/legal/cpl-v10.html
 import org.eclipse.jface.text.IRegion;
 
 /**
+ * A hyperlink in the console. The region of a link specifies the link location
+ * in the console. Link behavior is implementation dependent.
+ * <p>
+ * Clients may implement this interface.
+ * </p>
+ * <p>
+ * <b>This interface is still evolving</b>
+ * </p>
+ * @since 2.1
  */
-public interface IConsoleHyperLink extends IRegion {
+public interface IConsoleHyperlink extends IRegion {
 	
 	/**
 	 * Notification that the mouse has entered this link's region.
@@ -24,8 +33,8 @@ public interface IConsoleHyperLink extends IRegion {
 	public void linkExited();
 	
 	/**
-	 * Notification that this link has been activated. This link should
-	 * perform what ever action is associated with the link.
+	 * Notification that this link has been activated. Performs
+	 * context specific linking.
 	 */
 	public void linkActivated();
 

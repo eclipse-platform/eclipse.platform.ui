@@ -10,11 +10,14 @@ http://www.eclipse.org/legal/cpl-v10.html
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.preferences.ConsolePreferencePage;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
+import org.eclipse.debug.ui.console.*;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IDocumentPartitioner;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.TextViewer;
@@ -24,18 +27,22 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 
-public class ConsoleViewer extends TextViewer implements IPropertyChangeListener, MouseTrackListener, MouseMoveListener, PaintListener {
+public class ConsoleViewer extends TextViewer implements IPropertyChangeListener, MouseTrackListener, MouseMoveListener, MouseListener, PaintListener {
 
 	/**
 	 * Font used in the underlying text widget
@@ -43,9 +50,19 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 	protected Font fFont;
 	
 	/**
+	 * Hand cursor
+	 */
+	private Cursor fHandCursor;
+	
+	/**
+	 * Text cursor
+	 */
+	private Cursor fTextCursor;
+	
+	/**
 	 * The active hyperlink, or <code>null</code>
 	 */
-	private IConsoleHyperLink fHyperLink = null;
+	private IConsoleHyperlink fHyperLink = null;
 	
 	protected InternalDocumentListener fInternalDocumentListener= new InternalDocumentListener();
 	/**
@@ -90,6 +107,7 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 		fFont= new Font(getControl().getDisplay(), data);
 		getTextWidget().setFont(fFont);
 		getTextWidget().addMouseTrackListener(this);
+		getTextWidget().addPaintListener(this);
 	}
 	
 	/**
@@ -183,8 +201,16 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 	 * Dispose this viewer and resources
 	 */
 	protected void dispose() {
-		if (getTextWidget() != null) {
-			getTextWidget().removeMouseTrackListener(this);
+		Control control = getTextWidget();
+		if (control != null) {
+			control.removeMouseTrackListener(this);
+			control.removePaintListener(this);
+		}
+		if (fHandCursor != null) {
+			fHandCursor.dispose();
+		}
+		if (fTextCursor != null) {
+			fTextCursor.dispose();
 		}
 		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 		fFont.dispose();
@@ -226,7 +252,7 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 		if (partitioner != null) {
 			Runnable r = new Runnable() {
 				public void run() {
-					IConsoleDocumentContentProvider contentProvider = partitioner.getContentProvider();
+					IConsoleContentProvider contentProvider = partitioner.getContentProvider();
 					ITypedRegion[] regions = partitioner.computePartitioning(0, getDocument().getLength());
 					StyleRange[] styles = new StyleRange[regions.length];
 					for (int i = 0; i < regions.length; i++) {
@@ -255,6 +281,9 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 	 */
 	public void mouseExit(MouseEvent e) {
 		getTextWidget().removeMouseMoveListener(this);
+		if (fHyperLink != null) {
+			linkExited(fHyperLink);
+		}
 	}
 
 	/**
@@ -269,48 +298,59 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 	public void mouseMove(MouseEvent e) {
 		int offset = -1;
 		try {
-			offset = getTextWidget().getOffsetAtLocation(new Point(e.x, e.y));
+			Point p = new Point(e.x, e.y);
+			offset = getTextWidget().getOffsetAtLocation(p);
 		} catch (IllegalArgumentException ex) {
-			return;
+			// out of the document range
 		}
 		if (offset >= 0) {
 			Position[] positions = null;
 			try {
-				positions = getDocument().getPositions(HyperLinkPosition.HYPER_LINK_CATEGORY);
+				positions = getDocument().getPositions(HyperlinkPosition.HYPER_LINK_CATEGORY);
 			} catch (BadPositionCategoryException ex) {
-				// internal error
-				DebugUIPlugin.log(ex);
+				// no links have been added
 				return;
 			}
 			for (int i = 0; i < positions.length; i++) {
 				Position position = positions[i];
-				if (offset >= position.getOffset() && position.getOffset() <= (position.getOffset() + position.getLength())) {
-					IConsoleHyperLink link = ((HyperLinkPosition)position).getHyperLink();
-					System.out.println(position.getOffset() + ":" + position.getLength());
-					if (!link.equals(fHyperLink)) {
+				if (offset >= position.getOffset() && offset <= (position.getOffset() + position.getLength())) {
+					IConsoleHyperlink link = ((HyperlinkPosition)position).getHyperLink();
+					if (link.equals(fHyperLink)) {
+						return;
+					} else {
 						linkEntered(link);
 						return;
 					}
 				}
 			}
-			if (fHyperLink != null) {
-				linkExited(fHyperLink);
-			}
 		}
+		if (fHyperLink != null) {
+			linkExited(fHyperLink);
+		}		
 	}
 
 
-	protected void linkEntered(IConsoleHyperLink link) {
+	protected void linkEntered(IConsoleHyperlink link) {
+		Control control = getTextWidget();
+		control.setRedraw(false);
 		if (fHyperLink != null) {
 			linkExited(fHyperLink);
 		}
 		fHyperLink = link;
 		fHyperLink.linkEntered();
+		control.setCursor(getHandCursor());
+		control.setRedraw(true);
+		control.redraw();
+		control.addMouseListener(this);
 	}
 	
-	protected void linkExited(IConsoleHyperLink link) {
+	protected void linkExited(IConsoleHyperlink link) {
 		link.linkExited();
 		fHyperLink = null;
+		Control control = getTextWidget();
+		control.setCursor(getTextCursor());
+		control.redraw();
+		control.removeMouseListener(this);
 	}
 	/**
 	 * @see org.eclipse.swt.events.PaintListener#paintControl(org.eclipse.swt.events.PaintEvent)
@@ -319,10 +359,73 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 		if (fHyperLink != null) {
 			int start = fHyperLink.getOffset();
 			int end = start + fHyperLink.getLength();
-			Point p1 = getTextWidget().getLocationAtOffset(start);
-			Point p2 = getTextWidget().getLocationAtOffset(end);
-			e.gc.drawLine(p1.x, p1.y, p2.x, p2.y);
+			IDocument doc = getDocument();
+			ConsoleDocumentPartitioner partitioner = (ConsoleDocumentPartitioner)getDocument().getDocumentPartitioner();
+			IConsoleContentProvider contentProvider = partitioner.getContentProvider();
+			try {
+				ITypedRegion partition = doc.getPartition(start);
+				Color fontColor = e.gc.getForeground();
+				if (partition instanceof StreamPartition) {
+					StreamPartition streamPartition = (StreamPartition)partition;
+					fontColor = contentProvider.getColor(streamPartition.getStreamIdentifier());
+				}
+				int startLine = doc.getLineOfOffset(start);
+				int endLine = doc.getLineOfOffset(end);
+				for (int i = startLine; i <= endLine; i++) {
+					IRegion lineRegion = doc.getLineInformation(i);
+					int lineStart = lineRegion.getOffset();
+					int lineEnd = lineStart + lineRegion.getLength();
+					Color color = e.gc.getForeground();
+					e.gc.setForeground(fontColor);
+					if (lineStart < end) {
+						lineStart = Math.max(start, lineStart);
+						lineEnd = Math.min(end, lineEnd);
+						Point p1 = getTextWidget().getLocationAtOffset(lineStart);
+						Point p2 = getTextWidget().getLocationAtOffset(lineEnd);
+						FontMetrics metrics = e.gc.getFontMetrics();
+						int height = metrics.getHeight();
+						e.gc.drawLine(p1.x, p1.y + height, p2.x, p2.y + height);
+					}
+					e.gc.setForeground(color);
+				}
+			} catch (BadLocationException ex) {
+			}
 		}
+	}
+	
+	protected Cursor getHandCursor() {
+		if (fHandCursor == null) {
+			fHandCursor = new Cursor(DebugUIPlugin.getStandardDisplay(), SWT.CURSOR_HAND);
+		}
+		return fHandCursor;
+	}
+	
+	protected Cursor getTextCursor() {
+		if (fTextCursor == null) {
+			fTextCursor = new Cursor(DebugUIPlugin.getStandardDisplay(), SWT.CURSOR_IBEAM);
+		}
+		return fTextCursor;
+	}	
+
+	/**
+	 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
+	 */
+	public void mouseDoubleClick(MouseEvent e) {
+	}
+
+	/**
+	 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
+	 */
+	public void mouseDown(MouseEvent e) {
+		if (fHyperLink != null) {
+			fHyperLink.linkActivated();
+		}
+	}
+
+	/**
+	 * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
+	 */
+	public void mouseUp(MouseEvent e) {
 	}
 
 }

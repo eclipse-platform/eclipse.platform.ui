@@ -1,4 +1,4 @@
-package org.eclipse.debug.internal.ui.views.console;
+package org.eclipse.debug.ui.console;
 
 /**********************************************************************
 Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
@@ -9,16 +9,18 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.ui.console.*;
 import org.eclipse.swt.graphics.Color;
 
 /**
- * Provides content for a console document. When a process is added to a registered
- * launch the debug plug-in creates a console document for the process. By default,
- * a document is created which is contected to the standard input, output, and error
- * streams associated with the process. A client may override the default behavior by
- * specifying a custom content providier for a process, via the process attribute
- * <code>ATTR_CONSOLE_DOCUMENT_CONTENT_PROVIDER</code>, which refers to a console
- * document content provider extension.
+ * Provides content for a console. When a process is added to a registered
+ * launch the debug plug-in creates a console document for the process. By
+ * default, a document is created which is contected to the standard input,
+ * output, and error streams associated with the process. A client may override
+ * the default behavior by specifying a custom content providier for a process,
+ * via the process attribute
+ * <code>ATTR_CONSOLE_CONTENT_PROVIDER</code>, which refers to a
+ * console document content provider extension.
  * <p>
  * A console document content provider extension is defined in <code>plugin.xml</code>.
  * Following is an example definition of a console document content provider
@@ -35,16 +37,19 @@ import org.eclipse.swt.graphics.Color;
  * <ul>
  * <li><code>id</code> specifies a unique identifier for this content provider.</li>
  * <li><code>class</code> specifies a fully qualified name of a Java class
- *  that implements <code>IConsoleDocumentContentProvider</code>.</li>
+ *  that implements <code>IConsoleContentProvider</code>.</li>
  * </ul>
  * </p> 
  * <p>
  * Clients may implement this interface.
  * </p>
+ * <p>
+ * <b>This interface is still evolving</b>
+ * </p>
  * @since 2.1
  */
 
-public interface IConsoleDocumentContentProvider {
+public interface IConsoleContentProvider {
 	
 	/**
 	 * Process attribute identifying the console document content
@@ -53,7 +58,7 @@ public interface IConsoleDocumentContentProvider {
 	 * document content provider extension. When this attribute is
 	 * not specified, a default console document content provider
 	 * is used. 	 */
-	public static final String ATTR_CONSOLE_DOCUMENT_CONTENT_PROVIDER = DebugUIPlugin.getUniqueIdentifier() + ".CONSOLE_DOCUMENT_CONTENT_PROVIDER"; //$NON-NLS-1$
+	public static final String ATTR_CONSOLE_CONTENT_PROVIDER = DebugUIPlugin.getUniqueIdentifier() + ".CONSOLE_DOCUMENT_CONTENT_PROVIDER"; //$NON-NLS-1$
 
 	/**
 	 * Returns whether the console associated with this content provider's
@@ -62,13 +67,6 @@ public interface IConsoleDocumentContentProvider {
 	 * 	 * @return whether the console associated with this content provider's
 	 * process can accept keyboard input	 */
 	public boolean isReadOnly();
-	
-	/**
-	 * Returns whether the output is still being produced by this content provider.
-	 * Usually, this is associated with the termianted property of this content
-	 * provider's process.
-	 * 	 * @return whether the output is still being produced by this content provider	 */
-	public boolean isTerminated();
 	
 	/**
 	 * Returns the color to draw output associated with the given stream.
@@ -80,7 +78,7 @@ public interface IConsoleDocumentContentProvider {
 	 * This content provider should connect its streams to the given console
 	 * document.
 	 * 	 * @param process	 * @param partitioner	 */
-	public void connect(IProcess process, IConsoleDocument partitioner);
+	public void connect(IProcess process, IConsole console);
 	
 	/**
 	 * Disconnects this content provider.	 */

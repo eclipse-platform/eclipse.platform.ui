@@ -7,15 +7,16 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
+import org.eclipse.debug.ui.console.*;
 import org.eclipse.jface.text.AbstractDocument;
 import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.ITextStore;
 
 public class ConsoleDocument extends AbstractDocument {
 	
-	private IConsoleDocumentContentProvider fContentProvider = null;
+	private IConsoleContentProvider fContentProvider = null;
 	
-	public ConsoleDocument(IConsoleDocumentContentProvider contentProvider) {
+	public ConsoleDocument(IConsoleContentProvider contentProvider) {
 		fContentProvider = contentProvider;
 		setTextStore(newTextStore());	
 		setLineTracker(new DefaultLineTracker());

@@ -1,0 +1,119 @@
+package org.eclipse.debug.ui.console;
+
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.ui.console.*;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.Region;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.texteditor.IDocumentProvider;
+import org.eclipse.ui.texteditor.ITextEditor;
+
+/**
+ * A hyperlink that opens a file in a text editor and selects a range of text.
+ * <p>
+ * This class is not intended to be subclassed; clients may instantiate this
+ * class.
+ * </p>
+ * <p>
+ * <b>This class is still evolving</b>
+ * </p>
+ * @since 2.1
+ */
+public class FileLink extends Region implements IConsoleHyperlink {
+
+	private IFile fFile;
+	private int fFileOffset;
+	private int fFileLength;
+	private int fFileLineNumber;
+	private String fEditorId;
+	
+	/**
+	 * Constructs a hyperlink to the specified file.
+	 * 
+	 * @param linkOffset the offset of the hyperlink (in the console)	 * @param linkLength the length of the hyperlink (in the console)	 * @param file the file to open when activated	 * @param editorId the identifier of the editor to open the file in, or
+	 * <code>null</code> if the default editor should be used
+	 * @param fileOffset the offset in the file to select when activated, or -1	 * @param fileLength the length of text to select in the file when activated
+	 * or -1
+	 * @param fileLineNumber the line number to select in the file when
+	 * activated, or -1
+	 */
+	public FileLink(int linkOffset, int linkLength, IFile file, String editorId, int fileOffset, int fileLength, int fileLineNumber) {
+		super(linkOffset, linkLength);
+		fFile = file;
+		fFileOffset = fileOffset;
+		fFileLength = fileLength;
+		fFileLineNumber = fileLineNumber;
+		fEditorId = editorId;
+	}
+
+	/**
+	 * @see org.eclipse.debug.internal.ui.views.console.IConsoleHyperlink#linkActivated()
+	 */
+	public void linkActivated() {
+		IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
+		if (window != null) {
+			IWorkbenchPage page = window.getActivePage();
+			if (page != null) {
+				try {
+					IEditorPart editorPart = page.openEditor(fFile, fEditorId, false);
+					if (editorPart instanceof ITextEditor) {
+						ITextEditor textEditor = (ITextEditor)editorPart;
+						IEditorInput input = editorPart.getEditorInput();
+						if (fFileOffset < 0) {
+							IDocumentProvider provider = textEditor.getDocumentProvider();
+							try {
+								provider.connect(input);
+							} catch (CoreException e) {
+								// unable to link
+								DebugUIPlugin.log(e);
+								return;
+							}
+							IDocument document = provider.getDocument(input);
+							try {
+								fFileOffset = document.getLineOffset(fFileLineNumber - 1);
+								fFileLength = document.getLineLength(fFileLineNumber - 1);
+							} catch (BadLocationException e) {
+								// unable to link
+								DebugUIPlugin.log(e);
+							}
+							provider.disconnect(input);
+						}
+						if (fFileOffset >= 0 && fFileLength >=0) {
+							textEditor.selectAndReveal(fFileOffset, fFileLength);
+						}
+					}
+				} catch (PartInitException e) {
+					DebugUIPlugin.log(e);
+				}
+				
+			}
+		}
+	}
+
+	/**
+	 * @see org.eclipse.debug.internal.ui.views.console.IConsoleHyperlink#linkEntered()
+	 */
+	public void linkEntered() {
+	}
+
+	/**
+	 * @see org.eclipse.debug.internal.ui.views.console.IConsoleHyperlink#linkExited()
+	 */
+	public void linkExited() {
+	}
+
+}

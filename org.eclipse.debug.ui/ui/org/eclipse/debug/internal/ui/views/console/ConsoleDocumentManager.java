@@ -26,6 +26,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.console.*;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -308,12 +309,12 @@ public class ConsoleDocumentManager implements ILaunchListener {
 	/**
 	 * Returns a new console document content provider extension with the
 	 * given identifier, or <code>null</code> if none.
-	 * 	 * @param identifier	 * @return IConsoleDocumentContentProvider	 */
-	public IConsoleDocumentContentProvider getContentProvider(String identifier) {
+	 * 	 * @param identifier	 * @return IConsoleContentProvider	 */
+	public IConsoleContentProvider getContentProvider(String identifier) {
 		if (fContentProviders == null) {
 			fContentProviders = new HashMap();
 			IPluginDescriptor descriptor = DebugUIPlugin.getDefault().getDescriptor();
-			IExtensionPoint extensionPoint = descriptor.getExtensionPoint(IDebugUIConstants.EXTENSION_POINT_CONSOLE_DOCUMENT_CONTENT_PROVIDERS);
+			IExtensionPoint extensionPoint = descriptor.getExtensionPoint(IDebugUIConstants.EXTENSION_POINT_CONSOLE_CONTENT_PROVIDERS);
 			IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
 			for (int i = 0; i < elements.length; i++) {
 				IConfigurationElement extension = elements[i];
@@ -324,8 +325,8 @@ public class ConsoleDocumentManager implements ILaunchListener {
 		if (extension != null) {
 			try {
 				Object contentProvider = extension.createExecutableExtension("class"); //$NON-NLS-1$
-				if (contentProvider instanceof IConsoleDocumentContentProvider) {
-					return (IConsoleDocumentContentProvider)contentProvider;
+				if (contentProvider instanceof IConsoleContentProvider) {
+					return (IConsoleContentProvider)contentProvider;
 				} else {
 					DebugUIPlugin.logErrorMessage(MessageFormat.format(DebugUIViewsMessages.getString("ConsoleDocumentManager.Invalid_extension_{0}_-_class_must_be_an_instance_of_IConsoleDocumentContentProvider._1"),new String[]{extension.getDeclaringExtension().getUniqueIdentifier()} )); //$NON-NLS-1$
 				}

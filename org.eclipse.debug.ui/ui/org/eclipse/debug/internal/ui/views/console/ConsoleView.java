@@ -25,6 +25,7 @@ import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandlerView;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.console.*;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -74,7 +75,7 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 	class EmptyConsoleDocument extends ConsoleDocument {
 		
 		public EmptyConsoleDocument() {
-			super(new DefaultConsoleDocumentContentProvider());
+			super(new ConsoleContentProvider());
 		}
 		
 		protected ITextStore newTextStore() {

@@ -1,3 +1,4 @@
+
 package org.eclipse.debug.internal.ui.views.console;
 
 /**********************************************************************
@@ -21,6 +22,7 @@ import org.eclipse.debug.core.model.IStreamMonitor;
 import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
+import org.eclipse.debug.ui.console.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
@@ -39,13 +41,13 @@ import org.eclipse.swt.widgets.Display;
  * Default console document paritioner. Partitions a document into
  * color regions for standard in, out, err.
  */
-public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocumentPartitionerExtension, IPropertyChangeListener, IConsoleDocument {
+public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocumentPartitionerExtension, IPropertyChangeListener, IConsole {
 
 	private boolean fClosed= false;
 	private boolean fKilled= false;
 
 	protected IProcess fProcess;
-	protected IConsoleDocumentContentProvider fContentProvider;
+	protected IConsoleContentProvider fContentProvider;
 	private IStreamsProxy fProxy;
 	protected List fStreamListeners = new ArrayList(2);
 	
@@ -169,13 +171,18 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	/**
 	 * Keyboard input buffer	 */
 	private StringBuffer fInputBuffer = new StringBuffer();
+	
+	/**
+	 * Queue of hyperlinks to be added to the console
+	 */
+	private Vector fPendingLinks = new Vector();
 
 	/**
 	 * @see org.eclipse.jface.text.IDocumentPartitioner#connect(org.eclipse.jface.text.IDocument)
 	 */
 	public void connect(IDocument document) {
 		fDocument = document;
-		fDocument.addPositionCategory(HyperLinkPosition.HYPER_LINK_CATEGORY);
+		fDocument.addPositionCategory(HyperlinkPosition.HYPER_LINK_CATEGORY);
 		document.setDocumentPartitioner(this);
 		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
 		fWrap = store.getBoolean(IDebugPreferenceConstants.CONSOLE_WRAP);
@@ -254,7 +261,7 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 			ITypedRegion partition = (ITypedRegion)fPartitions.get(i);
 			int start = partition.getOffset();
 			int end = start + partition.getLength();
-			if (offset >= start && offset <= end) {
+			if (offset >= start && offset < end) {
 				return partition;
 			} 
 		}
@@ -265,6 +272,7 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	 * @see org.eclipse.jface.text.IDocumentPartitionerExtension#documentChanged2(org.eclipse.jface.text.DocumentEvent)
 	 */
 	public IRegion documentChanged2(DocumentEvent event) {
+		addPendingLinks();
 		String text = event.getText();
 		if (isAppendInProgress()) {
 			// stream input
@@ -377,7 +385,25 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 		}
 	}	
 	
-	public ConsoleDocumentPartitioner(IProcess process, IConsoleDocumentContentProvider contentProvider) {
+	/**
+	 * Add any pending links to the document that are now within the document's
+	 * bounds.
+	 */
+	protected void addPendingLinks() {
+		if (fPendingLinks.isEmpty()) {
+			return;
+		}
+		Iterator links = fPendingLinks.iterator();
+		while (links.hasNext()) {
+			IConsoleHyperlink link = (IConsoleHyperlink)links.next();
+			if ((link.getOffset() + link.getLength()) <= fDocument.getLength()) {
+				links.remove();
+				addLink(link);
+			}
+		}
+	}
+	
+	public ConsoleDocumentPartitioner(IProcess process, IConsoleContentProvider contentProvider) {
 		fProcess= process;
 		fContentProvider = contentProvider;
 	}
@@ -392,7 +418,6 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 				listener.disconnect();
 			}
 			DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
-			fDocument.set(""); //$NON-NLS-1$
 		}
 	}
 	
@@ -645,23 +670,33 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	}
 	
 	protected boolean isTerminated() {
-		return fContentProvider.isTerminated();
+		return fProcess.isTerminated();
 	}
 
-	protected IConsoleDocumentContentProvider getContentProvider() {
+	protected IConsoleContentProvider getContentProvider() {
 		return fContentProvider;
 	}
 
 	/**
-	 * @see org.eclipse.debug.internal.ui.views.console.IConsoleDocument#addLink(org.eclipse.debug.internal.ui.views.console.IConsoleHyperLink)
+	 * @see org.eclipse.debug.internal.ui.views.console.IConsole#addLink(org.eclipse.debug.internal.ui.views.console.IConsoleHyperlink)
 	 */
-	public void addLink(IConsoleHyperLink link) throws BadLocationException {
+	public void addLink(IConsoleHyperlink link) {
 		try {
-			fDocument.addPosition(HyperLinkPosition.HYPER_LINK_CATEGORY, new HyperLinkPosition(link));
+			fDocument.addPosition(HyperlinkPosition.HYPER_LINK_CATEGORY, new HyperlinkPosition(link));
 		} catch (BadPositionCategoryException e) {
 			// internal error
 			DebugUIPlugin.log(e);
+		} catch (BadLocationException e) {
+			// queue the link
+			fPendingLinks.add(link);
 		}
+	}
+
+	/**
+	 * @see org.eclipse.debug.internal.ui.views.console.IConsole#getDocument()
+	 */
+	public IDocument getDocument() {
+		return fDocument;
 	}
 
 }

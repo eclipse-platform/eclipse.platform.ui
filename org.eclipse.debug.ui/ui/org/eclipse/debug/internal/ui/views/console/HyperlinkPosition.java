@@ -8,26 +8,41 @@ http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.ui.console.*;
 import org.eclipse.jface.text.Position;
 
 /**
  */
-public class HyperLinkPosition extends Position {
+public class HyperlinkPosition extends Position {
 	
 	public static final String HYPER_LINK_CATEGORY = DebugUIPlugin.getUniqueIdentifier() + ".HYPER_LINK";
 	
-	private IConsoleHyperLink fLink = null;
+	private IConsoleHyperlink fLink = null;
 
 	/**
 	 * 
 	 */
-	public HyperLinkPosition(IConsoleHyperLink link) {
+	public HyperlinkPosition(IConsoleHyperlink link) {
 		super(link.getOffset(), link.getLength());
 		fLink = link;
 	}
 	
-	public IConsoleHyperLink getHyperLink() {
+	public IConsoleHyperlink getHyperLink() {
 		return fLink;
+	}
+
+	/**
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object arg) {
+		return arg instanceof HyperlinkPosition && super.equals(arg) && getHyperLink().equals(((HyperlinkPosition)arg).getHyperLink());
+	}
+
+	/**
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return super.hashCode() + getHyperLink().hashCode();
 	}
 
 }

@@ -10,6 +10,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.ui.console.*;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.source.IAnnotationModel;
@@ -27,7 +28,7 @@ public class ConsoleDocumentProvider extends AbstractDocumentProvider {
 	protected IDocument createDocument(Object element) throws CoreException {
 		if (element instanceof IProcess) {
 			IProcess process = (IProcess)element;
-			IConsoleDocumentContentProvider contentProvider = getContentProvider(process);
+			IConsoleContentProvider contentProvider = getContentProvider(process);
 			ConsoleDocument doc= new ConsoleDocument(contentProvider);
 			IDocumentPartitioner partitioner = new ConsoleDocumentPartitioner(process, contentProvider);
 			partitioner.connect(doc);
@@ -66,15 +67,15 @@ public class ConsoleDocumentProvider extends AbstractDocumentProvider {
 
 	/**
 	 * Returns a content provider for the given process.
-	 *  	 * @param process	 * @return IConsoleDocumentContentProvider	 */
-	protected IConsoleDocumentContentProvider getContentProvider(IProcess process) {
-		String identifier = process.getAttribute(IConsoleDocumentContentProvider.ATTR_CONSOLE_DOCUMENT_CONTENT_PROVIDER);
-		IConsoleDocumentContentProvider contentProvider = null;
+	 *  	 * @param process	 * @return IConsoleContentProvider	 */
+	protected IConsoleContentProvider getContentProvider(IProcess process) {
+		String identifier = process.getAttribute(IConsoleContentProvider.ATTR_CONSOLE_CONTENT_PROVIDER);
+		IConsoleContentProvider contentProvider = null;
 		if (identifier != null) {
 			contentProvider = ConsoleDocumentManager.getDefault().getContentProvider(identifier);
 		}
 		if (contentProvider == null) {
-			contentProvider = new DefaultConsoleDocumentContentProvider();
+			contentProvider = new ConsoleContentProvider();
 		}
 		return contentProvider;
 	}
