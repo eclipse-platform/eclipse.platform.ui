@@ -391,8 +391,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			return null;
 		} 
 
-		// If first element is a launch config file, create a launch configuration from it
-		// and make this the context, otherwise just return the first element
+		// See if selection is a (shared) launch configuration file
 		Object firstSelected = selection.getFirstElement();
 		if (firstSelected instanceof IFile) {
 			IFile file = (IFile) firstSelected;
@@ -2938,19 +2937,14 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	
 	/**
 	 * Handles key events in the tree viewer. Specifically
-	 * when the delete key or 'Ctrl-C' for duplicate is pressed.
+	 * when the delete key is pressed.
 	 */
 	protected void handleTreeViewerKeyPressed(KeyEvent event) {
 		if (event.character == SWT.DEL && event.stateMask == 0) {
 			if (getButtonActionDelete().isEnabled()) {
 				getButtonActionDelete().run();
 			}
-		// Treat Ctrl-C as 'duplicate'
-		} else if (event.character == '\003' && event.stateMask == SWT.CTRL && event.keyCode == 0) {
-			if (getButtonActionDuplicate().isEnabled()) {
-				getButtonActionDuplicate().run();
-			}			
-		}
+		} 
 	}
 	
 	protected void setButtonActionNew(ButtonAction action) {
