@@ -32,7 +32,7 @@ import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsoleListener;
 import org.eclipse.ui.console.IConsoleManager;
-import org.eclipse.ui.console.IConsolePageParticipantDelegate;
+import org.eclipse.ui.console.IConsolePageParticipant;
 import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.IPatternMatchListener;
@@ -289,7 +289,7 @@ public class ConsoleManager implements IConsoleManager {
     /* (non-Javadoc)
      * @see org.eclipse.ui.console.IConsoleManager#getPageParticipants(org.eclipse.ui.console.IConsole)
      */
-    public IConsolePageParticipantDelegate[] getPageParticipants(IConsole console) {
+    public IConsolePageParticipant[] getPageParticipants(IConsole console) {
         if(fPageParticipants == null) {
             fPageParticipants = new ArrayList();
             IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(ConsolePlugin.getUniqueIdentifier(), IConsoleConstants.EXTENSION_POINT_CONSOLE_PAGE_PARTICIPANT);
@@ -311,7 +311,7 @@ public class ConsoleManager implements IConsoleManager {
                 ConsolePlugin.log(e);
             }
         }
-        return (IConsolePageParticipantDelegate[]) list.toArray(new IConsolePageParticipantDelegate[0]);
+        return (IConsolePageParticipant[]) list.toArray(new IConsolePageParticipant[0]);
     }
 
     /* (non-Javadoc)

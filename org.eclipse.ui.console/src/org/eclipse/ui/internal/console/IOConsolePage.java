@@ -47,7 +47,7 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleConstants;
-import org.eclipse.ui.console.IConsolePageParticipantDelegate;
+import org.eclipse.ui.console.IConsolePageParticipant;
 import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.actions.ClearOutputAction;
@@ -76,7 +76,7 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
     private ScrollLockAction scrollLockAction;
     private Menu menu;
     private boolean readOnly;
-    private IConsolePageParticipantDelegate[] delegates;
+    private IConsolePageParticipant[] delegates;
     
 	// text selection listener, used to update selection dependant actions on selection changes
 	private ISelectionChangedListener selectionChangedListener =  new ISelectionChangedListener() {

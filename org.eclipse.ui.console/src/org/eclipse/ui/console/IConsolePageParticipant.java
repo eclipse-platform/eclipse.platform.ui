@@ -21,7 +21,7 @@ import org.eclipse.ui.part.IPageSite;
  * 
  * @since 3.1
  */
-public interface IConsolePageParticipantDelegate extends IAdaptable {
+public interface IConsolePageParticipant extends IAdaptable {
     /**
      * Called during Page initialization. Marks the start of the 
      * Page Participant's lifecycle.

@@ -27,7 +27,7 @@ import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleConstants;
-import org.eclipse.ui.console.IConsolePageParticipantDelegate;
+import org.eclipse.ui.console.IConsolePageParticipant;
 import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.IShowInSource;
@@ -39,7 +39,7 @@ import org.eclipse.ui.part.ShowInContext;
  * 
  * @since 3.1
  */
-public class ProcessConsolePageParticipant implements IConsolePageParticipantDelegate, IShowInSource, IShowInTargetList, IDebugEventSetListener, ISelectionListener {
+public class ProcessConsolePageParticipant implements IConsolePageParticipant, IShowInSource, IShowInTargetList, IDebugEventSetListener, ISelectionListener {
 
 	// scroll lock
 	private boolean fIsLocked = DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_CONSOLE_SCROLL_LOCK);

@@ -95,7 +95,7 @@ public interface IConsoleManager {
 	 * @return an array of IConsolePageParticipantDelegate
 	 * @since 3.1
 	 */
-	public IConsolePageParticipantDelegate[] getPageParticipants(IConsole console);
+	public IConsolePageParticipant[] getPageParticipants(IConsole console);
 
     /**
      * 

@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.console.IConsole;
-import org.eclipse.ui.console.IConsolePageParticipantDelegate;
+import org.eclipse.ui.console.IConsolePageParticipant;
 
 public class ConsolePageParticipantExtension implements IPluginContribution {
 
@@ -62,8 +62,8 @@ public class ConsolePageParticipantExtension implements IPluginContribution {
 		return fEnablementExpression;
     }
 
-    public IConsolePageParticipantDelegate createDelegate() throws CoreException {
-        return (IConsolePageParticipantDelegate) fConfig.createExecutableExtension("class"); //$NON-NLS-1$;
+    public IConsolePageParticipant createDelegate() throws CoreException {
+        return (IConsolePageParticipant) fConfig.createExecutableExtension("class"); //$NON-NLS-1$;
     }
 
 }
