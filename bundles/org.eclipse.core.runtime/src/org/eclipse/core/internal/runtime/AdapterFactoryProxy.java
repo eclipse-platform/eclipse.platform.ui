@@ -45,12 +45,12 @@ class AdapterFactoryProxy implements IAdapterFactory {
 	}
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		if (!factoryLoaded)
-			loadFactory();
+			loadFactory(false);
 		return factory == null ? null : factory.getAdapter(adaptableObject, adapterType);
 	}
 	public Class[] getAdapterList() {
 		if (!factoryLoaded)
-			loadFactory();
+			loadFactory(false);
 		return factory == null ? null : factory.getAdapterList();
 	}
 	String[] getAdapterNames() {
@@ -74,11 +74,17 @@ class AdapterFactoryProxy implements IAdapterFactory {
 	/**
 	 * Loads the real adapter factory, but only if its associated plug-in is
 	 * already loaded. Returns the real factory if it was successfully loaded.
+	 * @param force if <code>true</code> the plugin providing the 
+	 * factory will be loaded if necessary, otherwise no plugin activations
+	 * will occur.
 	 */
-	IAdapterFactory loadFactory() {
-		factoryLoaded = true;
-		if (!element.getDeclaringExtension().getDeclaringPluginDescriptor().isPluginActivated())
+	IAdapterFactory loadFactory(boolean force) {
+		if (factory != null || factoryLoaded)
+			return factory;
+		if (!force && !element.getDeclaringExtension().getDeclaringPluginDescriptor().isPluginActivated())
 			return null;
+		//set to true to prevent repeated attempts to load a broken factory
+		factoryLoaded = true;
 		try {
 			factory = (IAdapterFactory) element.createExecutableExtension("class"); //$NON-NLS-1$
 		} catch (CoreException e) {

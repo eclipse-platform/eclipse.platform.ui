@@ -85,9 +85,8 @@ public final class AdapterManager implements IAdapterManager, IRegistryChangeLis
 	 */
 	private Class classForName(IAdapterFactory factory, String typeName) {
 		try {
-			if (factory instanceof AdapterFactoryProxy) {
-				factory = ((AdapterFactoryProxy)factory).loadFactory();
-			}
+			if (factory instanceof AdapterFactoryProxy) 
+				factory = ((AdapterFactoryProxy)factory).loadFactory(false);
 			if (factory != null)
 				return factory.getClass().getClassLoader().loadClass(typeName);
 		} catch (ClassNotFoundException e) {
@@ -156,7 +155,20 @@ public final class AdapterManager implements IAdapterManager, IRegistryChangeLis
 	 * @see org.eclipse.core.runtime.IAdapterManager#getAdapter(java.lang.Object, java.lang.Class)
 	 */
 	public synchronized Object getAdapter(Object adaptable, String adapterType) {
+		return getAdapter(adaptable, adapterType, false);
+	}
+	/**
+	 * Returns an adapter of the given type for the provided adapter.
+	 * @param adaptable the object to adapt
+	 * @param adapterType the type to adapt the object to
+	 * @param force <code>true</code> if the plug-in providing the
+	 * factory should be activated if necessary. <code>false</code>
+	 * if no plugin activations are desired.
+	 */
+	private Object getAdapter(Object adaptable, String adapterType, boolean force) {
 		IAdapterFactory factory = getFactory(adaptable.getClass(), adapterType);
+		if (force && factory instanceof AdapterFactoryProxy)
+			factory = ((AdapterFactoryProxy)factory).loadFactory(true);
 		Object result = null;
 		if (factory != null) {
 			Class clazz = classForName(factory, adapterType);
@@ -189,6 +201,12 @@ public final class AdapterManager implements IAdapterManager, IRegistryChangeLis
 	}
 	public boolean hasAdapter(Object adaptable, String adapterTypeName) {
 		 return getFactory(adaptable.getClass(), adapterTypeName) != null;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IAdapterManager#loadAdapter(java.lang.Object, java.lang.String)
+	 */
+	public Object loadAdapter(Object adaptable, String adapterTypeName) {
+		return getAdapter(adaptable, adapterTypeName, true);
 	}
 	/*
 	 * @see IAdapterManager#registerAdapters

@@ -77,6 +77,8 @@ public interface IAdapterManager {
 	 * <p>
 	 * Note that this method will never cause plug-ins to be loaded. If the
 	 * only suitable factory is not yet loaded, this method will return <code>null</code>.
+	 * If activation of the plug-in providing the factory is required, use the
+	 * <code>loadAdapter</code> method instead.
 	 * 
 	 * @param adaptable the adaptable object being queried (usually an instance
 	 * of <code>IAdaptable</code>)
@@ -85,8 +87,7 @@ public interface IAdapterManager {
 	 * if the given adaptable object does not have an available adapter of the
 	 * given type
 	 */
-	public Object getAdapter(Object adaptable, String adapterTypeName);
-	/**
+	public Object getAdapter(Object adaptable, String adapterTypeName);	/**
 	 * Returns whether there is an adapter factory registered that may be able
 	 * to convert <code>adaptable</code> to an object of type <code>adapterTypeName</code>.
 	 * <p>
@@ -106,6 +107,25 @@ public interface IAdapterManager {
 	 * @since 3.0
 	 */
 	public boolean hasAdapter(Object adaptable, String adapterTypeName);
+	/**
+	 * Returns an object that is an instance of the given class name associated
+	 * with the given object. Returns <code>null</code> if no such object can
+	 * be found.
+	 * <p>
+	 * Note that unlike the <code>getAdapter</code> methods, this method
+	 * will cause the plug-in that contributes the adapter factory to be loaded
+	 * if necessary. As such, this method should be used judiciously, in order
+	 * to avoid unnecessary plug-in activations. Most clients should avoid
+	 * activation by using <code>getAdapter</code> instead.
+	 * 
+	 * @param adaptable the adaptable object being queried (usually an instance
+	 * of <code>IAdaptable</code>)
+	 * @param adapterTypeName the fully qualified name of the type of adapter to look up
+	 * @return an object castable to the given adapter type, or <code>null</code>
+	 * if the given adaptable object does not have an available adapter of the
+	 * given type
+	 */
+	public Object loadAdapter(Object adaptable, String adapterTypeName);
 	/**
 	 * Registers the given adapter factory as extending objects of the given
 	 * type.
