@@ -77,7 +77,7 @@ toolbars, it is used as the button label. The label can
 contain JFace-encoded mnemonic and accelerator 
 information (see example).</li><li><b>accelerator</b> - an integer that is used to specify the keycode of the accelerator for the action.
 This is the integer value resulting from a bitwise OR of zero or more SWT key modifier masks (i.e. SWT.CTRL or SWT.ALT) and a character code.
-For example, for Ctrl+Z, use SWT.CTRL|'Z' = (1<<18)|'Z' = 262234.</li><li><b>definitionId</b> - the id specified in the action definition. Only needed when an action set specifies accelerators through the key binding service. See the extension points Action Definitions and Accelerator Sets</li><li><b>menubarPath</b> - a slash-delimited path ('/') that is used to specify the location of the action in the menu bar.
+For example, for Ctrl+Z, use <pre>SWT.CTRL|'Z' = (1<<18)|'Z' = 262234</pre>.</li><li><b>definitionId</b> - the id specified in the action definition. Only needed when an action set specifies accelerators through the key binding service. See the extension points Action Definitions and Accelerator Sets</li><li><b>menubarPath</b> - a slash-delimited path ('/') that is used to specify the location of the action in the menu bar.
 Each token in the path except the last one must represent a valid ID of an existing menu in the hierarchy.
 The last token represents the named separator group into which the action will be added.
 If the path is omitted, the action will not appear in the menu bar.</li><li><b>toolbarPath</b> - a slash-delimited path ('/') that is used to specify the location of the action in the toolbar.
