@@ -78,39 +78,7 @@ public class MergeEditorInput extends CVSSyncCompareInput {
 	}
 	protected void contentsChanged(ICompareInput source) {
 	}
-	/**
-	 * Wrap the input preparation in a CVS session run so open sessions will be reused
-	 */
-	public Object prepareInput(IProgressMonitor pm) throws InterruptedException, InvocationTargetException {
-		final Object[] result = new Object[] { null };
-		final Exception[] exception = new Exception[] {null};
-		try {
-			Session.run(null, null, false, new ICVSRunnable() {
-				public void run(IProgressMonitor monitor) throws CVSException {
-					try {
-						result[0] = MergeEditorInput.super.prepareInput(monitor);
-					} catch (InterruptedException e) {
-						exception[0] = e;
-					} catch (InvocationTargetException e) {
-						exception[0] = e;
-					}
-				}
-			}, pm);
-		} catch (CVSException e) {
-			throw new InvocationTargetException(e);
-		}
-		
-		if (exception[0] != null) {
-			if (exception[0] instanceof InvocationTargetException) {
-				throw (InvocationTargetException)exception[0];
-			} else {
-				throw (InterruptedException)exception[0];
-			}
-		}
 			
-		return result[0];
-	}
-	
 	/*
 	 * Override collectResourceChanges to only determine the true sync state for incomming changes
 	 */
