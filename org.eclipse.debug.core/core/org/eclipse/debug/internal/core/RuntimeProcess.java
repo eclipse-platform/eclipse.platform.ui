@@ -8,6 +8,7 @@ package org.eclipse.debug.internal.core;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
@@ -72,15 +73,16 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	/**
 	 * Table of client defined attributes
 	 */
-	private HashMap fAttributes;
+	private Map fAttributes;
 
 	/**
 	 * Constructs a RuntimeProcess on the given system process
 	 * with the given name, adding this process to the given
 	 * launch.
 	 */
-	public RuntimeProcess(ILaunch launch, Process process, String name) {
+	public RuntimeProcess(ILaunch launch, Process process, String name, Map attributes) {
 		setLaunch(launch);
+		fAttributes = attributes;
 		fProcess= process;
 		fName= name;
 		fTerminated= true;

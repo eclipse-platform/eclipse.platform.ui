@@ -10,6 +10,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Vector;
 
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -422,8 +423,27 @@ public class DebugPlugin extends Plugin {
 	 * @see IProcess
 	 */
 	public static IProcess newProcess(ILaunch launch, Process process, String label) {
-		return new RuntimeProcess(launch, process, label);
+		return new RuntimeProcess(launch, process, label, null);
 	}
+	
+	/**
+	 * Creates and returns a new process representing the given
+	 * <code>java.lang.Process</code>. A streams proxy is created
+	 * for the I/O streams in the system process. The process
+	 * is added to the given launch, and the process is initialized
+	 * with the given attribute map.
+	 *
+	 * @param launch the launch the process is conatined in
+	 * @param process the system process to wrap
+	 * @param label the label assigned to the process
+	 * @param initial values for the attribute map
+	 * @return the process
+	 * @see IProcess
+	 * @since 2.1
+	 */
+	public static IProcess newProcess(ILaunch launch, Process process, String label, Map attributes) {
+		return new RuntimeProcess(launch, process, label, attributes);
+	}	
 	
 	/**
 	 * Returns whether this plug-in is in the process of 
