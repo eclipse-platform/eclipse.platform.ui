@@ -334,7 +334,7 @@ public class ExtensionsRegistry {
 		Set resultSet= new HashSet();
 		int i= 0;
 		while (i < contentTypes.length) {
-			Set set= (Set) fFactoryDescriptors.get(new ContentTypeAdapter(contentTypes[i++]));
+			Set set= (Set) fSetupParticipants.get(new ContentTypeAdapter(contentTypes[i++]));
 			if (set != null)
 				resultSet.addAll(set);
 		}
