@@ -47,8 +47,10 @@ public class UpdateMessageHandler extends ResponseHandler {
 		String line = connection.readLine();
 		if (updateMessageListener == null)
 			return;
-		String path = line.substring(2);
-		updateMessageListener.fileInformation(line.charAt(0), path);
-
+		if (line.indexOf(' ') == 1) {
+			// We have a message that indicates the type of update (A, R, M, U, C, ?) and the file name
+			String path = line.substring(2);
+			updateMessageListener.fileInformation(line.charAt(0), path);
+		}
 	}
 }
