@@ -18,6 +18,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.registry.EditorRegistry;
 
 /**
  * The PlatformUIPreferenceListener is a class that listens to 
@@ -61,6 +62,11 @@ public class PlatformUIPreferenceListener implements IPropertyChangeListener {
 					((WorkbenchWindow)window).dockPerspectiveBar(preferenceStore.getBoolean(IPreferenceConstants.DOCK_PERSPECTIVE_BAR));
 			}
 			return;
+		}
+
+		if (IPreferenceConstants.EDITORS.equals(propertyName)) {
+			((EditorRegistry) WorkbenchPlugin.getDefault().getEditorRegistry())
+					.initializeFromStorage();
 		}
 	}
 }
