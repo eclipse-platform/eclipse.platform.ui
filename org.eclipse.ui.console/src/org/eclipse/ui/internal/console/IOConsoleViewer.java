@@ -39,7 +39,6 @@ public class IOConsoleViewer extends TextViewer implements LineStyleListener {
             public void documentChanged(DocumentEvent event) {
                 revealEndOfDocument();
             }
-            
         });
     }
     

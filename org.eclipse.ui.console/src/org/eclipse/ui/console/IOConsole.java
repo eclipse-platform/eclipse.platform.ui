@@ -6,6 +6,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.ui.internal.console.IOConsolePage;
 import org.eclipse.ui.internal.console.IOConsolePartitioner;
+import org.eclipse.ui.internal.console.IOConsolePatternMatcher;
 import org.eclipse.ui.part.IPageBookViewPage;
 
 /**
@@ -16,32 +17,6 @@ import org.eclipse.ui.part.IPageBookViewPage;
  *
  */
 public class IOConsole extends AbstractConsole {
-	
-//	DONE colored streams
-//	DONE prevent input anywhere except the end
-//	DONE autoscroll doesn't	
-//	DONE viewer actions (cut/copy/paste are free!)
-//	DONE wrap/no wrap
-//	DONE activate when written to (at StreamLevel)
-//	DONE clear output action
-//	DONE partitioner should append to StringBuffer and only update doc once?
-//	DONE look at ColorManager - not going to use, clients may want to use it, but Console should not be constructing Color
-//	DONE Input stream should return EOF and Exceptions when closed
-//	DONE DELETE StreamData!
-//	DONE IOConsole.setFont()
-//  	DONE Stream.setFontStyle()
-//	DONE test synchronization - accepting input while doing output, multiple output streams
-//	DONE convert to using Document.getLegalLineDelimiters();
-//	DONE do I really want console.setInputColor(...)? - removed
-//	DONE buffer size - high/low water mark
-//		TODO hyperlinks
-//		TODO performance needs to be much better
-//		TODO hook up ProcessConsole
-//		TODO tab size - busted??? seems to be doing the right thing, but tab size isn't what is expected.. Mac bug????
-//  		TODO fixed width
-//		TODO terminateConsole???  (if terminated/removed from manager, streams should be closed, ie console needs to remember which streams belong to him)
-//		TODO find/replace action
-//		TODO Scheduling Rule in Partitioner.
     
 	/** 
 	 * The font used by this console
@@ -88,11 +63,15 @@ public class IOConsole extends AbstractConsole {
     private int tabWidth = DEFAULT_TAB_SIZE;
     private boolean wordWrap;
 
+    private IOConsolePatternMatcher patternMatcher;
+
     public IOConsole(String name, ImageDescriptor imageDescriptor) {
         super(name, imageDescriptor);
         inputStream = new IOConsoleInputStream(this);
         partitioner = new IOConsolePartitioner(inputStream);
-        partitioner.connect(new Document());
+        Document document = new Document();
+        partitioner.connect(document);
+        patternMatcher = new IOConsolePatternMatcher(document);
     }
 
     public IDocument getDocument() {
@@ -161,5 +140,10 @@ public class IOConsole extends AbstractConsole {
         ConsolePlugin.getDefault().getConsoleManager().showConsoleView(this);
     }
 
-    
+    public void addPatternMatchNotifier(IPatternMatchNotifier matchNotifier) {
+        patternMatcher.addPatternMatchNotifier(matchNotifier);
+    }
+    public void removePatternMatchNotifier(IPatternMatchNotifier matchNotifier) {
+        patternMatcher.removePatternMatchNotifier(matchNotifier);
+    }    
 }
