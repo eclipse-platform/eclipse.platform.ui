@@ -34,6 +34,16 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 		this.policy = policy;
 	}
 
+	/**
+	 * Copy Constructor
+	 */
+	public ConfigurationSite(IConfigurationSite configSite) {
+		this.site = configSite.getSite();
+		this.policy = new ConfigurationPolicy(configSite.getConfigurationPolicy());
+		this.installable = configSite.isInstallSite();
+	}
+
+
 	/*
 	 * @see IConfigurationSite#getSite()
 	 */
@@ -245,7 +255,8 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 			// loop for all history
 			// get the history I am interested in
 			// try to see if teh site config exists
-			// if it does, get the unconfigured features
+			// if it does, get the unconfigured features 
+			// and the configured one
 			IInstallConfiguration[] history = SiteManager.getLocalSite().getConfigurationHistory();
 			for (int i = 0; i < history.length; i++) {
 				IInstallConfiguration element = history[i];
@@ -254,6 +265,7 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 					IConfigurationSite configSite = configSites[j];
 					if (configSite.getSite().getURL().equals(getSite().getURL())) {
 						featureToUnconfigure.addAll(Arrays.asList(configSite.getConfigurationPolicy().getUnconfiguredFeatures()));
+						featureToUnconfigure.addAll(Arrays.asList(configSite.getConfigurationPolicy().getConfiguredFeatures()));						
 					}
 				}	
 			}
@@ -262,6 +274,7 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 			// we have all teh unconfigured feature for this site config
 			// for the history
 			// remove the one that are configured 
+			// (may have been unconfigured in teh past, but the revert makes it configurd)
 			for (int i=0; i<configuredFeatures.length; i++) {
 				remove(configuredFeatures[i],featureToUnconfigure);				
 			}			

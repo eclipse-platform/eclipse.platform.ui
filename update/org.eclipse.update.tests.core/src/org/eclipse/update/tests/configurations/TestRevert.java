@@ -79,9 +79,13 @@ public class TestRevert extends UpdateManagerTestCase {
 		UpdateManagerUtils.removeFromFileSystem(localFile);		
 		localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.DEFAULT_CONFIG_FILE).getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);				
-		UpdateManagerUtils.removeFromFileSystem(file);		
-		localFile = new File(feature2.getURL().getFile());
-		UpdateManagerUtils.removeFromFileSystem(localFile);
+		UpdateManagerUtils.removeFromFileSystem(file);	
+		time = ""+newConfig.getCreationDate().getTime();
+		file = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),"DefaultConfig"+time+".xml").getFile());	
+		UpdateManagerUtils.removeFromFileSystem(file);	
+		time = ""+newConfig2.getCreationDate().getTime();
+		file = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),"DefaultConfig"+time+".xml").getFile());	
+		UpdateManagerUtils.removeFromFileSystem(file);	
 	}
 
 }

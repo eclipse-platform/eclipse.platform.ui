@@ -65,25 +65,25 @@ public class SiteLocal implements ILocalSite, IWritable {
 	 *  the newly added configuration is teh current one
 	 */
 	public void addConfiguration(IInstallConfiguration config) {
-		if (config != null){
-		if (configurations == null)
-			configurations = new ArrayList(0);
-		configurations.add(config);
-		// FIXME: check if we have to remove a configuration
+		if (config != null) {
+			if (configurations == null)
+				configurations = new ArrayList(0);
+			configurations.add(config);
+			// FIXME: check if we have to remove a configuration
 
-		// set configuration as current		
-		if (currentConfiguration != null)
-			currentConfiguration.setCurrent(false);
-		config.setCurrent(true);
-		currentConfiguration = config;
+			// set configuration as current		
+			if (currentConfiguration != null)
+				currentConfiguration.setCurrent(false);
+			config.setCurrent(true);
+			currentConfiguration = config;
 
-		// notify listeners
-		Object[] siteLocalListeners = listeners.getListeners();
-		for (int i = 0; i < siteLocalListeners.length; i++) {
-			((ILocalSiteChangedListener) siteLocalListeners[i]).currentInstallConfigurationChanged(config);
+			// notify listeners
+			Object[] siteLocalListeners = listeners.getListeners();
+			for (int i = 0; i < siteLocalListeners.length; i++) {
+				((ILocalSiteChangedListener) siteLocalListeners[i]).currentInstallConfigurationChanged(config);
+			}
 		}
-		}
-		
+
 	}
 	/**
 	 * initialize the configurations from the persistent model.
@@ -92,36 +92,36 @@ public class SiteLocal implements ILocalSite, IWritable {
 	 * is shared between the workspaces.
 	 */
 	private void initialize() throws CoreException {
-		
-		URL configXml=null;
+
+		URL configXml = null;
 		try {
 			IPlatformConfiguration platformConfig = UpdateManagerUtils.getRuntimeConfiguration();
 			location = platformConfig.getConfigurationLocation();
 			configXml = UpdateManagerUtils.getURL(location, SITE_LOCAL_FILE, null);
 			//if the file exists, parse it			
 			SiteLocalParser parser = new SiteLocalParser(configXml.openStream(), this);
-		}  catch (FileNotFoundException exception) {
+		} catch (FileNotFoundException exception) {
 			// file doesn't exist, ok, log it and continue 
 			// log no config
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
 				UpdateManagerPlugin.getPlugin().debug(location.toExternalForm() + " does not exist, there is no previous state or install history we can recover, we shall use default.");
 			}
 			createDefaultConfiguration();
-			
+
 			// FIXME: always save ?
 			this.save();
-			
+
 		} catch (SAXException exception) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error during parsing of the install config XML:" + location.toExternalForm(), exception);
 			throw new CoreException(status);
-		}catch (MalformedURLException exception) {
+		} catch (MalformedURLException exception) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot create URL from: "+location.toExternalForm() +" & "+SITE_LOCAL_FILE , exception);
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot create URL from: " + location.toExternalForm() + " & " + SITE_LOCAL_FILE, exception);
 			throw new CoreException(status);
-		}	catch (IOException exception) {
+		} catch (IOException exception) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot read xml file: "+configXml , exception);
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot read xml file: " + configXml, exception);
 			throw new CoreException(status);
 		}
 
@@ -138,7 +138,7 @@ public class SiteLocal implements ILocalSite, IWritable {
 			URL execURL = BootLoader.getInstallURL();
 			ISite site = SiteManager.getSite(execURL);
 			IInstallConfiguration newDefaultConfiguration = cloneCurrentConfiguration(new URL(location, DEFAULT_CONFIG_FILE), DEFAULT_CONFIG_LABEL);
-			addConfiguration(newDefaultConfiguration);			
+			addConfiguration(newDefaultConfiguration);
 
 			// notify listeners
 			Object[] localSiteListeners = listeners.getListeners();
@@ -179,8 +179,8 @@ public class SiteLocal implements ILocalSite, IWritable {
 	/*
 	 * @see ILocalSite#importConfiguration(File)
 	 */
-	public IInstallConfiguration importConfiguration(URL importURL,String label) throws CoreException{
-		InstallConfiguration config = new InstallConfiguration(importURL,label);
+	public IInstallConfiguration importConfiguration(URL importURL, String label) throws CoreException {
+		InstallConfiguration config = new InstallConfiguration(importURL, label);
 		return config;
 	}
 
@@ -286,10 +286,11 @@ public class SiteLocal implements ILocalSite, IWritable {
 	 * @see ILocalSite#createNewCurrentConfiguration(String)
 	 */
 	public IInstallConfiguration cloneCurrentConfiguration(URL newFile, String name) throws CoreException {
-		
+
 		// save previous current configuration
-		if (getCurrentConfiguration()!=null)	((InstallConfiguration)getCurrentConfiguration()).save();
-		
+		if (getCurrentConfiguration() != null)
+			 ((InstallConfiguration) getCurrentConfiguration()).save();
+
 		InstallConfiguration result = null;
 		String newFileName = UpdateManagerUtils.getLocalRandomIdentifier(DEFAULT_CONFIG_FILE);
 		try {
@@ -297,11 +298,12 @@ public class SiteLocal implements ILocalSite, IWritable {
 				newFile = UpdateManagerUtils.getURL(getLocation(), newFileName, null);
 			Date currentDate = new Date();
 			// pass the date onto teh name
-			if (name == null)	name = DEFAULT_CONFIG_LABEL + currentDate.getTime();
+			if (name == null)
+				name = DEFAULT_CONFIG_LABEL + currentDate.getTime();
 			result = new InstallConfiguration(getCurrentConfiguration(), newFile, name);
 			// set teh same date in the installConfig
 			result.setCreationDate(currentDate);
-			
+
 		} catch (MalformedURLException e) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot create a new configuration in:" + newFileName, e);
@@ -313,19 +315,38 @@ public class SiteLocal implements ILocalSite, IWritable {
 	/*
 	 * @see ILocalSite#revertTo(IInstallConfiguration)
 	 */
-	public void revertTo(IInstallConfiguration configuration,IProgressMonitor monitor) throws CoreException {
-		
-		// create the activity ?
-		
-		// create a configuration
-		IInstallConfiguration newConfiguration = cloneCurrentConfiguration(null, configuration.getLabel());
-		// process delta
-		// the Configured featuresConfigured are the same as the old configuration
-		// the unconfigured featuresConfigured are the rest...
-		((InstallConfiguration)newConfiguration).revertTo(configuration,monitor);
+	public void revertTo(IInstallConfiguration configuration, IProgressMonitor monitor) throws CoreException {
 
-		// add to the stack which will set up as current
-		addConfiguration(newConfiguration);
+		// create the activity 
+		//Start UOW ?
+		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_REVERT);
+		activity.setLabel(configuration.getLabel());
+		activity.setDate(new Date());
+		IInstallConfiguration newConfiguration=null;
+		
+		try {
+			// create a configuration
+			newConfiguration = cloneCurrentConfiguration(null, configuration.getLabel());
+			
+			// add to the stack which will set up as current
+			addConfiguration(newConfiguration);
+			
+			
+			// process delta
+			// the Configured featuresConfigured are the same as the old configuration
+			// the unconfigured featuresConfigured are the rest...
+			 ((InstallConfiguration) newConfiguration).revertTo(configuration, monitor);
+			
+			// everything done ok
+			activity.setStatus(IActivity.STATUS_OK);
+		} catch (CoreException e) {
+			// error
+			activity.setStatus(IActivity.STATUS_NOK);
+			throw e;
+		} finally{
+			if (newConfiguration!=null) ((InstallConfiguration)newConfiguration).addActivity(activity);
+		}
+
 
 	}
 }

@@ -39,17 +39,21 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 		this.location = newLocation;
 		this.label = label;
 		// do not copy list of listeners nor activities
+		// ake a copy of the siteConfiguration object
 		if (config!=null){
 			configurationSites = new ArrayList();
-			configurationSites.addAll(Arrays.asList(config.getConfigurationSites()));
-			/**featuresConfigured = new ArrayList();
-			featuresConfigured.addAll(Arrays.asList(config.getConfiguredFeatures()));
-			featuresUnconfigured = new ArrayList();
-			featuresUnconfigured.addAll(Arrays.asList(config.getUnconfiguredFeatures()));*/
+			IConfigurationSite[] sites = config.getConfigurationSites();
+			if (sites!=null){
+				for (int i =0; i<sites.length;i++){
+					addConfigSite(new ConfigurationSite(sites[i]));
+				}
+			}
 		}
 		date = new Date();
 		this.isCurrent = false;
 	}
+	
+	
 	
 	/**
 	 * initialize the configurations from the persistent model.
@@ -122,7 +126,7 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 	 * in this case we do not want to create a new activity, so we do not want t call
 	 * addConfigurationSite()
 	 */
-	public void addConfigSite(IConfigurationSite site) {
+	/*package*/ void addConfigSite(IConfigurationSite site) {
 		if (configurationSites == null) {
 			configurationSites = new ArrayList(0);
 		}

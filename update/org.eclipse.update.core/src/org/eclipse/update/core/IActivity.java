@@ -15,10 +15,11 @@ public interface IActivity {
 	public static final int ACTION_SITE_REMOVE 			= 4;
 	public static final int ACTION_UNCONFIGURE 			= 5;
 	public static final int ACTION_CONFIGURE 				= 6;
+	public static final int ACTION_REVERT 						= 7;	
 	
 	public static final int STATUS_OK 			= 0;
 	public static final int STATUS_NOK 		= 1;
-	public static final int STATUS_REVERT 	= 2;
+
 	
 	/**
 	 * Returns teh user description of teh action

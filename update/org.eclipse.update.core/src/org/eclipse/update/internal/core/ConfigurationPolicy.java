@@ -27,6 +27,20 @@ public class ConfigurationPolicy implements IConfigurationPolicy {
 		this.policy = policy;
 	}
 
+	/**
+	 * Copy Constructor for ConfigurationPolicy.
+	 */
+	public ConfigurationPolicy(IConfigurationPolicy configPolicy) {
+		super();
+		this.policy = configPolicy.getPolicy();
+		configuredFeatureReferences = new ArrayList(0);
+		configuredFeatureReferences.addAll(Arrays.asList(configPolicy.getConfiguredFeatures()));
+		unconfiguredFeatureReferences = new ArrayList(0);
+		unconfiguredFeatureReferences.addAll(Arrays.asList(configPolicy.getUnconfiguredFeatures()));
+		
+	}
+	
+
 	/*
 	 * @see IConfigurationPolicy#getPolicy()
 	 */

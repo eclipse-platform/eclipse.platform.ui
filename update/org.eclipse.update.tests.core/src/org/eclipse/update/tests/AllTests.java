@@ -5,6 +5,7 @@ package org.eclipse.update.tests;
  */
 import junit.framework.*;
 import org.eclipse.update.tests.api.AllAPITests;
+import org.eclipse.update.tests.configurations.AllConfigurationsTests;
 import org.eclipse.update.tests.core.boot.AllPlatformConfigurationTests;
 import org.eclipse.update.tests.parser.AllParserTests;
 import org.eclipse.update.tests.regularInstall.AllRegularInstallTests;
@@ -22,6 +23,7 @@ public static Test suite() throws Exception {
 	suite.addTest(AllAPITests.suite());	
 	suite.addTest(AllParserTests.suite());
 	suite.addTest(AllCoreUITests.suite());
+	suite.addTest(AllConfigurationsTests.suite());	
 	return suite;
 }
 }
