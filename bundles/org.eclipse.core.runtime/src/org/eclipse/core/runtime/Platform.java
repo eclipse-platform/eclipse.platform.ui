@@ -1129,7 +1129,7 @@ public final class Platform {
 	 * @since 3.0
 	 */
 	public static Location getUserLocation() {
-		return InternalPlatform.getDefault().getConfigurationLocation();
+		return InternalPlatform.getDefault().getUserLocation();
 	}
 
 	/**
