@@ -89,8 +89,12 @@ public class InstructionPointerManager {
 			}
 		}
 		
-		// Add the annotation at the position to the editor's annotation model
+		// Add the annotation at the position to the editor's annotation model.
+		// If there is no annotation model, there's nothing more to do
 		IAnnotationModel annModel = docProvider.getAnnotationModel(editorInput);
+		if (annModel == null) {
+			return;
+		}
 		annModel.removeAnnotation(instPtrAnnotation);
 		annModel.addAnnotation(instPtrAnnotation, position);	
 		
@@ -174,8 +178,12 @@ public class InstructionPointerManager {
 	 * Remove the specified annotation from the specified text editor.	 */
 	private void removeAnnotation(ITextEditor textEditor, InstructionPointerAnnotation annotation) {
 		IDocumentProvider docProvider = textEditor.getDocumentProvider();
-		IAnnotationModel annotationModel = docProvider.getAnnotationModel(textEditor.getEditorInput());
-		annotationModel.removeAnnotation(annotation);
+		if (docProvider != null) {
+			IAnnotationModel annotationModel = docProvider.getAnnotationModel(textEditor.getEditorInput());
+			if (annotationModel != null) {
+				annotationModel.removeAnnotation(annotation);
+			}
+		}
 	}
 	
 }
