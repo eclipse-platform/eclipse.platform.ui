@@ -18,6 +18,11 @@ package org.eclipse.core.runtime;
  * adapter manager then forwards this request unmodified to the <code>IAdapterFactory.getAdapter</code>
  * method on one of the registered adapter factories.
  * <p>
+ * Adapter factories can be registered programatically using the <code>registerAdapters</code>
+ * method.  Alternatively, they can be registered declaratively using the 
+ * <code>org.eclipse.core.runtime.adapters</code> extension point.  Factories registered
+ * with this extension point will not 
+ * <p>
  * The following code snippet shows how one might register an adapter of type
  * <code>com.example.acme.Sticky</code> on resources in the workspace.
  * <p>
@@ -86,8 +91,10 @@ public interface IAdapterManager {
 	 * @return an object castable to the given adapter type, or <code>null</code>
 	 * if the given adaptable object does not have an available adapter of the
 	 * given type
+	 * @since 3.0
 	 */
-	public Object getAdapter(Object adaptable, String adapterTypeName);	/**
+	public Object getAdapter(Object adaptable, String adapterTypeName);	
+	/**
 	 * Returns whether there is an adapter factory registered that may be able
 	 * to convert <code>adaptable</code> to an object of type <code>adapterTypeName</code>.
 	 * <p>
@@ -124,6 +131,7 @@ public interface IAdapterManager {
 	 * @return an object castable to the given adapter type, or <code>null</code>
 	 * if the given adaptable object does not have an available adapter of the
 	 * given type
+	 * @since 3.0
 	 */
 	public Object loadAdapter(Object adaptable, String adapterTypeName);
 	/**
