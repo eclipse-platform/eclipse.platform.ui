@@ -11,10 +11,13 @@
 
 package org.eclipse.ui.activities;
 
+import java.util.Set;
+
 /**
  * <p>
- * An instance of <code>IActivityEvent</code> describes changes to an
- * instance of <code>IActivity</code>.
+ * An instance of <code>IMutableActivityManager</code> can be used to obtain
+ * instances of <code>IActivity</code>, as well as manage whether or not
+ * those instances are enabled or disabled.
  * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
@@ -24,46 +27,19 @@ package org.eclipse.ui.activities;
  * </p>
  * 
  * @since 3.0
+ * @see ActivityManagerFactory
  * @see IActivity
- * @see IActivityListener#activityChanged
+ * @see IActivityManagerListener
  */
-public interface IActivityEvent {
+public interface IMutableActivityManager extends IActivityManager {
 
 	/**
-	 * Returns the instance of <code>IActivity</code> that has changed.
+	 * Sets the set of identifiers to enabled activities.
 	 * 
-	 * @return the instance of <code>IActivity</code> that has changed.
-	 *         Guaranteed not to be <code>null</code>.
+	 * @param enabledActivityIds
+	 *            the set of identifiers to enabled activities. This set may be
+	 *            empty, but it must not be <code>null</code>. If this set
+	 *            is not empty, it must only contain instances of <code>String</code>.
 	 */
-	IActivity getActivity();
-
-	/**
-	 * TODO javadoc
-	 */
-	boolean hasDefinedChanged();
-
-	/**
-	 * TODO javadoc
-	 */
-	boolean hasDescriptionChanged();
-
-	/**
-	 * TODO javadoc
-	 */
-	boolean hasEnabledChanged();
-
-	/**
-	 * TODO javadoc
-	 */
-	boolean hasNameChanged();
-
-	/**
-	 * TODO javadoc
-	 */
-	boolean hasParentIdChanged();
-
-	/**
-	 * TODO javadoc
-	 */
-	boolean havePatternBindingsChanged();
+	void setEnabledActivityIds(Set enabledActivityIds);
 }

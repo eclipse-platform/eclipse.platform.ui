@@ -36,7 +36,7 @@ public interface IActivityServiceListener {
 	 * have changed. Specific details are described in the <code>ActivityServiceEvent</code>.
 	 * 
 	 * @param activityServiceEvent
-	 *            the activity Provider event. Guaranteed not to be <code>null</code>.
+	 *            the activity service event. Guaranteed not to be <code>null</code>.
 	 */
 	void activityServiceChanged(ActivityServiceEvent activityServiceEvent);
 }

@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.IActivityManager;
+import org.eclipse.ui.activities.IMutableActivityManager;
 import org.eclipse.ui.roles.IActivityBinding;
 import org.eclipse.ui.roles.IRole;
 import org.eclipse.ui.roles.IRoleManager;
@@ -230,8 +231,9 @@ public class SwapActivityHelper {
 	 * @since 3.0
 	 */
     public void updateActivityStates() {
-        IActivityManager activityManager = PlatformUI.getWorkbench().getActivityManager();
-
+    	// TODO cast
+    	IMutableActivityManager activityManager = (IMutableActivityManager) PlatformUI.getWorkbench().getActivityManager();
+    	
         Set finalState = new HashSet(activityManager.getEnabledActivityIds());
 
         Collection disabledActivities = (Collection) potentialViewer.getInput();

@@ -557,9 +557,10 @@ public void setEditorReuseThreshold(int openEditors);
 public INavigationHistory getNavigationHistory();
 
 /**
- * TODO javadoc
+ * Returns the compound activity service for the workbench page.
  * 
- * @return
+ * @return the compound activity service for the workbench page. Guaranteed not 
+ * 		   to be <code>null</code>.
  * @since 3.0
  */
 public ICompoundActivityService getCompoundActivityService();

@@ -9,18 +9,38 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.activities;
+package org.eclipse.ui.activities;
 
-import org.eclipse.ui.activities.IActivityManager;
-import org.eclipse.ui.activities.IActivityManagerEvent;
-
-final class ActivityManagerEvent implements IActivityManagerEvent {
+/**
+ * <p>
+ * An instance of <code>ActivityManagerEvent</code> describes changes to an
+ * instance of <code>IActivityManager</code>.
+ * </p>
+ * <p>
+ * This class is not intended to be extended by clients.
+ * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>
+ * </p>
+ * 
+ * @since 3.0
+ * @see IActivityManager
+ * @see IActivityManagerListener#activityManagerChanged
+ */
+public final class ActivityManagerEvent {
 
 	private IActivityManager activityManager;
 	private boolean definedActivityIdsChanged;
 	private boolean enabledActivityIdsChanged;
 
-	ActivityManagerEvent(IActivityManager activityManager, boolean definedActivityIdsChanged, boolean enabledActivityIdsChanged) {
+	/**
+	 * TODO javadoc
+	 * 
+	 * @param activityManager
+	 * @param definedActivityIdsChanged
+	 * @param enabledActivityIdsChanged
+	 */
+	public ActivityManagerEvent(IActivityManager activityManager, boolean definedActivityIdsChanged, boolean enabledActivityIdsChanged) {
 		if (activityManager == null)
 			throw new NullPointerException();
 
@@ -29,14 +49,27 @@ final class ActivityManagerEvent implements IActivityManagerEvent {
 		this.enabledActivityIdsChanged = enabledActivityIdsChanged;
 	}
 
+	/**
+	 * Returns the instance of <code>IActivityManager</code> that has
+	 * changed.
+	 * 
+	 * @return the instance of <code>IActivityManager</code> that has
+	 *         changed. Guaranteed not to be <code>null</code>.
+	 */
 	public IActivityManager getActivityManager() {
 		return activityManager;
 	}
 
+	/**
+	 * TODO javadoc
+	 */
 	public boolean haveDefinedActivityIdsChanged() {
 		return definedActivityIdsChanged;
 	}
 
+	/**
+	 * TODO javadoc
+	 */
 	public boolean haveEnabledActivityIdsChanged() {
 		return enabledActivityIdsChanged;
 	}

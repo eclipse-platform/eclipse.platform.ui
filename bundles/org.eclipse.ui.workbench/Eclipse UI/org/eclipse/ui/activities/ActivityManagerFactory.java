@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.activities;
 
-import org.eclipse.ui.internal.activities.ActivityManager;
+import org.eclipse.ui.internal.activities.MutableActivityManager;
 
 /**
  * <p>
@@ -30,21 +30,17 @@ import org.eclipse.ui.internal.activities.ActivityManager;
 public final class ActivityManagerFactory {
 
 	/**
-	 * Creates a new instance of IActivityManager.
+	 * Creates a new instance of IMutableActivityManager.
 	 * 
-	 * @return a new instance of IActivityManager. Clients should not make
-	 *         assumptions about the concrete implementation outside the
-	 *         contract of <code>IActivityManager</code>. Guaranteed not to
-	 *         be <code>null</code>.
+	 * @return a new instance of IMutableActivityManager. Clients should not
+	 *         make assumptions about the concrete implementation outside the
+	 *         contract of <code>IMutableActivityManager</code>. Guaranteed
+	 *         not to be <code>null</code>.
 	 */
-	public static IActivityManager getActivityManager() {
-		return new ActivityManager();
+	public static IMutableActivityManager getMutableActivityManager() {
+		return new MutableActivityManager();
 	}
 
-	/**
-	 * Private constructor to ensure that <code>ActivityManagerFactory</code>
-	 * can not be instantiated.
-	 */
 	private ActivityManagerFactory() {
 	}
 }

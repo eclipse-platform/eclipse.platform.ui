@@ -24,18 +24,18 @@ package org.eclipse.ui.activities;
  * </p>
  * 
  * @since 3.0
+ * @see ActivityEvent
  * @see IActivity#addActivityListener
  * @see IActivity#removeActivityListener
- * @see IActivityEvent
  */
 public interface IActivityListener {
 
 	/**
 	 * Notifies that one or more attributes of an instance of <code>IActivity</code>
-	 * have changed. Specific details are described in the <code>IActivityEvent</code>.
+	 * have changed. Specific details are described in the <code>ActivityEvent</code>.
 	 * 
 	 * @param activityEvent
 	 *            the activity event. Guaranteed not to be <code>null</code>.
 	 */
-	void activityChanged(IActivityEvent activityEvent);
+	void activityChanged(ActivityEvent activityEvent);
 }

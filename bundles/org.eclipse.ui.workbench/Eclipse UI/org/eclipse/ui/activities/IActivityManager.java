@@ -16,8 +16,7 @@ import java.util.Set;
 /**
  * <p>
  * An instance of <code>IActivityManager</code> can be used to obtain
- * instances of <code>IActivity</code>, as well as manage whether or not
- * those instances are enabled or disabled.
+ * instances of <code>IActivity</code>.
  * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
@@ -110,14 +109,4 @@ public interface IActivityManager {
 	 *            operation is performed.
 	 */
 	void removeActivityManagerListener(IActivityManagerListener activityManagerListener);
-
-	/**
-	 * Sets the set of identifiers to enabled activities.
-	 * 
-	 * @param enabledActivityIds
-	 *            the set of identifiers to enabled activities. This set may be
-	 *            empty, but it must not be <code>null</code>. If this set
-	 *            is not empty, it must only contain instances of <code>String</code>.
-	 */
-	void setEnabledActivityIds(Set enabledActivityIds);
 }

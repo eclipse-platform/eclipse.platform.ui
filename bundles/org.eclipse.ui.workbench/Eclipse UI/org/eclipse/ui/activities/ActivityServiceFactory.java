@@ -54,10 +54,6 @@ public final class ActivityServiceFactory {
 		return new MutableActivityService();
 	}
 
-	/**
-	 * Private constructor to ensure that <code>ActivityServiceFactory</code>
-	 * can not be instantiated.
-	 */
 	private ActivityServiceFactory() {
 	}
 }

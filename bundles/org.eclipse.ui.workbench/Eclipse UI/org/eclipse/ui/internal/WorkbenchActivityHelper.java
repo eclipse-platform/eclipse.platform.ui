@@ -17,7 +17,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
@@ -26,6 +25,7 @@ import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.IActivityManager;
+import org.eclipse.ui.activities.IMutableActivityManager;
 import org.eclipse.ui.activities.IObjectActivityManager;
 import org.eclipse.ui.internal.dialogs.WizardCollectionElement;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceNode;
@@ -127,7 +127,8 @@ public class WorkbenchActivityHelper {
         boolean noRoles = PlatformUI.getWorkbench().getRoleManager().getDefinedRoleIds().isEmpty();
         
         if (noRoles) {
-            IActivityManager activityManager = PlatformUI.getWorkbench().getActivityManager();
+        	// TODO cast
+            IMutableActivityManager activityManager = (IMutableActivityManager) PlatformUI.getWorkbench().getActivityManager();
             activityManager.setEnabledActivityIds(activityManager.getDefinedActivityIds());
         }
 
@@ -145,7 +146,8 @@ public class WorkbenchActivityHelper {
 	 * @since 3.0
 	 */
     public static void enableActivities(String id) {
-        IActivityManager activityManager = PlatformUI.getWorkbench().getActivityManager();
+        // TODO cast
+    	IMutableActivityManager activityManager = (IMutableActivityManager) PlatformUI.getWorkbench().getActivityManager();
         Set activities = new HashSet(activityManager.getEnabledActivityIds());
         for (Iterator i = activityManager.getDefinedActivityIds().iterator(); i.hasNext();) {
             String activityId = (String) i.next();
@@ -337,7 +339,10 @@ public class WorkbenchActivityHelper {
         //allow for switching off and on of roles
         //        if (!store.isDefault(PREFIX + FILTERING_ENABLED))
         //            setFiltering(store.getBoolean(PREFIX + FILTERING_ENABLED));
-        IActivityManager activityManager = PlatformUI.getWorkbench().getActivityManager();
+
+        // TODO cast
+        IMutableActivityManager activityManager = (IMutableActivityManager) PlatformUI.getWorkbench().getActivityManager();
+        
         Iterator values = activityManager.getDefinedActivityIds().iterator();
         Set enabledActivities = new HashSet();
         while (values.hasNext()) {

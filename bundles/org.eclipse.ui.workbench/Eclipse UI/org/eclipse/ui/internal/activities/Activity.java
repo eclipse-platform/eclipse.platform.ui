@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.ui.activities.ActivityEvent;
 import org.eclipse.ui.activities.IActivity;
-import org.eclipse.ui.activities.IActivityEvent;
 import org.eclipse.ui.activities.IActivityListener;
 import org.eclipse.ui.activities.IPatternBinding;
 import org.eclipse.ui.activities.NotDefinedException;
@@ -28,7 +28,7 @@ final class Activity implements IActivity {
 	private final static int HASH_INITIAL = Activity.class.getName().hashCode();
 
 	private List activityListeners;
-	private ActivityManager activityManager;
+	private MutableActivityManager activityManager;
 	private boolean defined;
 	private String description;
 	private boolean enabled;
@@ -42,7 +42,7 @@ final class Activity implements IActivity {
 	private transient IPatternBinding[] patternBindingsAsArray;
 	private transient String string;
 
-	Activity(ActivityManager activityManager, String id) {
+	Activity(MutableActivityManager activityManager, String id) {
 		if (activityManager == null || id == null)
 			throw new NullPointerException();
 
@@ -213,7 +213,7 @@ final class Activity implements IActivity {
 		return string;
 	}
 
-	void fireActivityChanged(IActivityEvent activityEvent) {
+	void fireActivityChanged(ActivityEvent activityEvent) {
 		if (activityEvent == null)
 			throw new NullPointerException();
 

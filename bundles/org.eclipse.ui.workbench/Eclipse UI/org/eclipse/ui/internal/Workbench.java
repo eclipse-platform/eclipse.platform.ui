@@ -82,6 +82,7 @@ import org.eclipse.ui.activities.ActivityManagerFactory;
 import org.eclipse.ui.activities.ActivityServiceFactory;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.ICompoundActivityService;
+import org.eclipse.ui.activities.IMutableActivityManager;
 import org.eclipse.ui.activities.IObjectActivityManager;
 import org.eclipse.ui.application.IWorkbenchPreferences;
 import org.eclipse.ui.application.WorkbenchAdviser;
@@ -282,7 +283,7 @@ public final class Workbench implements IWorkbench {
 	// TODO reduce visibility
 	public WorkbenchActivitiesCommandsAndRoles workbenchActivitiesCommandsAndRoles = new WorkbenchActivitiesCommandsAndRoles(this);
 
-	private IActivityManager activityManager;
+	private IMutableActivityManager activityManager;
 	// TODO reduce visibility
 	ICommandManager commandManager;
 	private IRoleManager roleManager;
@@ -723,7 +724,7 @@ public final class Workbench implements IWorkbench {
 	private boolean init(ImageDescriptor windowImage, Display display) {
 		
 		// create an activity manager		
-		activityManager = ActivityManagerFactory.getActivityManager();
+		activityManager = ActivityManagerFactory.getMutableActivityManager();
 		activityManager.addActivityManagerListener(workbenchActivitiesCommandsAndRoles.activityManagerListener);                   
 		
 		// create a role manager

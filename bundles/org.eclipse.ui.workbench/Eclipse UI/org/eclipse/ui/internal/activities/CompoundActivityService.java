@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.ui.activities.AbstractActivityService;
 import org.eclipse.ui.activities.ActivityServiceEvent;
 import org.eclipse.ui.activities.IActivityService;
 import org.eclipse.ui.activities.IActivityServiceListener;

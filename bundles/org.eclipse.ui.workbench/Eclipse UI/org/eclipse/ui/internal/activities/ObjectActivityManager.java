@@ -20,10 +20,10 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.ActivityEvent;
 import org.eclipse.ui.activities.IActivity;
-import org.eclipse.ui.activities.IActivityEvent;
 import org.eclipse.ui.activities.IActivityListener;
-import org.eclipse.ui.activities.IActivityManager;
+import org.eclipse.ui.activities.IMutableActivityManager;
 import org.eclipse.ui.activities.IObjectActivityManager;
 import org.eclipse.ui.activities.IObjectContributionRecord;
 import org.eclipse.ui.roles.IRoleManager;
@@ -60,7 +60,8 @@ public class ObjectActivityManager implements IObjectActivityManager {
     public static ObjectActivityManager getManager(String id, boolean create) {
         ObjectActivityManager manager = (ObjectActivityManager) managersMap.get(id);
         if (manager == null && create) {
-            manager = new ObjectActivityManager(id, PlatformUI.getWorkbench().getActivityManager(), PlatformUI.getWorkbench().getRoleManager());
+        	// TODO cast
+            manager = new ObjectActivityManager(id, (IMutableActivityManager) PlatformUI.getWorkbench().getActivityManager(), PlatformUI.getWorkbench().getRoleManager());
             managersMap.put(id, manager);
         }
         return manager;
@@ -78,7 +79,7 @@ public class ObjectActivityManager implements IObjectActivityManager {
      */
     private IActivityListener activityListener = new IActivityListener() {
 
-        public void activityChanged(IActivityEvent activityEvent) {
+        public void activityChanged(ActivityEvent activityEvent) {
             invalidateCache();
         }
 
@@ -87,7 +88,7 @@ public class ObjectActivityManager implements IObjectActivityManager {
     /**
      * The <code>IActivityManager</code> to which this manager is bound.
      */
-    private IActivityManager activityManager;
+    private IMutableActivityManager activityManager;
 
     /**
 	 * Map of id-&gt;list&lt;activity&gt;.
@@ -124,7 +125,7 @@ public class ObjectActivityManager implements IObjectActivityManager {
      * @param roleManager the <code>IRoleManager</code> to bind to.
      * @since 3.0
      */
-    public ObjectActivityManager(String id, IActivityManager activityManager, IRoleManager roleManager) {
+    public ObjectActivityManager(String id, IMutableActivityManager activityManager, IRoleManager roleManager) {
         super();
         if (id == null) {
             throw new IllegalArgumentException();

@@ -25,18 +25,18 @@ package org.eclipse.ui.activities;
  * </p>
  * 
  * @since 3.0
+ * @see ActivityManagerEvent
  * @see IActivityManager#addActivityManagerListener
  * @see IActivityManager#removeActivityManagerListener
- * @see IActivityManagerEvent
  */
 public interface IActivityManagerListener {
 
 	/**
 	 * Notifies that one or more attributes of an instance of <code>IActivityManager</code>
-	 * have changed. Specific details are described in the <code>IActivityManagerEvent</code>.
+	 * have changed. Specific details are described in the <code>ActivityManagerEvent</code>.
 	 * 
 	 * @param activityManagerEvent
 	 *            the activity manager event. Guaranteed not to be <code>null</code>.
 	 */
-	void activityManagerChanged(IActivityManagerEvent activityManagerEvent);
+	void activityManagerChanged(ActivityManagerEvent activityManagerEvent);
 }

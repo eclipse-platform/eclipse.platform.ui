@@ -9,12 +9,25 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.activities;
+package org.eclipse.ui.activities;
 
-import org.eclipse.ui.activities.IActivity;
-import org.eclipse.ui.activities.IActivityEvent;
-
-final class ActivityEvent implements IActivityEvent {
+/**
+ * <p>
+ * An instance of <code>ActivityEvent</code> describes changes to an instance
+ * of <code>Activity</code>.
+ * </p>
+ * <p>
+ * This class is not intended to be extended by clients.
+ * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>
+ * </p>
+ * 
+ * @since 3.0
+ * @see IActivity
+ * @see IActivityListener#activityChanged
+ */
+public final class ActivityEvent {
 
 	private IActivity activity;
 	private boolean definedChanged;
@@ -24,7 +37,18 @@ final class ActivityEvent implements IActivityEvent {
 	private boolean parentIdChanged;
 	private boolean patternBindingsChanged;
 
-	ActivityEvent(
+	/**
+	 * TODO javadoc
+	 * 
+	 * @param activity
+	 * @param definedChanged
+	 * @param descriptionChanged
+	 * @param enabledChanged
+	 * @param nameChanged
+	 * @param parentIdChanged
+	 * @param patternBindingsChanged
+	 */
+	public ActivityEvent(
 		IActivity activity,
 		boolean definedChanged,
 		boolean descriptionChanged,
@@ -44,30 +68,54 @@ final class ActivityEvent implements IActivityEvent {
 		this.patternBindingsChanged = patternBindingsChanged;
 	}
 
+	/**
+	 * Returns the instance of <code>IActivity</code> that has changed.
+	 * 
+	 * @return the instance of <code>IActivity</code> that has changed.
+	 *         Guaranteed not to be <code>null</code>.
+	 */
 	public IActivity getActivity() {
 		return activity;
 	}
 
+	/**
+	 * TODO javadoc
+	 */
 	public boolean hasDefinedChanged() {
 		return definedChanged;
 	}
 
+	/**
+	 * TODO javadoc
+	 */
 	public boolean hasDescriptionChanged() {
 		return descriptionChanged;
 	}
 
+	/**
+	 * TODO javadoc
+	 */
 	public boolean hasEnabledChanged() {
 		return enabledChanged;
 	}
 
+	/**
+	 * TODO javadoc
+	 */
 	public boolean hasNameChanged() {
 		return nameChanged;
 	}
 
+	/**
+	 * TODO javadoc
+	 */
 	public boolean hasParentIdChanged() {
 		return parentIdChanged;
 	}
 
+	/**
+	 * TODO javadoc
+	 */
 	public boolean havePatternBindingsChanged() {
 		return patternBindingsChanged;
 	}

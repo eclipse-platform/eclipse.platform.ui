@@ -25,15 +25,14 @@ import java.util.WeakHashMap;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.activities.ActivityEvent;
+import org.eclipse.ui.activities.ActivityManagerEvent;
 import org.eclipse.ui.activities.IActivity;
-import org.eclipse.ui.activities.IActivityEvent;
-import org.eclipse.ui.activities.IActivityManager;
-import org.eclipse.ui.activities.IActivityManagerEvent;
-import org.eclipse.ui.activities.IActivityManagerListener;
+import org.eclipse.ui.activities.IMutableActivityManager;
 import org.eclipse.ui.activities.IPatternBinding;
 import org.eclipse.ui.internal.util.Util;
 
-public final class ActivityManager implements IActivityManager {
+public final class MutableActivityManager extends AbstractActivityManager implements IMutableActivityManager {
 
 	static boolean isActivityDefinitionChildOf(String ancestor, String id, Map activityDefinitionsById) {
 		Collection visited = new HashSet();
@@ -52,40 +51,28 @@ public final class ActivityManager implements IActivityManager {
 	private Map activitiesById = new WeakHashMap();
 	private Set activitiesWithListeners = new HashSet();
 	private Map activityDefinitionsById = new HashMap();
-	private List activityManagerListeners;
 	private IActivityRegistry activityRegistry;
 	private Set definedActivityIds = new HashSet();
 	private Set enabledActivityIds = new HashSet();
 	private Map patternBindingsByActivityId = new HashMap();
 
-	public ActivityManager() {
+	public MutableActivityManager() {
 		this(new ExtensionActivityRegistry(Platform.getExtensionRegistry()));
 	}
 
-	public ActivityManager(IActivityRegistry activityRegistry) {
+	public MutableActivityManager(IActivityRegistry activityRegistry) {
 		if (activityRegistry == null)
 			throw new NullPointerException();
 
 		this.activityRegistry = activityRegistry;
 
 		this.activityRegistry.addActivityRegistryListener(new IActivityRegistryListener() {
-			public void activityRegistryChanged(IActivityRegistryEvent activityRegistryEvent) {
+			public void activityRegistryChanged(ActivityRegistryEvent activityRegistryEvent) {
 				readRegistry();
 			}
 		});
 
 		readRegistry();
-	}
-
-	public void addActivityManagerListener(IActivityManagerListener activityManagerListener) {
-		if (activityManagerListener == null)
-			throw new NullPointerException();
-
-		if (activityManagerListeners == null)
-			activityManagerListeners = new ArrayList();
-
-		if (!activityManagerListeners.contains(activityManagerListener))
-			activityManagerListeners.add(activityManagerListener);
 	}
 
 	public IActivity getActivity(String activityId) {
@@ -140,14 +127,6 @@ public final class ActivityManager implements IActivityManager {
 		return Collections.unmodifiableSet(matches);
 	}
 
-	public void removeActivityManagerListener(IActivityManagerListener activityManagerListener) {
-		if (activityManagerListener == null)
-			throw new NullPointerException();
-
-		if (activityManagerListeners != null)
-			activityManagerListeners.remove(activityManagerListener);
-	}
-
 	public void setEnabledActivityIds(Set enabledActivityIds) {
 		enabledActivityIds = Util.safeCopy(enabledActivityIds, String.class);
 		boolean activityManagerChanged = false;
@@ -170,20 +149,11 @@ public final class ActivityManager implements IActivityManager {
 		return activitiesWithListeners;
 	}
 
-	private void fireActivityManagerChanged(IActivityManagerEvent activityManagerEvent) {
-		if (activityManagerEvent == null)
-			throw new NullPointerException();
-
-		if (activityManagerListeners != null)
-			for (int i = 0; i < activityManagerListeners.size(); i++)
-				 ((IActivityManagerListener) activityManagerListeners.get(i)).activityManagerChanged(activityManagerEvent);
-	}
-
 	private void notifyActivities(Map activityEventsByActivityId) {
 		for (Iterator iterator = activityEventsByActivityId.entrySet().iterator(); iterator.hasNext();) {
 			Map.Entry entry = (Map.Entry) iterator.next();
 			String activityId = (String) entry.getKey();
-			IActivityEvent activityEvent = (IActivityEvent) entry.getValue();
+			ActivityEvent activityEvent = (ActivityEvent) entry.getValue();
 			Activity activity = (Activity) activitiesById.get(activityId);
 
 			if (activity != null)
@@ -258,7 +228,7 @@ public final class ActivityManager implements IActivityManager {
 			notifyActivities(activityEventsByActivityId);
 	}
 
-	private IActivityEvent updateActivity(Activity activity) {
+	private ActivityEvent updateActivity(Activity activity) {
 		IActivityDefinition activityDefinition = (IActivityDefinition) activityDefinitionsById.get(activity.getId());
 		boolean definedChanged = activity.setDefined(activityDefinition != null);
 		boolean descriptionChanged = activity.setDescription(activityDefinition != null ? activityDefinition.getDescription() : null);
@@ -289,7 +259,7 @@ public final class ActivityManager implements IActivityManager {
 			Activity activity = (Activity) activitiesById.get(activityId);
 
 			if (activity != null) {
-				IActivityEvent activityEvent = updateActivity(activity);
+				ActivityEvent activityEvent = updateActivity(activity);
 
 				if (activityEvent != null)
 					activityEventsByActivityId.put(activityId, activityEvent);

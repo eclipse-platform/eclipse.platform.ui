@@ -13,8 +13,8 @@ package org.eclipse.ui.internal.activities;
 
 import java.util.Set;
 
+import org.eclipse.ui.activities.AbstractActivityService;
 import org.eclipse.ui.activities.IActivityService;
-import org.eclipse.ui.activities.IActivityServiceListener;
 
 public final class ActivityServiceAdapter extends AbstractActivityService {
 
@@ -27,15 +27,7 @@ public final class ActivityServiceAdapter extends AbstractActivityService {
 		this.activityService = activityService;
 	}
 
-	public void addActivityServiceListener(IActivityServiceListener activityServiceListener) {
-		addActivityServiceListener(activityServiceListener);
-	}
-
 	public Set getActiveActivityIds() {
 		return activityService.getActiveActivityIds();
-	}
-
-	public void removeActivityServiceListener(IActivityServiceListener activityServiceListener) {
-		removeActivityServiceListener(activityServiceListener);
 	}
 }

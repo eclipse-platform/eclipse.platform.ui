@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.ui.activities.AbstractActivityService;
 import org.eclipse.ui.activities.ActivityServiceEvent;
 import org.eclipse.ui.activities.IMutableActivityService;
 import org.eclipse.ui.internal.util.Util;

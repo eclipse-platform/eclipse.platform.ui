@@ -15,16 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author cmclaren
- * 
- * To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Generation - Code and Comments
+ * TODO javadoc
  */
 public abstract class AbstractActivityService implements IActivityService {
 
-	/**
-	 * TODO javadoc
-	 */
 	private List activityServiceListeners;
 
 	/**
@@ -33,9 +27,6 @@ public abstract class AbstractActivityService implements IActivityService {
 	protected AbstractActivityService() {
 	}
 
-	/**
-	 * TODO javadoc ?
-	 */
 	public void addActivityServiceListener(IActivityServiceListener activityServiceListener) {
 		if (activityServiceListener == null)
 			throw new NullPointerException();
@@ -47,9 +38,6 @@ public abstract class AbstractActivityService implements IActivityService {
 			activityServiceListeners.add(activityServiceListener);
 	}
 
-	/**
-	 * TODO javadoc ?
-	 */
 	public void removeActivityServiceListener(IActivityServiceListener activityServiceListener) {
 		if (activityServiceListener == null)
 			throw new NullPointerException();
@@ -58,6 +46,11 @@ public abstract class AbstractActivityService implements IActivityService {
 			activityServiceListeners.remove(activityServiceListener);
 	}
 
+	/**
+	 * TODO javadoc
+	 * 
+	 * @param activityServiceEvent
+	 */
 	protected void fireActivityServiceChanged(ActivityServiceEvent activityServiceEvent) {
 		if (activityServiceEvent == null)
 			throw new NullPointerException();

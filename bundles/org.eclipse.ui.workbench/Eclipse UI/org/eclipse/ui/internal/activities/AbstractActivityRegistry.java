@@ -17,7 +17,7 @@ import java.util.List;
 
 abstract class AbstractActivityRegistry implements IActivityRegistry {
 
-	private IActivityRegistryEvent activityRegistryEvent;
+	private ActivityRegistryEvent activityRegistryEvent;
 	private List activityRegistryListeners;
 
 	protected List activityDefinitions = Collections.EMPTY_LIST;
