@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
@@ -30,7 +31,20 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DefaultLabelProvider;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationDialog;
+import org
+	.eclipse
+	.debug
+	.internal
+	.ui
+	.launchConfigurations
+	.LaunchConfigurationDialog;
+import org
+	.eclipse
+	.debug
+	.internal
+	.ui
+	.launchConfigurations
+	.LaunchConfigurationManager;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -38,7 +52,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
@@ -268,16 +281,13 @@ public class DebugUITools {
 	 * @since 2.0
 	 */
 	public static int openLaunchConfigurationDialog(Shell shell, IStructuredSelection selection, String mode) {
-		LaunchConfigurationDialog dialog = (LaunchConfigurationDialog) LaunchConfigurationDialog.getCurrentlyVisibleLaunchConfigurationDialog();
-		if (dialog != null) {
-			dialog.setTreeViewerSelection(selection);
-			return LaunchConfigurationDialog.LAUNCH_CONFIGURATION_DIALOG_REUSE_OPEN;
+		String groupId = null;
+		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
+			groupId = IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP;
 		} else {
-			dialog = new LaunchConfigurationDialog(shell, null, mode);
-			dialog.setOpenMode(LaunchConfigurationDialog.LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_SELECTION);
-			dialog.setInitialSelection(selection);
-			return dialog.open();			
+			groupId = IDebugUIConstants.ID_RUN_LAUNCH_GROUP;
 		}
+		return openLaunchConfigurationDialogOnGroup(shell, selection, groupId);
 	}
 	
 	/**
@@ -297,33 +307,20 @@ public class DebugUITools {
 	 * 
 	 * @param shell the parent shell for the launch configuration dialog
 	 * @param selection the initial selection for the dialog
-	 * @param mode the mode (run or debug) in which to open the launch configuration dialog.
-	 *  This should be one of the constants defined in <code>ILaunchManager</code>.
-	 * @param shellTitle the title to display on the dialog, and as the label
-	 * for the tree of launch configurations, or <code>null</code> if the
-	 * default title should be used
-	 * @param title the title to display in the banner area, or
-	 * <code>null</code> if the default title should be used
-	 * @param image the image to display in the banner area of <code>null</code>
-	 * if the default image should be used
-	 * @param filter a filter to apply to the launch configuration tree, or
-	 * <code>null</code> if none
+	 * @param groupIdentifier the identifier of the launch group to display (corresponds to
+	 * the identifier of a lanuch group extension)
 	 * @return the return code from opening the launch configuration dialog
 	 * @since 2.1
 	 */
-	public static int openLaunchConfigurationDialog(Shell shell, IStructuredSelection selection, String mode, String shellTitle, String message, Image image, ViewerFilter filter) {
+	public static int openLaunchConfigurationDialogOnGroup(Shell shell, IStructuredSelection selection, String groupIdentifier) {
 		LaunchConfigurationDialog dialog = (LaunchConfigurationDialog) LaunchConfigurationDialog.getCurrentlyVisibleLaunchConfigurationDialog();
 		if (dialog != null) {
 			dialog.setTreeViewerSelection(selection);
 			return LaunchConfigurationDialog.LAUNCH_CONFIGURATION_DIALOG_REUSE_OPEN;
 		} else {
-			dialog = new LaunchConfigurationDialog(shell, null, mode);
+			dialog = new LaunchConfigurationDialog(shell, null, LaunchConfigurationManager.getDefault().getLaunchGroup(groupIdentifier));
 			dialog.setOpenMode(LaunchConfigurationDialog.LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_SELECTION);
 			dialog.setInitialSelection(selection);
-			dialog.setShellText(shellTitle);
-			dialog.setTitleText(message);
-			dialog.setDialogImage(image);
-			dialog.addFilter(filter);
 			return dialog.open();			
 		}
 	}

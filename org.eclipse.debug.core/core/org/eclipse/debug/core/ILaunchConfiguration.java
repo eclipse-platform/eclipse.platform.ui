@@ -338,5 +338,18 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * of the specified launch configuration.
 	 */
 	public boolean contentsEqual(ILaunchConfiguration configuration);
+	
+	/**
+	 * Returns this launch configuration's type's category, or <code>null</code>
+	 * if unspecified.
+	 * 
+	 * @return this launch configuration's type's category, or <code>null</code>
+	 * @exception CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li>Unable to retrieve or instantiate this launch configuration's type.</li>
+	 * </ul>
+	 * @since 2.1
+	 */
+	public String getCategory() throws CoreException;	
 
 }

@@ -1,0 +1,66 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>README Launch Groups Extension Point</title>
+</head>
+
+<body link="#0000FF" vlink="#800080">
+
+<h1 align="center">Launch Groups</h1>
+
+<p><b><i>Identifier: </i></b>org.eclipse.debug.ui.launchGroups</p>
+
+<p><b><i>Description: </i></b>This extension point provides support for defining 
+  a group of launch configurations to be viewed together in the launch configuration 
+  dialog, and support a launch history (recent and favorite launches).</p>
+
+<p><b><i>Configuration Markup:</i></b> </p>
+
+<pre>
+<tt>&nbsp;&nbsp; &lt;!ELEMENT launchGroup</tt>&gt;
+<tt>&nbsp;&nbsp; &lt;!ATTLIST launchGroup</tt> 
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; mode &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; category&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; label&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; image&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>
+
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; bannerImage&nbsp;&nbsp; CDATA #REQUIRED</tt></pre>
+
+<ul>
+  <li><code>id</code> specifies a unique identifier for this launch group.</li>
+  <li><code>mode</code> specifies the launch mode associated with this group - 
+    i.e. run or debug.</li>
+  <li><code>category</code> specifies the category of launch configurations in 
+    this group. When unspecified, the category is null.</li>
+  <li><code>label</code> specifies a translatable label used to render this group.</li>
+  <li><code>image</code> specifies a plug-in relative path to an image used to 
+    render this group in trees, lists, tabs, etc.</li>
+  <li><code>bannerImage</code> specifies a plug-in relative path to an image used 
+    to render this group in a wizard or dialog banner area.</li>
+</ul>
+
+<p><b><i>Examples:</i></b> </p>
+
+<p>The following is an example of a launch group extension point: </p>
+
+<pre>
+&lt;extension point="org.eclipse.debug.ui.launchGroups
+  &lt;launchGroup
+     id="com.example.ExampleLaunchGroupId"
+     mode="run"
+     label="Run"
+     icon="icons\run.gif"
+     bannerImage=&quot;icons\runBanner.gif&quot;&gt;
+  &lt;/launchGroup&gt;
+&lt;/extension&gt;
+</pre>
+<p>In the above example, the launch group will consist of all launch configurations 
+  with no cateogory that support run mode.</p>
+
+<p><a href="hglegal.htm"><img src="ngibmcpy.gif" alt="Copyright IBM Corp. 2000, 2001. All Rights Reserved."
+border="0" width="195" height="12"></a></p>
+</body>
+</html>

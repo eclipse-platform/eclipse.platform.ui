@@ -388,6 +388,17 @@
 			class="org.eclipse.ui.externaltools.internal.ant.launchConfigurations.AntConsoleContentProvider">
 		</consoleContentProvider>
 	</extension>  	
+	
+	<extension point = "org.eclipse.debug.ui.launchGroups">
+		<launchGroup
+			id = "org.eclipse.ui.externaltools.launchGroup"
+			mode = "run"
+			category = "org.eclipse.ui.externaltools"
+			label = "%ExternalToolsLaunchGroup.label"
+			image = "icons/full/obj16/external_tools.gif"
+			bannerImage = "icons/full/wizban/ext_tools_wiz.gif">
+		</launchGroup>	
+	</extension>	
 
 <!-- Old Stuff -->
 <!-- Old Stuff -->

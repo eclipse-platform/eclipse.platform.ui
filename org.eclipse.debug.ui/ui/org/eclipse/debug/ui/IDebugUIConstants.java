@@ -107,12 +107,7 @@ public interface IDebugUIConstants {
 	 * Debug perspective identifier (value <code>"org.eclipse.debug.ui.DebugPerspective"</code>).
 	 */
 	public static final String ID_DEBUG_PERSPECTIVE = PLUGIN_ID + ".DebugPerspective"; //$NON-NLS-1$
-	
-	/**
-	 * Debug model presentation simple extension point identifier (value <code>"debugModelPresentations"</code>).
-	 */
-	public static final String ID_DEBUG_MODEL_PRESENTATION= "debugModelPresentations"; //$NON-NLS-1$
-		
+			
 	/**
 	 * Constant for referring to no perspective.
 	 */
@@ -240,15 +235,6 @@ public interface IDebugUIConstants {
 	 * Console view identifier (value <code>"org.eclipse.debug.ui.ConsoleView"</code>).
 	 */
 	public static final String ID_CONSOLE_VIEW= "org.eclipse.debug.ui.ConsoleView"; //$NON-NLS-1$
-
-	// Extension points
-	
-	/**
-	 * Extension point for launch configuration type images.
-	 * 
-	 * @since 2.0
-	 */
-	public static final String EXTENSION_POINT_LAUNCH_CONFIGURATION_TYPE_IMAGES = "launchConfigurationTypeImages"; //$NON-NLS-1$
 	
 	// Debug Action images
 	
@@ -411,6 +397,17 @@ public interface IDebugUIConstants {
 	 * Launch action set identifier (value <code>"org.eclipse.debug.ui.LaunchActionSet"</code>).
 	 */
 	public static final String LAUNCH_ACTION_SET= PLUGIN_ID + ".launchActionSet"; //$NON-NLS-1$
+	
+	// extensions
+	/**
+	 * Identifier for the standard 'debug' launch group. 
+	 */
+	public static final String ID_DEBUG_LAUNCH_GROUP = PLUGIN_ID + ".launchGroup.debug"; //$NON-NLS-1$
+	
+	/**
+	 * Identifier for the standard 'run' launch group. 
+	 */
+	public static final String ID_RUN_LAUNCH_GROUP = PLUGIN_ID + ".launchGroup.run"; //$NON-NLS-1$	
 	
 	// menus 
 	
@@ -617,6 +614,13 @@ public interface IDebugUIConstants {
 	 */
 	public static final String ATTR_RUN_FAVORITE = PLUGIN_ID + ".runFavorite"; //$NON-NLS-1$		
 	
+	// Extension points
+	
+	/**
+	 * Debug model presentation simple extension point identifier (value <code>"debugModelPresentations"</code>).
+	 */
+	public static final String ID_DEBUG_MODEL_PRESENTATION= "debugModelPresentations"; //$NON-NLS-1$
+	
 	/**
 	 * Debug action groups extension point identifier
 	 * (value <code>"debugActionGroups"</code>).
@@ -642,11 +646,26 @@ public interface IDebugUIConstants {
 	public static final String EXTENSION_POINT_LAUNCH_SHORTCUTS= "launchShortcuts";	 //$NON-NLS-1$
 	
 	/**
+	 * Extension point for launch configuration type images.
+	 * 
+	 * @since 2.0
+	 */
+	public static final String EXTENSION_POINT_LAUNCH_CONFIGURATION_TYPE_IMAGES = "launchConfigurationTypeImages"; //$NON-NLS-1$	
+	
+	/**
 	 * Console document content provider extension point identifier
 	 * (value <code>"consoleDocumentContentProviders"</code>).
 	 * 
 	 * @since 2.1
 	 */
 	public static final String EXTENSION_POINT_CONSOLE_CONTENT_PROVIDERS = "consoleContentProviders";	 //$NON-NLS-1$
+	
+	/**
+	 * Launch groups extension point identifier (value
+	 * <code>"launchGroups"</code>).
+	 * 
+	 * @since 2.1
+	 */
+	public static final String EXTENSION_POINT_LAUNCH_GROUPS = "launchGroups";	 //$NON-NLS-1$	
 		
 }

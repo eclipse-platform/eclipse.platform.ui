@@ -9,6 +9,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 Contributors:
 **********************************************************************/
 
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.viewers.ISelection;
@@ -177,7 +178,7 @@ public class ExternalToolMenuDelegate extends ActionDelegate implements IWorkben
 			configure.setText(ToolMessages.getString("ExternalToolMenuDelegate.configure")); //$NON-NLS-1$
 			configure.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
-					ExternalToolsPlugin.openExternalToolsDialog(new StructuredSelection());
+					DebugUITools.openLaunchConfigurationDialogOnGroup(ExternalToolsPlugin.getActiveWorkbenchWindow().getShell(), new StructuredSelection(), IExternalToolConstants.ID_EXTERNAL_TOOLS_LAUNCH_GROUP);
 				}
 			});
 		}		

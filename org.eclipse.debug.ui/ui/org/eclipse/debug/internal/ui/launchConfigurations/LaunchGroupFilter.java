@@ -17,15 +17,18 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
 /**
- * Displays launch configurations with no "category".
+ * Displays launch configurations for a specific launch group
  */
-public class DefaultLaunchConfigurationFilter extends ViewerFilter {
+public class LaunchGroupFilter extends ViewerFilter {
+	
+	private LaunchGroupExtension fGroup;
 
 	/**
 	 * Constructor for ExternalToolsLaunchConfigurationFilter.
 	 */
-	public DefaultLaunchConfigurationFilter() {
+	public LaunchGroupFilter(LaunchGroupExtension groupExtension) {
 		super();
+		fGroup = groupExtension;
 	}
 
 	/**
@@ -58,10 +61,23 @@ public class DefaultLaunchConfigurationFilter extends ViewerFilter {
 				}
 			}
 			if (type != null) {
-				return !priv && type.getCategory() == null;
+				return !priv && type.supportsMode(fGroup.getMode()) && equalCategories(type.getCategory(), fGroup.getCategory());
 			}
 			return false;
 	}
-
+	
+	/**
+	 * Returns whether the given categories are equal.
+	 * 
+	 * @param c1 category identifier or <code>null</code>
+	 * @param c2 category identifier or <code>null</code>
+	 * @return boolean
+	 */
+	private boolean equalCategories(String c1, String c2) {
+		if (c1 == null || c2 == null) {
+			return c1 == c2;
+		}
+		return c1.equals(c2);
+	} 
 
 }

@@ -463,5 +463,12 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		return null;
 	}
 	
+	/**
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#getCategory()
+	 */
+	public String getCategory() throws CoreException {
+		return getType().getCategory();
+	}
+
 }
 

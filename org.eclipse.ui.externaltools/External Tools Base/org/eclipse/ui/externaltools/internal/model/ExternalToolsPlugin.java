@@ -16,16 +16,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -47,14 +42,6 @@ import org
 	.internal
 	.registry
 	.RefreshScopeVariableRegistry;
-import org
-	.eclipse
-	.ui
-	.externaltools
-	.internal
-	.ui
-	.launchConfigurations
-	.ExternalToolsLaunchConfigurationFilter;
 import org.eclipse.ui.externaltools.model.IExternalToolConstants;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
@@ -227,20 +214,6 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 		}
 		return display;		
 	}		
-	
-	/**
-	 * Opens the external tools dialog
-	 */
-	public static void openExternalToolsDialog(IStructuredSelection selection) {
-		IWorkbenchWindow window = getActiveWorkbenchWindow();
-		if (window != null) {
-			ViewerFilter filter = new ExternalToolsLaunchConfigurationFilter();
-			Image image = ExternalToolsImages.getImage(IExternalToolConstants.IMG_WIZBAN_EXTERNAL_TOOLS);
-			DebugUITools.openLaunchConfigurationDialog(window.getShell(), selection, ILaunchManager.RUN_MODE, ToolMessages.getString("ExternalToolsDialog.External_Tools_1"), ToolMessages.getString("ExternalToolsDialog.Create,_manage,_and_run_external_tools_2"), image, filter); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-			
-	}
-
 	
 	/**
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#createImageRegistry()

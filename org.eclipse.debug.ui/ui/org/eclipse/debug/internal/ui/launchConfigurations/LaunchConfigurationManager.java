@@ -93,6 +93,11 @@ public class LaunchConfigurationManager implements ILaunchListener,
 	protected boolean fHistoryInitialized= false;
 	
 	/**
+	 * Launch group extensions, keyed by identifier.
+	 */
+	protected Map fLaunchGroups;
+	
+	/**
 	 * The list of most recent launches, independent of mode.
 	 * This list may be empty, but should never be <code>null</code>.
 	 */
@@ -837,6 +842,22 @@ public class LaunchConfigurationManager implements ILaunchListener,
 		}
 	}
 	
+	/**
+	 * Load all registered extensions of the 'launch groups' extension point.
+	 */
+	private void loadLaunchGroups() {
+		// Get the configuration elements
+		IPluginDescriptor descriptor= DebugUIPlugin.getDefault().getDescriptor();
+		IExtensionPoint extensionPoint= descriptor.getExtensionPoint(IDebugUIConstants.EXTENSION_POINT_LAUNCH_GROUPS);
+		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
+
+		// Load the configuration elements into a Map 
+		fLaunchGroups = new HashMap(infos.length);
+		for (int i = 0; i < infos.length; i++) {
+			LaunchGroupExtension ext = new LaunchGroupExtension(infos[i]);
+			fLaunchGroups.put(ext.getIdentifier(), ext);
+		}
+	}	
 	
 	/**
 	 * Returns all launch shortcuts
@@ -952,6 +973,29 @@ public class LaunchConfigurationManager implements ILaunchListener,
 			fErrorImages.put(key, image);
 		}
 		return image;
+	}
+	
+	/**
+	 * Return the launch group with the given id, or <code>null</code>
+	 * 
+	 * @return the launch group with the given id, or <code>null</code>	 */
+	public LaunchGroupExtension getLaunchGroup(String id) {
+		if (fLaunchGroups == null) {
+			loadLaunchGroups();
+		}
+		return (LaunchGroupExtension)fLaunchGroups.get(id);
+	}
+	
+	/**
+	 * Returns the default lanuch group for the given mode.
+	 * 
+	 * @param mode	 * @return launch group	 */
+	public LaunchGroupExtension getDefaultLanuchGroup(String mode) {
+		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
+			return getLaunchGroup(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP);
+		} else {
+			return getLaunchGroup(IDebugUIConstants.ID_RUN_LAUNCH_GROUP);
+		}
 	}
 
 }

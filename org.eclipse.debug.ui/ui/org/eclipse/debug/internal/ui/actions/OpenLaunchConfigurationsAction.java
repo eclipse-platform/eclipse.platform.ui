@@ -10,6 +10,13 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationDialog;
+import org
+	.eclipse
+	.debug
+	.internal
+	.ui
+	.launchConfigurations
+	.LaunchConfigurationManager;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -122,7 +129,7 @@ public abstract class OpenLaunchConfigurationsAction extends Action implements I
 			} else {
 				ss = new StructuredSelection();
 			}
-			LaunchConfigurationDialog dialog = new LaunchConfigurationDialog(window.getShell(), ss, getMode());
+			LaunchConfigurationDialog dialog = new LaunchConfigurationDialog(window.getShell(), ss, LaunchConfigurationManager.getDefault().getDefaultLanuchGroup(getMode()));
 			if (fCreateNewConfigMode) {
 				dialog.setOpenMode(LaunchConfigurationDialog.LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_NEW_CONFIG_OF_TYPE);
 				dialog.setInitialConfigType(getConfigType());
