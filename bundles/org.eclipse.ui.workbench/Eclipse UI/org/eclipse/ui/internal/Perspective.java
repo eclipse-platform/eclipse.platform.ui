@@ -818,6 +818,10 @@ private IStatus createReferences(IMemento views[]) {
 		// Get the view details.
 		IMemento childMem = views[x];
 		String primaryId = childMem.getString(IWorkbenchConstants.TAG_ID);
+		// skip creation of the intro reference -  it's handled elsewhere.
+		if (primaryId.equals(IIntroConstants.INTRO_VIEW_ID))
+			continue;
+
 		String secondaryId = childMem.getString(IWorkbenchConstants.TAG_SECONDARY_ID);
 		// Create and open the view.
 		try {
