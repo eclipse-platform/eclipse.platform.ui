@@ -93,7 +93,7 @@ public abstract class Dialog extends Window {
 	/**
 	 * The button bar; <code>null</code> until dialog is layed out.
 	 */
-	protected Control buttonBar;
+	public Control buttonBar;
 
 	/**
 	 * Collection of buttons created by the <code>createButton</code> method.
@@ -429,7 +429,6 @@ public abstract class Dialog extends Window {
 				shell.setDefaultButton(button);
 			}
 		}
-		button.setFont(parent.getFont());
 		buttons.put(new Integer(id), button);
 		setButtonLayoutData(button);
 
@@ -509,15 +508,6 @@ public abstract class Dialog extends Window {
 	}
 
 	/*
-	 * @see Window.configureShell()
-	 */
-	protected void configureShell(Shell newShell) {
-
-		super.configureShell(newShell);
-		newShell.setFont(JFaceResources.getDialogFont());
-	}
-
-	/*
 	 * @see Window.initializeBounds()
 	 */
 	protected void initializeBounds() {
@@ -568,8 +558,7 @@ public abstract class Dialog extends Window {
 		layout.verticalSpacing = 0;
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		composite.setFont(parent.getFont());
-
+		applyDialogFont(composite);
 		// initialize the dialog units
 		initializeDialogUnits(composite);
 
@@ -618,7 +607,7 @@ public abstract class Dialog extends Window {
 			convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		composite.setFont(parent.getFont());
+		applyDialogFont(composite);
 
 		return composite;
 	}
@@ -716,6 +705,7 @@ public abstract class Dialog extends Window {
 	 * @param control a control from which to obtain the current font
 	 */
 	protected void initializeDialogUnits(Control control) {
+
 		// Compute and store a font metric
 		GC gc = new GC(control);
 		gc.setFont(JFaceResources.getDialogFont());
@@ -792,11 +782,11 @@ public abstract class Dialog extends Window {
 	 * its children. If the control is <code>null</code> nothing happens.
 	 */
 	public static void applyDialogFont(Control control) {
-		if(control == null)
+		if (control == null || dialogFontIsDefault())
 			return;
+
 		Font dialogFont = JFaceResources.getDialogFont();
-		Font defaultFont = JFaceResources.getDefaultFont();
-		applyDialogFont(control, dialogFont, defaultFont);
+		applyDialogFont(control, dialogFont);
 	}
 
 	/**
@@ -808,18 +798,82 @@ public abstract class Dialog extends Window {
 	 * @param dialogFont the dialog font to set
 	 * @param defaultFont the default font to compare against
 	 */
-	private static void applyDialogFont(
-		Control control,
-		Font dialogFont,
-		Font defaultFont) {
-
-		if (control.getFont().equals(defaultFont))
+	private static void applyDialogFont(Control control, Font dialogFont) {
+		
+		if (hasDefaultFont(control))
 			control.setFont(dialogFont);
 
 		if (control instanceof Composite) {
 			Control[] children = ((Composite) control).getChildren();
 			for (int i = 0; i < children.length; i++)
-				applyDialogFont(children[i], dialogFont, defaultFont);
+				applyDialogFont(children[i], dialogFont);
 		}
+	}
+
+	/**
+	 * Return whether or not this control has the same font
+	 * as it's default.
+	 * @param control Control
+	 * @return boolean
+	 */
+	private static boolean hasDefaultFont(Control control) {
+		FontData[] controlFontData = control.getFont().getFontData();
+		FontData[] defaultFontData = getDefaultFont(control).getFontData();
+
+		if (controlFontData.length == defaultFontData.length) {
+			for (int i = 0; i < controlFontData.length; i++) {
+				if (controlFontData[i].equals(defaultFontData[i]))
+					continue;
+				return false;
+			}
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Get the default font for this type of control.
+	 * @param control
+	 * @return
+	 */
+	private static Font getDefaultFont(Control control) {
+		String fontName = "DEFAULT_FONT_" + control.getClass().getName(); //$NON-NLS-1$
+		if (JFaceResources.getFontRegistry().hasValueFor(fontName))
+			return JFaceResources.getFontRegistry().get(fontName);
+
+		Font cached = control.getFont();
+		control.setFont(null);
+		Font defaultFont = control.getFont();
+		control.setFont(cached);
+		JFaceResources.getFontRegistry().put(
+			fontName,
+			defaultFont.getFontData());
+		return defaultFont;
+	}
+
+	/**
+	 * Return whether or not the dialog font is currently
+	 * the same as the default font.
+	 * @return boolean if the two are the same
+	 */
+	protected static boolean dialogFontIsDefault() {
+		
+		FontData[] dialogFontData = JFaceResources.getDialogFont().getFontData();
+		FontData[] defaultFontData = JFaceResources.getDefaultFont().getFontData();
+		if(dialogFontData.length != defaultFontData.length)
+			return false;
+		for(int i = 0; i < defaultFontData.length; i++){
+			if(dialogFontData[i].equals(defaultFontData[i]))
+				continue;
+			return false;
+		}
+		return true;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#create()
+	 */
+	public void create() {
+		super.create();
+		applyDialogFont(buttonBar);
 	}
 }

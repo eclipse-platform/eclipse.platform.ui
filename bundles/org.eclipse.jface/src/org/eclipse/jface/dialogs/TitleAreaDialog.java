@@ -7,6 +7,8 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * 	   Konstantin Scheglov <scheglov_ke@nlmk.ru > - Fix for bug 41172
+ *     [Dialogs] Bug with Image in TitleAreaDialog
  *******************************************************************************/
 package org.eclipse.jface.dialogs;
 
@@ -64,8 +66,8 @@ public class TitleAreaDialog extends Dialog {
 	private Label titleImage;
 	private Label bottomFillerLabel;
 	private Label leftFillerLabel;
-	private Color titleAreaColor;
 	private RGB titleAreaRGB;
+	Color titleAreaColor;
 
 	private String message = ""; //$NON-NLS-1$
 	private String errorMessage;
@@ -102,7 +104,7 @@ protected Control createContents(Composite parent) {
 	parent.setLayout(layout);
 	FormData data = new FormData();
 	data.top = new FormAttachment(0,0);
-	data.bottom = new FormAttachment(100,100);
+	data.bottom = new FormAttachment(100,0);
 	parent.setLayoutData(data);
 	
 	//Now create a work area for the rest of the dialog
@@ -173,8 +175,6 @@ private Control createTitleArea(Composite parent) {
 
 			if (titleAreaColor != null)
 				titleAreaColor.dispose();
-			if (errorMsgAreaBackground != null)
-				errorMsgAreaBackground.dispose();
 		}
 	});
 	
@@ -203,7 +203,7 @@ private Control createTitleArea(Composite parent) {
 	
 	FormData imageData = new FormData();
 	imageData.top = new FormAttachment(0,verticalSpacing);
-	imageData.right = new FormAttachment(100,horizontalSpacing);
+	imageData.right = new FormAttachment(100,-1 * horizontalSpacing);
 	titleImage.setLayoutData(imageData);
 	
 	// Title label @ top, left
@@ -461,6 +461,8 @@ private void layoutForNewMessage(){
  * <p>
  * Shortcut for <code>setMessage(newMessage, IMessageProvider.NONE)</code>
  * </p> 
+ * This method should be called after the dialog has been opened as it
+ * updates the message label immediately.
  * 
  * @param newMessage the message, or <code>null</code> to clear
  *   the message

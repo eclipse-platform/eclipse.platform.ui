@@ -111,7 +111,7 @@ public IWizardPage getNextPage() {
  * 
  * @return the wizard node, or <code>null</code> if no node is selected
  */
-protected IWizardNode getSelectedNode() {
+public IWizardNode getSelectedNode() {
 	return selectedNode;
 }
 /**

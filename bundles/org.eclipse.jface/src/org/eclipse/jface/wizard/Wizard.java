@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 /**
  * An abstract base implementation of a wizard. A typical client subclasses 
- * both <code>Wizard</code> to implement a particular wizard.
+ * <code>Wizard</code> to implement a particular wizard.
  * <p>
  * Subclasses may call the following methods to configure the wizard:
  * <ul>

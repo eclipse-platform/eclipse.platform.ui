@@ -207,7 +207,6 @@ protected Control createDialogArea(Composite parent) {
 	data.horizontalSpan = 2;
 	
 	composite.setLayoutData(data);
-	composite.setFont(parent.getFont());
 
 	// allow subclasses to add custom controls
 	customArea = createCustomArea(composite);

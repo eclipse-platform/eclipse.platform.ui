@@ -10,12 +10,15 @@
  *******************************************************************************/
 package org.eclipse.jface.action;
 
+import java.util.*;
+import java.util.List;
+
+
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.MenuAdapter;
+import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.widgets.*;
-import java.util.*;
-import java.util.List;  // disambiguate from SWT List
 
 /**
  * A menu manager is a contribution manager which realizes itself and its items
@@ -25,8 +28,6 @@ import java.util.List;  // disambiguate from SWT List
  * </p>
  */
 public class MenuManager extends ContributionManager implements IMenuManager {
-
-	private final static String PERMANENT = "lkg84hsdf098a!243lkjha9SDFlkjhsdfXlkjhsfdkljhfds$#$%sdfa68fgh"; //$NON-NLS-1$
 
 	/**
 	 * The menu control; <code>null</code> before
@@ -251,7 +252,7 @@ public IContributionItem findUsingPath(String path) {
  *
  * @see IMenuListener#menuAboutToShow
  */
-private void fireAboutToShow(IMenuManager manager) {
+private void fireAboutToShow(IMenuManager manager) {	
 	Object[] listeners = this.listeners.getListeners();
 	for (int i = 0; i < listeners.length; ++i) {
 		((IMenuListener) listeners[i]).menuAboutToShow(manager);
@@ -509,9 +510,6 @@ protected void update(boolean force, boolean recursive) {
 			MenuItem[] mi= menu.getItems();
 			
 			for (int i= 0; i < mi.length; i++) {
-				if (PERMANENT.equals(mi[i].getData(PERMANENT)))
-					continue;
-								
 				Object data = mi[i].getData();					
 					
 				if (data == null || !clean.contains(data)) {
@@ -532,11 +530,6 @@ protected void update(boolean force, boolean recursive) {
 				IContributionItem src= (IContributionItem) e.next();
 				IContributionItem dest;
 
-				while (srcIx < mi.length && PERMANENT.equals(mi[srcIx].getData(PERMANENT))) {
-					srcIx++;
-					destIx++;
-				}
-					
 				// get corresponding item in SWT widget
 				if (srcIx < mi.length)
 					dest= (IContributionItem) mi[srcIx].getData();
@@ -577,10 +570,8 @@ protected void update(boolean force, boolean recursive) {
 			}
 
 			// remove any old menu items not accounted for
-			for (; srcIx < mi.length; srcIx++) {
-				if (!PERMANENT.equals(mi[srcIx].getData(PERMANENT)))
-					mi[srcIx].dispose();
-			}
+			for (; srcIx < mi.length; srcIx++)
+				mi[srcIx].dispose();
 			
 			setDirty(false);
 		}

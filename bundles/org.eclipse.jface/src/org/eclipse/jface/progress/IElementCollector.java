@@ -14,7 +14,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * IElementCollector is a type that allows for the incremental
- * update of a collection of objects.
+ * update of a collection of objects. This interface is not
+ * intended to be implemented by other plug-ins.
  */
 public interface IElementCollector {
 
@@ -31,5 +32,12 @@ public interface IElementCollector {
 	 * @param monitor
 	 */
 	public void add(Object[] elements, IProgressMonitor monitor);
+	
+	/**
+	 * The element collection is done. Clean up any temporary
+	 * state.
+	 *
+	 */
+	public void done();
 
 }

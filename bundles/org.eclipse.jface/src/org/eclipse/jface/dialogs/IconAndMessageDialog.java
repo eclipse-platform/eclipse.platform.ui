@@ -74,7 +74,6 @@ public abstract class IconAndMessageDialog extends Dialog {
 				convertHorizontalDLUsToPixels(
 					IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
 			messageLabel.setLayoutData(data);
-			messageLabel.setFont(composite.getFont());
 		}
 		return composite;
 	}
@@ -136,7 +135,9 @@ public abstract class IconAndMessageDialog extends Dialog {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.marginHeight =
-			convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN) * 3/2;
+			convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN)
+				* 3
+				/ 2;
 		layout.marginWidth =
 			convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
 		layout.verticalSpacing =
@@ -162,6 +163,9 @@ public abstract class IconAndMessageDialog extends Dialog {
 		// create the dialog area and button bar
 		dialogArea = createDialogArea(parent);
 		buttonBar = createButtonBar(parent);
+
+		//Apply to the parent so that the message gets it too.
+		applyDialogFont(parent);
 	}
 
 }

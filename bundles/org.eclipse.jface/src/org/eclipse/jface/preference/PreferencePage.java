@@ -12,8 +12,8 @@
  *******************************************************************************/
 package org.eclipse.jface.preference;
 
-import org.eclipse.jface.dialogs.DialogPage;
-import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -198,12 +198,12 @@ public abstract class PreferencePage
 		GridData gd;
 		Composite content = new Composite(parent, SWT.NULL);
 		setControl(content);
-		Font font = parent.getFont();
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
 		content.setLayout(layout);
-		content.setFont(font);
+		//Apply the font on creation for backward compatibility
+		applyDialogFont(content);
 
 		// initialize the dialog units
 		initializeDialogUnits(content);
@@ -239,8 +239,8 @@ public abstract class PreferencePage
 			int widthHint =
 				convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 			defaultsButton = new Button(buttonBar, SWT.PUSH);
-			defaultsButton.setFont(font);
 			defaultsButton.setText(labels[0]);
+			Dialog.applyDialogFont(defaultsButton);
 			GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 			data.heightHint = heightHint;
 			data.widthHint =
@@ -258,8 +258,8 @@ public abstract class PreferencePage
 			});
 
 			applyButton = new Button(buttonBar, SWT.PUSH);
-			applyButton.setFont(font);
 			applyButton.setText(labels[1]);
+			Dialog.applyDialogFont(applyButton);
 			data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 			data.heightHint = heightHint;
 			data.widthHint =
@@ -273,6 +273,7 @@ public abstract class PreferencePage
 				}
 			});
 			applyButton.setEnabled(isValid());
+			applyDialogFont(buttonBar);
 		} else {
 			/* Check if there are any other buttons on the button bar.
 			 * If not, throw away the button bar composite.  Otherwise
@@ -282,6 +283,17 @@ public abstract class PreferencePage
 				buttonBar.dispose();
 		}
 	}
+	
+	/**
+	 * Apply the dialog font to the composite and it's children
+	 * if it is set. Subclasses may override if they wish to
+	 * set the font themselves.
+	 * @param composite
+	 */
+	protected void applyDialogFont(Composite composite){
+		Dialog.applyDialogFont(composite);
+	}
+	
 	/**
 	 * Creates and returns an SWT label under the given composite.
 	 *
@@ -310,9 +322,9 @@ public abstract class PreferencePage
 	 */
 	protected Point doComputeSize() {
 		if (descriptionLabel != null && body != null) {
-			Point size = body.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+			Point bodySize = body.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 			GridData gd = (GridData) descriptionLabel.getLayoutData();
-			gd.widthHint = size.x;
+			gd.widthHint = bodySize.x;
 			descriptionLabel.getParent().layout(true);
 		}
 		return getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
@@ -337,7 +349,7 @@ public abstract class PreferencePage
 	 *   page has yet to be added to a container
 	 */
 	public IPreferencePageContainer getContainer() {
-		return (IPreferencePageContainer) container;
+		return container;
 	}
 	/**
 	 * Returns the preference store of this preference page.
