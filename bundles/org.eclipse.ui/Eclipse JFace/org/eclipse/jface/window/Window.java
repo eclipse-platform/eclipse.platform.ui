@@ -510,9 +510,15 @@ public int open() {
 		create();
 	}
 
+	// constrain the shell size to be no larger than the display bounds
+	Point size = shell.getSize();
+	Rectangle bounds = shell.getDisplay().getBounds();
+	shell.setSize(Math.min(size.x, bounds.width), Math.min(size.y, bounds.height));
+	
 	// open the window
 	shell.open();
 
+	// run the event loop if specified
 	if (block) 
 		runEventLoop(shell);	
 

@@ -222,7 +222,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer {
  */
 public WizardDialog(Shell parentShell, IWizard newWizard) {
 	super(parentShell);
-	setShellStyle(SWT.TITLE | SWT.BORDER | SWT.APPLICATION_MODAL);
+	setShellStyle(SWT.TITLE | SWT.BORDER | SWT.APPLICATION_MODAL | SWT.RESIZE);
 	setWizard(newWizard);
 	
 	// since VAJava can't initialize an instance var with an anonymous
