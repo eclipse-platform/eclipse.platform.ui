@@ -9,6 +9,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
@@ -21,7 +22,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
-class ProcessDropDownAction extends Action implements IMenuCreator {
+class ProcessDropDownAction extends Action implements IMenuCreator, ILaunchListener {
 
 	private ConsoleView fView;
 	private Menu fMenu;
@@ -32,6 +33,7 @@ class ProcessDropDownAction extends Action implements IMenuCreator {
 		setToolTipText(ActionMessages.getString("ProcessDropDownAction.Display_output_of_selected_process._2")); //$NON-NLS-1$
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_OBJS_OS_PROCESS));
 		setMenuCreator(this);
+		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 	}
 
 	public void dispose() {
@@ -39,6 +41,7 @@ class ProcessDropDownAction extends Action implements IMenuCreator {
 			fMenu.dispose();
 		
 		fView= null;
+		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
 	}
 
 	public Menu getMenu(Menu parent) {
@@ -92,4 +95,30 @@ class ProcessDropDownAction extends Action implements IMenuCreator {
 	public void run() {
 		// do nothing - this is a menu
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchListener#launchAdded(org.eclipse.debug.core.ILaunch)
+	 */
+	public void launchAdded(ILaunch launch) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchListener#launchChanged(org.eclipse.debug.core.ILaunch)
+	 */
+	public void launchChanged(ILaunch launch) {
+	}
+
+	/* (non-Javadoc)
+	 * 
+	 * Dispose the menu when a launch is removed, such that the actions in this
+	 * menu do not hang on to removed processes and associated resources.
+	 * 
+	 * @see org.eclipse.debug.core.ILaunchListener#launchRemoved(org.eclipse.debug.core.ILaunch)
+	 */
+	public void launchRemoved(ILaunch launch) {
+		if (fMenu != null) {
+			fMenu.dispose();
+		}
+	}
+
 }
