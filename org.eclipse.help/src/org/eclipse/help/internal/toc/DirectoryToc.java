@@ -161,8 +161,8 @@ public class DirectoryToc {
 			String directory) {
 		String constantHrefSegment = "/" + pluginID + "/"; //$NON-NLS-1$ //$NON-NLS-2$
 		Map ret = new HashMap();
-		for (Enumeration enum = zipFile.entries(); enum.hasMoreElements();) {
-			ZipEntry zEntry = (ZipEntry) enum.nextElement();
+		for (Enumeration entriesEnum = zipFile.entries(); entriesEnum.hasMoreElements();) {
+			ZipEntry zEntry = (ZipEntry) entriesEnum.nextElement();
 			if (zEntry.isDirectory()) {
 				continue;
 			}
