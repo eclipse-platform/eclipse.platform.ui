@@ -54,7 +54,7 @@ public interface SimpleAccessOperations {
 	 * static constants.
 	 * @param progress a progress monitor to indicate the duration of the operation, or
 	 * <code>null</code> if progress reporting is not required.
-	 * @throws TeamProviderException if there is a problem getting one or more of the resources.  The
+	 * @throws TeamException if there is a problem getting one or more of the resources.  The
 	 * exception will contain multiple statuses, one for each resource in the <code>resources</code>
 	 * array.  Possible status codes include:
 	 * <ul>
@@ -120,7 +120,7 @@ public interface SimpleAccessOperations {
 	 * constants.
 	 * @param progress a progress monitor to indicate the duration of the operation, or
 	 * <code>null</code> if progress reporting is not required.
-	 * @throws TeamProviderException if there is a problem checking-in one or more of the resources.
+	 * @throws TeamException if there is a problem checking-in one or more of the resources.
 	 * The exception will contain multiple statuses, one for each resource in the <code>resources</code>
 	 * array.  Possible status codes include:
 	 * <ul>
