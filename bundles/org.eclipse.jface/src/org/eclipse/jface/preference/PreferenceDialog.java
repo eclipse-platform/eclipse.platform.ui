@@ -1047,6 +1047,8 @@ public class PreferenceDialog extends Dialog
 					vdiff = Math.max(0, vdiff);
 					setShellSize(shellSize.x + hdiff, shellSize.y + vdiff);
 					lastShellSize = shell.getSize();
+					if(currentPage.getControl().getSize(). x == 0)
+						currentPage.getControl().setSize(containerSize);
 				} else {
 					currentPage.setSize(containerSize);
 				}
