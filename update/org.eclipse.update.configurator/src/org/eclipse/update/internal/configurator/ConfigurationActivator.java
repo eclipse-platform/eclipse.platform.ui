@@ -71,14 +71,8 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		initialize();
 		
 		//Short cut, if the configuration has not changed
-		String product = configuration.getPrimaryFeatureIdentifier();
-		
 		if (canRunWithCachedData()) {		
-			Utils.debug("Same last time stamp *****"); //$NON-NLS-1$
-			if (System.getProperty(ECLIPSE_PRODUCT) == null && product != null) {
-				Utils.debug("no eclipse.product, setting it and returning"); //$NON-NLS-1$
-				System.setProperty(ECLIPSE_PRODUCT, product);
-			}
+			Utils.debug("Running with cached data"); //$NON-NLS-1$
 			Platform.registerBundleGroupProvider(this);
 			return;
 		}
@@ -206,9 +200,6 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 			context.ungetService(reference);
 			removeInitialBundles(toRefresh, cachedBundles);
 			refreshPackages((Bundle[]) toRefresh.toArray(new Bundle[toRefresh.size()]));
-			
-			if (System.getProperty(ECLIPSE_PRODUCT) == null && configuration.getPrimaryFeatureIdentifier() != null)
-				System.setProperty(ECLIPSE_PRODUCT, configuration.getPrimaryFeatureIdentifier());
 			
 			// keep track of the last config successfully processed
 			writePlatformConfigurationTimeStamp();

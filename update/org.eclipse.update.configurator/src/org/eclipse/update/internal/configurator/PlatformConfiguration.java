@@ -64,7 +64,6 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	private static final String LINKS = "links"; //$NON-NLS-1$
 	private static final String[] BOOTSTRAP_PLUGINS = {}; //$NON-NLS-1$
 
-	private static final String DEFAULT_FEATURE_ID = "org.eclipse.platform"; //$NON-NLS-1$
 	private static final String DEFAULT_FEATURE_APPLICATION = "org.eclipse.ui.ide.workbench"; //$NON-NLS-1$
 
 	private static final String LINK_PATH = "path"; //$NON-NLS-1$
@@ -372,14 +371,13 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	public String getPrimaryFeatureIdentifier() {
 		// Return the product if defined in system properties
 		String primaryFeatureId = System.getProperty(ECLIPSE_PRODUCT);
-		if (primaryFeatureId == null)
-			primaryFeatureId = DEFAULT_FEATURE_ID; // return hardcoded default
-		
-		// check if feature exists
-		if (findConfiguredFeatureEntry(primaryFeatureId) == null)
-			return null;
-		else
-			return primaryFeatureId;
+		if (primaryFeatureId != null) {
+			// check if feature exists
+			IFeatureEntry feature = findConfiguredFeatureEntry(primaryFeatureId);
+			if (feature != null && feature.canBePrimary())
+				return primaryFeatureId;
+		}
+		return null;
 	}
 
 	/*
@@ -552,10 +550,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 						Utils.log(Messages.getString("PlatformConfiguration.cannotBackupConfig")); //$NON-NLS-1$
 				}
 			}
-			
-			// If config.ini does not exist, generate it in the configuration area
-			writeConfigIni(workingDir.getParentFile());
-			
+
 			// first save the file as temp
 			os = new FileOutputStream(cfigTmp);
 			try {
@@ -609,18 +604,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			}
 		}
 	}
-	
-	private void writeConfigIni(File configDir) {
-		try {
-			File configIni = new File(configDir, CONFIG_INI);
-			if (!configIni.exists()) {
-				URL configIniURL = ConfigurationActivator.getBundleContext().getBundle().getEntry(CONFIG_INI);
-				copy(configIniURL, configIni);
-			}
-		} catch (Exception e) {
-			System.out.println(Messages.getString("cfg.unableToCreateConfig.ini")); //$NON-NLS-1$
-		}
-	}
+
 
 	public static PlatformConfiguration getCurrent() {
 		return currentPlatformConfiguration;
@@ -976,35 +960,6 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			System.out.println(e);
 		}
 	}
-
-
-	private void copy(URL src, File tgt) throws IOException {
-		InputStream is = null;
-		OutputStream os = null;
-		try {
-			is = src.openStream();
-			os = new FileOutputStream(tgt);
-			byte[] buff = new byte[1024];
-			int count = is.read(buff);
-			while (count != -1) {
-				os.write(buff, 0, count);
-				count = is.read(buff);
-			}
-		} finally {
-			if (is != null)
-				try {
-					is.close();
-				} catch (IOException e) {
-					// ignore ...
-				}
-			if (os != null)
-				try {
-					os.close();
-				} catch (IOException e) {
-					// ignore ...
-				}
-		}
-	}		
 	
 	private Configuration loadConfig(URL url) throws Exception {
 		if (url == null)
