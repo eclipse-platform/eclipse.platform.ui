@@ -173,12 +173,14 @@ class SearchManager implements IResourceChangeListener {
 		}
 	}
 
-	void internalSetCurrentSearch(Search search, IProgressMonitor monitor) {
+	void internalSetCurrentSearch(final Search search, IProgressMonitor monitor) {
 		if (fCurrentSearch != null)
 			fCurrentSearch.backupMarkers();
 				
 		fCurrentSearch= search;
-		monitor.beginTask(SearchPlugin.getResourceString("SearchManager.removingMarkers"), getCurrentResults().size() + 20);
+		monitor.beginTask("", getCurrentResults().size() + 20);
+		monitor.subTask(SearchPlugin.getResourceString("SearchManager.removingMarkers"));
+		
 		// remove current search markers
 		try {
 			SearchPlugin.getWorkspace().getRoot().deleteMarkers(SearchUI.SEARCH_MARKER, true, IResource.DEPTH_INFINITE);
@@ -186,7 +188,7 @@ class SearchManager implements IResourceChangeListener {
 			ExceptionHandler.handle(ex, SearchPlugin.getResourceBundle(), "Search.Error.deleteMarkers.");
 		}
 		monitor.worked(10);
-		monitor.setTaskName(SearchPlugin.getResourceString("SearchManager.addingMarkers"));
+		monitor.subTask(SearchPlugin.getResourceString("SearchManager.addingMarkers"));
 		// add search markers
 		Iterator iter= getCurrentResults().iterator();
 		ArrayList emptyEntries= new ArrayList(10);
@@ -248,7 +250,7 @@ class SearchManager implements IResourceChangeListener {
 		}
 			
 		// update viewers
-		monitor.setTaskName(SearchPlugin.getResourceString("SearchManager.updatingSearchViewers"));
+		monitor.subTask(SearchPlugin.getResourceString("SearchManager.updatingSearchViewers"));
 		iter= fListeners.iterator();
 		if (display != null && !display.isDisposed()) {
 			while (iter.hasNext()) {
@@ -256,9 +258,10 @@ class SearchManager implements IResourceChangeListener {
 				viewer.setPageId(search.getPageId());
 				viewer.setGotoMarkerAction(search.getGotoMarkerAction());
 				viewer.setContextMenuTarget(search.getContextMenuContributor());
-				viewer.internalGetLabelProvider().setLabelProvider(search.getLabelProvider());
 				display.syncExec(new Runnable() {
 					public void run() {
+						viewer.setInput(null);						
+						viewer.internalSetLabelProvider(search.getLabelProvider());
 						viewer.setInput(getCurrentResults());
 					}
 				});
@@ -398,8 +401,14 @@ class SearchManager implements IResourceChangeListener {
 	
 	private void handleNewSearchResult() {
 		Iterator iter= fListeners.iterator();
+		final Search search= getCurrentSearch();
 		while (iter.hasNext()) {
 			SearchResultViewer viewer= (SearchResultViewer)iter.next();
+			viewer.setInput(null);
+			viewer.setPageId(search.getPageId());
+			viewer.setContextMenuTarget(search.getContextMenuContributor());
+			viewer.internalSetLabelProvider(search.getLabelProvider());
+			viewer.setGotoMarkerAction(search.getGotoMarkerAction());
 			viewer.setInput(getCurrentResults());
 		}
 	}

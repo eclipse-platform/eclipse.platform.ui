@@ -71,6 +71,7 @@ class SortDropDownAction extends Action implements IMenuCreator {
 					}
 				};
 				action.setText(sorterDesc.getLabel());
+				action.setImageDescriptor(sorterDesc.getImage());
 				action.setToolTipText(sorterDesc.getToolTipText());
 				action.setChecked(fCheckedId.equals(sorterDesc.getId()));
 				addActionToMenu(menu, action);
@@ -87,28 +88,5 @@ class SortDropDownAction extends Action implements IMenuCreator {
     public void run() {
 		// nothing to do
 	    }
-	/**
-	 * Sets/tests the enabled state of the Action.
-	 * When enabled, any component associated with this object is
-	 * active and able to fire this object's <code>run</code> method.
-
-	public void setEnabled(boolean enabled) {
-		if (!enabled) {
-			super.setEnabled(false);
-			return;
-		}
-		boolean hasValidSorter= false;
-		Iterator iter= SearchPlugin.getDefault().getSorterDescriptors().iterator();
-		while (iter.hasNext()) {
-			SorterDescriptor sorterDesc= (SorterDescriptor) iter.next();
-			if (sorterDesc.getPageId().equals(fPageId) || sorterDesc.getPageId().equals("*"))
-				if (sorterDesc.createObject() != null) {
-					hasValidSorter= true;
-					break;
-				}
-		}
-		super.setEnabled(hasValidSorter);
-	}
-	 */
 }
 

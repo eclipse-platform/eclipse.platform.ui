@@ -126,14 +126,13 @@ public class ExceptionHandler {
 	 */
 	protected void displayMessageDialog(Throwable t, Shell shell, String title, String message) {
 		StringWriter msg= new StringWriter();
+		if (message != null)
+			msg.write(message);
+		msg.write("\n\n");
 		if (t.getMessage() == null || t.getMessage().length() == 0)
 			msg.write(t.toString());
 		else
 			msg.write(t.getMessage());
-		if (message != null) {
-			msg.write("\n\n");
-			msg.write(message);
-		}
 		MessageDialog.openError(shell, title, msg.toString());			
 	}
 	

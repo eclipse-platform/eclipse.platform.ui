@@ -88,13 +88,7 @@ class Search extends Object {
 		boolean isAutoBuilding= workspaceDesc.isAutoBuilding();
 		if (isAutoBuilding)
 			// disable auto-build during search operation
-			workspaceDesc.setAutoBuilding(false);
-			try {
-				SearchPlugin.getWorkspace().setDescription(workspaceDesc);
-			}
-			catch (CoreException ex) {
-				ExceptionHandler.handle(ex, shell, bundle, "Search.Error.setDescription.");
-			}				
+			SearchPlugin.setAutoBuilding(false);
 		try {
 			new ProgressMonitorDialog(shell).run(true, true, fOperation);
 		} catch (InvocationTargetException ex) {
@@ -103,14 +97,7 @@ class Search extends Object {
 		} finally {
 			if (isAutoBuilding)
 				// enable auto-building again
-				workspaceDesc= SearchPlugin.getWorkspace().getDescription();
-				workspaceDesc.setAutoBuilding(true);
-				try {
-					SearchPlugin.getWorkspace().setDescription(workspaceDesc);
-				}
-				catch (CoreException ex) {
-					ExceptionHandler.handle(ex, shell, bundle, "Search.Error.setDescription.");
-				}				
+				SearchPlugin.setAutoBuilding(true);
 		}
 	}
 	

@@ -5,6 +5,9 @@ package org.eclipse.search.internal.ui.text;
  * WebSphere Studio Workbench
  * (c) Copyright IBM Corp 1999, 2000
  */
+import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -279,12 +282,19 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 	}
 	
 	private String insertEscapeChars(String text) {
-		if (text == null)
+		if (text == null || text.equals(""))
 			return "";
 		StringBuffer sbIn= new StringBuffer(text);
-		StringBuffer sbOut= new StringBuffer(sbIn.length() + 5);
+		BufferedReader reader= new BufferedReader(new StringReader(text));
+		int lengthOfFirstLine= 0;
+		try {
+			lengthOfFirstLine= reader.readLine().length();
+		} catch (IOException ex) {
+			return "";
+		}
+		StringBuffer sbOut= new StringBuffer(lengthOfFirstLine + 5);
 		int i= 0;
-		while (i < sbIn.length()) {
+		while (i < lengthOfFirstLine) {
 			char ch= sbIn.charAt(i);
 			if (ch == '*' || ch == '?' || ch == '\\')
 				sbOut.append("\\");

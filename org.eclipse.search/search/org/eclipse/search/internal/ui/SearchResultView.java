@@ -41,6 +41,9 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 		fViewer= new SearchResultViewer(this, parent);
 		IWorkspace workspace= SearchPlugin.getWorkspace();
 		SearchManager.getDefault().addSearchChangeListener(fViewer);
+		Search search= SearchManager.getDefault().getCurrentSearch();
+		if (search != null)
+			fViewer.setPageId(search.getPageId());
 		fViewer.setInput(SearchManager.getDefault().getCurrentResults());
 		fillToolBar(getViewSite().getActionBars().getToolBarManager());	
 		getSite().setSelectionProvider(fViewer);
@@ -79,7 +82,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 		// Make sure we are doing it in the right thread.
 		getDisplay().syncExec(new Runnable() {
 			public void run() {
-				fViewer.internalGetLabelProvider().setLabelProvider(provider);
+				fViewer.internalSetLabelProvider(provider);
 			}
 		});
 	}
@@ -132,16 +135,18 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 		Assert.isNotNull(label);
 		Assert.isNotNull(gotoAction);		
 
-		fViewer.setPageId(pageId);
 		fResponse= new HashMap(500);
+		setGotoMarkerAction(gotoAction);
+/*
+		fViewer.setPageId(pageId);
 		setContextMenuContributor(contributor);
 		setLabelProvider(labelProvider);
-		setGotoMarkerAction(gotoAction);
+		*/
 		SearchManager.getDefault().addNewSearch(		
 			new Search(
 				pageId,
 				label,
-				fViewer.internalGetLabelProvider().getLabelProvider(),
+				labelProvider,
 				imageDescriptor,
 				fViewer.getGotoMarkerAction(),
 				contributor,

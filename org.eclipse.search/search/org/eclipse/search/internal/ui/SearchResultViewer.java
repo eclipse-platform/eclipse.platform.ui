@@ -24,6 +24,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
@@ -56,7 +57,7 @@ class SearchResultViewer extends TableViewer {
 	 * These static fields will go away when support for 
 	 * multiple search will be implemented
 	 */
-	private static SearchResultLabelProvider fgLabelProvider;
+	private SearchResultLabelProvider fLabelProvider;
 	private static IContextMenuContributor fgContextMenuContributor;
 	private static IAction fgGotoMarkerAction;
 	
@@ -68,7 +69,7 @@ class SearchResultViewer extends TableViewer {
 		
 		setUseHashlookup(true);
 		setContentProvider(new SearchResultContentProvider());
-		setLabelProvider(internalGetLabelProvider());
+		internalSetLabelProvider(internalGetLabelProvider().getLabelProvider());
 
 		fShowNextResultAction= new ShowNextResultAction(this);
 		fShowNextResultAction.setEnabled(false);
@@ -201,9 +202,14 @@ class SearchResultViewer extends TableViewer {
 	}
 
 	SearchResultLabelProvider internalGetLabelProvider() {
-		if (fgLabelProvider == null)
-			fgLabelProvider= new SearchResultLabelProvider();
-		return fgLabelProvider;
+		if (fLabelProvider == null)
+			fLabelProvider= new SearchResultLabelProvider();
+		return fLabelProvider;
+	}
+
+	void internalSetLabelProvider(ILabelProvider provider) {
+		internalGetLabelProvider().setLabelProvider(provider);
+		setLabelProvider(fLabelProvider);
 	}
 	
 	/**

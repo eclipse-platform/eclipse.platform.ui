@@ -40,24 +40,20 @@ class SearchResultLabelProvider extends LabelProvider implements ILabelProvider 
 
 
 	private static final FileLabelProvider DEFAULT_LABEL_PROVIDER= new FileLabelProvider();
-	private ILabelProvider fLabelProvider;
-	
-	public SearchResultLabelProvider() {
-		fLabelProvider= DEFAULT_LABEL_PROVIDER;
-	}
+	private static ILabelProvider fgLabelProvider= DEFAULT_LABEL_PROVIDER;
 	
 	public ILabelProvider getLabelProvider() {
-		return fLabelProvider;
+		return fgLabelProvider;
 	}
 	
 	public void setLabelProvider(ILabelProvider provider) {
 		if (provider == null)
 			provider= DEFAULT_LABEL_PROVIDER;
-		fLabelProvider= provider;
+		fgLabelProvider= provider;
 	}
 	
 	public String getText(Object rowElement) {
-		StringBuffer text= new StringBuffer(fLabelProvider.getText(rowElement));
+		StringBuffer text= new StringBuffer(fgLabelProvider.getText(rowElement));
 		int count= ((ISearchResultViewEntry)rowElement).getMatchCount();
 		if (count > 1) {
 			text.append(" (");
@@ -68,14 +64,15 @@ class SearchResultLabelProvider extends LabelProvider implements ILabelProvider 
 	}
 	
 	public Image getImage(Object rowElement) {
-		return fLabelProvider.getImage(rowElement);	
+		return fgLabelProvider.getImage(rowElement);	
 	}
-
+/*
 	public void dispose() {
-		if (fLabelProvider != DEFAULT_LABEL_PROVIDER) {
-			fLabelProvider.dispose();
+		if (fgLabelProvider != DEFAULT_LABEL_PROVIDER) {
+			fgLabelProvider.dispose();
 			setLabelProvider(null);
 		}
 		super.dispose();
 	}
+	*/
 }
