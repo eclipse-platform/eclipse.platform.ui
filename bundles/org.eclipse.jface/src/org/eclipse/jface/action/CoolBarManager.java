@@ -412,8 +412,21 @@ public class CoolBarManager extends ContributionManager implements
         Assert.isNotNull(item);
         super.itemAdded(item);
         int insertedAt = indexOf(item);
-        cbItemsCreationOrder.add(Math.min(Math.max(insertedAt, 0),
-                cbItemsCreationOrder.size()), item);
+        boolean replaced = false;
+        final int size = cbItemsCreationOrder.size();
+        for (int i = 0; i < size; i++) {
+            IContributionItem created = (IContributionItem) cbItemsCreationOrder.get(i);
+            if (created.getId().equals(item.getId())) {
+                cbItemsCreationOrder.set(i, item);
+                replaced = true;
+                break;
+            }
+        }
+        
+        if (!replaced) { 
+            cbItemsCreationOrder.add(Math.min(Math.max(insertedAt, 0),
+                    cbItemsCreationOrder.size()), item);
+        }
     }
 
     /**
