@@ -208,6 +208,9 @@
     <test id="builders.AllTests">
       <run class="org.eclipse.core.tests.internal.builders.AllTests"/>
     </test>
+    <test id="builders.BuilderNatureTest">
+      <run class="org.eclipse.core.tests.internal.builders.BuilderNatureTest"/>
+    </test>
     <test id="builders.BuilderTest">
       <run class="org.eclipse.core.tests.internal.builders.BuilderTest"/>
     </test>
@@ -382,9 +385,14 @@
       <run class="org.eclipse.core.tests.resources.usecase.SignaledBuilder"/> 
     </builder>
   </extension>
-  <extension point="org.eclipse.core.resources.builders" id="simple" name="Simple Builder">
-    <builder>
+  <extension point="org.eclipse.core.resources.builders" id="simplebuilder" name="Simple Builder">
+    <builder hasNature="false">
       <run class="org.eclipse.core.tests.resources.regression.SimpleBuilder"/>
+    </builder>
+  </extension>
+  <extension point="org.eclipse.core.resources.builders" id="snowbuilder" name="Snow Builder">
+    <builder hasNature="true">
+      <run class="org.eclipse.core.tests.internal.builders.SnowBuilder"/>
     </builder>
   </extension>
   
@@ -409,6 +417,7 @@
    <one-of-nature
          id="org.eclipse.core.tests.resources.otherSet">
    </one-of-nature>
+   <builder id="org.eclipse.core.tests.resources.snowbuilder"/>
 </extension>
 <extension
       id="waterNature"

@@ -1,8 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.core.tests.internal.resources;
-/*
- * (c) Copyright IBM Corp. 2002.
- * All Rights Reserved.
- */
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectNature;
@@ -11,6 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  */
 public class TestNature implements IProjectNature {
+	private IProject project;
 /**
  * Constructor for TestNature.
  */
@@ -31,11 +38,12 @@ public void deconfigure() throws CoreException {
  * @see IProjectNature#getProject()
  */
 public IProject getProject() {
-	return null;
+	return project;
 }
 /**
  * @see IProjectNature#setProject(IProject)
  */
 public void setProject(IProject project) {
+	this.project = project;
 }
 }

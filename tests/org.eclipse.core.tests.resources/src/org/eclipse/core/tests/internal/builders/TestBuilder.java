@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2001, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.core.tests.internal.builders;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.util.*;
 
@@ -60,8 +65,8 @@ public void assertLifecycleEvents(String text) {
 }
 /**
  * Implemements the inherited abstract method in
- * <code>BaseBuilder</code>.
- * @see BaseBuilder#build(IResourceDelta,int,IProgressMonitor)
+ * <code>InternalBuilder</code>.
+ * @see InternalBuilder#build(IResourceDelta,int,IProgressMonitor)
  */
 protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
 	arguments = args == null ? new HashMap(1) : args;
