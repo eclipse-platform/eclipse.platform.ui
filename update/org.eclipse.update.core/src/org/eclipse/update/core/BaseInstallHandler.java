@@ -146,7 +146,7 @@ public class BaseInstallHandler implements IInstallHandler {
 	 * Called after the feature files and any downloaded plug-ins have
 	 * been installed. 
 	 * 
-	 * @see IInstallHandler#pluginsInstalled(IFeatureContentConsumer)
+	 * @see IInstallHandler#completeInstall(IFeatureContentConsumer)
 	 * @since 2.0
 	 */
 	public void completeInstall(IFeatureContentConsumer consumer)

@@ -347,7 +347,7 @@ public class SiteModel extends ModelObject {
 	}
 
 	/**
-	 * @see org.eclipse.update.core.ISite#setConfiguredSite(IConfiguredSite)
+	 * 
 	 */
 	public void setConfiguredSiteModel(ConfiguredSiteModel configuredSiteModel) {
 		this.configuredSiteModel = configuredSiteModel;

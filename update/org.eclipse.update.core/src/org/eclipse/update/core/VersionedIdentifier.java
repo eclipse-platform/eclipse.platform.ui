@@ -20,7 +20,7 @@ import org.eclipse.update.internal.core.UpdateCore;
  * <p>
  * Clients may instantiate; not intended to be subclassed by clients.
  * </p> 
- * @see org.eclipse.update.core.Version
+ * @see org.eclipse.core.runtime.PluginVersionIdentifier
  * @since 2.0
  */
 public class VersionedIdentifier {
@@ -32,7 +32,7 @@ public class VersionedIdentifier {
 	 * Construct a versioned identifier from an identifier and a string
 	 * representation of a version
 	 * 
-	 * @see Version#toString()
+	 * @see org.eclipse.core.runtime.PluginVersionIdentifier#toString()
 	 * @param id identifier string
 	 * @param versionName string representation of version
 	 * @since 2.0

@@ -51,8 +51,8 @@ public interface IURLEntry extends IAdaptable {
 	/**
 	 * Returns the type of the URLEntry
 	 * 
-	 * @see UPDATE_SITE
-	 * @see WEB_SITE
+	 * @see #UPDATE_SITE
+	 * @see #WEB_SITE
 	 * @return type
 	 * @since 2.0 
 	 */

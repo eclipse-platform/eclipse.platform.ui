@@ -111,8 +111,8 @@ public interface IIncludedFeatureReference extends IFeatureReference, IAdaptable
 	 * 
 	 * The default is <code>SEARCH_ROOT</code>
 	 * 
-	 * @see IFeatureReference#SEARCH_ROOT
-	 * @see IFeatureReference#SEARCH_SELF
+	 * @see IUpdateConstants#SEARCH_ROOT
+	 * @see IUpdateConstants#SEARCH_SELF
 	 * @return int representation of feature searching rule.
 	 * @since 2.0.2
 	 */

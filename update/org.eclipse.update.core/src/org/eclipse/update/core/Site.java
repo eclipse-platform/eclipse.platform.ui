@@ -182,7 +182,7 @@ public class Site extends SiteModel implements ISite {
 	}
 
 	/**
-	 * @see org.eclipse.update.core.ISite#getRawIncludedFeatureReferences()
+	 * @see org.eclipse.update.core.ISite#getFeatureReferences()
 	 */
 	public ISiteFeatureReference[] getFeatureReferences() {
 		// only filter local site
@@ -280,7 +280,7 @@ public class Site extends SiteModel implements ISite {
 	/**
 	 * Returns the default type for a packaged feature supported by this site
 	 * 
-	 * @see ISite#getDefaultInstallableFeatureType()
+	 * @see ISite#getDefaultPackagedFeatureType()
 	 * @since 2.0
 	 */
 	public String getDefaultPackagedFeatureType() {
@@ -291,7 +291,7 @@ public class Site extends SiteModel implements ISite {
 	 * Returns an array of entries corresponding to plug-ins installed
 	 * on this site.
 	 * 
-	 * @see IPluginContainer#getPluginEntries()
+	 * @see ISite#getPluginEntries()
 	 * @since 2.0
 	 */
 	public IPluginEntry[] getPluginEntries() {
@@ -301,7 +301,7 @@ public class Site extends SiteModel implements ISite {
 	/**
 	 * Returns the number of plug-ins installed on this site
 	 * 
-	 * @see IPluginContainer#getPluginEntryCount()
+	 * @see ISite#getPluginEntryCount()
 	 * @since 2.0
 	 */
 	public int getPluginEntryCount() {
@@ -478,7 +478,7 @@ public class Site extends SiteModel implements ISite {
 		this.siteContentProvider = siteContentProvider;
 	}
 	/**
-	 * @see org.eclipse.update.core.model.SiteModel#getConfiguredSite()
+	 * @see ISite#getCurrentConfiguredSite()
 	 */
 	public IConfiguredSite getCurrentConfiguredSite() {
 		return (IConfiguredSite) getConfiguredSiteModel();

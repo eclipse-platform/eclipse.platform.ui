@@ -238,7 +238,7 @@ public class ContentReference {
 	 * Returns the permission for this file.
 	 * 
 	 * @return the content reference permission
-	 * @see DEFAULT_PERMISSION
+	 * @see #DEFAULT_EXECUTABLE_PERMISSION
 	 * @since 2.0.1
 	 */
 	public int getPermission() {
@@ -262,5 +262,4 @@ public class ContentReference {
 	protected void setTempLocal(boolean tempLocal) {
 		this.tempLocal = tempLocal;
 	}
-
 }

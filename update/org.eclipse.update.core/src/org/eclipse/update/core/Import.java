@@ -29,7 +29,7 @@ public class Import extends ImportModel implements IImport {
 
 	/**
 	 * Returns an identifier of the dependent plug-in.
-	 * @see IImport#getIdentifier()
+	 * @see IImport#getVersionedIdentifier()
 	 */
 	public VersionedIdentifier getVersionedIdentifier() {
 		if (versionId != null)

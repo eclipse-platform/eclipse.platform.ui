@@ -21,7 +21,6 @@ package org.eclipse.update.core;
  * <p>
  * Clients may implement this interface.
  * </p>
- * @see 
  * @since 2.0
  */
 public interface IVerificationResult {

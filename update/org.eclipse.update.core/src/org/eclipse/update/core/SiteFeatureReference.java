@@ -22,7 +22,9 @@ import org.eclipse.update.internal.core.UpdateCore;
  * </p> 
  * @see org.eclipse.update.core.IFeatureReference
  * @see org.eclipse.update.core.model.FeatureReferenceModel
- * @since 2.0
+ * @see org.eclipse.update.core.ISiteFeatureReference
+ * @see org.eclipse.update.core.model.SiteFeatureReferenceModel 
+ * @since 2.1
  */
 public class SiteFeatureReference extends SiteFeatureReferenceModel implements ISiteFeatureReference {
 
@@ -47,8 +49,8 @@ public class SiteFeatureReference extends SiteFeatureReferenceModel implements I
 	/**
 	 * Returns an array of categories the referenced feature belong to.
 	 * 
-	 * @see IFeatureReference#getCategories()
-	 * @since 2.0 
+	 * @see ISiteFeatureReference#getCategories()
+	 * @since 2.1 
 	 */
 	public ICategory[] getCategories() {
 
@@ -78,8 +80,8 @@ public class SiteFeatureReference extends SiteFeatureReferenceModel implements I
 	/**
 	 * Adds a category to the referenced feature.
 	 * 
-	 * @see IFeatureReference#addCategory(ICategory)
-	 * @since 2.0 
+	 * @see ISiteFeatureReference#addCategory(ICategory)
+	 * @since 2.1 
 	 */
 	public void addCategory(ICategory category) {
 		this.addCategoryName(category.getName());

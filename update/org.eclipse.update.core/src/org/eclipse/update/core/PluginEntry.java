@@ -37,7 +37,7 @@ public class PluginEntry extends PluginEntryModel implements IPluginEntry {
 	/**
 	 * Returns the identifier of this plugin entry
 	 * 
-	 * @see IPluginEntry#getIdentifier()
+	 * @see IPluginEntry#getVersionedIdentifier()
 	 * @since 2.0
 	 */
 	public VersionedIdentifier getVersionedIdentifier() {

@@ -1257,7 +1257,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 	}
 
 	/**
-	 * @see org.xml.sax.ContentHandler#ignorableWhitespace(char, int, int)
+	 * @see org.xml.sax.ContentHandler#ignorableWhitespace(char[], int, int)
 	 */
 	public void ignorableWhitespace(char[] arg0, int arg1, int arg2) throws SAXException {
 		super.ignorableWhitespace(arg0, arg1, arg2);

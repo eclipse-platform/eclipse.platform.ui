@@ -67,8 +67,8 @@ public interface IImport extends IAdaptable, IUpdateConstants, IPlatformEnvironm
 	/**
 	 * Returns the dependency kind
 	 * 
-	 * @see KIND_PLUGIN
-	 * @see KIND_FEATURE
+	 * @see #KIND_PLUGIN
+	 * @see #KIND_FEATURE
 	 * @return KIND_PLUGIN if the dependency relates to a plugin, 
 	 * KIND_FEATURE if the dependency relates to a feature.
 	 */

@@ -118,7 +118,7 @@ public class IncludedFeatureReference extends IncludedFeatureReferenceModel impl
 	}
 	
 	/**
-	 * @see org.eclipse.update.core.IFeatureReference#getFeature(boolean,
+	 * @see org.eclipse.update.core.IIncludedFeatureReference#getFeature(boolean,
 	 * IConfiguredSite)
 	 * @deprecated
 	 */
@@ -127,7 +127,7 @@ public class IncludedFeatureReference extends IncludedFeatureReferenceModel impl
 	}	
 	
 	/**
-	 * @see org.eclipse.update.core.IFeatureReference#getFeature(boolean,
+	 * @see org.eclipse.update.core.IIncludedFeatureReference#getFeature(boolean,
 	 * IConfiguredSite,IProgressMonitor)
 	 */
 	public IFeature getFeature(boolean perfectMatch,IConfiguredSite configuredSite,IProgressMonitor monitor) throws CoreException {

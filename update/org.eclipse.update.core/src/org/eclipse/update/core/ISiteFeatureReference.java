@@ -20,8 +20,8 @@ import org.eclipse.core.runtime.IAdaptable;
  * directly instantiate or subclass the provided implementation of this 
  * interface.
  * </p>
- * @see org.eclipse.update.core.FeatureReference
- * @since 2.0
+ * @see org.eclipse.update.core.SiteFeatureReference
+ * @since 2.1
  */
 public interface ISiteFeatureReference extends IFeatureReference, IAdaptable {
 
@@ -29,7 +29,7 @@ public interface ISiteFeatureReference extends IFeatureReference, IAdaptable {
 	 * Returns an array of categories the referenced feature belong to.
 	 * 
 	 * @return an array of categories, or an empty array
-	 * @since 2.0 
+	 * @since 2.1 
 	 */
 	public ICategory[] getCategories();
 
@@ -37,7 +37,7 @@ public interface ISiteFeatureReference extends IFeatureReference, IAdaptable {
 	 * Adds a category to the referenced feature.
 	 * 
 	 * @param category new category
-	 * @since 2.0 
+	 * @since 2.1 
 	 */
 	public void addCategory(ICategory category);
 
