@@ -413,7 +413,7 @@ public class SiteModel extends ModelObject {
 	 */
 	public void setMirrorSiteEntryModels(URLEntryModel[] mirrors) {
 		assertIsWriteable();
-		if (mirrors == null)
+		if (mirrors == null || mirrors.length == 0)
 			this.mirrors = null;
 		else
 			this.mirrors = new ArrayList(Arrays.asList(mirrors));
