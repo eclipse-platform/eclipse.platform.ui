@@ -501,6 +501,16 @@ private void openFirstTimeWindow() {
 			e.getMessage());
 	}
 	newWindow.open();
+	
+	// Update perspective history.
+	PerspectiveHistory history = getPerspectiveHistory();
+	WorkbenchPage page = (WorkbenchPage)newWindow.getActivePage();
+	ArrayList perspActions = page.getPerspectiveActions();
+	Iterator iter = perspActions.iterator();
+	while (iter.hasNext()) {
+		String id = (String)iter.next();
+		history.add(id);		
+	}
 }
 /*
  * Create the workbench UI from a persistence file.

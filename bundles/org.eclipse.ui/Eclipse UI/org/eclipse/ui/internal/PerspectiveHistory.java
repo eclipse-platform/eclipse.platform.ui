@@ -74,6 +74,12 @@ public class PerspectiveHistory {
 		}
 	}
 
+	public void add(String id) {
+		IPerspectiveDescriptor desc = reg.findPerspectiveWithId(id);
+		if (desc != null) 
+			add(desc);
+	}
+	
 	public void add(IPerspectiveDescriptor desc) {
 		// If the new desc is already in the shortcut list, just return.
 		if (sortedShortcuts.contains(desc))
