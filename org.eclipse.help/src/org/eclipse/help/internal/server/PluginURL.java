@@ -81,6 +81,7 @@ public class PluginURL extends HelpURL {
 		inputStream = ResourceLocator.openFromZip(getPlugin(), "doc.zip", getFile());
 		if (inputStream == null)
 			inputStream = ResourceLocator.openFromPlugin(getPlugin(), getFile());
+
 		return inputStream;
 	}
 }
