@@ -46,11 +46,13 @@ public class AntConsoleColorProvider extends ConsoleColorProvider {
 	 * @see org.eclipse.debug.internal.ui.views.console.IConsoleColorProvider#connect(org.eclipse.debug.core.model.IProcess, org.eclipse.debug.internal.ui.views.console.IConsole)
 	 */
 	public void connect(IProcess process, IConsole console) {
-		AntStreamsProxy proxy = (AntStreamsProxy)process.getStreamsProxy();
-		((AntProcess)process).setConsole(console);
-		console.connect(proxy.getDebugStreamMonitor(), AntStreamsProxy.ANT_DEBUG_STREAM);
-		console.connect(proxy.getWarningStreamMonitor(), AntStreamsProxy.ANT_WARNING_STREAM);
-		console.connect(proxy.getVerboseStreamMonitor(), AntStreamsProxy.ANT_VERBOSE_STREAM);		
+		if (process instanceof AntProcess) {
+			AntStreamsProxy proxy = (AntStreamsProxy)process.getStreamsProxy();
+			((AntProcess)process).setConsole(console);
+			console.connect(proxy.getDebugStreamMonitor(), AntStreamsProxy.ANT_DEBUG_STREAM);
+			console.connect(proxy.getWarningStreamMonitor(), AntStreamsProxy.ANT_WARNING_STREAM);
+			console.connect(proxy.getVerboseStreamMonitor(), AntStreamsProxy.ANT_VERBOSE_STREAM);
+		}		
 		super.connect(process, console);
 	}
 
