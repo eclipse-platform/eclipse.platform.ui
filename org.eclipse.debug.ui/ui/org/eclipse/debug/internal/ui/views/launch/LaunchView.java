@@ -494,17 +494,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		if (memento == null) {
 			return;
 		}
-		// TODO: persist editor to re-use
-//		if (fReuseEditor) {
-//			String index = memento.getString(IDebugUIConstants.PREF_REUSE_EDITOR);
-//			if (index != null) {
-//				try {
-//					fEditorIndex = Integer.parseInt(index);
-//				} catch (NumberFormatException e) {
-//					DebugUIPlugin.log(e);
-//				}
-//			}
-//		}
 	}
 		
 	/* (non-Javadoc)
@@ -963,35 +952,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		} else if (property.equals(IInternalDebugUIConstants.PREF_TRACK_VIEWS) && fContextListener != null) {
 			fContextListener.loadTrackViews();
 		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IViewPart#saveState(org.eclipse.ui.IMemento)
-	 */
-	public void saveState(IMemento memento) {
-		super.saveState(memento);
-		// TODO: persist editor to re-use
-//		if (fReuseEditor && fEditor != null) {
-//			IWorkbenchWindow dwindow= getSite().getWorkbenchWindow();
-//			if (dwindow == null) {
-//				return;
-//			}	
-//			IWorkbenchPage page= dwindow.getActivePage();
-//			if (page == null) {
-//				return;
-//			}
-//			IEditorReference[] refs = page.getEditorReferences();
-//			int index = -1;
-//			for (int i = 0; i < refs.length; i++) {
-//				if (fEditor.equals(refs[i].getEditor(false))) {
-//					index = i;
-//					break;
-//				}
-//			}
-//			if (index >= 0) {	
-//				memento.putString(IDebugUIConstants.PREF_REUSE_EDITOR, Integer.toString(index));
-//			}
-//		}
 	}
 
 	/**
