@@ -122,7 +122,8 @@ public class Checkout extends Command {
 		if (status.getCode() == CVSStatus.SERVER_ERROR)
 			return status;
 		
-		// Do not shorten paths if -d is specified
+		// If -d is not included in the local options, then send -N (do not shorten directory paths)
+		// to the server (as is done by other cvs clients)
 		if (findOption(localOptions, "-d") == null) { //$NON-NLS-1$
 			if ( ! DO_NOT_SHORTEN.isElementOf(localOptions)) {
 				LocalOption[] newLocalOptions = new LocalOption[localOptions.length + 1];
