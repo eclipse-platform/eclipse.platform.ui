@@ -224,7 +224,7 @@ public class EmbeddedBrowser {
 							new URL(productImageURLs[i])).createImage();
 				} catch (MalformedURLException mue) {
 					if (!"".equals(productImageURLs[i])) { //$NON-NLS-1$
-						System.out.println("Invalid URL of product image.");
+						//System.out.println("Invalid URL of product image.");
 					}
 				}
 			}
