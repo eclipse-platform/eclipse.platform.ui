@@ -81,18 +81,18 @@ final class ContextDefinition implements Comparable {
 	private String id;
 	private String name;
 	private String parentId;
-	private String pluginId;
+	private String sourceId;
 	private transient String string;
 
 	ContextDefinition(
 		String id,
 		String name,
 		String parentId,
-		String pluginId) {
+		String sourceId) {
 		this.id = id;
 		this.name = name;
 		this.parentId = parentId;
-		this.pluginId = pluginId;
+		this.sourceId = sourceId;
 	}
 
 	public int compareTo(Object object) {
@@ -106,7 +106,7 @@ final class ContextDefinition implements Comparable {
 				compareTo = Util.compare(parentId, castedObject.parentId);
 
 				if (compareTo == 0)
-					compareTo = Util.compare(pluginId, castedObject.pluginId);
+					compareTo = Util.compare(sourceId, castedObject.sourceId);
 			}
 		}
 
@@ -122,7 +122,7 @@ final class ContextDefinition implements Comparable {
 		equals &= Util.equals(id, castedObject.id);
 		equals &= Util.equals(name, castedObject.name);
 		equals &= Util.equals(parentId, castedObject.parentId);
-		equals &= Util.equals(pluginId, castedObject.pluginId);
+		equals &= Util.equals(sourceId, castedObject.sourceId);
 		return equals;
 	}
 
@@ -138,8 +138,8 @@ final class ContextDefinition implements Comparable {
 		return parentId;
 	}
 
-	public String getPluginId() {
-		return pluginId;
+	public String getSourceId() {
+		return sourceId;
 	}
 
 	public int hashCode() {
@@ -148,7 +148,7 @@ final class ContextDefinition implements Comparable {
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(parentId);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(pluginId);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(sourceId);
 			hashCodeComputed = true;
 		}
 
@@ -165,7 +165,7 @@ final class ContextDefinition implements Comparable {
 			stringBuffer.append(',');
 			stringBuffer.append(parentId);
 			stringBuffer.append(',');
-			stringBuffer.append(pluginId);
+			stringBuffer.append(sourceId);
 			stringBuffer.append(']');
 			string = stringBuffer.toString();
 		}

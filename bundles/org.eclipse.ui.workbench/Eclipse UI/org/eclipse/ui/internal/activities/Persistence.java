@@ -35,31 +35,31 @@ final class Persistence {
 	final static String TAG_NAME = "name"; //$NON-NLS-1$	
 	final static String TAG_PARENT_ACTIVITY_ID = "parentActivityId"; //$NON-NLS-1$
 	final static String TAG_PATTERN = "pattern"; //$NON-NLS-1$	
-	final static String TAG_PLUGIN_ID = "pluginId"; //$NON-NLS-1$
+	final static String TAG_SOURCE_ID = "sourceId"; //$NON-NLS-1$
 	final static String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
 
 	static ActivityActivityBindingDefinition readActivityActivityBindingDefinition(
 		IMemento memento,
-		String pluginIdOverride) {
+		String sourceIdOverride) {
 		if (memento == null)
 			throw new NullPointerException();
 
 		String childActivityId = memento.getString(TAG_CHILD_ACTIVITY_ID);
 		String parentActivityId = memento.getString(TAG_PARENT_ACTIVITY_ID);
-		String pluginId =
-			pluginIdOverride != null
-				? pluginIdOverride
-				: memento.getString(TAG_PLUGIN_ID);
+		String sourceId =
+			sourceIdOverride != null
+				? sourceIdOverride
+				: memento.getString(TAG_SOURCE_ID);
 		return new ActivityActivityBindingDefinition(
 			childActivityId,
 			parentActivityId,
-			pluginId);
+			sourceId);
 	}
 
 	static List readActivityActivityBindingDefinitions(
 		IMemento memento,
 		String name,
-		String pluginIdOverride) {
+		String sourceIdOverride) {
 		if (memento == null || name == null)
 			throw new NullPointerException();
 
@@ -74,7 +74,7 @@ final class Persistence {
 			list.add(
 				readActivityActivityBindingDefinition(
 					mementos[i],
-					pluginIdOverride));
+					sourceIdOverride));
 
 		return list;
 	}
@@ -90,24 +90,24 @@ final class Persistence {
 
 	static ActivityDefinition readActivityDefinition(
 		IMemento memento,
-		String pluginIdOverride) {
+		String sourceIdOverride) {
 		if (memento == null)
 			throw new NullPointerException();
 
 		String id = memento.getString(TAG_ID);
 		String name = memento.getString(TAG_NAME);
 		String description = memento.getString(TAG_DESCRIPTION);
-		String pluginId =
-			pluginIdOverride != null
-				? pluginIdOverride
-				: memento.getString(TAG_PLUGIN_ID);
-		return new ActivityDefinition(id, name, pluginId, description);
+		String sourceId =
+			sourceIdOverride != null
+				? sourceIdOverride
+				: memento.getString(TAG_SOURCE_ID);
+		return new ActivityDefinition(id, name, sourceId, description);
 	}
 
 	static List readActivityDefinitions(
 		IMemento memento,
 		String name,
-		String pluginIdOverride) {
+		String sourceIdOverride) {
 		if (memento == null || name == null)
 			throw new NullPointerException();
 
@@ -119,33 +119,33 @@ final class Persistence {
 		List list = new ArrayList(mementos.length);
 
 		for (int i = 0; i < mementos.length; i++)
-			list.add(readActivityDefinition(mementos[i], pluginIdOverride));
+			list.add(readActivityDefinition(mementos[i], sourceIdOverride));
 
 		return list;
 	}
 
 	static ActivityPatternBindingDefinition readActivityPatternBindingDefinition(
 		IMemento memento,
-		String pluginIdOverride) {
+		String sourceIdOverride) {
 		if (memento == null)
 			throw new NullPointerException();
 
 		String activityId = memento.getString(TAG_ACTIVITY_ID);
 		String pattern = memento.getString(TAG_PATTERN);
-		String pluginId =
-			pluginIdOverride != null
-				? pluginIdOverride
-				: memento.getString(TAG_PLUGIN_ID);
+		String sourceId =
+			sourceIdOverride != null
+				? sourceIdOverride
+				: memento.getString(TAG_SOURCE_ID);
 		return new ActivityPatternBindingDefinition(
 			activityId,
 			pattern,
-			pluginId);
+			sourceId);
 	}
 
 	static List readActivityPatternBindingDefinitions(
 		IMemento memento,
 		String name,
-		String pluginIdOverride) {
+		String sourceIdOverride) {
 		if (memento == null || name == null)
 			throw new NullPointerException();
 
@@ -160,33 +160,33 @@ final class Persistence {
 			list.add(
 				readActivityPatternBindingDefinition(
 					mementos[i],
-					pluginIdOverride));
+					sourceIdOverride));
 
 		return list;
 	}
 
 	static CategoryActivityBindingDefinition readCategoryActivityBindingDefinition(
 		IMemento memento,
-		String pluginIdOverride) {
+		String sourceIdOverride) {
 		if (memento == null)
 			throw new NullPointerException();
 
 		String activityId = memento.getString(TAG_ACTIVITY_ID);
 		String categoryId = memento.getString(TAG_CATEGORY_ID);
-		String pluginId =
-			pluginIdOverride != null
-				? pluginIdOverride
-				: memento.getString(TAG_PLUGIN_ID);
+		String sourceId =
+			sourceIdOverride != null
+				? sourceIdOverride
+				: memento.getString(TAG_SOURCE_ID);
 		return new CategoryActivityBindingDefinition(
 			activityId,
 			categoryId,
-			pluginId);
+			sourceId);
 	}
 
 	static List readCategoryActivityBindingDefinitions(
 		IMemento memento,
 		String name,
-		String pluginIdOverride) {
+		String sourceIdOverride) {
 		if (memento == null || name == null)
 			throw new NullPointerException();
 
@@ -201,31 +201,31 @@ final class Persistence {
 			list.add(
 				readCategoryActivityBindingDefinition(
 					mementos[i],
-					pluginIdOverride));
+					sourceIdOverride));
 
 		return list;
 	}
 
 	static CategoryDefinition readCategoryDefinition(
 		IMemento memento,
-		String pluginIdOverride) {
+		String sourceIdOverride) {
 		if (memento == null)
 			throw new NullPointerException();
 
 		String id = memento.getString(TAG_ID);
 		String name = memento.getString(TAG_NAME);
 		String description = memento.getString(TAG_DESCRIPTION);
-		String pluginId =
-			pluginIdOverride != null
-				? pluginIdOverride
-				: memento.getString(TAG_PLUGIN_ID);
-		return new CategoryDefinition(id, name, pluginId, description);
+		String sourceId =
+			sourceIdOverride != null
+				? sourceIdOverride
+				: memento.getString(TAG_SOURCE_ID);
+		return new CategoryDefinition(id, name, sourceId, description);
 	}
 
 	static List readCategoryDefinitions(
 		IMemento memento,
 		String name,
-		String pluginIdOverride) {
+		String sourceIdOverride) {
 		if (memento == null || name == null)
 			throw new NullPointerException();
 
@@ -237,7 +237,7 @@ final class Persistence {
 		List list = new ArrayList(mementos.length);
 
 		for (int i = 0; i < mementos.length; i++)
-			list.add(readCategoryDefinition(mementos[i], pluginIdOverride));
+			list.add(readCategoryDefinition(mementos[i], sourceIdOverride));
 
 		return list;
 	}
@@ -255,8 +255,8 @@ final class Persistence {
 			TAG_PARENT_ACTIVITY_ID,
 			activityActivityBindingDefinition.getParentActivityId());
 		memento.putString(
-			TAG_PLUGIN_ID,
-			activityActivityBindingDefinition.getPluginId());
+			TAG_SOURCE_ID,
+			activityActivityBindingDefinition.getSourceId());
 	}
 
 	static void writeActivityActivityBindingDefinitions(
@@ -293,7 +293,7 @@ final class Persistence {
 
 		memento.putString(TAG_ID, activityDefinition.getId());
 		memento.putString(TAG_NAME, activityDefinition.getName());
-		memento.putString(TAG_PLUGIN_ID, activityDefinition.getPluginId());
+		memento.putString(TAG_SOURCE_ID, activityDefinition.getSourceId());
 	}
 
 	static void writeActivityDefinitions(
@@ -330,8 +330,8 @@ final class Persistence {
 			TAG_PATTERN,
 			activityPatternBindingDefinition.getPattern());
 		memento.putString(
-			TAG_PLUGIN_ID,
-			activityPatternBindingDefinition.getPluginId());
+			TAG_SOURCE_ID,
+			activityPatternBindingDefinition.getSourceId());
 	}
 
 	static void writeActivityPatternBindingDefinitions(
@@ -373,8 +373,8 @@ final class Persistence {
 			TAG_CATEGORY_ID,
 			categoryActivityBindingDefinition.getCategoryId());
 		memento.putString(
-			TAG_PLUGIN_ID,
-			categoryActivityBindingDefinition.getPluginId());
+			TAG_SOURCE_ID,
+			categoryActivityBindingDefinition.getSourceId());
 	}
 
 	static void writeCategoryActivityBindingDefinitions(
@@ -411,7 +411,7 @@ final class Persistence {
 
 		memento.putString(TAG_ID, categoryDefinition.getId());
 		memento.putString(TAG_NAME, categoryDefinition.getName());
-		memento.putString(TAG_PLUGIN_ID, categoryDefinition.getPluginId());
+		memento.putString(TAG_SOURCE_ID, categoryDefinition.getSourceId());
 	}
 
 	static void writeCategoryDefinitions(

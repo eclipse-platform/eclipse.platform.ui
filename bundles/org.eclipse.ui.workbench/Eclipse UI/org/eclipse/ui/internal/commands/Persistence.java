@@ -100,7 +100,7 @@ final class Persistence {
 	final static String TAG_NAME = "name"; //$NON-NLS-1$	
 	final static String TAG_PARENT_ID = "parentId"; //$NON-NLS-1$
 	final static String TAG_PLATFORM = "platform"; //$NON-NLS-1$	
-	final static String TAG_PLUGIN_ID = "pluginId"; //$NON-NLS-1$
+	final static String TAG_SOURCE_ID = "sourceId"; //$NON-NLS-1$
 	final static String TAG_PRIORITY = "priority"; //$NON-NLS-1$
 
 	private static KeySequence deprecatedSequenceToKeySequence(int[] sequence) {
@@ -192,7 +192,7 @@ final class Persistence {
 
 	static ActiveKeyConfigurationDefinition readActiveKeyConfigurationDefinition(
 		IMemento memento,
-		String pluginIdOverride) {
+		String sourceIdOverride) {
 		if (memento == null)
 			throw new NullPointerException();
 
@@ -203,25 +203,25 @@ final class Persistence {
 			keyConfigurationId = memento.getString("value"); //$NON-NLS-1$ 
 		// TODO deprecated end
 
-		String pluginId =
-			pluginIdOverride != null
-				? pluginIdOverride
-				: memento.getString(TAG_PLUGIN_ID);
+		String sourceId =
+			sourceIdOverride != null
+				? sourceIdOverride
+				: memento.getString(TAG_SOURCE_ID);
 
 		// TODO deprecated start
-		if (pluginIdOverride == null && pluginId == null)
-			pluginId = memento.getString("plugin"); //$NON-NLS-1$ 
+		if (sourceIdOverride == null && sourceId == null)
+			sourceId = memento.getString("plugin"); //$NON-NLS-1$ 
 		// TODO deprecated end
 
 		return new ActiveKeyConfigurationDefinition(
 			keyConfigurationId,
-			pluginId);
+			sourceId);
 	}
 
 	static List readActiveKeyConfigurationDefinitions(
 		IMemento memento,
 		String name,
-		String pluginIdOverride) {
+		String sourceIdOverride) {
 		if (memento == null || name == null)
 			throw new NullPointerException();
 
@@ -236,14 +236,14 @@ final class Persistence {
 			list.add(
 				readActiveKeyConfigurationDefinition(
 					mementos[i],
-					pluginIdOverride));
+					sourceIdOverride));
 
 		return list;
 	}
 
 	static ContextBindingDefinition readContextBindingDefinition(
 		IMemento memento,
-		String pluginIdOverride) {
+		String sourceIdOverride) {
 		if (memento == null)
 			throw new NullPointerException();
 
@@ -255,17 +255,17 @@ final class Persistence {
 		// TODO deprecated end
 
 		String commandId = memento.getString(TAG_COMMAND_ID);
-		String pluginId =
-			pluginIdOverride != null
-				? pluginIdOverride
-				: memento.getString(TAG_PLUGIN_ID);
-		return new ContextBindingDefinition(contextId, commandId, pluginId);
+		String sourceId =
+			sourceIdOverride != null
+				? sourceIdOverride
+				: memento.getString(TAG_SOURCE_ID);
+		return new ContextBindingDefinition(contextId, commandId, sourceId);
 	}
 
 	static List readContextBindingDefinitions(
 		IMemento memento,
 		String name,
-		String pluginIdOverride) {
+		String sourceIdOverride) {
 		if (memento == null || name == null)
 			throw new NullPointerException();
 
@@ -278,37 +278,37 @@ final class Persistence {
 
 		for (int i = 0; i < mementos.length; i++)
 			list.add(
-				readContextBindingDefinition(mementos[i], pluginIdOverride));
+				readContextBindingDefinition(mementos[i], sourceIdOverride));
 
 		return list;
 	}
 
 	static CategoryDefinition readCategoryDefinition(
 		IMemento memento,
-		String pluginIdOverride) {
+		String sourceIdOverride) {
 		if (memento == null)
 			throw new NullPointerException();
 
 		String description = memento.getString(TAG_DESCRIPTION);
 		String id = memento.getString(TAG_ID);
 		String name = memento.getString(TAG_NAME);
-		String pluginId =
-			pluginIdOverride != null
-				? pluginIdOverride
-				: memento.getString(TAG_PLUGIN_ID);
+		String sourceId =
+			sourceIdOverride != null
+				? sourceIdOverride
+				: memento.getString(TAG_SOURCE_ID);
 
 		// TODO deprecated start
-		if (pluginIdOverride == null && pluginId == null)
-			pluginId = memento.getString("plugin"); //$NON-NLS-1$ 
+		if (sourceIdOverride == null && sourceId == null)
+			sourceId = memento.getString("plugin"); //$NON-NLS-1$ 
 		// TODO deprecated end
 
-		return new CategoryDefinition(description, id, name, pluginId);
+		return new CategoryDefinition(description, id, name, sourceId);
 	}
 
 	static List readCategoryDefinitions(
 		IMemento memento,
 		String name,
-		String pluginIdOverride) {
+		String sourceIdOverride) {
 		if (memento == null || name == null)
 			throw new NullPointerException();
 
@@ -320,14 +320,14 @@ final class Persistence {
 		List list = new ArrayList(mementos.length);
 
 		for (int i = 0; i < mementos.length; i++)
-			list.add(readCategoryDefinition(mementos[i], pluginIdOverride));
+			list.add(readCategoryDefinition(mementos[i], sourceIdOverride));
 
 		return list;
 	}
 
 	static CommandDefinition readCommandDefinition(
 		IMemento memento,
-		String pluginIdOverride) {
+		String sourceIdOverride) {
 		if (memento == null)
 			throw new NullPointerException();
 
@@ -341,14 +341,14 @@ final class Persistence {
 		String description = memento.getString(TAG_DESCRIPTION);
 		String id = memento.getString(TAG_ID);
 		String name = memento.getString(TAG_NAME);
-		String pluginId =
-			pluginIdOverride != null
-				? pluginIdOverride
-				: memento.getString(TAG_PLUGIN_ID);
+		String sourceId =
+			sourceIdOverride != null
+				? sourceIdOverride
+				: memento.getString(TAG_SOURCE_ID);
 
 		// TODO deprecated start
-		if (pluginIdOverride == null && pluginId == null)
-			pluginId = memento.getString("plugin"); //$NON-NLS-1$ 
+		if (sourceIdOverride == null && sourceId == null)
+			sourceId = memento.getString("plugin"); //$NON-NLS-1$ 
 		// TODO deprecated end
 
 		return new CommandDefinition(
@@ -356,13 +356,13 @@ final class Persistence {
 			description,
 			id,
 			name,
-			pluginId);
+			sourceId);
 	}
 
 	static List readCommandDefinitions(
 		IMemento memento,
 		String name,
-		String pluginIdOverride) {
+		String sourceIdOverride) {
 		if (memento == null || name == null)
 			throw new NullPointerException();
 
@@ -374,7 +374,7 @@ final class Persistence {
 		List list = new ArrayList(mementos.length);
 
 		for (int i = 0; i < mementos.length; i++)
-			list.add(readCommandDefinition(mementos[i], pluginIdOverride));
+			list.add(readCommandDefinition(mementos[i], sourceIdOverride));
 
 		return list;
 	}
@@ -431,7 +431,7 @@ final class Persistence {
 
 	static ImageBindingDefinition readImageBindingDefinition(
 		IMemento memento,
-		String pluginIdOverride) {
+		String sourceIdOverride) {
 		if (memento == null)
 			throw new NullPointerException();
 
@@ -440,23 +440,23 @@ final class Persistence {
 		String imageUri = memento.getString(TAG_IMAGE_URI);
 		String locale = memento.getString(TAG_LOCALE);
 		String platform = memento.getString(TAG_PLATFORM);
-		String pluginId =
-			pluginIdOverride != null
-				? pluginIdOverride
-				: memento.getString(TAG_PLUGIN_ID);
+		String sourceId =
+			sourceIdOverride != null
+				? sourceIdOverride
+				: memento.getString(TAG_SOURCE_ID);
 		return new ImageBindingDefinition(
 			commandId,
 			imageStyle,
 			imageUri,
 			locale,
 			platform,
-			pluginId);
+			sourceId);
 	}
 
 	static List readImageBindingDefinitions(
 		IMemento memento,
 		String name,
-		String pluginIdOverride) {
+		String sourceIdOverride) {
 		if (memento == null || name == null)
 			throw new NullPointerException();
 
@@ -468,14 +468,14 @@ final class Persistence {
 		List list = new ArrayList(mementos.length);
 
 		for (int i = 0; i < mementos.length; i++)
-			list.add(readImageBindingDefinition(mementos[i], pluginIdOverride));
+			list.add(readImageBindingDefinition(mementos[i], sourceIdOverride));
 
 		return list;
 	}
 
 	static KeyConfigurationDefinition readKeyConfigurationDefinition(
 		IMemento memento,
-		String pluginIdOverride) {
+		String sourceIdOverride) {
 		if (memento == null)
 			throw new NullPointerException();
 
@@ -489,14 +489,14 @@ final class Persistence {
 			parentId = memento.getString("parent"); //$NON-NLS-1$ 
 		// TODO deprecated end
 
-		String pluginId =
-			pluginIdOverride != null
-				? pluginIdOverride
-				: memento.getString(TAG_PLUGIN_ID);
+		String sourceId =
+			sourceIdOverride != null
+				? sourceIdOverride
+				: memento.getString(TAG_SOURCE_ID);
 
 		// TODO deprecated start
-		if (pluginIdOverride == null && pluginId == null)
-			pluginId = memento.getString("plugin"); //$NON-NLS-1$ 
+		if (sourceIdOverride == null && sourceId == null)
+			sourceId = memento.getString("plugin"); //$NON-NLS-1$ 
 		// TODO deprecated end
 
 		return new KeyConfigurationDefinition(
@@ -504,13 +504,13 @@ final class Persistence {
 			id,
 			name,
 			parentId,
-			pluginId);
+			sourceId);
 	}
 
 	static List readKeyConfigurationDefinitions(
 		IMemento memento,
 		String name,
-		String pluginIdOverride) {
+		String sourceIdOverride) {
 		if (memento == null || name == null)
 			throw new NullPointerException();
 
@@ -523,14 +523,14 @@ final class Persistence {
 
 		for (int i = 0; i < mementos.length; i++)
 			list.add(
-				readKeyConfigurationDefinition(mementos[i], pluginIdOverride));
+				readKeyConfigurationDefinition(mementos[i], sourceIdOverride));
 
 		return list;
 	}
 
 	static KeySequenceBindingDefinition readKeySequenceBindingDefinition(
 		IMemento memento,
-		String pluginIdOverride) {
+		String sourceIdOverride) {
 		if (memento == null)
 			throw new NullPointerException();
 
@@ -590,14 +590,14 @@ final class Persistence {
 
 		String locale = memento.getString(TAG_LOCALE);
 		String platform = memento.getString(TAG_PLATFORM);
-		String pluginId =
-			pluginIdOverride != null
-				? pluginIdOverride
-				: memento.getString(TAG_PLUGIN_ID);
+		String sourceId =
+			sourceIdOverride != null
+				? sourceIdOverride
+				: memento.getString(TAG_SOURCE_ID);
 
 		// TODO deprecated start
-		if (pluginIdOverride == null && pluginId == null)
-			pluginId = memento.getString("plugin"); //$NON-NLS-1$ 
+		if (sourceIdOverride == null && sourceId == null)
+			sourceId = memento.getString("plugin"); //$NON-NLS-1$ 
 		// TODO deprecated end
 
         // We treat null context identifiers as the window context.
@@ -612,13 +612,13 @@ final class Persistence {
 			keySequence,
 			locale,
 			platform,
-			pluginId);
+			sourceId);
 	}
 
 	static List readKeySequenceBindingDefinitions(
 		IMemento memento,
 		String name,
-		String pluginIdOverride) {
+		String sourceIdOverride) {
 		if (memento == null || name == null)
 			throw new NullPointerException();
 
@@ -633,7 +633,7 @@ final class Persistence {
 			list.add(
 				readKeySequenceBindingDefinition(
 					mementos[i],
-					pluginIdOverride));
+					sourceIdOverride));
 
 		return list;
 	}
@@ -648,8 +648,8 @@ final class Persistence {
 			TAG_KEY_CONFIGURATION_ID,
 			activeKeyConfigurationDefinition.getKeyConfigurationId());
 		memento.putString(
-			TAG_PLUGIN_ID,
-			activeKeyConfigurationDefinition.getPluginId());
+			TAG_SOURCE_ID,
+			activeKeyConfigurationDefinition.getSourceId());
 	}
 
 	static void writeActiveKeyConfigurationDefinitions(
@@ -691,8 +691,8 @@ final class Persistence {
 			TAG_COMMAND_ID,
 			contextBindingDefinition.getCommandId());
 		memento.putString(
-			TAG_PLUGIN_ID,
-			contextBindingDefinition.getPluginId());
+			TAG_SOURCE_ID,
+			contextBindingDefinition.getSourceId());
 	}
 
 	static void writeContextBindingDefinitions(
@@ -729,7 +729,7 @@ final class Persistence {
 		memento.putString(TAG_DESCRIPTION, categoryDefinition.getDescription());
 		memento.putString(TAG_ID, categoryDefinition.getId());
 		memento.putString(TAG_NAME, categoryDefinition.getName());
-		memento.putString(TAG_PLUGIN_ID, categoryDefinition.getPluginId());
+		memento.putString(TAG_SOURCE_ID, categoryDefinition.getSourceId());
 	}
 
 	static void writeCategoryDefinitions(
@@ -763,7 +763,7 @@ final class Persistence {
 		memento.putString(TAG_DESCRIPTION, commandDefinition.getDescription());
 		memento.putString(TAG_ID, commandDefinition.getId());
 		memento.putString(TAG_NAME, commandDefinition.getName());
-		memento.putString(TAG_PLUGIN_ID, commandDefinition.getPluginId());
+		memento.putString(TAG_SOURCE_ID, commandDefinition.getSourceId());
 	}
 
 	static void writeCommandDefinitions(
@@ -802,7 +802,7 @@ final class Persistence {
 		memento.putString(TAG_IMAGE_URI, imageBindingDefinition.getImageUri());
 		memento.putString(TAG_LOCALE, imageBindingDefinition.getLocale());
 		memento.putString(TAG_PLATFORM, imageBindingDefinition.getPlatform());
-		memento.putString(TAG_PLUGIN_ID, imageBindingDefinition.getPluginId());
+		memento.putString(TAG_SOURCE_ID, imageBindingDefinition.getSourceId());
 	}
 
 	static void writeImageBindingDefinitions(
@@ -841,8 +841,8 @@ final class Persistence {
 			TAG_PARENT_ID,
 			keyConfigurationDefinition.getParentId());
 		memento.putString(
-			TAG_PLUGIN_ID,
-			keyConfigurationDefinition.getPluginId());
+			TAG_SOURCE_ID,
+			keyConfigurationDefinition.getSourceId());
 	}
 
 	static void writeKeyConfigurationDefinitions(
@@ -896,8 +896,8 @@ final class Persistence {
 			TAG_PLATFORM,
 			keySequenceBindingDefinition.getPlatform());
 		memento.putString(
-			TAG_PLUGIN_ID,
-			keySequenceBindingDefinition.getPluginId());
+			TAG_SOURCE_ID,
+			keySequenceBindingDefinition.getSourceId());
 	}
 
 	static void writeKeySequenceBindingDefinitions(

@@ -24,14 +24,14 @@ public final class ActiveKeyConfigurationDefinition
 	private transient boolean hashCodeComputed;
 
 	private String keyConfigurationId;
-	private String pluginId;
+	private String sourceId;
 	private transient String string;
 
 	public ActiveKeyConfigurationDefinition(
 		String keyConfigurationId,
-		String pluginId) {
+		String sourceId) {
 		this.keyConfigurationId = keyConfigurationId;
-		this.pluginId = pluginId;
+		this.sourceId = sourceId;
 	}
 
 	public int compareTo(Object object) {
@@ -41,7 +41,7 @@ public final class ActiveKeyConfigurationDefinition
 			Util.compare(keyConfigurationId, castedObject.keyConfigurationId);
 
 		if (compareTo == 0)
-			compareTo = Util.compare(pluginId, castedObject.pluginId);
+			compareTo = Util.compare(sourceId, castedObject.sourceId);
 
 		return compareTo;
 	}
@@ -55,7 +55,7 @@ public final class ActiveKeyConfigurationDefinition
 		boolean equals = true;
 		equals
 			&= Util.equals(keyConfigurationId, castedObject.keyConfigurationId);
-		equals &= Util.equals(pluginId, castedObject.pluginId);
+		equals &= Util.equals(sourceId, castedObject.sourceId);
 		return equals;
 	}
 
@@ -63,8 +63,8 @@ public final class ActiveKeyConfigurationDefinition
 		return keyConfigurationId;
 	}
 
-	public String getPluginId() {
-		return pluginId;
+	public String getSourceId() {
+		return sourceId;
 	}
 
 	public int hashCode() {
@@ -72,7 +72,7 @@ public final class ActiveKeyConfigurationDefinition
 			hashCode = HASH_INITIAL;
 			hashCode =
 				hashCode * HASH_FACTOR + Util.hashCode(keyConfigurationId);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(pluginId);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(sourceId);
 			hashCodeComputed = true;
 		}
 
@@ -85,7 +85,7 @@ public final class ActiveKeyConfigurationDefinition
 			stringBuffer.append('[');
 			stringBuffer.append(keyConfigurationId);
 			stringBuffer.append(',');
-			stringBuffer.append(pluginId);
+			stringBuffer.append(sourceId);
 			stringBuffer.append(']');
 			string = stringBuffer.toString();
 		}

@@ -62,17 +62,17 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 		}
 	}
 
-	private String getPluginId(IConfigurationElement configurationElement) {
-		String pluginId = null;
+	private String getNamespace(IConfigurationElement configurationElement) {
+		String namespace = null;
 
 		if (configurationElement != null) {
 			IExtension extension = configurationElement.getDeclaringExtension();
 
 			if (extension != null)
-				pluginId = extension.getNamespace();
+				namespace = extension.getNamespace();
 		}
 
-		return pluginId;
+		return namespace;
 	}
 
 	private void load() throws IOException {
@@ -190,7 +190,7 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 		ActivityActivityBindingDefinition activityActivityBindingDefinition =
 			Persistence.readActivityActivityBindingDefinition(
 				new ConfigurationElementMemento(configurationElement),
-				getPluginId(configurationElement));
+				getNamespace(configurationElement));
 
 		if (activityActivityBindingDefinition != null)
 			activityActivityBindingDefinitions.add(
@@ -201,7 +201,7 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 		ActivityDefinition activityDefinition =
 			Persistence.readActivityDefinition(
 				new ConfigurationElementMemento(configurationElement),
-				getPluginId(configurationElement));
+				getNamespace(configurationElement));
 
 		if (activityDefinition != null)
 			activityDefinitions.add(activityDefinition);
@@ -211,7 +211,7 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 		ActivityPatternBindingDefinition activityPatternBindingDefinition =
 			Persistence.readActivityPatternBindingDefinition(
 				new ConfigurationElementMemento(configurationElement),
-				getPluginId(configurationElement));
+				getNamespace(configurationElement));
 
 		if (activityPatternBindingDefinition != null)
 			activityPatternBindingDefinitions.add(
@@ -222,7 +222,7 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 		CategoryActivityBindingDefinition categoryActivityBindingDefinition =
 			Persistence.readCategoryActivityBindingDefinition(
 				new ConfigurationElementMemento(configurationElement),
-				getPluginId(configurationElement));
+				getNamespace(configurationElement));
 
 		if (categoryActivityBindingDefinition != null)
 			categoryActivityBindingDefinitions.add(
@@ -233,7 +233,7 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 		CategoryDefinition categoryDefinition =
 			Persistence.readCategoryDefinition(
 				new ConfigurationElementMemento(configurationElement),
-				getPluginId(configurationElement));
+				getNamespace(configurationElement));
 
 		if (categoryDefinition != null)
 			categoryDefinitions.add(categoryDefinition);

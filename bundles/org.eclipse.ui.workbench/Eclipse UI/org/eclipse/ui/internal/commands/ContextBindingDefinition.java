@@ -61,16 +61,16 @@ public final class ContextBindingDefinition
 
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
-	private String pluginId;
+	private String sourceId;
 	private transient String string;
 
 	public ContextBindingDefinition(
 		String contextId,
 		String commandId,
-		String pluginId) {
+		String sourceId) {
 		this.contextId = contextId;
 		this.commandId = commandId;
-		this.pluginId = pluginId;
+		this.sourceId = sourceId;
 	}
 
 	public int compareTo(Object object) {
@@ -82,7 +82,7 @@ public final class ContextBindingDefinition
 			compareTo = Util.compare(commandId, castedObject.commandId);
 
 			if (compareTo == 0)
-				compareTo = Util.compare(pluginId, castedObject.pluginId);
+				compareTo = Util.compare(sourceId, castedObject.sourceId);
 		}
 
 		return compareTo;
@@ -97,7 +97,7 @@ public final class ContextBindingDefinition
 		boolean equals = true;
 		equals &= Util.equals(contextId, castedObject.contextId);
 		equals &= Util.equals(commandId, castedObject.commandId);
-		equals &= Util.equals(pluginId, castedObject.pluginId);
+		equals &= Util.equals(sourceId, castedObject.sourceId);
 		return equals;
 	}
 
@@ -109,8 +109,8 @@ public final class ContextBindingDefinition
 		return commandId;
 	}
 
-	public String getPluginId() {
-		return pluginId;
+	public String getSourceId() {
+		return sourceId;
 	}
 
 	public int hashCode() {
@@ -118,7 +118,7 @@ public final class ContextBindingDefinition
 			hashCode = HASH_INITIAL;
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(contextId);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(commandId);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(pluginId);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(sourceId);
 			hashCodeComputed = true;
 		}
 
@@ -133,7 +133,7 @@ public final class ContextBindingDefinition
 			stringBuffer.append(',');
 			stringBuffer.append(commandId);
 			stringBuffer.append(',');
-			stringBuffer.append(pluginId);
+			stringBuffer.append(sourceId);
 			stringBuffer.append(']');
 			string = stringBuffer.toString();
 		}

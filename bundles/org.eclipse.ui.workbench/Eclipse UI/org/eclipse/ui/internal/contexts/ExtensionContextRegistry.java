@@ -58,17 +58,17 @@ final class ExtensionContextRegistry extends AbstractContextRegistry {
 		}
 	}
 
-	private String getPluginId(IConfigurationElement configurationElement) {
-		String pluginId = null;
+	private String getNamespace(IConfigurationElement configurationElement) {
+		String namespace = null;
 
 		if (configurationElement != null) {
 			IExtension extension = configurationElement.getDeclaringExtension();
 
 			if (extension != null)
-				pluginId = extension.getNamespace();
+				namespace = extension.getNamespace();
 		}
 
-		return pluginId;
+		return namespace;
 	}
 
 	private void load() throws IOException {
@@ -144,7 +144,7 @@ final class ExtensionContextRegistry extends AbstractContextRegistry {
 		ContextContextBindingDefinition contextContextBindingDefinition =
 			Persistence.readContextContextBindingDefinition(
 				new ConfigurationElementMemento(configurationElement),
-				getPluginId(configurationElement));
+				getNamespace(configurationElement));
 
 		if (contextContextBindingDefinition != null)
 			contextContextBindingDefinitions.add(
@@ -155,7 +155,7 @@ final class ExtensionContextRegistry extends AbstractContextRegistry {
 		ContextDefinition contextDefinition =
 			Persistence.readContextDefinition(
 				new ConfigurationElementMemento(configurationElement),
-				getPluginId(configurationElement));
+				getNamespace(configurationElement));
 
 		if (contextDefinition != null)
 			contextDefinitions.add(contextDefinition);

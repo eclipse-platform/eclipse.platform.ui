@@ -67,7 +67,7 @@ public final class KeySequenceBindingDefinition
 	private KeySequence keySequence;
 	private String locale;
 	private String platform;
-	private String pluginId;
+	private String sourceId;
 	private transient String string;
 
 	public KeySequenceBindingDefinition(
@@ -77,14 +77,14 @@ public final class KeySequenceBindingDefinition
 		KeySequence keySequence,
 		String locale,
 		String platform,
-		String pluginId) {
+		String sourceId) {
 		this.contextId = contextId;
 		this.commandId = commandId;
 		this.keyConfigurationId = keyConfigurationId;
 		this.keySequence = keySequence;
 		this.locale = locale;
 		this.platform = platform;
-		this.pluginId = pluginId;
+		this.sourceId = sourceId;
 	}
 
 	public int compareTo(Object object) {
@@ -115,8 +115,8 @@ public final class KeySequenceBindingDefinition
 							if (compareTo == 0)
 								compareTo =
 									Util.compare(
-										pluginId,
-										castedObject.pluginId);
+										sourceId,
+										castedObject.sourceId);
 						}
 					}
 				}
@@ -140,7 +140,7 @@ public final class KeySequenceBindingDefinition
 		equals &= Util.equals(keySequence, castedObject.keySequence);
 		equals &= Util.equals(locale, castedObject.locale);
 		equals &= Util.equals(platform, castedObject.platform);
-		equals &= Util.equals(pluginId, castedObject.pluginId);
+		equals &= Util.equals(sourceId, castedObject.sourceId);
 		return equals;
 	}
 
@@ -168,8 +168,8 @@ public final class KeySequenceBindingDefinition
 		return platform;
 	}
 
-	public String getPluginId() {
-		return pluginId;
+	public String getSourceId() {
+		return sourceId;
 	}
 
 	public int hashCode() {
@@ -182,7 +182,7 @@ public final class KeySequenceBindingDefinition
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(keySequence);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(locale);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(platform);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(pluginId);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(sourceId);
 			hashCodeComputed = true;
 		}
 
@@ -205,7 +205,7 @@ public final class KeySequenceBindingDefinition
 			stringBuffer.append(',');
 			stringBuffer.append(platform);
 			stringBuffer.append(',');
-			stringBuffer.append(pluginId);
+			stringBuffer.append(sourceId);
 			stringBuffer.append(']');
 			string = stringBuffer.toString();
 		}

@@ -64,16 +64,16 @@ public final class ActivityActivityBindingDefinition {
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
 	private String parentActivityId;
-	private String pluginId;
+	private String sourceId;
 	private transient String string;
 
 	public ActivityActivityBindingDefinition(
 		String childActivityId,
 		String parentActivityId,
-		String pluginId) {
+		String sourceId) {
 		this.childActivityId = childActivityId;
 		this.parentActivityId = parentActivityId;
-		this.pluginId = pluginId;
+		this.sourceId = sourceId;
 	}
 
 	public int compareTo(Object object) {
@@ -87,7 +87,7 @@ public final class ActivityActivityBindingDefinition {
 				Util.compare(parentActivityId, castedObject.parentActivityId);
 
 			if (compareTo == 0)
-				compareTo = Util.compare(pluginId, castedObject.pluginId);
+				compareTo = Util.compare(sourceId, castedObject.sourceId);
 		}
 
 		return compareTo;
@@ -102,7 +102,7 @@ public final class ActivityActivityBindingDefinition {
 		boolean equals = true;
 		equals &= Util.equals(childActivityId, castedObject.childActivityId);
 		equals &= Util.equals(parentActivityId, castedObject.parentActivityId);
-		equals &= Util.equals(pluginId, castedObject.pluginId);
+		equals &= Util.equals(sourceId, castedObject.sourceId);
 		return equals;
 	}
 
@@ -114,8 +114,8 @@ public final class ActivityActivityBindingDefinition {
 		return parentActivityId;
 	}
 
-	public String getPluginId() {
-		return pluginId;
+	public String getSourceId() {
+		return sourceId;
 	}
 
 	public int hashCode() {
@@ -123,7 +123,7 @@ public final class ActivityActivityBindingDefinition {
 			hashCode = HASH_INITIAL;
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(childActivityId);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(parentActivityId);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(pluginId);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(sourceId);
 			hashCodeComputed = true;
 		}
 
@@ -138,7 +138,7 @@ public final class ActivityActivityBindingDefinition {
 			stringBuffer.append(',');
 			stringBuffer.append(parentActivityId);
 			stringBuffer.append(',');
-			stringBuffer.append(pluginId);
+			stringBuffer.append(sourceId);
 			stringBuffer.append(']');
 			string = stringBuffer.toString();
 		}

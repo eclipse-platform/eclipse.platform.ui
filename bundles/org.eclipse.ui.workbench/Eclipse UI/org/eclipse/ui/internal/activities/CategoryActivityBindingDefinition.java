@@ -62,16 +62,16 @@ public final class CategoryActivityBindingDefinition {
 	private String categoryId;
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
-	private String pluginId;
+	private String sourceId;
 	private transient String string;
 
 	public CategoryActivityBindingDefinition(
 		String activityId,
 		String categoryId,
-		String pluginId) {
+		String sourceId) {
 		this.activityId = activityId;
 		this.categoryId = categoryId;
-		this.pluginId = pluginId;
+		this.sourceId = sourceId;
 	}
 
 	public int compareTo(Object object) {
@@ -83,7 +83,7 @@ public final class CategoryActivityBindingDefinition {
 			compareTo = Util.compare(categoryId, castedObject.categoryId);
 
 			if (compareTo == 0)
-				compareTo = Util.compare(pluginId, castedObject.pluginId);
+				compareTo = Util.compare(sourceId, castedObject.sourceId);
 		}
 
 		return compareTo;
@@ -98,7 +98,7 @@ public final class CategoryActivityBindingDefinition {
 		boolean equals = true;
 		equals &= Util.equals(activityId, castedObject.activityId);
 		equals &= Util.equals(categoryId, castedObject.categoryId);
-		equals &= Util.equals(pluginId, castedObject.pluginId);
+		equals &= Util.equals(sourceId, castedObject.sourceId);
 		return equals;
 	}
 
@@ -110,8 +110,8 @@ public final class CategoryActivityBindingDefinition {
 		return categoryId;
 	}
 
-	public String getPluginId() {
-		return pluginId;
+	public String getSourceId() {
+		return sourceId;
 	}
 
 	public int hashCode() {
@@ -119,7 +119,7 @@ public final class CategoryActivityBindingDefinition {
 			hashCode = HASH_INITIAL;
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityId);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(categoryId);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(pluginId);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(sourceId);
 			hashCodeComputed = true;
 		}
 
@@ -134,7 +134,7 @@ public final class CategoryActivityBindingDefinition {
 			stringBuffer.append(',');
 			stringBuffer.append(categoryId);
 			stringBuffer.append(',');
-			stringBuffer.append(pluginId);
+			stringBuffer.append(sourceId);
 			stringBuffer.append(']');
 			string = stringBuffer.toString();
 		}

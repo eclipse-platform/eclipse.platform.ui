@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2000, 2003 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the  accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
@@ -30,30 +30,30 @@ final class Persistence {
 	final static String TAG_PARENT_CONTEXT_ID = "parentContextId"; //$NON-NLS-1$		
 	final static String TAG_PARENT_ID = "parentId"; //$NON-NLS-1$
 	final static String TAG_PATTERN = "pattern"; //$NON-NLS-1$	
-	final static String TAG_PLUGIN_ID = "pluginId"; //$NON-NLS-1$
+	final static String TAG_SOURCE_ID = "sourceId"; //$NON-NLS-1$
 
 	static ContextContextBindingDefinition readContextContextBindingDefinition(
 		IMemento memento,
-		String pluginIdOverride) {
+		String sourceIdOverride) {
 		if (memento == null)
 			throw new NullPointerException();
 
 		String childContextId = memento.getString(TAG_CHILD_CONTEXT_ID);
 		String parentContextId = memento.getString(TAG_PARENT_CONTEXT_ID);
-		String pluginId =
-			pluginIdOverride != null
-				? pluginIdOverride
-				: memento.getString(TAG_PLUGIN_ID);
+		String sourceId =
+			sourceIdOverride != null
+				? sourceIdOverride
+				: memento.getString(TAG_SOURCE_ID);
 		return new ContextContextBindingDefinition(
 			childContextId,
 			parentContextId,
-			pluginId);
+			sourceId);
 	}
 
 	static List readContextContextBindingDefinitions(
 		IMemento memento,
 		String name,
-		String pluginIdOverride) {
+		String sourceIdOverride) {
 		if (memento == null || name == null)
 			throw new NullPointerException();
 
@@ -68,31 +68,31 @@ final class Persistence {
 			list.add(
 				readContextContextBindingDefinition(
 					mementos[i],
-					pluginIdOverride));
+					sourceIdOverride));
 
 		return list;
 	}
 
 	static ContextDefinition readContextDefinition(
 		IMemento memento,
-		String pluginIdOverride) {
+		String sourceIdOverride) {
 		if (memento == null)
 			throw new NullPointerException();
 
 		String id = memento.getString(TAG_ID);
 		String name = memento.getString(TAG_NAME);
 		String parentId = memento.getString(TAG_PARENT_ID);
-		String pluginId =
-			pluginIdOverride != null
-				? pluginIdOverride
-				: memento.getString(TAG_PLUGIN_ID);
-		return new ContextDefinition(id, name, parentId, pluginId);
+		String sourceId =
+			sourceIdOverride != null
+				? sourceIdOverride
+				: memento.getString(TAG_SOURCE_ID);
+		return new ContextDefinition(id, name, parentId, sourceId);
 	}
 
 	static List readContextDefinitions(
 		IMemento memento,
 		String name,
-		String pluginIdOverride) {
+		String sourceIdOverride) {
 		if (memento == null || name == null)
 			throw new NullPointerException();
 
@@ -104,7 +104,7 @@ final class Persistence {
 		List list = new ArrayList(mementos.length);
 
 		for (int i = 0; i < mementos.length; i++)
-			list.add(readContextDefinition(mementos[i], pluginIdOverride));
+			list.add(readContextDefinition(mementos[i], sourceIdOverride));
 
 		return list;
 	}
@@ -122,8 +122,8 @@ final class Persistence {
 			TAG_PARENT_CONTEXT_ID,
 			contextContextBindingDefinition.getParentContextId());
 		memento.putString(
-			TAG_PLUGIN_ID,
-			contextContextBindingDefinition.getPluginId());
+			TAG_SOURCE_ID,
+			contextContextBindingDefinition.getSourceId());
 	}
 
 	static void writeContextContextBindingDefinitions(
@@ -161,7 +161,7 @@ final class Persistence {
 		memento.putString(TAG_ID, contextDefinition.getId());
 		memento.putString(TAG_NAME, contextDefinition.getName());
 		memento.putString(TAG_PARENT_ID, contextDefinition.getParentId());
-		memento.putString(TAG_PLUGIN_ID, contextDefinition.getPluginId());
+		memento.putString(TAG_SOURCE_ID, contextDefinition.getSourceId());
 	}
 
 	static void writeContextDefinitions(

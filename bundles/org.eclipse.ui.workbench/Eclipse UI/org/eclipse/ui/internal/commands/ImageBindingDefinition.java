@@ -63,7 +63,7 @@ public final class ImageBindingDefinition implements Comparable {
 	private String imageUri;
 	private String locale;
 	private String platform;
-	private String pluginId;
+	private String sourceId;
 	private transient String string;
 
 	public ImageBindingDefinition(
@@ -72,13 +72,13 @@ public final class ImageBindingDefinition implements Comparable {
 		String imageUri,
 		String locale,
 		String platform,
-		String pluginId) {
+		String sourceId) {
 		this.commandId = commandId;
 		this.imageStyle = imageStyle;
 		this.imageUri = imageUri;
 		this.locale = locale;
 		this.platform = platform;
-		this.pluginId = pluginId;
+		this.sourceId = sourceId;
 	}
 
 	public int compareTo(Object object) {
@@ -100,7 +100,7 @@ public final class ImageBindingDefinition implements Comparable {
 
 						if (compareTo == 0)
 							compareTo =
-								Util.compare(pluginId, castedObject.pluginId);
+								Util.compare(sourceId, castedObject.sourceId);
 					}
 				}
 			}
@@ -120,7 +120,7 @@ public final class ImageBindingDefinition implements Comparable {
 		equals &= Util.equals(imageUri, castedObject.imageUri);
 		equals &= Util.equals(locale, castedObject.locale);
 		equals &= Util.equals(platform, castedObject.platform);
-		equals &= Util.equals(pluginId, castedObject.pluginId);
+		equals &= Util.equals(sourceId, castedObject.sourceId);
 		return equals;
 	}
 
@@ -144,8 +144,8 @@ public final class ImageBindingDefinition implements Comparable {
 		return platform;
 	}
 
-	public String getPluginId() {
-		return pluginId;
+	public String getSourceId() {
+		return sourceId;
 	}
 
 	public int hashCode() {
@@ -156,7 +156,7 @@ public final class ImageBindingDefinition implements Comparable {
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(imageUri);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(locale);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(platform);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(pluginId);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(sourceId);
 			hashCodeComputed = true;
 		}
 
@@ -177,7 +177,7 @@ public final class ImageBindingDefinition implements Comparable {
 			stringBuffer.append(',');
 			stringBuffer.append(platform);
 			stringBuffer.append(',');
-			stringBuffer.append(pluginId);
+			stringBuffer.append(sourceId);
 			stringBuffer.append(']');
 			string = stringBuffer.toString();
 		}

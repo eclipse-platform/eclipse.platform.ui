@@ -77,17 +77,17 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 		}
 	}
 
-	private String getPluginId(IConfigurationElement configurationElement) {
-		String pluginId = null;
+	private String getNamespace(IConfigurationElement configurationElement) {
+		String namespace = null;
 
 		if (configurationElement != null) {
 			IExtension extension = configurationElement.getDeclaringExtension();
 
 			if (extension != null)
-				pluginId = extension.getNamespace();
+				namespace = extension.getNamespace();
 		}
 
-		return pluginId;
+		return namespace;
 	}
 
 	private void load() throws IOException {
@@ -166,7 +166,7 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 					KeySequenceBindingDefinition keySequenceBindingDefinition =
 						Persistence.readKeySequenceBindingDefinition(
 							new ConfigurationElementMemento(deprecatedConfigurationElement2),
-							getPluginId(deprecatedConfigurationElement2));
+							getNamespace(deprecatedConfigurationElement2));
 
 					if (keySequenceBindingDefinition != null) {
 						keySequenceBindingDefinition =
@@ -177,7 +177,7 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 								keySequenceBindingDefinition.getKeySequence(),
 								keySequenceBindingDefinition.getLocale(),
 								keySequenceBindingDefinition.getPlatform(),
-								keySequenceBindingDefinition.getPluginId());
+								keySequenceBindingDefinition.getSourceId());
 
 						keySequenceBindingDefinitions.add(
 							keySequenceBindingDefinition);
@@ -286,7 +286,7 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 		ActiveKeyConfigurationDefinition activeKeyConfigurationDefinition =
 			Persistence.readActiveKeyConfigurationDefinition(
 				new ConfigurationElementMemento(configurationElement),
-				getPluginId(configurationElement));
+				getNamespace(configurationElement));
 
 		if (activeKeyConfigurationDefinition != null)
 			activeKeyConfigurationDefinitions.add(
@@ -297,7 +297,7 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 		ContextBindingDefinition contextBindingDefinition =
 			Persistence.readContextBindingDefinition(
 				new ConfigurationElementMemento(configurationElement),
-				getPluginId(configurationElement));
+				getNamespace(configurationElement));
 
 		if (contextBindingDefinition != null)
 			contextBindingDefinitions.add(contextBindingDefinition);
@@ -307,7 +307,7 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 		CategoryDefinition categoryDefinition =
 			Persistence.readCategoryDefinition(
 				new ConfigurationElementMemento(configurationElement),
-				getPluginId(configurationElement));
+				getNamespace(configurationElement));
 
 		if (categoryDefinition != null)
 			categoryDefinitions.add(categoryDefinition);
@@ -317,7 +317,7 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 		CommandDefinition commandDefinition =
 			Persistence.readCommandDefinition(
 				new ConfigurationElementMemento(configurationElement),
-				getPluginId(configurationElement));
+				getNamespace(configurationElement));
 
 		if (commandDefinition != null)
 			commandDefinitions.add(commandDefinition);
@@ -343,7 +343,7 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 		ImageBindingDefinition imageBinding =
 			Persistence.readImageBindingDefinition(
 				new ConfigurationElementMemento(configurationElement),
-				getPluginId(configurationElement));
+				getNamespace(configurationElement));
 
 		if (imageBinding != null)
 			imageBindingDefinitions.add(imageBinding);
@@ -353,7 +353,7 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 		KeyConfigurationDefinition keyConfigurationDefinition =
 			Persistence.readKeyConfigurationDefinition(
 				new ConfigurationElementMemento(configurationElement),
-				getPluginId(configurationElement));
+				getNamespace(configurationElement));
 
 		if (keyConfigurationDefinition != null)
 			keyConfigurationDefinitions.add(keyConfigurationDefinition);
@@ -363,7 +363,7 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 		KeySequenceBindingDefinition keySequenceBindingDefinition =
 			Persistence.readKeySequenceBindingDefinition(
 				new ConfigurationElementMemento(configurationElement),
-				getPluginId(configurationElement));
+				getNamespace(configurationElement));
 
 		if (keySequenceBindingDefinition != null)
 			keySequenceBindingDefinitions.add(keySequenceBindingDefinition);

@@ -60,16 +60,16 @@ final class ContextContextBindingDefinition {
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
 	private String parentContextId;
-	private String pluginId;
+	private String sourceId;
 	private transient String string;
 
 	ContextContextBindingDefinition(
 		String childContextId,
 		String parentContextId,
-		String pluginId) {
+		String sourceId) {
 		this.childContextId = childContextId;
 		this.parentContextId = parentContextId;
-		this.pluginId = pluginId;
+		this.sourceId = sourceId;
 	}
 
 	public int compareTo(Object object) {
@@ -83,7 +83,7 @@ final class ContextContextBindingDefinition {
 				Util.compare(parentContextId, castedObject.parentContextId);
 
 			if (compareTo == 0)
-				compareTo = Util.compare(pluginId, castedObject.pluginId);
+				compareTo = Util.compare(sourceId, castedObject.sourceId);
 		}
 
 		return compareTo;
@@ -98,7 +98,7 @@ final class ContextContextBindingDefinition {
 		boolean equals = true;
 		equals &= Util.equals(childContextId, castedObject.childContextId);
 		equals &= Util.equals(parentContextId, castedObject.parentContextId);
-		equals &= Util.equals(pluginId, castedObject.pluginId);
+		equals &= Util.equals(sourceId, castedObject.sourceId);
 		return equals;
 	}
 
@@ -110,8 +110,8 @@ final class ContextContextBindingDefinition {
 		return parentContextId;
 	}
 
-	public String getPluginId() {
-		return pluginId;
+	public String getSourceId() {
+		return sourceId;
 	}
 
 	public int hashCode() {
@@ -119,7 +119,7 @@ final class ContextContextBindingDefinition {
 			hashCode = HASH_INITIAL;
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(childContextId);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(parentContextId);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(pluginId);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(sourceId);
 			hashCodeComputed = true;
 		}
 
@@ -134,7 +134,7 @@ final class ContextContextBindingDefinition {
 			stringBuffer.append(',');
 			stringBuffer.append(parentContextId);
 			stringBuffer.append(',');
-			stringBuffer.append(pluginId);
+			stringBuffer.append(sourceId);
 			stringBuffer.append(']');
 			string = stringBuffer.toString();
 		}
