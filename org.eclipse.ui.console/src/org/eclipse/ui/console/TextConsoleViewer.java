@@ -135,9 +135,8 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
             } catch (BadPositionCategoryException e) {
             }
             
-                    
             if (ranges.size() > 0) {
-            		event.styles = (StyleRange[]) ranges.toArray(new StyleRange[0]);
+                event.styles = (StyleRange[]) ranges.toArray(new StyleRange[ranges.size()]);
             }
         }
     }
