@@ -488,7 +488,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	 */
 	protected boolean isPrefQuickDiffAlwaysOn() {
 		IPreferenceStore store= getPreferenceStore();
-		return store == null ? store.getBoolean(ExtendedTextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON) : false;
+		return store != null ? store.getBoolean(ExtendedTextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON) : false;
 	}
 	
 	/**
