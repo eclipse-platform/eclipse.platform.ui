@@ -33,6 +33,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
+import org.eclipse.team.internal.ccvs.ui.console.CVSOutputConsole;
 import org.eclipse.team.internal.ccvs.ui.model.CVSAdapterFactory;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryRoot;
@@ -43,6 +44,8 @@ import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ISynchronizeView;
 import org.eclipse.ui.*;
+import org.eclipse.ui.console.ConsolePlugin;
+import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -69,6 +72,11 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	private static CVSUIPlugin plugin;
 	
 	/**
+	 * The CVS console
+	 */
+	private CVSOutputConsole console;
+	
+	/**
 	 * The repository manager
 	 */
 	private RepositoryManager repositoryManager;
@@ -85,6 +93,19 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	public CVSUIPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
 		plugin = this;
+	}
+	
+	/**
+	 * Returns the standard display to be used. The method first checks, if
+	 * the thread calling this method has an associated display. If so, this
+	 * display is returned. Otherwise the method returns the default display.
+	 */
+	public static Display getStandardDisplay() {
+		Display display= Display.getCurrent();
+		if (display == null) {
+			display= Display.getDefault();
+		}
+		return display;		
 	}
 	
 	/**
