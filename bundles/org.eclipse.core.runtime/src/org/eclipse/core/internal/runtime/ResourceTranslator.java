@@ -101,17 +101,9 @@ public class ResourceTranslator {
 		if (fragments == null)
 			return;
 
-		ManifestElement[] classpathElements;
 		for (int i = 0; i < fragments.length; i++) {
-			try {
-				classpathElements = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, (String) fragments[i].getHeaders().get(Constants.BUNDLE_CLASSPATH));
-			} catch (BundleException e) {
-				break;
-			}
-			if (classpathElements != null) {
-				for (int j = 0; j < classpathElements.length; j++)
-					classpath.add(fragments[i].getEntry(classpathElements[j].getValue()));
-			}
+			addClasspathEntries(fragments[i], classpath);
+			addDevEntries(fragments[i], classpath);
 		}
 	}
 
@@ -139,7 +131,9 @@ public class ResourceTranslator {
 
 		String[] binaryPaths = DevClassPathHelper.getDevClassPath(b.getSymbolicName());
 		for (int i = 0; i < binaryPaths.length; i++) {
-			classpath.add(b.getEntry(binaryPaths[i]));
+			URL classpathEntry = b.getEntry(binaryPaths[i]);
+			if (classpathEntry != null)
+				classpath.add(classpathEntry);
 		}
 	}
 }
