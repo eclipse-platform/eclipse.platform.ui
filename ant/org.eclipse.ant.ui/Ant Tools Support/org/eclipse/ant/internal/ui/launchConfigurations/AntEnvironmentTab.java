@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.EnvironmentTab;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
@@ -39,12 +40,14 @@ public class AntEnvironmentTab extends EnvironmentTab {
 		wrappingComposite= new Composite(parent, SWT.NONE);
 		wrappingComposite.setLayout(new GridLayout());
 		wrappingComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		wrappingComposite.setFont(parent.getFont());
 		
 		warningLabel= new Label(wrappingComposite, SWT.NONE);
 		warningLabel.setText(AntLaunchConfigurationMessages.getString("AntEnvironmentTab.0")); //$NON-NLS-1$
 		
 		super.createControl(wrappingComposite);
 		setControl(wrappingComposite); // Overwrite setting in super method
+		Dialog.applyDialogFont(parent);
 	}
 	
 	/* (non-Javadoc)
