@@ -2200,11 +2200,16 @@ public void requestActivation(IWorkbenchPart part) {
  */
 public void resetPerspective() {
 	// Run op in busy cursor.
+	// Use set redraw to eliminate the "flash" that occurs when the
+	// coolbar is reset.
+	CoolBarManager mgr = window.getCoolBarManager();
+	mgr.getControl().setRedraw(false);
 	BusyIndicator.showWhile(null, new Runnable() {
 		public void run() {
 			busyResetPerspective();
 		}
 	});
+	mgr.getControl().setRedraw(true);
 }
 /**
  * Restore this page from the memento and ensure that
