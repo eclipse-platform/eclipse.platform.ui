@@ -172,14 +172,20 @@ public class CopyViewTabToClipboardAction extends AbstractMemoryAction
 		
 		if (table == null)
 			return;
-		
-		Clipboard clip = new Clipboard(table.getDisplay());
-		TableItem[] tableItems = table.getItems();
-		String tableAsString = new String();
-		tableAsString = concatenateTableAsString(tableItems);
-		if (!tableAsString.equals("")) { //$NON-NLS-1$
-			TextTransfer plainTextTransfer = TextTransfer.getInstance();
-			clip.setContents(new Object[] {tableAsString}, new Transfer[] {plainTextTransfer});
+		Clipboard clip= null;
+		try {
+			clip = new Clipboard(table.getDisplay());
+			TableItem[] tableItems = table.getItems();
+			String tableAsString = new String();
+			tableAsString = concatenateTableAsString(tableItems);
+			if (!tableAsString.equals("")) { //$NON-NLS-1$
+				TextTransfer plainTextTransfer = TextTransfer.getInstance();
+				clip.setContents(new Object[] {tableAsString}, new Transfer[] {plainTextTransfer});
+			}
+		} finally {
+			if (clip != null) {
+				clip.dispose();
+			}
 		}
 	}
 
