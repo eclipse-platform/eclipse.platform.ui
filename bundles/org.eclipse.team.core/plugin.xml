@@ -50,6 +50,7 @@
   <fileTypes extension="dll" type="binary"/>
   <fileTypes extension="so" type="binary"/>
   <fileTypes extension="project" type="text"/>
+  <fileTypes extension="options" type="text"/>
 </extension>
 
 <extension point="org.eclipse.core.resources.fileModificationValidator" id="FileValidator">
