@@ -179,7 +179,7 @@
     	</launchConfigurationType>
     	<launchConfigurationType
     		id = "org.eclipse.ant.AntBuilderLaunchConfigurationType"
-    		name = "%AntScript.externalTools"
+    		name = "%AntBuild.externalTools"
     		delegate = "org.eclipse.ui.externaltools.internal.ant.launchConfigurations.AntLaunchDelegate"
     		modes = "run"
     		category = "org.eclipse.ui.externaltools.builder">
