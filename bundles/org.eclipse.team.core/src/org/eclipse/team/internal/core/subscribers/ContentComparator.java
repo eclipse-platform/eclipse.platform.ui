@@ -35,6 +35,7 @@ public class ContentComparator {
 		InputStream is1 = null;
 		InputStream is2 = null;
 		try {
+			monitor.beginTask(null, 100);
 			is1 = getContents(e1, Policy.subMonitorFor(monitor, 50));
 			is2 = getContents(e2, Policy.subMonitorFor(monitor, 50));
 			return contentsEqual(is1, is2, shouldIgnoreWhitespace());
@@ -55,6 +56,7 @@ public class ContentComparator {
 			} catch (IOException e) {
 				// Ignore
 			}
+			monitor.done();
 		}
 	}
 

@@ -41,7 +41,6 @@ public class RefreshDirtyStateOperation extends CVSSubscriberOperation {
 	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberOperation#run(org.eclipse.team.core.synchronize.SyncInfoSet, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected void run(SyncInfoSet set, IProgressMonitor monitor) throws TeamException {
-		// TODO Fetch the contents in a single connection
 		final ContentComparisonSyncInfoFilter comparator = new SyncInfoFilter.ContentComparisonSyncInfoFilter(false);
 		final SyncInfo[] infos = set.getSyncInfos();
 		if (infos.length == 0) return;
