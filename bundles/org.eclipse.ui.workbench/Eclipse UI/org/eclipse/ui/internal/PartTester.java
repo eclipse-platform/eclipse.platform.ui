@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
@@ -35,9 +37,26 @@ public class PartTester {
         testWorkbenchPart(part);
         
         Assert.isTrue(part.getEditorSite() == part.getSite());
+        IEditorInput input = part.getEditorInput();
+        Assert.isNotNull(input);
+        testEditorInput(input);
+        
         part.isDirty();
         part.isSaveAsAllowed();
         part.isSaveOnCloseNeeded();
+    }
+    
+    public static void testEditorInput(IEditorInput input) throws Exception {
+        input.getAdapter(Object.class);
+        Assert.isNotNull(input.getImageDescriptor());
+        Assert.isNotNull(input.getName());
+        Assert.isNotNull(input.getToolTipText());
+
+        // Persistable element may be null
+        IPersistableElement persistableElement = input.getPersistable();
+        if (persistableElement != null) {
+            Assert.isNotNull(persistableElement.getFactoryId());
+        }
     }
     
     /**
