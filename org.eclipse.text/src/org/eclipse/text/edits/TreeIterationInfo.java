@@ -15,8 +15,8 @@ import org.eclipse.jface.text.Assert;
 
 /* package */ class TreeIterationInfo {
 	
-	public static interface Visitor {
-		public void visit(TextEdit edit);
+	interface Visitor {
+		void visit(TextEdit edit);
 	}
 	
 	private int fMark= -1;		

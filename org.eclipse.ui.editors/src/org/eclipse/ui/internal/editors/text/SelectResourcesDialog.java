@@ -56,7 +56,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  */
 public class SelectResourcesDialog extends Dialog {
 	
-	static interface IFilter {
+	interface IFilter {
 		boolean accept(IResource resource);
 	}
 

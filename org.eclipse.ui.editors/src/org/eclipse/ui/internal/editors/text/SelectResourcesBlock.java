@@ -64,7 +64,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	 * This is meant as an internal class and is used exclusively
 	 * by the import dialog.
 	 */
-	static interface IElementFilter {
+	interface IElementFilter {
 
 		void filterElements(Collection elements, IProgressMonitor monitor)
 	            throws InterruptedException;

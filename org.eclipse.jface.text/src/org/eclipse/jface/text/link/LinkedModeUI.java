@@ -101,7 +101,7 @@ public class LinkedModeUI {
 	 * Clients may implement this interface.
 	 * </p>
 	 */
-	public static interface ILinkedModeUIFocusListener {
+	public interface ILinkedModeUIFocusListener {
 		/**
 		 * Called when the UI for the linked mode leaves a linked position.
 		 * 

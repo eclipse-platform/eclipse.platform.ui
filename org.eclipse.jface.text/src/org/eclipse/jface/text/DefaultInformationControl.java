@@ -47,7 +47,7 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	 * of information displayed in the default information control. 
 	 * The interface can be implemented by clients.
 	 */
-	public static interface IInformationPresenter {
+	public interface IInformationPresenter {
 		
 		/**
 		 * Updates the given presentation of the given information and

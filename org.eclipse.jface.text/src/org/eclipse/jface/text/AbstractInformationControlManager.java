@@ -49,7 +49,7 @@ abstract public class AbstractInformationControlManager {
 	 * Clients must implement this interface in order to equip an information
 	 * control manager accordingly.
 	 */
-	public static interface IInformationControlCloser {
+	public interface IInformationControlCloser {
 		
 		/**
 		 * Sets the closer's subject control. This is the control that parents 
