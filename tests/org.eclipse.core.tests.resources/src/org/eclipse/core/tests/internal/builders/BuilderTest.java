@@ -26,8 +26,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 public class BuilderTest extends AbstractBuilderTest {
 	public static Test suite() {
-		TestSuite suite = new TestSuite(BuilderTest.class);
-		return suite;
+		return new TestSuite(BuilderTest.class);
+//		TestSuite suite = new TestSuite();
+//		suite.addTest(new BuilderTest("testChangeDynamicBuildOrder"));
+//		return suite;
 	}
 
 	public BuilderTest() {
@@ -62,7 +64,6 @@ public class BuilderTest extends AbstractBuilderTest {
 	/**
 	 * Tests the lifecycle of a builder.
 	 * 
-	 * @see SortBuilderPlugin
 	 * @see SortBuilder
 	 */
 	public void testAutoBuildPR() {
@@ -211,7 +212,6 @@ public class BuilderTest extends AbstractBuilderTest {
 	/**
 	 * Tests the lifecycle of a builder.
 	 * 
-	 * @see SortBuilderPlugin
 	 * @see SortBuilder
 	 */
 	public void testBuildCommands() {
@@ -365,7 +365,6 @@ public class BuilderTest extends AbstractBuilderTest {
 	/**
 	 * Tests the lifecycle of a builder.
 	 * 
-	 * @see SortBuilderPlugin
 	 * @see SortBuilder
 	 */
 	public void testBuildOrder() {
@@ -576,6 +575,67 @@ public class BuilderTest extends AbstractBuilderTest {
 			fail("5.99");
 		}
 	}
+	/**
+	 * Tests that changing the dynamic build order will induce an autobuild on a project.
+	 * This is a regression test for bug 60653.
+	 */
+	public void testChangeDynamicBuildOrder() {
+		IWorkspace workspace = getWorkspace();
+		// Create some resource handles
+		final IProject proj1 = workspace.getRoot().getProject("PROJECT" + 1);
+		final IProject proj2 = workspace.getRoot().getProject("PROJECT" + 2);
+		try {
+			// Turn auto-building on and make sure there is no explicit build order
+			setAutoBuilding(true);
+			IWorkspaceDescription wsDescription = getWorkspace().getDescription();
+			wsDescription.setBuildOrder(null);
+			getWorkspace().setDescription(wsDescription);
+			// Create and set a build spec for project two
+			getWorkspace().run(new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					proj2.create(getMonitor());
+					proj2.open(getMonitor());
+					IProjectDescription desc = proj2.getDescription();
+					desc.setBuildSpec(new ICommand[] {createCommand(desc, "Build1")});
+					proj2.setDescription(desc, getMonitor());
+				}
+			}, getMonitor());
+			waitForBuild();
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+		// Set up a plug-in lifecycle verifier for testing purposes
+		TestBuilder verifier = SortBuilder.getInstance();
+		verifier.reset();
+		//create project two and establish a build order by adding a dynamic 
+		//reference from proj2->proj1 in the same operation
+		try {
+			getWorkspace().run(new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					// Create and set a build specs for project one
+					proj1.create(getMonitor());
+					proj1.open(getMonitor());
+					IProjectDescription desc = proj1.getDescription();
+					desc.setBuildSpec(new ICommand[] {createCommand(desc, "Build0")});
+					proj1.setDescription(desc, getMonitor());
+
+					//add the dynamic reference to project two
+					IProjectDescription description = proj2.getDescription();
+					description.setDynamicReferences(new IProject[] {proj1});
+					proj2.setDescription(description, IResource.NONE, null);
+				}
+			}, getMonitor());
+		} catch (CoreException e1) {
+			fail("2.99", e1);
+		}
+		waitForBuild();
+		//ensure the build happened in the correct order, and that both projects were built
+		verifier.addExpectedLifecycleEvent(TestBuilder.SET_INITIALIZATION_DATA);
+		verifier.addExpectedLifecycleEvent(TestBuilder.STARTUP_ON_INITIALIZE);
+		verifier.addExpectedLifecycleEvent("Build0");
+		verifier.addExpectedLifecycleEvent("Build1");
+		verifier.assertLifecycleEvents("3.0");
+	}
 
 	/**
 	 * Tests the method IncrementProjectBuilder.forgetLastBuiltState
@@ -729,7 +789,6 @@ public class BuilderTest extends AbstractBuilderTest {
 	/**
 	 * Tests the lifecycle of a builder.
 	 * 
-	 * @see SortBuilderPlugin
 	 * @see SortBuilder
 	 */
 	public void testMoveProject() {
