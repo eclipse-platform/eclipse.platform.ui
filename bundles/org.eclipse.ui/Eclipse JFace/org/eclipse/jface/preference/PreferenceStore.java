@@ -327,7 +327,7 @@ public String[] preferenceNames() {
  * Method declared on IPreferenceStore.
  */
 public void putValue(String name, String value) {
-	setValue(properties, name, value);
+	setValue(name, value);
 }
 /* (non-Javadoc)
  * Method declared on IPreferenceStore.
