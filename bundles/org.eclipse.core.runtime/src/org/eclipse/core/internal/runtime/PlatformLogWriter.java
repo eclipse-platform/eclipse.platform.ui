@@ -121,12 +121,22 @@ public synchronized void logging(IStatus status, String plugin) {
 	if (log == null)
 		return;
 	try {
-		writeLogEntry(status);
+		try {
+			writeLogEntry(status);
+		} finally {
+			if (logFile != null)
+				closeLogFile();
+		}			
 	} catch (Exception e) {
-		e.printStackTrace();
-	}finally {
-		if (logFile != null)
-			closeLogFile();
+		System.err.println("An exception occurred while writing to the platform log:");
+		e.printStackTrace(System.err);
+		//we failed to write, so dump log entry to console instead
+		try {
+			log = new PrintWriter(System.err);
+			writeLogEntry(status);
+			log.flush();
+		} catch (Exception e2) {
+		}
 	}
 }
 protected void openLogFile() {
