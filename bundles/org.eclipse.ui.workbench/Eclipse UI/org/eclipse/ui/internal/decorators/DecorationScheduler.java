@@ -33,7 +33,7 @@ public class DecorationScheduler implements IResourceChangeListener {
 	private List awaitingDecoration = new ArrayList();
 
 	// Objects that are awaiting a label update.
-	private List pendingUpdate = new ArrayList();
+	private List pendingUpdate = Collections.synchronizedList(new ArrayList());
 
 	private Map awaitingDecorationValues = new HashMap();
 
@@ -42,9 +42,6 @@ public class DecorationScheduler implements IResourceChangeListener {
 	private boolean shutdown = false;
 
 	private Thread decoratorUpdateThread;
-
-	//The number of results to batch before the label changed is sent
-	private final int NUM_TO_BATCH = 50;
 
 	/**
 	 * Return a new instance of the receiver configured for

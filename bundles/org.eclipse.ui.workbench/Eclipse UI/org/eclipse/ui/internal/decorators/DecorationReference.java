@@ -1,5 +1,7 @@
 package org.eclipse.ui.internal.decorators;
 
+import org.eclipse.ui.internal.misc.Assert;
+
 /************************************************************************
 Copyright (c) 2000, 2002 IBM Corporation and others.
 All rights reserved.   This program and the accompanying materials
@@ -22,6 +24,7 @@ class DecorationReference {
 	Object adaptedElement;
 
 	DecorationReference(Object object) {
+		Assert.isNotNull(object);
 		element = object;
 	}
 
