@@ -440,39 +440,15 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		if (!isActive()) {
 			return;
 		}		
-		if (!fShowingEditor) {
-			try {
-				fShowingEditor = true;
-				ISelection selection= getViewer().getSelection();
-				Object obj= null;
-				if (selection instanceof IStructuredSelection) {
-					obj= ((IStructuredSelection) selection).getFirstElement();
-				}
-				if (!(obj instanceof IStackFrame)) {
-					return;
-				}
-				
-				IStackFrame stackFrame= (IStackFrame) obj;
-				if (!stackFrame.isSuspended()) {
-					return;
-				}
-				
-				if (stackFrame.equals(getStackFrame())) {
-					if (getEditorInput() == null || getEditorId() == null) {
-						lookupEditorInput();
-					}
-				} else {
-					setStackFrame(stackFrame);
-					lookupEditorInput();
-				}
-				
-				if (getEditorInput() != null && getEditorId() != null) {
-					openEditorForStackFrame(stackFrame);
-				}
-			} finally {
-				fShowingEditor= false;
-			}
+		ISelection selection= getViewer().getSelection();
+		Object obj= null;
+		if (selection instanceof IStructuredSelection) {
+			obj= ((IStructuredSelection) selection).getFirstElement();
 		}
+		if (!(obj instanceof IStackFrame)) {
+			return;
+		}
+		openEditorForStackFrame((IStackFrame) obj);
 	}
 	
 	/**
@@ -526,38 +502,62 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	}
 
 	/**
-	 * Get the active window and open/bring to the front an editor on the source element.
-	 * Selection is based on the line number OR the char start and end.
+	 * Get the active window and open/bring to the front an editor on the stack
+	 * frame. Selection is based on the line number OR the char start and end.
 	 */
 	protected void openEditorForStackFrame(IStackFrame stackFrame) {
-		IEditorPart editor= openEditor();
-		if (editor == null) {
+		if (fShowingEditor) {
 			return;
 		}
-
-		int lineNumber= 0;
-		int charStart = -1;
-		int charEnd = -1;
 		try {
-			lineNumber= stackFrame.getLineNumber();
-			charStart= stackFrame.getCharStart();
-			charEnd= stackFrame.getCharEnd();
-		} catch (DebugException de) {
-			DebugUIPlugin.log(de);
-		}
-		if (lineNumber >= 0 || charStart >= 0) {
-			if (editor instanceof ITextEditor) {
-				selectAndReveal((ITextEditor)editor, lineNumber, charStart, charEnd);
-				InstructionPointerManager.getDefault().addAnnotation((ITextEditor)editor, stackFrame);
-			} else {
-				IMarker marker= getInstructionPointer(lineNumber, charStart, charEnd);
-				if (marker != null) {
-					editor.gotoMarker(marker);
-				}
+			fShowingEditor = true;
+
+			if (!stackFrame.isSuspended()) {
+				return;
 			}
-			fLastCharStart= charStart;
-			fLastCharEnd= charEnd;
-			fLastLine= lineNumber;
+
+			if (stackFrame.equals(getStackFrame())) {
+				if (getEditorInput() == null || getEditorId() == null) {
+					lookupEditorInput();
+				}
+			} else {
+				setStackFrame(stackFrame);
+				lookupEditorInput();
+			}
+			if (getEditorInput() == null || getEditorId() == null) {
+				return;
+			}
+			IEditorPart editor= openEditor();
+			if (editor == null) {
+				return;
+			}
+	
+			int lineNumber= 0;
+			int charStart = -1;
+			int charEnd = -1;
+			try {
+				lineNumber= stackFrame.getLineNumber();
+				charStart= stackFrame.getCharStart();
+				charEnd= stackFrame.getCharEnd();
+			} catch (DebugException de) {
+				DebugUIPlugin.log(de);
+			}
+			if (lineNumber >= 0 || charStart >= 0) {
+				if (editor instanceof ITextEditor) {
+					selectAndReveal((ITextEditor)editor, lineNumber, charStart, charEnd);
+					InstructionPointerManager.getDefault().addAnnotation((ITextEditor)editor, stackFrame);
+				} else {
+					IMarker marker= getInstructionPointer(lineNumber, charStart, charEnd);
+					if (marker != null) {
+						editor.gotoMarker(marker);
+					}
+				}
+				fLastCharStart= charStart;
+				fLastCharEnd= charEnd;
+				fLastLine= lineNumber;
+			}
+		} finally {
+			fShowingEditor= false;
 		}
 	}
 	
