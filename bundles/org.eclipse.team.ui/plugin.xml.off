@@ -46,13 +46,33 @@
 <extension
      point="org.eclipse.ui.popupMenus">
 	<objectContribution
+       	   id="org.eclipse.team.ui.ResourceContributions"
+           objectClass="org.eclipse.core.resources.IResource" adaptable="true">
+		<menu
+			id="team.main"
+			path="additions"
+			label="%TeamGroupMenu.label">
+			<separator name="group1"/>
+			<separator name="group2"/>
+			<separator name="group3"/>
+			<separator name="group4"/>
+			<separator name="group5"/>
+			<separator name="group6"/>
+			<separator name="group7"/>
+			<separator name="group8"/>
+			<separator name="group9"/>
+			<separator name="group10"/>
+			<separator name="projectGroup"/>
+		</menu>
+	</objectContribution>	
+	<objectContribution
 	   id="org.eclipse.team.ui.ProjectContributions"
 	   objectClass="org.eclipse.core.resources.IProject" adaptable="true">
 		<action 
 			id="org.eclipse.team.ui.ConfigureProject"
 			label="%ConfigureProject.label"
 			tooltip="%ConfigureProject.tooltip"
-			menubarPath="additions"
+			menubarPath="team.main/projectGroup"
 			enablesFor="1"
 			class="org.eclipse.team.ui.actions.ConfigureProjectAction">
 		</action>
