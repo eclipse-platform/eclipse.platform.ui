@@ -136,7 +136,7 @@ public class QueryBuilder {
 								// Adding words should not be done when DefaultAnalyzer is used,
 								// because it does not perform stemming and common words removal
 								// which would result in common characters highlighted all over (bug 30263)
-								if (!analyzerDesc.getLang().startsWith("org.eclipse.help#")) {
+								if (!analyzerDesc.getId().startsWith("org.eclipse.help#")) {
 									if (!highlightWords.contains(word)) {
 										highlightWords.add(word);
 									}
