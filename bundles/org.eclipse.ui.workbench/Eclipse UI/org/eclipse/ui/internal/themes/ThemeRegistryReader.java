@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.ui.PlatformUI;
@@ -42,6 +43,8 @@ public class ThemeRegistryReader extends RegistryReader {
 	public static final String ATT_LABEL = "label"; //$NON-NLS-1$
 	public static final String ATT_VALUE = "value"; //$NON-NLS-1$
 	public static final String ATT_NAME = "name"; //$NON-NLS-1$
+	public static final String ATT_OS = "os"; //$NON-NLS-1$
+	public static final String ATT_WS = "ws"; //$NON-NLS-1$
 	
 	public static final String ATT_COLORFACTORY = "colorFactory"; //$NON-NLS-1$
 	
@@ -53,8 +56,10 @@ public class ThemeRegistryReader extends RegistryReader {
 	public static final String TAG_CATEGORYDEFINITION = "themeElementCategory"; //$NON-NLS-1$
 	public static final String TAG_COLORDEFINITION = "colorDefinition"; //$NON-NLS-1$
 	public static final String TAG_COLOROVERRIDE = "colorOverride"; //$NON-NLS-1$    
+	public static final String TAG_COLORVALUE = "colorValue"; //$NON-NLS-1$
 	public static final String TAG_FONTDEFINITION = "fontDefinition"; //$NON-NLS-1$
 	public static final String TAG_FONTOVERRIDE = "fontOverride"; //$NON-NLS-1$
+	public static final String TAG_FONTVALUE = "fontValue"; //$NON-NLS-1$
 	public static final String TAG_DATA = "data"; //$NON-NLS-1$
 	public static final String TAG_THEME="theme";//$NON-NLS-1$
 
@@ -152,11 +157,11 @@ public class ThemeRegistryReader extends RegistryReader {
 		String id = element.getAttribute(ATT_ID);
 		
 		String defaultMapping = element.getAttribute(ATT_DEFAULTS_TO);
-
-		String value = element.getAttribute(ATT_VALUE);
+		
+		String value = getPlatformSpecificColorValue(element.getChildren(TAG_COLORVALUE));
 		
 		if (value == null) {
-			value = checkColorFactory(element);
+		    value = getColorValue(element);
 		}
 
 		if ((value == null && defaultMapping == null)
@@ -191,7 +196,71 @@ public class ThemeRegistryReader extends RegistryReader {
 				element.getDeclaringExtension().getNamespace());
     }
 	
-	/* (non-Javadoc)
+	/**
+     * Gets the color value, either via the value attribute or from a color 
+     * factory.
+     * 
+	 * @param element the element to check
+     * @return the color string
+     */
+    private String getColorValue(IConfigurationElement element) {
+        if (element == null)
+            return null;
+        
+        String value = element.getAttribute(ATT_VALUE);
+        if (value == null) {
+            value = checkColorFactory(element);
+        }
+        return value;
+    }
+
+    /**
+     * Check for platform specific color values.  This will return the 
+     * "best match" for the current platform.
+     * 
+     * @param elements the elements to check
+     * @return the platform specific color, if any
+     */
+    private String getPlatformSpecificColorValue(IConfigurationElement[] elements) {
+        return getColorValue(getBestPlatformMatch(elements));
+    }
+    
+    /**
+     * Get the element that has os/ws attributes that best match the current 
+     * platform.
+     * 
+     * @param elements the elements to check
+     * @return the best match, if any
+     */
+    private IConfigurationElement getBestPlatformMatch(IConfigurationElement [] elements) {
+		IConfigurationElement match = null;
+        
+        String osname = Platform.getOS(); 
+		String wsname = Platform.getWS();
+
+		for (int i = 0; i < elements.length; i++) {
+            IConfigurationElement element = elements[i];
+            String elementOs = element.getAttribute(ATT_OS);
+            String elementWs = element.getAttribute(ATT_WS);
+            
+            if (osname.equalsIgnoreCase(elementOs)) {                
+                if (wsname.equalsIgnoreCase(elementWs)) {
+                    // best possible match.  Return
+                    return element;
+                }
+                else {
+                    match = element;
+                }
+            }
+            else if (wsname.equalsIgnoreCase(elementWs)) {
+                match = element;                
+            }
+        }
+		
+        return match;        
+    }
+
+    /* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.registry.RegistryReader#readElement(org.eclipse.core.runtime.IConfigurationElement)
 	 */
 	public boolean readElement(IConfigurationElement element) {
@@ -284,7 +353,10 @@ public class ThemeRegistryReader extends RegistryReader {
 
 		String defaultMapping = element.getAttribute(ATT_DEFAULTS_TO);
 
-		String value = element.getAttribute(ATT_VALUE);
+		String value = getPlatformSpecificFontValue(element.getChildren(TAG_FONTVALUE));
+		if (value == null) {
+		    value = element.getAttribute(ATT_VALUE);
+		}
 		
 		if (value != null && defaultMapping != null) {
 			logError(element, RESOURCE_BUNDLE.getString("Fonts.badDefault")); //$NON-NLS-1$
@@ -318,6 +390,30 @@ public class ThemeRegistryReader extends RegistryReader {
 				description);	    
 	}	
 	
+    /**
+     * Check for platform specific font values.  This will return the 
+     * "best match" for the current platform.
+     * 
+     * @param elements the elements to check
+     * @return the platform specific font, if any
+     */
+    private String getPlatformSpecificFontValue(IConfigurationElement[] elements) {
+        return getFontValue(getBestPlatformMatch(elements));
+    }
+    
+	/**
+     * Gets the font valu from the value attribute.
+     * 
+	 * @param element the element to check
+     * @return the font string
+     */
+    private String getFontValue(IConfigurationElement element) {
+        if (element == null)
+            return null;
+        
+        return element.getAttribute(ATT_VALUE);
+    }    
+
     /**
 	 * Attempt to load the color value from the colorFactory attribute.
      *

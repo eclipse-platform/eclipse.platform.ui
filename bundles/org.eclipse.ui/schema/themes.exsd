@@ -121,7 +121,10 @@
       </annotation>
       <complexType>
          <sequence>
-            <element ref="colorFactory" minOccurs="0" maxOccurs="1"/>
+            <choice>
+               <element ref="colorFactory"/>
+               <element ref="colorValue"/>
+            </choice>
             <element ref="description" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="id" type="string">
@@ -155,7 +158,7 @@ Only one of &lt;code&gt;defaultsTo&lt;/code&gt;, &lt;code&gt;value&lt;/code&gt; 
 &lt;li&gt;a String containing comma seperated integers in the form red,green,blue 
 &lt;li&gt;a String that maps to an SWT color constant (ie:  COLOR_RED).
 &lt;/ul&gt;
-Only one of &lt;code&gt;defaultsTo&lt;/code&gt;, &lt;code&gt;value&lt;/code&gt; or &lt;code&gt;colorFactory&lt;/code&gt; may be defined.
+Only one of &lt;code&gt;defaultsTo&lt;/code&gt;, &lt;code&gt;value&lt;/code&gt; or &lt;code&gt;colorFactory&lt;/code&gt; may be defined.  If &lt;code&gt;value&lt;/code&gt; is specified, additional value definitions may be specified on a per platform/windowing system basis via the &lt;code&gt;colorValue&lt;/code&gt; element.
                </documentation>
             </annotation>
          </attribute>
@@ -172,7 +175,7 @@ Only one of &lt;code&gt;defaultsTo&lt;/code&gt;, &lt;code&gt;value&lt;/code&gt; 
                   a class that implements &lt;code&gt;org.eclipse.ui.themes.IColorFactory&lt;/code&gt;.  This may be used instead of &lt;code&gt;value&lt;/code&gt; to specify the default value of the color.  Please be advised that this should be used with caution - usage of this attribute will cause plugin activation.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.themes.IColorFactory"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -215,7 +218,7 @@ Only one of &lt;code&gt;defaultsTo&lt;/code&gt;, &lt;code&gt;value&lt;/code&gt; 
                <documentation>
                   the font value.  This is in the form: &lt;code&gt;&lt;it&gt;fontname&lt;/it&gt;-&lt;it&gt;style&lt;/it&gt;-&lt;it&gt;height&lt;/it&gt;&lt;/code&gt; where &lt;code&gt;&lt;it&gt;fontname&lt;/it&gt;&lt;/code&gt; is the name of a font, &lt;code&gt;&lt;it&gt;style&lt;/it&gt;&lt;/code&gt; is a font style (one of &lt;code&gt;&quot;regular&quot;&lt;/code&gt;, &lt;code&gt;&quot;bold&quot;&lt;/code&gt;, &lt;code&gt;&quot;italic&quot;&lt;/code&gt;, or &lt;code&gt;&quot;bold italic&quot;&lt;/code&gt;) and &lt;code&gt;&lt;it&gt;height&lt;/it&gt;&lt;/code&gt; is an integer representing the font height.&lt;/p&gt;
 &lt;p&gt;Example: &lt;code&gt;Times New Roman-bold-36&lt;/code&gt;.&lt;/p&gt;  
-&lt;p&gt;Only one (or neither) of &lt;code&gt;value&lt;/code&gt; or &lt;code&gt;defaultsTo&lt;/code&gt; may be used.&lt;/p&gt;
+&lt;p&gt;Only one (or neither) of &lt;code&gt;value&lt;/code&gt; or &lt;code&gt;defaultsTo&lt;/code&gt; may be used.&lt;/p&gt;  If &lt;code&gt;value&lt;/code&gt; is specified, additional value definitions may be specified on a per platform/windowing system basis via the &lt;code&gt;fontValue&lt;/code&gt; element.
                </documentation>
             </annotation>
          </attribute>
@@ -254,7 +257,11 @@ Only one (or neither) of &lt;code&gt;value&lt;/code&gt; or &lt;code&gt;defaultsT
       </annotation>
       <complexType>
          <sequence>
-            <element ref="colorFactory" minOccurs="0" maxOccurs="1"/>
+            <choice>
+               <element ref="colorFactory"/>
+               <element ref="colorValue"/>
+            </choice>
+            <element ref="description" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -340,7 +347,7 @@ Unlike a &lt;code&gt;fontDefinition&lt;/code&gt;, you may not supply a &lt;code&
                   a class that implements &lt;code&gt;org.eclipse.ui.themes.IColorFactory&lt;/code&gt;.  It may also implement &lt;code&gt;org.eclipse.core.runtime.IExecutableExtension&lt;/code&gt;.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.themes.IColorFactory"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -403,13 +410,93 @@ Unlike a &lt;code&gt;fontDefinition&lt;/code&gt;, you may not supply a &lt;code&
       </complexType>
    </element>
 
+   <element name="colorValue">
+      <annotation>
+         <documentation>
+            This element allows specification of a color value on a per-platform basis.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="colorFactory" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="os" type="string">
+            <annotation>
+               <documentation>
+                  an optional os string to enable choosing of color based on current OS. eg: win32,linux
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="ws" type="string">
+            <annotation>
+               <documentation>
+                  an optional os string to enable choosing of color based on current WS. eg: win32,gtk
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="value" type="string">
+            <annotation>
+               <documentation>
+                  The default value of this color.  The value may be specified in the following ways:
+&lt;ul&gt;
+&lt;li&gt;a String containing comma seperated integers in the form red,green,blue 
+&lt;li&gt;a String that maps to an SWT color constant (ie:  COLOR_RED).
+&lt;/ul&gt;
+Only one of &lt;code&gt;value&lt;/code&gt; or &lt;code&gt;colorFactory&lt;/code&gt; may be defined.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="colorFactory" type="string">
+            <annotation>
+               <documentation>
+                  a class that implements &lt;code&gt;org.eclipse.ui.themes.IColorFactory&lt;/code&gt;.  This may be used instead of &lt;code&gt;value&lt;/code&gt; to specify the value of the color.  Please be advised that this should be used with caution - usage of this attribute will cause plugin activation.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.themes.IColorFactory"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="fontValue">
+      <annotation>
+         <documentation>
+            This element allows specification of a font value on a per-platform basis.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="os" type="string">
+            <annotation>
+               <documentation>
+                  an optional os string to enable choosing of font based on current OS. eg: win32,linux
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="ws" type="string">
+            <annotation>
+               <documentation>
+                  an optional os string to enable choosing of font based on current WS. eg: win32,gtk
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="value" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the font value.  This is in the form: &lt;code&gt;&lt;it&gt;fontname&lt;/it&gt;-&lt;it&gt;style&lt;/it&gt;-&lt;it&gt;height&lt;/it&gt;&lt;/code&gt; where &lt;code&gt;&lt;it&gt;fontname&lt;/it&gt;&lt;/code&gt; is the name of a font, &lt;code&gt;&lt;it&gt;style&lt;/it&gt;&lt;/code&gt; is a font style (one of &lt;code&gt;&quot;regular&quot;&lt;/code&gt;, &lt;code&gt;&quot;bold&quot;&lt;/code&gt;, &lt;code&gt;&quot;italic&quot;&lt;/code&gt;, or &lt;code&gt;&quot;bold italic&quot;&lt;/code&gt;) and &lt;code&gt;&lt;it&gt;height&lt;/it&gt;&lt;/code&gt; is an integer representing the font height.&lt;/p&gt;
+&lt;p&gt;Example: &lt;code&gt;Times New Roman-bold-36&lt;/code&gt;.&lt;/p&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
    <annotation>
       <appInfo>
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The workbench provides the font
-definitions for the text, dialog, banner, header and part title fonts.  it also supplies color definitions for the hyperlink, active hyperlink, error, active part (background gradient parts and forground) and the inactive part (background gradient parts and forground).  The workbench also provides data constants for the title gradient percentages (active and inactive) and the gradient directions (active and inactive).  The workbench does not provide any named themes.
+         The workbench provides the font definitions for the text, dialog, banner, header and part title fonts.  it also supplies color definitions for the hyperlink, active hyperlink, error, active part (background gradient parts and forground) and the inactive part (background gradient parts and forground).  The workbench also provides data constants for the title gradient percentages (active and inactive) and the gradient directions (active and inactive).  The workbench does not provide any named themes.
       </documentation>
    </annotation>
 
@@ -442,15 +529,20 @@ All rights reserved.   This program and the accompanying materials are made avai
 &lt;p&gt;
 &lt;pre&gt;
    &lt;extension point=&quot;org.eclipse.ui.themes&quot;&gt;
-   	  &lt;themeElementCategory
-   	  	id=&quot;com.xyz.ThemeCategory&quot;
-   	  	class=&quot;com.xyz.XYZPreview&quot;
-   	  	label=&quot;XYZ Elements&quot;/&gt;
+      &lt;themeElementCategory
+       id=&quot;com.xyz.ThemeCategory&quot;
+       class=&quot;com.xyz.XYZPreview&quot;
+       label=&quot;XYZ Elements&quot;/&gt;
       &lt;colorDefinition 
         id=&quot;com.xyz.Forground&quot;
         categoryId=&quot;com.xyz.ThemeCategory&quot;
         label=&quot;XYZ Foreground Color&quot;
         value=&quot;COLOR_BLACK&quot;&gt;
+        	&lt;!-- white should be used on GTK --&gt;
+        	&lt;colorValue
+        		value=&quot;COLOR_WHITE&quot;
+        		os=&quot;linux&quot;
+        		ws=&quot;gtk&quot;/&gt;
         &lt;description&gt;
         This color is used for the forground color of the XYZ plugin editor.
         &lt;/description&gt;
@@ -469,6 +561,11 @@ All rights reserved.   This program and the accompanying materials are made avai
           name=&quot;color2&quot;
           value=&quot;COLOR_BLUE&quot;/&gt;         
         &lt;/colorFactory&gt;
+        &lt;!-- black should be used on GTK --&gt;
+        &lt;colorValue
+        	value=&quot;COLOR_BLACK&quot;
+        	os=&quot;linux&quot;
+        	ws=&quot;gtk&quot;/&gt;
         &lt;description&gt;
         This color is used for the background color of the XYZ plugin editor.
         &lt;/description&gt;
