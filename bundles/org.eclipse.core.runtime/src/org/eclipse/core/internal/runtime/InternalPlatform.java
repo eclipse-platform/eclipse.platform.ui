@@ -37,7 +37,7 @@ public final class InternalPlatform {
 	
 	private static Set logListeners = new HashSet(5);
 	private static Map logs = new HashMap(5);
-	private static PlatformLogListener platformLog = null;
+	private static PlatformLogWriter platformLog = null;
 	private static PlatformMetaArea metaArea;
 	private static boolean initialized;
 	private static IPath location;
@@ -590,10 +590,10 @@ public static void loaderStartup(URL[] pluginPath, String locationString, Proper
 		System.out.println("OS: " + BootLoader.getOS() + " WS: " + BootLoader.getWS() + 
 			" NL: " + BootLoader.getNL() + " ARCH: " + BootLoader.getOSArch());
 	// can't install the log or log problems until after the platform has been initialized.
-	platformLog = new PlatformLogListener();
+	platformLog = new PlatformLogWriter(metaArea.getLogLocation().toFile());
 	addLogListener(platformLog);
 	if (consoleLogEnabled) {
-		consoleLog = new PlatformLogListener(System.out);
+		consoleLog = new PlatformLogWriter(System.out);
 		addLogListener(consoleLog);
 	}
 	if (!problems.isOK())
@@ -694,7 +694,9 @@ private static MultiStatus loadRegistry(URL[] pluginPath) {
 	return problems;
 }
 /**
- * @see Platform#log
+ * Notifies all listeners of the platform log.  This includes the console log, if 
+ * used, and the platform log file.  All Plugin log messages get funnelled
+ * through here as well.
  */
 public static void log(final IStatus status) {
 	assertInitialized();

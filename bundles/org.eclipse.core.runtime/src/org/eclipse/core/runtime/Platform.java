@@ -281,6 +281,22 @@ public static IPath getLocation() {
 	return InternalPlatform.getLocation();
 }
 /**
+ * Returns the location of the platform log file.  This file may contain information
+ * about errors that have previously occurred during this invocation of the Platform.
+ * 
+ * Note: it is very important that users of this method do not leave the log
+ * file open for extended periods of time.  Doing so may prevent others
+ * from writing to the log file, which could result in important error messages
+ * being lost.  It is strongly recommended that clients wanting to read the
+ * log file for extended periods should copy the log file contents elsewhere,
+ * and immediately close the original file.
+ * 
+ * @return the path of the log file on disk.
+ */
+public static IPath getLogFileLocation() {
+	return InternalPlatform.getMetaArea().getLogLocation();
+}
+/**
  * Returns the plug-in runtime object for the identified plug-in
  * or <code>null</code> if no such plug-in can be found.  If
  * the plug-in is defined but not yet activated, the plug-in will
@@ -371,8 +387,8 @@ public static void removeLogListener(ILogListener listener) {
  * supplied URL. This method is expected to be used with 
  * plug-in-relative URLs returned by IPluginDescriptor.
  * If the specified URL is not a plug-in-relative URL, it is returned
- * asis. If the specified URL is a plug-in-relative URL, it is
- * resolved to a URL using the actuall URL protocol
+ * as is. If the specified URL is a plug-in-relative URL, it is
+ * resolved to a URL using the actual URL protocol
  * (eg. file, http, etc)
  *
  * @param url original plug-in-relative URL.
