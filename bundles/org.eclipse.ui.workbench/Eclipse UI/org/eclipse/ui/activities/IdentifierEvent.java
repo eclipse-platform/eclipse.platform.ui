@@ -12,10 +12,7 @@
 package org.eclipse.ui.activities;
 
 /**
- * <p>
- * An instance of <code>IdentifierEvent</code> describes changes to an
- * instance of <code>IIdentifier</code>.
- * </p>
+ * An instance of this class describes changes to an instance of <code>IIdentifier</code>.
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
@@ -24,7 +21,6 @@ package org.eclipse.ui.activities;
  * </p>
  * 
  * @since 3.0
- * @see IIdentifier
  * @see IIdentifierListener#identifierChanged
  */
 public final class IdentifierEvent {
@@ -33,10 +29,14 @@ public final class IdentifierEvent {
 	private IIdentifier identifier;
 
 	/**
-	 * TODO javadoc
+	 * Creates a new instance of this class.
 	 * 
 	 * @param identifier
-	 * @param availableChanged
+	 *            the instance of the interface that changed.
+	 * @param activityIdsChanged
+	 *            true, iff the activityIds property changed.
+	 * @param enabledChanged
+	 *            true, iff the enabled property changed.
 	 */
 	public IdentifierEvent(
 		IIdentifier identifier,
@@ -51,24 +51,28 @@ public final class IdentifierEvent {
 	}
 
 	/**
-	 * Returns the instance of <code>IIdentifier</code> that has changed.
+	 * Returns the instance of the interface that changed.
 	 * 
-	 * @return the instance of <code>IIdentifier</code> that has changed.
-	 *         Guaranteed not to be <code>null</code>.
+	 * @return the instance of the interface that changed. Guaranteed not to be
+	 *         <code>null</code>.
 	 */
 	public IIdentifier getIdentifier() {
 		return identifier;
 	}
 
 	/**
-	 * TODO javadoc
+	 * Returns whether or not the activityIds property changed.
+	 * 
+	 * @return true, iff the activityIds property changed.
 	 */
 	public boolean hasActivityIdsChanged() {
 		return activityIdsChanged;
 	}
 
 	/**
-	 * TODO javadoc
+	 * Returns whether or not the enabled property changed.
+	 * 
+	 * @return true, iff the enabled property changed.
 	 */
 	public boolean hasEnabledChanged() {
 		return enabledChanged;

@@ -84,15 +84,20 @@ import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.activities.ActivityManagerFactory;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IMutableActivityManager;
-import org.eclipse.ui.activities.service.ActivityServiceFactory;
-import org.eclipse.ui.activities.service.IActivityService;
-import org.eclipse.ui.activities.service.ICompoundActivityService;
+import org.eclipse.ui.contexts.activationservice.ContextActivationServiceFactory;
+import org.eclipse.ui.contexts.activationservice.IContextActivationService;
+import org.eclipse.ui.contexts.activationservice.ICompoundContextActiviationService;
 import org.eclipse.ui.application.IWorkbenchPreferences;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.commands.CommandManagerFactory;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.IKeySequenceBinding;
+import org.eclipse.ui.keys.KeySequence;
+import org.eclipse.ui.keys.KeyStroke;
+import org.eclipse.ui.keys.KeySupport;
+import org.eclipse.ui.progress.IProgressService;
+
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.fonts.FontDefinition;
 import org.eclipse.ui.internal.keys.WorkbenchKeyboard;
@@ -101,10 +106,6 @@ import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.testing.WorkbenchTestable;
-import org.eclipse.ui.keys.KeySequence;
-import org.eclipse.ui.keys.KeyStroke;
-import org.eclipse.ui.keys.KeySupport;
-import org.eclipse.ui.progress.IProgressService;
 
 /**
  * The workbench class represents the top of the Eclipse user interface. Its
@@ -291,14 +292,14 @@ public final class Workbench implements IWorkbench {
 	private IMutableActivityManager activityManager;
 	/* TODO private */
 	ICommandManager commandManager;
-	private WorkbenchActivityService workbenchActivityService;
-	private final ICompoundActivityService compoundActivityService =
-		ActivityServiceFactory.getCompoundActivityService();
+	private WorkbenchContextActiviationService workbenchActivityService;
+	private final ICompoundContextActiviationService compoundActivityService =
+		ContextActivationServiceFactory.getCompoundContextActivationService();
 	// TODO reduce visibility
 	public WorkbenchActivitiesCommandsAndRoles workbenchActivitiesCommandsAndRoles =
 		new WorkbenchActivitiesCommandsAndRoles(this);
-	private final WorkbenchKeyboard keyboard = new WorkbenchKeyboard(this);
-	private WorkbenchActivityHelper activityHelper;
+	private WorkbenchKeyboard keyboard;
+	private ActivityPersistanceHelper activityHelper;
 
 	public IActivityManager getActivityManager() {
 		return activityManager;
@@ -312,11 +313,11 @@ public final class Workbench implements IWorkbench {
 		return commandManager;
 	}
 
-	public IActivityService getActivityService() {
+	public IContextActivationService getContextActivationService() {
 		return workbenchActivityService;
 	}
 
-	public ICompoundActivityService getCompoundActivityService() {
+	public ICompoundContextActiviationService getCompoundContextActivationService() {
 		return compoundActivityService;
 	}
 
@@ -329,7 +330,6 @@ public final class Workbench implements IWorkbench {
 			Listener keyFilter = keyboard.getKeyDownFilter();
 			currentDisplay.removeFilter(SWT.KeyDown, keyFilter);
 			currentDisplay.removeFilter(SWT.Traverse, keyFilter);
-			currentDisplay.removeFilter(SWT.KeyUp, keyboard.getKeyUpFilter());
 			keyFilterDisabled = true;
 		}
 	}
@@ -340,7 +340,6 @@ public final class Workbench implements IWorkbench {
 			Listener keyFilter = keyboard.getKeyDownFilter();
 			currentDisplay.addFilter(SWT.KeyDown, keyFilter);
 			currentDisplay.addFilter(SWT.Traverse, keyFilter);
-			currentDisplay.addFilter(SWT.KeyUp, keyboard.getKeyUpFilter());
 			keyFilterDisabled = false;
 		}
 	}
@@ -371,10 +370,15 @@ public final class Workbench implements IWorkbench {
 	 * @param window
 	 *            The window which just opened; should not be <code>null</code>.
 	 */
-	protected void fireWindowOpened(IWorkbenchWindow window) {
+	protected void fireWindowOpened(final IWorkbenchWindow window) {
 		Object list[] = windowListeners.getListeners();
 		for (int i = 0; i < list.length; i++) {
-			((IWindowListener) list[i]).windowOpened(window);
+			final IWindowListener l = (IWindowListener) list[i];
+			Platform.run(new SafeRunnable() {
+				public void run() {
+					l.windowOpened(window);
+				}
+			});
 		}
 	}
 	/**
@@ -383,7 +387,7 @@ public final class Workbench implements IWorkbench {
 	 * @param window
 	 *            The window which just closed; should not be <code>null</code>.
 	 */
-	protected void fireWindowClosed(IWorkbenchWindow window) {
+	protected void fireWindowClosed(final IWorkbenchWindow window) {
 		if (activatedWindow == window) {
 			// Do not hang onto it so it can be GC'ed
 			activatedWindow = null;
@@ -391,7 +395,12 @@ public final class Workbench implements IWorkbench {
 
 		Object list[] = windowListeners.getListeners();
 		for (int i = 0; i < list.length; i++) {
-			((IWindowListener) list[i]).windowClosed(window);
+			final IWindowListener l = (IWindowListener) list[i];
+			Platform.run(new SafeRunnable() {
+				public void run() {
+					l.windowClosed(window);
+				}
+			});
 		}
 	}
 	/**
@@ -400,10 +409,15 @@ public final class Workbench implements IWorkbench {
 	 * @param window
 	 *            The window which was just activated; should not be <code>null</code>.
 	 */
-	protected void fireWindowActivated(IWorkbenchWindow window) {
+	protected void fireWindowActivated(final IWorkbenchWindow window) {
 		Object list[] = windowListeners.getListeners();
 		for (int i = 0; i < list.length; i++) {
-			((IWindowListener) list[i]).windowActivated(window);
+			final IWindowListener l = (IWindowListener) list[i];
+			Platform.run(new SafeRunnable() {
+				public void run() {
+					l.windowActivated(window);
+				}
+			});
 		}
 	}
 	/**
@@ -412,10 +426,15 @@ public final class Workbench implements IWorkbench {
 	 * @param window
 	 *            The window which was just deactivated; should not be <code>null</code>.
 	 */
-	protected void fireWindowDeactivated(IWorkbenchWindow window) {
+	protected void fireWindowDeactivated(final IWorkbenchWindow window) {
 		Object list[] = windowListeners.getListeners();
 		for (int i = 0; i < list.length; i++) {
-			((IWindowListener) list[i]).windowDeactivated(window);
+			final IWindowListener l = (IWindowListener) list[i];
+			Platform.run(new SafeRunnable() {
+				public void run() {
+					l.windowDeactivated(window);
+				}
+			});
 		}
 	}
 
@@ -548,7 +567,13 @@ public final class Workbench implements IWorkbench {
 		windowManager.add(newWindow);
 
 		// Create the initial page.
-		newWindow.busyOpenPage(perspID, input);
+		try {
+			newWindow.busyOpenPage(perspID, input);
+		}
+		catch (WorkbenchException e) {
+			windowManager.remove(newWindow);
+			throw e;
+		}
 
 		// Open after opening page, to avoid flicker.
 		newWindow.open();
@@ -833,6 +858,7 @@ public final class Workbench implements IWorkbench {
 		});
 
 		workbenchActivitiesCommandsAndRoles.updateActiveActivityIds();
+		keyboard = new WorkbenchKeyboard(this);
 		Listener keyFilter = keyboard.getKeyDownFilter();
 		display.addFilter(SWT.Traverse, keyFilter);
 		display.addFilter(SWT.KeyDown, keyFilter);
@@ -850,7 +876,7 @@ public final class Workbench implements IWorkbench {
 		// create workbench window manager
 		windowManager = new WindowManager();
 
-		workbenchActivityService = new WorkbenchActivityService(this);
+		workbenchActivityService = new WorkbenchContextActiviationService(this);
 		workbenchActivityService.start();
 
 		// allow the workbench configurer to initialize
@@ -887,7 +913,7 @@ public final class Workbench implements IWorkbench {
 		}
 
 		// initialize activities
-		activityHelper = WorkbenchActivityHelper.getInstance();
+		activityHelper = ActivityPersistanceHelper.getInstance();
 
 		// attempt to restore a previous workbench state
 		try {

@@ -181,6 +181,7 @@ public class CoolItemToolBarManager extends ToolBarManager {
         for (int i = 0; i < getItems().length; i++) {
             if (!(getItems()[i] instanceof Separator) && getItems()[i].isVisible()) {
                 enabled = true;
+                break;
             }
         }
         

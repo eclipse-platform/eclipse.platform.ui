@@ -32,7 +32,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FormAttachment;
@@ -59,7 +58,6 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.jface.window.ColorSchemeService;
 
@@ -80,9 +78,9 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.activities.service.IActivityService;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
+import org.eclipse.ui.contexts.activationservice.IContextActivationService;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 import org.eclipse.ui.internal.commands.ActionHandler;
@@ -266,8 +264,8 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			getWindowConfigurer().getActionBarConfigurer(),
 			FILL_ALL_ACTION_BARS);
 
-		workbenchWindowActivityService = new WorkbenchWindowActivityService(this);
-		workbenchWindowActivityService.start();
+		workbenchWindowContextActivationService = new WorkbenchWindowContextActivationService(this);
+		workbenchWindowContextActivationService.start();
 	}
 
 	/**
@@ -286,11 +284,11 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		return SWT.FLAT | SWT.WRAP | SWT.HORIZONTAL;
 	}
 
-	private WorkbenchWindowActivityService workbenchWindowActivityService;
+	private WorkbenchWindowContextActivationService workbenchWindowContextActivationService;
 
-	public IActivityService getActivityService() {
-		return workbenchWindowActivityService;
-	}
+	public IContextActivationService getContextActivationService() {
+		return workbenchWindowContextActivationService;
+	}	
 
 	private SortedMap actionsForActionSets = new TreeMap();
 	private SortedMap actionsForGlobalActions = new TreeMap();

@@ -11,24 +11,25 @@
 
 package org.eclipse.ui.internal.util;
 
-import org.eclipse.jface.action.ContributionItem;
-import org.eclipse.jface.action.IContributionManager;
-import org.eclipse.jface.action.StatusLineLayoutData;
-import org.eclipse.jface.resource.JFaceColors;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
+
+import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.IContributionManager;
+import org.eclipse.jface.action.StatusLineLayoutData;
+import org.eclipse.jface.resource.JFaceColors;
 
 /**
  * @issue needs Javadoc
  */
 public class StatusLineContributionItem extends ContributionItem {
 
-	public final static int DEFAULT_CHAR_WIDTH = 40; 
-	
+	public final static int DEFAULT_CHAR_WIDTH = 40;
+
 	private int charWidth;
 	private CLabel label;
 	private String text = Util.ZERO_LENGTH_STRING;
@@ -44,15 +45,15 @@ public class StatusLineContributionItem extends ContributionItem {
 		setVisible(false); // no text to start with
 	}
 
-	public void fill(Composite parent) {	
-		label = new CLabel(parent, SWT.NONE);//SWT.SHADOW_IN);
+	public void fill(Composite parent) {
+		label = new CLabel(parent, SWT.NONE); //SWT.SHADOW_IN);
 		StatusLineLayoutData statusLineLayoutData = new StatusLineLayoutData();
 		Color[] colors = new Color[2];
 		colors[0] = parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
 		colors[1] = label.getBackground();
-		int[] gradient = new int[] {JFaceColors.STATUS_PERCENT};
+		int[] gradient = new int[] { JFaceColors.STATUS_PERCENT };
 		label.setBackground(colors, gradient);
-		
+
 		if (widthHint < 0) {
 			GC gc = new GC(parent);
 			gc.setFont(parent.getFont());
@@ -65,6 +66,20 @@ public class StatusLineContributionItem extends ContributionItem {
 		label.setText(text);
 	}
 
+	/**
+	 * An accessor for the current location of this status line contribution
+	 * item -- relative to the display.
+	 * 
+	 * @return The current location of this status line; <code>null</code> if
+	 *         not yet initialized.
+	 */
+	public Point getDisplayLocation() {
+		if ((label != null)) {
+			return label.getLocation();
+		}
+
+		return null;
+	}
 	public String getText() {
 		return text;
 	}
@@ -74,15 +89,15 @@ public class StatusLineContributionItem extends ContributionItem {
 			throw new NullPointerException();
 
 		this.text = text;
-		
+
 		if (label != null && !label.isDisposed())
 			label.setText(this.text);
-		
+
 		if (this.text.length() == 0) {
 			if (isVisible()) {
 				setVisible(false);
 				IContributionManager contributionManager = getParent();
-				
+
 				if (contributionManager != null)
 					contributionManager.update(true);
 			}
@@ -90,7 +105,7 @@ public class StatusLineContributionItem extends ContributionItem {
 			if (!isVisible()) {
 				setVisible(true);
 				IContributionManager contributionManager = getParent();
-				
+
 				if (contributionManager != null)
 					contributionManager.update(true);
 			}

@@ -34,12 +34,12 @@ import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IActionDelegateWithEvent;
 import org.eclipse.ui.INullSelectionListener;
+import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.SelectionEnabler;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.misc.StatusUtil;
-import org.eclipse.ui.internal.registry.IPluginContribution;
 
 /**
  * A PluginAction is a proxy for an action extension.
@@ -358,22 +358,23 @@ public abstract class PluginAction extends Action
 		return configElement;
 	}
     
+
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.registry.IPluginContribution#fromPlugin()
+	 * @see org.eclipse.ui.activities.support.IPluginContribution#fromPlugin()
 	 */
 	public boolean fromPlugin() {
 		return true;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.registry.IPluginContribution#getLocalId()
+	 * @see org.eclipse.ui.activities.support.IPluginContribution#getLocalId()
 	 */
 	public String getLocalId() {		
 		return getId();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.registry.IPluginContribution#getPluginId()
+	 * @see org.eclipse.ui.activities.support.IPluginContribution#getPluginId()
 	 */
 	public String getPluginId() {		
 		return configElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier();

@@ -12,10 +12,8 @@
 package org.eclipse.ui.activities;
 
 /**
- * <p>
- * An instance of <code>ICategoryActivityBinding</code> represents a binding
- * between a category and an activity.
- * </p>
+ * An instance of this interface represents a binding between a category and an
+ * activity.
  * <p>
  * This interface is not intended to be extended or implemented by clients.
  * </p>

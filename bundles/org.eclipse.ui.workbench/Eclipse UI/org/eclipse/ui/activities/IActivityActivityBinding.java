@@ -12,10 +12,8 @@
 package org.eclipse.ui.activities;
 
 /**
- * <p>
- * An instance of <code>IActivityActivityBinding</code> represents a binding
- * between an activity and a activity.
- * </p>
+ * An instance of this interface represents a binding between an activity and
+ * an activity.
  * <p>
  * This interface is not intended to be extended or implemented by clients.
  * </p>
@@ -24,7 +22,7 @@ package org.eclipse.ui.activities;
  * </p>
  * 
  * @since 3.0
- * @see org.eclipse.ui.activities.IActivity
+ * @see IActivity
  */
 public interface IActivityActivityBinding extends Comparable {
 

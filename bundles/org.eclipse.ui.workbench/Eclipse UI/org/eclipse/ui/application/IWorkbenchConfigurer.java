@@ -59,6 +59,9 @@ public interface IWorkbenchConfigurer {
 	 * Returns the workbench window manager.
 	 *
 	 * @return the workbench window manager
+	 * 
+	 * @issue IWorkbenchWindow is implemented using JFace's Window (and therefore uses WindowManager), 
+	 *   but this is an implementation detail
 	 */
 	public WindowManager getWorkbenchWindowManager();
 	

@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.swt.widgets.Composite;
@@ -20,11 +23,13 @@ import org.eclipse.jface.wizard.Wizard;
 
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.IActivityManager;
+import org.eclipse.ui.activities.IIdentifier;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
-import org.eclipse.ui.internal.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
@@ -89,8 +94,13 @@ public class ImportWizard extends Wizard {
 	public boolean performFinish() {
 		SelectionPage first = (SelectionPage) getPages()[0];
 		first.saveWidgetValues();
-        WorkbenchActivityHelper.enableActivities(
-                first.getSelectedNode().getWizard().getClass().getName());
+        
+        IActivityManager activityManager = PlatformUI.getWorkbench().getActivityManager();
+		IIdentifier identifier = activityManager.getIdentifier(first.getSelectedNode().getWizard().getClass().getName());
+        Set activities = new HashSet(activityManager .getEnabledActivityIds());
+        if (activities.addAll(identifier.getActivityIds())) {
+        	PlatformUI.getWorkbench().setEnabledActivityIds(activities);
+        }
 		return true;
 	}
 }

@@ -39,29 +39,28 @@ public interface IActionBarConfigurer {
 	public IMenuManager getMenuManager();
 		
 	/**
-	 * Adds a tool bar item with the given id to the tool bar of a workbench
-	 * window. The new tool bar item is added after any existing ones.
+	 * Adds a tool bar with the given id to the tool bars of a workbench
+	 * window. The new tool bar is added after any existing ones.
 	 * 
 	 * @param id the id assigned to this tool bar
-	 * @return the tool bar manager for the new tool bar item
+	 * @return the tool bar manager for the new tool bar
 	 */
 	public IToolBarManager addToolBar(String id);
 	
 	/**
-	 * Removes the tool bar item with the given id from the tool bar of a
-	 * workbench window. Ignored if there is no tool bar item with the given id. 
+	 * Removes the tool bar with the given id from the tool bar of a
+	 * workbench window. Ignored if there is no tool bar with the given id. 
 	 * 
 	 * @param id the tool bar id
 	 */
 	public void removeToolBar(String id);
 	
 	/**
-	 * Returns the tool bar manager for the tool bar item with the given id
-	 * to the tool bar of a workbench window. The new tool bar item is added
-	 * after any existing ones.
+	 * Returns the tool bar manager for the tool bar with the given id,
+	 * or <code>null</code> if there is no such tool bar.
 	 * 
 	 * @param id the id of the tool bar item
-	 * @return the tool bar manager for the tool bar item with the given id
+	 * @return the tool bar manager or <code>null</code>
 	 */
 	public IToolBarManager getToolBar(String id);
 
@@ -92,7 +91,7 @@ public interface IActionBarConfigurer {
 	public void registerGlobalAction(IAction action);
 	
 	/**
-	 * Adds a menu item to the tool bar of a workbench menu.
+	 * Adds a menu item to the context menu for the tool bars of a workbench window.
 	 * 
 	 * @param menuItem the action contribution item to add to the menu
 	 */

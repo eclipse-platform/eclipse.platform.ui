@@ -18,8 +18,14 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.program.Program;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.IEditorActionBarContributor;
+import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPluginContribution;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.ProgramImageDescriptor;
 
 /**
@@ -390,21 +396,21 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable, 
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.registry.IPluginContribution#fromPlugin()
+	 * @see org.eclipse.ui.activities.support.IPluginContribution#fromPlugin()
 	 */
 	public boolean fromPlugin() {
 		return configurationElement != null;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.registry.IPluginContribution#getLocalId()
+	 * @see org.eclipse.ui.activities.support.IPluginContribution#getLocalId()
 	 */
 	public String getLocalId() {
 		return getId();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.registry.IPluginContribution#getPluginId()
+	 * @see org.eclipse.ui.activities.support.IPluginContribution#getPluginId()
 	 */
 	public String getPluginId() {		
 		return pluginIdentifier;

@@ -48,8 +48,8 @@ public final class MutableActivityManager
 		Collection visited = new HashSet();
 
 		while (id != null && !visited.contains(id)) {
-			IActivityDefinition activityDefinition =
-				(IActivityDefinition) activityDefinitionsById.get(id);
+			ActivityDefinition activityDefinition =
+				(ActivityDefinition) activityDefinitionsById.get(id);
 			visited.add(id);
 
 			if (activityDefinition != null
@@ -175,7 +175,7 @@ public final class MutableActivityManager
 			getRequiredActivityIds(childActivityIds, requiredActivityIds);
 		}
 	}
-	
+
 	public boolean isMatch(String string, Set activityIds) {
 		return match(string, activityIds);
 	}
@@ -253,8 +253,8 @@ public final class MutableActivityManager
 		for (Iterator iterator = activityDefinitionsById.values().iterator();
 			iterator.hasNext();
 			) {
-			IActivityDefinition activityDefinition =
-				(IActivityDefinition) iterator.next();
+			ActivityDefinition activityDefinition =
+				(ActivityDefinition) iterator.next();
 			String name = activityDefinition.getName();
 
 			if (name == null || name.length() == 0)
@@ -280,8 +280,8 @@ public final class MutableActivityManager
 		for (Iterator iterator = categoryDefinitionsById.values().iterator();
 			iterator.hasNext();
 			) {
-			ICategoryDefinition categoryDefinition =
-				(ICategoryDefinition) iterator.next();
+			CategoryDefinition categoryDefinition =
+				(CategoryDefinition) iterator.next();
 			String name = categoryDefinition.getName();
 
 			if (name == null || name.length() == 0)
@@ -312,8 +312,8 @@ public final class MutableActivityManager
 						activityActivityBindingDefinitions.iterator();
 						iterator2.hasNext();
 						) {
-						IActivityActivityBindingDefinition activityActivityBindingDefinition =
-							(IActivityActivityBindingDefinition) iterator2
+						ActivityActivityBindingDefinition activityActivityBindingDefinition =
+							(ActivityActivityBindingDefinition) iterator2
 								.next();
 						String childActivityId =
 							activityActivityBindingDefinition
@@ -367,9 +367,8 @@ public final class MutableActivityManager
 						activityPatternBindingDefinitions.iterator();
 						iterator2.hasNext();
 						) {
-						IActivityPatternBindingDefinition activityPatternBindingDefinition =
-							(IActivityPatternBindingDefinition) iterator2
-								.next();
+						ActivityPatternBindingDefinition activityPatternBindingDefinition =
+							(ActivityPatternBindingDefinition) iterator2.next();
 						String pattern =
 							activityPatternBindingDefinition.getPattern();
 
@@ -419,8 +418,8 @@ public final class MutableActivityManager
 						categoryActivityBindingDefinitions.iterator();
 						iterator2.hasNext();
 						) {
-						ICategoryActivityBindingDefinition categoryActivityBindingDefinition =
-							(ICategoryActivityBindingDefinition) iterator2
+						CategoryActivityBindingDefinition categoryActivityBindingDefinition =
+							(CategoryActivityBindingDefinition) iterator2
 								.next();
 						String activityId =
 							categoryActivityBindingDefinition.getActivityId();
@@ -573,15 +572,10 @@ public final class MutableActivityManager
 				activityPatternBindings != null
 					? activityPatternBindings
 					: Collections.EMPTY_SET);
-		IActivityDefinition activityDefinition =
-			(IActivityDefinition) activityDefinitionsById.get(activity.getId());
+		ActivityDefinition activityDefinition =
+			(ActivityDefinition) activityDefinitionsById.get(activity.getId());
 		boolean definedChanged =
 			activity.setDefined(activityDefinition != null);
-		boolean descriptionChanged =
-			activity.setDescription(
-				activityDefinition != null
-					? activityDefinition.getDescription()
-					: null);
 		boolean enabledChanged =
 			activity.setEnabled(enabledActivityIds.contains(activity.getId()));
 		boolean nameChanged =
@@ -598,7 +592,6 @@ public final class MutableActivityManager
 		if (activityActivityBindingsChanged
 			|| activityPatternBindingsChanged
 			|| definedChanged
-			|| descriptionChanged
 			|| enabledChanged
 			|| nameChanged
 			|| parentIdChanged)
@@ -607,7 +600,6 @@ public final class MutableActivityManager
 				activityActivityBindingsChanged,
 				activityPatternBindingsChanged,
 				definedChanged,
-				descriptionChanged,
 				enabledChanged,
 				nameChanged,
 				parentIdChanged);
@@ -641,30 +633,21 @@ public final class MutableActivityManager
 				categoryActivityBindings != null
 					? categoryActivityBindings
 					: Collections.EMPTY_SET);
-		ICategoryDefinition categoryDefinition =
-			(ICategoryDefinition) categoryDefinitionsById.get(category.getId());
+		CategoryDefinition categoryDefinition =
+			(CategoryDefinition) categoryDefinitionsById.get(category.getId());
 		boolean definedChanged =
 			category.setDefined(categoryDefinition != null);
-		boolean descriptionChanged =
-			category.setDescription(
-				categoryDefinition != null
-					? categoryDefinition.getDescription()
-					: null);
 		boolean nameChanged =
 			category.setName(
 				categoryDefinition != null
 					? categoryDefinition.getName()
 					: null);
 
-		if (categoryActivityBindingsChanged
-			|| definedChanged
-			|| descriptionChanged
-			|| nameChanged)
+		if (categoryActivityBindingsChanged || definedChanged || nameChanged)
 			return new CategoryEvent(
 				category,
 				categoryActivityBindingsChanged,
 				definedChanged,
-				descriptionChanged,
 				nameChanged);
 		else
 			return null;

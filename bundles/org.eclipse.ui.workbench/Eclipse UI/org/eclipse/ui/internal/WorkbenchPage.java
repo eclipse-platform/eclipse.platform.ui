@@ -72,8 +72,8 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.activities.service.ActivityServiceFactory;
-import org.eclipse.ui.activities.service.ICompoundActivityService;
+import org.eclipse.ui.contexts.activationservice.ContextActivationServiceFactory;
+import org.eclipse.ui.contexts.activationservice.ICompoundContextActiviationService;
 import org.eclipse.ui.commands.IActionService;
 import org.eclipse.ui.contexts.IContextActivationService;
 import org.eclipse.ui.internal.commands.ActionService;
@@ -383,9 +383,9 @@ public WorkbenchPage(WorkbenchWindow w, IAdaptable input)
 	init(w, null, input);
 }
 
-private final ICompoundActivityService compoundActivityService = ActivityServiceFactory.getCompoundActivityService();
+private final ICompoundContextActiviationService compoundActivityService = ContextActivationServiceFactory.getCompoundContextActivationService();
 
-public ICompoundActivityService getCompoundActivityService() {
+public ICompoundContextActiviationService getCompoundContextActivationService() {
 	Perspective perspective = getActivePerspective();
 	
 	if (perspective != null)

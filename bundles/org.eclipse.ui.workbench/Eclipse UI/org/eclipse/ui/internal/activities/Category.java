@@ -31,7 +31,6 @@ final class Category implements ICategory {
 	private transient ICategoryActivityBinding[] categoryActivityBindingsAsArray;
 	private List categoryListeners;
 	private boolean defined;
-	private String description;
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
 	private String id;
@@ -69,14 +68,10 @@ final class Category implements ICategory {
 			compareTo = Util.compare(defined, castedObject.defined);
 
 			if (compareTo == 0) {
-				compareTo = Util.compare(description, castedObject.description);
+				compareTo = Util.compare(id, castedObject.id);
 
-				if (compareTo == 0) {
-					compareTo = Util.compare(id, castedObject.id);
-
-					if (compareTo == 0)
-						compareTo = Util.compare(name, castedObject.name);
-				}
+				if (compareTo == 0)
+					compareTo = Util.compare(name, castedObject.name);
 			}
 		}
 
@@ -94,7 +89,6 @@ final class Category implements ICategory {
 				categoryActivityBindings,
 				castedObject.categoryActivityBindings);
 		equals &= Util.equals(defined, castedObject.defined);
-		equals &= Util.equals(description, castedObject.description);
 		equals &= Util.equals(id, castedObject.id);
 		equals &= Util.equals(name, castedObject.name);
 		return equals;
@@ -112,13 +106,6 @@ final class Category implements ICategory {
 
 	public Set getCategoryActivityBindings() {
 		return categoryActivityBindings;
-	}
-
-	public String getDescription() throws NotDefinedException {
-		if (!defined)
-			throw new NotDefinedException();
-
-		return description;
 	}
 
 	public String getId() {
@@ -139,7 +126,6 @@ final class Category implements ICategory {
 				hashCode * HASH_FACTOR
 					+ Util.hashCode(categoryActivityBindings);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(defined);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(description);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
 			hashCodeComputed = true;
@@ -201,18 +187,6 @@ final class Category implements ICategory {
 		return false;
 	}
 
-	boolean setDescription(String description) {
-		if (!Util.equals(description, this.description)) {
-			this.description = description;
-			hashCodeComputed = false;
-			hashCode = 0;
-			string = null;
-			return true;
-		}
-
-		return false;
-	}
-
 	boolean setName(String name) {
 		if (!Util.equals(name, this.name)) {
 			this.name = name;
@@ -232,8 +206,6 @@ final class Category implements ICategory {
 			stringBuffer.append(categoryActivityBindings);
 			stringBuffer.append(',');
 			stringBuffer.append(defined);
-			stringBuffer.append(',');
-			stringBuffer.append(description);
 			stringBuffer.append(',');
 			stringBuffer.append(id);
 			stringBuffer.append(',');

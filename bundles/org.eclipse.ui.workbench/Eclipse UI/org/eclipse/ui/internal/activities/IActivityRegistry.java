@@ -17,10 +17,10 @@ public interface IActivityRegistry {
 
 	void addActivityRegistryListener(IActivityRegistryListener activityRegistryListener);
 
+	List getActivityActivityBindingDefinitions();
+
 	List getActivityDefinitions();
 
-	List getActivityActivityBindingDefinitions();
-	
 	List getActivityPatternBindingDefinitions();
 
 	List getCategoryActivityBindingDefinitions();

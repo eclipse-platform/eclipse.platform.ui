@@ -12,10 +12,7 @@
 package org.eclipse.ui.activities;
 
 /**
- * <p>
- * An instance of <code>CategoryEvent</code> describes changes to an instance
- * of <code>ICategory</code>.
- * </p>
+ * An instance of this class describes changes to an instance of <code>ICategory</code>.
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
@@ -24,31 +21,30 @@ package org.eclipse.ui.activities;
  * </p>
  * 
  * @since 3.0
- * @see ICategory
  * @see ICategoryListener#categoryChanged
  */
 public final class CategoryEvent {
 	private ICategory category;
-
 	private boolean categoryActivityBindingsChanged;
 	private boolean definedChanged;
-	private boolean descriptionChanged;
 	private boolean nameChanged;
 
 	/**
-	 * TODO javadoc
+	 * Creates a new instance of this class.
 	 * 
 	 * @param category
+	 *            the instance of the interface that changed.
 	 * @param categoryActivityBindingsChanged
+	 *            true, iff the categoryActivityBindings property changed.
 	 * @param definedChanged
-	 * @param descriptionChanged
+	 *            true, iff the defined property changed.
 	 * @param nameChanged
+	 *            true, iff the name property changed.
 	 */
 	public CategoryEvent(
 		ICategory category,
 		boolean categoryActivityBindingsChanged,
 		boolean definedChanged,
-		boolean descriptionChanged,
 		boolean nameChanged) {
 		if (category == null)
 			throw new NullPointerException();
@@ -56,43 +52,41 @@ public final class CategoryEvent {
 		this.category = category;
 		this.categoryActivityBindingsChanged = categoryActivityBindingsChanged;
 		this.definedChanged = definedChanged;
-		this.descriptionChanged = descriptionChanged;
 		this.nameChanged = nameChanged;
 	}
 
 	/**
-	 * Returns the instance of <code>ICategory</code> that has changed.
+	 * Returns the instance of the interface that changed.
 	 * 
-	 * @return the instance of <code>ICategory</code> that has changed.
-	 *         Guaranteed not to be <code>null</code>.
+	 * @return the instance of the interface that changed. Guaranteed not to be
+	 *         <code>null</code>.
 	 */
 	public ICategory getCategory() {
 		return category;
 	}
 
 	/**
-	 * TODO javadoc
+	 * Returns whether or not the defined property changed.
+	 * 
+	 * @return true, iff the defined property changed.
 	 */
 	public boolean hasDefinedChanged() {
 		return definedChanged;
 	}
 
 	/**
-	 * TODO javadoc
-	 */
-	public boolean hasDescriptionChanged() {
-		return descriptionChanged;
-	}
-
-	/**
-	 * TODO javadoc
+	 * Returns whether or not the name property changed.
+	 * 
+	 * @return true, iff the name property changed.
 	 */
 	public boolean hasNameChanged() {
 		return nameChanged;
 	}
 
 	/**
-	 * TODO javadoc
+	 * Returns whether or not the categoryActivityBindings property changed.
+	 * 
+	 * @return true, iff the categoryActivityBindings property changed.
 	 */
 	public boolean haveCategoryActivityBindingsChanged() {
 		return categoryActivityBindingsChanged;
