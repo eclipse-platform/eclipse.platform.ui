@@ -173,7 +173,8 @@ public class IJobManagerTest extends TestCase {
 		final List done = Collections.synchronizedList(new ArrayList());
 		IJobChangeListener listener = new JobChangeAdapter() {
 			public void done(IJobChangeEvent event) {
-				done.add(event.getJob());
+				if (event.getJob() instanceof TestJob)
+					done.add(event.getJob());
 			}
 		};
 		int[] sleepTimes = new int[] { 50, 250, 500, 800, 1000, 1500 };
