@@ -10,17 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.performance;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.URL;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.test.performance.Performance;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
@@ -28,7 +21,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.tests.TestPlugin;
 
 /**
  * Test perspective switching.
@@ -53,41 +45,28 @@ public class PerspectiveSwitchTest extends BasicPerformanceTest {
         // Get the two perspectives to switch between.
         final IPerspectiveRegistry registry = WorkbenchPlugin.getDefault()
                 .getPerspectiveRegistry();
-        final IPerspectiveDescriptor javaPerspective = registry
-                .findPerspectiveWithId("org.eclipse.jdt.ui.JavaPerspective");
-        final IPerspectiveDescriptor resourcePerspective = registry
-                .findPerspectiveWithId("org.eclipse.ui.resourcePerspective");
-
-        /*
-         * Open a workbench window on the first perspective. Make it the Java
-         * perspective to force plug-in loading.
-         */
-        IProject testProject = ResourcesPlugin.getWorkspace().getRoot().getProject(UIPerformanceTestSetup.PROJECT_NAME);
-
-        // Create a test java file.
-        TestPlugin plugin = TestPlugin.getDefault();
-        URL fullPathString = plugin.getDescriptor().find(
-                new Path("data/PerspectiveSwitchSourceCode.txt"));
-        IPath path = new Path(fullPathString.getPath());
-        File file = path.toFile();
-        FileInputStream inputStream = new FileInputStream(file);
-        IFile javaFile = testProject.getFile("Util1.java");
-        javaFile.create(inputStream, true, null);	    
+        final IPerspectiveDescriptor perspective1 = registry
+                .findPerspectiveWithId("org.eclipse.ui.tests.dnd.dragdrop");
+        final IPerspectiveDescriptor perspective2 = registry
+                .findPerspectiveWithId("org.eclipse.ui.tests.fastview_perspective");
 
         // Open the file.
         IWorkbenchPage activePage = fWorkbench.getActiveWorkbenchWindow().getActivePage();
-        IDE.openEditor(activePage, javaFile, true);
+        IFile mock3File = getProject().getFile(UIPerformanceTestSetup.MOCK3_FILE);
+        assertTrue(mock3File.exists());
+
+        IDE.openEditor(activePage, mock3File, true);
 
         // Open both perspective outside the loop so as not to include
-        // the initial time to open, just switching.
-        activePage.setPerspective(resourcePerspective);
-        activePage.setPerspective(javaPerspective);
+        // the initial time to open, just switching.        
+        activePage.setPerspective(perspective1);
+        activePage.setPerspective(perspective2);
 
         for (int i = 0; i < 20; i++) {
             performanceMeter.start();
-            activePage.setPerspective(resourcePerspective);
+            activePage.setPerspective(perspective1);
             processEvents();
-            activePage.setPerspective(javaPerspective);
+            activePage.setPerspective(perspective2);
             processEvents();
             performanceMeter.stop();
             try {

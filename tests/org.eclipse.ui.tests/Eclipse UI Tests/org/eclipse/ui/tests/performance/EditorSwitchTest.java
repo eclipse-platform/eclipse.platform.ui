@@ -10,23 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.performance;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.test.performance.Performance;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.tests.TestPlugin;
 
 /**
  * Test editor switching.
@@ -46,47 +34,25 @@ public class EditorSwitchTest extends BasicPerformanceTest {
     /**
      * Test perspective switching performance. This test always fails.
      */
-    public void testEditorSwitching() throws CoreException, IOException,
-            WorkbenchException {
-
-        /*
-         * Open a workbench window on the first perspective. Make it the Java
-         * perspective to force plug-in loading.
-         */
-//        final Display display = fWorkbench.getDisplay();
-//        final IWorkbenchWindow window = fWorkbench.openWorkbenchWindow(
-//                "org.eclipse.jdt.ui.JavaPerspective", null);
-
-        IProject testProject = ResourcesPlugin.getWorkspace().getRoot().getProject(UIPerformanceTestSetup.PROJECT_NAME);
-
-        // Create a test java file.
-        TestPlugin plugin = TestPlugin.getDefault();
-        URL fullPathString = plugin.getDescriptor().find(
-                new Path("data/PerspectiveSwitchSourceCode.txt"));
-        IPath path = new Path(fullPathString.getPath());
-        File file = path.toFile();
-        InputStream inputStream = new FileInputStream(file);
-        IFile javaFile = testProject.getFile("Util2.java");
-        javaFile.create(inputStream, true, null);
-
-        // Create a test text file.
-        inputStream = new FileInputStream(file);
-        IFile textFile = testProject.getFile("A.txt");
-        textFile.create(inputStream, true, null);
-        inputStream.close();
+    public void testEditorSwitching() throws CoreException {
 
         // Open both files outside the loop so as not to include
         // the initial time to open, just switching.
         IWorkbenchPage activePage = fWorkbench.getActiveWorkbenchWindow().getActivePage();
-        IDE.openEditor(activePage, textFile, true);
-        IDE.openEditor(activePage, javaFile, true);
+        IFile mock3File = getProject().getFile(UIPerformanceTestSetup.MOCK3_FILE);
+        assertTrue(mock3File.exists());
+        IFile multiFile = getProject().getFile(UIPerformanceTestSetup.MULTI_FILE);
+        assertTrue(multiFile.exists());
+        IDE.openEditor(activePage, mock3File, true);
+        IDE.openEditor(activePage, multiFile, true);
+        processEvents();
 
         // Switch between the two editors one hundred times.
         for (int i = 0; i < 20; i++) {
             performanceMeter.start();
-            IDE.openEditor(activePage, textFile, true);
+            IDE.openEditor(activePage, mock3File, true);
             processEvents();
-            IDE.openEditor(activePage, javaFile, true);
+            IDE.openEditor(activePage, multiFile, true);
             processEvents();
             performanceMeter.stop();
             try {
