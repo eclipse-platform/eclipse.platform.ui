@@ -17,9 +17,11 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 import org.eclipse.ui.tests.util.ArrayUtil;
 import org.eclipse.ui.tests.util.UITestCase;
@@ -127,6 +129,14 @@ public class IWorkingSetManagerTest extends UITestCase {
 		workingSet2 = fWorkingSetManager.createWorkingSet("", new IAdaptable[] {});
 		assertEquals("", workingSet2.getName());
 		assertTrue(ArrayUtil.equals(new IAdaptable[] {}, workingSet2.getElements()));
+	}
+	public void testCreateWorkingSetFromMemento() throws Throwable {
+		IWorkingSet workingSet2 = fWorkingSetManager.createWorkingSet(WORKING_SET_NAME_2, new IAdaptable[] {fWorkspace.getRoot()});
+		IMemento memento = XMLMemento.createWriteRoot("savedState"); //$NON-NLS-1$
+		workingSet2.saveState(memento);
+		IWorkingSet restoredWorkingSet2 = fWorkingSetManager.createWorkingSet(memento);
+		assertEquals(WORKING_SET_NAME_2, restoredWorkingSet2.getName());
+		assertTrue(ArrayUtil.equals(new IAdaptable[] {fWorkspace.getRoot()}, restoredWorkingSet2.getElements()));
 	}
 	public void testCreateWorkingSetSelectionDialog() throws Throwable {
 		IWorkbenchWindow window = openTestWindow();
