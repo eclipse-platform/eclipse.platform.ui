@@ -491,7 +491,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				try {
-					monitor.beginTask(UpdateUI.getString("SitePage.connecting"), 3); //$NON-NLS-1$
+					monitor.beginTask("", 3); //$NON-NLS-1$
 					monitor.worked(1);
 
 					if (connect)
