@@ -114,7 +114,7 @@ public class JarVerifier extends Verifier {
 				jarFile = jarReference.asFile();
 				if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_INSTALL)
 					UpdateManagerPlugin.getPlugin().debug("Attempting to read JAR file:"+jarFile);
-				
+			
 				// # of entries
 				JarFile jar = new JarFile(jarFile);
 				entries = jar.size();

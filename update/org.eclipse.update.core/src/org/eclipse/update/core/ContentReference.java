@@ -165,8 +165,10 @@ public class ContentReference {
 		if (file != null)
 			return file;
 			
-		if (url!=null && FILE_URL_PROTOCOL.equals(url.getProtocol())) 
-			return new File(url.getFile());
+		if (url!=null && FILE_URL_PROTOCOL.equals(url.getProtocol())) {
+			File result = new File(url.getFile());
+			if (result.exists()) return result;
+		}
 			
 		throw new IOException(Policy.bind("ContentReference.UnableToReturnReferenceAsFile",this.toString())); //$NON-NLS-1$ 
 	}	

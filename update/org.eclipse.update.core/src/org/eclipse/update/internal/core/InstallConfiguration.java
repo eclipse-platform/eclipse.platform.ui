@@ -322,7 +322,7 @@ public class InstallConfiguration
 					// get the URL of the plugin that corresponds to the feature (pluginid = featureid)					
 					IPluginEntry[] entries = feature.getPluginEntries();
 					URL url = null;
-					for (int k = 0; k < configuredFeaturesRef.length; k++) {
+					for (int k = 0; k < entries.length; k++) {
 						if (id.equalsIgnoreCase(entries[k].getVersionedIdentifier().getIdentifier())) {
 							url = getRuntimeConfigurationURL(entries[k], cSite);
 						}
@@ -563,7 +563,11 @@ public class InstallConfiguration
 			URL fullURL = siteContentProvider.getArchiveReference(pluginPathID);
 			URL rootURL = Platform.resolve(new URL(rootString));
 			String relativeString = UpdateManagerUtils.getURLAsString(rootURL, fullURL);
-			return new URL(new URL(rootString), relativeString);
+			URL result = new URL(new URL(rootString), relativeString);
+			// DEBUG:
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION)
+				UpdateManagerPlugin.getPlugin().debug("getRuntimeCOnfiguration Full URL:"+fullURL+" Relative:"+relativeString);
+			return result;
 		} catch (IOException e) {
 			throw Utilities.newCoreException(
 				Policy.bind(

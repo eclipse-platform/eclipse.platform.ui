@@ -130,6 +130,7 @@ public class UpdateManagerUtils {
 							return url.toString();
 						} else {
 							String returnString = fullString.substring(relativeRootString.length() + 1);
+							if (urlFile.isDirectory()) returnString+=File.separator; // we lost the last slash when tranforming in File
 							returnString = returnString.replace(File.separatorChar, '/');
 							return returnString;
 						}
