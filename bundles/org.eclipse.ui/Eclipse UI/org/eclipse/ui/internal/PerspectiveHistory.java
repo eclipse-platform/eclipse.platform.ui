@@ -1,5 +1,6 @@
 package org.eclipse.ui.internal;
 
+import java.text.Collator;
 import java.util.*;
 import org.eclipse.ui.*;
 
@@ -14,10 +15,12 @@ public class PerspectiveHistory {
 	private IPerspectiveRegistry reg; 
 
 	private Comparator comparator = new Comparator() {
+		private Collator collator = Collator.getInstance();
+		
 		public int compare(Object ob1, Object ob2) {
 			IPerspectiveDescriptor d1 = (IPerspectiveDescriptor)ob1;
 			IPerspectiveDescriptor d2 = (IPerspectiveDescriptor)ob2;
-			return d1.getLabel().compareTo(d2.getLabel());
+			return collator.compare(d1.getLabel(), d2.getLabel());
 		}
 	};
 	

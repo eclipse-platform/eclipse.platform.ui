@@ -4,6 +4,7 @@ package org.eclipse.ui.actions;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.text.Collator;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -39,11 +40,13 @@ public class OpenWithMenu extends ContributionItem {
 	private IWorkbenchPage page;
 	private IAdaptable file;
 	private Sorter sorter = new Sorter() {
+		private Collator collator = Collator.getInstance();
+		
 		public boolean compare(Object o1, Object o2) {
-			String s1 = ((IEditorDescriptor)o1).getLabel().toUpperCase();
-			String s2 = ((IEditorDescriptor)o2).getLabel().toUpperCase();
+			String s1 = ((IEditorDescriptor)o1).getLabel();
+			String s2 = ((IEditorDescriptor)o2).getLabel();
 			//Return true if elementTwo is 'greater than' elementOne
-			return s2.compareTo(s1) > 0;
+			return collator.compare(s2, s1) > 0;
 		}
 	};
 /**
