@@ -651,38 +651,6 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	}
 
 	/**
-	 * Set the orientation of the sash form to display its controls according to the value
-	 * of <code>value</code>.  'VARIABLES_DETAIL_PANE_UNDERNEATH' means that the detail 
-	 * pane appears underneath the tree viewer, 'VARIABLES_DETAIL_PANE_RIGHT' means the
-	 * detail pane appears to the right of the tree viewer.
-	 */
-//	protected void setDetailPaneOrientation(String value) {
-//		int orientation = value.equals(IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_UNDERNEATH) ? SWT.VERTICAL : SWT.HORIZONTAL;
-//		getSashForm().setOrientation(orientation);				
-//	}
-	
-	/**
-	 * Show or hide the detail pane, based on the value of <code>on</code>.
-	 * If showing, reset the sash form to use the relative weights that were
-	 * in effect the last time the detail pane was visible, and populate it with
-	 * details for the current selection.  If hiding, save the current relative 
-	 * weights, unless the detail pane hasn't yet been shown.
-	 */
-//	public void toggleDetailPane(boolean on) {
-//		if (on) {
-//			getSashForm().setMaximizedControl(null);
-//			getSashForm().setWeights(getLastSashWeights());
-//			populateDetailPane();
-//			fToggledDetailOnce = true;
-//		} else {
-//			if (fToggledDetailOnce) {
-//				setLastSashWeights(getSashForm().getWeights());
-//			}
-//			getSashForm().setMaximizedControl(getViewer().getControl());
-//		}
-//	}
-	
-	/**
 	 * Set on or off the word wrap flag for the detail pane.
 	 */
 	public void toggleDetailPaneWordWrap(boolean on) {
