@@ -34,6 +34,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.INewWizard;
@@ -144,6 +145,7 @@ class NewWizardNewPage
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
         showAllCheck.setLayoutData(data);
+        showAllCheck.setFont(wizardFont);
 		showAllCheck.setText(WorkbenchMessages.getString("NewWizardNewPage.showAll")); //$NON-NLS-1$
 		showAllCheck.setSelection(false);
 		
@@ -177,7 +179,7 @@ class NewWizardNewPage
 		// wizard actions pane...create SWT table directly to
 		// get single selection mode instead of multi selection.
 		restoreWidgetValues();
-
+		
 		return outerContainer;
 	}
 
@@ -188,18 +190,30 @@ class NewWizardNewPage
 	 * @since 3.0
 	 */
 	private void createDescriptionText(Composite parent) {
+	    
+	    Composite descParent = new Composite(parent, SWT.NONE);	    
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.widthHint = SIZING_LISTS_WIDTH;
-
-//		ScrolledComposite scroller =
-//			new ScrolledComposite(parent, SWT.V_SCROLL | SWT.BORDER);
-//		scroller.setBackground(viewer.getControl().getBackground());
-//		scroller.setLayoutData(data);
-//		scroller.setContent(descriptionText);
-
-		descriptionText = new Text(parent, SWT.READ_ONLY | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
+		descParent.setLayoutData(data);
+		
+		GridLayout layout = new GridLayout(1, true);
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		descParent.setLayout(layout);
+		
+	    Label descLabel = new Label(descParent, SWT.NONE);	
+	    descLabel.setFont(parent.getFont());
+	    descLabel.setText("&Description:");
+	    
+	    data = new GridData(GridData.FILL_HORIZONTAL);
+	    descLabel.setLayoutData(data);
+		
+		
+		descriptionText = new Text(descParent, SWT.READ_ONLY | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL);
+		descriptionText.setFont(parent.getFont());				
+		data = new GridData(GridData.FILL_BOTH);
 		descriptionText.setLayoutData(data);
-		descriptionText.setBackground(viewer.getControl().getBackground());
+		
 	}
 
 	/**
@@ -211,9 +225,36 @@ class NewWizardNewPage
 	private void createViewer(Composite parent) {
 		// category tree pane...create SWT tree directly to
 		// get single selection mode instead of multi selection.
+	    
+	    Composite treeParent = new Composite(parent, SWT.NONE);
+	    treeParent.setFont(parent.getFont());
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.widthHint = SIZING_LISTS_WIDTH;		
+
+		boolean needsHint = DialogUtil.inRegularFontMode(treeParent.getParent());
+
+		//Only give a height hint if the dialog is going to be too small
+		if (needsHint) {
+			data.heightHint = SIZING_LISTS_HEIGHT;
+		}
+
+		treeParent.setLayoutData(data);
+		
+		GridLayout layout = new GridLayout(1, true);
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		treeParent.setLayout(layout);
+			    
+	    Label wizardLabel = new Label(treeParent, SWT.NONE);	
+	    wizardLabel.setFont(parent.getFont());
+	    wizardLabel.setText("&Wizards:");
+	    
+	    data = new GridData(GridData.FILL_HORIZONTAL);
+	    wizardLabel.setLayoutData(data);
+	    
 		Tree tree =
 			new Tree(
-				parent,
+			    treeParent,
 				SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		viewer = new TreeViewer(tree);
 		
@@ -245,17 +286,6 @@ class NewWizardNewPage
 		viewer.setInput(input);
 		tree.setFont(parent.getFont());
 
-		GridData data = new GridData(GridData.FILL_BOTH);
-		data.widthHint = SIZING_LISTS_WIDTH;
-
-		boolean needsHint = DialogUtil.inRegularFontMode(tree.getParent());
-
-		//Only give a height hint if the dialog is going to be too small
-		if (needsHint) {
-			data.heightHint = SIZING_LISTS_HEIGHT;
-		}
-
-		tree.setLayoutData(data);
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 		    /*
 			 * (non-Javadoc)
@@ -272,6 +302,9 @@ class NewWizardNewPage
 				}
 			}
 		});
+		
+		data = new GridData(GridData.FILL_BOTH);
+		tree.setLayoutData(data);
 	}
 	
 	/**
