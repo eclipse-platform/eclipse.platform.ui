@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * <p>
  * This class is a partial implementation of <code>IHandler</code>. This
  * abstract implementation provides support for handler listeners. You should
  * subclass from this method unless you want to implement your own listener
@@ -24,6 +25,12 @@ import java.util.Map;
  * changes. Subclasses should also override
  * {@link AbstractHandler#getAttributeValuesByName()}if they have any
  * attributes.
+ * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>.  The commands architecture is currently under
+ * development for Eclipse 3.1.  This class -- its existence, its name and its
+ * methods -- are in flux.  Do not use this class yet.
+ * </p>
  * 
  * @since 3.1
  */

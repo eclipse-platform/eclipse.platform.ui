@@ -12,9 +12,14 @@ package org.eclipse.core.commands;
 
 /**
  * An instance of this interface can be used by clients to receive notification
- * of changes to one or more instances of <code>ICommand</code>.
+ * of changes to one or more instances of <code>Command</code>.
  * <p>
  * This interface may be implemented by clients.
+ * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>.  The commands architecture is currently under
+ * development for Eclipse 3.1.  This class -- its existence, its name and its
+ * methods -- are in flux.  Do not use this class yet.
  * </p>
  * 
  * @since 3.1
@@ -25,7 +30,7 @@ public interface ICommandListener {
 
     /**
      * Notifies that one or more properties of an instance of
-     * <code>ICommand</code> have changed. Specific details are described in
+     * <code>Command</code> have changed. Specific details are described in
      * the <code>CommandEvent</code>.
      * 
      * @param commandEvent
