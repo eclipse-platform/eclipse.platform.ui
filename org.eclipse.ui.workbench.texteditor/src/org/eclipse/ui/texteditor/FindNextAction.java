@@ -97,7 +97,7 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	 * @param forward the search direction
 	 * @see ResourceAction#ResourceAction
 	 * 
-	 * @deprecated use FindReplaceAction(ResourceBundle, String, IWorkbenchPart) instead
+	 * @deprecated use FindReplaceAction(ResourceBundle, String, IWorkbenchPart, boolean) instead
 	 */
 	public FindNextAction(ResourceBundle bundle, String prefix, IWorkbenchWindow workbenchWindow, boolean forward) {
 		super(bundle, prefix);
