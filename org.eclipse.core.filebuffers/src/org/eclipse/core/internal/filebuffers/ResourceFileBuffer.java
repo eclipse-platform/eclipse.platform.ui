@@ -28,6 +28,8 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
+import org.eclipse.core.filebuffers.FileBuffers;
+
 
 public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 	
@@ -215,7 +217,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 	abstract protected void commitFileBufferContent(IProgressMonitor monitor, boolean overwrite) throws CoreException;
 	
 	public void create(IPath location, IProgressMonitor monitor) throws CoreException {
-		IFile file= fManager.getWorkspaceFileAtLocation(location);
+		IFile file= FileBuffers.getWorkspaceFileAtLocation(location);
 		if (file == null || !file.exists())
 			throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, "File does not exist", null));
 		

@@ -16,8 +16,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -25,6 +23,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
+import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.IDocumentFactory;
 import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
 import org.eclipse.core.filebuffers.IFileBuffer;
@@ -57,6 +56,8 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	 */
 	public void connect(IPath location, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(location);
+		location= FileBuffers.normalizeLocation(location);
+		
 		AbstractFileBuffer fileBuffer= (AbstractFileBuffer) fFilesBuffers.get(location);
 		if (fileBuffer == null)  {
 			
@@ -79,6 +80,8 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	 */
 	public void disconnect(IPath location, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(location);
+		location= FileBuffers.normalizeLocation(location);
+		
 		AbstractFileBuffer fileBuffer= (AbstractFileBuffer) fFilesBuffers.get(location);
 		if (fileBuffer != null) {
 			fileBuffer.disconnect();
@@ -99,27 +102,8 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		return new JavaTextFileBuffer(this);
 	}
 	
-	/**
-	 * Returns the workspace file at the given location or <code>null</code> if
-	 * the location is not a valid location in the workspace.
-	 * 
-	 * @param location the location
-	 * @return the workspace file at the location or <code>null</code>
-	 */
-	public IFile getWorkspaceFileAtLocation(IPath location) {
-		IWorkspaceRoot workspaceRoot= ResourcesPlugin.getWorkspace().getRoot();
-		IPath workspacePath= workspaceRoot.getLocation();
-		if (workspacePath.isPrefixOf(location)) {
-			IPath fileLocation= location.removeFirstSegments(workspacePath.segmentCount());
-			IFile file= workspaceRoot.getFile(fileLocation);
-			if  (file != null && file.exists())
-				return file;
-		}
-		return null;		
-	}
-	
 	private boolean isWorkspaceResource(IPath location) {
-		return getWorkspaceFileAtLocation(location) != null;
+		return FileBuffers.getWorkspaceFileAtLocation(location) != null;
 	}
 	
 	private boolean isTextFile(IPath location) {
@@ -130,6 +114,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	 * @see org.eclipse.core.filebuffers.IFileBufferManager#getFileBuffer(org.eclipse.core.runtime.IPath)
 	 */
 	public IFileBuffer getFileBuffer(IPath location) {
+		location= FileBuffers.normalizeLocation(location);
 		return (IFileBuffer) fFilesBuffers.get(location);
 	}
 	
@@ -137,6 +122,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#getTextFileBuffer(org.eclipse.core.runtime.IPath)
 	 */
 	public ITextFileBuffer getTextFileBuffer(IPath location) {
+		location= FileBuffers.normalizeLocation(location);
 		return (ITextFileBuffer) fFilesBuffers.get(location);
 	}
 
@@ -151,6 +137,9 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#createEmptyDocument(org.eclipse.core.runtime.IPath)
 	 */
 	public IDocument createEmptyDocument(IPath location) {
+		Assert.isNotNull(location);
+		location= FileBuffers.normalizeLocation(location);
+		
 		IDocumentFactory factory= fRegistry.getDocumentFactory(location);
 		
 		IDocument document= null;
@@ -197,6 +186,8 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	 */
 	public void requestSynchronizationContext(IPath location) {
 		Assert.isNotNull(location);
+		location= FileBuffers.normalizeLocation(location);
+		
 		AbstractFileBuffer fileBuffer= (AbstractFileBuffer) fFilesBuffers.get(location);
 		if (fileBuffer != null)
 			fileBuffer.requestSynchronizationContext();
@@ -207,6 +198,8 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	 */
 	public void releaseSynchronizationContext(IPath location) {
 		Assert.isNotNull(location);
+		location= FileBuffers.normalizeLocation(location);
+		
 		AbstractFileBuffer fileBuffer= (AbstractFileBuffer) fFilesBuffers.get(location);
 		if (fileBuffer != null)
 			fileBuffer.releaseSynchronizationContext();
