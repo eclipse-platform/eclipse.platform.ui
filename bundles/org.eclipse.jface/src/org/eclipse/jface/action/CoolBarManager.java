@@ -16,7 +16,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.SWT;
