@@ -39,7 +39,7 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 	}
 
 	protected void setUp() throws Exception {
-		IPath base = Platform.getLocation().removeLastSegments(1);
+		IPath base = super.getRandomLocation();
 		getWorkspace().getPathVariableManager().setValue(VARIABLE_NAME, base);
 		super.setUp();
 	}
