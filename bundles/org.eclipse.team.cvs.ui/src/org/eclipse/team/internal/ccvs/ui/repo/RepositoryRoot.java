@@ -458,6 +458,7 @@ public class RepositoryRoot extends PlatformObject {
 	 * RepositoriesView is pressed.
 	 */
 	void clearCache() {
+		if (modulesCache == null) return;
 		synchronized(modulesCache) {
 			modulesCache = null;
 		}
