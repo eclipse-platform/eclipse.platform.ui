@@ -47,6 +47,8 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.internal.colors.ColorDefinition;
+import org.eclipse.ui.internal.colors.ColorDefinitionReader;
 import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceNode;
 import org.eclipse.ui.internal.fonts.FontDefinition;
@@ -203,7 +205,24 @@ public class ExtensionEventHandler implements IRegistryChangeListener {
 			loadFontDefinitions(ext);
 			return;
 		}
+		if (name.equalsIgnoreCase(IWorkbenchConstants.PL_COLOR_DEFINITIONS)) {
+			loadColorDefinitions(ext);
+			return;
+		}
 	}	
+
+	private void loadColorDefinitions(IExtension ext) {
+		ColorDefinition.clearCache();
+		ColorDefinitionReader reader = new ColorDefinitionReader();
+		IConfigurationElement [] elements = ext.getConfigurationElements();
+		for (int i = 0; i < elements.length; i++) {
+			reader.readElement(elements[i]);	
+		}
+		
+		Collection colors = reader.getValues();
+		ColorDefinition [] colorDefs = (ColorDefinition []) colors.toArray(new ColorDefinition [colors.size()]);
+		workbench.initializeApplicationColors(colorDefs);		
+	}
 
 	private void loadFontDefinitions(IExtension ext) {
 		FontDefinition.clearCache();

@@ -915,13 +915,23 @@ public final class Workbench implements IWorkbench {
 	 * @since 3.0
 	 */
 	private void initializeApplicationColors() {
-		IPreferenceStore store = getPreferenceStore();
-		ColorRegistry registry = JFaceResources.getColorRegistry();
-
 		//Iterate through the definitions and initialize thier
 		//defaults in the preference store.
 		ColorDefinition[] definitions = ColorDefinition.getDefinitions();
-		
+				
+		initializeApplicationColors(definitions);
+	}
+
+	/**
+	 * For dynamic UI
+	 * 
+	 * @param definitions the color definitions to initialize
+	 * @since 3.0
+	 */
+	public void initializeApplicationColors(ColorDefinition[] definitions) {
+		IPreferenceStore store = getPreferenceStore();
+		ColorRegistry registry = JFaceResources.getColorRegistry();
+	
 		// sort the definitions by dependant ordering so that we process 
 		// ancestors before children.		
 		ColorDefinition [] copyOfDefinitions = new ColorDefinition[definitions.length];

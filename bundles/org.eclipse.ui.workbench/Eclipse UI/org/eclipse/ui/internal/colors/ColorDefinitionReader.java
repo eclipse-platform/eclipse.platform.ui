@@ -17,6 +17,7 @@ import java.util.ResourceBundle;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.registry.RegistryReader;
 
 /**
@@ -25,14 +26,12 @@ import org.eclipse.ui.internal.registry.RegistryReader;
  * 
  * @since 3.0
  */
-class ColorDefinitionReader extends RegistryReader {
+public class ColorDefinitionReader extends RegistryReader {
 	private static String ATT_DEFAULTS_TO = "defaultsTo"; //$NON-NLS-1$
 	private static String ATT_ID = "id"; //$NON-NLS-1$
 	private static String ATT_LABEL = "label"; //$NON-NLS-1$
 	private static String ATT_VALUE = "value"; //$NON-NLS-1$
 	private static String CHILD_DESCRIPTION = "description"; //$NON-NLS-1$
-
-	private static String EXTENSION_ID = "colorDefinitions"; //$NON-NLS-1$
 
 	/**
 	 * The translation bundle in which to look up internationalized text.
@@ -40,12 +39,12 @@ class ColorDefinitionReader extends RegistryReader {
 	private final static ResourceBundle RESOURCE_BUNDLE =
 		ResourceBundle.getBundle(ColorDefinitionReader.class.getName());
 
-	private Collection values;
+	private Collection values = new ArrayList();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.registry.RegistryReader#readElement(org.eclipse.core.runtime.IConfigurationElement)
 	 */
-	protected boolean readElement(IConfigurationElement element) {
+	public boolean readElement(IConfigurationElement element) {
 
 		String name = element.getAttribute(ATT_LABEL);
 
@@ -82,7 +81,6 @@ class ColorDefinitionReader extends RegistryReader {
 					.getUniqueIdentifier()));
 
 		return true;
-
 	}
 
 	/**
@@ -91,11 +89,12 @@ class ColorDefinitionReader extends RegistryReader {
 	 * @param registry the <code>IPluginRegistry</code> to read from.
 	 */
 	Collection readRegistry(IPluginRegistry in) {
-		if (values == null)
-			values = new ArrayList();
-		else
-			values.clear();
-		readRegistry(in, PlatformUI.PLUGIN_ID, EXTENSION_ID);
+		values.clear();
+		readRegistry(in, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_COLOR_DEFINITIONS);
+		return values;
+	}
+	
+	public Collection getValues() {
 		return values;
 	}
 }
