@@ -11,7 +11,7 @@ import org.eclipse.debug.core.model.*;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 
 /**
- * Provide the contents for a Variables Viewer</code>
+ * Provide the contents for a variables viewer.
  */
 public class VariablesContentProvider extends BasicContentProvider implements IDebugEventListener, ITreeContentProvider {
 	/**
