@@ -26,9 +26,7 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.commands.IActionService;
-import org.eclipse.ui.commands.IActiveContextService;
-import org.eclipse.ui.internal.commands.ActionService;
-import org.eclipse.ui.internal.commands.ActiveContextService;
+import org.eclipse.ui.commands.IContextService;
 
 /**
  * <code>PartSite</code> is the general implementation for an
@@ -64,7 +62,7 @@ public class PartSite implements IWorkbenchPartSite {
 	private ArrayList menuExtenders;
 	
 	private IActionService actionService;
-	private IActiveContextService activeContextService;
+	private IContextService contextService;
 	
 	/**
 	 * EditorContainer constructor comment.
@@ -250,16 +248,18 @@ public class PartSite implements IWorkbenchPartSite {
 	}
 
 	public IActionService getActionService() {
+		/*
 		if (actionService == null)
 			actionService = new ActionService();
-		
+		*/
 		return actionService;		
 	}
 
-	public IActiveContextService getActiveContextService() {
-		if (activeContextService == null)
-			activeContextService = new ActiveContextService();
-		
-		return activeContextService;		
+	public IContextService getContextService() {
+		/*
+		if (contextService == null)
+			contextService = new contextService();
+		*/
+		return contextService;		
 	}
 }
