@@ -143,7 +143,7 @@ public interface IPageLayout {
 	
 	/**
 	 * A variable used to represent a ratio which has not been specified.
-	 * @sicne 2.0
+	 * @since 2.0
 	 */
 	public static final float NULL_RATIO = -2f;
 	
