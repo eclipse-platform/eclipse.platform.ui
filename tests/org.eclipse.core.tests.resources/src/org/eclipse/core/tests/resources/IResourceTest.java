@@ -537,9 +537,9 @@ public class IResourceTest extends EclipseWorkspaceTest {
 	public static Test suite() {
 		return new TestSuite(IResourceTest.class);
 
-		//	TestSuite suite = new TestSuite();
-		//	suite.addTest(new IResourceTest("testSetLocalTimeStamp"));
-		//	return suite;
+//		TestSuite suite = new TestSuite();
+//		suite.addTest(new IResourceTest("testSetLocalTimeStamp"));
+//		return suite;
 	}
 	protected void tearDown() throws Exception {
 		if (noSideEffects)
@@ -1723,7 +1723,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 		}
 
 		interestingResources = buildInterestingResources();
-		Long[] interestingTimes = new Long[] { new Long(-1), new Long(0), new Long(1), new Long(System.currentTimeMillis()), new Long(Integer.MAX_VALUE * 4L)};
+		Long[] interestingTimes = new Long[] { new Long(-1), new Long(System.currentTimeMillis()-1000), new Long(System.currentTimeMillis()-100), new Long(System.currentTimeMillis()), new Long(Integer.MAX_VALUE * 1024L)};
 		Object[][] args = new Object[][] { interestingResources, interestingTimes };
 		new TestPerformer("IResourceTest.testRefreshLocal") {
 			public Object invokeMethod(Object[] args, int count) throws CoreException {
