@@ -257,9 +257,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 */
 	public IPerspectiveRegistry getPerspectiveRegistry() {
 		if (perspRegistry == null) {
-			IPath path = WorkbenchPlugin.getDefault().getStateLocation();
-			File folder = path.toFile();
-			perspRegistry = new PerspectiveRegistry(folder);
+			perspRegistry = new PerspectiveRegistry();
 			perspRegistry.load();
 		}
 		return perspRegistry;
