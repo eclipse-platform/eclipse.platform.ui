@@ -28,7 +28,7 @@ public class InstallationHistoryAction extends Action {
 	private IPath path;
 	private static final String lightBlue = "#EEEEFF"; //$NON-NLS-1$
 	private static final String white = "#FFFFFF"; //$NON-NLS-1$
-	private static final String darkBlue = "#AABADD"; //$NON-NLS-1$
+	private static final String darkBlue = "#99AADD"; //$NON-NLS-1$
 
 	public InstallationHistoryAction(String text, ImageDescriptor desc) {
 		super(text, desc);
@@ -168,7 +168,7 @@ public class InstallationHistoryAction extends Action {
 
 	private void addCSS() {
 		htmlLog.println("<STYLE type=\"text/css\">"); //$NON-NLS-1$
-		htmlLog.println("H1.title { font-family: sans-serif; color: #AABADD }"); //$NON-NLS-1$
+		htmlLog.println("H1.title { font-family: sans-serif; color: #99AACC }"); //$NON-NLS-1$
 		htmlLog.println("P.bodyText { font-family: sans-serif; font-size: 9pt; }"); //$NON-NLS-1$
 		htmlLog.println(
 			"TD.log-header { font-family: sans-serif; font-style: normal; font-weight: bold; font-size: 9pt; color: white}"); //$NON-NLS-1$
