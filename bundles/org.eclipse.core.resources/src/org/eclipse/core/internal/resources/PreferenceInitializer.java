@@ -32,7 +32,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		node.putBoolean(ResourcesPlugin.PREF_AUTO_REFRESH, false);
 
 		// linked resources default
-//		node.putBoolean(ResourcesPlugin.PREF_DISABLE_LINKING, false);
+		node.putBoolean(ResourcesPlugin.PREF_DISABLE_LINKING, false);
 
 		// build manager defaults
 //		node.putBoolean(ResourcesPlugin.PREF_AUTO_BUILDING, true);
