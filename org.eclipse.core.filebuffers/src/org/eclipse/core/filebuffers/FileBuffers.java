@@ -14,6 +14,7 @@ import java.io.File;
 
 import org.eclipse.core.internal.filebuffers.FileBuffersPlugin;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -65,14 +66,18 @@ public final class FileBuffers {
 	 */
 	public static IPath normalizeLocation(IPath location) {
 		IWorkspaceRoot workspaceRoot= ResourcesPlugin.getWorkspace().getRoot();
-		IPath workspacePath= workspaceRoot.getLocation();
-		if (!workspacePath.isPrefixOf(location))
-			return location.makeAbsolute();
+		IProject[] projects= workspaceRoot.getProjects();
 		
-		IPath fileLocation= location.removeFirstSegments(workspacePath.segmentCount());
-		fileLocation= fileLocation.setDevice(null);
-		return fileLocation.makeAbsolute();
-		
+		for (int i= 0, length= projects.length; i < length; i++) {
+			IPath path= projects[i].getLocation();
+			if (path.isPrefixOf(location)) {
+				IPath filePath= location.removeFirstSegments(path.segmentCount());
+				filePath= projects[i].getFullPath().append(filePath);
+				return filePath.makeAbsolute();
+			}
+			
+		}
+		return location.makeAbsolute();
 	}
 	
 	/**
