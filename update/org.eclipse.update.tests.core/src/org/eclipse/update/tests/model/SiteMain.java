@@ -9,8 +9,8 @@ import org.eclipse.update.core.model.*;
 import org.eclipse.update.core.model.ArchiveReferenceModel;
 import org.eclipse.update.core.model.DefaultSiteParser;
 import org.eclipse.update.core.model.FeatureReferenceModel;
-import org.eclipse.update.core.model.SiteCategoryModel;
-import org.eclipse.update.core.model.SiteMapModel;
+import org.eclipse.update.core.model.CategoryModel;
+import org.eclipse.update.core.model.SiteModel;
 import org.eclipse.update.core.model.SiteModelFactory;
 import org.eclipse.update.core.model.URLEntryModel;
 import org.eclipse.update.tests.UpdateManagerTestCase;
@@ -40,7 +40,7 @@ public class SiteMain extends UpdateManagerTestCase {
 		
 		SiteModelFactory factory = new SiteModelFactory();
 		InputStream is = null;
-		SiteMapModel site = null;
+		SiteModel site = null;
 		
 		w.println("");
 		w.println("Parsing site map ...");
@@ -63,7 +63,7 @@ public class SiteMain extends UpdateManagerTestCase {
 		writeSite(w,0,site);
 	}
 	
-	private static void writeSite(PrintWriter w, int level, SiteMapModel site) {
+	private static void writeSite(PrintWriter w, int level, SiteModel site) {
 		if (site == null) return;
 		
 		String in = getIndent(level);
@@ -90,7 +90,7 @@ public class SiteMain extends UpdateManagerTestCase {
 		w.println(in+"</description>");
 	}
 	
-	private static void writeFeatures(PrintWriter w, int level, SiteMapModel site) {
+	private static void writeFeatures(PrintWriter w, int level, SiteModel site) {
 		String in = getIndent(level);
 		String in2 = getIndent(level+1);
 		w.println("");
@@ -106,7 +106,7 @@ public class SiteMain extends UpdateManagerTestCase {
 		}
 	}
 	
-	private static void writeArchives(PrintWriter w, int level, SiteMapModel site) {
+	private static void writeArchives(PrintWriter w, int level, SiteModel site) {
 		String in = getIndent(level);
 		w.println("");
 		
@@ -119,12 +119,12 @@ public class SiteMain extends UpdateManagerTestCase {
 		}
 	}
 	
-	private static void writeCategoryDefs(PrintWriter w, int level, SiteMapModel site) {
+	private static void writeCategoryDefs(PrintWriter w, int level, SiteModel site) {
 		String in = getIndent(level);
 		String in2 = getIndent(level+1);
 		w.println("");
 		
-		SiteCategoryModel[] cat = site.getCategoryModels();
+		CategoryModel[] cat = site.getCategoryModels();
 		for (int i=0; i<cat.length; i++) {
 			w.println(in+"<category-def");
 			w.println(in+"   "+"name=\""+cat[i].getName()+"\"");

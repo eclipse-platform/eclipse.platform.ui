@@ -69,8 +69,8 @@ public class SiteManager {
 	 * @since 2.0 
 	 */
 
-	public static IConfiguredSite createConfigurationSite(File file,int policy) throws CoreException{
-		return InternalSiteManager.createConfigurationSite(file,policy);
+	public static IConfiguredSite createConfiguredSite(File directory) throws CoreException{
+		return InternalSiteManager.createConfiguredSite(directory);
 	}
 	
 }

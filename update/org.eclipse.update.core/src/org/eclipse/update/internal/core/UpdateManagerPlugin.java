@@ -4,14 +4,7 @@ package org.eclipse.update.internal.core;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.IPluginRegistry;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.*;
 import org.eclipse.help.IAppServer;
 
 /**

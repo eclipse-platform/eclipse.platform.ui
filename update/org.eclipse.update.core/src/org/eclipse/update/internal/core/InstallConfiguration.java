@@ -28,10 +28,11 @@ import org.eclipse.update.configuration.IConfiguredSite;
 import org.eclipse.update.configuration.IInstallConfiguration;
 import org.eclipse.update.configuration.IInstallConfigurationChangedListener;
 import org.eclipse.update.configuration.IProblemHandler;
-import org.eclipse.update.core.model.ConfigurationActivityModel;
-import org.eclipse.update.core.model.ConfiguredSiteModel;
-import org.eclipse.update.core.model.InstallConfigurationModel;
-import org.eclipse.update.core.model.InstallConfigurationParser;
+import org.eclipse.update.internal.model.*;
+import org.eclipse.update.internal.model.ConfigurationActivityModel;
+import org.eclipse.update.internal.model.ConfiguredSiteModel;
+import org.eclipse.update.internal.model.InstallConfigurationModel;
+import org.eclipse.update.internal.model.InstallConfigurationParser;
 
 /**
  * An InstallConfigurationModel is 

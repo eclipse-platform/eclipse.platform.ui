@@ -15,6 +15,7 @@ import java.util.Properties;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 
+import org.eclipse.update.core.*;
 import org.eclipse.update.core.ContentReference;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.core.IFeatureContentProvider;
@@ -83,7 +84,7 @@ public class BuildZipConverter {
 				JarEntry entry = new JarEntry(id);
 				jos.putNextEntry(entry);
 				is = refs[i].getInputStream();
-				UpdateManagerUtils.copy(is,jos,null);
+				Utilities.copy(is,jos,null);
 				is.close(); is = null;
 			}
 			
@@ -99,7 +100,7 @@ public class BuildZipConverter {
 					StringBufferInputStream sbis = new StringBufferInputStream(buf);
 					JarEntry entry = new JarEntry("buildmanifest.properties");
 					jos.putNextEntry(entry);
-					UpdateManagerUtils.copy(sbis,jos,null);
+					Utilities.copy(sbis,jos,null);
 					sbis.close();
 				}
 			}
@@ -124,7 +125,7 @@ public class BuildZipConverter {
 		FileOutputStream os = new FileOutputStream(manifest);
 		String siteXML = "<site>\n   <feature url=\"features/"+feature.getVersionedIdentifier().toString()+".jar\"/>\n</site>";
 		StringBufferInputStream sbis = new StringBufferInputStream(siteXML);
-		UpdateManagerUtils.copy(sbis,os,null);
+		Utilities.copy(sbis,os,null);
 		os.close();
 		sbis.close();
 	}

@@ -12,9 +12,10 @@ import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.configuration.*;
-import org.eclipse.update.core.model.ConfigurationActivityModel;
-import org.eclipse.update.core.model.ConfigurationPolicyModel;
 import org.eclipse.update.core.model.FeatureReferenceModel;
+import org.eclipse.update.internal.model.*;
+import org.eclipse.update.internal.model.ConfigurationActivityModel;
+import org.eclipse.update.internal.model.ConfigurationPolicyModel;
 
 /**
  * 

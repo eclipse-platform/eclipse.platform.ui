@@ -94,15 +94,7 @@ public class FeatureModelFactory {
 		return new NonPluginEntryModel();
 	}
 
-	/**
-	 * Returns a new content group model which is not initialized.
-	 *
-	 * @return a new content group model
-	 */
-	public ContentGroupModel createContentGroupModel() {
-		return new ContentGroupModel();
-	}
-
+	
 	/**
 	 * Returns a new URL Entry model which is not initialized.
 	 *

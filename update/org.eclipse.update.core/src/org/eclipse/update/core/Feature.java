@@ -210,7 +210,7 @@ public class Feature extends FeatureModel implements IFeature {
 			IPluginEntry[] sourceFeaturePluginEntries = getPluginEntries();
 			ISite targetSite = targetFeature.getSite();
 			IPluginEntry[] targetSitePluginEntries = (targetSite != null) ? targetSite.getPluginEntries() : new IPluginEntry[0];
-			IPluginEntry[] pluginsToInstall = UpdateManagerUtils.intersection(sourceFeaturePluginEntries, targetSitePluginEntries);
+			IPluginEntry[] pluginsToInstall = UpdateManagerUtils.diff(sourceFeaturePluginEntries, targetSitePluginEntries);
 
 			// determine number of monitor tasks
 				int taskCount = 1 // one task for all feature files (already downloaded)

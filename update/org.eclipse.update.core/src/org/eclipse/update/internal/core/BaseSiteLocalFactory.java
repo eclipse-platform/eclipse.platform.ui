@@ -4,8 +4,9 @@ package org.eclipse.update.internal.core;
  * All Rights Reserved.
  */
 import org.eclipse.update.core.model.*;
-import org.eclipse.update.core.model.ConfigurationActivityModel;
-import org.eclipse.update.core.model.InstallConfigurationModel;
+import org.eclipse.update.internal.model.*;
+import org.eclipse.update.internal.model.ConfigurationActivityModel;
+import org.eclipse.update.internal.model.InstallConfigurationModel;
 
 /**
  * 
@@ -45,7 +46,7 @@ public class BaseSiteLocalFactory {
 	/**
 	 * 
 	 */
-	public ConfiguredSiteModel createConfigurationSiteModel(SiteMapModel site, int policy){
+	public ConfiguredSiteModel createConfigurationSiteModel(SiteModel site, int policy){
 		//create config site
 		ConfiguredSiteModel configSite = this.createConfigurationSiteModel();
 		configSite.setSiteModel(site);

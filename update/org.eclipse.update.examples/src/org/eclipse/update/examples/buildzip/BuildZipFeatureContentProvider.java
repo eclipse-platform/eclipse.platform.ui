@@ -15,6 +15,7 @@ import java.util.jar.JarEntry;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.update.core.*;
 import org.eclipse.update.core.ContentReference;
 import org.eclipse.update.core.FeatureContentProvider;
 import org.eclipse.update.core.IFeatureContentProvider;
@@ -161,7 +162,7 @@ public class BuildZipFeatureContentProvider extends FeatureContentProvider imple
 		ContentReference[] refs = baseReference.unpack(tmpDir, selector, monitor);
 		
 		// write out feature manifest (feature.xml);
-		File manifest = UpdateManagerUtils.createLocalFile(tmpDir, null/*key*/,"feature.xml");
+		File manifest = Utilities.createLocalFile(tmpDir, null/*key*/,"feature.xml");
 		ContentReference manifestReference = new ContentReference("feature.xml", manifest);
 		DefaultModelWriter w = new DefaultModelWriter(feature);
 		FileOutputStream os = null;

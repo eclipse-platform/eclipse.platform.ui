@@ -15,7 +15,7 @@ import org.eclipse.update.internal.core.*;
 /**
  * 
  */
-public class Site extends SiteMapModel implements ISite{
+public class Site extends SiteModel implements ISite{
 
 
 	/** 
@@ -154,7 +154,7 @@ public class Site extends SiteMapModel implements ISite{
 	 * @see ISite#getCategories()
 	 */
 	public ICategory[] getCategories() {
-		SiteCategoryModel[] result = getCategoryModels();
+		CategoryModel[] result = getCategoryModels();
 		if (result.length == 0)
 			return new ICategory[0];
 		else

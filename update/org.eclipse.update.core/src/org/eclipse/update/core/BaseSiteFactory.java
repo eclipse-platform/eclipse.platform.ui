@@ -79,7 +79,7 @@ public abstract class BaseSiteFactory extends SiteModelFactory implements ISiteF
 	/*
 	 * @see SiteModelFactory#createSiteMapModel()
 	*/
-	public SiteMapModel createSiteMapModel() {
+	public SiteModel createSiteMapModel() {
 		return new Site();
 	}
 
@@ -107,7 +107,7 @@ public abstract class BaseSiteFactory extends SiteModelFactory implements ISiteF
 	/*
 	 * @see SiteModelFactory#createSiteCategoryModel()
 	 */
-	public SiteCategoryModel createSiteCategoryModel() {
+	public CategoryModel createSiteCategoryModel() {
 		return new Category();
 	}
 

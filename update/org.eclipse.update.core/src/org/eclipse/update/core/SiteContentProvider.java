@@ -6,7 +6,8 @@ package org.eclipse.update.core;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
+import org.eclipse.update.internal.core.UpdateManagerPlugin;
 
 /**
  * Base site content provider
@@ -17,30 +18,7 @@ public abstract class SiteContentProvider implements ISiteContentProvider {
 	private URL base;
 	private ISite site;
 
-	/**
-	 * Content selector used in archive operations
-	 * 
-	 * @since 2.0
-	 */
-	public interface IContentSelector {
-		
-		/**
-		 * Indicates whether the archive content entry should be
-		 * selected for the operation
-		 * 
-		 * @since 2.0
-		 */
-		public boolean include(String entry);
-		
-		/**
-		 * Defines a content reference identifier for the 
-		 * archive content entry
-		 * 
-		 * @since 2.0
-		 */
-		public String defineIdentifier(String entry);
-	}
-
+	
 	/**
 	 * Constructor for SiteContentProvider.
 	 */
@@ -59,8 +37,15 @@ public abstract class SiteContentProvider implements ISiteContentProvider {
 	/*
 	 * @see ISiteContentProvider#getArchivesReferences(String)
 	 */
-	 // VK: should we provide default implementation ... return archiveId;
-	public abstract URL getArchiveReference(String archiveID) throws CoreException;
+	public URL getArchiveReference(String archiveID) throws CoreException{
+		try {
+			return new URL(getURL(),archiveID);
+		} catch (MalformedURLException e){
+			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"Error creating URL",e);
+			throw new CoreException(status);	
+		}		
+	}
 
 	/**
 	 * Sets the site.

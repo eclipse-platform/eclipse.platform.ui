@@ -23,7 +23,8 @@ public class BuildZipSiteContentProvider extends SiteContentProvider {
 	 * @see ISiteContentProvider#getArchiveReference(String)
 	 */
 	public URL getArchiveReference(String id) throws CoreException {
-		// build zip features do not have plugin archives
+		// build zip features do not have associated archives
+		// the zip file also contains the archives files
 		return null;
 	}
 

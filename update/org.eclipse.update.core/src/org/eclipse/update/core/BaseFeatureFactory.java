@@ -84,13 +84,6 @@ public abstract class BaseFeatureFactory extends FeatureModelFactory implements 
 	}
 
 	/*
-	 * @see FeatureModelFactory#createContentGroupModel()
-	 */
-	public ContentGroupModel createContentGroupModel() {
-		return null;
-	}
-
-	/*
 	 * @see FeatureModelFactory#createURLEntryModel()
 	 */
 	public URLEntryModel createURLEntryModel() {

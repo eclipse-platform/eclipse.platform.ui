@@ -148,7 +148,7 @@ public class SiteFile extends Site {
 		long result = 0;
 		IPluginEntry[] entriesToInstall = feature.getPluginEntries();
 		IPluginEntry[] siteEntries = this.getPluginEntries();
-		entriesToInstall = UpdateManagerUtils.intersection(entriesToInstall, siteEntries);
+		entriesToInstall = UpdateManagerUtils.diff(entriesToInstall, siteEntries);
 
 		// FIXME Intersection for NonPluginEntry (using Install Handler)
 		try {
@@ -176,7 +176,7 @@ public class SiteFile extends Site {
 		long result = 0;
 		IPluginEntry[] entriesToInstall = feature.getPluginEntries();
 		IPluginEntry[] siteEntries = this.getPluginEntries();
-		entriesToInstall = UpdateManagerUtils.intersection(entriesToInstall, siteEntries);
+		entriesToInstall = UpdateManagerUtils.diff(entriesToInstall, siteEntries);
 
 		// FIXME Intersection for NonPluginEntry (using Install Handler)
 		try {

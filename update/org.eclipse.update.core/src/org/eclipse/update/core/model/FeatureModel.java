@@ -233,16 +233,7 @@ public class FeatureModel extends ModelObject {
 		return (NonPluginEntryModel[]) nonPluginEntries.toArray(arrayTypeFor(nonPluginEntries));
 	}
 
-	/**
-	 * @since 2.0
-	 */	
-	public ContentGroupModel[] getGroupEntryModels() {
-		if (groupEntries == null)
-			return new ContentGroupModel[0];
-			
-		return (ContentGroupModel[]) groupEntries.toArray(arrayTypeFor(groupEntries));
-	}	
-
+	
 	/**
 	 * @since 2.0
 	 */	
@@ -402,17 +393,7 @@ public class FeatureModel extends ModelObject {
 			this.nonPluginEntries = new ArrayList(Arrays.asList(nonPluginEntries));
 	}
 
-	/**
-	 * @since 2.0
-	 */	
-	public void setGroupEntryModels(ContentGroupModel[] groupEntries) {
-		assertIsWriteable();
-		if (groupEntries == null)
-			this.groupEntries = null;
-		else
-			this.groupEntries = new ArrayList(Arrays.asList(groupEntries));
-	}
-
+	
 	/**
 	 * @since 2.0
 	 */
@@ -457,17 +438,7 @@ public class FeatureModel extends ModelObject {
 			this.nonPluginEntries.add(nonPluginEntry);
 	}
 
-	/**
-	 * @since 2.0
-	 */	
-	public void addGroupEntryModel(ContentGroupModel groupEntry) {
-		assertIsWriteable();
-		if (this.groupEntries == null)
-			this.groupEntries = new ArrayList();
-		if (!this.groupEntries.contains(groupEntry))
-			this.groupEntries.add(groupEntry);
-	}
-
+	
 	/**
 	 * @since 2.0
 	 */
@@ -504,15 +475,7 @@ public class FeatureModel extends ModelObject {
 			this.nonPluginEntries.remove(nonPluginEntry);
 	}
 
-	/**
-	 * @since 2.0
-	 */
-	public void removeGroupEntryModel(ContentGroupModel groupEntry) {
-		assertIsWriteable();
-		if (this.groupEntries != null)
-			this.groupEntries.remove(groupEntry);
-	}
-	
+		
 	/**
 	 * @since 2.0
 	 */
@@ -526,7 +489,6 @@ public class FeatureModel extends ModelObject {
 		markListReferenceReadOnly(getImportModels());
 		markListReferenceReadOnly(getPluginEntryModels());
 		markListReferenceReadOnly(getNonPluginEntryModels());
-		markListReferenceReadOnly(getGroupEntryModels());
 	}
 	
 	/**
@@ -547,14 +509,7 @@ public class FeatureModel extends ModelObject {
 		resolveListReference(getImportModels(), base, bundle);
 		resolveListReference(getPluginEntryModels(), base, bundle);
 		resolveListReference(getNonPluginEntryModels(), base, bundle);
-		resolveListReference(getGroupEntryModels(), base, bundle);
 	}
-	/*
-	 * @see Object#equals(Object)
-	 */
 
-	/*
-	 * @see Object#hashCode()
-	 */
 
 }

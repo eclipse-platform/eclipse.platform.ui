@@ -118,12 +118,12 @@ public class JarContentReference extends ContentReference {
 					is = null;
 					os = null;
 					entryId = selector.defineIdentifier(entry);
-					localFile = UpdateManagerUtils.createLocalFile(dir, null/*key*/, entryId); // create temp file w/o a key map
+					localFile = Utilities.createLocalFile(dir, null/*key*/, entryId); // create temp file w/o a key map
 					if (!entry.isDirectory()) { 
 						try {
 							is = jarArchive.getInputStream(entry);
 							os = new FileOutputStream(localFile);
-							UpdateManagerUtils.copy(is, os, monitor);
+							Utilities.copy(is, os, monitor);
 						} finally {
 							if (is != null) try { is.close(); } catch(IOException e) {}
 							if (os != null) try { os.close(); } catch(IOException e) {}
@@ -161,12 +161,12 @@ public class JarContentReference extends ContentReference {
 			InputStream is = null;
 			OutputStream os = null;
 			entryId = selector.defineIdentifier(entry);
-			File localFile = UpdateManagerUtils.createLocalFile(dir, null/*key*/, entryId); // create temp file w/o a key map
+			File localFile = Utilities.createLocalFile(dir, null/*key*/, entryId); // create temp file w/o a key map
 			if (!entry.isDirectory()) { 
 				try {
 					is = jarArchive.getInputStream(entry);
 					os = new FileOutputStream(localFile);
-					UpdateManagerUtils.copy(is, os, monitor);
+					Utilities.copy(is, os, monitor);
 				} finally {
 					if (is != null) try { is.close(); } catch(IOException e) {}
 					if (os != null) try { os.close(); } catch(IOException e) {}

@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
+import org.eclipse.update.internal.model.*;
 
 /**
  * 
@@ -32,7 +33,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 	 * Copy Constructor
 	 */
 	public ConfiguredSite(IConfiguredSite configSite) {
-		setSiteModel((SiteMapModel)configSite.getSite());
+		setSiteModel((SiteModel)configSite.getSite());
 		ConfiguredSite cSite = (ConfiguredSite)configSite;
 		setConfigurationPolicyModel(new ConfigurationPolicy(cSite.getConfigurationPolicy()));
 		isUpdateable(configSite.isUpdateable());
@@ -480,9 +481,9 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 		IPluginEntry[] siteEntries = getSite().getPluginEntries();
 
 		IPluginEntry[] featuresEntries = feature.getPluginEntries();
-		IPluginEntry[] result = UpdateManagerUtils.substract(featuresEntries, siteEntries);
+		IPluginEntry[] result = UpdateManagerUtils.diff(featuresEntries, siteEntries);
 		if (result == null || (result.length != 0)) {
-			IPluginEntry[] missing = UpdateManagerUtils.substract(featuresEntries, result);
+			IPluginEntry[] missing = UpdateManagerUtils.diff(featuresEntries, result);
 			String listOfMissingPlugins = "";
 			for (int k = 0; k < missing.length; k++) {
 				listOfMissingPlugins = "\r\nplugin:" + missing[k].getVersionedIdentifier().toString();

@@ -40,12 +40,12 @@ public class DefaultSiteParser extends DefaultHandler {
 	private static final int STATE_DESCRIPTION_CATEGORY_DEF = 7;
 	private static final String PLUGIN_ID = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 
-	public static final String SITE = "site";
-	public static final String FEATURE = "feature";
-	public static final String ARCHIVE = "archive";
-	public static final String CATEGORY_DEF = "category-def";
-	public static final String CATEGORY = "category";
-	public static final String DESCRIPTION = "description";
+	private static final String SITE = "site";
+	private static final String FEATURE = "feature";
+	private static final String ARCHIVE = "archive";
+	private static final String CATEGORY_DEF = "category-def";
+	private static final String CATEGORY = "category";
+	private static final String DESCRIPTION = "description";
 
 	private static final String DEFAULT_INFO_URL = "index.html";
 
@@ -74,15 +74,15 @@ public class DefaultSiteParser extends DefaultHandler {
 	/**
 	 * @since 2.0
 	 */
-	public SiteMapModel parse(InputStream in) throws SAXException, IOException {
+	public SiteModel parse(InputStream in) throws SAXException, IOException {
 		stateStack.push(new Integer(STATE_INITIAL));
 		currentState = ((Integer) stateStack.peek()).intValue();
 		parser.parse(new InputSource(in));
 		if (objectStack.isEmpty())
 			throw new SAXException("Error parsing stream. cannot find Site tag.Site not created.");
 		else {
-			if (objectStack.peek() instanceof SiteMapModel) {
-				return (SiteMapModel) objectStack.pop();
+			if (objectStack.peek() instanceof SiteModel) {
+				return (SiteModel) objectStack.pop();
 			} else {
 				String stack = "";
 				Iterator iter = objectStack.iterator();
@@ -151,7 +151,7 @@ public class DefaultSiteParser extends DefaultHandler {
 
 	}
 
-	public void handleInitialState(String elementName, Attributes attributes) throws SAXException{
+	private void handleInitialState(String elementName, Attributes attributes) throws SAXException{
 		if (elementName.equals(SITE)) {
 			stateStack.push(new Integer(STATE_SITE));
 			processSite(attributes);
@@ -163,7 +163,7 @@ public class DefaultSiteParser extends DefaultHandler {
 			
 	}
 
-	public void handleSiteState(String elementName, Attributes attributes) {
+	private void handleSiteState(String elementName, Attributes attributes) {
 		if (elementName.equals(DESCRIPTION)) {
 			stateStack.push(new Integer(STATE_DESCRIPTION_SITE));
 			processInfo(attributes);
@@ -180,7 +180,7 @@ public class DefaultSiteParser extends DefaultHandler {
 			internalErrorUnknownTag("unknown element :" + elementName + " after site tag.");
 	}
 
-	public void handleFeatureState(String elementName, Attributes attributes) {
+	private void handleFeatureState(String elementName, Attributes attributes) {
 		if (elementName.equals(FEATURE)) {
 			stateStack.push(new Integer(STATE_FEATURE));
 			processFeature(attributes);
@@ -196,7 +196,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		} else
 			internalErrorUnknownTag("unknown element:" + elementName + " after feature tag.");
 	}
-	public void handleArchiveState(String elementName, Attributes attributes) {
+	private void handleArchiveState(String elementName, Attributes attributes) {
 		if (elementName.equals(ARCHIVE)) {
 			stateStack.push(new Integer(STATE_ARCHIVE));
 			processArchive(attributes);
@@ -206,7 +206,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		} else
 			internalErrorUnknownTag("unknown element:" + elementName + " after archive tag.");
 	}
-	public void handleCategoryState(String elementName, Attributes attributes) {
+	private void handleCategoryState(String elementName, Attributes attributes) {
 		if (elementName.equals(FEATURE)) {
 			stateStack.push(new Integer(STATE_FEATURE));
 			processFeature(attributes);
@@ -222,7 +222,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		} else
 			internalErrorUnknownTag("unknown element:" + elementName + " after category tag.");
 	}
-	public void handleCategoryDefState(String elementName, Attributes attributes) {
+	private void handleCategoryDefState(String elementName, Attributes attributes) {
 		if (elementName.equals(CATEGORY_DEF)) {
 			stateStack.push(new Integer(STATE_CATEGORY_DEF));
 			processCategoryDef(attributes);
@@ -232,7 +232,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		} else
 			internalErrorUnknownTag("unknown element:" + elementName + " after category definition tag.");
 	}
-	public void handleDescriptionSiteState(String elementName, Attributes attributes) {
+	private void handleDescriptionSiteState(String elementName, Attributes attributes) {
 		if (elementName.equals(FEATURE)) {
 			stateStack.push(new Integer(STATE_FEATURE));
 			processFeature(attributes);
@@ -245,7 +245,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		} else
 			internalErrorUnknownTag("unknown element:" + elementName + " after description of site tag.");
 	}
-	public void handleDescriptionCategoryDefState(String elementName, Attributes attributes) {
+	private void handleDescriptionCategoryDefState(String elementName, Attributes attributes) {
 		if (elementName.equals(CATEGORY_DEF)) {
 			stateStack.push(new Integer(STATE_CATEGORY_DEF));
 			processCategoryDef(attributes);
@@ -261,7 +261,7 @@ public class DefaultSiteParser extends DefaultHandler {
 	 */
 	private void processSite(Attributes attributes) throws SAXException {
 		// create site map
-		SiteMapModel site = factory.createSiteMapModel();
+		SiteModel site = factory.createSiteMapModel();
 
 		// Compatibility support for <site url=""/>. If <description> is specified,
 		// it takes precedence
@@ -302,7 +302,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		String type = attributes.getValue("type");
 		feature.setType(type);
 
-		SiteMapModel site = (SiteMapModel) objectStack.peek();
+		SiteModel site = (SiteModel) objectStack.peek();
 		site.addFeatureReferenceModel(feature);
 		feature.setSiteModel(site);
 
@@ -331,7 +331,7 @@ public class DefaultSiteParser extends DefaultHandler {
 		} else {
 			archive.setURLString(url);
 
-			SiteMapModel site = (SiteMapModel) objectStack.peek();
+			SiteModel site = (SiteModel) objectStack.peek();
 			site.addArchiveReferenceModel(archive);
 		}
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING)
@@ -355,13 +355,13 @@ public class DefaultSiteParser extends DefaultHandler {
 	 * process category def info
 	 */
 	private void processCategoryDef(Attributes attributes) {
-		SiteCategoryModel category = factory.createSiteCategoryModel();
+		CategoryModel category = factory.createSiteCategoryModel();
 		String name = attributes.getValue("name");
 		String label = attributes.getValue("label");
 		category.setName(name);
 		category.setLabel(label);
 
-		SiteMapModel site = (SiteMapModel) objectStack.peek();
+		SiteModel site = (SiteModel) objectStack.peek();
 		site.addCategoryModel(category);
 		objectStack.push(category);
 
@@ -408,7 +408,7 @@ public class DefaultSiteParser extends DefaultHandler {
 				stateStack.pop();
 				if (objectStack.peek() instanceof String) {
 					text = (String) objectStack.pop();
-					SiteMapModel site = (SiteMapModel) objectStack.peek();
+					SiteModel site = (SiteModel) objectStack.peek();
 					site.getDescriptionModel().setAnnotation(text);
 				}
 				//do not pop the object
@@ -423,7 +423,7 @@ public class DefaultSiteParser extends DefaultHandler {
 				stateStack.pop();
 				if (objectStack.peek() instanceof String) {
 					text = (String) objectStack.pop();
-					SiteCategoryModel category = (SiteCategoryModel) objectStack.peek();
+					CategoryModel category = (CategoryModel) objectStack.peek();
 					category.getDescriptionModel().setAnnotation(text);
 				}
 				objectStack.pop();
@@ -440,7 +440,7 @@ public class DefaultSiteParser extends DefaultHandler {
 				if (text != null)
 					info.setAnnotation(text);
 
-				SiteMapModel siteModel = (SiteMapModel) objectStack.peek();
+				SiteModel siteModel = (SiteModel) objectStack.peek();
 				// override description.
 				// do not raise error as previous description may be default one
 				// when parsing site tage
@@ -460,7 +460,7 @@ public class DefaultSiteParser extends DefaultHandler {
 				if (text != null)
 					info.setAnnotation(text);
 
-				SiteCategoryModel category = (SiteCategoryModel) objectStack.peek();
+				CategoryModel category = (CategoryModel) objectStack.peek();
 				if (category.getDescriptionModel() != null)
 					internalError("Description already set for the Category:" + category.getLabel());
 				else
@@ -522,7 +522,7 @@ public class DefaultSiteParser extends DefaultHandler {
 	 *
 	 * @param error a status detailing the error condition
 	 */
-	public void error(IStatus error) {
+	private void error(IStatus error) {
 
 		getStatus().add(error);
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING)
@@ -531,7 +531,7 @@ public class DefaultSiteParser extends DefaultHandler {
 	/**
 	 *
 	 */
-	public void internalErrorUnknownTag(String msg) {
+	private void internalErrorUnknownTag(String msg) {
 		stateStack.push(new Integer(STATE_IGNORED_ELEMENT));
 		internalError(msg);
 	}

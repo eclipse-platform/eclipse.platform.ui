@@ -13,7 +13,7 @@ import org.eclipse.update.configuration.*;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 
-public class TestInstallURLSiteXML extends UpdateManagerTestCase {
+public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 	
 	/**
 	 * 
@@ -46,7 +46,7 @@ public class TestInstallURLSiteXML extends UpdateManagerTestCase {
 	/**
 	 * Constructor for Test1
 	 */
-	public TestInstallURLSiteXML(String arg0) {
+	public TestInstallURLSIteXML(String arg0) {
 		super(arg0);
 	}
 

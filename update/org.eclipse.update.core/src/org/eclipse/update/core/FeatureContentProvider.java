@@ -74,12 +74,12 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 
 		// check to see if we already have a local file for this reference
 		String key = ref.toString();
-		File localFile = UpdateManagerUtils.lookupLocalFile(key);
+		File localFile = Utilities.lookupLocalFile(key);
 		if (localFile != null)
 			return ref.createContentReference(ref.getIdentifier(), localFile);
 
 		// download the referenced file into local temporary area
-		localFile = UpdateManagerUtils.createLocalFile(getWorkingDirectory(), key, null /*name*/
+		localFile = Utilities.createLocalFile(getWorkingDirectory(), key, null /*name*/
 		);
 		InputStream is = null;
 		OutputStream os = null;
@@ -93,9 +93,9 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 			}
 			is = ref.getInputStream();
 			os = new FileOutputStream(localFile);
-			UpdateManagerUtils.copy(is, os, monitor);
+			Utilities.copy(is, os, monitor);
 		} catch (IOException e) {
-			UpdateManagerUtils.removeLocalFile(key);
+			Utilities.removeLocalFile(key);
 			throw e;
 		} finally {
 			if (is != null)
@@ -138,7 +138,7 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 	 */
 	protected File getWorkingDirectory() throws IOException {
 		if (tmpDir == null)
-			tmpDir = UpdateManagerUtils.createWorkingDirectory();
+			tmpDir = Utilities.createWorkingDirectory();
 		return tmpDir;
 	}
 	/*

@@ -9,8 +9,9 @@ import java.io.PrintWriter;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.configuration.IActivity;
 import org.eclipse.update.configuration.IInstallConfiguration;
-import org.eclipse.update.core.model.ConfigurationActivityModel;
-import org.eclipse.update.core.model.InstallConfigurationParser;
+import org.eclipse.update.internal.model.*;
+import org.eclipse.update.internal.model.ConfigurationActivityModel;
+import org.eclipse.update.internal.model.InstallConfigurationParser;
 
 public class ConfigurationActivity extends ConfigurationActivityModel implements IActivity, IWritable {
 	

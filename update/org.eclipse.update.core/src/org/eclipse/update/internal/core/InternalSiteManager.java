@@ -393,16 +393,18 @@ public class InternalSiteManager {
 	 * Creates a Configuration Site and a new Site
 	 * The policy is from <code> org.eclipse.core.boot.IPlatformConfiguration</code>
 	 */
-	public static IConfiguredSite createConfigurationSite(File file, int policy)
+	public static IConfiguredSite createConfiguredSite(File file)
 		throws CoreException {
 
 		ISite site = createSite(file);
-
+		int policy = IPlatformConfiguration.ISitePolicy.USER_EXCLUDE;
+		
+		
 		//create config site
 		BaseSiteLocalFactory factory = new BaseSiteLocalFactory();
 		ConfiguredSite configSite =
 			(ConfiguredSite) factory.createConfigurationSiteModel(
-				(SiteMapModel) site,
+				(SiteModel) site,
 				policy);
 		configSite.setPlatformURLString(site.getURL().toExternalForm());
 		configSite.isUpdateable(true);

@@ -25,7 +25,7 @@ public class FeatureReferenceModel extends ModelObject {
 	private String type;
 	private URL url;
 	private String urlString;	
-	private SiteMapModel site;
+	private SiteModel site;
 	private List /* of String*/ categoryNames;
 	
 	/**
@@ -64,7 +64,7 @@ public boolean equals(Object object) {
 	/**
 	 * @since 2.0
 	 */
-	public SiteMapModel getSiteModel() {
+	public SiteModel getSiteModel() {
 		return site;
 	}
 	
@@ -106,7 +106,7 @@ public boolean equals(Object object) {
 	/**
 	 * @since 2.0
 	 */
-	public void setSiteModel(SiteMapModel site) {
+	public void setSiteModel(SiteModel site) {
 		assertIsWriteable();
 		this.site = site;
 	}

@@ -17,7 +17,7 @@ public static Test suite() {
 	// the following will take all teh test methods in teh class that start with 'test'
 
 	suite.addTest(new TestSuite(TestInstall.class));
-	suite.addTest(new TestSuite(TestInstallURLSiteXML.class));	
+	suite.addTest(new TestSuite(TestInstallURLSIteXML.class));	
 	suite.addTest(new TestSuite(TestSpaceInInstall.class));	
 	suite.addTest(new TestSuite(TestGetFeature.class));
 	suite.addTest(new TestSuite(TestExecutableInstall.class));	

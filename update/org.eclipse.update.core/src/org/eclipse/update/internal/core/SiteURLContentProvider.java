@@ -42,20 +42,14 @@ public class SiteURLContentProvider extends SiteContentProvider {
 	 */
 	public URL getArchiveReference(String archiveId)  throws CoreException {
 		URL contentURL = null;
-		try {
-			contentURL = getArchiveURLfor(archiveId);
-			
-			// if there is no mapping in the site.xml
-			// for this archiveId, use the default one
-			if (contentURL==null) {
-				contentURL = new URL(getURL(),archiveId);
-			}
-			
-		} catch (MalformedURLException e){
-			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"Error creating URL",e);
-			throw new CoreException(status);	
-		}		
+		
+		contentURL = getArchiveURLfor(archiveId);
+		// if there is no mapping in the site.xml
+		// for this archiveId, use the default one
+		if (contentURL==null) {
+			return super.getArchiveReference(archiveId);
+		}
+		
 		return contentURL;
 	}
 

@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.core.model.FeatureReferenceModel;
-import org.eclipse.update.core.model.SiteMapModel;
+import org.eclipse.update.core.model.SiteModel;
 
 /**
  *
@@ -178,7 +178,7 @@ public class FeatureReference
 	 * @see IFeatureReference#setSite(ISite)
 	 */
 	public void setSite(ISite site) {
-		setSiteModel((SiteMapModel) site);
+		setSiteModel((SiteModel) site);
 	}
 
 	

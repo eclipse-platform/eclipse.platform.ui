@@ -198,7 +198,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 	}
 
-	public void handleInitialState(String elementName, Attributes attributes)
+	private void handleInitialState(String elementName, Attributes attributes)
 		throws SAXException {
 		if (elementName.equals(FEATURE)) {
 			stateStack.push(new Integer(STATE_FEATURE));
@@ -208,7 +208,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 		//$NON-NLS-1$
 	}
 
-	public void handleFeatureState(String elementName, Attributes attributes)
+	private void handleFeatureState(String elementName, Attributes attributes)
 		throws SAXException {
 		if (elementName.equals(HANDLER)) {
 			stateStack.push(new Integer(STATE_HANDLER));
@@ -238,7 +238,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 			internalErrorUnknownTag(Policy.bind("DefaultFeatureParser.UnknownElement", elementName, getState(currentState)));
 		//$NON-NLS-1$ 
 	}
-	public void handleHandlerState(String elementName, Attributes attributes)
+	private void handleHandlerState(String elementName, Attributes attributes)
 		throws SAXException {
 		if (elementName.equals(DESCRIPTION)) {
 			stateStack.push(new Integer(STATE_DESCRIPTION));
@@ -266,7 +266,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 				Policy.bind("DefaultFeatureParser.UnknownElement", elementName, getState(currentState)));
 		//$NON-NLS-1$ 
 	}
-	public void handleCopyrightState(String elementName, Attributes attributes)
+	private void handleCopyrightState(String elementName, Attributes attributes)
 		throws SAXException {
 		if (elementName.equals(LICENSE)) {
 			stateStack.push(new Integer(STATE_LICENSE));
@@ -288,7 +288,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 				Policy.bind("DefaultFeatureParser.UnknownElement",elementName,getState(currentState)));
 		//$NON-NLS-1$ 
 	}
-	public void handleLicenseState(String elementName, Attributes attributes)
+	private void handleLicenseState(String elementName, Attributes attributes)
 		throws SAXException {
 		if (elementName.equals(URL)) {
 			stateStack.push(new Integer(STATE_URL));
@@ -307,7 +307,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 				Policy.bind("DefaultFeatureParser.UnknownElement",elementName,getState(currentState)));
 		//$NON-NLS-1$ 
 	}
-	public void handleDescriptionState(String elementName, Attributes attributes)
+	private void handleDescriptionState(String elementName, Attributes attributes)
 		throws SAXException {
 		if (elementName.equals(COPYRIGHT)) {
 			stateStack.push(new Integer(STATE_COPYRIGHT));
@@ -332,7 +332,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 				Policy.bind("DefaultFeatureParser.UnknownElement",elementName,getState(currentState)));
 		//$NON-NLS-1$ 
 	}
-	public void handleURLState(String elementName, Attributes attributes)
+	private void handleURLState(String elementName, Attributes attributes)
 		throws SAXException {
 		if (elementName.equals(UPDATE)) {
 			stateStack.push(new Integer(STATE_UPDATE));
@@ -345,7 +345,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 				Policy.bind("DefaultFeatureParser.UnknownElement",elementName,getState(currentState)));
 		//$NON-NLS-1$ 
 	}
-	public void handleUpdateState(String elementName, Attributes attributes)
+	private void handleUpdateState(String elementName, Attributes attributes)
 		throws SAXException {
 		if (elementName.equals(REQUIRES)) {
 			stateStack.push(new Integer(STATE_REQUIRES));
@@ -364,7 +364,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 				Policy.bind("DefaultFeatureParser.UnknownElement",elementName,getState(currentState)));
 		//$NON-NLS-1$ 
 	}
-	public void handleDiscoveryState(String elementName, Attributes attributes)
+	private void handleDiscoveryState(String elementName, Attributes attributes)
 		throws SAXException {
 		if (elementName.equals(REQUIRES)) {
 			stateStack.push(new Integer(STATE_REQUIRES));
@@ -386,7 +386,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 				Policy.bind("DefaultFeatureParser.UnknownElement",elementName,getState(currentState)));
 		//$NON-NLS-1$
 	}
-	public void handleRequiresState(String elementName, Attributes attributes)
+	private void handleRequiresState(String elementName, Attributes attributes)
 		throws SAXException {
 		if (elementName.equals(IMPORT)) {
 			stateStack.push(new Integer(STATE_IMPORT));
@@ -396,7 +396,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 				Policy.bind("DefaultFeatureParser.UnknownElement",elementName,getState(currentState)));
 		//$NON-NLS-1$ 
 	}
-	public void handleImportState(String elementName, Attributes attributes)
+	private void handleImportState(String elementName, Attributes attributes)
 		throws SAXException {
 		if (elementName.equals(PLUGIN)) {
 			stateStack.push(new Integer(STATE_PLUGIN));
@@ -412,7 +412,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 				Policy.bind("DefaultFeatureParser.UnknownElement",elementName,getState(currentState)));
 		//$NON-NLS-1$ 
 	}
-	public void handlePluginState(String elementName, Attributes attributes)
+	private void handlePluginState(String elementName, Attributes attributes)
 		throws SAXException {
 		if (elementName.equals(PLUGIN)) {
 			stateStack.push(new Integer(STATE_PLUGIN));
@@ -425,7 +425,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 				Policy.bind("DefaultFeatureParser.UnknownElement",elementName,getState(currentState)));
 		//$NON-NLS-1$ 
 	}
-	public void handleDataState(String elementName, Attributes attributes)
+	private void handleDataState(String elementName, Attributes attributes)
 		throws SAXException {
 		if (elementName.equals(DATA)) {
 			stateStack.push(new Integer(STATE_DATA));
@@ -1005,7 +1005,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 	 *
 	 * @param error a status detailing the error condition
 	 */
-	public void error(IStatus error) {
+	private void error(IStatus error) {
 
 		getStatus().add(error);
 		UpdateManagerPlugin.getPlugin().getLog().log(error);
@@ -1015,7 +1015,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 	/**
 	 *
 	 */
-	public void internalErrorUnknownTag(String msg) {
+	private void internalErrorUnknownTag(String msg) {
 		stateStack.push(new Integer(STATE_IGNORED_ELEMENT));
 		internalError(msg);
 	}

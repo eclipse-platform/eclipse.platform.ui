@@ -10,13 +10,14 @@ import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.update.core.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.model.*;
-import org.eclipse.update.core.model.ConfiguredSiteModel;
-import org.eclipse.update.core.model.InstallConfigurationModel;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.core.ConfigurationPolicy;
 import org.eclipse.update.internal.core.InternalSiteManager;
 import org.eclipse.update.internal.core.SiteLocal;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
+import org.eclipse.update.internal.model.*;
+import org.eclipse.update.internal.model.ConfiguredSiteModel;
+import org.eclipse.update.internal.model.InstallConfigurationModel;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 import org.eclipse.update.tests.regularInstall.*;
 

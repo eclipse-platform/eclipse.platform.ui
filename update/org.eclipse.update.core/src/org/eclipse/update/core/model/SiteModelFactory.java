@@ -44,8 +44,8 @@ public class SiteModelFactory {
 	 * @exception IOException when an IOException occured in the Stream
 	 * @exception InvalidSiteTypeException when the type of the site is different from the one expected
 	 */
-	public SiteMapModel parseSite(InputStream stream) throws ParsingException, IOException, InvalidSiteTypeException {
-		SiteMapModel result = null;
+	public SiteModel parseSite(InputStream stream) throws ParsingException, IOException, InvalidSiteTypeException {
+		SiteModel result = null;
 		try {
 			DefaultSiteParser parser = new DefaultSiteParser(this);
 			result = parser.parse(stream);
@@ -83,8 +83,8 @@ public class SiteModelFactory {
 	 *
 	 * @return a new site map model
 	 */
-	public SiteMapModel createSiteMapModel(){
-		return new SiteMapModel();
+	public SiteModel createSiteMapModel(){
+		return new SiteModel();
 	}
 	
 	/**
@@ -119,8 +119,8 @@ public class SiteModelFactory {
 	 *
 	 * @return a new site category model
 	 */
-	public SiteCategoryModel createSiteCategoryModel() {
-		return new SiteCategoryModel();
+	public CategoryModel createSiteCategoryModel() {
+		return new CategoryModel();
 	}
 }
 

@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.model.*;
+import org.eclipse.update.internal.model.*;
 import org.xml.sax.SAXException;
 
 /**
@@ -470,7 +471,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 					ISite site = SiteManager.getSite(resolvedURL);
 					//site policy
 					IPlatformConfiguration.ISitePolicy sitePolicy = siteEntries[siteIndex].getSitePolicy();
-					ConfiguredSite configSite = (ConfiguredSite) new BaseSiteLocalFactory().createConfigurationSiteModel((SiteMapModel) site, sitePolicy.getType());
+					ConfiguredSite configSite = (ConfiguredSite) new BaseSiteLocalFactory().createConfigurationSiteModel((SiteModel) site, sitePolicy.getType());
 					configSite.setPlatformURLString(siteEntries[siteIndex].getURL().toExternalForm());
 					configSite.setPreviousPluginPath(siteEntries[siteIndex].getSitePolicy().getList());
 
@@ -527,7 +528,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 
 		// create a copy of the ConfigSite without any feature
 		// this is not a clone
-		SiteMapModel siteModel = (SiteMapModel) toReconcile.getSite();
+		SiteModel siteModel = (SiteModel) toReconcile.getSite();
 		ConfiguredSite cSiteToReconcile = (ConfiguredSite)toReconcile;
 		int policy = cSiteToReconcile.getConfigurationPolicy().getPolicy();
 		ConfiguredSiteModel newSiteModel = new BaseSiteLocalFactory().createConfigurationSiteModel(siteModel, policy);
@@ -604,7 +605,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 		IPluginEntry[] result = new IPluginEntry[0];
 		if (feature != null) {
 			IPluginEntry[] featurePlugins = ref.getFeature().getPluginEntries();
-			result = UpdateManagerUtils.substract(featurePlugins, allPlugins);
+			result = UpdateManagerUtils.diff(featurePlugins, allPlugins);
 			if (result.length == 0) {
 				configured = true;
 			}

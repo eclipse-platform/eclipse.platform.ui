@@ -6,7 +6,6 @@ import java.io.PrintWriter;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import org.eclipse.update.core.model.ContentGroupModel;
 import org.eclipse.update.core.model.DefaultFeatureParser;
 import org.eclipse.update.core.model.FeatureModel;
 import org.eclipse.update.core.model.FeatureModelFactory;
@@ -44,20 +43,7 @@ public class FeatureMain extends UpdateManagerTestCase {
 		ResourceBundle bundle = null;
 		bundle = ResourceBundle.getBundle("org/eclipse/update/tests/model/test");
 		feature.resolve(new URL(base), bundle);
-		
-		ContentGroupModel[] groups = new ContentGroupModel[2];
-		groups[0] = factory.createContentGroupModel();
-		groups[1] = factory.createContentGroupModel();
-		w.println("Group count [before] = "+groups.length);
-		feature.setGroupEntryModels(groups);
-		ContentGroupModel group = factory.createContentGroupModel();
-		feature.addGroupEntryModel(group);
-		groups = feature.getGroupEntryModels();
-		w.println("Group count [after] = "+groups.length);
-		
-		w.println("Writing feature ...");
-		writeFeature(w,0,feature);		
-		
+				
 		w.close();
 	}
 	

@@ -10,6 +10,7 @@ import java.net.URL;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
+import org.eclipse.update.internal.model.*;
 import org.xml.sax.SAXException;
 
 public class SiteFileFactory extends BaseSiteFactory {
@@ -372,7 +373,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 	/*
 	 * @see SiteModelFactory#createSiteMapModel()
 	 */
-	public SiteMapModel createSiteMapModel() {
+	public SiteModel createSiteMapModel() {
 		return new SiteFile();
 	}
 

@@ -9,7 +9,7 @@ import java.net.URL;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.core.model.DefaultSiteParser;
-import org.eclipse.update.core.model.SiteMapModel;
+import org.eclipse.update.core.model.SiteModel;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.core.SiteFileFactory;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
@@ -53,11 +53,11 @@ public class TestSiteParse extends UpdateManagerTestCase {
 		URL remoteURL = new URL(SOURCE_FILE_SITE + "parsertests/site.xml");
 		DefaultSiteParser parser = new DefaultSiteParser(new SiteFileFactory());
 		URL resolvedURL = URLEncoder.encode(remoteURL);		
-		SiteMapModel remoteSite = parser.parse(resolvedURL.openStream());
+		SiteModel remoteSite = parser.parse(resolvedURL.openStream());
 		remoteSite.resolve(remoteURL, null);
 
 		FeatureReferenceModel[] feature = remoteSite.getFeatureReferenceModels();
-		SiteCategoryModel[] categories = remoteSite.getCategoryModels();
+		CategoryModel[] categories = remoteSite.getCategoryModels();
 		ArchiveReferenceModel[] archives = remoteSite.getArchiveReferenceModels();
 
 		assertTrue("Wrong number of features", feature.length == 6);
@@ -75,11 +75,11 @@ public class TestSiteParse extends UpdateManagerTestCase {
 		URL remoteURL = new URL(SOURCE_FILE_SITE + "parsertests/reddot.xml");
 		DefaultSiteParser parser = new DefaultSiteParser(new SiteFileFactory());
 		URL resolvedURL = URLEncoder.encode(remoteURL);		
-		SiteMapModel remoteSite = parser.parse(resolvedURL.openStream());
+		SiteModel remoteSite = parser.parse(resolvedURL.openStream());
 		remoteSite.resolve(remoteURL, null);
 
 		FeatureReferenceModel[] feature = remoteSite.getFeatureReferenceModels();
-		SiteCategoryModel[] categories = remoteSite.getCategoryModels();
+		CategoryModel[] categories = remoteSite.getCategoryModels();
 		ArchiveReferenceModel[] archives = remoteSite.getArchiveReferenceModels();
 
 		assertTrue("Wrong number of features", feature.length == 2);
@@ -101,11 +101,11 @@ public class TestSiteParse extends UpdateManagerTestCase {
 		URL remoteURL = new URL(SOURCE_FILE_SITE + "parsertests/reddot1.xml");
 		DefaultSiteParser parser = new DefaultSiteParser(new SiteFileFactory());
 		URL resolvedURL = URLEncoder.encode(remoteURL);		
-		SiteMapModel remoteSite = parser.parse(resolvedURL.openStream());
+		SiteModel remoteSite = parser.parse(resolvedURL.openStream());
 		remoteSite.resolve(remoteURL, null);
 
 		FeatureReferenceModel[] feature = remoteSite.getFeatureReferenceModels();
-		SiteCategoryModel[] categories = remoteSite.getCategoryModels();
+		CategoryModel[] categories = remoteSite.getCategoryModels();
 		ArchiveReferenceModel[] archives = remoteSite.getArchiveReferenceModels();
 
 		assertTrue("Wrong number of features", feature.length == 2);

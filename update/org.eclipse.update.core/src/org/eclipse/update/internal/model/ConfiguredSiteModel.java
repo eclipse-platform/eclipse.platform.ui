@@ -1,4 +1,4 @@
-package org.eclipse.update.core.model;
+package org.eclipse.update.internal.model;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.IFeatureReference;
+import org.eclipse.update.core.model.*;
 
 /**
  * 
@@ -20,7 +21,7 @@ import org.eclipse.update.core.IFeatureReference;
 public class ConfiguredSiteModel extends ModelObject {
 	private String[] previousPluginPath;
 
-	private SiteMapModel site;
+	private SiteModel site;
 	private String platformURLString;
 	private ConfigurationPolicyModel policy;
 	private InstallConfigurationModel installConfiguration;
@@ -38,7 +39,7 @@ public class ConfiguredSiteModel extends ModelObject {
 	 * @return The ISite 
 	 * @since 2.0
 	 */
-	public SiteMapModel getSiteModel() {
+	public SiteModel getSiteModel() {
 		return site;
 	}
 
@@ -46,7 +47,7 @@ public class ConfiguredSiteModel extends ModelObject {
 	 * Sets the site.
 	 * @param site The site to set
 	 */
-	public void setSiteModel(SiteMapModel site) {
+	public void setSiteModel(SiteModel site) {
 		assertIsWriteable();
 		this.site = site;
 	}
