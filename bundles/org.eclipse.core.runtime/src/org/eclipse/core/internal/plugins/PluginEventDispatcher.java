@@ -13,20 +13,26 @@ package org.eclipse.core.internal.plugins;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 
 public class PluginEventDispatcher implements IPluginEventDispatcher {
+	
+	private static final String OPTION_DEBUG_EVENTS_PLUGIN = "org.eclipse.core.runtime/registry/debug/events/plugin"; //$NON-NLS-1$	
+	
 	private Set listeners;
 	private static PluginEventDispatcher instance;
 	public PluginEventDispatcher() {
+		
 		this.listeners = new HashSet();
-		if (BootLoader.inDebugMode())
+		String debugOption = InternalPlatform.getDebugOption(OPTION_DEBUG_EVENTS_PLUGIN);
+		boolean debugEvents = debugOption == null ? false : debugOption.equalsIgnoreCase("true"); //$NON-NLS-1$		
+		if (debugEvents)
 			this.addListener(new DebugPluginListener());
 	}
-	public void addListener(IPluginListener listener) {
+	public void addListener(IPluginListener listener) {		
 		synchronized (listeners) {
 			listeners.add(listener);
 		}

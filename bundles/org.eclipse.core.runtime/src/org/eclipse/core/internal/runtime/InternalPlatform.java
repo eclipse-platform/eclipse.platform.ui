@@ -847,7 +847,7 @@ private static MultiStatus loadRegistry(URL[] pluginPath) {
 		InternalPlatform.setRegistryCacheTimeStamp(BootLoader.getCurrentPlatformConfiguration().getPluginsChangeStamp());
 		registry = (PluginRegistry) parsePlugins(augmentedPluginPath, factory, DEBUG && DEBUG_PLUGINS);
 		IStatus resolveStatus;		
-		if (dynamic) {
+		if (isDynamic()) {
 			resolveStatus = registry.incrementalResolve();
 			extensionsRegistry = new ExtensionRegistry(new ExtensionLinker());
 			addPluginListener(new ExtensionRegistryBuilder(extensionsRegistry,registry.getPluginDescriptors()));				
@@ -1394,13 +1394,15 @@ public static void setRegistryCacheTimeStamp(long timeStamp) {
  * @since 3.0
  */
 public static void addPluginListener(IPluginListener pluginListener) {
-	PluginEventDispatcher.getInstance().addListener(pluginListener);
+	if (isDynamic())
+		PluginEventDispatcher.getInstance().addListener(pluginListener);
 }
 /**
  * @since 3.0
  */
 public static void removePluginListener(IPluginListener pluginListener) {
-	PluginEventDispatcher.getInstance().removeListener(pluginListener);		
+	if (isDynamic())
+		PluginEventDispatcher.getInstance().removeListener(pluginListener);		
 }
 /**
  * @since 3.0

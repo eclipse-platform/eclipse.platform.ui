@@ -14,6 +14,7 @@ import java.lang.reflect.Array;
 import java.util.*;
 
 import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
@@ -26,6 +27,9 @@ import org.eclipse.core.runtime.registry.IExtensionPoint;
  * An OSGi-free implementation for the extension registry API.
  */
 public class ExtensionRegistry implements IExtensionRegistry {
+	
+	private static final String OPTION_DEBUG_EVENTS_EXTENSION = "org.eclipse.core.runtime/registry/debug/events/extension"; //$NON-NLS-1$	
+	
 	// a name->host mapping
 	private Map hostsByName = new HashMap();
 	// all registry change listeners 
@@ -369,7 +373,8 @@ public class ExtensionRegistry implements IExtensionRegistry {
 	}
 	public ExtensionRegistry(IExtensionLinker extensionLinker) {
 		this.linker = extensionLinker;
-		this.debug = BootLoader.inDevelopmentMode();
+		String debugOption = InternalPlatform.getDebugOption(OPTION_DEBUG_EVENTS_EXTENSION);
+		this.debug = debugOption == null ? false : debugOption.equalsIgnoreCase("true"); //$NON-NLS-1$		
 		if (this.debug)
 			addRegistryChangeListener(new IRegistryChangeListener() {
 			public void registryChanged(IRegistryChangeEvent event) {
