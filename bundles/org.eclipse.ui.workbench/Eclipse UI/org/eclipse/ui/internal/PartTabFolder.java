@@ -278,7 +278,8 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 			 * @see org.eclipse.swt.custom.CTabFolderExpandListener#collapse(org.eclipse.swt.custom.CTabFolderEvent)
 			 */
 			public void collapse(CTabFolderEvent event) {
-				// TODO Auto-generated method stub
+				//Cancel the event for now
+				event.doit = false;
 
 			}
 			
@@ -286,8 +287,8 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 			 * @see org.eclipse.swt.custom.CTabFolderExpandListener#expand(org.eclipse.swt.custom.CTabFolderEvent)
 			 */
 			public void expand(CTabFolderEvent event) {
-				// TODO Auto-generated method stub
-
+				//Cancel the event for now
+				event.doit = false;
 			}
 		});
 
