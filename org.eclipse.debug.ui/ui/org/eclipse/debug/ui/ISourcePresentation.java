@@ -20,7 +20,7 @@ import org.eclipse.ui.IEditorInput;
  * <li>Locating a source element - the source locator associated
  *  with a launch is queried for the source element associated
  *  with a stack frame.</li>
- * <li>Resloving an editor in which to display a source element -
+ * <li>Resolving an editor in which to display a source element -
  *  by default, the debug model presentation associated with the
  *  debug model being debugged is queried for an editor input
  *  and editor id in which to display a source element. However,
