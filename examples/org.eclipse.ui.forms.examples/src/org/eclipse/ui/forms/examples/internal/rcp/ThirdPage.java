@@ -11,7 +11,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.*;
 import org.eclipse.ui.forms.events.*;
-import org.eclipse.ui.forms.examples.internal.ExamplesPlugin;
 import org.eclipse.ui.forms.widgets.*;
 /**
  * @author dejan
@@ -31,8 +30,6 @@ public class ThirdPage extends FormPage {
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
 		form.setText("Form with wrapped controls");
-		form.setBackgroundImage(ExamplesPlugin.getDefault().getImage(
-				ExamplesPlugin.IMG_FORM_BG));
 		ColumnLayout layout = new ColumnLayout();
 		layout.topMargin = 0;
 		layout.bottomMargin = 5;

@@ -46,11 +46,6 @@ public class FormToolkit {
 	public static final String KEY_DRAW_BORDER = "FormWidgetFactory.drawBorder";
 	public static final String TREE_BORDER = "treeBorder";
 	public static final String TEXT_BORDER = "textBorder";
-	private static final String COLOR_TB_BG = "_sec_tb_bg";
-	private static final String COLOR_TB_FG = "_sec_tb_fg";
-	private static final String COLOR_TB_GBG = "_sec_tb_gbg";
-	private static final String COLOR_TB_BORDER = "_sec_tb_fg";
-	private static final String COLOR_TB_TOGGLE = "_sec_tb_twistie";
 	private int borderStyle = SWT.NULL;
 	private FormColors colors;
 	private KeyListener deleteListener;
@@ -370,24 +365,15 @@ public class FormToolkit {
 		section.setFont(JFaceResources.getFontRegistry().get(
 				JFaceResources.BANNER_FONT));
 		if ((sectionStyle & Section.TITLE_BAR)!=0) {
-			allocateSectionTitleBarColors();
+			FormUtil.allocateSectionTitleBarColors(colors);
 			//section.setForeground(colors.getColor(COLOR_TB_FG));
-			section.setTitleBarBackground(colors.getColor(COLOR_TB_BG));
-			section.setTitleBarBorderColor(colors.getColor(COLOR_TB_BORDER));
-			section.setTitleGradientBackground(colors.getColor(COLOR_TB_GBG));
+			section.setTitleBarBackground(colors.getColor(FormColors.TB_GBG));
+			section.setTitleBarBorderColor(colors.getColor(FormColors.TB_BORDER));
+			section.setTitleGradientBackground(colors.getColor(FormColors.TB_GBG));
 			if (section.toggle!=null)
-				section.toggle.setDecorationColor(colors.getColor(COLOR_TB_TOGGLE));
+				section.toggle.setDecorationColor(colors.getColor(FormColors.TB_TOGGLE));
 		}
 		return section;
-	}
-	private void allocateSectionTitleBarColors() {
-		if (colors.getColor(COLOR_TB_BG)==null) {
-			colors.createColor(COLOR_TB_BG, 240, 243, 251);
-			colors.createColor(COLOR_TB_GBG, 248, 249, 253);
-			colors.createColor(COLOR_TB_FG, 100, 135, 220);
-			colors.createColor(COLOR_TB_BORDER, 169, 188, 236);
-			colors.createColor(COLOR_TB_TOGGLE, 138, 168, 229);
-		}
 	}
 	/**
 	 * Creates an expandable composite as a part of the form.
@@ -668,11 +654,17 @@ public class FormToolkit {
 	
 	private void initialize() {
 		String osname = System.getProperty("os.name");
-		if (osname.equals("Windows XP"))
-			borderStyle = SWT.BORDER;
+		if (osname.equals("Windows XP")) {
+			RGB rgb = FormUtil.getSystemColor(colors, SWT.COLOR_WIDGET_BACKGROUND);
+			if (rgb.red!=212 && rgb.green!=208 && rgb.blue != 200)
+				borderStyle = SWT.BORDER;
+		}
 		hyperlinkGroup = new HyperlinkGroup(colors.getDisplay());
 		hyperlinkGroup.setBackground(colors.getBackground());
 		visibilityHandler = new VisibilityHandler();
 		keyboardHandler = new KeyboardHandler();
+	}
+	public void allocateSectionTitleBarColors() {
+		FormUtil.allocateSectionTitleBarColors(colors);
 	}
 }

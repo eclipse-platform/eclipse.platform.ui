@@ -13,6 +13,7 @@ import java.util.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.forms.internal.widgets.FormUtil;
 /**
  * Manages colors that will be applied to forms and form widgets. The colors
  * are chosen to make the widgets look correct in the editor area. If a
@@ -35,6 +36,12 @@ public class FormColors {
 	 * Key for the section separator color.
 	 */
 	public static final String SEPARATOR = "org.eclipse.ui.forms.SEPARATOR";
+
+	public static final String TB_BG = "_sec_tb_bg";
+	public static final String TB_FG = "_sec_tb_fg";
+	public static final String TB_GBG = "_sec_tb_gbg";
+	public static final String TB_BORDER = "_sec_tb_fg";
+	public static final String TB_TOGGLE = "_sec_tb_twistie";	
 	protected Map colorRegistry = new HashMap(10);
 	protected Color background;
 	protected Color foreground;
@@ -80,8 +87,7 @@ public class FormColors {
 	protected void initializeColorTable() {
 		createColor(BORDER, 195, 191, 179);
 		createColor(SEPARATOR, 152, 170, 203);
-		//createColor(TITLE, 102, 120, 153);
-		createColor(TITLE, 100, 135, 220);
+		createColor(TITLE, FormUtil.getSystemColor(this, SWT.COLOR_LIST_SELECTION));
 	}
 	/**
 	 * Creates the color for the specified key using the provided RGB object.

@@ -17,6 +17,7 @@ import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.widgets.*;
 
 public class FormUtil {
@@ -355,5 +356,44 @@ public class FormUtil {
 				return ((ILayoutExtension)layout).computeMaximumWidth((Composite)c, changed);
 		}
 		return c.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed).x;
+	}
+	
+	private static RGB blend(RGB c1, RGB c2, int ratio) {
+		int r = blend(c1.red, c2.red, ratio);
+		int g = blend(c1.green, c2.green, ratio);
+		int b = blend(c1.blue, c2.blue, ratio);
+		return new RGB(r, g, b);
+	}
+
+	private static int blend(int v1, int v2, int ratio) {
+		return (ratio*v1 + (100-ratio)*v2)/100;
+	}
+	
+	public static void allocateSectionTitleBarColors(FormColors colors) {
+		if (colors.getColor(FormColors.TB_BG)!=null) return;
+		
+		RGB tbBg = getSystemColor(colors, SWT.COLOR_TITLE_BACKGROUND_GRADIENT);
+		RGB formBackground = colors.getBackground().getRGB();
+		// blend 77% white with the title background gradient
+		tbBg = blend(formBackground, tbBg, 77);
+		colors.createColor(FormColors.TB_BG, tbBg);
+		
+		// blend 50 % white with the previous blend for half-way
+		RGB tbGbg = blend(formBackground, tbBg, 50);
+		colors.createColor(FormColors.TB_GBG, tbGbg);
+		
+		// Title bar foreground
+		RGB tbFg = getSystemColor(colors, SWT.COLOR_LIST_SELECTION);
+		colors.createColor(FormColors.TB_FG, tbFg);
+		
+		// title bar outline - border color
+		RGB tbBorder = getSystemColor(colors, SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT);
+		colors.createColor(FormColors.TB_BORDER, tbBorder);
+		// toggle color
+		RGB toggle = getSystemColor(colors, SWT.COLOR_WIDGET_NORMAL_SHADOW);
+		colors.createColor(FormColors.TB_TOGGLE, toggle);
+	}
+	public static RGB getSystemColor(FormColors colors, int code) {
+		return colors.getDisplay().getSystemColor(code).getRGB();
 	}
 }
