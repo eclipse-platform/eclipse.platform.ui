@@ -5,6 +5,7 @@ package org.eclipse.update.core;
  * All Rights Reserved.
  */
  
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.eclipse.core.runtime.CoreException;
@@ -48,5 +49,24 @@ public class SiteManager {
 	 */
 	public static ISite getTempSite() throws CoreException {
 		return InternalSiteManager.getTempSite();
+	}
+	
+
+	/** 
+	 * Resolves a URL to the local file System.
+	 * If the URL is already accessible through the file system 
+	 * (i.e the protocol is file) it returns itself
+	 * Otherwise, it copies the file of the URL to the TEMP
+	 * directory and return a file URL pointing to the file
+	 * in the TEMP directory
+	 * 
+	 * @param url teh URL to be resolve
+	 * @return the locally resolved URL
+	 * @throws IOException if the remote URL canot be found
+	 * @throws MalformedURLException if the local URL cannot be created
+	 * @throws CoreException	 if we cannot access the local TEMP directory
+	 */
+	public static URL resolveAsLocal(URL url) throws IOException, MalformedURLException, CoreException {
+		return UpdateManagerUtils.resolveAsLocal(url);
 	}
 }
