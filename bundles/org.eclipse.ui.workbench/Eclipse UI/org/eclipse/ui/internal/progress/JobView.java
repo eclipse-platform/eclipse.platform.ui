@@ -159,23 +159,21 @@ public class JobView extends ViewPart {
 		static final int MAX_PROGRESS_HEIGHT= 12;
 		static final int MIN_ICON_SIZE= 16;
 
-		private JobTreeElement jobTreeElement;
-		boolean fKeep;
-		boolean fTerminated;
-		boolean fSelected;
-		boolean fProgressIsShown;
-		boolean fTaskIsShown;
+		JobTreeElement jobTreeElement;
+		boolean keepItem;
+		boolean jobTerminated;
+		boolean selected;
+		IAction gotoAction;	
+		int cachedWidth= -1;
+		int cachedHeight= -1;
 
-		int fCachedWidth= -1;
-		int fCachedHeight= -1;
-		Label fIcon;
-		Label fName;
+		Label iconItem;
+		Label nameItem;
 		ProgressBar progressBar;
-		Hyperlink fTask;
-		Hyperlink fTask2;
+		Hyperlink taskItem;
 		ToolBar actionBar;
-		ToolItem fActionButton;
-		ToolItem fGotoButton;
+		ToolItem actionButton;
+		ToolItem gotoButton;
 		
 
 		JobItem(Composite parent, JobTreeElement info) {
@@ -187,12 +185,11 @@ public class JobView extends ViewPart {
 			Display display= getDisplay();
 
 			Job job= getJob();
-			IAction gotoAction= null;	
 			Image image= null;
 			if (job != null) {
 				Object property= job.getProperty(new QualifiedName(PROPERTY_PREFIX, PROPERTY_KEEP));
 				if (property instanceof Boolean)
-					fKeep= ((Boolean)property).booleanValue();
+					keepItem= ((Boolean)property).booleanValue();
 				property= job.getProperty(new QualifiedName(PROPERTY_PREFIX, PROPERTY_GOTO));
 				if (property instanceof IAction)
 					gotoAction= (IAction) property;
@@ -206,65 +203,55 @@ public class JobView extends ViewPart {
 			
 			MouseListener ml= new MouseAdapter() {
 				public void mouseDown(MouseEvent e) {
-//					select(JobItem.this);
+//					select(JobItem.this);	// no selections yet
 				}
 			};
 			
 			setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-			fIcon= new Label(this, SWT.NONE);
+			iconItem= new Label(this, SWT.NONE);
 			if (image != null)
-				fIcon.setImage(image);				
-			fIcon.addMouseListener(ml);
+				iconItem.setImage(image);				
+			iconItem.addMouseListener(ml);
 			
-			fName= new Label(this, SWT.NONE);
-			fName.setFont(defaultFont);
-			fName.addMouseListener(ml);
+			nameItem= new Label(this, SWT.NONE);
+			nameItem.setFont(defaultFont);
+			nameItem.addMouseListener(ml);
 			
 			actionBar= new ToolBar(this, SWT.FLAT);
 						
 			if (false && gotoAction != null) {
 				final IAction gotoAction2= gotoAction;
-				fGotoButton= new ToolItem(actionBar, SWT.NONE);
-				fGotoButton.setImage(getImage(parent.getDisplay(), "newprogress_goto.gif")); //$NON-NLS-1$
-				fGotoButton.setToolTipText(gotoAction.getToolTipText());
-				fGotoButton.setEnabled(gotoAction.isEnabled());
-				fGotoButton.addSelectionListener(new SelectionAdapter() {
+				gotoButton= new ToolItem(actionBar, SWT.NONE);
+				gotoButton.setImage(getImage(parent.getDisplay(), "newprogress_goto.gif")); //$NON-NLS-1$
+				gotoButton.setToolTipText(gotoAction.getToolTipText());
+				gotoButton.setEnabled(gotoAction.isEnabled());
+				gotoButton.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
 						if (gotoAction2.isEnabled()) {
 							gotoAction2.run();
-							if (fTerminated)
+							if (jobTerminated)
 								kill(true, true);
 						}
 					}
 				});
 			}
 
-			fActionButton= new ToolItem(actionBar, SWT.NONE);
-			fActionButton.setImage(getImage(parent.getDisplay(), "newprogress_cancel.gif")); //$NON-NLS-1$
-			fActionButton.setToolTipText(ProgressMessages.getString("NewProgressView.CancelJobToolTip")); //$NON-NLS-1$
-			fActionButton.addSelectionListener(new SelectionAdapter() {
+			actionButton= new ToolItem(actionBar, SWT.NONE);
+			actionButton.setImage(getImage(parent.getDisplay(), "newprogress_cancel.gif")); //$NON-NLS-1$
+			actionButton.setToolTipText(ProgressMessages.getString("NewProgressView.CancelJobToolTip")); //$NON-NLS-1$
+			actionButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
-					fActionButton.setEnabled(false);
-					if (fTerminated)
+					actionButton.setEnabled(false);
+					if (jobTerminated)
 						kill(true, true);
 					else
 						jobTreeElement.cancel();
 				}
 			});
 			
-			actionBar.pack();
+			//actionBar.pack();
 
-			fProgressIsShown= true;
-			
-			fTaskIsShown= true;
- 			fTask= new Hyperlink(this, SWT.NONE);
- 			fTask.setFont(defaultFont);
- 			if (gotoAction != null) {
- 				fTask.setToolTipText(gotoAction.getToolTipText());
- 				fTask.setAction(gotoAction);
- 			}
-			
 			addMouseListener(ml);
 			
 			addControlListener(new ControlAdapter() {
@@ -337,22 +324,21 @@ public class JobView extends ViewPart {
 						return ((JobTreeElement)objects[0]).getDisplayString();
 				}
 			}
-			return jobTreeElement.getDisplayString();
+			return null;
 		}
 	
 		boolean remove() {
-			fTerminated= true;
-			if (fKeep) {
+			jobTerminated= true;
+			if (keepItem) {
 				boolean changed= false;
 				if (progressBar != null && !progressBar.isDisposed()) {
-					fProgressIsShown= false;
-					progressBar.setVisible(false);
+					progressBar.dispose();
 					changed= true;
 				}
-				if (!fActionButton.isDisposed()) {
-					fActionButton.setImage(getImage(actionBar.getDisplay(), "newprogress_clear.gif")); //$NON-NLS-1$
-					fActionButton.setToolTipText(ProgressMessages.getString("NewProgressView.RemoveJobToolTip")); //$NON-NLS-1$
-					fActionButton.setEnabled(true);
+				if (!actionButton.isDisposed()) {
+					actionButton.setImage(getImage(actionBar.getDisplay(), "newprogress_clear.gif")); //$NON-NLS-1$
+					actionButton.setToolTipText(ProgressMessages.getString("NewProgressView.RemoveJobToolTip")); //$NON-NLS-1$
+					actionButton.setEnabled(true);
 				}
 				refresh();
 				return changed;
@@ -362,7 +348,7 @@ public class JobView extends ViewPart {
 		}
 		
 		boolean kill(boolean refresh, boolean broadcast) {
-			if (fTerminated) {
+			if (jobTerminated) {
 				
 				if (broadcast) {
 					Object[] listeners= allJobViews.getListeners();
@@ -385,9 +371,8 @@ public class JobView extends ViewPart {
 		
 		void handleResize() {
 			Point e= getSize();
-			Point e1= fIcon.computeSize(SWT.DEFAULT, SWT.DEFAULT); e1.x= MIN_ICON_SIZE;
-			Point e2= fName.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-			Point e4= fTask.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+			Point e1= iconItem.computeSize(SWT.DEFAULT, SWT.DEFAULT); e1.x= MIN_ICON_SIZE;
+			Point e2= nameItem.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			Point e5= actionBar.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			
 			int iw= e.x-MARGIN-HGAP-e5.x-MARGIN;
@@ -395,18 +380,19 @@ public class JobView extends ViewPart {
 				
 			int y= MARGIN;
 			int h= Math.max(e1.y, e2.y);
-			fIcon.setBounds(MARGIN, y+(h-e1.y)/2, e1.x, e1.y);
-			fName.setBounds(MARGIN+e1.x+HGAP, y+(h-e2.y)/2, iw-e1.x-HGAP, e2.y);
+			iconItem.setBounds(MARGIN, y+(h-e1.y)/2, e1.x, e1.y);
+			nameItem.setBounds(MARGIN+e1.x+HGAP, y+(h-e2.y)/2, iw-e1.x-HGAP, e2.y);
 			y+= h;
-			if (fProgressIsShown && progressBar != null /* fProgressBar.isVisible() */) {
+			if (progressBar != null && !progressBar.isDisposed()) {
 				Point e3= progressBar.computeSize(SWT.DEFAULT, SWT.DEFAULT); e3.y= MAX_PROGRESS_HEIGHT;
 				y+= VGAP;
 				progressBar.setBounds(MARGIN+indent, y, iw-indent, e3.y);
 				y+= e3.y;
 			}
-			if (fTaskIsShown /* fTask.isVisible() */) {
+			if (taskItem != null) {
+				Point e4= taskItem.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 				y+= VGAP;
-				fTask.setBounds(MARGIN+indent, y, iw-indent, e4.y);
+				taskItem.setBounds(MARGIN+indent, y, iw-indent, e4.y);
 				y+= e4.y;
 			}
 			
@@ -414,28 +400,27 @@ public class JobView extends ViewPart {
 		}
 		
 		public Point computeSize(int wHint, int hHint, boolean changed) {
-
-			int w, h;
 			
-			if (changed || fCachedHeight <= 0 || fCachedWidth <= 0) {
-				Point e1= fIcon.computeSize(SWT.DEFAULT, SWT.DEFAULT); e1.x= MIN_ICON_SIZE;
-				Point e2= fName.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-				Point e4= fTask.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+			if (changed || cachedHeight <= 0 || cachedWidth <= 0) {
+				Point e1= iconItem.computeSize(SWT.DEFAULT, SWT.DEFAULT); e1.x= MIN_ICON_SIZE;
+				Point e2= nameItem.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 				
-				fCachedWidth= MARGIN + e1.x + HGAP + 100 + MARGIN;
+				cachedWidth= MARGIN + e1.x + HGAP + 100 + MARGIN;
 					
-				fCachedHeight= MARGIN + Math.max(e1.y, e2.y);
-				if (fProgressIsShown && progressBar != null/* fProgressBar.isVisible() */) {
+				cachedHeight= MARGIN + Math.max(e1.y, e2.y);
+				if (progressBar != null && !progressBar.isDisposed()) {
 					Point e3= progressBar.computeSize(SWT.DEFAULT, SWT.DEFAULT); e3.y= MAX_PROGRESS_HEIGHT;
-					fCachedHeight+= VGAP + e3.y;
+					cachedHeight+= VGAP + e3.y;
 				}
-				if (fTaskIsShown /* fTask.isVisible() */)
-					fCachedHeight+= VGAP + e4.y;
-				fCachedHeight+= MARGIN;
+				if (taskItem != null) {
+					Point e4= taskItem.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+					cachedHeight+= VGAP + e4.y;
+				}
+				cachedHeight+= MARGIN;
 			}
 			
-			w= wHint == SWT.DEFAULT ? fCachedWidth : wHint;
-			h= hHint == SWT.DEFAULT ? fCachedHeight : hHint;
+			int w= wHint == SWT.DEFAULT ? cachedWidth : wHint;
+			int h= hHint == SWT.DEFAULT ? cachedHeight : hHint;
 			
 			return new Point(w, h);
 		}
@@ -445,14 +430,15 @@ public class JobView extends ViewPart {
 		 */
 		void updateBackground(boolean dark) {
 			Color c;
-			if (fSelected)
+			if (selected)
 				c= selectedColor;				
 			else
 				c= dark ? darkColor : whiteColor;
 			setBackground(c);				
-			fIcon.setBackground(c);	
-			fName.setBackground(c);
-			fTask.setBackground(c);
+			iconItem.setBackground(c);	
+			nameItem.setBackground(c);
+			if (taskItem != null)
+			    taskItem.setBackground(c);
 			actionBar.setBackground(c);
 		}
 		
@@ -466,7 +452,7 @@ public class JobView extends ViewPart {
 					progressBar.setMaximum(100);
 					progressBar.setSelection(percentDone);
 					relayout(true, false);
-				} else
+				} else if (!progressBar.isDisposed())
 					progressBar.setSelection(percentDone);
 			}
 		}
@@ -475,8 +461,17 @@ public class JobView extends ViewPart {
 		 * Sets the task message.
 		 */
 		void setTask(String message) {
-			if (fTask != null && !fTask.isDisposed())
-				fTask.setText(message);
+		    if (taskItem == null) {
+	 			taskItem= new Hyperlink(this, SWT.NONE);
+	 			taskItem.setFont(defaultFont);
+		        taskItem.setText(message);
+	 			if (gotoAction != null) {
+	 				taskItem.setToolTipText(gotoAction.getToolTipText());
+	 				taskItem.setAction(gotoAction);
+	 			}
+				relayout(true, false);
+		    } else
+		        taskItem.setText(message);
 		}
 
 		String getResult() {
@@ -503,10 +498,11 @@ public class JobView extends ViewPart {
 		 */
 		void refresh() {
 
-			fName.setText(shortenText(fName, getJobName()));
+		    	String name= getJobName();
+			nameItem.setText(shortenText(nameItem, name));
 
-			if (fTerminated) {
-				if (! isCanceled() && fKeep) {
+			if (jobTerminated) {
+				if (! isCanceled() && keepItem) {
 					String message= getResult();
 					if (message != null) {
 						setTask(message);
@@ -514,7 +510,7 @@ public class JobView extends ViewPart {
 					}
 				}
 			} else {
-				fActionButton.setEnabled(true || jobTreeElement.isCancellable());				
+				actionButton.setEnabled(true || jobTreeElement.isCancellable());				
 			}
 			
 			if (jobTreeElement instanceof JobInfo) {
@@ -526,7 +522,9 @@ public class JobView extends ViewPart {
 				setPercentDone(gi.getPercentDone());		
 			}
 			
-			setTask(getTaskName());
+			String tname= getTaskName();
+			if (tname != null)
+			    setTask(tname);
 		}
 		
 	}
@@ -804,9 +802,9 @@ public class JobView extends ViewPart {
 		for (int i= 0; i < cs.length; i++) {
 			JobItem ji= (JobItem) cs[i];
 			if (ji == c) {
-				ji.fSelected= !ji.fSelected;
+				ji.selected= !ji.selected;
 			} else {
-				ji.fSelected= false;	
+				ji.selected= false;	
 			}
 		}		
 		relayout(false, true);
