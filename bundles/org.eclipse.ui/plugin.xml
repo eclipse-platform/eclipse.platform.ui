@@ -849,14 +849,21 @@
                key="Ctrl+Shift+Space"
                id="org.eclipse.ui.edit.text.contentAssist.contextInformation">
          </accelerator>
-<!-- override accelerators for Chinese -->
          <accelerator
-               locale="zh_CN"
+               locale="zh"
+               key="Ctrl+Space">
+         </accelerator>
+         <accelerator
+               locale="zh"
+               key="Ctrl+Shift+Space">
+         </accelerator>
+         <accelerator
+               locale="zh"
                key="Alt+/"
                id="org.eclipse.ui.edit.text.contentAssist.proposals">
          </accelerator>
          <accelerator
-               locale="zh_CN"
+               locale="zh"
                key="Alt+?"
                id="org.eclipse.ui.edit.text.contentAssist.contextInformation">
          </accelerator>
@@ -1442,28 +1449,6 @@
                key="Alt+?"
                id="org.eclipse.ui.edit.text.contentAssist.contextInformation">
          </accelerator>
-<!-- override accelerators for Chinese China -->
-         <accelerator
-               locale="zh_CN"
-               key="Alt+/"
-               id="org.eclipse.ui.edit.text.contentAssist.proposals">
-         </accelerator>
-         <accelerator
-               locale="zh_CN"
-               key="Alt+?"
-               id="org.eclipse.ui.edit.text.contentAssist.contextInformation">
-         </accelerator>
-<!-- override accelerators for Chinese Taiwan -->
-         <accelerator
-               locale="zh_TW"
-               key="Alt+/"
-               id="org.eclipse.ui.edit.text.contentAssist.proposals">
-         </accelerator>
-         <accelerator
-               locale="zh_TW"
-               key="Alt+?"
-               id="org.eclipse.ui.edit.text.contentAssist.contextInformation">
-         </accelerator>
       </acceleratorSet>
    </extension>
    <extension
@@ -1959,6 +1944,63 @@
             %FontsPreference.TextFontDescription
          </description>
       </fontDefinition>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            label="Test"
+            description="Test"
+            visible="false"
+            id="org.test.TestActionSet">
+         <action
+               definitionId="org.test.action"
+               label="Test"
+               class="org.test.TestAction"
+               menubarPath="navigate/open.ext"
+               id="org.test.TestAction">
+         </action>
+      </actionSet>
+   </extension>
+   <extension
+         point="org.eclipse.ui.actionDefinitions">
+      <actionDefinition
+            name="Test"
+            description="Test"
+            id="org.test.action">
+      </actionDefinition>
+   </extension>
+   <extension
+         point="org.eclipse.ui.acceleratorSets">
+      <acceleratorSet
+            scopeId="org.eclipse.ui.textEditorScope"
+            configurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
+         <accelerator
+               key="`"
+               id="org.test.action">
+         </accelerator>
+      </acceleratorSet>
+      <acceleratorSet
+            scopeId="org.eclipse.ui.textEditorScope"
+            configurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+         <accelerator
+               key="`"
+               id="org.test.action">
+         </accelerator>
+      </acceleratorSet>
+   </extension>
+   <extension
+         id="org.test.fooEditor"
+         name="Foo Editor"
+         point="org.eclipse.ui.editors">
+      <editor
+            name="org.test.editor1"
+            icon="icons/test.gif"
+            extensions="foo"
+            contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
+            class="org.test.FooEditor"
+            id="org.test.editor1">
+      </editor>
    </extension>
 
 </plugin>
