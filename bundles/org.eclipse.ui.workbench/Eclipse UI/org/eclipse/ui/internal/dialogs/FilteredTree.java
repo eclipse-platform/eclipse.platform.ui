@@ -74,4 +74,13 @@ public class FilteredTree extends Composite{
     public TreeViewer getViewer() {
         return treeViewer;
     }
+    
+    /**
+     * Get the filter text field associated with this contro.
+     * 
+     * @return the text field
+     */
+    public Text getFilterField() {
+    	return filterField;
+    }
 }

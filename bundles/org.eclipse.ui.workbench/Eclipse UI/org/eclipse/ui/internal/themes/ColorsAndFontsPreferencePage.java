@@ -332,7 +332,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
     	    }
 
             updateColumn(getText(element), tree.getViewer().getControl().getFont());
-            return display.getSystemFont();
+            return null;
         }
     	
     	/**
@@ -720,6 +720,12 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	            parent, 
 	            SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 	    
+		GridData data = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_FILL);
+		data.heightHint = Math.max(175, convertHeightInCharsToPixels(10));		
+		tree.setLayoutData(data);
+		myApplyDialogFont(tree.getViewer().getControl());
+		myApplyDialogFont(tree.getFilterField());
+	    
 	    tree.getViewer().setLabelProvider(labelProvider);
 	    tree.getViewer().setContentProvider(new ThemeContentProvider());
 	    tree.getViewer().setSorter(new ViewerSorter() {
@@ -746,12 +752,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 				} 
 			}
 		});
-		
-		
-		GridData data = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_FILL);
-		data.heightHint = Math.max(175, convertHeightInCharsToPixels(10));		
-		tree.setLayoutData(data);
-		myApplyDialogFont(tree.getViewer().getControl());
 	}
 
     /**
