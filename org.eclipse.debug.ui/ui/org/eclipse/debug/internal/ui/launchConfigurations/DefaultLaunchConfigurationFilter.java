@@ -12,6 +12,7 @@ Contributors:
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
@@ -35,6 +36,7 @@ public class DefaultLaunchConfigurationFilter extends ViewerFilter {
 		Object parentElement,
 		Object element) {
 			ILaunchConfigurationType type = null;
+			ILaunchConfiguration config = null;
 			if (parentElement instanceof ILaunchConfigurationType) {
 				type = (ILaunchConfigurationType)parentElement;
 			}
@@ -42,13 +44,21 @@ public class DefaultLaunchConfigurationFilter extends ViewerFilter {
 				type = (ILaunchConfigurationType)element;
 			}
 			if (element instanceof ILaunchConfiguration) {
+				config = (ILaunchConfiguration)element;
 				try {
-					type = ((ILaunchConfiguration)element).getType();
+					type = config.getType();
+				} catch (CoreException e) {
+				}
+			}
+			boolean priv = false;
+			if (config != null) {
+				try {
+					priv = config.getAttribute(IDebugUIConstants.ATTR_PRIVATE, false);
 				} catch (CoreException e) {
 				}
 			}
 			if (type != null) {
-				return type.getCategory() == null;
+				return !priv && type.getCategory() == null;
 			}
 			return false;
 	}

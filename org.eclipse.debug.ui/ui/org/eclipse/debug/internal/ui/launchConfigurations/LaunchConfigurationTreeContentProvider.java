@@ -71,9 +71,6 @@ public class LaunchConfigurationTreeContentProvider implements ITreeContentProvi
 				ArrayList filteredConfigs = new ArrayList(allConfigs.length);
 				for (int i = 0; i < allConfigs.length; i++) {
 					ILaunchConfiguration config = allConfigs[i];
-					if (!LaunchConfigurationManager.isVisible(config)) {
-						continue;
-					}
 					filteredConfigs.add(config);
 				}
 				return filteredConfigs.toArray();
