@@ -110,7 +110,6 @@ protected void createDestinationGroup(Composite parent) {
 	// destination browse button
 	destinationBrowseButton = new Button(destinationSelectionGroup, SWT.PUSH);
 	destinationBrowseButton.setText(DataTransferMessages.getString("DataTransfer.browse")); //$NON-NLS-1$
-	destinationBrowseButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 	destinationBrowseButton.addListener(SWT.Selection, this);
 	destinationBrowseButton.setFont(font);
 	setButtonLayoutData(destinationBrowseButton);
@@ -130,7 +129,6 @@ protected void createOptionsGroupButtons(Group optionsGroup) {
 	overwriteExistingFilesCheckbox.setText(
 		DataTransferMessages.getString("ExportFile.overwriteExisting")); //$NON-NLS-1$
 	overwriteExistingFilesCheckbox.setFont(font);
-	setButtonLayoutData(overwriteExistingFilesCheckbox);
 
 	// create directory structure radios
 	createDirectoryStructureButton = new Button(optionsGroup, SWT.RADIO | SWT.LEFT);
@@ -138,7 +136,6 @@ protected void createOptionsGroupButtons(Group optionsGroup) {
 		DataTransferMessages.getString("FileExport.createDirectoryStructure")); //$NON-NLS-1$
 	createDirectoryStructureButton.setSelection(false);
 	createDirectoryStructureButton.setFont(font);
-	setButtonLayoutData(createDirectoryStructureButton);
 
 
 	// create directory structure radios
@@ -147,7 +144,6 @@ protected void createOptionsGroupButtons(Group optionsGroup) {
 		DataTransferMessages.getString("FileExport.createSelectedDirectories"));//$NON-NLS-1$}
 	createSelectionOnlyButton.setSelection(true);
 	createSelectionOnlyButton.setFont(font);
-	setButtonLayoutData(createSelectionOnlyButton);
 }
 
 /**

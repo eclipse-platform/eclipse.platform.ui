@@ -234,7 +234,6 @@ public class FontPreferencePage
 		changeFontButton = new Button(parent, SWT.PUSH);
 
 		changeFontButton.setText(changeButtonLabel); //$NON-NLS-1$
-		setButtonLayoutData(changeFontButton);
 		changeFontButton.setFont(parent.getFont());
 		setButtonLayoutData(changeFontButton);
 		
