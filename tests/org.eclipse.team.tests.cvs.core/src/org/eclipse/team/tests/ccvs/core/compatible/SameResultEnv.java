@@ -48,6 +48,7 @@ public final class SameResultEnv extends JUnitTestCase {
 	private File referenceClientRoot;
 	private File eclipseClientRoot;
 	private boolean ignoreExceptions=false;
+	private boolean expectExceptions=false;
 	
 	private CVSRepositoryLocation referenceClientRepository;
 	private CVSRepositoryLocation eclipseClientRepository;
@@ -202,6 +203,9 @@ public final class SameResultEnv extends JUnitTestCase {
 		assertNotNull(globalOptions1);
 		assertNotNull(globalOptions);
 		
+		boolean referenceClientException = false;
+		boolean eclipseClientException = false;
+		
 		localOptions = notNull(localOptions);
 		arguments = notNull(arguments);
 		if (rootExtention == null || rootExtention.equals(".")) {
@@ -217,6 +221,7 @@ public final class SameResultEnv extends JUnitTestCase {
 									new NullProgressMonitor(), 
 									new PrintStream(new NullOutputStream()));
 		} catch (ReferenceException e) {
+			referenceClientException = true;			
 			if (!ignoreExceptions) {
 				throw e;
 			}
@@ -231,9 +236,13 @@ public final class SameResultEnv extends JUnitTestCase {
 					new NullProgressMonitor(), 
 					new PrintStream(new NullOutputStream()));
 		} catch (CVSServerException e) {
+			eclipseClientException = true;
 			if (!ignoreExceptions) {
 				throw e;
 			}
+		}
+		if(ignoreExceptions) {
+			assertEquals(referenceClientException == true, eclipseClientException == true);
 		}
 		assertConsistent();
 	}
@@ -353,7 +362,7 @@ public final class SameResultEnv extends JUnitTestCase {
 		File file2 = new File(eclipseClientRoot,relativeFileName);
 
 		// Wait a second so that the timestamp will change for sure
-		//waitMsec(1100);
+		waitMsec(2000);
 		
 		appendToFile(file1,txt);
 		appendToFile(file2,txt);
@@ -458,8 +467,8 @@ public final class SameResultEnv extends JUnitTestCase {
 	private static void assertTimestampEquals(String timestamp1, String timestamp2) {
 		try {			
 			EntryFileDateFormat timestampFormat = new EntryFileDateFormat();
-			boolean merge1 = timestamp1.indexOf(ResourceSyncInfo.RESULT_OF_MERGE) != -1;
-			boolean merge2 = timestamp2.indexOf(ResourceSyncInfo.RESULT_OF_MERGE) != -1;
+			boolean merge1 = timestamp1.indexOf(ResourceSyncInfo.RESULT_OF_MERGE_CONFLICT) != -1;
+			boolean merge2 = timestamp2.indexOf(ResourceSyncInfo.RESULT_OF_MERGE_CONFLICT) != -1;
 			boolean dummy1 = timestamp1.indexOf(ResourceSyncInfo.DUMMY_TIMESTAMP) != -1;
 			boolean dummy2 = timestamp2.indexOf(ResourceSyncInfo.DUMMY_TIMESTAMP) != -1;
 			assertEquals("both timestamps should show same conflict state", merge1, merge2);

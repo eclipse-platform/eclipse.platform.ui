@@ -6,6 +6,7 @@ package org.eclipse.team.tests.ccvs.core.compatible;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.tests.ccvs.core.JUnitTestCase;
 
 public class ConflictTest extends JUnitTestCase {
@@ -21,10 +22,6 @@ public class ConflictTest extends JUnitTestCase {
 		super(arg);
 		env1 = new SameResultEnv(arg, getFile("checkout1"));
 		env2 = new SameResultEnv(arg, getFile("checkout2"));
-	}
-
-	public static void main(String[] args) {	
-		run(ConflictTest.class);
 	}
 
 	public void setUp() throws Exception {
@@ -43,6 +40,7 @@ public class ConflictTest extends JUnitTestCase {
 	
 	public static Test suite() {
 		TestSuite suite = new TestSuite(ConflictTest.class);
+		//return new CompatibleTestSetup(new ConflictTest("testSimpleConflict"));
 		return new CompatibleTestSetup(suite);
 	}
 	
@@ -62,11 +60,15 @@ public class ConflictTest extends JUnitTestCase {
 		// and submit the merge
 		env2.execute("update",EMPTY_ARGS,new String[]{"proj2"},"");
 		
+		// commit must fail because we have a merged conflict which has not been
+		// edited.
+		env2.setIgnoreExceptions(true);
+		env2.execute("ci",new String[]{"-m","TestMessage"},new String[]{"proj2"},"");
+		env2.setIgnoreExceptions(false);
+		
 		// Make a change to the file in order to let the cvs-client know
 		// that we solved the confilict
 		env2.appendToFile("proj2/f1/c.txt","That's allright");		
-		
 		env2.execute("ci",new String[]{"-m","TestMessage"},new String[]{"proj2"},"");
 	}
 }
-
