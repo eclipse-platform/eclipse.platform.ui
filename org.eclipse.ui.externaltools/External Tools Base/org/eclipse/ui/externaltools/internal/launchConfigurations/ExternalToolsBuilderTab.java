@@ -16,8 +16,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.variables.VariableUtil;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.launchVariables.IVariableComponent;
 import org.eclipse.debug.ui.launchVariables.IVariableComponentContainer;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -67,7 +67,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab impl
 		mainComposite.setFont(parent.getFont());
 		createBuildScheduleComponent(mainComposite);
 		
-		workingSetComponent= DebugUIPlugin.getDefault().getVariableComponentManager().getComponent(IExternalToolConstants.VAR_WORKING_SET);
+		workingSetComponent= DebugUITools.getVariableComponentManager().getComponent(IExternalToolConstants.VAR_WORKING_SET);
 		workingSetComponent.createContents(mainComposite, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.Working_Sets_1"), this); //$NON-NLS-1$
 	}
 	

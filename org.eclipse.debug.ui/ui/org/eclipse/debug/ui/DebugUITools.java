@@ -40,6 +40,7 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationDia
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPropertiesDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
+import org.eclipse.debug.ui.launchVariables.ILaunchVariableComponentManager;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -125,6 +126,15 @@ public class DebugUITools {
 	 */
 	public static IPreferenceStore getPreferenceStore() {
 		return DebugUIPlugin.getDefault().getPreferenceStore();
+	}
+	
+	/**
+	 * Returns the variable component manager for the debug UI plugin.
+	 * 
+	 * @return variable component manager
+	 */
+	public static ILaunchVariableComponentManager getVariableComponentManager() {
+		return DebugUIPlugin.getDefault().getVariableComponentManager();
 	}
 	
 	/**
