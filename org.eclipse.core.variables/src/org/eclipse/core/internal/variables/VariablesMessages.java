@@ -13,9 +13,6 @@ package org.eclipse.core.internal.variables;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-/**
- * StringSubstitutionMessages
- */
 public class VariablesMessages {
 
 	private static final String BUNDLE_NAME = "org.eclipse.core.internal.variables.VariablesMessages"; //$NON-NLS-1$
@@ -23,19 +20,10 @@ public class VariablesMessages {
 	private static final ResourceBundle RESOURCE_BUNDLE =
 		ResourceBundle.getBundle(BUNDLE_NAME);
 
-	/**
-	 * 
-	 */
 	private VariablesMessages() {
-
-		// TODO Auto-generated constructor stub
 	}
-	/**
-	 * @param key
-	 * @return
-	 */
+
 	public static String getString(String key) {
-		// TODO Auto-generated method stub
 		try {
 			return RESOURCE_BUNDLE.getString(key);
 		} catch (MissingResourceException e) {
