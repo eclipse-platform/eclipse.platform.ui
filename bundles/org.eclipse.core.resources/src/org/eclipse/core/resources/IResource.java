@@ -265,7 +265,7 @@ public void copy(IProjectDescription destination, boolean force, IProgressMonito
  * Relative paths are considered to be relative to the
  * container of the resource being copied. A trailing separator is ignored.
  * </p>
- * <p>Calling this method with a one segement absolute destination
+ * <p>Calling this method with a one segment absolute destination
  * path is equivalent to calling:
  * <pre>
  		copy(workspace.newProjectDescription(folder.getName()), force, monitor);
