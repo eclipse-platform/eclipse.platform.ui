@@ -215,8 +215,9 @@ public class InternalAntRunner {
 
 	protected void setTasks(Project project) {
 		List tasks = AntCorePlugin.getPlugin().getPreferences().getTasks();
-		if (tasks == null)
+		if (tasks == null) {
 			return;
+		}
 		try {
 			for (Iterator iterator = tasks.iterator(); iterator.hasNext();) {
 				Task task = (Task) iterator.next();
@@ -230,8 +231,9 @@ public class InternalAntRunner {
 
 	protected void setTypes(Project project) {
 		List types = AntCorePlugin.getPlugin().getPreferences().getTypes();
-		if (types == null)
+		if (types == null) {
 			return;
+		}
 		try {
 			for (Iterator iterator = types.iterator(); iterator.hasNext();) {
 				Type type = (Type) iterator.next();
@@ -647,8 +649,6 @@ public class InternalAntRunner {
 
 	/**
 	 * Sets the message output level. Use -1 for none.
-	 * 
-	 * @param 
 	 */
 	public void setMessageOutputLevel(int level) {
 		fMessageOutputLevel = level;
