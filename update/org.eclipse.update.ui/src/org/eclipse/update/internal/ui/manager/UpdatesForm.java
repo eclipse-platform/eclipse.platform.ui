@@ -189,10 +189,11 @@ private void catchUp() {
 }
 
 private void attachStatusLineMonitor() {
-   IViewSite vsite = getPage().getView().getViewSite();
-   IStatusLineManager manager = vsite.getActionBars().getStatusLineManager();
-   statusMonitor = new UpdateSearchProgressMonitor(manager);
-   updates.attachProgressMonitor(statusMonitor);	
+	if (statusMonitor!=null) return;
+   	IViewSite vsite = getPage().getView().getViewSite();
+   	IStatusLineManager manager = vsite.getActionBars().getStatusLineManager();
+   	statusMonitor = new UpdateSearchProgressMonitor(manager);
+   	updates.attachProgressMonitor(statusMonitor);	
 }
 
 private void stopSearch() {

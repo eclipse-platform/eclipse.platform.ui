@@ -153,6 +153,7 @@ class SearchAdapter extends MonitorAdapter {
 			versionedLabel += " "+version+":";
 			backgroundProgress.setTaskName(versionedLabel);
 			findUpdates(candidates[i]);
+			backgroundProgress.worked(1);
 		}
 		monitor.done();
 		UpdateModel model = getModel();

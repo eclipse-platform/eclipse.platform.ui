@@ -10,7 +10,7 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.ui.*;
 import org.eclipse.core.runtime.IAdaptable;
-
+
 /**
  * Insert the type's description here.
  * @see IWorkbenchWindowActionDelegate

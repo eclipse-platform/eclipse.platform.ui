@@ -41,8 +41,8 @@ public class UpdateSearchProgressMonitor implements IProgressMonitor {
 	 * @see IProgressMonitor#done()
 	 */
 	public void done() {
-		contribution.dispose();
 		manager.remove(contribution.getId());
+		contribution.dispose();
 		manager.update(true);
 		contribution=null;
 	}

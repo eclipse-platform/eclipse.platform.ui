@@ -563,7 +563,7 @@ private void doButtonSelected() {
 		BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
 			public void run() {
 				InstallWizard wizard = new InstallWizard(job);
-				WizardDialog dialog = new WizardDialog(UpdateUIPlugin.getActiveWorkbenchShell(), wizard);
+				WizardDialog dialog = new InstallWizardDialog(UpdateUIPlugin.getActiveWorkbenchShell(), wizard);
 				dialog.create();
 				dialog.getShell().setSize(500, 500);
 				dialog.open();

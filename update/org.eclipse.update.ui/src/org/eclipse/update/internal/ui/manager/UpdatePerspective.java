@@ -5,6 +5,8 @@ package org.eclipse.update.internal.ui.manager;
  */
 
 import org.eclipse.ui.*;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.update.internal.ui.UpdateUIPlugin;
 
 public class UpdatePerspective implements IPerspectiveFactory {
 	private static final String PREFIX = "org.eclipse.update.ui.";
@@ -17,6 +19,8 @@ public class UpdatePerspective implements IPerspectiveFactory {
 
 public UpdatePerspective() {
 	super();
+	MessageDialog.openInformation(UpdateUIPlugin.getActiveWorkbenchShell(), "Update", 
+	"Update Manager 2.0 is in experimental phase. You are free to use it but please refrain from reporting bugs as long as this dialog appears.");
 }
 
 public void createInitialLayout(IPageLayout factory) {
