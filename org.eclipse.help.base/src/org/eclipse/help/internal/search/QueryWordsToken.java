@@ -35,10 +35,18 @@ public class QueryWordsToken {
 	 */
 	public Query createLuceneQuery(String field, float boost) {
 		Query q;
-		if (value.indexOf('?') >= 0 || value.indexOf('*') >= 0) {
-			Term t = new Term("exact_"+field, value);
-			q = new WildcardQuery(t);
-			((WildcardQuery) q).setBoost(boost);
+		int questionPos = value.indexOf('?');
+		int starPos = value.indexOf('*');
+		if (questionPos >= 0 || starPos >= 0) {
+			if (questionPos == -1 && starPos == value.length() - 1) {
+				Term t = new Term("exact_" + field, value.substring(0, starPos));
+				q = new PrefixQuery(t);
+				((PrefixQuery) q).setBoost(boost);
+			} else {
+				Term t = new Term("exact_" + field, value);
+				q = new WildcardQuery(t);
+				((WildcardQuery) q).setBoost(boost);
+			}
 		} else {
 			Term t = new Term(field, value);
 			q = new TermQuery(t);
