@@ -18,7 +18,6 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
-import org.eclipse.jface.text.ISynchronizable;
 
 /**
  * An <code>InputStream</code> that reads from an <code>IDocument</code>.
@@ -116,23 +115,12 @@ class DocumentInputStream extends InputStream {
 	private IDocumentListener fDocumentListener= new InternalDocumentListener();
 	
 	/**
-	 * Initialize the stream to read from the given document. If the
-	 * document implements {@link ISynchronizable}, its lock object will be
-	 * locked during initialization.
+	 * Initialize the stream to read from the given document.
 	 * 
 	 * @param document the document
 	 */
 	public DocumentInputStream(IDocument document) {
-		Object lock= null;
-		if (document instanceof ISynchronizable)
-			lock= ((ISynchronizable) document).getLockObject();
-		
-		if (lock != null)
-			synchronized (lock) {
-				acquireDocument(document);
-			}
-		else
-			acquireDocument(document);
+		acquireDocument(document);
 	}
 
 	/**
@@ -142,8 +130,8 @@ class DocumentInputStream extends InputStream {
 	 */
 	private void acquireDocument(IDocument document) {
 		fDocument= document;
-		fDocument.addDocumentListener(fDocumentListener);
 		fCharSequence= new DocumentCharSequence(fDocument);
+		fDocument.addDocumentListener(fDocumentListener);
 		fLength= fCharSequence.length();
 	}
 
@@ -161,16 +149,26 @@ class DocumentInputStream extends InputStream {
 	/*
 	 * @see java.io.InputStream#close()
 	 */
-	public synchronized void close() throws IOException {
-		fCharSequence= null;
+	public void close() throws IOException {
+		synchronized (this) {
+			fCharSequence= null;
+		}
 		releaseDocument();
 	}
 
 	/**
 	 * Copies the document prior to modification and removes the document listener.
 	 */
-	private synchronized void handleDocumentAboutToBeChanged() {
-		fCharSequence= fDocument.get();
+	private void handleDocumentAboutToBeChanged() {
+		IDocument document= fDocument;
+		if (fCharSequence == null || document == null)
+			return;
+		String content= document.get();
+		synchronized (this) {
+			if (fCharSequence == null)
+				return;
+			fCharSequence= content;
+		}
 		releaseDocument();
 	}
 
@@ -178,8 +176,10 @@ class DocumentInputStream extends InputStream {
 	 * Removes the document listener.
 	 */
 	private void releaseDocument() {
-		if (fDocument != null && fDocumentListener != null)
-			fDocument.removeDocumentListener(fDocumentListener);
+		IDocument document= fDocument;
+		IDocumentListener documentListener= fDocumentListener;
+		if (document != null && documentListener != null)
+			document.removeDocumentListener(documentListener);
 		fDocument= null;
 		fDocumentListener= null;
 	}
