@@ -5,7 +5,10 @@
 package org.eclipse.compare.internal.patch;
 
 import java.io.*;
-import java.util.*;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -15,6 +18,7 @@ import org.eclipse.swt.widgets.*;
 
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 import org.eclipse.core.resources.*;
@@ -23,6 +27,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.compare.*;
 import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.DiffImage;
+import org.eclipse.compare.internal.TimeoutContext;
 import org.eclipse.compare.structuremergeviewer.*;
 
 
@@ -32,6 +37,8 @@ import org.eclipse.compare.structuremergeviewer.*;
  * resources.
  */
 /* package */ class PreviewPatchPage extends WizardPage {
+	
+	static final int GUESS_TIMEOUT= 1500; 	// show progress after 1.5sec of fuzz factor guessing
 	
 	/**
 	 * Used with CompareInput
@@ -220,25 +227,39 @@ import org.eclipse.compare.structuremergeviewer.*;
 	 *	Create the group for setting various patch options
 	 */
 	private void buildPatchOptionsGroup(Composite parent) {
+		
+		GridLayout gl;
+		GridData gd;
+		Label l;
 				
 		final Patcher patcher= fPatchWizard.getPatcher();
 		
 		Group group= new Group(parent, SWT.NONE);
 		group.setText(PatchMessages.getString("PreviewPatchPage.PatchOptions.title")); //$NON-NLS-1$
-		GridLayout layout= new GridLayout();
-		layout.numColumns= 5;
-		group.setLayout(layout);
+		gl= new GridLayout(); gl.numColumns= 4; gl.marginHeight= 0; gl.verticalSpacing= 0;
+		group.setLayout(gl);
 		group.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
-		//fPatchFileGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	
 		// 1st row
-		new Label(group, SWT.NONE).setText(PatchMessages.getString("PreviewPatchPage.IgnoreSegments.text")); //$NON-NLS-1$
+		
+		Composite pair= new Composite(group, SWT.NONE);
+		gl= new GridLayout(); gl.numColumns= 2; gl.marginHeight= gl.marginWidth= 0;
+		pair.setLayout(gl);
+		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		pair.setLayoutData(gd);
+		
+			l= new Label(pair, SWT.NONE);
+			l.setText(PatchMessages.getString("PreviewPatchPage.IgnoreSegments.text")); //$NON-NLS-1$
+			gd= new GridData(GridData.VERTICAL_ALIGN_CENTER | GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.GRAB_HORIZONTAL);
+			l.setLayoutData(gd);
 
-		fStripPrefixSegments= new Combo(group, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.SIMPLE);
-		int prefixCnt= patcher.getStripPrefixSegments();
-		String prefix= Integer.toString(prefixCnt);
-		fStripPrefixSegments.add(prefix);
-		fStripPrefixSegments.setText(prefix);
+			fStripPrefixSegments= new Combo(pair, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.SIMPLE);
+			int prefixCnt= patcher.getStripPrefixSegments();
+			String prefix= Integer.toString(prefixCnt);
+			fStripPrefixSegments.add(prefix);
+			fStripPrefixSegments.setText(prefix);
+			gd= new GridData(GridData.VERTICAL_ALIGN_CENTER | GridData.HORIZONTAL_ALIGN_END);
+			fStripPrefixSegments.setLayoutData(gd);
 		
 		addSpacer(group);
 		
@@ -248,15 +269,37 @@ import org.eclipse.compare.structuremergeviewer.*;
 		addSpacer(group);
 		
 		// 2nd row
-		Label l= new Label(group, SWT.NONE);
-		l.setText(PatchMessages.getString("PreviewPatchPage.FuzzFactor.text")); //$NON-NLS-1$
-		l.setToolTipText(PatchMessages.getString("PreviewPatchPage.FuzzFactor.tooltip")); //$NON-NLS-1$
-		fFuzzField= new Text(group, SWT.BORDER);
-		fFuzzField.setText("2"); //$NON-NLS-1$
-		GridData gd2= new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
-		gd2.widthHint= 30;
-		fFuzzField.setLayoutData(gd2);
-
+		pair= new Composite(group, SWT.NONE);
+		gl= new GridLayout(); gl.numColumns= 3; gl.marginHeight= gl.marginWidth= 0;
+		pair.setLayout(gl);
+		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		pair.setLayoutData(gd);
+	
+			l= new Label(pair, SWT.NONE);
+			l.setText(PatchMessages.getString("PreviewPatchPage.FuzzFactor.text")); //$NON-NLS-1$
+			l.setToolTipText(PatchMessages.getString("PreviewPatchPage.FuzzFactor.tooltip")); //$NON-NLS-1$
+			gd= new GridData(GridData.VERTICAL_ALIGN_CENTER | GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.GRAB_HORIZONTAL);
+			l.setLayoutData(gd);
+						
+			fFuzzField= new Text(pair, SWT.BORDER);
+			fFuzzField.setText("2"); //$NON-NLS-1$
+			gd= new GridData(GridData.VERTICAL_ALIGN_CENTER | GridData.HORIZONTAL_ALIGN_END); gd.widthHint= 30;
+			fFuzzField.setLayoutData(gd);
+	
+			Button b= new Button(pair, SWT.PUSH);
+			b.setText("Guess");
+			b.addSelectionListener(
+				new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						int fuzz= guessFuzzFactor(patcher);
+						if (fuzz >= 0)
+							fFuzzField.setText(Integer.toString(fuzz));
+					}
+				}
+			);
+			gd= new GridData(GridData.VERTICAL_ALIGN_CENTER);
+			b.setLayoutData(gd);
+		
 		addSpacer(group);
 		
 		fIgnoreWhitespaceButton= new Button(group, SWT.CHECK);
@@ -301,7 +344,82 @@ import org.eclipse.compare.structuremergeviewer.*;
 			}
 		);
 	}
+	
+	private int guessFuzzFactor(final Patcher patcher) {
+		final int strip= getStripPrefixSegments();
+		final int[] result= new int[1];
+		try {
+			TimeoutContext.run(true, GUESS_TIMEOUT, getControl().getShell(),
+				new IRunnableWithProgress() {
+					public void run(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
+						result[0]= guess(patcher, monitor, strip);
+					}
+				}
+			);
+			return result[0];
+		} catch (InvocationTargetException ex) {
+		} catch (InterruptedException ex) {
+		}
+		return -1;
+	}
+	
+	private int guess(Patcher patcher, IProgressMonitor pm, int strip) {
 		
+		Diff[] diffs= patcher.getDiffs();
+		if (diffs == null || diffs.length <= 0)
+			return -1;
+		
+		// now collect files and determine "work"
+		IFile[] files= new IFile[diffs.length];
+		int work= 0;
+		for (int i= 0; i < diffs.length; i++) {
+			Diff diff= diffs[i];
+			if (diff == null)
+				continue;
+			if (diff.getType() != Differencer.ADDITION) {
+				IPath p= diff.fOldPath;
+				if (strip > 0 && strip < p.segmentCount())
+					p= p.removeFirstSegments(strip);
+				IFile file= existsInSelection(p);
+				if (file != null) {
+					files[i]= file;
+					work+= diff.fHunks.size();
+				}
+			}	
+		}
+		
+		// do the "work"
+		pm.beginTask("Guessing Fuzz Factor...", work);
+		try {
+			int fuzz= 0;
+			for (int i= 0; i < diffs.length; i++) {
+				Diff d= diffs[i];
+				IFile file= files[i];
+				if (d != null && file != null) {
+					List lines= patcher.load(file, false);
+					String name= d.getPath().lastSegment();
+					Iterator iter= d.fHunks.iterator();
+					int shift= 0;
+					for (int hcnt= 1; iter.hasNext(); hcnt++) {
+						pm.subTask(name + " (hunk #" + hcnt + ")");
+						Hunk h= (Hunk) iter.next();
+						patcher.fMaxFuzz= 0;
+						shift= patcher.getFuzz(h, lines, shift, pm);
+						int f= patcher.fMaxFuzz;
+						if (f == -1)	// cancel
+							return -1;
+						if (f > fuzz)
+							fuzz= f;
+						pm.worked(1);
+					}
+				}
+			}
+			return fuzz;
+		} finally {
+			pm.done();
+		}
+	}
+	
 	ICompareInput createInput(Hunk hunk) {
 		
 		String[] lines= hunk.fLines;
@@ -452,7 +570,9 @@ import org.eclipse.compare.structuremergeviewer.*;
 			}
 			
 			ArrayList failedHunks= new ArrayList();
-			fPatchWizard.getPatcher().apply(diff, file, create, failedHunks);
+			Patcher patcher= fPatchWizard.getPatcher();
+			patcher.setFuzz(getFuzzFactor());
+			patcher.apply(diff, file, create, failedHunks);
 
 			if (failedHunks.size() > 0)
 				diff.fRejected= fPatchWizard.getPatcher().getRejected(failedHunks);

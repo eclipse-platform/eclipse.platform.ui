@@ -42,6 +42,7 @@ public class Patcher {
 		
 	private String fName;
 	private Diff[] fDiffs;
+	int fMaxFuzz;
 	// patch options
 	private int fStripPrefixSegments;
 	private int fFuzz;
@@ -49,6 +50,7 @@ public class Patcher {
 	private boolean fIgnoreLineDelimiter= true;
 	private boolean fPreserveLineDelimiters= false;
 	private boolean fReverse= false;
+	private boolean fAdjustShift= false;
 	
 	
 	Patcher() {
@@ -618,18 +620,20 @@ public class Patcher {
 			boolean found= false;
 			int oldShift= shift;
 			
-			for (int i= shift-1; i > shift-fFuzz; i--) {
+			for (int i= shift-1; i >= shift-fFuzz; i--) {
 				if (tryPatch(hunk, lines, i)) {
-					shift= i;
+					if (fAdjustShift)
+						shift= i;
 					found= true;
 					break;
 				}
 			}
 			
 			if (! found) {
-				for (int i= shift+1; i < shift+fFuzz; i++) {
+				for (int i= shift+1; i <= shift+fFuzz; i++) {
 					if (tryPatch(hunk, lines, i)) {
-						shift= i;
+						if (fAdjustShift)
+							shift= i;
 						found= true;
 						break;
 					}
@@ -825,7 +829,7 @@ public class Patcher {
 	 * Reads the contents from the given file and returns them as
 	 * a List of lines.
 	 */
-	private List load(IFile file, boolean create) {
+	List load(IFile file, boolean create) {
 		List lines= null;
 		if (!create && file != null) {
 			// read current contents
@@ -999,5 +1003,43 @@ public class Patcher {
 			}
 		}
 		return l;
+	}
+
+	int getFuzz(Hunk hunk, List lines, int shift, IProgressMonitor pm) {
+		hunk.fMatches= false;
+		if (tryPatch(hunk, lines, shift)) {
+			shift+= doPatch(hunk, lines, shift);
+			fMaxFuzz= 0;
+		} else {
+			boolean found= false;
+			int oldShift= shift;
+			int hugeFuzz= lines.size();	// the maximum we need for this file
+			
+			for (int i= -1; i >= -hugeFuzz; i--) {
+				if (tryPatch(hunk, lines, i+shift)) {
+					fMaxFuzz= -i;
+					if (fAdjustShift)
+						shift+= i;
+					found= true;
+					break;
+				}
+			}
+			
+			if (! found) {
+				for (int i= 1; i <= hugeFuzz; i++) {
+					if (tryPatch(hunk, lines, i+shift)) {
+						fMaxFuzz= i;
+						if (fAdjustShift)
+							shift+= i;
+						found= true;
+						break;
+					}
+				}
+			}
+			
+			if (found)
+				shift+= doPatch(hunk, lines, shift);
+		}
+		return shift;
 	}
 }
