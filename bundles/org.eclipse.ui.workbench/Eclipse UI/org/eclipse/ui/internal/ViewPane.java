@@ -358,29 +358,23 @@ protected void doDock() {
 /* package */ void drawGradient() {
 	if (titleLabel == null || viewToolBar == null || isvToolBar == null)
 		return;
+
 	if (showFocus) {
 		if (getShellActivated()) {
 			titleLabel.setBackground(WorkbenchColors.getActiveViewGradient(), WorkbenchColors.getActiveViewGradientPercents());
 			titleLabel.setForeground(WorkbenchColors.getSystemColor(SWT.COLOR_TITLE_FOREGROUND));
-			titleLabel.update();
-			viewToolBar.setBackground(WorkbenchColors.getActiveViewGradientEnd());
-			isvToolBar.setBackground(WorkbenchColors.getActiveViewGradientEnd());
 		}
 		else {
 			titleLabel.setBackground(WorkbenchColors.getDeactivatedViewGradient(), WorkbenchColors.getDeactivatedViewGradientPercents());
 			titleLabel.setForeground(WorkbenchColors.getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND));
-			titleLabel.update();
-			viewToolBar.setBackground(WorkbenchColors.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
-			isvToolBar.setBackground(WorkbenchColors.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		}
 	}
 	else {
 		titleLabel.setBackground(null, null);
 		titleLabel.setForeground(null);
-		titleLabel.update();
-		viewToolBar.setBackground(WorkbenchColors.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
-		isvToolBar.setBackground(WorkbenchColors.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 	}
+
+	titleLabel.update();
 }
 
 /**
