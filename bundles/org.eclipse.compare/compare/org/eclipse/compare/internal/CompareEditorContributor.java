@@ -21,19 +21,19 @@ public class CompareEditorContributor extends EditorActionBarContributor {
 	private IEditorPart fActiveEditorPart= null;
 
 	private IgnoreWhiteSpaceAction fIgnoreWhitespace;
-	private ShowPseudoConflicts fShowPseudoConflicts;
+	//private ShowPseudoConflicts fShowPseudoConflicts;
 
 
 	public CompareEditorContributor() {
 		ResourceBundle bundle= CompareUIPlugin.getResourceBundle();
 		fIgnoreWhitespace= new IgnoreWhiteSpaceAction(bundle, null);
-		fShowPseudoConflicts= new ShowPseudoConflicts(bundle, null);
+		//fShowPseudoConflicts= new ShowPseudoConflicts(bundle, null);
 	}
 
 	public void contributeToToolBar(IToolBarManager tbm) {
 		tbm.add(new Separator());
 		tbm.add(fIgnoreWhitespace);
-		tbm.add(fShowPseudoConflicts);
+		//tbm.add(fShowPseudoConflicts);
 	}
 
 	public void setActiveEditor(IEditorPart targetEditor) {
@@ -47,7 +47,7 @@ public class CompareEditorContributor extends EditorActionBarContributor {
 			
 				CompareConfiguration cc= editor.getCompareConfiguration();
 				fIgnoreWhitespace.setCompareConfiguration(cc);
-				fShowPseudoConflicts.setCompareConfiguration(cc);
+				//fShowPseudoConflicts.setCompareConfiguration(cc);
 			}
 		}
 	}

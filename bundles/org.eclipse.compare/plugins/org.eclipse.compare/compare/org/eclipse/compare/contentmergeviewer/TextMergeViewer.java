@@ -28,7 +28,9 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.preference.IPreferenceStore;
 
 import org.eclipse.core.runtime.CoreException;
 
@@ -43,10 +45,12 @@ import org.eclipse.compare.internal.Utilities;
 import org.eclipse.compare.internal.TokenComparator;
 import org.eclipse.compare.internal.ChangePropertyAction;
 import org.eclipse.compare.internal.CompareEditor;
+import org.eclipse.compare.internal.DocLineComparator;
+import org.eclipse.compare.internal.ComparePreferencePage;
+import org.eclipse.compare.internal.CompareUIPlugin;
+
 import org.eclipse.compare.rangedifferencer.RangeDifference;
 import org.eclipse.compare.rangedifferencer.RangeDifferencer;
-import org.eclipse.compare.internal.DocLineComparator;
-
 
 /**
  * A text merge viewer uses the <code>RangeDifferencer</code> to perform a
@@ -136,6 +140,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private static final RGB SELECTED_OUTGOING_FILL= new RGB(255, 255, 255);
 	
 	private IDocumentListener fDocumentListener;
+	
+	private	IPropertyChangeListener fPreferenceChangeListener;
 	
 	/** All diffs for calculating scrolling position (includes line ranges without changes) */
 	private ArrayList fAllDiffs;
@@ -332,7 +338,17 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		
 		buildControl(parent);
 
-		fSynchronizedScrolling= Utilities.getBoolean(configuration, SYNC_SCROLLING, fSynchronizedScrolling);
+		IPreferenceStore ps= CompareUIPlugin.getDefault().getPreferenceStore();
+		if (ps != null) {
+			fPreferenceChangeListener= new IPropertyChangeListener() {
+				public void propertyChange(PropertyChangeEvent event) {
+					TextMergeViewer.this.propertyChange(event);
+				}
+			};
+			ps.addPropertyChangeListener(fPreferenceChangeListener);
+			//fSynchronizedScrolling= ps.getBoolean(ComparePreferencePage.SYNCHRONIZE_SCROLLING);
+		}
+		//fSynchronizedScrolling= Utilities.getBoolean(configuration, SYNC_SCROLLING, fSynchronizedScrolling);
 		
 		fDocumentListener= new IDocumentListener() {
 			
@@ -396,6 +412,13 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	 * Clients may extend if they have to do additional cleanup.
 	 */
 	protected void handleDispose(DisposeEvent event) {
+		
+		if (fPreferenceChangeListener != null) {
+			IPreferenceStore ps= CompareUIPlugin.getDefault().getPreferenceStore();
+			if (ps != null)
+				ps.removePropertyChangeListener(fPreferenceChangeListener);
+			fPreferenceChangeListener= null;
+		}
 		
 		fLeftCanvas= null;
 		fRightCanvas= null;
@@ -1407,13 +1430,13 @@ public class TextMergeViewer extends ContentMergeViewer  {
 //		);
 //		tbm.appendToGroup("merge", fRejectItem);
 //		
-		Action a= new ChangePropertyAction(getResourceBundle(), getCompareConfiguration(), "action.SynchMode.", SYNC_SCROLLING);
-		a.setChecked(fSynchronizedScrolling);
-		tbm.appendToGroup("modes", a);
+//		Action a= new ChangePropertyAction(getResourceBundle(), getCompareConfiguration(), "action.SynchMode.", SYNC_SCROLLING);
+//		a.setChecked(fSynchronizedScrolling);
+//		tbm.appendToGroup("modes", a);
 		
 		tbm.add(new Separator());
 					
-		a= new Action() {
+		Action a= new Action() {
 			public void run() {
 				navigate(true);
 			}
@@ -1473,12 +1496,22 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			updateVScrollBar();
 			
 			selectFirstDiff();
-		} else if (key.equals(SYNC_SCROLLING)) {
+//		} else if (key.equals(SYNC_SCROLLING)) {
+//			
+//			boolean b= Utilities.getBoolean(getCompareConfiguration(), SYNC_SCROLLING, true);
+//			if (b != fSynchronizedScrolling)
+//				toggleSynchMode();
+	
+		} else if (key.equals(ComparePreferencePage.SYNCHRONIZE_SCROLLING)) {
 			
-			boolean b= Utilities.getBoolean(getCompareConfiguration(), SYNC_SCROLLING, true);
+			IPreferenceStore ps= CompareUIPlugin.getDefault().getPreferenceStore();
+			
+			boolean b= ps.getBoolean(ComparePreferencePage.SYNCHRONIZE_SCROLLING);
+			
+			//boolean b= Utilities.getBoolean(getCompareConfiguration(), SYNC_SCROLLING, true);
 			if (b != fSynchronizedScrolling)
 				toggleSynchMode();
-			
+		
 		} else
 			super.propertyChange(event);
 	}

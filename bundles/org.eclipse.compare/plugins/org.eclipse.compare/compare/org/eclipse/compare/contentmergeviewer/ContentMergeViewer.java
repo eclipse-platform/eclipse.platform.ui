@@ -58,7 +58,7 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 	/**
 	 * Property names.
 	 */
-	private static final String ANCESTOR_ENABLED= "ANCESTOR_ENABLED";	
+	private static final String ANCESTOR_ENABLED= ComparePreferencePage.INITIALLY_SHOW_ANCESTOR_PANE;	
 	
 	/* package */ static final int HORIZONTAL= 1;
 	/* package */ static final int VERTICAL= 2;
@@ -258,6 +258,7 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 	protected ContentMergeViewer(int style, ResourceBundle bundle, CompareConfiguration cc) {
 		fStyles= style;
 		fBundle= bundle;
+		
 		
 		fAncestorEnabled= Utilities.getBoolean(cc, ANCESTOR_ENABLED, fAncestorEnabled);
 

@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.jface.util.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.preference.IPreferenceStore;
 
 import org.eclipse.compare.internal.*;
 import org.eclipse.compare.*;
@@ -120,6 +121,7 @@ public class DiffTreeViewer extends TreeViewer {
 	private CompareConfiguration fCompareConfiguration;
 	private ViewerFilter fViewerFilter;
 	private IPropertyChangeListener fPropertyChangeListener;
+	private IPropertyChangeListener fPreferenceChangeListener;
 
 	private Action fCopyLeftToRightAction;
 	private Action fCopyRightToLeftAction;
@@ -158,6 +160,7 @@ public class DiffTreeViewer extends TreeViewer {
 		
 		fBundle= ResourceBundle.getBundle("org.eclipse.compare.structuremergeviewer.DiffTreeViewerResources");
 		
+		// register for notification with the CompareConfiguration 
 		fCompareConfiguration= configuration;
 		if (fCompareConfiguration != null) {
 			fPropertyChangeListener= new IPropertyChangeListener() {
@@ -165,10 +168,21 @@ public class DiffTreeViewer extends TreeViewer {
 					DiffTreeViewer.this.propertyChange(event);
 				}
 			};
-			
 			fCompareConfiguration.addPropertyChangeListener(fPropertyChangeListener);
-		}		
+		}	
+		
+		// register for notification with the Compare plugin's PreferenceStore 
+		fPreferenceChangeListener= new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				if (event.getProperty().equals(CompareConfiguration.SHOW_PSEUDO_CONFLICTS))
+					syncShowPseudoConflictFilter();			
+			}
+		};
+		IPreferenceStore ps= CompareUIPlugin.getDefault().getPreferenceStore();
+		if (ps != null)
+			ps.addPropertyChangeListener(fPreferenceChangeListener);
 			
+	
 		setContentProvider(new DiffViewerContentProvider());
 		setLabelProvider(new DiffViewerLabelProvider());
 		
@@ -243,6 +257,13 @@ public class DiffTreeViewer extends TreeViewer {
 	 * Clients may extend if they have to do additional cleanup.
 	 */
 	protected void handleDispose(DisposeEvent event) {
+		
+		if (fPreferenceChangeListener != null) {
+			IPreferenceStore ps= CompareUIPlugin.getDefault().getPreferenceStore();
+			if (ps != null)
+				ps.addPropertyChangeListener(fPreferenceChangeListener);
+			fPreferenceChangeListener= null;
+		}
 				
 		if (fCompareConfiguration != null) {
 			if (fPropertyChangeListener != null)
@@ -260,8 +281,8 @@ public class DiffTreeViewer extends TreeViewer {
 	 */
 	protected void propertyChange(PropertyChangeEvent event) {
 			
-		if (event.getProperty().equals(CompareConfiguration.SHOW_PSEUDO_CONFLICTS))
-			syncShowPseudoConflictFilter();			
+		//if (event.getProperty().equals(CompareConfiguration.SHOW_PSEUDO_CONFLICTS))
+		//	syncShowPseudoConflictFilter();			
 	}
 	
 	protected void inputChanged(Object in, Object oldInput) {

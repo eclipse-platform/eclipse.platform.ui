@@ -51,6 +51,15 @@
     	</editor>
 	</extension>
 
+	<extension
+		point="org.eclipse.ui.preferencePages">
+		<page name="%ComparePreferencePage.name"
+			id="org.eclipse.compare.internal.ComparePreferencePage"
+			class="org.eclipse.compare.internal.ComparePreferencePage"
+			category= "org.eclipse.ui.preferencePages.Workbench">
+		</page>	
+	</extension>
+
 	<extension point="org.eclipse.ui.popupMenus">
 	
 		<objectContribution

@@ -8,12 +8,13 @@ package org.eclipse.compare;
 import java.util.HashMap;
 
 import org.eclipse.swt.graphics.Image;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.*;
+import org.eclipse.jface.preference.IPreferenceStore;
 
-import org.eclipse.compare.internal.DiffImage;
-import org.eclipse.compare.internal.CompareUIPlugin;
-import org.eclipse.compare.structuremergeviewer.DiffTreeViewer;
+import org.eclipse.compare.internal.*;
+//import org.eclipse.compare.structuremergeviewer.DiffTreeViewer;
 import org.eclipse.compare.structuremergeviewer.Differencer;
 
 /**
@@ -88,6 +89,12 @@ public class CompareConfiguration {
 	 * suitable default labels, and no images.
 	 */
 	public CompareConfiguration() {
+		
+		IPreferenceStore ps= CompareUIPlugin.getDefault().getPreferenceStore();
+		if (ps != null) {
+			boolean b= ps.getBoolean(ComparePreferencePage.INITIALLY_SHOW_ANCESTOR_PANE);
+			setProperty(ComparePreferencePage.INITIALLY_SHOW_ANCESTOR_PANE, new Boolean(b));
+		}
 	}
 
 	/**

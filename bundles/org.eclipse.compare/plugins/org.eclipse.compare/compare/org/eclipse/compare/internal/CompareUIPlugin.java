@@ -22,6 +22,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.preference.IPreferenceStore;
 
 import org.eclipse.ui.internal.SharedImages;
 import org.eclipse.core.runtime.*;
@@ -53,16 +54,14 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	private final static String CLASS_ATTRIBUTE= "class";
 	private final static String EXTENSIONS_ATTRIBUTE= "extensions";
 
-	private static final String RESOURCE_BUNDLE= "org.eclipse.compare.internal.ComparePluginResources";
-
-	private static final String PLUGIN_ID= "org.eclipse.compare";
+	public static final String PLUGIN_ID= "org.eclipse.compare";
 
 	private static final String STRUCTURE_CREATOR_EXTENSION_POINT= "structureCreators";
 	private static final String STRUCTURE_MERGEVIEWER_EXTENSION_POINT= "structureMergeViewers";
 	private static final String CONTENT_MERGEVIEWER_EXTENSION_POINT= "contentMergeViewers";
 	private static final String CONTENT_VIEWER_EXTENSION_POINT= "contentViewers";
 	
-	private static final String COMPARE_EDITOR= "org.eclipse.compare.CompareEditor";
+	private static final String COMPARE_EDITOR= PLUGIN_ID + ".CompareEditor";
 	
 	private static final String COMPARE= "Compare";
 	private static final String COMPARE_FAILED= "Compare failed";
@@ -104,7 +103,18 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 				
 		fgComparePlugin= this;
 		
+		fgResourceBundle= descriptor.getResourceBundle();
+		
 		registerExtensions();
+	}
+	
+	/**
+	 * @see AbstractUIPlugin#initializeDefaultPreferences
+	 */
+	protected void initializeDefaultPreferences(IPreferenceStore store) {
+		super.initializeDefaultPreferences(store);
+		
+		ComparePreferencePage.initDefaults(store);		
 	}
 	
 	/**
@@ -175,8 +185,6 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	 * @return the plugin's resource bundle
 	 */
 	public static ResourceBundle getResourceBundle() {
-		if (fgResourceBundle == null)
-			fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
 		return fgResourceBundle;
 	}
 	
