@@ -102,11 +102,22 @@ function onloadHandler()
 %>
 }
 		
+function onunloadHandler() {
+<%
+// for large books, we want to avoid a long unload time
+if (data.isIE()){
+%>
+	document.body.innerHTML = "";
+<%
+}
+%>
+}
+
 </script>
 </head>
 
 
-<body onload="onloadHandler()">
+<body onload="onloadHandler()" onunload="onunloadHandler()">
 	<ul class='expanded' id='root'>
 <%
 	for (int toc=0; toc<data.getTocCount(); toc++) 
