@@ -16,20 +16,24 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -110,7 +114,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 //			if (item.verticalRulerKey != null && fStore.getBoolean(item.verticalRulerKey))
 			return item.image;
 //			return null; // don't show icon if preference is not to show in vertical ruler
-			// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=80793
+			// XXX see https://bugs.eclipse.org/bugs/show_bug.cgi?id=80793
 			// returning null does not remove a once set image.
 			// always show the image until then.	
 		}
@@ -194,6 +198,8 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 	private final ListItem[] fListModel;
 
 	private ComboViewer fDecorationViewer;
+	private final Set fImageKeys= new HashSet();
+	
 	public AnnotationsConfigurationBlock(OverlayPreferenceStore store) {
 		Assert.isNotNull(store);
 		MarkerAnnotationPreferences markerAnnotationPreferences= new MarkerAnnotationPreferences();
@@ -252,7 +258,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		gd.horizontalSpan= 2;
 		editorComposite.setLayoutData(gd);		
 
-		fAnnotationTypeViewer= new TableViewer(editorComposite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER);
+		fAnnotationTypeViewer= new TableViewer(editorComposite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER | SWT.FULL_SELECTION);
 		fAnnotationTypeViewer.setLabelProvider(new ItemLabelProvider());
 		fAnnotationTypeViewer.setContentProvider(new ItemContentProvider());
 		gd= new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false);
@@ -335,7 +341,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 				ListItem item= getSelectedItem();
 				final boolean value= fShowInTextCheckBox.getSelection();
 				if (value) {
-					// enable whatever is in the dropdown
+					// enable whatever is in the combo
 					String[] decoration= (String[]) ((IStructuredSelection) fDecorationViewer.getSelection()).getFirstElement();
 					if (HIGHLIGHT.equals(decoration))
 						fStore.setValue(item.highlightKey, true);
@@ -436,8 +442,8 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 	 * @see PreferencePage#performDefaults()
 	 */
 	public void performDefaults() {
-		
 		fStore.loadDefaults();
+		fAnnotationTypeViewer.refresh();
 		handleAnnotationListSelection();
 	}
 	
@@ -536,7 +542,14 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		if (annotationType == null)
 			return null;
 		
-		Image image= registry.get(annotationType);
+		String customImage= annotationType + "__AnnotationsConfigurationBlock_Image"; //$NON-NLS-1$
+		
+		Image image;
+		image= registry.get(customImage);
+		if (image != null)
+			return image;
+		
+		image= registry.get(annotationType);
 		if (image == null) {
 			ImageDescriptor descriptor= preference.getImageDescriptor();
 			if (descriptor != null) {
@@ -551,7 +564,40 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 			}
 		}
 		
-		return image;
+		if (image == null)
+			return image;
+		
+		// create custom image
+		final int SIZE= 16; // square images
+		ImageData data= image.getImageData();
+		Image copy;
+		if (data.height > SIZE || data.width > SIZE) {
+			// scale down to icon size
+			copy= new Image(Display.getCurrent(), data.scaledTo(SIZE, SIZE));
+		} else {
+			// don't scale up, but rather copy into the middle and mark everything else transparent
+			ImageData mask= data.getTransparencyMask();
+			ImageData resized= new ImageData(SIZE, SIZE, data.depth, data.palette);
+			ImageData resizedMask= new ImageData(SIZE, SIZE, mask.depth, mask.palette);
+			
+			int xo= Math.max(0, (SIZE - data.width) / 2);
+			int yo= Math.max(0, (SIZE - data.height) / 2);
+			
+			for (int y= 0; y < SIZE; y++) {
+				for (int x= 0; x < SIZE; x++) {
+					if (y >= yo && x >= xo && y < yo + data.height && x < xo + data.width) {
+						resized.setPixel(x, y, data.getPixel(x - xo, y - yo));
+						resizedMask.setPixel(x, y, mask.getPixel(x - xo, y - yo));
+					}
+				}
+			}
+			
+			copy= new Image(Display.getCurrent(), resized, resizedMask);
+		}
+		
+		fImageKeys.add(customImage);
+		registry.put(customImage, copy);
+		return copy;
 	}
 
 	/**
@@ -585,6 +631,14 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 	 * @see IPreferenceConfigurationBlock#dispose()
 	 */
 	public void dispose() {
+		ImageRegistry registry= EditorsPlugin.getDefault().getImageRegistry();
+
+		for (Iterator it= fImageKeys.iterator(); it.hasNext();) {
+			String string= (String) it.next();
+			registry.remove(string);
+		}
+		
+		fImageKeys.clear();
 	}
 
 	private ListItem getSelectedItem() {
@@ -593,7 +647,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 
 	private void updateDecorationViewer(ListItem item, boolean changed) {
 		// decoration selection: if the checkbox is enabled, there is
-		// only one case where the combois not enabled: if both the highlight and textStyle keys are null
+		// only one case where the combo is not enabled: if both the highlight and textStyle keys are null
 		final boolean enabled= fShowInTextCheckBox.getSelection() && !(item.highlightKey == null && item.textStyleKey == null);
 		fDecorationViewer.getControl().setEnabled(enabled);
 		
