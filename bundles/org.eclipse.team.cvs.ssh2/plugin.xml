@@ -1,42 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin
-	name="%pluginName"
-	id="org.eclipse.team.cvs.ssh2"
-	version="0.1.0"
-	provider-name="%providerName"
-	class="org.eclipse.team.cvs.ssh2.CVSSSH2Plugin">
+   id="org.eclipse.team.cvs.ssh2"
+   name="%pluginName"
+   version="0.1.0"
+   provider-name="%providerName"
+   class="org.eclipse.team.cvs.ssh2.CVSSSH2Plugin">
 
-  <requires>
-    <import plugin="org.eclipse.core.boot"/>
-    <import plugin="org.eclipse.core.resources"/>
-    <import plugin="org.eclipse.team.cvs.core"/>
-    <import plugin="org.eclipse.team.core"/>
-    <import plugin="org.eclipse.ui"/>
-  </requires>
+   <runtime>
+      <library name="cvsssh2.jar">
+         <export name="*"/>
+         <packages prefixes="org.eclipse.team.cvs.ssh2"/>
+      </library>
+      <library name="jsch-0.1.9.jar">
+         <packages prefixes="com.jcraft.jsch,com.jcraft.jsch.jce"/>
+      </library>
+   </runtime>
+   <requires>
+      <import plugin="org.eclipse.core.boot"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.team.cvs.core"/>
+      <import plugin="org.eclipse.team.core"/>
+      <import plugin="org.eclipse.ui"/>
+   </requires>
 
-  <runtime>
-    <library name="cvsssh2.jar">
-      <export name="*"/>
-      <packages prefixes="org.eclipse.team.cvs.ssh2"/>
-    </library>
-  </runtime>
 
-  <extension id="ssh" point="org.eclipse.team.cvs.core.connectionmethods">
-    <adapter>
-      <run class="org.eclipse.team.cvs.ssh2.CVSSSH2Method">
-        <parameter name="trace" value="false" /> 
-      </run>
-    </adapter>
-  </extension>
-
-  <extension id="ssh" point="org.eclipse.team.cvs.core.connectionmethods">
-    <adapter>
-      <run class="org.eclipse.team.cvs.ssh2.PServerSSH2Method">
-        <parameter name="trace" value="false" />
-      </run>
-    </adapter>
-  </extension>
-
+   <extension
+         id="ssh"
+         point="org.eclipse.team.cvs.core.connectionmethods">
+      <adapter>
+         <run
+               class="org.eclipse.team.cvs.ssh2.CVSSSH2Method">
+            <parameter
+                  name="trace"
+                  value="false">
+            </parameter>
+         </run>
+      </adapter>
+   </extension>
+   <extension
+         id="ssh"
+         point="org.eclipse.team.cvs.core.connectionmethods">
+      <adapter>
+         <run
+               class="org.eclipse.team.cvs.ssh2.PServerSSH2Method">
+            <parameter
+                  name="trace"
+                  value="false">
+            </parameter>
+         </run>
+      </adapter>
+   </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
