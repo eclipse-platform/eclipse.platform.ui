@@ -80,6 +80,11 @@ abstract class AbstractStructureVisitor implements IManagedVisitor {
 			requestSender.sendDirectory(local, remote);
 		} 
 		
+		if (mFolder.getFolderInfo() != null && 
+			mFolder.getFolderInfo().getStaticFolder()) {
+			requestSender.sendStaticDirectory();
+		}
+	
 		// Remember, that we send this folder
 		lastFolderSend = mFolder;
 	}

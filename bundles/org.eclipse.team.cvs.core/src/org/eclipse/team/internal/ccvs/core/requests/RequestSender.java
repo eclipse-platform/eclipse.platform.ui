@@ -37,6 +37,7 @@ public class RequestSender {
 	public static final String VALID_RESPONSES = "Valid-responses";
 	public static final String QUESTIONABLE = "Questionable";
 	public static final String KOPT = "Kopt";
+	public static final String STATIC_DIRECTORY = "Static-directory";
 	
 	/** Requests that do expect any response from the server */
 	public static final String CHECKOUT = "co";
@@ -159,6 +160,10 @@ public class RequestSender {
 
 	public void sendIsModified(String file) throws CVSException {
 		connection.writeLine(IS_MODIFIED, file);
+	}
+
+	public void sendStaticDirectory() throws CVSException {
+		connection.writeLine(STATIC_DIRECTORY);
 	}
 	
 	/**

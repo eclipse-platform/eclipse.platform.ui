@@ -5,11 +5,12 @@ package org.eclipse.team.internal.ccvs.core.commands;
  * All Rights Reserved.
  */
 
-import org.eclipse.team.internal.ccvs.core.util.Assert;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.requests.RequestSender;
-import org.eclipse.team.internal.ccvs.core.resources.api.FileProperties;
 import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFile;
 import org.eclipse.team.internal.ccvs.core.resources.api.IManagedFolder;
 
@@ -32,6 +33,8 @@ class FileStructureVisitor extends AbstractStructureVisitor {
 	
 	private final boolean modifiedOnly;
 	private final boolean emptyFolders;
+	private final Set sentFiles;
+	
 
 	/**
 	 * Constructor for the visitor
@@ -49,6 +52,7 @@ class FileStructureVisitor extends AbstractStructureVisitor {
 		super(requestSender, mRoot, monitor);
 		this.modifiedOnly = modifiedOnly;
 		this.emptyFolders = emptyFolders;
+		sentFiles = new HashSet();
 
 	}
 	
@@ -112,6 +116,13 @@ class FileStructureVisitor extends AbstractStructureVisitor {
 	
 	private void sendFile(IManagedFile mFile) throws CVSException {
 		
+		// Only if we know about the file, it is added to the
+		// list of sended files, Questionables do not go into
+		// the list
+		if (mFile.isManaged()) {
+			sentFiles.add(mFile);
+		}
+
 		// Send the folder if it hasn't been send so far
 		sendFolder(mFile.getParent());
 		
@@ -124,6 +135,13 @@ class FileStructureVisitor extends AbstractStructureVisitor {
 	
 	private void sendFolder(IManagedFolder mFolder) throws CVSException{
 		sendFolder(mFolder,false,true);
+	}
+	
+	/**
+	 * Return all the files that have been send to the server
+	 */
+	public IManagedFile[] getSentFiles() {
+		return (IManagedFile[]) sentFiles.toArray(new IManagedFile[sentFiles.size()]);
 	}
 }
 

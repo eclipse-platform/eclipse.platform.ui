@@ -284,6 +284,8 @@ class ManagedFolder extends ManagedResource implements IManagedFolder {
 			if (data == null) {
 				// throw new CVSException("The FolderInformation in the folder " + cvsFolder + "  is partrtial");
 				continue;
+			} else if (data.length == 0) {
+				folderProperties.putProperty(key,"");
 			} else {
 				folderProperties.putProperty(key,data[0]);
 			}

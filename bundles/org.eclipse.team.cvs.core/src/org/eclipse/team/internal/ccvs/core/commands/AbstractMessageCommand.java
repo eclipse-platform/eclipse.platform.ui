@@ -47,7 +47,7 @@ abstract class AbstractMessageCommand extends Command {
 		mWorkResources = getWorkResources();
 		
 		// Send all folders that are already managed to the server
-		sendFileStructure(mWorkResources,monitor,false,false,false);
+		sendFileStructure(mWorkResources,monitor,false,false);
 		sendHomeFolder();			
 	}
 

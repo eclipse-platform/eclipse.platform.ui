@@ -53,7 +53,7 @@ class Remove extends Command {
 		mWorkResources = getWorkResources();
 		
 		// Send all changed files to the server	
-		sendFileStructure(mWorkResources,monitor,true,false,false);		
+		sendFileStructure(mWorkResources,monitor,true,false);		
 		sendHomeFolder();
 	}
 }

@@ -51,7 +51,7 @@ public class Tag extends Command {
 		IManagedResource[] mWorkResources = getWorkResources(1);
 		
 		// Send all folders that are already managed to the server
-		sendFileStructure(mWorkResources,monitor,false,false,false);
+		sendFileStructure(mWorkResources,monitor,false,false);
 		sendHomeFolder();
 	}
 }

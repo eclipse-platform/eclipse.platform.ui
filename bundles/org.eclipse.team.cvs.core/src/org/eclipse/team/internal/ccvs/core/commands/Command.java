@@ -332,8 +332,7 @@ abstract class Command implements ICommand {
 	protected void sendFileStructure(IManagedResource[] mResources, 
 									IProgressMonitor monitor,
 									boolean modifiedOnly,
-									boolean emptyFolders,
-									boolean newFolders) throws CVSException {
+									boolean emptyFolders) throws CVSException {
 		
 		for (int i=0; i<mResources.length; i++) {
 			sendFileStructure(mResources[i],

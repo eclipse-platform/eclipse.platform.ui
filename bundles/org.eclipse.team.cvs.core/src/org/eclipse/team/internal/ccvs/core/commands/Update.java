@@ -65,7 +65,7 @@ class Update extends Command {
 		
 		// Send all folders that are already managed to the server
 		// even folders that are empty
-		sendFileStructure(mWorkResources,monitor,false,true,false);
+		sendFileStructure(mWorkResources,monitor,false,true);
 		sendHomeFolder();
 				
 	}
