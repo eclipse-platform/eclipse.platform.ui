@@ -46,7 +46,6 @@ import org.eclipse.ui.internal.ToggleEditorsVisibilityAction;
 import org.eclipse.ui.internal.WorkbenchEditorsAction;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.WorkbookEditorsAction;
 import org.eclipse.ui.internal.about.AboutAction;
 import org.eclipse.ui.internal.actions.HelpContentsAction;
@@ -570,9 +569,6 @@ public abstract class ActionFactory {
             }
             IWorkbenchAction action = new NewWizardAction(window);
             action.setId(getId());
-            // indicate that a new wizard submenu has been created
-            ((WorkbenchWindow) window)
-                    .addSubmenu(WorkbenchWindow.NEW_WIZARD_SUBMENU);
             return action;
         }
     };
