@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.preference.*;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.*;
@@ -59,7 +58,11 @@ public class MainPreferencePage
 	private static final String KEY_UPDATE_VERSIONS_COMPATIBLE =
 		"MainPreferencePage.updateVersions.compatible";
 
-	private BooleanFieldEditor checkSignatureEditor;
+	private Label historySizeLabel;
+	private Text historySizeText;
+	private Button checkSignatureCheckbox;
+	private Button equivalentButton;
+	private Button compatibleButton;
 	private Label httpProxyHostLabel;
 	private Label httpProxyPortLabel;
 	private Text httpProxyHostText;
@@ -75,7 +78,7 @@ public class MainPreferencePage
 	// these two values are for compatibility with old code
 	public static final String EQUIVALENT_VALUE = "equivalent";
 	public static final String COMPATIBLE_VALUE = "compatible";
-	
+
 	/**
 	 * The constructor.
 	 */
@@ -95,19 +98,38 @@ public class MainPreferencePage
 		WorkbenchHelp.setHelp(
 			getFieldEditorParent(),
 			"org.eclipse.update.ui.MainPreferencePage");
-		IntegerFieldEditor maxLevel =
-			new IntegerFieldEditor(
-				UpdateCore.P_HISTORY_SIZE,
-				UpdateUI.getString(KEY_HISTORY_SIZE),
-				getFieldEditorParent());
-		maxLevel.setValidRange(1, Integer.MAX_VALUE);
-		addField(maxLevel);
-		checkSignatureEditor =
-			new BooleanFieldEditor(
-				UpdateCore.P_CHECK_SIGNATURE,
-				UpdateUI.getString(KEY_CHECK_SIGNATURE),
-				getFieldEditorParent());
-		addField(checkSignatureEditor);
+
+		Composite mainComposite =
+			new Composite(getFieldEditorParent(), SWT.NULL);
+		mainComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.numColumns = 2;
+		mainComposite.setLayout(layout);
+
+		historySizeLabel = new Label(mainComposite, SWT.NONE);
+		historySizeLabel.setText(UpdateUI.getString(KEY_HISTORY_SIZE));
+		historySizeLabel.setFont(getFieldEditorParent().getFont());
+		historySizeText = new Text(mainComposite, SWT.SINGLE | SWT.BORDER);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		historySizeText.setLayoutData(gd);
+		historySizeText.setFont(getFieldEditorParent().getFont());
+
+		checkSignatureCheckbox =
+			new Button(mainComposite, SWT.CHECK | SWT.LEFT);
+		checkSignatureCheckbox.setText(UpdateUI.getString(KEY_CHECK_SIGNATURE));
+		checkSignatureCheckbox.setFont(getFieldEditorParent().getFont());
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		checkSignatureCheckbox.setLayoutData(gd);
+		checkSignatureCheckbox.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (checkSignatureCheckbox.getSelection() == false) {
+					warnSignatureCheck(getShell());
+				}
+			}
+		});
 		if ("win32".equals(SWT.getPlatform())) {
 			RadioGroupFieldEditor browser =
 				new RadioGroupFieldEditor(
@@ -126,20 +148,26 @@ public class MainPreferencePage
 		}
 		createSpacer(getFieldEditorParent(), 2);
 
-		RadioGroupFieldEditor updateVersions =
-			new RadioGroupFieldEditor(
-				UpdateCore.P_UPDATE_VERSIONS,
-				UpdateUI.getString(KEY_UPDATE_VERSIONS),
-				1,
-				new String[][] {
-					{
-						UpdateUI.getString(KEY_UPDATE_VERSIONS_EQUIVALENT),
-						UpdateCore.EQUIVALENT_VALUE },
-					{
-				UpdateUI.getString(KEY_UPDATE_VERSIONS_COMPATIBLE),
-				UpdateCore.COMPATIBLE_VALUE }
-		}, getFieldEditorParent(), true);
-		addField(updateVersions);
+		Group group = new Group(getFieldEditorParent(), SWT.NONE);
+		group.setText(UpdateUI.getString(KEY_UPDATE_VERSIONS));
+		layout = new GridLayout();
+		layout.numColumns = 1;
+		group.setLayout(layout);
+		gd = new GridData();
+		gd.horizontalSpan = 2;
+		gd.horizontalAlignment = GridData.FILL;
+		group.setLayoutData(gd);
+		group.setFont(getFieldEditorParent().getFont());
+
+		equivalentButton = new Button(group, SWT.RADIO);
+		equivalentButton.setText(
+			UpdateUI.getString(KEY_UPDATE_VERSIONS_EQUIVALENT));
+		equivalentButton.setFont(group.getFont());
+
+		compatibleButton = new Button(group, SWT.RADIO);
+		compatibleButton.setText(
+			UpdateUI.getString(KEY_UPDATE_VERSIONS_COMPATIBLE));
+		compatibleButton.setFont(group.getFont());
 
 		createSpacer(getFieldEditorParent(), 2);
 
@@ -166,6 +194,7 @@ public class MainPreferencePage
 		gd.horizontalSpan = columnSpan;
 		label.setLayoutData(gd);
 	}
+
 	protected void createHttpProxy(Composite composite, int columnSpan) {
 		Group group = new Group(composite, SWT.NONE);
 		group.setText(UpdateUI.getString("MainPreferencePage.proxyGroup"));
@@ -254,6 +283,20 @@ public class MainPreferencePage
 			});
 		}
 		UpdateUI.getDefault().savePluginPreferences();
+		
+		Preferences prefs = UpdateCore.getPlugin().getPluginPreferences();
+		prefs.setValue(
+			UpdateCore.P_CHECK_SIGNATURE,
+			checkSignatureCheckbox.getSelection());
+		prefs.setValue(UpdateCore.P_HISTORY_SIZE, historySizeText.getText());
+		prefs.setValue(
+			UpdateCore.P_UPDATE_VERSIONS,
+			equivalentButton.getSelection()
+				? EQUIVALENT_VALUE
+				: COMPATIBLE_VALUE);
+				
+		UpdateCore.getPlugin().savePluginPreferences();
+		
 		return result;
 	}
 	public void performApply() {
@@ -266,6 +309,19 @@ public class MainPreferencePage
 					httpProxyPortText.getText());
 			}
 		});
+
+		Preferences prefs = UpdateCore.getPlugin().getPluginPreferences();
+		prefs.setValue(
+			UpdateCore.P_CHECK_SIGNATURE,
+			checkSignatureCheckbox.getSelection());
+		prefs.setValue(UpdateCore.P_HISTORY_SIZE, historySizeText.getText());
+		prefs.setValue(
+			UpdateCore.P_UPDATE_VERSIONS,
+			equivalentButton.getSelection()
+				? EQUIVALENT_VALUE
+				: COMPATIBLE_VALUE);
+				
+		UpdateCore.getPlugin().savePluginPreferences();
 	}
 	public void performDefaults() {
 		super.performDefaults();
@@ -282,16 +338,26 @@ public class MainPreferencePage
 		httpProxyHostLabel.setEnabled(enableHttpProxy.getSelection());
 		httpProxyPortText.setEnabled(enableHttpProxy.getSelection());
 		httpProxyHostText.setEnabled(enableHttpProxy.getSelection());
+
+		Preferences prefs = UpdateCore.getPlugin().getPluginPreferences();
+		checkSignatureCheckbox.setSelection(
+			prefs.getBoolean(UpdateCore.P_CHECK_SIGNATURE));
+		historySizeText.setText(prefs.getString(UpdateCore.P_HISTORY_SIZE));
+		boolean isCompatible =
+			UpdateCore.COMPATIBLE_VALUE.equals(
+				prefs.getString(UpdateCore.P_UPDATE_VERSIONS));
+		equivalentButton.setSelection(!isCompatible);
+		compatibleButton.setSelection(isCompatible);
 	}
-	
-	public void propertyChange(PropertyChangeEvent event) {
-		super.propertyChange(event);
-		if (event.getSource().equals(checkSignatureEditor)) {
-			if (event.getNewValue().equals(Boolean.FALSE)) {
-				warnSignatureCheck(getShell());
-			}
-		}
-	}	
+
+//	public void propertyChange(PropertyChangeEvent event) {
+//		super.propertyChange(event);
+//		if (event.getSource().equals(checkSignatureEditor)) {
+//			if (event.getNewValue().equals(Boolean.FALSE)) {
+//				warnSignatureCheck(getShell());
+//			}
+//		}
+//	}
 
 	private void warnSignatureCheck(Shell shell) {
 		MessageDialog.openWarning(
