@@ -47,8 +47,8 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	
 	/**
 	 * The  information control closer for the hover information. Closes the information control as 
-	 * soon as the mouse pointer leaves the subject area, the user presses a key, or the subject
-	 * control is resized or moved.
+	 * soon as the mouse pointer leaves the subject area, a mouse button is pressed, the user presses a key,
+	 * or the subject control is resized or moved.
 	 */
 	class Closer extends MouseTrackAdapter 
 		implements IInformationControlCloser, MouseListener, MouseMoveListener, ControlListener, KeyListener {
@@ -131,7 +131,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		}
 		
 		/*
-		 * @see MouseMoveListener#mouseMove
+		 * @see org.eclipse.swt.events.MouseMoveListener#mouseMove(org.eclipse.swt.events.MouseEvent)
 		 */
 		public void mouseMove(MouseEvent event) {
 			if (!fSubjectArea.contains(event.x, event.y))
@@ -139,7 +139,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		}
 				
 		/*
-		 * @see MouseListener#mouseUp(MouseEvent)
+		 * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
 		 */
 		public void mouseUp(MouseEvent event) {
 		}
@@ -232,7 +232,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		
 		/**
 		 * Sets this mouse tracker's subject area, the area to be tracked in order
-		 * to reenable the information control manager.
+		 * to re-enable the information control manager.
 		 * 
 		 * @param subjectArea the subject area
 		 */
@@ -275,6 +275,8 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 * to a small rectangle around the hover event location. Adds mouse move and shell activation listeners
 		 * to track whether the computed information is, after completion, useful for presentation and to
 		 * implement the restart function.
+		 * 
+		 * @param event the mouse hover event
 		 */
 		public void mouseHover(MouseEvent event) {
 			
@@ -362,7 +364,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		
 		/**
 		 * Determines whether the computed information is still useful for presentation.
-		 * This is the case, if the shell of the subject control has been deactivated, the mouse
+		 * This is not the case, if the shell of the subject control has been deactivated, the mouse
 		 * left the subject control, or the mouse moved on, so that it is no longer in the subject
 		 * area.
 		 * 
@@ -466,6 +468,8 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 
  	/**
 	 * Returns the SWT event state of the most recent mouse hover event.
+	 * 
+	 * @return the SWT event state of the most recent mouse hover event
 	 */
 	protected int getHoverEventStateMask() {
 		return fHoverEventStateMask;

@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.Control;
  * control are internally handled by the information control manager and are not the responsibility
  * of the information control closer.
  * 
+ * @see org.eclipse.jface.text.IInformationControl
  * @since 2.0
  */
 abstract public class AbstractInformationControlManager {
@@ -82,7 +83,7 @@ abstract public class AbstractInformationControlManager {
 	
 	
 	/**
-	 * Constitues entities to enumerate anchors for the layout of the information control.
+	 * Constitutes entities to enumerate anchors for the layout of the information control.
 	 */
 	public static final class Anchor {
 		private Anchor() {
@@ -100,7 +101,10 @@ abstract public class AbstractInformationControlManager {
 	public final static Anchor ANCHOR_LEFT=  ANCHORS[2];
 	/** Anchor representing the right side of the information area */
 	public final static Anchor ANCHOR_RIGHT= ANCHORS[3];
-	/** Anchor representing the middle of the subject control */
+	/** 
+	 * Anchor representing the middle of the subject control
+	 * @since 2.1
+	 */
 	public final static Anchor ANCHOR_GLOBAL= new Anchor();
 	
 	
@@ -212,11 +216,10 @@ abstract public class AbstractInformationControlManager {
 	 * the area for which the given information is valid. This so called subject area is a graphical
 	 * region of the information control's subject control. This method calls <code>presentInformation()</code>
 	 * to trigger the presentation of the computed information.
-	 * 
-	 * @since  2.1
 	 *
 	 * @param information the information
 	 * @param subjectArea the subject area
+	 * @since  2.1
 	 */
 	protected final void setInformation(Object information, Rectangle subjectArea) {
 		fInformation= information;
@@ -435,6 +438,7 @@ abstract public class AbstractInformationControlManager {
 	 * @param subjectArea the subject area
 	 * @param controlSize the size of the information control
 	 * @param anchor the anchor at the subject area
+	 * @return the display location of the information control
 	 */
 	protected Point computeLocation(Rectangle subjectArea, Point controlSize, Anchor anchor) {
 		
