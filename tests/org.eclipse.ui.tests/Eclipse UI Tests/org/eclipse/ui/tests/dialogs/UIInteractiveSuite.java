@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dialogs;
 
+import org.eclipse.ui.tests.compare.UIComparePreferences;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -31,6 +33,7 @@ public class UIInteractiveSuite extends TestSuite {
 	 */
 	public UIInteractiveSuite() {
 		addTest(new TestSuite(UIPreferences.class));
+		addTest(new TestSuite(UIComparePreferences.class));
 		addTest(new TestSuite(DeprecatedUIPreferences.class));
 		addTest(new TestSuite(UIWizards.class));
 		addTest(new TestSuite(DeprecatedUIWizards.class));
