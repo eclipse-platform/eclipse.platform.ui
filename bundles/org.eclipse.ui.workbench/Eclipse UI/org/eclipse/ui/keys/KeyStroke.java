@@ -22,6 +22,7 @@ import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.eclipse.ui.internal.keys.*;
 import org.eclipse.ui.internal.util.Util;
 
 /**

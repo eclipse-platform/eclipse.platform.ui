@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 
+import org.eclipse.ui.internal.keys.*;
 import org.eclipse.ui.internal.util.Util;
 
 /**

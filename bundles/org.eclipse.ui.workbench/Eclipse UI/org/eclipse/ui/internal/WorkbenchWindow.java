@@ -87,6 +87,7 @@ import org.eclipse.ui.internal.commands.ActionHandler;
 import org.eclipse.ui.internal.commands.CommandManager;
 import org.eclipse.ui.internal.commands.Match;
 import org.eclipse.ui.internal.dialogs.MessageDialogWithToggle;
+import org.eclipse.ui.internal.keys.KeySupport;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.progress.AnimationItem;
@@ -95,7 +96,6 @@ import org.eclipse.ui.internal.registry.IActionSet;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
-import org.eclipse.ui.keys.KeySupport;
 import org.eclipse.ui.keys.ModifierKey;
 
 /**

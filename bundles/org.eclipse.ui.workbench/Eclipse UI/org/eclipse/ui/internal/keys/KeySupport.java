@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.keys;
+package org.eclipse.ui.internal.keys;
 
 import java.util.Iterator;
 import java.util.MissingResourceException;
@@ -18,6 +18,12 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.ui.keys.CharacterKey;
+import org.eclipse.ui.keys.KeyStroke;
+import org.eclipse.ui.keys.ModifierKey;
+import org.eclipse.ui.keys.NaturalKey;
+import org.eclipse.ui.keys.SpecialKey;
 
 /**
  * <p>
@@ -30,6 +36,25 @@ import org.eclipse.swt.SWT;
  * @since 3.0
  */
 public final class KeySupport {
+
+	public static int convertFromEvent(Event event) {
+		int key = event.character;
+
+		if (key == 0)
+			key = event.keyCode;
+		else {
+			if (0 <= key && key <= 0x1F) {
+				if ((event.stateMask & SWT.CTRL) != 0)
+					key += 0x40;
+			} else {
+				if ('a' <= key && key <= 'z')
+					key -= 'a' - 'A';
+			}
+		}
+
+		int modifiers = event.stateMask & SWT.MODIFIER_MASK;
+		return modifiers + key;
+	}
 
     /**
      * JAVADOC
@@ -209,7 +234,7 @@ public final class KeySupport {
         return key;
     }
 
-	static String translateString(ResourceBundle resourceBundle, String key, String string) {
+	public static String translateString(ResourceBundle resourceBundle, String key, String string) {
 		if (resourceBundle != null && key != null)
 			try {
 				final String translatedString = resourceBundle.getString(key);

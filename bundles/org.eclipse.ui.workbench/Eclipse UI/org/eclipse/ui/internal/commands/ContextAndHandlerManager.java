@@ -23,6 +23,7 @@ import org.eclipse.ui.commands.*;
 import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.contexts.*;
 import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.keys.*;
 import org.eclipse.ui.keys.*;
 
 /**

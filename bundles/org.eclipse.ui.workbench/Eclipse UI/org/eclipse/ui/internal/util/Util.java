@@ -154,21 +154,6 @@ public final class Util {
 		return left == null ? right == null : left.equals(right);
 	}
 
-	public static String getString(ResourceBundle resourceBundle, String key) {
-		if (resourceBundle == null || key == null)
-			throw new NullPointerException();
-
-		String value = key;
-
-		try {
-			value = resourceBundle.getString(key);
-		} catch (MissingResourceException eMissingResource) {
-			System.err.println(eMissingResource);
-		}
-		
-		return value != null ? value.trim() : null;
-	}
-
 	public static boolean isChildOf(Object[] left, Object[] right, boolean equals) {
 		if (left == null || right == null)
 			return false;
@@ -320,6 +305,21 @@ public final class Util {
 
 		return sortedSet;
 	}	
+
+	public static String translateString(ResourceBundle resourceBundle, String key) {
+		if (resourceBundle == null || key == null)
+			throw new NullPointerException();
+
+		String value = key;
+
+		try {
+			value = resourceBundle.getString(key);
+		} catch (MissingResourceException eMissingResource) {
+			System.err.println(eMissingResource);
+		}
+		
+		return value != null ? value.trim() : null;
+	}
 	
 	private Util() {
 	}

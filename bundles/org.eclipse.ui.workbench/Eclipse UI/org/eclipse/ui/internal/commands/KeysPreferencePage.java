@@ -75,9 +75,9 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 
 	private final static ResourceBundle resourceBundle = ResourceBundle.getBundle(KeysPreferencePage.class.getName());
 
-	private final static String COMMAND_CONFLICT = Util.getString(resourceBundle, "commandConflict"); //$NON-NLS-1$
-	private final static String COMMAND_NOTHING = Util.getString(resourceBundle, "commandNothing"); //$NON-NLS-1$
-	private final static String COMMAND_UNDEFINED = Util.getString(resourceBundle, "commandUndefined"); //$NON-NLS-1$
+	private final static String COMMAND_CONFLICT = Util.translateString(resourceBundle, "commandConflict"); //$NON-NLS-1$
+	private final static String COMMAND_NOTHING = Util.translateString(resourceBundle, "commandNothing"); //$NON-NLS-1$
+	private final static String COMMAND_UNDEFINED = Util.translateString(resourceBundle, "commandUndefined"); //$NON-NLS-1$
 	private final static int DIFFERENCE_ADD = 0;	
 	private final static int DIFFERENCE_CHANGE = 1;	
 	private final static int DIFFERENCE_MINUS = 2;	
@@ -245,7 +245,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 					categoryIdsByUniqueName.put(name, categoryDefinition.getId());
 				} else while (iterator2.hasNext()) {
 					ICategoryDefinition categoryDefinition = (ICategoryDefinition) iterator2.next(); 
-					String uniqueName = MessageFormat.format(Util.getString(resourceBundle, "uniqueName"), new Object[] { name, categoryDefinition.getId() }); //$NON-NLS-1$
+					String uniqueName = MessageFormat.format(Util.translateString(resourceBundle, "uniqueName"), new Object[] { name, categoryDefinition.getId() }); //$NON-NLS-1$
 					categoryIdsByUniqueName.put(uniqueName, categoryDefinition.getId());							
 				}
 			}	
@@ -278,7 +278,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 					commandIdsByUniqueName.put(name, commandDefinition.getId());
 				} else while (iterator2.hasNext()) {
 					ICommandDefinition commandDefinition = (ICommandDefinition) iterator2.next(); 
-					String uniqueName = MessageFormat.format(Util.getString(resourceBundle, "uniqueName"), new Object[] { name, commandDefinition.getId() }); //$NON-NLS-1$
+					String uniqueName = MessageFormat.format(Util.translateString(resourceBundle, "uniqueName"), new Object[] { name, commandDefinition.getId() }); //$NON-NLS-1$
 					commandIdsByUniqueName.put(uniqueName, commandDefinition.getId());							
 				}
 			}	
@@ -311,7 +311,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 					contextIdsByUniqueName.put(name, contextDefinition.getId());
 				} else while (iterator2.hasNext()) {
 					IContextDefinition contextDefinition = (IContextDefinition) iterator2.next(); 
-					String uniqueName = MessageFormat.format(Util.getString(resourceBundle, "uniqueName"), new Object[] { name, contextDefinition.getId() }); //$NON-NLS-1$
+					String uniqueName = MessageFormat.format(Util.translateString(resourceBundle, "uniqueName"), new Object[] { name, contextDefinition.getId() }); //$NON-NLS-1$
 					contextIdsByUniqueName.put(uniqueName, contextDefinition.getId());												
 				}
 			}	
@@ -344,7 +344,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 					keyConfigurationIdsByUniqueName.put(name, keyConfigurationDefinition.getId());
 				} else while (iterator2.hasNext()) {
 					IKeyConfigurationDefinition keyConfigurationDefinition = (IKeyConfigurationDefinition) iterator2.next(); 
-					String uniqueName = MessageFormat.format(Util.getString(resourceBundle, "uniqueName"), new Object[] { name, keyConfigurationDefinition.getId() }); //$NON-NLS-1$
+					String uniqueName = MessageFormat.format(Util.translateString(resourceBundle, "uniqueName"), new Object[] { name, keyConfigurationDefinition.getId() }); //$NON-NLS-1$
 					keyConfigurationIdsByUniqueName.put(uniqueName, keyConfigurationDefinition.getId());		
 				}
 			}	
@@ -367,12 +367,12 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 
 			List contextNames = new ArrayList(contextIdsByUniqueName.keySet());
 			Collections.sort(contextNames, Collator.getInstance());						
-			contextNames.add(0, Util.getString(resourceBundle, "general")); //$NON-NLS-1$
+			contextNames.add(0, Util.translateString(resourceBundle, "general")); //$NON-NLS-1$
 			comboContext.setItems((String[]) contextNames.toArray(new String[contextNames.size()]));
 
 			List keyConfigurationNames = new ArrayList(keyConfigurationIdsByUniqueName.keySet());
 			Collections.sort(keyConfigurationNames, Collator.getInstance());						
-			keyConfigurationNames.add(0, Util.getString(resourceBundle, "standard")); //$NON-NLS-1$
+			keyConfigurationNames.add(0, Util.translateString(resourceBundle, "standard")); //$NON-NLS-1$
 			comboKeyConfiguration.setItems((String[]) keyConfigurationNames.toArray(new String[keyConfigurationNames.size()]));
 
 			/*
@@ -499,7 +499,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 
 		labelKeyConfiguration = new Label(composite, SWT.LEFT);
 		labelKeyConfiguration.setFont(composite.getFont());
-		labelKeyConfiguration.setText(Util.getString(resourceBundle, "labelKeyConfiguration")); //$NON-NLS-1$
+		labelKeyConfiguration.setText(Util.translateString(resourceBundle, "labelKeyConfiguration")); //$NON-NLS-1$
 
 		comboKeyConfiguration = new Combo(composite, SWT.READ_ONLY);
 		comboKeyConfiguration.setFont(composite.getFont());
@@ -528,14 +528,14 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		gridData = new GridData(GridData.FILL_BOTH);
 		gridData.horizontalSpan = 3;
 		labelCommandGroup.setLayoutData(gridData);
-		labelCommandGroup.setText(Util.getString(resourceBundle, "labelCommandGroup")); //$NON-NLS-1$
+		labelCommandGroup.setText(Util.translateString(resourceBundle, "labelCommandGroup")); //$NON-NLS-1$
 
 		labelCategory = new Label(composite, SWT.LEFT);
 		labelCategory.setFont(composite.getFont());
 		gridData = new GridData();
 		gridData.horizontalIndent = 50;
 		labelCategory.setLayoutData(gridData);
-		labelCategory.setText(Util.getString(resourceBundle, "labelCategory")); //$NON-NLS-1$
+		labelCategory.setText(Util.translateString(resourceBundle, "labelCategory")); //$NON-NLS-1$
 
 		comboCategory = new Combo(composite, SWT.READ_ONLY);
 		comboCategory.setFont(composite.getFont());
@@ -555,7 +555,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		gridData = new GridData();
 		gridData.horizontalIndent = 50;
 		labelCommand.setLayoutData(gridData);
-		labelCommand.setText(Util.getString(resourceBundle, "labelCommand")); //$NON-NLS-1$
+		labelCommand.setText(Util.translateString(resourceBundle, "labelCommand")); //$NON-NLS-1$
 
 		comboCommand = new Combo(composite, SWT.READ_ONLY);
 		comboCommand.setFont(composite.getFont());
@@ -575,7 +575,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		gridData = new GridData();
 		gridData.horizontalIndent = 50;
 		labelDescription.setLayoutData(gridData);
-		labelDescription.setText(Util.getString(resourceBundle, "labelDescription")); //$NON-NLS-1$
+		labelDescription.setText(Util.translateString(resourceBundle, "labelDescription")); //$NON-NLS-1$
 
 		textDescription = new Text(composite, SWT.BORDER | SWT.LEFT | SWT.READ_ONLY);
 		textDescription.setFont(composite.getFont());
@@ -589,7 +589,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		gridData.horizontalIndent = 50;
 		gridData.horizontalSpan = 3;
 		labelKeySequencesForCommand.setLayoutData(gridData);
-		labelKeySequencesForCommand.setText(Util.getString(resourceBundle, "labelKeySequencesForCommand")); //$NON-NLS-1$
+		labelKeySequencesForCommand.setText(Util.translateString(resourceBundle, "labelKeySequencesForCommand")); //$NON-NLS-1$
 
 		tableKeySequencesForCommand = new Table(composite, SWT.BORDER | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
 		tableKeySequencesForCommand.setFont(composite.getFont());
@@ -610,14 +610,14 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 
 		tableColumn = new TableColumn(tableKeySequencesForCommand, SWT.NULL, 1);
 		tableColumn.setResizable(true);
-		tableColumn.setText(Util.getString(resourceBundle, "tableColumnContext")); //$NON-NLS-1$
+		tableColumn.setText(Util.translateString(resourceBundle, "tableColumnContext")); //$NON-NLS-1$
 		tableColumn.pack();
 		tableColumn.setWidth("carbon".equals(SWT.getPlatform()) ? 100 : tableColumn.getWidth() + 40); // TODO remove carbon reference
 		width += tableColumn.getWidth();
 
 		tableColumn = new TableColumn(tableKeySequencesForCommand, SWT.NULL, 2);
 		tableColumn.setResizable(true);
-		tableColumn.setText(Util.getString(resourceBundle, "tableColumnKeySequence")); //$NON-NLS-1$
+		tableColumn.setText(Util.translateString(resourceBundle, "tableColumnKeySequence")); //$NON-NLS-1$
 		tableColumn.pack();
 		tableColumn.setWidth(Math.max(220, Math.max(440 - width, tableColumn.getWidth() + 20)));	
 
@@ -635,7 +635,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 
 		labelContext = new Label(composite, SWT.LEFT);
 		labelContext.setFont(composite.getFont());
-		labelContext.setText(Util.getString(resourceBundle, "labelContext")); //$NON-NLS-1$
+		labelContext.setText(Util.translateString(resourceBundle, "labelContext")); //$NON-NLS-1$
 
 		comboContext = new Combo(composite, SWT.READ_ONLY);
 		comboContext.setFont(composite.getFont());
@@ -656,7 +656,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 
 		labelKeySequence = new Label(composite, SWT.LEFT);
 		labelKeySequence.setFont(composite.getFont());
-		labelKeySequence.setText(Util.getString(resourceBundle, "labelKeySequence")); //$NON-NLS-1$
+		labelKeySequence.setText(Util.translateString(resourceBundle, "labelKeySequence")); //$NON-NLS-1$
 
 		comboKeySequence = new Combo(composite, SWT.NULL);
 		comboKeySequence.setFont(composite.getFont());
@@ -683,7 +683,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		gridData.horizontalIndent = 50;
 		gridData.horizontalSpan = 3;
 		labelCommandsForKeySequence.setLayoutData(gridData);
-		labelCommandsForKeySequence.setText(Util.getString(resourceBundle, "labelCommandsForKeySequence")); //$NON-NLS-1$
+		labelCommandsForKeySequence.setText(Util.translateString(resourceBundle, "labelCommandsForKeySequence")); //$NON-NLS-1$
 
 		tableCommandsForKeySequence = new Table(composite, SWT.BORDER | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
 		tableCommandsForKeySequence.setFont(composite.getFont());
@@ -704,14 +704,14 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 
 		tableColumn = new TableColumn(tableCommandsForKeySequence, SWT.NULL, 1);
 		tableColumn.setResizable(true);
-		tableColumn.setText(Util.getString(resourceBundle, "tableColumnContext")); //$NON-NLS-1$
+		tableColumn.setText(Util.translateString(resourceBundle, "tableColumnContext")); //$NON-NLS-1$
 		tableColumn.pack();
 		tableColumn.setWidth("carbon".equals(SWT.getPlatform()) ? 100 : tableColumn.getWidth() + 40); // TODO remove carbon reference
 		width += tableColumn.getWidth();
 
 		tableColumn = new TableColumn(tableCommandsForKeySequence, SWT.NULL, 2);
 		tableColumn.setResizable(true);
-		tableColumn.setText(Util.getString(resourceBundle, "tableColumnCommand")); //$NON-NLS-1$
+		tableColumn.setText(Util.translateString(resourceBundle, "tableColumnCommand")); //$NON-NLS-1$
 		tableColumn.pack();
 		tableColumn.setWidth(Math.max(220, Math.max(440 - width, tableColumn.getWidth() + 20)));		
 
@@ -743,7 +743,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		gridData = new GridData();
 		gridData.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		buttonAdd.setText(Util.getString(resourceBundle, "buttonAdd")); //$NON-NLS-1$
+		buttonAdd.setText(Util.translateString(resourceBundle, "buttonAdd")); //$NON-NLS-1$
 		gridData.widthHint = Math.max(widthHint, buttonAdd.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x) + 5;
 		buttonAdd.setLayoutData(gridData);		
 
@@ -758,7 +758,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		gridData = new GridData();
 		gridData.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 		widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		buttonRemove.setText(Util.getString(resourceBundle, "buttonRemove")); //$NON-NLS-1$
+		buttonRemove.setText(Util.translateString(resourceBundle, "buttonRemove")); //$NON-NLS-1$
 		gridData.widthHint = Math.max(widthHint, buttonRemove.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x) + 5;
 		buttonRemove.setLayoutData(gridData);		
 
@@ -773,7 +773,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		gridData = new GridData();
 		gridData.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 		widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		buttonRestore.setText(Util.getString(resourceBundle, "buttonRestore")); //$NON-NLS-1$
+		buttonRestore.setText(Util.translateString(resourceBundle, "buttonRestore")); //$NON-NLS-1$
 		gridData.widthHint = Math.max(widthHint, buttonRestore.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x) + 5;
 		buttonRestore.setLayoutData(gridData);		
 		
@@ -798,8 +798,8 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 
 		if (activeKeyConfigurationId != null || !preferenceKeyBindingDefinitions.isEmpty()) {
 			MessageBox restoreDefaultsMessageBox = new MessageBox(getShell(), SWT.YES | SWT.NO | SWT.ICON_WARNING | SWT.APPLICATION_MODAL);
-			restoreDefaultsMessageBox.setText(Util.getString(resourceBundle, "restoreDefaultsMessageBoxText")); //$NON-NLS-1$
-			restoreDefaultsMessageBox.setMessage(Util.getString(resourceBundle, "restoreDefaultsMessageBoxMessage")); //$NON-NLS-1$
+			restoreDefaultsMessageBox.setText(Util.translateString(resourceBundle, "restoreDefaultsMessageBoxText")); //$NON-NLS-1$
+			restoreDefaultsMessageBox.setMessage(Util.translateString(resourceBundle, "restoreDefaultsMessageBoxMessage")); //$NON-NLS-1$
 		
 			if (restoreDefaultsMessageBox.open() == SWT.YES) {
 				setKeyConfigurationId(null);			
