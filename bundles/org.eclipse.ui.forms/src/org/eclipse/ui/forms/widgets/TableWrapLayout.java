@@ -405,7 +405,8 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 		int yloc = y;
 		int height = td.compSize.y;
 		int colWidth = td.compWidth - td.indent;
-		int width = Math.min(td.compSize.x, colWidth);
+		int width = td.compSize.x-td.indent;
+		width = Math.min(width, colWidth);
 		int slotHeight = rowHeights[row];
 		RowSpan rowspan = (RowSpan) rowspans.get(control);
 		if (rowspan != null) {
