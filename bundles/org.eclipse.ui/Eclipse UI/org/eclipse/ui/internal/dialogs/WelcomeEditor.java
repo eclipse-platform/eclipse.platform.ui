@@ -161,6 +161,7 @@ private Composite createInfoArea(Composite parent) {
 		setLinkRanges(styledText, items[i].getActionRanges());
 		setLinkRanges(styledText, items[i].getHelpRanges());
 		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.verticalAlignment = gd.VERTICAL_ALIGN_BEGINNING;		
 		gd.verticalSpan = 2;
 		styledText.setLayoutData(gd);
 		styledText.setData(items[i]);
@@ -168,10 +169,7 @@ private Composite createInfoArea(Composite parent) {
 			
 		Label spacer = new Label(infoArea, SWT.NONE);
 		spacer.setBackground(bg);
-
-		spacer = new Label(infoArea, SWT.NONE);
-		spacer.setBackground(bg);
-		gd = new GridData(); 
+		gd = new GridData(GridData.FILL_HORIZONTAL); 
 		gd.horizontalSpan = 2;
 		spacer.setLayoutData(gd);
 	}
