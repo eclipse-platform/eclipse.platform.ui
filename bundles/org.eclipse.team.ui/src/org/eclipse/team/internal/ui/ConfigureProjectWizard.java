@@ -38,6 +38,10 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 	protected final static String ATT_ICON = "icon";
 	protected final static String ATT_ID = "id";
 	
+	public ConfigureProjectWizard() {
+		setNeedsProgressMonitor(true);
+	}
+	
 	/*
 	 * @see Wizard#addPages
 	 */

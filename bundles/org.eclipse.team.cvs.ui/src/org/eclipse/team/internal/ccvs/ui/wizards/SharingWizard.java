@@ -12,8 +12,10 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
@@ -56,6 +58,9 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 	// The page that prompts the user for module name.
 	private ModuleSelectionPage modulePage;
 	
+	public SharingWizard() {
+		setNeedsProgressMonitor(true);
+	}		
 	public void addPages() {
 		if (doesCVSDirectoryExist()) {
 			autoconnectPage = new ConfigurationWizardAutoconnectPage("autoconnectPage", Policy.bind("SharingWizard.autoConnectTitle"), null);
@@ -110,9 +115,10 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 		final boolean[] result = new boolean[] { true };
 		try {
 			final boolean[] doSync = new boolean[] { false };
-			getContainer().run(false, true, new WorkspaceModifyOperation() {
-				public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
+			getContainer().run(false, false, new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) throws InvocationTargetException {
 					try {
+						monitor.beginTask("", 100);
 						if (autoconnectPage != null) {
 							// Autoconnect to the repository using CVS/ directories
 							
@@ -139,7 +145,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 							if (validate) {
 								// Do the validation right now
 								try {
-									location.validateConnection(monitor);
+									location.validateConnection(new SubProgressMonitor(monitor, 50));
 								} catch (TeamException e) {
 									if (created)
 										CVSProviderPlugin.getProvider().disposeRepository(location);
@@ -148,7 +154,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 							}
 							
 							// Set the sharing
-							CVSProvider.getInstance().setSharing(project, location, properties.getProperty("module"), tag, monitor);
+							CVSProvider.getInstance().setSharing(project, location, properties.getProperty("module"), tag, new SubProgressMonitor(monitor, 50));
 						} else {
 							// Import
 							doSync[0] = true;
@@ -162,7 +168,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 								ICVSRemoteFolder folder = location.getRemoteFolder(moduleName, null);
 								try {
 									// Hack until exists() works properly.
-									IRemoteResource[] members = folder.members(new NullProgressMonitor());
+									IRemoteResource[] members = folder.members(new SubProgressMonitor(monitor, 50));
 									if (members.length > 0) {
 										// We didn't get an exception, so the folder must already exist.
 										MessageDialog.openInformation(getShell(), Policy.bind("SharingWizard.couldNotImport"), Policy.bind("SharingWizard.couldNotImportLong"));
@@ -175,13 +181,16 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 							} catch (TeamException e) {
 								ErrorDialog.openError(getShell(), null, null, e.getStatus());
 								result[0] = false;
+								doSync[0] = false;
 								return;
 							}
 							// Create the remote module for the project
-							CVSProviderPlugin.getProvider().createModule(project, getProperties(), monitor);
+							CVSProviderPlugin.getProvider().createModule(project, getProperties(), new SubProgressMonitor(monitor, 50));
 						}
 					} catch (TeamException e) {
 						throw new InvocationTargetException(e);
+					} finally {
+						monitor.done();
 					}
 				}
 			});
