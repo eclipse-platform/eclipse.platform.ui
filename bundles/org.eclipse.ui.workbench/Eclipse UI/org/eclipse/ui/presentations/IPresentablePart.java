@@ -211,9 +211,9 @@ public interface IPresentablePart {
 	/**
 	 * Returns an SWT control that can be used to indicate the tab order for
 	 * this part. This can be returned as part of the result to 
-	 * StackPresentation.getTabList(). Any other use of this control is
+	 * {@link StackPresentation#getTabList(IPresentablePart)}. Any other use of this control is
 	 * unsupported. This may return a placeholder control that is only
-	 * meaninful in the context of getTabList().
+	 * meaningful in the context of <code>getTabList</code>.
 	 * 
 	 * @return the part's control (not null)
 	 */
