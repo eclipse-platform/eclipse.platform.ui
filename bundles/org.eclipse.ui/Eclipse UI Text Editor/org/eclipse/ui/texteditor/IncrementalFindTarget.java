@@ -31,6 +31,9 @@ import org.eclipse.swt.graphics.Point;
  */
 class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExtension, VerifyKeyListener, MouseListener, FocusListener, ITextListener {
 
+	/** The string representing rendered tab */
+	private final static String TAB= EditorMessages.getString("Editor.FindIncremental.render.tab"); //$NON-NLS-1$
+
 	/** The text viewer to operate on */
 	private final ITextViewer fTextViewer;
 	/** The status line manager for output */
@@ -292,8 +295,9 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 				event.doit= false;
 				break;
 				
-			// backspace	
+			// backspace	and delete
 			case 0x08:
+			case 0x7F:
 				{
 					int length= fFindString.length();
 					if (length == 0) {
@@ -320,7 +324,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 					char character= event.character;
 					if (fCasePosition == -1 && Character.isUpperCase(character) && Character.toLowerCase(character) != character)
 						fCasePosition= fFindString.length();
-					
+
 					fFindString.append(character);
 					performFindNext(true, fBasePosition);
 					event.doit= false;
@@ -379,17 +383,34 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 
 	private void statusMessage(String string) {
 		fStatusLine.setErrorMessage(""); //$NON-NLS-1$
-		fStatusLine.setMessage(string);
+		fStatusLine.setMessage(escapeTabs(string));
 	}
 
 	private void statusError(String string) {
-		fStatusLine.setErrorMessage(string);
+		fStatusLine.setErrorMessage(escapeTabs(string));
 		fStatusLine.setMessage(""); //$NON-NLS-1$
 	}
 
 	private void statusClear() {
 		fStatusLine.setErrorMessage(""); //$NON-NLS-1$
 		fStatusLine.setMessage(""); //$NON-NLS-1$
+	}
+	
+	private String escapeTabs(String string) {
+		StringBuffer buffer= new StringBuffer();
+
+		int begin= 0;
+		int end= string.indexOf('\t', begin);
+		
+		while (end >= 0) {
+			buffer.append(string.substring(begin, end));
+			buffer.append(TAB);
+			begin= end + 1;
+			end= string.indexOf('\t', begin);
+		}
+		buffer.append(string.substring(begin));
+		
+		return buffer.toString();
 	}
 	
 	/*

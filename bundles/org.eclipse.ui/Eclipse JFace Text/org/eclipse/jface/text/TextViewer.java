@@ -2227,7 +2227,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 				return true;
 			case SHIFT_RIGHT:
 			case SHIFT_LEFT:
-				return isEditable() && fIndentChars != null && fTextWidget.getSelectionCount() > 0;
+				return isEditable() && fIndentChars != null && areMultipleLinesSelected();
 			case PREFIX:
 			case STRIP_PREFIX:
 				return isEditable() && fDefaultPrefixChars != null;
@@ -2278,10 +2278,6 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 				deleteText();
 				break;
 			case SELECT_ALL:
-				/*
-				 * 1GETDON: ITPJUI:WIN2000 - Select All doesn't work in segmented view
-				 * setSelectedRange(0, getVisibleDocument().getLength());
-				 */
 				setSelectedRange(getVisibleRegionOffset(), getVisibleDocument().getLength());
 				break;
 			case SHIFT_RIGHT:
@@ -2332,6 +2328,29 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 			int start= document.getLineOffset(line);
 			return (s.x == start);
 			
+		} catch (BadLocationException x) {
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Returns whether multiple lines are selected.
+	 * 
+	 * @return <code>true</code> if multiple lines are selected
+	 */
+	protected boolean areMultipleLinesSelected() {
+		Point s= getSelectedRange();
+		if (s.y < 1)
+			return false;
+			
+		try {
+			
+			IDocument document= getDocument();
+			int startLine= document.getLineOfOffset(s.x);
+			int endLine= document.getLineOfOffset(s.x + s.y -1);
+			return startLine != endLine;
+		
 		} catch (BadLocationException x) {
 		}
 		

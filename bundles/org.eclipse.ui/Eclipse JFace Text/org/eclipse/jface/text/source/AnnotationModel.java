@@ -155,11 +155,24 @@ public class AnnotationModel implements IAnnotationModel {
 	 * Informs all annotation model listeners that this model has been changed.
 	 */
 	protected void fireModelChanged() {
+		fireModelChanged(new AnnotationModelEvent(this));
+	}
+	
+	/**
+	 * Informs all annotation model listeners that this model has been changed
+	 * as described in the annotation model event.
+	 * 
+	 * @param event the event to be sent out to the listeners
+	 */
+	protected void fireModelChanged(AnnotationModelEvent event) {
 		ArrayList v= new ArrayList(fAnnotationModelListeners);
 		Iterator e= v.iterator();
 		while (e.hasNext()) {
 			IAnnotationModelListener l= (IAnnotationModelListener) e.next();
-			l.modelChanged(this);
+			if (l instanceof IAnnotationModelListenerExtension)
+				((IAnnotationModelListenerExtension) l).modelChanged(event);
+			else
+				l.modelChanged(this);
 		}
 	}
 	

@@ -195,13 +195,10 @@ class FindReplaceDialog extends Dialog {
 	 */
 	private Composite createButtonSection(Composite parent) {
 		
-		Composite panel= new Composite(parent, SWT.NULL);
-		
+		Composite panel= new Composite(parent, SWT.NULL);		
 		GridLayout layout= new GridLayout();
 		layout.numColumns= -2;
 		layout.makeColumnsEqualWidth= true;
-		layout.marginWidth= 0;
-		layout.marginHeight= 0;
 		panel.setLayout(layout);
 		
 		fFindNextButton= makeButton(panel, "FindReplace.FindNextButton.label", 102, true, new SelectionAdapter() { //$NON-NLS-1$
