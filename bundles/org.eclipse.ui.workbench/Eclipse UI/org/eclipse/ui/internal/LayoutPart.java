@@ -305,4 +305,44 @@ abstract public class LayoutPart {
 protected ListenerList getPropertyListeners() {
 	return propertyListeners;
 }
+
+/**
+ * Writes a description of the layout to the given string buffer.
+ * This is used for drag-drop test suites to determine if two layouts are the
+ * same. Like a hash code, the description should compare as equal iff the
+ * layouts are the same. However, it should be user-readable in order to
+ * help debug failed tests. Although these are english readable strings,
+ * they do not need to be translated.
+ * 
+ * @param buf
+ */
+public void describeLayout(StringBuffer buf) {
+	if (this instanceof ILayoutContainer) {
+		LayoutPart[] children = ((ILayoutContainer)this).getChildren();
+		
+		int visibleChildren = 0;
+		
+		for (int idx = 0; idx < children.length; idx++) {
+			
+			LayoutPart next = children[idx];
+			if (!(next instanceof PartPlaceholder)) {
+				if (visibleChildren > 0) {
+					buf.append(", ");
+				}
+				
+				next.describeLayout(buf);
+				
+				visibleChildren++;				
+			}
+		}
+	} else {
+		IPresentablePart part = getPresentablePart();
+		
+		if (part != null) {
+			buf.append(part.getName());
+			return;
+		}
+	}
+}
+
 }

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -63,18 +62,10 @@ public class MaximizePartAction extends PageEventAction {
 			if (page instanceof WorkbenchPage) {
 				WorkbenchPage realPage = (WorkbenchPage)page;
 				
-				Perspective perspective = realPage.getActivePerspective();
+				IWorkbenchPartReference partRef = page.getActivePartReference();
 				
-				if (perspective != null) {
-					IWorkbenchPartReference partRef = page.getActivePartReference();
-					
-					if (partRef != null) {
-						if (partRef instanceof IViewReference && perspective.isFastView((IViewReference)partRef)) {
-							perspective.toggleFastViewZoom();
-						} else {
-							((WorkbenchPage) page).toggleZoom(partRef);
-						}
-					}
+				if (partRef != null) {
+					((WorkbenchPage) page).toggleZoom(partRef);
 				}
 			}
 		}

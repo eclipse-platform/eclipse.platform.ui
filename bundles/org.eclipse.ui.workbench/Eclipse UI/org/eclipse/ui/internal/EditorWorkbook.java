@@ -89,27 +89,12 @@ public class EditorWorkbook extends LayoutPart implements ILayoutContainer {
 
         public void dragStart(IPresentablePart beingDragged,
                 Point initialLocation, boolean keyboard) {
-            LayoutPart pane = getPaneFor(beingDragged);
-
-            if (pane != null) {
-            	if (getState() == STATE_MAXIMIZED) {
-            		setState(STATE_RESTORED);
-            	}
-            	
-                DragUtil.performDrag(pane, Geometry.toDisplay(getParent(),
-                        getPresentation().getControl().getBounds()),
-                        initialLocation, !keyboard);
-            }
+        	
+        	EditorWorkbook.this.dragStart(beingDragged, initialLocation, keyboard);
         }
         
         public void dragStart(Point initialLocation, boolean keyboard) {
-        	if (getState() == STATE_MAXIMIZED) {
-        		setState(STATE_RESTORED);
-        	}
-        	
-        	DragUtil.performDrag(EditorWorkbook.this, Geometry.toDisplay(getParent(),
-                    getPresentation().getControl().getBounds()),
-                    initialLocation, !keyboard);
+        	EditorWorkbook.this.dragStart(null, initialLocation, keyboard);
         }
 
         public void close(IPresentablePart part) {
@@ -1156,4 +1141,27 @@ public class EditorWorkbook extends LayoutPart implements ILayoutContainer {
     public void showVisibleEditor() {
     }
 
+    public void dragStart(IPresentablePart beingDragged, Point initialLocation, boolean keyboard) {
+    	if (beingDragged != null) {
+	        LayoutPart pane = getPaneFor(beingDragged);
+	
+	        if (pane != null) {
+	        	if (presentationSite.getState() == IStackPresentationSite.STATE_MAXIMIZED) {
+	        		presentationSite.setState(IStackPresentationSite.STATE_RESTORED);
+	        	}
+	        	
+	            DragUtil.performDrag(pane, Geometry.toDisplay(getParent(),
+	                    getPresentation().getControl().getBounds()),
+	                    initialLocation, !keyboard);
+	        }
+    	} else {
+        	if (presentationSite.getState() == IStackPresentationSite.STATE_MAXIMIZED) {
+        		presentationSite.setState(IStackPresentationSite.STATE_RESTORED);
+        	}
+        	
+        	DragUtil.performDrag(EditorWorkbook.this, Geometry.toDisplay(getParent(),
+                    getPresentation().getControl().getBounds()),
+                    initialLocation, !keyboard);    	 
+    	}
+    }
 }

@@ -586,4 +586,41 @@ public void updateSashes(Composite parent) {
 	else
 		getSash().dispose();
 }
+
+/**
+ * Writes a description of the layout to the given string buffer.
+ * This is used for drag-drop test suites to determine if two layouts are the
+ * same. Like a hash code, the description should compare as equal iff the
+ * layouts are the same. However, it should be user-readable in order to
+ * help debug failed tests. Although these are english readable strings,
+ * they should not be translated or equality tests will fail.
+ * 
+ * @param buf
+ */
+public void describeLayout(StringBuffer buf) {
+	if (!(children[0].isVisible())) {
+		if (!children[1].isVisible()) {
+			return;
+		}
+		
+		children[1].describeLayout(buf);
+		return;
+	}
+
+	if (!children[1].isVisible()) {
+		children[0].describeLayout(buf);
+		return;
+	}
+	
+	buf.append("(");
+	children[0].describeLayout(buf);
+	buf.append(")");
+	
+	buf.append(getSash().isVertical() ? "|" : "-");
+	
+	buf.append("(");
+	children[1].describeLayout(buf);
+	buf.append(")");
+}
+
 }

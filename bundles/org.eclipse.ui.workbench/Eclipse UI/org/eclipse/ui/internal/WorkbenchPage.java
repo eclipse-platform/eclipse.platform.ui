@@ -2950,6 +2950,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		if (pane.getWindow() instanceof DetachedWindow)
 			return;
 
+		if (ref instanceof IViewReference && persp.isFastView((IViewReference)ref)) {
+			persp.toggleFastViewZoom();
+			return;
+		}
 				
 		// Update zoom status.
 		if (isZoomed()) {

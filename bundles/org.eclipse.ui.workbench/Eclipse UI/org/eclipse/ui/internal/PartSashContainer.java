@@ -796,4 +796,26 @@ protected float getDockingRatio(LayoutPart dragged, LayoutPart target) {
 	return 0.5f;
 }
 
+/**
+ * Writes a description of the layout to the given string buffer.
+ * This is used for drag-drop test suites to determine if two layouts are the
+ * same. Like a hash code, the description should compare as equal iff the
+ * layouts are the same. However, it should be user-readable in order to
+ * help debug failed tests. Although these are english readable strings,
+ * they should not be translated or equality tests will fail.
+ * 
+ * @param buf
+ */
+public void describeLayout(StringBuffer buf) {
+	if (isZoomed()) {
+		buf.append("zoomed (");
+		root.describeLayout(buf);
+		buf.append(")");
+	} else {
+		buf.append("layout (");
+		root.describeLayout(buf);
+		buf.append(")");
+	}
+}
+
 }

@@ -13,9 +13,11 @@ package org.eclipse.ui.internal;
  *       - Fix for bug 10025 - Resizing views should not use height ratios
 **********************************************************************/
 
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
 import java.util.ArrayList;
+
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
 /**
  * Implementation of a tree where the node is allways a sash
  * and it allways has two chidren. If a children is removed
@@ -201,4 +203,23 @@ public String toString() {
  */
 public void updateSashes(Composite parent) {
 }
+
+/**
+ * Writes a description of the layout to the given string buffer.
+ * This is used for drag-drop test suites to determine if two layouts are the
+ * same. Like a hash code, the description should compare as equal iff the
+ * layouts are the same. However, it should be user-readable in order to
+ * help debug failed tests. Although these are english readable strings,
+ * they should not be translated or equality tests will fail.
+ * <p>
+ * This is only intended for use by test suites.
+ * </p>
+ * 
+ * @param buf
+ */
+public void describeLayout(StringBuffer buf) {
+	part.describeLayout(buf);
+}
+
+
 }

@@ -38,7 +38,7 @@ public class DragUtil {
 	 * all user input is ignored in drag/drop. If null, we use user input
 	 * to determine where objects should be dropped.
 	 */
-	private static Point forcedDropTarget = null;
+	private static TestDropLocation forcedDropTarget = null;
 	
 	/**
 	 * Singleton drag listener
@@ -166,7 +166,7 @@ public class DragUtil {
 	 * @param forcedLocation location where objects will be dropped (or null to
 	 * cause drag/drop to behave normally).
 	 */
-	public static void forceDropLocation(Point forcedLocation) {
+	public static void forceDropLocation(TestDropLocation forcedLocation) {
 		forcedDropTarget = forcedLocation; 
 	}
     
@@ -193,9 +193,11 @@ public class DragUtil {
 		final Tracker tracker = new Tracker(display, SWT.NULL);
 				
 		if (forcedDropTarget != null) {
-			Control currentControl = SwtUtil.findControl(display, forcedDropTarget);
+			
+			Point location = forcedDropTarget.getLocation();
+			Control currentControl = SwtUtil.findControl(display, location);
 
-			return getDropTarget(currentControl, draggedItem, forcedDropTarget, sourceBounds); 
+			return getDropTarget(currentControl, draggedItem, location, sourceBounds); 
 		}
 		
 		tracker.setStippled(true);

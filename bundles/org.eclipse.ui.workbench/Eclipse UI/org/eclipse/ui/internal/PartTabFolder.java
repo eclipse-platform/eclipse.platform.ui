@@ -85,19 +85,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
         public void dragStart(IPresentablePart beingDragged,
                 Point initialLocation, boolean keyboard) {
         	
-        	if (isMoveable(beingDragged)) {
-	            LayoutPart pane = getPaneFor(beingDragged);
-	
-	            if (pane != null) {
-	            	if (getState() == STATE_MAXIMIZED) {
-	            		setState(STATE_RESTORED);
-	            	}
-	            	
-	                DragUtil.performDrag(pane, Geometry.toDisplay(getParent(),
-	                        getPresentation().getControl().getBounds()),
-	                        initialLocation, !keyboard);
-	            }
-        	}
+        	PartTabFolder.this.dragStart(beingDragged, initialLocation, keyboard);
         }
 
         /*
@@ -105,16 +93,8 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
          * 
          * @see org.eclipse.ui.internal.skins.IPresentationSite#dragStart(boolean)
          */
-        public void dragStart(Point initialPosition, boolean keyboard) {
-            if (canMoveFolder()) {
-            	if (getState() == STATE_MAXIMIZED) {
-            		setState(STATE_RESTORED);
-            	}
-            	
-	            DragUtil.performDrag(PartTabFolder.this, Geometry.toDisplay(
-	                    getParent(), getPresentation().getControl().getBounds()),
-	                    initialPosition, !keyboard);
-            }
+        public void dragStart(Point initialLocation, boolean keyboard) {
+        	PartTabFolder.this.dragStart(null, initialLocation, keyboard);
         }
 
         public boolean isCloseable(IPresentablePart part) {
@@ -1042,5 +1022,39 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
         }
 		
 		return new Control[0];
+	}
+	
+	/**
+	 * 
+	 * @param beingDragged
+	 * @param initialLocation
+	 * @param keyboard
+	 */
+	public void dragStart(IPresentablePart beingDragged, Point initialLocation, boolean keyboard) {
+		if (beingDragged == null) {
+	        if (canMoveFolder()) {
+	        	if (presentationSite.getState() == IStackPresentationSite.STATE_MAXIMIZED) {
+	        		setState(IStackPresentationSite.STATE_RESTORED);
+	        	}
+	        	
+	            DragUtil.performDrag(PartTabFolder.this, Geometry.toDisplay(
+	                    getParent(), getPresentation().getControl().getBounds()),
+	                    initialLocation, !keyboard);
+	        }	
+		} else {
+	    	if (presentationSite.isMoveable(beingDragged)) {
+	            LayoutPart pane = getPaneFor(beingDragged);
+	
+	            if (pane != null) {
+	            	if (presentationSite.getState() == IStackPresentationSite.STATE_MAXIMIZED) {
+	            		presentationSite.setState(IStackPresentationSite.STATE_RESTORED);
+	            	}
+	            	
+	                DragUtil.performDrag(pane, Geometry.toDisplay(getParent(),
+	                        getPresentation().getControl().getBounds()),
+	                        initialLocation, !keyboard);
+	            }
+	    	}
+		}    	
 	}
 }
