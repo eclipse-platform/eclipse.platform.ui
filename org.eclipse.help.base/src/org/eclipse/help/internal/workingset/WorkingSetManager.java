@@ -79,7 +79,6 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 	// Working set persistence
 	private static final String WORKING_SET_STATE_FILENAME = "workingsets.xml";
 	private SortedSet workingSets = new TreeSet(new WorkingSetComparator());
-	private String locale;
 	private PropertyChange.ListenerList propertyChangeListeners =
 		new PropertyChange.ListenerList();
 	private AdaptableTocsArray root;
@@ -91,8 +90,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 	 * Constructor
 	 * @param locale
 	 */
-	public WorkingSetManager(String locale) {
-		this.locale = locale != null ? locale : Platform.getNL();
+	public WorkingSetManager() {
 		restoreState();
 	}
 
@@ -100,7 +98,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 		if (root == null)
 			root =
 				new AdaptableTocsArray(
-					HelpPlugin.getTocManager().getTocs(locale));
+					HelpPlugin.getTocManager().getTocs(Platform.getNL()));
 		return root;
 	}
 
@@ -224,7 +222,6 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 	 */
 	private File getWorkingSetStateFile() {
 		IPath path = HelpBasePlugin.getDefault().getStateLocation();
-		path = path.append(locale);
 		path = path.append(WORKING_SET_STATE_FILENAME);
 		return path.toFile();
 	}
@@ -438,8 +435,6 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 	/**
 	 * Synchronizes the working sets. Should only be called by the webapp
 	 * working set manager dialog.
-	 *
-	 * @param changedWorkingSet the working set that has changed
 	 */
 	public void synchronizeWorkingSets() {
 		firePropertyChange(CHANGE_WORKING_SETS_SYNCH, null, null);

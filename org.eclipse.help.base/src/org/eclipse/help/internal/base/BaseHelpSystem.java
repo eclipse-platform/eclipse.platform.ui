@@ -74,7 +74,7 @@ public final class BaseHelpSystem {
 	 */
 	public static synchronized WorkingSetManager getWorkingSetManager() {
 		if (getInstance().workingSetManager == null) {
-			getInstance().workingSetManager = new WorkingSetManager(Platform.getNL());
+			getInstance().workingSetManager = new WorkingSetManager();
 		}
 		return getInstance().workingSetManager;
 	}

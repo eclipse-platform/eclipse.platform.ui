@@ -25,6 +25,7 @@ public class WebappWorkingSetManager implements IHelpWorkingSetManager {
 	IHelpWorkingSetManager wSetManager;
 	// for keeping track if working set synchronized with working sets in UI
 	private static boolean workingSetsSynchronized = false;
+	private static final Object workingSetsSyncLock = new Object();
 
 	/**
 	 * Constructor
@@ -39,11 +40,14 @@ public class WebappWorkingSetManager implements IHelpWorkingSetManager {
 				new InfocenterWorkingSetManager(request, response, locale);
 		} else {
 			wSetManager = BaseHelpSystem.getWorkingSetManager();
-			if (!workingSetsSynchronized
-				&& BaseHelpSystem.getMode() == BaseHelpSystem.MODE_WORKBENCH) {
+			if ( BaseHelpSystem.getMode() == BaseHelpSystem.MODE_WORKBENCH) {
 				// upon startup in workbench mode, make sure working sets are in synch with those from UI
-				workingSetsSynchronized = true;
-				((WorkingSetManager)wSetManager).synchronizeWorkingSets();
+				synchronized (workingSetsSyncLock){
+					if(!workingSetsSynchronized){
+						workingSetsSynchronized = true;
+						((WorkingSetManager)wSetManager).synchronizeWorkingSets();
+					}
+				}
 			}
 		}
 
