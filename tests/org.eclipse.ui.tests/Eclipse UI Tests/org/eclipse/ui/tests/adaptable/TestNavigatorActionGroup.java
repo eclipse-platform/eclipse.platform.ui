@@ -1,5 +1,12 @@
 package org.eclipse.ui.tests.adaptable;
 
+/*
+ * Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+ * This file is made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ */
+
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
@@ -12,11 +19,6 @@ import org.eclipse.ui.actions.NewWizardAction;
 import org.eclipse.ui.actions.NewWizardMenu;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.views.navigator.ResourceNavigatorMessages;
-
-/**
- * (c) Copyright 2001 MyCorporation.
- * All Rights Reserved.
- */
 
 public class TestNavigatorActionGroup extends ActionGroup {
 

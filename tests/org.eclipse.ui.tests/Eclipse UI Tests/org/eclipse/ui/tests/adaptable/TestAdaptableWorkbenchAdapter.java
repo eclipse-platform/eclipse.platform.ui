@@ -1,5 +1,12 @@
 package org.eclipse.ui.tests.adaptable;
 
+/*
+ * Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+ * This file is made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ */
+
 import java.util.Hashtable;
 import java.util.Iterator;
 
@@ -10,11 +17,6 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.model.IWorkbenchAdapter;
-
-/*
- * (c) Copyright 2001 MyCorporation.
- * All Rights Reserved.
- */
 
 /**
  * @version 	1.0
