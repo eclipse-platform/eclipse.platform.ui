@@ -525,6 +525,10 @@ public class SearchResultViewer extends TableViewer {
 		if (menu != null)
 			menu.dispose();
 		fPotentialMatchFgColor.dispose();
+		if (fActionGroup != null) {
+			fActionGroup.dispose();
+			fActionGroup= null;
+		}
 		super.handleDispose(event);
 	}
 
