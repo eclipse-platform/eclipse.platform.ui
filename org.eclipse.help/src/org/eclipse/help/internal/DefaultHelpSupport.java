@@ -24,8 +24,6 @@ import org.eclipse.help.internal.util.*;
  */
 public class DefaultHelpSupport implements IHelp {
 
-	private int idCounter = 0;
-
 	/**
 	 * BaseHelpViewer constructor.
 	 */
@@ -249,10 +247,7 @@ public class DefaultHelpSupport implements IHelp {
 			return ((Context) context).getID();
 		if (context instanceof ContextProxy)
 			return ((ContextProxy) context).getID();
-		// TODO add code not to generate new ID for the same context
-		String id = HelpPlugin.PLUGIN_ID + ".ID" + idCounter++;
-		HelpSystem.getContextManager().addContext(id, context);
-		return id;
+		return HelpSystem.getContextManager().addContext(context);
 	}
 
 	private String getBaseURL() {
