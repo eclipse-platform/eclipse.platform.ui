@@ -111,7 +111,8 @@ import java.util.*;
 					
 		int curPos = start;
 		int matchStart = -1;  
-		for (int i = 0; i < segCount && curPos < end; ++i) {
+		int i;
+		for (i = 0; i < segCount && curPos < end; ++i) {
 			String current = fSegments[i];
 			int nextMatch = regExpPosIn(text, curPos, end, current);
 			if (nextMatch < 0 )
@@ -120,6 +121,8 @@ import java.util.*;
 				matchStart = nextMatch;
 			curPos = nextMatch + current.length();
 		}
+		if (i < segCount) // Ensure all segments match
+			return null;
 		return new Position(matchStart, curPos);
 	}
 	/**
