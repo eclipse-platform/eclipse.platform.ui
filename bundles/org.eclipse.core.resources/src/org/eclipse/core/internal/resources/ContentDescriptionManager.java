@@ -108,9 +108,9 @@ public class ContentDescriptionManager implements IManager {
 				return null;
 			}
 			// if it is a default description for the default type, we don't have to cache 
-			if (((ContentType) newDescription.getContentType()).getDefaultDescription() == newDescription) {
+			if ((((ContentType) newDescription.getContentType()).getDefaultDescription()).equals(newDescription)) {
 				IContentType defaultForName = Platform.getContentTypeManager().findContentTypeFor(file.getName());
-				if (newDescription.getContentType() == defaultForName) {
+				if (newDescription.getContentType().equals(defaultForName)) {
 					// the default content description is enough for this file
 					info.set(ICoreConstants.M_DEFAULT_CONTENT_DESCRIPTION);
 					return newDescription;
