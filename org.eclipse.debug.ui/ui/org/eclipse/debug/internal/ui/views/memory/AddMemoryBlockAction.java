@@ -12,6 +12,7 @@
 package org.eclipse.debug.internal.ui.views.memory;
 
 import java.math.BigInteger;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
@@ -210,7 +211,7 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 				// make sure the memory block returned is not an instance of IExtendedMemoryBlock
 				if (memBlock instanceof IExtendedMemoryBlock)
 				{
-					Status status = new Status(Status.WARNING, DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),	0, 
+					Status status = new Status(IStatus.WARNING, DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),	0, 
 						"IMemoryBlockRetrieval returns IExtendedMemoryBlock.  This may result in unexpected behavior.", null); //$NON-NLS-1$
 					DebugUIPlugin.log(status);
 				}

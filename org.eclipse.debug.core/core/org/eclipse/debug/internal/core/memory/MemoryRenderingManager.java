@@ -83,7 +83,7 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
 		 */
 		public void handleException(Throwable exception) {
-			Status status = new Status(Status.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
+			Status status = new Status(IStatus.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
 					0, exception.getMessage(), exception); //$NON-NLS-1$
 			DebugPlugin.log(status);
 		}
@@ -166,7 +166,7 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 				}
 				else
 				{
-					Status status = new Status(Status.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),	0, 
+					Status status = new Status(IStatus.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),	0, 
 							"Unknown element in rendering extenstion: " + elements[j].getName(), null); //$NON-NLS-1$
 					DebugPlugin.log(status);					
 				}
@@ -188,7 +188,7 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 		    name == null)
 		{
 			String extension = element.getDeclaringExtension().getUniqueIdentifier();
-			Status status = new Status(Status.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),	0, 
+			Status status = new Status(IStatus.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),	0, 
 					"Rendering defined is malformed: " + extension, null); //$NON-NLS-1$
 			DebugPlugin.log(status);
 		}
@@ -199,7 +199,7 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 			if (fMemoryRenderingInfo.containsKey(renderingId))
 			{
 				// if a rendering already exists with the same id, log a warning of duplicated rendering
-				Status status = new Status(Status.WARNING, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),	0, 
+				Status status = new Status(IStatus.WARNING, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),	0, 
 						"Duplicated rendering definition: " + renderingId, null); //$NON-NLS-1$
 				DebugPlugin.log(status);
 			}
@@ -218,7 +218,7 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 			}
 			else
 			{
-				Status status = new Status(Status.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),	0, 
+				Status status = new Status(IStatus.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),	0, 
 						"Unknown element in rendering extenstion: " + element.getName(), null); //$NON-NLS-1$
 				DebugPlugin.log(status);					
 			}
@@ -239,7 +239,7 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 			propertyValue == null)
 		{
 			String extension = element.getDeclaringExtension().getUniqueIdentifier();
-			Status status = new Status(Status.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),	0, 
+			Status status = new Status(IStatus.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),	0, 
 					"Rendering property defined is malformed: " + extension, null); //$NON-NLS-1$
 			DebugPlugin.log(status);
 			
@@ -250,7 +250,7 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 			MemoryRenderingInfo info = (MemoryRenderingInfo)fMemoryRenderingInfo.get(renderingId);
 			
 			if (info == null){
-				Status status = new Status(Status.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),	0, 
+				Status status = new Status(IStatus.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),	0, 
 						"Rendering info for this property is not found: " + propertyId, null); //$NON-NLS-1$
 				DebugPlugin.log(status);
 			}
@@ -275,7 +275,7 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 		if(memoryBlockClass == null || renderings == null)
 		{
 			String extension = element.getDeclaringExtension().getUniqueIdentifier();
-			Status status = new Status(Status.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),	0, 
+			Status status = new Status(IStatus.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),	0, 
 					"Default rendering defined is malformed: " + extension, null); //$NON-NLS-1$
 			DebugPlugin.log(status);			
 			return;
@@ -338,7 +338,7 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 		if(memoryBlockClass == null || renderings == null)
 		{
 			String extension = element.getDeclaringExtension().getUniqueIdentifier();
-			Status status = new Status(Status.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),	0, 
+			Status status = new Status(IStatus.ERROR, DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),	0, 
 					"Rendering bind defined is malformed: " + extension, null); //$NON-NLS-1$
 			DebugPlugin.log(status);			
 			return;
@@ -471,7 +471,7 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 			else
 			{
 				// throw a debug exception because the rendering info cannot be located
-				Status status = new Status(Status.ERROR, 
+				Status status = new Status(IStatus.ERROR, 
 						DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
 						0, DebugCoreMessages.getString(ERROR_MSG) + renderingId, null);
 				DebugException de = new DebugException(status);
@@ -481,7 +481,7 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 		else
 		{
 			// throw a debug exception because the rendering info cannot be located
-			Status status = new Status(Status.ERROR, 
+			Status status = new Status(IStatus.ERROR, 
 					DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
 					0, DebugCoreMessages.getString(ERROR_MSG) + renderingId, null);
 			DebugException de = new DebugException(status);
@@ -632,7 +632,7 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 			return;
 		
 		if(listener == null){
-			Status status = new Status(Status.ERROR, 
+			Status status = new Status(IStatus.ERROR, 
 					DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
 					0, "Null argument passed into IMemoryRenderingManager.addListener", null); //$NON-NLS-1$
 			DebugPlugin.log(status);
@@ -653,7 +653,7 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 			return;
 		
 		if(listener == null){
-			Status status = new Status(Status.ERROR, 
+			Status status = new Status(IStatus.ERROR, 
 					DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
 					0, "Null argument passed into IMemoryRenderingManager.removeListener", null); //$NON-NLS-1$
 			DebugPlugin.log(status);
@@ -722,7 +722,7 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 				} catch (DebugException e) {
 					// catch error silently
 					// log error
-					Status status = new Status(Status.ERROR, 
+					Status status = new Status(IStatus.ERROR, 
 							DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
 							0, "Cannot create default rendering: " + renderingIds[i], null); //$NON-NLS-1$
 					DebugPlugin.log(status);
@@ -877,7 +877,7 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 				
 			}
 		} catch (CoreException e) {
-			Status status = new Status(Status.ERROR, 
+			Status status = new Status(IStatus.ERROR, 
 					DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
 					0, "Cannot create the dynamic rendering factory for " + element.getDeclaringExtension().getUniqueIdentifier(), null); //$NON-NLS-1$
 			DebugPlugin.log(status);
@@ -893,7 +893,7 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 			
 		if (info.getParentRenderingInfo() == null)
 		{
-			Status status = new Status(Status.ERROR, 
+			Status status = new Status(IStatus.ERROR, 
 					DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
 					0, "Dynamic rendering info does not have a parent " +  info.getRenderingId(), null); //$NON-NLS-1$
 			DebugPlugin.log(status);
