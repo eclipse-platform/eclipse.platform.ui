@@ -11,7 +11,6 @@
 package org.eclipse.core.resources;
 
 import org.eclipse.core.internal.preferences.EclipsePreferences;
-import org.eclipse.core.internal.resources.ProjectPreferences;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
