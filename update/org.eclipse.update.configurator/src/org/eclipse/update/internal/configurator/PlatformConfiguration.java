@@ -86,7 +86,9 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		// Detect external links. These are "soft link" to additional sites. The link
 		// files are usually provided by external installation programs. They are located
 		// relative to this configuration URL.
-		configureExternalLinks();
+		// Note: don't do it for self hosting
+		if (!isTransient())
+			configureExternalLinks();
 
 		// Validate sites in the configuration. Causes any sites that do not exist to
 		// be removed from the configuration
