@@ -505,7 +505,7 @@ class PropertySheetViewer extends Viewer {
 	 */
 	private List getFilteredEntries(IPropertySheetEntry[] entires) {
 		// if no filter just return all entries
-		if (!isShowingExpertProperties)
+		if (isShowingExpertProperties)
 			return Arrays.asList(entires);
 
 		// check each entry for the filter
