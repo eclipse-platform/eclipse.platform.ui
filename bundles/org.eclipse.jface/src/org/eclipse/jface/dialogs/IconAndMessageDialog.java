@@ -129,11 +129,18 @@ public abstract class IconAndMessageDialog extends Dialog {
 		parent.setLayout(layout);
 		parent.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		// create the dialog area and button bar
-		dialogArea = createDialogArea(parent);
-		buttonBar = createButtonBar(parent);
+		createDialogAndButtonArea(parent);
 		
 		
 		return parent;
+	}
+	
+	/**
+	 * Create the dialog area and button bar for the receiver.	 * @param parent	 */
+
+	protected void createDialogAndButtonArea(Composite parent) {
+		// create the dialog area and button bar
+		dialogArea = createDialogArea(parent);
+		buttonBar = createButtonBar(parent);
 	}
 }

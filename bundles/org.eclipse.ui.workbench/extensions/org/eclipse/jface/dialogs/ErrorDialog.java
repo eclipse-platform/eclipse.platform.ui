@@ -163,6 +163,21 @@ protected Control createDialogArea(Composite parent) {
 }
 
 /*
+ * @see IconAndMessageDialog#createDialogAndButtonArea(Composite)
+ */
+
+protected void createDialogAndButtonArea(Composite parent) {
+	
+	super.createDialogAndButtonArea(parent);
+	if(this.dialogArea instanceof Composite){
+		//Create a label if there are no children to force a smaller layout
+		Composite dialogComposite = (Composite) dialogArea;
+		if(dialogComposite.getChildren().length == 0)
+			new Label(dialogComposite,SWT.NULL);
+	}
+}
+
+/*
  * @see IconAndMessageDialog#getImage()
  */
 protected Image getImage() {
