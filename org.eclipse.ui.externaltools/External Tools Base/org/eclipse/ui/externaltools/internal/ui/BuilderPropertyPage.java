@@ -997,7 +997,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 			if (data instanceof ICommand) {
 			} else if (data instanceof ILaunchConfiguration) {
 				ILaunchConfiguration config= (ILaunchConfiguration) data;
-				if (!isUnmigratedConfig(config)) {
+				if (!isUnmigratedConfig(config) && (config instanceof ILaunchConfigurationWorkingCopy)) {
 					ILaunchConfigurationWorkingCopy workingCopy= ((ILaunchConfigurationWorkingCopy) config);
 					// Save any changes to the config (such as enable/disable)
 					if (workingCopy.isDirty()) {
