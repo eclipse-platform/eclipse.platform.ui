@@ -27,15 +27,18 @@ public class AntCorePreferences {
 	protected List defaultTasks;
 	protected List defaultTypes;
 	protected List defaultURLs;
-	protected URL[] defaultCustomURLs;
+	protected URL[] defaultAntURLs;
 	
 	protected Task[] customTasks;
 	protected Type[] customTypes;
+	protected URL[] antURLs;
 	protected URL[] customURLs;
 	protected Property[] customProperties;
 	protected String[] customPropertyFiles;
 	
 	protected List pluginClassLoaders;
+	
+	private String antHome;
 
 	protected AntCorePreferences(List defaultTasks, List defaultExtraClasspath, List defaultTypes) {
 		initializePluginClassLoaders();
@@ -63,12 +66,20 @@ public class AntCorePreferences {
 			customTypes = extractTypes(prefs, getArrayFromString(types));
 		}
 		// urls
-		String urls = prefs.getString(IAntCoreConstants.PREFERENCE_URLS);
+		String urls = prefs.getString(IAntCoreConstants.PREFERENCE_ANT_URLS);
 		if (urls.equals("")) {//$NON-NLS-1$
-			customURLs = getDefaultCustomURLs();
+			antURLs = getDefaultAntURLs();
+		} else {
+			antURLs = extractURLs(getArrayFromString(urls));
+		}
+		urls = prefs.getString(IAntCoreConstants.PREFERENCE_URLS);
+		if (urls.equals("")) {//$NON-NLS-1$
+			customURLs = new URL[0];
 		} else {
 			customURLs = extractURLs(getArrayFromString(urls));
 		}
+		
+		antHome= prefs.getString(IAntCoreConstants.PREFERENCE_ANT_HOME);
 		
 		// properties
 		String properties = prefs.getString(IAntCoreConstants.PREFERENCE_PROPERTIES);
@@ -156,18 +167,34 @@ public class AntCorePreferences {
 	/**
 	 * Returns the array of URLs that is the default set of URLs defining
 	 * the Ant classpath.
-	 * 	 * @return the default set of URLs defining the Ant classpath	 */
-	public URL[] getDefaultCustomURLs() {
-		if (defaultCustomURLs == null) {
+	 * 
+	 * Ant running through the command line tries to find tools.jar to help the
+	 * user. Try emulating the same behaviour here.
+	 *	 * @return the default set of URLs defining the Ant classpath	 */
+	public URL[] getDefaultAntURLs() {
+		if (defaultAntURLs == null) {
 			List result = new ArrayList(10);
 			IPluginDescriptor descriptor = Platform.getPlugin("org.apache.ant").getDescriptor(); //$NON-NLS-1$
 			addLibraries(descriptor, result);
 			descriptor = Platform.getPlugin("org.apache.xerces").getDescriptor(); //$NON-NLS-1$
 			addLibraries(descriptor, result);
-			addToolsJar(result);
-			defaultCustomURLs= (URL[]) result.toArray(new URL[result.size()]);
+			URL toolsURL= getToolsJarURL();
+			if (toolsURL != null) {
+				result.add(toolsURL);
+			}
+			defaultAntURLs= (URL[]) result.toArray(new URL[result.size()]);
 		}
-		return defaultCustomURLs;
+		return defaultAntURLs;
+	}
+	
+	/**
+	 * Returns the array of URLs that is the set of URLs defining the Ant
+	 * classpath.
+	 * 
+	 * @return the set of URLs defining the Ant classpath
+	 */
+	public URL[] getAntURLs() {
+		return antURLs;
 	}
 
 	protected List computeDefaultTasks(List tasks) {
@@ -257,27 +284,23 @@ public class AntCorePreferences {
 		}
 	}
 
-	/**
-	 * Ant running through the command line tries to find tools.jar to help the user. Try
-	 * emulating the same behaviour here.
-	 */
-	protected void addToolsJar(List destination) {
+	public URL getToolsJarURL() {
 		IPath path = new Path(System.getProperty("java.home")); //$NON-NLS-1$
 		if (path.lastSegment().equalsIgnoreCase("jre")) { //$NON-NLS-1$
 			path = path.removeLastSegments(1);
 		}
 		path = path.append("lib").append("tools.jar"); //$NON-NLS-1$ //$NON-NLS-2$
 		File tools = path.toFile();
-		if (!tools.exists()) {
-			return;
+		if (tools.exists()) {
+			try {
+				return new URL("file:" + tools.getAbsolutePath());
+			} catch (MalformedURLException e) {
+				// if the URL does not have a valid format, just log and ignore the exception
+				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.getString("AntCorePreferences.Malformed_URL._1"), e);  //$NON-NLS-1$
+				AntCorePlugin.getPlugin().getLog().log(status);
+			}
 		}
-		try {
-			destination.add(new URL("file:" + tools.getAbsolutePath())); //$NON-NLS-1$
-		} catch (MalformedURLException e) {
-			// if the URL does not have a valid format, just log and ignore the exception
-			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.getString("AntCorePreferences.Malformed_URL._1"), e);  //$NON-NLS-1$
-			AntCorePlugin.getPlugin().getLog().log(status);
-		}
+		return null;
 	}
 
 	protected void addLibraries(IPluginDescriptor source, List destination) {
@@ -396,6 +419,16 @@ public class AntCorePreferences {
 	}
 	
 	/**
+	 * Sets the Ant URLs specified for the Ant classpath. To commit the changes,
+	 * updatePluginPreferences must be called.
+	 * 
+	 * @param the urls defining the Ant classpath
+	 */
+	public void setAntURLs(URL[] urls) {
+		antURLs = urls;
+	}
+	
+	/**
 	 * Sets the custom property files specified for Ant builds. To commit the
 	 * changes, updatePluginPreferences must be called.
 	 * 
@@ -457,6 +490,7 @@ public class AntCorePreferences {
 		Preferences prefs = AntCorePlugin.getPlugin().getPluginPreferences();
 		updateTasks(prefs);
 		updateTypes(prefs);
+		updateAntURLs(prefs);
 		updateURLs(prefs);
 		updateProperties(prefs);
 		updatePropertyFiles(prefs);
@@ -506,27 +540,42 @@ public class AntCorePreferences {
 	}
 
 	protected void updateURLs(Preferences prefs) {
+		StringBuffer urls = new StringBuffer();
+		for (int i = 0; i < customURLs.length; i++) {
+			urls.append(customURLs[i].toExternalForm());
+			urls.append(',');
+		}
+		
+		prefs.setValue(IAntCoreConstants.PREFERENCE_URLS, urls.toString());
+		String prefAntHome= "";
+		if (antHome != null) {
+			prefAntHome= antHome;
+		} 
+		prefs.setValue(IAntCoreConstants.PREFERENCE_ANT_HOME, prefAntHome);
+	}
+	
+	protected void updateAntURLs(Preferences prefs) {
 		//see if the custom URLS are just the default URLS
-		URL[] dcUrls= getDefaultCustomURLs();
+		URL[] dcUrls= getDefaultAntURLs();
 		boolean dflt= false;
-		if (dcUrls.length == customURLs.length) {
+		if (dcUrls.length == antURLs.length) {
 			dflt= true;
-			for (int i = 0; i < customURLs.length; i++) {
-				if (!customURLs[i].equals(dcUrls[i])) {
+			for (int i = 0; i < antURLs.length; i++) {
+				if (!antURLs[i].equals(dcUrls[i])) {
 					dflt= false;
 					break;
 				}
 			}
 		}
 		if (dflt) {
-			//always want to recalculate the default custom urls
-			//to pick up any changes in the default classpath
-			prefs.setValue(IAntCoreConstants.PREFERENCE_URLS, ""); //$NON-NLS-1$
+			//always want to recalculate the default Ant urls
+			//to pick up any changes in the default Ant classpath
+			prefs.setValue(IAntCoreConstants.PREFERENCE_ANT_URLS, ""); //$NON-NLS-1$
 			return;
 		}
 		StringBuffer urls = new StringBuffer();
-		for (int i = 0; i < customURLs.length; i++) {
-			urls.append(customURLs[i].toExternalForm());
+		for (int i = 0; i < antURLs.length; i++) {
+			urls.append(antURLs[i].toExternalForm());
 			urls.append(',');
 		}
 		
@@ -541,5 +590,13 @@ public class AntCorePreferences {
 		}
 		
 		prefs.setValue(IAntCoreConstants.PREFERENCE_PROPERTY_FILES, files.toString());
+	}
+	
+	public void setAntHome(String antHome) {
+		this.antHome= antHome;
+	}
+	
+	public String getAntHome() {
+		return antHome;
 	}
 }

@@ -197,7 +197,12 @@ public class InternalAntRunner {
 		project.setUserProperty("ant.file", getBuildFileLocation()); //$NON-NLS-1$
 		project.setUserProperty("ant.version", getAntVersion()); //$NON-NLS-1$
 		
-		Property[] properties= AntCorePlugin.getPlugin().getPreferences().getCustomProperties();
+		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
+		if (prefs.getAntHome() != null) {
+			project.setProperty("ant.home", prefs.getAntHome());
+		}
+		
+		Property[] properties= prefs.getCustomProperties();
 		if (properties != null) {
 			for (int i = 0; i < properties.length; i++) {
 				Property property = properties[i];
@@ -850,8 +855,11 @@ public class InternalAntRunner {
 			if (getAntVersion().indexOf("1.5") == -1) { //$NON-NLS-1$
 				throw new BuildException(InternalAntMessages.getString("InternalAntRunner.The_diagnositics_options_is_an_Ant_1.5.*_feature._Please_update_your_Ant_classpath_to_include_an_Ant_version_greater_than_this._4")); //$NON-NLS-1$
 			}
-			//Diagnostics.doReport(System.out);
-			logMessage(currentProject, "-diagnostics option not yet implemented", Project.MSG_INFO); //$NON-NLS-1$
+			try {
+				Diagnostics.doReport(System.out);
+			} catch (NullPointerException e) {
+				logMessage(getCurrentProject(), "ANT_HOME must be set to use Ant diagnostics", Project.MSG_ERR);
+			}
 			return false;
 		}
 		
@@ -1281,7 +1289,7 @@ public class InternalAntRunner {
 	private void setJavaClassPath() {
 		
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
-		URL[] antClasspath= prefs.getDefaultCustomURLs();
+		URL[] antClasspath= prefs.getAntURLs();
 		StringBuffer buff= new StringBuffer();
 		for (int i = 0; i < antClasspath.length; i++) {
 			URL url = antClasspath[i];

@@ -172,7 +172,7 @@ public abstract class AbstractAntTest extends TestCase {
 	
 	protected void restorePreferenceDefaults() {
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
-		prefs.setCustomURLs(prefs.getDefaultCustomURLs());
+		prefs.setCustomURLs(prefs.getDefaultAntURLs());
 		prefs.setCustomTasks(new Task[]{});
 		prefs.setCustomTypes(new Type[]{});
 		prefs.setCustomPropertyFiles(new String[]{});

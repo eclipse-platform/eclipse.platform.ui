@@ -33,6 +33,8 @@ public interface IAntCoreConstants {
 	 * Preferences
 	 * @since 2.1
 	 */
+	public static final String PREFERENCE_ANT_URLS = "ant_urls"; //$NON-NLS-1$
+	public static final String PREFERENCE_ANT_HOME = "ant_home"; //$NON-NLS-1$
 	public static final String PREFERENCE_PROPERTIES = "properties"; //$NON-NLS-1$
 	public static final String PREFERENCE_PROPERTY_FILES = "propertyfiles"; //$NON-NLS-1$
 	public static final String PREFIX_PROPERTY = "property."; //$NON-NLS-1$
