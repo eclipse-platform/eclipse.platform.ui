@@ -30,6 +30,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.ui.views.navigator.ResourceSorter;
 
 /**
  * This class was derived from org.eclipse.ui.internal.misc.CheckboxTreeAndListGroup
@@ -172,6 +173,7 @@ public class TreeAndListGroup implements ISelectionChangedListener {
 		listViewer.getTable().setFont(parent.getFont());
 		listViewer.setContentProvider(listContentProvider);
 		listViewer.setLabelProvider(listLabelProvider);
+		listViewer.setSorter(new ResourceSorter(ResourceSorter.NAME));
 		listViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				notifySelectionListeners(event);
@@ -197,6 +199,7 @@ public class TreeAndListGroup implements ISelectionChangedListener {
 		treeViewer = new TreeViewer(tree);
 		treeViewer.setContentProvider(treeContentProvider);
 		treeViewer.setLabelProvider(treeLabelProvider);
+		treeViewer.setSorter(new ResourceSorter(ResourceSorter.NAME));
 		treeViewer.addSelectionChangedListener(this);
 	}
 	
