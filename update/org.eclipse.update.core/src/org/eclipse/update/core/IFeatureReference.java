@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IAdaptable;
  * @see org.eclipse.update.core.FeatureReference
  * @since 2.0
  */
-public interface IFeatureReference extends IAdaptable {
+public interface IFeatureReference extends IAdaptable,IPlatformEnvironment {
 
 	/**
 	 * Returns the referenced feature URL.

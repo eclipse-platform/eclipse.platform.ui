@@ -22,7 +22,6 @@ import org.eclipse.update.internal.core.UpdateManagerPlugin;
 public class IncludedFeatureReference extends IncludedFeatureReferenceModel implements IIncludedFeatureReference {
 	
 	private IFeature bestMatchFeature;	 
-	private IFeature exactFeature;
 
 	/**
 	 * Construct a included feature reference
@@ -119,7 +118,7 @@ public class IncludedFeatureReference extends IncludedFeatureReferenceModel impl
 		// if perfect match is asked or if the feature is disabled
 		// we return the exact match 		
 		if (perfectMatch || getMatch() == IImport.RULE_PERFECT || isDisabled()) {
-			return getFeature(this);
+			return super.getFeature();
 		} else {
 			if (bestMatchFeature == null) {
 				// find best match
@@ -130,23 +129,6 @@ public class IncludedFeatureReference extends IncludedFeatureReferenceModel impl
 			}
 			return bestMatchFeature;
 		}
-	}
-	
-	/*
-	 * 
-	 */
-	private IFeature getFeature(IFeatureReference ref) throws CoreException {
-		
-		if (exactFeature!=null)
-			return exactFeature;
-				
-		String type = getType();
-		if (type == null || type.equals("")) { //$NON-NLS-1$
-			// ask the Site for the default type 
-			type = getSite().getDefaultPackagedFeatureType();
-		}
-		exactFeature = getSite().createFeature(type, ref.getURL());
-		return exactFeature;
 	}
 	
 	/*

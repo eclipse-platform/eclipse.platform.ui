@@ -64,21 +64,33 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 	}
 	
 	/**
-	 * Returns the feature this reference points to based on match and resolution
+	 * Returns the feature this reference points to 
 	 *  @return the feature on the Site
 	 */
 	public IFeature getFeature() throws CoreException {
 		
 		if (exactFeature!=null)	
 			return exactFeature;
-		
+		exactFeature = getFeature(this);
+		return exactFeature;
+	}
+
+
+	/**
+	 * Returns the feature the reference points to 
+	 * @param the feature reference
+	 * @return the feature on the Site
+	 */
+	protected IFeature getFeature(IFeatureReference ref) throws CoreException {
+
+		IFeature feature = null;
 		String type = getType();
 		if (type == null || type.equals("")) { //$NON-NLS-1$
-			// ask the Site for the default type 
+			// ask the Site for the default type
 			type = getSite().getDefaultPackagedFeatureType();
 		}
-		exactFeature = getSite().createFeature(type, this.getURL());
-		return exactFeature;
+		feature = getSite().createFeature(type, ref.getURL());
+		return feature;
 	}
 
 	/**

@@ -22,30 +22,11 @@ import org.xml.sax.SAXException;
  */
 
 public class InstallConfigurationModel extends ModelObject {
-	/**
-	 * initialize the configurations from the persistent model.
-	 */
-	private void initialize() {
-		try {
-			try {
-				URL resolvedURL = URLEncoder.encode(locationURL);
-				InputStream in = UpdateManagerPlugin.getPlugin().get(resolvedURL).getInputStream();
-				new InstallConfigurationParser(in, this);
-			} catch (FileNotFoundException exception) {
-				UpdateManagerPlugin.warn(locationURLString + " does not exist, The local site is not in synch with the file system and is pointing to a file that doesn't exist.", exception); //$NON-NLS-1$
-				throw Utilities.newCoreException(Policy.bind("InstallConfiguration.ErrorDuringFileAccess", locationURLString), exception); //$NON-NLS-1$			
-			} catch (SAXException exception) {
-				throw Utilities.newCoreException(Policy.bind("InstallConfiguration.ParsingErrorDuringCreation", locationURLString, "\r\n" + exception.toString()), exception); //$NON-NLS-1$ //$NON-NLS-2$
-			} catch (IOException exception) {
-				throw Utilities.newCoreException(Policy.bind("InstallConfiguration.ErrorDuringFileAccess", locationURLString), exception); //$NON-NLS-1$
-			}
-		} catch (CoreException e) {
-			UpdateManagerPlugin.warn("Error processing configuration history:" + locationURL.toExternalForm(), e);
-		} finally {
-			initialized = true;
-		}
 
-	}
+	// performance
+	private URL bundleURL;
+	private URL base;
+	private boolean resolved = false;
 
 	private boolean isCurrent;
 	private URL locationURL;
@@ -73,7 +54,7 @@ public class InstallConfigurationModel extends ModelObject {
 		if (!initialized) initialize();
 		if (configurationSites == null)
 			return new ConfiguredSiteModel[0];
-
+	
 		return (ConfiguredSiteModel[]) configurationSites.toArray(arrayTypeFor(configurationSites));
 	}
 
@@ -173,6 +154,7 @@ public class InstallConfigurationModel extends ModelObject {
 	public URL getURL() {
 		//if (!initialized) initialize();
 		//no need to initialize, always set
+		delayedResolve();
 		return locationURL;
 	}
 
@@ -206,7 +188,7 @@ public class InstallConfigurationModel extends ModelObject {
 	 * @return Returns a String
 	 */
 	public String getLocationURLString() {
-		if (!initialized) initialize();
+		if (!initialized) delayedResolve();
 		return locationURLString;
 	}
 
@@ -221,15 +203,13 @@ public class InstallConfigurationModel extends ModelObject {
 	}
 
 	/*
-	 * @see ModelObject#resolve(URL)
+	 * @see ModelObject#resolve(URL, ResourceBundle)
 	 */
-	public void resolve(URL base,URL bundleURL) throws MalformedURLException {
-		// local
-		locationURL = resolveURL(base, bundleURL, locationURLString);
+	public void resolve(URL base, URL bundleURL) throws MalformedURLException {
 
-		// delagate
-		resolveListReference(getActivityModel(), base,bundleURL);
-		resolveListReference(getConfigurationSitesModel(),base, bundleURL);
+		this.base = base;
+		this.bundleURL = bundleURL;
+
 	}
 
 	/**
@@ -249,11 +229,53 @@ public class InstallConfigurationModel extends ModelObject {
 		this.timeline = timeline;
 	}
 
-	/**
-	 * @see org.eclipse.update.core.model.ModelObject#getPropertyName()
+	/*
+	 * initialize the configurations from the persistent model.
 	 */
-	protected String getPropertyName() {
-		return SiteLocalModel.SITE_LOCAL_FILE;
+	private void initialize() {
+		try {
+			try {
+				URL resolvedURL = URLEncoder.encode(getURL());
+				InputStream in = UpdateManagerPlugin.getPlugin().get(resolvedURL).getInputStream();
+				new InstallConfigurationParser(in, this);
+			} catch (FileNotFoundException exception) {
+				UpdateManagerPlugin.warn(locationURLString + " does not exist, The local site is not in synch with the file system and is pointing to a file that doesn't exist.", exception); //$NON-NLS-1$
+				throw Utilities.newCoreException(Policy.bind("InstallConfiguration.ErrorDuringFileAccess", locationURLString), exception); //$NON-NLS-1$
+			} catch (SAXException exception) {
+				throw Utilities.newCoreException(Policy.bind("InstallConfiguration.ParsingErrorDuringCreation", locationURLString, "\r\n" + exception.toString()), exception); //$NON-NLS-1$ //$NON-NLS-2$
+			} catch (IOException exception) {
+				throw Utilities.newCoreException(Policy.bind("InstallConfiguration.ErrorDuringFileAccess", locationURLString), exception); //$NON-NLS-1$
+			}
+			
+		} catch (CoreException e) {
+			UpdateManagerPlugin.warn("Error processing configuration history:" + locationURL.toExternalForm(), e);
+		} finally {
+			initialized = true;
+		}
+		
+		//finish resolve
+		// PERF:
+		try {
+			// delegate
+			resolveListReference(getActivityModel(), base, bundleURL);
+			resolveListReference(getConfigurationSitesModel(), base, bundleURL);
+		} catch (MalformedURLException e){}		
 	}
 
+	/*
+	 * 
+	 */
+	private void delayedResolve() {
+
+		// PERF: delay resolution
+		if (resolved)
+			return;
+
+		resolved = true;
+		// resolve local elements
+		try {
+			locationURL = resolveURL(base, bundleURL, locationURLString);			
+		} catch (MalformedURLException e){}
+		
+	}
 }

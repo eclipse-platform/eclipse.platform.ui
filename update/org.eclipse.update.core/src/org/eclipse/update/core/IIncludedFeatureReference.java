@@ -21,7 +21,7 @@ import org.eclipse.update.configuration.IConfiguredSite;
  * @see org.eclipse.update.core.FeatureReference
  * @since 2.0.1
  */
-public interface IIncludedFeatureReference extends IFeatureReference, IPlatformEnvironment,  IAdaptable {
+public interface IIncludedFeatureReference extends IFeatureReference, IAdaptable {
 
 	/**
 	 * Returns the referenced feature.

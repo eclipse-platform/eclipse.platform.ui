@@ -8,8 +8,9 @@
 
    <runtime>
       <library name="updatecore.jar">
-         <export name="*"/>
-         <packages prefixes="org.eclipse.update"/>
+         <export name="org.eclipse.update.core.*"/>
+		 <export name="org.eclipse.update.configuration.*"/>         
+         <packages prefixes="org.eclipse.update.core,org.eclipse.update.configuration"/>
       </library>
    </runtime>
    <requires>
