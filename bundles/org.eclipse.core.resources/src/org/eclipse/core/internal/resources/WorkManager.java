@@ -66,7 +66,7 @@ class WorkManager implements IManager {
 		if (currentRule == null)
 			depth = beginUnprotected();
 		try {
-			jobManager.beginRule(notifyRule);
+			jobManager.beginRule(notifyRule, null);
 		} finally {
 			if (currentRule == null)
 				endUnprotected(depth);
@@ -91,7 +91,7 @@ class WorkManager implements IManager {
 	 */
 	public void checkIn(ISchedulingRule rule) {
 		try {
-			jobManager.beginRule(rule);
+			jobManager.beginRule(rule, null);
 		} finally {
 			//must increment regardless of failure because checkOut is always
 			// in finally
