@@ -591,8 +591,7 @@ public class BasicStackPresentation extends StackPresentation {
 	 */
 	public void addPart(IPresentablePart newPart, IPresentablePart position) {
 		int idx = indexOf(position);
-		if (idx == tabFolder.getItemCount())
-			idx = 0;
+		
 		createPartTab(newPart, idx);
 		
 		setControlSize();
@@ -629,15 +628,7 @@ public class BasicStackPresentation extends StackPresentation {
 		current = toSelect;
 		
 		if (current != null) {
-			CTabItem item = getTab(toSelect);
-			if (item != null)
-				if (!item.isShowing()) {
-					removePart(toSelect);
-					addPart(toSelect, null);
-					current = toSelect;
-				}
-			int ind = indexOf(current);
-			tabFolder.setSelection(ind);
+			tabFolder.setSelection(indexOf(current));
 			current.setVisible(true);
 			setControlSize();		
 		}
