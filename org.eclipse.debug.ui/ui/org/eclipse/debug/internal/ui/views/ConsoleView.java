@@ -139,7 +139,11 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 					if (obj == null) {
 						obj = getProcess();
 					}
-					title = "Console [" + DebugUIPlugin.getModelPresentation().getText(obj) + "]";
+					StringBuffer buff= new StringBuffer(DebugUIViewsMessages.getString("ConsoleView.Console_1")); //$NON-NLS-1$
+					buff.append(" ["); //$NON-NLS-1$
+					buff.append(DebugUIPlugin.getModelPresentation().getText(obj));
+					buff.append(']');
+					title= buff.toString();
 				}
 				setTitle(title);
 				updateActions();
