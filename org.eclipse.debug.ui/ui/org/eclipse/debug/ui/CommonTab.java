@@ -665,7 +665,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		if (!captureOutput) {
 		    configuration.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, false);
 		} else {
-		    configuration.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, true);
+		    configuration.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, (String)null);
 		}
 	}
 
