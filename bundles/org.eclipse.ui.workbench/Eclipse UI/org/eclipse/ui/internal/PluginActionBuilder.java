@@ -134,7 +134,7 @@ public abstract class PluginActionBuilder extends RegistryReader {
                     return true;
             }
 
-            // Read it's sub-elements
+            // Read its sub-elements
             currentContribution = createContribution();
             readElementChildren(element);
             if (cache == null)
@@ -454,5 +454,30 @@ public abstract class PluginActionBuilder extends RegistryReader {
         protected void addGroup(IContributionManager mgr, String name) {
             mgr.add(new Separator(name));
         }
+
+		/**
+		 * Disposes this contribution. 
+		 * 
+		 * @since 3.1
+		 */
+		public void dispose() {
+			// do nothing
+		}
+		
+		/**
+		 * Disposes the actions.
+		 *
+		 * @since 3.1
+		 */
+		protected void disposeActions() {
+            if (actions != null) {
+                for (int i = 0; i < actions.size(); i++) {
+                    PluginAction proxy = ((ActionDescriptor) actions.get(i))
+                            .getAction();
+					proxy.dispose();
+                }
+				actions = null;
+            }
+		}
     }
 }

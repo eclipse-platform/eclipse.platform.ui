@@ -10,17 +10,18 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import java.util.ArrayList;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IActionDelegate2;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
@@ -46,17 +47,9 @@ public class ViewerActionBuilder extends PluginActionBuilder {
      */
     protected ActionDescriptor createActionDescriptor(
             IConfigurationElement element) {
-        ActionDescriptor desc = null;
         if (part instanceof IViewPart)
-            desc = new ActionDescriptor(element, ActionDescriptor.T_VIEW, part);
-        else
-            desc = new ActionDescriptor(element, ActionDescriptor.T_EDITOR,
-                    part);
-        if (provider != null) {
-            PluginAction action = desc.getAction();
-            provider.addSelectionChangedListener(action);
-        }
-        return desc;
+			return new ActionDescriptor(element, ActionDescriptor.T_VIEW, part);
+		return new ActionDescriptor(element, ActionDescriptor.T_EDITOR, part);
     }
 
     /* (non-Javadoc)
@@ -72,15 +65,7 @@ public class ViewerActionBuilder extends PluginActionBuilder {
     public void dispose() {
         if (cache != null) {
             for (int i = 0; i < cache.size(); i++) {
-                ArrayList actions = ((BasicContribution) cache.get(i)).actions;
-                if (actions != null) {
-                    for (int j = 0; j < actions.size(); j++) {
-                        PluginAction proxy = ((ActionDescriptor) actions.get(j))
-                                .getAction();
-                        if (proxy.getDelegate() instanceof IActionDelegate2)
-                            ((IActionDelegate2) proxy.getDelegate()).dispose();
-                    }
-                }
+                ((BasicContribution) cache.get(i)).dispose();
             }
             cache = null;
         }
@@ -93,7 +78,7 @@ public class ViewerActionBuilder extends PluginActionBuilder {
         String tag = element.getName();
 
         // Found visibility sub-element
-        if (tag.equals(IWorkbenchRegistryConstants.TAG_VISIBILITY)) {
+        if (currentContribution != null && tag.equals(IWorkbenchRegistryConstants.TAG_VISIBILITY)) {
             ((ViewerContribution) currentContribution)
                     .setVisibilityTest(element);
             return true;
@@ -114,6 +99,7 @@ public class ViewerActionBuilder extends PluginActionBuilder {
      */
     public boolean readViewerContributions(String id, ISelectionProvider prov,
             IWorkbenchPart part) {
+		Assert.isTrue(part instanceof IViewPart || part instanceof IEditorPart);
         provider = prov;
         this.part = part;
         readContributions(id, IWorkbenchRegistryConstants.TAG_CONTRIBUTION_TYPE,
@@ -125,7 +111,7 @@ public class ViewerActionBuilder extends PluginActionBuilder {
      * Helper class to collect the menus and actions defined within a
      * contribution element.
      */
-    private static class ViewerContribution extends BasicContribution {
+    private static class ViewerContribution extends BasicContribution implements ISelectionChangedListener {
         private ISelectionProvider selProvider;
 
         private ActionExpression visibilityTest;
@@ -138,6 +124,9 @@ public class ViewerActionBuilder extends PluginActionBuilder {
         public ViewerContribution(ISelectionProvider selProvider) {
             super();
             this.selProvider = selProvider;
+			if (selProvider != null) {
+				selProvider.addSelectionChangedListener(this);
+			}
         }
 
         /**
@@ -170,5 +159,38 @@ public class ViewerActionBuilder extends PluginActionBuilder {
                 super.contribute(menu, menuAppendIfMissing, toolbar,
                         toolAppendIfMissing);
         }
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.internal.PluginActionBuilder.BasicContribution#dispose()
+		 */
+		public void dispose() {
+			if (selProvider != null) {
+				selProvider.removeSelectionChangedListener(this);
+			}
+			disposeActions();
+			super.dispose();
+		}
+
+		/**
+		 * Rather than hooking up each action as a selection listener,
+		 * the contribution itself is added, and propagates
+		 * the selection changed notification to all actions.
+		 * This simplifies cleanup, in addition to potentially reducing the number of listeners.
+		 * 
+		 * @see ISelectionChangedListener
+		 * @since 3.1
+		 */
+		public void selectionChanged(SelectionChangedEvent event) {
+			if (actions != null) {
+				if (actions != null) {
+					for (int i = 0; i < actions.size(); i++) {
+						PluginAction proxy = ((ActionDescriptor) actions.get(i))
+								.getAction();
+						proxy.selectionChanged(event);
+					}
+				}
+			}
+		}
     }
+
 }

@@ -67,4 +67,12 @@ public final class ViewPluginAction extends PartPluginAction {
     public boolean isOkToCreateDelegate() {
         return super.isOkToCreateDelegate() && viewPart != null;
     }
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.PluginAction#dispose()
+	 */
+	public void dispose() {
+		unregisterSelectionListener(viewPart);
+		super.dispose();
+	}
 }

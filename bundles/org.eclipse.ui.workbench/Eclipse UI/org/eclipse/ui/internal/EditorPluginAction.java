@@ -34,17 +34,6 @@ public final class EditorPluginAction extends PartPluginAction {
             editorChanged(part);
     }
 
-    /**
-     * This class adds the requirement that action delegates
-     * loaded on demand implement IViewActionDelegate
-     * @deprecated Please use the other constructor instead.
-     * @see EditorPluginAction#EditorPluginAction(IConfigurationElement, IEditorPart, String, int)
-     */
-    public EditorPluginAction(IConfigurationElement actionElement,
-            String runAttribute, IEditorPart part, String id, int style) {
-        this(actionElement, part, id, style);
-    }
-
     /* (non-Javadoc)
      * Method declared on PluginAction.
      */
@@ -84,4 +73,15 @@ public final class EditorPluginAction extends PartPluginAction {
         if (part != null)
             registerSelectionListener(part);
     }
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.PluginAction#dispose()
+	 */
+	public void dispose() {
+        if (currentEditor != null) {
+            unregisterSelectionListener(currentEditor);
+			currentEditor = null;
+        }
+		super.dispose();
+	}
 }

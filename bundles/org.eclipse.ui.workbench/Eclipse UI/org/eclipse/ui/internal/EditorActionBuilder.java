@@ -14,7 +14,6 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorPart;
@@ -70,14 +69,8 @@ public class EditorActionBuilder extends PluginActionBuilder {
      */
     private static class EditorContribution extends BasicContribution {
         public void dispose() {
-            if (actions != null) {
-                for (int i = 0; i < actions.size(); i++) {
-                    PluginAction proxy = ((ActionDescriptor) actions.get(i))
-                            .getAction();
-                    if (proxy.getDelegate() instanceof IActionDelegate2)
-                        ((IActionDelegate2) proxy.getDelegate()).dispose();
-                }
-            }
+			disposeActions();
+			super.dispose();
         }
 
         public void editorChanged(IEditorPart editor) {
