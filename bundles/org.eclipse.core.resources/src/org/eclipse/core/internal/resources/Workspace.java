@@ -681,10 +681,6 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		return 0;
 	}
 
-	public ResourceInfo createResource(IResource resource, ResourceInfo info, boolean phantom, boolean overwrite) throws CoreException {
-		return createResource(resource, info, phantom, overwrite, false);
-	}
-
 	/*
 	 * Creates the given resource in the tree and returns the new resource info object.  
 	 * If phantom is true, the created element is marked as a phantom.
@@ -746,11 +742,15 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * information is preserved)
 	 */
 	public ResourceInfo createResource(IResource resource, boolean phantom) throws CoreException {
-		return createResource(resource, null, phantom, false);
+		return createResource(resource, null, phantom, false, false);
 	}
 
 	public ResourceInfo createResource(IResource resource, boolean phantom, boolean overwrite) throws CoreException {
-		return createResource(resource, null, phantom, overwrite);
+		return createResource(resource, null, phantom, overwrite, false);
+	}
+
+	public ResourceInfo createResource(IResource resource, ResourceInfo info, boolean phantom, boolean overwrite) throws CoreException {
+		return createResource(resource, info, phantom, overwrite, false);
 	}
 
 	public static WorkspaceDescription defaultWorkspaceDescription() {
