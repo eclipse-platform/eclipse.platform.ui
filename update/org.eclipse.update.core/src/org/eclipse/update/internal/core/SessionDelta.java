@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
+import org.eclipse.update.internal.operations.*;
 
 /**
  *
@@ -125,8 +126,7 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 
 	private void createInstallConfiguration() throws CoreException {
 		ILocalSite localSite = SiteManager.getLocalSite();
-		IInstallConfiguration config = localSite.cloneCurrentConfiguration();
-		config.setLabel(Utilities.format(config.getCreationDate()));
+		IInstallConfiguration config = UpdateUtils.createInstallConfiguration();
 		localSite.addConfiguration(config);
 	}
 
