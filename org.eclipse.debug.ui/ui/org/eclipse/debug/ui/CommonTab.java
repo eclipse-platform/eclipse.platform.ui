@@ -113,6 +113,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
     private Button fFileBrowse;
     private Text fFileText;
     private Button fVariables;
+    private Button fAppend;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
@@ -121,7 +122,8 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
 		WorkbenchHelp.setHelp(getControl(), IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_COMMON_TAB);
-		GridLayout topLayout = new GridLayout();
+		GridLayout topLayout = new GridLayout(2, true);
+		topLayout.horizontalSpacing = 10;
 		comp.setLayout(topLayout);
 		comp.setFont(parent.getFont());
 		
@@ -130,6 +132,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		layout.numColumns = 3;
 		group.setLayout(layout);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
 		group.setLayoutData(gd);
 		group.setText(LaunchConfigurationsMessages.getString("CommonTab.0")); //$NON-NLS-1$
 		group.setFont(comp.getFont());
@@ -163,29 +166,19 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 
 		getLocalRadioButton().setSelection(true);
 		setSharedEnabled(false);
-
-		createVerticalSpacer(comp, 1);
 		
-		Composite favComp = new Composite(comp, SWT.NONE);
+		Group favComp = new Group(comp, SWT.NONE);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		favComp.setLayoutData(gd);
 		GridLayout favLayout = new GridLayout();
-		favLayout.marginHeight = 0;
-		favLayout.marginWidth = 0;
-		favLayout.numColumns = 2;
-		favLayout.makeColumnsEqualWidth = true;
 		favComp.setLayout(favLayout);
 		
-		Label favLabel = new Label(favComp, SWT.HORIZONTAL | SWT.LEFT);
-		favLabel.setText(LaunchConfigurationsMessages.getString("CommonTab.Display_in_favorites_menu__10")); //$NON-NLS-1$
-		gd = new GridData(GridData.BEGINNING);
-		gd.horizontalSpan = 2;
-		favLabel.setLayoutData(gd);
+		favComp.setText(LaunchConfigurationsMessages.getString("CommonTab.Display_in_favorites_menu__10")); //$NON-NLS-1$
+		favComp.setFont(parent.getFont());
 		
 		fFavoritesTable = CheckboxTableViewer.newCheckList(favComp, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
 		Control table = fFavoritesTable.getControl();
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.horizontalSpan = 1;
+		gd = new GridData(GridData.FILL_BOTH);
 		table.setLayoutData(gd);
 		
 		fFavoritesTable.setContentProvider(new FavoritesContentProvider());
@@ -199,24 +192,22 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 					updateLaunchConfigurationDialog();
 				}
 			});
-		createVerticalSpacer(comp, 1);
-		addOutputCaptureBlock(comp);
 		
-		createVerticalSpacer(comp, 1);
-		addEncodingBlock(comp);
-		
-		createVerticalSpacer(comp, 1);
+		createEncodingComponent(comp);
+		createOutputCaptureComponent(comp);
 		createLaunchInBackgroundComponent(comp);
 		
 		Dialog.applyDialogFont(parent);
 	}
 	
-    protected void addOutputCaptureBlock(Composite parent) {
+    protected void createOutputCaptureComponent(Composite parent) {
         Group group = new Group(parent, SWT.NONE);
         group.setText(LaunchConfigurationsMessages.getString("CommonTab.4")); //$NON-NLS-1$
         GridData gd = new GridData(SWT.FILL, SWT.NONE, true, false);
+        gd.horizontalSpan = 2;
         group.setLayoutData(gd);
-        group.setLayout(new GridLayout(4, false));
+        GridLayout layout = new GridLayout(4, false);
+        group.setLayout(layout);
         group.setFont(parent.getFont());
         
         fConsoleOutput = createCheckButton(group, LaunchConfigurationsMessages.getString("CommonTab.5")); //$NON-NLS-1$
@@ -237,12 +228,26 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
         fVariables = createPushButton(group, LaunchConfigurationsMessages.getString("CommonTab.9"), null); //$NON-NLS-1$
         fFileBrowse = createPushButton(group, LaunchConfigurationsMessages.getString("CommonTab.7"), null); //$NON-NLS-1$
         
+        Label spacer = new Label(group,SWT.NONE);
+        spacer.setLayoutData(new GridData(SWT.FILL, SWT.NORMAL, false, false));
+        fAppend = createCheckButton(group, LaunchConfigurationsMessages.getString("CommonTab.11")); //$NON-NLS-1$
+        gd = new GridData(SWT.LEFT, SWT.TOP, true, false);
+        fAppend.setLayoutData(gd);
+        
+        
         fFileOutput.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 boolean enabled = fFileOutput.getSelection();
                 fFileText.setEnabled(enabled);
                 fFileBrowse.setEnabled(enabled);
                 fVariables.setEnabled(enabled);
+                fAppend.setEnabled(enabled);
+                updateLaunchConfigurationDialog();
+            }
+        });
+        
+        fAppend.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
                 updateLaunchConfigurationDialog();
             }
         });
@@ -279,16 +284,17 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
         });
     }
 
-    protected void addEncodingBlock(Composite parent) {
+    protected void createEncodingComponent(Composite parent) {
 	    List allEncodings = IDEEncoding.getIDEEncodings();
 	    String defaultEncoding = WorkbenchEncoding.getWorkbenchDefaultEncoding();
 	    
 	    Group group = new Group(parent, SWT.NONE);
 	    group.setText(LaunchConfigurationsMessages.getString("CommonTab.1"));  //$NON-NLS-1$
-	    GridData gd = new GridData(SWT.BEGINNING, SWT.NORMAL, true, false);
-	    gd.horizontalSpan = 2;
+	    GridData gd = new GridData(SWT.FILL, SWT.FILL, true, false);
 	    group.setLayoutData(gd);
-	    group.setLayout(new GridLayout(2, false));
+	    GridLayout layout = new GridLayout(2, false);
+	    group.setLayout(layout);
+	    group.setFont(parent.getFont());
 	    
 	    fDefaultEncodingButton = createRadioButton(group, MessageFormat.format(LaunchConfigurationsMessages.getString("CommonTab.2"), new String[]{defaultEncoding})); //$NON-NLS-1$
 	    gd = new GridData(SWT.BEGINNING, SWT.NORMAL, true, false);
@@ -299,7 +305,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	    fAltEncodingButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 	    
 	    fEncodingCombo = new Combo(group, SWT.READ_ONLY);
-	    fEncodingCombo.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
+	    fEncodingCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	    fEncodingCombo.setItems((String[]) allEncodings.toArray(new String[0]));
 	    
 	    SelectionListener listener = new SelectionAdapter() {
@@ -422,22 +428,26 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
     protected void updateConsoleOutput(ILaunchConfiguration configuration) {
         boolean outputToConsole = true;
         String outputFile = null;
+        boolean append = false;
         
         try {
             outputToConsole = configuration.getAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, true);
             outputFile = configuration.getAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_FILE, (String)null);
+            append = configuration.getAttribute(IDebugUIConstants.ATTR_APPEND_TO_FILE, false);
         } catch (CoreException e) {
         }
         
         fConsoleOutput.setSelection(outputToConsole);
+        fAppend.setSelection(append);
         boolean haveOutputFile= outputFile != null;
         if (haveOutputFile) {
             fFileText.setText(outputFile);
-        } 
+        }
         fFileOutput.setSelection(haveOutputFile);
         fFileText.setEnabled(haveOutputFile);
         fFileBrowse.setEnabled(haveOutputFile);
         fVariables.setEnabled(haveOutputFile);
+        fAppend.setEnabled(haveOutputFile);
     }
 
     protected void updateLaunchInBackground(ILaunchConfiguration configuration) { 
@@ -666,6 +676,11 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		    captureOutput = true;
 		    String file = fFileText.getText().replace('\\', '/');
 		    configuration.setAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_FILE, file);
+		    if(fAppend.getSelection()) {
+		        configuration.setAttribute(IDebugUIConstants.ATTR_APPEND_TO_FILE, true);
+		    } else {
+		        configuration.setAttribute(IDebugUIConstants.ATTR_APPEND_TO_FILE, (String)null);
+		    }
 		} else {
 		    configuration.setAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_FILE, (String)null);
 		}

@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.internal.variables.StringVariableManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -88,7 +89,7 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 
     private IOConsoleInputStream fInput;
 
-    private FileOutputStream fOutput;
+    private FileOutputStream fFileOutputStream;
 
     private boolean fAllocateConsole = true;
 
@@ -105,30 +106,39 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 
         ILaunchConfiguration configuration = process.getLaunch().getLaunchConfiguration();
         String file = null;
+        boolean append = false;
         try {
             file = configuration.getAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_FILE, (String) null);
+            if (file != null) {
+                file = StringVariableManager.getDefault().performStringSubstitution(file);
+                append = configuration.getAttribute(IDebugUIConstants.ATTR_APPEND_TO_FILE, false);
+            }
         } catch (CoreException e) {
         }
 
         if (file != null) {
-            String message = MessageFormat.format(ConsoleMessages.getString("ProcessConsole.1"), new String[] {file}); //$NON-NLS-1$
+            String message = null;
             try {
-                fOutput = new FileOutputStream(file);
-                addPatternMatchListener(new ConsoleLogFilePatternMatcher(file));
+                File outputFile = new File(file);
+                fFileOutputStream = new FileOutputStream(outputFile, append);
+                String fileLoc = outputFile.getAbsolutePath();
+                message = MessageFormat.format(ConsoleMessages.getString("ProcessConsole.1"), new String[] {fileLoc}); //$NON-NLS-1$
+                addPatternMatchListener(new ConsoleLogFilePatternMatcher(fileLoc));
             } catch (FileNotFoundException e) {
                 DebugUIPlugin.log(e);
                 message = MessageFormat.format(ConsoleMessages.getString("ProcessConsole.2"), new String[] {file}); //$NON-NLS-1$
             }
-            try { 
-                IOConsoleOutputStream stream = newOutputStream();
-                file = new File(file).getAbsolutePath();
-                
-                stream.write(message);
-                stream.close();
-            } catch (IOException e) {
-                DebugUIPlugin.log(e);
+            if (message != null) { 
+                try { 
+                    IOConsoleOutputStream stream = newOutputStream();
+                    file = new File(file).getAbsolutePath();
+                    
+                    stream.write(message);
+                    stream.close();
+                } catch (IOException e) {
+                    DebugUIPlugin.log(e);
+                }
             }
-            
             try {
                 fAllocateConsole = configuration.getAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, true);
             } catch (CoreException e) {
@@ -334,16 +344,16 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
                 listener.dispose();
             }
         }
-        if (fOutput != null) {
-	        synchronized (fOutput) {
+        if (fFileOutputStream != null) {
+	        synchronized (fFileOutputStream) {
 	            try {
-	                fOutput.flush();
-	                fOutput.close();
+	                fFileOutputStream.flush();
+	                fFileOutputStream.close();
 	            } catch (IOException e) {
 	            }
 	        }
         }
-        fOutput = null;
+        fFileOutputStream = null;
         fInput = null;
     }
 
@@ -532,9 +542,9 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
                     if (stream != null) {
                         stream.write(text);
                     }
-                    if (fOutput != null) {
-                        synchronized (fOutput) {
-                            fOutput.write(text.getBytes());
+                    if (fFileOutputStream != null) {
+                        synchronized (fFileOutputStream) {
+                            fFileOutputStream.write(text.getBytes());
                         }
                     }
                 } catch (IOException e) {
@@ -556,9 +566,9 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
                         if (stream != null) {
                             stream.write(contents);
                         }
-                        if (fOutput != null) {
-                            synchronized (fOutput) {
-                                fOutput.write(contents.getBytes());
+                        if (fFileOutputStream != null) {
+                            synchronized (fFileOutputStream) {
+                                fFileOutputStream.write(contents.getBytes());
                             }
                         }
                     }

@@ -873,6 +873,12 @@ public interface IDebugUIConstants {
 	 */
 	public static final String ATTR_CAPTURE_IN_FILE = PLUGIN_ID + ".ATTR_CAPTURE_IN_FILE"; //$NON-NLS-1$
 	
+	/**
+	 * ProcessConsole attribute - if <code>true</code> process output will be appended to the file specified by
+	 * the <code>ATTR_CAPTURE_IN_FILE</code> attribute instead of overwriting the file.
+	 */
+	public static final String ATTR_APPEND_TO_FILE = PLUGIN_ID + ".ATTR_APPEND_TO_FILE"; //$NON-NLS-1$
+	
 	// Extension points
 	
 	/**
