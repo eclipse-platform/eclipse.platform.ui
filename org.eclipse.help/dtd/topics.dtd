@@ -1,8 +1,0 @@
-
-<!ELEMENT topics (topic)* ) >
-<!ATTLIST topics id  ID #REQUIRED >
-
-<!ELEMENT topic (topic)* >
-<!ATTLIST topic id ID #IMPLIED >
-<!ATTLIST topic label CDATA #REQUIRED >
-<!ATTLIST topic href  CDATA #IMPLIED >
