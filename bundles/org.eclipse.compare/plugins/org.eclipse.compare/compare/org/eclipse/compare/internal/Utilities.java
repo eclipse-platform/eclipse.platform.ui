@@ -242,6 +242,10 @@ public class Utilities {
 		return dfltValue;
 	}
 	
+	public static String getString(ResourceBundle bundle, String key) {
+		return getString(bundle, key, key);
+	}
+	
 	public static int getInteger(ResourceBundle bundle, String key, int dfltValue) {
 		
 		if (bundle != null) {

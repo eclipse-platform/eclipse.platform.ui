@@ -5,21 +5,19 @@
  */
 package org.eclipse.compare.internal;
 
-import java.util.HashMap;
+import java.util.*;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.source.SourceViewer;
-import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.util.*;
+import org.eclipse.jface.text.source.*;
 
 import org.eclipse.jface.viewers.SelectionChangedEvent;import org.eclipse.ui.texteditor.IUpdate;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -27,47 +25,67 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.compare.contentmergeviewer.TextMergeViewer;
 
 /**
- * Extends the SEF SourceViewer with some convenience methods.
+ * Extends the JFace SourceViewer with some convenience methods.
  */
-public class MergeSourceViewer extends SourceViewer {
-						
-	class TextMergeAction extends Action implements IUpdate, ISelectionChangedListener {
+public class MergeSourceViewer extends SourceViewer
+						implements ISelectionChangedListener, ITextListener, IMenuListener {
+								
+	public static final String UNDO_ID= "undo";
+	public static final String REDO_ID= "redo";
+	public static final String CUT_ID= "cut";
+	public static final String COPY_ID= "copy";
+	public static final String PASTE_ID= "paste";
+	public static final String DELETE_ID= "delete";
+	public static final String SELECT_ALL_ID= "selectAll";
+	
+
+	class TextOperationAction extends Action implements IUpdate {
 		
 		int fOperationCode;
+		boolean fMutable;
+		boolean fSelection;
+		boolean fContent;
 		
-		TextMergeAction(int operationCode) {
+		TextOperationAction(int operationCode, boolean mutable, boolean selection, boolean content) {
 			fOperationCode= operationCode;
+			fMutable= mutable;
+			fSelection= selection;
+			fContent= content;
 			update();
 		}
 		
 		public void run() {
-			if (fOperationCode != -1 && canDoOperation(fOperationCode))
+			if (isEnabled())
 				doOperation(fOperationCode);
 		}
 
 		public boolean isEnabled() {
-			return canDoOperation(fOperationCode);
+			return fOperationCode != -1 && canDoOperation(fOperationCode);
 		}
 		
 		public void update() {
 			this.setEnabled(isEnabled());
 		}
-		
-		public void selectionChanged(SelectionChangedEvent event) {
-			ISelection selection= event.getSelection();
-			if (selection instanceof ITextSelection)
-				update();
-		}
-}
+	}
 
-
+	private ResourceBundle fResourceBundle;
 	private IRegion fRegion;
 	private boolean fEnabled= true;
 	private HashMap fActions= new HashMap();
 	
+	private boolean fInitialized= true;
 	
-	public MergeSourceViewer(Composite parent) {
+	
+	public MergeSourceViewer(Composite parent, ResourceBundle bundle) {
 		super(parent, null, SWT.H_SCROLL + SWT.V_SCROLL);
+		
+		fResourceBundle= bundle;
+		
+		MenuManager menu= new MenuManager();
+		menu.setRemoveAllWhenShown(true);
+		menu.addMenuListener(this);
+		StyledText te= getTextWidget();
+		te.setMenu(menu.createContextMenu(te));
 	}
 		
 	public void setEnabled(boolean enabled) {
@@ -257,46 +275,101 @@ public class MergeSourceViewer extends SourceViewer {
 		}
 	}
 	
-	/**
-	 * Returns -1 on error
-	 */
-	private int getOperationCode(String operation) {
-		if (IWorkbenchActionConstants.UNDO.equals(operation))
-			return UNDO;
-		if (IWorkbenchActionConstants.REDO.equals(operation))
-			return REDO;
-		if (IWorkbenchActionConstants.CUT.equals(operation))
-			return CUT;
-		if (IWorkbenchActionConstants.CUT.equals(operation))
-			return CUT;
-		if (IWorkbenchActionConstants.COPY.equals(operation))
-			return COPY;
-		if (IWorkbenchActionConstants.PASTE.equals(operation))
-			return PASTE;
-		if (IWorkbenchActionConstants.DELETE.equals(operation))
-			return DELETE;
-		if (IWorkbenchActionConstants.SELECT_ALL.equals(operation))
-			return SELECT_ALL;
-//		if (IWorkbenchActionConstants.SHIFT_RIGHT.equals(operation))
-//			return SHIFT_RIGHT;
-//		if (IWorkbenchActionConstants.SHIFT_LEFT.equals(operation))
-//			return SHIFT_LEFT;
-//		if (IWorkbenchActionConstants.PREFIX.equals(operation))
-//			return PREFIX;
-//		if (IWorkbenchActionConstants.STRIP_PREFIX.equals(operation))
-//			return STRIP_PREFIX;
-		return -1;	// error
+	public TextOperationAction getAction(String actionId) {
+		TextOperationAction action= (TextOperationAction) fActions.get(actionId);
+		if (action == null) {
+			action= createAction(actionId);
+			
+			if (action.fContent)
+				addTextListener(this);
+			if (action.fSelection)
+				addSelectionChangedListener(this);
+				
+			Utilities.initAction(action, fResourceBundle, "action." + actionId + ".");			
+			fActions.put(actionId, action);
+		}
+		if (action.fMutable && !isEditable())
+			return null;
+		return action;
 	}
 	
-	public Action getAction(String operation) {
-		Action action= (Action) fActions.get(operation);
-		if (action == null) {
-			action= new TextMergeAction(getOperationCode(operation));
-//			if (action instanceof ISelectionChangedListener)
-//				addSelectionChangedListener((ISelectionChangedListener)action);
-			fActions.put(operation, action);
+	protected TextOperationAction createAction(String actionId) {
+		if (UNDO_ID.equals(actionId))
+			return new TextOperationAction(UNDO, true, false, true);
+		if (REDO_ID.equals(actionId))
+			return new TextOperationAction(REDO, true, false, true);
+		if (CUT_ID.equals(actionId))
+			return new TextOperationAction(CUT, true, true, false);
+		if (COPY_ID.equals(actionId))
+			return new TextOperationAction(COPY, false, true, false);
+		if (PASTE_ID.equals(actionId))
+			return new TextOperationAction(PASTE, true, false, false);
+		if (DELETE_ID.equals(actionId))
+			return new TextOperationAction(DELETE, true, false, false);
+		if (SELECT_ALL_ID.equals(actionId))
+			return new TextOperationAction(SELECT_ALL, false, false, false);
+		return null;
+	}
+	
+	public void selectionChanged(SelectionChangedEvent event) {
+		Iterator e= fActions.values().iterator();
+		while (e.hasNext()) {
+			TextOperationAction action= (TextOperationAction) e.next();
+			if (action.fSelection) {
+				action.update();
+			}
 		}
-		return action;
+	}
+					
+	//public void documentChanged(DocumentEvent event) {
+	public void textChanged(TextEvent event) {
+		Iterator e= fActions.values().iterator();
+		while (e.hasNext()) {
+			TextOperationAction action= (TextOperationAction) e.next();
+			if (action.fContent) {
+				action.update();
+			}
+		}
+	}
+		
+	/**
+	 * Allows the viewer to add menus and/or tools to the context menu.
+	 */
+	public void menuAboutToShow(IMenuManager menu) {
+		
+		menu.add(new Separator("undo"));
+		addMenu(menu, UNDO_ID);
+		addMenu(menu, REDO_ID);
+	
+		menu.add(new Separator("ccp"));
+		addMenu(menu, CUT_ID);
+		addMenu(menu, COPY_ID);
+		addMenu(menu, PASTE_ID);
+		addMenu(menu, DELETE_ID);
+		addMenu(menu, SELECT_ALL_ID);
+
+		menu.add(new Separator("edit"));
+		menu.add(new Separator("find"));
+		//addMenu(menu, FIND_ID);
+		
+		menu.add(new Separator("save"));
+		//addMenu(menu, SAVE_ID);
+		
+		menu.add(new Separator("rest"));
+	}
+	
+	private void addMenu(IMenuManager menu, String actionId) {
+		TextOperationAction action= getAction(actionId);
+		if (action != null)
+			menu.add(action);
+	}
+		
+	protected void handleDispose() {
+		
+		removeTextListener(this);
+		removeSelectionChangedListener(this);
+		
+		super.handleDispose();
 	}
 }
 

@@ -7,6 +7,8 @@ package org.eclipse.compare.internal;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ResourceBundle;
+import java.text.MessageFormat;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
@@ -21,15 +23,21 @@ import org.eclipse.compare.structuremergeviewer.ICompareInput;
  */
 public class BinaryCompareViewer extends AbstractViewer {
 
+	private static final String BUNDLE_NAME= "org.eclipse.compare.internal.BinaryCompareViewerResources";
+
 	private static final int EOF= -1;
 	private Text fControl;
 	private ICompareInput fInput;
+	private ResourceBundle fBundle;
 	
 	
 	public BinaryCompareViewer(Composite parent, CompareConfiguration cc) {
+		
+		fBundle= ResourceBundle.getBundle(BUNDLE_NAME);
+
 		fControl= new Text(parent, SWT.NONE);
 		fControl.setEditable(false);
-		fControl.setData(CompareUI.COMPARE_VIEWER_TITLE, "Binary Compare");
+		fControl.setData(CompareUI.COMPARE_VIEWER_TITLE, Utilities.getString(fBundle, "title"));
 	}
 
 	public Control getControl() {
@@ -47,22 +55,32 @@ public class BinaryCompareViewer extends AbstractViewer {
 				left= getStream(fInput.getLeft());
 				right= getStream(fInput.getRight());
 				
-				int pos= 0;
-				while (true) {
-					int l= left.read();
-					int r= right.read();
-					if (l != r) {
-						fControl.setText("first bytes differ at position " + pos);
-						break;
+				if (left != null && right != null) {
+					int pos= 0;
+					while (true) {
+						int l= left.read();
+						int r= right.read();
+						if (l != r) {
+							String format= Utilities.getString(fBundle, "diffMessageFormat", "diffMessageFormat {0}");
+							String msg= MessageFormat.format(format, new String[] { Integer.toString(pos) } );
+							fControl.setText(msg);
+							break;
+						}
+						if (l == EOF)
+							break;
+						pos++;
 					}
-					if (l == EOF)
-						break;
-					pos++;
+				} else if (left == null && right == null) {
+					fControl.setText(Utilities.getString(fBundle, "deleteConflictMessage"));
+				} else if (left == null) {
+					fControl.setText(Utilities.getString(fBundle, "addedMessage"));
+				} else if (right == null) {
+					fControl.setText(Utilities.getString(fBundle, "deletedMessage"));
 				}
 			} catch (CoreException ex) {
-				fControl.setText("CoreException " + ex);
+				fControl.setText(Utilities.getString(fBundle, "errorMessage"));
 			} catch (IOException ex) {
-				fControl.setText("IOException " + ex);
+				fControl.setText(Utilities.getString(fBundle, "errorMessage"));
 			} finally {
 				if (left != null) {
 					try {
@@ -87,6 +105,6 @@ public class BinaryCompareViewer extends AbstractViewer {
 	private InputStream getStream(ITypedElement input) throws CoreException {
 		if (input instanceof IStreamContentAccessor)
 			return ((IStreamContentAccessor)input).getContents();
-		return new ByteArrayInputStream(new byte[0]);
+		return null;
 	}
 }

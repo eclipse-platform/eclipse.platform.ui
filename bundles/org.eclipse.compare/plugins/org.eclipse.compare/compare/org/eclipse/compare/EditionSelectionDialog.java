@@ -722,7 +722,8 @@ public class EditionSelectionDialog extends Dialog {
 			fSelectedItem= null;
 			fContentPane.setInput(null);
 		}
-		fCommitButton.setEnabled(fSelectedItem != null);
+		if (fCommitButton != null)
+			fCommitButton.setEnabled(fSelectedItem != null);
 	}
 }
 

@@ -101,15 +101,23 @@ import org.eclipse.compare.rangedifferencer.RangeDifferencer;
 public class TextMergeViewer extends ContentMergeViewer  {
 	
 	private static final String[] GLOBAL_ACTIONS= {
-			' ' + IWorkbenchActionConstants.UNDO,
-			' ' + IWorkbenchActionConstants.REDO,
-			' ' + IWorkbenchActionConstants.CUT,
-			'r' + IWorkbenchActionConstants.COPY,
-			' ' + IWorkbenchActionConstants.PASTE,
-			' ' + IWorkbenchActionConstants.DELETE,
-			'r' + IWorkbenchActionConstants.SELECT_ALL,
-			'r' + IWorkbenchActionConstants.FIND
-		};
+		IWorkbenchActionConstants.UNDO,
+		IWorkbenchActionConstants.REDO,
+		IWorkbenchActionConstants.CUT,
+		IWorkbenchActionConstants.COPY,
+		IWorkbenchActionConstants.PASTE,
+		IWorkbenchActionConstants.DELETE,
+		IWorkbenchActionConstants.SELECT_ALL
+	};
+	private static final String[] TEXT_ACTIONS= {
+		MergeSourceViewer.UNDO_ID,
+		MergeSourceViewer.REDO_ID,
+		MergeSourceViewer.CUT_ID,
+		MergeSourceViewer.COPY_ID,
+		MergeSourceViewer.PASTE_ID,
+		MergeSourceViewer.DELETE_ID,
+		MergeSourceViewer.SELECT_ALL_ID
+	};
 		
 	private static final String MY_UPDATER= "my_updater";
 	
@@ -544,7 +552,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	 */
 	private MergeSourceViewer createPart(Composite parent) {
 		
-		final MergeSourceViewer part= new MergeSourceViewer(parent);
+		final MergeSourceViewer part= new MergeSourceViewer(parent, getResourceBundle());
 		final StyledText te= part.getTextWidget();
 		
 		te.addPaintListener(
@@ -574,25 +582,14 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			new FocusAdapter() {
 				public void focusGained(FocusEvent fe) {
 					fFocusPart= part;
-//					connectGlobalActions(fFocusPart);
+					connectGlobalActions(fFocusPart);
 				}
-//				public void focusLost(FocusEvent fe) {
-//					connectGlobalActions(null);
-//				}
+				public void focusLost(FocusEvent fe) {
+					connectGlobalActions(null);
+				}
 			}
 		);
 		
-		MenuManager mm= new MenuManager();
-		mm.setRemoveAllWhenShown(true);
-		mm.addMenuListener(
-			new IMenuListener() {
-				public void menuAboutToShow(IMenuManager mm) {
-					fillContextMenu(mm, part);
-				}
-			}
-		);
-		te.setMenu(mm.createContextMenu(te));				
-				
 		part.addViewportListener(
 			new IViewportListener() {
 				public void viewportChanged(int verticalPosition) {
@@ -606,63 +603,14 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		return part;
 	}
 	
-	/**
-	 * Allows the viewer to add menus and/or tools to the context menu.
-	 */
-	private void fillContextMenu(IMenuManager menu, MergeSourceViewer part) {
-
-		boolean mutable= part.isEditable();
-			
-		menu.add(new Separator("undo"));
-		if (mutable) {
-			menu.add(getAction(part, IWorkbenchActionConstants.UNDO));
-			menu.add(getAction(part, IWorkbenchActionConstants.REDO));
-		}
-	
-		menu.add(new Separator("ccp"));
-		if (mutable)
-			menu.add(getAction(part, IWorkbenchActionConstants.CUT));
-		menu.add(getAction(part, IWorkbenchActionConstants.COPY));
-		if (mutable) {
-			menu.add(getAction(part, IWorkbenchActionConstants.PASTE));
-			menu.add(getAction(part, IWorkbenchActionConstants.DELETE));
-		}
-		menu.add(getAction(part, IWorkbenchActionConstants.SELECT_ALL));
-
-		menu.add(new Separator("edit"));
-		menu.add(new Separator("find"));
-		//menu.add(getAction(part, IWorkbenchActionConstants.FIND));
-		
-		menu.add(new Separator("save"));
-		//if (mutable)
-		//	contributeAction(menu, part, "save");
-		
-		menu.add(new Separator("rest"));
-	}
-	
-	private Action getAction(MergeSourceViewer part, String operation) {
-		Action action= part.getAction(operation);
-		if (action.getText() == null)
-			Utilities.initAction(action, getResourceBundle(), "action." + operation + ".");
-		return action;
-	}
-	
-	void connectGlobalActions2(MergeSourceViewer part) {
-		System.out.println("connectGlobalActions: " + part);
+	private void connectGlobalActions(MergeSourceViewer part) {
 		IActionBars actionBars= CompareEditor.findActionBars(fComposite);
 		if (actionBars != null) {
 			for (int i= 0; i < GLOBAL_ACTIONS.length; i++) {
-				String name= GLOBAL_ACTIONS[i].substring(1);
-				char tag= GLOBAL_ACTIONS[i].charAt(0);
 				Action action= null;
-				if (part != null && (part.isEditable() || tag == 'r'))
-						action= getAction(part, name);
-					
-				actionBars.setGlobalActionHandler(name, action);
-
-//				if (action instanceof IUpdate) {
-//					((IUpdate)action).update();
-//				}	
+				if (part != null)
+					action= part.getAction(TEXT_ACTIONS[i]);
+				actionBars.setGlobalActionHandler(GLOBAL_ACTIONS[i], action);
 			}
 			actionBars.updateActionBars();
 		}

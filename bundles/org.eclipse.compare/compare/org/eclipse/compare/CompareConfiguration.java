@@ -67,7 +67,7 @@ public class CompareConfiguration {
 		fgImages[OUTGOING + Differencer.DELETION]= CompareUIPlugin.getImageDescriptor("ovr16/outdel_ov.gif");
 		fgImages[Differencer.CONFLICTING + Differencer.DELETION]= CompareUIPlugin.getImageDescriptor("ovr16/confdel_ov.gif");
 
-		fgImages[Differencer.CHANGE]= CompareUIPlugin.getImageDescriptor("ovr16/chg_ov.gif");
+		//fgImages[Differencer.CHANGE]= CompareUIPlugin.getImageDescriptor("ovr16/chg_ov.gif");
 		fgImages[INCOMING + Differencer.CHANGE]= CompareUIPlugin.getImageDescriptor("ovr16/inchg_ov.gif");
 		fgImages[OUTGOING + Differencer.CHANGE]= CompareUIPlugin.getImageDescriptor("ovr16/outchg_ov.gif");
 		fgImages[Differencer.CONFLICTING + Differencer.CHANGE]= CompareUIPlugin.getImageDescriptor("ovr16/confchg_ov.gif");

@@ -99,6 +99,19 @@
 				class="org.eclipse.compare.internal.ReplaceWithEditionAction">
 			</action>
 		</objectContribution>
+		
+		<objectContribution
+			id="org.eclipse.compare.CompareWithEditionAction"
+			objectClass="org.eclipse.core.resources.IFile">
+			<action
+				id="compareWithHistory"
+				label="%CompareWithHistoryAction.label"
+				tooltip="%CompareWithHistoryAction.tooltip"
+				menubarPath="compareWithMenu/compareWithGroup"
+				enablesFor="1"
+				class="org.eclipse.compare.internal.CompareWithEditionAction">
+			</action>
+		</objectContribution>
 			
 	</extension>
 
@@ -132,3 +145,4 @@
 	</extension>
 
 </plugin>
+

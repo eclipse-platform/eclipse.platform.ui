@@ -38,7 +38,8 @@ public class ImageMergeViewer extends ContentMergeViewer {
 	public ImageMergeViewer(Composite parent, int styles, CompareConfiguration mp) {
 		super(styles, ResourceBundle.getBundle(BUNDLE_NAME), mp);
 		buildControl(parent);
-		getControl().setData(CompareUI.COMPARE_VIEWER_TITLE, "Image Compare");
+		String title= Utilities.getString(getResourceBundle(), "title");
+		getControl().setData(CompareUI.COMPARE_VIEWER_TITLE, title);
 	}
 
 	protected void updateContent(Object ancestor, Object left, Object right) {
