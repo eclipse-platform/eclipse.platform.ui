@@ -11,12 +11,12 @@
 package org.eclipse.search.ui.text;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.ISearchResultListener;
@@ -91,15 +91,14 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 * @param matches the matches to add
 	 */
 	public void addMatches(Match[] matches) {
-
-		Set reallyAdded= new HashSet();
+		Collection reallyAdded= new ArrayList();
 		synchronized (fElementsToMatches) {
 			for (int i = 0; i < matches.length; i++) {
 				if (doAddMatch(matches[i]))
 					reallyAdded.add(matches[i]);
 			}
 		}
-		if (reallyAdded.size() > 0)
+		if (!reallyAdded.isEmpty())
 			fireChange(getSearchResultEvent(reallyAdded, MatchEvent.ADDED));
 	}
 	
@@ -109,10 +108,9 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 		return fMatchEvent;
 	}
 
-	private MatchEvent getSearchResultEvent(Set matches, int eventKind) {
+	private MatchEvent getSearchResultEvent(Collection matches, int eventKind) {
 		fMatchEvent.setKind(eventKind);
-		Match[] matchArray= new Match[matches.size()];
-		matches.toArray(matchArray);
+		Match[] matchArray= (Match[]) matches.toArray(new Match[matches.size()]);
 		fMatchEvent.setMatches(matchArray);
 		return fMatchEvent;
 	}
@@ -122,6 +120,8 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 		if (matches == null) {
 			matches= new ArrayList();
 			fElementsToMatches.put(match.getElement(), matches);
+			matches.add(match);
+			return true;
 		}
 		if (!matches.contains(match)) {
 			insertSorted(matches, match);
@@ -131,10 +131,6 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	}
 	
 	private static void insertSorted(List matches, Match match) {
-		if (matches.size() == 0) {
-			matches.add(match);
-			return;
-		}
 		int insertIndex= getInsertIndex(matches, match);
 		matches.add(insertIndex, match);
 	}
@@ -205,14 +201,14 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 * @param matches the matches to remove
 	 */
 	public void removeMatches(Match[] matches) {
-		Set existing= new HashSet();
+		Collection existing= new ArrayList();
 		synchronized (fElementsToMatches) {
 			for (int i = 0; i < matches.length; i++) {
 				if (doRemoveMatch(matches[i]))
-					existing.add(matches[i]);
+					existing.add(matches[i]); 		// no duplicate matches at this point
 			}
 		}
-		if (existing.size() > 0)
+		if (!existing.isEmpty())
 			fireChange(getSearchResultEvent(existing, MatchEvent.REMOVED));
 	}
 
