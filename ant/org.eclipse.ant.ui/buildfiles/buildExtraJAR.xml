@@ -33,8 +33,6 @@
 				 	${eclipse.home}/plugins/org.eclipse.core.runtime${version.suffix}/runtime.jar;
 			 		${basedir}/../org.eclipse.core.resources/bin;
 			 		${eclipse.home}/plugins/org.eclipse.core.resources${version.suffix}/resources.jar;
-					${basedir}/../org.eclipse.osgi/bin;
-					${eclipse.home}/plugins/org.eclipse.osgi${version.suffix}/osgi.jar;
 			 		${basedir}/bin;
 					${basedir}/../org.eclipse.swt${version.suffix}/bin;
 			 		${swt.jar};
