@@ -14,13 +14,10 @@ package org.eclipse.jface.viewers;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
@@ -29,6 +26,8 @@ import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Widget;
+
+import org.eclipse.jface.util.Assert;
 
 /**
  * A concrete viewer based on a SWT <code>Table</code> control.
@@ -60,7 +59,7 @@ public class TableViewer extends StructuredViewer {
 	 * This viewer's table editor.
 	 */
 	private TableEditor tableEditor;
-
+	
 	/**
 	 * Creates a table viewer on a newly-created table control under the given
 	 * parent. The table control is created using the SWT style bits
@@ -146,6 +145,19 @@ public class TableViewer extends StructuredViewer {
 	public void add(Object element) {
 		add(new Object[] { element });
 	}
+	
+	/**
+	 * Add element and map it to item. This is generally
+	 * used when the item was created as a result of an
+	 * SWT.SetItem callback.
+	 * @param element The element being displayed
+	 * @param item The widget displaying it
+	 * @see SWT#VIRTUAL
+	 */
+	public void add(Object element, Widget item){
+		mapElement(element,item);
+		updateItem(item,element);
+	}
 
 	/**
 	 * Cancels a currently active cell editor. All changes already done in the
@@ -170,9 +182,9 @@ public class TableViewer extends StructuredViewer {
 	 * @see org.eclipse.jface.viewers.StructuredViewer#doFindItem(java.lang.Object)
 	 */
 	protected Widget doFindItem(Object element) {
-		TableItem[] children = table.getItems();
-		for (int i = 0; i < children.length; i++) {
-			TableItem item = children[i];
+		
+		for (int i = 0; i < getTable().getItemCount(); i++) {
+			TableItem item = getTable().getItem(i);
 			Object data = item.getData();
 			if (data != null && equals(data, element))
 				return item;
@@ -199,30 +211,15 @@ public class TableViewer extends StructuredViewer {
 
 			IBaseLabelProvider prov = getLabelProvider();
 			ITableLabelProvider tprov = null;
-			ILabelProvider lprov = null;
 			ITableColorProvider cprov = null;
-
-			if (prov instanceof ITableColorProvider) {
-				cprov = (ITableColorProvider) prov;
-			}
 
 			if (prov instanceof ITableLabelProvider) {
 				tprov = (ITableLabelProvider) prov;
-			} else {
-				lprov = (ILabelProvider) prov;
-			}
+			} 
+			
 			int columnCount = table.getColumnCount();
 			TableItem ti = item;
 			
-			//Initialize the fonts and colors that might be set by
-			// the label provider
-			Color backgroundColor = null;
-			Color foregroundColor = null;
-			Font font = null;
-			
-			//If it is using an IViewerLabelProvider force the update
-			//as we may need to clear values.
-			boolean decorating = false;
 			
 			// Also enter loop if no columns added. See 1G9WWGZ: JFUIF:WINNT -
 			// TableViewer with 0 columns does not work
@@ -239,38 +236,19 @@ public class TableViewer extends StructuredViewer {
 
 				if (tprov == null) {
 					if (column == 0) {
-						if (lprov instanceof IViewerLabelProvider) {
-							IViewerLabelProvider itemProvider = (IViewerLabelProvider) lprov;
-							ViewerLabel updateLabel = new ViewerLabel(item
-									.getText(), item.getImage());
-
-							itemProvider.updateLabel(updateLabel, element);
-							
-							 //As it is possible for user code to run the event 
-				            //loop check here.
-				            if (item.isDisposed()) {
-				                unmapElement(element);
-				                return;
-				            }   
-				            
-							text = updateLabel.getText();
-							image = updateLabel.getImage();
-							
-							decorating = true;
-							
-							if(updateLabel.hasNewBackground())
-								backgroundColor = updateLabel.getBackground();
-							
-							if(updateLabel.hasNewForeground())
-								foregroundColor = updateLabel.getForeground();
-							
-							if(updateLabel.hasNewFont())
-								font = updateLabel.getFont();
-
-						} else {
-							text = lprov.getText(element);
-							image = lprov.getImage(element);
-						}
+						ViewerLabel updateLabel = new ViewerLabel(item
+								.getText(), item.getImage());
+						buildLabel(updateLabel,element);
+						
+//						As it is possible for user code to run the event 
+			            //loop check here.
+						if (item.isDisposed()) {
+			                unmapElement(element);
+			                return;
+			            }   
+						
+						text = updateLabel.getText();
+						image = updateLabel.getImage();
 					}
 				} else {
 					text = tprov.getColumnText(element, column);
@@ -285,28 +263,9 @@ public class TableViewer extends StructuredViewer {
 					ti.setImage(column, image);
 				}
 			}
-			if (prov instanceof IColorProvider) {
-				IColorProvider baseColorProv = (IColorProvider) prov;
-				
-				//Allow the decorator to override the base color provider
-				if(foregroundColor == null)
-					foregroundColor = baseColorProv.getForeground(element);
-				if(backgroundColor == null)
-					backgroundColor = baseColorProv.getBackground(element);
-			}
-			if (prov instanceof IFontProvider && font == null) {
-				IFontProvider fprov = (IFontProvider) prov;
-				 font = fprov.getFont(element);
-			}
 			
-			if(decorating || backgroundColor != null)
-				ti.setBackground(backgroundColor);
-			
-			if(decorating || foregroundColor != null)
-				ti.setForeground(foregroundColor);
-			
-			if(decorating || font != null)
-				ti.setFont(font);
+			colorAndFontCollector.setFontsAndColors(element);
+			colorAndFontCollector.applyFontsAndColors(ti);
 		}
 	}
 
@@ -576,18 +535,20 @@ public class TableViewer extends StructuredViewer {
 			// the associate of b to item 0.
 
 			Object[] children = getSortedChildren(getRoot());
-			TableItem[] items = table.getItems();
-			int min = Math.min(children.length, items.length);
+			int itemCount = getTable().getItemCount();
+			int min = Math.min(children.length, itemCount);
+			Table visibleTable = getTable();
 			for (int i = 0; i < min; ++i) {
+				TableItem currentItem = visibleTable.getItem(i);
 				// if the element is unchanged, update its label if appropriate
-				if (equals(children[i], items[i].getData())) {
+				if (equals(children[i], currentItem.getData())) {
 					if (updateLabels) {
-						updateItem(items[i], children[i]);
+						updateItem(currentItem, children[i]);
 					} else {
 						// associate the new element, even if equal to the old
 						// one,
 						// to remove stale references (see bug 31314)
-						associate(children[i], items[i]);
+						associate(children[i], currentItem);
 					}
 				} else {
 					// updateItem does an associate(...), which can mess up
@@ -596,18 +557,21 @@ public class TableViewer extends StructuredViewer {
 					// replaces b->1 with a->1, but this actually removes b->0.
 					// So, if the object associated with this item has changed,
 					// just disassociate it for now, and update it below.
-					items[i].setText(""); //$NON-NLS-1$
-					items[i].setImage(new Image[table.getItemCount()]);//Clear all images
-					disassociate(items[i]);
+					currentItem.setText(""); //$NON-NLS-1$
+					currentItem.setImage(new Image[table.getItemCount()]);//Clear all images
+					disassociate(currentItem);
 				}
 			}
 
 			// dispose of all items beyond the end of the current elements
-			if (min < items.length) {
-				for (int i = items.length; --i >= min;) {
-					disassociate(items[i]);
+			
+			if (itemCount < children.length) {
+				for (int i = itemCount; --i >= min;) {
+					TableItem item = visibleTable.getItem(i);
+					if(item != null && item.getData() != null)//May have never created the item if VIRTUAL
+						disassociate(item);
 				}
-				table.remove(min, items.length - 1);
+				table.remove(min, itemCount - 1);
 			}
 
 			// Workaround for 1GDGN4Q: ITPUI:WIN2000 - TableViewer icons get
@@ -618,8 +582,9 @@ public class TableViewer extends StructuredViewer {
 
 			// Update items which were removed above
 			for (int i = 0; i < min; ++i) {
-				if (items[i].getData() == null) {
-					updateItem(items[i], children[i]);
+				TableItem next = table.getItem(i);
+				if (next.getData() == null) {
+					updateItem(next, children[i]);
 				}
 			}
 

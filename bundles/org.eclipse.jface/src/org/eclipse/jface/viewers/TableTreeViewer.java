@@ -172,11 +172,12 @@ public class TableTreeViewer extends AbstractTreeViewer {
         // Similar code in TableTreeViewer.doUpdateItem()
         IBaseLabelProvider prov = getLabelProvider();
         ITableLabelProvider tprov = null;
-        ILabelProvider lprov = null;
+        
+        colorAndFontCollector.setFontsAndColors(element);
+        
         if (prov instanceof ITableLabelProvider)
             tprov = (ITableLabelProvider) prov;
-        else
-            lprov = (ILabelProvider) prov;
+        
         int columnCount = tableTree.getTable().getColumnCount();
         TableTreeItem ti = (TableTreeItem) item;
         // Also enter loop if no columns added.  See 1G9WWGZ: JFUIF:WINNT - TableViewer with 0 columns does not work
@@ -188,9 +189,20 @@ public class TableTreeViewer extends AbstractTreeViewer {
                 image = tprov.getColumnImage(element, column);
             } else {
                 if (column == 0) {
-                    text = lprov.getText(element);
-                    image = lprov.getImage(element);
-                }
+					ViewerLabel updateLabel = new ViewerLabel(item
+							.getText(), item.getImage());
+					buildLabel(updateLabel,element);
+					
+					//As it is possible for user code to run the event 
+		            //loop check here.
+					if (item.isDisposed()) {
+		                unmapElement(element);
+		                return;
+		            }   
+					
+					text = updateLabel.getText();
+					image = updateLabel.getImage();
+				}
             }
             
             //Avoid setting text to null
@@ -201,17 +213,11 @@ public class TableTreeViewer extends AbstractTreeViewer {
             // Apparently a problem to setImage to null if already null
             if (ti.getImage(column) != image)
                 ti.setImage(column, image);
+            
+            colorAndFontCollector.setFontsAndColors(element);
+			colorAndFontCollector.applyFontsAndColors(ti);
         }
-        if (prov instanceof IColorProvider) {
-            IColorProvider cprov = (IColorProvider) prov;
-            ti.setForeground(cprov.getForeground(element));
-            ti.setBackground(cprov.getBackground(element));
-        }
-
-        if (prov instanceof IFontProvider) {
-            IFontProvider fprov = (IFontProvider) prov;
-            ti.setFont(fprov.getFont(element));
-        }
+   
     }
 
     /**

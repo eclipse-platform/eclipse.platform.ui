@@ -14,12 +14,8 @@ package org.eclipse.jface.viewers;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.TreeListener;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -27,6 +23,8 @@ import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
+
+import org.eclipse.jface.util.Assert;
 
 /**
  * A concrete viewer based on an SWT <code>Tree</code> control.
@@ -102,83 +100,32 @@ public class TreeViewer extends AbstractTreeViewer {
             unmapElement(element);
             return;
         }        
-        // update icon and label
-        IBaseLabelProvider baseProvider = getLabelProvider();
         
-        Color background = null;
-        Color foreground = null;
-        Font font = null;
-        boolean decorating = false;
+        colorAndFontCollector.setFontsAndColors(element);
+        ViewerLabel updateLabel = new ViewerLabel(item.getText(), item
+                .getImage());
+        buildLabel(updateLabel,element);
         
-        if (baseProvider instanceof IColorProvider) {
-            IColorProvider cp = (IColorProvider) baseProvider;
-            foreground = cp.getForeground(element);
-            background = cp.getBackground(element);
-        }
-        if (baseProvider instanceof IFontProvider) {
-            font = ((IFontProvider) baseProvider).getFont(element);
-        }
+        //As it is possible for user code to run the event 
+        //loop check here.
+        if (item.isDisposed()) {
+            unmapElement(element);
+            return;
+        }    
         
-        if (baseProvider instanceof IViewerLabelProvider) {
-            IViewerLabelProvider provider = (IViewerLabelProvider) baseProvider;
-
-            ViewerLabel updateLabel = new ViewerLabel(item.getText(), item
-                    .getImage());
-            
-            provider.updateLabel(updateLabel, element);
-            
-            //As it is possible for user code to run the event 
-            //loop check here.
-            if (item.isDisposed()) {
-                unmapElement(element);
-                return;
-            }           
-            
-            decorating = true;
-
-            if (updateLabel.hasNewImage())
-                item.setImage(updateLabel.getImage());
-            if (updateLabel.hasNewText())
-                item.setText(updateLabel.getText());
-            if(updateLabel.hasNewBackground())
-            	background = updateLabel.getBackground();
-            
-            if(updateLabel.hasNewForeground())
-            	foreground = updateLabel.getForeground();
-            
-            if(updateLabel.hasNewFont())
-            	font = updateLabel.getFont();            	
-
-        } else {
-            if (baseProvider instanceof ILabelProvider) {
-                ILabelProvider provider = (ILabelProvider) baseProvider;
-                
-                String text = provider.getText(element);
-                if(text == null)
-                	text = ""; //$NON-NLS-1$
-                item.setText(text);
-                Image image = provider.getImage(element);
-                if (item.getImage() != image)
-                    item.setImage(image);
-            }
+        if (updateLabel.hasNewImage()){
+        	item.setImage(updateLabel.getImage());
         }
         
+        if (updateLabel.hasNewText()){
+        	String text = updateLabel.getText();
+            if(text == null)
+            	text = ""; //$NON-NLS-1$
+            item.setText(text);
+        } 
         
-        //Update fonts and colors. If a decorator is being used
-        //always update the tree items as they may get cleared
-        //by decorator enablement.
-        if(item instanceof TreeItem){
-        	TreeItem treeItem = (TreeItem) item;
-			
-			if(decorating || background != null)
-				treeItem.setBackground(background);
-			
-			if(decorating || foreground != null)
-				treeItem.setForeground(foreground);
-			
-			if(decorating || font != null)
-				treeItem.setFont(font);
-        }
+        if(item instanceof TreeItem)
+        	colorAndFontCollector.applyFontsAndColors((TreeItem) item);
        
     }
 
