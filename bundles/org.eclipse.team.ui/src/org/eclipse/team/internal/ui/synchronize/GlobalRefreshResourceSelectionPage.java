@@ -115,6 +115,7 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 	public void createControl(Composite parent2) {
 		Composite top = new Composite(parent2, SWT.NULL);
 		top.setLayout(new GridLayout());
+		initializeDialogUnits(top);
 		
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.widthHint = 50;
@@ -146,11 +147,46 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 			});
 			fViewer.setSorter(new ResourceSorter(ResourceSorter.NAME));
 			fViewer.setInput(resources);
-						
+				
+			Composite selectGroup = new Composite(top, SWT.NULL);
+			GridLayout layout = new GridLayout();
+			layout.numColumns = 2;
+			layout.marginHeight = 0;
+			layout.marginWidth = 0;
+			//layout.makeColumnsEqualWidth = false;
+			selectGroup.setLayout(layout);
+			data = new GridData(GridData.FILL_HORIZONTAL);
+			selectGroup.setLayoutData(data);
+			
+			Button selectAll = new Button(selectGroup, SWT.NULL);
+			selectAll.setText(Policy.bind("GlobalRefreshResourceSelectionPage.12")); //$NON-NLS-1$
+			selectAll.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {	
+					participantScope.setSelection(true);
+					selectedResourcesScope.setSelection(false);
+					workingSetScope.setSelection(false);
+					updateParticipantScope();
+					scopeCheckingElement = true;
+					updateOKStatus();
+					scopeCheckingElement = false;
+				}
+			});
+			setButtonLayoutData(selectAll);
+			
+			Button deSelectAll = new Button(selectGroup, SWT.NULL);
+			deSelectAll.setText(Policy.bind("GlobalRefreshResourceSelectionPage.13")); //$NON-NLS-1$
+			deSelectAll.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					fViewer.setCheckedElements(new Object[0]);
+					updateOKStatus();
+				}
+			});
+			setButtonLayoutData(deSelectAll);
+			
 			// Scopes
 			Group scopeGroup = new Group(top, SWT.NULL);
 			scopeGroup.setText(Policy.bind("GlobalRefreshResourceSelectionPage.6")); //$NON-NLS-1$
-			GridLayout layout = new GridLayout();
+			layout = new GridLayout();
 			layout.numColumns = 3;
 			layout.makeColumnsEqualWidth = false;
 			scopeGroup.setLayout(layout);
@@ -203,41 +239,6 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 			data = new GridData(GridData.HORIZONTAL_ALIGN_END);
 			selectWorkingSetButton.setLayoutData(data);
 			Dialog.applyDialogFont(selectWorkingSetButton);
-			
-			Composite selectGroup = new Composite(top, SWT.SHADOW_NONE);
-			layout = new GridLayout();
-			layout.numColumns = 2;
-			layout.marginHeight = 0;
-			layout.marginWidth = 0;
-			layout.makeColumnsEqualWidth = false;
-			selectGroup.setLayout(layout);
-			data = new GridData(GridData.FILL_HORIZONTAL);
-			selectGroup.setLayoutData(data);
-			
-			Button selectAll = new Button(selectGroup, SWT.NULL);
-			selectAll.setText(Policy.bind("GlobalRefreshResourceSelectionPage.12")); //$NON-NLS-1$
-			selectAll.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {	
-					participantScope.setSelection(true);
-					selectedResourcesScope.setSelection(false);
-					workingSetScope.setSelection(false);
-					updateParticipantScope();
-					scopeCheckingElement = true;
-					updateOKStatus();
-					scopeCheckingElement = false;
-				}
-			});
-			selectAll.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
-			
-			Button deSelectAll = new Button(selectGroup, SWT.NULL);
-			deSelectAll.setText(Policy.bind("GlobalRefreshResourceSelectionPage.13")); //$NON-NLS-1$
-			deSelectAll.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					fViewer.setCheckedElements(new Object[0]);
-					updateOKStatus();
-				}
-			});
-			deSelectAll.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 			
 			//workingSet = participant.getWorkingSet();
 			//updateWorkingSetLabel();
@@ -319,6 +320,7 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 		if(participantScope.getSelection()) {
 			scopeCheckingElement = true;
 			fViewer.setCheckedElements(resources.toArray());
+			setPageComplete(getRootResources().length > 0);
 			scopeCheckingElement = false;
 		}
 	}
