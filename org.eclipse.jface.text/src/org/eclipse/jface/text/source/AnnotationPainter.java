@@ -92,7 +92,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 				Point right= textWidget.getLocationAtOffset(offset + length);
 				
 				gc.setForeground(color);
-				int[] polyline= computePolyline(left, right, textWidget.getBaseline());
+				int[] polyline= computePolyline(left, right, textWidget.getBaseline(), textWidget.getLineHeight());
 				gc.drawPolyline(polyline);
 									
 			} else {
@@ -109,7 +109,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		 * @param baseline the font's baseline
 		 * @return the array of alternating x and y values which are the corners of the squiggly line
 		 */
-		private int[] computePolyline(Point left, Point right, int baseline) {
+		private int[] computePolyline(Point left, Point right, int baseline, int lineHeight) {
 			
 			final int WIDTH= 4; // must be even
 			final int HEIGHT= 2; // can be any number
@@ -132,7 +132,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			int[] coordinates= new int[length];
 			
 			// cache peeks' y-coordinates
-			int top= left.y + baseline;
+			int top= left.y + Math.min(baseline + 1, lineHeight - HEIGHT - 1);
 			int bottom= top + HEIGHT;
 			
 			// populate array with peek coordinates
