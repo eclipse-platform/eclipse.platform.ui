@@ -42,30 +42,31 @@ import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.commands.IActionService;
-import org.eclipse.ui.commands.IActionServiceListener;
 import org.eclipse.ui.commands.IContextService;
 import org.eclipse.ui.commands.IContextServiceListener;
+import org.eclipse.ui.commands.IHandler;
+import org.eclipse.ui.commands.IHandlerService;
+import org.eclipse.ui.commands.IHandlerServiceListener;
 import org.eclipse.ui.internal.AcceleratorMenu;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.WorkbenchWindow;
 
-public class ActionAndContextManager implements IContextResolver {
+public class ContextAndHandlerManager implements IContextResolver {
 
 	private final StatusLineContributionItem modeContributionItem = new StatusLineContributionItem("ModeContributionItem"); //$NON-NLS-1$
 
-	private final IActionServiceListener actionServiceListener = new IActionServiceListener() {
-		public void actionServiceChanged(IActionService actionService) {
-			ActionAndContextManager.this.actionServiceChanged();
-		}
-	};			
-	
 	private final IContextServiceListener contextServiceListener = new IContextServiceListener() {
 		public void contextServiceChanged(IContextService contextService) {
-			ActionAndContextManager.this.contextServiceChanged();
+			ContextAndHandlerManager.this.contextServiceChanged();
 		}
 	};	
+
+	private final IHandlerServiceListener handlerServiceListener = new IHandlerServiceListener() {
+		public void handlerServiceChanged(IHandlerService handlerService) {
+			ContextAndHandlerManager.this.handlerServiceChanged();
+		}
+	};
 
 	private final IPartListener partListener = new IPartListener() {
 		public void partActivated(IWorkbenchPart workbenchPart) {
@@ -106,23 +107,23 @@ public class ActionAndContextManager implements IContextResolver {
 	};
 
 	private AcceleratorMenu acceleratorMenu;		
-	//private IActionService activeWorkbenchPageActionService;
 	//private IContextService activeWorkbenchPageContextService;
-	private IActionService activeWorkbenchPartActionService;
+	//private IHandlerService activeWorkbenchPageHandlerService;
 	private IContextService activeWorkbenchPartContextService;
+	private IHandlerService activeWorkbenchPartHandlerService;
 	private WorkbenchWindow workbenchWindow;
-	private IActionService workbenchWindowActionService;
 	private IContextService workbenchWindowContextService;
+	private IHandlerService workbenchWindowHandlerService;
 	private Map contextsByCommand;
 
-	public ActionAndContextManager(WorkbenchWindow workbenchWindow) {
+	public ContextAndHandlerManager(WorkbenchWindow workbenchWindow) {
 		super();
 		this.workbenchWindow = workbenchWindow;	
 		workbenchWindow.getStatusLineManager().add(modeContributionItem);							
-		workbenchWindowActionService = ((WorkbenchWindow) workbenchWindow).getActionService();
-		workbenchWindowActionService.addActionServiceListener(actionServiceListener);	
 		workbenchWindowContextService = ((WorkbenchWindow) workbenchWindow).getContextService();
 		workbenchWindowContextService.addContextServiceListener(contextServiceListener);
+		workbenchWindowHandlerService = ((WorkbenchWindow) workbenchWindow).getHandlerService();
+		workbenchWindowHandlerService.addHandlerServiceListener(handlerServiceListener);
 		reset();
 
 		this.workbenchWindow.addPageListener(new IPageListener() {			
@@ -149,17 +150,17 @@ public class ActionAndContextManager implements IContextResolver {
 		partEvent();
 	}
 
-	private void actionServiceChanged() {
-		update();
-	}
-	
 	private void contextServiceChanged() {
 		update();
 	}	
 
+	private void handlerServiceChanged() {
+		update();
+	}
+
 	private void partEvent() {
-		IActionService activeWorkbenchPartActionService = null;
 		IContextService activeWorkbenchPartContextService = null;
+		IHandlerService activeWorkbenchPartHandlerService = null;
 		IWorkbenchPage activeWorkbenchPage = workbenchWindow.getActivePage();
 	 
 		if (activeWorkbenchPage != null) {
@@ -169,26 +170,14 @@ public class ActionAndContextManager implements IContextResolver {
 				IWorkbenchPartSite activeWorkbenchPartSite = activeWorkbenchPart.getSite();
 			
 				if (activeWorkbenchPartSite != null) {
-					activeWorkbenchPartActionService = ((PartSite) activeWorkbenchPartSite).getActionService();
 					activeWorkbenchPartContextService = ((PartSite) activeWorkbenchPartSite).getContextService();
+					activeWorkbenchPartHandlerService = ((PartSite) activeWorkbenchPartSite).getHandlerService();
 				}
 			}
 		}
 
 		boolean updateRequired = false;
-				
-		if (this.activeWorkbenchPartActionService != activeWorkbenchPartActionService) {
-			if (this.activeWorkbenchPartActionService != null)
-				this.activeWorkbenchPartActionService.removeActionServiceListener(actionServiceListener);				
-			
-			this.activeWorkbenchPartActionService = activeWorkbenchPartActionService;
-			
-			if (this.activeWorkbenchPartActionService != null)
-				this.activeWorkbenchPartActionService.addActionServiceListener(actionServiceListener);
-				
-			updateRequired = true;				
-		}
-	
+
 		if (this.activeWorkbenchPartContextService != activeWorkbenchPartContextService) {
 			if (this.activeWorkbenchPartContextService != null)
 				this.activeWorkbenchPartContextService.removeContextServiceListener(contextServiceListener);				
@@ -200,7 +189,19 @@ public class ActionAndContextManager implements IContextResolver {
 				
 			updateRequired = true;				
 		}
-	
+				
+		if (this.activeWorkbenchPartHandlerService != activeWorkbenchPartHandlerService) {
+			if (this.activeWorkbenchPartHandlerService != null)
+				this.activeWorkbenchPartHandlerService.removeHandlerServiceListener(handlerServiceListener);				
+			
+			this.activeWorkbenchPartHandlerService = activeWorkbenchPartHandlerService;
+			
+			if (this.activeWorkbenchPartHandlerService != null)
+				this.activeWorkbenchPartHandlerService.addHandlerServiceListener(handlerServiceListener);
+				
+			updateRequired = true;				
+		}
+		
 		if (updateRequired)
 			update();
 	}
@@ -226,10 +227,10 @@ public class ActionAndContextManager implements IContextResolver {
 
 		if (childSequenceMapForMode.isEmpty()) {
 			clear();
-			IAction action = getAction((String) sequenceMapForMode.get(childMode));
+			IHandler handler = getHandler((String) sequenceMapForMode.get(childMode));
 			
-			if (action != null && action.isEnabled())
-				action.runWithEvent(event);
+			if (handler != null && handler.isEnabled())
+				handler.runWithEvent(event);
 		}
 		else {
 			modeContributionItem.setText(KeySupport.formatSequence(childMode, true));
@@ -237,27 +238,27 @@ public class ActionAndContextManager implements IContextResolver {
 		}
 	}
 
-	private IAction getAction(String command) {
+	private IHandler getHandler(String command) {
 		if (command != null) {
-			if (activeWorkbenchPartActionService != null) {
-				SortedMap actionMap = activeWorkbenchPartActionService.getActionMap();
+			if (activeWorkbenchPartHandlerService != null) {
+				SortedMap handlerMap = activeWorkbenchPartHandlerService.getHandlerMap();
 				
-				if (actionMap != null) {
-					Object object = actionMap.get(command);
+				if (handlerMap != null) {
+					Object object = handlerMap.get(command);
 					
-					if (object instanceof IAction)
-						return (IAction) object;
+					if (object instanceof IHandler)
+						return (IHandler) object;
 				}
 			}
 
-			if (workbenchWindowActionService != null) {
-				SortedMap actionMap = workbenchWindowActionService.getActionMap();
+			if (workbenchWindowHandlerService != null) {
+				SortedMap handlerMap = workbenchWindowHandlerService.getHandlerMap();
 				
-				if (actionMap != null) {
-					Object object = actionMap.get(command);
+				if (handlerMap != null) {
+					Object object = handlerMap.get(command);
 					
-					if (object instanceof IAction)
-						return (IAction) object;
+					if (object instanceof IHandler)
+						return (IHandler) object;
 				}
 			}
 		}
@@ -299,9 +300,9 @@ public class ActionAndContextManager implements IContextResolver {
 			String command = (String) entry.getValue();		
 
 			if (sequence.isChildOf(mode, false)) {
-				IAction action = getAction(command);
+				IHandler handler = getHandler(command);
 				
-				if (action != null)
+				if (handler != null)
 					strokeSetForMode.add(sequence.getStrokes().get(size));	
 			}
 		}

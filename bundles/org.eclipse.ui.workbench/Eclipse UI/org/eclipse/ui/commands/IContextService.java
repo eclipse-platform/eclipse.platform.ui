@@ -17,8 +17,9 @@ import java.util.List;
  * <p>
  * This interface is not intended to be implemented or extended by clients.
  * </p>
- * 
- * EXPERIMENTAL
+ * <p>
+ * <em>EXPERIMENTAL</em>
+ * </p>
  * 
  * @since 3.0
  */

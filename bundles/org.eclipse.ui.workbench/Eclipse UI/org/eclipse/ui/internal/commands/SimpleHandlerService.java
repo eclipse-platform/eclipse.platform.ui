@@ -15,24 +15,24 @@ import java.util.Collections;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.eclipse.jface.action.IAction;
+import org.eclipse.ui.commands.IHandler;
 
-public final class SimpleActionService extends AbstractActionService {
+public final class SimpleHandlerService extends AbstractHandlerService {
 	
-	private SortedMap actionMap;
+	private SortedMap handlerMap;
 
-	public SimpleActionService() {
+	public SimpleHandlerService() {
 		super();
-		this.actionMap = Collections.unmodifiableSortedMap(new TreeMap());
+		this.handlerMap = Collections.unmodifiableSortedMap(new TreeMap());
 	}
 
-	public SortedMap getActionMap() {
-		return actionMap;
+	public SortedMap getHandlerMap() {
+		return handlerMap;
 	}
 	
-	public void setActionMap(SortedMap actionMap)
+	public void setHandlerMap(SortedMap handlerMap)
 		throws IllegalArgumentException {
-		this.actionMap = Util.safeCopy(actionMap, String.class, IAction.class);    
-		fireActionServiceChanged(); 
+		this.handlerMap = Util.safeCopy(handlerMap, String.class, IHandler.class);    
+		fireHandlerServiceChanged(); 
     }
 }

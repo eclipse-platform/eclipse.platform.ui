@@ -29,7 +29,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.commands.IActionService;
+import org.eclipse.ui.commands.IHandlerService;
 import org.eclipse.ui.commands.IContextService;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.commands.*;
@@ -46,9 +46,9 @@ public class WorkbenchWindow
 	extends ApplicationWindow
 	implements IWorkbenchWindow {
 
-	private ActionAndContextManager actionAndContextManager;
-	private IActionService actionService;
+	private ContextAndHandlerManager contextAndHandlerManager;
 	private IContextService contextService;
+	private IHandlerService handlerService;
 	private int number;
 	private Workbench workbench;
 	private PageList pageList = new PageList();
@@ -358,16 +358,9 @@ public class WorkbenchWindow
 		};
 	}
 
-	void updateActionAndContextManager() {
-		if (actionAndContextManager != null)
-			actionAndContextManager.update();
-	}
-
-	public IActionService getActionService() {
-		if (actionService == null)
-			actionService = new SimpleActionService();
-
-		return actionService;
+	void updateContextAndHandlerManager() {
+		if (contextAndHandlerManager != null)
+			contextAndHandlerManager.update();
 	}
 
 	public IContextService getContextService() {
@@ -375,6 +368,13 @@ public class WorkbenchWindow
 			contextService = new SimpleContextService();
 
 		return contextService;
+	}
+
+	public IHandlerService getHandlerService() {
+		if (handlerService == null)
+			handlerService = new SimpleHandlerService();
+
+		return handlerService;
 	}
 
 	private SortedMap actionSetsCommandIdToActionMap = new TreeMap();
@@ -401,7 +401,7 @@ public class WorkbenchWindow
 			}
 		}
 
-		updateActionMap();
+		updateHandlerMap();
 	}
 
 	void registerGlobalAction(IAction globalAction) {
@@ -409,15 +409,23 @@ public class WorkbenchWindow
 
 		if (command != null) {
 			globalActionsCommandIdToActionMap.put(command, globalAction);
-			updateActionMap();
+			updateHandlerMap();
 		}
 	}
 
-	private void updateActionMap() {
+	private void updateHandlerMap() {
 		SortedMap actionMap = new TreeMap();
 		actionMap.putAll(globalActionsCommandIdToActionMap);
-		actionMap.putAll(actionSetsCommandIdToActionMap);
-		getActionService().setActionMap(actionMap);
+		actionMap.putAll(actionSetsCommandIdToActionMap);		
+		Iterator iterator = actionMap.entrySet().iterator();
+		SortedMap handlerMap = new TreeMap();
+		
+		while (iterator.hasNext()) {
+			Map.Entry entry = (Map.Entry) iterator.next();
+			handlerMap.put(entry.getKey(), new ActionHandler((IAction) entry.getValue()));				
+		}
+		
+		getHandlerService().setHandlerMap(handlerMap);
 	}
 
 	/*
@@ -531,7 +539,7 @@ public class WorkbenchWindow
 	 */
 	public int open() {
 		int result = super.open();
-		actionAndContextManager = new ActionAndContextManager(this);
+		contextAndHandlerManager = new ContextAndHandlerManager(this);
 		workbench.fireWindowOpened(this);
 		return result;
 	}
@@ -1136,8 +1144,7 @@ public class WorkbenchWindow
 	 */
 	public KeyBindingService getKeyBindingService() {
 		if (keyBindingService == null) {
-			keyBindingService =
-				new KeyBindingService(getActionService(), getContextService());
+			keyBindingService = new KeyBindingService(getContextService(), getHandlerService());
 			updateActiveActions();
 		}
 
@@ -1563,7 +1570,7 @@ public class WorkbenchWindow
 		setActivePage(newActivePage);
 
 		// TODO: is this necessary?
-		updateActionAndContextManager();
+		updateContextAndHandlerManager();
 
 		// Restore the coolbar manager state. 
 		IMemento coolBarMem =

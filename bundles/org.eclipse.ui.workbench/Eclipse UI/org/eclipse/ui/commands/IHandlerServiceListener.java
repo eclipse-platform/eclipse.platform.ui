@@ -15,16 +15,18 @@ package org.eclipse.ui.commands;
  * <p>
  * This interface is not intended to be extended by clients.
  * </p>
- * 
- * EXPERIMENTAL
+ * <p>
+ * <em>EXPERIMENTAL</em>
+ * </p>
  * 
  * @since 3.0
  */
-public interface IActionServiceListener {
+public interface IHandlerServiceListener {
 
 	/**
 	 * TODO
-	 * @param actionService
+	 * 
+	 * @param handlerService
 	 */	
-	void actionServiceChanged(IActionService actionService);
+	void handlerServiceChanged(IHandlerService handlerService);
 }

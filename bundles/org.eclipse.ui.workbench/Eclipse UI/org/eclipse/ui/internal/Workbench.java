@@ -768,7 +768,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
 		
 		if (workbenchWindow != null && workbenchWindow instanceof WorkbenchWindow)
-			((WorkbenchWindow) workbenchWindow).updateActionAndContextManager();			
+			((WorkbenchWindow) workbenchWindow).updateContextAndHandlerManager();			
 	}
 		
 	/**

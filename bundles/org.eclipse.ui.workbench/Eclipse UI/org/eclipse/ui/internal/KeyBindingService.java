@@ -18,19 +18,20 @@ import java.util.TreeMap;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IKeyBindingService;
-import org.eclipse.ui.commands.IActionService;
 import org.eclipse.ui.commands.IContextService;
+import org.eclipse.ui.commands.IHandlerService;
+import org.eclipse.ui.internal.commands.ActionHandler;
 
 final class KeyBindingService implements IKeyBindingService {
 	
-	private SortedMap actionMap = new TreeMap();
-	private IActionService actionService;
+	private SortedMap handlerMap = new TreeMap();
 	private IContextService contextService;
-	
-	KeyBindingService(IActionService actionService, IContextService contextService) {
+	private IHandlerService handlerService;
+		
+	KeyBindingService(IContextService contextService, IHandlerService handlerService) {
 		super();
-		this.actionService = actionService;
 		this.contextService = contextService;
+		this.handlerService = handlerService;	
 	}
 
 	public String[] getScopes() {
@@ -47,8 +48,8 @@ final class KeyBindingService implements IKeyBindingService {
     	String command = action.getActionDefinitionId();
 
 		if (command != null) {
-			actionMap.put(command, action);		
-			actionService.setActionMap(actionMap);
+			handlerMap.put(command, new ActionHandler(action));		
+			handlerService.setHandlerMap(handlerMap);
 		}
     }
     
@@ -56,8 +57,8 @@ final class KeyBindingService implements IKeyBindingService {
     	String command = action.getActionDefinitionId();
 
 		if (command != null) {
-			actionMap.remove(command);
-			actionService.setActionMap(actionMap);
+			handlerMap.remove(command);
+			handlerService.setHandlerMap(handlerMap);
 		}
     }	
 }
