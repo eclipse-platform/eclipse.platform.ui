@@ -17,7 +17,7 @@ import org.eclipse.team.internal.ccvs.core.util.Assert;
 public class Checkout extends Command {
 	/*** Local options: specific to checkout ***/
 	public static final LocalOption FETCH_MODULE_ALIASES = new LocalOption("-c");
-	public static LocalOption makeModuleNameOption(String moduleName) {
+	public static LocalOption makeDirectoryNameOption(String moduleName) {
 		return new LocalOption("-d", moduleName);
 	}
 

@@ -160,7 +160,7 @@ public class CVSProvider implements ICVSProvider {
 		// Add the option to load into a directory of a different name
 		String module = project.getName();
 		if (sourceModule != null) {
-			localOptions.add(Checkout.makeModuleNameOption(module));
+			localOptions.add(Checkout.makeDirectoryNameOption(module));
 			module = sourceModule;
 		}
 		// Prune empty directories if pruning enabled

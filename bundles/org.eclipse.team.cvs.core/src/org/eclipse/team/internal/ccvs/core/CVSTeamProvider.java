@@ -520,9 +520,40 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	 * 
 	 * @see ITeamProvider#get(IResource[], int, IProgressMonitor)
 	 */
-	public void get(IResource[] resources, int depth, IProgressMonitor progress) throws TeamException {
+	public void get(IResource[] resources, final int depth, IProgressMonitor progress) throws TeamException {
 			
-		// XXX Need to correct any outgoing additions or deletions so the remote contents will be retrieved properly
+		// Need to correct any outgoing additions and deletions so the remote contents will be retrieved properly
+		ICVSResourceVisitor visitor = new ICVSResourceVisitor() {
+			public void visitFile(ICVSFile file) throws CVSException {
+				ResourceSyncInfo info = file.getSyncInfo();
+				if (info == null || info.isAdded()) {
+					// Delete the file if it's unmanaged or doesn't exist remotely
+					file.delete();
+					file.unmanage();
+				} else if (info.isDeleted()) {
+					// If deleted, null the sync info so the file will be refetched
+					file.unmanage();
+				}
+			}
+
+			public void visitFolder(ICVSFolder folder) throws CVSException {
+				// Visit the children of the folder as appropriate
+				if (depth == IResource.DEPTH_INFINITE)
+					folder.acceptChildren(this);
+				else if (depth == IResource.DEPTH_ONE) {
+					ICVSFile[] files = folder.getFiles();
+					for (int i = 0; i < files.length; i++) {
+						files[i].accept(this);
+					}
+				}
+			}
+		};
+		
+		for (int i = 0; i < resources.length; i++) {
+			getChild(resources[i]).accept(visitor);
+		}
+
+		Synchronizer.getInstance().save(progress);
 		
 		// Perform an update, ignoring any local file modifications
 		update(resources, depth, null, true, progress);
