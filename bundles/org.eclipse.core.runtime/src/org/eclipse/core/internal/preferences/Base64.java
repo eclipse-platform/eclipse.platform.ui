@@ -28,10 +28,11 @@ public class Base64 {
 	 * @return the decoded byte array
 	 */
 	public static byte[] decode(byte[] data) {
-		int lastRealDataIndex;
 		if (data.length == 0)
 			return data;
-		for (lastRealDataIndex = data.length - 1; data[lastRealDataIndex] == equalSign; lastRealDataIndex--);
+		int lastRealDataIndex = data.length - 1;
+		while (data[lastRealDataIndex] == equalSign)
+			lastRealDataIndex--;
 		// original data digit is 8 bits long, but base64 digit is 6 bits long
 		int padBytes = data.length - 1 - lastRealDataIndex;
 		int byteLength = data.length * 6 / 8 - padBytes;
