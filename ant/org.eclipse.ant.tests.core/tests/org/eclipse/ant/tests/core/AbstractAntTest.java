@@ -53,7 +53,7 @@ public abstract class AbstractAntTest extends TestCase {
 	
 	protected IFile getBuildFile(String buildFileName) {
 		IFile file = getProject().getFolder("buildfiles").getFile(buildFileName);
-		assertTrue("Could not find script file named: " + buildFileName, file.exists());
+		assertTrue("Could not find build file named: " + buildFileName, file.exists());
 		return file;
 	}
 	
