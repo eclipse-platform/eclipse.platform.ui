@@ -20,7 +20,7 @@ public class AllRootsElement extends CVSModelElement implements IAdaptable {
 		return null;
 	}
 	public Object[] internalGetChildren(Object o, IProgressMonitor monitor) {
-		return CVSUIPlugin.getPlugin().getRepositoryManager().getWorkingRepositoryRoots();
+		return CVSUIPlugin.getPlugin().getRepositoryManager().getKnownRepositoryRoots();
 	}
 	public String getLabel(Object o) {
 		return null;

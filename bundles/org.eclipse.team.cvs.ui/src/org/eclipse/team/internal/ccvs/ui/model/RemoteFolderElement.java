@@ -11,6 +11,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
@@ -24,18 +25,20 @@ public class RemoteFolderElement extends RemoteResourceElement {
 	public String getLabel(Object o) {
 		if (!(o instanceof ICVSRemoteFolder)) return null;
 		ICVSRemoteFolder folder = (ICVSRemoteFolder)o;
-		if (CVSUIPlugin.getPlugin().getRepositoryManager().isDisplayingProjectVersions(folder.getRepository())) {
-			CVSTag tag = folder.getTag();
-			if (tag != null && tag.getType() == CVSTag.VERSION) {
-				if (folder.getRemoteParent() == null) {
-					return Policy.bind("RemoteFolderElement.nameAndTag", folder.getName(), tag.getName()); //$NON-NLS-1$
-				}
+		CVSTag tag = folder.getTag();
+		if (tag != null && tag.getType() != CVSTag.HEAD) {
+			if (folder.getRemoteParent() == null) {
+				return Policy.bind("RemoteFolderElement.nameAndTag", folder.getName(), tag.getName()); //$NON-NLS-1$
 			}
 		}
 		return folder.getName();
 	}
 	public ImageDescriptor getImageDescriptor(Object object) {
 		if (!(object instanceof ICVSRemoteFolder)) return null;
+		ICVSRemoteFolder folder = (ICVSRemoteFolder) object;
+		if (folder.isDefinedModule()) {
+			return CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_MODULE);
+		}
 		return PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
 	}
 	/**

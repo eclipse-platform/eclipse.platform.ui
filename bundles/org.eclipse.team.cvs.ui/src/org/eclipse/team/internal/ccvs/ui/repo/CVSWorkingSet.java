@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.XMLWriter;
@@ -153,6 +154,7 @@ public class CVSWorkingSet implements Cloneable {
 	 */
 	private String[] getRemotePaths(ICVSRepositoryLocation location) {
 		Set set = (Set)remotePaths.get(location);
+		if (set == null) return new String[0];
 		return (String[])set.toArray(new String[set.size()]);
 	}
 	
@@ -201,6 +203,28 @@ public class CVSWorkingSet implements Cloneable {
 		// XXX Not sure if the below works
 		if (!set.remotePaths.equals(remotePaths)) return false;
 		return true;
+	}
+	/**
+	 * Method filterResources.
+	 * @param resources
+	 * @return ICVSRemoteResource[]
+	 */
+	public ICVSRemoteResource[] filterResources(ICVSRemoteResource[] resources) {
+		List result = new ArrayList(resources.length);
+		for (int i = 0; i < resources.length; i++) {
+			ICVSRemoteResource resource = resources[i];
+			for (Iterator iter = remotePaths.values().iterator(); iter.hasNext();) {
+				Set folders = (Set) iter.next();
+				for (Iterator iterator = folders.iterator(); iterator.hasNext();) {
+					String folder = (String) iterator.next();
+					if (folder.equals(resource.getName())) {
+						result.add(resource);
+					}
+				}
+				
+			}
+		}
+		return (ICVSRemoteResource[]) result.toArray(new ICVSRemoteResource[result.size()]);
 	}
 	
 }

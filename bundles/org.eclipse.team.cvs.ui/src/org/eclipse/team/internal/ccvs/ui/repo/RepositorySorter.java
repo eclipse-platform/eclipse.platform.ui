@@ -18,6 +18,9 @@ import org.eclipse.team.internal.ccvs.ui.model.VersionCategory;
 public class RepositorySorter extends ViewerSorter {
 	public int category(Object element) {
 		if (element instanceof ICVSRemoteFolder) {
+			if (((ICVSRemoteFolder)element).isDefinedModule()) {
+				return 7;
+			}
 			return 1;
 		}
 		if (element instanceof ICVSRemoteFile) {

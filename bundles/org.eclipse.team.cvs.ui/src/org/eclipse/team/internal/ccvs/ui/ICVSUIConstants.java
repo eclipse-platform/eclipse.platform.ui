@@ -27,6 +27,7 @@ public interface ICVSUIConstants {
 	public final String IMG_TAG = "obj16/tag.gif"; //$NON-NLS-1$
 	public final String IMG_BRANCHES_CATEGORY = "obj16/branches_rep.gif"; //$NON-NLS-1$
 	public final String IMG_VERSIONS_CATEGORY = "obj16/versions_rep.gif"; //$NON-NLS-1$
+	public final String IMG_MODULE = "obj16/module_rep.gif"; //$NON-NLS-1$
 	public final String IMG_PROJECT_VERSION = "obj16/prjversions_rep.gif"; //$NON-NLS-1$
 	
 	// toolbar
@@ -92,6 +93,9 @@ public interface ICVSUIConstants {
 	// watch/edit preferences
 	public final String PREF_CHECKOUT_READ_ONLY = "pref_checkout_read_only"; //$NON-NLS-1$
 	public final String PREF_PROMPT_ON_EDIT = "pref_prompt_on_edit"; //$NON-NLS-1$
+	
+	// Repositories view preferences
+	public final String PREF_GROUP_VERSIONS_BY_PROJECT = "pref_group_versions_by_project";
 	
 	// Wizard banners
 	public final String IMG_WIZBAN_SHARE = "wizban/newconnect_wizban.gif";	 //$NON-NLS-1$

@@ -72,7 +72,7 @@ public class VersionCategory extends CVSModelElement implements IAdaptable {
 	 */
 	private Object[] getProjectVersionChildren(Object o, IProgressMonitor monitor) throws TeamException {
 		IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
-		ICVSRemoteResource[] resources = CVSUIPlugin.getPlugin().getRepositoryManager().getFoldersForTag(
+		ICVSRemoteResource[] resources = CVSUIPlugin.getPlugin().getRepositoryManager().getWorkingFoldersForTag(
 			repository,
 			CVSTag.DEFAULT,
 			monitor);

@@ -27,6 +27,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
@@ -286,7 +287,7 @@ abstract public class CVSAction extends TeamAction {
 	 * @param c
 	 * @return Object
 	 */
-	protected Object getAdapter(Object selection, Class c) {
+	public static Object getAdapter(Object selection, Class c) {
 		if (c.isInstance(selection)) {
 			return selection;
 		}
@@ -301,6 +302,10 @@ abstract public class CVSAction extends TeamAction {
 	}
 	
 	protected Object[] getSelectedResources(Class c) {
+		return getSelectedResources(selection, c);
+	}
+	
+	public static Object[] getSelectedResources(ISelection selection, Class c) {
 		ArrayList result = null;
 		if (!selection.isEmpty()) {
 			result = new ArrayList();

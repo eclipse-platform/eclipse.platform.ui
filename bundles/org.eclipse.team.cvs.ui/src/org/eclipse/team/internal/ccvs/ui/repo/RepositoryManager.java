@@ -32,7 +32,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
@@ -50,7 +49,6 @@ import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.IRepositoryListener;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.ReleaseCommentDialog;
@@ -185,7 +183,13 @@ public class RepositoryManager {
 	
 	public ICVSRemoteResource[] getFoldersForTag(ICVSRepositoryLocation location, CVSTag tag, IProgressMonitor monitor) throws CVSException {
 		if (tag.getType() == CVSTag.HEAD) {
-			return location.members(tag, false, monitor);
+			ICVSRemoteResource[] resources = location.members(tag, false, monitor);
+			RepositoryRoot root = getRepositoryRootFor(location);
+			ICVSRemoteResource[] modules = root.getDefinedModules(tag, monitor);
+			ICVSRemoteResource[] result = new ICVSRemoteResource[resources.length + modules.length];
+			System.arraycopy(resources, 0, result, 0, resources.length);
+			System.arraycopy(modules, 0, result, resources.length, modules.length);
+			return result;
 		}
 		Set result = new HashSet();
 		// Get the tags for the location
@@ -721,7 +725,7 @@ public class RepositoryManager {
 	 * @return boolean
 	 */
 	public boolean isDisplayingProjectVersions(ICVSRepositoryLocation repository) {
-		return false;
+		return true;
 	}
 	
 	/**
@@ -792,19 +796,6 @@ public class RepositoryManager {
 	}
 	
 	/**
-	 * Method getWorkingRepositoryRoots.
-	 * @return Object[]
-	 */
-	public RepositoryRoot[] getWorkingRepositoryRoots() {
-		CVSWorkingSet current = getWorkingSet(currentWorkingSet);
-		if (current == null) {
-			return getKnownRepositoryRoots();
-		} else {
-			return getRepositoryRoots(current.getRepositoryLocations());
-		}
-	}
-	
-	/**
 	 * Method getWorkingFoldersForTag.
 	 * @param root
 	 * @param tag
@@ -813,15 +804,25 @@ public class RepositoryManager {
 	 */
 	public ICVSRemoteResource[] getWorkingFoldersForTag(ICVSRepositoryLocation root, CVSTag tag, IProgressMonitor monitor) throws CVSException {
 		CVSWorkingSet current = getCurrentWorkingSet();
-		if (current == null) {
-			return getFoldersForTag(root, tag, monitor);
-		} else {
-			if (CVSTag.DEFAULT.equals(tag) || tag == null) {
-				return current.getFoldersForTag(root, tag, monitor);
-			} else {
-				return getRepositoryRootFor(root).filterResources(current.getFoldersForTag(root, tag, monitor));
-			}
+		ICVSRemoteResource[] resources = getFoldersForTag(root, tag, monitor);
+		resources = filterResources(current, resources);
+		if (!(CVSTag.DEFAULT.equals(tag) || tag == null)) {
+			resources =  getRepositoryRootFor(root).filterResources(resources);
 		}
+		return resources;
+	}
+	
+	/**
+	 * Method filterResources filters the given resources using the given
+	 * working set.
+	 * 
+	 * @param current
+	 * @param resources
+	 * @return ICVSRemoteResource[]
+	 */
+	private ICVSRemoteResource[] filterResources(CVSWorkingSet current, ICVSRemoteResource[] resources) {
+		if (current == null) return resources;
+		return current.filterResources(resources);
 	}
 	
 	/**
@@ -831,6 +832,7 @@ public class RepositoryManager {
 	 * @return CVSTag[]
 	 */
 	public CVSTag[] getWorkingTags(ICVSRepositoryLocation repository, int tagType, IProgressMonitor monitor) throws CVSException {
+		// todo: needs changing
 		CVSWorkingSet current = getCurrentWorkingSet();
 		if (current == null) {
 			return getKnownTags(repository, tagType);

@@ -100,6 +100,15 @@ public class RepositoryRoot extends PlatformObject {
 	 * @return ICVSRemoteFolder
 	 */
 	private ICVSRemoteFolder getDefinedModule(String path, CVSTag tag, IProgressMonitor monitor) throws CVSException {
+		Map cache = getDefinedModulesCache(tag, monitor);
+		ICVSRemoteFolder folder = (ICVSRemoteFolder)cache.get(path);
+		if (folder != null) {
+			folder = (ICVSRemoteFolder)folder.forTag(tag);
+		}
+		return folder;
+	}
+	
+	private Map getDefinedModulesCache(CVSTag tag, IProgressMonitor monitor) throws CVSException {
 		if (modulesCache == null) {
 			ICVSRemoteResource[] folders = root.members(CVSTag.DEFAULT, true, monitor);
 			modulesCache = new HashMap();
@@ -108,11 +117,12 @@ public class RepositoryRoot extends PlatformObject {
 				modulesCache.put(resource.getName(), resource);
 			}
 		}
-		ICVSRemoteFolder folder = (ICVSRemoteFolder)modulesCache.get(path);
-		if (folder != null) {
-			folder = (ICVSRemoteFolder)folder.forTag(tag);
-		}
-		return folder;
+		return modulesCache;
+	}
+	
+	public ICVSRemoteResource[] getDefinedModules(CVSTag tag, IProgressMonitor monitor) throws CVSException {
+		Map cache = getDefinedModulesCache(tag, monitor);
+		return (ICVSRemoteResource[]) cache.values().toArray(new ICVSRemoteResource[cache.size()]);
 	}
 	
 	public static String getRemotePathFor(ICVSResource resource) throws CVSException {
