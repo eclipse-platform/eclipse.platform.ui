@@ -32,11 +32,11 @@
 </extension>
 
 <extension point="org.eclipse.core.resources.fileModificationValidator" id="FileValidator">
-	<fileModificationValidator class="org.eclipse.team.core.internal.FileModificationValidatorManager"/>
+	<fileModificationValidator class="org.eclipse.team.internal.core.FileModificationValidatorManager"/>
 </extension>
 
 <extension point="org.eclipse.core.resources.moveDeleteHook" id="MoveDeleteHook">
-	<moveDeleteHook class="org.eclipse.team.core.internal.MoveDeleteManager"/>
+	<moveDeleteHook class="org.eclipse.team.internal.core.MoveDeleteManager"/>
 </extension>
 
 </plugin>
