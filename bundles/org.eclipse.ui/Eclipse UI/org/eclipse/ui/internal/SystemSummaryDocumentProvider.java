@@ -5,17 +5,20 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
  
-import java.io.ByteArrayOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
 import org.eclipse.core.internal.plugins.PluginDescriptor;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.CoreException;
@@ -84,15 +87,15 @@ class SystemSummaryDocumentProvider extends AbstractDocumentProvider {
 	/*
 	 * Returns a <code>String</code> of diagnostics information.
 	 */ 	private String createDiagnostics() {
-		ByteArrayOutputStream out= new ByteArrayOutputStream();
-		PrintWriter writer= new PrintWriter(out);
+		StringWriter out = new StringWriter();
+		PrintWriter writer = new PrintWriter(out);
 		appendTimestamp(writer);
 		appendProperties(writer);
 		appendRegistry(writer);
 		appendUpdateManagerLog(writer);
 		appendLog(writer);
 		writer.close();
-		return new String(out.toByteArray());
+		return out.toString();
 	}
 
 	/*
@@ -211,10 +214,11 @@ class SystemSummaryDocumentProvider extends AbstractDocumentProvider {
 		if (log.exists()) {
 			writer.println();
 			writer.println("*** Error Log:"); //$NON-NLS-1$
-			
-			FileReader reader= null;
+	
+			BufferedReader reader = null;
 			try {
-				reader= new FileReader(log);
+				FileInputStream in = new FileInputStream(log);
+				reader = new BufferedReader(new InputStreamReader(in, "UTF-8")); //$NON-NLS-1$
 				char[] chars= new char[8192];
 				int read= reader.read(chars);
 				while (read > 0) {
@@ -225,8 +229,7 @@ class SystemSummaryDocumentProvider extends AbstractDocumentProvider {
 				reader= null;			
 			} catch (IOException e) {
 				writer.println("Error reading .log file"); //$NON-NLS-1$
-			}
-			
+			}			
 			if (reader != null) {
 				try {
 					reader.close();

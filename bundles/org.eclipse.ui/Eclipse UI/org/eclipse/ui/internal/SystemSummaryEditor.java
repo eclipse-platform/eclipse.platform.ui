@@ -5,17 +5,19 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
  
-import java.io.File;
-import java.io.FileWriter;
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.ui.internal.*;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 
@@ -34,6 +36,7 @@ public class SystemSummaryEditor extends AbstractTextEditor {
 	 * the last file the user selected to write to.
 	 */
 	public static final String LAST_FILE="last_file"; //$NON-NLS-1$
+	
 	
 	/**
 	 * Creates a new text editor.
@@ -71,12 +74,28 @@ public class SystemSummaryEditor extends AbstractTextEditor {
 		if (filename == null)
 			return;
 		String contents= getDocumentProvider().getDocument(getEditorInput()).get();
-		File file= new File(filename);
+		
+		Writer writer = null;
 		try {
-			Writer writer= new FileWriter(file);
+			writer = 
+				new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename, false), "UTF-8"));//$NON-NLS-1$
 			writer.write(contents);
 			writer.close();
-		} catch (IOException ioe) {}
+			writer = null;
+		} catch (IOException ioe) {
+			MessageDialog.openError(
+				getSite().getShell(),
+				WorkbenchMessages.getString("SystemSummary.saveErrorTitle"),
+				WorkbenchMessages.format("SystemSummary.saveErrorMessage", new Object[]{filename, ioe.getMessage() == null ? "" : ioe.getMessage()}));
+		}
+		if (writer != null) {
+			try {
+				writer.close();
+			} catch (IOException e) {
+				// silent
+			}
+		}
+		
 	}		
 
 	/*
@@ -123,4 +142,8 @@ public class SystemSummaryEditor extends AbstractTextEditor {
 
 		menu.add(new Separator(ITextEditorActionConstants.MB_ADDITIONS));
 	}
+	
+	
+	
+	
 }
