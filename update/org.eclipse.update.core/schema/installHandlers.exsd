@@ -2,17 +2,17 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.update.core">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.update.core" id="installHandlers" name="Global Install Handlers"/>
-   </appInfo>
-   <documentation>
-      Extension point for registering global install handlers. Global
+      <appInfo>
+         <meta.schema plugin="org.eclipse.update.core" id="installHandlers" name="Global Install Handlers"/>
+      </appInfo>
+      <documentation>
+         Extension point for registering global install handlers. Global
 install handlers can be referenced by features 
 (using the &lt;code&gt;&amp;lt;feature&amp;gt; &amp;lt;install-handler&amp;gt;&lt;/code&gt;
 tags) without having to include a copy of the handler code as
 part of the downloadable feature.
-   </documentation>
-</annotation>
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -65,11 +65,11 @@ install handler
 &lt;p&gt;
 &lt;pre&gt;
    &lt;extension
-        id="custom"
-        point="org.eclipse.update.core.installHandlers"
-        name="Custom install handler"&gt;
+        id=&quot;custom&quot;
+        point=&quot;org.eclipse.update.core.installHandlers&quot;
+        name=&quot;Custom install handler&quot;&gt;
      &lt;install-handler
-        class="com.xyz.update.CustomInstallHandler"&gt;
+        class=&quot;com.xyz.update.CustomInstallHandler&quot;&gt;
      &lt;/install-handler&gt;
    &lt;/extension&gt;
 &lt;/pre&gt;
@@ -102,10 +102,8 @@ Implementers should extend base class &lt;code&gt;org.eclipse.update.core.BaseIn
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         &lt;br&gt;
-&lt;br&gt;&lt;a href="hglegal.htm"&gt;&lt;img SRC="ngibmcpy.gif" 
-ALT="Copyright IBM Corp. and others 2000, 2002.  All Rights Reserved."
-BORDER=0&gt;&lt;/a&gt;
+         Copyright (c) 2002, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;.
       </documentation>
    </annotation>
 

@@ -2,11 +2,11 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.update.core">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.update.core" id="featureTypes" name="Feature Type Factory"/>
-   </appInfo>
-   <documentation>
-      The platform update mechanism supports pluggable feature type
+      <appInfo>
+         <meta.schema plugin="org.eclipse.update.core" id="featureTypes" name="Feature Type Factory"/>
+      </appInfo>
+      <documentation>
+         The platform update mechanism supports pluggable feature type
 implementations. A new feature type can be registered in order
 to support
 alternate packaging and verification schemes.
@@ -16,8 +16,9 @@ extension point allows alternate feature implementations to be
 registered using a symbolic type identifier. Whenever the 
 type is referenced using this identifier, the supplied factory
 is used to create the correct concrete feature implementation.
-   </documentation>
-</annotation>
+&lt;/p&gt;
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -72,11 +73,11 @@ is used to create the correct concrete feature implementation.
 &lt;p&gt;
 &lt;pre&gt;
    &lt;extension
-      id="custom"
-      point="org.eclipse.update.core.featureTypes"
-      name="Custom packaged feature"&gt;
+      id=&quot;custom&quot;
+      point=&quot;org.eclipse.update.core.featureTypes&quot;
+      name=&quot;Custom packaged feature&quot;&gt;
       &lt;feature-factory
-          class="com.xyz.update.CustomFeatureFactory"&gt;
+          class=&quot;com.xyz.update.CustomFeatureFactory&quot;&gt;
       &lt;/feature-factory&gt;
    &lt;/extension&gt;
 &lt;/pre&gt;
@@ -110,10 +111,8 @@ the other representing an installed feature type.
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         &lt;br&gt;
-&lt;br&gt;&lt;a href="hglegal.htm"&gt;&lt;img SRC="ngibmcpy.gif" 
-ALT="Copyright IBM Corp. and others 2000, 2002.  All Rights Reserved." 
-BORDER=0&gt;&lt;/a&gt;
+         Copyright (c) 2002, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;.
       </documentation>
    </annotation>
 
