@@ -409,7 +409,7 @@ public abstract class TextChange extends Change {
 	 *   </li>
 	 * </ul> 
 	 * 
-	 * @param region the starting region for the clipping
+	 * @param region the starting region for the text to be returned
 	 * @param expandRegionToFullLine if <code>true</code> is passed the region
 	 *  is extended to cover full lines
 	 * @param surroundingLines the number of surrounding lines to be added to 
