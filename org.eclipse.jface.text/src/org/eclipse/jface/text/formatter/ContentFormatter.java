@@ -61,7 +61,6 @@ import org.eclipse.jface.text.TypedPosition;
  * @see IDocument
  * @see ITypedRegion
  * @see Position
- * @deprecated since 3.0, use <code>MultiPassContentFormatter</code> instead
  */
 public class ContentFormatter implements IContentFormatter {
 		
