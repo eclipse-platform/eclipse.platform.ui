@@ -198,7 +198,6 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 		 */
 		public void worked(int work) {
 			internalWorked(work);
-			workbenchMonitor.worked(work);
 		}
 	}
 
