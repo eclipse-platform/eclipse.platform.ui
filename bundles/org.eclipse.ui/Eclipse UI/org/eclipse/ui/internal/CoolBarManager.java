@@ -744,17 +744,28 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 			coolBar.setRedraw(false);
 			CoolItem[] coolItems = coolBar.getItems();
 			int[] newItemOrder = new int[coolItems.length];
-			// Reset the coolitem order to the creation order.  CoolItems are
-			// created in contribution item order.  Only way to reset item 
-			// order is to setItemLayout (no setItemOrder API).
-			for (int i = 0; i < coolItems.length; i++) {
-				newItemOrder[i]=i;
+			// Reset the coolitem order to their original order.  This order is
+			// based on the order of the ContributionItems.  Note that the only
+			// way to reset item order is to setItemLayout (no setItemOrder API).
+			IContributionItem[] items = getItems();
+			int j = 0;
+			int[] oldItemOrder = coolBar.getItemOrder();
+			for (int i = 0; i < items.length; i++) {
+				CoolBarContributionItem item = (CoolBarContributionItem)items[i];
+				CoolItem coolItem = findCoolItem(item);
+				if (coolItem != null) {
+					int visualIndex = coolBar.indexOf(coolItem);
+					int creationIndex = oldItemOrder[visualIndex];
+					newItemOrder[j] = creationIndex;
+					j++;
+				}
 			}
 			coolBar.setItemLayout(newItemOrder, coolBar.getWrapIndices(), coolBar.getItemSizes());
 			redoLayout();
 			coolBar.setRedraw(true);
 			return;
 		}
+
 
 		int maxItemCount = coolBar.getItemCount();
 		int[] itemOrder = new int[maxItemCount];
