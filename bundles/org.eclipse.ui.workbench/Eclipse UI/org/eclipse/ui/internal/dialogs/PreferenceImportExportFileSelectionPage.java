@@ -297,7 +297,10 @@ class PreferenceImportExportFileSelectionPage extends AbstractPreferenceImportEx
 	 */
 	boolean validate() {
 		final String fileName = fileText.getText();
-        if (fileName.equals(Util.ZERO_LENGTH_STRING)) return false;
+        if (fileName.equals(Util.ZERO_LENGTH_STRING)) {
+            setErrorMessage(null);
+            return false;
+        }
 
         final File currentFile = new File(fileName);
         if (export) {
