@@ -100,11 +100,18 @@ protected OutputStream createStream(File target, boolean append) throws CoreExce
 		return new FileOutputStream(path, append);
 	} catch (FileNotFoundException e) {
 		String message;
-		if (target.isDirectory())
+		int code = IResourceStatus.FAILED_WRITE_LOCAL;
+		// Check to see if the parent is a read-only folder and if so then
+		// throw an exception with a more specific message and error code.
+		String parent = target.getParent();
+		if (parent != null && CoreFileSystemLibrary.isReadOnly(parent)) {
+			message = Policy.bind("localstore.readOnlyParent", path); //$NON-NLS-1$
+			code = IResourceStatus.PARENT_READ_ONLY;
+		} else if (target.isDirectory())
 			message = Policy.bind("localstore.notAFile", path); //$NON-NLS-1$
 		else
 			message = Policy.bind("localstore.couldNotWrite", path); //$NON-NLS-1$
-		throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, new Path(path), message, e);
+		throw new ResourceException(code, new Path(path), message, e);
 	}
 }
 public void delete(File target) throws CoreException {
@@ -310,25 +317,9 @@ public void transferStreams(InputStream source, OutputStream destination, String
 				try {
 					destination.write(buffer, 0, bytesRead);
 				} catch (IOException e) {
+					String msg = Policy.bind("localstore.couldNotWrite", new String[] {path}); //$NON-NLS-1$
 					IPath p = path == null ? null : new Path(path);
-					String msg=null;
-					int code=0;
-					// check to see if the immediate parent is marked as read-only. If so 
-					// then we can set a more accurate error code and message for the user.
-					if (p != null) {
-						String parent = p.toFile().getParent();
-						if (parent != null && CoreFileSystemLibrary.isReadOnly(parent)) {
-							msg = Policy.bind("localstore.readOnlyParent", path); //$NON-NLS-1$
-							code = IResourceStatus.PARENT_READ_ONLY;
-						}
-					}
-					// if message is null then we didn't discover a read-only immediate parent
-					// so set a general message and error code
-					if (msg == null) {
-						msg = Policy.bind("localstore.couldNotWrite", path); //$NON-NLS-1$
-						code = IResourceStatus.FAILED_WRITE_LOCAL;
-					}
-					throw new ResourceException(code, p, msg, e);
+					throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, p, msg, e);
 				}
 				monitor.worked(1);
 			}
