@@ -98,7 +98,7 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 			
 			tag = info.getTag();
 			
-			if (tag != null) {
+			if (tag != null && tag.getType() != tag.HEAD) {
 				requestSender.sendSticky(tag.toEntryLineFormat(false));
 			} 
 		}
