@@ -718,7 +718,7 @@
             id="org.eclipse.ui.actionSet.keyBindings">
          <action
                label="%KeyBindingActionSet.showKeyAssist.label"
-               class="org.eclipse.ui.internal.commands.ws.ShowKeyAssistHandler"
+               class="org.eclipse.ui.internal.handlers.ShowKeyAssistHandler"
                menubarPath="help/group.main"
                id="org.eclipse.ui.actions.showKeyAssistHandler"
                definitionId="org.eclipse.ui.window.showKeyAssist">
