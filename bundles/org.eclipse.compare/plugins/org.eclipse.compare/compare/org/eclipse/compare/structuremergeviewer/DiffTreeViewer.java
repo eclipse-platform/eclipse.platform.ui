@@ -315,16 +315,8 @@ public class DiffTreeViewer extends TreeViewer {
 		super.inputChanged(in, oldInput);
 		//expandToLevel(2);
 		
-//		Control c= getControl();
-//		Display display= c.getDisplay();
-//		display.asyncExec(
-//			new Runnable() {
-//				public void run() {
-					navigate(true);
-					updateActions();
-//				}
-//			}
-//		);
+		navigate(true);
+		updateActions();
 	}
 
 	/**
@@ -362,7 +354,7 @@ public class DiffTreeViewer extends TreeViewer {
 //		};
 //		Utilities.initAction(fCopyLeftToRightAction, fBundle, "action.TakeLeft.");
 //		toolbarManager.appendToGroup("merge", fCopyLeftToRightAction);
-//
+
 //		fCopyRightToLeftAction= new Action() {
 //			public void run() {
 //				copySelected(false);

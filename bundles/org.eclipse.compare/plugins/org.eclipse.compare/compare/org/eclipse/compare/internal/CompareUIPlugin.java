@@ -628,7 +628,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 		}
 		return null;
 	}
-	
+		
 	/**
 	 * Determines the type of the given threeway input by analyzing
 	 * the types (file extension) of the individual parts.

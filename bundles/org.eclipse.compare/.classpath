@@ -6,8 +6,7 @@
     <classpathentry kind="lib"
         path="/org.eclipse.core.runtime/runtime.jar" sourcepath="/org.eclipse.core.runtime/runtimesrc.zip"/>
     <classpathentry kind="lib" path="/org.eclipse.core.resources/resources.jar"/>
-    <classpathentry kind="lib" path="/org.eclipse.help/help.jar"
-        rootpath="" sourcepath="/org.eclipse.help/helpsrc.zip"/>
+    <classpathentry kind="lib" path="/org.eclipse.help/help.jar" sourcepath="/org.eclipse.help/helpsrc.zip"/>
     <classpathentry kind="var" path="JRE_LIB"/>
     <classpathentry kind="lib" path="/org.eclipse.swt/swt.jar" sourcepath="/org.eclipse.swt/swtsrc.zip"/>
     <classpathentry kind="output" path="bin"/>

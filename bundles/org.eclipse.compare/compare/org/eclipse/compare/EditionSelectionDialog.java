@@ -146,13 +146,16 @@ public class EditionSelectionDialog extends Dialog {
 		}
 	}
 	
-	private boolean fHideIdentical= true;
-	
-	private Button fCommitButton;
-	private boolean fReplaceMode= true;
-	
-	private ResourceBundle fBundle;
+	// Configuration options
+	/** use a side-by-side compare viewer */
+	private boolean fCompare= true;
+	/** show target on right hand side */
 	private boolean fTargetIsRight= false;
+	/** hide entries which have identical content */
+	private boolean fHideIdentical= true;
+	/** replace mode */
+	private boolean fReplaceMode= true;
+	private CompareConfiguration fCompareConfiguration;	
 	
 	/**
 	 * Maps from members to their corresponding editions.
@@ -162,21 +165,20 @@ public class EditionSelectionDialog extends Dialog {
 	/** The editions of the current selected member */
 	private List fCurrentEditions;
 	private Thread fThread;
-
+	private ResourceBundle fBundle;
 	private Pair fTargetPair;
 	/** The selected edition in the edition viewer */
 	private ITypedElement fSelectedItem;
 	
+	// SWT controls
+	private CompareViewerSwitchingPane fContentPane;
+	private Button fCommitButton;
 	private Table fMemberTable;
 	private Pane fMemberPane;
-	
 	private Tree fEditionTree;
 	private Pane fEditionPane;
 	private Image fDateImage;
-	private Image fTimeImage;
-	
-	private CompareViewerSwitchingPane fContentPane;
-	private CompareConfiguration fCompareConfiguration;
+	private Image fTimeImage;	
 	
 	/**
 	 * Creates a new modal, resizable dialog.
@@ -533,7 +535,7 @@ public class EditionSelectionDialog extends Dialog {
 		
 		fContentPane= new CompareViewerSwitchingPane(vsplitter, SWT.NONE) {
 			protected Viewer getViewer(Viewer oldViewer, Object input) {
-				return CompareUIPlugin.findContentViewer(oldViewer, input, this, fCompareConfiguration);
+				return CompareUIPlugin.findContentViewer(oldViewer, input, this, fCompareConfiguration);	
 			}
 		};
 		vsplitter.setWeights(new int[] { 30, 70 });
@@ -768,6 +770,17 @@ public class EditionSelectionDialog extends Dialog {
 		}
 	}
 	
+	private void setInput(Object input) {
+		if (!fCompare && input instanceof ICompareInput) {
+			ICompareInput ci= (ICompareInput) input;
+			if (fTargetIsRight)
+				input= ci.getLeft();
+			else
+				input= ci.getRight();
+		}
+		fContentPane.setInput(input);
+	}
+	
 	/*
 	 * Feeds selection from edition viewer to content viewer.
 	 */
@@ -780,20 +793,20 @@ public class EditionSelectionDialog extends Dialog {
 			String editionLabel= getEditionLabel(pair.getEdition(), fSelectedItem);
 			
 			if (!fReplaceMode) {
-				fContentPane.setInput(fSelectedItem);
+				setInput(fSelectedItem);
 				fContentPane.setText(editionLabel);
 			} else {
 				if (fTargetIsRight) {
 					fCompareConfiguration.setLeftLabel(editionLabel);
-					fContentPane.setInput(new DiffNode(fSelectedItem, fTargetPair.getItem()));
+					setInput(new DiffNode(fSelectedItem, fTargetPair.getItem()));
 				} else {
 					fCompareConfiguration.setRightLabel(editionLabel);
-					fContentPane.setInput(new DiffNode(fTargetPair.getItem(), fSelectedItem));
+					setInput(new DiffNode(fTargetPair.getItem(), fSelectedItem));
 				}
 			}
 		} else {
 			fSelectedItem= null;
-			fContentPane.setInput(null);
+			setInput(null);
 		}
 		if (fCommitButton != null)
 			fCommitButton.setEnabled(fSelectedItem != null);
