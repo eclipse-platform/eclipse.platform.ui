@@ -14,7 +14,6 @@ package org.eclipse.ui.internal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
