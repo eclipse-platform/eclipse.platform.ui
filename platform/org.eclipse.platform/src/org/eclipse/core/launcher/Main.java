@@ -185,6 +185,8 @@ public class Main {
 	private static final String OSGI = "org.eclipse.osgi"; //$NON-NLS-1$
 	private static final String STARTER = "org.eclipse.core.runtime.adaptor.EclipseStarter"; //$NON-NLS-1$
 	private static final String PLATFORM_URL = "platform:/base/"; //$NON-NLS-1$
+	private static final String ECLIPSE_PROPERTIES = "eclipse.properties"; //$NON-NLS-1$
+	private static final String FILE_SCHEME = "file:"; //$NON-NLS-1$	
 
 	// constants: configuration file location
 	private static final String CONFIG_DIR = "configuration/"; //$NON-NLS-1$
@@ -373,10 +375,10 @@ public class Main {
 	private void addBaseJars(String devBase, ArrayList result) throws IOException {
 		String baseJarList = System.getProperty(PROP_CLASSPATH);
 		if (baseJarList == null) {
-			Properties defaults = loadProperties(devBase + "eclipse.properties");
+			Properties defaults = loadProperties(devBase + ECLIPSE_PROPERTIES);
 			baseJarList = defaults.getProperty(PROP_CLASSPATH);
 			if (baseJarList == null)
-				throw new IOException("Unable to initialize " + PROP_CLASSPATH);
+				throw new IOException("Unable to initialize " + PROP_CLASSPATH); //$NON-NLS-1$
 			System.getProperties().put(PROP_CLASSPATH, baseJarList);
 		}
 		String[] baseJars = getArrayFromList(baseJarList);
@@ -434,7 +436,7 @@ public class Main {
 		if (System.getProperty(PROP_FRAMEWORK) == null)
 			System.getProperties().put(PROP_FRAMEWORK, url.toExternalForm());
 		if (debug)
-			System.out.println("Framework located:\n    " + url.toExternalForm());
+			System.out.println("Framework located:\n    " + url.toExternalForm()); //$NON-NLS-1$
 		URL[] result = getDevPath(url);
 		if (debug) {
 			System.out.println("Framework classpath:"); //$NON-NLS-1$
@@ -545,18 +547,18 @@ public class Main {
 			return null;
 		// if the spec is a file: url then see if it is absolute.  If not, break it up
 		// and make it absolute.  
-		if (spec.startsWith("file:")) {
+		if (spec.startsWith(FILE_SCHEME)) {
 			File file = new File(spec.substring(5));
 			if (!file.isAbsolute())
-				spec = "file:" + file.getAbsolutePath();
+				spec = FILE_SCHEME + file.getAbsolutePath();
 		}
 		try {
 			spec = adjustTrailingSlash(spec, true);
 			return new URL(spec);
 		} catch (MalformedURLException e) {
-			if (spec.startsWith("file:"))
+			if (spec.startsWith(FILE_SCHEME))
 				return null;
-			return buildURL("file:" + spec, trailingSlash);
+			return buildURL(FILE_SCHEME + spec, trailingSlash);
 		}
 	}
 
@@ -604,7 +606,7 @@ public class Main {
 
 		String install = getInstallLocation();
 		// TODO a little dangerous here.  Basically we have to assume that it is a file URL.
-		if (install.startsWith("file:")) {
+		if (install.startsWith(FILE_SCHEME)) {
 			File installDir = new File(install.substring(5));
 			if (installDir.canWrite())
 				return installDir.getAbsolutePath() + File.separator + CONFIG_DIR;
@@ -658,8 +660,7 @@ public class Main {
 	 */
 	public static void main(String argString) {
 		Vector list = new Vector(5);
-		for (StringTokenizer tokens = new StringTokenizer(argString, " "); tokens.hasMoreElements();)
-			//$NON-NLS-1$
+		for (StringTokenizer tokens = new StringTokenizer(argString, " "); tokens.hasMoreElements();) //$NON-NLS-1$
 			list.addElement(tokens.nextElement());
 		main((String[]) list.toArray(new String[list.size()]));
 	}
@@ -708,7 +709,7 @@ public class Main {
 			takeDownSplash();
 			// only log the exceptions if they have not been caught by the 
 			// EclipseStarter (i.e., if the exitCode is not 13) 
-			if (!"13".equals(System.getProperty(PROP_EXITCODE))) {
+			if (!"13".equals(System.getProperty(PROP_EXITCODE))) { //$NON-NLS-1$
 				log("Exception launching the Eclipse Platform:"); //$NON-NLS-1$
 				log(e);
 				String message = "An error has occurred"; //$NON-NLS-1$
@@ -733,7 +734,7 @@ public class Main {
 		String data = System.getProperty(PROP_EXITDATA);
 		if (exitData == null || data == null)
 			return;
-		runCommand(exitData, data, " " + EXITDATA);
+		runCommand(exitData, data, " " + EXITDATA); //$NON-NLS-1$
 	}
 
 	/**
@@ -900,8 +901,8 @@ public class Main {
 		try {
 			URL location = new URL(arg);
 			Properties props = load(location, null);
-			String result = props.getProperty("org.eclipse.osgi");
-			return result == null ? props.getProperty("*") : result;
+			String result = props.getProperty(OSGI);
+			return result == null ? props.getProperty("*") : result; //$NON-NLS-1$
 		} catch (MalformedURLException e) {
 			// the arg was not a URL so use it as is.
 			return arg;
@@ -922,7 +923,7 @@ public class Main {
 		configurationLocation = adjustTrailingSlash(result.toExternalForm(), true);
 		System.getProperties().put(PROP_CONFIG_AREA, configurationLocation);
 		if (debug)
-			System.out.println("Configuration location:\n    " + configurationLocation);
+			System.out.println("Configuration location:\n    " + configurationLocation); //$NON-NLS-1$
 		return configurationLocation;
 	}
 
@@ -972,7 +973,7 @@ public class Main {
 		if (configuration == null || !getConfigurationLocation().equals(baseConfigurationLocation.toExternalForm()))
 			configuration = loadConfiguration(getConfigurationLocation());
 		mergeProperties(System.getProperties(), configuration);
-		if ("false".equalsIgnoreCase(System.getProperty(PROP_CONFIG_CASCADED)))
+		if ("false".equalsIgnoreCase(System.getProperty(PROP_CONFIG_CASCADED))) //$NON-NLS-1$
 			// if we are not cascaded then remvoe the parent property even if it was set.
 			System.getProperties().remove(PROP_SHARED_CONFIG_AREA);
 		else {
@@ -1000,7 +1001,7 @@ public class Main {
 					mergeProperties(System.getProperties(), configuration);
 					System.getProperties().put(PROP_SHARED_CONFIG_AREA, location);
 					if (debug)
-						System.out.println("Shared configuration location:\n    " + location);
+						System.out.println("Shared configuration location:\n    " + location); //$NON-NLS-1$
 				}
 			}
 		}
@@ -1025,11 +1026,11 @@ public class Main {
 		if (installLocation != null) {
 			URL location = buildURL(installLocation, true);
 			if (location == null)
-				throw new IllegalStateException("Install location is invalid: " + installLocation);
+				throw new IllegalStateException("Install location is invalid: " + installLocation); //$NON-NLS-1$
 			installLocation = location.toExternalForm();
 			System.getProperties().put(PROP_INSTALL_AREA, installLocation);
 			if (debug)
-				System.out.println("Install location:\n    " + installLocation);
+				System.out.println("Install location:\n    " + installLocation); //$NON-NLS-1$
 			return installLocation;
 		}
 
@@ -1053,7 +1054,7 @@ public class Main {
 			// TODO Very unlikely case.  log here.  
 		}
 		if (debug)
-			System.out.println("Install location:\n    " + installLocation);
+			System.out.println("Install location:\n    " + installLocation); //$NON-NLS-1$
 		return installLocation;
 	}
 
@@ -1257,13 +1258,13 @@ public class Main {
 			ArrayList path = new ArrayList(entries.length);
 			for (int i = 0; i < entries.length; i++) {
 				String entry = resolve(entries[i]);
-				if (entry == null || entry.startsWith("file:")) {
+				if (entry == null || entry.startsWith(FILE_SCHEME)) {
 					File entryFile = new File(entry.substring(5).replace('/', File.separatorChar));
 					entry = searchFor(entryFile.getName(), entryFile.getParent());
 					if (entry != null)
 						path.add(entry);
 				} else
-					log("Invalid splash path entry: " + entries[i]);
+					log("Invalid splash path entry: " + entries[i]); //$NON-NLS-1$
 			}
 			// see if we can get a splash given the splash path
 			result = searchForSplash((String[]) path.toArray(new String[path.size()]));
@@ -1342,7 +1343,7 @@ public class Main {
 	 */
 	private String resolve(String urlString) {
 		// handle the case where people mistakenly spec a refererence: url.
-		if (urlString.startsWith("reference:")) {
+		if (urlString.startsWith("reference:")) { //$NON-NLS-1$
 			urlString = urlString.substring(10);
 			System.getProperties().put(PROP_FRAMEWORK, urlString);
 		}
@@ -1562,11 +1563,11 @@ public class Main {
 	}
 
 	private String adjustTrailingSlash(String value, boolean slash) {
-		boolean hasSlash = value.endsWith("/") || value.endsWith(File.separator);
+		boolean hasSlash = value.endsWith("/") || value.endsWith(File.separator); //$NON-NLS-1$
 		if (hasSlash == slash)
 			return value;
 		if (hasSlash)
 			return value.substring(0, value.length() - 1);
-		return value + "/";
+		return value + "/"; //$NON-NLS-1$
 	}
 }
