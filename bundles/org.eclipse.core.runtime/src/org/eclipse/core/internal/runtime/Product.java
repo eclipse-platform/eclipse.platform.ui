@@ -11,10 +11,15 @@
 package org.eclipse.core.internal.runtime;
 
 import java.util.Dictionary;
+import java.util.Hashtable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProduct;
 
 public class Product implements IProduct {
+	private static final String ATTR_DESCRIPTION = "description";
+	private static final String ATTR_ID = "id";
+	private static final String ATTR_NAME = "name";
+	private static final String ATTR_APPLICATION = "application";
 	String application = null;
 	String name = null;
 	String id = null;
@@ -24,14 +29,24 @@ public class Product implements IProduct {
 	public Product(IConfigurationElement element) {
 		if (element == null)
 			return;
-		application = element.getAttribute("application");
-		name = element.getAttribute("name");
-		id = element.getAttribute("id");
-		description = element.getAttribute("description");
+		application = element.getAttribute(ATTR_APPLICATION);
+		name = element.getAttribute(ATTR_NAME);
+		id = element.getAttribute(ATTR_ID);
+		description = element.getAttribute(ATTR_DESCRIPTION);
 		loadProperties(element);
 	}
 	
 	private void loadProperties(IConfigurationElement element) {
+		String[] attributes = element.getAttributeNames();
+		properties = new Hashtable(attributes.length);
+		for (int i = 0; i < attributes.length; i++) {
+			if (attributes[i].equalsIgnoreCase(ATTR_DESCRIPTION) ||
+				attributes[i].equalsIgnoreCase(ATTR_ID) ||
+				attributes[i].equalsIgnoreCase(ATTR_NAME) ||
+				attributes[i].equalsIgnoreCase(ATTR_APPLICATION))
+				break;
+			properties.put(attributes[i], element.getAttribute(attributes[i]));
+		}
 	}
 	
 	public String getApplication() {
