@@ -127,6 +127,10 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	protected void showPageRec(PageRec pageRec) {
         // don't show the page when pinned, unless this is the first console to be added
         if (fPinned && fConsoleToPart.size() > 1) {
+            IConsole console = (IConsole)fPartToConsole.get(pageRec.part);
+            if (!fStack.contains(console)) {
+                fStack.add(console);
+            }
             return;
         }
 	    super.showPageRec(pageRec);
