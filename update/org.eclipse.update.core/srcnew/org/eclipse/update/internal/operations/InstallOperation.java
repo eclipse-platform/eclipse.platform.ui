@@ -48,7 +48,8 @@ public class InstallOperation
 		return optionalFeatures;
 	}
 
-	public boolean execute(IProgressMonitor pm, IOperationListener listener) throws CoreException {
+	public boolean execute(IProgressMonitor pm, IOperationListener listener)
+		throws CoreException {
 
 		if (optionalFeatures == null)
 			targetSite.install(feature, verifier, pm);
@@ -56,6 +57,8 @@ public class InstallOperation
 			targetSite.install(feature, optionalFeatures, verifier, pm);
 
 		if (oldFeature != null) { //&& isOptionalDelta()) {
+			preserveOptionalState();
+
 			boolean oldSuccess = unconfigure(config, oldFeature);
 			if (!oldSuccess) {
 				if (!UpdateManager.isNestedChild(config, oldFeature)) {
@@ -75,22 +78,28 @@ public class InstallOperation
 				}
 			}
 		}
+
 		if (oldFeature == null) {
 			ensureUnique();
-		}
-
-		if (oldFeature != null //&& !operations[i].isOptionalDelta()
-			&& unconfiguredOptionalElements != null) {
-			preserveOptionalState();
 		}
 
 		return true;
 	}
 
 	private void preserveOptionalState() {
+		if (unconfiguredOptionalElements == null)
+			return;
+
 		for (int i = 0; i < unconfiguredOptionalElements.length; i++) {
 			try {
-				targetSite.unconfigure(unconfiguredOptionalElements[i]);
+				// Get the feature that matches the original unconfigured ones.
+				IFeature localFeature =
+					UpdateManager.getLocalFeature(
+						targetSite,
+						unconfiguredOptionalElements[i]);
+				if (localFeature != null)
+					targetSite.unconfigure(localFeature);
+
 			} catch (CoreException e) {
 				// Ignore this - we will leave with it
 			}

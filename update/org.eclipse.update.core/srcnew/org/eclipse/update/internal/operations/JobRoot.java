@@ -12,7 +12,6 @@ package org.eclipse.update.internal.operations;
 
 import java.util.*;
 
-import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.operations.*;
@@ -37,6 +36,14 @@ public class JobRoot {
 		return elements;
 	}
 
+	/**
+	 * Returns unconfigured features before an install.
+	 * After installing the features, the caller must get the local features that match
+	 * these unconfigured features and unconfigure them.
+	 * @param config
+	 * @param targetSite
+	 * @return
+	 */
 	public IFeature[] getUnconfiguredOptionalFeatures(
 		IInstallConfiguration config,
 		IConfiguredSite targetSite) {
@@ -65,15 +72,7 @@ public class JobRoot {
 				children,
 				isPatch);
 			if (!optionalElements[i].isEnabled(config)) {
-				IFeature newFeature = optionalElements[i].getFeature();
-				try {
-					IFeature localFeature =
-						UpdateManager.getLocalFeature(targetSite, newFeature);
-					if (localFeature != null)
-						unconfiguredOptionalFeatures.add(localFeature);
-				} catch (CoreException e) {
-					// Ignore this - we will leave with it
-				}
+				unconfiguredOptionalFeatures.add(optionalElements[i].getFeature());
 			}
 		}
 	}
