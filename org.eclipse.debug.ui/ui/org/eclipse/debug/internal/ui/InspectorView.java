@@ -5,8 +5,7 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.debug.ui.IDebugUIConstants;import org.eclipse.jface.action.*;import org.eclipse.jface.viewers.TreeViewer;import org.eclipse.swt.SWT;import org.eclipse.swt.events.KeyAdapter;import org.eclipse.swt.events.KeyEvent;import org.eclipse.swt.widgets.Composite;import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.debug.ui.IDebugUIConstants;import org.eclipse.jface.action.*;import org.eclipse.jface.viewers.TreeViewer;import org.eclipse.swt.SWT;import org.eclipse.swt.events.KeyAdapter;import org.eclipse.swt.events.KeyEvent;import org.eclipse.swt.widgets.Composite;import org.eclipse.ui.IWorkbenchActionConstants;import org.eclipse.ui.help.ViewContextComputer;import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * A view that shows items that have been added to a inspector
@@ -48,7 +47,7 @@ public class InspectorView extends AbstractDebugView {
 		setTitleToolTip(getTitleToolTipText(PREFIX));
 		WorkbenchHelp.setHelp(
 			parent,
-			new Object[] { IDebugHelpContextIds.INSPECTOR_VIEW });
+			new ViewContextComputer(this, IDebugHelpContextIds.INSPECTOR_VIEW ));
 	}
 
 	/**

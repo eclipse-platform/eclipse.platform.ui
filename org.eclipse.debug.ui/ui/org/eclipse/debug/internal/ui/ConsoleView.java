@@ -5,10 +5,9 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import java.util.*;import org.eclipse.core.runtime.IAdaptable;import org.eclipse.debug.core.model.IProcess;import org.eclipse.debug.ui.IDebugUIConstants;import org.eclipse.jface.action.*;import org.eclipse.jface.text.*;import org.eclipse.jface.text.DocumentEvent;import org.eclipse.jface.viewers.ISelectionChangedListener;import org.eclipse.jface.viewers.SelectionChangedEvent;import org.eclipse.swt.graphics.Point;import org.eclipse.swt.widgets.Composite;
+import java.util.*;import org.eclipse.core.runtime.IAdaptable;import org.eclipse.debug.core.model.IProcess;import org.eclipse.debug.ui.IDebugUIConstants;import org.eclipse.jface.action.*;import org.eclipse.jface.text.*;import org.eclipse.jface.viewers.ISelectionChangedListener;import org.eclipse.jface.viewers.SelectionChangedEvent;import org.eclipse.swt.graphics.Point;import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Menu;import org.eclipse.ui.IActionBars;import org.eclipse.ui.IWorkbenchActionConstants;import org.eclipse.ui.part.ViewPart;import org.eclipse.ui.texteditor.*;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.swt.widgets.Menu;import org.eclipse.ui.IActionBars;import org.eclipse.ui.IWorkbenchActionConstants;import org.eclipse.ui.help.ViewContextComputer;import org.eclipse.ui.help.WorkbenchHelp;import org.eclipse.ui.part.ViewPart;import org.eclipse.ui.texteditor.*;
 
 public class ConsoleView extends ViewPart implements IDocumentListener {
 	
@@ -46,7 +45,7 @@ public class ConsoleView extends ViewPart implements IDocumentListener {
 		setTitleToolTip(DebugUIUtils.getResourceString(PREFIX + AbstractDebugView.TITLE_TOOLTIPTEXT));
 		WorkbenchHelp.setHelp(
 			parent,
-			new Object[] { IDebugHelpContextIds.CONSOLE_VIEW });
+			new ViewContextComputer(this, IDebugHelpContextIds.CONSOLE_VIEW));
 	}
 
 	/**

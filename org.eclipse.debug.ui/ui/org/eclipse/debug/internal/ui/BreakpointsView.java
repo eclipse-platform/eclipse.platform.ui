@@ -5,21 +5,7 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
  
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IBreakpointManager;
-import org.eclipse.debug.ui.IDebugModelPresentation;
-import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.*;
-import org.eclipse.ui.model.WorkbenchViewerSorter;
+import org.eclipse.core.resources.IMarker;import org.eclipse.debug.core.DebugPlugin;import org.eclipse.debug.core.IBreakpointManager;import org.eclipse.debug.ui.IDebugModelPresentation;import org.eclipse.debug.ui.IDebugUIConstants;import org.eclipse.jface.action.*;import org.eclipse.jface.viewers.*;import org.eclipse.swt.SWT;import org.eclipse.swt.events.KeyAdapter;import org.eclipse.swt.events.KeyEvent;import org.eclipse.swt.widgets.Composite;import org.eclipse.ui.*;import org.eclipse.ui.help.ViewContextComputer;import org.eclipse.ui.help.WorkbenchHelp;import org.eclipse.ui.model.WorkbenchViewerSorter;
 
 /**
  * This view shows the breakpoints registered with the breakpoint manager
@@ -59,6 +45,9 @@ public class BreakpointsView extends AbstractDebugView implements IDoubleClickLi
 		});
 		
 		setTitleToolTip(getTitleToolTipText(PREFIX));
+		WorkbenchHelp.setHelp(
+			parent,
+			new ViewContextComputer(this, IDebugHelpContextIds.BREAKPOINT_VIEW));
 	}
 
 	/**

@@ -5,7 +5,7 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.debug.ui.IDebugModelPresentation;import org.eclipse.debug.ui.IDebugViewAdapter;import org.eclipse.jface.action.ActionContributionItem;import org.eclipse.jface.action.IAction;import org.eclipse.jface.action.IContributionItem;import org.eclipse.jface.action.IMenuListener;import org.eclipse.jface.action.IMenuManager;import org.eclipse.jface.action.IToolBarManager;import org.eclipse.jface.action.MenuManager;import org.eclipse.jface.viewers.StructuredViewer;import org.eclipse.swt.widgets.Composite;import org.eclipse.swt.widgets.Control;import org.eclipse.swt.widgets.Menu;import org.eclipse.ui.IPartListener;import org.eclipse.ui.IViewSite;import org.eclipse.ui.IWorkbenchPart;import org.eclipse.ui.IWorkbenchWindow;import org.eclipse.ui.PartInitException;import org.eclipse.ui.part.ViewPart;
+import org.eclipse.debug.ui.IDebugModelPresentation;import org.eclipse.debug.ui.IDebugViewAdapter;import org.eclipse.jface.action.*;import org.eclipse.jface.viewers.StructuredViewer;import org.eclipse.swt.widgets.Control;import org.eclipse.swt.widgets.Menu;import org.eclipse.ui.*;import org.eclipse.ui.part.ViewPart;
 
 /**
  * Functionality common to views in the debugger
@@ -26,7 +26,6 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 		}
 		return super.getAdapter(adapter);
 	}
-	
 	
 	/**
 	 * @see IViewPart
@@ -148,13 +147,5 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 	 */
 	public void partActivated(IWorkbenchPart arg0) {
 	}
-
-	/**
-	 * @see WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
-	 */
-	public void createPartControl(Composite arg0) {
-	}
-
-
 }	
 
