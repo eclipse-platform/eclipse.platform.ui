@@ -89,7 +89,6 @@ public class BatchInstallOperation
 					listener.afterExecute(operations[i], null);
 
 				//monitor.worked(1);
-				UpdateUtils.saveLocalSite();
 				installCount++;
 			}
 			// should we just return true ?
@@ -100,6 +99,8 @@ public class BatchInstallOperation
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
 		} finally {
+			// saves the current configuration
+			UpdateUtils.saveLocalSite();
 			OperationsManager.setInProgress(false);
 			monitor.done();
 		}
