@@ -2586,14 +2586,14 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			if (hasIncoming) {
 				if (unresolved) {
 					if (fNOTOKImage == null) {
-						ImageDescriptor id= CompareUIPlugin.getImageDescriptor("obj16/NOT_OK.gif");	//$NON-NLS-1$
+						ImageDescriptor id= CompareUIPlugin.getImageDescriptor("obj16/unresolved.gif");	//$NON-NLS-1$
 						if (id != null)
 							fNOTOKImage= id.createImage(fSummaryCanvas.getDisplay());
 					}
 					c= fNOTOKImage;
 				} else {
 					if (fOKImage == null) {
-						ImageDescriptor id= CompareUIPlugin.getImageDescriptor("obj16/OK.gif");	//$NON-NLS-1$
+						ImageDescriptor id= CompareUIPlugin.getImageDescriptor("obj16/resolved.gif");	//$NON-NLS-1$
 						if (id != null)
 							fOKImage= id.createImage(fSummaryCanvas.getDisplay());
 					}
