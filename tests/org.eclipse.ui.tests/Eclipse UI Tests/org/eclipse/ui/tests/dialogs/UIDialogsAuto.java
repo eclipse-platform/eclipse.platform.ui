@@ -18,27 +18,10 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.dialogs.ContainerSelectionDialog;
-import org.eclipse.ui.dialogs.ListSelectionDialog;
-import org.eclipse.ui.dialogs.ProjectLocationSelectionDialog;
-import org.eclipse.ui.dialogs.SaveAsDialog;
-import org.eclipse.ui.dialogs.TypeFilteringDialog;
-import org.eclipse.ui.internal.Perspective;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPage;
-import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.dialogs.AboutDialog;
-import org.eclipse.ui.internal.dialogs.ActionSetSelectionDialog;
-import org.eclipse.ui.internal.dialogs.EditorSelectionDialog;
-import org.eclipse.ui.internal.dialogs.FileExtensionDialog;
-import org.eclipse.ui.internal.dialogs.SavePerspectiveDialog;
-import org.eclipse.ui.internal.dialogs.SelectPerspectiveDialog;
-import org.eclipse.ui.internal.dialogs.ShowViewDialog;
-import org.eclipse.ui.internal.dialogs.SimpleListContentProvider;
+import org.eclipse.ui.*;
+import org.eclipse.ui.dialogs.*;
+import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.dialogs.*;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 import org.eclipse.ui.tests.util.DialogCheck;
@@ -89,7 +72,7 @@ public class UIDialogsAuto extends TestCase {
 			persp = new Perspective((PerspectiveDescriptor)getWorkbench().getPerspectiveRegistry().getPerspectives()[0],
 			                                    (WorkbenchPage)getWorkbench().getActiveWorkbenchWindow().getActivePage()
 			);
-			dialog = new ActionSetSelectionDialog(getShell(),  persp);
+			dialog = new CustomizePerspectiveDialog(getShell(),  persp);
 		} catch (WorkbenchException e) {
 			dialog = null;
 		}
