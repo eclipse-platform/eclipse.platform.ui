@@ -718,17 +718,20 @@ public interface IPlatform {
 	public Bundle getBundle(String symbolicName);
 
 	/**
-	 * Returns the resolved bundle with the specified symbolic name
-	 * and version, or <code>null</code> if there is no such bundle.
-	 *
-	 * @param symbolicName the symbolic name of the bundle to be returned.
-	 *		(e.g. <code>"org.eclipse.core.resources"</code>)
-	 * @param version bundle version identifier. If <code>null</code> is specified,
-	 * a non-deterministically chosen version of the identified plug-in (if any)
-	 * will be returned
-	 * @return the bundle or <code>null</code>
-	 */
-	public Bundle getBundle(String symbolicName, String version);
+     * Gets the Bundles with the specified symbolic name.  If no bundles are 
+     * resolved that have the specified symbolic name then null is returned.  
+     * If the version argument is not null then only the Bundles that have 
+     * the specified symbolic name and a version greater than or equal to the 
+     * specified version are returned. The returned bundles are ordered in 
+     * descending bundle version order.
+     * 
+     * @param symbolicName the symbolic name of the bundles that are to be returned.
+     * @param version the version that the return bundle versions must match, 
+     * or <tt>null</tt> if no version matching is to be done. 
+     * @return the array of Bundles with the specified name that match the 
+     * specified version and match rule, or <tt>null</tt> if no bundles are found.
+     */
+	public Bundle[] getBundles(String symbolicName, String version);
 	/**
 	 * Returns the content type manager.
 	 * 

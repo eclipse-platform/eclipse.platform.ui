@@ -862,19 +862,32 @@ public final class InternalPlatform implements IPlatform {
 	}
 
 	public Bundle getBundle(String symbolicName) {
-		return getBundle(symbolicName, null);
+		Bundle[] result = getBundles(symbolicName, null);
+		if (result != null)
+			return result[0];
+		return null;
 	}
 
-	public Bundle getBundle(String symbolicName, String version) {
+	public Bundle[] getBundles(String symbolicName, String version) {
 		Bundle[] bundles = packageAdmin.getBundles(symbolicName, version, null);
 		if (bundles == null)
 			return null;
+		
+		//Remove all the bundes that are installed or uninstalled
+		Bundle[] selectedBundles = new Bundle[bundles.length];
+		int added = 0;
 		for (int i = 0; i < bundles.length; i++) {
 			if ((bundles[i].getState() & (Bundle.INSTALLED | Bundle.UNINSTALLED)) == 0) {
-				return bundles[i];
+				selectedBundles[added++] = bundles[i];
 			}
 		}
-		return null;
+		if (added == 0)
+			return null;
+		
+		//return an array of the correct size
+		Bundle[] results = new Bundle[added];
+		System.arraycopy(selectedBundles, 0, results, 0, added);
+		return results;
 	}
 	
 	public boolean isFragment(Bundle bundle) {

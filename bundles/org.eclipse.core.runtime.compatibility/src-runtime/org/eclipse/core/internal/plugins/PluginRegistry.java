@@ -11,17 +11,16 @@
 
 package org.eclipse.core.internal.plugins;
 
+import java.util.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.*;
 import org.osgi.framework.*;
 
-//TODO 1: this class must be made thread safe (query methods must be sync'd as well)
 public class PluginRegistry implements IPluginRegistry {
 	private IExtensionRegistry extRegistry;
 
-	private HashMap descriptors = new HashMap();
+	private HashMap descriptors = new HashMap();	//key is a bundle object, value is a pluginDescriptor. The synchornization is required
 
 	public PluginRegistry() {
 		extRegistry = InternalPlatform.getDefault().getRegistry();
@@ -60,37 +59,61 @@ public class PluginRegistry implements IPluginRegistry {
 		return extRegistry.getExtensionPoints();
 	}
 
-	//TODO The three following methods must be fixed. They must support multiple version. Maybe should we have another kind of key.
-	//This also need to check if the plugin is not a fragment 
-	public synchronized IPluginDescriptor getPluginDescriptor(String plugin) {
-		// first check to see if a bundle exists
-		Bundle b = InternalPlatform.getDefault().getBundle(plugin);
-		PluginDescriptor pd = (PluginDescriptor) descriptors.get(plugin);
-		if (b != null) {
-			// we haven't created a plugin descriptor yet or it was for a different bundle
-			if (pd == null || pd.getBundle() != b) {
-				// create a new plugin descriptor and save it for the next time
-				pd = new PluginDescriptor(b);
-				descriptors.put(plugin, pd);
-			}
-			return pd;
-		}
-		// if a bundle does not exist, ensure we don't keep a plugin descriptor for it
-		if (pd != null)
-			descriptors.remove(plugin);
-		return null;
+	public IPluginDescriptor getPluginDescriptor(String plugin) {
+		Bundle correspondingBundle = InternalPlatform.getDefault().getBundle(plugin);
+		if (correspondingBundle == null)
+			return null;
+		return getPluginDescriptor(correspondingBundle);
 	}
 
-	//This methods must iterate through the bundle list and return all the one that matches
+	private PluginDescriptor getPluginDescriptor(Bundle bundle) {
+		if (InternalPlatform.getDefault().isFragment(bundle)) {
+			return null;
+		}
+		synchronized(descriptors) {
+			PluginDescriptor correspondingDescriptor = (PluginDescriptor) descriptors.get(bundle);
+			if (bundle != null) {
+				// we haven't created a plugin descriptor yet or it was for a different bundle
+				if (correspondingDescriptor == null || correspondingDescriptor.getBundle() != bundle) {
+					// create a new plugin descriptor and save it for the next time
+					correspondingDescriptor = new PluginDescriptor(bundle);
+					descriptors.put(bundle, correspondingDescriptor);
+				}
+				return correspondingDescriptor;
+			}
+			// if a bundle does not exist, ensure we don't keep a plugin descriptor for it
+			if (correspondingDescriptor != null)
+				descriptors.remove(bundle);
+		}
+		return null;
+	}
+	
 	public IPluginDescriptor[] getPluginDescriptors(String plugin) {
-		IPluginDescriptor pd = getPluginDescriptor(plugin);
-		if (pd == null)
+		Bundle[] bundles = InternalPlatform.getDefault().getBundles(plugin, null);
+		IPluginDescriptor[] results = new IPluginDescriptor[bundles.length];
+		int added = 0;
+		for (int i = 0; i < bundles.length; i++) {
+			PluginDescriptor desc = getPluginDescriptor(bundles[i]);
+			if (desc != null)
+				results[added++] = desc;
+		}
+		if (added == bundles.length)
+			return results;
+		
+		if (added == 0)
 			return new IPluginDescriptor[0];
-		return new IPluginDescriptor[] {pd};
+		
+		IPluginDescriptor[] toReturn = new IPluginDescriptor[added];
+		System.arraycopy(results, 0, toReturn, 0, added);
+		return toReturn;
 	}
 
 	public IPluginDescriptor getPluginDescriptor(String pluginId, PluginVersionIdentifier version) {
-		return getPluginDescriptor(pluginId);
+		Bundle[] bundles = InternalPlatform.getDefault().getBundles(pluginId, version.toString());
+		if (bundles == null)
+			return null;
+		
+		return getPluginDescriptor(bundles[0]);
 	}
 
 	public IPluginDescriptor[] getPluginDescriptors() {
@@ -99,7 +122,7 @@ public class PluginRegistry implements IPluginRegistry {
 		for (int i = 0; i < bundles.length; i++) {
 			boolean isFragment = InternalPlatform.getDefault().isFragment(bundles[i]);
 			if (!isFragment && bundles[i].getSymbolicName() != null && (bundles[i].getState() == Bundle.RESOLVED || bundles[i].getState() == Bundle.STARTING || bundles[i].getState() == Bundle.ACTIVE))
-				pds.add(getPluginDescriptor(bundles[i].getSymbolicName()));
+				pds.add(getPluginDescriptor(bundles[i]));
 		}
 		IPluginDescriptor[] result = new IPluginDescriptor[pds.size()];
 		return (IPluginDescriptor[]) pds.toArray(result);
@@ -112,11 +135,10 @@ public class PluginRegistry implements IPluginRegistry {
 	}
 
 	public class RegistryListener implements BundleListener {
-		public synchronized void bundleChanged(BundleEvent event) {
-			if (event.getType() == BundleEvent.UNINSTALLED || event.getType() == BundleEvent.UNRESOLVED) {
-				String globalName = event.getBundle().getSymbolicName();
-				if (globalName != null && descriptors.containsKey(globalName)) {
-					descriptors.remove(globalName);
+		public void bundleChanged(BundleEvent event) {
+			synchronized(descriptors) {
+				if (event.getType() == BundleEvent.UNINSTALLED || event.getType() == BundleEvent.UNRESOLVED) {
+					descriptors.remove(event.getBundle());
 				}
 			}
 		}
