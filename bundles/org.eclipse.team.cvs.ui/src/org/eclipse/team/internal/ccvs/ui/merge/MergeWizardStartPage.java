@@ -46,6 +46,7 @@ public class MergeWizardStartPage extends CVSWizardPage {
 	IProject project;
 	
 	private static final int TABLE_HEIGHT_HINT = 350;
+	private static final int TABLE_WIDTH_HINT = 100;
 	
 	/**
 	 * MergeWizardStartPage constructor.
@@ -62,6 +63,7 @@ public class MergeWizardStartPage extends CVSWizardPage {
 		Table table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.heightHint = TABLE_HEIGHT_HINT;
+		data.widthHint = TABLE_WIDTH_HINT;
 		table.setLayoutData(data);
 		TableLayout layout = new TableLayout();
 		layout.addColumnData(new ColumnWeightData(100, true));

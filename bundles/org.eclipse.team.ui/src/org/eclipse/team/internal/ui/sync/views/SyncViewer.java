@@ -685,9 +685,7 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 				activePage = TeamUIPlugin.getActivePage();
 				if (activePage == null) return;
 			}
-			IViewPart part = activePage.findView(VIEW_ID);
-			if (part == null)
-				part = activePage.showView(VIEW_ID);
+			activePage.showView(VIEW_ID);
 		} catch (PartInitException pe) {
 			TeamUIPlugin.log(new TeamException("error showing view", pe));
 		}

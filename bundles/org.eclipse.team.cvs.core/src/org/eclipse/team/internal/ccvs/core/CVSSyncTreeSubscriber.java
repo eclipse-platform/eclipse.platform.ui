@@ -208,14 +208,20 @@ public abstract class CVSSyncTreeSubscriber extends TeamSubscriber {
 	 * @see org.eclipse.team.core.sync.ISyncTreeSubscriber#refresh(org.eclipse.core.resources.IResource[], int, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void refresh(IResource[] resources, int depth, IProgressMonitor monitor) throws TeamException {
-		IResource[] remoteChanges = refreshRemote(resources, depth, monitor);
-		IResource[] baseChanges = getBaseSynchronizer().refresh(resources, depth, monitor);
+		monitor = Policy.monitorFor(monitor);
+		try {
+			monitor.beginTask(null, 100);
+			IResource[] remoteChanges = refreshRemote(resources, depth, Policy.subMonitorFor(monitor, 60));
+			IResource[] baseChanges = getBaseSynchronizer().refresh(resources, depth, Policy.subMonitorFor(monitor, 40));
 		
-		Set allChanges = new HashSet();
-		allChanges.addAll(Arrays.asList(remoteChanges));
-		allChanges.addAll(Arrays.asList(baseChanges));
-		IResource[] changedResources = (IResource[]) allChanges.toArray(new IResource[allChanges.size()]);
-		fireTeamResourceChange(TeamDelta.asSyncChangedDeltas(this, changedResources)); 
+			Set allChanges = new HashSet();
+			allChanges.addAll(Arrays.asList(remoteChanges));
+			allChanges.addAll(Arrays.asList(baseChanges));
+			IResource[] changedResources = (IResource[]) allChanges.toArray(new IResource[allChanges.size()]);
+			fireTeamResourceChange(TeamDelta.asSyncChangedDeltas(this, changedResources));
+		} finally {
+			monitor.done();
+		} 
 	}
 
 	protected IResource[] refreshRemote(IResource[] resources, int depth, IProgressMonitor monitor) throws TeamException {
