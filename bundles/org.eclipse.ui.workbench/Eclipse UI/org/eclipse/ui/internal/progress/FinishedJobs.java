@@ -2,6 +2,7 @@ package org.eclipse.ui.internal.progress;
 
 import java.util.HashSet;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.util.ListenerList;
 
@@ -52,6 +53,9 @@ class FinishedJobs {
                         if (((Boolean)prop).booleanValue())
                             add(info);
                     }
+                    IStatus status= job.getResult();
+                    if (status != null && status.getSeverity() == IStatus.ERROR)
+                    	add(info);
                 }
             }
 
@@ -64,7 +68,7 @@ class FinishedJobs {
 	    };
 	    ProgressManager.getInstance().addListener(listener);	
     }
-    
+       
     void addListener(KeptJobsListener l) {
         listeners.add(l);
     }
