@@ -74,32 +74,9 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	/**
-	 * The Load button id.
-	 */
-	private final static int LOAD_ID = IDialogConstants.CLIENT_ID + 1;
-
-	/**
-	 * The Save button id.
-	 */
-	private final static int SAVE_ID = IDialogConstants.CLIENT_ID + 2;
-
-	/**
 	 * The dialog settings key for the last used import/export path.
 	 */
 	final static String FILE_PATH_SETTING = "PreferenceImportExportFileSelectionPage.filePath"; //$NON-NLS-1$
-
-	/**
-	 * There can only ever be one instance of the workbench's preference dialog.
-	 * This keeps a handle on this instance, so that attempts to create a second
-	 * dialog should just fail (or return the original instance).
-	 * 
-	 * @since 3.1
-	 */
-	private static WorkbenchPreferenceDialog instance = null;
-
-	private static String MODE_ICON = "org.eclipse.ui.internal.dialogs.MODE_ICON";//$NON-NLS-1$
-
-	private static String TOOLBAR_ICON = "org.eclipse.ui.internal.dialogs.TOOLBAR_ICON";//$NON-NLS-1$
 
 	private static boolean groupedMode = false;
 
@@ -111,10 +88,36 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	static int ICON_MODE = SWT.MIN;
 
 	/**
+	 * There can only ever be one instance of the workbench's preference dialog.
+	 * This keeps a handle on this instance, so that attempts to create a second
+	 * dialog should just fail (or return the original instance).
+	 * 
+	 * @since 3.1
+	 */
+	private static WorkbenchPreferenceDialog instance = null;
+
+	// The id of the last page that was selected
+	private static String lastGroupId = null;
+
+	/**
+	 * The Load button id.
+	 */
+	private final static int LOAD_ID = IDialogConstants.CLIENT_ID + 1;
+
+	private static String MODE_ICON = "org.eclipse.ui.internal.dialogs.MODE_ICON";//$NON-NLS-1$
+
+	/**
+	 * The Save button id.
+	 */
+	private final static int SAVE_ID = IDialogConstants.CLIENT_ID + 2;
+
+	/**
 	 * The TEXT_SHOWING booean is a constant that determines if
 	 * the dialog is showing text or not in the toolbar.
 	 */
 	static boolean TEXT_SHOWING = true;
+
+	private static String TOOLBAR_ICON = "org.eclipse.ui.internal.dialogs.TOOLBAR_ICON";//$NON-NLS-1$
 
 	static {
 		ImageDescriptor descriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
@@ -133,50 +136,13 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 				.getPreferenceManager()).getGroups().length > 0;
 	}
 
-	private Composite toolBarComposite;
-
-	private ToolBar toolBar;
-
 	/**
-	 * The preference page history.
+	 * Return whether or not groups can be shown
 	 * 
-	 * @since 3.1
+	 * @return boolean
 	 */
-	private PreferencePageHistory history;
-
-	WorkbenchPreferenceGroup currentGroup;
-
-	private CTabItem tab;
-
-	// The id of the last page that was selected
-	private static String lastGroupId = null;
-
-	private Object pageData;
-
-	/**
-	 * Creates a workbench preference dialog to a particular preference page.
-	 * Show the other pages as filtered results using whatever filtering
-	 * criteria the search uses. It is the responsibility of the caller to then
-	 * call <code>open()</code>. The call to <code>open()</code> will not
-	 * return until the dialog closes, so this is the last chance to manipulate
-	 * the dialog.
-	 * 
-	 * @param preferencePageId
-	 *            The identifier of the preference page to open; may be
-	 *            <code>null</code>. If it is <code>null</code>, then the
-	 *            preference page is not selected or modified in any way.
-	 * @param filteredIds
-	 *            The ids of the other pages to be highlighted using the same
-	 *            filtering criterea as search.
-	 * @return The selected preference page.
-	 * @since 3.1
-	 * @see #createDialogOn(String)
-	 */
-	public static final WorkbenchPreferenceDialog createDialogOn(final String preferencePageId,
-			String[] filteredIds) {
-		WorkbenchPreferenceDialog dialog = createDialogOn(preferencePageId);
-		dialog.setSearchResults(filteredIds);
-		return dialog;
+	public static boolean canShowGroups() {
+		return getGroups().length > 0;
 	}
 
 	/**
@@ -236,6 +202,68 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		// Get the selected node, and return it.
 		return dialog;
 	}
+
+	/**
+	 * Creates a workbench preference dialog to a particular preference page.
+	 * Show the other pages as filtered results using whatever filtering
+	 * criteria the search uses. It is the responsibility of the caller to then
+	 * call <code>open()</code>. The call to <code>open()</code> will not
+	 * return until the dialog closes, so this is the last chance to manipulate
+	 * the dialog.
+	 * 
+	 * @param preferencePageId
+	 *            The identifier of the preference page to open; may be
+	 *            <code>null</code>. If it is <code>null</code>, then the
+	 *            preference page is not selected or modified in any way.
+	 * @param filteredIds
+	 *            The ids of the other pages to be highlighted using the same
+	 *            filtering criterea as search.
+	 * @return The selected preference page.
+	 * @since 3.1
+	 * @see #createDialogOn(String)
+	 */
+	public static final WorkbenchPreferenceDialog createDialogOn(final String preferencePageId,
+			String[] filteredIds) {
+		WorkbenchPreferenceDialog dialog = createDialogOn(preferencePageId);
+		dialog.setSearchResults(filteredIds);
+		return dialog;
+	}
+
+	/**
+	 * Return the groups in the receiver.
+	 * 
+	 * @return WorkbenchPreferenceGroup[]
+	 */
+	protected static WorkbenchPreferenceGroup[] getGroups() {
+		return ((WorkbenchPreferenceManager) WorkbenchPlugin.getDefault().getPreferenceManager())
+				.getGroups();
+	}
+
+	/**
+	 * Return whether groups are being shown
+	 * 
+	 * @return boolean
+	 */
+	public static boolean showingGroups() {
+		return groupedMode;
+	}
+
+	WorkbenchPreferenceGroup currentGroup;
+
+	/**
+	 * The preference page history.
+	 * 
+	 * @since 3.1
+	 */
+	private PreferencePageHistory history;
+
+	private Object pageData;
+
+	private CTabItem tab;
+
+	private ToolBar toolBar;
+
+	private Composite toolBarComposite;
 
 	/**
 	 * Creates a new preference dialog under the control of the given preference
@@ -309,166 +337,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		super.createButtonsForButtonBar(parent);
 	}
 
-	/**
-	 * Handle a request to load preferences
-	 */
-	protected void loadPressed() {
-		final IPath filePath = getFilePath(false);
-		if (filePath == null)
-			return;
-		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see java.lang.Runnable#run()
-			 */
-			public void run() {
-				importPreferences(filePath);
-			}
-		});
-
-		close();
-	}
-
-	/**
-	 * Get the file name we are using. Set the button type flag depending on
-	 * whether it is import or export operation.
-	 * 
-	 * @param export
-	 *            <code>true</code> if an export file name is being looked
-	 *            for.
-	 * 
-	 * @return IPath or <code>null</code> if no selection is mage.
-	 */
-	private IPath getFilePath(boolean export) {
-
-		// Find the closest file/directory to what is currently entered.
-		String currentFileName = getFileNameSetting(export);
-
-		// Open a dialog allowing the user to choose.
-		FileDialog fileDialog = null;
-		if (export)
-			fileDialog = new FileDialog(getShell(), SWT.SAVE);
-		else
-			fileDialog = new FileDialog(getShell(), SWT.OPEN);
-
-		if (currentFileName != null)
-			fileDialog.setFileName(currentFileName);
-		fileDialog
-				.setFilterExtensions(PreferenceImportExportFileSelectionPage.DIALOG_PREFERENCE_EXTENSIONS);
-		currentFileName = fileDialog.open();
-
-		if (currentFileName == null)
-			return null;
-
-		/*
-		 * Append the default filename if none was specifed and such a file does
-		 * not exist.
-		 */
-		String fileName = new File(currentFileName).getName();
-		if (fileName.lastIndexOf(".") == -1) { //$NON-NLS-1$
-			currentFileName += AbstractPreferenceImportExportPage.PREFERENCE_EXT;
-		}
-		setFileNameSetting(currentFileName);
-		return new Path(currentFileName);
-
-	}
-
-	/**
-	 * @param currentFileName
-	 */
-	private void setFileNameSetting(String currentFileName) {
-		if (currentFileName != null)
-			WorkbenchPlugin.getDefault().getDialogSettings().put(
-					WorkbenchPreferenceDialog.FILE_PATH_SETTING, currentFileName);
-
-	}
-
-	/**
-	 * Return the file name setting or a default value if there isn't one.
-	 * 
-	 * @param export
-	 *            <code>true</code> if an export file name is being looked
-	 *            for.
-	 * 
-	 * @return String if there is a good value to choose. Otherwise return
-	 *         <code>null</code>.
-	 */
-	private String getFileNameSetting(boolean export) {
-
-		String lastFileName = WorkbenchPlugin.getDefault().getDialogSettings().get(
-				WorkbenchPreferenceDialog.FILE_PATH_SETTING);
-		if (lastFileName == null) {
-			if (export)
-				return System.getProperty("user.dir") + System.getProperty("file.separator") + WorkbenchMessages.getString("ImportExportPages.preferenceFileName") + AbstractPreferenceImportExportPage.PREFERENCE_EXT; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-
-		} else if ((export) || (new File(lastFileName).exists())) {
-			return lastFileName;
-		}
-
-		return null;
-	}
-
-	/**
-	 * Handle a request to save preferences
-	 */
-	protected void savePressed() {
-		new PreferencesExportDialog(getShell()).open();
-		close();
-	}
-
-	/**
-	 * Import a preference file.
-	 * 
-	 * @param path
-	 *            The file path.
-	 * @return true if successful.
-	 */
-	private boolean importPreferences(IPath path) {
-		IStatus status = Preferences.validatePreferenceVersions(path);
-		if (status.getSeverity() == IStatus.ERROR) {
-			// Show the error and about
-			ErrorDialog.openError(getShell(), WorkbenchMessages
-					.getString("WorkbenchPreferenceDialog.loadErrorTitle"), //$NON-NLS-1$
-					WorkbenchMessages.format("WorkbenchPreferenceDialog.verifyErrorMessage", //$NON-NLS-1$
-							new Object[] { path.toOSString() }), status);
-			return false;
-		} else if (status.getSeverity() == IStatus.WARNING) {
-			// Show the warning and give the option to continue
-			int result = PreferenceErrorDialog.openError(getShell(), WorkbenchMessages
-					.getString("WorkbenchPreferenceDialog.loadErrorTitle"), //$NON-NLS-1$
-					WorkbenchMessages.format("WorkbenchPreferenceDialog.verifyWarningMessage", //$NON-NLS-1$
-							new Object[] { path.toOSString() }), status);
-			if (result != Window.OK) {
-				return false;
-			}
-		}
-
-		try {
-			Preferences.importPreferences(path);
-		} catch (CoreException e) {
-			ErrorDialog.openError(getShell(), WorkbenchMessages
-					.getString("WorkbenchPreferenceDialog.loadErrorTitle"), //$NON-NLS-1$
-					WorkbenchMessages.format("WorkbenchPreferenceDialog.loadErrorMessage", //$NON-NLS-1$
-							new Object[] { path.toOSString() }), e.getStatus());
-			return false;
-		}
-		return true;
-	}
-
-	/**
-	 * Returns the currently selected page. This can be used in conjuction with
-	 * <code>createDialogOn</code> to create a dialog, manipulate the
-	 * preference page, and then display it to the user.
-	 * 
-	 * @return The currently selected page; this value may be <code>null</code>
-	 *         if there is no selected page.
-	 * @since 3.1
-	 */
-	public final IPreferencePage getCurrentPage() {
-		return super.getCurrentPage();
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -504,61 +372,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 
 		return composite;
 
-	}
-
-	/**
-	 * Create the toolbar for the groups.
-	 * 
-	 * @param composite
-	 */
-	private void createToolBar(Composite composite) {
-
-		toolBar = new ToolBar(composite, SWT.CENTER | SWT.FLAT);
-		toolBar.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-
-		WorkbenchPreferenceGroup[] groups = getGroups();
-
-		for (int i = 0; i < groups.length; i++) {
-			final WorkbenchPreferenceGroup group = groups[i];
-			ToolItem newItem = new ToolItem(toolBar, SWT.RADIO);
-			newItem.setData(group);
-			setTextAndImage(group, newItem);
-			newItem.addSelectionListener(new SelectionAdapter() {
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-				 */
-				public void widgetSelected(SelectionEvent e) {
-					groupSelected(group);
-				}
-			});
-
-		}
-
-		GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL);
-		data.horizontalAlignment = GridData.HORIZONTAL_ALIGN_BEGINNING;
-		data.horizontalIndent = IDialogConstants.HORIZONTAL_MARGIN;
-		data.verticalIndent = IDialogConstants.VERTICAL_MARGIN;
-		toolBar.setLayoutData(data);
-	}
-
-	/**
-	 * Set te text and images for the group in the item.
-	 * @param group
-	 * @param item
-	 */
-	private void setTextAndImage(final WorkbenchPreferenceGroup group, ToolItem item) {
-		String text = TEXT_SHOWING ? group.getName() : EMPTY_STRING;
-		item.setText(text);
-
-		Image image = null;
-		if (ICON_MODE == SWT.MIN)
-			image = group.getImage();
-		else if (ICON_MODE == SWT.MAX)
-			image = group.getLargeImage();
-
-		item.setImage(image);
 	}
 
 	/**
@@ -608,134 +421,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		separator.setLayoutData(gd);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.PreferenceDialog#selectSavedItem()
-	 */
-	protected void selectSavedItem() {
-		if (showingGroups()) {
-			WorkbenchPreferenceGroup[] groups = getGroups();
-
-			if (lastGroupId != null) {
-				for (int i = 0; i < groups.length; i++) {
-					if (lastGroupId.equals(groups[i].getId())) {
-						selectAndRevealInToolBar(groups[i]);
-						return;
-					}
-				}
-			}
-			selectAndRevealInToolBar(groups[0]);
-		} else {
-			getTreeViewer().setInput(getPreferenceManager());
-			super.selectSavedItem();
-
-		}
-	}
-
-	/**
-	 * Select the group and reveal it in the toolbar.
-	 * 
-	 * @param group
-	 */
-	private void selectAndRevealInToolBar(WorkbenchPreferenceGroup group) {
-		selectGroupInToolBar(group);
-		groupSelected(group);
-	}
-
-	/**
-	 * A group has been selected. Update the tree viewer.
-	 * 
-	 * @param group
-	 *            tool item.
-	 */
-	private void groupSelected(final WorkbenchPreferenceGroup group) {
-
-		lastGroupId = group.getId();
-		currentGroup = group;
-
-		getTreeViewer().setInput(group);
-		StructuredSelection structured = StructuredSelection.EMPTY;
-
-		Object selection = group.getLastSelection();
-		if (selection == null && group.getPreferenceNodes().length > 0) {
-			structured = new StructuredSelection(group.getPreferenceNodes()[0]);
-		}
-
-		getTreeViewer().setSelection(structured, true);
-	}
-
-	/**
-	 * @param group
-	 */
-	private void selectGroupInToolBar(final WorkbenchPreferenceGroup group) {
-		ToolItem[] items = toolBar.getItems();
-		for (int i = 0; i < items.length; i++) {
-			if (group.equals(items[i].getData())) {
-				items[i].setSelection(true);
-				break;
-			}
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.PreferenceDialog#createPageContainer(org.eclipse.swt.widgets.Composite)
-	 */
-	public Composite createPageContainer(Composite parent) {
-
-		CTabFolder parentFolder = new CTabFolder(parent, SWT.BORDER);
-		parentFolder.setSingle(true);
-
-		tab = new CTabItem(parentFolder, SWT.BORDER);
-
-		parentFolder.setSelectionForeground(parent.getDisplay().getSystemColor(
-				SWT.COLOR_WIDGET_FOREGROUND));
-		parentFolder.setSelectionBackground(parent.getDisplay().getSystemColor(
-				SWT.COLOR_WIDGET_BACKGROUND));
-
-		tab.setFont(JFaceResources.getFontRegistry().get(JFaceResources.BANNER_FONT));
-
-		Control topBar = getContainerToolBar(parentFolder);
-		parentFolder.setTopRight(topBar, SWT.RIGHT);
-		int height = topBar.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
-		parentFolder.setTabHeight(height);
-
-		parentFolder.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL
-				| GridData.GRAB_VERTICAL));
-
-		Composite outer = new Composite(parentFolder, SWT.NULL);
-		GridLayout layout = new GridLayout();
-		outer.setLayout(layout);
-
-		Composite result = new Composite(outer, SWT.NULL);
-		result.setLayout(getPageLayout());
-		result.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL
-				| GridData.GRAB_VERTICAL));
-		tab.setControl(outer);
-		parentFolder.setSelection(0);
-		return result;
-	}
-
-	/**
-	 * Get the toolbar for the container
-	 * 
-	 * @return Control
-	 */
-	private Control getContainerToolBar(Composite composite) {
-
-		ToolBar historyBar = new ToolBar(composite, SWT.HORIZONTAL | SWT.FLAT);
-		ToolBarManager historyManager = new ToolBarManager(historyBar);
-
-		history.createHistoryControls(historyBar, historyManager);
-		createModeSwitch(historyManager);
-
-		historyManager.update(false);
-
-		return historyBar;
-	}
-
 	/**
 	 * Create the button that switches modes.
 	 * 
@@ -780,7 +465,7 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 
 		historyManager.add(modeSwitchAction);
 
-		IAction toolBarSettings = new Action(EMPTY_STRING, IAction.AS_PUSH_BUTTON) { 
+		IAction toolBarSettings = new Action(EMPTY_STRING, IAction.AS_PUSH_BUTTON) {
 			/* (non-Javadoc)
 			 * @see org.eclipse.jface.action.Action#run()
 			 */
@@ -788,71 +473,78 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 				new PreferencesLookDialog(WorkbenchPreferenceDialog.this).open();
 			}
 		};
-		toolBarSettings.setToolTipText(WorkbenchMessages.getString("WorkbenchPreferenceDialog.toolBatSettingsTip")); //$NON-NLS-1$
+		toolBarSettings.setToolTipText(WorkbenchMessages
+				.getString("WorkbenchPreferenceDialog.toolBatSettingsTip")); //$NON-NLS-1$
 		toolBarSettings.setImageDescriptor(JFaceResources.getImageRegistry().getDescriptor(
 				TOOLBAR_ICON));
 		historyManager.add(toolBarSettings);
 
 	}
 
-	/*
-	 * @see org.eclipse.jface.preference.PreferenceDialog#showPage(org.eclipse.jface.preference.IPreferenceNode)
-	 * @since 3.1
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferenceDialog#createPage(org.eclipse.jface.preference.IPreferenceNode)
 	 */
-	protected boolean showPage(IPreferenceNode node) {
-		final boolean success = super.showPage(node);
-		if (success) {
-			history.addHistoryEntry(new PreferenceHistoryEntry(node.getId(), node.getLabelText(),
-					null));
-		}
-		return success;
+	protected void createPage(IPreferenceNode node) {
+		super.createPage(node);
+		if (this.pageData == null)
+			return;
+		//Apply the data if it has been set.
+		IPreferencePage page = node.getPage();
+		if (page instanceof PreferencePage)
+			((PreferencePage) page).applyData(this.pageData);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.preference.PreferenceDialog#updateTitle()
+	 * @see org.eclipse.jface.preference.PreferenceDialog#createPageContainer(org.eclipse.swt.widgets.Composite)
 	 */
-	public void updateTitle() {
-		tab.setText(getCurrentPage().getTitle());
-		tab.setImage(getCurrentPage().getImage());
+	public Composite createPageContainer(Composite parent) {
+
+		CTabFolder parentFolder = new CTabFolder(parent, SWT.BORDER);
+		parentFolder.setSingle(true);
+
+		tab = new CTabItem(parentFolder, SWT.BORDER);
+
+		parentFolder.setSelectionForeground(parent.getDisplay().getSystemColor(
+				SWT.COLOR_WIDGET_FOREGROUND));
+		parentFolder.setSelectionBackground(parent.getDisplay().getSystemColor(
+				SWT.COLOR_WIDGET_BACKGROUND));
+
+		tab.setFont(JFaceResources.getFontRegistry().get(JFaceResources.BANNER_FONT));
+
+		Control topBar = getContainerToolBar(parentFolder);
+		parentFolder.setTopRight(topBar, SWT.RIGHT);
+		int height = topBar.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+		parentFolder.setTabHeight(height);
+
+		parentFolder.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL
+				| GridData.GRAB_VERTICAL));
+
+		Composite outer = new Composite(parentFolder, SWT.NULL);
+		GridLayout layout = new GridLayout();
+		outer.setLayout(layout);
+
+		Composite result = new Composite(outer, SWT.NULL);
+		result.setLayout(getPageLayout());
+		result.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL
+				| GridData.GRAB_VERTICAL));
+		tab.setControl(outer);
+		parentFolder.setSelection(0);
+		return result;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.preference.PreferenceDialog#updateMessage()
+	 * @see org.eclipse.jface.preference.PreferenceDialog#createPageControl(org.eclipse.jface.preference.IPreferencePage,
+	 *      org.eclipse.swt.widgets.Composite)
 	 */
-	public void updateMessage() {
-		// No longer required as the pages do this.
-	}
-
-	/**
-	 * Return whether groups are being shown
-	 * 
-	 * @return boolean
-	 */
-	public static boolean showingGroups() {
-		return groupedMode;
-	}
-
-	/**
-	 * Return whether or not groups can be shown
-	 * 
-	 * @return boolean
-	 */
-	public static boolean canShowGroups() {
-		return getGroups().length > 0;
-	}
-
-	/**
-	 * Return the groups in the receiver.
-	 * 
-	 * @return WorkbenchPreferenceGroup[]
-	 */
-	protected static WorkbenchPreferenceGroup[] getGroups() {
-		return ((WorkbenchPreferenceManager) WorkbenchPlugin.getDefault().getPreferenceManager())
-				.getGroups();
+	protected void createPageControl(IPreferencePage page, Composite parent) {
+		if (page instanceof PreferencePage)
+			((PreferencePage) page).createControl(parent);
+		else
+			super.createPageControl(page, parent);
 	}
 
 	/*
@@ -868,29 +560,40 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	}
 
 	/**
-	 * Set the search results of the receiver to be filteredIds.
+	 * Create the toolbar for the groups.
 	 * 
-	 * @param filteredIds
+	 * @param composite
 	 */
-	public void setSearchResults(String[] filteredIds) {
+	private void createToolBar(Composite composite) {
+
+		toolBar = new ToolBar(composite, SWT.CENTER | SWT.FLAT);
+		toolBar.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 
 		WorkbenchPreferenceGroup[] groups = getGroups();
+
 		for (int i = 0; i < groups.length; i++) {
-			WorkbenchPreferenceGroup group = groups[i];
-			group.highlightIds(filteredIds);
+			final WorkbenchPreferenceGroup group = groups[i];
+			ToolItem newItem = new ToolItem(toolBar, SWT.RADIO);
+			newItem.setData(group);
+			setTextAndImage(group, newItem);
+			newItem.addSelectionListener(new SelectionAdapter() {
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+				 */
+				public void widgetSelected(SelectionEvent e) {
+					groupSelected(group);
+				}
+			});
+
 		}
-	}
 
-	/**
-	 * Highlight all nodes that match text;
-	 * 
-	 * @param text
-	 */
-	protected void highlightHits(String text) {
-		WorkbenchPreferenceGroup group = (WorkbenchPreferenceGroup) getTreeViewer().getInput();
-
-		group.highlightHits(text);
-		getTreeViewer().refresh();
+		GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL);
+		data.horizontalAlignment = GridData.HORIZONTAL_ALIGN_BEGINNING;
+		data.horizontalIndent = IDialogConstants.HORIZONTAL_MARGIN;
+		data.verticalIndent = IDialogConstants.VERTICAL_MARGIN;
+		toolBar.setLayoutData(data);
 	}
 
 	/**
@@ -909,6 +612,280 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	}
 
 	/**
+	 * Get the toolbar for the container
+	 * 
+	 * @return Control
+	 */
+	private Control getContainerToolBar(Composite composite) {
+
+		ToolBar historyBar = new ToolBar(composite, SWT.HORIZONTAL | SWT.FLAT);
+		ToolBarManager historyManager = new ToolBarManager(historyBar);
+
+		history.createHistoryControls(historyBar, historyManager);
+		createModeSwitch(historyManager);
+
+		historyManager.update(false);
+
+		return historyBar;
+	}
+
+	/**
+	 * Returns the currently selected page. This can be used in conjuction with
+	 * <code>createDialogOn</code> to create a dialog, manipulate the
+	 * preference page, and then display it to the user.
+	 * 
+	 * @return The currently selected page; this value may be <code>null</code>
+	 *         if there is no selected page.
+	 * @since 3.1
+	 */
+	public final IPreferencePage getCurrentPage() {
+		return super.getCurrentPage();
+	}
+
+	/**
+	 * Return the file name setting or a default value if there isn't one.
+	 * 
+	 * @param export
+	 *            <code>true</code> if an export file name is being looked
+	 *            for.
+	 * 
+	 * @return String if there is a good value to choose. Otherwise return
+	 *         <code>null</code>.
+	 */
+	private String getFileNameSetting(boolean export) {
+
+		String lastFileName = WorkbenchPlugin.getDefault().getDialogSettings().get(
+				WorkbenchPreferenceDialog.FILE_PATH_SETTING);
+		if (lastFileName == null) {
+			if (export)
+				return System.getProperty("user.dir") + System.getProperty("file.separator") + WorkbenchMessages.getString("ImportExportPages.preferenceFileName") + AbstractPreferenceImportExportPage.PREFERENCE_EXT; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+
+		} else if ((export) || (new File(lastFileName).exists())) {
+			return lastFileName;
+		}
+
+		return null;
+	}
+
+	/**
+	 * Get the file name we are using. Set the button type flag depending on
+	 * whether it is import or export operation.
+	 * 
+	 * @param export
+	 *            <code>true</code> if an export file name is being looked
+	 *            for.
+	 * 
+	 * @return IPath or <code>null</code> if no selection is mage.
+	 */
+	private IPath getFilePath(boolean export) {
+
+		// Find the closest file/directory to what is currently entered.
+		String currentFileName = getFileNameSetting(export);
+
+		// Open a dialog allowing the user to choose.
+		FileDialog fileDialog = null;
+		if (export)
+			fileDialog = new FileDialog(getShell(), SWT.SAVE);
+		else
+			fileDialog = new FileDialog(getShell(), SWT.OPEN);
+
+		if (currentFileName != null)
+			fileDialog.setFileName(currentFileName);
+		fileDialog
+				.setFilterExtensions(PreferenceImportExportFileSelectionPage.DIALOG_PREFERENCE_EXTENSIONS);
+		currentFileName = fileDialog.open();
+
+		if (currentFileName == null)
+			return null;
+
+		/*
+		 * Append the default filename if none was specifed and such a file does
+		 * not exist.
+		 */
+		String fileName = new File(currentFileName).getName();
+		if (fileName.lastIndexOf(".") == -1) { //$NON-NLS-1$
+			currentFileName += AbstractPreferenceImportExportPage.PREFERENCE_EXT;
+		}
+		setFileNameSetting(currentFileName);
+		return new Path(currentFileName);
+
+	}
+
+	/**
+	 * A group has been selected. Update the tree viewer.
+	 * 
+	 * @param group
+	 *            tool item.
+	 */
+	private void groupSelected(final WorkbenchPreferenceGroup group) {
+
+		lastGroupId = group.getId();
+		currentGroup = group;
+
+		getTreeViewer().setInput(group);
+		StructuredSelection structured = StructuredSelection.EMPTY;
+
+		Object selection = group.getLastSelection();
+		if (selection == null && group.getPreferenceNodes().length > 0) {
+			structured = new StructuredSelection(group.getPreferenceNodes()[0]);
+		}
+
+		getTreeViewer().setSelection(structured, true);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.dialogs.FilteredPreferenceDialog#handleTreeSelectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
+	 */
+	protected void handleTreeSelectionChanged(SelectionChangedEvent event) {
+		if (!showingGroups())
+			return;
+		if (event.getSelection() instanceof IStructuredSelection) {
+			IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+			if (selection.isEmpty())
+				return;
+			Object item = selection.getFirstElement();
+			currentGroup.setLastSelection(item);
+		}
+
+	}
+
+	/**
+	 * Highlight all nodes that match text;
+	 * 
+	 * @param text
+	 */
+	protected void highlightHits(String text) {
+		WorkbenchPreferenceGroup group = (WorkbenchPreferenceGroup) getTreeViewer().getInput();
+
+		group.highlightHits(text);
+		getTreeViewer().refresh();
+	}
+
+	/**
+	 * Import a preference file.
+	 * 
+	 * @param path
+	 *            The file path.
+	 * @return true if successful.
+	 */
+	private boolean importPreferences(IPath path) {
+		IStatus status = Preferences.validatePreferenceVersions(path);
+		if (status.getSeverity() == IStatus.ERROR) {
+			// Show the error and about
+			ErrorDialog.openError(getShell(), WorkbenchMessages
+					.getString("WorkbenchPreferenceDialog.loadErrorTitle"), //$NON-NLS-1$
+					WorkbenchMessages.format("WorkbenchPreferenceDialog.verifyErrorMessage", //$NON-NLS-1$
+							new Object[] { path.toOSString() }), status);
+			return false;
+		} else if (status.getSeverity() == IStatus.WARNING) {
+			// Show the warning and give the option to continue
+			int result = PreferenceErrorDialog.openError(getShell(), WorkbenchMessages
+					.getString("WorkbenchPreferenceDialog.loadErrorTitle"), //$NON-NLS-1$
+					WorkbenchMessages.format("WorkbenchPreferenceDialog.verifyWarningMessage", //$NON-NLS-1$
+							new Object[] { path.toOSString() }), status);
+			if (result != Window.OK) {
+				return false;
+			}
+		}
+
+		try {
+			Preferences.importPreferences(path);
+		} catch (CoreException e) {
+			ErrorDialog.openError(getShell(), WorkbenchMessages
+					.getString("WorkbenchPreferenceDialog.loadErrorTitle"), //$NON-NLS-1$
+					WorkbenchMessages.format("WorkbenchPreferenceDialog.loadErrorMessage", //$NON-NLS-1$
+							new Object[] { path.toOSString() }), e.getStatus());
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Handle a request to load preferences
+	 */
+	protected void loadPressed() {
+		final IPath filePath = getFilePath(false);
+		if (filePath == null)
+			return;
+		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see java.lang.Runnable#run()
+			 */
+			public void run() {
+				importPreferences(filePath);
+			}
+		});
+
+		close();
+	}
+
+	/**
+	 * Handle a request to save preferences
+	 */
+	protected void savePressed() {
+		new PreferencesExportDialog(getShell()).open();
+		close();
+	}
+
+	/**
+	 * Select the group and reveal it in the toolbar.
+	 * 
+	 * @param group
+	 */
+	private void selectAndRevealInToolBar(WorkbenchPreferenceGroup group) {
+		selectGroupInToolBar(group);
+		groupSelected(group);
+	}
+
+	/**
+	 * @param group
+	 */
+	private void selectGroupInToolBar(final WorkbenchPreferenceGroup group) {
+		ToolItem[] items = toolBar.getItems();
+		for (int i = 0; i < items.length; i++) {
+			if (group.equals(items[i].getData())) {
+				items[i].setSelection(true);
+				break;
+			}
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.preference.PreferenceDialog#selectSavedItem()
+	 */
+	protected void selectSavedItem() {
+		if (showingGroups()) {
+			WorkbenchPreferenceGroup[] groups = getGroups();
+
+			if (lastGroupId != null) {
+				for (int i = 0; i < groups.length; i++) {
+					if (lastGroupId.equals(groups[i].getId())) {
+						selectAndRevealInToolBar(groups[i]);
+						return;
+					}
+				}
+			}
+			selectAndRevealInToolBar(groups[0]);
+		} else {
+			getTreeViewer().setInput(getPreferenceManager());
+			super.selectSavedItem();
+
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.dialogs.FilteredPreferenceDialog#setContentAndLabelProviders(org.eclipse.jface.viewers.TreeViewer)
+	 */
+	protected void setContentAndLabelProviders(TreeViewer treeViewer) {
+		treeViewer.setContentProvider(new GroupedPreferenceContentProvider(showingGroups()));
+		treeViewer.setLabelProvider(new GroupedPreferenceLabelProvider());
+	}
+
+	/**
 	 * Selects the current page based on the given preference page identifier.
 	 * If no node can be found, then nothing will change.
 	 * 
@@ -924,17 +901,14 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.PreferenceDialog#createPageControl(org.eclipse.jface.preference.IPreferencePage,
-	 *      org.eclipse.swt.widgets.Composite)
+	/**
+	 * @param currentFileName
 	 */
-	protected void createPageControl(IPreferencePage page, Composite parent) {
-		if (page instanceof PreferencePage)
-			((PreferencePage) page).createControl(parent);
-		else
-			super.createPageControl(page, parent);
+	private void setFileNameSetting(String currentFileName) {
+		if (currentFileName != null)
+			WorkbenchPlugin.getDefault().getDialogSettings().put(
+					WorkbenchPreferenceDialog.FILE_PATH_SETTING, currentFileName);
+
 	}
 
 	/**
@@ -945,17 +919,49 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		this.pageData = pageData;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferenceDialog#createPage(org.eclipse.jface.preference.IPreferenceNode)
+	/**
+	 * Set the search results of the receiver to be filteredIds.
+	 * 
+	 * @param filteredIds
 	 */
-	protected void createPage(IPreferenceNode node) {
-		super.createPage(node);
-		if (this.pageData == null)
-			return;
-		//Apply the data if it has been set.
-		IPreferencePage page = node.getPage();
-		if (page instanceof PreferencePage)
-			((PreferencePage) page).applyData(this.pageData);
+	public void setSearchResults(String[] filteredIds) {
+
+		WorkbenchPreferenceGroup[] groups = getGroups();
+		for (int i = 0; i < groups.length; i++) {
+			WorkbenchPreferenceGroup group = groups[i];
+			group.highlightIds(filteredIds);
+		}
+	}
+
+	/**
+	 * Set te text and images for the group in the item.
+	 * @param group
+	 * @param item
+	 */
+	private void setTextAndImage(final WorkbenchPreferenceGroup group, ToolItem item) {
+		String text = TEXT_SHOWING ? group.getName() : EMPTY_STRING;
+		item.setText(text);
+
+		Image image = null;
+		if (ICON_MODE == SWT.MIN)
+			image = group.getImage();
+		else if (ICON_MODE == SWT.MAX)
+			image = group.getLargeImage();
+
+		item.setImage(image);
+	}
+
+	/*
+	 * @see org.eclipse.jface.preference.PreferenceDialog#showPage(org.eclipse.jface.preference.IPreferenceNode)
+	 * @since 3.1
+	 */
+	protected boolean showPage(IPreferenceNode node) {
+		final boolean success = super.showPage(node);
+		if (success) {
+			history.addHistoryEntry(new PreferenceHistoryEntry(node.getId(), node.getLabelText(),
+					null));
+		}
+		return success;
 	}
 
 	/**
@@ -965,34 +971,28 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		toolBar.dispose();
 		createToolBar(toolBarComposite);
 		selectAndRevealInToolBar(currentGroup);
-		
+
 		getShell().setSize(getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		getShell().layout(true);
 
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.dialogs.FilteredPreferenceDialog#setContentAndLabelProviders(org.eclipse.jface.viewers.TreeViewer)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.preference.PreferenceDialog#updateMessage()
 	 */
-	protected void setContentAndLabelProviders(TreeViewer treeViewer) {
-		treeViewer.setContentProvider(new GroupedPreferenceContentProvider(showingGroups()));
-		treeViewer.setLabelProvider(new GroupedPreferenceLabelProvider());
+	public void updateMessage() {
+		// No longer required as the pages do this.
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.dialogs.FilteredPreferenceDialog#handleTreeSelectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.preference.PreferenceDialog#updateTitle()
 	 */
-	protected void handleTreeSelectionChanged(SelectionChangedEvent event) {
-		if (!showingGroups())
-			return;
-		if (event.getSelection() instanceof IStructuredSelection) {
-			IStructuredSelection selection = (IStructuredSelection) event
-					.getSelection();
-			if (selection.isEmpty())
-				return;
-			Object item = selection.getFirstElement();
-			currentGroup.setLastSelection(item);
-		}
-	
+	public void updateTitle() {
+		tab.setText(getCurrentPage().getTitle());
+		tab.setImage(getCurrentPage().getImage());
 	}
 }
