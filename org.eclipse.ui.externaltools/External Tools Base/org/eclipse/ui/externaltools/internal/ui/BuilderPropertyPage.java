@@ -94,6 +94,8 @@ public final class BuilderPropertyPage extends PropertyPage {
 	
 	private boolean userHasMadeChanges= false;
 	
+	private List configsToBeDeleted= null;
+	
 	/**
 	 * Error configs are objects representing entries pointing to
 	 * invalid launch configurations
@@ -405,7 +407,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 	/**
 	 * Turns autobuilding on or off in the workspace.
 	 */
-	private boolean setAutobuild(boolean newState) throws CoreException {
+	private void setAutobuild(boolean newState) throws CoreException {
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
 		IWorkspaceDescription wsDescription= workspace.getDescription();
 		boolean oldState= wsDescription.isAutoBuilding();
@@ -413,7 +415,6 @@ public final class BuilderPropertyPage extends PropertyPage {
 			wsDescription.setAutoBuilding(newState);
 			workspace.setDescription(wsDescription);
 		}
-		return oldState;
 	}
 
 	/**
@@ -550,23 +551,14 @@ public final class BuilderPropertyPage extends PropertyPage {
 	private void handleRemoveButtonPressed() {
 		TableItem[] selection = builderTable.getSelection();
 		if (selection != null) {
+			if (configsToBeDeleted == null) {
+				configsToBeDeleted= new ArrayList(selection.length);
+			}
 			userHasMadeChanges= true;
 			for (int i = 0; i < selection.length; i++) {
 				Object data= selection[i].getData();
 				if (data instanceof ILaunchConfiguration) {
-					boolean wasAutobuilding= ResourcesPlugin.getWorkspace().getDescription().isAutoBuilding();
-					try {
-						setAutobuild(false);
-						((ILaunchConfiguration) data).delete();
-					} catch (CoreException e) {
-						handleException(e);
-					} finally {
-						try {
-							setAutobuild(wasAutobuilding);
-						} catch (CoreException e) {
-							handleException(e);
-						}
-					}
+					configsToBeDeleted.add(data);
 				}
 				selection[i].dispose();
 			}
@@ -875,6 +867,9 @@ public final class BuilderPropertyPage extends PropertyPage {
 			return super.performOk();
 		}
 		userHasMadeChanges= false;
+		if (configsToBeDeleted != null) {
+			deleteConfigurations();
+		}
 		IProject project = getInputProject();
 		//get all the build commands
 		int numCommands = builderTable.getItemCount();
@@ -907,6 +902,27 @@ public final class BuilderPropertyPage extends PropertyPage {
 			}
 		}
 		return super.performOk();
+	}
+
+	private void deleteConfigurations() {
+		boolean wasAutobuilding= ResourcesPlugin.getWorkspace().getDescription().isAutoBuilding();
+		try {
+			setAutobuild(false);
+		
+			Iterator itr= configsToBeDeleted.iterator();
+			while (itr.hasNext()) {
+				ILaunchConfiguration element = (ILaunchConfiguration) itr.next();
+				element.delete();
+			}
+		} catch (CoreException e) {
+			handleException(e);
+		} finally {
+			try {
+				setAutobuild(wasAutobuilding);
+			} catch (CoreException e) {
+				handleException(e);
+			}
+		}
 	}
 	
 	/**
