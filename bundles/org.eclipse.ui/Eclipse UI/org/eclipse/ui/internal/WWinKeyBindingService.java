@@ -150,6 +150,12 @@ public class WWinKeyBindingService {
 		return result;
 	}
 	/**
+	 * Returns the workbench window.
+	 */
+	public IWorkbenchWindow getWindow() {
+		return window;	
+	}
+	/**
 	 * Remove or restore the accelerators in the menus.
 	 * If the service is the active part's service.
 	 */	

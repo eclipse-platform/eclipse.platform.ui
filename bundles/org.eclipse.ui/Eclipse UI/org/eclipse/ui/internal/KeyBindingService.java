@@ -115,6 +115,12 @@ public class KeyBindingService implements IKeyBindingService {
 	public String getActiveAcceleratorScopeId() {
     	return scope.getId();
     }
+    /**
+     * Returns the workbench window.
+     */
+    public IWorkbenchWindow getWindow() {
+    	return parent.getWindow();	
+    } 
 	/*
 	 * @see IKeyBindingService#setActiveAcceleratorScopeId(String)
 	 */ 
