@@ -3,8 +3,6 @@
 	<name>org.eclipse.core.variables</name>
 	<comment></comment>
 	<projects>
-		<project>org.eclipse.core.boot</project>
-		<project>org.eclipse.core.runtime</project>
 		<project>org.eclipse.core.runtime.compatibility</project>
 	</projects>
 	<buildSpec>
