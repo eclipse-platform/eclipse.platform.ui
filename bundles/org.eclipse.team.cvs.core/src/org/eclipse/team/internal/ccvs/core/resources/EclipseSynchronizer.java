@@ -284,7 +284,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 			try {
 				cacheResourceSyncForChildren(parent, false /* cannot modify workspace */);
 			} catch (CVSException e) {
-				if (isCannotModifySynchronizer(e)) {
+				if (isCannotModifySynchronizer(e) || isResourceNotFound(e)) {
 					// We will resort to loading the sync info for the requested resource from disk
 					byte[] bytes =  getSyncBytesFromDisk(resource);
 					if (!resource.exists() && bytes != null && !ResourceSyncInfo.isDeletion(bytes)) {
@@ -452,7 +452,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 				cacheResourceSyncForChildren(folder, false);
 			}
 		} catch (CVSException e) {
-			if (!isCannotModifySynchronizer(e)) {
+			if (!isCannotModifySynchronizer(e) && !isResourceNotFound(e)) {
 				throw e;
 			}
 		} finally {
@@ -472,6 +472,10 @@ public class EclipseSynchronizer implements IFlushOperation {
 		// when no scheduling rule is held.
 		return (e.getStatus().getCode() == IResourceStatus.WORKSPACE_LOCKED 
 				|| e.getStatus().getCode() == CVSStatus.FAILED_TO_CACHE_SYNC_INFO);
+	}
+	
+	private boolean isResourceNotFound(CVSException e) {
+		return e.getStatus().getCode() == IResourceStatus.RESOURCE_NOT_FOUND;
 	}
 	
 	/**
