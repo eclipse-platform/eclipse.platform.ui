@@ -83,7 +83,7 @@ public class SearchManager {
 	 * @return AnalyzerDescriptro or null if no analyzer is configured
 	 * for given locale.
 	 */
-	public AnalyzerDescriptor createAnalyzer(String locale) {
+	private AnalyzerDescriptor createAnalyzer(String locale) {
 		Collection contributions = new ArrayList();
 		// find extension point
 		IConfigurationElement configElements[] =
@@ -247,11 +247,13 @@ public class SearchManager {
 	 */
 	public synchronized void updateIndex(IProgressMonitor pm, String locale)
 		throws OperationCanceledException, Exception {
-		if (!isIndexingNeeded(locale))
-			return;
 		// monitor indexing
 		if (pm == null)
 			pm = new IndexProgressMonitor();
+		if (!isIndexingNeeded(locale)){
+			pm.done();
+			return;
+		}
 		progressMonitors.put(locale, pm);
 		SearchIndex index = getIndex(locale);
 		if (Logger.DEBUG)
