@@ -448,7 +448,7 @@ public class OverviewRuler implements IOverviewRuler {
 		Point size= fCanvas.getSize();
 		int writable= maxLines * textWidget.getLineHeight();
 		if (size.y > writable)
-			size.y= Math.max(writable - fHeader.getSize().y, 1);
+			size.y= Math.max(writable - fHeader.getSize().y, 0);
 		
 		for (Iterator iterator= fAnnotationsSortedByLayer.iterator(); iterator.hasNext();) {
 			Object annotationType= iterator.next();
@@ -536,7 +536,7 @@ public class OverviewRuler implements IOverviewRuler {
 		Point size= fCanvas.getSize();
 		int writable= maxLines * textWidget.getLineHeight();
 		if (size.y > writable)
-			size.y= Math.max(writable - fHeader.getSize().y, 1);
+			size.y= Math.max(writable - fHeader.getSize().y, 0);
 			
 		for (Iterator iterator= fAnnotationsSortedByLayer.iterator(); iterator.hasNext();) {
 			Object annotationType= iterator.next();
@@ -648,9 +648,9 @@ public class OverviewRuler implements IOverviewRuler {
 		int writable= maxLines * textWidget.getLineHeight();
 
 		if (rulerLength > writable)
-			rulerLength= Math.max(writable - fHeader.getSize().y, 1);
+			rulerLength= Math.max(writable - fHeader.getSize().y, 0);
 
-		if (y_coordinate >= writable)
+		if (y_coordinate >= writable || y_coordinate >= rulerLength)
 			return new int[] {-1, -1};
 
 		int[] lines= new int[2];
