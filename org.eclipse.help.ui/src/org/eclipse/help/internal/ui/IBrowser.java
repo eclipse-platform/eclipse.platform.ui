@@ -21,5 +21,17 @@ public interface IBrowser {
 	 * Navigate to the specified URL
 	 */
 	public int navigate(String url);
-	public int print();
+	/**
+	 * @param showPrintDialog
+	 * set to true to cause print dialog to be displayed
+	 */
+	public int print(boolean showPrintDialog);
+	/**
+	 * Adds listener for DocumentComplete events
+	 */
+	public void addDocumentCompleteListener(IDocumentCompleteListener listener);
+	/**
+	 * Adds listener for DocumentComplete events
+	 */
+	public void removeDocumentCompleteListener(IDocumentCompleteListener listener);
 }

@@ -192,7 +192,7 @@ public class EmbeddedHelpView extends ViewPart {
 		// but manager does not update it automatically once it has been created
 		tbm.update(true);
 	}
-	NavigationViewer getNavigationViewer() {
+	public NavigationViewer getNavigationViewer() {
 		return navigationViewer;
 	}
 	public Composite getViewComposite() {

@@ -102,11 +102,7 @@ public class NavigationViewer implements ISelectionProvider, IMenuListener {
 				IHelpUIConstants.TOPICS_VIEWER,
 				IHelpUIConstants.NAVIGATION_VIEWER,
 				IHelpUIConstants.EMBEDDED_HELP_VIEW });
-		// create the pop-up menus in the viewer
-		// For now, do this only for win32. 
-		if (System.getProperty("os.name").startsWith("Win")) {
-			createPopUpMenus();
-		}
+		createPopUpMenus();
 		WorkbenchHelp.setHelp(
 			contents,
 			new String[] {
@@ -115,11 +111,13 @@ public class NavigationViewer implements ISelectionProvider, IMenuListener {
 		return contents;
 	}
 	private void createPopUpMenus() {
+		// For now, do this only for win32. 
+		if (!System.getProperty("os.name").startsWith("Win"))
+			return;
 		// create the Menu Manager for this control. and do
 		// proper initialization
-		Menu shellMenu;
 		MenuManager mgr = new MenuManager();
-		shellMenu = mgr.createContextMenu(viewer.getControl());
+		Menu shellMenu = mgr.createContextMenu(viewer.getControl());
 		mgr.setRemoveAllWhenShown(true);
 		mgr.addMenuListener(this);
 		viewer.getControl().setMenu(shellMenu);
@@ -153,19 +151,15 @@ public class NavigationViewer implements ISelectionProvider, IMenuListener {
 		}
 	}
 	public void menuAboutToShow(IMenuManager mgr) {
-		// Add pop-up Menus depending on current selection
-		// if multiple topics are selected, the Nested print menu is not showed.
 		ISelection selection = getSelection();
 		if (!(selection instanceof IStructuredSelection))
-			return; // should never be here. This is guaranteed by Viewer.
-		// Show nested printing and only if one topic is selected.
-		// make sure to have lazy creation of the printing Browser. 
-		// TODO add printing implementation
-		/*if (((IStructuredSelection) selection).size() == 1) {
-			mgr.add(new NestedPrintAction((IStructuredSelection) selection));
+			return;
+		// Show printing menu if and and only one topic is selected.
+		if (((IStructuredSelection) selection).size() == 1) {
+			mgr.add(new PrintTopicTreeAction((IStructuredSelection) selection));
 			mgr.add(new Separator());
 			mgr.update(true);
-		}*/
+		}
 	}
 	/**
 	 * @param input an InfoSet or Contribution[]

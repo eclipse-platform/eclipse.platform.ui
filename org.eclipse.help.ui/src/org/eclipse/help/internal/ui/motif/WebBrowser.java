@@ -12,6 +12,7 @@ import org.eclipse.help.internal.ui.util.StreamConsumer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.help.internal.ui.*;
 /**
  * Netscape based browser.
  */
@@ -114,14 +115,18 @@ class WebBrowser implements IBrowser {
 		lastBrowserThread.start();
 		return 0;
 	}
-	public int print() {
+	public int print(boolean showPrintDialog) {
 		// This feature is temporarily not supported on Linux.
 		return 0;
 	}
 	/**
-	 * Print a Topic and all it's children.
+	 * Adds listener for DocumentComplete events
 	 */
-	public void printFullTopic(ITopic rootTopic) {
-		// This feature is temporarily not supported on Linux.      
+	public void addDocumentCompleteListener(IDocumentCompleteListener listener){
+	}
+	/**
+	 * Adds listener for DocumentComplete events
+	 */
+	public void removeDocumentCompleteListener(IDocumentCompleteListener listener){
 	}
 }

@@ -12,6 +12,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.help.internal.util.Logger;
 import org.eclipse.help.internal.ui.util.*;
 import org.eclipse.help.internal.ui.*;
+import java.util.*;
 
 /**
  * ActiveX based web browser control.
@@ -81,7 +82,8 @@ public class WebBrowser implements OleListener, IBrowser {
 
 	// The OLE frame (there should only be one)
 	private OleFrame controlFrame;
-
+	// DocumentComplete listeners
+	private Collection documentCompleteListeners;
 	/**
 	 */
 	public WebBrowser(Composite parent) throws HelpWorkbenchException {
@@ -101,9 +103,14 @@ public class WebBrowser implements OleListener, IBrowser {
 			backwardEnabled = false;
 			forwardEnabled = false;
 
+			// initialize DocumentComplete listeners;
+			documentCompleteListeners=new ArrayList();
+
 			// Listen for changes to the Command States
 			controlSite.addEventListener(CommandStateChange, this);
-
+			// Listen for DocumentComplete events
+			controlSite.addEventListener(DocumentComplete, this);
+		
 			// initialize control
 			controlSite.doVerb(OLE.OLEIVERB_SHOW);
 
@@ -116,6 +123,18 @@ public class WebBrowser implements OleListener, IBrowser {
 			throw new HelpWorkbenchException(msg);
 		}
 
+	}
+	/**
+	 * Adds listener for DocumentComplete events
+	 */
+	public void addDocumentCompleteListener(IDocumentCompleteListener listener){
+		documentCompleteListeners.add(listener);
+	}
+	/**
+	 * Adds listener for DocumentComplete events
+	 */
+	public void removeDocumentCompleteListener(IDocumentCompleteListener listener){
+		documentCompleteListeners.remove(listener);
 	}
 	/**
 	 */
@@ -289,6 +308,12 @@ public class WebBrowser implements OleListener, IBrowser {
 
 			case (DocumentComplete) :
 				varResult = event.arguments[0];
+				Collection currentListeners=new ArrayList(documentCompleteListeners.size());
+				currentListeners.addAll(documentCompleteListeners);
+				for(Iterator it=currentListeners.iterator();it.hasNext();){
+					IDocumentCompleteListener listener=(IDocumentCompleteListener)it.next();
+					listener.documentComplete();
+				}
 				return;
 		}
 		//throw new OleError(OLE.ERROR_NOT_IMPLEMENTED);
@@ -343,9 +368,11 @@ public class WebBrowser implements OleListener, IBrowser {
 
 	}
 	/**
+	 * @param showPrintDialog
+	 * set to true to cause print dialog to be displayed
 	 */
-	public int print() {
-		return print(controlSite, true);
+	public int print(boolean showPrintDialog) {
+		return print(controlSite, showPrintDialog);
 	}
 	/**
 	 */

@@ -142,7 +142,7 @@ public class Actions {
 					IHelpUIConstants.EMBEDDED_HELP_VIEW });
 		}
 		public void run() {
-			web.print();
+			web.print(true);
 		}
 	}
 	/**
