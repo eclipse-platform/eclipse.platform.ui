@@ -19,6 +19,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.INullSelectionListener;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
@@ -27,7 +28,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
-public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowActionDelegate, IViewActionDelegate, ISelectionListener {
+public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowActionDelegate, IViewActionDelegate, ISelectionListener, INullSelectionListener {
 	
 	/**
 	 * The underlying action for this delegate
@@ -134,9 +135,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	public void selectionChanged(IAction action, ISelection s) {
 		boolean wasInitialized= initialize(action, s);		
 		if (!wasInitialized) {
-			if (getView() != null) {
-				update(action, s);
-			}
+			update(action, s);
 		}
 	}
 	

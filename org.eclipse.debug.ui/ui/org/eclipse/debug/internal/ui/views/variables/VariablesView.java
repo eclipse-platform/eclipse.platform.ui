@@ -69,6 +69,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -78,6 +79,7 @@ import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.INullSelectionListener;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
@@ -92,7 +94,8 @@ import org.eclipse.ui.texteditor.IUpdate;
 public class VariablesView extends AbstractDebugEventHandlerView implements ISelectionListener, 
 																	IPropertyChangeListener,
 																	IValueDetailListener,
-																	IDebugExceptionHandler {
+																	IDebugExceptionHandler,
+																	INullSelectionListener {
 	/**
 	 * The selection provider for the variables view changes depending on whether
 	 * the variables viewer or detail pane source viewer have focus. This "super" 
@@ -1001,7 +1004,9 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 * @see ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
 	 */
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		if (selection instanceof IStructuredSelection) {
+		if (selection == null) {
+			setViewerInput(new StructuredSelection());
+		} else if (selection instanceof IStructuredSelection) {
 			setViewerInput((IStructuredSelection) selection);
 		} else {
 			getDetailViewer().setEditable(false);
