@@ -1,9 +1,8 @@
 package org.eclipse.core.internal.localstore;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -39,7 +38,7 @@ public CopyVisitor(IResource rootSource, IResource destination, boolean force, I
 	this.force = force;
 	this.monitor = monitor;
 	this.segmentsToDrop = rootSource.getFullPath().segmentCount();
-	status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Policy.bind("copyProblem"), null);
+	status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INFO, Policy.bind("copyProblem"), null);
 }
 protected void copy(UnifiedTreeNode node) {
 	Resource source = (Resource) node.getResource();
@@ -131,7 +130,7 @@ public boolean visit(UnifiedTreeNode node) throws CoreException {
 		}
 		if (!force && !wasSynchronized) {
 			IPath path = node.getResource().getFullPath();
-			String message = Policy.bind("resourcesDifferent");
+			String message = Policy.bind("resourceWasOutOfSync", path.toString());
 			status.add(new ResourceStatus(IResourceStatus.OUT_OF_SYNC_LOCAL, path, message, null));
 			return true;
 		}

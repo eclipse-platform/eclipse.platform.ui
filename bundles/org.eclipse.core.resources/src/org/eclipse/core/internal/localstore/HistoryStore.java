@@ -1,9 +1,8 @@
 package org.eclipse.core.internal.localstore;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -54,7 +53,7 @@ protected void accept(byte[] key, IHistoryStoreVisitor visitor, boolean visitOnP
 		}
 		cursor.close();
 	} catch (Exception e) {
-		String message = "Problems accessing history store";
+		String message = Policy.bind("history.problemsAccessing");
 		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_READ_LOCAL, null, message, e);
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
@@ -92,8 +91,8 @@ protected void addState(IPath path, UniversalUniqueIdentifier uuid, long lastMod
 		store.getIndex().insert(entryToInsert.getKey(), valueID);
 	} catch (Exception e) {
 		resetIndexedStore();
-		String message = "Could not add history";
-		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, null, message, e);
+		String message = Policy.bind("history.couldNotAdd", path.toString());
+		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, path, message, e);
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
 }
@@ -151,7 +150,7 @@ public void clean() {
 		store.commit();
 		removeGarbage(blobs);
 	} catch (Exception e) {
-		String message = "Problems cleaning up history store";
+		String message = Policy.bind("history.problemsCleaning");
 		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, null, message, e);
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
@@ -221,8 +220,8 @@ public boolean exists(IFileState target) {
  */ 
 public InputStream getContents(IFileState target) throws CoreException {
 	if (!exists(target)) {
-		String message = "State is not valid.";
-		throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, null, message, null);
+		String message = Policy.bind("history.notValid");
+		throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, null);
 	}
 	return blobStore.getBlob(((FileState) target).getUUID());
 }
@@ -282,8 +281,8 @@ public void removeAll(IResource resource) {
 		cursor.close();
 		store.commit();
 	} catch (Exception e) {
-		String message = "Problems cleaning up history store";
-		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, null, message, e);
+		String message = Policy.bind("history.problemsRemoving", resource.getFullPath().toString());
+		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, resource.getFullPath(), message, e);
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
 }
@@ -302,7 +301,7 @@ public void removeGarbage() {
 		}
 		cursor.close();
 	} catch (Exception e) {
-		String message = "Problems cleaning up history store";
+		String message = Policy.bind("history.problemsCleaning");
 		ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, null, message, e);
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
@@ -340,7 +339,7 @@ protected void resetIndexedStore() {
 	java.io.File target = location.toFile();
 	workspace.clear(target);
 	target.mkdirs();
-	String message = "History store got corrupted. Local history is lost. A new store is being created.";
+	String message = Policy.bind("history.corrupt");
 	ResourceStatus status = new ResourceStatus(IResourceStatus.INTERNAL_ERROR, null, message, null);
 	ResourcesPlugin.getPlugin().getLog().log(status);
 }

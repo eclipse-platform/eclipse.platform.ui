@@ -1,9 +1,8 @@
 package org.eclipse.core.internal.localstore;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
@@ -42,8 +41,8 @@ public UniversalUniqueIdentifier addBlob(File target, boolean moveContents) thro
 	File dir = folderFor(uuid);
 	if (!dir.exists())
 		if (!dir.mkdirs()) {
-			String message = Policy.bind("fileOverFolder", new String[] { dir.getAbsolutePath()});
-			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, null, message, null);
+			String message = Policy.bind("fileOverFolder", dir.getAbsolutePath());
+			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, new Path(dir.getAbsolutePath()), message, null);
 		}
 	File destination = fileFor(uuid);
 	if (moveContents)

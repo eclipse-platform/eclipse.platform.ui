@@ -811,7 +811,7 @@ protected void moveInFileSystem(IPath destination, boolean force, boolean keepHi
 	monitor = Policy.monitorFor(monitor);
 	try {
 		monitor.beginTask(Policy.bind("moving", new String[] { getFullPath().toString()}), 100);
-		RefreshLocalWithStatusVisitor visitor = new RefreshLocalWithStatusVisitor(Policy.bind("moveProblem"), Policy.bind("resourcesDifferent"), monitor);
+		RefreshLocalWithStatusVisitor visitor = new RefreshLocalWithStatusVisitor(Policy.bind("moveProblem"), monitor);
 		UnifiedTree tree = new UnifiedTree(this);
 		tree.accept(visitor, DEPTH_INFINITE);
 		/* if force is false and resources were not in sync, throw an exception */

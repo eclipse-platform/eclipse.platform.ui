@@ -1,27 +1,26 @@
 package org.eclipse.core.internal.localstore;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.internal.resources.*;
+import org.eclipse.core.internal.utils.Policy;
 import java.util.ArrayList;
 import java.util.List;
 //
 public class RefreshLocalWithStatusVisitor extends RefreshLocalVisitor {
 	protected MultiStatus status;
-	protected String message;
 	protected List affectedResources;
-public RefreshLocalWithStatusVisitor(String multiStatusTitle, String eachResourceMessage, IProgressMonitor monitor) {
+public RefreshLocalWithStatusVisitor(String multiStatusTitle, IProgressMonitor monitor) {
 	super(monitor);
-	status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, multiStatusTitle, null);
+	status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INFO, multiStatusTitle, null);
 	affectedResources = new ArrayList(20);
-	message = eachResourceMessage;
 }
 protected void changed(Resource target) {
+	String message = Policy.bind("resourceWasOutOfSync", target.getFullPath().toString());
 	status.add(new ResourceStatus(IResourceStatus.OUT_OF_SYNC_LOCAL, target.getFullPath(), message));
 	affectedResources.add(target);
 }

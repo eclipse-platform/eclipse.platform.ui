@@ -1,9 +1,8 @@
 package org.eclipse.core.internal.localstore;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -19,7 +18,7 @@ public FileSystemStore() {
 public void copy(File source, File destination, int depth, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		monitor.beginTask(Policy.bind("copying", new String[] {source.getAbsolutePath()}), 1);
+		monitor.beginTask(Policy.bind("copying", source.getAbsolutePath()), 1);
 		Policy.checkCanceled(monitor);
 		if (source.isDirectory())
 			copyDirectory(source, destination, depth, Policy.subMonitorFor(monitor, 1));
@@ -37,7 +36,7 @@ protected void copyDirectory(File source, File destination, int depth, IProgress
 			children = new String[0];
 		}
 
-		monitor.beginTask(Policy.bind("copying", new String[] { source.getAbsolutePath()}), children.length);
+		monitor.beginTask(Policy.bind("copying", source.getAbsolutePath()), children.length);
 		// create directory
 		writeFolder(destination);
 
@@ -58,15 +57,17 @@ protected void copyFile(File target, File destination, IProgressMonitor monitor)
 	monitor = Policy.monitorFor(monitor);
 	try {
 		int totalWork = 1 + ((int) target.length() / 8192);
-		monitor.beginTask(Policy.bind("copying", new String[] {target.getAbsolutePath()}), totalWork);
+		monitor.beginTask(Policy.bind("copying", target.getAbsolutePath()), totalWork);
 		write(destination, read(target), false, monitor);
 	} finally {
 		monitor.done();
 	}
 }
 public void delete(File target) throws CoreException {
-	if (!Workspace.clear(target))
-		throw new ResourceException(IResourceStatus.FAILED_DELETE_LOCAL, new Path(target.getAbsolutePath()), Policy.bind("couldnotDelete", new String[] {target.getAbsolutePath()}), null);
+	if (!Workspace.clear(target)) {
+		String message = Policy.bind("couldnotDelete", target.getAbsolutePath());
+		throw new ResourceException(IResourceStatus.FAILED_DELETE_LOCAL, new Path(target.getAbsolutePath()), message, null);
+	}
 }
 public boolean delete(File root, MultiStatus status) {
 	boolean failedRecursive = false;
@@ -84,32 +85,33 @@ public boolean delete(File root, MultiStatus status) {
 			failedThis = !root.delete();
 	} catch (Exception e) {
 		// we caught a runtime exception so log it
-		String message = "Exception trying to delete file: " + root.getAbsolutePath();
+		String message = Policy.bind("couldnotDelete", root.getAbsolutePath());
 		status.add(new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, new Path(root.getAbsolutePath()), message, e));
 		return false;
 	}
 	if (failedThis) {
 		String message = null;
 		if (CoreFileSystemLibrary.isReadOnly(root.getAbsolutePath()))
-			message = "Could not delete read-only resource: " + root.getAbsolutePath();
+			message = Policy.bind("couldnotDeleteReadOnly", root.getAbsolutePath());
 		else
-			message = Policy.bind("couldnotDelete", new String[] { root.getAbsolutePath()});
-		status.add(new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, message));
+			message = Policy.bind("couldnotDelete", root.getAbsolutePath());
+		status.add(new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, new Path(root.getAbsolutePath()), message, null));
 	}
 	return !(failedRecursive || failedThis);
 }
 public void move(File source, File destination, boolean force, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		monitor.beginTask(Policy.bind("moving", new String[] {source.getAbsolutePath()}), 2);
+		monitor.beginTask(Policy.bind("moving", source.getAbsolutePath()), 2);
 		if (destination.exists()) {
-			if (!force)
-				throw new ResourceException(IResourceStatus.EXISTS_LOCAL, new Path(destination.getAbsolutePath()), Policy.bind("resourceExists"), null);
-			else
+			if (!force) {
+				String message = Policy.bind("resourceExists", destination.getAbsolutePath());
+				throw new ResourceException(IResourceStatus.EXISTS_LOCAL, new Path(destination.getAbsolutePath()), message, null);
+			} else
 				try {
 					delete(destination);
 				} catch (CoreException e) {
-					String message = "Could not move file";
+					String message = Policy.bind("couldnotDelete", destination.getAbsolutePath());
 					throw new ResourceException(IResourceStatus.FAILED_DELETE_LOCAL, new Path(destination.getAbsolutePath()), message, e);
 				}
 		}
@@ -121,7 +123,8 @@ public void move(File source, File destination, boolean force, IProgressMonitor 
 					// couldn't delete the source so remove the destination
 					// and throw an error
 					Workspace.clear(destination);
-					throw new ResourceException(new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, "Could not remove source file: " + source));
+					String message = Policy.bind("couldnotDelete", source.getAbsolutePath());
+					throw new ResourceException(new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, new Path(source.getAbsolutePath()), message, null));
 				} else {
 					// source exists but destination doesn't so try to copy below
 				}
@@ -131,7 +134,8 @@ public void move(File source, File destination, boolean force, IProgressMonitor 
 					return;
 				} else {
 					// neither the source nor the destination exist. this is REALLY bad
-					throw new ResourceException(new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, "Failed to move: " + source + " to: " + destination));
+					String message = Policy.bind("failedMove", source.getAbsolutePath(), destination.getAbsolutePath());
+					throw new ResourceException(new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, new Path(source.getAbsolutePath()), message, null));
 				}
 			}
 		} 
@@ -144,7 +148,8 @@ public void move(File source, File destination, boolean force, IProgressMonitor 
 				Workspace.clear(source);
 			else {
 				Workspace.clear(destination);
-				throw new ResourceException(new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, "Could not move " + source + " to " + destination));
+				String message = Policy.bind("couldnotMove", source.getAbsolutePath());
+				throw new ResourceException(new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, new Path(source.getAbsolutePath()), message, null));
 			}
 		}
 		monitor.worked(1);
@@ -166,12 +171,12 @@ public InputStream read(File target) throws CoreException {
 	} catch (FileNotFoundException e) {
 		String message;
 		if (!target.exists())
-			message = Policy.bind("fileNotFound");
+			message = Policy.bind("fileNotFound", target.getAbsolutePath());
 		else
 			if (target.isDirectory())
-				message = Policy.bind("resourceFolder");
+				message = Policy.bind("notAFile", target.getAbsolutePath());
 			else
-				message = Policy.bind("couldNotRead");
+				message = Policy.bind("couldNotRead", target.getAbsolutePath());
 		throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, new Path(target.getAbsolutePath()), message, e);
 	}
 }
@@ -216,16 +221,18 @@ public void write(File target, InputStream content, boolean append, IProgressMon
 	} catch (IOException e) {
 		String message = null;
 		if (CoreFileSystemLibrary.isReadOnly(target.getAbsolutePath()))
-			message = "Could not write to read-only file: " + target.getAbsolutePath();
+			message = Policy.bind("couldNotWriteReadOnly", target.getAbsolutePath());
 		else
-			message = Policy.bind("couldNotWrite");
+			message = Policy.bind("couldNotWrite", target.getAbsolutePath());
 		throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, new Path(target.getAbsolutePath()), message, e);
 	}
 }
 public void writeFolder(File target) throws CoreException {
 	if (!target.exists())
 		target.mkdirs();
-	if (!target.isDirectory())
-		throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, new Path(target.getAbsolutePath()), Policy.bind("couldNotCreateFolder"), null);
+	if (!target.isDirectory()) {
+		String message = Policy.bind("couldNotCreateFolder", target.getAbsolutePath());
+		throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, new Path(target.getAbsolutePath()), message, null);
+	}
 }
 }

@@ -1,11 +1,11 @@
 package org.eclipse.core.internal.localstore;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.internal.resources.ResourceStatus;
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Platform;
@@ -74,7 +74,7 @@ public static long getStat(String fileName) {
 }
 private static void logMissingNativeLibrary(UnsatisfiedLinkError e) {
 	String libName = System.mapLibraryName(LIBRARY_NAME);
-	String message = "Could not find library " + libName;
+	String message = Policy.bind("couldNotLoadLibrary", libName);
 	ResourceStatus status = new ResourceStatus(IResourceStatus.WARNING, null, message, e);
 	ResourcesPlugin.getPlugin().getLog().log(status);
 }
