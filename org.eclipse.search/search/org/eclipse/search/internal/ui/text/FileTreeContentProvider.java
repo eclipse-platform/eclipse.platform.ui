@@ -36,7 +36,7 @@ public class FileTreeContentProvider extends FileContentProvider implements ITre
 	}
 	
 
-	protected void initialize(FileSearchResult result) {
+	protected synchronized void initialize(FileSearchResult result) {
 		super.initialize(result);
 		fChildrenMap= new HashMap();
 		Object[] elements= result.getElements();
@@ -120,7 +120,7 @@ public class FileTreeContentProvider extends FileContentProvider implements ITre
 		return getChildren(element).length > 0;
 	}
 
-	public void elementsChanged(Object[] updatedElements) {
+	public synchronized void elementsChanged(Object[] updatedElements) {
 		for (int i= 0; i < updatedElements.length; i++) {
 			if (fResult.getMatchCount(updatedElements[i]) > 0)
 				insert(updatedElements[i], true);
@@ -131,7 +131,7 @@ public class FileTreeContentProvider extends FileContentProvider implements ITre
 	}
 	
 	public void clear() {
-		fChildrenMap.clear();
+		initialize(fResult);
 		fTreeViewer.refresh();
 	}
 }
