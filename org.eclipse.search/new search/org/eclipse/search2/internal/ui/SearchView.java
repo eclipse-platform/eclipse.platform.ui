@@ -216,6 +216,9 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	}
 	
 	public void showSearchResult(ISearchResult search) {
+		if (search != null) {
+			InternalSearchUI.getInstance().getSearchManager().touch(search.getQuery());
+		}
 		ISearchResultPage page= null;
 		if (search != null) {
 			page= fSearchViewPageService.getExtensionObject(search, ISearchResultPage.class);

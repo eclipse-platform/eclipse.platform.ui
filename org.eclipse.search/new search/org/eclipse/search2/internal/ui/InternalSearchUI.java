@@ -45,6 +45,8 @@ import org.eclipse.search.internal.ui.util.ExceptionHandler;
 import org.eclipse.search2.internal.ui.text.PositionTracker;
 
 public class InternalSearchUI {
+	private static final int HISTORY_COUNT= 10;
+	
 	//The shared instance.
 	private static InternalSearchUI plugin;
 	private HashMap fSearchJobs;
@@ -131,7 +133,7 @@ public class InternalSearchUI {
 	public boolean runSearchInBackground(ISearchQuery query) {
 		Assert.isTrue(fSearchJobs.get(query) == null);
 		
-		getSearchManager().addQuery(query);
+		addQuery(query);
 		
 		if (isQueryRunning(query))
 			return false;
@@ -148,7 +150,7 @@ public class InternalSearchUI {
 
 	public IStatus runSearchInForeground(IRunnableContext context, final ISearchQuery query) {
 		Assert.isTrue(fSearchJobs.get(query) == null);
-		getSearchManager().addQuery(query);
+		addQuery(query);
 		SearchJobRecord sjr= new SearchJobRecord(query, false);
 		fSearchJobs.put(query, sjr);
 		
@@ -295,6 +297,9 @@ public class InternalSearchUI {
 	}
 
 	public void addQuery(ISearchQuery query) {
+		while (getSearchManager().getQueries().length >= HISTORY_COUNT) {
+			removeQuery(getSearchManager().getOldestQuery());
+		}
 		getSearchManager().addQuery(query);
 	}
 

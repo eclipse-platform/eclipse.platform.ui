@@ -55,7 +55,10 @@ class SearchDropDownAction extends Action implements IMenuCreator {
 	}
 
 	public Menu getMenu(Control parent) {
+		ISearchQuery currentQuery= null;
 		ISearchResult currentSearch= fSearchView.getCurrentSearchResult();
+		if (currentSearch != null)
+			currentQuery= currentSearch.getQuery();
 		disposeMenu();
 		
 		fMenu= new Menu(parent);
@@ -68,7 +71,7 @@ class SearchDropDownAction extends Action implements IMenuCreator {
 			if (InternalSearchUI.getInstance().isQueryRunning(search.getQuery()))
 				label= label+ SearchMessages.getString("SearchDropDownAction.running.message"); //$NON-NLS-1$
 			ShowSearchAction action= new ShowSearchAction(fSearchView, search, label, image, tooltip );
-			if (searches[i].equals(currentSearch))
+			if (searches[i].equals(currentQuery))
 				action.setChecked(true);
 			addActionToMenu(fMenu, action);
 		}

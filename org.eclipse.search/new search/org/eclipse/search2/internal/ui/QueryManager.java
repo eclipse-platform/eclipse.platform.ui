@@ -21,12 +21,14 @@ import org.eclipse.search.ui.ISearchQuery;
 
 class QueryManager {
 	private List fQueries;
+	private List fLRU;
 	private List fListeners;
 	public QueryManager() {
 		super();
 		// an ArrayList should be plenty fast enough (few searches).
 		fQueries= new ArrayList();
 		fListeners= new ArrayList();
+		fLRU= new ArrayList();
 	}
 	synchronized ISearchQuery[] getQueries() {
 		ISearchQuery[] result= new ISearchQuery[fQueries.size()];
@@ -36,6 +38,7 @@ class QueryManager {
 	void removeQuery(ISearchQuery query) {
 		synchronized (fQueries) {
 			fQueries.remove(query);
+			fLRU.remove(query);
 		}
 		fireRemoved(query);
 	}
@@ -45,6 +48,7 @@ class QueryManager {
 			if (fQueries.contains(query))
 				return;
 			fQueries.add(0, query);
+			fLRU.add(0, query);
 		}
 		fireAdded(query);
 	}
@@ -114,6 +118,7 @@ class QueryManager {
 		synchronized (fQueries) {
 			copiedSearches.addAll(fQueries);
 			fQueries.clear();
+			fLRU.clear();
 			Iterator iter= copiedSearches.iterator();
 			while (iter.hasNext()) {
 				ISearchQuery element= (ISearchQuery) iter.next();
@@ -128,6 +133,19 @@ class QueryManager {
 
 	void queryStarting(ISearchQuery query) {
 		fireStarting(query);
+	}
+	
+	void touch(ISearchQuery query) {
+		if (fLRU.contains(query)) {
+			fLRU.remove(query);
+			fLRU.add(0, query);
+		}
+	}
+	
+	ISearchQuery getOldestQuery() {
+		if (fLRU.size() > 0)
+			return (ISearchQuery) fLRU.get(fLRU.size()-1);
+		return null;
 	}
 
 }
