@@ -68,8 +68,9 @@ abstract class MergeAction extends Action {
 		for (int i = 0; i < nodes.length; i++) {
 			if (nodes[i] instanceof ITeamNode) {
 				ITeamNode node = (ITeamNode)nodes[i];
-				if (isMatchingKind(node.getKind())) 
+				if (isEnabled(node)) {
 					return true;
+				}
 			} else {
 				if (nodes[i] instanceof IDiffContainer)
 					if (isEnabled(((IDiffContainer)nodes[i]).getChildren()))
@@ -79,8 +80,8 @@ abstract class MergeAction extends Action {
 		return false;
 	}
 
-	protected abstract boolean isMatchingKind(int kind);
-
+	protected abstract boolean isEnabled(ITeamNode node);
+	
 	/**
 	 * Perform the sychronization operation.
 	 */
