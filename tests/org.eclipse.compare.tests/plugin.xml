@@ -15,7 +15,6 @@
    <requires>
       <import plugin="org.junit"/>
       <import plugin="org.eclipse.compare"/>
-      <import plugin="org.eclipse.core.runtime.compatibility"/>
       <import plugin="org.eclipse.jface.text"/>
       <import plugin="org.eclipse.jface"/>
       <import plugin="org.eclipse.jdt.junit"/>
