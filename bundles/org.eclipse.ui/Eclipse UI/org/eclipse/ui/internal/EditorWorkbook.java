@@ -507,9 +507,14 @@ public void reorderTab(EditorPane pane, int x, int y) {
 	// do nothing if already before target tab
 	int sourceIndex = tabFolder.indexOf(sourceTab);
 	int targetIndex = tabFolder.indexOf(targetTab);
+	
 	if (sourceIndex == targetIndex - 1)
 		return;
-
+		
+	//Source is going to be dispose so the target index will change.
+	if (sourceIndex < targetIndex)
+		targetIndex--;
+		
 	reorderTab(pane, sourceTab, targetIndex);
 }
 /**
