@@ -187,7 +187,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 					file.createNewFile();
 				}
 				FileOutputStream stream = new FileOutputStream(file);
-				stream.write(xml.getBytes());
+				stream.write(xml.getBytes("UTF8"));
 				stream.close();
 				if (added) {
 					getLaunchManager().launchConfigurationAdded(new LaunchConfiguration(getLocation()));
