@@ -266,8 +266,9 @@ public class TagSelectionDialog extends Dialog {
 		result.getTree().addMouseListener(new MouseAdapter() {
 			public void mouseDoubleClick(MouseEvent e) {
 				IStructuredSelection selection = (IStructuredSelection)tagTree.getSelection();
-				if (!selection.isEmpty())
+				if (!selection.isEmpty() && (selection.getFirstElement() instanceof TagElement)) {
 					okPressed();
+				}
 			}
 		});
 		result.setSorter(new RepositorySorter());
