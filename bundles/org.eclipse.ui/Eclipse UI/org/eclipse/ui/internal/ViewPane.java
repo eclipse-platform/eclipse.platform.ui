@@ -180,7 +180,13 @@ public void createControl(Composite parent) {
 	
 	// Only include the ISV toolbar and the content in the tab list.
 	// All actions on the System toolbar should be accessible on the pane menu.
-	control.setTabList(new Control[] { isvToolBar, viewToolBar, control.getContent() });
+	if (control.getContent() == null) {
+		// content can be null if view creation failed
+		control.setTabList(new Control[] { isvToolBar, viewToolBar });
+	}
+	else {
+		control.setTabList(new Control[] { isvToolBar, viewToolBar, control.getContent() });
+	}
 	
 	Platform.run(new SafeRunnableAdapter() {
 		public void run() { 
