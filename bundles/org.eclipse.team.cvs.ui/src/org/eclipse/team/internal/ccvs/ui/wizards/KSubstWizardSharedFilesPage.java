@@ -40,7 +40,7 @@ public class KSubstWizardSharedFilesPage extends CVSWizardPage {
 		Composite top = new Composite(parent, SWT.NONE);
 		top.setLayout(new GridLayout());
 		setControl(top);
-		createWrappingLabel(top, Policy.bind("KSubstWizardSharedFilesPage.contents"), 0, LABEL_WIDTH_HINT); //$NON-NLS-1$
+		createWrappingLabel(top, Policy.bind("KSubstWizardSharedFilesPage.contents"), 0); //$NON-NLS-1$
 
 		// set F1 help
 		WorkbenchHelp.setHelp(top, IHelpContextIds.KEYWORD_SUBSTITUTION_SHARED_PAGE);

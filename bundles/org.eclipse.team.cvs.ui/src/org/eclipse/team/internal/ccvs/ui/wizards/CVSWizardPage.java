@@ -5,8 +5,6 @@ package org.eclipse.team.internal.ccvs.ui.wizards;
  * All Rights Reserved.
  */
 
-import java.util.Collection;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -14,6 +12,7 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -22,8 +21,9 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.team.internal.ccvs.ui.ResizableWizardDialog;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
 
 /**
@@ -51,6 +51,17 @@ public abstract class CVSWizardPage extends WizardPage {
 	 */
 	public CVSWizardPage(String pageName, String title, ImageDescriptor titleImage) {
 		super(pageName, title, titleImage);
+	}
+	/**
+	 * CVSWizardPage constructor comment.
+	 * @param pageName  the name of the page
+	 * @param title  the title of the page
+	 * @param titleImage  the image for the page
+	 * @param description the description of the page
+	 */
+	public CVSWizardPage(String pageName, String title, ImageDescriptor titleImage, String description) {
+		super(pageName, title, titleImage);
+		setDescription(description);
 	}
 	/**
 	 * Creates a new checkbox instance and sets the default layout data.
@@ -142,18 +153,23 @@ public abstract class CVSWizardPage extends WizardPage {
 	 * @param widthHint  the nominal width of the label
 	 * @return the new label
 	 */
-	protected Label createWrappingLabel(Composite parent, String text, int indent, int widthHint) {
+	protected Label createWrappingLabel(Composite parent, String text, int indent) {
+		return createWrappingLabel(parent, text, indent, 1);
+	}
+	
+	protected Label createWrappingLabel(Composite parent, String text, int indent, int horizontalSpan) {
 		Label label = new Label(parent, SWT.LEFT | SWT.WRAP);
 		label.setText(text);
 		GridData data = new GridData();
-		data.horizontalSpan = 1;
+		data.horizontalSpan = horizontalSpan;
 		data.horizontalAlignment = GridData.FILL;
 		data.horizontalIndent = indent;
 		data.grabExcessHorizontalSpace = true;
-		data.widthHint = widthHint;
+		data.widthHint = LABEL_WIDTH_HINT;
 		label.setLayoutData(data);
 		return label;
 	}
+	
 	/**
 	 * Create a text field specific for this application
 	 *

@@ -82,7 +82,7 @@ public class KSubstWizardSelectionPage extends CVSWizardPage {
 		createWrappingLabel(top, Policy.bind("KSubstWizardSelectionPage.automaticLabel", //$NON-NLS-1$
 			Command.KSUBST_BINARY.getLongDisplayText(),
 			CVSProviderPlugin.getPlugin().getDefaultTextKSubstOption().getLongDisplayText()),
-			LABEL_INDENT_WIDTH, LABEL_WIDTH_HINT);
+			LABEL_INDENT_WIDTH);
 
 		// Binary
 		binaryRadioButton = createRadioButton(top, Policy.bind("KSubstWizardSelectionPage.binaryButton"), 1); //$NON-NLS-1$

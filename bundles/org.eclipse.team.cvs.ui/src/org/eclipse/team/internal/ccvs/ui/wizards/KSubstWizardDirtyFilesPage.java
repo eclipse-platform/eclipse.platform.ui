@@ -43,7 +43,7 @@ public class KSubstWizardDirtyFilesPage extends CVSWizardPage {
 		// set F1 help
 		WorkbenchHelp.setHelp(top, IHelpContextIds.KEYWORD_SUBSTITUTION_CHANGED_PAGE);
 			
-		createWrappingLabel(top, Policy.bind("KSubstWizardDirtyFilesPage.contents"), 0, LABEL_WIDTH_HINT); //$NON-NLS-1$
+		createWrappingLabel(top, Policy.bind("KSubstWizardDirtyFilesPage.contents"), 0); //$NON-NLS-1$
 		
 		includeDirtyFilesButton = new Button(top, SWT.CHECK);
 		includeDirtyFilesButton.setText(Policy.bind("KSubstWizardDirtyFilesPage.includeDirtyFiles")); //$NON-NLS-1$

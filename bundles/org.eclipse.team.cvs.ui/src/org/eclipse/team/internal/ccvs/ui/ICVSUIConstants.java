@@ -95,6 +95,8 @@ public interface ICVSUIConstants {
 	public final String IMG_WIZBAN_DIFF = "wizban/createpatch_wizban.gif";   //$NON-NLS-1$
 	public final String IMG_WIZBAN_KEYWORD = "wizban/keywordsub_wizban.gif"; //$NON-NLS-1$
 	public final String IMG_WIZBAN_NEW_LOCATION = "wizban/newlocation_wizban.gif"; //$NON-NLS-1$
+	// XXX checkout is same as ne connect. If it changes, it must be initialized
+	public final String IMG_WIZBAN_CHECKOUT = "wizban/newconnect_wizban.gif";	 //$NON-NLS-1$
 	
 	// Properties
 	public final String PROP_NAME = "cvs.name"; //$NON-NLS-1$
