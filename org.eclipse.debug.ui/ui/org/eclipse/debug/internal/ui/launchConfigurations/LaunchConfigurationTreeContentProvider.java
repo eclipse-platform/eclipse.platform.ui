@@ -67,13 +67,7 @@ public class LaunchConfigurationTreeContentProvider implements ITreeContentProvi
 		} else if (parentElement instanceof ILaunchConfigurationType) {
 			try {
 				ILaunchConfigurationType type = (ILaunchConfigurationType)parentElement;
-				ILaunchConfiguration[] allConfigs = getLaunchManager().getLaunchConfigurations(type);
-				ArrayList filteredConfigs = new ArrayList(allConfigs.length);
-				for (int i = 0; i < allConfigs.length; i++) {
-					ILaunchConfiguration config = allConfigs[i];
-					filteredConfigs.add(config);
-				}
-				return filteredConfigs.toArray();
+				return getLaunchManager().getLaunchConfigurations(type);
 			} catch (CoreException e) {
 				DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Error_19"), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.An_exception_occurred_while_retrieving_launch_configurations_20"), e); //$NON-NLS-1$ //$NON-NLS-2$
 			}
