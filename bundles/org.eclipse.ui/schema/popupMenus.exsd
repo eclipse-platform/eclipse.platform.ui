@@ -157,6 +157,13 @@ selection must subclass or implement.
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="definitionId" type="string">
+            <annotation>
+               <documentation>
+                  This specifies the command that this action is handling.  This is used to decide which key binding to display in the pop-up menu.
+               </documentation>
+            </annotation>
+         </attribute>
          <attribute name="menubarPath" type="string">
             <annotation>
                <documentation>
