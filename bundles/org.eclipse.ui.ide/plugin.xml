@@ -212,13 +212,6 @@
       </factory>
    </extension>
    <extension
-         point="org.eclipse.ui.markerUpdaters">
-      <updater
-            class="org.eclipse.ui.texteditor.BasicMarkerUpdater"
-            id="org.eclipse.ui.texteditor.BasicMarkerUpdater">
-      </updater>
-   </extension>
-   <extension
          point="org.eclipse.ui.workingSets">
       <workingSet
             name="%WorkingSets.resource"
