@@ -135,13 +135,13 @@ public class EditorWorkbook extends LayoutPart implements ILayoutContainer {
         
 		public void addSystemActions(IMenuManager menuManager) {
 			pinEditorItem = new SystemMenuPinEditor((EditorPane)current);
-			appendToGroupIfPossible(menuManager, "misc", new UpdatingActionContributionItem(pinEditorItem));
+			appendToGroupIfPossible(menuManager, "misc", new UpdatingActionContributionItem(pinEditorItem)); //$NON-NLS-1$
 			sizeItem = new SystemMenuSize((PartPane)current);
-			appendToGroupIfPossible(menuManager, "size", sizeItem);
+			appendToGroupIfPossible(menuManager, "size", sizeItem); //$NON-NLS-1$
 			closeAllOthersItem = new SystemMenuCloseOtherEditors((EditorPane)current);
-			appendToGroupIfPossible(menuManager, "close", new UpdatingActionContributionItem(closeAllOthersItem));
+			appendToGroupIfPossible(menuManager, "close", new UpdatingActionContributionItem(closeAllOthersItem)); //$NON-NLS-1$
 			closeAllItem = new SystemMenuCloseAllEditors((EditorPane)current);
-			appendToGroupIfPossible(menuManager, "close", new UpdatingActionContributionItem(closeAllItem));
+			appendToGroupIfPossible(menuManager, "close", new UpdatingActionContributionItem(closeAllItem)); //$NON-NLS-1$
 		}
     };
     

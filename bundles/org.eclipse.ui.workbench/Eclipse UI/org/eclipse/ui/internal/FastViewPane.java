@@ -146,9 +146,9 @@ public class FastViewPane {
 		}
 		
 		public void addSystemActions(IMenuManager menuManager) {
-			appendToGroupIfPossible(menuManager, "misc", new SystemMenuFastViewOrientation(currentPane));
-			appendToGroupIfPossible(menuManager, "misc", new UpdatingActionContributionItem(fastViewAction));
-			appendToGroupIfPossible(menuManager, "size", new SystemMenuSizeFastView(FastViewPane.this));
+			appendToGroupIfPossible(menuManager, "misc", new SystemMenuFastViewOrientation(currentPane)); //$NON-NLS-1$
+			appendToGroupIfPossible(menuManager, "misc", new UpdatingActionContributionItem(fastViewAction)); //$NON-NLS-1$
+			appendToGroupIfPossible(menuManager, "size", new SystemMenuSizeFastView(FastViewPane.this)); //$NON-NLS-1$
 		}
 		
 	};

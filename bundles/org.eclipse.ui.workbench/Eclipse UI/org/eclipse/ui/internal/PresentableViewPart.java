@@ -179,8 +179,8 @@ public class PresentableViewPart implements IPresentablePart {
 			
 			substr = substr.trim();
 			
-			if (substr.startsWith("(")) {
-				int end = substr.indexOf(")", 1);
+			if (substr.startsWith("(")) { //$NON-NLS-1$
+				int end = substr.indexOf(")", 1); //$NON-NLS-1$
 				
 				if (end != -1) {
 					return substr.substring(1, end);

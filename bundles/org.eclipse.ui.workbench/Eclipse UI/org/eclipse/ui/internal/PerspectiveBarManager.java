@@ -117,14 +117,14 @@ public class PerspectiveBarManager extends ToolBarManager {
 			menuItem.setText(tool.getText());
 			menuItem.setImage(tool.getImage());
 			
-			menuItem.setData("IContributionItem", tool.getData());
+			menuItem.setData("IContributionItem", tool.getData()); //$NON-NLS-1$
 
 			menuItem.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					//rotate the selected item in and the other items right
 					// don't touch the "Open" item
 					MenuItem menuItem = (MenuItem)e.widget;
-					PerspectiveBarContributionItem contribItem = (PerspectiveBarContributionItem)menuItem.getData("IContributionItem");
+					PerspectiveBarContributionItem contribItem = (PerspectiveBarContributionItem)menuItem.getData("IContributionItem"); //$NON-NLS-1$
 					PerspectiveBarContributionItem newItem = new PerspectiveBarContributionItem(contribItem.getPerspective(), contribItem.getPage());
 					remove(contribItem);
 					contribItem.dispose();

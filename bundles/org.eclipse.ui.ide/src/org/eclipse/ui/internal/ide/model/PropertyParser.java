@@ -258,6 +258,6 @@ public class PropertyParser extends DefaultHandler implements LexicalHandler {
      */
     public InputSource resolveEntity(String publicId, String systemId)
             throws SAXException {
-        return new InputSource(new StringReader(""));
+        return new InputSource(new StringReader("")); //$NON-NLS-1$
     }
 }

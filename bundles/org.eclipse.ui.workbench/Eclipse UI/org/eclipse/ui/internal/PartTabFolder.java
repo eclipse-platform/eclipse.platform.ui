@@ -135,9 +135,9 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
 		}
 		
 		public void addSystemActions(IMenuManager menuManager) {
-			appendToGroupIfPossible(menuManager, "misc", new UpdatingActionContributionItem(fastViewAction));
+			appendToGroupIfPossible(menuManager, "misc", new UpdatingActionContributionItem(fastViewAction)); //$NON-NLS-1$
 			sizeItem = new SystemMenuSize((PartPane)current);
-			appendToGroupIfPossible(menuManager, "size", sizeItem);
+			appendToGroupIfPossible(menuManager, "size", sizeItem); //$NON-NLS-1$
 		}
 		
     };

@@ -151,7 +151,7 @@ import org.eclipse.ui.internal.registry.ViewDescriptor;
 	/**
 	 * Separates a view's primary id from its secondary id in view key strings.
 	 */
-	static final String ID_SEP = ":";
+	static final String ID_SEP = ":"; //$NON-NLS-1$
 	
 	/**
      * Returns a string representing a view with the given id and (optional) secondary id,

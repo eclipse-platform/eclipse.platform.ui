@@ -870,13 +870,13 @@ protected float getDockingRatio(LayoutPart dragged, LayoutPart target) {
  */
 public void describeLayout(StringBuffer buf) {
 	if (isZoomed()) {
-		buf.append("zoomed (");
+		buf.append("zoomed ("); //$NON-NLS-1$
 		root.describeLayout(buf);
-		buf.append(")");
+		buf.append(")"); //$NON-NLS-1$
 	} else {
-		buf.append("layout (");
+		buf.append("layout ("); //$NON-NLS-1$
 		root.describeLayout(buf);
-		buf.append(")");
+		buf.append(")"); //$NON-NLS-1$
 	}
 }
 

@@ -739,8 +739,8 @@ public class CommandContributionItem
 	    try {
 	        Map attributeValuesByName = command.getAttributeValuesByName();
 
-	        if (attributeValuesByName.containsKey("enabled")
-	                && !Boolean.TRUE.equals(attributeValuesByName.get("enabled")))
+	        if (attributeValuesByName.containsKey("enabled") //$NON-NLS-1$
+	                && !Boolean.TRUE.equals(attributeValuesByName.get("enabled"))) //$NON-NLS-1$
 	            return false;
 	        else
 	            return true;

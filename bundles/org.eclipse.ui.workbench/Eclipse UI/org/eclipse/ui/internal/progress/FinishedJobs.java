@@ -156,7 +156,7 @@ class FinishedJobs {
    	
         synchronized (keptjobinfos) {
 	        if (keptjobinfos.remove(jte)) {
-	            if (NewProgressViewer.DEBUG) System.err.println("FinishedJobs: sucessfully removed job");
+	            if (NewProgressViewer.DEBUG) System.err.println("FinishedJobs: sucessfully removed job"); //$NON-NLS-1$
 	
 	            // delete all elements that have jte as their direct or indirect parent
 	            JobTreeElement jtes[] = (JobTreeElement[]) keptjobinfos.toArray(new JobTreeElement[keptjobinfos.size()]);
@@ -182,7 +182,7 @@ class FinishedJobs {
     }
     
     void refresh() {
-        if (NewProgressViewer.DEBUG) System.err.println("FinishedJobs: refresh");
+        if (NewProgressViewer.DEBUG) System.err.println("FinishedJobs: refresh"); //$NON-NLS-1$
         Object l[] = listeners.getListeners();
         for (int i = 0; i < l.length; i++) {
             KeptJobsListener jv = (KeptJobsListener) l[i];

@@ -330,7 +330,7 @@ public void describeLayout(StringBuffer buf) {
 			LayoutPart next = children[idx];
 			if (!(next instanceof PartPlaceholder)) {
 				if (visibleChildren > 0) {
-					buf.append(", ");
+					buf.append(", "); //$NON-NLS-1$
 				}
 				
 				next.describeLayout(buf);

@@ -645,15 +645,15 @@ public void describeLayout(StringBuffer buf) {
 		return;
 	}
 	
-	buf.append("(");
+	buf.append("("); //$NON-NLS-1$
 	children[0].describeLayout(buf);
-	buf.append(")");
+	buf.append(")"); //$NON-NLS-1$
 	
-	buf.append(getSash().isVertical() ? "|" : "-");
+	buf.append(getSash().isVertical() ? "|" : "-"); //$NON-NLS-1$ //$NON-NLS-2$
 	
-	buf.append("(");
+	buf.append("("); //$NON-NLS-1$
 	children[1].describeLayout(buf);
-	buf.append(")");
+	buf.append(")"); //$NON-NLS-1$
 }
 
 }

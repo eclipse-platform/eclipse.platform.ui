@@ -274,18 +274,18 @@ public class BasicStackPresentation extends StackPresentation {
 	 */
 	private void populateSystemMenu(IMenuManager systemMenuManager) {
 
-		systemMenuManager.add(new GroupMarker("misc"));
-		systemMenuManager.add(new GroupMarker("restore"));
+		systemMenuManager.add(new GroupMarker("misc")); //$NON-NLS-1$
+		systemMenuManager.add(new GroupMarker("restore")); //$NON-NLS-1$
 		systemMenuManager.add(new UpdatingActionContributionItem(new SystemMenuRestore(getSite())));
 		
 
 		systemMenuManager.add(new SystemMenuMove(getSite(), getPaneName()));
-		systemMenuManager.add(new GroupMarker("size"));
-		systemMenuManager.add(new GroupMarker("state"));
+		systemMenuManager.add(new GroupMarker("size")); //$NON-NLS-1$
+		systemMenuManager.add(new GroupMarker("state")); //$NON-NLS-1$
 		systemMenuManager.add(new UpdatingActionContributionItem(new SystemMenuMinimize(getSite())));
 		
 		systemMenuManager.add(new UpdatingActionContributionItem(new SystemMenuMaximize(getSite())));
-		systemMenuManager.add(new Separator("close"));
+		systemMenuManager.add(new Separator("close")); //$NON-NLS-1$
 		systemMenuManager.add(new UpdatingActionContributionItem(new SystemMenuClose(getSite())));
 		
 		getSite().addSystemActions(systemMenuManager);
@@ -432,7 +432,7 @@ public class BasicStackPresentation extends StackPresentation {
 	
 	protected String getCurrentTitle() {
 		if (current == null) {
-			return "";
+			return ""; //$NON-NLS-1$
 		} 
 		
 		String result = current.getTitleStatus();
