@@ -23,16 +23,18 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public interface IElementCollector {
 
 	/**
-	 * Add element to the IElementCollector.
-	 * @param element
-	 * @param monitor
+	 * Add the element to the IElementCollector. Send any progress
+	 * information to monitor.
+	 * @param element The element being added
+	 * @param monitor The monitor to send updates to.
 	 */
 	public void add(Object element,IProgressMonitor monitor);
 
 	/**
-	 * Add elements to the IElementCollector.
-	 * @param element
-	 * @param monitor
+	 * Add the elements to the IElementCollector. Send any progress
+	 * information to monitor.
+	 * @param elements The elements being added
+	 * @param monitor The monitor to send updates to.
 	 */
 	public void add(Object[] elements, IProgressMonitor monitor);
 	
