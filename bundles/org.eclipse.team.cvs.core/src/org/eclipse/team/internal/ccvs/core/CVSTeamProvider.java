@@ -1285,7 +1285,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 			}
 		};
 		try {
-			ResourcesPlugin.getWorkspace().run(workspaceRunnable, getProject(), Policy.monitorFor(monitor));
+			ResourcesPlugin.getWorkspace().run(workspaceRunnable, getProject(), 0, Policy.monitorFor(monitor));
 		} catch (CoreException e) {
 			if (exception[0] == null) {
 				throw CVSException.wrapException(e);

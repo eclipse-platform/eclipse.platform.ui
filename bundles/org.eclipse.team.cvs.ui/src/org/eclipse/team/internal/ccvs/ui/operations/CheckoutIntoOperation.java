@@ -127,7 +127,7 @@ public class CheckoutIntoOperation extends CheckoutOperation {
 				public void run(IProgressMonitor monitor) throws CoreException {
 					result[0] = checkout(folder, getLocalFolder(), isRecursive(), monitor);
 				}
-			}, getSchedulingRule(), monitor);
+			}, getSchedulingRule(), 0, monitor);
 		} catch (CoreException e) {
 			result[0] = CVSException.wrapException(e).getStatus();
 		}
