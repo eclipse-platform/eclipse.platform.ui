@@ -92,6 +92,16 @@ public class LaunchShortcutExtension implements ILaunchShortcut {
 	}	
 	
 	/**
+	 * Returns the category of this shortcut
+	 *
+	 * @return the category of this shortcut, or <code>null</code> if not
+	 *  specified
+	 */
+	public String getCategory() {
+		return getConfigurationElement().getAttribute("category"); //$NON-NLS-1$
+	}	
+	
+	/**
 	 * Returns the image for this shortcut, or <code>null</code> if none
 	 * 
 	 * @return the image for this shortcut, or <code>null</code> if none

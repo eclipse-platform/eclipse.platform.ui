@@ -15,13 +15,7 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.ILaunchHistoryChangedListener;
-import org
-	.eclipse
-	.debug
-	.internal
-	.ui
-	.launchConfigurations
-	.LaunchConfigurationManager;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -276,6 +270,7 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 			addSeparator(menu);
 		}
 
+		addToMenu(menu, new LaunchAsAction(fLaunchGroupIdentifier), -1);
 		addToMenu(menu, new OpenLaunchDialogAction(fLaunchGroupIdentifier), -1);
 	}
 	

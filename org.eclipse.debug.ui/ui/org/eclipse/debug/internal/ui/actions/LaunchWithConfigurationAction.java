@@ -107,13 +107,13 @@ public abstract class LaunchWithConfigurationAction extends Action implements IM
 		List shortcuts = null;
 		String activePerspID = getActivePerspectiveID();
 		if (activePerspID != null) {
-			shortcuts = LaunchConfigurationManager.getDefault().getLaunchShortcuts(activePerspID);
+			shortcuts = LaunchConfigurationManager.getDefault().getLaunchShortcuts(activePerspID, null);
 		}
 		
 		// If NO shortcuts are listed in the current perspective, add ALL shortcuts
 		// to avoid an empty cascading menu
 		if (shortcuts == null || shortcuts.isEmpty()) {
-			shortcuts = LaunchConfigurationManager.getDefault().getLaunchShortcuts();
+			shortcuts = LaunchConfigurationManager.getDefault().getLaunchShortcuts(null);
 		}
 		
 		if (getCreatedMenu() != null) {

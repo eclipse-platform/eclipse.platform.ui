@@ -1,0 +1,200 @@
+package org.eclipse.debug.ui.actions;
+
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
+
+import java.util.Iterator;
+import java.util.List;
+
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.actions.ActionMessages;
+import org.eclipse.debug.internal.ui.actions.LaunchShortcutAction;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtension;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuCreator;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+
+/**
+ * A cascading sub-menu that shows all launch shortcuts pertinent to a
+ * launch group.
+ * 
+ * @since 2.1
+ */
+public class LaunchAsAction extends Action implements IMenuCreator {
+	
+	/**
+	 * Cascading menu 
+	 */
+	private Menu fCreatedMenu;
+	
+	/**
+	 * Launch group identifier 
+	 */
+	private String fLaunchGroupIdentifier;
+	
+	/**
+	 * Creates a cascading menu action to populate with shortcuts in the given
+	 * launch group.
+	 *  
+	 * @param launchGroupIdentifier launch group identifier
+	 */
+	public LaunchAsAction(String launchGroupIdentifier) {
+		super();
+		fLaunchGroupIdentifier = launchGroupIdentifier;
+		if (getMode().equals(ILaunchManager.DEBUG_MODE)) {
+			setText(ActionMessages.getString("LaunchAsAction.Debug_As_1")); //$NON-NLS-1$
+		} else {
+			setText(ActionMessages.getString("LaunchAsAction.Run_As_2")); //$NON-NLS-1$
+		}
+		setMenuCreator(this);
+	}
+	
+	/**
+	 * Returns the launch group associatd with this action.
+	 * 
+	 * @return the launch group associatd with this action
+	 */
+	private LaunchGroupExtension getLaunchGroup() {
+		return LaunchConfigurationManager.getDefault().getLaunchGroup(fLaunchGroupIdentifier);
+	}
+
+	/**
+	 * @see IAction#run()
+	 */
+	public void run() {
+		//do nothing, this action just creates a cascading menu.
+	}
+		
+	private void createAction(Menu parent, IAction action, int count) {
+		StringBuffer label= new StringBuffer();
+		//add the numerical accelerator
+		if (count < 10) {
+			label.append('&');
+			label.append(count);
+			label.append(' ');
+		}
+		label.append(action.getText());
+		action.setText(label.toString());
+		ActionContributionItem item= new ActionContributionItem(action);
+		item.fill(parent, -1);
+	}
+	
+	/**
+	 * @see IMenuCreator#dispose()
+	 */
+	public void dispose() {
+		if (getCreatedMenu() != null) {
+			getCreatedMenu().dispose();
+		}
+	}
+	
+	/**
+	 * @see IMenuCreator#getMenu(Control)
+	 */
+	public Menu getMenu(Control parent) {
+		return null;
+	}
+	
+	/**
+	 * @see IMenuCreator#getMenu(Menu)
+	 */
+	public Menu getMenu(Menu parent) {
+		
+		// Retrieve the current perspective and the registered shortcuts
+		List shortcuts = null;
+		String activePerspID = getActivePerspectiveID();
+		if (activePerspID != null) {
+			shortcuts = LaunchConfigurationManager.getDefault().getLaunchShortcuts(activePerspID, getCategory());
+		}
+		
+		// If NO shortcuts are listed in the current perspective, add ALL shortcuts
+		// to avoid an empty cascading menu
+		if (shortcuts == null || shortcuts.isEmpty()) {
+			shortcuts = LaunchConfigurationManager.getDefault().getLaunchShortcuts(getCategory());
+		}
+		
+		if (getCreatedMenu() != null) {
+			getCreatedMenu().dispose();
+		}
+		// Sort the applicable config types alphabetically and add them to the menu
+		setCreatedMenu(new Menu(parent));
+		
+		int menuCount = 1;
+		Iterator iter = shortcuts.iterator();
+		while (iter.hasNext()) {
+			LaunchShortcutExtension ext = (LaunchShortcutExtension) iter.next();
+			if (ext.getModes().contains(getMode())) {
+				populateMenu(ext, getCreatedMenu(), menuCount);
+				menuCount++;
+			}
+		}
+				
+		return getCreatedMenu();
+	}
+	
+	/**
+	 * Add the shortcut to the menu.
+	 */
+	private void populateMenu(LaunchShortcutExtension ext, Menu menu, int menuCount) {
+		LaunchShortcutAction action = new LaunchShortcutAction(getMode(), ext);
+		createAction(menu, action, menuCount);
+	}
+	
+	/**
+	 * Return the ID of the currently active perspective, or <code>null</code>
+	 * if there is none.
+	 */
+	private String getActivePerspectiveID() {
+		IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
+		if (window != null) {
+			IWorkbenchPage page = window.getActivePage();
+			if (page != null) {
+				IPerspectiveDescriptor persp = page.getPerspective();
+				if (persp != null) {
+					return persp.getId();
+				}
+			}
+		}
+		return null;
+	}
+		
+	/**
+	 * Returns the mode of this action - run or debug 
+	 * 
+	 * @return the mode of this action - run or debug
+	 */
+	private String getMode() {
+		return getLaunchGroup().getMode();
+	}
+	
+	/**
+	 * Returns the category of this action - possibly <code>null</code>
+	 *
+	 * @return the category of this action - possibly <code>null</code>
+	 */
+	private String getCategory() {
+		return getLaunchGroup().getCategory();
+	}
+	
+	private Menu getCreatedMenu() {
+		return fCreatedMenu;
+	}
+	
+	private void setCreatedMenu(Menu createdMenu) {
+		fCreatedMenu = createdMenu;
+	}
+}
+

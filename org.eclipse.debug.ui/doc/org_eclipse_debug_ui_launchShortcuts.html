@@ -26,17 +26,22 @@ editor.</p>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; modes&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; label&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; icon&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</tt>&gt;
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; icon&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED
+      category      CDATA #IMPLIED</tt>&gt;
 </pre>
 
 <ul>
-<li><code>id</code> specifies a unique identifier for this launch shortcut.</li>
-<li><code>modes</code> specifies a comma separated list of modes this shortcut supports.</li>
-<li><code>class</code> specifies the fully qualified name of a class which implements
- <code>org.eclipse.debug.ui.ILaunchShortcut</code>.</li>
-<li><code>label</code> specifies a translatable label used to render this shortcut.</li> 
-<li><code>icon</code> specifies a plug-in relative path to an image used to render this
- shortcut.</li> 
+  <li><code>id</code> specifies a unique identifier for this launch shortcut.</li>
+  <li><code>modes</code> specifies a comma separated list of modes this shortcut 
+    supports.</li>
+  <li><code>class</code> specifies the fully qualified name of a class which implements 
+    <code>org.eclipse.debug.ui.ILaunchShortcut</code>.</li>
+  <li><code>label</code> specifies a translatable label used to render this shortcut.</li>
+  <li><code>icon</code> specifies a plug-in relative path to an image used to 
+    render this shortcut.</li>
+  <li><font face="Courier New, Courier, mono">category</font> specifies the launch 
+    configuration type category this shortcut is applicable for. When unspecified, 
+    the category is null (default).</li>
 </ul>
 
 <pre>

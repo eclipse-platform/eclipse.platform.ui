@@ -451,6 +451,41 @@ public class LaunchConfigurationManager implements ILaunchListener {
 	}
 	
 	/**
+	 * Returns all launch shortcuts for the given category
+	 *
+	 * @return all launch shortcuts
+	 */
+	public List getLaunchShortcuts(String category) {
+		if (fLaunchShortcuts == null) {
+			loadLaunchShortcuts();
+		}
+		return filterShortcuts(fLaunchShortcuts, category);
+	}	
+	
+	/**
+	 * Return a list of filtered launch shortcuts, based on the given category.
+	 *  
+	 * @param unfiltered
+	 * @param category
+	 * @return List
+	 */
+	protected List filterShortcuts(List unfiltered, String category) {
+		List filtered = new ArrayList(unfiltered.size());
+		Iterator iter = unfiltered.iterator();
+		while (iter.hasNext()){
+			LaunchShortcutExtension extension = (LaunchShortcutExtension)iter.next();
+			if (category == null) {
+				if (extension.getCategory() == null) {
+					filtered.add(extension);
+				}
+			} else if (category.equals(extension.getCategory())){
+				filtered.add(extension);
+			}
+		}
+		return filtered;		
+	}
+	
+	/**
 	 * Returns all launch shortcuts defined for the given perspective,
 	 * or <code>null</code> if none
 	 * 
@@ -458,7 +493,7 @@ public class LaunchConfigurationManager implements ILaunchListener {
 	 * @return all launch shortcuts defined for the given perspective,
 	 * or <code>null</code> if none
 	 */
-	public List getLaunchShortcuts(String perpsective) {
+	public List getLaunchShortcuts(String perpsective, String category) {
 		if (fLaunchShortcutsByPerspective == null) {
 			Iterator shortcuts = getLaunchShortcuts().iterator();
 			fLaunchShortcutsByPerspective = new HashMap(10);
@@ -483,8 +518,12 @@ public class LaunchConfigurationManager implements ILaunchListener {
 				Collections.sort(list, new ShortcutComparator());
 			}
 		}
-		return (List)fLaunchShortcutsByPerspective.get(perpsective);
-
+		List list = (List)fLaunchShortcutsByPerspective.get(perpsective); 
+		if (list == null) {
+			return null;
+		} else {
+			return filterShortcuts(list, category);
+		}
 	}
 	
 	/**
