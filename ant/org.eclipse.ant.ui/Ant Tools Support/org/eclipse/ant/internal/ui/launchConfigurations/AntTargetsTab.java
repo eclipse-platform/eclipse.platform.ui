@@ -11,6 +11,7 @@
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
 
+import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,6 +27,7 @@ import org.eclipse.ant.internal.ui.model.AntUtil;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
 import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -34,6 +36,7 @@ import org.eclipse.debug.core.variables.LaunchVariableUtil;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.debug.ui.launchVariables.LaunchVariableContextManager;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -287,18 +290,41 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	}
 	
 	private TargetInfo[] getTargets() {
-		if (fAllTargets == null) {
+		if (fAllTargets == null || isDirty()) {
+			fAllTargets= null;
+			setDirty(false);
 			setErrorMessage(null);
 			MultiStatus status = new MultiStatus(IAntUIConstants.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
-			String expandedLocation = LaunchVariableUtil.expandVariables(fLocation, status, LaunchVariableContextManager.getDefault().getVariableContext());
+			final String expandedLocation = LaunchVariableUtil.expandVariables(fLocation, status, LaunchVariableContextManager.getDefault().getVariableContext());
 			if (expandedLocation != null && status.isOK()) {
+				final CoreException[] exceptions= new CoreException[1];
 				try {
-					String[] arguments = LaunchVariableUtil.parseStringIntoList(fLaunchConfiguration.getAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, (String) null));
-					fAllTargets = AntUtil.getTargets(expandedLocation, arguments, fLaunchConfiguration);
+					final String[] arguments = LaunchVariableUtil.parseStringIntoList(fLaunchConfiguration.getAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, (String) null));
+
+					IRunnableWithProgress operation= new IRunnableWithProgress() {
+						/* (non-Javadoc)
+						 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
+						 */
+						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+							try {
+								fAllTargets = AntUtil.getTargets(expandedLocation, arguments, fLaunchConfiguration);
+							} catch (CoreException ce) {
+								exceptions[0]= ce;
+							}
+						}
+					};
+					
+					getLaunchConfigurationDialog().run(false, false, operation);
 				} catch (CoreException ce) {
-					IStatus exceptionStatus= ce.getStatus();
+					exceptions[0]= ce;
+				} catch (InvocationTargetException e) {
+				} catch (InterruptedException e) {
+				}
+				
+				if (exceptions[0] != null) {
+					IStatus exceptionStatus= exceptions[0].getStatus();
 					IStatus[] children= exceptionStatus.getChildren();
-					StringBuffer message= new StringBuffer(ce.getMessage());
+					StringBuffer message= new StringBuffer(exceptions[0].getMessage());
 					for (int i = 0; i < children.length; i++) {
 						message.append(' ');
 						IStatus childStatus = children[i];
@@ -477,5 +503,12 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			return false;
 		}
 		return super.isValid(launchConfig);
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#setDirty(boolean)
+	 */
+	protected void setDirty(boolean dirty) {
+		//provide package visibility
+		super.setDirty(dirty);
 	}
 }

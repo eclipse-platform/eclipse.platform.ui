@@ -132,9 +132,7 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab implements I
 			antClasspathBlock.setAntTableInput(antURLs);
 			antClasspathBlock.setTablesEnabled(true);
 		}
-		if (!(configuration instanceof ILaunchConfigurationWorkingCopy)) {
-			updateTargetsTab();
-		}
+
 		toggleUseDefaultClasspath();
 	}
 
