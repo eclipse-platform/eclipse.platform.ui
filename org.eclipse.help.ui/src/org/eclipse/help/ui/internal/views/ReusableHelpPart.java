@@ -24,7 +24,6 @@ import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -79,8 +78,6 @@ public class ReusableHelpPart implements IHelpUIConstants {
 	private IStatusLineManager statusLineManager;
 
 	private IActionBars actionBars;
-
-	private MenuManager dropDownManager;
 
 	private abstract class BusyRunAction extends Action {
 		public BusyRunAction(String name) {
@@ -152,6 +149,8 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		private String id;
 
 		private String iconId;
+		
+		Action pageAction;
 
 		private int vspacing = verticalSpacing;
 
@@ -305,6 +304,8 @@ public class ReusableHelpPart implements IHelpUIConstants {
 						}
 					}
 				}
+				if (pageAction!=null)
+					pageAction.setChecked(visible);
 			}
 			if (bars != null) {
 				if (visible)
@@ -519,8 +520,8 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		this.actionBars = bars;
 		this.toolBarManager = toolBarManager;
 		this.statusLineManager = statusLineManager;
-		makeActions();
 		definePages();
+		makeActions();		
 	}
 
 	private void makeActions() {
@@ -587,6 +588,8 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		copyAction = new CopyAction();
 		copyAction.setText(HelpUIResources
 				.getString("ReusableHelpPart.copyAction.label")); //$NON-NLS-1$
+		if (actionBars!=null && actionBars.getMenuManager()!=null)
+			contributeToDropDownMenu(actionBars.getMenuManager());		
 	}
 
 	private void doBack() {
@@ -633,27 +636,6 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		manager.addMenuListener(listener);
 		Menu contextMenu = manager.createContextMenu(form.getForm());
 		form.getForm().setMenu(contextMenu);
-
-		ToolBarManager mng = (ToolBarManager) mform.getForm()
-				.getToolBarManager();
-		ToolBar toolBar = mng.createControl(form.getForm());
-		final ToolItem item = new ToolItem(toolBar, SWT.PUSH);
-		item.setImage(HelpUIResources
-				.getImage(IHelpUIConstants.IMAGE_VIEW_MENU));
-		item.setToolTipText("Other Pages");
-		toolBar.addMouseListener(new MouseAdapter() {
-			public void mouseDown(MouseEvent e) {
-				handleDropDown(e, item);
-			}
-		});
-		dropDownManager = new MenuManager();
-		IMenuListener dlistener = new IMenuListener() {
-			public void menuAboutToShow(IMenuManager manager) {
-				dropDownAboutToShow(dropDownManager);
-			}
-		};
-		dropDownManager.setRemoveAllWhenShown(true);
-		dropDownManager.addMenuListener(dlistener);
 	}
 
 	public HelpPartPage showPage(String id) {
@@ -679,15 +661,6 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		SearchPart part = (SearchPart) findPart(IHelpUIConstants.HV_FSEARCH);
 		if (part != null && phrase != null)
 			part.startSearch(phrase);
-	}
-
-	private void handleDropDown(MouseEvent e, ToolItem item) {
-		Menu menu = dropDownManager.createContextMenu(mform.getForm());
-		Rectangle itemBounds = item.getBounds();
-		Point p = item.getParent().toDisplay(itemBounds.x + itemBounds.width,
-				itemBounds.y + itemBounds.height);
-		menu.setLocation(p);
-		menu.setVisible(true);
 	}
 
 	private boolean flipPages(HelpPartPage oldPage, HelpPartPage newPage) {
@@ -761,10 +734,6 @@ public class ReusableHelpPart implements IHelpUIConstants {
 	}
 
 	public void dispose() {
-		if (dropDownManager != null) {
-			dropDownManager.dispose();
-			dropDownManager = null;
-		}
 		for (int i = 0; i < pages.size(); i++) {
 			HelpPartPage page = (HelpPartPage) pages.get(i);
 			page.dispose();
@@ -971,7 +940,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		manager.add(openInfoCenterAction);
 	}
 
-	private void dropDownAboutToShow(IMenuManager manager) {
+	private void contributeToDropDownMenu(IMenuManager manager) {
 		addPageAction(manager, IHelpUIConstants.HV_CONTEXT_HELP_PAGE);
 		addPageAction(manager, IHelpUIConstants.HV_ALL_TOPICS_PAGE);
 		addPageAction(manager, IHelpUIConstants.HV_FSEARCH_PAGE);
@@ -993,12 +962,12 @@ public class ReusableHelpPart implements IHelpUIConstants {
 			}
 		};
 		action.setText(page.getText());
-		action.setChecked(cid.equals(pageId));
 		String iconId = page.getIconId();
 		if (iconId != null)
 			action.setImageDescriptor(HelpUIResources
 					.getImageDescriptor(iconId));
 		manager.add(action);
+		page.pageAction = action;
 	}
 
 	private HelpPartPage findPage(String id) {

@@ -290,6 +290,8 @@ public class HelpView extends ViewPart implements IPartListener2, ISelectionChan
 	
 	public void displayContext(IContext context, IWorkbenchPart part, Control control) {
 		if (reusableHelpPart!=null) {
+			// Ensure that context help is currently showing
+			reusableHelpPart.showPage(IHelpUIConstants.HV_CONTEXT_HELP_PAGE);
 			//check if there is a dynamic version
 			IContextProvider provider = (IContextProvider)part.getAdapter(IContextProvider.class);
 			if (provider!=null)
