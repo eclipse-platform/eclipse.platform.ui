@@ -707,26 +707,195 @@ public class ProjectionMappingTest extends TestCase {
 	}
 	
 	public void test12a() {
+		// test toExactImageRegions
+		// test the whole master document
+		
+		createStandardProjection();
+		
+		try {
+			IRegion[] actual= fProjectionMapping.toExactImageRegions(new Region(0, fMasterDocument.getLength()));
+			IRegion[] expected= new IRegion[] {
+				new Region(0, 20),
+				new Region(20, 20)
+			};
+			assertRegions(expected, actual);
+		} catch (BadLocationException e) {
+			assertTrue(false);
+		}
+	}
+	
+	public void test12b() {
+		// test toExactImageRegions
+		// test a region completely comprised by a fragment
+		
+		createStandardProjection();
+		
+		try {
+			IRegion[] actual= fProjectionMapping.toExactImageRegions(new Region(25, 10));
+			IRegion[] expected= new IRegion[] {
+				new Region(5, 10)
+			};
+			assertRegions(expected, actual);
+		} catch (BadLocationException e) {
+			assertTrue(false);
+		}
+	}
+	
+	public void test12c() {
+		// test toExactImageRegions
+		// test a region completely comprised by a fragment at the beginning of a fragment
+		
+		createStandardProjection();
+		
+		try {
+			IRegion[] actual= fProjectionMapping.toExactImageRegions(new Region(20, 10));
+			IRegion[] expected= new IRegion[] {
+				new Region(0, 10)
+			};
+			assertRegions(expected, actual);
+		} catch (BadLocationException e) {
+			assertTrue(false);
+		}
+	}
+
+	public void test12d() {
+		// test toExactImageRegions
+		// test a region completely comprised by a fragment at the end of a fragment
+		
+		createStandardProjection();
+		
+		try {
+			IRegion[] actual= fProjectionMapping.toExactImageRegions(new Region(30, 10));
+			IRegion[] expected= new IRegion[] {
+				new Region(10, 10)
+			};
+			assertRegions(expected, actual);
+		} catch (BadLocationException e) {
+			assertTrue(false);
+		}
+	}
+	
+	public void test12e() {
+		// test toExactImageRegions
+		// test a complete fragment
+
+		createStandardProjection();
+		
+		try {
+			IRegion[] actual= fProjectionMapping.toExactImageRegions(new Region(20, 20));
+			IRegion[] expected= new IRegion[] {
+				new Region(0, 20)
+			};
+			assertRegions(expected, actual);
+		} catch (BadLocationException e) {
+			assertTrue(false);
+		}
+	}
+	
+	public void test12f() {
+		// test toExactImageRegions		
+		// test zero-length regions
+		
+		createStandardProjection();
+		
+		try {
+			IRegion[] actual= fProjectionMapping.toExactImageRegions(new Region(20, 0));
+			IRegion[] expected= new IRegion[] {
+				new Region(0, 0)
+			};
+			assertRegions(expected, actual);
+
+			actual= fProjectionMapping.toExactImageRegions(new Region(60, 0));
+			expected= new IRegion[] {
+				new Region(20, 0)
+			};
+			assertRegions(expected, actual);
+
+			actual= fProjectionMapping.toExactImageRegions(new Region(80, 0));
+			expected= new IRegion[] {
+				new Region(40, 0)
+			};
+			assertRegions(expected, actual);
+			
+		} catch (BadLocationException e) {
+			assertTrue(false);
+		}
+	}
+
+	public void test12g() {
+		// test toExactImageRegions		
+		// test a region starting in the middle of a fragment and ending in the middle of another fragment
+		
+		createStandardProjection();
+		
+		try {
+			IRegion[] actual= fProjectionMapping.toExactImageRegions(new Region(30, 40));
+			IRegion[] expected= new IRegion[] {
+				new Region(10, 10),
+				new Region(20, 10)
+			};
+			assertRegions(expected, actual);
+		} catch (BadLocationException e) {
+			assertTrue(false);
+		}
+	}
+	
+	public void test12h() {
+		// test toExactImageRegions
+		// test a region completely comprised by a fragment at the end of a fragment, not the first fragment
+		
+		createStandardProjection();
+		
+		try {
+			IRegion[] actual= fProjectionMapping.toExactImageRegions(new Region(70, 10));
+			IRegion[] expected= new IRegion[] {
+				new Region(30, 10)
+			};
+			assertRegions(expected, actual);
+		} catch (BadLocationException e) {
+			assertTrue(false);
+		}
+	}
+	
+	public void test12i() {
+		// test toExactImageRegions
+		// test a single region in the identical projection
+		
+		createIdenticalProjection();
+		
+		try {
+			IRegion[] actual= fProjectionMapping.toExactImageRegions(new Region(30, 10));
+			IRegion[] expected= new IRegion[] {
+				new Region(30, 10)
+			};
+			assertRegions(expected, actual);
+		} catch (BadLocationException e) {
+			assertTrue(false);
+		}	
+		
+	}
+	
+	public void test13a() {
 		// test getImageLength
 		// empty projection
 		assertEquals(0, fProjectionMapping.getImageLength());
 	}
 	
-	public void test12b() {
+	public void test13b() {
 		// test getImageLength
 		// identical projection
 		createIdenticalProjection();
 		assertEquals(fSlaveDocument.getLength(), fProjectionMapping.getImageLength());
 	}
 	
-	public void test12c() {
+	public void test13c() {
 		// test getImageLength
 		// standard projection
 		createStandardProjection();
 		assertEquals(fSlaveDocument.getLength(), fProjectionMapping.getImageLength());		
 	}
 
-	public void test12d() {
+	public void test13d() {
 		// test getImageLength
 		// line wrapping projection
 		createLineWrappingProjection();
