@@ -5,15 +5,11 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.swt.SWT;
-
-import org.eclipse.jface.action.Action;
-
-import org.eclipse.ui.IPageListener;
-import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.actions.PartEventAction;
+import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.actions.*;
+import org.eclipse.ui.part.*;
+import org.eclipse.ui.internal.IHelpContextIds;
 
 /**
  *	Closes all active editors
@@ -23,16 +19,16 @@ public class CloseAllAction extends PartEventAction implements IPageListener {
 /**
  *	Create an instance of this class
  */
-public CloseAllAction(IWorkbenchWindow aWorkbench, String id) {
-	super(""); //$NON-NLS-1$
-	initializeFromRegistry(id);
-	setId(IWorkbenchActionConstants.CLOSE_ALL);
-	setAccelerator(SWT.CTRL | SWT.SHIFT | SWT.F4);
-	
+public CloseAllAction(IWorkbenchWindow aWorkbench) {
+	super(WorkbenchMessages.getString("CloseAllAction.text")); //$NON-NLS-1$
 	this.workbench = aWorkbench;
+	setToolTipText(WorkbenchMessages.getString("CloseAllAction.toolTip")); //$NON-NLS-1$
 	setEnabled(false);
+	setId(IWorkbenchActionConstants.CLOSE_ALL);
 	updateState();
 	aWorkbench.addPageListener(this);
+	WorkbenchHelp.setHelp(this, IHelpContextIds.CLOSE_ALL_ACTION);
+	setAccelerator(SWT.CTRL | SWT.SHIFT | SWT.F4);
 }
 /**
  * Notifies this listener that the given page has been activated.

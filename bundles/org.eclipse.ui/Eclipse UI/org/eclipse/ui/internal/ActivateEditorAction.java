@@ -1,11 +1,6 @@
 package org.eclipse.ui.internal;
 
-import org.eclipse.jface.action.Action;
-
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.*;
 
 /**
  * Activates the most recently used editor in the current window.
@@ -15,9 +10,9 @@ public class ActivateEditorAction extends PageEventAction {
 /**
  * Creates an ActivateEditorAction.
  */
-protected ActivateEditorAction(IWorkbenchWindow window, String id) {
-	super("", window); //$NON-NLS-1$
-	initializeFromRegistry(id);
+protected ActivateEditorAction(IWorkbenchWindow window) {
+	super(WorkbenchMessages.getString("ActivateEditorAction.text"), window); //$NON-NLS-1$
+	setToolTipText(WorkbenchMessages.getString("ActivateEditorAction.toolTip"));
 	window.getPartService().addPartListener(this);
 	updateState();
 }

@@ -4,20 +4,13 @@ package org.eclipse.ui.actions;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.swt.events.HelpEvent;
-import org.eclipse.swt.events.HelpListener;
-import org.eclipse.swt.widgets.Event;
-
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.*;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.SubActionBars;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.util.*;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.widgets.Event;
 
 /**
  * A <code>RetargetAction</code> tracks the active part in the workbench.  
@@ -47,9 +40,8 @@ public class RetargetAction extends PartEventAction {
 /**
  * Constructs a RetargetAction.
  */
-public RetargetAction(String actionID, String actionDefId) {
-	super("");
-	initializeFromRegistry(actionDefId);
+public RetargetAction(String actionID, String label) {
+	super(label);
 	setId(actionID);
 	setEnabled(false);
 	super.setHelpListener(new HelpListener() {

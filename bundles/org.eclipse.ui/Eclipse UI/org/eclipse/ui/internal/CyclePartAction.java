@@ -4,25 +4,11 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
-
-import org.eclipse.jface.action.Action;
-
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 
 /**
  * Implements a action to enable the user switch between parts
@@ -35,12 +21,25 @@ public class CyclePartAction extends PageEventAction {
 /**
  * Creates a CyclePartAction.
  */
-protected CyclePartAction(IWorkbenchWindow window, boolean forward, String id) {
+protected CyclePartAction(IWorkbenchWindow window, boolean forward) {
 	super("", window); //$NON-NLS-1$
-	initializeFromRegistry(id);
 	this.forward = forward;
+	setText();
 	window.getPartService().addPartListener(this);
 	updateState();
+}
+/**
+ * Set text and tooltips in the action.
+ */
+protected void setText() {
+	// TBD: Remove text and tooltip when this becomes an invisible action.
+	if (forward) {
+		setText(WorkbenchMessages.getString("CyclePartAction.next.text"));
+		setToolTipText(WorkbenchMessages.getString("CyclePartAction.next.toolTip"));
+	} else {
+		setText(WorkbenchMessages.getString("CyclePartAction.prev.text"));
+		setToolTipText(WorkbenchMessages.getString("CyclePartAction.prev.toolTip"));
+	}
 }
 /**
  * See IPageListener

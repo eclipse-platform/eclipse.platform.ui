@@ -7,15 +7,7 @@ package org.eclipse.ui.internal;
 import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
-
-import org.eclipse.jface.action.Action;
-
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IPageListener;
-import org.eclipse.ui.IPropertyListener;
-import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.*;
 import org.eclipse.ui.actions.PartEventAction;
 import org.eclipse.ui.help.WorkbenchHelp;
 
@@ -33,21 +25,23 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class SaveAllAction extends PartEventAction
 	implements IPageListener, IPropertyListener
-{	
+{
 	private WorkbenchWindow window;
 	private IWorkbenchPage activePage = null;
 	private ArrayList targets = null;
 /**
  * The default constructor.
  */
-public SaveAllAction(WorkbenchWindow window, String id) {
-	super("");//$NON-NLS-1$
-	initializeFromRegistry(id);
+public SaveAllAction(WorkbenchWindow window) {
+	super("saveAll");//$NON-NLS-1$
+	setText(WorkbenchMessages.getString("SaveAll.text")); //$NON-NLS-1$
+	setToolTipText(WorkbenchMessages.getString("SaveAll.toolTip")); //$NON-NLS-1$
 	setId(IWorkbenchActionConstants.SAVE_ALL);
 	setAccelerator(SWT.CTRL | SWT.SHIFT |'s');
 	setEnabled(false);
 	this.window = window;
 	window.addPageListener(this);
+	WorkbenchHelp.setHelp(this, IHelpContextIds.SAVE_ALL_ACTION);
 }
 /**
  * Notifies the listener that a page has been activated.

@@ -13,11 +13,24 @@ public class CycleEditorAction extends CyclePartAction {
 /**
  * Creates a CycleEditorAction.
  */
-protected CycleEditorAction(IWorkbenchWindow window, boolean forward, String id) {
-	super(window, forward, id); //$NON-NLS-1$
+protected CycleEditorAction(IWorkbenchWindow window, boolean forward) {
+	super(window,forward); //$NON-NLS-1$
 	window.getPartService().addPartListener(this);
 	updateState();
 }
+
+protected void setText() {
+	// TBD: Remove text and tooltip when this becomes an invisible action.
+	if (forward) {
+		setText(WorkbenchMessages.getString("CycleEditorAction.next.text"));
+		setToolTipText(WorkbenchMessages.getString("CycleEditorAction.next.toolTip"));
+	}
+	else {
+		setText(WorkbenchMessages.getString("CycleEditorAction.prev.text"));
+		setToolTipText(WorkbenchMessages.getString("CycleEditorAction.prev.toolTip"));
+	}
+}
+
 /**
  * Updates the enabled state.
  */

@@ -485,22 +485,6 @@ public void setActionDefinitionId(String id) {
  * We do not use a constructor Action(String id) to do this work because that would conflict with
  * the pre-existing constructor Action(String text).
  */
-public void initializeFromRegistry(String id) {
-	ActionDefinitionRegistry registry = WorkbenchPlugin.getDefault().getActionDefinitionRegistry();
-	ActionDefinition def = registry.getDefinition(id);
-	/*
-	 * If the String argument was a valid action definition id, then retrieve
-	 * label, tool tip text, and help context from the action definition.
-	 */
-	if(def != null) { 
-		setActionDefinitionId(id);
-		setText(def.getLabel());
-		if(def.getToolTip() != null)
-			setToolTipText(def.getToolTip()); //$NON-NLS-1$
-		if(def.getHelpContextId() != null)
-			WorkbenchHelp.setHelp(this, def.getHelpContextId());
-	}
-}
 
 /* (non-Javadoc)
  * Method declared on IAction.

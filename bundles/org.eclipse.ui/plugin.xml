@@ -30,6 +30,10 @@
 
 <!-- Workbench extension point definitions -->
 
+<extension-point name="%ExtPoint.acceleratorSets" id="acceleratorSets" />
+<extension-point name="%ExtPoint.acceleratorConfigurations" id="acceleratorConfigurations" />
+<extension-point name="%ExtPoint.acceleratorScopes" id="acceleratorScopes" />
+<extension-point name="%ExtPoint.actionDefinitions" id="actionDefinitions" />
 <extension-point name="%ExtPoint.perspectives" id="perspectives"/>
 <extension-point name="%ExtPoint.perspectiveExtensions" id="perspectiveExtensions"/>
 <extension-point name="%ExtPoint.preferencePages" id="preferencePages"/>
@@ -54,6 +58,215 @@
 <extension-point name="%ExtPoint.capabilities" id="capabilities"/>
 
 <!-- Extensions -->
+
+<extension point = "org.eclipse.ui.actionDefinitions">
+	<actionDefinition
+		id = "file.close"/>
+	<actionDefinition
+		id = "file.closeAll"/>		
+    <actionDefinition 
+        id = "file.save"/>
+    <actionDefinition 
+        id = "file.saveAll"/>
+    <actionDefinition 
+        id = "file.print"/>
+    <actionDefinition 
+        id = "edit.undo"/>
+    <actionDefinition 
+        id = "edit.redo"/>
+    <actionDefinition 
+        id = "edit.cut"/>
+    <actionDefinition 
+        id = "edit.copy"/>
+    <actionDefinition 
+        id = "edit.paste"/>
+    <actionDefinition 
+        id = "edit.delete"/>        
+    <actionDefinition 
+        id = "edit.selectAll"/>
+    <actionDefinition 
+        id = "edit.findReplace"/>
+    <actionDefinition
+    	id = "edit.addBookmark"/>
+    <actionDefinition
+    	id = "window.switchToEditor"/>
+    <actionDefinition
+    	id = "window.showSystemMenu"/>
+    <actionDefinition
+    	id = "window.showViewMenu"/>
+    <actionDefinition 
+        id = "window.activeEditor"/>
+    <actionDefinition 
+        id = "window.nextEditor"/>
+    <actionDefinition 
+        id = "window.previousEditor"/>
+    <actionDefinition 
+        id = "window.nextView"/>
+    <actionDefinition 
+        id = "window.previousView"/>
+</extension>
+
+<extension point = "org.eclipse.ui.acceleratorConfigurations"> 
+    <acceleratorConfiguration 
+        id = "org.eclipse.ui.defaultAcceleratorConfiguration" 
+        name = "Default" 
+        description = "Eclipse's default accelerator configuration"/> 
+    <acceleratorConfiguration 
+        id = "org.eclipse.ui.emacsAcceleratorConfiguration" 
+        name = "Emacs" 
+        description = "Emacs editor style accelerator configuration"/> 
+</extension> 
+<extension point = "org.eclipse.ui.acceleratorScopes"> 
+    <acceleratorScope 
+        id = "org.eclipse.ui.globalScope" 
+        name = "Global" 
+        description = "Action accelerator key applicable to all views and editors unless explicitly overridden."/> 
+    <acceleratorScope 
+        id = "org.eclipse.ui.textEditorScope" 
+        name = "Text Editor" 
+        description = "Action accelerator key applicable only when text editor active." 
+        parentScope = "org.eclipse.ui.globalScope" /> 
+</extension> 
+
+<extension point = "org.eclipse.ui.acceleratorSets">
+	<acceleratorSet 
+    	configurationId = "org.eclipse.ui.emacsAcceleratorConfiguration" 
+    	scopeId = "org.eclipse.ui.globalScope"> 
+        <accelerator
+        	id = "file.close"
+        	key = "Ctrl+X Ctrl+K" />
+        <accelerator
+        	id = "file.closeAll"
+        	key = "Ctrl+Shift+F4||Ctrl+X Ctrl+C" />
+        <accelerator
+        	id = "file.save"
+        	key = "Ctrl+X Ctrl+S" />
+        <accelerator
+        	id = "file.saveAll"
+        	key = "" />
+        <accelerator
+        	id = "file.print"
+        	key = "Alt+F9" />
+        <accelerator
+        	id = "edit.undo"
+        	key = "F9" />
+        <accelerator
+        	id = "edit.redo"
+        	key = "F10" />
+        <accelerator
+        	id = "edit.cut"
+        	key = "Ctrl+W||Shift+DELETE" />
+        <accelerator
+        	id = "edit.copy"
+        	key = "Alt+W||Ctrl+INSERT" />
+        <accelerator
+        	id = "edit.paste"
+        	key = "Ctrl+Y||Shift+INSERT" />
+        <accelerator
+        	id = "edit.delete"
+        	key = "" />
+        <accelerator
+        	id = "edit.selectAll"
+        	key = "" />
+        <accelerator
+        	id = "edit.findReplace"
+        	key = "Ctrl+S" />
+        <accelerator
+        	id = "edit.search"
+        	key = "Ctrl+H" />
+        <accelerator
+        	id = "window.switchToEditor"
+        	key = "Ctrl+X Ctrl+B" />
+        <accelerator
+        	id = "window.showSystemMenu"
+        	key = "Alt+-" />
+        <accelerator
+        	id = "window.showViewMenu"
+        	key = "Ctrl+F10" />
+        <accelerator
+        	id = "window.activeEditor"
+        	key = "F12" />
+        <accelerator
+        	id = "window.nextEditor"
+        	key = "Ctrl+F6" />
+        <accelerator
+        	id = "window.previousEditor"
+        	key = "Ctrl+Shift+F6" />
+        <accelerator
+        	id = "window.nextView"
+        	key = "Ctrl+F7" />
+        <accelerator
+        	id = "window.previousView"
+        	key = "Ctrl+Shift+F7" />
+    </acceleratorSet>
+    <acceleratorSet
+    	configurationId = "org.eclipse.ui.defaultAcceleratorConfiguration"
+    	scopeId = "org.eclipse.ui.globalScope">
+        <accelerator
+        	id = "file.close"
+        	key = "Ctrl+F4" />
+        <accelerator
+        	id = "file.closeAll"
+        	key = "Ctrl+Shift+F4" />
+        <accelerator
+        	id = "file.save"
+        	key = "Ctrl+S" />
+        <accelerator
+        	id = "file.saveAll"
+        	key = "Ctrl+Shift+S" />
+        <accelerator
+        	id = "file.print"
+        	key = "Ctrl+P" />
+        <accelerator
+        	id = "edit.undo"
+        	key = "Ctrl+Z"/>
+        <accelerator
+        	id = "edit.redo"
+        	key = "Ctrl+Y" />
+        <accelerator
+        	id = "edit.cut"
+        	key = "Ctrl+X" />
+        <accelerator
+        	id = "edit.copy"
+        	key = "Ctrl+C" />
+        <accelerator
+        	id = "edit.paste"
+        	key = "Ctrl+V" />
+        <accelerator
+        	id = "edit.delete"
+        	key = "Ctrl+DELETE" />
+        <accelerator
+        	id = "edit.selectAll"
+        	key = "Ctrl+A" />
+        <accelerator
+        	id = "edit.findReplace"
+        	key = "Ctrl+F" />
+        <accelerator
+        	id = "window.switchToEditor"
+        	key = "Ctrl+W" />
+        <accelerator
+        	id = "window.showSystemMenu"
+        	key = "Alt+-" />
+        <accelerator
+        	id = "window.showViewMenu"
+        	key = "Ctrl+F10" />
+        <accelerator
+        	id = "window.activeEditor"
+        	key = "F12" />
+        <accelerator
+        	id = "window.nextEditor"
+        	key = "Ctrl+F6" />
+        <accelerator
+        	id = "window.previousEditor"
+        	key = "Ctrl+Shift+F6" />
+        <accelerator
+        	id = "window.nextView"
+        	key = "Ctrl+F7" />
+        <accelerator
+        	id = "window.previousView"
+        	key = "Ctrl+Shift+F7" />
+    </acceleratorSet>     
+</extension>
 
 <extension 
 	point="org.eclipse.ui.perspectives">
