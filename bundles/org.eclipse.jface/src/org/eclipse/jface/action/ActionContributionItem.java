@@ -343,6 +343,9 @@ private void handleWidgetArm(Event e) {
 private void handleWidgetDispose(Event e) {
 	if (e.widget == widget) {
 		// the item is being disposed
+		if (action.getStyle() == IAction.AS_DROP_DOWN_MENU)  {
+			action.getMenuCreator().dispose(); 
+		}
 		action.removePropertyChangeListener(listener);
 		widget = null;
 	}
