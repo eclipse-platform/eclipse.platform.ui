@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.eclipse.team.internal.ui;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
@@ -55,7 +56,7 @@ public class TeamPreferencePage extends PreferencePage implements IWorkbenchPref
 		syncModeButton = createCheckBox(composite, Policy.bind("TeamPreferencePage.&Use_Incoming/Outgoing_mode_when_synchronizing_2")); //$NON-NLS-1$
 
 		initializeValues();
-		
+		Dialog.applyDialogFont(parent);
 		return composite;
 	}
 	/**

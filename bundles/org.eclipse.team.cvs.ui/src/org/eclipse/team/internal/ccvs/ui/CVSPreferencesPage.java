@@ -250,7 +250,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		WorkbenchHelp.setHelp(showMarkers, IHelpContextIds.PREF_MARKERS_ENABLED);
 		WorkbenchHelp.setHelp(repositoriesAreBinary, IHelpContextIds.PREF_TREAT_NEW_FILE_AS_BINARY);
 		WorkbenchHelp.setHelp(determineVersionEnabled, IHelpContextIds.PREF_DETERMINE_SERVER_VERSION);
-						
+		Dialog.applyDialogFont(parent);
 		return composite;
 	}
 	/**

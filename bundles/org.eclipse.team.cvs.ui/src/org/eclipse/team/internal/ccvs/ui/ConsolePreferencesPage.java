@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
@@ -81,6 +82,7 @@ public class ConsolePreferencesPage extends PreferencePage implements IWorkbench
 		
 		initializeValues();
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.CONSOLE_PREFERENCE_PAGE);
+		Dialog.applyDialogFont(parent);
 		return composite;
 	}
 	/**

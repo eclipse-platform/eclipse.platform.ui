@@ -5,6 +5,7 @@ package org.eclipse.team.internal.ccvs.ui;
  * All Rights Reserved.
  */
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
@@ -128,7 +129,8 @@ public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenc
 
 		
 		initializeDefaults();
-		WorkbenchHelp.setHelp(composite, IHelpContextIds.EXT_PREFERENCE_PAGE);		
+		WorkbenchHelp.setHelp(composite, IHelpContextIds.EXT_PREFERENCE_PAGE);
+		Dialog.applyDialogFont(parent);
 		return composite;
 	}
 	

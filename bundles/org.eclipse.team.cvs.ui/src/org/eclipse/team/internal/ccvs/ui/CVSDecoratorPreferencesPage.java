@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.compare.internal.TabFolderLayout;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
@@ -181,6 +182,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 				
 		initializeValues();
 		WorkbenchHelp.setHelp(tabFolder, IHelpContextIds.DECORATORS_PREFERENCE_PAGE);
+		Dialog.applyDialogFont(parent);
 		return tabFolder;
 	}
 	

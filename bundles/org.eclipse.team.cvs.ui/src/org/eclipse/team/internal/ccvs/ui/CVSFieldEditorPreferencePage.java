@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Composite;
@@ -47,6 +48,7 @@ public abstract class CVSFieldEditorPreferencePage extends FieldEditorPreference
 		String id = getPageHelpContextId();
 		if (id != null)
 			WorkbenchHelp.setHelp(control, id);
+		Dialog.applyDialogFont(control);
 		return control;
 	}
 	
