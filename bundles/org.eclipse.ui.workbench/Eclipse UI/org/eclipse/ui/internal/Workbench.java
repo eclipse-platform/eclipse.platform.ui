@@ -30,6 +30,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -100,6 +101,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.actions.GlobalBuildAction;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.dialogs.WelcomeEditorInput;
 import org.eclipse.ui.internal.fonts.FontDefinition;
@@ -122,6 +124,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	private boolean runEventLoop;
 	private boolean isStarting = true;
 	private boolean isClosing = false;
+	private boolean autoBuild;
 	private Object returnCode;
 	private WorkbenchConfigurationInfo configurationInfo;
 	private ListenerList windowListeners = new ListenerList();
@@ -468,6 +471,26 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		// Nothing to do right now.
 	}
 	/**
+	 * Temporarily disable auto buold
+	 */
+	private void disableAutoBuild() {
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IWorkspaceDescription description = workspace.getDescription();
+		
+		autoBuild = description.isAutoBuilding();
+		if (autoBuild) {
+			description.setAutoBuilding(false);
+			try {
+				workspace.setDescription(description);
+			} catch (CoreException exception) { 
+				MessageDialog.openError(
+					null, 
+					WorkbenchMessages.getString("Workspace.problemsTitle"),	//$NON-NLS-1$
+					WorkbenchMessages.getString("Restoring_Problem"));		//$NON-NLS-1$
+			}
+		}
+	}	
+	/**
 	 * Disconnect from the core workspace.
 	 */
 	private void disconnectFromWorkspace() {
@@ -493,6 +516,43 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		null, status, IStatus.ERROR | IStatus.WARNING);
 		if (!status.isOK()) {
 			WorkbenchPlugin.log(WorkbenchMessages.getString("ProblemsSavingWorkspace"), status); //$NON-NLS-1$
+		}
+	}
+	/**
+	 * Enable auto build if it was temporarily disabled.
+	 * Should only be called after workbench state has been restored.
+	 * Assumes that workbench windows have already been restored.
+	 * <p>
+	 * Use a WorkspaceModifyOperation to trigger an immediate build.
+	 * See bug 6091.
+	 * </p>
+	 */
+	private void enableAutoBuild() {
+		if (autoBuild) {
+			IWorkbenchWindow windows[] = getWorkbenchWindows();
+			Shell shell = windows[windows.length - 1].getShell();				
+			try {
+				WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
+					protected void execute(IProgressMonitor monitor) throws CoreException {
+						IWorkspace workspace = ResourcesPlugin.getWorkspace();
+						IWorkspaceDescription description = workspace.getDescription();
+						monitor.setTaskName(WorkbenchMessages.getString("Workbench.autoBuild"));	//$NON-NLS-1$
+						description.setAutoBuilding(true);
+						workspace.setDescription(description);
+					}
+				};
+				IWorkbenchWindow window = getActiveWorkbenchWindow();
+				if (window != null)
+					window.run(true, true, op);
+				else
+					new ProgressMonitorDialog(shell).run(true, true, op);
+			} catch (InterruptedException e) {
+			} catch (InvocationTargetException exception) {
+				MessageDialog.openError(
+					shell, 
+					WorkbenchMessages.getString("Workspace.problemsTitle"), 	//$NON-NLS-1$
+					WorkbenchMessages.getString("Workspace.problemAutoBuild"));	//$NON-NLS-1$
+			}							
 		}
 	}
 	/**
@@ -804,6 +864,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 
 		try {
 			UIStats.start(UIStats.RESTORE_WORKBENCH, "Workbench"); //$NON-NLS-1$
+			disableAutoBuild();
 			int restoreCode = openPreviousWorkbenchState();
 			if (restoreCode == RESTORE_CODE_EXIT)
 				return false;
@@ -812,13 +873,13 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		} finally {
 			UIStats.end(UIStats.RESTORE_WORKBENCH, "Workbench"); //$NON-NLS-1$
 		}
-
+		refreshFromLocal(commandLineArgs);
+		enableAutoBuild();
 		// Listen for auto build property change events
 		getPreferenceStore().addPropertyChangeListener(propertyChangeListener);
 
 		forceOpenPerspective(commandLineArgs);
 		getConfigurationInfo().openWelcomeEditors(getActiveWorkbenchWindow());
-		refreshFromLocal(commandLineArgs);
 		isStarting = false;
 		return true;
 	}
