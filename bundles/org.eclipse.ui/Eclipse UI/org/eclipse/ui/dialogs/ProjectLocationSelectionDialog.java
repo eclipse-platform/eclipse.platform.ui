@@ -304,7 +304,8 @@ private Composite createUserSpecifiedProjectLocationGroup(
 		else
 			locationPathField.setText(location.toString());
 	} catch (CoreException exception) {
-		//Do nothing as it is just an initialization problem
+		//Set it to the default if possible as there is no info yet
+		 setLocationForSelection();
 	}
 
 	createLocationListener();
