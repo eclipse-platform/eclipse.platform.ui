@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -79,6 +80,8 @@ import org.eclipse.ui.contexts.IWorkbenchPageContextSupport;
 import org.eclipse.ui.internal.commands.ws.WorkbenchPageCommandSupport;
 import org.eclipse.ui.internal.contexts.ws.WorkbenchPageContextSupport;
 import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
+import org.eclipse.ui.internal.intro.IIntroConstants;
+import org.eclipse.ui.internal.intro.IntroMessages;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
@@ -150,6 +153,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 			}
 		}
 	};
+	
+	// a set of perspectives in which intros have already been created.
+	private Set introPerspectives = new HashSet(7);
+	
 	private ActionSwitcher actionSwitcher = new ActionSwitcher();
 	/**
 	 * Manages editor contributions and action set part associations.
@@ -1173,6 +1180,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		composite.dispose();
 
 		navigationHistory.dispose();
+		
+		introPerspectives.clear();
 	}
 	/**
 	 * Dispose a perspective.
@@ -2712,7 +2721,18 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		}
 		if (editorPresentation != null)
 			editorPresentation.showVisibleEditor();
-
+		
+		final Workbench workbench = (Workbench)window.getWorkbench();
+		if (workbench.hasIntroDescriptor()) {
+			if (workbench.isIntroInWindow(window) && !introPerspectives.contains(newPersp.getDesc())) {
+				try {
+					showView(IIntroConstants.INTRO_VIEW_ID, null,  IWorkbenchPage.VIEW_CREATE);
+				} catch (PartInitException e) {
+					WorkbenchPlugin.log(IntroMessages.getString("Intro.could_not_show_part"), new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR, IntroMessages.getString("Intro.could_not_show_part"), e));	//$NON-NLS-1$ //$NON-NLS-2$
+				}
+				introPerspectives.add(newPersp.getDesc());
+			}
+		}
 	}
 	/*
 	 * Update visibility state of all views.
@@ -2850,6 +2870,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		return showView(viewID, null, VIEW_ACTIVATE);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPage#showView(java.lang.String, java.lang.String, int)
+	 */
 	public IViewPart showView(
 			final String viewID, 
 			final String secondaryID, 

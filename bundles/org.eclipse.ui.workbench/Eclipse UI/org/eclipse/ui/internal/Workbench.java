@@ -1991,21 +1991,27 @@ public final class Workbench implements IWorkbench {
 		}
 		else {
 			try {
-				ViewIntroAdapterPart viewPart = getViewIntroAdapterPart();
+				ViewIntroAdapterPart viewPart = getViewIntroAdapterPart();				
 				WorkbenchPage page = (WorkbenchPage) viewPart.getSite().getPage();
-				IPerspectiveDescriptor [] perspDescriptors = page.getOpenedPerspectives();
-				for (int i = 0; i < perspDescriptors.length; i++) {
-					IPerspectiveDescriptor descriptor = perspDescriptors[i];
-					if (page.findPerspective(descriptor).containsView(viewPart)) {
-						if (!page.getPerspective().equals(descriptor)) {
-							page.setPerspective(descriptor);
-						}
-						break;
-					}
+				WorkbenchWindow window = (WorkbenchWindow) page.getWorkbenchWindow();
+				if (!window.equals(preferredWindow)) {
+					window.getShell().setActive();
 				}
 				
-				page.getWorkbenchWindow().getShell().setActive();
 				page.showView(IIntroConstants.INTRO_VIEW_ID);
+//				IPerspectiveDescriptor [] perspDescriptors = page.getOpenedPerspectives();
+//				for (int i = 0; i < perspDescriptors.length; i++) {
+//					IPerspectiveDescriptor descriptor = perspDescriptors[i];
+//					if (page.findPerspective(descriptor).containsView(viewPart)) {
+//						if (!page.getPerspective().equals(descriptor)) {
+//							page.setPerspective(descriptor);
+//						}
+//						break;
+//					}
+//				}
+//				
+//				page.getWorkbenchWindow().getShell().setActive();
+//				page.showView(IIntroConstants.INTRO_VIEW_ID);
 			} catch (PartInitException e) {
 				WorkbenchPlugin.log(IntroMessages.getString("Intro.could_not_show_part"), new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR, IntroMessages.getString("Intro.could_not_show_part"), e));	//$NON-NLS-1$ //$NON-NLS-2$
 			}
@@ -2013,7 +2019,24 @@ public final class Workbench implements IWorkbench {
 		return introPart;
 	}
 
-
+	/**	 
+	 * @param window the window to test
+	 * @return whether the intro exists in the given window
+	 * @since 3.0
+	 */
+	/*package*/ boolean isIntroInWindow(IWorkbenchWindow testWindow) {
+		ViewIntroAdapterPart viewPart = getViewIntroAdapterPart();	
+		if (viewPart == null)
+			return false;
+		
+		WorkbenchPage page = (WorkbenchPage) viewPart.getSite().getPage();
+		WorkbenchWindow window = (WorkbenchWindow) page.getWorkbenchWindow();
+		if (window.equals(testWindow)) {
+			return true;
+		}
+		return false;
+	}
+	
 	/**
      * Create a new Intro area (a view, currently) in the provided window.  If there is no intro
      * descriptor for this workbench then no work is done.
@@ -2071,7 +2094,7 @@ public final class Workbench implements IWorkbench {
      * cannot be found.
 	 * @since 3.0
 	 */
-	private ViewIntroAdapterPart getViewIntroAdapterPart() {
+	/*package*/ ViewIntroAdapterPart getViewIntroAdapterPart() {
 		IWorkbenchWindow [] windows = getWorkbenchWindows();
 		for (int i = 0; i < windows.length; i++) {
 			IWorkbenchWindow window = windows[i];
@@ -2108,6 +2131,14 @@ public final class Workbench implements IWorkbench {
 	 */
 	/*package*/ IntroDescriptor getIntroDescriptor() {
 		return introDescriptor;
+	}
+	
+	/** 
+	 * @return whether an intro extension exists for this workbench.
+	 * @since 3.0
+	 */
+	/*package*/ boolean hasIntroDescriptor() {
+		return introDescriptor != null;
 	}
 	
 	/* (non-Javadoc)
