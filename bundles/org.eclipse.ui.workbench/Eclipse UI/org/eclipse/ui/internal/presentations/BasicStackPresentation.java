@@ -304,7 +304,8 @@ public class BasicStackPresentation extends StackPresentation {
 		
 		// Compute the tab height
 		int toolbarHeight = viewToolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
-		int tabHeight = toolbarHeight + layout.differenceBetweenTabHeightAndTrimRegion();
+		// Add enough space for the margin
+		int tabHeight = toolbarHeight + 1;
 		// Enforce a minimum tab height
 		if (tabHeight < 20) {
 			tabHeight = 20;

@@ -12,11 +12,11 @@ package org.eclipse.ui.internal.presentations;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.internal.layout.*;
+import org.eclipse.ui.internal.layout.LayoutCache;
 
 /**
  * Arranges a set of controls along the top of a CTabFolder, and
@@ -51,6 +51,7 @@ public class TabFolderLayout {
 	private int trimStart;
 	private boolean trimOnTop = false;
 	private int leftAligned = 0;
+	private Control topRightProxy;
 	
 	/**
 	 * Creates a new TabFolderLayout which will arrange controls along the title
@@ -60,6 +61,10 @@ public class TabFolderLayout {
 	 */
 	public TabFolderLayout(CTabFolder folder) {
 		this.tabFolder = folder;
+		
+		topRightProxy = new Composite(folder, SWT.NONE);
+		topRightProxy.setVisible(false);
+		folder.setTopRight(topRightProxy, SWT.FILL);
 		
 		setTopRight(new Control[0]);
 	}
@@ -275,73 +280,15 @@ public class TabFolderLayout {
 	 * @return
 	 */
 	protected Rectangle getTitleTrimRegion() {
-		Rectangle result = new Rectangle(0,0,0,0); 
-		
-		int itemCount = tabFolder.getItemCount(); 
-		if (itemCount > 0) {
-			CTabItem item = tabFolder.getItem(itemCount - 1);
-			
-			Rectangle itemBounds = item.getBounds();
-			
-			result.x = itemBounds.x + itemBounds.width;
-			result.height = itemBounds.height;
-			result.y = itemBounds.y;
-			result.width = getAvailableSpace(tabFolder);
-		}
-		
+		Rectangle result = topRightProxy.getBounds();
 		Rectangle bounds = tabFolder.getBounds();
 		
 		result.x += bounds.x;
 		result.y += bounds.y;
-		
-		int borderSize = 1;
-		result.y += borderSize;
-		result.height = tabFolder.getTabHeight() - differenceBetweenTabHeightAndTrimRegion();
-		
-		// Amount to shift to avoid stomping on the curve
-		int xShift = 5;
-		result.x += xShift;
-		result.width -= xShift;
-		
+				
 		return result;
 	}
-	
-	public int differenceBetweenTabHeightAndTrimRegion() {
-		return 1;
-	}
-	
-	/**
-	 * Computes the maximium size available for the trim controls without causing
-	 * tabs to disappear.
-	 * 
-	 * @param folder
-	 * @return the amount of empty space to the right of the tabs
-	 */
-	protected static int getAvailableSpace(CTabFolder folder) {
-		int available = folder.getBounds().width;
-		
-		available -= 2 * folder.getBorderWidth();
-		available -= folder.getChevronBounds().width;
-		available -= folder.getMaximizeBounds().width;
-		available -= folder.getMinimizeBounds().width;
-		
-		// Add a safety margin to avoid stomping on the curve
-		available -= 10;
-		
-		CTabItem[] tabs = folder.getItems();
-		for (int idx = 0; idx < tabs.length; idx++) {
-			CTabItem item = tabs[idx];
 			
-			if (!item.isShowing()) {
-				return 0;
-			}
-			
-			available -= item.getBounds().width;
-		}
-		
-		return Math.max(0, available);
-	}
-		
 	/**
 	 * Returns the total preferred width of the top controls
 	 * 
