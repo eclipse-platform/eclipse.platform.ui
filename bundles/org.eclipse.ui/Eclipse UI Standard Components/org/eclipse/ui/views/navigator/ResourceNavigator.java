@@ -400,7 +400,6 @@ public class ResourceNavigator
 				return ((IResource) o).getFullPath().makeRelative().toString();
 			} else {
 				return ResourceNavigatorMessages.getString("ResourceNavigator.oneItemSelected"); //$NON-NLS-1$
-				//$NON-NLS-1$
 			}
 		}
 		if (selection.size() > 1) {
@@ -708,7 +707,9 @@ public class ResourceNavigator
 	public void selectReveal(ISelection selection) {
 		StructuredSelection ssel = convertSelection(selection);
 		if (!ssel.isEmpty()) {
+			getResourceViewer().getControl().setRedraw(false);
 			getResourceViewer().setSelection(ssel, true);
+			getResourceViewer().getControl().setRedraw(true);
 		}
 	}
 	/**
