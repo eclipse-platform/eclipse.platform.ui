@@ -24,9 +24,9 @@ import java.util.List;
  */
 public class StandaloneHelp extends EclipseController {
 	// timout for .hostport file to apper since starting eclipse [ms]
-	private static final int STARTUP_TIMEOUT = 30 * 1000;
+	private static final int STARTUP_TIMEOUT = 40 * 1000;
 	// number of retries to connectect to webapp
-	private static final int CONNECTION_RETRIES = 2;
+	private static final int CONNECTION_RETRIES = 3;
 	// time between retries to connectect to webapp [ms]
 	private static final int CONNECTION_RETRY_INTERVAL = 5 * 1000;
 	// ID of the application to run
@@ -51,22 +51,31 @@ public class StandaloneHelp extends EclipseController {
 	 * @see org.eclipse.help.standalone.Infocenter#main(String[])
 	 */
 	public static void main(String[] args) {
-		StandaloneHelp help = new StandaloneHelp(args);
+		try {
+			StandaloneHelp help = new StandaloneHelp(args);
 
-		List helpCommand = Options.getHelpCommand();
+			List helpCommand = Options.getHelpCommand();
 
-		if (help.executeCommand(helpCommand)) {
-			return;
-		} else
-			printMainUsage();
+			if (help.executeCommand(helpCommand)) {
+				return;
+			} else {
+				printMainUsage();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
 	 * Overrides the initialization of the connection to pass retry parameters.
 	 */
 	protected EclipseConnection initConnection() {
+		int timeout = STARTUP_TIMEOUT;
+		if (Options.getServerTimeout() > 0) {
+			timeout = 1000 * Options.getServerTimeout();
+		}
 		return new EclipseConnection(
-			STARTUP_TIMEOUT,
+			timeout,
 			CONNECTION_RETRIES,
 			CONNECTION_RETRY_INTERVAL);
 	}
@@ -84,14 +93,14 @@ public class StandaloneHelp extends EclipseController {
 	/**
 	 * @see org.eclipse.help.standalone.Help#displayHelp()
 	 */
-	public void displayHelp() {
+	public void displayHelp() throws Exception {
 		sendHelpCommand("displayHelp", new String[0]);
 	}
 
 	/**
 	 * @see org.eclipse.help.standalone.Help#displayHelp(java.lang.String)
 	 */
-	public void displayHelp(String href) {
+	public void displayHelp(String href) throws Exception {
 		sendHelpCommand("displayHelp", new String[] { "href=" + href });
 	}
 
@@ -99,7 +108,7 @@ public class StandaloneHelp extends EclipseController {
 	 * @return true if commands contained a known command
 	 *  and it was executed
 	 */
-	private boolean executeCommand(List helpCommands) {
+	private boolean executeCommand(List helpCommands) throws Exception {
 
 		if (helpCommands.size() <= 0) {
 			return false;

@@ -27,7 +27,7 @@ import org.eclipse.help.internal.standalone.StandaloneHelp;
  */
 public class Help {
 	private StandaloneHelp help;
-	
+
 	/**
 	* Constructs help system
 	* @param options array of String options and their values
@@ -45,7 +45,12 @@ public class Help {
 	*  that help server will use.
 	*  It overrides port number specified in the application server plugin preferences.
 	* <p>
-	*  Additionally, most options accepted by Eclipse execuable are supported.
+	*  Option <code>-servertimeout timeout</code> number of seconds waiting
+	*  to connect to the help server while executing commands, such as shutdown.
+	*  shutdown.   Default is 40s.  You may need to use this option when
+	*  running from a slow media such as a CD-ROM.
+	* <p>
+	*  Additionally,  most options accepted by Eclipse execuable are supported.
 	*/
 	public Help(String[] options) {
 		help = new StandaloneHelp(options);
@@ -71,19 +76,19 @@ public class Help {
 	/**
 	 * Starts the stand alone help system.
 	 */
-	public void start() {
+	public void start() throws Exception {
 		help.start();
 	}
 	/**
 	 * Shuts-down the stand alone help system.
 	 */
-	public void shutdown() {
+	public void shutdown() throws Exception {
 		help.shutdown();
 	}
 	/**
 	 * Displays help.
 	 */
-	public void displayHelp() {
+	public void displayHelp() throws Exception {
 		help.displayHelp();
 	}
 
@@ -91,7 +96,7 @@ public class Help {
 	 * Displays specified help resource.
 	 * @param href the href of the table of contents
 	 */
-	public void displayHelp(String href) {
+	public void displayHelp(String href) throws Exception {
 		help.displayHelp(href);
 	}
 
@@ -101,7 +106,8 @@ public class Help {
 	 * @param x x coordinate
 	 * @param y y coordinate
 	 */
-	public void displayContext(String contextId, int x, int y) {
+	public void displayContext(String contextId, int x, int y)
+		throws Exception {
 		help.displayContext(contextId, x, y);
 	}
 
@@ -111,7 +117,8 @@ public class Help {
 	 * @param x x coordinate
 	 * @param y y coordinate
 	 */
-	public void displayContextInfopop(String contextId, int x, int y) {
+	public void displayContextInfopop(String contextId, int x, int y)
+		throws Exception {
 		help.displayContextInfopop(contextId, x, y);
 	}
 

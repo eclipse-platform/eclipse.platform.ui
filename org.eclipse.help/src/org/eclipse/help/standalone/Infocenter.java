@@ -38,7 +38,12 @@ public class Infocenter {
 	*  that help server will use.
 	*  It overrides port number specified in the application server plugin preferences.
 	* <p>
-	*  Additionally, most options accepted by Eclipse execuable are supported.
+	*  Option <code>-servertimeout timeout</code> number of seconds waiting
+	*  to connect to the help server while executing commands, such as shutdown.
+	*  shutdown.   Default is 40s.  You may need to use this option when
+	*  running from a slow media such as a CD-ROM.
+	* <p>
+	*  Additionally,  most options accepted by Eclipse execuable are supported.
 	*/
 	public Infocenter(String[] options) {
 		infocenter = new StandaloneInfocenter(options);
@@ -46,13 +51,13 @@ public class Infocenter {
 	/**
 	 * Starts the stand alone infocenter.
 	 */
-	public void start() {
+	public void start() throws Exception {
 		infocenter.start();
 	}
 	/**
 	 * Shuts-down the stand alone infocenter.
 	 */
-	public void shutdown() {
+	public void shutdown() throws Exception {
 		infocenter.shutdown();
 	}
 	/**

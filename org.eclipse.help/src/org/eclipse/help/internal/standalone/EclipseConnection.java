@@ -27,14 +27,14 @@ public class EclipseConnection {
 	private String port;
 
 	EclipseConnection() {
-		this(0,0,5*1000);
+		this(0, 0, 5 * 1000);
 	}
 
 	EclipseConnection(
 		int startupTimeout,
 		int connectionRetries,
 		int connectionRetryInterval) {
-		
+
 		this.startupTimeout = startupTimeout;
 		this.connectionRetries = connectionRetries;
 		this.connectionRetryInterval = connectionRetryInterval;
@@ -43,29 +43,21 @@ public class EclipseConnection {
 	public String getPort() {
 		return port;
 	}
-	
+
 	public String getHost() {
 		return host;
 	}
-	
+
 	public void reset() {
 		host = null;
 		port = null;
-	}	
+	}
 
 	public boolean isValid() {
 		return (host != null && port != null);
 	}
-	
 
-	public void renew() {
-		obtainHostPort();
-	}
-
-	public boolean connect(URL url) {
-		if (url == null) 
-			return false;
-		
+	public void connect(URL url) throws InterruptedException, Exception {
 		for (int i = 0; i <= connectionRetries; i++) {
 			try {
 				HttpURLConnection connection =
@@ -85,19 +77,15 @@ public class EclipseConnection {
 						"Response code from control servlet=" + code);
 				}
 				connection.disconnect();
-				return true;
+				return;
 			} catch (IOException ioe) {
 				if (Options.isDebug()) {
 					ioe.printStackTrace();
 				}
 			}
-			try {
-				Thread.sleep(connectionRetryInterval);
-			} catch (InterruptedException ie) {
-				return false;
-			}
+			Thread.sleep(connectionRetryInterval);
 		}
-		return true;
+		throw new Exception("Connection to Help System timed out.");
 	}
 
 	/**
@@ -105,28 +93,28 @@ public class EclipseConnection {
 	 * Retries several times if file does not exists,
 	 * and help might be starting up.
 	 */
-	private void obtainHostPort() {
+	public void renew() throws Exception {
 		long time1 = System.currentTimeMillis();
 		while (!Options.getConnectionFile().exists()) {
 			// wait for .hostport file to appear
 			if (Options.isDebug()) {
 				System.out.println(
-					"File " + Options.getConnectionFile() + " does not exist, at the moment.");
+					"File "
+						+ Options.getConnectionFile()
+						+ " does not exist, at the moment.");
 			}
 			// timeout
 			if (System.currentTimeMillis() - time1 >= startupTimeout) {
 				if (Options.isDebug()) {
 					System.out.println(
-						"Timeout waiting for file " + Options.getConnectionFile());
+						"Timeout waiting for file "
+							+ Options.getConnectionFile());
 				}
-				return;
+				throw new Exception(
+					"Timeout waiting for file " + Options.getConnectionFile());
 			}
 			// wait more
-			try {
-				Thread.sleep(2000);
-			} catch (InterruptedException ie) {
-				return;
-			}
+			Thread.sleep(2000);
 		}
 		Properties p = new Properties();
 		FileInputStream is = null;
@@ -136,8 +124,7 @@ public class EclipseConnection {
 			is.close();
 		} catch (IOException ioe) {
 			// it ok, eclipse might have just exited
-			ioe.printStackTrace();
-			return;
+			throw ioe;
 		} finally {
 			if (is != null) {
 				try {

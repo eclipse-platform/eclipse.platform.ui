@@ -33,21 +33,26 @@ public class StandaloneInfocenter extends EclipseController {
 	 * @see org.eclipse.help.standalone.Infocenter#main(String[])
 	 */
 	public static void main(String[] args) {
-		StandaloneInfocenter infocenter = new StandaloneInfocenter(args);
+		try {
+			StandaloneInfocenter infocenter = new StandaloneInfocenter(args);
 
-		List helpCommand = Options.getHelpCommand();
+			List helpCommand = Options.getHelpCommand();
 
-		if (infocenter.executeCommand(helpCommand)) {
-			return;
-		} else
-			printMainUsage();
+			if (infocenter.executeCommand(helpCommand)) {
+				return;
+			} else {
+				printMainUsage();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
 	 * @return true if commands contained a known command
 	 *  and it was executed
 	 */
-	private boolean executeCommand(List helpCommand) {
+	private boolean executeCommand(List helpCommand) throws Exception {
 		if (helpCommand.size() <= 0) {
 			return false;
 		}

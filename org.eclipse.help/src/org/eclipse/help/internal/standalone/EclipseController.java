@@ -20,10 +20,9 @@ public class EclipseController {
 
 	// application to launch
 	protected String applicationId;
-	
+
 	// Eclipse connection params
 	protected EclipseConnection connection;
-
 
 	/**
 	 * Constructs help system
@@ -48,12 +47,18 @@ public class EclipseController {
 	protected EclipseConnection initConnection() {
 		return new EclipseConnection();
 	}
-	
+
 	/**
 	 * @see org.eclipse.help.standalone.Help#shutdown()
 	 */
-	public void shutdown() {
-		sendHelpCommand("shutdown", new String[0]);
+	public void shutdown() throws Exception {
+		try {
+			sendHelpCommand("shutdown", new String[0]);
+		} catch (MalformedURLException mue) {
+			mue.printStackTrace();
+		} catch (InterruptedException ie) {
+		}
+
 		connection.reset();
 	}
 
@@ -71,18 +76,22 @@ public class EclipseController {
 	 * If connection fails, retries several times,
 	 * in case webapp is starting up.
 	 */
-	protected boolean sendHelpCommand(String command, String[] parameters) {
+	protected void sendHelpCommand(String command, String[] parameters)
+		throws Exception {
 		if (!"shutdown".equalsIgnoreCase(command)) {
 			startEclipse();
 		}
 		if (!connection.isValid()) {
 			connection.renew();
-			if (!connection.isValid())
-				return false;
 		}
 
-		URL url = createCommandURL(command, parameters);
-		return connection.connect(url);
+		try {
+			URL url = createCommandURL(command, parameters);
+			connection.connect(url);
+		} catch (MalformedURLException mue) {
+			mue.printStackTrace();
+		} catch (InterruptedException ie) {
+		}
 	}
 
 	/**
@@ -91,7 +100,8 @@ public class EclipseController {
 	 * @param command standalone help system command e.g. "displayHelp"
 	 * @param parameters array of parameters of the command e.g. {"http://www.eclipse.org"}
 	 */
-	private URL createCommandURL(String command, String[] parameters) {
+	private URL createCommandURL(String command, String[] parameters)
+		throws MalformedURLException {
 		StringBuffer urlStr = new StringBuffer();
 		urlStr.append("http://");
 		urlStr.append(connection.getHost());
@@ -107,13 +117,7 @@ public class EclipseController {
 		if (Options.isDebug()) {
 			System.out.println("Control servlet URL=" + urlStr.toString());
 		}
-		try {
-			return new URL(urlStr.toString());
-		} catch (MalformedURLException mue) {
-			mue.printStackTrace();
-			return null;
-		}
-
+		return new URL(urlStr.toString());
 	}
 
 	/**
