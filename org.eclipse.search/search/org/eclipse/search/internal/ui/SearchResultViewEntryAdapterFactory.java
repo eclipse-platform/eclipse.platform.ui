@@ -37,7 +37,8 @@ public class SearchResultViewEntryAdapterFactory implements IAdapterFactory {
 			 * have been attached to a project because there is no
 			 * corresponding resource in the workspace.
 			 */
-			if (resource.getType() != IResource.PROJECT)
+			int type= resource.getType();
+			if (type != IResource.PROJECT && type != IResource.ROOT)
 				return resource;
 		}
 		return null; 
