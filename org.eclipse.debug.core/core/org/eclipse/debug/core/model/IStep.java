@@ -9,7 +9,8 @@ import org.eclipse.debug.core.DebugException;
 
 /**
  * Provides the ability to step into, over, and return
- * from the current execution location.
+ * from the current execution location.  Implementations
+ * must be non-blocking.
  * <p>
  * Clients may implement this interface.
  * </p>
@@ -54,8 +55,8 @@ public interface IStep {
 	/**
 	 * Steps into the current statement, generating <code>RESUME</code>
 	 * and <code>SUSPEND</code> events for the associated thread. Can only be called
-	 * when the associated thread is suspended. Implementations may choose to implement
-	 * stepping as blocking or non-blocking.
+	 * when the associated thread is suspended. Implementations must implement
+	 * stepping as non-blocking.
 	 *
 	 * @exception DebugException on failure. Reasons include:<ul>
 	 * <li>TARGET_REQUEST_FAILED - The request failed in the target</li>
@@ -66,8 +67,8 @@ public interface IStep {
 	/**
 	 * Steps over the current statement, generating <code>RESUME</code>
 	 * and <code>SUSPEND</code> events for the associated thread. Can only be called
-	 * when the associated thread is suspended. Implementations may choose to implement
-	 * stepping as blocking or non-blocking.
+	 * when the associated thread is suspended. Implementations must implement
+	 * stepping as non-blocking.
 	 *
 	 * @exception DebugException on failure. Reasons include:<ul>
 	 * <li>TARGET_REQUEST_FAILED - The request failed in the target</li>
@@ -79,7 +80,7 @@ public interface IStep {
 	 * Steps to the next return statement in the current scope,
 	 * generating <code>RESUME</code> and <code>SUSPEND</code> events for
 	 * the associated thread. Can only be called when the associated thread is suspended.
-	 * Implementations may choose to implement stepping as blocking or non-blocking.
+	 * Implementations must implement stepping as non-blocking.
 	 *
 	 * @exception DebugException on failure. Reasons include:<ul>
 	 * <li>TARGET_REQUEST_FAILED - The request failed in the target</li>
