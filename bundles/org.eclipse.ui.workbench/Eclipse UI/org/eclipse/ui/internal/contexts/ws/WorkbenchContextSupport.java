@@ -78,6 +78,11 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
      */
     private static final boolean DEBUG_VERBOSE = Policy.DEBUG_CONTEXTS_VERBOSE;
 
+	/**
+	 * The name of the data tag containing the dispose listener information.
+	 */
+	private static final String DISPOSE_LISTENER = "org.eclipse.ui.internal.contexts.ws.WorkbenchContextSupport"; //$NON-NLS-1$
+
     /**
      * Listens for shell activation events, and updates the list of enabled
      * contexts appropriately. This is used to keep the enabled contexts
@@ -209,8 +214,6 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
     private final Map registeredWindows = new WeakHashMap();
 
     private Workbench workbench;
-
-    private static final String DISPOSE_LISTENER = "WorkbenchContextSupport dispose listener"; //$NON-NLS-1$
 
     /**
      * Constructs a new instance of <code>WorkbenchCommandSupport</code>.
@@ -907,12 +910,18 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
             return false;
         }
 
-        // If we're unregistering the shell but we're not about to dispose it,
-        // then we'll end up leaking the DisposeListener unless we remove it here.
-        DisposeListener oldListener = (DisposeListener)shell.getData(DISPOSE_LISTENER);
-        if (oldListener != null) {
-            shell.removeDisposeListener(oldListener);
-        }
+        /*
+		 * If we're unregistering the shell but we're not about to dispose it,
+		 * then we'll end up leaking the DisposeListener unless we remove it
+		 * here.
+		 */
+		if (!shell.isDisposed()) {
+			final DisposeListener oldListener = (DisposeListener) shell
+					.getData(DISPOSE_LISTENER);
+			if (oldListener != null) {
+				shell.removeDisposeListener(oldListener);
+			}
+		}
         
         List previousSubmissions = (List) registeredWindows.get(shell);
         if (previousSubmissions != null) {
