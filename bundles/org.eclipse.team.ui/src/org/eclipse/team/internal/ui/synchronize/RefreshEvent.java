@@ -43,7 +43,7 @@ public class RefreshEvent implements IRefreshEvent {
 	}
 
 	public SyncInfo[] getChanges() {
-		return changes;
+		return changes != null ? changes : new SyncInfo[0];
 	}
 	
 	public void setChanges(SyncInfo[] changes) {
