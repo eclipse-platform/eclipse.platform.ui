@@ -15,7 +15,7 @@ package org.eclipse.core.variables;
  * and removed from the string variable manager. As well, listeners are
  * notified when a value variable changes value.
  * 
- * since 3.0
+ * @since 3.0
  */
 public interface IValueVariableListener {
 	
