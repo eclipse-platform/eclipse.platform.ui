@@ -67,8 +67,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.IWorkbenchAdapter;
@@ -155,7 +157,6 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	}
 
 	private TextSearchOperation createTextSearchOperation() {
-		SearchUI.activateSearchResultView();
 		
 		SearchPatternData patternData= getPatternData();
 		if (patternData.fileNamePatterns == null || fExtensions.getText().length() <= 0) {
@@ -182,6 +183,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		}		
 		scope.addExtensions(patternData.fileNamePatterns);
 
+		SearchUI.activateSearchResultView();
 		TextSearchResultCollector collector= new TextSearchResultCollector();
 		
 		final TextSearchOperation op= new TextSearchOperation(
@@ -634,6 +636,9 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 					scope.add(resource);
 				}
 			}
+		} else if (isProjectScope) {
+			IProject editorProject= getEditorProject();
+			if (editorProject != null)scope.add(editorProject);
 		}
 		if (isProjectScope) {
 			if (elementCount > 1)
@@ -646,8 +651,20 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		return scope;
 	}
 
+	private IProject getEditorProject() {
+		IWorkbenchPart activePart= SearchPlugin.getActivePage().getActivePart();
+		if (activePart instanceof IEditorPart) {
+			IEditorPart editor= (IEditorPart) activePart;
+			IEditorInput input= editor.getEditorInput();
+			if (input instanceof IFileEditorInput) {
+				return ((IFileEditorInput)input).getFile().getProject();
+			}
+		}
+		return null;
+	}
 	//--------------- Configuration handling --------------
 	
+
 	/**
 	 * Returns the page settings for this Java search page.
 	 * 

@@ -16,7 +16,15 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.Window;
+import org.eclipse.search.internal.ui.util.PixelConverter;
+import org.eclipse.search.internal.ui.util.SWTUtil;
+import org.eclipse.search.ui.ISearchPageContainer;
+import org.eclipse.search.ui.SearchUI;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -26,22 +34,11 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
-
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.window.Window;
-
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
-
-import org.eclipse.search.ui.ISearchPageContainer;
-import org.eclipse.search.ui.SearchUI;
-
-import org.eclipse.search.internal.ui.util.PixelConverter;
-import org.eclipse.search.internal.ui.util.SWTUtil;
 
 public class ScopePart {
 
@@ -280,9 +277,9 @@ public class ScopePart {
 		fUseSelection.setData(new Integer(ISearchPageContainer.SELECTION_SCOPE));
 		fUseSelection.setText(SearchMessages.getString("ScopePart.selectedResourcesScope.text")); //$NON-NLS-1$
 		ISelection selection= fSearchPageContainer.getSelection();
-		fUseSelection.setEnabled(
-			selection instanceof IStructuredSelection && !fSearchPageContainer.getSelection().isEmpty());
-
+		fUseSelection.setEnabled((selection instanceof IStructuredSelection && 
+				!fSearchPageContainer.getSelection().isEmpty()));
+		
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalIndent= 8;
 		fUseSelection.setLayoutData(gd);
@@ -290,8 +287,9 @@ public class ScopePart {
 		fUseProject= new Button(fPart, SWT.RADIO);
 		fUseProject.setData(new Integer(ISearchPageContainer.SELECTED_PROJECTS_SCOPE));
 		fUseProject.setText(SearchMessages.getString("ScopePart.enclosingProjectsScope.text")); //$NON-NLS-1$
-		fUseProject.setEnabled(
-			selection instanceof IStructuredSelection && !fSearchPageContainer.getSelection().isEmpty());
+		fUseProject.setEnabled((selection instanceof IStructuredSelection && 
+								!fSearchPageContainer.getSelection().isEmpty()) ||
+								hasFocusEditor());
 
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan= 2;
@@ -340,6 +338,18 @@ public class ScopePart {
 			fWorkingSetText.setText(toString(fWorkingSets));
 
 		return fPart;
+	}
+
+	/**
+	 * @return Whether an editor has the focus
+	 */
+	private boolean hasFocusEditor() {
+		IWorkbenchPage activePage= SearchPlugin.getActivePage();
+		if (activePage == null)
+			return false;
+		if (activePage.getActivePart() instanceof IEditorPart)
+			return true;
+		return false;
 	}
 
 	private void handleScopeChanged(SelectionEvent e) {
