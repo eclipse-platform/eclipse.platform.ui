@@ -31,6 +31,7 @@ import org.eclipse.core.runtime.Status;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 
@@ -432,6 +433,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		initializeFont(JFaceResources.HEADER_FONT, registry, store);
 		initializeFont(JFaceResources.TEXT_FONT, registry, store);
 		
+		sizeSmallFont(registry,store);
+		
 		store.addPropertyChangeListener(new PlatformUIPreferenceListener());
 	}
 
@@ -440,6 +443,35 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		FontData[] fontData = registry.getFontData(fontKey);
 		PreferenceConverter.setDefault(store, fontKey, fontData);
 	}
+	
+	/**
+	 * Set up the small font. If it has already been defined use
+	 * the defined value - otherwise size the default font.
+	 * @param registry
+	 * @param store
+	 */
+	private void sizeSmallFont(FontRegistry registry, IPreferenceStore store) {
+		
+		FontData[] smallFont;
+		
+		if(registry.hasValueFor(JFaceResources.SMALL_FONT))
+			smallFont = registry.getFontData(JFaceResources.SMALL_FONT);
+		else{
+			FontData[] systemFont = getWorkbench().getDisplay().getSystemFont().getFontData();
+			smallFont = new FontData[systemFont.length];
+		
+			for (int i = 0; i < systemFont.length; i++) {
+				FontData data = systemFont[i];
+				smallFont[i] = new FontData(data.getName(),((int)(data.getHeight() * 0.5)),data.getStyle());
+			}
+			
+			registry.put(JFaceResources.SMALL_FONT,smallFont);	
+		}
+		
+		PreferenceConverter.setDefault(store, JFaceResources.SMALL_FONT, smallFont);
+	}
+	
+	
 	/**
 	 * Log the given status to the ISV log.
 	 *

@@ -165,4 +165,7 @@ public interface IWorkbenchConstants {
 	
 	//Progress indicator
 	public static final String SHOW_PROGRESS_INDICATOR = "showProgressIndicator";	 //$NON-NLS-1$
+	
+	//Fonts
+	public static final String SMALL_FONT = "org.eclipse.ui.smallFont"; //$NON-NLS-1$
 }

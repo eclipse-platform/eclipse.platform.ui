@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import org.eclipse.swt.graphics.Device;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
@@ -23,6 +26,22 @@ import org.eclipse.jface.resource.*;
 public class SetPagePerspectiveAction extends Action {
 	private WorkbenchPage page;
 	private IPerspectiveDescriptor persp;
+	
+	private class ResizedDescriptor extends ImageDescriptor{
+		
+		ImageData cachedData;
+		
+		ResizedDescriptor(ImageData data){
+			super();
+			cachedData = data;
+		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.resource.ImageDescriptor#getImageData()
+		 */
+		public ImageData getImageData() {
+			return cachedData;
+		}
+	}
 	
 	/**
 	 *	Create an instance of this class
@@ -81,8 +100,9 @@ public class SetPagePerspectiveAction extends Action {
 		persp = newDesc;
 		setToolTipText(WorkbenchMessages.format("SetPagePerspectiveAction.toolTip", new Object[] {persp.getLabel()})); //$NON-NLS-1$
 		ImageDescriptor image = persp.getImageDescriptor();
+		ImageDescriptor mainImage = adjustMainImage(persp.getImageDescriptor());
 		if (image != null) {
-			setImageDescriptor(image);
+			setImageDescriptor(mainImage);
 			setHoverImageDescriptor(null);
 		} else {
 			setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_DEF_PERSPECTIVE));
@@ -97,6 +117,29 @@ public class SetPagePerspectiveAction extends Action {
 	 */
 	public boolean showTextInToolBar(){
 		return true;
+	}
+	
+	
+	
+	/**
+	 * Get the supplied image adjusted for the perspective bar.
+	 * @param start
+	 * @return
+	 */
+	private ImageDescriptor adjustMainImage(ImageDescriptor start){
+		
+		Device device = PlatformUI.getWorkbench().getDisplay();
+		Image sizeImage = start.createImage(device);
+		
+		if(sizeImage == null)
+			return start;
+		
+		ImageData data = sizeImage.getImageData().scaledTo(32,32);
+		
+		ImageDescriptor result = new ResizedDescriptor(data);
+		sizeImage.dispose();
+		return result;
+		
 	}
 	
 }
