@@ -1403,6 +1403,8 @@ private void updateChildren(Widget widget, Object parent, Object[] elementChildr
 			// Restore expanded state for items that changed position.
 			// Make sure setExpanded is called after updatePlus, since
 			// setExpanded(false) fails if item has no children.
+			// Need to call setExpanded for both expanded and unexpanded cases
+			// since the expanded state can change either way.
 			setExpanded(item, expanded.contains(newElement));
 		}
 		else {
@@ -1415,15 +1417,28 @@ private void updateChildren(Widget widget, Object parent, Object[] elementChildr
 	}
 	
 	// add any remaining elements
-	for (int i = min; i < elementChildren.length; ++i) {
-		Object newElement = elementChildren[i];
-		Item item = newItem(widget, SWT.NULL, i);
-		updateItem(item, newElement);
-		updatePlus(item, newElement);
-		// Restore expanded state for items that changed position.
-		// Make sure setExpanded is called after updatePlus, since
-		// setExpanded(false) fails if item has no children.
-		setExpanded(item, expanded.contains(newElement));
+	if (min < elementChildren.length) {
+		for (int i = min; i < elementChildren.length; ++i) {
+			createTreeItem(widget, elementChildren[i], i);
+		}
+		
+		// Need to restore expanded state in a separate pass 
+		// because createTreeItem does not return the new item.
+		// Avoid doing this unless needed.
+		if (!expanded.isEmpty()) {
+			// get the items again, to include the new items
+			items = getChildren(widget);
+			for (int i = min; i < elementChildren.length; ++i) {
+				// Restore expanded state for items that changed position.
+				// Make sure setExpanded is called after updatePlus (called in createTreeItem), since
+				// setExpanded(false) fails if item has no children.
+				// Only need to call setExpanded if element was expanded
+				// since new items are initially unexpanded.
+				if (expanded.contains(elementChildren[i])) {
+					setExpanded(items[i], true);
+				}
+			}
+		}
 	}
 	
 	// WORKAROUND
