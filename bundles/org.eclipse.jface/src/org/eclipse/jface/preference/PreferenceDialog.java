@@ -373,15 +373,16 @@ public class PreferenceDialog extends Dialog implements
 	private void createNewLookTab(Composite composite) {
 		TabFolder tabFolder = new TabFolder(composite,SWT.NONE);
 		
+		// TODO Remove this before 3.1 ships
 		TabItem classicItem = new TabItem(tabFolder,SWT.NONE);
-		classicItem.setText("Classic");
+		classicItem.setText("Classic");//$NON-NLS-1$
 		Composite classicParent = new Composite(tabFolder,SWT.NONE);
 		classicItem.setControl(classicParent);
 		classicParent.setLayout(new GridLayout());
 		createClassicPreferencesArea(classicParent);
 
 		TabItem newItem = new TabItem(tabFolder,SWT.NONE);
-		newItem.setText("New Look");
+		newItem.setText("New Look");//$NON-NLS-1$
 		Composite newParent = new Composite(tabFolder,SWT.NONE);
 		newItem.setControl(newParent);
 		newParent.setLayout(new GridLayout());
