@@ -40,7 +40,7 @@ import java.lang.reflect.InvocationTargetException;
  * after completion of one IRunnableWithProgress and a new one instantiated
  * for use by a second or sebsequent IRunnableWithProgress to ensure
  * proper initialization.
- * 
+ * </p> 
  */
 public class ProgressMonitorDialog extends Dialog implements IRunnableContext {
 
