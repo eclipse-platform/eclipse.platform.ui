@@ -783,7 +783,7 @@ public class EditorManager {
 				}
 				IElementFactory factory = WorkbenchPlugin.getDefault().getElementFactory(factoryID);
 				if (factory == null) {
-					WorkbenchPlugin.log("Unable to restore editor - cannot instantiate input factory: " + factoryID); //$NON-NLS-1$
+					WorkbenchPlugin.log("Unable to restore editor - cannot instantiate input element factory: " + factoryID); //$NON-NLS-1$
 					errors[0]++;
 					return;
 				}
@@ -791,12 +791,12 @@ public class EditorManager {
 				// Get the input element.
 				IAdaptable input = factory.createElement(inputMem);
 				if (input == null) {
-					WorkbenchPlugin.log("Unable to restore editor - cannot instantiate input element: " + factoryID); //$NON-NLS-1$
+					WorkbenchPlugin.log("Unable to restore editor - createElement returned null for input element factory: " + factoryID); //$NON-NLS-1$
 					errors[0]++;
 					return;
 				}
 				if (!(input instanceof IEditorInput)) {
-					WorkbenchPlugin.log("Unable to restore editor - input is not IEditorInput"); //$NON-NLS-1$
+					WorkbenchPlugin.log("Unable to restore editor - createElement result is not an IEditorInput for input element factory: " + factoryID); //$NON-NLS-1$
 					errors[0]++;
 					return;
 				}
