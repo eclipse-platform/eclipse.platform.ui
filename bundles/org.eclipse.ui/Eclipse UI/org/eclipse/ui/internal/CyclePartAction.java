@@ -207,7 +207,7 @@ protected void addItems(Table table,WorkbenchPage page) {
 			}
 		} else {
 			TableItem item = new TableItem(table,SWT.NONE);
-			item.setText(refs[i].getTitle());
+			item.setText(((WorkbenchPartReference)refs[i]).getRegisteredName());
 			item.setImage(refs[i].getTitleImage());
 			item.setData(refs[i]);
 		}

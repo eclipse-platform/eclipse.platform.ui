@@ -100,13 +100,8 @@ public void add(LayoutPart child) {
 	int index = getItemCount();
 	String label = "";//$NON-NLS-1$
 	if (child instanceof PartPane) {
-		String id = ((PartPane)child).getPartReference().getId();
-		IViewRegistry reg = WorkbenchPlugin.getDefault().getViewRegistry();
-		IViewDescriptor desc = reg.find(id);
-		if(desc != null)
-			label = desc.getLabel();
-		else
-			label = ((PartPane)child).getPartReference().getTitle();
+		WorkbenchPartReference ref = (WorkbenchPartReference)((PartPane)child).getPartReference();
+		label = ref.getRegisteredName();
 	}
 	add(label, index, child);
 }
@@ -681,8 +676,10 @@ private void replaceChild(PartPlaceholder oldChild, LayoutPart newChild) {
 				invisibleChildren = arrayRemove(invisibleChildren, oldChild);
 				oldChild.setContainer(null);
 				
-				if (newChild instanceof PartPane)
-					info.tabText = ((PartPane)newChild).getPartReference().getTitle();
+				if (newChild instanceof PartPane) {
+					WorkbenchPartReference ref = (WorkbenchPartReference)((PartPane)newChild).getPartReference();
+					info.tabText = ref.getRegisteredName();
+				}
 				CTabItem item = createPartTab(newChild, info.tabText, -1);
 				int index = tabFolder.indexOf(item);
 				setSelection(index);
