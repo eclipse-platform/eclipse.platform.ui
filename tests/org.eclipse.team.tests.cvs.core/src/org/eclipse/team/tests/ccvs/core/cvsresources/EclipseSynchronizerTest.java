@@ -14,6 +14,7 @@ import java.util.Set;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -29,6 +30,7 @@ import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 
@@ -311,15 +313,28 @@ public class EclipseSynchronizerTest extends EclipseTest {
 	 * Assumes resource does not already have ignores.
 	 */
 	private void _testIgnoresValid(IContainer container) throws CVSException {
-		String[] ignored = sync.getIgnored(container);
+		String[] ignored = getIgnored(container);
 		assertTrue(ignored.length == 0);
 		sync.addIgnored(container, "*.xyz");
-		ignored = sync.getIgnored(container);
+		ignored = getIgnored(container);
 		assertBijection(ignored, new String[] { "*.xyz" }, null);
 		sync.addIgnored(container, "*.abc");
 		sync.addIgnored(container, "*.def");
-		ignored = sync.getIgnored(container);
+		ignored = getIgnored(container);
 		assertBijection(ignored, new String[] { "*.abc", "*.def", "*.xyz" }, null);
+	}
+
+	/**
+	 * TODO: should use chached ignores somehow
+	 * @param container
+	 * @return String[]
+	 * @throws CVSException
+	 */
+	private String[] getIgnored(IContainer container) throws CVSException {
+		if (container.getType() == IResource.ROOT) return new String[0];
+		String[] ignored = SyncFileWriter.readCVSIgnoreEntries(container);
+		if (ignored == null) return new String[0];
+		return ignored;
 	}
 
 	/*
@@ -327,14 +342,14 @@ public class EclipseSynchronizerTest extends EclipseTest {
 	 * Assumes resource does not already have ignores.
 	 */
 	private void _testIgnoresInvalid(IContainer container) throws CVSException {
-		String[] ignored = sync.getIgnored(container);
+		String[] ignored = getIgnored(container);
 		assertTrue(ignored.length == 0);
 		try {
 			sync.addIgnored(container, "*.xyz");
 			fail("Expected CVSException");
 		} catch (CVSException e) {
 		}
-		ignored = sync.getIgnored(container);
+		ignored = getIgnored(container);
 		assertTrue(ignored.length == 0);
 	}
 	
