@@ -13,6 +13,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentExtension;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IRegion;
 
@@ -115,6 +116,9 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 			
 			if (fEditor instanceof ITextEditorExtension)
 				((ITextEditorExtension) fEditor).beginCompoundChange();
+				
+//			if (fDocument instanceof IDocumentExtension)
+//				((IDocumentExtension) fDocument).startSequentialRewrite();
 			
 			try {
 				for (int i= 0; i < lineCount; i++) {
@@ -134,6 +138,9 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 				throw new InvocationTargetException(e);
 
 			} finally {
+//				if (fDocument instanceof IDocumentExtension)
+//					((IDocumentExtension) fDocument).stopSequentialRewrite();	
+				
 				if (fEditor instanceof ITextEditorExtension)
 					((ITextEditorExtension) fEditor).endCompoundChange();
 				
@@ -222,9 +229,9 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 			if (editor instanceof ITextEditorExtension && ((ITextEditorExtension) editor).isEditorInputReadOnly())
 				return false;
 
-			IDocument document= getDocument();
-			if (document == null || usesLineDelimiterExclusively(document, fLineDelimiter))
-				return false;
+//			IDocument document= getDocument();
+//			if (document == null || usesLineDelimiterExclusively(document, fLineDelimiter))
+//				return false;
 				
 			return isEnabled();
 	}
@@ -234,7 +241,7 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 	 */
 	public void update() {
 		super.update();
-//		setEnabled(doEnable());	
-	}	
+		setEnabled(doEnable());	
+	}
 
 }
