@@ -1096,7 +1096,7 @@ public final class Workbench implements IWorkbench {
                     IWorkbenchConfigurer.RESTORE_CODE_RESET, msg, null); //$NON-NLS-1$
 		}
 
-		final IStatus result[] = { new Status(IStatus.WARNING,
+		final IStatus result[] = { new Status(IStatus.OK,
                 WorkbenchPlugin.PI_WORKBENCH, IStatus.OK, "", null)}; //$NON-NLS-1$
 		Platform.run(new SafeRunnable(WorkbenchMessages
                 .getString("ErrorReadingState")) { //$NON-NLS-1$
