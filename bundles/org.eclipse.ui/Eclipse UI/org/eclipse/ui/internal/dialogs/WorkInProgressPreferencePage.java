@@ -100,7 +100,7 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 	 * The default button has been pressed. 
 	 */
 	protected void performDefaults() {
-		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store = getPreferenceStore();
 
 		//Call commented out on WorkbenchPreferencePage. 
 		acceleratorPerformDefaults(store);
