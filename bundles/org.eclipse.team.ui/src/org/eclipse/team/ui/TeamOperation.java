@@ -315,8 +315,7 @@ public abstract class TeamOperation extends JobChangeAdapter implements IRunnabl
      * @since 3.1
      */
     public boolean isUserInitiated() {
-        // TODO Auto-generated method stub
-        return false;
+        return true;
     }
     
 	/**
