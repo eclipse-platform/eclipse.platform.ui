@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -204,7 +204,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			} catch (MalformedURLException e) {
 				continue;
 			}
-			result.add(new AntClasspathEntry(url.getFile()));
+			result.add(new AntClasspathEntry(url));
 		}
 		return (IAntClasspathEntry[])result.toArray(new IAntClasspathEntry[result.size()]);
 	}
@@ -383,10 +383,10 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		for (i = 0; i < antHomeEntries.length; i++) {
 			URL url = antHomeEntries[i].getEntryURL();
 			if (url != null) {
-				urls[i]=url;
+				urls[i]= url;
 			}
 		}
-		if (extra >0) {
+		if (extra > 0) {
 			urls[i]= entry.getEntryURL();
 		}
 		return urls;
@@ -400,8 +400,8 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			if (runningHeadless) {
 				String headless = element.getAttribute(AntCorePlugin.HEADLESS);
 				if (headless != null) {
-					boolean headlessType= Boolean.valueOf(headless).booleanValue();
-					if (!headlessType) {
+					boolean headlessTask= Boolean.valueOf(headless).booleanValue();
+					if (!headlessTask) {
 						continue;
 					}
 				}
@@ -421,12 +421,10 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			try {
 				URL url = Platform.asLocalURL(new URL(descriptor.getInstallURL(), library));
 				if (new File(url.getPath()).exists()) {
-					if (!extraClasspathURLs.contains(url)) {
-						extraClasspathURLs.add(url);
-					}
+					addURLToExtraClasspathEntries(url, element);
 					result.add(task);
 					addPluginClassLoader(descriptor.getPluginClassLoader());
-					task.setLibraryEntry(new AntClasspathEntry(url.getFile()));
+					task.setLibraryEntry(new AntClasspathEntry(url));
 				} else {
 					//task specifies a library that does not exist
 					IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(InternalCoreAntMessages.getString("AntCorePreferences.No_library_for_task"), new String[]{url.toExternalForm(), descriptor.getLabel()}), null); //$NON-NLS-1$
@@ -446,6 +444,25 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			}
 		}
 		return result;
+	}
+
+	private void addURLToExtraClasspathEntries(URL url, IConfigurationElement element) {
+		String eclipseRuntime= element.getAttribute(AntCorePlugin.ECLIPSE_RUNTIME);
+		boolean eclipseRuntimeRequired= true;
+		if (eclipseRuntime != null) {
+			eclipseRuntimeRequired= Boolean.getBoolean(eclipseRuntime);
+		}
+		Iterator itr= extraClasspathURLs.iterator();
+		while (itr.hasNext()) {
+			IAntClasspathEntry entry = (IAntClasspathEntry) itr.next();
+			if (entry.getEntryURL().equals(url)) {
+				return;
+			}
+		}
+		
+		AntClasspathEntry entry= new AntClasspathEntry(url);
+		entry.setEclipseRuntimeRequired(eclipseRuntimeRequired);
+		extraClasspathURLs.add(entry);
 	}
 
 	protected List computeDefaultTypes(List types) {
@@ -475,12 +492,10 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			try {
 				URL url = Platform.asLocalURL(new URL(descriptor.getInstallURL(), library));
 				if (new File(url.getPath()).exists()) {
-					if (!extraClasspathURLs.contains(url)) {
-						extraClasspathURLs.add(url);
-					}
+					addURLToExtraClasspathEntries(url, element);
 					result.add(type);
 					addPluginClassLoader(descriptor.getPluginClassLoader());
-					type.setLibraryEntry(new AntClasspathEntry(url.getFile()));
+					type.setLibraryEntry(new AntClasspathEntry(url));
 				} else {
 					//type specifies a library that does not exist
 					IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(InternalCoreAntMessages.getString("AntCorePreferences.No_library_for_type"), new String[]{url.toExternalForm(), descriptor.getLabel()}), null); //$NON-NLS-1$
@@ -523,9 +538,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 				URL url = Platform.asLocalURL(new URL(descriptor.getInstallURL(), library));
 				
 				if (new File(url.getPath()).exists()) {
-					if (!extraClasspathURLs.contains(url)) {
-						extraClasspathURLs.add(url);
-					}
+					addURLToExtraClasspathEntries(url, element);  
 					addPluginClassLoader(descriptor.getPluginClassLoader());
 				} else {
 					//extra classpath entry that does not exist
@@ -681,7 +694,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		for (int i = 0; i < libraries.length; i++) {
 			try {
 				URL url = new URL(root, libraries[i].getPath().toString());
-				destination.add(new AntClasspathEntry(Platform.asLocalURL(url).getFile()));
+				destination.add(new AntClasspathEntry(Platform.asLocalURL(url)));
 			} catch (Exception e) {
 				// if the URL does not have a valid format, just log and ignore the exception
 				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.getString("AntCorePreferences.Malformed_URL._1"), e);  //$NON-NLS-1$
@@ -703,7 +716,32 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * @return the list of extra classpath URLs
 	 */
 	public URL[] getExtraClasspathURLs() {
-		return (URL[])extraClasspathURLs.toArray(new URL[extraClasspathURLs.size()]);
+		URL[] urls= new URL[extraClasspathURLs.size()];
+		
+		for (int i = 0; i < extraClasspathURLs.size(); i++) {
+				IAntClasspathEntry entry = (IAntClasspathEntry) extraClasspathURLs.get(i);
+				urls[i]= entry.getEntryURL();	
+		}
+		return urls;
+	}
+	
+	/**
+	 * Returns the list of urls added to the classpath by the extra classpath
+	 * entries extension point for an Ant build that is occuring without the Eclipse runtime.
+	 * 
+	 * @return the list of extra classpath URLs
+	 * @since 3.0
+	 */
+	public URL[] getRemoteExtraClasspathURLs() {
+		List urls= new ArrayList(extraClasspathURLs.size());
+		
+		for (int i = 0; i < extraClasspathURLs.size(); i++) {
+				IAntClasspathEntry entry = (IAntClasspathEntry) extraClasspathURLs.get(i);
+				if (!entry.isEclipseRuntimeRequired()) {
+					urls.add(entry.getEntryURL());
+				}
+		}
+		return (URL[])urls.toArray(new URL[urls.size()]);
 	}
 	
 	/**
@@ -713,7 +751,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * @return the entire runtime classpath of URLs
 	 */
 	public URL[] getURLs() {
-		List result = new ArrayList(50);
+		List result = new ArrayList(60);
 		if (antHomeEntries != null) {
 			for (int i = 0; i < antHomeEntries.length; i++) {
 				IAntClasspathEntry entry = antHomeEntries[i];
@@ -726,33 +764,14 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 				result.add(entry.getEntryURL());	
 			}
 		}
-		if (extraClasspathURLs != null) {
-			result.addAll(extraClasspathURLs);
+		
+		for (int i = 0; i < extraClasspathURLs.size(); i++) {
+			IAntClasspathEntry entry = (IAntClasspathEntry) extraClasspathURLs.get(i);
+			result.add(entry.getEntryURL());	
 		}
+		
 		return (URL[]) result.toArray(new URL[result.size()]);
 	}
-	
-	/**
-	 * Returns the entire set of classpath entires that define the Ant runtime classpath.
-	 * Includes the Ant home entries, the additional entries and extra classpath entries.
-	 * 
-	 * @return the entire runtime classpath
-	 */
-	public IAntClasspathEntry[] getClasspathEntries() {
-		List result = new ArrayList(50);
-		if (antHomeEntries != null) {
-			result.addAll(Arrays.asList(antHomeEntries));
-		}
-		if (additionalEntries != null && additionalEntries.length > 0) {
-			result.addAll(Arrays.asList(additionalEntries));
-		}
-		if (extraClasspathURLs != null) {
-			result.addAll(extraClasspathURLs);
-		}
-		return (IAntClasspathEntry[]) result.toArray(new IAntClasspathEntry[result.size()]);
-	}
-	
-	
 
 	protected ClassLoader[] getPluginClassLoaders() {
 		if (orderedPluginClassLoaders == null) {
@@ -1028,7 +1047,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		additionalEntries= new IAntClasspathEntry[urls.length];
 		for (int i = 0; i < urls.length; i++) {
 			URL url = urls[i];
-			IAntClasspathEntry entry= new AntClasspathEntry(url.getFile());
+			IAntClasspathEntry entry= new AntClasspathEntry(url);
 			additionalEntries[i]= entry;
 		}
 	}
@@ -1044,7 +1063,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		antHomeEntries= new IAntClasspathEntry[urls.length];
 		for (int i = 0; i < urls.length; i++) {
 			URL url = urls[i];
-			IAntClasspathEntry entry= new AntClasspathEntry(url.getFile());
+			IAntClasspathEntry entry= new AntClasspathEntry(url);
 			antHomeEntries[i]= entry;
 		}
 	}
@@ -1377,14 +1396,14 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	}
 
 	/**
-	 * Returns the list of URLs to added to the classpath for a remote
-	 * Ant build
+	 * Returns the list of URLs to added to the classpath for an Ant build that is 
+	 * occuring without the Eclipse runtime.
 	 * 
 	 * @return the list of classpath entries
 	 * @since 3.0
 	 */
 	public URL[] getRemoteAntURLs() {
-		List result = new ArrayList(30);
+		List result = new ArrayList(40);
 		if (antHomeEntries != null) {
 			for (int i = 0; i < antHomeEntries.length; i++) {
 				IAntClasspathEntry entry = antHomeEntries[i];
@@ -1397,6 +1416,15 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 				result.add(entry.getEntryURL());	
 			}
 		}
+		if (extraClasspathURLs != null) {
+			for (int i = 0; i < extraClasspathURLs.size(); i++) {
+				IAntClasspathEntry entry = (IAntClasspathEntry) extraClasspathURLs.get(i);
+				if (!entry.isEclipseRuntimeRequired()) {
+					result.add(entry.getEntryURL());
+				}
+			}
+		}
+		
 		URL remote= getRemoteAntURL();
 		if (remote != null) {
 			result.add(remote);
