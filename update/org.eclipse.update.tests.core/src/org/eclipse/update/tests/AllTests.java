@@ -13,6 +13,7 @@ package org.eclipse.update.tests;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.update.tests.api.AllAPITests;
+import org.eclipse.update.tests.branding.*;
 import org.eclipse.update.tests.configurations.AllConfigurationsTests;
 import org.eclipse.update.tests.core.boot.AllPlatformConfigurationTests;
 import org.eclipse.update.tests.mirror.*;
@@ -46,7 +47,8 @@ public class AllTests extends TestSuite {
 		suite.addTest(AllRegularRemoveTests.suite());
 		suite.addTest(AllNestedTests.suite());	
 		suite.addTest(AllReconciliationTests.suite());					
-		suite.addTest(AllModelTests.suite());	
+		suite.addTest(AllModelTests.suite());
+		suite.addTest(AllBrandingTests.suite());
 		//suite.addTest(AllStandaloneTests.suite());
 		return suite;
 	}
