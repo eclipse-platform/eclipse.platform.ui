@@ -111,7 +111,7 @@
             category="org.eclipse.debug.ui"
             class="org.eclipse.debug.internal.ui.views.memory.MemoryView"
             id="org.eclipse.debug.ui.MemoryView">
-      </view>
+      </view>      
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
@@ -1288,6 +1288,36 @@
          </action>
       </viewerContribution>
    </extension>
+<!-- Contribution to Memory View, integer renderings -->
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.debug.internal.ui.views.memory.IntegerRendering"
+            id="org.eclipse.debug.ui.memory">
+         <menu
+               label="%Endianess"
+               path="additions"
+               id="org.eclipse.debug.ui.memory.rendering.setendianess">
+            <separator
+                  name="setEndianessGroup">
+            </separator>
+         </menu>            
+         <action
+               label="%BigEndianActionName"
+               class="org.eclipse.debug.internal.ui.views.memory.BigEndianAction"
+               enablesFor="1"
+               menubarPath="org.eclipse.debug.ui.memory.rendering.setendianess/setEndianessGroup"
+               id="org.eclipse.debug.ui.memory.rendering.BigEndianAction"> 
+         </action>
+          <action
+               label="%LittleEndianActionName"
+               class="org.eclipse.debug.internal.ui.views.memory.LittleEndianAction"
+               enablesFor="1"
+               menubarPath="org.eclipse.debug.ui.memory.rendering.setendianess/setEndianessGroup"
+               id="org.eclipse.debug.ui.memory.rendering.LittleEndianAction"> 
+         </action>
+      </objectContribution>   
+   </extension>   
    <extension
          point="org.eclipse.ui.elementFactories">
       <factory
@@ -2126,15 +2156,16 @@ M4 = Platform-specific fourth key
          </description>
       </fontDefinition>
    </extension>
-<!-- raw hex rendering for Memory View -->
+<!-- Renderings Definitions -->   
    <extension
-     id="org.eclipse.debug.ui.rendering.raw_memory"
-     name="%rawHexMemoryRendering.name"
+     id="org.eclipse.debug.ui.renderings"
+     name="%Renderings"
      point="org.eclipse.debug.core.memoryRenderings">
+<!-- raw hex rendering for Memory View -->     
 	  <rendering
 	        name="%RawHex"
 	        renderingId="org.eclipse.debug.ui.rendering.raw_memory"
-	        renderingFactory="org.eclipse.debug.internal.ui.views.memoryHexRenderingFactory">
+	        renderingFactory="org.eclipse.debug.internal.ui.views.memory.HexRenderingFactory">
 	        <rendering_property
 	            renderingId="org.eclipse.debug.ui.rendering.raw_memory"
 	            name="viewTabFactory"
@@ -2146,7 +2177,56 @@ M4 = Platform-specific fourth key
 	            value="org.eclipse.debug.internal.ui.views.memory.HexRenderer">
 	        </rendering_property>
 	  </rendering>
-   </extension>
+	 
+<!-- ASCII Rendering - renderingFactory will create an com.ibm.debug.defaultrenderings.rendering.ASCIIRendering -->
+      <rendering
+            name="%ASCIIName"
+            renderingId="org.eclipse.debug.ui.rendering.ascii"
+            renderingFactory="org.eclipse.debug.internal.ui.views.memory.DefaultRenderingsFactory">
+         <rendering_property
+               name="viewTabFactory"
+               renderingId="org.eclipse.debug.ui.rendering.ascii"
+               value="org.eclipse.debug.internal.ui.views.memory.MemoryRenderingViewTabFactory">
+         </rendering_property>
+         <rendering_property
+               name="renderer"
+               renderingId="org.eclipse.debug.ui.rendering.ascii"
+               value="org.eclipse.debug.internal.ui.views.memory.ASCIIRenderer">
+         </rendering_property>
+      </rendering>
+<!-- Signed Integer Rendering - renderingFactory will create an com.ibm.debug.defaultrenderings.rendering.SignedIntegerRendering -->  
+      <rendering
+            name="%SignedIntegerName"
+            renderingId="org.eclipse.debug.ui.rendering.signedint"
+            renderingFactory="org.eclipse.debug.internal.ui.views.memory.DefaultRenderingsFactory">
+         <rendering_property
+               name="viewTabFactory"
+               renderingId="org.eclipse.debug.ui.rendering.signedint"
+               value="org.eclipse.debug.internal.ui.views.memory.MemoryRenderingViewTabFactory">
+         </rendering_property>
+         <rendering_property
+               name="renderer"
+               renderingId="org.eclipse.debug.ui.rendering.signedint"
+               value="org.eclipse.debug.internal.ui.views.memory.SignedIntegerRenderer">
+         </rendering_property>
+      </rendering>
+<!-- Unsigned Integer Rendering - renderingFactory will create an com.ibm.debug.defaultrenderings.rendering.UnsignedIntegerRendering -->
+      <rendering
+            name="%UnsignedIntegerName"
+            renderingId="org.eclipse.debug.ui.rendering.unsignedint"
+            renderingFactory="org.eclipse.debug.internal.ui.views.memory.DefaultRenderingsFactory">
+         <rendering_property
+               name="viewTabFactory"
+               renderingId="org.eclipse.debug.ui.rendering.unsignedint"
+               value="org.eclipse.debug.internal.ui.views.memory.MemoryRenderingViewTabFactory">
+         </rendering_property>
+         <rendering_property
+               name="renderer"
+               renderingId="org.eclipse.debug.ui.rendering.unsignedint"
+               value="org.eclipse.debug.internal.ui.views.memory.UnsignedIntegerRenderer">
+         </rendering_property>
+      </rendering>
+   </extension>   
    <extension
          point="org.eclipse.ui.console.consolePageParticipants">
       <consolePageParticipant

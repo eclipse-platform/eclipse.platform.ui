@@ -60,6 +60,9 @@ public class RemoveMemoryBlockAction extends AbstractMemoryAction {
 	 * @see org.eclipse.debug.ui.internal.actions.AbstractMemoryAction#getViewTab()
 	 */
 	IMemoryViewTab getViewTab() {
-		return getTopViewTabFromView(IInternalDebugUIConstants.ID_MEMORY_VIEW);
+		
+		String viewId = IInternalDebugUIConstants.ID_MEMORY_VIEW;
+		
+		return super.getTopViewTabFromView(viewId);
 	}
 }

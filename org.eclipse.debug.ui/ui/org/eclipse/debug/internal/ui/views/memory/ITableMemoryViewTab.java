@@ -47,4 +47,15 @@ public interface ITableMemoryViewTab extends IMemoryViewTab {
 	 */
 	public int getNumberOfVisibleLines();
 	
+	/**
+	 * Set view tab to show/hide its address column
+	 * @param showColumn
+	 */
+	public void showAddressColumn(boolean showColumn);
+	
+	/**
+	 * @return if address column is currently shown
+	 */
+	public boolean isShowAddressColumn();
+	
 }

@@ -1,0 +1,485 @@
+/*******************************************************************************
+ * Copyright (c) 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.debug.internal.ui.views.memory;
+
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IDebugElement;
+import org.eclipse.debug.core.model.IMemoryBlock;
+import org.eclipse.debug.internal.core.memory.IExtendedMemoryBlock;
+import org.eclipse.debug.internal.core.memory.IMemoryRendering;
+import org.eclipse.debug.internal.core.memory.IMemoryRenderingInfo;
+import org.eclipse.debug.internal.core.memory.MemoryBlockManager;
+import org.eclipse.debug.internal.ui.DebugUIMessages;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ListViewer;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.dialogs.SelectionDialog;
+import org.eclipse.ui.help.WorkbenchHelp;
+
+/**
+ * Dialog allowing user to add a memory rendering
+ */
+public class AddMemoryRenderingDialog extends SelectionDialog {
+	
+	IMemoryBlock[] fMemoryBlocks;
+	Combo memoryBlock;
+	ListViewer viewer;
+	IMemoryBlock fSelectedMemoryBlock;
+	Button addNew;
+	
+	ISelectionChangedListener fSelectionChangedListener;
+	MouseListener fMouseListener;
+	SelectionListener fSelectionListener;
+	
+	private static final String PREFIX = "AddMemoryRenderingDialog."; //$NON-NLS-1$
+	private static final String MEMORY_MONITOR = PREFIX + "Memory_monitor"; //$NON-NLS-1$
+	private static final String ADD_NEW = PREFIX + "Add_new"; //$NON-NLS-1$
+	private static final String MEMORY_RENDERING = PREFIX + "Memory_rendering"; //$NON-NLS-1$
+	private static final String ADD_MEMORY_RENDERING = PREFIX + "Add_memory_rendering"; //$NON-NLS-1$
+	private static final String UNKNOWN = PREFIX + "Unknown"; //$NON-NLS-1$
+	
+	class MemoryRenderingLabelProvider implements ILabelProvider
+	{
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
+		 */
+		public Image getImage(Object element) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
+		 */
+		public String getText(Object element) {
+			if (element instanceof IMemoryRenderingInfo)
+			{	
+				String label = ((IMemoryRenderingInfo)element).getName();
+				return label;
+			}
+			else
+			{
+				return element.toString();
+			}
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
+		 */
+		public void addListener(ILabelProviderListener listener) {
+			// TODO Auto-generated method stub
+
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
+		 */
+		public void dispose() {
+			// TODO Auto-generated method stub
+
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
+		 */
+		public boolean isLabelProperty(Object element, String property) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
+		 */
+		public void removeListener(ILabelProviderListener listener) {
+			// TODO Auto-generated method stub
+
+		}
+
+	}
+	
+	class MemoryRenderingContentProvider implements IStructuredContentProvider
+	{
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+		 */
+		public Object[] getElements(Object inputElement) {
+			IMemoryRenderingInfo[] renderings = MemoryBlockManager.getMemoryRenderingManager().getAllRenderingInfo(inputElement);
+			return renderings;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
+		 */
+		public void dispose() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+		 */
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	}
+
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#close()
+	 */
+	public boolean close() {
+		
+		viewer.removeSelectionChangedListener(fSelectionChangedListener);
+		memoryBlock.removeSelectionListener(fSelectionListener);
+		addNew.removeMouseListener(fMouseListener);
+		
+		return super.close();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
+	 */
+	protected void createButtonsForButtonBar(Composite parent) {
+		super.createButtonsForButtonBar(parent);
+		getButton(IDialogConstants.OK_ID).setEnabled(false);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.dialogs.SelectionDialog#getResult()
+	 */
+	public Object[] getResult() {
+		
+		Object[] results = super.getResult();
+		
+		if (results != null)
+		{	
+			Object[] renderings = ((IStructuredSelection)results[0]).toArray();
+			return renderings;
+		}
+		else
+		{
+			return new Object[0];
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#cancelPressed()
+	 */
+	protected void cancelPressed() {
+		
+		setResult(null);
+		
+		super.cancelPressed();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
+	 */
+	protected void okPressed() {
+		
+		ISelection select = viewer.getSelection();
+		setSelectionResult(new Object[]{select});
+		
+		super.okPressed();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
+	 */
+	protected Control createDialogArea(Composite parent) {
+
+		Composite composite = new Composite(parent, SWT.NONE);
+		GridLayout compositeLayout = new GridLayout();
+		compositeLayout.numColumns = 3;
+		compositeLayout.makeColumnsEqualWidth = true;
+		composite.setLayout(compositeLayout);
+		
+		GridData comositeSpec= new GridData();
+		comositeSpec.grabExcessVerticalSpace= true;
+		comositeSpec.grabExcessHorizontalSpace= true;
+		comositeSpec.horizontalAlignment= GridData.FILL;
+		comositeSpec.verticalAlignment= GridData.CENTER;
+		composite.setLayoutData(comositeSpec);
+		
+		Label textLabel = new Label(composite, SWT.NONE);
+		textLabel.setText(DebugUIMessages.getString("AddMemoryRenderingDialog.Memory_Monitor")); //$NON-NLS-1$
+		GridData textLayout = new GridData();
+		textLayout.verticalAlignment=GridData.CENTER;
+		textLayout.horizontalAlignment=GridData.BEGINNING;
+		textLabel.setLayoutData(textLayout);
+		
+		memoryBlock = new Combo(composite, SWT.BORDER | SWT.READ_ONLY);
+		GridData spec= new GridData(GridData.FILL_HORIZONTAL);
+		spec.grabExcessVerticalSpace= false;
+		spec.grabExcessHorizontalSpace= false;
+		spec.horizontalAlignment= GridData.FILL;
+		spec.verticalAlignment= GridData.FILL;
+		spec.horizontalSpan = 4;
+		memoryBlock.setLayoutData(spec);
+		
+		Label filler = new Label(composite, SWT.NONE);
+		filler.setText(" "); //$NON-NLS-1$
+		GridData fillerData = new GridData(GridData.FILL_HORIZONTAL);
+		fillerData.horizontalSpan = 2;
+		filler.setLayoutData(fillerData);
+		
+		addNew = new Button(composite, SWT.NONE);
+		addNew.setText(DebugUIMessages.getString("AddMemoryRenderingDialog.Add_New")); //$NON-NLS-1$
+		GridData specButton= new GridData();
+		specButton.horizontalAlignment= GridData.END;
+		specButton.verticalAlignment= GridData.CENTER;
+		addNew.setLayoutData(specButton);
+		
+		fMouseListener =new MouseListener() {
+
+			public void mouseDoubleClick(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			public void mouseDown(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			public void mouseUp(MouseEvent e) {
+				AddMemoryBlockAction action = new AddMemoryBlockAction();
+				action.run();
+				populateDialog(memoryBlock, viewer, action.getLastMemoryBlock());
+				
+			}}; 
+		
+		addNew.addMouseListener(fMouseListener);
+		
+		fSelectionListener = new SelectionListener(){
+
+			public void widgetSelected(SelectionEvent e) {
+				
+				int idx = memoryBlock.getSelectionIndex();
+				
+				// avoid null pointer exception
+				if (fMemoryBlocks == null)
+					return;
+				
+				fSelectedMemoryBlock = fMemoryBlocks[idx];
+				
+				viewer.setInput(fSelectedMemoryBlock);			
+				
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}};
+		
+		memoryBlock.addSelectionListener(fSelectionListener);
+		
+		Label renderingLabel = new Label(composite, SWT.NONE);
+		renderingLabel.setText(DebugUIMessages.getString("AddMemoryRenderingDialog.Memory_renderings")); //$NON-NLS-1$
+		GridData renderingLayout = new GridData();
+		renderingLayout.horizontalAlignment = GridData.BEGINNING;
+		renderingLayout.verticalAlignment = GridData.CENTER;
+		renderingLayout.horizontalSpan = 3;
+		renderingLabel.setLayoutData(renderingLayout);
+		
+		viewer = new ListViewer(composite);
+		viewer.setContentProvider(new MemoryRenderingContentProvider());
+		viewer.setLabelProvider(new MemoryRenderingLabelProvider());
+		
+		GridData listLayout = new GridData(GridData.FILL_BOTH);
+		listLayout.horizontalSpan = 3;
+		listLayout.heightHint =140;
+		viewer.getControl().setLayoutData(listLayout);
+		
+		viewer.addDoubleClickListener(new IDoubleClickListener (){
+
+			public void doubleClick(DoubleClickEvent event) {
+				okPressed();
+			}});
+		
+		populateDialog(memoryBlock, viewer, null);
+		
+		fSelectionChangedListener = new ISelectionChangedListener() {
+
+			public void selectionChanged(SelectionChangedEvent event) {
+				ISelection selection  = viewer.getSelection();
+				
+				if (selection.isEmpty())
+				{	
+					getButton(IDialogConstants.OK_ID).setEnabled(false);
+				}
+				else
+				{	
+					getButton(IDialogConstants.OK_ID).setEnabled(true);
+				}
+			}};
+		
+		viewer.addSelectionChangedListener(fSelectionChangedListener);
+		return composite;
+	}
+
+	public AddMemoryRenderingDialog(Shell parent) {
+		super(parent);
+		super.setTitle(DebugUIMessages.getString("AddMemoryRenderingDialog.Add_memory_rendering")); //$NON-NLS-1$
+		WorkbenchHelp.setHelp(parent, DebugUIPlugin.getUniqueIdentifier() + ".AddMemoryRenderingDialog_context");
+		setShellStyle(getShellStyle() | SWT.RESIZE);
+	}
+	
+	private void populateDialog(Combo combo, ListViewer viewer, IMemoryBlock lastAdded)
+	{	
+		// clean up
+		combo.removeAll();
+		
+		IMemoryBlock currentBlock;
+		
+		if (lastAdded != null)
+			currentBlock = lastAdded;
+		else
+		{
+			ISelection selection = DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection(IInternalDebugUIConstants.ID_MEMORY_VIEW); //$NON-NLS-1$
+			
+			IDebugElement element = getMemoryBlock(selection);
+			
+			if (!(element instanceof IMemoryBlock) ||(element == null))
+			{
+				
+				ISelection debugSelection = DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
+				if (!(debugSelection instanceof IStructuredSelection))
+					return;
+	
+				//only single selection is allowed for this action
+				if (debugSelection == null || debugSelection.isEmpty() || ((IStructuredSelection)debugSelection).size() > 1)
+				{
+					return;
+				}
+	
+				Object elem = ((IStructuredSelection)debugSelection).getFirstElement();
+	
+				// if not debug element
+				if (!(elem instanceof IDebugElement))
+					return;			
+				
+				IMemoryBlock[] blocks = MemoryBlockManager.getMemoryBlockManager().getMemoryBlocks(((IDebugElement)elem).getDebugTarget());
+				
+				if (blocks.length <= 0)
+				{
+					combo.add(DebugUIMessages.getString("AddMemoryRenderingDialog.Add_New")); //$NON-NLS-1$
+					combo.select(0);
+					return;
+				}
+				
+				currentBlock = blocks[0];
+			}
+			else
+			{	
+				currentBlock = (IMemoryBlock)element;
+			}
+		}
+		
+		fMemoryBlocks = MemoryBlockManager.getMemoryBlockManager().getMemoryBlocks(currentBlock.getDebugTarget());
+		int selectionIdx = -1;
+		for (int i=0; i<fMemoryBlocks.length; i++)
+		{	
+			String text = ""; //$NON-NLS-1$
+			if (fMemoryBlocks[i] instanceof IExtendedMemoryBlock)
+			{
+				try {
+					text = ((IExtendedMemoryBlock)fMemoryBlocks[i]).getExpression();
+					
+					if (text == null)
+						text = DebugUIMessages.getString("AddMemoryRenderingDialog.Unknown"); //$NON-NLS-1$
+					
+					if (((IExtendedMemoryBlock)fMemoryBlocks[i]).getBigBaseAddress() != null)
+					{
+						text += " : 0x"; //$NON-NLS-1$
+						text += ((IExtendedMemoryBlock)fMemoryBlocks[i]).getBigBaseAddress().toString(16);
+					}	
+				} catch (DebugException e) {
+					long address = fMemoryBlocks[i].getStartAddress();
+					text = Long.toHexString(address);
+				}
+			}
+			else
+			{
+				long address = fMemoryBlocks[i].getStartAddress();
+				text = Long.toHexString(address);
+			}
+
+			if (fMemoryBlocks[i] == currentBlock)
+			{
+				selectionIdx = i;
+			}
+			
+			combo.add(text);
+		}
+
+		combo.select(selectionIdx);
+		fSelectedMemoryBlock = currentBlock;
+		
+		viewer.setInput(currentBlock);
+	}
+	
+	private IMemoryBlock getMemoryBlock(ISelection selection)
+	{
+		if (!(selection instanceof IStructuredSelection))
+			return null;
+
+		//only single selection of PICLDebugElements is allowed for this action
+		if (selection == null || selection.isEmpty() || ((IStructuredSelection)selection).size() > 1)
+		{
+			return null;
+		}
+
+		Object elem = ((IStructuredSelection)selection).getFirstElement();
+		
+		if (elem instanceof IMemoryBlock)
+			return (IMemoryBlock)elem;
+		else if (elem instanceof IMemoryRendering)
+			return ((IMemoryRendering)elem).getBlock();
+		else
+			return null;
+	}
+	
+	public IMemoryBlock getMemoryBlock()
+	{
+		return fSelectedMemoryBlock;
+	}
+}

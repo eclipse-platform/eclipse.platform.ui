@@ -255,14 +255,38 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 					throw e;					
 				}
 				
+				int numBytes = 0;
+				
+				// number of bytes need to prefill
+				if (!startingAddress.toString(16).endsWith("0"))
+				{
+					adjustedAddress = startingAddress.toString(16).substring(0, adjustedAddress.length() - 1);
+					adjustedAddress += "0"; //$NON-NLS-1$
+					BigInteger adjustedStart = new BigInteger(adjustedAddress, 16);
+					numBytes = startingAddress.subtract(adjustedStart).intValue();
+					startingAddress = adjustedStart;
+				}
+				
 				// create memory byte for IMemoryBlock
-				memoryBuffer = new MemoryByte[memory.length];
+				memoryBuffer = new MemoryByte[memory.length + numBytes];
+				
+				for (int i=0; i<numBytes; i++)
+				{
+					MByte tmp = new MByte();
+					tmp.value = 0;
+					tmp.flags |= MemoryByte.READONLY;
+					memoryBuffer[i] = tmp;
+				}
+				
+				// prefill buffer to ensure double-word alignment
+				int j = numBytes; 							// counter for memoryBuffer
 				for (int i=0; i<memory.length; i++)
 				{
 					MByte tmp = new MByte();
 					tmp.value = memory[i];
 					tmp.flags |= MemoryByte.VALID;
-					memoryBuffer[i] = tmp;
+					memoryBuffer[j] = tmp;
+					j++;
 				}
 				
 				paddedString = DEFAULT_PADDED_STR;

@@ -70,7 +70,8 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 		addField(mem);
 		mem= new ColorFieldEditor(IDebugPreferenceConstants.MEMORY_VIEW_UNBUFFERED_LINE_COLOR, DebugPreferencesMessages.getString("DebugPreferencePage.0"), getFieldEditorParent()); //$NON-NLS-1$
 		addField(mem);
-		
+		mem= new ColorFieldEditor(IDebugPreferenceConstants.MEMORY_VIEW_BUFFERED_LINE_COLOR, DebugPreferencesMessages.getString("DebugPreferencePage.27"), getFieldEditorParent()); //$NON-NLS-1$
+		addField(mem);
 	}
 
 	/**

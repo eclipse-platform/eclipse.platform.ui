@@ -76,11 +76,11 @@ public class MemoryViewTabLabelProvider
 			MemoryViewLine line = (MemoryViewLine)element;
 			
 			if (line.isMonitored) {
-				return null;
+				return DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.MEMORY_VIEW_BUFFERED_LINE_COLOR);
 			}
 			return DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.MEMORY_VIEW_UNBUFFERED_LINE_COLOR);
 		}
-		return null;
+		return DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.MEMORY_VIEW_BUFFERED_LINE_COLOR);
 	}
 
 	/* (non-Javadoc)

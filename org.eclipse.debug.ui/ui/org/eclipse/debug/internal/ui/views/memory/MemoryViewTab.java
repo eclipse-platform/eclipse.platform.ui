@@ -97,6 +97,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 
 	private IMemoryBlockModelPresentation fMemoryBlockPresentation;
 	private boolean fNoPresentation = false;
+	private boolean fShowAddressColumn = true;
 	
 	public int TABLE_PREBUFFER = 20;
 	public int TABLE_POSTBUFFER = 20;
@@ -118,6 +119,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 	private PrintViewTabAction fPrintViewTabAction;
 	private Action[] fFormatColumnActions;
 	private ReformatAction fReformatAction;
+	private ShowAddressColumnAction fShowAddColumnAction;
 	
 	private boolean fIsDisposed = false;
 	
@@ -127,6 +129,8 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 	// font change listener
 	private FontChangeListener fFontChangeListener;
 	private TabFolderDisposeListener fTabFolderDisposeListener;
+	
+	private boolean fUpdateTabLabel = true;
 
 	private static final int[] ignoreEvents =
 	{
@@ -179,6 +183,9 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 			if (!fViewTab.fIsDisposed)
 			{
 				// remove listeners
+				if (contentProvider != null)
+					contentProvider.dispose();
+				
 				JFaceResources.getFontRegistry().removeListener(fFontChangeListener);
 				removeReferenceFromSynchronizer();
 				getMemoryBlockViewSynchronizer().removeView(fViewTab);				
@@ -395,6 +402,9 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 
 	protected void setTabName(IMemoryBlock newMemory, boolean showAddress)
 	{
+		if (!fUpdateTabLabel)
+			return;
+		
 		String tabName = null;
 		
 		if (getMemoryBlockPresentation() != null)
@@ -461,6 +471,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 		fFormatColumnActions[5] =  new SetColumnSizeDefaultAction(this);
 		
 		fReformatAction = new ReformatAction(this);
+		fShowAddColumnAction = new ShowAddressColumnAction(this);
 	}
 
 
@@ -504,6 +515,8 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 		
 		menu.add(new Separator());
 		menu.add(fReformatAction);
+		menu.add(fShowAddColumnAction);
+		menu.add(new Separator());
 		menu.add(fCopyToClipboardAction);
 		menu.add(fPrintViewTabAction);
 	}
@@ -841,6 +854,11 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 		{
 			if (isAddressVisible(fSelectedAddress))
 				fCursorManager.redrawCursors();
+		}
+		
+		if (!fShowAddressColumn)
+		{
+			columns[0].setWidth(0);
 		}
 	}
 
@@ -2039,7 +2057,10 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 	public void setTabLabel(String label)
 	{
 		if (label != null)
+		{
+			fUpdateTabLabel = false;
 			fTabItem.setText(label);
+		}
 		
 	}
 
@@ -2482,6 +2503,17 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 	
 	private IMemoryBlockViewSynchronizer getMemoryBlockViewSynchronizer() {
 		return DebugUIPlugin.getDefault().getMemoryBlockViewSynchronizer();
+	}
+	
+	public void showAddressColumn(boolean show)
+	{
+		fShowAddressColumn = show;
+		packColumns();
+	}
+	
+	public boolean isShowAddressColumn()
+	{
+		return fShowAddressColumn;
 	}
 }	
 

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui;
 
+import org.eclipse.debug.internal.ui.views.memory.MemoryViewPane;
+import org.eclipse.debug.internal.ui.views.memory.RenderingViewPane;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
  
@@ -206,6 +208,18 @@ public interface IInternalDebugUIConstants {
 	 * @since 3.0
 	 */
 	public static String ID_MEMORY_VIEW = "org.eclipse.debug.ui.MemoryView";  //$NON-NLS-1$
+	
+	/**
+	 * Memory view's memory view pane identifier (value <code>"org.eclipse.debug.ui.MemoryView.MemoryViewPane"</code>). 
+	 * @since 3.1
+	 */
+	public static String ID_MEMORY_VIEW_PANE = MemoryViewPane.MEMORY_VIEW_PANE_ID;
+	
+	/**
+	 * Memory view's rendering view pane identifier (value <code>"org.eclipse.debug.ui.MemoryView.RenderingViewPane"</code>).
+	 * @since 3.1
+	 */
+	public static String ID_RENDERING_VIEW_PANE = RenderingViewPane.RENDERING_VIEW_PANE_ID;
 
 	/** 
 	 * Memory view image identifier

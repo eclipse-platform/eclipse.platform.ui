@@ -59,6 +59,12 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 		if (fgMemoryBlockManager == null)
 		{
 			fgMemoryBlockManager = new MemoryBlockManager();
+			
+			if (fgMemoryRenderingManager == null)
+			{
+				// create rendering manager and make sure it's the first listener
+				fgMemoryRenderingManager = new MemoryRenderingManager();
+			}
 		}
 		
 		return fgMemoryBlockManager;

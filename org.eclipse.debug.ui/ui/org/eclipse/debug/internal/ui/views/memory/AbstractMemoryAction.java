@@ -72,7 +72,7 @@ abstract public class AbstractMemoryAction extends Action
 			if (view == null) {
 				try {
 					IWorkbenchPart activePart= p.getActivePart();
-					view= (MemoryView) p.showView(viewId);
+					view= p.showView(viewId);
 					p.activate(activePart);
 				} catch (PartInitException e) {
 					return null;
@@ -80,15 +80,23 @@ abstract public class AbstractMemoryAction extends Action
 				
 			}
 			
-			if (view instanceof IMemoryView)
+			if (view instanceof IMultipaneMemoryView)
 			{
-				IMemoryViewTab topTab = ((IMemoryView)view).getTopMemoryTab();
+				IMemoryViewTab topTap = ((IMultipaneMemoryView)view).getTopMemoryTab(MemoryViewPane.MEMORY_VIEW_PANE_ID);
 				
-				return topTab;
+				return topTap;
 			}
-			return null;
+			else if (view instanceof IMemoryView)
+			{
+				IMemoryViewTab topTap = ((IMemoryView)view).getTopMemoryTab();
+				return topTap;
+			}
+			else
+			{
+				return null;
+			}
 		}
-		
-		return null;
+		else
+			return null;
 	}
 }
