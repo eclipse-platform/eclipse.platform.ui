@@ -15,9 +15,6 @@ import org.eclipse.ant.tests.ui.testplugin.AbstractAntUITest;
 
 public class FormattingPreferencesTest extends AbstractAntUITest {
 
-    /**
-     * @param name
-     */
     public FormattingPreferencesTest(String name) {
         super(name);
     }
@@ -59,5 +56,4 @@ public class FormattingPreferencesTest extends AbstractAntUITest {
         };        
         assertEquals("\t",prefs.getCanonicalIndent());
     }
-
 }
