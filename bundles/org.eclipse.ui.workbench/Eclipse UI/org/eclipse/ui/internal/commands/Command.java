@@ -22,6 +22,7 @@ import org.eclipse.ui.commands.IContextBinding;
 import org.eclipse.ui.commands.IImageBinding;
 import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.commands.NotDefinedException;
+
 import org.eclipse.ui.internal.util.Util;
 
 final class Command implements ICommand {

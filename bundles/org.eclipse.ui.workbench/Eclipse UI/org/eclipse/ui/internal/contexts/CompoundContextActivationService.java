@@ -21,6 +21,7 @@ import org.eclipse.ui.contexts.ContextActivationServiceEvent;
 import org.eclipse.ui.contexts.ICompoundContextActivationService;
 import org.eclipse.ui.contexts.IContextActivationService;
 import org.eclipse.ui.contexts.IContextActivationServiceListener;
+
 import org.eclipse.ui.internal.util.Util;
 
 public final class CompoundContextActivationService

@@ -19,6 +19,7 @@ import org.eclipse.ui.commands.IKeyConfiguration;
 import org.eclipse.ui.commands.IKeyConfigurationListener;
 import org.eclipse.ui.commands.KeyConfigurationEvent;
 import org.eclipse.ui.commands.NotDefinedException;
+
 import org.eclipse.ui.internal.util.Util;
 
 final class KeyConfiguration implements IKeyConfiguration {

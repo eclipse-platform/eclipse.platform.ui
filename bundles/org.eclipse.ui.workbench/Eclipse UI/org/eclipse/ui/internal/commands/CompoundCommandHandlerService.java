@@ -18,10 +18,11 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.ui.commands.CommandHandlerServiceEvent;
-import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.ICommandHandlerService;
 import org.eclipse.ui.commands.ICommandHandlerServiceListener;
 import org.eclipse.ui.commands.ICompoundCommandHandlerService;
+import org.eclipse.ui.commands.IHandler;
+
 import org.eclipse.ui.internal.util.Util;
 
 public final class CompoundCommandHandlerService

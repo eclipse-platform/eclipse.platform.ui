@@ -23,6 +23,7 @@ import org.eclipse.ui.activities.IActivityActivityBinding;
 import org.eclipse.ui.activities.IActivityListener;
 import org.eclipse.ui.activities.IActivityPatternBinding;
 import org.eclipse.ui.activities.NotDefinedException;
+
 import org.eclipse.ui.internal.util.Util;
 
 final class Activity implements IActivity {

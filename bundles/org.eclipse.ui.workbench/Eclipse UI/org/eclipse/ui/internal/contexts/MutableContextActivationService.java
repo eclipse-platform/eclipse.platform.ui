@@ -18,6 +18,7 @@ import java.util.Set;
 
 import org.eclipse.ui.contexts.ContextActivationServiceEvent;
 import org.eclipse.ui.contexts.IMutableContextActivationService;
+
 import org.eclipse.ui.internal.util.Util;
 
 public final class MutableContextActivationService

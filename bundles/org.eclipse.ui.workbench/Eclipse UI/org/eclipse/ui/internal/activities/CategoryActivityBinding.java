@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.activities;
 
 import org.eclipse.ui.activities.ICategoryActivityBinding;
+
 import org.eclipse.ui.internal.util.Util;
 
 final class CategoryActivityBinding implements ICategoryActivityBinding {

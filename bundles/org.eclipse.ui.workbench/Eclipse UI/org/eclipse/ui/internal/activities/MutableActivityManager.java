@@ -24,6 +24,7 @@ import java.util.WeakHashMap;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.Platform;
+
 import org.eclipse.ui.activities.ActivityEvent;
 import org.eclipse.ui.activities.ActivityManagerEvent;
 import org.eclipse.ui.activities.CategoryEvent;
@@ -35,6 +36,7 @@ import org.eclipse.ui.activities.ICategoryActivityBinding;
 import org.eclipse.ui.activities.IIdentifier;
 import org.eclipse.ui.activities.IMutableActivityManager;
 import org.eclipse.ui.activities.IdentifierEvent;
+
 import org.eclipse.ui.internal.util.Util;
 
 public final class MutableActivityManager

@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.activities;
 
 import org.eclipse.ui.activities.IActivityActivityBinding;
+
 import org.eclipse.ui.internal.util.Util;
 
 final class ActivityActivityBinding implements IActivityActivityBinding {

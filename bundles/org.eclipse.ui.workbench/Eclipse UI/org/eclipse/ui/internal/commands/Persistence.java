@@ -19,12 +19,14 @@ import java.util.StringTokenizer;
 import java.util.TreeMap;
 
 import org.eclipse.swt.SWT;
+
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.ui.keys.KeySupport;
 import org.eclipse.ui.keys.ParseException;
+
+import org.eclipse.ui.internal.util.Util;
 
 final class Persistence {
 

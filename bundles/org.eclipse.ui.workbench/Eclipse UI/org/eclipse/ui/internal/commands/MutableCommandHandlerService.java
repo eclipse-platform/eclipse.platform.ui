@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.ui.commands.CommandHandlerServiceEvent;
 import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.IMutableCommandHandlerService;
+
 import org.eclipse.ui.internal.util.Util;
 
 public final class MutableCommandHandlerService

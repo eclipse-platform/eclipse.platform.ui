@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.activities;
 import java.util.regex.Pattern;
 
 import org.eclipse.ui.activities.IActivityPatternBinding;
+
 import org.eclipse.ui.internal.util.Util;
 
 final class ActivityPatternBinding implements IActivityPatternBinding {

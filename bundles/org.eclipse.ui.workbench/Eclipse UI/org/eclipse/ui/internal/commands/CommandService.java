@@ -21,6 +21,7 @@ import java.util.Set;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.commands.ICommandServiceEvent;
 import org.eclipse.ui.commands.ICommandServiceListener;
+
 import org.eclipse.ui.internal.util.Util;
 
 public final class CommandService implements ICommandService {

@@ -21,6 +21,7 @@ import org.eclipse.ui.activities.ICategory;
 import org.eclipse.ui.activities.ICategoryActivityBinding;
 import org.eclipse.ui.activities.ICategoryListener;
 import org.eclipse.ui.activities.NotDefinedException;
+
 import org.eclipse.ui.internal.util.Util;
 
 final class Category implements ICategory {

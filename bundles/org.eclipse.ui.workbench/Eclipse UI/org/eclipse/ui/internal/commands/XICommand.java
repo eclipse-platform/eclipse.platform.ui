@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.commands;
 
 import org.eclipse.swt.widgets.Event;
+
 import org.eclipse.ui.commands.NotDefinedException;
 
 /**

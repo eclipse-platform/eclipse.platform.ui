@@ -19,6 +19,7 @@ import java.util.Set;
 import org.eclipse.ui.activities.IIdentifier;
 import org.eclipse.ui.activities.IIdentifierListener;
 import org.eclipse.ui.activities.IdentifierEvent;
+
 import org.eclipse.ui.internal.util.Util;
 
 final class Identifier implements IIdentifier {
