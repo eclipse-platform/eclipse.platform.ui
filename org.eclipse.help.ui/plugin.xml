@@ -87,6 +87,11 @@
 			name="%mozilla" />
 	</extension>
 	<extension point="org.eclipse.help.ui.browser">
+		<browser id="org.eclipse.help.ui.netscapeLinux"
+			factoryclass="org.eclipse.help.ui.internal.browser.linux.NetscapeFactory"
+			name="%netscape" />
+	</extension>
+	<extension point="org.eclipse.help.ui.browser">
 		<browser id="org.eclipse.help.ui.netscapeSolaris"
 			factoryclass="org.eclipse.help.ui.internal.browser.solaris.NetscapeFactory"
 			name="%netscape4" />

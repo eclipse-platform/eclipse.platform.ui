@@ -9,13 +9,13 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.help.ui.browser.IBrowser;
 import org.eclipse.help.ui.internal.WorkbenchHelpPlugin;
 import org.eclipse.help.ui.internal.util.StreamConsumer;
-public class MozillaBrowserAdapter implements IBrowser {
-	// delay that it takes mozilla to start responding
-	// to remote command after mozilla has been called
+public class NetscapeBrowserAdapter implements IBrowser {
+	// delay that it takes netscape to start responding
+	// to remote command after netscape has been called
 	private static int DELAY = 5000;
 	private static long browserFullyOpenedAt = 0;
 	private static BrowserThread lastBrowserThread = null;
-	private static MozillaBrowserAdapter instance;
+	private static NetscapeBrowserAdapter instance;
 	private static int x, y;
 	private static int width, height;
 	private static boolean setLocationPending;
@@ -23,13 +23,13 @@ public class MozillaBrowserAdapter implements IBrowser {
 	/**
 	 * Constructor
 	 */
-	private MozillaBrowserAdapter() {
+	private NetscapeBrowserAdapter() {
 	}
-	public static MozillaBrowserAdapter getInstance() {
+	public static NetscapeBrowserAdapter getInstance() {
 		setLocationPending = false;
 		setSizePending = false;
 		if (instance == null)
-			instance = new MozillaBrowserAdapter();
+			instance = new NetscapeBrowserAdapter();
 		return instance;
 	}
 	/*
@@ -73,23 +73,23 @@ public class MozillaBrowserAdapter implements IBrowser {
 	 * @see IBrowser#setLocation(int, int)
 	 */
 	public void setLocation(int x, int y) {
-		MozillaBrowserAdapter.x = x;
-		MozillaBrowserAdapter.y = y;
+		NetscapeBrowserAdapter.x = x;
+		NetscapeBrowserAdapter.y = y;
 		setLocationPending = true;
 	}
 	/*
 	 * @see IBrowser#setSize(int, int)
 	 */
 	public void setSize(int width, int height) {
-		MozillaBrowserAdapter.width = width;
-		MozillaBrowserAdapter.height = height;
+		NetscapeBrowserAdapter.width = width;
+		NetscapeBrowserAdapter.height = height;
 		setSizePending = true;
 	}
 	private synchronized String createPositioningURL(String url) {
 		IPath pluginPath = WorkbenchHelpPlugin.getDefault().getStateLocation();
 		File outFile =
 			pluginPath
-				.append("mozillaPositon")
+				.append("netscapePositon")
 				.append("position.html")
 				.toFile();
 		try {
@@ -145,12 +145,12 @@ public class MozillaBrowserAdapter implements IBrowser {
 			waitForBrowser();
 			if (exitRequested)
 				return;
-			if (openBrowser("mozilla -remote openURL(" + url + ")") == 0)
+			if (openBrowser("netscape -remote openURL(" + url + ")") == 0)
 				return;
 			if (exitRequested)
 				return;
 			browserFullyOpenedAt = System.currentTimeMillis() + DELAY;
-			openBrowser("mozilla " + url);
+			openBrowser("netscape " + url);
 		}
 		private void waitForBrowser() {
 			while (System.currentTimeMillis() < browserFullyOpenedAt)
