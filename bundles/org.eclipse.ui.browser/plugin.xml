@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+   id="org.eclipse.ui.browser"
+   name="%Plugin.name"
+   version="3.1.0"
+   provider-name="%Plugin.providerName"
+   class="org.eclipse.ui.browser.internal.WebBrowserUIPlugin">
+
+   <runtime>
+      <library name="browser.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+
+   <requires>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.ui.ide"/>
+   </requires>
+
+   <extension point="org.eclipse.ui.preferencePages">
+      <page
+         id="org.eclipse.ui.browser.preferencePage"
+         name="%preferenceWebBrowserTitle"
+         category="org.eclipse.ui.preferencePages.Workbench"
+         class="org.eclipse.ui.browser.internal.WebBrowserPreferencePage"/>
+   </extension>
+
+   <extension point="org.eclipse.ui.browserSupport">
+      <support
+         default="true"
+         class="org.eclipse.ui.browser.internal.DefaultBrowserSupport"/>
+   </extension>
+
+   <extension point="org.eclipse.ui.editors">
+      <editor id="org.eclipse.ui.browser"
+         name="%viewWebBrowserTitle"
+         icon="icons/obj16/internal_browser.gif"
+         class="org.eclipse.ui.browser.internal.WebBrowserEditor"
+         contributorClass="org.eclipse.ui.browser.internal.WebBrowserEditorActionBarContributor"/>
+  </extension>
+
+</plugin>
