@@ -314,7 +314,7 @@ public class IEBrowserAdapter implements IBrowser, Runnable {
 			windowIconURL = Platform.resolve(windowIconURL);
 			return windowIconURL.toString();
 		} catch (IOException ioe) {
-			Logger.logError("", ioe);
+			Logger.logError(WorkbenchResources.getString("WE029"), ioe);
 		}
 		return null;
 	}
