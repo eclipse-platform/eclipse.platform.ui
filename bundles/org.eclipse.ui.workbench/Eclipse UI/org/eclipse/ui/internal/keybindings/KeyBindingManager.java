@@ -10,12 +10,15 @@ package org.eclipse.ui.internal.keybindings;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.StringTokenizer;
@@ -24,6 +27,9 @@ import java.util.TreeSet;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.swt.SWT;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.Accelerator;
 import org.eclipse.ui.internal.registry.AcceleratorConfiguration;
@@ -273,6 +279,118 @@ public final class KeyBindingManager {
 		return keySequences;
 	}
 
+	private static List readKeyBindingsFromReader(Reader reader)
+		throws IOException {
+		try {
+			XMLMemento xmlMemento = XMLMemento.createReadRoot(reader);
+			return readKeyBindings(xmlMemento);
+		} catch (WorkbenchException eWorkbench) {
+			throw new IOException();	
+		}
+	}
+
+	private static void writeKeyBindingsToWriter(Writer writer, String root, List keyBindings)
+		throws IOException {
+		XMLMemento xmlMemento = XMLMemento.createWriteRoot(root);
+		writeKeyBindings(xmlMemento, keyBindings);
+		xmlMemento.save(writer);
+	}
+
+	private static List readKeyBindings(IMemento memento)
+		throws IllegalArgumentException {
+		if (memento == null)
+			throw new IllegalArgumentException();			
+		
+		IMemento[] mementos = memento.getChildren(KeyBinding.ELEMENT);
+		
+		if (mementos == null)
+			throw new IllegalArgumentException();
+		
+		List keyBindings = new ArrayList(mementos.length);
+		
+		for (int i = 0; i < mementos.length; i++)
+			keyBindings.add(KeyBinding.read(mementos[i]));
+		
+		return keyBindings;		
+	}
+
+	private static void writeKeyBindings(IMemento memento, List keyBindings)
+		throws IllegalArgumentException {
+		if (memento == null || keyBindings == null)
+			throw new IllegalArgumentException();
+			
+		Iterator iterator = keyBindings.iterator();
+		
+		while (iterator.hasNext())
+			((KeyBinding) iterator.next()).write(memento.createChild(KeyBinding.ELEMENT)); 
+	}
+
+	private static void filterAction(List keyBindings, Set actions, boolean exclusive) {
+		Iterator iterator = keyBindings.iterator();
+		
+		while (iterator.hasNext()) {
+			KeyBinding keyBinding = (KeyBinding) iterator.next();
+			
+			if (exclusive ^ !actions.contains(keyBinding.getAction()))
+				iterator.remove();
+		}
+	}
+
+	private static void filterConfiguration(List keyBindings, Set configurations, boolean exclusive) {
+		Iterator iterator = keyBindings.iterator();
+		
+		while (iterator.hasNext()) {
+			KeyBinding keyBinding = (KeyBinding) iterator.next();
+			
+			if (exclusive ^ !configurations.contains(keyBinding.getConfiguration()))
+				iterator.remove();
+		}
+	}
+
+	private static void filterLocale(List keyBindings, Set locales, boolean exclusive) {
+		Iterator iterator = keyBindings.iterator();
+		
+		while (iterator.hasNext()) {
+			KeyBinding keyBinding = (KeyBinding) iterator.next();
+			
+			if (exclusive ^ !locales.contains(keyBinding.getLocale()))
+				iterator.remove();
+		}
+	}
+
+	private static void filterPlatform(List keyBindings, Set platforms, boolean exclusive) {
+		Iterator iterator = keyBindings.iterator();
+		
+		while (iterator.hasNext()) {
+			KeyBinding keyBinding = (KeyBinding) iterator.next();
+			
+			if (exclusive ^ !platforms.contains(keyBinding.getPlatform()))
+				iterator.remove();
+		}
+	}
+
+	private static void filterPlugin(List keyBindings, Set plugins, boolean exclusive) {
+		Iterator iterator = keyBindings.iterator();
+		
+		while (iterator.hasNext()) {
+			KeyBinding keyBinding = (KeyBinding) iterator.next();
+			
+			if (exclusive ^ !plugins.contains(keyBinding.getPlugin()))
+				iterator.remove();
+		}
+	}
+
+	private static void filterScope(List keyBindings, Set scopes, boolean exclusive) {
+		Iterator iterator = keyBindings.iterator();
+		
+		while (iterator.hasNext()) {
+			KeyBinding keyBinding = (KeyBinding) iterator.next();
+			
+			if (exclusive ^ !scopes.contains(keyBinding.getScope()))
+				iterator.remove();
+		}
+	}
+
 	private static SortedMap buildTree(List keyBindings, SortedMap configurationMap, SortedMap scopeMap) {
 		SortedMap tree = new TreeMap();
 		Iterator iterator = keyBindings.iterator();
@@ -315,12 +433,12 @@ public final class KeyBindingManager {
 
 			IPath path0 = path.append("initialKeyBindings (from list).xml");
 			FileWriter fileWriter0 = new FileWriter(path0.toFile());
-			KeyBinding.writeKeyBindingsToWriter(fileWriter0, "initialkeybindings", initialKeyBindings);
+			writeKeyBindingsToWriter(fileWriter0, "initialkeybindings", initialKeyBindings);
 			fileWriter0.close();
 
 			IPath path1 = path.append("initialKeyBindings (from tree).xml");
 			FileWriter fileWriter1 = new FileWriter(path1.toFile());
-			KeyBinding.writeKeyBindingsToWriter(fileWriter1, "initialkeybindings", Node.toBindings(tree));
+			writeKeyBindingsToWriter(fileWriter1, "initialkeybindings", Node.toBindings(tree));
 			fileWriter1.close();
 		} catch (IOException eIO) {
 			eIO.printStackTrace();
@@ -541,8 +659,12 @@ public final class KeyBindingManager {
 		State[] states = new State[scopes.length];
 			
 		for (int i = 0; i < scopes.length; i++) {
-			states[i] = State.create(configuration, locale, platform, 
-				scopes[i]);
+			List paths = new ArrayList();
+			paths.add(scopes[i]);			
+			paths.add(configuration);
+			paths.add(platform);
+			paths.add(locale);							
+			states[i] = State.create(paths);
 		}
 		
 		Node.solveTree(tree, states);

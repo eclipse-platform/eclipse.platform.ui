@@ -19,7 +19,7 @@ import org.eclipse.ui.IMemento;
 public final class Path implements Comparable {
 
 	public final static int MAXIMUM_PATH_ITEMS = 16;
-	public final static String ELEMENT = "path";
+	public final static String ELEMENT = "path"; //$NON-NLS-1$
 
 	public static Path create() {
 		return new Path(Collections.EMPTY_LIST);
@@ -64,10 +64,14 @@ public final class Path implements Comparable {
 		throws IllegalArgumentException {
 		super();
 		
-		if (pathItems == null || pathItems.size() >= MAXIMUM_PATH_ITEMS)
+		if (pathItems == null)
 			throw new IllegalArgumentException();
 		
 		this.pathItems = Collections.unmodifiableList(new ArrayList(pathItems));
+
+		if (this.pathItems.size() >= MAXIMUM_PATH_ITEMS)
+			throw new IllegalArgumentException();
+		
 		Iterator iterator = this.pathItems.iterator();
 		
 		while (iterator.hasNext())
@@ -94,23 +98,31 @@ public final class Path implements Comparable {
 		if (!(object instanceof Path))
 			throw new ClassCastException();
 
-		return Util.compare(pathItems.iterator(), 
-			((Path) object).pathItems.iterator());
+		return Util.compare(pathItems.iterator(), ((Path) object).pathItems.iterator());
 	}
 	
 	public boolean equals(Object object) {
-		return object instanceof Path && 
-			pathItems.equals(((Path) object).pathItems);
+		return object instanceof Path && pathItems.equals(((Path) object).pathItems);
+	}
+
+	public int hashCode() {
+		final int i0 = 62;
+		final int i1 = 37;
+		int result = i0;		
+		Iterator iterator = pathItems.iterator();
+		
+		while (iterator.hasNext())
+			result = result * i1 + ((PathItem) iterator.next()).hashCode();
+
+		return result;
 	}
 
 	public boolean equalsOrIsChildOf(Path path) {
-		return pathItems.size() >= path.pathItems.size() && 
-			pathItems.subList(0, path.pathItems.size()).equals(path.pathItems);
+		return pathItems.size() >= path.pathItems.size() && pathItems.subList(0, path.pathItems.size()).equals(path.pathItems);
 	}
 			
 	public boolean isChildOf(Path path) {
-		return pathItems.size() > path.pathItems.size() && 
-			pathItems.subList(0, path.pathItems.size()).equals(path.pathItems);
+		return pathItems.size() > path.pathItems.size() && pathItems.subList(0, path.pathItems.size()).equals(path.pathItems);
 	}
 
 	public void write(IMemento memento)

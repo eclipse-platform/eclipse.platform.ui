@@ -12,8 +12,8 @@ import org.eclipse.ui.IMemento;
 
 final class Identifier implements Comparable {
 	
-	final static String ELEMENT = "identifier";
-	private final static String ATTRIBUTE_VALUE = "value";	
+	final static String ELEMENT = "identifier"; //$NON-NLS-1$
+	private final static String ATTRIBUTE_VALUE = "value"; //$NON-NLS-1$	
 	
 	static Identifier create(String value) {
 		return new Identifier(value);
@@ -34,7 +34,7 @@ final class Identifier implements Comparable {
 		this.value = value;	
 	}
 	
-	public String getValue() {
+	String getValue() {
 		return value;	
 	}
 
@@ -49,12 +49,11 @@ final class Identifier implements Comparable {
 		if (!(object instanceof Identifier))
 			return false;
 		
-		String value = ((Identifier) object).value;		
-		return this.value == null ? value == null : this.value.equals(value);
+		return Util.equals(value, ((Identifier) object).value);
 	}
 
 	public int hashCode() {
-		return value != null ? value.hashCode() : 0;
+		return Util.hashCode(value);
 	}
 
 	void write(IMemento memento)

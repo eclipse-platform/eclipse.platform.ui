@@ -18,7 +18,7 @@ import org.eclipse.ui.IMemento;
 
 public final class KeySequence implements Comparable {
 
-	public final static String ELEMENT = "keysequence";
+	public final static String ELEMENT = "keysequence"; //$NON-NLS-1$
 
 	public static KeySequence create() {
 		return new KeySequence(Collections.EMPTY_LIST);
@@ -66,8 +66,7 @@ public final class KeySequence implements Comparable {
 		if (keyStrokes == null)
 			throw new IllegalArgumentException();
 			
-		this.keyStrokes = 
-			Collections.unmodifiableList(new ArrayList(keyStrokes));
+		this.keyStrokes = Collections.unmodifiableList(new ArrayList(keyStrokes));
 		Iterator iterator = this.keyStrokes.iterator();
 		
 		while (iterator.hasNext())
@@ -83,25 +82,33 @@ public final class KeySequence implements Comparable {
 		if (!(object instanceof KeySequence))
 			throw new ClassCastException();
 
-		return Util.compare(keyStrokes.iterator(), 
-			((KeySequence) object).keyStrokes.iterator());
+		return Util.compare(keyStrokes.iterator(), ((KeySequence) object).keyStrokes.iterator());
 	}
 	
 	public boolean equals(Object object) {
-		return object instanceof KeySequence && 
-			keyStrokes.equals(((KeySequence) object).keyStrokes);
+		return object instanceof KeySequence && keyStrokes.equals(((KeySequence) object).keyStrokes);
+	}
+
+	public int hashCode() {
+		final int i0 = 52;
+		final int i1 = 27;
+		int result = i0;		
+		Iterator iterator = keyStrokes.iterator();
+		
+		while (iterator.hasNext())
+			result = result * i1 + ((KeyStroke) iterator.next()).hashCode();
+
+		return result;
 	}
 
 	public boolean equalsOrIsChildOf(KeySequence keySequence) {
-		return keyStrokes.size() >= keySequence.keyStrokes.size() &&
-			keyStrokes.subList(0, keySequence.keyStrokes.size()).equals(
-			keySequence.keyStrokes);
+		return keyStrokes.size() >= keySequence.keyStrokes.size() && 
+			keyStrokes.subList(0, keySequence.keyStrokes.size()).equals(keySequence.keyStrokes);
 	}
 			
 	public boolean isChildOf(KeySequence keySequence) {
 		return keyStrokes.size() > keySequence.keyStrokes.size() &&
-			keyStrokes.subList(0, keySequence.keyStrokes.size()).equals(
-			keySequence.keyStrokes);
+			keyStrokes.subList(0, keySequence.keyStrokes.size()).equals(keySequence.keyStrokes);
 	}
 
 	public void write(IMemento memento)

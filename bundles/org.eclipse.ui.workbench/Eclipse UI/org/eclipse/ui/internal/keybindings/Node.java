@@ -19,29 +19,27 @@ import java.util.TreeSet;
 
 final class Node {
 	
-	static boolean add(SortedMap contributions, 
-		Contributor contributor, Action action)
+	static boolean add(SortedMap plugins, Identifier plugin, Action action)
 		throws IllegalArgumentException {
-		if (contributions == null || contributor == null || action == null)
+		if (plugins == null || plugin == null || action == null)
 			throw new IllegalArgumentException();
 						
-		SortedSet actions = (SortedSet) contributions.get(contributor);
+		SortedSet actions = (SortedSet) plugins.get(plugin);
 			
 		if (actions == null) {
 			actions = new TreeSet();
-			contributions.put(contributor, actions);
+			plugins.put(plugin, actions);
 		}	
 		
 		return actions.add(action);
 	}
 
-	static boolean remove(SortedMap contributions, 
-		Contributor contributor, Action action)
+	static boolean remove(SortedMap plugins, Identifier plugin, Action action)
 		throws IllegalArgumentException {
-		if (contributions == null || contributor == null || action == null)
+		if (plugins == null || plugin == null || action == null)
 			throw new IllegalArgumentException();
 
-		SortedSet actions = (SortedSet) contributions.get(contributor);
+		SortedSet actions = (SortedSet) plugins.get(plugin);
 
 		if (actions == null)
 			return false;
@@ -49,64 +47,58 @@ final class Node {
 		boolean removed = actions.remove(action);
 		
 		if (actions.isEmpty())
-			contributions.remove(contributor);
+			plugins.remove(plugin);
 
 		return removed;			
 	}
 
-	static Action solve(SortedMap contributions)
+	static Action solve(SortedMap plugins)
 		throws IllegalArgumentException {
-		if (contributions == null)
+		if (plugins == null)
 			throw new IllegalArgumentException();	
 	
-		SortedSet actions = 
-			(SortedSet) contributions.get(Contributor.create(null));
+		SortedSet actions = (SortedSet) plugins.get(Identifier.create(null));
 		
 		if (actions == null) {
 			actions = new TreeSet();
-			Iterator iterator = contributions.values().iterator();
+			Iterator iterator = plugins.values().iterator();
 		
 			while (iterator.hasNext())
 				actions.addAll((SortedSet) iterator.next());
 		}
 
-		return actions.size() == 1 ? 
-			(Action) actions.first() : Action.create(null);
+		return actions.size() == 1 ? (Action) actions.first() : Action.create(null);
 	}
 
-	static boolean add(SortedMap states, State state, 
-		Contributor contributor, Action action)
+	static boolean add(SortedMap states, State state, Identifier plugin, Action action)
 		throws IllegalArgumentException {
-		if (states == null || state == null || contributor == null || 
-			action == null)
+		if (states == null || state == null || plugin == null || action == null)
 			throw new IllegalArgumentException();		
 		
-		SortedMap contributions = (SortedMap) states.get(state);
+		SortedMap plugins = (SortedMap) states.get(state);
 			
-		if (contributions != null) {
-			contributions = new TreeMap();
-			states.put(state, contributions);
+		if (plugins != null) {
+			plugins = new TreeMap();
+			states.put(state, plugins);
 		}	
 		
-		return add(contributions, contributor, action);
+		return add(plugins, plugin, action);
 	}
 
-	static boolean remove(SortedMap states, State state, 
-		Contributor contributor, Action action)
+	static boolean remove(SortedMap states, State state, Identifier plugin, Action action)
 		throws IllegalArgumentException {
-		if (states == null || state == null || contributor == null || 
-			action == null)
+		if (states == null || state == null || plugin == null || action == null)
 			throw new IllegalArgumentException();			
 		
-		SortedMap contributions = (SortedMap) states.get(state);
+		SortedMap plugins = (SortedMap) states.get(state);
 
-		if (contributions == null)
+		if (plugins == null)
 			return false;
 
-		boolean removed = remove(contributions, contributor, action);
+		boolean removed = remove(plugins, plugin, action);
 		
-		if (contributions.isEmpty())
-			states.remove(contributions);
+		if (plugins.isEmpty())
+			states.remove(plugins);
 
 		return removed;			 
 	}
@@ -133,8 +125,7 @@ final class Node {
 					if (match >= 0) {
 						if (match == 0)
 							return ActionMatch.create(testAction, 0);
-						else if (actionMatch == null || 
-							match < actionMatch.getMatch())
+						else if (actionMatch == null || match < actionMatch.getMatch())
 							actionMatch = ActionMatch.create(testAction, match);
 					}
 				}
@@ -149,10 +140,9 @@ final class Node {
 		if (states == null || stack == null)
 			throw new IllegalArgumentException();
 	
-		for (int i = 0; i < stack.length; i++) {
+		for (int i = 0; i < stack.length; i++)
 			if (stack == null)
 				throw new IllegalArgumentException();	
-		}
 	
 		for (int i = 0; i < stack.length; i++) {
 			ActionMatch actionMatch = solve(states, stack[i]);
@@ -194,8 +184,13 @@ final class Node {
 		}
 
 		if (node != null) {
-			SortedMap states = node.states;			
-			State state = State.create(configuration, locale, platform, scope);			
+			SortedMap states = node.states;	
+			List paths = new ArrayList();
+			paths.add(scope);			
+			paths.add(configuration);
+			paths.add(platform);
+			paths.add(locale);					
+			State state = State.create(paths);			
 			SortedMap contributorToActionSetMap = (SortedMap) states.get(state);
 			
 			if (contributorToActionSetMap == null) {
@@ -203,8 +198,7 @@ final class Node {
 				states.put(state, contributorToActionSetMap);
 			}
 			
-			add(contributorToActionSetMap, Contributor.create(keyBinding.getPlugin()),
-				Action.create(keyBinding.getAction()));			
+			add(contributorToActionSetMap, Identifier.create(keyBinding.getPlugin()), Action.create(keyBinding.getAction()));			
 		}
 	}
 
@@ -228,9 +222,7 @@ final class Node {
 				ActionMatch childActionMatch = child.bestActionMatch;				
 				
 				if (childActionMatch != null && 
-					(node.bestChildActionMatch == null || 
-					childActionMatch.getMatch() < 
-					node.bestChildActionMatch.getMatch())) 
+					(node.bestChildActionMatch == null || childActionMatch.getMatch() < node.bestChildActionMatch.getMatch())) 
 					node.bestChildActionMatch = childActionMatch;
 			}
 		}		
@@ -273,22 +265,20 @@ final class Node {
 			while (iterator2.hasNext()) {
 				Map.Entry entry2 = (Map.Entry) iterator2.next();
 				State state = (State) entry2.getKey();	
-				SortedMap contributions = (SortedMap) entry2.getValue();			
-				Iterator iterator3 = contributions.entrySet().iterator();
+				SortedMap plugins = (SortedMap) entry2.getValue();			
+				Iterator iterator3 = plugins.entrySet().iterator();
 				
 				while (iterator3.hasNext()) {
 					Map.Entry entry3 = (Map.Entry) iterator3.next();
-					Contributor contributor = (Contributor) entry3.getKey();	
+					Identifier plugin = (Identifier) entry3.getKey();	
 					SortedSet actions = (SortedSet) entry3.getValue();
 					Iterator iterator4 = actions.iterator();
 					
 					while (iterator4.hasNext()) {
-						Action action = (Action) iterator4.next();
-						
+						Action action = (Action) iterator4.next();						
 						/* TBD:
-						bindings.add(KeyBinding.create(keySequence, state, 
-							contributor, action));
-							*/					
+						bindings.add(KeyBinding.create(keySequence, state, plugin, action));
+						*/
 					}				
 				}			
 			}
@@ -299,8 +289,7 @@ final class Node {
 
 	static SortedMap toKeySequenceActionMap(SortedMap tree) {
 		SortedMap keySequenceActionMap = new TreeMap();
-		toKeySequenceActionMap(tree, KeySequence.create(),
-			keySequenceActionMap);
+		toKeySequenceActionMap(tree, KeySequence.create(), keySequenceActionMap);
 		return keySequenceActionMap;	
 	}				
 
@@ -317,11 +306,8 @@ final class Node {
 			Node node = (Node) entry.getValue();			
 			
 			if (node.bestChildActionMatch != null && 
-				(node.bestActionMatch == null ||
-				node.bestChildActionMatch.getMatch() < 
-				node.bestActionMatch.getMatch()))
-				toKeySequenceActionMap(node.children, keySequence, 
-					keySequenceActionMap);	
+				(node.bestActionMatch == null || node.bestChildActionMatch.getMatch() < node.bestActionMatch.getMatch()))
+				toKeySequenceActionMap(node.children, keySequence, keySequenceActionMap);	
 			else if (node.bestActionMatch != null) {
 				Action action = node.bestActionMatch.getAction();
 				

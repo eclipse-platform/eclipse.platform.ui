@@ -12,8 +12,8 @@ import org.eclipse.ui.IMemento;
 
 public final class KeyStroke implements Comparable {
 
-	public final static String ELEMENT = "keystroke";
-	private final static String ATTRIBUTE_ACCELERATOR = "accelerator";
+	public final static String ELEMENT = "keystroke"; //$NON-NLS-1$
+	private final static String ATTRIBUTE_ACCELERATOR = "accelerator"; //$NON-NLS-1$
 
 	public static KeyStroke create(int accelerator) {
 		return new KeyStroke(accelerator);
@@ -64,8 +64,11 @@ public final class KeyStroke implements Comparable {
 	}
 	
 	public boolean equals(Object object) {
-		return object instanceof KeyStroke && 
-			accelerator == ((KeyStroke) object).accelerator;	
+		return object instanceof KeyStroke && accelerator == ((KeyStroke) object).accelerator;	
+	}
+
+	public int hashCode() {
+		return accelerator;	
 	}
 
 	public void write(IMemento memento)

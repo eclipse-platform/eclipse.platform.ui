@@ -16,15 +16,9 @@ import java.util.List;
 final class State implements Comparable {
 
 	final static int MAXIMUM_PATHS = 8;
-	final static String ELEMENT = "state";
 
-	static State create(Path configuration, Path locale, Path platform, Path scope)
+	static State create(List paths)
 		throws IllegalArgumentException {
-		List paths = new ArrayList();
-		paths.add(scope);			
-		paths.add(configuration);
-		paths.add(platform);
-		paths.add(locale);
 		return new State(paths);
 	}
 
@@ -54,15 +48,18 @@ final class State implements Comparable {
 	}
 
 	int match(State state) {
-		int match = 0;
+		if (paths.size() != state.paths.size())
+			return -1;
 		
+		int match = 0;
+
 		for (int i = 0; i < paths.size(); i++) {
 			int path = ((Path) paths.get(i)).match((Path) state.paths.get(i)); 
 			
 			if (path == -1 || path >= 16)
 				return -1;	
 			else 
-				match += path << (MAXIMUM_PATHS - 1 - i) * 8;
+				match += path << (MAXIMUM_PATHS - 1 - i) * 4;
 		}		
 		
 		return match;
@@ -80,5 +77,17 @@ final class State implements Comparable {
 			return false;
 		
 		return paths.equals(((State) object).paths); 
+	}
+	
+	public int hashCode() {
+		final int i0 = 72;
+		final int i1 = 47;
+		int result = i0;		
+		Iterator iterator = paths.iterator();
+		
+		while (iterator.hasNext())
+			result = result * i1 + ((Path) iterator.next()).hashCode();
+
+		return result;
 	}
 }

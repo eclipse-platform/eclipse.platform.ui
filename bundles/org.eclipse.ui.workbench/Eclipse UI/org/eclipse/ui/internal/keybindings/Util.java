@@ -66,6 +66,10 @@ public final class Util {
 		return left == null ? right == null : left.equals(right);
 	}
 
+	public static int hashCode(Object object) {
+		return object != null ? object.hashCode() : 0;	
+	}
+
 	private Util() {
 		super();
 	}

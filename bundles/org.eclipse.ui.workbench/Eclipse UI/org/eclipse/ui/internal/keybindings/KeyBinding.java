@@ -8,27 +8,17 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 package org.eclipse.ui.internal.keybindings;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.XMLMemento;
 
 final class KeyBinding implements Comparable {
 
+	final static String ELEMENT = "keybinding"; //$NON-NLS-1$
 	private final static String ATTRIBUTE_ACTION = "action"; //$NON-NLS-1$
 	private final static String ATTRIBUTE_CONFIGURATION = "configuration"; //$NON-NLS-1$		
 	private final static String ATTRIBUTE_LOCALE = "locale"; //$NON-NLS-1$	
 	private final static String ATTRIBUTE_PLATFORM = "platform"; //$NON-NLS-1$		
 	private final static String ATTRIBUTE_PLUGIN = "plugin"; //$NON-NLS-1$		
 	private final static String ATTRIBUTE_SCOPE = "scope"; //$NON-NLS-1$
-	private final static String ELEMENT_KEYBINDING = "keybinding"; //$NON-NLS-1$
 	private final static String ZERO_LENGTH_STRING = ""; //$NON-NLS-1$
 
 	static KeyBinding create(KeySequence keySequence, String action, String configuration, String locale, String platform, String plugin, 
@@ -67,119 +57,7 @@ final class KeyBinding implements Comparable {
 
 		return KeyBinding.create(keySequence, action, configuration, locale, platform, plugin, scope);
 	}
-
-	static List readKeyBindingsFromReader(Reader reader)
-		throws IOException {
-		try {
-			XMLMemento xmlMemento = XMLMemento.createReadRoot(reader);
-			return readKeyBindings(xmlMemento);
-		} catch (WorkbenchException eWorkbench) {
-			throw new IOException();	
-		}
-	}
 	
-	static List readKeyBindings(IMemento memento)
-		throws IllegalArgumentException {
-		if (memento == null)
-			throw new IllegalArgumentException();			
-		
-		IMemento[] mementos = memento.getChildren(ELEMENT_KEYBINDING);
-		
-		if (mementos == null)
-			throw new IllegalArgumentException();
-		
-		List keyBindings = new ArrayList(mementos.length);
-		
-		for (int i = 0; i < mementos.length; i++)
-			keyBindings.add(KeyBinding.read(mementos[i]));
-		
-		return keyBindings;		
-	}
-
-	static void writeKeyBindingsToWriter(Writer writer, String root, List keyBindings)
-		throws IOException {
-		XMLMemento xmlMemento = XMLMemento.createWriteRoot(root);
-		writeKeyBindings(xmlMemento, keyBindings);
-		xmlMemento.save(writer);
-	}
-
-	static void writeKeyBindings(IMemento memento, List keyBindings)
-		throws IllegalArgumentException {
-		if (memento == null || keyBindings == null)
-			throw new IllegalArgumentException();
-			
-		Iterator iterator = keyBindings.iterator();
-		
-		while (iterator.hasNext())
-			((KeyBinding) iterator.next()).write(memento.createChild(ELEMENT_KEYBINDING)); 
-	}
-
-	static void filterAction(List keyBindings, Set actions, boolean exclusive) {
-		Iterator iterator = keyBindings.iterator();
-		
-		while (iterator.hasNext()) {
-			KeyBinding keyBinding = (KeyBinding) iterator.next();
-			
-			if (exclusive ^ !actions.contains(keyBinding.getAction()))
-				iterator.remove();
-		}
-	}
-
-	static void filterConfiguration(List keyBindings, Set configurations, boolean exclusive) {
-		Iterator iterator = keyBindings.iterator();
-		
-		while (iterator.hasNext()) {
-			KeyBinding keyBinding = (KeyBinding) iterator.next();
-			
-			if (exclusive ^ !configurations.contains(keyBinding.getConfiguration()))
-				iterator.remove();
-		}
-	}
-
-	static void filterLocale(List keyBindings, Set locales, boolean exclusive) {
-		Iterator iterator = keyBindings.iterator();
-		
-		while (iterator.hasNext()) {
-			KeyBinding keyBinding = (KeyBinding) iterator.next();
-			
-			if (exclusive ^ !locales.contains(keyBinding.getLocale()))
-				iterator.remove();
-		}
-	}
-
-	static void filterPlatform(List keyBindings, Set platforms, boolean exclusive) {
-		Iterator iterator = keyBindings.iterator();
-		
-		while (iterator.hasNext()) {
-			KeyBinding keyBinding = (KeyBinding) iterator.next();
-			
-			if (exclusive ^ !platforms.contains(keyBinding.getPlatform()))
-				iterator.remove();
-		}
-	}
-
-	static void filterPlugin(List keyBindings, Set plugins, boolean exclusive) {
-		Iterator iterator = keyBindings.iterator();
-		
-		while (iterator.hasNext()) {
-			KeyBinding keyBinding = (KeyBinding) iterator.next();
-			
-			if (exclusive ^ !plugins.contains(keyBinding.getPlugin()))
-				iterator.remove();
-		}
-	}
-
-	static void filterScope(List keyBindings, Set scopes, boolean exclusive) {
-		Iterator iterator = keyBindings.iterator();
-		
-		while (iterator.hasNext()) {
-			KeyBinding keyBinding = (KeyBinding) iterator.next();
-			
-			if (exclusive ^ !scopes.contains(keyBinding.getScope()))
-				iterator.remove();
-		}
-	}
-
 	private KeySequence keySequence;
 	private String action;
 	private String configuration;
@@ -244,19 +122,19 @@ final class KeyBinding implements Comparable {
 			compareTo = Util.compare(action, keyBinding.action);
 
 			if (compareTo == 0) {
-				compareTo = Util.compare(configuration, keyBinding.configuration);
+				compareTo = configuration.compareTo(keyBinding.configuration);
 
 				if (compareTo == 0) {
-					compareTo = Util.compare(locale, keyBinding.locale);
+					compareTo = locale.compareTo(keyBinding.locale);
 
 					if (compareTo == 0) {
-						compareTo = Util.compare(platform, keyBinding.platform);
+						compareTo = platform.compareTo(keyBinding.platform);
 
 						if (compareTo == 0) {
 							compareTo = Util.compare(plugin, keyBinding.plugin);
 
 							if (compareTo == 0)
-								compareTo = Util.compare(scope, keyBinding.scope);
+								compareTo = scope.compareTo(keyBinding.scope);
 						}
 					}
 				}
@@ -272,13 +150,22 @@ final class KeyBinding implements Comparable {
 		
 		KeyBinding keyBinding = (KeyBinding) object;
 		return keySequence.equals(keyBinding.keySequence) && Util.equals(action, keyBinding.action) && 
-			Util.equals(configuration, keyBinding.configuration) && Util.equals(locale, keyBinding.locale) &&
-			Util.equals(platform, keyBinding.platform) && Util.equals(plugin, keyBinding.plugin) && Util.equals(scope, keyBinding.scope);
+			configuration.equals(keyBinding.configuration) && locale.equals(keyBinding.locale) && platform.equals(keyBinding.platform) && 
+			Util.equals(plugin, keyBinding.plugin) && scope.equals(keyBinding.scope);
 	}
 
 	public int hashCode() {
-		// TBD!
-		return 0;
+		final int i0 = 42;
+		final int i1 = 17;
+		int result = i0;
+		result = result * i1 + keySequence.hashCode();		
+		result = result * i1 + Util.hashCode(action);		
+		result = result * i1 + configuration.hashCode();		
+		result = result * i1 + locale.hashCode();		
+		result = result * i1 + platform.hashCode();		
+		result = result * i1 + Util.hashCode(plugin);		
+		result = result * i1 + scope.hashCode();		
+		return result;
 	}
 
 	void write(IMemento memento)

@@ -10,17 +10,17 @@ package org.eclipse.ui.internal.keybindings;
 
 import org.eclipse.ui.IMemento;
 
-final class PathItem implements Comparable {
+public final class PathItem implements Comparable {
 	
-	final static String ELEMENT = "pathitem";		
-	private final static String ATTRIBUTE_VALUE = "value";
+	public final static String ELEMENT = "pathitem"; //$NON-NLS-1$
+	private final static String ATTRIBUTE_VALUE = "value"; //$NON-NLS-1$
 	
-	static PathItem create(String value)
+	public static PathItem create(String value)
 		throws IllegalArgumentException {
 		return new PathItem(value);
 	}
 
-	static PathItem read(IMemento memento)
+	public static PathItem read(IMemento memento)
 		throws IllegalArgumentException {
 		if (memento == null)
 			throw new IllegalArgumentException();
@@ -40,7 +40,7 @@ final class PathItem implements Comparable {
 		this.value = value;	
 	}
 	
-	String getValue() {
+	public String getValue() {
 		return value;	
 	}
 	
@@ -62,7 +62,7 @@ final class PathItem implements Comparable {
 		return value.hashCode();
 	}
 	
-	void write(IMemento memento)
+	public void write(IMemento memento)
 		throws IllegalArgumentException {
 		if (memento == null)
 			throw new IllegalArgumentException();
