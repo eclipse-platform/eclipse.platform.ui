@@ -17,6 +17,7 @@ import org.eclipse.search.ui.SearchResultEvent;
  * @since 3.0
  */
 public class RemoveAllEvent extends SearchResultEvent {
+	private static final long serialVersionUID = 6009335074727417445L;
 	/**
 	 * A constructor
 	 * @param searchResult the search result this event is about

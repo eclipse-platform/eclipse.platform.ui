@@ -21,6 +21,7 @@ import org.eclipse.search.ui.SearchResultEvent;
  * @since 3.0
  */
 public class MatchEvent extends SearchResultEvent {
+	private static final long serialVersionUID = 6009335074727417445L;
 	private int fKind;
 	private Match[] fMatches;
 	private Match[] fMatchContainer = new Match[1];
