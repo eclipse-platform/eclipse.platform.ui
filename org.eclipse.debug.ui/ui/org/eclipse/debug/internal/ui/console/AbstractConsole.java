@@ -89,7 +89,7 @@ public abstract class AbstractConsole implements IConsole {
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
 		 */
 		public void handleException(Throwable exception) {
-			IStatus status = new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, "Exception occurred during console property change notification.", exception);
+			IStatus status = new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, ConsoleMessages.getString("AbstractConsole.0"), exception); //$NON-NLS-1$
 			DebugUIPlugin.log(status);
 		}
 

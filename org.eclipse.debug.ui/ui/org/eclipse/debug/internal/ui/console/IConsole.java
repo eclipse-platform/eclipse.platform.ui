@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.console;
 
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.ui.part.IPageBookViewPage;
