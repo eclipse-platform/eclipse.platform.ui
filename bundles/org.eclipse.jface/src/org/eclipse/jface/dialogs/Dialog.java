@@ -677,7 +677,7 @@ protected Button getOKButton() {
 protected void initializeDialogUnits(Control control) {
 	// Compute and store a font metric
 	GC gc = new GC(control);
-	gc.setFont(control.getFont());
+	gc.setFont(JFaceResources.getDialogFont());
 	fontMetrics = gc.getFontMetrics();
 	gc.dispose();
 }
@@ -731,4 +731,37 @@ public boolean close() {
 		dialogArea = null;
 	}
 	return returnValue;
-}}
+}
+
+/**
+ * Apply the dialog font all widgets that currently have the default
+ * font.
+ * @param the control to apply the font to. Font will also be applied to
+ * its children.
+ */
+protected void applyDialogFont(Control control){
+	Font dialogFont = JFaceResources.getDialogFont();
+	Font defaultFont = JFaceResources.getDefaultFont(); 
+	applyDialogFont(control,dialogFont,defaultFont);
+}
+
+/**
+ * Set the dialog font on the control and any of its children if thier
+ * font is not otherwise set.
+ * @param control
+ * @param dialogFont
+ * @param defaultFont
+ */
+protected void applyDialogFont(Control control, Font dialogFont, Font defaultFont){
+	
+	if(control.getFont().equals(defaultFont))
+		control.setFont(dialogFont);
+		
+	if(control instanceof Composite){
+		Control[] children = ((Composite) control).getChildren();
+		for(int i = 0; i < children.length; i ++)	
+			applyDialogFont(children[i],dialogFont,defaultFont);
+	}
+}
+		
+}
