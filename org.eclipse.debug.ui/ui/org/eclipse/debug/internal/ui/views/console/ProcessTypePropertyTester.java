@@ -20,7 +20,7 @@ import org.eclipse.ui.console.IOConsole;
  * 
  * @since 3.1
  */
-public class JavaConsoleTrackerPropertyTester extends PropertyTester {
+public class ProcessTypePropertyTester extends PropertyTester {
 
     /* (non-Javadoc)
      * @see org.eclipse.core.expressions.IPropertyTester#test(java.lang.Object, java.lang.String, java.lang.Object[], java.lang.Object)
