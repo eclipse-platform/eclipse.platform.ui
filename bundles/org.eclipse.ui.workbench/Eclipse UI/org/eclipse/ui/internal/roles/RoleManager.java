@@ -15,6 +15,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
 
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
@@ -40,6 +43,8 @@ public class RoleManager {
 	private boolean filterRoles = true;
 
 	private Role[] roles = new Role[0];
+	private Hashtable activities = new Hashtable();
+	private Hashtable patternBindings = new Hashtable();
 
 	// Prefix for all role preferences
 	private static String PREFIX = "UIRoles."; //$NON-NLS-1$
@@ -76,14 +81,21 @@ public class RoleManager {
 		}
 		try {
 			location = Platform.asLocalURL(location);
-			
+
 			File xmlDefinition = new File(location.getFile());
-			if(!xmlDefinition.exists()){
+			if (!xmlDefinition.exists()) {
 				return false;
 			}
 			FileReader reader = new FileReader(xmlDefinition);
 			XMLMemento memento = XMLMemento.createReadRoot(reader);
-			roles = RoleParser.readRoleDefinitions(memento);
+			Activity [] activityArray = RoleParser.readActivityDefinitions(memento);
+			for(int i = 0; i < activityArray.length; i++){
+				activities.put(activityArray[i].getId(),activityArray[i]);
+			}
+			
+			patternBindings = RoleParser.readPatternBindings(memento);
+			
+			roles = RoleParser.readRoleDefinitions(memento,activities);
 
 		} catch (IOException e) {
 			reportError(e);
@@ -100,13 +112,7 @@ public class RoleManager {
 	 * @param e
 	 */
 	private void reportError(Exception e) {
-		IStatus error =
-			new Status(
-				IStatus.ERROR,
-				PlatformUI.PLUGIN_ID,
-				IStatus.ERROR,
-				e.getLocalizedMessage(),
-				e);
+		IStatus error = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.ERROR, e.getLocalizedMessage(), e);
 		WorkbenchPlugin.getDefault().getLog().log(error);
 		filterRoles = false;
 	}
@@ -121,14 +127,16 @@ public class RoleManager {
 	 */
 	void loadEnabledStates() {
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		
+
 		//Do not set it if the store is not set so as to
 		//allow for switching off and on of roles
-		if(!store.isDefault(PREFIX + FILTERING_ENABLED))
+		if (!store.isDefault(PREFIX + FILTERING_ENABLED))
 			setFiltering(store.getBoolean(PREFIX + FILTERING_ENABLED));
 
-		for (int i = 0; i < roles.length; i++) {
-			roles[i].enabled = store.getBoolean(createPreferenceKey(i));
+		Iterator values = activities.values().iterator();
+		while (values.hasNext()) {
+			Activity next = (Activity) values.next();
+			next.setEnabled(store.getBoolean(createPreferenceKey(next)));
 		}
 	}
 
@@ -139,18 +147,20 @@ public class RoleManager {
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		store.setValue(PREFIX + FILTERING_ENABLED, isFiltering());
 
-		for (int i = 0; i < roles.length; i++) {
-			store.setValue(createPreferenceKey(i), roles[i].enabled);
+		Iterator values = activities.values().iterator();
+		while (values.hasNext()) {
+			Activity next = (Activity) values.next();
+			store.setValue(createPreferenceKey(next), next.enabled);
 		}
 	}
 
 	/**
-	 * Create the preference key for the role at index i.
-	 * @param i index of the role
-	 * @return
+	 * Create the preference key for the activity.
+	 * @param activity
+	 * @return String
 	 */
-	private String createPreferenceKey(int i) {
-		return PREFIX + roles[i].id;
+	private String createPreferenceKey(Activity activity) {
+		return PREFIX + activity.getId();
 	}
 
 	/**
@@ -164,26 +174,18 @@ public class RoleManager {
 
 		if (!isFiltering())
 			return true;
-		for (int i = 0; i < roles.length; i++) {
-			if (roles[i].patternMatches(id))
-				return roles[i].enabled;
-		}
-		return true;
-	}
 
-	/**
-	 * Enable the roles that satisfy pattern.
-	 * @param pattern
-	 */
-	public void enableRoles(String pattern) {
-		if (!filterRoles)
-			return;
-		if (pattern == null)
-			return;
-		for (int i = 0; i < roles.length; i++) {
-			if (roles[i].patternMatches(pattern))
-				roles[i].setEnabled(true);
+		Enumeration bindingsPatterns = patternBindings.keys();
+		while (bindingsPatterns.hasMoreElements()) {
+			String next = (String) bindingsPatterns.nextElement();
+			if (id.matches(next)) {
+				Activity activity = getActivity((String) patternBindings.get(next));
+				if (activity != null)
+					return activity.isEnabled();
+			}
 		}
+
+		return true;
 	}
 
 	/**
@@ -212,4 +214,37 @@ public class RoleManager {
 		filterRoles = value;
 	}
 
+	/**
+	 * Return the activity with id equal to activityId.
+	 * Return <code>null</code> if not found.
+	 * @param activityId
+	 * @return Activity or <code>null</code>
+	 */
+	Activity getActivity(String activityId) {
+		if (activities.containsKey(activityId))
+			return (Activity) activities.get(activityId);
+		else
+			return null;
+	}
+	
+	/** 
+	 * Enable any activity for which there is a pattern
+	 * binding that matches id.
+	 * @param id
+	 */
+	public void enableActivities(String id){
+		
+		Iterator patternIterator = patternBindings.keySet().iterator();
+		
+		while(patternIterator.hasNext()){
+			String next = (String) patternIterator.next();
+			if(id.matches(next)){
+				String mappingId = (String) patternBindings.get(next);
+				Activity activity = getActivity(mappingId);
+				if(activity != null)
+					activity.setEnabled(true);
+			}
+		}
+		
+	}
 }

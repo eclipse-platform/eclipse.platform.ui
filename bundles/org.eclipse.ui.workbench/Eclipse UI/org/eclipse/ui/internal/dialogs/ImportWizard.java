@@ -82,7 +82,7 @@ public class ImportWizard extends Wizard {
 	public boolean performFinish() {
 		SelectionPage first = (SelectionPage) getPages()[0];
 		first.saveWidgetValues();
-		RoleManager.getInstance().enableRoles(
+		RoleManager.getInstance().enableActivities(
 			first.getSelectedNode().getWizard().getClass().getName());
 		return true;
 	}

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.roles;
 
-
 /**
  * The Role is a set of information about the current static
  * working state.
@@ -19,48 +18,56 @@ class Role {
 
 	String name;
 	String id;
-	String[] patterns;
-	
-	boolean enabled = false;
+	String[] activityIds;
 
 	/**
 	 * Create a new instance of the receiver.
 	 * @param newName String
 	 * @param newId String
-	 * @param newPattern String - the patterns that plugin ids will be mapped to.
+	 * @param newActivityIds String[]
+	 * @param newPatternBindings String[]
 	 */
-	Role(String newName, String newId, String[] newPatterns) {
+	Role(String newName, String newId, String[] newActivityIds) {
 		name = newName;
 		id = newId;
-		patterns = newPatterns;
+		activityIds = newActivityIds;
 	}
 
 	/**
-	 * Set the enabled state of this role.
+	 * Set the enabled state of the activities in this role.
 	 * @param set boolean
 	 */
 	public void setEnabled(boolean set) {
-		enabled = set;
-	}
-	
-	/**
-	 * Return whether or not this role is enabled.
-	 * @return
-	 */
-	public boolean isEnabled(){
-		return enabled;
-	}
-	
-	/**
-	 * Return whether or not one of the patterns matches the supplied value.
-	 * @param value
-	 * @return
-	 */
-	boolean patternMatches(String value){
-		for(int i = 0; i < patterns.length; i++){
-			if(value.matches(patterns[i]))
-				return true;
+		for (int i = 0; i < activityIds.length; i++) {
+			Activity activity = RoleManager.getInstance().getActivity(activityIds[i]);
+			if (activity != null)
+				activity.setEnabled(set);
+
 		}
-		return false;		
 	}
+
+	/**
+	 * Return the ids of the activities that this role
+	 * is bound to.
+	 * @return String[]
+	 */
+	public String[] getActivityIds() {
+		return activityIds;
+	}
+
+	/**
+	 * Return whether or not all activites are enabled.
+	 * Return false if any are disabled.
+	 * @param set boolean
+	 */
+	public boolean allEnabled() {
+		for (int i = 0; i < activityIds.length; i++) {
+			Activity activity = RoleManager.getInstance().getActivity(activityIds[i]);
+			if (activity != null)
+				if (!activity.isEnabled())
+					return false;
+		}
+		return true;
+	}
+
 }

@@ -94,7 +94,7 @@ public class RolePreferencePage extends PreferencePage implements IWorkbenchPref
         roleEnablement.setSelection(RoleManager.getInstance().isFiltering());
 		Role [] roles = RoleManager.getInstance().getRoles();	
 		for (int i = 0; i < roles.length; i++) {
-			viewer.setChecked(roles[i], roles[i].enabled);
+			viewer.setChecked(roles[i], roles[i].allEnabled());
 		}
 	}
 
@@ -112,7 +112,7 @@ public class RolePreferencePage extends PreferencePage implements IWorkbenchPref
 		RoleManager manager = RoleManager.getInstance();
 		Role [] roles = manager.getRoles();
 		for (int i = 0; i < roles.length; i++) {
-			roles[i].enabled = checked.contains(roles[i]);
+			roles[i].setEnabled(checked.contains(roles[i]));
 		}
         manager.setFiltering(roleEnablement.getSelection());
 		manager.saveEnabledStates();

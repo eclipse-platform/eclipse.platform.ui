@@ -360,7 +360,7 @@ public class BasicNewProjectResourceWizard
 		if (finalPersp == null) {
 			//Enable the role if required.
 			if (RoleManager.getInstance().isFiltering()) {
-				RoleManager.getInstance().enableRoles(finalPerspId);
+				RoleManager.getInstance().enableActivities(finalPerspId);
 				finalPersp = reg.findPerspectiveWithId(finalPerspId);
 			}
 			if (finalPersp == null) {

@@ -112,7 +112,7 @@ public class NewWizard extends Wizard {
 		//save our selection state
 		mainPage.saveWidgetValues();
 		IWizard selectedWizard = mainPage.getSelectedNode().getWizard();
-		RoleManager.getInstance().enableRoles(selectedWizard.getClass().getName());
+		RoleManager.getInstance().enableActivities(selectedWizard.getClass().getName());
 
 		return true;
 	}
