@@ -123,14 +123,15 @@ public class ViewPane extends PartPane
 		
 			// check the current internal fast view state
 			if (fast) {
-				ToolItem pinButton = new ToolItem(toolbar, SWT.PUSH, index++);
+				ToolItem dockButton = new ToolItem(toolbar, SWT.CHECK, index++);
+				dockButton.setSelection(true);
 				Image img = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_PIN_VIEW);
-				pinButton.setDisabledImage(img); // PR#1GE56QT - Avoid creation of unnecessary image.
-				pinButton.setImage(img);
-				pinButton.setToolTipText(WorkbenchMessages.getString("ViewPane.pin")); //$NON-NLS-1$
-				pinButton.addSelectionListener(new SelectionAdapter() {
+				dockButton.setDisabledImage(img); // PR#1GE56QT - Avoid creation of unnecessary image.
+				dockButton.setImage(img);
+				dockButton.setToolTipText(WorkbenchMessages.getString("ViewPane.pin")); //$NON-NLS-1$
+				dockButton.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
-						doPin();
+						doDock();
 					}
 				});
 		
@@ -316,7 +317,7 @@ protected void doMinimize() {
 /**
  * Pin the view.
  */
-protected void doPin() {
+protected void doDock() {
 	WorkbenchPage page = (WorkbenchPage)getPart().getSite().getPage();
 	page.removeFastView(getViewPart());
 }
@@ -489,15 +490,18 @@ protected Sashes findSashes() {
  */
 protected void addFastViewMenuItem(Menu parent,boolean isFastView) {
 	// add fast view item
-	MenuItem item = new MenuItem(parent, SWT.NONE);
+	MenuItem item = new MenuItem(parent, SWT.CHECK);
 	item.setText(WorkbenchMessages.getString("ViewPane.fastView")); //$NON-NLS-1$
 	item.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
-			doMakeFast();
+			if (isFastView())
+				doDock();
+			else
+				doMakeFast();
 		}
 	});
-	item.setEnabled(!isFastView);
-
+	item.setSelection(isFastView);
+	
 	if(isFastView) {
 		item = new MenuItem(parent, SWT.NONE);
 		item.setText(WorkbenchMessages.getString("ViewPane.minimizeView")); //$NON-NLS-1$

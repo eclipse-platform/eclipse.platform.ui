@@ -62,8 +62,9 @@ public class WorkbenchWindow extends ApplicationWindow
 	private boolean closing = false;
 	private boolean shellActivated = false;
 	private String workspaceLocation;
-	private Menu fastViewBarMenu;
 	private Menu perspectiveBarMenu;
+	private Menu fastViewBarMenu;
+	private MenuItem restoreItem;
 	// temporary, work in progress for CoolBars
 	private CoolBarManager coolBarManager;
 	
@@ -1157,9 +1158,9 @@ private void showShortcutBarPopup(MouseEvent e) {
 		// The fast view bar menu is created lazily here.
 		if (fastViewBarMenu == null) {
 			Menu menu = new Menu(toolBar);
-			MenuItem menuItem = new MenuItem(menu, SWT.NONE);
-			menuItem.setText(WorkbenchMessages.getString("WorkbenchWindow.close")); //$NON-NLS-1$
-			menuItem.addSelectionListener(new SelectionAdapter() {
+			MenuItem closeItem = new MenuItem(menu, SWT.NONE);
+			closeItem.setText(WorkbenchMessages.getString("WorkbenchWindow.close")); //$NON-NLS-1$
+			closeItem.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					ToolItem toolItem = (ToolItem) fastViewBarMenu.getData();
 					if (toolItem != null && !toolItem.isDisposed()) {
@@ -1168,9 +1169,9 @@ private void showShortcutBarPopup(MouseEvent e) {
 					}
 				}
 			});
-			menuItem = new MenuItem(menu, SWT.NONE);
-			menuItem.setText(WorkbenchMessages.getString("WorkbenchWindow.restore")); //$NON-NLS-1$
-			menuItem.addSelectionListener(new SelectionAdapter() {
+			restoreItem = new MenuItem(menu, SWT.CHECK);
+			restoreItem.setText(WorkbenchMessages.getString("WorkbenchWindow.restore")); //$NON-NLS-1$
+			restoreItem.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					ToolItem toolItem = (ToolItem) fastViewBarMenu.getData();
 					if (toolItem != null && !toolItem.isDisposed()) {
@@ -1181,6 +1182,7 @@ private void showShortcutBarPopup(MouseEvent e) {
 			});
 			fastViewBarMenu = menu;
 		}
+		restoreItem.setSelection(true);
 		fastViewBarMenu.setData(toolItem);
 	
 		// Show popup menu.

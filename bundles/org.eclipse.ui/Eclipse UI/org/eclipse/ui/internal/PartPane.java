@@ -59,11 +59,9 @@ public abstract class PartPane extends LayoutPart
 				public void widgetSelected(SelectionEvent e) {
 					if (isZoomed)
 						doZoom();
-					else
-						doPin();
 				}
 			});
-			item.setEnabled(isZoomed || isFastView);
+			item.setEnabled(isZoomed);
 			
 			//Add move menu
 			item = new MenuItem(menu, SWT.CASCADE);
@@ -466,5 +464,5 @@ protected void addFastViewMenuItem(Menu parent,boolean isFastView) {}
 /**
  * Pin this part.
  */
-protected void doPin() {}
+protected void doDock() {}
 }
