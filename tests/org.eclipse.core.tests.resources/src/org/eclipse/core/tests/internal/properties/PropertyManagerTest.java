@@ -47,7 +47,7 @@ public void testConcurrentAccess() {
 	}
 
 	// prepare keys and values
-	final int N = 10;
+	final int N = 50;
 	final QualifiedName[] names = new QualifiedName[N];
 	final String[] values = new String[N];
 	for (int i = 0; i < N; i++) {
