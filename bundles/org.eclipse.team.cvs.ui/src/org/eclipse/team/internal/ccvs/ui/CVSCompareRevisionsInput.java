@@ -137,7 +137,7 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 		public int compare(Viewer viewer, Object o1, Object o2) {
 			VersionCompareDiffNode d1 = (VersionCompareDiffNode)o1;
 			VersionCompareDiffNode d2 = (VersionCompareDiffNode)o2;
-			return super.compare(viewer, ((ResourceRevisionNode)d1.getRight()).getRemoteResource(), ((ResourceRevisionNode)d2.getRight()).getRemoteResource());
+			return super.compare(viewer, ((ResourceRevisionNode)d1.getRight()).getLogEntry(), ((ResourceRevisionNode)d2.getRight()).getLogEntry());
 		}
 		
 	};
