@@ -59,7 +59,6 @@ import org.eclipse.debug.ui.IDebugUIEventFilter;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
@@ -172,6 +171,10 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 	 */
 	protected static ResourceDeletedVisitor fgDeletedVisitor;
 	
+	/**
+	 * Context used to decide whether to show/switch to the 
+	 * debug view / debug perspective on a launch or suspend event
+	 */
 	protected SwitchContext fSwitchContext= new SwitchContext();
 	/**
 	 * Visitor for handling resource deltas
@@ -383,7 +386,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 				public void run() {
 					if (fSwitchContext.contextChanged(ILaunchManager.DEBUG_MODE)) {
 						if (showSuspendEvent(event)) {				
-							if (getPreferenceStore().getBoolean(IDebugUIConstants.PREF_AUTO_SHOW_DEBUG_VIEW)) {
+							if (event.getDetail() == event.BREAKPOINT || getPreferenceStore().getBoolean(IDebugUIConstants.PREF_AUTO_SHOW_DEBUG_VIEW)) {
 								switchToDebugPerspective(event.getSource(), ILaunchManager.DEBUG_MODE);
 							}
 						} 
