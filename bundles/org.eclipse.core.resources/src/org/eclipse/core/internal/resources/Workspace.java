@@ -17,6 +17,7 @@ import org.eclipse.core.internal.events.*;
 import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
 import org.eclipse.core.internal.properties.PropertyManager;
+import org.eclipse.core.internal.refresh.RefreshManager;
 import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.internal.watson.*;
@@ -49,6 +50,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 */
 	protected WorkManager _workManager;
 	protected AliasManager aliasManager;
+	protected RefreshManager refreshManager;
+	
 	protected long nextNodeId = 1;
 	protected long nextModificationStamp = 0;
 	protected long nextMarkerId = 0;
@@ -1647,7 +1650,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	protected void shutdown(IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			IManager[] managers = { buildManager, propertyManager, pathVariableManager, fileSystemManager, markerManager, saveManager, _workManager, aliasManager };
+			IManager[] managers = { buildManager, propertyManager, pathVariableManager, fileSystemManager, markerManager, saveManager, _workManager, aliasManager, refreshManager };
 			monitor.beginTask(null, managers.length);
 			String message = Policy.bind("resources.shutdownProblems"); //$NON-NLS-1$
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, null);
@@ -1674,6 +1677,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			synchronizer = null;
 			saveManager = null;
 			_workManager = null;
+			aliasManager = null;
+			refreshManager = null;
 			if (!status.isOK())
 				throw new CoreException(status);
 		} finally {
@@ -1710,8 +1715,11 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		//must start after save manager, because (read) access to tree is needed
 		aliasManager = new AliasManager(this);
 		aliasManager.startup(null);
+		refreshManager = new RefreshManager(this);
+		refreshManager.startup(null);
 		treeLocked = null; // unlock the tree.
 	}
+
 	/** 
 	 * Returns a string representation of this working state's
 	 * structure suitable for debug purposes.

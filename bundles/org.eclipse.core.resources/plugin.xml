@@ -1,83 +1,141 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin
-  name="%pluginName"
-  id="org.eclipse.core.resources"
-  version="3.0"
-  provider-name="%providerName"
-  class="org.eclipse.core.resources.ResourcesPlugin">
+   id="org.eclipse.core.resources"
+   name="%pluginName"
+   version="3.0"
+   provider-name="%providerName"
+   class="org.eclipse.core.resources.ResourcesPlugin">
 
-	<requires>
-		<import plugin="org.eclipse.core.runtime.compatibility"/> 
-	</requires>
+   <runtime>
+      <library name="resources.jar">
+         <export name="*"/>
+         <packages prefixes="org.eclipse.core"/>
+      </library>
+   </runtime>
+   <requires>
+      <import plugin="org.eclipse.core.runtime.compatibility"/>
+   </requires>
 
-  <runtime>
-    <library name="resources.jar">
-      <export name="*"/>
-      <packages prefixes="org.eclipse.core"/>
-    </library>
-  </runtime>
 
-  <extension-point name="%buildersName" id="builders" schema="schema/builders.mxsd"/>
-  <extension-point name="%markersName" id="markers" schema="schema/markers.mxsd"/>
-  <extension-point name="%naturesName" id="natures" schema="schema/natures.mxsd"/>
-  <extension-point name="%validatorName" id="fileModificationValidator" schema="schema/fileModificationValidator.mxsd"/>
-  <extension-point name="%hookName" id="moveDeleteHook" schema="schema/moveDeleteHook.mxsd"/>
-  <extension-point name="%teamHookName" id="teamHook" schema="schema/teamHook.mxsd"/>
+   <extension-point id="builders" name="%buildersName" schema="schema/builders.mxsd"/>
+   <extension-point id="markers" name="%markersName" schema="schema/markers.mxsd"/>
+   <extension-point id="natures" name="%naturesName" schema="schema/natures.mxsd"/>
+   <extension-point id="fileModificationValidator" name="%validatorName" schema="schema/fileModificationValidator.mxsd"/>
+   <extension-point id="moveDeleteHook" name="%hookName" schema="schema/moveDeleteHook.mxsd"/>
+   <extension-point id="teamHook" name="%teamHookName" schema="schema/teamHook.mxsd"/>
+   <extension-point id="refreshProviders" name="%refreshProvidersName" schema="schema/refreshProviders.exsd"/>
 
-  <extension id="marker" point="org.eclipse.core.resources.markers" name="%markerName">
-  	<attribute name="transient"/>
-  </extension>
-  <extension id="problemmarker" point="org.eclipse.core.resources.markers" name="%problemName">
-    <super type="org.eclipse.core.resources.marker"/>
-    <persistent value="true"/>
-    <attribute name="severity"/>
-    <attribute name="message"/>
-    <attribute name="location"/>
-  </extension>
-  <extension id="taskmarker" point="org.eclipse.core.resources.markers" name="%taskName">
-    <super type="org.eclipse.core.resources.marker"/>
-    <persistent value="true"/>
-    <attribute name="priority"/>
-    <attribute name="message"/>
-    <attribute name="done"/>
-    <attribute name="userEditable"/>    
-  </extension>
-  <extension id="bookmark" point="org.eclipse.core.resources.markers" name="%bookmarkName">
-    <super type="org.eclipse.core.resources.marker"/>
-    <persistent value="true"/>
-    <attribute name="message"/>
-    <attribute name="location"/>
-  </extension>
-  <extension id="textmarker" point="org.eclipse.core.resources.markers" name="%textName">
-    <super type="org.eclipse.core.resources.marker"/>
-    <attribute name="charStart"/>
-    <attribute name="charEnd"/>
-    <attribute name="lineNumber"/>
-  </extension>
-
-   <!-- Tasks -->
-   <extension point="org.eclipse.ant.core.antTasks">
+   <extension
+         id="marker"
+         name="%markerName"
+         point="org.eclipse.core.resources.markers">
+      <attribute
+            name="transient">
+      </attribute>
+   </extension>
+   <extension
+         id="problemmarker"
+         name="%problemName"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.marker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+      <attribute
+            name="severity">
+      </attribute>
+      <attribute
+            name="message">
+      </attribute>
+      <attribute
+            name="location">
+      </attribute>
+   </extension>
+   <extension
+         id="taskmarker"
+         name="%taskName"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.marker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+      <attribute
+            name="priority">
+      </attribute>
+      <attribute
+            name="message">
+      </attribute>
+      <attribute
+            name="done">
+      </attribute>
+      <attribute
+            name="userEditable">
+      </attribute>
+   </extension>
+   <extension
+         id="bookmark"
+         name="%bookmarkName"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.marker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+      <attribute
+            name="message">
+      </attribute>
+      <attribute
+            name="location">
+      </attribute>
+   </extension>
+   <extension
+         id="textmarker"
+         name="%textName"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.marker">
+      </super>
+      <attribute
+            name="charStart">
+      </attribute>
+      <attribute
+            name="charEnd">
+      </attribute>
+      <attribute
+            name="lineNumber">
+      </attribute>
+   </extension>
+<!-- Tasks -->
+   <extension
+         point="org.eclipse.ant.core.antTasks">
       <antTask
-         name="eclipse.convertPath"
-         class="org.eclipse.core.resources.ant.ConvertPath"
-         library="ant_tasks/resources-ant.jar">
+            library="ant_tasks/resources-ant.jar"
+            name="eclipse.convertPath"
+            class="org.eclipse.core.resources.ant.ConvertPath">
       </antTask>
       <antTask
-         name="eclipse.incrementalBuild"
-         class="org.eclipse.core.resources.ant.IncrementalBuild"
-         library="ant_tasks/resources-ant.jar">
+            library="ant_tasks/resources-ant.jar"
+            name="eclipse.incrementalBuild"
+            class="org.eclipse.core.resources.ant.IncrementalBuild">
       </antTask>
       <antTask
-         name="eclipse.refreshLocal"
-         class="org.eclipse.core.resources.ant.RefreshLocalTask"
-         library="ant_tasks/resources-ant.jar">
+            library="ant_tasks/resources-ant.jar"
+            name="eclipse.refreshLocal"
+            class="org.eclipse.core.resources.ant.RefreshLocalTask">
       </antTask>
    </extension>
-
-   <!-- Extra Classpath -->
-   <extension point="org.eclipse.ant.core.extraClasspathEntries">
-      <extraClasspathEntry library="ant_tasks/resources-ant.jar"/>
+<!-- Extra Classpath -->
+   <extension
+         point="org.eclipse.ant.core.extraClasspathEntries">
+      <extraClasspathEntry
+            library="ant_tasks/resources-ant.jar">
+      </extraClasspathEntry>
    </extension>
 
 </plugin>

@@ -12,6 +12,7 @@ package org.eclipse.core.resources;
 
 import java.util.Map;
 
+import org.eclipse.core.resources.refresh.IRefreshResult;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 

@@ -73,6 +73,15 @@ public final class ResourcesPlugin extends Plugin {
 	public static final String PT_TEAM_HOOK = "teamHook"; //$NON-NLS-1$
 
 	/**
+	 * Simple identifier constant (value <code>"refreshProviders"</code>)
+	 * for the auto-refresh refresh providers extension point.
+	 * 
+	 * @since 3.0
+	 */
+	public static final String PT_REFRESH_PROVIDERS= "refreshProviders"; //$NON-NLS-1$
+	
+	
+	/**
 	 * Constant identifying the job family identifier for the background autobuild job.
 	 * @see IJobManager#join(Object, IProgressMonitor)
 	 * @since 3.0
@@ -174,7 +183,19 @@ public final class ResourcesPlugin extends Plugin {
 	 * @since 2.1
 	 */
 	public static final String PREF_DISABLE_LINKING = PREF_DESCRIPTION_PREFIX + "disableLinking";//$NON-NLS-1$
-	
+
+	/**
+	 * Name of a preference for configuring whether the workspace performs auto-
+	 * refresh.
+	 * @since 3.0
+	 */
+	public static final String PREF_AUTO_REFRESH = "refresh.enabled"; //$NON-NLS-1$
+
+	/**
+	 * Default refresh delay in milliseconds, (value <code>60000</code>).
+	 */
+	public static final String PREF_REFRESH_POLLING_DELAY = "refresh.delay";	
+
 	/**
 	 * The single instance of this plug-in runtime class.
 	 */
