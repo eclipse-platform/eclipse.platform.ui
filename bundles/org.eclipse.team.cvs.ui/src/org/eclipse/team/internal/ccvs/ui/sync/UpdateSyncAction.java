@@ -185,8 +185,7 @@ public class UpdateSyncAction extends MergeAction {
 							updateIgnoreLocalShallow.add(changedNode);
 							break;
 						case Differencer.DELETION:
-							// Unmanage the file if necessary and delete it.
-							deletions.add(changedNode);
+							updateIgnoreLocalShallow.add(changedNode);
 							break;
 						case Differencer.CHANGE:
 							updateDeep.add(changedNode);
