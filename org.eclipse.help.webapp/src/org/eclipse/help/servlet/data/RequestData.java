@@ -8,6 +8,7 @@ import java.util.Locale;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
+import org.eclipse.core.boot.*;
 import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.servlet.*;
 
@@ -37,7 +38,7 @@ public class RequestData {
 			&& request != null)
 			locale = request.getLocale().toString();
 		else
-			locale = Locale.getDefault().toString();
+			locale = BootLoader.getNL();
 	}
 
 	/**

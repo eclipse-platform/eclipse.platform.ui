@@ -3,13 +3,14 @@ package org.eclipse.help.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-import java.text.BreakIterator;
+import java.text.*;
 import java.util.*;
 
-import org.eclipse.help.internal.context.ContextsNode;
-import org.eclipse.help.ui.internal.util.TString;
-import org.eclipse.swt.SWT;
+import org.eclipse.help.internal.context.*;
+import org.eclipse.help.internal.util.*;
+import org.eclipse.swt.*;
 import org.eclipse.swt.custom.*;
+
 public class StyledLineWrapper implements StyledTextContent {
 	/** Lines after splitting */
 	private ArrayList lines = new ArrayList();
