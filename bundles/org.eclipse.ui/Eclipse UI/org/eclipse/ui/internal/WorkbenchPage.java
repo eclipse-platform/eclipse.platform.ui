@@ -38,15 +38,13 @@ public class WorkbenchPage implements IWorkbenchPage {
 	private IWorkbenchPart activePart; //Could be delete. This information is in the active part list;
 	private ActivationList activationList = new ActivationList();
 	private IEditorPart lastActiveEditor;
-	private IEditorPart reusableEditor;
 	private EditorManager editorMgr;
 	private EditorPresentation editorPresentation;
 	private PartListenerList partListeners = new PartListenerList();
 	private PageSelectionService selectionService = new PageSelectionService(this);
 	private IActionBars actionBars;
-	private Perspective activePersp;
 	private ViewFactory viewFactory;
-	private ArrayList perspList = new ArrayList(1);
+	private PerspectiveList perspList = new PerspectiveList();
 	private Listener mouseDownListener;
 	private IMemento deferredMemento;
 	private PerspectiveDescriptor deferredActivePersp;
@@ -129,7 +127,8 @@ private void activatePart(final IWorkbenchPart part, final boolean switchActions
  * Add a fast view.
  */
 public void addFastView(IViewPart view) {
-	if (activePersp == null)
+	Perspective persp = getActivePerspective();
+	if (persp == null)
 		return;
 		
 	// If view is zoomed unzoom.
@@ -137,7 +136,7 @@ public void addFastView(IViewPart view) {
 		zoomOut();
 
 	// Do real work.	
-	getPersp().addFastView(view);
+	persp.addFastView(view);
 
 	// The view is now invisible.
 	// If it is active then deactivate it.
@@ -179,7 +178,8 @@ public void addSelectionListener(String partId, ISelectionListener listener) {
  */
 public void bringToTop(IWorkbenchPart part) {
 	// Sanity check.
-	if (activePersp == null || !certifyPart(part))
+	Perspective persp = getActivePerspective();
+	if (persp == null || !certifyPart(part))
 		return;
 		
 	// If zoomed then ignore.
@@ -200,7 +200,7 @@ public void bringToTop(IWorkbenchPart part) {
 			}
 		}
 	} else if (part instanceof IViewPart) {
-		broughtToTop = getPersp().bringToTop((IViewPart)part);
+		broughtToTop = persp.bringToTop((IViewPart)part);
 	}
 	if (broughtToTop)
 		firePartBroughtToTop(part);
@@ -219,14 +219,14 @@ private void busyResetPerspective() {
 	// Get the current perspective.
 	// This describes the working layout of the page and differs from
 	// the original template.
-	Perspective oldPersp = getPersp();
+	Perspective oldPersp = getActivePerspective();
 
 	// Map the current perspective to the original template.
 	// If the original template cannot be found then it has been deleted.  In
 	// that case just return. (PR#1GDSABU).
 	IPerspectiveRegistry reg = WorkbenchPlugin.getDefault().getPerspectiveRegistry();
 	PerspectiveDescriptor desc = (PerspectiveDescriptor)reg.findPerspectiveWithId(oldPersp.getDesc().getId());
-	if(desc == null)
+	if (desc == null)
 		desc = (PerspectiveDescriptor)reg.findPerspectiveWithId(((PerspectiveDescriptor)oldPersp.getDesc()).getOriginalId());
 	if (desc == null)		
 		return;
@@ -236,28 +236,18 @@ private void busyResetPerspective() {
 	if (newPersp == null)
 		return;
 
-	// Deactivate active part.
-	IWorkbenchPart oldActivePart = activePart;
-	setActivePart(null);
-	
+	// Update the perspective list and shortcut
+	perspList.swap(oldPersp, newPersp);
+	IContributionItem item = window.findPerspectiveShortcut(oldPersp, this);
+	SetPagePerspectiveAction action = (SetPagePerspectiveAction) ((ActionContributionItem)item).getAction();
+	action.setPerspective(newPersp);
+
 	// Install new persp.
 	setPerspective(newPersp);
 
 	// Notify listeners.
-	window.getShortcutBar().update(true);
 	window.firePerspectiveReset(this, desc);
 	window.firePerspectiveChanged(this, desc, CHANGE_RESET);
-
-	// Reactivate active part.
-	if (oldActivePart != null) {
-		if (oldActivePart instanceof IEditorPart && isEditorAreaVisible()) {
-			activate(oldActivePart);
-		} else if (oldActivePart instanceof IViewPart) {
-			String id = oldActivePart.getSite().getId();
-			if (findView(id) != null)
-				activate(oldActivePart);
-		}
-	}
 	
 	// Destroy old persp.
 	disposePerspective(oldPersp);
@@ -279,36 +269,13 @@ private void busySetPerspective(IPerspectiveDescriptor desc) {
 	Perspective newPersp = findPerspective(realDesc);
 	if (newPersp == null) {
 		newPersp = createPerspective(realDesc);
+		window.addPerspectiveShortcut(newPersp, this);
 		if (newPersp == null)
 			return;
 	}
 
-	// Deactivate active part.
-	IWorkbenchPart oldActivePart = activePart;
-	setActivePart(null);
-
 	// Change layout.
 	setPerspective(newPersp);
-	window.firePerspectiveActivated(this, desc);
-	
-	// Update MRU list.
-	Workbench wb = (Workbench)window.getWorkbench();
-	wb.getPerspectiveHistory().add(desc);
-	
-	// Update shortcut
-	window.updateShortcut(this);
-	window.getShortcutBar().update(true);
-	
-	// Reactivate active part.
-	if (oldActivePart != null) {
-		if (oldActivePart instanceof IEditorPart && isEditorAreaVisible()) {
-			activate(oldActivePart);
-		} else if (oldActivePart instanceof IViewPart) {
-			String id = oldActivePart.getSite().getId();
-			if (findView(id) != null)
-				activate(oldActivePart);
-		}
-	}
 }
 /**
  * Opens a view.
@@ -318,11 +285,12 @@ private void busySetPerspective(IPerspectiveDescriptor desc) {
 private IViewPart busyShowView(String viewID, boolean activate) 
 	throws PartInitException
 {
-	if (activePersp == null)
+	Perspective persp = getActivePerspective();
+	if (persp == null)
 		return null;
 
 	// If this view is already visible just return.
-	IViewPart view = getPersp().findView(viewID);
+	IViewPart view = persp.findView(viewID);
 	if (view != null) {
 		if (activate)
 			activate(view);
@@ -336,9 +304,8 @@ private IViewPart busyShowView(String viewID, boolean activate)
 		zoomOut();
 		
 	// Show the view.  
-	view = getPersp().showView(viewID);
+	view = persp.showView(viewID);
 	if (view != null) {
-		// If it view is new then fire an open event.		
 		if (activate)
 			activate(view);
 		else
@@ -354,7 +321,7 @@ private boolean certifyPart(IWorkbenchPart part) {
 	if (part instanceof IEditorPart)
 		return getEditorManager().containsEditor((IEditorPart)part);
 	if (part instanceof IViewPart)
-		return getPersp().containsView((IViewPart)part);
+		return getActivePerspective().containsView((IViewPart)part);
 	return false;
 }
 /**
@@ -405,8 +372,6 @@ public boolean closeAllEditors(boolean save) {
 		
 	// Notify interested listeners
 	window.firePerspectiveChanged(this, getPerspective(), CHANGE_EDITOR_CLOSE);
-	
-	setReusableEditor(null);
 
 	// Return true on success.
 	return true;
@@ -452,8 +417,6 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
 	getEditorManager().closeEditor(editor);
 	firePartClosed(editor);
 	editor.dispose();
-	if(editor == getReusableEditor())
-		setReusableEditor(null);
 
 	// Notify interested listeners
 	window.firePerspectiveChanged(this, getPerspective(), CHANGE_EDITOR_CLOSE);
@@ -471,6 +434,24 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
 	
 	// Return true on success.
 	return true;
+}
+/**
+ * Closes the specified perspective. If last perspective, then
+ * entire page is closed.
+ * 
+ * @param persp the perspective to be closed
+ * @param save whether the page's editors should be save if last perspective
+ */
+/* package */ void closePerspective(Perspective persp, boolean save) {
+	if (perspList.size() < 2) {
+		window.closePage(this, save);
+	} else {
+		boolean isActive = (perspList.getActive() == persp);
+		window.removePerspectiveShortcut(persp, this);
+		disposePerspective(persp);
+		if (isActive)
+			setPerspective(perspList.getNextActive());
+	}
 }
 /**
  * Creates the client composite.
@@ -508,8 +489,9 @@ private Perspective createPerspective(PerspectiveDescriptor desc) {
  * the specified part using keyboard.
  */
 public void openTracker(ViewPane pane) {
-	if (activePersp != null)
-		activePersp.openTracker(pane);
+	Perspective persp = getActivePerspective();
+	if (persp != null)
+		persp.openTracker(pane);
 }
 /**
  * Cycles the editors forward or backward.
@@ -573,10 +555,11 @@ public void dispose() {
 	// Get rid of perspectives.  This will close the views.
 	Iterator enum = perspList.iterator();
 	while (enum.hasNext()) {
-		Perspective mgr = (Perspective)enum.next();
-		mgr.dispose();
+		Perspective perspective = (Perspective) enum.next();
+		window.removePerspectiveShortcut(perspective, this);
+		perspective.dispose();
 	}
-	activePersp = null;
+	perspList = new PerspectiveList();
 
 	// Dispose views.
 	for (int nX = 0; nX < views.length; nX ++) {
@@ -594,7 +577,6 @@ public void dispose() {
 	window.getClientComposite().removeControlListener(resizeListener);
 	composite.dispose();
 }
-
 /**
  * Dispose a perspective.
  */
@@ -623,14 +605,15 @@ private void disposePerspective(Perspective persp) {
  * Edits the action sets.
  */
 public boolean editActionSets() {
-	if (activePersp == null)
+	Perspective persp = getActivePerspective();
+	if (persp == null)
 		return false;
 		
 	// Create list dialog.
 	ActionSetSelectionDialog dlg =
 		new ActionSetSelectionDialog(
 			window.getShell(),
-			getPersp());
+			persp);
 
 	// Open.
 	boolean ret = (dlg.open() == Window.OK);
@@ -657,8 +640,9 @@ private Perspective findPerspective(IPerspectiveDescriptor desc) {
  * See IWorkbenchPage@findView.
  */
 public IViewPart findView(String id) {
-	if (activePersp != null)
-		return getPersp().findView(id);
+	Perspective persp = getActivePerspective();
+	if (persp != null)
+		return persp.findView(id);
 	else
 		return null;
 }
@@ -666,7 +650,6 @@ public IViewPart findView(String id) {
  * Fire part activation out.
  */
 private void firePartActivated(IWorkbenchPart part) {
-//	System.out.println("page.firePartActivated(" + part.getSite().getId() + ")");
 	partListeners.firePartActivated(part);
 	selectionService.partActivated(part);
 }
@@ -674,7 +657,6 @@ private void firePartActivated(IWorkbenchPart part) {
  * Fire part brought to top out.
  */
 private void firePartBroughtToTop(IWorkbenchPart part) {
-//	System.out.println("page.firePartBroughtToTop(" + part.getSite().getId() + ")");
 	partListeners.firePartBroughtToTop(part);
 	selectionService.partBroughtToTop(part);
 }
@@ -682,7 +664,6 @@ private void firePartBroughtToTop(IWorkbenchPart part) {
  * Fire part close out.
  */
 private void firePartClosed(IWorkbenchPart part) {
-//	System.out.println("page.firePartClosed(" + part.getSite().getId() + ")");
 	partListeners.firePartClosed(part);
 	selectionService.partClosed(part);
 }
@@ -690,7 +671,6 @@ private void firePartClosed(IWorkbenchPart part) {
  * Fire part deactivation out.
  */
 private void firePartDeactivated(IWorkbenchPart part) {
-//	System.out.println("page.firePartDeactivated(" + part.getSite().getId() + ")");
 	partListeners.firePartDeactivated(part);
 	selectionService.partDeactivated(part);
 }
@@ -698,7 +678,6 @@ private void firePartDeactivated(IWorkbenchPart part) {
  * Fire part open out.
  */
 public void firePartOpened(IWorkbenchPart part) {
-//	System.out.println("page.firePartOpened(" + part.getSite().getId() + ")");
 	partListeners.firePartOpened(part);
 	selectionService.partOpened(part);
 }
@@ -714,8 +693,9 @@ public IActionBars getActionBars() {
  * Returns an array of the visible action sets. 
  */
 public IActionSetDescriptor[] getActionSets() {
-	if (activePersp != null)
-		return getPersp().getActionSets();
+	Perspective persp = getActivePerspective();
+	if (persp != null)
+		return persp.getActionSets();
 	else
 		return new IActionSetDescriptor[0];
 }
@@ -730,6 +710,13 @@ public IEditorPart getActiveEditor() {
  */
 public IWorkbenchPart getActivePart() {
 	return activePart;
+}
+/**
+ * Returns the active perspective for the page, <code>null</code>
+ * if none.
+ */
+/* package */ Perspective getActivePerspective() {
+	return perspList.getActive();
 }
 /**
  * Returns the client composite.
@@ -759,8 +746,9 @@ public IEditorPart [] getEditors() {
  * Returns the docked views.
  */
 public IViewPart [] getFastViews() {
-	if (activePersp != null)
-		return getPersp().getFastViews();
+	Perspective persp = getActivePerspective();
+	if (persp != null)
+		return persp.getFastViews();
 	else
 		return new IViewPart[0];
 }
@@ -781,8 +769,9 @@ public String getLabel() {
 		if (adapter != null)
 			label = adapter.getLabel(input);
 	}
-	if(activePersp != null)
-		label = WorkbenchMessages.format("WorkbenchPage.PerspectiveFormat", new Object[] { label, activePersp.getDesc().getLabel() }); //$NON-NLS-1$
+	Perspective persp = getActivePerspective();
+	if (persp != null)
+		label = WorkbenchMessages.format("WorkbenchPage.PerspectiveFormat", new Object[] { label, persp.getDesc().getLabel() }); //$NON-NLS-1$
 	else if (deferredActivePersp != null)
 		label = WorkbenchMessages.format("WorkbenchPage.PerspectiveFormat", new Object[] { label, deferredActivePersp.getLabel() }); //$NON-NLS-1$	
 	return label;
@@ -799,16 +788,17 @@ protected Listener getMouseDownListener() {
  * This is List of Strings.
  */
 public ArrayList getNewWizardActions() {
-	if (activePersp != null)
-		return getPersp().getNewWizardActions();
+	Perspective persp = getActivePerspective();
+	if (persp != null)
+		return persp.getNewWizardActions();
 	else
 		return new ArrayList();
 }
 /**
- * Answer the current prespective for this window.
+ * Returns an iterator over the opened perspectives
  */
-private Perspective getPersp() {
-	return activePersp;
+/* package */ Iterator getOpenedPerspectives() {
+	return perspList.iterator();
 }
 /**
  * Returns the perspective.
@@ -816,8 +806,9 @@ private Perspective getPersp() {
 public IPerspectiveDescriptor getPerspective() {
 	if (deferredActivePersp != null)
 		return deferredActivePersp;
-	if (activePersp != null)
-		return getPersp().getDesc();
+	Perspective persp = getActivePerspective();
+	if (persp != null)
+		return persp.getDesc();
 	else
 		return null;
 }
@@ -826,12 +817,12 @@ public IPerspectiveDescriptor getPerspective() {
  * This is List of Strings.
  */
 public ArrayList getPerspectiveActions() {
-	if (activePersp != null)
-		return getPersp().getPerspectiveActions();
+	Perspective persp = getActivePerspective();
+	if (persp != null)
+		return persp.getPerspectiveActions();
 	else
 		return new ArrayList();
 }
-
 /*
  * (non-Javadoc)
  * Method declared on ISelectionService
@@ -854,8 +845,9 @@ public ISelection getSelection(String partId) {
  * This is List of Strings.
  */
 public ArrayList getShowViewActions() {
-	if (activePersp != null)
-		return getPersp().getShowViewActions();
+	Perspective persp = getActivePerspective();
+	if (persp != null)
+		return persp.getShowViewActions();
 	else
 		return new ArrayList();
 }
@@ -879,8 +871,9 @@ public ViewFactory getViewFactory() {
  * See IWorkbenchPage.
  */
 public IViewPart [] getViews() {
-	if (activePersp != null)
-		return getPersp().getViews();
+	Perspective persp = getActivePerspective();
+	if (persp != null)
+		return persp.getViews();
 	else
 		return new IViewPart[0];
 }
@@ -894,8 +887,9 @@ public IWorkbenchWindow getWorkbenchWindow() {
  * @see IWorkbenchPage
  */
 public void hideActionSet(String actionSetID) {
-	if (activePersp != null) {
-		getPersp().hideActionSet(actionSetID);
+	Perspective persp = getActivePerspective();
+	if (persp != null) {
+		persp.hideActionSet(actionSetID);
 		window.updateActionSets();
 		window.firePerspectiveChanged(this, getPerspective(), CHANGE_ACTION_SET_HIDE);
 	}
@@ -905,7 +899,8 @@ public void hideActionSet(String actionSetID) {
  */
 public void hideView(IViewPart view) {
 	// Sanity check.	
-	if (activePersp == null || !certifyPart(view))
+	Perspective persp = getActivePerspective();
+	if (persp == null || !certifyPart(view))
 		return;
 		
 	// If part is added / removed always unzoom.
@@ -913,7 +908,7 @@ public void hideView(IViewPart view) {
 		zoomOut();
 		
 	// Confirm.
-	if (!getPersp().canCloseView(view))
+	if (!persp.canCloseView(view))
 		return;
 		
 	// Activate new part.
@@ -926,7 +921,7 @@ public void hideView(IViewPart view) {
 	}
 		
 	// Hide the part.  
-	getPersp().hideView(view);
+	persp.hideView(view);
 
 	// If the part is no longer reference then dispose it.
 	boolean exists = viewFactory.hasView(view.getSite().getId());
@@ -976,7 +971,8 @@ private void init(WorkbenchWindow w, String layoutID, IAdaptable input)
 			.getDefault().getPerspectiveRegistry().findPerspectiveWithId(layoutID);
 		if (desc == null)
 			throw new WorkbenchException(WorkbenchMessages.getString("WorkbenchPage.ErrorRecreatingPerspective")); //$NON-NLS-1$
-		activePersp = createPerspective(desc);
+		Perspective persp = createPerspective(desc);
+		perspList.setActive(persp);
 		window.firePerspectiveActivated(this, desc);
 		
 		// Update MRU list.
@@ -1050,16 +1046,18 @@ private boolean isActionSwitchForced(IWorkbenchPart newPart) {
  * See IWorkbenchPage.
  */
 public boolean isEditorAreaVisible() {
-	if (activePersp == null)
+	Perspective persp = getActivePerspective();
+	if (persp == null)
 		return false;
-	return activePersp.isEditorAreaVisible();
+	return persp.isEditorAreaVisible();
 }
 /**
  * Returns whether the view is fast.
  */
 public boolean isFastView(IViewPart part) {
-	if (activePersp != null)
-		return getPersp().isFastView(part);
+	Perspective persp = getActivePerspective();
+	if (persp != null)
+		return persp.isFastView(part);
 	else
 		return false;
 }
@@ -1068,8 +1066,9 @@ public boolean isFastView(IViewPart part) {
  * fast views or if there are all minimized.
  */
 public IViewPart getActiveFastView() {
-	if (activePersp != null)
-		return getPersp().getActiveFastView();
+	Perspective persp = getActivePerspective();
+	if (persp != null)
+		return persp.getActiveFastView();
 	else
 		return null;
 }
@@ -1083,9 +1082,10 @@ protected boolean isSaveNeeded() {
  * Returns whether the page is zoomed.
  */
 public boolean isZoomed() {
-	if (activePersp == null)
+	Perspective persp = getActivePerspective();
+	if (persp == null)
 		return false;
-	return activePersp.getPresentation().isZoomed();
+	return persp.getPresentation().isZoomed();
 }
 /**
  * This method is called when the page is activated.  
@@ -1095,8 +1095,15 @@ public boolean isZoomed() {
 protected void onActivate() {
 	if (deferredMemento != null)
 		finishInit();
+	Iterator enum = perspList.iterator();
+	while (enum.hasNext()) {
+		Perspective perspective = (Perspective) enum.next();
+		window.addPerspectiveShortcut(perspective, this);
+	}
+	Perspective persp = getActivePerspective();
+	window.selectPerspectiveShortcut(persp, this, true);
 	composite.setVisible(true);
-	getPersp().onActivate();
+	persp.onActivate();
 	if (activePart != null) {
 		activationList.setActive(activePart);
 		
@@ -1120,8 +1127,13 @@ protected void onDeactivate() {
 	}
 	deactivateLastEditor();
 	lastActiveEditor = null;
-	getPersp().onDeactivate();
+	getActivePerspective().onDeactivate();
 	composite.setVisible(false);
+	Iterator enum = perspList.iterator();
+	while (enum.hasNext()) {
+		Perspective perspective = (Perspective) enum.next();
+		window.removePerspectiveShortcut(perspective, this);
+	}
 }
 /**
  * See IWorkbenchPage.
@@ -1273,13 +1285,14 @@ public void openSystemEditor(IFile input)
  */
 private boolean partChangeAffectsZoom(IWorkbenchPart part) {
 	PartPane pane = ((PartSite)part.getSite()).getPane();
-	return getPersp().getPresentation().partChangeAffectsZoom(pane);
+	return getActivePerspective().getPresentation().partChangeAffectsZoom(pane);
 }
 /**
  * Removes a fast view.
  */
 public void removeFastView(IViewPart view) {
-	if (activePersp == null)
+	Perspective persp = getActivePerspective();
+	if (persp == null)
 		return;
 
 	// If parts change always update zoom.
@@ -1287,7 +1300,7 @@ public void removeFastView(IViewPart view) {
 		zoomOut();
 
 	// Do real work.	
-	getPersp().removeFastView(view);
+	persp.removeFastView(view);
 
 	// Notify listeners.
 	window.getShortcutBar().update(true);
@@ -1361,26 +1374,27 @@ private void restoreState(IMemento memento) {
 	Perspective activePerspective = null;
 	for (int i = 0; i < perspMems.length; i++) {
 		try {
-			Perspective persp = new Perspective(null,this);
+			Perspective persp = new Perspective(null, this);
 			persp.restoreState(perspMems[i]);
-			if(persp.getDesc().getId().equals(activePerspectiveID))
+			if (persp.getDesc().getId().equals(activePerspectiveID))
 				activePerspective = persp;
 			perspList.add(persp);
 		} catch (WorkbenchException e) {
 		}
 	}
+	perspList.setActive(activePerspective);
 	
 	// Make sure we have a valid perspective to work with,
 	// otherwise return.
-	if (activePerspective != null)
-		activePersp = activePerspective;
-	else if (perspList.size() > 0)
-		activePersp = (Perspective) perspList.get(0);
-	
-	if (activePersp == null)
+	activePerspective = perspList.getActive();
+	if (activePerspective == null) {
+		activePerspective = perspList.getNextActive();
+		perspList.setActive(activePerspective);
+	}
+	if (activePerspective == null)
 		return;
-		
-	window.firePerspectiveActivated(this, activePersp.getDesc());
+
+	window.firePerspectiveActivated(this, activePerspective.getDesc());
 
 	// Restore active part.
 	if (activePartID != null) {
@@ -1418,28 +1432,31 @@ public boolean saveEditor(org.eclipse.ui.IEditorPart editor, boolean confirm) {
  * Saves the current perspective.
  */
 public void savePerspective() {
-	if (activePersp == null)
+	Perspective persp = getActivePerspective();
+	if (persp == null)
 		return;
 		
 	// Always unzoom.
 	if (isZoomed())
 		zoomOut();
 
-	getPersp().saveDesc();
+	persp.saveDesc();
 }
 /**
  * Saves the perspective.
  */
 public void savePerspectiveAs(IPerspectiveDescriptor desc) {
-	if (activePersp == null)
+	Perspective persp = getActivePerspective();
+	if (persp == null)
 		return;
 		
 	// Always unzoom.
 	if (isZoomed())
 		zoomOut();
 
-	getPersp().saveDescAs(desc);
-	window.updateShortcut(this);
+	persp.saveDescAs(desc);
+	
+	window.updatePerspectiveShortcut(persp, this);
 	
 	// Update MRU list.
 	Workbench wb = (Workbench)window.getWorkbench();
@@ -1469,20 +1486,16 @@ public void saveState(IMemento memento) {
 
 	// Create persp block.
 	childMem = memento.createChild(IWorkbenchConstants.TAG_PERSPECTIVES);
-	childMem.putString(IWorkbenchConstants.TAG_ACTIVE_PERSPECTIVE,getPerspective().getId());
+	childMem.putString(IWorkbenchConstants.TAG_ACTIVE_PERSPECTIVE, getPerspective().getId());
 	if (getActivePart() != null)
 	 	childMem.putString(IWorkbenchConstants.TAG_ACTIVE_PART,getActivePart().getSite().getId());
 
-	// Save each perspective (active first, others after).
+	// Save each perspective in opened order
 	Iterator enum = perspList.iterator();
-	IMemento gChildMem = childMem.createChild(IWorkbenchConstants.TAG_PERSPECTIVE);
-	activePersp.saveState(gChildMem);
-	for (int i=0;enum.hasNext();i++) {
+	while (enum.hasNext()) {
 		Perspective persp = (Perspective)enum.next();
-		if (persp != activePersp) {
-			gChildMem = childMem.createChild(IWorkbenchConstants.TAG_PERSPECTIVE);
-			persp.saveState(gChildMem);
-		}
+		IMemento gChildMem = childMem.createChild(IWorkbenchConstants.TAG_PERSPECTIVE);
+		persp.saveState(gChildMem);
 	}
 }
 /**
@@ -1494,8 +1507,9 @@ private void setActivePart(IWorkbenchPart newPart) {
 		return;
 	
 	// Notify perspective.  It may deactivate fast view.
-	if (getPersp() != null)
-		getPersp().partActivated(newPart);
+	Perspective persp = getActivePerspective();
+	if (persp != null)
+		persp.partActivated(newPart);
 	
 	// We will switch actions only if the part types are different.
 	boolean switchActions = true;
@@ -1550,34 +1564,70 @@ public void setEditorAreaVisible(boolean showEditorArea) {
 	// If parts change always update zoom.
 	if (isZoomed())
 		zoomOut();
-		
-	if (activePersp == null)
+	
+	Perspective persp = getActivePerspective();
+	if (persp == null)
 		return;
 
 	// Update editor area visibility.
 	if (showEditorArea) {
-		activePersp.showEditorArea();
+		persp.showEditorArea();
 		window.firePerspectiveChanged(this, getPerspective(), CHANGE_EDITOR_AREA_SHOW);
 	} else {
-		activePersp.hideEditorArea();
+		persp.hideEditorArea();
 		if (activePart instanceof IEditorPart)
 			setActivePart(null);
 		window.firePerspectiveChanged(this, getPerspective(), CHANGE_EDITOR_AREA_HIDE);
 	}
 }
 /**
- * Sets the layout of the page.  
+ * Sets the layout of the page. Assumes the new perspective
+ * is not null. Keeps the active part if possible. Updates
+ * the window menubar and toolbar if necessary.
  */
-private void setPerspective(Perspective newMgr) {
-	if (activePersp == newMgr)
+private void setPerspective(Perspective newPersp) {
+	// Don't do anything if already active layout
+	Perspective oldPersp = getActivePerspective();
+	if (oldPersp == newPersp)
 		return;
-	if (activePersp != null)
-		activePersp.onDeactivate();
-	activePersp = newMgr;
-	if (activePersp != null)
-		activePersp.onActivate();
+	
+	// Deactivate active part.
+	IWorkbenchPart oldActivePart = activePart;
+	setActivePart(null);
+
+	// Deactivate the old layout
+	if (oldPersp != null) {
+		oldPersp.onDeactivate();
+		window.selectPerspectiveShortcut(oldPersp, this, false);
+	}
+	
+	// Activate the new layout
+	perspList.setActive(newPersp);
+	newPersp.onActivate();
+
+	// Notify listeners of activation
+	window.firePerspectiveActivated(this, newPersp.getDesc());
+	
+	// Update MRU list.
+	Workbench wb = (Workbench)window.getWorkbench();
+	wb.getPerspectiveHistory().add(newPersp.getDesc());
+	
+	// Update the window	
+	window.selectPerspectiveShortcut(newPersp, this, true);
 	window.updateActionSets();
 	window.updateTitle();
+	window.getShortcutBar().update(true);
+	
+	// Reactivate active part.
+	if (oldActivePart != null) {
+		if (oldActivePart instanceof IEditorPart && isEditorAreaVisible()) {
+			activate(oldActivePart);
+		} else if (oldActivePart instanceof IViewPart) {
+			String id = oldActivePart.getSite().getId();
+			if (findView(id) != null)
+				activate(oldActivePart);
+		}
+	}
 }
 /**
  * Sets the perspective.  
@@ -1596,8 +1646,9 @@ public void setPerspective(final IPerspectiveDescriptor desc) {
  * @see IWorkbenchPage
  */
 public void showActionSet(String actionSetID) {
-	if (activePersp != null) {
-		getPersp().showActionSet(actionSetID);
+	Perspective persp = getActivePerspective();
+	if (persp != null) {
+		persp.showActionSet(actionSetID);
 		window.updateActionSets();
 		window.firePerspectiveChanged(this, getPerspective(), CHANGE_ACTION_SET_SHOW);
 	}
@@ -1639,10 +1690,11 @@ private IViewPart showView(final String viewID, final boolean activate)
  * is deactivated.  Otherwise, it is activated.
  */
 public void toggleFastView(IViewPart part) {
-	if (activePersp != null) {
-		activePersp.toggleFastView(part);
+	Perspective persp = getActivePerspective();
+	if (persp != null) {
+		persp.toggleFastView(part);
 		// if the fast view has been deactivated
-		if (part != activePersp.getActiveFastView()) {
+		if (part != persp.getActiveFastView()) {
 			setActivePart(activationList.getPreviouslyActive());
 		}
 	}
@@ -1652,7 +1704,8 @@ public void toggleFastView(IViewPart part) {
  * If the part is already in zoom then zoom out.
  */
 public void toggleZoom(IWorkbenchPart part) {
-	if (activePersp == null)
+	Perspective persp = getActivePerspective();
+	if (persp == null)
 		return;
 
 	 PartPane pane = ((PartSite)(part.getSite())).getPane();
@@ -1673,7 +1726,7 @@ public void toggleZoom(IWorkbenchPart part) {
 		zoomOut();
 		return;
 	} else {
-		getPersp().getPresentation().zoomIn(pane);
+		persp.getPresentation().zoomIn(pane);
 		activate(part);
 	}
 }
@@ -1729,31 +1782,30 @@ public void updateTitle(IWorkbenchPart part) {
  * Zooms out a zoomed in part.
  */
 private void zoomOut() {
-	if (activePersp != null)
-		getPersp().getPresentation().zoomOut();
+	Perspective persp = getActivePerspective();
+	if (persp != null)
+		persp.getPresentation().zoomOut();
 }
 /**
  * @see IPageLayout.
  */
 public int getEditorReuseThreshold() {
-	return 0;
+	Perspective persp = getActivePerspective();
+	if (persp != null) {
+		int result = persp.getEditorReuseThreshold();
+		if(result > 0)
+			return result;
+	}
+	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();		
+	return store.getInt(IPreferenceConstants.REUSE_EDITORS);
 }
 /**
  * @see IPageLayout.
  */
 public void setEditorReuseThreshold(int openEditors) {
-}
-/*
- * Return the editor specified by the user as reusable.
- */
-protected IEditorPart getReusableEditor() {
-	return reusableEditor;
-}
-/*
- * Set <code>editor</code> as the reusable editor.
- */
-protected void setReusableEditor(IEditorPart editor) {
-	reusableEditor = editor;
+	Perspective persp = getActivePerspective();
+	if (persp != null)
+		persp.setEditorReuseThreshold(openEditors);
 }
 /*
  * Returns the editors in activation order (oldest first).
@@ -1910,4 +1962,141 @@ class ActivationList {
 	}
 }
 
+	/**
+	 * Helper class to keep track of all opened perspective.
+	 * Both the opened and used order is kept.
+	 */
+	class PerspectiveList {
+		/**
+		 * List of perspectives in the order they were opened;
+		 */
+		private List openedList;
+		
+		/**
+		 * List of perspectives in the order they were used.
+		 * Last element is the most recently used, and first element
+		 * is the least recently used.
+		 */
+	 	private List usedList;
+	 	
+	 	/**
+	 	 * The perspective explicitly set as being the active one
+	 	 */
+	 	private Perspective active;
+	 	
+	 	/**
+	 	 * Creates an empty instance of the perspective list
+	 	 */
+		public PerspectiveList() {
+			openedList = new ArrayList(15);
+	 		usedList = new ArrayList(15);
+		}
+		
+		/**
+		 * Adds a perspective to the list. No check is done
+		 * for a duplicate when adding.
+		 */
+		public boolean add(Perspective perspective) {
+			openedList.add(perspective);
+			usedList.add(0, perspective); //It will be moved to top only when activated.
+			return true;
+		}
+		
+		/**
+		 * Returns an iterator on the perspective list
+		 * in the order they were opened.
+		 */
+		public Iterator iterator() {
+			return openedList.iterator();
+		}
+		
+		/**
+		 * Checks if the specified perspective exists in the
+		 * list already.
+		 */
+		public boolean contains(Perspective perspective) {
+			return openedList.contains(perspective);
+		}
+		
+		/**
+		 * Removes a perspective from the list.
+		 */
+		public boolean remove(Perspective perspective) {
+			if (active == perspective)
+				active = null;
+			usedList.remove(perspective);
+			return openedList.remove(perspective);
+		}
+
+		/**
+		 * Swap the opened order of old perspective with the
+		 * new perspective.
+		 */
+		public void swap(Perspective oldPerspective, Perspective newPerspective) {
+			int oldIndex = openedList.indexOf(oldPerspective);
+			int newIndex = openedList.indexOf(newPerspective);
+			
+			if (oldIndex < 0 || newIndex < 0) 
+				return;
+				
+			openedList.set(oldIndex, newPerspective);
+			openedList.set(newIndex, oldPerspective);
+		}
+				
+		/**
+		 * Returns whether the list contains any perspectives
+		 */
+		public boolean isEmpty() {
+			return openedList.isEmpty();
+		}
+		
+		/**
+		 * Returns the most recently used perspective in
+		 * the list.
+		 */
+		public Perspective getActive() {
+			return active;
+		}
+		
+		/**
+		 * Returns the next most recently used perspective in
+		 * the list.
+		 */
+		public Perspective getNextActive() {
+			if (active == null) {
+				if (usedList.isEmpty())
+					return null;
+				else
+					return (Perspective)usedList.get(usedList.size() - 1);
+			} else {
+				if (usedList.size() < 2)
+					return null;
+				else
+					return (Perspective)usedList.get(usedList.size() - 2);
+			}
+		}
+		
+		/**
+		 * Returns the number of perspectives opened
+		 */
+		public int size() {
+			return openedList.size();
+		}
+		
+		/**
+		 * Marks the specified perspective as the most
+		 * recently used one in the list.
+		 */
+		public void setActive(Perspective perspective) {
+			if (perspective == active)
+				return;
+				
+			active = perspective;
+			
+			if (perspective != null) {
+				usedList.remove(perspective);
+				usedList.add(perspective);
+			}
+		}
+	}
 }
