@@ -28,7 +28,9 @@ import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.ui.actions.IJavaEditorActionDefinitionIds;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.source.IAnnotationAccess;
 import org.eclipse.jface.text.source.IOverviewRuler;
@@ -127,8 +129,12 @@ public class AntEditor extends TextEditor {
         action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
         setAction("ContentAssistProposal", action); //$NON-NLS-1$
         
-		action = new TextOperationAction(bundle,"ContentFormatProposal.",this,ISourceViewer.FORMAT); //$NON-NLS-1$        
-        setAction("ContentFormatProposal", action); //$NON-NLS-1$
+		action = new TextOperationAction(bundle, "ContentFormat.", this, ISourceViewer.FORMAT); //$NON-NLS-1$
+		action.setActionDefinitionId(IJavaEditorActionDefinitionIds.FORMAT);
+        setAction("ContentFormat", action); //$NON-NLS-1$
+        
+		//TODO set help
+		//WorkbenchHelp.setHelp(action, IJavaHelpContextIds.FORMAT_ACTION);
     }
 
 	/*
@@ -363,4 +369,20 @@ public class AntEditor extends TextEditor {
 		setStatusLineErrorMessage(AntEditorMessages.getString("AntEditor.3")); //$NON-NLS-1$
 		getSite().getShell().getDisplay().beep();
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#editorContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
+	 */
+	public void editorContextMenuAboutToShow(IMenuManager menu) {
+		super.editorContextMenuAboutToShow(menu);
+		
+		IAction formatAction= getAction("ContentFormat"); //$NON-NLS-1$
+		if (formatAction == null) {
+			return;
+		}
+		
+		if (formatAction.isEnabled()) {
+			menu.add(formatAction);
+		}
+	}			
 }
