@@ -4,8 +4,36 @@
 <meta NAME="since" content="">
 </head><h2>Refactoring</h2>
 <p>Since: <br>
-Last Modified: $Date: 2004/05/31 14:22:48 $</p><body>
+Last Modified: $Date: 2004/06/10 21:32:44 $</p><body>
 
-Answer comes here.
+These tests are a sanity check that workbench, JDT and other tools refactorings behave 
+properly with respect to validate Edit. For a repository providers that supports
+a pessimistic workflow, the following scenarios should result in the invocation
+of the validate edit callback and should include a UI context which allows prompting.
+<p>
+The following scenarios are stated in terms of the Navigator view and JDT. Other tools
+should translate them to a set of scenarios that make sense for the tool.
+
+<!-- ------------------------------------------------------------------------------ -->
+<h3>S1: Search and Replace</h3>
+<ol>
+<li>Select one or more projects or folders and choose Search/File.
+<li>Enter a string known to exist in multiple files and click Replace
+<li>Enter a new string that differs from the one searched for.
+</ol>
+<!-- ------------------------------------------------------------------------------ -->
+<h3>S2: Single file content modification</h3>
+<ol>
+<li>Open a Java file that is read-only
+<li>Perform any of the Java Source operations (e.g. toggle comment)
+<li>Ensure that validate edit is invoked
+</ol>
+<!-- ------------------------------------------------------------------------------ -->
+<h3>S3: Multiple file content modification</h3>
+<ol>
+<li>Ensure all files in your workspace are read-only
+<li>Perform a Java/Refactoring such as a method or class rename.
+<li>Ensure that validate edit is invoked at most once per project involved.
+</ol>
 
 </body></html>
