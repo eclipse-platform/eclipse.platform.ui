@@ -1,3 +1,8 @@
+/*
+ * (c) Copyright IBM Corp. 2000, 2003.
+ * All Rights Reserved.
+ */
+
 package org.eclipse.help.internal.search;
 
 import java.io.*;
@@ -6,7 +11,6 @@ import java.util.*;
 
 import org.apache.lucene.demo.html.*;
 import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.util.*;
 
 /**
  * Parser HTML documents.
