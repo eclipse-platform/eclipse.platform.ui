@@ -25,8 +25,9 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
@@ -45,8 +46,6 @@ import org.eclipse.jface.text.ITextViewer;
  * @see org.eclipse.jface.text.contentassist.ICompletionProposal
  */
 class CompletionProposalPopup implements IContentAssistListener {
-	
-	private static Point fgProposalShellSize;
 	
 	private ITextViewer fViewer;
 	private ContentAssistant fContentAssistant;
@@ -159,20 +158,23 @@ class CompletionProposalPopup implements IContentAssistListener {
 		fProposalTable.setLocation(0, 0);
 		fAdditionalInfoController.setSizeConstraints(50, 10, true, false);
 		
-		if (fgProposalShellSize == null) {
-			int height= fProposalTable.getItemHeight() * 10;
-			fgProposalShellSize= new Point(306, height + 6);
-		}
-		fProposalShell.setSize(fgProposalShellSize.x, fgProposalShellSize.y);
-		fProposalTable.setSize(fgProposalShellSize.x - 6, fgProposalShellSize.y - 6);
+		GridLayout layout= new GridLayout();
+		layout.marginWidth= 0;
+		layout.marginHeight= 0;		
+		fProposalShell.setLayout(layout);		
+
+		GridData data= new GridData(GridData.FILL_BOTH);
+		data.heightHint= fProposalTable.getItemHeight() * 10;
+		data.widthHint= 300;
+		fProposalTable.setLayoutData(data);
+
+		fProposalShell.pack();
 		
 		fProposalShell.addControlListener(new ControlListener() {
 			
 			public void controlMoved(ControlEvent e) {}
 			
 			public void controlResized(ControlEvent e) {
-				fgProposalShellSize= fProposalShell.getSize();
-				fProposalTable.setSize(fgProposalShellSize.x - 6, fgProposalShellSize.y - 6);
 				// resets the cached resize constraints
 				fAdditionalInfoController.setSizeConstraints(50, 10, true, false);
 			}
