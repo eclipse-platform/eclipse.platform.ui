@@ -1818,6 +1818,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			DebugUIPlugin.log(ce);						
 		}
 		
+		// Initialize data used to set the selection after deletion
 		int typeIndex= -1; // The index of the deleted configuration's type
 		int configIndex= -1; // The index of the deleted configuration
 		TreeItem[] items= getTreeViewer().getTree().getItems();
@@ -1862,8 +1863,11 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		if (typeIndex != -1 && configIndex != -1) {
 			// Reset selection to the next config
 			TreeItem[] configItems= getTreeViewer().getTree().getItems()[typeIndex].getItems();
-			if (configItems.length >= configIndex && configItems.length != 0) {
+			int numItems= configItems.length;
+			if (numItems > configIndex) { // Select the item at the same index as the deleted
 				newSelection= new StructuredSelection(configItems[configIndex].getData());
+			} else if (numItems > 0) { // Deleted the last item(s). Select the last item
+				newSelection= new StructuredSelection(configItems[numItems - 1].getData());
 			}
 		} 
 		if (newSelection == null) {
