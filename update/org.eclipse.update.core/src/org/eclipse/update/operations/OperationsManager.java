@@ -204,10 +204,21 @@ public class OperationsManager {
 		return inProgress;
 	}
 
+	/**
+	 * Returns the operations validator.
+	 * @return
+	 */
 	public static IOperationValidator getValidator() {
 		if (validator == null)
-			// in the future this will be pluggable
 			validator = new OperationValidator();
 		return validator;
+	}
+	
+	/**
+	 * Sets a custom operation validator
+	 * @param validator
+	 */
+	public static void setValidator(IOperationValidator validator) {
+		OperationsManager.validator = validator;
 	}
 }
