@@ -32,6 +32,14 @@
 	<uiTest 
 		id="ui.api.SessionRestoreTest"
 		class="org.eclipse.ui.tests.api.SessionRestoreTest"/>
+	<uiTest
+		id="ui.dialogs.Automated"
+		class="org.eclipse.ui.tests.dialogs.UIAutomatedSuite"/>
+	
+	<!-- Interactive Test Suites -->
+	<uiTest
+		id="ui.dialogs.Interactive"
+		class="org.eclipse.ui.tests.dialogs.UIInteractiveSuite"/>
 </extension>
 
 <extension 
