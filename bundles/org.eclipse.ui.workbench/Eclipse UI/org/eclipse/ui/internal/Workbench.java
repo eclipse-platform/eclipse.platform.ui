@@ -208,12 +208,13 @@ public class Workbench
 				if (shell.getParent() != null)
 					return;
 			}
+			
+			KeyStroke[] keyStrokes = new KeyStroke[3];
+			keyStrokes[0] = KeySupport.convertAcceleratorToKeyStroke(KeySupport.convertEventToUnmodifiedAccelerator(event));
+			keyStrokes[1] = KeySupport.convertAcceleratorToKeyStroke(KeySupport.convertEventToUnshiftedModifiedAccelerator(event));
+			keyStrokes[2] = KeySupport.convertAcceleratorToKeyStroke(KeySupport.convertEventToModifiedAccelerator(event));
 
-			KeyStroke keyStroke =
-				KeySupport.convertAcceleratorToKeyStroke(
-					KeySupport.convertEventToAccelerator(event));
-
-			if (press(keyStroke, event)) {
+			if (press(keyStrokes, event)) {
 				switch (event.type) {
 					case SWT.KeyDown :
 						event.doit = false;
@@ -413,69 +414,87 @@ public class Workbench
 		return true;
 	}
 
-	// TODO move this method to CommandManager once getMode() is added to ICommandManager (and triggers and change event)
-	// TODO remove event parameter once key-modified actions are removed
-	public final boolean press(KeyStroke keyStroke, Event event) {
-		final KeySequence modeBeforeKeyStroke = commandManager.getMode();
-		final List keyStrokes =
-			new ArrayList(modeBeforeKeyStroke.getKeyStrokes());
-		keyStrokes.add(keyStroke);
-		final KeySequence modeAfterKeyStroke =
-			KeySequence.getInstance(keyStrokes);
-		final Map matchesByKeySequenceForModeBeforeKeyStroke =
-			commandManager.getMatchesByKeySequenceForMode();
-		commandManager.setMode(modeAfterKeyStroke);
-		final Map matchesByKeySequenceForModeAfterKeyStroke =
-			commandManager.getMatchesByKeySequenceForMode();
-		boolean consumeKeyStroke = false;
+	/**
+	 * Processes a key press with respect to the key binding architecture.  This
+	 * updates the mode of the command manager, and runs the current handler for
+	 * the command that matches the key sequence, if any.
+	 * 
+	 * @param potentialKeyStrokes The key strokes that could potentially match,
+	 * in the order of priority; must not be <code>null</code>.
+	 * @param event The event to pass to the action; may be <code>null</code>.
+	 * 
+	 * @return <code>true</code> if a command is executed; <code>false</code>
+	 * otherwise.
+	 */
+	public boolean press(KeyStroke[] potentialKeyStrokes, Event event) {
+		// TODO move this method to CommandManager once getMode() is added to ICommandManager (and triggers and change event)
+		// TODO remove event parameter once key-modified actions are removed
+		
+		// Check every potential key stroke until one matches.
+		for (int i = 0; i < potentialKeyStrokes.length; i++) {
+			KeySequence modeBeforeKeyStroke = commandManager.getMode();
+			List keyStrokes = new ArrayList(modeBeforeKeyStroke.getKeyStrokes());
+			keyStrokes.add(potentialKeyStrokes[i]);
+			KeySequence modeAfterKeyStroke = KeySequence.getInstance(keyStrokes);
+			Map matchesByKeySequenceForModeBeforeKeyStroke = commandManager.getMatchesByKeySequenceForMode();
+			commandManager.setMode(modeAfterKeyStroke);
+			Map matchesByKeySequenceForModeAfterKeyStroke = commandManager.getMatchesByKeySequenceForMode();
+			boolean consumeKeyStroke = false;
 
-		if (!matchesByKeySequenceForModeAfterKeyStroke.isEmpty()) {
-			// this key stroke is part of one or more possible completions: consume the keystroke
-			updateModeLines(modeAfterKeyStroke);
-			consumeKeyStroke = true;
-		} else {
-			// there are no possible longer multi-stroke sequences, allow a completion now if possible
-			final Match match =
-				(Match) matchesByKeySequenceForModeBeforeKeyStroke.get(
-					modeAfterKeyStroke);
-
-			if (match != null) {
-				// a completion was found. 
-				final String commandId = match.getCommandId();
-				final Map actionsById = commandManager.getActionsById();
-				org.eclipse.ui.commands.IAction action =
-					(org.eclipse.ui.commands.IAction) actionsById.get(
-						commandId);
-
-				if (action != null) {
-					// an action was found corresponding to the completion
-
-					if (action.isEnabled()) {
-						updateModeLines(modeAfterKeyStroke);
-						try {
-							action.execute(event);
-						} catch (final Exception e) {
-							// TODO 						
-						}
-					}
-
-					// consume the keystroke
-					consumeKeyStroke = true;
-				}
-			}
-
-			// possibly no completion was found, or no action was found corresponding to the completion, but if we were already in a mode consume the keystroke anyway.									
-			if (modeBeforeKeyStroke.getKeyStrokes().size() >= 1)
+			if (!matchesByKeySequenceForModeAfterKeyStroke.isEmpty()) {
+				// this key stroke is part of one or more possible completions: consume the keystroke
+				updateModeLines(modeAfterKeyStroke);
 				consumeKeyStroke = true;
+			} else {
+				// there are no possible longer multi-stroke sequences, allow a completion now if possible
+				Match match = (Match) matchesByKeySequenceForModeBeforeKeyStroke.get(modeAfterKeyStroke);
 
-			// clear mode			
-			commandManager.setMode(KeySequence.getInstance());
-			updateModeLines(KeySequence.getInstance());
+				if (match != null) {
+					// a completion was found. 
+					String commandId = match.getCommandId();
+					Map actionsById = commandManager.getActionsById();
+					org.eclipse.ui.commands.IAction action = (org.eclipse.ui.commands.IAction) actionsById.get(commandId);
+
+					if (action != null) {
+						// an action was found corresponding to the completion
+
+						if (action.isEnabled()) {
+							updateModeLines(modeAfterKeyStroke);
+							try {
+								action.execute(event);
+							} catch (Exception e) {
+								// TODO 						
+							}
+						}
+	
+						// consume the keystroke
+						consumeKeyStroke = true;
+					}
+				}
+	
+				// possibly no completion was found, or no action was found corresponding to the completion, but if we were already in a mode consume the keystroke anyway.									
+				if (modeBeforeKeyStroke.getKeyStrokes().size() >= 1)
+					consumeKeyStroke = true;
+	
+				// clear mode			
+				commandManager.setMode(KeySequence.getInstance());
+				updateModeLines(KeySequence.getInstance());
+			}
+	
+			// TODO is this necessary?		
+			updateActiveContextIds();
+			
+			if (consumeKeyStroke) {
+				// We found a match, so stop now.
+				return consumeKeyStroke;
+			} else {
+				// Restore the mode, so we can try again.
+				commandManager.setMode(modeBeforeKeyStroke);
+			}
 		}
-
-		// TODO is this necessary?		
-		updateActiveContextIds();
-		return consumeKeyStroke;
+		
+		// No key strokes match.
+		return false;
 	}	
 	
 	/**

@@ -41,98 +41,133 @@ public final class KeySupport {
 		if ((accelerator & SWT.SHIFT) != 0)
 			modifierKeys.add(ModifierKey.SHIFT);
 
-		accelerator &= SWT.KEY_MASK;
+		if (((accelerator & SWT.KEY_MASK) == 0) && (accelerator != 0)) {
+			// There were only accelerators
+			naturalKey = null;
+		} else {
+			// There were other keys.
+			accelerator &= SWT.KEY_MASK;
 
-		switch (accelerator) {
-			case SWT.ARROW_DOWN :
-				naturalKey = SpecialKey.ARROW_DOWN;
-				break;
-			case SWT.ARROW_LEFT :
-				naturalKey = SpecialKey.ARROW_LEFT;
-				break;
-			case SWT.ARROW_RIGHT :
-				naturalKey = SpecialKey.ARROW_RIGHT;
-				break;
-			case SWT.ARROW_UP :
-				naturalKey = SpecialKey.ARROW_UP;
-				break;
-			case SWT.END :
-				naturalKey = SpecialKey.END;
-				break;
-			case SWT.F1 :
-				naturalKey = SpecialKey.F1;
-				break;
-			case SWT.F10 :
-				naturalKey = SpecialKey.F10;
-				break;
-			case SWT.F11 :
-				naturalKey = SpecialKey.F11;
-				break;
-			case SWT.F12 :
-				naturalKey = SpecialKey.F12;
-				break;
-			case SWT.F2 :
-				naturalKey = SpecialKey.F2;
-				break;
-			case SWT.F3 :
-				naturalKey = SpecialKey.F3;
-				break;
-			case SWT.F4 :
-				naturalKey = SpecialKey.F4;
-				break;
-			case SWT.F5 :
-				naturalKey = SpecialKey.F5;
-				break;
-			case SWT.F6 :
-				naturalKey = SpecialKey.F6;
-				break;
-			case SWT.F7 :
-				naturalKey = SpecialKey.F7;
-				break;
-			case SWT.F8 :
-				naturalKey = SpecialKey.F8;
-				break;
-			case SWT.F9 :
-				naturalKey = SpecialKey.F9;
-				break;
-			case SWT.HOME :
-				naturalKey = SpecialKey.HOME;
-				break;
-			case SWT.INSERT :
-				naturalKey = SpecialKey.INSERT;
-				break;
-			case SWT.PAGE_DOWN :
-				naturalKey = SpecialKey.PAGE_DOWN;
-				break;
-			case SWT.PAGE_UP :
-				naturalKey = SpecialKey.PAGE_UP;
-				break;
-			default :
-				naturalKey = CharacterKey.getInstance((char) (accelerator & 0xFFFF));
+			switch (accelerator) {
+				case SWT.ARROW_DOWN :
+					naturalKey = SpecialKey.ARROW_DOWN;
+					break;
+				case SWT.ARROW_LEFT :
+					naturalKey = SpecialKey.ARROW_LEFT;
+					break;
+				case SWT.ARROW_RIGHT :
+					naturalKey = SpecialKey.ARROW_RIGHT;
+					break;
+				case SWT.ARROW_UP :
+					naturalKey = SpecialKey.ARROW_UP;
+					break;
+				case SWT.END :
+					naturalKey = SpecialKey.END;
+					break;
+				case SWT.F1 :
+					naturalKey = SpecialKey.F1;
+					break;
+				case SWT.F10 :
+					naturalKey = SpecialKey.F10;
+					break;
+				case SWT.F11 :
+					naturalKey = SpecialKey.F11;
+					break;
+				case SWT.F12 :
+					naturalKey = SpecialKey.F12;
+					break;
+				case SWT.F2 :
+					naturalKey = SpecialKey.F2;
+					break;
+				case SWT.F3 :
+					naturalKey = SpecialKey.F3;
+					break;
+				case SWT.F4 :
+					naturalKey = SpecialKey.F4;
+					break;
+				case SWT.F5 :
+					naturalKey = SpecialKey.F5;
+					break;
+				case SWT.F6 :
+					naturalKey = SpecialKey.F6;
+					break;
+				case SWT.F7 :
+					naturalKey = SpecialKey.F7;
+					break;
+				case SWT.F8 :
+					naturalKey = SpecialKey.F8;
+					break;
+				case SWT.F9 :
+					naturalKey = SpecialKey.F9;
+					break;
+				case SWT.HOME :
+					naturalKey = SpecialKey.HOME;
+					break;
+				case SWT.INSERT :
+					naturalKey = SpecialKey.INSERT;
+					break;
+				case SWT.PAGE_DOWN :
+					naturalKey = SpecialKey.PAGE_DOWN;
+					break;
+				case SWT.PAGE_UP :
+					naturalKey = SpecialKey.PAGE_UP;
+					break;
+				default :
+					naturalKey = CharacterKey.getInstance((char) (accelerator & 0xFFFF));
+			}
 		}
 
 		return KeyStroke.getInstance(modifierKeys, naturalKey);
 	}
 
-	public static int convertEventToAccelerator(Event event) {
-		int key = event.character;
-
-		if (key == 0)
-			key = event.keyCode;
-		else {
-			if (0 <= key && key <= 0x1F) {
-				if ((event.stateMask & SWT.CTRL) != 0 && event.keyCode != event.character)
-					key += 0x40;
-			} else {
-				if ('a' <= key && key <= 'z')
-					key -= 'a' - 'A';
-			}
-		}
-
+	/**
+	 * Converts the given event into an SWT accelerator value -- considering
+	 * the modified character with the shift modifier. This is the third
+	 * accelerator value that should be checked.
+	 * 
+	 * @param event
+	 *           The event to be converted; must not be <code>null</code>.
+	 * @return The combination of the state mask and the unmodified character.
+	 */
+	public static int convertEventToModifiedAccelerator(Event event) {
 		int modifiers = event.stateMask & SWT.MODIFIER_MASK;
-		return modifiers + key;
+		int modifiedCharacter = topKey(event);
+		return modifiers + modifiedCharacter;
 	}
-	
+
+	/**
+	 * Converts the given event into an SWT accelerator value -- considering
+	 * the unmodified character with all modifier keys. This is the first
+	 * accelerator value that should be checked. However, all alphabetic
+	 * characters are considered as their uppercase equivalents.
+	 * 
+	 * @param event
+	 *           The event to be converted; must not be <code>null</code>.
+	 * @return The combination of the state mask and the unmodified character.
+	 */
+	public static int convertEventToUnmodifiedAccelerator(Event event) {
+		int modifiers = event.stateMask & SWT.MODIFIER_MASK;
+		int unmodifiedCharacter = upperCase(event.keyCode);
+
+		return modifiers + unmodifiedCharacter;
+	}
+
+	/**
+	 * Converts the given event into an SWT accelerator value -- considering
+	 * the modified character without the shift modifier. This is the second
+	 * accelerator value that should be checked.
+	 * 
+	 * @param event
+	 *           The event to be converted; must not be <code>null</code>.
+	 * @return The combination of the state mask without shift, and the
+	 *         modified character.
+	 */
+	public static int convertEventToUnshiftedModifiedAccelerator(Event event) {
+		int modifiers = event.stateMask & (SWT.MODIFIER_MASK ^ SWT.SHIFT);
+		int modifiedCharacter = topKey(event);
+		return modifiers + modifiedCharacter;
+	}
+
 	public static final int convertKeyStrokeToAccelerator(final KeyStroke keyStroke) {
 		if (keyStroke == null)
 			throw new NullPointerException();
@@ -205,6 +240,45 @@ public final class KeySupport {
 		}
 
 		return accelerator;
+	}
+
+	/**
+	 * Makes sure that a fully-modified character is converted to the normal
+	 * form. This means that "Ctrl+" key strokes must reverse the modification
+	 * caused by control-escaping. Also, all lower case letters are converted
+	 * to uppercase.
+	 * 
+	 * @param event
+	 *           The event from which the fully-modified character should be
+	 *           pulled.
+	 * @return The modified character, uppercase and without control-escaping.
+	 */
+	private static int topKey(Event event) {
+		boolean ctrlDown = (event.stateMask & SWT.CTRL) != 0;
+		char modifiedCharacter;
+		if ((ctrlDown) && (event.character != event.keyCode) && (event.character < 0x20)) {
+			modifiedCharacter = (char) (event.character + 0x40);
+		} else {
+			modifiedCharacter = event.character;
+		}
+
+		return upperCase(modifiedCharacter);
+	}
+
+	/**
+	 * Makes the given character uppercase if it is a letter.
+	 * 
+	 * @param character
+	 *           The character to convert.
+	 * @return The uppercase equivalent, if any; otherwise, the character
+	 *         itself.
+	 */
+	private static int upperCase(int character) {
+		if (Character.isLetter((char) character)) {
+			return Character.toUpperCase((char) character);
+		}
+
+		return character;
 	}
 
 	private KeySupport() {
