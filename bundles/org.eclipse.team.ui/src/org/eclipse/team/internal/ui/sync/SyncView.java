@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ui.IHelpContextIds;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.UIConstants;
@@ -39,6 +40,7 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.ViewPart;
 
 /**
@@ -142,6 +144,7 @@ public class SyncView extends ViewPart {
 		// add part listener
 		partListener = new PartListener();
 		getViewSite().getWorkbenchWindow().getPartService().addPartListener(partListener);
+		WorkbenchHelp.setHelp(top, IHelpContextIds.SYNC_VIEW);
 	}
 	
 	public void dispose() {
