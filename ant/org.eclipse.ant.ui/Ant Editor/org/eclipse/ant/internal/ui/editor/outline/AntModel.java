@@ -219,33 +219,40 @@ public class AntModel {
 				projectHelper= (ProjectHelper)project.getReference("ant.projectHelper"); //$NON-NLS-1$
 			}
 			beginReporting();
+			Map references= project.getReferences();
+			references.remove("ant.parsing.context");
 			projectHelper.parse(project, textToParse);
 			
     	} catch(BuildException e) {
 			handleBuildException(e, null);
     	} finally {
     		if (parsed) {
+    			if (fIncrementalTarget != null) {
+    	    		updateForIncrementalParse(region);
+    	    	}
     			resolveBuildfile();
     			endReporting();
     			project.fireBuildFinished(null); //cleanup
+    			fIncrementalTarget= null;
     		}
-    	}
-    	if (fIncrementalTarget != null && parsed) {
-    		updateForIncrementalParse(region);
     	}
 	}
 	
 	private void updateForIncrementalParse(DirtyRegion region) {
-		if (fProjectNode == null || !fProjectNode.hasChildren()) {
+		if (fProjectNode == null) {
 			return;
 		}
 		int editAdjustment= determineEditAdjustment(region);
 		if (editAdjustment == 0) {
 			return;
 		}
-		List children= fProjectNode.getChildNodes();
-		int index= children.indexOf(fIncrementalTarget) + 1;
-		updateNodesForIncrementalParse(editAdjustment, children, index);
+		fProjectNode.setLength(fProjectNode.getLength() + editAdjustment);
+		//fIncrementalTarget.setLength(fIncrementalTarget.getLength() + editAdjustment);
+		if (fProjectNode.hasChildren()) {
+			List children= fProjectNode.getChildNodes();
+			int index= children.indexOf(fIncrementalTarget) + 1;
+			updateNodesForIncrementalParse(editAdjustment, children, index);
+		}
 	}
 
 	private void updateNodesForIncrementalParse(int editAdjustment, List children, int index) {
@@ -260,7 +267,6 @@ public class AntModel {
 	}
 
 	private ProjectHelper prepareForFullParse(Project project) {
-		fIncrementalTarget= null;
 		initializeProject(project);
     	// Ant's parsing facilities always works on a file, therefore we need
     	// to determine the actual location of the file. Though the file 
@@ -282,8 +288,14 @@ public class AntModel {
 		String textToParse= null;
 		AntElementNode node= fProjectNode.getNode(region.getOffset());
 		if (node == null) {
-			//outside of any element...not interesting
-			return null;
+			if (fProjectNode.getLength() > 0) {
+				//outside of any element...not interesting
+				return null;
+			} else { //nodes don't know their lengths due to parsing error --> full parse
+				fProjectNode.reset();
+				return input.get();
+			}
+			
 		}
 		
 		while (node != null && !(node instanceof AntTargetNode)) {
@@ -294,19 +306,12 @@ public class AntModel {
 				return null; //no need to parse for whitespace additions
 			}
 			textToParse= input.get();
-			fIncrementalTarget= null;
 			fProjectNode.reset();
 		} else {
 			fIncrementalTarget= (AntTargetNode)node;
-			StringBuffer temp= new StringBuffer("<project");//$NON-NLS-1$
-			String defltTarget= project.getDefaultTarget();
-			if (defltTarget != null) {
-				temp.append(" default=\""); //$NON-NLS-1$
-				temp.append(defltTarget);
-				temp.append("\""); //$NON-NLS-1$
-			}
-			temp.append(">\n"); //$NON-NLS-1$
+			markHierarchy(node, false);
 			
+			StringBuffer temp = createIncrementalContents(project);			
 			fIncrementalTarget.reset();
 			try {
 				int editAdjustment = determineEditAdjustment(region) + 1;
@@ -319,6 +324,28 @@ public class AntModel {
 			}
 		}
 		return textToParse;
+	}
+
+	private StringBuffer createIncrementalContents(Project project) {
+		int offset= fIncrementalTarget.getOffset();
+		int line= 0;
+		try {
+			line= getLine(offset) - 1;
+		} catch (BadLocationException e) {
+		}
+		StringBuffer temp= new StringBuffer("<project");//$NON-NLS-1$
+		String defltTarget= project.getDefaultTarget();
+		if (defltTarget != null) {
+			temp.append(" default=\""); //$NON-NLS-1$
+			temp.append(defltTarget);
+			temp.append("\""); //$NON-NLS-1$
+		}
+		temp.append(">"); //$NON-NLS-1$
+		while (line > 0) {
+			temp.append("\n");
+			line--;
+		}
+		return temp;
 	}
 
 	private int determineEditAdjustment(DirtyRegion region) {
@@ -407,7 +434,7 @@ public class AntModel {
 	public void handleBuildException(BuildException e, AntElementNode node) {
 		try {
 			if (node != null) {
-				generateExceptionOutline(node);
+				markHierarchy(node, true);
 			}
 			Location location= e.getLocation();
 			int line= 0;
@@ -449,9 +476,9 @@ public class AntModel {
 		return fEditedFile;
     }
 
-	private void generateExceptionOutline(AntElementNode openElement) {
+	private void markHierarchy(AntElementNode openElement, boolean isError) {
 		while (openElement != null) {
-			openElement.setIsErrorNode(true);
+			openElement.setIsErrorNode(isError);
 			openElement= openElement.getParentNode();
 		}
 	}
@@ -838,7 +865,7 @@ public class AntModel {
 			}
 		} else {
 			node= (AntElementNode)fStillOpenElements.peek();
-			generateExceptionOutline(node);
+			markHierarchy(node, true);
 		}
 	
 		notifyProblemRequestor(exception, node, XMLProblem.SEVERTITY_ERROR);
@@ -847,7 +874,7 @@ public class AntModel {
 	public void errorFromElementText(Exception exception, int start, int count) {
 		computeEndLocationForErrorNode(fLastNode, start, count);
 		notifyProblemRequestor(exception, start, count, XMLProblem.SEVERTITY_ERROR);
-		generateExceptionOutline(fLastNode);
+		markHierarchy(fLastNode, true);
 	}
 	
 	public void errorFromElement(Exception exception, AntElementNode node, int lineNumber, int column) {
@@ -860,7 +887,7 @@ public class AntModel {
 		}
 		computeEndLocationForErrorNode(node, lineNumber, column);
 		notifyProblemRequestor(exception, node, XMLProblem.SEVERTITY_ERROR);
-		generateExceptionOutline(node);
+		markHierarchy(node, true);
 	}
 
 	private AntElementNode createProblemElement(SAXParseException exception) {
@@ -940,7 +967,7 @@ public class AntModel {
 			return;
 		}
 		AntElementNode node= (AntElementNode)fStillOpenElements.peek();
-		generateExceptionOutline(node);
+		markHierarchy(node, true);
 		
 		if (exception instanceof SAXParseException) {
 			SAXParseException parseException= (SAXParseException)exception;
