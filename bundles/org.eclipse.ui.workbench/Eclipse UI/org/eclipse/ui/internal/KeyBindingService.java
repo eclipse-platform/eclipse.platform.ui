@@ -18,18 +18,18 @@ import java.util.TreeMap;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IKeyBindingService;
-import org.eclipse.ui.commands.IHandlerService;
+import org.eclipse.ui.commands.old.ICommandHandlerService;
 import org.eclipse.ui.contexts.IContextActivationService;
-import org.eclipse.ui.internal.commands.ActionHandler;
+import org.eclipse.ui.internal.commands.old.ActionHandler;
 
 final class KeyBindingService implements IKeyBindingService {
 	
 	private SortedMap handlerMap = new TreeMap();
 	private IContextActivationService contextActivationService;
-	private IHandlerService handlerService;
+	private ICommandHandlerService handlerService;
 	private List scopes = new ArrayList();
 		
-	KeyBindingService(IContextActivationService contextService, IHandlerService handlerService) {
+	KeyBindingService(IContextActivationService contextService, ICommandHandlerService handlerService) {
 		super();
 		this.contextActivationService = contextService;
 		this.handlerService = handlerService;	

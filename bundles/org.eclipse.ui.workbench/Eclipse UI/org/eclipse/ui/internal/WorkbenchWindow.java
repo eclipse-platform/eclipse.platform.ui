@@ -81,15 +81,15 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.commands.IHandlerService;
+import org.eclipse.ui.commands.old.ICommandHandlerService;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.commands.ActionHandler;
-import org.eclipse.ui.internal.commands.ContextAndHandlerManager;
-import org.eclipse.ui.internal.commands.Manager;
-import org.eclipse.ui.internal.commands.SequenceMachine;
-import org.eclipse.ui.internal.commands.SimpleHandlerService;
-import org.eclipse.ui.internal.commands.util.Sequence;
-import org.eclipse.ui.internal.commands.util.Stroke;
+import org.eclipse.ui.internal.commands.old.ActionHandler;
+import org.eclipse.ui.internal.commands.old.ContextAndHandlerManager;
+import org.eclipse.ui.internal.commands.old.Manager;
+import org.eclipse.ui.internal.commands.old.SequenceMachine;
+import org.eclipse.ui.internal.commands.old.SimpleHandlerService;
+import org.eclipse.ui.internal.commands.util.old.Sequence;
+import org.eclipse.ui.internal.commands.util.old.Stroke;
 import org.eclipse.ui.internal.dialogs.MessageDialogWithToggle;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.UIStats;
@@ -106,7 +106,7 @@ public class WorkbenchWindow
 	implements IWorkbenchWindow {
 
 	private ContextAndHandlerManager contextAndHandlerManager;
-	private IHandlerService handlerService;
+	private ICommandHandlerService handlerService;
 	private int number;
 	private Workbench workbench;
 	private PageList pageList = new PageList();
@@ -424,7 +424,7 @@ public class WorkbenchWindow
 			contextAndHandlerManager.update();
 	}
 
-	public IHandlerService getHandlerService() {
+	public ICommandHandlerService getHandlerService() {
 		if (handlerService == null)
 			handlerService = new SimpleHandlerService();
 

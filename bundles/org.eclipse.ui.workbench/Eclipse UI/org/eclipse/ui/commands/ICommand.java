@@ -11,12 +11,12 @@
 
 package org.eclipse.ui.commands;
 
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.ui.internal.commands.util.Sequence;
-
 /**
  * <p>
- * This interface is not intended to be implemented or extended by clients.
+ * TODO javadoc
+ * </p>
+ * <p>
+ * This interface is not intended to be extended or implemented by clients.
  * </p>
  * <p>
  * <em>EXPERIMENTAL</em>
@@ -30,46 +30,11 @@ public interface ICommand {
 	 * Registers an ICommandListener instance with this command.
 	 *
 	 * @param commandListener the ICommandListener instance to register.
+	 * @throws IllegalArgumentException
 	 */	
-	void addCommandListener(ICommandListener commandListener);
+	void addCommandListener(ICommandListener commandListener)
+		throws IllegalArgumentException;
 
-	/**
-	 * TODO javadoc
-	 * 
-	 * @throws NotDefinedException
-	 * @throws NotHandledException
-	 */	
-	void execute()
-		throws NotDefinedException, NotHandledException;
-
-	/**
-	 * TODO temporary method
-	 * 
-	 * @param event
-	 * @throws NotDefinedException
-	 * @throws NotHandledException
-	 */	
-	void execute(Event event)
-		throws NotDefinedException, NotHandledException;
-
-	/**
-	 * TODO javadoc
-	 * 
-	 * @return
-	 * @throws NotDefinedException
-	 */	
-	String getCategoryId()
-		throws NotDefinedException;
-
-	/**
-	 * TODO javadoc
-	 * 
-	 * @return
-	 * @throws NotDefinedException
-	 */	
-	String[] getContextIds()
-		throws NotDefinedException;
-		
 	/**
 	 * TODO javadoc
 	 * 
@@ -83,15 +48,6 @@ public interface ICommand {
 	 * TODO javadoc
 	 * 
 	 * @return
-	 * @throws NotDefinedException
-	 */	
-	Sequence[] getGestureSequences()
-		throws NotDefinedException;
-
-	/**
-	 * TODO javadoc
-	 * 
-	 * @return
 	 */	
 	String getId();
 	
@@ -101,17 +57,17 @@ public interface ICommand {
 	 * @return
 	 * @throws NotDefinedException
 	 */	
-	Sequence[] getKeySequences()
+	String getName()
 		throws NotDefinedException;	
-	
+
 	/**
 	 * TODO javadoc
 	 * 
 	 * @return
 	 * @throws NotDefinedException
 	 */	
-	String getName()
-		throws NotDefinedException;	
+	String getParentId()
+		throws NotDefinedException;
 	
 	/**
 	 * TODO javadoc
@@ -125,23 +81,9 @@ public interface ICommand {
 	/**
 	 * TODO javadoc
 	 * 
-	 * @param propertyName
 	 * @return
-	 * @throws NotDefinedException
-	 * @throws NotHandledException
 	 */	
-	Object getProperty(String propertyName)
-		throws NotDefinedException, NotHandledException;
-
-	/**
-	 * TODO javadoc
-	 * 
-	 * @return
-	 * @throws NotDefinedException
-	 * @throws NotHandledException
-	 */	
-	String[] getPropertyNames()
-		throws NotDefinedException, NotHandledException;
+	boolean isActive();
 
 	/**
 	 * TODO javadoc
@@ -149,29 +91,13 @@ public interface ICommand {
 	 * @return
 	 */	
 	boolean isDefined();
-
-	/**
-	 * TODO temporary method
-	 *
-	 * @throws NotDefinedException
-	 * @throws NotHandledException
-	 */	
-	boolean isEnabled()
-		throws NotDefinedException, NotHandledException;
 	
-	/**
-	 * TODO javadoc
-	 * 
-	 * @return
-	 * @throws NotDefinedException
-	 */	
-	boolean isHandled()
-		throws NotDefinedException;
-
 	/**
 	 * Unregisters an ICommandListener instance with this command.
 	 *
 	 * @param commandListener the ICommandListener instance to unregister.
+	 * @throws IllegalArgumentException
 	 */
-	void removeCommandListener(ICommandListener commandListener);
+	void removeCommandListener(ICommandListener commandListener)
+		throws IllegalArgumentException;
 }

@@ -26,47 +26,48 @@ import java.util.SortedSet;
  * 
  * @since 3.0
  */
-public interface ICommandManager {
+public interface ICommandActivationService {
 
 	/**
-	 * Registers an ICommandManagerListener instance with this command manager.
+	 * TODO javadoc
 	 *
-	 * @param commandManagerListener the ICommandManagerListener instance to register.
+	 * @param commandId
 	 * @throws IllegalArgumentException
 	 */	
-	void addCommandManagerListener(ICommandManagerListener commandManagerListener)
+	void activateCommand(String commandId)
 		throws IllegalArgumentException;
 
+	/**
+	 * Registers an ICommandActivationServiceListener instance with this command activation service.
+	 *
+	 * @param commandActivationServiceListener the ICommandActivationServiceListener instance to register.
+	 * @throws IllegalArgumentException
+	 */	
+	void addCommandActivationServiceListener(ICommandActivationServiceListener commandActivationServiceListener)
+		throws IllegalArgumentException;
+
+	/**
+	 * TODO javadoc
+	 *
+	 * @param commandId
+	 * @throws IllegalArgumentException
+	 */	
+	void deactivateCommand(String commandId)
+		throws IllegalArgumentException;
+		
 	/**
 	 * TODO javadoc
 	 *
 	 * @return
 	 */
 	SortedSet getActiveCommandIds();
-
-	/**
-	 * TODO javadoc
-	 *
-	 * @param commandId
-	 * @return
-	 * @throws IllegalArgumentException
-	 */	
-	ICommand getCommand(String commandId)
-		throws IllegalArgumentException;
-
-	/**
-	 * TODO javadoc
-	 *
-	 * @return
-	 */
-	SortedSet getDefinedCommandIds();
 	
 	/**
-	 * Unregisters an ICommandManagerListener instance with this command manager.
+	 * Unregisters an ICommandActivationServiceListener instance with this command activation services.
 	 *
-	 * @param commandManagerListener the ICommandManagerListener instance to unregister.
+	 * @param commandActivationServiceListener the ICommandActivationServiceListener instance to unregister.
 	 * @throws IllegalArgumentException
 	 */
-	void removeCommandManagerListener(ICommandManagerListener commandManagerListener)
+	void removeCommandActivationServiceListener(ICommandActivationServiceListener commandActivationServiceListener)
 		throws IllegalArgumentException;
 }

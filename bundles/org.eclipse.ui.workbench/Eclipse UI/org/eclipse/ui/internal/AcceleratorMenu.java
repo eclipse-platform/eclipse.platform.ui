@@ -168,7 +168,7 @@ public void setAccelerators(final int[] accelerators) {
 		System.arraycopy(accelerators, 0, this.accelerators, 0, accelerators.length);
 	}
 	
-	menu.dispose();
+	menu.dispose();		
 	menu = new Menu(parent.getParent(), SWT.DROP_DOWN);
 	if (item != null) item.setMenu (menu);
 	

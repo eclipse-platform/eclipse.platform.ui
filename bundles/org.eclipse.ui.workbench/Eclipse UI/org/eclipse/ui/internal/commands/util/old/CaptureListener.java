@@ -9,27 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.commands;
+package org.eclipse.ui.internal.commands.util.old;
 
-/**
- * <p>
- * TODO javadoc
- * </p>
- * <p>
- * This interface is not intended to be extended by clients.
- * </p>
- * <p>
- * <em>EXPERIMENTAL</em>
- * </p>
- * 
- * @since 3.0
- */
-public interface ICommandListener {
+public interface CaptureListener {
 
-	/**
-	 * TODO javadoc
-	 * 
-	 * @param commandEvent
-	 */	
-	void commandChanged(ICommandEvent commandEvent);
+	void capture(CaptureEvent captureEvent);
 }

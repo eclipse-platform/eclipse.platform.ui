@@ -9,12 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.commands;
+package org.eclipse.ui.commands.old;
 
 /**
- * <p>
- * TODO javadoc
- * </p>
  * <p>
  * This interface is not intended to be extended by clients.
  * </p>
@@ -24,12 +21,26 @@ package org.eclipse.ui.commands;
  * 
  * @since 3.0
  */
-public interface ICommandListener {
+public interface IPropertyListener {
 
 	/**
 	 * TODO javadoc
 	 * 
-	 * @param commandEvent
+	 * @param propertyEvent
 	 */	
-	void commandChanged(ICommandEvent commandEvent);
+	void propertyAdded(PropertyEvent propertyEvent);
+	
+	/**
+	 * TODO javadoc
+	 * 
+	 * @param propertyEvent
+	 */	
+	void propertyChanged(PropertyEvent propertyEvent);
+	
+	/**
+	 * TODO javadoc
+	 * 
+	 * @param propertyEvent
+	 */	
+	void propertyRemoved(PropertyEvent propertyEvent);
 }

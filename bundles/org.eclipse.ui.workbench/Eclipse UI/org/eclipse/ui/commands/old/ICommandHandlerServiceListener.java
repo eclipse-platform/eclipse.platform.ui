@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.commands;
+package org.eclipse.ui.commands.old;
 
 /**
  * <p>
@@ -24,12 +24,13 @@ package org.eclipse.ui.commands;
  * 
  * @since 3.0
  */
-public interface ICommandListener {
+public interface ICommandHandlerServiceListener {
 
 	/**
 	 * TODO javadoc
 	 * 
-	 * @param commandEvent
+	 * @param handlerServiceEvent
 	 */	
-	void commandChanged(ICommandEvent commandEvent);
+	void handlerServiceChanged(CommandHandlerServiceEvent handlerServiceEvent);
 }
+

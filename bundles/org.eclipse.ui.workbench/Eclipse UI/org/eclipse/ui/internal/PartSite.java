@@ -28,9 +28,9 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.SubActionBars;
-import org.eclipse.ui.commands.IHandlerService;
+import org.eclipse.ui.commands.old.ICommandHandlerService;
 import org.eclipse.ui.contexts.IContextActivationService;
-import org.eclipse.ui.internal.commands.SimpleHandlerService;
+import org.eclipse.ui.internal.commands.old.SimpleHandlerService;
 import org.eclipse.ui.internal.contexts.ContextActivationService;
 
 /**
@@ -67,7 +67,7 @@ public class PartSite implements IWorkbenchPartSite {
 	private KeyBindingService keyBindingService;
 	private ArrayList menuExtenders;
 	
-	private IHandlerService handlerService;
+	private ICommandHandlerService handlerService;
 		
 	/**
 	 * EditorContainer constructor comment.
@@ -289,7 +289,7 @@ public class PartSite implements IWorkbenchPartSite {
 		return IWorkbenchConstants.DEFAULT_ACCELERATOR_SCOPE_ID;
 	}
 
-	public IHandlerService getHandlerService() {
+	public ICommandHandlerService getHandlerService() {
 		if (handlerService == null)
 			handlerService = new SimpleHandlerService();
 

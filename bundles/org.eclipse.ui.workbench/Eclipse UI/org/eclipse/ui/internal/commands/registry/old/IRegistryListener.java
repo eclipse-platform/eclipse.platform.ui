@@ -9,12 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.commands;
+package org.eclipse.ui.internal.commands.registry.old;
 
 /**
- * <p>
  * TODO javadoc
- * </p>
+ * 
  * <p>
  * This interface is not intended to be extended by clients.
  * </p>
@@ -24,12 +23,12 @@ package org.eclipse.ui.commands;
  * 
  * @since 3.0
  */
-public interface ICommandListener {
+public interface IRegistryListener {
 
 	/**
 	 * TODO javadoc
 	 * 
-	 * @param commandEvent
+	 * @param registryEvent
 	 */	
-	void commandChanged(ICommandEvent commandEvent);
+	void registryChanged(RegistryEvent registryEvent);
 }

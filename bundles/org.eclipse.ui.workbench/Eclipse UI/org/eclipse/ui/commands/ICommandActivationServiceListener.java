@@ -24,12 +24,12 @@ package org.eclipse.ui.commands;
  * 
  * @since 3.0
  */
-public interface ICommandListener {
+public interface ICommandActivationServiceListener {
 
 	/**
 	 * TODO javadoc
 	 * 
-	 * @param commandEvent
+	 * @param commandActivationServiceEvent
 	 */	
-	void commandChanged(ICommandEvent commandEvent);
+	void commandActivationServiceChanged(ICommandActivationServiceEvent commandActivationServiceEvent);
 }
