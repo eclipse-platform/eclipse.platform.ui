@@ -1214,7 +1214,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				);
 				
 				fCenterButton= new Button(canvas, "carbon".equals(SWT.getPlatform()) ? SWT.FLAT : SWT.PUSH);
-				fCenterButton.setText("<");	//$NON-NLS-1$
+				fCenterButton.setText("<");	 //$NON-NLS-1$
 				fCenterButton.pack();
 				fCenterButton.setVisible(false);
 				fCenterButton.addSelectionListener(
