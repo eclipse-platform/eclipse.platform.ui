@@ -6,13 +6,18 @@
 %>
 
 <%
+	 String  ContentStr = WebappResources.getString("Content", null);
+	 String  SearchStr = WebappResources.getString("SearchResults", null);
+	 String  LinksStr = WebappResources.getString("Links", null);
+
 	// Paramters allowed:
 	// tab = toc | search | links
 	// toc
 	// topic
-	// query
+	// searchWord
 	// contextId
 	// lang
+	
 	
 	String query = "";
 	if (request.getQueryString() != null && request.getQueryString().length() > 0)
