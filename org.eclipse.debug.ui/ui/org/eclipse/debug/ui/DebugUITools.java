@@ -11,6 +11,8 @@
 package org.eclipse.debug.ui;
 
 
+import java.text.MessageFormat;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -19,6 +21,8 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -55,6 +59,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
@@ -478,32 +483,41 @@ public class DebugUITools {
 	 */
 	public static boolean saveBeforeLaunch() {
 		return DebugUIPlugin.preLaunchSave();
-	}
+	}	
 	
 	/**
 	 * Saves and builds the workspace according to current preference settings, and
-	 * launches the given launch configuration in the specified mode with a
-	 * progress dialog. Reports any exceptions that occur in an error dilaog.
+	 * launches the given launch configuration in the specified mode in a background
+	 * Job with progress reported via the Job. Reports any exceptions that occurr in an error dilaog.
 	 * 
 	 * @param configuration the configuration to launch
 	 * @param mode launch mode - run or debug
 	 * @since 2.1
 	 */
-	public static void launch(ILaunchConfiguration configuration, String mode) {
+	public static void launch(final ILaunchConfiguration configuration, final String mode) {
 		if (DebugUIPlugin.preLaunchSave()) {
-			try {
-				buildAndLaunch(configuration, mode, null);
-			} catch (CoreException ce) {
-				IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(ce.getStatus());
-				if (handler != null) {
-					LaunchGroupExtension group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(configuration, mode);
-					if (group != null) {
-						openLaunchConfigurationDialogOnGroup(DebugUIPlugin.getShell(), new StructuredSelection(configuration), group.getIdentifier(), ce.getStatus());
-						return;
+			UIJob job= new UIJob(MessageFormat.format(DebugUIMessages.getString("DebugUITools.3"), new String[] { configuration.getName() })) { //$NON-NLS-1$
+				public IStatus runInUIThread(IProgressMonitor monitor) {
+					try {
+						buildAndLaunch(configuration, mode, monitor);
+					} catch (CoreException e) {
+						IStatus status= e.getStatus();
+						IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(status);
+						if (handler != null) {
+							LaunchGroupExtension group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(configuration, mode);
+							if (group != null) {
+								openLaunchConfigurationDialogOnGroup(DebugUIPlugin.getShell(), new StructuredSelection(configuration), group.getIdentifier(), status);
+								return Status.OK_STATUS;
+							}
+						}
+						DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), DebugUIMessages.getString("DebugUITools.Error_1"), DebugUIMessages.getString("DebugUITools.Exception_occurred_during_launch_2"), e); //$NON-NLS-1$ //$NON-NLS-2$
+						return status;
 					}
+					return Status.OK_STATUS;
 				}
-				DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), DebugUIMessages.getString("DebugUITools.Error_1"), DebugUIMessages.getString("DebugUITools.Exception_occurred_during_launch_2"), ce); //$NON-NLS-1$ //$NON-NLS-2$
-			}
+			};
+			job.setPriority(Job.INTERACTIVE);
+			job.schedule();
 		}
 	}
 	
@@ -520,7 +534,7 @@ public class DebugUITools {
 	 * 
 	 * @param configuration the configuration to launch
 	 * @param mode the mode to launch in
-	 * @param monitor progress monitor. Since 3.0, this parameter is ignored.
+	 * @param monitor progress monitor
 	 * @return the resulting launch object
 	 * @throws CoreException if building or launching fails
 	 * @since 2.1

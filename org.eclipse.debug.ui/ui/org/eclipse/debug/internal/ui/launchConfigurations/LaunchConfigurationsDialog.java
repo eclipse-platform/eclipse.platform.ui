@@ -19,7 +19,6 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.IStatusHandler;
@@ -28,6 +27,7 @@ import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.PixelConverter;
 import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
@@ -455,7 +455,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			try {
 				if (lastLaunchedConfig != null) {
 					if (lastLaunchedConfig.supportsMode(getMode())) {
-						doLaunch(lastLaunchedConfig);
+						DebugUITools.launch(lastLaunchedConfig, getMode());
 					} else {
 						// If we're trying to launch, but the last launched config doesn't 
 						// support the current mode of the dialog, show an error dialog
@@ -1138,73 +1138,18 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * Save and launch.
 	 */
 	protected void handleLaunchPressed() {
-		int result = CANCEL;
 		ILaunchConfiguration config = getTabViewer().getOriginal(); 
+		if (getTabViewer().isDirty()) {
+			getTabViewer().handleApplyPressed();
+			config = getTabViewer().getOriginal();
+		}
+		DebugUITools.launch(config, getMode());
 		try {
-			if (getTabViewer().isDirty()) {
-				getTabViewer().handleApplyPressed();
-				config = getTabViewer().getOriginal();
-			}
-			result = doLaunch(config);
+			getPreferenceStore().setValue(IDebugPreferenceConstants.PREF_LAST_LAUNCH_CONFIGURATION_SELECTION, config.getMemento());
 		} catch (CoreException e) {
-			DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Launch_Configuration_Error_6"), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Exception_occurred_while_launching_configuration._See_log_for_more_information_49"), e); //$NON-NLS-1$ //$NON-NLS-2$
-			return;
+			DebugUIPlugin.log(e);
 		}
-		if (result == OK) {
-			try {
-				getPreferenceStore().setValue(IDebugPreferenceConstants.PREF_LAST_LAUNCH_CONFIGURATION_SELECTION, config.getMemento());
-			} catch (CoreException e) {
-				DebugUIPlugin.log(e);
-			}
-			close();
-		} else {
-			getShell().setFocus();
-			updateButtons();
-		}
-	}
-	
-	/**
-	 * Save the working copy if necessary, then launch the underlying configuration.
-	 * 
-	 * @return one of CANCEL or OK
-	 */
-	private int doLaunch(ILaunchConfiguration config) throws CoreException {
-		
-		if (!DebugUIPlugin.preLaunchSave()) {
-			return CANCEL;
-		}
-		
-		// liftoff
-		ILaunch launch = null;
-		try {
-			launch = launchWithProgress(config);
-		} catch (CoreException e) {
-			handleStatus(e.getStatus());
-			return CANCEL;
-		}
-		
-		// If the launch was cancelled, get out.  Otherwise, notify the tabs of the successful launch.
-		if (cancelButtonPressed()) {
-			launch.terminate();
-			return CANCEL;
-		} else if (launch != null) {
-			ILaunchConfigurationTabGroup group = getTabGroup();
-			if (group != null) {
-				group.launched(launch);
-			}
-		}
-		
-		return OK;
-	}
-	
-	/**
-	 * Launches the given config.
-	 * 
-	 * @return the resulting launch, or <code>null</code> if cancelled.
-	 * @exception CoreException if an exception occurrs launching
-	 */
-	private ILaunch launchWithProgress(ILaunchConfiguration config) throws CoreException {
-		return DebugUIPlugin.buildAndLaunch(config, getMode(), null);		
+		close();
 	}
 	
 	private IPreferenceStore getPreferenceStore() {

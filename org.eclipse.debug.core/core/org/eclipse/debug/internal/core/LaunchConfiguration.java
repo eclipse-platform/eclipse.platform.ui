@@ -29,10 +29,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -144,30 +144,26 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 */
 	public ILaunch launch(final String mode, IProgressMonitor monitor) throws CoreException {
 		// bug 28245 - force the delegate to load in case it is interested in launch notifications
-		final ILaunchConfigurationDelegate delegate= getDelegate(mode);
+		ILaunchConfigurationDelegate delegate= getDelegate(mode);
 		
-		final ILaunch launch = new Launch(this, mode, null);
+		ILaunch launch = new Launch(this, mode, null);
 		getLaunchManager().addLaunch(launch);
-		Job job= new Job(MessageFormat.format(DebugCoreMessages.getString("LaunchConfiguration.12"), new String[] { getName() })) { //$NON-NLS-1$
-			public IStatus run(IProgressMonitor monitor) {
-				try {
-					initializeSourceLocator(launch);
-					delegate.launch(LaunchConfiguration.this, mode, launch, monitor);
-				} catch (CoreException e) {
-					// if there was an exception, and the launch is empty, remove it
-					if (!launch.hasChildren()) {
-						getLaunchManager().removeLaunch(launch);
-					}
-					return e.getStatus();
-				}
-				if (monitor.isCanceled()) {
-					getLaunchManager().removeLaunch(launch);
-				}
-				return Status.OK_STATUS;
+		if (monitor == null) {
+			monitor= new NullProgressMonitor();
+		}
+		try {
+			initializeSourceLocator(launch);
+			delegate.launch(this, mode, launch, monitor);
+		} catch (CoreException e) {
+			// if there was an exception, and the launch is empty, remove it
+			if (!launch.hasChildren()) {
+				getLaunchManager().removeLaunch(launch);
 			}
-		};
-		job.setPriority(Job.INTERACTIVE);
-		job.schedule();
+			throw e;
+		}
+		if (monitor.isCanceled()) {
+			getLaunchManager().removeLaunch(launch);
+		}
 
 		return launch;
 	}
