@@ -167,7 +167,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 									// Good, we got an exception. The folder doesn't exist.
 								}
 							} catch (TeamException e) {
-								// To do: handle exception
+								ErrorDialog.openError(getShell(), null, null, e.getStatus());
 								result[0] = false;
 								return;
 							}
