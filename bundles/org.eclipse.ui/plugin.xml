@@ -1471,6 +1471,7 @@
       <workingSet
             id="org.eclipse.ui.resourceWorkingSetPage"
             name="%WorkingSets.resource"            
+            icon="icons/full/obj16/workset.gif"
             pageClass="org.eclipse.ui.internal.dialogs.ResourceWorkingSetPage">
       </workingSet>
    </extension>
