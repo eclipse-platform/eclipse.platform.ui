@@ -1,0 +1,5 @@
+#Tue Dec 21 11:23:31 CET 2004
+eclipse.preferences.version=1
+org.eclipse.jdt.ui.ondemandthreshold=99
+org.eclipse.jdt.ui.ignorelowercasenames=true
+org.eclipse.jdt.ui.importorder=java;javax;junit;org.eclipse.text;org.eclipse.core.runtime;org.eclipse.core.expressions;org.eclipse.core.filebuffers;org.eclipse.core.resources;org.eclipse.ltk.refactoring.core;org.eclipse.ltk.refactoring.internal.core;org.eclipse.compare;org.eclipse.ui;org.eclipse.jdt.core;org.eclipse.ltk.refactoring.ui;org.eclipse.ltk.refactoring.internal.ui;org.eclipse.ltk.ui.refactoring.tests;
