@@ -1110,6 +1110,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			try {
 				return ((IFileEditorInput) element).getFile().getContentDescription();
 			} catch (CoreException x) {
+				handleCoreException(x, TextEditorMessages.getString("FileDocumentProvider.getContentDescription")); //$NON-NLS-1$
 			}
 		return super.getContentDescription(element);
 	}

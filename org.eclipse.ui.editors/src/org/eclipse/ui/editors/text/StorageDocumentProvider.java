@@ -442,12 +442,25 @@ public class StorageDocumentProvider extends AbstractDocumentProvider implements
 	 * @since 3.1
 	 */
 	public IContentDescription getContentDescription(Object element) {
-		if (element instanceof IStorageEditorInput)
+		if (element instanceof IStorageEditorInput) {
+			InputStream in= null;
 			try {
-				return Platform.getContentTypeManager().getDescriptionFor(((IStorageEditorInput) element).getStorage().getContents(), ((IStorageEditorInput) element).getName(), IContentDescription.ALL);
+				in= ((IStorageEditorInput) element).getStorage().getContents();
+				return Platform.getContentTypeManager().getDescriptionFor(in, ((IStorageEditorInput) element).getName(), IContentDescription.ALL);
 			} catch (IOException x) {
+				IStatus s= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, TextEditorMessages.getString("StorageDocumentProvider.getContentDescription"), x); //$NON-NLS-1$
+				Platform.getLog(Platform.getBundle(PlatformUI.PLUGIN_ID)).log(s);
 			} catch (CoreException x) {
+				handleCoreException(x, TextEditorMessages.getString("StorageDocumentProvider.getContentDescription")); //$NON-NLS-1$
+			} finally {
+				if (in != null) {
+					try {
+						in.close();
+					} catch (IOException x) {
+					}
+				}
 			}
+		}
 		return super.getContentDescription(element);
 	}
 }
