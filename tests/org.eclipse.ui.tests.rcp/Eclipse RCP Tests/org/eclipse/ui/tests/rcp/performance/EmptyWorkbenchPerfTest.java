@@ -11,6 +11,7 @@
 package org.eclipse.ui.tests.rcp.performance;
 
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.test.performance.Dimension;
 import org.eclipse.test.performance.Performance;
 import org.eclipse.test.performance.PerformanceTestCase;
 import org.eclipse.ui.PlatformUI;
@@ -34,7 +35,7 @@ public class EmptyWorkbenchPerfTest extends PerformanceTestCase {
 
         String baseScenarioId = perf.getDefaultScenarioId(this);
         IPerformanceMeterArray meters = new IntervalMeters(perf, baseScenarioId, OpenWorkbenchIntervalMonitor.intervalNames);
-
+        tagAsSummary("Open RCP App", Dimension.CPU_TIME);
         for (int i = 0; i < REPEAT_COUNT; ++i ) {
             meters.start(OpenWorkbenchIntervalMonitor.firstInterval);
             int code = PlatformUI.createAndRunWorkbench(display,
@@ -71,6 +72,8 @@ public class EmptyWorkbenchPerfTest extends PerformanceTestCase {
         String baseScenarioId = perf.getDefaultScenarioId(this);
         IPerformanceMeterArray meters = new IntervalMeters(perf, baseScenarioId, RestoreWorkbenchIntervalMonitor.intervalNames);
 
+        tagAsSummary("Restore RCP App", Dimension.CPU_TIME);
+        
         for (int i = 0; i < REPEAT_COUNT; ++i ) {
             meters.start(RestoreWorkbenchIntervalMonitor.firstInterval);
             code = PlatformUI.createAndRunWorkbench(display,
