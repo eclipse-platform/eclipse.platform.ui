@@ -739,9 +739,9 @@ public class ActivityConstraints {
 		throws CoreException {
 		if (features == null)
 			return;
-		IFeatureReference[] irefs = feature.getIncludedFeatureReferences();
+		IIncludedFeatureReference[] irefs = feature.getIncludedFeatureReferences();
 		for (int i = 0; i < irefs.length; i++) {
-			IFeatureReference iref = irefs[i];
+			IIncludedFeatureReference iref = irefs[i];
 			IFeature ifeature = iref.getFeature(null);
 			VersionedIdentifier vid = ifeature.getVersionedIdentifier();
 			String id = vid.getIdentifier();
@@ -779,7 +779,10 @@ public class ActivityConstraints {
 				// All the features carried in a patch must
 				// already be present, unless this feature
 				// is a patch itself
-				if (!isPatch(ifeature)) {
+				
+				// 30849: optional feature does not
+				// need to be present.
+				if (!isPatch(ifeature) && iref.isOptional()==false) {
 					String msg =
 						UpdateUI.getFormattedMessage(
 							KEY_PATCH_MISSING_TARGET,

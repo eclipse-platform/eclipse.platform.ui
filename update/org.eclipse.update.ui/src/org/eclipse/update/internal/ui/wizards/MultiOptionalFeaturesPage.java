@@ -55,10 +55,13 @@ public class MultiOptionalFeaturesPage extends BannerPage implements IDynamicPag
 			IFeature oldFeature = job.getOldFeature();
 			IFeature newFeature = job.getFeature();
 			ArrayList list = new ArrayList();
+			boolean patch = UpdateUI.isPatch(newFeature);
 			FeatureHierarchyElement.computeElements(
 				oldFeature,
 				newFeature,
 				oldFeature != null,
+				patch,
+				config,
 				list);
 			elements = list.toArray();
 			for (int i = 0; i < elements.length; i++) {
@@ -82,9 +85,10 @@ public class MultiOptionalFeaturesPage extends BannerPage implements IDynamicPag
 				Object root = fe.getRoot();
 				boolean oldFeature = false;
 				if (root instanceof JobRoot) {
-					oldFeature =
-						((JobRoot) root).getJob().getOldFeature() != null;
-					return fe.getChildren(oldFeature);
+					PendingChange job = ((JobRoot)root).getJob();
+					boolean patch = UpdateUI.isPatch(job.getFeature());
+					oldFeature = job.getOldFeature() != null;
+					return fe.getChildren(oldFeature, patch, config);
 				}
 			}
 			return new Object[0];
@@ -258,7 +262,7 @@ public class MultiOptionalFeaturesPage extends BannerPage implements IDynamicPag
 				checked.add(element);
 			if (!element.isEditable())
 				grayed.add(element);
-			Object[] children = element.getChildren(update);
+			Object[] children = element.getChildren();
 			initializeStates(update, children, checked, grayed);
 		}
 	}
@@ -302,7 +306,7 @@ public class MultiOptionalFeaturesPage extends BannerPage implements IDynamicPag
 					selected.add(ref);
 			}
 		}
-		Object[] included = ref.getChildren(update);
+		Object[] included = ref.getChildren();
 		for (int i = 0; i < included.length; i++) {
 			FeatureHierarchyElement fe = (FeatureHierarchyElement) included[i];
 			selectAll(update, fe, selected, value);
@@ -350,12 +354,14 @@ public class MultiOptionalFeaturesPage extends BannerPage implements IDynamicPag
 		if (jobRoot == null)
 			return new IFeatureReference[0];
 
-		boolean update = jobRoot.getJob().getOldFeature() != null;
+		PendingChange job = jobRoot.getJob();
+		boolean update = job.getOldFeature() != null;
+		boolean patch = UpdateUI.isPatch(job.getFeature());
 		Object[] elements = jobRoot.getElements();
 		for (int i = 0; i < elements.length; i++) {
 			FeatureHierarchyElement element =
 				(FeatureHierarchyElement) elements[i];
-			element.addCheckedOptionalFeatures(update, set);
+			element.addCheckedOptionalFeatures(update, patch, config, set);
 		}
 		return (IFeatureReference[]) set.toArray(
 			new IFeatureReference[set.size()]);

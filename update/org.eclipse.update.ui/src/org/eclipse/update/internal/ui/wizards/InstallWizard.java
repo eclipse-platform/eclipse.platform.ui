@@ -28,6 +28,7 @@ public class InstallWizard extends Wizard {
 	private boolean successfulInstall = false;
 	private IInstallConfiguration config;
 	private boolean needLicensePage;
+	private boolean patch;
 	
 	public InstallWizard(PendingChange job) {
 		this(job, true);
@@ -41,6 +42,8 @@ public class InstallWizard extends Wizard {
 		setWindowTitle(UpdateUI.getString("InstallWizard.wtitle"));
 		this.job = job;
 		this.needLicensePage = needLicensePage;
+		IFeature feature = job.getFeature();
+		patch = UpdateUI.isPatch(feature);
 	}
 
 	public boolean isSuccessfulInstall() {
@@ -209,7 +212,7 @@ public class InstallWizard extends Wizard {
 			IFeature oldFeature = job.getOldFeature();
 			if (oldFeature != null && !job.isOptionalDelta()) {
 				if (optionalElements != null)
-					preserveOptionalState(config, targetSite, optionalElements);
+					preserveOptionalState(config, targetSite, patch, optionalElements);
 				boolean oldSuccess = unconfigure(config, oldFeature);
 				if (!oldSuccess) {
 					if (!isNestedChild(oldFeature))
@@ -344,12 +347,13 @@ public class InstallWizard extends Wizard {
 	static void preserveOptionalState(
 		IInstallConfiguration config,
 		IConfiguredSite targetSite,
+		boolean patch,
 		Object[] optionalElements) {
 		for (int i = 0; i < optionalElements.length; i++) {
 			FeatureHierarchyElement fe =
 				(FeatureHierarchyElement) optionalElements[i];
-			Object[] children = fe.getChildren(true);
-			preserveOptionalState(config, targetSite, children);
+			Object[] children = fe.getChildren(true, patch, config);
+			preserveOptionalState(config, targetSite, patch, children);
 			if (!fe.isEnabled(config)) {
 				IFeature newFeature = fe.getFeature();
 				try {

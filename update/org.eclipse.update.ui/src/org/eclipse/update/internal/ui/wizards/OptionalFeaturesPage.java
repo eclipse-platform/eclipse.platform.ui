@@ -33,6 +33,7 @@ public class OptionalFeaturesPage extends BannerPage {
 	private IInstallConfiguration config;
 	private PendingChange pendingChange;
 	private Object[] elements;
+	private boolean patch;
 
 	class TreeContentProvider
 		extends DefaultContentProvider
@@ -41,7 +42,7 @@ public class OptionalFeaturesPage extends BannerPage {
 		public Object[] getChildren(Object parent) {
 			if (parent instanceof FeatureHierarchyElement) {
 				FeatureHierarchyElement fe = (FeatureHierarchyElement) parent;
-				return fe.getChildren(pendingChange.getOldFeature() != null);
+				return fe.getChildren(pendingChange.getOldFeature() != null, patch, config);
 			}
 			return new Object[0];
 		}
@@ -89,6 +90,7 @@ public class OptionalFeaturesPage extends BannerPage {
 		this.config = config;
 		this.pendingChange = pendingChange;
 		UpdateUI.getDefault().getLabelProvider().connect(this);
+		patch = UpdateUI.isPatch(pendingChange.getFeature());
 	}
 
 	public void dispose() {
@@ -188,6 +190,8 @@ public class OptionalFeaturesPage extends BannerPage {
 			oldFeature,
 			newFeature,
 			oldFeature != null,
+			patch, 
+			config,
 			list);
 		elements = list.toArray();
 	}
@@ -214,7 +218,7 @@ public class OptionalFeaturesPage extends BannerPage {
 			if (!element.isEditable())
 				grayed.add(element);
 			Object[] children =
-				element.getChildren(pendingChange.getOldFeature() != null);
+				element.getChildren(pendingChange.getOldFeature() != null, patch, config);
 			initializeStates(children, checked, grayed);
 		}
 	}
@@ -248,7 +252,7 @@ public class OptionalFeaturesPage extends BannerPage {
 			}
 		}
 		Object[] included =
-			ref.getChildren(pendingChange.getOldFeature() != null);
+			ref.getChildren(pendingChange.getOldFeature() != null, patch, config);
 		for (int i = 0; i < included.length; i++) {
 			FeatureHierarchyElement fe = (FeatureHierarchyElement) included[i];
 			selectAll(fe, selected, value);
@@ -277,6 +281,8 @@ public class OptionalFeaturesPage extends BannerPage {
 				(FeatureHierarchyElement) elements[i];
 			element.addCheckedOptionalFeatures(
 				pendingChange.getOldFeature() != null,
+				patch, 
+				config,
 				set);
 		}
 		return (IFeatureReference[]) set.toArray(

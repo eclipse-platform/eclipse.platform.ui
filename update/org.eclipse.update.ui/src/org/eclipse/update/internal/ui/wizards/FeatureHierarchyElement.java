@@ -184,15 +184,20 @@ public class FeatureHierarchyElement {
 	 * Computes children by linking matching features from the
 	 * old feature's and new feature's hierarchy.
 	 */
-	public Object[] getChildren(boolean update) {
-		computeChildren(update);
+	public Object[] getChildren(boolean update, boolean patch, IInstallConfiguration config) {
+		computeChildren(update, patch, config);
 		return children.toArray();
+	}
+	
+	public Object [] getChildren() {
+		if (children!=null) return children.toArray();
+		return new Object[0];
 	}
 	/**
 	 * Computes children of this node.
 	 * @return true if some of the children are optional, false otherwise.
 	 */
-	public void computeChildren(boolean update) {
+	public void computeChildren(boolean update, boolean patch, IInstallConfiguration config) {
 		if (children == null) {
 			children = new ArrayList();
 			try {
@@ -202,7 +207,7 @@ public class FeatureHierarchyElement {
 				if (oldFeatureRef != null)
 					oldFeature = oldFeatureRef.getFeature(null);
 				optionalChildren =
-					computeElements(oldFeature, newFeature, update, children);
+					computeElements(oldFeature, newFeature, update, patch, config, children);
 				for (int i = 0; i < children.size(); i++) {
 					FeatureHierarchyElement element =
 						(FeatureHierarchyElement) children.get(i);
@@ -221,7 +226,7 @@ public class FeatureHierarchyElement {
 	/**
 	 * Adds checked optional features to the provided set.
 	 */
-	public void addCheckedOptionalFeatures(boolean update, Set set) {
+	public void addCheckedOptionalFeatures(boolean update, boolean patch, IInstallConfiguration config, Set set) {
 		if (isOptional() && isChecked()) {
 			// Do not add checked optional features
 			// if this is an update case but
@@ -230,10 +235,10 @@ public class FeatureHierarchyElement {
 			if (!update || !isFalseUpdate())
 				set.add(newFeatureRef);
 		}
-		Object[] list = getChildren(update);
+		Object[] list = getChildren(update, patch, config);
 		for (int i = 0; i < list.length; i++) {
 			FeatureHierarchyElement element = (FeatureHierarchyElement) list[i];
-			element.addCheckedOptionalFeatures(update, set);
+			element.addCheckedOptionalFeatures(update, patch, config, set);
 		}
 	}
 
@@ -247,6 +252,8 @@ public class FeatureHierarchyElement {
 		IFeature oldFeature,
 		IFeature newFeature,
 		boolean update,
+		boolean patch,
+		IInstallConfiguration config,
 		ArrayList list) {
 		Object[] oldChildren = null;
 		Object[] newChildren = getIncludedFeatures(newFeature);
@@ -277,13 +284,21 @@ public class FeatureHierarchyElement {
 						} catch (CoreException ex) {
 						}
 					}
+				} else if (patch) {
+					// 30849 - find the old reference in the
+					// configuration.
+					if (!UpdateUI.isPatch(newFeature)) {
+						oldRef = findPatchedReference(newRef, config);
+					}
 				}
 				// test if the old optional feature exists
 				if (oldRef != null
-					&& oldRef instanceof IIncludedFeatureReference
-					&& ((IIncludedFeatureReference) oldRef).isOptional()) {
+					&& (oldRef instanceof IIncludedFeatureReference
+						&& ((IIncludedFeatureReference) oldRef).isOptional())
+					|| patch) {
 					try {
-						oldRef.getFeature(null);
+						IFeature f = oldRef.getFeature(null);
+						if (f==null) oldRef = null;
 					} catch (CoreException e) {
 						// missing
 						oldRef = null;
@@ -294,7 +309,7 @@ public class FeatureHierarchyElement {
 				// If this is an update (old feature exists), 
 				// only check the new optional feature if the old exists.
 				// Otherwise, always check.
-				if (element.isOptional() && update) {
+				if (element.isOptional() && (update || patch)) {
 					element.setChecked(oldRef != null);
 					if (oldRef == null) {
 						// Does not have an old reference,
@@ -311,7 +326,7 @@ public class FeatureHierarchyElement {
 				} else
 					element.setChecked(true);
 				list.add(element);
-				element.computeChildren(update);
+				element.computeChildren(update, patch, config);
 				if (element.isOptional() || element.hasOptionalChildren())
 					optionalChildren = true;
 			}
@@ -346,6 +361,26 @@ public class FeatureHierarchyElement {
 		}
 		return false;
 	}
+
+	private static IFeatureReference findPatchedReference(
+		IFeatureReference newRef,
+		IInstallConfiguration config)
+		throws CoreException {
+		VersionedIdentifier vid = newRef.getVersionedIdentifier();
+		IConfiguredSite[] csites = config.getConfiguredSites();
+		for (int i = 0; i < csites.length; i++) {
+			IConfiguredSite csite = csites[i];
+			IFeatureReference[] refs = csite.getConfiguredFeatures();
+			for (int j = 0; j < refs.length; j++) {
+				IFeatureReference ref = refs[j];
+				VersionedIdentifier refVid = ref.getVersionedIdentifier();
+				if (vid.getIdentifier().equals(refVid.getIdentifier()))
+					return ref;
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * Returns included feature references for the given reference.
 	 */

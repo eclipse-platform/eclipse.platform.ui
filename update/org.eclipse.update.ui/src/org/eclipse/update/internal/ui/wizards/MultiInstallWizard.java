@@ -322,8 +322,10 @@ public class MultiInstallWizard extends Wizard {
 					monitor);
 			IFeature oldFeature = job.getOldFeature();
 			if (oldFeature != null && !job.isOptionalDelta()) {
-				if (optionalElements != null)
-					preserveOptionalState(config, targetSite, optionalElements);
+				if (optionalElements != null) {
+					boolean patch = UpdateUI.isPatch(feature);
+					preserveOptionalState(config, targetSite, patch, optionalElements);
+				}
 				boolean oldSuccess = unconfigure(config, oldFeature);
 				if (!oldSuccess) {
 					if (!isNestedChild(oldFeature))
@@ -462,12 +464,13 @@ public class MultiInstallWizard extends Wizard {
 	static void preserveOptionalState(
 		IInstallConfiguration config,
 		IConfiguredSite targetSite,
+		boolean patch,
 		Object[] optionalElements) {
 		for (int i = 0; i < optionalElements.length; i++) {
 			FeatureHierarchyElement fe =
 				(FeatureHierarchyElement) optionalElements[i];
-			Object[] children = fe.getChildren(true);
-			preserveOptionalState(config, targetSite, children);
+			Object[] children = fe.getChildren(true, patch, config);
+			preserveOptionalState(config, targetSite, patch, children);
 			if (!fe.isEnabled(config)) {
 				IFeature newFeature = fe.getFeature();
 				try {
