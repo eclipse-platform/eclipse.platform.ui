@@ -103,13 +103,8 @@ public final class CompoundCommandHandlerService
 
 				if (!handlersByCommandId.containsKey(commandId))
 					handlersByCommandId.put(commandId, handler);
-				else{
-					Object cachedHandler = handlersByCommandId.get(commandId);
-					
-					if (!(cachedHandler == null || cachedHandler.equals(handler)))
-						handlersByCommandId.put(commandId, null);
-				}
-					
+				else if (handler == null || !handler.equals(handlersByCommandId.get(commandId))) 
+					handlersByCommandId.put(commandId, null);
 			}
 		}
 
