@@ -204,11 +204,15 @@ public void update(boolean force) {
 				int srcIx= 3;
 				int destIx= 0;
 				int oldChildCount = ws.length;
+				Control previousControl = ws[srcIx - 1];
+				
 				for (int i = 0; i < items.length; ++i) {
 					src= (IContributionItem) items[i];
 					
-					if (! src.isVisible())	// if not active skip this one
+					// if not active skip this one
+					if (!src.isVisible())
 						continue;	// we don't bounce the destIx!
+						
 					// get corresponding item in SWT widget
 					if (srcIx < ws.length)
 						dest= (IContributionItem) ws[srcIx].getData();
@@ -217,6 +221,7 @@ public void update(boolean force) {
 						
 					if (dest != null && src.equals(dest)) {	// no change
 						//if (DEBUG) System.out.println("  no change: ");
+						previousControl = ws[srcIx];
 						srcIx++;
 					} else {
 						// src is a new one: insert it at next position
@@ -226,6 +231,11 @@ public void update(boolean force) {
 						Control[] newChildren = statusLine.getChildren();
 						for (int j = oldChildCount; j < newChildren.length; j++) {
 							newChildren[j].setData(src);
+							// To keep the Control order the same as the contribution item
+							// otherwise, if a contribution item in the middle becomes visible
+							// the control will appear at the end.
+							newChildren[j].moveBelow(previousControl);
+							previousControl = newChildren[j];
 						}
 						oldChildCount = newChildren.length;
 					}
