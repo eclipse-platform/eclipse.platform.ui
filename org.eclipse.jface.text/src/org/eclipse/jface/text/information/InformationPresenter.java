@@ -293,8 +293,11 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 		IRegion subject= provider.getSubject(fTextViewer, offset);
 		if (subject == null)
 			return;
-			
-		setInformation(provider.getInformation(fTextViewer, subject), computeArea(subject));
+
+		if (provider instanceof IInformationProviderExtension)
+			setInformation(((IInformationProviderExtension)provider).getElement(fTextViewer, subject), computeArea(subject));
+		else
+			setInformation(provider.getInformation(fTextViewer, subject), computeArea(subject));
 	}
 	
 	/**

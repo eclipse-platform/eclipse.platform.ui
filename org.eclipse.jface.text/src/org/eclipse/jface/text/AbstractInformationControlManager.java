@@ -112,7 +112,7 @@ abstract public class AbstractInformationControlManager {
 	private Rectangle fSubjectArea;
 	
 	/** The information to be presented */
-	private String fInformation;
+	private Object fInformation;
 	
 	/** Indicates whether the information control takes focus when visible */
 	private boolean fTakesFocusWhenVisible= false;
@@ -203,6 +203,23 @@ abstract public class AbstractInformationControlManager {
 	 * @param subjectArea the subject area
 	 */
 	protected final void setInformation(String information, Rectangle subjectArea) {
+		fInformation= information;
+		fSubjectArea= subjectArea;
+		presentInformation();
+	}
+
+	/**
+	 * Sets the parameters of the information to be displayed. These are the information itself and
+	 * the area for which the given information is valid. This so called subject area is a graphical
+	 * region of the information control's subject control. This method calls <code>presentInformation()</code>
+	 * to trigger the presentation of the computed information.
+	 * 
+	 * @since  2.1
+	 *
+	 * @param information the information
+	 * @param subjectArea the subject area
+	 */
+	protected final void setInformation(Object information, Rectangle subjectArea) {
 		fInformation= information;
 		fSubjectArea= subjectArea;
 		presentInformation();
@@ -571,7 +588,13 @@ abstract public class AbstractInformationControlManager {
 	 * been set using <code>setInformation</code>.
 	 */
 	protected void presentInformation() {
-		if (fSubjectArea != null && fInformation != null && fInformation.trim().length() > 0)
+		boolean hasContents= false;
+		if (fInformation instanceof String)
+			hasContents= ((String)fInformation).trim().length() > 0;
+		else
+			hasContents= (fInformation != null);
+		
+		if (fSubjectArea != null && hasContents)
 			internalShowInformationControl(fSubjectArea, fInformation);
 		else
 			hideInformationControl();
@@ -584,22 +607,26 @@ abstract public class AbstractInformationControlManager {
 	 * @param subjectArea the information area
 	 * @param information the information
 	 */
-	private void internalShowInformationControl(Rectangle subjectArea, String information) {
+	private void internalShowInformationControl(Rectangle subjectArea, Object information) {
 	
-		IInformationControl hoverControl= getInformationControl();
-		if (hoverControl != null) {
-			
-			Point sizeConstraints= computeSizeConstraints(fSubjectControl, hoverControl);
-			hoverControl.setSizeConstraints(sizeConstraints.x, sizeConstraints.y);
-			hoverControl.setInformation(information);
-			
-			if (hoverControl instanceof IInformationControlExtension) {
-				IInformationControlExtension extension= (IInformationControlExtension) hoverControl;
+		IInformationControl informationControl= getInformationControl();
+		if (informationControl != null) {
+
+			Point sizeConstraints= computeSizeConstraints(fSubjectControl, informationControl);
+			informationControl.setSizeConstraints(sizeConstraints.x, sizeConstraints.y);
+
+			if (informationControl instanceof IInformationControlExtension2)
+				((IInformationControlExtension2)informationControl).setInput(information);
+			else
+				informationControl.setInformation(information.toString());
+		
+			if (informationControl instanceof IInformationControlExtension) {
+				IInformationControlExtension extension= (IInformationControlExtension)informationControl;
 				if (!extension.hasContents())
 					return;
 			}
-			
-			Point size= hoverControl.computeSizeHint();
+
+			Point size= informationControl.computeSizeHint();
 			
 			if (fEnforceAsMinimalSize) {
 				if (size.x < sizeConstraints.x)
@@ -615,10 +642,10 @@ abstract public class AbstractInformationControlManager {
 					size.y= sizeConstraints.y;
 			}					
 					
-			hoverControl.setSize(size.x, size.y);
+			informationControl.setSize(size.x, size.y);
 			
 			Point location= computeInformationControlLocation(subjectArea, size);
-			hoverControl.setLocation(location);
+			informationControl.setLocation(location);
 			
 			showInformationControl(subjectArea);
 		}
