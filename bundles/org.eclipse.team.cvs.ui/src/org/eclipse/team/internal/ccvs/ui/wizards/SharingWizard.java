@@ -303,6 +303,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 					IWorkingSet workingSet = CVSUIPlugin.getWorkingSet(new IResource[] {project}, Policy.bind("SyncAction.workingSetName")); //$NON-NLS-1$)
 					view.setWorkingSet(workingSet);
 					view.selectSubscriber(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber());
+					view.setMode(ISynchronizeView.OUTGOING_MODE);
 				} else {
 					CVSUIPlugin.openError(getContainer().getShell(), Policy.bind("error"), Policy.bind("Error.unableToShowSyncView"), null); //$NON-NLS-1$ //$NON-NLS-2$
 				}

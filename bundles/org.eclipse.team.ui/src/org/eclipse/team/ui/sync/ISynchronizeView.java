@@ -15,18 +15,10 @@ import org.eclipse.team.core.subscribers.TeamSubscriber;
 import org.eclipse.ui.IWorkingSet;
 
 public interface ISynchronizeView {
-
-	 /**
-	  * View type constant (value 0) indicating that the synchronize view will be shown
-	  * as a tree.
-	  */
-	public static final int TREE_VIEW = 0;
-	
-	/**
-	 * View type constant (value 1) indicating that the synchronize view will be shown
-	 * as a table.
-	 */
-	public static final int TABLE_VIEW = 1;
+	public final static int INCOMING_MODE = 1;
+	public final static int OUTGOING_MODE = 2;
+	public final static int BOTH_MODE = 3;
+	public final static int CONFLICTING_MODE = 4;
 
 	/**
 	 * Called to set the current selection in the sync viewer for the given subscriber. The viewType 
@@ -63,4 +55,11 @@ public interface ISynchronizeView {
 	 * Sets the working set used by the view to the given working set
 	 */
 	public void setWorkingSet(IWorkingSet workingSet);
+	
+	/**
+	 * Sets the current mode shown in the sync view. Valid modes are:
+	 * INCOMING_MODE, OUTGOING_MODE, BOTH_MODE,
+	 * CONFLICTING_MODE
+	 */
+	public void setMode(int mode);
 }

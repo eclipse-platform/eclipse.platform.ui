@@ -32,9 +32,9 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.internal.ui.jobs.RefreshSubscriberInputJob;
 import org.eclipse.team.internal.ui.jobs.RefreshSubscriberJob;
-import org.eclipse.team.internal.ui.sync.actions.SyncViewerDirectionFilters;
 import org.eclipse.team.internal.ui.sync.views.SyncViewerTableSorter;
 import org.eclipse.team.ui.ISharedImages;
+import org.eclipse.team.ui.sync.ISynchronizeView;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -150,7 +150,7 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 		store.setDefault(IPreferenceIds.SYNCVIEW_COMPRESS_FOLDERS, true);
 		store.setDefault(IPreferenceIds.SYNCVIEW_VIEW_TABLESORT, SyncViewerTableSorter.COL_NAME);
 		store.setDefault(IPreferenceIds.SYNCVIEW_VIEW_TABLESORT_REVERSED, false);
-		store.setDefault(IPreferenceIds.SYNCVIEW_SELECTED_MODE, SyncViewerDirectionFilters.BOTH_MODE);
+		store.setDefault(IPreferenceIds.SYNCVIEW_SELECTED_MODE, ISynchronizeView.BOTH_MODE);
 		store.setDefault(IPreferenceIds.SYNCVIEW_DEFAULT_PERSPECTIVE, "org.eclipse.team.internal.ui.sync.views.TeamSynchronizingPerspective"); //$NON-NLS-1$
 	}
 	

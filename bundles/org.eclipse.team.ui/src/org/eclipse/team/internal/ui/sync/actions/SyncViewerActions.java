@@ -23,7 +23,6 @@ import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.sync.sets.SubscriberInput;
 import org.eclipse.team.internal.ui.sync.views.INavigableControl;
 import org.eclipse.team.internal.ui.sync.views.SynchronizeView;
-import org.eclipse.team.ui.sync.ISynchronizeView;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkingSet;
@@ -107,8 +106,8 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 		gotoNext = new NavigateAction(this, INavigableControl.NEXT);
 		gotoPrevious = new NavigateAction(this, INavigableControl.PREVIOUS);
 		
-		toggleLayoutFlatAction = new ToggleViewAction(getSyncView(), ISynchronizeView.TABLE_VIEW);
-		toggleLayoutHierarchicalAction = new ToggleViewAction(getSyncView(), ISynchronizeView.TREE_VIEW);
+		toggleLayoutFlatAction = new ToggleViewAction(getSyncView(), SynchronizeView.TABLE_VIEW);
+		toggleLayoutHierarchicalAction = new ToggleViewAction(getSyncView(), SynchronizeView.TREE_VIEW);
 		
 		collapseAll = new Action() {
 			public void run() {
@@ -292,5 +291,13 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 			PlatformUI.getWorkbench().getWorkingSetManager().addRecentWorkingSet(workingSet);
 		}
 		workingSetGroup.setWorkingSet(workingSet);
+	}
+
+	/**
+	 * Sets the current mode shown in the sync view.
+	 * @param mode the mode id
+	 */
+	public void setMode(int mode) {
+		directionsFilters.setCurrentMode(mode);		
 	}
 }

@@ -99,6 +99,18 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 	// The property id for <code>getCurrentViewType</code>.
 	public static final int PROP_VIEWTYPE = 1;
 	
+	/**
+	  * View type constant (value 0) indicating that the synchronize view will be shown
+	  * as a tree.
+	  */
+	public static final int TREE_VIEW = 0;
+
+	/**
+	 * View type constant (value 1) indicating that the synchronize view will be shown
+	 * as a table.
+	 */
+	public static final int TABLE_VIEW = 1;
+	
 	 //This view's id. The same value as in the plugin.xml.
 	 public static final String VIEW_ID = "org.eclipse.team.sync.views.SynchronizeView";  //$NON-NLS-1$
 				
@@ -125,7 +137,7 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 	private SyncViewerActions actions;
 	
 	private JobBusyCursor busyCursor;
-	
+
 	/**
 	 * Constructs a new SynchronizeView.
 	 */
@@ -808,5 +820,12 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 		} catch (TeamException e) {
 			Utils.handleError(getSite().getShell(), e, Policy.bind("SynchronizeView.16"), e.getMessage()); //$NON-NLS-1$
 		}
+	}
+	
+	/**
+	 * Allows clients to change the active sync mode.
+	 */
+	public void setMode(int mode) {
+		actions.setMode(mode);
 	}
 }
