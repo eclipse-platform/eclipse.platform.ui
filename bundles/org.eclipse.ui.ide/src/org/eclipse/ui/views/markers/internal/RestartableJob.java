@@ -38,6 +38,7 @@ public final class RestartableJob {
 	boolean restartNeeded = false;
 	private Object lock = new Object();
 	private IProgressMonitor currentMonitor = null;
+	IWorkbenchSiteProgressService progressService;
 	
 	/**
 	 * Constructs a new RestartableJob with the given name that will run the given
@@ -53,17 +54,16 @@ public final class RestartableJob {
 			IRunnableWithProgress newRunnable,
 			IWorkbenchSiteProgressService service) {
 		this.runnable = newRunnable;
+		progressService = service;
 
 		createJob(name);
-		if(service != null)
-			service.useHalfBusyCursor(theJob);
 		
 		theJob.addJobChangeListener(new JobChangeAdapter() {
 			public void done(IJobChangeEvent e) {
 				synchronized(lock) {
 					currentMonitor = null;
 					if (restartNeeded) {
-						theJob.schedule();
+						scheduleInService();
 					}
 				}
 			}
@@ -106,7 +106,7 @@ public final class RestartableJob {
 	public void restart() {
 		synchronized(lock) {
 			if (currentMonitor == null) {
-				theJob.schedule();
+				scheduleInService();
 			} else if (!restartNeeded) {
 				restartNeeded = true;
 				theJob.cancel();
@@ -120,7 +120,7 @@ public final class RestartableJob {
 	public void schedule() {
 		synchronized(lock) {
 			if (currentMonitor == null) {
-				theJob.schedule();
+				scheduleInService();
 			} else {
 				if (currentMonitor.isCanceled()) {
 					restartNeeded = true;
@@ -129,6 +129,17 @@ public final class RestartableJob {
 		}
 	}
 	
+	/**
+	 * Schedule theJob using the progress service if there
+	 * is one.
+	 */
+	private void scheduleInService() {
+		if(progressService == null)
+			theJob.schedule();
+		else
+			progressService.schedule(theJob,0,true);
+	}
+
 	/**
 	 * Cancels the job. If the job is currently running, it will be
 	 * terminated as soon as possible.
