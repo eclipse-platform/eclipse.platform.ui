@@ -38,6 +38,7 @@ public class AllTopicsPart extends AbstractFormPart implements IHelpPart {
 	private Composite container;
 
 	private TreeViewer treeViewer;
+
 	private TreeItem lastItem;
 
 	class TopicsProvider implements ITreeContentProvider {
@@ -125,7 +126,8 @@ public class AllTopicsPart extends AbstractFormPart implements IHelpPart {
 	 * @param toolkit
 	 * @param style
 	 */
-	public AllTopicsPart(Composite parent, final FormToolkit toolkit, IToolBarManager tbm) {
+	public AllTopicsPart(Composite parent, final FormToolkit toolkit,
+			IToolBarManager tbm) {
 		container = toolkit.createComposite(parent);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
@@ -141,7 +143,8 @@ public class AllTopicsPart extends AbstractFormPart implements IHelpPart {
 		treeViewer.setContentProvider(new TopicsProvider());
 		treeViewer.setLabelProvider(new TopicsLabelProvider());
 		treeViewer.getTree().setMenu(parent.getMenu());
-		treeViewer.getTree().setForeground(toolkit.getHyperlinkGroup().getForeground());
+		treeViewer.getTree().setForeground(
+				toolkit.getHyperlinkGroup().getForeground());
 		treeViewer.setInput(this);
 		treeViewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 		treeViewer.addTreeListener(new ITreeViewerListener() {
@@ -154,7 +157,7 @@ public class AllTopicsPart extends AbstractFormPart implements IHelpPart {
 
 			public void treeExpanded(TreeExpansionEvent event) {
 				Object obj = event.getElement();
-				
+
 				if (obj instanceof IToc) {
 					postUpdate(event.getElement());
 				}
@@ -165,81 +168,97 @@ public class AllTopicsPart extends AbstractFormPart implements IHelpPart {
 				doOpenSelection((IStructuredSelection) event.getSelection());
 			}
 		});
+		treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				handleSelectionChanged((IStructuredSelection) event
+						.getSelection());
+			}
+		});
 		treeViewer.getTree().addMouseListener(new MouseAdapter() {
+			long lastTime;
 			public void mouseUp(MouseEvent e) {
-				if (e.button!=1)
+				if (e.time-lastTime <=e.display.getDoubleClickTime())
 					return;
+				if (e.button != 1)
+					return;
+				lastTime = e.time;
 				Point p = new Point(e.x, e.y);
 				TreeItem item = treeViewer.getTree().getItem(p);
 				if (item != null) {
 					Object obj = item.getData();
 					if (obj instanceof IHelpResource) {
-						doOpen((IHelpResource)obj);
+						doOpen((IHelpResource) obj);
 					}
 				}
 			}
 		});
-		
+
 		treeViewer.getTree().addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent e) {
-				if (lastItem!=null)
-					repaintItem(e.gc, lastItem, true, toolkit);
+				if (lastItem == null)
+					return;
+				Rectangle bounds = lastItem.getBounds();
+				boolean selected = false;
+				TreeItem[] items = lastItem.getParent().getSelection();
+				for (int i = 0; i < items.length; i++) {
+					if (items[i].equals(lastItem)) {
+						selected = true;
+						break;
+					}
+				}
+				if (selected)
+					e.gc.setForeground(container.getDisplay().getSystemColor(
+							SWT.COLOR_LIST_SELECTION_TEXT));
+				else
+					e.gc.setForeground(toolkit.getHyperlinkGroup()
+							.getActiveForeground());
+				FontMetrics fm = e.gc.getFontMetrics();
+				int height = fm.getHeight();
+				int lineY = bounds.y + height;
+				e.gc.drawLine(bounds.x, lineY, bounds.x + bounds.width - 1,
+						lineY);
 			}
 		});
-		
+
 		treeViewer.getTree().addMouseTrackListener(new MouseTrackAdapter() {
 			public void mouseExit(MouseEvent e) {
-				if (lastItem!=null) {
+				if (lastItem != null) {
 					TreeItem item = lastItem;
 					lastItem = null;
 					item.setForeground(null);
 				}
 			}
 		});
-		
+
 		treeViewer.getTree().addMouseMoveListener(new MouseMoveListener() {
 			public void mouseMove(MouseEvent e) {
 				Point p = new Point(e.x, e.y);
 				TreeItem item = treeViewer.getTree().getItem(p);
 				if (item != null) {
-					Object obj = item.getData();
-					String href=null;
-					
-					if (obj instanceof ITopic) {
-						href = ((ITopic)obj).getHref();
-					}
-					
-					if (lastItem!=null) {
+					if (lastItem != null) {
 						if (!lastItem.equals(item)) {
 							lastItem.setForeground(null);
-							repaintItem(null, lastItem, false, toolkit);
-							AllTopicsPart.this.parent.handleLinkExited(null);
+							repaintItem(lastItem);
+							updateStatus(null);
 							lastItem = null;
-						}
-						else
+						} else
 							return;
 					}
-
-					if (href!=null) {
-						ITopic topic = (ITopic)obj;
-						treeViewer.getTree().setCursor(
-								FormsResources.getHandCursor());
-						item.setForeground(toolkit.getHyperlinkGroup().getActiveForeground());
-						lastItem = item;							
-						repaintItem(null, item, false, toolkit);
-						AllTopicsPart.this.parent.handleLinkEntered(new HyperlinkEvent(treeViewer.getTree(), topic.getHref(), topic.getLabel(), SWT.NULL));
-						return;
-					}
-					else {
-						AllTopicsPart.this.parent.handleLinkExited(null);
-						lastItem = null;
-					}
-				}
-				else if (lastItem!=null) {
+					Object obj = item.getData();
+					IHelpResource res = (IHelpResource) obj;
+					treeViewer.getTree().setCursor(
+							FormsResources.getHandCursor());
+					item.setForeground(toolkit.getHyperlinkGroup()
+							.getActiveForeground());
+					lastItem = item;
+					repaintItem(lastItem);
+					updateStatus((IHelpResource) obj);
+					return;
+				} else if (lastItem != null) {
 					lastItem.setForeground(null);
-					repaintItem(null, lastItem, false, toolkit);							
-					lastItem=null;
-					AllTopicsPart.this.parent.handleLinkExited(null);
+					repaintItem(lastItem);
+					lastItem = null;
+					updateStatus(null);
 				}
 				treeViewer.getTree().setCursor(null);
 			}
@@ -248,40 +267,12 @@ public class AllTopicsPart extends AbstractFormPart implements IHelpPart {
 
 	}
 
-	private void repaintItem(GC gc, TreeItem item, boolean hover, FormToolkit toolkit) {
+	private void repaintItem(TreeItem item) {
 		Rectangle bounds = item.getBounds();
-		Object obj = item.getData();
-		if (obj instanceof ITopic) {
-			ITopic res = (ITopic)obj;
-			if (res.getHref()==null) {
-				// no href - don't underline
-				hover=false;
-			}
-		}
-		if (hover) {
-			//gc.setFont(item.getParent().getFont());
-			boolean selected = false;
-			TreeItem[] items = item.getParent().getSelection();
-			for (int i=0; i<items.length; i++) {
-				if (items[i].equals(item)) {
-					selected=true;
-					break;
-				}
-			}
-			if (selected)
-				gc.setForeground(container.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT));
-			else
-				gc.setForeground(toolkit.getHyperlinkGroup().getActiveForeground());
-			FontMetrics fm = gc.getFontMetrics();
-			int height = fm.getHeight();
-			int lineY = bounds.y+height;
-			gc.drawLine(bounds.x, lineY, bounds.x+bounds.width-1, lineY);
-		}
-		else {
-			item.getParent().redraw(bounds.x, bounds.y, bounds.width, bounds.height, false);
-		}
+		item.getParent().redraw(bounds.x, bounds.y, bounds.width,
+				bounds.height, false);
 	}
-	
+
 	private void contributeToToolBar(IToolBarManager tbm) {
 		Action collapseAllAction = new Action() {
 			public void run() {
@@ -292,14 +283,16 @@ public class AllTopicsPart extends AbstractFormPart implements IHelpPart {
 				});
 			}
 		};
-		collapseAllAction.setImageDescriptor(HelpUIResources.getImageDescriptor(IHelpUIConstants.IMAGE_COLLAPSE_ALL));
-		collapseAllAction.setToolTipText(HelpUIResources.getString("AllTopicsPart.collapseAll.tooltip")); //$NON-NLS-1$
+		collapseAllAction.setImageDescriptor(HelpUIResources
+				.getImageDescriptor(IHelpUIConstants.IMAGE_COLLAPSE_ALL));
+		collapseAllAction.setToolTipText(HelpUIResources
+				.getString("AllTopicsPart.collapseAll.tooltip")); //$NON-NLS-1$
 		tbm.insertBefore("back", collapseAllAction); //$NON-NLS-1$
 		tbm.insertBefore("back", new Separator()); //$NON-NLS-1$
 	}
-	
+
 	private void doCollapseAll() {
-		Object [] expanded = treeViewer.getExpandedElements();
+		Object[] expanded = treeViewer.getExpandedElements();
 		treeViewer.collapseAll();
 		treeViewer.update(expanded, null);
 	}
@@ -344,15 +337,44 @@ public class AllTopicsPart extends AbstractFormPart implements IHelpPart {
 			doOpen(res);
 		}
 	}
-	
+
+	private void handleSelectionChanged(IStructuredSelection sel) {
+		IHelpResource res = (IHelpResource) sel.getFirstElement();
+		updateStatus(res, false);
+	}
+
+	private void updateStatus(IHelpResource res) {
+		updateStatus(res, true);
+	}
+
+	private void updateStatus(IHelpResource res, boolean defaultToSelection) {
+		if (defaultToSelection && res == null) {
+			IStructuredSelection ssel = (IStructuredSelection) treeViewer
+					.getSelection();
+			res = (IHelpResource) ssel.getFirstElement();
+		}
+		if (res != null) {
+			String label = res.getLabel();
+			String href = (res instanceof ITopic) ? res.getHref() : null;
+			AllTopicsPart.this.parent.handleLinkEntered(new HyperlinkEvent(
+					treeViewer.getTree(), href, label, SWT.NULL));
+		} else {
+			AllTopicsPart.this.parent.handleLinkExited(null);
+		}
+	}
+
 	private void doOpen(IHelpResource res) {
-		if (res instanceof IToc) {
-			//treeViewer.setExpandedState(res, true);
-			//postUpdate(res);
-		} else
+		if (res instanceof IToc
+				|| (res instanceof ITopic
+						&& ((ITopic) res).getSubtopics().length > 0 && res
+						.getHref() == null))
+			treeViewer.setExpandedState(res, !treeViewer.getExpandedState(res));
+		if (res instanceof IToc)
+			postUpdate(res);
+		else if (res.getHref() != null)
 			parent.showURL(res.getHref());
 	}
-	
+
 	private void postUpdate(final Object obj) {
 		treeViewer.getControl().getDisplay().asyncExec(new Runnable() {
 			public void run() {

@@ -18,7 +18,9 @@ import org.eclipse.help.IHelpResource;
 import org.eclipse.help.search.ISearchEngineResult;
 import org.eclipse.help.ui.internal.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.*;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -213,8 +215,11 @@ public class EngineResultSection {
 					public void run() {
 						updateResults(true);
 						if (scrollToBeginning) {
-							part.scrollToBeginning();
+							//part.scrollToBeginning();
 							searchResults.setFocus();
+							ScrolledComposite scomp = FormUtil.getScrolledComposite(section);
+							Point controlOrigin = FormUtil.getControlLocation(scomp, section);
+							scomp.setOrigin(0, controlOrigin.y);
 						}
 					}
 				});

@@ -34,6 +34,7 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 
 	private Action showExternalAction;
 	private Action printAction;
+	private String statusURL;
 
 	public BrowserPart(final Composite parent, FormToolkit toolkit,
 			IToolBarManager tbm) {
@@ -76,6 +77,14 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 				IStatusLineManager statusLine = BrowserPart.this.parent
 						.getStatusLineManager();
 				statusLine.setMessage(event.text);
+				if (event.text.indexOf("://")!= -1)
+					statusURL = event.text;
+			}
+		});
+		browser.addOpenWindowListener(new OpenWindowListener() {
+			public void open(WindowEvent event) {
+				if (statusURL!=null)
+					BrowserPart.this.parent.showExternalURL(BrowserPart.this.parent.toRelativeURL(statusURL));
 			}
 		});
 		contributeToToolBar(tbm);
@@ -132,8 +141,11 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 	 * @see org.eclipse.help.ui.internal.views.IHelpPart#setVisible(boolean)
 	 */
 	public void setVisible(boolean visible) {
-		if (browser != null)
+		if (browser != null) {
+			if (!visible)
+				browser.stop();
 			browser.setVisible(visible);
+		}
 	}
 
 	/*
@@ -160,13 +172,12 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 		if (url.indexOf("/topic/") != -1) { //$NON-NLS-1$
 			if (url.indexOf("noframes") == -1) { //$NON-NLS-1$
 				char sep = url.lastIndexOf('?') != -1 ? '&' : '?';
-				parent.showURL(url + sep + "noframes=true"); //$NON-NLS-1$
+				String newURL = url + sep + "noframes=true"; //$NON-NLS-1$
 				return true;
 			}
 		}
 		return false;
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 

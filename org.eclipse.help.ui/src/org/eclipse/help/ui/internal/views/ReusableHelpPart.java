@@ -209,15 +209,20 @@ public class ReusableHelpPart implements IHelpUIConstants {
 
 		public void setVisible(boolean visible) {
 			if (bars!=null) bars.clearGlobalActionHandlers();
+			ArrayList tabList = new ArrayList();
 			for (int i = 0; i < partRecs.size(); i++) {
 				PartRec rec = (PartRec) partRecs.get(i);
 				if (visible) {
 					createRecPart(rec);
 					hookGlobalAction(ActionFactory.PRINT.getId(), rec.part);
 					hookGlobalAction(ActionFactory.COPY.getId(), rec.part);
+					tabList.add(rec.part.getControl());
 				}
 				rec.part.setVisible(visible);
 			}
+			Composite parent = mform.getForm().getBody();
+			parent.setTabList((Control[])tabList.toArray(new Control[tabList.size()]));
+			
 			if (actionBars!=null) {
 				actionBars.clearGlobalActionHandlers();
 				if (visible) {
@@ -900,10 +905,18 @@ public class ReusableHelpPart implements IHelpUIConstants {
 	void handleLinkEntered(HyperlinkEvent e) {
 		IStatusLineManager mng = getStatusLineManager();
 		if (mng!=null) {
+			String label = e.getLabel();
 			String href = (String)e.getHref();
 			if (href!=null)
 				href = href.replaceAll("&", "&&"); //$NON-NLS-1$ //$NON-NLS-2$
-			mng.setMessage(href);
+			if (label!=null && href!=null) {
+				String message = HelpUIResources.getString("ReusableHelpPart.status", label, href);
+				mng.setMessage(message);
+			}
+			else if (label!=null)
+				mng.setMessage(label);
+			else
+				mng.setMessage(href);
 		}
 	}
 
