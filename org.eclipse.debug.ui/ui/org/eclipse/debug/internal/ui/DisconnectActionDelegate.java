@@ -63,13 +63,13 @@ public class DisconnectActionDelegate extends ControlActionDelegate {
 	 * @see ControlActionDelegate#getToolTipText()
 	 */
 	protected String getToolTipText() {
-		return DebugUIMessages.getString("DisconnectActionDelegate.&Disconnect_4"); //$NON-NLS-1$
+		return DebugUIMessages.getString("DisconnectActionDelegate.Disconnect_3"); //$NON-NLS-1$	
 	}
 
 	/*
 	 * @see ControlActionDelegate#getText()
 	 */
 	protected String getText() {
-		return DebugUIMessages.getString("DisconnectActionDelegate.Disconnect_5"); //$NON-NLS-1$
+		return DebugUIMessages.getString("DisconnectActionDelegate.&Disconnect_4"); //$NON-NLS-1$
 	}
 }
