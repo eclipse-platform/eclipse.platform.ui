@@ -51,11 +51,11 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
     /**
      * Tests launching Ant in a separate vm and having an extra classpath entry designated to be availble.
      */
-//    public void testExtraClasspathEntries() throws CoreException {
-//      	launch("extraClasspathEntry");
-//      	assertTrue("Incorrect number of messages logged for build. Should be 6. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 6);
-//      	assertTrue("Incorrect last message. Should start with Total time:. Message: " + ConsoleLineTracker.getMessage(4), ConsoleLineTracker.getMessage(4).startsWith("Total time:"));
-//    }
+    public void testExtraClasspathEntries() throws CoreException {
+      	launch("extraClasspathEntry");
+      	assertTrue("Incorrect number of messages logged for build. Should be 6. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 6);
+      	assertTrue("Incorrect last message. Should start with Total time:. Message: " + ConsoleLineTracker.getMessage(4), ConsoleLineTracker.getMessage(4).startsWith("Total time:"));
+    }
     
 	/**
 	 * Tests launching Ant in a separate vm and that the
