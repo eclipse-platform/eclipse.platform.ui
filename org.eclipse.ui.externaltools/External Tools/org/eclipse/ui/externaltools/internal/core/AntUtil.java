@@ -9,17 +9,18 @@ http://www.eclipse.org/legal/cpl-v05.html
  
 Contributors:
 **********************************************************************/
-import java.io.File;
+import java.io.*;
 
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.ProjectHelper;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
+import org.eclipse.ui.*;
 
 /**
  * General utility class dealing with Ant files
  */
 public final class AntUtil {
+	private static final String ATT_DEFAULT = "default"; //NON-NLS-1$
+	private static final String ATT_NAME = "name"; //NON-NLS-1$
+	private static final String TAG_TARGET = "target"; //NON-NLS-1$
 	// Holds the current monitor that the Ant build logger can access
 	private static IProgressMonitor monitor;
 	
@@ -31,25 +32,55 @@ public final class AntUtil {
 	}
 
 	/**
-	 * Creates an intialized Ant project for the given
-	 * Ant file. Returns <code>null</code> if file
-	 * is invalid Ant format.
-	 */	
-	public static Project createAntProject(IPath path) {
-		// create an ant project and initialize it
-		Project antProject = new Project();
-		antProject.init();		
-		antProject.setProperty("ant.file", path.toOSString()); //$NON-NLS-1$;
-
+	 * Returns the list of targets for the Ant file specified
+	 * by the provided IPath, or <code>null</code> if no file is
+	 * found or the file is not a valid Ant file.
+	 */
+	public static AntTargetList getTargetList(IPath path) {
+		IMemento memento = getMemento(path);
+		return getTargetList(memento);	
+	}
+	
+	/**
+	 * Returns an IMemento representing the Ant tool found in
+	 * the supplied IPath, or <code>null</code> if a file is not found.
+	 */
+	private static IMemento getMemento(IPath path) {
 		try {
-			ProjectHelper.configureProject(antProject, new File(path.toOSString()));
-		} catch (VirtualMachineError e) {
-			throw e;		// Let others handle this
-		} catch (Throwable t) {
-			return null;	// Assume invalid format problems
+			Reader reader = new FileReader(path.toFile());
+			return XMLMemento.createReadRoot(reader);
+		} catch (FileNotFoundException e) {
+			ExternalToolsPlugin.getDefault().log("Error: Ant file not found.", e); // $NON-NLS-1$
+			return null;
+		}
+	}
+
+	/**
+	 * Returns the list of targets of the Ant file represented by the
+	 * supplied IMemento, or <code>null</code> if the memento is null or
+	 * does not represent a valid Ant file.
+	 */
+	private static AntTargetList getTargetList(IMemento memento) {
+		if (memento == null)
+			return null;
+		AntTargetList targets = new AntTargetList();
+		
+		String defaultTarget = memento.getString(ATT_DEFAULT);
+		targets.setDefaultTarget(defaultTarget);
+		
+		IMemento[] targetMementos = memento.getChildren(TAG_TARGET);
+		for (int i=0; i < targetMementos.length; i++) {
+			IMemento targetMemento = targetMementos[i];
+			String target = targetMemento.getString(ATT_NAME);
+			targets.add(target);
 		}
 		
-		return antProject;
+		// If the file has no targets, then it is not a
+		// valid Ant file.
+		if (targets.getTargets().length == 0)
+			return null;
+		else
+			return targets;
 	}
 	
 	/**

@@ -9,13 +9,17 @@ http://www.eclipse.org/legal/cpl-v05.html
  
 Contributors:
 **********************************************************************/
+import java.util.*;
 import java.util.ArrayList;
 
 import org.apache.tools.ant.Project;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.TextViewer;
+import org.eclipse.jface.util.*;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.custom.StyleRange;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Display;
@@ -36,10 +40,10 @@ public class LogConsoleDocument {
 	static Color DEBUG_COLOR;
 	static Font ANT_FONT;
 	
-	// class variables that handle the colors and the font;
-	private static LogPropertyChangeListener changeListener = LogPropertyChangeListener.getInstance();
 	private static LogConsoleDocument instance = null;
 	
+	private LogPropertyChangeListener changeListener = new LogPropertyChangeListener();
+
 	/*package*/ ArrayList views = new ArrayList();
 	private Document document;
 	private ArrayList styleRanges;
@@ -190,7 +194,71 @@ public class LogConsoleDocument {
 				break;
 			default: 
 				addRangeStyle(start, end, LogConsoleDocument.INFO_COLOR);
+		}
 	}
-}
+
+	private class LogPropertyChangeListener implements IPropertyChangeListener {
+	
+		// private constructor to ensure the singleton
+		private LogPropertyChangeListener() {
+		}
+		
+		/**
+		 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
+		 */
+		public void propertyChange(PropertyChangeEvent event) {
+				String propertyName= event.getProperty();
+			
+				if (propertyName.equals(IPreferenceConstants.CONSOLE_ERROR_RGB)) {
+					Color temp = LogConsoleDocument.ERROR_COLOR;
+					LogConsoleDocument.ERROR_COLOR = ToolsPreferencePage.getPreferenceColor(IPreferenceConstants.CONSOLE_ERROR_RGB);
+					temp.dispose();
+					clearOutput();
+				} else if (propertyName.equals(IPreferenceConstants.CONSOLE_WARNING_RGB)) {
+					Color temp = LogConsoleDocument.WARN_COLOR;
+					LogConsoleDocument.WARN_COLOR = ToolsPreferencePage.getPreferenceColor(IPreferenceConstants.CONSOLE_WARNING_RGB);
+					temp.dispose();
+					clearOutput();
+				} else if (propertyName.equals(IPreferenceConstants.CONSOLE_INFO_RGB)) {
+					Color temp = LogConsoleDocument.INFO_COLOR;
+					LogConsoleDocument.INFO_COLOR = ToolsPreferencePage.getPreferenceColor(IPreferenceConstants.CONSOLE_INFO_RGB);
+					temp.dispose();
+					clearOutput();
+				} else if (propertyName.equals(IPreferenceConstants.CONSOLE_VERBOSE_RGB)) {
+					Color temp = LogConsoleDocument.VERBOSE_COLOR;
+					LogConsoleDocument.VERBOSE_COLOR = ToolsPreferencePage.getPreferenceColor(IPreferenceConstants.CONSOLE_VERBOSE_RGB);
+					temp.dispose();
+					clearOutput();
+				} else if (propertyName.equals(IPreferenceConstants.CONSOLE_DEBUG_RGB)) {
+					Color temp = LogConsoleDocument.DEBUG_COLOR;
+					LogConsoleDocument.DEBUG_COLOR = ToolsPreferencePage.getPreferenceColor(IPreferenceConstants.CONSOLE_DEBUG_RGB);
+					temp.dispose();
+					clearOutput();
+				} else if (propertyName.equals(IPreferenceConstants.CONSOLE_FONT)) {
+					FontData data= ToolsPreferencePage.getConsoleFontData();
+					Font temp= LogConsoleDocument.ANT_FONT;
+					LogConsoleDocument.ANT_FONT = new Font(Display.getCurrent(), data);
+					temp.dispose();
+					updateFont();	
+				} else
+					return;
+		}
+	
+		/**
+		 * Clears the output of all the consoles
+		 */
+		private void clearOutput() {
+			LogConsoleDocument.getInstance().clearOutput();
+		}
+		
+		/**
+		 * Updates teh font in all the consoles
+		 */
+		private void updateFont() {
+			for (Iterator iterator = LogConsoleDocument.getInstance().getViews().iterator(); iterator.hasNext();)
+				 ((LogConsoleView) iterator.next()).updateFont();
+		}
+	}
+
 
 }

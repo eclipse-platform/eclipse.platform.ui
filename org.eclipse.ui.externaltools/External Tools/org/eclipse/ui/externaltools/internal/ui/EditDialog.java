@@ -10,9 +10,8 @@ http://www.eclipse.org/legal/cpl-v05.html
 Contributors:
 **********************************************************************/
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
 
-import org.apache.tools.ant.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
@@ -22,12 +21,11 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.externaltools.internal.core.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.*;
+import org.eclipse.ui.externaltools.internal.core.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.*;
-import org.eclipse.swt.widgets.List;
 
 /**
  * Dialog box to enter the required information for running
@@ -638,8 +636,8 @@ public class EditDialog extends TitleAreaDialog {
 			list.add(ToolMessages.getString("EditDialog.varProjectXDirLabel")); //$NON-NLS-1$
 			
 			Path path = new Path(locationField.getText().trim());
-			Project project = AntUtil.createAntProject(path);
-			if (project != null)
+			AntTargetList targetList = AntUtil.getTargetList(path);
+			if (targetList != null)
 				list.add(ToolMessages.getString("EditDialog.varAntTargetLabel")); //$NON-NLS-1$
 			
 			return dialogArea;
@@ -820,18 +818,18 @@ public class EditDialog extends TitleAreaDialog {
 	private class TargetSelectionDialog extends SelectionDialog implements ICheckStateListener {
 		private ArrayList selectedTargets = new ArrayList();
 		private CheckboxTableViewer listViewer;
-		private Project project;
+		private AntTargetList targetList;
 		private AntTargetLabelProvider labelProvider = new AntTargetLabelProvider();	
 		
 		public TargetSelectionDialog(Shell parent, String location) {
 			super(parent);
 			IPath path = new Path(location);
-			project = AntUtil.createAntProject(path);
+			targetList = AntUtil.getTargetList(path);
 			setTitle(ToolMessages.getString("EditDialog.varAntTargetLabel")); //$NON-NLS-1$
 		}
 		
 		public void checkStateChanged(CheckStateChangedEvent e) {
-			Target checkedTarget = (Target)e.getElement();
+			String checkedTarget = (String)e.getElement();
 			if (e.getChecked())
 				selectedTargets.add(checkedTarget);
 			else
@@ -854,15 +852,15 @@ public class EditDialog extends TitleAreaDialog {
 			listViewer.getTable().setLayoutData(data);
 			listViewer.setSorter(new ViewerSorter() {
 				public int compare(Viewer viewer,Object o1,Object o2) {
-					return ((Target)o1).getName().compareTo(((Target)o2).getName());
+					return ((String)o1).compareTo((String)o2);
 				}
 			});
 			
-			if (project != null && project.getDefaultTarget() != null)
-				labelProvider.setDefaultTargetName(project.getDefaultTarget());
+			if (targetList != null && targetList.getDefaultTarget() != null)
+				labelProvider.setDefaultTargetName(targetList.getDefaultTarget());
 			listViewer.setLabelProvider(labelProvider);
 			listViewer.setContentProvider(new AntTargetContentProvider());
-			listViewer.setInput(project);
+			listViewer.setInput(targetList);
 			
 			listViewer.addCheckStateListener(this);
 			listViewer.refresh();
@@ -880,8 +878,7 @@ public class EditDialog extends TitleAreaDialog {
 		
 		protected String[] getTargetNames() {
 			String[] result = new String[selectedTargets.size()];
-			for (int i = 0; i < selectedTargets.size(); i++)
-				result[i] = ((Target) selectedTargets.get(i)).getName();
+			selectedTargets.toArray(result);
 			return result;
 		}
 	}

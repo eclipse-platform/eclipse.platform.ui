@@ -9,25 +9,13 @@ http://www.eclipse.org/legal/cpl-v05.html
  
 Contributors:
 **********************************************************************/
-import java.io.File;
-
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.ProjectHelper;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.externaltools.internal.core.AntUtil;
-import org.eclipse.ui.externaltools.internal.core.ExternalToolsPlugin;
-import org.eclipse.ui.externaltools.internal.core.IPreferenceConstants;
-import org.eclipse.ui.externaltools.internal.core.ToolMessages;
+import org.eclipse.ui.externaltools.internal.core.*;
 
 /**
  * Action to run an ant build file.
@@ -59,8 +47,8 @@ public class AntAction extends Action {
 
 		saveDirtyEditors();
 
-		Project project = AntUtil.createAntProject(file.getLocation());
-		if (project == null) {
+		AntTargetList targetList = AntUtil.getTargetList(file.getLocation());
+		if (targetList == null) {
 			MessageDialog.openError(
 				window.getShell(),
 				ToolMessages.getString("AntAction.runErrorTitle"), //$NON-NLS-1$;
@@ -68,7 +56,7 @@ public class AntAction extends Action {
 			return;
 		}
 
-		AntLaunchWizard wizard = new AntLaunchWizard(project, file, window);
+		AntLaunchWizard wizard = new AntLaunchWizard(targetList, file, window);
 		wizard.setNeedsProgressMonitor(true);
 		WizardDialog dialog = new WizardDialog(window.getShell(), wizard);
 		dialog.create();

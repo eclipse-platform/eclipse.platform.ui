@@ -11,7 +11,6 @@ Contributors:
 **********************************************************************/
 import java.util.ArrayList;
 
-import org.apache.tools.ant.Target;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.ui.externaltools.internal.core.ToolMessages;
 
@@ -26,10 +25,10 @@ public class AntTargetLabelProvider extends LabelProvider {
 	 * Method declared on ILabelProvider.
 	 */
 	public String getText(Object model) {
-		Target targetToDisplay = (Target) model;
+		String targetToDisplay = (String) model;
 		if (targetToDisplay != null) {
-			StringBuffer result = new StringBuffer(targetToDisplay.getName());
-			if (targetToDisplay.getName().equals(defaultTargetName)) {
+			StringBuffer result = new StringBuffer(targetToDisplay);
+			if (targetToDisplay.equals(defaultTargetName)) {
 				result.append(" ("); //$NON-NLS-1$;
 				result.append(ToolMessages.getString("AntTargetLabelProvider.defaultTarget")); //$NON-NLS-1$;
 				result.append(")"); //$NON-NLS-1$;

@@ -12,10 +12,6 @@ Contributors:
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.tools.ant.BuildEvent;
-import org.apache.tools.ant.BuildListener;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.Task;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -62,7 +58,7 @@ public class ProgramRunner extends ExternalToolsRunner {
 	 * Returns a runnable that is used to capture and print out a stream
 	 * from another process.
 	 */
-	private Runnable getRunnable(final InputStream input, final BuildListener listener, final int severity, final boolean[] finished) {
+/*	private Runnable getRunnable(final InputStream input, final BuildListener listener, final int severity, final boolean[] finished) {
 		return new Runnable() {
 			public void run() {
 				try {
@@ -89,4 +85,5 @@ public class ProgramRunner extends ExternalToolsRunner {
 			}
 		};
 	}
+*/
 }

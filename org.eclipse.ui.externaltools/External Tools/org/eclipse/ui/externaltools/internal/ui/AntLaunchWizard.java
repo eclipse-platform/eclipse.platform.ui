@@ -12,20 +12,13 @@ Contributors:
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
-import org.apache.tools.ant.Project;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.externaltools.internal.core.DefaultRunnerContext;
-import org.eclipse.ui.externaltools.internal.core.ExternalTool;
-import org.eclipse.ui.externaltools.internal.core.ExternalToolsPlugin;
-import org.eclipse.ui.externaltools.internal.core.ToolMessages;
-import org.eclipse.ui.externaltools.internal.core.ToolUtil;
+import org.eclipse.ui.externaltools.internal.core.*;
 
 /**
  * The wizard to run an Ant script file when the Run Ant...
@@ -43,7 +36,7 @@ public class AntLaunchWizard extends Wizard {
 	/**
 	 * The Ant project described in the xml file.
 	 */
-	private Project antProject = null;
+	private AntTargetList targetList = null;
 
 	/**
 	 * The tool script representing Ant script
@@ -73,9 +66,9 @@ public class AntLaunchWizard extends Wizard {
 	 * @param antProject
 	 * @param antFile
 	 */
-	public AntLaunchWizard(Project antProject, IFile antFile, IWorkbenchWindow window) {
+	public AntLaunchWizard(AntTargetList targetList, IFile antFile, IWorkbenchWindow window) {
 		super();
-		this.antProject = antProject;
+		this.targetList = targetList;
 		this.antFile = antFile;
 		this.window = window;
 		String name = antFile.getFullPath().toString();
@@ -94,7 +87,7 @@ public class AntLaunchWizard extends Wizard {
 	 * Method declared on IWizard.
 	 */
 	public void addPages() {
-		page1 = new AntLaunchWizardPage(antProject);
+		page1 = new AntLaunchWizardPage(targetList);
 		addPage(page1);
 		
 		String args = antTool.getArguments();
