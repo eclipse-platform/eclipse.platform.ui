@@ -13,7 +13,7 @@ package org.eclipse.ui.externaltools.internal.ant.editor.support;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.ui.externaltools.internal.ant.editor.outline.ILocationProvider;
+import org.eclipse.ant.ui.internal.editor.outline.ILocationProvider;
 
 
 public class TestLocationProvider implements ILocationProvider {
@@ -25,7 +25,7 @@ public class TestLocationProvider implements ILocationProvider {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.externaltools.internal.ant.editor.outline.ILocationProvider#getLocation()
+	 * @see org.eclipse.ant.ui.internal.editor.outline.ILocationProvider#getLocation()
 	 */
 	public IPath getLocation() {
 		return new Path(buildFileName);

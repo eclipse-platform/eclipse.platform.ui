@@ -38,7 +38,7 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
-import org.eclipse.ui.externaltools.internal.ant.editor.AntEditorSaxDefaultHandler;
+import org.eclipse.ant.ui.internal.editor.AntEditorSaxDefaultHandler;
 import org.eclipse.ui.externaltools.internal.ant.editor.support.TestTextCompletionProcessor;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Comment;
@@ -194,7 +194,7 @@ public class CodeCompletionTest extends TestCase {
 		assertTrue(tempFile.exists());
         tempProject.setUserProperty("ant.file", tempFile.getAbsolutePath());
         try {
-            org.eclipse.ui.externaltools.internal.ant.editor.utils.ProjectHelper.configureProject(tempProject, tempFile);  // File will be parsed here
+            org.eclipse.ant.ui.internal.editor.utils.ProjectHelper.configureProject(tempProject, tempFile);  // File will be parsed here
         }
         catch(BuildException e) {
             // ignore a build exception on purpose 
@@ -220,7 +220,7 @@ public class CodeCompletionTest extends TestCase {
 		tempStrBuf.append("<property file=\"buildtest1.properties\" />\n");
         tempStrBuf.append("<target name=\"main\" depends=\"properties\">\n");
         try {
-            org.eclipse.ui.externaltools.internal.ant.editor.utils.ProjectHelper.configureProject(tempProject, tempFile, tempStrBuf.toString());  // File will be parsed here
+            org.eclipse.ant.ui.internal.editor.utils.ProjectHelper.configureProject(tempProject, tempFile, tempStrBuf.toString());  // File will be parsed here
         }
         catch (BuildException e) {
             //ignore a build exception on purpose

@@ -17,7 +17,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.eclipse.ui.externaltools.internal.ant.editor.TaskDescriptionProvider;
+import org.eclipse.ant.ui.internal.editor.TaskDescriptionProvider;
 
 /**
  * Tests the taks description provider.

@@ -11,27 +11,27 @@
 
 package org.eclipse.ui.externaltools.internal.ant.editor.support;
 
-import org.eclipse.ui.externaltools.internal.ant.editor.outline.IProblem;
-import org.eclipse.ui.externaltools.internal.ant.editor.outline.IProblemRequestor;
+import org.eclipse.ant.ui.internal.editor.outline.IProblem;
+import org.eclipse.ant.ui.internal.editor.outline.IProblemRequestor;
 
 public class TestProblemRequestor implements IProblemRequestor {
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.externaltools.internal.ant.editor.outline.IProblemRequestor#acceptProblem(org.eclipse.ui.externaltools.internal.ant.editor.outline.IProblem)
+	 * @see org.eclipse.ant.ui.internal.editor.outline.IProblemRequestor#acceptProblem(org.eclipse.ant.ui.internal.editor.outline.IProblem)
 	 */
 	public void acceptProblem(IProblem problem) {
 
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.externaltools.internal.ant.editor.outline.IProblemRequestor#beginReporting()
+	 * @see org.eclipse.ant.ui.internal.editor.outline.IProblemRequestor#beginReporting()
 	 */
 	public void beginReporting() {
 
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.externaltools.internal.ant.editor.outline.IProblemRequestor#endReporting()
+	 * @see org.eclipse.ant.ui.internal.editor.outline.IProblemRequestor#endReporting()
 	 */
 	public void endReporting() {
 

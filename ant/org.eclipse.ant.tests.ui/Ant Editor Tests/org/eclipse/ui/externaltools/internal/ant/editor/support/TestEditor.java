@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.externaltools.internal.ant.editor.support;
 
-import org.eclipse.ui.externaltools.internal.ant.editor.AntEditor;
+import org.eclipse.ant.ui.internal.editor.AntEditor;
 
 public class TestEditor extends AntEditor {
 	

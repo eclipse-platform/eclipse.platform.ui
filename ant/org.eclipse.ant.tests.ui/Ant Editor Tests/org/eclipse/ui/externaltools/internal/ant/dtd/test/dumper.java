@@ -18,12 +18,12 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 
-import org.eclipse.ui.externaltools.internal.ant.dtd.IDfm;
-import org.eclipse.ui.externaltools.internal.ant.dtd.IElement;
-import org.eclipse.ui.externaltools.internal.ant.dtd.IModel;
-import org.eclipse.ui.externaltools.internal.ant.dtd.ISchema;
-import org.eclipse.ui.externaltools.internal.ant.dtd.ParseError;
-import org.eclipse.ui.externaltools.internal.ant.dtd.Parser;
+import org.eclipse.ant.ui.internal.dtd.IDfm;
+import org.eclipse.ant.ui.internal.dtd.IElement;
+import org.eclipse.ant.ui.internal.dtd.IModel;
+import org.eclipse.ant.ui.internal.dtd.ISchema;
+import org.eclipse.ant.ui.internal.dtd.ParseError;
+import org.eclipse.ant.ui.internal.dtd.Parser;
 
 /**
  * This class is intended to be used from the command line (hence the

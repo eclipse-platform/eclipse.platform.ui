@@ -17,7 +17,7 @@ import java.io.IOException;
 import junit.framework.TestCase;
 
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
-import org.eclipse.ui.externaltools.internal.ant.editor.AntEditorCompletionProcessor;
+import org.eclipse.ant.ui.internal.editor.AntEditorCompletionProcessor;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.w3c.dom.Element;
 

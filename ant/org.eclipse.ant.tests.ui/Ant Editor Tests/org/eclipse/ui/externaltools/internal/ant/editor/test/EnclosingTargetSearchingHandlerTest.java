@@ -27,7 +27,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.eclipse.ui.externaltools.internal.ant.editor.EnclosingTargetSearchingHandler;
+import org.eclipse.ant.ui.internal.editor.EnclosingTargetSearchingHandler;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;

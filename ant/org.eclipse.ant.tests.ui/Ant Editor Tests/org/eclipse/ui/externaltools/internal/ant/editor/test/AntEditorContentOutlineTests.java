@@ -26,12 +26,12 @@ import junit.framework.TestSuite;
 
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.ui.externaltools.internal.ant.editor.outline.AntModel;
-import org.eclipse.ui.externaltools.internal.ant.editor.outline.XMLCore;
+import org.eclipse.ant.ui.internal.editor.outline.AntModel;
+import org.eclipse.ant.ui.internal.editor.outline.XMLCore;
 import org.eclipse.ui.externaltools.internal.ant.editor.support.TestLocationProvider;
 import org.eclipse.ui.externaltools.internal.ant.editor.support.TestUtils;
-import org.eclipse.ui.externaltools.internal.ant.editor.xml.IAntEditorConstants;
-import org.eclipse.ui.externaltools.internal.ant.editor.xml.XmlElement;
+import org.eclipse.ant.ui.internal.editor.xml.IAntEditorConstants;
+import org.eclipse.ant.ui.internal.editor.xml.XmlElement;
 import org.xml.sax.SAXException;
 
 /**

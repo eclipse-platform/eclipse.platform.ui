@@ -17,8 +17,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 
+import org.eclipse.ant.ui.internal.model.AntUIPlugin;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 
 public class TestUtils {
 
@@ -27,7 +27,7 @@ public class TestUtils {
 		try {
 			reader = new InputStreamReader(inputStream, ResourcesPlugin.getEncoding());
 		} catch (UnsupportedEncodingException e) {
-			ExternalToolsPlugin.getDefault().log(e);
+			AntUIPlugin.log(e);
 			return ""; //$NON-NLS-1$
 		}
 		BufferedReader tempBufferedReader = new BufferedReader(reader);
@@ -48,7 +48,7 @@ public class TestUtils {
 				tempLine = tempBufferedReader.readLine();
 			}
 		} catch (IOException e) {
-			ExternalToolsPlugin.getDefault().log(e);
+			AntUIPlugin.log(e);
 			return null;
 		}
 
