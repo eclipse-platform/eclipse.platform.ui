@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -59,6 +60,7 @@ import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.ActiveShellExpression;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
@@ -68,7 +70,6 @@ import org.eclipse.ui.IPersistable;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.ISelectionService;
-import org.eclipse.ui.ISources;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -77,7 +78,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.LegacyHandlerSubmissionExpression;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.application.ActionBarAdvisor;
@@ -472,15 +472,14 @@ public class WorkbenchWindow extends ApplicationWindow implements
         
         final Shell shell = getShell();
         if (shell != null) {
+			final Expression expression = new ActiveShellExpression(shell);
             for (Iterator iterator = handlersByCommandId.entrySet().iterator(); iterator
                     .hasNext();) {
                 Map.Entry entry = (Map.Entry) iterator.next();
                 String commandId = (String) entry.getKey();
                 IHandler handler = (IHandler) entry.getValue();
 				newHandlers.add(handlerService.activateHandler(commandId,
-						handler, new LegacyHandlerSubmissionExpression(null,
-								shell, null), ISources.ACTIVE_SHELL
-								| ISources.ACTIVE_WORKBENCH_WINDOW));
+						handler, expression, ActiveShellExpression.SOURCES));
             }
         }
         

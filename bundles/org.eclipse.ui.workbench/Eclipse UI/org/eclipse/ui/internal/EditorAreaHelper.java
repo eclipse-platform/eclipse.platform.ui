@@ -20,12 +20,11 @@ import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.ActiveShellExpression;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageLayout;
-import org.eclipse.ui.ISources;
-import org.eclipse.ui.LegacyHandlerSubmissionExpression;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
@@ -62,9 +61,8 @@ public class EditorAreaHelper {
 				.getWorkbench().getAdapter(IHandlerService.class);
 		openEditorDropDownHandlerActivation = handlerService.activateHandler(
 				"org.eclipse.ui.window.openEditorDropDown", //$NON-NLS-1$
-				openEditorDropDownHandler,
-				new LegacyHandlerSubmissionExpression(null, shell, null),
-				ISources.ACTIVE_SHELL | ISources.ACTIVE_WORKBENCH_WINDOW);
+				openEditorDropDownHandler, new ActiveShellExpression(shell),
+				ActiveShellExpression.SOURCES);;
     }
 
     /**

@@ -30,9 +30,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.ui.ActiveShellExpression;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.ISources;
-import org.eclipse.ui.LegacyHandlerSubmissionExpression;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
@@ -292,8 +292,8 @@ class PreferencePageHistory {
 				.getWorkbench().getAdapter(IHandlerService.class);
 		final IHandlerActivation activation = handlerService.activateHandler(
 				action.getActionDefinitionId(), handler,
-				new LegacyHandlerSubmissionExpression(null, dialog.getShell(),
-						null), ISources.ACTIVE_SHELL);
+				new ActiveShellExpression(dialog.getShell()),
+				ISources.ACTIVE_SHELL);
 		activations.add(activation);
 	}
 

@@ -60,6 +60,7 @@ import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.ActiveShellExpression;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorLauncher;
@@ -73,13 +74,11 @@ import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISaveablePart2;
-import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPart2;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.LegacyHandlerSubmissionExpression;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
@@ -329,9 +328,10 @@ public class EditorManager implements IExtensionRemovalHandler {
 			// Assign the handler for the pin editor keyboard shortcut.
 			final IHandlerService handlerService = (IHandlerService) window
 					.getWorkbench().getAdapter(IHandlerService.class);
-			pinEditorHandlerActivation = handlerService
-					.activateHandler(
-							"org.eclipse.ui.window.pinEditor", pinEditorHandler, new LegacyHandlerSubmissionExpression(null, shell, null), ISources.ACTIVE_SHELL | ISources.ACTIVE_WORKBENCH_WINDOW); //$NON-NLS-1$
+			pinEditorHandlerActivation = handlerService.activateHandler(
+					"org.eclipse.ui.window.pinEditor", pinEditorHandler, //$NON-NLS-1$
+					new ActiveShellExpression(shell),
+					ActiveShellExpression.SOURCES);
         }
     }
 
