@@ -437,7 +437,13 @@ public final class WorkbenchActionBuilder {
 		menu.add(workbenchEditorsAction);
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS + "end")); //$NON-NLS-1$
-		menu.add(openPreferencesAction);
+
+        //Only add it if role filtering is on
+        if (categoryAction != null) 
+            menu.add(categoryAction);
+
+        menu.add(openPreferencesAction);
+                
 		menu.add(ContributionItemFactory.OPEN_WINDOWS.create(getWindow()));
 		return menu;
 	}
@@ -504,11 +510,7 @@ public final class WorkbenchActionBuilder {
 		if (quickStartAction != null)
 			menu.add(quickStartAction);
 
-		//Only add it if role filtering is on
-		if (categoryAction != null) 
-            menu.add(categoryAction);
-        
-		// See if a tips and tricks page is specified
+        // See if a tips and tricks page is specified
 		if (tipsAndTricksAction != null)
 			menu.add(tipsAndTricksAction);
 		menu.add(new GroupMarker(IWorkbenchActionConstants.HELP_START));
