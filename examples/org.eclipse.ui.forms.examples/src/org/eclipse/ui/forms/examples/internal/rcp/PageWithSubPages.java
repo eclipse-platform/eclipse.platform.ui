@@ -49,7 +49,7 @@ public class PageWithSubPages extends FormPage {
 		tabFolder = new CTabFolder(form.getBody(), SWT.FLAT|SWT.TOP);
 		toolkit.adapt(tabFolder, true, true);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.heightHint = tabFolder.getTabHeight();
+		gd.heightHint = 0;
 		tabFolder.setLayoutData(gd);
 		Color selectedColor = toolkit.getColors().getColor(FormColors.SEPARATOR);
 		tabFolder.setSelectionBackground(new Color[] {selectedColor, toolkit.getColors().getBackground()}, new int[] {50});

@@ -21,8 +21,8 @@ import org.eclipse.ui.forms.widgets.*;
  * @since 3.0
  */
 public abstract class FormWizardPage extends WizardPage {
-	protected FormToolkit toolkit;
-	protected WizardForm managedForm;
+	private FormToolkit toolkit;
+	private WizardForm managedForm;
 	
 	public FormWizardPage(String id, FormToolkit toolkit) {
 		super(id);
@@ -38,7 +38,7 @@ public abstract class FormWizardPage extends WizardPage {
 		form.setExpandHorizontal(true);
 		form.setExpandVertical(true);
 		managedForm = new WizardForm(this, toolkit, form);
-		createFormContents(form.getBody());
+		createFormContents(form.getBody(), toolkit);
 		setControl(form);
 	}
 	
@@ -47,5 +47,13 @@ public abstract class FormWizardPage extends WizardPage {
 		super.dispose();
 	}
 	
-	protected abstract void createFormContents(Composite form);
+	protected FormToolkit getToolkit() {
+		return toolkit;
+	}
+	
+	protected WizardForm getForm() {
+		return managedForm;
+	}
+	
+	protected abstract void createFormContents(Composite form, FormToolkit toolkit);
 }

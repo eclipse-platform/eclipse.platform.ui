@@ -17,6 +17,8 @@
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.ui.forms"/>
       <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.ui.views"/>
+      <import plugin="org.eclipse.help"/>
    </requires>
 
 
@@ -25,10 +27,16 @@
       <editor
             name="%baseEditor"
             default="true"
-            extensions="sef"
             icon="icons/file_obj.gif"
             class="org.eclipse.ui.forms.examples.internal.rcp.SimpleFormEditor"
             id="org.eclipse.ui.forms.examples.base-editor">
+      </editor>
+      <editor
+            name="Wizard editor"
+            default="true"
+            icon="icons/file_obj.gif"
+            class="org.eclipse.ui.forms.examples.wizards.WizardFormEditorWithOutline"
+            id="org.eclipse.ui.forms.examples.wizard-editor">
       </editor>
    </extension>
    <extension
@@ -48,6 +56,12 @@
                class="org.eclipse.ui.forms.examples.internal.rcp.OpenSimpleFormEditorAction"
                menubarPath="org.eclipse.ui.forms.examples.menu/group"
                id="org.eclipse.ui.forms.examples.simple">
+         </action>
+         <action
+               label="Form Editor Wizard"
+               class="org.eclipse.ui.forms.examples.wizards.OpenEditorWizardAction"
+               menubarPath="org.eclipse.ui.forms.examples.menu/group"
+               id="org.eclipse.ui.forms.examples.editor-wizard">
          </action>
       </actionSet>
    </extension>

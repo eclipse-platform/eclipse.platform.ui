@@ -38,12 +38,13 @@ public class FormWizardDialog extends WizardDialog {
 	 */
 	public FormWizardDialog(
 		Shell shell,
-		FormWizard wizard,
+		FormWizard wizard, 
 		FormColors colors) {
 		super(shell, wizard);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		this.colors = colors;
 	}
+	
 	/**
 	 * Extends the parent method by adjusting the colors and margins to fit the
 	 * forms.
@@ -91,5 +92,17 @@ public class FormWizardDialog extends WizardDialog {
 				}
 			}
 		}
+	}
+	/**
+	 * @return Returns the colors.
+	 */
+	public FormColors getColors() {
+		return colors;
+	}
+	/**
+	 * @param colors The colors to set.
+	 */
+	public void setColors(FormColors colors) {
+		this.colors = colors;
 	}
 }

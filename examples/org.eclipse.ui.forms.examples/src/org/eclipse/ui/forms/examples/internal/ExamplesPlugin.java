@@ -38,6 +38,8 @@ public class ExamplesPlugin extends AbstractUIPlugin {
 	public static final String IMG_HORIZONTAL = "horizontal";
 	public static final String IMG_VERTICAL = "vertical";
 	public static final String IMG_SAMPLE = "sample";
+	public static final String IMG_WIZBAN = "wizban";
+	public static final String IMG_HELP_TOPIC = "help-topic";
 
 	/**
 	 * The constructor.
@@ -58,6 +60,8 @@ public class ExamplesPlugin extends AbstractUIPlugin {
 		registerImage(registry, IMG_HORIZONTAL, "th_horizontal.gif");
 		registerImage(registry, IMG_VERTICAL, "th_vertical.gif");
 		registerImage(registry, IMG_SAMPLE, "sample.gif");
+		registerImage(registry, IMG_WIZBAN, "newprj_wiz.gif");
+		registerImage(registry, IMG_HELP_TOPIC, "help_topic.gif");
 	}
 
 	private void registerImage(ImageRegistry registry, String key,

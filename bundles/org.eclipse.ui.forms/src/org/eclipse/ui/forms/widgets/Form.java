@@ -60,6 +60,8 @@ public class Form extends Composite {
 	private int TITLE_GAP = 5;
 	private Image backgroundImage;
 	private boolean backgroundImageTiled;
+	private boolean backgroundImageClipped=true;
+	private int backgroundImageAlignment=SWT.LEFT;
 	private String text;
 	private Composite body;
 	private ToolBarManager toolBarManager;
@@ -108,6 +110,11 @@ public class Form extends Composite {
 					height = Math.max(height, tbsize.y);
 				}
 			}
+			if (backgroundImage!=null && !backgroundImageClipped) {
+				Rectangle ibounds = backgroundImage.getBounds();
+				if (height < ibounds.height)
+					height = ibounds.height;
+			}
 			if (height != 0)
 				height += TITLE_VMARGIN * 2;
 			if (width != 0)
@@ -154,6 +161,11 @@ public class Form extends Composite {
 				gc.dispose();
 				if (tbsize != null)
 					height = Math.max(tbsize.y, height);
+			}
+			if (backgroundImage!=null && !backgroundImageClipped) {
+				Rectangle ibounds = backgroundImage.getBounds();
+				if (height < ibounds.height)
+					height = ibounds.height;
 			}
 			if (height > 0)
 				height += TITLE_VMARGIN * 2;
@@ -303,10 +315,12 @@ public class Form extends Composite {
 	private void onPaint(GC gc) {
 		if (text==null) return;
 		Rectangle carea = getClientArea();
-
 		gc.setFont(getFont());
 		Point textSize = FormUtil.computeWrapSize(gc, text, carea.width-TITLE_HMARGIN-TITLE_HMARGIN);
 		int theight = TITLE_HMARGIN + textSize.y + TITLE_HMARGIN + TITLE_GAP;
+		if (backgroundImage!=null && !backgroundImageClipped) {
+			theight = Math.max(theight, backgroundImage.getBounds().height);
+		}
 		Image buffer= new Image(getDisplay(), carea.width, theight);
 		GC bufferGC = new GC(buffer, gc.getStyle());
 		bufferGC.setBackground(getBackground());
@@ -326,8 +340,8 @@ public class Form extends Composite {
 		buffer.dispose();
 	}
 	private void drawBackgroundImage(GC gc, int width, int height) {
+		Rectangle ibounds = backgroundImage.getBounds();		
 		if (backgroundImageTiled) {
-			Rectangle ibounds = backgroundImage.getBounds();
 			int x=0;
 			int y=0;
 			// loop and tile image until the entire title area is covered
@@ -343,9 +357,16 @@ public class Form extends Composite {
 			}
 		}
 		else {
-			gc.drawImage(backgroundImage, 0, 0);
+			switch (backgroundImageAlignment) {
+				case SWT.LEFT:
+					gc.drawImage(backgroundImage, 0, 0);
+					break;
+				case SWT.RIGHT:
+					Rectangle clientArea = getClientArea();
+					gc.drawImage(backgroundImage, width-ibounds.width, 0);
+					break;
+			}
 		}
-		
 	}
 	/**
 	 * @return Returns the backgroundImageTiled.
@@ -360,5 +381,35 @@ public class Form extends Composite {
 		this.backgroundImageTiled = backgroundImageTiled;
 		if (isVisible())
 			redraw();
+	}
+	/**
+	 * @return Returns the backgroundImageAlignment.
+	 * @since 3.1
+	 */
+	public int getBackgroundImageAlignment() {
+		return backgroundImageAlignment;
+	}
+	/**
+	 * @param backgroundImageAlignment The backgroundImageAlignment to set.
+	 * @since 3.1
+	 */
+	public void setBackgroundImageAlignment(int backgroundImageAlignment) {
+		this.backgroundImageAlignment = backgroundImageAlignment;
+		if (isVisible())
+			redraw();
+	}
+	/**
+	 * @return Returns the backgroundImageClipped.
+	 * @since 3.1
+	 */
+	public boolean isBackgroundImageClipped() {
+		return backgroundImageClipped;
+	}
+	/**
+	 * @param backgroundImageClipped The backgroundImageClipped to set.
+	 * @since 3.1
+	 */
+	public void setBackgroundImageClipped(boolean backgroundImageClipped) {
+		this.backgroundImageClipped = backgroundImageClipped;
 	}
 }

@@ -33,6 +33,10 @@ public abstract class OpenFormEditorAction
 			System.out.println(e);
 		}
 	}
+	
+	protected IWorkbenchWindow getWindow() {
+		return window;
+	}
 	/**
 	 * @see IWorkbenchWindowActionDelegate#selectionChanged
 	 */

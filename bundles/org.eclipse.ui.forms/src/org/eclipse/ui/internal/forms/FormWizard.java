@@ -21,7 +21,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
  * @since 3.0
  */
 public abstract class FormWizard extends Wizard {
-	protected FormToolkit toolkit;
+	private FormToolkit toolkit;
 
 	/**
 	 * Creates the wizard that will own its own colors.
@@ -54,5 +54,9 @@ public abstract class FormWizard extends Wizard {
 	public void dispose() {
 		super.dispose();
 		toolkit.dispose();
+	}
+	
+	public FormToolkit getToolkit() {
+		return toolkit;
 	}
 }

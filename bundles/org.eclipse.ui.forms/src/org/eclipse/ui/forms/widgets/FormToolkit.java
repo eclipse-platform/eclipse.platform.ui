@@ -492,7 +492,8 @@ public class FormToolkit {
 		Text text = new Text(parent, borderStyle | style);
 		if (value != null)
 			text.setText(value);
-		adapt(text, true, false);
+		text.setForeground(colors.getForeground());
+		text.addFocusListener(visibilityHandler);
 		return text;
 	}
 	/**
