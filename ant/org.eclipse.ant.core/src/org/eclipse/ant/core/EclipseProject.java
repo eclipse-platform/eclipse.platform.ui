@@ -45,7 +45,7 @@ public Object createDataType(String typeName) throws BuildException {
 	// If its not found, look in the types defined in the plugin extension point.
 	Class c = (Class) getDataTypeDefinitions().get(typeName);
 	if (c != null)
-		return super.createDataType(typeName);
+		return internalCreateDataType(typeName);
 	// check to see if the ant plugin is available.  If we are running from
 	// the command line (i.e., no platform) it will not be.
 	if (AntPlugin.getPlugin() == null)
@@ -63,7 +63,7 @@ public Object createDataType(String typeName) throws BuildException {
 	} catch (ClassNotFoundException e) {
 		return null;
 	}
-	return super.createDataType(typeName);
+	return internalCreateDataType(typeName);
 }
 /**
  * Creates and returns a new instance of the identified task.
@@ -140,4 +140,45 @@ public void init() throws BuildException {
 	addDataTypeDefinition("commapatternset", CommaPatternSet.class);
 	System.setProperty("ant.regexp.matcherimpl", "org.eclipse.ant.core.XercesRegexpMatcher");
 }
+
+public Object internalCreateDataType(String typeName) throws BuildException {
+    Class c = (Class) getDataTypeDefinitions().get(typeName);
+
+    if (c == null)
+        return null;
+
+    try {
+        java.lang.reflect.Constructor ctor = null;
+        boolean noArg = false;
+        // DataType can have a "no arg" constructor or take a single 
+        // Project argument.
+        try {
+            ctor = c.getConstructor(new Class[0]);
+            noArg = true;
+        } catch (NoSuchMethodException nse) {
+            ctor = c.getConstructor(new Class[] {Project.class});
+            noArg = false;
+        }
+
+        Object o = null;
+        if (noArg) {
+             o = ctor.newInstance(new Object[0]);
+        } else {
+             o = ctor.newInstance(new Object[] {this});
+        }
+        String msg = "   +DataType: " + typeName;
+        log (msg, MSG_DEBUG);
+        return o;
+    } catch (java.lang.reflect.InvocationTargetException ite) {
+        Throwable t = ite.getTargetException();
+        String msg = "Could not create datatype of type: "
+             + typeName + " due to " + t;
+        throw new BuildException(msg, t);
+    } catch (Throwable t) {
+        String msg = "Could not create datatype of type: "
+             + typeName + " due to " + t;
+        throw new BuildException(msg, t);
+    }
+}
+    
 }
