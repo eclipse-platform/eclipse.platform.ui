@@ -347,7 +347,7 @@
          point="org.eclipse.ui.views">
       <view
             name="%Views.Progress"
-            icon="icons/full/progress/pview.gif"
+            icon="icons/full/eview16/pview.gif"
             category="org.eclipse.ui"
             class="org.eclipse.ui.internal.progress.JobView"
             id="org.eclipse.ui.views.ProgressView">
