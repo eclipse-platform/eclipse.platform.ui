@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.progress.UIJob;
 
 /**
@@ -182,7 +181,6 @@ public class DecorationScheduler {
 				}
 			};
 
-			job.setDisplay(Display.getDefault());
 			job.schedule();
 
 		}
