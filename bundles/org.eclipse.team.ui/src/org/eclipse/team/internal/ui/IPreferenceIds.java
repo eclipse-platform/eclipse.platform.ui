@@ -17,7 +17,7 @@ public interface IPreferenceIds {
 	 * Default model provider layout to use with SubscriberSynchronizePage. The user can configure but this
 	 * is used to select the initial layout.
 	 */
-	public static final String SYNCVIEW_DEFAULT_LAYOUT = PREFIX + "compress_folders"; //$NON-NLS-1$
+	public static final String SYNCVIEW_DEFAULT_LAYOUT = PREFIX + "default_layout"; //$NON-NLS-1$
 	
 	/*
 	 * Values used to indicate which layout to use as the default.
