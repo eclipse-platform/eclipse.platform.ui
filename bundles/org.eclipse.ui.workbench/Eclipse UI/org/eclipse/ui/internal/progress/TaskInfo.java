@@ -97,7 +97,7 @@ public class TaskInfo extends SubTaskInfo {
 	 * @return
 	 */
 	int getPercentDone() {
-		return (int) (preWork * 100 / totalWork);
+		return Math.min((int) (preWork * 100 / totalWork),100);
 	}
 
 	/**
