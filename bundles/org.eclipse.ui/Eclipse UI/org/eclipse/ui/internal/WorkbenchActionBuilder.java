@@ -50,7 +50,8 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private static final String prevPerspectiveActionDefId = "org.eclipse.ui.window.previousPerspective"; //$NON-NLS-1$
 	private static final String activateEditorActionDefId = "org.eclipse.ui.window.activateEditor"; //$NON-NLS-1$
 	private static final String workbenchEditorsActionDefId = "org.eclipse.ui.window.switchToEditor";	 //$NON-NLS-1$
-	
+	private static final String buildActionDefId = "org.eclipse.ui.project.buildProject";	 //$NON-NLS-1$
+
 	private static final String workbenchToolGroupId = "org.eclipse.ui.internal";
 	
 	//pin editor group in the toolbar
@@ -707,7 +708,8 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		buildAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC));
 		buildAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC_HOVER));
 		buildAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC_DISABLED));
-
+		buildAction.setActionDefinitionId(buildActionDefId);
+		
 		saveAction = new SaveAction(window);
 		saveAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_SAVE_EDIT));
 		saveAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_SAVE_EDIT_HOVER));
@@ -853,7 +855,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		WorkbenchHelp.setHelp(deleteAction, IHelpContextIds.DELETE_RETARGET_ACTION);
 		partService.addPartListener(deleteAction);
 		deleteAction.setActionDefinitionId(deleteActionDefId);
-		keyBindingService.registerGlobalAction(deleteAction);
+		// keyBindingService.registerGlobalAction(deleteAction);
 
 		// See if a welcome page is specified
 		AboutInfo[] infos = ((Workbench)workbench).getFeaturesInfo();
@@ -948,6 +950,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			buildAction.setText(WorkbenchMessages.getString("Workbench.buildAll")); //$NON-NLS-1$
 			buildAction.setToolTipText(WorkbenchMessages.getString("Workbench.buildAllToolTip")); //$NON-NLS-1$
 			buildAction.setAccelerator(SWT.CTRL | 'B');
+			keyBindingService.registerGlobalAction(buildAction);
 			rebuildAllAction.setText(WorkbenchMessages.getString("Workbench.rebuildAll")); //$NON-NLS-1$
 			rebuildAllAction.setToolTipText(WorkbenchMessages.getString("Workbench.rebuildAllToolTip")); //$NON-NLS-1$
 		}

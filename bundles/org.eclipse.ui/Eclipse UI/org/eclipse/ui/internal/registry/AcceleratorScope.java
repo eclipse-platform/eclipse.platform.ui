@@ -219,6 +219,18 @@ public class AcceleratorScope {
     	return false;
     }
     /**
+     * Finds the action of mode for the accelerator and returns its id.
+     */
+	public String getActionDefinitionId(int acc) {
+		AcceleratorAction a = currentMode.getAction(acc);
+		if(a == null)
+			a = (AcceleratorAction)defaultAcceleratorToAction.get(new Integer(acc));
+		if(a == null)
+			return null;
+		return a.getId();
+	}
+    
+    /**
      * Finds the action of mode for the accelerator and runs it.
      */
 	public boolean processKey(KeyBindingService service, Event e, int acc) {

@@ -79,6 +79,9 @@ public class KeyBindingMenu extends ContributionItem {
 //		Arrays.sort(accs);
 		for (int i = 0; i < accs.length; i++) {
 			final int acc = accs[i];
+			String accId = scope.getActionDefinitionId(acc);
+			if(accId == null || activeService.getAction(accId) == null)
+				continue;
 			MenuItem item = new MenuItem(acceleratorsMenu,SWT.PUSH);
 //			item.setText(Action.convertAccelerator(acc));
 			item.setAccelerator(acc);

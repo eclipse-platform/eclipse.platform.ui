@@ -909,7 +909,7 @@
                id="org.eclipse.ui.project.closeProject">
          </accelerator>
          <accelerator
-               key=""
+               key="Ctrl+B"
                id="org.eclipse.ui.project.buildProject">
          </accelerator> 
          <accelerator
