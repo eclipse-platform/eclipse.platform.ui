@@ -124,4 +124,8 @@ public class SyncSetChangedEvent {
 	public boolean isReset() {
 		return reset;
 	}
+	
+	public boolean isEmpty() {
+		return changedResources.isEmpty() && removedResources.isEmpty() && addedResources.isEmpty() && removedRoots.isEmpty() && addedRoots.isEmpty();
+	}
 }
