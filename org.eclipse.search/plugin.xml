@@ -69,69 +69,57 @@
 		/>
 
 		<command
-			category="org.eclipse.search.ui.category.search"
+			categoryId="org.eclipse.search.ui.category.search"
 			id="org.eclipse.search.ui.openSearchDialog"
 			name= "%ActionDefinition.openSearchDialog.name"
 			description="%ActionDefinition.openSearchDialog.description"
 		/>
 		<keyBinding
-			string="Ctrl+H"
-			scope="org.eclipse.ui.globalScope"
-			command="org.eclipse.search.ui.openSearchDialog"
-			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
+			keySequence="M1+H"
+			contextId="org.eclipse.ui.globalScope"
+			commandId="org.eclipse.search.ui.openSearchDialog"
+			keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
 		/>
 
 		<command
-			category="org.eclipse.search.ui.category.search"
+			categoryId="org.eclipse.search.ui.category.search"
 			id="org.eclipse.search.ui.openFileSearchPage"
 			name= "%ActionDefinition.openFileSearchPage.name"
 			description="%ActionDefinition.openFileSearchPage.description"
 		/>
-		<keyBinding
-			string=""
-			scope="org.eclipse.ui.globalScope"
-			command="org.eclipse.search.ui.openFileSearchPage"
-			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
-		/>
 		
 		<command
-			category="org.eclipse.ui.category.views"
+			categoryId="org.eclipse.ui.category.views"
 			id="org.eclipse.search.SearchResultView"
 			name="%ViewCommand.searchResultView.name"
 			description="%ViewCommand.searchResultView.description"
 		/>
-		<keyBinding
-			string=""
-			scope="org.eclipse.ui.globalScope"
-			command="org.eclipse.search.SearchResultView"
-			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
-		/>
 		
 		<command
-			category="org.eclipse.ui.category.views"
+			categoryId="org.eclipse.ui.category.views"
 			id="org.eclipse.search.ui.views.SearchView"
 			name="%ViewCommand.searchView.name"
 			description="%ViewCommand.searchView.description"
 		/>
 		<keyBinding
-            string="Alt+Shift+Q S"
-			scope="org.eclipse.ui.globalScope"
-			command="org.eclipse.search.ui.views.SearchView"
-			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
+            keySequence="Alt+Shift+Q S"
+			contextId="org.eclipse.ui.globalScope"
+			commandId="org.eclipse.search.ui.views.SearchView"
+			keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
 		/>
 		<keyBinding
 			platform="carbon"
-			string="Alt+Shift+Q S"
-			scope="org.eclipse.ui.globalScope"
-			command=""
-			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
+			keySequence="Alt+Shift+Q S"
+			contextId="org.eclipse.ui.globalScope"
+			commandId=""
+			keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
 		/>
 		<keyBinding
 			platform="carbon"
-			string="Command+Alt+Q S"
-			scope="org.eclipse.ui.globalScope"
-			command="org.eclipse.search.ui.views.SearchView"
-			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
+			keySequence="Command+Alt+Q S"
+			contextId="org.eclipse.ui.globalScope"
+			commandId="org.eclipse.search.ui.views.SearchView"
+			keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
 		/>
 	</extension>
 	
