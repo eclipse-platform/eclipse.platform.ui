@@ -400,8 +400,6 @@ public class DefaultUndoManager implements IUndoManager {
 	
 	/** Indicates inserting state */
 	private boolean fInserting= false;
-	/** Indicates deleteing state */
-	private boolean fDeleting= false;
 	/** Indicates overwriting state */
 	private boolean fOverwriting= false;
 	/** Indicates whether the current change belongs to a compound change */
@@ -493,7 +491,6 @@ public class DefaultUndoManager implements IUndoManager {
 	private void commit() {
 		
 		fInserting= false;
-		fDeleting= false;
 		fOverwriting= false;
 		fPreviousDelete.reinitialize();
 		
@@ -664,7 +661,6 @@ public class DefaultUndoManager implements IUndoManager {
 						// either DEL or backspace for the first time
 						
 						commit();
-						fDeleting= true;
 						
 						// as we can not decide whether it was DEL or backspace we initialize for backspace
 						fPreservedTextBuffer.append(oldText);
@@ -764,7 +760,6 @@ public class DefaultUndoManager implements IUndoManager {
 			fCurrent.reinitialize();
 		fFoldingIntoCompoundChange= false;
 		fInserting= false;
-		fDeleting= false;
 		fOverwriting= false;
 		fTextBuffer.setLength(0);
 		fPreservedTextBuffer.setLength(0);		

@@ -234,8 +234,6 @@ public class OverviewRuler implements IOverviewRuler {
 	private Cursor fHitDetectionCursor;
 	/** The last cursor */
 	private Cursor fLastCursor;
-	/** Cache for the actual scroll position in pixels */
-	private int fScrollPos;
 	/** The line of the last mouse button activity */
 	private int fLastMouseButtonActivityLine= -1;
 	/** The actual annotation height */
@@ -433,7 +431,6 @@ public class OverviewRuler implements IOverviewRuler {
 		
 		StyledText textWidget= fTextViewer.getTextWidget();
 		int maxLines= textWidget.getLineCount();
-		fScrollPos= textWidget.getTopPixel();		
 				
 		Point size= fCanvas.getSize();
 		int writable= maxLines * textWidget.getLineHeight();
@@ -520,7 +517,6 @@ public class OverviewRuler implements IOverviewRuler {
 		ITextViewerExtension3 extension= (ITextViewerExtension3) fTextViewer;
 		IDocument document= fTextViewer.getDocument();		
 		StyledText textWidget= fTextViewer.getTextWidget();
-		fScrollPos= textWidget.getTopPixel();
 		
 		int maxLines= textWidget.getLineCount();
 		Point size= fCanvas.getSize();
