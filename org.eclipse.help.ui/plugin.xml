@@ -153,12 +153,5 @@
             id="org.eclipse.help.ui.HelpWorkingSetPage">
       </workingSet>
    </extension>
-   <extension
-         point="org.eclipse.ui.elementFactories">
-      <factory
-            class="org.eclipse.help.ui.internal.workingset.HelpResourceFactory"
-            id="org.eclipse.help.ui.internal.workingset.HelpResourceFactory">
-      </factory>
-   </extension>
 
 </plugin>
