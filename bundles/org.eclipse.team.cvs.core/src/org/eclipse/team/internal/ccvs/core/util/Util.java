@@ -48,10 +48,13 @@ public class Util {
 	 */
 	public static String getLastSegment(String path) {
 		int index = path.lastIndexOf(Session.SERVER_SEPARATOR);
-		if (index == -1)
+		if (index == -1) {
 			return path;
-		else
-			return path.substring(index + 1);
+		}
+		if (index == path.length() - 1) {
+			return getLastSegment(path.substring(0, index));
+		}
+		return path.substring(index + 1);
 		
 	}
 	

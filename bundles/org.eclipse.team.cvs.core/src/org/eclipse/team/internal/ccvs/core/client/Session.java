@@ -1126,15 +1126,15 @@ public class Session {
 		
 		return result.toString();
 	}
-	protected void registerResponseHandler(ResponseHandler handler) {
+	public void registerResponseHandler(ResponseHandler handler) {
 		getReponseHandlers().put(handler.getResponseID(), handler);
 	}
 	
-	protected void removeResponseHandler(String responseID) {
+	public void removeResponseHandler(String responseID) {
 		getReponseHandlers().remove(responseID);
 	}
 	
-	protected ResponseHandler getResponseHandler(String responseID) {
+	public ResponseHandler getResponseHandler(String responseID) {
 		return (ResponseHandler)getReponseHandlers().get(responseID);
 	}
 	

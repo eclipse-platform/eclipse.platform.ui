@@ -46,7 +46,7 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
  * 
  * Requiers a exisiting parent-folder.
  */
-class UpdatedHandler extends ResponseHandler {
+public class UpdatedHandler extends ResponseHandler {
 	
 	private int handlerType;
 	

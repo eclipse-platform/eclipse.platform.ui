@@ -10,14 +10,15 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize.views;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.internal.ui.synchronize.sets.ISyncSetChangedListener;
@@ -31,6 +32,9 @@ import org.eclipse.team.internal.ui.synchronize.sets.SyncSetChangedEvent;
 public abstract class SyncSetContentProvider implements IStructuredContentProvider, ISyncSetChangedListener {
 	
 	protected Viewer viewer;
+	
+	// parents who need a label update accumulated while handling sync set changes
+	private Set parentsToUpdate = new HashSet();
 	
 	protected SyncSet getSyncSet() {
 		SubscriberInput input = getSubscriberInput();
@@ -95,8 +99,13 @@ public abstract class SyncSetContentProvider implements IStructuredContentProvid
 		if (ctrl != null && !ctrl.isDisposed()) {
 			ctrl.getDisplay().asyncExec(new Runnable() {
 				public void run() {
-					if(! ctrl.isDisposed())
-						handleSyncSetChanges(event);
+					if(! ctrl.isDisposed()) {
+						BusyIndicator.showWhile(ctrl.getDisplay(), new Runnable() {
+							public void run() {
+								handleSyncSetChanges(event);
+							}
+						});
+					}
 				}
 			});
 		}
@@ -116,6 +125,7 @@ public abstract class SyncSetContentProvider implements IStructuredContentProvid
 			handleResourceChanges(event);
 			handleResourceRemovals(event);
 			handleResourceAdditions(event);
+			updateParentLabels();
 		}
 		viewer.getControl().setRedraw(true);
 	}
@@ -274,20 +284,33 @@ public abstract class SyncSetContentProvider implements IStructuredContentProvid
 	}
 	
 	/**
+	 * Forces the viewer to update the labels for parents whose children have changed
+	 * during this round of sync set changes.
+	 */
+	protected void updateParentLabels() {
+		try {
+			getViewer().update(
+					parentsToUpdate.toArray(new Object[parentsToUpdate.size()]),
+					null 
+			);	
+		} finally {
+			parentsToUpdate.clear();
+		}
+	}
+	
+	/**
 	 * Forces the viewer to update the labels for parents of this element. This
 	 * can be useful when parents labels include information about their children
 	 * that needs updating when a child changes.
+	 * <p>
+	 * This method should only be called while processing sync set changes.
+	 * Changed parents are accumulated and updated at the end of the change processing
 	 */
 	protected void updateParentLabels(IResource resource) {
-		List parents = new ArrayList(3);
 		IResource parent = resource.getParent();
 		while(parent.getType() != IResource.ROOT) {
-			parents.add(getModelObject(parent));
+			parentsToUpdate.add(getModelObject(parent));
 			parent = parent.getParent();
-		}
-		getViewer().update(
-				(SynchronizeViewNode[])parents.toArray(new SynchronizeViewNode[parents.size()]),
-				null 
-				);		
+		}	
 	}
 }

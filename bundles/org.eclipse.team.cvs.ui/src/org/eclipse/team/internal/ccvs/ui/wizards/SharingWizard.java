@@ -11,24 +11,46 @@
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
-import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
+import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.TagSelectionDialog;
+import org.eclipse.team.internal.ccvs.ui.operations.ReconcileProjectOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.ShareProjectOperation;
 import org.eclipse.team.ui.IConfigurationWizard;
 import org.eclipse.team.ui.synchronize.TeamSubscriberParticipant;
@@ -295,23 +317,14 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 	}
 
 	private void mapProject(final String moduleName, final CVSTag tag) throws InvocationTargetException, InterruptedException {
-		getContainer().run(true /* fork */, true /* cancel */, new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException {
-				try {
-					// TODO: Should do a refresh with the subscriber
-					// and then transfer sync info for folders
-					monitor.beginTask(null, 200);
-					CVSWorkspaceRoot.getRemoteSyncTree(project, getLocation(), moduleName, tag, Policy.subMonitorFor(monitor, 100));
-					CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber().refresh(new IResource[] { project }, IResource.DEPTH_INFINITE, Policy.subMonitorFor(monitor, 100));
-				} catch (TeamException e) {
-					throw new InvocationTargetException(e);
-				} finally {
-					monitor.done();
-				}
-			}
-		});
+		try {
+			ICVSRemoteFolder remote = new RemoteFolder(null, getLocation(), moduleName, tag);
+			new ReconcileProjectOperation(getShell(), project, remote).run();
+		} catch (TeamException e) {
+			throw new InvocationTargetException(e);
+		} 
 	}
-
+	
 	/**
 	 * Return an ICVSRepositoryLocation
 	 */

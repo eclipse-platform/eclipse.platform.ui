@@ -182,10 +182,10 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	
 	/* package*/ void fetchContents(IProgressMonitor monitor) throws CVSException {
 		try {
-			fetching = true;
+			aboutToReceiveContents(getSyncBytes());
 			internalFetchContents(monitor);
 		} finally {
-			fetching = false;
+			doneReceivingContents();
 		}
 	}
 	/* package*/ void internalFetchContents(IProgressMonitor monitor) throws CVSException {
@@ -667,5 +667,21 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 				return RemoteFile.this.getAdapter(adapter);
 			}
 		};
+	}
+
+	/**
+	 * Callback which indicates that the remote file is about to receive contents that should be cached
+	 * @param entryLine
+	 */
+	public void aboutToReceiveContents(byte[] entryLine) {
+		setSyncBytes(entryLine, ICVSFile.CLEAN);
+		fetching = true;
+	}
+
+	/**
+	 * The contents for the file have already been provided.
+	 */
+	public void doneReceivingContents() {
+		fetching = false;
 	}
 }

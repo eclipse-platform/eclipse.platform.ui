@@ -11,9 +11,9 @@
 package org.eclipse.team.tests.ccvs.core.provider;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 
 import junit.framework.Test;
-import junit.framework.TestSuite;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -37,6 +37,7 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderTree;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderTreeBuilder;
+import org.eclipse.team.internal.ccvs.ui.operations.CheckoutToRemoteFolderOperation;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 
@@ -51,13 +52,7 @@ public class RemoteResourceTest extends EclipseTest {
 	}
 	
 	public static Test suite() {
-		String testName = System.getProperty("eclipse.cvs.testName");
-		if (testName == null) {
-			TestSuite suite = new TestSuite(RemoteResourceTest.class);
-			return new CVSTestSetup(suite);
-		} else {
-			return new CVSTestSetup(new RemoteResourceTest(testName));
-		}
+		return suite(RemoteResourceTest.class);
 	}
 	
 	protected void assertRemoteMatchesLocal(String message, RemoteFolder remote, IContainer container) throws CVSException, IOException, CoreException {
@@ -328,5 +323,28 @@ public class RemoteResourceTest extends EclipseTest {
 //		checkoutProject(project, name, null);
 //		assertEquals(Path.EMPTY, CVSWorkspaceRoot.getCVSResourceFor(project), tree, false, true);
 //	 }
+	 
+	 public void testCheckoutIntoRemoteFolder() throws CoreException, IOException, CVSException, InvocationTargetException, InterruptedException {
+	 	IProject project = createProject(new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder2/folder3/b.txt", "folder2/folder3/c.txt"});
+	 	
+	 	ICVSRemoteFolder remote = (ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(project);
+	 	remote = checkoutRemote(remote);
+	 	assertEquals(Path.EMPTY, CVSWorkspaceRoot.getCVSResourceFor(project), remote, false, true);
+	 	
+	 	// Try a version
+	 	CVSTag tag = new CVSTag("v1", CVSTag.VERSION);
+	 	tagProject(project, tag, false);
+	 	IProject copy = checkoutCopy(project, tag);
+	 	setContentsAndEnsureModified(project.getFile("file1.txt"));
+	 	commitProject(project);
+	 	remote = (ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(project);
+	 	((RemoteFolder)remote).setTag(tag);
+	 	remote = checkoutRemote(remote);
+	 	assertEquals(Path.EMPTY, CVSWorkspaceRoot.getCVSResourceFor(copy), remote, false, true);
+	 }
+
+	private ICVSRemoteFolder checkoutRemote(ICVSRemoteFolder remote) throws CVSException, InvocationTargetException, InterruptedException {
+		return CheckoutToRemoteFolderOperation.checkoutRemoteFolder(null, remote, DEFAULT_MONITOR);
+	}
 }
 

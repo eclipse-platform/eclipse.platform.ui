@@ -64,6 +64,8 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
  */
 public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, ICVSFolder {
 	
+	protected static final int CHILD_DOES_NOT_EXIST = 1000;
+	
 	protected FolderSyncInfo folderInfo;
 	private ICVSRemoteResource[] children;
 	private ICVSRepositoryLocation repository;
@@ -279,7 +281,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 		ICVSResource child = getChild(name);
 		if (child.isFolder())
 			return (ICVSFolder)child;
-		throw new CVSException(Policy.bind("RemoteFolder.invalidChild", name, getName())); //$NON-NLS-1$
+		throw new CVSException(IStatus.ERROR, CHILD_DOES_NOT_EXIST, Policy.bind("RemoteFolder.invalidChild", name, getName())); //$NON-NLS-1$
 	}
 
 	/**
@@ -289,8 +291,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 		ICVSResource child = getChild(name);
 		if (!child.isFolder())
 			return (ICVSFile)child;
-		throw new CVSException(Policy.bind("RemoteFolder.invalidChild", name, getName())); //$NON-NLS-1$
-
+		throw new CVSException(IStatus.ERROR, CHILD_DOES_NOT_EXIST, Policy.bind("RemoteFolder.invalidChild", name, getName())); //$NON-NLS-1$
 	}
 
 	public LocalOption[] getLocalOptions() {
@@ -360,18 +361,18 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 				return ((RemoteFolder)getChild(p.segment(0))).getChild(p.removeFirstSegments(1).toString());
 			} catch (CVSException e) {
 				// regenerate the exception to give as much info as possible
-				throw new CVSException(Policy.bind("RemoteFolder.invalidChild", path, getName()));//$NON-NLS-1$
+				throw new CVSException(IStatus.ERROR, CHILD_DOES_NOT_EXIST, Policy.bind("RemoteFolder.invalidChild", path, getName()));//$NON-NLS-1$
 			}
 		} else {
 			ICVSRemoteResource[] children = getChildren();
 			if (children == null) 
-				throw new CVSException(Policy.bind("RemoteFolder.invalidChild", path, getName()));//$NON-NLS-1$
+				throw new CVSException(IStatus.ERROR, CHILD_DOES_NOT_EXIST, Policy.bind("RemoteFolder.invalidChild", path, getName()));//$NON-NLS-1$
 			for (int i=0;i<children.length;i++) {
 				if (children[i].getName().equals(path))
 					return (ICVSResource)children[i];
 			}
 		}
-		throw new CVSException(Policy.bind("RemoteFolder.invalidChild", path, getName()));//$NON-NLS-1$
+		throw new CVSException(IStatus.ERROR, CHILD_DOES_NOT_EXIST, Policy.bind("RemoteFolder.invalidChild", path, getName()));//$NON-NLS-1$
 	}
 
 	/**

@@ -276,7 +276,7 @@ public class CVSSyncInfo extends SyncInfo {
 		
 		// The parent must be managed
 		ICVSFolder local = CVSWorkspaceRoot.getCVSFolderFor((IContainer)getLocal());
-		if (! local.getParent().isCVSFolder())
+		if (getLocal().getType() == IResource.FOLDER && ! local.getParent().isCVSFolder())
 			return new CVSStatus(IStatus.ERROR, PARENT_NOT_MANAGED, Policy.bind("CVSSyncInfo.9", getLocal().getFullPath().toString())); //$NON-NLS-1$
 		
 		// Ensure that the folder exists locally
@@ -286,7 +286,7 @@ public class CVSSyncInfo extends SyncInfo {
 		
 		// If the folder already has CVS info, check that the remote and local match
 		RemoteFolder remote = (RemoteFolder)getRemote();
-		if(local.isManaged() && local.isCVSFolder()) {
+		if((local.isManaged() || getLocal().getType() == IResource.PROJECT) && local.isCVSFolder()) {
 			// If there's no remote, assume everything is OK
 			if (remote == null) return Status.OK_STATUS;
 			// Verify that the root and repository are the same
