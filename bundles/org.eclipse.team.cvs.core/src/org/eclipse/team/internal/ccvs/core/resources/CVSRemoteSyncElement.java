@@ -20,6 +20,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
@@ -288,8 +289,12 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 			if(!local.exists()) {
 				if(remote != null) {
 					if (isCVSFolder) {
-						// say the folder is in_sync even though it doesn't exist locally
-						folderKind = IRemoteSyncElement.IN_SYNC;
+						if (containsOutgoingDeletions(cvsFolder)) {
+							// say the folder is in_sync even though it doesn't exist locally
+							folderKind = IRemoteSyncElement.IN_SYNC;
+						} else {
+							folderKind = IRemoteSyncElement.INCOMING | IRemoteSyncElement.ADDITION;
+						}
 					} else {
 						folderKind = IRemoteSyncElement.INCOMING | IRemoteSyncElement.ADDITION;
 					}
@@ -339,6 +344,36 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 		
 		return kind;
 	}
+
+	/**
+	 * Return true if the provided phantom folder conyains any outgoing file deletions.
+	 * We only need to detect if there are any files since a phantom folder can only
+	 * contain outgoing filre deletions and other folder.
+	 * 
+	 * @param cvsFolder a phantom folder
+	 * @return boolean
+	 */
+	private boolean containsOutgoingDeletions(ICVSFolder cvsFolder) {
+		final boolean result[] = new boolean[] { false };
+		try {
+			cvsFolder.accept(new ICVSResourceVisitor() {
+				public void visitFile(ICVSFile file) throws CVSException {
+					// Do nothing. Files are handled below
+				}
+				public void visitFolder(ICVSFolder folder) throws CVSException {
+					if (folder.members(ICVSFolder.FILE_MEMBERS).length > 0) {
+						result[0] = true;
+					} else {
+						folder.acceptChildren(this);
+					}
+				}
+			});
+		} catch (CVSException e) {
+			CVSProviderPlugin.log(e);
+		}
+		return result[0];
+	}
+
 	
 	/*
 	 * If the resource has a delete/delete conflict then ensure that the local is unmanaged so that the 
