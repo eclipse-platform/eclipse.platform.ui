@@ -27,7 +27,6 @@
       <import plugin="org.eclipse.ui.editors" export="true"/>
    </requires>
 
-
 <!-- Workbench extension points -->
    <extension-point id="actionSetPartAssociations" name="%ExtPoint.actionSetPartAssociations" schema="schema/actionSetPartAssociations.exsd"/>
    <extension-point id="actionSets" name="%ExtPoint.actionSets" schema="schema/actionSets.exsd"/>
@@ -71,6 +70,8 @@
    </extension>
    <extension
          point="org.eclipse.ui.commands">
+	  <activeKeyConfiguration
+	  		keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"/>         
       <category
             name="%category.file.name"
             description="%category.file.description"
@@ -824,984 +825,984 @@
             id="org.eclipse.ui.edit.text.contentAssist.contextInformation">
       </command>
       <keyBinding
-            string="Ctrl+N"
+            keySequence="Ctrl+N"
             commandId="org.eclipse.ui.newWizard">
       </keyBinding>
       <keyBinding
-            string="Ctrl+F4"
+            keySequence="Ctrl+F4"
             commandId="org.eclipse.ui.file.close">
       </keyBinding>
       <keyBinding
-            string="Ctrl+Shift+F4"
+            keySequence="Ctrl+Shift+F4"
             commandId="org.eclipse.ui.file.closeAll">
       </keyBinding>
       <keyBinding
-            string="Ctrl+S"
+            keySequence="Ctrl+S"
             commandId="org.eclipse.ui.file.save">
       </keyBinding>
       <keyBinding
-            string="Ctrl+Shift+S"
+            keySequence="Ctrl+Shift+S"
             commandId="org.eclipse.ui.file.saveAll">
       </keyBinding>
       <keyBinding
-            string="Ctrl+P"
+            keySequence="Ctrl+P"
             commandId="org.eclipse.ui.file.print">
       </keyBinding>
       <keyBinding
-            string="Alt+ENTER"
+            keySequence="Alt+Cr"
             commandId="org.eclipse.ui.file.properties">
       </keyBinding>
       <keyBinding
-            string="Ctrl+Z"
+            keySequence="Ctrl+Z"
             commandId="org.eclipse.ui.edit.undo">
       </keyBinding>
       <keyBinding
-            string="Ctrl+Y"
+            keySequence="Ctrl+Y"
             commandId="org.eclipse.ui.edit.redo">
       </keyBinding>
       <keyBinding
-            string="Ctrl+X"
+            keySequence="Ctrl+X"
             commandId="org.eclipse.ui.edit.cut">
       </keyBinding>
       <keyBinding
-            string="Ctrl+C"
+            keySequence="Ctrl+C"
             commandId="org.eclipse.ui.edit.copy">
       </keyBinding>
       <keyBinding
-            string="Ctrl+V"
+            keySequence="Ctrl+V"
             commandId="org.eclipse.ui.edit.paste">
       </keyBinding>
       <keyBinding
-            string="Ctrl+E"
+            keySequence="Ctrl+E"
             commandId="org.eclipse.ui.edit.text.delete.line">
       </keyBinding>
       <keyBinding
-            string="Ctrl+Shift+E"
+            keySequence="Ctrl+Shift+E"
             commandId="org.eclipse.ui.edit.text.delete.line.to.end">
       </keyBinding>
       <keyBinding
-            string="Ctrl+A"
+            keySequence="Ctrl+A"
             commandId="org.eclipse.ui.edit.selectAll">
       </keyBinding>
       <keyBinding
-            string="Ctrl+F"
+            keySequence="Ctrl+F"
             commandId="org.eclipse.ui.edit.findReplace">
       </keyBinding>
       <keyBinding
-            string="Ctrl+Shift+R"
+            keySequence="Ctrl+Shift+R"
             commandId="org.eclipse.ui.navigate.openResource">
       </keyBinding>
       <keyBinding
-            string="Ctrl+."
+            keySequence="Ctrl+."
             commandId="org.eclipse.ui.navigate.next">
       </keyBinding>
       <keyBinding
-            string="Ctrl+,"
+            keySequence="Ctrl+,"
             commandId="org.eclipse.ui.navigate.previous">
       </keyBinding>
       <keyBinding
-            string="Alt+ARROW_LEFT"
+            keySequence="Alt+Arrow_Left"
             commandId="org.eclipse.ui.navigate.backwardHistory">
       </keyBinding>
       <keyBinding
-            string="Alt+ARROW_RIGHT"
+            keySequence="Alt+Arrow_Right"
             commandId="org.eclipse.ui.navigate.forwardHistory">
       </keyBinding>
       <keyBinding
-            string="Ctrl+B"
+            keySequence="Ctrl+B"
             commandId="org.eclipse.ui.project.buildAll">
       </keyBinding>
       <keyBinding
-            string="Ctrl+Shift+W"
+            keySequence="Ctrl+Shift+W"
             commandId="org.eclipse.ui.window.switchToEditor">
       </keyBinding>
       <keyBinding
-            string="Alt+-"
+            keySequence="Alt+-"
             commandId="org.eclipse.ui.window.showSystemMenu">
       </keyBinding>
       <keyBinding
-            string="Ctrl+F10"
+            keySequence="Ctrl+F10"
             commandId="org.eclipse.ui.window.showViewMenu">
       </keyBinding>
       <keyBinding
-            string="F12"
+            keySequence="F12"
             commandId="org.eclipse.ui.window.activateEditor">
       </keyBinding>
       <keyBinding
-            string="Ctrl+M"
+            keySequence="Ctrl+M"
             commandId="org.eclipse.ui.window.maximizePart">>
       </keyBinding>
       <keyBinding
-            string="Ctrl+F6"
+            keySequence="Ctrl+F6"
             commandId="org.eclipse.ui.window.nextEditor">
       </keyBinding>
       <keyBinding
-            string="Ctrl+Shift+F6"
+            keySequence="Ctrl+Shift+F6"
             commandId="org.eclipse.ui.window.previousEditor">
       </keyBinding>
       <keyBinding
-            string="Ctrl+F7"
+            keySequence="Ctrl+F7"
             commandId="org.eclipse.ui.window.nextView">
       </keyBinding>
       <keyBinding
-            string="Ctrl+Shift+F7"
+            keySequence="Ctrl+Shift+F7"
             commandId="org.eclipse.ui.window.previousView">
       </keyBinding>
       <keyBinding
-            string="Ctrl+F8"
+            keySequence="Ctrl+F8"
             commandId="org.eclipse.ui.window.nextPerspective">
       </keyBinding>
       <keyBinding
-            string="Ctrl+Shift+F8"
+            keySequence="Ctrl+Shift+F8"
             commandId="org.eclipse.ui.window.previousPerspective">
       </keyBinding>
       <keyBinding
-            string="Ctrl+K"
+            keySequence="Ctrl+K"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.findNext">
       </keyBinding>
       <keyBinding
-            string="Ctrl+Shift+K"
+            keySequence="Ctrl+Shift+K"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.findPrevious">
       </keyBinding>
       <keyBinding
-            string="Ctrl+J"
+            keySequence="Ctrl+J"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.findIncremental">
       </keyBinding>
       <keyBinding
-            string="Ctrl+Shift+J"
+            keySequence="Ctrl+Shift+J"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.findIncrementalReverse">
       </keyBinding>
       <keyBinding
-            string="Ctrl+L"
+            keySequence="Ctrl+L"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.goto.line">
       </keyBinding>
       <keyBinding
-            string="Ctrl+ARROW_UP"
+            keySequence="Ctrl+Arrow_Up"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.scroll.lineUp">
       </keyBinding>
       <keyBinding
-            string="Ctrl+ARROW_DOWN"
+            keySequence="Ctrl+Arrow_Down"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.scroll.lineDown">
       </keyBinding>
       <keyBinding
-            string="INSERT"
+            keySequence="Insert"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.toggleOverwrite">
       </keyBinding>
       <keyBinding
-            string="Ctrl+W"
+            keySequence="Ctrl+W"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.showRulerContextMenu">
       </keyBinding>
       <keyBinding
-            string="Ctrl+Space"
+            keySequence="Ctrl+Space"
             commandId="org.eclipse.ui.edit.text.contentAssist.proposals">
       </keyBinding>
       <keyBinding
-            string="Ctrl+Shift+Space"
+            keySequence="Ctrl+Shift+Space"
             commandId="org.eclipse.ui.edit.text.contentAssist.contextInformation">
       </keyBinding>
       <keyBinding
             locale="zh"
-            string="Ctrl+Space"
+            keySequence="Ctrl+Space"
             contextId="org.eclipse.ui.textEditorScope">
       </keyBinding>
       <keyBinding
             locale="zh"
-            string="Ctrl+Shift+Space"
+            keySequence="Ctrl+Shift+Space"
             contextId="org.eclipse.ui.textEditorScope">
       </keyBinding>
       <keyBinding
             locale="zh"
-            string="Alt+/"
+            keySequence="Alt+/"
             commandId="org.eclipse.ui.edit.text.contentAssist.proposals">
       </keyBinding>
       <keyBinding
             locale="zh"
-            string="Alt+?"
+            keySequence="Alt+?"
             commandId="org.eclipse.ui.edit.text.contentAssist.contextInformation">
       </keyBinding>
       <keyBinding
             locale="zh"
-            string="Alt+Shift+?"
+            keySequence="Alt+Shift+?"
             commandId="org.eclipse.ui.edit.text.contentAssist.contextInformation">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Ctrl+F4">
+            keySequence="Ctrl+F4">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Ctrl+Shift+F4">
+            keySequence="Ctrl+Shift+F4">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Ctrl+S">
+            keySequence="Ctrl+S">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Ctrl+Shift+S">
+            keySequence="Ctrl+Shift+S">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Ctrl+P">
+            keySequence="Ctrl+P">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Alt+ENTER"
+            keySequence="Alt+Cr"
             commandId="org.eclipse.ui.file.properties">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Ctrl+Z">
+            keySequence="Ctrl+Z">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Ctrl+Y">
+            keySequence="Ctrl+Y">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Ctrl+X">
+            keySequence="Ctrl+X">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Ctrl+C">
+            keySequence="Ctrl+C">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Ctrl+V">
+            keySequence="Ctrl+V">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Ctrl+E">
+            keySequence="Ctrl+E">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Ctrl+Shift+E">
+            keySequence="Ctrl+Shift+E">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Ctrl+A">
+            keySequence="Ctrl+A">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Ctrl+F">
+            keySequence="Ctrl+F">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Ctrl+Shift+R">
+            keySequence="Ctrl+Shift+R">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Ctrl+.">
+            keySequence="Ctrl+.">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Ctrl+,">
+            keySequence="Ctrl+,">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Alt+ARROW_LEFT"
+            keySequence="Alt+Arrow_Left"
             commandId="org.eclipse.ui.navigate.backwardHistory">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Alt+ARROW_RIGHT"
+            keySequence="Alt+Arrow_Right"
             commandId="org.eclipse.ui.navigate.forwardHistory">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Ctrl+B">
+            keySequence="Ctrl+B">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Alt+-"
+            keySequence="Alt+-"
             commandId="org.eclipse.ui.window.showSystemMenu">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Ctrl+F10">
+            keySequence="Ctrl+F10">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="F12"
+            keySequence="F12"
             commandId="org.eclipse.ui.window.activateEditor">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Ctrl+M"
+            keySequence="Ctrl+M"
             commandId="org.eclipse.ui.window.maximizePart">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Ctrl+F6">
+            keySequence="Ctrl+F6">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Ctrl+Shift+F6">
+            keySequence="Ctrl+Shift+F6">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Ctrl+F7">
+            keySequence="Ctrl+F7">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Ctrl+Shift+F7">
+            keySequence="Ctrl+Shift+F7">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Ctrl+F8">
+            keySequence="Ctrl+F8">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Ctrl+Shift+F8">
+            keySequence="Ctrl+Shift+F8">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Ctrl+K"
+            keySequence="Ctrl+K"
             contextId="org.eclipse.ui.textEditorScope">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Ctrl+Shift+K"
+            keySequence="Ctrl+Shift+K"
             contextId="org.eclipse.ui.textEditorScope">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Ctrl+J"
+            keySequence="Ctrl+J"
             contextId="org.eclipse.ui.textEditorScope">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Ctrl+Shift+J"
+            keySequence="Ctrl+Shift+J"
             contextId="org.eclipse.ui.textEditorScope">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Ctrl+L"
+            keySequence="Ctrl+L"
             contextId="org.eclipse.ui.textEditorScope">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Ctrl+ARROW_UP"
+            keySequence="Ctrl+Arrow_Up"
             contextId="org.eclipse.ui.textEditorScope">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Ctrl+ARROW_DOWN"
+            keySequence="Ctrl+Arrow_Down"
             contextId="org.eclipse.ui.textEditorScope"> 
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="INSERT"
+            keySequence="Insert"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.toggleOverwrite">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Command+W"
+            keySequence="Command+W"
             commandId="org.eclipse.ui.file.close">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Command+Shift+W"
+            keySequence="Command+Shift+W"
             commandId="org.eclipse.ui.file.closeAll">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Command+S"
+            keySequence="Command+S"
             commandId="org.eclipse.ui.file.save">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Command+Shift+S"
+            keySequence="Command+Shift+S"
             commandId="org.eclipse.ui.file.saveAll">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Command+P"
+            keySequence="Command+P"
             commandId="org.eclipse.ui.file.print">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Command+Z"
+            keySequence="Command+Z"
             commandId="org.eclipse.ui.edit.undo">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Command+Y"
+            keySequence="Command+Y"
             commandId="org.eclipse.ui.edit.redo">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Command+X"
+            keySequence="Command+X"
             commandId="org.eclipse.ui.edit.cut">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Command+C"
+            keySequence="Command+C"
             commandId="org.eclipse.ui.edit.copy">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Command+V"
+            keySequence="Command+V"
             commandId="org.eclipse.ui.edit.paste">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Command+E"
+            keySequence="Command+E"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.delete.line">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Command+Shift+E"
+            keySequence="Command+Shift+E"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.delete.line.to.end">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Command+A"
+            keySequence="Command+A"
             commandId="org.eclipse.ui.edit.selectAll">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Command+F"
+            keySequence="Command+F"
             commandId="org.eclipse.ui.edit.findReplace">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Command+Shift+R"
+            keySequence="Command+Shift+R"
             commandId="org.eclipse.ui.navigate.openResource">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Command+."            
+            keySequence="Command+."            
             commandId="org.eclipse.ui.navigate.next">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Command+,"            
+            keySequence="Command+,"            
             commandId="org.eclipse.ui.navigate.previous">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Command+B"            
+            keySequence="Command+B"            
             commandId="org.eclipse.ui.project.buildAll">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Command+F10"            
+            keySequence="Command+F10"            
             commandId="org.eclipse.ui.window.showViewMenu">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Command+F6"            
+            keySequence="Command+F6"            
             commandId="org.eclipse.ui.window.nextEditor">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Command+Shift+F6"            
+            keySequence="Command+Shift+F6"            
             commandId="org.eclipse.ui.window.previousEditor">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Command+F7"            
+            keySequence="Command+F7"            
             commandId="org.eclipse.ui.window.nextView">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Command+Shift+F7"            
+            keySequence="Command+Shift+F7"            
             commandId="org.eclipse.ui.window.previousView">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Command+F8"            
+            keySequence="Command+F8"            
             commandId="org.eclipse.ui.window.nextPerspective">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Command+Shift+F8"            
+            keySequence="Command+Shift+F8"            
             commandId="org.eclipse.ui.window.previousPerspective">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Command+K"
+            keySequence="Command+K"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.findNext">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Command+Shift+K"
+            keySequence="Command+Shift+K"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.findPrevious">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Command+J"
+            keySequence="Command+J"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.findIncremental">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Command+Shift+J"
+            keySequence="Command+Shift+J"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.findIncrementalReverse">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Command+L"
+            keySequence="Command+L"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.goto.line">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Command+ARROW_UP"
+            keySequence="Command+Arrow_Up"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.scroll.lineUp">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Command+ARROW_DOWN"
+            keySequence="Command+Arrow_Down"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.scroll.lineDown">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Command+Space"            
+            keySequence="Command+Space"            
             commandId="org.eclipse.ui.edit.text.contentAssist.proposals">
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Command+Shift+Space"            
+            keySequence="Command+Shift+Space"            
             commandId="org.eclipse.ui.edit.text.contentAssist.contextInformation">
       </keyBinding>
       <keyBinding
             platform="gtk"
-            string="Shift+Delete"            
+            keySequence="Shift+Del"            
             commandId="org.eclipse.ui.edit.cut">
       </keyBinding>
       <keyBinding
             platform="gtk"
-            string="Ctrl+Insert"            
+            keySequence="Ctrl+Insert"            
             commandId="org.eclipse.ui.edit.copy">
       </keyBinding>
       <keyBinding
             platform="gtk"
-            string="Shift+Insert"            
+            keySequence="Shift+Insert"            
             commandId="org.eclipse.ui.edit.paste">
       </keyBinding>
       <keyBinding
             platform="motif"
-            string="Shift+Delete"            
+            keySequence="Shift+Del"            
             commandId="org.eclipse.ui.edit.cut">
       </keyBinding>
       <keyBinding
             platform="motif"
-            string="Ctrl+Insert"            
+            keySequence="Ctrl+Insert"            
             commandId="org.eclipse.ui.edit.copy">
       </keyBinding>
       <keyBinding
             platform="motif"
-            string="Shift+Insert"            
+            keySequence="Shift+Insert"            
             commandId="org.eclipse.ui.edit.paste">
       </keyBinding>
       <keyBinding
-            string="Ctrl+X K"            
+            keySequence="Ctrl+X K"            
             commandId="org.eclipse.ui.file.close"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Ctrl+X Ctrl+C"            
+            keySequence="Ctrl+X Ctrl+C"            
             commandId="org.eclipse.ui.file.closeAll"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Ctrl+X Ctrl+S"            
+            keySequence="Ctrl+X Ctrl+S"            
             commandId="org.eclipse.ui.file.save"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Ctrl+X S"            
+            keySequence="Ctrl+X S"            
             commandId="org.eclipse.ui.file.saveAll"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Alt+F9"            
+            keySequence="Alt+F9"            
             commandId="org.eclipse.ui.file.print"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Esc F9"            
+            keySequence="Esc F9"            
             commandId="org.eclipse.ui.file.print"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="F9"            
+            keySequence="F9"            
             commandId="org.eclipse.ui.edit.undo"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Ctrl+X U"            
+            keySequence="Ctrl+X U"            
             commandId="org.eclipse.ui.edit.undo"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>      
       <keyBinding
-            string="Ctrl+Shift+-"            
+            keySequence="Ctrl+Shift+-"            
             commandId="org.eclipse.ui.edit.undo"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="F10"            
+            keySequence="F10"            
             commandId="org.eclipse.ui.edit.redo"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Ctrl+W"            
+            keySequence="Ctrl+W"            
             commandId="org.eclipse.ui.edit.cut"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Shift+DELETE"            
+            keySequence="Shift+Del"            
             commandId="org.eclipse.ui.edit.cut"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Alt+W"            
+            keySequence="Alt+W"            
             commandId="org.eclipse.ui.edit.copy"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Esc W"            
+            keySequence="Esc W"            
             commandId="org.eclipse.ui.edit.copy"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Ctrl+INSERT"            
+            keySequence="Ctrl+Ins"            
             commandId="org.eclipse.ui.edit.copy"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Ctrl+Y"            
+            keySequence="Ctrl+Y"            
             commandId="org.eclipse.ui.edit.paste"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Shift+INSERT"            
+            keySequence="Shift+Ins"            
             commandId="org.eclipse.ui.edit.paste"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Alt+0 Ctrl+K"
+            keySequence="Alt+0 Ctrl+K"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.cut.line.to.beginning"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Esc 0 Ctrl+K"
+            keySequence="Esc 0 Ctrl+K"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.cut.line.to.beginning"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Ctrl+K"
+            keySequence="Ctrl+K"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.cut.line.to.end"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Ctrl+X H"            
+            keySequence="Ctrl+X H"            
             commandId="org.eclipse.ui.edit.selectAll"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Ctrl+Space"
+            keySequence="Ctrl+Space"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.set.mark"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Ctrl+2"
+            keySequence="Ctrl+2"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.set.mark"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Ctrl+G"
+            keySequence="Ctrl+G"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.clear.mark"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Ctrl+X Ctrl+X"
+            keySequence="Ctrl+X Ctrl+X"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.swap.mark"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Alt+R"            
+            keySequence="Alt+R"            
             commandId="org.eclipse.ui.edit.findReplace"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Esc R"            
+            keySequence="Esc R"            
             commandId="org.eclipse.ui.edit.findReplace"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Ctrl+X Ctrl+B"            
+            keySequence="Ctrl+X Ctrl+B"            
             commandId="org.eclipse.ui.window.switchToEditor"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Alt+-"            
+            keySequence="Alt+-"            
             commandId="org.eclipse.ui.window.showSystemMenu"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Ctrl+F10"            
+            keySequence="Ctrl+F10"            
             commandId="org.eclipse.ui.window.showViewMenu"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="F12"            
+            keySequence="F12"            
             commandId="org.eclipse.ui.window.activateEditor"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Ctrl+M"            
+            keySequence="Ctrl+M"            
             commandId="org.eclipse.ui.window.maximizePart"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Ctrl+S"
+            keySequence="Ctrl+S"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.findIncremental"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Ctrl+R"
+            keySequence="Ctrl+R"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.findIncrementalReverse"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Ctrl+P"
+            keySequence="Ctrl+P"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.goto.lineUp"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Ctrl+N"
+            keySequence="Ctrl+N"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.goto.lineDown"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Ctrl+A"
+            keySequence="Ctrl+A"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.goto.lineStart"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Ctrl+E"
+            keySequence="Ctrl+E"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.goto.lineEnd"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Ctrl+X G"
+            keySequence="Ctrl+X G"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.goto.line"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Ctrl+B"
+            keySequence="Ctrl+B"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.goto.columnPrevious"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Ctrl+F"
+            keySequence="Ctrl+F"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.goto.columnNext"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Alt+V"
+            keySequence="Alt+V"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.goto.pageUp"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Esc V"
+            keySequence="Esc V"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.goto.pageUp"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Ctrl+V"
+            keySequence="Ctrl+V"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.goto.pageDown"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Alt+B"
+            keySequence="Alt+B"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.goto.wordPrevious"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Esc B"
+            keySequence="Esc B"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.goto.wordPrevious"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>      
       <keyBinding
-            string="Alt+F"
+            keySequence="Alt+F"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.goto.wordNext"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Esc F"
+            keySequence="Esc F"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.goto.wordNext"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>           
       <keyBinding
-            string="Alt+&lt;"
+            keySequence="Alt+&lt;"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.goto.textStart"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Alt+Shift+&lt;"
+            keySequence="Alt+Shift+&lt;"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.goto.textStart"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Esc &lt;"
+            keySequence="Esc &lt;"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.goto.textStart"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Esc Shift+&lt;"
+            keySequence="Esc Shift+&lt;"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.goto.textStart"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Ctrl+X ["
+            keySequence="Ctrl+X ["
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.goto.textStart"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Alt+&gt;"
+            keySequence="Alt+&gt;"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.goto.textEnd"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Alt+Shift+&gt;"
+            keySequence="Alt+Shift+&gt;"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.goto.textEnd"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Esc &gt;"
+            keySequence="Esc &gt;"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.goto.textEnd"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Esc Shift+&gt;"
+            keySequence="Esc Shift+&gt;"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.goto.textEnd"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Ctrl+X ]"
+            keySequence="Ctrl+X ]"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.goto.textEnd"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Alt+Z"
+            keySequence="Alt+Z"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.scroll.lineUp"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Esc Z"
+            keySequence="Esc Z"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.scroll.lineUp"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Ctrl+Z"
+            keySequence="Ctrl+Z"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.scroll.lineDown"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Ctrl+D"
+            keySequence="Ctrl+D"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.deleteNext"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Alt+BACKSPACE"
+            keySequence="Alt+Bs"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.deletePreviousWord"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Esc BACKSPACE"
+            keySequence="Esc Bs"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.deletePreviousWord"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Alt+D"
+            keySequence="Alt+D"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.deleteNextWord"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Esc D"
+            keySequence="Esc D"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.deleteNextWord"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="INSERT"
+            keySequence="Insert"
             contextId="org.eclipse.ui.textEditorScope"
             commandId="org.eclipse.ui.edit.text.toggleOverwrite"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Alt+/"            
+            keySequence="Alt+/"            
             commandId="org.eclipse.ui.edit.text.contentAssist.proposals"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Alt+?"            
+            keySequence="Alt+?"            
             commandId="org.eclipse.ui.edit.text.contentAssist.contextInformation"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Alt+Shift+?"            
+            keySequence="Alt+Shift+?"            
             commandId="org.eclipse.ui.edit.text.contentAssist.contextInformation"
             keyConfigurationId="org.eclipse.ui.emacsAcceleratorConfiguration">
       </keyBinding>
