@@ -170,13 +170,21 @@ function scrollIntoView(node)
 	window.scrollBy(0, scroll);
 }
 
+function focusHandler(e)
+{
+	if (oldActive)
+		oldActive.focus();
+}
+
 
 // listen for clicks
 if (isMozilla) {
   document.addEventListener('click', mouseClickHandler, true);
   document.addEventListener('mousemove', mouseMoveHandler, true);
+  document.addEventListener("focus", focusHandler, true);
 }
 else if (isIE){
   document.onclick = mouseClickHandler;
   document.onmousemove = mouseMoveHandler;
+  window.onfocus = focusHandler;
 }

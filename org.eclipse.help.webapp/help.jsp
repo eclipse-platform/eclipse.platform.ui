@@ -99,12 +99,12 @@
 	<frameset id="helpFrameset" cols="25%,*"  framespacing="0" border="0"  frameborder="0" spacing="0" resize=no scrolling=no>
 		<frameset name="navFrameset" rows="24,*,24" marginwidth="0" marginheight="0" scrolling="no" frameborder="0">
 		        <frame name="NavToolbarFrame" src='<%="navToolbar.jsp"+query%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=yes>
-		        <frame name="NavFrame" src='<%="nav.html"+query%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=yes>
+		        <frame name="NavFrame" tabindex="1" src='<%="nav.html"+query%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=yes>
 		        <frame name="TabsFrame" src='<%="tabs.jsp"+query%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=yes>
 		</frameset>
         <frameset id="contentFrameset" rows="24,*", frameborder=0 framespacing=0 border=0>
         	<frame name="ToolbarFrame" src='<%="toolbar.jsp"+query%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=yes>
-             <frame name="MainFrame" src="<%=srcMainFrame%>" marginwidth="10" marginheight="10" scrolling="auto"  frameborder="0" resize="yes">
+             <frame name="MainFrame" tabindex="2" src="<%=srcMainFrame%>" marginwidth="10" marginheight="10" scrolling="auto"  frameborder="0" resize="yes">
         </frameset>
      </frameset>
  </frameset>
@@ -116,12 +116,12 @@
 	<frameset id="helpFrameset" cols="25%,*"  framespacing="0" border="0"  frameborder="0" spacing="0" resize=no scrolling=no>
 		<frameset name="navFrameset" rows="24,*,24" marginwidth="0" marginheight="0" scrolling="no" frameborder="0">
 		        <frame name="NavToolbarFrame" src='<%="navToolbar.jsp"+query%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=yes>
-		        <frame name="NavFrame" src='<%="nav.html"+query%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=yes>
+		        <frame name="NavFrame" tabindex="1"  src='<%="nav.html"+query%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=yes>
 		        <frame name="TabsFrame" src='<%="tabs.jsp"+query%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=yes>
 		</frameset>
         <frameset id="contentFrameset" rows="24,*", frameborder=0 framespacing=0 border=0>
         	<frame name="ToolbarFrame" src='<%="toolbar.jsp"+query%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=yes>
-             <frame name="MainFrame" src="<%=srcMainFrame%>" marginwidth="10" marginheight="10" scrolling="auto"  frameborder="0" resize="yes">
+             <frame name="MainFrame" tabindex="2" src="<%=srcMainFrame%>" marginwidth="10" marginheight="10" scrolling="auto"  frameborder="0" resize="yes">
         </frameset>
      </frameset>
  </frameset>
