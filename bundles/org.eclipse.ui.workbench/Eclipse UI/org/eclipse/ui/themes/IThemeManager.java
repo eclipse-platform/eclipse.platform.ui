@@ -19,7 +19,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
  * other controls where possible.  The workbench implementation of this 
  * interface will push the values of the current theme into the underlying jface
  * registries ({@link org.eclipse.jface.resource.ColorRegistry} and 
- * {@link org.eclipse.jface.resource.FontRegistry) whenever the current theme 
+ * {@link org.eclipse.jface.resource.FontRegistry} whenever the current theme 
  * changes.  Clients who do not need access to specific themes may instead 
  * attach listeners to these registries directly.  
  * 
@@ -27,7 +27,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
  * This interface is not intended to be implemented or extended by clients.
  * </p>
  * 
- * @see org.eclipse.ui.IWorkbench#getThemeManager()  
+ * @see org.eclipse.ui.IWorkbench#getThemeManager()
  * @since 3.0
  */
 public interface IThemeManager {

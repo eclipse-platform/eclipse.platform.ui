@@ -113,7 +113,7 @@ public class RetargetAction extends PartEventAction
 	/**
 	 * Enables the accelerator for this action. 
 	 *
-	 * @param boolean the new enable state
+	 * @param b the new enable state
 	 */
 	public void enableAccelerator(boolean b) {
 		enableAccelerator = b;

@@ -31,7 +31,7 @@ public interface IDecoratorManager {
 	 * label decorator.
 	 *
 	 * @return the label decorator
-	 * @see DecoratingLabelProvider
+	 * @see org.eclipse.jface.viewers.DecoratingLabelProvider
 	 */
 	ILabelDecorator getLabelDecorator();
 

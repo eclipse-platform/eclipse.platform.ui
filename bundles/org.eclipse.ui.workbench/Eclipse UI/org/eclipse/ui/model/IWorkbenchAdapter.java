@@ -30,7 +30,8 @@ public interface IWorkbenchAdapter {
  * element's children.  Returns an empty array if this
  * object has no children.
  *
- * @param object The object to get the children for.
+ * @param o The object to get the children for.
+ * @return Object[]
  */
 public Object[] getChildren(Object o);
 /**
@@ -38,6 +39,7 @@ public Object[] getChildren(Object o);
  * Returns <code>null</code> if there is no appropriate image.
  *
  * @param object The object to get an image descriptor for.
+ * @return ImageDescriptor
  */
 public ImageDescriptor getImageDescriptor(Object object);
 /**
@@ -46,7 +48,8 @@ public ImageDescriptor getImageDescriptor(Object object);
  * in the UI.  Returns an empty string if there is no appropriate
  * label text for this object.
  *
- * @param object The object to get a label for.
+ * @param o The object to get a label for.
+ * @return String
  */
 public String getLabel(Object o);
 /**
@@ -54,7 +57,8 @@ public String getLabel(Object o);
  * Returns <code>null</code> if there is no parent, or if this object doesn't
  * belong to a tree.
  *
- * @param object The object to get the parent for.
+ * @param o The object to get the parent for.
+ * @return Object
  */
 public Object getParent(Object o);
 }

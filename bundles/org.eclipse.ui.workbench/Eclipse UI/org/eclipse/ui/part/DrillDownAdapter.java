@@ -79,7 +79,7 @@ public void addNavigationActions(IMenuManager manager) {
 /**
  * Adds actions for "go back", "go home", and "go into" to a tool bar manager.
  *
- * @param manager is the target manager to update
+ * @param toolBar is the target manager to update
  */
 public void addNavigationActions(IToolBarManager toolBar) {
 	createActions();

@@ -69,10 +69,6 @@ public interface IWorkbench {
 
 	/**
 	 * Returns the progress service for the workbench.
-	 * <p>
-	 * <b>NOTE:</b> This is experimental API and subject to change at any
-	 * time.
-	 * </p>
 	 * 
 	 * @return the progress service
 	 * @since 3.0

@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Shell;
  * <b>NOTE</b> This interface is not intended to be implemented
  * by other plug-ins.
  * 
- * @see org.eclipse.ui.IWorkbench#getProgressService. 
+ * @see org.eclipse.ui.IWorkbench#getProgressService() 
  * @since 3.0
  */
 public interface IProgressService extends IRunnableContext {

@@ -81,7 +81,7 @@ public interface IWorkbenchConfigurer {
 	 *
 	 * @return the workbench window manager
 	 * 
-	 * @issue IWorkbenchWindow is implemented using JFace's Window (and therefore uses WindowManager), 
+	 * Note:IWorkbenchWindow is implemented using JFace's Window (and therefore uses WindowManager), 
 	 *   but this is an implementation detail
 	 */
 	public WindowManager getWorkbenchWindowManager();
@@ -193,7 +193,6 @@ public interface IWorkbenchConfigurer {
      * </p>
      * 
      * @see WorkbenchAdvisor#openWindows
-     * @issue clarify error handling
      */
     public void openFirstTimeWindow();
 }

@@ -47,7 +47,7 @@ import org.osgi.framework.Bundle;
  * As an interim solution, use reflection to access selections
  * implementing ITextSelection
  * 
- * @issue several public fields and methods - decide which should be API
+ * Note: several public fields and methods - decide which should be API
  */
 public final class SelectionEnabler {
 	private static final String ATT_NAME = "name";//$NON-NLS-1$

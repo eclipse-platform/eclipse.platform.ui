@@ -303,7 +303,7 @@ public class DeferredTreeContentManager {
 	}
 	/**
 	 * Create the element collector for the receiver.
-	 *@param parent.
+	 *@param parent
 	 *            The parent object being filled in,
 	 * @param placeholder
 	 *            The adapter that will be used to indicate that results are

@@ -99,7 +99,7 @@ public interface IProgressConstants {
 	 * <code>false</code> if the user subsequently decides to complete the job in the 
 	 * background.
 	 * This property is not intended to be set by clients.
-	 * @see Job#isUser()
+	 * @see org.eclipse.core.runtime.jobs.Job#isUser()
 	 */
 	public static final QualifiedName PROPERTY_IN_DIALOG = new QualifiedName(
 			IProgressConstants.PROPERTY_PREFIX, "inDialog"); //$NON-NLS-1$

@@ -117,7 +117,7 @@ package org.eclipse.ui;
  *  
  * @see org.eclipse.ui.IActionBars#setGlobalActionHandler
  * 
- * @issue many of the remaining non-deprecated constants here are IDE-specific
+ * Note: many of the remaining non-deprecated constants here are IDE-specific
  *   and should be deprecated and moved to a constant pool at the IDE layer
  *   (e.g. IIDEActionConstants).
  */

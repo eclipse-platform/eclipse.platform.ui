@@ -112,7 +112,7 @@ public class PresentationUtil {
 	 * Currently, only one such drag listener can be registered at a time. </p> 
 	 * 
 	 * @param control the control containing the drag listener
-	 * @param dragListener the drag listener to attach
+	 * @param externalDragListener the drag listener to attach
 	 */
 	public static void addDragListener(Control control, Listener externalDragListener) {
 		control.addListener(SWT.DragDetect, dragListener);
@@ -127,7 +127,7 @@ public class PresentationUtil {
 	 * Removes a drag listener that was previously attached using addDragListener
 	 * 
 	 * @param control the control containing the drag listener
-	 * @param dragListener the drag listener to remove
+	 * @param externalDragListener the drag listener to remove
 	 */
 	public static void removeDragListener(Control control, Listener externalDragListener) {
 		control.removeListener(SWT.DragDetect, dragListener);

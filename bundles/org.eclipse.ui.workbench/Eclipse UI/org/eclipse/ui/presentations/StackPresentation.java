@@ -73,6 +73,7 @@ public abstract class StackPresentation {
 	
 	/**
 	 * Returns the presentation site (not null).
+	 * @return  IStackPresentationSite
 	 */
 	protected IStackPresentationSite getSite() {
 	    return site;
@@ -107,7 +108,7 @@ public abstract class StackPresentation {
 	 * state has changed. StackPresentations can have three possible activation
 	 * states (see the AS_* constants above)
 	 * 
-	 * @param isActive one of AS_INACTIVE, AS_ACTIVE, or AS_ACTIVE_NOFOCUS
+	 * @param newState one of AS_INACTIVE, AS_ACTIVE, or AS_ACTIVE_NOFOCUS
 	 */
 	public abstract void setActive(int newState);
 	
@@ -117,6 +118,8 @@ public abstract class StackPresentation {
 	 * input or modify its parts. For example, a presentations will 
 	 * be made invisible if it belongs to a perspective and the user
 	 * switches to another perspective.
+	 * 
+	 * @param isVisible the state to set visibility to
 	 * 
 	 * @since 3.0
 	 */

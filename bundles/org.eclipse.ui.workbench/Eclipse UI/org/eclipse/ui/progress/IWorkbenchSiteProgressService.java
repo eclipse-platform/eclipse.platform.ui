@@ -41,8 +41,8 @@ public interface IWorkbenchSiteProgressService extends IProgressService {
 	 * indication by overriding <code>WorkbenchPart.setBusy()</code>.
 	 * If useHalfBusyCursor is true then the cursor will change to
 	 * the half busy cursor for the duration of the job.
-	 * @param job. The job to schedule
-	 * @param delay. The delay in scheduling.
+	 * @param job The job to schedule
+	 * @param delay The delay in scheduling.
 	 * @param useHalfBusyCursor. A boolean to indicate if the half busy
 	 * 		cursor should be used while this job is running.
 	 * @see Job#schedule(long)
@@ -54,8 +54,8 @@ public interface IWorkbenchSiteProgressService extends IProgressService {
 	 * to be changed to indicate that the part is busy and in a transient 
 	 * state until the job completes. Parts can also add customized busy 
 	 * indication by overriding <code>WorkbenchPart.setBusy</code>.
-	 * @param job. The job to schedule
-	 * @param delay. The delay in scheduling.
+	 * @param job The job to schedule
+	 * @param delay The delay in scheduling.
 	 * @see Job#schedule(long)
 	 */
 	public void schedule(Job job, long delay);
@@ -65,7 +65,7 @@ public interface IWorkbenchSiteProgressService extends IProgressService {
 	 * to be changed to indicate that the part is busy and in a transient 
 	 * state until the job completes. Parts can also add customized busy 
 	 * indication by overriding <code>WorkbenchPart.setBusy</code>.
-	 * @param job. The job to schedule
+	 * @param job The job to schedule
 	 * @see Job#schedule()
 	 */
 	public void schedule(Job job);

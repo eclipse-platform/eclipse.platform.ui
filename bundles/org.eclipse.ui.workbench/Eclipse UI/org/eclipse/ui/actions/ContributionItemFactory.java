@@ -65,7 +65,7 @@ public abstract class ContributionItemFactory {
 	 * Ordinarily, the window's references to these listeners will be dropped
 	 * automatically when the window closes. However, if the client needs to get
 	 * rid of a contribution item while the window is still open, the client must
-	 * call {@link IContributionItem#dispose dispose} to give the item an
+	 * call IContributionItem#dispose to give the item an
 	 * opportunity to deregister its listeners and to perform any other cleanup.
 	 * </p>
 	 * 

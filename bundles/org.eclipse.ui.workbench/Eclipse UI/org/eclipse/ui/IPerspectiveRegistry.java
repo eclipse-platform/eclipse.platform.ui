@@ -73,7 +73,7 @@ public IPerspectiveDescriptor findPerspectiveWithLabel(String label);
  * </p>
  *
  * @return the default perspective id; will never be <code>null</code>
- * @issue revise - this is out of date (even before RCP)
+ * Note: revise - this is out of date (even before RCP)
  */
 public String getDefaultPerspective();
 /**

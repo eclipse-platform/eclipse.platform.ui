@@ -220,6 +220,7 @@ public interface IWorkbenchPage extends IPartService, ISelectionService, ICompat
 	 * is <code>true</code>, the user will be given the opportunity to save
 	 * them.
 	 * </p>
+	 * @param save
 	 * 
 	 * @return <code>true</code> if all editors were successfully closed, and
 	 *         <code>false</code> if at least one is still open
@@ -318,7 +319,7 @@ public interface IWorkbenchPage extends IPartService, ISelectionService, ICompat
 	 * 
 	 * @return a list of open editors
 	 * 
-	 * @deprecated use getEditorReferences() instead
+	 * @deprecated use #getEditorReferences() instead
 	 */
 	public IEditorPart[] getEditors();
 	/**
@@ -378,7 +379,7 @@ public interface IWorkbenchPage extends IPartService, ISelectionService, ICompat
 	 * 
 	 * @return a list of visible views
 	 * 
-	 * @deprecated use getViewReferences() instead.
+	 * @deprecated use #getViewReferences() instead.
 	 */
 	public IViewPart[] getViews();
 	/**

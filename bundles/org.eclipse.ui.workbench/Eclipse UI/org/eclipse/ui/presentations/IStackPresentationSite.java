@@ -70,7 +70,7 @@ public interface IStackPresentationSite {
 	/**
 	 * Begins dragging the entire stack of parts
 	 * 
-	 * @param initialLocation the mouse position at the time of the initial mousedown (display coordinates, 
+	 * @param initialPosition the mouse position at the time of the initial mousedown (display coordinates, 
 	 * not null)
 	 * @param keyboard true iff the drag was initiated via mouse dragging,
 	 * and false if the drag may be using the keyboard	 
