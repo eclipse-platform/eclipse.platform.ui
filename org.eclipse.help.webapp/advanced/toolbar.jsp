@@ -25,7 +25,14 @@ HTML {
 	margin:0px;
 	padding:0px;
 	border:0px;
- }
+<%
+if (data.isIE()) {
+%>
+	border-bottom:1px solid ThreeDShadow;
+<%
+}
+%>
+}
  
 BODY {
 	background:<%=prefs.getToolbarBackground()%>;
@@ -151,6 +158,9 @@ if (data.getScript() != null) {
 			</tr>
 		</table>
 	</div>
+<%
+if (data.isMozilla()) {
+%>
 	<div id="borderLayer" style="position:absolute; z-index:2; left:0; top:0; height:100%; width:100%; ">
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" height="100% ">
 			<tr>
@@ -159,7 +169,10 @@ if (data.getScript() != null) {
 				</td>
 			</tr>
 		</table>
-	</div>	
+	</div>
+<%
+}
+%>	
 	<div id="iconLayer" style="position:absolute; z-index:3; left:0; top:0; height:100%; width:100%;">
 		<table width="100%" border="0" cellspacing="1" cellpadding="0" height="100%">
 			<tr>

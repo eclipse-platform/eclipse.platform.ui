@@ -60,7 +60,6 @@ if (data.isMozilla()){
 if (data.isMozilla()){
 %>
 	top:10px;
-	width:5px;
 <%
 }
 %>
