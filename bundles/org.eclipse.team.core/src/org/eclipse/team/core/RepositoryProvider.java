@@ -5,13 +5,13 @@ package org.eclipse.team.core;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProjectNature;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.resources.IFileModificationValidator;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectNature;
+import org.eclipse.core.resources.team.IMoveDeleteHook;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.team.core.*;
 import org.eclipse.team.core.internal.Policy;
 
 /**
@@ -125,6 +125,19 @@ public abstract class RepositoryProvider implements IProjectNature {
 	 */
 	
 	public IFileModificationValidator getFileModificationValidator() {
+		return null;
+	}
+	
+	/**
+	 * Returns an <code>IMoveDeleteHook</code> for handling moves and deletes
+	 * that occur withing projects managed by the provider. This allows providers 
+	 * to control how moves and deletes occur and includes the ability to prevent them. 
+	 * <p>
+	 * Returning <code>null</code> signals that the default move and delete behavior is desired.
+	 * 
+	 * @see org.eclipse.core.resources.IMoveDeleteHook
+	 */
+	public IMoveDeleteHook getMoveDeleteHook() {
 		return null;
 	}
 	

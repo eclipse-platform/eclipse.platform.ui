@@ -14,19 +14,21 @@ import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.resources.team.IResourceTree;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.DefaultMoveDeleteHook;
+import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.core.RepositoryProviderType;
 
 public class MoveDeleteManager implements IMoveDeleteHook {
 
 	private static final IMoveDeleteHook DEFAULT_HOOK = new DefaultMoveDeleteHook();
 	
 	private IMoveDeleteHook getHookFor(IResource resource) {
-//		IProject project = resource.getProject();
-//		ITeamProvider provider = TeamPlugin.getManager().getProvider(project);
-//		IMoveDeleteHook hook = provider.getMoveDeleteManager(project);
-//		if (hook == null) {
+		IProject project = resource.getProject();
+		RepositoryProvider provider = RepositoryProviderType.getProvider(project);
+		IMoveDeleteHook hook = provider.getMoveDeleteHook();
+		if (hook == null) {
 			return DEFAULT_HOOK;
-//		}
-//		return hook;
+		}
+		return hook;
 	}
 	
 	/*
@@ -75,8 +77,6 @@ public class MoveDeleteManager implements IMoveDeleteHook {
 		int updateFlags,
 		IProgressMonitor monitor) {
 		
-		// XXX need to check if source and target have same providers.
-		// If not, make it a delete?
 		return getHookFor(source).moveFile(tree, source, destination, updateFlags, monitor);
 	}
 

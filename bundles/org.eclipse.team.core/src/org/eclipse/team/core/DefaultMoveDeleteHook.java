@@ -17,11 +17,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * A class which provides the default behavior for resource deletions and moves.
  * This class can be overridden by providers to change some or all of the behavior
  * related to resources deletions or moves.
+ * 
+ * @see org.eclipse.team.core.ResourceProvider#getMoveDeleteHook()
  */
 
 public class DefaultMoveDeleteHook implements IMoveDeleteHook {
 
-	/*
+	/**
 	 * @see IMoveDeleteHook#deleteFile(IResourceTree, IFile, int, IProgressMonitor)
 	 */
 	public boolean deleteFile(
@@ -32,7 +34,7 @@ public class DefaultMoveDeleteHook implements IMoveDeleteHook {
 		return false;
 	}
 
-	/*
+	/**
 	 * @see IMoveDeleteHook#deleteFolder(IResourceTree, IFolder, int, IProgressMonitor)
 	 */
 	public boolean deleteFolder(
@@ -43,7 +45,7 @@ public class DefaultMoveDeleteHook implements IMoveDeleteHook {
 		return false;
 	}
 
-	/*
+	/**
 	 * @see IMoveDeleteHook#deleteProject(IResourceTree, IProject, int, IProgressMonitor)
 	 */
 	public boolean deleteProject(
@@ -54,7 +56,7 @@ public class DefaultMoveDeleteHook implements IMoveDeleteHook {
 		return false;
 	}
 
-	/*
+	/**
 	 * @see IMoveDeleteHook#moveFile(IResourceTree, IFile, IFile, int, IProgressMonitor)
 	 */
 	public boolean moveFile(
@@ -66,7 +68,7 @@ public class DefaultMoveDeleteHook implements IMoveDeleteHook {
 		return false;
 	}
 
-	/*
+	/**
 	 * @see IMoveDeleteHook#moveFolder(IResourceTree, IFolder, IFolder, int, IProgressMonitor)
 	 */
 	public boolean moveFolder(
@@ -78,7 +80,7 @@ public class DefaultMoveDeleteHook implements IMoveDeleteHook {
 		return false;
 	}
 
-	/*
+	/**
 	 * @see IMoveDeleteHook#moveProject(IResourceTree, IProject, IProjectDescription, int, IProgressMonitor)
 	 */
 	public boolean moveProject(
