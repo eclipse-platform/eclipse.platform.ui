@@ -13,6 +13,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 import org.apache.tools.ant.BuildListener;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IAction;
@@ -22,6 +23,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
@@ -179,7 +181,18 @@ public class ExternalToolsAction extends ActionDelegate implements IWorkbenchWin
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				try {
-					DefaultRunnerContext context = new DefaultRunnerContext(tool, null, window.getWorkbench().getWorkingSetManager());
+					IResource resource = null;
+					ISelection sel = window.getSelectionService().getSelection();
+					if (sel instanceof IStructuredSelection) {
+						Object result = ((IStructuredSelection)sel).getFirstElement();
+						if (result instanceof IResource)
+							resource = (IResource) result;
+					}
+					DefaultRunnerContext context;
+					if (resource != null)
+						context = new DefaultRunnerContext(tool, resource.getProject(), resource, window.getWorkbench().getWorkingSetManager());
+					else
+						context = new DefaultRunnerContext(tool, null, window.getWorkbench().getWorkingSetManager());
 					context.run(monitor, window.getShell());
 				} catch (BuildCanceledException e) {
 					throw new InterruptedException();

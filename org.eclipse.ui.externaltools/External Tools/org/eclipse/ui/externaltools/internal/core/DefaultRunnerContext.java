@@ -37,6 +37,7 @@ import org.eclipse.ui.IWorkingSetManager;
 public final class DefaultRunnerContext implements IRunnerContext {
 	private ExternalTool tool;
 	private IProject currentProject;
+	private IResource selectedResource;
 	private IWorkingSetManager workingSetManager;
 	private ArrayList antTargets = new ArrayList();
 	private String expandedLocation;
@@ -51,9 +52,22 @@ public final class DefaultRunnerContext implements IRunnerContext {
 	 * @param manager the working set manager
 	 */
 	public DefaultRunnerContext(ExternalTool tool, IProject currentProject, IWorkingSetManager manager) {
+		this(tool, currentProject, null, manager);
+	}
+
+	/**
+	 * Create a new context
+	 * 
+	 * @param tool the external tool for which the context applies to
+	 * @param currentProject the project to run the external tool on, or <code>null</code>
+	 * @param selectedResource the selected resource to run the external tool on, or <code>null</code>
+	 * @param manager the working set manager
+	 */
+	public DefaultRunnerContext(ExternalTool tool, IProject currentProject, IResource selectedResource, IWorkingSetManager manager) {
 		super();
 		this.tool = tool;
 		this.currentProject = currentProject;
+		this.selectedResource = selectedResource;
 		this.workingSetManager = manager;
 	}
 
@@ -175,8 +189,8 @@ public final class DefaultRunnerContext implements IRunnerContext {
 			if (varDef.argument != null && varDef.argument.length() > 0) {
 				location = ResourcesPlugin.getWorkspace().getRoot().getLocation() + varDef.argument;
 			} else {
-				if (currentProject != null)
-					location = currentProject.getLocation().toString(); // should get current resource
+				if (selectedResource != null)
+					location = selectedResource.getLocation().toString();
 			}
 			if (location != null)
 				buf.append(location);
