@@ -125,8 +125,6 @@ public class AntBuildTab extends AbstractLaunchConfigurationTab {
 		mainComposite.setLayoutData(gd);
 		mainComposite.setFont(parent.getFont());
 		
-		createVerticalSpacer(mainComposite, 1);
-		
 		fBuildButton = createCheckButton(mainComposite, AntLaunchConfigurationMessages.getString("AntBuildTab.1")); //$NON-NLS-1$
 		fBuildButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
