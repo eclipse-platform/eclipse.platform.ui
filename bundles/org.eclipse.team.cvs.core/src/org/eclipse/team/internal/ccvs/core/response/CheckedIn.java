@@ -81,7 +81,7 @@ class CheckedIn extends ResponseHandler {
 		}
 
 		mFile.setSyncInfo(newInfo);
-		Assert.isTrue(changeFile == mFile.isDirty());
+		Assert.isTrue(changeFile == mFile.isModified());
 	}
 }
 

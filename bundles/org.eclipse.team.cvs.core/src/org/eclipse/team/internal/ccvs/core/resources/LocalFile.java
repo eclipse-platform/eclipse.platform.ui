@@ -249,10 +249,21 @@ public class LocalFile extends LocalResource implements ICVSFile {
 			return true;
 		} else {
 			ResourceSyncInfo info = getSyncInfo();
+			if (info.isAdded()) return false;
+			if (info.isDeleted()) return true;
 			return !getTimeStamp().equals(info.getTimeStamp());
 		}
 	}
 
+	public boolean isModified() throws CVSException {
+		if (!exists() || !isManaged()) {
+			return true;
+		} else {
+			ResourceSyncInfo info = getSyncInfo();
+			return !getTimeStamp().equals(info.getTimeStamp());
+		}
+	}
+	
 	public void accept(ICVSResourceVisitor visitor) throws CVSException {
 		visitor.visitFile(this);
 	}

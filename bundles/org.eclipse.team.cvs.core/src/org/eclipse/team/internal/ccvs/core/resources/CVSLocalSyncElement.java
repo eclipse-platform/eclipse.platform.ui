@@ -65,7 +65,7 @@ public class CVSLocalSyncElement extends LocalSyncElement {
 						ICVSFolder parentFolder = cvsResource.getParent();
 						FolderSyncInfo syncInfo = parentFolder.getFolderSyncInfo();
 						RemoteFolder parent =  new RemoteFolder(null, CVSRepositoryLocation.fromString(syncInfo.getRoot()), new Path(syncInfo.getRepository()), syncInfo.getTag());
-						base = RemoteFile.createFile(parent, (ICVSFile)cvsResource);
+						base = RemoteFile.getBase(parent, (ICVSFile)cvsResource);
 					}
 				}
 			}

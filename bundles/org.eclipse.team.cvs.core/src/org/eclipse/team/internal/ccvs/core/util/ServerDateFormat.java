@@ -8,6 +8,7 @@ package org.eclipse.team.internal.ccvs.core.util;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Does convertion beetween this timeformats:<br>
@@ -21,7 +22,7 @@ public class ServerDateFormat extends SimpleDateFormat {
 	public static final String FORMAT = "dd MMM yyyy HH:mm:ss";
 	
 	public ServerDateFormat() {
-		super(FORMAT);
+		super(FORMAT,new Locale("en","US"));
 	}
 
 	/**

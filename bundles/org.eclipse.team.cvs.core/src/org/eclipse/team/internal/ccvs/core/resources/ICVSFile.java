@@ -65,9 +65,15 @@ public interface ICVSFile extends ICVSResource {
 	void setTimeStamp(String date) throws CVSException;
 	
 	/**
+	 * Answers <code>true</code> if the file differs from its base. If the file has no
+	 * base, it is not dirty
+	 */
+	boolean isDirty() throws CVSException;
+	
+	/**
 	 * Answers <code>true</code> if the file has changed since it was last updated
 	 * from the repository, if the file does not exist, or is not managed. And <code>false</code> 
 	 * if it has not changed.
 	 */
-	boolean isDirty() throws CVSException;
+	boolean isModified() throws CVSException;
 }

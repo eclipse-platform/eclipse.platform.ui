@@ -41,15 +41,27 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 	/**
 	 * Static method which creates a file as a single child of its parent.
 	 * This should only be used when one is only interested in the file alone.
+	 * 
+	 * The returned RemoteFile represents the base of the local resource.
+	 * If the local resource does not have a base, then null is returned
+	 * even if the resource does exists remotely (e.g. created by another party).
 	 */
-	public static RemoteFile createFile(RemoteFolder parent, ICVSFile managed) throws CVSException {
+	public static RemoteFile getBase(RemoteFolder parent, ICVSFile managed) throws CVSException {
+		ResourceSyncInfo info = managed.getSyncInfo();
+		if ((info == null) || info.isAdded()) {
+			// Either the file is unmanaged or has just been added (i.e. doesn't necessarily have a remote)
+			return null;
+		}
 		RemoteFile file = new RemoteFile(parent, managed.getSyncInfo());
 		parent.setChildren(new ICVSRemoteResource[] {file});
 		return file;
 	}
+	
 	/**
-	 * Constructor for RemoteFile.
+	 * Constructor for RemoteFile that should be used when nothing is know about the
+	 * file ahead of time.
 	 */
+	// XXX do we need the first two constructors?
 	public RemoteFile(RemoteFolder parent, String name, CVSTag tag) {
 		this(parent, name, "0", tag);
 	}
@@ -251,9 +263,19 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 	/**
 	 * @see IManagedFile#isDirty()
 	 * 
-	 * The file is direty if its contents haven't been fetched yet
+	 * A remote file is never dirty
 	 */
 	public boolean isDirty() throws CVSException {
+		return false;
+	}
+	
+	/**
+	 * @see IManagedFile#isModified()
+	 * 
+	 * The file is modified if its contents haven't been fetched yet.
+	 * This will trigger a fetch by the update command
+	 */
+	public boolean isModified() throws CVSException {
 		return contents == null;
 	}
 

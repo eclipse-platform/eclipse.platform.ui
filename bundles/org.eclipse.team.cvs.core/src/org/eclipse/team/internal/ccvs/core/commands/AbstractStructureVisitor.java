@@ -132,7 +132,7 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 			return;
 		}
 		
-		if (mFile.isDirty()) {
+		if (mFile.isModified()) {
 			requestSender.sendModified(mFile,monitor,binary);
 		} else {
 			requestSender.sendUnchanged(mFile.getName());

@@ -413,6 +413,13 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	 * 
 	 * XXX: shouldn't this consider the case where children is null. Maybe
 	 * by running the update + status with only one member?
+	 * 
+	 * XXX: The only problem with the above is that this is not supposed to be a long 
+	 * running method. Also, path could be a file or folder  and can be more than one level.
+	 * 
+	 * This getChild is geared to work with the Command hierarchy. Therefore it only returns 
+	 * children that were previously fetched by a call to getMembers(). If the request child
+	 * does not exist, an exception is thrown.
 	 */
 	public ICVSResource getChild(String path) throws CVSException {
 		if (path.equals(Client.CURRENT_LOCAL_FOLDER))
@@ -498,7 +505,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	 * Answers the immediate cached children of this remote folder or null if the remote folder
 	 * handle has not yet queried the server for the its children.
 	 */	
-	protected ICVSRemoteResource[] getChildren() {
+	public ICVSRemoteResource[] getChildren() {
 		return children;
 	}
 	/*

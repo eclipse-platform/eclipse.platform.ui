@@ -61,7 +61,8 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 		ICVSResource cvsResource = localSync.getCVSResource();
 		if(cvsResource != null && !cvsResource.isFolder()) {
 			try {
-				if(cvsResource.getSyncInfo() != null) {
+				ResourceSyncInfo info = cvsResource.getSyncInfo();
+				if ((info != null) && !info.isAdded()) {
 					hasBase = true;
 				}
 			} catch(CVSException e) {

@@ -126,6 +126,6 @@ class Updated extends ResponseHandler {
 		}			
 		mFile.setSyncInfo(new ResourceSyncInfo(entry, permissions, timestamp));
 
-		Assert.isTrue(mFile.isDirty()!=upToDate);
+		Assert.isTrue(mFile.isModified()!=upToDate);
 	}
 }

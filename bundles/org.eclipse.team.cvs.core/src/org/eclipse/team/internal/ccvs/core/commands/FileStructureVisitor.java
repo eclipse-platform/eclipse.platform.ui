@@ -65,7 +65,7 @@ class FileStructureVisitor extends AbstractStructureVisitor {
 		// and then the folder or first all the folders and then the
 		// files and does not mix. This is specified as well.
 		
-		if (!modifiedOnly || mFile.isDirty()) {
+		if (!modifiedOnly || mFile.isModified()) {
 			// sendFile sends the folder if it is nessary
 			sendFile(mFile);
 		}
