@@ -9,6 +9,7 @@ import java.net.URL;
 import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.ConfigurationPolicy;
+import org.eclipse.update.internal.core.InternalSiteManager;
 import org.eclipse.update.internal.core.SiteLocal;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
 import org.eclipse.update.tests.UpdateManagerTestCase;
@@ -26,16 +27,18 @@ public class TestLocalSite extends UpdateManagerTestCase {
 
 		//clean up
 		File localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.SITE_LOCAL_FILE).getFile());
-		UpdateManagerUtils.removeFromFileSystem(localFile);		
+		UpdateManagerUtils.removeFromFileSystem(localFile);	
+		InternalSiteManager.localSite=null;	
 
 
 		ILocalSite site = SiteManager.getLocalSite();
 		assertTrue("the local site already contains a config state, test cannot be executed",site.getCurrentConfiguration().getLabel().equals(SiteLocal.DEFAULT_CONFIG_LABEL));
 		site.save();
 		URL location = ((SiteLocal)site).getLocation();
-		String filePath = new URL(location,SiteLocal.SITE_LOCAL_FILE).getFile();
+		String filePath = new URL(location,SiteLocal.DEFAULT_CONFIG_FILE).getFile();
 		File file = new File(filePath);
 		assertTrue("config file hasn't been saved in :"+filePath, file.exists());
+		assertTrue("Local site hasn't been saved in :"+localFile.getAbsolutePath(),localFile.exists());
 		
 		// cleanup
 		UpdateManagerUtils.removeFromFileSystem(file);
@@ -49,6 +52,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		//clean up
 		File localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.SITE_LOCAL_FILE).getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);		
+		InternalSiteManager.localSite=null;
 
 		ILocalSite site = SiteManager.getLocalSite();
 		assertTrue("the local site already contains a config state, test cannot be executed",site.getCurrentConfiguration().getLabel().equals(SiteLocal.DEFAULT_CONFIG_LABEL));
@@ -59,6 +63,10 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		System.out.println("Default Config Site is :"+site.getCurrentConfiguration().getConfigurationSites()[0].getSite().getURL().toExternalForm());
 		
 		// cleanup
+		URL location = ((SiteLocal)site).getLocation();		
+		String filePath = new URL(location,SiteLocal.DEFAULT_CONFIG_FILE).getFile();
+		File file = new File(filePath);
+		UpdateManagerUtils.removeFromFileSystem(file);		
 		UpdateManagerUtils.removeFromFileSystem(localFile);		
 		
 
@@ -69,6 +77,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		// cleanup
 		File localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.SITE_LOCAL_FILE).getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);		
+		InternalSiteManager.localSite=null;		
 
 		ILocalSite site = SiteManager.getLocalSite();
 		ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE);
@@ -79,7 +88,8 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		IConfigurationSite configSite = newConfig.getConfigurationSites()[0];
 		configSite.setConfigurationPolicy(SiteManager.createConfigurationPolicy(IPlatformConfiguration.ISitePolicy.USER_INCLUDE));
 		configSite.install(feature,null);
-		newConfig.addConfigurationSite(configSite);
+		// why d I add, i didn;t create a new Site Config ?
+		//newConfig.addConfigurationSite(configSite);
 		site.save();
 		
 		// check
@@ -103,6 +113,10 @@ public class TestLocalSite extends UpdateManagerTestCase {
 	
 	public void testRetriveConfig() throws Exception {
 
+		//do not cleanup, we want to reuse previously created local site
+		// but force re-read of xml File
+		InternalSiteManager.localSite=null;
+		
 		ILocalSite site = SiteManager.getLocalSite();
 		ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE);
 		IFeature feature = remoteSite.getFeatureReferences()[0].getFeature();
@@ -116,9 +130,25 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		// teh current one points to a real fature
 		// does not throw error.
 		IConfigurationSite configSite2 = site.getCurrentConfiguration().getConfigurationSites()[0];
+		//FIXME: broken (Dec 4th 2001)
 		IFeatureReference ref = configSite2.getConfigurationPolicy().getConfiguredFeatures()[0];
 		IFeature feature2 = ref.getFeature();
 		String configuredFeature = feature2.getLabel();
+		assertEquals(feature2.getIdentifier().toString(),"org.eclipse.update.core.tests.feature3_1.0.0");
+		assertTrue("Wrong id  version of feature",feature2.getIdentifier().toString().equalsIgnoreCase("org.eclipse.update.core.tests.feature3_1.0.0"));
+		
+		// test only 2 install config in local site
+		assertTrue("wrong number of history in Local site",site.getConfigurationHistory().length==2);
+		
+		// test only 1 site in current config
+		assertTrue("Wrong number of config sites in current config",site.getCurrentConfiguration().getConfigurationSites().length==1);
+		
+		//test only one feature for the site
+		assertTrue("wrong number of configured features for config site",site.getCurrentConfiguration().getConfiguredFeatures().length==1);
+		
+		// test only 2 activities
+		assertTrue("Wrong number of activities for install config",site.getCurrentConfiguration().getActivities().length==2);
+		
 		
 		// cleanup
 		File localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.SITE_LOCAL_FILE).getFile());
@@ -126,6 +156,71 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.DEFAULT_CONFIG_FILE).getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);				
 		UpdateManagerUtils.removeFromFileSystem(file);		
+	}
+
+	public void testRetriveConfigHTTPInstall() throws Exception {
+
+		// cleanup
+		File localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.SITE_LOCAL_FILE).getFile());
+		UpdateManagerUtils.removeFromFileSystem(localFile);		
+		InternalSiteManager.localSite=null;		
+
+		ILocalSite site = SiteManager.getLocalSite();
+		ISite remoteSite = SiteManager.getSite(SOURCE_HTTP_SITE);
+		IFeature feature = remoteSite.getFeatureReferences()[0].getFeature();
+		
+		// we are not checking if this is read only
+		IInstallConfiguration newConfig = site.createNewCurrentConfiguration(null,"new Label");
+		IConfigurationSite configSite = newConfig.getConfigurationSites()[0];
+		configSite.setConfigurationPolicy(SiteManager.createConfigurationPolicy(IPlatformConfiguration.ISitePolicy.USER_INCLUDE));
+		configSite.install(feature,null);
+		// why d I add, i didn;t create a new Site Config ?
+		//newConfig.addConfigurationSite(configSite);
+		site.save();
+
+		//do not cleanup, we want to reuse previously created local site
+		// but force re-read of xml File
+		InternalSiteManager.localSite=null;
+		site = SiteManager.getLocalSite();
+		feature = remoteSite.getFeatureReferences()[0].getFeature();
+		
+		// check
+		// there are 2 configuration
+		String time = ""+site.getCurrentConfiguration().getCreationDate().getTime();
+		File file = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),"DefaultConfig"+time+".xml").getFile());
+		assertTrue("new configuration does not exist", file.exists());
+		
+		// teh current one points to a real fature
+		// does not throw error.
+		IConfigurationSite configSite2 = site.getCurrentConfiguration().getConfigurationSites()[0];
+		//FIXME: broken (Dec 4th 2001)
+		IFeatureReference ref = configSite2.getConfigurationPolicy().getConfiguredFeatures()[0];
+		IFeature feature2 = ref.getFeature();
+		String configuredFeature = feature2.getLabel();
+		assertEquals(feature2.getIdentifier().toString(),"org.test1.ident1_1.0.0");
+		assertTrue("Wrong id  version of feature",feature2.getIdentifier().toString().equalsIgnoreCase("org.test1.ident1_1.0.0"));
+		
+		// test only 2 install config in local site
+		assertTrue("wrong number of history in Local site",site.getConfigurationHistory().length==2);
+		
+		// test only 1 site in current config
+		assertTrue("Wrong number of config sites in current config",site.getCurrentConfiguration().getConfigurationSites().length==1);
+		
+		//test only one feature for the site
+		assertTrue("wrong number of configured features for config site",site.getCurrentConfiguration().getConfiguredFeatures().length==1);
+		
+		// test only 2 activities
+		assertTrue("Wrong number of activities for install config",site.getCurrentConfiguration().getActivities().length==2);
+		
+		
+		// cleanup
+		localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.SITE_LOCAL_FILE).getFile());
+		UpdateManagerUtils.removeFromFileSystem(localFile);		
+		localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.DEFAULT_CONFIG_FILE).getFile());
+		UpdateManagerUtils.removeFromFileSystem(localFile);				
+		UpdateManagerUtils.removeFromFileSystem(file);		
+		localFile = new File(feature2.getURL().getFile());
+		UpdateManagerUtils.removeFromFileSystem(localFile);
 	}
 
 }

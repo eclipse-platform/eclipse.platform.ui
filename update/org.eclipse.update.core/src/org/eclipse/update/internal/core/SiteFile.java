@@ -36,7 +36,18 @@ public class SiteFile extends SiteURL {
 	 * @see AbstractSite#createExecutableFeature(IFeature)
 	 */
 	public Feature createExecutableFeature(IFeature sourceFeature) throws CoreException {
-		return new FeatureExecutable(sourceFeature, this);
+		Feature result =  new FeatureExecutable(sourceFeature, this);
+		String featurePath = getFeaturePath(sourceFeature.getIdentifier());
+		featurePath += featurePath.endsWith("/") ? "" : "/";		
+		try {
+			URL newLocalURL = new URL("file",null,featurePath);
+			result.setURL(newLocalURL);
+		} catch (MalformedURLException e){
+				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error creating file new Local URL for feature:" + featurePath, e);
+				throw new CoreException(status);			
+		}
+		return result;
 	}
 
 	/**
@@ -76,9 +87,8 @@ public class SiteFile extends SiteURL {
 	 */
 	public void storeFeatureInfo(VersionedIdentifier featureIdentifier, String contentKey, InputStream inStream) throws CoreException {
 
-		String path = UpdateManagerUtils.getPath(getURL());
-		String featurePath = path + INSTALL_FEATURE_PATH + featureIdentifier.toString();
-		featurePath += featurePath.endsWith(File.separator) ? contentKey : File.separator + contentKey;
+		String featurePath = getFeaturePath(featureIdentifier);
+		featurePath += featurePath.endsWith(File.separator) ? contentKey : File.separator+contentKey;		
 		try {
 			UpdateManagerUtils.copyToLocal(inStream, featurePath, null);
 		} catch (IOException e) {
@@ -92,6 +102,12 @@ public class SiteFile extends SiteURL {
 			} catch (Exception e) {}
 		}
 
+	}
+
+	private String getFeaturePath(VersionedIdentifier featureIdentifier) {
+		String path = UpdateManagerUtils.getPath(getURL());
+		String featurePath = path + INSTALL_FEATURE_PATH + featureIdentifier.toString();
+		return featurePath;
 	}
 
 	/*

@@ -66,11 +66,7 @@ public interface ILocalSite {
 	 * The configuration is not added to the LocalSite
 	 */
 	IInstallConfiguration importConfiguration(URL importURL,String label) throws CoreException;
-	
-	/**
-	 * @deprecated use createNewCurrentConfiguration(URL,String);
-	 */
-	IInstallConfiguration createConfiguration(URL newFile,String name) throws CoreException;
+
 
 	/**
 	 * creates a new currentConfiguration based on the current configuration

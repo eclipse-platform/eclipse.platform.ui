@@ -199,4 +199,12 @@ public class FeatureReference implements IFeatureReference, IWritable {
 	}
 	
 
+	/**
+	 * Gets the site.
+	 * @return Returns a ISite
+	 */
+	public ISite getSite() {
+		return site;
+	}
+
 }

@@ -75,6 +75,7 @@ public class TestInstall extends UpdateManagerTestCase {
 		assertTrue("feature info not installed locally:"+featureFile, featureFile.exists());
 		//cleanup
 		UpdateManagerUtils.removeFromFileSystem(pluginFile);
+		UpdateManagerUtils.removeFromFileSystem(new File(localSite.getURL().getFile()));
 
 	}
 	private IFeature getFeature2(ISite site) throws MalformedURLException, CoreException {
@@ -103,7 +104,24 @@ public class TestInstall extends UpdateManagerTestCase {
 		assertNotNull("Cannot find feature2.jar on site", remoteFeature);
 		ISite localSite = SiteManager.getSite(TARGET_FILE_SITE);
 		localSite.install(remoteFeature, null);
+		
+		// feature2.jar should not be in the local site
+		IFeatureReference[] localFeatures = localSite.getFeatureReferences();		
+		if (localFeatures == null || localFeatures.length == 0)
+			fail("No features on the target site");
 
+		boolean found = false;
+		for (int i = 0; i < localFeatures.length; i++) {
+			if (features[i].getURL().toExternalForm().endsWith("features2.jar")) {
+				found= true;
+				break;
+			}
+		}
+
+		assertTrue("Found feature2.jar on target site. Target site feature ref shouldnot contain JAR file", !found);
+
+
+		// check
 		String site = UpdateManagerUtils.getPath(localSite.getURL());			
 		IPluginEntry[] entries = remoteFeature.getPluginEntries();
 		assertTrue("no plugins entry", (entries != null && entries.length != 0));
@@ -115,8 +133,11 @@ public class TestInstall extends UpdateManagerTestCase {
 		File featureFile = new File(site, SiteFile.INSTALL_FEATURE_PATH + remoteFeature.getIdentifier().toString());
 		assertTrue("feature info not installed locally", featureFile.exists());
 
+		localSite.save();
+
 		//cleanup
 		UpdateManagerUtils.removeFromFileSystem(pluginFile);
+		UpdateManagerUtils.removeFromFileSystem(new File(localSite.getURL().getFile()));		
 	}
 
 	public void testInstall() throws Exception {

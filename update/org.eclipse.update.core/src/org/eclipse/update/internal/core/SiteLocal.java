@@ -105,6 +105,10 @@ public class SiteLocal implements ILocalSite, IWritable {
 				UpdateManagerPlugin.getPlugin().debug(location.toExternalForm() + " does not exist, there is no previous state or install history we can recover, we shall use default.");
 			}
 			createDefaultConfiguration();
+			
+			// FIXME: always save ?
+			this.save();
+			
 		} catch (SAXException exception) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error during parsing of the install config XML:" + location.toExternalForm(), exception);
@@ -130,7 +134,7 @@ public class SiteLocal implements ILocalSite, IWritable {
 			//FIXME: location points to a file, not a directory, 
 			// check UpdateManagerUtils.getURL()
 			// use / and File.Separator, ATTN Linux/Unix issues ?
-			addConfiguration(createNewCurrentConfiguration(new URL(location, DEFAULT_CONFIG_FILE), DEFAULT_CONFIG_LABEL));
+			createNewCurrentConfiguration(new URL(location, DEFAULT_CONFIG_FILE), DEFAULT_CONFIG_LABEL);
 
 			// notify listeners
 			Object[] localSiteListeners = listeners.getListeners();
@@ -143,9 +147,6 @@ public class SiteLocal implements ILocalSite, IWritable {
 			ConfigurationSite configSite = (ConfigurationSite) SiteManager.createConfigurationSite(site, IPlatformConfiguration.ISitePolicy.USER_EXCLUDE);
 			configSite.setInstallSite(true);
 			currentConfiguration.addConfigurationSite(configSite);
-
-			// FIXME: always save ?
-			this.save();
 
 		} catch (Exception e) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
@@ -278,7 +279,7 @@ public class SiteLocal implements ILocalSite, IWritable {
 	}
 
 	/*
-	 * @see ILocalSite#createConfiguration(String)
+	 * @see ILocalSite#createNewCurrentConfiguration(String)
 	 */
 	public IInstallConfiguration createNewCurrentConfiguration(URL newFile, String name) throws CoreException {
 		
@@ -291,11 +292,11 @@ public class SiteLocal implements ILocalSite, IWritable {
 			if (newFile == null)
 				newFile = UpdateManagerUtils.getURL(getLocation(), newFileName, null);
 			Date currentDate = new Date();
-			if (name == null)
-				name = DEFAULT_CONFIG_LABEL + currentDate.toString();
+			// pass the date onto teh name
+			if (name == null)	name = DEFAULT_CONFIG_LABEL + currentDate.getTime();
 			result = new InstallConfiguration(getCurrentConfiguration(), newFile, name);
+			// set teh same date in the installConfig
 			result.setCreationDate(currentDate);
-			
 			// add as current 
 			addConfiguration(result);
 			
@@ -321,12 +322,4 @@ public class SiteLocal implements ILocalSite, IWritable {
 		addConfiguration(newConfiguration);
 
 	}
-
-	/*
-	 * @see ILocalSite#createConfiguration(URL, String)
-	 */
-	public IInstallConfiguration createConfiguration(URL newFile, String name) throws CoreException {
-		return createNewCurrentConfiguration(newFile,name);
-	}
-
 }

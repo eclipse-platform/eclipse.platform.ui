@@ -135,7 +135,7 @@ public class InstallConfigurationParser extends DefaultHandler {
 		configSite.setInstallSite(installable);
 
 		// add to install configuration
-		config.addConfigurationSite(configSite);
+		config.addConfigSite(configSite);
 
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
@@ -153,7 +153,8 @@ public class InstallConfigurationParser extends DefaultHandler {
 		URL url = UpdateManagerUtils.getURL(configSite.getSite().getURL(), attributes.getValue("url"), null);
 
 		if (url != null) {
-			IFeatureReference ref = ((Site) configSite.getSite()).getFeatureReferences(url);
+			//IFeatureReference ref = ((Site) configSite.getSite()).getFeatureReferences(url);
+			IFeatureReference ref = new FeatureReference(((Site) configSite.getSite()),url);
 			if (ref != null)
 				 ((ConfigurationPolicy) configSite.getConfigurationPolicy()).addFeatureReference(ref);
 
@@ -194,6 +195,8 @@ public class InstallConfigurationParser extends DefaultHandler {
 		String statusString = attributes.getValue("status");
 		int status = Integer.parseInt(statusString);
 		activity.setStatus(status);
+		
+		config.addActivity(activity);
 
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {

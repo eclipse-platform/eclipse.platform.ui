@@ -154,6 +154,17 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 		this.addActivity(activity);
 	}
 
+	/**
+	 * Adds the configuration to teh list
+	 */
+	public void addConfigSite(IConfigurationSite site) {
+		// FIXME: better name, better separation
+		if (configurationSites == null) {
+			configurationSites = new ArrayList(0);
+		}
+		configurationSites.add(site);
+	}
+
 	/*
 	 * @see IInstallConfiguration#removeConfigurationSite(IConfigurationSite)
 	 */

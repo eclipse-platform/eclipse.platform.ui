@@ -79,7 +79,7 @@ public class ConfigurationPolicy implements IConfigurationPolicy {
 		IFeatureReference[] result = new IFeatureReference[0];
 		// FIXME:
 		if (policy == IPlatformConfiguration.ISitePolicy.USER_INCLUDE) {
-			if (!featureReferences.isEmpty()) {
+			if (featureReferences!=null && !featureReferences.isEmpty()) {
 				result = new IFeatureReference[featureReferences.size()];
 				featureReferences.toArray(result);
 			}
@@ -133,9 +133,6 @@ public class ConfigurationPolicy implements IConfigurationPolicy {
 			
 		// FIXME:
 		if (policy == IPlatformConfiguration.ISitePolicy.USER_INCLUDE) {
-			if (featureReferences == null)
-				featureReferences = new ArrayList(0);
-			featureReferences.add(feature);
 			addFeatureReference(feature);
 		}
 		

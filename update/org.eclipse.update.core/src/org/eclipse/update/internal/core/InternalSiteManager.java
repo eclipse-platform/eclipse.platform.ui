@@ -27,7 +27,7 @@ public class InternalSiteManager {
 	private Map sites;
 	private Map sitesTypes;
 	private static InternalSiteManager inst;
-	private static ILocalSite localSite;
+	public static ILocalSite localSite;
 
 	private static void init() {
 		inst = new InternalSiteManager();

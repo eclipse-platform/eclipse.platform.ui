@@ -135,7 +135,7 @@ public abstract class Site implements ISite, IWritable {
 		// should start Unit Of Work and manage Progress Monitor
 		Feature localFeature = createExecutableFeature(sourceFeature);
 		((Feature) sourceFeature).install(localFeature, monitor);
-		IFeatureReference localReference = new FeatureReference(this, localFeature.getURL());
+		IFeatureReference localReference = new FeatureReference(this, localFeature.getURL());			
 		this.addFeatureReference(localReference);
 
 		// notify listeners
@@ -228,34 +228,6 @@ public abstract class Site implements ISite, IWritable {
 			result = new IFeatureReference[features.size()];
 			features.toArray(result);
 		}
-		return result;
-	}
-
-	/**
-	 * returns the corresponding feature reference or null
-	 * if the feature does not exist
-	 * @return Returns a IFeatureReference
-	 */
-	public IFeatureReference getFeatureReferences(URL url) {
-		IFeatureReference result = null;
-		boolean found = false;
-		if (!(features == null || features.isEmpty())) {
-			Iterator iter = features.iterator();
-			while (iter.hasNext() && !found) {
-				IFeatureReference element = (IFeatureReference) iter.next();
-				if (element.getURL().equals(url)) {
-					found = true;
-					result = element;
-				}
-			}
-		}
-
-		if (!found) {
-			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-				UpdateManagerPlugin.getPlugin().debug("cannot find feature url: " + url.toExternalForm() + " into site: " + getURL().toExternalForm());
-			}
-		}
-
 		return result;
 	}
 
