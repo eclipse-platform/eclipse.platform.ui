@@ -875,6 +875,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	 */
 	public void addAnnotationType(Object annotationType) {
 		fConfiguredAnnotationTypes.add(annotationType);
+		fAllowedAnnotationTypes.clear();
 	}
 	
 	/*
