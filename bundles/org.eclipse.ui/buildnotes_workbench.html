@@ -3,11 +3,120 @@
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
    <meta name="Author" content="Build">
-   <meta name="GENERATOR" content="Mozilla/4.5 [en] (Win98; I) [Netscape]">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Windows NT 5.0; U) [Netscape]">
    <title>Eclipse Platform Release Notes - Workbench</title>
 </head>
 <body>
 
+<h1>
+Eclipse Platform Build Notes<br>
+Workbench</h1>
+Eclipse Integration Build 20020108
+<h2>
+What's new in this drop</h2>
+
+<h3>
+Changes to plugin action support</h3>
+There have been two changes to plugin action support in the workbench.&nbsp;&nbsp;
+The xml grammar for action enablement and visibility has been extended.&nbsp;
+In addition, the IStructuredSelection limitations for plugin action enablement
+have been removed.&nbsp; Now, the workbench can enable actions which work
+with non-IStructuredSelection objects.
+<h4>
+Action Enablement</h4>
+In version 1 of Eclipse the enablement and visibility of window, view,
+editor and popup menu action extensions was defined using a limited set
+of elements in xml.&nbsp; The existing tags cannot adequately describe
+the conditions when an action should be enabled or visible.&nbsp; To resolve
+these issues, the following approach has been implemented:
+<p>- a refreshPluginActions() has been added to AbstractUIPlugin.&nbsp;
+The AbtractUIPlugin.startup method will call this to trigger the creation
+of the action delegates for the plugin.
+<br>- a new enablement element has been added to the action markup for
+action sets, views, editors, and popup menus.&nbsp; This can be used to
+define the enablement criteria for any action, and is a sub element of
+the action element.
+<br>- a new visibility element has been added to popup menu extension action
+markup.&nbsp; This can be used to define the visibility criteria for the
+action, and is a sub element of the object contribution element.
+<p>The new xml extends the existing markup, and do not replace it.
+<p>The xml format for visibility and enablement criteria is defined in
+actionExpressions.html, in the org.eclipse.ui doc directory.&nbsp; This
+doc is referenced from the popup menu, view, editor, and action set documents.
+<h4>
+IStructuredSelection Limitations</h4>
+In the past, the workbench plugin action enablement code could only handle
+IStructuredSelection objects.&nbsp; If a non-IStructuredSelection object
+was selected, the workbench would disable most of the plugin actions (in
+the view, editor, or action set) and drop the selection on the floor.&nbsp;
+This limitation has been removed.&nbsp; Regardless of selection type, the
+workbench plugin action enablement code will now forward the selection
+to the action delegate (once it has been instantiated).
+<p>The action enablement code has also been modified to support non IStructuredSelections.&nbsp;
+According to one dictionary, a selection is "one that is selected" or "a
+collection of selected things".&nbsp; In reflection of this definition,
+the workbench will treat an IStructuredSelection as a collection of selected
+things, and any other selection type as one thing.
+<p>For instance, suppose you add an action to the window (via an action
+set), and it should be enabled if some text is selected in an editor.&nbsp;
+You can use the following declaration to enable the action.
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;action id="org.eclipse.ui.tests.internal.as_1"
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+label="anyText"
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+menubarPath="org.eclipse.ui.tests.internal.TextSelectionMenu/group1"
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+class="org.eclipse.ui.tests.api.MockActionDelegate"
+<br>&nbsp; enablesFor="1">
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;selection class="org.eclipse.jface.text.ITextSelection"/>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/action>
+<p>If you want to add an action to the window which is enabled when an
+IFile with extension .txt is selected, you can use the following declaration
+(shown with the new enablement block).&nbsp; In this case, the IFile will
+be exposed in an IStructuredSelection, but there is no need to mention
+the IStructuredSelection in the action declaration.&nbsp; The workbench
+treats IStructuredSelection as a container for the important data inside.
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;action id="org.eclipse.ui.tests.internal.as_2"
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+label="anyTextFile"
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+menubarPath="org.eclipse.ui.tests.internal.TextSelectionMenu/group1"
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+class="org.eclipse.ui.tests.api.MockActionDelegate">
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;enablement>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;objectClass name="org.eclipse.core.IFile"/>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;objectState name="extension" value="txt"/>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;/enablement>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/action>
+<h3>
+API changes</h3>
+
+<h3>
+API additions</h3>
+
+<ul>
+<li>
+Added IActionDelegateWithEvent (experimental).</li>
+</ul>
+
+<h3>
+Other highlights</h3>
+
+<h2>
+Known deficiencies</h2>
+
+<h2>
+Problem reports fixed</h2>
+<a href="http://dev.eclipse.org/bugs/buglist.cgi?bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&chfield=bug_status&chfieldfrom=2001%2F12%2F18&chfieldto=2002%2F01%2F08&product=Platform&component=UI&cmdtype=doit&&order=Bug+Number">Click
+here</a> to see PRs which have been marked as RESOLVED, VERIFIED or CLOSED
+between 2001/12/18 and 2002/01/08.
+<p>
+<hr SIZE=0 WIDTH="100%">
 <h1>
 Eclipse Platform Build Notes<br>
 Workbench</h1>
