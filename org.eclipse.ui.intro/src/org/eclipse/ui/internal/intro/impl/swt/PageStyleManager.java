@@ -308,9 +308,25 @@ public class PageStyleManager extends SharedStyleManager {
     public boolean getShowLinkDescription() {
         String key = page.getId() + ".show-link-description"; //$NON-NLS-1$
         String value = getProperty(key);
+        if (value == null) {
+            key = "show-link-description";
+            value = getProperty(key);
+        }
         if (value == null)
             value = "true"; //$NON-NLS-1$
         return value.toLowerCase().equals("true"); //$NON-NLS-1$
+    }
+
+    public boolean showHomePageNavigation() {
+        String key = page.getId() + ".show-home-page-navigation"; //$NON-NLS-1$
+        String value = getProperty(key);
+        if (value == null) {
+            key = "show-home-page-navigation";
+            value = getProperty(key);
+        }
+        if (value == null)
+            value = "true"; //$NON-NLS-1$
+        return value.equalsIgnoreCase("true"); //$NON-NLS-1$
     }
 
 

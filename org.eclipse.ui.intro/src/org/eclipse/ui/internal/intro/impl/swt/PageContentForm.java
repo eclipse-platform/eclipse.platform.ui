@@ -27,7 +27,7 @@ public class PageContentForm implements IIntroConstants {
     private PageStyleManager styleManager;
 
     // the page we are modeling here.
-    private String pageId;
+    private AbstractIntroPage page;
 
     /**
      *  
@@ -35,13 +35,13 @@ public class PageContentForm implements IIntroConstants {
     public PageContentForm(FormToolkit toolkit, IntroModelRoot modelRoot) {
         this.toolkit = toolkit;
         this.model = modelRoot;
-        pageId = model.getCurrentPageId();
+        page = model.getCurrentPage();
     }
 
     public PageContentForm(FormToolkit toolkit, IntroModelRoot modelRoot,
-            String pageId) {
+            AbstractIntroPage page) {
         this(toolkit, modelRoot);
-        this.pageId = pageId;
+        this.page = page;
     }
 
 
@@ -53,16 +53,12 @@ public class PageContentForm implements IIntroConstants {
      * @param pageBook
      */
     public void createPartControl(ScrolledPageBook contentPageBook,
-            SharedStyleManager sharedStyleManager) {
-        // create a page style manager.
-        AbstractIntroPage page = (AbstractIntroPage) model.findChild(pageId,
-                AbstractIntroElement.ABSTRACT_PAGE);
-        styleManager = new PageStyleManager(page, sharedStyleManager
-                .getProperties());
+            PageStyleManager pageStyleManager) {
+        styleManager = pageStyleManager;
 
         // categoriesComposite has Table Layout with one col. Holds page
         // description and composite with all other children.
-        Composite contentComposite = contentPageBook.createPage(pageId);
+        Composite contentComposite = contentPageBook.createPage(page.getId());
         //Util.highlight(contentComposite, SWT.COLOR_GREEN);
         TableWrapLayout layout = new TableWrapLayout();
         layout.topMargin = 15;
@@ -88,9 +84,7 @@ public class PageContentForm implements IIntroConstants {
 
         createPageChildren(page, contentComposite);
 
-        // now we can clear all styleManagers, for memory performance.
         styleManager = null;
-        sharedStyleManager = null;
     }
 
     private void createPageChildren(AbstractIntroPage page, Composite parent) {

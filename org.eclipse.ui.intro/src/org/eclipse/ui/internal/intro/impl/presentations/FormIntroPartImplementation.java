@@ -36,6 +36,7 @@ public class FormIntroPartImplementation extends
     private FormToolkit toolkit;
     private ScrolledPageBook mainPageBook;
     private PageForm pageForm;
+    private PageFormWithNavigation pageFormWithNav;
     // cache model instance for reuse.
     private IntroModelRoot model = getModel();
     private SharedStyleManager sharedStyleManager;
@@ -116,9 +117,6 @@ public class FormIntroPartImplementation extends
         // Add this presentation as a listener to model.
         getModel().addPropertyListener(this);
 
-        // Clear memory. No need for style manager any more.
-        sharedStyleManager = null;
-
         addToolBarActions();
     }
 
@@ -149,11 +147,14 @@ public class FormIntroPartImplementation extends
             rootPageForm.createPartControl(pageBook, sharedStyleManager);
         }
 
-        // Create the Page form.
+        // Create the two Page forms .
         pageForm = new PageForm(toolkit, model, form);
         pageForm.createPartControl(pageBook, sharedStyleManager);
 
-        // now determine which page to show. Show it and ad it to history.
+        pageFormWithNav = new PageFormWithNavigation(toolkit, model, form);
+        pageFormWithNav.createPartControl(pageBook, sharedStyleManager);
+
+        // now determine which page to show. Show it and add it to history.
         // if the cached page is a URL ignore it. We do not want to launch a
         // browser on startup.
         String cachedPage = getCachedCurrentPage();
@@ -162,17 +163,31 @@ public class FormIntroPartImplementation extends
             model.setCurrentPageId(cachedPage);
 
         AbstractIntroPage pageToShow = getModel().getCurrentPage();
+        // load style manager here to test for navigation.
+        PageStyleManager styleManager = new PageStyleManager(pageToShow,
+                sharedStyleManager.getProperties());
+        boolean pageHasNavigation = styleManager.showHomePageNavigation();
         if (pageToShow != null) {
             if (pageBook.hasPage(pageToShow.getId()))
                 // we are showing Home Page.
                 pageBook.showPage(pageToShow.getId());
             else {
-                // if we are showing a regular intro page, or if the Home Page
-                // has a regular page layout, set the page id to the static
-                // PageForm id. first create the correct content.
-                pageForm.showPage(pageToShow.getId());
-                // then show the page
-                pageBook.showPage(PageForm.PAGE_FORM_ID);
+                if (pageHasNavigation) {
+                    // page or Home Page with a page layout and navigation, set
+                    // the page id to the static PageFormWithNavigation id.
+                    // first create the correct content.
+                    pageFormWithNav.showPage(pageToShow, sharedStyleManager);
+                    // then show the page
+                    pageBook
+                            .showPage(PageFormWithNavigation.PAGE_FORM_WITH_NAVIGATION_ID);
+                } else {
+                    // page or Home Page with a regular page layout, set the
+                    // page id to the static PageForm id. first create the
+                    // correct content.
+                    pageForm.showPage(pageToShow, sharedStyleManager);
+                    // then show the page
+                    pageBook.showPage(PageForm.PAGE_FORM_ID);
+                }
             }
             updateHistory(pageToShow.getId());
         }
@@ -200,12 +215,7 @@ public class FormIntroPartImplementation extends
                 // If page ID was not set properly. exit.
                 return;
 
-            // if we are showing a regular intro page, or if the Home Page
-            // has a regular page layout, set the page id to the static PageForm
-            // id.
-            if (!mainPageBook.hasPage(pageId))
-                pageId = PageForm.PAGE_FORM_ID;
-            mainPageBook.showPage(pageId);
+            showPage(getModel().getCurrentPage());
         }
     }
 
@@ -251,28 +261,67 @@ public class FormIntroPartImplementation extends
             // we have a standby part, nothing more to do in presentation.
             return;
 
-
+        // try to show a cached page.
+        AbstractIntroPage pageToShow = null;
         if (standby) {
             // we are in standby. Show standby page, in PageForm.
-            String standbyPageId = getModel().getHomePage().getId();
-            AbstractIntroPage standbyPage = getModel().getStandbyPage();
-            if (standbyPage != null)
-                standbyPageId = standbyPage.getId();
-            pageForm.showPage(standbyPageId);
-            mainPageBook.showPage(PageForm.PAGE_FORM_ID);
-        } else {
+            pageToShow = getModel().getStandbyPage();
+            if (pageToShow == null)
+                pageToShow = getModel().getHomePage();
+        } else
             // if we are showing a regular intro page, or if the Home Page
             // has a regular page layout, set the page id to the static PageForm
             // id.
-            AbstractIntroPage pageToShow = getModel().getCurrentPage();
-            String pageId = pageToShow.getId();
-            if (!mainPageBook.hasPage(pageId))
-                pageId = PageForm.PAGE_FORM_ID;
-            // show it in page form first.
-            pageForm.showPage(pageToShow.getId());
-            // now show the main page book.
-            mainPageBook.showPage(pageId);
+            pageToShow = getModel().getCurrentPage();
+
+        showPage(pageToShow);
+    }
+
+    private boolean showPage(AbstractIntroPage pageToShow) {
+        boolean pageisCached = showExistingPage(pageToShow);
+
+        if (!pageisCached) {
+            // page has not been show before.
+            // load style manager here to test for navigation.
+            PageStyleManager styleManager = new PageStyleManager(pageToShow,
+                    sharedStyleManager.getProperties());
+            boolean pageHasNavigation = styleManager.showHomePageNavigation();
+            if (pageHasNavigation) {
+                // page or Home Page with a regular page layout, set the
+                // page id to the static PageFormWithNavigation id. first
+                // create the correct content.
+                pageFormWithNav.showPage(pageToShow, sharedStyleManager);
+                // then show the page
+                mainPageBook
+                        .showPage(PageFormWithNavigation.PAGE_FORM_WITH_NAVIGATION_ID);
+            } else {
+                // page or Home Page with a regular page layout, set the
+                // page id to the static PageFormWithNavigation id. first
+                // create the correct content.
+                pageForm.showPage(pageToShow, sharedStyleManager);
+                // then show the page
+                mainPageBook.showPage(PageForm.PAGE_FORM_ID);
+            }
         }
+
+        return true;
+    }
+
+    private boolean showExistingPage(AbstractIntroPage page) {
+        String formPageId = null;
+        if (pageForm.hasPage(page.getId())) {
+            pageForm.showPage(page, sharedStyleManager);
+            formPageId = PageForm.PAGE_FORM_ID;
+        } else if (pageFormWithNav.hasPage(page.getId())) {
+            pageFormWithNav.showPage(page, sharedStyleManager);
+            formPageId = PageFormWithNavigation.PAGE_FORM_WITH_NAVIGATION_ID;
+        } else if (mainPageBook.hasPage(page.getId()))
+            formPageId = page.getId();
+        else
+            return false;
+
+        mainPageBook.showPage(formPageId);
+        return true;
     }
 
 
