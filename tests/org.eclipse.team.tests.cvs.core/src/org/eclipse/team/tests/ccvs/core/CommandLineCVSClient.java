@@ -51,6 +51,7 @@ public class CommandLineCVSClient implements ICVSClient {
 		appendStrings(commandLineBuf, arguments);
 		
 		// execute command
+		JUnitTestCase.waitMsec(1500);
 		int returnCode = CVSTestSetup.executeCommand(commandLineBuf.toString(), null, localRoot);
 		if (returnCode != 0) {
 			throw new CVSClientException("Command line client returned non-zero code: " + returnCode);
