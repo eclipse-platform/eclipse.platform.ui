@@ -20,12 +20,22 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TextChangeListener;
 import org.eclipse.swt.custom.TextChangedEvent;
 import org.eclipse.swt.custom.TextChangingEvent;
+import org.eclipse.swt.widgets.Display;
 
 
 /**
- * Adapts an <code>IDocument</code> to the <code>StyledTextContent</code> interface.
+ * Adapts an <code>IDocument</code> to the <code>StyledTextContent</code> interface. 
  */
 class DocumentAdapter implements IDocumentAdapter, IDocumentListener, IDocumentAdapterExtension {
+	/*
+	 * As <code>IDocument</code> is not UI dependent, incoming changes from the document world 
+	 * may not be in the UI thread. Updates of registered <code>TextChangeListener</code> must be 
+	 * serialized to the UI thread.
+	 * 
+	 * Other things are not threadsafe either: 
+	 * - registering the event in documentAboutToBeChanged and checking for equality in documentChanged
+	 */
+
 
 	/** The adapted document. */
 	private IDocument fDocument;
@@ -256,15 +266,42 @@ class DocumentAdapter implements IDocumentAdapter, IDocumentListener, IDocumentA
 		if (!fIsForwarding)
 			return;
 			
-		TextChangedEvent event= new TextChangedEvent(this);
-				
+		final TextChangedEvent event= new TextChangedEvent(this);
+		
 		if (fTextChangeListeners != null && fTextChangeListeners.size() > 0) {
-			Iterator e= new ArrayList(fTextChangeListeners).iterator();
-			while (e.hasNext())
-				((TextChangeListener) e.next()).textChanged(event);
+			final Iterator e= new ArrayList(fTextChangeListeners).iterator();
+			
+			Runnable runnable= new Runnable() {
+				public void run() {
+					// TODO need to protect?
+					while (e.hasNext())
+						((TextChangeListener) e.next()).textChanged(event);
+				}
+			};
+			
+			runInUIThread(runnable);
 		}
 	}
 	
+	/**
+	 * Runs <code>runnable</code> inline if called from a UI thread. If not, it is 
+	 * <code>asyncExce</code>'d in the default display thread.
+	 * 
+	 * @param runnable the <code>Runnable</code> to execute
+	 */
+	private void runInUIThread(Runnable runnable) {
+		// TODO will not work if there are multiple displays - need to synchronize on the 
+		// UI thread of the targeted TextChangeListener
+		Display display= Display.getCurrent();
+		if (display != null) {
+			runnable.run();	
+		} else {
+			display= Display.getDefault();
+			if (display != null)
+				display.asyncExec(runnable);
+		}
+	}
+
 	/**
 	 * Sends a text set event to all registered listeners.
 	 */
@@ -273,12 +310,20 @@ class DocumentAdapter implements IDocumentAdapter, IDocumentListener, IDocumentA
 		if (!fIsForwarding)
 			return;
 			
-		TextChangedEvent event = new TextChangedEvent(this);
+		final TextChangedEvent event = new TextChangedEvent(this);
 		
 		if (fTextChangeListeners != null && fTextChangeListeners.size() > 0) {
-			Iterator e= new ArrayList(fTextChangeListeners).iterator();
-			while (e.hasNext())
-				((TextChangeListener) e.next()).textSet(event);
+			final Iterator e= new ArrayList(fTextChangeListeners).iterator();
+			
+			Runnable runnable= new Runnable() {
+				public void run() {
+					// TODO need to protect?
+					while (e.hasNext())
+						((TextChangeListener) e.next()).textSet(event);
+				}
+			};
+			
+			runInUIThread(runnable);
 		}
 	}
 	
@@ -291,11 +336,12 @@ class DocumentAdapter implements IDocumentAdapter, IDocumentListener, IDocumentA
 			return;
 			
 		try {
+			// TODO dangerous - might get asynchronously replaced!
 		    IDocument document= fEvent.getDocument();
 		    if (document == null)
 		    	return;
 
-			TextChangingEvent event= new TextChangingEvent(this);
+			final TextChangingEvent event= new TextChangingEvent(this);
 			event.start= fEvent.fOffset;
 			event.replaceCharCount= fEvent.fLength;
 			event.replaceLineCount= document.getNumberOfLines(fEvent.fOffset, fEvent.fLength) - 1;
@@ -304,9 +350,17 @@ class DocumentAdapter implements IDocumentAdapter, IDocumentListener, IDocumentA
 			event.newLineCount= (fEvent.fText == null ? 0 : document.computeNumberOfLines(fEvent.fText));
 			
 			if (fTextChangeListeners != null && fTextChangeListeners.size() > 0) {
-				Iterator e= new ArrayList(fTextChangeListeners).iterator();
-				while (e.hasNext())
-					 ((TextChangeListener) e.next()).textChanging(event);
+				final Iterator e= new ArrayList(fTextChangeListeners).iterator();
+
+				Runnable runnable= new Runnable() {
+					public void run() {
+						// TODO need to protect?
+						while (e.hasNext())
+							((TextChangeListener) e.next()).textChanging(event);
+					}
+				};
+			
+				runInUIThread(runnable);
 			}
 
 		} catch (BadLocationException e) {

@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -52,6 +53,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ScrollBar;
+import org.eclipse.swt.widgets.Widget;
 
 import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelection;
@@ -275,16 +277,67 @@ public class TextViewer extends Viewer implements
 		 */
 		public void documentAboutToBeChanged(DocumentEvent e) {
 			if (e.getDocument() == getVisibleDocument())
-				fWidgetCommand.setEvent(e);
+				synchronized (fWidgetCommands) {
+					WidgetCommand command= new WidgetCommand();
+					command.setEvent(e);
+					fWidgetCommands.add(command);
+				}
 		}
 		
 		/*
 		 * @see IDocumentListener#documentChanged
 		 */
 		public void documentChanged(final DocumentEvent e) {
-			if (fWidgetCommand.event == e)
-				updateTextListeners(fWidgetCommand);
+			synchronized (fWidgetCommands) {
+				if (fWidgetCommandRunnable == null) {
+					
+					// create Runnable
+					fWidgetCommandRunnable= new Runnable() {
+						public void run() {
+							while (true) {
+								WidgetCommand command= null;
+								synchronized (fWidgetCommands) {
+									if (fWidgetCommands.isEmpty()) {
+										fWidgetCommandRunnable= null;
+										break;
+									}
+									else
+										command= (WidgetCommand) fWidgetCommands.remove(0);
+								}
+								updateTextListeners(command);
+							}
+						}
+					};
+					
+					// start it
+					runInUIThread(fWidgetCommandRunnable);
+				}
+				
+			}
 			fLastSentSelectionChange= null;
+		}
+
+		/**
+		 * Runs <code>runnable</code> inline if called from a UI thread. If not, it is 
+		 * <code>asyncExce</code>'d in the display thread of this viewer's <code>StyledText</code>
+		 * widget.
+		 * 
+		 * @param runnable the <code>Runnable</code> to execute
+		 */
+		private void runInUIThread(Runnable runnable) {
+			Widget widget= fTextWidget;
+			if (widget == null)
+				return;
+				
+			Display widgetDisplay= widget.getDisplay();
+			Display threadDisplay= Display.getCurrent();
+
+			if (threadDisplay == widgetDisplay && widgetDisplay != null) { // run directly in UI thread
+				runnable.run();	
+			} else if (widgetDisplay != null) {
+				widgetDisplay.asyncExec(runnable);
+			} else
+				return;
 		}
 	}
 	
@@ -1114,8 +1167,19 @@ public class TextViewer extends Viewer implements
 	private ViewportGuard fViewportGuard;
 	/** Caches the graphical coordinate of the first visible line */ 
 	private int fTopInset= 0;
-	/** The most recent document modification as widget command */
-	private WidgetCommand fWidgetCommand= new WidgetCommand();	
+	/** 
+	 * List of the widget commands stored for incoming document changes.
+	 * Also serves as mutex for all commands modifying the list or 
+	 * <code>fWidgetCommandRunnable</code> 
+	 */
+	private List fWidgetCommands= new LinkedList();
+	/** 
+	 * The <code>Runnable</code> which distributes the widget commands to our 
+	 * <code>ITextListener</code>s, or <code>null</code> if no runnable is running.
+	 * This field may only be set when sychronized on <code>fWidgetCommands</code> 
+	 */
+	private Runnable fWidgetCommandRunnable;
+		
 	/** The SWT control's scrollbars */
 	private ScrollBar fScroller;
 	/** Document listener */
@@ -2819,12 +2883,17 @@ public class TextViewer extends Viewer implements
 	 * @see org.eclipse.jface.text.ITextViewer#invalidateTextPresentation()
 	 */
 	public final void invalidateTextPresentation() {
+		// TODO check if always in UI thread
 		if (fVisibleDocument != null) {
-			fWidgetCommand.event= null;
-			fWidgetCommand.start= 0;
-			fWidgetCommand.length= fVisibleDocument.getLength();
-			fWidgetCommand.text= fVisibleDocument.get();
-			updateTextListeners(fWidgetCommand);
+			synchronized (fWidgetCommands) {
+				fWidgetCommands.clear();
+			}
+			WidgetCommand command= new WidgetCommand();
+			command.event= null;
+			command.start= 0;
+			command.length= fVisibleDocument.getLength();
+			command.text= fVisibleDocument.get();
+			updateTextListeners(command);
 		}
 	}
 	
@@ -2837,17 +2906,19 @@ public class TextViewer extends Viewer implements
 	 */
 	public final void invalidateTextPresentation(int offset, int length) {
 		if (fVisibleDocument != null) {
+			// TODO check if always in UI thread
 			
 			IRegion widgetRange= modelRange2WidgetRange(new Region(offset, length));
 			if (widgetRange != null) {
 				
-				fWidgetCommand.event= null;
-				fWidgetCommand.start= widgetRange.getOffset();
-				fWidgetCommand.length= widgetRange.getLength();
+				WidgetCommand command= new WidgetCommand();
+				command.event= null;
+				command.start= widgetRange.getOffset();
+				command.length= widgetRange.getLength();
 				
 				try {
-					fWidgetCommand.text= fVisibleDocument.get(widgetRange.getOffset(), widgetRange.getLength());
-					updateTextListeners(fWidgetCommand);
+					command.text= fVisibleDocument.get(widgetRange.getOffset(), widgetRange.getLength());
+					updateTextListeners(command);
 				} catch (BadLocationException x) {
 					// can not happen because of previous checking
 				}
@@ -4079,11 +4150,13 @@ public class TextViewer extends Viewer implements
 	 * @since 2.0
 	 */
 	private void fireRedrawChanged() {
-		fWidgetCommand.start= 0;
-		fWidgetCommand.length= 0;
-		fWidgetCommand.text= null;
-		fWidgetCommand.event= null;
-		updateTextListeners(fWidgetCommand);
+		// TODO check if always in UI thread
+		WidgetCommand command= new WidgetCommand();
+		command.event= null;
+		command.start= 0;
+		command.length= 0;
+		command.text= null;
+		updateTextListeners(command);
 	}
 	
 	/**
