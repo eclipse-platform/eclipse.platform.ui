@@ -19,15 +19,14 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.progress.UIJob;
 
 /**
- * The ProgressContentProvider is the content provider used for
- * classes that listen to the progress changes.
+ * The ProgressContentProvider is the content provider used for classes that
+ * listen to the progress changes.
  */
-public class ProgressContentProvider
-	implements ITreeContentProvider, IJobProgressManagerListener {
+public class ProgressContentProvider implements ITreeContentProvider, IJobProgressManagerListener {
 
 	/**
-	 * The UpdatesInfo is a private class for keeping track of the
-	 * updates required.
+	 * The UpdatesInfo is a private class for keeping track of the updates
+	 * required.
 	 */
 	private class UpdatesInfo {
 
@@ -41,6 +40,7 @@ public class ProgressContentProvider
 
 		/**
 		 * Add an add update
+		 * 
 		 * @param addition
 		 */
 		void add(JobInfo addition) {
@@ -49,6 +49,7 @@ public class ProgressContentProvider
 
 		/**
 		 * Add a remove update
+		 * 
 		 * @param addition
 		 */
 		void remove(JobInfo removal) {
@@ -56,6 +57,7 @@ public class ProgressContentProvider
 		}
 		/**
 		 * Add a refresh update
+		 * 
 		 * @param addition
 		 */
 		void refresh(JobInfo refresh) {
@@ -69,6 +71,35 @@ public class ProgressContentProvider
 			deletions.clear();
 			refreshes.clear();
 		}
+
+		void processForUpdate() {
+			HashSet staleAdditions = new HashSet();
+
+			Iterator additionsIterator = additions.iterator();
+			while (additionsIterator.hasNext()) {
+				JobInfo next = (JobInfo) additionsIterator.next();
+				if (deletions.contains(next) || next.getJob().getState() == Job.NONE)
+					staleAdditions.add(next);
+			}
+
+			additions.removeAll(staleAdditions);
+
+			HashSet obsoleteRefresh = new HashSet();
+			Iterator refreshIterator = refreshes.iterator();
+			while (refreshIterator.hasNext()) {
+				JobInfo next = (JobInfo) refreshIterator.next();
+				if (deletions.contains(next) || additions.contains(next))
+					obsoleteRefresh.add(next);
+				if (next.getJob().getState() == Job.NONE){
+					//If it is done then delete it
+					obsoleteRefresh.add(next);
+					deletions.add(next);
+				}
+			}
+			
+			refreshes.removeAll(obsoleteRefresh);			
+
+		}
 	}
 
 	ProgressTreeViewer viewer;
@@ -76,23 +107,22 @@ public class ProgressContentProvider
 	UpdatesInfo currentInfo = new UpdatesInfo();
 	Object updateLock = new Object();
 	boolean debug = false;
-	private Collection filteredJobs =
-		Collections.synchronizedList(new ArrayList());
+	private Collection filteredJobs = Collections.synchronizedList(new ArrayList());
 
 	public ProgressContentProvider(ProgressTreeViewer mainViewer) {
 		viewer = mainViewer;
 		ProgressManager.getInstance().addListener(this);
 		createUpdateJob();
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
+	/*
+	 * (non-Javadoc) @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 	 */
 	public Object[] getChildren(Object parentElement) {
 		return ((JobTreeElement) parentElement).getChildren();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
+	/*
+	 * (non-Javadoc) @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 	 */
 	public Object getParent(Object element) {
 		if (element == this)
@@ -101,8 +131,8 @@ public class ProgressContentProvider
 			return ((JobTreeElement) element).getParent();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
+	/*
+	 * (non-Javadoc) @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 	 */
 	public boolean hasChildren(Object element) {
 		if (element == this)
@@ -111,8 +141,8 @@ public class ProgressContentProvider
 			return ((JobTreeElement) element).hasChildren();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+	/*
+	 * (non-Javadoc) @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 	 */
 	public Object[] getElements(Object inputElement) {
 
@@ -130,23 +160,21 @@ public class ProgressContentProvider
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
+	/*
+	 * (non-Javadoc) @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
 	public void dispose() {
 		ProgressManager.getInstance().removeListener(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+	/*
+	 * (non-Javadoc) @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
+	 * java.lang.Object, java.lang.Object)
 	 */
-	public void inputChanged(
-		Viewer updateViewer,
-		Object oldInput,
-		Object newInput) {
+	public void inputChanged(Viewer updateViewer, Object oldInput, Object newInput) {
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#refresh(org.eclipse.ui.internal.progress.JobInfo)
+	/*
+	 * (non-Javadoc) @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#refresh(org.eclipse.ui.internal.progress.JobInfo)
 	 */
 	public void refresh(JobInfo info) {
 
@@ -166,8 +194,8 @@ public class ProgressContentProvider
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#refreshAll()
+	/*
+	 * (non-Javadoc) @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#refreshAll()
 	 */
 	public void refreshAll() {
 
@@ -181,8 +209,8 @@ public class ProgressContentProvider
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#add(org.eclipse.ui.internal.progress.JobInfo)
+	/*
+	 * (non-Javadoc) @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#add(org.eclipse.ui.internal.progress.JobInfo)
 	 */
 	public void add(JobInfo info) {
 
@@ -197,8 +225,8 @@ public class ProgressContentProvider
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#remove(org.eclipse.ui.internal.progress.JobInfo)
+	/*
+	 * (non-Javadoc) @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#remove(org.eclipse.ui.internal.progress.JobInfo)
 	 */
 	public void remove(JobInfo info) {
 
@@ -211,8 +239,8 @@ public class ProgressContentProvider
 		updateJob.schedule(100);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#showsDebug()
+	/*
+	 * (non-Javadoc) @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#showsDebug()
 	 */
 	public boolean showsDebug() {
 		return true;
@@ -220,8 +248,10 @@ public class ProgressContentProvider
 
 	/**
 	 * Return whether or not this job is currently displayable.
+	 * 
 	 * @param job
-	 * @param debug If the listener is in debug mode.
+	 * @param debug
+	 *           If the listener is in debug mode.
 	 * @return
 	 */
 	boolean isNonDisplayableJob(Job job) {
@@ -241,8 +271,8 @@ public class ProgressContentProvider
 	 */
 	private void createUpdateJob() {
 			updateJob = new UIJob(ProgressMessages.getString("ProgressContentProvider.UpdateProgressJob")) {//$NON-NLS-1$
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+	/*
+	 * (non-Javadoc) @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 
@@ -257,27 +287,26 @@ public class ProgressContentProvider
 					Object[] additionItems;
 					Object[] deletionItems;
 					synchronized (updateLock) {
+						currentInfo.processForUpdate();
+						
 						updateItems = currentInfo.refreshes.toArray();
 						additionItems = currentInfo.additions.toArray();
 						deletionItems = currentInfo.deletions.toArray();
-				
+
 					}
-								  
+
 					for (int i = 0; i < updateItems.length; i++) {
 						viewer.refresh(updateItems[i], true);
 					}
-					viewer.add(
-						viewer.getInput(),
-						additionItems);
+					viewer.add(viewer.getInput(), additionItems);
 
 					viewer.remove(deletionItems);
 				}
-					
+
 				synchronized (updateLock) {
 					currentInfo.reset();
 				}
-					
-				
+
 				return Status.OK_STATUS;
 
 			}
@@ -290,6 +319,7 @@ public class ProgressContentProvider
 
 	/**
 	 * Add job to the list of filtered jobs.
+	 * 
 	 * @param job
 	 */
 	void addToFiltered(Job job) {
@@ -298,6 +328,7 @@ public class ProgressContentProvider
 
 	/**
 	 * Remove job from the list of fitlered jobs.
+	 * 
 	 * @param job
 	 */
 	void removeFromFiltered(Job job) {
@@ -306,6 +337,7 @@ public class ProgressContentProvider
 
 	/**
 	 * Return whether or not the job is currently filtered.
+	 * 
 	 * @param job
 	 * @return
 	 */
