@@ -176,16 +176,6 @@ public org.eclipse.swt.widgets.List getList() {
 /* (non-Javadoc)
  * Method declared on Viewer.
  */
-public ISelection getSelection() {
-	int[] ixs = getList().getSelectionIndices();
-	ArrayList list = new ArrayList(ixs.length);
-	for (int i = 0; i < ixs.length; i++) {
-		Object e = getElementAt(ixs[i]);
-		if (e != null)
-			list.add(e);
-	}
-	return new StructuredSelection(list);
-}
 /* (non-Javadoc)
  * Method declared on StructuredViewer.
  */
