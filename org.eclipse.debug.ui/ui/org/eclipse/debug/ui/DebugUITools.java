@@ -5,6 +5,10 @@ package org.eclipse.debug.ui;
  * All Rights Reserved.
  */
 
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IValue;
@@ -14,6 +18,7 @@ import org.eclipse.debug.internal.ui.DefaultLabelProvider;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.InspectItem;
 import org.eclipse.debug.internal.ui.InspectorView;
+import org.eclipse.debug.internal.ui.LazyModelPresentation;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
@@ -162,10 +167,44 @@ public class DebugUITools {
 	 * 
 	 * @see IBaseLabelProvider#dispose()
 	 * @return a debug model presentation
+	 * @since 2.0
 	 */
 	public static IDebugModelPresentation newDebugModelPresentation() {
 		return new DelegatingModelPresentation();
 	}
+	
+	/**
+	 * Returns a new debug model presentation for specified
+	 * debug model, or <code>null</code> if a presentation does
+	 * not exist.
+	 * 
+	 * It is the client's responsibility to ensure to call the dispose
+	 * method of the returned debug model presentation.
+	 * 
+	 * @param identifier debug model identifier
+	 * @see IBaseLabelProvider#dispose()
+	 * @return a debug model presentation, or <code>null</code>
+	 * @since 2.0
+	 */
+	public static IDebugModelPresentation newDebugModelPresentation(String identifier) {
+		IPluginDescriptor descriptor= DebugUIPlugin.getDefault().getDescriptor();
+		IExtensionPoint point= descriptor.getExtensionPoint(IDebugUIConstants.ID_DEBUG_MODEL_PRESENTATION);
+		if (point != null) {
+			IExtension[] extensions= point.getExtensions();
+			for (int i= 0; i < extensions.length; i++) {
+				IExtension extension= extensions[i];
+				IConfigurationElement[] configElements= extension.getConfigurationElements();
+				for (int j= 0; j < configElements.length; j++) {
+					IConfigurationElement elt= configElements[j];
+					String id= elt.getAttribute("id"); //$NON-NLS-1$
+					if (id != null && id.equals(identifier)) {
+						return new LazyModelPresentation(elt);
+					}
+				}
+			}
+		}
+		return null;
+	}	
 	
 	/**
 	 * Returns the currently selected debug element in the 
