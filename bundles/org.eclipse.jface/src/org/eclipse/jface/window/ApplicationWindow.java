@@ -395,8 +395,8 @@ protected CoolBarManager createCoolBarManager(int style) {
  * @return a Control
  */
 protected Control createToolBarControl(Composite parent) {
-	if (toolBarManager instanceof ToolBarManager) {
-		return ((ToolBarManager)toolBarManager).createControl(parent);
+	if (toolBarManager != null) {
+		return toolBarManager.createControl(parent);
 	} 
 	return null;
 }
@@ -411,8 +411,8 @@ protected Control createToolBarControl(Composite parent) {
  * @since 3.0
  */
 protected Control createCoolBarControl(Composite composite) {
-	if (coolBarManager instanceof CoolBarManager) {
-		return ((CoolBarManager)coolBarManager).createControl(composite);
+	if (coolBarManager != null) {
+		return coolBarManager.createControl(composite);
 	}
 	return null;
 }
@@ -496,9 +496,8 @@ public CoolBarManager getCoolBarManager() {
  * @return a Control
  */
 protected Control getToolBarControl() {
-	if (toolBarManager == null) return null;
-	if (toolBarManager instanceof ToolBarManager) {
-		return ((ToolBarManager)toolBarManager).getControl();
+	if (toolBarManager != null) {
+		return toolBarManager.getControl();
 	}
 	return null;
 }
@@ -512,9 +511,8 @@ protected Control getToolBarControl() {
  * @since 3.0
  */
 protected Control getCoolBarControl() {
-	if (coolBarManager == null) return null;
-	if (coolBarManager instanceof CoolBarManager) {
-		return ((CoolBarManager)coolBarManager).getControl();
+	if (coolBarManager != null) {
+		return coolBarManager.getControl();
 	}
 	return null;
 }
