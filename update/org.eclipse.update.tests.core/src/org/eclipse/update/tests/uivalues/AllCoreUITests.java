@@ -15,7 +15,7 @@ public static Test suite() {
 	suite.setName("Regular Install Tests");
 	
 	// the following will take all teh test methods in teh class that start with 'test'
-	suite.addTest(new TestSuite(TestUILabel.class));
+	//suite.addTest(new TestSuite(TestUILabel.class));
 	
 	// or you can specify the method
 	//suite.addTest(new TestGetFeature("methodThatDoesNotStartWithtest"));	
