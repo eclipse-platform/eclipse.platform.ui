@@ -640,10 +640,14 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
         currentGroup = group;
 
         getTreeViewer().setInput(group);
+        StructuredSelection structured = StructuredSelection.EMPTY;
+        
         Object selection = group.getLastSelection();
-        if (selection == null)
-            selection = group.getPreferenceNodes()[0];
-        getTreeViewer().setSelection(new StructuredSelection(selection), true);
+        if (selection == null && group.getPreferenceNodes().length >0){
+        	structured = new StructuredSelection(group.getPreferenceNodes()[0]);
+        }
+            
+        getTreeViewer().setSelection(structured, true);
     }
 
     /**
