@@ -217,10 +217,11 @@ public interface IJobManager {
 	 * scheduled while the job manager was suspended, will now be elligible
 	 * for execution.
 	 * <p>
-	 * Calling <code>resume</code> when the job manager is not suspended
-	 * has no effect.
+	 * Calling this method on a rule that is not suspended  has no effect.  If another 
+	 * thread also owns the rule at the time this method is called, then the rule will 
+	 * not be resumed until all threads have released the rule.
 	 * 
-	 * @see #suspend()
+	 * @see #suspend(ISchedulingRule, IProgressMonitor)
 	 */
 	public void resume(ISchedulingRule rule);
 
@@ -291,14 +292,12 @@ public interface IJobManager {
 	 * conflicting rules are completed.  Conflicting jobs that are sleeping or waiting at
 	 * the time this method is called will not be executed until the rule is resumed.
 	 * <p>
+	 * While a rule is suspended, all calls to <code>beginRule</code> and 
+	 * <code>endRule</code> on a suspended rule will not block the caller.
 	 * The rule remains suspended until a subsequent call to
 	 * <code>resume(ISchedulingRule)</code> with the identical rule instance.  
 	 * Further calls to <code>suspend</code> with an identical rule prior to calling
 	 * <code>resume</code> are ignored.
-	 * <p>
-	 * All calls to <code>beginRule</code> and <code>endRule</code> on a suspended
-	 * rule will not block the caller. All such calls must be strictly nested between 
-	 * <code>suspend</code> and <code>resume</code>.
 	 * </p>
 	 * <p>
 	 * This method is long-running; progress and cancelation are provided by
@@ -317,7 +316,7 @@ public interface IJobManager {
 	 * reporting is not desired
 	 * @exception OperationCanceledException if the operation is canceled. 
 	 * Cancelation can occur even if no progress monitor is provided.
-	 * @see #resume()
+	 * @see #resume(ISchedulingRule)
 	 */
 	public void suspend(ISchedulingRule rule, IProgressMonitor monitor);
 
