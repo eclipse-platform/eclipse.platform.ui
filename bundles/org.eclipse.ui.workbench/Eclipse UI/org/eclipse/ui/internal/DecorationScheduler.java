@@ -52,9 +52,6 @@ public class DecorationScheduler implements IResourceChangeListener {
 	DecorationScheduler(DecoratorManager manager) {
 		decoratorManager = manager;
 
-		// thread that calculates the decoration for a resource
-		createDecoratorThread();
-		decoratorUpdateThread.start();
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 	}
 
@@ -97,6 +94,12 @@ public class DecorationScheduler implements IResourceChangeListener {
 	private synchronized void queueForDecoration(
 		Object element,
 		Object adaptedElement) {
+
+		//Lazily create the thread that calculates the decoration for a resource
+		if (decoratorUpdateThread == null){
+			createDecoratorThread();
+			decoratorUpdateThread.start();
+		}
 
 		if (!awaitingDecorationValues.containsKey(element)) {
 			DecorationReference reference =
@@ -182,7 +185,7 @@ public class DecorationScheduler implements IResourceChangeListener {
 	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
 	 */
 	public void resourceChanged(IResourceChangeEvent event) {
-		IResourceDelta delta= event.getDelta();
+		IResourceDelta delta = event.getDelta();
 		if (delta != null) {
 			try {
 				final List changedObjects = new ArrayList();
@@ -190,12 +193,12 @@ public class DecorationScheduler implements IResourceChangeListener {
 					public boolean visit(IResourceDelta delta)
 						throws CoreException {
 						IResource resource = delta.getResource();
-	
+
 						if (resource.getType() == IResource.ROOT) {
 							// continue with the delta
 							return true;
 						}
-	
+
 						switch (delta.getKind()) {
 							case IResourceDelta.REMOVED :
 								// remove the cached decoration for any removed resource
@@ -206,11 +209,11 @@ public class DecorationScheduler implements IResourceChangeListener {
 								//be recalculated.
 								resultCache.remove(resource);
 						}
-	
+
 						return true;
 					}
 				});
-	
+
 				changedObjects.clear();
 			} catch (CoreException exception) {
 				InternalPlatform.getRuntimePlugin().getLog().log(

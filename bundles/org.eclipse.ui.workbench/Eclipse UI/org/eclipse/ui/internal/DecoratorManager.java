@@ -113,11 +113,6 @@ public class DecoratorManager
 
 	public void restoreListeners() {
 		applyDecoratorsPreference();
-		for (int i = 0; i < fullDefinitions.length; i++) {
-			//Add a listener if it is an enabled option
-			if (fullDefinitions[i].isEnabled())
-				fullDefinitions[i].addListener(this);
-		}
 	}
 
 	/**

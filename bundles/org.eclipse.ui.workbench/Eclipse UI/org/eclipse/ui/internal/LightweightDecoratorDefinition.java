@@ -72,28 +72,38 @@ class LightweightDecoratorDefinition extends DecoratorDefinition {
 		if (labelProviderCreationFailed)
 			return null;
 
-		if (definingElement.getAttribute(WizardsRegistryReader.ATT_CLASS)
-			== null)
-			return new DeclarativeDecorator(definingElement, iconLocation);
-
 		final CoreException[] exceptions = new CoreException[1];
 
 		if (decorator == null) {
-			Platform.run(new SafeRunnable(WorkbenchMessages.format("DecoratorManager.ErrorActivatingDecorator", new String[] { getName()})) { //$NON-NLS-1$
-				public void run() {
-					try {
-						decorator =
-							(
-								ILightweightLabelDecorator) WorkbenchPlugin
-									.createExtension(
-								definingElement,
-								WizardsRegistryReader.ATT_CLASS);
-					} catch (CoreException exception) {
-						exceptions[0] = exception;
+
+			if (definingElement.getAttribute(WizardsRegistryReader.ATT_CLASS)
+				== null)
+				decorator =
+					new DeclarativeDecorator(definingElement, iconLocation);
+			else {
+
+				Platform.run(new SafeRunnable(WorkbenchMessages.format("DecoratorManager.ErrorActivatingDecorator", new String[] { getName()})) { //$NON-NLS-1$
+					public void run() {
+						try {
+							decorator =
+								(
+									ILightweightLabelDecorator) WorkbenchPlugin
+										.createExtension(
+									definingElement,
+									WizardsRegistryReader.ATT_CLASS);
+							decorator.addListener(
+								WorkbenchPlugin
+									.getDefault()
+									.getDecoratorManager());
+						} catch (CoreException exception) {
+							exceptions[0] = exception;
+						}
 					}
-				}
-			});
+				});
+			}
 		}
+		else
+			return decorator;
 
 		if (decorator == null) {
 			this.labelProviderCreationFailed = true;

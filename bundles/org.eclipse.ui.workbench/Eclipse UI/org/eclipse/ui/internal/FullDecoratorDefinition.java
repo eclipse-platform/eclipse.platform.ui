@@ -71,12 +71,15 @@ class FullDecoratorDefinition extends DecoratorDefinition {
 							(ILabelDecorator) WorkbenchPlugin.createExtension(
 								definingElement,
 								WizardsRegistryReader.ATT_CLASS);
+						decorator.addListener(WorkbenchPlugin.getDefault().getDecoratorManager());
 					} catch (CoreException exception) {
 						exceptions[0] = exception;
 					}
 				}
 			});
 		}
+		else
+			return decorator;
 
 		if (decorator == null) {
 			this.labelProviderCreationFailed = true;
@@ -98,13 +101,9 @@ class FullDecoratorDefinition extends DecoratorDefinition {
 			(DecoratorManager) WorkbenchPlugin
 				.getDefault()
 				.getDecoratorManager();
-
-		if (this.enabled) {
-			//Internal decorator might be null so be prepared
-			ILabelDecorator currentDecorator = internalGetDecorator();
-			if (currentDecorator != null)
-				currentDecorator.addListener(manager);
-		} else {
+		//Only do something if disabled so as to prevent
+		//gratutitous activation
+		if (!this.enabled) {
 			if (decorator != null) {
 				ILabelDecorator cached = decorator;
 				cached.removeListener(manager);
