@@ -442,6 +442,10 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 				gotoAction.run();
 		}
 		public boolean refresh() {
+			
+			if (jobTreeElement == null)
+				return false;
+			
 			Job job= getJob();
 			checkKeep();
 
@@ -1082,7 +1086,13 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
         return scroller;
     }
 
+    /**
+     * Returns true if given element is filtered (i.e. not shown).
+     */
     private boolean filtered(Object element) {
+    	
+    	if (element == null)
+    		return true;
     	
 		if (!dialogContext && ProgressViewUpdater.getSingleton().debug) // display all  in debug mode
 			return false;
