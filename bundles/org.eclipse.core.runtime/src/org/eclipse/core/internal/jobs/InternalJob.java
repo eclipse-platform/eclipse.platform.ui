@@ -80,7 +80,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	/*
 	 * The thread that is currently running this job
 	 */
-	private Thread thread = null;
+	private volatile Thread thread = null;
 
 	protected InternalJob(String name) {
 		Assert.isNotNull(name);
