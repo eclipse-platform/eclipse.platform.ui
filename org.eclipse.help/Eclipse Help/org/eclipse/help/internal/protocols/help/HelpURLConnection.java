@@ -2,6 +2,7 @@ package org.eclipse.help.internal.protocols.help;
 
 import java.io.*;
 import java.net.*;
+import java.util.*;
 import org.eclipse.help.internal.server.*;
 import org.eclipse.help.internal.util.*;
 
@@ -34,5 +35,11 @@ public class HelpURLConnection extends URLConnection {
 	public String getContentType()
 	{
 		return helpURL.getContentType();
+	}
+	
+	public long getExpiration()
+	{
+		Date now = new Date();
+		return now.getTime() + 10000;
 	}
 }
