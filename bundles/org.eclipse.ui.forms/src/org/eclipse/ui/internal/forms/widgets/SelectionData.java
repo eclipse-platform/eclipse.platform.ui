@@ -15,8 +15,10 @@ import java.util.ArrayList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.Display;
 
 public class SelectionData {
+	public Display display;
 	public Color bg;
 	public Color fg;
 	private Point start;
@@ -24,6 +26,7 @@ public class SelectionData {
 	private ArrayList segments;
 
 	public SelectionData(MouseEvent e) {
+		display = e.display;
 		segments = new ArrayList();
 		start = new Point(e.x, e.y);
 		stop = new Point(e.x, e.y);

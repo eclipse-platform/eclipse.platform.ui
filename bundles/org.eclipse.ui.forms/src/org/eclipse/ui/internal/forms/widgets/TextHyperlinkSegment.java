@@ -19,13 +19,13 @@ import org.eclipse.ui.forms.HyperlinkSettings;
  * @version 	1.0
  * @author
  */
-public class HyperlinkSegment
-	extends TextSegment {
+public class TextHyperlinkSegment
+	extends TextSegment implements IHyperlinkSegment {
 	private String href;
 	private static final String LINK_FG = "c.___link_fg";
 	private HyperlinkSettings settings;
 	
-	public HyperlinkSegment(String text, HyperlinkSettings settings, String fontId) {
+	public TextHyperlinkSegment(String text, HyperlinkSettings settings, String fontId) {
 		super(text, fontId);
 		this.settings = settings;
 		underline = settings.getHyperlinkUnderlineMode()==HyperlinkSettings.UNDERLINE_ALWAYS;
@@ -38,7 +38,7 @@ public class HyperlinkSegment
 		return href;
 	}
 	
-	void setHref(String href) {
+	public void setHref(String href) {
 		this.href = href;
 	}
 	public void paint(GC gc, int width, Locator locator, Hashtable resourceTable, boolean selected, SelectionData selData) {

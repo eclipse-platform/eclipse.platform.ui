@@ -89,7 +89,7 @@ public class BulletParagraph extends Paragraph {
 		Locator loc,
 		int lineHeight,
 		Hashtable resourceTable,
-		HyperlinkSegment selectedLink,
+		IHyperlinkSegment selectedLink,
 		SelectionData selData) {
 		computeRowHeights(gc, width, loc, lineHeight, resourceTable);
 		paintBullet(gc, loc, lineHeight, resourceTable, selData);

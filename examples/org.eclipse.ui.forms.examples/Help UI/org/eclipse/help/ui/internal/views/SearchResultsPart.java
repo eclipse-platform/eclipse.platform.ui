@@ -10,18 +10,13 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 import org.eclipse.help.internal.search.SearchHit;
-import org.eclipse.help.ui.internal.search.HelpSearchResult;
-import org.eclipse.help.ui.internal.search.SorterByScore;
+import org.eclipse.help.ui.internal.search.*;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.forms.AbstractFormPart;
-import org.eclipse.ui.forms.FormColors;
-import org.eclipse.ui.forms.events.HyperlinkAdapter;
-import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.forms.*;
+import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.examples.internal.ExamplesPlugin;
-import org.eclipse.ui.forms.widgets.FormText;
-import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -54,6 +49,8 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		//searchResults.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_GREEN));
 		searchResults.setImage(ExamplesPlugin.IMG_HELP_TOPIC, ExamplesPlugin
 				.getDefault().getImage(ExamplesPlugin.IMG_HELP_TOPIC));
+		searchResults.setImage(ExamplesPlugin.IMG_NW, ExamplesPlugin
+				.getDefault().getImage(ExamplesPlugin.IMG_NW));
 		searchResults.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				Object href = e.getHref();
@@ -112,6 +109,13 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 				buff.append("\">");
 				buff.append(hit.getLabel());
 				buff.append("</a>");
+				buff.append(" <a href=\"");
+				buff.append("nw:");
+				buff.append(hit.getHref());
+				buff.append("\"><img href=\"");
+				buff.append(ExamplesPlugin.IMG_NW);
+				buff.append("\"/>");
+				buff.append("</a>");
 				buff.append("</li>");
 			}
 			if (elements.length > 0) {
@@ -148,7 +152,13 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 	}
 
 	private void doOpenLink(Object href) {
-		parent.showURL((String)href);
+		String url = (String)href;
+
+		if (url.startsWith("nw:")) {
+			WorkbenchHelp.displayHelpResource(url.substring(3));
+		}
+		else 
+			parent.showURL(url);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.ui.internal.views.IHelpPart#fillContextMenu(org.eclipse.jface.action.IMenuManager)

@@ -106,7 +106,7 @@ public class Paragraph {
 		String text,
 		HyperlinkSettings settings,
 		String fontId) {
-		HyperlinkSegment hs = new HyperlinkSegment(text, settings, fontId);
+		TextHyperlinkSegment hs = new TextHyperlinkSegment(text, settings, fontId);
 		hs.setWordWrapAllowed(false);
 		hs.setHref(text);
 		addSegment(hs);
@@ -134,7 +134,7 @@ public class Paragraph {
 		Locator loc,
 		int lineHeight,
 		Hashtable resourceTable,
-		HyperlinkSegment selectedLink,
+		IHyperlinkSegment selectedLink,
 		SelectionData selData) {
 		ParagraphSegment [] segments = getSegments();
 		int height;
@@ -180,15 +180,12 @@ public class Paragraph {
 		swriter.flush();
 		return swriter.toString();
 	}
-	public TextSegment findSegmentAt(int x, int y) {
+	public ParagraphSegment findSegmentAt(int x, int y) {
 		if (segments!=null) {
 			for (int i=0; i<segments.size(); i++) {
 				ParagraphSegment segment = (ParagraphSegment)segments.get(i);
-				if (segment instanceof TextSegment) {
-					TextSegment textSegment = (TextSegment)segment;
-					if (textSegment.contains(x, y))
-						return textSegment;
-				}
+				if (segment.contains(x, y))
+					return segment;
 			}
 		}
 		return null;

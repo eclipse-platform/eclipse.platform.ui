@@ -41,4 +41,7 @@ public class BreakSegment extends ParagraphSegment {
 		locator.rowHeight = 0;
 		locator.rowCounter++;		
 	}
+	public boolean contains(int x, int y) {
+		return false;
+	}
 }

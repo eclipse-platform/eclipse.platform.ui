@@ -21,15 +21,27 @@ import org.w3c.dom.*;
 import org.xml.sax.*;
 
 public class FormTextModel {
-	private static final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+	private static final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
+			.newInstance();
 
-	private boolean whitespaceNormalized=true;
+	private boolean whitespaceNormalized = true;
+
 	private Vector paragraphs;
-	private HyperlinkSegment[] hyperlinks;
+
+	private IHyperlinkSegment[] hyperlinks;
+
 	private int selectedLinkIndex = -1;
+
 	private HyperlinkSettings hyperlinkSettings;
+
 	public static final String BOLD_FONT_ID = "f.____bold";
-	
+
+	private static final int TEXT_ONLY_LINK = 1;
+
+	private static final int IMG_ONLY_LINK = 2;
+
+	private static final int TEXT_AND_IMAGES_LINK = 3;
+
 	public FormTextModel() {
 		reset();
 	}
@@ -40,16 +52,16 @@ public class FormTextModel {
 	public Paragraph[] getParagraphs() {
 		if (paragraphs == null)
 			return new Paragraph[0];
-		return (Paragraph[]) paragraphs.toArray(
-			new Paragraph[paragraphs.size()]);
+		return (Paragraph[]) paragraphs
+				.toArray(new Paragraph[paragraphs.size()]);
 	}
-	
+
 	public String getAccessibleText() {
 		if (paragraphs == null)
 			return "";
 		StringBuffer sbuf = new StringBuffer();
-		for (int i=0; i<paragraphs.size(); i++) {
-			Paragraph paragraph  = (Paragraph)paragraphs.get(i);
+		for (int i = 0; i < paragraphs.size(); i++) {
+			Paragraph paragraph = (Paragraph) paragraphs.get(i);
 			String text = paragraph.getAccessibleText();
 			sbuf.append(text);
 		}
@@ -60,13 +72,13 @@ public class FormTextModel {
 	 * @see ITextModel#parse(String)
 	 */
 	public void parseTaggedText(String taggedText, boolean expandURLs) {
-		if (taggedText==null) {
+		if (taggedText == null) {
 			reset();
 			return;
 		}
 		try {
-			InputStream stream =
-				new ByteArrayInputStream(taggedText.getBytes("UTF8"));
+			InputStream stream = new ByteArrayInputStream(taggedText
+					.getBytes("UTF8"));
 			parseInputStream(stream, expandURLs);
 		} catch (UnsupportedEncodingException e) {
 			SWT.error(SWT.ERROR_UNSUPPORTED_FORMAT, e);
@@ -74,13 +86,14 @@ public class FormTextModel {
 	}
 
 	public void parseInputStream(InputStream is, boolean expandURLs) {
-			
+
 		documentBuilderFactory.setNamespaceAware(true);
 		documentBuilderFactory.setIgnoringComments(true);
-	
+
 		reset();
 		try {
-			DocumentBuilder parser = documentBuilderFactory.newDocumentBuilder();
+			DocumentBuilder parser = documentBuilderFactory
+					.newDocumentBuilder();
 			InputSource source = new InputSource(is);
 			Document doc = parser.parse(source);
 			processDocument(doc, expandURLs);
@@ -103,11 +116,8 @@ public class FormTextModel {
 				String text = getSingleNodeText(child);
 				if (text != null && !isIgnorableWhiteSpace(text, true)) {
 					Paragraph p = new Paragraph(true);
-					p.parseRegularText(
-						text,
-						expandURLs,
-						getHyperlinkSettings(),
-						null);
+					p.parseRegularText(text, expandURLs,
+							getHyperlinkSettings(), null);
 					paragraphs.add(p);
 				}
 			} else if (child.getNodeType() == Node.ELEMENT_NODE) {
@@ -124,13 +134,14 @@ public class FormTextModel {
 			}
 		}
 	}
+
 	private Paragraph processParagraph(Node paragraph, boolean expandURLs) {
 		NodeList children = paragraph.getChildNodes();
 		NamedNodeMap atts = paragraph.getAttributes();
 		Node addSpaceAtt = atts.getNamedItem("addVerticalSpace");
 		boolean addSpace = true;
-		
-		if (addSpaceAtt==null)
+
+		if (addSpaceAtt == null)
 			addSpaceAtt = atts.getNamedItem("vspace");
 
 		if (addSpaceAtt != null) {
@@ -142,6 +153,7 @@ public class FormTextModel {
 		processSegments(p, children, expandURLs);
 		return p;
 	}
+
 	private Paragraph processListItem(Node listItem, boolean expandURLs) {
 		NodeList children = listItem.getChildNodes();
 		NamedNodeMap atts = listItem.getAttributes();
@@ -166,15 +178,14 @@ public class FormTextModel {
 				style = BulletParagraph.TEXT;
 			} else if (value.equalsIgnoreCase("image")) {
 				style = BulletParagraph.IMAGE;
-			}
-			else if (value.equalsIgnoreCase("bullet")) {
+			} else if (value.equalsIgnoreCase("bullet")) {
 				style = BulletParagraph.CIRCLE;
 			}
 		}
 		if (valueAtt != null) {
 			text = valueAtt.getNodeValue();
-			if (style==BulletParagraph.IMAGE)
-				text = "i."+text;
+			if (style == BulletParagraph.IMAGE)
+				text = "i." + text;
 		}
 		if (indentAtt != null) {
 			String value = indentAtt.getNodeValue();
@@ -201,10 +212,8 @@ public class FormTextModel {
 		return p;
 	}
 
-	private void processSegments(
-		Paragraph p,
-		NodeList children,
-		boolean expandURLs) {
+	private void processSegments(Paragraph p, NodeList children,
+			boolean expandURLs) {
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			ParagraphSegment segment = null;
@@ -213,29 +222,23 @@ public class FormTextModel {
 				String value = getSingleNodeText(child);
 
 				if (value != null && !isIgnorableWhiteSpace(value, false)) {
-					p.parseRegularText(
-						value,
-						expandURLs,
-						getHyperlinkSettings(),
-						null);
+					p.parseRegularText(value, expandURLs,
+							getHyperlinkSettings(), null);
 				}
 			} else if (child.getNodeType() == Node.ELEMENT_NODE) {
 				String name = child.getNodeName();
 				if (name.equalsIgnoreCase("img")) {
 					segment = processImageSegment(child);
 				} else if (name.equalsIgnoreCase("a")) {
-					segment =
-						processHyperlinkSegment(child, getHyperlinkSettings());
+					segment = processHyperlinkSegment(child,
+							getHyperlinkSettings());
 				} else if (name.equalsIgnoreCase("span")) {
 					processTextSegment(p, expandURLs, child);
 				} else if (name.equalsIgnoreCase("b")) {
 					String text = getNodeText(child);
 					String fontId = BOLD_FONT_ID;
-					p.parseRegularText(
-						text,
-						expandURLs,
-						getHyperlinkSettings(),
-						fontId);
+					p.parseRegularText(text, expandURLs,
+							getHyperlinkSettings(), fontId);
 				} else if (name.equalsIgnoreCase("br")) {
 					segment = new BreakSegment();
 				}
@@ -258,14 +261,19 @@ public class FormTextModel {
 		return true;
 	}
 
-	private ParagraphSegment processImageSegment(Node image) {
+	private ImageSegment processImageSegment(Node image) {
 		ImageSegment segment = new ImageSegment();
+		processImageSegment(segment, image);
+		return segment;
+	}
+
+	private void processImageSegment(ImageSegment segment, Node image) {
 		NamedNodeMap atts = image.getAttributes();
 		Node id = atts.getNamedItem("href");
 		Node align = atts.getNamedItem("align");
 		if (id != null) {
 			String value = id.getNodeValue();
-			segment.setObjectId("i."+value);
+			segment.setObjectId("i." + value);
 		}
 		if (align != null) {
 			String value = align.getNodeValue().toLowerCase();
@@ -276,45 +284,43 @@ public class FormTextModel {
 			else if (value.equals("bottom"))
 				segment.setVerticalAlignment(ImageSegment.BOTTOM);
 		}
-		return segment;
 	}
-	
-	private void appendText(String value, StringBuffer buf, int [] spaceCounter) {
+
+	private void appendText(String value, StringBuffer buf, int[] spaceCounter) {
 		if (!whitespaceNormalized)
 			buf.append(value);
 		else {
-			for (int j=0; j<value.length(); j++) {
+			for (int j = 0; j < value.length(); j++) {
 				char c = value.charAt(j);
-				if (c==' ' || c=='\t') {
+				if (c == ' ' || c == '\t') {
 					// space
 					if (++spaceCounter[0] == 1) {
 						buf.append(c);
 					}
-				}
-				else if (c=='\n' || c=='\r' || c=='\f') {
+				} else if (c == '\n' || c == '\r' || c == '\f') {
 					// new line
-					if (++spaceCounter[0]==1) {
+					if (++spaceCounter[0] == 1) {
 						buf.append(' ');
 					}
-				}
-				else {
+				} else {
 					// other characters
-					spaceCounter[0]=0;
+					spaceCounter[0] = 0;
 					buf.append(c);
 				}
 			}
 		}
 	}
-	
+
 	private String getNormalizedText(String text) {
-		int [] spaceCounter = new int[1];
+		int[] spaceCounter = new int[1];
 		StringBuffer buf = new StringBuffer();
-		
-		if (text==null) return null;
+
+		if (text == null)
+			return null;
 		appendText(text, buf, spaceCounter);
 		return buf.toString();
 	}
-	
+
 	private String getSingleNodeText(Node node) {
 		return getNormalizedText(node.getNodeValue());
 	}
@@ -322,7 +328,7 @@ public class FormTextModel {
 	private String getNodeText(Node node) {
 		NodeList children = node.getChildNodes();
 		StringBuffer buf = new StringBuffer();
-		int [] spaceCounter=new int[1];
+		int[] spaceCounter = new int[1];
 
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
@@ -334,30 +340,87 @@ public class FormTextModel {
 		return buf.toString().trim();
 	}
 
-	private ParagraphSegment processHyperlinkSegment(
-		Node link,
-		HyperlinkSettings settings) {
-		String text = getNodeText(link);
-		HyperlinkSegment segment = new HyperlinkSegment(text, settings, null);
+	private ParagraphSegment processHyperlinkSegment(Node link,
+			HyperlinkSettings settings) {
 		NamedNodeMap atts = link.getAttributes();
-		Node href = atts.getNamedItem("href");
-		if (href != null) {
-			String value = href.getNodeValue();
-			segment.setHref(value);
+		String href = null;
+		boolean wrapAllowed = true;
+
+		Node hrefAtt = atts.getNamedItem("href");
+		if (hrefAtt != null) {
+			href = hrefAtt.getNodeValue();
 		}
 		Node nowrap = atts.getNamedItem("nowrap");
 		if (nowrap != null) {
 			String value = nowrap.getNodeValue();
-			if (value!=null && value.equalsIgnoreCase("true"))
-				segment.setWordWrapAllowed(false);
+			if (value != null && value.equalsIgnoreCase("true"))
+				wrapAllowed = false;
 		}
-		return segment;
+		Object status = checkChildren(link);
+		if (status instanceof Node) {
+			ImageHyperlinkSegment segment = new ImageHyperlinkSegment(settings);
+			segment.setHref(href);
+			segment.setWordWrapAllowed(wrapAllowed);
+			processImageSegment(segment, (Node) status);
+			return segment;
+		}  else if (status instanceof String) {
+			String text = (String) status;
+			TextHyperlinkSegment segment = new TextHyperlinkSegment(text,
+					settings, null);
+			segment.setHref(href);
+			segment.setWordWrapAllowed(wrapAllowed);
+			return segment;
+		} else {
+			AggregateHyperlinkSegment parent = new AggregateHyperlinkSegment(
+					settings);
+			parent.setHref(href);
+			parent.setWordWrapAllowed(wrapAllowed);
+			NodeList children = link.getChildNodes();
+			for (int i = 0; i < children.getLength(); i++) {
+				Node child = children.item(i);
+				if (child.getNodeType() == Node.TEXT_NODE) {
+					String value = child.getNodeValue();
+					TextHyperlinkSegment ts = new TextHyperlinkSegment(
+							getNormalizedText(value), settings, null);
+					parent.add(ts);
+				} else if (child.getNodeType() == Node.ELEMENT_NODE) {
+					String name = child.getNodeName();
+					if (name.equalsIgnoreCase("img")) {
+						ImageHyperlinkSegment is = new ImageHyperlinkSegment(
+								settings);
+						processImageSegment(is, child);
+						parent.add(is);
+					}
+				}
+			}
+			return parent;
+		}
 	}
 
-	private void processTextSegment(
-		Paragraph p,
-		boolean expandURLs,
-		Node textNode) {
+	private Object checkChildren(Node node) {
+		boolean text = false;
+		Node imgNode = null;
+		int status = 0;
+
+		NodeList children = node.getChildNodes();
+		for (int i = 0; i < children.getLength(); i++) {
+			Node child = children.item(i);
+			if (child.getNodeType() == Node.TEXT_NODE)
+				text = true;
+			else if (child.getNodeType() == Node.ELEMENT_NODE
+					&& child.getNodeName().equalsIgnoreCase("img")) {
+				imgNode = child;
+			}
+		}
+		if (text && imgNode == null)
+			return getNodeText(node);
+		else if (!text && imgNode != null)
+			return imgNode;
+		else return null;
+	}
+
+	private void processTextSegment(Paragraph p, boolean expandURLs,
+			Node textNode) {
 		String text = getNodeText(textNode);
 
 		NamedNodeMap atts = textNode.getAttributes();
@@ -366,19 +429,21 @@ public class FormTextModel {
 		String fontId = null;
 		String colorId = null;
 		if (font != null) {
-			fontId = "f."+font.getNodeValue();
+			fontId = "f." + font.getNodeValue();
 		}
 		if (color != null) {
-			colorId = "c."+color.getNodeValue();
+			colorId = "c." + color.getNodeValue();
 		}
-		p.parseRegularText(text, expandURLs, getHyperlinkSettings(), fontId, colorId);
+		p.parseRegularText(text, expandURLs, getHyperlinkSettings(), fontId,
+				colorId);
 	}
 
 	public void parseRegularText(String regularText, boolean convertURLs) {
 		reset();
-		
-		if (regularText==null) return;
-		
+
+		if (regularText == null)
+			return;
+
 		regularText = getNormalizedText(regularText);
 
 		Paragraph p = new Paragraph(true);
@@ -394,11 +459,8 @@ public class FormTextModel {
 			if (c == '\n') {
 				String text = regularText.substring(pstart, i);
 				pstart = i + 1;
-				p.parseRegularText(
-					text,
-					convertURLs,
-					getHyperlinkSettings(),
-					null);
+				p.parseRegularText(text, convertURLs, getHyperlinkSettings(),
+						null);
 				p = null;
 			}
 		}
@@ -425,7 +487,7 @@ public class FormTextModel {
 		hyperlinks = null;
 	}
 
-	HyperlinkSegment[] getHyperlinks() {
+	IHyperlinkSegment[] getHyperlinks() {
 		if (hyperlinks != null || paragraphs == null)
 			return hyperlinks;
 		Vector result = new Vector();
@@ -433,42 +495,42 @@ public class FormTextModel {
 			Paragraph p = (Paragraph) paragraphs.get(i);
 			ParagraphSegment[] segments = p.getSegments();
 			for (int j = 0; j < segments.length; j++) {
-				if (segments[j] instanceof HyperlinkSegment)
+				if (segments[j] instanceof IHyperlinkSegment)
 					result.add(segments[j]);
 			}
 		}
-		hyperlinks =
-			(HyperlinkSegment[]) result.toArray(
-				new HyperlinkSegment[result.size()]);
+		hyperlinks = (IHyperlinkSegment[]) result
+				.toArray(new IHyperlinkSegment[result.size()]);
 		return hyperlinks;
 	}
 
-	public HyperlinkSegment findHyperlinkAt(int x, int y) {
-		HyperlinkSegment[] links = getHyperlinks();
+	public IHyperlinkSegment findHyperlinkAt(int x, int y) {
+		IHyperlinkSegment[] links = getHyperlinks();
 		for (int i = 0; i < links.length; i++) {
 			if (links[i].contains(x, y))
 				return links[i];
 		}
 		return null;
 	}
-	public TextSegment findSegmentAt(int x, int y) {
+
+	public ParagraphSegment findSegmentAt(int x, int y) {
 		for (int i = 0; i < paragraphs.size(); i++) {
 			Paragraph p = (Paragraph) paragraphs.get(i);
-			TextSegment segment = p.findSegmentAt(x, y);
+			ParagraphSegment segment = p.findSegmentAt(x, y);
 			if (segment != null)
 				return segment;
 		}
 		return null;
 	}
 
-	public HyperlinkSegment getSelectedLink() {
+	public IHyperlinkSegment getSelectedLink() {
 		if (selectedLinkIndex == -1)
 			return null;
 		return hyperlinks[selectedLinkIndex];
 	}
 
 	public boolean traverseLinks(boolean next) {
-		HyperlinkSegment[] links = getHyperlinks();
+		IHyperlinkSegment[] links = getHyperlinks();
 		if (links == null)
 			return false;
 		int size = links.length;
@@ -483,11 +545,11 @@ public class FormTextModel {
 		return selectedLinkIndex != -1;
 	}
 
-	public void selectLink(HyperlinkSegment link) {
+	public void selectLink(IHyperlinkSegment link) {
 		if (link == null)
 			selectedLinkIndex = -1;
 		else {
-			HyperlinkSegment[] links = getHyperlinks();
+			IHyperlinkSegment[] links = getHyperlinks();
 			selectedLinkIndex = -1;
 			if (links == null)
 				return;
@@ -501,7 +563,7 @@ public class FormTextModel {
 	}
 
 	public boolean hasFocusSegments() {
-		HyperlinkSegment[] links = getHyperlinks();
+		IHyperlinkSegment[] links = getHyperlinks();
 		if (links.length > 0)
 			return true;
 		return false;
@@ -512,14 +574,17 @@ public class FormTextModel {
 		selectedLinkIndex = -1;
 		hyperlinks = null;
 	}
+
 	/**
 	 * @return Returns the whitespaceNormalized.
 	 */
 	public boolean isWhitespaceNormalized() {
 		return whitespaceNormalized;
 	}
+
 	/**
-	 * @param whitespaceNormalized The whitespaceNormalized to set.
+	 * @param whitespaceNormalized
+	 *            The whitespaceNormalized to set.
 	 */
 	public void setWhitespaceNormalized(boolean whitespaceNormalized) {
 		this.whitespaceNormalized = whitespaceNormalized;

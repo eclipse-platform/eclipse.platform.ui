@@ -23,76 +23,61 @@ import org.eclipse.ui.forms.widgets.*;
 
 public class FormUtil {
 	static final int H_SCROLL_INCREMENT = 5;
+
 	static final int V_SCROLL_INCREMENT = 64;
 
-	public static Text createText(
-		Composite parent,
-		String label,
-		FormToolkit factory) {
+	public static Text createText(Composite parent, String label,
+			FormToolkit factory) {
 		return createText(parent, label, factory, 1);
 	}
-	public static Text createText(
-		Composite parent,
-		String label,
-		FormToolkit factory,
-		int span) {
+
+	public static Text createText(Composite parent, String label,
+			FormToolkit factory, int span) {
 		factory.createLabel(parent, label);
 		Text text = factory.createText(parent, "");
-		int hfill =
-			span == 1
-				? GridData.FILL_HORIZONTAL
+		int hfill = span == 1 ? GridData.FILL_HORIZONTAL
 				: GridData.HORIZONTAL_ALIGN_FILL;
 		GridData gd = new GridData(hfill | GridData.VERTICAL_ALIGN_CENTER);
 		gd.horizontalSpan = span;
 		text.setLayoutData(gd);
 		return text;
 	}
-	public static Text createText(
-		Composite parent,
-		String label,
-		FormToolkit factory,
-		int span,
-		int style) {
+
+	public static Text createText(Composite parent, String label,
+			FormToolkit factory, int span, int style) {
 		Label l = factory.createLabel(parent, label);
 		if ((style & SWT.MULTI) != 0) {
 			GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 			l.setLayoutData(gd);
 		}
 		Text text = factory.createText(parent, "", style);
-		int hfill =
-			span == 1
-				? GridData.FILL_HORIZONTAL
+		int hfill = span == 1 ? GridData.FILL_HORIZONTAL
 				: GridData.HORIZONTAL_ALIGN_FILL;
 		GridData gd = new GridData(hfill | GridData.VERTICAL_ALIGN_CENTER);
 		gd.horizontalSpan = span;
 		text.setLayoutData(gd);
 		return text;
 	}
-	public static Text createText(
-		Composite parent,
-		FormToolkit factory,
-		int span) {
+
+	public static Text createText(Composite parent, FormToolkit factory,
+			int span) {
 		Text text = factory.createText(parent, "");
-		int hfill =
-			span == 1
-				? GridData.FILL_HORIZONTAL
+		int hfill = span == 1 ? GridData.FILL_HORIZONTAL
 				: GridData.HORIZONTAL_ALIGN_FILL;
 		GridData gd = new GridData(hfill | GridData.VERTICAL_ALIGN_CENTER);
 		gd.horizontalSpan = span;
 		text.setLayoutData(gd);
 		return text;
 	}
-	
+
 	public static int computeMinimumWidth(GC gc, String text) {
 		BreakIterator wb = BreakIterator.getWordInstance();
 		wb.setText(text);
 		int last = 0;
-		
+
 		int width = 0;
 
-		for (int loc = wb.first();
-		loc != BreakIterator.DONE;
-		loc = wb.next()) {
+		for (int loc = wb.first(); loc != BreakIterator.DONE; loc = wb.next()) {
 			String word = text.substring(last, loc);
 			Point extent = gc.textExtent(word);
 			width = Math.max(width, extent.x);
@@ -115,34 +100,27 @@ public class FormUtil {
 		int height = lineHeight;
 		int maxWidth = 0;
 
-		for (int loc = wb.first();
-			loc != BreakIterator.DONE;
-			loc = wb.next()) {
+		for (int loc = wb.first(); loc != BreakIterator.DONE; loc = wb.next()) {
 			String word = text.substring(saved, loc);
 			Point extent = gc.textExtent(word);
 			if (extent.x > wHint) {
 				// overflow
 				saved = last;
 				height += extent.y;
-			}
-			else {
+			} else {
 				maxWidth = Math.max(maxWidth, extent.x);
 			}
 			last = loc;
 		}
 		return new Point(maxWidth, height);
 	}
-	public static void paintWrapText(
-		GC gc,
-		String text,
-		Rectangle bounds) {
+
+	public static void paintWrapText(GC gc, String text, Rectangle bounds) {
 		paintWrapText(gc, text, bounds, false);
 	}
-	public static void paintWrapText(
-		GC gc,
-		String text,
-		Rectangle bounds,
-		boolean underline) {
+
+	public static void paintWrapText(GC gc, String text, Rectangle bounds,
+			boolean underline) {
 		BreakIterator wb = BreakIterator.getWordInstance();
 		wb.setText(text);
 		FontMetrics fm = gc.getFontMetrics();
@@ -154,9 +132,7 @@ public class FormUtil {
 		int y = bounds.y;
 		int width = bounds.width;
 
-		for (int loc = wb.first();
-			loc != BreakIterator.DONE;
-			loc = wb.next()) {
+		for (int loc = wb.first(); loc != BreakIterator.DONE; loc = wb.next()) {
 			String line = text.substring(saved, loc);
 			Point extent = gc.textExtent(line);
 
@@ -167,7 +143,9 @@ public class FormUtil {
 				if (underline) {
 					Point prevExtent = gc.textExtent(prevLine);
 					int lineY = y + lineHeight - descent + 1;
-					gc.drawLine(bounds.x, lineY, bounds.x+prevExtent.x, lineY);
+					gc
+							.drawLine(bounds.x, lineY, bounds.x + prevExtent.x,
+									lineY);
 				}
 
 				saved = last;
@@ -184,6 +162,7 @@ public class FormUtil {
 			gc.drawLine(bounds.x, lineY, bounds.x + lastExtent.x, lineY);
 		}
 	}
+
 	public static ScrolledComposite getScrolledComposite(Control c) {
 		Composite parent = c.getParent();
 
@@ -195,31 +174,31 @@ public class FormUtil {
 		}
 		return null;
 	}
-	
+
 	public static void ensureVisible(Control c) {
 		ScrolledComposite scomp = getScrolledComposite(c);
 		if (scomp != null) {
 			FormUtil.ensureVisible(scomp, c);
 		}
 	}
+
 	public static void ensureVisible(ScrolledComposite scomp, Control control) {
 		Point controlSize = control.getSize();
 		Point controlOrigin = getControlLocation(scomp, control);
 		ensureVisible(scomp, controlOrigin, controlSize);
 	}
 
-	public static void ensureVisible(
-		ScrolledComposite scomp,
-		Point controlOrigin,
-		Point controlSize) {
+	public static void ensureVisible(ScrolledComposite scomp,
+			Point controlOrigin, Point controlSize) {
 		Rectangle area = scomp.getClientArea();
 		Point scompOrigin = scomp.getOrigin();
 
 		int x = scompOrigin.x;
 		int y = scompOrigin.y;
-		//System.out.println("Ensure: area="+area+", origin="+scompOrigin+", cloc="+controlOrigin+", csize="+controlSize+", x="+x+", y="+y);
-		
-		//horizontal right
+		// System.out.println("Ensure: area="+area+", origin="+scompOrigin+",
+		// cloc="+controlOrigin+", csize="+controlSize+", x="+x+", y="+y);
+
+		// horizontal right
 		if (controlOrigin.x + controlSize.x > scompOrigin.x + area.width) {
 			x = controlOrigin.x + controlSize.x - area.width;
 		}
@@ -236,15 +215,13 @@ public class FormUtil {
 			y = controlOrigin.y;
 		}
 
-		if (scompOrigin.x!=x || scompOrigin.y!=y) {
+		if (scompOrigin.x != x || scompOrigin.y != y) {
 			// scroll to reveal
 			scomp.setOrigin(x, y);
 		}
 	}
-	
-	public static void ensureVisible(
-			ScrolledComposite scomp,
-			Control control,
+
+	public static void ensureVisible(ScrolledComposite scomp, Control control,
 			MouseEvent e) {
 		Point controlOrigin = getControlLocation(scomp, control);
 		int rX = controlOrigin.x + e.x;
@@ -254,9 +231,10 @@ public class FormUtil {
 
 		int x = scompOrigin.x;
 		int y = scompOrigin.y;
-		//System.out.println("Ensure: area="+area+", origin="+scompOrigin+", cloc="+controlOrigin+", csize="+controlSize+", x="+x+", y="+y);
-		
-		//horizontal right
+		// System.out.println("Ensure: area="+area+", origin="+scompOrigin+",
+		// cloc="+controlOrigin+", csize="+controlSize+", x="+x+", y="+y);
+
+		// horizontal right
 		if (rX > scompOrigin.x + area.width) {
 			x = rX - area.width;
 		}
@@ -273,13 +251,14 @@ public class FormUtil {
 			y = rY;
 		}
 
-		if (scompOrigin.x!=x || scompOrigin.y!=y) {
+		if (scompOrigin.x != x || scompOrigin.y != y) {
 			// scroll to reveal
 			scomp.setOrigin(x, y);
 		}
 	}
 
-	public static Point getControlLocation(ScrolledComposite scomp, Control control) {
+	public static Point getControlLocation(ScrolledComposite scomp,
+			Control control) {
 		int x = 0;
 		int y = 0;
 		Control content = scomp.getContent();
@@ -288,11 +267,11 @@ public class FormUtil {
 			if (currentControl == content)
 				break;
 			Point location = currentControl.getLocation();
-			//if (location.x > 0)
-				//x += location.x;
-			//if (location.y > 0)
-				//y += location.y;
-			x+= location.x;
+			// if (location.x > 0)
+			// x += location.x;
+			// if (location.y > 0)
+			// y += location.y;
+			x += location.x;
 			y += location.y;
 			currentControl = currentControl.getParent();
 		}
@@ -302,18 +281,18 @@ public class FormUtil {
 	static void scrollVertical(ScrolledComposite scomp, boolean up) {
 		scroll(scomp, 0, up ? -V_SCROLL_INCREMENT : V_SCROLL_INCREMENT);
 	}
+
 	static void scrollHorizontal(ScrolledComposite scomp, boolean left) {
 		scroll(scomp, left ? -H_SCROLL_INCREMENT : H_SCROLL_INCREMENT, 0);
 	}
+
 	static void scrollPage(ScrolledComposite scomp, boolean up) {
 		Rectangle clientArea = scomp.getClientArea();
 		int increment = up ? -clientArea.height : clientArea.height;
 		scroll(scomp, 0, increment);
 	}
-	static void scroll(
-		ScrolledComposite scomp,
-		int xoffset,
-		int yoffset) {
+
+	static void scroll(ScrolledComposite scomp, int xoffset, int yoffset) {
 		Point origin = scomp.getOrigin();
 		Point contentSize = scomp.getContent().getSize();
 		int xorigin = origin.x + xoffset;
@@ -333,81 +312,168 @@ public class FormUtil {
 			vbar.setPageIncrement(increment);
 		}
 	}
+
 	public static void processKey(int keyCode, Control c) {
 		ScrolledComposite scomp = FormUtil.getScrolledComposite(c);
 		if (scomp != null) {
 			if (c instanceof Combo)
 				return;
 			switch (keyCode) {
-				case SWT.ARROW_DOWN :
-					FormUtil.scrollVertical(scomp, false);
-					break;
-				case SWT.ARROW_UP :
-					FormUtil.scrollVertical(scomp, true);
-					break;
-				case SWT.ARROW_LEFT :
-					FormUtil.scrollHorizontal(scomp, true);
-					break;
-				case SWT.ARROW_RIGHT :
-					FormUtil.scrollHorizontal(scomp, false);
-					break;
-				case SWT.PAGE_UP :
-					FormUtil.scrollPage(scomp, true);
-					break;
-				case SWT.PAGE_DOWN :
-					FormUtil.scrollPage(scomp, false);
-					break;
+			case SWT.ARROW_DOWN:
+				FormUtil.scrollVertical(scomp, false);
+				break;
+			case SWT.ARROW_UP:
+				FormUtil.scrollVertical(scomp, true);
+				break;
+			case SWT.ARROW_LEFT:
+				FormUtil.scrollHorizontal(scomp, true);
+				break;
+			case SWT.ARROW_RIGHT:
+				FormUtil.scrollHorizontal(scomp, false);
+				break;
+			case SWT.PAGE_UP:
+				FormUtil.scrollPage(scomp, true);
+				break;
+			case SWT.PAGE_DOWN:
+				FormUtil.scrollPage(scomp, false);
+				break;
 			}
 		}
 	}
 
 	static boolean isWrapControl(Control c) {
 		if (c instanceof Composite) {
-			return ((Composite)c).getLayout() instanceof ILayoutExtension;
-		}
-		else {
+			return ((Composite) c).getLayout() instanceof ILayoutExtension;
+		} else {
 			return (c.getStyle() & SWT.WRAP) != 0;
 		}
 	}
-	
+
 	public static int getWidthHint(int wHint, Control c) {
-		boolean wrap=isWrapControl(c);
+		boolean wrap = isWrapControl(c);
 		return wrap ? wHint : SWT.DEFAULT;
 	}
-	
+
 	public static int getHeightHint(int hHint, Control c) {
 		if (c instanceof Composite) {
-			Layout layout = ((Composite)c).getLayout();
+			Layout layout = ((Composite) c).getLayout();
 			if (layout instanceof ColumnLayout)
 				return hHint;
 		}
 		return SWT.DEFAULT;
 	}
-	
+
 	public static int computeMinimumWidth(Control c, boolean changed) {
 		if (c instanceof Composite) {
-			Layout layout = ((Composite)c).getLayout();
+			Layout layout = ((Composite) c).getLayout();
 			if (layout instanceof ILayoutExtension)
-				return ((ILayoutExtension)layout).computeMinimumWidth((Composite)c, changed);
+				return ((ILayoutExtension) layout).computeMinimumWidth(
+						(Composite) c, changed);
 		}
 		return c.computeSize(FormUtil.getWidthHint(5, c), SWT.DEFAULT, changed).x;
 	}
+
 	public static int computeMaximumWidth(Control c, boolean changed) {
 		if (c instanceof Composite) {
-			Layout layout = ((Composite)c).getLayout();
+			Layout layout = ((Composite) c).getLayout();
 			if (layout instanceof ILayoutExtension)
-				return ((ILayoutExtension)layout).computeMaximumWidth((Composite)c, changed);
+				return ((ILayoutExtension) layout).computeMaximumWidth(
+						(Composite) c, changed);
 		}
 		return c.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed).x;
 	}
+
 	public static Form getForm(Control c) {
 		Composite parent = c.getParent();
-		while (parent!=null) {
+		while (parent != null) {
 			if (parent instanceof Form) {
-				return (Form)parent;
+				return (Form) parent;
 			}
 			parent = parent.getParent();
 		}
 		return null;
+	}
+
+	public static Image createColorMashImage(Device device, Image srcImage,
+			Color srcColor) {
+		Rectangle r = srcImage.getBounds();
+		ImageData data = srcImage.getImageData();
+		PaletteData palette = data.palette;
+		ImageData newData = data;
+		RGB blendRGB = srcColor.getRGB();
+		if (!palette.isDirect) {
+			/* Convert the palette entries to gray. */
+			RGB[] rgbs = palette.getRGBs();
+			for (int i = 0; i < rgbs.length; i++) {
+				if (data.transparentPixel != i) {
+					RGB color = rgbs[i];
+					int red = color.red;
+					int green = color.green;
+					int blue = color.blue;
+					int intensity = (red + red + green + green + green + green
+							+ green + blue) >> 3;
+					color.red = color.green = color.blue = intensity;
+				}
+			}
+			newData.palette = new PaletteData(rgbs);
+		} else {
+			/* Create a 8 bit depth image data with a gray palette. */
+			RGB[] rgbs = new RGB[256];
+			for (int i = 0; i < rgbs.length; i++) {
+				rgbs[i] = new RGB(i, i, i);
+			}
+			newData = new ImageData(r.width, r.height, 8, new PaletteData(rgbs));
+			newData.maskData = data.maskData;
+			newData.maskPad = data.maskPad;
+
+			/* Convert the pixels. */
+			int[] scanline = new int[r.width];
+			int redMask = palette.redMask;
+			int greenMask = palette.greenMask;
+			int blueMask = palette.blueMask;
+			int redShift = palette.redShift;
+			int greenShift = palette.greenShift;
+			int blueShift = palette.blueShift;
+			boolean blend = false;
+			for (int y = 0; y < r.height; y++) {
+				int offset = y * newData.bytesPerLine;
+				data.getPixels(0, y, r.width, scanline, 0);
+				for (int x = 0; x < r.width; x++) {
+					int red, green, blue;
+					int newPixel;
+					//blend = !blend;
+					blend = true;
+					if (blend) {
+						red = blendRGB.red;
+						green = blendRGB.green;
+						blue = blendRGB.blue;
+						newPixel = (byte) ((red + red + green + green
+								+ green + green + green + blue) >> 3);
+					} else {
+						int pixel = scanline[x];
+						red = pixel & redMask;
+						red = (redShift < 0) ? red >>> -redShift
+								: red << redShift;
+						green = pixel & greenMask;
+						green = (greenShift < 0) ? green >>> -greenShift
+								: green << greenShift;
+						blue = pixel & blueMask;
+						blue = (blueShift < 0) ? blue >>> -blueShift
+								: blue << blueShift;
+					}
+					newData.data[offset++] = (byte) ((red + red + green + green
+							+ green + green + green + blue) >> 3);
+				}
+			}
+		}
+		return new Image(device, newData);
+	}
+
+	public static Font createBoldFont(Display display, Font regularFont) {
+		FontData[] fontDatas = regularFont.getFontData();
+		for (int i = 0; i < fontDatas.length; i++) {
+			fontDatas[i].setStyle(fontDatas[i].getStyle() | SWT.BOLD);
+		}
+		return new Font(display, fontDatas);
 	}
 }

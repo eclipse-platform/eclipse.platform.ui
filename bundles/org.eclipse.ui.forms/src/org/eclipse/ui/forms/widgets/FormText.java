@@ -131,7 +131,7 @@ public final class FormText extends Canvas {
 
 	private Hashtable resourceTable = new Hashtable();
 
-	private HyperlinkSegment entered;
+	private IHyperlinkSegment entered;
 
 	private boolean mouseDown = false;
 
@@ -142,7 +142,7 @@ public final class FormText extends Canvas {
 	private Action copyShortcutAction;
 
 	private boolean loading = true;
-	
+
 	private static final String INTERNAL_MENU = "__internal_menu__";
 
 	// TODO translate this text
@@ -244,11 +244,7 @@ public final class FormText extends Canvas {
 		addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				model.dispose();
-				Font boldFont = (Font) resourceTable
-						.get(FormTextModel.BOLD_FONT_ID);
-				if (boldFont != null) {
-					boldFont.dispose();
-				}
+				disposeResourceTable(true);
 			}
 		});
 		addPaintListener(new PaintListener() {
@@ -494,6 +490,7 @@ public final class FormText extends Canvas {
 	 *            converted into hyperlinks.
 	 */
 	public void setText(String text, boolean parseTags, boolean expandURLs) {
+		disposeResourceTable(false);
 		if (parseTags)
 			model.parseTaggedText(text, expandURLs);
 		else
@@ -515,6 +512,7 @@ public final class FormText extends Canvas {
 	 *            converted into hyperlinks.
 	 */
 	public void setContents(InputStream is, boolean expandURLs) {
+		disposeResourceTable(false);
 		model.parseInputStream(is, expandURLs);
 		loading = false;
 		layout();
@@ -568,9 +566,10 @@ public final class FormText extends Canvas {
 	}
 
 	public void setMenu(Menu menu) {
-		if (menu==null) return;
+		if (menu == null)
+			return;
 		Menu currentMenu = super.getMenu();
-		if (currentMenu!=null && INTERNAL_MENU.equals(currentMenu.getData())) {
+		if (currentMenu != null && INTERNAL_MENU.equals(currentMenu.getData())) {
 			currentMenu.dispose();
 		}
 		super.setMenu(menu);
@@ -580,7 +579,7 @@ public final class FormText extends Canvas {
 		Menu menu = new Menu(this);
 		final MenuItem copyItem = new MenuItem(menu, SWT.PUSH);
 		copyItem.setText(Policy.getMessage("FormText.copy"));
-		
+
 		SelectionListener listener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (e.widget == copyItem) {
@@ -593,6 +592,7 @@ public final class FormText extends Canvas {
 			public void menuShown(MenuEvent e) {
 				copyItem.setEnabled(canCopy());
 			}
+
 			public void menuHidden(MenuEvent e) {
 			}
 		});
@@ -703,48 +703,53 @@ public final class FormText extends Canvas {
 		}
 		removeListener(SWT.Selection, listener);
 	}
-	
+
 	/**
 	 * Returns the selected text.
 	 * <p>
-	 *
+	 * 
 	 * @return selected text, or an empty String if there is no selection.
-	 * @exception SWTException <ul>
-	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
-	 * </ul>
+	 * @exception SWTException
+	 *                <ul>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
+	 *                disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
+	 *                thread that created the receiver</li>
+	 *                </ul>
 	 * @since 3.1
 	 */
-	
+
 	public String getSelectionText() {
 		checkWidget();
-		if (selData!=null)
+		if (selData != null)
 			return selData.getSelectionText();
 		else
 			return "";
 	}
-	
+
 	/**
 	 * Tests if the text is selected and can be copied into the clipboard.
-	 * @return <code>true</code> if the selected text can be copied into
-	 * the clipboard, <code>false</code> otherwise.
+	 * 
+	 * @return <code>true</code> if the selected text can be copied into the
+	 *         clipboard, <code>false</code> otherwise.
 	 * @since 3.1
 	 */
 	public boolean canCopy() {
-		return selData!=null && selData.canCopy();
+		return selData != null && selData.canCopy();
 	}
-	
+
 	/**
 	 * Copies the selected text into the clipboard.
 	 * 
 	 * @since. 3.1
 	 */
-	
+
 	public void copy() {
-		if (!canCopy()) return;
+		if (!canCopy())
+			return;
 		Clipboard clipboard = new Clipboard(getDisplay());
-		Object [] o = new Object[] {getSelectionText()};
-		Transfer[] t = new Transfer[] {TextTransfer.getInstance()};
+		Object[] o = new Object[] { getSelectionText() };
+		Transfer[] t = new Transfer[] { TextTransfer.getInstance() };
 		clipboard.setContents(o, t);
 		clipboard.dispose();
 	}
@@ -759,7 +764,7 @@ public final class FormText extends Canvas {
 	 * @since 3.1
 	 */
 	public Object getSelectedLinkHref() {
-		HyperlinkSegment link = model.getSelectedLink();
+		IHyperlinkSegment link = model.getSelectedLink();
 		if (link != null)
 			return link.getHref();
 		return null;
@@ -773,7 +778,7 @@ public final class FormText extends Canvas {
 	 *            the pop-up menu manager
 	 */
 	protected void contextMenuAboutToShow(IMenuManager manager) {
-		HyperlinkSegment link = model.getSelectedLink();
+		IHyperlinkSegment link = model.getSelectedLink();
 		if (link != null)
 			contributeLinkActions(manager, link);
 	}
@@ -834,21 +839,23 @@ public final class FormText extends Canvas {
 			}
 		});
 	}
-	
+
 	private void startSelection(MouseEvent e) {
 		mouseDown = true;
 		selData = new SelectionData(e);
 		redraw();
 		Form form = FormUtil.getForm(this);
-		if (form!=null)
+		if (form != null)
 			form.setSelectionText(this);
 	}
+
 	private void endSelection(MouseEvent e) {
 		mouseDown = false;
-		if (selData!=null && !selData.isEnclosed())
+		if (selData != null && !selData.isEnclosed())
 			selData = null;
 		notifySelectionChanged();
 	}
+
 	void clearSelection() {
 		selData = null;
 		redraw();
@@ -864,9 +871,9 @@ public final class FormText extends Canvas {
 	}
 
 	private void handleDrag(MouseEvent e) {
-		if (selData!=null) {
+		if (selData != null) {
 			ScrolledComposite scomp = FormUtil.getScrolledComposite(this);
-			if (scomp!=null) {
+			if (scomp != null) {
 				FormUtil.ensureVisible(scomp, this, e);
 			}
 			selData.update(e);
@@ -877,20 +884,20 @@ public final class FormText extends Canvas {
 	private void handleMouseClick(MouseEvent e, boolean down) {
 		if (down) {
 			// select a hyperlink
-			HyperlinkSegment segmentUnder = model.findHyperlinkAt(e.x, e.y);
+			IHyperlinkSegment segmentUnder = model.findHyperlinkAt(e.x, e.y);
 			if (segmentUnder != null) {
-				HyperlinkSegment oldLink = model.getSelectedLink();
+				IHyperlinkSegment oldLink = model.getSelectedLink();
 				model.selectLink(segmentUnder);
 				enterLink(segmentUnder, e.stateMask);
 				paintFocusTransfer(oldLink, segmentUnder);
 			}
-			if (e.button==1)
+			if (e.button == 1)
 				startSelection(e);
 			else {
 			}
 		} else {
 			if (e.button == 1) {
-				HyperlinkSegment segmentUnder = model.findHyperlinkAt(e.x, e.y);
+				IHyperlinkSegment segmentUnder = model.findHyperlinkAt(e.x, e.y);
 				if (segmentUnder != null) {
 					activateLink(segmentUnder, e.stateMask);
 				}
@@ -907,7 +914,7 @@ public final class FormText extends Canvas {
 			handleDrag(e);
 			return;
 		}
-		TextSegment segmentUnder = model.findSegmentAt(e.x, e.y);
+		ParagraphSegment segmentUnder = model.findSegmentAt(e.x, e.y);
 		if (segmentUnder == null) {
 			if (entered != null) {
 				exitLink(entered, e.stateMask);
@@ -916,8 +923,8 @@ public final class FormText extends Canvas {
 			}
 			setCursor(null);
 		} else {
-			if (segmentUnder instanceof HyperlinkSegment) {
-				HyperlinkSegment linkUnder = (HyperlinkSegment) segmentUnder;
+			if (segmentUnder instanceof IHyperlinkSegment) {
+				IHyperlinkSegment linkUnder = (IHyperlinkSegment) segmentUnder;
 				if (entered == null) {
 					entered = linkUnder;
 					enterLink(linkUnder, e.stateMask);
@@ -930,17 +937,20 @@ public final class FormText extends Canvas {
 					paintLinkHover(entered, false);
 					entered = null;
 				}
-				setCursor(model.getHyperlinkSettings().getTextCursor());
+				if (segmentUnder instanceof TextSegment)
+					setCursor(model.getHyperlinkSettings().getTextCursor());
+				else
+					setCursor(null);
 			}
 		}
 	}
 
 	private boolean advance(boolean next) {
-		HyperlinkSegment current = model.getSelectedLink();
+		IHyperlinkSegment current = model.getSelectedLink();
 		if (current != null)
 			exitLink(current, SWT.NULL);
 		boolean valid = model.traverseLinks(next);
-		HyperlinkSegment newLink = model.getSelectedLink();
+		IHyperlinkSegment newLink = model.getSelectedLink();
 		if (valid)
 			enterLink(newLink, SWT.NULL);
 		paintFocusTransfer(current, newLink);
@@ -961,7 +971,7 @@ public final class FormText extends Canvas {
 		}
 	}
 
-	private void enterLink(HyperlinkSegment link, int stateMask) {
+	private void enterLink(IHyperlinkSegment link, int stateMask) {
 		if (link == null || listeners == null)
 			return;
 		int size = listeners.size();
@@ -973,7 +983,7 @@ public final class FormText extends Canvas {
 		}
 	}
 
-	private void exitLink(HyperlinkSegment link, int stateMask) {
+	private void exitLink(IHyperlinkSegment link, int stateMask) {
 		if (link == null || listeners == null)
 			return;
 		int size = listeners.size();
@@ -985,7 +995,7 @@ public final class FormText extends Canvas {
 		}
 	}
 
-	private void paintLinkHover(HyperlinkSegment link, boolean hover) {
+	private void paintLinkHover(IHyperlinkSegment link, boolean hover) {
 		GC gc = new GC(this);
 		HyperlinkSettings settings = getHyperlinkSettings();
 		gc.setForeground(hover ? settings.getActiveForeground() : settings
@@ -1002,12 +1012,12 @@ public final class FormText extends Canvas {
 	}
 
 	private void activateSelectedLink() {
-		HyperlinkSegment link = model.getSelectedLink();
+		IHyperlinkSegment link = model.getSelectedLink();
 		if (link != null)
 			activateLink(link, SWT.NULL);
 	}
 
-	private void activateLink(HyperlinkSegment link, int stateMask) {
+	private void activateLink(IHyperlinkSegment link, int stateMask) {
 		setCursor(model.getHyperlinkSettings().getBusyCursor());
 		if (listeners != null) {
 			int size = listeners.size();
@@ -1019,19 +1029,24 @@ public final class FormText extends Canvas {
 				listener.linkActivated(e);
 			}
 		}
-		if (!isDisposed())
+		if (!isDisposed()) {
 			setCursor(model.getHyperlinkSettings().getHyperlinkCursor());
+			IHyperlinkSegment selectedLink = model.getSelectedLink();
+			if (selectedLink!=link) {
+				if (selectedLink != null)
+					exitLink(selectedLink, SWT.NULL);
+				model.selectLink(link);
+				enterLink(link, SWT.NULL);
+				paintFocusTransfer(selectedLink, link);
+			}
+		}
 	}
 
 	private void ensureBoldFontPresent(Font regularFont) {
 		Font boldFont = (Font) resourceTable.get(FormTextModel.BOLD_FONT_ID);
 		if (boldFont != null)
 			return;
-		FontData[] fontDatas = regularFont.getFontData();
-		for (int i = 0; i < fontDatas.length; i++) {
-			fontDatas[i].setStyle(fontDatas[i].getStyle() | SWT.BOLD);
-		}
-		boldFont = new Font(getDisplay(), fontDatas);
+		boldFont = FormUtil.createBoldFont(getDisplay(), regularFont);
 		resourceTable.put(FormTextModel.BOLD_FONT_ID, boldFont);
 	}
 
@@ -1058,7 +1073,7 @@ public final class FormText extends Canvas {
 		textGC.setBackground(getBackground());
 		textGC.setFont(getFont());
 		textGC.fillRectangle(0, 0, carea.width, carea.height);
-		if (selData!=null)
+		if (selData != null)
 			selData.reset();
 
 		if (loading) {
@@ -1067,7 +1082,7 @@ public final class FormText extends Canvas {
 					getClientArea().height / 2 - lineHeight / 2);
 		} else {
 			Paragraph[] paragraphs = model.getParagraphs();
-			HyperlinkSegment selectedLink = model.getSelectedLink();
+			IHyperlinkSegment selectedLink = model.getSelectedLink();
 			for (int i = 0; i < paragraphs.length; i++) {
 				Paragraph p = paragraphs[i];
 				if (i > 0 && paragraphsSeparated && p.getAddVerticalSpace())
@@ -1088,8 +1103,8 @@ public final class FormText extends Canvas {
 		return lineHeight / 2;
 	}
 
-	private void paintFocusTransfer(HyperlinkSegment oldLink,
-			HyperlinkSegment newLink) {
+	private void paintFocusTransfer(IHyperlinkSegment oldLink,
+			IHyperlinkSegment newLink) {
 		GC gc = new GC(this);
 		Color bg = getBackground();
 		Color fg = getForeground();
@@ -1109,7 +1124,7 @@ public final class FormText extends Canvas {
 	}
 
 	private void contributeLinkActions(IMenuManager manager,
-			HyperlinkSegment link) {
+			IHyperlinkSegment link) {
 		manager.add(openAction);
 		manager.add(copyShortcutAction);
 		manager.add(new Separator());
@@ -1121,7 +1136,7 @@ public final class FormText extends Canvas {
 	 * clipboard.setContents(new Object[]{text}, new Transfer[]{TextTransfer
 	 * .getInstance()}); }
 	 */
-	private void ensureVisible(HyperlinkSegment segment) {
+	private void ensureVisible(IHyperlinkSegment segment) {
 		if (segment == null)
 			return;
 		Rectangle bounds = segment.getBounds();
@@ -1134,6 +1149,7 @@ public final class FormText extends Canvas {
 		FormUtil.ensureVisible(scomp, origin, new Point(bounds.width,
 				bounds.height));
 	}
+
 	/**
 	 * Overrides the method by fully trusting the layout manager (computed width
 	 * or height may be larger than the provider width or height hints).
@@ -1149,5 +1165,27 @@ public final class FormText extends Canvas {
 		}
 		Rectangle trim = computeTrim(0, 0, size.x, size.y);
 		return new Point(trim.width, trim.height);
+	}
+
+	private void disposeResourceTable(boolean disposeBoldFont) {
+		if (disposeBoldFont) {
+			Font boldFont = (Font) resourceTable
+					.get(FormTextModel.BOLD_FONT_ID);
+			if (boldFont != null) {
+				boldFont.dispose();
+				resourceTable.remove(FormTextModel.BOLD_FONT_ID);
+			}
+		}
+		for (Enumeration enm = resourceTable.keys(); enm.hasMoreElements();) {
+			String key = (String) enm.nextElement();
+			if (key.startsWith(ImageSegment.SEL_IMAGE_PREFIX)) {
+				Object obj = resourceTable.get(key);
+				if (obj instanceof Image) {
+					Image image = (Image)obj;
+					if (!image.isDisposed())
+						image.dispose();
+				}
+			}
+		}
 	}
 }
