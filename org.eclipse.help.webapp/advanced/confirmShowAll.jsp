@@ -11,9 +11,9 @@
 <%@ include file="header.jsp"%>
 
 <jsp:include page="confirm.jsp">
-	<jsp:param name="title"		value="<%=ServletResources.getString(\"confirmShowAllTitle\", request)%>"/>
-	<jsp:param name="header"	value="<%=ServletResources.getString(\"confirmShowAllQuestion\", request)%>"/>
-	<jsp:param name="message"	value="<%=ServletResources.getString(\"confirmShowAllExplanation\", request)%>"/>
+	<jsp:param name="title"		value="confirmShowAllTitle"/>
+	<jsp:param name="header"	value="confirmShowAllQuestion"/>
+	<jsp:param name="message"	value="confirmShowAllExplanation"/>
 	<jsp:param name="dontaskagain"	value="true"/>
 	<jsp:param name="dontaskagainCallback"	value="<%=\"dontAskAgain()\"%>"/>
 	<jsp:param name="confirmCallback"	value="<%=\"showAll()\"%>"/>

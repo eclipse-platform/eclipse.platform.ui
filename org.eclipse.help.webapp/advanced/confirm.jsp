@@ -27,7 +27,7 @@
 
 <html>
 <head>
-<title><%=request.getParameter("title")%></title>
+<title><%=ServletResources.getString(request.getParameter("title"), request)%></title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="-1">
@@ -110,9 +110,9 @@ function confirmed(){
 <form onsubmit="confirmed();return false;">
 <div style="overflow:auto;height:220px;width:100%;">
 	<div style="padding:10px;">
-	<span style="font-weight:bold;"><%=request.getParameter("header")%></span>
+	<span style="font-weight:bold;"><%=ServletResources.getString(request.getParameter("header"), request)%></span>
 	<br><br>
-	<%=request.getParameter("message")%>
+	<%=ServletResources.getString(request.getParameter("message"), request)%>
 	</div>
 </div>
 <% if ("true".equalsIgnoreCase(request.getParameter("dontaskagain")) ){ %>
