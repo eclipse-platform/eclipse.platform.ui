@@ -11,18 +11,22 @@ Contributors:
 	Matt Conway - Patch for Bug 28052
 *********************************************************************/
 
+import java.io.File;
 import java.io.PrintStream;
 import java.text.MessageFormat;
 
 import org.apache.tools.ant.BuildEvent;
+import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.BuildLogger;
 import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
+import org.apache.tools.ant.util.FileUtils;
 import org.apache.tools.ant.util.StringUtils;
 import org.eclipse.ant.core.AntSecurityException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugPlugin;
@@ -31,10 +35,10 @@ import org.eclipse.debug.ui.console.FileLink;
 import org.eclipse.debug.ui.console.IConsoleHyperlink;
 import org.eclipse.jface.text.Region;
 import org.eclipse.ui.externaltools.internal.ant.AntSupportMessages;
-import org.eclipse.ui.externaltools.internal.ant.launchConfigurations.*;
 import org.eclipse.ui.externaltools.internal.ant.launchConfigurations.AntProcess;
 import org.eclipse.ui.externaltools.internal.ant.launchConfigurations.AntStreamMonitor;
 import org.eclipse.ui.externaltools.internal.ant.launchConfigurations.AntStreamsProxy;
+import org.eclipse.ui.externaltools.internal.ant.launchConfigurations.TaskLinkManager;
 	
 /**
  */
@@ -44,6 +48,8 @@ public class AntProcessBuildLogger implements BuildLogger {
 	private PrintStream fErr= null;
 	private PrintStream fOut= null;
 	protected boolean fEmacsMode= false;
+	private File fBuildFileParent= null;
+	
 	/**
 	 * An exception that has already been logged.
 	 */
@@ -87,6 +93,7 @@ public class AntProcessBuildLogger implements BuildLogger {
 				if (file != null) {
 					FileLink link = new FileLink(file, null,  -1, -1, -1);
 					TaskLinkManager.addTaskHyperlink(fProcess, link, new Region(11 + StringUtils.LINE_SEP.length(), fileName.length()), fileName);
+					fBuildFileParent= file.getLocation().toFile().getParentFile();
 				}
 			}
 		}
@@ -232,10 +239,10 @@ public class AntProcessBuildLogger implements BuildLogger {
 				}
 				// split file and line number
 				String fileName = path.substring(0, index);
-				String lineNumber = path.substring(index + 1);
 				IFile file = getFileForLocation(fileName);
 				if (file != null) {
 					try {
+						String lineNumber = path.substring(index + 1);
 						int line = Integer.parseInt(lineNumber);
 						return new FileLink(file, null, -1, -1, line);
 					} catch (NumberFormatException e) {
@@ -278,6 +285,7 @@ public class AntProcessBuildLogger implements BuildLogger {
 	public void buildFinished(BuildEvent event) {
 		handleException(event);
 		fHandledException= null;
+		fBuildFileParent= null;
 	}
 	
 	/**
@@ -340,15 +348,32 @@ public class AntProcessBuildLogger implements BuildLogger {
 	}
 
 	/**
-	 * Returns the workspace file associated with the given abosolute path in the local file system,
-	 * or <code>null</code> if none.
+	 * Returns the workspace file associated with the given absolute path in the
+	 * local file system, or <code>null</code> if none.
 	 *   
 	 * @param absolutePath
 	 * @return file or <code>null</code>
 	 */
 	protected IFile getFileForLocation(String absolutePath) {
-		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(new Path(absolutePath));
-		if (file != null && file.exists()) {
+		IPath filePath= new Path(absolutePath);
+		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(filePath);
+		if (file == null) {
+			//relative path
+			File relativeFile= null;
+			try {
+				//this call is ok if fBuildFileParent is null
+				relativeFile= FileUtils.newFileUtils().resolveFile(fBuildFileParent, absolutePath);
+				filePath= new Path(relativeFile.getAbsolutePath());
+				file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(filePath);
+				if (file == null) {
+					return null;
+				}
+			} catch (BuildException be) {
+				return null;
+			}
+		}
+		
+		if (file.exists()) {
 			return file;
 		}
 		return null;
