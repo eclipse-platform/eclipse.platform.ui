@@ -105,9 +105,9 @@
       </action>
       <action      
             menubarPath="team.target/group1"
-            class="org.eclipse.team.internal.ui.target.PutAction"
-            id="org.eclipse.team.target.putAction"
-            label="%Deployment.putAction">
+            class="org.eclipse.team.internal.ui.target.UploadAction"
+            id="org.eclipse.team.target.uploadAction"
+            label="%Deployment.uploadAction">
       </action>
       <action      
             menubarPath="team.target/group1"

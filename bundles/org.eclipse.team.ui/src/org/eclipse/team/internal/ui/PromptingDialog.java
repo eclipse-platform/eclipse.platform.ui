@@ -30,6 +30,7 @@ public class PromptingDialog {
 	private boolean confirmOverwrite = true;
 	private IPromptCondition condition;
 	private String title;
+	private boolean hasMultipeResources;
 
 	/**
 	 * Prompt for the given resources using the specific condition. The prompt dialog will
@@ -40,15 +41,16 @@ public class PromptingDialog {
 		this.resources = resources;
 		this.title = title;
 		this.shell = shell;
-		if(resources.length == 1) {
-			buttons = new String[] {IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL};
-		} else {
+		this.hasMultipeResources = resources.length > 1;
+		if (hasMultipeResources) {
 			buttons = new String[] {
-					IDialogConstants.YES_LABEL, 
-					IDialogConstants.YES_TO_ALL_LABEL, 
-					IDialogConstants.NO_LABEL, 
-					IDialogConstants.CANCEL_LABEL};			
-		}				 
+				IDialogConstants.YES_LABEL, 
+				IDialogConstants.YES_TO_ALL_LABEL, 
+				IDialogConstants.NO_LABEL, 
+				IDialogConstants.CANCEL_LABEL};
+		} else {
+			buttons = new String[] {IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL};
+		}			 
 	}
 		
 	/**
@@ -89,17 +91,21 @@ public class PromptingDialog {
 					dialog.open();
 				}
 			});
-		switch (dialog.getReturnCode()) {
-			case 0://Yes
-				return true;
-			case 1://No or Cancel
-				return false;
-			case 2://Yes to all
-				confirmOverwrite = false; 
-				return true;
-			case 3://Cancel
-			default:
-				throw new InterruptedException();
+		if (hasMultipeResources) {
+			switch (dialog.getReturnCode()) {
+				case 0://Yes
+					return true;
+				case 1://Yes to all
+					confirmOverwrite = false; 
+					return true;
+				case 2://No
+					return false;
+				case 3://Cancel
+				default:
+					throw new InterruptedException();
+			}
+		} else {
+			return dialog.getReturnCode() == 0;
 		}
 	}
 }
