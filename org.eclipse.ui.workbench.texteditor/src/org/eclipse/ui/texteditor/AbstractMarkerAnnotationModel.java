@@ -160,9 +160,9 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 		ILog log= Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog();
 		
 		if (message != null)
-			log.log(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, message, null));
-		
-		log.log(exception.getStatus());
+			log.log(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, message, exception));
+		else
+			log.log(exception.getStatus());
 	}
 	
 	/**
