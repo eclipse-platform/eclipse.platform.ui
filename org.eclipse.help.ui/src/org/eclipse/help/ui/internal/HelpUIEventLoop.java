@@ -10,16 +10,27 @@ package org.eclipse.help.ui.internal;
 import org.eclipse.help.internal.base.*;
 import org.eclipse.swt.widgets.*;
 public class HelpUIEventLoop {
+	/**
+	 * Indicates whether run had a chance to execute and display got created
+	 */
+	private static boolean started = false;
+	/**
+	 * Indicates whether it is still running
+	 */
 	private static boolean running = false;
 	private static Display display;
 	/**
 	 * Called by base in stand-alone help since it cannot run event loop
 	 */
 	public static void run() {
-		if (display == null)
-			display = Display.getCurrent();
-		if (display == null)
-			display = new Display();
+		try {
+			if (display == null)
+				display = Display.getCurrent();
+			if (display == null)
+				display = new Display();
+		} finally {
+			started = true;
+		}
 		try {
 			running = true;
 			while (HelpApplication.isRunning()) {
@@ -44,6 +55,17 @@ public class HelpUIEventLoop {
 				d.wake();
 			} catch (Exception e) {
 			}
+	}
+	/**
+	 * Blocks until the loop is started (Display created)
+	 */
+	public static void waitFor() {
+		while (!started && HelpApplication.isRunning()) {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException ie) {
+			}
+		}
 	}
 	/**
 	 * @return Returns if loop is running.

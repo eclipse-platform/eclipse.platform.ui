@@ -10,13 +10,11 @@
  *******************************************************************************/
 package org.eclipse.help.internal.base;
 import java.io.*;
-import java.lang.reflect.*;
 import java.nio.channels.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.appserver.*;
-import org.osgi.framework.*;
 
 /**
  * Help application.
@@ -42,7 +40,7 @@ public class HelpApplication
 		status = STATUS_EXITTING;
 		if (BaseHelpSystem.MODE_STANDALONE == BaseHelpSystem.getMode()) {
 			// UI loop may be sleeping if no SWT browser is up
-			wakeupUI();
+			DisplayUtils.wakeupUI();
 		}
 	}
 	/**
@@ -77,7 +75,7 @@ public class HelpApplication
 		
 		if (BaseHelpSystem.MODE_STANDALONE == BaseHelpSystem.getMode()) {
 			//try running UI loop if possible
-			runUI();
+			DisplayUtils.runUI();
 		}
 		//run a headless loop;
 		while (status == STATUS_RUNNING) {
@@ -92,30 +90,6 @@ public class HelpApplication
 			return EXIT_RESTART;
 		} else {
 			return EXIT_OK;
-		}
-	}
-	private void runUI(){
-		try {
-			Bundle bundle = Platform.getBundle("org.eclipse.help.ui"); //$NON-NLS-1$
-			if(bundle == null){
-				return;
-			}
-			Class c = bundle.loadClass("org.eclipse.help.ui.internal.HelpUIEventLoop"); //$NON-NLS-1$
-			Method m=c.getMethod("run", new Class[]{} ); //$NON-NLS-1$
-			m.invoke(null, new Object[]{});
-		} catch (Exception e) {
-		}
-	}
-	private static void wakeupUI(){
-		try {
-			Bundle bundle = Platform.getBundle("org.eclipse.help.ui"); //$NON-NLS-1$
-			if(bundle == null){
-				return;
-			}
-			Class c = bundle.loadClass("org.eclipse.help.ui.internal.HelpUIEventLoop"); //$NON-NLS-1$
-			Method m=c.getMethod("wakeup", new Class[]{} ); //$NON-NLS-1$
-			m.invoke(null, new Object[]{});
-		} catch (Exception e) {
 		}
 	}
 	/**

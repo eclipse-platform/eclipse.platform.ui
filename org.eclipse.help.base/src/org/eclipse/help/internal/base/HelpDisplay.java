@@ -151,7 +151,11 @@ public class HelpDisplay {
 		if (!BaseHelpSystem.ensureWebappRunning()) {
 			return;
 		}
-
+		if (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_STANDALONE) {
+			// wait for Display to be created
+			DisplayUtils.waitForDisplay();
+		}
+		
 		try {
 			if (helpURL == null || helpURL.length() == 0) {
 				BaseHelpSystem.getHelpBrowser(forceExternal).displayURL(getFramesetURL());
