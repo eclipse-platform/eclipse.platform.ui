@@ -16,6 +16,7 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.core.model.FeatureReferenceModel;
 import org.eclipse.update.core.model.SiteModel;
+import org.eclipse.update.internal.core.Policy;
 
 /**
  *
@@ -75,7 +76,7 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 		String type = getType();
 		if (feature == null) {
 
-			if (type == null || type.equals("")) {
+			if (type == null || type.equals("")) { //$NON-NLS-1$
 				// ask the Site for the default type 
 				type = getSite().getDefaultPackagedFeatureType();
 			}
@@ -97,34 +98,34 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 	 * @see IWritable#write(int, PrintWriter)
 	 */
 	public void write(int indent, PrintWriter w) {
-		String gap = "";
+		String gap = ""; //$NON-NLS-1$
 		for (int i = 0; i < indent; i++)
-			gap += " ";
-		String increment = "";
+			gap += " "; //$NON-NLS-1$
+		String increment = ""; //$NON-NLS-1$
 		for (int i = 0; i < IWritable.INDENT; i++)
-			increment += " ";
+			increment += " "; //$NON-NLS-1$
 
-		w.print(gap + "<feature ");
+		w.print(gap + "<feature "); //$NON-NLS-1$
 		// feature type
 		if (getType() != null) {
-			w.print("type=\"" + Writer.xmlSafe(getType() + "\""));
-			w.print(" ");
+			w.print("type=\"" + Writer.xmlSafe(getType() + "\"")); //$NON-NLS-1$ //$NON-NLS-2$
+			w.print(" "); //$NON-NLS-1$
 		}
 
 		// feature URL
 		String URLInfoString = null;
 		if (getURL() != null) {
 			URLInfoString = UpdateManagerUtils.getURLAsString(getSite().getURL(), getURL());
-			w.print("url=\"" + Writer.xmlSafe(URLInfoString) + "\"");
+			w.print("url=\"" + Writer.xmlSafe(URLInfoString) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		w.println(">");
+		w.println(">"); //$NON-NLS-1$
 
 		String[] categoryNames = getCategoryNames();
 		for (int i = 0; i < categoryNames.length; i++) {
 			String element = categoryNames[i];
-			w.println(gap + increment + "<category name=\"" + Writer.xmlSafe(element) + "\"/>");
+			w.println(gap + increment + "<category name=\"" + Writer.xmlSafe(element) + "\"/>"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		w.println("</feature>");
+		w.println("</feature>"); //$NON-NLS-1$
 	}
 
 	/**
@@ -147,7 +148,7 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 				resolve(url, null);
 			} catch (MalformedURLException e) {
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, "Cannot resolve URL:" + url.toExternalForm(), e);
+				IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, Policy.bind("FeatureReference.UnableToResolveURL", url.toExternalForm()), e); //$NON-NLS-1$
 				throw new CoreException(status);
 			}
 		}
@@ -168,7 +169,8 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 	}
 
 	private CoreException newCoreException(String s, Throwable e) throws CoreException {
-		return new CoreException(new Status(IStatus.ERROR, "org.eclipse.update.examples.buildzip", 0, s, e));
+		String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+		return new CoreException(new Status(IStatus.ERROR, id, 0, s, e)); //$NON-NLS-1$
 	}
 
 }

@@ -17,8 +17,8 @@ public class SiteFileContentProvider extends SiteContentProvider {
 	
 	private String path;
 	
-	public static final String INSTALL_FEATURE_PATH = "install/features/";	
-	public static final String SITE_TYPE = "org.eclipse.update.core.file";	
+	public static final String INSTALL_FEATURE_PATH = "install/features/";	 //$NON-NLS-1$
+	public static final String SITE_TYPE = "org.eclipse.update.core.file";	 //$NON-NLS-1$
 
 	/**
 	 * Constructor for FileSite
@@ -56,7 +56,7 @@ public class SiteFileContentProvider extends SiteContentProvider {
 	}
 
 	/**
-	 * return the URL associated with the id of teh archive for this site
+	 * return the URL associated with the id of the archive for this site
 	 * return null if the archiveId is null, empty or 
 	 * if teh list of archives on the site is null or empty
 	 * of if there is no URL associated with the archiveID for this site
@@ -67,7 +67,7 @@ public class SiteFileContentProvider extends SiteContentProvider {
 
 		IArchiveReference[] siteArchives = getSite().getArchives();
 		if (siteArchives.length > 0) {
-			for (int i = 0; i < siteArchives.length; i++) {
+			for (int i = 0; i < siteArchives.length && !found; i++) {
 				if (archiveId.trim().equalsIgnoreCase(siteArchives[i].getPath())) {
 					result = siteArchives[i].getURL();
 					found = true;

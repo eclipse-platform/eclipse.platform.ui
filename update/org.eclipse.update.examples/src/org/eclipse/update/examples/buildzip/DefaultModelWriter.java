@@ -221,7 +221,7 @@ public class DefaultModelWriter {
 	
 	private void writeGroups(PrintWriter w, int level, FeatureModel feature) {
 		String in = getIndent(level);
-		// TBA
+		// FIXME
 	}
 	
 	private String getIndent(int level) {

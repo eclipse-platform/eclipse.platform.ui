@@ -61,7 +61,6 @@ public class FeatureModel extends ModelObject {
 		return false;	
 	FeatureModel model = (FeatureModel)obj;
 	
-	//FIXME only check version ??
 	return (featureId.toLowerCase().equals(model.getFeatureIdentifier()) 
 		&& featureVersion.toLowerCase().equals(model.getFeatureVersion()));
 	}

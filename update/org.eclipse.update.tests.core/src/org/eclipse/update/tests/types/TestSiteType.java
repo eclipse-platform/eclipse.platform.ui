@@ -9,6 +9,7 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.core.FeaturePackagedContentProvider;
 import org.eclipse.update.internal.core.SiteURLContentProvider;
 import org.eclipse.update.tests.UpdateManagerTestCase;
@@ -35,11 +36,7 @@ public class TestSiteType extends UpdateManagerTestCase {
 
 		assertTrue(site.getSiteContentProvider() instanceof SiteURLContentProvider);
 		assertTrue(((Site) site).getType().equals("org.eclipse.update.core.http"));
-		assertTrue(
-			feature.getFeatureContentProvider() instanceof FeaturePackagedContentProvider);
-
-		// FIXME: cannot set type after feature a=has been created ? markAsReadOnly ?
-		//assertTrue(((FeatureReference)ref).getType().equals("org.eclipse.update.core.jar"));		
+		assertTrue(feature.getFeatureContentProvider() instanceof FeaturePackagedContentProvider);
 
 	}
 

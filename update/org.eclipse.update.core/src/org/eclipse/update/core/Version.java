@@ -212,18 +212,15 @@ public String getQualifierComponent() {
  * 
  * @see java.lang.String#compareTo 
  * @param versionId the other version identifier
- * @return -1 if the other version id is smaller than this
- * version, 0 if it is equal and 1 if it is greater than
- * this version.
+ * @return -1 if this version is smaller than the argument
+ * version, 0 if it is equal and 1 if this version is greater than the argument
+ * version.
  * @since 2.0 
  */
 
 public int compare(Version id) {
 
-	if (id == null) {
-		if (major==0 && minor==0 && service==0) return -1;
-		else return 1;
-	}
+	if (id == null) return 1;
 
 	if (major > id.getMajorComponent()) return 1;
 	if (major < id.getMajorComponent()) return -1;

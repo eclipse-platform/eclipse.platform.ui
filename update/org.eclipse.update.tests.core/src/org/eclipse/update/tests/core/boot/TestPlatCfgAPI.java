@@ -51,12 +51,12 @@ public class TestPlatCfgAPI extends PlatformConfigurationTestCase {
 		// create some urls
 		URL u1 = null;
 		URL u2 = null;
-		URL u3 = null;
+
 		URL u4 = null;
 		try {
 			u1 = new URL("file:d:/temp/");
 			u2 = new URL("file://localhost/temp/");
-			u3 = new URL("http://some.server/temp/");
+			new URL("http://some.server/temp/");
 			u4 = new URL("http://bad.url");
 		} catch (MalformedURLException e) {
 			Assert.fail("2.0.0 unable to create URL "+e);
@@ -121,13 +121,13 @@ public class TestPlatCfgAPI extends PlatformConfigurationTestCase {
 		URL u2 = null;
 		URL u3 = null;
 		URL u4 = null;
-		URL u5 = null;
+
 		try {
 			u1 = new URL("file:d:/temp/");
 			u2 = new URL("file://localhost/temp/");
 			u3 = new URL("http://some.server/temp/");
 			u4 = new URL("http://another.server/temp/");
-			u5 = new URL("http://one.more.server/temp/");
+			new URL("http://one.more.server/temp/");
 		} catch (MalformedURLException e) {
 			Assert.fail("1.0 unable to create URL "+e);
 		}
@@ -165,9 +165,8 @@ public class TestPlatCfgAPI extends PlatformConfigurationTestCase {
 		}
 		
 		// reload configuration	
-		IPlatformConfiguration newCfig = null;	
 		try {
-			newCfig = BootLoader.getPlatformConfiguration(cfigURL);
+			BootLoader.getPlatformConfiguration(cfigURL);
 		} catch (IOException e) {
 			Assert.fail("2.3 "+e.toString());
 		}
@@ -200,7 +199,7 @@ public class TestPlatCfgAPI extends PlatformConfigurationTestCase {
 		// get new config object
 		IPlatformConfiguration cfig = null;
 		cfig = BootLoader.getCurrentPlatformConfiguration();
-		URL[] path = cfig.getPluginPath();
+		cfig.getPluginPath();
 		cfig.save();
 	}
 }

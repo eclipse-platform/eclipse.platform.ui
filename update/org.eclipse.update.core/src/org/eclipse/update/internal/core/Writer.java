@@ -20,11 +20,11 @@ public Writer() {
 
 public void writeSite(IWritable element, PrintWriter w) {
 
-	w.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-	w.println("");
-	w.println("<!-- File written by Update manager 2.0 -->");
-	w.println("<!-- comments in this file are not preserved -->");
-	w.println("");
+	w.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
+	w.println(""); //$NON-NLS-1$
+	w.println("<!-- File written by Update manager 2.0 -->"); //$NON-NLS-1$
+	w.println("<!-- comments in this file are not preserved -->"); //$NON-NLS-1$
+	w.println(""); //$NON-NLS-1$
 	((IWritable)element).write(0,w);
 
 }
@@ -44,7 +44,7 @@ private static void appendEscapedChar(StringBuffer buffer, char c) {
 		if ((c >= ' ' && c <= 0x7E) || c == '\n' || c == '\r' || c == '\t') {
 			buffer.append(c);
 		} else {
-			buffer.append("&#");
+			buffer.append("&#"); //$NON-NLS-1$
 			buffer.append(Integer.toString(c));
 			buffer.append(';');
 		}
@@ -73,15 +73,15 @@ private static String getReplacement(char c) {
 	// These five are defined by default for all XML documents.
 	switch (c) {
 		case '<' :
-			return "lt";
+			return "lt"; //$NON-NLS-1$
 		case '>' :
-			return "gt";
+			return "gt"; //$NON-NLS-1$
 		case '"' :
-			return "quot";
+			return "quot"; //$NON-NLS-1$
 		case '\'' :
-			return "apos";
+			return "apos"; //$NON-NLS-1$
 		case '&' :
-			return "amp";
+			return "amp"; //$NON-NLS-1$
 	}
 	return null;
 }

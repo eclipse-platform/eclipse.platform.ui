@@ -63,7 +63,7 @@ public class TestBackward extends UpdateManagerTestCase {
 		UpdateManagerUtils.removeFromFileSystem(localFile);		
 		localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocationURL(),SiteLocal.DEFAULT_CONFIG_FILE).getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);	
-		//FIXME cleanup plugins.features			
+	
 	}
 
 }

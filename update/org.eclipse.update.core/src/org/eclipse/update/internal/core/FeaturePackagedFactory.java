@@ -10,6 +10,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.FeatureModelFactory;
 import org.xml.sax.SAXException;
+import org.eclipse.update.internal.core.Policy;
 
 public class FeaturePackagedFactory extends BaseFeatureFactory {
 
@@ -30,7 +31,7 @@ public class FeaturePackagedFactory extends BaseFeatureFactory {
 			feature.setSite(site);						
 			URL baseUrl = null;
 			try {
-				baseUrl = new URL(manifest.asURL(),"."); // make sure we have URL to feature directory
+				baseUrl = new URL(manifest.asURL(),"."); // make sure we have URL to feature directory //$NON-NLS-1$
 			} catch(IOException e) {
 			}
 			feature.resolve(baseUrl, getResourceBundle(baseUrl));
@@ -41,7 +42,7 @@ public class FeaturePackagedFactory extends BaseFeatureFactory {
 			// We should not stop the execution 
 			// but we must Log it all the time, not only when debugging...
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, "Error opening feature.xml in the feature archive:" + url.toExternalForm(), e);
+			IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, "IOException opening the 'feature.xml' stream in the feature archive:"  + url.toExternalForm(), e); //$NON-NLS-1$
 			UpdateManagerPlugin.getPlugin().getLog().log(status);
 		} catch (Exception e) { 
 			// other errors, we stop execution
@@ -49,7 +50,7 @@ public class FeaturePackagedFactory extends BaseFeatureFactory {
 				throw (CoreException)e;
 			};
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, "Error parsing feature.xml in the feature archive:" + url.toExternalForm(), e);
+			IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, Policy.bind("FeatureFactory.ParsingError", url.toExternalForm()), e); //$NON-NLS-1$
 			throw new CoreException(status);
 		}finally {
 			try {

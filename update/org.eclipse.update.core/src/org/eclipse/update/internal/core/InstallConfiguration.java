@@ -160,7 +160,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			fileWriter.close();
 		} catch (FileNotFoundException e) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot save configration into " + exportFile.getAbsolutePath(), e);
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("InstallConfiguration.UnableToSaveConfiguration", exportFile.getAbsolutePath()), e); //$NON-NLS-1$
 			throw new CoreException(status);
 		}
 	}
@@ -169,7 +169,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	 */
 	public void remove() {
 		// save the configuration
-		if (getURL().getProtocol().equalsIgnoreCase("file")) {
+		if (getURL().getProtocol().equalsIgnoreCase("file")) { //$NON-NLS-1$
 			// the location points to a file
 			File file = new File(getURL().getFile());
 			UpdateManagerUtils.removeFromFileSystem(file);
@@ -205,11 +205,11 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 				urlToCheck = new URL(configSiteModel.getPlatformURLString());
 			} catch (MalformedURLException e) {
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot create URL from:" + configSiteModel.getPlatformURLString(), e);
+				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("InstallConfiguration.UnableToCreateURL",configSiteModel.getPlatformURLString()), e); //$NON-NLS-1$
 				throw new CoreException(status);
 			} catch (ClassCastException e) {
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Internal Error: The configurationSite object is not a subclass of ConfiguredSiteModel.", e);
+				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("InstallConfiguration.UnableToCast"), e); //$NON-NLS-1$
 				throw new CoreException(status);
 			}
 
@@ -219,7 +219,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 				siteEntry.setSitePolicy(sitePolicy);
 			} else {
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Platform site not found :" + urlToCheck.toExternalForm(), null);
+				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("InstallConfiguration.UnableToFindConfiguredSite",urlToCheck.toExternalForm(), runtimeConfiguration.getConfigurationLocation().toExternalForm()), null); //$NON-NLS-1$
 				throw new CoreException(status);
 			}
 		}
@@ -228,7 +228,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			runtimeConfiguration.save();
 		} catch (IOException e) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot save Platform Configuration ", e);
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, Policy.bind("InstallConfiguration.UnableToSavePlatformConfiguration", runtimeConfiguration.getConfigurationLocation().toExternalForm()), e); //$NON-NLS-1$
 			throw new CoreException(status);
 		}
 	}
@@ -238,7 +238,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	 */
 	public void saveConfigurationFile() throws CoreException {
 		// save the configuration
-		if (getURL().getProtocol().equalsIgnoreCase("file")) {
+		if (getURL().getProtocol().equalsIgnoreCase("file")) { //$NON-NLS-1$
 			// the location points to a file
 			File file = new File(getURL().getFile());
 			export(file);
@@ -248,16 +248,16 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	 * @see IWritable#write(int, PrintWriter)
 	 */
 	public void write(int indent, PrintWriter w) {
-		String gap = "";
+		String gap = ""; //$NON-NLS-1$
 		for (int i = 0; i < indent; i++)
-			gap += " ";
-		String increment = "";
+			gap += " "; //$NON-NLS-1$
+		String increment = ""; //$NON-NLS-1$
 		for (int i = 0; i < IWritable.INDENT; i++)
-			increment += " ";
-		w.print(gap + "<" + InstallConfigurationParser.CONFIGURATION + " ");
-		w.print("date=\"" + getCreationDate().getTime() + "\" ");
-		w.println(">");
-		w.println("");
+			increment += " "; //$NON-NLS-1$
+		w.print(gap + "<" + InstallConfigurationParser.CONFIGURATION + " "); //$NON-NLS-1$ //$NON-NLS-2$
+		w.print("date=\"" + getCreationDate().getTime() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
+		w.println(">"); //$NON-NLS-1$
+		w.println(""); //$NON-NLS-1$
 		// site configurations
 		if (getConfigurationSitesModel() != null) {
 			ConfiguredSiteModel[] sites = getConfigurationSitesModel();
@@ -275,7 +275,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			}
 		}
 		// end
-		w.println(gap + "</" + InstallConfigurationParser.CONFIGURATION + ">");
+		w.println(gap + "</" + InstallConfigurationParser.CONFIGURATION + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	/**
 	 * reverts this configuration to the match the new one

@@ -18,7 +18,7 @@ import org.eclipse.update.internal.core.*;
  */
 public class SiteURLContentProvider extends SiteContentProvider {
 	
-	public static final String SITE_TYPE = "org.eclipse.update.core.http";
+	public static final String SITE_TYPE = "org.eclipse.update.core.http"; //$NON-NLS-1$
 
 	/**
 	 * Constructor for HTTPSite
@@ -65,7 +65,7 @@ public class SiteURLContentProvider extends SiteContentProvider {
 
 		IArchiveReference[] siteArchives = getSite().getArchives();
 		if (siteArchives.length > 0) {
-			for (int i = 0; i < siteArchives.length; i++) {
+			for (int i = 0; i < siteArchives.length && !found; i++) {
 				if (archiveId.trim().equalsIgnoreCase(siteArchives[i].getPath())) {
 					result = siteArchives[i].getURL();
 					found = true;

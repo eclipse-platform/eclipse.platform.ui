@@ -92,7 +92,7 @@ public class SiteMain extends UpdateManagerTestCase {
 	
 	private static void writeFeatures(PrintWriter w, int level, SiteModel site) {
 		String in = getIndent(level);
-		String in2 = getIndent(level+1);
+		getIndent(level+1);
 		w.println("");
 		
 		FeatureReferenceModel[] features = site.getFeatureReferenceModels();
@@ -121,7 +121,7 @@ public class SiteMain extends UpdateManagerTestCase {
 	
 	private static void writeCategoryDefs(PrintWriter w, int level, SiteModel site) {
 		String in = getIndent(level);
-		String in2 = getIndent(level+1);
+		getIndent(level+1);
 		w.println("");
 		
 		CategoryModel[] cat = site.getCategoryModels();

@@ -90,7 +90,7 @@ private void validateURL() {
 	String urlName = urlText.getText();
 	if (urlName.length()==0) enable = false;
 	try {
-		URL url = new URL(urlName);
+		new URL(urlName);
 	}
 	catch (MalformedURLException e) {
 		enable = false;

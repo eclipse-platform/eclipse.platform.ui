@@ -29,8 +29,8 @@ public class TestSiteParse extends UpdateManagerTestCase {
 		URL remoteUrl = new URL(SOURCE_FILE_SITE + "xmls/site1/");
 		ISite remoteSite = SiteManager.getSite(remoteUrl);
 
-		IFeatureReference[] feature = remoteSite.getFeatureReferences();
-		ICategory[] categories = remoteSite.getCategories();
+		//IFeatureReference[] feature = remoteSite.getFeatureReferences();
+		//ICategory[] categories = remoteSite.getCategories();
 
 		String path = remoteUrl.getFile();
 		String path2 = remoteSite.getInfoURL().getFile();
@@ -86,7 +86,6 @@ public class TestSiteParse extends UpdateManagerTestCase {
 		assertTrue("Wrong number of categories", categories.length == 1);
 		assertTrue("Wrong number of archives", archives.length == 2);
 
-		// FIXME teh parse doesn't return speace before < and after >
 		String valideString = "This category contains all of the<currently>available versions of Red Dot feature.<greeting>Hello, world!</greeting>";
 		assertEquals(valideString,remoteSite.getCategoryModels()[0].getDescriptionModel().getAnnotation());
 
@@ -112,7 +111,6 @@ public class TestSiteParse extends UpdateManagerTestCase {
 		assertTrue("Wrong number of categories", categories.length == 1);
 		assertTrue("Wrong number of archives", archives.length == 2);
 
-		// FIXME teh parse doesn't return speace before < and after >
 		String valideString = "This category contains all of the<currently>available versions of Red Dot feature.";
 		assertEquals(valideString,remoteSite.getCategoryModels()[0].getDescriptionModel().getAnnotation());
 
@@ -131,7 +129,7 @@ public class TestSiteParse extends UpdateManagerTestCase {
 		remoteSite.resolve(remoteURL, null);
 
 		FeatureReferenceModel[] feature = remoteSite.getFeatureReferenceModels();
-		CategoryModel[] categories = remoteSite.getCategoryModels();
+		//CategoryModel[] categories = remoteSite.getCategoryModels();
 		ArchiveReferenceModel[] archives = remoteSite.getArchiveReferenceModels();
 
 		assertTrue("Wrong number of features", feature.length == 2);
@@ -158,14 +156,14 @@ public void testParseValid5() throws Exception {
 		remoteSite.resolve(remoteURL, null);
 
 		FeatureReferenceModel[] featureRef = remoteSite.getFeatureReferenceModels();
-		CategoryModel[] categories = remoteSite.getCategoryModels();
+		//CategoryModel[] categories = remoteSite.getCategoryModels();
 		ArchiveReferenceModel[] archives = remoteSite.getArchiveReferenceModels();
 
 		assertTrue("Wrong number of features", featureRef.length == 1);
 		assertTrue("Wrong number of archives", archives.length == 0);
 		
 
-		IFeature feature = ((FeatureReference)featureRef[0]).getFeature();
+		((FeatureReference)featureRef[0]).getFeature();
 		
 	}
 	

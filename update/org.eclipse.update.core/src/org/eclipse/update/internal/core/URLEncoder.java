@@ -65,11 +65,11 @@ public final class URLEncoder {
 	 */
 	public static String encode(String file, String ref) {
 		StringBuffer buf = new StringBuffer();
-		StringTokenizer tokenizer = new StringTokenizer(file, "/", true);
+		StringTokenizer tokenizer = new StringTokenizer(file, "/", true); //$NON-NLS-1$
 
 		while (tokenizer.hasMoreTokens()) {
 			String token = tokenizer.nextToken();
-			if (token.equals("/")) {
+			if (token.equals("/")) { //$NON-NLS-1$
 				buf.append(token);
 			} else {
 				buf.append(encodeSegment(token));
@@ -106,7 +106,7 @@ public final class URLEncoder {
 			if (mustEncode(c)) {
 				byte[] bytes = null;
 				try {
-					bytes = new Character(c).toString().getBytes("UTF8");
+					bytes = new Character(c).toString().getBytes("UTF8"); //$NON-NLS-1$
 				} catch (UnsupportedEncodingException e) {
 					Assert.isTrue(false, e.getMessage());
 				}

@@ -228,7 +228,7 @@ public class SearchResultSection {
 
 	private String getFeatureLabel(IFeature feature) {
 		String fullLabel = feature.getLabel();
-		return feature.getLabel()
+		return fullLabel
 			+ " "
 			+ feature.getVersionedIdentifier().getVersion().toString();
 	}

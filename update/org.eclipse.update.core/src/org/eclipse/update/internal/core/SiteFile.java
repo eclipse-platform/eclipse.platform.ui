@@ -76,7 +76,10 @@ public class SiteFile extends Site {
 				archive.setURLString(url.toExternalForm());
 				this.addArchiveReferenceModel(archive);
 			} catch (MalformedURLException e){
-				IStatus status = new Status(IStatus.ERROR,"org.eclipse.update.core",IStatus.OK,"Unable to URL for location:"+pluginEntries[i].toString(),e);
+				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+				String urlString = (getURL()!=null)?getURL().toExternalForm():""; //$NON-NLS-1$
+				urlString +=Site.DEFAULT_PLUGIN_PATH + pluginEntries[i].toString();
+				IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,Policy.bind("SiteFile.UnableToCreateURL",urlString),e); //$NON-NLS-1$ 
 				throw new CoreException(status);
 			}
 		}

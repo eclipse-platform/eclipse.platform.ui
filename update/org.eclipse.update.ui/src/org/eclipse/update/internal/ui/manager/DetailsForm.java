@@ -358,7 +358,6 @@ public class DetailsForm extends PropertyWebForm {
 	private String getInstalledVersion(IFeature feature) {
 		alreadyInstalled = false;
 		VersionedIdentifier vid = feature.getVersionedIdentifier();
-		String id = vid.getIdentifier();
 		Version version = vid.getVersion();
 		newerVersion = installedFeatures.length>0;
 
@@ -397,9 +396,7 @@ public class DetailsForm extends PropertyWebForm {
 			IConfiguredSite[] isites = config.getConfiguredSites();
 			VersionedIdentifier vid = feature.getVersionedIdentifier();
 			String id = vid.getIdentifier();
-			Version version = vid.getVersion();
 
-			StringBuffer buf = new StringBuffer();
 			for (int i = 0; i < isites.length; i++) {
 				IConfiguredSite isite = isites[i];
 				IFeature[] result = UpdateUIPlugin.searchSite(id, isite, true);

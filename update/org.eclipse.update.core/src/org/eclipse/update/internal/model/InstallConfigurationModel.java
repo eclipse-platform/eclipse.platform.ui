@@ -97,7 +97,6 @@ public class InstallConfigurationModel extends ModelObject {
 		if (!isCurrent)
 			return false;
 			
-		//FIXME: remove should make sure we synchronize
 		if (configurationSites != null) {
 			return configurationSites.remove(site);
 		}

@@ -289,7 +289,6 @@ void placeControl(Control control, TableData td, int x, int y, int rowHeight) {
 
 void createGrid(Composite composite) {
 	int row, column, rowFill, columnFill;
-	Vector rows;
 	Control[] children;
 	TableData spacerSpec;
 	Vector growingCols = new Vector();
@@ -460,9 +459,7 @@ private TableData [] createEmptyRow() {
 			   }
 			}
 		}
-		int totalWidth=0;
 		int totalHeight=0;
-		int x = leftMargin;
 		int y = topMargin;
 		// compute widths 
 		for (int i=0; i<grid.size(); i++) {

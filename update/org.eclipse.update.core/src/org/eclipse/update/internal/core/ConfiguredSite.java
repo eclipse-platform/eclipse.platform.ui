@@ -184,7 +184,6 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 			throw new CoreException(status);
 		}
 
-		//FIXME:Start UOW ?
 		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_FEATURE_REMOVE);
 		activity.setLabel(feature.getVersionedIdentifier().toString());
 		activity.setDate(new Date());
@@ -283,7 +282,6 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 					((ConfigurationPolicy) getConfigurationPolicyModel()).addUnconfiguredFeatureReference((FeatureReferenceModel)element);
 				} catch (CoreException e) {
 					// feature does not exist ?
-					// FIXME: should we remove from list ? maybe keep it ? if this is a URL or temporary issue
 					featureToUnconfigure.remove(element);
 					// log no feature to unconfigure
 					if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
@@ -407,7 +405,6 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 	private List remove(IFeatureReference[] featureRefs, List list) {
 		
 		List result= new ArrayList(0);
-		String featureURLString = null; 
 				
 		if (list==null) return result;
 		Iterator iter = list.iterator();

@@ -133,7 +133,7 @@ public class UpdateManagerUtils {
 		//String ext = (dotIndex != -1 && fileIndex < dotIndex) ? "." + remotePath.substring(dotIndex) : "";
 		String ext = (dotIndex != -1 && fileIndex < dotIndex) ? remotePath.substring(dotIndex) : "";
 		
-		// the name is teh string between the separator and the dot
+		// the name is the string between the separator and the dot
 		// if there is no separator, it is the string up to the dot		
 		// if there is no dot, go to the end of the string 
 		if (fileIndex==-1) fileIndex=0;
@@ -200,31 +200,5 @@ public class UpdateManagerUtils {
 
 		return resultEntry;
 	}
-
-	
-		
-	
-
-	
-
-	
-
-	/**
-	 * Create a local file with the specified name in temporary area
-	 * and associate it with the specified key. If name is not specified
-	 * a temporary name is created. If key is not specified no 
-	 * association is made.
-	 * 
-	 * @since 2.0
-	 */
-	// VK: needs to be API (and lookupLocalFile(), removeLocalFile() ??)
-	
-		
-	
-	
-
-
-	
-
 
 }

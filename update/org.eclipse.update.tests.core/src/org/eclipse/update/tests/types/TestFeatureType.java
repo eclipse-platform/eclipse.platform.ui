@@ -135,7 +135,7 @@ public class TestFeatureType extends UpdateManagerTestCase {
 			IFeature feature = ref.getFeature();
 			assertTrue("id found, should be found",false);
 		} catch (CoreException e){
-			if (!e.getMessage().equals("Cannot find feature factory for id: org.eclipse.update.core.unknowntype.jar")){
+			if (e.getMessage().indexOf("org.eclipse.update.core.unknowntype.jar")==-1){
 				throw e;
 			}
 		}

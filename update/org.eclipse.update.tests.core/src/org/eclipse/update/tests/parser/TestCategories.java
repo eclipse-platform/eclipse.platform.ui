@@ -23,7 +23,7 @@ public class TestCategories extends UpdateManagerTestCase {
 		ISite remoteSite = SiteManager.getSite(remoteUrl);
 
 		IFeatureReference[] feature = remoteSite.getFeatureReferences();
-		ICategory[] categories = remoteSite.getCategories();
+		//ICategory[] categories = remoteSite.getCategories();
 
 		ICategory featureCategory = feature[0].getCategories()[0];
 

@@ -45,7 +45,6 @@ public class FormEngineLayout extends Layout {
 		Locator loc = new Locator();
 
 		int width = wHint != SWT.DEFAULT ? wHint : 0;
-		int height = 0;
 
 		FontMetrics fm = gc.getFontMetrics();
 		int lineHeight = fm.getHeight();

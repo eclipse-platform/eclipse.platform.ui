@@ -211,7 +211,6 @@ public class TextModel implements ITextModel {
 	public void parseRegularText(String regularText, boolean convertURLs)
 		throws CoreException {
 		reset();
-		StringBuffer buf = new StringBuffer();
 
 		Paragraph p = new Paragraph(true);
 		paragraphs.add(p);

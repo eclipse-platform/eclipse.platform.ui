@@ -107,7 +107,6 @@ public class DefaultSiteParser extends DefaultHandler {
 			debug("Start Element: uri:" + uri + " local Name:" + localName + " qName:" + qName); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 
-		String tag = localName.trim();
 		switch (currentState) {
 			case STATE_IGNORED_ELEMENT :
 				internalErrorUnknownTag(Policy.bind("DefaultSiteParser.UnknownElement", localName, getState(currentState))); //$NON-NLS-1$
@@ -397,7 +396,6 @@ public class DefaultSiteParser extends DefaultHandler {
 	 */
 	public void endElement(String uri, String localName, String qName) {
 
-		String tag = localName.trim();
 		String text = null;
 		URLEntryModel info = null;
 

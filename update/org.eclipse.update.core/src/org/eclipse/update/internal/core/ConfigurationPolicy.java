@@ -109,7 +109,6 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel{
 		}
 
 		if (unconfigure) {
-			// FIXME: Start UOW ?
 			ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_UNCONFIGURE);
 			activity.setLabel(featureReference.getFeature().getVersionedIdentifier().toString());
 			activity.setDate(new Date());
@@ -168,7 +167,6 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel{
 
 				for (int index = 0; index < entries.length; index++) {
 					IPluginEntry entry = entries[index];
-					String id = entry.getVersionedIdentifier().toString();
 					// obtain the path of the plugin directories on the site	
 					ContentReference[] featureContentReference = feature.getFeatureContentProvider().getPluginEntryArchiveReferences(entry, null/*IProgressMonitor*/);
 					for (int j = 0; j < featureContentReference.length; j++) {
@@ -203,8 +201,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel{
 				toInclude = remove(getUnconfiguredFeatures(),include);
 		}		
 		
-		// FIXME: HACK FOR OTI TC
-		//result = union(toInclude,result);
+		result = union(toInclude,result);
 
 		return result;
 	}

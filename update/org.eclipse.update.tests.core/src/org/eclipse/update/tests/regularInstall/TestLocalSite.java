@@ -35,8 +35,6 @@ public class TestLocalSite extends UpdateManagerTestCase {
 
 
 		ILocalSite site = SiteManager.getLocalSite();
-		// FIXME should check for any name
-		//assertTrue("the local site already contains a config state, test cannot be executed",site.getCurrentConfiguration().getLabel().equals(SiteLocalModel.DEFAULT_CONFIG_LABEL));
 		site.save();
 		URL location = ((SiteLocal)site).getLocationURL();
 		String fileName = UpdateManagerUtils.getLocalRandomIdentifier(SiteLocal.DEFAULT_CONFIG_FILE, site.getCurrentConfiguration().getCreationDate());
@@ -63,8 +61,6 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		InternalSiteManager.localSite=null;
 
 		ILocalSite site = SiteManager.getLocalSite();
-		// FIXME shoudl check for any name
-		//assertTrue("the local site already contains a config state, test cannot be executed",site.getCurrentConfiguration().getLabel().equals(SiteLocalModel.DEFAULT_CONFIG_LABEL));
 		assertTrue("The local site does not contain an history of install configuration",site.getConfigurationHistory().length!=0);
 		assertTrue("The local site does not contain an current install configuration",site.getCurrentConfiguration()!=null);
 		assertTrue("The local site does not contain a default configuration site for the current install config",site.getCurrentConfiguration().getConfiguredSites().length!=0);

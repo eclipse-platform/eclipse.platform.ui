@@ -39,7 +39,6 @@ public class SectionForm extends AbstractSectionForm implements PaintListener {
 			boolean flushCache) {
 			if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT)
 				return new Point(wHint, hHint);
-			int x = 0;
 			Control client = composite.getChildren()[0];
 			Point csize = client.computeSize(widthHint, heightHint, flushCache);
 			if (headingVisible) csize.y += getTitleHeight();

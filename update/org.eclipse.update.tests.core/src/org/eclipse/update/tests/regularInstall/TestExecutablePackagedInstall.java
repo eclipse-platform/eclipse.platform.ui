@@ -81,7 +81,7 @@ public class TestExecutablePackagedInstall extends UpdateManagerTestCase {
 		File target = new File(TARGET_FILE_SITE.getFile());
 		UpdateManagerUtils.removeFromFileSystem(target);
 		
-		URL newURL = new File(dataPath + "ExecutableFeaturePackagedSite/data/site.xml").toURL();
+		URL newURL = new File(dataPath + "ExecutableFeaturePackagedSite/data/").toURL();
 		ISite remoteSite = SiteManager.getSite(newURL);
 		IFeatureReference[] featuresRef = remoteSite.getFeatureReferences();
 		ISite localSite = SiteManager.getSite(TARGET_FILE_SITE);

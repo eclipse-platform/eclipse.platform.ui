@@ -56,7 +56,7 @@ public class FeatureExecutableFactory extends BaseFeatureFactory {
 		} catch (Exception e){
 			//catch (SAXException e) parseFeature
 			//catch (ParsingException)  parerFeature
-			throw newCoreException(Policy.bind("FeatureExecutableFactory.ParsingError", url.toExternalForm()), e); //$NON-NLS-1$
+			throw newCoreException(Policy.bind("FeatureFactory.ParsingError", url.toExternalForm()), e); //$NON-NLS-1$
 		} finally {
 			try {
 				featureStream.close();

@@ -9,7 +9,7 @@ import java.util.*;
 
 	public class Policy {
 	private static ResourceBundle bundle;
-	private static String bundleName = "org.eclipse.update.internal.core.messages";
+	private static String bundleName = "org.eclipse.update.internal.core.messages"; //$NON-NLS-1$
 
 	static {
 		relocalize();
@@ -42,14 +42,14 @@ public static String bind(String id, String binding1, String binding2) {
  */
 public static String bind(String id, String[] bindings) {
 	if (id == null)
-		return "No message available";
+		return Policy.bind("Policy.NoMessageAvailable"); //$NON-NLS-1$
 	String message = null;
 	try {
 		message = bundle.getString(id);
 	} catch (MissingResourceException e) {
 		// If we got an exception looking for the message, fail gracefully by just returning
 		// the id we were looking for.  In most cases this is semi-informative so is not too bad.
-		return "Missing message: " + id + " in: " + bundleName;
+		return Policy.bind("Policy.MissingMessage", id , bundleName); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	if (bindings == null)
 		return message;
@@ -68,7 +68,7 @@ public static String bind(String id, String[] bindings) {
 				} catch (NumberFormatException nfe) {
 					output.append(message.substring(end + 1, start + 1));
 				} catch (ArrayIndexOutOfBoundsException e) {
-					output.append("{missing " + Integer.toString(index) + "}");
+					output.append("{"+Policy.bind("Policy.Missing", Integer.toString(index) )+"}"); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 				}
 			} else {
 				output.append(message.substring(end, length));

@@ -67,7 +67,7 @@ public final class SiteTypeFactory {
 			throw new CoreException(status);
 		} else {
 			IConfigurationElement element = elements[0];
-			result = (ISiteFactory)element.createExecutableExtension("class");
+			result = (ISiteFactory)element.createExecutableExtension("class"); //$NON-NLS-1$
 		}
 		return result;
 	}

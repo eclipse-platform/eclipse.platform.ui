@@ -171,7 +171,6 @@ public abstract class FormSection implements IPropertyChangeListener {
 		section.setLayout(slayout);
 		section.setData(this);
 
-		GridData gd;
 		if (headerPainted) {
 			Color headerColor = factory.getColor(getHeaderColorKey());
 			header =
