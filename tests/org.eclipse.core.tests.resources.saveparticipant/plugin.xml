@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+  name="Eclipse Core Tests Save Participant"
+  id="org.eclipse.core.tests.resources.saveparticipant"
+  version="2.0"
+  provider-name="Object Technology International, Inc.">
+
+  <requires>
+    <import plugin="org.eclipse.core.resources"/>
+    <import plugin="org.eclipse.core.tests.harness"/>
+    <import plugin="org.junit"/>
+    <import plugin="org.eclipse.core.tests.resources"/>
+    <import plugin="org.eclipse.core.tests.resources.saveparticipant1"/>
+    <import plugin="org.eclipse.core.tests.resources.saveparticipant2"/>
+    <import plugin="org.eclipse.core.tests.resources.saveparticipant3"/>
+  </requires>
+
+  <runtime>
+    <library name="saveparticipant.jar">
+      <export name="*"/>
+    </library>
+  </runtime>
+
+  <extension point="org.eclipse.core.tests.harness.tests">
+    <test id="saveparticipant.SaveManager1Test">
+      <run class="org.eclipse.core.tests.resources.saveparticipant.SaveManager1Test"/>
+    </test>
+    <test id="saveparticipant.SaveManager2Test">
+      <run class="org.eclipse.core.tests.resources.saveparticipant.SaveManager2Test"/>
+    </test>
+    <test id="saveparticipant.SaveManager3Test">
+      <run class="org.eclipse.core.tests.resources.saveparticipant.SaveManager3Test"/>
+    </test>
+  </extension>
+
+  <extension point="org.eclipse.core.resources.builders" id="simple" name="Simple Builder">
+    <builder>
+      <run class="org.eclipse.core.tests.resources.saveparticipant.SimpleBuilder"/>
+    </builder>
+  </extension>
+
+</plugin>

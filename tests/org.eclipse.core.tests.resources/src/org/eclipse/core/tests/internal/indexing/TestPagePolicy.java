@@ -1,0 +1,2 @@
+package org.eclipse.core.tests.internal.indexing;import org.eclipse.core.internal.indexing.*;
+public class TestPagePolicy extends AbstractPagePolicy {	/**	 * @see PageStorePolicy#createPage(int, byte[], PageStore)	 */	public Page createPage(int pageNumber, byte[] buffer, PageStore pageStore) {		return new TestPage(pageNumber, buffer, pageStore);	}}

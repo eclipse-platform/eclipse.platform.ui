@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+  name="Eclipse Core Tests Resources"
+  id="org.eclipse.core.tests.resources"
+  version="2.0"
+  provider-name="Object Technology International, Inc.">
+
+  <requires>
+    <import plugin="org.eclipse.core.resources"/>
+    <import plugin="org.eclipse.core.tests.harness"/>
+    <import plugin="org.junit"/>
+  </requires>
+
+  <runtime>
+    <library name="resourcestests.jar">
+      <export name="*"/>
+    </library>
+  </runtime>
+
+  <extension id="transientmarker" point="org.eclipse.core.resources.markers">
+    <super type="org.eclipse.core.resources.marker"/>
+  </extension>   
+
+  <extension point="org.eclipse.core.tests.harness.tests">
+
+    <test id="resources.AllTests">
+      <run class="org.eclipse.core.tests.resources.AllTests"/>
+    </test>
+    <test id="resources.IFileTest">
+      <run class="org.eclipse.core.tests.resources.IFileTest"/>
+    </test>
+    <test id="resources.IFolderTest">
+      <run class="org.eclipse.core.tests.resources.IFolderTest"/>
+    </test>
+    <test id="resources.IProjectTest">
+      <run class="org.eclipse.core.tests.resources.IProjectTest"/>
+    </test>
+    <test id="resources.IResourceChangeEventTest">
+      <run class="org.eclipse.core.tests.resources.IResourceChangeEventTest"/>
+    </test>
+    <test id="resources.IResourceChangeListenerTest">
+      <run class="org.eclipse.core.tests.resources.IResourceChangeListenerTest"/>
+    </test>
+    <test id="resources.IResourceDeltaTest">
+      <run class="org.eclipse.core.tests.resources.IResourceDeltaTest"/>
+    </test>
+    <test id="resources.IResourceTest">
+      <run class="org.eclipse.core.tests.resources.IResourceTest"/>
+    </test>
+    <test id="resources.ISynchronizerTest">
+      <run class="org.eclipse.core.tests.resources.ISynchronizerTest"/>
+    </test>
+    <test id="resources.IWorkspaceTest">
+      <run class="org.eclipse.core.tests.resources.IWorkspaceTest"/>
+    </test>
+    <test id="resources.IWorkspaceRootTest">
+      <run class="org.eclipse.core.tests.resources.IWorkspaceRootTest"/>
+    </test>
+    <test id="resources.MarkerSetTest">
+      <run class="org.eclipse.core.tests.resources.MarkerSetTest"/>
+    </test>
+    <test id="resources.MarkerTest">
+      <run class="org.eclipse.core.tests.resources.MarkerTest"/>
+    </test>
+    <test id="resources.WorkspaceTest">
+      <run class="org.eclipse.core.tests.resources.WorkspaceTest"/>
+    </test>
+    <test id="resources.ResourceURLTest">
+      <run class="org.eclipse.core.tests.resources.ResourceURLTest"/>
+    </test>
+    
+    <test id="resources.performance.MarkerPerformanceTest">
+      <run class="org.eclipse.core.tests.resources.perf.MarkerPerformanceTest"/>
+    </test>
+    <test id="resources.performance.BenchWorkspace">
+      <run class="org.eclipse.core.tests.resources.perf.BenchWorkspace"/>
+    </test>
+
+    <test id="regression.AllTests">
+      <run class="org.eclipse.core.tests.resources.regression.AllTests"/>
+    </test>
+    <test id="regression.IProjectTest">
+      <run class="org.eclipse.core.tests.resources.regression.IProjectTest"/>
+    </test>
+    <test id="regression.IWorkspaceTest">
+      <run class="org.eclipse.core.tests.resources.regression.IWorkspaceTest"/>
+    </test>
+    <test id="regression.IResourceTest">
+      <run class="org.eclipse.core.tests.resources.regression.IResourceTest"/>
+    </test>
+    <test id="regression.LocalStoreRegressionTests">
+      <run class="org.eclipse.core.tests.resources.regression.LocalStoreRegressionTests"/>
+    </test>
+    <test id="regression.NLTest">
+      <run class="org.eclipse.core.tests.resources.regression.NLTest"/>
+    </test>
+    <test id="regression.PR_1GEAB3C_Test">
+      <run class="org.eclipse.core.tests.resources.regression.PR_1GEAB3C_Test"/>
+    </test>
+    <test id="regression.PR_1G1N9GZ_1Test">
+      <run class="org.eclipse.core.tests.resources.regression.PR_1G1N9GZ_1Test"/>
+    </test>
+    <test id="regression.PR_1G1N9GZ_2Test">
+      <run class="org.eclipse.core.tests.resources.regression.PR_1G1N9GZ_2Test"/>
+    </test>
+    <test id="regression.PR_1GALH44_1Test">
+      <run class="org.eclipse.core.tests.resources.regression.PR_1GALH44_1Test"/>
+    </test>
+    <test id="regression.PR_1GALH44_2Test">
+      <run class="org.eclipse.core.tests.resources.regression.PR_1GALH44_2Test"/>
+    </test>
+    <test id="regression.PR_1GALH44_3Test">
+      <run class="org.eclipse.core.tests.resources.regression.PR_1GALH44_3Test"/>
+    </test>
+    <test id="regression.PR_1GH2B0N_Test">
+      <run class="org.eclipse.core.tests.resources.regression.PR_1GH2B0N_Test"/>
+    </test>
+    <test id="regression.PR_1GHOM0N_Test">
+      <run class="org.eclipse.core.tests.resources.regression.PR_1GHOM0N_Test"/>
+    </test>
+  
+    <test id="usecase.AllTests">
+      <run class="org.eclipse.core.tests.resources.usecase.AllTests"/>
+    </test>
+    <test id="usecase.BuilderUseCaseTest">
+      <run class="org.eclipse.core.tests.resources.usecase.BuilderUseCaseTest"/>
+    </test>
+    <test id="usecase.ConcurrencyPerformanceTest">
+      <run class="org.eclipse.core.tests.resources.usecase.ConcurrencyPerformanceTest"/>
+    </test>
+    <test id="usecase.ConcurrencyTest">
+      <run class="org.eclipse.core.tests.resources.usecase.ConcurrencyTest"/>
+    </test>
+    <test id="usecase.IFileTest">
+      <run class="org.eclipse.core.tests.resources.usecase.IFileTest"/>
+    </test>
+    <test id="usecase.IFolderTest">
+      <run class="org.eclipse.core.tests.resources.usecase.IFolderTest"/>
+    </test>
+    <test id="usecase.IProjectTest">
+      <run class="org.eclipse.core.tests.resources.usecase.IProjectTest"/>
+    </test>
+    <test id="usecase.IWorkspaceRunnableUseCaseTest">
+      <run class="org.eclipse.core.tests.resources.usecase.IWorkspaceRunnableUseCaseTest"/>
+    </test>
+    <test id="usecase.Snapshot1Test">
+      <run class="org.eclipse.core.tests.resources.usecase.Snapshot1Test"/>
+    </test>
+    <test id="usecase.Snapshot2Test">
+      <run class="org.eclipse.core.tests.resources.usecase.Snapshot2Test"/>
+    </test>
+    <test id="usecase.Snapshot3Test">
+      <run class="org.eclipse.core.tests.resources.usecase.Snapshot3Test"/>
+    </test>
+    <test id="usecase.Snapshot4Test">
+      <run class="org.eclipse.core.tests.resources.usecase.Snapshot4Test"/>
+    </test>
+    <test id="usecase.Snapshot5Test">
+      <run class="org.eclipse.core.tests.resources.usecase.Snapshot5Test"/>
+    </test>
+
+    <test id="builders.AllTests">
+      <run class="org.eclipse.core.tests.internal.builders.AllTests"/>
+    </test>
+    <test id="builders.BuilderTest">
+      <run class="org.eclipse.core.tests.internal.builders.BuilderTest"/>
+    </test>
+    <test id="builders.BuildDeltaVerificationTest">
+      <run class="org.eclipse.core.tests.internal.builders.BuildDeltaVerificationTest"/>
+    </test>
+    <test id="builders.MultiProjectBuildTest">
+      <run class="org.eclipse.core.tests.internal.builders.MultiProjectBuildTest"/>
+    </test>
+
+    <test id="dtree.AllTests">
+      <run class="org.eclipse.core.tests.internal.dtree.AllTests"/>
+    </test>
+    <test id="dtree.DataTreeTest">
+      <run class="org.eclipse.core.tests.internal.dtree.DataTreeTest"/>
+    </test>
+    <test id="dtree.DeltaDataTreeTest">
+      <run class="org.eclipse.core.tests.internal.dtree.DeltaDataTreeTest"/>
+    </test>
+
+    <test id="indexing.AllTests">
+      <run class="org.eclipse.core.tests.internal.indexing.AllTests"/>
+    </test>
+    <test id="indexing.FieldTest">
+      <run class="org.eclipse.core.tests.internal.indexing.FieldTest"/>
+    </test>
+    <test id="indexing.IndexedStoreTest">
+      <run class="org.eclipse.core.tests.internal.indexing.IndexedStoreTest"/>
+    </test>
+    <test id="indexing.ObjectStoreTest">
+      <run class="org.eclipse.core.tests.internal.indexing.ObjectStoreTest"/>
+    </test>
+    <test id="indexing.PageCacheTest">
+      <run class="org.eclipse.core.tests.internal.indexing.PageCacheTest"/>
+    </test>
+    <test id="indexing.PageStoreTest">
+      <run class="org.eclipse.core.tests.internal.indexing.PageStoreTest"/>
+    </test>
+
+    <test id="localstore.AllTests">
+      <run class="org.eclipse.core.tests.internal.localstore.AllTests"/>
+    </test>
+    <test id="localstore.BlobOutputStreamTest">
+      <run class="org.eclipse.core.tests.internal.localstore.BlobOutputStreamTest"/>
+    </test>
+    <test id="localstore.BlobStoreTest">
+      <run class="org.eclipse.core.tests.internal.localstore.BlobStoreTest"/>
+    </test>
+    <test id="localstore.CaseSensitivityTest">
+      <run class="org.eclipse.core.tests.internal.localstore.CaseSensitivityTest"/>
+    </test>
+    <test id="localstore.CopyTest">
+      <run class="org.eclipse.core.tests.internal.localstore.CopyTest"/>
+    </test>
+    <test id="localstore.DeleteTest">
+      <run class="org.eclipse.core.tests.internal.localstore.DeleteTest"/>
+    </test>
+    <test id="localstore.FileSystemResourceManagerTest">
+      <run class="org.eclipse.core.tests.internal.localstore.FileSystemResourceManagerTest"/>
+    </test>
+    <test id="localstore.FileSystemStoreTest">
+      <run class="org.eclipse.core.tests.internal.localstore.FileSystemStoreTest"/>
+    </test>
+    <test id="localstore.HistoryStoreTest">
+      <run class="org.eclipse.core.tests.internal.localstore.HistoryStoreTest"/>
+    </test>
+    <test id="localstore.HistoryStoreUseCaseTest">
+      <run class="org.eclipse.core.tests.internal.localstore.HistoryStoreUseCaseTest"/>
+    </test>
+    <test id="localstore.LocalSyncTest">
+      <run class="org.eclipse.core.tests.internal.localstore.LocalSyncTest"/>
+    </test>
+    <test id="localstore.MoveTest">
+      <run class="org.eclipse.core.tests.internal.localstore.MoveTest"/>
+    </test>
+    <test id="localstore.RefreshLocalPerformanceTest">
+      <run class="org.eclipse.core.tests.internal.localstore.RefreshLocalPerformanceTest"/>
+    </test>
+    <test id="localstore.RefreshLocalTest">
+      <run class="org.eclipse.core.tests.internal.localstore.RefreshLocalTest"/>
+    </test>
+    <test id="localstore.SafeChunkyInputOutputStreamTest">
+      <run class="org.eclipse.core.tests.internal.localstore.SafeChunkyInputOutputStreamTest"/>
+    </test>
+    <test id="localstore.SafeFileInputOutputStreamTest">
+      <run class="org.eclipse.core.tests.internal.localstore.SafeFileInputOutputStreamTest"/>
+    </test>
+    <test id="localstore.UnifiedTreeTest">
+      <run class="org.eclipse.core.tests.internal.localstore.UnifiedTreeTest"/>
+    </test>
+ 
+    <test id="properties.AllTests">
+      <run class="org.eclipse.core.tests.internal.properties.AllTests"/>
+    </test>
+    <test id="properties.PropertyManagerTest">
+      <run class="org.eclipse.core.tests.internal.properties.PropertyManagerTest"/>
+    </test>
+
+    <test id="internal.resources.AllTests">
+      <run class="org.eclipse.core.tests.internal.resources.AllTests"/>
+    </test>
+    <test id="internal.ModelObjectWriterTest">
+      <run class="org.eclipse.core.tests.internal.resources.ModelObjectWriterTest"/>
+    </test>
+    <test id="internal.ResourceInfoTest">
+      <run class="org.eclipse.core.tests.internal.resources.ResourceInfoTest"/>
+    </test>
+
+    <test id="utils.AllTests">
+      <run class="org.eclipse.core.tests.internal.utils.AllTests"/>
+    </test>
+    <test id="utils.QueueTest">
+      <run class="org.eclipse.core.tests.internal.utils.QueueTest"/>
+    </test>
+
+    <test id="watson.AllTests">
+      <run class="org.eclipse.core.tests.internal.watson.AllTests"/>
+    </test>
+    <test id="watson.BenchElementTree">
+      <run class="org.eclipse.core.tests.internal.watson.BenchElementTree"/>
+    </test>
+    <test id="watson.DeltaChainFlatteningTest">
+      <run class="org.eclipse.core.tests.internal.watson.DeltaChainFlatteningTest"/>
+    </test>
+     <test id="watson.DeltaFlatteningTest">
+      <run class="org.eclipse.core.tests.internal.watson.DeltaFlatteningTest"/>
+    </test>
+     <test id="watson.DeltaIteratorTest">
+      <run class="org.eclipse.core.tests.internal.watson.DeltaIteratorTest"/>
+    </test>
+    <test id="watson.ElementDeltaTest">
+      <run class="org.eclipse.core.tests.internal.watson.ElementDeltaTest"/>
+    </test>
+    <test id="watson.ElementTreeDeltaChainTest">
+      <run class="org.eclipse.core.tests.internal.watson.ElementTreeDeltaChainTest"/>
+    </test>
+    <test id="watson.ElementTreeIteratorTest">
+      <run class="org.eclipse.core.tests.internal.watson.ElementTreeIteratorTest"/>
+    </test>
+    <test id="watson.ElementTreeTest">
+      <run class="org.eclipse.core.tests.internal.watson.ElementTreeTest"/>
+    </test>
+    <test id="watson.PluggableDeltaLogicTest">
+      <run class="org.eclipse.core.tests.internal.watson.PluggableDeltaLogicTest"/>
+    </test>
+    <test id="watson.TestTreeFlattening">
+      <run class="org.eclipse.core.tests.internal.watson.TestTreeFlattening"/>
+    </test>
+
+</extension>
+
+  <extension point="org.eclipse.core.resources.builders" id="deltaverifierbuilder" name="Delta Verifier">
+    <builder>
+      <run class="org.eclipse.core.tests.internal.builders.DeltaVerifierBuilder"/> 
+    </builder>
+  </extension>
+
+  <extension point="org.eclipse.core.resources.builders" id="sortbuilder" name="Sort Builder">
+    <builder>
+      <run class="org.eclipse.core.tests.internal.builders.SortBuilder"/> 
+    </builder>
+  </extension>
+
+  <extension point="org.eclipse.core.resources.builders" id="refreshbuilder" name="Refresh local builder">
+    <builder>
+      <run class="org.eclipse.core.tests.internal.builders.RefreshLocalJavaFileBuilder"/>
+    </builder>
+  </extension>
+
+  <extension point="org.eclipse.core.resources.builders" id="sigbuilder" name="Signaled Builder">
+    <builder>
+      <run class="org.eclipse.core.tests.resources.usecase.SignaledBuilder"/> 
+    </builder>
+  </extension>
+
+  <extension point="org.eclipse.core.resources.builders" id="simple" name="Simple Builder">
+    <builder>
+      <run class="org.eclipse.core.tests.resources.regression.SimpleBuilder"/>
+    </builder>
+  </extension>
+
+
+</plugin>
