@@ -52,9 +52,11 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 	// the current resource selection
 	private	IStructuredSelection currentSelection;
 	
-
 	// cache of newly-created file
 	private IFile newFile;
+	
+	// link target location
+	private String linkTarget;
 
 	// initial value stores
 	private String initialFileName;
@@ -116,7 +118,10 @@ protected void createFile(IFile fileHandle, InputStream contents, IProgressMonit
 
 	try {
 		// Create a new file resource in the workspace
-		fileHandle.create(contents, false, monitor);
+		if (linkTarget != null) 
+			fileHandle.createLink(new Path(linkTarget), IResource.NONE, monitor);
+		else
+			fileHandle.create(contents, false, monitor);
 	}
 	catch (CoreException e) {
 		// If the file already existed locally, just refresh to get contents
@@ -317,6 +322,16 @@ public void setFileName(String value) {
 		initialFileName = value;
 	else
 		resourceGroup.setResource(value);
+}
+/**
+ * Sets the link target.
+ * 
+ * @param value the path to the link target. <code>null</code> if the 
+ * 	new file should not be linked.
+ * @since 2.1
+ */
+public void setLinkTarget(String value) {
+	linkTarget = value;
 }
 /**
  * Returns whether this page's controls currently all contain valid 

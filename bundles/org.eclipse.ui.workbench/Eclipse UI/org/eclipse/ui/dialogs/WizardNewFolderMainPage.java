@@ -52,6 +52,8 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 	private IContainer currentParent;
 
 	private IFolder newFolder;
+	// link target location
+	private String linkTarget;
 	
 	// widgets
 	private ResourceAndContainerGroup resourceGroup;
@@ -108,7 +110,10 @@ protected void createFolder(IFolder folderHandle, IProgressMonitor monitor) thro
             if (parent instanceof IFolder && (!((IFolder)parent).exists())) {
                 createFolder((IFolder)parent, monitor);
             }
-            folderHandle.create(false, true, monitor);
+            if (linkTarget != null)
+            	folderHandle.createLink(new Path(linkTarget), IResource.NONE, monitor);
+            else
+        		folderHandle.create(false, true, monitor);
         }
     }
     catch (CoreException e) {
@@ -205,6 +210,17 @@ public IFolder createNewFolder() {
 	return newFolder;
 }
 /**
+ * Returns the current full path of the containing resource as entered or 
+ * selected by the user
+ *
+ * @return the container's full path, or <code>null</code> if no path 
+ * 	is known
+ * @since 2.1
+ */
+public IPath getContainerFullPath() {
+	return resourceGroup.getContainerFullPath();
+}
+/**
  * The <code>WizardNewFolderCreationPage</code> implementation of this 
  * <code>Listener</code> method handles all events and enablements for controls
  * on this page. Subclasses may extend.
@@ -290,7 +306,16 @@ protected boolean validatePage() {
 
 	return valid;
 }
-
+/**
+ * Sets the link target.
+ *
+ * @param value the path to the link target. <code>null</code> if the 
+ *	new folder should not be linked.
+ * @since 2.1
+ */
+public void setLinkTarget(String value) {
+	linkTarget = value;
+}
 /*
  * @see DialogPage.setVisible(boolean)
  */

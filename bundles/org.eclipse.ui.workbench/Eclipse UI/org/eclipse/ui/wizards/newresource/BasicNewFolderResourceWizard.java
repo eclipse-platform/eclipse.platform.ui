@@ -7,13 +7,17 @@ package org.eclipse.ui.wizards.newresource;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.WizardNewFolderMainPage;
+import org.eclipse.ui.dialogs.WizardNewLinkPage;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * Standard workbench wizard that create a new folder resource in the workspace.
@@ -37,6 +41,7 @@ import org.eclipse.ui.dialogs.WizardNewFolderMainPage;
  */
 public class BasicNewFolderResourceWizard extends BasicNewResourceWizard {
 	private WizardNewFolderMainPage mainPage;
+	private WizardNewLinkPage linkPage;	
 /**
  * Creates a wizard for creating a new folder resource in the workspace.
  */
@@ -50,6 +55,31 @@ public void addPages() {
 	super.addPages();
 	mainPage = new WizardNewFolderMainPage(ResourceMessages.getString("NewFolder.text"), getSelection()); //$NON-NLS-1$
 	addPage(mainPage);
+
+	linkPage = new WizardNewLinkPage("newLinkPage", IResource.FOLDER);	//$NON-NLS-1$
+	linkPage.setTitle(ResourceMessages.getString("NewLink.pageTitle")); //$NON-NLS-1$
+	linkPage.setDescription(ResourceMessages.getString("NewLink.description")); //$NON-NLS-1$
+	addPage(linkPage);
+}
+/**
+ * Returns the link creation page if the selected container is a 
+ * valid link parent.
+ * Sets the currently selected container in the link creation page.
+ * 
+ * @see org.eclipse.jface.wizard.IWizard#getNextPage(org.eclipse.jface.wizard.IWizardPage)
+ */
+public IWizardPage getNextPage(IWizardPage page) {
+	if (page == mainPage) {
+		IPath fullPath = mainPage.getContainerFullPath();
+		IWorkspaceRoot workspaceRoot = WorkbenchPlugin.getPluginWorkspace().getRoot();
+		IResource resource = workspaceRoot.findMember(fullPath);
+		
+		if (resource != null && resource instanceof IProject) {
+			linkPage.setContainer((IProject) resource);
+			return linkPage;
+		}
+	}
+	return null;
 }
 /* (non-Javadoc)
  * Method declared on IWorkbenchWizard.
@@ -78,6 +108,9 @@ protected void initializeDefaultPageImageDescriptor() {
  * Method declared on IWizard.
  */
 public boolean performFinish() {
+	String linkTarget = linkPage.getLinkTarget();
+	mainPage.setLinkTarget(linkTarget);
+
 	IFolder folder = mainPage.createNewFolder();
 	if (folder == null)
 		return false;
