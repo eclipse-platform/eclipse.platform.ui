@@ -153,6 +153,7 @@ function doSubmit()
 		var hrefs = getSelectedResources();
 		if (!hrefs || hrefs == "")
 			return false;
+
 		var query = "operation="+'<%=data.getOperation()%>'+"&workingSet="+escape(workingSet)+ hrefs+"&oldName="+escape(oldName)+"&encoding=js";
 		window.opener.location.replace("workingSetManager.jsp?"+query);
 		window.opener.focus();
@@ -314,7 +315,7 @@ function keyDownHandler(folderId, key, target)
 
 function enableOK() {
 	var value = document.getElementById("workingSet").value;
-	if (!value || value.length == 0)
+	if (!value || value.length == 0 || value.charAt(0) == " ")
 		document.getElementById("ok").disabled = true;
 	else
 		document.getElementById("ok").disabled = false;
