@@ -117,11 +117,11 @@ public class UIMessageDialogsAuto extends TestCase {
 	}
 	public void testCloseFileDeleted() {
 		Dialog dialog = null;
-		ResourceBundle bundle = ResourceBundle.getBundle("org.eclipse.ui.texteditor.AbstractTextEditorResources");
+		ResourceBundle bundle = ResourceBundle.getBundle("org.eclipse.ui.texteditor.EditorMessages");
 		if (bundle != null) {
 			dialog = getConfirmDialog(
-				bundle.getString("Error.activated.deleted.close.title"),
-				bundle.getString("Error.activated.deleted.close.message") );
+				bundle.getString("Editor.error.activated.deleted.close.title"),
+				bundle.getString("Editor.error.activated.deleted.close.message") );
 		}
 		DialogCheck.assertDialogTexts(dialog, this);
 	}
@@ -194,11 +194,11 @@ public class UIMessageDialogsAuto extends TestCase {
 	}
 	public void testFileChanged() {
 		MessageDialog dialog = null;
-		ResourceBundle bundle = ResourceBundle.getBundle("org.eclipse.ui.texteditor.AbstractTextEditorResources");
+		ResourceBundle bundle = ResourceBundle.getBundle("org.eclipse.ui.texteditor.EditorMessages");
 		if (bundle != null) {
 			dialog = getQuestionDialog(
-				bundle.getString("Error.activated.outofsync.title"),
-				bundle.getString("Error.activated.outofsync.message") );
+				bundle.getString("Editor.error.activated.outofsync.title"),
+				bundle.getString("Editor.error.activated.outofsync.message") );
 		}
 		DialogCheck.assertDialogTexts(dialog, this);
 	}
@@ -346,28 +346,28 @@ public class UIMessageDialogsAuto extends TestCase {
 	}
 	public void testSaveFileDeleted() {
 		MessageDialog dialog = null;
-		ResourceBundle bundle = ResourceBundle.getBundle("org.eclipse.ui.texteditor.AbstractTextEditorResources");
+		ResourceBundle bundle = ResourceBundle.getBundle("org.eclipse.ui.texteditor.EditorMessages");
 		if (bundle != null) {
 			dialog= new MessageDialog(
 				getShell(),
-				bundle.getString("Error.activated.deleted.save.title"),
+				bundle.getString("Editor.error.activated.deleted.save.title"),
 				null,
-				bundle.getString("Error.activated.deleted.save.message"),
+				bundle.getString("Editor.error.activated.deleted.save.message"),
 				MessageDialog.QUESTION,
 				new String[] {
-					bundle.getString("Error.activated.deleted.save.button.save"),
-					bundle.getString("Error.activated.deleted.save.button.close")},
+					bundle.getString("Editor.error.activated.deleted.save.button.save"),
+					bundle.getString("Editor.error.activated.deleted.save.button.close")},
 				0);
 		}
 		DialogCheck.assertDialogTexts(dialog, this);
 	}
 	public void testUpdateConflict() {
 		MessageDialog dialog = null;
-		ResourceBundle bundle = ResourceBundle.getBundle("org.eclipse.ui.texteditor.AbstractTextEditorResources");
+		ResourceBundle bundle = ResourceBundle.getBundle("org.eclipse.ui.texteditor.EditorMessages");
 		if (bundle != null) {
 			dialog = getQuestionDialog(
-				bundle.getString("Error.save.outofsync.title"),
-				bundle.getString("Error.save.outofsync.message") );
+				bundle.getString("Editor.error.save.outofsync.title"),
+				bundle.getString("Editor.error.save.outofsync.message") );
 		}
 		DialogCheck.assertDialogTexts(dialog, this);
 	}
