@@ -315,7 +315,7 @@ public class Perspective {
         // Copy the bounds of the page composite
         Rectangle bounds = page.getClientComposite().getBounds();
         // get the width ratio of the fast view
-        float ratio = getFastViewWidthRatio(ref.getId());
+        float ratio = getFastViewWidthRatio(ref);
         // Compute the actual width of the fast view.
         bounds.width = (int) (ratio * getClientComposite().getSize().x);
         return bounds;
@@ -361,17 +361,14 @@ public class Perspective {
     }
 
     /**
-     * Retrieves the ratio for the fast view with the given compound id. If
-     * the ratio is not known, the default ratio for the view is returned.
-     * 
-     * @param id the compound id for the view
+     * Retrieves the fast view width ratio for the given view. 
+     * If the ratio is not known, the default ratio for the view is assigned and returned.
      */
-    private float getFastViewWidthRatio(String id) {
-        ViewLayoutRec rec = getViewLayoutRec(id, true);
+    private float getFastViewWidthRatio(IViewReference ref) {
+        ViewLayoutRec rec = getViewLayoutRec(ref, true);
         if (rec.fastViewWidthRatio == IPageLayout.INVALID_RATIO) {
             IViewRegistry reg = WorkbenchPlugin.getDefault().getViewRegistry();
-            String primaryId = ViewFactory.extractPrimaryId(id);
-            IViewDescriptor desc = reg.find(primaryId);
+            IViewDescriptor desc = reg.find(ref.getId());
             rec.fastViewWidthRatio = 
                 (desc != null 
                     ? desc.getFastViewWidthRatio()
@@ -1427,7 +1424,7 @@ public class Perspective {
                         .createChild(IWorkbenchConstants.TAG_VIEW);
                 String id = ViewFactory.getKey(ref);
                 viewMemento.putString(IWorkbenchConstants.TAG_ID, id);
-                float ratio = getFastViewWidthRatio(id);
+                float ratio = getFastViewWidthRatio(ref);
                 viewMemento.putFloat(IWorkbenchConstants.TAG_RATIO, ratio);
             }
         }
@@ -1673,7 +1670,7 @@ public class Perspective {
         int side = bar.getViewSide(ref);
 
         fastViewPane.showView(getClientComposite(), pane, side,
-                getFastViewWidthRatio(ref.getId()));
+                getFastViewWidthRatio(ref)); 
 
         setFastViewIconSelection(ref, true);
 

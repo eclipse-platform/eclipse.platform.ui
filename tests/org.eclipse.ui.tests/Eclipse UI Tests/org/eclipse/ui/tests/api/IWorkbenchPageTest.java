@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
@@ -29,6 +30,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ClosePerspectiveAction;
 import org.eclipse.ui.internal.SaveableHelper;
@@ -186,6 +188,9 @@ public class IWorkbenchPageTest extends UITestCase {
         assertEquals(callTrace.contains("setFocus"), true);
     }
 
+    /**
+     * Tests showing multi-instance views (docked normally).
+     */
     public void testShowViewMult() throws Throwable {
         /*
          javadoc: Shows the view identified by the given view id and secondary id 
@@ -250,6 +255,66 @@ public class IWorkbenchPageTest extends UITestCase {
             exceptionThrown = true;
         }
         assertEquals(exceptionThrown, true);
+    }
+
+    /**
+     * Tests showing multi-instance views (as fast views).
+     * This is a regression test for bug 76669 - [Perspectives] NullPointerException in Perspective.getFastViewWidthRatio()
+     */
+    public void testShowViewMultFast() throws Throwable {
+        /*
+         javadoc: Shows the view identified by the given view id and secondary id 
+         in this page and gives it focus. 
+         This allows multiple instances of a particular view to be created.  
+         They are disambiguated using the secondary id.
+         */
+        MockViewPart view = (MockViewPart) fActivePage
+                .showView(MockViewPart.IDMULT);
+        assertNotNull(view);
+        assertTrue(view.getCallHistory().verifyOrder(
+                new String[] { "init", "createPartControl", "setFocus" }));
+        MockViewPart view2 = (MockViewPart) fActivePage.showView(
+                MockViewPart.IDMULT, "2", IWorkbenchPage.VIEW_ACTIVATE);
+        assertNotNull(view2);
+        assertTrue(view2.getCallHistory().verifyOrder(
+                new String[] { "init", "createPartControl", "setFocus" }));
+        assertTrue(!view.equals(view2));
+        
+        WorkbenchPage page = (WorkbenchPage) fActivePage;
+        IViewReference ref = (IViewReference) page.getReference(view);
+        IViewReference ref2 = (IViewReference) page.getReference(view2);
+        page.addFastView(ref);
+        page.addFastView(ref2);
+
+        page.activate(view);
+        assertEquals(view, page.getActivePart());
+
+        page.activate(view2);
+        assertEquals(view2, page.getActivePart());
+    }
+
+    /**
+     * Tests saving the page state when there is a fast view that is also a multi-instance view.
+     * This is a regression test for bug 76669 - [Perspectives] NullPointerException in Perspective.getFastViewWidthRatio()
+     */
+    public void testBug76669() throws Throwable {
+        MockViewPart view = (MockViewPart) fActivePage
+                .showView(MockViewPart.IDMULT);
+        MockViewPart view2 = (MockViewPart) fActivePage.showView(
+                MockViewPart.IDMULT, "2", IWorkbenchPage.VIEW_ACTIVATE);
+        
+        WorkbenchPage page = (WorkbenchPage) fActivePage;
+        IViewReference ref = (IViewReference) page.getReference(view);
+        IViewReference ref2 = (IViewReference) page.getReference(view2);
+        page.addFastView(ref);
+        page.addFastView(ref2);
+
+        IMemento memento = XMLMemento.createWriteRoot("page");
+        page.saveState(memento);
+        IMemento persps = memento.getChild("perspectives");
+        IMemento persp = persps.getChildren("perspective")[0];
+        IMemento[] fastViews = persp.getChild("fastViews").getChildren("view");
+        assertEquals(2, fastViews.length);
     }
 
     /**
