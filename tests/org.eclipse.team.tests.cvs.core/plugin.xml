@@ -6,10 +6,15 @@
   provider-name="Object Technology International, Inc.">
 
   <requires>
+	<import plugin="org.apache.xerces"/>
+    <import plugin="org.eclipse.core.tests.harness"/>
     <import plugin="org.eclipse.core.resources"/>
     <import plugin="org.eclipse.team.core"/>
     <import plugin="org.eclipse.team.cvs.core"/>
-    <import plugin="org.eclipse.core.tests.harness"/>
+    <import plugin="org.eclipse.team.ui"/>
+    <import plugin="org.eclipse.team.cvs.ui"/>
+    <import plugin="org.eclipse.compare"/>
+    <import plugin="org.eclipse.ui"/>
     <import plugin="org.junit"/>
   </requires>
 
@@ -46,6 +51,26 @@
      <test id="cvs.remote">
       <run class="org.eclipse.team.tests.ccvs.core.provider.RemoteResourceTest"/>
     </test>
+    
+    <test id="cvsui.benchmark.all">
+      <run class="org.eclipse.team.tests.ccvs.ui.benchmark.AllTests"/>
+    </test>
+    <test id="cvsui.benchmark.sync">
+      <run class="org.eclipse.team.tests.ccvs.ui.benchmark.SyncTests"/>
+    </test>
+    <test id="cvsui.benchmark.workflow">
+      <run class="org.eclipse.team.tests.ccvs.ui.benchmark.WorkflowTests"/>
+    </test>
+  </extension>
+ 
+  <extension point="org.eclipse.ui.perspectives">
+    <perspective id="org.eclipse.team.tests.ccvs.ui.EmptyPerspective" name="Empty Perspective" class="org.eclipse.team.tests.ccvs.ui.EmptyPerspective" /> 
+  </extension>
+
+  <extension id="harness" point="org.eclipse.core.runtime.applications">
+    <application> 
+      <run class="org.eclipse.team.tests.ccvs.ui.EclipseUITestHarnessApplication"/>
+    </application>
   </extension>
  
 </plugin>

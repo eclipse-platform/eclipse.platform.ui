@@ -17,9 +17,8 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 
 public class CVSTestSetup extends TestSetup {
-
 	public static String REPOSITORY_LOCATION;
-	static boolean INITIALIZE_REPO;
+	public static boolean INITIALIZE_REPO;
 	public static final boolean DEBUG;
 	public static final String RSH;
 
@@ -28,18 +27,35 @@ public class CVSTestSetup extends TestSetup {
 	
 	// Static initializer for constants
 	static {
-		String propertiesFile = System.getProperty("eclipse.cvs.properties");
-		if (propertiesFile != null)
-			try {
-				readRepositoryProperties(propertiesFile);
-			} catch (IOException e) {
-				System.out.println("Could not read repository properties file: " + propertiesFile);
-			}
+		loadProperties();
 		REPOSITORY_LOCATION = System.getProperty("eclipse.cvs.repository");
-		INITIALIZE_REPO = (System.getProperty("eclipse.cvs.initrepo")==null)?false:(new Boolean(System.getProperty("eclipse.cvs.initrepo")).booleanValue());
-		DEBUG= (System.getProperty("eclipse.cvs.debug")==null)?false:(new Boolean(System.getProperty("eclipse.cvs.debug")).booleanValue());
-		RSH= (System.getProperty("eclipse.cvs.rsh")==null)?"rsh":System.getProperty("eclipse.cvs.rsh");
+		INITIALIZE_REPO = Boolean.valueOf(System.getProperty("eclipse.cvs.initrepo", "false")).booleanValue();
+		DEBUG = Boolean.valueOf(System.getProperty("eclipse.cvs.debug", "false")).booleanValue();
+		RSH = System.getProperty("eclipse.cvs.rsh", "rsh");
 	}
+
+	public static void loadProperties() {
+		String propertiesFile = System.getProperty("eclipse.cvs.properties");
+		if (propertiesFile == null) return;
+		File file = new File(propertiesFile);
+		if (file.isDirectory()) file = new File(file, "repository.properties");
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(file));
+			try {
+				for (String line; (line = reader.readLine()) != null; ) {						
+					int sep = line.indexOf("=");
+					String property = line.substring(0, sep).trim();
+					String value = line.substring(sep + 1).trim();
+					System.setProperty("eclipse.cvs." + property, value);
+				}
+			} finally {
+				reader.close();
+			}
+		} catch (Exception e) {
+			System.err.println("Could not read repository properties file: " + file.getAbsolutePath());
+		}
+	}	
+
 	/**
 	 * Constructor for CVSTestSetup.
 	 */
@@ -67,20 +83,6 @@ public class CVSTestSetup extends TestSetup {
 		}
 	}
 	
-	static void readRepositoryProperties(String filename) throws IOException {
-		File file = new File(filename);
-		if (file.isDirectory())
-			file = new File(file, "repository.properties");
-		BufferedReader reader = new BufferedReader(new FileReader(file));
-		String line;
-		while ((line = reader.readLine()) != null) {
-			int sep = line.indexOf("=");
-			String property = line.substring(0, sep).trim();
-			String value = line.substring(sep + 1).trim();
-			System.setProperty("eclipse.cvs." + property, value);
-		}
-		
-	}
 	public void setUp() throws CVSException {
 		if (repository == null)
 			repository = setupRepository(REPOSITORY_LOCATION);
