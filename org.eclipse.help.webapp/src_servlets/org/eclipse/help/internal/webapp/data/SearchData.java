@@ -24,6 +24,7 @@ public class SearchData extends RequestData {
 	private String topicHref;
 	private String selectedTopicId = "";
 	private String searchWord;
+	private String workingSetName;
 
 	// search results
 	SearchHit[] hits;
@@ -185,7 +186,9 @@ public class SearchData extends RequestData {
 	 * @return String
 	 */
 	public String getScope() {
-		String workingSetName;
+		if (workingSetName != null)
+			return workingSetName;
+			
 		if (isSearchRequest()) {
 			workingSetName = request.getParameter("scope");
 			// if we have already set the working set, then use it.
