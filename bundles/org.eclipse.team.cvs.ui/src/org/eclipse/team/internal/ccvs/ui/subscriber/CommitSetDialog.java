@@ -176,7 +176,7 @@ public class CommitSetDialog extends Dialog {
     }
     
 	final protected void setPageComplete(boolean complete) {
-	    Button okButton = getOKButton();
+	    Button okButton = getButton(IDialogConstants.OK_ID);
 		if(okButton != null ) {
 			okButton.setEnabled(complete);
 		}
@@ -216,4 +216,13 @@ public class CommitSetDialog extends Dialog {
 		label.setLayoutData(data);
 		return label;
 	}
+	
+	/* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#createButtonBar(org.eclipse.swt.widgets.Composite)
+     */
+    protected Control createButtonBar(Composite parent) {
+        Control control = super.createButtonBar(parent);
+        updateEnablements();
+        return control;
+    }
 }
