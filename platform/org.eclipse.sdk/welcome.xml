@@ -43,18 +43,11 @@ additionally be converted into a Fast View by dragging it to the shortcut bar (a
 far left of the window). </item> 
 
 <item><b>Join a CVS team</b>
-To join a CVS development team, open the <action
-pluginId="org.eclipse.team.cvs.ui" 
-class="org.eclipse.team.internal.ccvs.ui.actions.ShowCVSPerspectiveAction">CVS
-Perspective</action>. Next, specify the location
-of your CVS repository. To do this choose <action
-pluginId="org.eclipse.team.cvs.ui" 
-class="org.eclipse.team.internal.ccvs.ui.actions.NewCVSRepositoryAction">New >
-CVS Repository Location...</action> from the
-Repositories view popup menu. When the location wizard opens, fill in the
-details of your 
-CVS repository and click Finish. 
-
+To join a CVS development team, open the <action pluginId="org.eclipse.team.cvs.ui" class="org.eclipse.team.internal.ccvs.ui.actions.ShowCVSPerspectiveAction">CVS Perspective</action>. Next, specify the location of
+your CVS repository. To do this choose <action pluginId="org.eclipse.team.cvs.ui" class="org.eclipse.team.internal.ccvs.ui.actions.NewCVSRepositoryAction">New >CVS Repository Location...</action> from the Repositories
+view popup menu. When the location wizard opens,fill in the details of your CVS repository
+and click Finish. 
+</item>
 
 <item><b>Learn more </b>
 To learn more you can browse the <topic id="/org.eclipse.platform.doc.user/toc.xml">Workbench User Guide</topic> or the <topic id="/org.eclipse.jdt.doc.user/toc.xml">Java Development User Guide</topic>.</item>
