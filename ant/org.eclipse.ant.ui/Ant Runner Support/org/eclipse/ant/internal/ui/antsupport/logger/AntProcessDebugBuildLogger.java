@@ -52,14 +52,6 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	private AntDebugTarget fTarget;
 	
 	/* (non-Javadoc)
-	 * @see org.apache.tools.ant.BuildListener#buildFinished(org.apache.tools.ant.BuildEvent)
-	 */
-	public void buildFinished(BuildEvent event) {
-		// TODO Auto-generated method stub
-		super.buildFinished(event);
-	}
-	
-	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#buildStarted(org.apache.tools.ant.BuildEvent)
 	 */
 	public void buildStarted(BuildEvent event) {
@@ -69,21 +61,6 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 		fTarget= new AntDebugTarget(launch, process, this);
 		launch.addDebugTarget(fTarget);
 		fTarget.buildStarted();
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.apache.tools.ant.BuildListener#targetStarted(org.apache.tools.ant.BuildEvent)
-	 */
-	public void targetStarted(BuildEvent event) {
-		// TODO Auto-generated method stub
-		super.targetStarted(event);
-	}
-	/* (non-Javadoc)
-	 * @see org.apache.tools.ant.BuildListener#targetFinished(org.apache.tools.ant.BuildEvent)
-	 */
-	public void targetFinished(BuildEvent event) {
-		// TODO Auto-generated method stub
-		super.targetFinished(event);
 	}
 	
 	/* (non-Javadoc)
