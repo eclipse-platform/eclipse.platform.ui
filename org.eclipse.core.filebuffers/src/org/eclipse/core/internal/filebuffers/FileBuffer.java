@@ -125,11 +125,10 @@ public abstract class FileBuffer implements IFileBuffer {
 					switch (delta.getKind()) {
 						case IResourceDelta.CHANGED:
 							if ((IResourceDelta.CONTENT & delta.getFlags()) != 0) {
-								if (!isDisposed() && !fCanBeSaved && fFile.isSynchronized(IFile.DEPTH_ZERO)) {
+								if (!isDisposed() && !fCanBeSaved && !isSynchronized()) {
 									fileChange= new SafeFileChange() {
 										protected void execute() throws Exception {
-											if (fSynchronizationStamp != fFile.getModificationStamp())
-												handleFileContentChanged();
+											handleFileContentChanged();
 										}
 									};
 								}
@@ -250,7 +249,19 @@ public abstract class FileBuffer implements IFileBuffer {
 	 */
 	public void commit(IProgressMonitor monitor, boolean overwrite) throws CoreException {
 		if (!isDisposed() && fCanBeSaved) {
-			commitFileBufferContent(monitor, overwrite);
+			
+			fManager.fireStateChanging(this);
+			
+			try {
+				commitFileBufferContent(monitor, overwrite);
+			} catch (CoreException x) {
+				fManager.fireStateChangeFailed(this);
+				throw x;
+			} catch (RuntimeException x) {
+				fManager.fireStateChangeFailed(this);
+				throw x;				
+			}
+			
 			fCanBeSaved= false;
 			addFileBufferContentListeners();
 			fManager.fireDirtyStateChanged(this, fCanBeSaved);

@@ -218,30 +218,15 @@ public class TextFileBuffer extends FileBuffer implements ITextFileBuffer {
 								
 				if (!overwrite)
 					checkSynchronizationState();
-				
-				fManager.fireStateChanging(this);
-				
-				try {
+							
 					
-					// here the file synchronizer should actually be removed and afterwards added again. However,
-					// we are already inside an operation, so the delta is sent AFTER we have added the listener
-					fFile.setContents(stream, overwrite, true, monitor);
-					// set synchronization stamp to know whether the file synchronizer must become active
-					fSynchronizationStamp= fFile.getModificationStamp();
-					
-				} catch (CoreException x) {
-					fManager.fireStateChangeFailed(this);
-					throw x;
-				} catch (RuntimeException x) {
-					fManager.fireStateChangeFailed(this);
-					throw x;
-				}
+				// here the file synchronizer should actually be removed and afterwards added again. However,
+				// we are already inside an operation, so the delta is sent AFTER we have added the listener
+				fFile.setContents(stream, overwrite, true, monitor);
+				// set synchronization stamp to know whether the file synchronizer must become active
+				fSynchronizationStamp= fFile.getModificationStamp();
 				
-				// If here, the editor state will be flipped to "not dirty".
-				// Thus, the state changing flag will be reset and we don't have to do
-				// it manually
-				
-				// if there is an annotation model update it here
+				// TODO if there is an annotation model update it here
 				
 			} else {
 
