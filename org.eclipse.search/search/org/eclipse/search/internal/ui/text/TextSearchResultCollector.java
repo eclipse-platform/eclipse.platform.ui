@@ -68,7 +68,10 @@ public class TextSearchResultCollector implements ITextSearchResultCollector {
 		attributes.put(IMarker.LINE_NUMBER, new Integer(lineNumber));
 		marker.setAttributes(attributes);
 		
-		fView.addMatch(resource.getFullPath().lastSegment().toString(), resource, resource, marker);
+		String description= resource.getFullPath().lastSegment();
+		if (description == null)
+			description= "";
+		fView.addMatch(description, resource, resource, marker);
 		if (!getProgressMonitor().isCanceled())
 			getProgressMonitor().subTask(++fMatchCount + SPACE_MATCHES);
 	}
