@@ -809,6 +809,7 @@ private static MultiStatus loadRegistry(URL[] pluginPath) {
 					cacheReader.setLazilyLoadExtensions(false);
 				if (DEBUG)
 					System.out.println("Read registry cache: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+				extensionsRegistry = new PluginRegistryWrapper(registry);
 			} finally {
 				input.close();
 			}
@@ -1051,6 +1052,7 @@ public static void setDebugOption(String option, String value) {
  */
 public static void setPluginRegistry(IPluginRegistry value) {
 	registry = (PluginRegistry) value;
+	extensionsRegistry = new PluginRegistryWrapper(registry);
 }
 private static void setupMetaArea(String locationString) throws CoreException {
 	location = new Path(locationString);
