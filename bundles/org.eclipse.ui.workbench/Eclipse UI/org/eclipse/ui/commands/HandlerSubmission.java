@@ -30,6 +30,9 @@ import org.eclipse.ui.internal.util.Util;
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
+ * <p>
+ * Note: this class has a natural ordering that is inconsistent with equals.
+ * </p>
  * 
  * @since 3.0
  * @see org.eclipse.ui.commands.IWorkbenchCommandSupport
