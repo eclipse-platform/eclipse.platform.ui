@@ -20,7 +20,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.misc.Assert;
-import org.eclipse.ui.views.internal.markers.DialogTaskProperties;
+import org.eclipse.ui.views.markers.internal.DialogTaskProperties;
 
 /**
  * Standard action for adding a task to the currently selected file
