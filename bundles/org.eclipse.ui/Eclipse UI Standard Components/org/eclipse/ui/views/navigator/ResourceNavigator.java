@@ -695,6 +695,7 @@ public class ResourceNavigator
 	 * Sets the decorator for the navigator.
 	 *
 	 * @param decorator a label decorator or <code>null</code> for no decorations.
+	 * @deprecated use the decorators extension point instead; see IWorkbench.getDecoratorManager()
 	 */
 	public void setLabelDecorator(ILabelDecorator decorator) {
 		DecoratingLabelProvider provider =
