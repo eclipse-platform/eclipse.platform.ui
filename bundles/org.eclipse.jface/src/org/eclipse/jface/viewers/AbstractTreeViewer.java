@@ -25,7 +25,6 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.events.TreeListener;
-import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Widget;
@@ -120,27 +119,29 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 		Assert.isNotNull(childElements);
 		Widget widget = findItem(parentElement);
 		// If parent hasn't been realized yet, just ignore the add.
-		if (widget == null || !(widget instanceof TreeItem))
+		if (widget == null)
 			return;
 
 		Object[] filtered = filter(childElements);
 		for (int i = 0; i < filtered.length; i++) {
 			Object element = filtered[i];
-			int index = indexForElement((TreeItem) widget, element);
+			int index = indexForElement(widget, element);
 			createTreeItem(widget, filtered[i], index);
 		}
 
 	} /*
 		* Returns the index where the item should be inserted.
 	   */
-	protected int indexForElement(TreeItem parent, Object element) {
+	protected int indexForElement(Widget parent, Object element) {
 		ViewerSorter sorter = getSorter();
+		Item [] items = getChildren(parent);
+		
 		if (sorter == null)
-			return parent.getItemCount();
-		int count = parent.getItemCount();
+			return items.length;
+		int count = items.length;
 		int min = 0, max = count - 1;
 		
-		TreeItem [] items = parent.getItems();
+		
 		
 		while (min <= max) {
 			int mid = (min + max) / 2;
