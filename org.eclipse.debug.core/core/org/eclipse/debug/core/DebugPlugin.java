@@ -207,7 +207,9 @@ public class DebugPlugin extends Plugin {
 	
 	/**
 	 * The launch attribute that designates whether or not it's associated
-	 * launch should capture output.
+	 * launch should capture output. Value is a string representing a boolean -
+	 * <code>true</code> or <code>false</code>. When unspecififed, the default
+	 * value is considered <code>true</code>.
 	 * 
 	 * @since 3.1
 	 */
