@@ -24,7 +24,7 @@ import org.eclipse.jface.preference.PreferenceManager;
  */
 public class WorkbenchPreferenceManager extends PreferenceManager {
 
-	WorkbenchPreferenceCategory[] categories;
+	WorkbenchPreferenceGroup[] categories;
 
 	private final static String GENERAL_ID = "org.eclipse.ui.general";//$NON-NLS-1$
 
@@ -74,15 +74,15 @@ public class WorkbenchPreferenceManager extends PreferenceManager {
 			categoryTable.put(categories[i].getId(), categories[i]);
 		}
 
-		WorkbenchPreferenceCategory advanced = categories[categories.length - 1];
+		WorkbenchPreferenceGroup advanced = categories[categories.length - 1];
 		for (int i = 0; i < nodes.length; i++) {
 			WorkbenchPreferenceNode node = (WorkbenchPreferenceNode) nodes[i];
-			if (node.getCategory() == null)
+			if (node.getGroup() == null)
 				advanced.addNode(node);
 			else {
-				if (categoryTable.contains(node.getCategory()))
-					((WorkbenchPreferenceCategory) categoryTable.get(node
-							.getCategory())).addNode(node);
+				if (categoryTable.contains(node.getGroup()))
+					((WorkbenchPreferenceGroup) categoryTable.get(node
+							.getGroup())).addNode(node);
 			}
 		}
 
@@ -96,7 +96,7 @@ public class WorkbenchPreferenceManager extends PreferenceManager {
 	 */
 	private void sortCategories(ArrayList collectedCategories) {
 
-		categories = new WorkbenchPreferenceCategory[collectedCategories.size()];
+		categories = new WorkbenchPreferenceGroup[collectedCategories.size()];
 		collectedCategories.toArray(categories);
 		Arrays.sort(categories, new Comparator() {
 			/*
@@ -106,8 +106,8 @@ public class WorkbenchPreferenceManager extends PreferenceManager {
 			 *      java.lang.Object)
 			 */
 			public int compare(Object arg0, Object arg1) {
-				WorkbenchPreferenceCategory first = (WorkbenchPreferenceCategory) arg0;
-				WorkbenchPreferenceCategory second = (WorkbenchPreferenceCategory) arg1;
+				WorkbenchPreferenceGroup first = (WorkbenchPreferenceGroup) arg0;
+				WorkbenchPreferenceGroup second = (WorkbenchPreferenceGroup) arg1;
 
 				if (first.getId().equals(GENERAL_ID)
 						|| second.getId().equals(ADVANCED_ID))
@@ -125,9 +125,9 @@ public class WorkbenchPreferenceManager extends PreferenceManager {
 
 	/**
 	 * Return the categories of the preference manager.
-	 * @return WorkbenchPreferenceCategory[]
+	 * @return WorkbenchPreferenceGroup[]
 	 */
-	public WorkbenchPreferenceCategory[] getCategories() {
+	public WorkbenchPreferenceGroup[] getCategories() {
 		return categories;
 	}
 }

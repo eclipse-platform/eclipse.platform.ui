@@ -111,6 +111,8 @@ public abstract class GenericListViewer extends ContentViewer {
 		items = new HashSet();
 		Object[] elements = ((IStructuredContentProvider) getContentProvider())
 				.getElements(getInput());
+		
+		((GridLayout) control.getLayout()).numColumns = elements.length;
 
 		createItems(elements,null,0);
 		getControl().setRedraw(true);
@@ -131,8 +133,6 @@ public abstract class GenericListViewer extends ContentViewer {
 			GridData layoutData = new GridData(GridData.FILL_HORIZONTAL);
 			layoutData.horizontalIndent = indent * 20;
 			newItem.getControl().setLayoutData(layoutData);
-			if(parent != null)
-				newItem.getControl().moveBelow(parent.getControl());
 			newItem.addMouseListener(new MouseAdapter() {
 				/* (non-Javadoc)
 				 * @see org.eclipse.swt.events.MouseAdapter#mouseDown(org.eclipse.swt.events.MouseEvent)

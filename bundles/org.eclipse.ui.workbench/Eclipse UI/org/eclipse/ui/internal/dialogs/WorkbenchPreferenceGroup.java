@@ -20,10 +20,10 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.Image;
 
 /**
- * WorkbenchPreferenceCategory is the representation of a category
+ * WorkbenchPreferenceGroup is the representation of a category
  * in the workbench.
  */
-public class WorkbenchPreferenceCategory {
+public class WorkbenchPreferenceGroup {
 	
 	private String id;
 	private String name;
@@ -41,7 +41,7 @@ public class WorkbenchPreferenceCategory {
 	 * @param icon The ImageDescriptor for the icon for the
 	 * receiver. May be <code>null</code>.
 	 */
-	public WorkbenchPreferenceCategory(String uniqueID, String displayableName, String parentId, ImageDescriptor icon) {
+	public WorkbenchPreferenceGroup(String uniqueID, String displayableName, String parentId, ImageDescriptor icon) {
 		id = uniqueID;
 		name = displayableName;
 		parentCategoryId = parentId;
@@ -60,7 +60,7 @@ public class WorkbenchPreferenceCategory {
 	 * Add the category to the children.
 	 * @param category
 	 */
-	public void addChild(WorkbenchPreferenceCategory category) {
+	public void addChild(WorkbenchPreferenceGroup category) {
 		childCategories.add(category);
 		
 	}

@@ -344,7 +344,7 @@ public class PreferencesPageContainer implements IPreferencePageContainer {
 	 * 
 	 * @param category
 	 */
-	void show(WorkbenchPreferenceCategory category) {
+	void show(WorkbenchPreferenceGroup category) {
 		IPreferenceNode[] subnodes = category.getPreferenceNodes();
 		for (int i = 0; i < subnodes.length; i++) {
 			createEntry(subnodes[i], subnodes[i].getLabelText(), 1);

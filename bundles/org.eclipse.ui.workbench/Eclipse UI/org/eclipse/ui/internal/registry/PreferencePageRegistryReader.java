@@ -28,7 +28,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceCategory;
+import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceGroup;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceNode;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
@@ -38,6 +38,8 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  */
 public class PreferencePageRegistryReader extends RegistryReader {
 	public static final String ATT_CATEGORY = "category"; //$NON-NLS-1$
+	
+	public static final String ATT_GROUP = "group"; //$NON-NLS-1$
 
 	public static final String ATT_CLASS = "class"; //$NON-NLS-1$
 
@@ -51,9 +53,9 @@ public class PreferencePageRegistryReader extends RegistryReader {
 
 	public static final String PREFERENCE_SEPARATOR = "/"; //$NON-NLS-1$
 
-	public static final String TAG_CATEGORY = "category"; //$NON-NLS-1$
+	public static final String TAG_GROUP = "group"; //$NON-NLS-1$
 
-	public static final String ATT_PARENT_CATEGORY = "parent"; //$NON-NLS-1$
+	public static final String ATT_PARENT_GROUP = "parent"; //$NON-NLS-1$
 
 	private static final Comparator comparer = new Comparator() {
 		private Collator collator = Collator.getInstance();
@@ -67,7 +69,7 @@ public class PreferencePageRegistryReader extends RegistryReader {
 
 	private List nodes;
 
-	private Hashtable categories;
+	private Hashtable groups;
 
 	private IWorkbench workbench;
 
@@ -209,11 +211,11 @@ public class PreferencePageRegistryReader extends RegistryReader {
 			// Iterate through all the nodes
 			CategoryNode categoryNode = (CategoryNode) sortedNodes[i];
 			WorkbenchPreferenceNode node = categoryNode.getNode();
-			if (node == favorite) {
-				// skip it - favorite already at the top of the list
-				continue;
-			}
+			
 			String category = node.getCategory();
+			
+			searchGroups(node);
+				
 			if (category == null) {
 				contributions.add(node);
 				continue;
@@ -237,18 +239,11 @@ public class PreferencePageRegistryReader extends RegistryReader {
 			}
 			if (parent != null) {
 				parent.add(node);
-			} else {
-				if (!searchCategories(node)) {
-					// Could not find the parent - log
-					WorkbenchPlugin
-							.log("Invalid preference page path: " + categoryNode.getFlatCategory()); //$NON-NLS-1$
-					contributions.add(node);
-				}
-			}
+			} 
 		}
 
 		// Add all of the categories
-		contributions.addAll(getOrganizedCategories());
+		contributions.addAll(getOrganizedGroups());
 		return contributions;
 	}
 
@@ -259,11 +254,14 @@ public class PreferencePageRegistryReader extends RegistryReader {
 	 * @param node
 	 * @return boolean
 	 */
-	private boolean searchCategories(WorkbenchPreferenceNode node) {
-		String category = node.getCategory();
-		if(categories.containsKey(category)){
-			WorkbenchPreferenceCategory categoryNode = (WorkbenchPreferenceCategory) categories.get(category);
-			categoryNode.addNode(node);
+	private boolean searchGroups(WorkbenchPreferenceNode node) {
+		String group = node.getGroup();
+		if(group == null)
+			return false;
+		
+		if(groups.containsKey(group)){
+			WorkbenchPreferenceGroup groupNode = (WorkbenchPreferenceGroup) groups.get(group);
+			groupNode.addNode(node);
 			return true;
 		}
 		return false;
@@ -274,29 +272,29 @@ public class PreferencePageRegistryReader extends RegistryReader {
 	 * 
 	 * @return
 	 */
-	private Collection getOrganizedCategories() {
-		Collection topCategories = new ArrayList();
+	private Collection getOrganizedGroups() {
+		Collection topGroups = new ArrayList();
 
-		Iterator allCategories = categories.values().iterator();
+		Iterator allGroups = groups.values().iterator();
 
-		while (allCategories.hasNext()) {
-			WorkbenchPreferenceCategory category = (WorkbenchPreferenceCategory) allCategories
+		while (allGroups.hasNext()) {
+			WorkbenchPreferenceGroup group = (WorkbenchPreferenceGroup) allGroups
 					.next();
-			String parentId = category.getParent();
+			String parentId = group.getParent();
 			if (parentId == null)
-				topCategories.add(category);
+				topGroups.add(group);
 			else {
-				Object parent = categories.get(parentId);
+				Object parent = groups.get(parentId);
 				if (parent == null) {
 					WorkbenchPlugin.log("Invalid category path: " + parentId); //$NON-NLS-1$
-					topCategories.add(category);
+					topGroups.add(group);
 				} else {
-					((WorkbenchPreferenceCategory) parent).addChild(category);
+					((WorkbenchPreferenceGroup) parent).addChild(group);
 				}
 			}
 
 		}
-		return topCategories;
+		return topGroups;
 
 	}
 
@@ -305,7 +303,7 @@ public class PreferencePageRegistryReader extends RegistryReader {
 	 */
 	protected void loadNodesFromRegistry(IExtensionRegistry registry) {
 		nodes = new ArrayList();
-		categories = new Hashtable();
+		groups = new Hashtable();
 		readRegistry(registry, PlatformUI.PLUGIN_ID,
 				IWorkbenchConstants.PL_PREFERENCES);
 	}
@@ -315,7 +313,7 @@ public class PreferencePageRegistryReader extends RegistryReader {
 	 */
 	protected boolean readElement(IConfigurationElement element) {
 		if (element.getName().equals(TAG_PAGE) == false)
-			return checkForCategory(element);
+			return checkForGroup(element);
 		WorkbenchPreferenceNode node = createNode(workbench, element);
 		if (node != null)
 			nodes.add(node);
@@ -324,19 +322,19 @@ public class PreferencePageRegistryReader extends RegistryReader {
 	}
 
 	/**
-	 * Check to see if there is a category defined here.
+	 * Check to see if there is a group defined here.
 	 * 
 	 * @param element
-	 * @return
+	 * @return boolean <code>true</code> if there is a group.
 	 */
-	private boolean checkForCategory(IConfigurationElement element) {
-		if (element.getName().equals(TAG_CATEGORY) == false)
+	private boolean checkForGroup(IConfigurationElement element) {
+		if (element.getName().equals(TAG_GROUP) == false)
 			return false;
 
 		String name = element.getAttribute(ATT_NAME);
 		String id = element.getAttribute(ATT_ID);
 		String icon = element.getAttribute(ATT_ICON);
-		String parent = element.getAttribute(ATT_PARENT_CATEGORY);
+		String parent = element.getAttribute(ATT_PARENT_GROUP);
 
 		ImageDescriptor descriptor = null;
 
@@ -347,7 +345,7 @@ public class PreferencePageRegistryReader extends RegistryReader {
 					contributingPluginId, icon);
 		}
 
-		categories.put(id, new WorkbenchPreferenceCategory(id, name, parent,
+		groups.put(id, new WorkbenchPreferenceGroup(id, name, parent,
 				descriptor));
 		return true;
 	}
@@ -359,6 +357,7 @@ public class PreferencePageRegistryReader extends RegistryReader {
 		String category = element.getAttribute(ATT_CATEGORY);
 		String imageName = element.getAttribute(ATT_ICON);
 		String className = element.getAttribute(ATT_CLASS);
+		String groupId = element.getAttribute(ATT_GROUP);
 		if (name == null) {
 			logMissingAttribute(element, ATT_NAME);
 		}
@@ -379,7 +378,7 @@ public class PreferencePageRegistryReader extends RegistryReader {
 					contributingPluginId, imageName);
 		}
 		WorkbenchPreferenceNode node = new WorkbenchPreferenceNode(id, name,
-				category, image, element, workbench);
+				category, groupId, image, element, workbench);
 		return node;
 	}
 

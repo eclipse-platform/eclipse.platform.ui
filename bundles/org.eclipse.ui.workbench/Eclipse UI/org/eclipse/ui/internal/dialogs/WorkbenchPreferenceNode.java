@@ -35,6 +35,8 @@ public class WorkbenchPreferenceNode extends PreferenceNode implements
     public final static String ATT_CONTRIBUTOR_CLASS = "class"; //$NON-NLS-1$
 
     private String category;
+    
+    private String group;
 
     private IConfigurationElement configurationElement;
 
@@ -50,12 +52,13 @@ public class WorkbenchPreferenceNode extends PreferenceNode implements
      * @param newWorkbench
      */
     public WorkbenchPreferenceNode(String nodeId, String nodeLabel,
-            String category, ImageDescriptor nodeImage,
+            String category, String groupId, ImageDescriptor nodeImage,
             IConfigurationElement element, IWorkbench newWorkbench) {
         super(nodeId, nodeLabel, nodeImage, null);
         this.category = category;
         this.configurationElement = element;
         this.workbench = newWorkbench;
+        this.group = groupId;
     }
 
     /**
@@ -122,4 +125,12 @@ public class WorkbenchPreferenceNode extends PreferenceNode implements
     	return getImageDescriptor();
     }
  
+	/**
+	 * Get the id of the group or <code>null</code> if it is
+	 * not specified.
+	 * @return String.
+	 */
+	public String getGroup() {
+		return group;
+	}
 }
