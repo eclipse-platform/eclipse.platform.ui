@@ -14,7 +14,10 @@ import org.eclipse.update.core.*;
 
 /**
  * Search results are collected by implementing this interface
- * and passing it to the search request.
+ * and passing it to the search request. If the implementation is
+ * visual, it is recommended that the match is shown as soon
+ * as it is collected (rather than kept in a list and presented
+ * at the end of the search).
  */
 public interface IUpdateSearchResultCollector {
 /**

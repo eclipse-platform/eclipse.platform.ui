@@ -15,6 +15,10 @@ package org.eclipse.update.search;
  * used instead of this adapter.
  */
 public interface IQueryUpdateSiteAdapter extends IUpdateSiteAdapter {
+/**
+ * Returns an ID that can be used for matching against the information in the address mapping file.
+ * @return a mapping Id to compare against the address mapping file.
+ */
 	public String getMappingId();
 
 }

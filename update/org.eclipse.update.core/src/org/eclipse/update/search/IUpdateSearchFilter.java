@@ -19,14 +19,15 @@ import org.eclipse.update.core.IFeature;
  */
 public interface IUpdateSearchFilter {
 	/**
-	 * Tests a feature according to this filter criteria.
+	 * Tests a feature according to this filter's criteria.
 	 * @param match the feature to test
 	 * @return <samp>true</samp> if the feature has been accepted, <samp>false</samp> otherwise.
 	 */
 	boolean accept(IFeature match);
 
 	/**
-	 * Tests a feature reference according to this filter criteria. This is a prefilter that allow rejecting a feature before a potentially lengthy download
+	 * Tests a feature reference according to this filter's criteria. 
+	 * This is a prefilter that allows rejecting a feature before a potentially lengthy download.
 	 * @param match the feature reference to test
 	 * @return <samp>true</samp> if the feature reference has been accepted, <samp>false</samp> otherwise.
 	 */

@@ -12,11 +12,11 @@ package org.eclipse.update.search;
 
 /**
  * This interface is used to represent sites that need to be
- * search within the search scope. In addition to being an
+ * searched within the search scope. In addition to being an
  * update site adapter, it also returns an array of categories
  * within the site that need not be searched (skipping categories
  * makes the search faster because fewer features need to
- * be checked).
+ * be checked and potentially downloaded from the server).
  */
 public interface IUpdateSearchSite extends IUpdateSiteAdapter {
 /**
