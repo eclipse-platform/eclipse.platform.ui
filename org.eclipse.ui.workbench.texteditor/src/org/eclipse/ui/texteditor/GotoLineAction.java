@@ -23,6 +23,7 @@ import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.window.Window;
 
 import org.eclipse.ui.IWorkbenchPage;
 
@@ -172,7 +173,7 @@ public class GotoLineAction extends TextEditorAction {
 			String message= MessageFormat.format(fBundle.getString(fPrefix + "dialog.message"), new Object[] {new Integer(fLastLine)}); //$NON-NLS-1$
 			
 			GotoLineDialog d= new GotoLineDialog(editor.getSite().getShell(), title, message, "", new NumberValidator()); //$NON-NLS-1$
-			if (d.open() == d.OK) {
+			if (d.open() == Window.OK) {
 				try {
 					int line= Integer.parseInt(d.getValue());
 					gotoLine(line - 1);

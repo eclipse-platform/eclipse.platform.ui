@@ -108,7 +108,7 @@ public class WordRule implements IRule {
 				do {
 					fBuffer.append((char) c);
 					c= scanner.read();
-				} while (c != scanner.EOF && fDetector.isWordPart((char) c));
+				} while (c != ICharacterScanner.EOF && fDetector.isWordPart((char) c));
 				scanner.unread();
 				
 				IToken token= (IToken) fWords.get(fBuffer.toString());
