@@ -55,6 +55,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
@@ -121,8 +122,6 @@ class NewWizardNewPage
 	private WizardCollectionElement wizardCategories;
 
     private WorkbenchWizardElement[] primaryWizards;
-
-    private WizardContentProvider contentProvider;
     
     private ToolItem helpButton;
 
@@ -135,6 +134,8 @@ class NewWizardNewPage
     private Label imageSeperator;
 
     private WorkbenchWizardElement selectedElement;
+    
+    private NewWizardActivityFilter filter = new NewWizardActivityFilter();
     
     private boolean needShowAll;
 
@@ -152,16 +153,42 @@ class NewWizardNewPage
 		
 		trimPrimaryWizards();
 		
-		needShowAll = this.primaryWizards.length > 0;
-		if (needShowAll) {
+		if (this.primaryWizards.length > 0) {
 		    if (allPrimary(wizardCategories)) {
 		        this.wizardCategories = null; // dont bother considering the categories as all wizards are primary
 		        needShowAll = false;
 		    }
+		    else { 
+		        needShowAll = !allActivityEnabled(wizardCategories);
+		    }
 		}
+		else {
+		    needShowAll = !allActivityEnabled(wizardCategories);
+		}		
 	}
 
 	/**
+     * @param category the wizard category
+     * @return whether all of the wizards in the category are enabled via activity filtering
+     */
+    private boolean allActivityEnabled(WizardCollectionElement category) {
+        Object [] wizards = category.getWizards();
+        for (int i = 0; i < wizards.length; i++) {
+            WorkbenchWizardElement wizard = (WorkbenchWizardElement) wizards[i];
+            if (WorkbenchActivityHelper.filterItem(wizard))
+                return false;
+        }
+        
+        Object [] children = category.getChildren();
+        for (int i = 0; i < children.length; i++) {
+            if (!allActivityEnabled((WizardCollectionElement) children[i]))
+                return false;
+        }
+        
+        return true;
+    }
+
+    /**
      * Remove all primary wizards that are not in the wizard collection
      */
     private void trimPrimaryWizards() {
@@ -175,8 +202,8 @@ class NewWizardNewPage
     }
 
     /**
-     * @return whether show all is needed.  Show all is needed if any of the 
-     * wizards in the category or its children are NOT primary wizards.
+     * @param category the wizard category
+     * @return whether all wizards in the category are considered primary
      */
     private boolean allPrimary(WizardCollectionElement category) {
         Object [] wizards = category.getWizards();
@@ -255,10 +282,14 @@ class NewWizardNewPage
 	                    }
 	
 	                    try {
-						    contentProvider.setFiltering(!showAll);
-						    
-						    if (showAll)
-						        viewer.setExpandedElements(expandedElements);
+	                        if (showAll) {
+	                            viewer.resetFilters();
+	                            viewer.setExpandedElements(expandedElements);
+	                        }
+	                        else {
+	                            viewer.addFilter(filter);
+	                        }
+	                        viewer.refresh(false);
 	                    }
 	                    finally {
 	                        if (showAll)
@@ -465,9 +496,8 @@ class NewWizardNewPage
 			    treeParent,
 				SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		viewer = new TreeViewer(tree);
-		
-		contentProvider = new WizardContentProvider(false);
-        viewer.setContentProvider(contentProvider);
+		 
+        viewer.setContentProvider(new WizardContentProvider());
 		viewer.setLabelProvider(new WorkbenchLabelProvider());
 		viewer.setSorter(NewWizardCollectionSorter.INSTANCE);
 		viewer.addSelectionChangedListener(this);
@@ -547,7 +577,13 @@ class NewWizardNewPage
 
 	    if (showAllCheck != null) {
 	        showAllCheck.setSelection(showAll);
-	        contentProvider.setFiltering(!showAll);
+	        if (showAll) {
+	            viewer.resetFilters();	            
+	        }
+	        else {
+	            viewer.addFilter(filter);
+	        }
+	        viewer.refresh(false);
 	    }    
 	    
 		String[] expandedCategoryPaths = settings.getArray(STORE_EXPANDED_CATEGORIES_ID);

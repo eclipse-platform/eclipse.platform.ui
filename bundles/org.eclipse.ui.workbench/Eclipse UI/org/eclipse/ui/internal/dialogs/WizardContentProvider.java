@@ -14,41 +14,25 @@ import java.util.ArrayList;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.ui.internal.activities.ws.FilterableObject;
 import org.eclipse.ui.model.AdaptableList;
 
 /**
- * Provider used by the new format NewWizardNewPage.
+ * Provider used by the NewWizardNewPage.
  * 
  * @since 3.0
  */
 public class WizardContentProvider
-	extends FilterableObject
 	implements ITreeContentProvider {
     
     private AdaptableList input;
-    private Viewer viewer;
 
-	/**
-	 * @param filtering the initial filtering state.
-	 */
-	public WizardContentProvider(boolean filtering) {
-		super(filtering);
-	}
-	
-	/**
-	 */
-	public WizardContentProvider() {
-	    super(false);
-	}
-
-	/*
+    /*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
 	public void dispose() {
-	    viewer = null;
+	    input = null;
 	}
 
 	/*
@@ -119,9 +103,7 @@ public class WizardContentProvider
 	}
 
 	/**
-	 * Adds the supplied element to the list except if the provider is
-	 * filtering and the element is an <code>IPluginContribution</code> that
-	 * is currently being filtered.
+	 * Adds the item to the list, unless it's a collection element without any children.
 	 * 
 	 * @param element the element to test and add
 	 * @param list the <code>Collection</code> to add to.
@@ -129,7 +111,7 @@ public class WizardContentProvider
 	 */
 	private void handleChild(Object element, ArrayList list) {
 	    if (element instanceof WizardCollectionElement) {
-	        if (!getFiltering() && hasChildren(element))
+	        if (hasChildren(element))
 	            list.add(element);
 	    }
 	    else {
@@ -157,16 +139,6 @@ public class WizardContentProvider
 	 *      java.lang.Object, java.lang.Object)
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-	    this.viewer = viewer;
 	    input = (AdaptableList) newInput;	   
 	}
-	
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.activities.ws.FilterableObject#setFiltering(boolean)
-     */
-    public void setFiltering(boolean filtering) {
-        super.setFiltering(filtering);
-        if (viewer != null)
-            viewer.refresh();
-    }
 }
