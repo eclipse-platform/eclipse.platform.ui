@@ -19,6 +19,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.ccvs.core.CVSTag;
+import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
@@ -89,7 +90,7 @@ public class DefineVersionAction extends TeamAction {
 						if (dialog.open() == InputDialog.OK) {
 							ICVSRemoteResource resource = projects[0].getCVSResource();
 							CVSTag tag = new CVSTag(dialog.getValue(), CVSTag.VERSION);
-							CVSUIPlugin.getPlugin().getRepositoryManager().addVersionTags(resource, new CVSTag[] {tag});
+							CVSUIPlugin.getPlugin().getRepositoryManager().addVersionTags((ICVSFolder)resource, new CVSTag[] {tag});
 						}
 					}
 				});

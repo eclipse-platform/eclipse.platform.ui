@@ -22,7 +22,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.ccvs.core.ICVSFile;
 import org.eclipse.team.ccvs.core.ICVSFolder;
+import org.eclipse.team.ccvs.core.ICVSRemoteFile;
+import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSResourceVisitor;
+import org.eclipse.team.ccvs.core.ILogEntry;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
@@ -218,5 +222,15 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 			return location.toFile();
 		}
 		return null;
+	}
+	/**
+	 * @see ICVSFile#getLogEntries(IProgressMonitor)
+	 */
+	public ILogEntry[] getLogEntries(IProgressMonitor monitor)	throws TeamException {
+		if(isManaged() && !getSyncInfo().isAdded()) {
+			ICVSRemoteResource remoteFile = CVSWorkspaceRoot.getRemoteResourceFor(resource);
+			return ((ICVSRemoteFile)remoteFile).getLogEntries(monitor);
+		}
+		return new ILogEntry[0];
 	}
 }

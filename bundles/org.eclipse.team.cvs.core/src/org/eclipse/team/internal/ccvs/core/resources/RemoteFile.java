@@ -46,7 +46,7 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
  * This class provides the implementation of ICVSRemoteFile and IManagedFile for
  * use by the repository and sync view.
  */
-public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFile  {
+public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 
 	// cache for file contents received from the server
 	private byte[] contents;

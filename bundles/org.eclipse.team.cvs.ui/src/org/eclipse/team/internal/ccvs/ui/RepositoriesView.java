@@ -74,10 +74,10 @@ public class RepositoriesView extends ViewPart {
 		public void repositoryRemoved(ICVSRepositoryLocation root) {
 			refresh();
 		}
-		public void branchTagsAdded(BranchTag[] tags, final ICVSRepositoryLocation root) {
+		public void branchTagsAdded(CVSTag[] tags, final ICVSRepositoryLocation root) {
 			refresh();
 		}
-		public void branchTagsRemoved(BranchTag[] tags, final ICVSRepositoryLocation root) {
+		public void branchTagsRemoved(CVSTag[] tags, final ICVSRepositoryLocation root) {
 			refresh();
 		}
 		public void versionTagsAdded(CVSTag[] tags, final ICVSRepositoryLocation root) {

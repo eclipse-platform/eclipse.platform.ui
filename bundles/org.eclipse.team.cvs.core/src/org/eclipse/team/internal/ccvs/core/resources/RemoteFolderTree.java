@@ -33,7 +33,7 @@ public class RemoteFolderTree extends RemoteFolder  {
 	/* 
 	 * Override of inherited method which persists the children
 	 */
-	public ICVSRemoteResource[] getMembers(CVSTag tagName, IProgressMonitor monitor) throws TeamException {
+	public ICVSRemoteResource[] getMembers(CVSTag tagName, IProgressMonitor monitor) throws CVSException {
 		if (getChildren() == null)
 			setChildren(super.getMembers(tagName, monitor));
 		return getChildren();

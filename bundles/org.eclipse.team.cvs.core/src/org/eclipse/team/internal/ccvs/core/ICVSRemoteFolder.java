@@ -16,7 +16,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
   * 
   * Clients are not expected to implement this interface.
   */
-public interface ICVSRemoteFolder extends ICVSRemoteResource {
+public interface ICVSRemoteFolder extends ICVSRemoteResource, ICVSFolder {
 
 	/**
 	 * Allows a client to change the context of a remote folder handle.  For

@@ -19,7 +19,7 @@ import org.eclipse.team.core.TeamException;
   * 
   * Clients are not expected to implement this interface.
   */
-public interface ICVSRemoteFile extends ICVSRemoteResource {
+public interface ICVSRemoteFile extends ICVSRemoteResource, ICVSFile {
 
 	/**
 	 * Get the log entry for the revision the remote file represents.

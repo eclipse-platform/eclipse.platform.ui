@@ -12,6 +12,7 @@ import java.util.Date;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -25,6 +26,8 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -55,7 +58,6 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
@@ -64,11 +66,14 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.ccvs.core.ICVSFile;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ILogEntry;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSCompareRevisionsInput.HistoryLabelProvider;
 import org.eclipse.team.internal.ccvs.ui.actions.OpenLogEntryAction;
@@ -100,7 +105,8 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 	private IAction toggleListAction;
 	private TextViewerAction copyAction;
 	private TextViewerAction selectAllAction;
-	private Action addAction;
+	private Action getContentsAction;
+	private Action getRevisionAction;
 	
 	private SashForm sashForm;
 	private SashForm innerSashForm;
@@ -115,6 +121,9 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 	private Image branchImage;
 	private Image versionImage;
 	
+	private ILogEntry currentSelection;
+	private String currentRevision;
+	
 	class HistoryLabelProvider extends LabelProvider implements ITableLabelProvider {
 		public Image getColumnImage(Object element, int columnIndex) {
 			return null;
@@ -125,13 +134,8 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 				case COL_REVISION:
 					String revision = entry.getRevision();
 					if (file == null) return revision;
-					try {
-						ICVSRemoteFile currentEdition = (ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(file);
-						if (currentEdition != null && currentEdition.getRevision().equals(revision)) {
-							return "*" + revision;
-						}
-					} catch (TeamException e) {
-						ErrorDialog.openError(getViewSite().getShell(), null, null, e.getStatus());
+					if (currentRevision != null && currentRevision.equals(revision)) {
+						return "*" + revision;
 					}
 					return revision;
 				case COL_TAGS:
@@ -193,49 +197,39 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 			}
 		});
 
-		addAction = new Action(Policy.bind("HistoryView.addToWorkspace")) {
-			public void run() {
+		getContentsAction = getContextMenuAction(Policy.bind("HistoryView.getContentsAction"), new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				ICVSRemoteFile remoteFile = currentSelection.getRemoteFile();
+				monitor.beginTask(null, 100);
 				try {
-					if (file == null) return;
-					ISelection selection = tableViewer.getSelection();
-					if (!(selection instanceof IStructuredSelection)) return;
-					IStructuredSelection ss = (IStructuredSelection)selection;
-					Object o = ss.getFirstElement();
-					final ILogEntry entry = (ILogEntry)o;
-					new ProgressMonitorDialog(getViewSite().getShell()).run(true, true, new WorkspaceModifyOperation() {
-						protected void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-							ICVSRemoteFile remoteFile = entry.getRemoteFile();
-							// Do the load. This just consists of setting the local contents. We don't
-							// actually want to change the base.
-							monitor.beginTask(null, 100);
-							try {
-								InputStream in = remoteFile.getContents(new SubProgressMonitor(monitor, 50));
-								file.setContents(in, false, true, new SubProgressMonitor(monitor, 50));				
-							} catch (TeamException e) {
-								throw new InvocationTargetException(e);
-							} catch (CoreException e) {
-								throw new InvocationTargetException(e);
-							} finally {
-								monitor.done();
-							}
-						}
-					});
-				} catch (InvocationTargetException e) {
-					Throwable t = e.getTargetException();
-					if (t instanceof TeamException) {
-						ErrorDialog.openError(getViewSite().getShell(), null, null, ((TeamException)t).getStatus());
-					} else if (t instanceof CoreException) {
-						IStatus status = ((CoreException)t).getStatus();
-						ErrorDialog.openError(getViewSite().getShell(), null, null, status);
-						CVSUIPlugin.log(status);
-					} else {
-						// To do
+					if(confirmOverwrite()) {
+						InputStream in = remoteFile.getContents(new SubProgressMonitor(monitor, 50));
+						file.setContents(in, false, true, new SubProgressMonitor(monitor, 50));				
 					}
-				} catch (InterruptedException e) {
-					// Do nothing
+				} catch (TeamException e) {
+					throw new CoreException(e.getStatus());
+				} finally {
+					monitor.done();
 				}
 			}
-		};
+		});
+		
+		getRevisionAction = getContextMenuAction(Policy.bind("HistoryView.getRevisionAction"), new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				ICVSRemoteFile remoteFile = currentSelection.getRemoteFile();
+				try {
+					if(confirmOverwrite()) {
+						CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(file.getProject());
+						CVSTag revisionTag = new CVSTag(remoteFile.getRevision(), CVSTag.VERSION);
+						provider.update(new IResource[] {file}, new Command.LocalOption[] {Command.UPDATE.IGNORE_LOCAL_CHANGES}, 
+												   revisionTag, true /*create backups*/, monitor);
+					}
+				} catch (TeamException e) {
+					throw new CoreException(e.getStatus());
+				}
+			}
+		});
+
 
 		// Toggle text visible action
 		final IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
@@ -584,7 +578,8 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 			if (!sel.isEmpty()) {
 				if (sel instanceof IStructuredSelection) {
 					if (((IStructuredSelection)sel).size() == 1) {
-						manager.add(addAction);
+						manager.add(getRevisionAction);
+						manager.add(getContentsAction);
 					}
 				}
 			}
@@ -650,9 +645,10 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 			if (teamProvider != null) {
 				this.provider = (CVSTeamProvider)teamProvider;
 				try {
-					ICVSRemoteResource remoteResource = CVSWorkspaceRoot.getRemoteResourceFor(file);
-					tableViewer.setInput(remoteResource);
-					setTitle(Policy.bind("HistoryView.titleWithArgument", remoteResource.getName()));
+					ICVSRemoteFile remoteFile = (ICVSRemoteFile)CVSWorkspaceRoot.getRemoteResourceFor(file);
+					currentRevision = remoteFile.getRevision();
+					tableViewer.setInput(remoteFile);
+					setTitle(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName()));
 				} catch (TeamException e) {
 					ErrorDialog.openError(getViewSite().getShell(), null, null, e.getStatus());
 				}				
@@ -676,5 +672,67 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 		this.file = null;
 		tableViewer.setInput(file);
 		setTitle(Policy.bind("HistoryView.titleWithArgument", file.getName()));
+	}
+	
+	private Action getContextMenuAction(String title, final IWorkspaceRunnable action) {
+			return new Action(title) {
+			public void run() {
+				try {
+					if (file == null) return;
+					ISelection selection = tableViewer.getSelection();
+					if (!(selection instanceof IStructuredSelection)) return;
+					IStructuredSelection ss = (IStructuredSelection)selection;
+					Object o = ss.getFirstElement();
+					currentSelection = (ILogEntry)o;
+					new ProgressMonitorDialog(getViewSite().getShell()).run(true, true, new WorkspaceModifyOperation() {
+						protected void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+							try {				
+								action.run(monitor);
+							} catch (CoreException e) {
+								throw new InvocationTargetException(e);
+							}
+						}
+					});
+				} catch (InvocationTargetException e) {
+					Throwable t = e.getTargetException();
+					if (t instanceof TeamException) {
+						ErrorDialog.openError(getViewSite().getShell(), null, null, ((TeamException)t).getStatus());
+					} else if (t instanceof CoreException) {
+						IStatus status = ((CoreException)t).getStatus();
+						ErrorDialog.openError(getViewSite().getShell(), null, null, status);
+						CVSUIPlugin.log(status);
+					} else {
+						// To do
+					}
+				} catch (InterruptedException e) {
+					// Do nothing
+				}
+			}
+		};
+	}
+	
+	private boolean confirmOverwrite() {
+		if (file!=null && file.exists()) {
+			ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor(file);
+			try {
+				if(cvsFile.isModified()) {
+					String title = Policy.bind("HistoryView.overwriteTitle"); //$NON-NLS-1$
+					String msg = Policy.bind("HistoryView.overwriteMsg"); //$NON-NLS-1$
+					final MessageDialog dialog = new MessageDialog(getViewSite().getShell(), title, null, msg, MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL, IDialogConstants.CANCEL_LABEL }, 0);
+					final int[] result = new int[1];
+					getViewSite().getShell().getDisplay().syncExec(new Runnable() {
+					public void run() {
+						result[0] = dialog.open();
+					}});
+					if (result[0] != 0) {
+						// cancel
+						return false;
+					}
+				}
+			} catch(CVSException e) {
+				CVSUIPlugin.log(e.getStatus());
+			}
+		}
+		return true;
 	}
 }

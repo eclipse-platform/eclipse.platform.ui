@@ -53,15 +53,19 @@ public class CVSWorkspaceRoot {
 	
 	public static ICVSRemoteResource getRemoteResourceFor(IResource resource) throws CVSException {
 		ICVSResource managed = getCVSResourceFor(resource);
-		if (managed.isFolder()) {
-			ICVSFolder folder = (ICVSFolder)managed;
+		return getRemoteResourceFor(managed);
+	}
+	
+	public static ICVSRemoteResource getRemoteResourceFor(ICVSResource resource) throws CVSException {
+		if (resource.isFolder()) {
+			ICVSFolder folder = (ICVSFolder)resource;
 			if (folder.isCVSFolder()) {
 				FolderSyncInfo syncInfo = folder.getFolderSyncInfo();
 				return new RemoteFolder(null, CVSProvider.getInstance().getRepository(syncInfo.getRoot()), new Path(syncInfo.getRepository()), syncInfo.getTag());
 			}
 		} else {
-			if (managed.isManaged())
-				return RemoteFile.getBase((RemoteFolder)getRemoteResourceFor(resource.getParent()), (ICVSFile)managed);
+			if (resource.isManaged())
+				return RemoteFile.getBase((RemoteFolder)getRemoteResourceFor(resource.getParent()), (ICVSFile)resource);
 		}
 		return null;
 	}

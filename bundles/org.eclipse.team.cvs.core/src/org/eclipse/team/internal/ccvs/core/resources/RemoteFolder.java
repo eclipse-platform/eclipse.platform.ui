@@ -235,7 +235,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	 * persist the children. Subclasses (namely RemoteFolderTree) may
 	 * persist the children.
 	 */
-	protected ICVSRemoteResource[] getMembers(final CVSTag tag, IProgressMonitor monitor) throws TeamException {
+	protected ICVSRemoteResource[] getMembers(final CVSTag tag, IProgressMonitor monitor) throws CVSException {
 		
 		final IProgressMonitor progress = Policy.monitorFor(monitor);
 		
@@ -342,17 +342,16 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	/**
 	 * @see ICVSFolder#getFolders()
 	 */
-	public ICVSFolder[] getFolders() throws CVSException {
+	public ICVSFolder[] getFolders() throws CVSException {		
 		ICVSRemoteResource[] children = getChildren();
-		if (children == null)
+		if (children == null) {
 			return new ICVSFolder[0];
-		else {
-			List result = new ArrayList();
-			for (int i=0;i<children.length;i++)
-				if (((ICVSResource)children[i]).isFolder())
-					result.add(children[i]);
-			return (ICVSFolder[])result.toArray(new ICVSFolder[result.size()]);
 		}
+		List result = new ArrayList();
+		for (int i=0;i<children.length;i++)
+			if (((ICVSResource)children[i]).isFolder())
+				result.add(children[i]);
+		return (ICVSFolder[])result.toArray(new ICVSFolder[result.size()]);
 	}
 
 	/**
@@ -360,15 +359,14 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	 */
 	public ICVSFile[] getFiles() throws CVSException {
 		ICVSRemoteResource[] children = getChildren();
-		if (children == null)
+		if (children == null) {
 			return new ICVSFile[0];
-		else {
-			List result = new ArrayList();
-			for (int i=0;i<children.length;i++)
-				if (!((ICVSResource)children[i]).isFolder())
-					result.add(children[i]);
-			return (ICVSFile[])result.toArray(new ICVSFile[result.size()]);
 		}
+		List result = new ArrayList();
+		for (int i=0;i<children.length;i++)
+			if (!((ICVSResource)children[i]).isFolder())
+				result.add(children[i]);
+		return (ICVSFile[])result.toArray(new ICVSFile[result.size()]);
 	}
 
 	/**
@@ -677,4 +675,15 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 			monitor.done();
 		}
 	 }
+	 
+	/**
+	 * @see ICVSFolder#fetchChildren(IProgressMonitor)
+	 */
+	public ICVSResource[] fetchChildren(IProgressMonitor monitor) throws CVSException {
+		try {
+			return getMembers(monitor);
+		} catch(TeamException e) {
+			throw new CVSException(e.getStatus());
+		}
+	}
 }

@@ -5,28 +5,30 @@ package org.eclipse.team.internal.ccvs.ui.model;
  * All Rights Reserved.
  */
  
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.ui.model.IWorkbenchAdapter;
-/**
- * BranchCategory is the model element for the branches category
- * for a particular repsitory in the repositories view. Its children
- * are the array of all known branch tags, other than HEAD, for the
- * given repository.
- */
-public class BranchCategory extends CVSModelElement implements IAdaptable {
+
+public class GroupedByVersionCategory extends CVSModelElement implements IAdaptable {
 	private ICVSRepositoryLocation repository;
 	
 	/**
-	 * TeamStreamsCategory constructor.
+	 * ProjectVersionsCategory constructor.
 	 */
-	public BranchCategory(ICVSRepositoryLocation repository) {
+	public GroupedByVersionCategory(ICVSRepositoryLocation repo) {
 		super();
-		this.repository = repository;
+		this.repository = repo;
 	}
 	
 	/**
@@ -46,14 +48,25 @@ public class BranchCategory extends CVSModelElement implements IAdaptable {
 	 * object has no children.
 	 */
 	public Object[] getChildren(Object o) {
-		CVSTag[] tags = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownBranchTags(repository);
-		BranchTag[] branchElements = new BranchTag[tags.length];
-		for (int i = 0; i < tags.length; i++) {
-			branchElements[i] = new BranchTag(tags[i], repository);
+		//String -> CTags[]
+		Map mappings = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownProjectsAndVersions(repository);
+		Map remoteVersionModules = new HashMap();
+		for (Iterator it = mappings.keySet().iterator(); it.hasNext();) {
+			String project = (String) it.next();
+			CVSTag[] versions = (CVSTag[])((HashSet)mappings.get(project)).toArray(new CVSTag[0]);
+			for (int i = 0; i < versions.length; i++) {
+				CVSTag tag = versions[i];
+				RemoteVersionModule module = (RemoteVersionModule)remoteVersionModules.get(tag);
+				if(module==null) {
+					module = new RemoteVersionModule(tag, this);
+					remoteVersionModules.put(tag, module);
+				}
+				module.addProject(new RemoteFolder(null, repository, new Path(project), tag));				
+			}
 		}
-		return branchElements;
+		return (RemoteVersionModule[])remoteVersionModules.values().toArray(new RemoteVersionModule[0]);				
 	}
-	
+
 	/**
 	 * Returns an image descriptor to be used for displaying an object in the workbench.
 	 * Returns null if there is no appropriate image.
@@ -61,9 +74,9 @@ public class BranchCategory extends CVSModelElement implements IAdaptable {
 	 * @param object The object to get an image descriptor for.
 	 */
 	public ImageDescriptor getImageDescriptor(Object object) {
-		return CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_BRANCHES_CATEGORY);
+		return CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_VERSIONS_CATEGORY);
 	}
-	
+
 	/**
 	 * Returns the name of this element.  This will typically
 	 * be used to assign a label to this object when displayed
@@ -73,9 +86,9 @@ public class BranchCategory extends CVSModelElement implements IAdaptable {
 	 * @param object The object to get a label for.
 	 */
 	public String getLabel(Object o) {
-		return "Branches";
+		return "Versions";
 	}
-	
+
 	/**
 	 * Returns the logical parent of the given object in its tree.
 	 * Returns null if there is no parent, or if this object doesn't

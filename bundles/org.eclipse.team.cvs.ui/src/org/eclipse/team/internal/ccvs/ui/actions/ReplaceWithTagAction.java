@@ -6,9 +6,15 @@ package org.eclipse.team.internal.ccvs.ui.actions;
  */
  
 import java.lang.reflect.InvocationTargetException;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -39,11 +45,15 @@ public class ReplaceWithTagAction extends ReplaceWithAction {
 		// Show a busy cursor while display the tag selection dialog
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
-				IResource[] resources = getSelectedResources();
-				if (resources.length != 1) return;
-				resource[0] = resources[0];
-	
-				if (isDirty(resource[0])) {
+				final IResource[] resources = getSelectedResources();
+				boolean isAnyDirty = false;
+				for (int i = 0; i < resources.length; i++) {
+					if(isDirty(resources[i])) { 
+						isAnyDirty = true;
+					}
+				}
+				
+				if (isAnyDirty) {
 					final Shell shell = getShell();
 					final boolean[] result = new boolean[] { false };
 					shell.getDisplay().syncExec(new Runnable() {
@@ -54,7 +64,12 @@ public class ReplaceWithTagAction extends ReplaceWithAction {
 					if (!result[0]) return;
 				}
 				
-				TagSelectionDialog dialog = new TagSelectionDialog(getShell(), resource[0]);
+				// show the tags for one of the selected resources
+				IProject[] projects = new IProject[resources.length];
+				for (int i = 0; i < resources.length; i++) {
+					projects[i] = resources[i].getProject();
+				}
+				TagSelectionDialog dialog = new TagSelectionDialog(getShell(), projects);
 				dialog.setBlockOnOpen(true);
 				if (dialog.open() == Dialog.CANCEL) {
 					return;
@@ -69,19 +84,44 @@ public class ReplaceWithTagAction extends ReplaceWithAction {
 		run(new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {
-					CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(resource[0].getProject(), CVSProviderPlugin.getTypeId());
-					monitor.beginTask(null, 100);
+					Hashtable table = getProviderMapping();
+					Set keySet = table.keySet();
+					monitor.beginTask("", keySet.size() * 1000);
 					monitor.setTaskName(Policy.bind("ReplaceWithTagAction.replacing", tag[0].getName()));
-					provider.get(resource, IResource.DEPTH_INFINITE, tag[0], Policy.subMonitorFor(monitor, 100));
-					monitor.done();
+					Iterator iterator = keySet.iterator();
+					while (iterator.hasNext()) {
+						IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
+						CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
+						List list = (List)table.get(provider);
+						IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
+						provider.get(providerResources, IResource.DEPTH_INFINITE, tag[0], Policy.subMonitorFor(monitor, 100));
+					}
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
+				} finally {
+					monitor.done();
 				}
 			}
 		}, Policy.bind("ReplaceWithTagAction.replace"), this.PROGRESS_DIALOG);
 	}
 	
 	protected boolean isEnabled() {
-		return getSelectedResources().length == 1;
+		IResource[] resources = getSelectedResources();
+		// allow operation for homegeneous multiple selections
+		if(resources.length>0) {
+			int type = -1;
+			for (int i = 0; i < resources.length; i++) {
+				IResource resource = resources[i];
+				if(type!=-1) {
+					if(type!=resource.getType()) return false;
+				}
+				if(RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId()) == null) {
+					return false;
+				}
+				type = resource.getType();
+			}
+			return true;
+		}
+		return false;
 	}
 }

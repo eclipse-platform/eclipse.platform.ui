@@ -5,8 +5,9 @@ package org.eclipse.team.internal.ccvs.ui.model;
  * All Rights Reserved.
  */
  
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdapterFactory;
+import org.eclipse.team.ccvs.core.ICVSFile;
+import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;

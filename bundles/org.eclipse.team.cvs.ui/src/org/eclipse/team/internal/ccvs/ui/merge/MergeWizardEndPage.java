@@ -77,7 +77,7 @@ public class MergeWizardEndPage extends CVSWizardPage {
 			}
 		});
 		setControl(composite);
-		tree.setInput(new ProjectElement(remote, getShell()));
+		tree.setInput(new ProjectElement(CVSWorkspaceRoot.getCVSFolderFor(project), true /*show HEAD as tag*/));
 		setPageComplete(false);
 	}
 	protected TreeViewer createTree(Composite parent) {
@@ -96,4 +96,13 @@ public class MergeWizardEndPage extends CVSWizardPage {
 	public CVSTag getTag() {
 		return result;
 	}
+	/**
+	 * @see IDialogPage#setVisible(boolean)
+	 */
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+		// refresh the tree because tags may of been added in the previous page
+		tree.refresh();
+	}
+
 }

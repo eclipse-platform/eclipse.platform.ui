@@ -96,7 +96,7 @@ public class BranchWizard extends Wizard {
 									}
 								}
 								if (update) {
-									manager.addBranchTags(root, new BranchTag[] { new BranchTag(branchTag, root) });
+									manager.addBranchTags(root, new CVSTag[] { branchTag });
 								}
 							} catch (TeamException e) {
 								status.merge(e.getStatus());

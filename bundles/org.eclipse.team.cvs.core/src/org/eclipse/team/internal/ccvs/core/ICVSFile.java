@@ -6,10 +6,10 @@ package org.eclipse.team.ccvs.core;
  */
 
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Date;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 
 /**
@@ -88,4 +88,9 @@ public interface ICVSFile extends ICVSResource {
 	 * if it has not changed.
 	 */
 	boolean isModified() throws CVSException;
+	
+	/**
+	 * Get the log entries of the remote file
+	 */
+	public ILogEntry[] getLogEntries(IProgressMonitor monitor) throws TeamException;
 }

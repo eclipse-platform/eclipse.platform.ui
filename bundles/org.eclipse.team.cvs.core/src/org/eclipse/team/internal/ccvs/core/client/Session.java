@@ -139,6 +139,7 @@ public class Session {
 	 */
 	public void open(IProgressMonitor monitor) throws CVSException {
 		if (connection != null) throw new IllegalStateException();
+		monitor = Policy.monitorFor(monitor);
 		monitor.beginTask(null, 100);
 		try {
 			connection = location.openConnection(Policy.subMonitorFor(monitor, 50));

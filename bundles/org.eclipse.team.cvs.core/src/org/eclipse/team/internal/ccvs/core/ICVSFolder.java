@@ -19,7 +19,22 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 public interface ICVSFolder extends ICVSResource {
 		
 	/**
-	 * Answers the immediate folder children of this resource. This includes the union 
+	 * Answers and array of <code>ICVSResource</code> elements that are immediate 
+	 * children of this remote resource, in no particular order. The server may be contacted.
+	 * 
+ 	 * @param monitor a progress monitor to indicate the duration of the operation, or
+	 * <code>null</code> if progress reporting is not required.
+	 * 
+	 * @return array of immediate children of this remote resource. 
+	 */
+	public ICVSResource[] fetchChildren(IProgressMonitor monitor) throws CVSException;
+	
+	/**
+	 * [Note: temporary method that should only be used by commands.]
+	 * Answers the immediate folder children of this resource that are known
+	 * at the time of invocation. The server is never contacted. 
+	 * 
+	 * This includes the union 
 	 * of children that satisfy the following criteria:
 	 * <ul>
 	 *   <li> exists but is not managed (not under CVS control)
@@ -28,36 +43,37 @@ public interface ICVSFolder extends ICVSResource {
 	 * </ul>
 	 * If the folder does not exist then a zero length array is returned.
 	 */
-	ICVSFolder[] getFolders() throws CVSException;
+	public ICVSFolder[] getFolders() throws CVSException;
 	
 	/**
-	 * Answers the immediate file children of this resource. This includes the union 
-	 * of children that satisfy the following criteria:
+	 * [Note: temporary method that should only be used by commands.]
+	 * Answers the immediate file children of this resource that are known
+	 * at the time of invocation. The server is never contacted. 
 	 * <ul>
 	 *   <li> exists but is not managed (not under CVS control)
 	 *   <li> does not exist() but is managed (deleted file)
 	 *   <li> exist() and isManaged() (normal registered file)
 	 * </ul>
 	 */
-	ICVSFile[] getFiles() throws CVSException;
+	public ICVSFile[] getFiles() throws CVSException;
 	
 	/**
 	 * Answers a child folder of this resource with the given name or <code>null</code> if 
 	 * the given folder does not have a child with that name.
 	 */
-	ICVSFolder getFolder(String name) throws CVSException;
+	public ICVSFolder getFolder(String name) throws CVSException;
 	
 	/**
 	 * Answers a child file of this resource with the given name or <code>null</code> if 
 	 * the given folder does not have a child with that name.
 	 */
-	ICVSFile getFile(String name) throws CVSException;
+	public ICVSFile getFile(String name) throws CVSException;
 
 	/**
 	 * Return the child resource at the given path relative to
 	 * the receiver.
 	 */
-	ICVSResource getChild(String path) throws CVSException;
+	public ICVSResource getChild(String path) throws CVSException;
 	
 	/**
 	 * Create the folder if it did not exist before. Does only
@@ -65,7 +81,7 @@ public interface ICVSFolder extends ICVSResource {
 	 * 
 	 * @throws CVSException if for some reason it was not possible to create the folder
 	 */
-	void mkdir() throws CVSException;
+	public void mkdir() throws CVSException;
 
 	/**
 	 * Answers the folder's synchronization information or <code>null</code> if the folder
@@ -74,14 +90,14 @@ public interface ICVSFolder extends ICVSResource {
 	 * To modify the folder sync info the caller must call <code>setFolderSyncInfo</code> with
 	 * new sync information.</p>
 	 */
-	FolderSyncInfo getFolderSyncInfo() throws CVSException;
+	public FolderSyncInfo getFolderSyncInfo() throws CVSException;
 	
 	/**
 	 * Set the folder sync information for this folder. Setting the folder information
 	 * to <code>null</code> is not supported. The only mechanism for removing an existing
 	 * CVS folder is to delete the resource.
 	 */
-	void setFolderSyncInfo(FolderSyncInfo folderInfo) throws CVSException;	
+	public void setFolderSyncInfo(FolderSyncInfo folderInfo) throws CVSException;	
 	
 	/**
 	 * Accepts the visitor on all files and all subFolder in the folder. Files are

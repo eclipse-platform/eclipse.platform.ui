@@ -13,24 +13,26 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IInputValidator;
-import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.ccvs.core.CVSTag;
+import org.eclipse.team.ccvs.core.ICVSFolder;
+import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.TagConfigurationDialog;
 import org.eclipse.team.internal.ccvs.ui.model.BranchCategory;
-import org.eclipse.team.internal.ccvs.ui.model.BranchTag;
 import org.eclipse.team.ui.actions.TeamAction;
 
 /**
  * DefineTagAction remembers a tag by name
  */
-public class DefineBranchAction extends TeamAction {
+public class ConfigureTagsFromRepoView extends TeamAction {
 	IInputValidator validator = new IInputValidator() {
 		public String isValid(String newText) {
 			IStatus status = CVSTag.validateTagName(newText);
@@ -74,6 +76,7 @@ public class DefineBranchAction extends TeamAction {
 		}
 		return new ICVSRepositoryLocation[0];
 	}
+
 	/*
 	 * @see IActionDelegate#run(IAction)
 	 */
@@ -82,20 +85,26 @@ public class DefineBranchAction extends TeamAction {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				final ICVSRepositoryLocation[] roots = getSelectedRemoteRoots();
 				if (roots.length != 1) return;
-				Shell shell = getShell();
+				final Shell shell = getShell();
 				shell.getDisplay().syncExec(new Runnable() {
 					public void run() {
-						InputDialog dialog = new InputDialog(getShell(), Policy.bind("DefineBranchAction.enterTag"), Policy.bind("DefineBranchAction.enterTagLong"), null, validator);
-						if (dialog.open() == InputDialog.OK) {
-							CVSTag tag = new CVSTag(dialog.getValue(), CVSTag.BRANCH);
-							CVSUIPlugin.getPlugin().getRepositoryManager().addBranchTags(roots[0], new CVSTag[] {tag});
+						try {
+							ICVSRemoteResource[] folders = roots[0].members(CVSTag.DEFAULT, false, null);
+							ICVSFolder[] cvsFolders = new ICVSFolder[folders.length];
+							for (int i = 0; i < folders.length; i++) {
+								cvsFolders[i] = (ICVSFolder)folders[i];
+							}
+							TagConfigurationDialog d = new TagConfigurationDialog(shell, cvsFolders);
+							d.open();
+						} catch(CVSException e) {
+							ErrorDialog.openError(shell, "Configure Tag Error", "Error retreiving root folders from repository", e.getStatus());
 						}
 					}
 				});
 			}
-		}, Policy.bind("DefineBranchAction.tag"), this.PROGRESS_BUSYCURSOR);
-
+		}, "Configuring branch tags", this.PROGRESS_BUSYCURSOR);
 	}
+
 	/*
 	 * @see TeamAction#isEnabled()
 	 */
@@ -105,4 +114,3 @@ public class DefineBranchAction extends TeamAction {
 		return true;
 	}
 }
-

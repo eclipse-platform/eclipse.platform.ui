@@ -6,6 +6,7 @@ package org.eclipse.team.internal.ccvs.ui.merge;
  */
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -20,14 +21,13 @@ import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.team.ccvs.core.CVSTag;
-import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.core.TeamException;
+import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.TagConfigurationDialog;
 import org.eclipse.team.internal.ccvs.ui.wizards.CVSWizardPage;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -67,7 +67,7 @@ public class MergeWizardStartPage extends CVSWizardPage {
 	 * @see IDialogPage#createControl(Composite)
 	 */
 	public void createControl(Composite parent) {
-		Composite composite = createComposite(parent, 2);
+		Composite composite = createComposite(parent, 1);
 		// set F1 help
 		// WorkbenchHelp.setHelp(composite, new DialogPageContextComputer (this, ITeamHelpContextIds.REPO_CONNECTION_MAIN_PAGE));
 		
@@ -85,9 +85,14 @@ public class MergeWizardStartPage extends CVSWizardPage {
 		});
 		table.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				TagElement element = (TagElement)((IStructuredSelection)table.getSelection()).getFirstElement();
-				result = element.getTag();
-				setPageComplete(true);
+				IStructuredSelection selection = (IStructuredSelection)table.getSelection();
+				if(!selection.isEmpty()) {
+					TagElement element = (TagElement)((IStructuredSelection)table.getSelection()).getFirstElement();
+					if(element!=null) {
+						result = element.getTag();
+						setPageComplete(true);
+					}
+				}
 			}
 		});
 		table.addDoubleClickListener(new IDoubleClickListener() {
@@ -96,18 +101,29 @@ public class MergeWizardStartPage extends CVSWizardPage {
 			}
 		});
 
-		setControl(composite);
+		Runnable afterRefresh = new Runnable() {
+			public void run() {
+				table.refresh();
+			}
+		};
+		
+		Runnable afterConfigure = new Runnable() {
+			public void run() {
+				initialize();
+			}
+		};
 
+		setControl(composite);
+		TagConfigurationDialog.createTagDefinitionButtons(getShell(), composite, new IProject[] {project}, 
+														  convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT), 
+														  convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH),
+														  afterRefresh, afterConfigure);
 		initialize();
 		setPageComplete(false);
 	}
 	private void initialize() {
-		try {
-			ICVSRemoteFolder remoteResource = (ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(project);
-			table.setInput(new VersionsElement(remoteResource, getShell()));
-		} catch (TeamException e) {
-			// To do. This could only happen if the resource was not a child of the provider.
-		}
+		ICVSFolder cvsProject = CVSWorkspaceRoot.getCVSFolderFor(project);
+		table.setInput(new TagRootElement(cvsProject, CVSTag.VERSION));
 	}
 	public void setProject(IProject project) {
 		this.project = project;

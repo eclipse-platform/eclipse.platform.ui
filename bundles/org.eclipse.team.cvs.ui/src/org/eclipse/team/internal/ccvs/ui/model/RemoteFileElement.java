@@ -17,7 +17,7 @@ public class RemoteFileElement extends RemoteResourceElement {
 	 * Initial implementation: return null;
 	 */
 	public Object[] getChildren(Object o) {
-		return null;
+		return new Object[0];
 	}
 	/**
 	 * Initial implementation: return null.

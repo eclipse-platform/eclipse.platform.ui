@@ -28,29 +28,14 @@ public class MergeWizard extends Wizard {
 
 	public void addPages() {
 		// Provide a progress monitor to indicate what is going on
-		try {
-			new ProgressMonitorDialog(getShell()).run(false, false, new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					monitor.beginTask(Policy.bind("MergeWizard.preparing"), 100);
-					setWindowTitle(Policy.bind("MergeWizard.title"));
-					ImageDescriptor mergeImage = CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_MERGE);
-					startPage = new MergeWizardStartPage("startPage", Policy.bind("MergeWizard.start"), mergeImage);
-					monitor.subTask(Policy.bind("MergeWizard.preparingStart"));
-					startPage.setProject(project);
-					monitor.worked(50);
-					addPage(startPage);
-					endPage = new MergeWizardEndPage("endPage", Policy.bind("MergeWizard.end"), mergeImage);
-					monitor.subTask(Policy.bind("MergeWizard.preparingEnd"));
-					endPage.setProject(project);
-					addPage(endPage);
-					monitor.done();
-				}
-			});
-		} catch (InvocationTargetException e) {
-			CVSUIPlugin.log(new Status(IStatus.ERROR, CVSUIPlugin.ID, 0, Policy.bind("internal"), e.getTargetException()));
-		} catch (InterruptedException e) {
-			// Ignore
-		}
+		setWindowTitle(Policy.bind("MergeWizard.title"));
+		ImageDescriptor mergeImage = CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_MERGE);
+		startPage = new MergeWizardStartPage("startPage", Policy.bind("MergeWizard.start"), mergeImage);
+		startPage.setProject(project);
+		addPage(startPage);
+		endPage = new MergeWizardEndPage("endPage", Policy.bind("MergeWizard.end"), mergeImage);
+		endPage.setProject(project);
+		addPage(endPage);
 	}
 
 	/*

@@ -5,19 +5,16 @@ package org.eclipse.team.internal.ccvs.ui.model;
  * All Rights Reserved.
  */
  
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
-import org.eclipse.team.internal.ccvs.ui.RepositoryManager;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
@@ -25,15 +22,16 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * children of a RemoteModule are its versions. A RemoteModule is
  * a child of the VersionsCategory.
  */
-public class RemoteModule extends CVSModelElement implements IAdaptable {
-	ICVSRemoteFolder folder;
-	VersionCategory parent;
+public class RemoteVersionModule extends CVSModelElement implements IAdaptable {
+	CVSTag tag;
+	List projects = new ArrayList();
+	GroupedByVersionCategory parent;
 	
 	/**
 	 * RemoteProject constructor.
 	 */
-	public RemoteModule(ICVSRemoteFolder folder, VersionCategory parent) {
-		this.folder = folder;
+	public RemoteVersionModule(CVSTag tag, GroupedByVersionCategory parent) {
+		this.tag = tag;
 		this.parent = parent;
 	}
 	
@@ -47,6 +45,10 @@ public class RemoteModule extends CVSModelElement implements IAdaptable {
 		return null;
 	}
 	
+	public void addProject(ICVSRemoteFolder project) {
+		projects.add(project);
+	}
+	
 	/**
 	 * Returns the children of this object.  When this object
 	 * is displayed in a tree, the returned objects will be this
@@ -55,24 +57,7 @@ public class RemoteModule extends CVSModelElement implements IAdaptable {
 	 * are the versions for that module.
 	 */
 	public Object[] getChildren(Object o) {
-		final Object[][] result = new Object[1][];
-		BusyIndicator.showWhile(Display.getDefault(), new Runnable() {
-			public void run() {
-				RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
-				try {
-					manager.refreshDefinedTags(folder, false);
-				} catch(TeamException e) {
-					// continue
-				}
-				CVSTag[] tags = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownVersionTags(folder);
-				Object[] versions = new Object[tags.length];
-				for (int i = 0; i < versions.length; i++) {
-					versions[i] = folder.getRepository().getRemoteFolder(folder.getRepositoryRelativePath(), tags[i]);
-				}
-				result[0] = versions;
-			}
-		});
-		return result[0];
+		return (ICVSRemoteFolder[]) projects.toArray(new ICVSRemoteFolder[projects.size()]);
 	}
 	
 	/**
@@ -92,7 +77,7 @@ public class RemoteModule extends CVSModelElement implements IAdaptable {
 	 * in the UI.
 	 */
 	public String getLabel(Object o) {
-		return folder.getName();
+		return tag.getName();
 	}
 	
 	/**
@@ -102,21 +87,11 @@ public class RemoteModule extends CVSModelElement implements IAdaptable {
 		return parent;
 	}
 
-	/**
-	 * Return the repository the given element belongs to.
-	 */
-	public ICVSRepositoryLocation getRepository(Object o) {
-		return folder.getRepository();
-	}
 	
 	/** (Non-javadoc)
 	 * For debugging purposes only.
 	 */
 	public String toString() {
-		return "RemoteModule(" + folder.getName() + ")";
-	}
-	
-	public ICVSRemoteResource getCVSResource() {
-		return folder;
+		return "RemoteVersionModule(" + tag.getName() + ")";
 	}
 }

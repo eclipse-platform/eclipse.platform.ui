@@ -11,6 +11,7 @@
 package org.eclipse.team.internal.ccvs.core.resources;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
@@ -310,5 +311,14 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 		if(error[0]!=null) {
 			throw error[0];
 		}
+	}
+	/**
+	 * @see ICVSFolder#fetchChildren(IProgressMonitor)
+	 */
+	public ICVSResource[] fetchChildren(IProgressMonitor monitor) throws CVSException {
+		List children = new ArrayList();
+		children.addAll(Arrays.asList(getFolders()));
+		children.addAll(Arrays.asList(getFiles()));
+		return (ICVSResource[]) children.toArray(new ICVSResource[children.size()]);
 	}
 }

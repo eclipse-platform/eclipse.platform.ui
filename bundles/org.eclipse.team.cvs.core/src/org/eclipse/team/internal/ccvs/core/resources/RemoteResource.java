@@ -25,7 +25,7 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
  * resources that reside in a CVS repository but have not necessarily been loaded
  * locally.
  */
-public abstract class RemoteResource extends PlatformObject implements ICVSRemoteResource, ICVSResource {
+public abstract class RemoteResource extends PlatformObject implements ICVSRemoteResource {
 
 	protected ResourceSyncInfo info;
 	protected RemoteFolder parent;

@@ -6,7 +6,6 @@ package org.eclipse.team.internal.ccvs.core.resources;
  */
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -17,11 +16,12 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.team.ccvs.core.*;
 import org.eclipse.team.ccvs.core.CVSTag;
+import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.client.Checkout;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Session;
@@ -247,7 +247,7 @@ public class RemoteModule extends RemoteFolder {
 	/* 
 	 * Override of inherited getMembers in order to combine the physical members with any referenced modules
 	 */
-	public ICVSRemoteResource[] getMembers(CVSTag tagName, IProgressMonitor monitor) throws TeamException {
+	public ICVSRemoteResource[] getMembers(CVSTag tagName, IProgressMonitor monitor) throws CVSException {
 		
 		if ( ! expandable) return new ICVSRemoteResource[0];
 		

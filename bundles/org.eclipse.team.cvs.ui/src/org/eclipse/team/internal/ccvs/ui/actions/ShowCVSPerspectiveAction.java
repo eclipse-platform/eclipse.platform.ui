@@ -28,7 +28,7 @@ public class ShowCVSPerspectiveAction extends Action {
 		if (activePage == null) {
 			return;
 		}
-		IPerspectiveDescriptor cvsPerspective = workbench.getPerspectiveRegistry().findPerspectiveWithId("org.eclipse.team.cvs.ui.cvsPerspective");
+		IPerspectiveDescriptor cvsPerspective = workbench.getPerspectiveRegistry().findPerspectiveWithId("org.eclipse.team.cvs.ui.cvsPerspective"); //$NON-NLS-1$
 		if(cvsPerspective!=null) {
 			activePage.setPerspective(cvsPerspective);
 		}

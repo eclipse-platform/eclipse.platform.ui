@@ -276,12 +276,12 @@
                class="org.eclipse.team.internal.ccvs.ui.actions.AddToWorkspaceAction"
                id="org.eclipse.team.ccvs.ui.addToWorkspace">
          </action>
-         <action
-               label="%RemoveModuleVersionAction.label"
-               tooltip="%RemoveModuleVersionAction.tooltip"
-               class="org.eclipse.team.internal.ccvs.ui.actions.RemoveModuleVersionAction"
-               id="org.eclipse.team.ccvs.ui.removeTag">
-         </action>
+	     <action
+				id="org.eclipse.team.ccvs.ui.configureTagsOnRemoteFolder"
+				label="%ConfigureTags.label"
+				tooltip="%ConfigureTags.label"
+				icon="icons/full/clcl16/newstream_wiz.gif"
+				class="org.eclipse.team.internal.ccvs.ui.actions.ConfigureTagsFromRepoViewOnFolder"/>        
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.team.ccvs.core.ICVSRemoteFile"
@@ -297,12 +297,6 @@
                tooltip="%ShowHistoryAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.ShowHistoryAction"
                id="org.eclipse.team.ccvs.ui.showHistory">
-         </action>
-         <action
-               label="%AutoDefineTagsAction.label"
-               tooltip="%AutoDefineTagsAction.tooltip"
-               class="org.eclipse.team.internal.ccvs.ui.actions.AutoDefineTagsAction"
-               id="org.eclipse.team.ccvs.ui.autoDefine">
          </action>
       </objectContribution>
       <objectContribution
@@ -325,22 +319,22 @@
       <objectContribution
             objectClass="org.eclipse.team.internal.ccvs.ui.model.RemoteModule"
             id="org.eclipse.team.ccvs.ui.VersionCategoryContributions">
-         <action
-               label="%DefineVersionAction.label"
-               tooltip="%DefineVersionAction.tooltip"
-               class="org.eclipse.team.internal.ccvs.ui.actions.DefineVersionAction"
-               id="org.eclipse.team.ccvs.ui.defineVersion">
-         </action>
+	     <action
+				id="org.eclipse.team.ccvs.ui.configureTagsOnRemoteModule"
+				label="%ConfigureTags.label"
+				tooltip="%ConfigureTags.label"
+				icon="icons/full/clcl16/newstream_wiz.gif"
+				class="org.eclipse.team.internal.ccvs.ui.actions.ConfigureTagsFromRepoViewOnFolder"/>       
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.team.internal.ccvs.ui.model.ProjectVersion"
             id="org.eclipse.team.ccvs.ui.ProjectVersionContributions">
-         <action
-               label="%DefineVersionAction.label"
-               tooltip="%DefineVersionAction.tooltip"
-               class="org.eclipse.team.internal.ccvs.ui.actions.DefineVersionAction"
-               id="org.eclipse.team.ccvs.ui.defineVersion">
-         </action>
+	     <action
+				id="org.eclipse.team.ccvs.ui.configureTagsOnProjectVersion"
+				label="%ConfigureTags.label"
+				tooltip="%ConfigureTags.label"
+				icon="icons/full/clcl16/newstream_wiz.gif"
+				class="org.eclipse.team.internal.ccvs.ui.actions.ConfigureTagsFromRepoView"/>        
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.team.ccvs.core.ICVSRepositoryLocation"
@@ -364,6 +358,12 @@
                class="org.eclipse.team.internal.ccvs.ui.actions.DefineBranchAction"
                id="org.eclipse.team.ccvs.ui.defineBranch">
          </action>
+	     <action
+				id="org.eclipse.team.ccvs.ui.configureTagsOnBranchCategory"
+				label="%ConfigureTags.label"
+				tooltip="%ConfigureTags.label"
+				icon="icons/full/clcl16/newstream_wiz.gif"
+				class="org.eclipse.team.internal.ccvs.ui.actions.ConfigureTagsFromRepoView"/>        
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.team.internal.ccvs.ui.model.BranchCategory"
@@ -375,6 +375,12 @@
                class="org.eclipse.team.internal.ccvs.ui.actions.DefineBranchAction"
                id="org.eclipse.team.ccvs.ui.defineBranch">
          </action>
+    	 <action
+				id="org.eclipse.team.ccvs.ui.configureTagsOnBranchCategory"
+				label="%ConfigureTags.label"
+				tooltip="%ConfigureTags.label"
+				icon="icons/full/clcl16/newstream_wiz.gif"
+				class="org.eclipse.team.internal.ccvs.ui.actions.ConfigureTagsFromRepoView"/>
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.team.internal.ccvs.ui.model.BranchTag"

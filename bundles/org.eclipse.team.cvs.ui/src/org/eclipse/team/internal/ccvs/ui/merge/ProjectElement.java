@@ -9,24 +9,38 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.ccvs.core.CVSTag;
-import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
+import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 public class ProjectElement implements IAdaptable, IWorkbenchAdapter {
-	ICVSRemoteFolder remote;
-	Shell shell;
+	ICVSFolder project;
+	boolean includeHeadTag;
+	TagRootElement branches;
+	TagRootElement versions;
 	
-	public ProjectElement(ICVSRemoteFolder remote, Shell shell) {
-		this.remote = remote;
-		this.shell = shell;
+	public ProjectElement(ICVSFolder project, boolean includeHeadTag) {
+		this.project = project;
+		this.includeHeadTag = includeHeadTag;		
+		branches = new TagRootElement(project, CVSTag.BRANCH);
+		versions = new TagRootElement(project, CVSTag.VERSION);
 	}
+	
 	public Object[] getChildren(Object o) {
-		return new Object[] {
-			new BranchesElement(remote),
-			new TagElement(CVSTag.DEFAULT),
-			new VersionsElement(remote, shell)
-		};
+		if(includeHeadTag) {
+			return new Object[] { branches, 
+								   new TagElement(CVSTag.DEFAULT),
+								   versions
+								  			 };
+		} else {
+				return new Object[] {branches, versions};
+		}
 	}
+	public TagRootElement getBranches() {
+		return branches;
+	}
+	public TagRootElement getVersions() {
+		return versions;
+	}	
 	public Object getAdapter(Class adapter) {
 		if (adapter == IWorkbenchAdapter.class) return this;
 		return null;

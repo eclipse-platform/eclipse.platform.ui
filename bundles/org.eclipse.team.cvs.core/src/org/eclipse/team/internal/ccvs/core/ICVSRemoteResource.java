@@ -16,7 +16,7 @@ import org.eclipse.team.core.sync.IRemoteResource;
  * 
  * Clients are not expected to implement this interface.
  */
-public interface ICVSRemoteResource extends IRemoteResource {
+public interface ICVSRemoteResource extends IRemoteResource, ICVSResource {
 	
 	/**
 	 * Return the repository
