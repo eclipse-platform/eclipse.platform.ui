@@ -105,25 +105,20 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	private ListenerList postSelectionChangedListeners = new ListenerList(1);
 	
 	/**
-	 * The safe runnable used to call the label provider.
+	 * The safe runnable used to update an item.
 	 */
-	private	UpdateItemSafeRunnable safeUpdateItem = new UpdateItemSafeRunnable();
-	
 	class UpdateItemSafeRunnable extends SafeRunnable {
-		Object object;
-		Widget widget;
-		boolean fullMap;
-		boolean exception = false;
+	    private Widget widget;
+	    private Object element;
+	    private boolean fullMap;
+	    UpdateItemSafeRunnable(Widget widget, Object element, boolean fullMap) {
+	        this.widget = widget;
+	        this.element = element;
+	        this.fullMap = fullMap;
+	    }
 		public void run() {
-			if(exception) return;
-			doUpdateItem(widget,object,fullMap);
+			doUpdateItem(widget, element, fullMap);
 		}
-		public void handleException(Throwable e) {
-			super.handleException(e);
-			//If and unexpected exception happens, remove it
-			//to make sure the application keeps running.
-			exception = true;
-		}		
 	} 		
 	
 /**
@@ -131,6 +126,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
  * no content provider, a default label provider, no sorter, and no filters.
  */
 protected StructuredViewer() {
+    // do nothing
 }
 /**
  * Adds a listener for double-clicks in this viewer.
@@ -888,17 +884,7 @@ public void refresh(final Object element, final boolean updateLabels) {
  * </p>
  */
 protected final void refreshItem(Widget widget, Object element) {
-	try {
-		safeUpdateItem.widget = widget;
-		safeUpdateItem.object = element;
-		safeUpdateItem.fullMap = false;
-		Platform.run(safeUpdateItem);
-	}
-	finally {
-		// clean up
-		safeUpdateItem.widget = null;
-		safeUpdateItem.object = null;
-	}
+	Platform.run(new UpdateItemSafeRunnable(widget, element, true));
 }
 /**
  * Removes the given open listener from this viewer.
@@ -1260,17 +1246,7 @@ public void update(Object element, String[] properties) {
  * @param element the element
  */
 protected final void updateItem(Widget widget, Object element) {
-	try {
-		safeUpdateItem.widget = widget;
-		safeUpdateItem.object = element;
-		safeUpdateItem.fullMap = true;
-		Platform.run(safeUpdateItem);
-	}
-	finally {
-		// clean up
-		safeUpdateItem.widget = null;
-		safeUpdateItem.object = null;
-	}
+    Platform.run(new UpdateItemSafeRunnable(widget, element, true));
 }
 /**
  * Updates the selection of this viewer.

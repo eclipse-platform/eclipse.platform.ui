@@ -17,7 +17,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.Platform;
-
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionListener;
@@ -26,10 +28,6 @@ import org.eclipse.swt.events.TreeListener;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Widget;
-
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.util.ListenerList;
-import org.eclipse.jface.util.SafeRunnable;
 
 /**
  * Abstract base implementation for tree-structure-oriented viewers (trees and
@@ -73,24 +71,17 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	private int expandToLevel = 0;
 
 	/**
-	 * The safe runnable used to call the label provider. */
-	private UpdateItemSafeRunnable safeUpdateItem =
-		new UpdateItemSafeRunnable();
-
+	 * Safe runnable used to update an item.
+	 */
 	class UpdateItemSafeRunnable extends SafeRunnable {
-		Object element;
-		Item item;
-		boolean exception = false;
+		private Object element;
+		private Item item;
+	    UpdateItemSafeRunnable(Item item, Object element) {
+	        this.item = item;
+	        this.element = element;
+	    }
 		public void run() {
-			if (exception)
-				return;
 			doUpdateItem(item, element);
-		}
-		public void handleException(Throwable e) {
-			super.handleException(e);
-			//If and unexpected exception happens, remove it
-			//to make sure the application keeps running.
-			exception = true;
 		}
 	}
 
@@ -100,6 +91,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	 * auto-expand turned off.
 	 */
 	protected AbstractTreeViewer() {
+	    // do nothing
 	}
 	/**
 	 * Adds the given child elements to this viewer as children of the given
@@ -263,6 +255,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	protected void addSelectionListener(
 		Control control,
 		SelectionListener listener) {
+	    // do nothing
 	}
 	/**
 	 * Adds a listener for expand and collapse events in this viewer. Has no
@@ -463,14 +456,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 			}
 
 			// update icon and label
-			safeUpdateItem.item = item;
-			safeUpdateItem.element = element;
-			try {
-				Platform.run(safeUpdateItem);
-			} finally {
-				safeUpdateItem.item = null;
-				safeUpdateItem.element = null;
-			}
+			Platform.run(new UpdateItemSafeRunnable(item, element));
 		}
 	}
 	/**
