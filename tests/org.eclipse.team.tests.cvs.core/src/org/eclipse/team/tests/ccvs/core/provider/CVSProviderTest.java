@@ -377,9 +377,6 @@ public class CVSProviderTest extends EclipseTest {
 		assertHasKSubstOption(copy2, "added.xtxt", ksubst);
 		assertHasKSubstOption(copy2, "added.xbin", ksubst);
 		
-		// verify that local contents are up to date
-		assertEquals(project, copy2);
-		
 		IFileTypeInfo[] infos = Team.getDefaultTypes();
 		String[] extensions = new String[infos.length];
 		int[] types = new int[infos.length];
@@ -389,6 +386,27 @@ public class CVSProviderTest extends EclipseTest {
 			types[i] = info.getType();
 		}
 		Team.setAllTypes(extensions, types);
+	}
+	
+	public void testKeywordSubsBinToText() throws TeamException, CoreException, IOException {
+		//create a test project
+		KSubstOption ksubst = Command.KSUBST_TEXT;
+		IProject project = createProject("testKeywordSubsBinToText", new String[] { "dummy" });
+		assertHasKSubstOption(project, "dummy", Command.KSUBST_BINARY);
+	
+		// change keyword substitution
+		Map map = new HashMap();
+		map.put(project.getFile("dummy"), ksubst);
+		
+		// change from binary to text should commit a new file with 
+		waitMsec(1500);
+		IStatus status = getProvider(project).setKeywordSubstitution(map, null, null);
+		assertTrue("Status should be ok, was: " + status.toString(), status.isOK());
+		assertHasKSubstOption(project, "dummy", ksubst);
+
+		IProject copy = checkoutCopy(project, "-copy");
+		assertHasKSubstOption(copy, "dummy", ksubst);
+		assertEquals(project, copy);		 		
 	}
 	
 	public static void setFileContents(IFile file, String string) throws CoreException {
