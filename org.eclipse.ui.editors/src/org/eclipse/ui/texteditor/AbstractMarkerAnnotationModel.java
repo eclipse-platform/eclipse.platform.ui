@@ -34,7 +34,6 @@ import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationModel;
 
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.editors.text.EditorsUI;
 
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 
@@ -152,20 +151,6 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 	}
 	
 	/**
-	 * Determines the annotation type for the given marker.
-	 * 
-	 * @param marker the marker for which to determine the annotation type
-	 * @return the annotation type for an annotation for the given marker
-	 * @since 3.0
-	 */
-	protected String computeAnnotationType(IMarker marker) {
-		AnnotationTypeLookup lookup= getAnnotationTypeLookup();
-		if (lookup != null)
-			return lookup.getAnnotationType(marker);
-		return null;
-	}
-	
-	/**
 	 * Returns the annotation type lookup used by this annotation model.
 	 * 
 	 * @return the annotation type lookup
@@ -244,14 +229,8 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 			if (p != null)
 				try {
 					MarkerAnnotation annotation= createMarkerAnnotation(marker);
-					if (annotation != null) {
-						
-						String annotationType= computeAnnotationType(marker);
-						if (annotationType != null)
-							annotation.setType(annotationType);
-						
+					if (annotation != null)
 						addAnnotation(annotation, p, false);
-					}
 				} catch (BadLocationException e) {
 					// ignore invalid position
 				}
@@ -345,9 +324,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 		if (a != null) {
 			Position p= createPositionFromMarker(marker);
 			if (p != null) {
-				String annotationType= computeAnnotationType(marker);
-				if (annotationType != null && !annotationType.equals(a.getType()))
-					a.setType(annotationType);
+				a.update();
 				modifyAnnotation(a, p);
 			}
 		}

@@ -29,10 +29,12 @@ import org.eclipse.jface.resource.ImageDescriptor;
 
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.IAnnotationAccessExtension;
 
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 
@@ -47,14 +49,12 @@ public class MarkerAnnotation extends Annotation {
 	/** 
 	 * The layer in which markers representing problem are located.
 	 * @since 2.0
-	 * XXX to be deprecated as of 3.0 use {@link AnnotationLayerLookup#ERROR_LAYER}
+	 * @deprecated as of 3.0
 	 */
 	public final static int PROBLEM_LAYER= 5;
 	
 	/** Internal image registry */
 	private static Map fgImageRegistry;
-
-
 	
 	/**
 	 * Returns an image for the given display as specified by the given image descriptor.
@@ -106,14 +106,19 @@ public class MarkerAnnotation extends Annotation {
 	private Image fImage;
 	/** The image name */
 	private String fImageName;
-
+	/**
+	 * Tells whether {@link setLayer(int)} has been called.
+	 * @since 3.0
+	 */
+	private boolean fLayerHasBeenSet= false;
+	
 	/**
 	 * Creates a new annotation for the given marker.
 	 *
 	 * @param marker the marker
 	 */
 	public MarkerAnnotation(IMarker marker) {
-		this(null, marker);
+		this(EditorsPlugin.getDefault().getAnnotationTypeLookup().getAnnotationType(marker), marker);
 	}
 	
 	/**
@@ -174,34 +179,51 @@ public class MarkerAnnotation extends Annotation {
 	protected void initialize() {
 		
 		String name= getUnknownImageName(fMarker);
-		int layer= 1;
 		
 		if (MarkerUtilities.isMarkerType(fMarker, IMarker.TASK)) {
 			name= IDE.SharedImages.IMG_OBJS_TASK_TSK;
-			layer= AnnotationLayerLookup.TASK_LAYER;
 		} else if (MarkerUtilities.isMarkerType(fMarker, IMarker.BOOKMARK)) {
 			name= IDE.SharedImages.IMG_OBJS_BKMRK_TSK;
-			layer= AnnotationLayerLookup.BOOKMARK_LAYER;
 		} else if (MarkerUtilities.isMarkerType(fMarker, IMarker.PROBLEM)) {
 			switch (MarkerUtilities.getSeverity(fMarker)) {
 				case IMarker.SEVERITY_INFO:
 					name= ISharedImages.IMG_OBJS_INFO_TSK;
-					layer= 3;
 					break;
 				case IMarker.SEVERITY_WARNING:
 					name= ISharedImages.IMG_OBJS_WARN_TSK;
-					layer= AnnotationLayerLookup.WARNING_LAYER;
 					break;
 				case IMarker.SEVERITY_ERROR:
 					name= ISharedImages.IMG_OBJS_ERROR_TSK;
-					layer= AnnotationLayerLookup.ERROR_LAYER;
 					break;
 			}
 		}
 		
 		fImage= null;
 		fImageName= name;
-		setLayer(layer);
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.source.Annotation#getLayer()
+	 * @since 3.0
+	 */
+	public int getLayer() {
+		if (fLayerHasBeenSet)
+			return super.getLayer();
+		
+		AnnotationPreference preference= EditorsPlugin.getDefault().getAnnotationPreferenceLookup().getAnnotationPreference(this);
+		if (preference != null)
+			return preference.getPresentationLayer();
+		else
+			return IAnnotationAccessExtension.DEFAULT_LAYER;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.source.Annotation#setLayer(int)
+	 * @since 3.0
+	 */
+	protected void setLayer(int layer) {
+		super.setLayer(layer);
+		fLayerHasBeenSet= true;
 	}
 	
 	/*
@@ -219,8 +241,20 @@ public class MarkerAnnotation extends Annotation {
 	 */
 	public void update() {
 		initialize();
+		updateType();
 	}
-		
+	
+	/**
+	 * Updates the type to be in sync with its underlying marker.
+	 * 
+	 * @since 3.0
+	 */
+	private void updateType() {
+		String annotationType= EditorsPlugin.getDefault().getAnnotationTypeLookup().getAnnotationType(fMarker); 
+		if (annotationType != null && !annotationType.equals(getType()))
+			setType(annotationType);
+	}
+	
 	/**
 	 * Returns the name of an image used to visually represent markers of 
 	 * unknown type. This implementation returns <code>null</code>.
