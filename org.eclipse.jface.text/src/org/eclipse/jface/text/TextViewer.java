@@ -2625,6 +2625,7 @@ public class TextViewer extends Viewer implements
 						documentCaret= fDocumentCommand.offset + (fDocumentCommand.text == null ? 0 : fDocumentCommand.text.length());
 					int widgetCaret= modelOffset2WidgetOffset(documentCaret);
 					fTextWidget.setCaretOffset(widgetCaret);
+					fTextWidget.showSelection();
 				}
 			} catch (BadLocationException x) {
 				if (TRACE_ERRORS)
