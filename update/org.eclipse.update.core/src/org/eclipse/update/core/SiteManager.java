@@ -58,8 +58,10 @@ public class SiteManager {
 	}
 	
 	/**
-	 * Prompt the user to configure or unconfigure
-	 * newly discoverd features.
+	 * Trigger handling of newly discovered features. This method
+	 * can be called by the executing application whenever it
+	 * is invoked with the -newUpdates command line argument.
+	 * 
 	 * @throws CoreException if an error occurs.
 	 * @since 2.0
 	 */
