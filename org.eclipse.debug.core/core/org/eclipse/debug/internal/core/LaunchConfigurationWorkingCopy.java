@@ -15,6 +15,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
@@ -226,7 +227,16 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 					)
 				);				
 			}
-			ByteArrayInputStream stream = new ByteArrayInputStream(xml.getBytes());
+			ByteArrayInputStream stream = null;
+			try {
+				stream = new ByteArrayInputStream(xml.getBytes("UTF8")); //$NON-NLS-1$
+			} catch (UnsupportedEncodingException e) {
+				throw new DebugException(
+					new Status(
+						 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
+						 DebugException.REQUEST_FAILED, DebugCoreMessages.getString("LaunchConfigurationWorkingCopy.5"), null //$NON-NLS-1$
+					));
+			}
 			if (!file.exists()) {
 				file.create(stream, false, null);
 			} else {
