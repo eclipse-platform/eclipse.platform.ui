@@ -368,7 +368,7 @@ class AnimationManager {
 			 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#add(org.eclipse.ui.internal.progress.JobInfo)
 			 */
 			public void add(JobInfo info) {
-				incrementJobCount(info.getJob());
+				incrementJobCount(info);
 
 			}
 
@@ -378,6 +378,13 @@ class AnimationManager {
 			public void refresh(JobInfo info) {
 				if (info.getErrorStatus() != null)
 					showingError = true;
+				else {
+					int state = info.getJob().getState();
+					if (state == Job.RUNNING)
+						add(info);
+					else
+						remove(info);
+				}
 			}
 
 			/* (non-Javadoc)
@@ -387,11 +394,11 @@ class AnimationManager {
 				JobProgressManager manager = JobProgressManager.getInstance();
 				showingError = manager.hasErrorsDisplayed();
 				jobs.clear();
+				setAnimated(false);
 				JobInfo[] currentInfos = manager.getJobInfos();
 				for (int i = 0; i < currentInfos.length; i++) {
 					JobInfo info = currentInfos[i];
-					if (info.getJob().getState() != Job.RUNNING
-						|| manager.isNonDisplayableJob(info.getJob()))
+					if (manager.isNonDisplayableJob(info.getJob()))
 						continue;
 					add(currentInfos[i]);
 				}
@@ -408,20 +415,17 @@ class AnimationManager {
 
 			}
 
-			private void incrementJobCount(Job job) {
+			private void incrementJobCount(JobInfo info) {
 				//Don't count the animate job itself
-				if (isAnimationSupport(job))
+				if (isNotTracked(info))
 					return;
 
 				if (jobs.isEmpty())
 					setAnimated(true);
-				jobs.add(job);
+				jobs.add(info.getJob());
 			}
 
 			private void decrementJobCount(Job job) {
-				//Don't count the animate job itself
-				if (isAnimationSupport(job))
-					return;
 
 				jobs.remove(job);
 				if (jobs.isEmpty())
@@ -429,10 +433,19 @@ class AnimationManager {
 			}
 
 			/** 
-			 * If this is one of our jobs then don't bother.
+			 * If this is one of our jobs or not running then don't bother.
 			 */
-			private boolean isAnimationSupport(Job job) {
-				return job == clearJob || job == animateJob;
+			private boolean isNotTracked(JobInfo info) {
+
+				//We always track errors
+				if (info.getErrorStatus() == null) {
+					Job job = info.getJob();
+					return job.getState() != Job.RUNNING
+						|| job == clearJob
+						|| job == animateJob;
+				}
+				else
+					return false;
 			}
 		};
 	}
@@ -479,10 +492,10 @@ class AnimationManager {
 	 * @return
 	 */
 	void createClearJob() {
-		clearJob = new UIJob(ProgressMessages.getString("AnimationItem.RedrawJob")) {//$NON-NLS-1$
-		/* (non-Javadoc)
-		* @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-		*/
+			clearJob = new UIJob(ProgressMessages.getString("AnimationItem.RedrawJob")) {//$NON-NLS-1$
+	/* (non-Javadoc)
+	* @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+	*/
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				AnimationItem[] animationItems = getAnimationItems();
 				for (int i = 0; i < animationItems.length; i++)
