@@ -29,8 +29,6 @@ import org.eclipse.ui.commands.ICommandHandle;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.ICommandManagerEvent;
 import org.eclipse.ui.commands.ICommandManagerListener;
-import org.eclipse.ui.commands.IGestureConfiguration;
-import org.eclipse.ui.commands.IGestureConfigurationHandle;
 import org.eclipse.ui.commands.IKeyConfiguration;
 import org.eclipse.ui.commands.IKeyConfigurationHandle;
 import org.eclipse.ui.internal.util.Util;
@@ -46,10 +44,7 @@ public final class CommandManager implements ICommandManager {
 	private SortedMap commandsById = new TreeMap();
 	private SortedSet definedCategoryIds = new TreeSet();
 	private SortedSet definedCommandIds = new TreeSet();
-	private SortedSet definedGestureConfigurationIds = new TreeSet();
 	private SortedSet definedKeyConfigurationIds = new TreeSet();
-	private SortedMap gestureConfigurationHandlesById = new TreeMap();
-	private SortedMap gestureConfigurationsById = new TreeMap();
 	private SortedMap keyConfigurationHandlesById = new TreeMap();
 	private SortedMap keyConfigurationsById = new TreeMap();	
 	private RegistryReader registryReader;
@@ -110,28 +105,10 @@ public final class CommandManager implements ICommandManager {
 		return Collections.unmodifiableSortedSet(definedCommandIds);	
 	}
 
-	public SortedSet getDefinedGestureConfigurationIds() {
-		return Collections.unmodifiableSortedSet(definedGestureConfigurationIds);
-	}
-
 	public SortedSet getDefinedKeyConfigurationIds() {
 		return Collections.unmodifiableSortedSet(definedKeyConfigurationIds);
 	}
 
-	public IGestureConfigurationHandle getGestureConfigurationHandle(String gestureConfigurationId) {
-		if (gestureConfigurationId == null)
-			throw new NullPointerException();
-			
-		IGestureConfigurationHandle gestureConfigurationHandle = (IGestureConfigurationHandle) gestureConfigurationHandlesById.get(gestureConfigurationId);
-		
-		if (gestureConfigurationHandle == null) {
-			gestureConfigurationHandle = new GestureConfigurationHandle(gestureConfigurationId);
-			gestureConfigurationHandlesById.put(gestureConfigurationId, gestureConfigurationHandle);
-		}
-		
-		return gestureConfigurationHandle;
-	}
-	
 	public IKeyConfigurationHandle getKeyConfigurationHandle(String keyConfigurationId) {
 		if (keyConfigurationId == null)
 			throw new NullPointerException();
@@ -172,11 +149,7 @@ public final class CommandManager implements ICommandManager {
 		if (registryReader == null)
 			registryReader = new RegistryReader(Platform.getPluginRegistry());
 		
-		registryReader.load();
-		List gestureConfigurations = registryReader.getGestureConfigurations();
-		SortedMap gestureConfigurationsById = GestureConfiguration.sortedMapById(gestureConfigurations);			
-		SortedSet gestureConfigurationChanges = new TreeSet();
-		Util.diff(gestureConfigurationsById, this.gestureConfigurationsById, gestureConfigurationChanges, gestureConfigurationChanges, gestureConfigurationChanges);
+		registryReader.load();	
 		List keyConfigurations = registryReader.getKeyConfigurations();
 		SortedMap keyConfigurationsById = KeyConfiguration.sortedMapById(keyConfigurations);			
 		SortedSet keyConfigurationChanges = new TreeSet();
@@ -207,16 +180,6 @@ public final class CommandManager implements ICommandManager {
 	
 			if (!Util.equals(definedCommandIds, this.definedCommandIds)) {	
 				this.definedCommandIds = definedCommandIds;
-				commandManagerChanged = true;
-			}
-		}
-
-		if (!gestureConfigurationChanges.isEmpty()) {
-			this.gestureConfigurationsById = gestureConfigurationsById;		
-			SortedSet definedGestureConfigurationIds = new TreeSet(gestureConfigurationsById.keySet());
-	
-			if (!Util.equals(definedGestureConfigurationIds, this.definedGestureConfigurationIds)) {	
-				this.definedGestureConfigurationIds = definedGestureConfigurationIds;
 				commandManagerChanged = true;
 			}
 		}
@@ -262,22 +225,6 @@ public final class CommandManager implements ICommandManager {
 						commandHandle.define((ICommand) commandsById.get(commandId));
 					else
 						commandHandle.undefine();
-				}
-			}			
-		}
-		
-		if (!gestureConfigurationChanges.isEmpty()) {
-			Iterator iterator = gestureConfigurationChanges.iterator();
-		
-			while (iterator.hasNext()) {
-				String gestureConfigurationId = (String) iterator.next();					
-				GestureConfigurationHandle gestureConfigurationHandle = (GestureConfigurationHandle) gestureConfigurationHandlesById.get(gestureConfigurationId);
-			
-				if (gestureConfigurationHandle != null) {			
-					if (gestureConfigurationsById.containsKey(gestureConfigurationId))
-						gestureConfigurationHandle.define((IGestureConfiguration) gestureConfigurationsById.get(gestureConfigurationId));
-					else
-						gestureConfigurationHandle.undefine();
 				}
 			}			
 		}

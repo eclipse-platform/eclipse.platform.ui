@@ -115,48 +115,48 @@ public class KeyStroke implements Comparable {
 	/**
 	 * JAVADOC
 	 * 
-	 * @param nonModifierKey
+	 * @param naturalKey
 	 * @return
 	 */		
-	public static KeyStroke getInstance(NaturalKey nonModifierKey) {
-		return new KeyStroke(Util.EMPTY_SORTED_SET, nonModifierKey);
+	public static KeyStroke getInstance(NaturalKey naturalKey) {
+		return new KeyStroke(Util.EMPTY_SORTED_SET, naturalKey);
 	}
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @param modifierKey
-	 * @param nonModifierKey
+	 * @param naturalKey
 	 * @return
 	 */
-	public static KeyStroke getInstance(ModifierKey modifierKey, NaturalKey nonModifierKey) {
+	public static KeyStroke getInstance(ModifierKey modifierKey, NaturalKey naturalKey) {
 		if (modifierKey == null)
 			throw new NullPointerException();
 
-		return new KeyStroke(new TreeSet(Collections.singletonList(modifierKey)), nonModifierKey);
+		return new KeyStroke(new TreeSet(Collections.singletonList(modifierKey)), naturalKey);
 	}
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @param modifierKeys
-	 * @param nonModifierKey
+	 * @param naturalKey
 	 * @return
 	 */
-	public static KeyStroke getInstance(ModifierKey[] modifierKeys, NaturalKey nonModifierKey) {
+	public static KeyStroke getInstance(ModifierKey[] modifierKeys, NaturalKey naturalKey) {
 		Util.assertInstance(modifierKeys, ModifierKey.class);		
-		return new KeyStroke(new TreeSet(Arrays.asList(modifierKeys)), nonModifierKey);
+		return new KeyStroke(new TreeSet(Arrays.asList(modifierKeys)), naturalKey);
 	}
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @param modifierKeys
-	 * @param nonModifierKey
+	 * @param naturalKey
 	 * @return
 	 */
-	public static KeyStroke getInstance(SortedSet modifierKeys, NaturalKey nonModifierKey) {
-		return new KeyStroke(modifierKeys, nonModifierKey);
+	public static KeyStroke getInstance(SortedSet modifierKeys, NaturalKey naturalKey) {
+		return new KeyStroke(modifierKeys, naturalKey);
 	}
 
 	/**
@@ -172,7 +172,7 @@ public class KeyStroke implements Comparable {
 			throw new NullPointerException();
 
 		SortedSet modifierKeys = new TreeSet();
-		NaturalKey nonModifierKey = null;
+		NaturalKey naturalKey = null;
 		StringTokenizer stringTokenizer = new StringTokenizer(string, KEY_DELIMITERS);
 		
 		while (stringTokenizer.hasMoreTokens()) {
@@ -185,38 +185,38 @@ public class KeyStroke implements Comparable {
 				if (modifierKey == null || !modifierKeys.add(modifierKey))
 					throw new ParseException();
 			} else if (name.length() == 1) {
-				nonModifierKey = CharacterKey.getInstance(name.charAt(0));				
+				naturalKey = CharacterKey.getInstance(name.charAt(0));				
 				break;
 			} else {
 				name = name.toUpperCase();
-				nonModifierKey = (NaturalKey) escapeKeyLookup.get(name);
+				naturalKey = (NaturalKey) escapeKeyLookup.get(name);
 				
-				if (nonModifierKey == null)
-					nonModifierKey = (NaturalKey) specialKeyLookup.get(name);
+				if (naturalKey == null)
+					naturalKey = (NaturalKey) specialKeyLookup.get(name);
 
-				if (nonModifierKey == null)
+				if (naturalKey == null)
 					throw new ParseException();
 				
 				break;
 			} 					
 		}
 		
-		return new KeyStroke(modifierKeys, nonModifierKey);
+		return new KeyStroke(modifierKeys, naturalKey);
 	}
 
 	private SortedSet modifierKeys;
-	private NaturalKey nonModifierKey;
+	private NaturalKey naturalKey;
 
 	private transient ModifierKey[] modifierKeysAsArray;
 	
-	private KeyStroke(SortedSet modifierKeys, NaturalKey nonModifierKey) {
+	private KeyStroke(SortedSet modifierKeys, NaturalKey naturalKey) {
 		super();
 
-		if (nonModifierKey == null)
+		if (naturalKey == null)
 			throw new NullPointerException();
 
 		this.modifierKeys = Util.safeCopy(modifierKeys, ModifierKey.class);
-		this.nonModifierKey = nonModifierKey;		
+		this.naturalKey = naturalKey;		
 		this.modifierKeysAsArray = (ModifierKey[]) this.modifierKeys.toArray(new ModifierKey[modifierKeys.size()]);
 	}
 
@@ -225,7 +225,7 @@ public class KeyStroke implements Comparable {
 		int compareTo = Util.compare((Comparable[]) modifierKeysAsArray, (Comparable[]) keyStroke.modifierKeysAsArray);
 		
 		if (compareTo == 0)
-			compareTo = nonModifierKey.compareTo(keyStroke.nonModifierKey);			
+			compareTo = naturalKey.compareTo(keyStroke.naturalKey);			
 			
 		return compareTo;	
 	}
@@ -235,7 +235,7 @@ public class KeyStroke implements Comparable {
 			return false;
 
 		KeyStroke keyStroke = (KeyStroke) object;	
-		return modifierKeys.equals(keyStroke.modifierKeys) && nonModifierKey.equals(keyStroke.nonModifierKey);
+		return modifierKeys.equals(keyStroke.modifierKeys) && naturalKey.equals(keyStroke.naturalKey);
 	}
 
 	/**
@@ -253,13 +253,13 @@ public class KeyStroke implements Comparable {
 	 * @return
 	 */
 	public NaturalKey getNonModifierKey() {
-		return nonModifierKey;
+		return naturalKey;
 	}
 
 	public int hashCode() {
 		int result = HASH_INITIAL;
 		result = result * HASH_FACTOR + modifierKeys.hashCode();
-		result = result * HASH_FACTOR + nonModifierKey.hashCode();
+		result = result * HASH_FACTOR + naturalKey.hashCode();
 		return result;		
 	}
 
@@ -272,7 +272,7 @@ public class KeyStroke implements Comparable {
 			stringBuffer.append(KEY_DELIMITER);
 		}
 
-		String name = nonModifierKey.toString();
+		String name = naturalKey.toString();
 
 		if ("\b".equals(name)) //$NON-NLS-1$
 			stringBuffer.append(BS);

@@ -19,7 +19,6 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.commands.ICategory;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.IContextBinding;
-import org.eclipse.ui.commands.IGestureConfiguration;
 import org.eclipse.ui.commands.IImageBinding;
 import org.eclipse.ui.commands.IKeyConfiguration;
 import org.eclipse.ui.internal.util.Util;
@@ -35,7 +34,6 @@ final class Persistence {
 	final static String TAG_CONTEXT_BINDING = "contextBinding"; //$NON-NLS-1$	
 	final static String TAG_CONTEXT_ID = "contextId"; //$NON-NLS-1$	
 	final static String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
-	final static String TAG_GESTURE_CONFIGURATION = "gestureConfiguration"; //$NON-NLS-1$	
 	final static String TAG_IMAGE_BINDING = "imageBinding"; //$NON-NLS-1$	
 	final static String TAG_IMAGE_STYLE = "imageStyle"; //$NON-NLS-1$	
 	final static String TAG_IMAGE_URI = "imageUri"; //$NON-NLS-1$
@@ -151,42 +149,6 @@ final class Persistence {
 	
 		for (int i = 0; i < mementos.length; i++)
 			list.add(readContextBinding(mementos[i], pluginIdOverride));
-	
-		return list;				
-	}
-
-	static IGestureConfiguration readGestureConfiguration(IMemento memento, String pluginIdOverride) {
-		if (memento == null)
-			throw new NullPointerException();			
-
-		String description = memento.getString(TAG_DESCRIPTION);
-		String id = memento.getString(TAG_ID);
-
-		if (id == null)
-			id = Util.ZERO_LENGTH_STRING;
-		
-		String name = memento.getString(TAG_NAME);
-
-		if (name == null)
-			name = Util.ZERO_LENGTH_STRING;
-		
-		String pluginId = pluginIdOverride != null ? pluginIdOverride : memento.getString(TAG_PLUGIN_ID);
-		return new GestureConfiguration(description, id, name, pluginId);
-	}
-
-	static List readGestureConfigurations(IMemento memento, String name, String pluginIdOverride) {
-		if (memento == null || name == null)
-			throw new NullPointerException();			
-	
-		IMemento[] mementos = memento.getChildren(name);
-	
-		if (mementos == null)
-			throw new NullPointerException();
-	
-		List list = new ArrayList(mementos.length);
-	
-		for (int i = 0; i < mementos.length; i++)
-			list.add(readGestureConfiguration(mementos[i], pluginIdOverride));
 	
 		return list;				
 	}
@@ -355,32 +317,6 @@ final class Persistence {
 			writeContextBinding(memento.createChild(name), (IContextBinding) iterator.next());
 	}
 	
-	static void writeGestureConfiguration(IMemento memento, IGestureConfiguration gestureConfiguration) {
-		if (memento == null || gestureConfiguration == null)
-			throw new NullPointerException();
-
-		memento.putString(TAG_DESCRIPTION, gestureConfiguration.getDescription());
-		memento.putString(TAG_ID, gestureConfiguration.getId());
-		memento.putString(TAG_NAME, gestureConfiguration.getName());
-		memento.putString(TAG_PLUGIN_ID, gestureConfiguration.getPluginId());
-	}
-
-	static void writeGestureConfigurations(IMemento memento, String name, List gestureConfigurations) {
-		if (memento == null || name == null || gestureConfigurations == null)
-			throw new NullPointerException();
-		
-		gestureConfigurations = new ArrayList(gestureConfigurations);
-		Iterator iterator = gestureConfigurations.iterator();
-
-		while (iterator.hasNext())
-			Util.assertInstance(iterator.next(), IGestureConfiguration.class);
-
-		iterator = gestureConfigurations.iterator();
-
-		while (iterator.hasNext()) 
-			writeGestureConfiguration(memento.createChild(name), (IGestureConfiguration) iterator.next());
-	}
-
 	static void writeImageBinding(IMemento memento, IImageBinding imageBinding) {
 		if (memento == null || imageBinding == null)
 			throw new NullPointerException();

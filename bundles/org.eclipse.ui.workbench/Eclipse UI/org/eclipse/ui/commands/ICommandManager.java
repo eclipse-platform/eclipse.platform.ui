@@ -81,23 +81,7 @@ public interface ICommandManager {
 	 *
 	 * @return
 	 */
-	SortedSet getDefinedGestureConfigurationIds();	
-
-	/**
-	 * JAVADOC
-	 *
-	 * @return
-	 */
 	SortedSet getDefinedKeyConfigurationIds();	
-
-	/**
-	 * JAVADOC
-	 *
-	 * @param gestureConfigurationId
-	 * @return
-	 * @throws NullPointerException
-	 */	
-	IGestureConfigurationHandle getGestureConfigurationHandle(String gestureConfigurationId);
 
 	/**
 	 * JAVADOC

@@ -16,62 +16,19 @@ package org.eclipse.ui.commands;
  * JAVADOC
  * </p>
  * <p>
- * This interface is not intended to be extended or implemented by clients.
- * </p>
- * <p>
  * <em>EXPERIMENTAL</em>
  * </p>
  * 
  * @since 3.0
  */
-public interface IGestureBinding {
+public class GestureKey extends NaturalKey {
 
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getCommandId();
+	public final static GestureKey EAST = new GestureKey("EAST"); 
+	public final static GestureKey NORTH = new GestureKey("NORTH"); 
+	public final static GestureKey SOUTH = new GestureKey("SOUTH"); 
+	public final static GestureKey WEST = new GestureKey("WEST"); 
 
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getContextId();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getGestureConfigurationId();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	GestureSequence getGestureSequence();
-	
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getLocale();
-	
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getPlatform();
-	
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getPluginId();		
+	private GestureKey(String name) {
+		super(name);
+	}
 }

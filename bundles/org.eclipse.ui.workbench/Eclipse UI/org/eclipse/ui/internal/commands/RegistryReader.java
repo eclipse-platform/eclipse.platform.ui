@@ -23,7 +23,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICategory;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.IContextBinding;
-import org.eclipse.ui.commands.IGestureConfiguration;
 import org.eclipse.ui.commands.IImageBinding;
 import org.eclipse.ui.commands.IKeyConfiguration;
 import org.eclipse.ui.internal.util.ConfigurationElementMemento;
@@ -35,14 +34,12 @@ final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryRead
 	private List categories;	
 	private List commands;
 	private List contextBindings;
-	private List gestureConfigurations;
 	private List imageBindings;
 	private List keyConfigurations;
 	private IPluginRegistry pluginRegistry;
 	private List unmodifiableCategories;
 	private List unmodifiableCommands;
 	private List unmodifiableContextBindings;
-	private List unmodifiableGestureConfigurations;
 	private List unmodifiableImageBindings;
 	private List unmodifiableKeyConfigurations;
 	
@@ -52,7 +49,6 @@ final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryRead
 		unmodifiableCategories = Collections.EMPTY_LIST;
 		unmodifiableCommands = Collections.EMPTY_LIST;
 		unmodifiableContextBindings = Collections.EMPTY_LIST;
-		unmodifiableGestureConfigurations = Collections.EMPTY_LIST;
 		unmodifiableImageBindings = Collections.EMPTY_LIST;		
 		unmodifiableKeyConfigurations = Collections.EMPTY_LIST;
 	}
@@ -67,10 +63,6 @@ final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryRead
 
 	List getContextBindings() {
 		return unmodifiableContextBindings;
-	}
-
-	List getGestureConfigurations() {
-		return unmodifiableGestureConfigurations;
 	}
 	
 	List getImageBindings() {
@@ -97,11 +89,6 @@ final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryRead
 		else 
 			contextBindings.clear();
 
-		if (gestureConfigurations == null)
-			gestureConfigurations = new ArrayList();
-		else 
-			gestureConfigurations.clear();
-
 		if (imageBindings == null)
 			imageBindings = new ArrayList();
 		else 
@@ -118,7 +105,6 @@ final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryRead
 		unmodifiableCategories = Collections.unmodifiableList(new ArrayList(categories));
 		unmodifiableCommands = Collections.unmodifiableList(new ArrayList(commands));
 		unmodifiableContextBindings = Collections.unmodifiableList(new ArrayList(contextBindings));
-		unmodifiableGestureConfigurations = Collections.unmodifiableList(new ArrayList(gestureConfigurations));
 		unmodifiableImageBindings = Collections.unmodifiableList(new ArrayList(imageBindings));
 		unmodifiableKeyConfigurations = Collections.unmodifiableList(new ArrayList(keyConfigurations));
 	}
@@ -134,9 +120,6 @@ final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryRead
 
 		if (Persistence.TAG_CONTEXT_BINDING.equals(name))
 			return readContextBinding(element);
-
-		if (Persistence.TAG_GESTURE_CONFIGURATION.equals(name))
-			return readGestureConfiguration(element);
 
 		if (Persistence.TAG_IMAGE_BINDING.equals(name))
 			return readImageBinding(element);
@@ -188,15 +171,6 @@ final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryRead
 	
 		if (contextBinding != null)
 			contextBindings.add(contextBinding);	
-		
-		return true;
-	}
-
-	private boolean readGestureConfiguration(IConfigurationElement element) {
-		IGestureConfiguration gestureConfiguration = Persistence.readGestureConfiguration(new ConfigurationElementMemento(element), getPluginId(element));
-	
-		if (gestureConfiguration != null)
-			gestureConfigurations.add(gestureConfiguration);	
 		
 		return true;
 	}

@@ -15,12 +15,9 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
    <element name="extension">
       <complexType>
          <sequence>
-<!--element ref="activeGestureConfiguration"/-->
             <element ref="activeKeyConfiguration"/>
             <element ref="category"/>
             <element ref="command"/>
-<!--element ref="gestureConfiguration"/-->
-<!--element ref="gestureBinding"/-->
             <element ref="keyBinding"/>
             <element ref="keyConfiguration"/>
             <element ref="context"/>
@@ -49,17 +46,6 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
       </complexType>
    </element>
 
-<!--element name="activeGestureConfiguration">
-      <complexType>
-         <attribute name="value" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element-->
    <element name="activeKeyConfiguration">
       <annotation>
          <documentation>
@@ -153,87 +139,6 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
       </complexType>
    </element>
 
-<!--element name="gestureConfiguration">
-      <complexType>
-         <attribute name="description" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="id" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="name" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="parent" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element-->
-<!--element name="gestureBinding">
-      <complexType>
-         <sequence>
-            <element ref="sequence" minOccurs="0" maxOccurs="1"/>
-         </sequence>
-         <attribute name="configuration" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="command" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="locale" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="platform" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="context" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="string" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element-->
    <element name="keyBinding">
       <annotation>
          <documentation>
