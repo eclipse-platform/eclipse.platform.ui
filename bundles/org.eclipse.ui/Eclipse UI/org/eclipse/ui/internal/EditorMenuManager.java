@@ -49,7 +49,11 @@ public class EditorMenuManager extends SubMenuManager {
 				return Boolean.FALSE;	
 		}
 		public Integer getAccelerator(IContributionItem item) {
-			return parentMgr.getOverrides().getAccelerator(item);
+			if (enabledAllowed)
+				return parentMgr.getOverrides().getAccelerator(item);
+			else
+				// no acclerator if the item is disabled
+				return new Integer(0);
 		}
 		public String getAcceleratorText(IContributionItem item) {
 			return parentMgr.getOverrides().getAcceleratorText(item);
