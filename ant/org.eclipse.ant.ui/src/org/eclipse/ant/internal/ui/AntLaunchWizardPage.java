@@ -65,7 +65,7 @@ public class AntLaunchWizardPage extends WizardPage implements ICheckStateListen
 
 		restorePreviousSelectedTargets();
 		listViewer.addCheckStateListener(this);
-		listViewer.refresh();
+		listViewer.refresh();				argumentsField.setFocus();
 		setControl(composite);
 	}
 	
