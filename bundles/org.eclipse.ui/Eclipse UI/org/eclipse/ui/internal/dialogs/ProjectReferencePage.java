@@ -168,11 +168,10 @@ protected void handle(InvocationTargetException e) {
 	} else {
 		String msg = target.getMessage();
 		if (msg == null)
-			msg = "Internal error";//$NON-NLS-1$
+			msg = WorkbenchMessages.getString("Internal_error"); //$NON-NLS-1$
 		error = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, 1, msg, target);
 	}
-	ErrorDialog.openError(getControl().getShell(), "Problems Occurred", null, error);//$NON-NLS-1$
-	WorkbenchPlugin.log("Error in ProjectReferencePage.doOk", error);//$NON-NLS-1$
+	ErrorDialog.openError(getControl().getShell(), null, null, error);
 }
 /**
  * Initializes a ProjectReferencePage.
