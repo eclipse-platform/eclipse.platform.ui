@@ -1,452 +1,528 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin
-	name="%pluginName"
-	id="org.eclipse.team.cvs.ui"
-	version="2.0.0"
-	provider-name="Object Technology International, Inc."
-	class="org.eclipse.team.internal.ccvs.ui.CVSUIPlugin">
+   id="org.eclipse.team.cvs.ui"
+   name="%pluginName"
+   version="2.0.0"
+   provider-name="Object Technology International, Inc."
+   class="org.eclipse.team.internal.ccvs.ui.CVSUIPlugin">
 
-	<requires>
-		<import plugin="org.eclipse.core.runtime"/>
-		<import plugin="org.eclipse.core.resources"/>
-		<import plugin="org.eclipse.ui"/>
-		<import plugin="org.eclipse.team.core"/>
-		<import plugin="org.eclipse.team.ui"/>
-		<import plugin="org.eclipse.team.cvs.core"/>
-		<import plugin="org.eclipse.compare"/>
-	</requires>
+   <runtime>
+      <library name="teamcvsui.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+   <requires>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.team.core"/>
+      <import plugin="org.eclipse.team.ui"/>
+      <import plugin="org.eclipse.team.cvs.core"/>
+      <import plugin="org.eclipse.compare"/>
+   </requires>
 
-	<runtime>
-		<library name="teamcvsui.jar"/>
-	</runtime>
 
-	<!-- *************** Authenticator **************** -->
-	<extension point="org.eclipse.team.cvs.core.authenticator">
-		<authenticator>
-			<run class="org.eclipse.team.internal.ccvs.ui.WorkbenchUserAuthenticator"/>
-		</authenticator>
-	</extension>
-	
-	<!-- ******************* Wizards ****************** -->
-	<extension point="org.eclipse.team.ui.configurationWizards">
-		<wizard
-			name="%SharingWizard.name"
-			icon="icons/full/wizards/newconnect_wiz.gif"
-			class="org.eclipse.team.internal.ccvs.ui.wizards.SharingWizard"
-			id="org.eclipse.team.ccvs.ui.SharingWizard">
-		</wizard>
-	</extension>
-
-	<!-- ************** Property Pages *************** -->
-	<extension point="org.eclipse.ui.propertyPages">
-		<page name="%CVS" id="org.eclipse.team.ccvs.ui.propertyPages.CVSFilePropertiesPage"
-			objectClass="org.eclipse.core.resources.IFile"
-			class="org.eclipse.team.internal.ccvs.ui.CVSFilePropertiesPage" adaptable="true">
-			<filter name="projectNature" value="org.eclipse.team.cvs.core.cvsnature"/> 
-		</page>
-		<page name="%CVS" id="org.eclipse.team.ccvs.ui.propertyPages.CVSPropertiesPage"
-			objectClass="org.eclipse.core.resources.IProject"
-			class="org.eclipse.team.internal.ccvs.ui.CVSPropertiesPage" adaptable="true">
-			<filter name="projectNature" value="org.eclipse.team.cvs.core.cvsnature"/> 
-		</page>
-	</extension>
-  
-  	<!-- ******************* Menus ******************** -->
-	<extension point="org.eclipse.ui.popupMenus"> 
-		<objectContribution
-			id="org.eclipse.team.ccvs.ui.IFileContributions"
-			objectClass="org.eclipse.core.resources.IFile" adaptable="true">
-			<filter name="projectNature" value="org.eclipse.team.cvs.core.cvsnature"/>
-			<action 
-				id="org.eclipse.team.ccvs.ui.ignore"
-				label="%IgnoreAction.label"
-				tooltip="%IgnoreAction.tooltip"
-				menubarPath="team.main/group3"
-				class="org.eclipse.team.internal.ccvs.ui.actions.IgnoreAction"/>
-			<action 
-				id="org.eclipse.team.ccvs.ui.add"
-				label="%AddAction.label"
-				tooltip="%AddAction.tooltip"
-				menubarPath="team.main/group3"
-				class="org.eclipse.team.internal.ccvs.ui.actions.AddAction"/>
-			<action 
-				id="org.eclipse.team.ccvs.ui.showHistory"
-				label="%ShowHistoryAction.label"
-				tooltip="%ShowHistoryAction.tooltip"
-				menubarPath="team.main/group2"
-				class="org.eclipse.team.internal.ccvs.ui.actions.ShowResourceInHistoryAction"/>
-			<action 
-				id="org.eclipse.team.ccvs.ui.compareWithRevision"
-				label="%CompareWithRevisionAction.label"
-				tooltip="%CompareWithRevisionAction.tooltip"
-				menubarPath="compareWithMenu/compareWithGroup"
-				class="org.eclipse.team.internal.ccvs.ui.actions.CompareWithRevisionAction"/>
-			<action 
-				id="org.eclipse.team.ccvs.ui.replaceWithRevision"
-				label="%ReplaceWithRevisionAction.label"
-				tooltip="%ReplaceWithRevisionAction.tooltip"
-				menubarPath="replaceWithMenu/replaceWithGroup"
-				class="org.eclipse.team.internal.ccvs.ui.actions.CompareWithRevisionAction"/>
-		</objectContribution>
-		<objectContribution 
-			id="org.eclipse.team.ccvs.ui.ResourceContributions" 
-			objectClass="org.eclipse.core.resources.IResource" adaptable="true"> 
-			<filter name="projectNature" value="org.eclipse.team.cvs.core.cvsnature"/>
-			<action 
-				id="org.eclipse.team.ccvs.ui.setKeywordSubstitution"
-				label="%SetKeywordSubstitutionAction.label"
-				tooltip="%SetKeywordSubstitutionAction.tooltip"
-				menubarPath="team.main/group3"
-				class="org.eclipse.team.internal.ccvs.ui.actions.SetKeywordSubstitutionAction"/>
-			<action 
-				id="org.eclipse.team.ccvs.ui.tag"
-				label="%TagAction.label"
-				tooltip="%TagAction.tooltip"
-				menubarPath="team.main/group2"
-				class="org.eclipse.team.internal.ccvs.ui.actions.TagAction"/>
-			<action 
-				id="org.eclipse.team.ccvs.ui.compareWithRemote"
-				label="%CompareWithRemoteAction.label"
-				tooltip="%CompareWithRemoteAction.tooltip"
-				menubarPath="compareWithMenu/compareWithGroup"
-				class="org.eclipse.team.internal.ccvs.ui.actions.CompareWithRemoteAction"/>
-			<action 
-				id="org.eclipse.team.ccvs.ui.replace"
-				label="%ReplaceWithAction.label"
-				tooltip="%ReplaceWithAction.tooltip"
-				menubarPath="replaceWithMenu/replaceWithGroup"
-				class="org.eclipse.team.internal.ccvs.ui.actions.ReplaceWithRemoteAction"/>
-			<action
-				id="org.eclipse.team.ccvs.ui.GenerateDiff"
-				label="%GenerateDiff.label"
-				tooltip="%GenerateDiff.tooltip"
-				menubarPath="team.main/group1"
-				class="org.eclipse.team.internal.ccvs.ui.actions.GenerateDiffFileAction"/>	
-			<action 
-				id="org.eclipse.team.ccvs.ui.update"
-				label="%UpdateAction.label"
-				tooltip="%UpdateAction.tooltip"
-				menubarPath="team.main/group1"
-				class="org.eclipse.team.internal.ccvs.ui.actions.UpdateAction"/>
-			<action 
-				id="org.eclipse.team.ccvs.ui.commit"
-				label="%CommitAction.label"
-				tooltip="%CommitAction.tooltip"
-				menubarPath="team.main/group1"
-				class="org.eclipse.team.internal.ccvs.ui.actions.CommitAction"/>
-			<action
-				id="org.eclipse.team.ccvs.ui.sync"
-				label="%Synchronize.label"
-				tooltip="%Synchronize.tooltip"
-				menubarPath="team.main/group1"
-				class="org.eclipse.team.internal.ccvs.ui.actions.SyncAction"/>
-		</objectContribution>
-		<objectContribution
-			id="org.eclipse.team.ccvs.ui.IProjectContributions"
-			objectClass="org.eclipse.core.resources.IProject" adaptable="true">
-			<filter name="projectNature" value="org.eclipse.team.cvs.core.cvsnature"/>
-			<action 
-				id="org.eclipse.team.ccvs.ui.unmanage"
-				label="%UnmanageFolder.label"
-				tooltip="%UnmanageFolder.tooltip"
-				menubarPath="team.main/projectGroup"
-				class="org.eclipse.team.internal.ccvs.ui.actions.UnmanageAction"/>
-			<action 
-				id="org.eclipse.team.ccvs.ui.merge"
-				label="%MergeAction.label"
-				tooltip="%MergeAction.tooltip"
-				menubarPath="team.main/group2"
-				class="org.eclipse.team.internal.ccvs.ui.actions.MergeAction"/>
-			<action 
-				id="org.eclipse.team.ccvs.ui.branch"
-				label="%BranchAction.label"
-				tooltip="%BranchAction.tooltip"
-				menubarPath="team.main/group2"
-				class="org.eclipse.team.internal.ccvs.ui.actions.BranchAction"/>
-			<action 
-				id="org.eclipse.team.ccvs.ui.replaceWithTag"
-				label="%ReplaceWithTagAction.label"
-				tooltip="%ReplaceWithTagAction.tooltip"
-				menubarPath="replaceWithMenu/replaceWithGroup"
-				class="org.eclipse.team.internal.ccvs.ui.actions.ReplaceWithTagAction"/>
-		</objectContribution>
-		<objectContribution
-			id="org.eclipse.team.ccvs.ui.IFolderContributions"
-			objectClass="org.eclipse.core.resources.IFolder" adaptable="true">
-			<filter name="projectNature" value="org.eclipse.team.cvs.core.cvsnature"/>
-			<action 
-				id="org.eclipse.team.ccvs.ui.ignore"
-				label="%IgnoreAction.label"
-				tooltip="%IgnoreAction.tooltip"
-				menubarPath="team.main/group3"
-				class="org.eclipse.team.internal.ccvs.ui.actions.IgnoreAction"/>
-			<action 
-				id="org.eclipse.team.ccvs.ui.add"
-				label="%AddAction.label"
-				tooltip="%AddAction.tooltip"
-				menubarPath="team.main/group3"
-				class="org.eclipse.team.internal.ccvs.ui.actions.AddAction"/>
-		</objectContribution>
-		<objectContribution
-			id="org.eclipse.team.ccvs.ui.IContainerContributions"
-			objectClass="org.eclipse.core.resources.IContainer" adaptable="true">
-			<filter name="projectNature" value="org.eclipse.team.cvs.core.cvsnature"/>
-			<action 
-				id="org.eclipse.team.ccvs.ui.compareWithTag"
-				label="%CompareWithTagAction.label"
-				tooltip="%CompareWithTagAction.tooltip"
-				menubarPath="compareWithMenu/compareWithGroup"
-				class="org.eclipse.team.internal.ccvs.ui.actions.CompareWithTagAction"/>
-		</objectContribution>
-		<objectContribution 
-			id="org.eclipse.team.ccvs.ui.RemoteFolderContributions" 
-			objectClass="org.eclipse.team.ccvs.core.ICVSRemoteFolder">
-			<action 
-				id="org.eclipse.team.ccvs.ui.tagInRepository"
-				label="%TagInRepositoryAction.label"
-				tooltip="%TagInRepositoryAction.tooltip"
-				class="org.eclipse.team.internal.ccvs.ui.actions.TagInRepositoryAction"/>
-			<action 
-				id="org.eclipse.team.ccvs.ui.checkoutAs"
-				label="%CheckoutAsAction.label"
-				tooltip="%CheckoutAsAction.tooltip"
-				class="org.eclipse.team.internal.ccvs.ui.actions.CheckoutAsAction"/>
-			<action 
-				id="org.eclipse.team.ccvs.ui.addToWorkspace"
-				label="%AddToWorkspaceAction.label"
-				tooltip="%AddToWorkspaceAction.tooltip"
-				class="org.eclipse.team.internal.ccvs.ui.actions.AddToWorkspaceAction"/>
-			<action
-				id="org.eclipse.team.ccvs.ui.removeTag"
-				label="%RemoveModuleVersionAction.label"
-				tooltip="%RemoveModuleVersionAction.tooltip"
-				class="org.eclipse.team.internal.ccvs.ui.actions.RemoveModuleVersionAction"/>
-		</objectContribution>
-		<objectContribution 
-			id="org.eclipse.team.ccvs.ui.RemoteFileContributions" 
-			objectClass="org.eclipse.team.ccvs.core.ICVSRemoteFile">
-			<action 
-				id="org.eclipse.team.ccvs.ui.openRemoteFile"
-				label="%OpenRemoteFileAction.label"
-				tooltip="%OpenRemoteFileAction.tooltip"
-				class="org.eclipse.team.internal.ccvs.ui.actions.OpenRemoteFileAction"/>
-			<action 
-				id="org.eclipse.team.ccvs.ui.showHistory"
-				label="%ShowHistoryAction.label"
-				tooltip="%ShowHistoryAction.tooltip"
-				class="org.eclipse.team.internal.ccvs.ui.actions.ShowHistoryAction"/>
-			<action 
-				id="org.eclipse.team.ccvs.ui.autoDefine"
-				label="%AutoDefineTagsAction.label"
-				tooltip="%AutoDefineTagsAction.tooltip"
-				class="org.eclipse.team.internal.ccvs.ui.actions.AutoDefineTagsAction"/>
-		</objectContribution>
-		<objectContribution
-			id="org.eclipse.team.ccvs.ui.LogEntryContributions"
-			objectClass="org.eclipse.team.ccvs.core.ILogEntry">
-			<action
-				id="org.eclipse.team.ccvs.ui.openLogEntry"
-				label="%OpenLogEntryAction.label"
-				tooltip="%OpenLogEntryAction.tooltip"
-				class="org.eclipse.team.internal.ccvs.ui.actions.OpenLogEntryAction"/>
-			<action
-				id="org.eclipse.team.ccvs.ui.compareLogEntries"
-				label="%CompareRemoteResourcesAction.label"
-				tooltip="%CompareRemoteResourcesAction.tooltip"
-				enablesFor="2"
-				class="org.eclipse.team.internal.ccvs.ui.actions.CompareRemoteResourcesAction"/>
-		</objectContribution>
-		<objectContribution
-			id="org.eclipse.team.ccvs.ui.VersionCategoryContributions"
-			objectClass="org.eclipse.team.internal.ccvs.ui.model.RemoteModule">
-			<action
-				id="org.eclipse.team.ccvs.ui.defineVersion"
-				label="%DefineVersionAction.label"
-				tooltip="%DefineVersionAction.tooltip"
-				class="org.eclipse.team.internal.ccvs.ui.actions.DefineVersionAction"/>
-		</objectContribution>
-		<objectContribution
-			id="org.eclipse.team.ccvs.ui.ProjectVersionContributions"
-			objectClass="org.eclipse.team.internal.ccvs.ui.model.ProjectVersion">
-			<action
-				id="org.eclipse.team.ccvs.ui.defineVersion"
-				label="%DefineVersionAction.label"
-				tooltip="%DefineVersionAction.tooltip"
-				class="org.eclipse.team.internal.ccvs.ui.actions.DefineVersionAction"/>
-		</objectContribution>
-		<objectContribution
-			id="org.eclipse.team.ccvs.ui.RemoteRootContributions"
-			objectClass="org.eclipse.team.ccvs.core.ICVSRepositoryLocation">
-			<action
-				id="org.eclipse.team.ccvs.ui.copyNames"
-				label="%CopyRepositoryNameAction.label"
-				tooltip="%CopyRepositoryNameAction.tooltip"
-				class="org.eclipse.team.internal.ccvs.ui.actions.CopyRepositoryNameAction"/>
-			<action
-				id="org.eclipse.team.ccvs.ui.removeRoot"
-				label="%RemoveRootAction.label"
-				tooltip="%RemoveRootAction.tooltip"
-				class="org.eclipse.team.internal.ccvs.ui.actions.RemoveRootAction"/>
-			<action
-				id="org.eclipse.team.ccvs.ui.defineBranch"
-				label="%DefineBranchAction.label"
-				icon="icons/full/clcl16/newstream_wiz.gif"
-				tooltip="%DefineBranchAction.tooltip"
-				class="org.eclipse.team.internal.ccvs.ui.actions.DefineBranchAction"/>
-		</objectContribution>
-		<objectContribution
-			id="org.eclipse.team.ccvs.ui.BranchCategoryContributions"
-			objectClass="org.eclipse.team.internal.ccvs.ui.model.BranchCategory">
-			<action
-				id="org.eclipse.team.ccvs.ui.defineBranch"
-				label="%DefineBranchAction.label"
-				tooltip="%DefineBranchAction.tooltip"
-				icon="icons/full/clcl16/newstream_wiz.gif"
-				class="org.eclipse.team.internal.ccvs.ui.actions.DefineBranchAction"/>
-		</objectContribution>			
-		<objectContribution
-			id="org.eclipse.team.ccvs.ui.BranchTagContributions"
-			objectClass="org.eclipse.team.internal.ccvs.ui.model.BranchTag">
-			<action
-				id="org.eclipse.team.ccvs.ui.removeBranchTag"
-				label="%RemoveBranchTagAction.label"
-				tooltip="%RemoveBranchTagAction.tooltip"
-				class="org.eclipse.team.internal.ccvs.ui.actions.RemoveBranchTagAction"/>
-		</objectContribution>
-		<objectContribution
-			id="org.eclipse.team.ccvs.ui.RemoteResourceContributions"
-			objectClass="org.eclipse.team.ccvs.core.ICVSRemoteResource">
-			<action
-				id="org.eclipse.team.ccvs.ui.compareRemoteResources"
-				label="%CompareRemoteResourcesAction.label"
-				tooltip="%CompareRemoteResourcesAction.tooltip"
-				enablesFor="2"
-				class="org.eclipse.team.internal.ccvs.ui.actions.CompareRemoteResourcesAction"/>
-		</objectContribution>
-	</extension> 
-
-	<!-- ************** Views ********************** -->
-	<extension point="org.eclipse.ui.views">
-		<category 
-			id="org.eclipse.team.ccvs.ui"
-			name="%viewCategory">
-		</category>
-		<view
-			name="%Console.name"
-			category="org.eclipse.team.ccvs.ui"
-			class="org.eclipse.team.internal.ccvs.ui.Console"
-			id="org.eclipse.team.ccvs.ui.console"
-			icon="icons/full/cview16/console_view.gif">
-		</view>
-		<view
-			id="org.eclipse.team.ccvs.ui.RepositoriesView"
-			icon="icons/full/cview16/repo_rep.gif"
-			name="%RepositoriesView.name"
-			category="org.eclipse.team.ccvs.ui"
-			class="org.eclipse.team.internal.ccvs.ui.RepositoriesView">
-		</view>
-		<view
-			id="org.eclipse.team.ccvs.ui.HistoryView"
-			icon="icons/full/cview16/history_view.gif"
-			name="%HistoryView.name"
-			category="org.eclipse.team.ccvs.ui"
-			class="org.eclipse.team.internal.ccvs.ui.HistoryView">
-		</view>
-	</extension>
-	
-	<!-- **************** Preferences ******************* -->
-	<extension
-		point = "org.eclipse.ui.preferencePages">
-			<page id="org.eclipse.team.cvs.ui.CVSPreferences"
-				class="org.eclipse.team.internal.ccvs.ui.CVSPreferencesPage"
-				category="org.eclipse.team.ui.TextPreferences"
-				name="%PreferencePage.name">
-			</page>
-	</extension>
-
-   	<extension
-      point = "org.eclipse.ui.preferencePages">
-       <page id="org.eclipse.team.cvs.ui.ConsolePreferences"
-       	  class="org.eclipse.team.internal.ccvs.ui.ConsolePreferencesPage"
-       	    name="%ConsolePreferencePage.name"
-       	    category="org.eclipse.team.cvs.ui.CVSPreferences">
-       </page>
+<!-- *************** Authenticator **************** -->
+   <extension
+         point="org.eclipse.team.cvs.core.authenticator">
+      <authenticator>
+         <run
+               class="org.eclipse.team.internal.ccvs.ui.WorkbenchUserAuthenticator">
+         </run>
+      </authenticator>
    </extension>
-
-	<extension
-      point = "org.eclipse.ui.preferencePages">
-       <page id="org.eclipse.team.cvs.ui.CVSDecoratorPreferences"
-       	  class="org.eclipse.team.internal.ccvs.ui.CVSDecoratorPreferencesPage"
-       	    name="%DecoratorPreferencePage.name"
-       	    category="org.eclipse.team.cvs.ui.CVSPreferences">
-       </page>
+<!-- ******************* Wizards ****************** -->
+   <extension
+         point="org.eclipse.team.ui.configurationWizards">
+      <wizard
+            name="%SharingWizard.name"
+            icon="icons/full/wizards/newconnect_wiz.gif"
+            class="org.eclipse.team.internal.ccvs.ui.wizards.SharingWizard"
+            id="org.eclipse.team.ccvs.ui.SharingWizard">
+      </wizard>
    </extension>
-   
-   	<extension
-      point = "org.eclipse.ui.preferencePages">
-       <page id="org.eclipse.team.cvs.ui.ExtMethodPreferencePage"
-       	  class="org.eclipse.team.internal.ccvs.ui.ExtMethodPreferencePage"
-       	    name="%ExtMethodPreferencePage.name"
-       	    category="org.eclipse.team.cvs.ui.CVSPreferences">
-       </page>
+<!-- ************** Property Pages *************** -->
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            objectClass="org.eclipse.core.resources.IFile"
+            adaptable="true"
+            name="%CVS"
+            class="org.eclipse.team.internal.ccvs.ui.CVSFilePropertiesPage"
+            id="org.eclipse.team.ccvs.ui.propertyPages.CVSFilePropertiesPage">
+         <filter
+               name="projectNature"
+               value="org.eclipse.team.cvs.core.cvsnature">
+         </filter>
+      </page>
+      <page
+            objectClass="org.eclipse.core.resources.IProject"
+            adaptable="true"
+            name="%CVS"
+            class="org.eclipse.team.internal.ccvs.ui.CVSPropertiesPage"
+            id="org.eclipse.team.ccvs.ui.propertyPages.CVSPropertiesPage">
+         <filter
+               name="projectNature"
+               value="org.eclipse.team.cvs.core.cvsnature">
+         </filter>
+      </page>
    </extension>
-	
-	<!-- **************** Decorator ******************* -->
-	<extension point="org.eclipse.ui.decorators"> 
-        <decorator 
-             id="org.eclipse.team.cvs.ui.decorator" 
-             label="%DecoratorStandard.name" 
-             state="false" 
-	         class="org.eclipse.team.internal.ccvs.ui.CVSDecorator" 
-             objectClass="org.eclipse.core.resources.IResource"
-             adaptable="true"> 
-         </decorator> 
-	</extension>
-	
-	<!-- *************** View Actions **************** -->
-   <extension point="org.eclipse.ui.viewActions"> 
-     <viewContribution 
-         id="org.eclipse.team.cvs.ui.history" 
-         targetID="org.eclipse.team.ccvs.ui.HistoryView"> 
+<!-- ******************* Menus ******************** -->
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IFile"
+            adaptable="true"
+            id="org.eclipse.team.ccvs.ui.IFileContributions">
+         <filter
+               name="projectNature"
+               value="org.eclipse.team.cvs.core.cvsnature">
+         </filter>
          <action
-           id="org.eclipse.team.cvs.ui.historyaction"
-           label="%HistoryFilter.label"
-           tooltip="%HistoryFilter.tooltip"
-           toolbarPath="actions"
-           icon="icons/full/clcl16/filter_history.gif"
-           class="org.eclipse.team.internal.ccvs.ui.HistoryFilterAction">
+               label="%IgnoreAction.label"
+               tooltip="%IgnoreAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.IgnoreAction"
+               menubarPath="team.main/group3"
+               id="org.eclipse.team.ccvs.ui.ignore">
          </action>
-     </viewContribution>
-   </extension> 
+         <action
+               label="%AddAction.label"
+               tooltip="%AddAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.AddAction"
+               menubarPath="team.main/group3"
+               id="org.eclipse.team.ccvs.ui.add">
+         </action>
+         <action
+               label="%ShowHistoryAction.label"
+               tooltip="%ShowHistoryAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.ShowResourceInHistoryAction"
+               menubarPath="team.main/group2"
+               id="org.eclipse.team.ccvs.ui.showHistory">
+         </action>
+         <action
+               label="%CompareWithRevisionAction.label"
+               tooltip="%CompareWithRevisionAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.CompareWithRevisionAction"
+               menubarPath="compareWithMenu/compareWithGroup"
+               id="org.eclipse.team.ccvs.ui.compareWithRevision">
+         </action>
+         <action
+               label="%ReplaceWithRevisionAction.label"
+               tooltip="%ReplaceWithRevisionAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.CompareWithRevisionAction"
+               menubarPath="replaceWithMenu/replaceWithGroup"
+               id="org.eclipse.team.ccvs.ui.replaceWithRevision">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IResource"
+            adaptable="true"
+            id="org.eclipse.team.ccvs.ui.ResourceContributions">
+         <filter
+               name="projectNature"
+               value="org.eclipse.team.cvs.core.cvsnature">
+         </filter>
+         <action
+               label="%SetKeywordSubstitutionAction.label"
+               tooltip="%SetKeywordSubstitutionAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.SetKeywordSubstitutionAction"
+               menubarPath="team.main/group3"
+               id="org.eclipse.team.ccvs.ui.setKeywordSubstitution">
+         </action>
+         <action
+               label="%TagAction.label"
+               tooltip="%TagAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.TagAction"
+               menubarPath="team.main/group2"
+               id="org.eclipse.team.ccvs.ui.tag">
+         </action>
+         <action
+               label="%CompareWithRemoteAction.label"
+               tooltip="%CompareWithRemoteAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.CompareWithRemoteAction"
+               menubarPath="compareWithMenu/compareWithGroup"
+               id="org.eclipse.team.ccvs.ui.compareWithRemote">
+         </action>
+         <action
+               label="%ReplaceWithAction.label"
+               tooltip="%ReplaceWithAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.ReplaceWithRemoteAction"
+               menubarPath="replaceWithMenu/replaceWithGroup"
+               id="org.eclipse.team.ccvs.ui.replace">
+         </action>
+         <action
+               label="%GenerateDiff.label"
+               tooltip="%GenerateDiff.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.GenerateDiffFileAction"
+               menubarPath="team.main/group1"
+               id="org.eclipse.team.ccvs.ui.GenerateDiff">
+         </action>
+         <action
+               label="%UpdateAction.label"
+               tooltip="%UpdateAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.UpdateAction"
+               menubarPath="team.main/group1"
+               id="org.eclipse.team.ccvs.ui.update">
+         </action>
+         <action
+               label="%CommitAction.label"
+               tooltip="%CommitAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.CommitAction"
+               menubarPath="team.main/group1"
+               id="org.eclipse.team.ccvs.ui.commit">
+         </action>
+         <action
+               label="%Synchronize.label"
+               tooltip="%Synchronize.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.SyncAction"
+               menubarPath="team.main/group1"
+               id="org.eclipse.team.ccvs.ui.sync">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IProject"
+            adaptable="true"
+            id="org.eclipse.team.ccvs.ui.IProjectContributions">
+         <filter
+               name="projectNature"
+               value="org.eclipse.team.cvs.core.cvsnature">
+         </filter>
+         <action
+               label="%UnmanageFolder.label"
+               tooltip="%UnmanageFolder.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.UnmanageAction"
+               menubarPath="team.main/projectGroup"
+               id="org.eclipse.team.ccvs.ui.unmanage">
+         </action>
+         <action
+               label="%MergeAction.label"
+               tooltip="%MergeAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.MergeAction"
+               menubarPath="team.main/group2"
+               id="org.eclipse.team.ccvs.ui.merge">
+         </action>
+         <action
+               label="%BranchAction.label"
+               tooltip="%BranchAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.BranchAction"
+               menubarPath="team.main/group2"
+               id="org.eclipse.team.ccvs.ui.branch">
+         </action>
+         <action
+               label="%ReplaceWithTagAction.label"
+               tooltip="%ReplaceWithTagAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.ReplaceWithTagAction"
+               menubarPath="replaceWithMenu/replaceWithGroup"
+               id="org.eclipse.team.ccvs.ui.replaceWithTag">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IFolder"
+            adaptable="true"
+            id="org.eclipse.team.ccvs.ui.IFolderContributions">
+         <filter
+               name="projectNature"
+               value="org.eclipse.team.cvs.core.cvsnature">
+         </filter>
+         <action
+               label="%IgnoreAction.label"
+               tooltip="%IgnoreAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.IgnoreAction"
+               menubarPath="team.main/group3"
+               id="org.eclipse.team.ccvs.ui.ignore">
+         </action>
+         <action
+               label="%AddAction.label"
+               tooltip="%AddAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.AddAction"
+               menubarPath="team.main/group3"
+               id="org.eclipse.team.ccvs.ui.add">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IContainer"
+            adaptable="true"
+            id="org.eclipse.team.ccvs.ui.IContainerContributions">
+         <filter
+               name="projectNature"
+               value="org.eclipse.team.cvs.core.cvsnature">
+         </filter>
+         <action
+               label="%CompareWithTagAction.label"
+               tooltip="%CompareWithTagAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.CompareWithTagAction"
+               menubarPath="compareWithMenu/compareWithGroup"
+               id="org.eclipse.team.ccvs.ui.compareWithTag">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.team.ccvs.core.ICVSRemoteFolder"
+            id="org.eclipse.team.ccvs.ui.RemoteFolderContributions">
+         <action
+               label="%TagInRepositoryAction.label"
+               tooltip="%TagInRepositoryAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.TagInRepositoryAction"
+               id="org.eclipse.team.ccvs.ui.tagInRepository">
+         </action>
+         <action
+               label="%CheckoutAsAction.label"
+               tooltip="%CheckoutAsAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.CheckoutAsAction"
+               id="org.eclipse.team.ccvs.ui.checkoutAs">
+         </action>
+         <action
+               label="%AddToWorkspaceAction.label"
+               tooltip="%AddToWorkspaceAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.AddToWorkspaceAction"
+               id="org.eclipse.team.ccvs.ui.addToWorkspace">
+         </action>
+         <action
+               label="%RemoveModuleVersionAction.label"
+               tooltip="%RemoveModuleVersionAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.RemoveModuleVersionAction"
+               id="org.eclipse.team.ccvs.ui.removeTag">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.team.ccvs.core.ICVSRemoteFile"
+            id="org.eclipse.team.ccvs.ui.RemoteFileContributions">
+         <action
+               label="%OpenRemoteFileAction.label"
+               tooltip="%OpenRemoteFileAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.OpenRemoteFileAction"
+               id="org.eclipse.team.ccvs.ui.openRemoteFile">
+         </action>
+         <action
+               label="%ShowHistoryAction.label"
+               tooltip="%ShowHistoryAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.ShowHistoryAction"
+               id="org.eclipse.team.ccvs.ui.showHistory">
+         </action>
+         <action
+               label="%AutoDefineTagsAction.label"
+               tooltip="%AutoDefineTagsAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.AutoDefineTagsAction"
+               id="org.eclipse.team.ccvs.ui.autoDefine">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.team.ccvs.core.ILogEntry"
+            id="org.eclipse.team.ccvs.ui.LogEntryContributions">
+         <action
+               label="%OpenLogEntryAction.label"
+               tooltip="%OpenLogEntryAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.OpenLogEntryAction"
+               id="org.eclipse.team.ccvs.ui.openLogEntry">
+         </action>
+         <action
+               label="%CompareRemoteResourcesAction.label"
+               tooltip="%CompareRemoteResourcesAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.CompareRemoteResourcesAction"
+               enablesFor="2"
+               id="org.eclipse.team.ccvs.ui.compareLogEntries">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.team.internal.ccvs.ui.model.RemoteModule"
+            id="org.eclipse.team.ccvs.ui.VersionCategoryContributions">
+         <action
+               label="%DefineVersionAction.label"
+               tooltip="%DefineVersionAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.DefineVersionAction"
+               id="org.eclipse.team.ccvs.ui.defineVersion">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.team.internal.ccvs.ui.model.ProjectVersion"
+            id="org.eclipse.team.ccvs.ui.ProjectVersionContributions">
+         <action
+               label="%DefineVersionAction.label"
+               tooltip="%DefineVersionAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.DefineVersionAction"
+               id="org.eclipse.team.ccvs.ui.defineVersion">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.team.ccvs.core.ICVSRepositoryLocation"
+            id="org.eclipse.team.ccvs.ui.RemoteRootContributions">
+         <action
+               label="%CopyRepositoryNameAction.label"
+               tooltip="%CopyRepositoryNameAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.CopyRepositoryNameAction"
+               id="org.eclipse.team.ccvs.ui.copyNames">
+         </action>
+         <action
+               label="%RemoveRootAction.label"
+               tooltip="%RemoveRootAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.RemoveRootAction"
+               id="org.eclipse.team.ccvs.ui.removeRoot">
+         </action>
+         <action
+               label="%DefineBranchAction.label"
+               icon="icons/full/clcl16/newstream_wiz.gif"
+               tooltip="%DefineBranchAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.DefineBranchAction"
+               id="org.eclipse.team.ccvs.ui.defineBranch">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.team.internal.ccvs.ui.model.BranchCategory"
+            id="org.eclipse.team.ccvs.ui.BranchCategoryContributions">
+         <action
+               label="%DefineBranchAction.label"
+               icon="icons/full/clcl16/newstream_wiz.gif"
+               tooltip="%DefineBranchAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.DefineBranchAction"
+               id="org.eclipse.team.ccvs.ui.defineBranch">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.team.internal.ccvs.ui.model.BranchTag"
+            id="org.eclipse.team.ccvs.ui.BranchTagContributions">
+         <action
+               label="%RemoveBranchTagAction.label"
+               tooltip="%RemoveBranchTagAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.RemoveBranchTagAction"
+               id="org.eclipse.team.ccvs.ui.removeBranchTag">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.team.ccvs.core.ICVSRemoteResource"
+            id="org.eclipse.team.ccvs.ui.RemoteResourceContributions">
+         <action
+               label="%CompareRemoteResourcesAction.label"
+               tooltip="%CompareRemoteResourcesAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.CompareRemoteResourcesAction"
+               enablesFor="2"
+               id="org.eclipse.team.ccvs.ui.compareRemoteResources">
+         </action>
+      </objectContribution>
+   </extension>
+<!-- ************** Views ********************** -->
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="%viewCategory"
+            id="org.eclipse.team.ccvs.ui">
+      </category>
+      <view
+            name="%Console.name"
+            icon="icons/full/cview16/console_view.gif"
+            category="org.eclipse.team.ccvs.ui"
+            class="org.eclipse.team.internal.ccvs.ui.Console"
+            id="org.eclipse.team.ccvs.ui.console">
+      </view>
+      <view
+            name="%RepositoriesView.name"
+            icon="icons/full/cview16/repo_rep.gif"
+            category="org.eclipse.team.ccvs.ui"
+            class="org.eclipse.team.internal.ccvs.ui.RepositoriesView"
+            id="org.eclipse.team.ccvs.ui.RepositoriesView">
+      </view>
+      <view
+            name="%HistoryView.name"
+            icon="icons/full/cview16/history_view.gif"
+            category="org.eclipse.team.ccvs.ui"
+            class="org.eclipse.team.internal.ccvs.ui.HistoryView"
+            id="org.eclipse.team.ccvs.ui.HistoryView">
+      </view>
+   </extension>
+<!-- **************** Preferences ******************* -->
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            name="%PreferencePage.name"
+            category="org.eclipse.team.ui.TextPreferences"
+            class="org.eclipse.team.internal.ccvs.ui.CVSPreferencesPage"
+            id="org.eclipse.team.cvs.ui.CVSPreferences">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            name="%ConsolePreferencePage.name"
+            category="org.eclipse.team.cvs.ui.CVSPreferences"
+            class="org.eclipse.team.internal.ccvs.ui.ConsolePreferencesPage"
+            id="org.eclipse.team.cvs.ui.ConsolePreferences">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            name="%DecoratorPreferencePage.name"
+            category="org.eclipse.team.cvs.ui.CVSPreferences"
+            class="org.eclipse.team.internal.ccvs.ui.CVSDecoratorPreferencesPage"
+            id="org.eclipse.team.cvs.ui.CVSDecoratorPreferences">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            name="%ExtMethodPreferencePage.name"
+            category="org.eclipse.team.cvs.ui.CVSPreferences"
+            class="org.eclipse.team.internal.ccvs.ui.ExtMethodPreferencePage"
+            id="org.eclipse.team.cvs.ui.ExtMethodPreferencePage">
+      </page>
+   </extension>
+<!-- **************** Decorator ******************* -->
+   <extension
+         point="org.eclipse.ui.decorators">
+      <decorator
+            objectClass="org.eclipse.core.resources.IResource"
+            adaptable="true"
+            label="%DecoratorStandard.name"
+            state="false"
+            class="org.eclipse.team.internal.ccvs.ui.CVSDecorator"
+            id="org.eclipse.team.cvs.ui.decorator">
+      </decorator>
+   </extension>
+<!-- *************** View Actions **************** -->
+   <extension
+         point="org.eclipse.ui.viewActions">
+      <viewContribution
+            targetID="org.eclipse.team.ccvs.ui.HistoryView"
+            id="org.eclipse.team.cvs.ui.history">
+         <action
+               label="%HistoryFilter.label"
+               icon="icons/full/clcl16/filter_history.gif"
+               tooltip="%HistoryFilter.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.HistoryFilterAction"
+               toolbarPath="actions"
+               id="org.eclipse.team.cvs.ui.historyaction">
+         </action>
+      </viewContribution>
+   </extension>
+<!-- **************** Markers ******************* -->
+   <extension
+         point="org.eclipse.ui.markerResolution">
+      <markerResolutionGenerator
+            markerType="org.eclipse.team.cvs.core.cvsremove"
+            class="org.eclipse.team.internal.ccvs.ui.CVSRemoveResolutionGenerator">
+      </markerResolutionGenerator>
+      <markerResolutionGenerator
+            markerType="org.eclipse.team.cvs.core.cvsadd"
+            class="org.eclipse.team.internal.ccvs.ui.CVSAddResolutionGenerator">
+      </markerResolutionGenerator>
+   </extension>
+<!-- **************** CVS Perspective ******************* -->
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            name="%CVS"
+            icon="icons/full/cview16/cvs_persp.gif"
+            class="org.eclipse.team.internal.ccvs.ui.CVSPerspective"
+            id="org.eclipse.team.cvs.ui.cvsPerspective">
+      </perspective>
+   </extension>
+<!-- ************** Perspective Extensions **************** -->
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.ui.resourcePerspective">
+         <perspectiveShortcut
+               id="org.eclipse.team.cvs.ui.cvsPerspective">
+         </perspectiveShortcut>
+      </perspectiveExtension>
+   </extension>
 
-	<!-- **************** Markers ******************* -->
-	<extension point="org.eclipse.ui.markerResolution">
-		<markerResolutionGenerator
-			markerType="org.eclipse.team.cvs.core.cvsremove" 
-			class="org.eclipse.team.internal.ccvs.ui.CVSRemoveResolutionGenerator">
-		</markerResolutionGenerator>
-		<markerResolutionGenerator
-			markerType="org.eclipse.team.cvs.core.cvsadd" 
-			class="org.eclipse.team.internal.ccvs.ui.CVSAddResolutionGenerator">
-		</markerResolutionGenerator>
-	</extension>
-
-	<!-- **************** CVS Perspective ******************* -->
-   <extension 
-        point="org.eclipse.ui.perspectives"> 
-        <perspective 
-            id="org.eclipse.team.cvs.ui.cvsPerspective" 
-            name="%CVS" 
-            class="org.eclipse.team.internal.ccvs.ui.CVSPerspective" 
-            icon="icons/full/cview16/cvs_persp.gif"> 
-        </perspective> 
-    </extension> 
-    
-	<!-- ************** Perspective Extensions **************** -->
-	<extension 
-		point="org.eclipse.ui.perspectiveExtensions">
-		<perspectiveExtension targetID="org.eclipse.ui.resourcePerspective">
-			<perspectiveShortcut id="org.eclipse.team.cvs.ui.cvsPerspective"/>
-		</perspectiveExtension>
-  </extension>
 </plugin>
