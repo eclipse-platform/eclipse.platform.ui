@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -167,6 +167,22 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 */
 	public final void forgetLastBuiltState() {
 		super.forgetLastBuiltState();
+	}
+	
+	/**
+	 * Returns the build command associated with this builder.  The returned
+	 * command may or may not be in the build specification for the project
+	 * on which this builder operates.
+	 * <p>
+	 * Any changes made to the returned command will only take effect if
+	 * the modified command is installed on a project build spec.
+	 * 
+	 * @see IProjectDescription#setBuildSpec(ICommand [])
+	 * @see IProject#setDescription(IProjectDescription, int, IProgressMonitor)
+	 * @since 3.1
+	 */
+	public final ICommand getCommand() {
+		return super.getCommand();
 	}
 
 	/**

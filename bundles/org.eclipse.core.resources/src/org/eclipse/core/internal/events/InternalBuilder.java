@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.*;
  */
 public abstract class InternalBuilder {
 	private static BuildManager buildManager = ((Workspace) ResourcesPlugin.getWorkspace()).getBuildManager();
+	private ICommand command;
 	private boolean forgetStateRequested = false;
 	private IProject[] interestingProjects = ICoreConstants.EMPTY_PROJECT_ARRAY;
 	/**
@@ -65,6 +66,13 @@ public abstract class InternalBuilder {
 		forgetStateRequested = true;
 	}
 
+	/*
+	 * @see IncrementalProjectBuilder#getCommand
+	 */
+	protected ICommand getCommand() {
+		return (ICommand)((BuildCommand)command).clone();
+	}
+	
 	/*
 	 * @see IncrementalProjectBuilder#forgetLastBuiltState
 	 */
@@ -124,6 +132,10 @@ public abstract class InternalBuilder {
 		buildManager.requestRebuild();
 	}
 
+	final void setCommand(ICommand value) {
+		this.command = value;
+	}
+	
 	final void setInterestingProjects(IProject[] value) {
 		interestingProjects = value;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -424,20 +424,21 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 * @param status MultiStatus for collecting errors
 	 */
 	private IncrementalProjectBuilder getBuilder(IProject project, ICommand command, int buildSpecIndex, MultiStatus status) throws CoreException {
-		IncrementalProjectBuilder result = ((BuildCommand) command).getBuilder();
+		InternalBuilder result = ((BuildCommand) command).getBuilder();
 		if (result == null) {
 			result = initializeBuilder(command.getBuilderName(), project, buildSpecIndex, status);
-			((BuildCommand) command).setBuilder(result);
-			((InternalBuilder) result).setProject(project);
-			((InternalBuilder) result).startupOnInitialize();
+			((BuildCommand) command).setBuilder((IncrementalProjectBuilder)result);
+			result.setCommand(command);
+			result.setProject(project);
+			result.startupOnInitialize();
 		}
 		if (!validateNature(result, command.getBuilderName())) {
 			//skip this builder and null its last built tree because it is invalid
 			//if the nature gets added or re-enabled a full build will be triggered
-			((InternalBuilder) result).setLastBuiltTree(null);
+			result.setLastBuiltTree(null);
 			return null;
 		}
-		return result;
+		return (IncrementalProjectBuilder)result;
 	}
 
 	/**
