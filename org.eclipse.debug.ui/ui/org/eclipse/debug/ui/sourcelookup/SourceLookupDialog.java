@@ -92,7 +92,7 @@ public class SourceLookupDialog extends TitleAreaDialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
 	protected void okPressed() {
-		fPanel.performApply(null);		
+		fPanel.performApply(null);
 		super.okPressed();
 	}
 	
@@ -104,4 +104,11 @@ public class SourceLookupDialog extends TitleAreaDialog {
 		shell.setText(SourceLookupUIMessages.getString("manageSourceDialog.title")); //$NON-NLS-1$
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#close()
+	 */
+	public boolean close() {
+		fPanel.dispose();
+		return super.close();
+	}
 }

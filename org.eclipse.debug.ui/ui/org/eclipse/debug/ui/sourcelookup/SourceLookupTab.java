@@ -112,6 +112,9 @@ public class SourceLookupTab extends AbstractLaunchConfigurationTab {
 	 */
 	public void dispose() {
 		if (fSourceLookupPanel != null) {
+			if (fSourceLookupPanel.getDirector() != null) {
+				fSourceLookupPanel.getDirector().dispose();
+			}
 			fSourceLookupPanel.dispose();
 		}
 		fSourceLookupPanel = null;		
