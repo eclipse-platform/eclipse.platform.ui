@@ -793,6 +793,10 @@ public class ResourceNavigator
 	 * @since 2.0
 	 */
 	public void setWorkingSet(IWorkingSet workingSet) {
+		TreeViewer treeViewer = getTreeViewer();
+		Object[] expanded = treeViewer.getExpandedElements();
+		ISelection selection = treeViewer.getSelection();
+		
 		workingSetFilter.setWorkingSet(workingSet);
 		if (workingSet != null) {
 			settings.put(STORE_WORKING_SET, workingSet.getName());
@@ -800,8 +804,13 @@ public class ResourceNavigator
 		else {
 			settings.put(STORE_WORKING_SET, "");
 		}
-		updateTitle();		
-		getResourceViewer().refresh();
+		updateTitle();
+		treeViewer.refresh();
+		treeViewer.setExpandedElements(expanded);
+		if (selection.isEmpty() == false && selection instanceof IStructuredSelection) {
+			IStructuredSelection structuredSelection = (IStructuredSelection) selection;
+			treeViewer.reveal(structuredSelection.getFirstElement());
+		}
 	}
 	/**
 	 * Updates the action bar actions for the given selection.
