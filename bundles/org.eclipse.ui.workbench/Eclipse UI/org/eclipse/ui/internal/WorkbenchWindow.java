@@ -1945,8 +1945,8 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			if (perspectiveBarGenericMenu == null) {
 				Menu menu = new Menu(toolBar);
 				final MenuItem dockMenuItem = new MenuItem(menu, SWT.CHECK);
-				dockMenuItem.setText(WorkbenchMessages.getString("Dock &Left"));
-				
+				dockMenuItem.setText(WorkbenchMessages.getString("PerspectiveBar.dockLeft")); //$NON-NLS-1$
+
 				dockMenuItem.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
 						IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
