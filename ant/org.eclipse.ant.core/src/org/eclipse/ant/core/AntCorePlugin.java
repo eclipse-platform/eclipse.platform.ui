@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 
@@ -182,7 +183,7 @@ public class AntCorePlugin extends Plugin {
 	 * @return The list of the extensions
 	 */
 	private List extractExtensions(String pointName) {
-		IExtensionPoint extensionPoint = getDescriptor().getExtensionPoint(pointName);
+		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(AntCorePlugin.PI_ANTCORE, pointName);
 		if (extensionPoint == null) {
 			return null;
 		}

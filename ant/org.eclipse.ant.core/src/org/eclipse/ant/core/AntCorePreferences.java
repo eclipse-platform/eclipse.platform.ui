@@ -12,12 +12,14 @@
 package org.eclipse.ant.core;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -25,12 +27,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+
 import org.eclipse.ant.internal.core.AntClasspathEntry;
 import org.eclipse.ant.internal.core.AntObject;
 import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.core.InternalCoreAntMessages;
 import org.eclipse.core.boot.BootLoader;
-import org.eclipse.core.internal.plugins.PluginClassLoader;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.ILibrary;
@@ -45,6 +47,7 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.IDynamicVariable;
 import org.eclipse.core.variables.VariablesPlugin;
+import org.osgi.framework.Bundle;
 
 
 /**
@@ -77,6 +80,48 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	private String antHome;
 	
 	private boolean runningHeadless= false;
+	
+	class WrappedClassLoader extends ClassLoader {
+		private Bundle bundle;
+		public WrappedClassLoader(Bundle bundle) {
+			super();
+			this.bundle = bundle;
+		}
+		/* (non-Javadoc)
+		 * @see java.lang.ClassLoader#findClass(java.lang.String)
+		 */
+		public Class findClass(String name) throws ClassNotFoundException {
+			return bundle.loadClass(name);
+		}
+		/* (non-Javadoc)
+		 * @see java.lang.ClassLoader#findResource(java.lang.String)
+		 */
+		public URL findResource(String name) {
+			return bundle.getResource(name);
+		}
+		
+		/* (non-Javadoc)
+		 * @see java.lang.ClassLoader#findResources(java.lang.String)
+		 */
+		protected Enumeration findResources(String name) throws IOException {
+			return bundle.getResources(name);
+		}
+		/* (non-Javadoc)
+		 * @see java.lang.Object#equals(java.lang.Object)
+		 */
+		public boolean equals(Object obj) {
+			if (!(obj instanceof WrappedClassLoader)) {
+				return false;
+			}
+			return bundle == ((WrappedClassLoader) obj).bundle;
+		}
+		/* (non-Javadoc)
+		 * @see java.lang.Object#hashCode()
+		 */
+		public int hashCode() {
+			return bundle.hashCode();
+		}
+	}
 	
 	protected AntCorePreferences(List defaultTasks, List defaultExtraClasspath, List defaultTypes, boolean headless) {
 		this(defaultTasks, defaultExtraClasspath, defaultTypes, Collections.EMPTY_LIST, headless);
@@ -454,14 +499,14 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			return;
 		}
 		
-		IPluginDescriptor descriptor = element.getDeclaringExtension().getDeclaringPluginDescriptor();
 		try {
 			antObject.setPluginLabel(element.getNamespace());
-			URL url = Platform.asLocalURL(new URL(descriptor.getInstallURL(), library));
+			Bundle bundle = Platform.getBundle(element.getNamespace());
+			URL url = Platform.asLocalURL(bundle.getEntry(library));
 			if (new File(url.getPath()).exists()) {
 				addURLToExtraClasspathEntries(url, element);
 				result.add(antObject);
-				addPluginClassLoader(descriptor.getPluginClassLoader());
+				addPluginClassLoader(bundle);
 				antObject.setLibraryEntry(new AntClasspathEntry(url));
 				return;
 			} 
@@ -493,13 +538,13 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 				continue;
 			}
 			String library = element.getAttribute(AntCorePlugin.LIBRARY);
-			IPluginDescriptor descriptor = element.getDeclaringExtension().getDeclaringPluginDescriptor();
+			Bundle bundle = Platform.getBundle(element.getNamespace());
 			try {
-				URL url = Platform.asLocalURL(new URL(descriptor.getInstallURL(), library));
+				URL url = Platform.asLocalURL(bundle.getEntry(library));
 				
 				if (new File(url.getPath()).exists()) {
 					addURLToExtraClasspathEntries(url, element);  
-					addPluginClassLoader(descriptor.getPluginClassLoader());
+					addPluginClassLoader(bundle);
 				} else {
 					//extra classpath entry that does not exist
 					IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(InternalCoreAntMessages.getString("AntCorePreferences.6"), new String[]{url.toExternalForm(), element.getNamespace()}), null); //$NON-NLS-1$
@@ -550,17 +595,20 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 				continue;
 			}
 			String value = element.getAttribute(AntCorePlugin.VALUE);
-			Property property;
+			Property property= null;
 			if (value != null) {
 				property = new Property(name, value);
 				property.setPluginLabel(element.getNamespace());
 			} else {
+				Bundle bundle= Platform.getBundle(element.getNamespace());
+				if (bundle == null) {
+					continue;
+				}
 				property = new Property();
 				property.setName(name);
-				IPluginDescriptor descriptor= element.getDeclaringExtension().getDeclaringPluginDescriptor();
 				property.setPluginLabel(element.getNamespace());
 				String className = element.getAttribute(AntCorePlugin.CLASS);
-				property.setValueProvider(className, descriptor.getPluginClassLoader());
+				property.setValueProvider(className, new WrappedClassLoader(bundle));
 			}
 			defaultProperties.add(property);
 			String runtime = element.getAttribute(AntCorePlugin.ECLIPSE_RUNTIME);
@@ -659,6 +707,10 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		return entry;
 	}
 
+	/*
+	 * TODO: Right now this is only called when dealing with the org.apache.ant plug-in which
+	 * we don't JAR. This might have to be changed if we JAR that plug-in in the future.
+	 */
 	private void addLibraries(IPluginDescriptor source, List destination) {
 		URL root = source.getInstallURL();
 		ILibrary[] libraries = source.getRuntimeLibraries();
@@ -674,7 +726,8 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		}
 	}
 
-	protected void addPluginClassLoader(ClassLoader loader) {
+	protected void addPluginClassLoader(Bundle bundle) {
+		WrappedClassLoader loader = new WrappedClassLoader(bundle);
 		if (!pluginClassLoaders.contains(loader)) {
 			pluginClassLoaders.add(loader);
 		}
@@ -755,16 +808,15 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		if (orderedPluginClassLoaders == null) {
 			Iterator classLoaders= pluginClassLoaders.iterator();
 			Map idToLoader= new HashMap(pluginClassLoaders.size());
-			IPluginDescriptor[] descriptors= new IPluginDescriptor[pluginClassLoaders.size()];
+			Bundle[] bundles= new Bundle[pluginClassLoaders.size()];
 			int i= 0;
 			while (classLoaders.hasNext()) {
-				PluginClassLoader loader = (PluginClassLoader) classLoaders.next();
-				IPluginDescriptor descriptor= loader.getPluginDescriptor();
-				idToLoader.put(descriptor.getUniqueIdentifier(), loader);
-				descriptors[i]= descriptor;
+				WrappedClassLoader loader = (WrappedClassLoader) classLoaders.next();
+				idToLoader.put(loader.bundle.getSymbolicName(), loader);
+				bundles[i]= loader.bundle;
 				i++;
 			}
-			String[] ids= computePrerequisiteOrderPlugins(descriptors);
+			String[] ids= computePrerequisiteOrderPlugins(bundles);
 			orderedPluginClassLoaders= new ClassLoader[pluginClassLoaders.size()];
 			for (int j = 0; j < ids.length; j++) {
 				String id = ids[j];
@@ -776,20 +828,21 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 
 	/*
 	 * Copied from org.eclipse.pde.internal.build.Utils
+	 * TODO: re-copy this code to get off the compatibility layer. (use bundles instead of plug-in descriptors)
 	 */
-	private String[] computePrerequisiteOrderPlugins(IPluginDescriptor[] plugins) {
+	private String[] computePrerequisiteOrderPlugins(Bundle[] plugins) {
 		List prereqs = new ArrayList(9);
 		Set pluginList = new HashSet(plugins.length);
 		for (int i = 0; i < plugins.length; i++) {
-			pluginList.add(plugins[i].getUniqueIdentifier());
+			pluginList.add(plugins[i].getSymbolicName());
 		}
-		
 		// create a collection of directed edges from plugin to prereq
 		for (int i = 0; i < plugins.length; i++) {
+			IPluginDescriptor descriptor = Platform.getPluginRegistry().getPluginDescriptor(plugins[i].getSymbolicName());
 			boolean boot = false;
 			boolean runtime = false;
 			boolean found = false;
-			IPluginPrerequisite[] prereqList = plugins[i].getPluginPrerequisites();
+			IPluginPrerequisite[] prereqList = descriptor.getPluginPrerequisites();
 			if (prereqList != null) {
 				for (int j = 0; j < prereqList.length; j++) {
 					// ensure that we only include values from the original set.
@@ -798,7 +851,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 					runtime = runtime || prereq.equals(Platform.PI_RUNTIME);
 					if (pluginList.contains(prereq)) {
 						found = true;
-						prereqs.add(new String[] { plugins[i].getUniqueIdentifier(), prereq });
+						prereqs.add(new String[] { plugins[i].getSymbolicName(), prereq });
 					}
 				}
 			}
@@ -806,19 +859,19 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			// if we didn't find any prereqs for this plugin, add a null prereq
 			// to ensure the value is in the output	
 			if (!found) {
-				prereqs.add(new String[] { plugins[i].getUniqueIdentifier(), null });
+				prereqs.add(new String[] { plugins[i].getSymbolicName(), null });
 			}
 
 			// if we didn't find the boot or runtime plugins as prereqs and they are in the list
 			// of plugins to build, add prereq relations for them.  This is required since the 
 			// boot and runtime are implicitly added to a plugin's requires list by the platform runtime.
 			// Note that we should skip the xerces plugin as this would cause a circularity.
-			if (plugins[i].getUniqueIdentifier().equals("org.apache.xerces")) //$NON-NLS-1$
+			if (plugins[i].getSymbolicName().equals("org.apache.xerces")) //$NON-NLS-1$
 				continue;
-			if (!boot && pluginList.contains(BootLoader.PI_BOOT) && !plugins[i].getUniqueIdentifier().equals(BootLoader.PI_BOOT))
-				prereqs.add(new String[] { plugins[i].getUniqueIdentifier(), BootLoader.PI_BOOT });
-			if (!runtime && pluginList.contains(Platform.PI_RUNTIME) && !plugins[i].getUniqueIdentifier().equals(Platform.PI_RUNTIME) && !plugins[i].getUniqueIdentifier().equals(BootLoader.PI_BOOT))
-				prereqs.add(new String[] { plugins[i].getUniqueIdentifier(), Platform.PI_RUNTIME });
+			if (!boot && pluginList.contains(BootLoader.PI_BOOT) && !plugins[i].getSymbolicName().equals(BootLoader.PI_BOOT))
+				prereqs.add(new String[] { plugins[i].getSymbolicName(), BootLoader.PI_BOOT });
+			if (!runtime && pluginList.contains(Platform.PI_RUNTIME) && !plugins[i].getSymbolicName().equals(Platform.PI_RUNTIME) && !plugins[i].getSymbolicName().equals(BootLoader.PI_BOOT))
+				prereqs.add(new String[] { plugins[i].getSymbolicName(), Platform.PI_RUNTIME });
 		}
 
 		// do a topological sort, insert the fragments into the sorted elements
@@ -902,7 +955,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	private void initializePluginClassLoaders() {
 		pluginClassLoaders = new ArrayList(10);
 		// ant.core should always be present
-		pluginClassLoaders.add(Platform.getPlugin(AntCorePlugin.PI_ANTCORE).getDescriptor().getPluginClassLoader());
+		pluginClassLoaders.add(new WrappedClassLoader(AntCorePlugin.getPlugin().getBundle()));
 	}
 
 	/**

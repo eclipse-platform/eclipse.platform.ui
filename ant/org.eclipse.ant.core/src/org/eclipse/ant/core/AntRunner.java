@@ -25,12 +25,12 @@ import java.util.StringTokenizer;
 import org.eclipse.ant.internal.core.AntClassLoader;
 import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.core.InternalCoreAntMessages;
-import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPlatformRunnable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
 /**
@@ -476,7 +476,7 @@ public class AntRunner implements IPlatformRunnable {
 			// and removes it from the args passed to the applications,
 			// we have to check if Eclipse is in debug mode in order to
 			// forward the -debug argument to Ant.
-			if (BootLoader.inDebugMode()) {
+			if (Platform.inDebugMode()) {
 				String[] args = (String[]) argArray;
 				String[] newArgs = new String[args.length + 1];
 				for (int i = 0; i < args.length; i++) {
