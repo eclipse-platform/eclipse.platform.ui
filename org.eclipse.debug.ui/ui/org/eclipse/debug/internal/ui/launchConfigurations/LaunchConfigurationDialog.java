@@ -37,6 +37,10 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.ControlEnableState;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -76,7 +80,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
@@ -109,7 +113,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	private IResource fResourceContext;
 	
 	/**
-	 * The mode (run or debug), as specified by the caller
+	 * The mode (run or debug) for this dialog.
 	 */
 	private String fMode;
 	
@@ -119,14 +123,19 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	private Composite fEditArea;
 	
 	/**
-	 * The 'New/Copy button to create a new configuration
+	 * The 'New configuration' action.
 	 */
-	private Button fNewCopyButton;
+	private ButtonAction fButtonActionNew;
 	
 	/**
-	 * The 'delete' button to delete selected configurations
+	 * The 'Duplicate configuration' action.
 	 */
-	private Button fDeleteButton;
+	private ButtonAction fButtonActionDuplicate;
+	
+	/**
+	 * The 'Delete configuration' action.
+	 */
+	private ButtonAction fButtonActionDelete;
 	
 	/**
 	 * The 'apply' button
@@ -312,7 +321,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	
 	/**
 	 * Set the flag indicating how this dialog behaves when the <code>open()</code> method is called.
-	 * Valid constants are the LAUNCH_CONFIGURATION_DIALOG constants defined in this class.
+	 * Valid values are defined by the LAUNCH_CONFIGURATION_DIALOG... constants in this class.
 	 */
 	public void setOpenMode(int mode) {
 		fOpenMode = mode;
@@ -393,11 +402,37 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 */
 	protected Control createContents(Composite parent) {
 		Control contents = super.createContents(parent);
+		createContextMenu(getTreeViewer().getControl());
 		getLaunchManager().addLaunchConfigurationListener(this);
 		initializeBounds();
 		doInitialTreeSelection();
 		return contents;
 	}
+	
+	/**
+	 * Creates a pop-up menu on the specified control.
+	 */
+	protected void createContextMenu(Control menuControl) {
+		MenuManager menuMgr= new MenuManager("#PopUp"); //$NON-NLS-1$
+		menuMgr.setRemoveAllWhenShown(true);
+		menuMgr.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager mgr) {
+				fillContextMenu(mgr);
+			}
+		});
+		Menu menu= menuMgr.createContextMenu(menuControl);
+		menuControl.setMenu(menu);
+	}
+	
+	/**
+	 * Fill the specified context menu with the basic launch configuration
+	 * management actions - New, Duplicate & Delete.
+	 */
+	protected void fillContextMenu(IMenuManager menu) {	
+		menu.add(getButtonActionNew());
+		menu.add(getButtonActionDuplicate());
+		menu.add(getButtonActionDelete());
+	}	
 	
 	/**
 	 * Set the initial selection in the tree.
@@ -766,10 +801,8 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		layout.marginWidth = 5;
 		comp.setLayout(layout);
 		
-		GridData gd;
-		
 		TreeViewer tree = new TreeViewer(comp);
-		gd = new GridData(GridData.FILL_BOTH);
+		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 2;
 		gd.widthHint = 130;
 		gd.heightHint = 375;
@@ -787,25 +820,14 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 				handleKeyPressed(e);
 			}
 		});
+		
 		Button newButton = SWTUtil.createPushButton(comp, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Ne&w_13"), null); //$NON-NLS-1$
-		setNewCopyButton(newButton);
-		getNewCopyButton().addSelectionListener(
-			new SelectionAdapter() { 
-				public void widgetSelected(SelectionEvent event) {
-					handleNewCopyPressed();
-				}
-			}
-		);				
+		setButtonActionNew(new ButtonActionNew(newButton.getText(), newButton));
 		
 		Button deleteButton = SWTUtil.createPushButton(comp, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Dele&te_14"), null); //$NON-NLS-1$
-		setDeleteButton(deleteButton);
-		deleteButton.addSelectionListener(
-			new SelectionAdapter() { 
-				public void widgetSelected(SelectionEvent event) {
-					handleDeletePressed();
-				}
-			}
-		);			
+		setButtonActionDelete(new ButtonActionDelete(deleteButton.getText(), deleteButton));
+		
+		setButtonActionDuplicate(new ButtonActionDuplicate("Duplicate", null));
 		
 		return comp;
 	}	
@@ -974,14 +996,14 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	}
 		
 	/**
-	 * Content provider for launch configuration tree
+	 * Content provider for launch configuration tree.
 	 */
 	class LaunchConfigurationContentProvider implements ITreeContentProvider {
 		
 		/**
 		 * Actual launch configurations have no children.  Launch configuration types have
 		 * all configurations of that type as children, minus any configurations that are 
-		 * private or were autosaved.
+		 * marked as private.
 		 * 
 		 * @see ITreeContentProvider#getChildren(Object)
 		 */
@@ -1183,42 +1205,6 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  		return fProgressMonitorCancelButton;
  	}
  	
- 	/**
- 	 * Sets the 'new' button.
- 	 * 
- 	 * @param button the 'new' button.
- 	 */	
- 	private void setNewCopyButton(Button button) {
- 		fNewCopyButton = button;
- 	} 	
- 	
-  	/**
- 	 * Returns the 'new' button
- 	 * 
- 	 * @return the 'new' button
- 	 */
- 	protected Button getNewCopyButton() {
- 		return fNewCopyButton;
- 	}
- 	
- 	/**
- 	 * Sets the 'delete' button.
- 	 * 
- 	 * @param button the 'delete' button.
- 	 */	
- 	private void setDeleteButton(Button button) {
- 		fDeleteButton = button;
- 	} 	
- 	
- 	/**
- 	 * Returns the 'delete' button
- 	 * 
- 	 * @return the 'delete' button
- 	 */
- 	protected Button getDeleteButton() {
- 		return fDeleteButton;
- 	}
- 	 	
  	/**
  	 * Sets the configuration to display/edit.
  	 * Updates the tab folder to contain the appropriate pages.
@@ -1704,24 +1690,55 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	}
 
 	/**
-	 * Notification the 'New/Copy' button has been pressed.
+	 * Notification the 'New' action has been activated.
 	 */
-	protected void handleNewCopyPressed() {
+	protected void handleNewAction() {
 		
 		// Take care of any unsaved changes
 		if (!canDiscardCurrentConfig()) {
 			return;
 		}
 		
-		// If the selection is a configuration type, take the 'New' path, if the selection
-		// is a configuration, take the 'Copy' path.
+		// The 'New' action should only be enabled if a single config type is selected
 		Object selectedElement = getTreeViewerFirstSelectedElement();
-		if (selectedElement instanceof ILaunchConfigurationType) {
-			doHandleNewConfiguration((ILaunchConfigurationType)selectedElement);
-		} else if (selectedElement instanceof ILaunchConfiguration) {
-			doHandleCopyConfiguration((ILaunchConfiguration)selectedElement);
-		}		
+		if (!(selectedElement instanceof ILaunchConfigurationType)) {
+			return;
+		}
+		
+		// Construct a new config of the selected type and select the result in the tree
+		ILaunchConfigurationType configType = (ILaunchConfigurationType) selectedElement;
+		constructNewConfig(configType);
+		getTreeViewer().setSelection(new StructuredSelection(fUnderlyingConfig));		
 	}	
+	
+	/**
+	 * Notification the 'Duplicate' action has been activated.
+	 */
+	protected void handleDuplicateAction() {
+
+		// Take care of any unsaved changes
+		if (!canDiscardCurrentConfig()) {
+			return;
+		}
+		
+		// The 'Duplicate' action should only be enabled if a single config is selected
+		Object selectedElement = getTreeViewerFirstSelectedElement();
+		if (!(selectedElement instanceof ILaunchConfiguration)) {
+			return;
+		}
+		
+		// Duplicate the selected config and select the dupe in the tree
+		ILaunchConfiguration copyFromConfig = (ILaunchConfiguration) selectedElement;
+		String newName = generateUniqueNameFrom(copyFromConfig.getName());
+		try {
+			ILaunchConfigurationWorkingCopy newWorkingCopy = copyFromConfig.copy(newName);
+			setLaunchConfiguration(newWorkingCopy, false);
+			doSave();
+			getTreeViewer().setSelection(new StructuredSelection(fUnderlyingConfig));
+		} catch (CoreException ce) {
+			DebugUIPlugin.log(ce);			
+		}							
+	}
 	
 	/**
 	 * Create a new configuration of the specified type and select it in the tree.
@@ -1743,8 +1760,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			getTreeViewer().setSelection(new StructuredSelection(fUnderlyingConfig));
 		} catch (CoreException ce) {
 			DebugUIPlugin.log(ce);			
-		}			
-		
+		}					
 	}
 	
 	/** 
@@ -1767,9 +1783,9 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	}
 	
 	/**
-	 * Notification the 'delete' button has been pressed
+	 * Notification the 'Delete' action has been activated
 	 */
-	protected void handleDeletePressed() {		
+	protected void handleDeleteAction() {		
 		IStructuredSelection selection = getTreeViewerSelection();
 		
 		// The 'Delete' button is disabled if the selection contains anything other than configurations (no types)
@@ -2150,8 +2166,8 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 */
 	private Map saveUIState() {
 		Map savedState= new HashMap(10);
-		saveEnableStateAndSet(getNewCopyButton(), savedState, "new", false);//$NON-NLS-1$
-		saveEnableStateAndSet(getDeleteButton(), savedState, "delete", false);//$NON-NLS-1$
+		saveEnableStateAndSet(getButtonActionNew().getButton(), savedState, "new", false);//$NON-NLS-1$
+		saveEnableStateAndSet(getButtonActionDelete().getButton(), savedState, "delete", false);//$NON-NLS-1$
 		saveEnableStateAndSet(getApplyButton(), savedState, "apply", false);//$NON-NLS-1$
 		saveEnableStateAndSet(getRevertButton(), savedState, "revert", false);//$NON-NLS-1$
 		saveEnableStateAndSet(getButton(ID_LAUNCH_BUTTON), savedState, "launch", false);//$NON-NLS-1$
@@ -2189,8 +2205,8 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * @see #saveUIState
 	 */
 	private void restoreUIState(Map state) {
-		restoreEnableState(getNewCopyButton(), state, "new");//$NON-NLS-1$
-		restoreEnableState(getDeleteButton(), state, "delete");//$NON-NLS-1$
+		restoreEnableState(getButtonActionNew().getButton(), state, "new");//$NON-NLS-1$
+		restoreEnableState(getButtonActionDelete().getButton(), state, "delete");//$NON-NLS-1$
 		restoreEnableState(getApplyButton(), state, "apply");//$NON-NLS-1$
 		restoreEnableState(getRevertButton(), state, "revert");//$NON-NLS-1$
 		restoreEnableState(getButton(ID_LAUNCH_BUTTON), state, "launch");//$NON-NLS-1$
@@ -2319,13 +2335,19 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		
 		// Get the current selection
 		IStructuredSelection sel = (IStructuredSelection)getTreeViewer().getSelection();
+		boolean singleSelection = sel.size() == 1;
+		boolean firstItemLaunchConfig = sel.getFirstElement() instanceof ILaunchConfiguration;
+		boolean firstItemLaunchConfigType = sel.getFirstElement() instanceof ILaunchConfigurationType;
 		
-		// New/Copy button
- 		getNewCopyButton().setEnabled(sel.size() == 1);
+		// New action
+ 		getButtonActionNew().setEnabled(singleSelection && firstItemLaunchConfigType);
 		
-		// Delete button
+		// Duplicate action
+		getButtonActionDuplicate().setEnabled(singleSelection && firstItemLaunchConfig);
+		
+		// Delete action
 		if (sel.isEmpty()) {
-			getDeleteButton().setEnabled(false); 		
+			getButtonActionDelete().setEnabled(false); 		
 		} else {
 			Iterator iter = sel.iterator();
 			boolean enable = true;
@@ -2335,7 +2357,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 					break;
 				}
 			}
-			getDeleteButton().setEnabled(enable);
+			getButtonActionDelete().setEnabled(enable);
 		}
 		
 
@@ -2353,7 +2375,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		if (sel.isEmpty() || sel.size() > 1) {
 			getRevertButton().setEnabled(false);
 		} else {
-			if ((sel.getFirstElement() instanceof ILaunchConfiguration) && (isWorkingCopyDirty())) {
+			if (firstItemLaunchConfig && isWorkingCopyDirty()) {
 				getRevertButton().setEnabled(true);
 			} else {
 				getRevertButton().setEnabled(false);
@@ -2558,7 +2580,9 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			IStructuredSelection structuredSelection = (IStructuredSelection) selection;
 			Object firstSelected = structuredSelection.getFirstElement();
 			if (firstSelected instanceof ILaunchConfigurationType) {
-				handleNewCopyPressed();
+				if (getButtonActionNew().isEnabled()) {
+					getButtonActionNew().run();
+				}
 			} else if (firstSelected instanceof ILaunchConfiguration) {
 				if (canLaunch()) {
 					handleLaunchPressed();
@@ -2621,9 +2645,116 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 */
 	protected void handleKeyPressed(KeyEvent event) {
 		if (event.character == SWT.DEL && event.stateMask == 0) {
-			if (getDeleteButton().isEnabled()) {
-				handleDeletePressed();
+			if (getButtonActionDelete().isEnabled()) {
+				getButtonActionDelete().run();
 			}
+		}
+	}
+	
+	protected void setButtonActionNew(ButtonAction action) {
+		fButtonActionNew = action;
+	}
+	
+	protected ButtonAction getButtonActionNew() {
+		return fButtonActionNew;
+	}
+
+	protected void setButtonActionDuplicate(ButtonAction action) {
+		fButtonActionDuplicate = action;
+	}
+	
+	protected ButtonAction getButtonActionDuplicate() {
+		return fButtonActionDuplicate;
+	}
+
+	protected void setButtonActionDelete(ButtonAction action) {
+		fButtonActionDelete = action;
+	}
+	
+	protected ButtonAction getButtonActionDelete() {
+		return fButtonActionDelete;
+	}
+
+	/**
+	 * Extension of <code>Action</code> that manages a <code>Button</code>
+	 * widget.  This allows common handling for actions that must appear in
+	 * a pop-up menu and also as a (non-toolbar) button in the UI.
+	 */
+	private abstract class ButtonAction extends Action {
+		
+		protected Button fButton;
+		
+		/**
+		 * Construct a ButtonAction handler.  All details of the specified
+		 * <code>Button</code>'s layout and appearance should be handled 
+		 * external to this class.
+		 */
+		public ButtonAction(String text, Button button) {
+			super(text);
+			fButton = button;
+			if (fButton != null) {
+				fButton.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent evt) {
+						ButtonAction.this.run();
+					}
+				});
+			}
+		}
+		
+		public Button getButton() {
+			return fButton;
+		}
+		
+		/**
+		 * @see IAction#setEnabled(boolean)
+		 */
+		public void setEnabled(boolean enabled) {
+			super.setEnabled(enabled);
+			if (fButton != null) {
+				fButton.setEnabled(enabled);
+			}
+		}
+	}
+	
+	/**
+	 * Handler for creating a new configuration.
+	 */
+	private class ButtonActionNew extends ButtonAction {
+		
+		public ButtonActionNew(String text, Button button) {
+			super(text, button);
+		}
+		
+		public void run() {
+			handleNewAction();
+		}
+	}
+
+	/**
+	 * Handler for duplicating a configuration.
+	 */
+	private class ButtonActionDuplicate extends ButtonAction {
+		
+		public ButtonActionDuplicate(String text, Button button) {
+			super(text, button);
+		}
+		
+		public void run() {
+			handleDuplicateAction();
+		}
+	}
+
+	/**
+	 * Handler for deleting a configuration.
+	 */
+	private class ButtonActionDelete extends ButtonAction {
+		
+		public ButtonActionDelete(String text, Button button) {
+			super(text, button);
+		}
+		
+		public void run() {
+			handleDeleteAction();
 		}
 	}
 
