@@ -1064,4 +1064,19 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		}
 		return fVisitor;
 	}
+	
+	/**
+	 * When this view becomes visible, selects the last stack frame whose
+	 * location was revealed.
+	 * 
+	 * @see org.eclipse.debug.ui.AbstractDebugView#becomesVisible()
+	 */
+	protected void becomesVisible() {
+		super.becomesVisible();
+		IStructuredSelection selection= (IStructuredSelection) getViewer().getSelection(); 
+		if (selection.isEmpty() || !selection.getFirstElement().equals(getStackFrame())) {
+			initializeSelection();
+		}
+	}
+
 }
