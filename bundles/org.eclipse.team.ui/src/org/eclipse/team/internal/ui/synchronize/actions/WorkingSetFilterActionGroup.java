@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize.actions;
 
-import java.util.*;
-
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.*;
 import org.eclipse.swt.widgets.Shell;
@@ -19,7 +17,6 @@ import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ISynchronizeView;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionGroup;
-import org.eclipse.ui.internal.WorkingSetComparator;
 
 /**
  * Adds working set filter actions (set / clear / edit)
@@ -37,8 +34,10 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 	private IPropertyChangeListener workingSetUpdater;
 	private int mruMenuCount;
 	private IActionBars bars;
+	private IContributionItem item;
+	private String id;
 
-	private final String MRULIST_SEPARATOR = "mruList"; //$NON-NLS-1$
+	private ISynchronizeParticipant participant; 
 
 	/**
 	 * Creates a new instance of the receiver
@@ -47,36 +46,16 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 	 * @param workingSetUpdater property change listener notified when a 
 	 * 	working set is set
 	 */
-	public WorkingSetFilterActionGroup(Shell shell, IPropertyChangeListener workingSetUpdater, ISynchronizeView view, ISynchronizeParticipant page) {
+	public WorkingSetFilterActionGroup(Shell shell, IPropertyChangeListener workingSetUpdater, ISynchronizeView view, ISynchronizeParticipant participant) {
+		this.participant = participant;
 		Assert.isNotNull(shell);
-
+		this.id = participant.toString();
 		this.workingSetUpdater = workingSetUpdater;
 		clearWorkingSetAction = new ClearWorkingSetAction(this);
 		selectWorkingSetAction = new SelectWorkingSetAction(this, shell);
 		editWorkingSetAction = new EditWorkingSetAction(this, shell);
 	}
-	/**
-	 * Adds actions for the most recently used working sets to the 
-	 * specified menu manager.
-	 *  
-	 * @param menuManager menu manager to add actions to
-	 */
-	private void addMruWorkingSetActions(IMenuManager menuManager) {
-		IWorkingSet[] workingSets = PlatformUI.getWorkbench().getWorkingSetManager().getRecentWorkingSets();
-		List sortedWorkingSets = Arrays.asList(workingSets);
-		Collections.sort(sortedWorkingSets, new WorkingSetComparator());
-		
-		Iterator iter = sortedWorkingSets.iterator();
-		mruMenuCount = sortedWorkingSets.size();
-		int i = mruMenuCount;
-		while (iter.hasNext()) {
-			IWorkingSet workingSet = (IWorkingSet)iter.next();
-			if (workingSet != null) {
-				IContributionItem item = new WorkingSetMenuContributionItem(i--, this, workingSet);
-				menuManager.prependToGroup(MRULIST_SEPARATOR, item);
-			}
-		}
-	}
+
 	/**
 	 * Adds working set actions to the specified action bar.
 	 * 
@@ -89,30 +68,23 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 		menuManager.add(selectWorkingSetAction);
 		menuManager.add(clearWorkingSetAction);
 		menuManager.add(editWorkingSetAction);
-		menuManager.add(new Separator(MRULIST_SEPARATOR));
-		updateMruList();
+		menuManager.add(new Separator(id));
+		addMruContribution(menuManager);
 	};
 	
-	public void updateMruList() {
-		removePreviousMruWorkingSetActions(bars.getMenuManager());
-		addMruWorkingSetActions(bars.getMenuManager());
-		bars.updateActionBars();
-	}
-	
-	/**
-	 * Removes the most recently used working set actions that were
-	 * added to the specified menu.
-	 * 
-	 * @param menuManager menu manager to remove actions from
-	 */
-	private void removePreviousMruWorkingSetActions(IMenuManager menuManager) {
-		for (int i = 1; i <= mruMenuCount; i++) {
-			String id = WorkingSetMenuContributionItem.getId(i);
-			if(menuManager.find(id) != null) {
-				menuManager.remove(id);
-			}
+	private void addMruContribution(IMenuManager menuManager) {
+		if(item != null) {
+			menuManager.remove(item);
+		}
+		IWorkingSet[] sets = PlatformUI.getWorkbench().getWorkingSetManager().getRecentWorkingSets();
+		if(sets.length > 0) {
+			item = new WorkingSetMenuContributionItem(id, this);
+			menuManager.prependToGroup(id, item);
+		} else {
+			item = null;
 		}
 	}
+
 	/**
 	 * Returns the working set which is currently selected.
 	 * 
@@ -121,6 +93,7 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 	public IWorkingSet getWorkingSet() {
 		return workingSet;
 	}
+	
 	/**
 	 * Sets the current working set.
 	 * 
@@ -145,6 +118,11 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 					oldWorkingSet, 
 					newWorkingSet));
 		}
-		updateMruList();
+		
+		// Trick to get dynamic menu contribution for most-recent list to
+		// be updated. These are action contributions and must be added/removed
+		// before the menu is shown.
+		addMruContribution(bars.getMenuManager());
+		bars.updateActionBars();
 	}	
 }
