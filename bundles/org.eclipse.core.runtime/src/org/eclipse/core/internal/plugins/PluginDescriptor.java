@@ -752,10 +752,12 @@ private void internalDoPluginActivation() throws CoreException {
 		throw new CoreException(multiStatus);
 }
 /**
- * Returns true if the plugin is currently in the process of being 
+ * Returns true if the plugin is active or is currently in the process of being 
  * activated, and false otherwse.
+ * NOTE: This method is not synchronized because it is called from within a
+ * sync block in PluginClassLoader.
  */
-public boolean isActivationInProgress() {
+boolean hasActivationStarted() {
 	return activePending || active;
 }
 /**
@@ -770,6 +772,10 @@ public synchronized boolean isPluginActivated() {
 	//plugin being activated during shutdown would never be shut down.
 	return active;
 }
+/*
+ * NOTE: This method is not synchronized because it is called from within a
+ * sync block in PluginClassLoader.
+ */
 public boolean isPluginDeactivated() {
 	return deactivated;
 }
@@ -803,11 +809,6 @@ private void pluginActivationExit(boolean errorExit) {
 		active = true;
 	// we are done with the activation
 	activePending = false;
-}
-private String getFragmentLocation(PluginFragmentModel fragment) {
-	if (usePlatformURLs)
-		return FragmentDescriptor.FRAGMENT_URL + fragment.toString() + "/"; //$NON-NLS-1$
-	return fragment.getLocation();
 }
 public void setPluginClassLoader(DelegatingURLClassLoader value) {
 	loader = value;
