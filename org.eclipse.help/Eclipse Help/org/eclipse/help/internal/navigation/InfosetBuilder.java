@@ -110,10 +110,19 @@ public class InfosetBuilder {
 			} else	if (isValidTopicSet(from)) {
 				// insert all the child topics nodes
 				Contribution topicSet = (Contribution) topicSetNodeMap.get(from);
-				for (Iterator topics = topicSet.getChildren(); topics.hasNext();) {
-					Contribution topic = (Contribution) topics.next();
-					Inserter newInserter = new Inserter(topic.getID(), to, null, mode);
-					newInserter.insert();
+				List topics = topicSet.getChildrenList();
+				if (mode == Contribution.LAST) {
+					for (int i = topics.size() - 1; i >= 0; i--) {
+						Contribution topic = (Contribution) topics.get(i);
+						Inserter newInserter = new Inserter(topic.getID(), to, null, mode);
+						newInserter.insert();
+					}
+				}else{
+					for (int i = 0; i < topics.size(); i++) {
+						Contribution topic = (Contribution) topics.get(i);
+						Inserter newInserter = new Inserter(topic.getID(), to, null, mode);
+						newInserter.insert();
+					}
 				}
 			}
 			return true; //success
