@@ -419,8 +419,10 @@ public final class Platform {
 	//TODO Throws IllegalStateException
 	public static Plugin getPlugin(String id) {
 		try {
-			// TODO check for a null registry (no compatibiity layer) and return null.
-			IPluginDescriptor pd = getPluginRegistry().getPluginDescriptor(id);
+			IPluginRegistry registry = getPluginRegistry();
+			if (registry == null)
+				return null;
+			IPluginDescriptor pd = registry.getPluginDescriptor(id);
 			if (pd == null)
 				return null;
 			return pd.getPlugin();
