@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
@@ -83,8 +84,7 @@ public class AboutDialog extends ProductInfoDialog {
         if (product != null)
             productName = product.getName();
         if (productName == null)
-            productName = WorkbenchMessages
-                    .getString("AboutDialog.defaultProductName"); //$NON-NLS-1$
+            productName = WorkbenchMessages.AboutDialog_defaultProductName;
 
         // create a descriptive object for each BundleGroup
         IBundleGroupProvider[] providers = Platform.getBundleGroupProviders();
@@ -135,8 +135,7 @@ public class AboutDialog extends ProductInfoDialog {
      */
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
-        newShell.setText(WorkbenchMessages.format("AboutDialog.shellTitle", //$NON-NLS-1$
-                new Object[] { productName }));
+        newShell.setText(NLS.bind(WorkbenchMessages.AboutDialog_shellTitle,productName ));
         PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell,
 				IWorkbenchHelpContextIds.ABOUT_DIALOG);
     }
@@ -155,13 +154,10 @@ public class AboutDialog extends ProductInfoDialog {
         // bug 64232: the feature details button should only be created if there
         // are features to show
         if (bundleGroupInfos != null && bundleGroupInfos.length > 0)
-                createButton(parent, FEATURES_ID, WorkbenchMessages
-                        .getString("AboutDialog.featureInfo"), false); //$NON-NLS-1$
+                createButton(parent, FEATURES_ID, WorkbenchMessages.AboutDialog_featureInfo, false); 
 
-        createButton(parent, PLUGINS_ID, WorkbenchMessages
-                .getString("AboutDialog.pluginInfo"), false); //$NON-NLS-1$
-        createButton(parent, INFO_ID, WorkbenchMessages
-                .getString("AboutDialog.systemInfo"), false); //$NON-NLS-1$
+        createButton(parent, PLUGINS_ID, WorkbenchMessages.AboutDialog_pluginInfo, false);
+        createButton(parent, INFO_ID, WorkbenchMessages.AboutDialog_systemInfo, false); 
 
         Label l = new Label(parent, SWT.NONE);
         l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));

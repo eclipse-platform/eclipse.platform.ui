@@ -20,6 +20,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -117,10 +118,8 @@ public class FileEditorsPreferencePage extends PreferencePage implements
                 MessageDialog
                         .openInformation(
                                 getControl().getShell(),
-                                WorkbenchMessages
-                                        .getString("FileEditorPreference.existsTitle"), //$NON-NLS-1$
-                                WorkbenchMessages
-                                        .getString("FileEditorPreference.existsMessage")); //$NON-NLS-1$
+                                WorkbenchMessages.FileEditorPreference_existsTitle,
+                                WorkbenchMessages.FileEditorPreference_existsMessage);
                 return;
             }
 
@@ -163,8 +162,7 @@ public class FileEditorsPreferencePage extends PreferencePage implements
 
         //layout the top table & its buttons
         Label label = new Label(pageComponent, SWT.LEFT);
-        label.setText(WorkbenchMessages
-                .getString("FileEditorPreference.fileTypes")); //$NON-NLS-1$
+        label.setText(WorkbenchMessages.FileEditorPreference_fileTypes); 
         data = new GridData();
         data.horizontalAlignment = GridData.FILL;
         data.horizontalSpan = 2;
@@ -196,16 +194,14 @@ public class FileEditorsPreferencePage extends PreferencePage implements
         groupComponent.setFont(font);
 
         addResourceTypeButton = new Button(groupComponent, SWT.PUSH);
-        addResourceTypeButton.setText(WorkbenchMessages
-                .getString("FileEditorPreference.add")); //$NON-NLS-1$
+        addResourceTypeButton.setText(WorkbenchMessages.FileEditorPreference_add); 
         addResourceTypeButton.addListener(SWT.Selection, this);
         addResourceTypeButton.setLayoutData(data);
         addResourceTypeButton.setFont(font);
         setButtonLayoutData(addResourceTypeButton);
 
         removeResourceTypeButton = new Button(groupComponent, SWT.PUSH);
-        removeResourceTypeButton.setText(WorkbenchMessages
-                .getString("FileEditorPreference.remove")); //$NON-NLS-1$
+        removeResourceTypeButton.setText(WorkbenchMessages.FileEditorPreference_remove);
         removeResourceTypeButton.addListener(SWT.Selection, this);
         removeResourceTypeButton.setFont(font);
         setButtonLayoutData(removeResourceTypeButton);
@@ -219,8 +215,7 @@ public class FileEditorsPreferencePage extends PreferencePage implements
 
         // layout the bottom table & its buttons
         editorLabel = new Label(pageComponent, SWT.LEFT);
-        editorLabel.setText(WorkbenchMessages
-                .getString("FileEditorPreference.associatedEditors")); //$NON-NLS-1$
+        editorLabel.setText(WorkbenchMessages.FileEditorPreference_associatedEditors);
         data = new GridData();
         data.horizontalAlignment = GridData.FILL;
         data.horizontalSpan = 2;
@@ -247,23 +242,20 @@ public class FileEditorsPreferencePage extends PreferencePage implements
         groupComponent.setFont(font);
 
         addEditorButton = new Button(groupComponent, SWT.PUSH);
-        addEditorButton.setText(WorkbenchMessages
-                .getString("FileEditorPreference.addEditor")); //$NON-NLS-1$
+        addEditorButton.setText(WorkbenchMessages.FileEditorPreference_addEditor);
         addEditorButton.addListener(SWT.Selection, this);
         addEditorButton.setLayoutData(data);
         addEditorButton.setFont(font);
         setButtonLayoutData(addEditorButton);
 
         removeEditorButton = new Button(groupComponent, SWT.PUSH);
-        removeEditorButton.setText(WorkbenchMessages
-                .getString("FileEditorPreference.removeEditor")); //$NON-NLS-1$
+        removeEditorButton.setText(WorkbenchMessages.FileEditorPreference_removeEditor); 
         removeEditorButton.addListener(SWT.Selection, this);
         removeEditorButton.setFont(font);
         setButtonLayoutData(removeEditorButton);
 
         defaultEditorButton = new Button(groupComponent, SWT.PUSH);
-        defaultEditorButton.setText(WorkbenchMessages
-                .getString("FileEditorPreference.default")); //$NON-NLS-1$
+        defaultEditorButton.setText(WorkbenchMessages.FileEditorPreference_default);
         defaultEditorButton.addListener(SWT.Selection, this);
         defaultEditorButton.setFont(font);
         setButtonLayoutData(defaultEditorButton);
@@ -326,8 +318,7 @@ public class FileEditorsPreferencePage extends PreferencePage implements
                 if (ext != null) {
                     IEditorDescriptor preferredEditor = ext.getDefaultEditor();
                     if (preferredEditor == editor)
-                        defaultString = WorkbenchMessages
-                                .getString("FileEditorPreference.defaultLabel"); //$NON-NLS-1$
+                        defaultString = WorkbenchMessages.FileEditorPreference_defaultLabel;
                 }
 
                 if (defaultString != null) {
@@ -465,9 +456,7 @@ public class FileEditorsPreferencePage extends PreferencePage implements
                 .getShell());
         dialog.setEditorsToFilter(getAssociatedEditors());
         dialog
-                .setMessage(WorkbenchMessages
-                        .format(
-                                "Choose_the_editor_for_file", new Object[] { getSelectedResourceType().getLabel() })); //$NON-NLS-1$
+                .setMessage(NLS.bind(WorkbenchMessages.Choose_the_editor_for_file,getSelectedResourceType().getLabel() ));
         if (dialog.open() == Window.OK) {
             EditorDescriptor editor = (EditorDescriptor) dialog
                     .getSelectedEditor();
@@ -479,7 +468,7 @@ public class FileEditorsPreferencePage extends PreferencePage implements
                 if (isEmpty)
                     item
                             .setText(editor.getLabel()
-                                    + " " + WorkbenchMessages.getString("FileEditorPreference.defaultLabel")); //$NON-NLS-2$ //$NON-NLS-1$
+                                    + " " + WorkbenchMessages.FileEditorPreference_defaultLabel); //$NON-NLS-1$
                 else
                     item.setText(editor.getLabel());
                 item.setImage(getImage(editor));
@@ -521,7 +510,7 @@ public class FileEditorsPreferencePage extends PreferencePage implements
                 item
                         .setText(((EditorDescriptor) (item.getData()))
                                 .getLabel()
-                                + " " + WorkbenchMessages.getString("FileEditorPreference.defaultLabel")); //$NON-NLS-2$ //$NON-NLS-1$
+                                + " " + WorkbenchMessages.FileEditorPreference_defaultLabel); //$NON-NLS-1$
         }
 
     }
@@ -557,7 +546,7 @@ public class FileEditorsPreferencePage extends PreferencePage implements
             item.setData(editor);
             item
                     .setText(editor.getLabel()
-                            + " " + WorkbenchMessages.getString("FileEditorPreference.defaultLabel")); //$NON-NLS-2$ //$NON-NLS-1$
+                            + " " + WorkbenchMessages.FileEditorPreference_defaultLabel); //$NON-NLS-1$
             item.setImage(getImage(editor));
             editorTable.setSelection(new TableItem[] { item });
         }

@@ -52,9 +52,8 @@ public class WorkbenchPreferenceNode extends WorkbenchPreferenceExtensionNode {
 		} catch (CoreException e) {
 			// Just inform the user about the error. The details are
 			// written to the log by now.
-			ErrorDialog.openError((Shell) null, WorkbenchMessages
-					.getString("PreferenceNode.errorTitle"), //$NON-NLS-1$
-					WorkbenchMessages.getString("PreferenceNode.errorMessage"), //$NON-NLS-1$
+			ErrorDialog.openError((Shell) null, WorkbenchMessages.PreferenceNode_errorTitle, 
+					WorkbenchMessages.PreferenceNode_errorMessage, 
 					e.getStatus());
 			page = new ErrorPreferencePage();
 		}

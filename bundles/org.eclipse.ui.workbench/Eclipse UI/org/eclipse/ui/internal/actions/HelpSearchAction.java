@@ -55,9 +55,8 @@ public class HelpSearchAction extends Action implements IWorkbenchAction {
         String overrideText = PrefUtil.getAPIPreferenceStore().getString(
                 IWorkbenchPreferenceConstants.HELP_SEARCH_ACTION_TEXT);
         if ("".equals(overrideText)) { //$NON-NLS-1$
-            setText(WorkbenchMessages.getString("HelpSearchAction.text")); //$NON-NLS-1$ 
-            setToolTipText(WorkbenchMessages
-                    .getString("HelpSearchAction.toolTip")); //$NON-NLS-1$
+            setText(WorkbenchMessages.HelpSearchAction_text); 
+            setToolTipText(WorkbenchMessages.HelpSearchAction_toolTip);
         } else {
             setText(overrideText);
             setToolTipText(Action.removeMnemonics(overrideText));

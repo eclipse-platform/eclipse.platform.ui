@@ -55,6 +55,7 @@ import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.window.WindowManager;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.DeviceData;
@@ -223,8 +224,7 @@ public final class Workbench implements IWorkbench {
         super();
 
         if (instance != null && instance.isRunning()) {
-            throw new IllegalStateException(WorkbenchMessages
-                    .getString("Workbench.CreatingWorkbenchTwice")); //$NON-NLS-1$
+            throw new IllegalStateException(WorkbenchMessages.Workbench_CreatingWorkbenchTwice); 
         }
         Assert.isNotNull(display);
         Assert.isNotNull(advisor);
@@ -481,16 +481,12 @@ public final class Workbench implements IWorkbench {
                 public void handleException(Throwable e) {
                     String message;
                     if (e.getMessage() == null) {
-                        message = WorkbenchMessages
-                                .getString("ErrorClosingNoArg"); //$NON-NLS-1$
+                        message = WorkbenchMessages.ErrorClosingNoArg;
                     } else {
-                        message = WorkbenchMessages
-                                .format(
-                                        "ErrorClosingOneArg", new Object[] { e.getMessage() }); //$NON-NLS-1$
+                        message = NLS.bind(WorkbenchMessages.ErrorClosingOneArg,  e.getMessage() ); 
                     }
 
-                    if (!MessageDialog.openQuestion(null, WorkbenchMessages
-                            .getString("Error"), message)) { //$NON-NLS-1$
+                    if (!MessageDialog.openQuestion(null, WorkbenchMessages.Error, message)) {
                         isClosing = false;
                     }
                 }
@@ -500,8 +496,7 @@ public final class Workbench implements IWorkbench {
             return false;
         }
 
-        Platform.run(new SafeRunnable(WorkbenchMessages
-                .getString("ErrorClosing")) { //$NON-NLS-1$
+        Platform.run(new SafeRunnable(WorkbenchMessages.ErrorClosing) {
                     public void run() {
                         if (isClosing || force)
                             isClosing = windowManager.close();
@@ -526,8 +521,7 @@ public final class Workbench implements IWorkbench {
         final boolean[] result = new boolean[1];
         result[0] = true;
 
-        Platform.run(new SafeRunnable(WorkbenchMessages
-                .getString("ErrorClosing")) { //$NON-NLS-1$
+        Platform.run(new SafeRunnable(WorkbenchMessages.ErrorClosing) { 
                     public void run() {
                         //Collect dirtyEditors
                         ArrayList dirtyEditors = new ArrayList();
@@ -1098,8 +1092,7 @@ public final class Workbench implements IWorkbench {
         } catch (WorkbenchException e) {
             // Don't use the window's shell as the dialog parent, 
             // as the window is not open yet (bug 76724).
-            ErrorDialog.openError(null, WorkbenchMessages
-                    .getString("Problems_Opening_Page"), //$NON-NLS-1$
+            ErrorDialog.openError(null, WorkbenchMessages.Problems_Opening_Page, 
                     e.getMessage(), e.getStatus());
         }
     }
@@ -1114,8 +1107,7 @@ public final class Workbench implements IWorkbench {
     /* package */IStatus restoreState() {
 
         if (!getWorkbenchConfigurer().getSaveAndRestore()) {
-            String msg = WorkbenchMessages
-                    .getString("Workbench.restoreDisabled"); //$NON-NLS-1$
+            String msg = WorkbenchMessages.Workbench_restoreDisabled; 
             return new Status(IStatus.WARNING, WorkbenchPlugin.PI_WORKBENCH,
                     IWorkbenchConfigurer.RESTORE_CODE_RESET, msg, null);
         }
@@ -1123,16 +1115,14 @@ public final class Workbench implements IWorkbench {
         final File stateFile = getWorkbenchStateFile();
         // If there is no state file cause one to open.
         if (stateFile == null || !stateFile.exists()) {
-            String msg = WorkbenchMessages
-                    .getString("Workbench.noStateToRestore"); //$NON-NLS-1$
+            String msg = WorkbenchMessages.Workbench_noStateToRestore; 
             return new Status(IStatus.WARNING, WorkbenchPlugin.PI_WORKBENCH,
-                    IWorkbenchConfigurer.RESTORE_CODE_RESET, msg, null); //$NON-NLS-1$
+                    IWorkbenchConfigurer.RESTORE_CODE_RESET, msg, null); 
         }
 
         final IStatus result[] = { new Status(IStatus.OK,
                 WorkbenchPlugin.PI_WORKBENCH, IStatus.OK, "", null) }; //$NON-NLS-1$
-        Platform.run(new SafeRunnable(WorkbenchMessages
-                .getString("ErrorReadingState")) { //$NON-NLS-1$
+        Platform.run(new SafeRunnable(WorkbenchMessages.ErrorReadingState) { 
                     public void run() throws Exception {
                         FileInputStream input = new FileInputStream(stateFile);
                         BufferedReader reader = new BufferedReader(
@@ -1151,11 +1141,9 @@ public final class Workbench implements IWorkbench {
                         }
                         if (!valid) {
                             reader.close();
-                            String msg = WorkbenchMessages
-                                    .getString("Invalid_workbench_state_ve"); //$NON-NLS-1$
+                            String msg = WorkbenchMessages.Invalid_workbench_state_ve; 
                             MessageDialog.openError((Shell) null,
-                                    WorkbenchMessages
-                                            .getString("Restoring_Problems"), //$NON-NLS-1$
+                                    WorkbenchMessages.Restoring_Problems,
                                     msg); //$NON-NLS-1$
                             stateFile.delete();
                             result[0] = new Status(IStatus.ERROR,
@@ -1169,12 +1157,10 @@ public final class Workbench implements IWorkbench {
                         // We no longer support the release 1.0 format
                         if (VERSION_STRING[0].equals(version)) {
                             reader.close();
-                            String msg = WorkbenchMessages
-                                    .getString("Workbench.incompatibleSavedStateVersion"); //$NON-NLS-1$
+                            String msg = WorkbenchMessages.Workbench_incompatibleSavedStateVersion;
                             boolean ignoreSavedState = new MessageDialog(
                                     null,
-                                    WorkbenchMessages
-                                            .getString("Workbench.incompatibleUIState"),//$NON-NLS-1$
+                                    WorkbenchMessages.Workbench_incompatibleUIState,
                                     null, msg, MessageDialog.WARNING,
                                     new String[] { IDialogConstants.OK_LABEL,
                                             IDialogConstants.CANCEL_LABEL }, 0)
@@ -1203,10 +1189,8 @@ public final class Workbench implements IWorkbench {
                             ErrorDialog
                                     .openError(
                                             null,
-                                            WorkbenchMessages
-                                                    .getString("Workspace.problemsTitle"), //$NON-NLS-1$
-                                            WorkbenchMessages
-                                                    .getString("Workbench.problemsRestoringMsg"), //$NON-NLS-1$
+                                            WorkbenchMessages.Workspace_problemsTitle,
+                                            WorkbenchMessages.Workbench_problemsRestoringMsg,
                                             restoreResult);
                         }
                     }
@@ -1223,8 +1207,7 @@ public final class Workbench implements IWorkbench {
                 });
         // ensure at least one window was opened
         if (result[0].isOK() && windowManager.getWindows().length == 0) {
-            String msg = WorkbenchMessages
-                    .getString("Workbench.noWindowsRestored"); //$NON-NLS-1$
+            String msg = WorkbenchMessages.Workbench_noWindowsRestored;
             result[0] = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH,
                     IWorkbenchConfigurer.RESTORE_CODE_RESET, msg, null);
         }
@@ -1261,8 +1244,7 @@ public final class Workbench implements IWorkbench {
         } else if (result[0] instanceof WorkbenchException) {
             throw (WorkbenchException) result[0];
         } else {
-            throw new WorkbenchException(WorkbenchMessages
-                    .getString("Abnormal_Workbench_Conditi")); //$NON-NLS-1$
+            throw new WorkbenchException(WorkbenchMessages.Abnormal_Workbench_Conditi);
         }
     }
 
@@ -1275,9 +1257,8 @@ public final class Workbench implements IWorkbench {
         IStatus status = saveState(memento);
         if (status.getSeverity() != IStatus.OK) {
             // don't use newWindow as parent because it has not yet been opened (bug 76724)
-            ErrorDialog.openError(null, WorkbenchMessages
-                    .getString("Workbench.problemsSaving"), //$NON-NLS-1$
-                    WorkbenchMessages.getString("Workbench.problemsSavingMsg"), //$NON-NLS-1$
+            ErrorDialog.openError(null, WorkbenchMessages.Workbench_problemsSaving, 
+                    WorkbenchMessages.Workbench_problemsSavingMsg, 
                     status);
         }
         return memento;
@@ -1299,7 +1280,7 @@ public final class Workbench implements IWorkbench {
         MultiStatus result = new MultiStatus(
                 PlatformUI.PLUGIN_ID,
                 IStatus.OK,
-                WorkbenchMessages.getString("Workbench.problemsRestoring"), null); //$NON-NLS-1$
+                WorkbenchMessages.Workbench_problemsRestoring, null);
         IMemento childMem;
         try {
             UIStats.start(UIStats.RESTORE_WORKBENCH, "MRUList"); //$NON-NLS-1$
@@ -1511,7 +1492,7 @@ public final class Workbench implements IWorkbench {
      */
     private IStatus saveState(IMemento memento) {
         MultiStatus result = new MultiStatus(PlatformUI.PLUGIN_ID, IStatus.OK,
-                WorkbenchMessages.getString("Workbench.problemsSaving"), null); //$NON-NLS-1$
+                WorkbenchMessages.Workbench_problemsSaving, null); 
 
         // Save the version number.
         memento.putString(IWorkbenchConstants.TAG_VERSION, VERSION_STRING[1]);
@@ -1544,9 +1525,8 @@ public final class Workbench implements IWorkbench {
             writer.close();
         } catch (IOException e) {
             stateFile.delete();
-            MessageDialog.openError((Shell) null, WorkbenchMessages
-                    .getString("SavingProblem"), //$NON-NLS-1$
-                    WorkbenchMessages.getString("ProblemSavingState")); //$NON-NLS-1$
+            MessageDialog.openError((Shell) null, WorkbenchMessages.SavingProblem, 
+                    WorkbenchMessages.ProblemSavingState);
             return false;
         }
 
@@ -1638,9 +1618,7 @@ public final class Workbench implements IWorkbench {
                         .findPerspectiveWithId(perspectiveId);
                 if (desc == null)
                     throw new WorkbenchException(
-                            WorkbenchMessages
-                                    .format(
-                                            "WorkbenchPage.ErrorCreatingPerspective", new Object[] { perspectiveId })); //$NON-NLS-1$
+                            NLS.bind(WorkbenchMessages.WorkbenchPage_ErrorCreatingPerspective,  perspectiveId )); 
                 win.getShell().open();
                 if (page == null)
                     page = win.openPage(perspectiveId, input);
@@ -1651,9 +1629,7 @@ public final class Workbench implements IWorkbench {
 
         // Just throw an exception....
         throw new WorkbenchException(
-                WorkbenchMessages
-                        .format(
-                                "Workbench.showPerspectiveError", new Object[] { perspectiveId })); //$NON-NLS-1$
+                NLS.bind(WorkbenchMessages.Workbench_showPerspectiveError,  perspectiveId )); 
     }
 
     /*
@@ -1735,9 +1711,7 @@ public final class Workbench implements IWorkbench {
                         .findPerspectiveWithId(perspectiveId);
                 if (desc == null)
                     throw new WorkbenchException(
-                            WorkbenchMessages
-                                    .format(
-                                            "WorkbenchPage.ErrorCreatingPerspective", new Object[] { perspectiveId })); //$NON-NLS-1$
+                            NLS.bind(WorkbenchMessages.WorkbenchPage_ErrorCreatingPerspective,perspectiveId )); 
                 win.getShell().open();
                 if (page == null)
                     page = win.openPage(perspectiveId, input);
@@ -1759,9 +1733,7 @@ public final class Workbench implements IWorkbench {
                         .findPerspectiveWithId(perspectiveId);
                 if (desc == null)
                     throw new WorkbenchException(
-                            WorkbenchMessages
-                                    .format(
-                                            "WorkbenchPage.ErrorCreatingPerspective", new Object[] { perspectiveId })); //$NON-NLS-1$
+                            NLS.bind(WorkbenchMessages.WorkbenchPage_ErrorCreatingPerspective,  perspectiveId ));
                 win.getShell().open();
                 if (page == null)
                     page = win.openPage(perspectiveId, input);

@@ -214,17 +214,14 @@ public abstract class PluginAction extends Action implements
                 MessageDialog
                         .openInformation(
                                 Display.getDefault().getActiveShell(),
-                                WorkbenchMessages.getString("Information"), //$NON-NLS-1$
-                                WorkbenchMessages
-                                        .getString("PluginAction.operationNotAvailableMessage")); //$NON-NLS-1$
+                                WorkbenchMessages.Information, 
+                                WorkbenchMessages.PluginAction_operationNotAvailableMessage); 
                 return;
             }
             if (!isEnabled()) {
                 MessageDialog.openInformation(Display.getDefault()
-                        .getActiveShell(), WorkbenchMessages
-                        .getString("Information"), //$NON-NLS-1$
-                        WorkbenchMessages
-                                .getString("PluginAction.disabledMessage")); //$NON-NLS-1$
+                        .getActiveShell(), WorkbenchMessages.Information, 
+                        WorkbenchMessages.PluginAction_disabledMessage); 
                 return;
             }
         }

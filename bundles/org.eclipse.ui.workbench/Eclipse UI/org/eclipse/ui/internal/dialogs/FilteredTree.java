@@ -218,8 +218,7 @@ public class FilteredTree extends Composite {
             }
         };
 
-        clearTextAction.setToolTipText(WorkbenchMessages
-                .getString("FilteredTree.ClearToolTip")); //$NON-NLS-1$
+        clearTextAction.setToolTipText(WorkbenchMessages.FilteredTree_ClearToolTip);
         clearTextAction.setImageDescriptor(JFaceResources.getImageRegistry()
                 .getDescriptor(CLEAR_ICON));
         clearTextAction.setDisabledImageDescriptor(JFaceResources

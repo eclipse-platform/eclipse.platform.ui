@@ -70,8 +70,7 @@ public class StartupPreferencePage extends PreferencePage implements
 
     protected void createEarlyStartupSelection(Composite parent) {
         Label label = new Label(parent, SWT.NONE);
-        label.setText(WorkbenchMessages
-                .getString("StartupPreferencePage.label")); //$NON-NLS-1$
+        label.setText(WorkbenchMessages.StartupPreferencePage_label);
         label.setFont(parent.getFont());
         GridData data = new GridData(GridData.FILL_HORIZONTAL);
         label.setLayoutData(data);

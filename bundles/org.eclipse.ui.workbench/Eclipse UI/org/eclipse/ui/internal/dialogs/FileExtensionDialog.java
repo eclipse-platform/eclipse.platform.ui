@@ -51,7 +51,7 @@ public class FileExtensionDialog extends TitleAreaDialog {
      */
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
-        shell.setText(WorkbenchMessages.getString("FileExtension.shellTitle")); //$NON-NLS-1$
+        shell.setText(WorkbenchMessages.FileExtension_shellTitle);
         //$NON-NLS-1$
         PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
 				IWorkbenchHelpContextIds.FILE_EXTENSION_DIALOG);
@@ -82,14 +82,13 @@ public class FileExtensionDialog extends TitleAreaDialog {
         contents.setLayoutData(new GridData(GridData.FILL_BOTH));
         contents.setFont(parentComposite.getFont());
 
-        setTitle(WorkbenchMessages.getString("FileExtension.dialogTitle")); //$NON-NLS-1$
-        setMessage(WorkbenchMessages.getString("FileExtension.fileTypeMessage")); //$NON-NLS-1$
+        setTitle(WorkbenchMessages.FileExtension_dialogTitle); 
+        setMessage(WorkbenchMessages.FileExtension_fileTypeMessage);
 
         // begin the layout
 
         Label label = new Label(contents, SWT.LEFT);
-        label.setText(WorkbenchMessages
-                .getString("FileExtension.fileTypeLabel")); //$NON-NLS-1$
+        label.setText(WorkbenchMessages.FileExtension_fileTypeLabel);
 
         GridData data = new GridData();
         data.horizontalAlignment = GridData.FILL;
@@ -143,8 +142,7 @@ public class FileExtensionDialog extends TitleAreaDialog {
         int index = filename.indexOf('.');
         if (index == filename.length() - 1) {
             if (index == 0 || (index == 1 && filename.charAt(0) == '*')) {
-                setErrorMessage(WorkbenchMessages
-                        .getString("FileExtension.extensionEmptyMessage")); //$NON-NLS-1$
+                setErrorMessage(WorkbenchMessages.FileExtension_extensionEmptyMessage); 
                 return false;
             }
         }
@@ -155,13 +153,11 @@ public class FileExtensionDialog extends TitleAreaDialog {
         index = filename.indexOf('*');
         if (index > -1) {
             if (filename.length() == 1) {
-                setErrorMessage(WorkbenchMessages
-                        .getString("FileExtension.extensionEmptyMessage")); //$NON-NLS-1$
+                setErrorMessage(WorkbenchMessages.FileExtension_extensionEmptyMessage); 
                 return false;
             }
             if (index != 0 || filename.charAt(1) != '.') {
-                setErrorMessage(WorkbenchMessages
-                        .getString("FileExtension.fileNameInvalidMessage")); //$NON-NLS-1$
+                setErrorMessage(WorkbenchMessages.FileExtension_fileNameInvalidMessage);
                 return false;
             }
         }

@@ -89,10 +89,8 @@ public class WorkbenchPreferencePage extends PreferencePage implements
      */
     protected void createShowUserDialogPref(Composite composite) {
         showUserDialogButton = new Button(composite, SWT.CHECK);
-        showUserDialogButton.setText(WorkbenchMessages
-                .getString("WorkbenchPreference.RunInBackgroundButton")); //$NON-NLS-1$
-        showUserDialogButton.setToolTipText(WorkbenchMessages
-                .getString("WorkbenchPreference.RunInBackgroundToolTip"));//$NON-NLS-1$
+        showUserDialogButton.setText(WorkbenchMessages.WorkbenchPreference_RunInBackgroundButton);
+        showUserDialogButton.setToolTipText(WorkbenchMessages.WorkbenchPreference_RunInBackgroundToolTip);
         showUserDialogButton.setSelection(WorkbenchPlugin.getDefault()
                 .getPreferenceStore().getBoolean(
                         IPreferenceConstants.RUN_IN_BACKGROUND));
@@ -119,8 +117,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements
 
     protected void createStickyCyclePref(Composite composite) {
         stickyCycleButton = new Button(composite, SWT.CHECK);
-        stickyCycleButton.setText(WorkbenchMessages
-                .getString("WorkbenchPreference.stickyCycleButton")); //$NON-NLS-1$
+        stickyCycleButton.setText(WorkbenchMessages.WorkbenchPreference_stickyCycleButton); 
         stickyCycleButton.setSelection(getPreferenceStore().getBoolean(
                 IPreferenceConstants.STICKY_CYCLE));
     }
@@ -135,11 +132,9 @@ public class WorkbenchPreferencePage extends PreferencePage implements
         GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL
                 | GridData.GRAB_HORIZONTAL);
         buttonComposite.setLayoutData(data);
-        buttonComposite.setText(WorkbenchMessages
-                .getString("WorkbenchPreference.openMode")); //$NON-NLS-1$
+        buttonComposite.setText(WorkbenchMessages.WorkbenchPreference_openMode); 
 
-        String label = WorkbenchMessages
-                .getString("WorkbenchPreference.doubleClick"); //$NON-NLS-1$	
+        String label = WorkbenchMessages.WorkbenchPreference_doubleClick;
         doubleClickButton = createRadioButton(buttonComposite, label);
         doubleClickButton.addSelectionListener(new SelectionAdapter() {
 
@@ -149,7 +144,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements
         });
         doubleClickButton.setSelection(!openOnSingleClick);
 
-        label = WorkbenchMessages.getString("WorkbenchPreference.singleClick"); //$NON-NLS-1$
+        label = WorkbenchMessages.WorkbenchPreference_singleClick;
         singleClickButton = createRadioButton(buttonComposite, label);
         singleClickButton.addSelectionListener(new SelectionAdapter() {
 
@@ -159,8 +154,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements
         });
         singleClickButton.setSelection(openOnSingleClick);
 
-        label = WorkbenchMessages
-                .getString("WorkbenchPreference.singleClick_SelectOnHover"); //$NON-NLS-1$				
+        label = WorkbenchMessages.WorkbenchPreference_singleClick_SelectOnHover; 		
         selectOnHoverButton = new Button(buttonComposite, SWT.CHECK | SWT.LEFT);
         selectOnHoverButton.setText(label);
         selectOnHoverButton.setEnabled(openOnSingleClick);
@@ -175,8 +169,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements
         data.horizontalIndent = 20;
         selectOnHoverButton.setLayoutData(data);
 
-        label = WorkbenchMessages
-                .getString("WorkbenchPreference.singleClick_OpenAfterDelay"); //$NON-NLS-1$				
+        label = WorkbenchMessages.WorkbenchPreference_singleClick_OpenAfterDelay;		
         openAfterDelayButton = new Button(buttonComposite, SWT.CHECK | SWT.LEFT);
         openAfterDelayButton.setText(label);
         openAfterDelayButton.setEnabled(openOnSingleClick);
@@ -191,10 +184,8 @@ public class WorkbenchPreferencePage extends PreferencePage implements
         data.horizontalIndent = 20;
         openAfterDelayButton.setLayoutData(data);
 
-        createNoteComposite(font, buttonComposite, WorkbenchMessages
-                .getString("Preference.note"), //$NON-NLS-1$
-                WorkbenchMessages
-                        .getString("WorkbenchPreference.noEffectOnAllViews")); //$NON-NLS-1$
+        createNoteComposite(font, buttonComposite, WorkbenchMessages.Preference_note, 
+                WorkbenchMessages.WorkbenchPreference_noEffectOnAllViews);
     }
 
     private void selectClickMode(boolean singleClick) {

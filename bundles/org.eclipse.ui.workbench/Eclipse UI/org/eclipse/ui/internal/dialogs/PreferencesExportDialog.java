@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -97,7 +98,7 @@ public class PreferencesExportDialog extends Dialog {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText(WorkbenchMessages.getString("PreferencesExportDialog.SelectMessage")); //$NON-NLS-1$
+		newShell.setText(WorkbenchMessages.PreferencesExportDialog_SelectMessage); 
 	}
 
 	/*
@@ -120,7 +121,7 @@ public class PreferencesExportDialog extends Dialog {
 		createOutputSelectionArea((Composite) outerArea);
 
 		Label title = new Label((Composite) outerArea, SWT.NONE);
-		title.setText(WorkbenchMessages.getString("PreferencesExportDialog.PreferencesListLabel")); //$NON-NLS-1$
+		title.setText(WorkbenchMessages.PreferencesExportDialog_PreferencesListLabel); 
 
 		viewer = new CheckboxTreeViewer((Composite) outerArea);
 
@@ -141,11 +142,9 @@ public class PreferencesExportDialog extends Dialog {
 				// we are at the scope level
 				if (node.parent().parent() == null) {
 					if (node.name().equals(InstanceScope.SCOPE))
-						return WorkbenchMessages
-								.getString("PreferencesExportDialog.WorkspaceScope"); //$NON-NLS-1$
+						return WorkbenchMessages.PreferencesExportDialog_WorkspaceScope;
 					else if (node.name().equals(ConfigurationScope.SCOPE))
-						return WorkbenchMessages
-								.getString("PreferencesExportDialog.ConfigurationScope"); //$NON-NLS-1$
+						return WorkbenchMessages.PreferencesExportDialog_ConfigurationScope;
 					return node.name();
 				}
 
@@ -153,8 +152,7 @@ public class PreferencesExportDialog extends Dialog {
 				String result = node.name();
 				Plugin plugin = Platform.getPlugin(result);
 				if (plugin != null)
-					return WorkbenchMessages.format("PreferencesExportDialog.PluginLabel", //$NON-NLS-1$
-							new String[] { plugin.getDescriptor().getLabel(), node.name() });
+					return NLS.bind(WorkbenchMessages.PreferencesExportDialog_PluginLabel, plugin.getDescriptor().getLabel(), node.name());
 				return node.name();
 			}
 
@@ -264,7 +262,7 @@ public class PreferencesExportDialog extends Dialog {
 		outputArea.setLayoutData(data);
 
 		Label titleLabel = new Label(outputArea, SWT.NONE);
-		titleLabel.setText(WorkbenchMessages.getString("ExportWizard.selectDestination"));//$NON-NLS-1$
+		titleLabel.setText(WorkbenchMessages.ExportWizard_selectDestination);
 
 		IDialogSettings settings = WorkbenchPlugin.getDefault().getDialogSettings();
 		String[] locations = settings.getArray(EXPORT_LOCATION_KEY);
@@ -288,7 +286,7 @@ public class PreferencesExportDialog extends Dialog {
 
 		// destination browse button
 		Button destinationBrowseButton = new Button(outputArea, SWT.PUSH);
-		destinationBrowseButton.setText(WorkbenchMessages.getString("EditorSelection.browse")); //$NON-NLS-1$
+		destinationBrowseButton.setText(WorkbenchMessages.EditorSelection_browse);
 		destinationBrowseButton.addSelectionListener(new SelectionAdapter() {
 			/*
 			 * (non-Javadoc)
@@ -297,8 +295,7 @@ public class PreferencesExportDialog extends Dialog {
 			 */
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog dialog = new FileDialog(getShell(), SWT.SAVE);
-				dialog.setText(WorkbenchMessages
-						.getString("PreferencesExportDialog.ExportDialogTitle")); //$NON-NLS-1$
+				dialog.setText(WorkbenchMessages.PreferencesExportDialog_ExportDialogTitle);
 				dialog
 						.setFilterExtensions(PreferenceImportExportFileSelectionPage.DIALOG_PREFERENCE_EXTENSIONS);
 				String selectedDirectoryName = dialog.open();
@@ -427,9 +424,8 @@ public class PreferencesExportDialog extends Dialog {
 	 * @param status
 	 */
 	private void openErrorDialog(IStatus status) {
-		ErrorDialog.openError(getShell(), WorkbenchMessages
-				.getString("PreferencesExportDialog.ErrorDialogTitle"), //$NON-NLS-1$
-				WorkbenchMessages.getString("PreferencesExportDialog.ErrorDialogMessage"), status); //$NON-NLS-1$
+		ErrorDialog.openError(getShell(), WorkbenchMessages.PreferencesExportDialog_ErrorDialogTitle, 
+				WorkbenchMessages.PreferencesExportDialog_ErrorDialogMessage, status); 
 	}
 
 	/* (non-Javadoc)

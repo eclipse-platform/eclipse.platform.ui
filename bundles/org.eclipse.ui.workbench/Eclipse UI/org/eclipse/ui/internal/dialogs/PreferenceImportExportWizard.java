@@ -26,6 +26,7 @@ import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -94,11 +95,9 @@ public class PreferenceImportExportWizard extends Wizard {
         export = exportWizard;
         parent = parentDialog;
         if (exportWizard) {
-            setWindowTitle(WorkbenchMessages
-                    .getString("ImportExportPages.exportWindowTitle")); //$NON-NLS-1$
+            setWindowTitle(WorkbenchMessages.ImportExportPages_exportWindowTitle); 
         } else {
-            setWindowTitle(WorkbenchMessages
-                    .getString("ImportExportPages.importWindowTitle")); //$NON-NLS-1$
+            setWindowTitle(WorkbenchMessages.ImportExportPages_importWindowTitle);
         }
     }
 
@@ -191,22 +190,16 @@ public class PreferenceImportExportWizard extends Wizard {
      */
     private boolean exportFile(IPath path) {
         if (selectedFile.exists()) {
-            if (!MessageDialog.openConfirm(getShell(), WorkbenchMessages
-                    .getString("WorkbenchPreferenceDialog.saveTitle"), //$NON-NLS-1$
-                    WorkbenchMessages.format(
-                            "WorkbenchPreferenceDialog.existsErrorMessage", //$NON-NLS-1$
-                            new Object[] { selectedFilePath })))
+            if (!MessageDialog.openConfirm(getShell(), WorkbenchMessages.WorkbenchPreferenceDialog_saveTitle,
+                    NLS.bind(WorkbenchMessages.WorkbenchPreferenceDialog_existsErrorMessage,  selectedFilePath)))
                 return false;
         }
 
         try {
             Preferences.exportPreferences(path);
         } catch (CoreException e) {
-            ErrorDialog.openError(getShell(), WorkbenchMessages
-                    .getString("WorkbenchPreferenceDialog.saveErrorTitle"), //$NON-NLS-1$
-                    WorkbenchMessages.format(
-                            "WorkbenchPreferenceDialog.saveErrorMessage", //$NON-NLS-1$
-                            new Object[] { selectedFilePath }), e.getStatus());
+            ErrorDialog.openError(getShell(), WorkbenchMessages.WorkbenchPreferenceDialog_saveErrorTitle, 
+                    NLS.bind(WorkbenchMessages.WorkbenchPreferenceDialog_saveErrorMessage,  selectedFilePath ), e.getStatus());
             return false;
         }
         return true;
@@ -223,23 +216,16 @@ public class PreferenceImportExportWizard extends Wizard {
         IStatus status = Preferences.validatePreferenceVersions(path);
         if (status.getSeverity() == IStatus.ERROR) {
             // Show the error and about
-            ErrorDialog.openError(getShell(), WorkbenchMessages
-                    .getString("WorkbenchPreferenceDialog.loadErrorTitle"), //$NON-NLS-1$
-                    WorkbenchMessages.format(
-                            "WorkbenchPreferenceDialog.verifyErrorMessage", //$NON-NLS-1$
-                            new Object[] { selectedFilePath }), status);
+            ErrorDialog.openError(getShell(), WorkbenchMessages.WorkbenchPreferenceDialog_loadErrorTitle, 
+                    NLS.bind(WorkbenchMessages.WorkbenchPreferenceDialog_verifyErrorMessage, selectedFilePath ), status);
             return false;
         } else if (status.getSeverity() == IStatus.WARNING) {
             // Show the warning and give the option to continue
             int result = PreferenceErrorDialog
                     .openError(
                             getShell(),
-                            WorkbenchMessages
-                                    .getString("WorkbenchPreferenceDialog.loadErrorTitle"), //$NON-NLS-1$
-                            WorkbenchMessages
-                                    .format(
-                                            "WorkbenchPreferenceDialog.verifyWarningMessage", //$NON-NLS-1$
-                                            new Object[] { selectedFilePath }),
+                            WorkbenchMessages.WorkbenchPreferenceDialog_loadErrorTitle,
+                            NLS.bind(WorkbenchMessages.WorkbenchPreferenceDialog_verifyWarningMessage, selectedFilePath ),
                             status);
             if (result != Window.OK) {
                 return false;
@@ -249,11 +235,8 @@ public class PreferenceImportExportWizard extends Wizard {
         try {
             Preferences.importPreferences(path);
         } catch (CoreException e) {
-            ErrorDialog.openError(getShell(), WorkbenchMessages
-                    .getString("WorkbenchPreferenceDialog.loadErrorTitle"), //$NON-NLS-1$
-                    WorkbenchMessages.format(
-                            "WorkbenchPreferenceDialog.loadErrorMessage", //$NON-NLS-1$
-                            new Object[] { selectedFilePath }), e.getStatus());
+            ErrorDialog.openError(getShell(), WorkbenchMessages.WorkbenchPreferenceDialog_loadErrorTitle, 
+                    NLS.bind(WorkbenchMessages.WorkbenchPreferenceDialog_loadErrorMessage,  selectedFilePath ), e.getStatus());
             return false;
         }
         return true;
@@ -265,27 +248,19 @@ public class PreferenceImportExportWizard extends Wizard {
      */
     private void showMessageDialog() {
         if (!export) {
-            MessageDialog.openInformation(getShell(), WorkbenchMessages
-                    .getString("WorkbenchPreferenceDialog.loadTitle"), //$NON-NLS-1$
-                    WorkbenchMessages.format(
-                            "WorkbenchPreferenceDialog.loadMessage", //$NON-NLS-1$
-                            new Object[] { selectedFilePath }));
+            MessageDialog.openInformation(getShell(), WorkbenchMessages.WorkbenchPreferenceDialog_loadTitle, 
+                    NLS.bind(WorkbenchMessages.WorkbenchPreferenceDialog_loadMessage, selectedFilePath ));
 
         } else if ((selectedFile.exists() && (selectedFile.lastModified() != lastModified))) {
-            MessageDialog.openInformation(getShell(), WorkbenchMessages
-                    .getString("WorkbenchPreferenceDialog.saveTitle"), //$NON-NLS-1$
-                    WorkbenchMessages.format(
-                            "WorkbenchPreferenceDialog.saveMessage", //$NON-NLS-1$
-                            new Object[] { selectedFilePath }));
+            MessageDialog.openInformation(getShell(), WorkbenchMessages.WorkbenchPreferenceDialog_saveTitle,
+                    NLS.bind(WorkbenchMessages.WorkbenchPreferenceDialog_saveMessage,  selectedFilePath ));
 
         } else {
             MessageDialog
                     .openError(
                             getShell(),
-                            WorkbenchMessages
-                                    .getString("WorkbenchPreferenceDialog.saveErrorTitle"), //$NON-NLS-1$
-                            WorkbenchMessages
-                                    .getString("WorkbenchPreferenceDialog.noPreferencesMessage")); //$NON-NLS-1$
+                            WorkbenchMessages.WorkbenchPreferenceDialog_saveErrorTitle,
+                            WorkbenchMessages.WorkbenchPreferenceDialog_noPreferencesMessage); 
         }
     }
 }

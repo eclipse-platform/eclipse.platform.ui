@@ -41,15 +41,14 @@ public class EditActionSetsAction extends Action implements
      * @param window the window
      */
     public EditActionSetsAction(IWorkbenchWindow window) {
-        super(WorkbenchMessages.getString("EditActionSetsAction.text")); //$NON-NLS-1$
+        super(WorkbenchMessages.EditActionSetsAction_text); 
         if (window == null) {
             throw new IllegalArgumentException();
         }
         this.workbenchWindow = window;
         setActionDefinitionId("org.eclipse.ui.window.customizePerspective"); //$NON-NLS-1$
         // @issue missing action id
-        setToolTipText(WorkbenchMessages
-                .getString("EditActionSetsAction.toolTip")); //$NON-NLS-1$
+        setToolTipText(WorkbenchMessages.EditActionSetsAction_toolTip); 
         setEnabled(false);
         window.getWorkbench().getHelpSystem().setHelp(this,
 				IWorkbenchHelpContextIds.EDIT_ACTION_SETS_ACTION);

@@ -63,8 +63,7 @@ public class ExportWizard extends Wizard {
      */
     public void addPages() {
         addPage(new SelectionPage(this.workbench, this.selection,
-                getAvailableExportWizards(), WorkbenchMessages
-                        .getString("ExportWizard.selectDestination"))); //$NON-NLS-1$
+                getAvailableExportWizards(), WorkbenchMessages.ExportWizard_selectDestination));
     }
 
     /**
@@ -94,7 +93,7 @@ public class ExportWizard extends Wizard {
         this.workbench = aWorkbench;
         this.selection = currentSelection;
 
-        setWindowTitle(WorkbenchMessages.getString("ExportWizard.title")); //$NON-NLS-1$
+        setWindowTitle(WorkbenchMessages.ExportWizard_title); 
         setDefaultPageImageDescriptor(WorkbenchImages
                 .getImageDescriptor(IWorkbenchGraphicConstants.IMG_WIZBAN_EXPORT_WIZ));
         setNeedsProgressMonitor(true);

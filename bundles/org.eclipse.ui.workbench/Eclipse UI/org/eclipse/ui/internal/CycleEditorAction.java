@@ -34,17 +34,15 @@ public class CycleEditorAction extends CyclePartAction {
     protected void setText() {
         // TBD: Remove text and tooltip when this becomes an invisible action.
         if (forward) {
-            setText(WorkbenchMessages.getString("CycleEditorAction.next.text")); //$NON-NLS-1$
-            setToolTipText(WorkbenchMessages
-                    .getString("CycleEditorAction.next.toolTip")); //$NON-NLS-1$
+            setText(WorkbenchMessages.CycleEditorAction_next_text); 
+            setToolTipText(WorkbenchMessages.CycleEditorAction_next_toolTip); 
             // @issue missing action ids
             getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp(this,
 					IWorkbenchHelpContextIds.CYCLE_EDITOR_FORWARD_ACTION);
             setActionDefinitionId("org.eclipse.ui.window.nextEditor"); //$NON-NLS-1$
         } else {
-            setText(WorkbenchMessages.getString("CycleEditorAction.prev.text")); //$NON-NLS-1$
-            setToolTipText(WorkbenchMessages
-                    .getString("CycleEditorAction.prev.toolTip")); //$NON-NLS-1$
+            setText(WorkbenchMessages.CycleEditorAction_prev_text);
+            setToolTipText(WorkbenchMessages.CycleEditorAction_prev_toolTip); 
             // @issue missing action ids
             getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp(this,
 					IWorkbenchHelpContextIds.CYCLE_EDITOR_BACKWARD_ACTION);
@@ -86,6 +84,6 @@ public class CycleEditorAction extends CyclePartAction {
      * Returns the string which will be shown in the table header.
      */
     protected String getTableHeader() {
-        return WorkbenchMessages.getString("CycleEditorAction.header"); //$NON-NLS-1$
+        return WorkbenchMessages.CycleEditorAction_header;
     }
 }

@@ -242,9 +242,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
             throw core;
         } catch (Exception e) {
             throw new CoreException(new Status(IStatus.ERROR, PI_WORKBENCH,
-                    IStatus.ERROR, WorkbenchMessages
-                            .getString("WorkbenchPlugin.extension"), //$NON-NLS-1$ 
-                    e));
+                    IStatus.ERROR, WorkbenchMessages.WorkbenchPlugin_extension,e));
         }
     }
 

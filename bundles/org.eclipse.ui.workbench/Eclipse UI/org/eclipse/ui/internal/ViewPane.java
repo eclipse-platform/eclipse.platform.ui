@@ -189,8 +189,7 @@ public class ViewPane extends PartPane implements IPropertyListener {
                 text.setForeground(JFaceColors.getErrorText(text.getDisplay()));
                 text.setBackground(text.getDisplay().getSystemColor(
                         SWT.COLOR_WIDGET_BACKGROUND));
-                text.setText(WorkbenchMessages
-                        .getString("ViewPane.errorMessage")); //$NON-NLS-1$
+                text.setText(WorkbenchMessages.ViewPane_errorMessage); 
             }
 
             public void setFocus() {

@@ -191,7 +191,7 @@ public class StandardSystemToolbar {
         toolbarManager.add(paneMenu);
         paneMenu.setImage(WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU_THIN));
         paneMenu.setVisible(showPaneMenu);
-        paneMenu.setToolTipText(WorkbenchMessages.getString("Menu")); //$NON-NLS-1$
+        paneMenu.setToolTipText(WorkbenchMessages.Menu); 
 
         toolbarManager.add(showToolbar);
         showToolbar.setImage(WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_HIDE_TOOLBAR_THIN));
@@ -251,19 +251,19 @@ public class StandardSystemToolbar {
     public void setState(int newState) {
         if (min != null) {
             if (newState == IStackPresentationSite.STATE_MINIMIZED) {
-            	min.setToolTipText(WorkbenchMessages.getString("StandardSystemToolbar.Restore")); //$NON-NLS-1$
+            	min.setToolTipText(WorkbenchMessages.StandardSystemToolbar_Restore);
                 min.setImage(WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_RESTORE_VIEW_THIN));
             } else {
-            	min.setToolTipText(WorkbenchMessages.getString("StandardSystemToolbar.Minimize")); //$NON-NLS-1$
+            	min.setToolTipText(WorkbenchMessages.StandardSystemToolbar_Minimize); 
                 min.setImage(WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_MIN_VIEW_THIN));
             }
         }
         if (max != null) {
             if (newState == IStackPresentationSite.STATE_MAXIMIZED) {
-            	max.setToolTipText(WorkbenchMessages.getString("StandardSystemToolbar.Restore")); //$NON-NLS-1$
+            	max.setToolTipText(WorkbenchMessages.StandardSystemToolbar_Restore);
                 max.setImage(WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_RESTORE_VIEW_THIN));
             } else {
-            	max.setToolTipText(WorkbenchMessages.getString("StandardSystemToolbar.Maximize")); //$NON-NLS-1$
+            	max.setToolTipText(WorkbenchMessages.StandardSystemToolbar_Maximize);
                 max.setImage(WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_MAX_VIEW_THIN));
             }
         }

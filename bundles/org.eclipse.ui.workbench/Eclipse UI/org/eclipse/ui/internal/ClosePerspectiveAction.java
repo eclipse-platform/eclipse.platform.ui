@@ -34,15 +34,14 @@ public class ClosePerspectiveAction extends Action implements
      * @param window the workbench window this action applies to
      */
     public ClosePerspectiveAction(IWorkbenchWindow window) {
-        super(WorkbenchMessages.getString("ClosePerspectiveAction.text")); //$NON-NLS-1$
+        super(WorkbenchMessages.ClosePerspectiveAction_text);
         if (window == null) {
             throw new IllegalArgumentException();
         }
         this.workbenchWindow = window;
         setActionDefinitionId("org.eclipse.ui.window.closePerspective"); //$NON-NLS-1$
         // @issue missing action id
-        setToolTipText(WorkbenchMessages
-                .getString("ClosePerspectiveAction.toolTip")); //$NON-NLS-1$
+        setToolTipText(WorkbenchMessages.ClosePerspectiveAction_toolTip);
         setEnabled(false);
         window.getWorkbench().getHelpSystem().setHelp(this,
 				IWorkbenchHelpContextIds.CLOSE_PAGE_ACTION);

@@ -25,8 +25,8 @@ public class CloseAllAction extends PageEventAction {
      * @param window the window
      */
     public CloseAllAction(IWorkbenchWindow window) {
-        super(WorkbenchMessages.getString("CloseAllAction.text"), window); //$NON-NLS-1$
-        setToolTipText(WorkbenchMessages.getString("CloseAllAction.toolTip")); //$NON-NLS-1$
+        super(WorkbenchMessages.CloseAllAction_text, window);
+        setToolTipText(WorkbenchMessages.CloseAllAction_toolTip);
         setEnabled(false);
         setId("closeAll"); //$NON-NLS-1$
         updateState();

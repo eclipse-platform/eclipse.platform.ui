@@ -56,7 +56,7 @@ public class RedoActionHandler extends OperationHistoryActionHandler {
 	}
 
 	protected String getCommandString() {
-		return WorkbenchMessages.getString("Workbench.redo"); //$NON-NLS-1$
+		return WorkbenchMessages.Workbench_redo;
 	}
 
 	protected IUndoableOperation getOperation() {

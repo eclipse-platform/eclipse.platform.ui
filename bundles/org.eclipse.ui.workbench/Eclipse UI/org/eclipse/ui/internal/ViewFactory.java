@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.dynamicHelpers.IExtensionTracker;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IMemento;
@@ -113,11 +114,8 @@ import org.eclipse.ui.views.IViewRegistry;
                         ErrorDialog
                                 .openError(
                                         page.getWorkbenchWindow().getShell(),
-                                        WorkbenchMessages
-                                                .getString("ViewFactory.unableToRestoreViewTitle"), //$NON-NLS-1$
-                                        WorkbenchMessages
-                                                .format(
-                                                        "ViewFactory.unableToRestoreViewMessage", new String[] { getTitle() }), //$NON-NLS-1$
+                                        WorkbenchMessages.ViewFactory_unableToRestoreViewTitle,
+                                        NLS.bind(WorkbenchMessages.ViewFactory_unableToRestoreViewMessage,getTitle()),
                                         status, IStatus.WARNING | IStatus.ERROR);
                     }
                 } else {
@@ -300,9 +298,7 @@ import org.eclipse.ui.views.IViewRegistry;
                         IStatus.ERROR,
                         PlatformUI.PLUGIN_ID,
                         0,
-                        WorkbenchMessages
-                                .format(
-                                        "Perspective.exceptionRestoringView", new String[] { key }), //$NON-NLS-1$
+                        NLS.bind(WorkbenchMessages.Perspective_exceptionRestoringView,key ), 
                         e);
 
             }
@@ -314,9 +310,7 @@ import org.eclipse.ui.views.IViewRegistry;
                             IStatus.ERROR,
                             PlatformUI.PLUGIN_ID,
                             0,
-                            WorkbenchMessages
-                                    .format(
-                                            "ViewFactory.couldNotCreate", new Object[] { key }), //$NON-NLS-1$
+                            NLS.bind(WorkbenchMessages.ViewFactory_couldNotCreate, key), 
                             null);
                     return;
                 }
@@ -348,9 +342,7 @@ import org.eclipse.ui.views.IViewRegistry;
                             IStatus.ERROR,
                             PlatformUI.PLUGIN_ID,
                             0,
-                            WorkbenchMessages
-                                    .format(
-                                            "ViewFactory.initException", new Object[] { desc.getId() }), //$NON-NLS-1$
+                            NLS.bind(WorkbenchMessages.ViewFactory_initException, desc.getId() ), 
                             e);
                     return;
                 }
@@ -378,9 +370,7 @@ import org.eclipse.ui.views.IViewRegistry;
                             IStatus.ERROR,
                             PlatformUI.PLUGIN_ID,
                             0,
-                            WorkbenchMessages
-                                    .format(
-                                            "Perspective.exceptionRestoringView", new String[] { key }), //$NON-NLS-1$
+                            NLS.bind(WorkbenchMessages.Perspective_exceptionRestoringView, key ),
                             e);
                     return;
                 }
@@ -390,9 +380,7 @@ import org.eclipse.ui.views.IViewRegistry;
                             IStatus.ERROR,
                             PlatformUI.PLUGIN_ID,
                             0,
-                            WorkbenchMessages
-                                    .format(
-                                            "ViewFactory.siteException", new Object[] { desc.getId() }), //$NON-NLS-1$
+                            NLS.bind(WorkbenchMessages.ViewFactory_siteException,desc.getId() ), 
                             null);
                     return;
                 }
@@ -437,13 +425,11 @@ import org.eclipse.ui.views.IViewRegistry;
         IViewDescriptor desc = viewReg.find(id);
         // ensure that the view id is valid
         if (desc == null)
-            throw new PartInitException(WorkbenchMessages.format(
-                    "ViewFactory.couldNotCreate", new Object[] { id })); //$NON-NLS-1$
+            throw new PartInitException(NLS.bind(WorkbenchMessages.ViewFactory_couldNotCreate,  id ));
         // ensure that multiple instances are allowed if a secondary id is given
         if (secondaryId != null) {
             if (!desc.getAllowMultiple()) {
-                throw new PartInitException(WorkbenchMessages.format(
-                        "ViewFactory.noMultiple", new Object[] { id })); //$NON-NLS-1$
+                throw new PartInitException(NLS.bind(WorkbenchMessages.ViewFactory_noMultiple, id)); 
             }
         }
         String key = getKey(id, secondaryId);
@@ -600,8 +586,7 @@ import org.eclipse.ui.views.IViewRegistry;
      */
     public IStatus saveState(IMemento memento) {
         final MultiStatus result = new MultiStatus(PlatformUI.PLUGIN_ID,
-                IStatus.OK, WorkbenchMessages
-                        .getString("ViewFactory.problemsSavingViews"), null); //$NON-NLS-1$
+                IStatus.OK, WorkbenchMessages.ViewFactory_problemsSavingViews, null); 
 
         final IViewReference refs[] = getViews();
         for (int i = 0; i < refs.length; i++) {
@@ -638,9 +623,7 @@ import org.eclipse.ui.views.IViewRegistry;
                                     IStatus.ERROR,
                                     PlatformUI.PLUGIN_ID,
                                     0,
-                                    WorkbenchMessages
-                                            .format(
-                                                    "ViewFactory.couldNotSave", new String[] { viewRef.getTitle() }), //$NON-NLS-1$
+                                    NLS.bind(WorkbenchMessages.ViewFactory_couldNotSave, viewRef.getTitle() ),
                                     e));
                 }
             });

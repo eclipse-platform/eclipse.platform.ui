@@ -32,9 +32,9 @@ public class PinEditorAction extends ActiveEditorAction {
      * Creates a PinEditorAction.
      */
     public PinEditorAction(IWorkbenchWindow window) {
-        super(WorkbenchMessages.getString("PinEditorAction.text"), window); //$NON-NLS-1$
+        super(WorkbenchMessages.PinEditorAction_text, window); 
         setActionDefinitionId("org.eclipse.ui.window.pinEditor"); //$NON-NLS-1$
-        setToolTipText(WorkbenchMessages.getString("PinEditorAction.toolTip")); //$NON-NLS-1$
+        setToolTipText(WorkbenchMessages.PinEditorAction_toolTip); 
         setId("org.eclipse.ui.internal.PinEditorAction"); //$NON-NLS-1$
         // @issue need help constant for this?
         //	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.SAVE_ACTION});

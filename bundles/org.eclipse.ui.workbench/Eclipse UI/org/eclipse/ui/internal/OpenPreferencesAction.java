@@ -42,14 +42,14 @@ public class OpenPreferencesAction extends Action implements ActionFactory.IWork
 	 * @param window
 	 */
 	public OpenPreferencesAction(IWorkbenchWindow window) {
-		super(WorkbenchMessages.getString("OpenPreferences.text")); //$NON-NLS-1$
+		super(WorkbenchMessages.OpenPreferences_text); 
 		if (window == null) {
 			throw new IllegalArgumentException();
 		}
 		this.workbenchWindow = window;
 		setActionDefinitionId("org.eclipse.ui.window.preferences"); //$NON-NLS-1$
 		// @issue action id not set
-		setToolTipText(WorkbenchMessages.getString("OpenPreferences.toolTip")); //$NON-NLS-1$
+		setToolTipText(WorkbenchMessages.OpenPreferences_toolTip); 
 		window.getWorkbench().getHelpSystem().setHelp(this,
 				IWorkbenchHelpContextIds.OPEN_PREFERENCES_ACTION);
 	}

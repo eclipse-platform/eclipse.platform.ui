@@ -81,7 +81,7 @@ public class ExportResourcesAction extends BaseSelectionListenerAction
      * @param window the window
      */
     public ExportResourcesAction(IWorkbenchWindow window) {
-        this(window, WorkbenchMessages.getString("ExportResourcesAction.text")); //$NON-NLS-1$
+        this(window, WorkbenchMessages.ExportResourcesAction_text);
     }
 
     /**
@@ -97,8 +97,7 @@ public class ExportResourcesAction extends BaseSelectionListenerAction
         }
         this.workbenchWindow = window;
         setActionDefinitionId("org.eclipse.ui.file.export"); //$NON-NLS-1$
-        setToolTipText(WorkbenchMessages
-                .getString("ExportResourcesAction.toolTip")); //$NON-NLS-1$
+        setToolTipText(WorkbenchMessages.ExportResourcesAction_toolTip);
         setId("export"); //$NON-NLS-1$
         window.getWorkbench().getHelpSystem().setHelp(this,
 				IWorkbenchHelpContextIds.EXPORT_ACTION);
@@ -106,8 +105,7 @@ public class ExportResourcesAction extends BaseSelectionListenerAction
         workbenchWindow.getSelectionService().addSelectionListener(
                 selectionListener);
 
-        setText(WorkbenchMessages
-                .getString("ExportResourcesAction.fileMenuText")); //$NON-NLS-1$
+        setText(WorkbenchMessages.ExportResourcesAction_fileMenuText); 
         setImageDescriptor(WorkbenchImages
                 .getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_EXPORT_WIZ));
     }

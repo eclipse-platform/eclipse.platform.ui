@@ -475,14 +475,12 @@ public class EditorList {
 
     private void fillContextMenu(IMenuManager menuMgr) {
         // SortBy SubMenu
-        MenuManager sortMenuMgr = new MenuManager(WorkbenchMessages
-                .getString("EditorList.SortBy.text")); //$NON-NLS-1$
+        MenuManager sortMenuMgr = new MenuManager(WorkbenchMessages.EditorList_SortBy_text);
         sortMenuMgr.add(nameSortAction);
         sortMenuMgr.add(MRUSortAction);
 
         // ApplyTo SubMenu
-        MenuManager applyToMenuMgr = new MenuManager(WorkbenchMessages
-                .getString("EditorList.ApplyTo.text")); //$NON-NLS-1$
+        MenuManager applyToMenuMgr = new MenuManager(WorkbenchMessages.EditorList_ApplyTo_text);
         applyToMenuMgr.add(windowScopeAction);
         applyToMenuMgr.add(pageScopeAction);
         if (dropDown) {
@@ -507,9 +505,8 @@ public class EditorList {
          *	Create an instance of this class
          */
         private SaveAction() {
-            setText(WorkbenchMessages.getString("EditorList.saveSelected.text")); //$NON-NLS-1$
-            setToolTipText(WorkbenchMessages
-                    .getString("EditorList.saveSelected.toolTip")); //$NON-NLS-1$
+            setText(WorkbenchMessages.EditorList_saveSelected_text); 
+            setToolTipText(WorkbenchMessages.EditorList_saveSelected_toolTip); 
             PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
 					IWorkbenchHelpContextIds.SAVE_ACTION);
         }
@@ -544,10 +541,8 @@ public class EditorList {
          *	Create an instance of this class
          */
         private CloseAction() {
-            setText(WorkbenchMessages
-                    .getString("EditorList.closeSelected.text")); //$NON-NLS-1$
-            setToolTipText(WorkbenchMessages
-                    .getString("EditorList.closeSelected.toolTip")); //$NON-NLS-1$
+            setText(WorkbenchMessages.EditorList_closeSelected_text); 
+            setToolTipText(WorkbenchMessages.EditorList_closeSelected_toolTip); 
             PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
 					IWorkbenchHelpContextIds.CLOSE_PART_ACTION);
         }
@@ -601,22 +596,16 @@ public class EditorList {
 
             switch (selectionType) {
             case SELECT_ALL:
-                setText(WorkbenchMessages
-                        .getString("EditorList.selectAll.text")); //$NON-NLS-1$
-                setToolTipText(WorkbenchMessages
-                        .getString("EditorList.selectAll.toolTip")); //$NON-NLS-1$
+                setText(WorkbenchMessages.EditorList_selectAll_text); 
+                setToolTipText(WorkbenchMessages.EditorList_selectAll_toolTip); 
                 break;
             case INVERT_SELECTION:
-                setText(WorkbenchMessages
-                        .getString("EditorList.invertSelection.text")); //$NON-NLS-1$
-                setToolTipText(WorkbenchMessages
-                        .getString("EditorList.invertSelection.toolTip")); //$NON-NLS-1$
+                setText(WorkbenchMessages.EditorList_invertSelection_text); 
+                setToolTipText(WorkbenchMessages.EditorList_invertSelection_toolTip);
                 break;
             case SELECT_CLEAN:
-                setText(WorkbenchMessages
-                        .getString("EditorList.selectClean.text")); //$NON-NLS-1$
-                setToolTipText(WorkbenchMessages
-                        .getString("EditorList.selectClean.toolTip")); //$NON-NLS-1$
+                setText(WorkbenchMessages.EditorList_selectClean_text);
+                setToolTipText(WorkbenchMessages.EditorList_selectClean_toolTip);
                 break;
             default:
                 break;
@@ -688,10 +677,9 @@ public class EditorList {
          *	Create an instance of this class
          */
         private FullNameAction() {
-            setText(WorkbenchMessages.getString("EditorList.FullName.text")); //$NON-NLS-1$
-            setToolTipText(WorkbenchMessages
-                    .getString("EditorList.FullName.toolTip")); //$NON-NLS-1$
-            //		WorkbenchHelp.setHelp(this, IHelpContextIds.FULL_NAME_ALL_ACTION);
+            setText(WorkbenchMessages.EditorList_FullName_text);
+            setToolTipText(WorkbenchMessages.EditorList_FullName_toolTip);
+       
         }
 
         /**
@@ -724,16 +712,12 @@ public class EditorList {
             this.sortOrder = sortOrder;
             switch (sortOrder) {
             case NAME_SORT:
-                setText(WorkbenchMessages
-                        .getString("EditorList.SortByName.text")); //$NON-NLS-1$
-                setToolTipText(WorkbenchMessages
-                        .getString("EditorList.SortByName.toolTip")); //$NON-NLS-1$
+                setText(WorkbenchMessages.EditorList_SortByName_text);
+                setToolTipText(WorkbenchMessages.EditorList_SortByName_toolTip); 
                 break;
             case MRU_SORT:
-                setText(WorkbenchMessages
-                        .getString("EditorList.SortByMostRecentlyUsed.text")); //$NON-NLS-1$
-                setToolTipText(WorkbenchMessages
-                        .getString("EditorList.SortByMostRecentlyUsed.toolTip")); //$NON-NLS-1$
+                setText(WorkbenchMessages.EditorList_SortByMostRecentlyUsed_text); 
+                setToolTipText(WorkbenchMessages.EditorList_SortByMostRecentlyUsed_toolTip);
                 break;
             default:
                 break;
@@ -768,22 +752,16 @@ public class EditorList {
             this.whichScope = whichScope;
             switch (whichScope) {
             case SET_WINDOW_SCOPE:
-                setText(WorkbenchMessages
-                        .getString("EditorList.DisplayAllWindows.text")); //$NON-NLS-1$
-                setToolTipText(WorkbenchMessages
-                        .getString("EditorList.DisplayAllWindows.toolTip")); //$NON-NLS-1$
+                setText(WorkbenchMessages.EditorList_DisplayAllWindows_text); 
+                setToolTipText(WorkbenchMessages.EditorList_DisplayAllWindows_toolTip);
                 break;
             case SET_PAGE_SCOPE:
-                setText(WorkbenchMessages
-                        .getString("EditorList.DisplayAllPage.text")); //$NON-NLS-1$
-                setToolTipText(WorkbenchMessages
-                        .getString("EditorList.DisplayAllPage.toolTip")); //$NON-NLS-1$
+                setText(WorkbenchMessages.EditorList_DisplayAllPage_text);
+                setToolTipText(WorkbenchMessages.EditorList_DisplayAllPage_toolTip);
                 break;
             case SET_TAB_GROUP_SCOPE:
-                setText(WorkbenchMessages
-                        .getString("EditorList.DisplayTabGroup.text")); //$NON-NLS-1$
-                setToolTipText(WorkbenchMessages
-                        .getString("EditorList.DisplayTabGroup.toolTip")); //$NON-NLS-1$
+                setText(WorkbenchMessages.EditorList_DisplayTabGroup_text);
+                setToolTipText(WorkbenchMessages.EditorList_DisplayTabGroup_toolTip);
                 break;
             default:
                 break;

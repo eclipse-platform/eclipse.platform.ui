@@ -47,6 +47,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
@@ -141,11 +142,9 @@ public class EditorManager implements IExtensionRemovalHandler {
 
     private MultiStatus closingEditorStatus = null;
 
-    private static final String RESOURCES_TO_SAVE_MESSAGE = WorkbenchMessages
-            .getString("EditorManager.saveResourcesMessage"); //$NON-NLS-1$
+    private static final String RESOURCES_TO_SAVE_MESSAGE = WorkbenchMessages.EditorManager_saveResourcesMessage; 
 
-    private static final String SAVE_RESOURCES_TITLE = WorkbenchMessages
-            .getString("EditorManager.saveResourcesTitle"); //$NON-NLS-1$
+    private static final String SAVE_RESOURCES_TITLE = WorkbenchMessages.EditorManager_saveResourcesTitle;
 
     /**
      * EditorManager constructor comment.
@@ -191,8 +190,7 @@ public class EditorManager implements IExtensionRemovalHandler {
         if (closingEditorStatus == null) {
             createdStatus = true;
             closingEditorStatus = new MultiStatus(PlatformUI.PLUGIN_ID,
-                    IStatus.OK, WorkbenchMessages
-                            .getString("EditorManager.unableToOpenEditors"), //$NON-NLS-1$
+                    IStatus.OK, WorkbenchMessages.EditorManager_unableToOpenEditors,
                     null);
         }
 
@@ -229,8 +227,7 @@ public class EditorManager implements IExtensionRemovalHandler {
         }
         if (createdStatus) {
             if (closingEditorStatus.getSeverity() == IStatus.ERROR) {
-                ErrorDialog.openError(window.getShell(), WorkbenchMessages
-                        .getString("EditorManager.unableToRestoreEditorTitle"), //$NON-NLS-1$
+                ErrorDialog.openError(window.getShell(), WorkbenchMessages.EditorManager_unableToRestoreEditorTitle, 
                         null, closingEditorStatus, IStatus.WARNING
                                 | IStatus.ERROR);
             }
@@ -593,17 +590,13 @@ public class EditorManager implements IExtensionRemovalHandler {
 
         MessageDialog dialog = new MessageDialog(
                 window.getShell(),
-                WorkbenchMessages
-                        .getString("EditorManager.reuseEditorDialogTitle"), null, // accept the default window icon //$NON-NLS-1$
-                WorkbenchMessages
-                        .format(
-                                "EditorManager.saveChangesQuestion", new String[] { dirtyEditor.getName() }), //$NON-NLS-1$
+                WorkbenchMessages.EditorManager_reuseEditorDialogTitle, null, // accept the default window icon
+                NLS.bind(WorkbenchMessages.EditorManager_saveChangesQuestion, dirtyEditor.getName()), 
                 MessageDialog.QUESTION,
                 new String[] {
                         IDialogConstants.YES_LABEL,
                         IDialogConstants.NO_LABEL,
-                        WorkbenchMessages
-                                .getString("EditorManager.openNewEditorLabel") }, //$NON-NLS-1$
+                        WorkbenchMessages.EditorManager_openNewEditorLabel }, 
                 0);
         int result = dialog.open();
         if (result == 0) { //YES
@@ -631,9 +624,7 @@ public class EditorManager implements IExtensionRemovalHandler {
         EditorDescriptor desc = (EditorDescriptor) reg.findEditor(editorId);
         if (desc == null) {
             throw new PartInitException(
-                    WorkbenchMessages
-                            .format(
-                                    "EditorManager.unknownEditorIDMessage", new Object[] { editorId })); //$NON-NLS-1$
+                    NLS.bind(WorkbenchMessages.EditorManager_unknownEditorIDMessage,editorId )); 
         }
 
         IEditorReference result = openEditorFromDescriptor(new Editor(), desc,
@@ -662,17 +653,14 @@ public class EditorManager implements IExtensionRemovalHandler {
             if (pathInput != null) {
                 result = openSystemExternalEditor(pathInput.getPath());
             } else {
-                throw new PartInitException(WorkbenchMessages
-                        .getString("EditorManager.systemEditorError")); //$NON-NLS-1$
+                throw new PartInitException(WorkbenchMessages.EditorManager_systemEditorError); 
             }
         } else if (desc.isOpenExternal()) {
             result = openExternalEditor(desc, input);
         } else {
             // this should never happen
             throw new PartInitException(
-                    WorkbenchMessages
-                            .format(
-                                    "EditorManager.invalidDescriptor", new String[] { desc.getId() })); //$NON-NLS-1$
+                    NLS.bind(WorkbenchMessages.EditorManager_invalidDescriptor, desc.getId() ));
         }
 
         Workbench wb = (Workbench) window.getWorkbench();
@@ -711,16 +699,12 @@ public class EditorManager implements IExtensionRemovalHandler {
             });
         } else {
             throw new PartInitException(
-                    WorkbenchMessages
-                            .format(
-                                    "EditorManager.errorOpeningExternalEditor", new Object[] { desc.getFileName(), desc.getId() })); //$NON-NLS-1$
+                    NLS.bind(WorkbenchMessages.EditorManager_errorOpeningExternalEditor, desc.getFileName(), desc.getId() ));
         }
 
         if (ex[0] != null) {
             throw new PartInitException(
-                    WorkbenchMessages
-                            .format(
-                                    "EditorManager.errorOpeningExternalEditor", new Object[] { desc.getFileName(), desc.getId() }), ex[0]); //$NON-NLS-1$
+                    NLS.bind(WorkbenchMessages.EditorManager_errorOpeningExternalEditor, desc.getFileName(), desc.getId() ), ex[0]); 
         }
 
         // we do not have an editor part for external editors
@@ -749,9 +733,7 @@ public class EditorManager implements IExtensionRemovalHandler {
                     .findEditor(editorArray[i]);
             if (innerDesc == null)
                 throw new PartInitException(
-                        WorkbenchMessages
-                                .format(
-                                        "EditorManager.unknownEditorIDMessage", new Object[] { editorArray[i] })); //$NON-NLS-1$
+                        NLS.bind(WorkbenchMessages.EditorManager_unknownEditorIDMessage, editorArray[i] )); 
             descArray[i] = innerDesc;
             partArray[i] = createPart(descArray[i]);
             refArray[i] = new Editor();
@@ -825,9 +807,7 @@ public class EditorManager implements IExtensionRemovalHandler {
 			}
 			if (part.getSite() != site)
 				throw new PartInitException(
-						WorkbenchMessages
-								.format(
-										"EditorManager.siteIncorrect", new Object[] { desc.getId() })); //$NON-NLS-1$
+						NLS.bind(WorkbenchMessages.EditorManager_siteIncorrect,  desc.getId() ));
 		} catch (Exception e) {
 			disposeEditorActionBars((EditorActionBars) site.getActionBars());
 			site.dispose();
@@ -835,9 +815,7 @@ public class EditorManager implements IExtensionRemovalHandler {
 				throw (PartInitException) e;
 
 			throw new PartInitException(
-					WorkbenchMessages
-							.format(
-									"EditorManager.unableToInitialize", new Object[] { desc.getId(), e }), e); //$NON-NLS-1$        	
+					NLS.bind(WorkbenchMessages.EditorManager_unableToInitialize,desc.getId(), e ), e);
 		}
     }
 
@@ -919,9 +897,7 @@ public class EditorManager implements IExtensionRemovalHandler {
 
         if (ex[0] != null)
             throw new PartInitException(
-                    WorkbenchMessages
-                            .format(
-                                    "EditorManager.unableToInstantiate", new Object[] { desc.getId(), ex[0] })); //$NON-NLS-1$
+                    NLS.bind(WorkbenchMessages.EditorManager_unableToInstantiate, desc.getId(), ex[0] )); 
         
         IConfigurationElement element = desc.getConfigurationElement();
         if (element != null) {
@@ -952,9 +928,7 @@ public class EditorManager implements IExtensionRemovalHandler {
 
         if (!result[0]) {
             throw new PartInitException(
-                    WorkbenchMessages
-                            .format(
-                                    "EditorManager.unableToOpenExternalEditor", new Object[] { location })); //$NON-NLS-1$
+                    NLS.bind(WorkbenchMessages.EditorManager_unableToOpenExternalEditor, location )); 
         }
 
         // We do not have an editor part for external editors
@@ -999,8 +973,7 @@ public class EditorManager implements IExtensionRemovalHandler {
         final MultiStatus result = new MultiStatus(
                 PlatformUI.PLUGIN_ID,
                 IStatus.OK,
-                WorkbenchMessages
-                        .getString("EditorManager.problemsRestoringEditors"), null); //$NON-NLS-1$
+                WorkbenchMessages.EditorManager_problemsRestoringEditors, null); 
         final String activeWorkbookID[] = new String[1];
         final ArrayList visibleEditors = new ArrayList(5);
         final IEditorPart activeEditor[] = new IEditorPart[1];
@@ -1057,8 +1030,7 @@ public class EditorManager implements IExtensionRemovalHandler {
                                 IStatus.ERROR,
                                 PlatformUI.PLUGIN_ID,
                                 0,
-                                WorkbenchMessages
-                                        .getString("EditorManager.exceptionRestoringEditor"), e)); //$NON-NLS-1$
+                                WorkbenchMessages.EditorManager_exceptionRestoringEditor, e));
             }
         });
         return result;
@@ -1161,9 +1133,7 @@ public class EditorManager implements IExtensionRemovalHandler {
                 IStatus.ERROR,
                 PlatformUI.PLUGIN_ID,
                 0,
-                WorkbenchMessages
-                        .format(
-                                "EditorManager.unableToCreateEditor", new String[] { ref.getName() }), t); //$NON-NLS-1$
+                NLS.bind(WorkbenchMessages.EditorManager_unableToCreateEditor, ref.getName() ), t); 
     }
 
     /**
@@ -1260,8 +1230,7 @@ public class EditorManager implements IExtensionRemovalHandler {
         };
 
         // Do the save.
-        return SaveableHelper.runProgressMonitorOperation(WorkbenchMessages
-                .getString("Save_All"), progressOp, window); //$NON-NLS-1$
+        return SaveableHelper.runProgressMonitorOperation(WorkbenchMessages.Save_All, progressOp, window);
     }
 
     /*
@@ -1287,8 +1256,7 @@ public class EditorManager implements IExtensionRemovalHandler {
     public IStatus saveState(final IMemento memento) {
 
         final MultiStatus result = new MultiStatus(PlatformUI.PLUGIN_ID,
-                IStatus.OK, WorkbenchMessages
-                        .getString("EditorManager.problemsSavingEditors"), null); //$NON-NLS-1$
+                IStatus.OK, WorkbenchMessages.EditorManager_problemsSavingEditors, null); 
 
         // Save the editor area workbooks layout/relationship
         IMemento editorAreaMem = memento
@@ -1495,11 +1463,8 @@ public class EditorManager implements IExtensionRemovalHandler {
                     ErrorDialog
                             .openError(
                                     window.getShell(),
-                                    WorkbenchMessages
-                                            .getString("EditorManager.unableToRestoreEditorTitle"), //$NON-NLS-1$
-                                    WorkbenchMessages
-                                            .format(
-                                                    "EditorManager.unableToRestoreEditorMessage", new String[] { getName() }), //$NON-NLS-1$
+                                    WorkbenchMessages.EditorManager_unableToRestoreEditorTitle,
+                                    NLS.bind(WorkbenchMessages.EditorManager_unableToRestoreEditorMessage,  getName() ),
                                     status, IStatus.WARNING | IStatus.ERROR);
                 }
             }
@@ -1822,10 +1787,7 @@ public class EditorManager implements IExtensionRemovalHandler {
                                 IStatus.ERROR,
                                 PlatformUI.PLUGIN_ID,
                                 0,
-                                WorkbenchMessages
-                                        .format(
-                                                "EditorManager.unableToSaveEditor", new String[] { editorRef.getTitle() }), //$NON-NLS-1$
-                                e));
+                                NLS.bind(WorkbenchMessages.EditorManager_unableToSaveEditor, editorRef.getTitle() ), e));
             }
         });
     }

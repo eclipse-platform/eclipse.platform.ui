@@ -24,7 +24,7 @@ public class SystemMenuFastView extends Action implements ISelfUpdatingAction {
 
     public SystemMenuFastView(IStackPresentationSite site) {
         this.site = site;
-        setText(WorkbenchMessages.getString("ViewPane.fastView")); //$NON-NLS-1$
+        setText(WorkbenchMessages.ViewPane_fastView);
         update();
     }
 

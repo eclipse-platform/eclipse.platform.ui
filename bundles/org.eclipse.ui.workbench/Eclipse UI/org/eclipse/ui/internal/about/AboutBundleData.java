@@ -43,26 +43,19 @@ public class AboutBundleData extends AboutData {
     public String getStateName() {
         switch (state) {
         case Bundle.INSTALLED:
-            return WorkbenchMessages
-                    .getString("AboutPluginsDialog.state.installed"); //$NON-NLS-1$
+            return WorkbenchMessages.AboutPluginsDialog_state_installed;
         case Bundle.RESOLVED:
-            return WorkbenchMessages
-                    .getString("AboutPluginsDialog.state.resolved"); //$NON-NLS-1$
+            return WorkbenchMessages.AboutPluginsDialog_state_resolved;
         case Bundle.STARTING:
-            return WorkbenchMessages
-                    .getString("AboutPluginsDialog.state.starting"); //$NON-NLS-1$
+            return WorkbenchMessages.AboutPluginsDialog_state_starting;
         case Bundle.STOPPING:
-            return WorkbenchMessages
-                    .getString("AboutPluginsDialog.state.stopping"); //$NON-NLS-1$
+            return WorkbenchMessages.AboutPluginsDialog_state_stopping; 
         case Bundle.UNINSTALLED:
-            return WorkbenchMessages
-                    .getString("AboutPluginsDialog.state.uninstalled"); //$NON-NLS-1$
+            return WorkbenchMessages.AboutPluginsDialog_state_uninstalled;
         case Bundle.ACTIVE:
-            return WorkbenchMessages
-                    .getString("AboutPluginsDialog.state.active"); //$NON-NLS-1$
+            return WorkbenchMessages.AboutPluginsDialog_state_active; 
         default:
-            return WorkbenchMessages
-                    .getString("AboutPluginsDialog.state.unknown"); //$NON-NLS-1$
+            return WorkbenchMessages.AboutPluginsDialog_state_unknown; 
         }
     }
 

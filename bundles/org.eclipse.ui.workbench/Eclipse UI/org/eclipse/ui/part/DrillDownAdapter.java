@@ -153,39 +153,38 @@ public class DrillDownAdapter implements ISelectionChangedListener {
             return;
 
         // Home.	
-        homeAction = new Action(WorkbenchMessages.getString("GoHome.text")) { //$NON-NLS-1$
+        homeAction = new Action(WorkbenchMessages.GoHome_text) {
             public void run() {
                 goHome();
             }
         };
         homeAction
-                .setToolTipText(WorkbenchMessages.getString("GoHome.toolTip")); //$NON-NLS-1$
+                .setToolTipText(WorkbenchMessages.GoHome_toolTip);
         homeAction
                 .setImageDescriptor(WorkbenchImages
                         .getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_HOME_NAV));
 
         // Back.
         ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
-        backAction = new Action(WorkbenchMessages.getString("GoBack.text")) { //$NON-NLS-1$
+        backAction = new Action(WorkbenchMessages.GoBack_text) {
             public void run() {
                 goBack();
             }
         };
         backAction
-                .setToolTipText(WorkbenchMessages.getString("GoBack.toolTip")); //$NON-NLS-1$
+                .setToolTipText(WorkbenchMessages.GoBack_toolTip); 
         backAction.setImageDescriptor(images
                 .getImageDescriptor(ISharedImages.IMG_TOOL_BACK));
         backAction.setDisabledImageDescriptor(images
                 .getImageDescriptor(ISharedImages.IMG_TOOL_BACK_DISABLED));
 
         // Forward.
-        forwardAction = new Action(WorkbenchMessages.getString("GoInto.text")) { //$NON-NLS-1$
+        forwardAction = new Action(WorkbenchMessages.GoInto_text) { 
             public void run() {
                 goInto();
             }
         };
-        forwardAction.setToolTipText(WorkbenchMessages
-                .getString("GoInto.toolTip")); //$NON-NLS-1$
+        forwardAction.setToolTipText(WorkbenchMessages.GoInto_toolTip); 
         forwardAction.setImageDescriptor(images
                 .getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD));
         forwardAction.setDisabledImageDescriptor(images

@@ -53,8 +53,7 @@ class NewWizardSelectionPage extends WorkbenchWizardSelectionPage {
 			IWizardDescriptor[] primary, boolean projectsOnly) {
         super("newWizardSelectionPage", workbench, selection, null);//$NON-NLS-1$
         
-        setTitle(WorkbenchMessages
-                .getString("NewWizardSelectionPage.description")); //$NON-NLS-1$
+        setTitle(WorkbenchMessages.NewWizardSelectionPage_description); 
         wizardCategories = root;
         primaryWizards = primary;
         this.projectsOnly = projectsOnly;

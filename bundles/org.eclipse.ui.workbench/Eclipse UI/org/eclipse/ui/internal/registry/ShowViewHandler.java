@@ -46,7 +46,7 @@ public class ShowViewHandler extends AbstractHandler {
             activePage.showView(viewId);
         } catch (PartInitException e) {
             ErrorDialog.openError(activePage.getWorkbenchWindow().getShell(),
-                    WorkbenchMessages.getString("ShowView.errorTitle"), //$NON-NLS-1$
+                    WorkbenchMessages.ShowView_errorTitle,
                     e.getMessage(), e.getStatus());
         }
         return null;

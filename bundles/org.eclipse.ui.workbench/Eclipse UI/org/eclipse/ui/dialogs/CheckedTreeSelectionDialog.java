@@ -59,8 +59,7 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
 
     private ViewerSorter fSorter;
 
-    private String fEmptyListMessage = WorkbenchMessages
-            .getString("CheckedTreeSelectionDialog.nothing_available"); //$NON-NLS-1$	
+    private String fEmptyListMessage = WorkbenchMessages.CheckedTreeSelectionDialog_nothing_available; 
 
     private IStatus fCurrStatus = new Status(IStatus.OK, PlatformUI.PLUGIN_ID,
             0, "", null); //$NON-NLS-1$
@@ -345,8 +344,7 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
         data.grabExcessHorizontalSpace = true;
         composite.setData(data);
         Button selectButton = createButton(buttonComposite,
-                IDialogConstants.SELECT_ALL_ID, WorkbenchMessages
-                        .getString("CheckedTreeSelectionDialog.select_all"), //$NON-NLS-1$	
+                IDialogConstants.SELECT_ALL_ID, WorkbenchMessages.CheckedTreeSelectionDialog_select_all,
                 false);
         SelectionListener listener = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
@@ -362,8 +360,7 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
         };
         selectButton.addSelectionListener(listener);
         Button deselectButton = createButton(buttonComposite,
-                IDialogConstants.DESELECT_ALL_ID, WorkbenchMessages
-                        .getString("CheckedTreeSelectionDialog.deselect_all"),//$NON-NLS-1$	
+                IDialogConstants.DESELECT_ALL_ID, WorkbenchMessages.CheckedTreeSelectionDialog_deselect_all,
                 false);
         listener = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {

@@ -33,14 +33,12 @@ abstract class AbstractPreferenceImportExportPage extends WizardPage {
     /**
      * The title for all pages involved in the export operation.
      */
-    protected static final String EXPORT_TITLE = WorkbenchMessages
-            .getString("ImportExportPages.exportTitle"); //$NON-NLS-1$
+    protected static final String EXPORT_TITLE = WorkbenchMessages.ImportExportPages_exportTitle; 
 
     /**
      * The title for all pages involved in the export operation.
      */
-    protected static final String IMPORT_TITLE = WorkbenchMessages
-            .getString("ImportExportPages.importTitle"); //$NON-NLS-1$
+    protected static final String IMPORT_TITLE = WorkbenchMessages.ImportExportPages_importTitle; 
 
     /**
      * The default extension for preferences files.

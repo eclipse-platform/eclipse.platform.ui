@@ -33,9 +33,8 @@ public class ShowViewMenuAction extends ShowPartPaneMenuAction {
      * Initialize the menu text and tooltip.
      */
     protected void initText() {
-        setText(WorkbenchMessages.getString("ShowViewMenuAction.text")); //$NON-NLS-1$
-        setToolTipText(WorkbenchMessages
-                .getString("ShowViewMenuAction.toolTip")); //$NON-NLS-1$
+        setText(WorkbenchMessages.ShowViewMenuAction_text);
+        setToolTipText(WorkbenchMessages.ShowViewMenuAction_toolTip);
     }
 
     /**

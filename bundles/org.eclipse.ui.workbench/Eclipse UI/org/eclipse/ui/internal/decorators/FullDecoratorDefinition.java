@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelDecorator;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -55,9 +56,7 @@ class FullDecoratorDefinition extends DecoratorDefinition {
         if (decorator == null) {
             Platform
                     .run(new SafeRunnable(
-                            WorkbenchMessages
-                                    .format(
-                                            "DecoratorManager.ErrorActivatingDecorator", new String[] { getName() })) { //$NON-NLS-1$
+                            NLS.bind(WorkbenchMessages.DecoratorManager_ErrorActivatingDecorator, getName() )) { 
                         public void run() {
                             try {
                                 decorator = (ILabelDecorator) WorkbenchPlugin

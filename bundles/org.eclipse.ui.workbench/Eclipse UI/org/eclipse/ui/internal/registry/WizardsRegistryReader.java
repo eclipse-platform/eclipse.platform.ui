@@ -62,8 +62,7 @@ public class WizardsRegistryReader extends RegistryReader {
 
     final public static String UNCATEGORIZED_WIZARD_CATEGORY = "org.eclipse.ui.Other";//$NON-NLS-1$
 
-    private final static String UNCATEGORIZED_WIZARD_CATEGORY_LABEL = WorkbenchMessages
-            .getString("NewWizardsRegistryReader.otherCategory");//$NON-NLS-1$
+    private final static String UNCATEGORIZED_WIZARD_CATEGORY_LABEL = WorkbenchMessages.NewWizardsRegistryReader_otherCategory;
 
     private final static String CATEGORY_SEPARATOR = "/";//$NON-NLS-1$
 

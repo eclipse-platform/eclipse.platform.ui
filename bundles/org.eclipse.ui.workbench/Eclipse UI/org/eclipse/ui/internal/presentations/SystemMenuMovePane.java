@@ -26,7 +26,7 @@ public class SystemMenuMovePane extends Action {
 
     public SystemMenuMovePane(IStackPresentationSite site) {
         this.site = site;
-        setText(WorkbenchMessages.getString("SystemMenuMovePane.PaneName")); //$NON-NLS-1$
+        setText(WorkbenchMessages.SystemMenuMovePane_PaneName);
     }
 
     /* (non-Javadoc)

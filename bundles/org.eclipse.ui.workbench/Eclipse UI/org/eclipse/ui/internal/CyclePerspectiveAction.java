@@ -44,19 +44,15 @@ public class CyclePerspectiveAction extends CyclePartAction implements
     protected void setText() {
         // TBD: Remove text and tooltip when this becomes an invisible action.
         if (forward) {
-            setText(WorkbenchMessages
-                    .getString("CyclePerspectiveAction.next.text")); //$NON-NLS-1$
-            setToolTipText(WorkbenchMessages
-                    .getString("CyclePerspectiveAction.next.toolTip")); //$NON-NLS-1$
+            setText(WorkbenchMessages.CyclePerspectiveAction_next_text);
+            setToolTipText(WorkbenchMessages.CyclePerspectiveAction_next_toolTip);
             // @issue missing action ids
             getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp(this,
 					IWorkbenchHelpContextIds.CYCLE_PERSPECTIVE_FORWARD_ACTION);
             setActionDefinitionId("org.eclipse.ui.window.nextPerspective"); //$NON-NLS-1$
         } else {
-            setText(WorkbenchMessages
-                    .getString("CyclePerspectiveAction.prev.text")); //$NON-NLS-1$
-            setToolTipText(WorkbenchMessages
-                    .getString("CyclePerspectiveAction.prev.toolTip")); //$NON-NLS-1$
+            setText(WorkbenchMessages.CyclePerspectiveAction_prev_text); 
+            setToolTipText(WorkbenchMessages.CyclePerspectiveAction_prev_toolTip); 
             // @issue missing action ids
             getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp(this,
 					IWorkbenchHelpContextIds.CYCLE_PERSPECTIVE_BACKWARD_ACTION);
@@ -121,7 +117,7 @@ public class CyclePerspectiveAction extends CyclePartAction implements
      * Returns the string which will be shown in the table header.
      */
     protected String getTableHeader() {
-        return WorkbenchMessages.getString("CyclePerspectiveAction.header"); //$NON-NLS-1$
+        return WorkbenchMessages.CyclePerspectiveAction_header;
     }
 
     /* (non-Javadoc)

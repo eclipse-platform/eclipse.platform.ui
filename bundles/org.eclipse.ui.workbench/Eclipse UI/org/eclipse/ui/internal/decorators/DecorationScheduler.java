@@ -242,8 +242,7 @@ public class DecorationScheduler {
 	 * Create the Thread used for running decoration.
 	 */
 	private void createDecorationJob() {
-		decorationJob = new Job(WorkbenchMessages
-				.getString("DecorationScheduler.CalculationJobName")) {//$NON-NLS-1$
+		decorationJob = new Job(WorkbenchMessages.DecorationScheduler_CalculationJobName) {
 			/*
 			 * (non-Javadoc)
 			 * 
@@ -254,8 +253,7 @@ public class DecorationScheduler {
 				if(shutdown)//Cancelled on shutdown
 					return Status.CANCEL_STATUS;
 				
-				monitor.beginTask(WorkbenchMessages
-						.getString("DecorationScheduler.CalculatingTask"), 100); //$NON-NLS-1$
+				monitor.beginTask(WorkbenchMessages.DecorationScheduler_CalculatingTask, 100);
 				//will block if there are no resources to be decorated
 				DecorationReference reference;
 				monitor.worked(5);
@@ -383,7 +381,7 @@ public class DecorationScheduler {
 	 */
 	void clearResults() {
 		
-		Job clearJob = new Job(WorkbenchMessages.getString("DecorationScheduler.ClearResultsJob")){ //$NON-NLS-1$
+		Job clearJob = new Job(WorkbenchMessages.DecorationScheduler_ClearResultsJob){ 
 
 			/* (non-Javadoc)
 			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
@@ -412,8 +410,7 @@ public class DecorationScheduler {
 	 * @return WorkbenchJob
 	 */
 	private WorkbenchJob getUpdateJob() {
-		WorkbenchJob job = new WorkbenchJob(WorkbenchMessages
-				.getString("DecorationScheduler.UpdateJobName")) {//$NON-NLS-1$
+		WorkbenchJob job = new WorkbenchJob(WorkbenchMessages.DecorationScheduler_UpdateJobName) {
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				
 				if(shutdown)//Cancelled on shutdown
@@ -429,8 +426,7 @@ public class DecorationScheduler {
 							.toArray(new Object[pendingUpdate.size()]);
 					monitor
 							.beginTask(
-									WorkbenchMessages
-											.getString("DecorationScheduler.UpdatingTask"), elements.length + 20); //$NON-NLS-1$
+									WorkbenchMessages.DecorationScheduler_UpdatingTask, elements.length + 20); 
 					pendingUpdate.clear();
 					monitor.worked(15);
 					decoratorManager

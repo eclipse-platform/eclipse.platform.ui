@@ -35,7 +35,7 @@ public class WorkbenchEditorsAction extends Action implements
      * @param window the window
      */
     public WorkbenchEditorsAction(IWorkbenchWindow window) {
-        super(WorkbenchMessages.getString("WorkbenchEditorsAction.label")); //$NON-NLS-1$
+        super(WorkbenchMessages.WorkbenchEditorsAction_label);
         if (window == null) {
             throw new IllegalArgumentException();
         }

@@ -43,7 +43,7 @@ public abstract class WorkbenchWizardSelectionPage extends WizardSelectionPage {
         this.wizardElements = elements;
         this.currentResourceSelection = currentSelection;
         this.workbench = aWorkbench;
-        setTitle(WorkbenchMessages.getString("Select")); //$NON-NLS-1$
+        setTitle(WorkbenchMessages.Select);
     }
 
     /**

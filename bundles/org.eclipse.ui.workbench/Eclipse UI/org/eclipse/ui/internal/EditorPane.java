@@ -73,8 +73,7 @@ public class EditorPane extends PartPane {
                 text.setForeground(JFaceColors.getErrorText(text.getDisplay()));
                 text.setBackground(text.getDisplay().getSystemColor(
                         SWT.COLOR_WIDGET_BACKGROUND));
-                text.setText(WorkbenchMessages
-                        .getString("EditorPane.errorMessage")); //$NON-NLS-1$
+                text.setText(WorkbenchMessages.EditorPane_errorMessage);
             }
 
             public void setFocus() {
@@ -209,7 +208,7 @@ public class EditorPane extends PartPane {
         }
 
         final MenuItem item = new MenuItem(parent, SWT.CHECK);
-        item.setText(WorkbenchMessages.getString("EditorPane.pinEditor")); //$NON-NLS-1$
+        item.setText(WorkbenchMessages.EditorPane_pinEditor);
         item.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 IWorkbenchPart part = getPartReference().getPart(true);

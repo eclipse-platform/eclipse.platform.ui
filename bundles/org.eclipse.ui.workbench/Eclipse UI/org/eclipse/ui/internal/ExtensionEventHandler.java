@@ -523,8 +523,7 @@ class ExtensionEventHandler implements IRegistryChangeListener {
 
     private void unloadPerspective(IExtension ext) {
         final MultiStatus result = new MultiStatus(PlatformUI.PLUGIN_ID,
-                IStatus.OK, WorkbenchMessages
-                        .getString("ViewFactory.problemsSavingViews"), null); //$NON-NLS-1$
+                IStatus.OK, WorkbenchMessages.ViewFactory_problemsSavingViews, null);
         IPerspectiveRegistry pReg = WorkbenchPlugin.getDefault()
                 .getPerspectiveRegistry();
         IConfigurationElement[] elements = ext.getConfigurationElements();
@@ -556,9 +555,8 @@ class ExtensionEventHandler implements IRegistryChangeListener {
             //((Workbench)workbench).getPerspectiveHistory().removeItem(desc);
         }
         if (result.getSeverity() != IStatus.OK) {
-            ErrorDialog.openError((Shell) null, WorkbenchMessages
-                    .getString("Workbench.problemsSaving"), //$NON-NLS-1$
-                    WorkbenchMessages.getString("Workbench.problemsSavingMsg"), //$NON-NLS-1$
+            ErrorDialog.openError((Shell) null, WorkbenchMessages.Workbench_problemsSaving,
+                    WorkbenchMessages.Workbench_problemsSavingMsg,
                     result);
         }
     }

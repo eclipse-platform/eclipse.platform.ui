@@ -230,8 +230,7 @@ public class EditorSashContainer extends PartSashContainer {
         MultiStatus result = new MultiStatus(
                 PlatformUI.PLUGIN_ID,
                 IStatus.OK,
-                WorkbenchMessages
-                        .getString("RootLayoutContainer.problemsRestoringPerspective"), null); //$NON-NLS-1$
+                WorkbenchMessages.RootLayoutContainer_problemsRestoringPerspective, null);
 
         // Remove the default editor workbook that is
         // initialy created with the editor area.
@@ -320,8 +319,7 @@ public class EditorSashContainer extends PartSashContainer {
         MultiStatus result = new MultiStatus(
                 PlatformUI.PLUGIN_ID,
                 IStatus.OK,
-                WorkbenchMessages
-                        .getString("RootLayoutContainer.problemsSavingPerspective"), null); //$NON-NLS-1$
+                WorkbenchMessages.RootLayoutContainer_problemsSavingPerspective, null); 
 
         for (int i = 0; i < relationships.length; i++) {
             // Save the relationship info ..

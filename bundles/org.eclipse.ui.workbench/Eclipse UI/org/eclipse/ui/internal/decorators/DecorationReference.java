@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.decorators;
 
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.misc.Assert;
 
@@ -85,11 +86,7 @@ class DecorationReference {
      */
     String getSubTask() {
         if (undecoratedText == null)
-            return WorkbenchMessages
-                    .getString("DecorationReference.EmptyReference"); //$NON-NLS-1$
-        else
-            return WorkbenchMessages.format(
-                    "DecorationScheduler.DecoratingSubtask", //$NON-NLS-1$
-                    new Object[] { undecoratedText });
+            return WorkbenchMessages.DecorationReference_EmptyReference;
+	return NLS.bind(WorkbenchMessages.DecorationScheduler_DecoratingSubtask, undecoratedText );
     }
 }

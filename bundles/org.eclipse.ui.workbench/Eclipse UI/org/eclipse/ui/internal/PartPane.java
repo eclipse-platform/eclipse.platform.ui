@@ -16,6 +16,7 @@ import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
@@ -137,9 +138,7 @@ public abstract class PartPane extends LayoutPart implements Listener {
         final Composite content = new Composite(control, style);
         content.setLayout(new FillLayout());
 
-        String error = WorkbenchMessages
-                .format(
-                        "PartPane.unableToCreate", new Object[] { partReference.getTitle() }); //$NON-NLS-1$
+        String error = NLS.bind(WorkbenchMessages.PartPane_unableToCreate,partReference.getTitle() ); 
         Platform.run(new SafeRunnable(error) {
             public void run() {
                 try {
@@ -189,7 +188,7 @@ public abstract class PartPane extends LayoutPart implements Listener {
     public void addSizeMenuItem(Menu menu, int index) {
         //Add size menu
         MenuItem item = new MenuItem(menu, SWT.CASCADE, index);
-        item.setText(WorkbenchMessages.getString("PartPane.size")); //$NON-NLS-1$
+        item.setText(WorkbenchMessages.PartPane_size);
         Menu sizeMenu = new Menu(menu);
         item.setMenu(sizeMenu);
         addSizeItems(sizeMenu);
@@ -526,13 +525,12 @@ public abstract class PartPane extends LayoutPart implements Listener {
     protected void addSizeItems(Menu sizeMenu) {
         Sashes sashes = findSashes();
         addSizeItem(sizeMenu,
-                WorkbenchMessages.getString("PartPane.sizeLeft"), sashes.left); //$NON-NLS-1$
+                WorkbenchMessages.PartPane_sizeLeft, sashes.left);
         addSizeItem(sizeMenu,
-                WorkbenchMessages.getString("PartPane.sizeRight"), sashes.right); //$NON-NLS-1$
+                WorkbenchMessages.PartPane_sizeRight, sashes.right); 
         addSizeItem(sizeMenu,
-                WorkbenchMessages.getString("PartPane.sizeTop"), sashes.top); //$NON-NLS-1$
-        addSizeItem(sizeMenu, WorkbenchMessages
-                .getString("PartPane.sizeBottom"), sashes.bottom); //$NON-NLS-1$
+                WorkbenchMessages.PartPane_sizeTop, sashes.top); 
+        addSizeItem(sizeMenu, WorkbenchMessages.PartPane_sizeBottom, sashes.bottom);
     }
 
     /**

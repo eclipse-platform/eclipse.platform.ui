@@ -43,7 +43,7 @@ public class StandardViewSystemMenu implements ISystemMenu {
 
     public StandardViewSystemMenu(IStackPresentationSite site) {
         restore = new SystemMenuRestore(site);
-        move = new SystemMenuMove(site, WorkbenchMessages.getString("ViewPane.moveView"), false); //$NON-NLS-1$)
+        move = new SystemMenuMove(site, WorkbenchMessages.ViewPane_moveView, false);
         minimize = new SystemMenuMinimize(site);
         maximize = new SystemMenuMaximize(site);
         close = new SystemMenuClose(site);

@@ -297,8 +297,7 @@ public class ScopedPreferenceStore implements IPreferenceStore,
 		// the end)
 		for (int i = 0; i < scopes.length; i++) {
 			if (scopes[i].equals(defaultContext))
-				Assert.isTrue(false, WorkbenchMessages
-						.getString("ScopedPreferenceStore.DefaultAddedError")); //$NON-NLS-1$
+				Assert.isTrue(false, WorkbenchMessages.ScopedPreferenceStore_DefaultAddedError); 
 		}
 	}
 

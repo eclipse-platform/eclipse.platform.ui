@@ -33,14 +33,12 @@ class PreferenceImportExportSettingsSelectionPage extends
     /**
      * The message to display when there are no errors on this page.
      */
-    private static final String EXPORT_MESSAGE = WorkbenchMessages
-            .getString("ImportExportPages.exportSettingsSelect"); //$NON-NLS-1$
+    private static final String EXPORT_MESSAGE = WorkbenchMessages.ImportExportPages_exportSettingsSelect;
 
     /**
      * The message to display when there are no errors on this page.
      */
-    private static final String IMPORT_MESSAGE = WorkbenchMessages
-            .getString("ImportExportPages.importSettingsSelect"); //$NON-NLS-1$
+    private static final String IMPORT_MESSAGE = WorkbenchMessages.ImportExportPages_importSettingsSelect; 
 
     /**
      * The name of this page -- used to find the page later.
@@ -127,10 +125,8 @@ class PreferenceImportExportSettingsSelectionPage extends
             item.setChecked(true);
         }
 
-        columnName.setText(WorkbenchMessages
-                .getString("ImportExportPages.name")); //$NON-NLS-1$
-        columnValue.setText(WorkbenchMessages
-                .getString("ImportExportPages.value")); //$NON-NLS-1$
+        columnName.setText(WorkbenchMessages.ImportExportPages_name); 
+        columnValue.setText(WorkbenchMessages.ImportExportPages_value);
         columnChecked.pack();
         columnName.pack();
         columnValue.pack();
@@ -139,8 +135,7 @@ class PreferenceImportExportSettingsSelectionPage extends
         final Button selectAllButton = new Button(page, SWT.PUSH);
         selectAllButton.setFont(parentFont);
         layoutData = new GridData();
-        selectAllButton.setText(WorkbenchMessages
-                .getString("ImportExportPages.selectAll")); //$NON-NLS-1$
+        selectAllButton.setText(WorkbenchMessages.ImportExportPages_selectAll);
         layoutData.widthHint = computePushButtonWidthHint(selectAllButton);
         layoutData.verticalAlignment = GridData.BEGINNING;
         selectAllButton.setLayoutData(layoutData);
@@ -154,8 +149,7 @@ class PreferenceImportExportSettingsSelectionPage extends
         final Button deselectAllButton = new Button(page, SWT.PUSH);
         deselectAllButton.setFont(parentFont);
         layoutData = new GridData();
-        deselectAllButton.setText(WorkbenchMessages
-                .getString("ImportExportPages.deselectAll")); //$NON-NLS-1$
+        deselectAllButton.setText(WorkbenchMessages.ImportExportPages_deselectAll); 
         layoutData.widthHint = computePushButtonWidthHint(deselectAllButton);
         layoutData.verticalAlignment = GridData.BEGINNING;
         deselectAllButton.setLayoutData(layoutData);
@@ -169,8 +163,7 @@ class PreferenceImportExportSettingsSelectionPage extends
         final Button invertSelectionButton = new Button(page, SWT.PUSH);
         invertSelectionButton.setFont(parentFont);
         layoutData = new GridData();
-        invertSelectionButton.setText(WorkbenchMessages
-                .getString("ImportExportPages.invertSelection")); //$NON-NLS-1$
+        invertSelectionButton.setText(WorkbenchMessages.ImportExportPages_invertSelection); 
         layoutData.widthHint = computePushButtonWidthHint(invertSelectionButton);
         layoutData.verticalAlignment = GridData.BEGINNING;
         invertSelectionButton.setLayoutData(layoutData);

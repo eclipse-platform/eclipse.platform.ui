@@ -38,6 +38,7 @@ import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.CBanner;
@@ -1194,12 +1195,10 @@ public class WorkbenchWindow extends ApplicationWindow implements
         } else {
             if (IWorkbenchActionConstants.TOOLBAR_FILE
                     .equalsIgnoreCase(actionSetId))
-                return WorkbenchMessages
-                        .getString("WorkbenchWindow.FileToolbar"); //$NON-NLS-1$
+                return WorkbenchMessages.WorkbenchWindow_FileToolbar;
             if (IWorkbenchActionConstants.TOOLBAR_NAVIGATE
                     .equalsIgnoreCase(actionSetId))
-                return WorkbenchMessages
-                        .getString("WorkbenchWindow.NavigateToolbar"); //$NON-NLS-1$
+                return WorkbenchMessages.WorkbenchWindow_NavigateToolbar;
         }
         return null;
     }
@@ -1321,8 +1320,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
         else if (result[0] instanceof WorkbenchException)
             throw (WorkbenchException) result[0];
         else
-            throw new WorkbenchException(WorkbenchMessages
-                    .getString("WorkbenchWindow.exceptionMessage")); //$NON-NLS-1$
+            throw new WorkbenchException(WorkbenchMessages.WorkbenchWindow_exceptionMessage);
     }
 
     /**
@@ -1363,9 +1361,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
                 IStatus.ERROR,
                 PlatformUI.PLUGIN_ID,
                 0,
-                WorkbenchMessages
-                        .format(
-                                "WorkbenchWindow.unableToRestorePerspective", new String[] { pageName }), //$NON-NLS-1$
+                NLS.bind(WorkbenchMessages.WorkbenchWindow_unableToRestorePerspective, pageName),
                 null);
     }
 
@@ -1379,8 +1375,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
         MultiStatus result = new MultiStatus(
                 PlatformUI.PLUGIN_ID,
                 IStatus.OK,
-                WorkbenchMessages
-                        .getString("WorkbenchWindow.problemsRestoringWindow"), null); //$NON-NLS-1$
+                WorkbenchMessages.WorkbenchWindow_problemsRestoringWindow, null); 
 
         // Read window's bounds and state.
         Rectangle displayBounds = getShell().getDisplay().getBounds();
@@ -1991,8 +1986,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
         MultiStatus result = new MultiStatus(
                 PlatformUI.PLUGIN_ID,
                 IStatus.OK,
-                WorkbenchMessages
-                        .getString("WorkbenchWindow.problemsSavingWindow"), null); //$NON-NLS-1$
+                WorkbenchMessages.WorkbenchWindow_problemsSavingWindow, null); 
 
         // Save the window's state and bounds.
         if (getShell().getMaximized() || asMaximizedState) {

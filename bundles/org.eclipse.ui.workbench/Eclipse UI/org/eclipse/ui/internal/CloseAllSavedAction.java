@@ -38,9 +38,8 @@ public class CloseAllSavedAction extends PageEventAction implements
      * @param window the window
      */
     public CloseAllSavedAction(IWorkbenchWindow window) {
-        super(WorkbenchMessages.getString("CloseAllSavedAction.text"), window); //$NON-NLS-1$
-        setToolTipText(WorkbenchMessages
-                .getString("CloseAllSavedAction.toolTip")); //$NON-NLS-1$
+        super(WorkbenchMessages.CloseAllSavedAction_text, window);
+        setToolTipText(WorkbenchMessages.CloseAllSavedAction_toolTip);
         // @issue Should create a ID in IWorkbenchActionConstants when it becames API?
         setId("closeAllSaved"); //$NON-NLS-1$
         updateState();

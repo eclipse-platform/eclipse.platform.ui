@@ -76,8 +76,7 @@ public class DecoratorsPreferencePage extends PreferencePage implements
         mainComposite.setLayout(layout);
 
         Label topLabel = new Label(mainComposite, SWT.NONE);
-        topLabel.setText(WorkbenchMessages
-                .getString("DecoratorsPreferencePage.explanation")); //$NON-NLS-1$
+        topLabel.setText(WorkbenchMessages.DecoratorsPreferencePage_explanation);
         topLabel.setFont(font);
 
         createDecoratorsArea(mainComposite);
@@ -102,8 +101,7 @@ public class DecoratorsPreferencePage extends PreferencePage implements
         decoratorsComposite.setFont(mainFont);
 
         Label decoratorsLabel = new Label(decoratorsComposite, SWT.NONE);
-        decoratorsLabel.setText(WorkbenchMessages
-                .getString("DecoratorsPreferencePage.decoratorsLabel")); //$NON-NLS-1$
+        decoratorsLabel.setText(WorkbenchMessages.DecoratorsPreferencePage_decoratorsLabel);
         decoratorsLabel.setFont(mainFont);
 
         // Checkbox table viewer of decorators
@@ -188,8 +186,7 @@ public class DecoratorsPreferencePage extends PreferencePage implements
         textComposite.setFont(mainFont);
 
         Label descriptionLabel = new Label(textComposite, SWT.NONE);
-        descriptionLabel.setText(WorkbenchMessages
-                .getString("DecoratorsPreferencePage.description")); //$NON-NLS-1$
+        descriptionLabel.setText(WorkbenchMessages.DecoratorsPreferencePage_description); 
         descriptionLabel.setFont(mainFont);
 
         descriptionText = new Text(textComposite, SWT.MULTI | SWT.WRAP
@@ -219,8 +216,7 @@ public class DecoratorsPreferencePage extends PreferencePage implements
         }
         String text = definition.getDescription();
         if (text == null || text.length() == 0)
-            descriptionText.setText(WorkbenchMessages
-                    .getString("PreferencePage.noDescription")); //$NON-NLS-1$
+            descriptionText.setText(WorkbenchMessages.PreferencePage_noDescription);
         else
             descriptionText.setText(text);
     }

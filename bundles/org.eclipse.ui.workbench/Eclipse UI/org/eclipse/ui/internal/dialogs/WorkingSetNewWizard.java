@@ -49,7 +49,7 @@ public class WorkingSetNewWizard extends Wizard implements IWorkingSetNewWizard 
         super();
         Assert.isTrue(descriptors != null && descriptors.length > 0);
         this.descriptors= descriptors;
-        setWindowTitle(WorkbenchMessages.getString("WorkingSetNewWizard.title")); //$NON-NLS-1$
+        setWindowTitle(WorkbenchMessages.WorkingSetNewWizard_title);
     }
 
     /**

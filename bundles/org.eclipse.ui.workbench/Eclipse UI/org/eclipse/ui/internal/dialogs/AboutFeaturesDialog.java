@@ -21,6 +21,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.DisposeEvent;
@@ -78,10 +79,10 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
     private Map cachedImages = new HashMap();
 
     private String columnTitles[] = {
-            WorkbenchMessages.getString("AboutFeaturesDialog.provider"), //$NON-NLS-1$
-            WorkbenchMessages.getString("AboutFeaturesDialog.featureName"), //$NON-NLS-1$
-            WorkbenchMessages.getString("AboutFeaturesDialog.version"), //$NON-NLS-1$
-            WorkbenchMessages.getString("AboutFeaturesDialog.featureId"), //$NON-NLS-1$
+            WorkbenchMessages.AboutFeaturesDialog_provider,
+            WorkbenchMessages.AboutFeaturesDialog_featureName, 
+            WorkbenchMessages.AboutFeaturesDialog_version, 
+            WorkbenchMessages.AboutFeaturesDialog_featureId, 
     };
 
     private String productName;
@@ -135,10 +136,8 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 
         AboutBundleGroupData info = (AboutBundleGroupData) items[0].getData();
         if (info == null || !openBrowser(info.getLicenseUrl())) {
-            MessageDialog.openInformation(getShell(), WorkbenchMessages
-                    .getString("AboutFeaturesDialog.noInfoTitle"), //$NON-NLS-1$
-                    WorkbenchMessages
-                            .getString("AboutFeaturesDialog.noInformation")); //$NON-NLS-1$
+            MessageDialog.openInformation(getShell(), WorkbenchMessages.AboutFeaturesDialog_noInfoTitle, 
+                    WorkbenchMessages.AboutFeaturesDialog_noInformation);
         }
     }
 
@@ -157,11 +156,8 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
                 .getBundles();
 
         AboutPluginsDialog d = new AboutPluginsDialog(getShell(), productName,
-                bundles, WorkbenchMessages
-                        .getString("AboutFeaturesDialog.pluginInfoTitle"), //$NON-NLS-1$
-                WorkbenchMessages.format(
-                        "AboutFeaturesDialog.pluginInfoMessage", //$NON-NLS-1$
-                        new Object[] { bundleGroup.getIdentifier() }),
+                bundles, WorkbenchMessages.AboutFeaturesDialog_pluginInfoTitle, 
+                NLS.bind(WorkbenchMessages.AboutFeaturesDialog_pluginInfoMessage, bundleGroup.getIdentifier()),
                 IWorkbenchHelpContextIds.ABOUT_FEATURES_PLUGINS_DIALOG);
         d.open();
     }
@@ -189,9 +185,7 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
         if (productName != null)
-            newShell.setText(WorkbenchMessages.format(
-                    "AboutFeaturesDialog.shellTitle", //$NON-NLS-1$
-                    new Object[] { productName }));
+            newShell.setText(NLS.bind(WorkbenchMessages.AboutFeaturesDialog_shellTitle,productName));
 
         PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell,
 				IWorkbenchHelpContextIds.ABOUT_FEATURES_DIALOG);
@@ -208,11 +202,8 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
     protected void createButtonsForButtonBar(Composite parent) {
         parent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        moreButton = createButton(parent, MORE_ID, WorkbenchMessages
-                .getString("AboutFeaturesDialog.moreInfo"), false); //$NON-NLS-1$
-        pluginsButton = createButton(parent, PLUGINS_ID, WorkbenchMessages
-                .getString("AboutFeaturesDialog.pluginsInfo"), false); //$NON-NLS-1$
-
+        moreButton = createButton(parent, MORE_ID, WorkbenchMessages.AboutFeaturesDialog_moreInfo, false);
+        pluginsButton = createButton(parent, PLUGINS_ID, WorkbenchMessages.AboutFeaturesDialog_pluginsInfo, false); 
         Label l = new Label(parent, SWT.NONE);
         l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         GridLayout layout = (GridLayout) parent.getLayout();
@@ -421,8 +412,7 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
             setItem(scan(aboutText));
 
         if (getItem() == null)
-            text.setText(WorkbenchMessages
-                    .getString("AboutFeaturesDialog.noInformation")); //$NON-NLS-1$
+            text.setText(WorkbenchMessages.AboutFeaturesDialog_noInformation); 
         else {
             text.setText(getItem().getText());
             text.setCursor(null);

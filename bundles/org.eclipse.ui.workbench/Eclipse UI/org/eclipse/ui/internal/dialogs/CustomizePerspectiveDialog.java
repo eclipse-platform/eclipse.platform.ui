@@ -44,6 +44,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.StyledText;
@@ -154,9 +155,8 @@ public class CustomizePerspectiveDialog extends Dialog {
     private final static int TABLE_HEIGHT = 300;
 
     private final String shortcutMenuColumnHeaders[] = {
-            WorkbenchMessages.getString("ActionSetSelection.menuColumnHeader"),//$NON-NLS-1$
-            WorkbenchMessages
-                    .getString("ActionSetSelection.descriptionColumnHeader") };//$NON-NLS-1$
+            WorkbenchMessages.ActionSetSelection_menuColumnHeader,
+            WorkbenchMessages.ActionSetSelection_descriptionColumnHeader };
 
     private int[] shortcutMenuColumnWidths = { 125, 300 };
 
@@ -337,17 +337,13 @@ public class CustomizePerspectiveDialog extends Dialog {
             if (type == MENUITEM) {
                 if (children.size() > 0) {
                     if (parent.id.equals("Root")) { //$NON-NLS-1$
-                        return WorkbenchMessages
-                                .format(
-                                        "ActionSetSelection.menubarLocation", new Object[] { text }); //$NON-NLS-1$
+                        return NLS.bind(WorkbenchMessages.ActionSetSelection_menubarLocation, text );
                     }
                 }
                 return text;
             } 
             if (children.size() > 0)
-                return WorkbenchMessages
-                        .format(
-                                "ActionSetSelection.toolbarLocation", new Object[] { text }); //$NON-NLS-1$
+				return NLS.bind(WorkbenchMessages.ActionSetSelection_toolbarLocation, text ); 
             
             return text;
         }
@@ -1006,8 +1002,7 @@ public class CustomizePerspectiveDialog extends Dialog {
         super.configureShell(shell);
         String title=perspective.getDesc().getLabel();
         
-        title = WorkbenchMessages
-                .format("ActionSetSelection.customize", new Object[] {title}); //$NON-NLS-1$
+        title = NLS.bind(WorkbenchMessages.ActionSetSelection_customize,title);
         shell.setText(title); //$NON-NLS-1$
         window.getWorkbench().getHelpSystem().setHelp(shell,
 				IWorkbenchHelpContextIds.ACTION_SET_SELECTION_DIALOG);
@@ -1047,9 +1042,7 @@ public class CustomizePerspectiveDialog extends Dialog {
         // Select... label
         Label label = new Label(actionSetsComposite, SWT.WRAP);
         label
-                .setText(WorkbenchMessages
-                        .format(
-                                "ActionSetSelection.selectActionSetsLabel", new Object[] { perspective.getDesc().getLabel() })); //$NON-NLS-1$
+                .setText(NLS.bind(WorkbenchMessages.ActionSetSelection_selectActionSetsLabel,perspective.getDesc().getLabel() ));
         data = new GridData(GridData.FILL_BOTH);
         data.widthHint = TABLES_WIDTH;
         label.setLayoutData(data);
@@ -1076,8 +1069,7 @@ public class CustomizePerspectiveDialog extends Dialog {
         actionSetGroup.setLayoutData(data);
 
         label = new Label(actionSetGroup, SWT.NONE);
-        label.setText(WorkbenchMessages
-                .getString("ActionSetSelection.availableActionSets")); //$NON-NLS-1$
+        label.setText(WorkbenchMessages.ActionSetSelection_availableActionSets);
 
         actionSetsViewer = CheckboxTableViewer.newCheckList(actionSetGroup,
                 SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
@@ -1110,13 +1102,11 @@ public class CustomizePerspectiveDialog extends Dialog {
         actionGroup.setLayoutData(data);
 
         label = new Label(actionGroup, SWT.NONE);
-        label.setText(WorkbenchMessages
-                .getString("ActionSetSelection.menubarActions")); //$NON-NLS-1$
+        label.setText(WorkbenchMessages.ActionSetSelection_menubarActions); 
         label.setFont(font);
 
         label = new Label(actionGroup, SWT.NONE);
-        label.setText(WorkbenchMessages
-                .getString("ActionSetSelection.toolbarActions")); //$NON-NLS-1$
+        label.setText(WorkbenchMessages.ActionSetSelection_toolbarActions);
         label.setFont(font);
 
         actionSetMenuViewer = new IndentedTableViewer(actionGroup);
@@ -1136,8 +1126,7 @@ public class CustomizePerspectiveDialog extends Dialog {
 
         // Use F2... label
         label = new Label(actionSetsComposite, SWT.WRAP);
-        label.setText(WorkbenchMessages
-                .getString("ActionSetSelection.selectActionSetsHelp")); //$NON-NLS-1$
+        label.setText(WorkbenchMessages.ActionSetSelection_selectActionSetsHelp);
         label.setFont(font);
         data = new GridData();
         data.widthHint = TABLES_WIDTH;
@@ -1171,8 +1160,7 @@ public class CustomizePerspectiveDialog extends Dialog {
         // Shortcuts tab
         if (showShortcutTab()) {
             TabItem item1 = new TabItem(tabFolder, SWT.NONE);
-            item1.setText(WorkbenchMessages
-                    .getString("ActionSetSelection.menuTab")); //$NON-NLS-1$
+            item1.setText(WorkbenchMessages.ActionSetSelection_menuTab);
             item1.setControl(createMenusPage(tabFolder));
             addShortcutListeners();
             ArrayList children = rootMenu.getChildren();
@@ -1185,8 +1173,7 @@ public class CustomizePerspectiveDialog extends Dialog {
 
         // Commands tab
         TabItem item = new TabItem(tabFolder, SWT.NONE);
-        item.setText(WorkbenchMessages
-                .getString("ActionSetSelection.actionSetsTab")); //$NON-NLS-1$
+        item.setText(WorkbenchMessages.ActionSetSelection_actionSetsTab); 
         item.setControl(createActionSetsPage(tabFolder));
         addActionSetsListeners();
         actionSetsViewer.setInput(actionSets);
@@ -1211,9 +1198,7 @@ public class CustomizePerspectiveDialog extends Dialog {
         // Select... label
         Label label = new Label(menusComposite, SWT.WRAP);
         label
-                .setText(WorkbenchMessages
-                        .format(
-                                "ActionSetSelection.selectMenusLabel", new Object[] { perspective.getDesc().getLabel() })); //$NON-NLS-1$
+                .setText(NLS.bind(WorkbenchMessages.ActionSetSelection_selectMenusLabel,  perspective.getDesc().getLabel() )); 
         label.setFont(font);
         data = new GridData();
         data.widthHint = TABLES_WIDTH;
@@ -1240,8 +1225,7 @@ public class CustomizePerspectiveDialog extends Dialog {
         menusGroup.setFont(font);
 
         label = new Label(menusGroup, SWT.NONE);
-        label.setText(WorkbenchMessages
-                .getString("ActionSetSelection.availableMenus")); //$NON-NLS-1$
+        label.setText(WorkbenchMessages.ActionSetSelection_availableMenus); 
         label.setFont(font);
 
         menusCombo = new Combo(menusGroup, SWT.READ_ONLY);
@@ -1251,8 +1235,7 @@ public class CustomizePerspectiveDialog extends Dialog {
 
         // Categories Tree
         label = new Label(menusGroup, SWT.NONE);
-        label.setText(WorkbenchMessages
-                .getString("ActionSetSelection.availableCategories")); //$NON-NLS-1$
+        label.setText(WorkbenchMessages.ActionSetSelection_availableCategories);
         label.setFont(font);
 
         menuCategoriesViewer = new CheckboxTreeViewer(menusGroup);
@@ -1273,8 +1256,7 @@ public class CustomizePerspectiveDialog extends Dialog {
         menuItemsGroup.setFont(font);
 
         label = new Label(menuItemsGroup, SWT.NONE);
-        label.setText(WorkbenchMessages
-                .getString("ActionSetSelection.menuItems")); //$NON-NLS-1$
+        label.setText(WorkbenchMessages.ActionSetSelection_menuItems);
         label.setFont(font);
 
         menuItemsViewer = CheckboxTableViewer.newCheckList(menuItemsGroup,
@@ -1313,8 +1295,7 @@ public class CustomizePerspectiveDialog extends Dialog {
             if (element != null) {
                 String desc = element.description;
                 if (desc == null || desc.equals("")) { //$NON-NLS-1$
-                    desc = WorkbenchMessages
-                            .getString("ActionSetSelection.noDesc"); //$NON-NLS-1$
+                    desc = WorkbenchMessages.ActionSetSelection_noDesc;
                 }
                 popUp(desc);
             }
@@ -1398,8 +1379,7 @@ public class CustomizePerspectiveDialog extends Dialog {
             if (element != null) {
                 String desc = element.description;
                 if (desc == null || desc.equals("")) { //$NON-NLS-1$
-                    desc = WorkbenchMessages
-                            .getString("ActionSetSelection.noDesc"); //$NON-NLS-1$
+                    desc = WorkbenchMessages.ActionSetSelection_noDesc; 
                 }
                 popUp(desc);
             }
@@ -1416,8 +1396,7 @@ public class CustomizePerspectiveDialog extends Dialog {
             if (element != null) {
                 String desc = element.getDescription();
                 if (desc == null || desc.equals("")) { //$NON-NLS-1$
-                    desc = WorkbenchMessages
-                            .getString("ActionSetSelection.noDesc"); //$NON-NLS-1$
+                    desc = WorkbenchMessages.ActionSetSelection_noDesc; 
                 }
                 popUp(desc);
             }
@@ -1570,8 +1549,7 @@ public class CustomizePerspectiveDialog extends Dialog {
 
         if (window.containsSubmenu(WorkbenchWindow.NEW_WIZARD_SUBMENU)) {
             ShortcutMenu wizardMenu = new ShortcutMenu(rootMenu,
-                    ShortcutMenu.ID_WIZARD, WorkbenchMessages
-                            .getString("ActionSetDialogInput.wizardCategory")); //$NON-NLS-1$
+                    ShortcutMenu.ID_WIZARD, WorkbenchMessages.ActionSetDialogInput_wizardCategory); 
             
             IWizardCategory wizardCollection = WorkbenchPlugin.getDefault().getNewWizardRegistry().getRootCategory();
 
@@ -1589,8 +1567,7 @@ public class CustomizePerspectiveDialog extends Dialog {
             ShortcutMenu perspMenu = new ShortcutMenu(
                     rootMenu,
                     ShortcutMenu.ID_PERSP,
-                    WorkbenchMessages
-                            .getString("ActionSetDialogInput.perspectiveCategory")); //$NON-NLS-1$
+                    WorkbenchMessages.ActionSetDialogInput_perspectiveCategory);
             IPerspectiveRegistry perspReg = WorkbenchPlugin.getDefault()
                     .getPerspectiveRegistry();
             IPerspectiveDescriptor[] persps = perspReg.getPerspectives();
@@ -1610,8 +1587,7 @@ public class CustomizePerspectiveDialog extends Dialog {
 
         if (window.containsSubmenu(WorkbenchWindow.SHOW_VIEW_SUBMENU)) {
             ShortcutMenu viewMenu = new ShortcutMenu(rootMenu,
-                    ShortcutMenu.ID_VIEW, WorkbenchMessages
-                            .getString("ActionSetDialogInput.viewCategory")); //$NON-NLS-1$
+                    ShortcutMenu.ID_VIEW, WorkbenchMessages.ActionSetDialogInput_viewCategory); 
             IViewRegistry viewReg = WorkbenchPlugin.getDefault()
                     .getViewRegistry();
             Category[] categories = viewReg.getCategories();

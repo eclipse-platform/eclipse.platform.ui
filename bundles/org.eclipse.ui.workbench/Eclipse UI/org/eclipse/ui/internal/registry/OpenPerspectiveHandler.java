@@ -71,8 +71,7 @@ public class OpenPerspectiveHandler extends AbstractHandler {
                     input); //$NON-NLS-1$
         } catch (WorkbenchException e) {
             ErrorDialog.openError(activeWorkbenchWindow.getShell(),
-                    WorkbenchMessages
-                            .getString("ChangeToPerspectiveMenu.errorTitle"), //$NON-NLS-1$
+                    WorkbenchMessages.ChangeToPerspectiveMenu_errorTitle,
                     e.getMessage(), e.getStatus());
         }
         

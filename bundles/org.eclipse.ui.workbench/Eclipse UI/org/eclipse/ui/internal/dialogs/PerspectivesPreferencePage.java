@@ -21,6 +21,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.ImageCache;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -96,23 +97,17 @@ public class PerspectivesPreferencePage extends PreferencePage implements
     private ImageCache imageCache;
 
 	// labels
-	private final String OVM_TITLE = WorkbenchMessages
-			.getString("OpenViewMode.title"); //$NON-NLS-1$
+	private final String OVM_TITLE = WorkbenchMessages.OpenViewMode_title;
 
-	private final String OVM_EMBED = WorkbenchMessages
-			.getString("OpenViewMode.embed"); //$NON-NLS-1$
+	private final String OVM_EMBED = WorkbenchMessages.OpenViewMode_embed;
 
-	private final String OVM_FAST = WorkbenchMessages
-			.getString("OpenViewMode.fast"); //$NON-NLS-1$
+	private final String OVM_FAST = WorkbenchMessages.OpenViewMode_fast; 
 
-	private final String OPM_TITLE = WorkbenchMessages
-			.getString("OpenPerspectiveMode.optionsTitle"); //$NON-NLS-1$
+	private final String OPM_TITLE = WorkbenchMessages.OpenPerspectiveMode_optionsTitle; 
 
-	private final String OPM_SAME_WINDOW = WorkbenchMessages
-			.getString("OpenPerspectiveMode.sameWindow"); //$NON-NLS-1$
+	private final String OPM_SAME_WINDOW = WorkbenchMessages.OpenPerspectiveMode_sameWindow; 
 
-	private final String OPM_NEW_WINDOW = WorkbenchMessages
-			.getString("OpenPerspectiveMode.newWindow"); //$NON-NLS-1$
+	private final String OPM_NEW_WINDOW = WorkbenchMessages.OpenPerspectiveMode_newWindow; 
 
 	/**
 	 * <code>Comparator</code> to compare two perspective descriptors
@@ -280,8 +275,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 
 		// Add the label
 		Label label = new Label(perspectivesComponent, SWT.LEFT);
-		label.setText(WorkbenchMessages
-				.getString("PerspectivesPreference.available")); //$NON-NLS-1$
+		label.setText(WorkbenchMessages.PerspectivesPreference_available); 
 		GridData data = new GridData();
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
@@ -317,10 +311,8 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 		buttonBar.setLayoutData(data);
 		
 		//Add note label
-		String NOTE_LABEL = WorkbenchMessages
-	    .getString("Preference.note"); //$NON-NLS-1$
-		String REVERT_NOTE = WorkbenchMessages
-        .getString("RevertPerspective.note"); //$NON-NLS-1$
+		String NOTE_LABEL = WorkbenchMessages.Preference_note;
+		String REVERT_NOTE = WorkbenchMessages.RevertPerspective_note; 
 		Composite noteComposite = createNoteComposite(font, parent,
                 NOTE_LABEL, REVERT_NOTE);
         GridData noteData = new GridData();
@@ -395,20 +387,14 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 		composite.setFont(parent.getFont());
 
 		// Add the buttons to the button bar.
-		setDefaultButton = createVerticalButton(composite, WorkbenchMessages
-				.getString("PerspectivesPreference.MakeDefault"), false); //$NON-NLS-1$
-		setDefaultButton.setToolTipText(WorkbenchMessages
-				.getString("PerspectivesPreference.MakeDefaultTip")); //$NON-NLS-1$
+		setDefaultButton = createVerticalButton(composite, WorkbenchMessages.PerspectivesPreference_MakeDefault, false); 
+		setDefaultButton.setToolTipText(WorkbenchMessages.PerspectivesPreference_MakeDefaultTip); 
 
-		revertButton = createVerticalButton(composite, WorkbenchMessages
-				.getString("PerspectivesPreference.Reset"), false); //$NON-NLS-1$
-		revertButton.setToolTipText(WorkbenchMessages
-				.getString("PerspectivesPreference.ResetTip")); //$NON-NLS-1$
+		revertButton = createVerticalButton(composite, WorkbenchMessages.PerspectivesPreference_Reset, false); 
+		revertButton.setToolTipText(WorkbenchMessages.PerspectivesPreference_ResetTip); 
 
-		deleteButton = createVerticalButton(composite, WorkbenchMessages
-				.getString("PerspectivesPreference.Delete"), false); //$NON-NLS-1$
-		deleteButton.setToolTipText(WorkbenchMessages
-				.getString("PerspectivesPreference.DeleteTip")); //$NON-NLS-1$
+		deleteButton = createVerticalButton(composite, WorkbenchMessages.PerspectivesPreference_Delete, false); 
+		deleteButton.setToolTipText(WorkbenchMessages.PerspectivesPreference_DeleteTip); 
 		updateButtons();
 
 		return composite;
@@ -515,11 +501,8 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 						MessageDialog
 								.openInformation(
 										getShell(),
-										WorkbenchMessages
-												.getString("PerspectivesPreference.cannotdelete.title"), //$NON-NLS-1$
-										WorkbenchMessages
-												.format(
-														"PerspectivesPreference.cannotdelete.message", new String[] { desc.getLabel() })); //$NON-NLS-1$
+										WorkbenchMessages.PerspectivesPreference_cannotdelete_title,
+										NLS.bind(WorkbenchMessages.PerspectivesPreference_cannotdelete_message,desc.getLabel()));
 						return true;
 				}
 			}
@@ -612,9 +595,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements
         }
         String label=persp.getLabel();
         if (persp.getId().equals(defaultPerspectiveId)){
-			label = WorkbenchMessages
-					.format(
-							"PerspectivesPreference.defaultLabel", new Object[] { label }); //$NON-NLS-1$
+			label = NLS.bind(WorkbenchMessages.PerspectivesPreference_defaultLabel, label ); 
     	    
 		}
         item.setText(label);

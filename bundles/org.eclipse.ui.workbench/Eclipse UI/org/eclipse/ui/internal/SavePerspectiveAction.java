@@ -39,14 +39,14 @@ public class SavePerspectiveAction extends Action implements
      * @param window the workbench window in which this action appears
      */
     public SavePerspectiveAction(IWorkbenchWindow window) {
-        super(WorkbenchMessages.getString("SavePerspective.text")); //$NON-NLS-1$
+        super(WorkbenchMessages.SavePerspective_text);
         if (window == null) {
             throw new IllegalArgumentException();
         }
         this.workbenchWindow = window;
         setActionDefinitionId("org.eclipse.ui.window.savePerspective"); //$NON-NLS-1$
         // @issue missing action id
-        setToolTipText(WorkbenchMessages.getString("SavePerspective.toolTip")); //$NON-NLS-1$
+        setToolTipText(WorkbenchMessages.SavePerspective_toolTip); 
         setEnabled(false);
         window.getWorkbench().getHelpSystem().setHelp(this,
 				IWorkbenchHelpContextIds.SAVE_PERSPECTIVE_ACTION);
@@ -82,9 +82,8 @@ public class SavePerspectiveAction extends Action implements
         String[] buttons = new String[] { IDialogConstants.OK_LABEL,
                 IDialogConstants.CANCEL_LABEL };
         MessageDialog d = new MessageDialog(workbenchWindow.getShell(),
-                WorkbenchMessages.getString("SavePerspective.overwriteTitle"), //$NON-NLS-1$
-                null, WorkbenchMessages
-                        .getString("SavePerspective.singletonQuestion"), //$NON-NLS-1$
+                WorkbenchMessages.SavePerspective_overwriteTitle,
+                null, WorkbenchMessages.SavePerspective_singletonQuestion,
                 MessageDialog.QUESTION, buttons, 0);
         if (d.open() == 0) {
             page.savePerspective();
@@ -116,10 +115,8 @@ public class SavePerspectiveAction extends Action implements
             newDesc = reg.createPerspective(name,
                     (PerspectiveDescriptor) description);
             if (newDesc == null) {
-                MessageDialog.openError(dlg.getShell(), WorkbenchMessages
-                        .getString("SavePerspective.errorTitle"), //$NON-NLS-1$
-                        WorkbenchMessages
-                                .getString("SavePerspective.errorMessage")); //$NON-NLS-1$
+                MessageDialog.openError(dlg.getShell(), WorkbenchMessages.SavePerspective_errorTitle,
+                        WorkbenchMessages.SavePerspective_errorMessage); 
                 return;
             }
         }

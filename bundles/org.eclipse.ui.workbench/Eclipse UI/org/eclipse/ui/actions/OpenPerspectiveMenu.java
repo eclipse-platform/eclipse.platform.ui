@@ -49,11 +49,9 @@ public class OpenPerspectiveMenu extends PerspectiveMenu {
 
     private boolean replaceEnabled = true;
 
-    private static String PAGE_PROBLEMS_TITLE = WorkbenchMessages
-            .getString("OpenPerspectiveMenu.pageProblemsTitle"); //$NON-NLS-1$
+    private static String PAGE_PROBLEMS_TITLE = WorkbenchMessages.OpenPerspectiveMenu_pageProblemsTitle; 
 
-    private static String PAGE_PROBLEMS_MESSAGE = WorkbenchMessages
-            .getString("OpenPerspectiveMenu.errorUnknownInput"); //$NON-NLS-1$
+    private static String PAGE_PROBLEMS_MESSAGE = WorkbenchMessages.OpenPerspectiveMenu_errorUnknownInput;
 
     /**
      * Constructs a new menu.

@@ -119,8 +119,7 @@ public class CyclePartAction extends PageEventAction {
 				if (includeEditor) {
 					IEditorReference activeEditor = (IEditorReference) refs[i];
 					TableItem item = new TableItem(table, SWT.NONE);
-					item.setText(WorkbenchMessages
-							.getString("CyclePartAction.editor")); //$NON-NLS-1$
+					item.setText(WorkbenchMessages.CyclePartAction_editor);
 					item.setImage(activeEditor.getTitleImage());
 					item.setData(activeEditor);
 					includeEditor = false;
@@ -316,7 +315,7 @@ public class CyclePartAction extends PageEventAction {
 	 * Returns the string which will be shown in the table header.
 	 */
 	protected String getTableHeader() {
-		return WorkbenchMessages.getString("CyclePartAction.header"); //$NON-NLS-1$
+		return WorkbenchMessages.CyclePartAction_header;
 	}
 
 	// private static void printKeyEvent(KeyEvent keyEvent) {
@@ -528,17 +527,15 @@ public class CyclePartAction extends PageEventAction {
 	protected void setText() {
 		// TBD: Remove text and tooltip when this becomes an invisible action.
 		if (forward) {
-			setText(WorkbenchMessages.getString("CyclePartAction.next.text")); //$NON-NLS-1$
-			setToolTipText(WorkbenchMessages
-					.getString("CyclePartAction.next.toolTip")); //$NON-NLS-1$
+			setText(WorkbenchMessages.CyclePartAction_next_text); 
+			setToolTipText(WorkbenchMessages.CyclePartAction_next_toolTip);
 			// @issue missing action ids
 			getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp(this,
 					IWorkbenchHelpContextIds.CYCLE_PART_FORWARD_ACTION);
 			setActionDefinitionId("org.eclipse.ui.window.nextView"); //$NON-NLS-1$
 		} else {
-			setText(WorkbenchMessages.getString("CyclePartAction.prev.text")); //$NON-NLS-1$
-			setToolTipText(WorkbenchMessages
-					.getString("CyclePartAction.prev.toolTip")); //$NON-NLS-1$
+			setText(WorkbenchMessages.CyclePartAction_prev_text); 
+			setToolTipText(WorkbenchMessages.CyclePartAction_prev_toolTip); 
 			// @issue missing action ids
 			getWorkbenchWindow().getWorkbench().getHelpSystem().setHelp(this,
 					IWorkbenchHelpContextIds.CYCLE_PART_BACKWARD_ACTION);

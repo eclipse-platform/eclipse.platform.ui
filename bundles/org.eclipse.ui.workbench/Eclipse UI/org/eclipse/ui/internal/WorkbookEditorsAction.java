@@ -37,7 +37,7 @@ public class WorkbookEditorsAction extends Action implements
      * Constructor for NavigateWorkbenchAction.
      */
     public WorkbookEditorsAction(IWorkbenchWindow window) {
-        super(WorkbenchMessages.getString("WorkbookEditorsAction.label")); //$NON-NLS-1$
+        super(WorkbenchMessages.WorkbookEditorsAction_label); 
         if (window == null) {
             throw new IllegalArgumentException();
         }

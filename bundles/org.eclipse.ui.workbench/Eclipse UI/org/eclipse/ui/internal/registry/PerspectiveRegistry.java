@@ -453,10 +453,8 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionRemo
      * @param status
      */
     private void unableToLoadPerspective(IStatus status) {
-        String title = WorkbenchMessages
-                .getString("Perspective.problemLoadingTitle"); //$NON-NLS-1$
-        String msg = WorkbenchMessages
-                .getString("Perspective.errorLoadingState"); //$NON-NLS-1$
+        String title = WorkbenchMessages.Perspective_problemLoadingTitle; 
+        String msg = WorkbenchMessages.Perspective_errorLoadingState;
         if (status == null) {
             MessageDialog.openError((Shell) null, title, msg);
         } else {

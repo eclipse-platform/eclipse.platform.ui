@@ -36,9 +36,9 @@ public class ToggleEditorsVisibilityAction extends Action implements
     public void perspectiveActivated(IWorkbenchPage page,
             IPerspectiveDescriptor perspective) {
         if (page.isEditorAreaVisible()) {
-            setText(WorkbenchMessages.getString("ToggleEditor.hideEditors")); //$NON-NLS-1$
+            setText(WorkbenchMessages.ToggleEditor_hideEditors); 
         } else {
-            setText(WorkbenchMessages.getString("ToggleEditor.showEditors")); //$NON-NLS-1$
+            setText(WorkbenchMessages.ToggleEditor_showEditors);
         }
     }
 
@@ -51,9 +51,9 @@ public class ToggleEditorsVisibilityAction extends Action implements
                 || changeId == IWorkbenchPage.CHANGE_EDITOR_AREA_HIDE
                 || changeId == IWorkbenchPage.CHANGE_EDITOR_AREA_SHOW) {
             if (page.isEditorAreaVisible()) {
-                setText(WorkbenchMessages.getString("ToggleEditor.hideEditors")); //$NON-NLS-1$
+                setText(WorkbenchMessages.ToggleEditor_hideEditors); 
             } else {
-                setText(WorkbenchMessages.getString("ToggleEditor.showEditors")); //$NON-NLS-1$
+                setText(WorkbenchMessages.ToggleEditor_showEditors); 
             }
         }
     }
@@ -64,14 +64,14 @@ public class ToggleEditorsVisibilityAction extends Action implements
      * @param window the window
      */
     public ToggleEditorsVisibilityAction(IWorkbenchWindow window) {
-        super(WorkbenchMessages.getString("ToggleEditor.hideEditors")); //$NON-NLS-1$
+        super(WorkbenchMessages.ToggleEditor_hideEditors);
         if (window == null) {
             throw new IllegalArgumentException();
         }
         this.workbenchWindow = window;
         setActionDefinitionId("org.eclipse.ui.window.hideShowEditors"); //$NON-NLS-1$
         // @issue missing action id
-        setToolTipText(WorkbenchMessages.getString("ToggleEditor.toolTip")); //$NON-NLS-1$
+        setToolTipText(WorkbenchMessages.ToggleEditor_toolTip);
         workbenchWindow.getWorkbench().getHelpSystem().setHelp(this,
                 IWorkbenchHelpContextIds.TOGGLE_EDITORS_VISIBILITY_ACTION);
         setEnabled(false);
@@ -98,10 +98,10 @@ public class ToggleEditorsVisibilityAction extends Action implements
         boolean visible = page.isEditorAreaVisible();
         if (visible) {
             page.setEditorAreaVisible(false);
-            setText(WorkbenchMessages.getString("ToggleEditor.showEditors")); //$NON-NLS-1$
+            setText(WorkbenchMessages.ToggleEditor_showEditors); 
         } else {
             page.setEditorAreaVisible(true);
-            setText(WorkbenchMessages.getString("ToggleEditor.hideEditors")); //$NON-NLS-1$
+            setText(WorkbenchMessages.ToggleEditor_hideEditors);
         }
     }
 

@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.IBundleGroupProvider;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.about.ISystemSummarySection;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -60,8 +61,7 @@ public class ConfigurationLogDefaultSection implements ISystemSummarySection {
      */
     private void appendProperties(PrintWriter writer) {
         writer.println();
-        writer.println(WorkbenchMessages
-                .getString("SystemSummary.systemProperties")); //$NON-NLS-1$
+        writer.println(WorkbenchMessages.SystemSummary_systemProperties);
         Properties properties = System.getProperties();
         SortedSet set = new TreeSet(new Comparator() {
             public int compare(Object o1, Object o2) {
@@ -98,7 +98,7 @@ public class ConfigurationLogDefaultSection implements ISystemSummarySection {
      */
     private void appendFeatures(PrintWriter writer) {
         writer.println();
-        writer.println(WorkbenchMessages.getString("SystemSummary.features")); //$NON-NLS-1$
+        writer.println(WorkbenchMessages.SystemSummary_features);
 
         IBundleGroupProvider[] providers = Platform.getBundleGroupProviders();
         LinkedList groups = new LinkedList();
@@ -117,8 +117,7 @@ public class ConfigurationLogDefaultSection implements ISystemSummarySection {
             AboutBundleGroupData info = bundleGroupInfos[i];
             String[] args = new String[] { info.getId(), info.getVersion(),
                     info.getName() };
-            writer.println(WorkbenchMessages.format(
-                    "SystemSummary.featureVersion", args)); //$NON-NLS-1$
+            writer.println(NLS.bind(WorkbenchMessages.SystemSummary_featureVersion, args)); 
         }
     }
 
@@ -127,8 +126,7 @@ public class ConfigurationLogDefaultSection implements ISystemSummarySection {
      */
     private void appendRegistry(PrintWriter writer) {
         writer.println();
-        writer.println(WorkbenchMessages
-                .getString("SystemSummary.pluginRegistry")); //$NON-NLS-1$
+        writer.println(WorkbenchMessages.SystemSummary_pluginRegistry);
 
         Bundle[] bundles = WorkbenchPlugin.getDefault().getBundles();
         AboutBundleData[] bundleInfos = new AboutBundleData[bundles.length];
@@ -142,8 +140,7 @@ public class ConfigurationLogDefaultSection implements ISystemSummarySection {
             AboutBundleData info = bundleInfos[i];
             String[] args = new String[] { info.getId(), info.getVersion(),
                     info.getName(), info.getStateName() };
-            writer.println(WorkbenchMessages.format(
-                    "SystemSummary.descriptorIdVersionState", args)); //$NON-NLS-1$
+            writer.println(NLS.bind(WorkbenchMessages.SystemSummary_descriptorIdVersionState, args)); 
         }
     }
 
@@ -163,8 +160,7 @@ public class ConfigurationLogDefaultSection implements ISystemSummarySection {
 
         // copy the prefs from the byte array to the writer
         writer.println();
-        writer.println(WorkbenchMessages
-                .getString("SystemSummary.userPreferences")); //$NON-NLS-1$
+        writer.println(WorkbenchMessages.SystemSummary_userPreferences); 
 
         BufferedReader reader = null;
         try {

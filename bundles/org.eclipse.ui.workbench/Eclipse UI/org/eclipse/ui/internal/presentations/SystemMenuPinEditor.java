@@ -23,7 +23,7 @@ public class SystemMenuPinEditor extends Action implements ISelfUpdatingAction {
     private EditorPane editorPane;
 
     public SystemMenuPinEditor(EditorPane pane) {
-        setText(WorkbenchMessages.getString("EditorPane.pinEditor")); //$NON-NLS-1$
+        setText(WorkbenchMessages.EditorPane_pinEditor);
         setPane(pane);
     }
 

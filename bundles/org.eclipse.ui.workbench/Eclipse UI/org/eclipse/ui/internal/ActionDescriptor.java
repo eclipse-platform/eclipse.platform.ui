@@ -128,8 +128,7 @@ public class ActionDescriptor implements IPluginContribution {
         if (label == null) {
             WorkbenchPlugin
                     .log("Invalid action declaration (label == null): " + id); //$NON-NLS-1$
-            label = WorkbenchMessages
-                    .getString("ActionDescriptor.invalidLabel"); //$NON-NLS-1$
+            label = WorkbenchMessages.ActionDescriptor_invalidLabel; 
         }
 
         // Calculate menu and toolbar paths.

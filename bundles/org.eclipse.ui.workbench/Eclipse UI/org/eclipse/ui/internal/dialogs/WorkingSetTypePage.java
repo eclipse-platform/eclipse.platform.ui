@@ -64,9 +64,8 @@ public class WorkingSetTypePage extends WizardPage {
      */
     public WorkingSetTypePage() {
         super(
-                "workingSetTypeSelectionPage", WorkbenchMessages.getString("Select"), WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_WIZBAN_WORKINGSET_WIZ)); //$NON-NLS-1$ //$NON-NLS-2$
-        setDescription(WorkbenchMessages
-                .getString("WorkingSetTypePage.description")); //$NON-NLS-1$				
+                "workingSetTypeSelectionPage", WorkbenchMessages.Select, WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_WIZBAN_WORKINGSET_WIZ)); //$NON-NLS-1$
+        setDescription(WorkbenchMessages.WorkingSetTypePage_description); 			
         icons = new Hashtable();
     }
 
@@ -121,8 +120,7 @@ public class WorkingSetTypePage extends WizardPage {
         PlatformUI.getWorkbench().getHelpSystem().setHelp(composite,
 				IWorkbenchHelpContextIds.WORKING_SET_TYPE_PAGE);
         Label typesLabel = new Label(composite, SWT.NONE);
-        typesLabel.setText(WorkbenchMessages
-                .getString("WorkingSetTypePage.typesLabel")); //$NON-NLS-1$
+        typesLabel.setText(WorkbenchMessages.WorkingSetTypePage_typesLabel);
         GridData data = new GridData(GridData.GRAB_HORIZONTAL
                 | GridData.GRAB_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL
                 | GridData.VERTICAL_ALIGN_CENTER);

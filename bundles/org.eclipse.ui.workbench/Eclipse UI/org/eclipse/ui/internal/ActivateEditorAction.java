@@ -31,9 +31,8 @@ public class ActivateEditorAction extends PageEventAction {
      * @param window the window
      */
     public ActivateEditorAction(IWorkbenchWindow window) {
-        super(WorkbenchMessages.getString("ActivateEditorAction.text"), window); //$NON-NLS-1$
-        setToolTipText(WorkbenchMessages
-                .getString("ActivateEditorAction.toolTip")); //$NON-NLS-1$
+        super(WorkbenchMessages.ActivateEditorAction_text, window);
+        setToolTipText(WorkbenchMessages.ActivateEditorAction_toolTip); 
         // @issue missing action id
         updateState();
         window.getWorkbench().getHelpSystem().setHelp(this,

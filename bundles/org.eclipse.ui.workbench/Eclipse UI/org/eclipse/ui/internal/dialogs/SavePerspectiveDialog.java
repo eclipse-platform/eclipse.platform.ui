@@ -18,6 +18,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Font;
@@ -83,8 +84,7 @@ public class SavePerspectiveDialog extends org.eclipse.jface.dialogs.Dialog
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
         shell
-                .setText(WorkbenchMessages
-                        .getString("SavePerspective.shellTitle")); //$NON-NLS-1$
+                .setText(WorkbenchMessages.SavePerspective_shellTitle); 
         PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
 				IWorkbenchHelpContextIds.SAVE_PERSPECTIVE_DIALOG);
     }
@@ -117,8 +117,7 @@ public class SavePerspectiveDialog extends org.eclipse.jface.dialogs.Dialog
 
         // description
         Label descLabel = new Label(composite, SWT.WRAP);
-        descLabel.setText(WorkbenchMessages
-                .getString("SavePerspectiveDialog.description")); //$NON-NLS-1$
+        descLabel.setText(WorkbenchMessages.SavePerspectiveDialog_description);
         descLabel.setFont(parent.getFont());
 
         // Spacer.
@@ -137,7 +136,7 @@ public class SavePerspectiveDialog extends org.eclipse.jface.dialogs.Dialog
 
         // Create name label.
         label = new Label(nameGroup, SWT.NONE);
-        label.setText(WorkbenchMessages.getString("SavePerspective.name")); //$NON-NLS-1$
+        label.setText(WorkbenchMessages.SavePerspective_name);
         label.setFont(font);
 
         // Add text field.
@@ -157,7 +156,7 @@ public class SavePerspectiveDialog extends org.eclipse.jface.dialogs.Dialog
 
         // Another label.
         label = new Label(composite, SWT.NONE);
-        label.setText(WorkbenchMessages.getString("SavePerspective.existing")); //$NON-NLS-1$
+        label.setText(WorkbenchMessages.SavePerspective_existing);
         label.setFont(font);
 
         // Add perspective list.
@@ -242,14 +241,11 @@ public class SavePerspectiveDialog extends org.eclipse.jface.dialogs.Dialog
         persp = perspReg.findPerspectiveWithLabel(perspName);
         if (persp != null) {
             // Confirm ok to overwrite
-            String message = WorkbenchMessages
-                    .format(
-                            "SavePerspective.overwriteQuestion", new Object[] { perspName }); //$NON-NLS-1$
+            String message = NLS.bind(WorkbenchMessages.SavePerspective_overwriteQuestion,perspName ); 
             String[] buttons = new String[] { IDialogConstants.YES_LABEL,
                     IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL };
             MessageDialog d = new MessageDialog(this.getShell(),
-                    WorkbenchMessages
-                            .getString("SavePerspective.overwriteTitle"), //$NON-NLS-1$
+                    WorkbenchMessages.SavePerspective_overwriteTitle, 
                     null, message, MessageDialog.QUESTION, buttons, 0);
 
             switch (d.open()) {

@@ -220,8 +220,7 @@ class NewWizardNewPage implements ISelectionChangedListener,
      * @since 3.0
      */
     public void activate() {
-        page.setDescription(WorkbenchMessages
-                .getString("NewWizardNewPage.description")); //$NON-NLS-1$
+        page.setDescription(WorkbenchMessages.NewWizardNewPage_description);
     }
 
     /**
@@ -241,8 +240,7 @@ class NewWizardNewPage implements ISelectionChangedListener,
         Label wizardLabel = new Label(outerContainer, SWT.NONE);
         GridData data = new GridData(GridData.FILL_VERTICAL);
         wizardLabel.setFont(wizardFont);
-        wizardLabel.setText(WorkbenchMessages
-                .getString("NewWizardNewPage.wizardsLabel")); //$NON-NLS-1$	    
+        wizardLabel.setText(WorkbenchMessages.NewWizardNewPage_wizardsLabel);    
 
         Composite innerContainer = new Composite(outerContainer, SWT.NONE);
         layout = new GridLayout(2, false);
@@ -391,8 +389,7 @@ class NewWizardNewPage implements ISelectionChangedListener,
             data = new GridData();
             showAllCheck.setLayoutData(data);
             showAllCheck.setFont(parent.getFont());
-            showAllCheck.setText(WorkbenchMessages
-                    .getString("NewWizardNewPage.showAll")); //$NON-NLS-1$
+            showAllCheck.setText(WorkbenchMessages.NewWizardNewPage_showAll); 
             showAllCheck.setSelection(false);
 
             // flipping tabs updates the selected node
@@ -463,8 +460,7 @@ class NewWizardNewPage implements ISelectionChangedListener,
         helpButton = new ToolItem(toolBar, SWT.NONE);
         helpButton.setImage(buttonImage);
         helpButton.setEnabled(false);
-        helpButton.setToolTipText(WorkbenchMessages
-                .getString("NewWizardNewPage.moreHelp")); //$NON-NLS-1$		
+        helpButton.setToolTipText(WorkbenchMessages.NewWizardNewPage_moreHelp);
         data = new GridData(GridData.HORIZONTAL_ALIGN_END
                 | GridData.VERTICAL_ALIGN_END);
         if (!needShowAll)

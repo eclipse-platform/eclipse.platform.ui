@@ -71,7 +71,7 @@ public class ViewLabelProvider extends LabelProvider {
      * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
      */
     public String getText(Object element) {
-        String label = WorkbenchMessages.getString("ViewLabel.unknown"); //$NON-NLS-1$
+        String label = WorkbenchMessages.ViewLabel_unknown;
         if (element instanceof Category)
             label = ((Category) element).getLabel();
         else if (element instanceof IViewDescriptor)

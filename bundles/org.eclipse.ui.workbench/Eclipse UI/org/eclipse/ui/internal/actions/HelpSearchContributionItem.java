@@ -52,12 +52,12 @@ public class HelpSearchContributionItem extends ControlContribution {
 
 	protected Control createControl(Composite parent) {
 		combo = new Combo(parent, SWT.NONE);
-		combo.setToolTipText(WorkbenchMessages.getString("WorkbenchWindow.searchCombo.toolTip")); //$NON-NLS-1$
+		combo.setToolTipText(WorkbenchMessages.WorkbenchWindow_searchCombo_toolTip); 
 		String[] items = WorkbenchPlugin.getDefault().getDialogSettings()
 				.getArray(ID);
 		if (items != null)
 			combo.setItems(items);
-		combo.setText(WorkbenchMessages.getString("WorkbenchWindow.searchCombo.text")); //$NON-NLS-1$
+		combo.setText(WorkbenchMessages.WorkbenchWindow_searchCombo_text); 
 		combo.addKeyListener(new KeyAdapter() {
 			public void keyReleased(KeyEvent e) {
 				if (e.character == SWT.CR) {

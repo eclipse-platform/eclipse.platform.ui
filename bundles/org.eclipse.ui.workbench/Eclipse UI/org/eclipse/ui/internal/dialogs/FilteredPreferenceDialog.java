@@ -140,8 +140,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 		filteredTree.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 
 		TreeViewer tree = filteredTree.getViewer();
-		filteredTree.setInitialText(WorkbenchMessages
-				.getString("WorkbenchPreferenceDialog.FilterMessage")); //$NON-NLS-1$
+		filteredTree.setInitialText(WorkbenchMessages.WorkbenchPreferenceDialog_FilterMessage);
 
 		setContentAndLabelProviders(tree);
 		tree.setInput(getPreferenceManager());

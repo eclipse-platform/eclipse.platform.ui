@@ -44,11 +44,9 @@ public abstract class SelectionDialog extends Dialog {
     // message to show user
     private String message = ""; //$NON-NLS-1$
 
-    static String SELECT_ALL_TITLE = WorkbenchMessages
-            .getString("SelectionDialog.selectLabel"); //$NON-NLS-1$
+    static String SELECT_ALL_TITLE = WorkbenchMessages.SelectionDialog_selectLabel;
 
-    static String DESELECT_ALL_TITLE = WorkbenchMessages
-            .getString("SelectionDialog.deselectLabel"); //$NON-NLS-1$
+    static String DESELECT_ALL_TITLE = WorkbenchMessages.SelectionDialog_deselectLabel;
 
     /**
      * Creates a dialog instance. Note that the dialog will have no visual

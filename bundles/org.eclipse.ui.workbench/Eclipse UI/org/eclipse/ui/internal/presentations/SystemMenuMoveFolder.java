@@ -23,7 +23,7 @@ public class SystemMenuMoveFolder extends Action implements ISelfUpdatingAction 
 
     public SystemMenuMoveFolder(IStackPresentationSite site) {
         this.site = site;
-        setText(WorkbenchMessages.getString("ViewPane.moveFolder")); //$NON-NLS-1$
+        setText(WorkbenchMessages.ViewPane_moveFolder);
     }
 
     /* (non-Javadoc)

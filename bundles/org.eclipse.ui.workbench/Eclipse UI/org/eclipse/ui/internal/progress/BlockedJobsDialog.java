@@ -211,8 +211,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
          */
         if (parentShell == null) {
             //create the job that will open the dialog after a delay.
-            WorkbenchJob dialogJob = new WorkbenchJob(WorkbenchMessages
-                    .getString("EventLoopProgressMonitor.OpenDialogJobName")) { //$NON-NLS-1$
+            WorkbenchJob dialogJob = new WorkbenchJob(WorkbenchMessages.EventLoopProgressMonitor_OpenDialogJobName) {
                 /*
                  * (non-Javadoc)
                  * 

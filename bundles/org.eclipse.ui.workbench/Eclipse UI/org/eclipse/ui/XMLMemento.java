@@ -107,15 +107,13 @@ public final class XMLMemento implements IMemento {
             }
         } catch (ParserConfigurationException e) {
             exception = e;
-            errorMessage = WorkbenchMessages
-                    .getString("XMLMemento.parserConfigError"); //$NON-NLS-1$
+            errorMessage = WorkbenchMessages.XMLMemento_parserConfigError;
         } catch (IOException e) {
             exception = e;
-            errorMessage = WorkbenchMessages.getString("XMLMemento.ioError"); //$NON-NLS-1$
+            errorMessage = WorkbenchMessages.XMLMemento_ioError; 
         } catch (SAXException e) {
             exception = e;
-            errorMessage = WorkbenchMessages
-                    .getString("XMLMemento.formatError"); //$NON-NLS-1$
+            errorMessage = WorkbenchMessages.XMLMemento_formatError; 
         }
 
         String problemText = null;
@@ -123,7 +121,7 @@ public final class XMLMemento implements IMemento {
             problemText = exception.getMessage();
         if (problemText == null || problemText.length() == 0)
             problemText = errorMessage != null ? errorMessage
-                    : WorkbenchMessages.getString("XMLMemento.noElement"); //$NON-NLS-1$
+                    : WorkbenchMessages.XMLMemento_noElement; 
         throw new WorkbenchException(problemText, exception);
     }
 

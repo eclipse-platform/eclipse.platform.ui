@@ -63,20 +63,17 @@ public class SystemMenuFastViewOrientation extends ContributionItem {
                     .getViewReference()));
             MenuItem orientationItem = new MenuItem(menu, SWT.CASCADE, index);
             {
-                orientationItem.setText(WorkbenchMessages
-                        .getString("FastViewBar.view_orientation")); //$NON-NLS-1$
+                orientationItem.setText(WorkbenchMessages.FastViewBar_view_orientation);
 
                 Menu orientationSwtMenu = new Menu(orientationItem);
                 RadioMenu orientationMenu = new RadioMenu(orientationSwtMenu,
                         currentOrientation);
                 orientationMenu
                         .addMenuItem(
-                                WorkbenchMessages
-                                        .getString("FastViewBar.horizontal"), new Integer(SWT.HORIZONTAL)); //$NON-NLS-1$
+                                WorkbenchMessages.FastViewBar_horizontal, new Integer(SWT.HORIZONTAL)); 
                 orientationMenu
                         .addMenuItem(
-                                WorkbenchMessages
-                                        .getString("FastViewBar.vertical"), new Integer(SWT.VERTICAL)); //$NON-NLS-1$
+                                WorkbenchMessages.FastViewBar_vertical, new Integer(SWT.VERTICAL)); 
 
                 orientationItem.setMenu(orientationSwtMenu);
             }

@@ -147,8 +147,7 @@ public class RectangleAnimation extends Job {
      */
     public RectangleAnimation(Shell parentShell, Rectangle start,
             Rectangle end, int duration) {
-        super(WorkbenchMessages
-                .getString("RectangleAnimation.Animating_Rectangle")); //$NON-NLS-1$
+        super(WorkbenchMessages.RectangleAnimation_Animating_Rectangle);
         this.duration = duration;
         this.start = start;
         this.end = end;

@@ -100,7 +100,7 @@ public class ShowViewDialog extends Dialog implements
      */
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
-        shell.setText(WorkbenchMessages.getString("ShowView.shellTitle")); //$NON-NLS-1$
+        shell.setText(WorkbenchMessages.ShowView_shellTitle);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
 				IWorkbenchHelpContextIds.SHOW_VIEW_DIALOG);
     }

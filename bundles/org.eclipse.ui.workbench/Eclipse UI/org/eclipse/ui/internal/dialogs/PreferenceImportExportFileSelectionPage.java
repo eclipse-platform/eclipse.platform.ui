@@ -66,14 +66,12 @@ class PreferenceImportExportFileSelectionPage extends
     /**
      * The message to display when there are no errors on this page.
      */
-    public static final String EXPORT_MESSAGE = WorkbenchMessages
-            .getString("ImportExportPages.exportFileSelect"); //$NON-NLS-1$
+    public static final String EXPORT_MESSAGE = WorkbenchMessages.ImportExportPages_exportFileSelect; 
 
     /**
      * The message to display when there are no errors on this page.
      */
-    public static final String IMPORT_MESSAGE = WorkbenchMessages
-            .getString("ImportExportPages.importFileSelect"); //$NON-NLS-1$
+    public static final String IMPORT_MESSAGE = WorkbenchMessages.ImportExportPages_importFileSelect;
 
     /**
      * The name of this page -- used to find the page later.
@@ -172,8 +170,7 @@ class PreferenceImportExportFileSelectionPage extends
 
         // Set up the file selection label.
         final Label fileLabel = new Label(page, SWT.NONE);
-        fileLabel.setText(WorkbenchMessages
-                .getString("ImportExportPages.fileLabel")); //$NON-NLS-1$
+        fileLabel.setText(WorkbenchMessages.ImportExportPages_fileLabel); 
         fileLabel.setFont(parentFont);
         layoutData = new GridData();
         fileLabel.setLayoutData(layoutData);
@@ -191,8 +188,7 @@ class PreferenceImportExportFileSelectionPage extends
         final Button browseButton = new Button(page, SWT.PUSH);
         browseButton.setFont(parentFont);
         layoutData = new GridData();
-        browseButton.setText(WorkbenchMessages
-                .getString("ImportExportPages.browseButton")); //$NON-NLS-1$
+        browseButton.setText(WorkbenchMessages.ImportExportPages_browseButton); 
         layoutData.widthHint = computePushButtonWidthHint(browseButton);
         browseButton.setLayoutData(layoutData);
         browseButton.addSelectionListener(new SelectionAdapter() {
@@ -233,7 +229,7 @@ class PreferenceImportExportFileSelectionPage extends
         if (lastFileName == null) {
             if (export) {
                 fileText
-                        .setText(System.getProperty("user.dir") + System.getProperty("file.separator") + WorkbenchMessages.getString("ImportExportPages.preferenceFileName") + PREFERENCE_EXT); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+                        .setText(System.getProperty("user.dir") + System.getProperty("file.separator") + WorkbenchMessages.ImportExportPages_preferenceFileName + PREFERENCE_EXT); //$NON-NLS-1$//$NON-NLS-2$ 
             }
         } else if ((export) || (new File(lastFileName).exists())) {
             fileText.setText(lastFileName);
@@ -258,14 +254,12 @@ class PreferenceImportExportFileSelectionPage extends
         if (export) {
             final File parentFile = currentFile.getParentFile();
             if (parentFile == null || !parentFile.exists()) {
-                setErrorMessage(WorkbenchMessages
-                        .getString("ImportExportPages.errorDirectoryDoesNotExist")); //$NON-NLS-1$
+                setErrorMessage(WorkbenchMessages.ImportExportPages_errorDirectoryDoesNotExist);
                 return false;
             }
         } else {
             if (!currentFile.exists()) {
-                setErrorMessage(WorkbenchMessages
-                        .getString("ImportExportPages.errorImportFileDoesNotExist")); //$NON-NLS-1$
+                setErrorMessage(WorkbenchMessages.ImportExportPages_errorImportFileDoesNotExist);
                 return false;
             }
         }

@@ -55,9 +55,8 @@ public class HelpContentsAction extends Action implements IWorkbenchAction {
         String overrideText = PrefUtil.getAPIPreferenceStore().getString(
                 IWorkbenchPreferenceConstants.HELP_CONTENTS_ACTION_TEXT);
         if ("".equals(overrideText)) { //$NON-NLS-1$
-            setText(WorkbenchMessages.getString("HelpContentsAction.text")); //$NON-NLS-1$ 
-            setToolTipText(WorkbenchMessages
-                    .getString("HelpContentsAction.toolTip")); //$NON-NLS-1$
+            setText(WorkbenchMessages.HelpContentsAction_text);
+            setToolTipText(WorkbenchMessages.HelpContentsAction_toolTip);
         } else {
             setText(overrideText);
             setToolTipText(Action.removeMnemonics(overrideText));

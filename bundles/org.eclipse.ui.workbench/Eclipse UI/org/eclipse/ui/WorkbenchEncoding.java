@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -150,8 +151,7 @@ public class WorkbenchEncoding {
 		Iterator invalidIterator = invalid.iterator();
 		while (invalidIterator.hasNext()) {
 			String next = (String) invalidIterator.next();
-			WorkbenchPlugin.log(WorkbenchMessages.format("WorkbenchEncoding.invalidCharset", //$NON-NLS-1$
-					new String[] { next }));
+			WorkbenchPlugin.log(NLS.bind(WorkbenchMessages.WorkbenchEncoding_invalidCharset,  next ));
 			definedEncodings.remove(next);
 
 		}

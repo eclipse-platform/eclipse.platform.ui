@@ -46,6 +46,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Rectangle;
@@ -513,8 +514,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             throws WorkbenchException {
         super();
         if (layoutID == null)
-            throw new WorkbenchException(WorkbenchMessages
-                    .getString("WorkbenchPage.UndefinedPerspective")); //$NON-NLS-1$
+            throw new WorkbenchException(WorkbenchMessages.WorkbenchPage_UndefinedPerspective);
         init(w, layoutID, input);
     }
 
@@ -567,8 +567,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * Activates a part. The part is given focus, the pane is hilighted.
      */
     private void activatePart(final IWorkbenchPart part) {
-        Platform.run(new SafeRunnable(WorkbenchMessages
-                .getString("WorkbenchPage.ErrorActivatingView")) { //$NON-NLS-1$
+        Platform.run(new SafeRunnable(WorkbenchMessages.WorkbenchPage_ErrorActivatingView) { 
                     public void run() {
                         if (part != null) {
                             part.setFocus();
@@ -1249,10 +1248,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                 MessageDialog
                         .openError(
                                 window.getShell(),
-                                WorkbenchMessages.getString("Error"), //$NON-NLS-1$
-                                WorkbenchMessages
-                                        .format(
-                                                "Workbench.showPerspectiveError", new String[] { desc.getId() })); //$NON-NLS-1$
+                                WorkbenchMessages.Error, 
+                                NLS.bind(WorkbenchMessages.Workbench_showPerspectiveError,desc.getId() )); 
             }
             return null;
         } finally {
@@ -1370,13 +1367,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         if (errors[0] > 0) {
             String message;
             if (errors[0] == 1)
-                message = WorkbenchMessages
-                        .getString("WorkbenchPage.oneErrorClosingPage"); //$NON-NLS-1$
+                message = WorkbenchMessages.WorkbenchPage_oneErrorClosingPage; 
             else
-                message = WorkbenchMessages
-                        .getString("WorkbenchPage.multipleErrorsClosingPage"); //$NON-NLS-1$
-            MessageDialog.openError(null,
-                    WorkbenchMessages.getString("Error"), message); //$NON-NLS-1$
+                message = WorkbenchMessages.WorkbenchPage_multipleErrorsClosingPage;
+            MessageDialog.openError(null,WorkbenchMessages.Error, message); 
         }
         activePart = null;
         activationList = new ActivationList();
@@ -1704,8 +1698,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * active perspective.
      */
     public String getLabel() {
-        String label = WorkbenchMessages
-                .getString("WorkbenchPage.UnknownLabel"); //$NON-NLS-1$
+        String label = WorkbenchMessages.WorkbenchPage_UnknownLabel;
         if (input != null) {
             IWorkbenchAdapter adapter = (IWorkbenchAdapter) input
                     .getAdapter(IWorkbenchAdapter.class);
@@ -1714,13 +1707,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         }
         Perspective persp = getActivePerspective();
         if (persp != null)
-            label = WorkbenchMessages
-                    .format(
-                            "WorkbenchPage.PerspectiveFormat", new Object[] { label, persp.getDesc().getLabel() }); //$NON-NLS-1$
+            label = NLS.bind(WorkbenchMessages.WorkbenchPage_PerspectiveFormat,  label, persp.getDesc().getLabel());
         else if (deferredActivePersp != null)
-            label = WorkbenchMessages
-                    .format(
-                            "WorkbenchPage.PerspectiveFormat", new Object[] { label, deferredActivePersp.getLabel() }); //$NON-NLS-1$	
+            label = NLS.bind(WorkbenchMessages.WorkbenchPage_PerspectiveFormat,label, deferredActivePersp.getLabel()); 
         return label;
     }
 
@@ -1984,9 +1973,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                     .findPerspectiveWithId(layoutID);
             if (desc == null)
                 throw new WorkbenchException(
-                        WorkbenchMessages
-                                .format(
-                                        "WorkbenchPage.ErrorCreatingPerspective", new String[] { layoutID })); //$NON-NLS-1$
+                        NLS.bind(WorkbenchMessages.WorkbenchPage_ErrorCreatingPerspective,layoutID )); 
             Perspective persp = createPerspective(desc);
             if (persp == null)
                 return;
@@ -2210,11 +2197,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                 if (editor.isDirty()) {
                     MessageDialog dialog = new MessageDialog(
                             getWorkbenchWindow().getShell(),
-                            WorkbenchMessages.getString("Save"), //$NON-NLS-1$
+                            WorkbenchMessages.Save, 
                             null, // accept the default window icon
-                            WorkbenchMessages
-                                    .format(
-                                            "WorkbenchPage.editorAlreadyOpenedMsg", new String[] { input.getName() }), //$NON-NLS-1$
+                            NLS.bind(WorkbenchMessages.WorkbenchPage_editorAlreadyOpenedMsg,  input.getName()), 
                             MessageDialog.QUESTION, new String[] {
                                     IDialogConstants.YES_LABEL,
                                     IDialogConstants.NO_LABEL,
@@ -2470,9 +2455,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             MultiStatus result = new MultiStatus(
                     PlatformUI.PLUGIN_ID,
                     IStatus.OK,
-                    WorkbenchMessages
-                            .format(
-                                    "WorkbenchPage.unableToRestorePerspective", new String[] { pageName }), //$NON-NLS-1$
+                    NLS.bind(WorkbenchMessages.WorkbenchPage_unableToRestorePerspective, pageName ), 
                     null);
 
             String workingSetName = memento
@@ -2541,9 +2524,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                                     IStatus.ERROR,
                                     PlatformUI.PLUGIN_ID,
                                     0,
-                                    WorkbenchMessages
-                                            .format(
-                                                    "Workbench.showPerspectiveError", new String[] { activeDescriptor.getId() }), //$NON-NLS-1$
+                                    NLS.bind(WorkbenchMessages.Workbench_showPerspectiveError, activeDescriptor.getId() ), 
                                     null));
                 }
             }
@@ -2663,9 +2644,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         MultiStatus result = new MultiStatus(
                 PlatformUI.PLUGIN_ID,
                 IStatus.OK,
-                WorkbenchMessages
-                        .format(
-                                "WorkbenchPage.unableToSavePerspective", new String[] { getLabel() }), //$NON-NLS-1$
+                NLS.bind(WorkbenchMessages.WorkbenchPage_unableToSavePerspective, getLabel()), 
                 null);
 
         // Save editor manager.
@@ -2820,10 +2799,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	        if (newPersp != null) {
 	            IStatus status = newPersp.restoreState();
 	            if (status.getSeverity() != IStatus.OK) {
-	                String title = WorkbenchMessages
-	                        .getString("WorkbenchPage.problemRestoringTitle"); //$NON-NLS-1$
-	                String msg = WorkbenchMessages
-	                        .getString("WorkbenchPage.errorReadingState"); //$NON-NLS-1$
+	                String title = WorkbenchMessages.WorkbenchPage_problemRestoringTitle; 
+	                String msg = WorkbenchMessages.WorkbenchPage_errorReadingState;
 	                ErrorDialog.openError(getWorkbenchWindow().getShell(), title,
 	                        msg, status);
 	            }
@@ -3078,12 +3055,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         if (secondaryID != null) {
             if (secondaryID.length() == 0
                     || secondaryID.indexOf(ViewFactory.ID_SEP) != -1)
-                throw new IllegalArgumentException(WorkbenchMessages
-                        .getString("WorkbenchPage.IllegalSecondaryId")); //$NON-NLS-1$
+                throw new IllegalArgumentException(WorkbenchMessages.WorkbenchPage_IllegalSecondaryId); 
         }
         if (!certifyMode(mode))
-            throw new IllegalArgumentException(WorkbenchMessages
-                    .getString("WorkbenchPage.IllegalViewMode")); //$NON-NLS-1$
+            throw new IllegalArgumentException(WorkbenchMessages.WorkbenchPage_IllegalViewMode);
 
         // Run op in busy cursor.
         final Object[] result = new Object[1];
@@ -3101,8 +3076,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         else if (result[0] instanceof PartInitException)
             throw (PartInitException) result[0];
         else
-            throw new PartInitException(WorkbenchMessages
-                    .getString("WorkbenchPage.AbnormalWorkbenchCondition")); //$NON-NLS-1$
+            throw new PartInitException(WorkbenchMessages.WorkbenchPage_AbnormalWorkbenchCondition); 
     }
 
     /**
@@ -4070,8 +4044,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                 if (MessageDialog
                         .openQuestion(
                                 parentShell,
-                                WorkbenchMessages.getString("Dynamic.resetPerspectiveTitle"), //$NON-NLS-1$
-                                WorkbenchMessages.getString("Dynamic.resetPerspectiveMessage"))) { //$NON-NLS-1$
+                                WorkbenchMessages.Dynamic_resetPerspectiveTitle, 
+                                WorkbenchMessages.Dynamic_resetPerspectiveMessage)) { 
                     IWorkbenchPage page = window.getActivePage();
                     if (page == null)
                         return;

@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.program.Program;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -60,9 +61,7 @@ public class ExternalEditor {
                             Status.ERROR,
                             WorkbenchPlugin.PI_WORKBENCH,
                             0,
-                            WorkbenchMessages
-                                    .format(
-                                            "ExternalEditor.errorMessage", new Object[] { path }), //$NON-NLS-1$
+                            NLS.bind(WorkbenchMessages.ExternalEditor_errorMessage, path), 
                             null));
         }
     }
@@ -112,9 +111,7 @@ public class ExternalEditor {
                             Status.ERROR,
                             WorkbenchPlugin.PI_WORKBENCH,
                             0,
-                            WorkbenchMessages
-                                    .format(
-                                            "ExternalEditor.errorMessage", new Object[] { programFileName }), //$NON-NLS-1$
+                            NLS.bind(WorkbenchMessages.ExternalEditor_errorMessage,programFileName), 
                             null));
         }
         String path = filePath.toOSString();
@@ -132,9 +129,7 @@ public class ExternalEditor {
                             Status.ERROR,
                             WorkbenchPlugin.PI_WORKBENCH,
                             0,
-                            WorkbenchMessages
-                                    .format(
-                                            "ExternalEditor.errorMessage", new Object[] { programFileName }), //$NON-NLS-1$
+                            NLS.bind(WorkbenchMessages.ExternalEditor_errorMessage,programFileName),
                             e));
         }
     }

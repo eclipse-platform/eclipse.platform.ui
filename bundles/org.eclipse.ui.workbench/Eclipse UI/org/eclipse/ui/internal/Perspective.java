@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -612,9 +613,7 @@ public class Perspective {
             MultiStatus status = new MultiStatus(
                     PlatformUI.PLUGIN_ID,
                     IStatus.OK,
-                    WorkbenchMessages
-                            .format(
-                                    "Perspective.unableToRestorePerspective", new String[] { persp.getLabel() }), //$NON-NLS-1$
+                    NLS.bind(WorkbenchMessages.Perspective_unableToRestorePerspective, persp.getLabel()),
                     null);
             status.merge(restoreState(memento));
             status.merge(restoreState());
@@ -637,10 +636,8 @@ public class Perspective {
         // the perspective (we wouldn't want to).  But make sure to delete the
         // customized portion.
         persp.deleteCustomDefinition();
-        String title = WorkbenchMessages
-                .getString("Perspective.problemRestoringTitle"); //$NON-NLS-1$
-        String msg = WorkbenchMessages
-                .getString("Perspective.errorReadingState"); //$NON-NLS-1$
+        String title = WorkbenchMessages.Perspective_problemRestoringTitle;
+        String msg = WorkbenchMessages.Perspective_errorReadingState;
         if (status == null) {
             MessageDialog.openError((Shell) null, title, msg);
         } else {
@@ -659,8 +656,7 @@ public class Perspective {
         try {
             factory = persp.createFactory();
         } catch (CoreException e) {
-            throw new WorkbenchException(WorkbenchMessages.format(
-                    "Perspective.unableToLoad", new Object[] { persp.getId() })); //$NON-NLS-1$
+            throw new WorkbenchException(NLS.bind(WorkbenchMessages.Perspective_unableToLoad, persp.getId() ));
         }
 
         // Create layout factory.
@@ -851,8 +847,7 @@ public class Perspective {
         MultiStatus result = new MultiStatus(
                 PlatformUI.PLUGIN_ID,
                 IStatus.OK,
-                WorkbenchMessages
-                        .getString("Perspective.problemsRestoringPerspective"), null); //$NON-NLS-1$
+                WorkbenchMessages.Perspective_problemsRestoringPerspective, null);
 
         // Create persp descriptor.
         descriptor = new PerspectiveDescriptor(null, null, null);
@@ -878,8 +873,7 @@ public class Perspective {
 
     private IStatus createReferences(IMemento views[]) {
         MultiStatus result = new MultiStatus(PlatformUI.PLUGIN_ID, IStatus.OK,
-                WorkbenchMessages
-                        .getString("Perspective.problemsRestoringViews"), null); //$NON-NLS-1$
+                WorkbenchMessages.Perspective_problemsRestoringViews, null); 
 
         for (int x = 0; x < views.length; x++) {
             // Get the view details.
@@ -919,8 +913,7 @@ public class Perspective {
         MultiStatus result = new MultiStatus(
                 PlatformUI.PLUGIN_ID,
                 IStatus.OK,
-                WorkbenchMessages
-                        .getString("Perspective.problemsRestoringPerspective"), null); //$NON-NLS-1$
+                WorkbenchMessages.Perspective_problemsRestoringPerspective, null);
 
         IMemento memento = this.memento;
         this.memento = null;
@@ -974,8 +967,7 @@ public class Perspective {
             if (ref == null) {
                 String key = ViewFactory.getKey(id, secondaryId);
                 result.add(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0,
-                        WorkbenchMessages.format("Perspective.couldNotFind", //$NON-NLS-1$
-                                new String[] { key }), null));
+                        NLS.bind(WorkbenchMessages.Perspective_couldNotFind,  key ), null));
                 continue;
             }
             if (ref.getPane() == null) {
@@ -1029,9 +1021,7 @@ public class Perspective {
                                     IStatus.ERROR,
                                     PlatformUI.PLUGIN_ID,
                                     0,
-                                    WorkbenchMessages
-                                            .format(
-                                                    "Perspective.couldNotFind", new String[] { key }), //$NON-NLS-1$
+                                    NLS.bind(WorkbenchMessages.Perspective_couldNotFind, key ),
                                     null));
                     continue;
                 }
@@ -1275,10 +1265,8 @@ public class Perspective {
         XMLMemento memento = XMLMemento.createWriteRoot("perspective");//$NON-NLS-1$
         IStatus status = saveState(memento, realDesc, false);
         if (status.getSeverity() == IStatus.ERROR) {
-            ErrorDialog.openError((Shell) null, WorkbenchMessages
-                    .getString("Perspective.problemSavingTitle"), //$NON-NLS-1$
-                    WorkbenchMessages
-                            .getString("Perspective.problemSavingMessage"), //$NON-NLS-1$
+            ErrorDialog.openError((Shell) null, WorkbenchMessages.Perspective_problemSavingTitle, 
+                    WorkbenchMessages.Perspective_problemSavingMessage,
                     status);
             return;
         }
@@ -1288,10 +1276,8 @@ public class Perspective {
             descriptor = realDesc;
         } catch (IOException e) {
             perspRegistry.deletePerspective(realDesc);
-            MessageDialog.openError((Shell) null, WorkbenchMessages
-                    .getString("Perspective.problemSavingTitle"), //$NON-NLS-1$
-                    WorkbenchMessages
-                            .getString("Perspective.problemSavingMessage")); //$NON-NLS-1$
+            MessageDialog.openError((Shell) null, WorkbenchMessages.Perspective_problemSavingTitle, 
+                    WorkbenchMessages.Perspective_problemSavingMessage);
         }
     }
 
@@ -1302,8 +1288,7 @@ public class Perspective {
         MultiStatus result = new MultiStatus(
                 PlatformUI.PLUGIN_ID,
                 IStatus.OK,
-                WorkbenchMessages
-                        .getString("Perspective.problemsSavingPerspective"), null); //$NON-NLS-1$
+                WorkbenchMessages.Perspective_problemsSavingPerspective, null);
 
         result.merge(saveState(memento, descriptor, true));
 
@@ -1318,8 +1303,7 @@ public class Perspective {
         MultiStatus result = new MultiStatus(
                 PlatformUI.PLUGIN_ID,
                 IStatus.OK,
-                WorkbenchMessages
-                        .getString("Perspective.problemsSavingPerspective"), null); //$NON-NLS-1$
+                WorkbenchMessages.Perspective_problemsSavingPerspective, null); 
 
         if (this.memento != null) {
             memento.putMemento(this.memento);
@@ -1463,12 +1447,11 @@ public class Perspective {
         }
 
         if (errors > 0) {
-            String message = WorkbenchMessages
-                    .getString("Perspective.multipleErrors"); //$NON-NLS-1$
+            String message = WorkbenchMessages.Perspective_multipleErrors;
             if (errors == 1)
-                message = WorkbenchMessages.getString("Perspective.oneError"); //$NON-NLS-1$
+                message = WorkbenchMessages.Perspective_oneError;
             MessageDialog.openError(null,
-                    WorkbenchMessages.getString("Error"), message); //$NON-NLS-1$
+                    WorkbenchMessages.Error, message); 
         }
 
         // Save the layout.

@@ -193,8 +193,7 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
                 && workbenchWindow.getActivePage().getPerspective() != null) {
             addItems(list);
         } else {
-            String text = WorkbenchMessages
-                    .getString("Workbench.noApplicableItems"); //$NON-NLS-1$
+            String text = WorkbenchMessages.Workbench_noApplicableItems;
             Action dummyAction = new Action(text) {
                 // dummy inner class; no methods
             };

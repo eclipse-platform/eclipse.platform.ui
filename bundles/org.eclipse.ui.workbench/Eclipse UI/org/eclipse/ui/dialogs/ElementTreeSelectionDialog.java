@@ -64,8 +64,7 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 
     private boolean fDoubleClickSelects = true;
 
-    private String fEmptyListMessage = WorkbenchMessages
-            .getString("ElementTreeSelectionDialog.nothing_available"); //$NON-NLS-1$	
+    private String fEmptyListMessage = WorkbenchMessages.ElementTreeSelectionDialog_nothing_available;
 
     private IStatus fCurrStatus = new Status(IStatus.OK, PlatformUI.PLUGIN_ID,
             IStatus.OK, "", null); //$NON-NLS-1$

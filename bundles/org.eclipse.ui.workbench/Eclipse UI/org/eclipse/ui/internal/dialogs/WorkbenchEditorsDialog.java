@@ -131,7 +131,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
     public WorkbenchEditorsDialog(IWorkbenchWindow window) {
         super(window.getShell());
         this.window = window;
-        setTitle(WorkbenchMessages.getString("WorkbenchEditorsDialog.title")); //$NON-NLS-1$
+        setTitle(WorkbenchMessages.WorkbenchEditorsDialog_title); 
         setShellStyle(getShellStyle() | SWT.RESIZE);
 
         IDialogSettings s = getDialogSettings();
@@ -179,8 +179,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
                 IDialogConstants.CANCEL_LABEL, false);
         Button button = getButton(IDialogConstants.CANCEL_ID);
         if (button != null)
-            button.setText(WorkbenchMessages
-                    .getString("WorkbenchEditorsDialog.close")); //$NON-NLS-1$
+            button.setText(WorkbenchMessages.WorkbenchEditorsDialog_close);
 
     }
 
@@ -220,7 +219,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 
         //Label over the table
         Label l = new Label(dialogArea, SWT.NONE);
-        l.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.label")); //$NON-NLS-1$
+        l.setText(WorkbenchMessages.WorkbenchEditorsDialog_label); 
         l.setFont(font);
         l.setLayoutData(new CellData().align(SWT.FILL, SWT.CENTER));
         //Table showing the editors name, full path and perspective
@@ -259,12 +258,12 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
         //Name column
         TableColumn tc = new TableColumn(editorsTable, SWT.NONE);
         tc.setResizable(true);
-        tc.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.name")); //$NON-NLS-1$
+        tc.setText(WorkbenchMessages.WorkbenchEditorsDialog_name);
         tc.addSelectionListener(headerListener);
         //Full path column
         tc = new TableColumn(editorsTable, SWT.NONE);
         tc.setResizable(true);
-        tc.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.path")); //$NON-NLS-1$
+        tc.setText(WorkbenchMessages.WorkbenchEditorsDialog_path); 
         tc.addSelectionListener(headerListener);
 
         // A composite for selection option buttons
@@ -277,8 +276,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 
         //Select clean editors button
         selectClean = new Button(selectionButtons, SWT.PUSH);
-        selectClean.setText(WorkbenchMessages
-                .getString("WorkbenchEditorsDialog.selectClean")); //$NON-NLS-1$
+        selectClean.setText(WorkbenchMessages.WorkbenchEditorsDialog_selectClean); 
         selectClean.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 editorsTable.setSelection(selectClean(editorsTable.getItems()));
@@ -290,8 +288,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 
         //Invert selection button
         invertSelection = new Button(selectionButtons, SWT.PUSH);
-        invertSelection.setText(WorkbenchMessages
-                .getString("WorkbenchEditorsDialog.invertSelection")); //$NON-NLS-1$
+        invertSelection.setText(WorkbenchMessages.WorkbenchEditorsDialog_invertSelection); 
         invertSelection.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 editorsTable.setSelection(invertedSelection(editorsTable
@@ -304,8 +301,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 
         //Select all button
         allSelection = new Button(selectionButtons, SWT.PUSH);
-        allSelection.setText(WorkbenchMessages
-                .getString("WorkbenchEditorsDialog.allSelection")); //$NON-NLS-1$
+        allSelection.setText(WorkbenchMessages.WorkbenchEditorsDialog_allSelection); 
         allSelection.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 editorsTable.setSelection(editorsTable.getItems());
@@ -324,14 +320,12 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
         actionButtons.setLayout(actLayout);
 
         // Activate selected editor button
-        createButton(actionButtons, IDialogConstants.OK_ID, WorkbenchMessages
-                .getString("WorkbenchEditorsDialog.activate"), //$NON-NLS-1$
+        createButton(actionButtons, IDialogConstants.OK_ID, WorkbenchMessages.WorkbenchEditorsDialog_activate, 
                 true);
 
         //Close selected editors button
         closeSelected = new Button(actionButtons, SWT.PUSH);
-        closeSelected.setText(WorkbenchMessages
-                .getString("WorkbenchEditorsDialog.closeSelected")); //$NON-NLS-1$
+        closeSelected.setText(WorkbenchMessages.WorkbenchEditorsDialog_closeSelected);
         closeSelected.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 closeItems(editorsTable.getSelection());
@@ -342,8 +336,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 
         //Save selected editors button
         saveSelected = new Button(actionButtons, SWT.PUSH);
-        saveSelected.setText(WorkbenchMessages
-                .getString("WorkbenchEditorsDialog.saveSelected")); //$NON-NLS-1$
+        saveSelected.setText(WorkbenchMessages.WorkbenchEditorsDialog_saveSelected); 
         saveSelected.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 saveItems(editorsTable.getSelection(), null);
@@ -354,8 +347,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 
         //Show only active perspective button
         final Button showAllPerspButton = new Button(dialogArea, SWT.CHECK);
-        showAllPerspButton.setText(WorkbenchMessages
-                .getString("WorkbenchEditorsDialog.showAllPersp")); //$NON-NLS-1$
+        showAllPerspButton.setText(WorkbenchMessages.WorkbenchEditorsDialog_showAllPersp);
         showAllPerspButton.setSelection(showAllPersp);
         showAllPerspButton.setFont(font);
         setButtonLayoutData(showAllPerspButton);

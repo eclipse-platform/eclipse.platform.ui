@@ -55,7 +55,7 @@ public class UndoActionHandler extends OperationHistoryActionHandler {
 	}
 
 	protected String getCommandString() {
-		return WorkbenchMessages.getString("Workbench.undo"); //$NON-NLS-1$
+		return WorkbenchMessages.Workbench_undo;
 	}
 
 	protected IUndoableOperation getOperation() {

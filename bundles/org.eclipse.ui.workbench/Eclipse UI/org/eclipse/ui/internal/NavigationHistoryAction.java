@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 import org.eclipse.jface.action.IMenuCreator;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -78,9 +79,7 @@ public class NavigationHistoryAction extends PageEventAction {
                     MenuItem item = new MenuItem(historyMenu, SWT.NONE);
                     item.setData(entries[i]);
                     if (entriesCount[i] > 1)
-                        text = WorkbenchMessages
-                                .format(
-                                        "NavigationHistoryAction.locations", new String[] { text, new Integer(entriesCount[i]).toString() }); //$NON-NLS-1$
+                        text = NLS.bind(WorkbenchMessages.NavigationHistoryAction_locations,text, new Integer(entriesCount[i]));
                     item.setText(text);
                     item.addSelectionListener(new SelectionAdapter() {
                         public void widgetSelected(SelectionEvent e) {
@@ -105,10 +104,8 @@ public class NavigationHistoryAction extends PageEventAction {
         super("", window); //$NON-NLS-1$
         ISharedImages sharedImages = window.getWorkbench().getSharedImages();
         if (forward) {
-            setText(WorkbenchMessages
-                    .getString("NavigationHistoryAction.forward.text")); //$NON-NLS-1$
-            setToolTipText(WorkbenchMessages
-                    .getString("NavigationHistoryAction.forward.toolTip")); //$NON-NLS-1$
+            setText(WorkbenchMessages.NavigationHistoryAction_forward_text);
+            setToolTipText(WorkbenchMessages.NavigationHistoryAction_forward_toolTip);
             // @issue missing action id
             window.getWorkbench().getHelpSystem().setHelp(this,
 					IWorkbenchHelpContextIds.NAVIGATION_HISTORY_FORWARD);
@@ -118,10 +115,8 @@ public class NavigationHistoryAction extends PageEventAction {
                     .getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD_DISABLED));
             setActionDefinitionId("org.eclipse.ui.navigate.forwardHistory"); //$NON-NLS-1$
         } else {
-            setText(WorkbenchMessages
-                    .getString("NavigationHistoryAction.backward.text")); //$NON-NLS-1$
-            setToolTipText(WorkbenchMessages
-                    .getString("NavigationHistoryAction.backward.toolTip")); //$NON-NLS-1$
+            setText(WorkbenchMessages.NavigationHistoryAction_backward_text); 
+            setToolTipText(WorkbenchMessages.NavigationHistoryAction_backward_toolTip);
             // @issue missing action id
             window.getWorkbench().getHelpSystem().setHelp(this,
 					IWorkbenchHelpContextIds.NAVIGATION_HISTORY_BACKWARD);
@@ -217,26 +212,20 @@ public class NavigationHistoryAction extends PageEventAction {
             entries = history.getForwardEntries();
             if (entries.length > 0) {
                 NavigationHistoryEntry entry = entries[0];
-                String text = WorkbenchMessages
-                        .format(
-                                "NavigationHistoryAction.forward.toolTipName", new String[] { entry.getHistoryText() }); //$NON-NLS-1$
+                String text = NLS.bind(WorkbenchMessages.NavigationHistoryAction_forward_toolTipName, entry.getHistoryText() ); 
                 setToolTipText(text);
             } else {
-                setToolTipText(WorkbenchMessages
-                        .getString("NavigationHistoryAction.forward.toolTip")); //$NON-NLS-1$
+                setToolTipText(WorkbenchMessages.NavigationHistoryAction_forward_toolTip);
             }
         } else {
             setEnabled(history.canBackward());
             entries = history.getBackwardEntries();
             if (entries.length > 0) {
                 NavigationHistoryEntry entry = entries[0];
-                String text = WorkbenchMessages
-                        .format(
-                                "NavigationHistoryAction.backward.toolTipName", new String[] { entry.getHistoryText() }); //$NON-NLS-1$
+                String text = NLS.bind(WorkbenchMessages.NavigationHistoryAction_backward_toolTipName, entry.getHistoryText() ); 
                 setToolTipText(text);
             } else {
-                setToolTipText(WorkbenchMessages
-                        .getString("NavigationHistoryAction.backward.toolTip")); //$NON-NLS-1$
+                setToolTipText(WorkbenchMessages.NavigationHistoryAction_backward_toolTip); 
             }
         }
     }

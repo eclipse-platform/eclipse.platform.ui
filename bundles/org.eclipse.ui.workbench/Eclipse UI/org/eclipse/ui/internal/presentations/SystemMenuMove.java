@@ -33,7 +33,7 @@ public class SystemMenuMove extends MenuManager {
     
     public SystemMenuMove(IStackPresentationSite stackPresentationSite,
             String partName, boolean assumeActivePart) {
-        super(WorkbenchMessages.getString("PartPane.move")); //$NON-NLS-1$
+        super(WorkbenchMessages.PartPane_move);
         this.stackPresentationSite = stackPresentationSite;
         this.movePart = partName;
         this.assumeActivePart = assumeActivePart;

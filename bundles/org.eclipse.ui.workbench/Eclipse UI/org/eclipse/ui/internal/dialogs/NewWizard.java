@@ -102,9 +102,9 @@ public class NewWizard extends Wizard {
         this.selection = currentSelection;
 
         if (projectsOnly)
-            setWindowTitle(WorkbenchMessages.getString("NewProject.title")); //$NON-NLS-1$
+            setWindowTitle(WorkbenchMessages.NewProject_title); 
         else
-            setWindowTitle(WorkbenchMessages.getString("NewWizard.title")); //$NON-NLS-1$
+            setWindowTitle(WorkbenchMessages.NewWizard_title); 
         setDefaultPageImageDescriptor(WorkbenchImages
                 .getImageDescriptor(IWorkbenchGraphicConstants.IMG_WIZBAN_NEW_WIZ));
         setNeedsProgressMonitor(true);

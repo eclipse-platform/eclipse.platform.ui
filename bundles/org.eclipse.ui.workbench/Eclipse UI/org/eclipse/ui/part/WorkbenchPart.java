@@ -372,8 +372,7 @@ public abstract class WorkbenchPart implements IWorkbenchPart2,
         if (!Util.equals(description, "")) { //$NON-NLS-1$
             newTitle = MessageFormat
                     .format(
-                            WorkbenchMessages
-                                    .getString("WorkbenchPart.AutoTitleFormat"), new String[] { name, description }); //$NON-NLS-1$
+                            WorkbenchMessages.WorkbenchPart_AutoTitleFormat, new String[] { name, description });
         }
 
         setTitle(newTitle);

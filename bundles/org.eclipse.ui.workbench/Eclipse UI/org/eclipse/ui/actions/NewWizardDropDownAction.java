@@ -107,7 +107,7 @@ public class NewWizardDropDownAction extends Action implements
     public NewWizardDropDownAction(IWorkbenchWindow window,
             ActionFactory.IWorkbenchAction showDlgAction, 
             IContributionItem newWizardMenu) {
-        super(WorkbenchMessages.getString("NewWizardDropDown.text")); //$NON-NLS-1$
+        super(WorkbenchMessages.NewWizardDropDown_text);
         if (window == null) {
             throw new IllegalArgumentException();
         }

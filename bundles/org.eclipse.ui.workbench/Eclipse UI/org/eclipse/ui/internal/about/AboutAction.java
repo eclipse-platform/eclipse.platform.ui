@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.about;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
@@ -49,10 +50,8 @@ public class AboutAction extends Action implements
             productName = product.getName();
         if (productName == null)
             productName = ""; //$NON-NLS-1$
-        setText(WorkbenchMessages.format(
-                "AboutAction.text", new Object[] { productName })); //$NON-NLS-1$
-        setToolTipText(WorkbenchMessages.format(
-                "AboutAction.toolTip", new Object[] { productName })); //$NON-NLS-1$
+        setText(NLS.bind(WorkbenchMessages.AboutAction_text,productName)); 
+        setToolTipText(NLS.bind(WorkbenchMessages.AboutAction_toolTip, productName));
         setId("about"); //$NON-NLS-1$
         setActionDefinitionId("org.eclipse.ui.help.aboutAction"); //$NON-NLS-1$
         window.getWorkbench().getHelpSystem().setHelp(this,

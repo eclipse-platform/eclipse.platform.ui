@@ -111,18 +111,14 @@ public class WorkingSetManager extends AbstractWorkingSetManager implements IWor
                 MessageDialog
                         .openError(
                                 (Shell) null,
-                                WorkbenchMessages
-                                        .getString("ProblemRestoringWorkingSetState.title"), //$NON-NLS-1$
-                                WorkbenchMessages
-                                        .getString("ProblemRestoringWorkingSetState.message")); //$NON-NLS-1$
+                                WorkbenchMessages.ProblemRestoringWorkingSetState_title, 
+                                WorkbenchMessages.ProblemRestoringWorkingSetState_message); 
             } catch (WorkbenchException e) {
                 ErrorDialog
                         .openError(
                                 (Shell) null,
-                                WorkbenchMessages
-                                        .getString("ProblemRestoringWorkingSetState.title"),//$NON-NLS-1$
-                                WorkbenchMessages
-                                        .getString("ProblemRestoringWorkingSetState.message"), //$NON-NLS-1$
+                                WorkbenchMessages.ProblemRestoringWorkingSetState_title,
+                                WorkbenchMessages.ProblemRestoringWorkingSetState_message,
                                 e.getStatus());
             }
         }
@@ -145,10 +141,8 @@ public class WorkingSetManager extends AbstractWorkingSetManager implements IWor
             writer.close();
         } catch (IOException e) {
             stateFile.delete();
-            MessageDialog.openError((Shell) null, WorkbenchMessages
-                    .getString("ProblemSavingWorkingSetState.title"), //$NON-NLS-1$
-                    WorkbenchMessages
-                            .getString("ProblemSavingWorkingSetState.message")); //$NON-NLS-1$
+            MessageDialog.openError((Shell) null, WorkbenchMessages.ProblemSavingWorkingSetState_title, 
+                    WorkbenchMessages.ProblemSavingWorkingSetState_message); 
         }
     }
     

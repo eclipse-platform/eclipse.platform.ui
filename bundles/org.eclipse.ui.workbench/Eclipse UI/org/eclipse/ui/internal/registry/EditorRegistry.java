@@ -479,8 +479,7 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
         // there will always be a system external editor descriptor
         EditorDescriptor editor = new EditorDescriptor();
         editor.setID(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
-        editor.setName(WorkbenchMessages
-                .getString("SystemEditorDescription.name")); //$NON-NLS-1$
+        editor.setName(WorkbenchMessages.SystemEditorDescription_name); 
         editor.setOpenMode(EditorDescriptor.OPEN_EXTERNAL);
         // @issue we need a real icon for this editor?
         map.put(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID, editor);
@@ -489,8 +488,7 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
         if (ComponentSupport.inPlaceEditorSupported()) {
             editor = new EditorDescriptor();
             editor.setID(IEditorRegistry.SYSTEM_INPLACE_EDITOR_ID);
-            editor.setName(WorkbenchMessages
-                    .getString("SystemInPlaceDescription.name")); //$NON-NLS-1$
+            editor.setName(WorkbenchMessages.SystemInPlaceDescription_name);
             editor.setOpenMode(EditorDescriptor.OPEN_INPLACE);
             // @issue we need a real icon for this editor?
             map.put(IEditorRegistry.SYSTEM_INPLACE_EDITOR_ID, editor);
@@ -642,9 +640,8 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
             //Ignore this as the workbench may not yet have saved any state
             return false;
         } catch (WorkbenchException e) {
-            ErrorDialog.openError((Shell) null, WorkbenchMessages
-                    .getString("EditorRegistry.errorTitle"), //$NON-NLS-1$
-                    WorkbenchMessages.getString("EditorRegistry.errorMessage"), //$NON-NLS-1$
+            ErrorDialog.openError((Shell) null, WorkbenchMessages.EditorRegistry_errorTitle,
+                    WorkbenchMessages.EditorRegistry_errorMessage, 
                     e.getStatus());
             return false;
         }
@@ -788,14 +785,12 @@ public class EditorRegistry implements IEditorRegistry, IExtensionRemovalHandler
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
-            MessageDialog.openError((Shell) null, WorkbenchMessages
-                    .getString("EditorRegistry.errorTitle"), //$NON-NLS-1$
-                    WorkbenchMessages.getString("EditorRegistry.errorMessage")); //$NON-NLS-1$
+            MessageDialog.openError((Shell) null, WorkbenchMessages.EditorRegistry_errorTitle,
+                    WorkbenchMessages.EditorRegistry_errorMessage);
             return false;
         } catch (WorkbenchException e) {
-            ErrorDialog.openError((Shell) null, WorkbenchMessages
-                    .getString("EditorRegistry.errorTitle"), //$NON-NLS-1$
-                    WorkbenchMessages.getString("EditorRegistry.errorMessage"), //$NON-NLS-1$
+            ErrorDialog.openError((Shell) null, WorkbenchMessages.EditorRegistry_errorTitle,
+                    WorkbenchMessages.EditorRegistry_errorMessage,
                     e.getStatus());
             return false;
         }

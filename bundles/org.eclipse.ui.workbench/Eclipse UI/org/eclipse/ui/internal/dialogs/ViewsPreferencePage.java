@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
@@ -93,35 +94,25 @@ public class ViewsPreferencePage extends PreferencePage implements
 
     String perspBarLocation;
 
-    static final String EDITORS_TITLE = WorkbenchMessages
-            .getString("ViewsPreference.editors"); //$NON-NLS-1$
+    static final String EDITORS_TITLE = WorkbenchMessages.ViewsPreference_editors; 
 
-    private static final String EDITORS_TOP_TITLE = WorkbenchMessages
-            .getString("ViewsPreference.editors.top"); //$NON-NLS-1$
+    private static final String EDITORS_TOP_TITLE = WorkbenchMessages.ViewsPreference_editors_top;
 
-    private static final String EDITORS_BOTTOM_TITLE = WorkbenchMessages
-            .getString("ViewsPreference.editors.bottom"); //$NON-NLS-1$
+    private static final String EDITORS_BOTTOM_TITLE = WorkbenchMessages.ViewsPreference_editors_bottom;
 
-    private static final String VIEWS_TITLE = WorkbenchMessages
-            .getString("ViewsPreference.views"); //$NON-NLS-1$
+    private static final String VIEWS_TITLE = WorkbenchMessages.ViewsPreference_views; 
 
-    private static final String VIEWS_TOP_TITLE = WorkbenchMessages
-            .getString("ViewsPreference.views.top"); //$NON-NLS-1$
+    private static final String VIEWS_TOP_TITLE = WorkbenchMessages.ViewsPreference_views_top;
 
-    private static final String VIEWS_BOTTOM_TITLE = WorkbenchMessages
-            .getString("ViewsPreference.views.bottom"); //$NON-NLS-1$
+    private static final String VIEWS_BOTTOM_TITLE = WorkbenchMessages.ViewsPreference_views_bottom; 
 
-    private static final String PERSP_TITLE = WorkbenchMessages
-            .getString("ViewsPreference.perspectiveBar"); //$NON-NLS-1$
+    private static final String PERSP_TITLE = WorkbenchMessages.ViewsPreference_perspectiveBar; 
 
-    private static final String PERSP_LEFT_TITLE = WorkbenchMessages
-            .getString("ViewsPreference.perspectiveBar.left"); //$NON-NLS-1$
+    private static final String PERSP_LEFT_TITLE = WorkbenchMessages.ViewsPreference_perspectiveBar_left;
 
-    private static final String PERSP_TOP_LEFT_TITLE = WorkbenchMessages
-            .getString("ViewsPreference.perspectiveBar.topLeft"); //$NON-NLS-1$
+    private static final String PERSP_TOP_LEFT_TITLE = WorkbenchMessages.ViewsPreference_perspectiveBar_topLeft;
 
-    private static final String PERSP_TOP_RIGHT_TITLE = WorkbenchMessages
-            .getString("ViewsPreference.perspectiveBar.topRight"); //$NON-NLS-1$
+    private static final String PERSP_TOP_RIGHT_TITLE = WorkbenchMessages.ViewsPreference_perspectiveBar_topRight;
 
     // These constants aren't my favourite idea, but to get this preference done
     // for M9...  A better solution might be to have the presentation factory set
@@ -214,8 +205,7 @@ public class ViewsPreferencePage extends PreferencePage implements
         data.horizontalSpan = 2;
 
         Label label = new Label(composite, SWT.NONE);
-        label.setText(WorkbenchMessages
-                .getString("ViewsPreference.currentTheme")); //$NON-NLS-1$
+        label.setText(WorkbenchMessages.ViewsPreference_currentTheme); 
         label.setFont(parent.getFont());
         label.setLayoutData(data);
 
@@ -240,8 +230,7 @@ public class ViewsPreferencePage extends PreferencePage implements
         data.horizontalSpan = 2;
 
         Label label = new Label(parent, SWT.NONE);
-        label.setText(WorkbenchMessages
-                .getString("ViewsPreference.currentPresentation")); //$NON-NLS-1$
+        label.setText(WorkbenchMessages.ViewsPreference_currentPresentation); 
         label.setFont(parent.getFont());
         label.setLayoutData(data);
 
@@ -425,9 +414,7 @@ public class ViewsPreferencePage extends PreferencePage implements
                 presentationCombo.add(name);
             else {
                 selection = i;
-                presentationCombo.add(WorkbenchMessages.format(
-                        "ViewsPreference.currentPresentationFormat", //$NON-NLS-1$
-                        new String[] { name }));
+                presentationCombo.add(NLS.bind(WorkbenchMessages.ViewsPreference_currentPresentationFormat, name ));
             }
         }
 
@@ -494,17 +481,13 @@ public class ViewsPreferencePage extends PreferencePage implements
         // make sure they really want to do this
         int really = new MessageDialog(
                 getShell(),
-                WorkbenchMessages
-                        .getString("ViewsPreference.presentationConfirm.title"), //$NON-NLS-1$
+                WorkbenchMessages.ViewsPreference_presentationConfirm_title, 
                 null,
-                WorkbenchMessages
-                        .getString("ViewsPreference.presentationConfirm.message"), //$NON-NLS-1$
+                WorkbenchMessages.ViewsPreference_presentationConfirm_message, 
                 MessageDialog.QUESTION,
                 new String[] {
-                        WorkbenchMessages
-                                .getString("ViewsPreference.presentationConfirm.yes"), //$NON-NLS-1$
-                        WorkbenchMessages
-                                .getString("ViewsPreference.presentationConfirm.no") }, //$NON-NLS-1$
+                        WorkbenchMessages.ViewsPreference_presentationConfirm_yes, 
+                        WorkbenchMessages.ViewsPreference_presentationConfirm_no }, 
                 1).open();
         if (really != 0)
             return;
@@ -592,8 +575,7 @@ public class ViewsPreferencePage extends PreferencePage implements
         if (currentTheme.getId().equals(IThemeManager.DEFAULT_THEME)) {
             themeString = MessageFormat
                     .format(
-                            WorkbenchMessages
-                                    .getString("ViewsPreference.currentThemeFormat"), new Object[] { themeString }); //$NON-NLS-1$
+                            WorkbenchMessages.ViewsPreference_currentThemeFormat, new Object[] { themeString }); //$NON-NLS-1$
         }
         themeCombo.add(themeString);
 
@@ -602,8 +584,7 @@ public class ViewsPreferencePage extends PreferencePage implements
             if (descs[i].getId().equals(currentTheme.getId())) {
                 themeString = MessageFormat
                         .format(
-                                WorkbenchMessages
-                                        .getString("ViewsPreference.currentThemeFormat"), new Object[] { themeString }); //$NON-NLS-1$
+                                WorkbenchMessages.ViewsPreference_currentThemeFormat, new Object[] { themeString }); //$NON-NLS-1$
                 selection = i + 1;
             }
             themeCombo.add(themeString);
@@ -620,8 +601,7 @@ public class ViewsPreferencePage extends PreferencePage implements
         IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 
         showTextOnPerspectiveBar = new Button(composite, SWT.CHECK);
-        showTextOnPerspectiveBar.setText(WorkbenchMessages
-                .getString("WorkbenchPreference.showTextOnPerspectiveBar")); //$NON-NLS-1$
+        showTextOnPerspectiveBar.setText(WorkbenchMessages.WorkbenchPreference_showTextOnPerspectiveBar);
         showTextOnPerspectiveBar.setFont(composite.getFont());
         showTextOnPerspectiveBar
                 .setSelection(apiStore
@@ -637,8 +617,7 @@ public class ViewsPreferencePage extends PreferencePage implements
         IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 
         showTraditionalStyleTabs = new Button(composite, SWT.CHECK);
-        showTraditionalStyleTabs.setText(WorkbenchMessages
-                .getString("ViewsPreference.traditionalTabs")); //$NON-NLS-1$
+        showTraditionalStyleTabs.setText(WorkbenchMessages.ViewsPreference_traditionalTabs); 
         showTraditionalStyleTabs.setFont(composite.getFont());
         showTraditionalStyleTabs
                 .setSelection(apiStore
@@ -650,8 +629,7 @@ public class ViewsPreferencePage extends PreferencePage implements
         IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 
         enableAnimations = new Button(composite, SWT.CHECK);
-        enableAnimations.setText(WorkbenchMessages
-                .getString("ViewsPreference.enableAnimations")); //$NON-NLS-1$
+        enableAnimations.setText(WorkbenchMessages.ViewsPreference_enableAnimations); 
         enableAnimations.setFont(composite.getFont());
         enableAnimations
                 .setSelection(apiStore

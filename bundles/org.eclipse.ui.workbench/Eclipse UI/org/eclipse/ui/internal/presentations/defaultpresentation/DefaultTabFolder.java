@@ -110,7 +110,7 @@ public class DefaultTabFolder extends AbstractTabFolder {
 	                .getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU);
 	        pullDownButton.setDisabledImage(hoverImage);
 	        pullDownButton.setImage(hoverImage);
-	        pullDownButton.setToolTipText(WorkbenchMessages.getString("Menu")); //$NON-NLS-1$
+	        pullDownButton.setToolTipText(WorkbenchMessages.Menu); 
             actualToolBar.addMouseListener(new MouseAdapter() {
                 public void mouseDown(MouseEvent e) {
                     fireEvent(TabFolderEvent.EVENT_PANE_MENU, getSelection(), getPaneMenuLocation());

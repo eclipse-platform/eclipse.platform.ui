@@ -35,8 +35,7 @@ public class Category implements IWorkbenchAdapter, IPluginContribution {
     /**
      * Name of the miscellaneous category
      */
-    public final static String MISC_NAME = WorkbenchMessages
-            .getString("ICategory.other"); //$NON-NLS-1$
+    public final static String MISC_NAME = WorkbenchMessages.ICategory_other;
 
     /**
      * Identifier of the miscellaneous category

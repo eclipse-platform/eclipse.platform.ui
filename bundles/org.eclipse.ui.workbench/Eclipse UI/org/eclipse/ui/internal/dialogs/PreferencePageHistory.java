@@ -22,6 +22,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -222,9 +223,7 @@ class PreferencePageHistory {
 			public boolean isEnabled() {
 				boolean enabled = historyIndex > 0;
 				if (enabled)
-					setToolTipText(WorkbenchMessages
-							.format(
-									"NavigationHistoryAction.backward.toolTipName", new String[] { getHistoryEntry(historyIndex - 1).getLabel() })); //$NON-NLS-1$
+					setToolTipText(NLS.bind(WorkbenchMessages.NavigationHistoryAction_backward_toolTipName,getHistoryEntry(historyIndex - 1).getLabel() )); 
 				return enabled;
 			}
 
@@ -237,8 +236,7 @@ class PreferencePageHistory {
 				}
 			}
 		};
-		backward.setText(WorkbenchMessages
-				.getString("NavigationHistoryAction.backward.text")); //$NON-NLS-1$
+		backward.setText(WorkbenchMessages.NavigationHistoryAction_backward_text); 
 		backward
 				.setActionDefinitionId("org.eclipse.ui.navigate.backwardHistory"); //$NON-NLS-1$
 		backward.setImageDescriptor(WorkbenchPlugin.getDefault()
@@ -255,9 +253,7 @@ class PreferencePageHistory {
 			public boolean isEnabled() {
 				boolean enabled = historyIndex < history.size() - 1;
 				if (enabled)
-					setToolTipText(WorkbenchMessages
-							.format(
-									"NavigationHistoryAction.forward.toolTipName", new String[] { getHistoryEntry(historyIndex + 1).getLabel() })); //$NON-NLS-1$
+					setToolTipText(NLS.bind(WorkbenchMessages.NavigationHistoryAction_forward_toolTipName, getHistoryEntry(historyIndex + 1).getLabel() )); 
 				return enabled;
 			}
 
@@ -271,8 +267,7 @@ class PreferencePageHistory {
 				}
 			}
 		};
-		forward.setText(WorkbenchMessages
-				.getString("NavigationHistoryAction.forward.text")); //$NON-NLS-1$
+		forward.setText(WorkbenchMessages.NavigationHistoryAction_forward_text); 
 		forward.setActionDefinitionId("org.eclipse.ui.navigate.forwardHistory"); //$NON-NLS-1$
 		forward.setImageDescriptor(WorkbenchPlugin.getDefault()
 				.getSharedImages().getImageDescriptor(

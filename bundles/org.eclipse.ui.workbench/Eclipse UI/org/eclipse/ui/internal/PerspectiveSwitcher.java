@@ -639,8 +639,7 @@ public class PerspectiveSwitcher {
 			        	workbenchWindow.getWorkbench().openWorkbenchWindow(perspective.getId(),
 								page.getInput());
 			        } catch (WorkbenchException e) {
-			            MessageDialog.openError(workbenchWindow.getShell(), WorkbenchMessages
-			                    .getString("OpenNewWindowMenu.dialogTitle"), //$NON-NLS-1$
+			            MessageDialog.openError(workbenchWindow.getShell(), WorkbenchMessages.OpenNewWindowMenu_dialogTitle, 
 			                    e.getMessage());
 			            return;
 			        }
@@ -936,8 +935,7 @@ public class PerspectiveSwitcher {
      */
     private void addCloseItems(Menu menu) {
         MenuItem menuItem = new MenuItem(menu, SWT.NONE);
-        menuItem.setText(WorkbenchMessages
-                .getString("WorkbenchWindow.close")); //$NON-NLS-1$
+        menuItem.setText(WorkbenchMessages.WorkbenchWindow_close); 
         menuItem.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 ToolItem perspectiveToolItem = (ToolItem) popupMenu
@@ -952,8 +950,7 @@ public class PerspectiveSwitcher {
             }
         });
         menuItem = new MenuItem(menu, SWT.NONE);
-        menuItem.setText(WorkbenchMessages
-                .getString("WorkbenchWindow.closeAll")); //$NON-NLS-1$
+        menuItem.setText(WorkbenchMessages.WorkbenchWindow_closeAll); 
         menuItem.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 ToolItem perspectiveToolItem = (ToolItem) popupMenu
@@ -1016,21 +1013,18 @@ public class PerspectiveSwitcher {
 
     private void addDockOnSubMenu(Menu menu) {
         MenuItem item = new MenuItem(menu, SWT.CASCADE);
-        item.setText(WorkbenchMessages.getString("PerspectiveSwitcher.dockOn")); //$NON-NLS-1$
+        item.setText(WorkbenchMessages.PerspectiveSwitcher_dockOn);
 
         final Menu subMenu = new Menu(item);
 
         final MenuItem menuItemTopRight = new MenuItem(subMenu, SWT.RADIO);
-        menuItemTopRight.setText(WorkbenchMessages
-                .getString("PerspectiveSwitcher.topRight")); //$NON-NLS-1$
+        menuItemTopRight.setText(WorkbenchMessages.PerspectiveSwitcher_topRight); 
 
         final MenuItem menuItemTopLeft = new MenuItem(subMenu, SWT.RADIO);
-        menuItemTopLeft.setText(WorkbenchMessages
-                .getString("PerspectiveSwitcher.topLeft")); //$NON-NLS-1$
+        menuItemTopLeft.setText(WorkbenchMessages.PerspectiveSwitcher_topLeft); 
 
         final MenuItem menuItemLeft = new MenuItem(subMenu, SWT.RADIO);
-        menuItemLeft.setText(WorkbenchMessages
-                .getString("PerspectiveSwitcher.left")); //$NON-NLS-1$
+        menuItemLeft.setText(WorkbenchMessages.PerspectiveSwitcher_left); 
 
         SelectionListener listener = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
@@ -1061,8 +1055,7 @@ public class PerspectiveSwitcher {
 
     private void addShowTextItem(Menu menu) {
         final MenuItem showtextMenuItem = new MenuItem(menu, SWT.CHECK);
-        showtextMenuItem.setText(WorkbenchMessages
-                .getString("PerspectiveBar.showText")); //$NON-NLS-1$
+        showtextMenuItem.setText(WorkbenchMessages.PerspectiveBar_showText);
         showtextMenuItem.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 if (perspectiveBar == null)
@@ -1080,8 +1073,7 @@ public class PerspectiveSwitcher {
 
     private void addCustomizeItem(Menu menu) {
         final MenuItem customizeMenuItem = new MenuItem(menu, SWT.Activate);
-        customizeMenuItem.setText(WorkbenchMessages
-                .getString("PerspectiveBar.customize")); //$NON-NLS-1$
+        customizeMenuItem.setText(WorkbenchMessages.PerspectiveBar_customize);
         customizeMenuItem.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 if (perspectiveBar == null)
@@ -1095,8 +1087,7 @@ public class PerspectiveSwitcher {
     
     private void addSaveAsItem(Menu menu) {
         final MenuItem saveasMenuItem = new MenuItem(menu, SWT.Activate);
-        saveasMenuItem.setText(WorkbenchMessages
-                .getString("PerspectiveBar.saveAs")); //$NON-NLS-1$
+        saveasMenuItem.setText(WorkbenchMessages.PerspectiveBar_saveAs); 
         saveasMenuItem.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 if (perspectiveBar == null)
@@ -1110,8 +1101,7 @@ public class PerspectiveSwitcher {
     
     private void addResetItem(Menu menu) {
         final MenuItem resetMenuItem = new MenuItem(menu, SWT.Activate);
-        resetMenuItem.setText(WorkbenchMessages
-                .getString("PerspectiveBar.reset")); //$NON-NLS-1$
+        resetMenuItem.setText(WorkbenchMessages.PerspectiveBar_reset);
         resetMenuItem.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 if (perspectiveBar == null)

@@ -244,8 +244,7 @@ public class DecoratorManager implements IDelayedLabelDecorator,
             return;
         }
 
-        WorkbenchJob updateJob = new WorkbenchJob(WorkbenchMessages
-                .getString("DecorationScheduler.UpdateJobName")) { //$NON-NLS-1$
+        WorkbenchJob updateJob = new WorkbenchJob(WorkbenchMessages.DecorationScheduler_UpdateJobName) { 
             /*
              * (non-Javadoc)
              * 

@@ -39,8 +39,8 @@ public class QuitAction extends Action implements
             throw new IllegalArgumentException();
         }
         this.workbenchWindow = window;
-        setText(WorkbenchMessages.getString("Exit.text")); //$NON-NLS-1$
-        setToolTipText(WorkbenchMessages.getString("Exit.toolTip")); //$NON-NLS-1$
+        setText(WorkbenchMessages.Exit_text); 
+        setToolTipText(WorkbenchMessages.Exit_toolTip);
         setActionDefinitionId("org.eclipse.ui.file.exit"); //$NON-NLS-1$
         window.getWorkbench().getHelpSystem().setHelp(this,
 				IWorkbenchHelpContextIds.QUIT_ACTION);

@@ -26,9 +26,9 @@ public class SaveAction extends BaseSaveAction {
      * @param window the window
      */
     public SaveAction(IWorkbenchWindow window) {
-        super(WorkbenchMessages.getString("SaveAction.text"), window); //$NON-NLS-1$
-        setText(WorkbenchMessages.getString("SaveAction.text")); //$NON-NLS-1$
-        setToolTipText(WorkbenchMessages.getString("SaveAction.toolTip")); //$NON-NLS-1$
+        super(WorkbenchMessages.SaveAction_text, window); 
+        setText(WorkbenchMessages.SaveAction_text); 
+        setToolTipText(WorkbenchMessages.SaveAction_toolTip);
         setId("save"); //$NON-NLS-1$
         window.getWorkbench().getHelpSystem().setHelp(this,
 				IWorkbenchHelpContextIds.SAVE_ACTION);

@@ -23,8 +23,8 @@ public class CloseEditorAction extends ActiveEditorAction {
      * @param window the window
      */
     public CloseEditorAction(IWorkbenchWindow window) {
-        super(WorkbenchMessages.getString("CloseEditorAction.text"), window); //$NON-NLS-1$
-        setToolTipText(WorkbenchMessages.getString("CloseEditorAction.toolTip")); //$NON-NLS-1$
+        super(WorkbenchMessages.CloseEditorAction_text, window);
+        setToolTipText(WorkbenchMessages.CloseEditorAction_toolTip);
         setId("close"); //$NON-NLS-1$
         window.getWorkbench().getHelpSystem().setHelp(this,
 				IWorkbenchHelpContextIds.CLOSE_PART_ACTION);

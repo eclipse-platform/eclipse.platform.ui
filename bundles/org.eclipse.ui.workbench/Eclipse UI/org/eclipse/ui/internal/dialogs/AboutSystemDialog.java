@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -72,7 +73,7 @@ public final class AboutSystemDialog extends ProductInfoDialog {
      */
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
-        newShell.setText(WorkbenchMessages.getString("SystemSummary.title")); //$NON-NLS-1$
+        newShell.setText(WorkbenchMessages.SystemSummary_title);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell,
 				IWorkbenchHelpContextIds.SYSTEM_SUMMARY_DIALOG);
     }
@@ -83,13 +84,11 @@ public final class AboutSystemDialog extends ProductInfoDialog {
     protected void createButtonsForButtonBar(Composite parent) {
         parent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        Button button = createButton(parent, BROWSE_ERROR_LOG_BUTTON, WorkbenchMessages
-                .getString("AboutSystemDialog.browseErrorLogName"), false); //$NON-NLS-1$
+        Button button = createButton(parent, BROWSE_ERROR_LOG_BUTTON, WorkbenchMessages.AboutSystemDialog_browseErrorLogName, false);
         String filename = Platform.getLogFileLocation().toOSString();
         button.setEnabled(new File(filename).exists());
 
-        createButton(parent, COPY_TO_CLIPBOARD_BUTTON, WorkbenchMessages
-                .getString("AboutSystemDialog.copyToClipboardName"), false); //$NON-NLS-1$
+        createButton(parent, COPY_TO_CLIPBOARD_BUTTON, WorkbenchMessages.AboutSystemDialog_copyToClipboardName, false);
 
         new Label(parent, SWT.NONE).setLayoutData(new GridData(
                 GridData.FILL_HORIZONTAL));
@@ -126,8 +125,7 @@ public final class AboutSystemDialog extends ProductInfoDialog {
     private String getSystemSummary() {
         StringWriter out = new StringWriter();
         PrintWriter writer = new PrintWriter(out);
-        writer.println(WorkbenchMessages.format(
-                "SystemSummary.timeStamp", new Object[] { new Date() })); //$NON-NLS-1$
+        writer.println(NLS.bind(WorkbenchMessages.SystemSummary_timeStamp,  new Date())); 
 
         appendExtensions(writer);
         writer.close();
@@ -154,16 +152,13 @@ public final class AboutSystemDialog extends ProductInfoDialog {
             }
 
             writer.println();
-            writer.println(WorkbenchMessages.format(
-                    "SystemSummary.sectionTitle", //$NON-NLS-1$
-                    new Object[] { element.getAttribute("sectionTitle") })); //$NON-NLS-1$
+            writer.println(NLS.bind(WorkbenchMessages.SystemSummary_sectionTitle, element.getAttribute("sectionTitle") )); //$NON-NLS-1$
 
             if (obj instanceof ISystemSummarySection) {
                 ISystemSummarySection logSection = (ISystemSummarySection) obj;
                 logSection.write(writer);
             } else
-                writer.println(WorkbenchMessages
-                        .getString("SystemSummary.sectionError")); //$NON-NLS-1$
+                writer.println(WorkbenchMessages.SystemSummary_sectionError);
         }
     }
 
@@ -228,10 +223,8 @@ public final class AboutSystemDialog extends ProductInfoDialog {
             return;
         }
 
-        MessageDialog.openInformation(getShell(), WorkbenchMessages
-                .getString("AboutSystemDialog.noLogTitle"), //$NON-NLS-1$
-                WorkbenchMessages.format("AboutSystemDialog.noLogMessage", //$NON-NLS-1$
-                        new String[] { filename }));
+        MessageDialog.openInformation(getShell(), WorkbenchMessages.AboutSystemDialog_noLogTitle, 
+                NLS.bind(WorkbenchMessages.AboutSystemDialog_noLogMessage,  filename ));
     }
 
     private void runCopyToClipboard() {

@@ -52,8 +52,7 @@ public class ShowViewMenu extends ContributionItem {
 
     private IWorkbenchWindow window;
 
-    private static final String NO_TARGETS_MSG = WorkbenchMessages
-            .getString("Workbench.showInNoTargets"); //$NON-NLS-1$
+    private static final String NO_TARGETS_MSG = WorkbenchMessages.Workbench_showInNoTargets; 
 
     private Comparator actionComparator = new Comparator() {
         public int compare(Object o1, Object o2) {
@@ -65,8 +64,7 @@ public class ShowViewMenu extends ContributionItem {
         }
     };
 
-    private Action showDlgAction = new Action(WorkbenchMessages
-            .getString("ShowView.title")) {//$NON-NLS-1$
+    private Action showDlgAction = new Action(WorkbenchMessages.ShowView_title) {
         public void run() {
             showOther();
         }
@@ -212,8 +210,7 @@ public class ShowViewMenu extends ContributionItem {
             try {
                 page.showView(descs[i].getId());
             } catch (PartInitException e) {
-                ErrorDialog.openError(window.getShell(), WorkbenchMessages
-                        .getString("ShowView.errorTitle"), //$NON-NLS-1$
+                ErrorDialog.openError(window.getShell(), WorkbenchMessages.ShowView_errorTitle, 
                         e.getMessage(), e.getStatus());
             }
         }

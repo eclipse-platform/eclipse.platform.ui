@@ -20,6 +20,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.ApplicationWindow;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -59,11 +60,11 @@ public class SaveableHelper {
 		if (confirm) {
 			int choice = AutomatedResponse;
 			if (choice == -1) {
-				String message = WorkbenchMessages.format("EditorManager.saveChangesQuestion", new Object[] { part.getTitle()}); //$NON-NLS-1$
+				String message = NLS.bind(WorkbenchMessages.EditorManager_saveChangesQuestion, part.getTitle()); 
 				// Show a dialog.
 				String[] buttons = new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL };
 					MessageDialog d = new MessageDialog(
-						window.getShell(), WorkbenchMessages.getString("Save_Resource"), //$NON-NLS-1$
+						window.getShell(), WorkbenchMessages.Save_Resource,
 						null, message, MessageDialog.QUESTION, buttons, 0);
 				choice = d.open();
 			}
@@ -90,7 +91,7 @@ public class SaveableHelper {
 		};
 
 		// Do the save.
-		return runProgressMonitorOperation(WorkbenchMessages.getString("Save"), progressOp,window); //$NON-NLS-1$
+		return runProgressMonitorOperation(WorkbenchMessages.Save, progressOp,window); 
 	}
 	/**
 	 * Runs a progress monitor operation.
@@ -114,11 +115,10 @@ public class SaveableHelper {
 		try {
 			ctx.run(false, true, runnable);
 		} catch (InvocationTargetException e) {
-			String title = WorkbenchMessages.format("EditorManager.operationFailed", new Object[] { opName }); //$NON-NLS-1$
+			String title = NLS.bind(WorkbenchMessages.EditorManager_operationFailed, opName ); 
 			Throwable targetExc = e.getTargetException();
 			WorkbenchPlugin.log(title, new Status(IStatus.WARNING, PlatformUI.PLUGIN_ID, 0, title, targetExc));
-			MessageDialog.openError(window.getShell(), WorkbenchMessages.getString("Error"), //$NON-NLS-1$
-			title + ':' + targetExc.getMessage());
+			MessageDialog.openError(window.getShell(), WorkbenchMessages.Error, title + ':' + targetExc.getMessage());
 		} catch (InterruptedException e) {
 			// Ignore.  The user pressed cancel.
 			wasCanceled[0] = true;

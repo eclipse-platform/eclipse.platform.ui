@@ -153,13 +153,10 @@ public abstract class WorkbenchWizardNode implements IWizardNode,
                 });
 
         if (statuses[0] != null) {
-            parentWizardPage.setErrorMessage(WorkbenchMessages
-                    .getString("WorkbenchWizard.errorMessage")); //$NON-NLS-1$
+            parentWizardPage.setErrorMessage(WorkbenchMessages.WorkbenchWizard_errorMessage);
             ErrorDialog
-                    .openError(parentWizardPage.getShell(), WorkbenchMessages
-                            .getString("WorkbenchWizard.errorTitle"), //$NON-NLS-1$
-                            WorkbenchMessages
-                                    .getString("WorkbenchWizard.errorMessage"), //$NON-NLS-1$
+                    .openError(parentWizardPage.getShell(), WorkbenchMessages.WorkbenchWizard_errorTitle,
+                            WorkbenchMessages.WorkbenchWizard_errorMessage,
                             statuses[0]);
             return null;
         }

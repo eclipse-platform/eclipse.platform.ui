@@ -186,8 +186,7 @@ public class DefaultTabItem extends WidgetTabItem {
         if (!contentDescription.equals("")) { //$NON-NLS-1$
             text = MessageFormat
                     .format(
-                            WorkbenchMessages
-                                    .getString("EditorPart.AutoTitleFormat"), new String[] { text, contentDescription }); //$NON-NLS-1$
+                            WorkbenchMessages.EditorPart_AutoTitleFormat, new String[] { text, contentDescription });
         }
 
         if (info.dirty) {

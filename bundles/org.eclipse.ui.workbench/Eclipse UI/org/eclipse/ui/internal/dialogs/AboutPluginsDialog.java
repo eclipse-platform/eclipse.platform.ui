@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -73,10 +74,10 @@ public class AboutPluginsDialog extends ProductInfoDialog {
     private String helpContextId;
 
     private String columnTitles[] = {
-            WorkbenchMessages.getString("AboutPluginsDialog.provider"), //$NON-NLS-1$
-            WorkbenchMessages.getString("AboutPluginsDialog.pluginName"), //$NON-NLS-1$
-            WorkbenchMessages.getString("AboutPluginsDialog.version"), //$NON-NLS-1$
-            WorkbenchMessages.getString("AboutPluginsDialog.pluginId"), //$NON-NLS-1$
+            WorkbenchMessages.AboutPluginsDialog_provider,
+            WorkbenchMessages.AboutPluginsDialog_pluginName,
+            WorkbenchMessages.AboutPluginsDialog_version, 
+            WorkbenchMessages.AboutPluginsDialog_pluginId, 
     };
 
     private String productName;
@@ -158,8 +159,7 @@ public class AboutPluginsDialog extends ProductInfoDialog {
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
         if (title == null && productName != null)
-            title = WorkbenchMessages.format("AboutPluginsDialog.shellTitle", //$NON-NLS-1$
-                    new Object[] { productName });
+            title = NLS.bind(WorkbenchMessages.AboutPluginsDialog_shellTitle, productName );
 
         if (title != null)
             newShell.setText(title);
@@ -179,8 +179,7 @@ public class AboutPluginsDialog extends ProductInfoDialog {
     protected void createButtonsForButtonBar(Composite parent) {
         parent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        moreInfo = createButton(parent, MORE_ID, WorkbenchMessages
-                .getString("AboutPluginsDialog.moreInfo"), false); //$NON-NLS-1$
+        moreInfo = createButton(parent, MORE_ID, WorkbenchMessages.AboutPluginsDialog_moreInfo, false); 
         moreInfo.setEnabled(tableHasSelection() && selectionHasInfo());
 
         Label l = new Label(parent, SWT.NONE);
@@ -317,11 +316,8 @@ public class AboutPluginsDialog extends ProductInfoDialog {
             return;
 
         if (!openBrowser(getMoreInfoURL(bundleInfo)))
-            MessageDialog.openError(getShell(), WorkbenchMessages
-                    .getString("AboutPluginsDialog.errorTitle"), //$NON-NLS-1$
-                    WorkbenchMessages.format(
-                            "AboutPluginsDialog.unableToOpenFile", //$NON-NLS-1$
-                            new Object[] { PLUGININFO, bundleInfo.getId() }));
+            MessageDialog.openError(getShell(), WorkbenchMessages.AboutPluginsDialog_errorTitle, //$NON-NLS-1$
+                    NLS.bind(WorkbenchMessages.AboutPluginsDialog_unableToOpenFile,PLUGININFO, bundleInfo.getId()));
     }
 
     /**

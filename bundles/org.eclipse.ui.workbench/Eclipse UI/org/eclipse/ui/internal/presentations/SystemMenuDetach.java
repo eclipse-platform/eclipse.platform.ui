@@ -25,7 +25,7 @@ public class SystemMenuDetach extends Action implements ISelfUpdatingAction {
 
     public SystemMenuDetach(IStackPresentationSite site) {
         this.site = site;
-        setText(WorkbenchMessages.getString("PartPane.detach")); //$NON-NLS-1$
+        setText(WorkbenchMessages.PartPane_detach);
         update();
     }
     

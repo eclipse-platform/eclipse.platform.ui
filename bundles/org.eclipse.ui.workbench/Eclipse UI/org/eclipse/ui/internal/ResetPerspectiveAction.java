@@ -13,6 +13,7 @@ package org.eclipse.ui.internal;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -42,14 +43,14 @@ public class ResetPerspectiveAction extends Action implements
      * @param window the window
      */
     public ResetPerspectiveAction(IWorkbenchWindow window) {
-        super(WorkbenchMessages.getString("ResetPerspective.text")); //$NON-NLS-1$
+        super(WorkbenchMessages.ResetPerspective_text); 
         if (window == null) {
             throw new IllegalArgumentException();
         }
         this.workbenchWindow = window;
         setActionDefinitionId("org.eclipse.ui.window.resetPerspective"); //$NON-NLS-1$
         // @issue missing action id
-        setToolTipText(WorkbenchMessages.getString("ResetPerspective.toolTip")); //$NON-NLS-1$
+        setToolTipText(WorkbenchMessages.ResetPerspective_toolTip); 
         setEnabled(false);
         window.getWorkbench().getHelpSystem().setHelp(this,
 				IWorkbenchHelpContextIds.RESET_PERSPECTIVE_ACTION);
@@ -65,13 +66,11 @@ public class ResetPerspectiveAction extends Action implements
         }
         IWorkbenchPage page = workbenchWindow.getActivePage();
         if (page != null && page.getPerspective() != null) {
-            String message = WorkbenchMessages
-                    .format(
-                            "ResetPerspective.message", new Object[] { page.getPerspective().getLabel() }); //$NON-NLS-1$
+            String message = NLS.bind(WorkbenchMessages.ResetPerspective_message, page.getPerspective().getLabel() );
             String[] buttons = new String[] { IDialogConstants.OK_LABEL,
                     IDialogConstants.CANCEL_LABEL };
             MessageDialog d = new MessageDialog(workbenchWindow.getShell(),
-                    WorkbenchMessages.getString("ResetPerspective.title"), //$NON-NLS-1$
+                    WorkbenchMessages.ResetPerspective_title,
                     null, message, MessageDialog.QUESTION, buttons, 0);
             if (d.open() == 0)
                 page.resetPerspective();

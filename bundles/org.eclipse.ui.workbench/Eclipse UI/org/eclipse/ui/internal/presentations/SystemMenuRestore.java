@@ -21,7 +21,6 @@ public class SystemMenuRestore extends SystemMenuStateChange {
      * @param state
      */
     public SystemMenuRestore(IStackPresentationSite site) {
-        super(site, WorkbenchMessages.getString("PartPane.restore"), //$NON-NLS-1$
-                IStackPresentationSite.STATE_RESTORED);
+        super(site, WorkbenchMessages.PartPane_restore, IStackPresentationSite.STATE_RESTORED);
     }
 }

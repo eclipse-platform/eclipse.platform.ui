@@ -39,8 +39,7 @@ public class WorkingSetEditWizard extends Wizard implements
         super();
         workingSetEditPage = editPage;
         workingSetEditPage.setWizard(this);
-        setWindowTitle(WorkbenchMessages
-                .getString("WorkingSetEditWizard.title")); //$NON-NLS-1$
+        setWindowTitle(WorkbenchMessages.WorkingSetEditWizard_title);
     }
 
     /**

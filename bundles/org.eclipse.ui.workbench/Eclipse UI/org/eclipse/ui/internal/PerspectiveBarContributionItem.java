@@ -13,6 +13,7 @@ package org.eclipse.ui.internal;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -73,9 +74,7 @@ public class PerspectiveBarContributionItem extends ContributionItem {
             }
             toolItem.setImage(image);
 
-            toolItem.setToolTipText(WorkbenchMessages.format(
-                    "PerspectiveBarContributionItem.toolTip", //$NON-NLS-1$
-                    new Object[] { perspective.getLabel() }));
+            toolItem.setToolTipText(NLS.bind(WorkbenchMessages.PerspectiveBarContributionItem_toolTip, perspective.getLabel()));
             toolItem.addSelectionListener(new SelectionAdapter() {
 
                 public void widgetSelected(SelectionEvent event) {
@@ -142,9 +141,7 @@ public class PerspectiveBarContributionItem extends ContributionItem {
                         IWorkbenchGraphicConstants.IMG_ETOOL_DEF_PERSPECTIVE)
                         .createImage());
             }
-            toolItem.setToolTipText(WorkbenchMessages.format(
-                    "PerspectiveBarContributionItem.toolTip", //$NON-NLS-1$
-                    new Object[] { perspective.getLabel() }));
+            toolItem.setToolTipText(NLS.bind(WorkbenchMessages.PerspectiveBarContributionItem_toolTip, perspective.getLabel() ));
         }
         update();
     }

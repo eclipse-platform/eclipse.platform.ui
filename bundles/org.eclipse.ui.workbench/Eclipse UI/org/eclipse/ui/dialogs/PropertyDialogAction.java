@@ -67,10 +67,10 @@ public class PropertyDialogAction extends SelectionProviderAction {
 	 *            describe
 	 */
 	public PropertyDialogAction(Shell shell, ISelectionProvider provider) {
-		super(provider, WorkbenchMessages.getString("PropertyDialog.text")); //$NON-NLS-1$
+		super(provider, WorkbenchMessages.PropertyDialog_text); 
 		Assert.isNotNull(shell);
 		this.shell = shell;
-		setToolTipText(WorkbenchMessages.getString("PropertyDialog.toolTip")); //$NON-NLS-1$
+		setToolTipText(WorkbenchMessages.PropertyDialog_toolTip); 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
 				IWorkbenchHelpContextIds.PROPERTY_DIALOG_ACTION);
 	}

@@ -42,10 +42,9 @@ public class SelectWorkingSetAction extends Action {
      */
     public SelectWorkingSetAction(WorkingSetFilterActionGroup actionGroup,
             Shell shell) {
-        super(WorkbenchMessages.getString("SelectWorkingSetAction.text")); //$NON-NLS-1$
+        super(WorkbenchMessages.SelectWorkingSetAction_text); 
         Assert.isNotNull(actionGroup);
-        setToolTipText(WorkbenchMessages
-                .getString("SelectWorkingSetAction.toolTip")); //$NON-NLS-1$
+        setToolTipText(WorkbenchMessages.SelectWorkingSetAction_toolTip); 
 
         this.shell = shell;
         this.actionGroup = actionGroup;

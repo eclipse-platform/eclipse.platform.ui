@@ -24,7 +24,7 @@ public abstract class ViewPreferencesAction extends Action {
 	 * Create a new instance of the receiver.
 	 */
 	public ViewPreferencesAction() {
-		super(WorkbenchMessages.getString("OpenPreferences.text")); //$NON-NLS-1$
+		super(WorkbenchMessages.OpenPreferences_text); 
 	}
 	
 	/* (non-Javadoc)

@@ -89,8 +89,7 @@ public final class PlatformUI {
     public static IWorkbench getWorkbench() {
         if (Workbench.getInstance() == null) {
             // app forgot to call createAndRunWorkbench beforehand
-            throw new IllegalStateException(WorkbenchMessages
-                    .getString("PlatformUI.NoWorkbench")); //$NON-NLS-1$
+            throw new IllegalStateException(WorkbenchMessages.PlatformUI_NoWorkbench); 
         }
         return Workbench.getInstance();
     }

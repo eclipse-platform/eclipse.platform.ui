@@ -18,6 +18,7 @@ import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
@@ -63,15 +64,11 @@ public class PropertyDialog extends FilteredPreferenceDialog {
 			MessageDialog
 					.openInformation(
 							shell,
-							WorkbenchMessages
-									.getString("PropertyDialog.messageTitle"), //$NON-NLS-1$
-							WorkbenchMessages
-									.format(
-											"PropertyDialog.noPropertyMessage", new Object[] { name })); //$NON-NLS-1$
+							WorkbenchMessages.PropertyDialog_messageTitle, //$NON-NLS-1$
+							NLS.bind(WorkbenchMessages.PropertyDialog_noPropertyMessage,  name)); 
 			return null;
 		}
-		title = WorkbenchMessages.format(
-				"PropertyDialog.propertyMessage", new Object[] { name }); //$NON-NLS-1$
+		title = NLS.bind(WorkbenchMessages.PropertyDialog_propertyMessage,  name ); 
 		PropertyDialog propertyDialog = new PropertyDialog(shell, pageManager,
 				new StructuredSelection(element));
 

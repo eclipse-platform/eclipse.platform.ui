@@ -533,7 +533,7 @@ public class FilteredList extends Composite {
          *            The number of items to update per running.
          */
         public TableUpdateJob(Table table, int count) {
-            super(WorkbenchMessages.getString("FilteredList.UpdateJobName")); //$NON-NLS-1$
+            super(WorkbenchMessages.FilteredList_UpdateJobName);
             setSystem(true);
             fTable = table;
             fCount = count;

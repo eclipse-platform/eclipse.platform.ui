@@ -177,15 +177,11 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements
         labelProvider = new WorkingSetLabelProvider();
         multiSelect = multi;
         if (multiSelect) {
-            setTitle(WorkbenchMessages
-                    .getString("WorkingSetSelectionDialog.title.multiSelect")); //$NON-NLS-1$;
-            setMessage(WorkbenchMessages
-                    .getString("WorkingSetSelectionDialog.message.multiSelect")); //$NON-NLS-1$
+            setTitle(WorkbenchMessages.WorkingSetSelectionDialog_title_multiSelect); 
+            setMessage(WorkbenchMessages.WorkingSetSelectionDialog_message_multiSelect);
         } else {
-            setTitle(WorkbenchMessages
-                    .getString("WorkingSetSelectionDialog.title")); //$NON-NLS-1$;
-            setMessage(WorkbenchMessages
-                    .getString("WorkingSetSelectionDialog.message")); //$NON-NLS-1$
+            setTitle(WorkbenchMessages.WorkingSetSelectionDialog_title); 
+            setMessage(WorkbenchMessages.WorkingSetSelectionDialog_message);
         }
         if (workingSetIds != null) {
             this.workingSetIds = new HashSet();
@@ -211,8 +207,7 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements
         composite.setData(data);
 
         int id = IDialogConstants.CLIENT_ID + 1;
-        newButton = createButton(buttonComposite, id++, WorkbenchMessages
-                .getString("WorkingSetSelectionDialog.newButton.label"), false); //$NON-NLS-1$
+        newButton = createButton(buttonComposite, id++, WorkbenchMessages.WorkingSetSelectionDialog_newButton_label, false); 
         newButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 createWorkingSet();
@@ -222,8 +217,7 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements
         detailsButton = createButton(
                 buttonComposite,
                 id++,
-                WorkbenchMessages
-                        .getString("WorkingSetSelectionDialog.detailsButton.label"), false); //$NON-NLS-1$
+                WorkbenchMessages.WorkingSetSelectionDialog_detailsButton_label, false);
         detailsButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 editSelectedWorkingSet();
@@ -233,8 +227,7 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements
         removeButton = createButton(
                 buttonComposite,
                 id++,
-                WorkbenchMessages
-                        .getString("WorkingSetSelectionDialog.removeButton.label"), false); //$NON-NLS-1$
+                WorkbenchMessages.WorkingSetSelectionDialog_removeButton_label, false);
         removeButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 removeSelectedWorkingSets();

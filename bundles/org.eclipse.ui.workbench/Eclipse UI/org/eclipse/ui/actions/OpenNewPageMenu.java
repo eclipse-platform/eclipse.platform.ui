@@ -75,10 +75,8 @@ public class OpenNewPageMenu extends PerspectiveMenu {
     protected void run(IPerspectiveDescriptor desc) {
         // Verify page input.
         if (pageInput == null) {
-            MessageDialog.openError(getWindow().getShell(), WorkbenchMessages
-                    .getString("OpenNewPageMenu.dialogTitle"), //$NON-NLS-1$
-                    WorkbenchMessages
-                            .getString("OpenNewPageMenu.unknownPageInput")); //$NON-NLS-1$
+            MessageDialog.openError(getWindow().getShell(), WorkbenchMessages.OpenNewPageMenu_dialogTitle, 
+                    WorkbenchMessages.OpenNewPageMenu_unknownPageInput); 
             return;
         }
 
@@ -86,8 +84,7 @@ public class OpenNewPageMenu extends PerspectiveMenu {
         try {
             getWindow().openPage(desc.getId(), pageInput);
         } catch (WorkbenchException e) {
-            MessageDialog.openError(getWindow().getShell(), WorkbenchMessages
-                    .getString("OpenNewPageMenu.dialogTitle"), //$NON-NLS-1$
+            MessageDialog.openError(getWindow().getShell(), WorkbenchMessages.OpenNewPageMenu_dialogTitle, 
                     e.getMessage());
         }
     }

@@ -25,10 +25,10 @@ public class SaveAsAction extends BaseSaveAction {
      * @param window the window
      */
     public SaveAsAction(IWorkbenchWindow window) {
-        super(WorkbenchMessages.getString("SaveAs.text"), window); //$NON-NLS-1$
+        super(WorkbenchMessages.SaveAs_text, window); 
         setActionDefinitionId("org.eclipse.ui.file.saveAs"); //$NON-NLS-1$
-        setText(WorkbenchMessages.getString("SaveAs.text")); //$NON-NLS-1$
-        setToolTipText(WorkbenchMessages.getString("SaveAs.toolTip")); //$NON-NLS-1$
+        setText(WorkbenchMessages.SaveAs_text); 
+        setToolTipText(WorkbenchMessages.SaveAs_toolTip); 
         setId("saveAs"); //$NON-NLS-1$
         window.getWorkbench().getHelpSystem().setHelp(this,
 				IWorkbenchHelpContextIds.SAVE_AS_ACTION);

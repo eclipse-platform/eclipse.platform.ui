@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.internal.runtime.Assert;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
@@ -246,8 +247,7 @@ public class PageLayout implements IPageLayout {
             rootLayoutContainer.add(newPart, getPartSashConst(relationship),
                     ratio, refPart);
         } else {
-            WorkbenchPlugin.log(WorkbenchMessages.format(
-                    "PageLayout.missingRefPart", new Object[] { refId })); //$NON-NLS-1$
+            WorkbenchPlugin.log(NLS.bind(WorkbenchMessages.PageLayout_missingRefPart,  refId )); 
             rootLayoutContainer.add(newPart);
         }
     }
@@ -384,8 +384,7 @@ public class PageLayout implements IPageLayout {
     /*package*/
     boolean checkPartInLayout(String partId) {
         if (getRefPart(partId) != null || isFastViewId(partId)) {
-            WorkbenchPlugin.log(WorkbenchMessages.format(
-                    "PageLayout.duplicateRefPart", new Object[] { partId })); //$NON-NLS-1$
+            WorkbenchPlugin.log(NLS.bind(WorkbenchMessages.PageLayout_duplicateRefPart,partId )); 
             return true;
         }
 
@@ -697,8 +696,7 @@ public class PageLayout implements IPageLayout {
         }
 
         // If ref part is not found then just do add.
-        WorkbenchPlugin.log(WorkbenchMessages.format(
-                "PageLayout.missingRefPart", new Object[] { refId })); //$NON-NLS-1$
+        WorkbenchPlugin.log(NLS.bind(WorkbenchMessages.PageLayout_missingRefPart, refId )); 
         rootLayoutContainer.add(newPart);
     }
 

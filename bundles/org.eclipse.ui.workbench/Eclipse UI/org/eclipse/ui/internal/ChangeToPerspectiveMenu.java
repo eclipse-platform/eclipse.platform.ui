@@ -106,8 +106,7 @@ public class ChangeToPerspectiveMenu extends PerspectiveMenu {
      * Handles workbench exception
      */
     private void handleWorkbenchException(WorkbenchException e) {
-        ErrorDialog.openError(getWindow().getShell(), WorkbenchMessages
-                .getString("ChangeToPerspectiveMenu.errorTitle"), //$NON-NLS-1$,
+        ErrorDialog.openError(getWindow().getShell(), WorkbenchMessages.ChangeToPerspectiveMenu_errorTitle, 
                 e.getMessage(), e.getStatus());
     }
 }

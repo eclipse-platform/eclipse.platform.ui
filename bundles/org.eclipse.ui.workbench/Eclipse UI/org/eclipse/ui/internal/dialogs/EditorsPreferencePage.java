@@ -18,6 +18,7 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -98,8 +99,7 @@ public class EditorsPreferencePage extends PreferencePage implements
 
     protected void createShowMultipleEditorTabsPref(Composite composite) {
         showMultipleEditorTabs = new Button(composite, SWT.CHECK);
-        showMultipleEditorTabs.setText(WorkbenchMessages
-                .getString("WorkbenchPreference.showMultipleEditorTabsButton")); //$NON-NLS-1$
+        showMultipleEditorTabs.setText(WorkbenchMessages.WorkbenchPreference_showMultipleEditorTabsButton);
         showMultipleEditorTabs.setFont(composite.getFont());
         showMultipleEditorTabs.setSelection(getPreferenceStore().getBoolean(
                 IPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS));
@@ -108,8 +108,7 @@ public class EditorsPreferencePage extends PreferencePage implements
 
     protected void createCloseEditorsOnExitPref(Composite composite) {
         closeEditorsOnExit = new Button(composite, SWT.CHECK);
-        closeEditorsOnExit.setText(WorkbenchMessages
-                .getString("WorkbenchPreference.closeEditorsButton")); //$NON-NLS-1$
+        closeEditorsOnExit.setText(WorkbenchMessages.WorkbenchPreference_closeEditorsButton); 
         closeEditorsOnExit.setFont(composite.getFont());
         closeEditorsOnExit.setSelection(getPreferenceStore().getBoolean(
                 IPreferenceConstants.CLOSE_EDITORS_ON_EXIT));
@@ -215,8 +214,7 @@ public class EditorsPreferencePage extends PreferencePage implements
         editorReuseGroup.setFont(font);
 
         reuseEditors = new Button(editorReuseGroup, SWT.CHECK);
-        reuseEditors.setText(WorkbenchMessages
-                .getString("WorkbenchPreference.reuseEditors")); //$NON-NLS-1$
+        reuseEditors.setText(WorkbenchMessages.WorkbenchPreference_reuseEditors);
         reuseEditors.setLayoutData(new GridData());
         reuseEditors.setFont(font);
 
@@ -253,15 +251,13 @@ public class EditorsPreferencePage extends PreferencePage implements
 
         reuseEditorsThreshold = new IntegerFieldEditor(
                 IPreferenceConstants.REUSE_EDITORS,
-                WorkbenchMessages
-                        .getString("WorkbenchPreference.reuseEditorsThreshold"), editorReuseThresholdGroup); //$NON-NLS-1$
+                WorkbenchMessages.WorkbenchPreference_reuseEditorsThreshold, editorReuseThresholdGroup); 
 
         reuseEditorsThreshold.setPreferenceStore(WorkbenchPlugin.getDefault()
                 .getPreferenceStore());
         reuseEditorsThreshold.setPage(this);
         reuseEditorsThreshold.setTextLimit(2);
-        reuseEditorsThreshold.setErrorMessage(WorkbenchMessages
-                .getString("WorkbenchPreference.reuseEditorsThresholdError")); //$NON-NLS-1$
+        reuseEditorsThreshold.setErrorMessage(WorkbenchMessages.WorkbenchPreference_reuseEditorsThresholdError); 
         reuseEditorsThreshold
                 .setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
         reuseEditorsThreshold.setValidRange(1, 99);
@@ -276,22 +272,19 @@ public class EditorsPreferencePage extends PreferencePage implements
         dirtyEditorReuseGroup.setLayout(new GridLayout());
         dirtyEditorReuseGroup.setLayoutData(new GridData(
                 GridData.FILL_HORIZONTAL));
-        dirtyEditorReuseGroup.setText(WorkbenchMessages
-                .getString("WorkbenchPreference.reuseDirtyEditorGroupTitle")); //$NON-NLS-1$
+        dirtyEditorReuseGroup.setText(WorkbenchMessages.WorkbenchPreference_reuseDirtyEditorGroupTitle); 
         dirtyEditorReuseGroup.setFont(font);
         dirtyEditorReuseGroup.setEnabled(reuseEditors.getSelection());
 
         promptToReuseEditor = new Button(dirtyEditorReuseGroup, SWT.RADIO);
-        promptToReuseEditor.setText(WorkbenchMessages
-                .getString("WorkbenchPreference.promptToReuseEditor")); //$NON-NLS-1$
+        promptToReuseEditor.setText(WorkbenchMessages.WorkbenchPreference_promptToReuseEditor); 
         promptToReuseEditor.setFont(font);
         promptToReuseEditor.setSelection(store
                 .getBoolean(IPreferenceConstants.REUSE_DIRTY_EDITORS));
         promptToReuseEditor.setEnabled(reuseEditors.getSelection());
 
         openNewEditor = new Button(dirtyEditorReuseGroup, SWT.RADIO);
-        openNewEditor.setText(WorkbenchMessages
-                .getString("WorkbenchPreference.openNewEditor")); //$NON-NLS-1$
+        openNewEditor.setText(WorkbenchMessages.WorkbenchPreference_openNewEditor); 
         openNewEditor.setFont(font);
         openNewEditor.setSelection(!store
                 .getBoolean(IPreferenceConstants.REUSE_DIRTY_EDITORS));
@@ -315,7 +308,7 @@ public class EditorsPreferencePage extends PreferencePage implements
 
         recentFilesEditor = new IntegerFieldEditor(
                 IPreferenceConstants.RECENT_FILES,
-                WorkbenchMessages.getString("WorkbenchPreference.recentFiles"), groupComposite); //$NON-NLS-1$
+                WorkbenchMessages.WorkbenchPreference_recentFiles, groupComposite); 
 
         recentFilesEditor.setPreferenceStore(WorkbenchPlugin.getDefault()
                 .getPreferenceStore());
@@ -323,9 +316,7 @@ public class EditorsPreferencePage extends PreferencePage implements
         recentFilesEditor.setTextLimit(Integer.toString(EditorHistory.MAX_SIZE)
                 .length());
         recentFilesEditor
-                .setErrorMessage(WorkbenchMessages
-                        .format(
-                                "WorkbenchPreference.recentFilesError", new Object[] { new Integer(EditorHistory.MAX_SIZE) })); //$NON-NLS-1$
+                .setErrorMessage(NLS.bind(WorkbenchMessages.WorkbenchPreference_recentFilesError, new Integer(EditorHistory.MAX_SIZE) )); 
         recentFilesEditor
                 .setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
         recentFilesEditor.setValidRange(0, EditorHistory.MAX_SIZE);

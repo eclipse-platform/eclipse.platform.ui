@@ -26,6 +26,7 @@ import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.layout.GridData;
@@ -266,9 +267,9 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		parent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		createButton(parent, LOAD_ID,
-				WorkbenchMessages.getString("WorkbenchPreferenceDialog.load"), false); //$NON-NLS-1$
+				WorkbenchMessages.WorkbenchPreferenceDialog_load, false);
 		createButton(parent, SAVE_ID,
-				WorkbenchMessages.getString("WorkbenchPreferenceDialog.save"), false); //$NON-NLS-1$
+				WorkbenchMessages.WorkbenchPreferenceDialog_save, false);
 
 		Label l = new Label(parent, SWT.NONE);
 		l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -514,7 +515,7 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 				WorkbenchPreferenceDialog.FILE_PATH_SETTING);
 		if (lastFileName == null) {
 			if (export)
-				return System.getProperty("user.dir") + System.getProperty("file.separator") + WorkbenchMessages.getString("ImportExportPages.preferenceFileName") + AbstractPreferenceImportExportPage.PREFERENCE_EXT; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+				return System.getProperty("user.dir") + System.getProperty("file.separator") + WorkbenchMessages.ImportExportPages_preferenceFileName + AbstractPreferenceImportExportPage.PREFERENCE_EXT; //$NON-NLS-1$//$NON-NLS-2$
 
 		} else if ((export) || (new File(lastFileName).exists())) {
 			return lastFileName;
@@ -578,17 +579,13 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		IStatus status = Preferences.validatePreferenceVersions(path);
 		if (status.getSeverity() == IStatus.ERROR) {
 			// Show the error and about
-			ErrorDialog.openError(getShell(), WorkbenchMessages
-					.getString("WorkbenchPreferenceDialog.loadErrorTitle"), //$NON-NLS-1$
-					WorkbenchMessages.format("WorkbenchPreferenceDialog.verifyErrorMessage", //$NON-NLS-1$
-							new Object[] { path.toOSString() }), status);
+			ErrorDialog.openError(getShell(), WorkbenchMessages.WorkbenchPreferenceDialog_loadErrorTitle,
+					NLS.bind(WorkbenchMessages.WorkbenchPreferenceDialog_verifyErrorMessage, path.toOSString() ), status);
 			return false;
 		} else if (status.getSeverity() == IStatus.WARNING) {
 			// Show the warning and give the option to continue
-			int result = PreferenceErrorDialog.openError(getShell(), WorkbenchMessages
-					.getString("WorkbenchPreferenceDialog.loadErrorTitle"), //$NON-NLS-1$
-					WorkbenchMessages.format("WorkbenchPreferenceDialog.verifyWarningMessage", //$NON-NLS-1$
-							new Object[] { path.toOSString() }), status);
+			int result = PreferenceErrorDialog.openError(getShell(), WorkbenchMessages.WorkbenchPreferenceDialog_loadErrorTitle,
+					NLS.bind(WorkbenchMessages.WorkbenchPreferenceDialog_verifyWarningMessage, path.toOSString()), status);
 			if (result != Window.OK) {
 				return false;
 			}
@@ -597,10 +594,8 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		try {
 			Preferences.importPreferences(path);
 		} catch (CoreException e) {
-			ErrorDialog.openError(getShell(), WorkbenchMessages
-					.getString("WorkbenchPreferenceDialog.loadErrorTitle"), //$NON-NLS-1$
-					WorkbenchMessages.format("WorkbenchPreferenceDialog.loadErrorMessage", //$NON-NLS-1$
-							new Object[] { path.toOSString() }), e.getStatus());
+			ErrorDialog.openError(getShell(), WorkbenchMessages.WorkbenchPreferenceDialog_loadErrorTitle, 
+					NLS.bind(WorkbenchMessages.WorkbenchPreferenceDialog_loadErrorMessage, path.toOSString()), e.getStatus());
 			return false;
 		}
 		return true;

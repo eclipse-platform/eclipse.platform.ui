@@ -58,10 +58,8 @@ public class PropertyPageNode extends WorkbenchPreferenceExtensionNode {
         } catch (CoreException e) {
             // Just inform the user about the error. The details are
             // written to the log by now.
-            ErrorDialog.openError((Shell) null, WorkbenchMessages
-                    .getString("PropertyPageNode.errorTitle"), //$NON-NLS-1$
-                    WorkbenchMessages
-                            .getString("PropertyPageNode.errorMessage"), //$NON-NLS-1$
+            ErrorDialog.openError((Shell) null, WorkbenchMessages.PropertyPageNode_errorTitle, 
+                    WorkbenchMessages.PropertyPageNode_errorMessage, 
                     e.getStatus());
             page = new EmptyPropertyPage();
         }

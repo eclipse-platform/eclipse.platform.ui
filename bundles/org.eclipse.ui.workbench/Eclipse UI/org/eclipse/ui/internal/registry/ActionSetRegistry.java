@@ -200,7 +200,7 @@ public class ActionSetRegistry extends RegistryManager implements
     public void mapActionSetsToCategories() {
         // Create "other" category.
         ActionSetCategory cat = new ActionSetCategory(OTHER_CATEGORY,
-                WorkbenchMessages.getString("ActionSetRegistry.otherCategory")); //$NON-NLS-1$
+                WorkbenchMessages.ActionSetRegistry_otherCategory); 
         categories.add(cat);
 
         // Add everything to it.

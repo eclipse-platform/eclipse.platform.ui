@@ -63,8 +63,7 @@ public class EditorSelectionDialog extends Dialog implements Listener {
 
     private static final String STORE_ID_INTERNAL_EXTERNAL = "EditorSelectionDialog.STORE_ID_INTERNAL_EXTERNAL";//$NON-NLS-1$
 
-    private String message = WorkbenchMessages
-            .getString("EditorSelection.chooseAnEditor"); //$NON-NLS-1$
+    private String message = WorkbenchMessages.EditorSelection_chooseAnEditor; 
 
     // collection of IEditorDescriptor
     private IEditorDescriptor[] externalEditors;
@@ -130,7 +129,7 @@ public class EditorSelectionDialog extends Dialog implements Listener {
      */
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
-        shell.setText(WorkbenchMessages.getString("EditorSelection.title")); //$NON-NLS-1$
+        shell.setText(WorkbenchMessages.EditorSelection_title);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
 				IWorkbenchHelpContextIds.EDITOR_SELECTION_DIALOG);
     }
@@ -159,8 +158,7 @@ public class EditorSelectionDialog extends Dialog implements Listener {
         textLabel.setFont(font);
 
         internalButton = new Button(contents, SWT.RADIO | SWT.LEFT);
-        internalButton.setText(WorkbenchMessages
-                .getString("EditorSelection.internal")); //$NON-NLS-1$
+        internalButton.setText(WorkbenchMessages.EditorSelection_internal);
         internalButton.addListener(SWT.Selection, this);
         data = new GridData();
         data.horizontalSpan = 1;
@@ -168,8 +166,7 @@ public class EditorSelectionDialog extends Dialog implements Listener {
         internalButton.setFont(font);
 
         externalButton = new Button(contents, SWT.RADIO | SWT.LEFT);
-        externalButton.setText(WorkbenchMessages
-                .getString("EditorSelection.external")); //$NON-NLS-1$
+        externalButton.setText(WorkbenchMessages.EditorSelection_external); 
         externalButton.addListener(SWT.Selection, this);
         data = new GridData();
         data.horizontalSpan = 1;
@@ -192,8 +189,7 @@ public class EditorSelectionDialog extends Dialog implements Listener {
         data.heightHint = editorTable.getItemHeight() * 12;
 
         browseExternalEditorsButton = new Button(contents, SWT.PUSH);
-		browseExternalEditorsButton.setText(WorkbenchMessages
-				.getString("EditorSelection.browse")); //$NON-NLS-1$
+		browseExternalEditorsButton.setText(WorkbenchMessages.EditorSelection_browse);
 		browseExternalEditorsButton.addListener(SWT.Selection, this);
 		data = new GridData();
 		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);

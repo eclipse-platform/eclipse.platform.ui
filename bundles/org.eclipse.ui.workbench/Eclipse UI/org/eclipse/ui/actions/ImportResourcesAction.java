@@ -82,14 +82,13 @@ public class ImportResourcesAction extends BaseSelectionListenerAction
      * @param window the window
      */
     public ImportResourcesAction(IWorkbenchWindow window) {
-        super(WorkbenchMessages.getString("ImportResourcesAction.text")); //$NON-NLS-1$
+        super(WorkbenchMessages.ImportResourcesAction_text);
         if (window == null) {
             throw new IllegalArgumentException();
         }
         this.workbenchWindow = window;
         setActionDefinitionId("org.eclipse.ui.file.import"); //$NON-NLS-1$
-        setToolTipText(WorkbenchMessages
-                .getString("ImportResourcesAction.toolTip")); //$NON-NLS-1$
+        setToolTipText(WorkbenchMessages.ImportResourcesAction_toolTip);
         setId("import"); //$NON-NLS-1$
         window.getWorkbench().getHelpSystem().setHelp(this,
 				IWorkbenchHelpContextIds.IMPORT_ACTION);

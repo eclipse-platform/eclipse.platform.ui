@@ -16,6 +16,7 @@ import java.util.Iterator;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.PlatformUI;
@@ -108,14 +109,12 @@ public final class PerspectiveLabelProvider extends LabelProvider implements
                 String def = PlatformUI.getWorkbench().getPerspectiveRegistry()
                         .getDefaultPerspective();
                 if (desc.getId().equals(def)) {
-                    label = WorkbenchMessages
-                            .format(
-                                    "PerspectivesPreference.defaultLabel", new Object[] { label }); //$NON-NLS-1$
+                    label = NLS.bind(WorkbenchMessages.PerspectivesPreference_defaultLabel, label );
                 }
             }
             return label;
         }
-        return WorkbenchMessages.getString("PerspectiveLabelProvider.unknown"); //$NON-NLS-1$
+        return WorkbenchMessages.PerspectiveLabelProvider_unknown;
     }
 
     /**

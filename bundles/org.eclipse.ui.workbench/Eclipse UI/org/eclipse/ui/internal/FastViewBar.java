@@ -344,7 +344,7 @@ public class FastViewBar implements IWindowTrim {
                 .setDefaultColumn(Row.fixed()).setColumn(
                         newSide == SWT.BOTTOM ? 1 : 0, Row.growing());
         control.setLayout(controlLayout);
-        String tip = WorkbenchMessages.getString("FastViewBar.0"); //$NON-NLS-1$
+        String tip = WorkbenchMessages.FastViewBar_0; 
         control.setToolTipText(tip);
 
         // When we're on the bottom, add a drag handle. Otherwise, it's impossible to drag the fast view
@@ -593,28 +593,24 @@ public class FastViewBar implements IWindowTrim {
 
             orientationItem = new MenuItem(menu, SWT.CASCADE);
             {
-                orientationItem.setText(WorkbenchMessages
-                        .getString("FastViewBar.view_orientation")); //$NON-NLS-1$
+                orientationItem.setText(WorkbenchMessages.FastViewBar_view_orientation);
 
                 Menu orientationSwtMenu = new Menu(orientationItem);
                 RadioMenu orientationMenu = new RadioMenu(orientationSwtMenu,
                         currentOrientation);
                 orientationMenu
                         .addMenuItem(
-                                WorkbenchMessages
-                                        .getString("FastViewBar.horizontal"), new Integer(SWT.HORIZONTAL)); //$NON-NLS-1$
+                                WorkbenchMessages.FastViewBar_horizontal, new Integer(SWT.HORIZONTAL)); 
                 orientationMenu
                         .addMenuItem(
-                                WorkbenchMessages
-                                        .getString("FastViewBar.vertical"), new Integer(SWT.VERTICAL)); //$NON-NLS-1$
+                                WorkbenchMessages.FastViewBar_vertical, new Integer(SWT.VERTICAL)); 
 
                 orientationItem.setMenu(orientationSwtMenu);
             }
 
             restoreItem = new MenuItem(menu, SWT.CHECK);
             restoreItem.setSelection(true);
-            restoreItem.setText(WorkbenchMessages
-                    .getString("ViewPane.fastView")); //$NON-NLS-1$
+            restoreItem.setText(WorkbenchMessages.ViewPane_fastView);
             restoreItem.addSelectionListener(new SelectionAdapter() {
                 public void widgetSelected(SelectionEvent e) {
                     if (selectedView != null) {
@@ -648,8 +644,7 @@ public class FastViewBar implements IWindowTrim {
             });
 
             closeItem = new MenuItem(menu, SWT.NONE);
-            closeItem.setText(WorkbenchMessages
-                    .getString("WorkbenchWindow.close")); //$NON-NLS-1$
+            closeItem.setText(WorkbenchMessages.WorkbenchWindow_close); 
             closeItem.addSelectionListener(new SelectionAdapter() {
                 public void widgetSelected(SelectionEvent e) {
                     if (selectedView != null) {
@@ -665,22 +660,18 @@ public class FastViewBar implements IWindowTrim {
 
             showOn = new MenuItem(menu, SWT.CASCADE);
             {
-                showOn.setText(WorkbenchMessages
-                        .getString("FastViewBar.dock_on")); //$NON-NLS-1$
+                showOn.setText(WorkbenchMessages.FastViewBar_dock_on); 
 
                 sidesMenu = new Menu(showOn);
                 radioButtons = new RadioMenu(sidesMenu, side);
 
-                radioButtons.addMenuItem(WorkbenchMessages
-                        .getString("FastViewBar.Left"), new Integer(SWT.LEFT)); //$NON-NLS-1$
+                radioButtons.addMenuItem(WorkbenchMessages.FastViewBar_Left, new Integer(SWT.LEFT)); 
                 radioButtons
                         .addMenuItem(
-                                WorkbenchMessages
-                                        .getString("FastViewBar.Right"), new Integer(SWT.RIGHT)); //$NON-NLS-1$
+                                WorkbenchMessages.FastViewBar_Right, new Integer(SWT.RIGHT)); 
                 radioButtons
                         .addMenuItem(
-                                WorkbenchMessages
-                                        .getString("FastViewBar.Bottom"), new Integer(SWT.BOTTOM)); //$NON-NLS-1$
+                                WorkbenchMessages.FastViewBar_Bottom, new Integer(SWT.BOTTOM));
 
                 showOn.setMenu(sidesMenu);
             }

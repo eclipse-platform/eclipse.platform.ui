@@ -55,12 +55,10 @@ public class TypeFilteringDialog extends SelectionDialog {
 
     private final static int SIZING_SELECTION_WIDGET_WIDTH = 300;
 
-    private final static String TYPE_DELIMITER = WorkbenchMessages
-            .getString("TypesFiltering.typeDelimiter"); //$NON-NLS-1$
+    private final static String TYPE_DELIMITER = WorkbenchMessages.TypesFiltering_typeDelimiter; 
 
     //Define a title for the filter entry field.
-    private String filterTitle = WorkbenchMessages
-            .getString("TypesFiltering.otherExtensions"); //$NON-NLS-1$
+    private String filterTitle = WorkbenchMessages.TypesFiltering_otherExtensions; 
 
     Text userDefinedText;
 
@@ -76,9 +74,9 @@ public class TypeFilteringDialog extends SelectionDialog {
      */
     public TypeFilteringDialog(Shell parentShell, Collection preselections) {
         super(parentShell);
-        setTitle(WorkbenchMessages.getString("TypesFiltering.title")); //$NON-NLS-1$
+        setTitle(WorkbenchMessages.TypesFiltering_title); 
         this.initialSelections = preselections;
-        setMessage(WorkbenchMessages.getString("TypesFiltering.message")); //$NON-NLS-1$
+        setMessage(WorkbenchMessages.TypesFiltering_message); 
     }
 
     /**
@@ -114,8 +112,7 @@ public class TypeFilteringDialog extends SelectionDialog {
         data.grabExcessHorizontalSpace = true;
         composite.setData(data);
         Button selectButton = createButton(buttonComposite,
-                IDialogConstants.SELECT_ALL_ID, WorkbenchMessages
-                        .getString("WizardTransferPage.selectAll"), false); //$NON-NLS-1$
+                IDialogConstants.SELECT_ALL_ID, WorkbenchMessages.WizardTransferPage_selectAll, false);
         SelectionListener listener = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 listViewer.setAllChecked(true);
@@ -123,8 +120,7 @@ public class TypeFilteringDialog extends SelectionDialog {
         };
         selectButton.addSelectionListener(listener);
         Button deselectButton = createButton(buttonComposite,
-                IDialogConstants.DESELECT_ALL_ID, WorkbenchMessages
-                        .getString("WizardTransferPage.deselectAll"), false); //$NON-NLS-1$
+                IDialogConstants.DESELECT_ALL_ID, WorkbenchMessages.WizardTransferPage_deselectAll, false); 
         listener = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 listViewer.setAllChecked(false);

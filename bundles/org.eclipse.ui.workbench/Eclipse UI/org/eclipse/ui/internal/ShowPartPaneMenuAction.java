@@ -55,9 +55,8 @@ public class ShowPartPaneMenuAction extends PartEventAction implements
      * Initialize the menu text and tooltip.
      */
     protected void initText() {
-        setText(WorkbenchMessages.getString("ShowPartPaneMenuAction.text")); //$NON-NLS-1$
-        setToolTipText(WorkbenchMessages
-                .getString("ShowPartPaneMenuAction.toolTip")); //$NON-NLS-1$
+        setText(WorkbenchMessages.ShowPartPaneMenuAction_text); 
+        setToolTipText(WorkbenchMessages.ShowPartPaneMenuAction_toolTip); 
     }
 
     /**

@@ -19,6 +19,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -256,19 +257,15 @@ public class ReopenEditorMenu extends ContributionItem {
                 IEditorInput input = item.getInput();
                 IEditorDescriptor desc = item.getDescriptor();
                 if (input == null || desc == null) {
-                    String title = WorkbenchMessages
-                            .getString("OpenRecent.errorTitle"); //$NON-NLS-1$
-                    String msg = WorkbenchMessages
-                            .format(
-                                    "OpenRecent.unableToOpen", new String[] { itemName }); //$NON-NLS-1$
+                    String title = WorkbenchMessages.OpenRecent_errorTitle;
+                    String msg = NLS.bind(WorkbenchMessages.OpenRecent_unableToOpen,  itemName ); 
                     MessageDialog.openWarning(window.getShell(), title, msg);
                     history.remove(item);
                 } else {
                     page.openEditor(input, desc.getId());
                 }
             } catch (PartInitException e2) {
-                String title = WorkbenchMessages
-                        .getString("OpenRecent.errorTitle"); //$NON-NLS-1$
+                String title = WorkbenchMessages.OpenRecent_errorTitle;
                 MessageDialog.openWarning(window.getShell(), title, e2
                         .getMessage());
                 history.remove(item);

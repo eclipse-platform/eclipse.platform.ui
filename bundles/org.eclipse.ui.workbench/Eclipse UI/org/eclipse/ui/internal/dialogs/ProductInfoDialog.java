@@ -331,10 +331,8 @@ public abstract class ProductInfoDialog extends Dialog {
                 MessageDialog
                         .openError(
                                 getShell(),
-                                WorkbenchMessages
-                                        .getString("ProductInfoDialog.errorTitle"), //$NON-NLS-1$
-                                WorkbenchMessages
-                                        .getString("ProductInfoDialog.unableToOpenWebBrowser")); //$NON-NLS-1$
+                                WorkbenchMessages.ProductInfoDialog_errorTitle, 
+                                WorkbenchMessages.ProductInfoDialog_unableToOpenWebBrowser);
             }
         });
     }
