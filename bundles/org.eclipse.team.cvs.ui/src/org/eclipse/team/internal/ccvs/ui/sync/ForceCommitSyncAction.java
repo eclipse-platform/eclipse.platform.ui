@@ -41,6 +41,9 @@ public class ForceCommitSyncAction extends MergeAction {
 	}
 
 	protected SyncSet run(SyncSet syncSet, IProgressMonitor monitor) {
+		boolean result = saveIfNecessary();
+		if (!result) return null;
+		
 		// If there is a conflict in the syncSet, we need to prompt the user before proceeding.
 		if (syncSet.hasConflicts() || syncSet.hasIncomingChanges()) {
 			switch (promptForConflicts(syncSet)) {

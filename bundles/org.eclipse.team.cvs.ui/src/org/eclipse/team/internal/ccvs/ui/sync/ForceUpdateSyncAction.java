@@ -110,6 +110,9 @@ public class ForceUpdateSyncAction extends MergeAction {
 	}
 
 	protected SyncSet run(final SyncSet syncSet, IProgressMonitor monitor) {
+		boolean result = saveIfNecessary();
+		if (!result) return null;
+		
 		// If there are conflicts or outgoing changes in the syncSet, we need to warn the user.
 		boolean onlyUpdateAutomergeable = false;
 		if (syncSet.hasConflicts() || syncSet.hasOutgoingChanges()) {

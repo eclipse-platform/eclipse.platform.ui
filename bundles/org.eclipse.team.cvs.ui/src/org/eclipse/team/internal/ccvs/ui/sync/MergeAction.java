@@ -12,9 +12,11 @@ import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
@@ -181,5 +183,33 @@ abstract class MergeAction extends Action {
 			ErrorDialog.openError(shell, problemMessage, error.getMessage(), error);
 			CVSUIPlugin.log(error);
 		}
+	}
+	
+	/**
+	 * Helper method. Check if a save is necessary. If it is, prompt the user to save.
+	 * Return true if all necessary saves have been performed, false otherwise.
+	 */
+	protected boolean saveIfNecessary() {
+		if (!getDiffModel().isDirty()) {
+			return true;
+		}
+		final boolean[] result = new boolean[1];
+		getShell().getDisplay().syncExec(new Runnable() {
+			public void run() {
+				try {
+					boolean r = MessageDialog.openConfirm(getShell(), Policy.bind("MergeAction.saveChangesTitle"), Policy.bind("MergeAction.saveChanges"));
+					if (!r) {
+						result[0] = false;
+						return;
+					}
+					getDiffModel().saveChanges(new NullProgressMonitor());
+					result[0] = true;
+				} catch (CoreException e) {
+					ErrorDialog.openError(getShell(), Policy.bind("simpleInternal"), Policy.bind("internal"), e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
+					result[0] = false;
+				}
+			}
+		});
+		return result[0];
 	}
 }
