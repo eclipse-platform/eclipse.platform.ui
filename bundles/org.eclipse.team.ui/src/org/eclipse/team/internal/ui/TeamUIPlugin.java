@@ -375,12 +375,13 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 			RefreshSubscriberJob refreshJob = getRefreshJob();
 			refreshJob.setRefreshInterval(getPreferenceStore().getInt(IPreferenceIds.SYNCVIEW_DELAY) * 60);
 			if(((Boolean)event.getNewValue()).booleanValue()) {
+				refreshJob.setRestartOnCancel(true);
 				refreshJob.setReschedule(true);
 				refreshJob.schedule();				
 			} else {				
 				refreshJob.setRestartOnCancel(false /* don't restart the job */);
 				refreshJob.setReschedule(false);
-				refreshJob.cancel();
+				refreshJob.cancel();				
 			}
 		}
 	}

@@ -63,17 +63,15 @@ public class RefreshAction extends Action {
 	}
 	
 	public static void run(SyncViewer viewer, IResource[] resources, TeamSubscriber subscriber) {
-		if(TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SYNCVIEW_BACKGROUND_SYNC)) {
-			// Cancel the scheduled background refresh but ensure it gets rescheduled
-			// to run later.
-			Platform.getJobManager().cancel(RefreshSubscriberJob.getFamily());
+		// Cancel the scheduled background refresh or any other refresh that is happening.
+		// The scheduled background refresh will restart automatically.
+		Platform.getJobManager().cancel(RefreshSubscriberJob.getFamily());
+		if(TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SYNCVIEW_BACKGROUND_SYNC)) {			
 			RefreshSubscriberJob job = new RefreshSubscriberJob(Policy.bind("SyncViewRefresh.taskName", new Integer(resources.length).toString()), resources, subscriber); //$NON-NLS-1$
-			if(TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SYNCVIEW_SCHEDULED_SYNC)) {
-				job.schedule();
-			}
-		} else {
+			job.schedule();
+		} else { 			
 			runBlocking(viewer, subscriber, resources);
-		}		
+		}
 	}
 		
 	private static void runBlocking(SyncViewer viewer, final TeamSubscriber s, final IResource[] resources) {
