@@ -23,7 +23,8 @@ import org.eclipse.ui.externaltools.model.StringMatcher;
 public class JavacLineTracker implements IConsoleLineTracker {
 	
 	private IConsole fConsole;
-	private StringMatcher fErrorMatcher;
+	private StringMatcher fEclipseCompilerMatcher;
+	private StringMatcher fJavacMatcher;
 
 	/**
 	 * Constructor for JavacLineTracker.
@@ -37,7 +38,8 @@ public class JavacLineTracker implements IConsoleLineTracker {
 	 */
 	public void init(IConsole console) {
 		fConsole = console;
-		fErrorMatcher = new StringMatcher("*[javac]*ERROR in*.java*(at line*)*",false, false); //$NON-NLS-1$
+		fEclipseCompilerMatcher = new StringMatcher("*[javac]*ERROR in*.java*(at line*)*",false, false); //$NON-NLS-1$
+		fJavacMatcher = new StringMatcher("*[javac] *.java:*:*",false, false); //$NON-NLS-1$
 	}
 
 	/**
@@ -48,16 +50,39 @@ public class JavacLineTracker implements IConsoleLineTracker {
 			int lineOffset = line.getOffset();
 			int lineLength = line.getLength();
 			String text = fConsole.getDocument().get(lineOffset, lineLength);
-			if (fErrorMatcher.match(text)) {
+			String fileName = null;
+			String lineNumber = ""; //$NON-NLS-1$
+			int fileStart = -1;
+			if (fEclipseCompilerMatcher.match(text)) {
 				int index = text.indexOf("ERROR in"); //$NON-NLS-1$
-				int fileStart = index + 9;
-				index = text.lastIndexOf("(at line "); //$NON-NLS-1$
-				int fileEnd = index - 1;
-				int numberStart = index + 9;
-				index = text.lastIndexOf(')');
-				int numberEnd = index;
-				String fileName = text.substring(fileStart, fileEnd).trim();
-				String lineNumber = text.substring(numberStart, numberEnd).trim();
+				if (index > 0) {
+					fileStart = index + 9;
+					index = text.lastIndexOf("(at line "); //$NON-NLS-1$
+					if (index > 0) {
+						int fileEnd = index - 1;
+						int numberStart = index + 9;
+						index = text.lastIndexOf(')');
+						if (index > 0) {
+							int numberEnd = index;
+							fileName = text.substring(fileStart, fileEnd).trim();
+							lineNumber = text.substring(numberStart, numberEnd).trim();
+						}
+					}
+				}
+			} else if (fJavacMatcher.match(text)) {
+				fileStart = text.indexOf("[javac] "); //$NON-NLS-1$
+				fileStart += 8;
+				int index = text.indexOf(".java:", fileStart); //$NON-NLS-1$
+				if (index > 0) {
+					int numberStart = index + 6;
+					fileName = text.substring(fileStart, numberStart - 1).trim();
+					index = text.indexOf(":", numberStart); //$NON-NLS-1$
+					if (index > numberStart) {
+						lineNumber = text.substring(numberStart, index);
+					}
+				}
+			}
+			if (fileName != null) {
 				int num = -1;
 				try {
 					num = Integer.parseInt(lineNumber);
