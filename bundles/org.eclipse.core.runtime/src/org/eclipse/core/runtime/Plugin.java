@@ -180,10 +180,7 @@ public abstract class Plugin implements BundleActivator {
 		Assert.isNotNull(descriptor);
 		Assert.isTrue(!CompatibilityHelper.hasPluginObject(descriptor), Policy.bind("plugin.deactivatedLoad", this.getClass().getName(), descriptor.getUniqueIdentifier() + " is not activated")); //$NON-NLS-1$ //$NON-NLS-2$
 		this.descriptor = descriptor;
-		String key = descriptor.getUniqueIdentifier() + "/debug"; //$NON-NLS-1$
-		String value = InternalPlatform.getDefault().getOption(key);
-		this.debug = value == null ? false : value.equalsIgnoreCase("true"); //$NON-NLS-1$
-
+		
 		// on plugin start, find and start the corresponding bundle.
 		bundle = InternalPlatform.getDefault().getBundle(descriptor.getUniqueIdentifier());
 		try {
@@ -616,15 +613,21 @@ public abstract class Plugin implements BundleActivator {
 	public void start(BundleContext context) throws Exception {
 		bundle = context.getBundle();
 
+		String symbolicName = bundle.getSymbolicName();
+		if (symbolicName != null) {
+			String key = symbolicName + "/debug"; //$NON-NLS-1$
+			String value = InternalPlatform.getDefault().getOption(key);
+			this.debug = value == null ? false : value.equalsIgnoreCase("true"); //$NON-NLS-1$
+		}
+		
 		if (CompatibilityHelper.getCompatibility() == null)
 			return;
 		
 		//This associate a descriptor to any real bundle that uses this to start
-		String pluginId = bundle.getSymbolicName();
-		if (pluginId == null)
+		if (symbolicName == null)
 			return;
 		
-		descriptor = CompatibilityHelper.getPluginDescriptor(pluginId);
+		descriptor = CompatibilityHelper.getPluginDescriptor(symbolicName);
 		CompatibilityHelper.setPlugin(descriptor, this);
 		CompatibilityHelper.setActive(descriptor);
 	}
