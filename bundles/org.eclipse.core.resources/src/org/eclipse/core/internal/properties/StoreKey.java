@@ -135,11 +135,12 @@ public boolean matchPrefix() {
 }
 private String readNullTerminated(ByteArrayInputStream stream) throws IOException {
 	ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-	int b = stream.read();
-	while (b != 0) {
+	int b;
+	while ((b=stream.read()) > 0)
 		buffer.write(b);
-		b = stream.read();
-	}
+	//should not reach end of stream without first hitting null (0) byte
+	if (b == -1)
+		throw new EOFException();
 	return Convert.fromUTF8(buffer.toByteArray());
 }
 public byte[] toBytes() {
