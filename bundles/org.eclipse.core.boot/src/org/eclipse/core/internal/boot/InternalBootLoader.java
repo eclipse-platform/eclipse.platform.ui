@@ -823,7 +823,6 @@ private static URL[] readPluginPath(InputStream input) {
 	}
 	return (URL[]) result.toArray(new URL[result.size()]);
 }
-
 public static URL resolve(URL url) throws IOException {
 	if (!url.getProtocol().equals(PlatformURLHandler.PROTOCOL))
 		return url;
@@ -908,7 +907,14 @@ private static void setupSystemContext() {
 			os = BootLoader.OS_UNKNOWN;
 	}
 	if (ws == null)
-		ws = BootLoader.WS_UNKNOWN;
+		// setup default values for known OSes if nothing was specified
+		if (os.equals(BootLoader.OS_WIN32))
+			ws = BootLoader.WS_WIN32;
+		else
+			if (os.equals(BootLoader.OS_LINUX))
+				ws = BootLoader.WS_MOTIF;
+			else
+				ws = BootLoader.WS_UNKNOWN;
 }
 /**
  * @see BootLoader

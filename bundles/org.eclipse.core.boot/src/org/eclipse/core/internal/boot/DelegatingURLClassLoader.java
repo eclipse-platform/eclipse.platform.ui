@@ -156,6 +156,44 @@ public DelegatingURLClassLoader(URL[] codePath, URLContentFilter[] codeFilters, 
 	}
 }
 /**
+ * Returns the absolute path name of a native library. The VM
+ * invokes this method to locate the native libraries that belong
+ * to classes loaded with this class loader. If this method returns
+ * <code>null</code>, the VM searches the library along the path
+ * specified as the <code>java.library.path</code> property.
+ *
+ * @param      libname   the library name
+ * @return     the absolute path of the native library
+ */
+protected String basicFindLibrary(String libName) {
+	if (DEBUG && DEBUG_SHOW_ACTIONS && debugNative(libName))
+		debug("findLibrary(" + libName + ")");
+	if (base == null)
+		return null;
+	File libFile = null;
+	if (base.getProtocol().equals(PlatformURLHandler.FILE) || base.getProtocol().equals(PlatformURLHandler.VA)) {
+		// directly access library	
+		String libFileName = (base.getFile() + libName).replace('/', File.separatorChar);
+		libFile = new File(libFileName);
+	} else
+		if (base.getProtocol().equals(PlatformURLHandler.PROTOCOL))
+			// access library through eclipse URL
+			libFile = getNativeLibraryAsLocal(libName);
+
+	if (libFile == null)
+		return null;
+	if (!libFile.exists()) {
+		if (DEBUG && DEBUG_SHOW_FAILURE && debugNative(libName))
+			debug("not found " + libName);
+		return null; // can't find the file
+	}
+
+	if (DEBUG && DEBUG_SHOW_SUCCESS && debugNative(libName))
+		debug("found " + libName + " as " + libFile.getAbsolutePath());
+
+	return libFile.getAbsolutePath();
+}
+/**
  * Returns the given class or <code>null</code> if the class is not visible to the
  * given requestor.  The <code>inCache</code> flag controls how this action is
  * reported if in debug mode.
@@ -250,6 +288,10 @@ protected boolean debugResource(String name) {
 	}
 	return false;
 }
+protected void enableHotSwap(ClassLoader cl, Class clazz) {
+	if (isHotSwapEnabled)
+		VM.enableClassHotSwap(clazz);
+}
 /**
  * Looks for the requested class in the parent of this loader using
  * standard Java protocols.  If the parent is null then the system class
@@ -335,51 +377,12 @@ protected Class findClassPrerequisites(final String name, DelegatingURLClassLoad
 protected URL findClassResource(String name) {
 	return super.findResource(name);
 }
-/**
- * Returns the absolute path name of a native library. The VM
- * invokes this method to locate the native libraries that belong
- * to classes loaded with this class loader. If this method returns
- * <code>null</code>, the VM searches the library along the path
- * specified as the <code>java.library.path</code> property.
- *
- * @param      libname   the library name
- * @return     the absolute path of the native library
- */
-protected String basicFindLibrary(String libName) {
-	if (DEBUG && DEBUG_SHOW_ACTIONS && debugNative(libName))
-		debug("findLibrary(" + libName + ")");
-	if (base == null)
-		return null;
-	String osLibFileName = System.mapLibraryName(libName);
-	File libFile = null;
-	if (base.getProtocol().equals(PlatformURLHandler.FILE) || base.getProtocol().equals(PlatformURLHandler.VA)) {
-		// directly access library	
-		String libFileName = (base.getFile() + osLibFileName).replace('/', File.separatorChar);
-		libFile = new File(libFileName);
-	} else
-		if (base.getProtocol().equals(PlatformURLHandler.PROTOCOL))
-			// access library through eclipse URL
-			libFile = getNativeLibraryAsLocal(osLibFileName);
-
-	if (libFile == null)
-		return null;
-	if (!libFile.exists()) {
-		if (DEBUG && DEBUG_SHOW_FAILURE && debugNative(libName))
-			debug("not found " + libName);
-		return null; // can't find the file
-	}
-
-	if (DEBUG && DEBUG_SHOW_SUCCESS && debugNative(libName))
-		debug("found " + libName + " as " + libFile.getAbsolutePath());
-
-	return libFile.getAbsolutePath();
-}
-
 protected String findLibrary(String libName) {
 	if (libName.length() == 0)
 		return null;
 	if (libName.charAt(0) == '/' || libName.charAt(0) == '\\')
 		libName = libName.substring(1);
+	libName = System.mapLibraryName(libName);
 	String result;
 	result = basicFindLibrary(libName);
 	if (result != null)
@@ -392,7 +395,6 @@ protected String findLibrary(String libName) {
 		return result;
 	return findLibraryNL(libName);
 }
-
 /**
  * Scan all the possible NL-based locations in which there might be a 
  * requested library.
@@ -411,7 +413,6 @@ private String findLibraryNL(String libName) {
 	}
 	return result;
 }
-
 /**
  * Finds the resource with the specified name on the URL search path.
  * Returns a URL for the resource. If resource is not found in own 
@@ -498,6 +499,17 @@ private Enumeration findResources(String name, DelegatingURLClassLoader requesto
 	}
 
 	return result;
+}
+protected String getFileFromURL(URL target) {
+	try {
+		URL url = InternalBootLoader.resolve(target);
+		String protocol = url.getProtocol();
+		// check only for the file protocol here.  Not interested in Jar files.
+		if (protocol.equals(PlatformURLHandler.FILE))
+			return url.getFile();
+	} catch (IOException e) {
+	}
+	return null;
 }
 private File getNativeLibraryAsLocal(String osname) {
 	File result = null;
@@ -607,12 +619,6 @@ protected Class loadClass(String name, boolean resolve) throws ClassNotFoundExce
 	}
 	return result;
 }
-protected void enableHotSwap(ClassLoader cl, Class clazz) {
-	if (isHotSwapEnabled)
-		VM.enableClassHotSwap(clazz);
-}
-
-
 /**
  * Delegated load call.  This method is not synchronized.  Implementations of
  * findClassParentsSelf, and perhaps others, should synchronize themselves as
@@ -641,7 +647,6 @@ private Class loadClass(String name, boolean resolve, DelegatingURLClassLoader r
 
 	return result;
 }
-
 private void setHotSwapPath(ClassLoader cl, URL[] urls) {
 	if (!isHotSwapEnabled)
 		return;
@@ -661,19 +666,6 @@ private void setHotSwapPath(ClassLoader cl, URL[] urls) {
 	if (path.length() > 0)
 		VM.setClassPathImpl(cl, path.toString());
 }
-
-protected String getFileFromURL(URL target) {
-	try {
-		URL url = InternalBootLoader.resolve(target);
-		String protocol = url.getProtocol();
-		// check only for the file protocol here.  Not interested in Jar files.
-		if (protocol.equals(PlatformURLHandler.FILE))
-			return url.getFile();
-	} catch (IOException e) {
-	}
-	return null;
-}
-
 protected void setImportedLoaders(DelegateLoader[] loaders) {
 	
 	imports = loaders;
