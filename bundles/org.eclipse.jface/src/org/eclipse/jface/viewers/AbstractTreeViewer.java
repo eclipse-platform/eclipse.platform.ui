@@ -7,7 +7,9 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- ******************************************************************************/package org.eclipse.jface.viewers;
+ ******************************************************************************/
+
+package org.eclipse.jface.viewers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -926,7 +928,8 @@ private void internalRefresh(Widget widget, Object element, boolean doStruct, bo
 		if (doStruct) {
 			updatePlus((Item)widget, element);
 		}	
-		if (updateLabels) {
+		// update labels if told to, or if element has changed
+		if (updateLabels || !equals(element, widget.getData())) {
 			doUpdateItem(widget, element, true);
 		}
 		else {

@@ -302,9 +302,9 @@ protected abstract void doUpdateItem(
  */	
 protected boolean equals(Object elementA, Object elementB) {
 	if (comparer == null)
-		return elementA.equals(elementB);
+		return elementA == null ? elementB == null : elementA.equals(elementB);
 	else
-		return comparer.equals(elementA, elementB);
+		return elementA == null ? elementB == null : comparer.equals(elementA, elementB);
 }
 
 /**
