@@ -8,7 +8,7 @@
 
 	<target name="init" depends="properties">
 		<property name="plugin" value="org.eclipse.help.webapp"/>
-		<property name="version.suffix" value="_2.0.0"/>
+		<property name="version.suffix" value="_2.1.0"/>
 		<!-- custom change begin -->
 		<!--
 		<property name="full.name" value="${plugin}${version.suffix}"/>

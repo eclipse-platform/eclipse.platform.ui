@@ -9,7 +9,7 @@
 <plugin
    name = "%help_plugin_name"
    id = "org.eclipse.help.webapp"
-   version = "2.0.0"
+   version = "2.1.0"
    provider-name = "%providerName">
 
    <requires>
