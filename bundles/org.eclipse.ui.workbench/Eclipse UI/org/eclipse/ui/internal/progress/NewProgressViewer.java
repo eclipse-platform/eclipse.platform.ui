@@ -1,6 +1,7 @@
 package org.eclipse.ui.internal.progress;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -13,7 +14,6 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -50,7 +50,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.internal.misc.Assert;
 
-public class NewProgressViewer extends ProgressTreeViewer {
+public class NewProgressViewer extends ProgressTreeViewer implements FinishedJobs.KeptJobsListener {
     
 	static final String PROPERTY_PREFIX= "org.eclipse.ui.workbench.progress"; //$NON-NLS-1$
 
@@ -63,8 +63,6 @@ public class NewProgressViewer extends ProgressTreeViewer {
 
 	private static String ELLIPSIS = ProgressMessages.getString("ProgressFloatingWindow.EllipsisValue"); //$NON-NLS-1$
 
-	private static ListenerList allJobViews= new ListenerList();
-	
 	static final QualifiedName KEEP_PROPERTY= new QualifiedName(PROPERTY_PREFIX, PROPERTY_KEEP);
 	static final QualifiedName ICON_PROPERTY= new QualifiedName(PROPERTY_PREFIX, PROPERTY_ICON);
 	static final QualifiedName GOTO_PROPERTY= new QualifiedName(PROPERTY_PREFIX, PROPERTY_GOTO);
@@ -76,7 +74,7 @@ public class NewProgressViewer extends ProgressTreeViewer {
 	private Color errorColor;
 	private Color errorColor2;
 	private Color darkColor;
-	private Color whiteColor;
+	private Color lightColor;
 	private Color taskColor;
 	private Color selectedColor;
 	private Cursor handCursor;
@@ -534,17 +532,8 @@ public class NewProgressViewer extends ProgressTreeViewer {
 		public boolean kill(boolean refresh, boolean broadcast) {
 			if (jobTerminated) {
 				
-				if (broadcast) {
-					Object[] listeners= allJobViews.getListeners();
-					for (int i= 0; i < listeners.length; i++) {
-						NewProgressViewer jv= (NewProgressViewer) listeners[i];
-						if (jv != NewProgressViewer.this) {
-							JobTreeItem ji= jv.findJobItem(jobTreeElement, false);
-							if (ji != null)
-								ji.kill(true, false);
-						}
-					}
-				}
+				if (broadcast && jobTreeElement instanceof JobInfo)
+				    FinishedJobs.getInstance().remove(NewProgressViewer.this, (JobInfo)jobTreeElement);
 				
 				dispose();
 				relayout(refresh, refresh);
@@ -623,7 +612,7 @@ public class NewProgressViewer extends ProgressTreeViewer {
 			if (selected)
 				c= selectedColor;				
 			else
-				c= dark ? darkColor : whiteColor;
+				c= dark ? darkColor : lightColor;
 			setBackground(c);
 			
 			Control[] cs= getChildren();
@@ -773,14 +762,14 @@ public class NewProgressViewer extends ProgressTreeViewer {
         if (c instanceof Tree)
             c.dispose();
        
-		allJobViews.add(this);
+        FinishedJobs.getInstance().addListener(this);
 		
 		Display display= parent.getDisplay();
 		handCursor= new Cursor(display, SWT.CURSOR_HAND);
 		normalCursor= new Cursor(display, SWT.CURSOR_ARROW);
 
 		boolean carbon= "carbon".equals(SWT.getPlatform()); //$NON-NLS-1$
-		whiteColor= display.getSystemColor(SWT.COLOR_WHITE);
+		lightColor= display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 		if (carbon)
 			darkColor= new Color(display, 230, 230, 230);
 		else
@@ -800,7 +789,7 @@ public class NewProgressViewer extends ProgressTreeViewer {
 				
 		list= new Composite(scroller, SWT.NONE);
 		list.setFont(defaultFont);
-		list.setBackground(whiteColor);
+		list.setBackground(lightColor);
 		list.setLayout(new ListLayout());
 		
 		scroller.setContent(list);
@@ -811,7 +800,7 @@ public class NewProgressViewer extends ProgressTreeViewer {
 
     protected void handleDispose(DisposeEvent event) {
         super.handleDispose(event);
-		allJobViews.remove(this);
+        FinishedJobs.getInstance().removeListener(this);
     }
  
     // need to implement
@@ -1006,11 +995,33 @@ public class NewProgressViewer extends ProgressTreeViewer {
 	}
 
 	Object[] contentProviderGetRoots(Object parent) {
+	    HashSet roots= new HashSet();
 		IContentProvider provider = getContentProvider();
-		if (provider instanceof ITreeContentProvider)
-			return ((ITreeContentProvider)provider).getElements(parent);
-		return new Object[0];
+		if (provider instanceof ITreeContentProvider) {
+			Object[] r= ((ITreeContentProvider)provider).getElements(parent);
+			for (int i= 0; i < r.length; i++)
+			    roots.add(r[i]);
+		}
+		JobInfo[] infos= FinishedJobs.getInstance().getJobInfos();
+		for (int i= 0; i < infos.length; i++)
+		    roots.add(infos[i]);
+		return roots.toArray();
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.progress.NewKeptJobs.KeptJobsListener#added(org.eclipse.ui.internal.progress.JobInfo)
+     */
+    public void added(JobInfo info) {
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.progress.NewKeptJobs.KeptJobsListener#removed(org.eclipse.ui.internal.progress.JobInfo)
+     */
+    public void removed(JobInfo info) {
+		JobTreeItem ji= findJobItem(info, false);
+		if (ji != null)
+			ji.kill(true, false);
+    }
 
 	////// SelectionProvider
 
@@ -1029,7 +1040,7 @@ public class NewProgressViewer extends ProgressTreeViewer {
 
     public void cancelSelection() {
     }
-
+    
     ///////////////////////////////////
 
     protected void addTreeListener(Control c, TreeListener listener) {
@@ -1099,4 +1110,5 @@ public class NewProgressViewer extends ProgressTreeViewer {
 	
 	protected void internalRefresh(Object element, boolean updateLabels) {
 	}
+
 }
