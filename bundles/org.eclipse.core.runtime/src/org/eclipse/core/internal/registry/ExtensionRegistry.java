@@ -16,7 +16,6 @@ import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.registry.*;
 
 /**
  * An OSGi-free implementation for the extension registry API.
@@ -132,20 +131,20 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 		return fragmentNames == null ? Collections.EMPTY_SET : fragmentNames;
 	}
 	private void addExtension(IExtension extension) {
-		IExtensionPoint extPoint = getExtensionPoint(extension.getExtensionPointIdentifier());
+		IExtensionPoint extPoint = getExtensionPoint(extension.getExtensionPointUniqueIdentifier());
 		//orphan extension
 		if (extPoint == null) {
 			// are there any other orphan extensions
-			IExtension[] existingOrphanExtensions = (IExtension[]) orphanExtensions.get(extension.getExtensionPointIdentifier());
+			IExtension[] existingOrphanExtensions = (IExtension[]) orphanExtensions.get(extension.getExtensionPointUniqueIdentifier());
 			if (existingOrphanExtensions != null) {
 				// just add
 				IExtension[] newOrphanExtensions = new IExtension[existingOrphanExtensions.length + 1];
 				System.arraycopy(existingOrphanExtensions, 0, newOrphanExtensions, 0, existingOrphanExtensions.length);
 				newOrphanExtensions[newOrphanExtensions.length - 1] = extension;
-				orphanExtensions.put(extension.getExtensionPointIdentifier(), newOrphanExtensions);
+				orphanExtensions.put(extension.getExtensionPointUniqueIdentifier(), newOrphanExtensions);
 			} else
 				// otherwise this is the first one
-				orphanExtensions.put(extension.getExtensionPointIdentifier(), new IExtension[] { extension });
+				orphanExtensions.put(extension.getExtensionPointUniqueIdentifier(), new IExtension[] { extension });
 			return;
 		}
 		// otherwise, link them
@@ -400,10 +399,10 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 		}
 	}
 	private void removeExtension(IExtension extension) {
-		IExtensionPoint extPoint = getExtensionPoint(extension.getExtensionPointIdentifier());
+		IExtensionPoint extPoint = getExtensionPoint(extension.getExtensionPointUniqueIdentifier());
 		if (extPoint == null) {
 			// not found - maybe it was an orphan extension
-			IExtension[] existingOrphanExtensions = (IExtension[]) orphanExtensions.get(extension.getExtensionPointIdentifier());
+			IExtension[] existingOrphanExtensions = (IExtension[]) orphanExtensions.get(extension.getExtensionPointUniqueIdentifier());
 			if (existingOrphanExtensions == null)
 				// nope, this extension is unknown
 				return;
@@ -412,7 +411,7 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 			for (int i = 0, j = 0; i < existingOrphanExtensions.length; i++)
 				if (extension != existingOrphanExtensions[i])
 					newOrphanExtensions[j++] = existingOrphanExtensions[i];
-			orphanExtensions.put(extension.getExtensionPointIdentifier(), newOrphanExtensions);
+			orphanExtensions.put(extension.getExtensionPointUniqueIdentifier(), newOrphanExtensions);
 			return;
 		}
 		// otherwise, unlink the extension from the extension point

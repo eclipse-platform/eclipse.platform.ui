@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.core.internal.registry;
 
-import org.eclipse.core.runtime.registry.IConfigurationElement;
-import org.eclipse.core.runtime.registry.IExtension;
+import java.lang.reflect.Method;
+import org.eclipse.core.internal.runtime.CompatibilityHelper;
+import org.eclipse.core.runtime.*;
+import org.osgi.framework.Bundle;
 
 /**
  * An object which represents the user-defined extension in a 
@@ -158,5 +160,10 @@ public class Extension extends RegistryModelObject implements IExtension {
 	public void setFullyLoaded(boolean value) {
 		fullyLoaded = value;
 	}
-
+	public IPluginDescriptor getDeclaringPluginDescriptor() {
+		return CompatibilityHelper.getPluginDescriptor(((BundleModel) getParent()).getName());
+	}
+	public String getExtensionPointUniqueIdentifier() {
+		return getExtensionPointIdentifier();
+	}
 }

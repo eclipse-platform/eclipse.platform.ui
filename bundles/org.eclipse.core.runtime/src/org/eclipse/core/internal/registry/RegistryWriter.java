@@ -11,7 +11,7 @@
 package org.eclipse.core.internal.registry;
 
 import java.io.PrintWriter;
-import org.eclipse.core.runtime.registry.*;
+import org.eclipse.core.runtime.*;
 
 public class RegistryWriter {
 	public RegistryWriter() {

@@ -11,9 +11,10 @@
 package org.eclipse.core.internal.registry;
 
 import java.io.File;
-
-import org.eclipse.core.runtime.registry.IExtension;
-import org.eclipse.core.runtime.registry.IExtensionPoint;
+import java.util.ArrayList;
+import java.util.Arrays;
+import org.eclipse.core.internal.runtime.CompatibilityHelper;
+import org.eclipse.core.runtime.*;
 
 /**
  * An object which represents the user-defined extension point in a 
@@ -81,5 +82,19 @@ public class ExtensionPoint extends RegistryModelObject implements IExtensionPoi
 	}
 	public String toString() {
 		return getUniqueIdentifier();
+	}
+	public IConfigurationElement[] getConfigurationElements() {
+		IExtension[] exts = getExtensions();
+		ArrayList allConfigElts = new ArrayList();
+		
+		for (int i = 0; i < exts.length; i++)
+			allConfigElts.addAll(Arrays.asList(exts[i].getConfigurationElements()));
+		
+		IConfigurationElement[] value = new IConfigurationElement[allConfigElts.size()]; 
+		allConfigElts.toArray(value);
+		return value;
+	}
+	public IPluginDescriptor getDeclaringPluginDescriptor() {
+		return CompatibilityHelper.getPluginDescriptor(getParentIdentifier());
 	}
 }

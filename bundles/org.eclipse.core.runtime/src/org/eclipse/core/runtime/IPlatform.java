@@ -11,11 +11,14 @@
 package org.eclipse.core.runtime;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
-import java.util.Map;
+import java.util.*;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.osgi.framework.Bundle;
 
+// TODO clarify the javadoc below.  Copy the signatures from Platform.
+// talk to jeem about the best way to do the triplication
 /**
  * The central class of the Eclipse Platform Runtime. This class cannot
  * be instantiated or subclassed by clients; all functionality is provided 
@@ -344,4 +347,92 @@ public interface IPlatform {
 	 * metadata for this running Eclipse.
 	 */
 	public IPath getConfigurationMetadataLocation();
+	
+	/**
+	 * Takes down the splash screen if one was put up.
+	 */
+	public void endSplash();
+	
+	public URL find(Bundle b, IPath path);
+	
+	public URL find(Bundle b, IPath path, Map override);
+	
+	public InputStream openStream(Bundle b, IPath file)  throws IOException;
+	/**
+	 * Returns an input stream for the specified file. The file path
+	 * must be specified relative to this plug-in's installation location.
+	 * Optionally, the platform searches for the correct localized version
+	 * of the specified file using the users current locale, and Java
+	 * naming convention for localized resource files (locale suffix appended 
+	 * to the specified file extension).
+	 * <p>
+	 * The caller must close the returned stream when done.
+	 * </p>
+	 *
+	 * @param file path relative to plug-in installation location
+	 * @param localized <code>true</code> for the localized version
+	 *   of the file, and <code>false</code> for the file exactly
+	 *   as specified
+	 * @return an input stream
+	 */	
+	public InputStream openStream(Bundle b, IPath file, boolean localized) throws IOException;
+	
+	public IPath getStateLocation(Bundle bundle);
+	
+	public ResourceBundle getResourceBundle(Bundle bundle) throws MissingResourceException;
+	/**
+	 * Returns a resource string corresponding to the given argument value.
+	 * If the argument value specifies a resource key, the string
+	 * is looked up in the default resource bundle. If the argument does not
+	 * specify a valid key, the argument itself is returned as the
+	 * resource string. The key lookup is performed in the
+	 * plugin.properties resource bundle. If a resource string 
+	 * corresponding to the key is not found in the resource bundle
+	 * the key value, or any default text following the key in the
+	 * argument value is returned as the resource string.
+	 * A key is identified as a string begining with the "%" character.
+	 * Note, that the "%" character is stripped off prior to lookup
+	 * in the resource bundle.
+	 * <p>
+	 * Equivalent to <code>getResourceString(value, getResourceBundle())</code>
+	 * </p>
+	 *
+	 * @param value the value
+	 * @return the resource string
+	 * @see #getResourceBundle
+	 */
+	public String getResourceString(Bundle bundle, String value);
+	/**
+	 * Returns a resource string corresponding to the given argument 
+	 * value and bundle.
+	 * If the argument value specifies a resource key, the string
+	 * is looked up in the given resource bundle. If the argument does not
+	 * specify a valid key, the argument itself is returned as the
+	 * resource string. The key lookup is performed against the
+	 * specified resource bundle. If a resource string 
+	 * corresponding to the key is not found in the resource bundle
+	 * the key value, or any default text following the key in the
+	 * argument value is returned as the resource string.
+	 * A key is identified as a string begining with the "%" character.
+	 * Note that the "%" character is stripped off prior to lookup
+	 * in the resource bundle.
+	 * <p>
+	 * For example, assume resource bundle plugin.properties contains
+	 * name = Project Name
+	 * <pre>
+	 *     getResourceString("Hello World") returns "Hello World"</li>
+	 *     getResourceString("%name") returns "Project Name"</li>
+	 *     getResourceString("%name Hello World") returns "Project Name"</li>
+	 *     getResourceString("%abcd Hello World") returns "Hello World"</li>
+	 *     getResourceString("%abcd") returns "%abcd"</li>
+	 *     getResourceString("%%name") returns "%name"</li>
+	 * </pre>
+	 * </p>
+	 *
+	 * @param value the value
+	 * @param bundle the resource bundle
+	 * @return the resource string
+	 * @see #getResourceBundle
+	 */
+	public String getResourceString(Bundle bundle, String value, ResourceBundle resourceBundle);
 }

@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.registry;
 
-import org.eclipse.core.runtime.registry.IExtension;
-import org.eclipse.core.runtime.registry.IExtensionPoint;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
 
 //TODO: need to put back support for fragments - they are needed for OSGi
 public interface IRegistryElement {

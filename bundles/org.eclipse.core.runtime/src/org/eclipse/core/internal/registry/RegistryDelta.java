@@ -12,8 +12,8 @@ package org.eclipse.core.internal.registry;
 
 import java.util.*;
 
-import org.eclipse.core.runtime.registry.IExtension;
-import org.eclipse.core.runtime.registry.IExtensionDelta;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionDelta;
 
 /*
  * Basic implementation for now...
@@ -35,7 +35,7 @@ public class RegistryDelta {
 		Collection selectedExtDeltas = new LinkedList();
 		for (Iterator extDeltasIter = extensionDeltas.iterator(); extDeltasIter.hasNext();) {
 			IExtensionDelta extensionDelta = (IExtensionDelta) extDeltasIter.next();
-			if (extensionDelta.getExtension().getExtensionPointIdentifier().equals(extensionPoint))
+			if (extensionDelta.getExtension().getExtensionPointUniqueIdentifier().equals(extensionPoint))
 				selectedExtDeltas.add(extensionDelta);
 		}
 		return (IExtensionDelta[]) selectedExtDeltas.toArray(new IExtensionDelta[selectedExtDeltas.size()]);
@@ -48,7 +48,7 @@ public class RegistryDelta {
 		for (Iterator extDeltasIter = extensionDeltas.iterator(); extDeltasIter.hasNext();) {
 			IExtensionDelta extensionDelta = (IExtensionDelta) extDeltasIter.next();
 			IExtension extension = extensionDelta.getExtension();
-			if (extension.getExtensionPointIdentifier().equals(extensionPointId) && extension.getUniqueIdentifier() != null && extension.getUniqueIdentifier().equals(extensionId))
+			if (extension.getExtensionPointUniqueIdentifier().equals(extensionPointId) && extension.getUniqueIdentifier() != null && extension.getUniqueIdentifier().equals(extensionId))
 				return extensionDelta;
 		}
 		return null;

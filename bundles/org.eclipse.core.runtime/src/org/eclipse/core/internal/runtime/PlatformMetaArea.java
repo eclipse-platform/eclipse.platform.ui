@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import org.eclipse.core.runtime.*;
+import org.osgi.framework.Bundle;
 
 public class PlatformMetaArea {
 	IPath location;
@@ -105,8 +106,8 @@ public class PlatformMetaArea {
 	 * Returns the read/write location in which the given bundle can manage
 	 * private state.  
 	 */
-	public IPath getStateLocation(String bundleId) {
-		return getLocation().append(F_PLUGIN_DATA).append(bundleId);
+	public IPath getStateLocation(Bundle bundle) {
+		return getLocation().append(F_PLUGIN_DATA).append(bundle.getGlobalName());
 	}
 	/**
 	 * 
@@ -117,8 +118,8 @@ public class PlatformMetaArea {
 	/**
 	 * Returns the read/write location of the file for storing plugin preferences.
 	 */
-	public IPath getPreferenceLocation(String bundleId, boolean create) {
-		IPath result = getStateLocation(bundleId);
+	public IPath getPreferenceLocation(Bundle bundle, boolean create) {
+		IPath result = getStateLocation(bundle);
 		if (create)
 			result.toFile().mkdirs();
 		return result.append(PREFERENCES_FILE_NAME);
@@ -198,8 +199,8 @@ public class PlatformMetaArea {
 		}
 	}
 
-	public IPath getPluginPreferenceLocation(String bundleId, boolean create) {
-		IPath result = getStateLocation(bundleId);
+	public IPath getPluginPreferenceLocation(Bundle bundle, boolean create) {
+		IPath result = getStateLocation(bundle);
 		if (create)
 			result.toFile().mkdirs();
 		return result.append(PREFERENCES_FILE_NAME);

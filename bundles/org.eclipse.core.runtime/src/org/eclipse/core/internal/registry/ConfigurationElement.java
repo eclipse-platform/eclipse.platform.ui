@@ -10,12 +10,9 @@
  *******************************************************************************/
 package org.eclipse.core.internal.registry;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.util.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Policy;
-import org.eclipse.core.runtime.registry.*;
 import org.eclipse.core.runtime.*;
 import org.osgi.framework.Bundle;
 
@@ -164,41 +161,7 @@ public class ConfigurationElement extends RegistryModelObject implements IConfig
 				throwException(Policy.bind("policy.initObjectError", bundle.getGlobalName(), className), te); //$NON-NLS-1$
 			}
 		}
-		//For backward compatibility reason we can not return here. See bug #47810. 
-
-		//Backward compatibility handling of configurationElement
-		if (oldStyleConfigurationElement != null || implementsIExecutableExtension(result)) {
-			Class oldConfigurationElement = null;
-			Method executableExtension = null;
-			try {
-				oldConfigurationElement = Class.forName(OLD_CONFIGURATION_ELEMENT_NAME);
-				try {
-					executableExtension = oldConfigurationElement.getMethod("runOldExecutableExtension", new Class[] { Object.class, String.class, Object.class }); //$NON-NLS-1$
-					try {
-						if (oldStyleConfigurationElement == null)
-							oldStyleConfigurationElement = createOldStyleConfigurationElement(this);
-						executableExtension.invoke(oldStyleConfigurationElement, new Object[] { result, propertyName, initData });
-					} catch (Exception e) {
-						if (e instanceof CoreException) {
-							CoreException ce = (CoreException) e;
-							InternalPlatform.getDefault().getLog(InternalPlatform.getDefault().getBundle(IPlatform.PI_RUNTIME)).log(ce.getStatus());
-							throw new CoreException(ce.getStatus());
-						}
-						throwException(Policy.bind("policy.initObjectError", bundle.getGlobalName(), className), e); //$NON-NLS-1$
-					}
-				} catch (SecurityException e3) {
-					// TODO Auto-generated catch block
-					e3.printStackTrace();
-				} catch (NoSuchMethodException e3) {
-					//This can never happen
-				}
-			} catch (ClassNotFoundException e2) {
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
-			}
-		}
-
-		return result;
+ 		return result;
 	}
 
 	private void throwException(String message, Throwable exception) throws CoreException {
@@ -352,39 +315,5 @@ public class ConfigurationElement extends RegistryModelObject implements IConfig
 	public void setValue(String value) {
 		assertIsWriteable();
 		this.value = value;
-	}
-
-	public void setOldStyleConfigurationElement(Object ce) {
-		oldStyleConfigurationElement = ce;
-	}
-
-	private boolean implementsIExecutableExtension(Object o) {
-		//Here we use reflection so the runtime code can run without the compatibility fragment
-		Bundle compatibility = InternalPlatform.getDefault().getBundle(IPlatform.PI_RUNTIME_COMPATIBILITY);
-		if (compatibility != null) {
-			Class oldConfigurationElement = null;
-			try {
-				oldConfigurationElement = compatibility.loadClass(OLD_CONFIGURATION_ELEMENT_NAME);
-				Method testExecutableExtensionType = oldConfigurationElement.getMethod("implementsIExecutableExtension", new Class[] { Object.class }); //$NON-NLS-1$
-				return ((Boolean) testExecutableExtensionType.invoke(oldConfigurationElement, new Object[] { o })).booleanValue();
-			} catch (Exception e) {
-				//Ignore the exceptions, return false 
-			}
-		}
-		return false;
-	}
-
-	/* create an instance of the old configurationElement using reflection. Reflection is used so the runtime code can run without the compatibility fragment*/
-	private Object createOldStyleConfigurationElement(Object o) {
-		Class oldConfigurationElement = null;
-		try {
-			oldConfigurationElement = Class.forName(OLD_CONFIGURATION_ELEMENT_NAME);
-			Constructor constructor = oldConfigurationElement.getConstructor(new Class[] { org.eclipse.core.runtime.registry.IConfigurationElement.class });
-			return constructor.newInstance(new Object[] { o });
-		} catch (Exception e) {
-			e.printStackTrace();
-			//TODO 
-		}
-		return null;
 	}
 }

@@ -17,7 +17,6 @@ import java.lang.reflect.Method;
 import java.net.*;
 import java.util.Hashtable;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.registry.*;
 import org.osgi.service.url.*;
 
 public class PlatformURLPluginHandlerFactory {
@@ -89,7 +88,7 @@ public class PlatformURLPluginHandlerFactory {
 		}, "org.eclipse.core.runtime");
 	}
 
-	private static void installURL(org.eclipse.core.runtime.registry.IConfigurationElement ce) {
+	private static void installURL(org.eclipse.core.runtime.IConfigurationElement ce) {
 		String protocol;
 		if ((protocol = ce.getAttribute(PROTOCOL)) == null)
 			return;

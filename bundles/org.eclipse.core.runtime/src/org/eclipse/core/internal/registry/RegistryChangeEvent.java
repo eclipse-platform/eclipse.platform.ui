@@ -13,8 +13,8 @@ package org.eclipse.core.internal.registry;
 import java.util.Arrays;
 import java.util.Map;
 
-import org.eclipse.core.runtime.registry.IExtensionDelta;
-import org.eclipse.core.runtime.registry.IRegistryChangeEvent;
+import org.eclipse.core.runtime.IExtensionDelta;
+import org.eclipse.core.runtime.IRegistryChangeEvent;
 
 /**
  * A registry change event implementation. A filter can be specified. In that case, only 

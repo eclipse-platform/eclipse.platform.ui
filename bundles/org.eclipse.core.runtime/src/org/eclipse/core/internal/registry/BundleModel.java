@@ -16,8 +16,8 @@ import java.net.URL;
 import java.util.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Policy;
-import org.eclipse.core.runtime.registry.IExtension;
-import org.eclipse.core.runtime.registry.IExtensionPoint;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.osgi.framework.Bundle;
 
 /**

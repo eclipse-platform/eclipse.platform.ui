@@ -13,14 +13,12 @@ package org.eclipse.core.internal.runtime;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-
 import org.eclipse.core.boot.IPlatformRunnable;
 import org.eclipse.core.internal.boot.*;
 import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.IJobManager;
-import org.eclipse.core.runtime.registry.*;
-import org.eclipse.osgi.service.debug.DebugOptions;
+import org.eclipse.osgi.service.environment.DebugOptions;
 import org.eclipse.osgi.service.environment.EnvironmentInfo;
 import org.osgi.framework.*;
 import org.osgi.util.tracker.ServiceTracker;
@@ -381,13 +379,6 @@ public final class InternalPlatform implements IPlatform {
 
 	public IExtensionRegistry getRegistry() {
 		return registry;
-	}
-	public IPath getStateLocation(String bundleId, boolean create) {
-		assertInitialized();
-		IPath result = metaArea.getStateLocation(bundleId);
-		if (create)
-			result.toFile().mkdirs();
-		return result;
 	}
 	/**
 	 * Check whether the workspace metadata version matches the expected version. 
@@ -1189,5 +1180,40 @@ public final class InternalPlatform implements IPlatform {
 		if (configMetadataLocation == null)
 			configMetadataLocation = new Path(System.getProperty("osgi.configuration.area")); //$NON-NLS-1$
 		return configMetadataLocation;
+	}
+
+	public IPath getStateLocation(Bundle bundle, boolean create) {
+		assertInitialized();
+		IPath result = metaArea.getStateLocation(bundle);
+		if (create)
+			result.toFile().mkdirs();
+		return result;
+	}
+	public URL find(Bundle b, IPath path) {
+		return FindSupport.find(b, path);
+	}
+	public URL find(Bundle bundle, IPath path, Map override) {
+		return FindSupport.find(bundle, path, override);
+	}
+	public InputStream openStream(Bundle bundle, IPath file) throws IOException {
+		return FindSupport.openStream(bundle, file, false);
+	}
+	public InputStream openStream(Bundle bundle, IPath file, boolean localized) throws IOException {
+		return FindSupport.openStream(bundle, file, localized);
+	}
+	public IPath getStateLocation(Bundle bundle) {
+		return getStateLocation(bundle, true);
+	}
+	public ResourceBundle getResourceBundle(Bundle bundle) throws MissingResourceException {
+		//TODO
+		throw new NoSuchMethodError("getResourceBundleString");
+	}
+	public String getResourceString(Bundle bundle, String value) {
+		//TODO
+		throw new NoSuchMethodError("getResourceBundleString");
+	}
+	public String getResourceString(Bundle bundle, String value, ResourceBundle resourceBundle) {
+		//TODO
+		throw new NoSuchMethodError("getResourceBundleString");
 	}
 }

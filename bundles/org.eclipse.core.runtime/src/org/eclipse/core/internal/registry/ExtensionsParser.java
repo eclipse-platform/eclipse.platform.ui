@@ -18,7 +18,6 @@ import javax.xml.parsers.SAXParserFactory;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.registry.IConfigurationElement;
 import org.osgi.framework.ServiceReference;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
