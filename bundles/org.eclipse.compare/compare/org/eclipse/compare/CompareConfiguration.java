@@ -111,8 +111,11 @@ public class CompareConfiguration {
 		if (fPreferenceStore != null) {
 			boolean b= fPreferenceStore.getBoolean(ComparePreferencePage.INITIALLY_SHOW_ANCESTOR_PANE);
 			setProperty(ComparePreferencePage.INITIALLY_SHOW_ANCESTOR_PANE, new Boolean(b));
+			
+			b= fPreferenceStore.getBoolean(ComparePreferencePage.IGNORE_WHITESPACE);
+			setProperty(CompareConfiguration.IGNORE_WHITESPACE, new Boolean(b));
 		}
-	}
+	}	
 	
 	/**
 	 * Creates a new configuration with editable left and right sides,

@@ -32,11 +32,10 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Button;
 
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.*;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFileState;
@@ -77,7 +76,7 @@ import org.eclipse.compare.*;
  * @see IModificationDate
  * @see ITypedElement
  */
-public class EditionSelectionDialog extends Dialog {
+public class EditionSelectionDialog extends ResizableDialog {
 		
 	/**
 	 * An item in an underlying edition.
@@ -167,7 +166,6 @@ public class EditionSelectionDialog extends Dialog {
 	/** The editions of the current selected member */
 	private List fCurrentEditions;
 	private Thread fThread;
-	private ResourceBundle fBundle;
 	private Pair fTargetPair;
 	/** The selected edition in the edition viewer */
 	private ITypedElement fSelectedItem;
@@ -209,11 +207,8 @@ public class EditionSelectionDialog extends Dialog {
 	 * @param bundle <code>ResourceBundle</code> to configure the dialog
 	 */
 	public EditionSelectionDialog(Shell parent, ResourceBundle bundle) {
-		super(parent);
-		setShellStyle(SWT.CLOSE | SWT.APPLICATION_MODAL | SWT.RESIZE);
+		super(parent, bundle);
 		
-		fBundle= bundle;
-	
 		fCompareConfiguration= new CompareConfiguration();
 		fCompareConfiguration.setLeftEditable(false);
 		fCompareConfiguration.setRightEditable(false);
@@ -607,28 +602,6 @@ public class EditionSelectionDialog extends Dialog {
 		return null;
 	}
 	
-	/* (non Javadoc)
-	 * Returns the size initialized with the constructor.
-	 */
-	protected Point getInitialSize() {
-		Point size= new Point(Utilities.getInteger(fBundle, "width", 0), //$NON-NLS-1$
-					Utilities.getInteger(fBundle, "height", 0)); //$NON-NLS-1$
-		
-		Shell shell= getParentShell();
-		if (shell != null) {
-			Point parentSize= shell.getSize();
-			if (size.x <= 0)
-				size.x= parentSize.x-300;
-			if (size.y <= 0)
-				size.y= parentSize.y-200;
-		}
-		if (size.x < 700)
-			size.x= 700;
-		if (size.y < 500)
-			size.y= 500;
-		return size;
-	}
-
  	/* (non Javadoc)
  	 * Creates SWT control tree.
  	 */

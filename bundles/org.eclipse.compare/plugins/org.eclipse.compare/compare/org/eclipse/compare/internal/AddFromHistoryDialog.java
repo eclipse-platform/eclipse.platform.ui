@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.compare.*;
 
 
-public class AddFromHistoryDialog extends org.eclipse.jface.dialogs.Dialog {
+public class AddFromHistoryDialog extends ResizableDialog {
 	
 	static class HistoryInput implements ITypedElement, IStreamContentAccessor, IModificationDate {
 		IFile fFile;
@@ -48,7 +48,6 @@ public class AddFromHistoryDialog extends org.eclipse.jface.dialogs.Dialog {
 	}
 
 	private CompareConfiguration fCompareConfiguration;
-	private ResourceBundle fBundle;
 	private HistoryInput fSelectedItem;
 
 	// SWT controls
@@ -64,10 +63,7 @@ public class AddFromHistoryDialog extends org.eclipse.jface.dialogs.Dialog {
 
 
 	public AddFromHistoryDialog(Shell parent, ResourceBundle bundle) {
-		super(parent);
-		setShellStyle(SWT.CLOSE | SWT.APPLICATION_MODAL | SWT.RESIZE);
-		
-		fBundle= bundle;
+		super(parent, bundle);
 					
 		String iconName= Utilities.getString(fBundle, "dateIcon", "obj16/day_obj.gif"); //$NON-NLS-2$ //$NON-NLS-1$
 		ImageDescriptor id= CompareUIPlugin.getImageDescriptor(iconName);
@@ -297,29 +293,7 @@ public class AddFromHistoryDialog extends org.eclipse.jface.dialogs.Dialog {
 		
 		return MessageFormat.format(format, new Object[] { date });
 	}
-		
-	/* (non Javadoc)
-	 * Returns the size initialized with the constructor.
-	 */
-	protected Point getInitialSize() {
-		Point size= new Point(Utilities.getInteger(fBundle, "width", 0), //$NON-NLS-1$
-					Utilities.getInteger(fBundle, "height", 0)); //$NON-NLS-1$
-		
-		Shell shell= getParentShell();
-		if (shell != null) {
-			Point parentSize= shell.getSize();
-			if (size.x <= 0)
-				size.x= parentSize.x-300;
-			if (size.y <= 0)
-				size.y= parentSize.y-200;
-		}
-		if (size.x < 700)
-			size.x= 700;
-		if (size.y < 500)
-			size.y= 500;
-		return size;
-	}
-	
+			
 	/* (non-Javadoc)
 	 * Method declared on Dialog.
 	 */

@@ -58,6 +58,7 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 	public static final String PREF_SAVE_ALL_EDITORS= PREFIX + "SaveAllEditors"; //$NON-NLS-1$
 	public static final String SHOW_MORE_INFO= PREFIX + "ShowMoreInfo"; //$NON-NLS-1$
 	public static final String TEXT_FONT= PREFIX + "TextFont"; //$NON-NLS-1$
+	public static final String IGNORE_WHITESPACE= PREFIX + "IgnoreWhitespace"; //$NON-NLS-1$
 	
 	private WorkbenchChainedTextFontFieldEditor fFontEditor;
 	private TextMergeViewer fPreviewViewer;
@@ -79,6 +80,7 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, INITIALLY_SHOW_ANCESTOR_PANE),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, SHOW_MORE_INFO),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, TEXT_FONT),
+		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, IGNORE_WHITESPACE),
 		
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT)
@@ -91,6 +93,7 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		store.setDefault(SHOW_PSEUDO_CONFLICTS, false);
 		store.setDefault(INITIALLY_SHOW_ANCESTOR_PANE, false);
 		store.setDefault(SHOW_MORE_INFO, false);
+		store.setDefault(IGNORE_WHITESPACE, false);
 		
 		Display display= Display.getDefault();
 		Color color= display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
@@ -218,6 +221,8 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		
 		addCheckBox(composite, "ComparePreferencePage.showMoreInfo.label", SHOW_MORE_INFO, 0);	//$NON-NLS-1$
 		
+		addCheckBox(composite, "ComparePreferencePage.ignoreWhitespace.label", IGNORE_WHITESPACE, 0);	//$NON-NLS-1$
+
 		return composite;
 	}
 	

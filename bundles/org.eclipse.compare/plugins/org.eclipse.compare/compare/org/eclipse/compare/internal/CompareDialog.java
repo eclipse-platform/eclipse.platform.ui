@@ -6,36 +6,32 @@ package org.eclipse.compare.internal;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.compare.CompareEditorInput;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.layout.*;
-
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.util.PropertyChangeEvent;
-
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.OperationCanceledException;
-
-import org.eclipse.compare.CompareEditorInput;
-import org.eclipse.jface.util.IPropertyChangeListener;
 
 
-public class CompareDialog extends Dialog implements IPropertyChangeListener {
+public class CompareDialog extends ResizableDialog implements IPropertyChangeListener {
 		
 	private CompareEditorInput fCompareEditorInput;
 	private Button fCommitButton;
 
 
 	CompareDialog(Shell shell, CompareEditorInput input) {
-		super(shell);
-		setShellStyle(SWT.CLOSE | SWT.APPLICATION_MODAL | SWT.RESIZE);
+		super(shell, null);
 		
 		Assert.isNotNull(input);
 		fCompareEditorInput= input;
@@ -79,25 +75,7 @@ public class CompareDialog extends Dialog implements IPropertyChangeListener {
 
 		return c;
 	}
-	
-	/* (non-Javadoc)
-	 * Method declared on Window.
-	 */
-	protected Point getInitialSize() {
-		Point size= new Point(0, 0);
-		Shell shell= getParentShell();
-		if (shell != null) {
-			Point parentSize= shell.getSize();
-			size.x= parentSize.x-100;
-			size.y= parentSize.y-100;
-		}
-		if (size.x < 800)
-			size.x= 800;
-		if (size.y < 600)
-			size.y= 600;
-		return size;
-	}
-	
+		
 	/* (non-Javadoc)
 	 * Method declared on Window.
 	 */
