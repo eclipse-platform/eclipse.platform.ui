@@ -33,6 +33,14 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * Editor input must implement the <code>IAdaptable</code> interface; extensions
  * are managed by the platform's adapter manager.
  * </p>
+ * <p>
+ * Please note that it is important that the editor input be light weight.
+ * Within the workbench, the navigation history tends to hold on to editor
+ * inputs as a means of reconstructing the editor at a later time.  The
+ * navigation history can hold on to quite a few inputs (i.e., the default is
+ * fifty).  The actual data model should probably not be held in the input.
+ * </p>
+ *
  *
  * @see org.eclipse.ui.IEditorPart
  * @see org.eclipse.ui.IWorkbenchPage#openEditor(IEditorInput, String)
