@@ -18,6 +18,7 @@ import org.eclipse.core.internal.boot.update.IComponentEntryDescriptor;
 import org.eclipse.core.internal.boot.update.IManifestDescriptor;
 import org.eclipse.core.internal.boot.update.IProductDescriptor;
 import org.eclipse.core.internal.boot.update.IUMRegistry;
+import org.eclipse.core.internal.boot.update.UMEclipseTree;
 import org.eclipse.core.internal.boot.update.URLNamePair;
 import org.eclipse.core.internal.boot.update.UpdateManagerConstants;
 import org.eclipse.core.internal.boot.update.BaseURLHandler.Response;
@@ -760,21 +761,23 @@ public class UMWizardPageInstallable extends WizardPage implements MouseMoveList
 					//---------------------------
 					try {
 						URL url = new URL(pair._getURL());
-
+						url = UMEclipseTree.appendTrailingSlash(url);
 						Response response = URLHandler.open(url);
-						if (response.getResponseCode() == IStatusCodes.HTTP_OK) {
+						// we open the url to get authenticated.  response code not
+						// important at this point
+					/*	if (response.getResponseCode() == IStatusCodes.HTTP_OK) {
 							InputStream stream = response.getInputStream();
 
 							if (stream != null) {
-								stream.close();
+								stream.close();*/
 								bUrlOk = true;
-							}
-						}
+					//		}
+					//	}
 					}
 					catch (Exception ex) {
 					}
 
-					if (bUrlOk == true) {
+					if (bUrlOk == true) { 
 						registry = getRegistryAt(pair._getURL());
 
 						// Add it to the list
