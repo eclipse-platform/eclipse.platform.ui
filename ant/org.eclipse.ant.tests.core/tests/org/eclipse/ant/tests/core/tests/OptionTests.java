@@ -302,7 +302,7 @@ public class OptionTests extends AbstractAntTest {
 	}
 	
 	/**
-	 * Tests specifying a target at the command line and quiet reporting
+	 * Tests properties using "-D"
 	 */
 	public void testMinusD() throws CoreException {
 		run("echoing.xml", new String[]{"-DAntTests=testing", "-Declipse.is.cool=true"}, false);
@@ -313,7 +313,19 @@ public class OptionTests extends AbstractAntTest {
 	}
 	
 	/**
-	 * Tests specifying a target at the command line and quiet reporting
+	 * Tests specifying a property such as "-D=emptyStringIsMyName
+	 * Bug 37007
+	 */
+	public void testMinusDEmpty() throws CoreException {
+		run("echoing.xml", new String[]{"-D=emptyStringIsMyName", "-Declipse.is.cool=true"}, false);
+		assertSuccessful();
+		assertTrue("eclipse.is.cool should have been set as true", "true".equals(AntTestChecker.getDefault().getUserProperty("eclipse.is.cool")));
+		assertTrue("\"\" should have a value of emptyStringIsMyName", "emptyStringIsMyName".equals(AntTestChecker.getDefault().getUserProperty("")));
+		assertNull("my.name was not set and should be null", AntTestChecker.getDefault().getUserProperty("my.name"));
+	}
+	
+	/**
+	 * Tests specifying properties that contain spaces
 	 * Bug 37094
 	 */
 	public void testMinusDWithSpaces() throws CoreException {
