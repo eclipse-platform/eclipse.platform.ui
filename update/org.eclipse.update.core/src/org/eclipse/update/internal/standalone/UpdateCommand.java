@@ -29,7 +29,11 @@ public class UpdateCommand extends ScriptedCommand {
 
 	public UpdateCommand(
 		String featureId,
-		String toSite) {
+		String toSite,
+		String verifyOnly) {
+		
+		super(verifyOnly);
+		
 		try {
 			this.featureId = featureId;
 			
@@ -97,6 +101,9 @@ public class UpdateCommand extends ScriptedCommand {
 				return false;
 			}
 			
+			if (isVerifyOnly())
+				return true;
+				
 			IBatchOperation installOperation = OperationsManager.getOperationFactory().createBatchInstallOperation(operations);
 			try {
 				installOperation.execute(

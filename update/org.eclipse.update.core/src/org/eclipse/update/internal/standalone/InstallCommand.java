@@ -33,7 +33,11 @@ public class InstallCommand extends ScriptedCommand {
 		String featureId,
 		String version,
 		String fromSite,
-		String toSite) {
+		String toSite,
+		String verifyOnly) {
+			
+		super(verifyOnly);
+		
 		try {
 			this.featureId = featureId;
 			this.version = version;
@@ -111,6 +115,10 @@ public class InstallCommand extends ScriptedCommand {
 			if (conflicts != null) {
 				System.out.println("Duplicate conflicts");
 				return false;
+			}
+			
+			if (isVerifyOnly()) {
+				return (operations != null && operations.length > 1);
 			}
 			
 			IBatchOperation installOperation = OperationsManager.getOperationFactory().createBatchInstallOperation(operations);

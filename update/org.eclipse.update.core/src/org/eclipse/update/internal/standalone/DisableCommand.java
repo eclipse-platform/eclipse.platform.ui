@@ -26,7 +26,11 @@ public  class DisableCommand extends ScriptedCommand {
 	public DisableCommand(
 		String featureId,
 		String version,
-		String toSite) {
+		String toSite, 
+		String verifyOnly) {
+			
+		super(verifyOnly);
+		
 		try {
 			IConfiguredSite[] sites = config.getConfiguredSites();
 
@@ -82,6 +86,12 @@ public  class DisableCommand extends ScriptedCommand {
 	 * @see Wizard#performFinish()
 	 */
 	public boolean run() {
+		if (isVerifyOnly()) {
+			IStatus status =
+				UpdateUtils.getValidator().validatePendingUnconfig(feature);
+			return status == null;
+		}
+		
 		final IUnconfigFeatureOperation configOperation =
 			OperationsManager.getOperationFactory().createUnconfigOperation(config, targetSite,feature);
 

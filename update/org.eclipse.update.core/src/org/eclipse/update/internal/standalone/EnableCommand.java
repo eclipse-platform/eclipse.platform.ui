@@ -26,8 +26,12 @@ public  class EnableCommand extends ScriptedCommand {
 	public EnableCommand(
 		String featureId,
 		String version,
-		String toSite) {
-		try {
+		String toSite,
+		String verifyOnly) {
+			
+		super(verifyOnly);
+		
+		try {		
 			IConfiguredSite[] sites = config.getConfiguredSites();
 
 			// Get site to enable to
@@ -82,6 +86,12 @@ public  class EnableCommand extends ScriptedCommand {
 	 * @see Wizard#performFinish()
 	 */
 	public boolean run() {
+		if (isVerifyOnly()) {
+			IStatus status =
+				UpdateUtils.getValidator().validatePendingConfig(feature);
+			return status == null;
+		}
+		
 		final IConfigFeatureOperation configOperation =
 			OperationsManager.getOperationFactory().createConfigOperation(config, targetSite,feature);
 

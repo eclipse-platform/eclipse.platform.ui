@@ -17,8 +17,15 @@ import org.eclipse.update.operations.*;
 public  abstract class ScriptedCommand implements IOperationListener {
 
 	protected IInstallConfiguration config;
+	protected boolean verifyOnly;
 
 	public ScriptedCommand() {
+		this(null);
+	}
+
+	public ScriptedCommand(String verifyOnly) {
+		this.verifyOnly = "true".equals(verifyOnly);
+		
 		try {
 			ILocalSite localSite = SiteManager.getLocalSite();
 			config = localSite.getCurrentConfiguration();
@@ -28,7 +35,15 @@ public  abstract class ScriptedCommand implements IOperationListener {
 		}
 	}
 
-
+	/**
+	 * Returns true if the command should only be run in simulation mode,
+	 * to verify if it can execute.
+	 * @return
+	 */
+	public boolean isVerifyOnly() {
+		return verifyOnly;
+	}
+	
 	/**
 	 */
 	public abstract boolean run();
