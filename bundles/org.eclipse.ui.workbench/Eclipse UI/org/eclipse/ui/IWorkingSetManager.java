@@ -217,6 +217,8 @@ public interface IWorkingSetManager {
     public IWorkingSetNewWizard createWorkingSetNewWizard(String[] workingSetIds);
     
     /**
+     * @param parent the parent shell
+     * @return the dialog
      * @deprecated use createWorkingSetSelectionDialog(parent, true) instead
      */
     public IWorkingSetSelectionDialog createWorkingSetSelectionDialog(
@@ -240,6 +242,29 @@ public interface IWorkingSetManager {
     public IWorkingSetSelectionDialog createWorkingSetSelectionDialog(
             Shell parentShell, boolean multi);
 
+    /**
+     * Creates a working set selection dialog that lists all working 
+     * sets with the specified ids and allows the user to add, remove and
+     * edit working sets with the specified ids.
+     * The caller is responsible for opening the dialog with 
+     * <code>IWorkingSetSelectionDialog#open</code>, and subsequently 
+     * extracting the selected working sets using 
+     * <code>IWorkingSetSelectionDialog#getSelection</code>.
+     * 
+     * @param parentShell the parent shell of the working set selection dialog
+     * @param multi true=more than one working set can be chosen 
+     *  in the dialog. false=only one working set can be chosen. Multiple
+     *  working sets can still be selected and removed from the list but
+     *  the dialog can only be closed when a single working set is selected.
+     * @param workingsSetIds a list of working set ids which are valid workings sets
+     *  to be selected, created, removed or edited, or <code>null</code> if all currently
+     *  available working set types are valid 
+     * @return a working set selection dialog
+     * @since 3.1
+     */
+    public IWorkingSetSelectionDialog createWorkingSetSelectionDialog(
+            Shell parentShell, boolean multi, String[] workingsSetIds);
+    
     /**
      * Returns the list of most recently used working sets.
      * The most recently used working set appears first in the list.

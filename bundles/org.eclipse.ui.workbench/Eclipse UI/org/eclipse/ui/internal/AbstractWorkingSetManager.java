@@ -299,7 +299,7 @@ public abstract class AbstractWorkingSetManager implements IWorkingSetManager, B
      * @param oldValue the old value
      */
     public void workingSetChanged(IWorkingSet changedWorkingSet, String propertyChangeId, Object oldValue) {
-        firePropertyChange(propertyChangeId, null, changedWorkingSet);
+        firePropertyChange(propertyChangeId, oldValue, changedWorkingSet);
     }
     
     //---- Persistence ----------------------------------------------------------------
@@ -314,22 +314,12 @@ public abstract class AbstractWorkingSetManager implements IWorkingSetManager, B
         Iterator iterator = workingSets.iterator();
 
         while (iterator.hasNext()) {
-            IWorkingSet workingSet = (IWorkingSet) iterator.next();
-            IPersistableElement persistable = null;
-
-            if (workingSet instanceof IPersistableElement) {
-                persistable = (IPersistableElement) workingSet;
-            } else if (workingSet instanceof IAdaptable) {
-                persistable = (IPersistableElement) ((IAdaptable) workingSet)
-                        .getAdapter(IPersistableElement.class);
-            }
-            if (persistable != null) {
-                IMemento workingSetMemento = memento
-                        .createChild(IWorkbenchConstants.TAG_WORKING_SET);
-                workingSetMemento.putString(IWorkbenchConstants.TAG_FACTORY_ID,
-                        persistable.getFactoryId());
-                persistable.saveState(workingSetMemento);
-            }
+            IPersistableElement persistable = (IWorkingSet) iterator.next();
+            IMemento workingSetMemento = memento
+                    .createChild(IWorkbenchConstants.TAG_WORKING_SET);
+            workingSetMemento.putString(IWorkbenchConstants.TAG_FACTORY_ID,
+                    persistable.getFactoryId());
+            persistable.saveState(workingSetMemento);
         }
     }
     
@@ -469,7 +459,7 @@ public abstract class AbstractWorkingSetManager implements IWorkingSetManager, B
      */
     public IWorkingSetSelectionDialog createWorkingSetSelectionDialog(
             Shell parent, boolean multi) {
-        return new WorkingSetSelectionDialog(parent, multi);
+        return createWorkingSetSelectionDialog(parent, multi, null);
     }
     
     /**
@@ -547,4 +537,12 @@ public abstract class AbstractWorkingSetManager implements IWorkingSetManager, B
     		updater.remove(workingSet);
     	}
     }	
+    
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkingSetManager#createWorkingSetSelectionDialog(org.eclipse.swt.widgets.Shell, boolean, java.lang.String[])
+     */
+    public IWorkingSetSelectionDialog createWorkingSetSelectionDialog(Shell parent, boolean multi, String[] workingsSetIds) {
+        return new WorkingSetSelectionDialog(parent, multi, workingsSetIds);
+    }
 }

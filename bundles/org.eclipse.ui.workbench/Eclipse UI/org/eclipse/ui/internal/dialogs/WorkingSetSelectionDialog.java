@@ -15,22 +15,12 @@ package org.eclipse.ui.internal.dialogs;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Dialog;
-import org.eclipse.swt.widgets.Shell;
+import java.util.Set;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -46,9 +36,20 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.dialogs.IWorkingSetEditWizard;
@@ -80,6 +81,9 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements
     private static class WorkingSetLabelProvider extends LabelProvider {
         private Map icons;
 
+        /**
+         * Create a new instance of the receiver.
+         */
         public WorkingSetLabelProvider() {
             icons = new Hashtable();
         }
@@ -116,6 +120,18 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements
             return workingSet.getName();
         }
     }
+    
+    class WorkingSetFilter extends ViewerFilter {
+        public boolean select(Viewer viewer, Object parentElement, Object element) {
+            if (element instanceof IWorkingSet) {
+                String id = ((IWorkingSet) element).getId();
+                if (id != null) {
+                    return workingSetIds.contains(id);
+                }
+            }
+            return true;
+        }
+    }
 
     private ILabelProvider labelProvider;
 
@@ -140,6 +156,8 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements
     private Map editedWorkingSets;
 
     private List removedMRUWorkingSets;
+    
+    private Set workingSetIds;
 
     /**
      * Creates a working set selection dialog.
@@ -149,8 +167,11 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements
      * 	in the dialog. false=only one working set can be chosen. Multiple
      * 	working sets can still be selected and removed from the list but
      * 	the dialog can only be closed when a single working set is selected.
+     * @param workingSetIds a list of working set ids which are valid workings sets
+     *  to be selected, created, removed or edited, or <code>null</code> if all currently
+     *  available working set types are valid 
      */
-    public WorkingSetSelectionDialog(Shell parentShell, boolean multi) {
+    public WorkingSetSelectionDialog(Shell parentShell, boolean multi, String[] workingSetIds) {
         super(parentShell);
         contentProvider = new ListContentProvider();
         labelProvider = new WorkingSetLabelProvider();
@@ -165,6 +186,12 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements
                     .getString("WorkingSetSelectionDialog.title")); //$NON-NLS-1$;
             setMessage(WorkbenchMessages
                     .getString("WorkingSetSelectionDialog.message")); //$NON-NLS-1$
+        }
+        if (workingSetIds != null) {
+            this.workingSetIds = new HashSet();
+            for (int i = 0; i < workingSetIds.length; i++) {
+                this.workingSetIds.add(workingSetIds[i]);
+            }
         }
     }
 
@@ -218,7 +245,7 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements
     /**
      * Overrides method from Dialog.
      * 
-     * @see Dialog#cancelPressed()
+     * @see org.eclipse.jface.dialogs.Dialog#cancelPressed()
      */
     protected void cancelPressed() {
         restoreAddedWorkingSets();
@@ -258,6 +285,9 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements
         listViewer.setLabelProvider(labelProvider);
         listViewer.setContentProvider(contentProvider);
         listViewer.setSorter(new WorkbenchViewerSorter());
+        if (workingSetIds != null) {
+            listViewer.addFilter(new WorkingSetFilter());
+        }
         listViewer.addSelectionChangedListener(new ISelectionChangedListener() {
             public void selectionChanged(SelectionChangedEvent event) {
                 handleSelectionChanged();
@@ -299,7 +329,11 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements
 	 */
 	void createWorkingSet() {
 	    IWorkingSetManager manager = WorkbenchPlugin.getDefault().getWorkingSetManager();
-	    IWorkingSetNewWizard wizard = manager.createWorkingSetNewWizard(null);
+        String ids[] = null;
+        if (workingSetIds != null) {
+            ids = (String[]) workingSetIds.toArray(new String[workingSetIds.size()]);
+        }
+	    IWorkingSetNewWizard wizard = manager.createWorkingSetNewWizard(ids);
 	    // the wizard can never be null since we have at least a resource working set
 	    // creation page
 	    WizardDialog dialog = new WizardDialog(getShell(), wizard);
@@ -321,7 +355,7 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements
      * Opens a working set wizard for editing the currently selected 
      * working set.
      * 
-     * @see org.eclipse.ui.IWorkingSetPage
+     * @see org.eclipse.ui.dialogs.IWorkingSetPage
      */
     void editSelectedWorkingSet() {
         IWorkingSetManager manager = WorkbenchPlugin.getDefault()
