@@ -309,10 +309,10 @@ public final class DefaultRunnerContext implements IRunnerContext {
 	 */
 	private void appendVariable(String var, StringBuffer buf, boolean addQuotes) {
 		if (var != null) {
-			if (addQuotes)
+			if (addQuotes && ToolUtil.hasSpace(var))
 				buf.append("\""); //$NON-NLS-1$
 			buf.append(var);
-			if (addQuotes)
+			if (addQuotes && ToolUtil.hasSpace(var))
 				buf.append("\""); //$NON-NLS-1$			
 		}
 	}

@@ -264,6 +264,19 @@ public final class ToolUtil {
 	}
 	
 	/**
+	 * Returns whether or not the given string contains at least one space.
+	 * 
+	 * @return true if the given string contains at least one space, false otherwise
+	 */
+	public static boolean hasSpace(String var) {
+		int index = var.indexOf(' ');
+		if (index >= 0)
+			return true;
+		else
+			return false;
+	}
+	
+	/**
 	 * Structure to represent a variable definition within a
 	 * source string.
 	 */

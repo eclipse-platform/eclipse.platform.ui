@@ -39,8 +39,12 @@ public class AntFileRunner extends ExternalToolsRunner {
 			String args = runnerContext.getExpandedArguments();
 			String baseDir = runnerContext.getExpandedWorkingDirectory();
 			if (baseDir.length() > 0) {
-				String baseDirArg = BASE_DIR_PREFIX + baseDir;
-				runner.setArguments(args + " \"" + baseDirArg + "\""); //$NON-NLS-2$ //$NON-NLS-1$
+				String baseDirArg;
+				if (ToolUtil.hasSpace(baseDir))
+					baseDirArg = BASE_DIR_PREFIX + "\"" + baseDir + "\""; //$NON-NLS-2$ //$NON-NLS-1$
+				else
+					baseDirArg = BASE_DIR_PREFIX + baseDir;
+				runner.setArguments(args + " " + baseDirArg ); //$NON-NLS-1$
 			} else {
 				runner.setArguments(args);	
 			}
