@@ -29,6 +29,7 @@ import org.eclipse.ant.internal.ui.IAntUIPreferenceConstants;
 import org.eclipse.ant.internal.ui.editor.actions.FoldingActionGroup;
 import org.eclipse.ant.internal.ui.editor.actions.InformationDispatchAction;
 import org.eclipse.ant.internal.ui.editor.actions.OpenDeclarationAction;
+import org.eclipse.ant.internal.ui.editor.actions.RenameInFileAction;
 import org.eclipse.ant.internal.ui.editor.actions.RunToLineAdapter;
 import org.eclipse.ant.internal.ui.editor.actions.ToggleLineBreakpointAction;
 import org.eclipse.ant.internal.ui.editor.outline.AntEditorContentOutlinePage;
@@ -638,6 +639,10 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		resAction= new InformationDispatchAction(AntEditorMessages.getResourceBundle(), "ShowTooltip.", (TextOperationAction) resAction, this); //$NON-NLS-1$
 		resAction.setActionDefinitionId("org.eclipse.ant.ui.showTooltip"); //$NON-NLS-1$
 		setAction("ShowTooltip", resAction); //$NON-NLS-1$
+		
+		action= new RenameInFileAction(this);
+		action.setActionDefinitionId("org.eclipse.ant.ui.renameInFile"); //$NON-NLS-1$
+		setAction("renameInFile", action); //$NON-NLS-1$
     }
 
 	/*
@@ -1014,23 +1019,19 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 	public void editorContextMenuAboutToShow(IMenuManager menu) {
 		super.editorContextMenuAboutToShow(menu);
 		
-		IAction action= getAction("ContentFormat"); //$NON-NLS-1$
-		if (action != null && action.isEnabled()) {
-			menu.add(action);
-		}
-
-		action= getAction("OpenDeclaration"); //$NON-NLS-1$
+		IAction action= getAction("OpenDeclaration"); //$NON-NLS-1$
 		if (action != null) {
 			String openGroup = "group.open"; //$NON-NLS-1$
     	    menu.appendToGroup(ITextEditorActionConstants.GROUP_UNDO, new Separator(openGroup)); 
 			menu.appendToGroup(openGroup, action);
 		}
-		//action= getAction("renameInFile"); //$NON-NLS-1$
-		//if (action != null) {
-		//	String editGroup = "group.edit"; //$NON-NLS-1$
-    	 //   menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, new Separator(editGroup)); 
-		//	menu.appendToGroup(editGroup, action);
-	//	}
+		action= getAction("renameInFile"); //$NON-NLS-1$
+		String editGroup = "group.edit"; //$NON-NLS-1$
+	    menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, new Separator(editGroup)); 
+		menu.appendToGroup(editGroup, action);
+		
+		action= getAction("ContentFormat"); //$NON-NLS-1$
+		menu.appendToGroup(editGroup, action);
 	}
 	
 	private void startTabConversion() {
