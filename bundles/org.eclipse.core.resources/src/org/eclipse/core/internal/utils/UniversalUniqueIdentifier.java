@@ -20,6 +20,11 @@ import java.util.Random;
 
 public class UniversalUniqueIdentifier implements java.io.Serializable {
 
+	/**
+	 * All serializable objects should have a stable serialVersionUID
+	 */
+	private static final long serialVersionUID = 1L;
+
 	/* INSTANCE FIELDS =============================================== */
 
 	private byte[] fBits = new byte[BYTES_SIZE];

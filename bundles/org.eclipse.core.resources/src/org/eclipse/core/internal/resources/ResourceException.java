@@ -26,6 +26,11 @@ import org.eclipse.core.runtime.*;
  * @see IStatus
  */
 public class ResourceException extends CoreException {
+	/**
+	 * All serializable objects should have a stable serialVersionUID
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public ResourceException(int code, IPath path, String message, Throwable exception) {
 		super(new ResourceStatus(code, path, message, exception));
 	}

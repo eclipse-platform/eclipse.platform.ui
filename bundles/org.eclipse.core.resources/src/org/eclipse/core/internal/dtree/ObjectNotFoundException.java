@@ -16,6 +16,11 @@ package org.eclipse.core.internal.dtree;
  */
 public class ObjectNotFoundException extends RuntimeException {
 	/**
+	 * All serializable objects should have a stable serialVersionUID
+	 */
+	private static final long serialVersionUID = 1L;
+
+	/**
 	 * ObjectNotFoundException constructor comment.
 	 */
 	public ObjectNotFoundException() {

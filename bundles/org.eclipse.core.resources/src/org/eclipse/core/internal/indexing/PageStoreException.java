@@ -30,6 +30,12 @@ public class PageStoreException extends StoreException {
 	public final static int LogWriteFailure = 24;
 
 	public final static String[] message = new String[30];
+
+	/**
+	 * All serializable objects should have a stable serialVersionUID
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	static {
 		initializeMessages();
 	}

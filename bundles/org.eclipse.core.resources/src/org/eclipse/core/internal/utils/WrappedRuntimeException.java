@@ -12,6 +12,11 @@ package org.eclipse.core.internal.utils;
 
 public class WrappedRuntimeException extends RuntimeException {
 
+	/**
+	 * All serializable objects should have a stable serialVersionUID
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private Throwable target;
 
 	public WrappedRuntimeException(Throwable target) {

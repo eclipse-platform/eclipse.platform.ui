@@ -34,6 +34,12 @@ public class ObjectStoreException extends StoreException {
 	public final static int MetadataRequestFailure = 40;
 
 	public final static String[] message = new String[50];
+
+	/**
+	 * All serializable objects should have a stable serialVersionUID
+	 */
+	private static final long serialVersionUID = 1L;
+
 	static {
 		initializeMessages();
 	}

@@ -55,6 +55,11 @@ public class IndexedStoreException extends StoreException {
 
 	public static String[] messages = new String[40];
 
+	/**
+	 * All serializable objects should have a stable serialVersionUID
+	 */
+	private static final long serialVersionUID = 1L;
+
 	static {
 		initializeMessages();
 	}

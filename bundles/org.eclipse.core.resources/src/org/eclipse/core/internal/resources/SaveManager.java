@@ -435,8 +435,8 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 		List valuables = new ArrayList(10);
 		IPath location = workspace.getMetaArea().getSafeTableLocationFor(ResourcesPlugin.PI_RESOURCES);
 		valuables.add(location.lastSegment()); // add master table
-		for (Enumeration enum = masterTable.keys(); enum.hasMoreElements();) {
-			String key = (String) enum.nextElement();
+		for (Enumeration e = masterTable.keys(); e.hasMoreElements();) {
+			String key = (String) e.nextElement();
 			if (key.startsWith(SAVE_NUMBER_PREFIX)) {
 				String pluginId = key.substring(SAVE_NUMBER_PREFIX.length());
 				valuables.add(workspace.getMetaArea().getSafeTableLocationFor(pluginId).lastSegment());
@@ -527,7 +527,7 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 
 				restoreMasterTable();
 				// restore the saved tree and overlay the snapshots if any
-				restoreTree(workspace, Policy.subMonitorFor(monitor, 10));
+				restoreTree(Policy.subMonitorFor(monitor, 10));
 				restoreSnapshots(Policy.subMonitorFor(monitor, 10));
 
 				// tolerate failure for non-critical information
@@ -543,7 +543,7 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 					problems.merge(e.getStatus());
 				}
 				// restore meta info last because it might close a project if its description is not readable
-				restoreMetaInfo(workspace, problems, Policy.subMonitorFor(monitor, 10));
+				restoreMetaInfo(problems, Policy.subMonitorFor(monitor, 10));
 				IProject[] roots = workspace.getRoot().getProjects();
 				for (int i = 0; i < roots.length; i++)
 					((Project) roots[i]).startup();
@@ -654,7 +654,7 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 	 * Restores the state of this workspace by opening the projects
 	 * which were open when it was last saved.
 	 */
-	protected void restoreMetaInfo(Workspace workspace, MultiStatus problems, IProgressMonitor monitor) {
+	protected void restoreMetaInfo(MultiStatus problems, IProgressMonitor monitor) {
 		if (Policy.DEBUG_RESTORE_METAINFO)
 			System.out.println("Restore workspace metainfo: starting..."); //$NON-NLS-1$
 		long start = System.currentTimeMillis();
@@ -793,7 +793,7 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 	 * after workspace save/shutdown.
 	 * @exception CoreException if the workspace could not be restored.
 	 */
-	protected void restoreTree(Workspace workspace, IProgressMonitor monitor) throws CoreException {
+	protected void restoreTree(IProgressMonitor monitor) throws CoreException {
 		long start = System.currentTimeMillis();
 		IPath treeLocation = workspace.getMetaArea().getTreeLocationFor(workspace.getRoot(), false);
 		IPath tempLocation = workspace.getMetaArea().getBackupLocationFor(treeLocation);
@@ -864,7 +864,7 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 	 * Writes the metainfo (e.g. descriptions) of the given workspace and
 	 * all projects to the local disk.
 	 */
-	protected void saveMetaInfo(Workspace workspace, MultiStatus problems, IProgressMonitor monitor) throws CoreException {
+	protected void saveMetaInfo(MultiStatus problems, IProgressMonitor monitor) throws CoreException {
 		if (Policy.DEBUG_SAVE_METAINFO)
 			System.out.println("Save workspace metainfo: starting..."); //$NON-NLS-1$
 		long start = System.currentTimeMillis();
@@ -1336,7 +1336,7 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 							removeUnusedTreeFiles();
 							workspace.getFileSystemManager().getHistoryStore().clean(Policy.subMonitorFor(monitor, 1));
 							// write out all metainfo (e.g., workspace/project descriptions) 
-							saveMetaInfo(workspace, warnings, Policy.subMonitorFor(monitor, 1));
+							saveMetaInfo(warnings, Policy.subMonitorFor(monitor, 1));
 							break;
 						case ISaveContext.SNAPSHOT :
 							snapTree(workspace.getElementTree(), Policy.subMonitorFor(monitor, 1));
@@ -1352,7 +1352,7 @@ public class SaveManager implements IElementInfoFlattener, IManager {
 							collapseTrees();
 							clearSavedDelta();
 							// write out all metainfo (e.g., workspace/project descriptions) 
-							saveMetaInfo(workspace, warnings, Policy.subMonitorFor(monitor, 1));
+							saveMetaInfo(warnings, Policy.subMonitorFor(monitor, 1));
 							break;
 						case ISaveContext.PROJECT_SAVE :
 							writeTree(project, IResource.DEPTH_INFINITE);
