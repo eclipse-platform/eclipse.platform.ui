@@ -144,7 +144,11 @@ public class DebugPluginImages {
 			} catch (MalformedURLException mue) {
 				DebugUIPlugin.log(mue);
 			}
-			String configTypeID = configElement.getAttribute(ATTR_LAUNCH_CONFIG_TYPE_ID);			
+			String configTypeID = configElement.getAttribute(ATTR_LAUNCH_CONFIG_TYPE_ID);
+			if (configTypeID == null) {
+				// bug 12652
+				configTypeID = configElement.getAttribute("type");
+			}			
 			imageRegistry.put(configTypeID, imageDescriptor);				
 			imageDescriptors.put(configTypeID, imageDescriptor);
 		}	
