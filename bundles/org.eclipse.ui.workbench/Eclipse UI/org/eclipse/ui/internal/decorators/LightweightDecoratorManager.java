@@ -12,8 +12,11 @@ package org.eclipse.ui.internal.decorators;
 
 import java.util.*;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.misc.StatusUtil;
 
 /**
  * The LightweightDecoratorManager is a decorator manager
@@ -33,7 +36,7 @@ class LightweightDecoratorManager {
 		private DecorationBuilder decoration;
 		private LightweightDecoratorDefinition decorator;
 
-		private void setValues(
+		void setValues(
 			Object object,
 			DecorationBuilder builder,
 			LightweightDecoratorDefinition definition) {
@@ -46,6 +49,8 @@ class LightweightDecoratorManager {
 		 * @see ISafeRunnable.handleException(Throwable).
 		 */
 		public void handleException(Throwable exception) {
+			IStatus status = StatusUtil.newStatus(IStatus.ERROR,exception.getMessage(),exception);
+			WorkbenchPlugin.log("Exception in Decorator",status); //$NON-NLS-1$
 		}
 		/*
 		 * @see ISafeRunnable.run
@@ -184,8 +189,6 @@ class LightweightDecoratorManager {
 				decorate(element, decoration, decorators[i]);
 			}
 		}
-
-
 	}
 
 	/**
