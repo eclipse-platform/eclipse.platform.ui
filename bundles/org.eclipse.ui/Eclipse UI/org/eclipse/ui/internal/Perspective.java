@@ -40,7 +40,7 @@ public class Perspective
 	protected PerspectivePresentation presentation;
 	final static private String VERSION_STRING = "0.016";//$NON-NLS-1$
 	
-	final static private float DEFAULT_FASTVIEW_RATIO = 0.25f;
+	final static private float DEFAULT_FASTVIEW_RATIO = 0.30f;
 	
 	// fields used by fast view resizing via a sash
 	private static final int SASH_SIZE = 3;
