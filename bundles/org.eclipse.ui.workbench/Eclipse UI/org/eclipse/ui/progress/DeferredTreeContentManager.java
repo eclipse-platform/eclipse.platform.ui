@@ -55,8 +55,8 @@ public class DeferredTreeContentManager {
 	 * Create a new instance of the receiver using the supplied content
 	 * provider and viewer.
 	 * 
-	 * @param provider
-	 * @param viewer
+	 * @param provider The content provider that will be updated
+	 * @param viewer The tree viewer that the results are added to
 	 */
 	public DeferredTreeContentManager(ITreeContentProvider provider, AbstractTreeViewer viewer) {
 		contentProvider = provider;
@@ -69,9 +69,10 @@ public class DeferredTreeContentManager {
 	 * children. Throw an AssertionFailedException if element is not an
 	 * instance of IDeferredWorkbenchAdapter.
 	 * 
-	 * @param element
-	 *            Object
-	 * @return boolean
+	 * @param element The Object being tested. This should not be
+	 * <code>null</code>.
+	 * @return boolean <code>true</code> if there are potentially children.
+	 * @throws RuntimeException if the element is null.
 	 */
 	public boolean mayHaveChildren(Object element) {
 		IDeferredWorkbenchAdapter adapter = getAdapter(element);
@@ -81,7 +82,7 @@ public class DeferredTreeContentManager {
 	}
 	/**
 	 * Returns the child elements of the given element, or in the case of a
-	 * deferred element, returns a placeholder. If a deferred element used a
+	 * deferred element, returns a placeholder. If a deferred element is used, a
 	 * job is created to fetch the children in the background.
 	 * 
 	 * @param parent
@@ -118,7 +119,7 @@ public class DeferredTreeContentManager {
 	}
 	/**
 	 * Starts a job and creates a collector for fetching the children of this
-	 * deferred adapter. If children are waiting to be retrieve for this parent
+	 * deferred adapter. If children are waiting to be retrieved for this parent
 	 * already, that job is cancelled and another is started.
 	 * 
 	 * @param parent.
@@ -250,7 +251,9 @@ public class DeferredTreeContentManager {
 		return getAdapter(element) != null;
 	}
 	/**
-	 * Run a job to clear the placeholder.
+	 * Run a job to clear the placeholder. This is used when the update
+	 * for the tree is complete so that the user is aware that no more 
+	 * updates are pending.
 	 * 
 	 * @param placeholder
 	 */

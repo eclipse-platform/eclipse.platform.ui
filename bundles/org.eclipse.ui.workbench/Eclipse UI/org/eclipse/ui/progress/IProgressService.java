@@ -19,8 +19,9 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * The IProgressManager is an interface to the progress manager provided by the
- * workbench.
+ * workbench. 
  * 
+ * @see org.eclipse.ui.IWorkbench#getProgressService. 
  * @since 3.0
  */
 public interface IProgressService extends IRunnableContext {
@@ -60,7 +61,7 @@ public interface IProgressService extends IRunnableContext {
 	 * Do not open the ProgressMonitorDialog if there is already a modal
 	 * dialog open.
 	 * 
-	 * @param runnable
+	 * @param runnable The runnable to execute and show the progress for.
 	 * @see IProgressService#getLongOperationTime
 	 * @throws InvocationTargetException
 	 * @throws InterruptedException
@@ -75,9 +76,10 @@ public interface IProgressService extends IRunnableContext {
 	 * 
 	 * Parent the dialog from the shell.
 	 * 
-	 * @param job The Job that will be reported in the dialog.
 	 * @param shell The Shell to parent the dialog from or 
 	 * <code>null</code> if the active shell is to be used.
+	 * @param job The Job that will be reported in the dialog. job
+	 * must not be <code>null</code>.
 	 */
 	public void showInDialog(Shell shell, Job job);
 

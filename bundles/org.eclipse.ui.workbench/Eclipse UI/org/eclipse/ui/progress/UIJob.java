@@ -46,6 +46,7 @@ public abstract class UIJob extends Job {
 	 *            the display
 	 * @param name
 	 *            the job name
+	 * @see Job
 	 */
 	public UIJob(Display jobDisplay, String name) {
 		this(name);
@@ -56,14 +57,13 @@ public abstract class UIJob extends Job {
 	 * 
 	 * @param exception
 	 * @return IStatus an error status built from the exception
+	 * @see Job
 	 */
 	public static IStatus errorStatus(Throwable exception) {
 		return new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.ERROR,
 				exception.getMessage(), exception);
 	}
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 	 *      Note: this message is marked final. Implementors should use
 	 *      runInUIThread() instead.
@@ -112,17 +112,23 @@ public abstract class UIJob extends Job {
 	 */
 	public abstract IStatus runInUIThread(IProgressMonitor monitor);
 	/**
-	 * Sets the display to execute the asyncExec in.
+	 * Sets the display to execute the asyncExec in. Generally this is not'
+	 * used if there is a valid display avaialble via PlatformUI.isWorkbenchRunning().
 	 * 
 	 * @param runDisplay
 	 *            Display
+	 * @see UIJob#getDisplay()
+	 * @see PlatformUI#isWorkbenchRunning()
 	 */
 	public void setDisplay(Display runDisplay) {
 		Assert.isNotNull(runDisplay);
 		cachedDisplay = runDisplay;
 	}
 	/**
-	 * Returns the display for use by the receiver.
+	 * Returns the display for use by the receiver when running in an
+	 * asyncExec. If it is not set then the display set in the workbench
+	 * is used.
+	 * If the display is null the job will not be run.
 	 * 
 	 * @return Display or <code>null</code>.
 	 */
