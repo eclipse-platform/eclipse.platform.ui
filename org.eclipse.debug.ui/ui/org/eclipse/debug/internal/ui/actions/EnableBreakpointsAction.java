@@ -10,8 +10,12 @@ http://www.eclipse.org/legal/cpl-v10.html
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IMarkerDelta;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointsListener;
@@ -68,28 +72,40 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 	 */
 	public void run(IAction action) {
 		IStructuredSelection selection= getSelection();
-		int size= selection.size();
+		final int size= selection.size();
 		if (size == 0) {
 			return;
 		}
-		Iterator enum= selection.iterator();
-		MultiStatus ms= new MultiStatus(DebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, ActionMessages.getString("EnableBreakpointAction.Enable_breakpoint(s)_failed_2"), null); //$NON-NLS-1$
-		while (enum.hasNext()) {
-			IBreakpoint breakpoint = (IBreakpoint) enum.next();
-			try {
-				if (size > 1) {
-					if (isEnableAction()) {
-						breakpoint.setEnabled(true);
-					} else {
-						breakpoint.setEnabled(false);
+		
+		final Iterator enum= selection.iterator();
+		final MultiStatus ms= new MultiStatus(DebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, ActionMessages.getString("EnableBreakpointAction.Enable_breakpoint(s)_failed_2"), null); //$NON-NLS-1$
+		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				while (enum.hasNext()) {
+					IBreakpoint breakpoint = (IBreakpoint) enum.next();
+					try {
+						if (size > 1) {
+							if (isEnableAction()) {
+								breakpoint.setEnabled(true);
+							} else {
+								breakpoint.setEnabled(false);
+							}
+						} else {
+							breakpoint.setEnabled(!breakpoint.isEnabled());
+						}
+					} catch (CoreException e) {
+						ms.merge(e.getStatus());
 					}
-				} else {
-					breakpoint.setEnabled(!breakpoint.isEnabled());
 				}
-			} catch (CoreException e) {
-				ms.merge(e.getStatus());
 			}
+		};
+		
+		try {
+			ResourcesPlugin.getWorkspace().run(runnable, new NullProgressMonitor());
+		} catch (CoreException e) {
+			// Exceptions are handled by runnable
 		}
+		
 		if (!ms.isOK()) {
 			IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
 			if (window != null) {
