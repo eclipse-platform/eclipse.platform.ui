@@ -27,13 +27,13 @@ public class JarVerifier {
 	private List listOfKeystoreCertifcates;
 
 	/**
-	 * FUTURE: check validity of keystore
+	 * check validity of keystore
 	 * default == FALSE 
 	 */
 	private boolean shouldVerifyKeystore = false;
 
 	/**
-	 * FUTURE: check validity of keystore
+	 * check validity of keystore
 	 * default == FALSE 
 	 */
 	private boolean shouldRetrieveKeystoreCertificates = false;
@@ -129,8 +129,7 @@ public class JarVerifier {
 
 			}
 			catch (KeyStoreException e) {
-				// hum... what to do , what to do ???
-				// I cannot instanciate a default keystore...
+				// cannot instanciate a default keystore...
 			}
 		}
 
@@ -217,14 +216,12 @@ public class JarVerifier {
 	}
 	/**
 	 * 
-	 * [future]
 	 */
 	public void shouldRetrieveCertificate(boolean value) {
 		shouldRetrieveKeystoreCertificates = value;
 	}
 	/**
 	 * 
-	 * [future]
 	 */
 	public void shouldVerifyKeystore(boolean value) {
 		shouldVerifyKeystore = value;
@@ -356,7 +353,6 @@ public class JarVerifier {
 
 	}
 	/**
-	 * [future]
 	 */
 	private boolean verifyIntegrityOfKeyStore() {
 		return shouldVerifyKeystore;
