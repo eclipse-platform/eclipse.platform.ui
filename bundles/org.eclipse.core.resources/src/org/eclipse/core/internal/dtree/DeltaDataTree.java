@@ -785,10 +785,10 @@ protected void reroot(DeltaDataTree sourceTree) {
 	this.reroot(parent);
 	DeltaDataTree backwardDelta = sourceTree.asBackwardDelta();
 	DeltaDataTree complete = parent.assembleWithForwardDelta(sourceTree);
-	parent.setRootNode(backwardDelta.getRootNode());
-	parent.setParent(sourceTree);
 	sourceTree.setRootNode(complete.getRootNode());
 	sourceTree.setParent(null);
+	parent.setRootNode(backwardDelta.getRootNode());
+	parent.setParent(sourceTree);
 }
 /**
  * Returns the specified node.  Search in the parent if necessary.  Return null
@@ -839,7 +839,7 @@ public void setData (IPath key, Object data) {
 /**
  * Sets the parent of the tree.
  */
-public void setParent (DeltaDataTree aTree) {
+protected void setParent (DeltaDataTree aTree) {
 	parent = aTree;
 }
 /**
