@@ -109,7 +109,7 @@ protected Control createContents(Composite parent) {
     
     Label topLabel = new Label(pageComponent, SWT.NONE);
     topLabel.setText(WorkbenchMessages.getString("PathVariablesPreference.explanation")); //$NON-NLS-1$
-    topLabel.setLayoutData(data); 
+    topLabel.setLayoutData(data);
     topLabel.setFont(font);
 
     // layout the table & its buttons
@@ -121,7 +121,6 @@ protected Control createContents(Composite parent) {
     variableLabel.setLayoutData(data);
     variableLabel.setFont(font);
     
-
     variableTable = new Table(pageComponent, SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION);
     variableTable.addSelectionListener(new SelectionListener() {
 		public void widgetDefaultSelected(SelectionEvent e) {
@@ -130,7 +129,6 @@ protected Control createContents(Composite parent) {
 		public void widgetSelected(SelectionEvent e) {
 			updateEnabledState();
 		}
-
     });
     data = new GridData(GridData.FILL_BOTH);
     data.heightHint = variableTable.getItemHeight()*7;
@@ -155,7 +153,6 @@ protected Control createContents(Composite parent) {
     		addNewVariable();
     	}
     });
-    addButton.setLayoutData(data);
     addButton.setFont(font);
     setButtonLayoutData(addButton);
     
@@ -169,7 +166,7 @@ protected Control createContents(Composite parent) {
     removeButton.setFont(font);
     setButtonLayoutData(removeButton);
     
-    editButton= new Button(groupComponent, SWT.PUSH);
+    editButton = new Button(groupComponent, SWT.PUSH);
     editButton.setText(WorkbenchMessages.getString("PathVariablesPreference.editVariable")); //$NON-NLS-1$
     editButton.addSelectionListener(new SelectionAdapter() {
         public void widgetSelected(SelectionEvent e) {

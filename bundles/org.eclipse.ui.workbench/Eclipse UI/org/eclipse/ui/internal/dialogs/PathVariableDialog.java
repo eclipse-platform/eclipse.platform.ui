@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.dialogs;
 import java.io.File;
 import java.util.Set;
 import org.eclipse.core.resources.IPathVariableManager;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.swt.SWT;
@@ -108,12 +109,9 @@ public class PathVariableDialog extends TitleAreaDialog {
 /**
  * Constructs a dialog for editing a new/existing path variable.
  * 
- * @param parentShell the parent shell
- * @param type the dialog type: <code>NEW_VARIABLE</code> or
+ * @param parentShell the parent shell * @param type the dialog type: <code>NEW_VARIABLE</code> or
  * <code>EXISTING_VARIABLE</code>
- * @param pathVariableManager a reference to the path variable manager
- * @param namesInUse a set of variable names currently in use 
- */
+ * @param pathVariableManager a reference to the path variable manager * @param namesInUse a set of variable names currently in use  */
 public PathVariableDialog(Shell parentShell, int type, IPathVariableManager pathVariableManager, Set namesInUse) {
 	super(parentShell);
 	this.type = type;
@@ -123,12 +121,13 @@ public PathVariableDialog(Shell parentShell, int type, IPathVariableManager path
 
 	this.pathVariableManager = pathVariableManager;
 	this.namesInUse = namesInUse;
+    
+    this.standardMessage = WorkbenchMessages.getString("PathVariableDialog.message." + typeKeySuffix); //$NON-NLS-1$
 }
 /**
  * Configures this dialog's shell, setting the shell's text.
  * 
- * @see org.eclipse.jface.window.Window#configureShell(Shell)
- */
+ * @see org.eclipse.jface.window.Window#configureShell(Shell) */
 protected void configureShell(Shell shell) {
 	super.configureShell(shell);
 	shell.setText(WorkbenchMessages.getString("PathVariableDialog.shellTitle." + typeKeySuffix)); //$NON-NLS-1$
@@ -158,9 +157,7 @@ protected Control createDialogArea(Composite parent) {
 /**
  * Creates and configures this dialog's main composite.
  * 
- * @param parentComposite parent's composite
- * @return this dialog's main composite
- */
+ * @param parentComposite parent's composite * @return this dialog's main composite */
 private Composite createComposite(Composite parentComposite) {
 	// creates a composite with standard margins and spacing
 	Composite contents = new Composite(parentComposite, SWT.NONE);
@@ -174,16 +171,14 @@ private Composite createComposite(Composite parentComposite) {
 	contents.setFont(parentComposite.getFont());
 	
 	setTitle(WorkbenchMessages.getString("PathVariableDialog.dialogTitle." + typeKeySuffix)); //$NON-NLS-1$
-	setMessage(WorkbenchMessages.getString("PathVariableDialog.message." + typeKeySuffix)); //$NON-NLS-1$);
+	setMessage(standardMessage);
 	return contents;
 }
 
 /**
  * Creates widgets for this dialog.
  * 
- * @param parent the parent composite where to create widgets
- * @param contents 
- */
+ * @param parent the parent composite where to create widgets * @param contents  */
 private void createWidgets(Composite contents,Font font) {
 	FormData data;
 	
@@ -246,7 +241,7 @@ private void createWidgets(Composite contents,Font font) {
 	fileButton = new Button(contents, SWT.PUSH);
 	fileButton.setText(WorkbenchMessages.getString("PathVariableDialog.file")); //$NON-NLS-1$
 	
-	data = new FormData();
+	data = setButtonFormLayoutData(fileButton);
 	data.top = new FormAttachment(variableNameLabel, convertVerticalDLUsToPixels(10));
 	data.left = new FormAttachment(variableValueField, convertHorizontalDLUsToPixels(10));
 	data.right = new FormAttachment(100, -5);
@@ -262,7 +257,7 @@ private void createWidgets(Composite contents,Font font) {
 	folderButton = new Button(contents, SWT.PUSH);
 	folderButton.setText(WorkbenchMessages.getString("PathVariableDialog.folder")); //$NON-NLS-1$
 	
-	data = new FormData();
+	data = setButtonFormLayoutData(folderButton);
 	data.top = new FormAttachment(variableValueLabel, convertVerticalDLUsToPixels(10));
 	data.left = new FormAttachment(variableValueField, convertHorizontalDLUsToPixels(10));
 	data.right = new FormAttachment(100, -5);
@@ -273,6 +268,24 @@ private void createWidgets(Composite contents,Font font) {
 	        selectFolder();
 	    }
 	});
+}
+
+/**
+ * Sets the <code>FormData</code> on the specified button to be one that is
+ * spaced for the current dialog page units. The method
+ * <code>initializeDialogUnits</code> must be called once before calling this
+ * method for the first time.
+ * 
+ * @param button the button to set the <code>FormData</code>
+ * @return the <code>FormData</code> set on the specified button
+ */
+private FormData setButtonFormLayoutData(Button button) {
+    FormData data = new FormData();
+    data.height = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+    int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+    data.width = Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+    button.setLayoutData(data);
+    return data;
 }
 
 /**
@@ -340,8 +353,7 @@ protected void createButtonsForButtonBar(Composite parent) {
 /**
  * Validates the current variable name, and updates this dialog's message.
  * 
- * @return true if the name is valid, false otherwise
- */
+ * @return true if the name is valid, false otherwise */
 private boolean validateVariableName() {    
     
     // if the current validationStatus is ERROR, no additional validation applies
@@ -349,22 +361,24 @@ private boolean validateVariableName() {
         return false;
 
     // assumes everything will be ok
-	String message = null;
+	String message = standardMessage;
 	int newValidationStatus = IMessageProvider.NONE;    
     
 	if (variableName.length() == 0) {
         // the variable name is empty
 		newValidationStatus = IMessageProvider.ERROR;
 		message = WorkbenchMessages.getString("PathVariableDialog.variableNameEmptyMessage"); //$NON-NLS-1$
-	} else if (!pathVariableManager.validateName(variableName).isOK()) {
-        // the variable name is not valid
-        //TODO: can get a better message from the returned IStatus object
-		newValidationStatus = IMessageProvider.ERROR;
-		message = WorkbenchMessages.getString("PathVariableDialog.variableNameInvalidMessage"); //$NON-NLS-1$
-	} else if (namesInUse.contains(variableName) && !variableName.equals(originalName)) {
-        // the variable name is already in use (warning)
-		message = WorkbenchMessages.getString("PathVariableDialog.variableAlreadyExistsMessage"); //$NON-NLS-1$
-		newValidationStatus = IMessageProvider.WARNING;
+	} else {
+        IStatus status = pathVariableManager.validateName(variableName); 
+        if (!status.isOK()) {
+            // the variable name is not valid
+    		newValidationStatus = IMessageProvider.ERROR;
+    		message = status.getMessage();
+        } else if (namesInUse.contains(variableName) && !variableName.equals(originalName)) {
+            // the variable name is already in use (warning)
+    		message = WorkbenchMessages.getString("PathVariableDialog.variableAlreadyExistsMessage"); //$NON-NLS-1$
+    		newValidationStatus = IMessageProvider.WARNING;
+        }
 	}
 
     // overwrite the current validation status / message only if everything is ok (clearing them)
@@ -389,7 +403,7 @@ private boolean validateVariableValue() {
         return false;
 
     // assumes everything will be ok
-	String message = null;
+	String message = standardMessage;
 	int newValidationStatus = IMessageProvider.NONE;
 
 	if (variableValue.length() == 0) {
