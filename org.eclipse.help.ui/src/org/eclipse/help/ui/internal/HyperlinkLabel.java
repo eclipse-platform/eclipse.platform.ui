@@ -217,7 +217,7 @@ public class HyperlinkLabel extends Canvas{
 			}
 
 			public void getRole(AccessibleControlEvent e) {
-				e.detail = ACC.ROLE_LABEL;
+				e.detail = ACC.ROLE_TEXT;
 			}
 
 			public void getState(AccessibleControlEvent e) {
