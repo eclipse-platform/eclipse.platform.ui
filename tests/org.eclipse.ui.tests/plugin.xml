@@ -978,7 +978,7 @@
       </decorator>
       <decorator
             lightweight="true"
-            quadrant="TOP_LEFT"
+            location="TOP_LEFT"
             adaptable="true"
             label="Declarative Test Decorator"
             icon="icons/binary_co.gif"
@@ -1128,7 +1128,6 @@
    <extension
          point="org.eclipse.ui.intro">
       <intro
-            name="Intro Test"
             icon="icons/anything.gif"
             class="org.eclipse.ui.tests.intro.MockIntroPart"
             id="org.eclipse.ui.testintro">
