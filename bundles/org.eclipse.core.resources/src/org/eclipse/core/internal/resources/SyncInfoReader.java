@@ -8,7 +8,6 @@ package org.eclipse.core.internal.resources;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.*;
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.*;
 
@@ -31,6 +30,8 @@ protected SyncInfoReader getReader(int formatVersion) throws IOException {
 	switch (formatVersion) {
 		case 2 :
 			return new SyncInfoReader_2(workspace, synchronizer);
+		case 3 :
+			return new SyncInfoReader_3(workspace, synchronizer);
 		default :
 			throw new IOException("Unknown format");
 	}
@@ -49,16 +50,12 @@ public void readPartners(DataInputStream input) throws CoreException {
 		throw new ResourceException(new ResourceStatus(IResourceStatus.INTERNAL_ERROR, "Errors reading sync info file: " + e.toString()));
 	}
 }
-public void readSyncInfo(DataInputStream input) throws CoreException {
-	try {
-		// dispatch to the appropriate reader depending
-		// on the version of the file
-		int formatVersion = readVersionNumber(input);
-		SyncInfoReader reader = getReader(formatVersion);
-		reader.readSyncInfo(input);
-	} catch (IOException e) {
-		throw new ResourceException(new ResourceStatus(IResourceStatus.ERROR, null, "Error reading sync info file.", e));
-	}
+public void readSyncInfo(DataInputStream input) throws IOException {
+	// dispatch to the appropriate reader depending
+	// on the version of the file
+	int formatVersion = readVersionNumber(input);
+	SyncInfoReader reader = getReader(formatVersion);
+	reader.readSyncInfo(input);
 }
 protected static int readVersionNumber(DataInputStream input) throws IOException {
 	return input.readInt();
