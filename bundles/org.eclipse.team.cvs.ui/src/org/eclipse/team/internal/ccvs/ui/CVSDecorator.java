@@ -224,7 +224,7 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 				IResource resource= resources[i];
 				if(resource.exists()) {
 					cache.put(resource, decorations[i]);
-					decorated.add(decorations[i]);
+					decorated.add(resource);
 				}
 			}
 			postLabelEvent(new LabelProviderChangedEvent(this, decorated.toArray()));
