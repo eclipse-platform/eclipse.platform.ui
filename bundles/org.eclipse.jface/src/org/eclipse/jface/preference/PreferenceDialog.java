@@ -593,7 +593,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	 * @since 3.0
 	 */
 	protected TreeViewer createTreeViewer(Composite parent) {
-		final TreeViewer viewer = new TreeViewer(parent, SWT.NONE);
+		final TreeViewer viewer = new TreeViewer(parent, SWT.BORDER);
 		addListeners(viewer);
 		viewer.setLabelProvider(new PreferenceLabelProvider());
 		viewer.setContentProvider(new PreferenceContentProvider());
