@@ -112,8 +112,12 @@ public interface ICVSFolder extends ICVSResource {
 	public void acceptChildren(ICVSResourceVisitor visitor) throws CVSException;
 	
 	/**
-	 * Answers <code>true</code> if the folder has CVS synchronization information and
-	 * <code>false</code> otherwise.
+	 * Answers <code>true</code> if the folder has valid CVS synchronization information and
+	 * <code>false</code> otherwise. 
+	 * 
+	 * Note: This method does not throw an exception so this method does not differentiate
+	 * between a folder not be shared with CVS and a folder that is shared but whose sync info has
+	 * become corrupt. Use getFolderSyncInfo() to differentiate between these situations.
 	 */
 	public boolean isCVSFolder();
 	

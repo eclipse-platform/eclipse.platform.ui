@@ -59,8 +59,8 @@ public class CVSWorkspaceRoot {
 	public static ICVSRemoteResource getRemoteResourceFor(ICVSResource resource) throws CVSException {
 		if (resource.isFolder()) {
 			ICVSFolder folder = (ICVSFolder)resource;
-			if (folder.isCVSFolder()) {
-				FolderSyncInfo syncInfo = folder.getFolderSyncInfo();
+			FolderSyncInfo syncInfo = folder.getFolderSyncInfo();
+			if (syncInfo != null) {
 				return new RemoteFolder(null, CVSProvider.getInstance().getRepository(syncInfo.getRoot()), new Path(syncInfo.getRepository()), syncInfo.getTag());
 			}
 		} else {
@@ -77,7 +77,8 @@ public class CVSWorkspaceRoot {
 	private static ICVSRemoteResource getRemoteTreeFromParent(IResource resource, ICVSResource managed, CVSTag tag, IProgressMonitor progress) throws TeamException {
 		// If the parent isn't mapped to CVS, there's nothing we can do
 		ICVSFolder parent = managed.getParent();
-		if (!parent.isCVSFolder()) {
+		FolderSyncInfo syncInfo = parent.getFolderSyncInfo();
+		if (syncInfo == null) {
 			throw new CVSException(new CVSStatus(CVSStatus.ERROR, resource.getFullPath(), Policy.bind("CVSTeamProvider.unmanagedParent", resource.getFullPath().toString()), null)); //$NON-NLS-1$
 		}
 		ICVSRepositoryLocation location = CVSProvider.getInstance().getRepository(parent.getFolderSyncInfo().getRoot());
