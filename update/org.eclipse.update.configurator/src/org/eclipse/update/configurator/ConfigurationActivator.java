@@ -160,7 +160,6 @@ public class ConfigurationActivator implements BundleActivator {
 	}
 
 	private void installBundles() {
-		String metaPath = platform.getLocation().append(".metadata").toOSString();
 		URL installURL = platform.getInstallURL();
 		ServiceReference reference = context.getServiceReference(StartLevel.class.getName());
 		StartLevel start = null;
