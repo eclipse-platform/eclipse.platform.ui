@@ -338,7 +338,7 @@ public class DocumentRangeNode
 			// no destination: we have to add the contents into the parent
 			add(srcContents, null /*srcParentNode*/, src);
 		}
-		return null;
+		return child;
 	}
 	
 	/* (non Javadoc)
