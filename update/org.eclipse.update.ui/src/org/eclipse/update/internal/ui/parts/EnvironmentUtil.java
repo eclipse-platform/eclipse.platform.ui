@@ -3,7 +3,6 @@ package org.eclipse.update.internal.ui.parts;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.boot.BootLoader;
-import org.eclipse.update.core.IFeature;
 import org.eclipse.update.core.IPlatformEnvironment;
 
 public class EnvironmentUtil {
