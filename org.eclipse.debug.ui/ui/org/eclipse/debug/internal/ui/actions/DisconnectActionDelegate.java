@@ -7,6 +7,7 @@ package org.eclipse.debug.internal.ui.actions;
 
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IDisconnect;
 
 public class DisconnectActionDelegate extends AbstractListenerActionDelegate {
@@ -50,7 +51,7 @@ public class DisconnectActionDelegate extends AbstractListenerActionDelegate {
 	 * @see ListenerActionDelegate#doHandleDebugEvent(DebugEvent)
 	 */
 	protected void doHandleDebugEvent(DebugEvent event) {	
-		if (event.getKind() == DebugEvent.TERMINATE) {
+		if (event.getKind() == DebugEvent.TERMINATE && event.getSource() instanceof IDebugTarget) {
 			update(getAction(), getSelection());
 		}
 	}
