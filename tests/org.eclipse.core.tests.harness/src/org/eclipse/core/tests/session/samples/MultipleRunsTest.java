@@ -24,9 +24,8 @@ public class MultipleRunsTest extends TestCase {
 		test.setTestRunner(new SessionTestRunner());
 		// setup the command line to be passed to the multiple runs so it has the right system properties			
 		test.setSetup(SetupManager.getInstance().getDefaultSetup());
-		String[] perfCtrl = PerformanceSessionTestSuite.parsePerfCtrl();
-		if (perfCtrl[0] != null)
-			test.getSetup().setSystemProperty(PerformanceSessionTestSuite.PROP_PERFORMANCE, perfCtrl[0]);
+		test.getSetup().setSystemProperty("eclipse.perf.dbloc", System.getProperty("eclipse.perf.dbloc"));
+		test.getSetup().setSystemProperty("eclipse.perf.config", System.getProperty("eclipse.perf.config"));		
 		// runs the test case several times - only to collect data, won't do any assertions
 		TestResult result = new TestResult();
 		for (int i = 0; i < 5; i++) {

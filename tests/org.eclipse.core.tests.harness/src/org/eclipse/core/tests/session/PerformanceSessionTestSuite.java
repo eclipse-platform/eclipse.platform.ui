@@ -71,33 +71,6 @@ public class PerformanceSessionTestSuite extends SessionTestSuite {
 
 	private int timesToRun;
 
-	/* 
-	 * This method will not be needed when the performance testing API
-	 * change to use multiple properties instead of perf_ctrl.
-	 */
-	public static String[] parsePerfCtrl() {
-		String[] result = new String[2];
-		String perfCtrl = System.getProperty(PROP_PERFORMANCE);
-		if (perfCtrl == null || perfCtrl.trim().length() == 0)
-			return result;
-		int assertBeginning = perfCtrl.indexOf("assertAgainst=");
-		if (assertBeginning == -1) {
-			result[0] = perfCtrl;
-			return result;
-		}
-		int assertEnding = perfCtrl.indexOf(';', assertBeginning);
-		if (assertEnding == -1)
-			assertEnding = perfCtrl.length();
-		String assertAgainst = perfCtrl.substring(assertBeginning, assertEnding);
-		StringBuffer newPerfCtrl = new StringBuffer();
-		newPerfCtrl.append(perfCtrl.substring(0, assertBeginning));
-		if (assertEnding + 1 < perfCtrl.length())
-			newPerfCtrl.append(perfCtrl.substring(assertEnding + 1));
-		result[0] = newPerfCtrl.toString();
-		result[1] = assertAgainst;
-		return result;
-	}
-
 	public PerformanceSessionTestSuite(String pluginId, int timesToRun) {
 		super(pluginId);
 		this.timesToRun = timesToRun;
@@ -125,11 +98,8 @@ public class PerformanceSessionTestSuite extends SessionTestSuite {
 			result.addError(descriptor.getTest(), e.getCause());
 			return;
 		}
-		// first component contains the property except assertAgainst=*
-		// second component contains only assertAgainst=*
-		String[] perfCtrl = parsePerfCtrl();
-		if (perfCtrl[0] != null)
-			descriptor.getSetup().setSystemProperty(PROP_PERFORMANCE, perfCtrl[0]);
+		descriptor.getSetup().setSystemProperty("eclipse.perf.dbloc", System.getProperty("eclipse.perf.dbloc"));
+		descriptor.getSetup().setSystemProperty("eclipse.perf.config", System.getProperty("eclipse.perf.config"));		
 		// run test cases n-1 times
 		ConsolidatedTestResult consolidated = new ConsolidatedTestResult(result);
 		for (int i = 0; !consolidated.shouldStop() && i < timesToRun - 1; i++)
@@ -137,8 +107,7 @@ public class PerformanceSessionTestSuite extends SessionTestSuite {
 		if (consolidated.shouldStop())
 			return;
 		// for the n-th run, enable assertions
-		if (perfCtrl[1] != null)
-			descriptor.getSetup().setSystemProperty(PROP_PERFORMANCE, perfCtrl[0] + ';' + perfCtrl[1]);
+		descriptor.getSetup().setSystemProperty("eclipse.perf.assertAgainst", System.getProperty("eclipse.perf.assertAgainst"));		
 		descriptor.run(consolidated);
 	}
 }
