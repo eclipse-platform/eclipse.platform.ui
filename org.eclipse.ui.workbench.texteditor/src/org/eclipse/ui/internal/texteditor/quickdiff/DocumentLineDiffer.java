@@ -461,13 +461,18 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 				// Getting our own copies of the documents for offline diffing.
 				//
 				// We need to make sure that we do get all document modifications after
-				// copying the documents as we want to reinject them later on to become consistent.
+				// copying the documents as we want to re-inject them later on to become consistent.
 				//
 				// Now this is fun. The reference documents may be PartiallySynchronizedDocuments
 				// which will result in a deadlock if they get changed externally before we get
 				// our exclusive copies.
 				// Here's what we do: we try over and over (without synchronization) to get copies 
-				// without interleaving modification. If there is a document change, we just repeat. 
+				// without interleaving modification. If there is a document change, we just repeat.
+				// 
+				// TODO we should only fall back to this method if document is not an
+				// ISynchronizable. If it is, we can adhere to the proper lock
+				// order (first document, then differ) and create a clean copy inside the
+				// critical section
 				
 				IDocument right= fRightDocument; // fRightDocument, but not subject to change
 				IDocument actual= null; // the copy of the actual (right) document
@@ -497,7 +502,8 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 				
 				int i= 0;
 				do {
-					if (i++ == 100) // XXX this is an arbitrary emergency exit in case a referenced document goes nuts
+					// this is an arbitrary emergency exit in case a referenced document goes nuts
+					if (i++ == 100)
 						return new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, QuickDiffMessages.getFormattedString("quickdiff.error.getting_document_content", new Object[] {left.getClass(), right.getClass()}), null); //$NON-NLS-1$
 					
 					// clear events
@@ -599,8 +605,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 			 */
 			private IDocument createCopy(IDocument document) {
 				Assert.isNotNull(document);
-				// TODO needs for sure a safer synchronization method
-				// this is a temporary workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=56091
+				// this fixes https://bugs.eclipse.org/bugs/show_bug.cgi?id=56091
 				try {
 					return new Document(document.get());
 				} catch (NullPointerException e) {
@@ -1114,7 +1119,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		 * appended.
 		 * We terminate if the current line does not match and there are no more free slots.
 		 * 
-		 * TODO what if we have a prefix to a repetition field? Probably does not matter.
+		 * Q: what if we have a prefix to a repetition field? Probably does not matter.
 		 */
 		LinkedList window= new LinkedList();
 		int nLines= doc.getNumberOfLines();
