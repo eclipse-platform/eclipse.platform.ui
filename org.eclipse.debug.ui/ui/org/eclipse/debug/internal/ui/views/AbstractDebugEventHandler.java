@@ -71,6 +71,8 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	 */
 	private class EventProcessingJob extends UIJob {
 
+        private static final int TIMEOUT = 200;
+        
 	    public EventProcessingJob() {
 	        super(DebugUIViewsMessages.getString("AbstractDebugEventHandler.0")); //$NON-NLS-1$
 	        setSystem(true);
@@ -82,9 +84,9 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
          */
         public IStatus runInUIThread(IProgressMonitor monitor) {
             boolean more = true;
-            int count = 0;
+            long start = System.currentTimeMillis();
             // to avoid blocking the UI thread, process a max of 50 event sets at once
-            while (more && (count < 50)) {
+            while (more) {
                 DebugEvent[] eventSet = null;
                 Object data = null;
 			    synchronized (LOCK) {
@@ -104,7 +106,13 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 					}
 					updateForDebugEvents(eventSet, data);
 				}
-				count++;
+                
+                if (more) {
+                    long current = System.currentTimeMillis();
+                    if (current - start > TIMEOUT) {
+                        break;
+                    }
+                }
             }
             if (more) {
                 // re-schedule with a delay if there are still events to process 
