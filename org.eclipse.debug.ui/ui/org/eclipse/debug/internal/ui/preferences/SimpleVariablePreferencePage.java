@@ -77,14 +77,17 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 	 
 	protected static String[] variableTableColumnProperties= {
 		"variable", //$NON-NLS-1$
-		"value"//$NON-NLS-1$
+		"value", //$NON-NLS-1$
+		"description" //$NON-NLS-1$
 	};
 	protected String[] variableTableColumnHeaders= {
 		DebugPreferencesMessages.getString("SimpleVariablePreferencePage.3"), //$NON-NLS-1$
-		DebugPreferencesMessages.getString("SimpleVariablePreferencePage.4") //$NON-NLS-1$
+		DebugPreferencesMessages.getString("SimpleVariablePreferencePage.4"), //$NON-NLS-1$
+		DebugPreferencesMessages.getString("SimpleVariablePreferencePage.15") //$NON-NLS-1$
 	};
 	protected ColumnLayoutData[] variableTableColumnLayouts= {
-		new ColumnWeightData(50),
+		new ColumnWeightData(25),
+		new ColumnWeightData(25),
 		new ColumnWeightData(50)
 	};
 	
@@ -408,6 +411,12 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 							value= ""; //$NON-NLS-1$
 						}
 						return value;
+					case 2:
+						String description= ((ISimpleLaunchVariable) element).getDescription();
+						if (description == null) {
+							description= ""; //$NON-NLS-1$
+						}
+						return description;
 				}
 			}
 			return null;

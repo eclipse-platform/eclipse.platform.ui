@@ -53,6 +53,7 @@ public class SimpleLaunchVariableRegistry {
 	private static final String VARIABLE_TAG= "variable"; //$NON-NLS-1$
 	private static final String NAME_TAG= "name"; //$NON-NLS-1$
 	private static final String VALUE_TAG= "value"; //$NON-NLS-1$
+	private static final String DESCRIPTION_TAG="description"; //$NON_NLS-1$
 
 	private Map fVariables= new HashMap(); 
 	
@@ -173,6 +174,10 @@ public class SimpleLaunchVariableRegistry {
 					if (value.length() > 0) {
 						variable.setValue(value);
 					}
+					String description= element.getAttribute(DESCRIPTION_TAG);
+					if (description.length() > 0) {
+						variable.setDescription(description);
+					}
 					fVariables.put(name, variable);
 				} else {
 					DebugPlugin.logMessage("Invalid variable entry encountered while loading launch configuration variables. Variable name is null.", null); //$NON-NLS-1$
@@ -216,6 +221,7 @@ public class SimpleLaunchVariableRegistry {
 			Element element= document.createElement(VARIABLE_TAG);
 			element.setAttribute(NAME_TAG, (String)entry.getKey());
 			element.setAttribute(VALUE_TAG, ((ISimpleLaunchVariable)entry.getValue()).getValue());
+			element.setAttribute(DESCRIPTION_TAG, ((ISimpleLaunchVariable)entry.getValue()).getDescription());
 			rootElement.appendChild(element);
 		}
 		return LaunchManager.serializeDocument(document);
