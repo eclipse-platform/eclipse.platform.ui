@@ -260,5 +260,13 @@
 	            isGoToPreviousNavigationTarget="false">
 	     </specification>
 	</extension>
+	
+	<extension point="org.eclipse.core.runtime.adapters">
+		<factory 
+			class="org.eclipse.search.internal.ui.SearchResultViewEntryAdapterFactory" 
+			adaptableType="org.eclipse.search.ui.ISearchResultViewEntry">
+			<adapter type="org.eclipse.core.resources.IResource"/>
+		</factory>
+	</extension>     	
 
 </plugin>

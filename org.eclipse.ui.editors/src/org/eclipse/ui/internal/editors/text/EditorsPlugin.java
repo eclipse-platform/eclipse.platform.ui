@@ -12,13 +12,9 @@ package org.eclipse.ui.internal.editors.text;
 
 import org.osgi.framework.BundleContext;
 
-import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-
-import org.eclipse.core.resources.IFile;
 
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.source.ISharedTextColors;
@@ -68,8 +64,6 @@ public class EditorsPlugin extends AbstractUIPlugin {
 	}
 	
 	
-	
-	private FileEditorInputAdapterFactory fFileEditorInputAdapterFactory;
 	private ISharedTextColors fSharedTextColors;
 	private AnnotationTypeLookup fAnnotationTypeLookup;
 	private AnnotationPreferenceLookup fAnnotationPreferenceLookup;
@@ -129,24 +123,10 @@ public class EditorsPlugin extends AbstractUIPlugin {
 	}
 
 	/*
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
-	 * @since 3.0
-	 */
-	public void start(BundleContext context) throws Exception {
-		super.start(context);
-		fFileEditorInputAdapterFactory= new FileEditorInputAdapterFactory();
-		IAdapterManager manager= Platform.getAdapterManager();		
-		manager.registerAdapters(fFileEditorInputAdapterFactory, IFile.class);
-	}
-
-	/*
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
 	 * @since 3.0
 	 */
 	public void stop(BundleContext context) throws Exception {
-		IAdapterManager manager= Platform.getAdapterManager();		
-		manager.unregisterAdapters(fFileEditorInputAdapterFactory);
-		
 		if (fSharedTextColors != null) {
 			fSharedTextColors.dispose();
 			fSharedTextColors= null;

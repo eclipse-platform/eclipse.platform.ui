@@ -15,32 +15,28 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceDescription;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceDescription;
+import org.eclipse.core.resources.ResourcesPlugin;
+
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.Assert;
-import org.eclipse.search.internal.ui.util.ExceptionHandler;
-import org.eclipse.search.ui.IContextMenuConstants;
-import org.eclipse.search.ui.ISearchResultView;
-import org.eclipse.search.ui.ISearchResultViewEntry;
-import org.eclipse.search.ui.NewSearchUI;
-import org.eclipse.search.ui.SearchUI;
-import org.eclipse.search2.internal.ui.InternalSearchUI;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -48,6 +44,15 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+
+import org.eclipse.search.ui.IContextMenuConstants;
+import org.eclipse.search.ui.ISearchResultView;
+import org.eclipse.search.ui.NewSearchUI;
+import org.eclipse.search.ui.SearchUI;
+
+import org.eclipse.search.internal.ui.util.ExceptionHandler;
+
+import org.eclipse.search2.internal.ui.InternalSearchUI;
 
 /**
  * The plug-in runtime class for Search plug-in
@@ -65,7 +70,6 @@ public class SearchPlugin extends AbstractUIPlugin {
 	private List fPageDescriptors;
 	private List fSorterDescriptors;
 	
-	private SearchResultViewEntryAdapterFactory fSearchResultViewEntryAdapterFactory;
 
 	public SearchPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
@@ -221,18 +225,11 @@ public class SearchPlugin extends AbstractUIPlugin {
 		}
 	}
 
-
-	public void startup() throws CoreException {
-		super.startup();
-		registerAdapters();
-	}
-	
 	/**
 	 * Shuts down this plug-in.
 	 */
 	public void shutdown() throws CoreException {
 		InternalSearchUI.shutdown();
-		unregisterAdapters();
 		getWorkspace().removeResourceChangeListener(SearchManager.getDefault());
 		super.shutdown();
 		fgSearchPlugin = null;
@@ -363,16 +360,5 @@ public class SearchPlugin extends AbstractUIPlugin {
 		menu.add(new Separator(IContextMenuConstants.GROUP_ADDITIONS));
 		menu.add(new Separator(IContextMenuConstants.GROUP_VIEWER_SETUP));
 		menu.add(new Separator(IContextMenuConstants.GROUP_PROPERTIES));
-	}
-
-	private void registerAdapters() {
-		IAdapterManager manager= Platform.getAdapterManager();
-		fSearchResultViewEntryAdapterFactory= new SearchResultViewEntryAdapterFactory();
-		manager.registerAdapters(fSearchResultViewEntryAdapterFactory, ISearchResultViewEntry.class);
-	}
-
-	private void unregisterAdapters() {
-		IAdapterManager manager= Platform.getAdapterManager();
-		manager.unregisterAdapters(fSearchResultViewEntryAdapterFactory);
 	}
 }

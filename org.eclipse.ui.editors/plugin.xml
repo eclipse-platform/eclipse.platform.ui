@@ -33,6 +33,14 @@
       <initializer class="org.eclipse.ui.internal.editors.text.EditorsPluginPreferenceInitializer"/>
    </extension>
 
+   <extension point="org.eclipse.core.runtime.adapters">
+      <factory 
+         class="org.eclipse.ui.internal.editors.text.FileEditorInputAdapterFactory" 
+            adaptableType="org.eclipse.core.resources.IFile">
+            <adapter type="org.eclipse.ui.editors.text.ILocationProvider"/>
+      </factory>
+   </extension>     	
+
    <extension
          point="org.eclipse.ui.commands">
       <command
