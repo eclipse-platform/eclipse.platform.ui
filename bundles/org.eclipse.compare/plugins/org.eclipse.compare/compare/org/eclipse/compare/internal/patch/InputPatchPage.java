@@ -96,7 +96,7 @@ import org.eclipse.compare.internal.Utilities;
 		updateWidgetEnablements();
 		//updatePageCompletion();
 		
-		WorkbenchHelp.setHelp(composite, new DialogPageContextComputer(this, PATCH_HELP_CONTEXT_ID));								
+		WorkbenchHelp.setHelp(composite, PATCH_HELP_CONTEXT_ID);
 	}
 	
 	/* (non-JavaDoc)
