@@ -52,6 +52,8 @@ class StaticHandler extends ResponseHandler {
 		repositoryDir = repositoryDir.substring(0, repositoryDir.length() - 1);
 		ICVSFolder folder = createFolder(session, localDir, repositoryDir);
 		FolderSyncInfo syncInfo = folder.getFolderSyncInfo();
+		// Added to ignore sync info for workspace root
+		if (syncInfo == null) return;
 		folder.setFolderSyncInfo(new FolderSyncInfo(syncInfo.getRepository(),
 			syncInfo.getRoot(), syncInfo.getTag(), setStaticDirectory));
 	}

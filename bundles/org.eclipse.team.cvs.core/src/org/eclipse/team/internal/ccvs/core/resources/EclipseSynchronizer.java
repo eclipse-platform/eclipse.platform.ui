@@ -102,7 +102,9 @@ public class EclipseSynchronizer {
 	 */
 	public void setFolderSync(IContainer folder, FolderSyncInfo info) throws CVSException {
 		Assert.isNotNull(info); // enforce the use of deleteFolderSync
-		if (folder.getType() == IResource.ROOT || !isValid(folder)) {
+		// ignore folder sync on the root (i.e. CVSROOT/config/TopLevelAdmin=yes but we just ignore it)
+		if (folder.getType() == IResource.ROOT) return;
+		if (!isValid(folder)) {
 			throw new CVSException(IStatus.ERROR, CVSException.UNABLE,
 				Policy.bind("EclipseSynchronizer.ErrorSettingFolderSync", folder.getFullPath().toString())); //$NON-NLS-1$
 		}

@@ -200,6 +200,8 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 	 * @see ICVSFolder#setFolderInfo(FolderSyncInfo)
 	 */
 	public void setFolderSyncInfo(FolderSyncInfo folderInfo) throws CVSException {
+		// ignore folder sync on the root (i.e. CVSROOT/config/TopLevelAdmin=yes but we just ignore it)
+		if (resource.getType() == IResource.ROOT) return;
 		EclipseSynchronizer synchronizer = EclipseSynchronizer.getInstance();
 		FolderSyncInfo oldInfo = synchronizer.getFolderSync((IContainer)resource);
 		synchronizer.setFolderSync((IContainer)resource, folderInfo);
