@@ -48,27 +48,6 @@ public class DefaultHelpSupport {
 	}
 
 	/**
-	 * Displays context-sensitive help for specified context
-	 * @param contexts the context to display
-	 * @param x int positioning information
-	 * @param y int positioning information
-	 */
-	public void displayContext(IContext context, int x, int y) {
-		// no implementation
-	}
-
-	/**
-	 * Displays context-sensitive help for specified context
-	 * @param contextIds context identifier
-	 * @param x int positioning information
-	 * @param y int positioning information
-	 */
-	public void displayContext(String contextId, int x, int y) {
-		IContext context = HelpCore.getContextManager().getContext(contextId);
-		displayContext(context, x, y);
-	}
-
-	/**
 	 * Displays a help resource
 	 */
 	public void displayHelpResource(IHelpResource helpResource) {
@@ -110,53 +89,6 @@ public class DefaultHelpSupport {
 			displayHelpURL("topic=" + URLEncoder.encode(href));
 	}
 
-	/**
-	 * Displays the specified table of contents.
-	 */
-	public void displayHelp(String tocFileHref) {
-		displayHelp(tocFileHref, null);
-	}
-	/**
-	 * Display help and selected specified topic.
-	 */
-	public void displayHelp(
-		String toc,
-		String topic) { // Do not start help view if documentaton is not available, display error
-		if (getTocs().length == 0) {
-			// There is no documentation
-			BaseHelpSystem.getDefaultErrorUtil().displayError(
-				HelpBaseResources.getString("WW001"));
-			//Documentation is not installed.
-			return;
-		}
-
-		String query = null;
-		if (toc != null) {
-			query = "toc=" + toc;
-			if (topic != null)
-				query =
-					query + "&topic=" + URLEncoder.encode(getTopicURL(topic));
-		} else {
-			if (topic != null)
-				query = "topic=" + URLEncoder.encode(getTopicURL(topic));
-		}
-
-		displayHelpURL(query);
-	}
-	/**
-	 * Displays context-sensitive help for specified context
-	 * @deprecated
-	 */
-	public void displayHelp(String contextId, int x, int y) {
-		displayContext(contextId, x, y);
-	}
-	/**
-	 * Displays context-sensitive help for specified context
-	 * @deprecated
-	 */
-	public void displayHelp(IContext context, int x, int y) {
-		displayContext(context, x, y);
-	}
 	/**
 	 * Display help for the a given topic and related topics.
 	 * @param topic topic to be displayed by the help browse
