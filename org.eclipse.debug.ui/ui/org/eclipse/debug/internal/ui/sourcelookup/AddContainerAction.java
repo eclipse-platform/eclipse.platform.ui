@@ -11,9 +11,7 @@
 package org.eclipse.debug.internal.ui.sourcelookup;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.actions.SelectionListenerAction;
 
 
 /**
