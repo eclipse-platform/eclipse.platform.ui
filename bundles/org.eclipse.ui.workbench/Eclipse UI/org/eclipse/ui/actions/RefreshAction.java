@@ -113,12 +113,18 @@ protected List getSelectedResources() {
  * Method declared on WorkspaceAction.
  */
 void invokeOperation(IResource resource, IProgressMonitor monitor) throws CoreException {
-	resource.refreshLocal(IResource.DEPTH_INFINITE,monitor);
 	// Check if project's location has been deleted, 
 	// as per 1G83UCE: ITPUI:WINNT - Refresh from local doesn't detect new or deleted projects
+	// and also for bug report #18283
 	if (resource.getType() == IResource.PROJECT) {
 		checkLocationDeleted((IProject) resource);
+	} else if (resource.getType() == IResource.ROOT) {
+		IProject[] projects = ((IWorkspaceRoot)resource).getProjects();
+		for (int i = 0; i < projects.length; i++) {
+			checkLocationDeleted(projects[i]);
+		}
 	}
+	resource.refreshLocal(IResource.DEPTH_INFINITE,monitor);
 }
 /**
  * The <code>RefreshAction</code> implementation of this
