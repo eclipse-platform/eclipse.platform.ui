@@ -222,7 +222,7 @@
                helpContextId="org.eclipse.ui.AddTask_action_context"
                class="org.eclipse.ui.texteditor.TaskRulerAction"
                tooltip="%AddTask.tooltip"
-               menubarPath="additions"
+               menubarPath="add"
                id="org.eclipse.ui.texteditor.TaskRulerAction">
          </action>
          <action
@@ -230,8 +230,29 @@
                helpContextId="org.eclipse.ui.bookmark_action_context"
                class="org.eclipse.ui.texteditor.BookmarkRulerAction"
                tooltip="%AddBookmark.tooltip"
-               menubarPath="additions"
+               menubarPath="add"
                id="org.eclipse.ui.texteditor.BookmarkRulerAction">
+         </action>
+          <menu
+			id="projection"
+			label="%Folding.label"
+			path="rest">
+		 </menu>
+         <action
+               label="%Dummy.label"
+               tooltip="%Dummy.label"
+               class="org.eclipse.ant.internal.ui.editor.actions.FoldingExpandAllRulerAction"
+               menubarPath="projection/additions"
+               definitionId="org.eclipse.ui.edit.text.folding.expand_all"
+               id="org.eclipse.ant.ui.folding.expandAll">
+         </action>
+         <action
+               label="%Dummy.label"
+               tooltip="%Dummy.label"
+               class="org.eclipse.ant.internal.ui.editor.actions.FoldingToggleRulerAction"
+               menubarPath="projection/additions"
+               definitionId="org.eclipse.ui.edit.text.folding.toggle"
+               id="org.eclipse.ant.ui.folding.toggle">
          </action>
       </viewerContribution>
    </extension>

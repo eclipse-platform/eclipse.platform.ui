@@ -17,6 +17,7 @@ package org.eclipse.ant.internal.ui.editor;
 
 import java.util.ResourceBundle;
 
+import org.eclipse.ant.internal.ui.editor.actions.OpenDeclarationAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;

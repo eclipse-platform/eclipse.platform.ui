@@ -9,8 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ant.internal.ui.editor;
+package org.eclipse.ant.internal.ui.editor.actions;
 
+import org.eclipse.ant.internal.ui.editor.AntEditor;
 import org.eclipse.jdt.ui.actions.IJavaEditorActionDefinitionIds;
 import org.eclipse.jdt.ui.actions.OpenAction;
 import org.eclipse.jface.text.ITextSelection;
@@ -25,9 +26,9 @@ public class OpenDeclarationAction extends OpenAction {
 		setActionDefinitionId(IJavaEditorActionDefinitionIds.OPEN_EDITOR);
 		antEditor.getSite().getKeyBindingService().registerAction(this);
 
-		setText(AntEditorMessages.getString("OpenDeclarationAction.0"));  //$NON-NLS-1$
-		setDescription(AntEditorMessages.getString("OpenDeclarationAction.1")); //$NON-NLS-1$
-		setToolTipText(AntEditorMessages.getString("OpenDeclarationAction.1")); //$NON-NLS-1$
+		setText(AntEditorActionMessages.getString("OpenDeclarationAction.0"));  //$NON-NLS-1$
+		setDescription(AntEditorActionMessages.getString("OpenDeclarationAction.1")); //$NON-NLS-1$
+		setToolTipText(AntEditorActionMessages.getString("OpenDeclarationAction.1")); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)

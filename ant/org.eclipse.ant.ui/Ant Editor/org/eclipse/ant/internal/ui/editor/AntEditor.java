@@ -384,6 +384,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 		setPreferenceStore(createCombinedPreferenceStore());
 		setCompatibilityMode(false);
 		setHelpContextId(IAntUIHelpContextIds.ANT_EDITOR);	
+		setRulerContextMenuId("org.eclipse.ant.internal.ui.editor.AntEditor.RulerContext"); //$NON-NLS-1$
     }
    
 	/* (non-Javadoc)
