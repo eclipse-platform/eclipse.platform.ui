@@ -4,8 +4,7 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
 
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.Assert;
@@ -454,117 +453,58 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 			});
 			return;
 		}
-		// Some of the layout items may not exist on the coolbar, for example, if we save
-		// the layout of editor action bars.  Similarly, items may exist on the coolbar that
-		// are not part of the saved layout.
-		CoolItem[] coolItems = coolBar.getItems();
-		ArrayList currentCoolItemIds = getCoolItemIds();
-		ArrayList newItems = new ArrayList();
-		int maxItemCount = Math.max(coolItems.length, layout.items.size());
-		// the maximum possible number of items that need to be visited
+
+		// This method is called after update.  All of the coolbar items have
+		// been created, now apply the layout to the coolbar. 
+		int maxItemCount = coolBar.getItemCount();
 		int[] itemOrder = new int[maxItemCount];
 		Point[] itemSizes = new Point[maxItemCount];
+
+		// Used to keep track of what cool items have been accounted for in
+		// layout.  New items that were added after the layout was saved, will
+		// not be accounted for.
+		int[] found = new int[maxItemCount];
+		for (int i = 0; i < found.length; i++) {
+			found[i] = -1;
+		}
 		int[] currentItemOrder = coolBar.getItemOrder();
-		// necessary if cool item order has already changed from its original creation order
-		for (int i = 0; i < itemOrder.length; i++) {
-			itemOrder[i] = -1;
-		}
-		for (int i = 0; i < coolItems.length; i++) {
-			CoolBarContributionItem item = (CoolBarContributionItem) coolItems[i].getData();
-			int index = layout.items.indexOf(item.getId());
-			if (index != -1) {
-				// index = new visual position, i = current visual position 
-				// itemOrder[index] must be original visual/creation position
-				itemOrder[index] = currentItemOrder[i];
-				itemSizes[index] = layout.itemSizes[index];
-			} else {
-				newItems.add(coolItems[i]);
+		Vector foundItemOrder = new Vector();
+		Vector foundItemSizes = new Vector();
+		for (int i=0; i<layout.items.size(); i++) {
+			CoolItem coolItem = findCoolItem((CoolBarContributionItem)find((String)layout.items.get(i)));
+			if (coolItem != null) {
+				int index = currentItemOrder[coolBar.indexOf(coolItem)];
+				foundItemOrder.add(new Integer(index));
+				foundItemSizes.add(layout.itemSizes[i]);
+				// the cool item at the given index has been accounted for,
+				// so set the found value for that index to 0
+				found[index]=0;
 			}
 		}
-		Iterator iterator = newItems.iterator();
-		while (iterator.hasNext()) {
-			CoolItem coolItem = (CoolItem) iterator.next();
-			CoolBarContributionItem item = (CoolBarContributionItem) coolItem.getData();
-			int index = currentCoolItemIds.indexOf(item.getId());
-			for (int i = 0; i < itemOrder.length; i++) {
-				if (itemOrder[i] == -1) {
-					itemOrder[i] = index;
-					itemSizes[i] = coolItem.getSize();
-					break;
-				} else if (i == index) {
-					// index of new item is already used. move items up one,
-					boolean increment = false;
-					for (int j = 0; j <itemOrder.length; j++) {
-						if (itemOrder[j] == index) {
-							increment = true;
-							break;
-						}
-					}
-					System.arraycopy(itemOrder, i, itemOrder, i + 1, itemOrder.length - i - 1);
-					if (increment) {
-						for (int j=i+1; j<itemOrder.length; j++) {
-							if (itemOrder[j] != -1) {
-								itemOrder[j]++;
-							}
-						}
-					}
-					System.arraycopy(itemSizes, i, itemSizes, i + 1, itemSizes.length - i - 1);
-					itemOrder[i] = index;
-					itemSizes[i] = coolItem.getSize();
-					break;
-				}
+		int count=0;
+		for (count=0; count<foundItemOrder.size(); count++) {
+			itemOrder[count]=((Integer)foundItemOrder.elementAt(count)).intValue();
+			itemSizes[count]=(Point)foundItemSizes.elementAt(count);
+		}
+		// Handle those items that are on the coolbar, but not in the layout.
+		// Just add these items at the end of the coolbar.
+		for (int i=0; i<found.length; i++) {
+			if (found[i] == -1) {
+				itemOrder[count]=i;
+				itemSizes[count]=coolBar.getItem(count).getSize();
+				count++;
 			}
 		}
-		// remove gaps/unused slots that exist if the old CoolBar had more items 
-		// than the new CoolBar
-		int unusedCount = 0;
-		for (int i = 0; i < itemOrder.length - 1; i++) {
-			if (itemOrder[i] == -1) {
-				unusedCount++;
-				// remove unused slot
-				System.arraycopy(itemOrder, i + 1, itemOrder, i, itemOrder.length - i - 1);
-				System.arraycopy(itemSizes, i + 1, itemSizes, i, itemSizes.length - i - 1);
-			}
-		}
-		if (itemOrder[itemOrder.length - 1] == -1) {
-			unusedCount++;
-		}
-		if (unusedCount > 0) {
-			int[] newItemOrder = new int[itemOrder.length - unusedCount];
-			Point[] newItemSizes = new Point[itemSizes.length - unusedCount];
-
-			System.arraycopy(itemOrder, 0, newItemOrder, 0, newItemOrder.length);
-			System.arraycopy(itemSizes, 0, newItemSizes, 0, newItemSizes.length);
-			itemOrder = newItemOrder;
-			itemSizes = newItemSizes;
-		}
-		/*
-		 * TODO: Make sure that a new item that used to be the last item
-		 * and is now no longer the last item doesn't take more space than
-		 * its preferred size.
-		 * Otherwise it would move the following items to the right
-		 */
-
-//				System.out.print("item create positions ");
-//				CoolItem[] itms = coolBar.getItems();
-//				for (int i=0; i<itms.length; i++) {
-//					CoolItem cItem = itms[i];
-//					System.out.print(coolBar.indexOf(cItem) + " ");
-//				}
-//				System.out.println();
-//				System.out.print("item order ");
-//				for (int i=0; i<itemOrder.length; i++) {
-//					System.out.print(itemOrder[i] + " ");
-//				}
-//				System.out.println();
-//				System.out.print("item sizes ");
-//				for (int i=0; i<itemSizes.length; i++) {
-//					System.out.print(itemSizes[i] + " ");
-//				}
-//				System.out.println();
 
 		coolBar.setRedraw(false);
 		coolBar.setItemLayout(itemOrder, new int[0], itemSizes);
+
+//		System.out.print("old item wraps ");
+//		for (int i=0; i<layout.itemWrapIndices.length; i++) {
+//			System.out.print(layout.itemWrapIndices[i] + " ");
+//		}
+//		System.out.println();
+
 
 		// restore the wrap indices after the new item order is restored, wrap on the same items that 
 		// were specified in the layout
@@ -573,7 +513,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 			wrapItems[i] = (String) layout.items.get(layout.itemWrapIndices[i]);
 		}
 		int[] wrapIndices = new int[wrapItems.length];
-		currentCoolItemIds = getCoolItemIds();
+		ArrayList currentCoolItemIds = getCoolItemIds();
 		int j = 0;
 		int numItems = itemSizes.length;
 		for (int i = 0; i < wrapItems.length; i++) {
@@ -581,22 +521,41 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 			if (index != -1) {
 				wrapIndices[j] = index;
 				j++;
-			} 
+			} else {
+				// wrap item no longer exists, wrap on the next visual item 
+				int visualIndex = layout.itemWrapIndices[i];
+				if ((i+1) < wrapItems.length) {
+					// there's another wrap row, set the wrap to the next
+					// visual item as long as it isn't on the next row
+					int nextWrapIndex = layout.itemWrapIndices[i+1];
+					if (visualIndex < nextWrapIndex) {
+						wrapIndices[j] = visualIndex;
+						j++;
+					}
+				} else {
+					// we're on the last row, set the wrap to the 
+					// next visual item
+					if (visualIndex < itemSizes.length) {
+						wrapIndices[j] = visualIndex;
+						j++;
+					}
+				}
+			}
 		}
 		int[] itemWraps = new int[j];
 		System.arraycopy(wrapIndices, 0, itemWraps, 0, j);
 
-		//		System.out.print("item wraps ");
-		//		for (int i=0; i<itemWraps.length; i++) {
-		//			System.out.print(itemWraps[i] + " ");
-		//		}
-		//		System.out.println();
+//		System.out.print("new item wraps ");
+//		for (int i=0; i<itemWraps.length; i++) {
+//			System.out.print(itemWraps[i] + " ");
+//		}
+//		System.out.println();
 
 		coolBar.setWrapIndices(itemWraps);
 		coolBar.setRedraw(true);
 
-		//		System.out.println("layout set");
-		//		System.out.println(getLayout().toString());
+//		System.out.println("layout set");
+//		System.out.println(getLayout().toString());
 	}
 	/**
 	 */
