@@ -24,6 +24,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.externaltools.internal.ant.model.AntUtil;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.VariableContextManager;
 import org.eclipse.ui.externaltools.internal.model.ToolMessages;
@@ -288,4 +289,20 @@ public class ExternalToolsUtil {
 	public static boolean isBackground(ILaunchConfiguration configuration) throws CoreException {
 		return configuration.getAttribute(IExternalToolConstants.ATTR_RUN_IN_BACKGROUND, false);
 	}	
+	
+	/**
+	 * Returns an array of targets to be run, or <code>null</code> if none are
+	 * specified (indicating the default target should be run).
+	 * 
+	 * @param configuration launch configuration	 * @return array of target names, or <code>null</code>	 * @throws CoreException if an exception occurrs retrieveing the assocaited
+	 * attribute
+	 */
+	public static String[] getTargets(ILaunchConfiguration configuration) throws CoreException {
+		String attribute= configuration.getAttribute(IExternalToolConstants.ATTR_ANT_TARGETS, (String)null);
+		if (attribute == null) {
+			return null;
+		} else {
+			return AntUtil.parseRunTargets(attribute);
+		}		
+	}
 }
