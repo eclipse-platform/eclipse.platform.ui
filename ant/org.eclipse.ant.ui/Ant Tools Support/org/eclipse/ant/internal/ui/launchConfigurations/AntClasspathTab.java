@@ -219,6 +219,7 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab implements I
 			}
 			
 			valid= antClasspathBlock.validateXerces(vmTypeID == null);
+			antClasspathBlock.setValidated();
 		}
 
 		if (valid) {
