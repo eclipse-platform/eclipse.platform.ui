@@ -273,7 +273,7 @@ public final class PaintManager implements KeyListener, MouseListener, ISelectio
 	 * @param reason the reason
 	 * @see IPainter
 	 */
-	void paint(int reason) {
+	private void paint(int reason) {
 		for (Iterator e = fPainters.iterator(); e.hasNext();)
 			((IPainter) e.next()).paint(reason);
 	}

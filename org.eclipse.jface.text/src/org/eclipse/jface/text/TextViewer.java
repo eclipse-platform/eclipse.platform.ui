@@ -3031,8 +3031,6 @@ public class TextViewer extends Viewer implements
 		} catch (BadLocationException x) {
 			throw new IllegalArgumentException(JFaceTextMessages.getString("TextViewer.error.invalid_visible_region_2")); //$NON-NLS-1$
 		}
-		
-		getPaintManager().paint(IPainter.INTERNAL);
 	}
 				
 	/*
@@ -3048,7 +3046,6 @@ public class TextViewer extends Viewer implements
 				manager.freeSlaveDocument(slave);
 			}
 		}
-		getPaintManager().paint(IPainter.INTERNAL);
 	}
 	
 	
