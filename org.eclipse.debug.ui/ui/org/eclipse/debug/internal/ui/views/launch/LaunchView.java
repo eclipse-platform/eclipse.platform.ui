@@ -1382,7 +1382,8 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		IWorkbenchPart part = partRef.getPart(false);
 		if (part == this) {
 			setActive(true);
-			updateContextListener();
+// TODO: Workaround for Bug #63332. Reexamine after M9.
+//			updateContextListener();
 		}
 	}
 
