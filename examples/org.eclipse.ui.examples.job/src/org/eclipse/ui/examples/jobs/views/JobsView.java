@@ -4,10 +4,14 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -18,9 +22,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.examples.jobs.TestJob;
 import org.eclipse.ui.examples.jobs.UITestJob;
@@ -221,6 +222,16 @@ public class JobsView extends ViewPart {
 			}
 		});
 		
+		//progress monitor dialog with fork=false
+		Button exception = new Button(body, SWT.PUSH);
+		noFork.setText("Runtime Exception");
+		noFork.setToolTipText("NullPointerException when running");
+		noFork.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				jobWithRuntimeException();
+			}
+		});
+		
 		
 	}
 	protected void doRun(long duration, IProgressMonitor monitor) {
@@ -298,6 +309,21 @@ public class JobsView extends ViewPart {
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	protected void jobWithRuntimeException() {
+		Job runtimeExceptionJob = new Job("Job with Runtime exception"){
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+			 */
+			protected IStatus run(IProgressMonitor monitor) {
+				throw new NullPointerException();
+				
+			}
+		};
+		runtimeExceptionJob.schedule();
+		
+		
 	}
 	
 }
