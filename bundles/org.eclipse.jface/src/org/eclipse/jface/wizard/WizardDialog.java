@@ -14,6 +14,7 @@ import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
@@ -580,11 +581,12 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer {
 		MessageDialog result =
 			new MessageDialog(
 				getShell(),
-				JFaceResources.getString("WizardClosingDialog.title"),
-			//$NON-NLS-1$
-	null, JFaceResources.getString("WizardClosingDialog.message"),
-			//$NON-NLS-1$
-	MessageDialog.QUESTION, new String[] { IDialogConstants.OK_LABEL }, 0);
+				JFaceResources.getString("WizardClosingDialog.title"), //$NON-NLS-1$
+				null,
+				JFaceResources.getString("WizardClosingDialog.message"), //$NON-NLS-1$
+				MessageDialog.QUESTION,
+				new String[] { IDialogConstants.OK_LABEL },
+				0);
 		return result;
 	}
 	/**
@@ -910,6 +912,26 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer {
 		else
 			isMovingToPreviousPage = false;
 
+		//Update for the new page ina busy cursor if possible
+		if (getContents() == null)
+			updateForPage(page);
+		else {
+			final IWizardPage finalPage = page;
+			BusyIndicator
+				.showWhile(getContents().getDisplay(), new Runnable() {
+				public void run() {
+					updateForPage(finalPage);
+				}
+			});
+		}
+
+	}
+
+	/**
+	 * Update the receiver for the new page.
+	 * @param page
+	 */
+	private void updateForPage(IWizardPage page) {
 		// ensure this page belongs to the current wizard
 		if (wizard != page.getWizard())
 			setWizard(page.getWizard());
