@@ -43,7 +43,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private boolean pluginsChangeStampIsValid = false;
 	private boolean featureChangesConfigured = false;
 
-	public static boolean DEBUG = true;
+	public static boolean DEBUG = false;
 
 	private static final String ECLIPSEDIR = "eclipse";
 	private static final String PLUGINS = "plugins";

@@ -48,11 +48,6 @@ public class TestPlatCfgAPI extends PlatformConfigurationTestCase {
 		Assert.assertEquals("1.1.2",p2.getList().length,2);
 		Assert.assertEquals("1.1.3",p2.getList()[1],"second");
 		
-		ISitePolicy p3 = cfig.createSitePolicy(ISitePolicy.SITE_INCLUDE, new String[] {"first", "second", "third"});
-		Assert.assertEquals("1.2.0",p3.getType(),ISitePolicy.SITE_INCLUDE);
-		Assert.assertEquals("1.2.1",p3.getList().length,3);
-		Assert.assertEquals("1.2.2",p3.getList()[2],"third");
-		
 		// create some urls
 		URL u1 = null;
 		URL u2 = null;
@@ -74,17 +69,11 @@ public class TestPlatCfgAPI extends PlatformConfigurationTestCase {
 		s1.setSitePolicy(p1);
 		Assert.assertEquals("3.0.2",s1.getSitePolicy(),p1);
 		
-		ISiteEntry s2 = cfig.createSiteEntry(u2,p3);
+		ISiteEntry s2 = cfig.createSiteEntry(u2,p1);
 		Assert.assertEquals("3.1.0",s2.getURL(),u2);
-		Assert.assertEquals("3.1.1",s2.getSitePolicy(),p3);
+		Assert.assertEquals("3.1.1",s2.getSitePolicy(),p1);
 		s2.setSitePolicy(p2);
 		Assert.assertEquals("3.1.2",s2.getSitePolicy(),p2);
-		
-		ISiteEntry s3 = cfig.createSiteEntry(u3,p1);
-		Assert.assertEquals("3.2.0",s3.getURL(),u3);
-		Assert.assertEquals("3.2.1",s3.getSitePolicy(),p1);
-		s3.setSitePolicy(p3);
-		Assert.assertEquals("3.2.2",s3.getSitePolicy(),p3);
 		
 		// configure site tests
 		Assert.assertEquals("3.3.0",cfig.getConfiguredSites().length,0);
@@ -92,25 +81,19 @@ public class TestPlatCfgAPI extends PlatformConfigurationTestCase {
 		Assert.assertEquals("3.3.1",cfig.getConfiguredSites().length,1);
 		cfig.configureSite(s2);
 		Assert.assertEquals("3.3.2",cfig.getConfiguredSites().length,2);
-		cfig.configureSite(s3);
-		Assert.assertEquals("3.3.3",cfig.getConfiguredSites().length,3);
 		
 		// lookup site tests
 		Assert.assertEquals("3.4.0",cfig.findConfiguredSite(u1),s1);
 		Assert.assertEquals("3.4.1",cfig.findConfiguredSite(u2),s2);
-		Assert.assertEquals("3.4.2",cfig.findConfiguredSite(u3),s3);
 		Assert.assertNull("3.4.3",cfig.findConfiguredSite(u4));
 		
 		// unconfigure site tests
 		cfig.unconfigureSite(s1);
-		Assert.assertEquals("3.5.0",cfig.getConfiguredSites().length,2);
+		Assert.assertEquals("3.5.0",cfig.getConfiguredSites().length,1);
 		Assert.assertNull("3.5.1",cfig.findConfiguredSite(u1));		
 		cfig.unconfigureSite(s2);
-		Assert.assertEquals("3.5.2",cfig.getConfiguredSites().length,1);
-		Assert.assertNull("3.5.3",cfig.findConfiguredSite(u2));		
-		cfig.unconfigureSite(s3);
-		Assert.assertEquals("3.5.4",cfig.getConfiguredSites().length,0);
-		Assert.assertNull("3.5.5",cfig.findConfiguredSite(u3));		
+		Assert.assertEquals("3.5.2",cfig.getConfiguredSites().length,0);
+		Assert.assertNull("3.5.3",cfig.findConfiguredSite(u2));	
 	}
 	
 	public void testSaveRestore() throws Exception {
@@ -132,7 +115,6 @@ public class TestPlatCfgAPI extends PlatformConfigurationTestCase {
 		ISitePolicy p2 = cfig.createSitePolicy(ISitePolicy.USER_EXCLUDE, new String[0]);		
 		ISitePolicy p3 = cfig.createSitePolicy(ISitePolicy.USER_INCLUDE, new String[] {"first"});
 		ISitePolicy p4 = cfig.createSitePolicy(ISitePolicy.USER_EXCLUDE, new String[] {"first", "second"});
-		ISitePolicy p5 = cfig.createSitePolicy(ISitePolicy.SITE_INCLUDE, new String[] {"first", "second", "third"});
 						
 		// create some urls
 		URL u1 = null;
@@ -159,10 +141,8 @@ public class TestPlatCfgAPI extends PlatformConfigurationTestCase {
 		cfig.configureSite(s3);
 		ISiteEntry s4 = cfig.createSiteEntry(u4,p4);
 		cfig.configureSite(s4);
-		ISiteEntry s5 = cfig.createSiteEntry(u5,p5);
-		cfig.configureSite(s5);
 		sites = cfig.getConfiguredSites();
-		Assert.assertEquals("1.1",sites.length,5);
+		Assert.assertEquals("1.1",sites.length,4);
 		
 		// do save
 		try {
@@ -192,7 +172,7 @@ public class TestPlatCfgAPI extends PlatformConfigurationTestCase {
 			Assert.fail("2.3 "+e.toString());
 		}
 		ISiteEntry[] newSites = cfig.getConfiguredSites();
-		Assert.assertEquals("2.4",newSites.length,5);
+		Assert.assertEquals("2.4",newSites.length,4);
 		
 		// check what we've got
 		Assert.assertEquals("3.0.1",sites[0].getURL(),newSites[0].getURL());
@@ -211,10 +191,21 @@ public class TestPlatCfgAPI extends PlatformConfigurationTestCase {
 		Assert.assertEquals("3.3.2",sites[3].getSitePolicy().getType(),newSites[3].getSitePolicy().getType());
 		Assert.assertEquals("3.3.3",sites[3].getSitePolicy().getList(),newSites[3].getSitePolicy().getList());
 		
-		Assert.assertEquals("3.4.1",sites[4].getURL(),newSites[4].getURL());
-		Assert.assertEquals("3.4.2",sites[4].getSitePolicy().getType(),newSites[4].getSitePolicy().getType());
-		Assert.assertEquals("3.4.3",sites[4].getSitePolicy().getList(),newSites[4].getSitePolicy().getList());
+	}
+	
+	public void testCurrentConfiguration() throws Exception {
+				
+		Assert.assertNotNull("0.0 Unable to obtain temp directory",tempDir);
 		
+		// get new config object
+		IPlatformConfiguration cfig = null;
+		try {
+			cfig = BootLoader2.getCurrentPlatformConfiguration();
+		} catch (IOException e) {
+			Assert.fail("0.0.0 "+e.toString());
+		}
+		URL[] path = cfig.getPluginPath();
+		cfig.save();
 	}
 }
 
