@@ -86,16 +86,6 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
             doUpdateItem(item, element);
         }
         
-        /* (non-Javadoc)
-		 * @see org.eclipse.jface.util.SafeRunnable#handleException(java.lang.Throwable)
-		 */
-		public void handleException(Throwable e) {
-			if(item.isDisposed()){
-        		//Report any disposed problems fully.
-        		dumpMap();
-        	}
-			super.handleException(e);
-		}
     }
 
     /**

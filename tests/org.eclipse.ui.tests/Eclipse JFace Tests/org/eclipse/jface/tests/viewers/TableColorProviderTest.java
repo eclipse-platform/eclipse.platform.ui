@@ -15,6 +15,7 @@ package org.eclipse.jface.tests.viewers;
 import org.eclipse.jface.tests.viewers.TableViewerTest.TableTestLabelProvider;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.ITableColorProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableLayout;
@@ -46,20 +47,19 @@ public class TableColorProviderTest extends StructuredViewerTest {
     }
 
     /**
-     *  
+     *  Test with a standard color provider.
      */
     public void testColorProviderForeground() {
         TableViewer viewer = (TableViewer) fViewer;
-        TableColorViewLabelProvider provider = (TableColorViewLabelProvider) viewer
-                .getLabelProvider();
+        ColorViewLabelProvider provider = new ColorViewLabelProvider();
+        
+        viewer.setLabelProvider(provider);
 
         //refresh so that the colors are set
         fViewer.refresh();
 
-        TestElement first = fRootElement.getFirstChild();
-        Color providerFG = provider.getForeground(first, 0);
-        assertEquals("foreground green", providerFG, green);//$NON-NLS-1$
-        assertTrue("foreground green", providerFG.equals(red) == false);//$NON-NLS-1$
+        assertEquals("foreground 1 green", viewer.getTable().getItem(0).getForeground(0), green);//$NON-NLS-1$
+        assertEquals("foreground 2 green", viewer.getTable().getItem(0).getForeground(1), green);//$NON-NLS-1$
 
         provider.fExtended = false;
 
@@ -70,15 +70,14 @@ public class TableColorProviderTest extends StructuredViewerTest {
      */
     public void testColorProviderBackground() {
         TableViewer viewer = (TableViewer) fViewer;
-        TableColorViewLabelProvider provider = (TableColorViewLabelProvider) viewer
-                .getLabelProvider();
-
+        ColorViewLabelProvider provider = new ColorViewLabelProvider();
+        
+        viewer.setLabelProvider(provider);
+        
         fViewer.refresh();
 
-        TestElement first = fRootElement.getFirstChild();
-        Color providerBG = provider.getBackground(first, 0);
-        assertEquals("background red", providerBG, red); //$NON-NLS-1$
-        assertTrue("background red", providerBG.equals(green) == false); //$NON-NLS-1$
+        assertEquals("background 1 red", viewer.getTable().getItem(0).getBackground(0), red);//$NON-NLS-1$
+        assertEquals("background 2 red", viewer.getTable().getItem(1).getBackground(1), red);//$NON-NLS-1$
 
         provider.fExtended = false;
 
@@ -90,15 +89,15 @@ public class TableColorProviderTest extends StructuredViewerTest {
      */
     public void testTableItemsColorProviderForeground() {
         TableViewer viewer = (TableViewer) fViewer;
-        TableColorViewLabelProvider provider = (TableColorViewLabelProvider) viewer
-                .getLabelProvider();
+        TableColorViewLabelProvider provider = new TableColorViewLabelProvider();
+        
+        viewer.setLabelProvider(provider);
         Table table = viewer.getTable();
 
         fViewer.refresh();
 
-        Color tableItemFG = table.getItem(0).getForeground(0);
-        assertEquals("table item green", tableItemFG, green);//$NON-NLS-1$
-        assertTrue("table item green", tableItemFG.equals(red) == false);//$NON-NLS-1$
+        assertEquals("table item 1 green", table.getItem(0).getForeground(0), green);//$NON-NLS-1$
+        assertEquals("table item 2 red", table.getItem(0).getForeground(1), red);//$NON-NLS-1$
         provider.fExtended = false;
 
     }
@@ -109,15 +108,15 @@ public class TableColorProviderTest extends StructuredViewerTest {
      */
     public void testTableItemsColorProviderBackground() {
         TableViewer viewer = (TableViewer) fViewer;
-        TableColorViewLabelProvider provider = (TableColorViewLabelProvider) viewer
-                .getLabelProvider();
+        TableColorViewLabelProvider provider = new TableColorViewLabelProvider();
+        
+        viewer.setLabelProvider(provider);
+        
         Table table = viewer.getTable();
         fViewer.refresh();
 
-        Color tableItemBG = table.getItem(0).getBackground(0);
-        assertEquals("table item background red", tableItemBG, red);//$NON-NLS-1$
-        assertTrue(
-                "table item background red", tableItemBG.equals(green) == false);//$NON-NLS-1$
+        assertEquals("table item 1 background red", table.getItem(0).getBackground(0), red);//$NON-NLS-1$
+        assertEquals("table item 2 background green", table.getItem(0).getBackground(1), green);//$NON-NLS-1$
         provider.fExtended = false;
 
     }
@@ -154,7 +153,7 @@ public class TableColorProviderTest extends StructuredViewerTest {
     protected StructuredViewer createViewer(Composite parent) {
         TableViewer viewer = new TableViewer(parent);
         viewer.setContentProvider(new TestModelContentProvider());
-        viewer.setLabelProvider(new TableColorViewLabelProvider());
+        
         viewer.getTable().setLinesVisible(true);
 
         TableLayout layout = new TableLayout();
@@ -208,6 +207,8 @@ public class TableColorProviderTest extends StructuredViewerTest {
                 return red;
             }
         }
+        
+       
 
         /* (non-Javadoc)
          * @see org.eclipse.jface.viewers.ITableColorProvider#getBackground(java.lang.Object, int)
@@ -223,4 +224,22 @@ public class TableColorProviderTest extends StructuredViewerTest {
 
     }
 
+    /**
+     * A class to test color providing without coloured columns.
+     */
+    class ColorViewLabelProvider extends TableTestLabelProvider implements IColorProvider{
+    	/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
+		 */
+		public Color getBackground(Object element) {
+			return red;
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
+		 */
+		public Color getForeground(Object element) {
+			return green;
+		}
+    }
 }

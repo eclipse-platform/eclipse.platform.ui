@@ -58,6 +58,11 @@ public class TableViewer extends StructuredViewer {
 	 * This viewer's table editor.
 	 */
 	private TableEditor tableEditor;
+	
+	/**
+	 * The color and font collector for the cells.
+	 */
+	private TableColorAndFontCollector tableColorAndFont = new TableColorAndFontCollector();
 
 	/**
 	 * Creates a table viewer on a newly-created table control under the given
@@ -196,16 +201,12 @@ public class TableViewer extends StructuredViewer {
 			}
 
 			IBaseLabelProvider prov = getLabelProvider();
-			ITableLabelProvider tprov = null;
-			ITableColorProvider cprov = null;
+			ITableLabelProvider tprov = null;			
 
 			if (prov instanceof ITableLabelProvider) {
 				tprov = (ITableLabelProvider) prov;
 			} 
 			
-			if (prov instanceof ITableColorProvider) {
-				cprov = (ITableColorProvider) prov;
-			} 
 			
 			int columnCount = table.getColumnCount();
 			TableItem ti = item;
@@ -217,12 +218,7 @@ public class TableViewer extends StructuredViewer {
 				// Similar code in TableTreeViewer.doUpdateItem()
 				String text = "";//$NON-NLS-1$
 				Image image = null;
-				if (cprov != null) {
-					ti.setBackground(column, cprov.getBackground(element,
-							column));
-					ti.setForeground(column, cprov.getForeground(element,
-							column));
-				}
+				tableColorAndFont.setFontsAndColors(ti,element,column);
 
 				if (tprov == null) {
 					if (column == 0) {
@@ -727,6 +723,7 @@ public class TableViewer extends StructuredViewer {
 		Assert.isTrue(labelProvider instanceof ITableLabelProvider
 				|| labelProvider instanceof ILabelProvider);
 		super.setLabelProvider(labelProvider);
+		tableColorAndFont = new TableColorAndFontCollector(labelProvider);
 	}
 
 	/*

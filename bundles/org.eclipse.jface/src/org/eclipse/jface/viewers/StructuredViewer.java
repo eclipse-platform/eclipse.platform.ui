@@ -11,15 +11,15 @@
 package org.eclipse.jface.viewers;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.runtime.ILog;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.util.IOpenEventListener;
+import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.util.OpenStrategy;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.custom.TableTreeItem;
 import org.eclipse.swt.dnd.DragSource;
 import org.eclipse.swt.dnd.DragSourceListener;
@@ -36,12 +36,6 @@ import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
-
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.util.IOpenEventListener;
-import org.eclipse.jface.util.ListenerList;
-import org.eclipse.jface.util.OpenStrategy;
-import org.eclipse.jface.util.SafeRunnable;
 
 /**
  * Abstract base implementation for structure-oriented viewers (trees, lists,
@@ -130,6 +124,15 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 */
 	protected ColorAndFontCollector colorAndFontCollector = new ColorAndFontCollector();
 
+	/**
+	 * The ColorAndFontCollector is a helper class for viewers
+	 * that have color and font support ad optionally decorators.
+	 * @see IColorDecorator
+	 * @see IFontDecorator
+	 * @see IColorProvider
+	 * @see IFontProvider
+	 * @see IDecoration
+	 */
 	protected class ColorAndFontCollector {
 
 		Color foreground = null;
@@ -284,6 +287,57 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		}
 	}
 
+	/**
+	 * TableColorAndFontCollector is an helper class for color and font
+	 * support for tables that support the ITableFontProvider and
+	 * the ITableColorProvider.
+	 * @see ITableColorProvider
+	 * @see ITableFontProvider
+	 */
+	
+	protected class TableColorAndFontCollector{
+		
+		ITableFontProvider fontProvider = null;
+		ITableColorProvider colorProvider = null;
+		
+		/**
+		 * Create an instance of the receiver. Set the color and font
+		 * providers if provider can be cast to the correct type.
+		 * @param provider IBaseLabelProvider
+		 */
+		public TableColorAndFontCollector(IBaseLabelProvider provider){
+			if(provider instanceof ITableFontProvider)
+				fontProvider = (ITableFontProvider) provider;
+			if(provider instanceof ITableColorProvider)
+				colorProvider = (ITableColorProvider) provider;
+		}
+		
+		/**
+		 * Create an instance of the receiver with no color and font
+		 * providers.
+		 */
+		public TableColorAndFontCollector(){
+		}
+		
+		/**
+		 * Set the fonts and colors for the tableItem if there is a color
+		 * and font provider available.
+		 * @param tableItem The item to update.
+		 * @param element The element being represented
+		 * @param column The column index
+		 */
+		public void setFontsAndColors(TableItem tableItem, Object element, int column){
+			if (colorProvider != null) {
+				tableItem.setBackground(column, colorProvider.getBackground(element,
+						column));
+				tableItem.setForeground(column, colorProvider.getForeground(element,
+						column));
+			}
+			if(fontProvider != null)
+				tableItem.setFont(column,fontProvider.getFont(element,column));
+		}	
+		
+	}
 	/**
 	 * The safe runnable used to update an item.
 	 */
@@ -1623,36 +1677,6 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 */
 	protected boolean usingElementMap() {
 		return elementMap != null;
-	}
-
-	/**
-	 * Dump the contents of the elementMap to the log and 
-	 * prune any disposed mappings. This is debug functionality
-	 * for tracking down concurrency issues and should eventually
-	 * be deleted. 
-	 */
-	void dumpMap() {
-
-		ILog log = Platform.getPlugin(Platform.PI_RUNTIME).getLog();
-		if (elementMap == null) {
-			log.log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR,
-					"No element map yet",//$NON-NLS-1$
-					new Throwable()));
-			return;
-		}
-
-		Enumeration keys = elementMap.keys();
-
-		while (keys.hasMoreElements()) {
-			Object key = keys.nextElement();
-			Widget widget = (Widget) elementMap.get(key);
-			if (widget.isDisposed()) {
-				log.log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR,
-						"Disposed widget for " + key.toString(),//$NON-NLS-1$
-						new Throwable()));
-			}
-		}
-
 	}
 
 	/* (non-Javadoc)
