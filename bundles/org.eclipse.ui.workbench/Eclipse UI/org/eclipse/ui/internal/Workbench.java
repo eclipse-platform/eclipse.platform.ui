@@ -1026,10 +1026,6 @@ public final class Workbench implements IWorkbench {
 		Platform.run(new SafeRunnable(WorkbenchMessages
                 .getString("ErrorReadingState")) { //$NON-NLS-1$
 			public void run() throws Exception {
-
-				//notify users of errors restoring the state of hte workbench
-				setIgnoreErrors(false);
-				
 				FileInputStream input = new FileInputStream(stateFile);
 				BufferedReader reader = new BufferedReader(
                                 new InputStreamReader(input, "utf-8")); //$NON-NLS-1$
