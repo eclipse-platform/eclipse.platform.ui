@@ -35,7 +35,7 @@ public class ClosePerspectiveAction extends Action {
 		if (page != null) {
 			Perspective persp = page.getActivePerspective();
 			if (persp != null)
-				page.closePerspective(persp, true);
+				page.closePerspective(persp, true,true);
 		}
 	}
 }

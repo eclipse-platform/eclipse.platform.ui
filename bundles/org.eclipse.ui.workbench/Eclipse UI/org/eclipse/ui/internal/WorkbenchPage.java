@@ -870,7 +870,7 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
 /* package */ void closePerspective(IPerspectiveDescriptor desc, boolean save) {
 	Perspective persp = findPerspective(desc);
 	if(persp != null)
-		closePerspective(persp,save);
+		closePerspective(persp,save,true);
 }
 
 /**
@@ -880,7 +880,7 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
  * @param persp the perspective to be closed
  * @param save whether the page's editors should be save if last perspective
  */
-/* package */ void closePerspective(Perspective persp, boolean save) {
+/* package */ void closePerspective(Perspective persp, boolean save, boolean closePage) {
 
 	// Always unzoom
 	if (isZoomed())
@@ -899,8 +899,39 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
 	if (isActive)
 		setPerspective(perspList.getNextActive());
 	disposePerspective(persp);
-	if (perspList.size() == 0)
+	if (closePage && perspList.size() == 0)
 		close();
+}
+
+/**
+ * Closes all perspectives in the page. The page is kept so as
+ * not to lose the input.
+ * 
+ * @param save whether the page's editors should be saved
+ */
+/* package */ void closeAllPerspectives() {
+	
+	if (perspList.isEmpty())
+		return;
+		
+	// Always unzoom
+	if (isZoomed())
+		zoomOut();
+		
+	// Close all editors
+	if (!closeAllEditors(true))
+		return;
+
+	// Deactivate the active perspective and part
+	setPerspective((Perspective)null);
+	
+	// Close each perspective in turn
+	PerspectiveList oldList = perspList;
+	perspList = new PerspectiveList();
+	Iterator enum = oldList.iterator();
+	while (enum.hasNext())
+		closePerspective((Perspective)enum.next(), false,false);
+	close();
 }
 /**
  * Creates the client composite.
@@ -1607,7 +1638,7 @@ private void lastPartClosePerspective() {
 	Perspective persp = getActivePerspective();
 	if (persp != null && getActivePart() == null)
 		if(persp.getViewReferences().length == 0 && getEditorReferences().length == 0)
-			closePerspective(persp, false);
+			closePerspective(persp, false,true);
 }
 
 /**

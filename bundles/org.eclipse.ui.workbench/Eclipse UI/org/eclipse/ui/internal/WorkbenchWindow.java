@@ -1600,7 +1600,7 @@ private void showShortcutBarPopup(MouseEvent e) {
 					if (toolItem != null && !toolItem.isDisposed()) {
 						ActionContributionItem item = (ActionContributionItem) toolItem.getData();
 						SetPagePerspectiveAction action = (SetPagePerspectiveAction) item.getAction();
-						action.getPage().close();
+						action.getPage().closeAllPerspectives();
 					}
 				}
 			});
