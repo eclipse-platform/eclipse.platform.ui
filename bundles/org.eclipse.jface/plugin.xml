@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+   id="org.eclipse.jface"
+   name="%pluginName"
+   version="2.1.0"
+   provider-name="%providerName">
+
+   <runtime>
+      <library name="jface.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+   <requires>
+      <import plugin="org.apache.xerces"/>
+      <import plugin="org.eclipse.swt" export="true"/>
+   </requires>
+
+
+</plugin>
