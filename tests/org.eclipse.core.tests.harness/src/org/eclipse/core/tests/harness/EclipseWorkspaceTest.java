@@ -11,9 +11,7 @@
 package org.eclipse.core.tests.harness;
 
 import java.io.*;
-import junit.framework.Test;
 import junit.framework.TestCase;
-import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;

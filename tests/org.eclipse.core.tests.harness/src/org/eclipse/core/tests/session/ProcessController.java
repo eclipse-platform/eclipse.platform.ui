@@ -11,7 +11,6 @@
 package org.eclipse.core.tests.session;
 
 import java.io.*;
-import org.eclipse.core.internal.runtime.Policy;
 
 /**
  * Executes an external process synchronously, allowing the client to define 
