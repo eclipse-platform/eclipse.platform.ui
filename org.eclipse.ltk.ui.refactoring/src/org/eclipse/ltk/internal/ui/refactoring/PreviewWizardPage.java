@@ -95,7 +95,8 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		}
 	}
 	
-	private Change fChange;		
+	private Change fChange;
+	private CompositeChange fTreeViewerInputChange;
 	private ChangeElement fCurrentSelection;
 	private PageBook fPageContainer;
 	private Control fStandardPage;
@@ -123,7 +124,13 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		if (fChange == change)
 			return;
 		
-		fChange= change;	
+		fChange= change;
+		if (fChange instanceof CompositeChange) {
+			fTreeViewerInputChange= (CompositeChange)fChange;
+		} else {
+			fTreeViewerInputChange= new CompositeChange("Dummy Change"); //$NON-NLS-1$
+			fTreeViewerInputChange.add(fChange);
+		}
 		setTreeViewerInput();
 	}
 
@@ -300,19 +307,13 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 	}
 	
 	private void setTreeViewerInput() {
+		if (fTreeViewer == null)
+			return;
 		ChangeElement input= null;
-		if (fChange == null) {
-			input= null;
-		} else if (fChange instanceof CompositeChange) {
-			input= new DefaultChangeElement(null, fChange);
-		} else {
-			CompositeChange root= new CompositeChange("Dummy Change"); //$NON-NLS-1$
-			root.add(fChange);
-			input= new DefaultChangeElement(null, root);
+		if (fTreeViewerInputChange != null) {
+			input= new DefaultChangeElement(null, fTreeViewerInputChange);
 		}
-		if (fTreeViewer != null) {
-			fTreeViewer.setInput(input);
-		}
+		fTreeViewer.setInput(input);
 	}
 	
 	private ICheckStateListener createCheckStateListener() {
