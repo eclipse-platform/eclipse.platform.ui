@@ -185,7 +185,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 		saveSelected.setText(WorkbenchMessages.getString("WorkbenchEditorsDialog.saveSelected")); //$NON-NLS-1$
 		saveSelected.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				saveItems(editorsTable.getItems(),null);
+				saveItems(editorsTable.getSelection(),null);
 			}
 		});
 		//Select clean editors button
