@@ -8,29 +8,28 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.tests.popups;
+package org.eclipse.ui.tests.menus;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
- * Tests for all code related to pop-up menus. This includes the
- * <code>popupMenus</code> extension point, as well as the code needed to
- * support it.
+ * Tests for all code related to menus. This includes the
+ * <code>popupMenus</code> extension point, and others.
  */
-public class PopupsTestSuite extends TestSuite {
+public class MenusTestSuite extends TestSuite {
 
     /**
      * Returns the suite. This is required to use the JUnit Launcher.
      */
     public static Test suite() {
-        return new PopupsTestSuite();
+        return new MenusTestSuite();
     }
 
     /**
      * Construct the test suite.
      */
-    public PopupsTestSuite() {
+    public MenusTestSuite() {
         addTest(new TestSuite(ObjectContributionTest.class));
     }
 }

@@ -301,6 +301,18 @@
                menubarPath="additions"
                id="org.eclipse.ui.tests.api.MockWindowAction">
          </action>
+      </actionSet>      
+      <actionSet
+      		label="Hostile Action Set"
+      		id="org.eclipse.ui.tests.actionSets.brokenActionSet"
+      		visible="true">
+      	<action
+      			label="Hostile Action"
+      			style="pulldown"
+      			class="org.eclipse.ui.tests.menus.BrokenWorkbenchWindowPulldownDelegate"
+      			menubarPath="help/helpStart"
+      			id="org.eclipse.ui.tests.actionSets.brokenAction">
+      	</action>
       </actionSet>
       <actionSet
             label="Drag Test"

@@ -24,9 +24,9 @@ import org.eclipse.ui.tests.dynamicplugins.DynamicPluginsTestSuite;
 import org.eclipse.ui.tests.internal.InternalTestSuite;
 import org.eclipse.ui.tests.intro.IntroTestSuite;
 import org.eclipse.ui.tests.keys.KeysTestSuite;
+import org.eclipse.ui.tests.menus.MenusTestSuite;
 import org.eclipse.ui.tests.multipageeditor.MultiPageEditorTestSuite;
 import org.eclipse.ui.tests.navigator.NavigatorTestSuite;
-import org.eclipse.ui.tests.popups.PopupsTestSuite;
 import org.eclipse.ui.tests.preferences.PreferencesTestSuite;
 import org.eclipse.ui.tests.propertysheet.PropertySheetTestSuite;
 import org.eclipse.ui.tests.themes.ThemesTestSuite;
@@ -71,6 +71,6 @@ public class UiTestSuite extends TestSuite {
         addTest(new DragTestSuite());
         addTest(new ThemesTestSuite());
         addTest(new IntroTestSuite());
-        addTest(new PopupsTestSuite());
+        addTest(new MenusTestSuite());
     }
 }

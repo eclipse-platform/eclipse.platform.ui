@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
-package org.eclipse.ui.tests.popups;
+package org.eclipse.ui.tests.menus;
 
 import java.io.ByteArrayInputStream;
 
