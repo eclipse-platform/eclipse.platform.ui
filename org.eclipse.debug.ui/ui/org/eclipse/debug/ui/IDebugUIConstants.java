@@ -18,82 +18,73 @@ package org.eclipse.debug.ui;
  * <ul>
  *   <li>Empty edit group</li>
  *   <li>Edit group</li>
- *   <li>Copy Stack action</li>
- *   <li>Empty Step group</li>
+ *   <li>Copy stack action</li>
+ *   <li>Empty step group</li>
  *   <li>Step group</li>
- *   <li>Step Into action</li>
- *   <li>Step Over action</li>
- *   <li>Run to return action</li>
+ *   <li>Step into group</li>
+ *   <li>Step into action</li>
+ * 	 <li>Step over group</li>
+ *   <li>Step over action</li>
+ *   <li>Step return group</li> 
+ *   <li>Step return action</li>
  *   <li>Empty thread group</li>
  *   <li>Thread group</li>
- *   <li>Suspend action</li>
  *   <li>Resume action</li>
+ *   <li>Suspend action</li>
  *   <li>Terminate action</li>
+ *   <li>Disconnect action</li>
  *   <li>Empty launch group</li>
  *   <li>Launch group</li>
+ *   <li>Remove all terminated action</li>
  *   <li>Terminate and Remove action</li>
- *   <li>Terminate All action</li>
- *   <li>Remove All Terminated action</li>
  *   <li>Relaunch action</li>
+ *   <li>Terminate all action</li>
  *   <li>Empty render group</li>
  *   <li>Render group</li>
- *   <li>Show qualified names action</li>
  *   <li>Property group</li>
  *   <li>Property dialog action</li>
  *   <li>Additions group</li>
  * </ul>
- * <h3>Process View Popup Menu</h3>
- * <ul>
- *   <li>Empty launch group</li>
- *   <li>Launch group</li>
- *   <li>Relaunch action</li>
- *   <li>Terminate action</li>
- *   <li>Terminate and Remove action</li>
- *   <li>Terminate All action</li>
- *   <li>Remove All Terminated action</li>
- *   <li>Property group</li>
- *   <li>Property dialog action</li>
- *   <li>Additions group</li>
- * </ul>
- * <h3>Variable View Popup Menu</h3>
+ * <h3>Variables View Popup Menus</h3>
  * <ul>
  *   <li>Empty variable group</li>
  *   <li>Variable group</li>
- *   <li>Add to Watch List action</li>
+ *   <li>Select all action</li>
+ *   <li>Copy to clipboard action</li>
  *   <li>Change value action</li>
  *   <li>Empty render group</li>
  *   <li>Render group</li>
- *   <li>Show qualified names action</li>
+ *   <li>Show type names action</li>
  *   <li>Additions group</li>
  * </ul>
- * <h3>Breakpoint View Popup Menu</h3>
+ * <h3>Breakpoints View Popup Menu</h3>
  * <ul>
  *   <li>Empty Navigation group</li>
  *   <li>Navigation group</li>
  *   <li>Open action</li>
  *   <li>Empty Breakpoint goup</li>
  *   <li>Breakpoint group</li>
- *   <li>Enable/Disable action</li> 
+ *   <li>Enable action</li> 
+ *   <li>Disable action</li>
  *   <li>Remove action</li>
  *   <li>Remove all action</li>
  *   <li>Empty render group</li>
  *   <li>Render group</li>
- *   <li>Show qualified names action</li>
  * 	 <li>Show breakpoints for model action</li>
  *   <li>Additions group</li>
  * </ul>
- * <h3>Expression View Popup Menu</h3>
+ * <h3>Expressions View Popup Menu</h3>
  * <ul>
  *   <li>Empty Expression group</li>
  *   <li>Expression group</li>
- *	 <li>Change variable value action</li>
+ *   <li>Select all action</li>
  * 	 <li>Copy to clipboard action</li>	 
  *   <li>Remove action</li>
  *   <li>Remove all action</li>
+ *   <li>Change variable value action</li>
  *   <li>Empty Render group</li>
  *   <li>Render group</li>
  * 	 <li>Show type names action</li>
- *   <li>Show qualified names action</li>
  *   <li>Additions group</li>
  * </ul>
  * <p>
