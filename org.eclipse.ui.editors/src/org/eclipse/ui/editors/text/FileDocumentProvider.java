@@ -77,6 +77,13 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 */
 	private static final QualifiedName ENCODING_KEY = new QualifiedName(EditorsUI.PLUGIN_ID, "encoding"); //$NON-NLS-1$
 	/** 
+	 * Constant denoting UTF-8 encoding.
+	 * @since 3.0
+	 */
+	private static final String CHARSET_UTF_8= "UTF-8"; //$NON-NLS-1$
+	
+	
+	/** 
 	 * The runnable context for that provider.
 	 * @since 3.0
 	 */
@@ -356,7 +363,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
 			 * </p>
 			 */
-			if (info != null && info.UTF8BOM != null) {
+			if (info != null && info.UTF8BOM != null && CHARSET_UTF_8.equals(encoding)) {
 				try {
 					contentStream.read();
 					contentStream.read();
@@ -512,7 +519,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 				 * This is a workaround for a corresponding bug in Java readers and writer,
 				 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
 				 */
-				if (hasUTF8BOM) {
+				if (hasUTF8BOM && CHARSET_UTF_8.equals(encoding)) {
 					byte[] bytesWithBOM= new byte[bytes.length + 3];
 					System.arraycopy(info.UTF8BOM, 0, bytesWithBOM, 0, 3);
 					System.arraycopy(bytes, 0, bytesWithBOM, 3, bytes.length);
@@ -590,11 +597,12 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		try {
 			QualifiedName[] options= new QualifiedName[] { IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK };
 			IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(reader, targetFile.getName(), options);
-			encoding= getCharset(description);
-			if (encoding != null)
-				return encoding;
-			else if (hasUTF8BOM)
-				return "UTF-8"; //$NON-NLS-1$
+			if (description != null) {
+				encoding= description.getCharset();
+				if (encoding != null)
+					return encoding;
+			} else if (hasUTF8BOM)
+				return CHARSET_UTF_8;
 		} catch (IOException ex) {
 			// continue with next strategy
 		} finally {
@@ -612,35 +620,6 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			// Use global default
 			return ResourcesPlugin.getEncoding();
 		}
-	}
-
-	/**
-	 * Helper method which computes the encoding out of the given description.
-	 * <p>
-	 * XXX:
-	 * This method should be provided by Platform Core
-	 * see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=64342
-	 * </p>
-	 * 
-	 * @param description the content description
-	 * @return the encoding
-	 * @see org.eclipse.core.resources.IFile#getCharset()
-	 * @since 3.0
-	 */
-	private String getCharset(IContentDescription description) {
-		if (description == null)
-			return null;
-		byte[] bom= (byte[]) description.getProperty(IContentDescription.BYTE_ORDER_MARK);
-		if (bom != null)
-			if (bom == IContentDescription.BOM_UTF_8)
-				return "UTF-8"; //$NON-NLS-1$
-			else if (bom == IContentDescription.BOM_UTF_16BE || bom == IContentDescription.BOM_UTF_16LE)
-				// UTF-16 will properly detect the BOM
-				return "UTF-16"; //$NON-NLS-1$
-			else {
-				// unknown BOM... ignore it				
-			}
-		return (String)description.getProperty(IContentDescription.CHARSET);
 	}
 
 	/*

@@ -66,20 +66,23 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 	/**
 	 * Reader chunk size.
 	 */
-	static final private int READER_CHUNK_SIZE= 2048;
+	private static final int READER_CHUNK_SIZE= 2048;
 	/**
 	 * Buffer size.
 	 */
-	static final private int BUFFER_SIZE= 8 * READER_CHUNK_SIZE;
+	private static final int BUFFER_SIZE= 8 * READER_CHUNK_SIZE;
 	/**
-	 * Constant for representing the ok status. This is considered a value object.
+	 * Constant for representing the OK status. This is considered a value object.
 	 */
-	static final private IStatus STATUS_OK= new Status(IStatus.OK, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.getString("FileBuffer.status.ok"), null); //$NON-NLS-1$
+	private static final IStatus STATUS_OK= new Status(IStatus.OK, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.getString("FileBuffer.status.ok"), null); //$NON-NLS-1$
 	/**
 	 * Constant for representing the error status. This is considered a value object.
 	 */
-	static final private IStatus STATUS_ERROR= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.INFO, FileBuffersMessages.getString("FileBuffer.status.error"), null); //$NON-NLS-1$
-
+	private static final IStatus STATUS_ERROR= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.INFO, FileBuffersMessages.getString("FileBuffer.status.error"), null); //$NON-NLS-1$
+	/** 
+	 * Constant denoting UTF-8 encoding.
+	 */
+	private static final String CHARSET_UTF_8= "UTF-8"; //$NON-NLS-1$
 	
 	
 	/** The element's document */
@@ -259,7 +262,7 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 				QualifiedName[] options= new QualifiedName[] { IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK };
 				IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(stream, fFile.getName(), options);
 				if (description != null) {
-					fEncoding= getCharset(description);
+					fEncoding= description.getCharset();
 					
 					fUTF8BOM= (byte[]) description.getProperty(IContentDescription.BYTE_ORDER_MARK);
 					if (fUTF8BOM != null && fUTF8BOM != IContentDescription.BOM_UTF_8)
@@ -296,7 +299,7 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 			 * This is a workaround for a corresponding bug in Java readers and writer,
 			 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
 			 */
-			if (fUTF8BOM != null) {
+			if (fUTF8BOM != null && CHARSET_UTF_8.equals(encoding)) {
 				byte[] bytesWithBOM= new byte[bytes.length + 3];
 				System.arraycopy(fUTF8BOM, 0, bytesWithBOM, 0, 3);
 				System.arraycopy(bytes, 0, bytesWithBOM, 3, bytes.length);
@@ -350,11 +353,12 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 		try {
 			QualifiedName[] options= new QualifiedName[] { IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK };
 			IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(reader, fFile.getName(), options);
-			String encoding= getCharset(description);
-			if (encoding != null)
-				return encoding;
-			else if (fUTF8BOM != null)
-				return "UTF-8"; //$NON-NLS-1$
+			if (description != null) {
+				String encoding= description.getCharset();
+				if (encoding != null)
+					return encoding;
+			} else if (fUTF8BOM != null)
+				return CHARSET_UTF_8;
 		} catch (IOException ex) {
 			// try next strategy
 		} finally {
@@ -390,7 +394,7 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 			 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
 			 * </p>
 			 */
-			if (fUTF8BOM != null) {
+			if (fUTF8BOM != null && CHARSET_UTF_8.equals(encoding)) {
 				contentStream.read();
 				contentStream.read();
 				contentStream.read();

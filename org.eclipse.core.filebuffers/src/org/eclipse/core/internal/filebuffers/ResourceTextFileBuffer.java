@@ -75,14 +75,17 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	 */
 	static final private QualifiedName ENCODING_KEY= new QualifiedName(FileBuffersPlugin.PLUGIN_ID, "encoding");  //$NON-NLS-1$
 	/**
-	 * Constant for representing the ok status. This is considered a value object.
+	 * Constant for representing the OK status. This is considered a value object.
 	 */
 	static final private IStatus STATUS_OK= new Status(IStatus.OK, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.getString("FileBuffer.status.ok"), null); //$NON-NLS-1$
 	/**
 	 * Constant for representing the error status. This is considered a value object.
 	 */
 	static final private IStatus STATUS_ERROR= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.INFO, FileBuffersMessages.getString("FileBuffer.status.error"), null); //$NON-NLS-1$
-
+	/** 
+	 * Constant denoting UTF-8 encoding.
+	 */
+	private static final String CHARSET_UTF_8= "UTF-8"; //$NON-NLS-1$
 	
 	
 	/** The element's document */
@@ -281,7 +284,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	 * 			- byte order mark is not valid for UTF-8
 	 */
 	protected void readUTF8BOM() throws CoreException {
-		if ("UTF-8".equals(fEncoding)) { //$NON-NLS-1$
+		if (CHARSET_UTF_8.equals(fEncoding)) {
 			IContentDescription description= fFile.getContentDescription();
 			if (description != null) {
 				fUTF8BOM= (byte[]) description.getProperty(IContentDescription.BYTE_ORDER_MARK);
@@ -323,7 +326,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			 * This is a workaround for a corresponding bug in Java readers and writer,
 			 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
 			 */
-			if (fUTF8BOM != null) {
+			if (fUTF8BOM != null && CHARSET_UTF_8.equals(encoding)) {
 				byte[] bytesWithBOM= new byte[bytes.length + 3];
 				System.arraycopy(fUTF8BOM, 0, bytesWithBOM, 0, 3);
 				System.arraycopy(bytes, 0, bytesWithBOM, 3, bytes.length);
@@ -390,11 +393,12 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 		try {
 			QualifiedName[] options= new QualifiedName[] { IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK };
 			IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(reader, fFile.getName(), options);
-			String encoding= getCharset(description);
-			if (encoding != null)
-				return encoding;
-			else if (fUTF8BOM != null)
-				return "UTF-8"; //$NON-NLS-1$
+			if (description != null) {
+				String encoding= description.getCharset();
+				if (encoding != null)
+					return encoding;
+			} else if (fUTF8BOM != null)
+				return CHARSET_UTF_8;
 		} catch (IOException ex) {
 			// try next strategy
 		} finally {
@@ -486,7 +490,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			 * This is a workaround for a corresponding bug in Java readers and writer,
 			 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
 			 */
-			if (fUTF8BOM != null) {
+			if (fUTF8BOM != null && CHARSET_UTF_8.equals(encoding)) {
 				contentStream.read();
 				contentStream.read();
 				contentStream.read();

@@ -717,9 +717,11 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		try {
 			QualifiedName[] options= new QualifiedName[] { IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK };
 			IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(reader, targetFile.getName(), options);
-			encoding= getCharset(description);
-			if (encoding != null)
-				return encoding;
+			if (description != null) {
+				encoding= description.getCharset();
+				if (encoding != null)
+					return encoding;
+			}
 		} catch (IOException ex) {
 			// continue with next strategy
 		} finally {
@@ -737,34 +739,6 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 			// Use global default
 			return ResourcesPlugin.getEncoding();
 		}
-	}
-
-	/**
-	 * Helper method which computes the encoding out of the given description.
-	 * <p>
-	 * XXX:
-	 * This method should be provided by Platform Core
-	 * see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=64342
-	 * </p>
-	 * 
-	 * @param description the content description
-	 * @return the encoding
-	 * @see org.eclipse.core.resources.IFile#getCharset()
-	 */
-	private String getCharset(IContentDescription description) {
-		if (description == null)
-			return null;
-		byte[] bom= (byte[]) description.getProperty(IContentDescription.BYTE_ORDER_MARK);
-		if (bom != null)
-			if (bom == IContentDescription.BOM_UTF_8)
-				return "UTF-8"; //$NON-NLS-1$
-			else if (bom == IContentDescription.BOM_UTF_16BE || bom == IContentDescription.BOM_UTF_16LE)
-				// UTF-16 will properly detect the BOM
-				return "UTF-16"; //$NON-NLS-1$
-			else {
-				// unknown BOM... ignore it				
-			}
-		return (String)description.getProperty(IContentDescription.CHARSET);
 	}
 
 	/*
