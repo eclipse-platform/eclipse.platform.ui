@@ -20,8 +20,12 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.Transfer;
+
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.util.DelegatingDragAdapter;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
@@ -43,17 +47,20 @@ import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.IShowInTargetList;
+import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-import org.eclipse.search.internal.ui.SearchMessages;
-import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.internal.ui.SearchPreferencePage;
 import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.search.ui.ISearchResultViewPart;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 import org.eclipse.search.ui.text.Match;
+
+import org.eclipse.search.internal.ui.SearchMessages;
+import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.internal.ui.SearchPreferencePage;
+
 
 public class FileSearchPage extends AbstractTextSearchViewPage implements IAdaptable {
 	
@@ -125,6 +132,16 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 	public StructuredViewer getViewer() {
 		return super.getViewer();
 	}
+	
+	private void addDragAdapters(StructuredViewer viewer) {
+		Transfer[] transfers= new Transfer[] { ResourceTransfer.getInstance() };
+		int ops= DND.DROP_COPY | DND.DROP_LINK;
+		
+		DelegatingDragAdapter adapter= new DelegatingDragAdapter();
+		adapter.addDragSourceListener(new ResourceTransferDragAdapter(viewer));
+		
+		viewer.addDragSupport(ops, transfers, adapter);
+	}	
 
 	protected void configureTableViewer(TableViewer viewer) {
 		viewer.setUseHashlookup(true);
@@ -133,6 +150,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 		viewer.setContentProvider(new FileTableContentProvider(this));
 		viewer.setSorter(new DecoratorIgnoringViewerSorter(innerLabelProvider));
 		fContentProvider= (FileContentProvider) viewer.getContentProvider();
+		addDragAdapters(viewer);
 	}
 
 	protected void configureTreeViewer(TreeViewer viewer) {
@@ -142,6 +160,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 		viewer.setContentProvider(new FileTreeContentProvider(viewer));
 		viewer.setSorter(new DecoratorIgnoringViewerSorter(innerLabelProvider));
 		fContentProvider= (FileContentProvider) viewer.getContentProvider();
+		addDragAdapters(viewer);
 	}
 
 	protected void showMatch(Match match, int offset, int length, boolean activate) throws PartInitException {
