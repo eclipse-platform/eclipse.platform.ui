@@ -20,40 +20,31 @@ import org.eclipse.core.runtime.jobs.*;
  * Tests the API of the class IJobManager
  */
 public class IJobManagerTest extends TestCase {
-	class TestJobListener implements IJobChangeListener {
+	class TestJobListener extends JobChangeAdapter  {
 		private Set scheduled = Collections.synchronizedSet(new HashSet());
-		public void aboutToResume(Job job) {
-		}
-		public void aboutToRun(Job job) {
-		}
-		public void awake(Job job) {
-		}
 		public void cancelAllJobs() {
 			Job[] jobs = (Job[]) scheduled.toArray(new Job[scheduled.size()]);
 			for (int i = 0; i < jobs.length; i++) {
 				jobs[i].cancel();
 			}
 		}
-		public void done(Job job, IStatus result) {
+		public void done(IJobChangeEvent event) {
 			synchronized (IJobManagerTest.this) {
-				if (scheduled.remove(job)) {
+				if (scheduled.remove(event.getJob())) {
 					//wake up the waitForCompletion method
 					completedJobs++;
 					IJobManagerTest.this.notify();
 				}
 			}
 		}
-		public void running(Job job) {
-		}
-		public void scheduled(Job job) {
+		public void scheduled(IJobChangeEvent event) {
+			Job job = event.getJob();
 			synchronized (IJobManagerTest.this) {
 				if (job instanceof TestJob) {
 					scheduledJobs++;
 					scheduled.add(job);
 				}
 			}
-		}
-		public void sleeping(Job job) {
 		}
 	}
 	public static Test suite() {

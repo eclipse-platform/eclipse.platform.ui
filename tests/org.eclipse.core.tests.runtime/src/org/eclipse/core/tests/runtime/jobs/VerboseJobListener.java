@@ -9,30 +9,29 @@
  **********************************************************************/
 package org.eclipse.core.tests.runtime.jobs;
 
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
-import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * 
  */
 public class VerboseJobListener implements IJobChangeListener {
-	public void aboutToRun(Job job) {
-		System.out.println("[" + Thread.currentThread() + "] aboutToRun: " + job);
+	public void aboutToRun(IJobChangeEvent event) {
+		System.out.println("[" + Thread.currentThread() + "] aboutToRun: " + event.getJob());
 	}
-	public void scheduled(Job job) {
-		System.out.println("[" + Thread.currentThread() + "] scheduled: " + job);
+	public void scheduled(IJobChangeEvent event) {
+		System.out.println("[" + Thread.currentThread() + "] scheduled: " + event.getJob());
 	}
-	public void done(Job job, IStatus result) {
-		System.out.println("[" + Thread.currentThread() + "] finished: " + job);
+	public void done(IJobChangeEvent event) {
+		System.out.println("[" + Thread.currentThread() + "] finished: " + event.getJob());
 	}
-	public void running(Job job) {
-		System.out.println("[" + Thread.currentThread() + "] running: " + job);
+	public void running(IJobChangeEvent event) {
+		System.out.println("[" + Thread.currentThread() + "] running: " + event.getJob());
 	}
-	public void sleeping(Job job) {
-		System.out.println("[" + Thread.currentThread() + "] sleeping: " + job);
+	public void sleeping(IJobChangeEvent event) {
+		System.out.println("[" + Thread.currentThread() + "] sleeping: " + event.getJob());
 	}
-	public void awake(Job job) {
-		System.out.println("[" + Thread.currentThread() + "] awake: " + job);
+	public void awake(IJobChangeEvent event) {
+		System.out.println("[" + Thread.currentThread() + "] awake: " + event.getJob());
 	}
 }
