@@ -121,7 +121,6 @@ public class AntCorePlugin extends Plugin implements Preferences.IPropertyChange
 	 * @see Plugin#startup()
 	 */
 	public void startup() throws CoreException {
-		getPluginPreferences().addPropertyChangeListener(this);
 	}
 
 	/**
@@ -180,6 +179,7 @@ public class AntCorePlugin extends Plugin implements Preferences.IPropertyChange
 			URL[] urls = preferences.getURLs();
 			ClassLoader[] pluginLoaders = preferences.getPluginClassLoaders();
 			classLoader= new AntClassLoader(urls, pluginLoaders, null);
+			getPluginPreferences().addPropertyChangeListener(this);
 		}
 		return classLoader;
 	}
