@@ -141,6 +141,8 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 	private TaskDescriptionProvider descriptionProvider = new TaskDescriptionProvider();
 	private AntEditorSaxDefaultHandler lastDefaultHandler;
 	
+	private String errorMessage;
+	
 	/**
 	 * Constructor for AntEditorCompletionProcessor.
 	 */
@@ -209,7 +211,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getErrorMessage()
 	 */
 	public String getErrorMessage() {
-		return AntEditorMessages.getString("AntEditorCompletionProcessor.No_Text_Completions_2"); //$NON-NLS-1$
+		return errorMessage;
 	}
 	
     /**
@@ -255,26 +257,47 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
             case PROPOSAL_MODE_ATTRIBUTE_PROPOSAL:
                 taskString = getTaskStringFromDocumentStringToPrefix(documentString.substring(0, cursorPosition-prefix.length()));
                 proposals= getAttributeProposals(taskString, prefix);
+                if (proposals.length == 0) {
+                	errorMessage= AntEditorMessages.getString("AntEditorCompletionProcessor.28"); //$NON-NLS-1$
+                }
                 break;
             case PROPOSAL_MODE_TASK_PROPOSAL:
 				proposals= getTaskProposals(documentString, findParentElement(documentString, lineNumber, columnNumber), prefix);
+            	if (proposals.length == 0) {
+				   errorMessage= AntEditorMessages.getString("AntEditorCompletionProcessor.29"); //$NON-NLS-1$
+            	}
 				break;
             case PROPOSAL_MODE_TASK_PROPOSAL_CLOSING:
                 proposals= getClosingTaskProposals(findNotClosedParentElement(documentString, lineNumber, columnNumber), prefix);
+            	if (proposals.length == 0) {
+				   errorMessage= AntEditorMessages.getString("AntEditorCompletionProcessor.30"); //$NON-NLS-1$
+            	}
                 break;
             case PROPOSAL_MODE_ATTRIBUTE_VALUE_PROPOSAL:
                 taskString = getTaskStringFromDocumentStringToPrefix(documentString.substring(0, cursorPosition-prefix.length()));
                 String attributeString = getAttributeStringFromDocumentStringToPrefix(documentString.substring(0, cursorPosition-prefix.length()));
 				proposals=getAttributeValueProposals(taskString, attributeString, prefix);
+				if (proposals.length == 0) {
+				   errorMessage= AntEditorMessages.getString("AntEditorCompletionProcessor.31"); //$NON-NLS-1$
+				}
 				break;
             case PROPOSAL_MODE_PROPERTY_PROPOSAL:
 				proposals= getPropertyProposals(documentString, prefix, cursorPosition);
+            	if (proposals.length == 0) {
+				   errorMessage= AntEditorMessages.getString("AntEditorCompletionProcessor.32"); //$NON-NLS-1$
+            	}
 				break;
 			case PROPOSAL_MODE_NONE :
             default :
                 proposals= new ICompletionProposal[0];
+            	if (proposals.length == 0) {
+				   errorMessage= AntEditorMessages.getString("AntEditorCompletionProcessor.33"); //$NON-NLS-1$
+            	}
         } 
         Arrays.sort(proposals, proposalComparator);
+        if (proposals.length > 0) {
+        	errorMessage= ""; //$NON-NLS-1$
+        }
         return proposals;
 
     }
@@ -396,7 +419,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 		   replacementLength += 1;
 		   replacementOffset = aCursorPosition - aPrefix.length() - 1;                
 	   } else {
-		   throw new AntEditorException(AntEditorMessages.getString("AntEditorCompletionProcessor.Error")); //$NON-NLS-1$
+		   throw new AntEditorException("Internal Error computing property proposals"); //$NON-NLS-1$
 	   }
 	   if(aDocumentText.length() > aCursorPosition && aDocumentText.charAt(aCursorPosition) == '}') {
 		   replacementLength += 1;

@@ -30,11 +30,14 @@ import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.source.IAnnotationAccess;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.source.IVerticalRuler;
+import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IWorkbenchPart;
@@ -42,6 +45,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.ContentAssistAction;
 import org.eclipse.ui.texteditor.IDocumentProvider;
+import org.eclipse.ui.texteditor.IEditorStatusLine;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
@@ -50,6 +54,31 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
  */
 public class AntEditor extends TextEditor {
 
+		
+	class StatusLineSourceViewer extends SourceViewer{
+		public StatusLineSourceViewer(Composite composite, IVerticalRuler verticalRuler, int styles) {
+			super(composite, verticalRuler, styles);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.text.ITextOperationTarget#doOperation(int)
+		 */
+		public void doOperation(int operation) {
+			if (getTextWidget() == null || !redraws()) {
+				return;
+			}
+
+			switch (operation) {
+				case CONTENTASSIST_PROPOSALS:
+					String msg= fContentAssistant.showPossibleCompletions();
+					setStatusLineErrorMessage(msg);
+					return;
+				default :
+					super.doOperation(operation);
+			}
+		}
+
+	}
 	/**
 	 * The tab width
 	 */
@@ -269,5 +298,28 @@ public class AntEditor extends TextEditor {
 	 */
 	protected IAnnotationAccess createAnnotationAccess() {
 		return new AnnotationAccess(getAnnotationPreferences());
+	}
+	
+	/**
+	 * Creates the source viewer to be used by this editor.
+	 * Subclasses may re-implement this method.
+	 *
+	 * @param parent the parent control
+	 * @param ruler the vertical ruler
+	 * @param styles style bits
+	 * @return the source viewer
+	 */
+	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
+		return new StatusLineSourceViewer(parent, ruler, styles);
+	}
+	
+	/**
+	 * Ses the given message as error message to this editor's status line.
+	 * @param msg message to be set
+	 */
+	protected void setStatusLineErrorMessage(String msg) {
+		IEditorStatusLine statusLine= (IEditorStatusLine) getAdapter(IEditorStatusLine.class);
+		if (statusLine != null)
+			statusLine.setMessage(true, msg, null);	
 	}
 }
