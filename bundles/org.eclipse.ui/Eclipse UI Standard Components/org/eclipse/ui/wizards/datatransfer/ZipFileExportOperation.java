@@ -119,21 +119,36 @@ protected int countSelectedResources() throws CoreException {
 		
 	return result;
 }
+
+/**
+ *  Export the passed resource to the destination .zip. Export with
+ * no path leadup
+ *
+ *  @param resource org.eclipse.core.resources.IResource
+ */
+protected void exportResource(IResource resource) throws InterruptedException{
+	exportResource(resource,1);
+}
+
+
 /**
  *  Export the passed resource to the destination .zip
  *
  *  @param resource org.eclipse.core.resources.IResource
+ *  @param depth - the number of resource levels to be included in
+ *   				the path including the resourse itself.
  */
-protected void exportResource(IResource resource) throws InterruptedException {
+protected void exportResource(IResource resource, int leadupDepth) throws InterruptedException {
 	if (!resource.isAccessible())
 		return;
 
 	if (resource.getType() == IResource.FILE) {
 		String destinationName;
+		IPath fullPath = resource.getFullPath();
 		if(createLeadupStructure)
-		 	destinationName = resource.getFullPath().toString();
+		 	destinationName = fullPath.toString();
 		else
-			destinationName = resource.getName();
+			destinationName = fullPath.removeFirstSegments(fullPath.segmentCount() - leadupDepth).toString();
 		monitor.subTask(destinationName);
 
 		try {
@@ -165,7 +180,7 @@ protected void exportResource(IResource resource) throws InterruptedException {
 		}
 
 		for (int i = 0; i<children.length; i++) 
-			exportResource(children[i]);
+			exportResource(children[i],leadupDepth + 1);
 
 	}
 }
