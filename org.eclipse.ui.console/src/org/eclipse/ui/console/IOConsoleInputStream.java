@@ -20,6 +20,7 @@ import org.eclipse.swt.graphics.Color;
  * InputStream used to read input from an IOConsole. 
  * This stream will buffer input that it receives from the console
  * until it has been read.
+ * 
  * @since 3.1
  *
  */
