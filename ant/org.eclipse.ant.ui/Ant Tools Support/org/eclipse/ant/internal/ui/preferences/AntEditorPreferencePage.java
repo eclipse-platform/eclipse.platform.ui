@@ -684,7 +684,11 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 			store.putValue(key, (String)fWorkingValues.get(key));
 		}
 		if (store.needsSaving()) {
+            //any AntModels listen for changes to the "PROBLEM" pref
+            //this is so that the models do not update for each and every pref modification
 			store.putValue(AntEditorPreferenceConstants.PROBLEM, "changed"); //$NON-NLS-1$
+			//ensure to clear as there may not be any models open currently
+            store.setToDefault(AntEditorPreferenceConstants.PROBLEM);
 		}
 		return super.performOk();
 	}
