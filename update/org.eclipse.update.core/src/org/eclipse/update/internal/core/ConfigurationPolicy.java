@@ -66,17 +66,25 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 		boolean callInstallHandler)
 		throws CoreException {
 
-		if (featureReference == null)
+		if (featureReference == null){
+			UpdateManagerPlugin.warn("The feature reference to configure is null");
 			return;
+		}
 			
 		IFeature feature = null;			
 		try {
 			feature = featureReference.getFeature();
 		} catch (CoreException e){
+			URL url = featureReference.getURL();
+			String urlString = (url!=null)?url.toExternalForm():"<no feature reference url>";
+			UpdateManagerPlugin.warn("Error retrieving feature:"+urlString,e);
 			return;
 		}
-		if (feature == null)
-			return;
+		if (feature == null){
+			URL url = featureReference.getURL();
+			String urlString = (url!=null)?url.toExternalForm():"<no feature reference url>";
+			UpdateManagerPlugin.warn("The feature to unconfigure is null: feature reference is:"+urlString);	
+		}
 
 		// Setup optional install handler
 		InstallHandlerProxy handler = null;
@@ -161,7 +169,8 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 		if (feature==null){
 			URL url = featureReference.getURL();
 			String urlString = (url!=null)?url.toExternalForm():"<no feature reference url>";
-			UpdateManagerPlugin.warn("The feature to unconfigure is null: feature reference is:"+urlString);			
+			UpdateManagerPlugin.warn("The feature to unconfigure is null: feature reference is:"+urlString);
+			return false;			
 		}
 
 		// Setup optional install handler
@@ -260,7 +269,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 		// Calculate which plugins we read should still be written out
 		// (pluginNotToWrite-pluginRead = delta that should be written out)
 		// pluginsToWrite+delta = all that should be written out
-		IFeatureReference[] arrayOfFeatureRef = null;		
+		/*IFeatureReference[] arrayOfFeatureRef = null;		
 		if (getPolicy() == IPlatformConfiguration.ISitePolicy.USER_EXCLUDE) {
 			if (getConfiguredFeatures() != null)
 				arrayOfFeatureRef = getConfiguredFeatures();
@@ -284,7 +293,9 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 				UpdateManagerPlugin.debug("Delta with read:"+included[i]);
 			}
 		}		
-		result = union(included, pluginsToWrite);
+		result = union(included, pluginsToWrite);*/
+		
+		result = pluginsToWrite;
 
 		return result;		
 	}

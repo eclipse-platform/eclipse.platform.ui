@@ -154,8 +154,13 @@ public class Utilities {
 	}
 
 	/**
-	 * Creates a CoreException from some other exception
+	 * Creates a CoreException from some other exception.
+	 * The type of the CoreException is <code>IStatus.ERROR</code>
+	 * If the exceptionpassed as a parameter is also a CoreException,
+	 * the new CoreException will contain all the status of the passed
+	 * CoreException.
 	 * 
+	 * @see IStatus#ERROR
 	 * @param s exception string
 	 * @param e actual exception being reported
 	 * @return a CoreException
@@ -179,8 +184,7 @@ public class Utilities {
 				completeString.append(e.toString());
 				completeString.append("]\r\n");
 			}
-			status = new Status(IStatus.ERROR, id, 0, completeString.toString(), e);
-UpdateManagerPlugin.log(status);				
+			status = new Status(IStatus.ERROR, id, IStatus.OK, completeString.toString(), e);
 		}	
 		return new CoreException(status); //$NON-NLS-1$
 	}

@@ -117,23 +117,27 @@ public class UpdateManagerPlugin extends Plugin {
 	}
 	
 	/**
-	 * dumps a String in the trace if WARNING is set to true
+	 * Dumps a String in the log if WARNING is set to true
 	 */
 	public static void warn(String s) {
 		if (DEBUG && DEBUG_SHOW_WARNINGS)
-			debug(s); 
+			log(s,null); 
 	}
 
 	/**
-	 * Dumps an exception if WARNING is set to true
+	 * Dumps an exception in the log if WARNING is set to true
 	 * 
 	 * @param s log string
 	 * @param e exception to be logged
 	 * @since 2.0
 	 */
 	public static void warn(String s, Throwable e) {
-		if (DEBUG && DEBUG_SHOW_WARNINGS)
+		if (DEBUG && DEBUG_SHOW_WARNINGS){
+			if (s!=null){
+				s="Install/Update WARNING:"+s;
+			}
 			log(s,e);
+		}
 	} 
 			
 	/**

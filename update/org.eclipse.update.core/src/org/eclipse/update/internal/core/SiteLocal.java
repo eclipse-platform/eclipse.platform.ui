@@ -689,7 +689,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 
 		// add the currentConfig last
 		// based on creation date
-		if (validConfig.size()>=0){
+		if (validConfig.size()>0){
 			Iterator iter = validConfig.iterator();
 			InstallConfigurationModel currentConfig = (InstallConfigurationModel)iter.next();
 			while (iter.hasNext()) {

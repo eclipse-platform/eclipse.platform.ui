@@ -116,6 +116,7 @@ public class ErrorRecoveryLog {
 
 			out.write(buffer.toString());
 			out.flush();
+			index++;
 		} catch (IOException e) {
 			throw Utilities.newCoreException(
 				Policy.bind("UpdateManagerUtils.UnableToLog", new Object[] { logFile }),
