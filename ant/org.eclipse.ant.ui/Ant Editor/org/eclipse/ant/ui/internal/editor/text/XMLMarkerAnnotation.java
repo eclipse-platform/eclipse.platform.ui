@@ -13,6 +13,7 @@ package org.eclipse.ant.ui.internal.editor.text;
 
 import java.util.Iterator;
 
+import org.eclipse.ant.ui.internal.model.AntUIPlugin;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 
@@ -23,9 +24,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.text.Assert;
 
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
-
 
 public class XMLMarkerAnnotation extends MarkerAnnotation implements IXMLAnnotation {
 	
@@ -78,7 +77,7 @@ public class XMLMarkerAnnotation extends MarkerAnnotation implements IXMLAnnotat
 				}
 			}
 		} catch (CoreException e) {
-			ExternalToolsPlugin.getDefault().log(e);
+			AntUIPlugin.log(e);
 		}
 		super.initialize();
 	}

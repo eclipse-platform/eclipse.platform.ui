@@ -16,13 +16,13 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.Iterator;
 
+import org.eclipse.ant.ui.internal.model.AntUIPlugin;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 
 /**
  * * @see org.eclipse.jdt.internal.ui.text.HTMLPresenter
@@ -154,10 +154,8 @@ public class HTMLTextPresenter implements DefaultInformationControl.IInformation
 			return trim(buffer, presentation);
 			
 		} catch (IOException e) {
-			
-			ExternalToolsPlugin.getDefault().log(e);
+			AntUIPlugin.log(e);
 			return null;
-			
 		} finally {
 			gc.dispose();
 		}

@@ -13,9 +13,9 @@ package org.eclipse.ant.ui.internal.launchConfigurations;
 
 import java.io.IOException;
 
+import org.eclipse.ant.ui.internal.model.IAntUIConstants;
 import org.eclipse.debug.core.model.IStreamMonitor;
 import org.eclipse.debug.core.model.IStreamsProxy;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 ;
 
 /**
@@ -26,9 +26,9 @@ public class AntStreamsProxy implements IStreamsProxy {
 	private AntStreamMonitor fErrorMonitor = new AntStreamMonitor();
 	private AntStreamMonitor fOutputMonitor = new AntStreamMonitor();
 	
-	public static final String ANT_DEBUG_STREAM = IExternalToolConstants.PLUGIN_ID + ".ANT_DEBUG_STREAM"; //$NON-NLS-1$
-	public static final String ANT_VERBOSE_STREAM = IExternalToolConstants.PLUGIN_ID + ".ANT_VERBOSE_STREAM"; //$NON-NLS-1$
-	public static final String ANT_WARNING_STREAM = IExternalToolConstants.PLUGIN_ID + ".ANT_WARNING_STREAM"; //$NON-NLS-1$
+	public static final String ANT_DEBUG_STREAM = IAntUIConstants.PLUGIN_ID + ".ANT_DEBUG_STREAM"; //$NON-NLS-1$
+	public static final String ANT_VERBOSE_STREAM = IAntUIConstants.PLUGIN_ID + ".ANT_VERBOSE_STREAM"; //$NON-NLS-1$
+	public static final String ANT_WARNING_STREAM = IAntUIConstants.PLUGIN_ID + ".ANT_WARNING_STREAM"; //$NON-NLS-1$
 	
 	private AntStreamMonitor fDebugMonitor = new AntStreamMonitor();
 	private AntStreamMonitor fVerboseMonitor = new AntStreamMonitor();

@@ -11,9 +11,9 @@
 package org.eclipse.ant.ui.internal.preferences;
 
 
+import org.eclipse.ant.ui.internal.model.IAntUIConstants;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.util.Assert;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
 /**
  * A settable IStatus.
@@ -142,7 +142,7 @@ public class StatusInfo implements IStatus {
 	 * @see IStatus#getPlugin()
 	 */
 	public String getPlugin() {
-		return IExternalToolConstants.PLUGIN_ID;
+		return IAntUIConstants.PLUGIN_ID;
 	}
 
 	/**

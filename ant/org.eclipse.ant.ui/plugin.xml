@@ -134,7 +134,7 @@
 			category="org.eclipse.ant.ui.AntPreferencePage">
 		</page>
 		<page
-			id="org.eclipse.ui.externaltools.AntEditorPreferencePage"
+			id="org.eclipse.ant.ui.AntEditorPreferencePage"
 			name="%PreferencePage.antEditorPreferences"
 			class="org.eclipse.ant.ui.internal.preferences.AntEditorPreferencePage"
 			category="org.eclipse.ant.ui.AntPreferencePage">
@@ -191,7 +191,7 @@
 		<consoleContentProvider 
 			id="org.eclipse.ant.consoleColorProvider" 
 			class="org.eclipse.ant.ui.internal.launchConfigurations.AntConsoleColorProvider"
-			processType="org.eclipse.ui.externaltools.ant">
+			processType="org.eclipse.ant.ui.antProcess">
 		</consoleContentProvider>
 	</extension>
 	
@@ -199,7 +199,7 @@
     	<launchConfigurationType
     		id = "org.eclipse.ant.AntBuilderLaunchConfigurationType"
     		name = "%AntBuild.externalTools"
-    		delegate = "org.eclipse.ui.externaltools.internal.ant.launchConfigurations.AntLaunchDelegate"
+    		delegate = "org.eclipse.ant.ui.internal.launchConfigurations.AntLaunchDelegate"
     		modes = "run"
     		category = "org.eclipse.ui.externaltools.builder">
     	</launchConfigurationType>
@@ -214,28 +214,16 @@
     
     <extension point = "org.eclipse.debug.ui.launchConfigurationTabGroups">
 		<launchConfigurationTabGroup
-			id="org.eclipse.ui.externaltools.launchConfigurationTabGroup.program"
-			type ="org.eclipse.ui.externaltools.ProgramLaunchConfigurationType"
-			helpContextId="org.eclipse.ui.externaltools.launchConfigHelpContext.program"
-			class="org.eclipse.ui.externaltools.internal.program.launchConfigurations.ProgramTabGroup">
-		</launchConfigurationTabGroup>
-		<launchConfigurationTabGroup
-			id="org.eclipse.ui.externaltools.launchConfigurationTabGroup.ant"
+			id="org.eclipse.ant.ui.launchConfigurationTabGroup.ant"
 			type ="org.eclipse.ant.AntLaunchConfigurationType"
 			helpContextId="org.eclipse.ui.externaltools.launchConfigHelpContext.ant"
-			class="org.eclipse.ui.externaltools.internal.ant.launchConfigurations.AntTabGroup">
+			class="org.eclipse.ant.ui.internal.launchConfigurations.AntTabGroup">
 		</launchConfigurationTabGroup>
 		<launchConfigurationTabGroup
-			id="org.eclipse.ui.externaltools.launchConfigurationTabGroup.program.builder"
-			type ="org.eclipse.ui.externaltools.ProgramBuilderLaunchConfigurationType"
-			helpContextId="org.eclipse.ui.externaltools.launchConfigHelpContext.program_builder"
-			class="org.eclipse.ui.externaltools.internal.program.launchConfigurations.ProgramBuilderTabGroup">
-		</launchConfigurationTabGroup>
-		<launchConfigurationTabGroup
-			id="org.eclipse.ui.externaltools.launchConfigurationTabGroup.ant.builder"
+			id="org.eclipse.ant.ui.launchConfigurationTabGroup.ant.builder"
 			type ="org.eclipse.ant.AntBuilderLaunchConfigurationType"
 			helpContextId="org.eclipse.ui.externaltools.launchConfigHelpContext.ant_builder"
-			class="org.eclipse.ui.externaltools.internal.ant.launchConfigurations.AntBuilderTabGroup">
+			class="org.eclipse.ant.ui.internal.launchConfigurations.AntBuilderTabGroup">
 		</launchConfigurationTabGroup>
 	</extension>
 	
@@ -267,22 +255,22 @@
 	<!-- Console Extensions -->
 	<extension point = "org.eclipse.debug.ui.consoleLineTrackers">
 		<consoleLineTracker
-			id = "org.eclipse.ui.externaltools.ant.javacLineTracker"
-			class = "org.eclipse.ui.externaltools.internal.ant.launchConfigurations.JavacLineTracker"
-			processType = "org.eclipse.ui.externaltools.ant">
+			id = "org.eclipse.ant.ui.javacLineTracker"
+			class = "org.eclipse.ant.ui.internal.launchConfigurations.JavacLineTracker"
+			processType = "org.eclipse.ant.ui.antProcess">
 		</consoleLineTracker>
 		<consoleLineTracker
-			id = "org.eclipse.ui.externaltools.ant.taskLineTracker"
+			id = "org.eclipse.ant.ui.taskLineTracker"
 			class = "org.eclipse.ant.ui.internal.console.TaskLineTracker"
-			processType = "org.eclipse.ui.externaltools.ant">
+			processType = "org.eclipse.ant.ui.antProcess">
 		</consoleLineTracker>		
 	</extension>
 	
 	<extension point = "org.eclipse.debug.core.statusHandlers">
 		<statusHandler
-			id="org.eclipse.ui.externaltools.statusHandler.runAntInit"
-			class="org.eclipse.ui.externaltools.internal.ant.launchConfigurations.RunAntStatusHandler"
-			plugin ="org.eclipse.ui.externaltools"
+			id="org.eclipse.ant.ui.statusHandler.runAntInit"
+			class="org.eclipse.ant.ui.internal.launchConfigurations.RunAntStatusHandler"
+			plugin ="org.eclipse.ant.ui"
 			code="1000">
 		</statusHandler>	
 	</extension>

@@ -18,10 +18,11 @@ import java.util.List;
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.Type;
+import org.eclipse.ant.ui.internal.model.AntUIImages;
+import org.eclipse.ant.ui.internal.model.IAntUIConstants;
 import org.eclipse.ant.ui.internal.model.IAntUIHelpContextIds;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -30,7 +31,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 
 /**
  * Sub-page that allows the user to enter custom types
@@ -160,9 +160,6 @@ public class AntTypesPage extends AntPage {
 	 * Label provider for type elements
 	 */
 	private static final class AntTypesLabelProvider extends LabelProvider implements ITableLabelProvider {
-		private static final String IMG_TYPE = "icons/full/obj16/type.gif"; //$NON-NLS-1$;
-		private Image typeImage;
-	
 		/**
 		 * Creates an instance.
 		 */
@@ -173,10 +170,6 @@ public class AntTypesPage extends AntPage {
 		 * Method declared on IBaseLabelProvider.
 		 */
 		public void dispose() {
-			if (typeImage != null) {
-				typeImage.dispose();
-				typeImage = null;
-			}
 		}
 		
 		/* (non-Javadoc)
@@ -204,23 +197,20 @@ public class AntTypesPage extends AntPage {
 		}
 		
 		public Image getTypeImage() {
-			if (typeImage == null) {
-				ImageDescriptor desc = ExternalToolsPlugin.getDefault().getImageDescriptor(IMG_TYPE);
-				typeImage = desc.createImage();
-			}
-			return typeImage;
+			return AntUIImages.getImage(IAntUIConstants.IMG_ANT_TYPE);
 		}
 	}
-	/**
-	 * @see org.eclipse.ui.externaltools.internal.ant.preferences.AntPage#initialize()
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.ui.internal.preferences.AntPage#initialize()
 	 */
 	protected void initialize() {
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
 		setInput(prefs.getTypes());
 	}
-	
+
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.externaltools.internal.ant.preferences.AntPage#getHelpContextId()
+	 * @see org.eclipse.ant.ui.internal.preferences.AntPage#initialize()
 	 */
 	protected String getHelpContextId() {
 		return IAntUIHelpContextIds.ANT_TYPES_PAGE;

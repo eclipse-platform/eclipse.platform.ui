@@ -20,6 +20,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.ant.ui.internal.model.AntUIPlugin;
+import org.eclipse.ant.ui.internal.model.IAntUIConstants;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
@@ -37,8 +39,6 @@ import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
 /**
  * 
@@ -56,7 +56,7 @@ public class AntOpenWithMenu extends ContributionItem {
 	/**
 	 * The id of this action.
 	 */
-	public static final String ID = IExternalToolConstants.PLUGIN_ID + ".AntOpenWithMenu"; //$NON-NLS-1$
+	public static final String ID = IAntUIConstants.PLUGIN_ID + ".AntOpenWithMenu"; //$NON-NLS-1$
 
 	public AntOpenWithMenu(IWorkbenchPage page) {
 		super(ID);
@@ -185,7 +185,7 @@ public class AntOpenWithMenu extends ContributionItem {
 				return s1.compareToIgnoreCase(s2);
 			}
 		});
-		IEditorDescriptor antEditor= registry.findEditor("org.eclipse.ui.externaltools.internal.ant.editor.AntEditor"); //$NON-NLS-1$
+		IEditorDescriptor antEditor= registry.findEditor("org.eclipse.ant.ui.internal.editor.AntEditor"); //$NON-NLS-1$
 		
 		boolean defaultFound = false;
 		boolean antFound= false;
@@ -261,7 +261,7 @@ public class AntOpenWithMenu extends ContributionItem {
 				page.openEditor(fileResource, editor.getId());
 			}
 		} catch (PartInitException e) {
-			ExternalToolsPlugin.getDefault().log(MessageFormat.format(AntViewActionMessages.getString("AntViewOpenWithMenu.Editor_failed"), new String[]{fileResource.getLocation().toOSString()}), e); //$NON-NLS-1$
+			AntUIPlugin.log(MessageFormat.format(AntViewActionMessages.getString("AntViewOpenWithMenu.Editor_failed"), new String[]{fileResource.getLocation().toOSString()}), e); //$NON-NLS-1$
 		}
 	}
 
@@ -286,7 +286,7 @@ public class AntOpenWithMenu extends ContributionItem {
 							try {
 								page.openEditor(fileResource);
 							} catch (PartInitException e) {
-								ExternalToolsPlugin.getDefault().log(MessageFormat.format(AntViewActionMessages.getString("AntViewOpenWithMenu.Editor_failed"), new String[]{fileResource.getLocation().toOSString()}), e); //$NON-NLS-1$
+								AntUIPlugin.log(MessageFormat.format(AntViewActionMessages.getString("AntViewOpenWithMenu.Editor_failed"), new String[]{fileResource.getLocation().toOSString()}), e); //$NON-NLS-1$
 							}
 						}
 						break;

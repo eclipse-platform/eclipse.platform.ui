@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.ant.ui.internal.editor.text.IAntEditorColorConstants;
+import org.eclipse.ant.ui.internal.model.AntUIPlugin;
 import org.eclipse.ant.ui.internal.model.IAntUIHelpContextIds;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.DialogPage;
@@ -42,7 +43,6 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 
@@ -184,7 +184,7 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 	
 	public AntEditorPreferencePage() {
 		setDescription(AntPreferencesMessages.getString("AntEditorPreferencePage.description")); //$NON-NLS-1$
-		setPreferenceStore(ExternalToolsPlugin.getDefault().getPreferenceStore());
+		setPreferenceStore(AntUIPlugin.getDefault().getPreferenceStore());
 		fOverlayStore= new OverlayPreferenceStore(getPreferenceStore(), fKeys);
 	}
 	
@@ -702,7 +702,7 @@ public class AntEditorPreferencePage extends PreferencePage implements IWorkbenc
 	 */
 	public boolean performOk() {
 		fOverlayStore.propagate();
-		ExternalToolsPlugin.getDefault().savePluginPreferences();
+		AntUIPlugin.getDefault().savePluginPreferences();
 		return true;
 	}
 	

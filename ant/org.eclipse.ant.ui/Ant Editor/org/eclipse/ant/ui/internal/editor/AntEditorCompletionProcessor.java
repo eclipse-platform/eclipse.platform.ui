@@ -495,7 +495,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
                 }
                  
                 String tempReplacementString = new StringBuffer("${").append(tempPropertyName).append('}').toString();  //$NON-NLS-1$
-                Image tempImage = AntUIImages.getImage(IAntUIConstants.IMAGE_ID_PROPERTY);
+                Image tempImage = AntUIImages.getImage(IAntUIConstants.IMG_PROPERTY_PROPOSAL);
                 
                 ICompletionProposal proposal = 
                     new CompletionProposal(
@@ -531,7 +531,7 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
 		// through a child sequence. This works for the Ant
 		// 1.5 DTD but not in general. I kept the assumption. bf
         LinkedList tempProposals = new LinkedList();
-        Image tempImage = AntUIImages.getImage(IAntUIConstants.IMAGE_ID_TASK);
+        Image tempImage = AntUIImages.getImage(IAntUIConstants.IMG_TASK_PROPOSAL);
         
         if (aParentTaskElement == null) {
         	// DTDs do not designate a root element.

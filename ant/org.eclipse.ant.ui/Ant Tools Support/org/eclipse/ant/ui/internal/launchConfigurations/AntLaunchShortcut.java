@@ -15,6 +15,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.ant.ui.internal.model.AntUIPlugin;
 import org.eclipse.ant.ui.internal.model.AntUtil;
 import org.eclipse.ant.ui.internal.model.IAntUIConstants;
 import org.eclipse.ant.ui.internal.model.IAntUIPreferenceConstants;
@@ -44,7 +45,6 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.model.ToolUtil;
 import org.eclipse.ui.externaltools.internal.variable.ExpandVariableContext;
@@ -142,8 +142,8 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 
 		if (configuration != null) {
 			if (fShowDialog) {
-				IStatus status = new Status(IStatus.INFO, IExternalToolConstants.PLUGIN_ID, IAntUIConstants.STATUS_INIT_RUN_ANT, "", null); //$NON-NLS-1$
-				DebugUITools.openLaunchConfigurationDialog(ExternalToolsPlugin.getActiveWorkbenchWindow().getShell(), configuration, IExternalToolConstants.ID_EXTERNAL_TOOLS_LAUNCH_GROUP, status);
+				IStatus status = new Status(IStatus.INFO, IAntUIConstants.PLUGIN_ID, IAntUIConstants.STATUS_INIT_RUN_ANT, "", null); //$NON-NLS-1$
+				DebugUITools.openLaunchConfigurationDialog(AntUIPlugin.getActiveWorkbenchWindow().getShell(), configuration, IExternalToolConstants.ID_EXTERNAL_TOOLS_LAUNCH_GROUP, status);
 			} else {
 				if (targetAttribute != null) {
 					String newName= DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(configuration.getName());
@@ -191,7 +191,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 	}
 	
 	private String[] getBuildFileNames() {
-		IPreferenceStore prefs= ExternalToolsPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore prefs= AntUIPlugin.getDefault().getPreferenceStore();
 		String buildFileNames= prefs.getString(IAntUIPreferenceConstants.ANT_FIND_BUILD_FILE_NAMES);
 		if (buildFileNames.length() == 0) {
 			//the user has not specified any names to look for
@@ -326,7 +326,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 		} else {
 			status = new Status(IStatus.ERROR, IAntUIConstants.PLUGIN_ID, 0, message, throwable);
 		}
-		ErrorDialog.openError(ExternalToolsPlugin.getActiveWorkbenchWindow().getShell(), AntLaunchConfigurationMessages.getString("AntLaunchShortcut.Error_7"), AntLaunchConfigurationMessages.getString("AntLaunchShortcut.Build_Failed_2"), status); //$NON-NLS-1$ //$NON-NLS-2$
+		ErrorDialog.openError(AntUIPlugin.getActiveWorkbenchWindow().getShell(), AntLaunchConfigurationMessages.getString("AntLaunchShortcut.Error_7"), AntLaunchConfigurationMessages.getString("AntLaunchShortcut.Build_Failed_2"), status); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**

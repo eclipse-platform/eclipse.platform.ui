@@ -19,6 +19,9 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.ant.core.AntRunner;
+import org.eclipse.ant.ui.internal.model.AntUIPlugin;
+import org.eclipse.ant.ui.internal.model.AntUtil;
+import org.eclipse.ant.ui.internal.model.IAntUIConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -33,12 +36,7 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jdt.internal.launching.JavaLocalApplicationLaunchConfigurationDelegate;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.ant.ui.internal.model.AntUIPlugin;
-import org.eclipse.ant.ui.internal.model.AntUtil;
-import org.eclipse.ant.ui.internal.model.IAntUIConstants;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.program.launchConfigurations.BackgroundResourceRefresher;
 import org.eclipse.ui.externaltools.internal.variable.ExpandVariableContext;
 
@@ -47,10 +45,10 @@ import org.eclipse.ui.externaltools.internal.variable.ExpandVariableContext;
  */
 public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 	
-	private static final String ANT_LOGGER_CLASS = "org.eclipse.ui.externaltools.internal.ant.logger.AntProcessBuildLogger"; //$NON-NLS-1$
-	private static final String NULL_LOGGER_CLASS = "org.eclipse.ui.externaltools.internal.ant.logger.NullBuildLogger"; //$NON-NLS-1$
+	private static final String ANT_LOGGER_CLASS = "org.eclipse.ant.ui.internal.antsupport.logger.AntProcessBuildLogger"; //$NON-NLS-1$
+	private static final String NULL_LOGGER_CLASS = "org.eclipse.ant.ui.internal.antsupport.logger.NullBuildLogger"; //$NON-NLS-1$
 	private static final String BASE_DIR_PREFIX = "-Dbasedir="; //$NON-NLS-1$
-	private static final String INPUT_HANDLER_CLASS = "org.eclipse.ui.externaltools.internal.ant.inputhandler.AntInputHandler"; //$NON-NLS-1$	
+	private static final String INPUT_HANDLER_CLASS = "org.eclipse.ant.ui.internal.antsupport.inputhandler.AntInputHandler"; //$NON-NLS-1$	
 
 	/**
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate#launch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
@@ -90,7 +88,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		}
 		
 		if (vmTypeID == null && AntRunner.isBuildRunning()) {
-			IStatus status= new Status(IStatus.ERROR, IExternalToolConstants.PLUGIN_ID, 1, MessageFormat.format(AntLaunchConfigurationMessages.getString("AntLaunchDelegate.Build_In_Progress"), new String[]{location.toOSString()}), null); //$NON-NLS-1$
+			IStatus status= new Status(IStatus.ERROR, IAntUIConstants.PLUGIN_ID, 1, MessageFormat.format(AntLaunchConfigurationMessages.getString("AntLaunchDelegate.Build_In_Progress"), new String[]{location.toOSString()}), null); //$NON-NLS-1$
 			throw new CoreException(status);
 		}		
 		
@@ -189,7 +187,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 					try {
 						finalRunner.run(process);
 					} catch (final CoreException e) {
-						ExternalToolsPlugin.getStandardDisplay().asyncExec(new Runnable() {
+						AntUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
 							public void run() {
 								ErrorDialog.openError(null, AntLaunchConfigurationMessages.getString("AntLaunchDelegate.Failure"), null, e.getStatus()); //$NON-NLS-1$
 							}

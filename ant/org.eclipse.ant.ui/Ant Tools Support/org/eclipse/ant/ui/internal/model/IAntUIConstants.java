@@ -28,7 +28,7 @@ public interface IAntUIConstants {
 	// ------- Views -------
 
 	/**
-	 * Ant View identifier (value <code>org.eclipse.ui.externaltools.AntView</code>).
+	 * Ant View identifier (value <code>org.eclipse.ant.ui.AntView</code>).
 	 */
 	public static final String ANT_VIEW_ID = PLUGIN_ID + ".AntView"; //$NON-NLS-1$
 
@@ -68,12 +68,12 @@ public interface IAntUIConstants {
 	/**
 	 * Icon for task proposal.
 	 */
-	public static final String IMAGE_ID_TASK = PLUGIN_ID + ".html_tab_obj"; //$NON-NLS-1$
+	public static final String IMG_TASK_PROPOSAL = PLUGIN_ID + ".html_tab_obj"; //$NON-NLS-1$
 	
 	/**
 	 * Icon for property proposal.
 	 */
-	public static final String IMAGE_ID_PROPERTY = IExternalToolConstants.PLUGIN_ID + ".property"; //$NON-NLS-1$
+	public static final String IMG_PROPERTY_PROPOSAL = PLUGIN_ID + ".property"; //$NON-NLS-1$
 	
 	// Action images
 	public static final String IMG_REMOVE= PLUGIN_ID + ".remove"; //$NON-NLS-1$
@@ -84,8 +84,9 @@ public interface IAntUIConstants {
 	public static final String IMG_TOGGLE= PLUGIN_ID + ".toggle"; //$NON-NLS-1$
 	 
 	//	Overlays
-	 public static final String IMG_OVR_ERROR = IExternalToolConstants.PLUGIN_ID + ".ovrError";  //$NON-NLS-1$
+	 public static final String IMG_OVR_ERROR = PLUGIN_ID + ".ovrError";  //$NON-NLS-1$
 	
+	public static final String IMG_ANT_TYPE= PLUGIN_ID + ".type"; //$NON-NLS-1$
 
 	// ------- Launch configuration types --------
 	/**

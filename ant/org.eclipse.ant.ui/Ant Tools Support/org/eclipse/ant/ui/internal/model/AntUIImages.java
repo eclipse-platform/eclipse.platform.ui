@@ -66,7 +66,7 @@ public class AntUIImages {
 	private static void declareImages() {
 		// Ant Editor images
 		declareRegistryImage(IAntUIConstants.IMG_PROPERTY, OBJECT + "property_obj.gif"); //$NON-NLS-1$
-		declareRegistryImage(IAntUIConstants.IMAGE_ID_TASK, OBJECT + "task_obj.gif"); //$NON-NLS-1$
+		declareRegistryImage(IAntUIConstants.IMG_TASK_PROPOSAL, OBJECT + "task_obj.gif"); //$NON-NLS-1$
 		// Ant View Actions
 		declareRegistryImage(IAntUIConstants.IMG_REMOVE, LOCALTOOL + "remove_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IAntUIConstants.IMG_REMOVE_ALL, LOCALTOOL + "removeAll_co.gif"); //$NON-NLS-1$
@@ -83,6 +83,7 @@ public class AntUIImages {
 		
 		//ANT object
 		declareRegistryImage(IAntUIConstants.IMG_TAB_ANT_TARGETS, LOCALTOOL + "ant_targets.gif"); //$NON-NLS-1$
+		declareRegistryImage(IAntUIConstants.IMG_ANT_TYPE, OBJECT + "type.gif"); //$NON-NLS-1$
 		
 		// Overlays
 		declareRegistryImage(IAntUIConstants.IMG_OVR_ERROR, OVR + "error_co.gif"); //$NON-NLS-1$

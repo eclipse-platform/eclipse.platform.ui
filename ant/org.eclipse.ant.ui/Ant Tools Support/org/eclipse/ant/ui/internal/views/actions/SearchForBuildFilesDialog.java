@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.ant.ui.internal.model.AntUIPlugin;
 import org.eclipse.ant.ui.internal.model.IAntUIPreferenceConstants;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -43,7 +44,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.externaltools.internal.model.StringMatcher;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -87,7 +87,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	/**
 	 * The dialog settings used to persist this dialog's settings.
 	 */
-	private static IDialogSettings settings= ExternalToolsPlugin.getDefault().getDialogSettings();
+	private static IDialogSettings settings= AntUIPlugin.getDefault().getDialogSettings();
 	
 	/**
 	 * Initialize any dialog settings that haven't been set.

@@ -34,42 +34,42 @@ public class Attribute extends Atom implements IAttribute {
 		fElement = element;
 	}
 
-	/**
-	 * @see org.eclipse.ant.ui.internal.dtd.IAorg.eclipse.ui.externaltools.internal.ant.dtdpe()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.ui.internal.dtd.IAttribute#getType()
 	 */
 	public String getType() {
 		return fType;
 	}
 	
-	/**
-	 * @see org.eclipse.ui.exteorg.eclipse.ui.externaltools.internal.ant.dtdrnal.ant.dtd.IAttribute#getEnum()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.ui.internal.dtd.IAttribute#getEnum()
 	 */
 	public String[] getEnum() {
 		return fEnum;
 	}
 	
-	/**
-	 * @sorg.eclipse.ui.externaltools.internal.ant.dtd.ui.externaltools.internal.ant.dtd.IAttribute#getElement()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.ui.internal.dtd.IAttribute#getElement()
 	 */
 	public IElement getElement() {
 		return fElement;
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.ant.ui.internal.dtd.IAttribute#getDefault()
 	 */
 	public String getDefault() {
 		return fDefault;
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.ant.ui.internal.dtd.IAttribute#isFixed()
 	 */
 	public boolean isFixed() {
 		return fFixed;
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.ant.ui.internal.dtd.IAttribute#isRequired()
 	 */
 	public boolean isRequired() {
@@ -79,6 +79,7 @@ public class Attribute extends Atom implements IAttribute {
 	public void setType(String type) {
 		fType = type;
 	}
+	
 	/**
 	 * Sets the default value.
 	 * @param defaultValue Value
@@ -110,5 +111,4 @@ public class Attribute extends Atom implements IAttribute {
 	public void setRequired(boolean required) {
 		fRequired = required;
 	}
-
 }

@@ -11,6 +11,7 @@
 package org.eclipse.ant.ui.internal.preferences;
 
 
+import org.eclipse.ant.ui.internal.model.AntUIPlugin;
 import org.eclipse.ant.ui.internal.model.IAntUIHelpContextIds;
 import org.eclipse.ant.ui.internal.model.IAntUIPreferenceConstants;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -34,7 +35,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 public class AntPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
@@ -60,7 +60,7 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 		public AntPreferencePage() {
 			super(GRID);
 			setDescription(AntPreferencesMessages.getString("AntPreferencePage.General")); //$NON-NLS-1$
-			setPreferenceStore(ExternalToolsPlugin.getDefault().getPreferenceStore());
+			setPreferenceStore(AntUIPlugin.getDefault().getPreferenceStore());
 		}
 	
 	/**

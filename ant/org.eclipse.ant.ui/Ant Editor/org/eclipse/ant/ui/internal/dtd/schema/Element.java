@@ -83,14 +83,16 @@ public class Element extends Atom implements IElement {
 		return fMap;
 	}
 
-	/**
-	 * @see org.eclipse.ant.ui.internal.dtd.IElement#getContorg.eclipse.ui.externaltools.internal.ant.dtd*/
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.ui.internal.dtd.IElement#isMixed()
+	 */
 	public IModel getContentModel() {
 		return fModel;
 	}
 
-	/**
-	 * @see org.eclipse.ui.eorg.eclipse.ui.externaltools.internal.ant.dtdnternal.ant.dtd.IElement#isMixed()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.ui.internal.dtd.IElement#isMixed()
 	 */
 	public boolean isMixed() {
 		return fMixed;

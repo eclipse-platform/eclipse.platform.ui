@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.ant.ui.internal.model.AntUIPlugin;
 import org.eclipse.ant.ui.internal.model.AntUtil;
 import org.eclipse.ant.ui.internal.model.IAntUIHelpContextIds;
 import org.eclipse.ant.ui.internal.views.elements.ProjectNode;
@@ -66,7 +67,6 @@ import org.eclipse.ant.ui.internal.views.actions.RemoveAllAction;
 import org.eclipse.ant.ui.internal.views.actions.RemoveProjectAction;
 import org.eclipse.ant.ui.internal.views.actions.RunTargetAction;
 import org.eclipse.ant.ui.internal.views.actions.SearchForBuildFilesAction;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.ShowInContext;
@@ -329,7 +329,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 					getViewSite().getPage().openEditor(file, editor.getId());
 				}
 			} catch (PartInitException e) {
-				ExternalToolsPlugin.getDefault().log(e);
+				AntUIPlugin.log(e);
 			}
 		} else if (selection instanceof TargetNode){
 			runTargetAction.run();

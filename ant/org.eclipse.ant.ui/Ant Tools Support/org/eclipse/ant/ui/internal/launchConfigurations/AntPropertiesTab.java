@@ -10,11 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ant.ui.internal.launchConfigurations;
 
-
 import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.ant.core.Property;
+import org.eclipse.ant.ui.internal.model.AntUIImages;
+import org.eclipse.ant.ui.internal.model.AntUIPlugin;
 import org.eclipse.ant.ui.internal.model.AntUtil;
 import org.eclipse.ant.ui.internal.model.IAntUIConstants;
 import org.eclipse.ant.ui.internal.model.IAntUIHelpContextIds;
@@ -30,9 +31,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -62,7 +60,7 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
 	public Image getImage() {
-		return ExternalToolsImages.getImage(IExternalToolConstants.IMG_PROPERTY);
+		return AntUIImages.getImage(IAntUIConstants.IMG_PROPERTY);
 	}
 
 	/**
@@ -82,14 +80,14 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 		try {
 			properties= configuration.getAttribute(IAntUIConstants.ATTR_ANT_PROPERTIES, (Map)null);
 		} catch (CoreException ce) {
-			ExternalToolsPlugin.getDefault().log(AntLaunchConfigurationMessages.getString("AntPropertiesTab.Error_reading_configuration_9"), ce); //$NON-NLS-1$
+			AntUIPlugin.log(AntLaunchConfigurationMessages.getString("AntPropertiesTab.Error_reading_configuration_9"), ce); //$NON-NLS-1$
 		}
 		
 		String propertyFiles= null;
 		try {
 			propertyFiles= configuration.getAttribute(IAntUIConstants.ATTR_ANT_PROPERTY_FILES, (String)null);
 		} catch (CoreException ce) {
-			ExternalToolsPlugin.getDefault().log(AntLaunchConfigurationMessages.getString("AntPropertiesTab.Error_reading_configuration_9"), ce); //$NON-NLS-1$
+			AntUIPlugin.log(AntLaunchConfigurationMessages.getString("AntPropertiesTab.Error_reading_configuration_9"), ce); //$NON-NLS-1$
 		}
 		
 		antPropertiesBlock.populatePropertyViewer(properties);
@@ -140,28 +138,28 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.externaltools.internal.ant.preferences.IAntClasspathBlockContainer#setMessage(java.lang.String)
+	 * @see org.eclipse.ant.ui.internal.preferences.IAntBlockContainer#createPushButton(org.eclipse.swt.widgets.Composite, java.lang.String)
 	 */
 	public void setMessage(String message) {
 		super.setMessage(message);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.externaltools.internal.ant.preferences.IAntClasspathBlockContainer#setErrorMessage(java.lang.String)
+	 * @see org.eclipse.ant.ui.internal.preferences.IAntBlockContainer#createPushButton(org.eclipse.swt.widgets.Composite, java.lang.String)
 	 */
 	public void setErrorMessage(String message) {
 		super.setErrorMessage(message);
 	}
 
 	/* (non-Javadoc)
-	* @see org.eclipse.ui.externaltools.internal.ant.preferences.IAntClasspathBlockContainer#createPushButton(org.eclipse.swt.widgets.Composite, java.lang.String)
-	*/
+	 * @see org.eclipse.ant.ui.internal.preferences.IAntBlockContainer#createPushButton(org.eclipse.swt.widgets.Composite, java.lang.String)
+	 */
 	public Button createPushButton(Composite parent, String buttonText) {
 		return super.createPushButton(parent, buttonText, null);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.externaltools.internal.ant.preferences.IAntClasspathBlockContainer#update()
+	 * @see org.eclipse.ant.ui.internal.preferences.IAntBlockContainer#createPushButton(org.eclipse.swt.widgets.Composite, java.lang.String)
 	 */
 	public void update() {
 		updateLaunchConfigurationDialog();

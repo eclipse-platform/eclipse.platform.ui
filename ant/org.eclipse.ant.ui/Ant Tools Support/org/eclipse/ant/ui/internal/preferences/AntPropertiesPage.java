@@ -15,6 +15,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.ant.core.AntCorePlugin;
+import org.eclipse.ant.ui.internal.model.AntUIImages;
+import org.eclipse.ant.ui.internal.model.IAntUIConstants;
 import org.eclipse.ant.ui.internal.model.IAntUIHelpContextIds;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
@@ -24,8 +26,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -51,7 +51,7 @@ public class AntPropertiesPage implements IAntBlockContainer {
 	protected TabItem createTabItem(TabFolder folder) {
 		TabItem item = new TabItem(folder, SWT.NONE);
 		item.setText(AntPreferencesMessages.getString("AntPropertiesPage.title")); //$NON-NLS-1$
-		item.setImage(ExternalToolsImages.getImage(IExternalToolConstants.IMG_PROPERTY));
+		item.setImage(AntUIImages.getImage(IAntUIConstants.IMG_PROPERTY));
 		item.setData(this);
 		item.setControl(createContents(folder));
 		return item;
@@ -104,21 +104,21 @@ public class AntPropertiesPage implements IAntBlockContainer {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.externaltools.internal.ant.preferences.IAntClasspathBlockContainer#setMessage(java.lang.String)
+	 * @see org.eclipse.ant.ui.internal.preferences.IAntBlockContainer#setMessage(java.lang.String)
 	 */
 	public void setMessage(String message) {
 		preferencePage.setMessage(message);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.externaltools.internal.ant.preferences.IAntClasspathBlockContainer#setErrorMessage(java.lang.String)
+	 * @see org.eclipse.ant.ui.internal.preferences.IAntBlockContainer#setErrorMessage(java.lang.String)
 	 */
 	public void setErrorMessage(String message) {
 		preferencePage.setErrorMessage(message);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.externaltools.internal.ant.preferences.IAntClasspathBlockContainer#createPushButton(org.eclipse.swt.widgets.Composite, java.lang.String)
+	 * @see org.eclipse.ant.ui.internal.preferences.IAntBlockContainer#createPushButton(org.eclipse.swt.widgets.Composite, java.lang.String)
 	 */
 	public Button createPushButton(Composite parent, String buttonText) {
 		Button button = new Button(parent, SWT.PUSH);
@@ -129,7 +129,7 @@ public class AntPropertiesPage implements IAntBlockContainer {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.externaltools.internal.ant.preferences.IAntClasspathBlockContainer#update()
+	 * @see org.eclipse.ant.ui.internal.preferences.IAntBlockContainer#update()
 	 */
 	public void update() {
 	}

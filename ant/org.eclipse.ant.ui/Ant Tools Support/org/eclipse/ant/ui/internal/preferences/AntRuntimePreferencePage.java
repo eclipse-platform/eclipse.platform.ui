@@ -20,6 +20,7 @@ import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.Property;
 import org.eclipse.ant.core.Task;
 import org.eclipse.ant.core.Type;
+import org.eclipse.ant.ui.internal.model.AntUIPlugin;
 import org.eclipse.ant.ui.internal.model.IAntUIHelpContextIds;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
@@ -30,7 +31,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -48,7 +48,7 @@ public class AntRuntimePreferencePage extends PreferencePage implements IWorkben
 	 */
 	public AntRuntimePreferencePage() {
 		setDescription(AntPreferencesMessages.getString("AntPreferencePage.description")); //$NON-NLS-1$
-		setPreferenceStore(ExternalToolsPlugin.getDefault().getPreferenceStore());
+		setPreferenceStore(AntUIPlugin.getDefault().getPreferenceStore());
 	}
 	
 	/* (non-Javadoc)

@@ -12,15 +12,13 @@ package org.eclipse.ant.ui.internal.preferences;
 
 
 import org.eclipse.ant.core.Property;
-import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ant.ui.internal.model.AntUIImages;
+import org.eclipse.ant.ui.internal.model.IAntUIConstants;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
 /**
  * Label provider for property elements
@@ -54,7 +52,7 @@ final class AntPropertiesLabelProvider extends LabelProvider implements ITableLa
 	 */
 	public Image getColumnImage(Object element, int columnIndex) {
 		if (element instanceof Property) {
-			return ExternalToolsImages.getImage(IExternalToolConstants.IMG_PROPERTY);
+			return AntUIImages.getImage(IAntUIConstants.IMG_PROPERTY);
 		} else {
 			return getFileImage();
 		}
@@ -75,10 +73,6 @@ final class AntPropertiesLabelProvider extends LabelProvider implements ITableLa
 	}
 	
 	public Image getClasspathImage() {
-		if (classpathImage == null) {
-			ImageDescriptor desc = ExternalToolsPlugin.getDefault().getImageDescriptor(AntPropertiesLabelProvider.IMG_CLASSPATH);
-			classpathImage = desc.createImage();
-		}
-		return classpathImage;
+		return AntUIImages.getImage(AntPropertiesLabelProvider.IMG_CLASSPATH);
 	}
 }

@@ -56,7 +56,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.ShowInContext;
@@ -193,7 +192,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 			}
 			
 			if("property".equals(tempElement.getName())) { //$NON-NLS-1$
-				return AntUIImages.getImage(IAntUIConstants.IMAGE_ID_PROPERTY);
+				return AntUIImages.getImage(IAntUIConstants.IMG_PROPERTY_PROPOSAL);
 			}
 			
 			XmlAttribute attribute= tempElement.getAttributeNamed(IAntEditorConstants.ATTR_TYPE);
@@ -203,7 +202,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 
 			if (attribute != null && IAntEditorConstants.TYPE_UNKNOWN.equals(attribute.getValue())) {
 				int flags= 0;
-				ImageDescriptor base= AntUIImages.getImageDescriptor(IAntUIConstants.IMAGE_ID_TASK);
+				ImageDescriptor base= AntUIImages.getImageDescriptor(IAntUIConstants.IMG_TASK_PROPOSAL);
 				if (tempElement.isErrorNode()) {
 					flags |= AntImageDescriptor.HAS_ERRORS;
 				}
@@ -213,7 +212,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 			if (tempElement.isErrorNode()) {
 				return AntUIImages.getImage(IAntUIConstants.IMG_ANT_TARGET_ERROR);
 			}
-			return AntUIImages.getImage(IAntUIConstants.IMAGE_ID_TASK);
+			return AntUIImages.getImage(IAntUIConstants.IMG_TASK_PROPOSAL);
 		}
 		
 		private Image getProjectImage(XmlElement tempElement) {
@@ -331,7 +330,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		viewer.getTree().setMenu(menu);
 
 		IPageSite site= getSite();
-		site.registerContextMenu(IExternalToolConstants.PLUGIN_ID + ".antEditorOutline", manager, viewer); //$NON-NLS-1$
+		site.registerContextMenu(IAntUIConstants.PLUGIN_ID + ".antEditorOutline", manager, viewer); //$NON-NLS-1$
 		
 		openWithMenu= new AntOpenWithMenu(this.getSite().getPage());
 		

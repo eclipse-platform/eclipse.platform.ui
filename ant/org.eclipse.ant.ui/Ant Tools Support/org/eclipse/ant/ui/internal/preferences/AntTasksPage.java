@@ -206,8 +206,8 @@ public class AntTasksPage extends AntPage {
 			return taskImage;
 		}
 	}
-	/**
-	 * @see org.eclipse.ui.externaltools.internal.ant.preferences.AntPage#initialize()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.ui.internal.preferences.AntPage#initialize()
 	 */
 	protected void initialize() {
 		AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
@@ -215,7 +215,7 @@ public class AntTasksPage extends AntPage {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.externaltools.internal.ant.preferences.AntPage#getHelpContextId()
+	 * @see org.eclipse.ant.ui.internal.preferences.AntPage#getHelpContextId()
 	 */
 	protected String getHelpContextId() {
 		return IAntUIHelpContextIds.ANT_TASKS_PAGE;

@@ -19,6 +19,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.ant.core.TargetInfo;
+import org.eclipse.ant.ui.internal.model.AntUIImages;
+import org.eclipse.ant.ui.internal.model.AntUIPlugin;
 import org.eclipse.ant.ui.internal.model.AntUtil;
 import org.eclipse.ant.ui.internal.model.IAntUIConstants;
 import org.eclipse.ant.ui.internal.model.IAntUIHelpContextIds;
@@ -52,8 +54,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.model.ToolUtil;
 import org.eclipse.ui.externaltools.internal.variable.ExpandVariableContext;
@@ -238,7 +238,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	private TargetInfo[] getTargets() {
 		if (fAllTargets == null) {
 			setErrorMessage(null);
-			MultiStatus status = new MultiStatus(IExternalToolConstants.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
+			MultiStatus status = new MultiStatus(IAntUIConstants.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
 			String expandedLocation = ToolUtil.expandFileLocation(fLocation, ExpandVariableContext.EMPTY_CONTEXT, status);
 			if (expandedLocation != null && status.isOK()) {
 				try {
@@ -293,7 +293,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			configTargets= configuration.getAttribute(IAntUIConstants.ATTR_ANT_TARGETS, (String)null);
 			newLocation= configuration.getAttribute(IExternalToolConstants.ATTR_LOCATION, (String)null);
 		} catch (CoreException ce) {
-			ExternalToolsPlugin.getDefault().log(AntLaunchConfigurationMessages.getString("AntTargetsTab.Error_reading_configuration_12"), ce); //$NON-NLS-1$
+			AntUIPlugin.log(AntLaunchConfigurationMessages.getString("AntTargetsTab.Error_reading_configuration_12"), ce); //$NON-NLS-1$
 		}
 		
 		if (newLocation == null) {
@@ -389,7 +389,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
 	public Image getImage() {
-		return ExternalToolsImages.getImage(IAntUIConstants.IMG_TAB_ANT_TARGETS);
+		return AntUIImages.getImage(IAntUIConstants.IMG_TAB_ANT_TARGETS);
 	}
 
 	/**

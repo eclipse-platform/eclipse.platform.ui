@@ -22,11 +22,11 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ant.ui.internal.model.AntUIImages;
+import org.eclipse.ant.ui.internal.model.IAntUIConstants;
 import org.eclipse.ant.ui.internal.views.AntView;
 import org.eclipse.ant.ui.internal.views.elements.ProjectNode;
 import org.eclipse.ant.ui.internal.views.elements.TargetNode;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.IUpdate;
@@ -45,7 +45,7 @@ public class RefreshBuildFilesAction extends Action implements IUpdate {
 	 * determining which buildfiles to refresh.
 	 */
 	public RefreshBuildFilesAction(AntView view) {
-		super(AntViewActionMessages.getString("RefreshBuildFilesAction.Refresh_Buildfiles_1"), ExternalToolsImages.getImageDescriptor(IExternalToolConstants.IMG_ACTION_REFRESH)); //$NON-NLS-1$
+		super(AntViewActionMessages.getString("RefreshBuildFilesAction.Refresh_Buildfiles_1"), AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ACTION_REFRESH)); //$NON-NLS-1$
 		setToolTipText(AntViewActionMessages.getString("RefreshBuildFilesAction.Refresh_Buildfiles_1")); //$NON-NLS-1$
 		this.view = view;
 		WorkbenchHelp.setHelp(this, IExternalToolsHelpContextIds.REFRESH_BUILDFILE_ACTION);

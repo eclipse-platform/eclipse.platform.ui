@@ -56,9 +56,6 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 	 */
 	private AntProcess fProcess = null;
 	
-	/**
-	 * @see org.eclipse.ui.externaltools.internal.ant.logger.NullBuildLogger#logMessage(java.lang.String, int)
-	 */
 	protected void logMessage(String message, BuildEvent event, int overridePriority) {
 		int priority= overridePriority;
 		if (priority == -1) {

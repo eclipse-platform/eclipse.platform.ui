@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.ant.core.Property;
+import org.eclipse.ant.ui.internal.model.AntUIPlugin;
 import org.eclipse.ant.ui.internal.model.IAntUIConstants;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -36,7 +37,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.ui.ExternalToolsContentProvider;
 
 public class AntPropertiesBlock {
@@ -95,7 +95,7 @@ public class AntPropertiesBlock {
 	
 	public void createControl(Composite top, String propertyLabel, String propertyFileLabel) {
 		Font font= top.getFont();
-		dialogSettings= ExternalToolsPlugin.getDefault().getDialogSettings();
+		dialogSettings= AntUIPlugin.getDefault().getDialogSettings();
 		
 		createVerticalSpacer(top, 2);
 

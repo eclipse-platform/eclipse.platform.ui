@@ -14,6 +14,7 @@ package org.eclipse.ant.ui.internal.launchConfigurations;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.ant.ui.internal.model.IAntUIConstants;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
@@ -22,7 +23,6 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.debug.ui.console.IConsole;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
 /**
  * 
@@ -33,7 +33,7 @@ public class AntProcess implements IProcess, IProgressMonitor {
 	 * Process attribute with process identifier - links the ant process build
 	 * logger to a process.
 	 */
-	public static final String ATTR_ANT_PROCESS_ID = IExternalToolConstants.PLUGIN_ID + ".ATTR_ANT_PROCESS_ID"; //$NON-NLS-1$
+	public static final String ATTR_ANT_PROCESS_ID = IAntUIConstants.PLUGIN_ID + ".ATTR_ANT_PROCESS_ID"; //$NON-NLS-1$
 	
 	private AntStreamsProxy fProxy = new AntStreamsProxy();
 	private String fLabel = null;
