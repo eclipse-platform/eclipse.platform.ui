@@ -181,6 +181,9 @@ public class SearchOperation extends WorkspaceModifyOperation {
 				marker.setAttribute(
 					SearchUIConstants.HIT_MARKER_ATTR_LABEL,
 					topic.getAttribute(ITopic.LABEL));
+				marker.setAttribute(
+					SearchUIConstants.HIT_MARKER_ATTR_ORDER,
+					new Integer(i).toString());
 				sView.addMatch(
 					topic.getAttribute(ITopic.LABEL),
 					marker.getAttribute(SearchUIConstants.HIT_MARKER_ATTR_HREF),
