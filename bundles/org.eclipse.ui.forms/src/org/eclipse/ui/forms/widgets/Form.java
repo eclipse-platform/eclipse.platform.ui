@@ -158,7 +158,15 @@ public class Form extends Composite {
 		});
 		super.setLayout(new FormLayout());
 		body = new LayoutComposite(this, SWT.NULL);
-		body.setMenu(getMenu());
+		body.setMenu(parent.getMenu());
+	}
+/**
+ * Passes the menu to the form body.
+ *@param menu
+ */
+	public void setMenu(Menu menu) {
+		super.setMenu(menu);
+		body.setMenu(menu);
 	}
 	/**
 	 * Fully delegates the size computation to the internal

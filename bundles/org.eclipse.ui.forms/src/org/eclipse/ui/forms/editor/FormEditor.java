@@ -148,6 +148,7 @@ public abstract class FormEditor extends MultiPageEditorPart {
 		if (page.getPartControl() == null) {
 			page.createPartControl(getContainer());
 			setControl(newPageIndex, page.getPartControl());
+			page.getPartControl().setMenu(getContainer().getMenu());
 		}
 		// fix for windows handles
 		int oldPage = getCurrentPage();

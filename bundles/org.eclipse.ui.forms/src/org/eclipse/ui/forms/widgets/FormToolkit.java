@@ -349,6 +349,7 @@ public class FormToolkit {
 		Section section = new Section(parent, sectionStyle);
 		section.setBackground(colors.getBackground());
 		section.setForeground(colors.getForeground());
+		section.setMenu(parent.getMenu());
 		section.textLabel.addFocusListener(visibilityHandler);
 		section.textLabel.addKeyListener(keyboardHandler);
 		if (section.toggle != null) {
@@ -376,6 +377,7 @@ public class FormToolkit {
 			int expansionStyle) {
 		ExpandableComposite ec = new ExpandableComposite(parent, SWT.NULL,
 				expansionStyle);
+		ec.setMenu(parent.getMenu());
 		ec.setBackground(colors.getBackground());
 		ec.setForeground(colors.getForeground());
 		//hyperlinkGroup.add(ec.textLabel);

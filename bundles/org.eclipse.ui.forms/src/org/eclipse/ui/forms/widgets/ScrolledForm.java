@@ -49,9 +49,19 @@ public class ScrolledForm extends SharedScrolledComposite {
 	 */
 	public ScrolledForm(Composite parent, int style) {
 		super(parent, style);
+		super.setMenu(parent.getMenu());
 		content = new Form(this, SWT.NULL);
 		super.setContent(content);
 		content.setMenu(getMenu());
+	}
+/**
+ * Passes the menu to the body.
+ * @param menu
+ */
+	public void setMenu(Menu menu) {
+		super.setMenu(menu);
+		if (content!=null) 
+			content.setMenu(menu);
 	}
 	/**
 	 * Returns the title text that will be rendered at the top of the form.

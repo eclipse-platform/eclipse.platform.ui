@@ -335,6 +335,8 @@ public class ExpandableComposite extends Composite {
 			}
 			textLabel = label;
 		}
+		if (textLabel!=null)
+			textLabel.setMenu(getMenu());
 	}
 	/**
 	 * Prevents assignment of the layout manager - expandable composite uses

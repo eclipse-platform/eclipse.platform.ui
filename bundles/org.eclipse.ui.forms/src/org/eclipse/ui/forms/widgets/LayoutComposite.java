@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.*;
 /* package */class LayoutComposite extends Composite {
 	public LayoutComposite(Composite parent, int style) {
 		super(parent, style);
+		setMenu(parent.getMenu());
 	}
 	public Point computeSize(int wHint, int hHint, boolean changed) {
 		Layout layout = getLayout();

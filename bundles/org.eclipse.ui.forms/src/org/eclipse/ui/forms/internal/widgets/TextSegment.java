@@ -150,7 +150,7 @@ public class TextSegment extends ParagraphSegment {
 		if (wHint == SWT.DEFAULT || !wrapAllowed) {
 			Point extent = gc.textExtent(text);
 
-			if (locator.x + extent.x > wHint) {
+			if (wHint!=SWT.DEFAULT && locator.x + extent.x > wHint) {
 				// new line
 				locator.x = isSelectable()?locator.indent+1:locator.indent;
 				locator.y += locator.rowHeight;
