@@ -7,7 +7,7 @@
   <feature url="features/org.eclipse.pde.feature_1.0.0.jar" type="org.eclipse.update.core.packaged">
     <category name="eclipse/J2EE"/>
   </feature>
-  <feature url="install/features/feature3/">
+  <feature url="features/feature3/">
     <category name="eclipse"/>
   </feature>
   <archive path="plugins/org.eclipse.help_1.0.0.jar" url="plugins/help.jar"/>
