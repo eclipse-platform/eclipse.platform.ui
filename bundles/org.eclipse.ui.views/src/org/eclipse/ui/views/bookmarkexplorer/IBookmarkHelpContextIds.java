@@ -26,6 +26,7 @@ interface IBookmarkHelpContextIds {
 
 	// Actions
 	public static final String COPY_BOOKMARK_ACTION = PREFIX + "copy_bookmark_action_context"; //$NON-NLS-1$
+	public static final String PASTE_BOOKMARK_ACTION = PREFIX + "paste_bookmark_action_context"; //$NON-NLS-1$
 	public static final String REMOVE_BOOKMARK_ACTION = PREFIX + "remove_bookmark_action_context"; //$NON-NLS-1$
 	public static final String OPEN_BOOKMARK_ACTION = PREFIX + "open_bookmark_action_context"; //$NON-NLS-1$
 	public static final String SELECT_ALL_BOOKMARK_ACTION = PREFIX + "select_all_bookmark_action_context"; //$NON-NLS-1$
