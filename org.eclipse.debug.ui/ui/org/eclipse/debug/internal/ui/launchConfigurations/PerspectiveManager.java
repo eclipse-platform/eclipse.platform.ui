@@ -228,7 +228,7 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 		for (int i = 0; i < events.length; i++) {
 			DebugEvent event = events[i];
 			if (event.getKind() == DebugEvent.SUSPEND && event.getDetail() == DebugEvent.BREAKPOINT) {
-				doPerspectiveSwitch(event);
+				handleBreakpointHit(event);
 			}
 		}
 	}
@@ -236,7 +236,7 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 	/**
 	 * Makes the debug view visible.
 	 */
-	protected void doShowDebugView() {
+	protected void showDebugView() {
 		if (fPrompting) {
 			// Wait until the user has dismissed the perspective
 			// switching dialog before opening the view.
@@ -252,7 +252,7 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 					}
 					async(new Runnable() {
 						public void run() {
-							doShowDebugView0();
+							doShowDebugView();
 						}
 					});
 				}
@@ -260,10 +260,13 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 			thread.start();
 			return;
 		}
-		doShowDebugView0();
+		doShowDebugView();
 	}
 	
-	private void doShowDebugView0() {
+	/**
+	 * Shows the debug view in the current workbench window.
+	 */
+	private void doShowDebugView() {
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (window != null) {
 			IWorkbenchPage page = window.getActivePage();
@@ -277,12 +280,12 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 		}
 	}
 	/**
-	 * Carries out perspective switching as appropriate for
-	 * the given debug event. 
+	 * A breakpoint has been hit. Carry out perspective switching
+	 * as appropriate for the given debug event. 
 	 * 
-	 * @param event the suspend or step end event
+	 * @param event the suspend event
 	 */
-	private void doPerspectiveSwitch(DebugEvent event) {
+	private void handleBreakpointHit(DebugEvent event) {
 		// apply event filters
 		ILaunch launch= null;
 		Object source = event.getSource();
@@ -323,7 +326,7 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 					}
 				}
 				if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_ACTIVATE_DEBUG_VIEW)) {
-					doShowDebugView();
+					showDebugView();
 				}
 			}
 		};
