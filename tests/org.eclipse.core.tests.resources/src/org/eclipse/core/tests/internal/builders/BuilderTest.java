@@ -5,6 +5,8 @@ package org.eclipse.core.tests.internal.builders;
  * All Rights Reserved.
  */
 
+import java.util.Map;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
@@ -416,6 +418,50 @@ public void testBuildOrder() {
 		verifier.assertLifecycleEvents("7.0");
 	} catch (CoreException e) {
 		fail("7.99");
+	}
+}
+/**
+ * Ensure that build order is preserved when project is closed/opened.
+ */
+public void testCloseOpenProject() {
+	IWorkspace workspace = getWorkspace();
+
+	IProject project = workspace.getRoot().getProject("PROJECT" + 1);
+
+	try {
+		// Create some resources
+		project.create(getMonitor());
+		project.open(getMonitor());
+	} catch (CoreException e) {
+		fail("1.99", e);
+	}
+	// Create and set a build spec
+	try {
+		IProjectDescription desc = project.getDescription();
+		desc.setBuildSpec(new ICommand[] {createCommand(desc, "Build1"), createCommand(desc, "Build2")});
+		project.setDescription(desc, getMonitor());
+	} catch (CoreException e) {
+		fail("2.99", e);
+	}
+	try {
+		project.close(getMonitor());
+		project.open(getMonitor());
+	} catch (CoreException e) {
+		fail("3.99", e);
+	}
+	//ensure the build spec hasn't changed
+	try {
+		IProjectDescription desc = project.getDescription();
+		ICommand[] commands = desc.getBuildSpec();
+		assertEquals("4.0", 2, commands.length);
+		assertEquals("4.1", commands[0].getBuilderName(), SortBuilder.BUILDER_NAME);
+		assertEquals("4.2", commands[1].getBuilderName(), SortBuilder.BUILDER_NAME);
+		Map args = commands[0].getArguments();
+		assertEquals("4.3", "Build1", (String)args.get(TestBuilder.BUILD_ID));
+		args = commands[1].getArguments();
+		assertEquals("4.4", "Build2", (String)args.get(TestBuilder.BUILD_ID));
+	} catch (CoreException e) {
+		fail("4.99", e);
 	}
 }
 /**
