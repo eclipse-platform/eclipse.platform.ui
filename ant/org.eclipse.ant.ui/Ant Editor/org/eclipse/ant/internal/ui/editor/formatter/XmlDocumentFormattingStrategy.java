@@ -69,9 +69,7 @@ public class XmlDocumentFormattingStrategy extends ContextBasedFormattingStrateg
         // setup formatter with preferences and format the text.
         FormattingPreferences prefs = new FormattingPreferences();
         
-        XmlDocumentFormatter formatter = new XmlDocumentFormatter();     
-        formatter.setText(documentText);
-        formatter.setFormattingPreferences(prefs);
+        XmlDocumentFormatter formatter = new XmlDocumentFormatter(documentText, prefs);     
         
         String formattedText = formatter.format();
         if(formattedText != null && ! formattedText.equals(documentText)) {

@@ -88,12 +88,9 @@ public class XmlDocumentFormatterTest extends AbstractAntUITest {
      * @param prefs - given the included preference instructions
      * @throws Exception
      */
-    private void simpleTest(String sourceFileName, String targetFileName,
-            FormattingPreferences prefs) throws Exception {
+    private void simpleTest(String sourceFileName, String targetFileName, FormattingPreferences prefs) throws Exception {
         
-        XmlDocumentFormatter xmlFormatter = new XmlDocumentFormatter();
-        xmlFormatter.setText(getFileContentAsString(getBuildFile(sourceFileName)));
-        xmlFormatter.setFormattingPreferences(prefs);
+        XmlDocumentFormatter xmlFormatter = new XmlDocumentFormatter(getFileContentAsString(getBuildFile(sourceFileName)), prefs);
         
         String result = xmlFormatter.format();
         String expectedResult = getFileContentAsString(getBuildFile(targetFileName));

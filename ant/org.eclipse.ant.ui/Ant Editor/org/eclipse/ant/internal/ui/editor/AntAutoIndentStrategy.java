@@ -10,16 +10,13 @@
  *******************************************************************************/
  
 package org.eclipse.ant.internal.ui.editor;
+import org.eclipse.ant.internal.ui.editor.formatter.XmlDocumentFormatter;
 import org.eclipse.ant.internal.ui.editor.model.AntElementNode;
 import org.eclipse.ant.internal.ui.editor.outline.AntModel;
-import org.eclipse.ant.internal.ui.model.AntUIPlugin;
-import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultAutoIndentStrategy;
 import org.eclipse.jface.text.DocumentCommand;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.TextUtilities;
 
 /**
@@ -53,9 +50,9 @@ public class AntAutoIndentStrategy extends DefaultAutoIndentStrategy {
 			return;
 		}
 		StringBuffer buf= new StringBuffer(c.text);
-		buf.append(getLeadingWhitespace(node.getOffset(), d));
+		buf.append(XmlDocumentFormatter.getLeadingWhitespace(node.getOffset(), d));
 		if (!nextNodeIsEndTag(c.offset, d)) {
-			buf.append(createIndent());
+			buf.append(XmlDocumentFormatter.createIndent());
 		}
 		
 		fAccumulatedChange+= buf.length();
@@ -82,51 +79,6 @@ public class AntAutoIndentStrategy extends DefaultAutoIndentStrategy {
 	public void customizeDocumentCommand(IDocument d, DocumentCommand c) {
 		if (c.length == 0 && c.text != null && TextUtilities.endsWith(d.getLegalLineDelimiters(), c.text) != -1) {
 			autoIndentAfterNewLine(d, c);
-		}
-	}
-	
-	/**
-	 * Creates a string that represents one indent (can be
-	 * spaces or tabs..)
-	 * 
-	 * @return one indentation
-	 */
-	private StringBuffer createIndent() {
-		StringBuffer oneIndent= new StringBuffer();
-		IPreferenceStore prefs= AntUIPlugin.getDefault().getPreferenceStore();
-		prefs.getBoolean(AntEditorPreferenceConstants.FORMATTER_TAB_CHAR);
-		
-		if (!prefs.getBoolean(AntEditorPreferenceConstants.FORMATTER_TAB_CHAR)) {
-			int tabLen= prefs.getInt(AntEditorPreferenceConstants.FORMATTER_TAB_SIZE);
-			for (int i= 0; i < tabLen; i++) {
-				oneIndent.append(' ');
-			}
-		} else {
-			oneIndent.append('\t'); // default
-		}
-		
-		return oneIndent;
-	}
-	
-	/**
-	 * Returns the indentation of the line at <code>offset</code> as a
-	 * <code>StringBuffer</code>. If the offset is not valid, the empty string
-	 * is returned.
-	 * 
-	 * @param offset the offset in the document
-	 * @return the indentation (leading whitespace) of the line in which
-	 * 		   <code>offset</code> is located
-	 */
-	private StringBuffer getLeadingWhitespace(int offset, IDocument document) {
-		StringBuffer indent= new StringBuffer();
-		try {
-			IRegion line= document.getLineInformationOfOffset(offset);
-			int lineOffset= line.getOffset();
-			int nonWS= findEndOfWhiteSpace(document, lineOffset, lineOffset + line.getLength());
-			indent.append(document.get(lineOffset, nonWS - lineOffset));
-			return indent;
-		} catch (BadLocationException e) {
-			return indent;
 		}
 	}
 	

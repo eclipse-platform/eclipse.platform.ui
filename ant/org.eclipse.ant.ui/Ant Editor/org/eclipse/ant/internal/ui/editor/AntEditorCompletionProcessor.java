@@ -214,9 +214,9 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
         return schema;
     }
     
-	/**
-     * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)
-     */
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeCompletionProposals(org.eclipse.jface.text.ITextViewer, int)
+	 */
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer refViewer, int documentOffset) {
         this.viewer = refViewer;
         return mergeProposals(determineProposals(), super.computeCompletionProposals(refViewer, documentOffset));
@@ -1494,9 +1494,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
             case PROPOSAL_MODE_PROPERTY_PROPOSAL:
             default :
             	return null;
-                
         }
-		
 	}
 
     /* (non-Javadoc)
@@ -1505,4 +1503,16 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
     protected Image getImage(Template template) {
         return AntUIImages.getImage(IAntUIConstants.IMG_TEMPLATE_PROPOSAL);
     }
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.templates.TemplateCompletionProcessor#createContext(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
+	 */
+//	protected TemplateContext createContext(ITextViewer contextViewer, IRegion region) {
+//		ContextType contextType= getContextType(contextViewer, region);
+//		if (contextType != null) {
+//			IDocument document= contextViewer.getDocument();
+//			return new AntContext(contextType, document, antModel, region.getOffset(), region.getLength());
+//		}
+//		return null;
+//	}
 }
