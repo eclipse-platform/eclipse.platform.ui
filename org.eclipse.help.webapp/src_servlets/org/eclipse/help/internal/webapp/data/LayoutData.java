@@ -38,7 +38,7 @@ public class LayoutData extends RequestData {
 		String banner = preferences.getBanner();
 		if (banner == null || banner.trim().length() == 0) {
 			banner = "about:blank"; //$NON-NLS-1$
-		} else if (banner.startsWith("http:/")) { //$NON-NLS-1$
+		} else if (banner.startsWith("http:/") || banner.startsWith("https:/")) { //$NON-NLS-1$ //$NON-NLS-2$
 		} else if (banner.startsWith("file:/") || banner.startsWith("jar:file:/")) { //$NON-NLS-1$ //$NON-NLS-2$
 			banner = "topic/" + banner; //$NON-NLS-1$
 		} else {
