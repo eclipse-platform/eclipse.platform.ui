@@ -186,7 +186,7 @@ public class EmbeddedHelpView extends ViewPart {
 			return;
 
 		HelpInfoView relatedTopicsTree = new HelpInfoView(null);
-		relatedTopicsTree.setRawLabel(
+		relatedTopicsTree.setLabel(
 			WorkbenchResources.getString("RelatedTopics_viewLabel"));
 		HelpTopic selectedChild = null;
 		for (int i = 0; i < relatedTopics.length; i++) {
