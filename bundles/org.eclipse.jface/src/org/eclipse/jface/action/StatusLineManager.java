@@ -247,6 +247,11 @@ public void update(boolean force) {
 					}
 					destIx++;
 				}
+				
+				// remove any old status line items not accounted for
+				for (; srcIx < ws.length; srcIx++) {
+					ws[srcIx].dispose();
+				}
 			}
 			setDirty(false);
 			

@@ -563,6 +563,11 @@ protected void update(boolean force, boolean recursive) {
 
 			}
 
+			// remove any old menu items not accounted for
+			for (; srcIx < mi.length; srcIx++) {
+				mi[srcIx].dispose();
+			}
+			
 			setDirty(false);
 		}
 	} else {

@@ -177,7 +177,7 @@ public void update(boolean force) {
 //			}
 
 			// determine obsolete items (removed or non active)
-			Item[] mi= toolBar.getItems();
+			ToolItem[] mi= toolBar.getItems();
 			ArrayList toRemove = new ArrayList(mi.length);
 			for (int i= 0; i < mi.length; i++) {
 				Object data= mi[i].getData();
@@ -246,6 +246,19 @@ public void update(boolean force) {
 				}
 			}
 
+			// remove any old tool items not accounted for
+			for (int i = mi.length; --i >= srcIx;) {
+				ToolItem item = mi[i];
+				if (!item.isDisposed()) {
+					Control ctrl = item.getControl();
+					if (ctrl != null) {
+						item.setControl(null);
+						ctrl.dispose();
+					}
+					item.dispose();
+				}
+			}
+			
 			setDirty(false);
 			
 			// turn redraw back on if we turned it off above
