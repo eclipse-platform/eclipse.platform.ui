@@ -171,11 +171,5 @@ public class LaunchGroupExtension implements ILaunchGroup {
 		return string.equals("true"); //$NON-NLS-1$
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.ILaunchGroup#getTitle()
-     */
-    public String getTitle() {
-        return getConfigurationElement().getAttribute("title"); //$NON-NLS-1$
-    }
 }
 
