@@ -199,7 +199,7 @@ public void copy(IPath destination, boolean force, IProgressMonitor monitor) thr
 		internalCopy(desc, force, monitor);
 	} else {
 		// will fail since we're trying to copy a project to a non-project
-		checkCopyRequirements(destination, IResource.PROJECT);
+		checkCopyRequirements(destination, IResource.PROJECT, force ? IResource.FORCE : IResource.NONE);
 	}
 }
 public void copy(IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
@@ -419,7 +419,7 @@ protected void internalCopy(IProjectDescription destDesc, boolean force, IProgre
 			IPath destPath = new Path(destName).makeAbsolute();
 			// The following assert method throws CoreExceptions as stated in the IProject.copy API
 			// and assert for programming errors. See checkCopyRequirements for more information.
-			assertCopyRequirements(destPath, IResource.PROJECT);
+			assertCopyRequirements(destPath, IResource.PROJECT, force ? IResource.FORCE : IResource.NONE);
 			Project destProject = (Project) workspace.getRoot().getProject(destName);
 			checkDescription(destProject, destDesc, false);
 			workspace.changing(this);

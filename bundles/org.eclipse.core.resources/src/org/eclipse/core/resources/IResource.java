@@ -191,6 +191,17 @@ public interface IResource extends IAdaptable {
 	 * @since 2.1	 */
 	public static final int ALLOW_MISSING_LOCAL = 0x10;
 
+	/**
+	 * Update flag constant (bit mask value 32) indicating that a copy or move
+	 * operation should copy the underlying contents of linked resources rather
+	 * than just performing a shallow copy of the link.
+	 *
+	 * @see #copy
+	 * @see #move
+	 * @since 2.1
+	 */
+	public static final int DEEP = 0x20;
+
 	/*====================================================================
 	 * Other constants:
 	 *====================================================================*/
@@ -402,41 +413,46 @@ public void copy(IPath destination, boolean force, IProgressMonitor monitor) thr
  *   copy(workspace.newProjectDescription(folder.getName()),updateFlags,monitor);
  * </pre>
  * </p>
- * <p>When a linked resource is copied into another project, a new linked
- * resource is created in the destination project that points to the same file
- * system location.  When a project containing linked resources is copied, the
- * new project will contain the same linked resources pointing to the same file
- * system locations.  For either of these cases, no files on disk under the
- * linked resource are actually copied.  Copying of linked resources into
- * anything other than a project is not permitted.
- * </p>
- * <p>
- * When a resource is copied, its persistent properties are copied with it.
+ * <p> When a resource is copied, its persistent properties are copied with it.
  * Session properties and markers are not copied.
  * </p>
  * <p>
- * The <code>FORCE</code> update flag controls how this method deals with
- * cases where the workspace is not completely in sync with the local file 
- * system. If <code>FORCE</code> is not specified, the method will only attempt
- * to copy resources that are in sync with the corresponding files and
- * directories in the local file system; it will fail if it
- * encounters a resource that is out of sync with the file system.
- * However, if <code>FORCE</code> is specified, the method
- * copies all corresponding files and directories from the local
- * file system, including ones that have been recently updated or created.
- * Note that in both settings of the <code>FORCE</code> flag,
- * the operation fails if the newly created resources in the 
- * workspace would be out of sync with the local file system; 
- * this ensures files in the file system cannot be accidentally
+ * The <code>FORCE</code> update flag controls how this method deals with cases
+ * where the workspace is not completely in sync with the local file system. If
+ * <code>FORCE</code> is not specified, the method will only attempt to copy
+ * resources that are in sync with the corresponding files and directories in
+ * the local file system; it will fail if it encounters a resource that is out
+ * of sync with the file system. However, if <code>FORCE</code> is specified,
+ * the method copies all corresponding files and directories from the local file
+ * system, including ones that have been recently updated or created. Note that
+ * in both settings of the <code>FORCE</code> flag, the operation fails if the
+ * newly created resources in the workspace would be out of sync with the local
+ * file system; this ensures files in the file system cannot be accidentally
  * overwritten.
  * </p>
  * <p>
- * Update flags other than <code>FORCE</code> are ignored.
+ * The <code>DEEP</code> update flag controls how this method deals with linked
+ * resources.  If <code>DEEP</code> is not specified when a linked resource is
+ * copied into another project, a new linked resource is created in the
+ * destination project that points to the same file system location.  When a
+ * project containing linked resources is copied, the new project will contain
+ * the same linked resources pointing to the same file system locations.  For
+ * either of these cases, no files on disk under the linked resource are
+ * actually copied.  Without the <code>DEEP</code> flag, copying of linked
+ * resources into anything other than a project is not permitted. If
+ * <code>DEEP</code> is specified, then the underlying contents of the linked
+ * resource will always be copied in the file system.  In this case, the
+ * destination of the copy will never be a linked resource or contain any linked
+ * resources.  The <code>DEEP</code> update flag is ignored when copying non-
+ * linked resources.
  * </p>
  * <p> 
- * This operation changes resources; these changes will be reported
- * in a subsequent resource change event that will include 
- * an indication that the resource copy has been added to its new parent.
+ * Update flags other than <code>FORCE</code> and <code>DEEP</code> are ignored.
+ * </p>
+ * <p> 
+ * This operation changes resources; these changes will be reported in a
+ * subsequent resource change event that will include an indication that the
+ * resource copy has been added to its new parent.
  * </p>
  * <p>
  * This operation is long-running; progress and cancellation are provided
@@ -445,7 +461,7 @@ public void copy(IPath destination, boolean force, IProgressMonitor monitor) thr
  *
  * @param destination the destination path 
  * @param updateFlags bit-wise or of update flag constants
- *   (only <code>FORCE</code> is relevant here)
+ *   (only <code>FORCE</code> and <code>DEEP</code> are relevant here)
  * @param monitor a progress monitor, or <code>null</code> if progress
  *    reporting and cancellation are not desired
  * @exception CoreException if this resource could not be copied. Reasons include:
@@ -457,8 +473,8 @@ public void copy(IPath destination, boolean force, IProgressMonitor monitor) thr
  * <li> The destination is a project but the source is not.</li>
  * <li> The resource corresponding to the parent destination path does not exist.</li>
  * <li> The resource corresponding to the parent destination path is a closed project.</li>
- * <li> The source is a linked resource, but the destination is not a project.
- * </li>
+ * <li> The source is a linked resource, but the destination is not a project,
+ *      and <code>DEEP</code> is not specified.</li>
  * <li> A resource at destination path does exist.</li>
  * <li> This resource or one of its descendents is out of sync with the local file
  *      system and <code>FORCE</code> is not specified.</li>
@@ -470,6 +486,7 @@ public void copy(IPath destination, boolean force, IProgressMonitor monitor) thr
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
+ * @see #DEEP
  * @see #FORCE
  * @since 2.0
  */
@@ -1300,12 +1317,12 @@ public boolean isTeamPrivateMember();
 public void move(IPath destination, boolean force, IProgressMonitor monitor) throws CoreException;
 /**
  * Moves this resource so that it is located at the given path.  
- * The path of the resource must not be a prefix of the destination path.
- * The workspace root may not be the source or destination location 
- * of a move operation, and a project can only be moved to another project.
- * After successful completion, the resource and any direct or indirect members
- * will no longer exist; but corresponding new resources will now exist at the
- * given path.
+ * The path of the resource must not be a prefix of the destination path. The
+ * workspace root may not be the source or destination location of a move
+ * operation, and a project can only be moved to another project. After
+ * successful completion, the resource and any direct or indirect members will
+ * no longer exist; but corresponding new resources will now exist at the given
+ * path.
  * <p>
  * The supplied path may be absolute or relative.  Absolute paths fully specify
  * the new location for the resource, including its project.  Relative paths are
@@ -1313,25 +1330,16 @@ public void move(IPath destination, boolean force, IProgressMonitor monitor) thr
  * trailing slash is ignored.
  * </p>
  * <p>
- * Calling this method with a one segment absolute destination
- * path is equivalent to calling:
+ * Calling this method with a one segment absolute destination path is
+ * equivalent to calling:
  * <pre>
  		IProjectDescription description = getDescription();
  		description.setName(path.lastSegment());
  		move(description, updateFlags, monitor);
  * </pre>
  * </p>
- * <p>When a linked resource is moved into another project, a new linked
- * resource is created in the destination project that points to the same file
- * system location.  When a project containing linked resources is moved, the
- * new project will contain the same linked resources pointing to the same file
- * system locations.  For either of these cases, no files on disk under the
- * linked resource are actually moved.  Moving of linked resources into anything
- * other than a project is not permitted.
- * </p>
- * <p>
- * When a resource moves, its session and persistent properties move with it.
- * Likewise for all other attributes of the resource including markers.
+ * <p> When a resource moves, its session and persistent properties move with
+ * it. Likewise for all other attributes of the resource including markers.
  * </p>
  * <p>
  * The <code>FORCE</code> update flag controls how this method deals with cases
@@ -1360,8 +1368,24 @@ public void move(IPath destination, boolean force, IProgressMonitor monitor) thr
  * when moving files and folders, but not whole projects.
  * </p>
  * <p>
- * Update flags other than <code>FORCE</code> and <code>KEEP_HISTORY</code> 
- * are ignored.
+ * The <code>DEEP</code> update flag controls how this method deals with linked
+ * resources.  If <code>DEEP</code> is not specified when a linked resource is
+ * moved into another project, a new linked resource is created in the
+ * destination project that points to the same file system location.  When a
+ * project containing linked resources is moved, the new project will contain
+ * the same linked resources pointing to the same file system locations.  For
+ * either of these cases, no files on disk under the linked resource are
+ * actually moved. Without the <code>DEEP</code> flag, moving of linked
+ * resources into anything other than a project is not permitted. If
+ * <code>DEEP</code> is specified, then the underlying contents of the linked
+ * resource will always be moved in the file system.  In this case, the
+ * destination of the move will never be a linked resource or contain any linked
+ * resources. The <code>DEEP</code> update flag is ignored when moving non-
+ * linked resources.
+ * </p>
+ * <p> 
+ * Update flags other than <code>FORCE</code>, <code>KEEP_HISTORY</code>and
+ * <code>DEEP</code> are ignored.
  * </p>
  * <p>
  * This method changes resources; these changes will be reported in a subsequent
@@ -1377,7 +1401,7 @@ public void move(IPath destination, boolean force, IProgressMonitor monitor) thr
  *
  * @param destination the destination path 
  * @param updateFlags bit-wise or of update flag constants
- *   (<code>FORCE</code> and <code>KEEP_HISTORY</code>)
+ *   (<code>FORCE</code>, <code>KEEP_HISTORY</code> and <code>DEEP</code>)
  * @param monitor a progress monitor, or <code>null</code> if progress
  *    reporting and cancellation are not desired
  * @exception CoreException if this resource could not be moved. Reasons include:
@@ -1390,8 +1414,8 @@ public void move(IPath destination, boolean force, IProgressMonitor monitor) thr
  * <li> The resource corresponding to the parent destination path does not exist.</li>
  * <li> The resource corresponding to the parent destination path is a closed 
  *      project.</li>
- * <li> The source is a linked resource, but the destination is not a project.
- * </li>
+ * <li> The source is a linked resource, but the destination is not a project
+ *      and  <code>DEEP</code> is not specified.</li>
  * <li> A resource at destination path does exist.</li>
  * <li> A resource of a different type exists at the destination path.</li>
  * <li> This resource or one of its descendents is out of sync with the local file system
@@ -1403,6 +1427,7 @@ public void move(IPath destination, boolean force, IProgressMonitor monitor) thr
  * <li> The source resource is a file and the destination path specifies a project.</li>
  * </ul>
  * @see IResourceDelta#getFlags
+ * @see #DEEP
  * @see #FORCE
  * @see #KEEP_HISTORY
  * @since 2.0

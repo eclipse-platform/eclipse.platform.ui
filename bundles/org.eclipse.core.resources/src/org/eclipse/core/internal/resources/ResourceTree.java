@@ -751,6 +751,7 @@ public void standardMoveFile(IFile source, IFile destination, int updateFlags, I
 	
 		boolean force = (updateFlags & IResource.FORCE) != 0;
 		boolean keepHistory = (updateFlags & IResource.KEEP_HISTORY) != 0;
+		boolean isDeep = (updateFlags & IResource.DEEP) != 0;
 	
 		// If the file is not in sync with the local file system and force is false,
 		// then signal that we have an error.
@@ -775,8 +776,8 @@ public void standardMoveFile(IFile source, IFile destination, int updateFlags, I
 			addToLocalHistory(source);
 		monitor.worked(Policy.totalWork/4);
 		
-		//for linked resources, nothing needs to be moved in the file system
-		if (source.isLinked()) {
+		//for shallow move of linked resources, nothing needs to be moved in the file system
+		if (!isDeep && source.isLinked()) {
 			movedFile(source, destination);
 			return;
 		}
@@ -832,7 +833,8 @@ public void standardMoveFolder(IFolder source, IFolder destination, int updateFl
 			addToLocalHistory(source, IResource.DEPTH_INFINITE);
 			
 		//for linked resources, nothing needs to be moved in the file system
-		if (source.isLinked()) {
+		boolean isDeep = (updateFlags & IResource.DEEP) != 0;
+		if (!isDeep && source.isLinked()) {
 			movedFolderSubtree(source, destination);
 			return;
 		}
@@ -874,8 +876,13 @@ private void updateTimestamps(IResource root) {
 		public boolean visit(IResource resource) {
 			if (resource.getType() == IResource.FILE) {
 				IFile file = (IFile) resource;
-				long timestamp = computeTimestamp(file);
-				updateMovedFileTimestamp(file, timestamp);
+				updateMovedFileTimestamp(file, computeTimestamp(file));
+			} else {
+				//clear the linked resource bit, if any
+				if (resource.isLinked()) {
+					ResourceInfo info = ((Resource)resource).getResourceInfo(false, true);
+					info.clear(ICoreConstants.M_LINK);
+				}
 			}
 			return true;
 		}
@@ -1056,5 +1063,7 @@ public void updateMovedFileTimestamp(IFile file, long timestamp) {
 	ResourceInfo info = ((Resource) file).getResourceInfo(false, true);
 	// The info should never be null since we just checked that the resource exists in the tree.
 	((Resource) file).getLocalManager().updateLocalSync(info, timestamp, true);
+	//remove the linked bit since this resource has been moved in the file system
+	info.clear(ICoreConstants.M_LINK);
 }
 }

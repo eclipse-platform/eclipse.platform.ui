@@ -502,10 +502,11 @@ public IStatus copy(IResource[] resources, IPath destination, int updateFlags, I
 				if (parentPath.equals(resource.getFullPath().removeLastSegments(1))) {
 					// test copy requirements
 					try {
-						IStatus requirements = ((Resource) resource).checkCopyRequirements(destination.append(resource.getName()), resource.getType());
+						IPath destinationPath = destination.append(resource.getName());
+						IStatus requirements = ((Resource) resource).checkCopyRequirements(destinationPath, resource.getType(), updateFlags);
 						if (requirements.isOK()) {
 							try {
-								resource.copy(destination.append(resource.getName()), updateFlags, Policy.subMonitorFor(monitor, 1));
+								resource.copy(destinationPath, updateFlags, Policy.subMonitorFor(monitor, 1));
 							} catch (CoreException e) {
 								status.merge(e.getStatus());
 							}
@@ -1328,7 +1329,7 @@ public IStatus move(IResource[] resources, IPath destination, int updateFlags, I
 				if (parentPath.equals(resource.getFullPath().removeLastSegments(1))) {
 					// test move requirements
 					try {
-						IStatus requirements = resource.checkMoveRequirements(destination.append(resource.getName()), resource.getType());
+						IStatus requirements = resource.checkMoveRequirements(destination.append(resource.getName()), resource.getType(), updateFlags);
 						if (requirements.isOK()) {
 							try {
 								resource.move(destination.append(resource.getName()), updateFlags, Policy.subMonitorFor(monitor, 1));

@@ -27,11 +27,14 @@ public class CopyVisitor implements IUnifiedTreeVisitor {
 	/** reports progress */
 	protected IProgressMonitor monitor;
 
+	/** update flags */
+	protected int updateFlags;
+
 	/** force flag */
 	protected boolean force;
 	
-	/** update flags */
-	protected int updateFlags;
+	/** deep copy flag */
+	protected boolean isDeep;
 
 	/** segments to drop from the source name */
 	protected int segmentsToDrop;
@@ -41,13 +44,14 @@ public class CopyVisitor implements IUnifiedTreeVisitor {
 
 	/** visitor to refresh unsynchronized nodes */
 	protected RefreshLocalVisitor refreshLocalVisitor;
-public CopyVisitor(IResource rootSource, IResource destination, boolean force, IProgressMonitor monitor) {
+public CopyVisitor(IResource rootSource, IResource destination, int updateFlags, IProgressMonitor monitor) {
 	this.rootDestination = destination;
 	this.rootDestinationLocalLocation = destination.getLocation();
-	this.force = force;
+	this.updateFlags = updateFlags;
+	this.isDeep = (updateFlags & IResource.DEEP) != 0;
+	this.force = (updateFlags & IResource.FORCE) != 0;
 	this.monitor = monitor;
 	this.segmentsToDrop = rootSource.getFullPath().segmentCount();
-	this.updateFlags = force ? IResource.FORCE : IResource.NONE;
 	this.status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INFO, Policy.bind("localstore.copyProblem"), null); //$NON-NLS-1$
 }
 protected boolean copy(UnifiedTreeNode node) {
@@ -60,7 +64,7 @@ protected boolean copy(UnifiedTreeNode node) {
 }
 protected boolean copyContents(UnifiedTreeNode node, Resource source, Resource destination) {
 	try {
-		if (source.isLinked()) {
+		if (!isDeep && source.isLinked()) {
 			destination.createLink(source.getLocation(), updateFlags, null);
 			return false;
 		}
@@ -72,7 +76,9 @@ protected boolean copyContents(UnifiedTreeNode node, Resource source, Resource d
 		((IFile) destination).create(((IFile) source).getContents(false), updateFlags, null);
 		// update the destination timestamp on disk
 		long lastModified = node.getLastModified();
-		destination.getResourceInfo(false, true).setLocalSyncInfo(lastModified);
+		ResourceInfo destinationInfo = destination.getResourceInfo(false, true);
+		destinationInfo.setLocalSyncInfo(lastModified);
+		destinationInfo.clear(ICoreConstants.M_LINK);
 		destination.getLocation().toFile().setLastModified(lastModified);
 		// update file attributes
 		CoreFileSystemLibrary.copyAttributes(source.getLocation().toOSString(), destination.getLocation().toOSString(), false);

@@ -117,7 +117,7 @@ public IContainer containerForLocation(IPath location) {
 	IPath path = pathForLocation(location);
 	return path == null ? null : (IContainer)resourceFor(path, false);
 }
-public void copy(IResource target, IResource destination, boolean force, IProgressMonitor monitor) throws CoreException {
+public void copy(IResource target, IResource destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
 		int totalWork = ((Resource) target).countResources(IResource.DEPTH_INFINITE, false);
@@ -128,7 +128,7 @@ public void copy(IResource target, IResource destination, boolean force, IProgre
 			String message = Policy.bind("localstore.resourceExists", destination.getFullPath().toString()); //$NON-NLS-1$
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, destination.getFullPath(), message, null);
 		}
-		CopyVisitor visitor = new CopyVisitor(target, destination, force, monitor);
+		CopyVisitor visitor = new CopyVisitor(target, destination, updateFlags, monitor);
 		UnifiedTree tree = new UnifiedTree(target);
 		tree.accept(visitor, IResource.DEPTH_INFINITE);
 		IStatus status = visitor.getStatus();
