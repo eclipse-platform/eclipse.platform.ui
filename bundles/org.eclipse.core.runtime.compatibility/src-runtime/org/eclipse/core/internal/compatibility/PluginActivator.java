@@ -65,6 +65,7 @@ public class PluginActivator implements BundleActivator {
 	public void stop(BundleContext context) throws Exception {
 		try {
 			plugin.shutdown();
+			plugin.stop(context);
 			((PluginDescriptor) plugin.getDescriptor()).doPluginDeactivation();
 		} finally {
 			this.context = null;
