@@ -25,17 +25,20 @@ Edit Actions ..
 	Verify editor contributions are removed when editor is closed.
 	Verify edit actions are consistent when switching between perspectives.
 
-Perspective Actions ..
+Perspective Actions (on the Window menu) ..
 	Open = always enabled
 	Verify other actions only enabled when a perspective is open.
 	Verify "open new window", "open perspective"
 	Verify "Save As" by modifying current persp, save as, close, reopen.
 	Verify "Reset" by modifying current persp, then reset.
 	Test Workbench/Perspectives preference page.
+
+The next two have been removed from the Window menu (bug 63827), but can
+still be tested by assigning a key binding.
 	Hide Editors, Show Editors
 	Hide Editors, Open new editor, verify implicit show editors.
-	
-Action Sets ..
+
+Action Sets (on Window -> Customize Perspective -> Shortcuts) ..
 	Confirm order is consistent.  Add all actions, record order, 
 		then remove and re-add.  Select action sets to verify order.
 	Test Customization of File New, Perspective Open, and Show View.
