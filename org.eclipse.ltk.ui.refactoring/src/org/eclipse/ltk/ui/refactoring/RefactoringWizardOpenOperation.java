@@ -51,7 +51,7 @@ public class RefactoringWizardOpenOperation {
 	 * Constant (value 1025) indicating that the precondition check failed
 	 * when opening a refactoring wizard dialog.
 	 * 
-	 * @see #open(RefactoringWizard, Shell, String)
+	 * @see #run(Shell, String)
 	 */
 	public static final int INITIAL_CONDITION_CHECKING_FAILED= IDialogConstants.CLIENT_ID + 1;
 	

@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ltk.ui.refactoring;
 
-import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
@@ -57,6 +55,6 @@ public interface IChangePreviewViewer {
 	 * 
 	 * @param input the input element
 	 */
-	public void setInput(ChangePreviewViewerInput input) throws CoreException;	
+	public void setInput(ChangePreviewViewerInput input);	
 }
 

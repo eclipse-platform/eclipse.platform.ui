@@ -22,10 +22,15 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
  * Operation that, when run, executes a refactoring. This includes
  * condition checking, change creation, change execution and remembering
  * of the undo change on the refactoring's undo stack.
- * 
- * <p> 
- * Note: this class is not intented to be subclassed by clients.
+ * <p>
+ * The operation should be executed via the run method offered by
+ * <code>IWorkspace</code> to achieve proper delta batching.
  * </p>
+ * <p> 
+ * Note: this class is not intended to be subclassed by clients.
+ * </p>
+ * 
+ * @see org.eclipse.core.resources.IWorkspace
  * 
  * @since 3.0 
  */
@@ -44,7 +49,7 @@ public class PerformRefactoringOperation implements IWorkspaceRunnable {
 	 * an error	of severity {@link RefactoringStatus#FATAL}. 
 	 * 
 	 * @param refactoring the refactoring to perform
-	 * @param style the condidition checking style as defined by 
+	 * @param style the condition checking style as defined by 
 	 *  {@link CheckConditionsOperation} 
 	 */
 	public PerformRefactoringOperation(Refactoring refactoring, int style) {

@@ -21,18 +21,25 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
 
 /**
  * Operation that, when run, performs a {@link Change} object. The operation
- * can be created in two different ways: with a given change or wiht a
- * {@link CreateChangeOperation}. If create the second way the given create
+ * can be created in two different ways: with a given change or with a
+ * {@link CreateChangeOperation}. If created the second way the given create
  * change operation will be used to create the actual change to perform.
- * 
  * <p>
  * If an undo change has been provided by the change to execute then the operation 
  * calls {@link Change#initializeValidationData(IProgressMonitor)} to initialize the 
  * undo change's validation data.
  * </p>
- * 
+ * <p>
+ * If an undo manager has been set via the method {@link #setUndoManager(IUndoManager, String)}
+ * then the undo object, if any has been provided, will be pushed onto the managers
+ * undo stack.
+ * </p> 
+ * <p>
+ * The operation should be executed via the run method offered by
+ * <code>IWorkspace</code> to achieve proper delta batching.
+ * </p>
  * <p> 
- * Note: this class is not intented to be subclassed by clients.
+ * Note: this class is not intended to be subclassed outside of the refactoring framework.
  * </p>
  * 
  * @since 3.0 
@@ -183,6 +190,14 @@ public class PerformChangeOperation implements IWorkspaceRunnable {
 		}	
 	}
 	
+	/**
+	 * Actually executes the change.
+	 * 
+	 * @param pm a progress monitor to report progress
+	 * 
+	 * @throws CoreException if an unexpected error occurs during
+	 *  change execution
+	 */
 	protected void executeChange(IProgressMonitor pm) throws CoreException {
 		fChangeExecuted= false;
 		if (!fChange.isEnabled())

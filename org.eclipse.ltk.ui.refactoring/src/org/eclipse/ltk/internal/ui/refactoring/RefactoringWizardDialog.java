@@ -46,6 +46,9 @@ public class RefactoringWizardDialog extends WizardDialog {
 
 	/**
 	 * Creates a new refactoring wizard dialog with the given wizard.
+	 * 
+	 * @param parent the parent shell
+	 * @param wizard the refactoring wizard
 	 */
 	public RefactoringWizardDialog(Shell parent, RefactoringWizard wizard) {
 		super(parent, wizard);

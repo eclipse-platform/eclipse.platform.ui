@@ -14,19 +14,18 @@ import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.dialogs.Dialog;
 
+import org.eclipse.ltk.core.refactoring.Change;
+import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringPreferences;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringStatusDialog;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringWizardDialog;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringWizardDialog2;
+import org.eclipse.ltk.internal.ui.refactoring.UIPerformChangeOperation;
 
 /**
  * Central access point to access resources managed by the refactoring
- * core plug-in.
- * 
- * <p> 
- * Note: this class is not intended to be subclassed by clients.
- * </p>
+ * ui plug-in.
  * 
  * @since 3.0
  */
@@ -91,4 +90,19 @@ public class RefactoringUI {
 			result= new RefactoringWizardDialog2(parent, wizard);
 		return result;
 	}
+	
+	/**
+	 * Creates a special perform change operations that knows how to batch
+	 * undo operations in open editors into one undo object. The operation
+	 * batches the undo operations for those editors that implement the
+	 * interface {@link org.eclipse.jface.text.IRewriteTarget}.
+	 * 
+	 * @param change the change to perform
+	 * 
+	 * @return a special perform change operation that knows how to batch
+	 *  undo operations for open editors
+	 */
+	public static PerformChangeOperation createUIAwareChangeOperation(Change change) {
+		return new UIPerformChangeOperation(change);
+	}	
 }

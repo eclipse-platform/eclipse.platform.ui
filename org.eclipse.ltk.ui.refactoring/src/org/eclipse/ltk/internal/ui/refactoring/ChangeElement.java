@@ -63,6 +63,8 @@ abstract class ChangeElement {
 	 * 
 	 * @return the viewer suitable to present a preview of this change or
 	 *  <code>null</code> if no previewer is configured.
+	 * 
+	 * @throws CoreException if an error occurred while creating the descriptor
 	 */
 	public abstract ChangePreviewViewerDescriptor getChangePreviewViewerDescriptor() throws CoreException;
 	

@@ -90,7 +90,7 @@ class DefaultChangeElement extends ChangeElement {
 	/**
 	 * Sets the children.
 	 * 
-	 * @param the children of this node. Must not be <code>null</code>
+	 * @param children the children of this node. Must not be <code>null</code>
 	 */
 	public void setChildren(ChangeElement[] children) {
 		Assert.isNotNull(children);

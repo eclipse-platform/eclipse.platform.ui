@@ -148,29 +148,34 @@ public class TextChangePreviewViewer implements IChangePreviewViewer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.internal.ui.refactoring.IChangePreviewViewer#setInput(org.eclipse.jdt.internal.ui.refactoring.ChangeElement)
 	 */
-	public void setInput(ChangePreviewViewerInput input) throws CoreException {
-		Change change= input.getChange();
-		if (input instanceof TextEditChangeInput) {
-			TextEditChangeInput edi= (TextEditChangeInput)input;
-			if (edi.group != null && edi.surroundingLines >= 0) {
-				TextEditChangeGroup editChange= edi.group;
-				TextChange textChange= editChange.getTextChange();
-				setInput(textChange.getCurrentContent(editChange.getRegion(), true, 2),
-					textChange.getPreviewContent(new TextEditChangeGroup[] { editChange }, editChange.getRegion(), true, 2),
-					textChange.getTextType());
+	public void setInput(ChangePreviewViewerInput input) {
+		try {
+			Change change= input.getChange();
+			if (input instanceof TextEditChangeInput) {
+				TextEditChangeInput edi= (TextEditChangeInput)input;
+				if (edi.group != null && edi.surroundingLines >= 0) {
+					TextEditChangeGroup editChange= edi.group;
+					TextChange textChange= editChange.getTextChange();
+					setInput(textChange.getCurrentContent(editChange.getRegion(), true, 2),
+						textChange.getPreviewContent(new TextEditChangeGroup[] { editChange }, editChange.getRegion(), true, 2),
+						textChange.getTextType());
+					return;
+				} else if (edi.groups != null && edi.groups.length > 0 && edi.range != null) {
+					TextChange textChange= edi.groups[0].getTextChange();
+					setInput(textChange.getCurrentContent(edi.range, true, 0),
+						textChange.getPreviewContent(edi.groups, edi.range, true, 0),
+						textChange.getTextType());
+					return;
+				}
+			} else if (change instanceof TextChange) {
+				TextChange textChange= (TextChange)change;
+				setInput(textChange.getCurrentContent(), textChange.getPreviewContent(), textChange.getTextType());
 				return;
-			} else if (edi.groups != null && edi.groups.length > 0 && edi.range != null) {
-				TextChange textChange= edi.groups[0].getTextChange();
-				setInput(textChange.getCurrentContent(edi.range, true, 0),
-					textChange.getPreviewContent(edi.groups, edi.range, true, 0),
-					textChange.getTextType());
-				return;
+			} else {
+				fViewer.setInput(null);
 			}
-		} else if (change instanceof TextChange) {
-			TextChange textChange= (TextChange)change;
-			setInput(textChange.getCurrentContent(), textChange.getPreviewContent(), textChange.getTextType());
-			return;
-		} else {
+		} catch (CoreException e) {
+			RefactoringUIPlugin.log(e);
 			fViewer.setInput(null);
 		}
 	}

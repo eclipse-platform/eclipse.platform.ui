@@ -43,6 +43,8 @@ public class ViewerPane extends ViewForm {
 	
 	/**
 	 * Sets the receiver's title text.
+	 * 
+	 * @param label the text
 	 */
 	public void setText(String label) {
 		CLabel cl= (CLabel) getTopLeft();
@@ -56,6 +58,8 @@ public class ViewerPane extends ViewForm {
 	
 	/**
 	 * Sets the receiver's title image.
+	 * 
+	 * @param image the image
 	 */
 	public void setImage(Image image) {
 		CLabel cl= (CLabel) getTopLeft();

@@ -63,7 +63,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		public Control getControl() {
 			return fLabel;
 		}
-		public void setInput(ChangePreviewViewerInput input) throws CoreException {
+		public void setInput(ChangePreviewViewerInput input) {
 		}
 	}
 	
@@ -128,6 +128,8 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 	/**
 	 * Creates the tree viewer to present the hierarchy of changes. Subclasses may override
 	 * to create their own custom tree viewer.
+	 * 
+	 * @param parent the tree viewer's parent
 	 * 
 	 * @return the tree viewer to present the hierarchy of changes
 	 */
@@ -390,6 +392,8 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 	/**
 	 * Returns <code>true</code> if the preview page will show any changes when
 	 * it becomes visibile. Otherwise <code>false</code> is returned.
+	 * 
+	 * @return whether the preview has changes or not
 	 */
 	public boolean hasChanges() {
 		if (fChange == null)

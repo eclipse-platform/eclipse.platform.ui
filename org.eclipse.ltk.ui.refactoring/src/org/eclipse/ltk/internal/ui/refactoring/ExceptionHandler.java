@@ -38,6 +38,9 @@ public class ExceptionHandler {
 	/**
 	 * Logs the given exception using the platform's logging mechanism. The exception is
 	 * logged as an error with the error code <code>JavaStatusConstants.INTERNAL_ERROR</code>.
+	 * 
+	 * @param t the throwable to log
+	 * @param message the detail message
 	 */
 	public static void log(Throwable t, String message) {
 		RefactoringUIPlugin.log(new Status(IStatus.ERROR, RefactoringUIPlugin.getPluginId(), 

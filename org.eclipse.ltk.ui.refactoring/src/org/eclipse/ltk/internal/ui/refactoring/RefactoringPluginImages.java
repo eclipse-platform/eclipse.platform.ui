@@ -80,6 +80,9 @@ public class RefactoringPluginImages {
 	/**
 	 * Sets the three image descriptors for enabled, disabled, and hovered to an action. The actions
 	 * are retrieved from the *tool16 folders.
+	 * 
+	 * @param action the action to set the icons to
+	 * @param iconName the iconName
 	 */
 	public static void setToolImageDescriptors(IAction action, String iconName) {
 		setImageDescriptors(action, "tool16", iconName); //$NON-NLS-1$
@@ -88,6 +91,9 @@ public class RefactoringPluginImages {
 	/**
 	 * Sets the three image descriptors for enabled, disabled, and hovered to an action. The actions
 	 * are retrieved from the *lcl16 folders.
+	 * 
+	 * @param action the action to set the icons to
+	 * @param iconName the iconName
 	 */
 	public static void setLocalImageDescriptors(IAction action, String iconName) {
 		setImageDescriptors(action, "lcl16", iconName); //$NON-NLS-1$

@@ -31,6 +31,10 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
  * If a change has been created the operation calls {@link Change#initializeValidationData(IProgressMonitor)}
  * to initialize the change's validation data.
  * </p>
+ * <p>
+ * The operation should be executed via the run method offered by
+ * <code>IWorkspace</code> to achieve proper delta batching.
+ * </p>
  * 
  * <p> 
  * Note: this class is not intented to be subclassed by clients.

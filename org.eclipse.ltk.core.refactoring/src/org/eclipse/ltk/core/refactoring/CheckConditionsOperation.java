@@ -20,6 +20,10 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
 /**
  * Operation that, when run, check preconditions of the {@link Refactoring}
  * passed on creation.
+ * <p>
+ * The operation should be executed via the run method offered by
+ * <code>IWorkspace</code> to achieve proper delta batching.
+ * </p>
  * 
  * <p> 
  * Note: this class is not intented to be subclassed by clients.

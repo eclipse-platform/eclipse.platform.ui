@@ -137,7 +137,8 @@ public class RefactoringStatusViewer extends SashForm {
 
 	/**
 	 * Sets the refactoring status.
-	 * @param the refactoring status.
+	 * 
+	 * @param status the refactoring status.
 	 */
 	public void setStatus(RefactoringStatus status){
 		fStatus= status;

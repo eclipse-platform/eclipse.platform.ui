@@ -56,6 +56,9 @@ import org.eclipse.ltk.internal.ui.refactoring.WorkbenchRunnableAdapter;
  *       to present the outcome of the refactoring's condition checking and one
  *       preview page to present a preview of the workspace changes.</li> 
  * </ul> 
+ * <p>
+ * A refactoring wizard is best opened using the {@link RefactoringWizardOpenOperation}.
+ * </p>
  * 
  * @see org.eclipse.ltk.core.refactoring.Refactoring
  * 
@@ -205,7 +208,7 @@ public abstract class RefactoringWizard extends Wizard {
 	
 	/**
 	 * Returns the width in characters to be used for the message line embedded into
-	 * the refactoring wizard dialog used to present this wizard.
+	 * the refactoring wizard dialog.
 	 * <p>
 	 * Subclasses may override this method and return a different value.
 	 * </p>
@@ -231,7 +234,7 @@ public abstract class RefactoringWizard extends Wizard {
 	}
 	
 	/**
-	 * Sets the initial condition checking status compute by the refactoring.
+	 * Sets the initial condition checking status computed by the refactoring.
 	 * Clients should uses this method if the initial condition checking
 	 * status has been computed outside of this refactoring wizard.
 	 * 
@@ -491,6 +494,12 @@ public abstract class RefactoringWizard extends Wizard {
 
 	/**
 	 * Note: This method is for internal use only. Clients should not call this method.
+	 * 
+	 * @param api internal instance to avoid access from external clients.
+	 * @param operation the create change operation
+	 * @param updateStatus flag indicating if status updating is requested
+	 * 
+	 * @return the created change
 	 */
 	public final Change createChange(InternalAPI api, CreateChangeOperation operation, boolean updateStatus) {
 		Assert.isNotNull(api);
@@ -499,6 +508,11 @@ public abstract class RefactoringWizard extends Wizard {
 
 	/**
 	 * Note: This method is for internal use only. Clients should not call this method.
+	 * 
+	 * @param api internal instance to avoid access from external clients.
+	 * @param op the perform change operation
+	 * 
+	 * @return whether the finish ended ok or not
 	 */
 	public final boolean performFinish(InternalAPI api, PerformChangeOperation op) {
 		return performRefactoring(op, fRefactoring, getContainer(), getContainer().getShell());
@@ -554,6 +568,10 @@ public abstract class RefactoringWizard extends Wizard {
 	
 	/**
 	 * Note: This method is for internal use only. Clients should not call this method.
+	 * 
+	 * @param api internal instance to avoid access from external clients.
+	 * 
+	 * @return whether the wizard has a preview page or not.
 	 */
 	public final boolean hasPreviewPage(InternalAPI api) {
 		Assert.isNotNull(api);
@@ -562,6 +580,10 @@ public abstract class RefactoringWizard extends Wizard {
 	
 	/**
 	 * Note: This method is for internal use only. Clients should not call this method.
+	 * 
+	 * @param api internal instance to avoid access from external clients.
+	 * 
+	 * @return whether yes no button style is requested
 	 */
 	public final boolean yesNoStyle(InternalAPI api) {
 		Assert.isNotNull(api);
@@ -570,6 +592,10 @@ public abstract class RefactoringWizard extends Wizard {
 	
 	/**
 	 * Note: This method is for internal use only. Clients should not call this method.
+	 * 
+	 * @param api internal instance to avoid access from external clients.
+	 * 
+	 * @return whether the first node of the preview is supposed to be expanded
 	 */
 	public final boolean getExpandFirstNode(InternalAPI api) {
 		Assert.isNotNull(api);
@@ -578,6 +604,9 @@ public abstract class RefactoringWizard extends Wizard {
 	
 	/**
 	 * Note: This method is for internal use only. Clients should not call this method.
+	 * 
+	 * @param api internal instance to avoid access from external clients.
+	 * @param change the change to set
 	 */
 	public final void setChange(InternalAPI api, Change change){
 		Assert.isNotNull(api);

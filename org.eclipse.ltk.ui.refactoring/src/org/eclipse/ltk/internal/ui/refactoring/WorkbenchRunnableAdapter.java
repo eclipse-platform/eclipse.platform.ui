@@ -35,6 +35,9 @@ public class WorkbenchRunnableAdapter implements IRunnableWithProgress {
 	
 	/**
 	 * Runs a workspace runnable with the given lock or <code>null</code> to run with no lock at all.
+	 * 
+	 * @param runnable the workspace runnable
+	 * @param rule the scheduling rule
 	 */
 	public WorkbenchRunnableAdapter(IWorkspaceRunnable runnable, ISchedulingRule rule) {
 		fWorkspaceRunnable= runnable;

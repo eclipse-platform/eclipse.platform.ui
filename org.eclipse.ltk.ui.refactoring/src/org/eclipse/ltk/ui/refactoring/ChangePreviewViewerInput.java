@@ -14,11 +14,11 @@ import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.internal.ui.refactoring.Assert;
 
 /**
- * Instance of this class represent the input for a {@link IChangePreviewViewer}.
- * The input manages the Change object the viewer is associated with
+ * Instances of this class represent the input for an {@link IChangePreviewViewer}.
+ * The input object manages the change object the viewer is associated with via
+ * the extension point <code>org.eclipse.ltk.ui.refactoring.changePreviewViewers</code>.
  * <p>
- * This class is not intended to be extended outside the refactoring
- * framework.
+ * This class is not intended to be extended outside the refactoring framework.
  * </p>
  * 
  * @since 3.0
