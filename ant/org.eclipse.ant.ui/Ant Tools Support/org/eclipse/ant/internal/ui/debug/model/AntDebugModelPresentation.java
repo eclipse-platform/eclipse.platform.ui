@@ -103,15 +103,13 @@ public class AntDebugModelPresentation extends LabelProvider implements IDebugMo
         if (name != null) {
             StringBuffer text= new StringBuffer(name);
             int lineNumber= frame.getLineNumber();
-            if (lineNumber != -1) { //TODO until targets have locations set properly 
-                String lineNumberString= null;
-                if (lineNumber == 0) {
-                    lineNumberString= DebugModelMessages.getString("AntDebugModelPresentation.0"); //$NON-NLS-1$
-                } else {
-                    lineNumberString= Integer.toString(lineNumber);
-                }
-                text.append(MessageFormat.format(DebugModelMessages.getString("AntDebugModelPresentation.1"), new String[]{lineNumberString})); //$NON-NLS-1$
+            String lineNumberString= null;
+            if (lineNumber == 0) {
+                lineNumberString= DebugModelMessages.getString("AntDebugModelPresentation.0"); //$NON-NLS-1$
+            } else {
+                lineNumberString= Integer.toString(lineNumber);
             }
+            text.append(MessageFormat.format(DebugModelMessages.getString("AntDebugModelPresentation.1"), new String[]{lineNumberString})); //$NON-NLS-1$
             return text.toString();
         }
         return null;

@@ -73,7 +73,7 @@ public final class AntDebugUtil {
         }
     }
     
-    private static void appendToStack(StringBuffer stackRepresentation, String targetName, String taskName, Location location, boolean setLineNumber) {
+    private static void appendToStack(StringBuffer stackRepresentation, String targetName, String taskName, Location location) {
         stackRepresentation.append(targetName);
         stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
         stackRepresentation.append(taskName);
@@ -81,11 +81,7 @@ public final class AntDebugUtil {
         
         stackRepresentation.append(AntDebugUtil.getFileName(location));
         stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
-        if (setLineNumber) {
-            stackRepresentation.append(AntDebugUtil.getLineNumber(location));
-        } else {   //TODO until targets have locations set properly 
-            stackRepresentation.append(-1);
-        }
+        stackRepresentation.append(AntDebugUtil.getLineNumber(location));
         stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
     }
     
@@ -95,7 +91,7 @@ public final class AntDebugUtil {
         
         for (int i = tasks.size() - 1; i >= 0 ; i--) {
             Task task= (Task) tasks.get(i);
-            appendToStack(stackRepresentation, task.getOwningTarget().getName(), task.getTaskName(), task.getLocation(), true);
+            appendToStack(stackRepresentation, task.getOwningTarget().getName(), task.getTaskName(), task.getLocation());
         }   
         //target dependancy stack 
          if (targetToExecute != null) {
@@ -106,7 +102,7 @@ public final class AntDebugUtil {
          	Target stackTarget;
          	for (int i = startIndex; i <= dependancyStackDepth; i++) {
          		stackTarget= (Target) buildSequence.get(i);
-         		appendToStack(stackRepresentation, stackTarget.getName(), "", stackTarget.getLocation(), false); //$NON-NLS-1$
+         		appendToStack(stackRepresentation, stackTarget.getName(), "", stackTarget.getLocation()); //$NON-NLS-1$
          	}
          }
     }
