@@ -21,7 +21,11 @@ import org.eclipse.jface.text.FindReplaceDocumentAdapter;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
 
-
+/**
+ * Tests the FindReplaceDocumentAdapter.
+ * 
+ * @since 3.1
+ */
 public class FindReplaceDocumentAdapterTest extends TestCase {
 	
 	private Document fDocument;
