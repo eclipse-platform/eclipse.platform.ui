@@ -25,11 +25,6 @@ public class SiteReconciler extends ModelObject implements IWritable {
 	private SiteLocal siteLocal;
 	private List newFoundFeatures;
 	private Date date;
-	private static final String SIMPLE_EXTENSION_ID = "deltaHandler";
-	//$NON-NLS-1$
-	private static final String INSTALL_DELTA_HANDLER =
-		"org.eclipse.update.core.deltaHandler.display";
-	//$NON-NLS-1$
 	private static final String DEFAULT_INSTALL_CHANGE_NAME = "delta.xml";
 	//$NON-NLS-1$	
 
@@ -419,43 +414,6 @@ public class SiteReconciler extends ModelObject implements IWritable {
 	}
 
 	/*
-	 * Do not cache, calculate everytime
-	 * because we delete the file in SessionDelta when teh session
-	 * has been seen
-	 */
-	private ISessionDelta[] getSessionDeltas() {
-		List sessionDeltas = new ArrayList();
-		IPath path = UpdateManagerPlugin.getPlugin().getStateLocation();
-		InputStream in;
-		InstallChangeParser parser;
-
-		File file = path.toFile();
-		if (file.isDirectory()) {
-			File[] allFiles = file.listFiles();
-			for (int i = 0; i < allFiles.length; i++) {
-				try {
-					parser = new InstallChangeParser(allFiles[i]);
-					ISessionDelta change = parser.getInstallChange();
-					if (change != null) {
-						sessionDeltas.add(change);
-					}
-				} catch (Exception e) {
-					if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
-						CoreException exc =
-							Utilities.newCoreException("Unable to parse install change:" + allFiles[i], e);
-						UpdateManagerPlugin.getPlugin().getLog().log(exc.getStatus());
-					}
-				}
-			}
-		}
-
-		if (sessionDeltas.size() == 0)
-			return new ISessionDelta[0];
-
-		return (ISessionDelta[]) sessionDeltas.toArray(arrayTypeFor(sessionDeltas));
-	}
-
-	/*
 	 * 
 	 */
 	private IFeatureReference[] getFeatureReferences() {
@@ -496,42 +454,7 @@ public class SiteReconciler extends ModelObject implements IWritable {
 			//$NON-NLS-1$
 		}
 	}
-
-	/*
-	 * @see ILocalSite#displayUpdateChange()
-	 */
-	public void displayUpdateChange() throws CoreException {
-		// find extension point
-		IInstallDeltaHandler handler = null;
-
-		String pluginID =
-			UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-		IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
-		IConfigurationElement[] elements =
-			pluginRegistry.getConfigurationElementsFor(
-				pluginID,
-				SIMPLE_EXTENSION_ID,
-				INSTALL_DELTA_HANDLER);
-		if (elements == null || elements.length == 0) {
-			throw Utilities.newCoreException(
-				Policy.bind(
-					"SiteReconciler.UnableToFindInstallDeltaFactory",
-					INSTALL_DELTA_HANDLER),
-				null);
-			//$NON-NLS-1$
-		} else {
-			IConfigurationElement element = elements[0];
-			handler = (IInstallDeltaHandler) element.createExecutableExtension("class");
-			//$NON-NLS-1$
-		}
-
-		// instanciate and open
-		if (handler != null) {
-			handler.init(getSessionDeltas());
-			handler.open();
-		}
-	}
-
+	
 	/*
 	 * @see IWritable#write(int, PrintWriter)
 	 */

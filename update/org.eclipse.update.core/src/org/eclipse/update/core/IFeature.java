@@ -229,6 +229,14 @@ public interface IFeature extends IAdaptable {
 		throws CoreException;
 
 	/**
+	 * Returns an array of feature references included by this feature
+	 * 
+	 * @return an erray of feature references, or an empty array.
+	 * @since 2.0
+	 */
+	public IFeatureReference[] getIncludedFeatureReferences() throws CoreException;
+
+	/**
 	 * Returns an array of plug-in entries referenced by this feature
 	 * 
 	 * @return an erray of plug-in entries, or an empty array.

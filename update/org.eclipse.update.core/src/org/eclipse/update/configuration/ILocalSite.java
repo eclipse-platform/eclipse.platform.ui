@@ -140,13 +140,4 @@ public interface ILocalSite extends IAdaptable {
 	 * @since 2.0 
 	 */
 	public IInstallConfiguration[] getPreservedConfigurations();
-	
-	
-	/**
-	 * Prompt the user to configure or unconfigure
-	 * newly discoverd features.
-	 * @throws CoreException if an error occurs.
-	 * @since 2.0
-	 */
-	public void displayUpdateChange() throws CoreException;
 }

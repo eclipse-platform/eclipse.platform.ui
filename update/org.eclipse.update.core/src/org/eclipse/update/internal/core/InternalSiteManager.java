@@ -5,20 +5,19 @@ package org.eclipse.update.internal.core;
  * All Rights Reserved.
  */
 
-import java.io.*;
 import java.io.File;
-import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.eclipse.core.boot.BootLoader;
-import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.runtime.*;
-import org.eclipse.update.configuration.IConfiguredSite;
-import org.eclipse.update.configuration.ILocalSite;
+import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.core.model.*;
-import org.eclipse.update.internal.core.Policy;
+import org.eclipse.update.core.model.InvalidSiteTypeException;
+import org.eclipse.update.internal.model.InstallChangeParser;
 
 /**
  * 
@@ -32,6 +31,11 @@ public class InternalSiteManager {
 		SiteURLContentProvider.SITE_TYPE;
 	private static final String DEFAULT_EXECUTABLE_SITE_TYPE =
 		SiteFileContentProvider.SITE_TYPE;
+	private static final String SIMPLE_EXTENSION_ID = "deltaHandler";
+	//$NON-NLS-1$
+	private static final String INSTALL_DELTA_HANDLER =
+		"org.eclipse.update.core.deltaHandler.display";
+	//$NON-NLS-1$		
 
 	/**
 	 * Returns the LocalSite i.e the different sites
@@ -267,5 +271,94 @@ public class InternalSiteManager {
 		return site;
 	}
 
+	/**
+	 * Prompt the user to configure or unconfigure
+	 * newly discoverd features.
+	 * @throws CoreException if an error occurs.
+	 * @since 2.0
+	 */
+	public static void handleNewChanges() throws CoreException{
+		// find extension point
+		IInstallDeltaHandler handler = null;
 
+		String pluginID =
+			UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+		IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
+		IConfigurationElement[] elements =
+			pluginRegistry.getConfigurationElementsFor(
+				pluginID,
+				SIMPLE_EXTENSION_ID,
+				INSTALL_DELTA_HANDLER);
+		if (elements == null || elements.length == 0) {
+			throw Utilities.newCoreException(
+				Policy.bind(
+					"SiteReconciler.UnableToFindInstallDeltaFactory",
+					INSTALL_DELTA_HANDLER),
+				null);
+			//$NON-NLS-1$
+		} else {
+			IConfigurationElement element = elements[0];
+			handler = (IInstallDeltaHandler) element.createExecutableExtension("class");
+			//$NON-NLS-1$
+		}
+
+		// instanciate and open
+		if (handler != null) {
+			handler.init(getSessionDeltas());
+			handler.open();
+		}
+	}
+	
+	/*
+	 * Do not cache, calculate everytime
+	 * because we delete the file in SessionDelta when the session
+	 * has been seen
+	 */
+	private static ISessionDelta[] getSessionDeltas() {
+		List sessionDeltas = new ArrayList();
+		IPath path = UpdateManagerPlugin.getPlugin().getStateLocation();
+		InputStream in;
+		InstallChangeParser parser;
+
+		File file = path.toFile();
+		if (file.isDirectory()) {
+			File[] allFiles = file.listFiles();
+			for (int i = 0; i < allFiles.length; i++) {
+				try {
+					parser = new InstallChangeParser(allFiles[i]);
+					ISessionDelta change = parser.getInstallChange();
+					if (change != null) {
+						sessionDeltas.add(change);
+					}
+				} catch (Exception e) {
+					if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
+						CoreException exc =
+							Utilities.newCoreException("Unable to parse install change:" + allFiles[i], e);
+						UpdateManagerPlugin.getPlugin().getLog().log(exc.getStatus());
+					}
+				}
+			}
+		}
+
+		if (sessionDeltas.size() == 0)
+			return new ISessionDelta[0];
+
+		return (ISessionDelta[]) sessionDeltas.toArray(arrayTypeFor(sessionDeltas));
+	}
+	
+	/**
+	 * Returns a concrete array type for the elements of the specified
+	 * list. The method assumes all the elements of the list are the same
+	 * concrete type as the first element in the list.
+	 * 
+	 * @param l list
+	 * @return concrete array type, or <code>null</code> if the array type
+	 * could not be determined (the list is <code>null</code> or empty)
+	 * @since 2.0
+	 */
+	private static Object[] arrayTypeFor(List l) {
+		if (l == null || l.size() == 0)
+			return null;
+		return (Object[]) Array.newInstance(l.get(0).getClass(), 0);
+	}		
 }

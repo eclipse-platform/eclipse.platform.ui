@@ -8,6 +8,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
+import org.eclipse.update.core.IFeatureReference;
+import org.eclipse.update.core.VersionedIdentifier;
+
 /**
  * Feature model object.
  * <p>
@@ -45,6 +48,8 @@ public class FeatureModel extends ModelObject {
 	imports;
 	private List /*of PluginEntryModel*/
 	pluginEntries;
+	private List /*of VersionedIdentifier*/	
+	featureIncludes;
 	private List /*of NonPluginEntryModel*/
 	nonPluginEntries;
 	private List /*of ContentGroupModel*/
@@ -323,6 +328,19 @@ public class FeatureModel extends ModelObject {
 			return new PluginEntryModel[0];
 
 		return (PluginEntryModel[]) pluginEntries.toArray(arrayTypeFor(pluginEntries));
+	}
+
+	/**
+	 * Returns an array of feature versioned identifier referenced by this feature
+	 * 
+	 * @return an erray of feature versioned identifier, or an empty array.
+	 * @since 2.0
+	 */
+	public VersionedIdentifier[] getFeatureIncludeVersionedIdentifier() {
+		if (featureIncludes == null)
+			return new VersionedIdentifier[0];
+
+		return (VersionedIdentifier[]) featureIncludes.toArray(arrayTypeFor(featureIncludes));
 	}
 
 	/**
@@ -643,7 +661,20 @@ public class FeatureModel extends ModelObject {
 		if (!this.pluginEntries.contains(pluginEntry))
 			this.pluginEntries.add(pluginEntry);
 	}
-
+	/**
+	 * Adds a feature identifier.
+	 * Throws a runtime exception if this object is marked read-only.
+	 * 
+	 * @param identifier feature identifer
+	 * @since 2.0
+	 */
+	public void addIncludesFeatureIdentifier(VersionedIdentifier identifier){
+		assertIsWriteable();
+		if (this.featureIncludes == null)
+			this.featureIncludes = new ArrayList();
+		if (!this.featureIncludes.contains(identifier))
+			this.featureIncludes.add(identifier);
+	}
 	/**
 	 * Adds a non-plug-in data reference.
 	 * Throws a runtime exception if this object is marked read-only.
@@ -757,5 +788,4 @@ public class FeatureModel extends ModelObject {
 		resolveListReference(getPluginEntryModels(), base, bundle);
 		resolveListReference(getNonPluginEntryModels(), base, bundle);
 	}
-
 }

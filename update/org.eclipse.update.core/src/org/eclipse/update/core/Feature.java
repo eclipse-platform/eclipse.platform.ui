@@ -4,12 +4,15 @@ package org.eclipse.update.core;
  * All Rights Reserved.
  */
 
+import java.io.IOException;
 import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.*;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.core.*;
-import org.eclipse.update.internal.core.Policy;
 
 /**
  * Convenience implementation of a feature.
@@ -26,16 +29,18 @@ public class Feature extends FeatureModel implements IFeature {
 	 * Simple file name of the default feature manifest file
 	 * @since 2.0
 	 */
-	public static final String FEATURE_FILE= "feature"; //$NON-NLS-1$
+	public static final String FEATURE_FILE = "feature"; //$NON-NLS-1$
 
 	/**
 	 * File extension of the default feature manifest file
 	 * @since 2.0
 	 */
-	public static final String FEATURE_XML= FEATURE_FILE + ".xml"; //$NON-NLS-1$
+	public static final String FEATURE_XML = FEATURE_FILE + ".xml"; //$NON-NLS-1$
 
 	private ISite site; // feature site
 	private IFeatureContentProvider featureContentProvider; // content provider
+	private List /*of IFeatureReference*/
+	includedFeatureReferences;
 
 	/**
 	 * Feature default constructor
@@ -56,7 +61,7 @@ public class Feature extends FeatureModel implements IFeature {
 	public boolean equals(Object object) {
 		if (!(object instanceof Feature))
 			return false;
-		IFeature f= (IFeature) object;
+		IFeature f = (IFeature) object;
 		return super.equals(object);
 
 	}
@@ -88,9 +93,9 @@ public class Feature extends FeatureModel implements IFeature {
 	 * @since 2.0
 	 */
 	public URL getURL() {
-		IFeatureContentProvider contentProvider= null;
+		IFeatureContentProvider contentProvider = null;
 		try {
-			contentProvider= getFeatureContentProvider();
+			contentProvider = getFeatureContentProvider();
 		} catch (CoreException e) {
 			// no content provider: always log status
 			UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
@@ -117,7 +122,7 @@ public class Feature extends FeatureModel implements IFeature {
 	 * @since 2.0
 	 */
 	public IURLEntry[] getDiscoverySiteEntries() {
-		URLEntryModel[] result= getDiscoverySiteEntryModels();
+		URLEntryModel[] result = getDiscoverySiteEntryModels();
 		if (result.length == 0)
 			return new IURLEntry[0];
 		else
@@ -181,7 +186,7 @@ public class Feature extends FeatureModel implements IFeature {
 	 * @since 2.0
 	 */
 	public IImport[] getImports() {
-		ImportModel[] result= getImportModels();
+		ImportModel[] result = getImportModels();
 		if (result.length == 0)
 			return new IImport[0];
 		else
@@ -204,53 +209,54 @@ public class Feature extends FeatureModel implements IFeature {
 		throws CoreException {
 
 		//DEBUG
-		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_INSTALL){
-			UpdateManagerPlugin.getPlugin().debug("Installing...:"+getURL().toExternalForm());
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_INSTALL) {
+			UpdateManagerPlugin.getPlugin().debug(
+				"Installing...:" + getURL().toExternalForm());
 		}
 
 		// make sure we have an InstallMonitor		
 		InstallMonitor monitor;
 		if (progress == null)
-			monitor= null;
+			monitor = null;
 		else if (progress instanceof InstallMonitor)
-			monitor= (InstallMonitor) progress;
+			monitor = (InstallMonitor) progress;
 		else
-			monitor= new InstallMonitor(progress);
+			monitor = new InstallMonitor(progress);
 
 		// Setup optional install handler
-		InstallHandlerProxy handler=
+		InstallHandlerProxy handler =
 			new InstallHandlerProxy(
 				IInstallHandler.HANDLER_ACTION_INSTALL,
 				this,
 				this.getInstallHandlerEntry(),
 				monitor);
-		boolean success= false;
-		Throwable originalException= null;
+		boolean success = false;
+		Throwable originalException = null;
 
 		// Get source feature provider and verifier. Initialize target variables.
-		IFeatureContentProvider provider= getFeatureContentProvider();
-		IVerifier verifier= provider.getVerifier();
-		IFeatureReference result= null;
-		IFeatureContentConsumer consumer= null;
+		IFeatureContentProvider provider = getFeatureContentProvider();
+		IVerifier verifier = provider.getVerifier();
+		IFeatureReference result = null;
+		IFeatureContentConsumer consumer = null;
 
 		try {
 			// determine list of plugins to install
 			// find the intersection between the plugin entries already contained
 			// on the target site, and plugin entries packaged in source feature
-			IPluginEntry[] sourceFeaturePluginEntries= getPluginEntries();
-			ISite targetSite= targetFeature.getSite();
-			IPluginEntry[] targetSitePluginEntries=
+			IPluginEntry[] sourceFeaturePluginEntries = getPluginEntries();
+			ISite targetSite = targetFeature.getSite();
+			IPluginEntry[] targetSitePluginEntries =
 				(targetSite != null) ? targetSite.getPluginEntries() : new IPluginEntry[0];
-			IPluginEntry[] pluginsToInstall=
+			IPluginEntry[] pluginsToInstall =
 				UpdateManagerUtils.diff(sourceFeaturePluginEntries, targetSitePluginEntries);
-			INonPluginEntry[] nonPluginsToInstall= getNonPluginEntries();
+			INonPluginEntry[] nonPluginsToInstall = getNonPluginEntries();
 
 			// determine number of monitor tasks
 			//   2 tasks for the feature jar (download/verify + install)
 			// + 2*n tasks for plugin entries (download/verify + install for each)
 			// + 1*m tasks per non-plugin data entry (download for each)
 			// + 1 task for custom non-plugin entry handling (1 for all combined)
-			int taskCount=
+			int taskCount =
 				2 + 2 * pluginsToInstall.length + nonPluginsToInstall.length + 1;
 			if (monitor != null)
 				monitor.beginTask("", taskCount);
@@ -259,118 +265,124 @@ public class Feature extends FeatureModel implements IFeature {
 			handler.installInitiated();
 
 			// Download and verify feature archive(s)
-			ContentReference[] references=
+			ContentReference[] references =
 				provider.getFeatureEntryArchiveReferences(monitor);
 			IVerificationResult vr;
 			if (verifier != null) {
-				for (int i= 0; i < references.length; i++) {
-					vr= verifier.verify(this, references[i], true, monitor);
+				for (int i = 0; i < references.length; i++) {
+					vr = verifier.verify(this, references[i], true, monitor);
 					if (vr != null) {
 						promptForVerification(vr, verificationListener);
 					}
 				}
 			}
-			if (monitor != null){
+			if (monitor != null) {
 				monitor.worked(1);
-				if (monitor.isCanceled()) abort();
+				if (monitor.isCanceled())
+					abort();
 			}
 
 			// Download and verify plugin archives
-			for (int i= 0; i < pluginsToInstall.length; i++) {
-				references=
+			for (int i = 0; i < pluginsToInstall.length; i++) {
+				references =
 					provider.getPluginEntryArchiveReferences(pluginsToInstall[i], monitor);
 				if (verifier != null) {
-					for (int j= 0; j < references.length; j++) {
-						vr= verifier.verify(this, references[j], false, monitor);
+					for (int j = 0; j < references.length; j++) {
+						vr = verifier.verify(this, references[j], false, monitor);
 						if (vr != null) {
 							promptForVerification(vr, verificationListener);
 						}
 					}
 				}
-				if (monitor != null){
+				if (monitor != null) {
 					monitor.worked(1);
-					if (monitor.isCanceled()) abort();
+					if (monitor.isCanceled())
+						abort();
 				}
 			}
 			handler.pluginsDownloaded(pluginsToInstall);
 
 			// Download non-plugin archives. Verification handled by optional install handler
-			for (int i= 0; i < nonPluginsToInstall.length; i++) {
-				references=
+			for (int i = 0; i < nonPluginsToInstall.length; i++) {
+				references =
 					provider.getNonPluginEntryArchiveReferences(nonPluginsToInstall[i], monitor);
-				if (monitor != null){
+				if (monitor != null) {
 					monitor.worked(1);
-					if (monitor.isCanceled()) abort();
+					if (monitor.isCanceled())
+						abort();
 				}
 			}
 			handler.nonPluginDataDownloaded(nonPluginsToInstall, verificationListener);
 
 			// All archives are downloaded and verified. Get ready to install
-			consumer= targetFeature.getFeatureContentConsumer();
+			consumer = targetFeature.getFeatureContentConsumer();
 
 			//Install feature files
 			if (monitor != null)
 				monitor.setTaskName(Policy.bind("Feature.TaskInstallFeatureFiles")); //$NON-NLS-1$
-			references= provider.getFeatureEntryContentReferences(monitor);
-			for (int i= 0; i < references.length; i++) {
+			references = provider.getFeatureEntryContentReferences(monitor);
+			for (int i = 0; i < references.length; i++) {
 				if (monitor != null)
 					monitor.subTask(references[i].getIdentifier());
 				consumer.store(references[i], monitor);
 			}
-			if (monitor != null){
+			if (monitor != null) {
 				monitor.worked(1);
-				if (monitor.isCanceled()) abort();
+				if (monitor.isCanceled())
+					abort();
 			}
 
 			// Install plugin files
-			for (int i= 0; i < pluginsToInstall.length; i++) {
+			for (int i = 0; i < pluginsToInstall.length; i++) {
 				if (monitor != null)
 					monitor.setTaskName(
 						Policy.bind(
 							"Feature.TaskInstallPluginFiles",
 							pluginsToInstall[i].getVersionedIdentifier().getIdentifier()));
 				//$NON-NLS-1$
-				IContentConsumer pluginConsumer= consumer.open(pluginsToInstall[i]);
-				references=
+				IContentConsumer pluginConsumer = consumer.open(pluginsToInstall[i]);
+				references =
 					provider.getPluginEntryContentReferences(pluginsToInstall[i], monitor);
-				for (int j= 0; j < references.length; j++) {
+				for (int j = 0; j < references.length; j++) {
 					if (monitor != null)
 						monitor.subTask(references[j].getIdentifier());
 					pluginConsumer.store(references[j], monitor);
 				}
 				pluginConsumer.close();
-				if (monitor != null){
+				if (monitor != null) {
 					monitor.worked(1);
-					if (monitor.isCanceled()) abort();
+					if (monitor.isCanceled())
+						abort();
 				}
 			}
 
 			// call handler to complete installation (eg. handle non-plugin entries)
 			handler.completeInstall(consumer);
-			if (monitor != null){
+			if (monitor != null) {
 				monitor.worked(1);
-				if (monitor.isCanceled()) abort();
+				if (monitor.isCanceled())
+					abort();
 			}
 			// indicate install success
-			success= true;
+			success = true;
 
 		} catch (Throwable t) {
-			originalException= t;
+			originalException = t;
 		} finally {
 			if (monitor != null)
 				monitor.done();
 
-			Throwable newException= null;
+			Throwable newException = null;
 			try {
 				if (consumer != null) {
 					if (success)
-						result= consumer.close();
+						result = consumer.close();
 					else
 						consumer.abort();
 				}
 				handler.installCompleted(success);
 			} catch (Throwable t) {
-				newException= t;
+				newException = t;
 			}
 			if (originalException != null) // original exception wins
 				throw Utilities.newCoreException(
@@ -391,7 +403,7 @@ public class Feature extends FeatureModel implements IFeature {
 	 * @since 2.0
 	 */
 	public IPluginEntry[] getPluginEntries() {
-		PluginEntryModel[] result= getPluginEntryModels();
+		PluginEntryModel[] result = getPluginEntryModels();
 		if (result.length == 0)
 			return new IPluginEntry[0];
 		else
@@ -415,7 +427,7 @@ public class Feature extends FeatureModel implements IFeature {
 	 * @since 2.0
 	 */
 	public INonPluginEntry[] getNonPluginEntries() {
-		NonPluginEntryModel[] result= getNonPluginEntryModels();
+		NonPluginEntryModel[] result = getNonPluginEntryModels();
 		if (result.length == 0)
 			return new INonPluginEntry[0];
 		else
@@ -433,6 +445,23 @@ public class Feature extends FeatureModel implements IFeature {
 	}
 
 	/**
+	 * Returns an array of feature references included by this feature
+	 * 
+	 * @return an erray of feature references, or an empty array.
+	 * @since 2.0
+	 */
+	public IFeatureReference[] getIncludedFeatureReferences()
+		throws CoreException {
+		if (includedFeatureReferences == null)
+			initializeIncludedReferences();
+
+		if (includedFeatureReferences.size() == 0)
+			return new FeatureReference[0];
+
+		return (IFeatureReference[]) includedFeatureReferences.toArray(
+			arrayTypeFor(includedFeatureReferences));
+	}
+	/**
 	 * Returns the download size of the feature, if it can be determined.
 	 * 
 	 * @see IFeature#getDownloadSize()
@@ -440,14 +469,39 @@ public class Feature extends FeatureModel implements IFeature {
 	 */
 	public long getDownloadSize() {
 		try {
+			Set allPluginEntries = new HashSet();
+			Set allNonPluginEntries = new HashSet();
+						
+			IPluginEntry[] plugins = getPluginEntries();
+			allPluginEntries.addAll(Arrays.asList(plugins));
+			INonPluginEntry[] nonPlugins = getNonPluginEntries();			
+			allNonPluginEntries.addAll(Arrays.asList(nonPlugins));			
+
+			IFeatureReference[] children = getIncludedFeatureReferences();
+			for (int i = 0; i < children.length; i++) {
+				plugins = children[i].getFeature().getPluginEntries();
+				allPluginEntries.addAll(Arrays.asList(plugins));
+				nonPlugins = children[i].getFeature().getNonPluginEntries();		
+				allNonPluginEntries.addAll(Arrays.asList(nonPlugins));				
+			}
+
+			IPluginEntry[] totalPlugins = new IPluginEntry[allPluginEntries.size()];
+			INonPluginEntry[] totalNonPlugins= new INonPluginEntry[allNonPluginEntries.size()];
+			if (allPluginEntries.size()!=0){
+				allPluginEntries.toArray(totalPlugins);
+			} 
+			if (allNonPluginEntries.size()!=0){
+				allNonPluginEntries.toArray(totalNonPlugins);
+			} 		
+				
 			return getFeatureContentProvider().getDownloadSizeFor(
-				getPluginEntries(),
-				getNonPluginEntries());
+					totalPlugins,
+					totalNonPlugins);
+			
 		} catch (CoreException e) {
 			UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
 			return ContentEntryModel.UNKNOWN_SIZE;
 		}
-
 	}
 
 	/**
@@ -458,14 +512,39 @@ public class Feature extends FeatureModel implements IFeature {
 	 */
 	public long getInstallSize() {
 		try {
+			Set allPluginEntries = new HashSet();
+			Set allNonPluginEntries = new HashSet();
+						
+			IPluginEntry[] plugins = getPluginEntries();
+			allPluginEntries.addAll(Arrays.asList(plugins));
+			INonPluginEntry[] nonPlugins = getNonPluginEntries();			
+			allNonPluginEntries.addAll(Arrays.asList(nonPlugins));			
+
+			IFeatureReference[] children = getIncludedFeatureReferences();
+			for (int i = 0; i < children.length; i++) {
+				plugins = children[i].getFeature().getPluginEntries();
+				allPluginEntries.addAll(Arrays.asList(plugins));
+				nonPlugins = children[i].getFeature().getNonPluginEntries();		
+				allNonPluginEntries.addAll(Arrays.asList(nonPlugins));				
+			}
+
+			IPluginEntry[] totalPlugins = new IPluginEntry[allPluginEntries.size()];
+			INonPluginEntry[] totalNonPlugins= new INonPluginEntry[allNonPluginEntries.size()];
+			if (allPluginEntries.size()!=0){
+				allPluginEntries.toArray(totalPlugins);
+			} 
+			if (allNonPluginEntries.size()!=0){
+				allNonPluginEntries.toArray(totalNonPlugins);
+			} 		
+				
 			return getFeatureContentProvider().getInstallSizeFor(
-				getPluginEntries(),
-				getNonPluginEntries());
+					totalPlugins,
+					totalNonPlugins);
+					
 		} catch (CoreException e) {
 			UpdateManagerPlugin.getPlugin().getLog().log(e.getStatus());
 			return ContentEntryModel.UNKNOWN_SIZE;
 		}
-
 	}
 
 	/**
@@ -478,8 +557,8 @@ public class Feature extends FeatureModel implements IFeature {
 		throws CoreException {
 		if (featureContentProvider == null) {
 			throw Utilities.newCoreException(
-					Policy.bind("Feature.NoContentProvider", getVersionedIdentifier().toString()),
-					null);
+				Policy.bind("Feature.NoContentProvider", getVersionedIdentifier().toString()),
+				null);
 			//$NON-NLS-1$
 		}
 		return this.featureContentProvider;
@@ -504,13 +583,13 @@ public class Feature extends FeatureModel implements IFeature {
 	 */
 	public void setSite(ISite site) throws CoreException {
 		if (this.site != null) {
-			String featureURLString= (getURL() != null) ? getURL().toExternalForm() : "";
+			String featureURLString = (getURL() != null) ? getURL().toExternalForm() : "";
 			throw Utilities.newCoreException(
-					Policy.bind("Feature.SiteAlreadySet", featureURLString),
-					null);
+				Policy.bind("Feature.SiteAlreadySet", featureURLString),
+				null);
 			//$NON-NLS-1$
 		}
-		this.site= site;
+		this.site = site;
 	}
 
 	/**
@@ -520,7 +599,7 @@ public class Feature extends FeatureModel implements IFeature {
 	 * @since 2.0
 	 */
 	public void setFeatureContentProvider(IFeatureContentProvider featureContentProvider) {
-		this.featureContentProvider= featureContentProvider;
+		this.featureContentProvider = featureContentProvider;
 		featureContentProvider.setFeature(this);
 	}
 
@@ -531,7 +610,7 @@ public class Feature extends FeatureModel implements IFeature {
 	 * @since 2.0
 	 */
 	public String toString() {
-		String URLString=
+		String URLString =
 			(getURL() == null) ? Policy.bind("Feature.NoURL") : getURL().toExternalForm();
 		//$NON-NLS-1$
 		return Policy.bind(
@@ -551,8 +630,8 @@ public class Feature extends FeatureModel implements IFeature {
 
 		if (listener == null)
 			return;
-			
-		int result= listener.prompt(verificationResult);
+
+		int result = listener.prompt(verificationResult);
 
 		if (result == IVerificationListener.CHOICE_ABORT) {
 			throw Utilities
@@ -562,8 +641,7 @@ public class Feature extends FeatureModel implements IFeature {
 		}
 		if (result == IVerificationListener.CHOICE_ERROR) {
 			throw Utilities
-				.newCoreException(
-					Policy.bind("JarVerificationService.UnsucessfulVerification"),
+				.newCoreException(Policy.bind("JarVerificationService.UnsucessfulVerification"),
 			//$NON-NLS-1$
 			verificationResult.getVerificationException());
 		}
@@ -574,8 +652,93 @@ public class Feature extends FeatureModel implements IFeature {
 	/*
 	 * Installation has been cancelled, abort and revert
 	 */
-	 private void abort() throws CoreException{
+	private void abort() throws CoreException {
 		// FIXME	 	
-		throw Utilities.newCoreException(Policy.bind("Feature.InstallationCancelled"),null); //$NON-NLS-1$
-	 }
+		throw Utilities.newCoreException(Policy.bind("Feature.InstallationCancelled"), null); //$NON-NLS-1$
+	}
+
+	/*
+	 * Initializes includes feature references
+	 * If the included feature reference is found on the site, add it to the List
+	 * Otherwise attempt to instanciate it using the same type as this feature and
+	 * using the default location on the site
+	 */
+	private void initializeIncludedReferences() throws CoreException {
+		includedFeatureReferences = new ArrayList();
+
+		VersionedIdentifier[] identifiers = getFeatureIncludeVersionedIdentifier();
+		ISite site = getSite();
+		IFeatureReference[] refs = (site == null) ? null : site.getFeatureReferences();
+
+		for (int i = 0; i < identifiers.length; i++) {
+			VersionedIdentifier identifier = identifiers[i];
+			boolean found = false;
+
+			// check if declared on the Site
+			if (refs != null) {
+				for (int ref = 0; ref < refs.length && !found; ref++) {
+					IFeature feature = (refs[ref] == null) ? null : refs[ref].getFeature();
+					if (feature != null) {
+						if (identifier.equals(feature.getVersionedIdentifier())) {
+							includedFeatureReferences.add(refs[ref]);
+							found = true;
+						}
+					}
+				}
+			}
+
+			// if not found, instanciate
+			if (!found) {
+				// in future we may ask for a factory to create the feature ref
+				FeatureReference newRef = new FeatureReference();
+				newRef.setSite(getSite());
+				IFeatureReference parentRef = getSite().getFeatureReference(this);
+				if (parentRef instanceof FeatureReference) {
+					newRef.setType(((FeatureReference) parentRef).getType());
+				}
+				String featureURL = Site.DEFAULT_FEATURE_PATH + identifier.toString() + ".jar";
+				newRef.setURLString(featureURL);
+				try {
+					newRef.resolve(getSite().getURL(), getResourceBundle(getSite().getURL()));
+					includedFeatureReferences.add(newRef);
+				} catch (Exception e) {
+					throw Utilities.newCoreException(
+						Policy.bind(
+							"Feature.UnableToInitializeFeatureReference",
+							identifier.toString()),
+						e);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Helper method to access resouce bundle for feature. The default 
+	 * implementation attempts to load the appropriately localized 
+	 * feature.properties file.
+	 * 
+	 * @param url base URL used to load the resource bundle.
+	 * @return resource bundle, or <code>null</code>.
+	 * @since 2.0
+	 */
+	private ResourceBundle getResourceBundle(URL url)
+		throws IOException, CoreException {
+
+		if (url == null)
+			return null;
+
+		ResourceBundle bundle = null;
+		try {
+			ClassLoader l = new URLClassLoader(new URL[] { url }, null);
+			bundle = ResourceBundle.getBundle(Site.SITE_FILE, Locale.getDefault(), l);
+		} catch (MissingResourceException e) {
+			//if there is no bundle, keep it as null
+			//DEBUG:
+			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
+				UpdateManagerPlugin.getPlugin().debug(e.getLocalizedMessage() + ":" + url.toExternalForm()); //$NON-NLS-1$
+			}
+		}
+		return bundle;
+	}
+
 }

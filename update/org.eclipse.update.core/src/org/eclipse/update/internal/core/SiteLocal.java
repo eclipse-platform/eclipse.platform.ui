@@ -797,13 +797,6 @@ public class SiteLocal
 		return bundle;
 	}
 
-	/*
-	 * @see ILocalSite#displayUpdateChange()
-	 */
-	public void displayUpdateChange() throws CoreException {
-		getReconciler().displayUpdateChange();
-	}
-
 	/**
 	 * compare two feature references
 	 * returns 0 if the feature are different
@@ -861,8 +854,8 @@ public class SiteLocal
 		// get configured plugins from configured features
 		// 
 
-		ISite currentSite = getSite();
-		IPluginEntry[] siteEntries = getSite().getPluginEntries();
+		ISite currentSite =null;//=getSite();
+		IPluginEntry[] siteEntries =null;// = getSite().getPluginEntries();
 		IPluginEntry[] featuresEntries = feature.getPluginEntries();
 		IPluginEntry[] result = UpdateManagerUtils.diff(featuresEntries, siteEntries);
 		

@@ -74,6 +74,19 @@ public interface IFeatureContentConsumer {
 		throws CoreException;
 
 	/**
+	 * Opens a generic content consumer for the specified feature reference.
+	 * Feature reference files corresponding to this entry should be stored
+	 * using this feature content consumer.
+	 * 
+	 * @param featureReference feature reference.
+	 * @return feature content consumer for the feature reference
+	 * @exception CoreException
+	 * @since 2.0 
+	 */
+	public IFeatureContentConsumer open(IFeatureReference featureReference)
+		throws CoreException;
+
+	/**
 	 * Closes this content consumer. This indicates a successful completion
 	 * of the store operations. The content consumer commits any changes
 	 * made by this consumer.
@@ -105,4 +118,31 @@ public interface IFeatureContentConsumer {
 	 */
 	public void setFeature(IFeature feature);
 
+	/**
+	 * Returns the feature for this content consumer.
+	 *
+	 * @return the feature for this content consumer
+	 * @since 2.0
+	 */
+	public IFeature getFeature();
+
+	/**
+	 * Returns the feature content consumer that opened
+	 * this feature content consumer, or <code>null</code>
+	 * if this feature content consumer is a root feature
+	 * content consumer.
+	 *
+	 * @return the parent feature content consumer, or null.
+	 * @since 2.0
+	 */
+	public IFeatureContentConsumer getParent();
+
+	/**
+	 * Returns the feature content consumers that
+	 * this feature content consumer opened
+	 *
+	 * @return an array of feature content consumer, or en empty array.
+	 * @since 2.0
+	 */
+	public IFeatureContentConsumer[] getChildren();
 }

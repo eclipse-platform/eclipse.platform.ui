@@ -13,6 +13,7 @@ import java.util.Stack;
 
 import org.apache.xerces.parsers.SAXParser;
 import org.eclipse.core.runtime.*;
+import org.eclipse.update.core.VersionedIdentifier;
 import org.eclipse.update.internal.core.Policy;
 import org.eclipse.update.internal.core.UpdateManagerPlugin;
 import org.xml.sax.*;
@@ -40,22 +41,24 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 	private static final int STATE_IGNORED_ELEMENT = -1;
 	private static final int STATE_INITIAL = 0;
-	private static final int STATE_FEATURE = 1;
-	private static final int STATE_HANDLER = 2;
-	private static final int STATE_DESCRIPTION = 3;
-	private static final int STATE_COPYRIGHT = 4;
-	private static final int STATE_LICENSE = 5;
-	private static final int STATE_URL = 6;
-	private static final int STATE_UPDATE = 7;
-	private static final int STATE_DISCOVERY = 8;
-	private static final int STATE_REQUIRES = 9;
-	private static final int STATE_IMPORT = 10;
-	private static final int STATE_PLUGIN = 11;
-	private static final int STATE_DATA = 12;
+	private static final int STATE_INCLUDES = 1;
+	private static final int STATE_FEATURE = 2;
+	private static final int STATE_HANDLER = 3;
+	private static final int STATE_DESCRIPTION = 4;
+	private static final int STATE_COPYRIGHT = 5;
+	private static final int STATE_LICENSE = 6;
+	private static final int STATE_URL = 7;
+	private static final int STATE_UPDATE = 8;
+	private static final int STATE_DISCOVERY = 9;
+	private static final int STATE_REQUIRES = 10;
+	private static final int STATE_IMPORT = 11;
+	private static final int STATE_PLUGIN = 12;
+	private static final int STATE_DATA = 13;
 	private static final String PLUGIN_ID =
 		UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 
 	private static final String FEATURE = "feature"; //$NON-NLS-1$
+	private static final String INCLUDES = "includes"; //$NON-NLS-1$
 	private static final String HANDLER = "install-handler"; //$NON-NLS-1$
 	private static final String DESCRIPTION = "description"; //$NON-NLS-1$
 	private static final String COPYRIGHT = "copyright"; //$NON-NLS-1$
@@ -167,6 +170,10 @@ public class DefaultFeatureParser extends DefaultHandler {
 				handleFeatureState(localName, attributes);
 				break;
 
+			case STATE_INCLUDES :
+				handleIncludesState(localName, attributes);
+				break;
+
 			case STATE_HANDLER :
 				handleHandlerState(localName, attributes);
 				break;
@@ -263,6 +270,17 @@ public class DefaultFeatureParser extends DefaultHandler {
 				//do not pop
 				break;
 
+			case STATE_INCLUDES :
+				stateStack.pop();
+				if (objectStack.peek() instanceof VersionedIdentifier) {
+					VersionedIdentifier identifier = (VersionedIdentifier) objectStack.pop();
+					if (objectStack.peek() instanceof FeatureModel) {
+						featureModel = (FeatureModel) objectStack.peek();
+						featureModel.addIncludesFeatureIdentifier(identifier);
+					}
+				}				
+				break;
+
 			case STATE_HANDLER :
 				stateStack.pop();
 				if (objectStack.peek() instanceof InstallHandlerEntryModel) {
@@ -278,6 +296,7 @@ public class DefaultFeatureParser extends DefaultHandler {
 						featureModel.setInstallHandlerModel(handlerModel);
 				}
 				break;
+				
 			case STATE_DESCRIPTION :
 				stateStack.pop();
 
@@ -560,6 +579,9 @@ public class DefaultFeatureParser extends DefaultHandler {
 		if (elementName.equals(HANDLER)) {
 			stateStack.push(new Integer(STATE_HANDLER));
 			processHandler(attributes);
+		} else if (elementName.equals(INCLUDES)) {
+			stateStack.push(new Integer(STATE_INCLUDES));
+			processIncludes(attributes);
 		} else if (elementName.equals(DESCRIPTION)) {
 			stateStack.push(new Integer(STATE_DESCRIPTION));
 			processInfo(attributes);
@@ -595,6 +617,9 @@ public class DefaultFeatureParser extends DefaultHandler {
 		if (elementName.equals(DESCRIPTION)) {
 			stateStack.push(new Integer(STATE_DESCRIPTION));
 			processInfo(attributes);
+		} else if (elementName.equals(INCLUDES)) {
+			stateStack.push(new Integer(STATE_INCLUDES));
+			processIncludes(attributes);
 		} else if (elementName.equals(COPYRIGHT)) {
 			stateStack.push(new Integer(STATE_COPYRIGHT));
 			processInfo(attributes);
@@ -622,6 +647,37 @@ public class DefaultFeatureParser extends DefaultHandler {
 		//$NON-NLS-1$
 	}
 
+	private void handleIncludesState(String elementName, Attributes attributes)
+		throws SAXException {
+		if (elementName.equals(INCLUDES)) {
+			stateStack.push(new Integer(STATE_INCLUDES));
+			processIncludes(attributes);
+		} else if (elementName.equals(COPYRIGHT)) {
+			stateStack.push(new Integer(STATE_COPYRIGHT));
+			processInfo(attributes);
+		} else if (elementName.equals(LICENSE)) {
+			stateStack.push(new Integer(STATE_LICENSE));
+			processInfo(attributes);
+		} else if (elementName.equals(URL)) {
+			stateStack.push(new Integer(STATE_URL));
+			//No process as URL tag does not contain any element itself
+		} else if (elementName.equals(REQUIRES)) {
+			stateStack.push(new Integer(STATE_REQUIRES));
+			processRequire(attributes);
+		} else if (elementName.equals(PLUGIN)) {
+			stateStack.push(new Integer(STATE_PLUGIN));
+			processPlugin(attributes);
+		} else if (elementName.equals(DATA)) {
+			stateStack.push(new Integer(STATE_DATA));
+			processData(attributes);
+		} else
+			internalErrorUnknownTag(
+				Policy.bind(
+					"DefaultFeatureParser.UnknownElement",
+					elementName,
+					getState(currentState)));
+		//$NON-NLS-1$
+	}
 	private void handleCopyrightState(String elementName, Attributes attributes)
 		throws SAXException {
 		if (elementName.equals(LICENSE)) {
@@ -673,7 +729,10 @@ public class DefaultFeatureParser extends DefaultHandler {
 
 	private void handleDescriptionState(String elementName, Attributes attributes)
 		throws SAXException {
-		if (elementName.equals(COPYRIGHT)) {
+		if (elementName.equals(INCLUDES)) {
+			stateStack.push(new Integer(STATE_INCLUDES));
+			processIncludes(attributes);
+		} else if (elementName.equals(COPYRIGHT)) {
 			stateStack.push(new Integer(STATE_COPYRIGHT));
 			processInfo(attributes);
 		} else if (elementName.equals(LICENSE)) {
@@ -949,6 +1008,35 @@ public class DefaultFeatureParser extends DefaultHandler {
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING)
 			debug("Processed Info: url:" + infoURL); //$NON-NLS-1$
 	}
+
+	/*
+	 * Process includes information
+	 */
+	private void processIncludes(Attributes attributes) {
+
+		// identifier and version
+		String id = attributes.getValue("id"); //$NON-NLS-1$
+		String ver = attributes.getValue("version"); //$NON-NLS-1$
+
+		if (id == null
+			|| id.trim().equals("") //$NON-NLS-1$
+			|| ver == null
+			|| ver.trim().equals("")) { //$NON-NLS-1$
+			internalError(
+				Policy.bind(
+					"DefaultFeatureParser.IdOrVersionInvalid",
+					new String[] { id, ver, getState(currentState)}));
+			//$NON-NLS-1$
+			}
+		
+		objectStack.push(new VersionedIdentifier(id,ver));	
+			
+		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
+			debug("End process Includes tag: id:" //$NON-NLS-1$
+			+id + " ver:" +ver);//$NON-NLS-1$
+		}
+	}
+			
 
 	/* 
 	 * process URL info with label attribute
@@ -1232,6 +1320,9 @@ public class DefaultFeatureParser extends DefaultHandler {
 			case STATE_DESCRIPTION :
 				return "description"; //$NON-NLS-1$
 
+			case STATE_INCLUDES :
+				return "includes"; //$NON-NLS-1$
+				
 			case STATE_COPYRIGHT :
 				return "Copyright"; //$NON-NLS-1$
 

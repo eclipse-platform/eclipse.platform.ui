@@ -9,6 +9,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
+import org.eclipse.update.core.VersionedIdentifier;
+
 /**
  * Feature reference model object.
  * <p>
@@ -24,6 +26,7 @@ public class FeatureReferenceModel extends ModelObject {
 	private String type;
 	private URL url;
 	private String urlString;
+	private VersionedIdentifier versionID;
 	private SiteModel site;
 	private List /* of String*/
 	categoryNames;
@@ -162,6 +165,19 @@ public class FeatureReferenceModel extends ModelObject {
 		assertIsWriteable();
 		this.urlString = urlString;
 		this.url = null;
+	}
+
+	/**
+	 * Sets the identifier and version for the feature reference.
+	 * Throws a runtime exception if this object is marked read-only.
+	 * 
+	 * @param id identifier of the feature reference
+	 * @param ver version of the feature reference
+	 * @since 2.0
+	 */
+	public void setIndentifier(String id, String ver) {
+		assertIsWriteable();
+		versionID = new VersionedIdentifier(id,ver);
 	}
 
 	/**

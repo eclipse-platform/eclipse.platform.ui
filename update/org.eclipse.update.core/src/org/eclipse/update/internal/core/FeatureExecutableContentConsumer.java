@@ -36,6 +36,15 @@ public class FeatureExecutableContentConsumer extends FeatureContentConsumer {
 	}
 
 	/*
+	 * @see IContentConsumer#open(IFeatureReference)
+	 */
+	public IFeatureContentConsumer open(IFeatureReference featureReference)
+		throws CoreException{
+		return null;
+	}
+
+
+	/*
 	 * @see IFeatureContentConsumer#store(ContentReference, IProgressMonitor)
 	 */
 	public void store(ContentReference contentReference, IProgressMonitor monitor)
@@ -83,5 +92,27 @@ public class FeatureExecutableContentConsumer extends FeatureContentConsumer {
 	public void abort() {
 		//FIXME implement the abort
 	}
+
+	/*
+	 * @see IFeatureContentConsumer#getFeature()
+	 */
+	public IFeature getFeature(){
+		return null;
+	}
+
+	/*
+	 * @see IFeatureContentConsumer#getParent()
+	 */
+	public IFeatureContentConsumer getParent(){
+		return null;
+	}
+
+	/*
+	 * @see IFeatureContentConsumer#getChildren()
+	 */
+	public IFeatureContentConsumer[] getChildren(){
+		return null;
+	}
+
 
 }
