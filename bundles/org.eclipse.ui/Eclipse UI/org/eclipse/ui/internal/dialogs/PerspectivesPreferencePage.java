@@ -35,9 +35,9 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 	private Button setDefaultButton;
 
 	// widgets for open perspective mode;
-	private String openPerspMode;
 	private Button openSameWindowButton;
 	private Button openNewWindowButton;
+	private int openPerspMode;
 	
 	// widgets for open view mode
 	private int openViewMode;
@@ -73,10 +73,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 	 * Creates the page's UI content.
 	 */
 	protected Control createContents(Composite parent) {
-
-		WorkbenchHelp.setHelp(
-			parent,
-			IHelpContextIds.PERSPECTIVES_PREFERENCE_PAGE);
+		WorkbenchHelp.setHelp(parent, IHelpContextIds.PERSPECTIVES_PREFERENCE_PAGE);
 
 		Composite pageComponent = new Composite(parent, SWT.NULL);
 		GridData data = new GridData(GridData.FILL_BOTH);
@@ -89,15 +86,13 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 		pageComponent.setLayout(layout);
 
 		createOpenPerspButtonGroup(pageComponent);
-		
 		createOpenViewButtonGroup(pageComponent);
-
 		createProjectPerspectiveGroup(pageComponent);
-
 		createCustomizePerspective(pageComponent);
 
 		return pageComponent;
 	}
+	
 	/**
 	 * Create a composite that contains buttons for selecting
 	 * the open perspective mode.
@@ -118,22 +113,23 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 
 		openSameWindowButton = new Button(buttonComposite, SWT.RADIO);
 		openSameWindowButton.setText(OPM_SAME_WINDOW);
-		openSameWindowButton.setSelection(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE.equals(openPerspMode));
+		openSameWindowButton.setSelection(IPreferenceConstants.OPM_ACTIVE_PAGE == openPerspMode);
 		openSameWindowButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				openPerspMode = IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE;
+				openPerspMode = IPreferenceConstants.OPM_ACTIVE_PAGE;
 			}
 		});
 
 		openNewWindowButton = new Button(buttonComposite, SWT.RADIO);
 		openNewWindowButton.setText(OPM_NEW_WINDOW);
-		openNewWindowButton.setSelection(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW.equals(openPerspMode));
+		openNewWindowButton.setSelection(IPreferenceConstants.OPM_NEW_WINDOW == openPerspMode);
 		openNewWindowButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				openPerspMode = IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW;
+				openPerspMode = IPreferenceConstants.OPM_NEW_WINDOW;
 			}
 		});
 	}
+	
 	/**
 	 * Create a composite that contains buttons for selecting open view mode.
 	 * @param composite Composite
@@ -189,6 +185,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 		 * }
 		 */
 	}
+	
 	/**
 	 * Create a composite that contains buttons for selecting the 
 	 * preference opening new project selections. 
@@ -275,10 +272,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 		label.setLayoutData(data);
 
 		// Add perspective list.
-		list =
-			new List(
-				perspectivesComponent,
-				SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+		list = new List(perspectivesComponent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		list.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateButtons();
@@ -358,6 +352,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 		button.setFont(parent.getFont());
 		return button;
 	}
+	
 	/**
 	 * Creates and returns the vertical button bar.
 	 *
@@ -392,6 +387,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 
 		return composite;
 	}
+	
 	/**
 	 * @see IWorkbenchPreferencePage
 	 */
@@ -402,39 +398,34 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 		newProjectPerspectiveSetting =
 			store.getString(IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE);
 		openViewMode = store.getInt(IPreferenceConstants.OPEN_VIEW_MODE);
-		openPerspMode = store.getString(IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE);
-		
-		// It is possible the open perspective mode stored
-		// is some old unsupported value, so update it.
-		if (!IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW.equals(openPerspMode))
-			openPerspMode = IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE;
+		openPerspMode = store.getInt(IPreferenceConstants.OPEN_PERSP_MODE);
 	}
+	
 	/**
 	 * The default button has been pressed. 
 	 */
 	protected void performDefaults() {
 		//Project perspective preferences
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		String projectPreference =
+		newProjectPerspectiveSetting =
 			store.getDefaultString(IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE);
-		newProjectPerspectiveSetting = projectPreference;
 		openProjectInSameWindowButton.setSelection(
-			projectPreference.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE));
+			newProjectPerspectiveSetting.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE));
 		openProjectInNewWindowButton.setSelection(
-			projectPreference.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW));
+			newProjectPerspectiveSetting.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW));
 		switchOnNewProjectButton.setSelection(
-			projectPreference.equals(IWorkbenchPreferenceConstants.NO_NEW_PERSPECTIVE));
+			newProjectPerspectiveSetting.equals(IWorkbenchPreferenceConstants.NO_NEW_PERSPECTIVE));
 
-		int value = store.getDefaultInt(IPreferenceConstants.OPEN_VIEW_MODE);
+		openViewMode = store.getDefaultInt(IPreferenceConstants.OPEN_VIEW_MODE);
 		// Open view as float no longer supported
-		if (value == IPreferenceConstants.OVM_FLOAT)
-			value = IPreferenceConstants.OVM_FAST;
-		openEmbedButton.setSelection(value == IPreferenceConstants.OVM_EMBED);
-		openFastButton.setSelection(value == IPreferenceConstants.OVM_FAST);
+		if (openViewMode == IPreferenceConstants.OVM_FLOAT)
+			openViewMode = IPreferenceConstants.OVM_FAST;
+		openEmbedButton.setSelection(openViewMode == IPreferenceConstants.OVM_EMBED);
+		openFastButton.setSelection(openViewMode == IPreferenceConstants.OVM_FAST);
 
-		openPerspMode = store.getDefaultString(IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE);
-		openSameWindowButton.setSelection(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE.equals(openPerspMode));
-		openNewWindowButton.setSelection(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW.equals(openPerspMode));
+		openPerspMode = store.getDefaultInt(IPreferenceConstants.OPEN_PERSP_MODE);
+		openSameWindowButton.setSelection(IPreferenceConstants.OPM_ACTIVE_PAGE == openPerspMode);
+		openNewWindowButton.setSelection(IPreferenceConstants.OPM_NEW_WINDOW == openPerspMode);
 	}
 
 	/**
@@ -468,11 +459,12 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 		store.setValue(IPreferenceConstants.OPEN_VIEW_MODE, openViewMode);
 
 		// store the open perspective mode setting
-		store.setValue(IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE, openPerspMode);
+		store.setValue(IPreferenceConstants.OPEN_PERSP_MODE, openPerspMode);
 		
 		WorkbenchPlugin.getDefault().savePluginPreferences();
 		return true;
 	}
+	
 	/**
 	 * Update the button enablement state.
 	 */
@@ -499,6 +491,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 			setDefaultButton.setEnabled(false);
 		}
 	}
+	
 	/**
 	 * Update the list items.
 	 */
@@ -513,6 +506,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 			list.add(label, i);
 		}
 	}
+	
 	/**
 	 * Notifies that this page's button with the given id has been pressed.
 	 *

@@ -52,6 +52,12 @@ public interface IPreferenceConstants {
 	public static final int OVM_FAST = 1;
 	public static final int OVM_FLOAT = 2;
 
+	// (int) Mode for opening a new perspective
+	public static final String OPEN_PERSP_MODE = "OPEN_PERSPECTIVE_MODE"; //$NON-NLS-1$
+	public static final int OPM_ACTIVE_PAGE = 0;
+	//public static final int OPM_NEW_PAGE = 1;
+	public static final int OPM_NEW_WINDOW = 2;
+
 	//Identifier for enabled decorators
 	public static final String ENABLED_DECORATORS = "ENABLED_DECORATORS"; //$NON-NLS-1$
 	
