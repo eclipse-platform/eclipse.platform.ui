@@ -34,6 +34,10 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -403,7 +407,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		commandLine.append('\"');
 	}
 	
-	private void runInSeparateVM(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor, String idStamp, int port, StringBuffer commandLine) throws CoreException {
+	private void runInSeparateVM(ILaunchConfiguration configuration, final ILaunch launch, IProgressMonitor monitor, String idStamp, int port, StringBuffer commandLine) throws CoreException {
 		RemoteAntBuildListener client= new RemoteAntBuildListener(launch);
 		
 		if (port != -1) {
@@ -422,16 +426,49 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 			}
 		});
 		//copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, "-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000"); //$NON-NLS-1$
+		IProgressMonitor subMonitor= new SubProgressMonitor(monitor, 10);
 		JavaLocalApplicationLaunchConfigurationDelegate delegate= new JavaLocalApplicationLaunchConfigurationDelegate();
-		delegate.launch(copy, ILaunchManager.RUN_MODE, launch, monitor);
-		IProcess[] processes= launch.getProcesses();
+		delegate.launch(copy, ILaunchManager.RUN_MODE, launch, subMonitor);
+		final IProcess[] processes= launch.getProcesses();
 		for (int i = 0; i < processes.length; i++) {
 			setProcessAttributes(processes[i], idStamp, null);
 		}
-		// refresh resources after process finishes
-		if (RefreshTab.getRefreshScope(configuration) != null) {
-			BackgroundResourceRefresher refresher = new BackgroundResourceRefresher(configuration, processes[0]);
-			refresher.startBackgroundRefresh();
-		}				
+
+		if (CommonTab.isLaunchInBackground(configuration)) {
+			// refresh resources after process finishes
+			if (RefreshTab.getRefreshScope(configuration) != null) {
+				BackgroundResourceRefresher refresher = new BackgroundResourceRefresher(configuration, processes[0]);
+				refresher.startBackgroundRefresh();
+			}
+		} else {
+			final boolean[] terminated= new boolean[1];
+			terminated[0]= launch.isTerminated();
+			IDebugEventSetListener listener= new IDebugEventSetListener() {
+				public void handleDebugEvents(DebugEvent[] events) {
+					for (int i = 0; i < events.length; i++) {
+						DebugEvent event = events[i];
+						for (int j= 0, numProcesses= processes.length; j < numProcesses; j++) {
+							if (event.getSource() == processes[j] && event.getKind() == DebugEvent.TERMINATE) {
+								terminated[0]= true;
+								break;
+							}
+						}
+					}
+				}
+			};
+			DebugPlugin.getDefault().addDebugEventListener(listener);
+			monitor.subTask(AntLaunchConfigurationMessages.getString("AntLaunchDelegate.28")); //$NON-NLS-1$
+			while (!monitor.isCanceled() && !terminated[0]) {
+				try {
+					Thread.sleep(50);
+				} catch (InterruptedException e) {
+				}
+			}
+			DebugPlugin.getDefault().removeDebugEventListener(listener);
+			if (!monitor.isCanceled()) {
+				// refresh resources
+				RefreshTab.refreshResources(configuration, monitor);
+			}
+		}
 	}
 }
