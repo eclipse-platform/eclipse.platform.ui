@@ -5,14 +5,16 @@ package org.eclipse.team.internal.ccvs.core.response;
  * All Rights Reserved.
  */
 
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Hashtable;
 import java.util.Iterator;
 
 import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
@@ -236,9 +238,10 @@ public class ResponseDispatcher {
 				//   ERROR => throw error (implicit break)
 				//   rest  => handle it
 				if (response.startsWith(OK)) {
+					checkForErrors(connection);
 					break;
 				} else if (ERROR.equals(response)) {
-					throw serverErrorConnection(connection);
+					throw generateServerException(connection);
 				} else {
 					handle(response,connection,messageOutput,mRoot,monitor);
 				}
@@ -248,11 +251,10 @@ public class ResponseDispatcher {
 		}
 	}
 	
-	/**
-	 * Reads error-data from the server and throws an
-	 * exception.
+	/*
+	 * Create the CVSServerException for the given connection
 	 */
-	private static CVSException serverErrorConnection(Connection connection) {
+	private CVSServerException generateServerException(Connection connection) {
 		
 		String message = ERROR;
 		
@@ -268,8 +270,23 @@ public class ResponseDispatcher {
 		if (message.equals("") || message.equals(" ")) {
 			message = Policy.bind("ResponseDispatcher.serverError");
 		}
-		
-		return new CVSServerException(message);
+
+		CVSServerException e = CVSServerException.forError(message, connection.getErrors());
+		connection.resetErrors();
+		return e;
 	}
+	
+	/*
+	 * Check to see if any handlers registered errors even if the sevrer didn't report one.
+	 * 
+	 * If there are, throw an exception
+	 */
+	 private void checkForErrors(Connection connection) throws CVSException {
+	 	if (connection.hasErrors()) {
+	 		CVSServerException e = CVSServerException.forError(Policy.bind("ResponseDispatcher.problemsReported"), connection.getErrors());
+			connection.resetErrors();
+			throw e;
+	 	}
+	 }
 }
 

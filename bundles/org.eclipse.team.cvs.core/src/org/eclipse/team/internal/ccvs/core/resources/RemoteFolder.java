@@ -82,8 +82,6 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 		};
 			
 		// Perform a "cvs status..." with a custom message handler
-		final List errors = new ArrayList();
-		try {
 		Client.execute(
 			Client.STATUS,
 			Client.EMPTY_ARGS_LIST, 
@@ -93,16 +91,8 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 			monitor,
 			getPrintStream(),
 			connection,
-				new IResponseHandler[] {new StatusMessageHandler(listener),new StatusErrorHandler(listener, errors)},
+				new IResponseHandler[] {new StatusMessageHandler(listener), new StatusErrorHandler(listener)},
 			false);
-		} catch (CVSException e) {
-			if (!errors.isEmpty()) {
-				PrintStream out = getPrintStream();
-				for (int i=0;i<errors.size();i++)
-					out.println(errors.get(i));
-			}
-			throw e;
-		}
 		
 		if (count[0] != fileNames.length)
 			throw new CVSException(Policy.bind("RemoteFolder.errorFetchingRevisions"));
@@ -132,9 +122,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 		final IProgressMonitor progress = Policy.monitorFor(monitor);
 		
 		// Create the listener for remote files and folders
-		final List errors = new ArrayList();
 		final boolean[] exists = new boolean[] {false};
-		final boolean expectError[] = new boolean[] {false};
 		IUpdateMessageListener listener = new IUpdateMessageListener() {
 			public void directoryInformation(IPath path, boolean newDirectory) {
 				exists[0] = true;
@@ -145,9 +133,6 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 				exists[0] = true;
 			}
 			public void fileDoesNotExist(String filename) {
-			}
-			public void expectError() {
-				expectError[0] = true;
 			}
 		};
 		
@@ -171,26 +156,19 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 				monitor,
 				getPrintStream(),
 				((CVSRepositoryLocation)getRepository()),
-				new IResponseHandler[]{new UpdateMessageHandler(listener), new UpdateErrorHandler(listener, errors)});
+				new IResponseHandler[]{new UpdateMessageHandler(listener), new UpdateErrorHandler(listener)});
 
 			return exists[0];
 			
 		} catch (CVSServerException e) {
-			if ( ! isNoTagException(errors) || ! child.isContainer())
-				if (!expectError[0])
+			if ( ! e.isNoTagException() || ! child.isContainer())
+				if (e.containsErrors())
 					throw e;
 				// we now know that this is an exception caused by a cvs bug.
 				// if the folder has no files in it (just subfolders) cvs does not respond with the subfolders...
 				// workaround: retry the request with no tag to get the directory names (if any)
 			Policy.checkCanceled(progress);
 			return exists(child, null, progress);
-		} catch (CVSException e) {
-			if (!errors.isEmpty()) {
-				PrintStream out = getPrintStream();
-				for (int i=0;i<errors.size();i++)
-					out.println(errors.get(i));
-			}
-			throw e;
 		}
 	}
 
@@ -217,10 +195,8 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 		children = null;
 		
 		// Create the listener for remote files and folders
-		final List errors = new ArrayList();
 		final List newRemoteDirectories = new ArrayList();
 		final List newRemoteFiles = new ArrayList();
-		final boolean expectError[] = new boolean[] {false};
 		IUpdateMessageListener listener = new IUpdateMessageListener() {
 			public void directoryInformation(IPath path, boolean newDirectory) {
 				if (newDirectory && path.segmentCount() == 1) {
@@ -241,9 +217,6 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 				}
 			}
 			public void fileDoesNotExist(String filename) {
-			}
-			public void expectError() {
-				expectError[0] = true;
 			}
 		};
 		
@@ -271,7 +244,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 				monitor,
 				getPrintStream(),
 				c,
-				new IResponseHandler[]{new UpdateMessageHandler(listener), new UpdateErrorHandler(listener, errors)},
+				new IResponseHandler[]{new UpdateMessageHandler(listener), new UpdateErrorHandler(listener)},
 				true);
 
 			if (progress.isCanceled()) {
@@ -293,11 +266,11 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 			}
 			
 		} catch (CVSServerException e) {
-			if ( ! isNoTagException(errors) && ! expectError[0])
+			if ( ! e.isNoTagException() && e.containsErrors())
 				throw e;
-				// we now know that this is an exception caused by a cvs bug.
-				// if the folder has no files in it (just subfolders) cvs does not respond with the subfolders...
-				// workaround: retry the request with no tag to get the directory names (if any)
+			// we now know that this is an exception caused by a cvs bug.
+			// if the folder has no files in it (just subfolders) cvs does not respond with the subfolders...
+			// workaround: retry the request with no tag to get the directory names (if any)
 			Policy.checkCanceled(progress);
 			children = getMembers(null, progress);
 			// the returned children must be given the original tag
@@ -307,13 +280,6 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 					((RemoteFolder)remoteResource).setTag(tag);
 				}
 			}
-		} catch (CVSException e) {
-			if (!errors.isEmpty()) {
-				PrintStream out = getPrintStream();
-				for (int i=0;i<errors.size();i++)
-					out.println(errors.get(i));
-			}
-			throw e;
 		} finally {
 			c.close();
 		}
@@ -565,9 +531,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 			final IProgressMonitor progress = Policy.monitorFor(monitor);
 			
 			// Create the listener for remote files and folders
-			final List errors = new ArrayList();
 			final boolean[] exists = new boolean[] {true};
-			final boolean expectError[] = new boolean[] {false};
 			IUpdateMessageListener listener = new IUpdateMessageListener() {
 				public void directoryInformation(IPath path, boolean newDirectory) {
 				}
@@ -581,9 +545,6 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 				}
 				public void fileDoesNotExist(String filename) {
 					exists[0] = false;
-				}
-				public void expectError() {
-					expectError[0] = true;
 				}
 			};
 			
@@ -608,10 +569,10 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 						monitor,
 						getPrintStream(),
 						c,
-						new IResponseHandler[]{new UpdateMessageHandler(listener), new UpdateErrorHandler(listener, errors)},
+						new IResponseHandler[]{new UpdateMessageHandler(listener), new UpdateErrorHandler(listener)},
 						true);
 				} catch (CVSServerException e) {
-					if (!expectError[0]) {
+					if (e.containsErrors()) {
 						throw e;
 					}
 				}
@@ -622,13 +583,6 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 				updateFileRevisions(c, new String[] {child.getName()}, monitor);
 				return true;
 				
-			} catch (CVSException e) {
-				if (!errors.isEmpty()) {
-					PrintStream out = getPrintStream();
-					for (int i=0;i<errors.size();i++)
-						out.println(errors.get(i));
-				}
-				throw e;
 			} finally {
 				c.close();
 			}

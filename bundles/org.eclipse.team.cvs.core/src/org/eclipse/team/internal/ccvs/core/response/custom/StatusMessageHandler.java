@@ -42,8 +42,11 @@ public class StatusMessageHandler extends ResponseHandler {
 		ICVSFolder mRoot,
 		IProgressMonitor monitor)
 			throws CVSException {
+				
+		// Read the message line
 		String line = context.readLine();
-		StringBuffer tags = new StringBuffer(10);
+		
+		// We're only concerned about file revisions.
 		if (line.startsWith("   Repository revision:")) {
 			if (!line.startsWith("   Repository revision:	No revision control file")) {
 				int separatingTabIndex = line.indexOf('\t', 24);
@@ -52,9 +55,8 @@ public class StatusMessageHandler extends ResponseHandler {
 				// This is the full location on the server (e.g. /home/cvs/repo/project/file.txt)
 				String fileLocation = line.substring(separatingTabIndex + 1, line.length() - 2);
 
-				// This is the path relatrive to the ICVSResource used as the root of the command (mRoot)
-				IPath fullPath =
-					new Path(fileLocation.substring(mRoot.getRemoteLocation(mRoot).length() + 1));
+				// This is the path relative to the ICVSResource used as the root of the command (mRoot)
+				IPath fullPath = new Path(fileLocation.substring(mRoot.getRemoteLocation(mRoot).length() + 1));
 
 				// If the status returns that the file is in the Attic, then remove the
 				// Attic segment. This is because files added to a branch that are not in
@@ -67,7 +69,7 @@ public class StatusMessageHandler extends ResponseHandler {
 					fullPath = fullPath.append(filename);
 				}
 
-				// Try and get the tags from the end of the status output
+				// Inform the listener about the file revision
 				statusListener.fileStatus(fullPath, remoteRevision);
 			}
 		}

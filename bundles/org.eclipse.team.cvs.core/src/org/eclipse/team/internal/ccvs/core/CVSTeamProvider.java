@@ -480,7 +480,6 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		// Build the arguments list
 		String[] arguments = getValidArguments(resources, localOptions.contains(DiffOption.DONT_RECURSE) ? IResource.DEPTH_ONE : IResource.DEPTH_INFINITE, progress);
 						
-		final List errors = new ArrayList();	
 		try {
 			Client.execute(
 				Client.DIFF,
@@ -491,16 +490,9 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 				progress,
 				stream,
 				null,
-				new IResponseHandler[] {new DiffMessageHandler(), new DiffErrorHandler(errors)});
+				new IResponseHandler[] {new DiffMessageHandler(), new DiffErrorHandler()});
 		} catch(CVSDiffException e) {
 			// Ignore this for now
-		} catch (CVSException e) {
-			if (!errors.isEmpty()) {
-				PrintStream out = getPrintStream();
-				for (int i=0;i<errors.size();i++)
-					out.println(errors.get(i));
-			}
-			throw e;
 		}
 	}
 	

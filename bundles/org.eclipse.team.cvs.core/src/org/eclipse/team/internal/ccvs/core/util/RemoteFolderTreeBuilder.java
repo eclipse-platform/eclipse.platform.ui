@@ -37,9 +37,11 @@ import org.eclipse.team.internal.ccvs.core.resources.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.response.IResponseHandler;
 import org.eclipse.team.internal.ccvs.core.response.custom.IStatusListener;
 import org.eclipse.team.internal.ccvs.core.response.custom.IUpdateMessageListener;
+import org.eclipse.team.internal.ccvs.core.response.custom.StatusErrorHandler;
 import org.eclipse.team.internal.ccvs.core.response.custom.StatusMessageHandler;
 import org.eclipse.team.internal.ccvs.core.response.custom.UpdateErrorHandler;
 import org.eclipse.team.internal.ccvs.core.response.custom.UpdateMessageHandler;
+import org.omg.CORBA.UNKNOWN;
 
 /*
  * This class is responsible for building a remote tree that shows the repository
@@ -56,8 +58,6 @@ public class RemoteFolderTreeBuilder {
 
 	private Map fileDeltas;
 	private List changedFiles;
-	
-	private List errors;
 	
 	private ICVSFolder root;
 	private RemoteFolderTree remoteRoot;
@@ -80,7 +80,6 @@ public class RemoteFolderTreeBuilder {
 		this.repository = repository;
 		this.root = root;
 		this.tag = tag;
-		this.errors = new ArrayList();
 		this.fileDeltas = new HashMap();
 		this.changedFiles = new ArrayList();
 		
@@ -124,13 +123,6 @@ public class RemoteFolderTreeBuilder {
 			if (!changedFiles.isEmpty())
 				fetchFileRevisions(connection, remoteRoot, (String[])changedFiles.toArray(new String[changedFiles.size()]), monitor);
 			return remoteRoot;
-		} catch (CVSException e) {
-			if (!errors.isEmpty()) {
-				PrintStream out = getPrintStream();
-				for (int i=0;i<errors.size();i++)
-					out.println(errors.get(i));
-			}
-			throw e;
 		} finally {
 			connection.close();
 		}
@@ -308,7 +300,6 @@ public class RemoteFolderTreeBuilder {
 		
 		// Create an listener that will accumulate new and removed files and folders
 		final List newChildDirectories = new ArrayList();
-		final boolean expectError[] = new boolean[] {false};
 		IUpdateMessageListener listener = new IUpdateMessageListener() {
 			public void directoryInformation(IPath path, boolean newDirectory) {
 				if (newDirectory) {
@@ -350,9 +341,6 @@ public class RemoteFolderTreeBuilder {
 			public void fileDoesNotExist(String filename) {
 				recordDelta(new Path(filename), DELETED);
 			}
-			public void expectError() {
-				expectError[0] = true;
-			}
 		};
 		
 		// Perform a "cvs -n update -d [-r tag] ." in order to get the
@@ -368,11 +356,11 @@ public class RemoteFolderTreeBuilder {
 				monitor,
 				getPrintStream(),
 				connection,
-				new IResponseHandler[]{new UpdateMessageHandler(listener), new UpdateErrorHandler(listener, errors)},
+				new IResponseHandler[]{new UpdateMessageHandler(listener), new UpdateErrorHandler(listener)},
 				true
 				);
 		} catch (CVSServerException e) {
-			if (!expectError[0])
+			if (e.containsErrors())
 				throw e;
 		}
 					
@@ -380,10 +368,8 @@ public class RemoteFolderTreeBuilder {
 	}
 	
 	private void fetchNewDirectory(Connection connection, RemoteFolderTree newFolder, IPath localPath, IProgressMonitor monitor) throws CVSException {
-		List errors = new ArrayList();
 		
 		// Create an listener that will accumulate new files and folders
-		final boolean expectError[] = new boolean[] {false};
 		IUpdateMessageListener listener = new IUpdateMessageListener() {
 			public void directoryInformation(IPath path, boolean newDirectory) {
 				if (newDirectory) {
@@ -401,9 +387,6 @@ public class RemoteFolderTreeBuilder {
 			}
 			public void fileDoesNotExist(String filename) {
 			}
-			public void expectError() {
-				expectError[0] = true;
-			}
 		};
 
 		// NOTE: Should use the path relative to the remoteRoot
@@ -418,17 +401,16 @@ public class RemoteFolderTreeBuilder {
 				monitor,
 				getPrintStream(),
 				connection,
-				new IResponseHandler[]{new UpdateMessageHandler(listener), new UpdateErrorHandler(listener, errors)},
+				new IResponseHandler[]{new UpdateMessageHandler(listener), new UpdateErrorHandler(listener)},
 				false
 				);
 		} catch (CVSServerException e) {
-			if ( ! RemoteFolder.isNoTagException(errors) && ! expectError[0])
+			if ( ! e.isNoTagException() && e.containsErrors())
 				throw e;
-				// we now know that this is an exception caused by a cvs bug.
-				// if the folder has no files in it (just subfolders) cvs does not respond with the subfolders...
-				// workaround: retry the request with no tag to get the directory names (if any)
+			// we now know that this is an exception caused by a cvs bug.
+			// if the folder has no files in it (just subfolders) cvs does not respond with the subfolders...
+			// workaround: retry the request with no tag to get the directory names (if any)
 			Policy.checkCanceled(monitor);
-			errors.clear();
 			Client.execute(
 				Client.UPDATE,
 				new String[] {"-n"}, 
@@ -438,7 +420,7 @@ public class RemoteFolderTreeBuilder {
 				monitor,
 				getPrintStream(),
 				connection,
-				new IResponseHandler[]{new UpdateMessageHandler(listener), new UpdateErrorHandler(listener, errors)},
+				new IResponseHandler[]{new UpdateMessageHandler(listener), new UpdateErrorHandler(listener)},
 				false
 				);
 		}
@@ -472,7 +454,7 @@ public class RemoteFolderTreeBuilder {
 			monitor,
 			getPrintStream(),
 			connection,
-			new IResponseHandler[] {new StatusMessageHandler(listener)},
+			new IResponseHandler[] {new StatusMessageHandler(listener), new StatusErrorHandler(listener)},
 			false);
 		
 		// XXX we can't make this check because it may be valid to call this method

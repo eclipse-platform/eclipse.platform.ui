@@ -59,20 +59,18 @@ public class UpdateErrorHandler extends ResponseHandler {
 	public static final String SERVER_ABORTED_PREFIX = "cvs [server aborted]: ";
 
 	IUpdateMessageListener updateMessageListener;
-	List errors;
 
-	public UpdateErrorHandler(IUpdateMessageListener updateMessageListener, List errors) {
+	public UpdateErrorHandler(IUpdateMessageListener updateMessageListener) {
 		this.updateMessageListener = updateMessageListener;
-		this.errors = errors;
 	}
 	public String getName() {
 		return NAME;
 	}
-	public void handle(Connection context, 
+	public void handle(Connection connection, 
 						PrintStream messageOutput,
 						ICVSFolder mRoot,
 						IProgressMonitor monitor) throws CVSException {
-		String line = context.readLine();
+		String line = connection.readLine();
 		if (line.startsWith(SERVER_PREFIX)) {
 			// Strip the prefix from the line
 			String message = line.substring(SERVER_PREFIX.length());
@@ -105,8 +103,8 @@ public class UpdateErrorHandler extends ResponseHandler {
 				 * If we get the above line, we have conflicting additions or deletions and we can expect a server error.
 				 * We still get "C foler/file.ext" so we don't need to do anything else (except in the remotely deleted case)
 				 */
+				connection.addError(new Status(IStatus.WARNING, CVSProviderPlugin.ID, CVSException.CONFLICT, line, null));
 				if (updateMessageListener != null) {
-					updateMessageListener.expectError();
 					if (message.endsWith("is modified but no longer in the repository")) {
 						// The "C foler/file.ext" will come after this so if whould be ignored!
 						String filename = message.substring(10, message.indexOf(' ', 10));
@@ -119,16 +117,19 @@ public class UpdateErrorHandler extends ResponseHandler {
 				 *    cvs server: warning: folder1/file.ext is not (any longer) pertinent
 				 * If we get the above line, we have local changes to a remotely deleted file.
 				 */
+				connection.addError(new Status(IStatus.WARNING, CVSProviderPlugin.ID, CVSException.WARNING, line, null));
 				if (updateMessageListener != null) {
-					updateMessageListener.expectError();
 					if (message.endsWith("is not (any longer) pertinent")) {
 						String filename = message.substring(9, message.indexOf(' ', 9));
 						updateMessageListener.fileDoesNotExist(filename);
 					}
 				}
+			} else if (message.startsWith("conflicts")) {
+				// This line is info only. The server doesn't report an error.
+				connection.addError(new Status(IStatus.INFO, CVSProviderPlugin.ID, CVSException.CONFLICT, line, null));				
 			} else if (!message.startsWith("cannot open directory")
 					&& !message.startsWith("nothing known about")) {
-				errors.add(new Status(IStatus.ERROR, CVSProviderPlugin.ID, CVSException.IO_FAILED, line, null));
+				connection.addError(new Status(IStatus.ERROR, CVSProviderPlugin.ID, CVSException.IO_FAILED, line, null));
 			}
 		} else if (line.startsWith(SERVER_ABORTED_PREFIX)) {
 			// Strip the prefix from the line
@@ -136,9 +137,10 @@ public class UpdateErrorHandler extends ResponseHandler {
 			if (message.startsWith("no such tag")) {
 				// This is reported from CVS when a tag is used on the update there are no files in the directory
 				// To get the folders, the update request should be re-issued for HEAD
-				// XXX should we add special handling or just let the caller hande the error
-			} 
-			errors.add(new Status(IStatus.ERROR, CVSProviderPlugin.ID, CVSException.IO_FAILED, line, null));
+				connection.addError(new Status(IStatus.WARNING, CVSProviderPlugin.ID, CVSException.NO_SUCH_TAG, line, null));
+			} else {
+				connection.addError(new Status(IStatus.ERROR, CVSProviderPlugin.ID, CVSException.IO_FAILED, line, null));
+			}
 		}
 	}
 }

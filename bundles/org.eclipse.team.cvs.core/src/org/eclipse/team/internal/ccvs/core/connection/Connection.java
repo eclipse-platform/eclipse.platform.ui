@@ -9,11 +9,17 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.ccvs.core.IServerConnection;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
-import org.eclipse.team.ccvs.core.*;
-import org.eclipse.team.ccvs.core.*;
 
 /**
  * A connection to talk to a cvs server. The life cycle of a connection is
@@ -45,12 +51,54 @@ public class Connection {
 	private boolean fIsEstablished;
 	private BufferedInputStream fResponseStream;
 	private char fLastUsedTokenDelimiter;
+	
+	private List errors;
 
 	boolean closed = false;
 
 	public Connection(ICVSRepositoryLocation cvsroot, IServerConnection serverConnection) {
 		fCVSRoot = cvsroot;
 		this.serverConnection = serverConnection;
+		this.errors = new ArrayList();
+	}
+	
+	/**
+	 * Add a server error message to the list of server errors.
+	 * 
+	 * This is used by M and E handlers to accumulate errors that are to be reported
+	 * at the end of command execution.
+	 * 
+	 * XXX This may not be the right place for this!
+	 */
+	public void addError(IStatus error) {
+		errors.add(error);	
+	}
+	
+	/*
+	 * Return whether server errors have been reported on the connection
+	 * 
+	 * XXX This is public due to packaging and should not be called by handlers
+	 */	
+	public boolean hasErrors() {
+		return ! errors.isEmpty();
+	}
+	
+	/*
+	 * Return the server errors that have been reported for the connection.
+	 * 
+	 * XXX This is public due to packaging and should not be called by handlers
+	 */	
+	public IStatus[] getErrors() {
+		return (IStatus[])errors.toArray(new IStatus[errors.size()]);
+	}
+	
+	/*
+	 * Clear the error list.
+	 * 
+	 * XXX This is public due to packaging and should not be called by handlers
+	 */	
+	public void resetErrors() {
+		errors.clear();
 	}
 	
 	private static byte[] append(byte[] buffer, int index, byte b) {
