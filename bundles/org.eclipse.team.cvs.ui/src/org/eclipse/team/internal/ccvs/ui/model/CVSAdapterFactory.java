@@ -17,6 +17,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryRoot;
 import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 public class CVSAdapterFactory implements IAdapterFactory {
@@ -33,27 +34,41 @@ public class CVSAdapterFactory implements IAdapterFactory {
 	 */
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		if (IWorkbenchAdapter.class == adapterType) {
-			if (adaptableObject instanceof ICVSRemoteFile) {
-				return fileAdapter;
-			} else if (adaptableObject instanceof ICVSRepositoryLocation) {
-				return rootAdapter;
-			}  else if (adaptableObject instanceof RepositoryRoot) {
-				return rootAdapter;
-			} else if (adaptableObject instanceof ICVSRemoteFolder) {
-				return folderAdapter;
-			}
-			return null;
+			return getWorkbenchAdapter(adaptableObject);
 		}
+		
+		if(IDeferredWorkbenchAdapter.class == adapterType) {
+			 Object o = getWorkbenchAdapter(adaptableObject);
+			 if(o != null && o instanceof IDeferredWorkbenchAdapter) {
+			 	return o;
+			 }
+			 return null;
+		}		
+		
 		if (IPropertySource.class == adapterType) {
 			return getPropertySource(adaptableObject);
 		}
 		return null;
 	}
+	
+	protected Object getWorkbenchAdapter(Object o) {
+		if (o instanceof ICVSRemoteFile) {
+			return fileAdapter;
+		} else if (o instanceof ICVSRepositoryLocation) {
+			return rootAdapter;
+		}  else if (o instanceof RepositoryRoot) {
+			return rootAdapter;
+		} else if (o instanceof ICVSRemoteFolder) {
+			return folderAdapter;
+		}
+		return null;
+	}
+	
 	/** (Non-javadoc)
 	 * Method declared on IAdapterFactory.
 	 */
 	public Class[] getAdapterList() {
-		return new Class[] {IWorkbenchAdapter.class, IPropertySource.class};
+		return new Class[] {IWorkbenchAdapter.class, IPropertySource.class, IDeferredWorkbenchAdapter.class};
 	}
 	/**
 	 * Returns the property source for the given object.  Caches

@@ -12,14 +12,15 @@ package org.eclipse.team.internal.ccvs.ui.model;
 
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteResource;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.progress.DeferredTreeContentManager;
-
-/**
-
 
 /**
  * Extension to the generic workbench content provider mechanism
@@ -30,20 +31,19 @@ import org.eclipse.ui.progress.DeferredTreeContentManager;
 public class RemoteContentProvider extends WorkbenchContentProvider {
 
 	IWorkingSet workingSet;
- DeferredTreeContentManager manager;
+	DeferredTreeContentManager manager;
 
- /* (non-Javadoc)
-  * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-  */
- public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-  if (viewer instanceof AbstractTreeViewer) {
-   manager =
-    new DeferredTreeContentManager(
-     this,
-     (AbstractTreeViewer) viewer);
-  }
-  super.inputChanged(viewer, oldInput, newInput);
- }
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+	 */
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		if (viewer instanceof AbstractTreeViewer) {
+			if(CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.BACKGROUND_REPOVIEW)) {
+				manager = new DeferredTreeContentManager(this, (AbstractTreeViewer) viewer);
+			}
+		}
+		super.inputChanged(viewer, oldInput, newInput);
+	}
 
 	public boolean hasChildren(Object element) {
 		// the + box will always appear, but then disappear
@@ -69,10 +69,10 @@ public class RemoteContentProvider extends WorkbenchContentProvider {
 		} else if (element instanceof RemoteModule) {
 			return true;
 		}
-  if (manager != null) {
-   if (manager.isDeferredAdapter(element))
-    return manager.mayHaveChildren(element);
-  }
+		if (manager != null) {
+			if (manager.isDeferredAdapter(element))
+				return manager.mayHaveChildren(element);
+		}
 
 		return super.hasChildren(element);
 	}
@@ -93,16 +93,15 @@ public class RemoteContentProvider extends WorkbenchContentProvider {
 		return workingSet;
 	}
 
- /* (non-Javadoc)
-  * @see org.eclipse.ui.model.WorkbenchContentProvider#getChildren(java.lang.Object)
-  */
- public Object[] getChildren(Object element) {
-  if (manager != null) {
-   Object[] children = manager.getChildren(element);
-   if (children != null)
-    return children;
-  }
-  return super.getChildren(element);
- }
-
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.model.WorkbenchContentProvider#getChildren(java.lang.Object)
+	 */
+	public Object[] getChildren(Object element) {
+		if (manager != null) {
+			Object[] children = manager.getChildren(element);
+			if (children != null)
+				return children;
+		}
+		return super.getChildren(element);
+	}
 }

@@ -12,6 +12,7 @@ package org.eclipse.team.internal.ccvs.ui.model;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -20,8 +21,9 @@ import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 
-public abstract class CVSModelElement implements IWorkbenchAdapter {
+public abstract class CVSModelElement implements IWorkbenchAdapter, IAdaptable {
 	
 	private IRunnableContext runnableContext;
 	private IWorkingSet workingSet;
@@ -32,6 +34,14 @@ public abstract class CVSModelElement implements IWorkbenchAdapter {
 
 	public void setWorkingSet(IWorkingSet workingSet) {
 		this.workingSet = workingSet;
+	}
+
+	public Object getAdapter(Class adapter) {
+		if (adapter == IWorkbenchAdapter.class)
+			return this;
+		if ((adapter == IDeferredWorkbenchAdapter.class) && this instanceof IDeferredWorkbenchAdapter)
+			return this;
+		return null;
 	}
 
 	/**

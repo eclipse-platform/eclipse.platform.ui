@@ -10,19 +10,19 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.model;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.progress.IElementCollector;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
-import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 
-public class CVSTagElement extends CVSModelElement implements IAdaptable, IDeferredWorkbenchAdapter {
+public class CVSTagElement extends CVSModelElement implements IDeferredWorkbenchAdapter {
 	CVSTag tag;
 	ICVSRepositoryLocation root;
 
@@ -30,19 +30,15 @@ public class CVSTagElement extends CVSModelElement implements IAdaptable, IDefer
 		this.tag = tag;
 		this.root = root;
 	}
+
 	public ICVSRepositoryLocation getRoot() {
 		return root;
 	}
-	public Object getAdapter(Class adapter) {
-		if (adapter == IWorkbenchAdapter.class)
-   return this;
-  if (adapter == IDeferredWorkbenchAdapter.class)
-			return this;
-		return null;
-	}
+
 	public CVSTag getTag() {
 		return tag;
 	}
+
 	public boolean equals(Object o) {
 		if (!(o instanceof CVSTagElement))
 			return false;
@@ -51,6 +47,7 @@ public class CVSTagElement extends CVSModelElement implements IAdaptable, IDefer
 			return false;
 		return root.equals(t.root);
 	}
+
 	public int hashCode() {
 		return root.hashCode() ^ tag.hashCode();
 	}
