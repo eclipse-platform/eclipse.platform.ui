@@ -887,15 +887,18 @@ abstract public class AbstractInformationControlManager {
 		if (!(fInformationControl instanceof IInformationControlExtension3))
 			throw new UnsupportedOperationException();
 		
+		boolean controlRestoresSize= ((IInformationControlExtension3)fInformationControl).restoresSize();
+		boolean controlRestoresLocation= ((IInformationControlExtension3)fInformationControl).restoresLocation();
+		
 		Rectangle bounds= ((IInformationControlExtension3)fInformationControl).getBounds();
 		if (bounds == null)
 			return;
 		
-		if (fIsRestoringSize) {
+		if (fIsRestoringSize && controlRestoresSize) {
 			fDialogSettings.put(STORE_SIZE_X, bounds.width);
 			fDialogSettings.put(STORE_SIZE_Y, bounds.height);
 		}
-		if (fIsRestoringLocation) {
+		if (fIsRestoringLocation && controlRestoresLocation) {
 			fDialogSettings.put(STORE_LOCATION_X, bounds.x);
 			fDialogSettings.put(STORE_LOCATION_Y, bounds.y);
 		}
@@ -913,9 +916,12 @@ abstract public class AbstractInformationControlManager {
 		if (!(fInformationControl instanceof IInformationControlExtension3))
 			throw new UnsupportedOperationException();
 		
+		boolean controlRestoresSize= ((IInformationControlExtension3)fInformationControl).restoresSize();
+		boolean controlRestoresLocation= ((IInformationControlExtension3)fInformationControl).restoresLocation();
+		
 		Rectangle bounds= new Rectangle(-1, -1, -1, -1);
 		
-		if (fIsRestoringSize) {
+		if (fIsRestoringSize && controlRestoresSize) {
 			try {
 				bounds.width= fDialogSettings.getInt(STORE_SIZE_X);
 				bounds.height= fDialogSettings.getInt(STORE_SIZE_Y);
@@ -925,7 +931,7 @@ abstract public class AbstractInformationControlManager {
 			}
 		}
 	
-		if (fIsRestoringLocation) {
+		if (fIsRestoringLocation && controlRestoresLocation) {
 			try {
 				bounds.x= fDialogSettings.getInt(STORE_LOCATION_X);
 				bounds.y= fDialogSettings.getInt(STORE_LOCATION_Y);

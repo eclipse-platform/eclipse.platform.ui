@@ -335,6 +335,20 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	}
 	
 	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension3#restoresLocation()
+	 */
+	public boolean restoresLocation() {
+		return false;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension3#restoresSize()
+	 */
+	public boolean restoresSize() {
+		return false;
+	}
+	
+	/*
 	 * @see IInformationControl#addDisposeListener(DisposeListener)
 	 */
 	public void addDisposeListener(DisposeListener listener) {

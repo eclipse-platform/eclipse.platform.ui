@@ -48,4 +48,26 @@ public interface IInformationControlExtension3 {
 	 * @return the receivers trim
 	 */
 	Rectangle computeTrim();
+	
+	/**
+	 * Tells whether this control allows to restore the previously
+	 * used size.
+	 * <p>
+	 * Note: This is not a static property - it can change during the
+	 * lifetime of this control.</p>
+	 * 
+	 * @return <code>true</code> if restoring size is supported
+	 */
+	boolean restoresSize();
+	
+	/**
+	 * Tells whether this control allows to restore the previously
+	 * used location.
+	 * <p>
+	 * Note: This is not a static property - it can change during the
+	 * lifetime of this control.</p>
+	 * 
+	 * @return <code>true</code> if restoring location is supported
+	 */
+	boolean restoresLocation();
 }
