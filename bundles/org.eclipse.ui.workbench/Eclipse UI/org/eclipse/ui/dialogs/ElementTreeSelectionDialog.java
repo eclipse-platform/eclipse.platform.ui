@@ -274,6 +274,26 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 				}
 			});
 		}
+		fViewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				updateOKStatus();
+				
+				//If it is not OK or if double click does not
+				//select then expand
+				if (!(fDoubleClickSelects && fCurrStatus.isOK())) {
+					ISelection selection = event.getSelection();
+					if (selection instanceof IStructuredSelection) {
+						Object item =
+							((IStructuredSelection) selection)
+								.getFirstElement();
+						if (fViewer.getExpandedState(item))
+							fViewer.collapseToLevel(item, 1);
+						else
+							fViewer.expandToLevel(item, 1);
+					}
+				}
+			}
+		});
 
 		fViewer.setInput(fInput);
 
