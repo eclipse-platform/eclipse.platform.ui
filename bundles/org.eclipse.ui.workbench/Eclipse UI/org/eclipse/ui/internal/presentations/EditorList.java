@@ -11,8 +11,13 @@
 
 package org.eclipse.ui.internal.presentations;
 
+import java.text.Collator;
 import java.util.Iterator;
 
+import org.eclipse.jface.viewers.ContentViewer;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
+import org.eclipse.jface.viewers.IFontProvider;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -23,6 +28,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -37,9 +44,11 @@ public class EditorList extends AbstractTableInformationControl {
         private EditorPresentation editorPresentation;
 
         public EditorListContentProvider() {
+            //no-op
         }
 
         public void dispose() {
+            //no-op
         }
 
         public Object[] getElements(Object inputElement) {
@@ -66,9 +75,12 @@ public class EditorList extends AbstractTableInformationControl {
         }
     }
     
-    private class EditorListLabelProvider extends LabelProvider {
+    private class EditorListLabelProvider extends LabelProvider implements IFontProvider {
 
-    	public EditorListLabelProvider() {
+    	private Font boldFont = null;
+
+		public EditorListLabelProvider() {
+		    //no-op
     	}
 
     	public String getText(Object element) {
@@ -76,7 +88,7 @@ public class EditorList extends AbstractTableInformationControl {
             EditorPresentation editorPresentation = (EditorPresentation) getTableViewer()
             .getInput();
             IPresentablePart presentablePart = editorPresentation.getPartForTab(tabItem);    	    
-    	    return editorPresentation.getLabelText(presentablePart, false, true);
+    	    return editorPresentation.getLabelText(presentablePart, true); 
     	}
 
     	public Image getImage(Object element) {
@@ -86,7 +98,93 @@ public class EditorList extends AbstractTableInformationControl {
             IPresentablePart presentablePart = editorPresentation.getPartForTab(tabItem);    	    
     	    return editorPresentation.getLabelImage(presentablePart);
     	}
+    	
+		public Font getFont(Object element) {
+			CTabItem tabItem = (CTabItem) element;
+			if (tabItem.isShowing()) // visible
+				return null;
+			
+			if (boldFont == null) {
+				Font originalFont = tabItem.getFont();
+				FontData fontData[] = originalFont.getFontData();
+				// Adding the bold attribute
+				for (int i = 0; i < fontData.length; i++) 
+					fontData[i].setStyle(fontData[i].getStyle()|SWT.BOLD);
+				boldFont = new Font(tabItem.getDisplay(), fontData);
+			}
+			return boldFont;
+		}
+		
+		public void dispose() {
+			super.dispose();
+			if (boldFont != null)
+				boldFont.dispose();
+		}
     }    
+    
+    private class EditorListViewerSorter extends ViewerSorter {
+    	
+    	public EditorListViewerSorter(){
+    	    //no-op
+    	}
+    	
+    	public EditorListViewerSorter(Collator collator) {
+    		super(collator);
+    	}
+    	
+    	/* (non-Javadoc)
+    	 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+    	 */
+    	public int compare(Viewer viewer, Object e1, Object e2) {
+    		int cat1 = category(e1);
+    		int cat2 = category(e2);
+
+    		if (cat1 != cat2)
+    			return cat1 - cat2;
+
+    		// cat1 == cat2
+
+    		String name1;
+    		String name2;
+
+    		if (viewer == null || !(viewer instanceof ContentViewer)) {
+    			name1 = e1.toString();
+    			name2 = e2.toString();
+    		} else {
+    			IBaseLabelProvider prov = ((ContentViewer) viewer).getLabelProvider();
+    			if (prov instanceof ILabelProvider) {
+    				ILabelProvider lprov = (ILabelProvider) prov;
+    				name1 = lprov.getText(e1);
+    				name2 = lprov.getText(e2);
+    				// ILabelProvider's implementation in EditorList calls 
+    				// EditorPresentation.getLabelText which returns the name of dirty 
+    				// files begining with "* ", sorting should not take "* " in consideration
+    				if (name1.startsWith("* ")) //$NON-NLS-1$
+    					name1 = name1.substring(2);
+    				if (name2.startsWith("* ")) //$NON-NLS-1$
+    					name2 = name2.substring(2);
+    			} else {
+    				name1 = e1.toString();
+    				name2 = e2.toString();
+    			}
+    		}
+    		if (name1 == null)
+    			name1 = "";//$NON-NLS-1$
+    		if (name2 == null)
+    			name2 = "";//$NON-NLS-1$
+    		return collator.compare(name1, name2);
+    	}
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ViewerSorter#category(java.lang.Object)
+		 */
+		public int category(Object element) {
+			
+			CTabItem tabItem = (CTabItem) element;
+			if (tabItem.isShowing())
+				return 1; // visible
+			return 0; // not visible
+		}
+    }
     
     public EditorList(Shell parent, int shellStyle, int treeStyle) {
         super(parent, shellStyle, treeStyle);
@@ -99,7 +197,7 @@ public class EditorList extends AbstractTableInformationControl {
         TableViewer tableViewer = new TableViewer(table);
         tableViewer.addFilter(new NamePatternFilter());
         tableViewer.setContentProvider(new EditorListContentProvider());
-        tableViewer.setSorter(new ViewerSorter());
+        tableViewer.setSorter(new EditorListViewerSorter());
         tableViewer.setLabelProvider(new EditorListLabelProvider());
         return tableViewer;
     }

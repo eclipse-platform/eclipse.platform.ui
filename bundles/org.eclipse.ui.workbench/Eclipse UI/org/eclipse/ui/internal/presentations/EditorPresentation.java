@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.presentations;
 
 import java.util.Map;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
@@ -30,7 +31,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.AbstractHandler;
 import org.eclipse.ui.commands.ExecutionException;
@@ -135,7 +135,6 @@ public class EditorPresentation extends BasicStackPresentation {
         ColorSchemeService.setTabAttributes(this, tabFolder);
         updateGradient();
         final Shell shell = tabFolder.getShell();
-        IWorkbenchWindow workbenchWindow = null;
         IHandler openEditorDropDownHandler = new AbstractHandler() {
 
             public Object execute(Map parameterValuesByName) throws ExecutionException {
@@ -164,8 +163,7 @@ public class EditorPresentation extends BasicStackPresentation {
     }
 
     protected void initTab(CTabItem tabItem, IPresentablePart part) {
-        tabItem.setText(getLabelText(part, true,
-                (getTabFolder().getStyle() & SWT.MULTI) == 0));
+        tabItem.setText(getLabelText(part, (getTabFolder().getStyle() & SWT.MULTI) == 0));
         tabItem.setImage(getLabelImage(part));
         String toolTipText = part.getTitleToolTip();
         if (!toolTipText.equals(Util.ZERO_LENGTH_STRING)) {
@@ -173,7 +171,7 @@ public class EditorPresentation extends BasicStackPresentation {
         }
     }
 
-    String getLabelText(IPresentablePart presentablePart, boolean dirtyLeft,
+    String getLabelText(IPresentablePart presentablePart,
             boolean includePath) {
         String title = presentablePart.getTitle().trim();
         String text = title;
@@ -185,15 +183,11 @@ public class EditorPresentation extends BasicStackPresentation {
                     titleTooltip = titleTooltip.substring(0,
                             titleTooltip.lastIndexOf(title)).trim();
 
-            if (titleTooltip.endsWith("\\"))
-                    //$NON-NLS-1$
-                    //$NON-NLS-1$
+            if (titleTooltip.endsWith("\\")) //$NON-NLS-1$
                     titleTooltip = titleTooltip.substring(0,
                             titleTooltip.lastIndexOf("\\")).trim(); //$NON-NLS-1$
 
-            if (titleTooltip.endsWith("/"))
-                    //$NON-NLS-1$
-                    //$NON-NLS-1$
+            if (titleTooltip.endsWith("/")) //$NON-NLS-1$
                     titleTooltip = titleTooltip.substring(0,
                             titleTooltip.lastIndexOf("/")).trim(); //$NON-NLS-1$
 
@@ -201,10 +195,7 @@ public class EditorPresentation extends BasicStackPresentation {
         }
 
         if (presentablePart.isDirty()) {
-            if (dirtyLeft)
                 text = "* " + text; //$NON-NLS-1$
-            else
-                text = text + " *"; //$NON-NLS-1$
         }
 
         return text;
@@ -324,7 +315,7 @@ public class EditorPresentation extends BasicStackPresentation {
      * @see org.eclipse.ui.internal.presentations.BasicStackPresentation#getCurrentTitle()
      */
     protected String getCurrentTitle() {
-        return "";
+        return ""; //$NON-NLS-1$
     }
     
 	/* (non-Javadoc)
