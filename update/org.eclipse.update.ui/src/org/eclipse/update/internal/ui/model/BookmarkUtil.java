@@ -127,7 +127,19 @@ public class BookmarkUtil {
 		String sel = getAttribute(child, "selected");
 		if (sel!=null && sel.equals("true"))
 			selected = true;
-		return new SiteBookmark(name, url, webBookmark, selected);
+		SiteBookmark bookmark = new SiteBookmark(name, url, webBookmark, selected);
+		String ign = getAttribute(child, "ignored-categories");
+		if (ign!=null) {
+			StringTokenizer stok = new StringTokenizer(ign, ",");
+			ArrayList array=new ArrayList();
+			while (stok.hasMoreTokens()) {
+				String tok = stok.nextToken();
+				array.add(tok);
+			}
+			String [] ignArray = (String[])array.toArray(new String[array.size()]);
+			bookmark.setIgnoredCategories(ignArray);
+		}
+		return bookmark;
 	}
 
 	private static BookmarkFolder createFolder(Node child) {
@@ -192,7 +204,19 @@ public class BookmarkUtil {
 			String url = bookmark.getURL().toString();
 			String web = bookmark.isWebBookmark()?"true":"false";
 			String sel = bookmark.isSelected()?"true":"false";
-			writer.println(indent + "<site name=\"" + name + "\" url=\"" + url + "\" web=\"" + web + "\" selected=\"" + sel + "\"/>");
+			String [] ign = bookmark.getIgnoredCategories();
+			StringBuffer wign=null;
+			if (ign!=null) {
+				wign = new StringBuffer();
+				for (int i=0; i<ign.length; i++) {
+					if (i>0) wign.append(',');
+					wign.append(ign[i]);
+				}
+			}
+			writer.print(indent + "<site name=\"" + name + "\" url=\"" + url + "\" web=\"" + web + "\" selected=\"" + sel + "\"");
+			if (wign!=null)
+				writer.print(" ignored-categories=\""+wign.toString()+"\"");
+			writer.println("/>");
 		} else if (obj instanceof BookmarkFolder) {
 			BookmarkFolder folder = (BookmarkFolder) obj;
 			String name = folder.getName();

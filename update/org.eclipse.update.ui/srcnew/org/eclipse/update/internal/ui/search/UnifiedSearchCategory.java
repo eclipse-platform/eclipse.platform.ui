@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.model.ISiteAdapter;
+import org.eclipse.update.internal.ui.model.SiteBookmark;
 import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
 
 /**
@@ -22,32 +23,55 @@ import org.eclipse.update.ui.forms.internal.FormWidgetFactory;
  */
 public class UnifiedSearchCategory extends SearchCategory {
 	private UnifiedQuery query;
-	
+
 	class UnifiedQuery implements ISearchQuery {
 		public IFeature[] getMatchingFeatures(
+			ISiteAdapter adapter,
 			ISite site,
 			IProgressMonitor monitor) {
-			IFeatureReference [] refs = site.getFeatureReferences();
+			ISiteFeatureReference[] refs = site.getFeatureReferences();
+			HashSet ignores = new HashSet();
+			if (adapter instanceof SiteBookmark) {
+				SiteBookmark bookmark = (SiteBookmark) adapter;
+				String[] ignoredCategories = bookmark.getIgnoredCategories();
+				if (ignoredCategories != null) {
+					for (int i = 0; i < ignoredCategories.length; i++) {
+						ignores.add(ignoredCategories[i]);
+					}
+				}
+			}
 
 			monitor.beginTask("", refs.length);
 			ArrayList result = new ArrayList();
 
-			for (int i=0; i<refs.length; i++) {
-				IFeatureReference ref = refs[i];
+			for (int i = 0; i < refs.length; i++) {
+				ISiteFeatureReference ref = refs[i];
+				boolean skipFeature = false;
 				if (monitor.isCanceled())
 					break;
+				if (ignores.size() > 0) {
+					ICategory[] categories = ref.getCategories();
+
+					for (int j = 0; j < categories.length; j++) {
+						ICategory category = categories[j];
+						if (ignores.contains(category.getName())) {
+							skipFeature = true;
+							break;
+						}
+					}
+				}
 				try {
-					IFeature feature = ref.getFeature(null);
-					result.add(feature);
-					monitor.subTask(feature.getLabel());
-				}
-				catch (CoreException e) {
-				}
-				finally {
+					if (!skipFeature) {
+						IFeature feature = ref.getFeature(null);
+						result.add(feature);
+						monitor.subTask(feature.getLabel());
+					}
+				} catch (CoreException e) {
+				} finally {
 					monitor.worked(1);
 				}
 			}
-			return (IFeature[])result.toArray(new IFeature[result.size()]);
+			return (IFeature[]) result.toArray(new IFeature[result.size()]);
 		}
 
 		/* (non-Javadoc)
@@ -57,8 +81,8 @@ public class UnifiedSearchCategory extends SearchCategory {
 			return null;
 		}
 	}
-	
-	public UnifiedSearchCategory () {
+
+	public UnifiedSearchCategory() {
 		query = new UnifiedQuery();
 	}
 
@@ -66,7 +90,7 @@ public class UnifiedSearchCategory extends SearchCategory {
 	 * @see org.eclipse.update.internal.ui.search.ISearchCategory#getQueries()
 	 */
 	public ISearchQuery[] getQueries() {
-		return new ISearchQuery[] {query};
+		return new ISearchQuery[] { query };
 	}
 
 	/* (non-Javadoc)

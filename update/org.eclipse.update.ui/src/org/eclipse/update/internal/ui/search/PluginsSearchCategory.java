@@ -71,6 +71,7 @@ public class PluginsSearchCategory extends SearchCategory {
 			}
 
 			public IFeature[] getMatchingFeatures(
+				ISiteAdapter adapter,
 				ISite site,
 				IProgressMonitor monitor) {
 				ArrayList result = new ArrayList();

@@ -32,6 +32,7 @@ public class SiteBookmark extends NamedModelObject
 	private int type;
 	private boolean webBookmark;
 	private boolean selected;
+	private String [] ignoredCategories;
 
 	public SiteBookmark() {
 	}
@@ -53,6 +54,14 @@ public class SiteBookmark extends NamedModelObject
 	
 	public boolean isSelected() {
 		return selected;
+	}
+	
+	public String [] getIgnoredCategories() {
+		return ignoredCategories;
+	}
+	
+	public void setIgnoredCategories(String [] categories) {
+		this.ignoredCategories = categories;
 	}
 	
 	public void setType(int type) {
@@ -120,7 +129,7 @@ public class SiteBookmark extends NamedModelObject
 	
 	private void createCatalog(IProgressMonitor monitor) {
 		catalog = new Vector();
-		otherCategory = new SiteCategory(null, null);
+		otherCategory = new SiteCategory(this, null, null);
 		// Add all the categories
 		ICategory [] categories;
 		categories = site.getCategories();
@@ -165,7 +174,7 @@ public class SiteBookmark extends NamedModelObject
 		int loc = name.indexOf('/');
 		if (loc == -1) {
 			// first level
-			catalog.add(new SiteCategory(name, category));
+			catalog.add(new SiteCategory(this, name, category));
 		}
 		else {
 			IPath path = new Path(name);
@@ -173,7 +182,7 @@ public class SiteBookmark extends NamedModelObject
 			path = path.removeLastSegments(1);
 			SiteCategory parentCategory = findCategory(path, catalog.toArray());
 			if (parentCategory!=null) {
-				parentCategory.add(new SiteCategory(name, category));
+				parentCategory.add(new SiteCategory(this, name, category));
 			}
 		}
 	}

@@ -89,7 +89,7 @@ public class ExpressionSearchCategory extends SearchCategory {
 			public ISiteAdapter getSearchSite() {
 				return null;
 			}
-			public IFeature [] getMatchingFeatures(ISite site, IProgressMonitor monitor) {
+			public IFeature [] getMatchingFeatures(ISiteAdapter adapter, ISite site, IProgressMonitor monitor) {
 				ArrayList result = new ArrayList();
 				ArrayList candidates = getCandidates(site, monitor);
 				for (int i=0; i<candidates.size(); i++) {

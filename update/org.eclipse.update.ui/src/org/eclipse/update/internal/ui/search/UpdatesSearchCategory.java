@@ -266,6 +266,7 @@ public class UpdatesSearchCategory extends SearchCategory {
 			return false;
 		}
 		public IFeature[] getMatchingFeatures(
+			ISiteAdapter adapter,
 			ISite site,
 			IProgressMonitor monitor) {
 			ArrayList hits = new ArrayList();

@@ -366,7 +366,7 @@ public class SearchObject extends NamedModelObject {
 		monitor.getWrappedProgressMonitor().subTask(text);
 
 		IFeature[] matches =
-			query.getMatchingFeatures(site, new SubProgressMonitor(monitor, 9));
+			query.getMatchingFeatures(siteAdapter, site, new SubProgressMonitor(monitor, 9));
 
 		for (int i = 0; i < matches.length; i++) {
 			if (monitor.isCanceled())

@@ -29,6 +29,7 @@ public class SiteCategory extends UIModelObject {
 	private boolean touched;
 	private int featureCount;
 	private boolean canceled;
+	private SiteBookmark bookmark;
 
 	class OtherCategory implements ICategory {
 		IURLEntry entry;
@@ -62,7 +63,8 @@ public class SiteCategory extends UIModelObject {
 		}
 	}
 
-	public SiteCategory(String name, ICategory category) {
+	public SiteCategory(SiteBookmark bookmark, String name, ICategory category) {
+		this.bookmark = bookmark;
 		if (category == null) {
 			this.name = UpdateUI.getString(KEY_OTHER_LABEL);
 			this.category = new OtherCategory();
@@ -71,6 +73,10 @@ public class SiteCategory extends UIModelObject {
 			this.category = category;
 		}
 		children = new Vector();
+	}
+	
+	public SiteBookmark getBookmark() {
+		return bookmark;
 	}
 
 	public boolean isOtherCategory() {
