@@ -123,9 +123,13 @@ public class AntClasspathPage extends AntPage {
 	 * Allows the user to enter a folder as a classpath.
 	 */
 	private void addFolder(ExternalToolsContentProvider contentProvider, String message) {
+		String lastUsedPath= fDialogSettings.get(IExternalToolsUIConstants.DIALOGSTORE_LASTFOLDER);
+		if (lastUsedPath == null) {
+			lastUsedPath= ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
+		}
 		DirectoryDialog dialog = new DirectoryDialog(getShell());
 		dialog.setMessage(message);
-		
+		dialog.setFilterPath(lastUsedPath);
 		String result = dialog.open();
 		if (result != null) {
 			try {
@@ -134,6 +138,7 @@ public class AntClasspathPage extends AntPage {
 			} catch (MalformedURLException e) {
 			}
 		}
+		fDialogSettings.put(IExternalToolsUIConstants.DIALOGSTORE_LASTFOLDER, result);
 	}
 	
 	private void addJars(ExternalToolsContentProvider contentProvider) {
@@ -206,15 +211,20 @@ public class AntClasspathPage extends AntPage {
 	}
 	
 	private void browseAntHome() {
+		String lastUsedPath= fDialogSettings.get(IExternalToolsUIConstants.DIALOGSTORE_LASTANTHOME);
+		if (lastUsedPath == null) {
+			lastUsedPath= ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString();
+		}
 		DirectoryDialog dialog = new DirectoryDialog(getShell());
 		dialog.setMessage(AntPreferencesMessages.getString("AntClasspathPage.&Choose_a_folder_that_will_be_used_as_the_location_of_ANT_HOME_3")); //$NON-NLS-1$
-		
+		dialog.setFilterPath(lastUsedPath);
 		String path = dialog.open();
 		if (path == null) {
 			return;
 		}
 		
 		antHome.setText(path);
+		fDialogSettings.put(IExternalToolsUIConstants.DIALOGSTORE_LASTANTHOME, path);
 	}
 	
 	private void setAntHome(File rootDir) {

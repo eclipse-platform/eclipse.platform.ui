@@ -29,4 +29,6 @@ public interface IExternalToolsUIConstants {
 
 	public static final String DIALOGSTORE_LASTEXTJAR= IExternalToolConstants.PLUGIN_ID + ".lastextjar"; //$NON-NLS-1$
 	public static final String DIALOGSTORE_LASTEXTFILE= IExternalToolConstants.PLUGIN_ID + ".lastextfile"; //$NON-NLS-1$
+	public static final String DIALOGSTORE_LASTFOLDER= IExternalToolConstants.PLUGIN_ID + ".lastfolder"; //$NON-NLS-1$
+	public static final String DIALOGSTORE_LASTANTHOME= IExternalToolConstants.PLUGIN_ID + ".lastanthome"; //$NON-NLS-1$
 }
