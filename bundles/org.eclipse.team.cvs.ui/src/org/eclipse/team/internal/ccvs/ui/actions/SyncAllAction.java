@@ -22,9 +22,9 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.ui.AdaptableResourceList;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.ProjectSelectionDialog;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -73,7 +73,7 @@ public class SyncAllAction extends SyncAction implements IWorkbenchWindowActionD
 	protected IResource[] getResourcesToSync() {
 		IResource[] resources = getSharedProjects();
 		
-		ListSelectionDialog dialog = new ListSelectionDialog(getShell(), 
+		ProjectSelectionDialog dialog = new ProjectSelectionDialog	(getShell(), 
 			new AdaptableResourceList(resources), 
 			new WorkbenchContentProvider(), new WorkbenchLabelProvider(), 
 			Policy.bind("SyncAllAction.selectProjects"));

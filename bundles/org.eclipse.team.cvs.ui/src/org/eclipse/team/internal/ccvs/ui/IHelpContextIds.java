@@ -25,7 +25,8 @@ public interface IHelpContextIds {
 	public static final String USER_VALIDATION_DIALOG = PREFIX + "user_validation_dialog_context"; //$NON-NLS-1$
 	public static final String RELEASE_COMMENT_DIALOG = PREFIX + "release_comment_dialog_context"; //$NON-NLS-1$
 	public static final String BRANCH_DIALOG = PREFIX + "branch_dialog_context"; //$NON-NLS-1$
-
+	public static final String RESOURCE_SELECTION_DIALOG = PREFIX + "resource_selection_dialog_context"; //$NON-NLS-1$
+	
 	// Different uses of the TagSelectionDialog
 	public static final String REPLACE_TAG_SELECTION_DIALOG = PREFIX + "replace_tag_selection_dialog_context"; //$NON-NLS-1$
 	public static final String COMPARE_TAG_SELECTION_DIALOG = PREFIX + "compare_tag_selection_dialog_context"; //$NON-NLS-1$
