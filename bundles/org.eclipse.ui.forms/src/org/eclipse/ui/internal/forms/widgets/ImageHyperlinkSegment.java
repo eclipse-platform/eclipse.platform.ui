@@ -103,6 +103,6 @@ public class ImageHyperlinkSegment extends ImageSegment implements
 		return true;
 	}
 
-	public void setFocus(Hashtable resourceTable) {
+	public void setFocus(Hashtable resourceTable, boolean direction) {
 	}
 }

@@ -153,6 +153,7 @@ public final class FormText extends Canvas {
 	private Action copyShortcutAction;
 
 	private static final String INTERNAL_MENU = "__internal_menu__";
+	private static final String CONTROL_KEY = "__segment__";	
 
 	private class FormTextLayout extends Layout implements ILayoutExtension {
 		public FormTextLayout() {
@@ -396,6 +397,8 @@ public final class FormText extends Canvas {
 		makeActions();
 		ensureBoldFontPresent(getFont());
 		createMenu();
+		//we will handle traversal
+		setTabList(new Control[] {});
 	}
 
 	/**
@@ -592,7 +595,7 @@ public final class FormText extends Canvas {
 			model.parseTaggedText(text, expandURLs);
 		else
 			model.parseRegularText(text, expandURLs);
-		//hookControlSegmentFocus();
+		hookControlSegmentFocus();
 		layout();
 		redraw();
 	}
@@ -612,7 +615,7 @@ public final class FormText extends Canvas {
 		entered = null;
 		disposeResourceTable(false);
 		model.parseInputStream(is, expandURLs);
-		//hookControlSegmentFocus();
+		hookControlSegmentFocus();
 		layout();
 		redraw();
 	}
@@ -621,17 +624,23 @@ public final class FormText extends Canvas {
 		Paragraph [] paragraphs = model.getParagraphs();
 		if (paragraphs==null)
 			return;
-		final String key = "__segment__";
 		Listener listener = new Listener() {
 			public void handleEvent(Event e) {
-				//recapture focus
-				e.doit = false;
+				switch (e.detail) {
+				case SWT.TRAVERSE_PAGE_NEXT:
+				case SWT.TRAVERSE_PAGE_PREVIOUS:
+				case SWT.TRAVERSE_ARROW_NEXT:
+				case SWT.TRAVERSE_ARROW_PREVIOUS:
+					e.doit = false;
+					return;
+				}
 				Control c = (Control)e.widget;
-				ControlSegment segment = (ControlSegment)c.getData(key);
-				hasFocus = true;
-				setFocus();
-				model.select(segment);
-				advance(true);
+				ControlSegment segment = (ControlSegment)c.getData(CONTROL_KEY);			
+				if (e.detail == SWT.TRAVERSE_TAB_NEXT)
+					e.doit = advanceControl(c, segment, true);
+				else if (e.detail == SWT.TRAVERSE_TAB_PREVIOUS)
+					e.doit = advanceControl(c, segment, false);
+				e.detail = SWT.TRAVERSE_NONE;
 			}
 		};
 		for (int i = 0; i < paragraphs.length; i++) {
@@ -642,12 +651,62 @@ public final class FormText extends Canvas {
 					ControlSegment cs = (ControlSegment)segments[j];
 					Control c = cs.getControl(resourceTable);
 					if (c!=null) {
-						c.addListener(SWT.Deactivate, listener);
-						c.setData(key, cs);
+						if (c.getData(CONTROL_KEY)==null) {
+							// first time - hook
+							c.setData(CONTROL_KEY, cs);
+							attachTraverseListener(c, listener);
+						}
 					}
 				}
 			}
 		}
+	}
+	
+	private void attachTraverseListener(Control c, Listener listener) {
+		if (c instanceof Composite) {
+			Composite parent = (Composite)c;
+			Control [] children = parent.getChildren();
+			for (int i=0; i<children.length; i++) {
+				attachTraverseListener(children[i], listener);
+			}
+		}
+		else {
+			c.addListener(SWT.Traverse, listener);
+		}
+	}
+	
+	private boolean advanceControl(Control c, ControlSegment segment, boolean next) {
+		Composite parent = c.getParent();
+		if (parent==this) {
+			hasFocus = true;
+			setFocus();
+			model.select(segment);
+			return advance(next);
+		}
+		Control [] children = parent.getTabList();
+		for (int i=0; i<children.length; i++) {
+			Control child = children[i];
+			if (child==c) {
+				// here
+				if (next) {
+					for (int j=i+1; j<children.length;j++) {
+						Control nc = children[j];
+						if (nc.setFocus())
+							return false;
+					}
+				}
+				else {
+					for (int j=i-1; j>=0; j--) {
+						Control pc = children[j];
+						if (pc.setFocus())
+							return false;
+					}
+				}
+			}
+		}
+		// still here - must go one level up
+		segment = (ControlSegment)parent.getData(CONTROL_KEY);		
+		return advanceControl(parent, segment, next);
 	}
 
 	/**
@@ -683,15 +742,15 @@ public final class FormText extends Canvas {
 	}
 
 	/**
-	 * Sets the focus to the first hyperlink, or the widget itself if there are
-	 * no hyperlinks.
+	 * Sets the focus to the first segment capable of accepting focus, or the widget 
+	 * itself if there are no hyperlinks.
 	 * 
 	 * @return <samp>true </samp> if the control got focus, <samp>false </samp>
 	 *         otherwise.
 	 */
 	public boolean setFocus() {
-		return super.setFocus();
-		//return super.forceFocus();
+		//return super.setFocus();
+		return super.forceFocus();
 	}
 
 	public void setMenu(Menu menu) {
@@ -1128,7 +1187,7 @@ public final class FormText extends Canvas {
 		boolean valid = model.traverseFocusSelectableObjects(next);
 		IFocusSelectable newSegment = model.getSelectedSegment();
 		if (newSegment!=null)
-			newSegment.setFocus(resourceTable);
+			newSegment.setFocus(resourceTable, next);
 		IHyperlinkSegment newLink = newSegment instanceof IHyperlinkSegment?(IHyperlinkSegment)newSegment:null;
 		if (valid)
 			enterLink(newLink, SWT.NULL);

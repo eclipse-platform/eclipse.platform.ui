@@ -14,5 +14,5 @@ import java.util.Hashtable;
 
 public interface IFocusSelectable {
 	boolean isFocusSelectable(Hashtable resourceTable);
-	void setFocus(Hashtable resourceTable);
+	void setFocus(Hashtable resourceTable, boolean direction);
 }
