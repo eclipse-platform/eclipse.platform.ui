@@ -65,9 +65,9 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 public class AboutFeaturesDialog extends Dialog {
 
 	/**
-	 * Table height in dialog units (value 200).
+	 * Table height in dialog units (value 150).
 	 */
-	private static final int TABLE_HEIGHT = 200;
+	private static final int TABLE_HEIGHT = 150;
 	private static final int INFO_HEIGHT = 100;
 
 	private static final String PLUGININFO = "about.html";	//$NON-NLS-1$
@@ -394,7 +394,7 @@ public class AboutFeaturesDialog extends Dialog {
 		// Create new order of table items
 		for(int i = 0; i < items.length; i++) {
 			String provider = featuresInfo[i].getProviderName();
-			String featureName = featuresInfo[i].getProductName();
+			String featureName = featuresInfo[i].getFeatureLabel();
 			String version = featuresInfo[i].getVersion();
 			if (provider == null)
 				provider = "";

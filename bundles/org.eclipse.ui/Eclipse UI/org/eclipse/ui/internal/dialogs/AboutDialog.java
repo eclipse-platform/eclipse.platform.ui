@@ -259,7 +259,7 @@ protected Control createDialogArea(Composite parent) {
 			image = desc.createImage();
 			images.add(image);
 			button.setImage(image);
-			String name = infoArray[i].getProductName();
+			String name = infoArray[i].getFeatureLabel();
 			if (name == null)
 				name = "";
 			button.setToolTipText(name);
