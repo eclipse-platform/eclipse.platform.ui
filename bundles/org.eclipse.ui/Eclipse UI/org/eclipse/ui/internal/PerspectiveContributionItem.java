@@ -10,6 +10,7 @@ http://www.eclipse.org/legal/cpl-v05.html
 Contributors:
 **********************************************************************/
 import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -25,14 +26,12 @@ import org.eclipse.ui.IWorkbenchWindow;
  * a workbench window.
  */
 public class PerspectiveContributionItem extends ContributionItem {
-	private static final Image image = 
-		WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_PAGE).createImage();
-	private static final Image hotImage = 
-		WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_PAGE_HOVER).createImage();
+	private static final Image image = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_PAGE).createImage();
+	private static final Image hotImage = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_NEW_PAGE_HOVER).createImage();
 
 	private ToolItem widget = null;
 	private ToolBar parentWidget = null;
-	private IWorkbenchWindow window;
+	private MenuManager menuMgr = null;
 
 	/**
 	 * Creates a new contribution item from the given action.
@@ -40,7 +39,8 @@ public class PerspectiveContributionItem extends ContributionItem {
 	 */
 	public PerspectiveContributionItem(IWorkbenchWindow window) {
 		super();
-		this.window = window;
+		menuMgr = new MenuManager();
+		menuMgr.add(new ChangeToPerspectiveMenu(window));
 	}
 	
 	/* (non-Javadoc)
@@ -48,6 +48,7 @@ public class PerspectiveContributionItem extends ContributionItem {
 	 */
 	public void fill(ToolBar parent, int index) {
 		if (widget == null && parent != null) {
+			parentWidget = parent;
 			if (index >= 0)
 				widget = new ToolItem(parent, SWT.PUSH, index);
 			else
@@ -58,14 +59,10 @@ public class PerspectiveContributionItem extends ContributionItem {
 			widget.setData(this);
 			widget.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent event) {
-					Menu menu = new Menu(parentWidget);
-					ChangeToPerspectiveMenu menuDescription =
-						new ChangeToPerspectiveMenu(window);
-					menuDescription.fill(menu, 0);
-					popUpMenu(event, menu);
+					menuMgr.update(true);
+					popUpMenu(event, menuMgr.createContextMenu(parentWidget));
 				}
 			});
-			parentWidget = parent;
 		}
 	}
 	
