@@ -25,13 +25,6 @@ import org.eclipse.ui.externaltools.model.IExternalToolConstants;
 public class ResourceExpander implements IVariableLocationExpander, IVariableResourceExpander, IVariableTextExpander {
 
 	/**
-	 * Create an instance
-	 */
-	public ResourceExpander() {
-		super();
-	}
-
-	/**
 	 * Expands the variable to a resource.
 	 */
 	/*package*/ IResource expand(String varValue, ExpandVariableContext context) {
@@ -113,7 +106,7 @@ public class ResourceExpander implements IVariableLocationExpander, IVariableRes
 	public String getText(String varTag, String varValue, ExpandVariableContext context) {
 		IPath path= getPath(varTag, varValue, context);
 		if (path != null) {
-			return path.toString();
+			return path.toOSString();
 		}
 		return null;
 	}
