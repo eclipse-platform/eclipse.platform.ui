@@ -56,6 +56,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 
+import org.eclipse.core.commands.operations.IUndoContext;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.ILog;
@@ -107,6 +109,8 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.ITextViewerExtension6;
+import org.eclipse.jface.text.IUndoManager;
+import org.eclipse.jface.text.IUndoManagerExtension;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextEvent;
@@ -138,11 +142,15 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.internal.ActionDescriptor;
 import org.eclipse.ui.internal.EditorPluginAction;
 import org.eclipse.ui.internal.texteditor.EditPosition;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
+import org.eclipse.ui.operations.OperationHistoryActionHandler;
+import org.eclipse.ui.operations.RedoActionHandler;
+import org.eclipse.ui.operations.UndoActionHandler;
 import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.part.EditorPart;
 
@@ -1551,10 +1559,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		new IdMapEntry(ITextEditorActionDefinitionIds.TOGGLE_OVERWRITE, ST.TOGGLE_OVERWRITE)
 	};	
 	
-	private final String fReadOnlyLabel = EditorMessages.getString("Editor.statusline.state.readonly.label"); //$NON-NLS-1$
-	private final String fWritableLabel = EditorMessages.getString("Editor.statusline.state.writable.label"); //$NON-NLS-1$
-	private final String fInsertModeLabel = EditorMessages.getString("Editor.statusline.mode.insert.label"); //$NON-NLS-1$
-	private final String fOverwriteModeLabel = EditorMessages.getString("Editor.statusline.mode.overwrite.label"); //$NON-NLS-1$
+	private final String fReadOnlyLabel= EditorMessages.getString("Editor.statusline.state.readonly.label"); //$NON-NLS-1$
+	private final String fWritableLabel= EditorMessages.getString("Editor.statusline.state.writable.label"); //$NON-NLS-1$
+	private final String fInsertModeLabel= EditorMessages.getString("Editor.statusline.mode.insert.label"); //$NON-NLS-1$
+	private final String fOverwriteModeLabel= EditorMessages.getString("Editor.statusline.mode.overwrite.label"); //$NON-NLS-1$
 	private final String fSmartInsertModeLabel= EditorMessages.getString("Editor.statusline.mode.smartinsert.label"); //$NON-NLS-1$
 	
 	/** The error message shown in the status line in case of failed information look up. */
@@ -2371,7 +2379,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 		
 		if (listener != null) {
-			DropTarget dropTarget = new DropTarget(viewer.getTextWidget(), DND.DROP_COPY | DND.DROP_MOVE);
+			DropTarget dropTarget= new DropTarget(viewer.getTextWidget(), DND.DROP_COPY | DND.DROP_MOVE);
 			dropTarget.setTransfer(listener.getTransfers());
 			dropTarget.addDropListener(listener);
 		}
@@ -2458,7 +2466,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		/* gestures commented out until proper solution (i.e. preference page) can be found
 		 * for bug # 28417:
 		 * 
-		final Map gestureMap = new HashMap();
+		final Map gestureMap= new HashMap();
 		
 		gestureMap.put("E", "org.eclipse.ui.navigate.forwardHistory");
 		gestureMap.put("N", "org.eclipse.ui.file.save");
@@ -2470,19 +2478,19 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		gestureMap.put("ES", "org.eclipse.ui.edit.paste");
 		gestureMap.put("EW", "org.eclipse.ui.edit.cut");
 
-		Capture capture = Capture.create();
+		Capture capture= Capture.create();
 		capture.setControl(styledText);
 		
 		capture.addCaptureListener(new CaptureListener() { 
 			public void gesture(Gesture gesture) {
 				if (gesture.getPen() == 3) {
-					String actionId = (String) gestureMap.get(Util.recognize(gesture.getPoints(), 20));
+					String actionId= (String) gestureMap.get(Util.recognize(gesture.getPoints(), 20));
 		
 					if (actionId != null) {					
-						IKeyBindingService keyBindingService = getEditorSite().getKeyBindingService();
+						IKeyBindingService keyBindingService= getEditorSite().getKeyBindingService();
 
 						if (keyBindingService instanceof KeyBindingService) {
-							IAction action = ((KeyBindingService) keyBindingService).getAction(actionId);
+							IAction action= ((KeyBindingService) keyBindingService).getAction(actionId);
 							
 							if (action != null) {
 								if (action instanceof IUpdate)
@@ -2568,6 +2576,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		createNavigationActions();
 		createAccessibilityActions();
+		createUndoRedoActions();
 		createActions();
 		
 		initializeSourceViewer(getEditorInput());
@@ -3507,7 +3516,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		} catch (CoreException x) {
 			IStatus status= x.getStatus();
 			if (status == null || status.getSeverity() != IStatus.CANCEL) {
-				Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);			
+				Bundle bundle= Platform.getBundle(PlatformUI.PLUGIN_ID);			
 				ILog log= Platform.getLog(bundle);
 				log.log(x.getStatus());
 				
@@ -3590,7 +3599,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					updateStateDependentActions();
 				
 			} catch (CoreException x) {
-				Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);			
+				Bundle bundle= Platform.getBundle(PlatformUI.PLUGIN_ID);			
 				ILog log= Platform.getLog(bundle);
 				log.log(x.getStatus());
 			}
@@ -3883,7 +3892,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				element= (IConfigurationElement)actions.get(0);
 			
 			// FIXME: see https://bugs.eclipse.org/bugs/show_bug.cgi?id=82256
-			String defId = element.getAttribute(ActionDescriptor.ATT_DEFINITION_ID);
+			String defId= element.getAttribute(ActionDescriptor.ATT_DEFINITION_ID);
 			return new EditorPluginAction(element, this, defId, IAction.AS_UNSPECIFIED); //$NON-NLS-1$			
 		}
 		
@@ -4084,6 +4093,57 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/**
+	 * Creates this editor's undo/redo actions.
+	 * <p>
+	 * Subclasses may override or extend.</p>
+	 *
+	 * @since 3.1
+	 */
+	protected void createUndoRedoActions() {
+		IUndoContext undoContext= null;
+		if (fSourceViewer instanceof ITextViewerExtension6) {
+			IUndoManager undoManager= ((ITextViewerExtension6)fSourceViewer).getUndoManager();
+			if (undoManager instanceof IUndoManagerExtension)
+				undoContext= ((IUndoManagerExtension)undoManager).getUndoContext();
+		}
+		
+		if (undoContext != null) {
+			// Use actions provided by global undo/redo
+			
+			
+			if (undoContext != null) {
+				IActionBars actionBars= getEditorSite().getActionBars();
+				OperationHistoryActionHandler action;
+				
+				// Create the undo action
+				action= new UndoActionHandler(getEditorSite().getWorkbenchWindow(), undoContext);
+				PlatformUI.getWorkbench().getHelpSystem().setHelp(action, IAbstractTextEditorHelpContextIds.UNDO_ACTION);
+				actionBars.setGlobalActionHandler(ActionFactory.UNDO.getId(),
+						action);
+				setAction(ActionFactory.UNDO.getId(), action);
+				
+				// Create the redo action.
+				action= new RedoActionHandler(getEditorSite().getWorkbenchWindow(), undoContext);
+				PlatformUI.getWorkbench().getHelpSystem().setHelp(action, IAbstractTextEditorHelpContextIds.REDO_ACTION);
+				actionBars.setGlobalActionHandler(ActionFactory.REDO.getId(), action);
+				setAction(ActionFactory.REDO.getId(), action);
+			}
+		} else {
+			ResourceAction action;
+			
+			action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.Undo.", this, ITextOperationTarget.UNDO); //$NON-NLS-1$
+			action.setHelpContextId(IAbstractTextEditorHelpContextIds.UNDO_ACTION);
+			action.setActionDefinitionId(IWorkbenchActionDefinitionIds.UNDO);
+			setAction(ITextEditorActionConstants.UNDO, action);
+			
+			action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.Redo.", this, ITextOperationTarget.REDO); //$NON-NLS-1$
+			action.setHelpContextId(IAbstractTextEditorHelpContextIds.REDO_ACTION);
+			action.setActionDefinitionId(IWorkbenchActionDefinitionIds.REDO);
+			setAction(ITextEditorActionConstants.REDO, action);
+		}
+	}
+	
+	/**
 	 * Creates this editor's standard actions and connects them with the global
 	 * workbench actions.
 	 * <p>
@@ -4091,18 +4151,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	protected void createActions() {
 		
-		ResourceAction action;
-		
-		action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.Undo.", this, ITextOperationTarget.UNDO); //$NON-NLS-1$
-		action.setHelpContextId(IAbstractTextEditorHelpContextIds.UNDO_ACTION);
-		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.UNDO);
-		setAction(ITextEditorActionConstants.UNDO, action);
-		
-		action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.Redo.", this, ITextOperationTarget.REDO); //$NON-NLS-1$
-		action.setHelpContextId(IAbstractTextEditorHelpContextIds.REDO_ACTION);
-		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.REDO);
-		setAction(ITextEditorActionConstants.REDO, action);
-		
+        ResourceAction action;
+        				
 		action= new TextOperationAction(EditorMessages.getResourceBundle(), "Editor.Cut.", this, ITextOperationTarget.CUT); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.CUT_ACTION);
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.CUT);
@@ -4239,7 +4289,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.LINE_GOTO);
 		setAction(ITextEditorActionConstants.GOTO_LINE, action);
 		
-		action = new MoveLinesAction(EditorMessages.getResourceBundle(), "Editor.MoveLinesUp.", this, true, false); //$NON-NLS-1$
+		action= new MoveLinesAction(EditorMessages.getResourceBundle(), "Editor.MoveLinesUp.", this, true, false); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.MOVE_LINES_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.MOVE_LINES_UP);
 		setAction(ITextEditorActionConstants.MOVE_LINE_UP, action);
@@ -4279,12 +4329,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SMART_ENTER_INVERSE);
 		setAction(ITextEditorActionConstants.SMART_ENTER_INVERSE, action);
 		
-		action = new ToggleInsertModeAction(EditorMessages.getResourceBundle(), "Editor.ToggleInsertMode."); //$NON-NLS-1$
+		action= new ToggleInsertModeAction(EditorMessages.getResourceBundle(), "Editor.ToggleInsertMode."); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.TOGGLE_INSERT_MODE_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.TOGGLE_INSERT_MODE);
 		setAction(ITextEditorActionConstants.TOGGLE_INSERT_MODE, action);
 
-		action = new HippieCompleteAction(EditorMessages.getResourceBundle(), "Editor.HippieCompletion.", this); //$NON-NLS-1$
+		action= new HippieCompleteAction(EditorMessages.getResourceBundle(), "Editor.HippieCompletion.", this); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.HIPPIE_COMPLETION_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.HIPPIE_COMPLETION);
 		setAction(ITextEditorActionConstants.HIPPIE_COMPLETION, action);
@@ -4408,7 +4458,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		menu.add(new Separator(ITextEditorActionConstants.GROUP_REST));
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 
-		for (Iterator i = fRulerContextMenuListeners.iterator(); i.hasNext();)
+		for (Iterator i= fRulerContextMenuListeners.iterator(); i.hasNext();)
 			((IMenuListener) i.next()).menuAboutToShow(menu);					
 		
 		addAction(menu, ITextEditorActionConstants.RULER_MANAGE_BOOKMARKS);
@@ -4495,7 +4545,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		if (DeleteLineTarget.class.equals(required)){
 			if (fDeleteLineTarget == null) {
-				fDeleteLineTarget = new DeleteLineTarget(fSourceViewer);
+				fDeleteLineTarget= new DeleteLineTarget(fSourceViewer);
 			}
 			return fDeleteLineTarget;
 		}
@@ -4877,10 +4927,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		PaletteData caretPalette= new PaletteData(new RGB[] {new RGB (0,0,0), new RGB (255,255,255)});
 		int width= getCaretWidthPreference();
 		int widthOffset= width - 1;
-		ImageData imageData = new ImageData(4 + widthOffset, styledText.getLineHeight(), 1, caretPalette);
-		Display display = styledText.getDisplay();
+		ImageData imageData= new ImageData(4 + widthOffset, styledText.getLineHeight(), 1, caretPalette);
+		Display display= styledText.getDisplay();
 		Image bracketImage= new Image(display, imageData);
-		GC gc = new GC (bracketImage);
+		GC gc= new GC (bracketImage);
 		gc.setForeground(display.getSystemColor(SWT.COLOR_WHITE));
 		gc.setLineWidth(1);
 		int height= imageData.height / 3;
