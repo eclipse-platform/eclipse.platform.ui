@@ -70,7 +70,7 @@ public class AntTargetContentProvider implements IStructuredContentProvider {
 	 * @param index the index of the the target to remove
 	 */
 	public void removeTarget(int index) {
-		if (targets.size() > index && index > 0) {
+		if (targets.size() > index && index >= 0) {
 			targets.remove(index);
 		}
 	}
