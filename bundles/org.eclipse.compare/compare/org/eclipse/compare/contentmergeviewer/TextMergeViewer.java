@@ -160,9 +160,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private static final boolean USE_MORE_CONTROLS= true;
 	/** Selects between smartTokenDiff and mergingTokenDiff */
 	private static final boolean USE_MERGING_TOKEN_DIFF= false;
-	/** if DEAD_STEP is true navigation with the next/previous buttons needs an extra step 
-	when wrapping around the beginning or end */
-	private static final boolean DEAD_STEP= false;
 	/** When calculating differences show Progress after this timeout (in milliseconds) */
 	private static final int TIMEOUT= 2000;
 		
@@ -173,7 +170,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private int fMarginWidth= MARGIN_WIDTH;
 	private int fTopInset;
 	
-	// Colors to use
+	// Colors
 	
 	private boolean fUseSystemBackground;
 	
@@ -193,6 +190,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private RGB OUTGOING_FILL;
 	
 
+	private boolean fEndOfDocReached;
 	private IDocumentListener fDocumentListener;
 	
 	private IPreferenceStore fPreferenceStore;
@@ -2908,13 +2906,14 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				}		
 			}
 		
-			if (diff == null) {
+			if (diff == null) {	// at end or beginning
 				if (wrap) {
-					Control c= getControl();
-					if (Utilities.okToUse(c))
-						c.getDisplay().beep();
-					if (DEAD_STEP)
-						return true;
+					if (!fEndOfDocReached) {
+						fEndOfDocReached= true;
+						if (! endOfDocumentReached(down))
+							return true;
+					}
+					fEndOfDocReached= false;
 					if (fChangeDiffs != null && fChangeDiffs.size() > 0) {
 						if (down)
 							diff= (Diff) fChangeDiffs.get(0);
@@ -2935,8 +2934,28 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		}
 
 		return false;
-	}	
-		
+	}
+	
+	private boolean endOfDocumentReached(boolean down) {
+		Control c= getControl();
+		if (Utilities.okToUse(c)) {
+			
+			c.getDisplay().beep();
+			
+			String title;
+			String message;
+			if (down) {
+				title= CompareMessages.getString("TextMergeViewer.atEnd.title"); //$NON-NLS-1$
+				message= CompareMessages.getString("TextMergeViewer.atEnd.message"); //$NON-NLS-1$
+			} else {
+				title= CompareMessages.getString("TextMergeViewer.atBeginning.title"); //$NON-NLS-1$
+				message= CompareMessages.getString("TextMergeViewer.atBeginning.message"); //$NON-NLS-1$
+			}
+			return MessageDialog.openQuestion(c.getShell(), title, message);
+		}
+		return false;
+	}
+	
 	/**
 	 * Find the Diff that overlaps with the given TextPart's text range.
 	 * If the range doesn't overlap with any range <code>null</code>

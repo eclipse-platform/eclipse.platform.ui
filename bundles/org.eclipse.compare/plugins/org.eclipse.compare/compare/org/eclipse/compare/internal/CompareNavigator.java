@@ -11,6 +11,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.dialogs.MessageDialog;
 
 import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.compare.*;
@@ -60,6 +61,17 @@ public class CompareNavigator {
 				Display display= c.getDisplay();
 				if (display != null)
 					display.beep();
+
+				String title;
+				String message;
+				if (next) {
+					title= CompareMessages.getString("CompareNavigator.atEnd.title"); //$NON-NLS-1$
+					message= CompareMessages.getString("CompareNavigator.atEnd.message"); //$NON-NLS-1$
+				} else {
+					title= CompareMessages.getString("CompareNavigator.atBeginning.title"); //$NON-NLS-1$
+					message= CompareMessages.getString("CompareNavigator.atBeginning.message"); //$NON-NLS-1$
+				}
+				MessageDialog.openInformation(c.getShell(), title, message);
 			}
 		}
 	}
