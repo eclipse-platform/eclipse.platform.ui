@@ -9,7 +9,9 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.internal.registry.*;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.actions.SimpleWildcardTester;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.*;
+
 import java.util.*;
 
 /**
@@ -63,10 +65,23 @@ public boolean isEnabledForSelection(ISelection selection) {
 	// In reflection of this, we deal with one or a collection.
 	if (selection instanceof IStructuredSelection)
 		return isEnabledFor((IStructuredSelection)selection);
+	else if (selection instanceof ITextSelection)
+		return isEnabledFor((ITextSelection)selection);
 	else
 		return isEnabledFor(selection);
 }
-
+/**
+ * Compare selection count with requirements.
+ */
+private boolean verifySelectionCount(int count) {
+	if (count > 0 && mode == NONE) return false;
+	if (count == 0 && mode == ONE_OR_MORE) return false;
+	if (count > 1 && mode == NONE_OR_ONE) return false;
+	if (count < 2 && mode == MULTIPLE) return false;
+	if (mode > 0 && count != mode) return false;
+	return true;
+}
+	
 /**
  * Returns true if given structured selection matches the
  * conditions specified in the registry for
@@ -76,12 +91,8 @@ private boolean isEnabledFor(ISelection sel) {
 	Object obj = sel;
 	int count = sel.isEmpty() ? 0: 1;
 	
-	// Compare selection count with requirements.
-	if (count > 0 && mode == NONE) return false;
-	if (count == 0 && mode == ONE_OR_MORE) return false;
-	if (count > 1 && mode == NONE_OR_ONE) return false;
-	if (count < 2 && mode == MULTIPLE) return false;
-	if (mode > 0 && count != mode) return false;
+	if(verifySelectionCount(count) == false)
+		return false;
 
 	// Compare selection to enablement expression.
 	if (enablementExpression != null)
@@ -97,6 +108,23 @@ private boolean isEnabledFor(ISelection sel) {
 	
 	return true;
 }
+/**
+ * Returns true if given text selection matches the
+ * conditions specified in the registry for this action.
+ */
+private boolean isEnabledFor(ITextSelection sel) {
+	int count = sel.getLength();
+	
+	if(verifySelectionCount(count) == false)
+		return false;
+
+	// Compare selection to enablement expression.
+	if (enablementExpression != null)
+		return enablementExpression.isEnabledFor(sel);
+
+	// Compare selection to class requirements.
+	return verifyElement(sel);
+}
 
 /**
  * Returns true if given structured selection matches the
@@ -106,12 +134,8 @@ private boolean isEnabledFor(ISelection sel) {
 private boolean isEnabledFor(IStructuredSelection ssel) {
 	int count = ssel.size();
 	
-	// Compare selection count with requirements.
-	if (count > 0 && mode == NONE) return false;
-	if (count == 0 && mode == ONE_OR_MORE) return false;
-	if (count > 1 && mode == NONE_OR_ONE) return false;
-	if (count < 2 && mode == MULTIPLE) return false;
-	if (mode > 0 && count != mode) return false;
+	if(verifySelectionCount(count) == false)
+		return false;
 
 	// Compare selection to enablement expression.
 	if (enablementExpression != null)
@@ -190,7 +214,7 @@ private void parseClasses(IConfigurationElement config) {
  * then recursively all superclasses and their
  * interfaces.
  */
-private boolean verifyClass(IAdaptable element, String className) {
+private boolean verifyClass(Object element, String className) {
 	Class eclass = element.getClass();
 	String eclassName = eclass.getName();
 	Class clazz = eclass;
@@ -215,6 +239,20 @@ private boolean verifyClass(IAdaptable element, String className) {
 		clazz = clazz.getSuperclass();
 	}
 	return match;
+}
+/**
+ * Verifies if the given element matches one of the
+ * selection requirements. Element must at pass the 
+ * type test. Filters are ignored in case of 
+ * ITextSelection.
+ */
+private boolean verifyElement(ITextSelection element) {
+	for (int i = 0; i < classes.size(); i++) {
+		SelectionClass sc = (SelectionClass) classes.get(i);
+		if (verifyClass(element, sc.className))
+			return true;
+	}
+	return false;
 }
 /**
  * Verifies if the given element matches one of the
