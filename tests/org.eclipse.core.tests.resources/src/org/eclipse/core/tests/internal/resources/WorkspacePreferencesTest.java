@@ -219,8 +219,8 @@ public class WorkspacePreferencesTest extends EclipseWorkspaceTest {
 			// ensures preferences exported match the imported ones
 			assertEquals("5.1", modified, workspace.getDescription());
 		} finally {
-			ensureDoesNotExistInFileSystem(originalPreferencesFile.toFile());
-			ensureDoesNotExistInFileSystem(modifiedPreferencesFile.toFile());
+			ensureDoesNotExistInFileSystem(originalPreferencesFile.removeLastSegments(1).toFile());
+			ensureDoesNotExistInFileSystem(modifiedPreferencesFile.removeLastSegments(1).toFile());
 		}
 
 	}
