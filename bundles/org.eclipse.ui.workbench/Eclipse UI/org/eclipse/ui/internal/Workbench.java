@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,6 +32,17 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.DeviceData;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ExternalActionManager;
 import org.eclipse.jface.action.IAction;
@@ -49,15 +59,7 @@ import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.window.WindowManager;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.DeviceData;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
@@ -85,6 +87,10 @@ import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.contexts.ContextManagerEvent;
 import org.eclipse.ui.contexts.IContextManagerListener;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
+import org.eclipse.ui.intro.IIntroManager;
+import org.eclipse.ui.progress.IProgressService;
+import org.eclipse.ui.themes.IThemeManager;
+
 import org.eclipse.ui.internal.activities.ws.WorkbenchActivitySupport;
 import org.eclipse.ui.internal.commands.ws.CommandCallback;
 import org.eclipse.ui.internal.commands.ws.WorkbenchCommandSupport;
@@ -101,9 +107,6 @@ import org.eclipse.ui.internal.themes.FontDefinition;
 import org.eclipse.ui.internal.themes.ThemeElementHelper;
 import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
 import org.eclipse.ui.internal.util.PrefUtil;
-import org.eclipse.ui.intro.IIntroManager;
-import org.eclipse.ui.progress.IProgressService;
-import org.eclipse.ui.themes.IThemeManager;
 
 /**
  * The workbench class represents the top of the Eclipse user interface. Its
@@ -930,25 +933,27 @@ public final class Workbench implements IWorkbench {
 	 * @see SWT#RIGHT_TO_LEFT
 	 */
 	private int checkCommandLineLocale(String[] commandLineArgs) {
-		boolean abortCheck = false;
 		
-		//Do not process the last one as it will never have a parameter
-		for (int i = 0; i < commandLineArgs.length - 1; i++) {
-			if(commandLineArgs[i].equalsIgnoreCase(NL_COMMAND_LINE)){
-				abortCheck = true;
-				break;
-			}
-		}
-		
-		if(abortCheck)
-			return SWT.NONE;
-		
-		Locale locale = Locale.getDefault();
-		String lang = locale.getLanguage();
-
-		if ("iw".equals(lang) || "ar".equals(lang) || "fa".equals(lang) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			|| "ur".equals(lang)) //$NON-NLS-1$
-			return SWT.RIGHT_TO_LEFT;
+		//Disable the check until there is OSGI support for this
+//		boolean abortCheck = false;
+//		
+//		//Do not process the last one as it will never have a parameter
+//		for (int i = 0; i < commandLineArgs.length - 1; i++) {
+//			if(commandLineArgs[i].equalsIgnoreCase(NL_COMMAND_LINE)){
+//				abortCheck = true;
+//				break;
+//			}
+//		}
+//		
+//		if(abortCheck)
+//			return SWT.NONE;
+//		
+//		Locale locale = Locale.getDefault();
+//		String lang = locale.getLanguage();
+//
+//		if ("iw".equals(lang) || "ar".equals(lang) || "fa".equals(lang) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+//			|| "ur".equals(lang)) //$NON-NLS-1$
+//			return SWT.RIGHT_TO_LEFT;
 			
 		return SWT.NONE;
 	}
