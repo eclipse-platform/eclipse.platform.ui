@@ -1588,7 +1588,10 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 					if (inputSame) {
 						Perspective persp = page.getActivePerspective();
 						if (perspectiveId.equals(persp.getDesc().getId())) {
-							win.getShell().open();
+							Shell shell = win.getShell();
+							shell.open();
+							if(shell.getMinimized())
+								shell.setMinimized(false);
 							return page;
 						}
 					}
