@@ -207,16 +207,17 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 			IResourceDelta root = event.getDelta();
 			IResourceDelta[] projectDeltas = root.getAffectedChildren();
 			for (int i = 0; i < projectDeltas.length; i++) {							
-				IResourceDelta delta = projectDeltas[i];
+				final IResourceDelta delta = projectDeltas[i];
 				IResource resource = delta.getResource();
 				RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId());	
 
 				// Make sure that the project is a CVS folder.
+				ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor(resource.getProject());
 				if (provider != null) {
-					ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor(resource.getProject());
 					try {
 						if (! folder.isCVSFolder()) {
 							RepositoryProvider.unmap(resource.getProject());
+							provider = null;
 						}
 					} catch (TeamException e) {
 						CVSProviderPlugin.log(e.getStatus());
@@ -231,10 +232,19 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 				}
 				
 				if(provider!=null) {
-					delta.accept(this);
+					// Traverse the delta is a runnable so that files are only written at the end
+					folder.run(new ICVSRunnable() {
+						public void run(IProgressMonitor monitor) throws CVSException {
+							try {
+								delta.accept(AddDeleteMoveListener.this);
+							} catch (CoreException e) {
+								Util.logError(Policy.bind("ResourceDeltaVisitor.visitError"), e);//$NON-NLS-1$
+							}
+						}
+					}, Policy.monitorFor(null));
 				}
 			}
-		} catch (CoreException e) {
+		} catch (CVSException e) {
 			Util.logError(Policy.bind("ResourceDeltaVisitor.visitError"), e);//$NON-NLS-1$
 		}
 	}
