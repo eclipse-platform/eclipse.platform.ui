@@ -70,10 +70,10 @@ public class CompositeChange extends Change {
 	}
 			
 	private CompositeChange(String name, List changes) {
-		Assert.isNotNull(changes);
 		Assert.isNotNull(name);
-		fChanges= changes;
+		Assert.isNotNull(changes);
 		fName= name;
+		fChanges= changes;
 	}
 	
 	/**
@@ -160,18 +160,26 @@ public class CompositeChange extends Change {
 	}
 	
 	/**
+	 * Removes all changes from this composite change.
+	 * 
+	 * @return the list of changes removed from this composite
+	 * change
+	 * 
+	 * @since 3.1
+	 */
+	public Change[] clear() {
+		Change[] result= (Change[])fChanges.toArray(new Change[fChanges.size()]);
+		fChanges.clear();
+		return result;
+	}
+	
+	/**
 	 * Returns the children managed by this composite change. 
 	 * 
 	 * @return the children of this change or an empty array if no
 	 *  children exist
 	 */
 	public Change[] getChildren() {
-		// This is false code. There is only one write access to fChanges in this
-		// code and this is in the private constructor CompositeChange(String name, List changes).
-		// And this one ensures that fChanges is not null. Code should be removed 
-		// after 3.0.
-		if (fChanges == null)
-			return null;
 		return (Change[])fChanges.toArray(new Change[fChanges.size()]);
 	}
 	
