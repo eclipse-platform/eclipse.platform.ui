@@ -25,6 +25,7 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 	protected IProcess fProcess;
 	private IStreamsProxy fProxy;
 	private int fLastStreamWriteEnd= 0;
+	private int fLastWritePosition= 0;
 	private int fNewStreamWriteEnd= 0;
 	protected boolean fNeedsToStartReading= true;
 	
@@ -86,7 +87,8 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 			if (lineDelimiters[i].equals(eventText)) {
 				try {
 					String inText= event.getDocument().get();
-					inText= inText.substring(fNewStreamWriteEnd, inText.length());
+					fLastWritePosition = fLastStreamWriteEnd;
+					inText= inText.substring(fLastWritePosition, inText.length());
 					if (inText.length() == 0) {
 						return;
 					}

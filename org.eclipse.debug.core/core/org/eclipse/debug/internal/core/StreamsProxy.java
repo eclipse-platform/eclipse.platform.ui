@@ -8,7 +8,6 @@ package org.eclipse.debug.internal.core;
 import org.eclipse.debug.core.model.IStreamMonitor;
 import org.eclipse.debug.core.model.IStreamsProxy;
 import java.io.IOException;
-import java.io.OutputStream;
 
 /**
  * @see IStreamsProxy
@@ -23,9 +22,9 @@ public class StreamsProxy implements IStreamsProxy {
 	 */
 	protected InputStreamMonitor fErrorMonitor;
 	/**
-	 * The <code>OutputStream</code> of the <code>IProcess</code>.
+	 * The monitor for the output stream (connected to standard in of the process).
 	 */
-	protected OutputStream fOutputStream;
+	protected OutputStreamMonitor fOutputMonitor;
 	/**
 	 * Records the open/closed state of communications with
 	 * the underlying streams.
@@ -39,9 +38,10 @@ public class StreamsProxy implements IStreamsProxy {
 		if (process != null) {
 			fInputMonitor= new InputStreamMonitor(process.getInputStream());
 			fErrorMonitor= new InputStreamMonitor(process.getErrorStream());
-			fOutputStream= process.getOutputStream();
+			fOutputMonitor= new OutputStreamMonitor(process.getOutputStream());
 			fInputMonitor.startMonitoring();
 			fErrorMonitor.startMonitoring();
+			fOutputMonitor.startMonitoring();
 		}
 	}
 
@@ -54,6 +54,7 @@ public class StreamsProxy implements IStreamsProxy {
 		fClosed= true;
 		fInputMonitor.close();
 		fErrorMonitor.close();
+		fOutputMonitor.close();
 	}
 
 	/**
@@ -74,9 +75,8 @@ public class StreamsProxy implements IStreamsProxy {
 	 * @see IStreamsProxy
 	 */
 	public void write(String input) throws IOException {
-		if (!fClosed && fOutputStream != null) {
-			fOutputStream.write(input.getBytes());
-			fOutputStream.flush();
+		if (!fClosed) {
+			fOutputMonitor.write(input);
 		} else {
 			throw new IOException();
 		}
