@@ -64,7 +64,9 @@ public class MarkerHighlighter extends Highlighter {
 			// need to clone position, can't have it twice in a document.
 			position= new Position(position.getOffset(), position.getLength());
 		}
-		IMarker marker= fFile.createMarker(NewSearchUI.SEARCH_MARKER);
+		IMarker marker= match.isFiltered() 
+			? fFile.createMarker(SearchPlugin.FILTERED_SEARCH_MARKER)
+			: fFile.createMarker(NewSearchUI.SEARCH_MARKER);
 		HashMap attributes= new HashMap(4);
 		if (match.getBaseUnit() == Match.UNIT_CHARACTER) {
 			attributes.put(IMarker.CHAR_START, new Integer(position.getOffset()));
@@ -93,6 +95,7 @@ public class MarkerHighlighter extends Highlighter {
 	public  void removeAll() {
 		try {
 			fFile.deleteMarkers(NewSearchUI.SEARCH_MARKER, true, IResource.DEPTH_INFINITE);
+			fFile.deleteMarkers(SearchPlugin.FILTERED_SEARCH_MARKER, true, IResource.DEPTH_INFINITE);
 			fMatchesToAnnotations.clear();
 		} catch (CoreException e) {
 			// just log the thing. There's nothing we can do anyway.
@@ -108,5 +111,4 @@ public class MarkerHighlighter extends Highlighter {
 		removeAll();
 		addHighlights(matches);
 	}
-
 }

@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.search2.internal.ui.text;
 
 import java.util.Collections;
@@ -60,7 +59,9 @@ public class EditorAccessHighlighter extends Highlighter {
 					if (position != null) {
 						Map map= getMap(mapsByAnnotationModel, matches[i]);
 						if (map != null) {
-							Annotation annotation= new Annotation(fAnnotationTypeLookup.getAnnotationType(NewSearchUI.SEARCH_MARKER, IMarker.SEVERITY_INFO), true, null);
+							Annotation annotation= matches[i].isFiltered() 
+								? new Annotation(fAnnotationTypeLookup.getAnnotationType(SearchPlugin.FILTERED_SEARCH_MARKER, IMarker.SEVERITY_INFO), true, null)
+								: new Annotation(fAnnotationTypeLookup.getAnnotationType(NewSearchUI.SEARCH_MARKER, IMarker.SEVERITY_INFO), true, null);
 							fMatchesToAnnotations.put(matches[i], annotation);
 							map.put(annotation, position);
 						}
@@ -198,5 +199,4 @@ public class EditorAccessHighlighter extends Highlighter {
 			addHighlights(matches);			
 		}
 	}
-
 }

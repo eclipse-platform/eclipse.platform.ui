@@ -62,6 +62,13 @@ public class SearchPlugin extends AbstractUIPlugin {
 	public static final String SEARCH_PAGE_EXTENSION_POINT= "searchPages"; //$NON-NLS-1$
 	public static final String SORTER_EXTENSION_POINT= "searchResultSorters"; //$NON-NLS-1$
 
+	/** 
+	 * Filtered search marker type (value <code>"org.eclipse.search.filteredsearchmarker"</code>).
+	 *
+	 * @see org.eclipse.core.resources.IMarker
+	 */ 
+	public static final String FILTERED_SEARCH_MARKER=  NewSearchUI.PLUGIN_ID + ".filteredsearchmarker"; //$NON-NLS-1$
+
 	/** Status code describing an internal error */
 	public static final int INTERNAL_ERROR= 1;
 	

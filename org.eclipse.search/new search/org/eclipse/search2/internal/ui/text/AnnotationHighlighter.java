@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.search2.internal.ui.text;
 
 import java.util.Collection;
@@ -62,7 +61,9 @@ public class AnnotationHighlighter extends Highlighter {
 			if (offset >= 0 && length >= 0) {
 				Position position= createPosition(matches[i]);
 				if (position != null) {
-					Annotation annotation= new Annotation(fAnnotationTypeLookup.getAnnotationType(NewSearchUI.SEARCH_MARKER, IMarker.SEVERITY_INFO), true, null);
+					Annotation annotation= matches[i].isFiltered() 
+						? new Annotation(fAnnotationTypeLookup.getAnnotationType(SearchPlugin.FILTERED_SEARCH_MARKER, IMarker.SEVERITY_INFO), true, null)
+						: new Annotation(fAnnotationTypeLookup.getAnnotationType(NewSearchUI.SEARCH_MARKER, IMarker.SEVERITY_INFO), true, null);
 					fMatchesToAnnotations.put(matches[i], annotation);
 					map.put(annotation, position);
 				}
@@ -124,6 +125,7 @@ public class AnnotationHighlighter extends Highlighter {
 			}
 		}
 	}
+	
 	/**
 	 * Removes annotations from the given annotation model. The default implementation works for editors that
 	 * implement <code>ITextEditor</code>.
@@ -144,8 +146,6 @@ public class AnnotationHighlighter extends Highlighter {
 		}
 	}
 
-
-
 	protected void handleContentReplaced(IFileBuffer buffer) {
 		if (!(buffer instanceof ITextFileBuffer))
 			return;
@@ -158,5 +158,4 @@ public class AnnotationHighlighter extends Highlighter {
 			addHighlights(matchesCopy);
 		}
 	}
-
 }

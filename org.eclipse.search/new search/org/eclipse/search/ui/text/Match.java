@@ -22,21 +22,25 @@ import org.eclipse.jface.util.Assert;
  * @since 3.0
  */
 public class Match {
+	
 	/**
 	 * A constant expressing that offset and length of this match are specified
 	 * in lines
 	 */
 	public static final int UNIT_LINE= 1;
+	
 	/**
 	 * A constant expressing that offset and length of this match are specified
 	 * in characters
 	 */
 	public static final int UNIT_CHARACTER= 2;
 
+	private static final int IS_FILTERED= 1 << 2;
+	
 	private Object fElement;
 	private int fOffset;
 	private int fLength;
-	private int fUnit;
+	private int fFlags;
 
 	/**
 	 * Constructs a new Match object.
@@ -55,7 +59,7 @@ public class Match {
 		fElement= element;
 		fOffset= offset;
 		fLength= length;
-		fUnit= unit;
+		fFlags= unit;
 	}
 
 	/**
@@ -127,7 +131,36 @@ public class Match {
 	 * @return either UNIT_LINE or UNIT_CHARACTER;
 	 */
 	public int getBaseUnit() {
-		return fUnit;
+		if ((fFlags & UNIT_LINE) != 0)
+			return UNIT_LINE;
+		return UNIT_CHARACTER;
 	}
-
+	
+	/**
+	 * Marks this match as filtered or not.
+	 * 
+	 * @param value <code>true</code> if the match is filtered;
+	 *  otherwise <code>false</code>
+	 *  
+	 *  @since 3.1
+	 */
+	public void setFiltered(boolean value) {
+		if (value) {
+			fFlags |= IS_FILTERED;
+		} else {
+			fFlags &= (~IS_FILTERED);
+		}
+	}
+	
+	/**
+	 * Returns whether this match is filtered or not.
+	 * 
+	 * @return <code>true<code> if the match is filtered;
+	 *  otherwise <code>false</code>
+	 *  
+	 * @since 3.1
+	 */
+	public boolean isFiltered() {
+		return (fFlags & IS_FILTERED) != 0;
+	}
 }

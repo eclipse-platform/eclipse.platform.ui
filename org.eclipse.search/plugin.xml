@@ -60,6 +60,28 @@
 		</imageprovider>
 	</extension>
 	
+	<extension point="org.eclipse.core.resources.markers" id="filteredsearchmarker" name="%filteredSearchMarker">
+		<super type="org.eclipse.core.resources.textmarker"/>
+		<attribute name="line"/>
+		<attribute name="potentialMatch"/>
+	</extension>
+	
+	<extension point="org.eclipse.ui.editors.annotationTypes">
+      <type
+        name="org.eclipse.search.filteredResults"
+		markerType="org.eclipse.search.filteredsearchmarker">
+      </type>
+	</extension>
+	
+	<extension 
+		point="org.eclipse.ui.ide.markerImageProviders">
+		<imageprovider 
+			id="org.eclipse.ui.filteredSearchMarkerProvider"
+			markertype="org.eclipse.search.filteredSearchmarker"
+			icon="icons/full/obj16/searchm_obj.gif">
+		</imageprovider>
+	</extension>
+	
 	<!-- commands and their bindings -->   
 	<extension point="org.eclipse.ui.commands">
 		<category
@@ -245,6 +267,28 @@
 	            isGoToNextNavigationTargetKey="isSearchResultGoToNextNavigationTarget"
 	            isGoToNextNavigationTarget="false"
 	            isGoToPreviousNavigationTargetKey="isSearchResultGoToPreviousNavigationTarget"
+	            isGoToPreviousNavigationTarget="false">
+	     </specification>
+	     <specification
+	      		annotationType="org.eclipse.search.filteredResults"
+	            label="%FilteredSearchMarkerPreference.label"
+	            icon="icons/full/obj16/searchm_obj.gif"
+	            textPreferenceKey="filteredSearchResultIndication"
+	            textPreferenceValue="false"
+	            highlightPreferenceKey="filteredSearchResultHighlighting"
+	            highlightPreferenceValue="false"
+	            overviewRulerPreferenceKey="filteredSearchResultIndicationInOverviewRuler"
+	            overviewRulerPreferenceValue="false"
+	            verticalRulerPreferenceKey="filteredSearchResultIndicationInVerticalRuler"
+	            verticalRulerPreferenceValue="false"
+	            colorPreferenceKey="filteredSearchResultIndicationColor"
+	            colorPreferenceValue="237,237,252"
+	            presentationLayer="3"
+	            showInNextPrevDropdownToolbarActionKey="showFilteredSearchResultInNextPrevDropdownToolbarAction"
+	            showInNextPrevDropdownToolbarAction="false"
+	            isGoToNextNavigationTargetKey="isFilteredSearchResultGoToNextNavigationTarget"
+	            isGoToNextNavigationTarget="false"
+	            isGoToPreviousNavigationTargetKey="isFilteredSearchResultGoToPreviousNavigationTarget"
 	            isGoToPreviousNavigationTarget="false">
 	     </specification>
 	</extension>
