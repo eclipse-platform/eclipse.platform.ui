@@ -196,7 +196,15 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 		 */
 		public ISelection getSelection() {
 			// get the selection provider from the current page
-			ISelectionProvider selProvider = getPageSite(getCurrentPage()).getSelectionProvider();
+			IPage currentPage = getCurrentPage();
+			// during workbench startup we may be in a state when
+			// there is no current page
+			if (currentPage == null) 
+				return StructuredSelection.EMPTY;
+			IPageSite site = getPageSite(currentPage);
+			if (site == null)
+				return	StructuredSelection.EMPTY;
+			ISelectionProvider selProvider = site.getSelectionProvider();
 			if (selProvider != null) 
 				return selProvider.getSelection();
 			else
@@ -223,7 +231,15 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 		 */
 		public void setSelection(ISelection selection) {
 			// get the selection provider from the current page
-			ISelectionProvider selProvider = getPageSite(getCurrentPage()).getSelectionProvider();
+			IPage currentPage = getCurrentPage();
+			// during workbench startup we may be in a state when
+			// there is no current page
+			if (currentPage == null) 
+				return;
+			IPageSite site = getPageSite(currentPage);
+			if (site == null)
+				return;
+			ISelectionProvider selProvider = site.getSelectionProvider();
 			// and set its selection
 			if (selProvider != null) 
 				selProvider.setSelection(selection);
