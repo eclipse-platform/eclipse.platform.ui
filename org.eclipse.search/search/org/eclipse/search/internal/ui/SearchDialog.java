@@ -173,7 +173,10 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 			}
 			public Image getImage(Object element) {
 				if (element instanceof SearchPageDescriptor) {
-					Image image= ((SearchPageDescriptor)element).getImage().createImage();
+					ImageDescriptor imageDesc= ((SearchPageDescriptor)element).getImage();
+					if (imageDesc == null)
+						return null;
+					Image image= imageDesc.createImage();
 					if (image != null)
 						createdImages.add(image);
 					return image;
