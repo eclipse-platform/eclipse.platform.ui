@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2002 IBM Corporation and others.
- * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
- * IBM - Initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
 
 import java.text.DateFormat;
@@ -113,7 +113,8 @@ public class HistoryTableProvider {
 	}
 
 	/**
-	 * The history sorter	 */
+	 * The history sorter
+	 */
 	class HistorySorter extends ViewerSorter {
 		private boolean reversed = false;
 		private int columnNumber;
@@ -221,7 +222,10 @@ public class HistoryTableProvider {
 	/**
 	 * Create a TableViewer that can be used to display a list of ILogEntry instances.
 	 * Ths method provides the labels and sorter but does not provide a content provider
-	 * 	 * @param parent	 * @return TableViewer	 */
+	 * 
+	 * @param parent
+	 * @return TableViewer
+	 */
 	public TableViewer createTable(Composite parent) {
 		Table table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION);
 		table.setHeaderVisible(true);

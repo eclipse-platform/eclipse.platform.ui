@@ -1,9 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.connection;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -927,7 +933,9 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 
 	/**
 	 * Return the name of the cvs program on the remote server. 
-	 * The default is "cvs" but it can be tailored for some servers	 * @return String	 */
+	 * The default is "cvs" but it can be tailored for some servers
+	 * @return String
+	 */
 	public String getRemoteCVSProgramName() {
 		return remoteCVSProgramName;
 	}

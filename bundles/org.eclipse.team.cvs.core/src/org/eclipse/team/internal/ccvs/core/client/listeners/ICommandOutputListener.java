@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2002 IBM Corporation and others.
- * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
- * IBM - Initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.client.listeners;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -19,7 +19,8 @@ import org.eclipse.team.internal.ccvs.core.Policy;
 
 /**
  * Instances of this interface can be passed to the <code>Command#execute</code> methods
- * and will receive notification when M or E messages are received from the server. */
+ * and will receive notification when M or E messages are received from the server.
+ */
 public interface ICommandOutputListener {
 	
 	/*** Status to be returned when no error or warning occured ***/

@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2002 IBM Corporation and others.
- * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
- * IBM - Initial implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.repo;
 
 import java.io.IOException;
@@ -193,7 +193,10 @@ public class RepositoryRoot extends PlatformObject {
 	}
 	
 	/**
-	 * Remove the given tags from the receiver	 * @param remotePath	 * @param tags	 */
+	 * Remove the given tags from the receiver
+	 * @param remotePath
+	 * @param tags
+	 */
 	public void removeTags(String remotePath, CVSTag[] tags) {	
 		// Get the name to cache the version tags with
 		String name = getCachePathFor(remotePath);
@@ -324,7 +327,10 @@ public class RepositoryRoot extends PlatformObject {
 	
 	/**
 	 * Write out the state of the receiver as XML on the given XMLWriter.
-	 * 	 * @param writer	 * @throws IOException	 */
+	 * 
+	 * @param writer
+	 * @throws IOException
+	 */
 	public void writeState(XMLWriter writer) throws IOException {
 
 		HashMap attributes = new HashMap();

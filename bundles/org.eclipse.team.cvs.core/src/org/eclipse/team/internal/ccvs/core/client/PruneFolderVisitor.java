@@ -1,9 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.client;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -78,7 +84,8 @@ class PruneFolderVisitor implements ICVSResourceVisitor {
 	}
 	
 	/**
-	 * Attemp to prunt the given folder. If the folder is pruned, attempt to prune it's parent.	 */
+	 * Attemp to prunt the given folder. If the folder is pruned, attempt to prune it's parent.
+	 */
 	private void pruneFolderAndParentsIfAppropriate(ICVSFolder folder) throws CVSException {
 		pruneFolderIfAppropriate(folder);
 		if (!folder.exists()) {

@@ -1,13 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2002 IBM Corporation and others.
- * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
- * IBM - Initial API and implementation
- ******************************************************************************/
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 
 package org.eclipse.team.internal.ccvs.ui;
 
@@ -384,8 +384,12 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 	public static final int LOG_NONTEAM_EXCEPTIONS = LOG_CORE_EXCEPTIONS | LOG_OTHER_EXCEPTIONS;
 	
 	/**
-	 * Convenience method for showing an error dialog 	 * @param shell a valid shell or null	 * @param exception the exception to be report	 * @param title the title to be displayed
-	 * @return IStatus the status that was displayed to the user	 */
+	 * Convenience method for showing an error dialog 
+	 * @param shell a valid shell or null
+	 * @param exception the exception to be report
+	 * @param title the title to be displayed
+	 * @return IStatus the status that was displayed to the user
+	 */
 	public static IStatus openError(Shell shell, String title, String message, Throwable exception) {
 		return openError(shell, title, message, exception, LOG_OTHER_EXCEPTIONS);
 	}
