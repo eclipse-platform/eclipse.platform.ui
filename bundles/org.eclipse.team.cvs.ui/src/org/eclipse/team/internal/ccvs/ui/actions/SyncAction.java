@@ -31,7 +31,7 @@ public class SyncAction extends WorkspaceAction {
 		
 		WorkspaceSynchronizeParticipant participant = CVSUIPlugin.getPlugin().getCvsWorkspaceSynchronizeParticipant();
 		if(participant != null) {
-				participant.refresh(resources, Policy.bind("Participant.synchronizing"), getTargetPart().getSite()); //$NON-NLS-1$
+				participant.refresh(resources, Policy.bind("Participant.synchronizing"), Policy.bind("Participant.synchronizingDetail", participant.getName()), getTargetPart().getSite()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	

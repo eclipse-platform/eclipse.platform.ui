@@ -18,6 +18,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.PlatformUI;
 
@@ -38,8 +39,8 @@ public class CompareWithRemoteAction extends WorkspaceAction {
 				ISynchronizePageConfiguration.NAVIGATE_GROUP, 
 				ISynchronizePageConfiguration.MODE_GROUP, 
 				ISynchronizePageConfiguration.LAYOUT_GROUP });
-		configuration.setWorkingSet(PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSet("", resources));
-		participant.refreshInDialog(getShell(), resources, Policy.bind("Participant.comparing"), configuration, null); //$NON-NLS-1$
+		configuration.setWorkingSet(PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSet("", resources)); //$NON-NLS-1$
+		participant.refreshInDialog(getShell(), resources, Policy.bind("Participant.comparing"), Policy.bind("Participant.comparingDetail", participant.getName(), Utils.stripAmpersand(calculateActionTagValue())), configuration, null); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/*

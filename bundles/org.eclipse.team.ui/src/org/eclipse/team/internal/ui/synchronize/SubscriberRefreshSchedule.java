@@ -112,7 +112,7 @@ public class SubscriberRefreshSchedule {
 		}
 		if(job == null) {
 			SubscriberParticipant participant = getParticipant();
-			job = new RefreshSubscriberJob(participant, Policy.bind("RefreshSchedule.14", participant.getName(), getRefreshIntervalAsString()), participant.getResources(), new RefreshUserNotificationPolicy(getParticipant())); //$NON-NLS-1$
+			job = new RefreshSubscriberJob(participant, Policy.bind("RefreshSchedule.14"), Policy.bind("RefreshSchedule.15", participant.getName(), getRefreshIntervalAsString()), participant.getResources(), new RefreshUserNotificationPolicy(getParticipant())); //$NON-NLS-1$
 			job.setUser(false);
 		} else if(job.getState() != Job.NONE){
 			stopJob();

@@ -41,12 +41,7 @@ public class CompareWithTagAction extends WorkspaceAction {
 				ISynchronizePageConfiguration.LAYOUT_GROUP });
 		configuration.setProperty(ISynchronizePageConfiguration.P_OBJECT_CONTRIBUTION_ID, CVSCompareSubscriber.ID_MODAL);
 			
-		participant.refreshInDialog(
-						getShell(),
-						resources,
-						Policy.bind("Participant.comparing"),
-						configuration,
-						null);
+		participant.refreshInDialog(getShell(), resources, Policy.bind("Participant.comparing"), 	participant.getName(), configuration, null); //$NON-NLS-1$
 	}
 	
 	protected CVSTag promptForTag(IResource[] resources) {

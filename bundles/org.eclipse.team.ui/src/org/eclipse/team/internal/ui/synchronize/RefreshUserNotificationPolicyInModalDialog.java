@@ -28,8 +28,10 @@ public class RefreshUserNotificationPolicyInModalDialog implements IRefreshSubsc
 	private SubscriberParticipant participant;
 	private ISynchronizePageConfiguration configuration;
 	private Shell shell;
+	private String title;
 
-	public RefreshUserNotificationPolicyInModalDialog(Shell shell, ISynchronizePageConfiguration configuration, SubscriberParticipant participant) {
+	public RefreshUserNotificationPolicyInModalDialog(Shell shell, String title, ISynchronizePageConfiguration configuration, SubscriberParticipant participant) {
+		this.title = title;
 		this.configuration  = configuration;
 		this.participant = participant;
 		this.shell = shell;
@@ -82,7 +84,11 @@ public class RefreshUserNotificationPolicyInModalDialog implements IRefreshSubsc
 
 	protected void compareAndOpenDialog(final IRefreshEvent event, final SubscriberParticipant participant) {
 		CompareConfiguration cc = new CompareConfiguration();
-		ParticipantPageSaveablePart input = new ParticipantPageSaveablePart(Utils.getShell(null), cc, configuration, participant);
+		ParticipantPageSaveablePart input = new ParticipantPageSaveablePart(Utils.getShell(null), cc, configuration, participant) {
+			public String getTitle() {
+				return RefreshUserNotificationPolicyInModalDialog.this.title;
+			}
+		};
 		ParticipantPageDialog dialog = new ParticipantPageDialog(shell, input, participant);
 		dialog.setBlockOnOpen(true);
 		dialog.open();

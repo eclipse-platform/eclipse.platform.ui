@@ -63,7 +63,7 @@ public class SubscriberRefreshWizard extends Wizard {
 		schedulePage.performFinish();
 		if(resources != null && resources.length > 0) {
 			// We don't know in which site to show progress because a participant could actually be shown in multiple sites.
-			participant.refresh(resources, Policy.bind("Participant.synchronizing"), null); //$NON-NLS-1$
+			participant.refresh(resources, Policy.bind("Participant.synchronizing"), Policy.bind("Participant.synchronizingDetail", participant.getName()), null); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return true;
 	}

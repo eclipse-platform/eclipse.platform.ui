@@ -532,4 +532,20 @@ public class Utils {
 	public static String getKey(String id, String secondaryId) {
 	    return secondaryId == null ? id : id + '/' + secondaryId;
 	}
+	
+	public static String stripAmpersand(String string) {
+		if( string.indexOf('&') != -1)  { 
+			StringBuffer buffer = new StringBuffer(string);
+			char last = 'x';
+			for (int i = string.length()-1; i > -1; i--) {
+				char c = string.charAt(i);
+				if(c == '&') {
+					buffer.deleteCharAt(i);
+					break;
+				}
+			}
+			return buffer.toString();
+		}
+		return string;
+	}
 }

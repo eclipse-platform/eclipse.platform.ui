@@ -37,7 +37,14 @@ import org.eclipse.ui.progress.UIJob;
 /**
  * Job to refresh a {@link Subscriber} in the background. The job can be configured
  * to be re-scheduled and run at a specified interval.
- * 
+ * <p>
+ * The job supports a basic workflow for modal/non-modal usage. If the job is
+ * run in the foreground (e.g. in a modal progress dialog) the refresh listeners
+ * action is invoked immediately after the refresh is completed. Otherwise the refresh
+ * listeners action is associated to the job as a <i>goto</i> action. This will
+ * allow the user to select the action in the progress view and run it when they
+ * choose.
+ * </p>
  * @since 3.0
  */
 public final class RefreshSubscriberJob extends WorkspaceJob {
@@ -67,7 +74,16 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 	 */
 	private IResource[] resources;
 
+	/**
+	 * The participant that is being refreshed.
+	 */
 	private SubscriberParticipant participant;
+	
+	/**
+	 * The task name for this refresh. This is usually more descriptive than the
+	 * job name.
+	 */
+	private String taskName;
 	
 	/**
 	 * Refresh started/completed listener for every refresh
@@ -100,17 +116,20 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 	
 	/**
 	 * Create a job to refresh the specified resources with the subscriber.
+	 * 
+	 * @param participant the subscriber participant 
 	 * @param name
 	 * @param resources
 	 * @param subscriber
 	 */
-	public RefreshSubscriberJob(SubscriberParticipant participant, String name, IResource[] resources, IRefreshSubscriberListener listener) {
-		super(name);
+	public RefreshSubscriberJob(SubscriberParticipant participant, String jobName, String taskName, IResource[] resources, IRefreshSubscriberListener listener) {
+		super(jobName);
 		Assert.isNotNull(resources);
 		Assert.isNotNull(participant);
 		Assert.isNotNull(resources);
 		this.resources = resources;
 		this.participant = participant;
+		this.taskName = taskName;
 		setPriority(Job.DECORATE);
 		setRefreshInterval(3600 /* 1 hour */);
 		
@@ -285,7 +304,7 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 		};
 		
 		IProgressMonitor group = Platform.getJobManager().createProgressGroup();
-		group.beginTask(participant.getName(), 100);
+		group.beginTask(taskName, 100);
 		setProgressGroup(group, 80);
 		getCollector().setProgressGroup(group, 20);
 		setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "icon"), participant.getImageDescriptor());

@@ -67,7 +67,7 @@ public class MergeWizard extends Wizard {
 				ISynchronizePageConfiguration.MODE_GROUP, 
 				ISynchronizePageConfiguration.LAYOUT_GROUP });
 		configuration.setProperty(ISynchronizePageConfiguration.P_OBJECT_CONTRIBUTION_ID, CVSMergeSubscriber.ID_MODAL);	
-		participant.refreshInDialog(Utils.findShell(), s.roots(), Policy.bind("Participant.merging"), configuration, null); //$NON-NLS-1$
+		participant.refreshInDialog(Utils.findShell(), s.roots(), Policy.bind("Participant.merging"), Policy.bind("Participant.mergingDetail", participant.getName()), configuration, null); //$NON-NLS-1$ //$NON-NLS-2$
 		return true;
 	}
 	

@@ -60,7 +60,7 @@ public final class SubscriberActionContribution extends SynchronizePageActionGro
 				public void run() {
 					IStructuredSelection selection = (IStructuredSelection)site.getSelectionProvider().getSelection();
 					IResource[] resources = Utils.getResources(selection.toArray());
-					participant.refresh(resources, Policy.bind("Participant.synchronizing"), site.getWorkbenchSite()); //$NON-NLS-1$
+					participant.refresh(resources, Policy.bind("Participant.synchronizing"), Policy.bind("Participant.synchronizingDetails", participant.getName()), site.getWorkbenchSite()); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			};
 			Utils.initAction(refreshSelectionAction, "action.refreshWithRemote."); //$NON-NLS-1$

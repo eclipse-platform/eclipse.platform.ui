@@ -105,9 +105,9 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	 * @param taskName
 	 * @param site
 	 */
-	public final void refreshInDialog(Shell shell, IResource[] resources, String taskName, ISynchronizePageConfiguration configuration, IWorkbenchSite site) {
-		IRefreshSubscriberListener listener =  new RefreshUserNotificationPolicyInModalDialog(shell, configuration, this);
-		internalRefresh(resources, taskName, site, listener);
+	public final void refreshInDialog(Shell shell, IResource[] resources, String jobName, String taskName, ISynchronizePageConfiguration configuration, IWorkbenchSite site) {
+		IRefreshSubscriberListener listener =  new RefreshUserNotificationPolicyInModalDialog(shell, taskName, configuration, this);
+		internalRefresh(resources, jobName, taskName, site, listener);
 	}
 
 	/**
@@ -115,16 +115,16 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	 * 
 	 * @param resources the resources to be refreshed.
 	 */
-	public final void refresh(IResource[] resources, String taskName, IWorkbenchSite site) {
+	public final void refresh(IResource[] resources, String jobName, String taskName, IWorkbenchSite site) {
 		IRefreshSubscriberListener listener = new RefreshUserNotificationPolicy(this);
-		internalRefresh(resources, taskName, site, listener);
+		internalRefresh(resources, jobName, taskName, site, listener);
 	}
 	
 	/**
 	 * Refresh a participant. The returned status describes the result of the refresh.
 	 */
 	public final IStatus refreshNow(IResource[] resources, String taskName, IProgressMonitor monitor) {
-		RefreshSubscriberJob job = new RefreshSubscriberJob(this, taskName, resources, null);
+		RefreshSubscriberJob job = new RefreshSubscriberJob(this, taskName, taskName, resources, null);
 		return job.runInWorkspace(monitor);
 	}
 	
@@ -289,8 +289,8 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	 * @param site the site in which to run the refresh
 	 * @param listener the listener to handle the refresh workflow
 	 */
-	private void internalRefresh(IResource[] resources, String taskName, IWorkbenchSite site, IRefreshSubscriberListener listener) {
-		RefreshSubscriberJob job = new RefreshSubscriberJob(this, taskName, resources, listener);
+	private void internalRefresh(IResource[] resources, String jobName, String taskName, IWorkbenchSite site, IRefreshSubscriberListener listener) {
+		RefreshSubscriberJob job = new RefreshSubscriberJob(this, jobName, taskName, resources, listener);
 		job.setUser(true);
 		Utils.schedule(job, site);
 	}
