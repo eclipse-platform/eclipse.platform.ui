@@ -80,6 +80,36 @@ public class AntEditorTests extends AbstractAntUITest {
     	}
     }
     
+    public void testRefOpenDeclaration() throws PartInitException, BadLocationException {
+    	try {
+    		IFile file= getIFile("refid.xml");
+    		AntEditor editor= (AntEditor)EditorTestHelper.openInEditor(file, "org.eclipse.ant.ui.internal.editor.AntEditor", true);
+    		int offset = getOffsetWithinLine(editor, 9, 20);
+    		editor.selectAndReveal(offset, 2);
+    		
+    		editor.openReferenceElement();
+    		ITextSelection selection= (ITextSelection) editor.getSelectionProvider().getSelection();
+    		assertTrue("Selection is not correct: " + selection.getText(), "path".equals(selection.getText()));
+    	} finally {
+    		EditorTestHelper.closeAllEditors();    
+    	}
+    }
+    
+    public void testTargetOpenDeclaration() throws PartInitException, BadLocationException {
+    	try {
+    		IFile file= getIFile("refid.xml");
+    		AntEditor editor= (AntEditor)EditorTestHelper.openInEditor(file, "org.eclipse.ant.ui.internal.editor.AntEditor", true);
+    		int offset = getOffsetWithinLine(editor, 0, 18);
+    		editor.selectAndReveal(offset, 1);
+    		
+    		editor.openReferenceElement();
+    		ITextSelection selection= (ITextSelection) editor.getSelectionProvider().getSelection();
+    		assertTrue("Selection is not correct: " + selection.getText(), "target".equals(selection.getText()));
+    	} finally {
+    		EditorTestHelper.closeAllEditors();    
+    	}
+    }
+    
     public void testHoverRegionWithSpaces() throws PartInitException, BadLocationException {
         try {
             IFile file= getIFile("refid.xml");
