@@ -177,34 +177,38 @@
          <action
                helpContextId="org.eclipse.team.cvs.ui.team_ignore_action_context"
                label="%IgnoreAction.label"
-               class="org.eclipse.team.internal.ccvs.ui.actions.IgnoreAction"
+               definitionId="org.eclipse.team.cvs.ui.ignore"
                tooltip="%IgnoreAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.IgnoreAction"
                menubarPath="team.main/group3"
                id="org.eclipse.team.cvs.ui.ignore">
          </action>
          <action
                helpContextId="org.eclipse.team.cvs.ui.team_add_action_context"
                label="%AddAction.label"
-               class="org.eclipse.team.internal.ccvs.ui.actions.AddAction"
+               definitionId="org.eclipse.team.cvs.ui.add"
                tooltip="%AddAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.AddAction"
                menubarPath="team.main/group3"
                id="org.eclipse.team.cvs.ui.add">
          </action>
          <action
                helpContextId="org.eclipse.team.cvs.ui.show_in_history_action_context"
                label="%ShowHistoryAction.label"
-               class="org.eclipse.team.internal.ccvs.ui.actions.ShowResourceInHistoryAction"
-               tooltip="%ShowHistoryAction.tooltip"
+               definitionId="org.eclipse.team.cvs.ui.showHistory"
                icon="icons/full/etool16/history.gif"
+               tooltip="%ShowHistoryAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.ShowResourceInHistoryAction"
                menubarPath="team.main/group2"
                id="org.eclipse.team.cvs.ui.showHistory">
          </action>
          <action
                helpContextId="org.eclipse.team.cvs.ui.get_annotate_action_context"
                label="%ShowAnnotationAction.label"
-               class="org.eclipse.team.internal.ccvs.ui.actions.ShowAnnotationAction"
-               tooltip="%ShowAnnotationAction.tooltip"
+               definitionId="org.eclipse.team.cvs.ui.showAnnotation"
                icon="icons/full/etool16/annotate.gif"
+               tooltip="%ShowAnnotationAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.ShowAnnotationAction"
                menubarPath="team.main/group2"
                id="org.eclipse.team.cvs.ui.showAnnotation">
          </action>
