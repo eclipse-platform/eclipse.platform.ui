@@ -13,6 +13,7 @@ package org.eclipse.ltk.core.refactoring;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 
 import org.eclipse.ltk.internal.core.refactoring.Assert;
 
@@ -163,8 +164,8 @@ public abstract class Change implements IAdaptable {
 	 * <p>
 	 * For example, a change object that manipulates the content of an <code>IFile</code>
 	 * could either listen to resource changes and detect that the file got changed or
-	 * it could remember the time stamp and compare it with the actual time stamp when
-	 * <code>isValid</code> is called.
+	 * it could remember some content stamp and compare it with the actual content stamp 
+	 * when <code>isValid</code> is called.
 	 * </p>
 	 * 
 	 * @param pm a progress monitor
@@ -191,8 +192,10 @@ public abstract class Change implements IAdaptable {
 	 * 
 	 * @throws CoreException if an error occurred during validation check. The change
 	 *  is to be treated as invalid if an exception occurs
+	 * 
+	 * @throws OperationCanceledException if the validation check got cancelled
 	 */
-	public abstract RefactoringStatus isValid(IProgressMonitor pm) throws CoreException;
+	public abstract RefactoringStatus isValid(IProgressMonitor pm) throws CoreException, OperationCanceledException;
 	
 	/**
 	 * Performs this change. If this method is call on an invalid or disabled change 

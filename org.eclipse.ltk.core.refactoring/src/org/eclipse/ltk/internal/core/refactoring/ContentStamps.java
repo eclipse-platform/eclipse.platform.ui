@@ -46,7 +46,7 @@ public class ContentStamps {
 		}
 	}
 	
-	private static final ContentStamp NULL_CONTENT_STAMP= new ContentStampImpl(ContentStampImpl.NULL_VALUE);
+	public static final ContentStamp NULL_CONTENT_STAMP= new ContentStampImpl(ContentStampImpl.NULL_VALUE);
 	
 	private static final QualifiedName CONTENT_STAMP= new QualifiedName(
 		RefactoringCorePlugin.getPluginId(), 

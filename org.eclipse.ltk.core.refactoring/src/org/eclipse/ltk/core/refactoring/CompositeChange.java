@@ -18,6 +18,7 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
@@ -214,6 +215,8 @@ public class CompositeChange extends Change {
 				result.merge(change.isValid(new SubProgressMonitor(pm, 1)));
 			else
 				pm.worked(1);
+			if (pm.isCanceled())
+				throw new OperationCanceledException();
 		}
 		pm.done();
 		return result;

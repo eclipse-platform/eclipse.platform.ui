@@ -136,7 +136,7 @@ abstract class UndoManagerAction implements IWorkbenchWindowActionDelegate {
 		IRunnableWithProgress op= createOperation(parent);
 		try {
 			// Don't execute in separate thread since it updates the UI.
-			PlatformUI.getWorkbench().getActiveWorkbenchWindow().run(false, false, op);
+			PlatformUI.getWorkbench().getProgressService().run(false, false, op);
 		} catch (InvocationTargetException e) {
 			RefactoringCore.getUndoManager().flush();
 			ExceptionHandler.handle(e,

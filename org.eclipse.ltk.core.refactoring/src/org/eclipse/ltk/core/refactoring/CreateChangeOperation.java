@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 
 import org.eclipse.ltk.internal.core.refactoring.Assert;
+import org.eclipse.ltk.internal.core.refactoring.NotCancelableProgressMonitor;
 
 /**
  * Operation that, when performed, creates a {@link Change} object for a given
@@ -111,14 +112,16 @@ public class CreateChangeOperation implements IWorkspaceRunnable {
 				RefactoringStatus status= fCheckConditionOperation.getStatus();
 				if (status != null && status.getSeverity() < fConditionCheckingFailedSeverity) {
 					fChange= fRefactoring.createChange(new SubProgressMonitor(pm, 2));
-					fChange.initializeValidationData(new SubProgressMonitor(pm, 1));
+					fChange.initializeValidationData(new NotCancelableProgressMonitor(
+							new SubProgressMonitor(pm, 1)));
 				} else {
 					pm.worked(3);
 				}
 			} else {
 				pm.beginTask("", 3); //$NON-NLS-1$
 				fChange= fRefactoring.createChange(new SubProgressMonitor(pm, 2));
-				fChange.initializeValidationData(new SubProgressMonitor(pm, 1));
+				fChange.initializeValidationData(new NotCancelableProgressMonitor(
+					new SubProgressMonitor(pm, 1)));
 			}
 		} finally {
 			pm.done();

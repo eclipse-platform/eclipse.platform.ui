@@ -155,6 +155,9 @@ class DirtyBufferValidationState extends BufferValidationState {
 		RefactoringStatus result= super.isValid();
 		if (result.hasFatalError())
 			return result;
+		// If we have initialized the content stamp with the null stamp then we can't compare it with 
+		// the current stamp since a change executed later could have set a concrete stamp for the 
+		// current content
 		if (fChanged || (!fContentStamp.isNullStamp() && !fContentStamp.equals(ContentStamps.get(fFile)))) {
 			result.addFatalError(RefactoringCoreMessages.getFormattedString(
 				"TextChanges.error.content_changed", //$NON-NLS-1$

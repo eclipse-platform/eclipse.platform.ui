@@ -25,6 +25,10 @@ package org.eclipse.ltk.core.refactoring;
  * refactoring framework only adds content stamp to those files where necessary.
  * </p>
  * <p>
+ * Content stamp are to be compared using the <code>equals(Object)</code> method.
+ * It is not guaranteed that content stamp are identical for identical files.
+ * </p>
+ * <p>
  * This class is not intended to be extended by clients.
  * </p>
  * 

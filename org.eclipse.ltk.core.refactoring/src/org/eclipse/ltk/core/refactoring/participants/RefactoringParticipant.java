@@ -12,6 +12,7 @@ package org.eclipse.ltk.core.refactoring.participants;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.PlatformObject;
 
 import org.eclipse.ltk.core.refactoring.Change;
@@ -130,10 +131,12 @@ public abstract class RefactoringParticipant extends PlatformObject {
 	 * @return a refactoring status. If the status is <code>RefactoringStatus#FATAL</code>
 	 *  the refactoring is considered as not being executable.
 	 * 
+	 * @throws OperationCanceledException if the condition checking got cancelled
+	 * 
 	 * @see org.eclipse.ltk.core.refactoring.Refactoring#checkInitialConditions(IProgressMonitor)
 	 * @see RefactoringStatus#FATAL
 	 */ 		
-	public abstract RefactoringStatus checkConditions(IProgressMonitor pm, CheckConditionsContext context);
+	public abstract RefactoringStatus checkConditions(IProgressMonitor pm, CheckConditionsContext context) throws OperationCanceledException;
 	
 	/**
 	 * Creates a {@link Change}object that contains the workspace modifications
@@ -156,8 +159,10 @@ public abstract class RefactoringParticipant extends PlatformObject {
 	 * @return the change representing the workspace modifications
 	 * 
 	 * @throws CoreException if an error occurred while creating the change
+	 * 
+	 * @throws OperationCanceledException if the condition checking got cancelled
 	 */
-	public abstract Change createChange(IProgressMonitor pm) throws CoreException;
+	public abstract Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException;
 
 	//---- helper method ----------------------------------------------------
 	

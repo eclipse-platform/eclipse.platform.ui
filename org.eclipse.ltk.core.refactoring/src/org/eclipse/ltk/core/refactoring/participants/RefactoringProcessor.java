@@ -12,6 +12,7 @@ package org.eclipse.ltk.core.refactoring.participants;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.PlatformObject;
 
 import org.eclipse.ltk.core.refactoring.Change;
@@ -111,10 +112,12 @@ public abstract class RefactoringProcessor extends PlatformObject {
 	 *         checking. If this happens the initial condition checking is
 	 *         interpreted as failed.
 	 * 
+	 * @throws OperationCanceledException if the condition checking got cancelled
+	 * 
 	 * @see org.eclipse.ltk.core.refactoring.Refactoring#checkInitialConditions(IProgressMonitor)
 	 * @see RefactoringStatus#FATAL
 	 */
-	public abstract RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException;
+	public abstract RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException;
 
 	/**
 	 * Checks the final conditions based on the element to be refactored.
@@ -136,11 +139,13 @@ public abstract class RefactoringProcessor extends PlatformObject {
 	 * @throws CoreException if an exception occurred during final condition
 	 *  checking If this happens the final condition checking is interpreted as failed.
 	 * 
+	 * @throws OperationCanceledException if the condition checking got cancelled
+	 * 
 	 * @see org.eclipse.ltk.core.refactoring.Refactoring#checkFinalConditions(IProgressMonitor)
 	 * @see RefactoringStatus#FATAL
 	 */
 	public abstract RefactoringStatus checkFinalConditions(IProgressMonitor pm, CheckConditionsContext context)
-		throws CoreException;
+		throws CoreException, OperationCanceledException;
 
 	/**
 	 * Creates a {@link Change} object describing the workspace modifications
@@ -153,9 +158,11 @@ public abstract class RefactoringProcessor extends PlatformObject {
 	 * 
 	 * @throws CoreException if an error occurred while creating the change
 	 * 
+	 * @throws OperationCanceledException if the condition checking got cancelled
+	 * 
 	 * @see org.eclipse.ltk.core.refactoring.Refactoring#createChange(IProgressMonitor)
 	 */
-	public abstract Change createChange(IProgressMonitor pm) throws CoreException;
+	public abstract Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException;
 
 	/**
 	 * Additional hook allowing processor's to add changes to the set of workspace
@@ -169,9 +176,11 @@ public abstract class RefactoringProcessor extends PlatformObject {
 	 * 
 	 * @throws CoreException if an error occurred while creating the post change
 	 * 
+	 * @throws OperationCanceledException if the condition checking got cancelled
+	 * 
 	 * @see #createChange(IProgressMonitor)
 	 */
-	public Change postCreateChange(Change[] participantChanges, IProgressMonitor pm) throws CoreException {
+	public Change postCreateChange(Change[] participantChanges, IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		return null;
 	}
 	

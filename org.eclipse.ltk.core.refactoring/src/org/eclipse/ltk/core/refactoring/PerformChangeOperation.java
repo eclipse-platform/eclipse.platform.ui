@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.ltk.internal.core.refactoring.Assert;
+import org.eclipse.ltk.internal.core.refactoring.NotCancelableProgressMonitor;
 
 /**
  * Operation that, when run, performs a {@link Change} object. The operation
@@ -224,7 +225,8 @@ public class PerformChangeOperation implements IWorkspaceRunnable {
 					}
 					fChange.dispose();
 					if (fUndoChange != null) {
-						fUndoChange.initializeValidationData(new SubProgressMonitor(monitor, 1));
+						fUndoChange.initializeValidationData(new NotCancelableProgressMonitor(
+							new SubProgressMonitor(monitor, 1)));
 						undoInitialized= true;
 					}
 					if (fUndoManager != null) {

@@ -12,6 +12,7 @@ package org.eclipse.ltk.core.refactoring;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
@@ -83,12 +84,14 @@ public abstract class Refactoring extends PlatformObject {
 	 *  the refactoring is considered as not being executable.
 	 * 
 	 * @throws CoreException if an exception occurred during condition checking.
-	 *  If this happens then the condition checking is interpreted as failed.
+	 *  If this happens then the condition checking is interpreted as failed
+	 * 
+	 * @throws OperationCanceledException if the condition checking got cancelled
 	 * 
 	 * @see #checkInitialConditions(IProgressMonitor)
 	 * @see #checkFinalConditions(IProgressMonitor)
 	 */
-	public RefactoringStatus checkAllConditions(IProgressMonitor pm) throws CoreException {
+	public RefactoringStatus checkAllConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		pm.beginTask("", 11); //$NON-NLS-1$
 		RefactoringStatus result= new RefactoringStatus();
 		result.merge(checkInitialConditions(new SubProgressMonitor(pm, 1)));
@@ -119,12 +122,14 @@ public abstract class Refactoring extends PlatformObject {
 	 *  the refactoring is considered as not being executable.
 	 * 
 	 * @throws CoreException if an exception occurred during initial condition checking.
-	 *  If this happens then the initial condition checking is interpreted as failed.
+	 *  If this happens then the initial condition checking is interpreted as failed
+	 * 
+	 * @throws OperationCanceledException if the condition checking got cancelled
 	 * 
 	 * @see #checkFinalConditions(IProgressMonitor)
 	 * @see RefactoringStatus#FATAL
 	 */ 
-	public abstract RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException;
+	public abstract RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException;
 	
 	/**
 	 * After <code>checkInitialConditions</code> has been performed and the user has 
@@ -144,12 +149,14 @@ public abstract class Refactoring extends PlatformObject {
 	 *  the refactoring is considered as not being executable.
 	 * 
 	 * @throws CoreException if an exception occurred during final condition checking
-	 *  If this happens then the final condition checking is interpreted as failed.
+	 *  If this happens then the final condition checking is interpreted as failed
+	 * 
+	 * @throws OperationCanceledException if the condition checking got cancelled
 	 * 
 	 * @see #checkInitialConditions(IProgressMonitor)
 	 * @see RefactoringStatus#FATAL
 	 */ 		
-	public abstract RefactoringStatus checkFinalConditions(IProgressMonitor pm) throws CoreException;
+	public abstract RefactoringStatus checkFinalConditions(IProgressMonitor pm) throws CoreException, OperationCanceledException;
 	
 	//---- change creation ------------------------------------------------------
 		
@@ -161,9 +168,11 @@ public abstract class Refactoring extends PlatformObject {
 	 * @return the change representing the workspace modifications of the
 	 *  refactoring
 	 * 
-	 * @throws CoreException if an error occurred while creating the change 
+	 * @throws CoreException if an error occurred while creating the change
+	 *  
+	 * @throws OperationCanceledException if the condition checking got cancelled
 	 */
-	public abstract Change createChange(IProgressMonitor pm) throws CoreException;
+	public abstract Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException;
 
 	/**
 	 * Returns the scheduling rule associated with this refactoring element.
