@@ -143,7 +143,13 @@ public class InstallCommand extends ScriptedCommand {
 			}
 
 			if (isVerifyOnly()) {
-				return (operations != null && operations.length > 1);
+				if (operations == null || operations.length == 0)
+					return false;
+				IStatus status = OperationsManager.getValidator().validatePendingChanges(operations);
+				if (status != null && status.getCode() == IStatus.ERROR)
+					throw new CoreException(status);
+				else
+					return true;
 			}
 
 			IBatchOperation installOperation =

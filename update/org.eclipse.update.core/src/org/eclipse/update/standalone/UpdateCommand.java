@@ -142,9 +142,14 @@ public class UpdateCommand extends ScriptedCommand {
 				UpdateCore.log(Utilities.newCoreException(Policy.bind("Standalone.duplicate"), null)); //$NON-NLS-1$
 				return false;
 			}
-
-			if (isVerifyOnly())
-				return true;
+			
+			if (isVerifyOnly()) {
+				status = OperationsManager.getValidator().validatePendingChanges(operations);
+				if (status != null && status.getCode() == IStatus.ERROR)
+					throw new CoreException(status);
+				else
+					return true;
+			}
 
 			IBatchOperation installOperation =
 				OperationsManager

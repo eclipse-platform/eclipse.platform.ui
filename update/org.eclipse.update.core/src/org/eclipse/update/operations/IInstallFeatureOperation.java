@@ -13,7 +13,9 @@ package org.eclipse.update.operations;
 import org.eclipse.update.core.*;
 
 /**
- * An installation operation.
+ * An installation operation. This operation should not be executed by itself, it should be 
+ * aggregated into a IBatchOperation, together with other IInstallOperations, so that the
+ * validation checks are done on the group, not per installation job.
  * <p>
  * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to
  * change significantly before reaching stability. It is being made available at this early stage to solicit feedback

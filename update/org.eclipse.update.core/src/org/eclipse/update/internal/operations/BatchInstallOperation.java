@@ -42,11 +42,15 @@ public class BatchInstallOperation
 	 */
 	public boolean execute(IProgressMonitor monitor, IOperationListener listener) throws CoreException, InvocationTargetException {
 		int installCount = 0;
-		boolean success = false;
-		
+
 		if (operations == null || operations.length == 0)
 			return false;
 					
+		IStatus status = OperationsManager.getValidator().validatePendingChanges(operations);
+		if (status != null && status.getCode() == IStatus.ERROR) {
+			throw new CoreException(status);
+		}
+		
 //		// Check for duplication conflicts
 //		ArrayList conflicts =
 //			DuplicateConflictsValidator.computeDuplicateConflicts(
@@ -88,7 +92,6 @@ public class BatchInstallOperation
 				//monitor.worked(1);
 				installCount++;
 			}
-			success = true;
 			return SiteManager.getLocalSite().save();
 		} catch (InstallAbortedException e) {
 			// saves the current configuration
