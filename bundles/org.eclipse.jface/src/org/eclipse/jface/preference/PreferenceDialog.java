@@ -51,19 +51,19 @@ public class PreferenceDialog
 		reg.put(PREF_DLG_TITLE_IMG, ImageDescriptor.createFromFile(PreferenceDialog.class, "images/pref_dialog_title.gif")); //$NON-NLS-1$
 	}
 
-	Composite titleArea;
+	private Composite titleArea;
 	private CLabel messageLabel;
 	private Label titleImage;
-	Color titleAreaColor;
+	private Color titleAreaColor;
 
 	private String message = ""; //$NON-NLS-1$
 	private String errorMessage;
-	Color normalMsgAreaBackground;
-	Color errorMsgAreaBackground;
+	private Color normalMsgAreaBackground;
+	private Color errorMsgAreaBackground;
 	private Image messageImage;
 	private Image errorMsgImage;
 	private boolean showingError = false;
-	Point lastShellSize;
+	private Point lastShellSize;
 
 	/**
 	 * Preference store, initially <code>null</code> meaning none.
@@ -76,7 +76,7 @@ public class PreferenceDialog
 	 * The current preference page, or <code>null</code> if
 	 * there is none.
 	 */
-	IPreferencePage currentPage;
+	private IPreferencePage currentPage;
 
 	/**
 	 * The preference manager.
@@ -86,14 +86,14 @@ public class PreferenceDialog
 	/**
 	 * The Composite in which a page is shown.
 	 */
-	Composite pageContainer;
+	private Composite pageContainer;
 
 	/**
 	 * The minimum page size; 400 by 400 by default.
 	 *
 	 * @see #setMinimumPageSize
 	 */
-	Point minimumPageSize = new Point(400, 400);
+	private Point minimumPageSize = new Point(400, 400);
 
 	/**
 	 * The OK button.
@@ -103,12 +103,12 @@ public class PreferenceDialog
 	/**
 	 * The Cancel button.
 	 */
-	Button cancelButton;
+	private Button cancelButton;
 
 	/**
 	 * The Help button; <code>null</code> if none.
 	 */
-	Button helpButton = null;
+	private Button helpButton = null;
 
 	/**
 	 * Indicates whether help is available; <code>false</code> by default.'
@@ -120,12 +120,12 @@ public class PreferenceDialog
 	/**
 	 * The tree control.
 	 */
-	Tree tree;
+	private Tree tree;
 
 	/**
 	 * The current tree item.
 	 */
-	TreeItem currentTreeItem;
+	private TreeItem currentTreeItem;
 
 	/**
 	 * Layout for the page container.
