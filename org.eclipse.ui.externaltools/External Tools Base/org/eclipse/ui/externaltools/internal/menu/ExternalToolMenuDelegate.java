@@ -21,14 +21,10 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.externaltools.action.RunExternalToolAction;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.ToolMessages;
-import org.eclipse.ui.externaltools.model.ExternalTool;
 import org.eclipse.ui.externaltools.model.IExternalToolConstants;
 
 /**
@@ -86,57 +82,7 @@ public class ExternalToolMenuDelegate extends AbstractLaunchHistoryAction implem
 	/**
 	 * Populates the menu with its items
 	 */
-	private void populateMenu(Menu menu, boolean wantFastAccess) {
-		// Add a menu item to run the most recent tool.
-		MenuItem runRecent = new MenuItem(menu, SWT.NONE);
-		runRecent.setText(ToolMessages.getString("ExternalToolMenuDelegate.runRecent")); //$NON-NLS-1$
-		runRecent.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				runLastTool();
-			}
-		});
-		// Disable option if no tool has been run yet.
-		runRecent.setEnabled(getLastTool() != null);
-		
-		// Add a separator.
-		new MenuItem(menu, SWT.SEPARATOR);
-				
-		// Add a menu item for each tool in the favorites list.
-		ExternalTool[] tools = FavoritesManager.getInstance().getFavorites();
-		if (tools.length > 0) {
-			for (int i = 0; i < tools.length; i++) {
-				ExternalTool tool = tools[i];
-				StringBuffer label = new StringBuffer();
-				if (i < 9 && wantFastAccess) {
-					//add the numerical accelerator
-					label.append('&');
-					label.append(i+1);
-					label.append(' ');
-				}
-				label.append(tool.getName());
-				MenuItem item = new MenuItem(menu, SWT.NONE);
-				item.setText(label.toString());
-				item.setData(tool);
-				item.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
-						runTool((ExternalTool)e.widget.getData());
-					}
-				});
-			}
-			
-			// Add a separator.
-			new MenuItem(menu, SWT.SEPARATOR);
-		}
-
-		// Add a menu item to show the external tools view.
-		MenuItem showView = new MenuItem(menu, SWT.NONE);
-		showView.setText(ToolMessages.getString("ExternalToolMenuDelegate.showView")); //$NON-NLS-1$
-		showView.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				showView();
-			}
-		});
-		
+	private void populateMenu(Menu menu, boolean wantFastAccess) {		
 		// Add a menu item to show the external tools dialog
 		MenuItem configure = new MenuItem(menu, SWT.NONE);
 		configure.setText(ToolMessages.getString("ExternalToolMenuDelegate.configure")); //$NON-NLS-1$
@@ -146,44 +92,5 @@ public class ExternalToolMenuDelegate extends AbstractLaunchHistoryAction implem
 			}
 		});
 	}
-
-	/**
-	 * Runs the specified tool
-	 */
-	private void runTool(final ExternalTool tool) {
-		RunExternalToolAction runToolAction;
-	 	runToolAction = new RunExternalToolAction(window);
-		runToolAction.setTool(tool);
-		runToolAction.run();
-	}
-	
-	/**
-	 * Shows the external tool view.
-	 */
-	private void showView() {
-		try {
-			IWorkbenchPage page = window.getActivePage();
-			if (page != null)
-				page.showView(IExternalToolConstants.VIEW_ID);
-		} catch (PartInitException e) {
-			ExternalToolsPlugin.getDefault().log("Unable to display the External Tools view.", e); //$NON-NLS-1$
-		}
-	}
-	
-	/**
-	 * Run the most recently run external tool.
-	 */
-	private void runLastTool() {
-		if (getLastTool() == null)
-			return;
-		runTool(getLastTool());	
-	}
-	
-	/**
-	 * Returns the tool which was run most recently.
-	 */
-	 private ExternalTool getLastTool() {
-	 	return FavoritesManager.getInstance().getLastTool();	
-	 }
 	
 }
