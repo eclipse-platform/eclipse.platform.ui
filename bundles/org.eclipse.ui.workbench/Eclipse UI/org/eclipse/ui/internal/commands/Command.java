@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.ui.commands.CommandEvent;
-import org.eclipse.ui.commands.IActivityBinding;
+import org.eclipse.ui.commands.IContextBinding;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandListener;
 import org.eclipse.ui.commands.IImageBinding;
@@ -31,7 +31,7 @@ final class Command implements ICommand {
 
 	private boolean active;
 	private List activityBindings;
-	private transient IActivityBinding[] activityBindingsAsArray;
+	private transient IContextBinding[] activityBindingsAsArray;
 	private String categoryId;
 	private List commandListeners;
 	private Set commandsWithListeners;
@@ -159,7 +159,7 @@ final class Command implements ICommand {
 					commandEvent);
 	}
 
-	public List getActivityBindings() {
+	public List getContextBindings() {
 		return activityBindings;
 	}
 
@@ -253,13 +253,13 @@ final class Command implements ICommand {
 
 	boolean setActivityBindings(List activityBindings) {
 		activityBindings =
-			Util.safeCopy(activityBindings, IActivityBinding.class);
+			Util.safeCopy(activityBindings, IContextBinding.class);
 
 		if (!Util.equals(activityBindings, this.activityBindings)) {
 			this.activityBindings = activityBindings;
 			this.activityBindingsAsArray =
-				(IActivityBinding[]) this.activityBindings.toArray(
-					new IActivityBinding[this.activityBindings.size()]);
+				(IContextBinding[]) this.activityBindings.toArray(
+					new IContextBinding[this.activityBindings.size()]);
 			hashCodeComputed = false;
 			hashCode = 0;
 			string = null;

@@ -235,7 +235,7 @@ final class Persistence {
 		return list;
 	}
 
-	static IActivityBindingDefinition readActivityBindingDefinition(
+	static IContextBindingDefinition readActivityBindingDefinition(
 		IMemento memento,
 		String pluginIdOverride) {
 		if (memento == null)
@@ -256,7 +256,7 @@ final class Persistence {
 			pluginIdOverride != null
 				? pluginIdOverride
 				: memento.getString(TAG_PLUGIN_ID);
-		return new ActivityBindingDefinition(activityId, commandId, pluginId);
+		return new ContextBindingDefinition(activityId, commandId, pluginId);
 	}
 
 	static List readActivityBindingDefinitions(
@@ -647,7 +647,7 @@ final class Persistence {
 
 	static void writeActivityBindingDefinition(
 		IMemento memento,
-		IActivityBindingDefinition activityBindingDefinition) {
+		IContextBindingDefinition activityBindingDefinition) {
 		if (memento == null || activityBindingDefinition == null)
 			throw new NullPointerException();
 
@@ -677,14 +677,14 @@ final class Persistence {
 		while (iterator.hasNext())
 			Util.assertInstance(
 				iterator.next(),
-				IActivityBindingDefinition.class);
+				IContextBindingDefinition.class);
 
 		iterator = activityBindingDefinitions.iterator();
 
 		while (iterator.hasNext())
 			writeActivityBindingDefinition(
 				memento.createChild(name),
-				(IActivityBindingDefinition) iterator.next());
+				(IContextBindingDefinition) iterator.next());
 	}
 
 	static void writeCategoryDefinition(
@@ -846,7 +846,7 @@ final class Persistence {
 
 		memento.putString(
 			TAG_ACTIVITY_ID,
-			keySequenceBindingDefinition.getActivityId());
+			keySequenceBindingDefinition.getContextId());
 		memento.putString(
 			TAG_COMMAND_ID,
 			keySequenceBindingDefinition.getCommandId());

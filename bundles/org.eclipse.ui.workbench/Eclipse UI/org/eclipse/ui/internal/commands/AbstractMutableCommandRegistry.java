@@ -40,7 +40,7 @@ public abstract class AbstractMutableCommandRegistry
 		activityBindingDefinitions =
 			Util.safeCopy(
 				activityBindingDefinitions,
-				IActivityBindingDefinition.class);
+				IContextBindingDefinition.class);
 
 		if (!activityBindingDefinitions
 			.equals(this.activityBindingDefinitions)) {

@@ -11,20 +11,20 @@
 
 package org.eclipse.ui.internal.commands;
 
-import org.eclipse.ui.commands.IActivityBinding;
+import org.eclipse.ui.commands.IContextBinding;
 
-final class ActivityBinding implements IActivityBinding {
+final class ContextBinding implements IContextBinding {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL =
-		ActivityBinding.class.getName().hashCode();
+		ContextBinding.class.getName().hashCode();
 
 	private String activityId;
 
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
 
-	ActivityBinding(String activityId) {
+	ContextBinding(String activityId) {
 		if (activityId == null)
 			throw new NullPointerException();
 
@@ -32,22 +32,22 @@ final class ActivityBinding implements IActivityBinding {
 	}
 
 	public int compareTo(Object object) {
-		ActivityBinding castedObject = (ActivityBinding) object;
+		ContextBinding castedObject = (ContextBinding) object;
 		int compareTo = activityId.compareTo(castedObject.activityId);
 		return compareTo;
 	}
 
 	public boolean equals(Object object) {
-		if (!(object instanceof ActivityBinding))
+		if (!(object instanceof ContextBinding))
 			return false;
 
-		ActivityBinding castedObject = (ActivityBinding) object;
+		ContextBinding castedObject = (ContextBinding) object;
 		boolean equals = true;
 		equals &= activityId.equals(castedObject.activityId);
 		return equals;
 	}
 
-	public String getActivityId() {
+	public String getContextId() {
 		return activityId;
 	}
 

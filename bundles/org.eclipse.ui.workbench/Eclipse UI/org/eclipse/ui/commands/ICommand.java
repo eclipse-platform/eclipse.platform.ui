@@ -72,7 +72,7 @@ public interface ICommand extends Comparable {
 	 *         guaranteed not to be <code>null</code>. If this list is not
 	 *         empty, it is guaranteed to only contain instances of <code>IActivityBinding</code>.
 	 */
-	List getActivityBindings();
+	List getContextBindings();
 
 	/**
 	 * <p>

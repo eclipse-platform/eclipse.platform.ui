@@ -15,7 +15,7 @@ import org.eclipse.ui.keys.KeySequence;
 
 public interface IKeySequenceBindingDefinition extends Comparable {
 
-	String getActivityId();
+	String getContextId();
 
 	String getCommandId();
 

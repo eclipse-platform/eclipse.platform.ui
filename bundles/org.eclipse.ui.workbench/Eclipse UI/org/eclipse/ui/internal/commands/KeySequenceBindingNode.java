@@ -210,7 +210,7 @@ final class KeySequenceBindingNode {
 		return keyStrokeNodeByKeyStrokeMap;
 	}
 
-	static Map getAssignmentsByActivityIdKeySequence(
+	static Map getAssignmentsByContextIdKeySequence(
 		Map keyStrokeNodeByKeyStrokeMap,
 		KeySequence prefix) {
 		Map assignmentsByActivityIdByKeySequence = new HashMap();
@@ -225,7 +225,7 @@ final class KeySequenceBindingNode {
 			keyStrokes.add(keyStroke);
 			KeySequence keySequence = KeySequence.getInstance(keyStrokes);
 			Map childAssignmentsByActivityIdByKeySequence =
-				getAssignmentsByActivityIdKeySequence(
+				getAssignmentsByContextIdKeySequence(
 					keySequenceBindingNode.childKeyStrokeNodeByKeyStrokeMap,
 					keySequence);
 

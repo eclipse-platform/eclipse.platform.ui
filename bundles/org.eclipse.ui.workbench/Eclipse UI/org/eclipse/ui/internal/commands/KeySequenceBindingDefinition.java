@@ -144,7 +144,7 @@ public final class KeySequenceBindingDefinition
 		return equals;
 	}
 
-	public String getActivityId() {
+	public String getContextId() {
 		return activityId;
 	}
 

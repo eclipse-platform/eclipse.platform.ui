@@ -202,7 +202,7 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 	}
 
 	private void readActivityBindingDefinition(IConfigurationElement configurationElement) {
-		IActivityBindingDefinition activityBindingDefinition =
+		IContextBindingDefinition activityBindingDefinition =
 			Persistence.readActivityBindingDefinition(
 				new ConfigurationElementMemento(configurationElement),
 				getPluginId(configurationElement));

@@ -19,12 +19,12 @@ import java.util.Map;
 
 import org.eclipse.ui.internal.util.Util;
 
-public final class ActivityBindingDefinition
-	implements IActivityBindingDefinition {
+public final class ContextBindingDefinition
+	implements IContextBindingDefinition {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL =
-		ActivityBindingDefinition.class.getName().hashCode();
+		ContextBindingDefinition.class.getName().hashCode();
 
 	static Map activityBindingDefinitionsByCommandId(Collection activityBindingDefinitions) {
 		if (activityBindingDefinitions == null)
@@ -35,9 +35,9 @@ public final class ActivityBindingDefinition
 
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
-			Util.assertInstance(object, IActivityBindingDefinition.class);
-			IActivityBindingDefinition activityBindingDefinition =
-				(IActivityBindingDefinition) object;
+			Util.assertInstance(object, IContextBindingDefinition.class);
+			IContextBindingDefinition activityBindingDefinition =
+				(IContextBindingDefinition) object;
 			String commandId = activityBindingDefinition.getCommandId();
 
 			if (commandId != null) {
@@ -64,7 +64,7 @@ public final class ActivityBindingDefinition
 	private String pluginId;
 	private transient String string;
 
-	public ActivityBindingDefinition(
+	public ContextBindingDefinition(
 		String activityId,
 		String commandId,
 		String pluginId) {
@@ -74,8 +74,8 @@ public final class ActivityBindingDefinition
 	}
 
 	public int compareTo(Object object) {
-		ActivityBindingDefinition castedObject =
-			(ActivityBindingDefinition) object;
+		ContextBindingDefinition castedObject =
+			(ContextBindingDefinition) object;
 		int compareTo = Util.compare(activityId, castedObject.activityId);
 
 		if (compareTo == 0) {
@@ -89,11 +89,11 @@ public final class ActivityBindingDefinition
 	}
 
 	public boolean equals(Object object) {
-		if (!(object instanceof ActivityBindingDefinition))
+		if (!(object instanceof ContextBindingDefinition))
 			return false;
 
-		ActivityBindingDefinition castedObject =
-			(ActivityBindingDefinition) object;
+		ContextBindingDefinition castedObject =
+			(ContextBindingDefinition) object;
 		boolean equals = true;
 		equals &= Util.equals(activityId, castedObject.activityId);
 		equals &= Util.equals(commandId, castedObject.commandId);

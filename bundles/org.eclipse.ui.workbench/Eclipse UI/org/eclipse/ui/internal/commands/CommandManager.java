@@ -109,8 +109,8 @@ public final class CommandManager implements ICommandManager {
 		Iterator iterator = activityBindingDefinitions.iterator();
 
 		while (iterator.hasNext()) {
-			IActivityBindingDefinition activityBindingDefinition =
-				(IActivityBindingDefinition) iterator.next();
+			IContextBindingDefinition activityBindingDefinition =
+				(IContextBindingDefinition) iterator.next();
 
 			if (activityBindingDefinition.getCommandId() == null)
 				iterator.remove();
@@ -428,7 +428,7 @@ public final class CommandManager implements ICommandManager {
 			String activeActivityId = (String) iterator.next();
 
 			if (activityBindings
-				.contains(new ActivityBinding(activeActivityId)));
+				.contains(new ContextBinding(activeActivityId)));
 			return true;
 		}
 
@@ -657,8 +657,8 @@ public final class CommandManager implements ICommandManager {
 		for (Iterator iterator = activityBindingDefinitions.iterator();
 			iterator.hasNext();
 			) {
-			IActivityBindingDefinition activityBindingDefinition =
-				(IActivityBindingDefinition) iterator.next();
+			IContextBindingDefinition activityBindingDefinition =
+				(IContextBindingDefinition) iterator.next();
 			String activityId = activityBindingDefinition.getActivityId();
 			String commandId = activityBindingDefinition.getCommandId();
 			SortedSet sortedSet =
@@ -669,7 +669,7 @@ public final class CommandManager implements ICommandManager {
 				activityBindingsByCommandId.put(commandId, sortedSet);
 			}
 
-			sortedSet.add(new ActivityBinding(activityId));
+			sortedSet.add(new ContextBinding(activityId));
 		}
 
 		this.activityBindingsByCommandId = activityBindingsByCommandId;

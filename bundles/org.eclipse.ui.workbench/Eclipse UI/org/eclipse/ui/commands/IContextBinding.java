@@ -9,13 +9,27 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands;
+package org.eclipse.ui.commands;
 
-public interface IActivityBindingDefinition extends Comparable {
+/**
+ * <p>
+ * An instance of <code>IActivityBinding</code> represents a binding between
+ * a command and an activity.
+ * </p>
+ * <p>
+ * This interface is not intended to be extended or implemented by clients.
+ * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>
+ * </p>
+ * 
+ * @since 3.0
+ * @see org.eclipse.ui.commands.ICommand
+ */
+public interface IContextBinding extends Comparable {
 
-	String getActivityId();
-
-	String getCommandId();
-
-	String getPluginId();
+	/**
+	 * TODO
+	 */
+	String getContextId();
 }

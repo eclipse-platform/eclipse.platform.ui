@@ -223,7 +223,7 @@ final class KeySequenceBindingMachine {
 					KeySequenceBindingNode.add(
 						tree,
 						keySequenceBindingDefinition.getKeySequence(),
-						keySequenceBindingDefinition.getActivityId(),
+						keySequenceBindingDefinition.getContextId(),
 						keySequenceBindingDefinition.getKeyConfigurationId(),
 						i,
 						keySequenceBindingDefinition.getPlatform(),
