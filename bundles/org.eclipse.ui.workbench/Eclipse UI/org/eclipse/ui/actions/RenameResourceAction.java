@@ -1,26 +1,29 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM - Initial implementation
+************************************************************************/
 package org.eclipse.ui.actions;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TreeEditor;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.*;
-
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.viewers.IStructuredSelection;
-
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.*;
@@ -217,6 +220,21 @@ private void disposeTextWidget() {
 		treeEditor.setEditor(null,null);
 	}
 }
+/**
+ * Returns the elements that the action is to be performed on.
+ * Return the resource cached by the action as we cannot rely
+ * on the selection being correct for inlined text.
+ *
+ * @return list of resource elements (element type: <code>IResource</code>)
+ */
+ protected List getActionResources() {
+ 	if(inlinedResource == null)
+ 		return super.getActionResources();
+ 	
+	List actionResources = new ArrayList();
+	actionResources.add(inlinedResource);
+	return actionResources;
+}
 /* (non-Javadoc)
  * Method declared on WorkspaceAction.
  */
@@ -257,7 +275,6 @@ private boolean getUpdateValue(IStructuredSelection selection) {
 		
 	return true;
 }
-
 /* (non-Javadoc)
  * Method declared on WorkspaceAction.
  */
@@ -269,9 +286,20 @@ void invokeOperation(IResource resource, IProgressMonitor monitor)
 
 	IResource newResource = workspaceRoot.findMember(newPath);
 	if (newResource != null) {
-		if (checkOverwrite(getShell(), newResource))
-			newResource.delete(IResource.KEEP_HISTORY, new SubProgressMonitor(monitor, 50));
-		else {
+		if (checkOverwrite(getShell(), newResource)) {
+			if (resource.getType() == IResource.FILE && newResource.getType() == IResource.FILE) {
+				IFile file = (IFile) resource;
+				IFile newFile = (IFile) newResource;
+				if (validateEdit(file, newFile, getShell())) {
+					IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 50);
+					newFile.setContents(file.getContents(), IResource.KEEP_HISTORY, subMonitor);
+					file.delete(IResource.KEEP_HISTORY, subMonitor); 
+				}
+	  			monitor.worked(100);
+				return;
+			} else
+				newResource.delete(IResource.KEEP_HISTORY, new SubProgressMonitor(monitor, 50));
+		} else {
 			monitor.worked(100);
 			return;
 		}
@@ -440,21 +468,28 @@ protected boolean updateSelection(IStructuredSelection selection) {
 public void setTextActionHandler(TextActionHandler actionHandler){
 	textActionHandler = actionHandler;
 }
-
 /**
- * Returns the elements that the action is to be performed on.
- * Return the resource cached by the action as we cannot rely
- * on the selection being correct for inlined text.
- *
- * @return list of resource elements (element type: <code>IResource</code>)
+ * Validates the destination file if it is read-only and additionally 
+ * the source file if both are read-only.
+ * Returns true if both files could be made writeable.
+ * 
+ * @param source source file
+ * @param destination destination file
+ * @param shell ui context for the validation
+ * @return boolean <code>true</code> both files could be made writeable.
+ * 	<code>false</code> either one or both files were not made writeable  
  */
- protected List getActionResources() {
- 	if(inlinedResource == null)
- 		return super.getActionResources();
- 	
-	List actionResources = new ArrayList();
-	actionResources.add(inlinedResource);
-	return actionResources;
+boolean validateEdit(IFile source, IFile destination, Shell shell) {
+	if (destination.isReadOnly()) {
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IStatus status;
+		if (source.isReadOnly())
+			status = workspace.validateEdit(new IFile[] {source, destination}, shell);
+		else
+			status = workspace.validateEdit(new IFile[] {destination}, shell);	
+		return status.isOK();
+	}
+	return true;
 }
 
 }
