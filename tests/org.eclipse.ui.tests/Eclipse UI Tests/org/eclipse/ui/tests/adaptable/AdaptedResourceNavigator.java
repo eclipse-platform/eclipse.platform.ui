@@ -9,22 +9,24 @@ import java.util.Iterator;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.viewers.*;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.widgets.*;
+
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.viewers.*;
+
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.NewWizardAction;
 import org.eclipse.ui.actions.NewWizardMenu;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.part.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.ui.views.internal.framelist.FrameList;
 import org.eclipse.ui.views.navigator.*;
 
 /**
@@ -36,8 +38,6 @@ public class AdaptedResourceNavigator
 	private IDialogSettings settings;
 	private IMemento memento;
 	private NavigatorFrameSource frameSource;
-	//@since 2.0
-	protected FrameList frameList;
 
 	protected PropertyDialogAction propertyDialogAction;
 	protected NewWizardAction newWizardAction;
@@ -54,8 +54,7 @@ public class AdaptedResourceNavigator
 	 * The value must be the same as IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR.]
 	 */
 	private static final String LINK_NAVIGATOR_TO_EDITOR =
-		"LINK_NAVIGATOR_TO_EDITOR";
-	//$NON-NLS-1$
+		"LINK_NAVIGATOR_TO_EDITOR";	//$NON-NLS-1$
 
 	// Persistance tags.
 	private static final String TAG_SORTER = "sorter"; //$NON-NLS-1$
@@ -65,12 +64,8 @@ public class AdaptedResourceNavigator
 	private static final String TAG_EXPANDED = "expanded"; //$NON-NLS-1$
 	private static final String TAG_ELEMENT = "element"; //$NON-NLS-1$
 	private static final String TAG_PATH = "path"; //$NON-NLS-1$
-	private static final String TAG_VERTICAL_POSITION = "verticalPosition";
-	//$NON-NLS-1$
-	private static final String TAG_HORIZONTAL_POSITION = "horizontalPosition";
-	//$NON-NLS-1$
-
-	//$NON-NLS-1$
+	private static final String TAG_VERTICAL_POSITION = "verticalPosition";	//$NON-NLS-1$
+	private static final String TAG_HORIZONTAL_POSITION = "horizontalPosition";	//$NON-NLS-1$
 
 	private IPartListener partListener = new IPartListener() {
 		public void partActivated(IWorkbenchPart part) {
@@ -221,16 +216,14 @@ public class AdaptedResourceNavigator
 		actionFactory.updateGlobalActions(selection);
 
 		MenuManager newMenu =
-			new MenuManager(ResourceNavigatorMessages.getString("ResourceNavigator.new"));
-		//$NON-NLS-1$
+			new MenuManager(ResourceNavigatorMessages.getString("ResourceNavigator.new")); //$NON-NLS-1$
 		menu.add(newMenu);
 		new NewWizardMenu(newMenu, getSite().getWorkbenchWindow(), false);
 		
 		actionFactory.fillPopUpMenu(menu,selection);
 		
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS + "-end"));
-		//$NON-NLS-1$
+		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS + "-end")); //$NON-NLS-1$
 		menu.add(new Separator());
 
 		if (propertyDialogAction.isApplicableForSelection())
