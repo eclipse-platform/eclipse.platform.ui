@@ -119,6 +119,7 @@ public class Perspective
 		}
 	};
 
+	private String oldPartID = null;
 	private boolean shouldHideEditorsOnActivate = false;
 
 /**
@@ -1335,4 +1336,20 @@ public void toggleFastView(IViewReference ref) {
 		setActiveFastView(ref);
 	}
 }
+/**
+ * Returns the oldPartID.
+ * @return String
+ */
+public String getOldPartID() {
+	return oldPartID;
+}
+
+/**
+ * Sets the oldPartID.
+ * @param oldPartID The oldPartID to set
+ */
+public void setOldPartID(String oldPartID) {
+	this.oldPartID = oldPartID;
+}
+
 }

@@ -2288,13 +2288,38 @@ private void setPerspective(Perspective newPersp) {
 			if (ed != null) 
 				actionSwitcher.updateTopEditor(ed);	
 			String id = oldActivePart.getSite().getId();
-			if (findView(id) != null)
+			oldPersp.setOldPartID(id);
+
+			if (findView(id) != null) {
 				activate(oldActivePart);
+			} else { //part not found in new perspective
+				String oldID = newPersp.getOldPartID();
+				if (oldID != null) { 
+					IWorkbenchPart prevOldPart = findView(oldID);
+					if (prevOldPart != null) {
+						activate(prevOldPart);
+					} else { //previously active part not found
+						IWorkbenchPartReference[] refs = getSortedParts();
+						if (refs.length != 0)
+							activate(refs[0].getPart(false));
+					}
+				} else { //no previously active part defined
+					IWorkbenchPartReference[] refs = getSortedParts();
+					if (refs.length != 0)
+						activate(refs[0].getPart(false));
+				}
+			}				
 		}
-	} else {
+	} else {  //no active part
 		IEditorPart ed = editorMgr.getVisibleEditor();	
-		if (ed != null) 
+		if (ed != null) {
 			actionSwitcher.updateTopEditor(ed);	
+		} else {
+			IWorkbenchPartReference[] refs = getSortedParts();
+			if (refs.length != 0)
+				activate(refs[0].getPart(false));
+		}
+			
 	}
 	
 	// Update the Coolbar layout.  Do this after the part is activated,
