@@ -170,22 +170,25 @@ public class PresentationReconciler implements IPresentationReconciler {
 		 	DocumentEvent de= e.getDocumentEvent();
 		 	
 		 	if (de == null) {
-		 		
-		 		if (e.getOffset() == 0 && e.getLength() == 0 && e.getText() == null) {
-			 		// redraw state change
-			 		IDocument d= fViewer.getDocument();
-			 		processDamage(new Region(0, d.getLength()), d);
-		 		} else {
-					IRegion region= widgetRegion2ModelRegion(e);
-			 		processDamage(region, fViewer.getDocument());
+		 		IDocument document= fViewer.getDocument();
+		 		if (document != null)  {
+			 		if (e.getOffset() == 0 && e.getLength() == 0 && e.getText() == null) {
+						// redraw state change		 			
+						de= new DocumentEvent(document, 0, document.getLength(), document.get());
+			 		} else {
+						IRegion region= widgetRegion2ModelRegion(e);
+						try {
+							String text= document.get(region.getOffset(), region.getLength());
+							de= new DocumentEvent(document, region.getOffset(), region.getLength(), text);
+						} catch (BadLocationException x) {
+						}
+			 		}
 		 		}
-		 		
-		 	} else {
-		 		
-			 	IRegion damage= getDamage(de);
-				if (damage != null)
-					processDamage(damage, de.getDocument());
 		 	}
+		 	
+		 	IRegion damage= de != null ? getDamage(de) : null;
+			if (damage != null)
+				processDamage(damage, de.getDocument());
 		 	
 			fDocumentPartitioningChanged= false;
 			fChangedDocumentPartitions= null;

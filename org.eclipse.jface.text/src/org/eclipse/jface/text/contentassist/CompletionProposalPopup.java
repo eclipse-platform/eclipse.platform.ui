@@ -37,11 +37,10 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IRewriteTarget;
-import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
-import org.eclipse.jface.text.TextEvent;
 import org.eclipse.jface.text.TextUtilities;
 
 
@@ -76,7 +75,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	/** List of document events used for filtering proposals */
 	private List fDocumentEvents= new ArrayList();
 	/** Listener filling the document event queue */
-	private ITextListener fTextListener;
+	private IDocumentListener fDocumentListener;
 	/** Reentrance count for <code>filterProposals</code> */
 	private long fInvocationCounter= 0;
 	/** The filter list of proposals */
@@ -374,9 +373,11 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 */
 	public void hide() {
 
-		if (fTextListener != null) {
-			fViewer.removeTextListener(fTextListener);
-			fTextListener= null;
+		if (fDocumentListener != null) {
+			IDocument document= fViewer.getDocument();
+			if (document != null)
+				document.removeDocumentListener(fDocumentListener);
+			fDocumentListener= null;
 		}
 		fDocumentEvents.clear();		
 
@@ -479,18 +480,22 @@ class CompletionProposalPopup implements IContentAssistListener {
 	private void displayProposals() {
 		if (fContentAssistant.addContentAssistListener(this, ContentAssistant.PROPOSAL_SELECTOR)) {
 			
-			if (fTextListener == null) {
-				fTextListener= new ITextListener() {
-					public void textChanged(TextEvent event) {
-						if (event.getDocumentEvent() != null && !fInserting)  {
-							fDocumentEvents.add(event.getDocumentEvent());
+			if (fDocumentListener == null)
+				fDocumentListener=  new IDocumentListener()  {
+					public void documentAboutToBeChanged(DocumentEvent event) {
+						if (!fInserting)
+							fDocumentEvents.add(event);
+					}
+	
+					public void documentChanged(DocumentEvent event) {
+						if (!fInserting)
 							filterProposals();
-						}
 					}
 				};
-			}
-			fViewer.addTextListener(fTextListener);		
-						
+			IDocument document= fViewer.getDocument();
+			if (document != null)
+				document.addDocumentListener(fDocumentListener);		
+				
 			fProposalShell.setVisible(true);
 			if (fAdditionalInfoController != null) {
 				fAdditionalInfoController.install(fProposalTable);		
@@ -695,7 +700,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 */
 	private ICompletionProposal[] computeFilteredProposals(int offset, DocumentEvent event) {
 		
-		if (offset == fInvocationOffset)
+		if (offset == fInvocationOffset && event == null)
 			return fComputedProposals;
 			
 		if (offset < fInvocationOffset) {
