@@ -645,30 +645,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		ColorSchemeService.setCoolBarColors(getCoolBarControl());
 		ColorSchemeService.setPerspectiveToolBarColors(perspectiveBar.getControl());
 		ColorSchemeService.setPerspectiveToolBarColors(newBar.getControl());
-		
-		FormData perspectiveData = new FormData();
-
-		perspectiveData.top = new FormAttachment(0);
-		perspectiveData.left = new FormAttachment(0);
-		perspectiveData.right = new FormAttachment(100, 0);
-
-		perspectiveBar.getControl().setLayoutData(perspectiveData);
-		
-		FormData newData = new FormData();
-		
-		newData.top = new FormAttachment(0);
-		newData.left = new FormAttachment(0);
-		newData.right = new FormAttachment(100, 0);
-
-		newBar.getControl().setLayoutData(newData);
-		
-		FormData toolBarData = new FormData();
-		toolBarData.top = new FormAttachment(0);
-		toolBarData.right = new FormAttachment(100, 0);
-		toolBarData.left = new FormAttachment(0);
-
-		getCoolBarControl().setLayoutData(toolBarData);
-
+	
 		createStatusLine(parent);
 		createFastViewBar(parent);
 		createProgressIndicator(parent);
