@@ -158,21 +158,22 @@ protected String getTableHeader() {
  */
 protected void addItems(Table table,WorkbenchPage page) {
 	IWorkbenchPart parts[] = page.getSortedParts();
-	IWorkbenchPart activePart = page.getActivePart();
+	IWorkbenchPart activeEditor = page.getActiveEditor();
 	boolean includeEditor = true;
 	for (int i = parts.length - 1; i >= 0 ; i--) {
-		TableItem item  = null;
 		if(parts[i] instanceof IEditorPart) {
 			if(includeEditor) {
-				item = new TableItem(table,SWT.NONE);
+				if(activeEditor == null)
+					activeEditor = parts[i];
+				TableItem item = new TableItem(table,SWT.NONE);
 				item.setText(WorkbenchMessages.getString("CyclePartAction.editor"));
+				item.setImage(activeEditor.getTitleImage());
+				item.setData(activeEditor);
 				includeEditor = false;
 			}
 		} else {
-			item = new TableItem(table,SWT.NONE);
+			TableItem item = new TableItem(table,SWT.NONE);
 			item.setText(parts[i].getTitle());
-		}
-		if(item != null) {
 			item.setImage(parts[i].getTitleImage());
 			item.setData(parts[i]);
 		}
