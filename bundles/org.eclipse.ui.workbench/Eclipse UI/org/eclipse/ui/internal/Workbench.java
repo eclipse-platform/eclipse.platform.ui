@@ -370,10 +370,15 @@ public final class Workbench implements IWorkbench {
 	 * @param window
 	 *            The window which just opened; should not be <code>null</code>.
 	 */
-	protected void fireWindowOpened(IWorkbenchWindow window) {
+	protected void fireWindowOpened(final IWorkbenchWindow window) {
 		Object list[] = windowListeners.getListeners();
 		for (int i = 0; i < list.length; i++) {
-			((IWindowListener) list[i]).windowOpened(window);
+			final IWindowListener l = (IWindowListener) list[i];
+			Platform.run(new SafeRunnable() {
+				public void run() {
+					l.windowOpened(window);
+				}
+			});
 		}
 	}
 	/**
@@ -382,7 +387,7 @@ public final class Workbench implements IWorkbench {
 	 * @param window
 	 *            The window which just closed; should not be <code>null</code>.
 	 */
-	protected void fireWindowClosed(IWorkbenchWindow window) {
+	protected void fireWindowClosed(final IWorkbenchWindow window) {
 		if (activatedWindow == window) {
 			// Do not hang onto it so it can be GC'ed
 			activatedWindow = null;
@@ -390,7 +395,12 @@ public final class Workbench implements IWorkbench {
 
 		Object list[] = windowListeners.getListeners();
 		for (int i = 0; i < list.length; i++) {
-			((IWindowListener) list[i]).windowClosed(window);
+			final IWindowListener l = (IWindowListener) list[i];
+			Platform.run(new SafeRunnable() {
+				public void run() {
+					l.windowClosed(window);
+				}
+			});
 		}
 	}
 	/**
@@ -399,10 +409,15 @@ public final class Workbench implements IWorkbench {
 	 * @param window
 	 *            The window which was just activated; should not be <code>null</code>.
 	 */
-	protected void fireWindowActivated(IWorkbenchWindow window) {
+	protected void fireWindowActivated(final IWorkbenchWindow window) {
 		Object list[] = windowListeners.getListeners();
 		for (int i = 0; i < list.length; i++) {
-			((IWindowListener) list[i]).windowActivated(window);
+			final IWindowListener l = (IWindowListener) list[i];
+			Platform.run(new SafeRunnable() {
+				public void run() {
+					l.windowActivated(window);
+				}
+			});
 		}
 	}
 	/**
@@ -411,10 +426,15 @@ public final class Workbench implements IWorkbench {
 	 * @param window
 	 *            The window which was just deactivated; should not be <code>null</code>.
 	 */
-	protected void fireWindowDeactivated(IWorkbenchWindow window) {
+	protected void fireWindowDeactivated(final IWorkbenchWindow window) {
 		Object list[] = windowListeners.getListeners();
 		for (int i = 0; i < list.length; i++) {
-			((IWindowListener) list[i]).windowDeactivated(window);
+			final IWindowListener l = (IWindowListener) list[i];
+			Platform.run(new SafeRunnable() {
+				public void run() {
+					l.windowDeactivated(window);
+				}
+			});
 		}
 	}
 
@@ -547,7 +567,13 @@ public final class Workbench implements IWorkbench {
 		windowManager.add(newWindow);
 
 		// Create the initial page.
-		newWindow.busyOpenPage(perspID, input);
+		try {
+			newWindow.busyOpenPage(perspID, input);
+		}
+		catch (WorkbenchException e) {
+			windowManager.remove(newWindow);
+			throw e;
+		}
 
 		// Open after opening page, to avoid flicker.
 		newWindow.open();
