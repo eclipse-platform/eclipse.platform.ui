@@ -1511,6 +1511,16 @@ public IStatus validateProjectLocation(IProject context, IPath location) {
 		message = Policy.bind("resources.validLocation");
 		return new ResourceStatus(IResourceStatus.OK, message);
 	}
+	//check the standard path name restrictions
+	int segmentCount = location.segmentCount();
+	for (int i = 0; i < segmentCount; i++) {
+		IStatus result = validateName(location.segment(i), IResource.PROJECT);
+		if (!result.isOK())
+			return result;
+	}
+	//if the location doesn't have a device, see if the OS will assign one
+	if (location.getDevice() == null)
+		location = new Path(location.toFile().getAbsolutePath());
 	// test if the given location overlaps the default default location
 	IPath defaultDefaultLocation = Platform.getLocation();
 	if (defaultDefaultLocation.isPrefixOf(location) || location.isPrefixOf(defaultDefaultLocation)) {

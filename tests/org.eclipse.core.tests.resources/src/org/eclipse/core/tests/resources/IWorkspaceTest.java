@@ -623,4 +623,82 @@ public void testValidatePath() {
 	// FIXME: Should this be valid?
 	assertTrue("6.11", getWorkspace().validatePath("/.metadata/project", IResource.FILE).isOK());
 }
+/**
+ * Performs black box testing of the following method:
+ *     IStatus validateProjectLocation(IProject, IPath)
+ */
+public void testValidateProjectLocation() {
+	IWorkspace workspace = getWorkspace();
+	IProject project = workspace.getRoot().getProject("Project");
+	
+	/* normal path */
+	assertTrue("1.1", workspace.validateProjectLocation(project, new Path("/one/two/three/four/")).isOK());
+
+	/* invalid characters (windows only) */
+	if (BootLoader.getOS().equals(BootLoader.OS_WIN32)) {
+		assertTrue("2.1", !(workspace.validateProjectLocation(project, new Path("d:\\dsa:sf")).isOK()));
+		assertTrue("2.2", !(workspace.validateProjectLocation(project, new Path("/abc/*dsasf")).isOK()));
+		assertTrue("2.3", !(workspace.validateProjectLocation(project, new Path("/abc/?dsasf")).isOK()));
+		assertTrue("2.4", !(workspace.validateProjectLocation(project, new Path("/abc/\"dsasf")).isOK()));
+		assertTrue("2.5", !(workspace.validateProjectLocation(project, new Path("/abc/<dsasf")).isOK()));
+		assertTrue("2.6", !(workspace.validateProjectLocation(project, new Path("/abc/>dsasf")).isOK()));
+		assertTrue("2.7", !(workspace.validateProjectLocation(project, new Path("/abc/|dsasf")).isOK()));
+		assertTrue("2.8", !(workspace.validateProjectLocation(project, new Path("/abc/\"dsasf")).isOK()));
+	}
+
+	/* dots */
+	assertTrue("3.1", !(workspace.validateProjectLocation(project, new Path("/abc/.../defghi")).isOK()));
+	assertTrue("3.2", !(workspace.validateProjectLocation(project, new Path("/abc/..../defghi")).isOK()));
+	assertTrue("3.3", !(workspace.validateProjectLocation(project, new Path("/abc/def..../ghi")).isOK()));
+	assertTrue("3.4", workspace.validateProjectLocation(project, new Path("/abc/....def/ghi")).isOK());
+	assertTrue("3.5", workspace.validateProjectLocation(project, new Path("/abc/def....ghi/jkl")).isOK());
+
+	/* test hiding incorrect characters using .. and device separator : */
+	assertTrue("4.1", workspace.validateProjectLocation(project, new Path("/abc/.?./../def/as")).isOK());
+	assertTrue("4.2", workspace.validateProjectLocation(project, new Path("/abc/;*?\"'/../def/safd")).isOK());
+	assertTrue("4.3", !(workspace.validateProjectLocation(project, new Path("c:/abc;*?\"':/def/asdf/sadf")).isOK()));
+
+	// cannot overlap the platform directory
+	IPath platformLocation = Platform.getLocation();
+	assertTrue("5.1", !(workspace.validateProjectLocation(project, new Path(platformLocation.getDevice(), "/")).isOK()));
+	assertTrue("5.2", !(workspace.validateProjectLocation(project, new Path(platformLocation.getDevice(), "\\")).isOK()));
+	assertTrue("5.3", !(workspace.validateProjectLocation(project, new Path(platformLocation.getDevice(), "")).isOK()));
+	assertTrue("5.4", !(workspace.validateProjectLocation(project, platformLocation).isOK()));
+	assertTrue("5.5", !(workspace.validateProjectLocation(project, platformLocation.append("foo")).isOK()));
+	
+	//can overlap platform directory on another device
+	IPath anotherDevice = platformLocation.setDevice("nowear:");
+	assertTrue("6.1", workspace.validateProjectLocation(project, new Path("nowear:", "/")).isOK());
+	assertTrue("6.2", workspace.validateProjectLocation(project, new Path("nowear:", "\\")).isOK());
+	assertTrue("6.3", workspace.validateProjectLocation(project, new Path("nowear:", "")).isOK());
+	assertTrue("6.4", workspace.validateProjectLocation(project, anotherDevice).isOK());
+	assertTrue("6.5", workspace.validateProjectLocation(project, anotherDevice.append("foo")).isOK());
+	
+	//cannot overlap with another project's location
+	IPath openProjectLocation = new Path("c:/temp/openProject");
+	IProject open = workspace.getRoot().getProject("OpenProject");
+	IProjectDescription openDesc = workspace.newProjectDescription(open.getName());
+	openDesc.setLocation(openProjectLocation);
+	IPath closedProjectLocation = new Path("c:/temp/closedProject");
+	IProject closed = workspace.getRoot().getProject("ClosedProject");
+	IProjectDescription closedDesc= workspace.newProjectDescription(closed.getName());
+	closedDesc.setLocation(closedProjectLocation);
+	try{
+		open.create(openDesc, null);
+		open.open(null);
+		closed.create(closedDesc, null);
+	} catch (CoreException e) {
+		fail("7.99", e);
+	}
+	
+	assertTrue("7.1", !workspace.validateProjectLocation(project, openProjectLocation).isOK());
+	assertTrue("7.2", !workspace.validateProjectLocation(project, closedProjectLocation).isOK());
+
+	// FIXME: Should this be valid?
+	assertTrue("23.1", workspace.validateProjectLocation(project, new Path("/asf")).isOK());
+	assertTrue("23.2", workspace.validateProjectLocation(project, new Path("/project/.metadata")).isOK());
+	// FIXME: Should this be valid?
+	assertTrue("23.3", workspace.validateProjectLocation(project, new Path("/.metadata/project")).isOK());
+
+}
 }
