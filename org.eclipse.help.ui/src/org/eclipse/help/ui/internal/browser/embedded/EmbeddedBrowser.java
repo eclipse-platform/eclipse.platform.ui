@@ -206,7 +206,7 @@ public class EmbeddedBrowser {
 		IProduct product = Platform.getProduct();
 		if(product!=null){
 			String url= Platform.getProduct().getProperty("windowImages");
-			if(url!=null || url.length()>0){
+			if(url!=null && url.length()>0){
 				return url.split(",\\s*")[0];
 			}
 			return product.getProperty("windowImages");
