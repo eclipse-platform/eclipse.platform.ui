@@ -146,7 +146,7 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 				reader= new BufferedReader(new StringReader(s));
 			} else {
 				InputStream stream= file.getContents(false);
-				reader= new BufferedReader(new InputStreamReader(stream, ResourcesPlugin.getEncoding()));
+				reader= new BufferedReader(new InputStreamReader(stream, file.getCharset()));
 			}
 			try {
 				fLocator.locateMatches(fProgressMonitor, reader, new FileMatchCollector(fCollector, proxy));
