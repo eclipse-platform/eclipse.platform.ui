@@ -426,7 +426,12 @@ public class InternalAntRunner {
 			fireBuildStarted(getCurrentProject());
 			
 			if (argList != null) {
-				executeScript= processCommandLine(argList);
+				try {
+					executeScript= processCommandLine(argList);
+				} catch (BuildException e) {
+					executeScript= false;
+					throw e;
+				}
 			}
 			if (!executeScript) {
 				return;
@@ -737,8 +742,9 @@ public class InternalAntRunner {
 		}
 		if (args != null) {
 			if (args.length == 0) {
-				logMessage(currentProject, InternalAntMessages.getString("InternalAntRunner.You_must_specify_a_log_file_when_using_the_-log_argument_3"), Project.MSG_ERR); //$NON-NLS-1$
-				return false;
+				String message= InternalAntMessages.getString("InternalAntRunner.You_must_specify_a_log_file_when_using_the_-log_argument_3"); //$NON-NLS-1$
+				logMessage(currentProject, message, Project.MSG_ERR); 
+				throw new BuildException(message);
 			} 
 			try {
 				createLogFile(args[0]);
@@ -760,8 +766,9 @@ public class InternalAntRunner {
 		
 		if (args != null) {
 			if (args.length == 0) {
-				logMessage(currentProject, InternalAntMessages.getString("InternalAntRunner.You_must_specify_a_buildfile_when_using_the_-buildfile_argument_4"), Project.MSG_ERR); //$NON-NLS-1$
-				return false;
+				String message= InternalAntMessages.getString("InternalAntRunner.You_must_specify_a_buildfile_when_using_the_-buildfile_argument_4"); //$NON-NLS-1$
+				logMessage(currentProject, message, Project.MSG_ERR); 
+				throw new BuildException(message);
 			} 
 			buildFileLocation = args[0];
 			targets = new Vector(args.length - 1);
