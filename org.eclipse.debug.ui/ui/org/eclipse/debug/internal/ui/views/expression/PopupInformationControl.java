@@ -265,19 +265,17 @@ public abstract class PopupInformationControl implements IInformationControl, II
 	public void setLocation(Point location) {
 	    Rectangle displayBounds = control.getDisplay().getClientArea();
 	    
-	    Point absoluteLoc = control.toDisplay(location);
-	    absoluteLoc.x = absoluteLoc.x < 0 ? displayBounds.x + 25 : absoluteLoc.x;
-	    absoluteLoc.y = absoluteLoc.y < 0 ? displayBounds.y + 25 : absoluteLoc.y;
-	    location = control.toControl(absoluteLoc);
+	    location.x = location.x < 0 ? displayBounds.x + 25 : location.x;
+	    location.y = location.y < 0 ? displayBounds.y + 25 : location.y;
 	    
 	    Point shellSize = shell.getSize();
 	    boolean shellSizeChanged = false;
-	    if (shellSize.x + absoluteLoc.x > displayBounds.width) {
-	        shellSize.x = displayBounds.width - absoluteLoc.x;
+	    if (shellSize.x + location.x > displayBounds.width) {
+	        shellSize.x = displayBounds.width - location.x;
 	        shellSizeChanged = true;
 	    }
-	    if (shellSize.y + absoluteLoc.y > displayBounds.height) {
-	        shellSize.y = displayBounds.height - absoluteLoc.y;
+	    if (shellSize.y + location.y > displayBounds.height) {
+	        shellSize.y = displayBounds.height - location.y;
 	        shellSizeChanged = true;
 	    }
 	    if (shellSizeChanged) {
