@@ -121,16 +121,18 @@ public class HistoryFilterDialog extends Dialog {
 		//set day, month and year combos with numbers
 		//years allows a selection from the past 5 years
 		//or any year written in
-		String days[] = new String[31];
-		for (int i = 0; i < 31; i++) {
-			days[i] = String.valueOf(i + 1);
+		String days[] = new String[32];
+		days[0] = "---"; //$NON-NLS-1$
+		for (int i = 1; i < 32; i++) {
+			days[i] = String.valueOf(i);
 		}
 
-		String months[] = new String[12];
+		String months[] = new String[13];
+		months[0] = "---"; //$NON-NLS-1$
 		SimpleDateFormat format = new SimpleDateFormat("MMMM"); //$NON-NLS-1$
 		Calendar calendar = Calendar.getInstance();
-		for (int i = 0; i < 12; i++) {
-			calendar.set(Calendar.MONTH, i);
+		for (int i = 1; i < 13; i++) {
+			calendar.set(Calendar.MONTH, i - 1);
 			months[i] = format.format(calendar.getTime());
 		}
 
@@ -140,9 +142,13 @@ public class HistoryFilterDialog extends Dialog {
 			years[i] = String.valueOf(calender.get(1) - i);
 		}
 		fromDayCombo.setItems(days);
+		fromDayCombo.select(0);
 		toDayCombo.setItems(days);
+		toDayCombo.select(0);
 		fromMonthCombo.setItems(months);
+		fromMonthCombo.select(0);
 		toMonthCombo.setItems(months);
+		toMonthCombo.select(0);
 		fromYearCombo.setItems(years);
 		toYearCombo.setItems(years);
 		fromYearCombo.select(0);
@@ -164,8 +170,8 @@ public class HistoryFilterDialog extends Dialog {
 		Calendar calendar = Calendar.getInstance();
 		if (historyFilter.fromDate != null) {
 			calendar.setTime(historyFilter.fromDate);
-			fromDayCombo.select(calendar.get(Calendar.DATE) - 1);
-			fromMonthCombo.select(calendar.get(Calendar.MONTH));
+			fromDayCombo.select(calendar.get(Calendar.DATE));
+			fromMonthCombo.select(calendar.get(Calendar.MONTH) + 1);
 			String yearValue = String.valueOf(calendar.get(Calendar.YEAR));
 			int index = fromYearCombo.indexOf(yearValue);
 			if (index == -1) {
@@ -176,8 +182,8 @@ public class HistoryFilterDialog extends Dialog {
 		}
 		if (historyFilter.toDate != null) {
 			calendar.setTime(historyFilter.toDate);
-			toDayCombo.select(calendar.get(Calendar.DATE) - 1);
-			toMonthCombo.select(calendar.get(Calendar.MONTH));
+			toDayCombo.select(calendar.get(Calendar.DATE));
+			toMonthCombo.select(calendar.get(Calendar.MONTH) + 1);
 			String yearValue = String.valueOf(calendar.get(Calendar.YEAR));
 			int index = toYearCombo.indexOf(yearValue);
 			if (index == -1) {
@@ -197,30 +203,30 @@ public class HistoryFilterDialog extends Dialog {
 		}
 		Date fromDate = null, toDate = null;
 
-		if ((fromMonthCombo.getSelectionIndex() >= 0)
-			&& (toMonthCombo.getSelectionIndex() >= 0)
-			&& (fromDayCombo.getSelectionIndex() >= 0)
-			&& (toDayCombo.getSelectionIndex() >= 0)
+		if ((fromMonthCombo.getSelectionIndex() > 0)
+			&& (toMonthCombo.getSelectionIndex() > 0)
+			&& (fromDayCombo.getSelectionIndex() > 0)
+			&& (toDayCombo.getSelectionIndex() > 0)
 			&& (fromYearCombo.getText().length() > 0)
 			&& (toYearCombo.getText().length() > 0)) {
 
-			//set the calander with the user input
+			//set the calendar with the user input
 			//set the hours, minutes and seconds to 00
 			//so as to cover the whole day
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(
 				Integer.parseInt(String.valueOf(fromYearCombo.getText())),
-				fromMonthCombo.getSelectionIndex(),
+				fromMonthCombo.getSelectionIndex() - 1,
 				Integer.parseInt(String.valueOf(fromDayCombo.getText())),
 				00, 00, 00);
 			fromDate = calendar.getTime();
 
-			//set the calander with the user input
+			//set the calendar with the user input
 			//set the hours, minutes and seconds to 23, 59, 59
 			//so as to cover the whole day
 			calendar.set(
 				Integer.parseInt(String.valueOf(toYearCombo.getText())),
-				toMonthCombo.getSelectionIndex(),
+				toMonthCombo.getSelectionIndex() - 1,
 				Integer.parseInt(String.valueOf(toDayCombo.getText())),
 				23, 59, 59);
 			toDate = calendar.getTime();
