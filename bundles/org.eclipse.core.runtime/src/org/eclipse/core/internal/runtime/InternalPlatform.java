@@ -289,7 +289,8 @@ public final class InternalPlatform implements IPlatform {
 			if (location == null)
 				return null;
 			//	This makes the assumption that the instance location is a file: URL
-			cachedInstanceLocation = new Path(location.getURL().getPath());
+			File file = new File(location.getURL().getFile());
+			cachedInstanceLocation = new Path(file.toString());
 		}
 		return cachedInstanceLocation;	
 	}
