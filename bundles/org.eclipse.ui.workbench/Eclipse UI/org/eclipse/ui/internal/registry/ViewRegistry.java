@@ -15,12 +15,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IRegistryChangeListener;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -84,7 +84,7 @@ public ViewRegistry() {
 	dirtyCategories = true;
 	sticky = new ArrayList();
 	dirtySticky = true;
-	InternalPlatform.getDefault().getRegistry().addRegistryChangeListener(this);
+	Platform.getExtensionRegistry().addRegistryChangeListener(this);
 }
 /**
  * Add a category to the registry.

@@ -22,7 +22,6 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 
-import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -74,7 +73,7 @@ public class PerspectiveRegistry extends RegistryManager implements IPerspective
 	 */
 	public PerspectiveRegistry() {
 		super(WorkbenchPlugin.PI_WORKBENCH, IWorkbenchConstants.PL_PERSPECTIVES);
-		InternalPlatform.getDefault().getRegistry().addRegistryChangeListener(this);
+		Platform.getExtensionRegistry().addRegistryChangeListener(this);
 
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		store.addPropertyChangeListener(new IPropertyChangeListener() {
