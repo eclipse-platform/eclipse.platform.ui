@@ -394,7 +394,8 @@ public void connectToTree(UMWizardTreeItem item, TableTreeItem treeItemParent) {
 
 	// Expand only after children have been created
 	//---------------------------------------------
-	treeItem.setExpanded(true);
+	if( item._iType != UpdateManagerConstants.TYPE_PRODUCT )
+		treeItem.setExpanded(true);
 
 	return;
 }
