@@ -1089,9 +1089,16 @@ public class DebugPlugin extends Plugin {
 				} else {
 					if (ch == '"') {
 					    StringBuffer buf = new StringBuffer();
-					    buf.append('"');
+					    if (Platform.getOS().equals(Constants.OS_WIN32)) {
+					    	buf.append('"');
+					    }
 						buf.append(parseString());
-						buf.append('"');
+						if (Platform.getOS().equals(Constants.OS_WIN32)) {
+							buf.append('"');
+						} else if (buf.length() == 0) {
+							// empty string on non-windows platform
+							buf.append("\"\""); //$NON-NLS-1$
+						}
 						v.add(buf.toString());
 					} else {
 						v.add(parseToken());
