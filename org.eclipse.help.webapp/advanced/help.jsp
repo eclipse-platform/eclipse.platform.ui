@@ -66,6 +66,7 @@ function toggleFrame(title)
 	if (left == "*" || right == "*") {
 		// restore frames
 		frameset.frameSpacing="3";
+		frameset.setAttribute("border", "6");
 		frameset.setAttribute("cols", leftCols+","+rightCols);
 		notifyMaximizeListeners(false);
 	} else {
@@ -111,6 +112,7 @@ if(isRTL) {
 }
 %>	
 		frameset.frameSpacing="0";
+		frameset.setAttribute("border", "1");
 		notifyMaximizeListeners(true);
 	}
 }
