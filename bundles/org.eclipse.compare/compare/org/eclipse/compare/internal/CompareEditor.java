@@ -178,6 +178,12 @@ public class CompareEditor extends EditorPart implements IPropertyChangeListener
 			Object data= c.getData();
 			if (data instanceof CompareEditor)
 				return ((CompareEditor)data).getActionBars();
+				
+			// PR 1GDVZV7: ITPVCM:WIN98 - CTRL + C does not work in Java source compare
+			if (data instanceof IViewPart)
+				return ((IViewPart)data).getViewSite().getActionBars();
+			// end PR 1GDVZV7
+			
 			c= c.getParent();
 		}
 		return null;
