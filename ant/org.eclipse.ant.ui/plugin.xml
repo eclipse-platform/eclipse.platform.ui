@@ -181,9 +181,15 @@
       </page>
       <page
             name="%PreferencePage.antCodeFormatterPreferences"
-            category="org.eclipse.ant.ui.AntPreferencePage"
+            category="org.eclipse.ant.ui.AntEditorPreferencePage"
             class="org.eclipse.ant.internal.ui.preferences.AntCodeFormatterPreferencePage"
             id="org.eclipse.ant.ui.AntCodeFormatterPreferencePage">
+      </page>
+      <page
+            name="%PreferencePage.antTemplatePreferences"
+            category="org.eclipse.ant.ui.AntEditorPreferencePage"
+            class="org.eclipse.ant.internal.ui.editor.templates.AntTemplatePreferencePage"
+            id="org.eclipse.ant.ui.TemplatesPreferencePage">
       </page>
    </extension>
    <extension
