@@ -11,7 +11,7 @@
 package org.eclipse.ant.internal.ui.preferences;
 
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
-import org.eclipse.debug.internal.ui.stringsubstitution.StringVariableSelectionDialog;
+import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
