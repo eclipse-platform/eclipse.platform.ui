@@ -470,8 +470,12 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		fContentInputPane.addListener(SWT.Deactivate, activationListener);
 		
 
-		if (fInput instanceof ICompareInput)
+		if (fInput instanceof ICompareInput) {
 			fStructureInputPane.setInput((ICompareInput) fInput);
+			ISelection sel= fStructureInputPane.getSelection();
+			if (sel == null || sel.isEmpty())
+				feed1(sel);	// we only feed downstream viewers if the top left pane is empty
+		}
 		
 		fComposite.setData("Nav", //$NON-NLS-1$
 			new CompareViewerSwitchingPane[] {
