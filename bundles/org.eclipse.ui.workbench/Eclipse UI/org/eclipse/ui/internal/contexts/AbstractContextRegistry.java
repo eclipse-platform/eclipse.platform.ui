@@ -16,9 +16,9 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.ui.contexts.registry.IContextRegistry;
-import org.eclipse.ui.contexts.registry.IContextRegistryEvent;
-import org.eclipse.ui.contexts.registry.IContextRegistryListener;
+import org.eclipse.ui.contexts.IContextRegistry;
+import org.eclipse.ui.contexts.IContextRegistryEvent;
+import org.eclipse.ui.contexts.IContextRegistryListener;
 
 abstract class AbstractContextRegistry implements IContextRegistry {
 

@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.internal.commands;
 
-import org.eclipse.ui.commands.registry.IKeyBindingDefinition;
+import org.eclipse.ui.commands.IKeyBindingDefinition;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 

@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.eclipse.ui.contexts.registry.IContextDefinition;
+import org.eclipse.ui.contexts.IContextDefinition;
 import org.eclipse.ui.internal.util.Util;
 
 final class ContextDefinition implements Comparable, IContextDefinition {

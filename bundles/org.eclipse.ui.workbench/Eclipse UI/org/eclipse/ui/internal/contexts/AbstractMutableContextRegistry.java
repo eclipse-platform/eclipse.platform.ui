@@ -13,7 +13,7 @@ package org.eclipse.ui.internal.contexts;
 
 import java.util.List;
 
-import org.eclipse.ui.contexts.registry.IContextDefinition;
+import org.eclipse.ui.contexts.IContextDefinition;
 import org.eclipse.ui.internal.util.Util;
 
 abstract class AbstractMutableContextRegistry extends AbstractContextRegistry implements IMutableContextRegistry {

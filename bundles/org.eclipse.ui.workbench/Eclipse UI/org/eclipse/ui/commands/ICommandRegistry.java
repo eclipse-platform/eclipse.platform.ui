@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.commands.registry;
+package org.eclipse.ui.commands;
 
 import java.util.List;
 

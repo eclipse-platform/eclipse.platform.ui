@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.eclipse.ui.commands.registry.ICommandDefinition;
+import org.eclipse.ui.commands.ICommandDefinition;
 import org.eclipse.ui.internal.util.Util;
 
 final class CommandDefinition implements ICommandDefinition {

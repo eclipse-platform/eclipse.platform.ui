@@ -9,7 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.commands.registry;
+package org.eclipse.ui.contexts;
+
+import java.util.List;
 
 /**
  * <p>
@@ -24,12 +26,28 @@ package org.eclipse.ui.commands.registry;
  * 
  * @since 3.0
  */
-public interface ICommandRegistryEvent {
+public interface IContextRegistry {
+
+	/**
+	 * Registers an IContextRegistryListener instance with this context registry.
+	 *
+	 * @param contextRegistryListener the IContextRegistryListener instance to register.
+	 * @throws NullPointerException
+	 */
+	void addContextRegistryListener(IContextRegistryListener contextRegistryListener);
 
 	/**
 	 * JAVADOC
-	 * 
+	 *
 	 * @return
-	 */	
-	ICommandRegistry getCommandRegistry();
+	 */
+	List getContextDefinitions();
+
+	/**
+	 * Unregisters an IContextRegistryListener instance with this context registry.
+	 *
+	 * @param contextRegistryListener the IContextRegistryListener instance to unregister.
+	 * @throws NullPointerException
+	 */
+	void removeContextRegistryListener(IContextRegistryListener contextRegistryListener);
 }

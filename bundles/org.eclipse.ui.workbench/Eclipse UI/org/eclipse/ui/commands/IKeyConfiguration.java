@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.commands;
 
-import org.eclipse.ui.commands.registry.IKeyConfigurationDefinition;
 
 /**
  * <p>

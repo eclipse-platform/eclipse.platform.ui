@@ -9,9 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.contexts.registry;
-
-import java.util.List;
+package org.eclipse.ui.commands;
 
 /**
  * <p>
@@ -26,28 +24,26 @@ import java.util.List;
  * 
  * @since 3.0
  */
-public interface IContextRegistry {
-
-	/**
-	 * Registers an IContextRegistryListener instance with this context registry.
-	 *
-	 * @param contextRegistryListener the IContextRegistryListener instance to register.
-	 * @throws NullPointerException
-	 */
-	void addContextRegistryListener(IContextRegistryListener contextRegistryListener);
+public interface IContextBindingDefinition extends Comparable {
 
 	/**
 	 * JAVADOC
-	 *
+	 * 
 	 * @return
-	 */
-	List getContextDefinitions();
+	 */	
+	String getCommandId();
 
 	/**
-	 * Unregisters an IContextRegistryListener instance with this context registry.
-	 *
-	 * @param contextRegistryListener the IContextRegistryListener instance to unregister.
-	 * @throws NullPointerException
-	 */
-	void removeContextRegistryListener(IContextRegistryListener contextRegistryListener);
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getContextId();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getPluginId();		
 }

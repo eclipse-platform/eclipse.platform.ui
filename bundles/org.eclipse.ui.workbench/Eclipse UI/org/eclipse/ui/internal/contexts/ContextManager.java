@@ -23,15 +23,16 @@ import java.util.TreeSet;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.contexts.IContext;
-import org.eclipse.ui.contexts.IContextHandle;
+import org.eclipse.ui.contexts.IContextDefinition;
 import org.eclipse.ui.contexts.IContextManager;
 import org.eclipse.ui.contexts.IContextManagerEvent;
 import org.eclipse.ui.contexts.IContextManagerListener;
-import org.eclipse.ui.contexts.registry.IContextDefinition;
-import org.eclipse.ui.contexts.registry.IContextRegistry;
-import org.eclipse.ui.contexts.registry.IContextRegistryEvent;
-import org.eclipse.ui.contexts.registry.IContextRegistryListener;
+import org.eclipse.ui.contexts.IContextRegistry;
+import org.eclipse.ui.contexts.IContextRegistryEvent;
+import org.eclipse.ui.contexts.IContextRegistryListener;
+import org.eclipse.ui.handles.IHandle;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.handles.Handle;
 import org.eclipse.ui.internal.util.Util;
 
 public final class ContextManager implements IContextManager {
@@ -94,18 +95,18 @@ public final class ContextManager implements IContextManager {
 		return Collections.unmodifiableSortedSet(activeContextIds);
 	}
 
-	public IContextHandle getContextHandle(String contextId) {
+	public IHandle getContextHandle(String contextId) {
 		if (contextId == null)
 			throw new NullPointerException();
 			
-		IContextHandle contextHandle = (IContextHandle) contextHandlesById.get(contextId);
+		IHandle handle = (IHandle) contextHandlesById.get(contextId);
 		
-		if (contextHandle == null) {
-			contextHandle = new ContextHandle(contextId);
-			contextHandlesById.put(contextId, contextHandle);
+		if (handle == null) {
+			handle = new Handle(contextId);
+			contextHandlesById.put(contextId, handle);
 		}
 		
-		return contextHandle;
+		return handle;
 	}
 
 	public SortedMap getContextsById() {
@@ -202,13 +203,13 @@ public final class ContextManager implements IContextManager {
 		
 			while (iterator.hasNext()) {
 				String contextId = (String) iterator.next();					
-				ContextHandle contextHandle = (ContextHandle) contextHandlesById.get(contextId);
+				Handle handle = (Handle) contextHandlesById.get(contextId);
 			
-				if (contextHandle != null) {			
+				if (handle != null) {			
 					if (contextsById.containsKey(contextId))
-						contextHandle.define((IContext) contextsById.get(contextId));
+						handle.define((IContext) contextsById.get(contextId));
 					else
-						contextHandle.undefine();
+						handle.undefine();
 				}
 			}			
 		}

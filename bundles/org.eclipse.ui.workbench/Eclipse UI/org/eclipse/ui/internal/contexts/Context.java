@@ -19,7 +19,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.eclipse.ui.contexts.IContext;
-import org.eclipse.ui.contexts.registry.IContextDefinition;
+import org.eclipse.ui.contexts.IContextDefinition;
 import org.eclipse.ui.internal.util.Util;
 
 final class Context implements IContext {

@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.contexts.registry;
+package org.eclipse.ui.contexts;
 
 /**
  * <p>

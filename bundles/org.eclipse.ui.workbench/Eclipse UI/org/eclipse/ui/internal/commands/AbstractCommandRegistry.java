@@ -16,9 +16,9 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.ui.commands.registry.ICommandRegistry;
-import org.eclipse.ui.commands.registry.ICommandRegistryEvent;
-import org.eclipse.ui.commands.registry.ICommandRegistryListener;
+import org.eclipse.ui.commands.ICommandRegistry;
+import org.eclipse.ui.commands.ICommandRegistryEvent;
+import org.eclipse.ui.commands.ICommandRegistryListener;
 
 abstract class AbstractCommandRegistry implements ICommandRegistry {
 

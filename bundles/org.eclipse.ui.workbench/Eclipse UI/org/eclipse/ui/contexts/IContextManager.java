@@ -14,7 +14,7 @@ package org.eclipse.ui.contexts;
 import java.util.SortedMap;
 import java.util.SortedSet;
 
-import org.eclipse.ui.contexts.registry.IContextRegistry;
+import org.eclipse.ui.handles.IHandle;
 
 
 /**
@@ -54,7 +54,7 @@ public interface IContextManager {
 	 * @return
 	 * @throws NullPointerException
 	 */	
-	IContextHandle getContextHandle(String contextId);
+	IHandle getContextHandle(String contextId);
 
 	/**
 	 * JAVADOC

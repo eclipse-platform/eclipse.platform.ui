@@ -13,7 +13,6 @@ package org.eclipse.ui.commands;
 
 import java.util.List;
 
-import org.eclipse.ui.commands.registry.ICommandDefinition;
 
 /**
  * <p>

@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.contexts.registry.IContextDefinition;
+import org.eclipse.ui.contexts.IContextDefinition;
 import org.eclipse.ui.internal.registry.RegistryReader;
 import org.eclipse.ui.internal.util.ConfigurationElementMemento;
 

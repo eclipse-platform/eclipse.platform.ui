@@ -14,7 +14,7 @@ package org.eclipse.ui.commands;
 import java.util.SortedMap;
 import java.util.SortedSet;
 
-import org.eclipse.ui.commands.registry.ICommandRegistry;
+import org.eclipse.ui.handles.IHandle;
 
 /**
  * <p>
@@ -88,7 +88,7 @@ public interface ICommandManager {
 	 * @return
 	 * @throws NullPointerException
 	 */	
-	ICategoryHandle getCategoryHandle(String categoryId);
+	IHandle getCategoryHandle(String categoryId);
 
 	/**
 	 * JAVADOC
@@ -97,7 +97,7 @@ public interface ICommandManager {
 	 * @return
 	 * @throws NullPointerException
 	 */	
-	ICommandHandle getCommandHandle(String commandId);
+	IHandle getCommandHandle(String commandId);
 
 	/**
 	 * JAVADOC
@@ -113,7 +113,7 @@ public interface ICommandManager {
 	 * @return
 	 * @throws NullPointerException
 	 */	
-	IKeyConfigurationHandle getKeyConfigurationHandle(String keyConfigurationId);
+	IHandle getKeyConfigurationHandle(String keyConfigurationId);
 
 	/**
 	 * JAVADOC

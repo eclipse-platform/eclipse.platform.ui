@@ -22,19 +22,18 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.ui.commands.ICategoryHandle;
 import org.eclipse.ui.commands.ICommand;
+import org.eclipse.ui.commands.ICommandDefinition;
 import org.eclipse.ui.commands.ICommandDelegate;
-import org.eclipse.ui.commands.ICommandHandle;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.ICommandManagerEvent;
 import org.eclipse.ui.commands.ICommandManagerListener;
-import org.eclipse.ui.commands.IKeyConfigurationHandle;
-import org.eclipse.ui.commands.registry.ICommandDefinition;
-import org.eclipse.ui.commands.registry.ICommandRegistry;
-import org.eclipse.ui.commands.registry.ICommandRegistryEvent;
-import org.eclipse.ui.commands.registry.ICommandRegistryListener;
+import org.eclipse.ui.commands.ICommandRegistry;
+import org.eclipse.ui.commands.ICommandRegistryEvent;
+import org.eclipse.ui.commands.ICommandRegistryListener;
+import org.eclipse.ui.handles.IHandle;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.handles.Handle;
 import org.eclipse.ui.internal.util.Util;
 
 public final class CommandManager implements ICommandManager {
@@ -127,30 +126,30 @@ public final class CommandManager implements ICommandManager {
 		return null;
 	}
 	
-	public ICategoryHandle getCategoryHandle(String categoryId) {
+	public IHandle getCategoryHandle(String categoryId) {
 		// TODO
 		return null;
 	}
 
-	public ICommandHandle getCommandHandle(String commandId) {
+	public IHandle getCommandHandle(String commandId) {
 		if (commandId == null)
 			throw new NullPointerException();
 			
-		ICommandHandle commandHandle = (ICommandHandle) commandHandlesById.get(commandId);
+		IHandle handle = (IHandle) commandHandlesById.get(commandId);
 		
-		if (commandHandle == null) {
-			commandHandle = new CommandHandle(commandId);
-			commandHandlesById.put(commandId, commandHandle);
+		if (handle == null) {
+			handle = new Handle(commandId);
+			commandHandlesById.put(commandId, handle);
 		}
 		
-		return commandHandle;
+		return handle;
 	}
 
 	public SortedMap getCommandsById() {
 		return Collections.unmodifiableSortedMap(commandsById);
 	}
 
-	public IKeyConfigurationHandle getKeyConfigurationHandle(String keyConfigurationId) {
+	public IHandle getKeyConfigurationHandle(String keyConfigurationId) {
 		// TODO
 		return null;
 	}
@@ -269,13 +268,13 @@ public final class CommandManager implements ICommandManager {
 		
 			while (iterator.hasNext()) {
 				String commandId = (String) iterator.next();					
-				CommandHandle commandHandle = (CommandHandle) commandHandlesById.get(commandId);
+				Handle handle = (Handle) commandHandlesById.get(commandId);
 			
-				if (commandHandle != null) {			
+				if (handle != null) {			
 					if (commandsById.containsKey(commandId))
-						commandHandle.define((ICommand) commandsById.get(commandId));
+						handle.define((ICommand) commandsById.get(commandId));
 					else
-						commandHandle.undefine();
+						handle.undefine();
 				}
 			}			
 		}

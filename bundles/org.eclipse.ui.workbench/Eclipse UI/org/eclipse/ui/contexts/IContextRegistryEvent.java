@@ -9,14 +9,14 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.contexts.registry;
+package org.eclipse.ui.contexts;
 
 /**
  * <p>
  * JAVADOC
  * </p>
  * <p>
- * This interface is not intended to be extended by clients.
+ * This interface is not intended to be extended or implemented by clients.
  * </p>
  * <p>
  * <em>EXPERIMENTAL</em>
@@ -24,12 +24,12 @@ package org.eclipse.ui.contexts.registry;
  * 
  * @since 3.0
  */
-public interface IContextRegistryListener {
+public interface IContextRegistryEvent {
 
 	/**
 	 * JAVADOC
 	 * 
-	 * @param contextRegistryEvent
-	 */
-	void contextRegistryChanged(IContextRegistryEvent contextRegistryEvent);
+	 * @return
+	 */	
+	IContextRegistry getContextRegistry();
 }

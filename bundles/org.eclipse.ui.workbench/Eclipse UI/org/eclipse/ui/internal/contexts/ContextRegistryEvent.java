@@ -11,8 +11,8 @@
 
 package org.eclipse.ui.internal.contexts;
 
-import org.eclipse.ui.contexts.registry.IContextRegistry;
-import org.eclipse.ui.contexts.registry.IContextRegistryEvent;
+import org.eclipse.ui.contexts.IContextRegistry;
+import org.eclipse.ui.contexts.IContextRegistryEvent;
 
 final class ContextRegistryEvent implements IContextRegistryEvent {
 

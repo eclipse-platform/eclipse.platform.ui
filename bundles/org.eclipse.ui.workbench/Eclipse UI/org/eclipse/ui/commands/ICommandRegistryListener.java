@@ -11,15 +11,12 @@
 
 package org.eclipse.ui.commands;
 
-import org.eclipse.ui.handles.IHandle;
-import org.eclipse.ui.handles.NotDefinedException;
-
 /**
  * <p>
  * JAVADOC
  * </p>
  * <p>
- * This interface is not intended to be extended or implemented by clients.
+ * This interface is not intended to be extended by clients.
  * </p>
  * <p>
  * <em>EXPERIMENTAL</em>
@@ -27,14 +24,12 @@ import org.eclipse.ui.handles.NotDefinedException;
  * 
  * @since 3.0
  */
-public interface IKeyConfigurationHandle extends IHandle {
+public interface ICommandRegistryListener {
 
 	/**
 	 * JAVADOC
 	 * 
-	 * @return
-	 * @throws NotDefinedException
-	 */	
-	IKeyConfiguration getKeyConfiguration()
-		throws NotDefinedException;
+	 * @param commandRegistryEvent
+	 */
+	void commandRegistryChanged(ICommandRegistryEvent commandRegistryEvent);
 }

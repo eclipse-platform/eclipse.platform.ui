@@ -19,10 +19,10 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.eclipse.ui.commands.ICommand;
-import org.eclipse.ui.commands.registry.ICommandDefinition;
-import org.eclipse.ui.commands.registry.IContextBindingDefinition;
-import org.eclipse.ui.commands.registry.IImageBindingDefinition;
-import org.eclipse.ui.commands.registry.IKeyBindingDefinition;
+import org.eclipse.ui.commands.ICommandDefinition;
+import org.eclipse.ui.commands.IContextBindingDefinition;
+import org.eclipse.ui.commands.IImageBindingDefinition;
+import org.eclipse.ui.commands.IKeyBindingDefinition;
 import org.eclipse.ui.internal.util.Util;
 
 final class Command implements ICommand {

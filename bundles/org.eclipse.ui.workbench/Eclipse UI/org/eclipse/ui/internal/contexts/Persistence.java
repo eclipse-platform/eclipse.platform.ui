@@ -16,7 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.contexts.registry.IContextDefinition;
+import org.eclipse.ui.contexts.IContextDefinition;
 import org.eclipse.ui.internal.util.Util;
 
 final class Persistence {

@@ -23,6 +23,10 @@ final class Path implements Comparable {
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = Path.class.getName().hashCode();
+
+	private transient int hashCode;
+	private transient boolean hashCodeComputed;
+	private transient String string;
 	
 	static Path getInstance() {
 		return new Path(Collections.EMPTY_LIST);
@@ -60,17 +64,26 @@ final class Path implements Comparable {
 			return false;
 
 		Path path = (Path) object;	
-		return strings.equals(path.strings);
+		boolean equals = true;
+		equals &= strings.equals(path.strings);
+		return equals;
 	}
 
 	public int hashCode() {
-		int result = HASH_INITIAL;
-		result = result * HASH_FACTOR + strings.hashCode();
-		return result;
+		if (!hashCodeComputed) {
+			hashCode = HASH_INITIAL;
+			hashCode = hashCode * HASH_FACTOR + strings.hashCode();
+			hashCodeComputed = true;
+		}
+			
+		return hashCode;
 	}
 
 	public String toString() {
-		return strings.toString();	
+		if (string == null)
+			string = strings.toString();
+	
+		return string;
 	}
 
 	List getStrings() {

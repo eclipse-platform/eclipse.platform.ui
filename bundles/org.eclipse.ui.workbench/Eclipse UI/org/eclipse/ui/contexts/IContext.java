@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.contexts;
 
-import org.eclipse.ui.contexts.registry.IContextDefinition;
 
 /**
  * <p>

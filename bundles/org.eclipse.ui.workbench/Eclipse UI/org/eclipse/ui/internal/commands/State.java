@@ -28,6 +28,10 @@ final class State implements Comparable {
 
 	private List paths;
 
+	private transient int hashCode;
+	private transient boolean hashCodeComputed;
+	private transient String string;
+
 	private State(List paths) {
 		this.paths = Util.safeCopy(paths, Path.class);
 		
@@ -46,17 +50,26 @@ final class State implements Comparable {
 			return false;
 
 		State state = (State) object;	
-		return paths.equals(state.paths);
+		boolean equals = true;
+		equals &= paths.equals(state.paths);
+		return equals;
 	}
 
 	public int hashCode() {
-		int result = HASH_INITIAL;
-		result = result * HASH_FACTOR + paths.hashCode();
-		return result;
+		if (!hashCodeComputed) {
+			hashCode = HASH_INITIAL;
+			hashCode = hashCode * HASH_FACTOR + paths.hashCode();
+			hashCodeComputed = true;
+		}
+			
+		return hashCode;
 	}
 
 	public String toString() {
-		return paths.toString();	
+		if (string == null)
+			string = paths.toString();
+	
+		return string;
 	}
 
 	List getPaths() {
