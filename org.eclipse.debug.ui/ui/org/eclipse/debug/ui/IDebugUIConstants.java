@@ -987,5 +987,5 @@ public interface IDebugUIConstants {
      * 
      * @since 3.1
      */
-    public static final String EXTENSION_POINT_MEMORY_RENDERIGNS = "memoryRenderigns"; //$NON-NLS-1$
+    public static final String EXTENSION_POINT_MEMORY_RENDERIGNS = "memoryRenderings"; //$NON-NLS-1$
 }

@@ -679,7 +679,7 @@ public class DebugUITools {
      * @return the memory rendering manager
      * @since 3.1
      */
-    public IMemoryRenderingManager getMemoryRenderingManager() {
+    public static IMemoryRenderingManager getMemoryRenderingManager() {
         return MemoryRenderingManager.getDefault();
     }
 }
