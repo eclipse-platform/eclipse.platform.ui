@@ -49,6 +49,7 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 	public ViewManagementPreferencePage() {
 		super();
 		setTitle(DebugPreferencesMessages.getString("ViewManagementPreferencePage.1")); //$NON-NLS-1$
+		setDescription(DebugPreferencesMessages.getString("ViewManagementPreferencePage.0")); //$NON-NLS-1$
 		setPreferenceStore(DebugUITools.getPreferenceStore());
 	}
 	
@@ -71,8 +72,8 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 	 * @param parent
 	 */
 	private void createPerspectiveViewer(Composite parent) {
-		Label label= new Label(parent, SWT.WRAP);
-		label.setText(DebugPreferencesMessages.getString("ViewManagementPreferencePage.0")); //$NON-NLS-1$
+		Label label= new Label(parent, SWT.NONE);
+		label.setText(DebugPreferencesMessages.getString("ViewManagementPreferencePage.2")); //$NON-NLS-1$
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		Table table= new Table(parent, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);

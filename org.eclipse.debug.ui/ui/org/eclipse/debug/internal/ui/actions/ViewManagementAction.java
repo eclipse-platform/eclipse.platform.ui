@@ -10,10 +10,16 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions;
 
-import org.eclipse.debug.internal.ui.preferences.PreferencePageContainerDialog;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.preferences.ViewManagementPreferencePage;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.jface.preference.IPreferenceNode;
+import org.eclipse.jface.preference.IPreferencePage;
+import org.eclipse.jface.preference.PreferenceDialog;
+import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.preference.PreferenceNode;
+import org.eclipse.jface.window.Window;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.actions.ActionDelegate;
@@ -30,8 +36,8 @@ public class ViewManagementAction extends ActionDelegate implements IViewActionD
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		PreferencePageContainerDialog dialog= new PreferencePageContainerDialog(Display.getDefault().getActiveShell(), new ViewManagementPreferencePage());
-		dialog.open();
+		IPreferencePage page = new ViewManagementPreferencePage();
+		showPreferencePage("org.eclipse.debug.ui.ViewManagementPreferencePage", page);	 //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -39,4 +45,20 @@ public class ViewManagementAction extends ActionDelegate implements IViewActionD
 	 */
 	public void init(IViewPart view) {
 	}
+	
+	protected void showPreferencePage(String id, IPreferencePage page) {
+		final IPreferenceNode targetNode = new PreferenceNode(id, page);
+		
+		PreferenceManager manager = new PreferenceManager();
+		manager.addToRoot(targetNode);
+		final PreferenceDialog dialog = new PreferenceDialog(DebugUIPlugin.getShell(), manager);
+		final boolean [] result = new boolean[] { false };
+		BusyIndicator.showWhile(DebugUIPlugin.getStandardDisplay(), new Runnable() {
+			public void run() {
+				dialog.create();
+				dialog.setMessage(targetNode.getLabelText());
+				result[0]= (dialog.open() == Window.OK);
+			}
+		});		
+	}	
 }
