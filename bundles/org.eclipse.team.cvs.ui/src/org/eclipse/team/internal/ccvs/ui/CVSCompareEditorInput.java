@@ -88,18 +88,17 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 			ICVSRemoteResource edition = ((ResourceEditionNode)element).getRemoteResource();
 			ICVSResource resource = (ICVSResource)edition;
 			try {
-				CVSTag tag = null;
 				if (edition.isContainer()) {
-					tag = ((ICVSRemoteFolder)edition).getTag();
+					CVSTag tag = ((ICVSRemoteFolder)edition).getTag();
+					if (tag == null) {
+						return Policy.bind("CVSCompareEditorInput.inHead", edition.getName());
+					} else if (tag.getType() == CVSTag.BRANCH) {
+						return Policy.bind("CVSCompareEditorInput.inBranch", new Object[] {edition.getName(), tag.getName()});
+					} else {
+						return Policy.bind("CVSCompareEditorInput.repository", new Object[] {edition.getName(), tag.getName()});
+					}
 				} else {
-					tag = resource.getSyncInfo().getTag();
-				}
-				if (tag == null) {
-					return Policy.bind("CVSCompareEditorInput.inHead", edition.getName());
-				} else if (tag.getType() == CVSTag.BRANCH) {
-					return Policy.bind("CVSCompareEditorInput.inBranch", new Object[] {edition.getName(), tag.getName()});
-				} else {
-					return Policy.bind("CVSCompareEditorInput.repository", new Object[] {edition.getName(), tag.getName()});
+					return Policy.bind("CVSCompareEditorInput.repository", new Object[] {edition.getName(), resource.getSyncInfo().getRevision()});
 				}
 			} catch (TeamException e) {
 				handle(e);
@@ -120,18 +119,17 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 			ICVSRemoteResource edition = ((ResourceEditionNode)element).getRemoteResource();
 			ICVSResource resource = (ICVSResource)edition;
 			try {
-				CVSTag tag = null;
 				if (edition.isContainer()) {
-					tag = ((ICVSRemoteFolder)resource).getTag();
+					CVSTag tag = ((ICVSRemoteFolder)resource).getTag();
+					if (tag == null) {
+						return Policy.bind("CVSCompareEditorInput.headLabel");
+					} else if (tag.getType() == CVSTag.BRANCH) {
+						return Policy.bind("CVSCompareEditorInput.branchLabel", tag.getName());
+					} else {
+						return tag.getName();
+					}
 				} else {
-					tag = resource.getSyncInfo().getTag();
-				}
-				if (tag == null) {
-					return Policy.bind("CVSCompareEditorInput.headLabel");
-				} else if (tag.getType() == CVSTag.BRANCH) {
-					return Policy.bind("CVSCompareEditorInput.branchLabel", tag.getName());
-				} else {
-					return tag.getName();
+					return resource.getSyncInfo().getRevision();
 				}
 			} catch (TeamException e) {
 				handle(e);
