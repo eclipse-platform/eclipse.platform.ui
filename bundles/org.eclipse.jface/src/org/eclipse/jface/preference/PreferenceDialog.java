@@ -260,7 +260,6 @@ public class PreferenceDialog
 	 * Method declared on Window.
 	 */
 	public boolean close() {
-		setSelectedNode();
 
 		List nodes = preferenceManager.getElements(PreferenceManager.PRE_ORDER);
 		for (int i = 0; i < nodes.size(); i++) {
