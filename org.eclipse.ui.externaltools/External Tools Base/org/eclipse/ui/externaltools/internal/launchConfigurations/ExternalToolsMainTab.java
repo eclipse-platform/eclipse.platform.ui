@@ -586,7 +586,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	private void handleVariablesButtonSelected(Text textField) {
 		String variable = getVariable();
 		if (variable != null) {
-			textField.append(variable);
+			textField.insert(variable);
 		}
 	}
 

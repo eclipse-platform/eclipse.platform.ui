@@ -265,7 +265,7 @@ public class MultipleInputDialog extends Dialog {
 				if (code == IDialogConstants.OK_ID) {
 					String variable = dialog.getVariableExpression();
 					if (variable != null) {
-						text.append(variable);
+						text.insert(variable);
 					}
 				}
 			}

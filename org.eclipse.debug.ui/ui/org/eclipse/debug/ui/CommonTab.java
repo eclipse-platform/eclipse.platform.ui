@@ -310,7 +310,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 				dialog.open();
 				String variable = dialog.getVariableExpression();
 				if (variable != null) {
-					fFileText.append(variable);
+					fFileText.insert(variable);
 				}
             }
             public void widgetDefaultSelected(SelectionEvent e) {   
