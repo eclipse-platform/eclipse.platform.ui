@@ -10,7 +10,10 @@ Contributors:
 **********************************************************************/
 package org.eclipse.ui.editors.text;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,6 +21,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.IFileBuffer;
+import org.eclipse.core.filebuffers.IFileBufferListener;
+import org.eclipse.core.filebuffers.IFileBufferManager;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.internal.filebuffers.ContainerGenerator;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILog;
@@ -27,13 +37,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-
-import org.eclipse.core.filebuffers.FileBuffers;
-import org.eclipse.core.filebuffers.IFileBuffer;
-import org.eclipse.core.filebuffers.IFileBufferListener;
-import org.eclipse.core.filebuffers.IFileBufferManager;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
-import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.runtime.SubProgressMonitor;
 
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.IDocument;
@@ -42,7 +46,6 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IDocumentProviderExtension;
@@ -51,6 +54,8 @@ import org.eclipse.ui.texteditor.IDocumentProviderExtension3;
 import org.eclipse.ui.texteditor.IElementStateListener;
 import org.eclipse.ui.texteditor.IElementStateListenerExtension;
 import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
+
+import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 
 /**
  * @since 3.0
@@ -374,9 +379,23 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 	 */
 	public void saveDocument(IProgressMonitor monitor, Object element, IDocument document, boolean overwrite) throws CoreException {
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
-		if (info != null)
+		if (info != null) {
 			info.fTextFileBuffer.commit(monitor, overwrite);
-		else
+		} else if (element instanceof IFileEditorInput) {
+			try {
+				monitor.beginTask("Saving", 2000);
+				InputStream stream= new ByteArrayInputStream(document.get().getBytes(getDefaultEncoding()));
+				IFile file= ((IFileEditorInput) element).getFile();
+				ContainerGenerator generator = new ContainerGenerator(file.getWorkspace(), file.getParent().getFullPath());
+				generator.generateContainer(new SubProgressMonitor(monitor, 1000));
+				file.create(stream, false, new SubProgressMonitor(monitor, 1000));
+			} catch (UnsupportedEncodingException x) {
+				IStatus s= new Status(IStatus.ERROR, EditorsPlugin.getPluginId(), IStatus.OK, x.getMessage(), x);
+				throw new CoreException(s);
+			} finally {
+				monitor.done();
+			}
+		} else
 			getParentProvider().saveDocument(monitor, element, document, overwrite);
 	}
 	
