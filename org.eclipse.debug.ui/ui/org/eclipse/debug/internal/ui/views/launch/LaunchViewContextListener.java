@@ -143,6 +143,10 @@ public class LaunchViewContextListener implements IPartListener2, IContextManage
 	 * @since 3.0
 	 */
 	public static final String PREF_OPENED_VIEWS= IDebugUIConstants.PLUGIN_ID + ".opened_views"; //$NON-NLS-1$
+	/**
+	 * The collection of context ids which were most recently enabled. 
+	 */
+	private List lastEnabledIds= new ArrayList();
 	
 	/**
 	 * Creates a fully initialized context listener.
@@ -720,13 +724,17 @@ public class LaunchViewContextListener implements IPartListener2, IContextManage
 		Iterator iter= contextIds.iterator();
 		while (iter.hasNext()) {
 			String contextId= (String) iter.next();
-			if (enabledContexts.contains(contextId)) {
+			if (enabledContexts.contains(contextId) && !lastEnabledIds.contains(contextId)) {
 				// If a context is already enabled, submitting it won't
 				// generate a callback from the workbench. So we inform
 				// our context listener ourselves.
+				// This covers the case where the user is selecting
+				// among elements from several active contexts.
 				contextsAlreadyEnabled.add(contextId);
 			}
 		}
+		lastEnabledIds.clear();
+		lastEnabledIds.addAll(contextIds);
 		submitContexts(contextIds, launch);
 		contextEnabled(contextsAlreadyEnabled);
 	}
