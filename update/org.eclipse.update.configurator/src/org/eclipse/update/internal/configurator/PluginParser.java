@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,16 +22,11 @@ import org.xml.sax.helpers.*;
  * Parse default feature.xml
  */
 
-public class PluginParser extends DefaultHandler {
+public class PluginParser extends DefaultHandler implements IConfigurationConstants {
 	private final static SAXParserFactory parserFactory =
 		SAXParserFactory.newInstance();
 	private SAXParser parser;
-	private String id = null;
-	private String version = null;
 	private PluginEntry pluginEntry;
-
-	private static final String PLUGIN = "plugin"; //$NON-NLS-1$
-	private static final String FRAGMENT = "fragment"; //$NON-NLS-1$
 
 	private class ParseCompleteException extends SAXException {
 		public ParseCompleteException(String arg0) {
@@ -57,18 +52,15 @@ public class PluginParser extends DefaultHandler {
 	/**
 	 * @since 2.0
 	 */
-	public synchronized PluginEntry parse(InputStream in) throws SAXException, IOException {
+	public synchronized PluginEntry parse(File pluginFile) throws SAXException, IOException {
 		try {
 			pluginEntry = new PluginEntry();
-			parser.parse(new InputSource(in), this);
+			pluginEntry.setURL(PLUGINS + "/" + pluginFile.getParentFile().getName() + "/" );
+			parser.parse(new InputSource(new FileInputStream(pluginFile)), this);
 		} catch (ParseCompleteException e) {
 			// expected, we stopped the parsing when we have the information we need
 			/// no need to pursue the parsing
 		}
-
-		if (id == null || id.trim().length() == 0)
-			id = "_no_id_";
-		pluginEntry.setVersionedIdentifier(new VersionedIdentifier(id, version));
 		return pluginEntry;
 	}
 
@@ -79,13 +71,13 @@ public class PluginParser extends DefaultHandler {
 
 		String tag = localName.trim();
 
-		if (tag.equalsIgnoreCase(PLUGIN)) {
+		if (tag.equalsIgnoreCase(CFG_PLUGIN)) {
 			pluginEntry.isFragment(false);			
 			processPlugin(attributes);
 			return;
 		}
 
-		if (tag.equalsIgnoreCase(FRAGMENT)) {
+		if (tag.equalsIgnoreCase(CFG_FRAGMENT)) {
 			pluginEntry.isFragment(true);			
 			processPlugin(attributes);
 			return;
@@ -96,8 +88,13 @@ public class PluginParser extends DefaultHandler {
 	 * process plugin entry info
 	 */
 	private void processPlugin(Attributes attributes) throws ParseCompleteException {
-		id = attributes.getValue("id"); //$NON-NLS-1$
-		version = attributes.getValue("version"); //$NON-NLS-1$
+		String id = attributes.getValue("id"); //$NON-NLS-1$
+		String version = attributes.getValue("version"); //$NON-NLS-1$
+		if (id == null || id.trim().length() == 0)
+			id = "_no_id_";
+		pluginEntry.setVersionedIdentifier(new VersionedIdentifier(id, version));
+		
+		// stop parsing now
 		throw new ParseCompleteException(""); //$NON-NLS-1$
 	}
 }

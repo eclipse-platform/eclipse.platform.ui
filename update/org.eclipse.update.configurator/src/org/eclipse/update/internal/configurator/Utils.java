@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003 IBM Corporation and others.
+ * Copyright (c) 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+import org.eclipse.core.internal.boot.*;
 import org.eclipse.core.internal.boot.PlatformURLBaseConnection;
 import org.eclipse.core.runtime.*;
 
@@ -149,7 +150,28 @@ public class Utils {
 	}
 	
 	public static void log(IStatus status) {
-		if (log != null)
-			log.log(status);
+//		if (log != null)
+//			log.log(status);
+		System.out.println(status.getMessage());
+	}
+	
+	/**
+	 * Returns the url as a platform:/ url, if possible, else leaves it unchanged
+	 * @param url
+	 * @return
+	 */
+	public static URL asPlatformURL(URL url) {
+		try {
+			URL platformURL = new URL(PlatformURLHandler.PROTOCOL + PlatformURLHandler.PROTOCOL_SEPARATOR + "/" + "base" + "/"); //$NON-NLS-1$ //$NON-NLS-2$ // try using platform-relative URL
+			URL resolvedPlatformURL = Platform.asLocalURL(platformURL);
+			String platformURLAsString = resolvedPlatformURL.toExternalForm();
+			String urlAsString = url.toExternalForm();
+			if (urlAsString.startsWith(platformURLAsString))
+				return new URL(platformURL.toExternalForm() + urlAsString.substring(platformURLAsString.length()) );
+			else
+				return url;
+		} catch (Exception e) {
+			return url;
+		}
 	}
 }

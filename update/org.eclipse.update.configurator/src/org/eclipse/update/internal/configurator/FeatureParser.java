@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ import java.io.*;
 import java.net.*;
 
 import javax.xml.parsers.*;
-import org.eclipse.update.configurator.*;
 
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
@@ -36,6 +35,7 @@ public class FeatureParser extends DefaultHandler {
 
 	private SAXParser parser;
 	private FeatureEntry feature;
+	private URL url;
 
 	private final static SAXParserFactory parserFactory =
 		SAXParserFactory.newInstance();
@@ -67,8 +67,9 @@ public class FeatureParser extends DefaultHandler {
 	 * @exception IOException
 	 * @since 2.0
 	 */
-	public IPlatformConfiguration.IFeatureEntry parse(URL featureURL) {
+	public FeatureEntry parse(URL featureURL) {
 		try {
+			this.url = featureURL;
 			InputStream in = featureURL.openStream();
 			parser.parse(new InputSource(in), this);
 		} catch (SAXException e) {;
@@ -127,18 +128,15 @@ public class FeatureParser extends DefaultHandler {
 
 			//TODO rootURLs
 			feature = new FeatureEntry(id, ver, plugin, "", isPrimary, application, null );
+			if ("file".equals(url.getProtocol())) {
+				File f = new File(url.getFile().replace('/', File.separatorChar));
+				feature.setURL("features" + "/" + f.getParentFile().getName() + "/");// + f.getName());
+			} else {
+				feature.setURL(url.toExternalForm());
+			}
 
 			Utils.
-				debug("End process DefaultFeature tag: id:" //$NON-NLS-1$
-				+id + " ver:" //$NON-NLS-1$
-				+ver); //$NON-NLS-1$
-//			Utils.debug("End process DefaultFeature tag: image:" + imageURL); //$NON-NLS-1$
-//			Utils.debug("End process DefaultFeature tag: ws:" //$NON-NLS-1$
-//				+ws + " os:" //$NON-NLS-1$
-//				+os + " nl:" //$NON-NLS-1$
-//				+nl + " application:" //$NON-NLS-1$
-//				+application);
-			
+				debug("End process DefaultFeature tag: id:" +id + " ver:" +ver + " url:" + feature.getURL()); 	
 		}
 	}
 

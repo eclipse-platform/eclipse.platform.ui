@@ -16,18 +16,18 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.debug.*;
-import org.eclipse.osgi.service.environment.*;
 import org.eclipse.update.configurator.*;
 import org.osgi.framework.*;
 import org.osgi.service.packageadmin.*;
 import org.osgi.service.startlevel.*;
 import org.osgi.util.tracker.*;
 
-public class ConfigurationActivator implements BundleActivator {
+public class ConfigurationActivator implements BundleActivator, IBundleGroupProvider {
 
 	public static String PI_CONFIGURATOR = "org.eclipse.update.configurator";
 	public static final String INSTALL_LOCATION = "osgi.installLocation";
 	public static final String LAST_CONFIG_STAMP = "last.config.stamp";
+	
 	// debug options
 	public static String OPTION_DEBUG = PI_CONFIGURATOR + "/debug";
 	// debug values
@@ -38,8 +38,6 @@ public class ConfigurationActivator implements BundleActivator {
 	private static BundleContext context;
 	private ServiceTracker platformTracker;
 	private ServiceRegistration configurationFactorySR;
-	private String[] allArgs;
-	private BundleListener reconcilerListener;
 	private IPlatform platform;
 	private PlatformConfiguration configuration;
 	
@@ -54,7 +52,6 @@ public class ConfigurationActivator implements BundleActivator {
 
 	public void start(BundleContext ctx) throws Exception {
 		context = ctx;
-		obtainArgs();
 		initialize();
 		//Short cut, if the configuration has not changed
 		String application = configuration.getApplicationIdentifier();
@@ -64,7 +61,9 @@ public class ConfigurationActivator implements BundleActivator {
 			System.setProperty("eclipse.application", "org.eclipse.ui.ide.workbench"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	
-		if (lastTimeStamp==configuration.getChangeStamp() && !(application.equals(PlatformConfiguration.RECONCILER_APP) || System.getProperties().get("osgi.dev") != null)) {
+//		if (lastTimeStamp==configuration.getChangeStamp() && !(application.equals(PlatformConfiguration.RECONCILER_APP) || System.getProperties().get("osgi.dev") != null)) {
+		if (lastTimeStamp==configuration.getChangeStamp() && System.getProperties().get("osgi.dev") == null) {
+				
 			Utils.debug("Same last time stamp *****");
 			
 			if (System.getProperty("eclipse.application") == null) {
@@ -77,6 +76,7 @@ public class ConfigurationActivator implements BundleActivator {
 		Utils.debug("Starting update configurator...");
 
 		installBundles();
+		platform.registerBundleGroupProvider(this);
 	}
 
 
@@ -91,7 +91,7 @@ public class ConfigurationActivator implements BundleActivator {
 		installURL = platform.getInstallURL();
 		configArea = platform.getConfigurationLocation().toOSString();
 		configurationFactorySR = context.registerService(IPlatformConfigurationFactory.class.getName(), new PlatformConfigurationFactory(), null);
-		configuration = getPlatformConfiguration(allArgs, installURL, configArea);
+		configuration = getPlatformConfiguration(installURL, configArea);
 		if (configuration == null)
 			throw Utils.newCoreException("Cannot create configuration in " + configArea, null);
 
@@ -105,19 +105,6 @@ public class ConfigurationActivator implements BundleActivator {
 		}
 	}
 
-
-	private void obtainArgs() {
-		// all this is only to get the application args		
-		EnvironmentInfo envInfo = null;
-		ServiceReference envInfoSR = context.getServiceReference(EnvironmentInfo.class.getName());
-		if (envInfoSR != null)
-			envInfo = (EnvironmentInfo) context.getService(envInfoSR);
-		if (envInfo == null)
-			throw new IllegalStateException();
-		this.allArgs = envInfo.getAllArgs();
-		// we have what we want - release the service
-		context.ungetService(envInfoSR);
-	}
 
 	public void stop(BundleContext ctx) throws Exception {
 		// quick fix (hack) for bug 47861
@@ -207,12 +194,9 @@ public class ConfigurationActivator implements BundleActivator {
 			}
 			context.ungetService(reference);
 			refreshPackages((Bundle[]) toRefresh.toArray(new Bundle[toRefresh.size()]));
-			if (System.getProperty("eclipse.application") == null || System.getProperty("eclipse.application").equals(PlatformConfiguration.RECONCILER_APP))
+//			if (System.getProperty("eclipse.application") == null || System.getProperty("eclipse.application").equals(PlatformConfiguration.RECONCILER_APP))
+			if (System.getProperty("eclipse.application") == null)
 				System.setProperty("eclipse.application", configuration.getApplicationIdentifier());
-			//			if (config.getApplicationIdentifier().equals(PlatformConfiguration.RECONCILER_APP) ) {
-			//				reconcilerListener = reconcilerListener();
-			//				context.addBundleListener(reconcilerListener);
-			//			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -261,39 +245,6 @@ public class ConfigurationActivator implements BundleActivator {
 		}
 		return (Bundle[])bundlesToUninstall.toArray(new Bundle[bundlesToUninstall.size()]);
 	}
-			
-	private BundleListener reconcilerListener() {
-		return new BundleListener() {
-			public void bundleChanged(BundleEvent event) {
-				String buid = event.getBundle().getGlobalName();
-				if (event.getType() == BundleEvent.STOPPED && buid != null && buid.equals("org.eclipse.update.core"))
-					runPostReconciler();
-			}
-		};
-	}
-
-	private void runPostReconciler() {
-		Runnable postReconciler = new Runnable() {
-			public void run() {
-				try {
-					Bundle apprunner = context.getBundles("org.eclipse.core.applicationrunner")[0];
-					apprunner.stop();
-					context.removeBundleListener(reconcilerListener);
-					try {
-						PlatformConfiguration.shutdown();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					installBundles();
-					apprunner.start();
-				} catch (BundleException be) {
-					be.printStackTrace();
-				}
-			}
-		};
-		new Thread(postReconciler, "Post reconciler").start();
-	}
 
 	/**
 	 * This is a major hack to try to get the reconciler application running. However we should find a way to not run it.
@@ -301,9 +252,9 @@ public class ConfigurationActivator implements BundleActivator {
 	 * @param metaPath
 	 * @return
 	 */
-	private PlatformConfiguration getPlatformConfiguration(String[] args, URL installURL, String configPath) {
+	private PlatformConfiguration getPlatformConfiguration(URL installURL, String configPath) {
 		try {
-			PlatformConfiguration.startup(args, null, installURL, configPath);
+			PlatformConfiguration.startup(installURL, configPath);
 		} catch (Exception e) {
 			if (platformTracker != null) {
 				String message = e.getMessage();
@@ -334,6 +285,7 @@ public class ConfigurationActivator implements BundleActivator {
 		}
 		// TODO this is such a hack it is silly.  There are still cases for race conditions etc
 		// but this should allow for some progress...
+		// (patch from John A.)
 		final boolean[] flag = new boolean[] {false};
 		FrameworkListener listener = new FrameworkListener() {
 			public void frameworkEvent(FrameworkEvent event) {
@@ -399,7 +351,7 @@ public class ConfigurationActivator implements BundleActivator {
 	public static BundleContext getBundleContext() {
 		return context;
 	}
-	
+		
 	public static URL getInstallURL() {
 		if (installURL == null)
 			try {
@@ -408,5 +360,22 @@ public class ConfigurationActivator implements BundleActivator {
 				//This can't fail because the location was set coming in
 			}
 			return installURL;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IBundleGroupProvider#getName()
+	 */
+	public String getName() {
+		return Messages.getString("BundleGroupProvider");
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IBundleGroupProvider#getBundleGroups()
+	 */
+	public IBundleGroup[] getBundleGroups() {
+		if (configuration == null)
+			return new IBundleGroup[0];
+		else {
+			return (FeatureEntry[])configuration.getConfiguredFeatureEntries();
+		}
 	}
 }

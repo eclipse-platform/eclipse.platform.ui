@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,11 +19,26 @@ public class PluginEntry {
 	private String pluginVersion;
 	private boolean isFragment = false;
 	private VersionedIdentifier versionId;
+	private String url;
 	
 	public PluginEntry() {
 		super();
 	}
 
+	/**
+	 * @return url relative to the site location: plugins/org.eclipse.foo/plugin.xml
+	 * Note: to do: we should probably only use plugins/org.eclipse.foo/ in the future
+	 */
+	public String getURL() {
+		return url;
+	}
+	
+	/**
+	 * url is relative to the site
+	 */
+	public void setURL(String url) {
+		this.url = url;
+	}
 
 	/**
 	 * Returns the plug-in identifier for this entry.

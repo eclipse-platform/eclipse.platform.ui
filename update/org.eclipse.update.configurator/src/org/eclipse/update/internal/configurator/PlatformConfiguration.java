@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.update.internal.configurator;
 
 import java.io.*;
+import java.lang.reflect.*;
 import java.net.*;
 import java.util.*;
 
@@ -20,45 +21,48 @@ import javax.xml.transform.dom.*;
 import javax.xml.transform.stream.*;
 
 import org.eclipse.core.internal.boot.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.update.configurator.*;
 import org.w3c.dom.*;
 
-public class PlatformConfiguration implements IPlatformConfiguration {
+/**
+ * This class is responsible for providing the features and plugins (bundles) to 
+ * the runtime. Configuration data is stored in the .config/platform.xml file.
+ * When eclipse starts, it tries to load the config info from platform.xml.
+ * If the file does not exist, then it also tries to read it from a temp or backup file.
+ * If this does not succeed, a platform.xml is created by inspecting the eclipse 
+ * installation directory (its features and plugin folders).
+ * If platform.xml already exists, a check is made to see when it was last modified
+ * and whether there are any file system changes that are newer (users may manually unzip 
+ * features and plugins). In this case, the newly added features and plugins are picked up.
+ * A check for existence of features and plugins is also performed, to detect deletions.
+ */
+public class PlatformConfiguration implements IPlatformConfiguration, IConfigurationConstants {
 
 	private static PlatformConfiguration currentPlatformConfiguration = null;
 	private static final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 	private static final TransformerFactory transformerFactory = TransformerFactory.newInstance();
 
+	private Configuration config;
 	private URL configLocation;
-	private HashMap sites;
+//	private HashMap sites;
 	private HashMap externalLinkSites; // used to restore prior link site state
-	private HashMap cfgdFeatures;
 	private HashMap bootPlugins;
-	private String defaultFeature;
 	private long changeStamp;
-	private boolean changeStampIsValid = false;
-	private long lastFeaturesChangeStamp;
+//	private boolean changeStampIsValid = false;
+//	private long lastFeaturesChangeStamp;
 	private long featuresChangeStamp;
-	private boolean featuresChangeStampIsValid = false;
-	private long lastPluginsChangeStamp;
+	private boolean featuresChangeStampIsValid;
+//	private long lastPluginsChangeStamp;
 	private long pluginsChangeStamp;
-	private boolean pluginsChangeStampIsValid = false;
-	private boolean transientConfig = false;
+	private boolean pluginsChangeStampIsValid;
 	private File cfgLockFile;
 	private RandomAccessFile cfgLockFileRAF;
-
-	private static String cmdFeature = null;
-	private static String cmdApplication = null;
-	private static boolean cmdInitialize = false;
-	private static boolean cmdFirstUse = false;
-	private static boolean cmdUpdate = false;
-	private static boolean cmdNoUpdate = false;
-	private static boolean cmdDev = false;
-	private static boolean cmdNoLinkedConfig = true;
+	private boolean isNew; // true when created out of parsing files
 
 	private static final String ECLIPSE = "eclipse"; //$NON-NLS-1$
 	private static final String CONFIG_DIR = ".config"; //$NON-NLS-1$
-	private static final String CONFIG_NAME = "platform.cfg"; //$NON-NLS-1$
+	private static final String CONFIG_NAME = "platform.xml"; //$NON-NLS-1$
 	private static final String CONFIG_FILE = CONFIG_DIR + "/" + CONFIG_NAME; //$NON-NLS-1$
 	private static final String CONFIG_FILE_INIT = "install.ini"; //$NON-NLS-1$
 	private static final String CONFIG_INI = "config.ini"; //NON-NLS-1$
@@ -67,29 +71,9 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private static final String CONFIG_FILE_BAK_SUFFIX = ".bak"; //$NON-NLS-1$
 	private static final String CHANGES_MARKER = ".newupdates"; //$NON-NLS-1$
 	private static final String LINKS = "links"; //$NON-NLS-1$
-	private static final String[] BOOTSTRAP_PLUGINS = { "org.eclipse.core.boot" }; //$NON-NLS-1$
-	private static final String CFG = "config"; //$NON-NLS-1$
-	private static final String CFG_BOOT_PLUGIN = "bootstrap"; //$NON-NLS-1$
-	private static final String CFG_SITE = "site"; //$NON-NLS-1$
-	private static final String CFG_URL = "url"; //$NON-NLS-1$
-	private static final String CFG_POLICY = "policy"; //$NON-NLS-1$
-	private static final String[] CFG_POLICY_TYPE = { "USER-INCLUDE", "USER-EXCLUDE" }; //$NON-NLS-1$ //$NON-NLS-2$
-	private static final String CFG_POLICY_TYPE_UNKNOWN = "UNKNOWN"; //$NON-NLS-1$
-	private static final String CFG_LIST = "list"; //$NON-NLS-1$
-	private static final String CFG_STAMP = "stamp"; //$NON-NLS-1$
-	private static final String CFG_FEATURE_STAMP = "stamp.features"; //$NON-NLS-1$
-	private static final String CFG_PLUGIN_STAMP = "stamp.plugins"; //$NON-NLS-1$
-	private static final String CFG_UPDATEABLE = "updateable"; //$NON-NLS-1$
-	private static final String CFG_LINK_FILE = "linkfile"; //$NON-NLS-1$
-	private static final String CFG_FEATURE_ENTRY = "feature"; //$NON-NLS-1$
-	private static final String CFG_FEATURE_ENTRY_DEFAULT = "feature.default.id"; //$NON-NLS-1$
-	private static final String CFG_FEATURE_ENTRY_ID = "id"; //$NON-NLS-1$
-	private static final String CFG_FEATURE_ENTRY_PRIMARY = "primary"; //$NON-NLS-1$
-	private static final String CFG_FEATURE_ENTRY_VERSION = "version"; //$NON-NLS-1$
-	private static final String CFG_FEATURE_ENTRY_PLUGIN_VERSION = "plugin-version"; //$NON-NLS-1$
-	private static final String CFG_FEATURE_ENTRY_PLUGIN_IDENTIFIER = "plugin-identifier"; //$NON-NLS-1$
-	private static final String CFG_FEATURE_ENTRY_APPLICATION = "application"; //$NON-NLS-1$
-	private static final String CFG_FEATURE_ENTRY_ROOT = "root"; //$NON-NLS-1$
+//	private static final String[] BOOTSTRAP_PLUGINS = { "org.eclipse.core.boot" }; //$NON-NLS-1$
+	private static final String[] BOOTSTRAP_PLUGINS = {}; //$NON-NLS-1$
+	
 
 	private static final String INIT_DEFAULT_FEATURE_ID = "feature.default.id"; //$NON-NLS-1$
 	private static final String INIT_DEFAULT_PLUGIN_ID = "feature.default.plugin.id"; //$NON-NLS-1$
@@ -97,42 +81,21 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private static final String DEFAULT_FEATURE_ID = "org.eclipse.platform"; //$NON-NLS-1$
 	private static final String DEFAULT_FEATURE_APPLICATION = "org.eclipse.ui.ide.workbench"; //$NON-NLS-1$
 
-	private static final String CFG_VERSION = "version"; //$NON-NLS-1$
-	private static final String CFG_TRANSIENT = "transient"; //$NON-NLS-1$
-	private static final String VERSION = "2.1"; //$NON-NLS-1$
-	private static final String EOF = "eof"; //$NON-NLS-1$
-	private static final int CFG_LIST_LENGTH = 10;
-
-	private static final int DEFAULT_POLICY_TYPE = ISitePolicy.USER_EXCLUDE;
-	private static final String[] DEFAULT_POLICY_LIST = new String[0];
 
 	private static final String LINK_PATH = "path"; //$NON-NLS-1$
 	private static final String LINK_READ = "r"; //$NON-NLS-1$
 	private static final String LINK_READ_WRITE = "rw"; //$NON-NLS-1$
 
-	private static final String CMD_FEATURE = "-feature"; //$NON-NLS-1$
-	private static final String CMD_APPLICATION = "-application"; //$NON-NLS-1$
-	private static final String CMD_UPDATE = "-update"; //$NON-NLS-1$
-	private static final String CMD_INITIALIZE = "-initialize"; //$NON-NLS-1$
-	private static final String CMD_FIRSTUSE = "-firstuse"; //$NON-NLS-1$
-	private static final String CMD_NO_UPDATE = "-noupdate"; //$NON-NLS-1$
-	private static final String CMD_NEW_UPDATES = "-newUpdates"; //$NON-NLS-1$
-	private static final String CMD_DEV = "-dev"; // triggers -noupdate //$NON-NLS-1$
-	private static final String CMD_NO_LINKED_CONFIG = "-no_linked_config";
-
-	public static final String RECONCILER_APP = "org.eclipse.update.core.reconciler"; //$NON-NLS-1$
-
-	private static final char[] HEX = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
-
 	private static URL installURL;
 	
 
-	private PlatformConfiguration(String configPath) throws IOException {
-		this.sites = new HashMap();
+	private PlatformConfiguration(String configPath) throws CoreException, IOException {
+//		this.sites = new HashMap();
 		this.externalLinkSites = new HashMap();
-		this.cfgdFeatures = new HashMap();
 		this.bootPlugins = new HashMap();
-
+		
+		this.config = null;
+		
 		// initialize configuration
 		initializeCurrent(configPath);
 
@@ -150,7 +113,10 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 
 		// compute differences between configuration and actual content of the sites
 		// (base sites and link sites)
-		computeChangeStamp();
+		// Note: when the config is transient (generated by PDE, etc.) we don't reconcile
+		changeStamp = computeChangeStamp();
+		if (changeStamp > config.getDate().getTime() && !isTransient())
+			reconcile();
 
 		// determine which plugins we will use to start the rest of the "kernel"
 		// (need to get core.runtime matching the executing core.boot and
@@ -158,10 +124,9 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		//		locateDefaultPlugins();
 	}
 
-	PlatformConfiguration(URL url) throws IOException {
-		this.sites = new HashMap();
+	PlatformConfiguration(URL url) throws Exception {
+//		this.sites = new HashMap();
 		this.externalLinkSites = new HashMap();
-		this.cfgdFeatures = new HashMap();
 		this.bootPlugins = new HashMap();
 		initialize(url);
 	}
@@ -170,7 +135,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	 * @see IPlatformConfiguration#createSiteEntry(URL, ISitePolicy)
 	 */
 	public ISiteEntry createSiteEntry(URL url, ISitePolicy policy) {
-		return new SiteEntry(url, policy, this);
+		return new SiteEntry(url, policy);
 	}
 
 	/*
@@ -209,16 +174,23 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 
 		if (entry == null)
 			return;
-
+	
 		URL url = entry.getURL();
 		if (url == null)
 			return;
 		String key = url.toExternalForm();
 
-		if (sites.containsKey(key) && !replace)
+//		if (sites.containsKey(key) && !replace)
+//			return;
+		
+		if (config.getSiteEntry(key) != null && !replace)
 			return;
-
-		sites.put(key, entry);
+		
+//
+//		sites.put(key, entry);
+		
+		if (entry instanceof SiteEntry)
+			config.addSiteEntry(key, (SiteEntry)entry);
 	}
 
 	/*
@@ -233,28 +205,52 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			return;
 		String key = url.toExternalForm();
 
-		sites.remove(key);
+//		sites.remove(key);
+		
+		if (entry instanceof SiteEntry)
+			config.removeSiteEntry(key);
 	}
 
 	/*
 	 * @see IPlatformConfiguration#getConfiguredSites()
 	 */
 	public ISiteEntry[] getConfiguredSites() {
-		if (sites.size() == 0)
+//		if (sites.size() == 0)
+//			return new ISiteEntry[0];
+//
+//		return (ISiteEntry[]) sites.values().toArray(new ISiteEntry[0]);
+		if (config == null)
 			return new ISiteEntry[0];
-
-		return (ISiteEntry[]) sites.values().toArray(new ISiteEntry[0]);
+		
+		SiteEntry[] sites = config.getSites();
+		ArrayList enabledSites = new ArrayList(sites.length);
+		for (int i=0; i<sites.length; i++) {
+			if (sites[i].isEnabled())
+				enabledSites.add(sites[i]);
+		}
+		return (ISiteEntry[])enabledSites.toArray(new ISiteEntry[enabledSites.size()]);
 	}
 
 	/*
 	 * @see IPlatformConfiguration#findConfiguredSite(URL)
 	 */
 	public ISiteEntry findConfiguredSite(URL url) {
+		return findConfiguredSite(url, true);
+	}
+	
+	/**
+	 * 
+	 * @param url site url
+	 * @param checkPlatformURL if true, check for url format that is platform:/...
+	 * @return
+	 */
+	public SiteEntry findConfiguredSite(URL url, boolean checkPlatformURL) {
 		if (url == null)
 			return null;
 		String key = url.toExternalForm();
 
-		ISiteEntry result = (ISiteEntry) sites.get(key);
+//		ISiteEntry result = (ISiteEntry) sites.get(key);
+		SiteEntry result = config.getSiteEntry(key);
 		try {
 			key = URLDecoder.decode(key, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
@@ -262,8 +258,16 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		}
 		
 		if (result == null) // retry with decoded URL string
-			result = (ISiteEntry) sites.get(key);
+//			result = (ISiteEntry) sites.get(key);
+			result = config.getSiteEntry(key);
 			
+		if (result == null && checkPlatformURL) {
+			try {
+				result = findConfiguredSite(Utils.asPlatformURL(url), false);
+			} catch (Exception e) {
+				//ignore
+			}
+		}
 		return result;
 	}
 
@@ -278,7 +282,16 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		if (key == null)
 			return;
 
-		cfgdFeatures.put(key, entry);
+		// we should check each site and find where the feature is
+		// located and then configure it
+		if (config == null)
+			config = new Configuration();
+
+		SiteEntry defaultSite = config.getSiteEntry(PlatformURLHandler.PROTOCOL + PlatformURLHandler.PROTOCOL_SEPARATOR + "/" + "base" + "/");
+		if (defaultSite != null) {
+			defaultSite.addFeatureEntry(entry);
+		}
+		// else, do nothing (we need a site)
 	}
 
 	/*
@@ -292,17 +305,21 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		if (key == null)
 			return;
 
-		cfgdFeatures.remove(key);
+		config.unconfigureFeatureEntry(entry);
 	}
 
 	/*
 	 * @see IPlatformConfiguration#getConfiguredFeatureEntries()
 	 */
 	public IFeatureEntry[] getConfiguredFeatureEntries() {
-		if (cfgdFeatures.size() == 0)
-			return new IFeatureEntry[0];
-
-		return (IFeatureEntry[]) cfgdFeatures.values().toArray(new IFeatureEntry[0]);
+		ArrayList configFeatures = new ArrayList();
+		SiteEntry[] sites = config.getSites();
+		for (int i=0; i<sites.length; i++) {
+			FeatureEntry[] features = sites[i].getFeatureEntries();
+			for (int j=0; j<features.length; j++)
+				configFeatures.add(features[j]);
+		}
+		return (IFeatureEntry[])configFeatures.toArray(new IFeatureEntry[configFeatures.size()]);
 	}
 
 	/*
@@ -312,7 +329,13 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		if (id == null)
 			return null;
 
-		return (IFeatureEntry) cfgdFeatures.get(id);
+		SiteEntry[] sites = config.getSites();
+		for (int i=0; i<sites.length; i++) {
+			FeatureEntry f = sites[i].getFeatureEntry(id);
+			if (f != null)
+				return f;
+		}
+		return null;
 	}
 
 	/*
@@ -326,27 +349,30 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	 * @see IPlatformConfiguration#getChangeStamp()
 	 */
 	public long getChangeStamp() {
-		if (!changeStampIsValid)
-			computeChangeStamp();
-		return changeStamp;
+//		if (!changeStampIsValid)
+//			computeChangeStamp();
+//		return changeStamp;
+		return 0;
 	}
 
 	/*
 	 * @see IPlatformConfiguration#getFeaturesChangeStamp()
 	 */
 	public long getFeaturesChangeStamp() {
-		if (!featuresChangeStampIsValid)
-			computeFeaturesChangeStamp();
-		return featuresChangeStamp;
+//		if (!featuresChangeStampIsValid)
+//			computeFeaturesChangeStamp();
+//		return featuresChangeStamp;
+		return 0;
 	}
 
 	/*
 	 * @see IPlatformConfiguration#getPluginsChangeStamp()
 	 */
 	public long getPluginsChangeStamp() {
-		if (!pluginsChangeStampIsValid)
-			computePluginsChangeStamp();
-		return pluginsChangeStamp;
+//		if (!pluginsChangeStampIsValid)
+//			computePluginsChangeStamp();
+//		return pluginsChangeStamp;
+		return 0;
 	}
 
 	/*
@@ -354,40 +380,32 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	 */
 	public String getApplicationIdentifier() {
 
-		if (cmdInitialize) {
-			// we are running post-install initialization. Force
-			// running of the reconciler
-			return RECONCILER_APP;
-		}
-
-		if (featuresChangeStamp != lastFeaturesChangeStamp) {
-			// we have detected feature changes ... see if we need to reconcile
-			boolean update = !cmdNoUpdate || cmdUpdate;
-			if (update)
-				return RECONCILER_APP;
-		}
+//		if (cmdInitialize) {
+//			// we are running post-install initialization. Force
+//			// running of the reconciler
+//			return RECONCILER_APP;
+//		}
+//
+//		if (featuresChangeStamp != lastFeaturesChangeStamp) {
+//			// we have detected feature changes ... see if we need to reconcile
+//			boolean update = !cmdNoUpdate || cmdUpdate;
+//			if (update)
+//				return RECONCILER_APP;
+//		}
 
 		// "normal" startup ... run specified application
 		return getApplicationIdentifierInternal();
 	}
 
 	private String getApplicationIdentifierInternal() {
+		String feature = config.getDefaultFeature();
 
-		if (cmdApplication != null) // application was specified
-			return cmdApplication;
-		else {
-			// if -feature was not specified use the default feature
-			String feature = cmdFeature;
-			if (feature == null)
-				feature = defaultFeature;
-
-			// lookup application for feature (specified or defaulted)
-			if (feature != null) {
-				IFeatureEntry fe = findConfiguredFeatureEntry(feature);
-				if (fe != null) {
-					if (fe.getFeatureApplication() != null)
-						return fe.getFeatureApplication();
-				}
+		// lookup application for feature (specified or defaulted)
+		if (feature != null) {
+			IFeatureEntry fe = findConfiguredFeatureEntry(feature);
+			if (fe != null) {
+				if (fe.getFeatureApplication() != null)
+					return fe.getFeatureApplication();
 			}
 		}
 
@@ -400,10 +418,8 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	 */
 	public String getPrimaryFeatureIdentifier() {
 		String primaryFeatureId = null;
-		if (cmdFeature != null) // -feature was specified on command line
-			primaryFeatureId = cmdFeature;
-		else if (defaultFeature != null)
-			primaryFeatureId = defaultFeature; // return customized default if set
+		if (config.getDefaultFeature() != null)
+			primaryFeatureId = config.getDefaultFeature(); // return customized default if set
 		else
 			primaryFeatureId = DEFAULT_FEATURE_ID; // return hardcoded default
 		
@@ -450,13 +466,13 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	 * @see IPlatformConfiguration#setBootstrapPluginLocation(String, URL)
 	 */
 	public void setBootstrapPluginLocation(String id, URL location) {
-		String[] ids = getBootstrapPluginIdentifiers();
-		for (int i = 0; i < ids.length; i++) {
-			if (ids[i].equals(id)) {
-				bootPlugins.put(id, location.toExternalForm());
-				break;
-			}
-		}
+//		String[] ids = getBootstrapPluginIdentifiers();
+//		for (int i = 0; i < ids.length; i++) {
+//			if (ids[i].equals(id)) {
+//				bootPlugins.put(id, location.toExternalForm());
+//				break;
+//			}
+//		}
 	}
 
 	/*
@@ -470,15 +486,18 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	 * @see IPlatformConfiguration#isTransient()
 	 */
 	public boolean isTransient() {
-		return transientConfig;
+		if (config != null)
+			return config.isTransient();
+		else
+			return false;
 	}
 
 	/*
 	 * @see IPlatformConfiguration#isTransient(boolean)
 	 */
 	public void isTransient(boolean value) {
-		//		if (this != BootLoader.getCurrentPlatformConfiguration())
-		//			transientConfig = value;
+		if (this != getCurrent() && config != null)
+			config.setTransient(value);
 	}
 
 	/*
@@ -493,11 +512,11 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			 ((SiteEntry) sites[i]).refresh();
 		}
 		// reset configuration entry.
-		lastFeaturesChangeStamp = featuresChangeStamp;
-		lastPluginsChangeStamp = pluginsChangeStamp;
-		changeStampIsValid = false;
-		featuresChangeStampIsValid = false;
-		pluginsChangeStampIsValid = false;
+//		lastFeaturesChangeStamp = featuresChangeStamp;
+//		lastPluginsChangeStamp = pluginsChangeStamp;
+//		changeStampIsValid = false;
+//		featuresChangeStampIsValid = false;
+//		pluginsChangeStampIsValid = false;
 	}
 
 	/*
@@ -515,18 +534,19 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		if (url == null)
 			throw new IOException(Messages.getString("cfig.unableToSave.noURL")); //$NON-NLS-1$
 
-		PrintWriter w = null;
 		OutputStream os = null;
 		if (!url.getProtocol().equals("file")) { //$NON-NLS-1$
 			// not a file protocol - attempt to save to the URL
 			URLConnection uc = url.openConnection();
 			uc.setDoOutput(true);
 			os = uc.getOutputStream();
-			w = new PrintWriter(os);
 			try {
-				write(w);
+				saveAsXML(os);
+				config.setDirty(false);
+			} catch (CoreException e) {
+				throw new IOException(Messages.getString("cfig.unableToSave", url.toExternalForm())); //$NON-NLS-1$
 			} finally {
-				w.close();
+				os.close();
 			}
 		} else {
 			// file protocol - do safe i/o
@@ -537,30 +557,34 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			if (cfigDir != null)
 				cfigDir.mkdirs();
 
+			// Backup old file
+			File oldConfigFile = new File(cfigDir, CONFIG_NAME);
+			if (oldConfigFile.exists()){
+				File backupDir = new File(cfigDir, "history");
+				if (!backupDir.exists())
+					backupDir.mkdir();
+				File preservedFile = new File(backupDir, String.valueOf(oldConfigFile.lastModified())+".xml");
+				copy(oldConfigFile, preservedFile);
+				preservedFile.setLastModified(oldConfigFile.lastModified());
+			}
+			
 			// If config.ini does not exist, generate it
 			writeConfigIni(cfigDir);
 			
 			// first save the file as temp
 			File cfigTmp = new File(cfigFile.getAbsolutePath() + CONFIG_FILE_TEMP_SUFFIX);
 			os = new FileOutputStream(cfigTmp);
-			w = new PrintWriter(os);
 			try {
-				write(w);
-				//saveAsXML(new File(cfigDir, "platform.xml"));
+				saveAsXML(os);
+				// set file time stamp to match that of the config element
+				cfigTmp.setLastModified(config.getDate().getTime());
+				// make the change stamp to be the same as the config file
+				changeStamp = config.getDate().getTime();
+//				changeStampIsValid = true;
+			} catch (CoreException e) {
+				throw new IOException(Messages.getString("cfig.unableToSave", cfigTmp.getAbsolutePath())); //$NON-NLS-1$
 			} finally {
-				w.close();
-			}
-
-			// make sure we actually succeeded saving the whole configuration.
-			InputStream is = new FileInputStream(cfigTmp);
-			Properties tmpProps = new Properties();
-			try {
-				tmpProps.load(is);
-				if (!EOF.equals(tmpProps.getProperty(EOF))) {
-					throw new IOException(Messages.getString("cfig.unableToSave", cfigTmp.getAbsolutePath())); //$NON-NLS-1$
-				}
-			} finally {
-				is.close();
+				os.close();
 			}
 
 			// make the saved config the "active" one
@@ -611,27 +635,15 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	 * @param r10apps application identifies as passed on the BootLoader.run(...)
 	 * method. Supported for R1.0 compatibility.
 	 */
-	public static synchronized String[] startup(String[] cmdArgs, String r10app, URL installURL, String configPath) throws Exception {
+	public static synchronized void startup(URL installURL, String configPath) throws Exception {
 		PlatformConfiguration.installURL = installURL;
-
-		cmdApplication = r10app; // R1.0 compatibility
-
-		// process command line arguments
-		String[] passthruArgs = processCommandLine(cmdArgs);
-		if (cmdDev)
-			cmdNoUpdate = true; // force -noupdate when in dev mode (eg. PDE)
-
+	
 		// create current configuration
-		if (currentPlatformConfiguration == null)
+		if (currentPlatformConfiguration == null) {
 			currentPlatformConfiguration = new PlatformConfiguration(configPath);
-
-		// check if we will be forcing reconciliation
-		passthruArgs = checkForFeatureChanges(passthruArgs, currentPlatformConfiguration);
-
-		// check if we should indicate new changes
-		passthruArgs = checkForNewUpdates(currentPlatformConfiguration, passthruArgs);
-
-		return passthruArgs;
+			if (currentPlatformConfiguration.isNew)
+				currentPlatformConfiguration.save();
+		}
 	}
 
 	public static synchronized void shutdown() throws IOException {
@@ -639,11 +651,17 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		// save platform configuration
 		PlatformConfiguration config = getCurrent();
 		if (config != null) {
-			try {
-				config.save();
-			} catch (IOException e) {
-				Utils.debug("Unable to save configuration " + e.toString()); //$NON-NLS-1$
-				// will recover on next startup
+			// only save if there are changes in the config
+			// TODO clean this up when merging with the rest of update code
+			long lastStamp = config.config.getDate().getTime();
+			long computedStamp = config.computeChangeStamp();
+			if (config.config.isDirty() || computedStamp > lastStamp) {
+				try {
+					config.save();
+				} catch (IOException e) {
+					Utils.debug("Unable to save configuration " + e.toString()); //$NON-NLS-1$
+					// will recover on next startup
+				}
 			}
 			config.clearConfigurationLock();
 		}
@@ -652,27 +670,6 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private synchronized void initializeCurrent(String configPath) throws IOException {
 		// FIXME: commented out for now. Remove if not needed.
 		//boolean concurrentUse = false;
-
-		if (cmdInitialize) {
-			// we are running post-install initialization (-install command
-			// line argument). Ignore any configuration URL passed in.
-			// Force the configuration to be saved in the install location.
-			// Allow an existing configuration to be re-initialized.
-			URL url = new URL(getInstallURL(), CONFIG_FILE); // if we fail here, return exception
-			// FIXME: commented out for now. Remove if not needed. 
-			// I left the call to #getConfigurationLock in just in case
-			// calling it has useful side effect. If not, then it can be removed too.
-			//concurrentUse = getConfigurationLock(url);
-			getConfigurationLock(url);
-
-			resetInitializationConfiguration(url); // [20111]
-
-			configureSite(getRootSite());
-			Utils.debug("Initializing configuration " + url.toString()); //$NON-NLS-1$
-			configLocation = url;
-			verifyPath(configLocation);
-			return;
-		}
 
 		// Configuration URL was is specified by the OSGi layer. 
 		// Default behavior is to look
@@ -691,54 +688,72 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 
 			// try loading the configuration
 			try {
-				load(configFileURL);
+				config = loadConfig(configFileURL);
 				Utils.debug("Using configuration " + configFileURL.toString()); //$NON-NLS-1$
-			} catch (IOException e) {
+			} catch (Exception e) {
 				// failed to load, see if we can find pre-initialized configuration.
 				// Don't attempt this initialization when self-hosting (is unpredictable)
 				try {
 					URL sharedConfigDirURL = new URL(getInstallURL(), CONFIG_DIR);
 					URL sharedConfigFileURL = new URL(getInstallURL(), CONFIG_FILE);
 
-					load(sharedConfigFileURL);
+					config = loadConfig(sharedConfigFileURL);
 					
 					// pre-initialized config loaded OK ... copy any remaining update metadata
 					// Only copy if the default config location is not the install location
 					if (!sharedConfigDirURL.equals(configDirURL)) {
-//						if (cmdNoLinkedConfig)
-//							// need to link config info instead of using a copy
-//							linkInitializedState(sharedConfigDirURL, configPath);
-//						else
+						if (true)
+							// need to link config info instead of using a copy
+							linkInitializedState(config, sharedConfigDirURL, configFileURL);
+						else
 							// copy config info
 							copyInitializedState(sharedConfigDirURL, configPath);
 						
 						Utils.debug("Configuration initialized from    " + sharedConfigDirURL.toString()); //$NON-NLS-1$
 					}
 					return;
-				} catch (IOException ioe) {
-					cmdFirstUse = true;
-					// we are creating new configuration
-					configureSite(getRootSite());
+				} catch (Exception ioe) {
+					Utils.debug("Creating default configuration from " + configFileURL.toExternalForm());
+					createDefaultConfiguration(configFileURL);
 				}
 			}
 		} finally {
 			configLocation = configFileURL;
+			if (config.getURL() == null)
+				config.setURL(configFileURL);
 			verifyPath(configLocation);
 			Utils.debug("Creating configuration " + configFileURL.toString()); //$NON-NLS-1$
 		}
 	}
 
-	private synchronized void initialize(URL url) throws IOException {
+	private synchronized void initialize(URL url) throws Exception {
 		if (url == null) {
+			config = new Configuration();
+			config.setURL(url);
 			Utils.debug("Creating empty configuration object"); //$NON-NLS-1$
 			return;
 		}
 
-		load(url);
+		config = loadConfig(url);
 		configLocation = url;
 		Utils.debug("Using configuration " + configLocation.toString()); //$NON-NLS-1$
 	}
 
+	private void createDefaultConfiguration(URL url)throws IOException{
+		// we are creating new configuration
+		config = new Configuration();
+		config.setURL(url);
+		SiteEntry defaultSite = (SiteEntry)getRootSite();
+		configureSite(defaultSite);
+		try {
+			// parse the site directory to discover features
+			defaultSite.loadFromDisk();
+			isNew = true;
+		} catch (CoreException e1) {
+			Utils.log("Cannot load default site " + defaultSite.getResolvedURL());
+			return;
+		}
+	}
 	private ISiteEntry getRootSite() {
 		// create default site entry for the root
 		ISitePolicy defaultPolicy = createSitePolicy(DEFAULT_POLICY_TYPE, DEFAULT_POLICY_LIST);
@@ -819,37 +834,41 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		}
 	}
 
-	private void computeChangeStamp() {
-		computeFeaturesChangeStamp();
-		computePluginsChangeStamp();
-		changeStamp = featuresChangeStamp ^ pluginsChangeStamp;
-		changeStampIsValid = true;
+	private long computeChangeStamp() {
+		featuresChangeStamp = computeFeaturesChangeStamp();
+		pluginsChangeStamp = computePluginsChangeStamp();
+		changeStamp = Math.max(featuresChangeStamp, pluginsChangeStamp);
+		// round off to seconds
+		changeStamp = (changeStamp/1000)*1000;
+		return changeStamp;
 	}
 
-	private void computeFeaturesChangeStamp() {
+	private long computeFeaturesChangeStamp() {
 		if (featuresChangeStampIsValid)
-			return;
+			return featuresChangeStamp;
 
 		long result = 0;
-		ISiteEntry[] sites = getConfiguredSites();
+		ISiteEntry[] sites = config.getSites();
 		for (int i = 0; i < sites.length; i++) {
-			result ^= sites[i].getFeaturesChangeStamp();
+			result = Math.max(result, sites[i].getFeaturesChangeStamp());
 		}
 		featuresChangeStamp = result;
 		featuresChangeStampIsValid = true;
+		return featuresChangeStamp;
 	}
 
-	private void computePluginsChangeStamp() {
+	private long computePluginsChangeStamp() {
 		if (pluginsChangeStampIsValid)
-			return;
+			return pluginsChangeStamp;
 
 		long result = 0;
-		ISiteEntry[] sites = getConfiguredSites();
+		ISiteEntry[] sites = config.getSites();
 		for (int i = 0; i < sites.length; i++) {
-			result ^= sites[i].getPluginsChangeStamp();
+			result = Math.max(result, sites[i].getPluginsChangeStamp());
 		}
 		pluginsChangeStamp = result;
 		pluginsChangeStampIsValid = true;
+		return pluginsChangeStamp;
 	}
 
 	private void configureExternalLinks() {
@@ -955,7 +974,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private void validateSites() {
 
 		// check to see if all sites are valid. Remove any sites that do not exist.
-		SiteEntry[] list = (SiteEntry[]) sites.values().toArray(new SiteEntry[0]);
+		SiteEntry[] list = config.getSites();
 		for (int i = 0; i < list.length; i++) {
 			URL siteURL = list[i].getResolvedURL();
 			if (!supportsDetection(siteURL))
@@ -969,24 +988,23 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		}
 	}
 	
-	private void linkInitializedState(URL source, String target) {
+	private void linkInitializedState(Configuration sharedConfig, URL sharedConfigURL, URL newConfigURL) {
 		try {
-			if (!source.getProtocol().equals("file")) //$NON-NLS-1$
-				return; // need to be able to do "dir"
+			URL oldConfigIniURL = new URL(sharedConfigURL, CONFIG_INI);
+			URL newConfigIniURL = new URL(newConfigURL, CONFIG_INI);
+			if (!newConfigIniURL.getProtocol().equals("file")) //$NON-NLS-1$
+				return; // need to be able to do write
 
-			copy(new File(source.getFile()), new File(target));
-			// modify config.ini and platform.cfg to only link original files
-			File configIni = new File(target, CONFIG_INI);
+			// modify config.ini and platform.xml to only link original files
+			File configIni = new File(newConfigIniURL.getFile());
 			Properties props = new Properties();
-			props.put("link", new URL(source, CONFIG_DIR+"/"+CONFIG_INI));
+			props.put(CFG_SHARED_URL, oldConfigIniURL.toExternalForm());
 			props.store(new FileOutputStream(configIni), "Linked configuration");
 			
-			File platformCfg = new File(target, CONFIG_NAME);
-			props = new Properties();
-			props.put(CFG_VERSION, VERSION);
-			props.put("link", new URL(source, CONFIG_DIR+"/"+CONFIG_NAME));
-			props.store(new FileOutputStream(platformCfg), "Linked configuration");
-
+			config = new Configuration(new Date());
+			config.setURL(newConfigURL);
+			config.setLinkedConfig(sharedConfig);
+			isNew = true;
 		} catch (IOException e) {
 			// this is an optimistic copy. If we fail, the state will be reconciled
 			// when the update manager is triggered.
@@ -1000,7 +1018,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 				return; // need to be able to do "dir"
 
 			copy(new File(source.getFile()), new File(target));
-			
+
 		} catch (IOException e) {
 			// this is an optimistic copy. If we fail, the state will be reconciled
 			// when the update manager is triggered.
@@ -1080,272 +1098,50 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 					// ignore ...
 				}
 		}
-	}
-
-	private void load(URL url) throws IOException {
-
+	}		
+	private Configuration loadConfig(URL url) throws Exception {
 		if (url == null)
 			throw new IOException(Messages.getString("cfig.unableToLoad.noURL")); //$NON-NLS-1$
 
 		// try to load saved configuration file (watch for failed prior save())
-		Properties props = null;
-		IOException originalException = null;
+		ConfigurationParser parser = null;
 		try {
-			props = loadProperties(url, null); // try to load config file
-		} catch (IOException e1) {
+			parser = new ConfigurationParser();
+		} catch (InvocationTargetException e) {
+			throw (Exception)e.getTargetException();
+		}
+		
+		config = null;
+		Exception originalException = null;
+		try {
+			config = parser.parse(url);
+		} catch (Exception e1) {
+			// check for save failures, so open temp and backup configurations
 			originalException = e1;
 			try {
-				props = loadProperties(url, CONFIG_FILE_TEMP_SUFFIX); // check for failures on save
-			} catch (IOException e2) {
+				URL tempURL = new URL(url.toExternalForm()+CONFIG_FILE_TEMP_SUFFIX);
+				config = parser.parse(tempURL); 
+			} catch (Exception e2) {
 				try {
-					props = loadProperties(url, CONFIG_FILE_BAK_SUFFIX); // check for failures on save
+					URL backupUrl = new URL(url.toExternalForm()+CONFIG_FILE_BAK_SUFFIX);
+					config = parser.parse(backupUrl);
 				} catch (IOException e3) {
 					throw originalException; // we tried, but no config here ...
 				}
 			}
 		}
-
-		// check version
-		String v = props.getProperty(CFG_VERSION);
-		if (!VERSION.equals(v)) {
-			// the state is invalid, delete any files under the directory
-			// bug 33493
-			resetUpdateManagerState(url);
-			throw new IOException(Messages.getString("cfig.badVersion", v)); //$NON-NLS-1$
-		}
-
-		// load simple properties
-		defaultFeature = loadAttribute(props, CFG_FEATURE_ENTRY_DEFAULT, null);
-
-		String flag = loadAttribute(props, CFG_TRANSIENT, null);
-		if (flag != null) {
-			if (flag.equals("true")) //$NON-NLS-1$
-				transientConfig = true;
-			else
-				transientConfig = false;
-		}
-
-		String stamp = loadAttribute(props, CFG_FEATURE_STAMP, null);
-		if (stamp != null) {
-			try {
-				lastFeaturesChangeStamp = Long.parseLong(stamp);
-			} catch (NumberFormatException e) {
-				// ignore bad attribute ...
+		if (config != null) {
+			SiteEntry[] sites = config.getSites();
+			for (int i=0; i<sites.length; i++) {
+				configureSite(sites[i]);
+				IFeatureEntry[] features = sites[i].getFeatureEntries();
+				for (int j=0; j<features.length; j++)
+					configureFeatureEntry(features[j]);
 			}
 		}
-
-		stamp = loadAttribute(props, CFG_PLUGIN_STAMP, null);
-		if (stamp != null) {
-			try {
-				lastPluginsChangeStamp = Long.parseLong(stamp);
-			} catch (NumberFormatException e) {
-				// ignore bad attribute ...
-			}
-		}
-
-		// load bootstrap entries
-		String[] ids = getBootstrapPluginIdentifiers();
-		for (int i = 0; i < ids.length; i++) {
-			bootPlugins.put(ids[i], loadAttribute(props, CFG_BOOT_PLUGIN + "." + ids[i], null)); //$NON-NLS-1$
-		}
-
-		// load feature entries
-		IFeatureEntry fe = loadFeatureEntry(props, CFG_FEATURE_ENTRY + ".0", null); //$NON-NLS-1$
-		for (int i = 1; fe != null; i++) {
-			configureFeatureEntry(fe);
-			fe = loadFeatureEntry(props, CFG_FEATURE_ENTRY + "." + i, null); //$NON-NLS-1$
-		}
-
-		// load site properties
-		SiteEntry root = (SiteEntry) getRootSite();
-		String rootUrlString = root.getURL().toExternalForm();
-		SiteEntry se = (SiteEntry) loadSite(props, CFG_SITE + ".0", null); //$NON-NLS-1$
-		
-		for (int i = 1; se != null; i++) {
-
-			// check if we are forcing "first use" processing with an existing
-			// platform.cfg. In this case ignore site entry that represents
-			// the platform install, and use a root site entry in its place.
-			// This ensures we do not get messed up by an exclusion list that
-			// is read from the prior state.
-			if (cmdFirstUse && rootUrlString.equals(se.getURL().toExternalForm()))
-				se = root;
-
-			if (!se.isExternallyLinkedSite())
-				configureSite(se);
-			else
-				// remember external link site state, but do not configure at this point
-				externalLinkSites.put(se.getURL(), se);
-			se = (SiteEntry) loadSite(props, CFG_SITE + "." + i, null); //$NON-NLS-1$
-		}
+		return config;
 	}
-
-	private Properties loadProperties(URL url, String suffix) throws IOException {
-
-		// figure out what we will be loading
-		if (suffix != null && !suffix.equals("")) //$NON-NLS-1$
-			url = new URL(url.getProtocol(), url.getHost(), url.getPort(), url.getFile() + suffix);
-
-		// try to load saved configuration file
-		Properties props = new Properties();
-		InputStream is = null;
-		try {
-			is = url.openStream();
-			if (is == null)
-				throw new IOException();
-			props.load(is);
-			// check to see if we have complete config file
-			if (!EOF.equals(props.getProperty(EOF))) {
-				throw new IOException(Messages.getString("cfig.unableToLoad.incomplete", url.toString())); //$NON-NLS-1$
-			}
-		} finally {
-			if (is != null) {
-				try {
-					is.close();
-				} catch (IOException e) {
-					// ignore ...
-				}
-			}
-		}
-		return props;
-	}
-
-	private ISiteEntry loadSite(Properties props, String name, ISiteEntry dflt) {
-
-		String urlString = loadAttribute(props, name + "." + CFG_URL, null); //$NON-NLS-1$
-		if (urlString == null)
-			return dflt;
-
-		URL url = null;
-		try {
-			url = new URL(urlString);
-		} catch (MalformedURLException e) {
-			return dflt;
-		}
-
-		int policyType;
-		String[] policyList;
-		String typeString = loadAttribute(props, name + "." + CFG_POLICY, null); //$NON-NLS-1$
-		if (typeString == null) {
-			policyType = DEFAULT_POLICY_TYPE;
-			policyList = DEFAULT_POLICY_LIST;
-		} else {
-			int i;
-			for (i = 0; i < CFG_POLICY_TYPE.length; i++) {
-				if (typeString.equals(CFG_POLICY_TYPE[i])) {
-					break;
-				}
-			}
-			if (i >= CFG_POLICY_TYPE.length) {
-				policyType = DEFAULT_POLICY_TYPE;
-				policyList = DEFAULT_POLICY_LIST;
-			} else {
-				policyType = i;
-				policyList = loadListAttribute(props, name + "." + CFG_LIST, new String[0]); //$NON-NLS-1$
-			}
-		}
-
-		ISitePolicy sp = createSitePolicy(policyType, policyList);
-		SiteEntry site = (SiteEntry) createSiteEntry(url, sp);
-
-		String stamp = loadAttribute(props, name + "." + CFG_FEATURE_STAMP, null); //$NON-NLS-1$
-		if (stamp != null) {
-			try {
-				site.setLastFeaturesChangeStamp(Long.parseLong(stamp));
-			} catch (NumberFormatException e) {
-				// ignore bad attribute ...
-			}
-		}
-
-		stamp = loadAttribute(props, name + "." + CFG_PLUGIN_STAMP, null); //$NON-NLS-1$
-		if (stamp != null) {
-			try {
-				site.setLastPluginsChangeStamp(Long.parseLong(stamp));
-			} catch (NumberFormatException e) {
-				// ignore bad attribute ...
-			}
-		}
-
-		String flag = loadAttribute(props, name + "." + CFG_UPDATEABLE, null); //$NON-NLS-1$
-		if (flag != null) {
-			if (flag.equals("true")) //$NON-NLS-1$
-				site.setUpdateable(true);
-			else
-				site.setUpdateable(false);
-		}
-
-		String linkname = loadAttribute(props, name + "." + CFG_LINK_FILE, null); //$NON-NLS-1$
-		if (linkname != null && !linkname.equals("")) { //$NON-NLS-1$
-			site.setLinkFileName(linkname.replace('/', File.separatorChar));
-		}
-
-		return site;
-	}
-
-	private IFeatureEntry loadFeatureEntry(Properties props, String name, IFeatureEntry dflt) {
-		String id = loadAttribute(props, name + "." + CFG_FEATURE_ENTRY_ID, null); //$NON-NLS-1$
-		if (id == null)
-			return dflt;
-		String version = loadAttribute(props, name + "." + CFG_FEATURE_ENTRY_VERSION, null); //$NON-NLS-1$
-		String pluginVersion = loadAttribute(props, name + "." + CFG_FEATURE_ENTRY_PLUGIN_VERSION, null); //$NON-NLS-1$
-		if (pluginVersion == null)
-			pluginVersion = version;
-		String pluginIdentifier = loadAttribute(props, name + "." + CFG_FEATURE_ENTRY_PLUGIN_IDENTIFIER, null); //$NON-NLS-1$
-		if (pluginIdentifier == null)
-			pluginIdentifier = id;
-		String application = loadAttribute(props, name + "." + CFG_FEATURE_ENTRY_APPLICATION, null); //$NON-NLS-1$
-		ArrayList rootList = new ArrayList();
-
-		// get install locations
-		String rootString = loadAttribute(props, name + "." + CFG_FEATURE_ENTRY_ROOT + ".0", null); //$NON-NLS-1$ //$NON-NLS-2$
-		for (int i = 1; rootString != null; i++) {
-			try {
-				URL rootEntry = new URL(rootString);
-				rootList.add(rootEntry);
-			} catch (MalformedURLException e) {
-				// skip bad entries ...
-			}
-			rootString = loadAttribute(props, name + "." + CFG_FEATURE_ENTRY_ROOT + "." + i, null); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		URL[] roots = (URL[]) rootList.toArray(new URL[0]);
-
-		// get primary flag
-		boolean primary = false;
-		String flag = loadAttribute(props, name + "." + CFG_FEATURE_ENTRY_PRIMARY, null); //$NON-NLS-1$
-		if (flag != null) {
-			if (flag.equals("true")) //$NON-NLS-1$
-				primary = true;
-		}
-		return createFeatureEntry(id, version, pluginIdentifier, pluginVersion, primary, application, roots);
-	}
-
-	private String[] loadListAttribute(Properties props, String name, String[] dflt) {
-		ArrayList list = new ArrayList();
-		String value = loadAttribute(props, name + ".0", null); //$NON-NLS-1$
-		if (value == null)
-			return dflt;
-
-		for (int i = 1; value != null; i++) {
-			loadListAttributeSegment(list, value);
-			value = loadAttribute(props, name + "." + i, null); //$NON-NLS-1$
-		}
-		return (String[]) list.toArray(new String[0]);
-	}
-
-	private void loadListAttributeSegment(ArrayList list, String value) {
-
-		if (value == null)
-			return;
-
-		StringTokenizer tokens = new StringTokenizer(value, ","); //$NON-NLS-1$
-		String token;
-		while (tokens.hasMoreTokens()) {
-			token = tokens.nextToken().trim();
-			if (!token.equals("")) //$NON-NLS-1$
-				list.add(token);
-		}
-		return;
-	}
+	
 
 	private String loadAttribute(Properties props, String name, String dflt) {
 		String prop = props.getProperty(name);
@@ -1394,300 +1190,40 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 
 			if (fe == null) {
 				// bug 26896 : setup optimistic reconciliation if the primary feature has changed or is new
-				cmdFirstUse = true;
 				// create entry if not exists
 				fe = createFeatureEntry(initId, null, initPluginId, null, true, application, null);
 			} else
 				// update existing entry with new info
 				fe = createFeatureEntry(initId, fe.getFeatureVersion(), fe.getFeaturePluginIdentifier(), fe.getFeaturePluginVersion(), fe.canBePrimary(), application, fe.getFeatureRootURLs());
 			configureFeatureEntry(fe);
-			defaultFeature = initId;
+			if (config != null)
+				config.setDefaultFeature(initId);
 			if (ConfigurationActivator.DEBUG) {
-				Utils.debug("    Default primary feature: " + defaultFeature); //$NON-NLS-1$
+				Utils.debug("    Default primary feature: " + initId); //$NON-NLS-1$
 				if (application != null)
 					Utils.debug("    Default application    : " + application); //$NON-NLS-1$
 			}
 		}
 	}
 
-	private void write(PrintWriter w) {
-		// write header
-		w.println("# " + (new Date()).toString()); //$NON-NLS-1$
-		writeAttribute(w, CFG_VERSION, VERSION);
-		if (transientConfig)
-			writeAttribute(w, CFG_TRANSIENT, "true"); //$NON-NLS-1$
-		w.println(""); //$NON-NLS-1$
-
-		// write global attributes
-		writeAttribute(w, CFG_STAMP, Long.toString(getChangeStamp()));
-		writeAttribute(w, CFG_FEATURE_STAMP, Long.toString(getFeaturesChangeStamp()));
-		writeAttribute(w, CFG_PLUGIN_STAMP, Long.toString(getPluginsChangeStamp()));
-
-		// write out bootstrap entries
-		String[] ids = getBootstrapPluginIdentifiers();
-		for (int i = 0; i < ids.length; i++) {
-			String location = (String) bootPlugins.get(ids[i]);
-			if (location != null)
-				writeAttribute(w, CFG_BOOT_PLUGIN + "." + ids[i], location); //$NON-NLS-1$
-		}
-
-		// write out feature entries
-		w.println(""); //$NON-NLS-1$
-		writeAttribute(w, CFG_FEATURE_ENTRY_DEFAULT, defaultFeature);
-		IFeatureEntry[] feats = getConfiguredFeatureEntries();
-		for (int i = 0; i < feats.length; i++) {
-			writeFeatureEntry(w, CFG_FEATURE_ENTRY + "." + Integer.toString(i), feats[i]); //$NON-NLS-1$
-		}
-
-		// write out site entries
-		SiteEntry[] list = (SiteEntry[]) sites.values().toArray(new SiteEntry[0]);
-		for (int i = 0; i < list.length; i++) {
-			writeSite(w, CFG_SITE + "." + Integer.toString(i), list[i]); //$NON-NLS-1$
-		}
-
-		// write end-of-file marker
-		writeAttribute(w, EOF, EOF);
-	}
-
-	private void writeSite(PrintWriter w, String id, SiteEntry entry) {
-
-		// write site separator
-		w.println(""); //$NON-NLS-1$
-
-		// write out site settings
-		writeAttribute(w, id + "." + CFG_URL, entry.getURL().toString()); //$NON-NLS-1$
-		writeAttribute(w, id + "." + CFG_STAMP, Long.toString(entry.getChangeStamp())); //$NON-NLS-1$
-		writeAttribute(w, id + "." + CFG_FEATURE_STAMP, Long.toString(entry.getFeaturesChangeStamp())); //$NON-NLS-1$
-		writeAttribute(w, id + "." + CFG_PLUGIN_STAMP, Long.toString(entry.getPluginsChangeStamp())); //$NON-NLS-1$
-		writeAttribute(w, id + "." + CFG_UPDATEABLE, entry.isUpdateable() ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		if (entry.isExternallyLinkedSite()) //$NON-NLS-1$
-			writeAttribute(w, id + "." + CFG_LINK_FILE, entry.getLinkFileName().trim().replace(File.separatorChar, '/')); //$NON-NLS-1$
-
-		// write out site policy
-		int type = entry.getSitePolicy().getType();
-		String typeString = CFG_POLICY_TYPE_UNKNOWN;
-		try {
-			typeString = CFG_POLICY_TYPE[type];
-		} catch (IndexOutOfBoundsException e) {
-			// ignore bad attribute ...
-		}
-		writeAttribute(w, id + "." + CFG_POLICY, typeString); //$NON-NLS-1$
-		writeListAttribute(w, id + "." + CFG_LIST, entry.getSitePolicy().getList()); //$NON-NLS-1$
-	}
-
-	private void writeFeatureEntry(PrintWriter w, String id, IFeatureEntry entry) {
-
-		// write feature entry separator
-		w.println(""); //$NON-NLS-1$
-
-		// write out feature entry settings
-		writeAttribute(w, id + "." + CFG_FEATURE_ENTRY_ID, entry.getFeatureIdentifier()); //$NON-NLS-1$
-		if (entry.canBePrimary())
-			writeAttribute(w, id + "." + CFG_FEATURE_ENTRY_PRIMARY, "true"); //$NON-NLS-1$ //$NON-NLS-2$
-		writeAttribute(w, id + "." + CFG_FEATURE_ENTRY_VERSION, entry.getFeatureVersion()); //$NON-NLS-1$
-		if (entry.getFeatureVersion() != null && !entry.getFeatureVersion().equals(entry.getFeaturePluginVersion()))
-			writeAttribute(w, id + "." + CFG_FEATURE_ENTRY_PLUGIN_VERSION, entry.getFeaturePluginVersion()); //$NON-NLS-1$
-		if (entry.getFeatureIdentifier() != null && !entry.getFeatureIdentifier().equals(entry.getFeaturePluginIdentifier()))
-			writeAttribute(w, id + "." + CFG_FEATURE_ENTRY_PLUGIN_IDENTIFIER, entry.getFeaturePluginIdentifier()); //$NON-NLS-1$
-		writeAttribute(w, id + "." + CFG_FEATURE_ENTRY_APPLICATION, entry.getFeatureApplication()); //$NON-NLS-1$
-		URL[] roots = entry.getFeatureRootURLs();
-		for (int i = 0; i < roots.length; i++) {
-			// write our as individual attributes (is easier for Main.java to read)
-			writeAttribute(w, id + "." + CFG_FEATURE_ENTRY_ROOT + "." + i, roots[i].toExternalForm()); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-	}
-
-	private void writeListAttribute(PrintWriter w, String id, String[] list) {
-		if (list == null || list.length == 0)
-			return;
-
-		String value = ""; //$NON-NLS-1$
-		int listLen = 0;
-		int listIndex = 0;
-		for (int i = 0; i < list.length; i++) {
-			if (listLen != 0)
-				value += ","; //$NON-NLS-1$
-			else
-				value = ""; //$NON-NLS-1$
-			value += list[i];
-
-			if (++listLen >= CFG_LIST_LENGTH) {
-				writeAttribute(w, id + "." + Integer.toString(listIndex++), value); //$NON-NLS-1$
-				listLen = 0;
-			}
-		}
-		if (listLen != 0)
-			writeAttribute(w, id + "." + Integer.toString(listIndex), value); //$NON-NLS-1$
-	}
-
-	private void writeAttribute(PrintWriter w, String id, String value) {
-		if (value == null || value.trim().equals("")) //$NON-NLS-1$
-			return;
-		w.println(id + "=" + escapedValue(value)); //$NON-NLS-1$
-	}
-
-	private String escapedValue(String value) {
-		// if required, escape property values as \\uXXXX
-		StringBuffer buf = new StringBuffer(value.length() * 2); // assume expansion by less than factor of 2
-		for (int i = 0; i < value.length(); i++) {
-			char character = value.charAt(i);
-			if (character == '\\' || character == '\t' || character == '\r' || character == '\n' || character == '\f') {
-				// handle characters requiring leading \
-				buf.append('\\');
-				buf.append(character);
-			} else if ((character < 0x0020) || (character > 0x007e)) {
-				// handle characters outside base range (encoded)
-				buf.append('\\');
-				buf.append('u');
-				buf.append(HEX[(character >> 12) & 0xF]); // first nibble
-				buf.append(HEX[(character >> 8) & 0xF]); // second nibble
-				buf.append(HEX[(character >> 4) & 0xF]); // third nibble
-				buf.append(HEX[character & 0xF]); // fourth nibble
-			} else {
-				// handle base characters
-				buf.append(character);
-			}
-		}
-		return buf.toString();
-	}
-
-	private static String[] checkForFeatureChanges(String[] args, PlatformConfiguration cfg) {
-		String original = cfg.getApplicationIdentifierInternal();
-		String actual = cfg.getApplicationIdentifier();
-
-		if (original.equals(actual))
-			// base startup of specified application
-			return args;
-		else {
-			// Will run reconciler.
-			// Re-insert -application argument with original app and optionally
-			// force "first use" processing
-			int newArgCnt = cmdFirstUse ? 3 : 2;
-			String[] newArgs = new String[args.length + newArgCnt];
-			newArgs[0] = CMD_APPLICATION;
-			newArgs[1] = original;
-			if (cmdFirstUse)
-				newArgs[2] = CMD_FIRSTUSE;
-			System.arraycopy(args, 0, newArgs, newArgCnt, args.length);
-			Utils.debug("triggering reconciliation ..."); //$NON-NLS-1$
-			return newArgs;
-		}
-	}
-
-	private static String[] checkForNewUpdates(IPlatformConfiguration cfg, String[] args) {
-		try {
-			URL markerURL = new URL(cfg.getConfigurationLocation(), CHANGES_MARKER);
-			File marker = new File(markerURL.getFile());
-			if (!marker.exists())
-				return args;
-
-			// indicate -newUpdates
-			marker.delete();
-			String[] newArgs = new String[args.length + 1];
-			newArgs[0] = CMD_NEW_UPDATES;
-			System.arraycopy(args, 0, newArgs, 1, args.length);
-			return newArgs;
-		} catch (MalformedURLException e) {
-			return args;
-		}
-	}
-
-	private static String[] processCommandLine(String[] args) throws Exception {
-		int[] configArgs = new int[100];
-		configArgs[0] = -1; // need to initialize the first element to something that could not be an index.
-		int configArgIndex = 0;
-		for (int i = 0; i < args.length; i++) {
-			boolean found = false;
-
-			// check for args without parameters (i.e., a flag arg)
-
-			// look for forced "first use" processing (triggered by stale
-			// bootstrap information)
-			if (args[i].equalsIgnoreCase(CMD_FIRSTUSE)) {
-				cmdFirstUse = true;
-				found = true;
-			}
-
-			// look for the update flag
-			if (args[i].equalsIgnoreCase(CMD_UPDATE)) {
-				cmdUpdate = true;
-				found = true;
-			}
-
-			// look for the no-update flag
-			if (args[i].equalsIgnoreCase(CMD_NO_UPDATE)) {
-				cmdNoUpdate = true;
-				found = true;
-			}
-
-			// look for the no-linked-config flag
-			if (args[i].equalsIgnoreCase(CMD_NO_LINKED_CONFIG)) {
-				cmdNoLinkedConfig = true;
-				found = true;
-			}
-			
-			// look for the initialization flag
-			if (args[i].equalsIgnoreCase(CMD_INITIALIZE)) {
-				cmdInitialize = true;
-				continue; // do not remove from command line
-			}
-
-			// look for the development mode flag ... triggers no-update
-			if (args[i].equalsIgnoreCase(CMD_DEV)) {
-				cmdDev = true;
-				continue; // do not remove from command line
-			}
-
-			if (found) {
-				configArgs[configArgIndex++] = i;
-				continue;
-			}
-
-			// check for args with parameters. If we are at the last argument or if the next one
-			// has a '-' as the first character, then we can't have an arg with a parm so continue.
-
-			if (i == args.length - 1 || args[i + 1].startsWith("-")) { //$NON-NLS-1$
-				continue;
-			}
-
-			String arg = args[++i];
-
-			// look for the feature to use for customization.
-			if (args[i - 1].equalsIgnoreCase(CMD_FEATURE)) {
-				found = true;
-				cmdFeature = arg;
-			}
-
-			// look for the application to run.  Only use the value from the
-			// command line if the application identifier was not explicitly
-			// passed on BootLoader.run(...) invocation.
-			if (args[i - 1].equalsIgnoreCase(CMD_APPLICATION)) {
-				found = true;
-				if (cmdApplication == null)
-					cmdApplication = arg;
-			}
-
-			// done checking for args.  Remember where an arg was found
-			if (found) {
-				configArgs[configArgIndex++] = i - 1;
-				configArgs[configArgIndex++] = i;
-			}
-		}
-
-		// remove all the arguments consumed by this argument parsing
-		if (configArgIndex == 0)
-			return args;
-		String[] passThruArgs = new String[args.length - configArgIndex];
-		configArgIndex = 0;
-		int j = 0;
-		for (int i = 0; i < args.length; i++) {
-			if (i == configArgs[configArgIndex])
-				configArgIndex++;
-			else
-				passThruArgs[j++] = args[i];
-		}
-		return passThruArgs;
-	}
+//
+//	private static String[] checkForNewUpdates(IPlatformConfiguration cfg, String[] args) {
+//		try {
+//			URL markerURL = new URL(cfg.getConfigurationLocation(), CHANGES_MARKER);
+//			File marker = new File(markerURL.getFile());
+//			if (!marker.exists())
+//				return args;
+//
+//			// indicate -newUpdates
+//			marker.delete();
+//			String[] newArgs = new String[args.length + 1];
+//			newArgs[0] = CMD_NEW_UPDATES;
+//			System.arraycopy(args, 0, newArgs, 1, args.length);
+//			return newArgs;
+//		} catch (MalformedURLException e) {
+//			return args;
+//		}
+//	}
 
 	public static boolean supportsDetection(URL url) {
 		String protocol = url.getProtocol();
@@ -1743,90 +1279,49 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		return url;
 	}
 
-	private void resetUpdateManagerState(URL url) throws IOException {
-		// [20111]
-		if (!supportsDetection(url))
-			return; // can't do ...
+//	private void resetUpdateManagerState(URL url) throws IOException {
+//		// [20111]
+//		if (!supportsDetection(url))
+//			return; // can't do ...
+//
+//		// find directory where the platform configuration file is	
+//		URL resolved = resolvePlatformURL(url);
+//		File initCfg = new File(resolved.getFile().replace('/', File.separatorChar));
+//		File initDir = initCfg.getParentFile();
+//
+//		// Find the Update Manager State directory
+//		if (initDir == null || !initDir.exists() || !initDir.isDirectory())
+//			return;
+//		String temp = initCfg.getName() + ".metadata"; //$NON-NLS-1$
+//		File UMDir = new File(initDir, temp + '/');
+//
+//		// Attempt to rename it
+//		if (UMDir == null || !UMDir.exists() || !UMDir.isDirectory())
+//			return;
+//		Date now = new Date();
+//		boolean renamed = UMDir.renameTo(new File(initDir, temp + now.getTime() + '/'));
+//
+//		if (!renamed)
+//			resetInitializationLocation(UMDir);
+//	}
 
-		// find directory where the platform configuration file is	
-		URL resolved = resolvePlatformURL(url);
-		File initCfg = new File(resolved.getFile().replace('/', File.separatorChar));
-		File initDir = initCfg.getParentFile();
-
-		// Find the Update Manager State directory
-		if (initDir == null || !initDir.exists() || !initDir.isDirectory())
-			return;
-		String temp = initCfg.getName() + ".metadata"; //$NON-NLS-1$
-		File UMDir = new File(initDir, temp + '/');
-
-		// Attempt to rename it
-		if (UMDir == null || !UMDir.exists() || !UMDir.isDirectory())
-			return;
-		Date now = new Date();
-		boolean renamed = UMDir.renameTo(new File(initDir, temp + now.getTime() + '/'));
-
-		if (!renamed)
-			resetInitializationLocation(UMDir);
-	}
-
-	private static URL getInstallURL() {
+	public static URL getInstallURL() {
 		return installURL;
 	}
 	
-	public void invalidateFeaturesChangeStamp() {
-		changeStampIsValid = false;
-		featuresChangeStampIsValid = false;
-	}
-	
-	public void invalidatePluginsChangeStamp() {
-		changeStampIsValid = false;
-		pluginsChangeStampIsValid = false;
-	}
-	
-	private void saveAsXML(File platformXML) {
+	private void saveAsXML(OutputStream stream) throws CoreException {	
 		try {
 			DocumentBuilder docBuilder = documentBuilderFactory.newDocumentBuilder();
 			Document doc = docBuilder.newDocument();
+
+			if (config == null)
+				throw Utils.newCoreException("Configuration cannot be saved because it does not exist",null);
 			
-			doc.appendChild(doc.createProcessingInstruction("date", "\""+(new Date()).toString()+"\""));
-			
-			Element configElement = doc.createElement(CFG);
+			config.setDate(new Date());
+			Element configElement = config.toXML(doc);
 			doc.appendChild(configElement);
-			configElement.setAttribute(CFG_VERSION, VERSION);
-			if (transientConfig)
-				configElement.setAttribute(CFG_TRANSIENT, "true"); //$NON-NLS-1$
-
-			// collect global attributes
-			configElement.setAttribute(CFG_STAMP, Long.toString(getChangeStamp()));
-			configElement.setAttribute(CFG_FEATURE_STAMP, Long.toString(getFeaturesChangeStamp()));
-			configElement.setAttribute(CFG_PLUGIN_STAMP, Long.toString(getPluginsChangeStamp()));
-
-			// collect bootstrap entries
-			String[] ids = getBootstrapPluginIdentifiers();
-			for (int i = 0; i < ids.length; i++) {
-				String location = (String) bootPlugins.get(ids[i]);
-				if (location != null) {
-					Element bootPlugin = doc.createElement(CFG_BOOT_PLUGIN);
-					bootPlugin.setNodeValue(location);
-					configElement.appendChild(bootPlugin);
-				}
-			}
-
-			// collect feature entries
-			configElement.setAttribute(CFG_FEATURE_ENTRY_DEFAULT, defaultFeature);
-			IFeatureEntry[] feats = getConfiguredFeatureEntries();
-			for (int i = 0; i < feats.length; i++) {
-				saveFeatureAsXML(feats[i], configElement); 
-			}
-
-			// collect site entries
-			SiteEntry[] list = (SiteEntry[]) sites.values().toArray(new SiteEntry[0]);
-			for (int i = 0; i < list.length; i++) {
-				saveSiteAsXML(list[i], configElement); 
-			}
 
 			// Write out to a file
-			FileOutputStream stream = new FileOutputStream(platformXML);
 			
 			Transformer transformer=transformerFactory.newTransformer();
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
@@ -1837,98 +1332,22 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 
 			transformer.transform(source,result);
 			stream.close();
-		} catch (DOMException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (TransformerConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (TransformerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (Exception e) {
-			e.printStackTrace();
-		} 
+			throw Utils.newCoreException("", e);
+		}  
 	}
 	
-	
-	/**
-	 * Saves state as xml content in a given parent element
-	 * @param parent
-	 */
-	private void saveSiteAsXML(SiteEntry site, Element parent) {
-		Document doc = parent.getOwnerDocument();
-		Element siteElement = doc.createElement(CFG_SITE);
-		parent.appendChild(siteElement);
-		
-		if (site.getURL().toString() != null)
-			siteElement.setAttribute(CFG_URL, site.getURL().toString());
-		siteElement.setAttribute(CFG_STAMP, Long.toString(site.getChangeStamp()));
-		siteElement.setAttribute(CFG_FEATURE_STAMP, Long.toString(site.getFeaturesChangeStamp()));
-		siteElement.setAttribute(CFG_PLUGIN_STAMP, Long.toString(site.getPluginsChangeStamp()));
-		siteElement.setAttribute(CFG_UPDATEABLE, site.isUpdateable() ? "true" : "false");
-		if (site.isExternallyLinkedSite()) 
-			siteElement.setAttribute(CFG_LINK_FILE, site.getLinkFileName().trim().replace(File.separatorChar, '/')); 
-
-		int type = site.getSitePolicy().getType();
-		String typeString = CFG_POLICY_TYPE_UNKNOWN;
-		try {
-			typeString = CFG_POLICY_TYPE[type];
-		} catch (IndexOutOfBoundsException e) {
-			// ignore bad attribute ...
+	private void reconcile() throws CoreException {
+		long lastChange = config.getDate().getTime();
+		SiteEntry[] sites = config.getSites();
+		for (int s=0; s<sites.length; s++) {
+			long siteTimestamp = sites[s].getChangeStamp();
+			if (siteTimestamp > lastChange) 
+				sites[s].loadFromDisk();
 		}
-		siteElement.setAttribute(CFG_POLICY, typeString); 
-		String[] list = site.getSitePolicy().getList();
-		for (int i=0; i<list.length; i++) {
-			Element listElement = doc.createElement(CFG_LIST);
-			listElement.setNodeValue(list[i]);
-			siteElement.appendChild(listElement);
-		}
-		// note: we don't save features inside the site element.
 	}
 	
-	/**
-	 * Saves state as xml content in a given parent element
-	 * @param parent
-	 */
-	private void saveFeatureAsXML(IFeatureEntry feature, Element parent) {
-		Document doc = parent.getOwnerDocument();
-		Element featureElement = doc.createElement(CFG_FEATURE_ENTRY);
-		parent.appendChild(featureElement);
-	
-		// write out feature entry settings
-		if (feature.getFeatureIdentifier() != null)
-			featureElement.setAttribute(CFG_FEATURE_ENTRY_ID, feature.getFeatureIdentifier()); 
-		if (feature.canBePrimary())
-			featureElement.setAttribute(CFG_FEATURE_ENTRY_PRIMARY, "true");
-		if (feature.getFeatureVersion() != null)
-			featureElement.setAttribute(CFG_FEATURE_ENTRY_VERSION, feature.getFeatureVersion()); 
-		if (feature.getFeaturePluginVersion() != null && !feature.getFeaturePluginVersion().equals(feature.getFeatureVersion()))
-			featureElement.setAttribute(CFG_FEATURE_ENTRY_PLUGIN_VERSION, feature.getFeaturePluginVersion()); 
-		if (feature.getFeaturePluginIdentifier() != null && !feature.getFeaturePluginIdentifier().equals(feature.getFeatureIdentifier()))
-			featureElement.setAttribute(CFG_FEATURE_ENTRY_PLUGIN_IDENTIFIER, feature.getFeaturePluginIdentifier());
-		if (feature.getFeatureApplication() != null)
-			featureElement.setAttribute(CFG_FEATURE_ENTRY_APPLICATION, feature.getFeatureApplication()); 
-		URL[] roots = feature.getFeatureRootURLs();
-		for (int i=0; i<roots.length; i++) {
-			String root = roots[i].toExternalForm();
-			if (root != null && root.trim().length() > 0){
-				Element rootElement = doc.createElement(CFG_FEATURE_ENTRY_ROOT);
-				rootElement.appendChild(doc.createTextNode(root));
-				featureElement.appendChild(rootElement);
-			}
-		}
+	public Configuration getConfiguration() {
+		return config;
 	}
 }
