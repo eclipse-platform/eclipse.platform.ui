@@ -16,6 +16,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.debug.internal.ui.views.DebugSelectionManager;
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -62,7 +63,7 @@ import org.eclipse.ui.texteditor.IUpdate;
 /**
  * This view shows variables and their values for a particular stack frame
  */
-public class VariablesView extends AbstractDebugView implements ISelectionListener, 
+public class VariablesView extends AbstractDebugView implements ISelectionChangedListener, 
 																	IPropertyChangeListener,
 																	IValueDetailListener {
 
@@ -114,7 +115,9 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 	 * @see IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
-		getSite().getWorkbenchWindow().getSelectionService().removeSelectionListener(this);
+		// listen to selection in debug view
+		ISelectionProvider provider = DebugSelectionManager.getDefault().getSelectionProvider(getSite().getPage(), IDebugUIConstants.ID_DEBUG_VIEW);
+		provider.removeSelectionChangedListener(this);		
 		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 		getDetailDocument().removeDocumentListener(getDetailDocumentListener());
 		super.dispose();
@@ -125,11 +128,10 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 	 *
 	 * @see ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
 	 */
-	public void selectionChanged(IWorkbenchPart part, ISelection sel) {
-		if (part.getSite().getId().equals(IDebugUIConstants.ID_DEBUG_VIEW)) {
-			if (sel instanceof IStructuredSelection) {
-				setViewerInput((IStructuredSelection)sel);
-			}
+	public void selectionChanged(SelectionChangedEvent event) {
+		ISelection sel = event.getSelection();
+		if (sel instanceof IStructuredSelection) {
+			setViewerInput((IStructuredSelection)sel);
 		}
 	}
 
@@ -170,7 +172,6 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 	 * @see AbstractDebugView#createViewer(Composite)
 	 */
 	public StructuredViewer createViewer(Composite parent) {
-		getSite().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
 		
 		fModelPresentation = new DelegatingModelPresentation();
 		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
@@ -197,8 +198,11 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 				
 		// add a context menu to the detail area
 		createDetailContextMenu(getDetailTextViewer().getTextWidget());
-	
-		setInitialContent();
+		
+		// listen to selection in debug view
+		ISelectionProvider provider = DebugSelectionManager.getDefault().getSelectionProvider(getSite().getPage(), IDebugUIConstants.ID_DEBUG_VIEW);
+		provider.addSelectionChangedListener(this);
+		
 		return vv;
 	}
 	
@@ -247,8 +251,10 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 	 * the detail pane.
 	 */
 	protected void populateDetailPane() {
-		IStructuredSelection selection = (IStructuredSelection) getViewer().getSelection();
-		populateDetailPaneFromSelection(selection);		
+		if (isDetailPaneVisible()) {
+			IStructuredSelection selection = (IStructuredSelection) getViewer().getSelection();
+			populateDetailPaneFromSelection(selection);		
+		}
 	}
 	
 	/**
@@ -271,25 +277,10 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 		fLastSashWeights = weights;
 	}
 
-	protected void setInitialContent() {
-		IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
-		if (window == null) {
-			return;
-		}
-		IWorkbenchPage p= window.getActivePage();
-		if (p == null) {
-			return;
-		}
-		IViewPart view= p.findView(IDebugUIConstants.ID_DEBUG_VIEW);
-		if (view != null) {
-			ISelectionProvider provider= view.getSite().getSelectionProvider();
-			if (provider != null) {
-				provider.getSelection();
-				ISelection selection= provider.getSelection();
-				if (!selection.isEmpty() && selection instanceof IStructuredSelection) {
-					setViewerInput((IStructuredSelection) selection);
-				}
-			}
+	protected void setInitialContent(ISelectionProvider provider) {
+		ISelection selection = provider.getSelection();
+		if (!selection.isEmpty() && selection instanceof IStructuredSelection) {
+			setViewerInput((IStructuredSelection) selection);
 		}
 	}
 
@@ -350,6 +341,10 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 	
 		fSelectionActions.add(ITextEditorActionConstants.COPY);
 		updateAction(ITextEditorActionConstants.FIND);
+		
+		// set initial content here, as viewer has to be set
+		ISelectionProvider provider = DebugSelectionManager.getDefault().getSelectionProvider(getSite().getPage(), IDebugUIConstants.ID_DEBUG_VIEW);
+		setInitialContent(provider);
 	} 
 
 	protected void setGlobalAction(IActionBars actionBars, String actionID, IAction action) {
@@ -535,5 +530,12 @@ public class VariablesView extends AbstractDebugView implements ISelectionListen
 			((IUpdate) action).update();
 	}
 	
+	protected boolean isDetailPaneVisible() {
+		IAction action = getAction("ShowDetailPane");
+		if (action != null) {
+			return action.isChecked();
+		}
+		return false;
+	}
 }
 
