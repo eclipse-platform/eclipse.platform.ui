@@ -292,7 +292,7 @@ public final class Levenstein {
 	/**
 	 * Computes the edit script. This is quadratic in space and time.
 	 * 
-	 * @return
+	 * @return the shortest edit script between the two range comparators
 	 */
 	public RangeDifference[] editScript() {
 		try {
@@ -324,7 +324,7 @@ public final class Levenstein {
 	 * Computes the edit script. This is quadratic in time but linear in space;
 	 * it is about twice as slow as the <code>editScript</code> method.
 	 * 
-	 * @return
+	 * @return the shortest edit script between the two range comparators
 	 */
 	public RangeDifference[] editScriptHirschberg() {
 		try {
