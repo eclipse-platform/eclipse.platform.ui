@@ -1,0 +1,120 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+
+package org.eclipse.debug.internal.ui.actions;
+
+import java.util.Collections;
+import java.util.List;
+
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchListener2;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.contexts.EnabledSubmission;
+import org.eclipse.ui.contexts.IWorkbenchContextSupport;
+
+/**
+ * Manages the debug scope in response to active debug sessions.
+ * When something is being debugged, the scope is activated. 
+ * When all debugging stops, the scope is deactivated.
+ * 
+ * @since 3.0
+ */
+public class DebugContextManager implements ILaunchListener2 {
+	
+	
+	private static final String DEBUG_SCOPE = "org.eclipse.debug.ui.debugging"; //$NON-NLS-1$
+	
+	// whether the debug scope is currently on
+	private boolean fDebugging = false;
+	
+	// debug scope submission
+	private List fDebugSubmission = Collections.singletonList(new EnabledSubmission(null, null, DEBUG_SCOPE));
+
+	// singleton
+	private static DebugContextManager contextServiceManager;
+	
+	public static DebugContextManager getDefault() {
+		if (contextServiceManager == null) {
+			contextServiceManager = new DebugContextManager();
+		}
+		return contextServiceManager;
+	}
+	
+	private DebugContextManager() {
+		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
+	}
+	
+	/**
+	 * Returns whether the debug scope is currently on.
+	 * 
+	 * @return whether the debug scope is currently on
+	 */
+	public boolean isDebugging() {
+		return fDebugging;
+	}
+		
+	/**
+	 * Sets whether the debug scope is currently on.
+	 * 
+	 * @param debugging whether the debug scope is currently on
+	 */
+	private void setDebugging(boolean debugging) {
+		if (debugging != fDebugging) {
+			fDebugging = debugging;
+			DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+				public void run() {
+					IWorkbenchContextSupport contextSupport = PlatformUI.getWorkbench().getContextSupport();
+					if (fDebugging) {
+						contextSupport.addEnabledSubmissions(fDebugSubmission);
+					} else {
+						contextSupport.removeEnabledSubmissions(fDebugSubmission);
+					}
+				}
+			});
+
+		}
+	}
+	
+	public void launchAdded(ILaunch launch) {
+		if (launch.getLaunchMode().equals(ILaunchManager.DEBUG_MODE)) {
+			setDebugging(true);
+		}
+	}
+		
+	public void launchRemoved(ILaunch launch) {
+	}	
+	
+	public void launchChanged(ILaunch launch) {
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchListener2#launchTerminated(org.eclipse.debug.core.ILaunch)
+	 */
+	public void launchTerminated(ILaunch launch) {
+		if (launch.getLaunchMode().equals(ILaunchManager.DEBUG_MODE)) {
+			// if nothing left in debug mode, turn debugging off
+			ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
+			ILaunch[] launches = manager.getLaunches();
+			for (int i = 0; i < launches.length; i++) {
+				ILaunch l = launches[i];
+				if (ILaunchManager.DEBUG_MODE.equals(l.getLaunchMode()) && !launch.isTerminated()) {
+					// still debugging
+					return;
+				}
+			}
+			setDebugging(false);
+		}
+	}
+
+}

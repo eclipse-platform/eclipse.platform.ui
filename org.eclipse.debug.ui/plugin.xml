@@ -1273,6 +1273,18 @@
             command="org.eclipse.debug.internal.ui.actions.RunLastAction"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
+      <command
+            name="%ActionDefinition.closeDebugPopup.name"
+            category="org.eclipse.debug.ui.category.run"
+            description="%ActionDefinition.closeDebugPopup.description"
+            id="org.eclipse.debug.ui.commands.defaultDebugPopupClose">
+      </command>
+      <keyBinding
+            string="Enter"
+            scope="org.eclipse.debug.ui.debugging.popups"
+            command="org.eclipse.debug.ui.commands.defaultDebugPopupClose"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>      
    </extension>
    <extension
          point="org.eclipse.ui.editors.markerAnnotationSpecification">
@@ -1549,6 +1561,11 @@
            description="Debugging Programs"
            id="org.eclipse.debug.ui.debugging">
      </context>
+     <context
+           name="%Context.debugPopups.name"
+           description="%Context.debugPopups.description"
+           id="org.eclipse.debug.ui.debugging.popups">
+     </context>     
   </extension>
   <extension
         point="org.eclipse.debug.ui.contextViewBindings">

@@ -49,6 +49,7 @@ import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.internal.ui.actions.DebugContextManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.PerspectiveManager;
 import org.eclipse.debug.internal.ui.preferences.DebugActionGroupsManager;
@@ -676,6 +677,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		if (fStepFilterManager == null) {
 			getStepFilterManager().launchAdded(launch);
 		}
+		
+		DebugContextManager.getDefault().launchAdded(launch);
 		
 		getLaunchConfigurationManager().startup();
 	}

@@ -73,7 +73,6 @@ public class ExpressionInformationControlAdapter implements IPopupInformationCon
 		viewer = new VariablesViewer(composite, SWT.NO_TRIM);
 		viewer.setContentProvider(new ExpressionPopupContentProvider());
 		viewer.setLabelProvider(DebugUITools.newDebugModelPresentation());
-//		gd.widthHint = 300;
 		gd.heightHint = 100;
 		viewer.getControl().setLayoutData(gd);
 
