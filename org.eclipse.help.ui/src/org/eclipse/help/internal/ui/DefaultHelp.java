@@ -7,7 +7,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.HelpSystem;
-import org.eclipse.help.internal.context.ContextImpl;
+import org.eclipse.help.internal.context.*;
 import org.eclipse.help.internal.ui.util.*;
 import org.eclipse.help.internal.util.Logger;
 import org.eclipse.ui.*;
@@ -22,6 +22,7 @@ public class DefaultHelp implements IHelp {
 	private static DefaultHelp instance;
 	private IWorkbenchPage helpPage = null;
 	private ContextHelpDialog f1Dialog = null;
+	private int idCounter = 0;
 	/**
 	 * BaseHelpViewer constructor.
 	 */
@@ -57,10 +58,8 @@ public class DefaultHelp implements IHelp {
 	 * @param y int positioning information
 	 */
 	public void displayHelp(String[] contextIds, int x, int y) {
-		if (f1Dialog != null)
-			f1Dialog.close();
-		f1Dialog = new ContextHelpDialog(contextIds, x, y);
-		f1Dialog.open();
+		IContext context = HelpSystem.getContextManager().getContext(contextIds[0]);
+		displayHelp(context, x, y);
 	}
 	/**
 	 * Displays context-sensitive help for specified context
@@ -69,8 +68,10 @@ public class DefaultHelp implements IHelp {
 	 * @param y int positioning information
 	 */
 	public void displayHelp(IContext context, int x, int y) {
-		IContext[] contexts = new IContext[] { context };
-		displayHelp(contexts, x, y);
+		if (f1Dialog != null)
+			f1Dialog.close();
+		f1Dialog = new ContextHelpDialog(context, x, y);
+		f1Dialog.open();
 	}
 	/**
 	 * Displays context-sensitive help for specified contexts
@@ -79,46 +80,34 @@ public class DefaultHelp implements IHelp {
 	 * @param y int positioning information
 	 */
 	public void displayHelp(IContext[] contexts, int x, int y) {
-		if (f1Dialog != null)
-			f1Dialog.close();
-		f1Dialog = new ContextHelpDialog(contexts, x, y);
-		f1Dialog.open();
+		displayHelp(contexts[0], x, y);
 	}
 	/**
 	 * Display help for the a given topic and related topics.
 	 * @param topic topic to be displayed by the help browser
 	 * @param relatedTopics topics that will populate related topics view
 	 */
-	public void displayHelp(IHelpResource[] relatedTopics, IHelpResource topic) {
-		if (topic == null || topic.getHref() == null)
+	public void displayHelp(IContext context, IHelpResource topic) {
+		if (context == null || topic == null || topic.getHref() == null)
 			return;
-		// Do not start help view if documentaton is not available, display error
-		if (getTocs().length == 0) {
-			ErrorUtil.displayErrorDialog(WorkbenchResources.getString("WW001"));
-			//Documentation is not installed.
-			return;
-		}
-		getHelpView();
-		activateHelpPerspective();
-		// open related topics view
-		IWorkbench workbench = PlatformUI.getWorkbench();
-		if (workbench == null)
-			return;
-		IWorkbenchWindow workbenchWindow = workbench.getActiveWorkbenchWindow();
-		IWorkbenchPage activeP = workbenchWindow.getActivePage();
-		if (activeP == null) {
-			return;
-		}
-		RelatedTopicsView aRelatedTopicsView;
-		try {
-			aRelatedTopicsView = (RelatedTopicsView) activeP.showView(RelatedTopicsView.ID);
-		} catch (PartInitException pie) {
-			return;
-		}
-		// check to see if the view was created successfully
-		if (aRelatedTopicsView == null)
-			return;
-		aRelatedTopicsView.displayHelp(relatedTopics, topic);
+		String contextID = getContextID(context);
+		IAppServer appServer = WorkbenchHelpPlugin.getDefault().getAppServer();
+		if (appServer == null)
+			return; // may want to display an error message
+		String url =
+			"http://"
+				+ appServer.getHost()
+				+ ":"
+				+ appServer.getPort()
+				+ "/help?tab=links&contextId="
+				+ contextID
+				+ "&topic=http://"
+				+ appServer.getHost()
+				+ ":"
+				+ appServer.getPort()
+				+ "/help/content/help:"
+				+ topic.getHref();
+		WorkbenchHelpPlugin.getDefault().getHelpBrowser().displayURL(url);
 	}
 	/**
 	 * Display help.
@@ -291,5 +280,15 @@ public class DefaultHelp implements IHelp {
 	}
 	public static DefaultHelp getInstance() {
 		return instance;
+	}
+	private String getContextID(IContext context) {
+		if (context instanceof ContextContribution)
+			return ((ContextContribution) context).getID();
+		if (context instanceof ContextImpl)
+			return ((ContextImpl) context).getID();
+		// TODO add code not to generate new ID for the same context
+		String id = "org.eclipse.help.ID" + idCounter++;
+		HelpSystem.getContextManager().addContext(id, context);
+		return id;
 	}
 }
