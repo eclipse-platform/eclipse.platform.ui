@@ -950,9 +950,7 @@ public class EclipsePreferencesTest extends RuntimeTest {
 	 */
 	protected void tearDown() throws Exception {
 		Preferences node = getScopeRoot();
-		String[] children = node.childrenNames();
-		for (int i = 0; i < children.length; i++)
-			node.node(children[i]).removeNode();
+		node.removeNode();
 	}
 
 	/*
