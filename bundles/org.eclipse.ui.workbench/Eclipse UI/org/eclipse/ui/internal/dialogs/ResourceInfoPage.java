@@ -1,9 +1,15 @@
+/************************************************************************
+Copyright (c) 2000, 2002 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM - Initial implementation
+************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import java.io.File;
 import java.text.DateFormat;
 import java.text.MessageFormat;
@@ -42,6 +48,7 @@ public class ResourceInfoPage extends PropertyPage {
 	private static String NAME_TITLE = WorkbenchMessages.getString("ResourceInfo.name"); //$NON-NLS-1$
 	private static String TYPE_TITLE = WorkbenchMessages.getString("ResourceInfo.type"); //$NON-NLS-1$
 	private static String LOCATION_TITLE = WorkbenchMessages.getString("ResourceInfo.location"); //$NON-NLS-1$
+	private static String RESOLVED_LOCATION_TITLE = WorkbenchMessages.getString("ResourceInfo.resolvedLocation"); //$NON-NLS-1$
 	private static String SIZE_TITLE = WorkbenchMessages.getString("ResourceInfo.size"); //$NON-NLS-1$
 	private static String BYTES_LABEL = WorkbenchMessages.getString("ResourceInfo.bytes"); //$NON-NLS-1$
 	private static String FILE_LABEL = WorkbenchMessages.getString("ResourceInfo.file"); //$NON-NLS-1$
@@ -51,10 +58,11 @@ public class ResourceInfoPage extends PropertyPage {
 	private static String LINKED_FOLDER_LABEL = WorkbenchMessages.getString("ResourceInfo.linkedFolder"); //$NON-NLS-1$
 	private static String UNKNOWN_LABEL = WorkbenchMessages.getString("ResourceInfo.unknown"); //$NON-NLS-1$
 	private static String NOT_LOCAL_TEXT = WorkbenchMessages.getString("ResourceInfo.notLocal"); //$NON-NLS-1$
-	private static String MISSING_PATH_VARIABLE_TEXT = WorkbenchMessages.getString("ResourceInfo.missingPathVariable"); //$NON-NLS-1$
+	private static String MISSING_PATH_VARIABLE_TEXT = WorkbenchMessages.getString("ResourceInfo.undefinedPathVariable"); //$NON-NLS-1$
 	private static String NOT_EXIST_TEXT = WorkbenchMessages.getString("ResourceInfo.notExist"); //$NON-NLS-1$
 	private static String PATH_TITLE = WorkbenchMessages.getString("ResourceInfo.path"); //$NON-NLS-1$
 	private static String TIMESTAMP_TITLE = WorkbenchMessages.getString("ResourceInfo.lastModified"); //$NON-NLS-1$
+	private static String FILE_NOT_EXIST_TEXT = WorkbenchMessages.getString("ResourceInfo.fileNotExist"); //$NON-NLS-1$
 
 	//Max value width in characters before wrapping
 	private static final int MAX_VALUE_WIDTH = 80;
@@ -117,7 +125,6 @@ private Composite createBasicInfoGroup(Composite parent, IResource resource) {
 	locationTitle.setLayoutData(gd);
 	locationTitle.setFont(font);
 	
-	
 	Text locationValue = new Text(basicInfoComposite, SWT.WRAP | SWT.READ_ONLY);
 	locationValue.setText(getLocationText(resource));
 	gd = new GridData();
@@ -127,6 +134,24 @@ private Composite createBasicInfoGroup(Composite parent, IResource resource) {
 	locationValue.setLayoutData(gd);
 	locationValue.setFont(font);
 	
+	if (resource.isLinked() && 
+		!getLocationText(resource).equals(getResolvedLocationText(resource))) {
+		Label resolvedLocationTitle = new Label(basicInfoComposite, SWT.LEFT);
+		resolvedLocationTitle.setText(RESOLVED_LOCATION_TITLE);
+		gd = new GridData();
+		gd.verticalAlignment = SWT.TOP;
+		resolvedLocationTitle.setLayoutData(gd);
+		resolvedLocationTitle.setFont(font);
+		
+		Text resolvedLocationValue = new Text(basicInfoComposite, SWT.WRAP | SWT.READ_ONLY);
+		resolvedLocationValue.setText(getResolvedLocationText(resource));
+		gd = new GridData();
+		gd.widthHint = convertWidthInCharsToPixels(MAX_VALUE_WIDTH);
+		gd.grabExcessHorizontalSpace = true;
+		gd.horizontalAlignment = GridData.FILL;
+		resolvedLocationValue.setLayoutData(gd);
+		resolvedLocationValue.setFont(font);
+	}
 	if (resource.getType() == IResource.FILE) {
 		//The group for size
 		Label sizeTitle = new Label(basicInfoComposite, SWT.LEFT);
@@ -297,6 +322,27 @@ private String getLocationText(IResource resource) {
 	if (!resource.isLocal(IResource.DEPTH_ZERO))
 		return NOT_LOCAL_TEXT;
 
+	IPath location; 
+	if (resource.isLinked()) {
+		location = resource.getRawLocation();
+	}
+	else {	
+		location = resource.getLocation();
+	}
+	if (location == null) {
+		return NOT_EXIST_TEXT;
+	} else {
+		return location.toOSString();
+	}
+}
+/**
+ * Get the resolved location of a resource.
+ * This resolves path variables if present in the resource path.
+ */
+private String getResolvedLocationText(IResource resource) {
+	if (!resource.isLocal(IResource.DEPTH_ZERO))
+		return NOT_LOCAL_TEXT;
+
 	IPath location = resource.getLocation();
 	if (location == null) {
 		if (resource.isLinked())
@@ -305,7 +351,13 @@ private String getLocationText(IResource resource) {
 		return NOT_EXIST_TEXT;
 	}
 	else {
-		return location.toOSString();
+		String locationString = location.toOSString();
+		File file = location.toFile();
+		
+		if (!file.exists()) {
+			locationString += " " + FILE_NOT_EXIST_TEXT; //$NON-NLS-1$ 
+		}
+		return locationString;
 	}
 }
 /**
