@@ -1,10 +1,14 @@
-/*
- * Created on May 22, 2003
- *
- * To change the template for this generated file go to
- * Window>Preferences>Java>Code Generation>Code and Comments
- */
-package org.eclipse.update.internal.search;
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.update.search;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -14,44 +18,93 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
 
 /**
- * @author dejan
- *
- * To change the template for this generated type comment go to
- * Window>Preferences>Java>Code Generation>Code and Comments
+ * This class is central to update search. The search pattern
+ * is encapsulated in update search category, while the search
+ * scope is defined in the scope object. When these two objects
+ * are defined and set, search can be performed using the 
+ * provided method. Search results are reported to the
+ * result collector, while search progress is tracked using
+ * the progress monitor.
+ * <p>By default, results should be filtered by only
+ * accepting matches that are compatible with the current
+ * environment (operating system, windowing system etc.).
+ * Since search queries are provided by the search category,
+ * it should call back into the search request (method 'select')
+ * to get the matching feature tested environment match.
+ * 
+ * @see UpdateSearchScope
+ * @see IUpdateSearchCategory
  */
 public class UpdateSearchRequest {
 	private IUpdateSearchCategory category;
 	private UpdateSearchScope scope;
 	private boolean searchInProgress = false;
 	private boolean filterEnvironment = true;
-	
+
+	/**
+	 * The constructor that accepts the search category and 
+	 * scope objects.
+	 * @param category the actual search pattern that should be applied
+	 * @param scope a list of sites that need to be scanned during the search
+	 */
 	public UpdateSearchRequest(
 		IUpdateSearchCategory category,
 		UpdateSearchScope scope) {
 		this.category = category;
 		this.scope = scope;
 	}
-	
+
+	/**
+	 * Defines whether features should be tested if they match
+	 * the current environment.
+	 * @param value the new value for the environment filter.
+	 */
 	public void setFilterEnvironment(boolean value) {
 		this.filterEnvironment = value;
 	}
-	
+	/**
+	 * Returns <samp>true</samp> if the features need to be tested
+	 * for the environment match, <samp>false</samp> otherwise.
+	 * @return <samp>true</samp> if features should be filtered for
+	 * the environment.
+	 */
 	public boolean getFilterEnvironment() {
 		return filterEnvironment;
 	}
-
+	/**
+	 * Update search queries should call this method to further filter their
+	 * matches for settings in the request object (e.g. valid environment).
+	 * @param match the feature to test
+	 * @return <samp>true</samp> if the feature passes the search request test, <samp>false</samp> otherwise.
+	 */
 	public boolean select(IFeature match) {
-		return !getFilterEnvironment() || UpdateManagerUtils.isValidEnvironment(match);
+		return !getFilterEnvironment()
+			|| UpdateManagerUtils.isValidEnvironment(match);
 	}
-
+	/**
+	 * Sets the scope object. It is possible to reuse the search request
+	 * object by modifying the scope and re-running the search.
+	 * @param scope the new search scope
+	 */
 	public void setScope(UpdateSearchScope scope) {
 		this.scope = scope;
 	}
-
+	/**
+	 * Tests whether this search request is current running.
+	 * @return <samp>true</samp> if the search is currently running, <samp>false</samp> otherwise.
+	 */
 	public boolean isSearchInProgress() {
 		return searchInProgress;
 	}
 
+	/**
+	 * Runs the search using the category and scope configured into
+	 * this request. As results arrive, they are passed to the
+	 * search result collector object.
+	 * @param collector matched features are passed to this object
+	 * @param monitor used to track the search progress
+	 * @throws CoreException
+	 */
 	public void performSearch(
 		IUpdateSearchResultCollector collector,
 		IProgressMonitor monitor)

@@ -14,7 +14,6 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
@@ -29,12 +28,11 @@ import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.operations.*;
-import org.eclipse.update.internal.search.*;
-import org.eclipse.update.internal.search.IUpdateSearchResultCollector;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.SimpleFeatureAdapter;
 import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.internal.ui.views.FeatureSorter;
+import org.eclipse.update.search.*;
 
 public class UnifiedReviewPage
 	extends UnifiedBannerPage
@@ -329,7 +327,7 @@ public class UnifiedReviewPage
 		tableViewer =
 			CheckboxTableViewer.newCheckList(
 				parent,
-				SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+				SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.FULL_SELECTION);
 		Table table = tableViewer.getTable();
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.widthHint = 250;

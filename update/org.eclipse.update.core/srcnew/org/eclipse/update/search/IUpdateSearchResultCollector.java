@@ -8,23 +8,19 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.update.internal.search;
+package org.eclipse.update.search;
 
-import org.eclipse.update.search.IUpdateSearchCategory;
+import org.eclipse.update.core.*;
 
-public abstract class UpdateSearchCategory implements IUpdateSearchCategory {
-	private String id;
-	
-	protected UpdateSearchCategory(String id) {
-		setId(id);
-	}
-	
-	public String getId() {
-		return id;
-	}
-	
-	public void setId(String id) {
-		if (this.id==null)
-			this.id = id;
-	}
+/**
+ * Search results are collected by implementing this interface
+ * and passing it to the search request.
+ */
+public interface IUpdateSearchResultCollector {
+/**
+ * Called when a matching feature has been found during
+ * the search.
+ * @param match the matching feature
+ */
+   void accept(IFeature match);
 }

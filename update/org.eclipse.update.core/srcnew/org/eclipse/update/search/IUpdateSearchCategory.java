@@ -8,8 +8,16 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.update.internal.search;
+package org.eclipse.update.search;
 
+/**
+ * This interface is used to encapsulate a particular Update
+ * search pattern. Each search category is free to scan
+ * sites using a specific algorithm. Search category must
+ * have a unique ID. The actual search is performed in
+ * search queries. A category can provide one or more
+ * queries to run during the search.
+ */
 
 public interface IUpdateSearchCategory {
 /**
@@ -21,6 +29,11 @@ public interface IUpdateSearchCategory {
  * the registry reading.
  */
 	public void setId(String id);
-	
+
+/**
+ * Returns an array of update search queries that need to 
+ * be run during the search.
+ * @return an arry of update search queries
+ */	
 	IUpdateSearchQuery [] getQueries();
 }

@@ -17,6 +17,7 @@ import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.UpdateCore;
 import org.eclipse.update.internal.operations.*;
+import org.eclipse.update.search.*;
 
 public class UnifiedUpdatesSearchCategory extends UpdateSearchCategory {
 	private static final String CATEGORY_ID =
