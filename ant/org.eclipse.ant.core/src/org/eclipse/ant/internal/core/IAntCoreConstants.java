@@ -19,9 +19,20 @@ public interface IAntCoreConstants {
 	public static final String PREFERENCE_TASKS = "tasks"; //$NON-NLS-1$
 	public static final String PREFERENCE_TYPES = "types"; //$NON-NLS-1$
 	public static final String PREFERENCE_URLS = "urls"; //$NON-NLS-1$
+	
+	/**
+	 * @since 2.1
+	 */
+	public static final String PREFERENCE_PROPERTIES = "properties"; //$NON-NLS-1$
+	
 	public static final String PREFIX_TASK = "task."; //$NON-NLS-1$
 	public static final String PREFIX_TYPE = "type."; //$NON-NLS-1$
 	public static final String PREFIX_URL = "url."; //$NON-NLS-1$
+	
+	/**
+	 * @since 2.1
+	 */
+	public static final String PREFIX_PROPERTY = "property."; //$NON-NLS-1$
 	
 	/**
 	 * Debug constant

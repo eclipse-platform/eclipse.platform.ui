@@ -196,7 +196,14 @@ public class InternalAntRunner {
 		project.setUserProperty(PROPERTY_ECLIPSE_RUNNING, "true"); //$NON-NLS-1$
 		project.setUserProperty("ant.file", getBuildFileLocation()); //$NON-NLS-1$
 		project.setUserProperty("ant.version", getAntVersion()); //$NON-NLS-1$
-		//project.setProperty("ant.home", AntCorePlugin.getPlugin().getPreferences().getAntHome());
+		
+		Property[] properties= AntCorePlugin.getPlugin().getPreferences().getCustomProperties();
+		if (properties != null) {
+			for (int i = 0; i < properties.length; i++) {
+				Property property = properties[i];
+				project.setUserProperty(property.getName(), property.getValue());
+			}
+		}
 		if (userProperties == null) {
 			return;
 		}

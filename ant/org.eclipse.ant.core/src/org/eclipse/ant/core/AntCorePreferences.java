@@ -27,10 +27,12 @@ public class AntCorePreferences {
 	protected List defaultTasks;
 	protected List defaultTypes;
 	protected List defaultURLs;
+	protected URL[] defaultCustomURLs;
+	
 	protected Task[] customTasks;
 	protected Type[] customTypes;
 	protected URL[] customURLs;
-	protected URL[] defaultCustomURLs;
+	protected Property[] customProperties;
 	
 	protected List pluginClassLoaders;
 
@@ -65,6 +67,14 @@ public class AntCorePreferences {
 			customURLs = getDefaultCustomURLs();
 		} else {
 			customURLs = extractURLs(getArrayFromString(urls));
+		}
+		
+		// properties
+		String properties = prefs.getString(IAntCoreConstants.PREFERENCE_PROPERTIES);
+		if (properties.equals("")) {//$NON-NLS-1$
+			customProperties = new Property[0];
+		} else {
+			customProperties = extractProperties(prefs, getArrayFromString(properties));
 		}
 	}
 
@@ -106,6 +116,20 @@ public class AntCorePreferences {
 			}
 		}
 		return (Type[]) result.toArray(new Type[result.size()]);
+	}
+	
+	protected Property[] extractProperties(Preferences prefs, String[] properties) {
+		Property[] result = new Property[properties.length];
+		for (int i = 0; i < properties.length; i++) {
+			
+			String propertyName = properties[i];
+			String[] values = getArrayFromString(prefs.getString(IAntCoreConstants.PREFIX_PROPERTY + propertyName));
+			Property property = new Property();
+			property.setName(propertyName);
+			property.setValue(values[0]);
+			result[i]= property;
+		}
+		return result;
 	}
 
 	protected URL[] extractURLs(String[] urls) {
@@ -317,6 +341,16 @@ public class AntCorePreferences {
 	}
 
 	/**
+	 * Returns the custom user properties specified for Ant builds.
+	 * 
+	 * @return the properties defined for Ant builds.
+	 * @since 2.1
+	 */
+	public Property[] getCustomProperties() {
+		return customProperties;
+	}
+	
+	/**
 	 * Returns the custom URLs specified for the Ant classpath
 	 * 
 	 * @return the urls defining the Ant classpath
@@ -342,6 +376,17 @@ public class AntCorePreferences {
 	 */
 	public void setCustomURLs(URL[] urls) {
 		customURLs = urls;
+	}
+	
+	/**
+	 * Sets the custom user properties specified for Ant builds. To commit the
+	 * changes, updatePluginPreferences must be called.
+	 * 
+	 * @param the properties defining the Ant properties
+	 * @since 2.1
+	 */
+	public void setCustomProperties(Property[] properties) {
+		customProperties = properties;
 	}
 
 	/**
@@ -385,6 +430,7 @@ public class AntCorePreferences {
 		updateTasks(prefs);
 		updateTypes(prefs);
 		updateURLs(prefs);
+		updateProperties(prefs);
 		AntCorePlugin.getPlugin().savePluginPreferences();
 	}
 
@@ -414,6 +460,20 @@ public class AntCorePreferences {
 			prefs.setValue(IAntCoreConstants.PREFIX_TYPE + customTypes[i].getTypeName(), customTypes[i].getClassName() + "," + customTypes[i].getLibrary().toExternalForm()); //$NON-NLS-1$
 		}
 		prefs.setValue(IAntCoreConstants.PREFERENCE_TYPES, types.toString());
+	}
+	
+	protected void updateProperties(Preferences prefs) {
+		if (customProperties.length == 0) {
+			prefs.setValue(IAntCoreConstants.PREFERENCE_PROPERTIES, ""); //$NON-NLS-1$
+			return;
+		}
+		StringBuffer properties = new StringBuffer();
+		for (int i = 0; i < customProperties.length; i++) {
+			properties.append(customProperties[i].getName());
+			properties.append(',');
+			prefs.setValue(IAntCoreConstants.PREFIX_PROPERTY + customProperties[i].getName(), customProperties[i].getValue()); //$NON-NLS-1$
+		}
+		prefs.setValue(IAntCoreConstants.PREFERENCE_PROPERTIES, properties.toString());
 	}
 
 	protected void updateURLs(Preferences prefs) {
