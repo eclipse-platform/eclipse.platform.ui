@@ -6,8 +6,10 @@ package org.eclipse.team.internal.ccvs.ui.sync;
  */
  
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 import org.eclipse.compare.structuremergeviewer.Differencer;
@@ -26,21 +28,15 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Update;
-import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
@@ -151,9 +147,9 @@ public class UpdateSyncAction extends MergeAction {
 		List updateShallow = new ArrayList();
 
 		// A list of diff elements in the sync set which are incoming folder additions
-		List parentCreationElements = new ArrayList();
+		Set parentCreationElements = new HashSet();
 		// A list of diff elements in the sync set which are folder conflicts
-		List parentConflictElements = new ArrayList();
+		Set parentConflictElements = new HashSet();
 		// A list of the team nodes that we need to perform makeIncoming on
 		List makeIncoming = new ArrayList();
 		// A list of diff elements that need to be unmanaged and locally deleted
@@ -279,11 +275,19 @@ public class UpdateSyncAction extends MergeAction {
 			if (updateDeep.size() > 0) {
 				manager.update((IResource[])updateDeep.toArray(new IResource[0]), getLocalOptions(Command.NO_LOCAL_OPTIONS), false, monitor);
 			}
-		} catch (TeamException e) {
-			ErrorDialog.openError(getShell(), null, null, e.getStatus());
+		} catch (final TeamException e) {
+			getShell().getDisplay().syncExec(new Runnable() {
+				public void run() {
+					ErrorDialog.openError(getShell(), null, null, e.getStatus());
+				}
+			});
 			return null;
-		} catch (CoreException e) {
-			ErrorDialog.openError(getShell(), Policy.bind("simpleInternal"), Policy.bind("internal"), e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
+		} catch (final CoreException e) {
+			getShell().getDisplay().syncExec(new Runnable() {
+				public void run() {
+					ErrorDialog.openError(getShell(), Policy.bind("simpleInternal"), Policy.bind("internal"), e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
+				}
+			});
 			CVSUIPlugin.log(e.getStatus());
 			return null;
 		}
