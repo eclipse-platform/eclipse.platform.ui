@@ -67,18 +67,16 @@ public class UnifiedInstallWizard
 
 		saveSettings();
 
-		if (targetPage != null) {
-			// Check for duplication conflicts
-			ArrayList conflicts =
-				DuplicateConflictsValidator.computeDuplicateConflicts(
-					targetPage.getTargetSites(),
-					config);
-			if (conflicts != null) {
-				DuplicateConflictsDialog2 dialog =
-					new DuplicateConflictsDialog2(getShell(), conflicts);
-				if (dialog.open() != 0)
-					return false;
-			}
+		// Check for duplication conflicts
+		ArrayList conflicts =
+			DuplicateConflictsValidator.computeDuplicateConflicts(
+				targetPage.getTargetSites(),
+				config);
+		if (conflicts != null) {
+			DuplicateConflictsDialog2 dialog =
+				new DuplicateConflictsDialog2(getShell(), conflicts);
+			if (dialog.open() != 0)
+				return false;
 		}
 
 		// ok to continue		
