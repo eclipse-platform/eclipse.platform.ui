@@ -208,6 +208,7 @@ public class Main {
 	private static final String PROP_SPLASHPATH = "osgi.splashPath"; //$NON-NLS-1$
 	private static final String PROP_SPLASHLOCATION = "osgi.splashLocation"; //$NON-NLS-1$
 	private static final String PROP_CLASSPATH = "osgi.frameworkClassPath"; //$NON-NLS-1$
+	private static final String PROP_LOGFILE = "osgi.logfile"; //$NON-NLS-1$
 	private static final String PROP_EOF = "eof"; //$NON-NLS-1$
 	
 	private static final String PROP_EXITCODE = "eclipse.exitcode"; //$NON-NLS-1$
@@ -1416,14 +1417,22 @@ public class Main {
 		log.newLine();
 	}
 	private void computeLogFileLocation() {
-		if (logFile != null)
+		String logFileProp = System.getProperty(PROP_LOGFILE);
+		if (logFileProp != null) {
+			if (logFile == null || !logFileProp.equals(logFile.getAbsolutePath())){
+				logFile = new File(logFileProp);
+				logFile.getParentFile().mkdirs();
+			}
 			return;
+		}
+
 		// compute the base location and then append the name of the log file
 		URL base = buildURL(System.getProperty(PROP_CONFIG_AREA), false);
 		if (base == null)
 			return;
-		logFile = new File(base.getPath(), ".log"); //$NON-NLS-1$
+		logFile = new File(base.getPath(),Long.toString(System.currentTimeMillis()) + ".log"); //$NON-NLS-1$
 		logFile.getParentFile().mkdirs();
+		System.setProperty(PROP_LOGFILE, logFile.getAbsolutePath());
 	}
 	
 	/**
