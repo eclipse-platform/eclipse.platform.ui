@@ -42,8 +42,10 @@ public class SearchResult {
 	public void addHits(Hits hits) {
 		for (int h = 0; h < hits.length() && h < maxHits; h++) {
 			org.apache.lucene.document.Document doc;
+			float score;
 			try {
 				doc = hits.doc(h);
+				score = hits.score(h);
 			} catch (IOException ioe) {
 				return;
 			}
@@ -54,6 +56,8 @@ public class SearchResult {
 			// Create topic
 			Element e = factory.createElement(ITopic.TOPIC);
 			factory.getDocumentElement().appendChild(e);
+			// Set document score
+			e.setAttribute("score", Float.toString(score));
 			// Set document href
 			e.setAttribute(ITopic.HREF, href + "?resultof=" + urlEncodedQuery);
 			// Set the document label
