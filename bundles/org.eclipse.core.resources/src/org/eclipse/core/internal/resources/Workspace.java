@@ -189,24 +189,16 @@ public void build(int trigger, IProgressMonitor monitor) throws CoreException {
  * @see IWorkspace#checkpoint
  */
 public void checkpoint(boolean build) {
-	boolean immutable = true;
 	try {
-		/* if it was not called by the current operation, just ignore */
-		if (!getWorkManager().isCurrentOperation())
-			return;
-		immutable = tree.isImmutable();
-		broadcastChanges(IResourceChangeEvent.PRE_AUTO_BUILD, false);
-		if (build && isAutoBuilding())
-			getBuildManager().build(IncrementalProjectBuilder.AUTO_BUILD, Policy.monitorFor(null));
-		broadcastChanges(IResourceChangeEvent.POST_AUTO_BUILD, false);
-		broadcastChanges(IResourceChangeEvent.POST_CHANGE, false);
-		getMarkerManager().resetMarkerDeltas();
+		try {
+			prepareOperation(null);
+			beginOperation(true);
+			broadcastChanges(IResourceChangeEvent.POST_CHANGE, true);
+		} finally {
+			endOperation(build, null);
+		}
 	} catch (CoreException e) {
-		// ignore any CoreException.  There shouldn't be any as the buildmanager and notification manager
-		// should be catching and logging...
-	} finally {
-		if (!immutable)
-			newWorkingTree();
+		ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
 	}
 }
 /**
