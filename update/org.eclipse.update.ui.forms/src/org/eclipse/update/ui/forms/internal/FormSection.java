@@ -34,6 +34,7 @@ public abstract class FormSection implements IPropertyChangeListener {
 	private boolean descriptionPainted=true;
 	private boolean headerPainted=true;
 	private boolean collapsable=false;
+	private boolean collapsed = false;
 	private int widthHint = SWT.DEFAULT;
 	private int heightHint=SWT.DEFAULT;
 	private Composite control;
@@ -185,6 +186,7 @@ public final Control createControl(
 		}
 		if (collapsable) {
 			toggle = new ToggleControl(section, SWT.NULL);
+			toggle.setSelection(collapsed);
 			toggle.setBackground(factory.getBackgroundColor());
 			toggle.setActiveDecorationColor(factory.getHyperlinkColor());
 			toggle.setDecorationColor(factory.getColor(factory.COLOR_COMPOSITE_SEPARATOR));
@@ -376,5 +378,8 @@ public void propertyChange(PropertyChangeEvent arg0) {
 	public void setCollapsable(boolean collapsable) {
 		this.collapsable = collapsable;
 	}
-
+	
+	public void setCollapsed(boolean collapsed) {
+		this.collapsed = collapsed;
+	}
 }
