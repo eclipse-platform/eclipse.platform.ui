@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.progress;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleControlAdapter;
 import org.eclipse.swt.accessibility.AccessibleControlEvent;
@@ -21,6 +22,7 @@ import org.eclipse.swt.events.HelpEvent;
 import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
@@ -30,8 +32,10 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.progress.WorkbenchJob;
+
 import org.eclipse.ui.internal.WorkbenchWindow;
 /**
  * The AnimationItem is the class that manages the animation for the progress.
@@ -64,8 +68,7 @@ public class AnimationItem {
 		// Canvas to show the image.
 		imageCanvas = new Canvas(parent, SWT.NONE);
 		imageCanvas.setBackground(AnimationManager.getItemBackgroundColor(getControl()));
-		imageCanvas.setToolTipText(ProgressMessages
-				.getString("AnimationItem.HoverHelp")); //$NON-NLS-1$
+
 		imageCanvas.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent event) {
 				paintImage(event, manager.getImage(), manager.getImageData()[0]);
@@ -84,8 +87,7 @@ public class AnimationItem {
 			 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
 			 */
 			public void mouseDoubleClick(MouseEvent arg0) {
-				if (isActiveWorkbenchItem())
-					AnimationManager.getInstance().toggleFloatingWindow();
+				ProgressManagerUtil.openProgressView(AnimationItem.this.window);
 			}
 			/*
 			 * (non-Javadoc)
@@ -104,6 +106,38 @@ public class AnimationItem {
 				//Do nothing
 			}
 		});
+		
+		imageCanvas.addMouseTrackListener(new MouseTrackListener(){
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.events.MouseTrackListener#mouseEnter(org.eclipse.swt.events.MouseEvent)
+			 */
+			public void mouseEnter(MouseEvent e) {
+				//Nothing here
+			}
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.events.MouseTrackListener#mouseExit(org.eclipse.swt.events.MouseEvent)
+			 */
+			public void mouseExit(MouseEvent e) {
+				//Abort if we are already showing the window
+				if(AnimationManager.getInstance().showingDetails())
+					return;
+				closeFloatingWindow();
+
+			}
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.events.MouseTrackListener#mouseHover(org.eclipse.swt.events.MouseEvent)
+			 */
+			public void mouseHover(MouseEvent e) {
+				//Abort if we are already showing the window
+				if(AnimationManager.getInstance().showingDetails())
+					return;
+				openFloatingWindow();
+
+			}
+		});
+		
 		imageCanvas.getAccessible().addAccessibleControlListener(
 				new AccessibleControlAdapter() {
 					/*
