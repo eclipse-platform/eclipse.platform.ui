@@ -170,8 +170,9 @@ public class PresentationReconciler implements IPresentationReconciler {
 		 	
 		 	if (de == null) {
 		 		
-		 		IDocument d= fViewer.getDocument();
-		 		processDamage(new Region(0, d.getLength()), d);
+		 		IRegion visible= fViewer.getVisibleRegion();
+		 		IRegion region= new Region(e.getOffset() + visible.getOffset(), e.getLength());
+		 		processDamage(region, fViewer.getDocument());
 		 		
 		 	} else {
 			 	

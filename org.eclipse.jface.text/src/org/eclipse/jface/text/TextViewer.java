@@ -75,7 +75,7 @@ import org.eclipse.jface.viewers.Viewer;
  * @see ITextViewer
  */  
 public class TextViewer extends Viewer implements 
-		ITextViewer, ITextViewerExtension, 
+		ITextViewer, ITextViewerExtension, ITextViewerExtension2, 
 		ITextOperationTarget, ITextOperationTargetExtension,
 		IWidgetTokenOwner {
 	
@@ -2204,18 +2204,45 @@ public class TextViewer extends Viewer implements
 		return fChildDocumentManager;
 	}
 	
-	/**
-	 * Invalidates the current presentation by sending an initialization
-	 * event to all text listener.
-	 * @since 2.0
+	/*
+	 * @see org.eclipse.jface.text.ITextViewer#invalidateTextPresentation()
 	 */
 	public final void invalidateTextPresentation() {
 		if (fVisibleDocument != null) {
-			fWidgetCommand.start= 0;
-			fWidgetCommand.length= 0;
-			fWidgetCommand.text= fVisibleDocument.get();
 			fWidgetCommand.event= null;
+			fWidgetCommand.start= 0;
+			fWidgetCommand.length= fVisibleDocument.getLength();
+			fWidgetCommand.text= fVisibleDocument.get();
 			updateTextListeners(fWidgetCommand);
+		}
+	}
+	
+	public final void invalidateTextPresentation(int offset, int length) {
+		if (fVisibleDocument != null) {
+			
+			IRegion visibleRegion= getVisibleRegion();
+			
+			int delta= visibleRegion.getOffset() - offset;
+			if (delta > 0) {
+				offset= visibleRegion.getOffset();
+				length -= delta;
+			}
+			offset -= visibleRegion.getOffset();	
+			
+			delta= (offset + length) - (visibleRegion.getOffset() + visibleRegion.getLength());
+			if (delta > 0)
+				length -= delta;
+				
+			fWidgetCommand.event= null;
+			fWidgetCommand.start= offset;
+			fWidgetCommand.length= length;
+			
+			try {
+				fWidgetCommand.text= fVisibleDocument.get(offset, length);
+				updateTextListeners(fWidgetCommand);
+			} catch (BadLocationException x) {
+				// can not happen because of previous checking
+			}
 		}
 	}
 	
