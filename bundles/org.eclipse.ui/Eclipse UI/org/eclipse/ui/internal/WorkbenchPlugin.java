@@ -432,5 +432,13 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		}
 		return decoratorManager;
 	}
+	
+	/*
+ 	 * See @Plugin.shutdown() 
+ 	 */
+	public void shutdown() throws CoreException {
+		super.shutdown();
+		getDecoratorManager().dispose();
+	}
 
 }

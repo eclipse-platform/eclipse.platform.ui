@@ -348,7 +348,7 @@ public class DecoratorManager
 		//so as to force a dispose of thier decorators
 		for (int i = 0; i < definitions.length; i++) {
 			if (definitions[i].isEnabled())
-				definitions[i].setEnabled(false,this);
+				definitions[i].setEnabled(false);
 		}
 	}
 
