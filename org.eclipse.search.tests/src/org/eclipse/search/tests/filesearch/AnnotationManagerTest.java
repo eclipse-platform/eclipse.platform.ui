@@ -19,24 +19,30 @@ import junit.framework.TestCase;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.Path;
+
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
-import org.eclipse.search.internal.core.text.TextSearchScope;
-import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.internal.ui.text.FileSearchQuery;
-import org.eclipse.search.internal.ui.text.FileSearchResult;
+
+import org.eclipse.ui.editors.text.EditorsUI;
+
+import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.texteditor.AnnotationTypeLookup;
+import org.eclipse.ui.texteditor.ITextEditor;
+
 import org.eclipse.search.tests.SearchTestPlugin;
+
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.SearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.Match;
+
+import org.eclipse.search.internal.core.text.TextSearchScope;
+import org.eclipse.search.internal.ui.text.FileSearchQuery;
+import org.eclipse.search.internal.ui.text.FileSearchResult;
+
 import org.eclipse.search2.internal.ui.InternalSearchUI;
-import org.eclipse.ui.editors.text.EditorsUI;
-import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.texteditor.AnnotationTypeLookup;
-import org.eclipse.ui.texteditor.ITextEditor;
 
 public class AnnotationManagerTest extends TestCase {
 	FileSearchQuery fQuery1;
