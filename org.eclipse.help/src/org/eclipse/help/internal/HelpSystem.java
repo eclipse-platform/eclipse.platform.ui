@@ -10,7 +10,7 @@ import org.eclipse.help.internal.contributors.xml1_0.HelpContributionManager;
 import org.eclipse.help.internal.contributors1_0.ContributionManager;
 import org.eclipse.help.internal.navigation1_0.HelpNavigationManager;
 import org.eclipse.help.internal.server.HelpServer;
-import org.eclipse.help.internal.topics.TopicsNavigationManager;
+import org.eclipse.help.internal.toc.TocManager;
 import org.eclipse.help.internal.util.*;
 /**
  * The actual implementation of the help system plugin.
@@ -23,8 +23,8 @@ public final class HelpSystem {
 	// Help Naviagation Manager for v1.0 navigation
 	protected HelpNavigationManager navigationManager;
 	// eo 1.0 nav support
-	// Topics NavigationManager for topics navigation
-	protected TopicsNavigationManager topicsNavigationManager;
+	// TocManager
+	protected TocManager tocManager;
 	protected IContextManager contextManager;
 	private String browserPath;
 	// constants
@@ -91,14 +91,14 @@ public final class HelpSystem {
 		return HelpServer.getAddress();
 	}
 	/**
-	 * Used to obtain Topics Naviagiont Manager
-	 * @return instance of TopicsNavigationManager
+	 * Used to obtain Toc Naviagiont Manager
+	 * @return instance of TocManager
 	 */
-	public static TopicsNavigationManager getTopicsNavigationManager() {
-		if (getInstance().topicsNavigationManager == null) {
-			getInstance().topicsNavigationManager = new TopicsNavigationManager();
+	public static TocManager getTocManager() {
+		if (getInstance().tocManager == null) {
+			getInstance().tocManager = new TocManager();
 		}
-		return getInstance().topicsNavigationManager;
+		return getInstance().tocManager;
 	}
 	/**
 	 */

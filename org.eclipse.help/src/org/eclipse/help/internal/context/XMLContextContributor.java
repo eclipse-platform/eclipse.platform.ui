@@ -138,7 +138,7 @@ public class XMLContextContributor
 	/**
 	 */
 	protected void preprocess(Contribution contrib) {
-		// update the ids and href only for child Topics (ie: related topics).
+		// update the ids and href only for child Toc (ie: related topics).
 		// we know that we a Context contributrion to start with.
 		// this is stored as a HelpContribution)
 		for (Iterator children = contrib.getChildren(); children.hasNext();) {

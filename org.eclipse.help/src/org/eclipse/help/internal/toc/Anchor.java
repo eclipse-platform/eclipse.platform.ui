@@ -2,32 +2,32 @@
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-package org.eclipse.help.internal.topics;
+package org.eclipse.help.internal.toc;
 import org.eclipse.help.internal.util.Resources;
 import org.xml.sax.*;
 /**
- * Anchor.  Place holder that Topics objects can atatch to.
+ * Anchor.  Place holder that Toc objects can atatch to.
  */
-class Anchor extends NavigationElement {
+class Anchor extends TocNode {
 	protected String id;
-	protected TopicsFile topicsFile;
+	protected TocFile tocFile;
 	/**
 	 * Constructor. 
 	 */
-	protected Anchor(TopicsFile topicsFile, Attributes attrs) {
-		this.topicsFile = topicsFile;
+	protected Anchor(TocFile tocFile, Attributes attrs) {
+		this.tocFile = tocFile;
 		if (attrs == null)
 			return;
 		id = attrs.getValue("id");
 		id =
 			HrefUtil.normalizeHref(
-				topicsFile.getPluginID(),
-				topicsFile.getHref() + "#" + id);
+				tocFile.getPluginID(),
+				tocFile.getHref() + "#" + id);
 	}
 	/**
 	 * Implements abstract method.
 	 */
-	public void build(NavigationBuilder builder) {
+	public void build(TocBuilder builder) {
 		builder.buildAnchor(this);
 	}
 	/**
@@ -37,9 +37,9 @@ class Anchor extends NavigationElement {
 		return id;
 	}
 	/**
-	 * Returns the topics file
+	 * Returns the toc file
 	 */
-	public TopicsFile getTopicsFile() {
-		return topicsFile;
+	public TocFile getTocFile() {
+		return tocFile;
 	}
 }

@@ -2,15 +2,15 @@
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-package org.eclipse.help.internal.topics;
+package org.eclipse.help.internal.toc;
 
 import java.util.*;
 
 /**
  * Navigation Element.
- * Common for all objects definable in topics.xml
+ * Common for all objects definable in toc.xml
  */
-abstract class NavigationElement implements INavigationNode {
+abstract class TocNode implements ITocNode {
 	private final static List emptyList = new ArrayList(0);
 	private List children;
 	private List parents;
@@ -20,18 +20,18 @@ abstract class NavigationElement implements INavigationNode {
 	 * Adds another element as child of this element
 	 * Modifies parents of a child as well
 	 */
-	public void addChild(INavigationNode child) {
+	public void addChild(ITocNode child) {
 		if (children == null)
 			children = new ArrayList();
 		children.add(child);
-		if (child instanceof NavigationElement)
-			((NavigationElement)child).addParent(this);
+		if (child instanceof TocNode)
+			((TocNode)child).addParent(this);
 	}
 	/**
 	 * Adds parent parents of this element
 	 * called by addChild method
 	 */
-	protected void addParent(INavigationNode parent) {
+	protected void addParent(ITocNode parent) {
 		if (parents == null)
 			parents = new ArrayList();
 		parents.add(parent);
@@ -40,10 +40,10 @@ abstract class NavigationElement implements INavigationNode {
 	/**
 	 * Removes a child
 	 */
-	public void removeChild(INavigationNode child)
+	public void removeChild(ITocNode child)
 	{
 		// first, remove the parent of the child
-		((NavigationElement)child).getParents().remove(this);
+		((TocNode)child).getParents().remove(this);
 		// remove the child now
 		getChildren().remove(child);
 	}
@@ -51,7 +51,7 @@ abstract class NavigationElement implements INavigationNode {
 	
 	/**
 	 * Obtains children
-	 * @return INavigationNode List
+	 * @return ITocNode List
 	 */
 	public List getChildren() {
 		if (children == null)
@@ -60,7 +60,7 @@ abstract class NavigationElement implements INavigationNode {
 	}
 	/**
 	 * Obtains parents
-	 * @return INavigationNode List
+	 * @return ITocNode List
 	 */
 	protected List getParents() {
 		if (parents == null)
@@ -76,11 +76,11 @@ abstract class NavigationElement implements INavigationNode {
 			return emptyList;
 		List childTopics = new ArrayList(children.size());
 		for (Iterator childrenIt = children.iterator(); childrenIt.hasNext();) {
-			NavigationElement c = (NavigationElement) childrenIt.next();
+			TocNode c = (TocNode) childrenIt.next();
 			if ((c instanceof Topic)) {
 				childTopics.add(c);
 			} else {
-				// it is a topics, anchor or include,
+				// it is a toc, anchor or include,
 				// which may have children attached to it.
 				childTopics.addAll(c.getChildTopics());
 			}

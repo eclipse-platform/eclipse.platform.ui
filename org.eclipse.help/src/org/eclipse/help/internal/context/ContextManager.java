@@ -129,7 +129,7 @@ public class ContextManager implements IContextManager {
 			IHelpTopic[] topics = getRelatedTopics(contexts[0]);
 			return topics;
 		}
-		// worst case scenario. Could not find related Topics in any context object. 
+		// worst case scenario. Could not find related Toc in any context object. 
 		return null;
 	}
 	/**

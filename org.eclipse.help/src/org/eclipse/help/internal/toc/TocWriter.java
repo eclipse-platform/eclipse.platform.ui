@@ -2,7 +2,7 @@
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-package org.eclipse.help.internal.topics;
+package org.eclipse.help.internal.toc;
 import java.io.File;
 import java.util.*;
 import org.eclipse.help.internal.util.XMLGenerator;
@@ -10,31 +10,31 @@ import org.eclipse.help.*;
 /**
  * This generates the XML file for the help navigation.
  */
-public class NavigationWriter extends XMLGenerator {
-	protected Topics topics;
+public class TocWriter extends XMLGenerator {
+	protected Toc topics;
 	/**
 	 * @param viewSet com.ibm.itp.ua.view.ViewSet
 	 * @param outputDir java.io.File
 	 */
-	public NavigationWriter(Topics topics, File outputFile) {
+	public TocWriter(Toc topics, File outputFile) {
 		super(outputFile);
 		this.topics = topics;
 	}
 	/**
-	 * Writes out navigation for the Topics to a file
+	 * Writes out navigation for the Toc to a file
 	 */
 	public void generate() {
 		println(
-			"<topics label=\""
+			"<toc label=\""
 				+ xmlEscape(topics.getLabel())
-				+ "\" topicsID=\""
-				+ reduceURL(topics.getTopicsID())
+				+ "\" tocID=\""
+				+ reduceURL(topics.getTocID())
 				+ "\">");
 		ITopic[] subtopics = topics.getSubtopics();
 		for (int i=0; i<subtopics.length; i++) {
 			generate(subtopics[i]);
 		}
-		println("</topics>");
+		println("</toc>");
 		super.close();
 	}
 	/**

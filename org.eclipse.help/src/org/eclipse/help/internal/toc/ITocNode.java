@@ -2,15 +2,15 @@
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-package org.eclipse.help.internal.topics;
+package org.eclipse.help.internal.toc;
 import java.util.List;
 /**
- * INavigationNode interface.
+ * ITocNode interface.
  */
-interface INavigationNode {
+interface ITocNode {
 	/**
 	 * Returns child nodes
-	 * @return List of INavigationNode
+	 * @return List of ITocNode
 	 */
 	List getChildren();
 	
@@ -19,18 +19,18 @@ interface INavigationNode {
 	 * Modifies parents of a child as well
 	 * @param child node to add as child
 	 */
-	void addChild(INavigationNode child);
+	void addChild(ITocNode child);
 	
 	/**
 	 * Removes specified child.
 	 * @param child child to remove
 	 */
-	void removeChild(INavigationNode child);
+	void removeChild(ITocNode child);
 	
 	/**
 	 * When a builder builds the navigation, each node
 	 * must "accomodate" the builder by responding to the build() 
 	 * command.
 	 */
-	void build(NavigationBuilder builder);
+	void build(TocBuilder builder);
 }

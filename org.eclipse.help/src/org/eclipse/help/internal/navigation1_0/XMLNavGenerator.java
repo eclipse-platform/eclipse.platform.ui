@@ -120,7 +120,7 @@ public class XMLNavGenerator extends XMLGenerator implements Visitor {
 		printPad();
 		println(anchor);
 		if (topic.getChildren().hasNext())
-			// Generate nested topics
+			// Generate nested toc
 			visitChildren(topic);
 
 		printPad();

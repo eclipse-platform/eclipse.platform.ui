@@ -39,7 +39,7 @@ public class TempURL extends HelpURL {
 	public InputStream openStream() {
 		// Ensure that navigation has been generated
 		// important on the server
-		HelpSystem.getTopicsNavigationManager();
+		HelpSystem.getTocManager();
 
 		String path =
 			HelpPlugin.getDefault().getStateLocation().toFile().getAbsolutePath().replace(

@@ -61,7 +61,7 @@ public class HelpInfoView extends HelpContribution implements InfoView {
 	/**
 	 *  1.0 nav support
 	 */
-	public String getTopicsID() {
+	public String getTocID() {
 		return this.getParent().getID() + ".." + getID();
 	}
 	/**
@@ -80,20 +80,4 @@ public class HelpInfoView extends HelpContribution implements InfoView {
 			getParent().getLabel(),
 			super.getLabel());
 	}
-
-/* 1.0 nav support */	
-	public ITopic getTopic(String href)
-	{
-		Topic[] topics =
-			(Topic[]) HelpSystem
-				.getNavigationManager()
-				.getNavigationModel(getParent().getID())
-				.getTopicsWithURL(href);
-				
-		if (topics == null || topics.length == 0)
-			return null;
-		else
-			return topics[0];
-	}
-/* eo 1.0 nav support */
 }

@@ -2,7 +2,7 @@
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-package org.eclipse.help.internal.topics;
+package org.eclipse.help.internal.toc;
 import java.io.*;
 import java.util.Stack;
 import org.apache.xerces.parsers.SAXParser;
@@ -10,17 +10,17 @@ import org.eclipse.help.internal.util.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 /**
- * Used to create TopicsFile's Topics object
- * from contributed topics xml file.
+ * Used to create TocFile's Toc object
+ * from contributed toc xml file.
  */
-class TopicsFileParser extends DefaultHandler {
-	protected NavigationBuilder builder;
+class TocFileParser extends DefaultHandler {
+	protected TocBuilder builder;
 	protected Stack elementStack;
-	protected TopicsFile topicsFile;
+	protected TocFile tocFile;
 	/**
-	 * Contstructor
+	 * Constructor
 	 */
-	public TopicsFileParser(NavigationBuilder builder) {
+	public TocFileParser(TocBuilder builder) {
 		super();
 		this.builder = builder;
 	}
@@ -28,7 +28,7 @@ class TopicsFileParser extends DefaultHandler {
 	 * @see ErrorHandler#error(SAXParseException)
 	 */
 	public void error(SAXParseException ex) throws SAXException {
-		String message = getMessage("E024", ex);//Error parsing topics file, URL: %1 at Line:%2 Column:%3 %4
+		String message = getMessage("E024", ex);//Error parsing Table of Contents file, URL: %1 at Line:%2 Column:%3 %4
 		Logger.logError(message, null);
 		RuntimeHelpStatus.getInstance().addParseError(message, ex.getSystemId());
 	}
@@ -37,7 +37,7 @@ class TopicsFileParser extends DefaultHandler {
 	 */
 	public void fatalError(SAXParseException ex) throws SAXException {
 		// create message string from exception
-		String message = getMessage("E025", ex);//Failed to parse topics file, URL: %1 at Line:%2 Column:%3 %4
+		String message = getMessage("E025", ex);//Failed to parse Table of Contents file, URL: %1 at Line:%2 Column:%3 %4
 		Logger.logError(message, ex);
 		RuntimeHelpStatus.getInstance().addParseError(message, ex.getSystemId());
 	}
@@ -50,19 +50,19 @@ class TopicsFileParser extends DefaultHandler {
 		return message;
 	}
 	/**
-	 * Gets the topics
+	 * Gets the toc
 	 */
-	public void parse(TopicsFile topicsFile) {
+	public void parse(TocFile tocFile) {
 				
-		this.topicsFile = topicsFile;
+		this.tocFile = tocFile;
 		elementStack = new Stack();
 				
-		InputStream is = topicsFile.getInputStream();
+		InputStream is = tocFile.getInputStream();
 		if (is == null) 
 			return;
 		
 		InputSource inputSource = new InputSource(is);
-		String file = topicsFile.getPluginID() + "/" + topicsFile.getHref();
+		String file = tocFile.getPluginID() + "/" + tocFile.getHref();
 		inputSource.setSystemId(file);
 		try {
 			SAXParser parser = new SAXParser();
@@ -71,10 +71,10 @@ class TopicsFileParser extends DefaultHandler {
 			parser.parse(inputSource);
 			is.close();
 		} catch (SAXException se) {
-			String msg = Resources.getString("E026", file);//Error loading topics file %1.
+			String msg = Resources.getString("E026", file);//Error loading Table of Contents file %1.
 			Logger.logError(msg, se);
 		} catch (IOException ioe) {
-			String msg = Resources.getString("E026", file);//Error loading topics file %1.
+			String msg = Resources.getString("E026", file);//Error loading Table of Contents file %1.
 			Logger.logError(msg, ioe);
 			// now pass it to the RuntimeHelpStatus object explicitly because we
 			// still need to display errors even if Logging is turned off.
@@ -90,23 +90,23 @@ class TopicsFileParser extends DefaultHandler {
 		String qName,
 		Attributes atts)
 		throws SAXException {
-			NavigationElement node = null;
+			TocNode node = null;
 			
-		if (qName.equals("topics")) {
-			node = new Topics(topicsFile, atts);
-			topicsFile.setTopics((Topics)node);
+		if (qName.equals("toc")) {
+			node = new Toc(tocFile, atts);
+			tocFile.setToc((Toc)node);
 		} else if (qName.equals("topic")) {
-			node = new Topic(topicsFile, atts);
+			node = new Topic(tocFile, atts);
 		} else if (qName.equals("link")) {
-			node = new Link(topicsFile, atts);
+			node = new Link(tocFile, atts);
 		} else if (qName.equals("anchor")) {
-			node = new Anchor(topicsFile, atts);
+			node = new Anchor(tocFile, atts);
 		}
 		else
 			return; // perhaps throw some exception
 		
 		if (!elementStack.empty())
-			((NavigationElement) elementStack.peek()).addChild(node);
+			((TocNode) elementStack.peek()).addChild(node);
 		elementStack.push(node);
 		
 		// do any builder specific actions in the node

@@ -2,32 +2,32 @@
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-package org.eclipse.help.internal.topics;
+package org.eclipse.help.internal.toc;
 import java.io.*;
 import java.util.*;
 import org.eclipse.help.internal.util.ResourceLocator;
 import org.xml.sax.SAXException;
 
-public class TopicsFile {
+public class TocFile {
 
-	protected Topics topics;
-	protected boolean topicsParsed = false;
+	protected Toc toc;
+	protected boolean tocParsed = false;
 
 	protected String plugin;
 	protected String href;
-	protected boolean toc;
+	protected boolean primary;
 
 
 	// used for fast access to anchors
 	protected Map anchors;
 
 	/**
-	 * Topics File Contstructor
+	 * Toc File Contstructor
 	 */
-	protected TopicsFile(String plugin, String href, boolean isTOC) {
+	protected TocFile(String plugin, String href, boolean primary) {
 		this.plugin = plugin;
 		this.href = href;
-		this.toc = isTOC;
+		this.primary = primary;
 	}
 
 	/**
@@ -59,18 +59,18 @@ public class TopicsFile {
 	}
 
 	/**
-	 * Parses file and gets the topics
-	 * @return Returns a Topics
+	 * Parses file and gets the toc
+	 * @return Returns a Toc
 	 */
-	public Topics getTopics() {
-		return topics;
+	public Toc getToc() {
+		return toc;
 	}
 
 	/**
-	 * Sets the topics on this file. It should happen during parsin
+	 * Sets the toc on this file. It should happen during parsing
 	 */
-	public void setTopics(Topics topics) {
-		this.topics = topics;
+	public void setToc(Toc toc) {
+		this.toc = toc;
 	}
 
 	/**
@@ -94,10 +94,10 @@ public class TopicsFile {
 	}
 
 	/**
-	 * Builds the topics file if needed
+	 * Builds the toc file if needed
 	 */
-	public void build(NavigationBuilder builder) {
-		builder.buildTopicsFile(this);
+	public void build(TocBuilder builder) {
+		builder.buildTocFile(this);
 	}
 
 
@@ -111,8 +111,8 @@ public class TopicsFile {
 	 * Checks if this file specifies a TOC.
 	 * @return Returns a boolean
 	 */
-	public boolean isTOC() {
-		return toc;
+	public boolean isPrimary() {
+		return primary;
 	}
 
 }

@@ -180,7 +180,7 @@ public class HelpContribution implements Contribution {
 
  /* 1.0 nav support */				
 	/**
-	 * Note: assumes the topics have been built....
+	 * Note: assumes the toc have been built....
 	 * @return ITopic list
 	 */
 	public ITopic[] getSubtopics() {
@@ -194,7 +194,7 @@ public class HelpContribution implements Contribution {
 	}
 	
 	/**
-	 * Note: assumes the topics have been built....
+	 * Note: assumes the toc have been built....
 	 * @return ITopic list
 	 */
 	public ITopic[] getTopics() {

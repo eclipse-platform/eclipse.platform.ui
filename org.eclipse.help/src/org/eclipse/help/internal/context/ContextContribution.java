@@ -52,7 +52,7 @@ public class ContextContribution
 			children.toArray(related);
 			return related;
 		} else {
-			// signal empty topics. handled by calling class.
+			// signal empty toc. handled by calling class.
 			return null;
 		}
 	}

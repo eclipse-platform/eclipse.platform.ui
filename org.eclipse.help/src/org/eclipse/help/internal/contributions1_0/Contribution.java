@@ -16,7 +16,7 @@ import org.eclipse.help.*;
  */
 public interface Contribution 
   /* 1.0 nav support */
-  // We are pushing this a bit, making everything behaving like a topic or topics
+  // We are pushing this a bit, making everything behaving like a topic or toc
   // in the new syntax. 
   // This code should be removed with the 1.0 cleanup
   extends IHelpResource, ITopic

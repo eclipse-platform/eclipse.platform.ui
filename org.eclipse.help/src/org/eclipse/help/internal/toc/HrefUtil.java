@@ -1,4 +1,4 @@
-package org.eclipse.help.internal.topics;
+package org.eclipse.help.internal.toc;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.

@@ -2,7 +2,7 @@
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-package org.eclipse.help.internal.topics;
+package org.eclipse.help.internal.toc;
 import java.net.URLEncoder;
 import java.util.*;
 import org.eclipse.help.internal.util.Resources;
@@ -10,32 +10,32 @@ import org.eclipse.help.internal.util.TString;
 import org.xml.sax.*;
 import org.eclipse.help.*;
 /** 
- * Root of navigation TopicsFile
- * Can be linked with other Topics objects.
+ * Root of navigation TocFile
+ * Can be linked with other Toc objects.
  */
-public class Topics extends NavigationElement implements ITopic {
+public class Toc extends TocNode implements ITopic {
 	private final static String defaultSplash =
 		"/org.eclipse.help/" + Resources.getString("splash_location");
 	private String link_to;
 	private String href;
 	private String label;
-	private TopicsFile topicsFile;
-	private String topicsID;
+	private TocFile tocFile;
+	private String tocID;
 	private ITopic[] topicArray;
 	
 	/**
 	 * Contstructor.  Used when parsing help contributions.
 	 */
-	protected Topics(TopicsFile topicsFile, Attributes attrs)
+	protected Toc(TocFile tocFile, Attributes attrs)
 	{
 		if (attrs == null)
 			return;
-		this.topicsFile = topicsFile;
+		this.tocFile = tocFile;
 		this.label = attrs.getValue("label");
 		this.link_to = attrs.getValue("link_to");
-		this.topicsID=attrs.getValue("topicsID");
-		this.link_to = HrefUtil.normalizeHref(topicsFile.getPluginID(), link_to);
-		this.topicsID=HrefUtil.normalizeHref(topicsFile.getPluginID(),topicsFile.getHref());
+		this.tocID=attrs.getValue("tocID");
+		this.link_to = HrefUtil.normalizeHref(tocFile.getPluginID(), link_to);
+		this.tocID=HrefUtil.normalizeHref(tocFile.getPluginID(),tocFile.getHref());
 		this.href =
 			defaultSplash
 				+ "?title="
@@ -45,15 +45,15 @@ public class Topics extends NavigationElement implements ITopic {
 	/**
 	 * Implements abstract method.
 	 */
-	public void build(NavigationBuilder builder) {
-		builder.buildTopics(this);
+	public void build(TocBuilder builder) {
+		builder.buildToc(this);
 	}
 	/**
-	 * Returns the topics file. 
+	 * Returns the toc file. 
 	 * Returns null when the topic is read from a temp file.
 	 */
-	public TopicsFile getTopicsFile() {
-		return topicsFile;
+	public TocFile getTocFile() {
+		return tocFile;
 	}
 
 	/**
@@ -77,7 +77,7 @@ public class Topics extends NavigationElement implements ITopic {
 	
 	/**
 	 * Returns a topic with the specified href.
-	 * <br> It is possible that multiple topics have 
+	 * <br> It is possible that multiple tocs have 
 	 * the same href, in which case there is no guarantee 
 	 * which one is returned.
 	 * @param href The topic's href value.
@@ -102,7 +102,7 @@ public class Topics extends NavigationElement implements ITopic {
 	}
 			
 	/**
-	 * Note: assumes the topics have been built....
+	 * Note: assumes the toc have been built....
 	 * @return ITopic list
 	 */
 	public ITopic[] getSubtopics() {
@@ -119,13 +119,13 @@ public class Topics extends NavigationElement implements ITopic {
 	 * Used by debugger
 	 */
 	public String toString() {
-		return topicsID != null ? topicsID : super.toString();
+		return tocID != null ? tocID : super.toString();
 	}
 	/**
 	 * Gets the topicsID.
 	 * @return Returns a String
 	 */
-	public String getTopicsID() {
-		return topicsID;
+	public String getTocID() {
+		return tocID;
 	}
 }

@@ -3,7 +3,7 @@
  * All Rights Reserved.
  */
  
-package org.eclipse.help.internal.topics;
+package org.eclipse.help.internal.toc;
 
 import java.util.List;
 import org.eclipse.help.internal.util.Resources;
@@ -14,7 +14,7 @@ import org.xml.sax.*;
  * Labeled, contains linik to a document.
  * Can also act as a container for other documents.
  */
-class Topic extends NavigationElement implements ITopic {
+class Topic extends TocNode implements ITopic {
 	private String href;
 	private String label;
 	private ITopic[] topicArray;
@@ -22,19 +22,19 @@ class Topic extends NavigationElement implements ITopic {
 	/**
 	 * Contstructor.  
 	 */
-	protected Topic(TopicsFile topicsFile, Attributes attrs) throws SAXException {
+	protected Topic(TocFile tocFile, Attributes attrs) throws SAXException {
 		if (attrs == null)
 			return;
 		href = attrs.getValue("href");
 		if (href != null)
-			href = HrefUtil.normalizeHref(topicsFile.getPluginID(), href);
+			href = HrefUtil.normalizeHref(tocFile.getPluginID(), href);
 		label = attrs.getValue("label");
 	}
 
 	/**
 	 * Implements abstract method.
 	 */
-	public void build(NavigationBuilder builder) {
+	public void build(TocBuilder builder) {
 		builder.buildTopic(this);
 	}
 

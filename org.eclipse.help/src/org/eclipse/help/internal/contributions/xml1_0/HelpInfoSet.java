@@ -94,19 +94,4 @@ public class HelpInfoSet extends HelpContribution implements InfoSet {
 		return getID();
 	}
 	
-/* 1.0 nav support */	
-	public ITopic getTopic(String href)
-	{
-		Topic[] topics =
-			(Topic[]) HelpSystem
-				.getNavigationManager()
-				.getNavigationModel(getID())
-				.getTopicsWithURL(href);
-				
-		if (topics == null || topics.length == 0)
-			return null;
-		else
-			return topics[0];
-	}
-/* eo 1.0 nav support */
 }
