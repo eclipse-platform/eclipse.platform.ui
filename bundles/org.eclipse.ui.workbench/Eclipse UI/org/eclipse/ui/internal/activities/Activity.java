@@ -57,6 +57,8 @@ final class Activity implements IActivity {
     private transient String string;
 
     private String description;
+    
+    private boolean defaultEnabled;
 
     Activity(String id) {
         if (id == null)
@@ -321,5 +323,24 @@ final class Activity implements IActivity {
             throw new NotDefinedException();
 
         return description;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.activities.IActivity#isDefaultEnabled()
+     */
+    public boolean isDefaultEnabled() {
+        return defaultEnabled;
+    }
+    
+    boolean setDefaultEnabled(boolean defaultEnabled) {
+        if (!Util.equals(defaultEnabled, this.defaultEnabled)) {
+            this.defaultEnabled = defaultEnabled;
+            hashCodeComputed = false;
+            hashCode = 0;
+            string = null;
+            return true;
+        }
+
+        return false;        
     }
 }

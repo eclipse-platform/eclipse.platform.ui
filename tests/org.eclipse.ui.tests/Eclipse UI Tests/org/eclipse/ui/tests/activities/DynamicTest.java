@@ -61,6 +61,8 @@ public class DynamicTest extends UITestCase {
     static final int ACTIVITY_ACTIVITY_BINDINGS_CHANGED = 9;
 
     static final int DESCRIPTION_CHANGED = 10;
+    
+    static final int DEFAULT_ENABLED_CHANGED = 11;
 
     /**
      * Constructor.
@@ -205,7 +207,7 @@ public class DynamicTest extends UITestCase {
                         case DEFINED_ACTIVITYIDS_CHANGED:
                             assertTrue(activityManagerEvent
                                     .haveDefinedActivityIdsChanged());
-                            break;
+                            break; 
                         }
                         listenerType = -1;
                     }
@@ -272,6 +274,9 @@ public class DynamicTest extends UITestCase {
                 case DESCRIPTION_CHANGED:
                     assertTrue(activityEvent.hasDescriptionChanged());
                     break;
+                case DEFAULT_ENABLED_CHANGED:
+                    assertTrue(activityEvent.hasDefaultEnabledChanged());
+                    break;
                 }
                 listenerType = -1;
             }
@@ -330,6 +335,25 @@ public class DynamicTest extends UITestCase {
         fixedModelRegistry.updateActivityDescription(
                 activity_to_listen.getId(), "description_change"); //$NON-NLS-1$
         assertTrue(listenerType == -1);
+
+        // check default enablement
+        listenerType = DEFAULT_ENABLED_CHANGED;
+        fixedModelRegistry.addDefaultEnabledActivity(activity_to_listen.getId());
+        assertTrue(listenerType == -1);
+        try {
+            assertTrue(activity_to_listen.isDefaultEnabled());
+        } catch (NotDefinedException e1) {
+            fail(e1.getMessage());
+        }
+        
+        listenerType = DEFAULT_ENABLED_CHANGED;
+        fixedModelRegistry.removeDefaultEnabledActivity(activity_to_listen.getId());
+        assertTrue(listenerType == -1);
+        try {
+            assertFalse(activity_to_listen.isDefaultEnabled());
+        } catch (NotDefinedException e1) {
+            fail(e1.getMessage());
+        }
     }
 
     /**

@@ -158,4 +158,11 @@ public class CategorizedActivity implements IActivity {
     public String getDescription() throws NotDefinedException {
         return activity.getDescription();
     }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.activities.IActivity#isDefaultEnabled()
+     */
+    public boolean isDefaultEnabled() throws NotDefinedException {
+        return activity.isDefaultEnabled();
+    }
 }

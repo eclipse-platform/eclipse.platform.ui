@@ -514,14 +514,16 @@ public final class MutableActivityManager extends AbstractActivityManager
         boolean descriptionChanged = activity
                 .setDescription(activityDefinition != null ? activityDefinition
                         .getDescription() : null);
-
+        boolean defaultEnabledChanged = activity.setDefaultEnabled(activityRegistry
+                .getDefaultEnabledActivities().contains(activity.getId()));
         if (activityRequirementBindingsChanged
                 || activityPatternBindingsChanged || definedChanged
-                || enabledChanged || nameChanged || descriptionChanged)
+                || enabledChanged || nameChanged || descriptionChanged 
+                || defaultEnabledChanged)
             return new ActivityEvent(activity,
                     activityRequirementBindingsChanged,
                     activityPatternBindingsChanged, definedChanged,
-                    descriptionChanged, enabledChanged, nameChanged);
+                    descriptionChanged, enabledChanged, nameChanged, defaultEnabledChanged);
         else
             return null;
     }

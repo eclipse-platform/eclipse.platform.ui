@@ -33,10 +33,49 @@ public final class ActivityEvent {
     private boolean definedChanged;
 
     private boolean enabledChanged;
+    
+    private boolean defaultEnabledChanged;
 
     private boolean nameChanged;
 
     private boolean descriptionChanged;
+
+    /**
+     * Creates a new instance of this class. Since 3.1 this method will assume
+     * that the default enabled state has not changed.
+     * 
+     * @param activity
+     *            the instance of the interface that changed.
+     * @param activityRequirementBindingsChanged
+     *            <code>true</code>, iff the activityRequirementBindings
+     *            property changed.
+     * @param activityPatternBindingsChanged
+     *            <code>true</code>, iff the activityPatternBindings property
+     *            changed.
+     * @param definedChanged
+     *            <code>true</code>, iff the defined property changed.
+     * @param descriptionChanged
+     *            <code>true</code>, iff the description property changed.
+     * @param enabledChanged
+     *            <code>true</code>, iff the enabled property changed.
+     * @param nameChanged
+     *            <code>true</code>, iff the name property changed.
+     */
+    public ActivityEvent(IActivity activity,
+            boolean activityRequirementBindingsChanged,
+            boolean activityPatternBindingsChanged, boolean definedChanged,
+            boolean descriptionChanged, boolean enabledChanged,
+            boolean nameChanged) {
+        
+        this(activity, 
+                activityRequirementBindingsChanged,
+                activityPatternBindingsChanged,
+                definedChanged,
+                descriptionChanged,
+                enabledChanged,
+                nameChanged, 
+                false);
+    }
 
     /**
      * Creates a new instance of this class.
@@ -55,12 +94,16 @@ public final class ActivityEvent {
      *      <code>true</code>, iff the enabled property changed.
      * @param nameChanged
      *        <code>true</code>, iff the name property changed.
+     * @param defaultEnabledChanged 
+     * 		  <code>true</code>, iff the default enabled property changed.
+     * @since 3.1
      */
     public ActivityEvent(IActivity activity,
             boolean activityRequirementBindingsChanged,
             boolean activityPatternBindingsChanged, boolean definedChanged,
             boolean descriptionChanged, boolean enabledChanged,
-            boolean nameChanged) {
+            boolean nameChanged,
+            boolean defaultEnabledChanged) {
         if (activity == null)
             throw new NullPointerException();
 
@@ -71,8 +114,10 @@ public final class ActivityEvent {
         this.enabledChanged = enabledChanged;
         this.nameChanged = nameChanged;
         this.descriptionChanged = descriptionChanged;
+        this.defaultEnabledChanged = defaultEnabledChanged;
     }
 
+    
     /**
      * Returns the instance of the interface that changed.
      * 
@@ -99,6 +144,16 @@ public final class ActivityEvent {
      */
     public boolean hasEnabledChanged() {
         return enabledChanged;
+    }
+    
+    /**
+     * Returns whether or not the default enabled property changed.
+     * 
+     * @return <code>true</code>, iff the default enabled property changed.
+     * @since 3.1
+     */
+    public boolean hasDefaultEnabledChanged() {
+        return defaultEnabledChanged;
     }
 
     /**

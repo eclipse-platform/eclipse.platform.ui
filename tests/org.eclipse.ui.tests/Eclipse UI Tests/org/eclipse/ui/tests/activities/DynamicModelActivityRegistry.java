@@ -403,4 +403,26 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
             return;
         }
     }
+    
+    /**
+     * Add default enablement to the provided activity
+     * @param activityId the activity id
+     */
+    public void addDefaultEnabledActivity(String activityId) {
+        if (defaultEnabledActivities.add(activityId)) {
+            fireActivityRegistryChanged();
+        }
+    }
+    
+    
+    /**
+     * Remove default enablement to the provided activity
+     * 
+     * @param activityId the activity id.
+     */
+    public void removeDefaultEnabledActivity(String activityId) {
+        if (defaultEnabledActivities.remove(activityId)) {
+            fireActivityRegistryChanged();
+        }
+    }
 }
