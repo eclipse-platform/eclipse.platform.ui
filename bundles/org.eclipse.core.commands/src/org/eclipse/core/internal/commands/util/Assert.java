@@ -50,6 +50,40 @@ public final class Assert {
 			throw new IllegalArgumentException("null argument:" + message); //$NON-NLS-1$
 	}
 
+	/**
+	 * Asserts that the given expression is true. If this is not the case, some
+	 * kind of unchecked exception is thrown.
+	 * 
+	 * @param expression
+	 *            the expression to test
+	 * @return <code>true</code> if the expression is true.
+	 * @exception IllegalArgumentException
+	 *                if the expression is not true
+	 */
+	public static boolean isTrue(boolean expression) {
+		return isTrue(expression, ""); //$NON-NLS-1$
+	}
+
+	/**
+	 * Asserts that the given expression is true. If this is not the case, some
+	 * kind of unchecked exception is thrown. The given message is included in
+	 * that exception, to aid debugging.
+	 * 
+	 * @param expression
+	 *            the expression to test
+	 * @param message
+	 *            the message to include in the exception
+	 * @return <code>true</code> if the expression is true.
+	 * 
+	 * @exception IllegalArgumentException
+	 *                if the expression is not true
+	 */
+	public static boolean isTrue(boolean expression, String message) {
+		if (!expression)
+			throw new IllegalArgumentException("assertion failed:" + message); //$NON-NLS-1$
+		return expression;
+	}
+
 	private Assert() {
 		// This class should not be instantiated.
 	}
