@@ -160,7 +160,7 @@ public IPath getChild (IPath parentKey, int index) {
  * @param parentKey
  *	key of parent whose children we want to retrieve.
  * @exception ObjectNotFoundException
- *	parentKey does not exist in the receiver"
+ *	parentKey does not exist in the receiver
  */
 public IPath[] getChildren(IPath parentKey) {
 	String names[] = getNamesOfChildren(parentKey);
