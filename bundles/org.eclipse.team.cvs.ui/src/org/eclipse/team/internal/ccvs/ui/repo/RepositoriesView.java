@@ -107,19 +107,21 @@ public class RepositoriesView extends RemoteViewPart {
 		};
 		WorkbenchHelp.setHelp(newAction, IHelpContextIds.NEW_REPOSITORY_LOCATION_ACTION);
 		
-		newAnonAction = new Action(Policy.bind("RepositoriesView.newAnonCVS"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_NEWLOCATION)) { //$NON-NLS-1$
-			public void run() {
-				Properties p = new Properties();
-				p.setProperty("connection", "pserver"); //$NON-NLS-1$ //$NON-NLS-2$
-				p.setProperty("user", "anonymous"); //$NON-NLS-1$ //$NON-NLS-2$
-				p.setProperty("host", "dev.eclipse.org"); //$NON-NLS-1$ //$NON-NLS-2$
-				p.setProperty("root", "/home/eclipse"); //$NON-NLS-1$ //$NON-NLS-2$
-				NewLocationWizard wizard = new NewLocationWizard(p);
-				WizardDialog dialog = new WizardDialog(shell, wizard);
-				dialog.open();
-			}
-		};
-		WorkbenchHelp.setHelp(newAnonAction, IHelpContextIds.NEW_DEV_ECLIPSE_REPOSITORY_LOCATION_ACTION);
+		if (includeAnonConnection()) {
+			newAnonAction = new Action(Policy.bind("RepositoriesView.newAnonCVS"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_NEWLOCATION)) { //$NON-NLS-1$
+				public void run() {
+					Properties p = new Properties();
+					p.setProperty("connection", "pserver"); //$NON-NLS-1$ //$NON-NLS-2$
+					p.setProperty("user", "anonymous"); //$NON-NLS-1$ //$NON-NLS-2$
+					p.setProperty("host", "dev.eclipse.org"); //$NON-NLS-1$ //$NON-NLS-2$
+					p.setProperty("root", "/home/eclipse"); //$NON-NLS-1$ //$NON-NLS-2$
+					NewLocationWizard wizard = new NewLocationWizard(p);
+					WizardDialog dialog = new WizardDialog(shell, wizard);
+					dialog.open();
+				}
+			};
+			WorkbenchHelp.setHelp(newAnonAction, IHelpContextIds.NEW_DEV_ECLIPSE_REPOSITORY_LOCATION_ACTION);
+		}
 		
 		// Properties
 		propertiesAction = new PropertyDialogAction(shell, getViewer());
@@ -142,6 +144,14 @@ public class RepositoriesView extends RemoteViewPart {
 	}
 	
 	/**
+	 * Method includeEclipseConnection.
+	 * @return boolean
+	 */
+	private boolean includeAnonConnection() {
+		return System.getProperty("eclipse.cvs.anon") != null;
+	}
+
+	/**
 	 * @see org.eclipse.team.internal.ccvs.ui.repo.RemoteViewPart#addWorkbenchActions(org.eclipse.jface.action.IMenuManager)
 	 */
 	protected void addWorkbenchActions(IMenuManager manager) {
@@ -155,7 +165,8 @@ public class RepositoriesView extends RemoteViewPart {
 			manager.add(propertiesAction);
 		}
 		sub.add(newAction);
-		sub.add(newAnonAction);
+		if (newAnonAction != null)
+			sub.add(newAnonAction);
 	}
 	
 	/*
