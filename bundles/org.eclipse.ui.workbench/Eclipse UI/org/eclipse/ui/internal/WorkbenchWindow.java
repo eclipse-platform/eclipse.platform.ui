@@ -79,13 +79,17 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.commands.ICommandHandlerService;
+import org.eclipse.ui.contexts.IContextActivationService;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.commands.CommandHandlerService;
 import org.eclipse.ui.internal.commands.old.ActionHandler;
 import org.eclipse.ui.internal.commands.old.ContextAndHandlerManager;
 import org.eclipse.ui.internal.commands.old.Manager;
 import org.eclipse.ui.internal.commands.old.SequenceMachine;
 import org.eclipse.ui.internal.commands.util.old.Sequence;
 import org.eclipse.ui.internal.commands.util.old.Stroke;
+import org.eclipse.ui.internal.contexts.ContextActivationService;
 import org.eclipse.ui.internal.dialogs.MessageDialogWithToggle;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.UIStats;
@@ -414,6 +418,24 @@ public class WorkbenchWindow
 		};
 	}
 
+	private ICommandHandlerService commandHandlerService;
+
+	public ICommandHandlerService getCommandHandlerService() {
+		if (commandHandlerService == null) 
+			commandHandlerService = new CommandHandlerService();
+		
+		return commandHandlerService;
+	}
+
+	private IContextActivationService contextActivationService;
+
+	public IContextActivationService getContextActivationService() {
+		if (contextActivationService == null) 
+			contextActivationService = new ContextActivationService();
+		
+		return contextActivationService;
+	}
+
 	void updateContextAndHandlerManager() {
 		if (contextAndHandlerManager != null)
 			contextAndHandlerManager.update();
@@ -431,7 +453,7 @@ public class WorkbenchWindow
 					String command = pluginAction.getActionDefinitionId();
 
 					if (command != null)
-						((Workbench) getWorkbench()).getCommandHandlerService().addCommandHandler(command, new ActionHandler(pluginAction));
+						getCommandHandlerService().addCommandHandler(command, new ActionHandler(pluginAction));
 				}
 			}
 		}
@@ -441,7 +463,7 @@ public class WorkbenchWindow
 		String command = globalAction.getActionDefinitionId();
 
 		if (command != null)
-			((Workbench) getWorkbench()).getCommandHandlerService().addCommandHandler(command, new ActionHandler(globalAction));
+			getCommandHandlerService().addCommandHandler(command, new ActionHandler(globalAction));
 	}
 
 	/*
