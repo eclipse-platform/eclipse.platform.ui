@@ -92,11 +92,7 @@ public class MergeUpdateOperation extends SafeUpdateOperation {
 	 */
 	protected void runSafeUpdate(SyncInfo[] nodes, IProgressMonitor monitor) throws TeamException {
 		if(nodes.length > 0) {
-			// Assumption that all nodes are from the same subscriber.
-			currentSubcriber = ((CVSSyncInfo)nodes[0]).getSubscriber();
-			if (!(currentSubcriber instanceof CVSMergeSubscriber)) {
-				throw new CVSException(Policy.bind("MergeUpdateAction.invalidSubscriber", currentSubcriber.toString())); //$NON-NLS-1$
-			}
+			setSubscriber(nodes[0]);
 			CVSTag startTag = ((CVSMergeSubscriber)currentSubcriber).getStartTag();
 			CVSTag endTag = ((CVSMergeSubscriber)currentSubcriber).getEndTag();
 
@@ -140,11 +136,25 @@ public class MergeUpdateOperation extends SafeUpdateOperation {
 		}
 	}
 	
+	/**
+	 * @param nodes
+	 * @throws CVSException
+	 */
+	private void setSubscriber(SyncInfo node) throws CVSException {
+		// Assumption that all nodes are from the same subscriber.
+		currentSubcriber = ((CVSSyncInfo)node).getSubscriber();
+		if (!(currentSubcriber instanceof CVSMergeSubscriber)) {
+			throw new CVSException(Policy.bind("MergeUpdateAction.invalidSubscriber", currentSubcriber.toString())); //$NON-NLS-1$
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.SafeUpdateOperation#overwriteUpdate(org.eclipse.team.core.synchronize.SyncInfoSet, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected void overwriteUpdate(SyncInfoSet set, IProgressMonitor monitor) throws TeamException {
 		SyncInfo[] nodes = set.getSyncInfos();
+		if (nodes.length == 0) return;
+		setSubscriber(nodes[0]);
 		monitor.beginTask(null, 1000 * nodes.length);
 		try {
 			for (int i = 0; i < nodes.length; i++) {
