@@ -150,7 +150,7 @@ public class OpenWorkspaceAction extends Action implements
             result.append(NEW_LINE);
         } else {
             // find the index of the arg to replace its value
-            int cmd_data_pos = property.indexOf(CMD_DATA);
+            int cmd_data_pos = property.lastIndexOf(CMD_DATA);
             if (cmd_data_pos != -1) {
                 cmd_data_pos += CMD_DATA.length() + 1;
                 result.append(property.substring(0, cmd_data_pos));
