@@ -70,11 +70,11 @@ import org.eclipse.ui.commands.ICategory;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.IKeyConfiguration;
 import org.eclipse.ui.keys.KeySequence;
-import org.eclipse.ui.keys.KeySequenceText;
 import org.eclipse.ui.keys.KeyStroke;
 
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.internal.keys.KeySequenceText;
 import org.eclipse.ui.internal.util.Util;
 
 public class KeysPreferencePage

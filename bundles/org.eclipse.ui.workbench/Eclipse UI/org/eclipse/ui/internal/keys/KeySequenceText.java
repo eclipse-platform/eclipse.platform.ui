@@ -7,7 +7,7 @@
  * Contributors: IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.keys;
+package org.eclipse.ui.internal.keys;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,6 +29,12 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.keys.KeySequence;
+import org.eclipse.ui.keys.KeyStroke;
+import org.eclipse.ui.keys.KeySupport;
+import org.eclipse.ui.keys.NaturalKey;
+import org.eclipse.ui.keys.ParseException;
+import org.eclipse.ui.keys.SpecialKey;
 
 /**
  * A wrapper around the SWT text widget that traps literal key presses and
