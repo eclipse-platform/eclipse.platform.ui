@@ -15,6 +15,7 @@ import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.IFeatureReference;
 import org.eclipse.update.core.SiteManager;
+import org.eclipse.update.core.model.SiteModel;
 import org.eclipse.update.internal.model.*;
 
 /**
@@ -75,6 +76,50 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			return new IConfiguredSite[0];
 		else
 			return (IConfiguredSite[]) result;
+	}
+
+	/**
+	 * Creates a Configuration Site and a new Site
+	 * The policy is from <code> org.eclipse.core.boot.IPlatformConfiguration</code>
+	 */
+	public IConfiguredSite createConfiguredSite(File file)
+		throws CoreException {
+
+		ISite site = null;
+		int policy = IPlatformConfiguration.ISitePolicy.USER_EXCLUDE;
+
+		if (file.exists() && canWrite(file)) {
+			site = InternalSiteManager.createSite(file);
+		}
+
+		//create config site
+		BaseSiteLocalFactory factory = new BaseSiteLocalFactory();
+		ConfiguredSite configSite =
+			(ConfiguredSite) factory.createConfigurationSiteModel(
+				(SiteModel) site,
+				policy);
+		configSite.isUpdateable(canWrite(file));
+		if (site != null) {
+			configSite.setPlatformURLString(site.getURL().toExternalForm());
+
+			// obtain the list of plugins
+			IPlatformConfiguration runtimeConfiguration =
+				BootLoader.getCurrentPlatformConfiguration();
+			ConfigurationPolicy configurationPolicy =
+				(ConfigurationPolicy) configSite.getConfigurationPolicy();
+			String[] pluginPath = configurationPolicy.getPluginPath(site, null);
+			IPlatformConfiguration.ISitePolicy sitePolicy =
+				runtimeConfiguration.createSitePolicy(
+					configurationPolicy.getPolicy(),
+					pluginPath);
+
+			// change runtime					
+			IPlatformConfiguration.ISiteEntry siteEntry =
+				runtimeConfiguration.createSiteEntry(site.getURL(), sitePolicy);
+			runtimeConfiguration.configureSite(siteEntry);
+		}
+
+		return configSite;
 	}
 
 	/**
@@ -358,6 +403,34 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		if (getActivityModel().length == 0)
 			return new IActivity[0];
 		return (IActivity[]) getActivityModel();
+	}
+
+	/**
+	 * Verify we can write on the file system
+	 */
+	private static boolean canWrite(File file) {
+		if (!file.isDirectory()) {
+			file = file.getParentFile();
+		}
+
+		File tryFile = null;
+		FileOutputStream out = null;
+		try {
+			tryFile = new File(file, "toDelete");
+			out = new FileOutputStream(tryFile);
+			out.write(0);
+		} catch (IOException e) {
+			return false;
+		} finally {
+			try {
+				out.close();
+				tryFile.delete();
+			} catch (Exception e) {
+			};
+		}
+
+		return true;
+
 	}
 
 }

@@ -258,9 +258,8 @@ public class Feature extends FeatureModel implements IFeature {
 			IVerificationResult vr;
 			if (verifier != null) {
 				for (int i = 0; i < references.length; i++) {
-					vr = verifier.verify(this, references[i], monitor);
+					vr = verifier.verify(this, references[i],true, monitor);
 					if (vr != null){
-						vr.isFeatureVerification(true);
 						promptForVerification(vr, verificationListener);
 					}
 				}
@@ -274,9 +273,8 @@ public class Feature extends FeatureModel implements IFeature {
 					provider.getPluginEntryArchiveReferences(pluginsToInstall[i], monitor);
 				if (verifier != null) {
 					for (int j = 0; j < references.length; j++) {
-						vr = verifier.verify(this, references[j], monitor);
+						vr = verifier.verify(this, references[j],false, monitor);
 						if (vr != null){
-							vr.isFeatureVerification(false);
 							promptForVerification(vr, verificationListener);
 						}
 					}
@@ -551,13 +549,13 @@ public class Feature extends FeatureModel implements IFeature {
 			throw Utilities
 				.newCoreException(Policy.bind("JarVerificationService.CancelInstall"),
 			//$NON-NLS-1$
-			verificationResult.getResultException());
+			verificationResult.getVerificationException());
 		}
 		if (result == IVerificationListener.CHOICE_ERROR) {
 			throw Utilities
 				.newCoreException(Policy.bind("JarVerificationService.UnsucessfulVerification"),
 			//$NON-NLS-1$
-			verificationResult.getResultException());
+			verificationResult.getVerificationException());
 		}
 
 		return;

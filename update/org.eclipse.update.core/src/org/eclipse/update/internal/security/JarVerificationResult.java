@@ -43,7 +43,7 @@ public class JarVerificationResult implements IVerificationResult {
 	}
 	/**
 	 */
-	public Exception getResultException() {
+	public Exception getVerificationException() {
 		return resultException;
 	}
 	/**

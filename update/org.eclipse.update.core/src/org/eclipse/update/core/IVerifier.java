@@ -32,6 +32,7 @@ public interface IVerifier {
 	public IVerificationResult verify(
 		IFeature feature,
 		ContentReference reference,
+		boolean isFeatureVerification, //VK
 		InstallMonitor monitor)
 		throws CoreException;
 }

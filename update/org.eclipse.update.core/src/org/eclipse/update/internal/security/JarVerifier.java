@@ -204,9 +204,9 @@ public class JarVerifier implements IVerifier {
 	}
 
 	/*
-	* @see IVerifier#verify(IFeature feature,ContentReference, InstallMonitor)
+	* @see IVerifier#verify(IFeature,ContentReference,boolean, InstallMonitor)
 	*/
-	public IVerificationResult verify(IFeature feature, ContentReference reference, InstallMonitor monitor) throws CoreException {
+	public IVerificationResult verify(IFeature feature, ContentReference reference,boolean isFeatureVerification, InstallMonitor monitor) throws CoreException {
 		if (reference == null )
 			return result;
 
@@ -216,14 +216,16 @@ public class JarVerifier implements IVerifier {
 			try {
 				File jarFile = jarReference.asFile(); 
 				initializeVariables(jarFile, feature, reference);
-				return verify(jarFile.getAbsolutePath());
+				result = verify(jarFile.getAbsolutePath());
 			} catch (IOException e){
 				throw Utilities.newCoreException(Policy.bind("JarVerifier.UnableToAccessJar",jarReference.toString()),e); //$NON-NLS-1$
 			}
-		} else
+		} else{
 			initializeResult(feature, reference);
-			
-		result.setVerificationCode(IVerificationResult.TYPE_ENTRY_UNRECOGNIZED);
+			result.setVerificationCode(IVerificationResult.TYPE_ENTRY_UNRECOGNIZED);
+		}
+
+		result.isFeatureVerification(isFeatureVerification);
 		return result;
 	}
 

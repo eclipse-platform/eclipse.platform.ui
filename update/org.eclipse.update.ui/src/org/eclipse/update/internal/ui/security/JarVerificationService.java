@@ -75,42 +75,35 @@ public class JarVerificationService implements IVerificationListener {
 	 * returns an JarVerificationResult
 	 * The monitor can be null.
 	 */
-	private IVerificationResult okToInstall(){
+	private int okToInstall(){
 
 		switch (result.getVerificationCode()) {
 			case IVerificationResult.UNKNOWN_ERROR :
-				{
-					result.setResultCode(CHOICE_ERROR);
-					break;
-				}			
-			case IVerificationResult.VERIFICATION_CANCELLED:
-				{
-					result.setResultCode(CHOICE_ABORT);
-					break;
-				}
+					return CHOICE_ERROR;
 
-			case IVerificationResult.TYPE_ENTRY_ALREADY_ACCEPTED : {
-				result.setResultCode(CHOICE_INSTALL_TRUST_ALWAYS);				
-				break;
-			}
+			case IVerificationResult.VERIFICATION_CANCELLED:
+					return CHOICE_ABORT;
+
+			case IVerificationResult.TYPE_ENTRY_ALREADY_ACCEPTED : 
+				return CHOICE_INSTALL_TRUST_ALWAYS;				
 			
-			// cannot verify it, don't prompt
-			case IVerificationResult.TYPE_ENTRY_UNRECOGNIZED: {
-				result.setResultCode(CHOICE_INSTALL_TRUST_ALWAYS);				
-				break;
-			}			
+			// cannot verify it: do not prompt user.
+			case IVerificationResult.TYPE_ENTRY_UNRECOGNIZED: 
+				return CHOICE_INSTALL_TRUST_ALWAYS;				
 			
 			default :
 				{
+					final int[] wizardResult = new int[1];					
 					shell.getDisplay().syncExec(new Runnable() {
 						public void run() {
-							result.setResultCode(openWizard());
+							wizardResult[0] = openWizard();
 						}
 					});
+					return wizardResult[0];
 				}
+				
 		}
 
-		return result;
 	}
 	/**
 	 * 
@@ -136,7 +129,7 @@ public class JarVerificationService implements IVerificationListener {
 	 */
 	public int prompt(IVerificationResult verificationResult){
 		result = verificationResult;
-		return(okToInstall().getResultCode());
+		return okToInstall();
 	}
 
 	

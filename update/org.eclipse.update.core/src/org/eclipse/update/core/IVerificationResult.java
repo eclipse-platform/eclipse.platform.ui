@@ -35,22 +35,22 @@ public interface IVerificationResult {
 	public static final int TYPE_ENTRY_CORRUPTED = 2;
 	
 	/**
-	 * Indicates the file was signed by a recognized signer
+	 * Indicates the file was signed by a known signer
 	 * 
 	 * @since 2.0
 	 */
 	public static final int TYPE_ENTRY_SIGNED_RECOGNIZED = 3;
 	
 	/**
-	 * Indicates the file was signed by a recognized signer and the user
-	 * previously indicated the signer should be truested
+	 * Indicates the file was signed by a recognized signer and the user //VK
+	 * previously indicated the signer should be trusted
 	 * 
 	 * @since 2.0
 	 */
 	public static final int TYPE_ENTRY_ALREADY_ACCEPTED = 4;	
 	
 	/**
-	 * Indicates the file was signed byt the signer is not recognized
+	 * Indicates the file was signed but the signer is not known
 	 * 
 	 * @since 2.0
 	 */
@@ -71,7 +71,7 @@ public interface IVerificationResult {
 	public static final int VERIFICATION_CANCELLED = 7;
 	
 	/**
-	 * Verification failed due to unrecognized file
+	 * Could not perform verification due to unrecognized file
 	 * 
 	 * @since 2.0
 	 */
@@ -100,6 +100,14 @@ public interface IVerificationResult {
 	 * @since 2.0
 	 */
 	public int getVerificationCode();
+
+	/**
+	 * Returns an exception caught during verification
+	 * 
+	 * @return exception,or <code>null</code>.
+	 * @since 2.0
+	 */
+	public Exception getVerificationException();
 	
 	/**
 	 * Returns display text describing the result of the verification.
@@ -135,58 +143,8 @@ public interface IVerificationResult {
 	 * @since 2.0
 	 */
 	public boolean isFeatureVerification();
-
-		
-	/**
-	 * Sets the verification result code.
-	 * 
-	 * @param type verification code, as defined in this interface
-	 * @since 2.0
-	 */
-	public void setVerificationCode(int type);
-
-	/**
-	 * Sets the reference type for this verification.
-	 * 
-	 * @param isFeature <code>true</code> if reference should be verified
-	 * as a feature file, <code>false</code> if reference should be verified
-	 * as a plug-in or non-plug-in file
-	 * @since 2.0
-	 */
-	public void isFeatureVerification(boolean isFeature);
-		
-	/**
-	 * Get the response from the verification listener
-	 * 
-	 * @deprecated TBD
-	 * @return response code, @see IVerificationListener
-	 * @since 2.0
-	 */ 
-	public int getResultCode();	
+	
+	
 	
 		
-	/**
-	 * Returns an exception caught during verification
-	 * 
-	 * @return exception,or <code>null</code>.
-	 * @since 2.0
-	 */
-	public Exception getResultException();
-
-
-	/**
-	 * Sets the verification response code
-	 * 
-	 * @param code response code, @see IVerificationListener
-	 * @since 2.0
-	 */ 
-	public void setResultCode(int code);
-	
-	/**
-	 * Sets the exception caught during verification
-	 * 
-	 * @param ex exception
-	 * @since 2.0
-	 */
-	public void setResultException(Exception ex);
-}
+	}

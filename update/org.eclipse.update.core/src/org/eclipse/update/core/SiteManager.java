@@ -57,15 +57,4 @@ public class SiteManager {
 		return InternalSiteManager.getLocalSite();
 	}
 
-	/**
-	 * Creates a new site, based on a local file system directory,
-	 * as a potential target for installation actions.
-	 * 
-	 * @exception CoreException
-	 * @since 2.0 
-	 */
-	public static IConfiguredSite createConfiguredSite(File directory)
-		throws CoreException {
-		return InternalSiteManager.createConfiguredSite(directory);
-	}
 }

@@ -52,6 +52,15 @@ public interface IInstallConfiguration extends IAdaptable {
 	public IConfiguredSite[] getConfiguredSites();
 	
 	/**
+	 * Creates a new site, based on a local file system directory,
+	 * as a potential target for installation actions.
+	 * 
+	 * @exception CoreException
+	 * @since 2.0 
+	 */
+	public IConfiguredSite createConfiguredSite(File directory) throws CoreException;
+		
+	/**
 	 * Adds an additional configuration site to this configuration.
 	 * 
 	 * @param site configuration site

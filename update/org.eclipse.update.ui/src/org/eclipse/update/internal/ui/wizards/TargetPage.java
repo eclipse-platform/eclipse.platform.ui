@@ -221,7 +221,7 @@ public class TargetPage extends BannerPage {
 			try {
 				File file = new File(path);
 				IConfiguredSite csite =
-					SiteManager.createConfiguredSite(file);
+					config.createConfiguredSite(file);
 				if (csite.isUpdateable())
 					config.addConfiguredSite(csite);
 				else {

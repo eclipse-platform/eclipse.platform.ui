@@ -251,17 +251,15 @@ public class InternalSiteManager {
 	 * Creates a new site on the file system
 	 * This is the only Site we can create.
 	 * 
-	 * 
-	 * 
 	 * @param siteLocation
 	 * @throws CoreException
 	 */
-	private static ISite createSite(File siteLocation) throws CoreException {
-		Site site = null;
+	public static ISite createSite(File siteLocation) throws CoreException {
+		ISite site = null;
 		if (siteLocation != null) {
 			try {
 				URL siteURL = siteLocation.toURL();
-				site = (Site) getSite(siteURL);
+				site = getSite(siteURL);
 			} catch (MalformedURLException e) {
 				throw Utilities.newCoreException(
 					Policy.bind(
@@ -274,73 +272,5 @@ public class InternalSiteManager {
 		return site;
 	}
 
-	/**
-	 * Creates a Configuration Site and a new Site
-	 * The policy is from <code> org.eclipse.core.boot.IPlatformConfiguration</code>
-	 */
-	public static IConfiguredSite createConfiguredSite(File file)
-		throws CoreException {
-
-		ISite site = null;
-		int policy = IPlatformConfiguration.ISitePolicy.USER_EXCLUDE;
-
-		if (file.exists() && canWrite(file)) {
-			site = createSite(file);
-		}
-
-		//create config site
-		BaseSiteLocalFactory factory = new BaseSiteLocalFactory();
-		ConfiguredSite configSite =
-			(ConfiguredSite) factory.createConfigurationSiteModel(
-				(SiteModel) site,
-				policy);
-		configSite.isUpdateable(canWrite(file));
-		if (site != null) {
-			configSite.setPlatformURLString(site.getURL().toExternalForm());
-
-			// obtain the list of plugins
-			IPlatformConfiguration runtimeConfiguration =
-				BootLoader.getCurrentPlatformConfiguration();
-			ConfigurationPolicy configurationPolicy =
-				(ConfigurationPolicy) configSite.getConfigurationPolicy();
-			String[] pluginPath = configurationPolicy.getPluginPath(site, null);
-			IPlatformConfiguration.ISitePolicy sitePolicy =
-				runtimeConfiguration.createSitePolicy(
-					configurationPolicy.getPolicy(),
-					pluginPath);
-
-			// change runtime					
-			IPlatformConfiguration.ISiteEntry siteEntry =
-				runtimeConfiguration.createSiteEntry(site.getURL(), sitePolicy);
-			runtimeConfiguration.configureSite(siteEntry);
-		}
-
-		return configSite;
-	}
-
-	private static boolean canWrite(File file) {
-		if (!file.isDirectory()) {
-			file = file.getParentFile();
-		}
-
-		File tryFile = null;
-		FileOutputStream out = null;
-		try {
-			tryFile = new File(file, "toDelete");
-			out = new FileOutputStream(tryFile);
-			out.write(0);
-		} catch (IOException e) {
-			return false;
-		} finally {
-			try {
-				out.close();
-				tryFile.delete();
-			} catch (Exception e) {
-			};
-		}
-
-		return true;
-
-	}
 
 }

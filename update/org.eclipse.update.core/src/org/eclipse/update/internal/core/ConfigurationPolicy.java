@@ -1,19 +1,18 @@
 package org.eclipse.update.internal.core;
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
 import org.eclipse.core.boot.IPlatformConfiguration;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.update.configuration.IActivity;
+import org.eclipse.update.configuration.IConfiguredSite;
 import org.eclipse.update.core.*;
-import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.model.FeatureReferenceModel;
-import org.eclipse.update.internal.model.*;
 import org.eclipse.update.internal.model.ConfigurationActivityModel;
 import org.eclipse.update.internal.model.ConfigurationPolicyModel;
 

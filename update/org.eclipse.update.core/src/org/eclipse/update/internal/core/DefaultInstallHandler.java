@@ -60,7 +60,7 @@ public class DefaultInstallHandler extends BaseInstallHandler {
 					}
 				}
 
-				result = verifier.verify(this.feature, archive, this.monitor);
+				result = verifier.verify(this.feature, archive, false, this.monitor);
 				if (result != null)
 					promptForVerification(result, listener);
 			}
@@ -133,13 +133,13 @@ public class DefaultInstallHandler extends BaseInstallHandler {
 			throw Utilities
 				.newCoreException(Policy.bind("JarVerificationService.CancelInstall"),
 			//$NON-NLS-1$
-			verificationResult.getResultException());
+			verificationResult.getVerificationException());
 		}
 		if (result == IVerificationListener.CHOICE_ERROR) {
 			throw Utilities
 				.newCoreException(Policy.bind("JarVerificationService.UnsucessfulVerification"),
 			//$NON-NLS-1$
-			verificationResult.getResultException());
+			verificationResult.getVerificationException());
 		}
 
 		return;
