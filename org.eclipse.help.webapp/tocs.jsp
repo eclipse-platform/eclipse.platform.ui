@@ -8,15 +8,29 @@
 
 <html>
 <head>
-	<link rel="stylesheet" TYPE="text/css" HREF="toc.css" TITLE="nav">
+    <link rel="stylesheet" TYPE="text/css" HREF="toc.css" TITLE="nav">
+      
+<script language="JavaScript">
 
-	<script language="JavaScript">
-		function selectTOC(tocId)
-		{
-			// navigate to this toc
-			window.location.href = "toc.jsp?toc="+tocId;
-		}
-	</script>
+/**
+ * Loads the specified table of contents
+ */		
+function selectTOC(tocId)
+{
+	// navigate to this toc
+	window.location.href = "toc.jsp?toc="+tocId;
+}
+
+/**
+ * This method is called when synchronizing the toc
+ */
+function selectTopic(topic)
+{
+	return false;
+}
+
+</script>
+
 </head>
 
 <body onload="parent.parent.ToolbarFrame.setToc('Bookshelf')">

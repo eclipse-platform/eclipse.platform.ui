@@ -1,5 +1,8 @@
 // Common scripts for IE and Mozilla.
-// Some functions are different, and we tagged them with IE if IE specific.
+
+var isMozilla = navigator.userAgent.toLowerCase().indexOf('mozilla') != -1 && parseInt(navigator.appVersion) >= 5;
+var isIE = navigator.userAgent.toLowerCase().indexOf('msie') != -1;
+
 
 // parse the arguments passed to the page
 var args = parseQueryString ();
@@ -42,21 +45,6 @@ function getChildNode(parent, childTag)
 	return null;
 }
 
-/**
- * Returns the containing DIV if any
- */
-function IEgetContentNode(srcElement) {
-  if (srcElement.tagName == "LI") 
-    return srcElement.lastChild;
-  else if (srcElement.tagName == "A") 
-    return srcElement.parentElement.lastChild;
-  else if (srcElement.tagName == "NOBR")
-  	return srcElement.parentElement.parentElement.lastChild;
-  else if (srcElement.tagName == "UL") 
-    return srcElement;
- 
-  return null;
-}
 
 /**
  * Returns the contained UL if any
@@ -70,7 +58,7 @@ function getContentNode(node) {
     return getChildNode(node, "UL");
   else if (node.tagName == "A") 
     return getChildNode(node.parentNode, "UL");
-  else if (node.tagName == "<NOBR>")
+  else if (node.tagName == "NOBR")
   	return getChildNode(node.parentNode.parentNode, "UL");
   else if (node.tagName == "UL") 
     return node;
@@ -86,11 +74,14 @@ function getAnchorNode(node) {
   if (node.nodeType == 3)  //"Node.TEXT_NODE") 
     //return getChildNode(node.parentNode.parentNode, "A");
 	return node.parentNode.parentNode;
+  else if (node.tagName == "NOBR")
+  	return node.parentNode;
   else if (node.tagName == "LI") 
     return getChildNode(node, "A");
   else if (node.tagName == "A") 
     return node;
-
+  else if (node.tagName == "UL")
+  	return getChildNode(node.parentNode, "A");
   return null;
 }
 
@@ -104,7 +95,7 @@ function collapse(node) {
 /**
  * Expands a tree rooted at the specified element
  */
-function expand(node, level) {
+function expand(node) {
   node.className = "expanded";
 }
 
@@ -125,73 +116,58 @@ function isCollapsed(node) {
 // NOTE: MOZILLA BUG WITH A:focus and A:active styles
 var oldActive;
 
-/**
- * handler for expanding/ collapsing topic tree
- */
-function mouseClickHandler(e) {
-  var srcElement = getContentNode(e.target);
-  if (srcElement != null) {
-    if (isCollapsed(srcElement)) {
-      expand(srcElement);
-    }
-    else if (isExpanded(srcElement)) {
-      collapse(srcElement);
-    }
-  }
-
-  // NOTE: MOZILLA BUG WITH A:focus and A:active styles
-  var a = getAnchorNode(e.target);
-  a.className = "active";
-  if (oldActive) {
-    oldActive.className="";
-  }
-  oldActive = a;
-  e.cancelBubble = true;
-}
 
 /**
  * display topic label in the status line on mouse over topic
  */
 function mouseMoveHandler(e) {
-  var srcElement = e.target;
-  if (srcElement.tagName == "A") {
-    e.cancelBubble = false;
-    window.status = srcElement.nodeValue;
-  }
-  else if (srcElement.nodeType == "Node.TEXT_NODE" || srcElement.tagName == "LI") {
-    e.cancelBubble = true;
-    window.status = srcElement.childNodes.item(0).nodeValue;
-  }
+  var overNode;
+  if (isMozilla)
+  	overNode = e.target;
+  else if (isIE)
+   	overNode = window.event.srcElement;
+  else 
+  	return;
+  	
+  overNode = getAnchorNode(overNode);
+  if (overNode == null)
+   return;
+ 
+  if (isMozilla)
+     e.cancelBubble = false;
+     
+  window.status = overNode.firstChild.innerHTML;
 }
 
 /**
  * handler for expanding / collapsing topic tree
  */
-function IEmouseClickHandler() {
-  var srcElement;
-  srcElement = IEgetContentNode(window.event.srcElement);
+function mouseClickHandler(e) {
+  var clickedNode;
+  if (isMozilla)
+  	clickedNode = e.target;
+  else if (isIE)
+   	clickedNode = window.event.srcElement;
+  else 
+  	return;
+  	
+  var treeNode = getContentNode(clickedNode);
 
-  if (srcElement == null) {
-    return;
+  if (treeNode != null) {
+    if (isCollapsed(treeNode)) {
+   	 expand(treeNode);
+  	}
+  	else if (isExpanded(treeNode)) {
+  	  collapse(treeNode);
+ 	}
   }
-  else if (isCollapsed(srcElement)) {
-    expand(srcElement);
-  }
-  else if (isExpanded(srcElement)) {
-    collapse(srcElement);
-  }
+  
+  highlightTopic(clickedNode);
+
+  if (isMozilla)
+  	e.cancelBubble = true;
 }
 
-/**
- * display topic label in the status line on mouse over topic
- */
-function IEmouseMoveHandler() {
-  srcElement = window.event.srcElement;
-  if (srcElement.tagName == "A") {
-    event.cancelBubble = true;
-    window.status = srcElement.innerText;
-  }
-}
 
 // This takes *forever*
 function expandAll() {
@@ -203,12 +179,59 @@ function expandAll() {
   }
 }
 
+/**
+ * Expands the nodes from root to the specified node
+ */
+function expandPathTo(node)
+{
+	var parent = node.parentNode;
+	if (parent == null)
+		return;
+	if (isCollapsed(parent))
+		expand(parent);
+	expandPathTo(parent);
+}
+
+/**
+ * Highlights link
+ */
+function highlightTopic(topic)
+{
+  var a = getAnchorNode(topic); 
+  if (a != null)
+  {
+  	a.className = "active";
+  	if (oldActive && oldActive != a) {
+    	oldActive.className="";
+  	}
+  	oldActive = a;
+  }
+}
+
+/**
+ * Selects a topic in the tree: expand tree and highlight it
+ */
+function selectTopic(topic)
+{
+	var links = document.getElementsByTagName("a");
+	for (var i=0; i<links.length; i++)
+	{
+		if (topic == links[i].href)
+		{
+			expandPathTo(links[i]);
+			highlightTopic(links[i]);
+			return true;
+		}
+	}
+	return false;
+}
+
 // listen for clicks
-if ((navigator.userAgent.toLowerCase().indexOf('mozilla') != -1) && (parseInt(navigator.appVersion) >= 5)) {
+if (isMozilla) {
   document.addEventListener('click', mouseClickHandler, true);
   document.addEventListener('mousemove', mouseMoveHandler, true);
 }
-else {
-  document.onclick = IEmouseClickHandler;
-  document.onmousemove = IEmouseMoveHandler;
+else if (isIE){
+  document.onclick = mouseClickHandler;
+  document.onmousemove = mouseMoveHandler;
 }

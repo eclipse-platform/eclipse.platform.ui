@@ -5,6 +5,10 @@
 
 	  <style type="text/css">
 	  
+	  BODY  {
+		  font: 9pt ms sans serif,sans-serif;
+      }
+      
 	  .normal {
 		border-width:0px; 
 		padding:4px;
@@ -85,7 +89,8 @@ function hidenav()
 
 function resynch()
 {
-alert("resynch");
+	var topic = parent.MainFrame.window.location.href;
+	parent.NavFrame.displayTocFor(topic);
 }
 
 function setToc(label)

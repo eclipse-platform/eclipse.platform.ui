@@ -1,9 +1,8 @@
 
 <html>
    <head>
-      <title>
-         Navigation
-      </title>
+      <title>Navigation</title>
+      
 <style type="text/css">
 #toc {
   display:block;
@@ -16,6 +15,7 @@
   display:none;
  }
 </style>
+
 <script type="text/javascript" language="JavaScript">
 // listen for clicks
 var isMozilla = navigator.userAgent.toLowerCase().indexOf('mozilla') != -1 && parseInt(navigator.appVersion) >= 5;
@@ -48,8 +48,14 @@ function resizeContent()
   iframes[i].width = w;
   iframes[i].height = h;
  }
-
 }
+
+function displayTocFor(topic)
+{
+	parent.TabsFrame.showNavFrame("toc");
+	var selected = window.toc.selectTopic(topic);
+}
+
 </script>
    </head>
    

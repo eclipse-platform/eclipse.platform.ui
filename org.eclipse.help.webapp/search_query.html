@@ -27,13 +27,14 @@ function mouseout(img)
     <form action="search_results.jsp" method="get" name="searchForm" target="ResultsFrame" >
   
       <div id="query" style="width:100%;padding:3px;background-color:ActiveBorder;">
+      
             <input type="text" class="txtInput" name="keyword" 
                    onblur="if (value == '') {value = 'search'}" 
                    onfocus="if (value == 'search') {value =''}" 
                    maxlength=256>
                          
-            <input align="center" type="image" alt="Search" src="images/go.gif" class="normal" onmouseover="mouseover(this)" onmouseout="mouseout(this)">
-    
+            <input type="image" alt="Search" src="images/go.gif" class="normal" onmouseover="mouseover(this)" onmouseout="mouseout(this)">
+            
            <!--
             <input type="checkbox" name="fieldSearch" <%= request.getParameter("fieldSearch")!=null?"checked='true'":""%>>Search headings only
    			-->

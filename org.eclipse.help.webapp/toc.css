@@ -1,7 +1,6 @@
     BODY  {
           background-color: Window;
-          font-size:smaller;
-		  font-style: Regular;
+		  font: 9pt ms sans serif,sans-serif;
       }
  
       A   {
@@ -13,10 +12,10 @@
           white-space: nowrap;
       }
       A:hover { 
-          color:#0000FF; 
           text-decoration:underline; 
       }
-      A:active { 
+
+     .active { 
           color:HighlightText;
           background:Highlight;  
       }
