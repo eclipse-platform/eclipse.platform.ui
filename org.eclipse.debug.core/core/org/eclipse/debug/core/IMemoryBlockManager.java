@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.debug.internal.core.memory;
+package org.eclipse.debug.core;
 
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
@@ -18,23 +18,22 @@ import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 
 /**
  * Manages all memory blocks in the workbench
- * @since 3.0
+ * @since 3.1
  */
 public interface IMemoryBlockManager {
 
 	/**
-	 * Tell the manager that a memory block has been added.
+	 * Tell the manager that the listed memory blocks have been added.
 	 * @param mem
-	 * @param addDefaultRenderings - true if default renderings are to be added
 	 */
-	void addMemoryBlock(IMemoryBlock mem, boolean addDefaultRenderings);
+	void addMemoryBlocks(IMemoryBlock[] memoryBlocks);
 	
 	
 	/**
-	 * Tell the manager that a memory block has been removed.
+	 * Tell the manager that the listed memory blocks have been removed.
 	 * @param mem
 	 */
-	void removeMemoryBlock(IMemoryBlock mem);
+	void removeMemoryBlocks(IMemoryBlock[] memoryBlocks);
 	
 	
 	/**

@@ -12,7 +12,6 @@
 package org.eclipse.debug.internal.ui.views.memory;
 
 import org.eclipse.debug.core.model.IMemoryBlock;
-import org.eclipse.debug.internal.core.memory.MemoryBlockManager;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
@@ -53,7 +52,7 @@ public class RemoveMemoryBlockAction extends AbstractMemoryAction {
 		if (topTab != null)
 		{
 			IMemoryBlock mem = topTab.getMemoryBlock();
-			MemoryBlockManager.getMemoryBlockManager().removeMemoryBlock(mem);
+			MemoryViewUtil.getMemoryBlockManager().removeMemoryBlocks(new IMemoryBlock[]{mem});
 		}
 	}	
 	/* (non-Javadoc)

@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.debug.internal.core.memory;
+package org.eclipse.debug.internal.core;
 
 import java.util.ArrayList;
 
@@ -18,10 +18,14 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
+import org.eclipse.debug.core.IMemoryBlockListener;
+import org.eclipse.debug.core.IMemoryBlockManager;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
+import org.eclipse.debug.internal.core.memory.IMemoryRenderingManager;
+import org.eclipse.debug.internal.core.memory.MemoryRenderingManager;
 
 
 /**
@@ -38,63 +42,11 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 	
 	private static final int ADDED = 0;
 	private static final int REMOVED = 1;
-	
-	
-	/**
-	 * The singleton memory block manager.
-	 */
-	private static MemoryBlockManager fgMemoryBlockManager;
-	
 	/**
 	 * The singleton memory rendering manager.
 	 */
 	private static MemoryRenderingManager fgMemoryRenderingManager;
 	
-	/**
-	 * Returns the memory block manager.
-	 * @return the memory block manager.
-	 * @see IMemoryBlockManager
-	 * @since 3.0
-	 */
-	public static IMemoryBlockManager getMemoryBlockManager(){
-		if (fgMemoryBlockManager == null)
-		{
-			fgMemoryBlockManager = new MemoryBlockManager();
-			
-			if (fgMemoryRenderingManager == null)
-			{
-				// create rendering manager and make sure it's the first listener
-				fgMemoryRenderingManager = new MemoryRenderingManager();
-			}
-		}
-		
-		return fgMemoryBlockManager;
-	}
-	
-	/**
-	 * Returns the memory rendering manager.
-	 * @return the memory rendering manager.
-	 * @see IMemoryRenderingManager
-	 * @since 3.0
-	 */
-	public static IMemoryRenderingManager getMemoryRenderingManager() {
-		if (fgMemoryRenderingManager == null)
-		{
-			fgMemoryRenderingManager = new MemoryRenderingManager();
-		}
-		
-		return fgMemoryRenderingManager;
-	}
-	
-	public static void pluginShutdown() {
-		if (fgMemoryBlockManager != null) {
-			fgMemoryBlockManager.shutdown();
-		}
-		if (fgMemoryRenderingManager != null) {
-			fgMemoryRenderingManager.shutdown();
-		}
-		
-	}
 	
 	/**
 	 * Notifies a memory block listener in a safe runnable to
@@ -104,7 +56,7 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 		
 		private IMemoryBlockListener fListener;
 		private int fType;
-		private IMemoryBlock fMemoryBlock;
+		private IMemoryBlock[] fMemoryBlocks;
 		
 		/**
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
@@ -119,10 +71,10 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 		public void run() throws Exception {
 			switch (fType) {
 				case ADDED:
-					fListener.MemoryBlockAdded(fMemoryBlock);
+					fListener.memoryBlocksAdded(fMemoryBlocks);
 					break;
 				case REMOVED:
-					fListener.MemoryBlockRemoved(fMemoryBlock);
+					fListener.memoryBlocksRemoved(fMemoryBlocks);
 					break;
 			}			
 		}
@@ -130,18 +82,18 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 		/**
 		 * Notify listeners of added/removed memory block events
 		 */
-		public void notify(IMemoryBlock memoryBlock, int update) {
+		public void notify(IMemoryBlock[] memBlocks, int update) {
 			if (listeners != null) {
 				fType = update;
 				Object[] copiedListeners= listeners.toArray(new IMemoryBlockListener[listeners.size()]);
 				for (int i= 0; i < copiedListeners.length; i++) {
 					fListener = (IMemoryBlockListener)copiedListeners[i];
-					fMemoryBlock = memoryBlock;
+					fMemoryBlocks = memBlocks;
 					Platform.run(this);
 				}			
 			}
 			fListener = null;
-			fMemoryBlock = null;
+			fMemoryBlocks = null;
 		}
 	}
 	
@@ -153,7 +105,7 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IMemoryBlockManager#addMemoryBlock(org.eclipse.debug.core.model.IMemoryBlock)
 	 */
-	public void addMemoryBlock(IMemoryBlock mem, boolean addDefaultRenderings) {
+	public void addMemoryBlocks(IMemoryBlock[] mem) {
 		
 		if (memoryBlocks == null)
 			return;
@@ -163,62 +115,57 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 			return;			
 		}
 		
-		// do not allow duplicates
-		if (memoryBlocks.contains(mem))
-			return;
+		ArrayList newMemoryBlocks = new ArrayList();
 		
-		MemoryRenderingManager renderingManager = (MemoryRenderingManager) getMemoryRenderingManager();
-		
-		if (!addDefaultRenderings)
+		for (int i=0; i<mem.length; i++)
 		{
-			renderingManager.setHandleMemoryBlockAddedEvent(false);
-		}
-		else
-		{
-			renderingManager.setHandleMemoryBlockAddedEvent(true);
-		}
-		
-		memoryBlocks.add(mem);
-		
-		// add listener for the first memory block added
-		if (memoryBlocks.size() == 1)
-		{
-			DebugPlugin.getDefault().addDebugEventListener(this);
+			// do not allow duplicates
+			if (!memoryBlocks.contains(mem[i]))
+			{
+			
+				newMemoryBlocks.add(mem[i]);
+				memoryBlocks.add(mem[i]);
+				
+				// add listener for the first memory block added
+				if (memoryBlocks.size() == 1)
+				{
+					DebugPlugin.getDefault().addDebugEventListener(this);
+				}
+			}
 		}
 		
-		notifyListeners(mem, ADDED);
-
-		// always set it back to true
-		renderingManager.setHandleMemoryBlockAddedEvent(true);
+		notifyListeners((IMemoryBlock[])newMemoryBlocks.toArray(new IMemoryBlock[newMemoryBlocks.size()]), ADDED);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IMemoryBlockManager#removeMemoryBlock(org.eclipse.debug.core.model.IMemoryBlock)
 	 */
-	public void removeMemoryBlock(IMemoryBlock mem) {
+	public void removeMemoryBlocks(IMemoryBlock[] memBlocks) {
 		
 		if (memoryBlocks == null)
 			return;
 		
-		if (mem == null){
+		if (memBlocks == null){
 			DebugPlugin.logMessage("Null argument passed into IMemoryBlockManager.removeMemoryBlock", null); //$NON-NLS-1$
 			return;			
 		}		
 		
-		memoryBlocks.remove(mem);
-		
-		// remove listener after the last memory block has been removed
-		if (memoryBlocks.size() == 0)
+		for (int i=0; i<memBlocks.length; i++)
 		{
-			DebugPlugin.getDefault().removeDebugEventListener(this);
+			memoryBlocks.remove(memBlocks[i]);
+			// remove listener after the last memory block has been removed
+			if (memoryBlocks.size() == 0)
+			{
+				DebugPlugin.getDefault().removeDebugEventListener(this);
+			}
+			
+			if (memBlocks[i] instanceof IMemoryBlockExtension)
+			{ 
+				((IMemoryBlockExtension)memBlocks[i]).dispose();
+			}
 		}
 		
-		if (mem instanceof IMemoryBlockExtension)
-		{ 
-			((IMemoryBlockExtension)mem).dispose();
-		}
-		
-		notifyListeners(mem, REMOVED);
+		notifyListeners(memBlocks, REMOVED);
 	}
 
 	/* (non-Javadoc)
@@ -314,9 +261,9 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 	}
 	
 	
-	private void notifyListeners(IMemoryBlock memoryBlock, int event)
+	private void notifyListeners(IMemoryBlock[] memBlocks, int event)
 	{
-		getMemoryBlockNotifier().notify(memoryBlock, event);
+		getMemoryBlockNotifier().notify(memBlocks, event);
 	}
 
 
@@ -345,11 +292,7 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 			
 			// getMemoryBlocks will return an empty array if dt is null
 			IMemoryBlock[] deletedMemoryBlocks = getMemoryBlocks(dt);
-			
-			for (int i=0; i<deletedMemoryBlocks.length; i++)
-			{
-				removeMemoryBlock(deletedMemoryBlocks[i]);
-			}
+			removeMemoryBlocks(deletedMemoryBlocks);
 		}
 	}
 	
@@ -370,4 +313,29 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 			memoryBlocks = null;
 		}
 	}
+
+
+	/**
+	 * Returns the memory rendering manager.
+	 * @return the memory rendering manager.
+	 * @see IMemoryRenderingManager
+	 * @since 3.0
+	 */
+	public static IMemoryRenderingManager getMemoryRenderingManager() {
+		if (fgMemoryRenderingManager == null)
+		{
+			fgMemoryRenderingManager = new MemoryRenderingManager();
+		}
+		
+		return fgMemoryRenderingManager;
+	}
+	
+	public static void pluginShutdown() {
+
+		if (fgMemoryRenderingManager != null) {
+			fgMemoryRenderingManager.shutdown();
+		}
+		
+	}
+	
 }

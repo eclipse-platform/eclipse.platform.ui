@@ -16,13 +16,13 @@ import java.util.Hashtable;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.debug.core.IMemoryBlockListener;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
-import org.eclipse.debug.internal.core.memory.IMemoryBlockListener;
+import org.eclipse.debug.internal.core.MemoryBlockManager;
 import org.eclipse.debug.internal.core.memory.IMemoryRenderingInfo;
-import org.eclipse.debug.internal.core.memory.MemoryBlockManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
@@ -138,14 +138,14 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 	
 	protected void addListeners()
 	{
-		MemoryBlockManager.getMemoryBlockManager().addListener(this);
+		MemoryViewUtil.getMemoryBlockManager().addListener(this);
 		DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 		DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().addSelectionListener(this);
 	}
 	
 	protected void removeListeners()
 	{
-		MemoryBlockManager.getMemoryBlockManager().removeListener(this);
+		MemoryViewUtil.getMemoryBlockManager().removeListener(this);
 		DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 		DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().removeSelectionListener(this);
 		
@@ -468,12 +468,12 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.memory.IMemoryBlockListener#MemoryBlockAdded(org.eclipse.debug.core.model.IMemoryBlock)
 	 */
-	abstract public void  MemoryBlockAdded(IMemoryBlock memory);
+	abstract public void  memoryBlocksAdded(IMemoryBlock[] memoryBlocks);
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.memory.IMemoryBlockListener#MemoryBlockRemoved(org.eclipse.debug.core.model.IMemoryBlock)
 	 */
-	abstract public void MemoryBlockRemoved(final IMemoryBlock memory);
+	abstract public void memoryBlocksRemoved(final IMemoryBlock[] memoryBlocks);
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)

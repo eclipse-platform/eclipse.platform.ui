@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.debug.internal.core.memory;
+package org.eclipse.debug.core;
 
 import org.eclipse.debug.core.model.IMemoryBlock;
 
@@ -17,20 +17,20 @@ import org.eclipse.debug.core.model.IMemoryBlock;
  * Listener for add memory / remove memory events.
  * Implementer should add itself to IMemoryBlockManager to
  * be notified of these events.
- * @since 3.0
+ * @since 3.1
  */
 public interface IMemoryBlockListener {
 	
 	/**
-	 * Called when a memory block is added.
+	 * Called when memory blocks are added
 	 * @param memory
 	 */
-	void MemoryBlockAdded(IMemoryBlock memory);
+	void memoryBlocksAdded(IMemoryBlock[] memory);
 
 	/**
-	 * Called when a memory block is removed.
+	 * Called when memory blocks are removed
 	 * @param memory
 	 */
-	void MemoryBlockRemoved(IMemoryBlock memory);
+	void memoryBlocksRemoved(IMemoryBlock[] memory);
 	
 }

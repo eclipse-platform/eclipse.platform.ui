@@ -12,6 +12,7 @@
 package org.eclipse.debug.internal.ui.views.memory;
 
 import java.math.BigInteger;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
@@ -25,7 +26,7 @@ import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.IMemoryBlockExtensionRetrieval;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.core.model.ITerminate;
-import org.eclipse.debug.internal.core.memory.MemoryBlockManager;
+import org.eclipse.debug.internal.core.MemoryBlockManager;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -59,6 +60,7 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 	
 	protected ISelection currentSelection = null;
 	protected IMemoryBlock fLastMemoryBlock;
+	private boolean fAddDefaultRenderings = true;
 
 
 	/* (non-Javadoc)
@@ -71,6 +73,23 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 
 	public AddMemoryBlockAction()
 	{
+		initialize();
+	}
+	
+	/**
+	 * @param addDefaultRenderings - specify if the action should add
+	 * default renderings for the new memory block when it is run
+	 */
+	AddMemoryBlockAction(boolean addDefaultRenderings)
+	{
+		initialize();
+		fAddDefaultRenderings = addDefaultRenderings;
+	}
+	
+	/**
+	 * 
+	 */
+	private void initialize() {
 		setText(DebugUIMessages.getString(TITLE));
 		
 		setToolTipText(DebugUIMessages.getString(TOOLTIP));
@@ -163,7 +182,10 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 				if (memBlock != null)
 				{
 					fLastMemoryBlock = memBlock;
-					MemoryBlockManager.getMemoryBlockManager().addMemoryBlock(memBlock, true);
+					
+					MemoryViewUtil.getMemoryBlockManager().addMemoryBlocks(new IMemoryBlock[]{memBlock});
+					if (fAddDefaultRenderings)
+						addDefaultRenderings(memBlock);
 					// move the tab with that memory block to the top
 					switchMemoryBlockToTop(fLastMemoryBlock);
 				}
@@ -220,7 +242,9 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 				{
 					// add memory block to memory block manager
 					fLastMemoryBlock = memBlock;
-					MemoryBlockManager.getMemoryBlockManager().addMemoryBlock(memBlock, true);
+					MemoryViewUtil.getMemoryBlockManager().addMemoryBlocks(new IMemoryBlock[]{memBlock});
+					if (fAddDefaultRenderings)
+						addDefaultRenderings(memBlock);
 					
 					// move the tab with that memory block to the top
 					switchMemoryBlockToTop(fLastMemoryBlock);
@@ -319,13 +343,13 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 			
 		}
 		
-		if (view instanceof IMemoryView)
+		if (view instanceof IMultipaneMemoryView)
 		{
-			IMemoryViewTab topTap = ((IMemoryView)view).getTopMemoryTab();
+			IMemoryViewTab topTap = ((IMultipaneMemoryView)view).getTopMemoryTab(IInternalDebugUIConstants.ID_MEMORY_VIEW_PANE);
 			
 			if (topTap.getMemoryBlock() != memoryBlock)
 			{
-				IMemoryViewTab[] allTabs = ((IMemoryView)view).getAllViewTabs();
+				IMemoryViewTab[] allTabs = ((IMultipaneMemoryView)view).getAllViewTabs(IInternalDebugUIConstants.ID_MEMORY_VIEW_PANE);
 				IMemoryViewTab moveToTop = null;
 			
 				for (int i=0; i<allTabs.length; i++)
@@ -339,7 +363,7 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 				
 				if (moveToTop != null)
 				{
-					((IMemoryView)view).moveToTop(moveToTop);
+					((IMultipaneMemoryView)view).moveToTop(IInternalDebugUIConstants.ID_MEMORY_VIEW_PANE, moveToTop);
 				}
 			}
 		}
@@ -347,5 +371,23 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 	
 	protected void dispose() {
 		DebugPlugin.getDefault().removeDebugEventListener(this);
+	}
+	
+	private void addDefaultRenderings(IMemoryBlock memoryBlock)
+	{
+		// get default renderings
+		String renderingIds[] = MemoryBlockManager.getMemoryRenderingManager().getDefaultRenderings(memoryBlock);
+		
+		// add renderings
+		for (int i=0; i<renderingIds.length; i++)
+		{
+			try {
+				MemoryBlockManager.getMemoryRenderingManager().addMemoryBlockRendering(memoryBlock, renderingIds[i]);
+			} catch (DebugException e) {
+				// catch error silently
+				// log error
+				DebugUIPlugin.logErrorMessage("Cannot create default rendering: " + renderingIds[i]); //$NON-NLS-1$
+			}
+		}
 	}
 }

@@ -12,9 +12,9 @@ package org.eclipse.debug.internal.ui.views.memory;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
+
+import org.eclipse.debug.core.IMemoryBlockListener;
 import org.eclipse.debug.core.model.IMemoryBlock;
-import org.eclipse.debug.internal.core.memory.IMemoryBlockListener;
-import org.eclipse.debug.internal.core.memory.MemoryBlockManager;
 
 
 /**
@@ -30,7 +30,7 @@ public class MemoryBlockViewSynchronizer implements IMemoryBlockViewSynchronizer
 	public MemoryBlockViewSynchronizer()
 	{
 		fSynchronizeInfo = new Hashtable();
-		MemoryBlockManager.getMemoryBlockManager().addListener(this);
+		MemoryViewUtil.getMemoryBlockManager().addListener(this);
 	}
 	
 	/* (non-Javadoc)
@@ -125,7 +125,7 @@ public class MemoryBlockViewSynchronizer implements IMemoryBlockViewSynchronizer
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IMemoryBlockListener#MemoryBlockAdded(org.eclipse.debug.core.model.IMemoryBlock)
 	 */
-	public void MemoryBlockAdded(IMemoryBlock memory) {
+	public void memoryBlocksAdded(IMemoryBlock[] memoryBlocks) {
 		// do nothing when a memory block is added
 		// create a synchronize info object when there is a fView
 		// tab registered to be synchronized.
@@ -134,16 +134,20 @@ public class MemoryBlockViewSynchronizer implements IMemoryBlockViewSynchronizer
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IMemoryBlockListener#MemoryBlockRemoved(org.eclipse.debug.core.model.IMemoryBlock)
 	 */
-	public void MemoryBlockRemoved(IMemoryBlock memory) {
+	public void memoryBlocksRemoved(IMemoryBlock[] memoryBlocks) {
 		
-		// delete the info object and remove it from fSynchronizeInfo
-		// when the memory block is deleted
-		SynchronizeInfo info = (SynchronizeInfo)fSynchronizeInfo.get(memory);
-		
-		if (info != null)
-		{	
-			info.delete();
-			fSynchronizeInfo.remove(memory);
+		for (int i=0; i<memoryBlocks.length; i++)
+		{
+			IMemoryBlock memory = memoryBlocks[i];
+			// delete the info object and remove it from fSynchronizeInfo
+			// when the memory block is deleted
+			SynchronizeInfo info = (SynchronizeInfo)fSynchronizeInfo.get(memory);
+			
+			if (info != null)
+			{	
+				info.delete();
+				fSynchronizeInfo.remove(memory);
+			}
 		}
 	}
 	

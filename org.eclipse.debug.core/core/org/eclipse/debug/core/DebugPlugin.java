@@ -50,7 +50,7 @@ import org.eclipse.debug.internal.core.ExpressionManager;
 import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.core.ListenerList;
 import org.eclipse.debug.internal.core.LogicalStructureManager;
-import org.eclipse.debug.internal.core.memory.MemoryBlockManager;
+import org.eclipse.debug.internal.core.MemoryBlockManager;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupMessages;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
 import org.eclipse.osgi.service.environment.Constants;
@@ -214,6 +214,11 @@ public class DebugPlugin extends Plugin {
 	 * The singleton launch manager.
 	 */
 	private LaunchManager fLaunchManager;
+
+	/**
+	 * The singleton memory block manager.
+	 */
+	private MemoryBlockManager fMemoryBlockManager;
 	
 	/**
 	 * The collection of debug event listeners.
@@ -270,8 +275,8 @@ public class DebugPlugin extends Plugin {
 	 * Mode constants for the event notifier
 	 */
 	private static final int NOTIFY_FILTERS = 0;
-	private static final int NOTIFY_EVENTS = 1;	
-			
+	private static final int NOTIFY_EVENTS = 1;
+
 	/**
 	 * Returns the singleton instance of the debug plug-in.
 	 */
@@ -388,6 +393,19 @@ public class DebugPlugin extends Plugin {
 	}
 	
 	/**
+	 * Returns the memory block manager.
+	 * @return the memory block manager.
+	 * @see IMemoryBlockManager
+	 * @since 3.1
+	 */
+	public IMemoryBlockManager getMemoryBlockManager(){
+		if (fMemoryBlockManager == null) {
+			fMemoryBlockManager = new MemoryBlockManager();
+		}
+		return fMemoryBlockManager;
+	}
+	
+	/**
 	 * Returns the status handler registered for the given
 	 * status, or <code>null</code> if none.
 	 *
@@ -459,7 +477,12 @@ public class DebugPlugin extends Plugin {
 			if (fBreakpointManager != null) {
 				fBreakpointManager.shutdown();
 			}
+			if (fMemoryBlockManager != null)  {
+				fMemoryBlockManager.shutdown();
+			}
+			
 			MemoryBlockManager.pluginShutdown();
+			
 			if (fEventListeners != null) {
 				fEventListeners.removeAll();
 			}

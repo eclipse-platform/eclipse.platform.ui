@@ -14,9 +14,9 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
+import org.eclipse.debug.internal.core.MemoryBlockManager;
 import org.eclipse.debug.internal.core.memory.IMemoryRendering;
 import org.eclipse.debug.internal.core.memory.IMemoryRenderingInfo;
-import org.eclipse.debug.internal.core.memory.MemoryBlockManager;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
@@ -246,7 +246,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 		
 		fMouseListener =new MouseAdapter() {
 			public void mouseUp(MouseEvent e) {
-				AddMemoryBlockAction action = new AddMemoryBlockAction();
+				AddMemoryBlockAction action = new AddMemoryBlockAction(false);
 				action.run();
 				populateDialog(memoryBlock, fViewer, action.getLastMemoryBlock());
 				
@@ -360,7 +360,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 				if (!(elem instanceof IDebugElement))
 					return;			
 				
-				IMemoryBlock[] blocks = MemoryBlockManager.getMemoryBlockManager().getMemoryBlocks(((IDebugElement)elem).getDebugTarget());
+				IMemoryBlock[] blocks = MemoryViewUtil.getMemoryBlockManager().getMemoryBlocks(((IDebugElement)elem).getDebugTarget());
 				
 				if (blocks.length <= 0)
 				{
@@ -377,7 +377,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 			}
 		}
 		
-		fMemoryBlocks = MemoryBlockManager.getMemoryBlockManager().getMemoryBlocks(currentBlock.getDebugTarget());
+		fMemoryBlocks = MemoryViewUtil.getMemoryBlockManager().getMemoryBlocks(currentBlock.getDebugTarget());
 		int selectionIdx = -1;
 		for (int i=0; i<fMemoryBlocks.length; i++)
 		{	

@@ -29,6 +29,7 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
+import org.eclipse.debug.core.IMemoryBlockListener;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.internal.core.DebugCoreMessages;
@@ -63,10 +64,7 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 	private static final String RENDERING_BIND = "rendering_binding"; //$NON-NLS-1$
 	private static final String RENDERING_FACTORY = "renderingFactory"; //$NON-NLS-1$
 	private static final String DYNAMIC_RENDERING_FACTORY = "dynamicRenderingFactory"; //$NON-NLS-1$
-	
-	private boolean fHandleAddEvent = true;
 		
-	
 	/**
 	 * Notifies a memory block listener  in a safe runnable to
 	 * handle exceptions.
@@ -117,7 +115,7 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 	
 	public MemoryRenderingManager()
 	{
-		MemoryBlockManager.getMemoryBlockManager().addListener(this);
+		DebugPlugin.getDefault().getMemoryBlockManager().addListener(this);
 		buildMemoryRenderingInfo();		
 	}
 	
@@ -682,39 +680,27 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IMemoryBlockListener#MemoryBlockAdded(org.eclipse.debug.core.model.IMemoryBlock)
 	 */
-	public void MemoryBlockAdded(IMemoryBlock memory)
+	public void memoryBlocksAdded(IMemoryBlock[] memoryBlocks)
 	{
-		if (fHandleAddEvent)
-		{
-			// get default renderings
-			String renderingIds[] = getDefaultRenderings(memory);
-			
-			// add renderings
-			for (int i=0; i<renderingIds.length; i++)
-			{
-				try {
-					addMemoryBlockRendering(memory, renderingIds[i]);
-				} catch (DebugException e) {
-					// catch error silently
-					// log error
-					DebugPlugin.logMessage("Cannot create default rendering: " + renderingIds[i], null); //$NON-NLS-1$
-				}
-			}
-		}
+		// do nothing when memory blocks are added
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IMemoryBlockListener#MemoryBlockRemoved(org.eclipse.debug.core.model.IMemoryBlock)
 	 */
-	public void MemoryBlockRemoved(IMemoryBlock memory)
+	public void memoryBlocksRemoved(IMemoryBlock[] memoryBlocks)
 	{
-		// remove all renderings related to the deleted memory block
-		IMemoryRendering[] renderings = getRenderingsFromMemoryBlock(memory);
-		
-		for (int i=0; i<renderings.length; i++)
+		for (int j=0; j<memoryBlocks.length; j++)
 		{
-			removeMemoryBlockRendering(renderings[i].getBlock(), renderings[i].getRenderingId());
-		}	
+			IMemoryBlock memory = memoryBlocks[j];
+			// remove all renderings related to the deleted memory block
+			IMemoryRendering[] renderings = getRenderingsFromMemoryBlock(memory);
+			
+			for (int i=0; i<renderings.length; i++)
+			{
+				removeMemoryBlockRendering(renderings[i].getBlock(), renderings[i].getRenderingId());
+			}
+		}
 	}
 	
 
@@ -1049,11 +1035,6 @@ public class MemoryRenderingManager implements IMemoryRenderingManager, IDebugEv
 		}
 		
 		// remove listener
-		MemoryBlockManager.getMemoryBlockManager().removeListener(this);
-	}
-	
-	public void setHandleMemoryBlockAddedEvent(boolean handleEvt)
-	{
-		fHandleAddEvent = handleEvt;
+		DebugPlugin.getDefault().getMemoryBlockManager().removeListener(this);
 	}
 }

@@ -13,8 +13,8 @@ package org.eclipse.debug.internal.ui.views.memory;
 import java.math.BigInteger;
 
 import org.eclipse.debug.core.model.MemoryByte;
+import org.eclipse.debug.internal.core.MemoryBlockManager;
 import org.eclipse.debug.internal.core.memory.IMemoryRendering;
-import org.eclipse.debug.internal.core.memory.MemoryBlockManager;
 
 /**
  * Converts bytes to unsigned integer and vice versa

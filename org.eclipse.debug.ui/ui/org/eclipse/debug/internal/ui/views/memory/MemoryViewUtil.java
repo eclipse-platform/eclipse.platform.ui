@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.memory;
 
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IMemoryBlockManager;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
@@ -86,5 +88,10 @@ public class MemoryViewUtil {
 			shell,
 			title,
 			message + "\n" + detail); //$NON-NLS-1$
+	}
+	
+	static IMemoryBlockManager getMemoryBlockManager()
+	{
+		return DebugPlugin.getDefault().getMemoryBlockManager();
 	}
 }

@@ -19,7 +19,6 @@ import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.internal.core.memory.IMemoryRendering;
-import org.eclipse.debug.internal.core.memory.MemoryBlockManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
@@ -198,7 +197,7 @@ public class MemoryViewPane extends AbstractMemoryViewPane {
 		}
 		
 		// restore view tabs based on memory block retrieval
-		IMemoryBlock[] memoryBlocks = MemoryBlockManager.getMemoryBlockManager().getMemoryBlocks(retrieve);
+		IMemoryBlock[] memoryBlocks = MemoryViewUtil.getMemoryBlockManager().getMemoryBlocks(retrieve);
 		TabFolder toDisplay = (TabFolder)fStackLayout.topControl;
 		
 		if (toDisplay.getItemCount() == 0)
@@ -234,22 +233,7 @@ public class MemoryViewPane extends AbstractMemoryViewPane {
 	
 	private void restoreViewTabs(IMemoryBlock[] memoryBlocks)
 	{
-		for (int i=0; i<memoryBlocks.length; i++)
-		{
-//			// enable to get latest data
-//			if (memoryBlocks[i] instanceof IMemoryBlockExtension)
-//			{
-//				((IMemoryBlockExtension)memoryBlocks[i]).connect(this);
-//			}
-			
-			MemoryBlockAdded(memoryBlocks[i]);
-			
-//			// disable after done
-//			if (memoryBlocks[i] instanceof IMemoryBlockExtension)
-//			{
-//				((IMemoryBlockExtension)memoryBlocks[i]).disconnect(this);
-//			}
-		}
+		memoryBlocksAdded(memoryBlocks);
 
 		// enable memory block
 		IMemoryViewTab viewTab = getTopMemoryTab();
@@ -261,113 +245,117 @@ public class MemoryViewPane extends AbstractMemoryViewPane {
 			}
 		}		
 	}
-	public void MemoryBlockRemoved(final IMemoryBlock memory) {
+	public void memoryBlocksRemoved(final IMemoryBlock[] memoryBlocks) {
 			
 		// need to run the following code on the UI Thread to avoid invalid thread access exception
 		Display.getDefault().syncExec(new Runnable()
 		{
 			public void run()
 			{
-				TabFolder tabFolder = (TabFolder) fStackLayout.topControl;
-				
-				if (tabFolder.isDisposed())
-					return;
-				
-				TabItem[] tabs = tabFolder.getItems();
-				boolean foundTab = false;
-				for (int i = 0; i < tabs.length; i++)
+				for (int j=0; j<memoryBlocks.length; j++)
 				{
-					IMemoryViewTab viewTab = (IMemoryViewTab) tabs[i].getData();
-					if (viewTab.getMemoryBlock() == memory)
+					IMemoryBlock memory = memoryBlocks[j];
+					TabFolder tabFolder = (TabFolder) fStackLayout.topControl;
+					
+					if (tabFolder.isDisposed())
+						return;
+					
+					TabItem[] tabs = tabFolder.getItems();
+					boolean foundTab = false;
+					for (int i = 0; i < tabs.length; i++)
 					{
-						disposeViewTab(viewTab, tabs[i]);
-						foundTab = true;
-						break;
-					}
-				}
-				if (foundTab)
-				{
-					if (tabFolder.getItemCount() == 0)
-					{
-						fRemoveMemoryBlockAction.setEnabled(false);
-						fResetMemoryBlockAction.setEnabled(false);
-						fCopyViewToClipboardAction.setEnabled(false);
-						fPrintViewTabAction.setEnabled(false);
-						
-						// if there is no more item in the top tab folder
-						// set selection as empty
-						fSelectionProvider.setSelection(new StructuredSelection(new Object[0]));
-						
-						// if there is no item left in the folder and if the debug target
-						// for the last memory block has been terminated
-						// Clean up the tab folder and use the EmptyTabFolder for display
-						IDebugTarget dt = memory.getDebugTarget();
-						if (dt.isTerminated() || dt.isDisconnected())
+						IMemoryViewTab viewTab = (IMemoryViewTab) tabs[i].getData();
+						if (viewTab.getMemoryBlock() == memory)
 						{
-							if (fKey != null)
-							{
-								fTabFolderForDebugView.remove(fKey);
-							}
-							if (!tabFolder.isDisposed())
-							{
-								tabFolder.dispose();
-							}
-							emptyFolder();
+							disposeViewTab(viewTab, tabs[i]);
+							foundTab = true;
+							break;
 						}
 					}
-				}
-				// if a tab is not found in the current top control
-				// this deletion is a result of a debug target termination
-				// find memory from other folder and dispose the view tab
-				if (!foundTab)
-				{
-					Enumeration enumeration = fTabFolderForDebugView.elements();
-					while (enumeration.hasMoreElements())
+					if (foundTab)
 					{
-						tabFolder = (TabFolder) enumeration.nextElement();
-						tabs = tabFolder.getItems();
-						IMemoryViewTab viewTab = null;
-						for (int i = 0; i < tabs.length; i++)
+						if (tabFolder.getItemCount() == 0)
 						{
-							viewTab = (IMemoryViewTab) tabs[i].getData();
-							if (viewTab.getMemoryBlock() == memory)
+							fRemoveMemoryBlockAction.setEnabled(false);
+							fResetMemoryBlockAction.setEnabled(false);
+							fCopyViewToClipboardAction.setEnabled(false);
+							fPrintViewTabAction.setEnabled(false);
+							
+							// if there is no more item in the top tab folder
+							// set selection as empty
+							fSelectionProvider.setSelection(new StructuredSelection(new Object[0]));
+							
+							// if there is no item left in the folder and if the debug target
+							// for the last memory block has been terminated
+							// Clean up the tab folder and use the EmptyTabFolder for display
+							IDebugTarget dt = memory.getDebugTarget();
+							if (dt.isTerminated() || dt.isDisconnected())
 							{
-								disposeViewTab(viewTab, tabs[i]);
-								foundTab = true;
-								break;
-							}
-						}
-						if (foundTab)
-						{
-							if (tabFolder.getItemCount() == 0)
-							{
-								// if there is no item left in the folder and if the debug target
-								// for the last memory block has been terminated
-								// Clean up the tab folder and use the EmptyTabFolder for display
-								IDebugTarget dt = memory.getDebugTarget();
-								if (dt.isTerminated() || dt.isDisconnected())
+								if (fKey != null)
 								{
-									Enumeration keyEnum = fTabFolderForDebugView.keys();
-									Object tabKey = null;
-									while (keyEnum.hasMoreElements())
-									{
-										tabKey = keyEnum.nextElement();
-										if (fTabFolderForDebugView.get(tabKey) == tabFolder)
-										{
-											break;
-										}
-									}
-									// dispose of the folder if it no longer contains anything
-									if (!tabFolder.isDisposed())
-										tabFolder.dispose();
-									// remove the folder from the hashtable
-									if (tabKey != null)
-										fTabFolderForDebugView.remove(tabKey);
-									// use empty folder for display
-									emptyFolder();
+									fTabFolderForDebugView.remove(fKey);
+								}
+								if (!tabFolder.isDisposed())
+								{
+									tabFolder.dispose();
+								}
+								emptyFolder();
+							}
+						}
+					}
+					// if a tab is not found in the current top control
+					// this deletion is a result of a debug target termination
+					// find memory from other folder and dispose the view tab
+					if (!foundTab)
+					{
+						Enumeration enumeration = fTabFolderForDebugView.elements();
+						while (enumeration.hasMoreElements())
+						{
+							tabFolder = (TabFolder) enumeration.nextElement();
+							tabs = tabFolder.getItems();
+							IMemoryViewTab viewTab = null;
+							for (int i = 0; i < tabs.length; i++)
+							{
+								viewTab = (IMemoryViewTab) tabs[i].getData();
+								if (viewTab.getMemoryBlock() == memory)
+								{
+									disposeViewTab(viewTab, tabs[i]);
+									foundTab = true;
+									break;
 								}
 							}
-							break;
+							if (foundTab)
+							{
+								if (tabFolder.getItemCount() == 0)
+								{
+									// if there is no item left in the folder and if the debug target
+									// for the last memory block has been terminated
+									// Clean up the tab folder and use the EmptyTabFolder for display
+									IDebugTarget dt = memory.getDebugTarget();
+									if (dt.isTerminated() || dt.isDisconnected())
+									{
+										Enumeration keyEnum = fTabFolderForDebugView.keys();
+										Object tabKey = null;
+										while (keyEnum.hasMoreElements())
+										{
+											tabKey = keyEnum.nextElement();
+											if (fTabFolderForDebugView.get(tabKey) == tabFolder)
+											{
+												break;
+											}
+										}
+										// dispose of the folder if it no longer contains anything
+										if (!tabFolder.isDisposed())
+											tabFolder.dispose();
+										// remove the folder from the hashtable
+										if (tabKey != null)
+											fTabFolderForDebugView.remove(tabKey);
+										// use empty folder for display
+										emptyFolder();
+									}
+								}
+								break;
+							}
 						}
 					}
 				}
@@ -375,37 +363,42 @@ public class MemoryViewPane extends AbstractMemoryViewPane {
 		});
 	}	
 	
-	public void MemoryBlockAdded(IMemoryBlock memory) {
+	public void memoryBlocksAdded(IMemoryBlock[] memoryBlocks) {
 		
-		// disable current view tab
-		if (getTopMemoryTab() != null)
-			getTopMemoryTab().setEnabled(false);
-		TabFolder tabFolder = (TabFolder) fStackLayout.topControl;
-		TabItem tab = new TabItem(tabFolder, SWT.NULL);
-		// create memory tab with new memory
-		IMemoryViewTab memoryTab;
+		for (int i=0; i<memoryBlocks.length; i++)
+		{
+			IMemoryBlock memory = memoryBlocks[i];
 		
-		// create a new menu manager for each view tab
-		// menu manager will be cleaned up when the view tab is disposed
-		// or when the view is disposed
-		MenuManager menuMgr = createContextMenuManager();
-		
-		HexRendering hexRendering = new HexRendering(memory, IMemoryViewConstants.RENDERING_RAW_MEMORY);
-		
-		IMemoryViewTabFactory factory = getViewTabFactory(IMemoryViewConstants.RENDERING_RAW_MEMORY);
-		AbstractMemoryRenderer renderer = getRenderer(IMemoryViewConstants.RENDERING_RAW_MEMORY);
-		
-		memoryTab = factory.createViewTab(memory, tab, menuMgr, hexRendering, renderer);
-		
-		// put to hashtable to be cleaned up later
-		fMenuMgr.put(memoryTab, menuMgr);
-		
-		// bring new tab to the front
-		tabFolder.setSelection(tabFolder.indexOf(tab));
-
-		updateToolBarActionsEnablement();
-
-		fSelectionProvider.setSelection(new StructuredSelection(memoryTab.getMemoryBlock()));
+			// disable current view tab
+			if (getTopMemoryTab() != null)
+				getTopMemoryTab().setEnabled(false);
+			TabFolder tabFolder = (TabFolder) fStackLayout.topControl;
+			TabItem tab = new TabItem(tabFolder, SWT.NULL);
+			// create memory tab with new memory
+			IMemoryViewTab memoryTab;
+			
+			// create a new menu manager for each view tab
+			// menu manager will be cleaned up when the view tab is disposed
+			// or when the view is disposed
+			MenuManager menuMgr = createContextMenuManager();
+			
+			HexRendering hexRendering = new HexRendering(memory, IMemoryViewConstants.RENDERING_RAW_MEMORY);
+			
+			IMemoryViewTabFactory factory = getViewTabFactory(IMemoryViewConstants.RENDERING_RAW_MEMORY);
+			AbstractMemoryRenderer renderer = getRenderer(IMemoryViewConstants.RENDERING_RAW_MEMORY);
+			
+			memoryTab = factory.createViewTab(memory, tab, menuMgr, hexRendering, renderer);
+			
+			// put to hashtable to be cleaned up later
+			fMenuMgr.put(memoryTab, menuMgr);
+			
+			// bring new tab to the front
+			tabFolder.setSelection(tabFolder.indexOf(tab));
+	
+			updateToolBarActionsEnablement();
+	
+			fSelectionProvider.setSelection(new StructuredSelection(memoryTab.getMemoryBlock()));
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -524,7 +517,7 @@ public class MemoryViewPane extends AbstractMemoryViewPane {
 					fViewPaneCanvas.layout();
 					
 					// restore view tabs
-					IMemoryBlock[] memoryBlocks = MemoryBlockManager.getMemoryBlockManager().getMemoryBlocks(debugTarget);
+					IMemoryBlock[] memoryBlocks = MemoryViewUtil.getMemoryBlockManager().getMemoryBlocks(debugTarget);
 					
 					if (toDisplay.getItemCount() == 0)
 					{

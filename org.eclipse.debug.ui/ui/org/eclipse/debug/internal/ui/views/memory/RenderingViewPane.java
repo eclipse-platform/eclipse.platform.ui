@@ -24,10 +24,10 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
+import org.eclipse.debug.internal.core.MemoryBlockManager;
 import org.eclipse.debug.internal.core.memory.IMemoryRendering;
 import org.eclipse.debug.internal.core.memory.IMemoryRenderingInfo;
 import org.eclipse.debug.internal.core.memory.IMemoryRenderingListener;
-import org.eclipse.debug.internal.core.memory.MemoryBlockManager;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
@@ -76,40 +76,44 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.memory.IMemoryBlockListener#MemoryBlockAdded(org.eclipse.debug.core.model.IMemoryBlock)
 	 */
-	public void MemoryBlockAdded(final IMemoryBlock memory) {
+	public void memoryBlocksAdded(final IMemoryBlock[] memoryBlocks) {
+		for (int i=0; i<memoryBlocks.length; i++)
+		{
+			IMemoryBlock memory = memoryBlocks[i];
 		
-		// create a tab folder when there is a new memory block
-		if (fTabFolderForMemoryBlock.containsKey(memory)) {
-			if (fStackLayout.topControl != (TabFolder)fTabFolderForMemoryBlock.get(memory)) {
+			// create a tab folder when there is a new memory block
+			if (fTabFolderForMemoryBlock.containsKey(memory)) {
+				if (fStackLayout.topControl != (TabFolder)fTabFolderForMemoryBlock.get(memory)) {
+					setTabFolder((TabFolder)fTabFolderForMemoryBlock.get(memory));
+					fViewPaneCanvas.layout();
+				}
+			} 
+			else {	//otherwise, add a new one
+				TabFolder folder =  new TabFolder(fViewPaneCanvas, SWT.NULL);
+				TabItem newItem = new TabItem(folder, SWT.NULL);
+				
+				CreateRenderingTab createTab = new CreateRenderingTab(memory, newItem);
+				
+				folder.setSelection(0);
+				
+				fTabFolderForMemoryBlock.put(memory, folder);
+				fMemoryBlockFromTabFolder.put(folder, memory);
+				fTabFolderForDebugView.put(getMemoryBlockRetrieval(memory), folder);
+				
 				setTabFolder((TabFolder)fTabFolderForMemoryBlock.get(memory));
+				setRenderingSelection(createTab);
+				
+				MenuManager menuMgr = createContextMenuManager();
+				Menu menu = menuMgr.createContextMenu(folder);
+				folder.setMenu(menu);
+				
+				fMenuMgr.put(folder, menuMgr);
+				
 				fViewPaneCanvas.layout();
-			}
-		} 
-		else {	//otherwise, add a new one
-			TabFolder folder =  new TabFolder(fViewPaneCanvas, SWT.NULL);
-			TabItem newItem = new TabItem(folder, SWT.NULL);
+			}	
 			
-			CreateRenderingTab createTab = new CreateRenderingTab(memory, newItem);
-			
-			folder.setSelection(0);
-			
-			fTabFolderForMemoryBlock.put(memory, folder);
-			fMemoryBlockFromTabFolder.put(folder, memory);
-			fTabFolderForDebugView.put(getMemoryBlockRetrieval(memory), folder);
-			
-			setTabFolder((TabFolder)fTabFolderForMemoryBlock.get(memory));
-			setRenderingSelection(createTab);
-			
-			MenuManager menuMgr = createContextMenuManager();
-			Menu menu = menuMgr.createContextMenu(folder);
-			folder.setMenu(menu);
-			
-			fMenuMgr.put(folder, menuMgr);
-			
-			fViewPaneCanvas.layout();
-		}	
-		
-		updateToolBarActionsEnablement();
+			updateToolBarActionsEnablement();
+		}
 	}
 	
 	private IMemoryBlockRetrieval getMemoryBlockRetrieval(IMemoryBlock memoryBlock)
@@ -127,115 +131,127 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.memory.IMemoryBlockListener#MemoryBlockRemoved(org.eclipse.debug.core.model.IMemoryBlock)
 	 */
-	public void MemoryBlockRemoved(final IMemoryBlock memory) {
+	public void memoryBlocksRemoved(final IMemoryBlock[] memoryBlocks) {
 		Display.getDefault().syncExec(new Runnable() {
 			public void run() {
 				
-				if (fTabFolderForMemoryBlock == null)
+				for (int j=0; j<memoryBlocks.length; j++)
 				{
-					return;
-				}
-				
-				// remove a the tab folder if the memory block is removed
-				TabFolder tabFolder =
-					(TabFolder) fTabFolderForMemoryBlock.get(memory);
-				fTabFolderForMemoryBlock.remove(memory);
-				fMemoryBlockFromTabFolder.remove(tabFolder);
-				fTabFolderForDebugView.remove(getMemoryBlockRetrieval(memory));
-				
-				if (!tabFolder.isDisposed()) {
-					
-					IMemoryBlockRetrieval retrieve = (IMemoryBlockRetrieval)memory.getAdapter(IMemoryBlockRetrieval.class);
-					if (retrieve == null)
-					{	
-						retrieve = memory.getDebugTarget();
+					IMemoryBlock memory = memoryBlocks[j];
+					if (fTabFolderForMemoryBlock == null)
+					{
+						return;
 					}
 					
-					if (fTabFolderForDebugView.contains(tabFolder))
-					{					
-						fTabFolderForDebugView.remove(retrieve);
+					// get all renderings from this memroy block and remove them from the view
+					IMemoryRendering[] renderings = MemoryBlockManager.getMemoryRenderingManager().getRenderingsFromMemoryBlock(memory);
+					
+					for (int k=0; k<renderings.length; k++)
+					{
+						MemoryBlockRenderingRemoved(renderings[k]);
 					}
 					
-					// dispose all view tabs belonging to the tab folder
-					TabItem[] items = tabFolder.getItems();
+					// remove a the tab folder if the memory block is removed
+					TabFolder tabFolder =
+						(TabFolder) fTabFolderForMemoryBlock.get(memory);
+					fTabFolderForMemoryBlock.remove(memory);
+					fMemoryBlockFromTabFolder.remove(tabFolder);
+					fTabFolderForDebugView.remove(getMemoryBlockRetrieval(memory));
 					
-					for (int i=0; i<items.length; i++)
-					{	
-						if (items[i].getData() instanceof IMemoryViewTab)
-							disposeViewTab((IMemoryViewTab)items[i].getData(), items[i]);
-					}
-					
-					MenuManager menuMgr = (MenuManager)fMenuMgr.get(tabFolder);
-					if (menuMgr != null)
-						menuMgr.dispose();
-					
-					// dispose the tab folder
-					tabFolder.dispose();						
-					
-					// if this is the top control
-					if (tabFolder == fStackLayout.topControl)
-					{	
+					if (!tabFolder.isDisposed()) {
 						
-						// if memory view is visible and have a selection
-						// follow memory view's selection
-						
-						ISelection selection = DebugUIPlugin.getActiveWorkbenchWindow().getSelectionService().getSelection(IInternalDebugUIConstants.ID_MEMORY_VIEW);
-						
-						if (selection != null)
+						IMemoryBlockRetrieval retrieve = (IMemoryBlockRetrieval)memory.getAdapter(IMemoryBlockRetrieval.class);
+						if (retrieve == null)
 						{	
-							if (!selection.isEmpty())
-							{
-								if (selection instanceof IStructuredSelection && ((IStructuredSelection)selection).getFirstElement() instanceof IMemoryBlock)
-								{	
-									IMemoryBlock blk = (IMemoryBlock)((IStructuredSelection)selection).getFirstElement();
-									
-									// memory view may not have got the event and is still displaying
-									// the deleted memory block
-									if (blk != memory)
-										handleMemoryBlockSelection(null, blk);
-									else if ((MemoryBlockManager.getMemoryBlockManager().getMemoryBlocks(memory.getDebugTarget()).length > 0))
-									{
-										blk = MemoryBlockManager.getMemoryBlockManager().getMemoryBlocks(memory.getDebugTarget())[0];
-										handleMemoryBlockSelection(null, blk);										
+							retrieve = memory.getDebugTarget();
+						}
+						
+						if (fTabFolderForDebugView.contains(tabFolder))
+						{					
+							fTabFolderForDebugView.remove(retrieve);
+						}
+						
+						// dispose all view tabs belonging to the tab folder
+						TabItem[] items = tabFolder.getItems();
+						
+						for (int i=0; i<items.length; i++)
+						{	
+							if (items[i].getData() instanceof IMemoryViewTab)
+								disposeViewTab((IMemoryViewTab)items[i].getData(), items[i]);
+						}
+						
+						MenuManager menuMgr = (MenuManager)fMenuMgr.get(tabFolder);
+						if (menuMgr != null)
+							menuMgr.dispose();
+						
+						// dispose the tab folder
+						tabFolder.dispose();						
+						
+						// if this is the top control
+						if (tabFolder == fStackLayout.topControl)
+						{	
+							
+							// if memory view is visible and have a selection
+							// follow memory view's selection
+							
+							ISelection selection = DebugUIPlugin.getActiveWorkbenchWindow().getSelectionService().getSelection(IInternalDebugUIConstants.ID_MEMORY_VIEW);
+							
+							if (selection != null)
+							{	
+								if (!selection.isEmpty())
+								{
+									if (selection instanceof IStructuredSelection && ((IStructuredSelection)selection).getFirstElement() instanceof IMemoryBlock)
+									{	
+										IMemoryBlock blk = (IMemoryBlock)((IStructuredSelection)selection).getFirstElement();
+										
+										// memory view may not have got the event and is still displaying
+										// the deleted memory block
+										if (blk != memory)
+											handleMemoryBlockSelection(null, blk);
+										else if ((MemoryViewUtil.getMemoryBlockManager().getMemoryBlocks(memory.getDebugTarget()).length > 0))
+										{
+											blk = MemoryViewUtil.getMemoryBlockManager().getMemoryBlocks(memory.getDebugTarget())[0];
+											handleMemoryBlockSelection(null, blk);										
+										}
+										else
+										{
+											emptyFolder();
+										}
 									}
 									else
 									{
 										emptyFolder();
 									}
 								}
+								else if (MemoryViewUtil.getMemoryBlockManager().getMemoryBlocks(memory.getDebugTarget()).length > 0)
+								{	// get to the next folder
+									IMemoryBlock blk = MemoryViewUtil.getMemoryBlockManager().getMemoryBlocks(memory.getDebugTarget())[0];
+									handleMemoryBlockSelection(null, blk);
+								}
 								else
 								{
 									emptyFolder();
 								}
 							}
-							else if (MemoryBlockManager.getMemoryBlockManager().getMemoryBlocks(memory.getDebugTarget()).length > 0)
+							// otheriwse, just pick the next one to display
+							else if (MemoryViewUtil.getMemoryBlockManager().getMemoryBlocks(memory.getDebugTarget()).length > 0)
 							{	// get to the next folder
-								IMemoryBlock blk = MemoryBlockManager.getMemoryBlockManager().getMemoryBlocks(memory.getDebugTarget())[0];
+								IMemoryBlock blk = MemoryViewUtil.getMemoryBlockManager().getMemoryBlocks(memory.getDebugTarget())[0];
 								handleMemoryBlockSelection(null, blk);
 							}
 							else
 							{
+								// empty the folder if there is no more stoarage block
 								emptyFolder();
-							}
-						}
-						// otheriwse, just pick the next one to display
-						else if (MemoryBlockManager.getMemoryBlockManager().getMemoryBlocks(memory.getDebugTarget()).length > 0)
-						{	// get to the next folder
-							IMemoryBlock blk = MemoryBlockManager.getMemoryBlockManager().getMemoryBlocks(memory.getDebugTarget())[0];
-							handleMemoryBlockSelection(null, blk);
-						}
-						else
-						{
-							// empty the folder if there is no more stoarage block
-							emptyFolder();
-						}						
-					}	
+							}						
+						}	
+						
+						// if not the top control
+						// no need to do anything
+					}
 					
-					// if not the top control
-					// no need to do anything
+					updateToolBarActionsEnablement();
 				}
-				
-				updateToolBarActionsEnablement();
 			}
 		});
 
@@ -595,10 +611,13 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 					setRenderingSelection(top);
 				else
 				{
-					TabItem newItem = new TabItem(tabFolder, SWT.NULL);
-					CreateRenderingTab createTab = new CreateRenderingTab(memory, newItem);
-					tabFolder.setSelection(0);
-					setRenderingSelection(createTab);
+					if (tabFolder != fEmptyTabFolder)
+					{
+						TabItem newItem = new TabItem(tabFolder, SWT.NULL);
+						CreateRenderingTab createTab = new CreateRenderingTab(memory, newItem);
+						tabFolder.setSelection(0);
+						setRenderingSelection(createTab);
+					}
 				}
 					
 				updateToolBarActionsEnablement();
@@ -783,7 +802,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 			{	
 				// find out if there is any memory block for this debug target
 				// and set up tab folder for the memory blocks
-				IMemoryBlock blocks[] = MemoryBlockManager.getMemoryBlockManager().getMemoryBlocks(retrieve);
+				IMemoryBlock blocks[] = MemoryViewUtil.getMemoryBlockManager().getMemoryBlocks(retrieve);
 				
 				if (blocks.length > 0)
 				{	
@@ -1031,7 +1050,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 		IDebugTarget target = getSelectedDebugTarget();
 		if (target != null)
 		{	
-			IMemoryBlock[] blocks = MemoryBlockManager.getMemoryBlockManager().getMemoryBlocks(target);
+			IMemoryBlock[] blocks = MemoryViewUtil.getMemoryBlockManager().getMemoryBlocks(target);
 			
 			if (blocks.length > 0)
 				fRemoveMemoryRenderingAction.setEnabled(true);
