@@ -12,7 +12,7 @@ import org.eclipse.swt.graphics.Image;
 
 public class DebugActionGroupsLabelProvider extends LabelProvider {
 
-	private String UNKNOWN = "<Unknown>";
+	private String UNKNOWN = DebugUIMessages.getString("DebugActionGroupsLabelProvider.<Unknown>_1"); //$NON-NLS-1$
 
 	public DebugActionGroupsLabelProvider() {
 		super();

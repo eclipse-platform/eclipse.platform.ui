@@ -74,7 +74,7 @@ public class DebugActionGroupsPreferencePage  extends PreferencePage implements 
 
 		// description
 		Label descLabel = new Label(composite, SWT.WRAP);
-		descLabel.setText("Selection the action groups to be displayed in debug views");
+		descLabel.setText(DebugUIMessages.getString("DebugActionGroupsPreferencePage.Select_the_action_groups_to_be_displayed_in_Debug_views_1")); //$NON-NLS-1$
 		descLabel.setFont(parent.getFont());
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
@@ -92,7 +92,7 @@ public class DebugActionGroupsPreferencePage  extends PreferencePage implements 
 
 		// ...second the label
 		Label selectionLabel = new Label(actionSetGroup, SWT.NONE);
-		selectionLabel.setText("&Available Debug Action Groups:");
+		selectionLabel.setText(DebugUIMessages.getString("DebugActionGroupsPreferencePage.&Available_Debug_Action_Groups__2")); //$NON-NLS-1$
 		selectionLabel.setFont(parent.getFont());
 
 		// ...third the checkbox list
@@ -147,7 +147,7 @@ public class DebugActionGroupsPreferencePage  extends PreferencePage implements 
 
 		// ...second the label
 		actionLabel = new Label(actionGroup, SWT.NONE);
-		actionLabel.setText("Actions in Group:");
+		actionLabel.setText(DebugUIMessages.getString("DebugActionGroupsPreferencePage.Actions_in_Group__3")); //$NON-NLS-1$
 
 		// ...third the list of actions
 		actionViewer = new TableViewer(actionGroup, SWT.BORDER);

@@ -181,7 +181,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 	 */
 	protected String getLaunchText(ILaunch launch) {
 		if (launch.getLaunchConfiguration() == null) {
-			return "<unknown>";
+			return DebugUIMessages.getString("DefaultLabelProvider.<unknown>_1"); //$NON-NLS-1$
 		} else {
 			// new launch configuration
 			ILaunchConfiguration config = launch.getLaunchConfiguration();

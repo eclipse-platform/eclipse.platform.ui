@@ -139,7 +139,7 @@ public class DebugActionGroupsManager implements IMenuListener {
 				IConfigurationElement[] children = configurationElement.getChildren();
 				for (int j = 0; j < children.length; j++) {
 					IConfigurationElement actionElement = children[j];
-					String actionId = actionElement.getAttribute("id");
+					String actionId = actionElement.getAttribute("id"); //$NON-NLS-1$
 					if (actionId != null) {
 						viewActionSet.add(actionId);
 						fDebugActionGroupActionIds.put(actionId, viewActionSet.getId());
@@ -148,11 +148,11 @@ public class DebugActionGroupsManager implements IMenuListener {
 
 			} else {
 				// invalid debug action group
-				String errorId= "";
+				String errorId= ""; //$NON-NLS-1$
 				if (id != null) {
-					errorId= ": "  + id;
+					errorId= ": "  + id; //$NON-NLS-1$
 				}
-				DebugUIPlugin.logErrorMessage("Improperly specified debug action group" + errorId);
+				DebugUIPlugin.logErrorMessage(DebugUIMessages.getString("DebugActionGroupsManager.Improperly_specified_debug_action_group_4") + errorId); //$NON-NLS-1$
 			}
 		}
 	}
@@ -400,9 +400,9 @@ public class DebugActionGroupsManager implements IMenuListener {
 
 		protected String getName() {
 			StringBuffer buff= new StringBuffer(fName);
-			buff.append(" (");
+			buff.append(" ("); //$NON-NLS-1$
 			buff.append(fViewName);
-			buff.append(" view ");
+			buff.append(DebugUIMessages.getString("DebugActionGroupsManager._view__6")); //$NON-NLS-1$
 			buff.append(getDescriptor());
 			buff.append(')');
 			return buff.toString();
@@ -423,9 +423,9 @@ public class DebugActionGroupsManager implements IMenuListener {
 		
 		protected String getDescriptor() {
 			if (fToolbarAction) {
-				return "toolbar";
+				return DebugUIMessages.getString("DebugActionGroupsManager.toolbar_7"); //$NON-NLS-1$
 			} else {
-				return "context menu";
+				return DebugUIMessages.getString("DebugActionGroupsManager.context_menu_8"); //$NON-NLS-1$
 			}
 		}
 		

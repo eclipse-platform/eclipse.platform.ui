@@ -253,7 +253,7 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventSetL
 			}
 		};
 		fPoll = true;
-		fPollingThread = new Thread(r, "Console Polling Thread");
+		fPollingThread = new Thread(r, "Console Polling Thread"); //$NON-NLS-1$
 		fPollingThread.start();
 	}
 	

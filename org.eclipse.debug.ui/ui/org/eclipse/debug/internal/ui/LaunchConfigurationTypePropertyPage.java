@@ -48,7 +48,7 @@ public class LaunchConfigurationTypePropertyPage extends PropertyPage {
 		topComp.setLayout(topLayout);
 		
 		setSelectLabel(new Label(topComp, SWT.NONE));
-		getSelectLabel().setText("&Select default launch configuration type");
+		getSelectLabel().setText(DebugUIMessages.getString("LaunchConfigurationTypePropertyPage.&Select_default_launch_configuration_type_1")); //$NON-NLS-1$
 		
 		setConfigTypeCombo(new Combo(topComp, SWT.NONE));
 		initializeConfigComboItems();
@@ -70,7 +70,7 @@ public class LaunchConfigurationTypePropertyPage extends PropertyPage {
 		setConfigTypes(configTypes);
 		
 		String[] configTypeNames = new String[configTypes.length];
-		configTypeNames[0] = "none";
+		configTypeNames[0] = DebugUIMessages.getString("LaunchConfigurationTypePropertyPage.none_2"); //$NON-NLS-1$
 		for (int i = 1; i < configTypes.length; i++) {
 			configTypeNames[i] = configTypes[i].getName();			
 		}
@@ -118,7 +118,7 @@ public class LaunchConfigurationTypePropertyPage extends PropertyPage {
 			try {
 				getLaunchManager().setDefaultLaunchConfigurationType(getResource(), configTypeID);
 			} catch (CoreException e) {
-				DebugUIPlugin.errorDialog(getShell(), "Error", "Unable to set default launch configuration type.", e);
+				DebugUIPlugin.errorDialog(getShell(), DebugUIMessages.getString("LaunchConfigurationTypePropertyPage.Error_3"), DebugUIMessages.getString("LaunchConfigurationTypePropertyPage.Unable_to_set_default_launch_configuration_type_4"), e); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		return true;
@@ -171,7 +171,7 @@ public class LaunchConfigurationTypePropertyPage extends PropertyPage {
 	private Control createForInaccessibleResource(Composite parent) {
 		noDefaultAndApplyButton();
 		Label label= new Label(parent, SWT.LEFT);
-		label.setText("Launcher configuration type information is not available for an inaccessible resource.");
+		label.setText(DebugUIMessages.getString("LaunchConfigurationTypePropertyPage.Launcher_configuration_type_information_is_not_available_for_an_inaccessible_resource_5")); //$NON-NLS-1$
 		label.setFont(parent.getFont());
 		return label;
 	}

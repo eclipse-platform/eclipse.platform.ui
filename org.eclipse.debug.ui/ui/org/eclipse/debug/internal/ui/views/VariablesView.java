@@ -191,11 +191,11 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	private int[] fLastSashWeights;
 	private boolean fToggledDetailOnce;
 
-	protected static final String DETAIL_SELECT_ALL_ACTION = SELECT_ALL_ACTION + ".Detail";
-	protected static final String VARIABLES_SELECT_ALL_ACTION=  SELECT_ALL_ACTION + ".Variables";
+	protected static final String DETAIL_SELECT_ALL_ACTION = SELECT_ALL_ACTION + ".Detail"; //$NON-NLS-1$
+	protected static final String VARIABLES_SELECT_ALL_ACTION=  SELECT_ALL_ACTION + ".Variables"; //$NON-NLS-1$
 	
-	protected static final String DETAIL_COPY_ACTION = ITextEditorActionConstants.COPY + ".Detail";
-	protected static final String VARIABLES_COPY_ACTION=  ITextEditorActionConstants.COPY + ".Variables";
+	protected static final String DETAIL_COPY_ACTION = ITextEditorActionConstants.COPY + ".Detail"; //$NON-NLS-1$
+	protected static final String VARIABLES_COPY_ACTION=  ITextEditorActionConstants.COPY + ".Variables"; //$NON-NLS-1$
 
 	
 	/**
@@ -504,19 +504,19 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		setAction("ContentAssist", textAction); //$NON-NLS-1$
 		
 		textAction= new TextViewerAction(getDetailViewer(), getDetailViewer().getTextOperationTarget().SELECT_ALL);
-		textAction.configureAction("Select &All", "", "");
+		textAction.configureAction(DebugUIViewsMessages.getString("VariablesView.Select_&All_5"), "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		setAction(DETAIL_SELECT_ALL_ACTION, textAction);
 		
 		textAction= new TextViewerAction(getDetailViewer(), getDetailViewer().getTextOperationTarget().COPY);
-		textAction.configureAction("&Copy", "", ""); 
+		textAction.configureAction(DebugUIViewsMessages.getString("VariablesView.&Copy_8"), "", "");  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		setAction(DETAIL_COPY_ACTION, textAction);
 		
 		textAction= new TextViewerAction(getDetailViewer(), getDetailViewer().getTextOperationTarget().CUT);
-		textAction.configureAction("Cu&t", "", "");
+		textAction.configureAction(DebugUIViewsMessages.getString("VariablesView.Cu&t_11"), "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		setAction(ITextEditorActionConstants.CUT, textAction);
 		
 		textAction= new TextViewerAction(getDetailViewer(), getDetailViewer().getTextOperationTarget().PASTE);
-		textAction.configureAction("&Paste", "", "");
+		textAction.configureAction(DebugUIViewsMessages.getString("VariablesView.&Paste_14"), "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		setAction(ITextEditorActionConstants.PASTE, textAction);
 		
 		//XXX Still using "old" resource access
@@ -578,7 +578,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		menu.add(getAction("ContentAssist")); //$NON-NLS-1$
 		menu.add(new Separator());
 		menu.add(getAction(ITextEditorActionConstants.CUT));
-		menu.add(getAction(ITextEditorActionConstants.COPY + ".Detail"));
+		menu.add(getAction(ITextEditorActionConstants.COPY + ".Detail")); //$NON-NLS-1$
 		menu.add(getAction(ITextEditorActionConstants.PASTE));
 		menu.add(getAction(DETAIL_SELECT_ALL_ACTION));
 		menu.add(new Separator("FIND")); //$NON-NLS-1$
@@ -630,7 +630,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 			}
 		} catch (DebugException de) {
 			DebugUIPlugin.log(de);
-			getDetailDocument().set("<error occurred retrieving value>");
+			getDetailDocument().set(DebugUIViewsMessages.getString("VariablesView.<error_occurred_retrieving_value>_18")); //$NON-NLS-1$
 		}				
 	}
 	

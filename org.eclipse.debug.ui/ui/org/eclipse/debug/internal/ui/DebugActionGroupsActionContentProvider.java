@@ -36,12 +36,12 @@ public class DebugActionGroupsActionContentProvider implements IStructuredConten
 		}
 		if (actionContributionItems != null) {
 			if (actionContributionItems.isEmpty()) {
-				return new String[]{"Updated when Debug perspective activated"};
+				return new String[]{DebugUIMessages.getString("DebugActionGroupsActionContentProvider.Updated_when_Debug_perspective_activated_1")}; //$NON-NLS-1$
 			} else {
 				return actionContributionItems.toArray();
 			}
 		} else {
-			return new String[]{"Updated when Debug perspective activated"};
+			return new String[]{DebugUIMessages.getString("DebugActionGroupsActionContentProvider.Updated_when_Debug_perspective_activated_2")}; //$NON-NLS-1$
 		}
 	}
 	/**

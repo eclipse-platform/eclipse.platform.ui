@@ -368,11 +368,11 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 		fLaunchConfigurationShortcuts = new HashMap(infos.length);
 		for (int i = 0; i < infos.length; i++) {
 			IConfigurationElement configElement = infos[i];
-			String configTypeID = configElement.getAttribute("configTypeID");
-			IConfigurationElement[] children = configElement.getChildren("perspective");
+			String configTypeID = configElement.getAttribute("configTypeID"); //$NON-NLS-1$
+			IConfigurationElement[] children = configElement.getChildren("perspective"); //$NON-NLS-1$
 			List perspChildren = new ArrayList(children.length);
 			for (int j = 0; j < children.length; j++) {
-				String perspID = children[j].getAttribute("id");
+				String perspID = children[j].getAttribute("id"); //$NON-NLS-1$
 				perspChildren.add(perspID);
 			}
 			fLaunchConfigurationShortcuts.put(configTypeID, perspChildren);
