@@ -461,12 +461,14 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 					for (int i = 0; i < markers.length; i++) {
 						IMarker marker = markers[i];
 						Integer severity = (Integer)marker.getAttribute(IMarker.SEVERITY);
-						if(severity.intValue() == IMarker.SEVERITY_ERROR) {
-							property = ISynchronizeModelElement.PROPAGATED_ERROR_MARKER_PROPERTY;
-							break;
-						} else if(severity.intValue() == IMarker.SEVERITY_WARNING) {
-							property = ISynchronizeModelElement.PROPAGATED_WARNING_MARKER_PROPERTY;
-							// Keep going because there may be errors on other resources
+						if(severity != null) {
+							if(severity.intValue() == IMarker.SEVERITY_ERROR) {
+								property = ISynchronizeModelElement.PROPAGATED_ERROR_MARKER_PROPERTY;
+								break;
+							} else if(severity.intValue() == IMarker.SEVERITY_WARNING) {
+								property = ISynchronizeModelElement.PROPAGATED_WARNING_MARKER_PROPERTY;
+								// Keep going because there may be errors on other resources
+							}
 						}
 					}
 				}
