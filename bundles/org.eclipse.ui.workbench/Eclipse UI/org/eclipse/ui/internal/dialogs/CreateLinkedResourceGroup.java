@@ -138,9 +138,8 @@ private void createLinkLocationGroup(Composite locationGroup, boolean enabled) {
 				listener.handleEvent(new Event());
 		}
 	});
-	if (initialLinkTarget != null) {
+	if (initialLinkTarget != null)
 		linkTargetField.setText(initialLinkTarget);
-	}
 
 	// browse button
 	browseButton = new Button(linkTargetGroup, SWT.PUSH);
@@ -213,9 +212,9 @@ public void dispose() {
  * 	chose not to create a link.
  */
 public String getLinkTarget() {
-	if (createLink && linkTargetField != null && linkTargetField.isDisposed() == false) {
+	if (createLink && linkTargetField != null && linkTargetField.isDisposed() == false)
 		return linkTargetField.getText();
-	}
+
 	return null;
 }
 /**
@@ -228,38 +227,32 @@ private void handleLinkTargetBrowseButtonPressed() {
 	
 	if ("".equals(linkTargetName) == false) {	//$NON-NLS-1$
 		file = new File(linkTargetName);
-		if (file.exists() == false) {
+		if (file.exists() == false)
 			file = null;
-		}
 	}
 	if (type == IResource.FILE) {
 		FileDialog dialog = new FileDialog(linkTargetField.getShell());
 		if (file != null) {
-			if (file.isFile()) {
+			if (file.isFile())
 				dialog.setFileName(linkTargetName);
-			}
-			else {
+			else
 				dialog.setFilterPath(linkTargetName);
-			}
 		}
 		selection = dialog.open();		
 	}
 	else {
 		DirectoryDialog dialog = new DirectoryDialog(linkTargetField.getShell());
 		if (file != null) {
-			if (file.isFile()) {
+			if (file.isFile())
 				linkTargetName = file.getParent();
-			}
-			if (linkTargetName != null) {
+			if (linkTargetName != null)
 				dialog.setFilterPath(linkTargetName);
-			}
 		}
 		dialog.setMessage(WorkbenchMessages.getString("CreateLinkedResourceGroup.targetSelectionLabel")); //$NON-NLS-1$
 		selection = dialog.open();
 	}					
-	if (selection != null) {
+	if (selection != null)
 		linkTargetField.setText(selection);
-	}
 }
 /**
  * Opens a path variable selection dialog
@@ -269,18 +262,15 @@ private void handleVariablesButtonPressed() {
 	
 	// allow selecting file and folder variables when creating a 
 	// linked file
-	if (type == IResource.FILE) {
+	if (type == IResource.FILE)
 		variableTypes |= IResource.FILE;
-	}	
+
 	PathVariableSelectionDialog dialog = 
 		new PathVariableSelectionDialog(linkTargetField.getShell(), variableTypes);
-	
 	if (dialog.open() == IDialogConstants.OK_ID) {
-		String[] variableNames = (String[]) dialog.getResult();
-				
-		if (variableNames != null && variableNames.length == 1) {
+		String[] variableNames = (String[]) dialog.getResult();			
+		if (variableNames != null && variableNames.length == 1)
 			linkTargetField.setText(variableNames[0]);
-		}
 	}
 }
 /**
@@ -313,12 +303,11 @@ private void resolveVariable() {
 	if (path.equals(resolvedPath)) {
 		resolvedPathLabelText.setVisible(false);
 		resolvedPathLabelData.setVisible(false);
-	}
-	else {
+	} else {
 		resolvedPathLabelText.setVisible(true);
 		resolvedPathLabelData.setVisible(true);
-		resolvedPathLabelData.setText(resolvedPath.toOSString());
 	}
+	resolvedPathLabelData.setText(resolvedPath.toOSString());
 }
 /**
  * Sets the <code>GridData</code> on the specified button to
@@ -344,9 +333,8 @@ private GridData setButtonLayoutData(Button button) {
  */
 public void setLinkTarget(String target) {
 	initialLinkTarget = target;
-	if (linkTargetField != null && linkTargetField.isDisposed() == false) {
+	if (linkTargetField != null && linkTargetField.isDisposed() == false)
 		linkTargetField.setText(target);
-	}
 }
 /**
  * Validates the type of the given file against the link type specified
@@ -361,9 +349,7 @@ private IStatus validateFileType(File linkTargetFile) {
 		return createStatus(
 			IStatus.ERROR,
 			WorkbenchMessages.getString("CreateLinkedResourceGroup.linkTargetNotFile"));	//$NON-NLS-1$
-	}
-	else
-	if (type == IResource.FOLDER && linkTargetFile.isDirectory() == false) {
+	} else if (type == IResource.FOLDER && linkTargetFile.isDirectory() == false) {
 		return createStatus(
 			IStatus.ERROR,
 			WorkbenchMessages.getString("CreateLinkedResourceGroup.linkTargetNotFolder"));	//$NON-NLS-1$
@@ -388,21 +374,22 @@ public IStatus validateLinkLocation(IResource linkHandle) {
 		return createStatus(IStatus.OK, ""); //$NON-NLS-1$
 
 	IStatus locationStatus = workspace.validateLinkLocation(linkHandle,	path);
-	if (locationStatus.getSeverity() != IStatus.OK) {
+	if (locationStatus.getSeverity() == IStatus.ERROR)
 		return locationStatus;
-	}
+
 	// use the resolved link target name
 	linkTargetName = resolvedPathLabelData.getText();
 	path = new Path(linkTargetName);
 	File linkTargetFile = new Path(linkTargetName).toFile();
-	if (linkTargetFile.exists() == false) {
+	if (linkTargetFile.exists()) {
+		IStatus fileTypeStatus = validateFileType(linkTargetFile);
+		if (fileTypeStatus.isOK() == false)
+			return fileTypeStatus;
+	} else if (locationStatus.getSeverity() == IStatus.OK) {
+		// locationStatus takes precedence over missing location warning.
 		return createStatus(
 			IStatus.WARNING,
-			WorkbenchMessages.getString("CreateLinkedResourceGroup.linkTargetNonExistent"));	//$NON-NLS-1$
-	}
-	IStatus fileTypeStatus = validateFileType(linkTargetFile);
-	if (fileTypeStatus.isOK() == false) {
-		return fileTypeStatus;
+			WorkbenchMessages.getString("CreateLinkedResourceGroup.linkTargetNonExistent"));	//$NON-NLS-1$	
 	}
 	return locationStatus;
 }
