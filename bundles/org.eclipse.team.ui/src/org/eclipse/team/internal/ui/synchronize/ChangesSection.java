@@ -12,7 +12,6 @@ package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -23,6 +22,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.forms.HyperlinkGroup;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
@@ -245,7 +245,7 @@ public class ChangesSection extends Composite {
 			}
 			
 			Label warning = new Label(composite, SWT.NONE);
-			warning.setImage(Dialog.getImage(Dialog.DLG_IMG_MESSAGE_WARNING));
+			warning.setImage(TeamUIPlugin.getPlugin().getImage(ISharedImages.IMG_WARNING_OVR));
 			
 			Hyperlink link = forms.createHyperlink(composite, Policy.bind("ChangesSection.filterChange", Utils.modeToString(newMode)), SWT.WRAP); //$NON-NLS-1$
 			link.addHyperlinkListener(new HyperlinkAdapter() {
