@@ -11,7 +11,7 @@
 
 package org.eclipse.ant.internal.ui.editor.text;
 
-
+import org.eclipse.ant.internal.ui.editor.AntEditor;
 import org.eclipse.ant.internal.ui.editor.outline.AntModel;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -21,22 +21,24 @@ import org.eclipse.jface.text.reconciler.DirtyRegion;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension;
 import org.eclipse.ui.texteditor.IDocumentProvider;
-import org.eclipse.ui.texteditor.ITextEditor;
-
 
 public class XMLReconcilingStrategy implements IReconcilingStrategy, IReconcilingStrategyExtension {
 
 	/**
-	 * How long the reconciler will wait for further text changes before reconciling
+	 * How long the reconciler will wait for further text changes before
+	 * reconciling
 	 */
 	public static final int DELAY= 500;
-	
-	private ITextEditor fEditor;
 
-	public XMLReconcilingStrategy(ITextEditor editor) {
+	private AntEditor fEditor;
+
+	private AntFoldingStructureProvider fFoldingStructureProvider;
+
+	public XMLReconcilingStrategy(AntEditor editor) {
 		fEditor= editor;
+		fFoldingStructureProvider= new AntFoldingStructureProvider(editor);
 	}
-	
+
 	private void internalReconcile(DirtyRegion dirtyRegion) {
 		try {
 			IDocumentProvider provider= fEditor.getDocumentProvider();
@@ -45,40 +47,55 @@ public class XMLReconcilingStrategy implements IReconcilingStrategy, IReconcilin
 				AntModel model= documentProvider.getAntModel(fEditor.getEditorInput());
 				if (model != null) {
 					model.reconcile(dirtyRegion);
+					if (fEditor.isFoldingEnabled()) {
+						fFoldingStructureProvider.updateFoldingRegions(model);
+					}
 				}
-			} 
+			}
 		} catch (Exception e) {
 			AntUIPlugin.log(e);
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#reconcile(org.eclipse.jface.text.IRegion)
 	 */
 	public void reconcile(IRegion partition) {
 		internalReconcile(null);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#reconcile(org.eclipse.jface.text.reconciler.DirtyRegion, org.eclipse.jface.text.IRegion)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#reconcile(org.eclipse.jface.text.reconciler.DirtyRegion,
+	 *      org.eclipse.jface.text.IRegion)
 	 */
 	public void reconcile(DirtyRegion dirtyRegion, IRegion subRegion) {
 		internalReconcile(dirtyRegion);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#setDocument(org.eclipse.jface.text.IDocument)
 	 */
 	public void setDocument(IDocument document) {
+		fFoldingStructureProvider.setDocument(document);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension#setProgressMonitor(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void setProgressMonitor(IProgressMonitor monitor) {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension#initialReconcile()
 	 */
 	public void initialReconcile() {

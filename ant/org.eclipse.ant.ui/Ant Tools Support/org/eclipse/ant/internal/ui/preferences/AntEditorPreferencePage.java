@@ -318,6 +318,8 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND));		
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_TRIGGERS));
 	
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.EDITOR_FOLDING_ENABLED));
+		
 		for (int i= 0; i < fSyntaxColorListModel.length; i++) {
 			String colorKey= fSyntaxColorListModel[i][1];
 			addTextKeyToCover(overlayKeys, colorKey);
@@ -512,12 +514,27 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		item.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.10")); //$NON-NLS-1$
 		item.setControl(createProblemsTabContent(folder));
 					
+		item= new TabItem(folder, SWT.NONE);
+		item.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.19")); //$NON-NLS-1$
+		item.setControl(createFoldingTabContent(folder));
+		
 		initialize();
 		
 		applyDialogFont(folder);
 		return folder;
 	}
 	
+	private Control createFoldingTabContent(TabFolder folder) {
+		Composite composite= new Composite(folder, SWT.NULL);
+		
+		GridLayout layout= new GridLayout();
+		layout.numColumns= 2;
+		composite.setLayout(layout);
+		
+		addCheckBox(composite, AntPreferencesMessages.getString("AntEditorPreferencePage.20"), AntEditorPreferenceConstants.EDITOR_FOLDING_ENABLED, 0);  //$NON-NLS-1$
+		return composite;
+	}
+
 	private void initializeDefaultColors() {	
 		if (!getPreferenceStore().contains(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND)) {
 			RGB rgb= getControl().getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND).getRGB();
@@ -893,8 +910,6 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 			return;
 		}
 		fWorkingValues.put(data.getKey(), newValue);
-		
-		//validateSettings(data.getKey(), newValue);
 	}
 	
 	protected void updateControls() {

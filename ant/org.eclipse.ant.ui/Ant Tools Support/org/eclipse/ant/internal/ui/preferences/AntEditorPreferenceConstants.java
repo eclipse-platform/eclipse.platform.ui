@@ -187,6 +187,16 @@ public class AntEditorPreferenceConstants {
 	public static final String BUILDFILE_ERROR = "error"; //$NON-NLS-1$
 	public static final String BUILDFILE_WARNING = "warning"; //$NON-NLS-1$
 	public static final String BUILDFILE_IGNORE = "ignore"; //$NON-NLS-1$
+	
+	/**
+	 * A named preference that controls whether folding is enabled in the Ant editor.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 3.1
+	 */
+	public static final String EDITOR_FOLDING_ENABLED= "editor_folding_enabled"; //$NON-NLS-1$
 
 	public static void initializeDefaultValues(IPreferenceStore store) {
 		TextEditorPreferenceConstants.initializeDefaultValues(store);
@@ -213,5 +223,7 @@ public class AntEditorPreferenceConstants {
 		store.setDefault(PROBLEM_PROPERTIES, BUILDFILE_IGNORE);
 		store.setDefault(PROBLEM_IMPORTS, BUILDFILE_WARNING);
 		store.setDefault(PROBLEM_TASKS, BUILDFILE_ERROR);
+		
+		store.setDefault(EDITOR_FOLDING_ENABLED, true);
 	}
 }
