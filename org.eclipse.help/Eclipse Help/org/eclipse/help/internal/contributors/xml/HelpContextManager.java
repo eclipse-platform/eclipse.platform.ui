@@ -208,7 +208,10 @@ public class HelpContextManager implements ContextManager {
 						) {
 						HelpContext contextNode = (HelpContext) contextIterator.next();
 						String description = contextNode.getDescription();
-						description = getNLdescription(plugin, description);
+						// NOTE: a context can be defined in another plugin, so we'd better
+						//       make sure we use the contributor plugin for properties files
+						//description = getNLdescription(plugin, description);
+						description = getNLdescription(contextNode.getContributor().getPlugin().getUniqueIdentifier(), description);
 						contextNode.setDescription(description);
 						contexts.put(contextNode.getID(), contextNode);
 					}

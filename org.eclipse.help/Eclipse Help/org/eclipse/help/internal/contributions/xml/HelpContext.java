@@ -14,10 +14,12 @@ import org.eclipse.help.internal.contributions.*;
 /**
  * Context object, as defined in the map.xml
  */
-public class HelpContext
-	extends HelpContribution
-	implements Context, IContext {
+public class HelpContext extends HelpContribution
+	implements Context, IContext 
+{
 	private String description;
+	private Contributor contributor;
+	
 	/**
 	 * Context constructor comment.
 	 */
@@ -43,6 +45,11 @@ public class HelpContext
 		// description is already NL enabled when the XML files are parsed.
 		return description;
 	}
+	public Contributor getContributor()
+	{
+		return contributor;
+	}
+	
 	/** List of topic ids */
 	public IHelpTopic[] getRelatedTopics() {
 		if (children.size() > 0) {
@@ -59,5 +66,9 @@ public class HelpContext
 	}
 	public void setDescription(String s) {
 		description = s;
+	}
+	public void setContributor(Contributor contributor)
+	{
+		this.contributor = contributor;
 	}
 }

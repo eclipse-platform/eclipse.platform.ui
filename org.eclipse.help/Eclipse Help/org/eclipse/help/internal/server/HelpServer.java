@@ -49,8 +49,6 @@ public class HelpServer extends Thread {
 		}
 	}
 	public void close() {
-		// close the zips
-		PluginURL.clear();
 		// close the communication channel
 		try {
 			if (ssocket != null)

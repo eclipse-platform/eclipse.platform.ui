@@ -170,7 +170,8 @@ public class XMLContextContributor
 				updateIDs((Contribution) child);
 				updateHrefs((Topic) child);
 			} else
-				if (child instanceof Context) {
+				if (child instanceof HelpContext) {
+					((HelpContext)child).setContributor(this);
 					preprocess((Contribution) child);
 				}
 		}

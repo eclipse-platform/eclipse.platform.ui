@@ -5,14 +5,15 @@ package org.eclipse.help.internal.contributors.xml;
  */
 
 
-import org.xml.sax.*;
 import java.util.*;
 import java.io.*;
+import java.net.*;
+import org.xml.sax.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.util.*;
 import org.eclipse.help.internal.contributors.*;
 import org.eclipse.help.internal.contributions.*;
-import java.net.*;
+import org.eclipse.help.internal.server.PluginURL;
 import org.eclipse.help.internal.contributions.xml.HelpContribution;
 
 /**
@@ -90,18 +91,19 @@ public abstract class XMLContributor implements Contributor {
 	 */
 	protected Contribution load(String nameAttribute) {
 		Contribution contribution = null;
-		URL xmlURL = null;
+		String file = plugin.getUniqueIdentifier()+"/"+ configuration.getAttribute(nameAttribute);
+
 		try {
-			xmlURL =
-				new URL(plugin.getInstallURL(), configuration.getAttribute(nameAttribute));
-			InputStream stream = xmlURL.openStream();
+			PluginURL xmlURL = new PluginURL(file, "");
+			InputStream stream = xmlURL.openFileFromPlugin();
 			if (stream == null)
 				return null;
 
 			InputSource source = new InputSource(stream);
 			// set id info for parser exceptions.
 			// use toString method to capture protocol...etc
-			source.setSystemId(xmlURL.toString());
+			////////source.setSystemId(xmlURL.toString());
+			source.setSystemId(file);
 
 			ContributionParser parser = getContributionParser();
 			parser.parse(source);
@@ -112,11 +114,11 @@ public abstract class XMLContributor implements Contributor {
 		} catch (SAXException se) {
 			Logger.logError("", se);
 		} catch (IOException ioe) {
-			String msg = Resources.getString("E009", xmlURL.toString());
+			String msg = Resources.getString("E009", file);
 			Logger.logError(msg, ioe);
 			// now pass it to the RuntimeHelpStatus object explicitly because we
 			// still need to display errors even if Logging is turned off.
-			RuntimeHelpStatus.getInstance().addParseError(msg, xmlURL.toString());
+			RuntimeHelpStatus.getInstance().addParseError(msg, file);
 		}
 
 		return contribution;
