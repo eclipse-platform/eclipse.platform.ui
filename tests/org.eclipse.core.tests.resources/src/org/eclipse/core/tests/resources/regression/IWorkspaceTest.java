@@ -20,6 +20,7 @@ import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
 public class IWorkspaceTest extends EclipseWorkspaceTest {
 	public IWorkspaceTest() {
+		super();
 	}
 
 	public IWorkspaceTest(String name) {

@@ -84,7 +84,7 @@ public class BuilderTest extends AbstractBuilderTest {
 			IProjectDescription desc = project1.getDescription();
 			ICommand command = desc.newCommand();
 			command.setBuilderName(SortBuilder.BUILDER_NAME);
-			command.getArguments().put(SortBuilder.BUILD_ID, "Project1Build1");
+			command.getArguments().put(TestBuilder.BUILD_ID, "Project1Build1");
 			desc.setBuildSpec(new ICommand[] {command});
 			project1.setDescription(desc, getMonitor());
 		} catch (CoreException e) {
@@ -227,6 +227,7 @@ public class BuilderTest extends AbstractBuilderTest {
 			workspaceDesc.setBuildOrder(new String[] {project1.getName(), project2.getName()});
 			workspace.setDescription(workspaceDesc);
 		} catch (CoreException e) {
+			fail("0.0", e);
 		}
 		TestBuilder verifier = null;
 		try {
@@ -653,7 +654,7 @@ public class BuilderTest extends AbstractBuilderTest {
 	/**
 	 * Tests the lifecycle of a builder.
 	 */
-	public void testLifecycleEvents() throws CoreException {
+	public void testLifecycleEvents() {
 		// Create some resource handles
 		IProject project = getWorkspace().getRoot().getProject("PROJECT");
 		try {
@@ -750,7 +751,7 @@ public class BuilderTest extends AbstractBuilderTest {
 			IProjectDescription desc = proj1.getDescription();
 			ICommand command = desc.newCommand();
 			command.setBuilderName(SortBuilder.BUILDER_NAME);
-			command.getArguments().put(SortBuilder.BUILD_ID, "Build0");
+			command.getArguments().put(TestBuilder.BUILD_ID, "Build0");
 			desc.setBuildSpec(new ICommand[] {command});
 			proj1.setDescription(desc, getMonitor());
 		} catch (CoreException e) {

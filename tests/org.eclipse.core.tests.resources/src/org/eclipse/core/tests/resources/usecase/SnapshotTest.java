@@ -27,6 +27,7 @@ public class SnapshotTest extends WorkspaceSessionTest {
 	static final String COMMENT_2 = "COMMENT TWO";
 
 	public SnapshotTest() {
+		super();
 	}
 
 	public SnapshotTest(String name) {

@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.Path;
  * Supplies convenience methods and some representative element trees.
  */
 abstract class TestUtil extends WatsonTest implements IPathConstants {
-	private TestUtil(String name) {
+	public TestUtil(String name) {
 		super(name);
 	}
 

@@ -17,6 +17,7 @@ import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.osgi.service.environment.Constants;
 
 public class IFolderTest extends EclipseWorkspaceTest {
 	/**
@@ -52,7 +53,7 @@ public class IFolderTest extends EclipseWorkspaceTest {
 
 		// Only run this test on Linux for now since Windows lets you create
 		// a file within a read-only folder.
-		if (!BootLoader.getOS().equals(BootLoader.OS_LINUX))
+		if (!BootLoader.getOS().equals(Constants.OS_LINUX))
 			return;
 
 		IProject project = getWorkspace().getRoot().getProject("MyProject");

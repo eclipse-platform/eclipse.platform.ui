@@ -33,6 +33,7 @@ public class IResourceDeltaTest extends EclipseWorkspaceTest {
 	protected IResource[] allResources;
 
 	public IResourceDeltaTest() {
+		super();
 	}
 
 	public IResourceDeltaTest(String name) {
@@ -60,7 +61,7 @@ public class IResourceDeltaTest extends EclipseWorkspaceTest {
 
 		// Create and open the resources
 		IWorkspaceRunnable body = new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
+			public void run(IProgressMonitor monitor) {
 				ensureExistsInWorkspace(allResources, true);
 			}
 		};

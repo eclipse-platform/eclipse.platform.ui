@@ -31,6 +31,7 @@ public class ModelObjectReaderWriterTest extends EclipseWorkspaceTest {
 	static final IPath LONG_LOCATION = new Path("D:/eclipse/dev/i0218/eclipse/pffds/fds//fds///fdsfsdfsd///fdsfdsf/fsdfsdfsd/lugi/dsds/fsd//f/ffdsfdsf/fsdfdsfsd/fds//fdsfdsfdsf/fdsfdsfds/fdsfdsfdsf/fdsfdsfdsds/ns/org.eclipse.help.ui_2.1.0/contexts.xml");
 
 	public ModelObjectReaderWriterTest() {
+		super();
 	}
 
 	public ModelObjectReaderWriterTest(String name) {
@@ -208,17 +209,6 @@ public class ModelObjectReaderWriterTest extends EclipseWorkspaceTest {
 		}
 	}
 
-	private String[] getPathMembers(URL path) {
-		String[] list = null;
-		String protocol = path.getProtocol();
-		if (protocol.equals("file")) { //$NON-NLS-1$
-			list = (new java.io.File(path.getFile())).list();
-		} else {
-			// XXX: attempt to read URL and see if we got html dir page
-		}
-		return list == null ? new String[0] : list;
-	}
-
 	private void compareProjectDescriptions(int errorTag, ProjectDescription description, ProjectDescription description2) {
 		assertTrue(errorTag + ".0", description.getName().equals(description2.getName()));
 		String comment = description.getComment();
@@ -271,7 +261,7 @@ public class ModelObjectReaderWriterTest extends EclipseWorkspaceTest {
 				if (value == null)
 					assertNull(errorTag + ".2." + (i + 1) + x, value2);
 				else
-					assertTrue(errorTag + ".3." + (i + 1) + x, ((String) args.get(key)).equals(((String) args2.get(key))));
+					assertTrue(errorTag + ".3." + (i + 1) + x, ((String) args.get(key)).equals((args2.get(key))));
 			}
 		}
 	}

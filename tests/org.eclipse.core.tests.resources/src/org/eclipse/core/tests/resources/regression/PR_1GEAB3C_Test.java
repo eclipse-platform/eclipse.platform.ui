@@ -23,6 +23,7 @@ public class PR_1GEAB3C_Test extends EclipseWorkspaceTest {
 	protected static final String VERIFIER_NAME = "TestListener";
 
 	public PR_1GEAB3C_Test() {
+		super();
 	}
 
 	public PR_1GEAB3C_Test(String name) {

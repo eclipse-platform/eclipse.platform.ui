@@ -25,6 +25,7 @@ public class DeltaDataTreeTest extends DataTreeTest {
 	DeltaDataTree tree, emptyTree, changedTree, deltaTree;
 
 	public DeltaDataTreeTest() {
+		super();
 	}
 
 	public DeltaDataTreeTest(String name) {

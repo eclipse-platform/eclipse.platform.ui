@@ -28,6 +28,7 @@ public class WorkspaceTest extends EclipseWorkspaceTest {
 	 * called by user code.
 	 */
 	public WorkspaceTest() {
+		super();
 	}
 
 	public WorkspaceTest(String name) {
@@ -64,7 +65,7 @@ public class WorkspaceTest extends EclipseWorkspaceTest {
 		QualifiedName name = new QualifiedName("itp-test", "testProperty");
 		target.setPersistentProperty(name, value);
 		// see if we can get the property
-		assertTrue("get not equal set", ((String) target.getPersistentProperty(name)).equals(value));
+		assertTrue("get not equal set", target.getPersistentProperty(name).equals(value));
 		// see what happens if we get a non-existant property
 		name = new QualifiedName("itp-test", "testNonProperty");
 		assertNull("non-existant persistent property not missing", target.getPersistentProperty(name));
@@ -361,7 +362,7 @@ public class WorkspaceTest extends EclipseWorkspaceTest {
 		String value = "this is a test property value";
 		QualifiedName name = new QualifiedName("itp-test", "testProperty");
 		target.setPersistentProperty(name, value);
-		assertTrue("get not equal set", ((String) target.getPersistentProperty(name)).equals(value));
+		assertTrue("get not equal set", target.getPersistentProperty(name).equals(value));
 	}
 
 	public void testSimpleMove() throws Throwable {

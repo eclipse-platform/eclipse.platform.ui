@@ -99,6 +99,7 @@ public class CopyTest extends LocalStoreTest {
 			folder.copy(destination.getFullPath(), true, null);
 			fail("3.1");
 		} catch (RuntimeException e) {
+			// expected
 		} catch (CoreException e) {
 			fail("3.2", e);
 		}
@@ -140,6 +141,7 @@ public class CopyTest extends LocalStoreTest {
 			file.copy(destination.getFullPath(), true, null);
 			fail("5.1");
 		} catch (CoreException e) {
+			// expected
 		}
 	}
 }

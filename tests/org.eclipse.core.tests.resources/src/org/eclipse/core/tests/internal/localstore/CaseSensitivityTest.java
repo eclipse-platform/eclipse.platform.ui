@@ -416,6 +416,7 @@ public class CaseSensitivityTest extends LocalStoreTest {
 			folder.move(Path.ROOT.append(folder.getName()), true, null);
 			fail("1.1");
 		} catch (CoreException e) {
+			// expected
 		}
 
 		// try to copy the folder from source project to the root, which makes it a project.
@@ -424,6 +425,7 @@ public class CaseSensitivityTest extends LocalStoreTest {
 			folder.copy(Path.ROOT.append(folder.getName()), true, null);
 			fail("1.2");
 		} catch (CoreException e) {
+			// expected
 		}
 	}
 
@@ -445,6 +447,7 @@ public class CaseSensitivityTest extends LocalStoreTest {
 			sourceProject.move(destinationProject.getFullPath().append(sourceProject.getName()), true, null);
 			fail("1.1");
 		} catch (CoreException e) {
+			// expected
 		}
 
 		// try to copy the source project to the destination project, which makes it a folder.
@@ -453,6 +456,7 @@ public class CaseSensitivityTest extends LocalStoreTest {
 			sourceProject.copy(destinationProject.getFullPath().append(sourceProject.getName()), true, null);
 			fail("1.2");
 		} catch (CoreException e) {
+			// expected
 		}
 	}
 

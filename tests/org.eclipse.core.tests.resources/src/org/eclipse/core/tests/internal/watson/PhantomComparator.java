@@ -22,6 +22,7 @@ public class PhantomComparator extends TestElementComparator implements IElement
 	 * Force clients to use the singleton
 	 */
 	protected PhantomComparator() {
+		super();
 	}
 
 	/**

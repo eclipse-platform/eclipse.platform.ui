@@ -30,12 +30,14 @@ public class TestNature implements IProjectNature {
 	 * @see IProjectNature#configure()
 	 */
 	public void configure() throws CoreException {
+		// do nothing
 	}
 
 	/**
 	 * @see IProjectNature#deconfigure()
 	 */
 	public void deconfigure() throws CoreException {
+		// do nothing
 	}
 
 	/**

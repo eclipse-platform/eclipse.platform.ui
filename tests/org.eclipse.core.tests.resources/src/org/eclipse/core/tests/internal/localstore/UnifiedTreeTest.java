@@ -162,7 +162,6 @@ public class UnifiedTreeTest extends LocalStoreTest {
 				/* test the node.getLocalLocation() method */
 				String key = node.getLocalLocation();
 				assertEquals("1.0", node.getResource().getLocation().toOSString(), key);
-				;
 
 				/* force children to be added to the queue */
 				node.getChildren();

@@ -23,6 +23,7 @@ public abstract class IResourceTest extends EclipseWorkspaceTest {
 	public static String FILE = "File";
 
 	public IResourceTest() {
+		super();
 	}
 
 	public IResourceTest(String name) {
@@ -46,11 +47,13 @@ public abstract class IResourceTest extends EclipseWorkspaceTest {
 			resource.getSessionProperty(Q_NAME_SESSION);
 			fail(method + "2.1");
 		} catch (CoreException e) {
+			// expected
 		}
 		try {
 			resource.setSessionProperty(Q_NAME_SESSION, STRING_VALUE);
 			fail(method + "2.2");
 		} catch (CoreException e) {
+			// expected
 		}
 	}
 }

@@ -22,6 +22,7 @@ import org.eclipse.osgi.service.environment.Constants;
 
 public class IProjectTest extends EclipseWorkspaceTest {
 	public IProjectTest() {
+		super();
 	}
 
 	public IProjectTest(String name) {
@@ -70,11 +71,13 @@ public class IProjectTest extends EclipseWorkspaceTest {
 			project.hasNature(NATURE_SIMPLE);
 			fail("1.0");
 		} catch (CoreException e) {
+			// expected
 		}
 		try {
 			project.hasNature(NATURE_MISSING);
 			fail("1.1");
 		} catch (CoreException e) {
+			// expected
 		}
 		try {
 			project.create(getMonitor());
@@ -86,11 +89,13 @@ public class IProjectTest extends EclipseWorkspaceTest {
 			project.hasNature(NATURE_SIMPLE);
 			fail("2.0");
 		} catch (CoreException e) {
+			// expected
 		}
 		try {
 			project.hasNature(NATURE_MISSING);
 			fail("2.1");
 		} catch (CoreException e) {
+			// expected
 		}
 		try {
 			project.open(getMonitor());
@@ -175,6 +180,7 @@ public class IProjectTest extends EclipseWorkspaceTest {
 				project.open(getMonitor());
 				fail("1.1 " + names[i]);
 			} catch (CoreException e) {
+				// expected
 			}
 			assertTrue("1.2 " + names[i], !project.exists());
 			assertTrue("1.3 " + names[i], !project.isOpen());
@@ -214,11 +220,13 @@ public class IProjectTest extends EclipseWorkspaceTest {
 			project.isNatureEnabled(NATURE_SIMPLE);
 			fail("1.0");
 		} catch (CoreException e) {
+			// expected
 		}
 		try {
 			project.isNatureEnabled(NATURE_MISSING);
 			fail("1.1");
 		} catch (CoreException e) {
+			// expected
 		}
 		try {
 			project.create(getMonitor());
@@ -230,11 +238,13 @@ public class IProjectTest extends EclipseWorkspaceTest {
 			project.isNatureEnabled(NATURE_SIMPLE);
 			fail("2.0");
 		} catch (CoreException e) {
+			// expected
 		}
 		try {
 			project.isNatureEnabled(NATURE_MISSING);
 			fail("2.1");
 		} catch (CoreException e) {
+			// expected
 		}
 		try {
 			project.open(getMonitor());
@@ -489,6 +499,7 @@ public class IProjectTest extends EclipseWorkspaceTest {
 			source.copy(destination.getFullPath(), true, getMonitor());
 			fail("3.1");
 		} catch (CoreException e) {
+			// expected
 		}
 		try {
 			getWorkspace().getRoot().delete(false, getMonitor());
@@ -510,6 +521,7 @@ public class IProjectTest extends EclipseWorkspaceTest {
 			source.copy(destination.getFullPath(), true, getMonitor());
 			fail("4.1");
 		} catch (CoreException e) {
+			// expected
 		}
 		// cleanup
 		try {
@@ -1276,6 +1288,7 @@ public class IProjectTest extends EclipseWorkspaceTest {
 				project.delete(updateFlags, getMonitor());
 				fail("6.3");
 			} catch (CoreException e) {
+				// expected
 			}
 			assertTrue("6.4", project.exists());
 			// delete was best effort so this file should be gone.
@@ -2246,6 +2259,7 @@ public class IProjectTest extends EclipseWorkspaceTest {
 			project.delete(updateFlags, getMonitor());
 			fail("6.2");
 		} catch (CoreException e) {
+			// expected
 		}
 		assertTrue("6.3", project.exists());
 		assertTrue("6.4", !file.exists());
@@ -2341,7 +2355,7 @@ public class IProjectTest extends EclipseWorkspaceTest {
 
 			// make sure all the resources still exist.	
 			IResourceVisitor visitor = new IResourceVisitor() {
-				public boolean visit(IResource resource) throws CoreException {
+				public boolean visit(IResource resource) {
 					assertExistsInWorkspace("2.1." + resource.getFullPath(), resource);
 					return true;
 				}
@@ -2489,6 +2503,7 @@ public class IProjectTest extends EclipseWorkspaceTest {
 			source.move(destination.getFullPath(), true, getMonitor());
 			fail("3.3");
 		} catch (CoreException e) {
+			// expected
 		}
 
 		// create a source folder and move it to be a project.
@@ -2502,6 +2517,7 @@ public class IProjectTest extends EclipseWorkspaceTest {
 			source.move(destination.getFullPath(), true, getMonitor());
 			fail("4.3");
 		} catch (CoreException e) {
+			// expected
 		}
 	}
 

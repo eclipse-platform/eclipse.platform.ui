@@ -14,6 +14,7 @@ import java.io.ByteArrayInputStream;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.internal.builders.SortBuilder;
+import org.eclipse.core.tests.internal.builders.TestBuilder;
 
 /**
  * Regression test for 1G1N9GZ: ITPCORE:WIN2000 - ElementTree corruption when linking trees
@@ -45,7 +46,7 @@ public class Test1G1N9GZ extends WorkspaceSerializationTest {
 		IProjectDescription desc = p1.getDescription();
 		ICommand command = desc.newCommand();
 		command.setBuilderName(SortBuilder.BUILDER_NAME);
-		command.getArguments().put(SortBuilder.BUILD_ID, "P1Build1");
+		command.getArguments().put(TestBuilder.BUILD_ID, "P1Build1");
 		desc.setBuildSpec(new ICommand[] {command});
 		p1.setDescription(desc, getMonitor());
 
@@ -56,7 +57,7 @@ public class Test1G1N9GZ extends WorkspaceSerializationTest {
 		desc = p1.getDescription();
 		command = desc.newCommand();
 		command.setBuilderName(SortBuilder.BUILDER_NAME);
-		command.getArguments().put(SortBuilder.BUILD_ID, "P2Build1");
+		command.getArguments().put(TestBuilder.BUILD_ID, "P2Build1");
 		desc.setBuildSpec(new ICommand[] {command});
 		p1.setDescription(desc, getMonitor());
 
@@ -68,7 +69,7 @@ public class Test1G1N9GZ extends WorkspaceSerializationTest {
 		workspace.save(true, getMonitor());
 	}
 
-	public void test3() throws CoreException {
+	public void test3() {
 		/* get new handles */
 		IProject p1 = workspace.getRoot().getProject("p1");
 		IProject p2 = workspace.getRoot().getProject("p2");

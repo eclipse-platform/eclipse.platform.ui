@@ -992,6 +992,7 @@ public class MarkerTest extends EclipseWorkspaceTest {
 				fail("1.99", e);
 			}
 
+			// TODO
 			// verify marker deltas
 			//		IResourceVisitor visitor = new IResourceVisitor() {
 			//			public boolean visit(IResource resource) throws CoreException {
@@ -1078,6 +1079,7 @@ public class MarkerTest extends EclipseWorkspaceTest {
 					fail("2.99." + resource.getFullPath(), e);
 				}
 
+				// TODO
 				// REMOVE + ADD = CHANGE
 				//try {
 				//final IMarker[] markers = new IMarker[1];

@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.Path;
  */
 public class TreeFlatteningTest extends ElementTreeSerializationTest {
 	public TreeFlatteningTest() {
+		super();
 	}
 
 	public TreeFlatteningTest(String name) {

@@ -38,12 +38,14 @@ public class IWorkspaceRootTest extends EclipseWorkspaceTest {
 	 * Tests the API method findContainersForLocation.
 	 */
 	public void testFindContainersForLocation() {
+		// TODO
 	}
 
 	/**
 	 * Tests the API method findFilesForLocation.
 	 */
 	public void testFindFilesForLocation() {
+		// TODO
 	}
 
 	/**
@@ -74,7 +76,7 @@ public class IWorkspaceRootTest extends EclipseWorkspaceTest {
 		}
 
 		try {
-			String storedValue = (String) root.getPersistentProperty(name);
+			String storedValue = root.getPersistentProperty(name);
 			assertEquals("2.0", value, storedValue);
 		} catch (CoreException e) {
 			fail("2.1", e);
@@ -82,7 +84,7 @@ public class IWorkspaceRootTest extends EclipseWorkspaceTest {
 
 		try {
 			name = new QualifiedName("test", "testNonProperty");
-			String storedValue = (String) root.getPersistentProperty(name);
+			String storedValue = root.getPersistentProperty(name);
 			assertEquals("3.0", null, storedValue);
 		} catch (CoreException e) {
 			fail("3.1", e);
@@ -112,7 +114,7 @@ public class IWorkspaceRootTest extends EclipseWorkspaceTest {
 			final String[] storedValue = new String[1];
 			getWorkspace().run(new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) throws CoreException {
-					storedValue[0] = (String) root.getPersistentProperty(name);
+					storedValue[0] = root.getPersistentProperty(name);
 				}
 			}, getMonitor());
 			assertEquals("2.0", value, storedValue[0]);
@@ -125,7 +127,7 @@ public class IWorkspaceRootTest extends EclipseWorkspaceTest {
 			final String[] storedValue = new String[1];
 			getWorkspace().run(new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) throws CoreException {
-					storedValue[0] = (String) root.getPersistentProperty(name2);
+					storedValue[0] = root.getPersistentProperty(name2);
 				}
 			}, getMonitor());
 			assertEquals("3.0", null, storedValue[0]);

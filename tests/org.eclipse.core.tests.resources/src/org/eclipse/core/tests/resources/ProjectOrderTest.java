@@ -25,6 +25,7 @@ import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 public class ProjectOrderTest extends EclipseWorkspaceTest {
 
 	public ProjectOrderTest() {
+		super();
 	}
 
 	public ProjectOrderTest(String name) {

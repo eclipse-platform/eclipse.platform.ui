@@ -27,6 +27,7 @@ public class ISynchronizerTest extends EclipseWorkspaceTest {
 	public IResource[] resources;
 
 	public ISynchronizerTest() {
+		super();
 	}
 
 	public ISynchronizerTest(String name) {
@@ -119,7 +120,7 @@ public class ISynchronizerTest extends EclipseWorkspaceTest {
 
 		// get the info and ensure its the same
 		visitor = new IResourceVisitor() {
-			public boolean visit(IResource resource) throws CoreException {
+			public boolean visit(IResource resource) {
 				try {
 					byte[] actual = synchronizer.getSyncInfo(qname, resource);
 					if (resource.getType() == IResource.ROOT) {
@@ -160,7 +161,7 @@ public class ISynchronizerTest extends EclipseWorkspaceTest {
 
 		// sync info should remain for the resources since they are now phantoms
 		visitor = new IResourceVisitor() {
-			public boolean visit(IResource resource) throws CoreException {
+			public boolean visit(IResource resource) {
 				try {
 					byte[] actual = synchronizer.getSyncInfo(qname, resource);
 					if (resource.getType() == IResource.ROOT) {
@@ -194,7 +195,7 @@ public class ISynchronizerTest extends EclipseWorkspaceTest {
 
 		// sync info should be gone since projects can't become phantoms
 		visitor = new IResourceVisitor() {
-			public boolean visit(IResource resource) throws CoreException {
+			public boolean visit(IResource resource) {
 				try {
 					assertNull("5.0." + resource.getFullPath(), synchronizer.getSyncInfo(qname, resource));
 				} catch (CoreException e) {
@@ -237,7 +238,7 @@ public class ISynchronizerTest extends EclipseWorkspaceTest {
 
 		// get the info and ensure its the same
 		visitor = new IResourceVisitor() {
-			public boolean visit(IResource resource) throws CoreException {
+			public boolean visit(IResource resource) {
 				try {
 					byte[] actual = synchronizer.getSyncInfo(qname, resource);
 					if (resource.getType() == IResource.ROOT) {
@@ -280,7 +281,7 @@ public class ISynchronizerTest extends EclipseWorkspaceTest {
 
 		// sync info should remain for the resources since they are now phantoms
 		visitor = new IResourceVisitor() {
-			public boolean visit(IResource resource) throws CoreException {
+			public boolean visit(IResource resource) {
 				try {
 					byte[] actual = synchronizer.getSyncInfo(qname, resource);
 					if (resource.getType() == IResource.ROOT) {
@@ -503,7 +504,7 @@ public class ISynchronizerTest extends EclipseWorkspaceTest {
 		// register the sync partner and set the sync info on the resources
 		synchronizer.add(qname);
 		IResourceVisitor visitor = new IResourceVisitor() {
-			public boolean visit(IResource resource) throws CoreException {
+			public boolean visit(IResource resource) {
 				if (resource.getType() == IResource.ROOT)
 					return true;
 				try {
@@ -540,7 +541,7 @@ public class ISynchronizerTest extends EclipseWorkspaceTest {
 		final DataOutputStream output = o1;
 		final List list = new ArrayList(5);
 		visitor = new IResourceVisitor() {
-			public boolean visit(final IResource resource) throws CoreException {
+			public boolean visit(final IResource resource) {
 				try {
 					ResourceInfo info = ((Resource) resource).getResourceInfo(false, false);
 					if (info == null)
@@ -766,7 +767,7 @@ public class ISynchronizerTest extends EclipseWorkspaceTest {
 		// setup the sync bytes
 		final Hashtable table = new Hashtable(10);
 		IResourceVisitor visitor = new IResourceVisitor() {
-			public boolean visit(IResource resource) throws CoreException {
+			public boolean visit(IResource resource) {
 				if (resource.getType() == IResource.ROOT)
 					return true;
 				byte[] b = getRandomString().getBytes();
@@ -782,7 +783,7 @@ public class ISynchronizerTest extends EclipseWorkspaceTest {
 
 		// should not be able to set sync info before the target has been registered.
 		visitor = new IResourceVisitor() {
-			public boolean visit(IResource resource) throws CoreException {
+			public boolean visit(IResource resource) {
 				if (resource.getType() == IResource.ROOT)
 					return true;
 				try {
@@ -801,7 +802,7 @@ public class ISynchronizerTest extends EclipseWorkspaceTest {
 
 		// should not be able to get sync info before the target has been registered
 		visitor = new IResourceVisitor() {
-			public boolean visit(IResource resource) throws CoreException {
+			public boolean visit(IResource resource) {
 				try {
 					synchronizer.getSyncInfo(qname, resource);
 					assertTrue("2.0." + resource.getFullPath(), false);
@@ -821,7 +822,7 @@ public class ISynchronizerTest extends EclipseWorkspaceTest {
 
 		// there shouldn't be any info yet
 		visitor = new IResourceVisitor() {
-			public boolean visit(IResource resource) throws CoreException {
+			public boolean visit(IResource resource) {
 				try {
 					byte[] actual = synchronizer.getSyncInfo(qname, resource);
 					assertNull("3.0." + resource.getFullPath(), actual);
@@ -839,7 +840,7 @@ public class ISynchronizerTest extends EclipseWorkspaceTest {
 
 		// set the sync info
 		visitor = new IResourceVisitor() {
-			public boolean visit(IResource resource) throws CoreException {
+			public boolean visit(IResource resource) {
 				try {
 					synchronizer.setSyncInfo(qname, resource, (byte[]) table.get(resource.getFullPath()));
 				} catch (CoreException e) {
@@ -856,7 +857,7 @@ public class ISynchronizerTest extends EclipseWorkspaceTest {
 
 		// get the info and ensure its the same
 		visitor = new IResourceVisitor() {
-			public boolean visit(IResource resource) throws CoreException {
+			public boolean visit(IResource resource) {
 				try {
 					byte[] actual = synchronizer.getSyncInfo(qname, resource);
 					if (resource.getType() == IResource.ROOT) {
@@ -880,7 +881,7 @@ public class ISynchronizerTest extends EclipseWorkspaceTest {
 
 		// change the info and then set it
 		visitor = new IResourceVisitor() {
-			public boolean visit(IResource resource) throws CoreException {
+			public boolean visit(IResource resource) {
 				if (resource.getType() == IResource.ROOT)
 					return true;
 				try {
@@ -901,7 +902,7 @@ public class ISynchronizerTest extends EclipseWorkspaceTest {
 
 		// get the new info
 		visitor = new IResourceVisitor() {
-			public boolean visit(IResource resource) throws CoreException {
+			public boolean visit(IResource resource) {
 				try {
 					byte[] actual = synchronizer.getSyncInfo(qname, resource);
 					if (resource.getType() == IResource.ROOT) {
@@ -928,7 +929,7 @@ public class ISynchronizerTest extends EclipseWorkspaceTest {
 
 		// should not be able to get sync info because the target has been unregistered
 		visitor = new IResourceVisitor() {
-			public boolean visit(IResource resource) throws CoreException {
+			public boolean visit(IResource resource) {
 				try {
 					synchronizer.getSyncInfo(qname, resource);
 					assertTrue("9.0." + resource.getFullPath(), false);

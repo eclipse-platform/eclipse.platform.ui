@@ -187,6 +187,7 @@ public class BasicAliasTest extends EclipseWorkspaceTest {
 	}
 
 	public void testCloseOpenProject() {
+		// TODO
 	}
 
 	/**
@@ -425,15 +426,19 @@ public class BasicAliasTest extends EclipseWorkspaceTest {
 	}
 
 	public void testCreateDeleteLink() {
+		// TODO
 	}
 
 	public void testCreateOpenProject() {
+		// TODO
 	}
 
 	public void testDeepCopyLink() {
+		// TODO
 	}
 
 	public void testDeepMoveLink() {
+		// TODO
 	}
 
 	public void testDeleteLink() {
@@ -458,6 +463,7 @@ public class BasicAliasTest extends EclipseWorkspaceTest {
 	}
 
 	public void testDeleteProject() {
+		// TODO
 	}
 
 	public void testDeleteProjectContents() {
@@ -597,14 +603,18 @@ public class BasicAliasTest extends EclipseWorkspaceTest {
 	}
 
 	public void testMoveFolder() {
+		// TODO
 	}
 
 	public void testShallowCopyLink() {
+		// TODO
 	}
 
 	public void testShallowMoveLink() {
+		// TODO
 	}
 
 	public void testShallowDeleteProject() {
+		// TODO
 	}
 }

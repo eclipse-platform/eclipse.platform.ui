@@ -18,6 +18,7 @@ import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
 public class ConcurrencyTest extends EclipseWorkspaceTest {
 	public ConcurrencyTest() {
+		super();
 	}
 
 	public ConcurrencyTest(String name) {

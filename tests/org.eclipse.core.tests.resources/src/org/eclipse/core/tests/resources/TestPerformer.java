@@ -32,6 +32,7 @@ abstract public class TestPerformer {
 	}
 
 	public void cleanUp(Object[] args, int count) {
+		// do nothing
 	}
 
 	public Object[] interestingOldState(Object[] args) throws Exception {

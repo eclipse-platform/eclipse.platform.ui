@@ -16,7 +16,6 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.properties.PropertyManager;
 import org.eclipse.core.internal.properties.StoredProperty;
-import org.eclipse.core.internal.resources.Resource;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -58,7 +57,6 @@ public class PropertyManagerTest extends LocalStoreTest {
 		final String[] values = new String[N];
 		createProperties(target, names, values);
 
-		final int THREAD_COUNT = 3;
 		final CoreException[] errorPointer = new CoreException[1];
 		Thread[] threads = createThreads(target, names, values, errorPointer);
 		join(threads);
@@ -97,7 +95,8 @@ public class PropertyManagerTest extends LocalStoreTest {
 			try {
 				//give the threads a chance to start
 				Thread.sleep(10);
-			} catch (InterruptedException e1) {
+			} catch (InterruptedException e) {
+				fail("1.98", e);
 			}
 			try {
 				//delete the project while the threads are still running
@@ -123,6 +122,7 @@ public class PropertyManagerTest extends LocalStoreTest {
 			try {
 				threads[j].join();
 			} catch (InterruptedException e) {
+				fail("#join", e);
 			}
 		}
 	}
@@ -262,7 +262,7 @@ public class PropertyManagerTest extends LocalStoreTest {
 		manager.setProperty(target, propName, propValue);
 		assertTrue("1.1", manager.getProperty(target, propName).equals(propValue));
 		/* delete */
-		manager.deleteProperties((Resource) target, IResource.DEPTH_INFINITE);
+		manager.deleteProperties(target, IResource.DEPTH_INFINITE);
 		assertTrue("1.3", manager.getProperty(target, propName) == null);
 
 		//test deep deletion of project properties	
@@ -318,6 +318,7 @@ public class PropertyManagerTest extends LocalStoreTest {
 			//should fail
 			fail("1.0");
 		} catch (CoreException e) {
+			// expected
 		}
 
 		// remove trash
@@ -354,7 +355,7 @@ public class PropertyManagerTest extends LocalStoreTest {
 			manager.setProperty(target, prop.getName(), prop.getStringValue());
 			assertTrue("1.0." + prop.getName(), prop.getStringValue().equals(manager.getProperty(target, prop.getName())));
 		}
-		manager.deleteProperties((Resource) target, IResource.DEPTH_INFINITE);
+		manager.deleteProperties(target, IResource.DEPTH_INFINITE);
 
 		// remove trash
 		target.delete(false, monitor);

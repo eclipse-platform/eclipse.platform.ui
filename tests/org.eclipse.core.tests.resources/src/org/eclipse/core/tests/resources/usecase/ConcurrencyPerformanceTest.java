@@ -33,7 +33,7 @@ public class ConcurrencyPerformanceTest extends CorePerformanceTest {
 	public void testSimpleCalls() throws CoreException {
 
 		IWorkspaceRunnable job = new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
+			public void run(IProgressMonitor monitor) {
 			}
 		};
 		startBench();

@@ -18,6 +18,7 @@ import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.*;
+import org.eclipse.osgi.service.environment.Constants;
 
 /**
  * Tests the following API methods:
@@ -156,7 +157,7 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 		}
 
 		//try to create with local path that can never exist
-		if (BootLoader.getOS().equals(BootLoader.OS_WIN32))
+		if (BootLoader.getOS().equals(Constants.OS_WIN32))
 			location = new Path("b:\\does\\not\\exist");
 		else
 			location = new Path("/dev/null/does/not/exist");

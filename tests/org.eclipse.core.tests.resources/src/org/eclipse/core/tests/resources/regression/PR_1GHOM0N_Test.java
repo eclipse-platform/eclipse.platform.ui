@@ -19,6 +19,7 @@ import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
 public class PR_1GHOM0N_Test extends EclipseWorkspaceTest {
 	public PR_1GHOM0N_Test() {
+		super();
 	}
 
 	public PR_1GHOM0N_Test(String name) {

@@ -47,6 +47,7 @@ public class IResourceChangeListenerTest extends EclipseWorkspaceTest {
 	}
 
 	public IResourceChangeListenerTest() {
+		super();
 	}
 
 	public IResourceChangeListenerTest(String name) {
@@ -73,7 +74,7 @@ public class IResourceChangeListenerTest extends EclipseWorkspaceTest {
 						long start = System.currentTimeMillis();
 						IResourceDelta delta = event.getDelta();
 						delta.accept(new IResourceDeltaVisitor() {
-							public boolean visit(IResourceDelta delta2) throws CoreException {
+							public boolean visit(IResourceDelta delta2) {
 								fCounter++;
 								return true;
 							}
@@ -164,7 +165,7 @@ public class IResourceChangeListenerTest extends EclipseWorkspaceTest {
 	void assertNotDeltaVisits(final String message, IResourceDelta delta, final IResource[] resources) {
 		try {
 			delta.accept(new IResourceDeltaVisitor() {
-				public boolean visit(IResourceDelta delta2) throws CoreException {
+				public boolean visit(IResourceDelta delta2) {
 					IResource deltaResource = delta2.getResource();
 					for (int i = 0; i < resources.length; i++) {
 						assertTrue(message, !deltaResource.equals(resources[i]));
@@ -644,7 +645,7 @@ public class IResourceChangeListenerTest extends EclipseWorkspaceTest {
 					notifyAll();
 				}
 			}
-		};
+		}
 		Listener1 listener = new Listener1();
 		try {
 			getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_CHANGE);

@@ -32,6 +32,7 @@ public class ResourceURLTest extends EclipseWorkspaceTest {
 	 * called by user code.
 	 */
 	public ResourceURLTest() {
+		super();
 	}
 
 	public ResourceURLTest(String name) {
@@ -104,6 +105,7 @@ public class ResourceURLTest extends EclipseWorkspaceTest {
 				checkURL(resources[i]);
 				fail("1.0");
 			} catch (IOException e) {
+				// expected
 			}
 		}
 	}

@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.Path;
  */
 public class Snapshot4Test extends SnapshotTest {
 	public Snapshot4Test() {
+		super();
 	}
 
 	public Snapshot4Test(String name) {

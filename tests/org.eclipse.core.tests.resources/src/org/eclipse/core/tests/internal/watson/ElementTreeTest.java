@@ -124,7 +124,7 @@ public class ElementTreeTest extends WatsonTest implements IPathConstants {
 
 		/* Create a root with no children. */
 		ElementTree tree = new ElementTree();
-		IPath rootID = (IPath) Path.ROOT.append("sol1");
+		IPath rootID = Path.ROOT.append("sol1");
 		tree.createElement(rootID, "ROOTS");
 
 		/* Create two grandchildren */

@@ -21,6 +21,7 @@ import org.eclipse.core.tests.harness.WorkspaceSessionTest;
  */
 public class SampleSessionTest extends WorkspaceSessionTest {
 	public SampleSessionTest() {
+		super();
 	}
 
 	public SampleSessionTest(String name) {

@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class Snapshot1Test extends SnapshotTest {
 	public Snapshot1Test() {
+		super();
 	}
 
 	public Snapshot1Test(String name) {

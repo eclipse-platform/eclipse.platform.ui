@@ -11,7 +11,6 @@
 package org.eclipse.core.tests.internal.localstore;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Date;
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -399,7 +398,7 @@ public class FileSystemStoreTest extends LocalStoreTest {
 		Workspace.clear(tree);
 	}
 
-	public void testReadOnly() throws IOException {
+	public void testReadOnly() {
 		// We need to know whether or not we can unset the read-only flag
 		// in order to perform this test.
 		if (!CoreFileSystemLibrary.usingNatives())

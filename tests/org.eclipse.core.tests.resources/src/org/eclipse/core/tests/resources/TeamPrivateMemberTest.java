@@ -19,6 +19,7 @@ import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
 public class TeamPrivateMemberTest extends EclipseWorkspaceTest {
 	public TeamPrivateMemberTest() {
+		super();
 	}
 
 	public TeamPrivateMemberTest(String name) {
@@ -115,6 +116,7 @@ public class TeamPrivateMemberTest extends EclipseWorkspaceTest {
 		try {
 			members = folder.members();
 		} catch (CoreException e) {
+			fail("2.2", e);
 		}
 		assertEquals("2.3", 1, members.length);
 
@@ -734,6 +736,7 @@ public class TeamPrivateMemberTest extends EclipseWorkspaceTest {
 				resources[i].setTeamPrivateMember(true);
 				fail("0.0." + resources[i].getFullPath());
 			} catch (CoreException e) {
+				// expected
 			}
 		}
 

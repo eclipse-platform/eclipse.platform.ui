@@ -18,6 +18,7 @@ import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
 public class IWorkspaceRunnableUseCaseTest extends EclipseWorkspaceTest {
 	public IWorkspaceRunnableUseCaseTest() {
+		super();
 	}
 
 	public IWorkspaceRunnableUseCaseTest(String name) {
@@ -81,6 +82,7 @@ public class IWorkspaceRunnableUseCaseTest extends EclipseWorkspaceTest {
 		} catch (CoreException e) {
 			fail("2.0", e);
 		} catch (OperationCanceledException e) {
+			// expected
 		}
 		assertTrue("2.1", !builder.wasExecuted());
 

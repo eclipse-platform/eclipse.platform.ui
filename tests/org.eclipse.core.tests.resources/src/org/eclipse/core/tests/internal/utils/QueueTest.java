@@ -101,7 +101,7 @@ public class QueueTest extends TestCase {
 		/**/
 		class ReusableObject {
 			int value;
-		};
+		}
 
 		/* add elements */
 		Queue queue = new Queue(10, true);

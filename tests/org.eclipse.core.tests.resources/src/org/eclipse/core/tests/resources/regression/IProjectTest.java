@@ -228,6 +228,7 @@ public class IProjectTest extends AbstractBuilderTest {
 			project.delete(false, getMonitor());
 			fail("3.0");
 		} catch (CoreException e) {
+			// expected
 		}
 
 		// clean up

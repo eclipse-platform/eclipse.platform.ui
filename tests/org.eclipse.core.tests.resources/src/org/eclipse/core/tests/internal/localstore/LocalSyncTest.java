@@ -13,7 +13,8 @@ package org.eclipse.core.tests.internal.localstore;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.resources.*;
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 
 ///
@@ -26,7 +27,7 @@ public class LocalSyncTest extends LocalStoreTest implements ICoreConstants {
 		super(name);
 	}
 
-	public void assertExistsInFileSystemWithNoContent(IFile target) throws CoreException {
+	public void assertExistsInFileSystemWithNoContent(IFile target) {
 		assertTrue(existsInFileSystemWithNoContent(target));
 	}
 
@@ -34,7 +35,7 @@ public class LocalSyncTest extends LocalStoreTest implements ICoreConstants {
 		return new String[] {"/File1", "/Folder1/", "/Folder1/File1", "/Folder1/Folder2/"};
 	}
 
-	private boolean existsInFileSystemWithNoContent(IResource resource) throws CoreException {
+	private boolean existsInFileSystemWithNoContent(IResource resource) {
 		IPath path = resource.getLocation();
 		return path.toFile().exists() && path.toFile().length() == 0;
 	}
@@ -44,7 +45,7 @@ public class LocalSyncTest extends LocalStoreTest implements ICoreConstants {
 		return suite;
 	}
 
-	public void testProjectDeletion() throws Throwable {
+	public void testProjectDeletion() {
 		/* initialize common objects */
 		Project project = (Project) projects[0];
 
@@ -64,6 +65,7 @@ public class LocalSyncTest extends LocalStoreTest implements ICoreConstants {
 			project.refreshLocal(IResource.DEPTH_INFINITE, null);
 			fail("1.0");
 		} catch (CoreException e) {
+			// expected
 		}
 
 		/* project should still exists */
@@ -74,19 +76,23 @@ public class LocalSyncTest extends LocalStoreTest implements ICoreConstants {
 			assertTrue("1.2", !resources[i].exists());
 	}
 
-	public void testProjectWithNoResources() throws Throwable {
+	public void testProjectWithNoResources() {
 		/* initialize common objects */
 		Project project = (Project) projects[0];
 
-		/* check normal behaviour */
-		project.refreshLocal(IResource.DEPTH_INFINITE, null);
+		try {
+			/* check normal behaviour */
+			project.refreshLocal(IResource.DEPTH_INFINITE, null);
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
 		assertTrue("1.1", project.exists());
 	}
 
 	/**
 	 * Simple synchronization test. Uses one solution and one project.
 	 */
-	public void testSimpleSync() throws Throwable {
+	public void testSimpleSync() {
 		/* initialize common objects */
 		Project project = (Project) projects[0];
 
@@ -98,12 +104,16 @@ public class LocalSyncTest extends LocalStoreTest implements ICoreConstants {
 
 		// add resources to the workspace
 		ensureExistsInWorkspace((IFile) index, "");
-		ensureExistsInWorkspace((IFile) toc, true);
+		ensureExistsInWorkspace(toc, true);
 		ensureExistsInWorkspace((IFile) file, "");
-		ensureExistsInWorkspace((IFolder) folder, true);
+		ensureExistsInWorkspace(folder, true);
 
-		// run synchronize
-		project.refreshLocal(IResource.DEPTH_INFINITE, null); // test
+		try {
+			// run synchronize
+			project.refreshLocal(IResource.DEPTH_INFINITE, null);
+		} catch (CoreException e) {
+			fail("0.0", e);
+		}
 
 		//-----------------------------------------------------------
 		// test synchronize
@@ -129,21 +139,29 @@ public class LocalSyncTest extends LocalStoreTest implements ICoreConstants {
 		//
 		ensureDoesNotExistInFileSystem(file);
 		ensureDoesNotExistInFileSystem(folder);
-		Thread.sleep(5000);
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			fail("3.0", e);
+		}
 		file = project.getFolder(new Path("file"));
 		folder = project.getFile(new Path("folder"));
-		ensureExistsInFileSystem((IFolder) file);
+		ensureExistsInFileSystem(file);
 		ensureExistsInFileSystem((IFile) folder);
 
-		// run synchronize
-		project.refreshLocal(IResource.DEPTH_INFINITE, null); // test
+		try {
+			// run synchronize
+			project.refreshLocal(IResource.DEPTH_INFINITE, null);
+		} catch (CoreException e) {
+			fail("4.0", e);
+		}
 
 		//-----------------------------------------------------------
 		// test synchronize
 		assertExistsInWorkspace(index);
 		assertExistsInFileSystemWithNoContent((IFile) index);
 		//
-		assertDoesNotExistInFileSystem((IFile) toc);
+		assertDoesNotExistInFileSystem(toc);
 		assertDoesNotExistInWorkspace(toc);
 		//
 		assertExistsInWorkspace(file);

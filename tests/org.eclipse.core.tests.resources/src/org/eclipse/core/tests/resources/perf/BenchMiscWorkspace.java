@@ -13,7 +13,6 @@ package org.eclipse.core.tests.resources.perf;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.tests.harness.CorePerformanceTest;
 
@@ -47,7 +46,7 @@ public class BenchMiscWorkspace extends CorePerformanceTest {
 		IWorkspace ws = ResourcesPlugin.getWorkspace();
 
 		IWorkspaceRunnable noop = new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
+			public void run(IProgressMonitor monitor) {
 			}
 		};
 		startBench();

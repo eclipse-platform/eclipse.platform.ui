@@ -33,6 +33,7 @@ public class BenchElementTree extends CorePerformanceTest {
 	static final IPath[] files = getFilePaths();
 
 	public BenchElementTree() {
+		super();
 	}
 
 	public BenchElementTree(String name) {

@@ -19,6 +19,7 @@ import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.service.environment.Constants;
 
 //
 public class RefreshLocalTest extends LocalStoreTest implements ICoreConstants {
@@ -254,7 +255,7 @@ public class RefreshLocalTest extends LocalStoreTest implements ICoreConstants {
 	public void skipTestDiscoverFileWithInvalidName() {
 		//FIXME Temporarily skip this test due to VM vendor bug #96338
 
-		if (BootLoader.getOS().equals(BootLoader.OS_WIN32))
+		if (BootLoader.getOS().equals(Constants.OS_WIN32))
 			return;
 
 		/* initialize common objects */

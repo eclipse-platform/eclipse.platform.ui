@@ -15,7 +15,6 @@ import java.util.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.indexing.IndexCursor;
-import org.eclipse.core.internal.indexing.IndexedStoreException;
 import org.eclipse.core.internal.localstore.*;
 import org.eclipse.core.internal.properties.IndexedStoreWrapper;
 import org.eclipse.core.internal.resources.*;
@@ -40,7 +39,7 @@ public class HistoryStoreTest extends EclipseWorkspaceTest {
 		Set expected = new HashSet();
 		Set actual = new HashSet();
 
-		public boolean visit(HistoryStoreEntry state) throws IndexedStoreException {
+		public boolean visit(HistoryStoreEntry state) {
 			actual.add(state.getPath());
 			return true;
 		}
@@ -315,6 +314,7 @@ public class HistoryStoreTest extends EclipseWorkspaceTest {
 			// some machines so we will sleep for 12 seconds)
 			Thread.sleep(1000 * 12);
 		} catch (InterruptedException e) {
+			fail("3.3.0", e);
 		}
 		try {
 			getWorkspace().save(true, null);
@@ -474,6 +474,7 @@ public class HistoryStoreTest extends EclipseWorkspaceTest {
 			// cause all 3 states for file.txt to be considered stale.
 			Thread.sleep(1000 * 12);
 		} catch (InterruptedException e) {
+			fail("4.0.1", e);
 		}
 		store.clean();
 		// change policies - restore to original values
@@ -654,6 +655,7 @@ public class HistoryStoreTest extends EclipseWorkspaceTest {
 				in.close();
 				fail("6." + i + " Edition should be invalid.");
 			} catch (CoreException e) {
+				// expected
 			}
 		}
 
@@ -663,6 +665,7 @@ public class HistoryStoreTest extends EclipseWorkspaceTest {
 				historyStore.getContents(null);
 				fail("7." + i + " Null edition should be invalid.");
 			} catch (RuntimeException e) {
+				// expected
 			}
 		}
 
@@ -2192,7 +2195,6 @@ public class HistoryStoreTest extends EclipseWorkspaceTest {
 		final String INDEX_FILE = ".index"; //$NON-NLS-1$
 		IPath location = ((Workspace) getWorkspace()).getMetaArea().getHistoryStoreLocation();
 		IndexedStoreWrapper store = new IndexedStoreWrapper(location.append(INDEX_FILE));
-		;
 
 		boolean[] counts = {false, false, false};
 

@@ -37,6 +37,7 @@ public class IResourceChangeEventTest extends EclipseWorkspaceTest {
 	protected IResource[] allResources;
 
 	public IResourceChangeEventTest() {
+		super();
 	}
 
 	public IResourceChangeEventTest(String name) {

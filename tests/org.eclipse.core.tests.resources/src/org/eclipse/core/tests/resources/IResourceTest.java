@@ -73,6 +73,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 	protected static final int S_FILE_TO_FOLDER = 6;
 
 	public IResourceTest() {
+		super();
 	}
 
 	public IResourceTest(String name) {
@@ -97,7 +98,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 		return result;
 	}
 
-	private IResource[] buildSampleResources(IContainer root) throws CoreException {
+	private IResource[] buildSampleResources(IContainer root) {
 		// do not change the example resources unless you change references to
 		// specific indices in setUp()
 		IResource[] result = buildResources(root, new String[] {"1/", "1/1/", "1/1/1/", "1/1/1/1", "1/1/2/", "1/1/2/1/", "1/1/2/2/", "1/1/2/3/", "1/2/", "1/2/1", "1/2/2", "1/2/3/", "1/2/3/1", "1/2/3/2", "1/2/3/3", "1/2/3/4", "2", "2"});
@@ -544,7 +545,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 			public boolean visit(IResource r) {
 				throw new RuntimeException("this class is abstract");
 			}
-		};
+		}
 
 		final LoggingResourceVisitor deepVisitor = new LoggingResourceVisitor() {
 			public boolean visit(IResource r) {
@@ -1316,7 +1317,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 			fail("7.1", e);
 		}
 		IResourceVisitor visitor = new IResourceVisitor() {
-			public boolean visit(IResource resource) throws CoreException {
+			public boolean visit(IResource resource) {
 				//projects and root are always local
 				if (resource.getType() == IResource.ROOT || resource.getType() == IResource.PROJECT) {
 					assertTrue("7.2" + resource.getFullPath(), IResource.NULL_STAMP != resource.getModificationStamp());
@@ -1411,7 +1412,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 			fail("12.0", e);
 		}
 		visitor = new IResourceVisitor() {
-			public boolean visit(IResource resource) throws CoreException {
+			public boolean visit(IResource resource) {
 				if (resource.getType() != IResource.ROOT)
 					assertTrue("12.1." + resource.getFullPath(), IResource.NULL_STAMP != resource.getModificationStamp());
 				return true;

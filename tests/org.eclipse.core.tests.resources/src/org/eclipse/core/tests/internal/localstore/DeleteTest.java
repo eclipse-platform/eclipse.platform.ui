@@ -410,6 +410,7 @@ public class DeleteTest extends LocalStoreTest {
 			folder.delete(false, null);
 			fail("2.0");
 		} catch (CoreException e) {
+			// expected
 		}
 
 		/* assert resources do not exist anymore in the file system */

@@ -18,9 +18,11 @@ import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.osgi.service.environment.Constants;
 
 public class IResourceTest extends EclipseWorkspaceTest {
 	public IResourceTest() {
+		super();
 	}
 
 	public IResourceTest(String name) {
@@ -94,6 +96,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 		try {
 			Thread.sleep(5000);
 		} catch (InterruptedException e) {
+			fail("0.99", e);
 		}
 
 		IPath destinationPath = new Path("copy of file");
@@ -120,7 +123,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 	public void testCreate_1FW87XF() {
 		// FIXME: remove when fix this PR
 		String os = BootLoader.getOS();
-		if (!os.equals(BootLoader.OS_LINUX)) {
+		if (!os.equals(Constants.OS_LINUX)) {
 			log("Skipping testCreate_1FW87XF because it is still not supported by the platform.");
 			return;
 		}
@@ -206,6 +209,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 			folder.create(true, true, null);
 			fail("2.1");
 		} catch (CoreException e) {
+			// expected
 		}
 		assertTrue("2.2", !folder.exists());
 
@@ -214,6 +218,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 			file.create(getRandomContents(), true, null);
 			fail("3.0");
 		} catch (CoreException e) {
+			// expected
 		}
 		assertTrue("3.1", !file.exists());
 
@@ -229,6 +234,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 			project.create(null);
 			fail("4.0");
 		} catch (CoreException e) {
+			// expected
 		}
 		assertTrue("4.1", !project.exists());
 	}
@@ -283,6 +289,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 			file.delete(false, getMonitor());
 			fail("3.0");
 		} catch (CoreException e) {
+			// expected
 		}
 
 		// cleanup
@@ -417,6 +424,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 			try {
 				Thread.sleep(5000);
 			} catch (InterruptedException e) {
+				fail("3.99", e);
 			}
 			createFileInFileSystem(target.getLocation(), getContents(newContents));
 		} catch (IOException e) {
@@ -450,6 +458,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 			target.getContents(false);
 			fail("5.0");
 		} catch (CoreException e) {
+			// expected
 		}
 
 		try {

@@ -27,6 +27,7 @@ public class BenchWorkspace extends CorePerformanceTest {
 	 * No-arg constructor to satisfy test harness.
 	 */
 	public BenchWorkspace() {
+		super();
 	}
 
 	/**

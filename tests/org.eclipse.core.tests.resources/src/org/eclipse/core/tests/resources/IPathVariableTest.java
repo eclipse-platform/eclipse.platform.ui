@@ -129,6 +129,7 @@ public class IPathVariableTest extends EclipseWorkspaceTest {
 	 * Default constructor for this class. 
 	 */
 	public IPathVariableTest() {
+		super();
 	}
 
 	/**

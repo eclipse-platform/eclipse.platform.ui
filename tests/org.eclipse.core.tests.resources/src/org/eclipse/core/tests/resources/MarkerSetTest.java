@@ -19,15 +19,13 @@ import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
 public class MarkerSetTest extends EclipseWorkspaceTest {
 
-	/** True if debug info should be logged */
-	private boolean debug = false;
-
 	/**
 	 * Need a zero argument constructor to satisfy the test harness.
 	 * This constructor should not do any real work nor should it be
 	 * called by user code.
 	 */
 	public MarkerSetTest() {
+		super();
 	}
 
 	/**
@@ -80,7 +78,7 @@ public class MarkerSetTest extends EclipseWorkspaceTest {
 		MarkerInfo[] infos = new MarkerInfo[max];
 		for (int i = 0; i < max; i++) {
 			info = new MarkerInfo();
-			info.setId((long) i);
+			info.setId(i);
 			info.setType(IMarker.PROBLEM);
 			info.setAttribute(IMarker.MESSAGE, getRandomString());
 			infos[i] = info;
@@ -112,7 +110,7 @@ public class MarkerSetTest extends EclipseWorkspaceTest {
 		MarkerInfo[] infos = new MarkerInfo[max];
 		for (int i = 0; i < max; i++) {
 			info = new MarkerInfo();
-			info.setId((long) i);
+			info.setId(i);
 			info.setType(IMarker.PROBLEM);
 			info.setAttribute(IMarker.MESSAGE, getRandomString());
 			infos[i] = info;
@@ -133,7 +131,7 @@ public class MarkerSetTest extends EclipseWorkspaceTest {
 		MarkerInfo[] infos = new MarkerInfo[max];
 		for (int i = 0; i < max; i++) {
 			info = new MarkerInfo();
-			info.setId((long) i);
+			info.setId(i);
 			info.setType(IMarker.PROBLEM);
 			info.setAttribute(IMarker.MESSAGE, getRandomString());
 			infos[i] = info;

@@ -497,6 +497,7 @@ public class MoveTest extends LocalStoreTest {
 			folder.move(destination.getFullPath(), false, null);
 			fail("4.2.1");
 		} catch (CoreException e) {
+			// expected
 		}
 		assertTrue("4.3", folder.exists());
 		// FIXME: should #move be a best effort operation?

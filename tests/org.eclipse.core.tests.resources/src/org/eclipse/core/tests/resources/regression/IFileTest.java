@@ -17,6 +17,7 @@ import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.osgi.service.environment.Constants;
 
 public class IFileTest extends EclipseWorkspaceTest {
 	/**
@@ -57,7 +58,7 @@ public class IFileTest extends EclipseWorkspaceTest {
 			return;
 
 		// Don't test this on Windows
-		if (BootLoader.getOS().equals(BootLoader.OS_WIN32))
+		if (BootLoader.getOS().equals(Constants.OS_WIN32))
 			return;
 
 		IProject project = getWorkspace().getRoot().getProject("MyProject");
@@ -93,7 +94,7 @@ public class IFileTest extends EclipseWorkspaceTest {
 
 		// Only run this test on Linux for now since Windows lets you create
 		// a file within a read-only folder.
-		if (!BootLoader.getOS().equals(BootLoader.OS_LINUX))
+		if (!BootLoader.getOS().equals(Constants.OS_LINUX))
 			return;
 
 		IProject project = getWorkspace().getRoot().getProject("MyProject");
@@ -132,7 +133,6 @@ public class IFileTest extends EclipseWorkspaceTest {
 		}
 		//change the local file timestamp
 		long newTime = System.currentTimeMillis() + 10000;
-		long actualTime = 0;
 		try {
 			descFile.setLocalTimeStamp(newTime);
 		} catch (CoreException e1) {

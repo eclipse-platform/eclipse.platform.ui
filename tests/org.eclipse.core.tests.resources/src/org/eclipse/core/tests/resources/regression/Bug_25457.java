@@ -18,6 +18,7 @@ import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.osgi.service.environment.Constants;
 
 /**
  * Tests regression of bug 25457.  In this case, attempting to move a project
@@ -39,7 +40,7 @@ public class Bug_25457 extends EclipseWorkspaceTest {
 
 	public void testFile() {
 		//this test only works on windows
-		if (!BootLoader.getOS().equals(BootLoader.OS_WIN32))
+		if (!BootLoader.getOS().equals(Constants.OS_WIN32))
 			return;
 		IProject source = getWorkspace().getRoot().getProject("project");
 		IFile sourceFile = source.getFile("file.txt");
@@ -82,7 +83,7 @@ public class Bug_25457 extends EclipseWorkspaceTest {
 
 	public void testFolder() {
 		//this test only works on windows
-		if (!BootLoader.getOS().equals(BootLoader.OS_WIN32))
+		if (!BootLoader.getOS().equals(Constants.OS_WIN32))
 			return;
 		IProject source = getWorkspace().getRoot().getProject("SourceProject");
 		IFolder sourceFolder = source.getFolder("folder");
@@ -130,7 +131,7 @@ public class Bug_25457 extends EclipseWorkspaceTest {
 
 	public void testProject() {
 		//this test only works on windows
-		if (!BootLoader.getOS().equals(BootLoader.OS_WIN32))
+		if (!BootLoader.getOS().equals(Constants.OS_WIN32))
 			return;
 		IProject source = getWorkspace().getRoot().getProject("project");
 		IProject destination = getWorkspace().getRoot().getProject("Project");

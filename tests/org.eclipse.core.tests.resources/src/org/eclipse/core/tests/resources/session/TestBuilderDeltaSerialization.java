@@ -15,6 +15,7 @@ import java.util.Map;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.internal.builders.SortBuilder;
+import org.eclipse.core.tests.internal.builders.TestBuilder;
 
 /**
  * Tests that builder deltas are correctly serialized.
@@ -79,8 +80,8 @@ public class TestBuilderDeltaSerialization extends WorkspaceSerializationTest {
 			IProjectDescription description = project1.getDescription();
 			ICommand command = description.newCommand();
 			Map args = command.getArguments();
-			args.put(SortBuilder.BUILD_ID, "Project1Build1");
-			args.put(SortBuilder.INTERESTING_PROJECT, project2.getName());
+			args.put(TestBuilder.BUILD_ID, "Project1Build1");
+			args.put(TestBuilder.INTERESTING_PROJECT, project2.getName());
 			command.setBuilderName(SortBuilder.BUILDER_NAME);
 			command.setArguments(args);
 			description.setBuildSpec(new ICommand[] {command});
@@ -90,8 +91,8 @@ public class TestBuilderDeltaSerialization extends WorkspaceSerializationTest {
 			description = project1.getDescription();
 			command = description.newCommand();
 			args = command.getArguments();
-			args.put(SortBuilder.BUILD_ID, "Project2Build1");
-			args.put(SortBuilder.INTERESTING_PROJECT, project1.getName());
+			args.put(TestBuilder.BUILD_ID, "Project2Build1");
+			args.put(TestBuilder.INTERESTING_PROJECT, project1.getName());
 			command.setBuilderName(SortBuilder.BUILDER_NAME);
 			command.setArguments(args);
 			description.setBuildSpec(new ICommand[] {command});

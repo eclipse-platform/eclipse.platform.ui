@@ -214,7 +214,7 @@ public class SortBuilder extends TestBuilder {
 			IFolder folder = (IFolder) resource;
 			IResource[] members = folder.members();
 			for (int i = 0; i < members.length; i++) {
-				deleteResource((IResource) members[i]);
+				deleteResource(members[i]);
 			}
 			folder.delete(true, null);
 		} else if (type == IResource.FILE) {
@@ -238,7 +238,7 @@ public class SortBuilder extends TestBuilder {
 				//delete all sorted files
 				IResource[] members = sortedFolder.members();
 				for (int i = 0; i < members.length; i++) {
-					deleteResource((IResource) members[i]);
+					deleteResource(members[i]);
 				}
 			}
 
@@ -261,7 +261,7 @@ public class SortBuilder extends TestBuilder {
 		} else {
 			IResource[] members = ((IFolder) unsortedResource).members();
 			for (int i = 0; i < members.length; i++) {
-				IResource member = (IResource) members[i];
+				IResource member = members[i];
 				fullBuild(member);
 			}
 		}

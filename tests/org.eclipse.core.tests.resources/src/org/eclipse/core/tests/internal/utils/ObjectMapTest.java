@@ -26,6 +26,7 @@ public class ObjectMapTest extends EclipseWorkspaceTest {
 	 * called by user code.
 	 */
 	public ObjectMapTest() {
+		super();
 	}
 
 	/**

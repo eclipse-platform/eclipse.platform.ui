@@ -27,6 +27,7 @@ public class MarkerPerformanceTest extends CorePerformanceTest {
 	 * No-arg constructor to satisfy test harness.
 	 */
 	public MarkerPerformanceTest() {
+		super();
 	}
 
 	/**

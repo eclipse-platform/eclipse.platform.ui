@@ -31,6 +31,7 @@ public class ElementTreeIteratorTest extends WatsonTest {
 	}
 
 	protected void setUp() throws Exception {
+		// do nothing
 	}
 
 	static void setupElementTree(ElementTree tree, int num) {

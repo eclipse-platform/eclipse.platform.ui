@@ -32,5 +32,6 @@ public class SyncAliasTest extends EclipseWorkspaceTest {
 	}
 
 	public void testSimple() {
+		// TODO
 	}
 }

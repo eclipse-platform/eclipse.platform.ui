@@ -270,6 +270,7 @@ public class IFolderTest extends IResourceTest {
 			folder.create(false, true, monitor);
 			fail(method + "1");
 		} catch (CoreException e) {
+			// expected
 		}
 		assertTrue(method + "2", !wb.getRoot().exists(folder.getFullPath()));
 	}

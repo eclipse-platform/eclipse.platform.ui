@@ -67,8 +67,8 @@ public class BuilderNatureTest extends AbstractBuilderTest {
 		} catch (CoreException e) {
 			fail("0.99", e);
 		}
-		builder.addExpectedLifecycleEvent(SnowBuilder.SET_INITIALIZATION_DATA);
-		builder.addExpectedLifecycleEvent(SnowBuilder.STARTUP_ON_INITIALIZE);
+		builder.addExpectedLifecycleEvent(TestBuilder.SET_INITIALIZATION_DATA);
+		builder.addExpectedLifecycleEvent(TestBuilder.STARTUP_ON_INITIALIZE);
 		builder.addExpectedLifecycleEvent(SnowBuilder.SNOW_BUILD_EVENT);
 		builder.assertLifecycleEvents("1.0");
 	}

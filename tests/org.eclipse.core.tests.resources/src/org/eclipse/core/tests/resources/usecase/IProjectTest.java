@@ -21,6 +21,7 @@ public class IProjectTest extends IResourceTest {
 	public static String LOCAL_LOCATION_PATH_STRING_0;
 
 	public IProjectTest() {
+		super();
 	}
 
 	public IProjectTest(String name) {
@@ -48,6 +49,7 @@ public class IProjectTest extends IResourceTest {
 			proj.getDescription();
 			fail(method + "4.1");
 		} catch (CoreException e) {
+			// expected
 		}
 	}
 
@@ -68,6 +70,7 @@ public class IProjectTest extends IResourceTest {
 			proj.open(monitor);
 			fail(method + "0.0");
 		} catch (CoreException e) {
+			// expected
 		}
 		assertTrue(method + "0.1", !proj.isOpen());
 
@@ -77,6 +80,7 @@ public class IProjectTest extends IResourceTest {
 			proj.getDescription().setLocation(new Path(LOCAL_LOCATION_PATH_STRING_0));
 			fail(method + "1");
 		} catch (Exception e) {
+			// expected
 		}
 
 		assertTrue(method + "2.1", wb.getRoot().getProjects().length == 0);
@@ -271,6 +275,7 @@ public class IProjectTest extends IResourceTest {
 			proj.create(monitor);
 			fail(method + "1");
 		} catch (CoreException e) {
+			// expected
 		}
 		assertTrue(method + "2", !proj.exists());
 		assertTrue(method + "3", !wb.getRoot().exists(proj.getFullPath()));
