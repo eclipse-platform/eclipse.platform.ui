@@ -95,6 +95,13 @@ This seperation out of pages can be used when performance is an issue, as the co
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="style-id" type="string">
+            <annotation>
+               <documentation>
+                  A means to classifiy the page into a given category so that a common style may be applied.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -144,13 +151,6 @@ This seperation out of pages can be used when performance is an issue, as the co
                   </enumeration>
                </restriction>
             </simpleType>
-         </attribute>
-         <attribute name="style-id" type="string">
-            <annotation>
-               <documentation>
-                  A means to classifiy the page into a given category so that a common style may be applied.
-               </documentation>
-            </annotation>
          </attribute>
       </complexType>
    </element>
