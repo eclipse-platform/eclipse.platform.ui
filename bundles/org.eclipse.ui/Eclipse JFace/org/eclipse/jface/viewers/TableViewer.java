@@ -294,20 +294,6 @@ public Table getTable() {
 protected void hookControl(Control control) {
 	super.hookControl(control);
 	Table tableControl = (Table)control;
-	tableControl.addSelectionListener(new SelectionListener() {
-		public void widgetSelected(SelectionEvent e) {
-			handleSelect(e);
-		}
-		public void widgetDefaultSelected(SelectionEvent e) {
-			handleDoubleSelect(e);
-		}
-	});
-	OpenStrategy handler = new OpenStrategy(control);
-	handler.addOpenListener(new IOpenEventListener() {
-		public void handleOpen(SelectionEvent e) {
-			TableViewer.this.handleOpen(e);
-		}
-	});
 	tableControl.addMouseListener(new MouseAdapter() {
 		public void mouseDown(MouseEvent e) {
 			tableViewerImpl.handleMouseDown(e);

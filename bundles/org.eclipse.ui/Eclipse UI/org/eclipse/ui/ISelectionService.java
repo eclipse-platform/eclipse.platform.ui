@@ -33,7 +33,26 @@ public void addSelectionListener(ISelectionListener listener);
  * @since 2.0
  */
 public void addSelectionListener(String partId, ISelectionListener listener);
+/**
+ * Adds the given post selection listener.
+ * Has no effect if an identical listener is already registered.
+ *
+ * @param listener a selection listener
+ */
+public void addPostSelectionListener(ISelectionListener listener);
 
+/**
+ * Adds a part-specific post selection listener which is notified when selection changes in the part with
+ * the given id.  This is independent of part activation: the part need not
+ * be active for notification to be sent.  The listener is also notified when the part is created
+ * and disposed.  When the part is created, the listener is passed the part's initial selection.
+ * When the part is disposed, the listener is passed a <code>null</code> selection.
+ *
+ * @param partId the id of the part to track
+ * @param listener a selection listener
+ * @since 2.0
+ */
+public void addPostSelectionListener(String partId, ISelectionListener listener);
 /**
  * Returns the current selection in the active part.  If the selection in the
  * active part is <em>undefined</em> (the active part has no selection provider)
@@ -53,8 +72,6 @@ public ISelection getSelection();
  * @since 2.0
  */
 public ISelection getSelection(String partId);
-
-
 /**
  * Removes the given selection listener.
  * Has no effect if an identical listener is not registered.
@@ -62,7 +79,6 @@ public ISelection getSelection(String partId);
  * @param listener a selection listener
  */
 public void removeSelectionListener(ISelectionListener listener);
-
 /**
  * Removes the given part-specific selection listener.
  * Has no effect if an identical listener is not registered for the given part id.
@@ -72,4 +88,20 @@ public void removeSelectionListener(ISelectionListener listener);
  * @since 2.0
  */
 public void removeSelectionListener(String partId, ISelectionListener listener);
+/**
+ * Removes the given post selection listener.
+ * Has no effect if an identical listener is not registered.
+ *
+ * @param listener a selection listener
+ */
+public void removePostSelectionListener(ISelectionListener listener);
+/**
+ * Removes the given part-specific post selection listener.
+ * Has no effect if an identical listener is not registered for the given part id.
+ *
+ * @param partId the id of the part to track
+ * @param listener a selection listener
+ * @since 2.0
+ */
+public void removePostSelectionListener(String partId, ISelectionListener listener);
 }

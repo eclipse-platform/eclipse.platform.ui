@@ -70,12 +70,6 @@ public TreeViewer(Tree tree) {
 /* (non-Javadoc)
  * Method declared in AbstractTreeViewer.
  */
-protected void addSelectionListener(Control c, SelectionListener listener) {
-	((Tree)c).addSelectionListener(listener);
-}
-/* (non-Javadoc)
- * Method declared in AbstractTreeViewer.
- */
 protected void addTreeListener(Control c, TreeListener listener) {
 	((Tree)c).addTreeListener(listener);
 }

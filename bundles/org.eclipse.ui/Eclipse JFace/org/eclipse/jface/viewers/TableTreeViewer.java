@@ -117,12 +117,6 @@ public TableTreeViewer(Composite parent, int style) {
 /* (non-Javadoc)
  * Method declared on AbstractTreeViewer.
  */
-protected void addSelectionListener(Control c, SelectionListener listener) {
-	((TableTree)c).addSelectionListener(listener);
-}
-/* (non-Javadoc)
- * Method declared on AbstractTreeViewer.
- */
 protected void addTreeListener(Control c, TreeListener listener) {
 	((TableTree)c).addTreeListener(listener);
 }

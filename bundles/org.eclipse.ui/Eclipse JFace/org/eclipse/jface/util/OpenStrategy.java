@@ -72,24 +72,50 @@ public class OpenStrategy {
 	
 	private Listener eventHandler;
 	
-	private ListenerList listeners = new ListenerList(1);
+	private ListenerList openEventListeners = new ListenerList(1);
+	private ListenerList selectionEventListeners = new ListenerList(1);
+	private ListenerList postSelectionEventListeners = new ListenerList(1);
 	
 	public OpenStrategy(Control control) {
 		initializeHandler(control.getDisplay());
 		addListener(control);
 	}
 	/**
-	 * Adds an IOpenEventListener to the collection of listeners
+	 * Adds an IOpenEventListener to the collection of openEventListeners
 	 */
 	public void addOpenListener(IOpenEventListener listener) {
-		listeners.add(listener);
+		openEventListeners.add(listener);
 	}
 	/**
-	 * Removes an IOpenEventListener to the collection of listeners
+	 * Removes an IOpenEventListener to the collection of openEventListeners
 	 */
 	public void removeOpenListener(IOpenEventListener listener) {
-		listeners.remove(listener);
+		openEventListeners.remove(listener);
 	}
+	/**
+	 * Adds an SelectionListener to the collection of selectionEventListeners
+	 */
+	public void addSelectionListener(SelectionListener listener) {
+		selectionEventListeners.add(listener);
+	}
+	/**
+	 * Removes an SelectionListener to the collection of selectionEventListeners
+	 */
+	public void removeSelectionListener(SelectionListener listener) {
+		selectionEventListeners.remove(listener);
+	}
+	/**
+	 * Adds an SelectionListener to the collection of selectionEventListeners
+	 */
+	public void addPostSelectionListener(SelectionListener listener) {
+		postSelectionEventListeners.add(listener);
+	}
+	/**
+	 * Removes an SelectionListener to the collection of selectionEventListeners
+	 */
+	public void removePostSelectionListener(SelectionListener listener) {
+		postSelectionEventListeners.remove(listener);
+	}	
 	/**
 	 * Returns the current used single/double-click method
 	 * 
@@ -137,10 +163,37 @@ public class OpenStrategy {
 		c.addListener(SWT.DefaultSelection, eventHandler);
 	}
 	/*
-	 * Fire the open event to all listeners
+	 * Fire the selection event to all selectionEventListeners
 	 */ 
-	private void handleOpen(SelectionEvent e) {
-		Object l[] = listeners.getListeners();
+	private void fireSelectionEvent(SelectionEvent e) {
+		Object l[] = selectionEventListeners.getListeners();
+		for (int i = 0; i < l.length; i++) {
+			((SelectionListener)l[i]).widgetSelected(e);
+		}
+	}
+	/*
+	 * Fire the default selection event to all selectionEventListeners
+	 */ 
+	private void fireDefaultSelectionEvent(SelectionEvent e) {
+		Object l[] = selectionEventListeners.getListeners();
+		for (int i = 0; i < l.length; i++) {
+			((SelectionListener)l[i]).widgetDefaultSelected(e);
+		}
+	}	
+	/*
+	 * Fire the post selection event to all postSelectionEventListeners
+	 */ 
+	private void firePostSelectionEvent(SelectionEvent e) {
+		Object l[] = postSelectionEventListeners.getListeners();
+		for (int i = 0; i < l.length; i++) {
+			((SelectionListener)l[i]).widgetSelected(e);
+		}
+	}		
+	/*
+	 * Fire the open event to all openEventListeners
+	 */ 
+	private void fireOpenEvent(SelectionEvent e) {
+		Object l[] = openEventListeners.getListeners();
 		for (int i = 0; i < l.length; i++) {
 			((IOpenEventListener)l[i]).handleOpen(e);
 		}
@@ -153,6 +206,8 @@ public class OpenStrategy {
 			Event mouseUpEvent = null;
 			Event mouseMoveEvent = null;
 			boolean selectionPendent = false;
+			boolean enterKeyDown = false;
+			boolean defaultSelectionPendent = false;
 
 			boolean keyDown = false;
 			final int[] count = new int[1];
@@ -161,11 +216,19 @@ public class OpenStrategy {
 
 			public void handleEvent(final Event e) {
 				if(e.type == SWT.DefaultSelection) {
-						handleOpen(new SelectionEvent(e));
-						return;
-				} else {
-					if(CURRENT_METHOD == DOUBLE_CLICK)
-						return;
+					fireDefaultSelectionEvent(new SelectionEvent(e));
+					if(CURRENT_METHOD == DOUBLE_CLICK) {
+						fireOpenEvent(new SelectionEvent(e));
+					} else {
+						if(enterKeyDown) {
+							fireOpenEvent(new SelectionEvent(e));
+							enterKeyDown = false;
+							defaultSelectionPendent = false;
+						} else {
+							defaultSelectionPendent = true;
+						}
+					}
+					return;
 				}
 				
 				switch (e.type) {			
@@ -218,16 +281,24 @@ public class OpenStrategy {
 						mouseMoveEvent = null;
 						mouseUpEvent = null;
 						keyDown = true;
+						if(e.character == SWT.CR) {
+							if(defaultSelectionPendent) {
+								fireOpenEvent(new SelectionEvent(e));
+								enterKeyDown = false;
+								defaultSelectionPendent = false;
+							} else {
+								enterKeyDown = true;
+							}
+						}	
 						break;
 					case SWT.Selection:
+						fireSelectionEvent(new SelectionEvent(e));
 						mouseMoveEvent = null;
 						if (mouseUpEvent != null)
 							mouseSelectItem(e);
 						else
 							selectionPendent = true;
 						count[0]++;
-						if((CURRENT_METHOD & ARROW_KEYS_OPEN) == 0)
-							return;
 						display.asyncExec(new Runnable() {
 							public void run() {
 								if (keyDown) {
@@ -235,7 +306,9 @@ public class OpenStrategy {
 										int id = count[0];
 										public void run() {
 											if (id == count[0]) {
-												handleOpen(new SelectionEvent(e));
+												firePostSelectionEvent(new SelectionEvent(e));
+												if((CURRENT_METHOD & (SINGLE_CLICK | ARROW_KEYS_OPEN)) != 0)
+													fireOpenEvent(new SelectionEvent(e));
 											}
 										}
 									});
@@ -247,7 +320,9 @@ public class OpenStrategy {
 			}
 
 			void mouseSelectItem(Event e) {
-				handleOpen(new SelectionEvent(e));
+				firePostSelectionEvent(new SelectionEvent(e));
+				if((CURRENT_METHOD & SINGLE_CLICK) != 0)
+					fireOpenEvent(new SelectionEvent(e));
 				mouseUpEvent = null;
 				selectionPendent = false;
 			}
@@ -275,7 +350,8 @@ public class OpenStrategy {
 					TableTreeItem item = table.getItem(new Point(e.x,e.y));
 					if(item != null)
 						table.setSelection(new TableTreeItem[]{item});
-				} 
+				}
+				fireSelectionEvent(new SelectionEvent(e));
 			}
 		};
 	}

@@ -55,12 +55,21 @@ public class WindowPartSelectionTracker extends AbstractPartSelectionTracker imp
 	 */
 	public void pageClosed(IWorkbenchPage page) {
 	}
-
+	
 	/*
 	 * @see IPageListener#pageOpened(IWorkbenchPage)
 	 */
 	public void pageOpened(IWorkbenchPage page) {
-		page.addSelectionListener(getPartId(), this);
+		page.addSelectionListener(getPartId(), new ISelectionListener() {
+			public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+				fireSelection(part, selection);
+			}
+		});
+		page.addPostSelectionListener(getPartId(), new ISelectionListener() {
+			public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+				firePostSelection(part, selection);
+			}
+		});				
 	}
 	
 	/**

@@ -394,7 +394,6 @@ public void addPartListener(IPartListener l) {
 public void addPropertyChangeListener(IPropertyChangeListener listener) {
 	propertyChangeListeners.add(listener);
 }
-
 /*
  * (non-Javadoc)
  * Method declared on ISelectionListener.
@@ -409,6 +408,21 @@ public void addSelectionListener(ISelectionListener listener) {
  */
 public void addSelectionListener(String partId, ISelectionListener listener) {
 	selectionService.addSelectionListener(partId, listener);
+}
+/*
+ * (non-Javadoc)
+ * Method declared on ISelectionListener.
+ */
+public void addPostSelectionListener(ISelectionListener listener) {
+	selectionService.addPostSelectionListener(listener);
+}
+
+/*
+ * (non-Javadoc)
+ * Method declared on ISelectionListener.
+ */
+public void addPostSelectionListener(String partId, ISelectionListener listener) {
+	selectionService.addPostSelectionListener(partId, listener);
 }
 
 /**
@@ -1758,7 +1772,21 @@ public void removeSelectionListener(ISelectionListener listener) {
 public void removeSelectionListener(String partId, ISelectionListener listener) {
 	selectionService.removeSelectionListener(partId, listener);
 }
+/*
+ * (non-Javadoc)
+ * Method declared on ISelectionListener.
+ */
+public void removePostSelectionListener(ISelectionListener listener) {
+	selectionService.removePostSelectionListener(listener);
+}
 
+/*
+ * (non-Javadoc)
+ * Method declared on ISelectionListener.
+ */
+public void removePostSelectionListener(String partId, ISelectionListener listener) {
+	selectionService.removePostSelectionListener(partId, listener);
+}
 /**
  * This method is called when a part is activated by clicking within it.
  * In response, the part, the pane, and all of its actions will be activated.
