@@ -149,10 +149,12 @@ public abstract class MultiEditor extends EditorPart {
 	 * Set the active editor.
 	 */
 	private void activateEditor(IEditorPart part) {
+		IEditorPart oldEditor = getActiveEditor();
 		activeEditorIndex = getIndex(part);
 		IEditorPart e = getActiveEditor();
 		EditorSite innerSite = (EditorSite) e.getEditorSite();
 		((WorkbenchPage) innerSite.getPage()).requestActivation(e);
+		updateGradient(oldEditor);
 	}
 	/*
 	 * Return the index of the specified editor

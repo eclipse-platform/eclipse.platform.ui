@@ -95,7 +95,12 @@ public void activate(IWorkbenchPart part) {
 	// If zoomed, unzoom.
 	if (isZoomed() && partChangeAffectsZoom(part))
 		zoomOut();
-		
+	
+	PartPane pane = ((PartSite)part.getSite()).getPane();
+	if(part instanceof MultiEditor) { 
+		part = ((MultiEditor)part).getActiveEditor();
+	}
+			
 	// Activate part.
 	if(window.getActivePage() == this) {
 		bringToTop(part);
@@ -1966,8 +1971,14 @@ class ActivationList {
 	void setActive(IWorkbenchPart part) {
 		if(parts.size() > 0 && part == parts.get(parts.size() - 1))
 			return;
-		parts.remove(part);
-		parts.add(part);
+		PartPane pane = ((PartSite)part.getSite()).getPane();
+		if(pane instanceof MultiEditorInnerPane) {
+			MultiEditorInnerPane innerPane = (MultiEditorInnerPane)pane;
+			setActive(innerPane.getParentPane().getPart());
+		} else {
+			parts.remove(part);
+			parts.add(part);
+		}
 	}
 	/*
 	 * Add the active part to the beginning of the list.
@@ -1975,7 +1986,13 @@ class ActivationList {
 	void add(IWorkbenchPart part) {
 		if(parts.indexOf(part) >= 0)
 			return;
-		parts.add(0,part);
+		PartPane pane = ((PartSite)part.getSite()).getPane();
+		if(pane instanceof MultiEditorInnerPane) {
+			MultiEditorInnerPane innerPane = (MultiEditorInnerPane)pane;
+			add(innerPane.getParentPane().getPart());
+		} else {
+			parts.add(0,part);
+		}
 	}
 	/*
 	 * Return the active part. Filter fast views.
