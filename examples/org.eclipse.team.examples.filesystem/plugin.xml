@@ -96,11 +96,11 @@
                value="org.eclipse.team.core.repository=org.eclipse.team.examples.filesystem.FileSystemProvider">
          </filter>
          <action
-               label="%Synchronize.name"
-               tooltip="%Synchronize.tooltip"
-               class="org.eclipse.team.examples.filesystem.ui.SynchronizeAction"
+               label="%Put.name"
+               tooltip="%Put.tooltip"
+               class="org.eclipse.team.examples.filesystem.ui.PutAction"
                menubarPath="team.main/group1"
-               id="org.eclipse.team.examples.filesystem.synchronize">
+               id="org.eclipse.team.examples.filesystem.put">
          </action>
          <action
                label="%Get.name"
@@ -110,11 +110,11 @@
                id="org.eclipse.team.examples.filesystem.get">
          </action>
          <action
-               label="%Put.name"
-               tooltip="%Put.tooltip"
-               class="org.eclipse.team.examples.filesystem.ui.PutAction"
+               label="%Synchronize.name"
+               tooltip="%Synchronize.tooltip"
+               class="org.eclipse.team.examples.filesystem.ui.SynchronizeAction"
                menubarPath="team.main/group1"
-               id="org.eclipse.team.examples.filesystem.put">
+               id="org.eclipse.team.examples.filesystem.synchronize">
          </action>
          <action
                label="%Replace.name"

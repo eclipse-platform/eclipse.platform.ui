@@ -205,8 +205,8 @@ public class FileSystemOperations {
 		FileSystemResourceVariant remote = getResourceVariant(localFile);
 		byte[] baseBytes = synchronizer.getBaseBytes(localFile);
 		IResourceVariant base = provider.getResourceVariant(localFile, baseBytes);
-		if (!synchronizer.hasSyncBytes(localFile) || (
-				synchronizer.isLocallyModified(localFile) && !overrideOutgoing)) {
+		if (!synchronizer.hasSyncBytes(localFile) 
+				|| (synchronizer.isLocallyModified(localFile) && !overrideOutgoing)) {
 			// Do not overwrite the local modification
 			return;
 		}
@@ -214,6 +214,7 @@ public class FileSystemOperations {
 			// The remote no longer exists so remove the local
 			try {
 				localFile.delete(false, true, progress);
+				synchronizer.flush(localFile, IResource.DEPTH_ZERO);
 			} catch (CoreException e) {
 				throw TeamException.asTeamException(e);
 			}
@@ -239,6 +240,7 @@ public class FileSystemOperations {
 			}
 			// Mark as read-only to force a checkout before editing
 			localFile.setReadOnly(true);
+			synchronizer.setBaseBytes(localFile, remote.asBytes());
 		} catch (IOException e) {
 			throw FileSystemPlugin.wrapException(e);
 		} catch (CoreException e) {
