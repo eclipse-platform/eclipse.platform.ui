@@ -30,17 +30,12 @@ public class ContentTypeManager implements IContentTypeManager {
 	}
 
 	final static String CONTENT_TYPE_PREF_NODE = Platform.PI_RUNTIME + IPath.SEPARATOR + "content-types"; //$NON-NLS-1$
-
 	private static final String OPTION_DEBUG_CONTENT_TYPES = Platform.PI_RUNTIME + "/contenttypes/debug"; //$NON-NLS-1$;	
-
 	static final boolean DEBUGGING = Boolean.TRUE.toString().equalsIgnoreCase(InternalPlatform.getDefault().getOption(OPTION_DEBUG_CONTENT_TYPES));
-
 	private static ContentTypeManager instance;
-
 	private static final int MARK_LIMIT = 0x400;
 
 	private ContentTypeBuilder builder;
-
 	private Map catalog = new HashMap();
 
 	// a comparator used when resolving conflicts (two types associated to the same spec) 

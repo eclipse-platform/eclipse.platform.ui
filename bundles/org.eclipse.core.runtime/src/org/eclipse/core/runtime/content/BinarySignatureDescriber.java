@@ -51,15 +51,10 @@ import org.eclipse.core.runtime.*;
  */
 public final class BinarySignatureDescriber implements IContentDescriber, IExecutableExtension {
 	private final static String SIGNATURE = "signature"; //$NON-NLS-1$
-
 	private final static String OFFSET = "offset"; //$NON-NLS-1$
-
 	private static final Object REQUIRED = "required"; //$NON-NLS-1$
-
 	private byte[] signature;
-
 	private int offset;
-
 	private boolean required = true;
 
 	/* (Intentionally not included in javadoc)
