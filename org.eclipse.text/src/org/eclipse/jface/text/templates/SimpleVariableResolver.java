@@ -12,7 +12,7 @@ package org.eclipse.jface.text.templates;
 
 
 /**
- * A simple template variable, which always evaluates to a defined string.
+ * A simple template variable resolver, which always evaluates to a defined string.
  * 
  * @since 3.0
  */

@@ -17,7 +17,7 @@ import java.util.ResourceBundle;
 /**
  * @since 3.0
  */
-public class TemplateMessages {
+class TemplateMessages {
 
 	private static final String RESOURCE_BUNDLE= TemplateMessages.class.getName();
 	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
