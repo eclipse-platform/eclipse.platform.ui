@@ -382,29 +382,31 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		getViewSite().getActionBars().updateActionBars();
 		// this is in a runnable to be run after this view's pane
 		// is created
-		Runnable r = new Runnable() {
-			public void run() {
-				if (!isAvailable()) {
-					return;
-				}
-				IContributionItem[] items = tbm.getItems();
-				if (items != null) {
-					for (int i = 0; i < items.length; i++) {
-						if (items[i] instanceof ActionContributionItem) {
-							IAction action = ((ActionContributionItem)items[i]).getAction();
-							if (action.getStyle() == IAction.AS_CHECK_BOX && getMemento() != null) {
-								initActionState(getMemento(), action);	
-								if (action.isChecked()) {
-									action.run();
+		if (getMemento() != null) {
+			Runnable r = new Runnable() {
+				public void run() {
+					if (!isAvailable()) {
+						return;
+					}
+					IContributionItem[] items = tbm.getItems();
+					if (items != null) {
+						for (int i = 0; i < items.length; i++) {
+							if (items[i] instanceof ActionContributionItem) {
+								IAction action = ((ActionContributionItem)items[i]).getAction();
+								if (action.getStyle() == IAction.AS_CHECK_BOX) {
+									initActionState(getMemento(), action);	
+									if (action.isChecked()) {
+										action.run();
+									}
 								}
 							}
 						}
 					}
+					setMemento(null);
 				}
-				setMemento(null);
-			}
-		};
-		asyncExec(r);
+			};
+			asyncExec(r);
+		}
 	}
 	
 	/**
