@@ -1083,8 +1083,6 @@ public class LinkedModeUI {
 		if (fCurrentTarget.fWidget != null && !fCurrentTarget.fWidget.isDisposed())
 			display= fCurrentTarget.fWidget.getDisplay();
 		
-//		// debug trace
-//		JavaPlugin.log(new Status(IStatus.INFO, JavaPlugin.getPluginId(), IStatus.OK, "leaving linked mode", null));
 		if (fCurrentTarget.fAnnotationModel != null)
 			fCurrentTarget.fAnnotationModel.removeAllAnnotations();
 		disconnect();
