@@ -4,6 +4,7 @@ package org.eclipse.help.ui.internal.search;
  * All Rights Reserved.
  */
 import java.util.*;
+import java.util.List;
 
 import org.eclipse.help.IToc;
 import org.eclipse.help.internal.HelpSystem;

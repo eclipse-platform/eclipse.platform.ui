@@ -37,7 +37,7 @@ public class TocURL extends HelpURL {
 	 * @return java.io.InputStream
 	 */
 	public InputStream openStream() {
-		if("/".equals(url)){
+		if ("/".equals(url)) {
 			return serializeTocs();
 		}
 		return serializeToc(url);
@@ -45,29 +45,30 @@ public class TocURL extends HelpURL {
 	/**
 	 * @return InputStream from XML representation of TOC
 	 */
-	private InputStream serializeToc(String tocID){
-		Toc toc = (Toc)HelpSystem.getTocManager().getToc(tocID, getLocale().toString());
-		if(toc==null)
+	private InputStream serializeToc(String tocID) {
+		Toc toc =
+			(Toc) HelpSystem.getTocManager().getToc(tocID, getLocale().toString());
+		if (toc == null)
 			return null;
-		StringWriter stWriter=new StringWriter();
+		StringWriter stWriter = new StringWriter();
 		new TocWriter(toc, stWriter).generate();
-		try{
+		try {
 			return new ByteArrayInputStream(stWriter.toString().getBytes("UTF8"));
-		}catch (UnsupportedEncodingException uee){
+		} catch (UnsupportedEncodingException uee) {
 			return null;
 		}
 	}
 	/**
 	 * @return InputStream from XML representation of TOC list
 	 */
-	private InputStream serializeTocs(){
-		TocManager tocManager=HelpSystem.getTocManager();
+	private InputStream serializeTocs() {
+		TocManager tocManager = HelpSystem.getTocManager();
 		IToc[] tocs = tocManager.getTocs(getLocale().toString());
-		StringWriter stWriter=new StringWriter();
+		StringWriter stWriter = new StringWriter();
 		XMLGenerator gen = new XMLGenerator(stWriter);
 		gen.println("<tocs>");
 		gen.pad++;
-		for (int i=0; i<tocs.length; i++) {
+		for (int i = 0; i < tocs.length; i++) {
 			gen.printPad();
 			gen.print("<toc href=\"");
 			gen.print(tocs[i].getHref());
@@ -78,9 +79,9 @@ public class TocURL extends HelpURL {
 		gen.pad--;
 		gen.println("</tocs>");
 		gen.close();
-		try{
+		try {
 			return new ByteArrayInputStream(stWriter.toString().getBytes("UTF8"));
-		}catch (UnsupportedEncodingException uee){
+		} catch (UnsupportedEncodingException uee) {
 			return null;
 		}
 	}
