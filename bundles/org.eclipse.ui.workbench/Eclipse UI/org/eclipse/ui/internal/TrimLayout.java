@@ -51,8 +51,10 @@ class TrimLayout extends Layout {
 	private int marginWidth;
 	private int marginHeight;
 	
-	private int spacingWidth;
-	private int spacingHeight;
+	private int topSpacing;
+	private int bottomSpacing;
+	private int leftSpacing;
+	private int rightSpacing;
 	
 	// Position constants -- correspond to indices in the controls array, above.
 	private static final int TOP = 0;
@@ -98,9 +100,11 @@ class TrimLayout extends Layout {
 	 * @param horizontalSpacing
 	 * @param verticalSpacing
 	 */
-	public void setSpacing(int horizontalSpacing, int verticalSpacing) {
-		this.spacingWidth = horizontalSpacing;
-		this.spacingHeight = verticalSpacing;
+	public void setSpacing(int left, int right, int top, int bottom) {
+		leftSpacing = left;
+		rightSpacing = right;
+		topSpacing = top;
+		bottomSpacing = bottom;
 	}
 	
 	/**
@@ -352,8 +356,8 @@ class TrimLayout extends Layout {
 		Point result = new Point(wHint, hHint);
 		
 		int[] trimSize = getTrimSizes();
-		int horizontalTrim = trimSize[LEFT] + trimSize[RIGHT] + 2 * (marginWidth + spacingWidth);
-		int verticalTrim = trimSize[TOP] + trimSize[BOTTOM] + 2 * (marginHeight + spacingHeight);
+		int horizontalTrim = trimSize[LEFT] + trimSize[RIGHT] + (2 * marginWidth) + leftSpacing + rightSpacing;
+		int verticalTrim = trimSize[TOP] + trimSize[BOTTOM] + (2 * marginHeight) + topSpacing + bottomSpacing;
 				
 		Point innerSize;
 		if (centerArea == null) {
@@ -390,13 +394,13 @@ class TrimLayout extends Layout {
 		clientArea.height -= 2 * marginHeight;
 		
 		int leftOfLayout = clientArea.x;
-		int leftOfCenterPane = leftOfLayout + trimSize[LEFT] + spacingWidth;
-		int widthOfCenterPane = clientArea.width - trimSize[LEFT] - trimSize[RIGHT] - 2 * spacingWidth;
+		int leftOfCenterPane = leftOfLayout + trimSize[LEFT] + leftSpacing;
+		int widthOfCenterPane = clientArea.width - trimSize[LEFT] - trimSize[RIGHT] - leftSpacing - rightSpacing;
 		int rightOfCenterPane = clientArea.x + clientArea.width - trimSize[RIGHT];
 		
 		int topOfLayout = clientArea.y;
-		int topOfCenterPane = topOfLayout + trimSize[TOP] + spacingHeight;
-		int heightOfCenterPane = clientArea.height - trimSize[TOP] - trimSize[BOTTOM] - 2 * spacingHeight;
+		int topOfCenterPane = topOfLayout + trimSize[TOP] + topSpacing;
+		int heightOfCenterPane = clientArea.height - trimSize[TOP] - trimSize[BOTTOM] - topSpacing - bottomSpacing;
 		int bottomOfCenterPane = clientArea.y + clientArea.height - trimSize[BOTTOM];
 		
 		arrangeHorizontally(new Rectangle(leftOfLayout, topOfLayout, clientArea.width, trimSize[TOP]), controls[TOP]);

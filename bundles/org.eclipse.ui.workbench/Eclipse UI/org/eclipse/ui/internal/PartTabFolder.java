@@ -226,7 +226,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 
 		// Create control.	
 		this.parent = parent;
-		tabFolder = new CTabFolder2(parent, tabLocation | SWT.BORDER);
+		tabFolder = new CTabFolder2(parent, tabLocation | SWT.BORDER | SWT.FLAT);
 		tabFolder.setBorderVisible(false);
 		ColorSchemeService.setTabColors(tabFolder);
 

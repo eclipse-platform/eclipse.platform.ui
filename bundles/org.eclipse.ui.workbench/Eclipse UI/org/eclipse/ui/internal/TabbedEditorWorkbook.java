@@ -125,7 +125,7 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 	protected void createPresentation(Composite parent) {
 		usePulldown = preferenceStore.getBoolean(IPreferenceConstants.EDITORLIST_PULLDOWN_ACTIVE);
 
-		tabFolder = new CTabFolder2(parent, SWT.BORDER | SWT.SINGLE | tabLocation);
+		tabFolder = new CTabFolder2(parent, SWT.BORDER | SWT.SINGLE | SWT.FLAT | tabLocation);
 		tabFolder.setBorderVisible(false);
 		ColorSchemeService.setTabColors(tabFolder);
 
