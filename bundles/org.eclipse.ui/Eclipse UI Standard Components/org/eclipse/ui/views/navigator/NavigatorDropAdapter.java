@@ -115,24 +115,9 @@ public class NavigatorDropAdapter
 		IStatus result = doCopy(monitor, source, destination, false);
 		if (result.getCode() == IResourceStatus.PATH_OCCUPIED
 			|| result.getCode() == IResourceStatus.RESOURCE_EXISTS) {
-			if (alwaysOverwrite) {
-				return doCopy(monitor, source, destination, true);
-			}
-			String query = queryOverwrite(destination.toString());
-			if (query == YES) {
-				return doCopy(monitor, source, destination, true);
-			}
-			if (query == CANCEL) {
-				isCanceled = true;
-				return ok();
-			}
-			if (query == ALL) {
-				alwaysOverwrite = true;
-				return doCopy(monitor, source, destination, true);
-			}
-			if (query == NO) {
-				return ok();
-			}
+			IWorkspace workspace = source.getWorkspace();
+			IPath destinationPath = getNewNameFor(destination, workspace);
+			result = doCopy(monitor, source, destinationPath, false);
 		}
 		return result;
 	}
@@ -256,6 +241,30 @@ public class NavigatorDropAdapter
 		return getViewer().getControl().getDisplay();
 	}
 	
+	/**
+	 * Return a "Copy of " name for the given path.
+	 */
+	private IPath getNewNameFor(IPath originalName, IWorkspace workspace) {
+		int counter = 1;
+		String resourceName = originalName.lastSegment();
+		IPath leadupSegment = originalName.removeLastSegments(1);
+		
+		while (true) {
+			String nameSegment;
+			
+			if (counter > 1)
+				nameSegment = ResourceNavigatorMessages.format("DropAdapter.copyNameTwoArgs", new Object[] {new Integer(counter), resourceName}); //$NON-NLS-1$
+			else
+				nameSegment = ResourceNavigatorMessages.format("DropAdapter.copyNameOneArg", new Object[] {resourceName}); //$NON-NLS-1$
+				
+			IPath pathToTry = leadupSegment.append(nameSegment);
+			
+			if (!workspace.getRoot().exists(pathToTry))
+				return pathToTry;
+				
+			counter++;
+		}
+	}
 	/**
 	 * Returns the shell
 	 */
