@@ -27,14 +27,20 @@ public class InstallWizard extends Wizard {
 	private PendingChange job;
 	private boolean successfulInstall = false;
 	private IInstallConfiguration config;
-
+	private boolean needLicensePage;
+	
 	public InstallWizard(PendingChange job) {
+		this(job, true);
+	}
+
+	public InstallWizard(PendingChange job, boolean needLicensePage) {
 		setDialogSettings(UpdateUIPlugin.getDefault().getDialogSettings());
 		setDefaultPageImageDescriptor(UpdateUIPluginImages.DESC_INSTALL_WIZ);
 		setForcePreviousAndNextButtons(true);
 		setNeedsProgressMonitor(true);
 		setWindowTitle(UpdateUIPlugin.getResourceString("InstallWizard.wtitle"));
 		this.job = job;
+		this.needLicensePage = needLicensePage;
 	}
 
 	public boolean isSuccessfulInstall() {
@@ -112,7 +118,7 @@ public class InstallWizard extends Wizard {
 		config = createInstallConfiguration();
 
 		if (job.getJobType() == PendingChange.INSTALL) {
-			if (UpdateModel.hasLicense(job)) {
+			if (needLicensePage && UpdateModel.hasLicense(job)) {
 				addPage(new LicensePage(job));
 			}
 			if (hasOptionalFeatures(job.getFeature())) {

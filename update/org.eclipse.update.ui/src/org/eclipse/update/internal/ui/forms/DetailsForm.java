@@ -860,7 +860,7 @@ public class DetailsForm extends PropertyWebForm {
 					return;
 			}
 			PendingChange job = createPendingChange(mode);
-			executeJob(getControl().getShell(), job);
+			executeJob(getControl().getShell(), job, true);
 		}
 	}
 
@@ -875,7 +875,7 @@ public class DetailsForm extends PropertyWebForm {
 		IFeature feature = fetchFeatureFromServer(getControl().getShell(), siteURL, vid);
 		if (feature!=null) {
 			PendingChange job = new PendingChange(feature, targetSite);
-			executeJob(getControl().getShell(), job);
+			executeJob(getControl().getShell(), job, true);
 		}		
 	}
 	
@@ -937,7 +937,7 @@ public class DetailsForm extends PropertyWebForm {
 		return null;
 	}
 
-	public static void executeJob(Shell shell, final PendingChange job) {
+	public static void executeJob(Shell shell, final PendingChange job, final boolean needLicensePage) {
 		IStatus validationStatus =
 			ActivityConstraints.validatePendingChange(job);
 		if (validationStatus != null) {
@@ -955,7 +955,7 @@ public class DetailsForm extends PropertyWebForm {
 		}
 		BusyIndicator.showWhile(shell.getDisplay(), new Runnable() {
 			public void run() {
-				InstallWizard wizard = new InstallWizard(job);
+				InstallWizard wizard = new InstallWizard(job, needLicensePage);
 				WizardDialog dialog =
 					new InstallWizardDialog(
 						UpdateUIPlugin.getActiveWorkbenchShell(),

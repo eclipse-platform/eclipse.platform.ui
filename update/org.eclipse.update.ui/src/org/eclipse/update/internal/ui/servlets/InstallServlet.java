@@ -2,6 +2,7 @@ package org.eclipse.update.internal.ui.servlets;
 
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -45,7 +46,6 @@ public class InstallServlet extends HttpServlet {
 		HttpServletRequest servletRequest,
 		HttpServletResponse servletResponse)
 		throws ServletException, IOException {
-		String serverInfo = ServletsUtil.getServerInfo(servletRequest);
 		PrintWriter writer =
 			ServletsUtil.createResponsePrologue(servletResponse);
 		execute(writer, servletRequest);
@@ -60,31 +60,46 @@ public class InstallServlet extends HttpServlet {
 		PrintWriter writer,
 		HttpServletRequest servletRequest) {
 		String serverURL = servletRequest.getParameter("server");
-		String id = servletRequest.getParameter("id");
-		String version = servletRequest.getParameter("version");
+		String license = servletRequest.getParameter("license");
+		boolean needLicensePage=true;
+		if (license!=null && license.equalsIgnoreCase("false"))
+			needLicensePage=false;
+		
+		String [] versionedIds = servletRequest.getParameterValues("feature");
+		
 		if (serverURL == null) {
 			createError(writer, "Update server URL is unknown.");
 			return;
 		}
-		if (id == null) {
-			createError(writer, "Feature identifier is unknown.");
-			return;
-		}
-		if (version == null) {
-			createError(writer, "Feature version is unknown.");
+		if (versionedIds == null) {
+			createError(writer, "No features to install.");
 			return;
 		}
 		try {
 			URL url = new URL(serverURL);
-			VersionedIdentifier vid = new VersionedIdentifier(id, version);
-			executeInstall(writer, url, vid);
-			createInfo(writer);
+			VersionedIdentifier [] vids = computeVersionedIdentifiers(versionedIds);
+			boolean success = executeInstall(writer, url, vids, needLicensePage);
+			if (success) createInfo(writer);
 		} catch (MalformedURLException e) {
 			createError(
 				writer,
 				"Update server URL has incorrect format: "
 					+ serverURL.toString());
 		}
+	}
+	
+	private VersionedIdentifier[] computeVersionedIdentifiers(String [] array) {
+		ArrayList result = new ArrayList();
+		for (int i=0; i<array.length; i++) {
+			String id_version = array[i];
+			int sep = id_version.lastIndexOf('_');
+			if (sep== -1) continue;
+			String id = id_version.substring(0, sep);
+			String version = id_version.substring(sep+1);
+			VersionedIdentifier vid = new VersionedIdentifier(id, version);
+			result.add(vid);
+		}
+		return (VersionedIdentifier[])result.toArray(new VersionedIdentifier[result.size()]);
 	}
 
 	private void createError(PrintWriter writer, String message) {
@@ -96,35 +111,50 @@ public class InstallServlet extends HttpServlet {
 	private void createInfo(PrintWriter writer) {
 		writer.println("Request succesfully executed.");
 	}
-
-	private void createResponseBody(PrintWriter writer, String serverInfo) {
-		writer.println("<H2>Web-triggered Updates</H2>");
+	private boolean executeInstall(PrintWriter writer,
+								URL siteURL,
+								VersionedIdentifier [] vids,
+								boolean needLicensePage) {
+		if (vids.length==1) {
+			return executeInstall(writer, siteURL, vids[0], needLicensePage);
+		}
+		else {
+			createError(writer, "Multiple feature install not supported");
+			return false;
+		}
 	}
-	private void executeInstall(
+
+	private boolean executeInstall(
 		final PrintWriter writer,
 		final URL siteURL,
-		final VersionedIdentifier vid) {
+		final VersionedIdentifier vid,
+		final boolean needLicensePage) {
 		Display display = SWTUtil.getStandardDisplay();
+		final boolean [] result = new boolean[] { false };
+		
 		display.syncExec(new Runnable() {
 			public void run() {
 				final Shell shell = UpdateUIPlugin.getActiveWorkbenchShell();
 				BusyIndicator.showWhile(shell.getDisplay(), new Runnable() {
 					public void run() {
-						doExecuteInstall(writer, shell, siteURL, vid);
+						result[0] = doExecuteInstall(writer, shell, siteURL, vid, needLicensePage);
 					}
 				});
 			}
 		});
+		return result[0];
 	}
-	private void doExecuteInstall(
+	
+	private boolean doExecuteInstall(
 		PrintWriter writer,
-		Shell shell,
+		final Shell shell,
 		URL siteURL,
-		VersionedIdentifier vid) {
+		VersionedIdentifier vid,
+		final boolean needLicensePage) {
 		IFeature feature =
 			DetailsForm.fetchFeatureFromServer(shell, siteURL, vid);
 		if (feature == null)
-			return;
+			return false;
 		IFeature latestOldFeature = findLatestOldFeature(feature);
 
 		if (latestOldFeature != null) {
@@ -133,7 +163,7 @@ public class InstallServlet extends HttpServlet {
 				.equals(feature.getVersionedIdentifier())) {
 				// Already installed.
 				createError(writer, "The feature is already installed.");
-				return;
+				return false;
 			}
 			if (latestOldFeature
 				.getVersionedIdentifier()
@@ -142,16 +172,21 @@ public class InstallServlet extends HttpServlet {
 				createError(
 					writer,
 					"The feature is older than the one already installed");
-				return;
+				return false;
 			}
 		}
-		PendingChange job;
+		final PendingChange job;
 
 		if (latestOldFeature != null)
 			job = new PendingChange(latestOldFeature, feature);
 		else
 			job = new PendingChange(feature, PendingChange.INSTALL);
-		DetailsForm.executeJob(shell, job);
+		shell.getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				DetailsForm.executeJob(shell, job, needLicensePage);
+			}
+		});
+		return true;
 	}
 
 	private IFeature findLatestOldFeature(IFeature feature) {
