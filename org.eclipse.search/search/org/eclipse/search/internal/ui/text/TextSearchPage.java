@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -108,8 +109,10 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		SearchUI.activateSearchResultView();
 		
 		SearchPatternData patternData= getPatternData();
-		if (patternData.fileNamePatterns == null || fExtensions.getText().length() <= 0)
-			return true;
+		if (patternData.fileNamePatterns == null || fExtensions.getText().length() <= 0) {
+			patternData.fileNamePatterns= new HashSet(1);
+			patternData.fileNamePatterns.add("*"); //$NON-NLS-1$
+		}
 
 		// Setup search scope
 		TextSearchScope scope= null;
@@ -243,7 +246,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 				initializePatternControl();
 			}
 			fExtensions.setFocus();
-			getContainer().setPerformActionEnabled(fExtensions.getText().length() > 0 && getContainer().hasValidScope());
+			getContainer().setPerformActionEnabled(getContainer().hasValidScope());
 		}
 		super.setVisible(visible);
 	}
@@ -259,20 +262,28 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		GridLayout layout;
 		RowLayouter layouter;
 		Composite result= new Composite(parent, SWT.NONE);
+
 		result.setLayout(new GridLayout());
 		result.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
 		// Search Expression group
-		Group group= new Group(result, SWT.NONE);
-		group.setText(SearchMessages.getString("SearchPage.expression.label")); //$NON-NLS-1$
 		layout= new GridLayout();
 		layout.numColumns= 3;
+		Composite group= new Composite(result, SWT.NONE);
 		group.setLayout(layout);
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
 		layouter= new RowLayouter(3, true);
 		layouter.setDefaultSpan();
 
 		createFileNamePatternComposite(layouter, group);
+
+		Label filler= new Label(group, SWT.NONE);
+		GridData gd= new GridData(GridData.FILL_BOTH);
+		gd.heightHint= convertHeightInCharsToPixels(1) / 3;
+		gd.horizontalSpan= 3;
+		filler.setLayoutData(gd);
+		layouter.perform(new Control[] { filler }, 3);
 
 		createTextSearchComposite(layouter, group);
 
@@ -281,7 +292,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		WorkbenchHelp.setHelp(result, ISearchHelpContextIds.TEXT_SEARCH_PAGE);
 	}
 
-	private void createTextSearchComposite(RowLayouter layouter, Group group) {
+	private void createTextSearchComposite(RowLayouter layouter, Composite group) {
 		GridData gd;
 		Label label;
 		
@@ -450,7 +461,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		});
 		fExtensions.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				getContainer().setPerformActionEnabled(fExtensions.getText().length() > 0 && getContainer().hasValidScope());
+				getContainer().setPerformActionEnabled(getContainer().hasValidScope());
 			}
 		});
 		
