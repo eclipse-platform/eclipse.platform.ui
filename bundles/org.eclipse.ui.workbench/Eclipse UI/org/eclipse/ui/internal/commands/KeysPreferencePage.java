@@ -219,7 +219,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 
 		// TODO ok to remove?
 		if (workbench instanceof Workbench)
-			((Workbench) workbench).updateActiveKeyBindingService();
+			((Workbench) workbench).updateCommandAndContextController();
 
 		return super.performOk();
 	}

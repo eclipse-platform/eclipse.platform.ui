@@ -757,7 +757,7 @@ public final class CommandManager implements ICommandManager {
 	private boolean updateCommand(Command command) {
 		boolean updated = false;
 		SortedSet contextBindings = (SortedSet) contextBindingsByCommandId.get(command.getId());
-		updated |= command.setActive(contextBindings != null ? inContext(contextBindings) : false);
+		updated |= command.setActive(contextBindings != null ? inContext(contextBindings) : true);
 		ICommandDefinition commandDefinition = (ICommandDefinition) commandDefinitionsById.get(command.getId());
 		updated |= command.setCategoryId(commandDefinition != null ? commandDefinition.getCategoryId() : null);
 		updated |= command.setContextBindings(contextBindings != null ? contextBindings : Util.EMPTY_SORTED_SET);

@@ -1826,10 +1826,16 @@
             id="org.eclipse.ui.globalScope">
       </context>
       <context
-            name="%context.text.name"
-            description="%context.text.description"
+            name="%context.editingText.name"
+            description="%context.editingText.description"
             id="org.eclipse.ui.textEditorScope"
             parentId="org.eclipse.ui.globalScope">
+      </context>
+      <context
+            name="%context.editingJavaSource.name"
+            description="%context.editingJavaSource.description"
+            id="org.eclipse.jdt.ui.javaEditorScope"
+            parentId="org.eclipse.ui.textEditorScope">
       </context>
    </extension>
    <extension

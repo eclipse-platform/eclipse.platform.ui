@@ -11,40 +11,128 @@
 
 package org.eclipse.ui.internal;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.SortedMap;
+import java.util.SortedSet;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.eclipse.core.boot.IPlatformRunnable;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IMarkerDelta;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceDescription;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExecutableExtension;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IPluginRegistry;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
-import org.eclipse.jface.preference.*;
-import org.eclipse.jface.resource.*;
-import org.eclipse.jface.util.*;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.resource.FontRegistry;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.util.OpenStrategy;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.window.WindowManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.graphics.DeviceData;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IDecoratorManager;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorRegistry;
+import org.eclipse.ui.IMarkerHelpRegistry;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.IPageListener;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IPartService;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveRegistry;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IStartup;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWindowListener;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.actions.GlobalBuildAction;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.ui.commands.*;
-import org.eclipse.ui.contexts.*;
-import org.eclipse.ui.internal.commands.*;
+import org.eclipse.ui.commands.IActionService;
+import org.eclipse.ui.commands.IActionServiceEvent;
+import org.eclipse.ui.commands.IActionServiceListener;
+import org.eclipse.ui.commands.ICommandManager;
+import org.eclipse.ui.contexts.IContextActivationService;
+import org.eclipse.ui.contexts.IContextActivationServiceEvent;
+import org.eclipse.ui.contexts.IContextActivationServiceListener;
+import org.eclipse.ui.contexts.IContextManager;
+import org.eclipse.ui.internal.commands.ActionService;
+import org.eclipse.ui.internal.commands.CommandAndContextController;
+import org.eclipse.ui.internal.commands.CommandManager;
 import org.eclipse.ui.internal.contexts.ContextActivationService;
 import org.eclipse.ui.internal.contexts.ContextManager;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.dialogs.WelcomeEditorInput;
 import org.eclipse.ui.internal.fonts.FontDefinition;
-import org.eclipse.ui.internal.misc.*;
+import org.eclipse.ui.internal.keys.KeySupport;
 import org.eclipse.ui.internal.misc.Assert;
+import org.eclipse.ui.internal.misc.Policy;
+import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.model.WorkbenchAdapterBuilder;
+import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.update.core.SiteManager;
 
 /**
@@ -53,7 +141,6 @@ import org.eclipse.update.core.SiteManager;
  */
 public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExtension {
 
-    private ContextAndHandlerManager contextAndHandlerManager;
 	private WindowManager windowManager;
 	private WorkbenchWindow activatedWindow;
 	private EditorHistory editorHistory;
@@ -185,9 +272,8 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	private IActionService activeWorkbenchPartActionService;
 	private	IContextActivationService activeWorkbenchPartContextActivationService;
 	private IActionService actionService;
-	private ICommandManager commandManager;
 	private IContextActivationService contextActivationService;
-	private IContextManager contextManager;
+	private CommandAndContextController commandAndContextController;
 
 	public IActionService getActionService() {
 		if (actionService == null) {
@@ -199,7 +285,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	}
 
 	public ICommandManager getCommandManager() {
-		return commandManager;
+		return CommandManager.getInstance();
 	}
 		
 	public IContextActivationService getContextActivationService() {
@@ -212,14 +298,57 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	}
 
 	public IContextManager getContextManager() {
-		return contextManager;
+		return ContextManager.getInstance();
 	}
 
-	private void initializeCommandsAndContexts() {
-		commandManager = CommandManager.getInstance();
-		contextManager = ContextManager.getInstance();
-		addWindowListener(windowListener);
+	private void initializeCommandsAndContexts(final Display display) {
+		getCommandManager();
+		getContextManager();
+		commandAndContextController = new CommandAndContextController();
+        
+		final Listener listener = new Listener() {
+			public void handleEvent(Event event) {
+				if ((event.keyCode & SWT.MODIFIER_MASK) != 0)
+					return;
+
+				final Display display = Display.getCurrent();
+				final Shell[] shells = display.getShells();
+		
+				for (int i = 0; i < shells.length; i++) {
+					final int style = shells[i].getStyle();
+	
+					if (((style & SWT.APPLICATION_MODAL) != 0) || ((style & SWT.PRIMARY_MODAL) != 0) || ((style & SWT.SYSTEM_MODAL) != 0))
+						return;
+				}
+
+				KeyStroke keyStroke = KeySupport.convertAcceleratorToKeyStroke(KeySupport.convertEventToAccelerator(event));				
+				
+				if (commandAndContextController.press(keyStroke, event)) {
+					switch (event.type) {
+						case SWT.KeyDown:
+							event.doit = false;
+							break;
+						case SWT.Traverse:
+							event.detail = SWT.TRAVERSE_NONE;
+							event.doit = true;
+							break;
+						default:
+					}
+
+					event.type = SWT.NONE;					
+				}
+			}
+		};
+ 
+		display.addFilter(SWT.Traverse, listener);
+		display.addFilter(SWT.KeyDown, listener);
+		addWindowListener(windowListener);				
 		updateCommandsAndContexts();
+	}
+
+	// TODO is this necessary? as well, should CommandAndContextController be a singleton?
+	public void updateCommandAndContextController() {
+		commandAndContextController.update();			
 	}
 
 	void updateCommandsAndContexts() {
@@ -442,7 +571,8 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 */
 	protected void fireWindowOpened(IWorkbenchWindow window) {
         // TODO cast craziness
-        contextAndHandlerManager.registerWindow((WorkbenchWindow) window);
+		((WorkbenchWindow) window).getStatusLineManager().add(commandAndContextController.getModeContributionItem());
+
 		Object list[] = windowListeners.getListeners();
 		for (int i = 0; i < list.length; i++) {
 			((IWindowListener) list[i]).windowOpened(window);
@@ -452,8 +582,9 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 * Fire window closed event.
 	 */
 	protected void fireWindowClosed(IWorkbenchWindow window) {
-        // TODO cast craziness
-        contextAndHandlerManager.deregisterWindow((WorkbenchWindow) window);
+		// TODO cast craziness
+		((WorkbenchWindow) window).getStatusLineManager().remove(commandAndContextController.getModeContributionItem());
+
 		if (activatedWindow == window) {
 			// Do not hang onto it so it can be GC'ed
 			activatedWindow = null;
@@ -973,13 +1104,6 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		return WorkbenchPlugin.getDefault().getWorkingSetManager();
 	}
 		
-	public void updateActiveGestureBindingService() {		
-	}
-
-	public void updateActiveKeyBindingService() {
-        contextAndHandlerManager.update();			
-	}
-		
 	/**
 	 * Listener for preference changes.
 	 */
@@ -1021,16 +1145,8 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 * @return true if init succeeded.
 	 */
 	private boolean init(String[] commandLineArgs, final Display display) {
-		initializeCommandsAndContexts();
-        this.commandLineArgs = commandLineArgs;
-        
-        /* Attach a listener to all key events so that accelerator keys can
-         * be executed.  This must be done after the command and contexts
-         * framework is up and running.
-         */
-        contextAndHandlerManager = new ContextAndHandlerManager(this);
-        display.addFilter(SWT.Traverse, contextAndHandlerManager);
-        display.addFilter(SWT.KeyDown, contextAndHandlerManager);
+		this.commandLineArgs = commandLineArgs;
+		initializeCommandsAndContexts(display);
 
 		if (WorkbenchPlugin.getDefault().isDebugging()) {
 			WorkbenchPlugin.DEBUG = true;

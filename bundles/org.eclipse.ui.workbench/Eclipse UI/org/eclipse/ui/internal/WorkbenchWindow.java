@@ -280,8 +280,8 @@ public class WorkbenchWindow
 						clientArea.x += width + VGAP;
 						clientArea.width -= width + VGAP;
 
-					}
 				}
+			}
 
 			} else
 				getShortcutBar().getControl().setBounds(0, 0, 0, 0);
@@ -1578,9 +1578,6 @@ public class WorkbenchWindow
 			newActivePage = (IWorkbenchPage) pageList.getNextActive();
 
 		setActivePage(newActivePage);
-
-		// TODO: is this necessary?
-		workbench.updateActiveKeyBindingService();
 
 		// Restore the coolbar manager state. 
 		IMemento coolBarMem =
