@@ -13,7 +13,6 @@ between perspectives that are already open. The perspective you are currently wo
 is shown in the title of the window and in the shortcut bar as a pushed-in icon.
 </item>
 
-
 <item><b>Configuring your perspectives</b>
 You can move views and editors around the workbench by dragging their titlebars. You can
 also add more views to your current perspective by using Window > Show View. 
