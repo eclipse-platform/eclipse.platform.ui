@@ -7,20 +7,31 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Red Hat Incorporated - get/setResourceAttribute code
  *******************************************************************************/
 package org.eclipse.core.internal.localstore;
 
 import java.io.File;
+import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.internal.resources.ResourceStatus;
 import org.eclipse.core.internal.utils.Convert;
 import org.eclipse.core.internal.utils.Policy;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 
 public abstract class CoreFileSystemLibrary {
 
 	/** Indicates whether or not this FS is case sensitive */
 	private static final boolean caseSensitive = new File("a").compareTo(new File("A")) != 0; //$NON-NLS-1$ //$NON-NLS-2$
+	private static boolean hasNatives = false;
+	private static boolean isUnicode = false;
+
+	/** instance of this library */
+	// The name convention is to get the plugin version at the time
+	// the library is changed.  
+	private static final String LIBRARY_NAME = "core_3_1_0"; //$NON-NLS-1$
+
+	private static boolean loggedFailedGetAttributes = false;
 
 	/**
 	 * The following masks are used to represent the bits
@@ -32,24 +43,19 @@ public abstract class CoreFileSystemLibrary {
 	 * given file and the higher bits represent some relevant flags.
 	 */
 
+	/** indicates if the resource is a folder or a file */
+	private static final long STAT_FOLDER = 0x2000000000000000l;
+	/** indicates if the resource is marked as read-only */
+	private static final long STAT_READ_ONLY = 0x1000000000000000l;
 	/** reserved, should not be used */
 	private static final long STAT_RESERVED = 0x8000000000000000l;
 	/** indicates if this is a valid stat or some problem happened when 
 	 retrieving the information */
 	private static final long STAT_VALID = 0x4000000000000000l;
-	/** indicates if the resource is a folder or a file */
-	private static final long STAT_FOLDER = 0x2000000000000000l;
-	/** indicates if the resource is marked as read-only */
-	private static final long STAT_READ_ONLY = 0x1000000000000000l;
 	/** used to extract the last modified timestamp */
 	private static final long STAT_LASTMODIFIED = ~(STAT_RESERVED | STAT_VALID | STAT_FOLDER | STAT_READ_ONLY);
 
-	/** instance of this library */
-	// The name convention is to get the plugin version at the time
-	// the library is changed.  
-	private static final String LIBRARY_NAME = "core_2_1_0b"; //$NON-NLS-1$
-	private static boolean hasNatives = false;
-	private static boolean isUnicode = false;
+
 
 	static {
 		try {
@@ -59,6 +65,17 @@ public abstract class CoreFileSystemLibrary {
 		} catch (UnsatisfiedLinkError e) {
 			logMissingNativeLibrary(e);
 		}
+	}
+
+	/**
+	 * Copies file attributes from source to destination. The copyLastModified attribute
+	 * indicates whether the lastModified attribute should be copied.
+	 */
+	public static boolean copyAttributes(String source, String destination, boolean copyLastModified) {
+		if (hasNatives)
+			// Note that support for copying last modified info is not implemented on Windows
+			return isUnicode ? internalCopyAttributesW(source.toCharArray(), destination.toCharArray(), copyLastModified) : internalCopyAttributes(Convert.toPlatformBytes(source), Convert.toPlatformBytes(destination), copyLastModified);
+		return false; // not supported
 	}
 
 	public static long getLastModified(long stat) {
@@ -71,6 +88,30 @@ public abstract class CoreFileSystemLibrary {
 
 		// inlined (no native) implementation
 		return new File(fileName).lastModified();
+	}
+
+	public static ResourceAttributes getResourceAttributes(String fileName) {
+		try {
+			ResourceAttributes attributes = new ResourceAttributes();
+			if (!hasNatives) {
+				//non-native implementation
+				attributes.setReadOnly(isReadOnly(fileName));
+			} else {
+				if (isUnicode)
+					internalGetResourceAttributesW(fileName.toCharArray(), attributes);
+				else
+					internalGetResourceAttributes(Convert.toPlatformBytes(fileName), attributes);
+			}
+			return attributes;
+		} catch (UnsatisfiedLinkError e) {
+			if (!loggedFailedGetAttributes) {
+				loggedFailedGetAttributes = true;
+				String message = Policy.bind("resources.getResourceAttributesFailed", fileName); //$NON-NLS-1$
+				ResourceStatus status = new ResourceStatus(IStatus.INFO, new Path(fileName), message);
+				ResourcesPlugin.getPlugin().getLog().log(status);
+			}
+		}
+		return null;
 	}
 
 	public static long getStat(String fileName) {
@@ -90,12 +131,28 @@ public abstract class CoreFileSystemLibrary {
 		return result;
 	}
 
-	private static void logMissingNativeLibrary(UnsatisfiedLinkError e) {
-		String libName = System.mapLibraryName(LIBRARY_NAME);
-		String message = Policy.bind("localstore.couldNotLoadLibrary", libName); //$NON-NLS-1$
-		ResourceStatus status = new ResourceStatus(IStatus.INFO, null, message, null);
-		ResourcesPlugin.getPlugin().getLog().log(status);
-	}
+	/**
+	 * Copies file attributes from source to destination. The copyLastModified attribute
+	 * indicates whether the lastModified attribute should be copied.
+	 */
+	private static final native boolean internalCopyAttributes(byte[] source, byte[] destination, boolean copyLastModified);
+
+	/**
+	 * Copies file attributes from source to destination. The copyLastModified attribute
+	 * indicates whether the lastModified attribute should be copied (Unicode
+	 * version - should not be called if <code>isUnicode</code> is
+	 * <code>false</code>).
+	 */
+	private static final native boolean internalCopyAttributesW(char[] source, char[] destination, boolean copyLastModified);
+	
+	/** Put the extended attributes that the platform supports in the IResource attributes object. Attributes
+	 * that are not supported by the platform will not be set and will remain the default value (<code>false</code>). */
+	private static final native boolean internalGetResourceAttributes(byte[] fileName, ResourceAttributes attribute);
+	
+	/** Put the extended attributes that the platform supports in the IResource attributes object. Attributes
+	 * that are not supported by the platform will not be set and will remain null (the default). 
+	 * (Unicode version - should not be called if <code>isUnicode</code> is <code>false</code>). */
+	private static final native boolean internalGetResourceAttributesW(char[] fileName, ResourceAttributes attribute);
 
 	/**
 	 * Returns the stat information for the specified filename in a long (64 bits). We just
@@ -118,14 +175,19 @@ public abstract class CoreFileSystemLibrary {
 	 */
 	private static final native boolean internalIsUnicode();
 
-	/** Set/unset the given file as read-only (Unicode
-	 * version - should not be called if <code>isUnicode</code> is
-	 * <code>false</code>). */
-	private static final native boolean internalSetReadOnlyW(char[] fileName, boolean readOnly);
+	/** Set the extended attributes specified in the IResource attribute. Only attributes 
+	 * that the platform supports will be set. */
+	private static final native boolean internalSetResourceAttributes(byte[] fileName, ResourceAttributes attribute);
 
-	/** Set/unset the given file as read-only. */
-	private static final native boolean internalSetReadOnly(byte[] fileName, boolean readOnly);
+	/** Set the extended attributes specified in the IResource attribute object. Only 
+	 * attributes that the platform supports will be set. (Unicode version - should not 
+	 * be called if <code>isUnicode</code> is <code>false</code>). */
+	private static final native boolean internalSetResourceAttributesW(char[] fileName, ResourceAttributes attribute);
 
+	public static boolean isCaseSensitive() {
+		return caseSensitive;
+	}
+	
 	public static boolean isFile(long stat) {
 		return isSet(stat, STAT_VALID) && !isSet(stat, STAT_FOLDER);
 	}
@@ -148,30 +210,39 @@ public abstract class CoreFileSystemLibrary {
 	private static boolean isSet(long stat, long mask) {
 		return (stat & mask) != 0;
 	}
-
-	public static boolean setReadOnly(String fileName, boolean readOnly) {
-		if (hasNatives)
-			return isUnicode ? internalSetReadOnlyW(fileName.toCharArray(), readOnly) : internalSetReadOnly(Convert.toPlatformBytes(fileName), readOnly);
-
-		// inlined (no native) implementation
-		if (!readOnly)
-			return false; // not supported
-		return new File(fileName).setReadOnly();
+	
+	private static void logMissingNativeLibrary(UnsatisfiedLinkError e) {
+		String libName = System.mapLibraryName(LIBRARY_NAME);
+		String message = Policy.bind("localstore.couldNotLoadLibrary", libName); //$NON-NLS-1$
+		ResourceStatus status = new ResourceStatus(IStatus.INFO, null, message, null);
+		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
 
-	public static boolean isCaseSensitive() {
-		return caseSensitive;
+	public static boolean setReadOnly(String fileName, boolean readonly) {
+		ResourceAttributes attributes = getResourceAttributes(fileName);
+		if (attributes == null)
+			return false;
+		attributes.setReadOnly(readonly);
+		try {
+			setResourceAttributes(fileName, attributes);
+		} catch (CoreException e) {
+			//spec of setReadOnly doesn't throw exceptions on failure
+			return false;
+		}
+		return true;
 	}
 
-	/**
-	 * Copies file attributes from source to destination. The copyLastModified attribute
-	 * indicates whether the lastModified attribute should be copied.
-	 */
-	public static boolean copyAttributes(String source, String destination, boolean copyLastModified) {
-		if (hasNatives)
-			// Note that support for copying last modified info is not implemented on Windows
-			return isUnicode ? internalCopyAttributesW(source.toCharArray(), destination.toCharArray(), copyLastModified) : internalCopyAttributes(Convert.toPlatformBytes(source), Convert.toPlatformBytes(destination), copyLastModified);
-		return false; // not supported
+	public static void setResourceAttributes(String fileName, ResourceAttributes attributes) throws CoreException{
+		if (!hasNatives) {
+			// inlined (no native) implementation
+			if (attributes.isReadOnly())
+				new File(fileName).setReadOnly();
+			return;
+		}
+		if (isUnicode ? internalSetResourceAttributesW(fileName.toCharArray(), attributes) : internalSetResourceAttributes(Convert.toPlatformBytes(fileName), attributes))
+			return;
+		String message = Policy.bind("resources.setResourceAttributesFailed", fileName); //$NON-NLS-1$
+		throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, new Path(fileName), message, null);
 	}
 
 	/**
@@ -181,18 +252,4 @@ public abstract class CoreFileSystemLibrary {
 	public static boolean usingNatives() {
 		return hasNatives;
 	}
-
-	/**
-	 * Copies file attributes from source to destination. The copyLastModified attribute
-	 * indicates whether the lastModified attribute should be copied.
-	 */
-	private static final native boolean internalCopyAttributes(byte[] source, byte[] destination, boolean copyLastModified);
-
-	/**
-	 * Copies file attributes from source to destination. The copyLastModified attribute
-	 * indicates whether the lastModified attribute should be copied (Unicode
-	 * version - should not be called if <code>isUnicode</code> is
-	 * <code>false</code>).
-	 */
-	private static final native boolean internalCopyAttributesW(char[] source, char[] destination, boolean copyLastModified);
 }

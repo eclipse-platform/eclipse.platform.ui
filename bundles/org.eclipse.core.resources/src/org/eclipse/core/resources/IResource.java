@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Red Hat Incorporated - get/setResourceAttribute code
  *******************************************************************************/
 package org.eclipse.core.resources;
 
@@ -1249,6 +1250,33 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @since 2.1
 	 */
 	public IPath getRawLocation();
+	
+	/**
+	 * Gets this resource's extended attributes from the file system,
+	 * or <code>null</code> if the attributes could not be obtained.
+	 * Attributes that are not supported by the underlying file system 
+	 * will be set to <code>false</code>.
+	 * <p>
+	 * Sample usage: <br>
+	 * <br> 
+	 * <code>
+	 *  IResource resource; <br> 
+	 *  ... <br>
+	 *  IResourceAttributes attributes = resource.getResourceAttributes(); <br>
+	 *  if (attributes != null) {
+	 *     atributes.setExecutable(true); <br>
+	 *     resource.setResourceAttributes(attributes); <br>
+	 *  }
+	 * </code>
+	 * </p>
+	 * 
+	 * @return the extended attributes from the file system, or
+	 * <code>null</code> if they could not be obtained
+	 * @see #setResourceAttributes(ResourceAttributes)
+	 * @see ResourceAttributes
+	 * @since 3.1
+	 */
+	public ResourceAttributes getResourceAttributes();
 
 	/**
 	 * Returns the value of the session property of this resource identified
@@ -1399,6 +1427,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *
 	 * @return <code>true</code> if this resource is read-only, 
 	 *		<code>false</code> otherwise
+	 * @deprecated use <tt>IResource#getResourceAttributes()</tt>
 	 */
 	public boolean isReadOnly();
 
@@ -1963,8 +1992,38 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *
 	 * @param readOnly <code>true</code> to set it to read-only, 
 	 *		<code>false</code> to unset
+	 * @deprecated use <tt>IResource#setResourceAttributes(ResourceAttributes)</tt>
 	 */
 	public void setReadOnly(boolean readOnly);
+	
+	/**
+	 * Sets this resource with the given extended attributues. This sets the
+	 * attributes in the file system. Only attributes that are suported by
+	 * the underlying file system will be set. 
+	 * <p>
+	 * Sample usage: <br>
+	 * <br> 
+	 * <code>
+	 *  IResource resource; <br> 
+	 *  ... <br>
+	 *  if (attributes != null) {
+	 *     atributes.setExecutable(true); <br>
+	 *     resource.setResourceAttributes(attributes); <br>
+	 *  }
+	 * </code>
+	 * </p>
+	 * 
+	 * @param attributes the attributes to set
+	 * @exception CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li> This resource does not exist.</li>
+	 * <li> This resource is not local.</li>
+	 * <li> This resource is a project that is not open.</li>
+	 * </ul>
+	 * @see #getResourceAttributes()
+	 * @since 3.1 
+	 */
+	void setResourceAttributes(ResourceAttributes attributes) throws CoreException;
 
 	/**
 	 * Sets the value of the session property of this resource identified

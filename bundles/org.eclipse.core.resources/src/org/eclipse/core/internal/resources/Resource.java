@@ -7,7 +7,8 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- * 	Dan Rubel <dan_rubel@instantiations.com> - Implementation of getLocalTimeStamp
+ *     Dan Rubel <dan_rubel@instantiations.com> - Implementation of getLocalTimeStamp
+ *     Red Hat Incorporated - get/setResourceAttribute code
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -26,10 +27,9 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 
 public abstract class Resource extends PlatformObject implements IResource, ICoreConstants, Cloneable {
-	private static boolean loggedFailedReadOnly = false;
 	/* package */IPath path;
 	/* package */Workspace workspace;
-
+	
 	protected Resource(IPath path, Workspace workspace) {
 		this.path = path.removeTrailingSeparator();
 		this.workspace = workspace;
@@ -970,6 +970,17 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		return getLocation();
 	}
 
+	/* (non-Javadoc)
+	 * @see IResource#getResourceAttributes()
+	 */
+	public ResourceAttributes getResourceAttributes() {
+		// get the attributes
+		IPath location = getLocation();
+		if (location == null)
+			return null;
+		return CoreFileSystemLibrary.getResourceAttributes(location.toOSString());
+	}
+
 	/**
 	 * Returns the resource info.  Returns null if the resource doesn't exist.
 	 * If the phantom flag is true, phantom resources are considered.
@@ -1099,6 +1110,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 
 	/* (non-Javadoc)
 	 * @see IResource#isReadOnly()
+	 * @deprecated
 	 */
 	public boolean isReadOnly() {
 		IPath location = getLocation();
@@ -1286,26 +1298,30 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 
 	/* (non-Javadoc)
 	 * @see IResource#setReadOnly(boolean)
+	 * @deprecated
 	 */
 	public void setReadOnly(boolean readonly) {
 		IPath location = getLocation();
-		if (location == null)
-			return;
-		if (CoreFileSystemLibrary.setReadOnly(location.toOSString(), readonly))
-			return;
-		// The call to #setReadOnly failed. Log a message but only the first time
-		// this happens.
-		if (loggedFailedReadOnly)
-			return;
-		try {
-			String message = Policy.bind("resources.readOnlyFailed", getFullPath().toString()); //$NON-NLS-1$
-			ResourceStatus status = new ResourceStatus(IStatus.INFO, getFullPath(), message);
-			ResourcesPlugin.getPlugin().getLog().log(status);
-		} finally {
-			loggedFailedReadOnly = true;
-		}
+		if (location != null)
+			CoreFileSystemLibrary.setReadOnly(location.toOSString(), readonly);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.IResource#setResourceAttributes(org.eclipse.core.resources.IResourceAttributes)
+	 */
+	public void setResourceAttributes(ResourceAttributes attributes) throws CoreException {
+		ResourceInfo info = getResourceInfo(false, false);
+		int flags = getFlags(info);
+		checkAccessible(flags);
+		checkLocal(flags, DEPTH_ZERO);
+		IPath location = getLocation();
+		if (location == null) {
+			String message = Policy.bind("localstore.locationUndefined", getFullPath().toString()); //$NON-NLS-1$
+			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, getFullPath(), message, null);
+		}
+		CoreFileSystemLibrary.setResourceAttributes(location.toOSString(), attributes);
+	}
+	
 	/* (non-Javadoc)
 	 * @see IResource#setSessionProperty(QualifiedName, Object)
 	 */

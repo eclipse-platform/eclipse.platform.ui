@@ -436,7 +436,7 @@ public class FileSystemStoreTest extends LocalStoreTest {
 		assertTrue("2.4", !CoreFileSystemLibrary.isReadOnly(fileName));
 
 		/* remove trash */
-		target.toFile().delete();
-		temp.delete();
+		assertTrue("3.98", target.toFile().delete());
+		assertTrue("3.99", temp.delete());
 	}
 }
