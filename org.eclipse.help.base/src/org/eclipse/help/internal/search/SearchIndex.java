@@ -56,7 +56,7 @@ public class SearchIndex {
 		this(
 			locale,
 			analyzerDesc,
-			Platform.getConfigurationMetadataLocation().append(".helpIx").append(locale).toFile()
+			Platform.getConfigurationMetadataLocation().append(HelpBasePlugin.PLUGIN_ID+".ix").append(locale).toFile()
 			);
 	}
 	/**
