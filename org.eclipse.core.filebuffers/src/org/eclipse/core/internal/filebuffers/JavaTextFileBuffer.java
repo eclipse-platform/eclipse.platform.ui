@@ -12,6 +12,7 @@ package org.eclipse.core.internal.filebuffers;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -151,10 +152,10 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 		return STATUS_ERROR;	
 	}
 	
-	private InputStream getFileContents(IProgressMonitor monitor) {
+	private InputStream getFileContents(File file, IProgressMonitor monitor) {
 		try {
-			if (fFile != null)
-				return new FileInputStream(fFile);
+			if (file != null)
+				return new FileInputStream(file);
 		} catch (FileNotFoundException e) {
 		}
 		return null;
@@ -209,9 +210,7 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 		try {
 			original= fManager.createEmptyDocument(getLocation());
 			cacheEncodingState(monitor);
-			InputStream stream= getFileContents(monitor);
-			if (stream != null)
-				setDocumentContent(original, stream, fEncoding);
+			setDocumentContent(original, fFile, fEncoding, monitor);
 		} catch (CoreException x) {
 			fStatus= x.getStatus();
 		}
@@ -286,7 +285,7 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 		try {
 			fDocument= fManager.createEmptyDocument(getLocation());
 			cacheEncodingState(monitor);
-			setDocumentContent(fDocument, getFileContents(monitor), fEncoding);
+			setDocumentContent(fDocument, fFile, fEncoding, monitor);
 			
 			fAnnotationModel= fManager.createAnnotationModel(getLocation());
 
@@ -318,7 +317,7 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 		fEncoding= fExplicitEncoding;
 		fHasBOM= false;
 		
-		InputStream stream= getFileContents(monitor);
+		InputStream stream= getFileContents(fFile, monitor);
 		if (stream != null) {
 			try {
 				QualifiedName[] options= new QualifiedName[] { IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK };
@@ -453,14 +452,16 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 	}
 	
 	/**
-	 * Initializes the given document with the given stream using the given encoding.
+	 * Initializes the given document with the given file's content using the given encoding.
 	 *
 	 * @param document the document to be initialized
-	 * @param contentStream the stream which delivers the document content
+	 * @param file the file which delivers the document content
 	 * @param encoding the character encoding for reading the given stream
+	 * @param monitor the progress monitor
 	 * @exception CoreException if the given stream can not be read
 	 */
-	private void setDocumentContent(IDocument document, InputStream contentStream, String encoding) throws CoreException {
+	private void setDocumentContent(IDocument document, File file, String encoding, IProgressMonitor monitor) throws CoreException {
+		InputStream contentStream= getFileContents(file, monitor);
 		if (contentStream == null)
 			return;
 		

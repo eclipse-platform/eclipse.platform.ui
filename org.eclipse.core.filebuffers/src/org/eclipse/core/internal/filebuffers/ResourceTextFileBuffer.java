@@ -19,6 +19,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
@@ -202,7 +203,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			
 			
 			fDocument= fManager.createEmptyDocument(getLocation());
-			setDocumentContent(fDocument, fFile.getContents(), fEncoding);
+			setDocumentContent(fDocument, fFile, fEncoding);
 			
 			fAnnotationModel= fManager.createAnnotationModel(getLocation());
 						
@@ -375,7 +376,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 		
 		try {
 			cacheEncodingState();
-			setDocumentContent(document, fFile.getContents(false), fEncoding);
+			setDocumentContent(document, fFile, fEncoding);
 		} catch (CoreException x) {
 			status= x.getStatus();
 		}
@@ -416,11 +417,12 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	 * Initializes the given document with the given stream using the given encoding.
 	 *
 	 * @param document the document to be initialized
-	 * @param contentStream the stream which delivers the document content
+	 * @param file the file which delivers the document content
 	 * @param encoding the character encoding for reading the given stream
 	 * @exception CoreException if the given stream can not be read
 	 */
-	private void setDocumentContent(IDocument document, InputStream contentStream, String encoding) throws CoreException {
+	private void setDocumentContent(IDocument document, IFile file, String encoding) throws CoreException {
+		InputStream contentStream= file.getContents();
 		Reader in= null;
 		try {
 			
