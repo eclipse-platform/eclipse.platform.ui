@@ -238,7 +238,7 @@ final class ContentAssistSubjectAdapter implements IContentAssistSubject {
 		if (fContentAssistSubject != null)
 			fContentAssistSubject.setSelectedRange(i, j);
 		else
-			fViewer.getTextWidget().setSelectionRange(i, j);
+			fViewer.setSelectedRange(i, j);
 	}
 
 	/*

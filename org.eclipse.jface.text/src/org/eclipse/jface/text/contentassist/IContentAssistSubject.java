@@ -53,9 +53,11 @@ public interface IContentAssistSubject {
 	int getLineHeight();
 
 	/**
-	 * Returns the caret position relative to the start of the text.
+	 * Returns the caret position relative to the start of the text in widget
+	 * coordinates.
 	 * 
-	 * @return the caret position relative to the start of the text
+	 * @return the caret position relative to the start of the text in widget
+	 *         coordinates
 	 * @exception SWTException
 	 *               <ul>
 	 *               <li>ERROR_WIDGET_DISPOSED - if the receiver has been
@@ -71,7 +73,7 @@ public interface IContentAssistSubject {
 	 * bounding box at the specified offset in the text. The point is relative
 	 * to the upper left corner of the widget client area.
 	 * 
-	 * @param offset offset relative to the start of the content 0
+	 * @param offset widget offset relative to the start of the content 0
 	 *           <= offset <= getCharCount()
 	 * @return x, y location of the upper left corner of the character bounding
 	 *         box at the specified offset in the text
