@@ -126,9 +126,9 @@ public class InspectorContentProvider extends BasicContentProvider implements IT
 	 * @see BasicContentProvider#doHandleDebug(Event)
 	 */
 	protected void doHandleDebugEvent(DebugEvent event) {
-		if (event.getKind() == DebugEvent.SUSPEND || 
+		if (!fInspectorList.isEmpty() && (event.getKind() == DebugEvent.SUSPEND || 
 			event.getKind() == DebugEvent.TERMINATE ||
-			event.getKind() == DebugEvent.CHANGE) {
+			event.getKind() == DebugEvent.CHANGE)) {
 			// remove any de-allocated values
 			Iterator itr = fInspectorList.getList().iterator();
 			while (itr.hasNext()) {

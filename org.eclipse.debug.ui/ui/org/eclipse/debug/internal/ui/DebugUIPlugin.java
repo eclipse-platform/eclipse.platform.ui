@@ -222,7 +222,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 			if (windows != null && windows.length > 0) {
 				Shell shell= windows[0].getShell();
 				if (!shell.isDisposed()) {
-					shell.getDisplay();
+					return shell.getDisplay();
 				}
 			}
 		}
