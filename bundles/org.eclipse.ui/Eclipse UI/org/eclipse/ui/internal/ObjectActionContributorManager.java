@@ -194,16 +194,7 @@ private Class getCommonResourceClass(List objects) {
 			if(object instanceof IResource)
 				break;
 				
-			IAdaptable adaptable = (IAdaptable) object;
-			Object resourceAdapter =
-				adaptable.getAdapter(IContributorResourceAdapter.class);
-			if(resourceAdapter == null)
-				resourceAdapter = 
-					DefaultContributorResourceAdapter.getDefault();
-				
-			IResource resource = 
-				((IContributorResourceAdapter) resourceAdapter).
-					getAdaptedResource(adaptable);
+			IResource resource = getAdaptedResource((IAdaptable) object);
 			
 			if(resource == null)
 				return null;
