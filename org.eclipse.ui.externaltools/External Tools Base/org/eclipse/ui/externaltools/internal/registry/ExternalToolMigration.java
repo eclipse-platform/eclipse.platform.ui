@@ -175,7 +175,7 @@ public final class ExternalToolMigration {
 		
 		config.setAttribute(IExternalToolConstants.ATTR_LOCATION, (String) commandArgs.get(TAG_LOCATION));
 		config.setAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, (String) commandArgs.get(TAG_WORK_DIR));
-		config.setAttribute(IExternalToolConstants.ATTR_CAPTURE_OUTPUT, TRUE.equals(commandArgs.get(TAG_CAPTURE_OUTPUT)));
+		config.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, TRUE.equals(commandArgs.get(TAG_CAPTURE_OUTPUT)));
 		config.setAttribute(IExternalToolConstants.ATTR_SHOW_CONSOLE, TRUE.equals(commandArgs.get(TAG_SHOW_CONSOLE)));
 		config.setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, TRUE.equals(commandArgs.get(TAG_RUN_BKGRND)));
 		config.setAttribute(IExternalToolConstants.ATTR_PROMPT_FOR_ARGUMENTS, TRUE.equals(commandArgs.get(TAG_PROMPT_ARGS)));
@@ -281,7 +281,7 @@ public final class ExternalToolMigration {
 
 		// Collect the rest of the information
 		config.setAttribute(IExternalToolConstants.ATTR_SHOW_CONSOLE, TRUE.equals(args.get(TAG_TOOL_SHOW_LOG)));
-		config.setAttribute(IExternalToolConstants.ATTR_CAPTURE_OUTPUT, TRUE.equals(args.get(TAG_TOOL_SHOW_LOG)));
+		config.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, TRUE.equals(args.get(TAG_TOOL_SHOW_LOG)));
 		config.setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, FALSE.equals(args.get(TAG_TOOL_BLOCK)));
 		String buildKinds= (String) args.get(TAG_TOOL_BUILD_TYPES);
 		if (buildKinds != null) {
