@@ -19,7 +19,7 @@ import java.util.Map;
 
 import org.eclipse.ui.internal.util.Util;
 
-final class ActivityPatternBindingDefinition {
+public final class ActivityPatternBindingDefinition {
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL =
 		ActivityPatternBindingDefinition.class.getName().hashCode();
@@ -63,7 +63,7 @@ final class ActivityPatternBindingDefinition {
 	private String pluginId;
 	private transient String string;
 
-	ActivityPatternBindingDefinition(
+	public ActivityPatternBindingDefinition(
 		String activityId,
 		String pattern,
 		String pluginId) {

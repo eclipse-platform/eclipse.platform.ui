@@ -25,7 +25,7 @@ import org.eclipse.ui.activities.NotDefinedException;
  * 
  * @since 3.0
  */
-class CategorizedActivity implements IActivity {
+public class CategorizedActivity implements IActivity {
 	
 	/**
 	 * The real <code>IActivity</code>.
@@ -44,7 +44,7 @@ class CategorizedActivity implements IActivity {
 	 * rendered.
 	 * @param activity the real <code>IActivity</code>.
 	 */
-	CategorizedActivity(ICategory category, IActivity activity) {
+	public CategorizedActivity(ICategory category, IActivity activity) {
 		this.activity = activity;
 		this.category = category;
 	}

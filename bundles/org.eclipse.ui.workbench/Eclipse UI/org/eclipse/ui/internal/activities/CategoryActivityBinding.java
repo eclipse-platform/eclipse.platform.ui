@@ -15,7 +15,7 @@ import org.eclipse.ui.activities.ICategoryActivityBinding;
 
 import org.eclipse.ui.internal.util.Util;
 
-final class CategoryActivityBinding implements ICategoryActivityBinding {
+public final class CategoryActivityBinding implements ICategoryActivityBinding {
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL =
 		CategoryActivityBinding.class.getName().hashCode();
@@ -25,7 +25,7 @@ final class CategoryActivityBinding implements ICategoryActivityBinding {
 	private transient boolean hashCodeComputed;
 	private transient String string;
 
-	CategoryActivityBinding(String activityId, String categoryId) {
+	public CategoryActivityBinding(String activityId, String categoryId) {
 		if (activityId == null || categoryId == null)
 			throw new NullPointerException();
 

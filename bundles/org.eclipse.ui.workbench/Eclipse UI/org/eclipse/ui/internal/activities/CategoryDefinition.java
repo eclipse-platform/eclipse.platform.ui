@@ -19,7 +19,7 @@ import java.util.Map;
 
 import org.eclipse.ui.internal.util.Util;
 
-final class CategoryDefinition implements Comparable {
+public final class CategoryDefinition implements Comparable {
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL =
 		CategoryDefinition.class.getName().hashCode();
@@ -83,7 +83,7 @@ final class CategoryDefinition implements Comparable {
 	private String pluginId;
 	private transient String string;
 
-	CategoryDefinition(String id, String name, String pluginId) {
+	public CategoryDefinition(String id, String name, String pluginId) {
 		this.id = id;
 		this.name = name;
 		this.pluginId = pluginId;
