@@ -1020,8 +1020,8 @@ public class CVSSSH2PreferencePage extends PreferencePage
   		i=Integer.parseInt(port);
   	}
   	catch (NumberFormatException ee) {
-  		setErrorMessage(Policy.bind("CVSSSH2PreferencePage.103")); //$NON-NLS-1$
-  		return false;
+//  		setErrorMessage(Policy.bind("CVSSSH2PreferencePage.103")); //$NON-NLS-1$
+//  		return false;
   	}
   	if((i < 0) || (i > 65535)){
   		setErrorMessage(Policy.bind("CVSSSH2PreferencePage.104")); //$NON-NLS-1$
