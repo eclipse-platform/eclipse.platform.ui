@@ -229,7 +229,7 @@ public class XmlCommentFormattingStrategy extends ContextBasedFormattingStrategy
         Assert.isLegal(fPartitions.size() > 0);
         Assert.isLegal(fIndentations.size() > 0);
 
-       //final String indent = fIndentations.removeFirst().toString();
+        final String indent = fIndentations.removeFirst().toString();
         final CommentPartitionDecorator partition = (CommentPartitionDecorator) fPartitions
                 .removeFirst();
 
