@@ -239,7 +239,8 @@ public class RemoteRevisionQuickDiffProvider implements IQuickDiffReferenceProvi
 	 */
 	private void readDocument(IProgressMonitor monitor) throws CoreException {
 		if(! fReferenceInitialized) return;
-		fReference = new Document();
+		if(fReference == null)
+			fReference = new Document();
 		if(computeChange(monitor)) {
 			ICVSRemoteFile remoteFile = (ICVSRemoteFile)fLastSyncState.getRemote(); 
 			if (fLastSyncState.getRemote() != null && fDocumentProvider instanceof IStorageDocumentProvider) {
