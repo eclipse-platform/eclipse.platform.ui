@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.CoreException;
  * model specific, since it must convert the debug model artifact (stack frame,
  * breakpoint, etc.),  into a source name that can be recognized by a source container
  * (<code>ISourceContainer</code>), to search for source elements. Source containers
- * are generally debug model independant, whereas source lookup participants are
+ * are generally debug model independent, whereas source lookup participants are
  * debug model specific.  
  * <p>
  * Clients may implement this interface. An abstract implementation is
