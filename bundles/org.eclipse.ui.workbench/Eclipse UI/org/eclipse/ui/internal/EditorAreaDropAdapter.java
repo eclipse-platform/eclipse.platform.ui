@@ -99,7 +99,12 @@ import org.eclipse.ui.part.ResourceTransfer;
 	}
 	
 	public void dragEnter(DropTargetEvent event) {				
-		//make sure the file is never moved; always do a copy
+		//always indicate a copy
+		event.detail = DND.DROP_COPY;
+	}
+
+	public void dragOperationChanged(DropTargetEvent event) {				
+		//always indicate a copy
 		event.detail = DND.DROP_COPY;
 	}
 }
