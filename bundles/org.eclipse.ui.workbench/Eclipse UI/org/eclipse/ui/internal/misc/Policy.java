@@ -27,6 +27,7 @@ public class Policy {
 	public static boolean DEBUG_RESTORE_WORKBENCH = DEFAULT;
 	public static boolean DEBUG_START_WORKBENCH = DEFAULT;
 	public static boolean DEBUG_DRAG_DROP = DEFAULT;
+	public static boolean DEBUG_KEY_BINDINGS = DEFAULT;
 
 	static {
 		if (getDebugOption("/debug")) { //$NON-NLS-1$
@@ -39,6 +40,7 @@ public class Policy {
 			DEBUG_PART_ACTIVATE = getDebugOption("/trace/part.activate"); //$NON-NLS-1$
 			DEBUG_PART_LISTENERS = getDebugOption("/trace/part.listeners"); //$NON-NLS-1$
 			DEBUG_DRAG_DROP = getDebugOption("/trace/dragDrop"); //$NON-NLS-1$
+			DEBUG_KEY_BINDINGS = getDebugOption("/trace/keyBindings"); //$NON-NLS-1$
 		}
 	}
 	
