@@ -53,6 +53,7 @@ import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.PerspectiveManager;
+import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupFacility;
 import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointOrganizerManager;
 import org.eclipse.debug.internal.ui.views.breakpoints.OtherBreakpointCategory;
@@ -342,6 +343,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
             if (fImageDescriptorRegistry != null) {
                 fImageDescriptorRegistry.dispose();
             }
+            
+            SourceLookupFacility.shutdown();
 			
 			MemoryRenderingManager.pluginShutdown();
 			

@@ -89,10 +89,20 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
     }
     
     /**
+     * Performs cleanup
+     */
+    public static void shutdown() {
+        if (fgDefault != null) {
+            fgDefault.dispose();
+        }
+    }
+    
+    /**
      * Constructs a source lookup facility.
      */
     private SourceLookupFacility() {
         fEditorsByPage = new HashMap();
+        DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
     }
     
     /**
@@ -467,4 +477,11 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
         page.getWorkbenchWindow().addPageListener(this);
     } 
   
+    /**
+     * Performs cleanup.
+     */
+    protected void dispose() {
+        DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
+        fEditorsByPage.clear();
+    }
 }
