@@ -26,16 +26,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
-import org.eclipse.ui.externaltools.model.ExternalTool;
 import org.eclipse.ui.externaltools.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.model.ToolUtil;
 import org.eclipse.ui.externaltools.variable.ExpandVariableContext;
 
-public class ExternalToolMainTab extends AbstractLaunchConfigurationTab {
+public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 
 	protected Text locationField;
 	protected Text workDirectoryField;
-	protected Text nameField;
 	protected Text descriptionField;
 	private Button fileLocationButton;
 	private Button workspaceLocationButton;
@@ -44,7 +42,7 @@ public class ExternalToolMainTab extends AbstractLaunchConfigurationTab {
 	
 	private ModifyListener modifyListener = new ModifyListener() {
 		public void modifyText(ModifyEvent e) {
-			//validate();
+			updateLaunchConfigurationDialog();
 		}
 	};
 
@@ -53,6 +51,7 @@ public class ExternalToolMainTab extends AbstractLaunchConfigurationTab {
 	 */
 	public void createControl(Composite parent) {
 		Composite mainComposite = new Composite(parent, SWT.NONE);
+		setControl(mainComposite);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
@@ -63,28 +62,8 @@ public class ExternalToolMainTab extends AbstractLaunchConfigurationTab {
 		
 		createLocationComponent(mainComposite);
 		createWorkDirectoryComponent(mainComposite);
-		createNameComponent(mainComposite);
 		createSpacer(parent);
 		createDescriptionComponent(mainComposite);
-	}
-	
-	/**
-	 * Creates the controls needed to edit the name
-	 * attribute of an external tool
-	 * 
-	 * @param parent the composite to create the controls in
-	 */
-	protected void createNameComponent(Composite parent) {
-		Label label = new Label(parent, SWT.NONE);
-		label.setText("Name:");
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		data.horizontalSpan = 2;
-		label.setLayoutData(data);
-		
-		nameField = new Text(parent, SWT.BORDER);
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
-		nameField.setLayoutData(data);
 	}
 	
 	/**
@@ -176,7 +155,6 @@ public class ExternalToolMainTab extends AbstractLaunchConfigurationTab {
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		updateLocation(configuration);
 		updateWorkingDirectory(configuration);
-		updateName(configuration);
 		updateDescription(configuration);
 	}
 	/**
@@ -192,11 +170,6 @@ public class ExternalToolMainTab extends AbstractLaunchConfigurationTab {
 		}
 		descriptionField.setText(desc);
 		descriptionField.addModifyListener(modifyListener);
-	}
-	
-	private void updateName(ILaunchConfiguration configuration) {
-		String name= configuration.getName();
-		nameField.setText(name);
 	}
 	
 	private void updateWorkingDirectory(ILaunchConfiguration configuration) {
@@ -261,7 +234,7 @@ public class ExternalToolMainTab extends AbstractLaunchConfigurationTab {
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		setErrorMessage(null);
 		setMessage(null);
-		return validateLocation() && validateName() && validateWorkDirectory();
+		return validateLocation() && validateWorkDirectory();
 	}
 	
 	/**
@@ -295,31 +268,7 @@ public class ExternalToolMainTab extends AbstractLaunchConfigurationTab {
 		}
 		return true;
 	}
-	
-	/**
-	 * Validates the content of the name field.
-	 */
-	protected boolean validateName() {
-		String value = nameField.getText().trim();
-		if (value.length() < 1) {
-			setErrorMessage("Name required");
-			return false;
-		}
-		
-		String errorText = ExternalTool.validateToolName(value);
-		if (errorText != null) {
-			setErrorMessage(errorText);
-			return false;
-		}
-		
-		boolean exists = ExternalToolsPlugin.getDefault().getToolRegistry(nameField.getShell()).hasToolNamed(value);
-		if (exists) {
-			setErrorMessage("An external tool with this name already exists");
-			return false;
-		}
-		return true;
-	}
-	
+
 	/**
 	 * Validates the content of the working directory field.
 	 */

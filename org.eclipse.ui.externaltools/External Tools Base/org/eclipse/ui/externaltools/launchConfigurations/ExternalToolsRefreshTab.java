@@ -26,7 +26,7 @@ import org.eclipse.ui.externaltools.internal.registry.ExternalToolVariable;
 import org.eclipse.ui.externaltools.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.model.ToolUtil;
 
-public class ExternalToolRefreshTab extends AbstractLaunchConfigurationTab implements IGroupDialogPage {
+public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab implements IGroupDialogPage {
 
 	private ExternalToolVariableForm variableForm;
 	
@@ -38,6 +38,8 @@ public class ExternalToolRefreshTab extends AbstractLaunchConfigurationTab imple
 	 */
 	public void createControl(Composite parent) {
 		Composite mainComposite = new Composite(parent, SWT.NONE);
+		setControl(mainComposite);
+		
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
@@ -235,5 +237,4 @@ public class ExternalToolRefreshTab extends AbstractLaunchConfigurationTab imple
 		}
 		return IMessageProvider.NONE;
 	}
-
 }

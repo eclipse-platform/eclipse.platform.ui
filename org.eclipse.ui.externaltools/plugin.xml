@@ -338,9 +338,6 @@
 	    	modes = "run"
     		category = "org.eclipse.ui.externaltools">
     	</launchConfigurationType>
-    </extension>
-    
-    <extension point="org.eclipse.debug.core.launchConfigurationTypes">
     	<launchConfigurationType
 	    	id = "org.eclipse.ui.externaltools.ProgramLaunchConfigurationType"
     		name = "%Program.externalTools"
@@ -348,7 +345,15 @@
     		modes = "run"
     		category = "org.eclipse.ui.externaltools">
     	</launchConfigurationType>
-    </extension>    
+    </extension>
+    
+    <extension point = "org.eclipse.debug.ui.launchConfigurationTabGroups">
+		<launchConfigurationTabGroup
+			id="org.eclipse.ui.externaltools.launchConfigurationTabGroup.program"
+			type ="org.eclipse.ui.externaltools.ProgramLaunchConfigurationType"
+			class="org.eclipse.ui.externaltools.launchConfigurations.ExternalToolsTabGroup">
+		</launchConfigurationTabGroup>
+	</extension>
     
 	<extension point="org.eclipse.ui.preferencePages">
 		<page 
