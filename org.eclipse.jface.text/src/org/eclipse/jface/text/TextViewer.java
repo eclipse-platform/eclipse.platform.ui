@@ -2266,12 +2266,12 @@ public class TextViewer extends Viewer implements
 				if (endLine > startLine) {
 					// reveal the beginning of the range in the start line
 					IRegion extent= getExtent(start, start);
-					startPixel= extent.getOffset();
+					startPixel= extent.getOffset() + fTextWidget.getHorizontalPixel();
 					endPixel= startPixel;
 					
 				} else {
 					IRegion extent= getExtent(start, end);
-					startPixel= extent.getOffset();
+					startPixel= extent.getOffset() + fTextWidget.getHorizontalPixel();;
 					endPixel= startPixel + extent.getLength();
 				}
 				
@@ -2322,6 +2322,17 @@ public class TextViewer extends Viewer implements
 		return extent.x;
 	}
 	
+	/**
+	 * Returns the region covered by the given start and end offset. 
+	 * The result is relative to the upper left corner of the widget
+	 * client area.
+	 *
+	 * @param start offset relative to the start of this viewer's viewport
+	 * 	0 <= offset <= getCharCount()
+ 	 * @param end offset relative to the start of this viewer's viewport
+	 * 	0 <= offset <= getCharCount()
+	 * @return the region covered by start and end offset
+	 */
 	final protected IRegion getExtent(int start, int end) {
 		Point left= fTextWidget.getLocationAtOffset(start);
 		Point right= new Point(left.x, left.y);
