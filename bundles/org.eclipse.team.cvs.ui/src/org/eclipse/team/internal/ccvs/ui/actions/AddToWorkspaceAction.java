@@ -8,12 +8,14 @@ package org.eclipse.team.internal.ccvs.ui.actions;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
@@ -72,28 +74,64 @@ public class AddToWorkspaceAction extends TeamAction {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {
 					ICVSRemoteFolder[] folders = getSelectedRemoteFolders();
-					IProject[] projects = new IProject[folders.length];
+					boolean yesToAll = false;
+					List targetProjects = new ArrayList();
+					List targetFolders = new ArrayList();
 					for (int i = 0; i < folders.length; i++) {
 						String name = folders[i].getName();
 						IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
-						if (project.exists()) {
-							// Make sure the user understands they will overwrite the project.
-							final boolean[] confirm = new boolean[] { false };
-							shell.getDisplay().syncExec(new Runnable() {
-								public void run() {
-									confirm[0] = MessageDialog.openConfirm(shell, Policy.bind("confirmOverwriteTitle"), Policy.bind("confirmOverwrite"));
-								}
-							});
-							if (!confirm[0]) return;
+						if (!yesToAll) {
+							switch (confirmOverwrite(project)) {
+								// yes
+								case 0:
+									targetFolders.add(folders[i]);
+									targetProjects.add(project);
+									break;
+								// no
+								case 1:
+									break;
+								// yes to all
+								case 2:
+									yesToAll = true;
+									targetFolders.add(folders[i]);
+									targetProjects.add(project);
+									break;
+								// cancel
+								case 3:
+								default:
+									return;
+							}
+						} else {
+							targetFolders.add(folders[i]);
+							targetProjects.add(project);
 						}
-						projects[i] = project;
 					}
-					CVSProviderPlugin.getProvider().checkout(folders, projects, monitor);
+					if (targetFolders.size() > 0) {
+						CVSProviderPlugin.getProvider().checkout((ICVSRemoteFolder[]) targetFolders.toArray(new ICVSRemoteFolder[targetFolders.size()]), (IProject[])targetProjects.toArray(new IProject[targetProjects.size()]), monitor);
+					}
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
 				}
 			}
 		}, Policy.bind("AddToWorkspaceAction.add"), this.PROGRESS_DIALOG);
+	}
+	private int confirmOverwrite(IProject project) {
+		if (!project.exists()) return 0;
+		final MessageDialog dialog = 
+			new MessageDialog(shell, Policy.bind("AddToWorkspaceAction.confirmOverwrite"), null, Policy.bind("AddToWorkspaceAction.thisResourceExists", project.getName()), MessageDialog.QUESTION, 
+				new String[] {
+					IDialogConstants.YES_LABEL, 
+					IDialogConstants.NO_LABEL, 
+					IDialogConstants.YES_TO_ALL_LABEL, 
+					IDialogConstants.CANCEL_LABEL}, 
+				0);
+		final int[] result = new int[1];
+		shell.getDisplay().syncExec(new Runnable() {
+			public void run() {
+				result[0] = dialog.open();
+			}
+		});
+		return result[0];
 	}
 	/*
 	 * @see TeamAction#isEnabled()
