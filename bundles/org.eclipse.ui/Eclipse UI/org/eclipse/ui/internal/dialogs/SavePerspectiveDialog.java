@@ -34,9 +34,9 @@ public class SavePerspectiveDialog extends org.eclipse.jface.dialogs.Dialog
 	private IPerspectiveDescriptor initialSelection;
 	private boolean ignoreSelection = false;
 
-	final private static int LIST_WIDTH = 150;
-	final private static int TEXT_WIDTH = 150;
-	final private static int LIST_HEIGHT = 100;
+	final private static int LIST_WIDTH = 40;
+	final private static int TEXT_WIDTH = 40;
+	final private static int LIST_HEIGHT = 14;
 /**
  * PerspectiveDialog constructor comment.
  */
@@ -87,7 +87,7 @@ protected Control createDialogArea(Composite parent) {
 	
 	// Create name group.
 	Composite nameGroup = new Composite(composite, SWT.NONE);
-	nameGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.GRAB_HORIZONTAL));
+	nameGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	GridLayout layout = new GridLayout();
 	layout.numColumns = 2;
 	layout.marginWidth = layout.marginHeight = 0;
@@ -96,14 +96,13 @@ protected Control createDialogArea(Composite parent) {
 	// Create name label.
 	label = new Label(nameGroup, SWT.NONE);
 	label.setText(WorkbenchMessages.getString("SavePerspective.name")); //$NON-NLS-1$
-	label.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 	label.setFont(parent.getFont());
 
 	// Add text field.
 	text = new Text(nameGroup, SWT.BORDER);
 	text.setFocus();
-	data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
-	data.widthHint = TEXT_WIDTH;
+	data = new GridData(GridData.FILL_HORIZONTAL);
+	data.widthHint = convertWidthInCharsToPixels(TEXT_WIDTH);
 	text.setLayoutData(data);
 	text.addModifyListener(this);
 
@@ -128,11 +127,9 @@ protected Control createDialogArea(Composite parent) {
 
 	// Set perspective list size.
 	Control ctrl = list.getControl();
-	GridData spec = new GridData(
-		GridData.VERTICAL_ALIGN_FILL | 
-		GridData.HORIZONTAL_ALIGN_FILL);
-	spec.widthHint = LIST_WIDTH;
-	spec.heightHint = LIST_HEIGHT;
+	GridData spec = new GridData(GridData.FILL_BOTH);
+	spec.widthHint = convertWidthInCharsToPixels(LIST_WIDTH);
+	spec.heightHint = convertHeightInCharsToPixels(LIST_HEIGHT);
 	ctrl.setLayoutData(spec);
 
 	// Set the initial selection
