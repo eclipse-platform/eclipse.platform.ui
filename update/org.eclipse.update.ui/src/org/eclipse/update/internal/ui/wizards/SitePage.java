@@ -276,8 +276,6 @@ public class SitePage extends BannerPage implements ISearchProvider {
 			}
 		});
 
-
-		
 		descLabel = new ScrolledFormText(client, true);
 		descLabel.setText("");
 		descLabel.setBackground(parent.getBackground());
@@ -286,6 +284,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		
 		gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.horizontalSpan = 1;
+        gd.heightHint = 30;
 		descLabel.setLayoutData(gd);
 		
 		envFilterCheck = new Button(client, SWT.CHECK);
@@ -299,6 +298,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		});
 		gd = new GridData();
 		gd.horizontalSpan = 2;
+        gd.verticalAlignment = SWT.BOTTOM;
 		envFilterCheck.setLayoutData(gd);
 
 		Dialog.applyDialogFont(parent);
