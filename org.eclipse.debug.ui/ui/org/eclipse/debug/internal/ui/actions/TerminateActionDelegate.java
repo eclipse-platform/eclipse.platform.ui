@@ -28,7 +28,7 @@ public class TerminateActionDelegate extends AbstractListenerActionDelegate {
 	/**
 	 * @see ControlActionDelegate#isEnabledFor(Object)
 	 */
-	public boolean isEnabledFor(Object element) {
+	protected boolean isEnabledFor(Object element) {
 		return element instanceof ITerminate && ((ITerminate)element).canTerminate();
 	}
 	

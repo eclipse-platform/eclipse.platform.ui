@@ -51,7 +51,7 @@ public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 	/**
 	 * @see ControlActionDelegate#isEnabledFor(Object)
 	 */
-	public boolean isEnabledFor(Object element) {
+	protected boolean isEnabledFor(Object element) {
 		return getViewer() != null && element instanceof IDebugElement;
 	}
 
@@ -127,7 +127,7 @@ public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 	/**
 	 * Do the specific action using the current selection.
 	 */
-	public void run() {
+	protected void run() {
 		final Iterator iter= pruneSelection();
 		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
 			public void run() {
@@ -199,19 +199,6 @@ public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 		return ActionMessages.getString("CopyToClipboardActionDelegate.Copy_failed"); //$NON-NLS-1$
 	}
 
-	/**
-	 * @see ControlActionDelegate#getErrorDialogMessage()
-	 */
-	protected String getErrorDialogMessage() {
-		return null;
-	}
-
-	/**
-	 * @see ControlActionDelegate#getErrorDialogTitle()
-	 */
-	protected String getErrorDialogTitle() {
-		return null;
-	}
 	/**
 	 * @see ControlActionDelegate#getToolTipText()
 	 */

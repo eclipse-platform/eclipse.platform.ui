@@ -184,9 +184,6 @@ public class BreakpointsView extends AbstractDebugView {
 	 * @see AbstractDebugView#createActions()
 	 */
 	protected void createActions() {
-		
-		setAction(REMOVE_ACTION, new RemoveBreakpointAction(getViewer()));
-		
 		IAction action = new OpenBreakpointMarkerAction(getViewer());
 		setAction("GotoMarker", action); //$NON-NLS-1$
 		setAction(DOUBLE_CLICK_ACTION, action);
@@ -205,7 +202,6 @@ public class BreakpointsView extends AbstractDebugView {
 		menu.add(getAction("GotoMarker")); //$NON-NLS-1$
 		menu.add(new Separator(IDebugUIConstants.EMPTY_BREAKPOINT_GROUP));
 		menu.add(new Separator(IDebugUIConstants.BREAKPOINT_GROUP));
-		menu.add(getAction(REMOVE_ACTION));
 		menu.add(new Separator(IDebugUIConstants.EMPTY_RENDER_GROUP));
 		menu.add(new Separator(IDebugUIConstants.RENDER_GROUP));
 		menu.add(getAction("ShowBreakpointsForModel")); //$NON-NLS-1$
@@ -218,7 +214,6 @@ public class BreakpointsView extends AbstractDebugView {
 	protected void configureToolBar(IToolBarManager tbm) {
 		tbm.add(new Separator(IDebugUIConstants.BREAKPOINT_GROUP));
 		tbm.add(getAction("ShowBreakpointsForModel")); //$NON-NLS-1$
-		tbm.add(getAction(REMOVE_ACTION));
 		tbm.add(getAction("GotoMarker")); //$NON-NLS-1$
 		tbm.add(new Separator(IDebugUIConstants.RENDER_GROUP));
 	}

@@ -17,20 +17,16 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
-public class RemoveBreakpointAction extends AbstractRemoveAction {
-
-	public RemoveBreakpointAction(ISelectionProvider provider) {
-		super(provider, ActionMessages.getString("RemoveBreakpointAction.&Remove_1"), ActionMessages.getString("RemoveBreakpointAction.Remove_Selected_Breakpoints_2")); //$NON-NLS-1$ //$NON-NLS-2$
-	}
+public class RemoveBreakpointAction extends AbstractRemoveActionDelegate {
 
 	/**
-	 * @see IAction
+	 * @see IActionDelegate#run(IAction)
 	 */
-	public void run() {
-		IStructuredSelection selection= getStructuredSelection();
+	public void run(IAction action) {
+		IStructuredSelection selection= getSelection();
 		final Iterator itr= selection.iterator();
 		final MultiStatus ms = new MultiStatus(DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
 			DebugException.REQUEST_FAILED, ActionMessages.getString("RemoveBreakpointAction.Breakpoint(s)_removal_failed_3"), null); //$NON-NLS-1$
@@ -57,6 +53,11 @@ public class RemoveBreakpointAction extends AbstractRemoveAction {
 			DebugUIPlugin.errorDialog(DebugUIPlugin.getActiveWorkbenchWindow().getShell(), ActionMessages.getString("RemoveBreakpointAction.Removing_a_breakpoint_4"),ActionMessages.getString("RemoveBreakpointAction.Exceptions_occurred_attempting_to_remove_a_breakpoint._5") , ms); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
-
+	
+	/**
+	 * @see AbstractDebugActionDelegate#doAction(Object)
+	 */
+	protected void doAction(Object element) throws DebugException {
+	}
 }
 

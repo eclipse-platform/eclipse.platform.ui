@@ -7,10 +7,7 @@ package org.eclipse.debug.internal.ui.views;
  
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.actions.RemoveAllExpressionsAction;
-import org.eclipse.debug.internal.ui.actions.RemoveExpressionAction;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
@@ -70,16 +67,6 @@ public class ExpressionView extends VariablesView {
 	}	
 	
 	/**
-	 * @see AbstractDebugView#createActions()
-	 */
-	protected void createActions() {
-		super.createActions();
-		
-		IAction action = new RemoveExpressionAction(getViewer());
-		setAction(REMOVE_ACTION,action); 
-	}
-	
-	/**
 	 * Configures the toolBar.
 	 * 
 	 * @param tbm The toolbar that will be configured
@@ -90,7 +77,6 @@ public class ExpressionView extends VariablesView {
 		tbm.add(getAction("ShowTypeNames")); //$NON-NLS-1$
 		tbm.add(new Separator(IDebugUIConstants.EMPTY_EXPRESSION_GROUP));		
 		tbm.add(new Separator(IDebugUIConstants.EXPRESSION_GROUP));
-		tbm.add(getAction(REMOVE_ACTION));
 		tbm.add(new Separator("TOGGLE_VIEW")); //$NON-NLS-1$
 		tbm.add(getAction("ShowDetailPane")); //$NON-NLS-1$
 	}	
@@ -106,7 +92,6 @@ public class ExpressionView extends VariablesView {
 		menu.add(new Separator(IDebugUIConstants.EMPTY_EXPRESSION_GROUP));
 		menu.add(new Separator(IDebugUIConstants.EXPRESSION_GROUP));
 		menu.add(getAction("ChangeVariableValue")); //$NON-NLS-1$
-		menu.add(getAction(REMOVE_ACTION));
 		menu.add(new Separator(IDebugUIConstants.EMPTY_RENDER_GROUP));
 		menu.add(new Separator(IDebugUIConstants.RENDER_GROUP));
 		menu.add(getAction("ShowTypeNames")); //$NON-NLS-1$

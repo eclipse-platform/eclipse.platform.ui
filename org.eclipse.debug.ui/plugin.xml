@@ -362,6 +362,15 @@
 			tooltip="%RemoveAllBreakpointsAction.tooltip"
 			label="%RemoveAllAction.label">
 		</action>
+		<action
+			id = "org.eclipse.debug.ui.breakpointsView.toolbar.remove"
+			icon = "icons/full/clcl16/rem_co.gif"
+			helpContextId = "remove_action_context"
+			toolbarPath = "breakpointGroup"
+			class = "org.eclipse.debug.internal.ui.actions.RemoveBreakpointAction"
+			tooltip="%RemoveBreakpointAction.tooltip"
+			label="%RemoveAction.label">
+		</action>
 	</viewContribution>
 <!-- Contributions to Expression View Toolbar -->
 	<viewContribution
@@ -375,6 +384,15 @@
 			class = "org.eclipse.debug.internal.ui.actions.RemoveAllExpressionsAction"
 			tooltip="%RemoveAllExpressionsAction.tooltip"
 			label="%RemoveAllAction.label">
+		</action>
+		<action
+			id = "org.eclipse.debug.ui.expresssionsView.toolbar.remove"
+			icon = "icons/full/clcl16/rem_co.gif"
+			helpContextId = "remove_action_context"
+			toolbarPath = "expressionGroup"
+			class = "org.eclipse.debug.internal.ui.actions.RemoveExpressionAction"
+			tooltip="%RemoveExpressionAction.tooltip"
+			label="%RemoveAction.label">
 		</action>
 	</viewContribution>
 </extension>
@@ -479,6 +497,20 @@
 		id = "org.eclipse.debug.ui.breakpointview.popupMenu"
 		targetID = "org.eclipse.debug.ui.BreakpointView">
 		<action
+			id="org.eclipse.jdt.debug.ui.actions.RemoveAllBreakpoints"
+			icon = "icons/full/clcl16/rem_all_co.gif"
+			label="%RemoveAllAction.label"
+			menubarPath="breakpointGroup"
+			class="org.eclipse.debug.internal.ui.actions.RemoveAllBreakpointsAction">
+		</action>
+		<action
+			id="org.eclipse.jdt.debug.ui.actions.RemoveBreakpoint"
+			label="%RemoveAction.label"
+			icon = "icons/full/clcl16/rem_co.gif"
+			menubarPath="breakpointGroup"
+			class="org.eclipse.debug.internal.ui.actions.RemoveBreakpointAction">
+		</action>
+		<action
 			id="org.eclipse.jdt.debug.ui.actions.ManageBreakpointEnablement"
 			label="%DisableBreakpointsAction.label"
 			menubarPath="breakpointGroup"
@@ -491,12 +523,6 @@
 			menubarPath="breakpointGroup"
 			class="org.eclipse.debug.internal.ui.actions.EnableBreakpointsAction"
 			enablesFor="2+">
-		</action>
-		<action
-			id="org.eclipse.jdt.debug.ui.actions.RemoveAllBreakpoints"
-			label="%RemoveAllAction.label"
-			menubarPath="breakpointGroup"
-			class="org.eclipse.debug.internal.ui.actions.RemoveAllBreakpointsAction">
 		</action>
 	</viewerContribution>
 <!-- Contributions to Variables View Popup Menu -->	
@@ -518,18 +544,27 @@
 		targetID = "org.eclipse.debug.ui.ExpressionView">
 		<!-- Expression Group -->
 		<action
+			id = "org.eclipse.debug.ui.debugview.popupMenu.removeAllExpressionsAction"
+			menubarPath = "expressionGroup"
+			class = "org.eclipse.debug.internal.ui.actions.RemoveAllExpressionsAction"
+			icon = "icons/full/clcl16/rem_all_co.gif"
+			label="%RemoveAllAction.label">
+		</action>
+		<action
+			id = "org.eclipse.debug.ui.debugview.popupMenu.removeExpressionAction"
+			menubarPath = "expressionGroup"
+			class = "org.eclipse.debug.internal.ui.actions.RemoveExpressionAction"
+			icon = "icons/full/clcl16/rem_co.gif"
+			label="%RemoveAction.label">
+		</action>
+		<action
 			id = "org.eclipse.debug.ui.debugview.popupMenu.copyVariablesToClipboard"
 			menubarPath = "expressionGroup"
 			helpContextId = "copy_variables_to_clipboard_action_context"
 			class = "org.eclipse.debug.internal.ui.actions.CopyVariablesToClipboardActionDelegate"
 			label="%CopyVariablesToClipboardAction.label">
 		</action>
-		<action
-			id = "org.eclipse.debug.ui.debugview.popupMenu.removeAllExpressionsAction"
-			menubarPath = "expressionGroup"
-			class = "org.eclipse.debug.internal.ui.actions.RemoveAllExpressionsAction"
-			label="%RemoveAllAction.label">
-		</action>
+		
 	</viewerContribution>
 <!-- Contributions to Console View popup menu -->
 	<viewerContribution

@@ -143,7 +143,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	/**
 	 * Return whether the action should be enabled or not based on the given selection.
 	 */
-	public boolean getEnableStateForSelection(IStructuredSelection selection) {
+	protected boolean getEnableStateForSelection(IStructuredSelection selection) {
 		if (selection.size() == 0) {
 			return false;
 		}
@@ -178,12 +178,14 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	/**
 	 * Returns whether this action will work for the given element
 	 */
-	public abstract boolean isEnabledFor(Object element);
+	protected abstract boolean isEnabledFor(Object element);
 	
 	/**
-	 * Returns this action's help context id
+	 * Returns this action's help context id. Default is to return null.
 	 */
-	protected abstract String getHelpContextId();
+	protected String getHelpContextId() {
+		return null;
+	}
 	
 	/**
 	 * Set the enabled, disabled & hover icons for this action delegate
@@ -192,32 +194,37 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	
 	/**
 	 * Returns the String to use as an error dialog title for
-	 * a failed action.
+	 * a failed action. Default is to return null.
 	 */
-	protected abstract String getErrorDialogTitle();
-	
+	protected String getErrorDialogTitle(){
+		return null;
+	}
 	/**
 	 * Returns the String to use as an error dialog message for
-	 * a failed action.
+	 * a failed action.  Default is to return null.
 	 */
-	protected abstract String getErrorDialogMessage();
-	
+	protected String getErrorDialogMessage(){
+		return null;
+	}
 	/**
 	 * Returns the String to use as a status message for
-	 * a failed action.
+	 * a failed action. Default is to return the empty String.
 	 */
-	protected abstract String getStatusMessage();
-	
+	protected String getStatusMessage(){
+		return "";
+	}
 	/**
-	 * Returns the text for this action.
+	 * Returns the text for this action. Default is to return null.
 	 */
-	protected abstract String getText();
-	
+	protected String getText(){
+		return null;
+	}
 	/**
-	 * Returns the tool tip text for this action.
+	 * Returns the tool tip text for this action. Default is to return null.
 	 */
-	protected abstract String getToolTipText();
-	
+	protected String getToolTipText(){
+		return null;
+	}
 	/**
 	 * @see IViewActionDelegate#init(IViewPart)
 	 */

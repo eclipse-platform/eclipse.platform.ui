@@ -34,16 +34,9 @@ public class CopyVariablesToClipboardActionDelegate extends CopyToClipboardActio
 	/**
 	 * @see ControlActionDelegate#isEnabledFor(Object)
 	 */
-	public boolean isEnabledFor(Object element) {
+	protected boolean isEnabledFor(Object element) {
 		return element instanceof IDebugElement;
 	}
-	
-	/**
-	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
-	 */
-	/*public void selectionChanged(IAction action, ISelection s) {
-		action.setEnabled(!s.isEmpty());
-	}*/
 	
 	/**
 	 * @see ControlActionDelegate#getText()

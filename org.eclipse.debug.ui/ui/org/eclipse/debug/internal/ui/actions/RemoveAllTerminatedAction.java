@@ -95,13 +95,6 @@ public class RemoveAllTerminatedAction extends AbstractRemoveAllActionDelegate i
 			}
 		}
 	}
-	
-	/**
-	 * @see ControlActionDelegate#getToolTipText()
-	 */
-	protected String getToolTipText() {
-		return ActionMessages.getString("RemoveTerminatedAction.Remove_All_Terminated_Launches_2"); //$NON-NLS-1$
-	}
 
 	/**
 	 * @see IViewActionDelegate#init(IViewPart)

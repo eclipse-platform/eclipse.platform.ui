@@ -26,7 +26,7 @@ public abstract class StepActionDelegate extends AbstractListenerActionDelegate 
 	/**
 	 * @see ControlActionDelegate#isEnabledFor(Object)
 	 */
-	public boolean isEnabledFor(Object element) {
+	protected boolean isEnabledFor(Object element) {
 		if (element instanceof IStep) {
 			return checkCapability((IStep) element);
 		}

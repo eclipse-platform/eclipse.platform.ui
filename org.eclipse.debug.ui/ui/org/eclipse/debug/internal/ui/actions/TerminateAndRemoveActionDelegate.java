@@ -46,7 +46,7 @@ public class TerminateAndRemoveActionDelegate extends AbstractDebugActionDelegat
 	/**
 	 * @see ControlActionDelegate#isEnabledFor(Object)
 	 */
-	public boolean isEnabledFor(Object element) {
+	protected boolean isEnabledFor(Object element) {
 		if (element instanceof ITerminate) {
 			ITerminate terminate= (ITerminate)element;
 			//do not want to terminate an attach launch that does not

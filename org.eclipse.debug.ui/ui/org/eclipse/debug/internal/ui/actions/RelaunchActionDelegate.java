@@ -72,7 +72,7 @@ public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 	/**
 	 * @see ControlActionDelegate#isEnabledFor(Object)
 	 */
-	public boolean isEnabledFor(Object element) {
+	protected boolean isEnabledFor(Object element) {
 		ILaunch launch= null;
 		
 		if (element instanceof ILaunch) {
@@ -121,19 +121,6 @@ public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 		return ActionMessages.getString("RelaunchActionDelegate.Launch_failed_2"); //$NON-NLS-1$
 	}
 
-	/**
-	 * @see ControlActionDelegate#getErrorDialogMessage()
-	 */
-	protected String getErrorDialogMessage() {
-		return null;
-	}
-
-	/**
-	 * @see ControlActionDelegate#getErrorDialogTitle()
-	 */
-	protected String getErrorDialogTitle() {
-		return null;
-	}
 	/**
 	 * @see ControlActionDelegate#getToolTipText()
 	 */

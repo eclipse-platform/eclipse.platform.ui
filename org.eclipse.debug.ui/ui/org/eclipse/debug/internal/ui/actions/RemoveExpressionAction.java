@@ -5,35 +5,21 @@ package org.eclipse.debug.internal.ui.actions;
  * All Rights Reserved.
  */
 
-import java.util.Iterator;
-
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IExpressionManager;
 import org.eclipse.debug.core.model.IExpression;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.debug.ui.IDebugViewAdapter;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
 
-public class RemoveExpressionAction extends AbstractRemoveAction {
+public class RemoveExpressionAction extends AbstractRemoveActionDelegate {
 
-	public RemoveExpressionAction(ISelectionProvider provider) {
-		super(provider, ActionMessages.getString("RemoveExpressionAction.Remove_1"), ActionMessages.getString("RemoveExpressionAction.Remove_Selected_Expressions_2")); //$NON-NLS-1$ //$NON-NLS-2$
-	}
-
-	/**
-	 * @see IAction
-	 */
-	public void run() {
-		IStructuredSelection selection= getStructuredSelection();
+	protected void doAction(Object element) {
 		IExpressionManager manager = DebugPlugin.getDefault().getExpressionManager();
-		Iterator itr= selection.iterator();
-		while (itr.hasNext()) {
-			Object element = itr.next();
-			IExpression exp = getExpression(element);
-			if (exp != null) {
-				manager.removeExpression(exp);
-			}
+		IExpression exp = getExpression(element);
+		if (exp != null) {
+			manager.removeExpression(exp);
 		}
 	}
 	
@@ -45,17 +31,22 @@ public class RemoveExpressionAction extends AbstractRemoveAction {
 	 *  the expression view.
 	 * @return associated expression
 	 */
-	protected IExpression getExpression(Object obj) {		
-		ISelectionProvider sp = getSelectionProvider();
-		if (sp instanceof TreeViewer) {
-			ITreeContentProvider cp = (ITreeContentProvider)((TreeViewer)sp).getContentProvider();
-			while (!(obj instanceof IExpression) && obj != null) {
-				obj = cp.getParent(obj);
-			}
-			return (IExpression)obj;
+	protected IExpression getExpression(Object obj) {
+		if (getView() == null) {
+			return null;
+		}
+		IDebugViewAdapter adapter= (IDebugViewAdapter)getView().getAdapter(IDebugViewAdapter.class);
+		if (adapter != null) {
+			Viewer v= adapter.getViewer();
+			if (v instanceof TreeViewer) {
+				ITreeContentProvider cp = (ITreeContentProvider)((TreeViewer)v).getContentProvider();
+				while (!(obj instanceof IExpression) && obj != null) {
+					obj = cp.getParent(obj);
+				}
+				return (IExpression)obj;
+			}	
 		}
 		return null;
 	}
-
 }
 

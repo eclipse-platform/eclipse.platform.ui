@@ -33,14 +33,14 @@ public class ResumeActionDelegate extends AbstractListenerActionDelegate {
 	/**
 	 * @see ControlActionDelegate#isEnabledFor(Object)
 	 */
-	public boolean isEnabledFor(Object element) {
+	protected boolean isEnabledFor(Object element) {
 		return element instanceof ISuspendResume && ((ISuspendResume) element).canResume();
 	}
 
 	/**
 	 * @see ControlActionDelegate#getEnableStateForSelection(IStructuredSelection)
 	 */
-	public boolean getEnableStateForSelection(IStructuredSelection selection) {	 		
+	protected boolean getEnableStateForSelection(IStructuredSelection selection) {	 		
 		if (selection.size() == 1) {
 			return isEnabledFor(selection.getFirstElement());
 		} else {

@@ -54,12 +54,7 @@ public class RemoveAllBreakpointsAction extends AbstractRemoveAllActionDelegate 
 		getAction().setEnabled(
 			DebugPlugin.getDefault().getBreakpointManager().getBreakpoints().length == 0 ? false : true);
 	}	
-	/**
-	 * @see AbstractDebugActionDelegate#getToolTipText()
-	 */
-	protected String getToolTipText() {
-		return null;
-	}
+	
 	/**
 	 * @see IBreakpointListener#breakpointAdded(IBreakpoint)
 	 */

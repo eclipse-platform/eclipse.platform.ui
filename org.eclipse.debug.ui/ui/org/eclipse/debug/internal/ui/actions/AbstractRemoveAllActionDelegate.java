@@ -35,7 +35,7 @@ public abstract class AbstractRemoveAllActionDelegate extends AbstractListenerAc
 	/**
 	 * @see AbstractDebugActionDelegate#isEnabledFor(Object)
 	 */
-	public boolean isEnabledFor(Object element) {
+	protected boolean isEnabledFor(Object element) {
 		return true;
 	}
 
@@ -51,35 +51,7 @@ public abstract class AbstractRemoveAllActionDelegate extends AbstractListenerAc
 	}
 	
 	protected abstract void update();
-	
-	/**
-	 * @see ControlActionDelegate#getErrorDialogMessage()
-	 */
-	protected String getErrorDialogMessage() {
-		return null;
-	}
-
-	/**
-	 * @see ControlActionDelegate#getErrorDialogTitle()
-	 */
-	protected String getErrorDialogTitle() {
-		return null;
-	}
-
-	/**
-	 * @see ControlActionDelegate#getStatusMessage()
-	 */
-	protected String getStatusMessage() {
-		return null;
-	}
-
-	/**
-	 * @see ControlActionDelegate#getText()
-	 */
-	protected String getText() {
-		return null;
-	}
-	
+		
 	/**
 	 * @see ControlActionDelegate#setActionImages(IAction)
 	 */
@@ -90,7 +62,7 @@ public abstract class AbstractRemoveAllActionDelegate extends AbstractListenerAc
 	}
 	
 	/**
-	 * RemoveTerminatedAction cares nothing about the current selection
+	 * Remove all actions do care nothing about the current selection
 	 */
 	public void selectionChanged(IAction action, ISelection s) {
 		if (!fInitialized) {

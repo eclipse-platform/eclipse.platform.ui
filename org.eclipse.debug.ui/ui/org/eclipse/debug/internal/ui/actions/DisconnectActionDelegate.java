@@ -27,7 +27,7 @@ public class DisconnectActionDelegate extends AbstractListenerActionDelegate {
 	/**
 	 * @see ControlActionDelegate#isEnabledFor(Object)
 	 */
-	public boolean isEnabledFor(Object element) {
+	protected boolean isEnabledFor(Object element) {
 		return element instanceof IDisconnect && ((IDisconnect) element).canDisconnect();
 	}
 	
