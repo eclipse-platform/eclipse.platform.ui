@@ -12,9 +12,8 @@ package org.eclipse.jface.text.source;
 
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.jface.preference.IPreferenceStore;
 
 import org.eclipse.jface.text.DefaultAutoIndentStrategy;
 import org.eclipse.jface.text.DefaultInformationControl;
@@ -32,8 +31,8 @@ import org.eclipse.jface.text.IUndoManager;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.formatter.IContentFormatter;
 import org.eclipse.jface.text.hyperlink.DefaultHyperlinkPresenter;
-import org.eclipse.jface.text.hyperlink.IHyperlinkPresenter;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
+import org.eclipse.jface.text.hyperlink.IHyperlinkPresenter;
 import org.eclipse.jface.text.hyperlink.URLHyperlinkDetector;
 import org.eclipse.jface.text.information.IInformationPresenter;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
@@ -357,7 +356,7 @@ public class SourceViewerConfiguration {
 	 * @since 3.1
 	 */
 	public IHyperlinkPresenter getHyperlinkPresenter(ISourceViewer sourceViewer) {
-		return new DefaultHyperlinkPresenter((IPreferenceStore)null);
+		return new DefaultHyperlinkPresenter(new RGB(0, 0, 255));
 	}
 	
 	/**
