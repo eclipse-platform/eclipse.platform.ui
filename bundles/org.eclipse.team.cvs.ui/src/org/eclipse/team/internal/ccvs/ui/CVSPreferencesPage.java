@@ -64,7 +64,6 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 	private Combo compressionLevelCombo;
 	private Combo ksubstCombo;
 	private List ksubstOptions;
-	private Button historyTracksSelectionButton;
 	private Button considerContentsInCompare;
 	private Button promptOnFileDelete;
 	private Button promptOnFolderDelete;
@@ -210,8 +209,6 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		
 		pruneEmptyDirectoriesField = createCheckBox(composite, Policy.bind("CVSPreferencePage.pruneEmptyDirectories")); //$NON-NLS-1$
 		
-		historyTracksSelectionButton = createCheckBox(composite, Policy.bind("CVSPreferencePage.historyTracksSelection")); //$NON-NLS-1$
-		
 		considerContentsInCompare = createCheckBox(composite, Policy.bind("CVSPreferencePage.considerContentsInCompare")); //$NON-NLS-1$
 		considerContentsInCompare.setToolTipText(Policy.bind("CVSPreferencePage.considerContentsInCompareTooltip")); //$NON-NLS-1$
 		
@@ -293,7 +290,6 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 			ksubstCombo.add(option.getLongDisplayText());
 		}
 		ksubstCombo.select(getKSubstComboIndexFor(store.getString(ICVSUIConstants.PREF_TEXT_KSUBST)));
-		historyTracksSelectionButton.setSelection(store.getBoolean(ICVSUIConstants.PREF_HISTORY_TRACKS_SELECTION));
 		considerContentsInCompare.setSelection(store.getBoolean(ICVSUIConstants.PREF_CONSIDER_CONTENTS));
 		promptOnFileDelete.setSelection(store.getBoolean(ICVSUIConstants.PREF_PROMPT_ON_FILE_DELETE));
 		promptOnFolderDelete.setSelection(store.getBoolean(ICVSUIConstants.PREF_PROMPT_ON_FOLDER_DELETE));
@@ -326,7 +322,6 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		store.setValue(ICVSUIConstants.PREF_QUIETNESS, quietnessCombo.getSelectionIndex());
 		store.setValue(ICVSUIConstants.PREF_COMPRESSION_LEVEL, compressionLevelCombo.getSelectionIndex());
 		store.setValue(ICVSUIConstants.PREF_TEXT_KSUBST, ((KSubstOption) ksubstOptions.get(ksubstCombo.getSelectionIndex())).toMode());
-		store.setValue(ICVSUIConstants.PREF_HISTORY_TRACKS_SELECTION, historyTracksSelectionButton.getSelection());
 		store.setValue(ICVSUIConstants.PREF_CONSIDER_CONTENTS, considerContentsInCompare.getSelection());
 		store.setValue(ICVSUIConstants.PREF_PROMPT_ON_FILE_DELETE, promptOnFileDelete.getSelection());
 		store.setValue(ICVSUIConstants.PREF_PROMPT_ON_FOLDER_DELETE, promptOnFolderDelete.getSelection());
@@ -380,7 +375,6 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		quietnessCombo.select(store.getDefaultInt(ICVSUIConstants.PREF_QUIETNESS));
 		compressionLevelCombo.select(store.getDefaultInt(ICVSUIConstants.PREF_COMPRESSION_LEVEL));
 		ksubstCombo.select(getKSubstComboIndexFor(store.getDefaultString(ICVSUIConstants.PREF_TEXT_KSUBST)));
-		historyTracksSelectionButton.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_HISTORY_TRACKS_SELECTION));
 		promptOnFileDelete.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_PROMPT_ON_FILE_DELETE));
 		promptOnFolderDelete.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_PROMPT_ON_FOLDER_DELETE));
 		showMarkers.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_SHOW_MARKERS));

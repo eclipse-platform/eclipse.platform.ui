@@ -244,7 +244,6 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		store.setDefault(ICVSUIConstants.PREF_TIMEOUT, CVSProviderPlugin.DEFAULT_TIMEOUT);
 		store.setDefault(ICVSUIConstants.PREF_SHOW_MODULES, false);
 		store.setDefault(ICVSUIConstants.PREF_CONSIDER_CONTENTS, false);
-		store.setDefault(ICVSUIConstants.PREF_HISTORY_TRACKS_SELECTION, false);
 		store.setDefault(ICVSUIConstants.PREF_PROMPT_ON_FILE_DELETE, true);
 		store.setDefault(ICVSUIConstants.PREF_PROMPT_ON_FOLDER_DELETE, true);
 		store.setDefault(ICVSUIConstants.PREF_SHOW_MARKERS, true);

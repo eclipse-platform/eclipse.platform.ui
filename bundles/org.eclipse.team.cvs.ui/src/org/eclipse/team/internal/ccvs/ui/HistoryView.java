@@ -89,7 +89,7 @@ import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 /**
  * The history view allows browsing of an array of resource revisions
  */
-public class HistoryView extends ViewPart implements ISelectionListener {
+public class HistoryView extends ViewPart {
 	private IFile file;
 	// cached for efficiency
 	private ILogEntry[] entries;
@@ -367,7 +367,6 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 		textViewer = createText(innerSashForm);
 		sashForm.setWeights(new int[] { 70, 30 });
 		innerSashForm.setWeights(new int[] { 50, 50 });
-		getSite().getPage().getWorkbenchWindow().getSelectionService().addSelectionListener(this);
 		contributeActions();
 		setViewerVisibility();
 		// set F1 help
@@ -520,7 +519,6 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 		return result;
 	}
 	public void dispose() {
-		getSite().getPage().getWorkbenchWindow().getSelectionService().removeSelectionListener(this);
 		if (branchImage != null) {
 			branchImage.dispose();
 			branchImage = null;
@@ -611,23 +609,6 @@ public class HistoryView extends ViewPart implements ISelectionListener {
 			return (HistoryView)CVSUIPlugin.getActivePage().showView(VIEW_ID);
 		} catch (PartInitException pe) {
 			return null;
-		}
-	}
-	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		if (CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_HISTORY_TRACKS_SELECTION)) {
-			if (selection == null) return;
-			if (!(selection instanceof IStructuredSelection)) return;
-			IStructuredSelection ss = (IStructuredSelection)selection;
-			if (ss.size() != 1) {
-				showHistory((IResource)null);
-				return;
-			}
-			Object first = ss.getFirstElement();
-			if (first instanceof IResource) {
-				showHistory((IResource)first);
-			} else if (first instanceof ICVSRemoteFile) {
-				showHistory((ICVSRemoteFile)first, null /* no current revision */);
-			}
 		}
 	}
 	/** (Non-javadoc)

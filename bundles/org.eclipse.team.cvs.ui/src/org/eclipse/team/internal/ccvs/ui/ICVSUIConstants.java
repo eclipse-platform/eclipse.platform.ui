@@ -44,7 +44,6 @@ public interface ICVSUIConstants {
 	public final String PREF_TIMEOUT = "pref_timeout";	 //$NON-NLS-1$
 	public final String PREF_QUIETNESS = "pref_quietness"; //$NON-NLS-1$
 	public final String PREF_SHOW_MODULES = "pref_show_modules"; //$NON-NLS-1$
-	public final String PREF_HISTORY_TRACKS_SELECTION = "pref_history_tracks_selection"; //$NON-NLS-1$
 	public final String PREF_CVS_RSH = "pref_cvs_rsh"; //$NON-NLS-1$
 	public final String PREF_CVS_SERVER = "pref_cvs_server"; //$NON-NLS-1$
 	public final String PREF_CONSIDER_CONTENTS = "pref_consider_contents"; //$NON-NLS-1$
