@@ -37,11 +37,11 @@ import org.eclipse.team.internal.core.TeamPlugin;
  */
 public class TeamProvider implements ISaveParticipant {
 	
-	private static String SUBSCRIBER_EXTENSION = "subscriber";
-	final static private String SAVECTX_SUBSCRIBERS = "subscribers"; 
-	final static private String SAVECTX_SUBSCRIBER = "subscriber";
-	final static private String SAVECTX_QUALIFIER = "qualifier";
-	final static private String SAVECTX_LOCALNAME = "localName";
+	private static String SUBSCRIBER_EXTENSION = "subscriber"; //$NON-NLS-1$
+	final static private String SAVECTX_SUBSCRIBERS = "subscribers";  //$NON-NLS-1$
+	final static private String SAVECTX_SUBSCRIBER = "subscriber"; //$NON-NLS-1$
+	final static private String SAVECTX_QUALIFIER = "qualifier"; //$NON-NLS-1$
+	final static private String SAVECTX_LOCALNAME = "localName"; //$NON-NLS-1$
 	
 	static private Map subscribers = new HashMap();
 	static private List listeners = new ArrayList(1);
@@ -133,7 +133,7 @@ public class TeamProvider implements ISaveParticipant {
 	
 	private synchronized static void restoreSubscribers() {
 		try {
-			SaveContext root = SaveContextXMLWriter.readXMLPluginMetaFile(TeamPlugin.getPlugin(), "subscribers");
+			SaveContext root = SaveContextXMLWriter.readXMLPluginMetaFile(TeamPlugin.getPlugin(), "subscribers"); //$NON-NLS-1$
 			if(root != null && root.getName().equals(SAVECTX_SUBSCRIBERS)) {
 				SaveContext[] contexts = root.getChildren();
 				for (int i = 0; i < contexts.length; i++) {
@@ -143,7 +143,7 @@ public class TeamProvider implements ISaveParticipant {
 						String localName = context.getAttribute(SAVECTX_LOCALNAME);
 						TeamSubscriberFactory factory = create(qualifier);
 						if(factory == null) {
-							TeamPlugin.log(new TeamException("Error restoring subscribers. Cannot find factory with id: " + qualifier.toString()));
+							TeamPlugin.log(new TeamException(Policy.bind("TeamProvider.10", qualifier.toString()))); //$NON-NLS-1$
 						}
 						SaveContext[] children = context.getChildren();
 						if(children.length == 1) {			
@@ -171,7 +171,7 @@ public class TeamProvider implements ISaveParticipant {
 				String qualifier = subscriber.getId().getQualifier();
 				TeamSubscriberFactory factory = create(qualifier);
 				if(factory == null) {
-					TeamPlugin.log(new TeamException("Error saving subscribers. Cannot find factory with id: " + qualifier));
+					TeamPlugin.log(new TeamException(Policy.bind("TeamProvider.11", qualifier))); //$NON-NLS-1$
 				}
 				SaveContext child = factory.saveSubscriber(subscriber);
 				if(child != null) { 
@@ -186,7 +186,7 @@ public class TeamProvider implements ISaveParticipant {
 				}
 			}
 			root.setChildren((SaveContext[])children.toArray(new SaveContext[children.size()]));
-			SaveContextXMLWriter.writeXMLPluginMetaFile(TeamPlugin.getPlugin(), "subscribers", root);
+			SaveContextXMLWriter.writeXMLPluginMetaFile(TeamPlugin.getPlugin(), "subscribers", root); //$NON-NLS-1$
 		} catch (TeamException e) {
 			TeamPlugin.log(e);
 		}

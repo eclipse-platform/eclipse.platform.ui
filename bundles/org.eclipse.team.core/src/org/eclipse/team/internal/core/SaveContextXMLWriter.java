@@ -177,10 +177,10 @@ public class SaveContextXMLWriter extends PrintWriter {
 			}
 			boolean renamed = tempFile.renameTo(stateFile);
 			if (!renamed) {
-				throw new TeamException(new Status(Status.ERROR, TeamPlugin.ID, TeamException.UNABLE, Policy.bind("RepositoryManager.rename", tempFile.getAbsolutePath()), null));
+				throw new TeamException(new Status(Status.ERROR, TeamPlugin.ID, TeamException.UNABLE, Policy.bind("RepositoryManager.rename", tempFile.getAbsolutePath()), null)); //$NON-NLS-1$
 			}
 		} catch (IOException e) {
-			throw new TeamException(new Status(Status.ERROR, TeamPlugin.ID, TeamException.UNABLE, Policy.bind("RepositoryManager.save",stateFile.getAbsolutePath()), e)); 
+			throw new TeamException(new Status(Status.ERROR, TeamPlugin.ID, TeamException.UNABLE, Policy.bind("RepositoryManager.save",stateFile.getAbsolutePath()), e));  //$NON-NLS-1$
 		}
 	}
 	
@@ -199,15 +199,15 @@ public class SaveContextXMLWriter extends PrintWriter {
 			}
 			return null;
 		} catch (SAXException ex) {
-			throw new TeamException(Policy.bind("RepositoryManager.ioException"), ex);			
+			throw new TeamException(Policy.bind("RepositoryManager.ioException"), ex);			 //$NON-NLS-1$
 		} catch (IOException e) {
-			throw new TeamException(Policy.bind("RepositoryManager.ioException"), e);
+			throw new TeamException(Policy.bind("RepositoryManager.ioException"), e); //$NON-NLS-1$
 		} finally {
 			if(is != null) {
 				try {
 					is.close();
 				} catch (IOException e1) {
-					throw new TeamException(Policy.bind("RepositoryManager.ioException"), e1);
+					throw new TeamException(Policy.bind("RepositoryManager.ioException"), e1); //$NON-NLS-1$
 				}
 			}
 		}

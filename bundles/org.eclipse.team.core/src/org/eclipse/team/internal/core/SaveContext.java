@@ -81,7 +81,7 @@ public class SaveContext {
 	public boolean getBoolean(String key) {
 		String bool = getAttribute(key);
 		if(bool != null) {
-			return bool.equals("true") ? true : false;		
+			return bool.equals("true") ? true : false; //$NON-NLS-1$
 		}
 		return true;
 	}
@@ -133,6 +133,6 @@ public class SaveContext {
 	}
 	
 	public String toString() {
-		return getName() + " ->" + attributes.toString();
+		return getName() + " ->" + attributes.toString(); //$NON-NLS-1$
 	}
 }

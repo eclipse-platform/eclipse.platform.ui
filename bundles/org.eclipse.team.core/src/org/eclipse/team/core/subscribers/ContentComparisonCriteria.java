@@ -36,7 +36,7 @@ public class ContentComparisonCriteria extends ComparisonCriteria {
 	final public static String ID_DONTIGNORE_WS = "org.eclipse.team.comparisoncriteria.content"; //$NON-NLS-1$
 
 	public String getName() {
-		return "Comparing content"  + (ignoreWhitespace ? " ignore whitespace": "");
+		return Policy.bind("ContentComparisonCriteria.2", ignoreWhitespace ? Policy.bind("ContentComparisonCriteria.3"): ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	public String getId() {

@@ -230,7 +230,7 @@ public class SyncInfo implements IAdaptable {
 	}
 	
 	public String toString() {
-		return getLocal().getName() + " " + kindToString(getKind());		
+		return getLocal().getName() + " " + kindToString(getKind()); //$NON-NLS-1$
 	}
 	
 	public static String kindToString(int kind) {
