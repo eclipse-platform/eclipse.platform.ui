@@ -10,6 +10,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.part.IPageSite;
@@ -60,7 +61,7 @@ public void addSelectionChangedListener(ISelectionChangedListener listener) {
  * provider, label provider, and input element.
  */
 public void createControl(Composite parent) {
-	treeViewer = new TreeViewer(parent);
+	treeViewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 	treeViewer.addSelectionChangedListener(this);
 }
 /**
