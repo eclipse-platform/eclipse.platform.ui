@@ -4,32 +4,29 @@ package org.eclipse.ui.views.navigator;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.*;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.actions.*;
-import org.eclipse.ui.dialogs.*;
-import org.eclipse.ui.help.*;
-import org.eclipse.ui.views.internal.framelist.*;
+import org.eclipse.ui.actions.NewWizardAction;
+import org.eclipse.ui.actions.NewWizardMenu;
+import org.eclipse.ui.dialogs.PropertyDialogAction;
+import org.eclipse.ui.help.ViewContextComputer;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.*;
+import org.eclipse.ui.views.internal.framelist.FrameList;
 
 /**
  * Implements the Resource Navigator view.
@@ -44,8 +41,6 @@ public class ResourceNavigator
 	private FrameList frameList;
 
 	protected PropertyDialogAction propertyDialogAction;
-	private SortViewAction sortByTypeAction;
-	private SortViewAction sortByNameAction;
 	protected NewWizardAction newWizardAction;
 
 	//The action factories
@@ -53,6 +48,7 @@ public class ResourceNavigator
 	protected OpenActionContributionFactory openActionFactory;
 	protected RefactorActionContributionFactory refactorFactory;
 	protected WorkbenchStateActionContributionFactory workbenchFactory;
+	protected ActionBarMenuContributionFactory actionMenuFactory;
 
 	//The filter the resources are cleared up on
 	private ResourcePatternFilter patternFilter = new ResourcePatternFilter();
@@ -92,10 +88,7 @@ public class ResourceNavigator
 	private static final String TAG_HORIZONTAL_POSITION = "horizontalPosition";
 	//$NON-NLS-1$
 
-	private static final String SELECT_FILTERS_LABEL =
-		ResourceNavigatorMessages.getString("ResourceNavigator.filterText");
 	//$NON-NLS-1$
-	private FilterSelectionAction filterAction;
 
 	private IPartListener partListener = new IPartListener() {
 		public void partActivated(IWorkbenchPart part) {
@@ -158,7 +151,6 @@ public class ResourceNavigator
 		viewer.addFilter(this.patternFilter);
 		if (memento != null)
 			restoreFilters();
-		initResourceSorter();
 		viewer.setInput(getInitialInput());
 		initFrameList();
 		initDragAndDrop();
@@ -176,6 +168,7 @@ public class ResourceNavigator
 		getSite().registerContextMenu(menuMgr, viewer);
 
 		makeActions();
+		initResourceSorter();
 		addKeyListeners();
 		addMouseListeners();
 		addSelectionChangedListeners();
@@ -246,14 +239,7 @@ public class ResourceNavigator
 		actionBars.updateActionBars();
 
 		IMenuManager menu = actionBars.getMenuManager();
-		MenuManager submenu =
-			new MenuManager(ResourceNavigatorMessages.getString("ResourceNavigator.sort"));
-		//$NON-NLS-1$
-		menu.add(submenu);
-		updateSortActions();
-		submenu.add(sortByNameAction);
-		submenu.add(sortByTypeAction);
-		menu.add(filterAction);
+		actionMenuFactory.fillMenu(menu,getResourceSorter());
 	}
 	/**
 	 * Called when the context menu is about to open.
@@ -345,7 +331,7 @@ public class ResourceNavigator
 	/**
 	 * Returns the current sorter.
 	 */
-	ResourceSorter getResourceSorter() {
+	protected ResourceSorter getResourceSorter() {
 		return (ResourceSorter) getResourceViewer().getSorter();
 	}
 	/**
@@ -524,17 +510,15 @@ public class ResourceNavigator
 	/**
 	 *	Create self's action objects
 	 */
-	void makeActions() {
+	protected void makeActions() {
 		Shell shell = getShell();
 
 		gotoFactory = new GotoActionContributionFactory(frameList, this);
 		openActionFactory = new OpenActionContributionFactory(getSite(), shell);
 		refactorFactory = new RefactorActionContributionFactory(getResourceViewer());
 		workbenchFactory = new WorkbenchStateActionContributionFactory(getResourceViewer().getControl());
+		actionMenuFactory = new ActionBarMenuContributionFactory(this);
 
-		sortByNameAction = new SortViewAction(this, false);
-		sortByTypeAction = new SortViewAction(this, true);
-		filterAction = new FilterSelectionAction(shell, this, SELECT_FILTERS_LABEL);
 		newWizardAction = new NewWizardAction();
 
 		gotoFactory.makeActions();
@@ -542,6 +526,7 @@ public class ResourceNavigator
 		refactorFactory.makeActions();
 		refactorFactory.addGlobalActions(getViewSite().getActionBars());
 		workbenchFactory.makeActions();
+		actionMenuFactory.makeActions();
 		propertyDialogAction =
 			new PropertyDialogAction(getShell(), getResourceViewer());
 	
@@ -692,7 +677,7 @@ public class ResourceNavigator
 		viewer.setSorter(sorter);
 		viewer.getControl().setRedraw(true);
 		settings.put(STORE_SORT_TYPE, sorter.getCriteria());
-		updateSortActions();
+		actionMenuFactory.updateSortActions(sorter);
 	}
 	/**
 	 * Updates all actions with the given selection.
@@ -703,13 +688,12 @@ public class ResourceNavigator
 	void updateActions(IStructuredSelection selection) {
 		
 		propertyDialogAction.selectionChanged(selection);
-		sortByTypeAction.selectionChanged(selection);
-		sortByNameAction.selectionChanged(selection);
 		updateGlobalActions(selection);
 		gotoFactory.updateActions(selection);
 		openActionFactory.updateActions(selection);
 		refactorFactory.updateActions(selection);
 		workbenchFactory.updateActions(selection);
+		actionMenuFactory.updateActions(selection);
 	}
 	/**
 	 * Updates the global actions with the given selection.
@@ -723,16 +707,7 @@ public class ResourceNavigator
 
 		actionBars.updateActionBars();
 	}
-	/**
-	 * Updates the checked state of the sort actions.
-	 */
-	void updateSortActions() {
-		int criteria = getResourceSorter().getCriteria();
-		if (sortByNameAction != null && sortByTypeAction != null) {
-			sortByNameAction.setChecked(criteria == ResourceSorter.NAME);
-			sortByTypeAction.setChecked(criteria == ResourceSorter.TYPE);
-		}
-	}
+	
 	/**
 	 * Updates the message shown in the status line.
 	 *
