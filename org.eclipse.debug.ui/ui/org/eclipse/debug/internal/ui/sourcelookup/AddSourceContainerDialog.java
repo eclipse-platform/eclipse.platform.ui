@@ -146,15 +146,14 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 		//there will always be a selected item since we set it with viewer.setSelection
 		ISourceContainerType type = (ISourceContainerType) ((StructuredSelection) fViewer.getSelection()).getFirstElement();
 		ISourceContainerBrowser browser = SourceLookupUIUtils.getSourceContainerBrowser(type.getId());
-		if(browser == null) {
-			super.okPressed();
-		}
-		ISourceContainer[] results = browser.addSourceContainers(getShell(), fDirector);
-		if(results != null) {
-			fSourceContainerViewer.addEntries(results);
+		if (browser != null) {
+			ISourceContainer[] results = browser.addSourceContainers(getShell(), fDirector);
+			if(results != null) {
+				fSourceContainerViewer.addEntries(results);
+			}
 		}
 		super.okPressed();
-	}		
+	}
 	
 	protected void addFilter(ViewerFilter filter) {
 		fViewer.addFilter(filter);
