@@ -6,10 +6,11 @@ package org.eclipse.ui.internal;
  */
 
 import org.eclipse.jface.action.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.actions.RetargetAction;
 
 /**
  * A CoolBarContributionItem is an item which realizes itself and its items
@@ -26,9 +27,12 @@ public class CoolBarContributionItem extends ContributionItem implements IContri
 	 * The parent contribution manager.
 	 */
 	private CoolBarManager parentManager;
-	private ToolBarManager toolBarManager;
+	private CoolItemToolBarManager toolBarManager;
 
 	private String id;
+
+	/**
+	 */
 
 	/**
 	 */
@@ -38,26 +42,26 @@ public class CoolBarContributionItem extends ContributionItem implements IContri
 	 * Creates a CoolBarContributionItem for the given CoolBarManager.
 	 */
 	public CoolBarContributionItem(CoolBarManager parent, String id) {
-		// have the item take on the style of its parent
-		this(parent, new ToolBarManager(parent.getStyle()), id);
+		this(parent, new CoolItemToolBarManager(parent.getStyle()), id);
 	}
-	public CoolBarContributionItem(CoolBarManager parent, ToolBarManager tBarMgr, String id) {
+	public CoolBarContributionItem(CoolBarManager parent, CoolItemToolBarManager tBarMgr, String id) {
 		this.toolBarManager = tBarMgr;
 		this.parentManager = parent;
 		this.id = id;
-		CoolBar parentControl = parent.getControl();
-		if (parentControl != null)
-			createControl(parentControl);
 		parent.add(this);
 	}
-	public ToolBar createControl(Composite parent) {
-		ToolBar tBar = toolBarManager.createControl(parent);
-		// add support for popup menu
-		tBar.addMouseListener(new MouseAdapter() {
-			public void mouseDown(MouseEvent e) {
-				getParentManager().popupCoolBarMenu(e);
-			}
-		});
+	protected ToolBar createControl() {
+		ToolBar tBar = null;
+		CoolBar parentControl = parentManager.getControl();
+		if (parentControl != null) {
+			tBar = toolBarManager.createControl(parentControl);
+			// add support for popup menu
+			tBar.addMouseListener(new MouseAdapter() {
+				public void mouseDown(MouseEvent e) {
+					getParentManager().popupCoolBarMenu(e);
+				}
+			});
+		}
 		return tBar;
 	}
 	public boolean equals(Object object) {
@@ -142,7 +146,11 @@ public class CoolBarContributionItem extends ContributionItem implements IContri
 		// invalid
 	}
 	public ToolBar getControl() {
-		return toolBarManager.getControl();
+		ToolBar tBar = toolBarManager.getControl();
+		if (tBar == null) {
+			tBar = createControl();
+		}
+		return tBar;
 	}
 	/**
 	 * Returns the identifier of this contribution item.

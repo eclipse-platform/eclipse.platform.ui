@@ -122,14 +122,6 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 					popupCoolBarMenu(e);
 				}
 			});
-			// Create the toolbars for each of the CoolBarContributionItems.
-			IContributionItem[] items = getItems();
-			for (int i = 0; i < items.length; i++) {
-				CoolBarContributionItem cbItem = (CoolBarContributionItem) items[i];
-				if (cbItem.getControl() == null) {
-					cbItem.createControl(coolBar);
-				}
-			}
 			update(false);
 		}
 		return coolBar;
@@ -207,6 +199,17 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		Menu popup = chevronMenuManager.createContextMenu(coolBar);
 		popup.setLocation(chevronPosition.x, chevronPosition.y);
 		popup.setVisible(true);
+	}
+	/**
+	 */
+	CoolBarContributionItem findSubId(String id) {
+		IContributionItem[] items = getItems();
+		for (int i = 0; i < items.length; i++) {
+			CoolBarContributionItem item = (CoolBarContributionItem)items[i];
+			IContributionItem subItem = item.getToolBarManager().find(id);
+			if (subItem != null) return item;
+		}
+		return null;
 	}
 	/**
 	 */
@@ -591,8 +594,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 								});
 							}
 						}
-					}
-				}
+					} 				}
 				// remove non-visible CoolBarContributionItems
 				coolItems = coolBar.getItems();
 				for (int i = 0; i < coolItems.length; i++) {
@@ -607,6 +609,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 						item.dispose();
 					}
 				}
+
 				setDirty(false);
 
 				// workaround for 14330

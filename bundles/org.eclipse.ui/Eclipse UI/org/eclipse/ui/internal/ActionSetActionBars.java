@@ -54,7 +54,7 @@ public IToolBarManager getToolBarManager() {
 		if (coolBarItem == null) {
 			// Create a CoolBar item for this action bar.
 			CoolBarManager cBarMgr = ((CoolBarManager)parentMgr);
-			ToolBarManager tBarMgr = new ToolBarManager(cBarMgr.getStyle());
+			CoolItemToolBarManager tBarMgr = new CoolItemToolBarManager(cBarMgr.getStyle());
 			toolBarMgr = createSubToolBarManager(tBarMgr);
 			coolBarItem = new CoolBarContributionItem(cBarMgr, tBarMgr, actionSetId);
 			coolBarItem.setVisible(active);
