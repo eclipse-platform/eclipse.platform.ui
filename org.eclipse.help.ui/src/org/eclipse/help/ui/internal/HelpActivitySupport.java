@@ -44,7 +44,7 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 		|| SHOW_DISABLED_ACTIVITIES_ON.equalsIgnoreCase(showDisabledActivities);
 		userCanToggleFiltering = userCanToggleFiltering && isWorkbenchFiltering();
 		
-		filteringEnabled = SHOW_DISABLED_ACTIVITIES_ON.equalsIgnoreCase(showDisabledActivities)
+		filteringEnabled = SHOW_DISABLED_ACTIVITIES_OFF.equalsIgnoreCase(showDisabledActivities)
 		|| SHOW_DISABLED_ACTIVITIES_NEVER.equalsIgnoreCase(showDisabledActivities);
 		filteringEnabled = filteringEnabled && isWorkbenchFiltering();
 	}
