@@ -317,6 +317,7 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 		SynchronizeViewWorkbenchPart part = (SynchronizeViewWorkbenchPart)fParticipantToPart.get(participant);
 		if (part != null) {
 			partActivated(part);
+			fPageDropDown.update();
 		}
 	}
 	
