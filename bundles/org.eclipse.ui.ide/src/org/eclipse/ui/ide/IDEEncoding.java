@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.ide;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -21,9 +23,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.jobs.Job;
-
 import org.eclipse.ui.WorkbenchEncoding;
-
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
@@ -66,13 +68,8 @@ public class IDEEncoding {
 	 * @return List of String
 	 */
 	public static List getIDEEncodings() {
-		List encodings = new ArrayList(WorkbenchEncoding.getDefinedEncodings());
-
-		String[] userEncodings = getIDEEncodingsPreference();
-		for (int i = 0; i < userEncodings.length; i++) {
-			encodings.add(userEncodings[i]);
-
-		}
+		List encodings =  getIDEEncodingsPreference();	
+		encodings.addAll(WorkbenchEncoding.getDefinedEncodings());
 		
 		String enc = getResourceEncoding();
 
@@ -139,13 +136,14 @@ public class IDEEncoding {
 		if(WorkbenchEncoding.getDefinedEncodings().contains(value))
 			return;
 		
-		String[] currentEncodings = getIDEEncodingsPreference();
+		Iterator currentEncodings = getIDEEncodingsPreference().iterator();
 
 		boolean addValue = true;
 
 		StringBuffer result = new StringBuffer();
-		for (int i = 0; i < currentEncodings.length; i++) {
-			String string = currentEncodings[i];
+		
+		while(currentEncodings.hasNext()){
+			String string = (String) currentEncodings.next();
 			result.append(string);
 			result.append(PREFERENCE_SEPARATOR);
 			if (string.equals(value))
@@ -165,14 +163,27 @@ public class IDEEncoding {
 	 * 
 	 * @return List
 	 */
-	private static String[] getIDEEncodingsPreference() {
+	private static List getIDEEncodingsPreference() {
 		String encodings = IDEWorkbenchPlugin.getDefault().getPreferenceStore()
 				.getString(IDE_ENCODINGS_PREFERENCE);
 
 		if (encodings == null || encodings.length() == 0)
-			return new String[0];
+			return new ArrayList();
 
-		return encodings.split(PREFERENCE_SEPARATOR);//$NON-NLS-1$
+		String [] preferenceEncodings =  encodings.split(PREFERENCE_SEPARATOR);//$NON-NLS-1$
+		ArrayList result = new ArrayList();
+		
+		//Drop any encodings that are not valid
+		for (int i = 0; i < preferenceEncodings.length; i++) {
+			String string = preferenceEncodings[i];
+			if (Charset.isSupported(string))
+				result.add(string);
+			else
+				WorkbenchPlugin.log(WorkbenchMessages.format("WorkbenchEncoding.invalidCharset", //$NON-NLS-1$
+						new String[] { string }));				
+		}
+		return result;
+		
 	}
 
 	/**
