@@ -140,9 +140,14 @@ public class DebugActionGroupsManager implements IMenuListener {
 					DebugUIPlugin.logErrorMessage(MessageFormat.format(DebugUIMessages.getString("DebugActionGroupsManager.Duplicate_action_group_id"), new String[]{id})); //$NON-NLS-1$
 					continue;
 				}
+				
+				IConfigurationElement[] children = configurationElement.getChildren();
+				if (children.length == 0) {
+					//empty action group
+					continue;
+				}
 				DebugActionGroup viewActionSet = new DebugActionGroup(id, name, isVisible);
 				fDebugActionGroups.put(id, viewActionSet);
-				IConfigurationElement[] children = configurationElement.getChildren();
 				for (int j = 0; j < children.length; j++) {
 					IConfigurationElement actionElement = children[j];
 					String actionId = actionElement.getAttribute("id"); //$NON-NLS-1$
