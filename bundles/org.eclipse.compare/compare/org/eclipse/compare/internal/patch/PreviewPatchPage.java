@@ -15,6 +15,7 @@ import org.eclipse.swt.widgets.*;
 
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.jface.resource.ImageDescriptor;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -68,12 +69,16 @@ import org.eclipse.compare.structuremergeviewer.*;
 	private Image fNullImage;
 	private Image fAddImage;
 	private Image fDelImage;
+	private Image fErrorImage;
+	private Image fErrorAddImage;
+	private Image fErrorDelImage;
 	
 	private CompareConfiguration fCompareConfiguration;
 	
 	
 	/* package */ PreviewPatchPage(PatchWizard pw) {
-		super("PreviewPatchPage", PatchMessages.getString("PreviewPatchPage.title"), null); //$NON-NLS-1$ //$NON-NLS-2$
+		super("PreviewPatchPage",	//$NON-NLS-1$ 
+			PatchMessages.getString("PreviewPatchPage.title"), null); //$NON-NLS-1$
 		
 		setMessage(PatchMessages.getString("PreviewPatchPage.message"));	//$NON-NLS-1$
 		
@@ -81,9 +86,20 @@ import org.eclipse.compare.structuremergeviewer.*;
 		//setPageComplete(false);
 		
 		int w= 16;
+		
+		ImageDescriptor addId= CompareUIPlugin.getImageDescriptor("ovr16/add_ov.gif");	//$NON-NLS-1$
+		ImageDescriptor delId= CompareUIPlugin.getImageDescriptor("ovr16/del_ov.gif");	//$NON-NLS-1$
+
+		ImageDescriptor errId= CompareUIPlugin.getImageDescriptor("ovr16/error_ov.gif");	//$NON-NLS-1$
+		Image errIm= errId.createImage();
+		
 		fNullImage= new DiffImage(null, null, w).createImage();
-		fAddImage= new DiffImage(null, CompareUIPlugin.getImageDescriptor("ovr16/add_ov.gif"), w).createImage(); //$NON-NLS-1$
-		fDelImage= new DiffImage(null, CompareUIPlugin.getImageDescriptor("ovr16/del_ov.gif"), w).createImage(); //$NON-NLS-1$
+		fAddImage= new DiffImage(null, addId, w).createImage();
+		fDelImage= new DiffImage(null, delId, w).createImage();
+
+		fErrorImage= new DiffImage(errIm, null, w).createImage();
+		fErrorAddImage= new DiffImage(errIm, addId, w).createImage();
+		fErrorDelImage= new DiffImage(errIm, delId, w).createImage();
 		
 		fCompareConfiguration= new CompareConfiguration();
 		
@@ -104,26 +120,47 @@ import org.eclipse.compare.structuremergeviewer.*;
 	}
 
 	Image getImage(Diff diff) {
+		if (diff.fMatches) {
+			switch (diff.getType()) {
+			case Differencer.ADDITION:
+				return fAddImage;
+			case Differencer.DELETION:
+				return fDelImage;
+			}
+			return fNullImage;
+		}
 		switch (diff.getType()) {
 		case Differencer.ADDITION:
-			return fAddImage;
+			return fErrorAddImage;
 		case Differencer.DELETION:
-			return fDelImage;
+			return fErrorDelImage;
 		}
-		return fNullImage;
+		return fErrorImage;
+	}
+	
+	Image getImage(Hunk hunk) {
+		if (hunk.fMatches)
+			return fNullImage;
+		return fErrorImage;
 	}
 	
 	public void createControl(Composite parent) {
-				
+
 		Composite composite= new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
+
 		setControl(composite);
 		
 		buildPatchOptionsGroup(composite);
 		
+		Splitter splitter= new Splitter(composite, SWT.VERTICAL);
+		splitter.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL
+					| GridData.VERTICAL_ALIGN_FILL | GridData.GRAB_VERTICAL));
+
+		
 		// top pane showing diffs and hunks in a check box tree 
-		fTree= new Tree(composite, SWT.CHECK | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+		fTree= new Tree(splitter, SWT.CHECK | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		GridData gd= new GridData();
 		gd.verticalAlignment= GridData.FILL;
 		gd.horizontalAlignment= GridData.FILL;
@@ -132,7 +169,7 @@ import org.eclipse.compare.structuremergeviewer.*;
 		fTree.setLayoutData(gd);
 				
 		// bottom pane showing hunks in compare viewer 
-		fHunkViewer= new CompareViewerSwitchingPane(composite, SWT.BORDER) {
+		fHunkViewer= new CompareViewerSwitchingPane(splitter, SWT.BORDER) {
 			protected Viewer getViewer(Viewer oldViewer, Object input) {
 				return CompareUI.findContentViewer(oldViewer, (ICompareInput)input, this, fCompareConfiguration);
 			}
@@ -428,6 +465,7 @@ import org.eclipse.compare.structuremergeviewer.*;
 				if (hunkError != null)
 					hunkLabel+= "   " + hunkError; //$NON-NLS-1$
 				hunkItems[h].setText(hunkLabel);
+				hunkItems[h].setImage(getImage(hunk));
 			}
 			
 			String label= diff.getDescription(strip);
