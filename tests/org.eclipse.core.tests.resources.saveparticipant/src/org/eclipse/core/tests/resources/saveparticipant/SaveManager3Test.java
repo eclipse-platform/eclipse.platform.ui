@@ -54,6 +54,7 @@ public void testBuilder() {
 	} catch (CoreException e) {
 		fail("1.0", e);
 	}
+	waitForBuild();
 	DeltaVerifierBuilder verifier = DeltaVerifierBuilder.getInstance();
 	assertTrue("1.1", verifier.wasIncrementalBuild());
 
@@ -64,6 +65,7 @@ public void testBuilder() {
 	} catch (CoreException e) {
 		fail("3.1", e);
 	}
+	waitForBuild();
 	assertTrue("3.2", verifier.wasAutoBuild());
 	assertTrue("3.3", verifier.isDeltaValid());
 	// remove the file because we don't want it to affect any other delta in the test

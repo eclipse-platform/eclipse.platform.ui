@@ -226,13 +226,16 @@ public void testBuilder() {
 		fail("3.0", e);
 	}
 	IFile added = project.getFile("added file");
+	waitForBuild();
 	DeltaVerifierBuilder verifier = DeltaVerifierBuilder.getInstance();
+	verifier.reset();
 	verifier.addExpectedChange(added, project, IResourceDelta.ADDED, 0);
 	try {
 		added.create(getRandomContents(), true, null);
 	} catch (CoreException e) {
 		fail("3.1", e);
 	}
+	waitForBuild();
 	assertTrue("3.2", verifier.wasAutoBuild());
 	assertTrue("3.3", verifier.isDeltaValid());
 	// remove the file because we don't want it to affect any other delta in the test

@@ -86,6 +86,8 @@ public class TestMissingBuilder extends WorkspaceSessionTest {
 		} catch (CoreException e) {
 			fail("0.99", e);
 		}
+		//wait for background build to complete
+		waitForBuild();
 		//remove the water nature, thus invalidating snow nature
 		SnowBuilder builder = SnowBuilder.getInstance();
 		builder.reset();
@@ -159,6 +161,7 @@ public class TestMissingBuilder extends WorkspaceSessionTest {
 		builder.assertLifecycleEvents("1.1");
 
 		//now re-enable the nature and ensure that the delta was null
+		waitForBuild();
 		builder.reset();
 		builder.addExpectedLifecycleEvent(SnowBuilder.SNOW_BUILD_EVENT);
 		try {
@@ -168,6 +171,7 @@ public class TestMissingBuilder extends WorkspaceSessionTest {
 		} catch (CoreException e) {
 			fail("2.99", e);
 		}
+		waitForBuild();
 		builder.assertLifecycleEvents("2.0");
 		assertTrue("2.1", builder.wasDeltaNull());
 

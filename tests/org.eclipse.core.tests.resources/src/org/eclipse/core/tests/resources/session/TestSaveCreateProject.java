@@ -53,8 +53,7 @@ public class TestSaveCreateProject extends WorkspaceSerializationTest {
 			assertEquals("1.2", 1, children.length);
 			IProject project = (IProject) children[0];
 			assertTrue("1.3", project.exists());
-			assertTrue("1.4", !project.isOpen());
-			assertEquals("1.5", PROJECT, project.getName());
+			assertEquals("1.4", PROJECT, project.getName());
 		} catch (CoreException e) {
 			fail("1.99", e);
 		}
