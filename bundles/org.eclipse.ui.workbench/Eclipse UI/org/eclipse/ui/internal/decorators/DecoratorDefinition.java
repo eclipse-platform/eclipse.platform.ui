@@ -117,12 +117,9 @@ public abstract class DecoratorDefinition {
 	 *  @param decorator
 	 */
 	protected void disposeCachedDecorator(IBaseLabelProvider decorator) {
-		DecoratorManager manager =
-			(DecoratorManager) WorkbenchPlugin
-				.getDefault()
-				.getDecoratorManager();
 		IBaseLabelProvider cached = decorator;
-		cached.removeListener(manager);
+		cached.removeListener(
+			WorkbenchPlugin.getDefault().getDecoratorManager());
 		//Clear the decorator before disposing
 		decorator = null;
 		cached.dispose();
