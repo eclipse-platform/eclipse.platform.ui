@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2003 GEBIT Gesellschaft fuer EDV-Beratung
+ * Copyright (c) 2002, 2004 GEBIT Gesellschaft fuer EDV-Beratung
  * und Informatik-Technologien mbH, 
  * Berlin, Duesseldorf, Frankfurt (Germany) and others.
  * All rights reserved. This program and the accompanying materials 
@@ -10,6 +10,7 @@
  * Contributors:
  *     GEBIT Gesellschaft fuer EDV-Beratung und Informatik-Technologien mbH - initial API and implementation
  * 	   IBM Corporation - bug 32890, bug 24108
+ *     John-Mason P. Shackelford - bug 57379
  *******************************************************************************/
 
 package org.eclipse.ant.internal.ui.editor.text;
@@ -33,25 +34,30 @@ import org.eclipse.jface.text.rules.Token;
  * <ul>
  * <li>XML_COMMENT</li>
  * <li>XML_TAG</li>
+ * <li>XML_CDATA</li>
  * </ul>
  */
 public class AntEditorPartitionScanner extends RuleBasedPartitionScanner {
 
 	public final static String XML_COMMENT = "__xml_comment"; //$NON-NLS-1$
 	public final static String XML_TAG = "__xml_tag"; //$NON-NLS-1$
-
+	public final static String XML_CDATA = "__xml_cdata"; //$NON-NLS-1$
+	
     /**
      * Creates an instance.
      */
 	public AntEditorPartitionScanner() {
 
-		IPredicateRule[] rules =new IPredicateRule[2];
+		IPredicateRule[] rules =new IPredicateRule[3];
 
+        IToken xmlCDATA = new Token(XML_CDATA);
+		rules[0]= new MultiLineRule("<![CDATA[", "]]>", xmlCDATA); //$NON-NLS-1$ //$NON-NLS-2$
+		
         IToken xmlComment = new Token(XML_COMMENT);
-		rules[0]= new MultiLineRule("<!--", "-->", xmlComment, '\\', true); //$NON-NLS-1$ //$NON-NLS-2$
+		rules[1]= new MultiLineRule("<!--", "-->", xmlComment, '\\', true); //$NON-NLS-1$ //$NON-NLS-2$
 
         IToken tag = new Token(XML_TAG);
-		rules[1]= new TagRule(tag);
+		rules[2]= new TagRule(tag);
 	
 		setPredicateRules(rules);
 	}
