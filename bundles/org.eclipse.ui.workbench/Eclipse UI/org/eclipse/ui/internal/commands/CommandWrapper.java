@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.commands;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -87,8 +88,9 @@ final class CommandWrapper implements ICommand {
     public final Object execute(Map parameterValuesByName)
             throws ExecutionException, NotHandledException {
         try {
-            return command.execute(new ExecutionEvent(parameterValuesByName,
-					null, null));
+            return command.execute(new ExecutionEvent(
+					(parameterValuesByName == null) ? Collections.EMPTY_MAP
+							: parameterValuesByName, null, null));
         } catch (final org.eclipse.core.commands.ExecutionException e) {
             throw new ExecutionException(e);
         } catch (final org.eclipse.core.commands.NotHandledException e) {
