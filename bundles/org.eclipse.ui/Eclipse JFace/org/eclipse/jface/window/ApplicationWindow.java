@@ -85,11 +85,11 @@ public class ApplicationWindow extends Window implements IRunnableContext {
 				Control w= ws[i];
 				
 				boolean hide= false;
-				if (toolBarManager != null && toolBarManager.getControl() == w) {
-					if (w instanceof ToolBar && ((ToolBar)w).getItemCount() <= 0) {
+				if (getToolBarControl() == w) {
+					if (!toolBarChildrenExist()) {
 						hide= true;
 						result.y+= 23;	// REVISIT
-					}
+					} 
 				} else if (statusLineManager != null && statusLineManager.getControl() == w) {
 				} else if (i > 0) { /* we assume this window is contents */
 					hide= false;
@@ -111,7 +111,7 @@ public class ApplicationWindow extends Window implements IRunnableContext {
 
 		protected void layout(Composite composite, boolean flushCache) {
 			Rectangle clientArea= composite.getClientArea();
-			
+	
 			Control[] ws= composite.getChildren();
 			
 			for (int i= 0; i < ws.length; i++) {
@@ -122,13 +122,13 @@ public class ApplicationWindow extends Window implements IRunnableContext {
 					w.setBounds(clientArea.x, clientArea.y, clientArea.width, e.y);
 					clientArea.y+= e.y;
 					clientArea.height-= e.y;
-				} else if (toolBarManager != null && toolBarManager.getControl() == w) {
-					if (!(w instanceof ToolBar) || ((ToolBar)w).getItemCount() > 0) {
+				} else if (getToolBarControl() == w) { 
+					if (toolBarChildrenExist()) {
 						Point e= w.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
 						w.setBounds(clientArea.x, clientArea.y, clientArea.width, e.y);
 						clientArea.y+= e.y + VGAP;
 						clientArea.height-= e.y + VGAP;
-					}
+					} 
 				} else if (statusLineManager != null && statusLineManager.getControl() == w) {
 					Point e= w.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
 					w.setBounds(clientArea.x, clientArea.y+clientArea.height-e.y, clientArea.width, e.y);
@@ -214,9 +214,7 @@ protected void configureShell(Shell shell) {
 
 	new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
 
-	if (toolBarManager != null) {
-		Control control = toolBarManager.createControl(shell);
-	}
+	createToolBarControl(shell);
 
 	if (statusLineManager != null) {
 		Control control = statusLineManager.createControl(shell);
@@ -251,6 +249,19 @@ protected StatusLineManager createStatusLineManager() {
  */
 protected ToolBarManager createToolBarManager(int style) {
 	return new ToolBarManager(style);
+}
+/**
+ * Creates the control for the tool bar manager.
+ * <p>
+ * Subclasses may override this method to customize the tool bar manager.
+ * </p>
+ * @return a Control
+ */
+protected Control createToolBarControl(Shell shell) {
+	if (toolBarManager instanceof ToolBarManager) {
+		return ((ToolBarManager)toolBarManager).createControl(shell);
+	} 
+	return null;
 }
 /**
  * Returns the default font used for this window.
@@ -313,7 +324,20 @@ public String getSymbolicFontName() {
 public ToolBarManager getToolBarManager() {
 	return toolBarManager;
 }
-
+/**
+ * Returns the control for the window's toolbar.
+ * <p>
+ * Subclasses may override this method to customize the tool bar manager.
+ * </p>
+ * @return a Control
+ */
+protected Control getToolBarControl() {
+	if (toolBarManager == null) return null;
+	if (toolBarManager instanceof ToolBarManager) {
+		return ((ToolBarManager)toolBarManager).getControl();
+	}
+	return null;
+}
 /* (non-Javadoc)
  * Method declared on IRunnableContext.
  */
@@ -352,4 +376,18 @@ public void setStatus(String message) {
 		statusLineManager.setMessage(message);
 	}
 }
+/**
+ * Returns whether or not children exist for the Application Window's
+ * toolbar control.
+ * <p>
+ * @return boolean true if children exist, false otherwise
+ */
+protected boolean toolBarChildrenExist() {
+	Control toolControl = getToolBarControl();
+	if (toolControl instanceof ToolBar) {
+		return ((ToolBar)toolControl).getItemCount() > 0;
+	}
+	return false;
+}
+
 }
