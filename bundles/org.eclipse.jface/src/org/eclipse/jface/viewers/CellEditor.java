@@ -1,17 +1,22 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
+
 package org.eclipse.jface.viewers;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 International Business Machines Corp and others.
-All rights reserved.   This program and the accompanying materials
-are made available under the terms of the Common Public License v0.5
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v05.html
- 
-Contributors:
-**********************************************************************/
-
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.util.*;
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
@@ -623,10 +628,11 @@ public boolean isValueValid() {
 /**
  * Processes a key release event that occurred in this cell editor.
  * <p>
- * The default implementation of this framework method interprets
- * the ESC key as canceling editing, and the RETURN key
- * as applying the current value. Subclasses should call this method
- * at appropriate times. Subclasses may also extend or reimplement.
+ * The default implementation of this framework method cancels editing
+ * when the ESC key is pressed.  When the RETURN key is pressed the current
+ * value is applied and the cell editor deactivates.
+ * Subclasses should call this method at appropriate times. 
+ * Subclasses may also extend or reimplement.
  * </p>
  *
  * @param keyEvent the key event
@@ -634,10 +640,24 @@ public boolean isValueValid() {
 protected void keyReleaseOccured(KeyEvent keyEvent) {
 	if (keyEvent.character == '\u001b') { // Escape character
 		fireCancelEditor();
-		return;
 	} else if (keyEvent.character == '\r') { // Return key
 		fireApplyEditorValue();
-		return;
+		deactivate();
+	}
+}
+/**
+ * Processes a focus lost event that occurred in this cell editor.
+ * <p>
+ * The default implementation of this framework method applies the current
+ * value and deactivates the cell editor.
+ * Subclasses should call this method at appropriate times. 
+ * Subclasses may also extend or reimplement.
+ * </p>
+ */
+protected void focusLost() {
+	if (isActivated()) {
+		fireApplyEditorValue();
+		deactivate();
 	}
 }
 /**

@@ -1,5 +1,5 @@
 /************************************************************************
-Copyright (c) 2002 IBM Corporation and others.
+Copyright (c) 2002, 2003 IBM Corporation and others.
 All rights reserved.   This program and the accompanying materials
 are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
@@ -133,18 +133,7 @@ protected Control createControl(Composite parent) {
 
 	comboBox.addSelectionListener(new SelectionAdapter() {
 		public void widgetDefaultSelected(SelectionEvent event) {
-			// must set the selection before getting value
-			selection = comboBox.getSelectionIndex();
-			Object newValue = doGetValue();
-			markDirty();
-			boolean isValid = isCorrect(newValue);
-			setValueValid(isValid);
-			if (!isValid) {
-				// try to insert the current value into the error message.
-				setErrorMessage(
-					MessageFormat.format(getErrorMessage(), new Object[] {items[selection]})); 
-			}
-			fireApplyEditorValue();
+			applyEditorValueAndDeactivate();
 		}
 	});
 
@@ -156,6 +145,11 @@ protected Control createControl(Composite parent) {
 		}
 	});
 
+	comboBox.addFocusListener(new FocusAdapter() {
+		public void focusLost(FocusEvent e) {
+			ComboBoxCellEditor.this.focusLost();
+		}
+	});
 	return comboBox;
 }
 
@@ -224,6 +218,33 @@ private void populateComboBoxItems() {
 
 		setValueValid(true);
 		selection = 0;
+	}
+}
+/**
+ * Applies the currently selected value and deactiavates the cell editor
+ */
+private void applyEditorValueAndDeactivate() {
+	//	must set the selection before getting value
+	selection = comboBox.getSelectionIndex();
+	Object newValue = doGetValue();
+	markDirty();
+	boolean isValid = isCorrect(newValue);
+	setValueValid(isValid);
+	if (!isValid) {
+		// try to insert the current value into the error message.
+		setErrorMessage(
+			MessageFormat.format(getErrorMessage(), new Object[] {items[selection]})); 
+	}
+	fireApplyEditorValue();
+	deactivate();
+}
+
+/**
+ * @see CellEditor#focusLost()
+ */
+protected void focusLost() {
+	if (isActivated()) {
+		applyEditorValueAndDeactivate();
 	}
 }
 }

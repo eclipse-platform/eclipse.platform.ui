@@ -1,21 +1,33 @@
-package org.eclipse.jface.viewers;
-
-/**********************************************************************
-Copyright (c) 2000, 2002 International Business Machines Corp and others.
-All rights reserved.   This program and the accompanying materials
-are made available under the terms of the Common Public License v0.5
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v05.html
- 
+http://www.eclipse.org/legal/cpl-v10.html
+
 Contributors:
-**********************************************************************/
+	IBM - Initial implementation
+************************************************************************/
+
+package org.eclipse.jface.viewers;
 
 import java.text.MessageFormat;
 
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Text;
 
 /**
  * A cell editor that manages a text entry field.
@@ -148,6 +160,11 @@ protected Control createControl(Composite parent) {
 			checkSelection();
 			checkDeleteable();
 			checkSelectable();
+		}
+	});
+	text.addFocusListener(new FocusAdapter() {
+		public void focusLost(FocusEvent e) {
+			TextCellEditor.this.focusLost();
 		}
 	});
 	text.setFont(parent.getFont());
