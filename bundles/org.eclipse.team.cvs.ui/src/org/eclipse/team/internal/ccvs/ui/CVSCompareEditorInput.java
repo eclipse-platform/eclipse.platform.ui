@@ -51,9 +51,6 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 	private static final int NODE_NOT_EQUAL = 1;
 	private static final int NODE_UNKNOWN = 2;
 	
-	// provider for the project being compared
-	CVSTeamProvider cvsProvider = null;
-	
 	class ResourceDiffNode extends DiffNode {
 		public ResourceDiffNode(IDiffContainer parent, int kind, ITypedElement ancestor, ITypedElement left, ITypedElement right) {
 			super(parent, kind, ancestor, left, right);
@@ -345,9 +342,6 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 				ICVSResource element = CVSWorkspaceRoot.getCVSResourceFor(resource);
 				if (resource.getType() == IResource.FILE) {
 					if (((ICVSFile) element).isDirty()) return NODE_NOT_EQUAL;
-				}
-				if(cvsProvider==null) {
-					return NODE_UNKNOWN;
 				}
 				leftEdition = CVSWorkspaceRoot.getRemoteResourceFor(resource);
 			} catch(CVSException e) {
