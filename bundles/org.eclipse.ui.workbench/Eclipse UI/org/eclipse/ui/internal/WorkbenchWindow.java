@@ -12,33 +12,89 @@
 package org.eclipse.ui.internal;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.SortedSet;
+import java.util.TreeMap;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.action.*;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IContributionManager;
+import org.eclipse.jface.action.IContributionManagerOverrides;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.StatusLineManager;
+import org.eclipse.jface.action.SubMenuManager;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.ShellAdapter;
+import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.CoolBar;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IElementFactory;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPageListener;
+import org.eclipse.ui.IPartService;
+import org.eclipse.ui.IPersistableElement;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.ISelectionService;
+import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.commands.IKeyBinding;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.commands.*;
+import org.eclipse.ui.internal.commands.ActionHandler;
+import org.eclipse.ui.internal.commands.CommandManager;
+import org.eclipse.ui.internal.commands.Match;
 import org.eclipse.ui.internal.dialogs.MessageDialogWithToggle;
 import org.eclipse.ui.internal.keys.KeySupport;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.progress.AnimationItem;
-import org.eclipse.ui.internal.registry.*;
-import org.eclipse.ui.keys.*;
+import org.eclipse.ui.internal.registry.ActionSetRegistry;
+import org.eclipse.ui.internal.registry.IActionSet;
+import org.eclipse.ui.internal.registry.IActionSetDescriptor;
+import org.eclipse.ui.keys.KeySequence;
+import org.eclipse.ui.keys.KeyStroke;
 
 /**
  * A window within the workbench.
@@ -378,8 +434,7 @@ public class WorkbenchWindow
 
 		for (int i = 0; i < actionSets.length; i++) {
 			if (actionSets[i] instanceof PluginActionSet) {
-				PluginActionSet pluginActionSet =
-					(PluginActionSet) actionSets[i];
+				PluginActionSet pluginActionSet = (PluginActionSet) actionSets[i];
 				IAction[] pluginActions = pluginActionSet.getPluginActions();
 
 				for (int j = 0; j < pluginActions.length; j++) {
@@ -387,14 +442,12 @@ public class WorkbenchWindow
 					String command = pluginAction.getActionDefinitionId();
 
 					if (command != null)
-						actionsForActionSets.put(
-							command,
-							new ActionHandler(pluginAction));
+						actionsForActionSets.put(command, new ActionHandler(pluginAction));
 				}
 			}
 		}
 
-		workbench.updateCommandsAndContexts();
+		workbench.updateActiveCommandIdsAndActiveContextIds();
 	}
 
 	void registerGlobalAction(IAction globalAction) {
@@ -405,7 +458,7 @@ public class WorkbenchWindow
 				command,
 				new ActionHandler(globalAction));
 
-		workbench.updateCommandsAndContexts();
+		workbench.updateActiveCommandIdsAndActiveContextIds();
 	}
 
 	/*
@@ -764,7 +817,8 @@ public class WorkbenchWindow
 	protected MenuManager createMenuManager() {
 		final MenuManager result = super.createMenuManager();
 		
-		// TODO refactor this to internal.commands
+		// TODO refactor this to internal.commands? get rid of it entirely?
+		// TODO time to take back the menu, and not allow any contribution item to set an accelerator unless it cooperates with the command manager.
 		result.setOverrides(new IContributionManagerOverrides() {
 
 			private CommandManager commandManager = CommandManager.getInstance();

@@ -21,6 +21,8 @@ import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -54,7 +56,9 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.ContextResolver;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContextResolver;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -116,14 +120,19 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.commands.IActionService;
 import org.eclipse.ui.commands.IActionServiceEvent;
 import org.eclipse.ui.commands.IActionServiceListener;
+import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandManager;
+import org.eclipse.ui.commands.ICommandManagerEvent;
+import org.eclipse.ui.commands.ICommandManagerListener;
 import org.eclipse.ui.contexts.IContextActivationService;
 import org.eclipse.ui.contexts.IContextActivationServiceEvent;
 import org.eclipse.ui.contexts.IContextActivationServiceListener;
 import org.eclipse.ui.contexts.IContextManager;
+import org.eclipse.ui.contexts.IContextManagerEvent;
+import org.eclipse.ui.contexts.IContextManagerListener;
 import org.eclipse.ui.internal.commands.ActionService;
-import org.eclipse.ui.internal.commands.CommandAndContextController;
 import org.eclipse.ui.internal.commands.CommandManager;
+import org.eclipse.ui.internal.commands.Match;
 import org.eclipse.ui.internal.contexts.ContextActivationService;
 import org.eclipse.ui.internal.contexts.ContextManager;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
@@ -134,6 +143,8 @@ import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.model.WorkbenchAdapterBuilder;
+import org.eclipse.ui.internal.util.StatusLineContributionItem;
+import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.update.core.SiteManager;
 
@@ -141,7 +152,7 @@ import org.eclipse.update.core.SiteManager;
  * The workbench class represents the top of the ITP user interface.  Its primary
  * responsability is the management of workbench windows and other ISV windows.
  */
-public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExtension {
+public class Workbench implements IContextResolver, IWorkbench, IPlatformRunnable, IExecutableExtension {
 
 	private WindowManager windowManager;
 	private WorkbenchWindow activatedWindow;
@@ -177,105 +188,160 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		WorkbenchPlugin.getDefault().setWorkbench(this);
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(getShowTasksChangeListener(), IResourceChangeEvent.POST_CHANGE);
 	}
-	
 
 	/* begin command and context support */
 
+	private final Listener listener = new Listener() {
+		public void handleEvent(Event event) {
+			if ((event.keyCode & SWT.MODIFIER_MASK) != 0)
+				return;
+
+			final Display display = Display.getCurrent();
+			final Shell[] shells = display.getShells();
+		
+			for (int i = 0; i < shells.length; i++) {
+				final int style = shells[i].getStyle();
+	
+				if (((style & SWT.APPLICATION_MODAL) != 0) || ((style & SWT.PRIMARY_MODAL) != 0) || ((style & SWT.SYSTEM_MODAL) != 0))
+					return;
+			}
+
+			KeyStroke keyStroke = KeySupport.convertAcceleratorToKeyStroke(KeySupport.convertEventToAccelerator(event));				
+				
+			if (press(keyStroke, event)) {
+				switch (event.type) {
+					case SWT.KeyDown:
+						event.doit = false;
+						break;
+					case SWT.Traverse:
+						event.detail = SWT.TRAVERSE_NONE;
+						event.doit = true;
+						break;
+					default:
+				}
+
+				event.type = SWT.NONE;					
+			}
+		}
+	};
+
+	private final ICommandManagerListener commandManagerListener = new ICommandManagerListener() {
+		public final void commandManagerChanged(final ICommandManagerEvent commandManagerEvent) {
+			updateActiveContextIds();
+		}
+	};
+	
+	private final IContextManagerListener contextManagerListener = new IContextManagerListener() {
+		public final void contextManagerChanged(final IContextManagerEvent contextManagerEvent) {
+			updateActiveContextIds();
+		}
+	};
+
 	private IActionServiceListener actionServiceListener = new IActionServiceListener() {
 		public void actionServiceChanged(IActionServiceEvent actionServiceEvent) {
-			updateCommandsAndContexts();
+			updateActiveCommandIdsAndActiveContextIds();
 		}
 	}; 
 
 	private IContextActivationServiceListener contextActivationServiceListener = new IContextActivationServiceListener() {
 		public void contextActivationServiceChanged(IContextActivationServiceEvent contextActivationServiceEvent) {
-			updateCommandsAndContexts();
+			updateActiveCommandIdsAndActiveContextIds();
 		}
 	}; 
 	
 	private IInternalPerspectiveListener internalPerspectiveListener = new IInternalPerspectiveListener() {
 		public void perspectiveActivated(IWorkbenchPage workbenchPage, IPerspectiveDescriptor perspectiveDescriptor) {
-			updateCommandsAndContexts();
+			updateActiveCommandIdsAndActiveContextIds();
 		}
 
 		public void perspectiveChanged(IWorkbenchPage workbenchPage, IPerspectiveDescriptor perspectiveDescriptor, String changeId) {
-			updateCommandsAndContexts();
+			updateActiveCommandIdsAndActiveContextIds();
 		}
 		
 		public void perspectiveClosed(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
-			updateCommandsAndContexts();
+			updateActiveCommandIdsAndActiveContextIds();
 		}
 
 		public void perspectiveOpened(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
-			updateCommandsAndContexts();				
+			updateActiveCommandIdsAndActiveContextIds();				
 		}		
 	};
 
 	private IPageListener pageListener = new IPageListener() {
 		public void pageActivated(IWorkbenchPage workbenchPage) {
-			updateCommandsAndContexts();
+			updateActiveCommandIdsAndActiveContextIds();
 		}
 			
 		public void pageClosed(IWorkbenchPage workbenchPage) {
-			updateCommandsAndContexts();
+			updateActiveCommandIdsAndActiveContextIds();
 		}
 			
 		public void pageOpened(IWorkbenchPage workbenchPage) {
-			updateCommandsAndContexts();
+			updateActiveCommandIdsAndActiveContextIds();
 		}				
 	};
 
 	private IPartListener partListener = new IPartListener() {
 		public void partActivated(IWorkbenchPart workbenchPart) {
-			updateCommandsAndContexts();
+			updateActiveCommandIdsAndActiveContextIds();
 		}
 		
 		public void partBroughtToTop(IWorkbenchPart workbenchPart) {
 		}
 		
 		public void partClosed(IWorkbenchPart workbenchPart) {
-			updateCommandsAndContexts();
+			updateActiveCommandIdsAndActiveContextIds();
 		}
 		
 		public void partDeactivated(IWorkbenchPart workbenchPart) {
-			updateCommandsAndContexts();
+			updateActiveCommandIdsAndActiveContextIds();
 		}
 		
 		public void partOpened(IWorkbenchPart workbenchPart) {
-			updateCommandsAndContexts();
+			updateActiveCommandIdsAndActiveContextIds();
 		}
 	};
 				
 	private IWindowListener windowListener = new IWindowListener() {
 		public void windowActivated(IWorkbenchWindow workbenchWindow) {
-			updateCommandsAndContexts();
+			updateActiveCommandIdsAndActiveContextIds();
+			updateActiveWorkbenchWindowMenuManager();
 		}
 
 		public void windowClosed(IWorkbenchWindow workbenchWindow) {
-			updateCommandsAndContexts();
+			updateActiveCommandIdsAndActiveContextIds();
+			updateActiveWorkbenchWindowMenuManager();
 		}
 			
 		public void windowDeactivated(IWorkbenchWindow workbenchWindow) {
-			updateCommandsAndContexts();				
+			updateActiveCommandIdsAndActiveContextIds();				
+			updateActiveWorkbenchWindowMenuManager();
 		}
 			
 		public void windowOpened(IWorkbenchWindow workbenchWindow) {
-			updateCommandsAndContexts();				
+			updateActiveCommandIdsAndActiveContextIds();				
+			updateActiveWorkbenchWindowMenuManager();
 		}
 	};
 
+	private CommandManager commandManager;
+	private ContextManager contextManager;
+	private StatusLineContributionItem modeContributionItem; 
+	
 	private IWorkbenchWindow activeWorkbenchWindow;
 	//private IActionService activeWorkbenchWindowActionService;
 	//private IContextActivationService activeWorkbenchWindowContextActivationService;
+	
 	private	IWorkbenchPage activeWorkbenchPage;
 	private IActionService activeWorkbenchPageActionService;
 	private	IContextActivationService activeWorkbenchPageContextActivationService;
-	private	IWorkbenchPart activeWorkbenchPart;;
+	
+	private	IWorkbenchPart activeWorkbenchPart;
 	private IActionService activeWorkbenchPartActionService;
 	private	IContextActivationService activeWorkbenchPartContextActivationService;
+	
 	private IActionService actionService;
 	private IContextActivationService contextActivationService;
-	private CommandAndContextController commandAndContextController;
 
 	public IActionService getActionService() {
 		if (actionService == null) {
@@ -287,7 +353,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	}
 
 	public ICommandManager getCommandManager() {
-		return CommandManager.getInstance();
+		return commandManager;
 	}
 		
 	public IContextActivationService getContextActivationService() {
@@ -300,73 +366,82 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	}
 
 	public IContextManager getContextManager() {
-		return ContextManager.getInstance();
+		return contextManager;
 	}
 
-	private void initializeCommandsAndContexts(final Display display) {
-		getCommandManager();
-		getContextManager();
-		commandAndContextController = new CommandAndContextController();
-        
-		final Listener listener = new Listener() {
-			public void handleEvent(Event event) {
-				if ((event.keyCode & SWT.MODIFIER_MASK) != 0)
-					return;
+	public final boolean inContext(final String commandId) {
+		if (commandId != null) {
+			final ICommand command = commandManager.getCommand(commandId);
 
-				final Display display = Display.getCurrent();
-				final Shell[] shells = display.getShells();
-		
-				for (int i = 0; i < shells.length; i++) {
-					final int style = shells[i].getStyle();
+			if (command != null)
+				return command.isDefined() && command.isActive();
+		}
+
+		return true;
+	}
+
+	// TODO move this method to CommandManager once getMode() is added to ICommandManager (and triggers and change event)
+	// TODO remove event parameter once key-modified actions are removed
+	public final boolean press(KeyStroke keyStroke, Event event) {
+		final KeySequence modeBeforeKeyStroke = commandManager.getMode();
+		final List keyStrokes = new ArrayList(modeBeforeKeyStroke.getKeyStrokes());
+		keyStrokes.add(keyStroke);
+		final KeySequence modeAfterKeyStroke = KeySequence.getInstance(keyStrokes);
+		final Map matchesByKeySequenceForModeBeforeKeyStroke = commandManager.getMatchesByKeySequenceForMode();
+		commandManager.setMode(modeAfterKeyStroke);
+		final Map matchesByKeySequenceForModeAfterKeyStroke = commandManager.getMatchesByKeySequenceForMode();
+		boolean handled = false;
+
+		if (!matchesByKeySequenceForModeAfterKeyStroke.isEmpty()) {			
+			commandManager.setMode(modeAfterKeyStroke);
+			modeContributionItem.setText(commandManager.getMode().format());							
+			handled = true;
+		} else {
+			final Match match = (Match) matchesByKeySequenceForModeBeforeKeyStroke.get(modeAfterKeyStroke);
+			
+			if (match != null) {
+				commandManager.setMode(modeAfterKeyStroke);
+				modeContributionItem.setText(commandManager.getMode().format());				
+				final String commandId = match.getCommandId();
+				final Map actionsById = commandManager.getActionsById();
+				org.eclipse.ui.commands.IAction action = (org.eclipse.ui.commands.IAction) actionsById.get(commandId);
 	
-					if (((style & SWT.APPLICATION_MODAL) != 0) || ((style & SWT.PRIMARY_MODAL) != 0) || ((style & SWT.SYSTEM_MODAL) != 0))
-						return;
-				}
-
-				KeyStroke keyStroke = KeySupport.convertAcceleratorToKeyStroke(KeySupport.convertEventToAccelerator(event));				
-				
-				if (commandAndContextController.press(keyStroke, event)) {
-					switch (event.type) {
-						case SWT.KeyDown:
-							event.doit = false;
-							break;
-						case SWT.Traverse:
-							event.detail = SWT.TRAVERSE_NONE;
-							event.doit = true;
-							break;
-						default:
+				if (action != null && action.isEnabled()) {
+					try {
+						action.execute(event);
+					} catch (final Exception e) {
+						// TODO 						
 					}
+				}					
 
-					event.type = SWT.NONE;					
-				}
-			}
-		};
- 
-		display.addFilter(SWT.Traverse, listener);
-		display.addFilter(SWT.KeyDown, listener);
-		addWindowListener(windowListener);				
-		updateCommandsAndContexts();
+				handled = true;
+			} 
+
+			commandManager.setMode(KeySequence.getInstance());	
+			modeContributionItem.setText(commandManager.getMode().format());				
+		}
+
+		// TODO is this necessary?		
+		updateActiveContextIds();
+		return handled;
 	}
 
-	// TODO is this necessary here? as well, should CommandAndContextController be a singleton?
-	public void updateCommandAndContextController() {
-		commandAndContextController.update();	
+	public void updateActiveContextIds() {
+		final List activeContextIds = new ArrayList(contextManager.getActiveContextIds());
+		activeContextIds.add(IWorkbenchConstants.DEFAULT_ACCELERATOR_SCOPE_ID);
+		commandManager.setActiveContextIds(activeContextIds);
+	}
+
+	public void updateActiveWorkbenchWindowMenuManager() {
 		IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
 		
 		if (workbenchWindow != null) {
 			MenuManager menuManager = ((WorkbenchWindow) workbenchWindow).getMenuManager();
 			menuManager.update(IAction.TEXT);
-
-			/* TODO make this work like it does for menus
-			CoolBarManager coolBarManager = ((WorkbenchWindow) workbenchWindow).getCoolBarManager();
-		
-			if (coolBarManager != null)
-				coolBarManager.update(true);
-			*/
 		}
 	}
 
-	void updateCommandsAndContexts() {
+	void updateActiveCommandIdsAndActiveContextIds() {
 		IWorkbenchWindow activeWorkbenchWindow = getActiveWorkbenchWindow();
 		
 		if (activeWorkbenchWindow != null && !(activeWorkbenchWindow instanceof WorkbenchWindow))
@@ -452,7 +527,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		if (this.activeWorkbenchPartActionService != null)
 			actionsById.putAll(this.activeWorkbenchPartActionService.getActionsById());
 			
-		((CommandManager) getCommandManager()).setActionsById(actionsById);
+		commandManager.setActionsById(actionsById);
 
 		/*
 		if (activeWorkbenchWindowContextActivationService != this.activeWorkbenchWindowContextActivationService) {
@@ -501,11 +576,24 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		if (this.activeWorkbenchPartContextActivationService != null)
 			activeContextIds.addAll(this.activeWorkbenchPartContextActivationService.getActiveContextIds());
 			
-		((ContextManager) getContextManager()).setActiveContextIds(new ArrayList(activeContextIds));
+		contextManager.setActiveContextIds(new ArrayList(activeContextIds));
 	}
-	
+
+	private void initializeCommandsAndContexts(final Display display) {
+		ContextResolver.getInstance().setContextResolver(this);
+		commandManager = CommandManager.getInstance();
+		contextManager = ContextManager.getInstance();
+		modeContributionItem = new StatusLineContributionItem("ModeContributionItem"); //$NON-NLS-1$	
+		commandManager.addCommandManagerListener(commandManagerListener);
+		contextManager.addContextManagerListener(contextManagerListener);
+		updateActiveContextIds();       
+		display.addFilter(SWT.Traverse, listener);
+		display.addFilter(SWT.KeyDown, listener);
+		addWindowListener(windowListener);				
+		updateActiveCommandIdsAndActiveContextIds();
+	}
+
 	/* end command and context support */
-	
 	
 	// TODO: The code for bringing the problem view to front must be moved 
 	// to org.eclipse.ui.views.
@@ -585,8 +673,8 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 * Fire window opened event.
 	 */
 	protected void fireWindowOpened(IWorkbenchWindow window) {
-        // TODO cast craziness
-		((WorkbenchWindow) window).getStatusLineManager().add(commandAndContextController.getModeContributionItem());
+		if (window instanceof WorkbenchWindow)        
+			((WorkbenchWindow) window).getStatusLineManager().add(modeContributionItem);
 
 		Object list[] = windowListeners.getListeners();
 		for (int i = 0; i < list.length; i++) {
@@ -597,8 +685,8 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	 * Fire window closed event.
 	 */
 	protected void fireWindowClosed(IWorkbenchWindow window) {
-		// TODO cast craziness
-		((WorkbenchWindow) window).getStatusLineManager().remove(commandAndContextController.getModeContributionItem());
+		if (window instanceof WorkbenchWindow)
+			((WorkbenchWindow) window).getStatusLineManager().remove(modeContributionItem);
 
 		if (activatedWindow == window) {
 			// Do not hang onto it so it can be GC'ed

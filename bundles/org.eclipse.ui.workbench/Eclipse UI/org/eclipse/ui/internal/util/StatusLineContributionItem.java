@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands;
+package org.eclipse.ui.internal.util;
 
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionManager;
@@ -19,32 +19,47 @@ import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Composite;
 
-class StatusLineContributionItem extends ContributionItem {
+public class StatusLineContributionItem extends ContributionItem {
 
-	final static int DEFAULT_CHAR_WIDTH = 40; 
+	public final static int DEFAULT_CHAR_WIDTH = 40; 
 	
-	private int charWidth = DEFAULT_CHAR_WIDTH;
+	private int charWidth;
 	private CLabel label;
-	private String text = ""; //$NON-NLS-1$
+	private String text = Util.ZERO_LENGTH_STRING;
 	private int widthHint = -1;
 
-	StatusLineContributionItem(String id) {
-		super(id);
+	public StatusLineContributionItem(String id) {
+		this(id, DEFAULT_CHAR_WIDTH);
 	}
 
-	StatusLineContributionItem(String id, int charWidth) {
+	public StatusLineContributionItem(String id, int charWidth) {
 		super(id);
 		this.charWidth = charWidth;
 	}
 
-	String getText() {
+	public void fill(Composite parent) {	
+		label = new CLabel(parent, SWT.SHADOW_IN);
+		StatusLineLayoutData statusLineLayoutData = new StatusLineLayoutData();
+		
+		if (widthHint < 0) {
+			GC gc = new GC(parent);
+			gc.setFont(parent.getFont());
+			widthHint = gc.getFontMetrics().getAverageCharWidth() * charWidth;
+			gc.dispose();
+		}
+
+		statusLineLayoutData.widthHint = widthHint;
+		label.setLayoutData(statusLineLayoutData);
+		label.setText(text);
+	}
+
+	public String getText() {
 		return text;
 	}
 
-	void setText(String text)
-		throws IllegalArgumentException {
+	public void setText(String text) {
 		if (text == null)
-			throw new IllegalArgumentException();
+			throw new NullPointerException();
 
 		this.text = text;
 		
@@ -68,21 +83,5 @@ class StatusLineContributionItem extends ContributionItem {
 					contributionManager.update(true);
 			}
 		}
-	}
-
-	public void fill(Composite parent) {	
-		label = new CLabel(parent, SWT.SHADOW_IN);
-		StatusLineLayoutData statusLineLayoutData = new StatusLineLayoutData();
-		
-		if (widthHint < 0) {
-			GC gc = new GC(parent);
-			gc.setFont(parent.getFont());
-			widthHint = gc.getFontMetrics().getAverageCharWidth() * charWidth;
-			gc.dispose();
-		}
-
-		statusLineLayoutData.widthHint = widthHint;
-		label.setLayoutData(statusLineLayoutData);
-		label.setText(text);
 	}
 }

@@ -217,9 +217,11 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		} catch (IOException eIO) {
 		}
 
-		// TODO ok to remove?
-		if (workbench instanceof Workbench)
-			((Workbench) workbench).updateCommandAndContextController();
+		// TODO remove the dependancy on Workbench. have Workbench rely on events from CommandManager.
+		if (workbench instanceof Workbench) {
+			((Workbench) workbench).updateActiveContextIds();
+			((Workbench) workbench).updateActiveWorkbenchWindowMenuManager();
+		}
 
 		return super.performOk();
 	}
