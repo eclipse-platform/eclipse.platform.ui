@@ -39,11 +39,16 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 	private static final int TABLE_HEIGHT = 200;
 
 	private static final String PLUGININFO = "about.html";	//$NON-NLS-1$
-
+	
+	private final static int MORE_ID = IDialogConstants.CLIENT_ID + 1;
+	
 	private boolean webBrowserOpened = false;
 
 	private Table vendorInfo;
 	private Button moreInfo;
+	
+	private String title;
+	private String message;
 
 	private String columnTitles[] =
 		{ WorkbenchMessages.getString("AboutPluginsDialog.provider"), //$NON-NLS-1$
@@ -63,10 +68,36 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 	 * Constructor for AboutPluginsDialog
 	 */
 	public AboutPluginsDialog(Shell parentShell) {
+		this(
+			parentShell, 
+			Platform.getPluginRegistry().getPluginDescriptors(),
+			null,
+			null);
+	}
+
+	/**
+	 * Constructor for AboutPluginsDialog
+	 */
+	public AboutPluginsDialog(Shell parentShell, IPluginDescriptor[] descriptors, String title, String msg) {
 		super(parentShell);
-		info = Platform.getPluginRegistry().getPluginDescriptors();
+		info = descriptors;
+		this.title = title;
+		message = msg;
 		sortByProvider();
 		aboutInfo = ((Workbench) PlatformUI.getWorkbench()).getAboutInfo();
+	}
+
+	/* (non-Javadoc)
+	 * Method declared on Dialog.
+	 */
+	protected void buttonPressed(int buttonId) {
+		switch (buttonId) {
+			case MORE_ID : {
+				handleMoreInfoPressed();
+				return;
+			}
+		}
+		super.buttonPressed(buttonId);
 	}
 
 	/* (non-Javadoc)
@@ -74,13 +105,17 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		String title = aboutInfo.getProductName();
-		if (title != null) { 
-			newShell.setText(
-				WorkbenchMessages.format(
-					"AboutPluginsDialog.shellTitle",	//$NON-NLS-1$
-					new Object[] {title}));
-		}
+		if (title == null) {
+			title = aboutInfo.getProductName();
+			if (title != null) { 
+				title = WorkbenchMessages.format(
+						"AboutPluginsDialog.shellTitle",	//$NON-NLS-1$
+						new Object[] {title});
+			}
+		} 
+		if (title != null)
+			newShell.setText(title);
+
 		WorkbenchHelp.setHelp(
 			newShell,
 			IHelpContextIds.ABOUT_PLUGINS_DIALOG);
@@ -93,8 +128,23 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 	 * @param parent the button bar composite
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
+		parent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+	
+		moreInfo = createButton(parent, MORE_ID, WorkbenchMessages.getString("AboutPluginsDialog.moreInfo"), false); //$NON-NLS-1$
+
+		// set initial enablement
+		moreInfo.setEnabled(tableHasSelection() & selectionHasInfo());
+
+		Label l = new Label(parent, SWT.NONE);
+		l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		GridLayout layout = (GridLayout)parent.getLayout();
+		layout.numColumns++;
+		layout.makeColumnsEqualWidth = false;
+	
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 	}
+
+
 	/**
 	 * Create the contents of the dialog (above the button bar).
 	 *
@@ -106,10 +156,15 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 	protected Control createDialogArea(Composite parent) {
 
 		Composite outer = (Composite) super.createDialogArea(parent);
+		
+		if (message != null) {
+			Label label = new Label(outer, SWT.NONE);
+			label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			label.setText(message);
+		}
 
 		createTable(outer);
 		createColumns();
-		createMoreButton(outer);
 
 		GridData gridData =
 			new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL);
@@ -151,9 +206,9 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 		/* create table headers */
 		int[] columnWidths =
 			{
-				convertHorizontalDLUsToPixels(165),
-				convertHorizontalDLUsToPixels(165),
-				convertHorizontalDLUsToPixels(50)};
+				convertHorizontalDLUsToPixels(120),
+				convertHorizontalDLUsToPixels(180),
+				convertHorizontalDLUsToPixels(105)};
 		for (int i = 0; i < columnTitles.length; i++) {
 			TableColumn tableColumn = new TableColumn(vendorInfo, SWT.NULL);
 			tableColumn.setWidth(columnWidths[i]);
@@ -177,33 +232,6 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 			item.setText(row);
 		}
 	}
-	/**
-	 * Create the button to provide more info on the selected plugin.
-	 *
-	 * @param the parent composite to contain the dialog area
-	 */
-	protected void createMoreButton(Composite parent) {
-		moreInfo = new Button(parent, SWT.PUSH);
-		moreInfo.setText(WorkbenchMessages.getString("AboutPluginsDialog.moreInfo"));	//$NON-NLS-1$
-		GridData data = new GridData();
-		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		data.widthHint =
-			Math.max(widthHint, moreInfo.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
-		moreInfo.setLayoutData(data);
-		// set initial enablement
-		moreInfo.setEnabled(tableHasSelection() & selectionHasInfo());
-
-		SelectionListener listener = new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleMoreInfoPressed();
-			}
-		};
-
-		moreInfo.addSelectionListener(listener);
-
-	}
-
 	/**
 	 * Set enablement of moreInfo button based on whether or not 
 	 * there is a selection in the table and if there is any additional

@@ -55,14 +55,16 @@ public class WelcomePageSelectionDialog extends SelectionDialog {
 	 * 
 	 * @param shell the parent shell
 	 * @param markerResolutions the resolutions to display
+	 * @param initialSelection the index of the initial selection
 	 */
-	public WelcomePageSelectionDialog(Shell shell, AboutInfo[] features) {
+	public WelcomePageSelectionDialog(Shell shell, AboutInfo[] features, int initialSelection) {
 		super(shell);
 		Assert.isTrue(features != null && features.length > 0);
 		this.features = features;
 		setTitle(WorkbenchMessages.getString("WelcomePageSelectionDialog.title"));	//$NON-NLS-1$
 		setMessage(WorkbenchMessages.getString("WelcomePageSelectionDialog.message")); //$NON-NLS-1$
-		setInitialSelections(new Object[]{features[0]});
+		if (initialSelection >= 0 && initialSelection < features.length)
+			setInitialSelections(new Object[]{features[initialSelection]});
 	}
 	
 	/* (non-Javadoc)

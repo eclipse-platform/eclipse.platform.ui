@@ -244,7 +244,7 @@ protected Control createDialogArea(Composite parent) {
 			image = desc.createImage();
 			images.add(image);
 			button.setImage(image);
-			String name = infoArray[i].getFeatureLabel();
+			String name = infoArray[i].getProviderName();
 			if (name == null)
 				name = "";
 			button.setToolTipText(name);
@@ -269,41 +269,39 @@ protected Control createDialogArea(Composite parent) {
 
 
 /**
- * Returns the feature infos ensuring that none have duplicate icons and
- * excluding the primary feature.
+ * Returns the feature infos.
+ * They are grouped by provider and image.
  */
 private AboutInfo[] getFeaturesInfo() {
 	AboutInfo[] rawArray = ((Workbench)PlatformUI.getWorkbench()).getFeaturesInfo();
-	// quickly exclude any that do not have an image
+	// quickly exclude any that do not have a provider name and image
 	ArrayList infoList = new ArrayList();
 	for (int i = 0; i < rawArray.length; i++) {
-		if (rawArray[i].getFeatureImageName() != null)
+		if (rawArray[i].getProviderName() != null &&
+			rawArray[i].getFeatureImageName() != null)
 			infoList.add(rawArray[i]); 
 	}
 	AboutInfo[] infoArray = (AboutInfo[])infoList.toArray(new AboutInfo[infoList.size()]);
 	
 	// now exclude those with duplicate images
 	infoList = new ArrayList();
-	if (aboutInfo != null 
-		&& aboutInfo.getFeatureImageName() != null)
-		// add the primary feature now, we will remove it later
-		infoList.add(aboutInfo);
 	for (int i = 0; i < infoArray.length; i++) {
-		if (infoArray[i].getFeatureImageName() == null) 
-			break;
-		// check for identical name
+		// check for identical provider
 		boolean add = true;
 		for (int j = 0; j < infoList.size(); j++) {
 			AboutInfo current = (AboutInfo)infoList.get(j);
-			if (current.getFeatureImageName().equals(infoArray[i].getFeatureImageName())) {
-				// same name
-				// we have to check if the CRC's are identical
-				Long crc1 = current.getFeatureImageCRC();
-				Long crc2 = infoArray[i].getFeatureImageCRC();
-				if (crc1 == null ? false : crc1.equals(crc2)) {
-					// duplicate
-					add = false;
-					break;
+			if (current.getProviderName().equals(infoArray[i].getProviderName())) {
+				// check for identical image
+				if (current.getFeatureImageName().equals(infoArray[i].getFeatureImageName())) {
+					// same name
+					// we have to check if the CRC's are identical
+					Long crc1 = current.getFeatureImageCRC();
+					Long crc2 = infoArray[i].getFeatureImageCRC();
+					if (crc1 == null ? false : crc1.equals(crc2)) {
+						// duplicate
+						add = false;
+						break;
+					}
 				}
 			}
 		}

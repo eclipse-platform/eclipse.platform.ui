@@ -6,6 +6,7 @@ package org.eclipse.ui.internal.dialogs;
  */
 
 import java.io.IOException;
+import java.net.URL;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,12 +18,18 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IPluginRegistry;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.DisposeEvent;
@@ -42,6 +49,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.program.Program;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -56,6 +64,15 @@ import org.eclipse.ui.internal.AboutItem;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.update.configuration.IConfiguredSite;
+import org.eclipse.update.configuration.IInstallConfiguration;
+import org.eclipse.update.configuration.ILocalSite;
+import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.IFeatureReference;
+import org.eclipse.update.core.IPluginEntry;
+import org.eclipse.update.core.IURLEntry;
+import org.eclipse.update.core.SiteManager;
+import org.eclipse.update.core.VersionedIdentifier;
 
 /**
  * Displays information about the product plugins.
@@ -71,8 +88,9 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 	private static final int TABLE_HEIGHT = 150;
 	private static final int INFO_HEIGHT = 100;
 
-	private static final String PLUGININFO = "about.html";	//$NON-NLS-1$
-
+	private final static int MORE_ID = IDialogConstants.CLIENT_ID + 1;
+	private final static int PLUGINS_ID = IDialogConstants.CLIENT_ID + 2;
+	
 	private Table table;
 	private Label imageLabel;	
 	private StyledText text;
@@ -92,6 +110,10 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 	private int lastColumnChosen = 0;	// initially sort by provider
 	private boolean reverseSort = false;	// initially sort ascending
 	private AboutInfo lastSelection = null;
+	private Button moreButton;
+	private Button pluginsButton;
+	
+	private static Map featuresMap;
 
 	/**
 	 * Constructor for AboutFeaturesDialog
@@ -102,6 +124,53 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 		aboutInfo = workbench.getAboutInfo();
 		featuresInfo = workbench.getFeaturesInfo();
 		sortByProvider();
+	}
+	/* (non-Javadoc)
+	 * Method declared on Dialog.
+	 */
+	protected void buttonPressed(int buttonId) {
+		switch (buttonId) {
+			case MORE_ID : {
+				TableItem[] items = table.getSelection();
+				if (items.length > 0) {
+					AboutInfo info = (AboutInfo)items[0].getData();
+					IFeature feature = getFeatureFor(info);
+					if (feature != null) {
+						IURLEntry entry = feature.getLicense();
+						if (entry != null) {
+							openLink(entry.getURL().toString());
+							return;
+						}
+					}
+					MessageDialog.openInformation(
+						getShell(), 
+						WorkbenchMessages.getString("AboutFeaturesDialog.noInfoTitle"), //$NON-NLS-1$
+						WorkbenchMessages.getString("AboutFeaturesDialog.noInformation")); //$NON-NLS-1$
+				}
+				return;
+			}
+			case PLUGINS_ID : {
+				TableItem[] items = table.getSelection();
+				if (items.length > 0) {
+					AboutInfo info = (AboutInfo)items[0].getData();
+					IFeature feature = getFeatureFor(info);
+					IPluginDescriptor[] descriptors;
+					if (feature == null)
+						descriptors = new IPluginDescriptor[0];	
+					else
+						descriptors = getPluginsFor(feature);
+					AboutPluginsDialog d = 
+						new AboutPluginsDialog(
+							getShell(), 
+							descriptors,
+							WorkbenchMessages.getString("AboutFeaturesDialog.pluginInfoTitle"), //$NON-NLS-1$
+							WorkbenchMessages.format("AboutFeaturesDialog.pluginInfoMessage",	new Object[] {info.getFeatureLabel()})); //$NON-NLS-1$
+					d.open();
+				}				
+				return;
+			}
+		}
+		super.buttonPressed(buttonId);
 	}
 
 	/* (non-Javadoc)
@@ -128,8 +197,25 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 	 * @param parent the button bar composite
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
-		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
+		parent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+	
+		moreButton = createButton(parent, MORE_ID, WorkbenchMessages.getString("AboutFeaturesDialog.moreInfo"), false);
+		pluginsButton = createButton(parent, PLUGINS_ID, WorkbenchMessages.getString("AboutFeaturesDialog.pluginsInfo"), false);
+
+		Label l = new Label(parent, SWT.NONE);
+		l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		GridLayout layout = (GridLayout)parent.getLayout();
+		layout.numColumns++;
+		layout.makeColumnsEqualWidth = false;
+	
+		Button b = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
+		b.setFocus();
+		
+		TableItem[] items = table.getSelection();
+		if (items.length > 0) 
+			updateButtons((AboutInfo)items[0].getData());
 	}
+
 	/**
 	 * Create the contents of the dialog (above the button bar).
 	 *
@@ -222,7 +308,9 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 
 		SelectionListener listener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				updateInfoArea((AboutInfo)e.item.getData());
+				AboutInfo info = (AboutInfo)e.item.getData();
+				updateInfoArea(info);
+				updateButtons(info);
 			}
 		};
 		table.addSelectionListener(listener);
@@ -237,6 +325,119 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 			image.dispose();
 		}
 		return super.close();
+	}
+	/**
+	 * Returns a mapping from feature id to feature
+	 */
+	private Map getFeaturesMap() {
+		if (featuresMap != null) 
+			return featuresMap;
+			
+		featuresMap = new HashMap();
+
+		IPluginRegistry reg = Platform.getPluginRegistry();
+		if (reg == null) {
+			MessageDialog.openError(
+				getShell(), 
+				WorkbenchMessages.getString("AboutFeaturesDialog.errorTitle"), //$NON-NLS-1$
+				WorkbenchMessages.getString("AboutFeaturesDialog.unableToObtainFeatureInfo")); //$NON-NLS-1$
+			return featuresMap;
+		}
+		
+		final ILocalSite[] localSiteArray = new ILocalSite[1];
+		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+			public void run() {
+				// this may take a few seconds
+				try {
+					localSiteArray[0] = SiteManager.getLocalSite();
+				} catch (CoreException e) {
+					MessageDialog.openError(
+						getShell(), 
+						WorkbenchMessages.getString("AboutFeaturesDialog.errorTitle"), //$NON-NLS-1$
+						WorkbenchMessages.getString("AboutFeaturesDialog.unableToObtainFeatureInfo")); //$NON-NLS-1$
+				}
+			}
+		});
+		if (localSiteArray[0] == null)
+			return featuresMap;
+		
+		IInstallConfiguration installConfiguration = localSiteArray[0].getCurrentConfiguration(); 
+		IConfiguredSite[] configuredSites = installConfiguration.getConfiguredSites();
+
+		for (int i = 0; i < configuredSites.length; i++) {
+			IFeatureReference[] featureReferences = configuredSites[i].getConfiguredFeatures();
+			for (int j = 0; j < featureReferences.length; j++) {
+				IFeature feature;
+				try {
+					feature = featureReferences[j].getFeature();
+				} catch (CoreException e) {
+					// just skip it
+					break;
+				}
+				String key = feature.getVersionedIdentifier().toString();
+				featuresMap.put(key, feature);
+			}
+		}
+		return featuresMap;
+	}
+
+	/**
+	 * Return the feature for the given info
+	 */
+	private IFeature getFeatureFor(AboutInfo info) {
+		Map map = getFeaturesMap();
+		if (map == null) 
+			return null;
+		String key = info.getFeatureId() + "_" + info.getVersion();
+		return (IFeature)map.get(key);
+	}
+
+	
+	/**
+	 * Return the plugins for the given feature
+	 */
+	private IPluginDescriptor[] getPluginsFor(IFeature feature) {
+		IPluginRegistry reg = Platform.getPluginRegistry();
+		if (reg == null)
+			return new IPluginDescriptor[0];
+		IPluginEntry[] pluginEntries = feature.getPluginEntries();	
+		ArrayList plugins = new ArrayList();
+		for (int k = 0; k < pluginEntries.length; k++) {
+			VersionedIdentifier id = pluginEntries[k].getVersionedIdentifier();
+
+			IPluginDescriptor desc = reg.getPluginDescriptor(id.getIdentifier(), id.getVersion());
+			if (desc != null)
+				plugins.add(desc);
+		}
+		return (IPluginDescriptor[])plugins.toArray(new IPluginDescriptor[plugins.size()]);	
+	}
+		
+
+
+	/**
+	 * Update the button enablement
+	 */
+	private void updateButtons(AboutInfo info) {
+		if (info == null) {
+			moreButton.setEnabled(false);
+			pluginsButton.setEnabled(false);
+			return;
+		}
+		boolean shouldEnable = true; // by default enable
+		// Avoid creating the map just to determine enablement
+		if (featuresMap != null) {
+			IFeature feature = getFeatureFor(info);
+			shouldEnable = feature != null && feature.getLicense() != null;
+		}
+		moreButton.setEnabled(shouldEnable);		
+				
+		// Assume there is at least one plugin		
+		shouldEnable = true; // by default enable
+		if (featuresMap != null) {
+			IFeature feature = getFeatureFor(info);
+			shouldEnable = feature != null;
+		}
+		pluginsButton.setEnabled(shouldEnable);
 	}
 
 	/**
@@ -287,9 +488,9 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 		/* create table headers */
 		int[] columnWidths =
 			{
-				convertHorizontalDLUsToPixels(165),
-				convertHorizontalDLUsToPixels(165),
-				convertHorizontalDLUsToPixels(50)};
+				convertHorizontalDLUsToPixels(125),
+				convertHorizontalDLUsToPixels(190),
+				convertHorizontalDLUsToPixels(110)};
 		for (int i = 0; i < columnTitles.length; i++) {
 			TableColumn tableColumn = new TableColumn(table, SWT.NULL);
 			tableColumn.setWidth(columnWidths[i]);

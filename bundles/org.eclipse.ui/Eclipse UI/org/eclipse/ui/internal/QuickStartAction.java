@@ -33,6 +33,15 @@ public class QuickStartAction extends PartEventAction {
 	private IWorkbench workbench;
 	
 /**
+ *	Create an instance of this class.
+ *  <p>
+ * 	This consructor added to support calling the action from the welcome page
+ *  </p>
+ */
+public QuickStartAction() {
+	this(PlatformUI.getWorkbench());
+}
+/**
  *	Create an instance of this class
  */
 public QuickStartAction(IWorkbench aWorkbench) {
@@ -82,11 +91,24 @@ public void run() {
 				return coll.compare(name1, name2);
 			}
 		});
-	
+
+	// Find primary feature
+	AboutInfo primaryFeature = ((Workbench)workbench).getAboutInfo();
+	int index = -1;
+	if (primaryFeature != null) {
+		for (int i = 0; i < features.length; i++) {
+			if (features[i].getFeatureId().equals(primaryFeature.getFeatureId())) {
+				index = i;
+				break;
+			}
+		}
+	}	
+
 	WelcomePageSelectionDialog d = 
 		new WelcomePageSelectionDialog(
 			workbench.getActiveWorkbenchWindow().getShell(),
-			features);
+			features,
+			index);
 	if(d.open() != d.OK || d.getResult().length != 1)
 		return;
 		

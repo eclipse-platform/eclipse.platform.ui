@@ -150,8 +150,7 @@ class SystemSummaryDocumentProvider extends AbstractDocumentProvider {
 			writer.print(descriptor.getUniqueIdentifier());
 			writer.print(" (");
 			writer.print(descriptor.getVersionIdentifier().toString());
-			writer.print(")\t");
-			writer.println(descriptor.getLabel());
+			writer.println(")");
 			PluginFragmentModel[] fragments= descriptor.getFragments();
 			if (fragments != null) {
 				for(int j= 0, length= fragments.length; j < length; j++) {
@@ -160,8 +159,7 @@ class SystemSummaryDocumentProvider extends AbstractDocumentProvider {
 					writer.print(fragment.getId());
 					writer.print(" (");
 					writer.print(fragment.getVersion());
-					writer.print(")\t");
-					writer.print(fragment.getName());
+					writer.print(")");
 				}
 				writer.println();
 			}

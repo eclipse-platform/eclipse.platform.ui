@@ -469,7 +469,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	}
 
 	/**
-	 * Returns the about info for all the non-primary configured features.
+	 * Returns the about info for all configured features with a corresponding plugin.
 	 *
 	 * @return the about info
 	 */
