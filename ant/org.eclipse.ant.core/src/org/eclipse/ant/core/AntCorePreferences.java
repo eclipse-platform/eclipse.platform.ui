@@ -170,9 +170,8 @@ public class AntCorePreferences {
 	/**
 	 * Returns the array of URLs that is the default set of URLs defining
 	 * the Ant classpath.
-	 * Xerces JARs are not added here.
-	 * There are included as the plugin class loader for org.eclipse.ant.core
-	 * is set as on of the plugin classloaders of the AntClassLoader.
+	 * The Xerces JARs are included when the plugin classloader for org.eclipse.ant.core
+	 * is set as one of the plugin classloaders of the AntClassLoader.
 	 * @see initializePluginClassLoaders()
 	 * 
 	 * Ant running through the command line tries to find tools.jar to help the
