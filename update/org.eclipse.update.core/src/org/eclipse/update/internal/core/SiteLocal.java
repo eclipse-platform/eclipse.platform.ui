@@ -31,6 +31,7 @@ public class SiteLocal implements ILocalSite, IWritable {
 	public static final String DEFAULT_CONFIG_FILE = "DefaultConfig.xml";
 
 	private List configurations;
+	private List preservedConfigurations;
 	private IInstallConfiguration currentConfiguration;
 
 	/*
@@ -235,7 +236,9 @@ public class SiteLocal implements ILocalSite, IWritable {
 
 		// Save the current configuration as
 		// the other are already saved
+		// and set runtim info for next startup
 		 ((InstallConfiguration) currentConfiguration).save();
+		 
 		// save the local site
 		if (location.getProtocol().equalsIgnoreCase("file")) {
 			File file = null;
@@ -277,17 +280,27 @@ public class SiteLocal implements ILocalSite, IWritable {
 		w.println("");
 
 		// teh last one is teh current configuration
-		IInstallConfiguration[] refs = getConfigurationHistory();
-		for (int index = 0; index < refs.length; index++) {
-			IInstallConfiguration element = refs[index];
+		IInstallConfiguration[] configurations = getConfigurationHistory();
+		for (int index = 0; index < configurations.length; index++) {
+			IInstallConfiguration element = configurations[index];
 			if (!element.isCurrent()) {
 				writeConfig(gap + increment, w, element);
 			}
 		}
 		// write current configuration last
 		writeConfig(gap + increment, w, getCurrentConfiguration());
-
 		w.println("");
+		
+		// write preserved configurations
+		w.print(gap+increment+"<"+SiteLocalParser.PRESERVED_CONFIGURATIONS+">");
+	
+		IInstallConfiguration[] preservedConfig = getPreservedConfigurations();
+		for (int index = 0; index < preservedConfig.length; index++) {
+			IInstallConfiguration element = preservedConfig[index];
+			writeConfig(gap + increment + increment, w, element);
+		}
+		w.println("");
+		w.print(gap+increment+"</"+SiteLocalParser.PRESERVED_CONFIGURATIONS+">");
 		// end
 		w.println("</" + SiteLocalParser.SITE + ">");
 	}
@@ -311,7 +324,7 @@ public class SiteLocal implements ILocalSite, IWritable {
 
 		// save previous current configuration
 		if (getCurrentConfiguration() != null)
-			 ((InstallConfiguration) getCurrentConfiguration()).save();
+			 ((InstallConfiguration) getCurrentConfiguration()).saveConfigurationFile();
 
 		InstallConfiguration result = null;
 		String newFileName = UpdateManagerUtils.getLocalRandomIdentifier(DEFAULT_CONFIG_FILE);
@@ -385,6 +398,48 @@ public class SiteLocal implements ILocalSite, IWritable {
 	 */
 	public void setMaximumHistory(int history) {
 		this.history = history;
+	}
+
+	/*
+	 * @see ILocalSite#preserve(IInstallConfiguration)
+	 */
+	public void preserve(IInstallConfiguration configuration) throws CoreException {
+		if (configuration != null) {
+			addPreservedInstallConfiguration(configuration);
+			((InstallConfiguration)configuration).saveConfigurationFile();
+		}
+	}
+
+	/**
+	 * Adds a preserved configuration into teh collection
+	 * do not save the configuration
+	 */
+	public void addPreservedInstallConfiguration(IInstallConfiguration configuration) {
+		if (preservedConfigurations == null) preservedConfigurations = new ArrayList(0);
+		preservedConfigurations.add(configuration);
+	}
+
+	/*
+	 * @see ILocalSite#remove(IInstallConfiguration)
+	 */
+	public void remove(IInstallConfiguration configuration) {
+		if (preservedConfigurations!=null){
+			preservedConfigurations.remove(configuration);
+		}
+		((InstallConfiguration)configuration).remove();
+	}
+
+	/*
+	 * @see ILocalSite#getPreservedConfigurations()
+	 */
+	public IInstallConfiguration[] getPreservedConfigurations() {
+		// return the current config as the last one
+		IInstallConfiguration[] result = new IInstallConfiguration[0];
+		if (preservedConfigurations != null && !preservedConfigurations.isEmpty()) {
+			result = new IInstallConfiguration[preservedConfigurations.size()];
+			preservedConfigurations.toArray(result);
+		}
+		return result;		
 	}
 
 }

@@ -136,10 +136,27 @@ public interface ILocalSite {
 	 * @since 2.0 
 	 */
 	void addLocalSiteChangedListener(ILocalSiteChangedListener listener);
+
 	/**
 	 * @since 2.0 
 	 */
 	void removeLocalSiteChangedListener(ILocalSiteChangedListener listener);
+	
+
+	/**
+	 * @since 2.0 
+	 */
+	void preserve(IInstallConfiguration configuration) throws CoreException;
+
+	/**
+	 * @since 2.0 
+	 */
+	void remove (IInstallConfiguration configuration);
+
+	/**
+	 * @since 2.0 
+	 */	
+	IInstallConfiguration[] getPreservedConfigurations();
 
 }
 
