@@ -48,14 +48,22 @@ public interface IConfigurationSite {
 	
 	/**
 	 * 
-	 * @param feature the DefaultFeature to install
-	 * @param installConfiguration the configuration to modify
+	 * @param feature the Feature to install
 	 * @param monitor the Progress Monitor
 	 * @since 2.0 
 	 */
 
 	IFeatureReference install(IFeature feature, IProgressMonitor monitor) throws CoreException;
-	
+
+	/**
+	 * 
+	 * @param feature the Feature to remove
+	 * @param monitor the Progress Monitor
+	 * @since 2.0 
+	 */
+
+	void remove(IFeature feature, IProgressMonitor monitor) throws CoreException;
+		
 	/**
 	 * Configure the DefaultFeature to be available at next startup
 	 * @since 2.0 

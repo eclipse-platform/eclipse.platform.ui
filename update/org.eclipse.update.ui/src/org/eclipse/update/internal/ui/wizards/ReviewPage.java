@@ -18,11 +18,13 @@ public class ReviewPage extends WizardPage {
 // NL keys
 private static final String KEY_TITLE = "InstallWizard.ReviewPage.title";
 private static final String KEY_DESC = "InstallWizard.ReviewPage.desc";
-private static final String KEY_ABOUT = "InstallWizard.ReviewPage.about";
+private static final String KEY_ABOUT_INSTALL = "InstallWizard.ReviewPage.about.install";
+private static final String KEY_ABOUT_UNINSTALL = "InstallWizard.ReviewPage.about.uninstall";
 private static final String KEY_NAME = "InstallWizard.ReviewPage.name";
 private static final String KEY_PROVIDER = "InstallWizard.ReviewPage.provider";
 private static final String KEY_VERSION = "InstallWizard.ReviewPage.version";
-private static final String KEY_CORRECT = "InstallWizard.ReviewPage.correct"; 
+private static final String KEY_CORRECT_INSTALL = "InstallWizard.ReviewPage.correct.install"; 
+private static final String KEY_CORRECT_UNINSTALL = "InstallWizard.ReviewPage.correct.uninstall"; 
 
 	private ChecklistJob job;
 	/**
@@ -46,7 +48,17 @@ private static final String KEY_CORRECT = "InstallWizard.ReviewPage.correct";
 		layout.numColumns = 2;
 		client.setLayout(layout);
 		Label label = new Label(client, SWT.NULL);
-		label.setText(UpdateUIPlugin.getResourceString(KEY_ABOUT));
+		switch (job.getJobType()) {
+			case ChecklistJob.UNINSTALL :
+				label.setText(UpdateUIPlugin.getResourceString(KEY_ABOUT_UNINSTALL));				
+				break;
+			case ChecklistJob.INSTALL :
+				label.setText(UpdateUIPlugin.getResourceString(KEY_ABOUT_INSTALL));				
+				break;			
+			default :
+				label.setText(UpdateUIPlugin.getResourceString(KEY_ABOUT_INSTALL));
+				break;
+		}
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
@@ -80,7 +92,11 @@ private static final String KEY_CORRECT = "InstallWizard.ReviewPage.correct";
 		label.setLayoutData(gd);
 
 		label = new Label(client, SWT.NULL);
-		label.setText(UpdateUIPlugin.getResourceString(KEY_CORRECT));
+		if (job.getJobType()==ChecklistJob.UNINSTALL){
+			label.setText(UpdateUIPlugin.getResourceString(KEY_CORRECT_UNINSTALL));
+		} else {
+			label.setText(UpdateUIPlugin.getResourceString(KEY_CORRECT_INSTALL));
+		}
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);

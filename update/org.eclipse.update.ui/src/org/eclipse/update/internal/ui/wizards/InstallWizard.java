@@ -43,7 +43,7 @@ public class InstallWizard extends Wizard {
 	 * @see Wizard#performFinish()
 	 */
 	public boolean performFinish() {
-		final IConfigurationSite targetSite = targetPage.getTargetSite();
+		final IConfigurationSite targetSite = (targetPage==null)?null: targetPage.getTargetSite();
 		IRunnableWithProgress operation = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
 				try {
@@ -74,12 +74,15 @@ public class InstallWizard extends Wizard {
 	public void addPages() {
 		reviewPage = new ReviewPage(job);
 		addPage(reviewPage);
-		if (hasLicense()) {
-			addPage(new LicensePage(job));
+		
+		if (job.getJobType()==ChecklistJob.INSTALL){			
+			if (hasLicense()) {
+				addPage(new LicensePage(job));
+			}
+			config = createInstallConfiguration();
+			targetPage = new TargetPage(config);
+			addPage(targetPage);
 		}
-		config = createInstallConfiguration();
-		targetPage = new TargetPage(config);
-		addPage(targetPage);
 	}
 	
 	private IInstallConfiguration createInstallConfiguration() {
@@ -116,9 +119,28 @@ public class InstallWizard extends Wizard {
 	public IWizardPage getNextPage(IWizardPage page) {
 		return super.getNextPage(page);
 	}
+	/*
+	 * When we are uninstalling, there is not targetSite
+	 */
 	private void performInstall(IConfigurationSite targetSite, IProgressMonitor monitor) throws CoreException {
-		IFeature feature = job.getFeature();
-	   	targetSite.install(feature, monitor);
+		IFeature feature = job.getFeature();		
+		if (job.getJobType()==ChecklistJob.UNINSTALL){
+			
+			//find the  config site of this feature
+			ILocalSite localSite = SiteManager.getLocalSite();
+			IConfigurationSite[] configSite = localSite.getCurrentConfiguration().getConfigurationSites();
+			for (int i = 0; i < configSite.length; i++) {
+				IConfigurationSite site = configSite[i];
+				if (site.getSite().getURL().equals(feature.getSite().getURL())){
+					site.remove(feature,monitor);
+					break;
+				}
+			}
+			
+		}
+		if (job.getJobType()==ChecklistJob.INSTALL){
+			targetSite.install(feature,monitor);
+		}
 	}
 }
 

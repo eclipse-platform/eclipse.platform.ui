@@ -6,9 +6,7 @@ package org.eclipse.update.internal.core;
 import java.io.PrintWriter;
 import java.util.Date;
 
-
 import java.util.*;
-
 
 import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.runtime.*;
@@ -107,7 +105,7 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 				// feature URL
 				String URLInfoString = null;
 				if (element.getURL() != null) {
-					ISite featureSite = (ISite)((FeatureReference) element).getSite();
+					ISite featureSite = (ISite) ((FeatureReference) element).getSite();
 					URLInfoString = UpdateManagerUtils.getURLAsString(featureSite.getURL(), element.getURL());
 					w.print("url=\"" + Writer.xmlSafe(URLInfoString) + "\"");
 				}
@@ -173,6 +171,51 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 	}
 
 	/*
+	 * @see IConfigurationSite#remove(IFeature, IProgressMonitor)
+	 */
+	public void remove(IFeature feature, IProgressMonitor monitor) throws CoreException {
+		if (!installable) {
+			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, "The site is not considered to be installable, you cannot uninstall from it either:" + site.getURL().toExternalForm(), null);
+			throw new CoreException(status);
+		}
+
+		//Start UOW ?
+		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_FEATURE_REMOVE);
+		activity.setLabel(feature.getVersionIdentifier().toString());
+		activity.setDate(new Date());
+
+		try {
+			IFeatureReference referenceToUnconfigure = null;
+			IFeatureReference[] featureRef = getSite().getFeatureReferences();
+			for (int i = 0; i < featureRef.length; i++) {
+				referenceToUnconfigure= featureRef[i];
+				if (referenceToUnconfigure.getURL().equals(feature.getURL())) {
+					break;
+				}
+			}
+			
+			// FIXME didn;t we say we had to first unconfigure then remove ?
+			// the UI should check it is unconfigured b4 then ?
+			if (referenceToUnconfigure!=null){
+			//	unconfigure(referenceToUnconfigure);
+			} else {
+				//FIXME warn, no reference found for this feature
+			}
+			getSite().remove(feature, monitor);
+
+			// everything done ok
+			activity.setStatus(IActivity.STATUS_OK);
+
+		} catch (CoreException e) {
+			activity.setStatus(IActivity.STATUS_NOK);
+			throw e;
+		} finally {
+			((InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration()).addActivity(activity);
+		}
+	}
+
+	/*
 	 * @see IConfigurationSite#configure(IFeatureReference)
 	 */
 	public void configure(IFeatureReference feature) throws CoreException {
@@ -229,7 +272,7 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 					if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
 						String feature = element.getFeature().getVersionIdentifier().toString();
 						ISite site = element.getFeature().getSite();
-						String siteString = (site!=null)?site.getURL().toExternalForm():"NO SITE";
+						String siteString = (site != null) ? site.getURL().toExternalForm() : "NO SITE";
 						UpdateManagerPlugin.getPlugin().debug("Attempted to unconfigure the feature :" + feature + " on site :" + site + " but it cannot be found.");
 					}
 				}
@@ -303,11 +346,11 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 				if (feature != null) {
 					// get plugin identifier
 					List siteIdentifiers = new ArrayList(0);
-					ISite site= feature.getSite();
-					IPluginEntry[] siteEntries=null;
-					
-					if (site!=null){
-						siteEntries= site.getPluginEntries();
+					ISite site = feature.getSite();
+					IPluginEntry[] siteEntries = null;
+
+					if (site != null) {
+						siteEntries = site.getPluginEntries();
 						for (int index = 0; index < siteEntries.length; index++) {
 							IPluginEntry entry = siteEntries[index];
 							siteIdentifiers.add(entry.getIdentifier());
@@ -319,12 +362,12 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 						for (int index = 0; index < entries.length; index++) {
 							IPluginEntry entry = entries[index];
 							if (!siteIdentifiers.contains(entry.getIdentifier())) {
-								// FIXME: teh plugin defined by teh feature
-								// doesn't see to exist on the site
+								// FIXME: the plugin defined by the feature
+								// doesn't seem to exist on the site
 								String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 								IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error verifying existence of plugin:" + entry.getIdentifier().toString(), null);
-								UpdateManagerPlugin.getPlugin().getLog().log(status);	
-								String siteString = (site!=null)?site.getURL().toExternalForm():"NO SITE";															
+								UpdateManagerPlugin.getPlugin().getLog().log(status);
+								String siteString = (site != null) ? site.getURL().toExternalForm() : "NO SITE";
 								if (!handler.reportProblem("Cannot find entry " + entry.getIdentifier().toString() + " on site " + siteString)) {
 									throw new InterruptedException();
 								}
