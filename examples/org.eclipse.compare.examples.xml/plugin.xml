@@ -23,7 +23,11 @@
 	</runtime>
 
 	<!-- Extensions -->
-	<extension-point id="idMapping" name="%idMapping"/>
+	<extension-point
+		id="idMapping"
+		name="%idMapping"
+		schema="schema/idMapping.exsd"
+	/>
 
 	<!-- Extension points -->
 	<extension
