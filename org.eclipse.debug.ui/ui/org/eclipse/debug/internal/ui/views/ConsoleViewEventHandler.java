@@ -32,6 +32,7 @@ public class ConsoleViewEventHandler extends AbstractDebugEventHandler {
 	protected void doHandleDebugEvent(DebugEvent event) {
 		if (event.getSource().equals(getConsoleView().getProcess())) {
 			getView().updateActions();
+			((ConsoleView)getView()).updateTitle();
 		}
 	}
 	

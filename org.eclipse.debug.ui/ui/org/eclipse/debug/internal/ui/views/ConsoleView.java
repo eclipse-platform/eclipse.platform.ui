@@ -129,27 +129,31 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 					doc = new ConsoleDocument(null);
 				}
 				getConsoleViewer().setDocument(doc);
-				// update view title
-				String title = null;
-				if (getProcess() == null) {
-					title = DebugUIViewsMessages.getString("ConsoleView.Console_1"); //$NON-NLS-1$
-				} else {
-					// use debug target title if applicable
-					Object obj = getProcess().getAdapter(IDebugTarget.class);
-					if (obj == null) {
-						obj = getProcess();
-					}
-					StringBuffer buff= new StringBuffer(DebugUIViewsMessages.getString("ConsoleView.Console_1")); //$NON-NLS-1$
-					buff.append(" ["); //$NON-NLS-1$
-					buff.append(DebugUIPlugin.getModelPresentation().getText(obj));
-					buff.append(']');
-					title= buff.toString();
-				}
-				setTitle(title);
+				updateTitle();
 				updateActions();
 			}
 		};
 		asyncExec(r);
+	}
+	
+	protected void updateTitle() {
+		// update view title
+		String title = null;
+		if (getProcess() == null) {
+			title = DebugUIViewsMessages.getString("ConsoleView.Console_1"); //$NON-NLS-1$
+		} else {
+			// use debug target title if applicable
+			Object obj = getProcess().getAdapter(IDebugTarget.class);
+			if (obj == null) {
+				obj = getProcess();
+			}
+			StringBuffer buff= new StringBuffer(DebugUIViewsMessages.getString("ConsoleView.Console_1")); //$NON-NLS-1$
+			buff.append(" ["); //$NON-NLS-1$
+			buff.append(DebugUIPlugin.getModelPresentation().getText(obj));
+			buff.append(']');
+			title= buff.toString();
+		}
+		setTitle(title);
 	}
 		
 	/**
