@@ -23,12 +23,27 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class SearchPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
+
+	/*
+	 * FIXE: This is a workaround for bug 22987
+	 */
+	private class FixedBooleanFieldEditor extends BooleanFieldEditor {
+		public FixedBooleanFieldEditor(String name, String label, Composite parent) {
+			super(name, label, DEFAULT, parent);
+		}
+		public void setEnabled(boolean state, Composite parent) {
+			getChangeControl(parent).setEnabled(state);
+		}
+	}
+
+	public static final String IGNORE_POTENTIAL_MATCHES= "org.eclipse.search.potentialMatch.ignore"; //$NON-NLS-1$
 	public static final String EMPHASIZE_POTENTIAL_MATCHES= "org.eclipse.search.potentialMatch.emphasize"; //$NON-NLS-1$
 	public static final String POTENTIAL_MATCH_FG_COLOR= "org.eclipse.search.potentialMatch.fgColor"; //$NON-NLS-1$
 	public static final String REUSE_EDITOR= "org.eclipse.search.reuseEditor"; //$NON-NLS-1$
 
 	private ColorFieldEditor fColorEditor;
 	private BooleanFieldEditor fEmphasizedCheckbox;
+	private BooleanFieldEditor fIgnorePotentialMatchesCheckbox;
 	private Composite fParent;
 
 	public SearchPreferencePage() {
@@ -39,6 +54,7 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 	public static void initDefaults(IPreferenceStore store) {
 		RGB gray= new RGB(85, 85, 85);
 		store.setDefault(EMPHASIZE_POTENTIAL_MATCHES, true);
+		store.setDefault(IGNORE_POTENTIAL_MATCHES, false);
 		PreferenceConverter.setDefault(store, POTENTIAL_MATCH_FG_COLOR, gray);
 		store.setDefault(REUSE_EDITOR, false);
 	}
@@ -46,6 +62,11 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 	public static boolean isEditorReused() {
 		IPreferenceStore store= SearchPlugin.getDefault().getPreferenceStore();
 		return store.getBoolean(REUSE_EDITOR);
+	}
+
+	public static boolean arePotentialMatchesIgnored() {
+		IPreferenceStore store= SearchPlugin.getDefault().getPreferenceStore();
+		return store.getBoolean(IGNORE_POTENTIAL_MATCHES);
 	}
 
 	public static boolean arePotentialMatchesEmphasized() {
@@ -71,7 +92,13 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
         );
 		addField(boolEditor);
 
-		fEmphasizedCheckbox= new BooleanFieldEditor(
+		fIgnorePotentialMatchesCheckbox= new FixedBooleanFieldEditor(
+			IGNORE_POTENTIAL_MATCHES,
+			SearchMessages.getString("SearchPreferencePage.ignorePotentialMatches"), //$NON-NLS-1$
+			getFieldEditorParent());
+		addField(fIgnorePotentialMatchesCheckbox);
+
+		fEmphasizedCheckbox= new FixedBooleanFieldEditor(
 			EMPHASIZE_POTENTIAL_MATCHES,
 			SearchMessages.getString("SearchPreferencePage.emphasizePotentialMatches"), //$NON-NLS-1$
 			getFieldEditorParent());
@@ -83,11 +110,15 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 			getFieldEditorParent()
         );
 		addField(fColorEditor);
-		fColorEditor.setEnabled(arePotentialMatchesEmphasized(), getFieldEditorParent());
+
+		fEmphasizedCheckbox.setEnabled(!arePotentialMatchesIgnored(), getFieldEditorParent());
+		fColorEditor.setEnabled(!arePotentialMatchesIgnored() && arePotentialMatchesEmphasized(), getFieldEditorParent());
 	}
 
 	public void propertyChange(PropertyChangeEvent event) {
-		fColorEditor.setEnabled(fEmphasizedCheckbox.getBooleanValue(), getFieldEditorParent());
+		boolean arePotentialMatchesIgnored= fIgnorePotentialMatchesCheckbox.getBooleanValue();
+		fEmphasizedCheckbox.setEnabled(!arePotentialMatchesIgnored, getFieldEditorParent());
+		fColorEditor.setEnabled(!arePotentialMatchesIgnored && fEmphasizedCheckbox.getBooleanValue(), getFieldEditorParent());
 	}
 
 	public void init(IWorkbench workbench) {
@@ -95,6 +126,8 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 
 	protected void performDefaults() {
 		super.performDefaults();
-		fColorEditor.setEnabled(fEmphasizedCheckbox.getBooleanValue(), getFieldEditorParent());
+		boolean arePotentialMatchesIgnored= fIgnorePotentialMatchesCheckbox.getBooleanValue();		
+		fEmphasizedCheckbox.setEnabled(!arePotentialMatchesIgnored, getFieldEditorParent());
+		fColorEditor.setEnabled(!arePotentialMatchesIgnored && fEmphasizedCheckbox.getBooleanValue(), getFieldEditorParent());
 	}
 }

@@ -133,22 +133,26 @@ public final class SearchUI {
 	 * 
 	 * The goto action can decide to use or ignore this preference.
 	 *
-	 * <p>
-	 * [Issue: Work in progress - not yet stable.]
-	 * </p>
-	 * <p>
-	 * [Issue: Always returns <code>true</code> yet due to bug 6784.]
-	 * </p>
-	 * <p>
-	 * [Issue: Bug is now fixed. But because it is not yet clear if
-	 *         old style should be supported. Therefore returning <code>false</code>]
-	 * </p>
-	 * 
 	 * @return <code>true</code> if editors should be reused for showing search results
 	 * @since 2.0
 	 */
 	public static boolean reuseEditor() {
 		return SearchPreferencePage.isEditorReused();
+	}
+
+	/**
+	 * Returns the preference whether a search engine is
+	 * allowed to report potential matches or not.
+	 * <p>
+	 * Search engines which can report inexact matches must
+	 * respect this preference i.e. they should not report
+	 * inexact matches if this method returns <code>true</code>
+	 * </p>
+	 * @return <code>true</code> if search engine must not report inexact matches
+	 * @since 2.1
+	 */
+	public static boolean arePotentialMatchesIgnored() {
+		return SearchPreferencePage.arePotentialMatchesIgnored();
 	}
 
 	/**
