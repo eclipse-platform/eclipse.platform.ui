@@ -33,6 +33,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	protected WorkManager workManager;
 	protected IProject[] buildOrder = null;
 
+	protected static final String REFRESH_ON_STARTUP = "-refresh";
+
 	/**
 		This field is used to control the access to the workspace tree
 	    inside operations. It is useful when calling alien code. Since
@@ -1012,8 +1014,8 @@ public IStatus open(IProgressMonitor monitor) throws CoreException {
 		//restart the notification manager so it is initialized with the right tree
 		notificationManager.startup(null);
 		openFlag = true;
-		if (crashed)
-			recoverFromCrash(null);
+		if (crashed || refreshRequested())
+			getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
 		return null;
 	} finally {
 		description.setAutoBuilding(oldBuildFlag);
@@ -1039,9 +1041,13 @@ public void prepareOperation() throws CoreException {
 		throw new ResourceException(IResourceStatus.OPERATION_FAILED, null, message, null);
 	}
 }
-protected void recoverFromCrash(IProgressMonitor monitor) throws CoreException {
-	getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
-	fileSystemManager.getHistoryStore().removeGarbage();
+
+protected boolean refreshRequested() {
+	String[] args = Platform.getCommandLineArgs();
+	for (int i = 0; i < args.length; i++) 
+		if (args[i].equalsIgnoreCase(REFRESH_ON_STARTUP))
+			return true;
+	return false;
 }
 private static void removeArcs(String[][] mappings, List roots, HashMap counts) {
 	for (Iterator j = roots.iterator(); j.hasNext();) {
