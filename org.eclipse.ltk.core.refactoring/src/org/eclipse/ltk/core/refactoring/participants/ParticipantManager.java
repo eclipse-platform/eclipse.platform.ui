@@ -129,4 +129,30 @@ public class ParticipantManager {
 		System.arraycopy(participants, 0, result, 0, participants.length);
 		return result;
 	}
+
+	//---- Copy participants ----------------------------------------------------------------
+	
+	private static final String COPY_PARTICIPANT_EXT_POINT= "copyParticipants"; //$NON-NLS-1$
+	private static ParticipantExtensionPoint fgCopyInstance= 
+		new ParticipantExtensionPoint("Copy", COPY_PARTICIPANT_EXT_POINT, CopyParticipant.class); //$NON-NLS-1$
+	
+	/**
+	 * Loads the copy participants for the given element.
+	 * 
+	 * @param status a refactoring status to report status if problems occurred while
+	 *  loading the participants
+	 * @param processor the processor that will own the participants
+	 * @param element the element to be copied or a corresponding descriptor
+	 * @param arguments the copy arguments describing the copy operation
+	 * @param affectedNatures an array of project natures affected by the refactoring
+	 * @param shared a list of shared participants
+	 * 
+	 * @return an array of copy participants
+	 */
+	public static CopyParticipant[] loadCopyParticipants(RefactoringStatus status, RefactoringProcessor processor, Object element, CopyArguments arguments, String affectedNatures[], SharableParticipants shared) {
+		RefactoringParticipant[] participants= fgCopyInstance.getParticipants(status, processor, element, arguments, affectedNatures, shared);
+		CopyParticipant[] result= new CopyParticipant[participants.length];
+		System.arraycopy(participants, 0, result, 0, participants.length);
+		return result;
+	}
 }

@@ -25,5 +25,6 @@
    <extension-point id="moveParticipants" name="%moveParticipantsExtensionPoint"  schema="schema/moveParticipants.exsd"/>
    <extension-point id="createParticipants" name="%createParticipantsExtensionPoint" schema="schema/createParticipants.exsd"/>
    <extension-point id="deleteParticipants" name="%deleteParticipantsExtensionPoint"  schema="schema/deleteParticipants.exsd"/>
+   <extension-point id="copyParticipants" name="%copyParticipantsExtensionPoint"  schema="schema/copyParticipants.exsd"/>
 
 </plugin>
