@@ -78,7 +78,47 @@
 			class="org.eclipse.team.internal.ui.actions.ConfigureProjectAction">
 		</action>
 	</objectContribution>	
+
+	<!-- ****************** Target Management Popup Actions *************** -->
+	
+   	<objectContribution
+         id="org.eclipse.team.ui.targetResourceContributions"
+         objectClass="org.eclipse.core.resources.IResource" adaptable="true">
+		<menu
+			id="team.target"
+			path="additions"
+			label="Deploy">
+			<separator name="group1"/>
+			<separator name="projectGroup"/>
+		</menu>
+      <action      
+            menubarPath="team.target/group1"
+            class="org.eclipse.team.internal.ui.target.GetAction"
+            id="org.eclipse.team.target.getAction"
+            label="Get">
+      </action>
+      <action      
+            menubarPath="team.target/group1"
+            class="org.eclipse.team.internal.ui.target.PutAction"
+            id="org.eclipse.team.target.putAction"
+            label="Put">
+      </action>
+	</objectContribution>	
+	
+    <objectContribution
+	   id="org.eclipse.team.ui.ProjectContributions"
+	   objectClass="org.eclipse.core.resources.IProject" adaptable="true">
+		<action 
+			id="org.eclipse.team.ui.TargetProject"
+			label="Target Site..."
+			tooltip="%ConfigureTargetProject.tooltip"
+			menubarPath="team.target/projectGroup"
+			enablesFor="1"
+			class="org.eclipse.team.internal.ui.target.TargetProjectAction">
+		</action>
+   </objectContribution>
 </extension>
+
 
 <!-- ************** Views ********************** -->
 <extension point="org.eclipse.ui.views">

@@ -29,6 +29,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.target.TargetManager;
+import org.eclipse.team.core.target.TargetProvider;
 import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
@@ -285,6 +287,37 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 		Hashtable result = new Hashtable();
 		for (int i = 0; i < resources.length; i++) {
 			RepositoryProvider provider = RepositoryProvider.getProvider(resources[i].getProject());
+			List list = (List)result.get(provider);
+			if (list == null) {
+				list = new ArrayList();
+				result.put(provider, list);
+			}
+			list.add(resources[i]);
+		}
+		return result;
+	}
+	
+	/**
+	 * Convenience method that maps the selected resources to their target providers.
+	 * The returned Hashtable has keys which are TargetProviders, and values
+	 * which are Lists of IResources that are shared with that provider.
+	 * 
+	 * @return a hashtable mapping providers to their selected resources
+	 */
+	protected Hashtable getTargetProviderMapping() throws TeamException {
+		return getTargetProviderMapping(getSelectedResources());
+	}
+	/**
+	 * Convenience method that maps the given resources to their target providers.
+	 * The returned Hashtable has keys which are TargetProviders, and values
+	 * which are Lists of IResources that are shared with that provider.
+	 * 
+	 * @return a hashtable mapping providers to their resources
+	 */
+	protected Hashtable getTargetProviderMapping(IResource[] resources) throws TeamException {
+		Hashtable result = new Hashtable();
+		for (int i = 0; i < resources.length; i++) {
+			TargetProvider provider = TargetManager.getProvider(resources[i].getProject());
 			List list = (List)result.get(provider);
 			if (list == null) {
 				list = new ArrayList();

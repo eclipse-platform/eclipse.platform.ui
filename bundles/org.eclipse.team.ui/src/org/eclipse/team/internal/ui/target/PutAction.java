@@ -1,7 +1,7 @@
-package org.eclipse.team.internal.ui.actions;
+package org.eclipse.team.internal.ui.target;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2002.
+ * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
 
@@ -13,18 +13,21 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.core.simpleAccess.SimpleAccessOperations;
+import org.eclipse.team.core.target.TargetManager;
+import org.eclipse.team.core.target.TargetProvider;
+import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 /**
- * Action for getting the contents of the selected resources
+ * Action for checking in the selected resources
  */
-public class GetAction extends TeamAction {
+public class PutAction extends TeamAction {
 	/*
 	 * Method declared on IActionDelegate.
 	 */
@@ -32,17 +35,18 @@ public class GetAction extends TeamAction {
 		run(new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {
-					Hashtable table = getProviderMapping();
+					Hashtable table = getTargetProviderMapping();
 					Set keySet = table.keySet();
 					monitor.beginTask("", keySet.size() * 1000); //$NON-NLS-1$
-					monitor.setTaskName(Policy.bind("UpdateAction.updating")); //$NON-NLS-1$
+					monitor.setTaskName(Policy.bind("PutAction.working")); 
 					Iterator iterator = keySet.iterator();
-					while (iterator.hasNext()) {
+					while (iterator.hasNext()) {					
 						IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
-						RepositoryProvider provider = (RepositoryProvider)iterator.next();
+						TargetProvider provider = (TargetProvider)iterator.next();
 						List list = (List)table.get(provider);
 						IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
-						provider.getSimpleAccess().get(providerResources, IResource.DEPTH_INFINITE, subMonitor);
+						
+						provider.put(providerResources, subMonitor);
 					}
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
@@ -50,20 +54,25 @@ public class GetAction extends TeamAction {
 					monitor.done();
 				}
 			}
-		}, Policy.bind("UpdateAction.title"), PROGRESS_DIALOG); //$NON-NLS-1$
+		}, Policy.bind("PutAction.title"), this.PROGRESS_DIALOG); //$NON-NLS-1$
 	}
 	/**
 	 * @see TeamAction#isEnabled()
 	 */
-	protected boolean isEnabled() throws TeamException {
+	protected boolean isEnabled() {
 		IResource[] resources = getSelectedResources();
 		if (resources.length == 0) return false;
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
-			RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject());
-			SimpleAccessOperations ops = provider.getSimpleAccess();
-			if (provider == null || ops == null) return false;
-			if (!ops.hasRemote(resource)) return false;
+			try {
+				if(!TargetManager.hasProvider(resource.getProject()))
+					return false;
+				if(!TargetManager.getProvider(resource.getProject()).canGet(resource))
+					return false;
+			} catch (TeamException e) {
+				TeamPlugin.log(IStatus.ERROR, "Exception getting provider", e);
+				return false;
+			}
 		}
 		return true;
 	}
