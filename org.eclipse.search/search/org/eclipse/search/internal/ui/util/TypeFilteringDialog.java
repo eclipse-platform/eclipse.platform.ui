@@ -38,7 +38,7 @@ import org.eclipse.search.internal.ui.SearchMessages;
 
 /**
  * The TypeFilteringDialog is a SelectionDialog that allows the user to select a file editor.
- * XXX: Workbench should offer this dialog (public API), see: 1GIYHMY: ITPUI:WINNT - DCR: TypeFilteringDialog should be public API
+ * XXX: Workbench should offer this dialog (public API), see: bug 2763: TypeFilteringDialog should be public API
  */
 public class TypeFilteringDialog extends SelectionDialog {
 	private Button fAddTypesButton;
