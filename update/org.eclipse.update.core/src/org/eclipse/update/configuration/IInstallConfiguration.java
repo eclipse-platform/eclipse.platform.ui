@@ -1,127 +1,128 @@
 package org.eclipse.update.configuration;
-
-import java.io.File;
-import java.net.URL;
-import java.util.Date;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.update.configuration.*;
-
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
- 
+
+import java.io.File;
+import java.util.Date;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+
 /**
- * Installation configuration object.
+ * Installation configuration.
+ * Represents a specific configuration of a number of sites as a point
+ * in time. Maintains a record of the specific activities that resulted
+ * in this configuration. Current installation configuration is
+ * the configuration the platform was started with.
  */
 public interface IInstallConfiguration extends IAdaptable {
-		
+
 	/**
-	 * Returns <code>true</code> is this is the current configuration
+	 * Indicates if this is the current configuration
 	 * 
-	 * @return boolean
+	 * @return <code>true</code> if this is the current configuration,
+	 * <code>false</code> otherwise
 	 * @since 2.0 
 	 */
-
 	public boolean isCurrent();
-	
-	/**
-	 *  Change the 
-	 * 
-	 * @since 2.0 
-	 */
-	void setCurrent(boolean isCurrent);
-		
-	
-	/**
-	 * Returns an array of local configuration sites that the sites
-	 * configured.
-	 * 
-	 * The sites can be pure link sites or install sites.
-	 * 
-	 *  The install sites
-	 * must be read-write accessible from the current client, otherwise
-	 * subsequent installation attampts will fail.
-	 * 
-	 * @return IConfiguredSite[] local install sites. Returns an empty array
-	 * if there are no local install sites
-	 * @since 2.0 
-	 */
 
-	public IConfiguredSite[] getConfiguredSites();
-	
 	/**
-	 * Creates a new site, based on a local file system directory,
-	 * as a potential target for installation actions.
+	 * Marks the configuration current
 	 * 
+	 * @param isCurrent <code>true</code> if this is the current
+	 * configuration, <code>false</code> otherwise
+	 * @since 2.0 
+	 */
+	public void setCurrent(boolean isCurrent);
+
+	/**
+	 * Return the sites that are part of this configuration.
+	 * 
+	 * @return an array of configured sites, or an empty array.
+	 * @since 2.0 
+	 */
+	public IConfiguredSite[] getConfiguredSites();
+
+	/**
+	 * Create a new installation site, based on a local file 
+	 * system directory. Note, the site is not added to the
+	 * configuration as a result of this call.
+	 * 
+	 * @param directory file directory
+	 * @return new site
 	 * @exception CoreException
 	 * @since 2.0 
 	 */
-	public IConfiguredSite createConfiguredSite(File directory) throws CoreException;
-		
+	public IConfiguredSite createConfiguredSite(File directory)
+		throws CoreException;
+
 	/**
-	 * Adds an additional configuration site to this configuration.
+	 * Adds the specified site to this configuration.
 	 * 
-	 * @param site configuration site
+	 * @param site new site
 	 * @since 2.0 
 	 */
-
 	public void addConfiguredSite(IConfiguredSite site);
-	
+
 	/**
-	 * Removes a configuration site from this configuration.
+	 * Removes the specified site from this configuration.
 	 * 
-	 * @param site configuration site
+	 * @param site site to remove
 	 * @since 2.0 
 	 */
-
 	public void removeConfiguredSite(IConfiguredSite site);
-	
-	
+
 	/**
-	 * @since 2.0 
-	 */
-	void addInstallConfigurationChangedListener(IInstallConfigurationChangedListener listener);
-	/**
-	 * @since 2.0 
-	 */
-	void removeInstallConfigurationChangedListener(IInstallConfigurationChangedListener listener);
-	
-	
-	/**
-	 * Returns the Activities that were performed to get this InstallConfigurationModel.
+	 * Adds a configuration change listener.
 	 * 
-	 * There is always at least one Activity
+	 * @param listener the listener
+	 * @since 2.0 
+	 */
+	public void addInstallConfigurationChangedListener(IInstallConfigurationChangedListener listener);
+
+	/**
+	 * Removes a configuration change listener.
 	 * 
+	 * @param listener the listener
+	 * @since 2.0 
+	 */
+	public void removeInstallConfigurationChangedListener(IInstallConfigurationChangedListener listener);
+
+	/**
+	 * Return the list of activities that resulted in this configuration.
+	 * There is always at least one activity
 	 * 
+	 * @return an array of activities
 	 * @since 2.0 
 	 */
-
-	IActivity[] getActivities();
-	
-	/**
-	 * retruns the Date at which the Configuration was created
-	 * The date is the local date from the machine that created the Configuration.
-	 * @since 2.0 
-	 */
-
-	Date getCreationDate();
-	
-	/**
-	 * returns the label of the configuration
-	 * @since 2.0 
-	 */
-
-	String getLabel();
+	public IActivity[] getActivities();
 
 	/**
-	 * sets the label of the configuration
+	 * Retrun the date the configuration was created.
+	 * 
+	 * @return create date
 	 * @since 2.0 
 	 */
+	public Date getCreationDate();
 
-	void setLabel(String label);
+	/**
+	 * Return the configuration label.
+	 * 
+	 * @return the configuration label. If the configuration label was not
+	 * explicitly set, a default label is generated based on the creation
+	 * date
+	 * @since 2.0 
+	 */
+	public String getLabel();
 
+	/**
+	 * Sets the configuration label.
+	 * 
+	 * @param label the label
+	 * @since 2.0 
+	 */
+	public void setLabel(String label);
 
 }
-
