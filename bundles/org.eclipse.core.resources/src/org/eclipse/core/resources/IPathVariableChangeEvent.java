@@ -33,40 +33,40 @@ public interface IPathVariableChangeEvent {
 	/** Event type constant (value = 3) that denotes a variable deletion. */
 	public final static int VARIABLE_DELETED = 3;
 
-/**
- * Returns the variable's current value. If the event type is
- * <code>VARIABLE_CHANGED</code> then it is the new value, if the event
- * type is <code>VARIABLE_CREATED</code> then it is the new value, or
- * if the event type is <code>VARIABLE_DELETED</code> then it will
- * be <code>null</code>.
- * 
- * @return the variable's current value, or <code>null</code>
- */
-public IPath getValue();
+	/**
+	 * Returns the variable's current value. If the event type is
+	 * <code>VARIABLE_CHANGED</code> then it is the new value, if the event
+	 * type is <code>VARIABLE_CREATED</code> then it is the new value, or
+	 * if the event type is <code>VARIABLE_DELETED</code> then it will
+	 * be <code>null</code>.
+	 * 
+	 * @return the variable's current value, or <code>null</code>
+	 */
+	public IPath getValue();
 
-/**
- * Returns the affected variable's name.
- * 
- * @return the affected variable's name
- */
-public String getVariableName();
+	/**
+	 * Returns the affected variable's name.
+	 * 
+	 * @return the affected variable's name
+	 */
+	public String getVariableName();
 
-/**
- * Returns an object identifying the source of this event.
- *
- * @return an object identifying the source of this event 
- * @see java.util.EventObject
- */
-public Object getSource();
+	/**
+	 * Returns an object identifying the source of this event.
+	 *
+	 * @return an object identifying the source of this event 
+	 * @see java.util.EventObject
+	 */
+	public Object getSource();
 
-/**
- * Returns the type of event being reported.
- *
- * @return one of the event type constants
- * @see #VARIABLE_CHANGED
- * @see #VARIABLE_CREATED
- * @see #VARIABLE_DELETED
- */
-public int getType();
+	/**
+	 * Returns the type of event being reported.
+	 *
+	 * @return one of the event type constants
+	 * @see #VARIABLE_CHANGED
+	 * @see #VARIABLE_CREATED
+	 * @see #VARIABLE_DELETED
+	 */
+	public int getType();
 
 }

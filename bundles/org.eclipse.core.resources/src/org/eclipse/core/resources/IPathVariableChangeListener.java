@@ -22,19 +22,19 @@ import java.util.EventListener;
  * @since 2.1
  */
 public interface IPathVariableChangeListener extends EventListener {
-/**
- * Notification that a path variable has changed.
- * <p>
- * This method is called when a path variable is added, removed or has its value
- * changed in the observed <code>IPathVariableManager</code> object.
- * </p>
- *
- * @param event the path variable change event object describing which variable
- *    changed and how
- * @see IPathVariableManager#addChangeListener
- * @see IPathVariableManager#removeChangeListener
- * @see IPathVariableChangeEvent
- */
-public void pathVariableChanged(IPathVariableChangeEvent event);
+	/**
+	 * Notification that a path variable has changed.
+	 * <p>
+	 * This method is called when a path variable is added, removed or has its value
+	 * changed in the observed <code>IPathVariableManager</code> object.
+	 * </p>
+	 *
+	 * @param event the path variable change event object describing which variable
+	 *    changed and how
+	 * @see IPathVariableManager#addChangeListener
+	 * @see IPathVariableManager#removeChangeListener
+	 * @see IPathVariableChangeEvent
+	 */
+	public void pathVariableChanged(IPathVariableChangeEvent event);
 
 }
