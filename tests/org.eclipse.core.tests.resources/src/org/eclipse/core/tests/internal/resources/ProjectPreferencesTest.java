@@ -528,4 +528,29 @@ public class ProjectPreferencesTest extends EclipseWorkspaceTest {
 			getWorkspace().removeResourceChangeListener(rclistener);
 		}
 	}
+
+	/*
+	 * Bug 65068 - When the preferences file is deleted, the corresponding preferences 
+	 * should be forgotten.
+	 */
+	public void test_65068() {
+		IWorkspace workspace = getWorkspace();
+		IProject project = workspace.getRoot().getProject(getUniqueString());
+		ensureExistsInWorkspace(new IResource[] {project}, true);
+		Preferences node = new ProjectScope(project).getNode(ResourcesPlugin.PI_RESOURCES);
+		String key = "key";
+		String value = getUniqueString();
+		node.put(key, value);
+		try {
+			node.flush();
+		} catch (BackingStoreException e) {
+			fail("1.1", e);
+		}
+		assertTrue("1.2", project.getFolder(".settings").getFile(ResourcesPlugin.PI_RESOURCES + ".prefs").exists());
+		node = new ProjectScope(project).getNode(ResourcesPlugin.PI_RESOURCES);
+		assertEquals("1.3", value, node.get(key, null));
+		ensureDoesNotExistInWorkspace(project.getFolder(".settings"));
+		node = new ProjectScope(project).getNode(ResourcesPlugin.PI_RESOURCES);
+		assertNull("2.0", node.get(key, null));
+	}
 }

@@ -112,11 +112,20 @@ public class ProjectPreferences extends EclipsePreferences {
 				String qualifier = path.removeFileExtension().lastSegment();
 				Preferences root = Platform.getPreferencesService().getRootNode();
 				Preferences node = root.node(ProjectScope.SCOPE).node(project).node(qualifier);
+				String message = null;
 				try {
-					if (node instanceof ProjectPreferences)
-						((ProjectPreferences) node).load();
+					switch (delta.getKind()) {
+						case IResourceDelta.REMOVED :
+							message = Policy.bind("preferences.removeNodeException", node.absolutePath()); //$NON-NLS-1$
+							node.removeNode();
+							break;
+						case IResourceDelta.CHANGED :
+							message = Policy.bind("preferences.syncException", node.absolutePath()); //$NON-NLS-1$
+							if (node instanceof ProjectPreferences)
+								((ProjectPreferences) node).load();
+							break;
+					}
 				} catch (BackingStoreException e) {
-					String message = Policy.bind("preferences.syncException", node.absolutePath()); //$NON-NLS-1$
 					IStatus status = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e);
 					throw new CoreException(status);
 				}
