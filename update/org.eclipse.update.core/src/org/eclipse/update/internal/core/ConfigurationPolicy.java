@@ -492,9 +492,6 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 						// add end "/"
 						path += (path.endsWith(File.separator) || path.endsWith("/")) ? "" : "/";
 						//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-						// add plugin.xml or fragment.xml
-						path += entry.isFragment() ? "fragment.xml" : "plugin.xml";
-						//$NON-NLS-1$ //$NON-NLS-2$
 						pluginStrings.add(path);
 						if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_CONFIGURATION)
 							UpdateCore.warn("Add plugin: " + path + " to the list");
