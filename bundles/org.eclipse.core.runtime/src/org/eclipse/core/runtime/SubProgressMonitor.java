@@ -31,7 +31,7 @@ package org.eclipse.core.runtime;
  * </pre>
  * <p>
  * This class may be instantiated or subclassed by clients.
-  * </p>
+ * </p>
  */
 public class SubProgressMonitor extends ProgressMonitorWrapper {
 
@@ -70,6 +70,7 @@ public class SubProgressMonitor extends ProgressMonitorWrapper {
 	public SubProgressMonitor(IProgressMonitor monitor, int ticks) {
 		this(monitor, ticks, 0);
 	}
+
 	/**
 	 * Creates a new sub-progress monitor for the given monitor. The sub 
 	 * progress monitor uses the given number of work ticks from its 
@@ -91,6 +92,7 @@ public class SubProgressMonitor extends ProgressMonitorWrapper {
 		this.parentTicks = ticks;
 		this.style = style;
 	}
+
 	/* (Intentionally not javadoc'd)
 	 * Implements the method <code>IProgressMonitor.beginTask</code>.
 	 *
@@ -115,6 +117,7 @@ public class SubProgressMonitor extends ProgressMonitorWrapper {
 			mainTaskLabel = name;
 		}
 	}
+
 	/* (Intentionally not javadoc'd)
 	 * Implements the method <code>IProgressMonitor.done</code>.
 	 */
@@ -130,6 +133,7 @@ public class SubProgressMonitor extends ProgressMonitorWrapper {
 		subTask(""); //$NON-NLS-1$
 		sentToParent = 0;
 	}
+
 	/* (Intentionally not javadoc'd)
 	 * Implements the internal method <code>IProgressMonitor.internalWorked</code>.
 	 */
@@ -146,6 +150,7 @@ public class SubProgressMonitor extends ProgressMonitorWrapper {
 			usedUp = true;
 		}
 	}
+
 	/* (Intentionally not javadoc'd)
 	 * Implements the method <code>IProgressMonitor.subTask</code>.
 	 */
@@ -160,6 +165,7 @@ public class SubProgressMonitor extends ProgressMonitorWrapper {
 		}
 		super.subTask(label);
 	}
+
 	/* (Intentionally not javadoc'd)
 	 * Implements the method <code>IProgressMonitor.worked</code>.
 	 */

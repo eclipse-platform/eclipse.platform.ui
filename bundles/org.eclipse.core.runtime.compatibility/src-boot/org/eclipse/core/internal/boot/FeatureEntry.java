@@ -20,6 +20,7 @@ public class FeatureEntry implements IFeatureEntry {
 	public FeatureEntry(IPlatformConfiguration.IFeatureEntry fe) {
 		newFeatureEntry = fe;
 	}
+
 	public String getFeatureIdentifier() {
 		return newFeatureEntry.getFeatureIdentifier();
 	}
@@ -47,15 +48,18 @@ public class FeatureEntry implements IFeatureEntry {
 	public boolean canBePrimary() {
 		return newFeatureEntry.canBePrimary();
 	}
+
 	public IPlatformConfiguration.IFeatureEntry getNewFeatureEntry() {
 		return newFeatureEntry;
 	}
+
 	public boolean equals(Object o) {
-		if(o instanceof FeatureEntry) {
-			return newFeatureEntry.equals(((FeatureEntry) o).newFeatureEntry); 
+		if (o instanceof FeatureEntry) {
+			return newFeatureEntry.equals(((FeatureEntry) o).newFeatureEntry);
 		}
 		return false;
 	}
+
 	public int hashCode() {
 		return newFeatureEntry.hashCode();
 	}

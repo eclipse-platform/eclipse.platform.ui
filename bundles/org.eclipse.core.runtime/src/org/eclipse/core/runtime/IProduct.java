@@ -60,7 +60,7 @@ public interface IProduct {
 	 * @return the id of this product
 	 */
 	public String getId();
-	
+
 	/**
 	 * Returns the property of this product with the given key.
 	 * <code>null</code> is returned if there is no such key/value pair.

@@ -27,6 +27,7 @@ public class PlatformLogWriter implements ILogListener {
 		FrameworkLogEntry logEntry = getLog(status);
 		InternalPlatform.getDefault().getFrameworkLog().log(logEntry);
 	}
+
 	protected FrameworkLogEntry getLog(IStatus status) {
 		StringBuffer entry = new StringBuffer();
 		entry.append(status.getPlugin()).append(" "); //$NON-NLS-1$
@@ -34,11 +35,11 @@ public class PlatformLogWriter implements ILogListener {
 		entry.append(Integer.toString(status.getCode()));
 		Throwable t = status.getException();
 		ArrayList childlist = new ArrayList();
-		
+
 		int stackCode = t instanceof CoreException ? 1 : 0;
 		// ensure a substatus inside a CoreException is properly logged 
 		if (stackCode == 1) {
-			IStatus coreStatus = ((CoreException)t).getStatus();
+			IStatus coreStatus = ((CoreException) t).getStatus();
 			if (coreStatus != null) {
 				childlist.add(getLog(coreStatus));
 			}
@@ -51,10 +52,8 @@ public class PlatformLogWriter implements ILogListener {
 			}
 		}
 
-		FrameworkLogEntry[] children = (FrameworkLogEntry[]) 
-			(childlist.size()==0 ? null :
-				childlist.toArray(new FrameworkLogEntry[childlist.size()]));
+		FrameworkLogEntry[] children = (FrameworkLogEntry[]) (childlist.size() == 0 ? null : childlist.toArray(new FrameworkLogEntry[childlist.size()]));
 
-		return new FrameworkLogEntry(entry.toString(),status.getMessage(),stackCode,t,children);
+		return new FrameworkLogEntry(entry.toString(), status.getMessage(), stackCode, t, children);
 	}
 }

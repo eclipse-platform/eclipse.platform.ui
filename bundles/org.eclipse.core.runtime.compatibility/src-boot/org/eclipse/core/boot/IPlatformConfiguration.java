@@ -240,13 +240,13 @@ public interface IPlatformConfiguration {
 
 		/**
 		 * Returns the identifier of the feature plug-in for this feature entry.
-			 *  Note,      that there is no guarantee that a feature in fact
-			 * supplies a corresponding feature plugin, so the result can be
-			 * <code>null</code>. Also, if supplied, there is no guarantee that the
-			 * plugin will in fact be loaded into the plug-in registry at runtime
-			 * (due to rules and constraint checking performed by the registry
-			 * loading support). Consequently code making use of this method must
-			 * handle these conditions.
+		 *  Note,      that there is no guarantee that a feature in fact
+		 * supplies a corresponding feature plugin, so the result can be
+		 * <code>null</code>. Also, if supplied, there is no guarantee that the
+		 * plugin will in fact be loaded into the plug-in registry at runtime
+		 * (due to rules and constraint checking performed by the registry
+		 * loading support). Consequently code making use of this method must
+		 * handle these conditions.
 		 * @return feature identifier (as string), or <code>null</code>
 		 * @since 2.1
 		 */

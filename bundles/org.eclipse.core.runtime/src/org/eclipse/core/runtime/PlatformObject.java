@@ -41,6 +41,7 @@ public abstract class PlatformObject implements IAdaptable {
 	public PlatformObject() {
 		super();
 	}
+
 	/**
 	 * Returns an object which is an instance of the given class
 	 * associated with this object. Returns <code>null</code> if

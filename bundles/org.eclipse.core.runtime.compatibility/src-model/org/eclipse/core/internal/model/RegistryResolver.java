@@ -319,6 +319,7 @@ public class RegistryResolver {
 		private boolean isResolved() {
 			return this.isResolved;
 		}
+
 		private void isResolved(boolean isResolved) {
 			this.isResolved = isResolved;
 		}
@@ -440,7 +441,7 @@ public class RegistryResolver {
 
 		private void removeConstraintFor(PluginPrerequisiteModel prereq) {
 			for (Iterator list = concurrentList.iterator(); list.hasNext();)
-				 ((ConstraintsEntry) list.next()).removeConstraintFor(prereq);
+				((ConstraintsEntry) list.next()).removeConstraintFor(prereq);
 		}
 
 		private PluginDescriptorModel getMatchingDescriptorFor(Constraint c) {
@@ -460,15 +461,16 @@ public class RegistryResolver {
 			// number and satisfies all the constraints.  This is then put in
 			// bestMatch field of the ConstraintsEntry.
 			for (Iterator list = concurrentList.iterator(); list.hasNext();)
-				 ((ConstraintsEntry) list.next()).preresolve(roots);
+				((ConstraintsEntry) list.next()).preresolve(roots);
 			// Now all versions of this plugin are disabled.
 			disableAllDescriptors();
 			// Now, find the best match (from preresolve above) and enable it.
 			// Be sure to update any prerequisite entries with the version number
 			// of the plugin we are actually using.
 			for (Iterator list = concurrentList.iterator(); list.hasNext();)
-				 ((ConstraintsEntry) list.next()).resolve();
+				((ConstraintsEntry) list.next()).resolve();
 		}
+
 		/**
 		 * A root plug-in does not have any constraints attached to it.
 		 */
@@ -533,10 +535,12 @@ public class RegistryResolver {
 			ok = value;
 		}
 	}
+
 	public RegistryResolver() {
 		String debug = Platform.getDebugOption(OPTION_DEBUG_RESOLVE);
 		DEBUG_RESOLVE = debug == null ? false : (debug.equalsIgnoreCase("true") ? true : false); //$NON-NLS-1$
 	}
+
 	private void add(PluginDescriptorModel pd) {
 
 		String key = pd.getId();
@@ -561,6 +565,7 @@ public class RegistryResolver {
 		}
 		verList.add(i, pd);
 	}
+
 	private void addExtensions(ExtensionModel[] extensions, PluginDescriptorModel plugin) {
 		// Add all the extensions (presumably from a fragment) to plugin
 		int extLength = extensions.length;
@@ -579,6 +584,7 @@ public class RegistryResolver {
 		System.arraycopy(extensions, 0, result, listLength, extLength);
 		plugin.setDeclaredExtensions(result);
 	}
+
 	private void addExtensionPoints(ExtensionPointModel[] extensionPoints, PluginDescriptorModel plugin) {
 		// Add all the extension points (presumably from a fragment) to plugin
 		int extPtLength = extensionPoints.length;
@@ -597,6 +603,7 @@ public class RegistryResolver {
 		System.arraycopy(extensionPoints, 0, result, listLength, extPtLength);
 		plugin.setDeclaredExtensionPoints(result);
 	}
+
 	private void addLibraries(LibraryModel[] libraries, PluginDescriptorModel plugin) {
 		// Add all the libraries (presumably from a fragment) to plugin
 		int libLength = libraries.length;
@@ -612,6 +619,7 @@ public class RegistryResolver {
 		System.arraycopy(libraries, 0, result, listLength, libLength);
 		plugin.setRuntime(result);
 	}
+
 	private void addPrerequisites(PluginPrerequisiteModel[] prerequisites, PluginDescriptorModel plugin) {
 		// Add all the prerequisites (presumably from a fragment) to plugin
 		int reqLength = prerequisites.length;
@@ -627,19 +635,23 @@ public class RegistryResolver {
 		System.arraycopy(prerequisites, 0, result, listLength, reqLength);
 		plugin.setRequires(result);
 	}
+
 	private void debug(String s) {
 		System.out.println("Registry Resolve: " + s); //$NON-NLS-1$
 	}
+
 	private void error(String message) {
 		Status error = new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, message, null);
 		status.add(error);
 		if (InternalPlatform.DEBUG && DEBUG_RESOLVE)
 			System.out.println(error.toString());
 	}
+
 	private void information(String message) {
 		if (InternalPlatform.DEBUG && DEBUG_RESOLVE)
 			System.out.println(message);
 	}
+
 	public IExtensionPoint getExtensionPoint(PluginDescriptorModel plugin, String extensionPointId) {
 		if (extensionPointId == null)
 			return null;
@@ -652,6 +664,7 @@ public class RegistryResolver {
 		}
 		return null;
 	}
+
 	private PluginVersionIdentifier getVersionIdentifier(PluginModel model) {
 		try {
 			return new PluginVersionIdentifier(model.getVersion());
@@ -663,10 +676,12 @@ public class RegistryResolver {
 			return new PluginVersionIdentifier("0.0.0"); //$NON-NLS-1$
 		}
 	}
+
 	private PluginVersionIdentifier getVersionIdentifier(PluginPrerequisiteModel prereq) {
 		String version = prereq.getVersion();
 		return version == null ? null : new PluginVersionIdentifier(version);
 	}
+
 	private boolean fragmentHasPrerequisites(PluginFragmentModel fragment) {
 		PluginPrerequisiteModel[] requires = fragment.getRequires();
 		if (requires == null || requires.length == 0)
@@ -684,6 +699,7 @@ public class RegistryResolver {
 		}
 		return true;
 	}
+
 	private void linkFragments() {
 		/* For each fragment, find out which plugin descriptor it belongs
 		 * to and add it to the list of fragments in this plugin.
@@ -762,6 +778,7 @@ public class RegistryResolver {
 			plugin.setFragments(newList);
 		}
 	}
+
 	private void removeConstraintFor(PluginPrerequisiteModel prereq) {
 
 		String id = prereq.getPlugin();
@@ -773,6 +790,7 @@ public class RegistryResolver {
 		}
 		ix.removeConstraintFor(prereq);
 	}
+
 	private void resolve() {
 
 		// Start by putting each plugin in the idmap.  We are
@@ -883,6 +901,7 @@ public class RegistryResolver {
 		idmap = null;
 		reg = null;
 	}
+
 	public IStatus resolve(PluginRegistryModel registry) {
 		// This is the entry point to the registry resolver.
 		// Calling this method, with a valid registry will 
@@ -899,6 +918,7 @@ public class RegistryResolver {
 		registry.markResolved();
 		return status;
 	}
+
 	private void resolveExtension(ExtensionModel ext) {
 
 		String target = ext.getExtensionPoint();
@@ -937,6 +957,7 @@ public class RegistryResolver {
 		newValues[newValues.length - 1] = ext;
 		extPt.setDeclaredExtensions(newValues);
 	}
+
 	private void resolveFragments() {
 		PluginFragmentModel[] fragments = reg.getFragments();
 		HashSet seen = new HashSet(5);
@@ -954,6 +975,7 @@ public class RegistryResolver {
 			resolvePluginFragments(plugin);
 		}
 	}
+
 	private Cookie resolveNode(String child, PluginDescriptorModel parent, PluginPrerequisiteModel prq, Cookie cookie, Set orphans) {
 		// This method is called recursively to setup dependency constraints.
 		// Top invocation is passed null parent and null prerequisite.
@@ -977,7 +999,7 @@ public class RegistryResolver {
 			if (prq.getOptional() && parent != null && child != null)
 				return cookie;
 			if (parent != null)
-				error(Policy.bind("parse.prereqDisabled", new String[] { parent.getId(), child })); //$NON-NLS-1$
+				error(Policy.bind("parse.prereqDisabled", new String[] {parent.getId(), child})); //$NON-NLS-1$
 			if (DEBUG_RESOLVE)
 				debug("<POP  " + child + " not found"); //$NON-NLS-1$ //$NON-NLS-2$
 			cookie.isOk(false);
@@ -1082,6 +1104,7 @@ public class RegistryResolver {
 			return cookie;
 		}
 	}
+
 	private void resolvePluginDescriptor(PluginDescriptorModel pd) {
 		ExtensionModel[] list = pd.getDeclaredExtensions();
 		if (list == null || list.length == 0 || !pd.getEnabled())
@@ -1090,6 +1113,7 @@ public class RegistryResolver {
 		for (int i = 0; i < list.length; i++)
 			resolveExtension((ExtensionModel) list[i]);
 	}
+
 	private void resolvePluginFragment(PluginFragmentModel fragment, PluginDescriptorModel plugin) {
 		ExtensionModel[] extensions = fragment.getDeclaredExtensions();
 		if (extensions != null)
@@ -1111,6 +1135,7 @@ public class RegistryResolver {
 			// Add all the fragment prerequisites to the plugin
 			addPrerequisites(prerequisites, plugin);
 	}
+
 	private void resolvePluginFragments(PluginDescriptorModel plugin) {
 		/* For each fragment contained in the fragment list of this plugin, 
 		 * apply all the fragment bits to the plugin (e.g. all of the fragment's
@@ -1169,7 +1194,7 @@ public class RegistryResolver {
 					if (libNames.size() == setSize) {
 						// We know this library name didn't get added to the set.
 						// Ignore the duplicate but indicate an error
-						String[] bindings = { latestFragment.getId(), plugin.getId(), libraries[i].getName()};
+						String[] bindings = {latestFragment.getId(), plugin.getId(), libraries[i].getName()};
 						error(Policy.bind("parse.duplicateLib", bindings)); //$NON-NLS-1$
 					} else {
 						setSize = libNames.size();
@@ -1184,6 +1209,7 @@ public class RegistryResolver {
 			plugin.setFragments((PluginFragmentModel[]) latestOnly.toArray(new PluginFragmentModel[latestOnly.size()]));
 
 	}
+
 	private void resolvePluginRegistry() {
 		// filter out disabled plugins from "live" registry
 		if (trimPlugins)
@@ -1197,6 +1223,7 @@ public class RegistryResolver {
 				resolvePluginDescriptor(plugins[i]);
 		}
 	}
+
 	private boolean requiredPluginDescriptor(PluginDescriptorModel plugin) {
 		boolean retValue = true;
 		retValue = plugin.getName() != null && plugin.getId() != null && plugin.getVersion() != null;
@@ -1237,21 +1264,27 @@ public class RegistryResolver {
 
 		return retValue;
 	}
+
 	private boolean requiredPrerequisite(PluginPrerequisiteModel prerequisite) {
 		return ((prerequisite.getPlugin() != null));
 	}
+
 	private boolean requiredExtension(ExtensionModel extension) {
 		return (extension.getExtensionPoint() != null);
 	}
+
 	private boolean requiredExtensionPoint(ExtensionPointModel extensionPoint) {
 		return ((extensionPoint.getName() != null) && (extensionPoint.getId() != null));
 	}
+
 	private boolean requiredLibrary(LibraryModel library) {
 		return (library.getName() != null);
 	}
+
 	private boolean requiredFragment(PluginFragmentModel fragment) {
 		return ((fragment.getName() != null) && (fragment.getId() != null) && (fragment.getPlugin() != null) && (fragment.getPluginVersion() != null) && (fragment.getVersion() != null));
 	}
+
 	private List resolveRootDescriptors() {
 
 		// Determine the roots of the dependency tree. Disable all
@@ -1318,6 +1351,7 @@ public class RegistryResolver {
 
 		return ids;
 	}
+
 	/**
 	 * Specifies whether extensions and extension points should be cross 
 	 * linked during the resolve process.
@@ -1325,6 +1359,7 @@ public class RegistryResolver {
 	public void setCrossLink(boolean value) {
 		crossLink = value;
 	}
+
 	/**
 	 * Specified whether disabled plugins should to be removed when the resolve
 	 * is completed.
@@ -1332,6 +1367,7 @@ public class RegistryResolver {
 	public void setTrimPlugins(boolean value) {
 		trimPlugins = value;
 	}
+
 	private void trimRegistry() {
 		PluginDescriptorModel[] list = reg.getPlugins();
 		for (int i = 0; i < list.length; i++) {

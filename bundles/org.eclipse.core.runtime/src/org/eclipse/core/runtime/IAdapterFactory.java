@@ -37,6 +37,7 @@ public interface IAdapterFactory {
 	 *    given object
 	 */
 	public Object getAdapter(Object adaptableObject, Class adapterType);
+
 	/**
 	 * Returns the collection of adapter types handled by this
 	 * factory.

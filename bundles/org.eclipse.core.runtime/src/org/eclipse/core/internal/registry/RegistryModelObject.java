@@ -27,7 +27,7 @@ public abstract class RegistryModelObject {
 	protected String name = null;
 
 	// transient properties (not included in plug-in manifest)
-	private int flags = 0;  // TODO should this be a transient variable?
+	private int flags = 0; // TODO should this be a transient variable?
 	// the last bit is a read-only flag
 	// IMPORTANT: One bit in the "flags" integer is used to store the 
 	// read-only flag and the other bits are used to store an integer value
@@ -45,6 +45,7 @@ public abstract class RegistryModelObject {
 	protected void assertIsWriteable() {
 		Assert.isTrue(!isReadOnly(), "Model is read-only"); //$NON-NLS-1$
 	}
+
 	/**
 	 * Returns the name of this element.
 	 * 
@@ -53,6 +54,7 @@ public abstract class RegistryModelObject {
 	public String getName() {
 		return name;
 	}
+
 	/**
 	 * Returns whether or not this model object is read-only.
 	 * 
@@ -63,6 +65,7 @@ public abstract class RegistryModelObject {
 	public boolean isReadOnly() {
 		return (flags & M_READ_ONLY) == M_READ_ONLY;
 	}
+
 	/**
 	 * Sets this model object and all of its descendents to be read-only.
 	 * Subclasses may extend this implementation.
@@ -72,6 +75,7 @@ public abstract class RegistryModelObject {
 	public void markReadOnly() {
 		flags |= M_READ_ONLY;
 	}
+
 	/**
 	 * Sets the name of this element.
 	 * 
@@ -81,6 +85,7 @@ public abstract class RegistryModelObject {
 		assertIsWriteable();
 		name = value;
 	}
+
 	/**
 	 * Return the line number for the start tag for this plug-in object. This
 	 * is the line number of the element declaration from the plug-in manifest file.
@@ -90,6 +95,7 @@ public abstract class RegistryModelObject {
 	public int getStartLine() {
 		return (flags & ~M_READ_ONLY) - 1;
 	}
+
 	/**
 	 * Set the line number for the start tag for this plug-in object. This is the
 	 * line number for the element declaration from the plug-in manifest file.
@@ -102,6 +108,7 @@ public abstract class RegistryModelObject {
 		if (getStartLine() == -1)
 			flags = (lineNumber + 1) | (flags & M_READ_ONLY);
 	}
+
 	/**
 	 * Returns the plug-in model (descriptor or fragment) in which this extension is declared.
 	 *
@@ -111,6 +118,7 @@ public abstract class RegistryModelObject {
 	public Object getParent() {
 		return parent;
 	}
+
 	/**
 	 * Sets the plug-in model in which this extension is declared.
 	 * This object must not be read-only.
@@ -122,6 +130,7 @@ public abstract class RegistryModelObject {
 		assertIsWriteable();
 		this.parent = value;
 	}
+
 	/**
 	 * Return a string representation of this object. This value is not to be relied
 	 * on and can change at any time. To be used for debugging purposes only.
@@ -131,6 +140,7 @@ public abstract class RegistryModelObject {
 	public String toString() {
 		return this.getClass() + ":" + getName() + "[" + super.toString() + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
+
 	public Object getAdapter(Class type) {
 		return InternalPlatform.getDefault().getAdapterManager().getAdapter(this, type);
 	}
@@ -138,6 +148,7 @@ public abstract class RegistryModelObject {
 	public RegistryModelObject getRegistry() {
 		return parent == null ? this : parent.getRegistry();
 	}
+
 	/**
 	 * Optimization to replace a non-localized key with its localized value.  Avoids having
 	 * to access resource bundles for further lookups.

@@ -32,6 +32,7 @@ public interface IExtensionPoint {
 	 *   into this extension point
 	 */
 	public IConfigurationElement[] getConfigurationElements();
+
 	/** 
 	 * Returns the descriptor of the plug-in that declares this extension point.
 	 * <p>
@@ -67,8 +68,9 @@ public interface IExtensionPoint {
 	 * @see Platform.getBundle(String)
 	 * @see IExtensionRegistry
 	 * @since 3.0
-	 */	 
-	public String getNamespace();	
+	 */
+	public String getNamespace();
+
 	/**
 	 * Returns the extension with the given unique identifier configured into
 	 * this extension point, or <code>null</code> if there is no such extension.
@@ -80,6 +82,7 @@ public interface IExtensionPoint {
 	 * @return an extension, or <code>null</code>
 	 */
 	public IExtension getExtension(String extensionId);
+
 	/**
 	 * Returns all extensions configured into this extension point.
 	 * Returns an empty array if this extension point has no extensions.
@@ -87,6 +90,7 @@ public interface IExtensionPoint {
 	 * @return the extensions configured into this extension point
 	 */
 	public IExtension[] getExtensions();
+
 	/**
 	 * Returns a displayable label for this extension point.
 	 * Returns the empty string if no label for this extension point
@@ -100,6 +104,7 @@ public interface IExtensionPoint {
 	 * @see IPluginDescriptor#getResourceString 
 	 */
 	public String getLabel();
+
 	/**
 	 * Returns reference to the extension point schema. The schema 
 	 * reference is returned as a URL path relative to the plug-in 
@@ -111,6 +116,7 @@ public interface IExtensionPoint {
 	 * @see IPluginDescriptor#getInstallURL
 	 */
 	public String getSchemaReference();
+
 	/**
 	 * Returns the simple identifier of this extension point.
 	 * This identifier is a non-empty string containing no
@@ -120,6 +126,7 @@ public interface IExtensionPoint {
 	 * @return the simple identifier of the extension point (e.g. <code>"builders"</code>)
 	 */
 	public String getSimpleIdentifier();
+
 	/**
 	 * Returns the unique identifier of this extension point.
 	 * This identifier is unique within the plug-in registry, and

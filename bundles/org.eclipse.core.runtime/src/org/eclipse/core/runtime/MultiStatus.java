@@ -21,6 +21,7 @@ public class MultiStatus extends Status {
 	/** List of child statuses.
 	 */
 	private IStatus[] children;
+
 	/**
 	 * Creates and returns a new multi-status object with the given children.
 	 *
@@ -46,6 +47,7 @@ public class MultiStatus extends Status {
 		setSeverity(maxSeverity);
 		System.arraycopy(newChildren, 0, this.children, 0, newChildren.length);
 	}
+
 	/**
 	 * Creates and returns a new multi-status object with no children.
 	 *
@@ -60,6 +62,7 @@ public class MultiStatus extends Status {
 		super(OK, pluginId, code, message, exception);
 		children = new IStatus[0];
 	}
+
 	/**
 	 * Adds the given status to this multi-status.
 	 *
@@ -76,6 +79,7 @@ public class MultiStatus extends Status {
 			setSeverity(newSev);
 		}
 	}
+
 	/**
 	 * Adds all of the children of the given status to this multi-status.
 	 * Does nothing if the given status has no children (which includes
@@ -90,18 +94,21 @@ public class MultiStatus extends Status {
 			add(statuses[i]);
 		}
 	}
+
 	/* (Intentionally not javadoc'd)
 	 * Implements the corresponding method on <code>IStatus</code>.
 	 */
 	public IStatus[] getChildren() {
 		return children;
 	}
+
 	/* (Intentionally not javadoc'd)
 	 * Implements the corresponding method on <code>IStatus</code>.
 	 */
 	public boolean isMultiStatus() {
 		return true;
 	}
+
 	/**
 	 * Merges the given status into this multi-status.
 	 * Equivalent to <code>add(status)</code> if the
@@ -121,6 +128,7 @@ public class MultiStatus extends Status {
 			addAll(status);
 		}
 	}
+
 	/**
 	 * Returns a string representation of the status, suitable 
 	 * for debugging purposes only.

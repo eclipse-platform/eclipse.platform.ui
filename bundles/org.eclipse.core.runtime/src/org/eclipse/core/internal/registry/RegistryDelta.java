@@ -26,12 +26,15 @@ public class RegistryDelta {
 	RegistryDelta(String hostName) {
 		this.hostName = hostName;
 	}
+
 	public int getExtensionDeltasCount() {
 		return extensionDeltas.size();
 	}
+
 	public IExtensionDelta[] getExtensionDeltas() {
 		return (IExtensionDelta[]) extensionDeltas.toArray(new IExtensionDelta[extensionDeltas.size()]);
 	}
+
 	public IExtensionDelta[] getExtensionDeltas(String extensionPoint) {
 		Collection selectedExtDeltas = new LinkedList();
 		for (Iterator extDeltasIter = extensionDeltas.iterator(); extDeltasIter.hasNext();) {
@@ -41,6 +44,7 @@ public class RegistryDelta {
 		}
 		return (IExtensionDelta[]) selectedExtDeltas.toArray(new IExtensionDelta[selectedExtDeltas.size()]);
 	}
+
 	/**
 	 * @param extensionPointId
 	 * @param extensionId must not be null
@@ -54,9 +58,11 @@ public class RegistryDelta {
 		}
 		return null;
 	}
+
 	void addExtensionDelta(IExtensionDelta extensionDelta) {
 		this.extensionDeltas.add(extensionDelta);
 	}
+
 	public String toString() {
 		return "\n\tHost " + hostName + ": " + extensionDeltas; //$NON-NLS-1$//$NON-NLS-2$
 	}

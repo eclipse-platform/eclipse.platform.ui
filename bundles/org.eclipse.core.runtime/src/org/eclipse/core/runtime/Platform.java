@@ -50,7 +50,7 @@ public final class Platform {
 	 * of the Core Runtime (pseudo-) plug-in.
 	 */
 	public static final String PI_RUNTIME = "org.eclipse.core.runtime"; //$NON-NLS-1$
-	
+
 	// TODO was this API anywhere?  On Plugin?
 	public static final String PI_BOOT = "org.eclipse.core.boot"; //$NON-NLS-1$
 	/** 
@@ -101,7 +101,7 @@ public final class Platform {
 	 * was started.  This constant can be used in conjunction with
 	 * <code>getDebugOption</code> to find the string value of
 	 * <code>System.currentTimeMillis()</code> when the platform was started.
-		 */
+	 */
 	public static final String OPTION_STARTTIME = PI_RUNTIME + "/starttime"; //$NON-NLS-1$
 
 	/**
@@ -139,42 +139,44 @@ public final class Platform {
 	/** 
 	 * Status code constant (value 1) indicating a problem in a plug-in
 	 * manifest (<code>plugin.xml</code>) file.
-		 */
+	 */
 	public static final int PARSE_PROBLEM = 1;
 
 	/**
 	 * Status code constant (value 2) indicating an error occurred while running a plug-in.
-		 */
+	 */
 	public static final int PLUGIN_ERROR = 2;
 
 	/**
 	 * Status code constant (value 3) indicating an error internal to the
 	 * platform has occurred.
-		 */
+	 */
 	public static final int INTERNAL_ERROR = 3;
 
 	/**
 	 * Status code constant (value 4) indicating the platform could not read
 	 * some of its metadata.
-		 */
+	 */
 	public static final int FAILED_READ_METADATA = 4;
 
 	/**
 	 * Status code constant (value 5) indicating the platform could not write
 	 * some of its metadata.
-		 */
+	 */
 	public static final int FAILED_WRITE_METADATA = 5;
 
 	/**
 	 * Status code constant (value 6) indicating the platform could not delete
 	 * some of its metadata.
-		 */
+	 */
 	public static final int FAILED_DELETE_METADATA = 6;
+
 	/**
 	 * Private constructor to block instance creation.
 	 */
 	private Platform() {
 	}
+
 	/**
 	 * Adds the given authorization information to the keyring. The
 	 * information is relevant for the specified protection space and the
@@ -204,6 +206,7 @@ public final class Platform {
 	public static void addAuthorizationInfo(URL serverUrl, String realm, String authScheme, Map info) throws CoreException {
 		InternalPlatform.getDefault().addAuthorizationInfo(serverUrl, realm, authScheme, info);
 	}
+
 	/** 
 	 * Adds the given log listener to the notification list of the platform.
 	 * <p>
@@ -219,6 +222,7 @@ public final class Platform {
 	public static void addLogListener(ILogListener listener) {
 		InternalPlatform.getDefault().addLogListener(listener);
 	}
+
 	/**
 	 * Adds the specified resource to the protection space specified by the
 	 * given realm. All targets at or deeper than the depth of the last
@@ -239,6 +243,7 @@ public final class Platform {
 	public static void addProtectionSpace(URL resourceUrl, String realm) throws CoreException {
 		InternalPlatform.getDefault().addProtectionSpace(resourceUrl, realm);
 	}
+
 	/**
 	 * Returns a URL which is the local equivalent of the
 	 * supplied URL. This method is expected to be used with the
@@ -293,6 +298,7 @@ public final class Platform {
 	public static void flushAuthorizationInfo(URL serverUrl, String realm, String authScheme) throws CoreException {
 		InternalPlatform.getDefault().flushAuthorizationInfo(serverUrl, realm, authScheme);
 	}
+
 	/**
 	 * Returns the adapter manager used for extending
 	 * <code>IAdaptable</code> objects.
@@ -303,6 +309,7 @@ public final class Platform {
 	public static IAdapterManager getAdapterManager() {
 		return InternalPlatform.getDefault().getAdapterManager();
 	}
+
 	/**
 	 * Returns the authorization information for the specified protection
 	 * space and given authorization scheme. The protection space is defined
@@ -323,6 +330,7 @@ public final class Platform {
 	public static Map getAuthorizationInfo(URL serverUrl, String realm, String authScheme) {
 		return InternalPlatform.getDefault().getAuthorizationInfo(serverUrl, realm, authScheme);
 	}
+
 	/**
 	 * Returns the command line args provided to the platform when it was first run.
 	 * Note that individual platform runnables may be provided with different arguments
@@ -333,6 +341,7 @@ public final class Platform {
 	public static String[] getCommandLineArgs() {
 		return InternalPlatform.getDefault().getCommandLineArgs();
 	}
+
 	/**
 	 * Returns the content type manager.
 	 * <p>
@@ -359,6 +368,7 @@ public final class Platform {
 	public static String getDebugOption(String option) {
 		return InternalPlatform.getDefault().getOption(option);
 	}
+
 	/**
 	 * Returns the location of the platform working directory.  
 	 * <p>
@@ -374,6 +384,7 @@ public final class Platform {
 	public static IPath getLocation() throws IllegalStateException {
 		return InternalPlatform.getDefault().getLocation();
 	}
+
 	/**
 	 * Returns the location of the platform log file.  This file may contain information
 	 * about errors that have previously occurred during this invocation of the Platform.
@@ -393,6 +404,7 @@ public final class Platform {
 	public static IPath getLogFileLocation() {
 		return InternalPlatform.getDefault().getMetaArea().getLogLocation();
 	}
+
 	/**
 	 * Returns the plug-in runtime object for the identified plug-in
 	 * or <code>null</code> if no such plug-in can be found.  If
@@ -433,6 +445,7 @@ public final class Platform {
 		}
 		return null;
 	}
+
 	/**
 	 * Returns the plug-in registry for this platform.
 	 * <p>
@@ -455,7 +468,7 @@ public final class Platform {
 		Bundle compatibility = org.eclipse.core.internal.runtime.InternalPlatform.getDefault().getBundle(IPlatform.PI_RUNTIME_COMPATIBILITY);
 		if (compatibility == null)
 			return null;
-		
+
 		Class oldInternalPlatform = null;
 		try {
 			oldInternalPlatform = compatibility.loadClass("org.eclipse.core.internal.plugins.InternalPlatform"); //$NON-NLS-1$
@@ -467,6 +480,7 @@ public final class Platform {
 		return null;
 
 	}
+
 	/**
 	 * Returns the location in the local file system of the plug-in 
 	 * state area for the given plug-in.
@@ -485,6 +499,7 @@ public final class Platform {
 	public static IPath getPluginStateLocation(Plugin plugin) {
 		return plugin.getStateLocation();
 	}
+
 	/**
 	 * Returns the protection space (realm) for the specified resource, or
 	 * <code>null</code> if the realm is unknown.
@@ -497,6 +512,7 @@ public final class Platform {
 	public static String getProtectionSpace(URL resourceUrl) {
 		return InternalPlatform.getDefault().getProtectionSpace(resourceUrl);
 	}
+
 	/** 
 	 * Removes the indicated (identical) log listener from the notification list
 	 * of the platform.  If no such listener exists, no action is taken.
@@ -508,6 +524,7 @@ public final class Platform {
 	public static void removeLogListener(ILogListener listener) {
 		InternalPlatform.getDefault().removeLogListener(listener);
 	}
+
 	/**
 	 * Returns a URL which is the resolved equivalent of the
 	 * supplied URL. This method is expected to be used with the
@@ -533,6 +550,7 @@ public final class Platform {
 	public static URL resolve(URL url) throws java.io.IOException {
 		return InternalPlatform.getDefault().resolve(url);
 	}
+
 	/**
 	 * Runs the given runnable in a protected mode.   Exceptions
 	 * thrown in the runnable are logged and passed to the runnable's
@@ -543,6 +561,7 @@ public final class Platform {
 	public static void run(ISafeRunnable runnable) {
 		InternalPlatform.getDefault().run(runnable);
 	}
+
 	/**
 	 * Returns the platform job manager.
 	 * 
@@ -551,6 +570,7 @@ public final class Platform {
 	public static IJobManager getJobManager() {
 		return InternalPlatform.getDefault().getJobManager();
 	}
+
 	/**
 	 * Returns the extension registry for this platform.
 	 *
@@ -561,7 +581,7 @@ public final class Platform {
 	public static IExtensionRegistry getExtensionRegistry() {
 		return InternalPlatform.getDefault().getRegistry();
 	}
-	
+
 	/**
 	 * Returns a URL for the given path in the given bundle.  Returns <code>null</code> if the URL
 	 * could not be computed or created.
@@ -584,7 +604,7 @@ public final class Platform {
 	public static URL find(Bundle bundle, IPath path) {
 		return FindSupport.find(bundle, path, null);
 	}
-	
+
 	/**
 	 * Returns a URL for the given path in the given bundle.  Returns <code>null</code> if the URL
 	 * could not be computed or created.
@@ -643,7 +663,7 @@ public final class Platform {
 	public static URL find(Bundle b, IPath path, Map override) {
 		return FindSupport.find(b, path, override);
 	}
-	
+
 	/**
 	 * Returns the location in the local file system of the 
 	 * plug-in state area for the given bundle.
@@ -672,7 +692,7 @@ public final class Platform {
 	public static IPath getStateLocation(Bundle bundle) {
 		return InternalPlatform.getDefault().getStateLocation(bundle);
 	}
-	
+
 	/**
 	 * Returns the log for the given bundle.  If no such log exists, one is created.
 	 * <p>
@@ -690,6 +710,7 @@ public final class Platform {
 	public static ILog getLog(Bundle bundle) {
 		return InternalPlatform.getDefault().getLog(bundle);
 	}
+
 	/**
 	 * Returns the given bundle's resource bundle for the current locale. 
 	 * <p>
@@ -713,6 +734,7 @@ public final class Platform {
 	public static ResourceBundle getResourceBundle(Bundle bundle) throws MissingResourceException {
 		return InternalPlatform.getDefault().getResourceBundle(bundle);
 	}
+
 	/**
 	 * Returns a resource string corresponding to the given argument value.
 	 * If the argument value specifies a resource key, the string
@@ -743,9 +765,10 @@ public final class Platform {
 	 * @see #getResourceBundle
 	 * @since 3.0
 	 */
-	public static  String getResourceString(Bundle bundle, String value) {
+	public static String getResourceString(Bundle bundle, String value) {
 		return InternalPlatform.getDefault().getResourceString(bundle, value);
 	}
+
 	/**
 	 * Returns a resource string corresponding to the given argument 
 	 * value and resource bundle in the given runtime bundle.
@@ -790,6 +813,7 @@ public final class Platform {
 	public static String getResourceString(Bundle bundle, String value, ResourceBundle resourceBundle) {
 		return InternalPlatform.getDefault().getResourceString(bundle, value, resourceBundle);
 	}
+
 	/**
 	 * Returns the string name of the current system architecture.  
 	 * The value is a user-defined string if the architecture is 
@@ -802,7 +826,7 @@ public final class Platform {
 	public static String getOSArch() {
 		return InternalPlatform.getDefault().getOSArch();
 	}
-	
+
 	/**
 	 * Returns the string name of the current locale for use in finding files
 	 * whose path starts with <code>$nl$</code>.
@@ -813,7 +837,7 @@ public final class Platform {
 	public static String getNL() {
 		return InternalPlatform.getDefault().getNL();
 	}
-	
+
 	/**
 	 * Returns the string name of the current operating system for use in finding
 	 * files whose path starts with <code>$os$</code>.  <code>OS_UNKNOWN</code> is
@@ -829,7 +853,7 @@ public final class Platform {
 	public static String getOS() {
 		return InternalPlatform.getDefault().getOS();
 	}
-	
+
 	/**
 	 * Returns the string name of the current window system for use in finding files
 	 * whose path starts with <code>$ws$</code>.  <code>null</code> is returned
@@ -841,7 +865,7 @@ public final class Platform {
 	public static String getWS() {
 		return InternalPlatform.getDefault().getWS();
 	}
-	
+
 	/**
 	 * Returns the arguments not consumed by the framework implementation itself.  Which
 	 * arguments are consumed is implementation specific. These arguments are available 
@@ -860,10 +884,11 @@ public final class Platform {
 	public static String[] getApplicationArgs() {
 		return InternalPlatform.getDefault().getApplicationArgs();
 	}
-	
+
 	public static PlatformAdmin getPlatformAdmin() {
 		return InternalPlatform.getDefault().getPlatformAdmin();
 	}
+
 	/**
 	 * Returns the location of the platform's working directory (also known as the instance data area).  
 	 * <code>null</code> is returned if the platform is running without an instance location.
@@ -883,14 +908,14 @@ public final class Platform {
 	 * @return the currently registered bundle group providers
 	 * @since 3.0
 	 */
-	public static  IBundleGroupProvider[] getBundleGroupProviders() {
+	public static IBundleGroupProvider[] getBundleGroupProviders() {
 		return InternalPlatform.getDefault().getBundleGroupProviders();
 	}
 
 	public static IPreferencesService getPreferencesService() {
 		return InternalPlatform.getDefault().getPreferencesService();
 	}
-	
+
 	/**
 	 * Returns the product which was selected when running this Eclipse instance
 	 * or null if none
@@ -907,16 +932,16 @@ public final class Platform {
 	 * @since 3.0
 	 */
 	public static void registerBundleGroupProvider(IBundleGroupProvider provider) {
-		InternalPlatform.getDefault().registerBundleGroupProvider(provider);		
+		InternalPlatform.getDefault().registerBundleGroupProvider(provider);
 	}
-	
+
 	/**
 	 * Deregisters the given bundle group provider with the platform
 	 * @param provider a provider to deregister
 	 * @since 3.0
 	 */
 	public static void unregisterBundleGroupProvider(IBundleGroupProvider provider) {
-		InternalPlatform.getDefault().unregisterBundleGroupProvider(provider);		
+		InternalPlatform.getDefault().unregisterBundleGroupProvider(provider);
 	}
 
 	/**
@@ -966,7 +991,7 @@ public final class Platform {
 	public static Location getInstallLocation() {
 		return InternalPlatform.getDefault().getInstallLocation();
 	}
-	
+
 	/**
 	 * Checks if the specified bundle is a fragment bundle.
 	 * @return true if the specified bundle is a fragment bundle; otherwise false is returned.
@@ -974,7 +999,8 @@ public final class Platform {
 	 */
 	public static boolean isFragment(Bundle bundle) {
 		return InternalPlatform.getDefault().isFragment(bundle);
-	}	
+	}
+
 	/**
 	 * Returns an array of attached fragment bundles for the specified bundle.  If the 
 	 * specified bundle is a fragment then <tt>null</tt> is returned.  If no fragments are 
@@ -987,20 +1013,22 @@ public final class Platform {
 	 */
 	public static Bundle[] getFragments(Bundle bundle) {
 		return InternalPlatform.getDefault().getFragments(bundle);
-	}    
+	}
+
 	/**
-     * Returns the resolved bundle with the specified symbolic name that has the
-     * highest version.  If no resolved bundles are installed that have the 
-     * specified symbolic name then null is returned.
-     * 
-     * @param symbolicName the symbolic name of the bundle to be returned.
-     * @return the bundle that has the specified symbolic name with the 
-     * highest version, or <tt>null</tt> if no bundle is found.
-     * @since 3.0
-     */
+	 * Returns the resolved bundle with the specified symbolic name that has the
+	 * highest version.  If no resolved bundles are installed that have the 
+	 * specified symbolic name then null is returned.
+	 * 
+	 * @param symbolicName the symbolic name of the bundle to be returned.
+	 * @return the bundle that has the specified symbolic name with the 
+	 * highest version, or <tt>null</tt> if no bundle is found.
+	 * @since 3.0
+	 */
 	public static Bundle getBundle(String symbolicName) {
 		return InternalPlatform.getDefault().getBundle(symbolicName);
 	}
+
 	/**
 	 * Returns an array of host bundles that the specified fragment bundle is 
 	 * attached to or <tt>null</tt> if the specified bundle is not attached to a host.  
@@ -1013,8 +1041,8 @@ public final class Platform {
 	 */
 	public static Bundle[] getHosts(Bundle bundle) {
 		return InternalPlatform.getDefault().getHosts(bundle);
-	}	
-	
+	}
+
 	/**
 	 * Returns whether the platform is running.
 	 *

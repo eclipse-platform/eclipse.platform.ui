@@ -23,24 +23,28 @@ import org.eclipse.core.runtime.IRegistryChangeEvent;
 public final class RegistryChangeEvent implements IRegistryChangeEvent {
 	private String filter;
 	private Map deltas;
+
 	RegistryChangeEvent(Map deltas, String filter) {
 		this.deltas = deltas;
 		this.filter = filter;
 	}
+
 	private RegistryDelta[] getHostDeltas() {
 		// if there is a filter, return only the delta for the selected plug-in
 		if (filter != null) {
 			RegistryDelta singleDelta = getHostDelta(filter);
-			return singleDelta == null ? new RegistryDelta[0] : new RegistryDelta[] { singleDelta };
+			return singleDelta == null ? new RegistryDelta[0] : new RegistryDelta[] {singleDelta};
 		}
 		// there is no filter - return all deltas
 		return (RegistryDelta[]) deltas.values().toArray(new RegistryDelta[deltas.size()]);
 	}
+
 	private RegistryDelta getHostDelta(String pluginId) {
 		if (filter != null && !pluginId.equals(filter))
 			return null;
 		return (RegistryDelta) deltas.get(pluginId);
 	}
+
 	public IExtensionDelta[] getExtensionDeltas() {
 		RegistryDelta[] hostDeltas = getHostDeltas();
 		if (hostDeltas.length == 0)
@@ -56,24 +60,28 @@ public final class RegistryChangeEvent implements IRegistryChangeEvent {
 		}
 		return extensionDeltas;
 	}
+
 	public IExtensionDelta[] getExtensionDeltas(String hostName) {
 		RegistryDelta hostDelta = getHostDelta(hostName);
 		if (hostDelta == null)
 			return new IExtensionDelta[0];
 		return hostDelta.getExtensionDeltas();
 	}
+
 	public IExtensionDelta[] getExtensionDeltas(String hostName, String extensionPoint) {
 		RegistryDelta hostDelta = getHostDelta(hostName);
 		if (hostDelta == null)
 			return new IExtensionDelta[0];
 		return hostDelta.getExtensionDeltas(hostName + '.' + extensionPoint);
 	}
+
 	public IExtensionDelta getExtensionDelta(String hostName, String extensionPoint, String extension) {
 		RegistryDelta hostDelta = getHostDelta(hostName);
 		if (hostDelta == null)
 			return null;
 		return hostDelta.getExtensionDelta(hostName + '.' + extensionPoint, extension);
 	}
+
 	public String toString() {
 		return "RegistryChangeEvent:  " + Arrays.asList(getHostDeltas()); //$NON-NLS-1$
 	}

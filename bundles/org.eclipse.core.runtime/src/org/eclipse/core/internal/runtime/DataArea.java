@@ -33,17 +33,17 @@ public class DataArea {
 	 * Internal name of the preference storage file (value <code>"pref_store.ini"</code>) in this plug-in's (read-write) state area.
 	 */
 	/* package */static final String PREFERENCES_FILE_NAME = "pref_store.ini"; //$NON-NLS-1$
-	
+
 	private IPath location; //The location of the instance data
 	private PlatformMetaAreaLock metaAreaLock = null;
-	
+
 	//Authorization related informations
 	private AuthorizationDatabase keyring = null;
 	private long keyringTimeStamp;
 	private String keyringFile = null;
 	private String password = ""; //$NON-NLS-1$
 	private boolean initialized = false;
-	
+
 	protected void assertLocationInitialized() throws IllegalStateException {
 		if (location != null && initialized)
 			return;
@@ -61,22 +61,26 @@ public class DataArea {
 			throw new IllegalStateException(e.getMessage());
 		}
 	}
-	public IPath getBackupFilePathFor(IPath file) throws IllegalStateException {	//TODO Does not seems to be used
+
+	public IPath getBackupFilePathFor(IPath file) throws IllegalStateException { //TODO Does not seems to be used
 		assertLocationInitialized();
 		return file.removeLastSegments(1).append(file.lastSegment() + F_BACKUP);
 	}
+
 	public IPath getMetadataLocation() throws IllegalStateException {
 		assertLocationInitialized();
 		return location.append(F_META_AREA);
 	}
+
 	public IPath getInstanceDataLocation() throws IllegalStateException {
 		assertLocationInitialized();
 		return location;
 	}
+
 	public IPath getLogLocation() throws IllegalStateException {
 		return new Path(InternalPlatform.getDefault().getFrameworkLog().getFile().getAbsolutePath());
 	}
-	
+
 	/**
 	 * Returns the read/write location in which the given bundle can manage private state.
 	 */
@@ -84,10 +88,12 @@ public class DataArea {
 		assertLocationInitialized();
 		return getStateLocation(bundle.getSymbolicName());
 	}
+
 	public IPath getStateLocation(String bundleName) throws IllegalStateException {
 		assertLocationInitialized();
 		return getMetadataLocation().append(F_PLUGIN_DATA).append(bundleName);
 	}
+
 	/**
 	 * Returns the read/write location of the file for storing plugin preferences.
 	 */
@@ -95,12 +101,14 @@ public class DataArea {
 		assertLocationInitialized();
 		return getPreferenceLocation(bundle.getSymbolicName(), create);
 	}
+
 	public IPath getPreferenceLocation(String bundleName, boolean create) throws IllegalStateException {
 		IPath result = getStateLocation(bundleName);
 		if (create)
 			result.toFile().mkdirs();
 		return result.append(PREFERENCES_FILE_NAME);
 	}
+
 	/**
 	 * Return the path to the version.ini file.
 	 */
@@ -108,6 +116,7 @@ public class DataArea {
 		assertLocationInitialized();
 		return getMetadataLocation().append(F_VERSION);
 	}
+
 	private void initializeLocation() throws CoreException {
 		// check if the location can be created
 		if (location.toFile().exists()) {
@@ -118,10 +127,11 @@ public class DataArea {
 		}
 		//try infer the device if there isn't one (windows)
 		if (location.getDevice() == null)
-			location = new Path(location.toFile().getAbsolutePath());		
+			location = new Path(location.toFile().getAbsolutePath());
 		createLocation();
 		initialized = true;
 	}
+
 	private void createLocation() throws CoreException {
 		// append on the metadata location so that the whole structure is created.  
 		File file = location.append(F_META_AREA).toFile();
@@ -143,7 +153,7 @@ public class DataArea {
 			e.printStackTrace();
 		}
 	}
-	
+
 	// TODO remove this method by M8
 	/**
 	 * Creates a lock file in the meta-area that indicates the meta-area is in use, preventing other eclipse instances from concurrently using the same meta-area.
@@ -180,6 +190,7 @@ public class DataArea {
 		if (metaAreaLock != null)
 			metaAreaLock.release();
 	}
+
 	/**
 	 * @see Platform
 	 */
@@ -188,6 +199,7 @@ public class DataArea {
 		keyring.addAuthorizationInfo(serverUrl, realm, authScheme, new HashMap(info));
 		keyring.save();
 	}
+
 	/**
 	 * @see Platform
 	 */
@@ -196,6 +208,7 @@ public class DataArea {
 		keyring.addProtectionSpace(resourceUrl, realm);
 		keyring.save();
 	}
+
 	/**
 	 * @see Platform
 	 */
@@ -204,6 +217,7 @@ public class DataArea {
 		keyring.flushAuthorizationInfo(serverUrl, realm, authScheme);
 		keyring.save();
 	}
+
 	/**
 	 * @see Platform
 	 */
@@ -212,6 +226,7 @@ public class DataArea {
 		Map info = keyring.getAuthorizationInfo(serverUrl, realm, authScheme);
 		return info == null ? null : new HashMap(info);
 	}
+
 	/**
 	 * @see Platform
 	 */
@@ -219,15 +234,16 @@ public class DataArea {
 		loadKeyring();
 		return keyring.getProtectionSpace(resourceUrl);
 	}
+
 	/**
 	 * Opens the password database (if any) initally provided to the platform at startup.
 	 */
 	private void loadKeyring() {
-		if (keyring != null && new File(keyringFile).lastModified()==keyringTimeStamp)
+		if (keyring != null && new File(keyringFile).lastModified() == keyringTimeStamp)
 			return;
 		if (keyringFile == null) {
 			File file = new File(InternalPlatform.getDefault().getConfigurationLocation().getURL().getPath());
-			file = new File(file, F_KEYRING); 
+			file = new File(file, F_KEYRING);
 			keyringFile = file.getAbsolutePath();
 		}
 		try {
@@ -246,11 +262,13 @@ public class DataArea {
 		}
 		keyringTimeStamp = new File(keyringFile).lastModified();
 	}
+
 	public void setKeyringFile(String keyringFile) {
 		if (this.keyringFile != null)
 			throw new IllegalStateException(Policy.bind("meta.keyringFileAlreadySpecified", this.keyringFile)); //$NON-NLS-1$
 		this.keyringFile = keyringFile;
 	}
+
 	public void setPassword(String password) {
 		this.password = password;
 	}

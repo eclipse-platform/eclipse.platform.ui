@@ -37,6 +37,7 @@ public class PluginFragmentModel extends PluginModel {
 	private String plugin = null;
 	private String pluginVersion = null;
 	private byte pluginMatch = FRAGMENT_MATCH_UNSPECIFIED;
+
 	/**
 	 * Creates a new plug-in descriptor model in which all fields
 	 * are <code>null</code>.
@@ -44,6 +45,7 @@ public class PluginFragmentModel extends PluginModel {
 	public PluginFragmentModel() {
 		super();
 	}
+
 	/**
 	 * Returns a byte code indicating the type of match this fragment requires
 	 * when trying to find its associated plugin.
@@ -60,6 +62,7 @@ public class PluginFragmentModel extends PluginModel {
 	public byte getMatch() {
 		return pluginMatch;
 	}
+
 	/**
 	 * Returns the fully qualified name of the plug-in for which this is a fragment
 	 *
@@ -68,6 +71,7 @@ public class PluginFragmentModel extends PluginModel {
 	public String getPlugin() {
 		return plugin;
 	}
+
 	/**
 	 * Returns the unique identifier of the plug-in related to this model
 	 * or <code>null</code>.  
@@ -80,6 +84,7 @@ public class PluginFragmentModel extends PluginModel {
 	public String getPluginId() {
 		return getPlugin();
 	}
+
 	/**
 	 * Returns the version name of the plug-in for which this is a fragment.
 	 *
@@ -88,6 +93,7 @@ public class PluginFragmentModel extends PluginModel {
 	public String getPluginVersion() {
 		return pluginVersion;
 	}
+
 	/**
 	 * Sets the type of match this fragment requires when trying to
 	 * find its associated plugin.  The value parameter may be any
@@ -107,6 +113,7 @@ public class PluginFragmentModel extends PluginModel {
 		Assert.isTrue((value == FRAGMENT_MATCH_PERFECT) || (value == FRAGMENT_MATCH_EQUIVALENT) || (value == FRAGMENT_MATCH_COMPATIBLE) || (value == FRAGMENT_MATCH_GREATER_OR_EQUAL));
 		pluginMatch = value;
 	}
+
 	/**
 	 * Sets the fully qualified name of the plug-in for which this is a fragment
 	 * This object must not be read-only.
@@ -118,6 +125,7 @@ public class PluginFragmentModel extends PluginModel {
 		assertIsWriteable();
 		plugin = value;
 	}
+
 	/**
 	 * Sets the version name of the plug-in for which this is a fragment.
 	 * The given version number is canonicalized.

@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.MultiStatus;
 // implementation or not.
 public class Factory {
 	private MultiStatus status;
+
 	/**
 	 * Creates a factory which can be used to create plug-in model objects.
 	 * Errors and warnings during parsing etc. can be logged to the given 
@@ -41,6 +42,7 @@ public class Factory {
 	public BundleModel createBundle() {
 		return new BundleModel();
 	}
+
 	/**
 	 * Returns a new configuration element model which is not initialized.
 	 *
@@ -67,6 +69,7 @@ public class Factory {
 	public Extension createExtension() {
 		return new Extension();
 	}
+
 	/**
 	 * Returns a new extension point model which is not initialized.
 	 *
@@ -75,6 +78,7 @@ public class Factory {
 	public ExtensionPoint createExtensionPoint() {
 		return new ExtensionPoint();
 	}
+
 	/**
 	 * Handles an error state specified by the status.  The collection of all logged status
 	 * objects can be accessed using <code>getStatus()</code>.
@@ -85,6 +89,7 @@ public class Factory {
 		status.add(error);
 		System.err.println(error.toString());
 	}
+
 	/**
 	 * Returns all of the status objects logged thus far by this factory.
 	 *
@@ -93,6 +98,7 @@ public class Factory {
 	public MultiStatus getStatus() {
 		return status;
 	}
+
 	/**
 	 * Returns a new empty extension registry.
 	 *

@@ -60,18 +60,21 @@ public interface IProgressMonitor {
 	 *  doesn't require the total number of work units in advance.
 	 */
 	public void beginTask(String name, int totalWork);
+
 	/**
 	 * Notifies that the work is done; that is, either the main task is completed 
 	 * or the user canceled it. This method may be called more than once 
 	 * (implementations should be prepared to handle this case).
 	 */
 	public void done();
+
 	/**
 	 * Internal method to handle scaling correctly. This method
 	 * must not be called by a client. Clients should 
 	 * always use the method </code>worked(int)</code>.
 	 */
 	public void internalWorked(double work);
+
 	/**
 	 * Returns whether cancelation of current operation has been requested.
 	 * Long-running operations should poll to see if cancelation
@@ -82,6 +85,7 @@ public interface IProgressMonitor {
 	 * @see #setCanceled(boolean)
 	 */
 	public boolean isCanceled();
+
 	/**
 	 * Sets the cancel state to the given value.
 	 * 
@@ -91,6 +95,7 @@ public interface IProgressMonitor {
 	 * @see #isCanceled()
 	 */
 	public void setCanceled(boolean value);
+
 	/**
 	 * Sets the task name to the given value. This method is used to 
 	 * restore the task label after a nested operation was executed. 
@@ -100,6 +105,7 @@ public interface IProgressMonitor {
 	 * @see #beginTask(java.lang.String, int)
 	 */
 	public void setTaskName(String name);
+
 	/**
 	 * Notifies that a subtask of the main task is beginning.
 	 * Subtasks are optional; the main task might not have subtasks.
@@ -107,6 +113,7 @@ public interface IProgressMonitor {
 	 * @param name the name (or description) of the subtask
 	 */
 	public void subTask(String name);
+
 	/**
 	 * Notifies that a given number of work unit of the main task
 	 * has been completed. Note that this amount represents an

@@ -39,6 +39,7 @@ public class PlatformURLHandlerFactory implements URLStreamHandlerFactory {
 			handlers.remove(protocol); // bad entry
 		return handler;
 	}
+
 	public static void register(String protocol, URLStreamHandlerFactory factory) {
 		if (protocol.equals(PlatformURLHandler.PROTOCOL))
 			return; // just in case ...

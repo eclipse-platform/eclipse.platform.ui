@@ -41,7 +41,7 @@ public class SitePolicy implements ISitePolicy {
 			return newPolicy.equals(((SitePolicy) o).newPolicy);
 		return false;
 	}
-	
+
 	public int hashCode() {
 		return newPolicy.hashCode();
 	}

@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.core.internal.plugins;
+
 import java.io.*;
 import java.util.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
@@ -60,6 +61,7 @@ public class PreferenceExporter {
 		}
 		storePreferences(file, globalPreferences);
 	}
+
 	/**
 	 * @see Preferences#importPreferences
 	 */
@@ -71,10 +73,10 @@ public class PreferenceExporter {
 		Map idsToProperties = splitPreferences(file);
 		IPluginDescriptor[] descriptors = Platform.getPluginRegistry().getPluginDescriptors();
 		for (int i = 0; i < descriptors.length; i++) {
-			setPluginPreferences(descriptors[i],
-				(Properties) idsToProperties.get(descriptors[i].getUniqueIdentifier()));
+			setPluginPreferences(descriptors[i], (Properties) idsToProperties.get(descriptors[i].getUniqueIdentifier()));
 		}
 	}
+
 	/**
 	 * Loads preferences from the given file into the provided preferences instance.
 	 * Returns the preferences instance.
@@ -105,6 +107,7 @@ public class PreferenceExporter {
 		}
 		return preferences;
 	}
+
 	/**
 	 * Adds all preferences for the given plugin descriptor to the provided
 	 * preferences instance.  Returns true if any properties were added,
@@ -112,7 +115,7 @@ public class PreferenceExporter {
 	 */
 	private static boolean mergePluginPreferences(IPluginDescriptor descriptor, Properties globalProperties) throws CoreException {
 		boolean found = false;
-		IPath propertiesFile = InternalPlatform.getDefault().getMetaArea().getPreferenceLocation(((PluginDescriptor)descriptor).getBundle(), false);
+		IPath propertiesFile = InternalPlatform.getDefault().getMetaArea().getPreferenceLocation(((PluginDescriptor) descriptor).getBundle(), false);
 		if (propertiesFile.toFile().exists()) {
 			Preferences pluginPreferences = loadPreferences(propertiesFile, new Preferences());
 			String pluginId = descriptor.getUniqueIdentifier();
@@ -125,13 +128,14 @@ public class PreferenceExporter {
 		}
 		return found;
 	}
+
 	/**
 	 * Sets the given preferences as the preferences for the plugin with the
 	 * given descriptor, overwriting any previously defined preferences.  If
 	 * the given preferences is null, all values are returned to their default value.
 	 */
 	private static void setPluginPreferences(IPluginDescriptor descriptor, Properties newProperties) throws CoreException {
-		IPath location = InternalPlatform.getDefault().getMetaArea().getPreferenceLocation(((PluginDescriptor)descriptor).getBundle(), false);
+		IPath location = InternalPlatform.getDefault().getMetaArea().getPreferenceLocation(((PluginDescriptor) descriptor).getBundle(), false);
 		if (descriptor.isPluginActivated()) {
 			Plugin plugin = descriptor.getPlugin();
 			if (plugin != null) {
@@ -145,7 +149,7 @@ public class PreferenceExporter {
 				//add new values
 				if (newProperties != null) {
 					for (Enumeration e = newProperties.propertyNames(); e.hasMoreElements();) {
-						String key = ((String)e.nextElement()).intern();
+						String key = ((String) e.nextElement()).intern();
 						oldPreferences.setValue(key, newProperties.getProperty(key));
 					}
 				}
@@ -157,6 +161,7 @@ public class PreferenceExporter {
 			storePreferences(location, newProperties);
 		}
 	}
+
 	/**
 	 * Splits up a global preference file into preferences for each plugin
 	 * descriptor.  Returns a map of plugin IDs to Preferences objects
@@ -183,6 +188,7 @@ public class PreferenceExporter {
 		}
 		return idsToProperties;
 	}
+
 	/**
 	 * Writes the given preferences to the given file.  If the preferences are
 	 * null or empty, the file is deleted.
@@ -191,9 +197,7 @@ public class PreferenceExporter {
 	private static void storePreferences(IPath destination, Object preferences) throws CoreException {
 		File propertiesFile = destination.toFile();
 		//if the preferences is null or empty, delete the file and return
-		if (preferences == null ||
-			(preferences instanceof Properties && ((Properties)preferences).size() == 0) ||
-			(preferences instanceof Preferences &&((Preferences)preferences).propertyNames().length == 0)) { 
+		if (preferences == null || (preferences instanceof Properties && ((Properties) preferences).size() == 0) || (preferences instanceof Preferences && ((Preferences) preferences).propertyNames().length == 0)) {
 			propertiesFile.delete();
 			return;
 		}
@@ -204,9 +208,9 @@ public class PreferenceExporter {
 		try {
 			out = new BufferedOutputStream(new FileOutputStream(propertiesFile));
 			if (preferences instanceof Properties)
-				((Properties)preferences).store(out, null);
+				((Properties) preferences).store(out, null);
 			else
-				((Preferences)preferences).store(out, null);
+				((Preferences) preferences).store(out, null);
 		} catch (IOException e) {
 			String msg = Policy.bind("preferences.errorWriting", propertiesFile.toString(), e.getMessage()); //$NON-NLS-1$
 			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, msg, e));
@@ -219,7 +223,8 @@ public class PreferenceExporter {
 				}
 			}
 		}
-	}	
+	}
+
 	/**
 	 * Compares two plugin version identifiers to see if their preferences
 	 * are compatible.  If they are not compatible, a warning message is 
@@ -233,14 +238,9 @@ public class PreferenceExporter {
 	 * @param pref The version identifer of the preferences to be loaded
 	 * @param installed The version identifier of the installed plugin
 	 */
-	private static void validatePluginVersions(
-		String pluginId,
-		PluginVersionIdentifier pref,
-		PluginVersionIdentifier installed,
-		MultiStatus result) {
+	private static void validatePluginVersions(String pluginId, PluginVersionIdentifier pref, PluginVersionIdentifier installed, MultiStatus result) {
 
-		if (installed.getMajorComponent() == pref.getMajorComponent() &&
-			installed.getMinorComponent() == pref.getMinorComponent()) {
+		if (installed.getMajorComponent() == pref.getMajorComponent() && installed.getMinorComponent() == pref.getMinorComponent()) {
 			return;
 		}
 		int severity;
@@ -250,9 +250,10 @@ public class PreferenceExporter {
 			severity = IStatus.WARNING;
 		}
 		String msg = Policy.bind("preferences.incompatible", new String[] { //$NON-NLS-1$
-			pref.toString(), pluginId, installed.toString()});
+				pref.toString(), pluginId, installed.toString()});
 		result.add(new Status(severity, Platform.PI_RUNTIME, 1, msg, null));
 	}
+
 	/**
 	 * Throws an exception if the supplied preferences do not comply
 	 * with the preference export file format.
@@ -269,9 +270,8 @@ public class PreferenceExporter {
 				String versionId = preferences.getString(pluginId);
 				if (versionId == null || versionId.length() == 0) {
 					String msg = Policy.bind("preferences.invalidProperty", names[i], //$NON-NLS-1$ 
-						preferences.getString(names[i]));
-					throw new CoreException(
-						new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, msg, null));
+							preferences.getString(names[i]));
+					throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, msg, null));
 				}
 			} else {
 				//should be of the form <plugin-id>=<plugin-version-id>
@@ -280,13 +280,13 @@ public class PreferenceExporter {
 				String versionId = preferences.getString(pluginId);
 				if (!PluginVersionIdentifier.validateVersion(versionId).isOK()) {
 					String msg = Policy.bind("preferences.invalidProperty", names[i], //$NON-NLS-1$
-						preferences.getString(names[i]));
-					throw new CoreException(
-						new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, msg, null));
+							preferences.getString(names[i]));
+					throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, msg, null));
 				}
 			}
 		}
 	}
+
 	/**
 	 * @see Preferences#validatePreferenceVersions
 	 */

@@ -42,10 +42,12 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 	class ListenerInfo {
 		IRegistryChangeListener listener;
 		String filter;
+
 		public ListenerInfo(IRegistryChangeListener listener, String filter) {
 			this.listener = listener;
 			this.filter = filter;
 		}
+
 		/**
 		 * Used by ListenerList to ensure uniqueness.
 		 */
@@ -62,6 +64,7 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 			fireRegistryChangeEvent();
 		}
 	}
+
 	/**
 	 * Adds and resolves all extensions and extension points provided by the
 	 * plug-in.
@@ -103,6 +106,7 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 		}
 		addExtensionsAndExtensionPoints(element);
 	}
+
 	private void addExtensionsAndExtensionPoints(IRegistryElement element) {
 		// now add and resolve extensions and extension points
 		IExtensionPoint[] extPoints = element.getExtensionPoints();
@@ -112,6 +116,7 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 		for (int i = 0; i < extensions.length; i++)
 			this.addExtension(extensions[i]);
 	}
+
 	/* Utility method to help with array concatenations */
 	private Object addArrays(Object a, Object b) {
 		Object[] result = (Object[]) Array.newInstance(a.getClass().getComponentType(), Array.getLength(a) + Array.getLength(b));
@@ -119,6 +124,7 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 		System.arraycopy(b, 0, result, Array.getLength(a), Array.getLength(b));
 		return result;
 	}
+
 	/*
 	 * Creates an association between a fragment and a master element.
 	 */
@@ -128,6 +134,7 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 			orphanFragments.put(masterName, fragmentNames = new HashSet());
 		fragmentNames.add(fragmentName);
 	}
+
 	/*
 	 * Removes an association between a fragment and a master element.
 	 */
@@ -139,6 +146,7 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 		if (fragmentNames.isEmpty())
 			orphanFragments.remove(masterName);
 	}
+
 	/*
 	 * Returns a collection of fragments for a master element.
 	 */
@@ -146,6 +154,7 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 		Collection fragmentNames = (Collection) orphanFragments.get(masterName);
 		return fragmentNames == null ? Collections.EMPTY_SET : fragmentNames;
 	}
+
 	private void addExtension(IExtension extension) {
 		IExtensionPoint extPoint = getExtensionPoint(extension.getExtensionPointUniqueIdentifier());
 		//orphan extension
@@ -160,14 +169,14 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 				orphanExtensions.put(extension.getExtensionPointUniqueIdentifier(), newOrphanExtensions);
 			} else
 				// otherwise this is the first one
-				orphanExtensions.put(extension.getExtensionPointUniqueIdentifier(), new IExtension[] { extension });
+				orphanExtensions.put(extension.getExtensionPointUniqueIdentifier(), new IExtension[] {extension});
 			return;
 		}
 		// otherwise, link them
 		IExtension[] newExtensions;
 		IExtension[] existingExtensions = extPoint.getExtensions();
 		if (existingExtensions == null)
-			newExtensions = new IExtension[] { extension };
+			newExtensions = new IExtension[] {extension};
 		else {
 			newExtensions = new IExtension[existingExtensions.length + 1];
 			System.arraycopy(existingExtensions, 0, newExtensions, 0, existingExtensions.length);
@@ -176,6 +185,7 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 		linker.link(extPoint, newExtensions);
 		recordChange(extPoint, extension, IExtensionDelta.ADDED);
 	}
+
 	/**
 	 * Looks for existing orphan extensions to connect to the given extension
 	 * point. If none is found, there is nothing to do. Otherwise, link them.
@@ -188,6 +198,7 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 		linker.link(extPoint, existingExtensions);
 		recordChange(extPoint, existingExtensions, IExtensionDelta.ADDED);
 	}
+
 	/**
 	 * Adds the given listener for registry change events on the given plug-in.
 	 */
@@ -195,12 +206,14 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 	public void addRegistryChangeListener(IRegistryChangeListener listener, String filter) {
 		this.listeners.add(new ListenerInfo(listener, filter));
 	}
+
 	/**
 	 * Adds the given listener for registry change events.
 	 */
 	public void addRegistryChangeListener(IRegistryChangeListener listener) {
 		addRegistryChangeListener(listener, null);
 	}
+
 	/**
 	 * Broadcasts (asynchronously) the event to all interested parties.
 	 */
@@ -216,6 +229,7 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 		// do the notification asynchronously
 		new ExtensionEventDispatcherJob(tmpListeners, tmpDeltas).schedule();
 	}
+
 	private RegistryDelta getDelta(String elementName) {
 		// is there a delta for the plug-in?
 		RegistryDelta existingDelta = (RegistryDelta) deltas.get(elementName);
@@ -227,18 +241,22 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 		deltas.put(elementName, delta);
 		return delta;
 	}
+
 	public String[] getElementIdentifiers() {
 		return getNamespaces();
 	}
+
 	public String[] getNamespaces() {
 		return (String[]) elements.keySet().toArray(new String[elements.size()]);
 	}
+
 	public IConfigurationElement[] getConfigurationElementsFor(String extensionPointId) {
 		int lastdot = extensionPointId.lastIndexOf('.');
 		if (lastdot == -1)
 			return new IConfigurationElement[0];
 		return getConfigurationElementsFor(extensionPointId.substring(0, lastdot), extensionPointId.substring(lastdot + 1));
 	}
+
 	public IConfigurationElement[] getConfigurationElementsFor(String pluginId, String extensionPointSimpleId) {
 		IExtensionPoint extPoint = this.getExtensionPoint(pluginId, extensionPointSimpleId);
 		if (extPoint == null)
@@ -254,12 +272,14 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 		}
 		return (IConfigurationElement[]) result.toArray(new IConfigurationElement[result.size()]);
 	}
+
 	public IConfigurationElement[] getConfigurationElementsFor(String pluginId, String extensionPointName, String extensionId) {
 		IExtension extension = this.getExtension(pluginId, extensionPointName, extensionId);
 		if (extension == null)
 			return new IConfigurationElement[0];
 		return extension.getConfigurationElements();
 	}
+
 	public IExtension[] getExtensions(String elementName) {
 		IRegistryElement element = (IRegistryElement) elements.get(elementName);
 		if (element == null)
@@ -272,18 +292,21 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 		}
 		return allExtensions;
 	}
+
 	public IExtension getExtension(String extensionPointId, String extensionId) {
 		int lastdot = extensionPointId.lastIndexOf('.');
 		if (lastdot == -1)
 			return null;
 		return getExtension(extensionPointId.substring(0, lastdot), extensionPointId.substring(lastdot + 1), extensionId);
 	}
+
 	public IExtension getExtension(String pluginId, String extensionPointName, String extensionId) {
 		IExtensionPoint extPoint = getExtensionPoint(pluginId, extensionPointName);
 		if (extPoint != null)
 			return extPoint.getExtension(extensionId);
 		return null;
 	}
+
 	public IExtensionPoint[] getExtensionPoints(String elementName) {
 		IRegistryElement element = (IRegistryElement) elements.get(elementName);
 		if (element == null)
@@ -296,6 +319,7 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 		}
 		return allExtensionPoints;
 	}
+
 	public IExtensionPoint[] getExtensionPoints() {
 		ArrayList extensionPoints = new ArrayList();
 		for (Iterator iter = elements.values().iterator(); iter.hasNext();) {
@@ -306,12 +330,14 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 		}
 		return (IExtensionPoint[]) extensionPoints.toArray(new IExtensionPoint[extensionPoints.size()]);
 	}
+
 	public IExtensionPoint getExtensionPoint(String xptUniqueId) {
 		int lastdot = xptUniqueId.lastIndexOf('.');
 		if (lastdot == -1)
 			return null;
 		return getExtensionPoint(xptUniqueId.substring(0, lastdot), xptUniqueId.substring(lastdot + 1));
 	}
+
 	public IExtensionPoint getExtensionPoint(String elementName, String xpt) {
 		IRegistryElement element = (IRegistryElement) elements.get(elementName);
 		if (element == null)
@@ -341,6 +367,7 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 		extensionDelta.setKind(kind);
 		getDelta(extPoint.getNamespace()).addExtensionDelta(extensionDelta);
 	}
+
 	/*
 	 * Records a set of extension additions/removals.
 	 */
@@ -358,6 +385,7 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 			pluginDelta.addExtensionDelta(extensionDelta);
 		}
 	}
+
 	/**
 	 * Unresolves and removes all extensions and extension points provided by
 	 * the plug-in.
@@ -402,6 +430,7 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 		}
 		return true;
 	}
+
 	private void removeExtensionsAndExtensionPoints(IRegistryElement element) {
 		// remove extensions
 		IExtension[] extensions = element.getExtensions();
@@ -412,6 +441,7 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 		for (int i = 0; i < extPoints.length; i++)
 			this.removeExtensionPoint(extPoints[i]);
 	}
+
 	private void removeExtensionPoint(IExtensionPoint extPoint) {
 		if (extPoint.getExtensions() != null) {
 			IExtension[] existingExtensions = extPoint.getExtensions();
@@ -420,6 +450,7 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 			recordChange(extPoint, existingExtensions, IExtensionDelta.REMOVED);
 		}
 	}
+
 	private void removeExtension(IExtension extension) {
 		IExtensionPoint extPoint = getExtensionPoint(extension.getExtensionPointUniqueIdentifier());
 		if (extPoint == null) {
@@ -470,18 +501,21 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 			});
 
 	}
+
 	private final static class ExtensionEventDispatcherJob extends Job {
 		// an "identy rule" that forces extension events to be queued		
 		private final static ISchedulingRule EXTENSION_EVENT_RULE = new ISchedulingRule() {
 			public boolean contains(ISchedulingRule rule) {
 				return rule == this;
 			}
+
 			public boolean isConflicting(ISchedulingRule rule) {
 				return rule == this;
 			}
 		};
 		private Object[] listenerInfos;
 		private Map deltas;
+
 		public ExtensionEventDispatcherJob(Object[] listenerInfos, Map deltas) {
 			super("RegistryChangeEventDispatcherJob"); //$NON-NLS-1$
 			this.listenerInfos = listenerInfos;
@@ -489,6 +523,7 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 			// all extension event dispatching jobs use this rule
 			setRule(EXTENSION_EVENT_RULE);
 		}
+
 		public IStatus run(IProgressMonitor monitor) {
 			MultiStatus result = new MultiStatus(IPlatform.PI_RUNTIME, IStatus.OK, Policy.bind("plugin.eventListenerError"), null); //$NON-NLS-1$			
 			for (int i = 0; i < listenerInfos.length; i++) {
@@ -505,6 +540,7 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 			return result;
 		}
 	}
+
 	public IRegistryElement getElement(String elementId) {
 		return (IRegistryElement) elements.get(elementId);
 	}
@@ -512,6 +548,7 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 	public void setCacheReader(RegistryCacheReader value) {
 		reader = value;
 	}
+
 	public RegistryCacheReader getCacheReader() {
 		return reader;
 	}

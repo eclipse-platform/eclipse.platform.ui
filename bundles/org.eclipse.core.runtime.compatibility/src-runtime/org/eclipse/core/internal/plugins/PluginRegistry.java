@@ -90,12 +90,13 @@ public class PluginRegistry implements IPluginRegistry {
 			descriptors.remove(plugin);
 		return null;
 	}
+
 	//This methods must iterate through the bundle list and return all the one that matches
 	public IPluginDescriptor[] getPluginDescriptors(String plugin) {
 		IPluginDescriptor pd = getPluginDescriptor(plugin);
 		if (pd == null)
 			return new IPluginDescriptor[0];
-		return new IPluginDescriptor[] { pd };
+		return new IPluginDescriptor[] {pd};
 	}
 
 	public IPluginDescriptor getPluginDescriptor(String pluginId, PluginVersionIdentifier version) {

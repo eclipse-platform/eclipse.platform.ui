@@ -98,7 +98,7 @@ public abstract class Plugin implements BundleActivator {
 	 * The bundle associated this plug-in
 	 */
 	private Bundle bundle;
-	
+
 	/**
 	 * The debug flag for this plug-in.  The flag is false by default.
 	 * It can be set to true either by the plug-in itself or in the platform 
@@ -153,6 +153,7 @@ public abstract class Plugin implements BundleActivator {
 	 */
 	public Plugin() {
 	}
+
 	/**
 	 * Creates a new plug-in runtime object for the given plug-in descriptor.
 	 * <p>
@@ -174,7 +175,7 @@ public abstract class Plugin implements BundleActivator {
 	 * @param descriptor the plug-in descriptor
 	 * @see #getDescriptor()
 	 * TODO @deprecated
- 	 * In Eclipse 3.0 this constructor has been replaced by {@link #Plugin()}.
+	 * In Eclipse 3.0 this constructor has been replaced by {@link #Plugin()}.
 	 * Implementations of <code>MyPlugin(IPluginDescriptor descriptor)</code> should be changed to 
 	 * <code>MyPlugin()</code> and call <code>super()</code> instead of <code>super(descriptor)</code>.
 	 * The <code>MyPlugin(IPluginDescriptor descriptor)</code> constructor is called only for plug-ins 
@@ -198,6 +199,7 @@ public abstract class Plugin implements BundleActivator {
 			e.printStackTrace();
 		}
 	}
+
 	/**
 	 * Returns a URL for the given path.  Returns <code>null</code> if the URL
 	 * could not be computed or created.
@@ -208,6 +210,7 @@ public abstract class Plugin implements BundleActivator {
 	public final URL find(IPath path) {
 		return FindSupport.find(bundle, path, null);
 	}
+
 	/**
 	 * Returns a URL for the given path.  Returns <code>null</code> if the URL
 	 * could not be computed or created.
@@ -224,6 +227,7 @@ public abstract class Plugin implements BundleActivator {
 	public final URL find(IPath path, Map override) {
 		return FindSupport.find(bundle, path, override);
 	}
+
 	/**
 	 * Returns the plug-in descriptor for this plug-in runtime object.
 	 * <p>
@@ -241,13 +245,14 @@ public abstract class Plugin implements BundleActivator {
 	 */
 	// TODO throw IllegalStateException if compatibility is not around.
 	public final IPluginDescriptor getDescriptor() {
-		if (descriptor!=null)
+		if (descriptor != null)
 			return descriptor;
 		descriptor = CompatibilityHelper.getPluginDescriptor(bundle.getSymbolicName());
 		if (descriptor != null)
 			CompatibilityHelper.setPlugin(descriptor, this);
 		return descriptor;
 	}
+
 	/**
 	 * Returns the log for this plug-in.  If no such log exists, one is created.
 	 *
@@ -256,6 +261,7 @@ public abstract class Plugin implements BundleActivator {
 	public final ILog getLog() {
 		return InternalPlatform.getDefault().getLog(bundle);
 	}
+
 	/**
 	 * Returns the location in the local file system of the 
 	 * plug-in state area for this plug-in.
@@ -273,7 +279,7 @@ public abstract class Plugin implements BundleActivator {
 	 * @return a local file system path
 	 */
 	public final IPath getStateLocation() throws IllegalStateException {
-		return InternalPlatform.getDefault().getStateLocation(bundle,true);
+		return InternalPlatform.getDefault().getStateLocation(bundle, true);
 	}
 
 	/**
@@ -477,6 +483,7 @@ public abstract class Plugin implements BundleActivator {
 	public boolean isDebugging() {
 		return debug;
 	}
+
 	/**
 	 * Returns an input stream for the specified file. The file path
 	 * must be specified relative this the plug-in's installation location.
@@ -488,6 +495,7 @@ public abstract class Plugin implements BundleActivator {
 	public final InputStream openStream(IPath file) throws IOException {
 		return FindSupport.openStream(bundle, file, false);
 	}
+
 	/**
 	 * Returns an input stream for the specified file. The file path
 	 * must be specified relative to this plug-in's installation location.
@@ -508,6 +516,7 @@ public abstract class Plugin implements BundleActivator {
 	public final InputStream openStream(IPath file, boolean localized) throws IOException {
 		return FindSupport.openStream(bundle, file, localized);
 	}
+
 	/**
 	 * Sets whether this plug-in is in debug mode.
 	 * By default plug-ins are not in debug mode.  A plug-in can put itself
@@ -518,6 +527,7 @@ public abstract class Plugin implements BundleActivator {
 	public void setDebugging(boolean value) {
 		debug = value;
 	}
+
 	/**
 	 * Shuts down this plug-in and discards all plug-in state.
 	 * <p>
@@ -622,6 +632,7 @@ public abstract class Plugin implements BundleActivator {
 	 */
 	public void startup() throws CoreException {
 	}
+
 	/**
 	 * Returns a string representation of the plug-in, suitable 
 	 * for debugging purposes only.
@@ -629,7 +640,7 @@ public abstract class Plugin implements BundleActivator {
 	public String toString() {
 		return descriptor.toString();
 	}
-	
+
 	/**
 	 * Starts up this plug-in.
 	 * <p>
@@ -713,7 +724,7 @@ public abstract class Plugin implements BundleActivator {
 	 */
 	public void stop(BundleContext context) throws Exception {
 	}
-	
+
 	/**
 	 * Returns the bundle associated with this plug-in.
 	 * 

@@ -61,6 +61,7 @@ public class Status implements IStatus {
 	/** Constant to avoid generating garbage.
 	 */
 	private static final IStatus[] theEmptyStatusArray = new IStatus[0];
+
 	/**
 	 * Creates a new status object.  The created status has no children.
 	 *
@@ -80,60 +81,70 @@ public class Status implements IStatus {
 		setMessage(message);
 		setException(exception);
 	}
+
 	/* (Intentionally not javadoc'd)
 	 * Implements the corresponding method on <code>IStatus</code>.
 	 */
 	public IStatus[] getChildren() {
 		return theEmptyStatusArray;
 	}
+
 	/* (Intentionally not javadoc'd)
 	 * Implements the corresponding method on <code>IStatus</code>.
 	 */
 	public int getCode() {
 		return code;
 	}
+
 	/* (Intentionally not javadoc'd)
 	 * Implements the corresponding method on <code>IStatus</code>.
 	 */
 	public Throwable getException() {
 		return exception;
 	}
+
 	/* (Intentionally not javadoc'd)
 	 * Implements the corresponding method on <code>IStatus</code>.
 	 */
 	public String getMessage() {
 		return message;
 	}
+
 	/* (Intentionally not javadoc'd)
 	 * Implements the corresponding method on <code>IStatus</code>.
 	 */
 	public String getPlugin() {
 		return pluginId;
 	}
+
 	/* (Intentionally not javadoc'd)
 	 * Implements the corresponding method on <code>IStatus</code>.
 	 */
 	public int getSeverity() {
 		return severity;
 	}
+
 	/* (Intentionally not javadoc'd)
 	 * Implements the corresponding method on <code>IStatus</code>.
 	 */
 	public boolean isMultiStatus() {
 		return false;
 	}
+
 	/* (Intentionally not javadoc'd)
 	 * Implements the corresponding method on <code>IStatus</code>.
 	 */
 	public boolean isOK() {
 		return severity == OK;
 	}
+
 	/* (Intentionally not javadoc'd)
 	 * Implements the corresponding method on <code>IStatus</code>.
 	 */
 	public boolean matches(int severityMask) {
 		return (severity & severityMask) != 0;
 	}
+
 	/**
 	 * Sets the status code.
 	 *
@@ -142,6 +153,7 @@ public class Status implements IStatus {
 	protected void setCode(int code) {
 		this.code = code;
 	}
+
 	/**
 	 * Sets the exception.
 	 *
@@ -151,6 +163,7 @@ public class Status implements IStatus {
 	protected void setException(Throwable exception) {
 		this.exception = exception;
 	}
+
 	/**
 	 * Sets the message.
 	 *
@@ -161,6 +174,7 @@ public class Status implements IStatus {
 		Assert.isLegal(message != null);
 		this.message = message;
 	}
+
 	/**
 	 * Sets the plug-in id.
 	 *
@@ -170,6 +184,7 @@ public class Status implements IStatus {
 		Assert.isLegal(pluginId != null && pluginId.length() > 0);
 		this.pluginId = pluginId;
 	}
+
 	/**
 	 * Sets the severity.
 	 *
@@ -180,6 +195,7 @@ public class Status implements IStatus {
 		Assert.isLegal(severity == OK || severity == ERROR || severity == WARNING || severity == INFO || severity == CANCEL);
 		this.severity = severity;
 	}
+
 	/**
 	 * Returns a string representation of the status, suitable 
 	 * for debugging purposes only.

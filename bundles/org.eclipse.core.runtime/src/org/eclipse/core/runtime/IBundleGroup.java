@@ -52,18 +52,19 @@ public interface IBundleGroup {
 	 * @return the string form of this bundle group's version
 	 */
 	public String getVersion();
+
 	/**
 	 * Returns a text description of this bundle group.
 	 * @return text description of this bundle group
 	 */
 	public String getDescription();
-	
+
 	/**
 	 * Returns the name of the provider of this bundle group.
 	 * @return the name of the provider or <code>null</code> if none
 	 */
 	public String getProviderName();
-	
+
 	/**
 	 * Returns a list of all bundles supplied by this bundle group.  
 	 * @return the bundles supplied by this bundle group

@@ -21,6 +21,7 @@ public final class OperationCanceledException extends RuntimeException {
 	public OperationCanceledException() {
 		super();
 	}
+
 	/**
 	 * Creates a new exception with the given message.
 	 * 

@@ -12,11 +12,13 @@ package org.eclipse.core.internal.registry;
 
 import java.io.PrintWriter;
 import org.eclipse.core.runtime.*;
+
 // TODO dead code? Does not seem to be used.
 public class RegistryWriter {
 	public RegistryWriter() {
 		super();
 	}
+
 	public void writeConfigurationElement(ConfigurationElement configElement, PrintWriter w, int indent) {
 		String element = configElement.getName();
 		if (element == null)
@@ -50,6 +52,7 @@ public class RegistryWriter {
 
 		w.println(gap1 + "</" + element + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
+
 	public void writeConfigurationProperty(ConfigurationProperty configProp, PrintWriter w, int indent) {
 		if (configProp.getName() == null)
 			return;
@@ -58,6 +61,7 @@ public class RegistryWriter {
 			w.print(xmlSafe(configProp.getValue()));
 		w.print("\""); //$NON-NLS-1$
 	}
+
 	public void writeExtension(Extension extension, PrintWriter w, int indent) {
 		String gap1 = ""; //$NON-NLS-1$
 		for (int i = 0; i < indent; i++)
@@ -83,6 +87,7 @@ public class RegistryWriter {
 
 		w.println(gap1 + "</" + IModel.EXTENSION + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
+
 	public void writeExtensionPoint(ExtensionPoint extPt, PrintWriter w, int indent) {
 		String gap1 = ""; //$NON-NLS-1$
 		for (int i = 0; i < indent; i++)
@@ -95,6 +100,7 @@ public class RegistryWriter {
 			w.print(" " + IModel.EXTENSION_POINT_NAME + "=\"" + xmlSafe(extPt.getName()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		w.println("/>"); //$NON-NLS-1$
 	}
+
 	public void writeBundleModel(BundleModel plugin, PrintWriter w, int indent) {
 
 		String gap1 = ""; //$NON-NLS-1$
@@ -134,6 +140,7 @@ public class RegistryWriter {
 		// entities separate from plugins.
 		w.println(gap1 + "</" + IModel.PLUGIN + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
+
 	public void writeRegistry(ExtensionRegistry registry, PrintWriter w, int indent) {
 		String gap1 = ""; //$NON-NLS-1$
 		for (int i = 0; i < indent; i++)
@@ -163,12 +170,14 @@ public class RegistryWriter {
 			}
 		}
 	}
+
 	public static String xmlSafe(String s) {
 		StringBuffer result = new StringBuffer(s.length() + 10);
 		for (int i = 0; i < s.length(); ++i)
 			appendEscapedChar(result, s.charAt(i));
 		return result.toString();
 	}
+
 	private static String getReplacement(char c) {
 		// Encode special XML characters into the equivalent character references.
 		// These five are defined by default for all XML documents.

@@ -8,9 +8,11 @@
  * IBM - Initial API and implementation
  **********************************************************************/
 package org.eclipse.core.internal.runtime;
+
 import java.util.ArrayList;
 import org.eclipse.core.runtime.*;
 import org.osgi.framework.Bundle;
+
 /**
  * Instances of this class represent adapter factories that have been
  * contributed via the adapters extension point. The concrete factory is not
@@ -24,6 +26,7 @@ class AdapterFactoryProxy implements IAdapterFactory {
 	 */
 	private IAdapterFactory factory;
 	private boolean factoryLoaded = false;
+
 	/**
 	 * Creates a new factory proxy based on the given configuration element.
 	 * Returns the new proxy, or null if the element could not be created.
@@ -36,6 +39,7 @@ class AdapterFactoryProxy implements IAdapterFactory {
 		result.logError();
 		return null;
 	}
+
 	String getAdaptableType() {
 		//cannot return null because it can cause startup failure
 		String result = element.getAttribute("adaptableType"); //$NON-NLS-1$
@@ -44,16 +48,19 @@ class AdapterFactoryProxy implements IAdapterFactory {
 		logError();
 		return ""; //$NON-NLS-1$
 	}
+
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		if (!factoryLoaded)
 			loadFactory(false);
 		return factory == null ? null : factory.getAdapter(adaptableObject, adapterType);
 	}
+
 	public Class[] getAdapterList() {
 		if (!factoryLoaded)
 			loadFactory(false);
 		return factory == null ? null : factory.getAdapterList();
 	}
+
 	String[] getAdapterNames() {
 		IConfigurationElement[] children = element.getChildren();
 		ArrayList adapters = new ArrayList(children.length);
@@ -69,9 +76,11 @@ class AdapterFactoryProxy implements IAdapterFactory {
 			logError();
 		return (String[]) adapters.toArray(new String[adapters.size()]);
 	}
+
 	IExtension getExtension() {
 		return element.getDeclaringExtension();
 	}
+
 	/**
 	 * Loads the real adapter factory, but only if its associated plug-in is
 	 * already loaded. Returns the real factory if it was successfully loaded.
@@ -94,6 +103,7 @@ class AdapterFactoryProxy implements IAdapterFactory {
 		}
 		return factory;
 	}
+
 	/**
 	 * The factory extension was malformed. Log an appropriate exception
 	 */

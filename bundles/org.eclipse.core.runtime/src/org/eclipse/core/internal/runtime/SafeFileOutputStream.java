@@ -11,6 +11,7 @@
 package org.eclipse.core.internal.runtime;
 
 import java.io.*;
+
 /**
  * This class should be used when there's a file already in the
  * destination and we don't want to lose its contents if a
@@ -27,12 +28,15 @@ public class SafeFileOutputStream extends OutputStream {
 	protected OutputStream output;
 	protected boolean failed;
 	protected static final String EXTENSION = ".bak"; //$NON-NLS-1$
+
 	public SafeFileOutputStream(File file) throws IOException {
 		this(file.getAbsolutePath(), null);
 	}
+
 	public SafeFileOutputStream(String targetName) throws IOException {
 		this(targetName, null);
 	}
+
 	/**
 	 * If targetPath is null, the file will be created in the default-temporary directory.
 	 */
@@ -50,6 +54,7 @@ public class SafeFileOutputStream extends OutputStream {
 		copy(temp, target);
 		output = new BufferedOutputStream(new FileOutputStream(temp));
 	}
+
 	public void close() throws IOException {
 		try {
 			output.close();
@@ -62,6 +67,7 @@ public class SafeFileOutputStream extends OutputStream {
 		else
 			commit();
 	}
+
 	protected void commit() throws IOException {
 		if (!temp.exists())
 			return;
@@ -69,6 +75,7 @@ public class SafeFileOutputStream extends OutputStream {
 		copy(temp, target);
 		temp.delete();
 	}
+
 	protected void copy(File sourceFile, File destinationFile) throws IOException {
 		if (!sourceFile.exists())
 			return;
@@ -78,11 +85,13 @@ public class SafeFileOutputStream extends OutputStream {
 		OutputStream destination = new BufferedOutputStream(new FileOutputStream(destinationFile));
 		transferStreams(source, destination);
 	}
+
 	protected void createTempFile(String tempPath) throws IOException {
 		if (tempPath == null)
 			tempPath = target.getAbsolutePath() + EXTENSION;
 		temp = new File(tempPath);
 	}
+
 	public void flush() throws IOException {
 		try {
 			output.flush();
@@ -91,9 +100,11 @@ public class SafeFileOutputStream extends OutputStream {
 			throw e; // rethrow
 		}
 	}
+
 	public String getTempFilePath() {
 		return temp.getAbsolutePath();
 	}
+
 	protected void transferStreams(InputStream source, OutputStream destination) throws IOException {
 		try {
 			byte[] buffer = new byte[8192];
@@ -114,6 +125,7 @@ public class SafeFileOutputStream extends OutputStream {
 			}
 		}
 	}
+
 	public void write(int b) throws IOException {
 		try {
 			output.write(b);

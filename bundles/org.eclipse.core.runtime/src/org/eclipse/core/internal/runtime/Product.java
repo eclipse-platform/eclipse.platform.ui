@@ -25,7 +25,7 @@ public class Product implements IProduct {
 	String id = null;
 	String description = null;
 	Dictionary properties;
-	
+
 	public Product(IConfigurationElement element) {
 		if (element == null)
 			return;
@@ -35,20 +35,17 @@ public class Product implements IProduct {
 		description = element.getAttribute(ATTR_DESCRIPTION);
 		loadProperties(element);
 	}
-	
+
 	private void loadProperties(IConfigurationElement element) {
 		String[] attributes = element.getAttributeNames();
 		properties = new Hashtable(attributes.length);
 		for (int i = 0; i < attributes.length; i++) {
-			if (attributes[i].equalsIgnoreCase(ATTR_DESCRIPTION) ||
-				attributes[i].equalsIgnoreCase(ATTR_ID) ||
-				attributes[i].equalsIgnoreCase(ATTR_NAME) ||
-				attributes[i].equalsIgnoreCase(ATTR_APPLICATION))
+			if (attributes[i].equalsIgnoreCase(ATTR_DESCRIPTION) || attributes[i].equalsIgnoreCase(ATTR_ID) || attributes[i].equalsIgnoreCase(ATTR_NAME) || attributes[i].equalsIgnoreCase(ATTR_APPLICATION))
 				continue;
 			properties.put(attributes[i], element.getAttribute(attributes[i]));
 		}
 	}
-	
+
 	public String getApplication() {
 		return application;
 	}
@@ -64,7 +61,8 @@ public class Product implements IProduct {
 	public String getId() {
 		return id;
 	}
+
 	public String getProperty(String key) {
-		return (String)properties.get(key);
+		return (String) properties.get(key);
 	}
 }

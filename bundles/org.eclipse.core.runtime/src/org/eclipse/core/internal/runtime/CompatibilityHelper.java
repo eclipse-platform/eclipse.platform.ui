@@ -23,12 +23,13 @@ public class CompatibilityHelper {
 			return;
 
 		try {
-			Method setPlugin = descriptor.getClass().getMethod("setPlugin", new Class[] { Plugin.class }); //$NON-NLS-1$
-			setPlugin.invoke(descriptor, new Object[] { plugin });
+			Method setPlugin = descriptor.getClass().getMethod("setPlugin", new Class[] {Plugin.class}); //$NON-NLS-1$
+			setPlugin.invoke(descriptor, new Object[] {plugin});
 		} catch (Exception e) {
 			//Ignore the exceptions, return false
 		}
 	}
+
 	public static IPluginDescriptor getPluginDescriptor(String pluginId) {
 		//Here we use reflection so the runtime code can run without the compatibility
 		Bundle compatibility = org.eclipse.core.internal.runtime.InternalPlatform.getDefault().getBundle(IPlatform.PI_RUNTIME_COMPATIBILITY);
@@ -38,14 +39,14 @@ public class CompatibilityHelper {
 		Class oldInternalPlatform = null;
 		try {
 			oldInternalPlatform = compatibility.loadClass("org.eclipse.core.internal.plugins.InternalPlatform"); //$NON-NLS-1$
-			Method getPluginDescriptor = oldInternalPlatform.getMethod("getPluginDescriptor", new Class[] { String.class }); //$NON-NLS-1$
-			return (IPluginDescriptor) getPluginDescriptor.invoke(oldInternalPlatform, new Object[] { pluginId });
+			Method getPluginDescriptor = oldInternalPlatform.getMethod("getPluginDescriptor", new Class[] {String.class}); //$NON-NLS-1$
+			return (IPluginDescriptor) getPluginDescriptor.invoke(oldInternalPlatform, new Object[] {pluginId});
 		} catch (Exception e) {
 			//Ignore the exceptions, return false
 		}
 		return null;
 	}
-	
+
 	public static void setActive(IPluginDescriptor descriptor) {
 		Bundle compatibility = org.eclipse.core.internal.runtime.InternalPlatform.getDefault().getBundle(IPlatform.PI_RUNTIME_COMPATIBILITY);
 		if (compatibility == null)

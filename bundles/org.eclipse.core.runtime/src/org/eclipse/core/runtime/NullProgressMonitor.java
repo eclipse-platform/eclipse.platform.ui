@@ -24,12 +24,14 @@ public class NullProgressMonitor implements IProgressMonitor {
 	 * Indicates whether cancel has been requested.
 	 */
 	private boolean cancelled = false;
+
 	/**
 	 * Constructs a new progress monitor.
 	 */
 	public NullProgressMonitor() {
 		super();
 	}
+
 	/**
 	 * This implementation does nothing. 
 	 * Subclasses may override this method to do interesting
@@ -40,6 +42,7 @@ public class NullProgressMonitor implements IProgressMonitor {
 	public void beginTask(String name, int totalWork) {
 		// do nothing
 	}
+
 	/**
 	 * This implementation does nothing.
 	 * Subclasses may override this method to do interesting
@@ -50,6 +53,7 @@ public class NullProgressMonitor implements IProgressMonitor {
 	public void done() {
 		// do nothing
 	}
+
 	/**
 	 * This implementation does nothing.
 	 * Subclasses may override this method.
@@ -59,6 +63,7 @@ public class NullProgressMonitor implements IProgressMonitor {
 	public void internalWorked(double work) {
 		// do nothing
 	}
+
 	/**
 	 * This implementation returns the value of the internal 
 	 * state variable set by <code>setCanceled</code>.
@@ -71,6 +76,7 @@ public class NullProgressMonitor implements IProgressMonitor {
 	public boolean isCanceled() {
 		return cancelled;
 	}
+
 	/**
 	 * This implementation sets the value of an internal state variable.
 	 * Subclasses which override this method should override 
@@ -82,6 +88,7 @@ public class NullProgressMonitor implements IProgressMonitor {
 	public void setCanceled(boolean cancelled) {
 		this.cancelled = cancelled;
 	}
+
 	/**
 	 * This implementation does nothing.
 	 * Subclasses may override this method to do something
@@ -92,6 +99,7 @@ public class NullProgressMonitor implements IProgressMonitor {
 	public void setTaskName(String name) {
 		// do nothing
 	}
+
 	/**
 	 * This implementation does nothing.
 	 * Subclasses may override this method to do interesting
@@ -102,6 +110,7 @@ public class NullProgressMonitor implements IProgressMonitor {
 	public void subTask(String name) {
 		// do nothing
 	}
+
 	/**
 	 * This implementation does nothing.
 	 * Subclasses may override this method to do interesting

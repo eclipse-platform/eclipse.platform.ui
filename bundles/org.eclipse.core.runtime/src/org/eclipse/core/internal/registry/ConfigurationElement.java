@@ -147,7 +147,7 @@ public class ConfigurationElement extends RegistryModelObject implements IConfig
 		if (result instanceof IExecutableExtension) {
 			try {
 				// make the call even if the initialization string is null
-				 ((IExecutableExtension) result).setInitializationData(cfig, propertyName, initData);
+				((IExecutableExtension) result).setInitializationData(cfig, propertyName, initData);
 			} catch (CoreException ce) {
 				// user code threw exception
 				InternalPlatform.getDefault().getLog(InternalPlatform.getDefault().getBundleContext().getBundle()).log(ce.getStatus());
@@ -157,7 +157,7 @@ public class ConfigurationElement extends RegistryModelObject implements IConfig
 				throwException(Policy.bind("policy.initObjectError", bundle.getSymbolicName(), className), te); //$NON-NLS-1$
 			}
 		}
- 		return result;
+		return result;
 	}
 
 	private void throwException(String message, Throwable exception) throws CoreException {
@@ -180,9 +180,11 @@ public class ConfigurationElement extends RegistryModelObject implements IConfig
 			p = ((ConfigurationElement) p).getParent();
 		return (Extension) p;
 	}
+
 	public IExtension getDeclaringExtension() {
 		return (IExtension) getParentExtension();
 	}
+
 	/**
 	 * Returns the properties associated with this element.
 	 *
@@ -192,6 +194,7 @@ public class ConfigurationElement extends RegistryModelObject implements IConfig
 	public ConfigurationProperty[] getProperties() {
 		return properties;
 	}
+
 	/**
 	 * Returns the value of this element.
 	 * 
@@ -207,6 +210,7 @@ public class ConfigurationElement extends RegistryModelObject implements IConfig
 			setLocalizedValue(localized);
 		return localized;
 	}
+
 	public String getValueAsIs() {
 		return value;
 	}
@@ -219,6 +223,7 @@ public class ConfigurationElement extends RegistryModelObject implements IConfig
 	public IConfigurationElement[] getChildren() {
 		return children == null ? new IConfigurationElement[0] : children;
 	}
+
 	public IConfigurationElement[] getChildren(String name) {
 		IConfigurationElement[] list = getChildren();
 		if (list == null)
@@ -253,6 +258,7 @@ public class ConfigurationElement extends RegistryModelObject implements IConfig
 			found.setLocalizedValue(localized);
 		return localized;
 	}
+
 	public String getAttributeAsIs(String name) {
 		ConfigurationProperty[] list = getProperties();
 		if (list == null)
@@ -262,6 +268,7 @@ public class ConfigurationElement extends RegistryModelObject implements IConfig
 				return list[i].getValue();
 		return null;
 	}
+
 	public String[] getAttributeNames() {
 		ConfigurationProperty[] list = getProperties();
 		if (list == null)
@@ -271,6 +278,7 @@ public class ConfigurationElement extends RegistryModelObject implements IConfig
 			result[i] = list[i].getName();
 		return result;
 	}
+
 	/**
 	 * Sets this model object and all of its descendents to be read-only.
 	 * Subclasses may extend this implementation.
@@ -281,11 +289,12 @@ public class ConfigurationElement extends RegistryModelObject implements IConfig
 		super.markReadOnly();
 		if (children != null)
 			for (int i = 0; i < children.length; i++)
-				 ((ConfigurationElement) children[i]).markReadOnly();
+				((ConfigurationElement) children[i]).markReadOnly();
 		if (properties != null)
 			for (int i = 0; i < properties.length; i++)
 				properties[i].markReadOnly();
 	}
+
 	/**
 	 * Sets the properties associated with this element.  This object must not be read-only.
 	 *
@@ -295,6 +304,7 @@ public class ConfigurationElement extends RegistryModelObject implements IConfig
 		assertIsWriteable();
 		properties = value;
 	}
+
 	/**
 	 * Sets configuration elements contained by this element
 	 * This object must not be read-only.
@@ -306,6 +316,7 @@ public class ConfigurationElement extends RegistryModelObject implements IConfig
 		assertIsWriteable();
 		children = value;
 	}
+
 	/**
 	 * Sets the value of this element.  This object must not be read-only.
 	 * 
@@ -315,6 +326,7 @@ public class ConfigurationElement extends RegistryModelObject implements IConfig
 		assertIsWriteable();
 		this.value = value;
 	}
+
 	/**
 	 * Optimization to replace a non-localized key with its localized value.  Avoids having
 	 * to access resource bundles for further lookups.

@@ -53,6 +53,7 @@ public class Extension extends RegistryModelObject implements IExtension {
 	public String getExtensionPointIdentifier() {
 		return extensionPoint;
 	}
+
 	/**
 	 * Returns the simple identifier of this extension, or <code>null</code>
 	 * if this extension does not have an identifier.
@@ -66,16 +67,20 @@ public class Extension extends RegistryModelObject implements IExtension {
 	public String getSimpleIdentifier() {
 		return id;
 	}
+
 	public String getUniqueIdentifier() {
 		return id == null ? null : this.getParentIdentifier() + "." + id; //$NON-NLS-1$
 	}
+
 	public String getParentIdentifier() {
 		return getNamespace();
 	}
+
 	public String getNamespace() {
 		BundleModel parent = (BundleModel) this.getParent();
 		return parent.isFragment() ? parent.getHostIdentifier() : parent.getName();
 	}
+
 	public IConfigurationElement[] getConfigurationElements() {
 		// synchronization is needed to avoid two threads trying to load the same 
 		// extension at the same time (see bug 36659) 
@@ -86,9 +91,9 @@ public class Extension extends RegistryModelObject implements IExtension {
 				RegistryCacheReader reader = ((ExtensionRegistry) getRegistry()).getCacheReader();
 				if (reader != null)
 					elements = reader.loadConfigurationElements(this, subElementsCacheOffset);
-			} 
+			}
 			if (elements == null)
-				elements = new  IConfigurationElement[0];
+				elements = new IConfigurationElement[0];
 		}
 		return elements;
 	}
@@ -103,8 +108,9 @@ public class Extension extends RegistryModelObject implements IExtension {
 		super.markReadOnly();
 		if (elements != null)
 			for (int i = 0; i < elements.length; i++)
-				 ((ConfigurationElement) elements[i]).markReadOnly();
+				((ConfigurationElement) elements[i]).markReadOnly();
 	}
+
 	/**
 	 * Set the extension point with which this extension is associated.
 	 * This object must not be read-only.
@@ -116,6 +122,7 @@ public class Extension extends RegistryModelObject implements IExtension {
 		assertIsWriteable();
 		extensionPoint = value;
 	}
+
 	/**
 	 * Sets the simple identifier of this extension, or <code>null</code>
 	 * if this extension does not have an identifier.
@@ -131,6 +138,7 @@ public class Extension extends RegistryModelObject implements IExtension {
 		assertIsWriteable();
 		id = value;
 	}
+
 	/**
 	 * Sets the configuration element children of this extension.
 	 * This object must not be read-only.
@@ -142,6 +150,7 @@ public class Extension extends RegistryModelObject implements IExtension {
 		assertIsWriteable();
 		elements = value;
 	}
+
 	public String getLabel() {
 		String s = getName();
 		if (s == null)
@@ -151,6 +160,7 @@ public class Extension extends RegistryModelObject implements IExtension {
 			setLocalizedName(localized);
 		return localized;
 	}
+
 	public String toString() {
 		return getUniqueIdentifier() + " -> " + getExtensionPointIdentifier(); //$NON-NLS-1$
 	}
@@ -158,18 +168,23 @@ public class Extension extends RegistryModelObject implements IExtension {
 	void setSubElementsCacheOffset(int value) {
 		subElementsCacheOffset = value;
 	}
+
 	public boolean isFullyLoaded() {
 		return fullyLoaded;
 	}
+
 	public void setFullyLoaded(boolean value) {
 		fullyLoaded = value;
 	}
+
 	public IPluginDescriptor getDeclaringPluginDescriptor() {
 		return CompatibilityHelper.getPluginDescriptor(((BundleModel) getParent()).getName());
 	}
+
 	public String getExtensionPointUniqueIdentifier() {
 		return getExtensionPointIdentifier();
 	}
+
 	/**
 	 * Optimization to replace a non-localized key with its localized value.  Avoids having
 	 * to access resource bundles for further lookups.

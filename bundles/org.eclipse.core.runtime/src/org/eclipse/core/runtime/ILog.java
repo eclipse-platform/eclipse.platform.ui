@@ -30,6 +30,7 @@ public interface ILog {
 	 * @see Platform#addLogListener(ILogListener)
 	 */
 	public void addLogListener(ILogListener listener);
+
 	/**
 	 * Returns the plug-in with which this log is associated.
 	 * <p>
@@ -44,6 +45,7 @@ public interface ILog {
 	 * @since 3.0
 	 */
 	public Bundle getBundle();
+
 	/**
 	 * Logs the given status.  The status is distributed to the log listeners
 	 * installed on this log and then to the log listeners installed on the platform.
@@ -51,6 +53,7 @@ public interface ILog {
 	 * @param status the status to log
 	 */
 	public void log(IStatus status);
+
 	/**
 	 * Removes the given log listener to this log.  Subsequently the log listener will
 	 * no longer receive notification of log events passing through this log.  

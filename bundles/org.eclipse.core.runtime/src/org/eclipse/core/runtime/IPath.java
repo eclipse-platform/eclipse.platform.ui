@@ -46,6 +46,7 @@ public interface IPath extends Cloneable {
 	 * Device separator character constant ":" used in paths.
 	 */
 	public static final char DEVICE_SEPARATOR = ':';
+
 	/**
 	 * Returns a new path which is the same as this path but with
 	 * the given file extension added.  If this path is empty, root or has a 
@@ -64,6 +65,7 @@ public interface IPath extends Cloneable {
 	 * @return the new path
 	 */
 	public IPath addFileExtension(String extension);
+
 	/**
 	 * Returns a path with the same segments as this path
 	 * but with a trailing separator added.
@@ -78,6 +80,7 @@ public interface IPath extends Cloneable {
 	 * @see #removeTrailingSeparator()
 	 */
 	public IPath addTrailingSeparator();
+
 	/**
 	 * Returns the canonicalized path obtained from the
 	 * concatenation of the given string path to the
@@ -94,6 +97,7 @@ public interface IPath extends Cloneable {
 	 * @see #isValidPath(String)
 	 */
 	public IPath append(String path);
+
 	/**
 	 * Returns the canonicalized path obtained from the 
 	 * concatenation of the given path's segments to the
@@ -108,12 +112,14 @@ public interface IPath extends Cloneable {
 	 * @return the new path
 	 */
 	public IPath append(IPath path);
+
 	/**
 	 * Returns a copy of this path.
 	 *
 	 * @return the cloned path
 	 */
 	public Object clone();
+
 	/**
 	 * Returns whether this path equals the given object.
 	 * <p>
@@ -128,6 +134,7 @@ public interface IPath extends Cloneable {
 	 *    and <code>false</code> if they are not
 	 */
 	public boolean equals(Object obj);
+
 	/**
 	 * Returns the device id for this path, or <code>null</code> if this
 	 * path has no device id. Note that the result will end in ':'.
@@ -136,6 +143,7 @@ public interface IPath extends Cloneable {
 	 * @see #setDevice(String)
 	 */
 	public String getDevice();
+
 	/**
 	 * Returns the file extension portion of this path, 
 	 * or <code>null</code> if there is none.
@@ -150,6 +158,7 @@ public interface IPath extends Cloneable {
 	 * @return the file extension or <code>null</code>
 	 */
 	public String getFileExtension();
+
 	/**
 	 * Returns whether this path has a trailing separator.
 	 * <p>
@@ -163,6 +172,7 @@ public interface IPath extends Cloneable {
 	 * @see #removeTrailingSeparator()
 	 */
 	public boolean hasTrailingSeparator();
+
 	/**
 	 * Returns whether this path is an absolute path (ignoring
 	 * any device id).
@@ -176,6 +186,7 @@ public interface IPath extends Cloneable {
 	 *    and <code>false</code> otherwise
 	 */
 	public boolean isAbsolute();
+
 	/**
 	 * Returns whether this path has no segments and is not
 	 * a root path.
@@ -184,6 +195,7 @@ public interface IPath extends Cloneable {
 	 *    and <code>false</code> otherwise
 	 */
 	public boolean isEmpty();
+
 	/**
 	 * Returns whether this path is a prefix of the given path.
 	 * To be a prefix, this path's segments must
@@ -198,6 +210,7 @@ public interface IPath extends Cloneable {
 	 *    and <code>false</code> otherwise
 	 */
 	public boolean isPrefixOf(IPath anotherPath);
+
 	/**
 	 * Returns whether this path is a root path.
 	 * <p>
@@ -210,6 +223,7 @@ public interface IPath extends Cloneable {
 	 *    and <code>false</code> otherwise
 	 */
 	public boolean isRoot();
+
 	/**
 	 * Returns a boolean value indicating whether or not this path
 	 * is considered to be in UNC form. Return false if this path
@@ -219,6 +233,7 @@ public interface IPath extends Cloneable {
 	 * @return boolean indicating if this path is UNC
 	 */
 	public boolean isUNC();
+
 	/**
 	 * Returns whether the given string is syntactically correct as
 	 * a path.  The device id is the prefix up to and including the first ":";
@@ -233,6 +248,7 @@ public interface IPath extends Cloneable {
 	 * @see #isValidSegment(String)
 	 */
 	public boolean isValidPath(String path);
+
 	/**
 	 * Returns whether the given string is valid as a segment in 
 	 * a path. The rules for valid segments are as follows:
@@ -251,6 +267,7 @@ public interface IPath extends Cloneable {
 	 * @see java.lang.Character#isWhitespace(char)
 	 */
 	public boolean isValidSegment(String segment);
+
 	/**
 	 * Returns the last segment of this path, or
 	 * <code>null</code> if it does not have any segments.
@@ -258,6 +275,7 @@ public interface IPath extends Cloneable {
 	 * @return the last segment of this path, or <code>null</code> 
 	 */
 	public String lastSegment();
+
 	/**
 	 * Returns an absolute path with the segments and device id of this path.
 	 * Absolute paths start with a path separator. If this path is absolute, 
@@ -266,6 +284,7 @@ public interface IPath extends Cloneable {
 	 * @return the new path
 	 */
 	public IPath makeAbsolute();
+
 	/**
 	 * Returns a relative path with the segments and device id of this path.
 	 * Absolute paths start with a path separator and relative paths do not. 
@@ -274,6 +293,7 @@ public interface IPath extends Cloneable {
 	 * @return the new path
 	 */
 	public IPath makeRelative();
+
 	/**
 	 * Return a new path which is the equivalent of this path converted to UNC
 	 * form (if the given boolean is true) or this path not as a UNC path (if the given
@@ -285,6 +305,7 @@ public interface IPath extends Cloneable {
 	 * @return the new path, either in UNC form or not depending on the boolean parm
 	 */
 	public IPath makeUNC(boolean toUNC);
+
 	/**
 	 * Returns a count of the number of segments which match in
 	 * this path and the given path (device ids are ignored),
@@ -294,6 +315,7 @@ public interface IPath extends Cloneable {
 	 * @return the number of matching segments
 	 */
 	public int matchingFirstSegments(IPath anotherPath);
+
 	/**
 	 * Returns a new path which is the same as this path but with
 	 * the file extension removed.  If this path does not have an 
@@ -309,6 +331,7 @@ public interface IPath extends Cloneable {
 	 * @return the new path
 	 */
 	public IPath removeFileExtension();
+
 	/**
 	 * Returns a copy of this path with the given number of segments
 	 * removed from the beginning. The device id is preserved. 
@@ -322,6 +345,7 @@ public interface IPath extends Cloneable {
 	 * @return the new path
 	 */
 	public IPath removeFirstSegments(int count);
+
 	/**
 	 * Returns a copy of this path with the given number of segments
 	 * removed from the end. The device id is preserved.
@@ -341,6 +365,7 @@ public interface IPath extends Cloneable {
 	 * @return the new path
 	 */
 	public IPath removeLastSegments(int count);
+
 	/**
 	 * Returns a path with the same segments as this path
 	 * but with a trailing separator removed.
@@ -356,6 +381,7 @@ public interface IPath extends Cloneable {
 	 * @see #hasTrailingSeparator()
 	 */
 	public IPath removeTrailingSeparator();
+
 	/**
 	 * Returns the specified segment of this path, or
 	 * <code>null</code> if the path does not have such a segment.
@@ -364,6 +390,7 @@ public interface IPath extends Cloneable {
 	 * @return the specified segment, or <code>null</code> 
 	 */
 	public String segment(int index);
+
 	/**
 	 * Returns the number of segments in this path.
 	 * <p> 
@@ -373,12 +400,14 @@ public interface IPath extends Cloneable {
 	 * @return the number of segments
 	 */
 	public int segmentCount();
+
 	/**
 	 * Returns the segments in this path in order.
 	 *
 	 * @return an array of string segments
 	 */
 	public String[] segments();
+
 	/**
 	 * Returns a new path which is the same as this path but with 
 	 * the given device id.  The device id must end with a ":".
@@ -392,12 +421,14 @@ public interface IPath extends Cloneable {
 	 * @see #getDevice()
 	 */
 	public IPath setDevice(String device);
+
 	/**
 	 * Returns a <code>java.io.File</code> corresponding to this path.
 	 *
 	 * @return the file corresponding to this path
 	 */
 	public java.io.File toFile();
+
 	/**
 	 * Returns a string representation of this path which uses the
 	 * platform-dependent path separator defined by <code>java.io.File</code>.
@@ -410,6 +441,7 @@ public interface IPath extends Cloneable {
 	 * @return a platform-dependent string representation of this path
 	 */
 	public String toOSString();
+
 	/**
 	 * Returns a string representation of this path, including its
 	 * device id.  The same separator, "/", is used on all platforms.
@@ -436,6 +468,7 @@ public interface IPath extends Cloneable {
 	 * @see Path
 	 */
 	public String toString();
+
 	/**
 	 * Returns a copy of this path truncated after the
 	 * given number of segments. The number must not be negative.

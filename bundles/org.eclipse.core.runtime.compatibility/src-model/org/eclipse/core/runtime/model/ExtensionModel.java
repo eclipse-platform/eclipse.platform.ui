@@ -30,12 +30,14 @@ public class ExtensionModel extends PluginModelObject {
 
 	// transient properties (not included in plug-in manifest)
 	private PluginModel plugin = null; // declaring plugin
+
 	/**
 	 * Creates a new extension model in which all fields are <code>null</code>.
 	 */
 	public ExtensionModel() {
 		super();
 	}
+
 	/**
 	 * Returns the extension point with which this extension is associated.
 	 * 
@@ -45,6 +47,7 @@ public class ExtensionModel extends PluginModelObject {
 	public String getExtensionPoint() {
 		return extensionPoint;
 	}
+
 	/**
 	 * Returns the simple identifier of this extension, or <code>null</code>
 	 * if this extension does not have an identifier. This identifier is
@@ -58,6 +61,7 @@ public class ExtensionModel extends PluginModelObject {
 	public String getId() {
 		return id;
 	}
+
 	/**
 	 * Returns the plug-in model (descriptor or fragment) in which this
 	 * extension is declared.
@@ -67,6 +71,7 @@ public class ExtensionModel extends PluginModelObject {
 	public PluginModel getParent() {
 		return plugin;
 	}
+
 	/**
 	 * Returns the plug-in descriptor in which this extension is declared.
 	 * 
@@ -76,6 +81,7 @@ public class ExtensionModel extends PluginModelObject {
 	public PluginDescriptorModel getParentPluginDescriptor() {
 		return (PluginDescriptorModel) plugin;
 	}
+
 	/**
 	 * Returns the configuration element children of this extension.
 	 * 
@@ -84,6 +90,7 @@ public class ExtensionModel extends PluginModelObject {
 	public ConfigurationElementModel[] getSubElements() {
 		return elements;
 	}
+
 	/**
 	 * Sets this model object and all of its descendents to be read-only.
 	 * Subclasses may extend this implementation.
@@ -96,6 +103,7 @@ public class ExtensionModel extends PluginModelObject {
 			for (int i = 0; i < elements.length; i++)
 				elements[i].markReadOnly();
 	}
+
 	/**
 	 * Set the extension point with which this extension is associated. This
 	 * object must not be read-only.
@@ -107,6 +115,7 @@ public class ExtensionModel extends PluginModelObject {
 		assertIsWriteable();
 		extensionPoint = value;
 	}
+
 	/**
 	 * Sets the simple identifier of this extension, or <code>null</code> if
 	 * this extension does not have an identifier. This identifier is specified
@@ -122,6 +131,7 @@ public class ExtensionModel extends PluginModelObject {
 		assertIsWriteable();
 		id = value;
 	}
+
 	/**
 	 * Sets the plug-in model in which this extension is declared. This object
 	 * must not be read-only.
@@ -134,6 +144,7 @@ public class ExtensionModel extends PluginModelObject {
 		assertIsWriteable();
 		plugin = value;
 	}
+
 	/**
 	 * Sets the plug-in descriptor in which this extension is declared. This
 	 * object must not be read-only.
@@ -146,6 +157,7 @@ public class ExtensionModel extends PluginModelObject {
 		assertIsWriteable();
 		plugin = value;
 	}
+
 	/**
 	 * Sets the configuration element children of this extension. This object
 	 * must not be read-only.

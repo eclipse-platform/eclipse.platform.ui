@@ -15,11 +15,17 @@ import org.eclipse.core.runtime.IExtensionPoint;
 
 //TODO: need to put back support for fragments - they are needed for OSGi
 public interface IRegistryElement {
-	public String getUniqueIdentifier();	
+	public String getUniqueIdentifier();
+
 	public IExtension[] getExtensions();
+
 	public IExtensionPoint getExtensionPoint(String xpt);
-	public IExtensionPoint[] getExtensionPoints();	
+
+	public IExtensionPoint[] getExtensionPoints();
+
 	public boolean isFragment();
+
 	public String getHostIdentifier();
+
 	public long getId();
 }

@@ -25,12 +25,15 @@ public class PlatformURLBaseConnection extends PlatformURLConnection {
 	public static final String PLATFORM_URL_STRING = PlatformURLHandler.PROTOCOL + PlatformURLHandler.PROTOCOL_SEPARATOR + "/" + PLATFORM + "/"; //$NON-NLS-1$ //$NON-NLS-2$
 
 	private static URL installURL;
+
 	public PlatformURLBaseConnection(URL url) {
 		super(url);
 	}
+
 	protected boolean allowCaching() {
 		return true;
 	}
+
 	protected URL resolve() throws IOException {
 		String spec = url.getFile().trim();
 		if (spec.startsWith("/")) //$NON-NLS-1$
@@ -41,6 +44,7 @@ public class PlatformURLBaseConnection extends PlatformURLConnection {
 		}
 		return spec.length() == PLATFORM.length() + 1 ? installURL : new URL(installURL, spec.substring(PLATFORM.length() + 1));
 	}
+
 	public static void startup(URL url) {
 		// register connection type for platform:/base/ handling
 		if (installURL != null)

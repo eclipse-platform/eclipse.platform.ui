@@ -33,19 +33,20 @@ public class PluginDescriptor implements IPluginDescriptor {
 	private boolean deactivated = false; // plugin deactivated due to startup errors
 	protected Plugin pluginObject = null; // plugin object
 	private Bundle bundleOsgi;
-	
+
 	private PluginClassLoader classLoader;
-	
+
 	// constants
 	static final String PLUGIN_URL = PlatformURLHandler.PROTOCOL + PlatformURLHandler.PROTOCOL_SEPARATOR + "/" + PlatformURLPluginConnection.PLUGIN + "/"; //$NON-NLS-1$ //$NON-NLS-2$
 	static final String VERSION_SEPARATOR = "_"; //$NON-NLS-1$
-	
+
 	synchronized public void doPluginDeactivation() {
 		pluginObject = null;
 		active = false;
 		activePending = false;
 		deactivated = false;
 	}
+
 	/**
 	 * convert a list of comma-separated tokens into an array
 	 *TODO This method is not used. 
@@ -62,6 +63,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 		}
 		return list.isEmpty() ? new String[0] : (String[]) list.toArray(new String[0]);
 	}
+
 	/**
 	 * @see IPluginDescriptor
 	 */
@@ -73,12 +75,14 @@ public class PluginDescriptor implements IPluginDescriptor {
 		}
 		return null;
 	}
+
 	/**
 	 * @see IPluginDescriptor
 	 */
-	public IExtensionPoint getExtensionPoint(String extensionPointId) {	//TODO This code only works if the underlying bundle as a symbolicName
+	public IExtensionPoint getExtensionPoint(String extensionPointId) { //TODO This code only works if the underlying bundle as a symbolicName
 		return InternalPlatform.getDefault().getRegistry().getExtensionPoint(getId(), extensionPointId);
 	}
+
 	/**
 	 * @see IPluginDescriptor
 	 */
@@ -103,6 +107,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 			throw new IllegalStateException(); // unchecked
 		}
 	}
+
 	/**
 	 * @return a URL to the install location that does not need to be resolved.
 	 */
@@ -120,6 +125,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 			}
 		}
 	}
+
 	/**
 	 * @see IPluginDescriptor
 	 */
@@ -160,12 +166,14 @@ public class PluginDescriptor implements IPluginDescriptor {
 	public PluginRegistry getPluginRegistry() {
 		return (PluginRegistry) org.eclipse.core.internal.plugins.InternalPlatform.getPluginRegistry();
 	}
+
 	/**
 	 * @see IPluginDescriptor
 	 */
 	public String getProviderName() {
 		return (String) bundleOsgi.getHeaders().get(Constants.BUNDLE_VENDOR);
 	}
+
 	/**
 	 * @see IPluginDescriptor
 	 */
@@ -179,12 +187,14 @@ public class PluginDescriptor implements IPluginDescriptor {
 	public String getResourceString(String value) {
 		return ResourceTranslator.getResourceString(bundleOsgi, value);
 	}
+
 	/**
 	 * @see IPluginDescriptor
 	 */
 	public String getResourceString(String value, ResourceBundle b) {
 		return ResourceTranslator.getResourceString(bundleOsgi, value, b);
 	}
+
 	/**
 	 * @see IPluginDescriptor
 	 */
@@ -195,18 +205,18 @@ public class PluginDescriptor implements IPluginDescriptor {
 		Bundle[] fragments = InternalPlatform.getDefault().getFragments(bundleOsgi);
 		if (fragments != null)
 			allBundes.addAll(Arrays.asList(fragments));
-		
+
 		for (Iterator iter = allBundes.iterator(); iter.hasNext();) {
 			Bundle element = (Bundle) iter.next();
 			String classpath = (String) element.getHeaders().get(Constants.BUNDLE_CLASSPATH);
 			if (classpath != null)
-				allLibraries.addAll(splitClasspath(classpath));		//TODO This should use ManifestElement. If this is done then splitClasspath can be removed
+				allLibraries.addAll(splitClasspath(classpath)); //TODO This should use ManifestElement. If this is done then splitClasspath can be removed
 		}
 		return (ILibrary[]) allLibraries.toArray(new ILibrary[allLibraries.size()]);
 	}
-	
+
 	private ArrayList splitClasspath(String classpath) {
-		StringTokenizer tokens = new StringTokenizer(classpath, ",");	//$NON-NLS-1$
+		StringTokenizer tokens = new StringTokenizer(classpath, ","); //$NON-NLS-1$
 		ArrayList libraries = new ArrayList(tokens.countTokens());
 		while (tokens.hasMoreElements()) {
 			String element = (String) tokens.nextElement();
@@ -214,13 +224,14 @@ public class PluginDescriptor implements IPluginDescriptor {
 		}
 		return libraries;
 	}
-	
+
 	/**
 	 * @see IPluginDescriptor
 	 */
 	public String getUniqueIdentifier() {
 		return getId();
 	}
+
 	/**
 	 * @see #toString
 	 */
@@ -228,6 +239,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 		int ix = pluginString.indexOf(VERSION_SEPARATOR);
 		return ix == -1 ? pluginString : pluginString.substring(0, ix);
 	}
+
 	/**
 	 * @see IPluginDescriptor
 	 */
@@ -241,6 +253,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 			return new PluginVersionIdentifier("1.0.0"); //$NON-NLS-1$
 		}
 	}
+
 	/**
 	 * @see #toString
 	 */
@@ -248,11 +261,10 @@ public class PluginDescriptor implements IPluginDescriptor {
 		return new PluginVersionIdentifier(pluginString);
 	}
 
-	
 	public IPluginPrerequisite[] getPluginPrerequisites() {
 		BundleDescription description = Platform.getPlatformAdmin().getState(false).getBundle(bundleOsgi.getBundleId());
 		BundleSpecification[] specs = description.getRequiredBundles();
-		
+
 		IPluginPrerequisite[] resolvedPrerequisites = new IPluginPrerequisite[specs.length];
 		for (int j = 0; j < specs.length; j++) {
 			resolvedPrerequisites[j] = new PluginPrerequisite(specs[j]);
@@ -269,6 +281,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 	boolean hasActivationStarted() {
 		return activePending || active;
 	}
+
 	/**
 	 * @see IPluginDescriptor
 	 */
@@ -281,6 +294,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 		//plugin being activated during shutdown would never be shut down.
 		return active;
 	}
+
 	/*
 	 * NOTE: This method is not synchronized because it is called from within a
 	 * sync block in PluginClassLoader.	//TODO This is no longer true
@@ -288,9 +302,11 @@ public class PluginDescriptor implements IPluginDescriptor {
 	public boolean isPluginDeactivated() {
 		return deactivated;
 	}
+
 	private void logError(IStatus status) {
 		InternalPlatform.getDefault().getLog(org.eclipse.core.internal.runtime.InternalPlatform.getDefault().getBundleContext().getBundle()).log(status);
 	}
+
 	/**
 	 * Returns <code>true</code> if we should continue with the plugin activation.
 	 */
@@ -308,6 +324,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 		// go ahead and try to activate
 		return true;
 	}
+
 	private void pluginActivationExit(boolean errorExit) {
 		if (errorExit) {
 			active = false;
@@ -317,11 +334,13 @@ public class PluginDescriptor implements IPluginDescriptor {
 		// we are done with the activation
 		activePending = false;
 	}
+
 	private void throwException(String message, Throwable exception) throws CoreException {
 		IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.PLUGIN_ERROR, message, exception);
 		logError(status);
 		throw new CoreException(status);
 	}
+
 	/**
 	 * @see #getUniqueIdentifierFromString
 	 * @see #getVersionIdentifierFromString
@@ -329,6 +348,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 	public String toString() {
 		return getUniqueIdentifier() + VERSION_SEPARATOR + getVersionIdentifier().toString();
 	}
+
 	/**
 	 * @see IPluginDescriptor
 	 */
@@ -342,6 +362,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 			}
 		return result;
 	}
+
 	/**
 	 * @see IPluginDescriptor
 	 */
@@ -386,11 +407,11 @@ public class PluginDescriptor implements IPluginDescriptor {
 			} catch (BundleException e) {
 				throwException(Policy.bind("plugin.startupProblems", e.toString()), e); //$NON-NLS-1$
 			}
-		if (pluginObject != null) 
+		if (pluginObject != null)
 			return;
-		boolean errorExit = true;			
+		boolean errorExit = true;
 		//	check if already activated or pending		
-		if (pluginActivationEnter()) { 
+		if (pluginActivationEnter()) {
 			try {
 				internalDoPluginActivation();
 				errorExit = false;
@@ -405,8 +426,8 @@ public class PluginDescriptor implements IPluginDescriptor {
 				active = true;
 			}
 		}
-		
-}
+
+	}
 
 	private String getPluginClass() {
 		return (String) bundleOsgi.getHeaders().get(PLUGIN_CLASS);
@@ -434,7 +455,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 		// find the correct constructor
 		Constructor construct = null;
 		try {
-			construct = runtimeClass.getConstructor(new Class[]{IPluginDescriptor.class});
+			construct = runtimeClass.getConstructor(new Class[] {IPluginDescriptor.class});
 		} catch (NoSuchMethodException eNoConstructor) {
 			errorMsg = Policy.bind("plugin.instantiateClassError", getId(), pluginClassName); //$NON-NLS-1$
 			throwException(errorMsg, eNoConstructor);
@@ -442,7 +463,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 
 		// create a new instance
 		try {
-			pluginObject = (Plugin) construct.newInstance(new Object[]{this});
+			pluginObject = (Plugin) construct.newInstance(new Object[] {this});
 		} catch (ClassCastException e) {
 			errorMsg = Policy.bind("plugin.notPluginClass", pluginClassName); //$NON-NLS-1$
 			throwException(errorMsg, e);
@@ -454,22 +475,22 @@ public class PluginDescriptor implements IPluginDescriptor {
 
 	public PluginDescriptor(org.osgi.framework.Bundle b) {
 		bundleOsgi = b;
-		if( (b.getState() & Bundle.ACTIVE) != 0 )
+		if ((b.getState() & Bundle.ACTIVE) != 0)
 			active = true;
 	}
 
 	public Bundle getBundle() {
 		return bundleOsgi;
 	}
-	
+
 	public String getLocation() {
 		return getInstallURLInternal().toExternalForm();
 	}
-	
-	public void setPlugin(Plugin object) { 
+
+	public void setPlugin(Plugin object) {
 		pluginObject = object;
 	}
-	
+
 	public synchronized void setActive() {
 		this.active = true;
 	}

@@ -55,7 +55,7 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 		 * which will add the bundle back.  This is required because the classloader
 		 * will have been refreshed for the bundle so all extensions and extension
 		 * points for the bundle must be refreshed.
-		 */ 
+		 */
 		Bundle bundle = event.getBundle();
 		switch (event.getType()) {
 			case BundleEvent.RESOLVED :
@@ -116,7 +116,7 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 			}
 		} catch (IOException ex) {
 			is = null;
-		}		
+		}
 		if (is == null)
 			return null;
 		try {
@@ -125,9 +125,9 @@ public class EclipseBundleListener implements SynchronousBundleListener {
 			BundleModel bundleModel = new ExtensionsParser(factory).parseManifest(new InputSource(is), manifestType);
 			bundleModel.setUniqueIdentifier(bundle.getSymbolicName());
 			bundleModel.setId(bundle.getBundleId());
-			if (isFragment){
+			if (isFragment) {
 				Bundle[] hosts = InternalPlatform.getDefault().getHosts(bundle);
-				if (hosts != null && hosts.length>0)
+				if (hosts != null && hosts.length > 0)
 					bundleModel.setHostIdentifier(hosts[0].getSymbolicName());
 			}
 			return bundleModel;

@@ -26,6 +26,6 @@ package org.eclipse.core.boot;
  * Runtime achieve their final and stable form (post-3.0). </p>
  */
 
-public interface IPlatformRunnable extends  org.eclipse.core.runtime.IPlatformRunnable {
+public interface IPlatformRunnable extends org.eclipse.core.runtime.IPlatformRunnable {
 
 }

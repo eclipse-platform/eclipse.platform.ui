@@ -86,6 +86,7 @@ public interface ILibrary {
 	 * There is no replacement.
 	 */
 	public String[] getContentFilters();
+
 	/**
 	 * Returns the path of this runtime library, relative to the
 	 * installation location.
@@ -101,6 +102,7 @@ public interface ILibrary {
 	 * </pre>
 	 */
 	public IPath getPath();
+
 	/**
 	 * Returns this library's type.
 	 *
@@ -111,6 +113,7 @@ public interface ILibrary {
 	 * There is no replacement.
 	 */
 	public String getType();
+
 	/**
 	 * Returns whether the library is exported. The contents of an exported
 	 * library may be visible to other plug-ins that declare a dependency
@@ -124,6 +127,7 @@ public interface ILibrary {
 	 * There is no replacement.
 	 */
 	public boolean isExported();
+
 	/**
 	 * Returns whether this library is fully exported. A library is considered
 	 * fully exported iff it is exported and has no content filters.
@@ -134,6 +138,7 @@ public interface ILibrary {
 	 * There is no replacement.
 	 */
 	public boolean isFullyExported();
+
 	/**
 	 * Returns the array of package prefixes that this library declares. This 
 	 * is used in classloader enhancements and is an optional entry in the plugin.xml.

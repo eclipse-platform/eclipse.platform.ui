@@ -21,6 +21,7 @@ import org.eclipse.update.configurator.IPlatformConfiguration;
 import org.eclipse.update.configurator.IPlatformConfigurationFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
+
 /**
  * Special boot loader class for the Eclipse Platform. This class cannot
  * be instantiated; all functionality is provided by static methods.
@@ -59,34 +60,35 @@ public final class BootLoader implements Constants {
 	public static final String PI_BOOT = "org.eclipse.core.boot"; //$NON-NLS-1$
 
 	private static final String[] ARCH_LIST = { // 
-		ARCH_PA_RISC, //
-		ARCH_PPC, //
-		ARCH_SPARC, //
-		ARCH_X86, //
-		ARCH_AMD64
-	};
+	ARCH_PA_RISC, //
+			ARCH_PPC, //
+			ARCH_SPARC, //
+			ARCH_X86, //
+			ARCH_AMD64};
 	private static final String[] OS_LIST = { //
-		OS_AIX, //
-		OS_HPUX, //
-		OS_LINUX, //
-		OS_MACOSX, //
-		OS_QNX, //
-		OS_SOLARIS, //
-		OS_WIN32 //
+	OS_AIX, //
+			OS_HPUX, //
+			OS_LINUX, //
+			OS_MACOSX, //
+			OS_QNX, //
+			OS_SOLARIS, //
+			OS_WIN32 //
 	};
 	private static final String[] WS_LIST = { //
-		WS_CARBON, //
-		WS_GTK, //
-		WS_MOTIF, //
-		WS_PHOTON, //
-		WS_WIN32 //
+	WS_CARBON, //
+			WS_GTK, //
+			WS_MOTIF, //
+			WS_PHOTON, //
+			WS_WIN32 //
 	};
+
 	/**
 	 * Private constructor to block instance creation.
 	 */
 	private BootLoader() {
 		// not allowed
 	}
+
 	/**
 	 * Returns the command line args provided to the platform when it was first run.
 	 * Note that individual platform runnables may be provided with different arguments
@@ -98,6 +100,7 @@ public final class BootLoader implements Constants {
 	public static String[] getCommandLineArgs() {
 		return InternalPlatform.getDefault().getApplicationArgs();
 	}
+
 	/**
 	 * Returns the current platform configuration.
 	 * 
@@ -118,6 +121,7 @@ public final class BootLoader implements Constants {
 		context.ungetService(configFactorySR);
 		return new OldPlatformConfiguration(currentConfig);
 	}
+
 	/**
 	 * Returns URL at which the Platform runtime executables and libraries are installed.
 	 * The returned value is distinct from the location of any given platform's data.
@@ -128,6 +132,7 @@ public final class BootLoader implements Constants {
 	public static URL getInstallURL() {
 		return InternalPlatform.getDefault().getInstallURL();
 	}
+
 	/**
 	 * Returns the string name of the current locale for use in finding files
 	 * whose path starts with <code>$nl$</code>.
@@ -138,6 +143,7 @@ public final class BootLoader implements Constants {
 	public static String getNL() {
 		return InternalPlatform.getDefault().getNL();
 	}
+
 	/**
 	 * Returns the string name of the current operating system for use in finding
 	 * files whose path starts with <code>$os$</code>.  <code>OS_UNKNOWN</code> is
@@ -153,6 +159,7 @@ public final class BootLoader implements Constants {
 	public static String getOS() {
 		return InternalPlatform.getDefault().getOS();
 	}
+
 	/**
 	 * Returns the string name of the current system architecture.  
 	 * The value is a user-defined string if the architecture is 
@@ -166,6 +173,7 @@ public final class BootLoader implements Constants {
 	public static String getOSArch() {
 		return InternalPlatform.getDefault().getOSArch();
 	}
+
 	/**
 	 * Returns a platform configuration object, optionally initialized with previously saved
 	 * configuration information.
@@ -189,6 +197,7 @@ public final class BootLoader implements Constants {
 		context.ungetService(configFactorySR);
 		return new OldPlatformConfiguration(config);
 	}
+
 	/**
 	 * Returns the string name of the current window system for use in finding files
 	 * whose path starts with <code>$ws$</code>.  <code>null</code> is returned
@@ -200,6 +209,7 @@ public final class BootLoader implements Constants {
 	public static String getWS() {
 		return InternalPlatform.getDefault().getWS();
 	}
+
 	/**
 	 * Returns a list of known system architectures.
 	 * <p>
@@ -218,6 +228,7 @@ public final class BootLoader implements Constants {
 	public static String[] knownOSArchValues() {
 		return ARCH_LIST;
 	}
+
 	/**
 	 * Returns a list of known operating system names.
 	 * <p>
@@ -236,6 +247,7 @@ public final class BootLoader implements Constants {
 	public static String[] knownOSValues() {
 		return OS_LIST;
 	}
+
 	/**
 	 * Returns a list of known windowing system names.
 	 * <p>
@@ -254,6 +266,7 @@ public final class BootLoader implements Constants {
 	public static String[] knownWSValues() {
 		return WS_LIST;
 	}
+
 	/**
 	 * Returns <code>true</code> if the platform is currently running in 
 	 * debug mode.  The platform is run
@@ -266,6 +279,7 @@ public final class BootLoader implements Constants {
 		// TODO: need an API to access this (at least a constant for the property name)
 		return System.getProperty("osgi.debug") != null; //$NON-NLS-1$
 	}
+
 	/**
 	 * Returns <code>true</code> if the platform is currently running in 
 	 * development mode.  That is, if special procedures are to be 
@@ -295,6 +309,7 @@ public final class BootLoader implements Constants {
 	public static boolean isRunning() {
 		return InternalPlatform.getDefault().isRunning();
 	}
+
 	/**
 	 * Returns the complete plugin path defined by the file at the given location.
 	 * If the given location is <code>null</code> or does not indicate a valid 

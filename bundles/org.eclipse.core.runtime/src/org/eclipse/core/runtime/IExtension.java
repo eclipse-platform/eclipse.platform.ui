@@ -32,6 +32,7 @@ public interface IExtension {
 	 * @return the configuration elements declared by this extension 
 	 */
 	public IConfigurationElement[] getConfigurationElements();
+
 	/**
 	 * Returns the descriptor of the plug-in that declares this extension.
 	 * <p>
@@ -51,6 +52,7 @@ public interface IExtension {
 	 * update your usecases.
 	 */
 	public IPluginDescriptor getDeclaringPluginDescriptor();
+
 	/**
 	 * Returns the namespace for this extension. This value can be used
 	 * in various global facilities to discover this extension's provider.
@@ -66,8 +68,9 @@ public interface IExtension {
 	 * @see Platform#getBundle(String)
 	 * @see IExtensionRegistry
 	 * @since 3.0
-	 */	 
+	 */
 	public String getNamespace();
+
 	/**
 	 * Returns the unique identifier of the extension point
 	 * to which this extension should be contributed.
@@ -75,6 +78,7 @@ public interface IExtension {
 	 * @return the unique identifier of the relevant extension point
 	 */
 	public String getExtensionPointUniqueIdentifier();
+
 	/**
 	 * Returns a displayable label for this extension.
 	 * Returns the empty string if no label for this extension
@@ -88,6 +92,7 @@ public interface IExtension {
 	 * @see IPluginDescriptor#getResourceString 
 	 */
 	public String getLabel();
+
 	/**
 	 * Returns the simple identifier of this extension, or <code>null</code>
 	 * if this extension does not have an identifier.
@@ -99,6 +104,7 @@ public interface IExtension {
 	 *  or <code>null</code>
 	 */
 	public String getSimpleIdentifier();
+
 	/**
 	 * Returns the unique identifier of this extension, or <code>null</code>
 	 * if this extension does not have an identifier.

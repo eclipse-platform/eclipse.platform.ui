@@ -47,6 +47,7 @@ public interface IConfigurationElement {
 	 * @see IExecutableExtension#setInitializationData
 	 */
 	public Object createExecutableExtension(String propertyName) throws CoreException;
+
 	/**
 	 * Returns the named attribute of this configuration element, or
 	 * <code>null</code> if none. 
@@ -71,6 +72,7 @@ public interface IConfigurationElement {
 	 * @return attribute value, or <code>null</code> if none
 	 */
 	public String getAttribute(String name);
+
 	/**
 	 * Returns the named attribute of this configuration element, or
 	 * <code>null</code> if none. 
@@ -94,6 +96,7 @@ public interface IConfigurationElement {
 	 * @return attribute value, or <code>null</code> if none
 	 */
 	public String getAttributeAsIs(String name);
+
 	/**
 	 * Returns the names of the attributes of this configuration element.
 	 * Returns an empty array if this configuration element has no attributes.
@@ -112,6 +115,7 @@ public interface IConfigurationElement {
 	 * @return the names of the attributes 
 	 */
 	public String[] getAttributeNames();
+
 	/**
 	 * Returns all configuration elements that are children of this
 	 * configuration element. 
@@ -133,6 +137,7 @@ public interface IConfigurationElement {
 	 * @return the child configuration elements
 	 */
 	public IConfigurationElement[] getChildren();
+
 	/**
 	 * Returns all child configuration elements with the given name. 
 	 * Returns an empty array if this configuration element has no children
@@ -143,12 +148,14 @@ public interface IConfigurationElement {
 	 * @see #getChildren
 	 */
 	public IConfigurationElement[] getChildren(String name);
+
 	/** 
 	 * Returns the extension that declares this configuration element.
 	 *
 	 * @return the extension
 	 */
 	public IExtension getDeclaringExtension();
+
 	/**
 	 * Returns the name of this configuration element. 
 	 * The name of a configuration element is the same as
@@ -162,6 +169,7 @@ public interface IConfigurationElement {
 	 * @return the name of this configuration element
 	 */
 	public String getName();
+
 	/**
 	 * Returns the element which contains this element.  If this element
 	 * is an immediate child of an extension, the
@@ -194,6 +202,7 @@ public interface IConfigurationElement {
 	 * @return the text value of this configuration element or <code>null</code>
 	 */
 	public String getValue();
+
 	/**
 	 * Returns the untranslated text value of this configuration element.
 	 * For example, the configuration markup 

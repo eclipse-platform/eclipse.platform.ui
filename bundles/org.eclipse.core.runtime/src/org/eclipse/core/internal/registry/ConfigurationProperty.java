@@ -24,6 +24,7 @@ public class ConfigurationProperty extends RegistryModelObject {
 
 	// DTD properties (included in plug-in manifest)
 	private String value = null;
+
 	/**
 	 * Creates a new configuration property model in which all fields
 	 * are <code>null</code>.
@@ -31,6 +32,7 @@ public class ConfigurationProperty extends RegistryModelObject {
 	public ConfigurationProperty() {
 		super();
 	}
+
 	/**
 	 * Returns the value of this property.
 	 * 
@@ -40,6 +42,7 @@ public class ConfigurationProperty extends RegistryModelObject {
 	public String getValue() {
 		return value;
 	}
+
 	/**
 	 * Sets the value of this property.
 	 * This object must not be read-only.
@@ -50,6 +53,7 @@ public class ConfigurationProperty extends RegistryModelObject {
 		assertIsWriteable();
 		this.value = value;
 	}
+
 	/**
 	 * Optimization to replace a non-localized key with its localized value.  Avoids having
 	 * to access resource bundles for further lookups.

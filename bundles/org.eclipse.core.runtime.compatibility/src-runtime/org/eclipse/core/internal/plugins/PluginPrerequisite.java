@@ -24,9 +24,9 @@ public class PluginPrerequisite implements IPluginPrerequisite {
 
 	public PluginVersionIdentifier getResolvedVersionIdentifier() {
 		Version actualVersion = prereq.getActualVersion();
-		if (actualVersion==null)
+		if (actualVersion == null)
 			return null;
-		return new PluginVersionIdentifier(actualVersion.toString());	
+		return new PluginVersionIdentifier(actualVersion.toString());
 	}
 
 	public String getUniqueIdentifier() {
@@ -45,19 +45,19 @@ public class PluginPrerequisite implements IPluginPrerequisite {
 	}
 
 	public boolean isMatchedAsGreaterOrEqual() {
-		return prereq.getMatchingRule()==BundleSpecification.GREATER_EQUAL_MATCH;
+		return prereq.getMatchingRule() == BundleSpecification.GREATER_EQUAL_MATCH;
 	}
 
 	public boolean isMatchedAsCompatible() {
-		return prereq.getMatchingRule()==BundleSpecification.MAJOR_MATCH || prereq.getMatchingRule()==BundleSpecification.NO_MATCH;
+		return prereq.getMatchingRule() == BundleSpecification.MAJOR_MATCH || prereq.getMatchingRule() == BundleSpecification.NO_MATCH;
 	}
 
 	public boolean isMatchedAsEquivalent() {
-		return prereq.getMatchingRule()==BundleSpecification.MINOR_MATCH;
+		return prereq.getMatchingRule() == BundleSpecification.MINOR_MATCH;
 	}
 
 	public boolean isMatchedAsPerfect() {
-		return prereq.getMatchingRule()==BundleSpecification.QUALIFIER_MATCH;
+		return prereq.getMatchingRule() == BundleSpecification.QUALIFIER_MATCH;
 	}
 
 	public boolean isMatchedAsExact() {

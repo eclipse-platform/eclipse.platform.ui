@@ -37,15 +37,19 @@ public class ExtensionPoint extends RegistryModelObject implements IExtensionPoi
 			return new IExtension[0];
 		return extensions;
 	}
+
 	public String getSchemaReference() {
 		return schemaReference == null ? "" : schemaReference.replace(File.separatorChar, '/'); //$NON-NLS-1$		
-	}	
+	}
+
 	public String getSchema() {
-		return schemaReference;		
-	}	
+		return schemaReference;
+	}
+
 	public String getSimpleIdentifier() {
 		return id;
 	}
+
 	public IExtension getExtension(String id) {
 		if (id == null)
 			return null;
@@ -57,24 +61,30 @@ public class ExtensionPoint extends RegistryModelObject implements IExtensionPoi
 		}
 		return null;
 	}
+
 	public String getUniqueIdentifier() {
 		return this.getNamespace() + "." + getSimpleIdentifier(); //$NON-NLS-1$
 	}
+
 	public void setExtensions(IExtension[] value) {
 		extensions = value;
 	}
+
 	public void setSchema(String schemaReference) {
 		assertIsWriteable();
 		this.schemaReference = schemaReference;
 	}
+
 	public void setSimpleIdentifier(String value) {
 		assertIsWriteable();
 		id = value;
 	}
+
 	public String getNamespace() {
 		BundleModel parent = (BundleModel) getParent();
 		return parent.isFragment() ? parent.getHostIdentifier() : parent.getName();
 	}
+
 	public String getLabel() {
 		String s = getName();
 		if (s == null)
@@ -84,20 +94,23 @@ public class ExtensionPoint extends RegistryModelObject implements IExtensionPoi
 			setLocalizedName(localized);
 		return localized;
 	}
+
 	public String toString() {
 		return getUniqueIdentifier();
 	}
+
 	public IConfigurationElement[] getConfigurationElements() {
 		IExtension[] exts = getExtensions();
 		ArrayList allConfigElts = new ArrayList();
-		
+
 		for (int i = 0; i < exts.length; i++)
 			allConfigElts.addAll(Arrays.asList(exts[i].getConfigurationElements()));
-		
-		IConfigurationElement[] value = new IConfigurationElement[allConfigElts.size()]; 
+
+		IConfigurationElement[] value = new IConfigurationElement[allConfigElts.size()];
 		allConfigElts.toArray(value);
 		return value;
 	}
+
 	public IPluginDescriptor getDeclaringPluginDescriptor() {
 		return CompatibilityHelper.getPluginDescriptor(getNamespace());
 	}

@@ -32,7 +32,7 @@ public interface IProductProvider {
 	 * @return the name of this product provider
 	 */
 	public String getName();
-	
+
 	/**
 	 * Returns the products provided by this provider.
 	 * 

@@ -20,14 +20,17 @@ public class PlatformMetaAreaLock {
 	private FileLock fileLock;
 	private FileOutputStream fileStream;
 	private File lockFile;
+
 	public PlatformMetaAreaLock(File lockFile) {
 		this.lockFile = lockFile;
 	}
+
 	public boolean acquire() throws IOException {
 		fileStream = new FileOutputStream(lockFile, true);
 		fileLock = fileStream.getChannel().tryLock();
 		return fileLock != null;
 	}
+
 	public void release() {
 		if (fileLock != null) {
 			try {

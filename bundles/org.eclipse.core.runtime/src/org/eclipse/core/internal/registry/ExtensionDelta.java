@@ -28,18 +28,23 @@ public class ExtensionDelta implements IExtensionDelta {
 	public int getKind() {
 		return kind;
 	}
+
 	public IExtension getExtension() {
 		return extension;
 	}
+
 	public void setExtension(IExtension extension) {
 		this.extension = extension;
 	}
+
 	public void setKind(int kind) {
 		this.kind = kind;
 	}
+
 	public String toString() {
 		return "\n\t\t" + this.extension.getExtensionPointUniqueIdentifier() + " - " + this.extension.getUniqueIdentifier() + " (" + getKindString(this.getKind()) + ")"; //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$
 	}
+
 	public static String getKindString(int kind) {
 		switch (kind) {
 			case ADDED :

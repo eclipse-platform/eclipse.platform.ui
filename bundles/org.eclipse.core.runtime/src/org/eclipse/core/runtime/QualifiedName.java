@@ -31,6 +31,7 @@ public final class QualifiedName {
 	/** Local name part. */
 	/*package*/
 	String localName = null;
+
 	/**
 	 * Creates and returns a new qualified name with the given qualifier
 	 * and local name.  The local name must not be the empty string.
@@ -46,6 +47,7 @@ public final class QualifiedName {
 		this.qualifier = qualifier;
 		this.localName = localName;
 	}
+
 	/**
 	 * Returns whether this qualified name is equivalent to the given object.
 	 * <p>
@@ -75,6 +77,7 @@ public final class QualifiedName {
 		}
 		return localName.equals(qName.getLocalName());
 	}
+
 	/**
 	 * Returns the local part of this name.
 	 *
@@ -83,6 +86,7 @@ public final class QualifiedName {
 	public String getLocalName() {
 		return localName;
 	}
+
 	/**
 	 * Returns the qualifier part for this qualifed name, or <code>null</code>
 	 * if none.
@@ -92,6 +96,7 @@ public final class QualifiedName {
 	public String getQualifier() {
 		return qualifier;
 	}
+
 	/* (Intentionally omitted from javadoc)
 	 * Implements the method <code>Object.hashCode</code>.
 	 * 
@@ -100,6 +105,7 @@ public final class QualifiedName {
 	public int hashCode() {
 		return (qualifier == null ? 0 : qualifier.hashCode()) + localName.hashCode();
 	}
+
 	/**
 	 * Converts this qualified name into a string, suitable for 
 	 * debug purposes only.

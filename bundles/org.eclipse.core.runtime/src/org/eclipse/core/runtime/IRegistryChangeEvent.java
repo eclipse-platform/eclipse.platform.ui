@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.core.runtime;
+
 /**
  * Registry change events describe changes to the extension registry. 
  * <p> 

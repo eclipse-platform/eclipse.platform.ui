@@ -39,6 +39,7 @@ public interface IProgressMonitorWithBlocking extends IProgressMonitor {
 	 * @see #clearBlocked()
 	 */
 	public void setBlocked(IStatus reason);
+
 	/**
 	 * Clears the blocked state of the running operation. If a running
 	 * operation ever calls <code>setBlocked</code>, it must eventually call

@@ -59,6 +59,7 @@ public final class PluginVersionIdentifier {
 	private String qualifier = ""; //$NON-NLS-1$
 
 	private static final String SEPARATOR = "."; //$NON-NLS-1$
+
 	/**
 	 * Creates a plug-in version identifier from its components.
 	 * 
@@ -69,6 +70,7 @@ public final class PluginVersionIdentifier {
 	public PluginVersionIdentifier(int major, int minor, int service) {
 		this(major, minor, service, null);
 	}
+
 	/**
 	 * Creates a plug-in version identifier from its components.
 	 * 
@@ -98,6 +100,7 @@ public final class PluginVersionIdentifier {
 		this.service = service;
 		this.qualifier = verifyQualifier(qualifier);
 	}
+
 	/**
 	 * Creates a plug-in version identifier from the given string.
 	 * The string represenation consists of up to 4 tokens 
@@ -123,6 +126,7 @@ public final class PluginVersionIdentifier {
 		this.service = ((Integer) parts[2]).intValue();
 		this.qualifier = (String) parts[3];
 	}
+
 	/**
 	 * Validates the given string as a plug-in version identifier.
 	 * 
@@ -136,10 +140,11 @@ public final class PluginVersionIdentifier {
 		try {
 			parseVersion(version);
 		} catch (RuntimeException e) {
-			return new Status(IStatus.ERROR,IPlatform.PI_RUNTIME, IStatus.ERROR, e.getMessage(), e);
+			return new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IStatus.ERROR, e.getMessage(), e);
 		}
 		return new Status(IStatus.OK, IPlatform.PI_RUNTIME, IStatus.OK, Policy.bind("ok"), null); //$NON-NLS-1$
 	}
+
 	private static Object[] parseVersion(String versionId) {
 
 		// Do the test outside of the assert so that they 'Policy.bind' 
@@ -212,6 +217,7 @@ public final class PluginVersionIdentifier {
 			result[3] = ""; //$NON-NLS-1$
 		return result;
 	}
+
 	/**
 	 * Compare version identifiers for equality. Identifiers are
 	 * equal if all of their components are equal.
@@ -225,6 +231,7 @@ public final class PluginVersionIdentifier {
 		PluginVersionIdentifier v = (PluginVersionIdentifier) object;
 		return v.getMajorComponent() == major && v.getMinorComponent() == minor && v.getServiceComponent() == service && v.getQualifierComponent().equals(qualifier);
 	}
+
 	/**
 	 * Returns a hash code value for the object. 
 	 *
@@ -237,6 +244,7 @@ public final class PluginVersionIdentifier {
 		else
 			return code + qualifier.hashCode();
 	}
+
 	/**
 	 * Returns the major (incompatible) component of this 
 	 * version identifier.
@@ -246,6 +254,7 @@ public final class PluginVersionIdentifier {
 	public int getMajorComponent() {
 		return major;
 	}
+
 	/**
 	 * Returns the minor (compatible) component of this 
 	 * version identifier.
@@ -255,6 +264,7 @@ public final class PluginVersionIdentifier {
 	public int getMinorComponent() {
 		return minor;
 	}
+
 	/**
 	 * Returns the service level component of this 
 	 * version identifier.
@@ -264,6 +274,7 @@ public final class PluginVersionIdentifier {
 	public int getServiceComponent() {
 		return service;
 	}
+
 	/**
 	 * Returns the qualifier component of this 
 	 * version identifier.
@@ -273,6 +284,7 @@ public final class PluginVersionIdentifier {
 	public String getQualifierComponent() {
 		return qualifier;
 	}
+
 	/**
 	 * Compares two version identifiers to see if this one is
 	 * greater than or equal to the argument.
@@ -308,6 +320,7 @@ public final class PluginVersionIdentifier {
 		else
 			return false;
 	}
+
 	/**
 	 * Compares two version identifiers for compatibility.
 	 * <p>
@@ -345,6 +358,7 @@ public final class PluginVersionIdentifier {
 		else
 			return false;
 	}
+
 	/**
 	 * Compares two version identifiers for equivalency.
 	 * <p>
@@ -378,6 +392,7 @@ public final class PluginVersionIdentifier {
 		else
 			return false;
 	}
+
 	/**
 	 * Compares two version identifiers for perfect equality.
 	 * <p>
@@ -399,6 +414,7 @@ public final class PluginVersionIdentifier {
 		else
 			return true;
 	}
+
 	/**
 	 * Compares two version identifiers for order using multi-decimal
 	 * comparison. 
@@ -435,6 +451,7 @@ public final class PluginVersionIdentifier {
 			return false;
 
 	}
+
 	/**
 	 * Returns the string representation of this version identifier. 
 	 * The result satisfies

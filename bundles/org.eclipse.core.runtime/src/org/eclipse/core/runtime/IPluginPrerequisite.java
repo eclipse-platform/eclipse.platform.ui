@@ -13,6 +13,7 @@ package org.eclipse.core.runtime;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.util.ManifestElement;
 import org.osgi.framework.Constants;
+
 /**
  * A prerequisite entry declared by a plug-in. The declaration causes
  * classes defined by the prerequisite plug-in to be visible
@@ -69,6 +70,7 @@ public interface IPluginPrerequisite {
 	 * </pre>
 	 */
 	public PluginVersionIdentifier getResolvedVersionIdentifier();
+
 	/**
 	 * Returns the plug-in identifier of the prerequisite plug-in.
 	 * 
@@ -80,6 +82,7 @@ public interface IPluginPrerequisite {
 	 * </pre>
 	 */
 	public String getUniqueIdentifier();
+
 	/**
 	 * Returns the version identifier of the prerequisite plug-in,
 	 * or <code>null</code> if none.
@@ -93,6 +96,7 @@ public interface IPluginPrerequisite {
 	 * </pre>
 	 */
 	public PluginVersionIdentifier getVersionIdentifier();
+
 	/**
 	 * Indicates whether this prerequisite plug-in is further exposed to any
 	 * plug-ins that declare a dependency on this plug-in. This allows
@@ -111,6 +115,7 @@ public interface IPluginPrerequisite {
 	 * </pre>
 	 */
 	public boolean isExported();
+
 	/**
 	 * Indicates that this plug-in prerequisite can be resolved
 	 * against a configured plug-in with an identifier that is
@@ -127,6 +132,7 @@ public interface IPluginPrerequisite {
 	 * </pre>
 	 */
 	public boolean isMatchedAsGreaterOrEqual();
+
 	/**
 	 * Indicates that this plug-in prerequisite can be resolved
 	 * against a configured plug-in with a compatible identifier.
@@ -141,6 +147,7 @@ public interface IPluginPrerequisite {
 	 * </pre>
 	 */
 	public boolean isMatchedAsCompatible();
+
 	/**
 	 * Indicates that this plug-in prerequisite can only be resolved
 	 * against a configured plug-in with an equivalent plug-in 
@@ -157,6 +164,7 @@ public interface IPluginPrerequisite {
 	 * </pre>
 	 */
 	public boolean isMatchedAsEquivalent();
+
 	/**
 	 * Indicates that this plug-in prerequisite can only be resolved
 	 * against a configured plug-in with a plug-in identifier that
@@ -174,6 +182,7 @@ public interface IPluginPrerequisite {
 	 * </pre>
 	 */
 	public boolean isMatchedAsPerfect();
+
 	/**
 	 * Indicates that this plug-in prerequisite can only be resolved
 	 * against a configured plug-in with exactly the same plug-in 
@@ -185,6 +194,7 @@ public interface IPluginPrerequisite {
 	 * TODO @deprecated ??? what the heck?
 	 */
 	public boolean isMatchedAsExact();
+
 	/**
 	 * Indicates whether this plug-in prerequisite is optional.  If a required (i.e., non-optional)
 	 * prerequisite is missing, this plugin is disabled.  

@@ -46,6 +46,7 @@ public abstract class PluginModel extends PluginModelObject {
 	// transient properties (not included in plug-in manifest)
 	private PluginRegistryModel registry = null;
 	private String location = null;
+
 	/**
 	 * Creates a new plug-in descriptor model in which all fields
 	 * are <code>null</code>.
@@ -53,6 +54,7 @@ public abstract class PluginModel extends PluginModelObject {
 	public PluginModel() {
 		super();
 	}
+
 	/**
 	 * Returns the extension points in this plug-in descriptor.
 	 *
@@ -61,6 +63,7 @@ public abstract class PluginModel extends PluginModelObject {
 	public ExtensionPointModel[] getDeclaredExtensionPoints() {
 		return extensionPoints;
 	}
+
 	/**
 	 * Returns the extensions in this plug-in descriptor.
 	 *
@@ -69,6 +72,7 @@ public abstract class PluginModel extends PluginModelObject {
 	public ExtensionModel[] getDeclaredExtensions() {
 		return extensions;
 	}
+
 	/**
 	 * Returns the unique identifier of this plug-in model
 	 * or <code>null</code>.
@@ -81,6 +85,7 @@ public abstract class PluginModel extends PluginModelObject {
 	public String getId() {
 		return id;
 	}
+
 	/**
 	 * Returns the location of the plug-in corresponding to this plug-in 
 	 * descriptor.  The location is in the form of a URL.
@@ -90,6 +95,7 @@ public abstract class PluginModel extends PluginModelObject {
 	public String getLocation() {
 		return location;
 	}
+
 	/**
 	 * Returns the unique identifier of the plug-in related to this model
 	 * or <code>null</code>.  
@@ -100,6 +106,7 @@ public abstract class PluginModel extends PluginModelObject {
 	 *		(e.g. <code>"com.example"</code>) or <code>null</code>. 
 	 */
 	public abstract String getPluginId();
+
 	/**
 	 * Returns the name of the provider who authored this plug-in.
 	 *
@@ -108,6 +115,7 @@ public abstract class PluginModel extends PluginModelObject {
 	public String getProviderName() {
 		return providerName;
 	}
+
 	/**
 	 * Returns the plug-in registry of which this plug-in descriptor is a member.
 	 *
@@ -135,6 +143,7 @@ public abstract class PluginModel extends PluginModelObject {
 	public LibraryModel[] getRuntime() {
 		return runtime;
 	}
+
 	/**
 	 * Returns the version name of this plug-in.
 	 *
@@ -143,6 +152,7 @@ public abstract class PluginModel extends PluginModelObject {
 	public String getVersion() {
 		return version;
 	}
+
 	/**
 	 * Sets this model object and all of its descendents to be read-only.
 	 * Subclasses may extend this implementation.
@@ -164,6 +174,7 @@ public abstract class PluginModel extends PluginModelObject {
 			for (int i = 0; i < requires.length; i++)
 				requires[i].markReadOnly();
 	}
+
 	/**
 	 * Sets the extension points in this plug-in descriptor.
 	 * This object must not be read-only.
@@ -175,6 +186,7 @@ public abstract class PluginModel extends PluginModelObject {
 		assertIsWriteable();
 		extensionPoints = value;
 	}
+
 	/**
 	 * Sets the extensions in this plug-in descriptor.
 	 * This object must not be read-only.
@@ -186,6 +198,7 @@ public abstract class PluginModel extends PluginModelObject {
 		assertIsWriteable();
 		extensions = value;
 	}
+
 	/**
 	 * Sets the unique identifier of this plug-in model.
 	 * The identifier is a non-empty string and is unique 
@@ -199,6 +212,7 @@ public abstract class PluginModel extends PluginModelObject {
 		assertIsWriteable();
 		id = value;
 	}
+
 	/**
 	 * Optimization to replace a non-localized key with its localized value.  Avoids having
 	 * to access resource bundles for further lookups.
@@ -206,6 +220,7 @@ public abstract class PluginModel extends PluginModelObject {
 	public void setLocalizedProviderName(String value) {
 		providerName = value;
 	}
+
 	/**
 	 * Sets the location of the plug-in manifest file (e.g., <code>plugin.xml</code>)
 	 * which corresponds to this plug-in descriptor.  The location is in the
@@ -218,6 +233,7 @@ public abstract class PluginModel extends PluginModelObject {
 		assertIsWriteable();
 		location = value;
 	}
+
 	/**
 	 * Sets the name of the provider who authored this plug-in.
 	 * This object must not be read-only.
@@ -229,6 +245,7 @@ public abstract class PluginModel extends PluginModelObject {
 		assertIsWriteable();
 		providerName = value;
 	}
+
 	/**
 	 * Sets the registry with which this plug-in descriptor is associated.
 	 * This object must not be read-only.
@@ -262,6 +279,7 @@ public abstract class PluginModel extends PluginModelObject {
 		assertIsWriteable();
 		runtime = value;
 	}
+
 	/**
 	 * Sets the version name of this plug-in.  The version number
 	 * is canonicalized.

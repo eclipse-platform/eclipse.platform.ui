@@ -14,5 +14,5 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 
 public interface IExtensionLinker {
-	public void link(IExtensionPoint extPoint,IExtension[] extensions);
+	public void link(IExtensionPoint extPoint, IExtension[] extensions);
 }

@@ -29,16 +29,19 @@ public class RegistryLoader {
 	private boolean debug = false;
 	private long startTick = (new java.util.Date()).getTime(); // used for performance timings
 	private long lastTick = startTick;
+
 	private RegistryLoader(Factory factory, boolean debug) {
 		super();
 		this.debug = debug;
 		this.factory = factory;
 	}
+
 	private void debug(String msg) {
 		long thisTick = System.currentTimeMillis();
 		System.out.println("RegistryLoader: " + msg + " [+" + (thisTick - lastTick) + "ms]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		lastTick = thisTick;
 	}
+
 	private String[] getPathMembers(URL path) {
 		String[] list = null;
 		String protocol = path.getProtocol();
@@ -49,6 +52,7 @@ public class RegistryLoader {
 		}
 		return list == null ? new String[0] : list;
 	}
+
 	/**
 	 * Reports an error and returns true.
 	 */
@@ -56,6 +60,7 @@ public class RegistryLoader {
 		factory.error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, message, null));
 		return true;
 	}
+
 	private PluginRegistryModel parseRegistry(URL[] pluginPath) {
 		long startTick = System.currentTimeMillis();
 		PluginRegistryModel result = processManifestFiles(pluginPath);
@@ -65,9 +70,11 @@ public class RegistryLoader {
 		}
 		return result;
 	}
+
 	public static PluginRegistryModel parseRegistry(URL[] pluginPath, Factory factory, boolean debug) {
 		return new RegistryLoader(factory, debug).parseRegistry(pluginPath);
 	}
+
 	private PluginModel processManifestFile(URL manifest) {
 		InputStream is = null;
 		try {
@@ -96,12 +103,14 @@ public class RegistryLoader {
 		}
 		return result;
 	}
+
 	private PluginRegistryModel processManifestFiles(URL[] pluginPath) {
 		PluginRegistryModel result = factory.createPluginRegistry();
 		for (int i = 0; i < pluginPath.length; i++)
 			processPluginPathEntry(result, pluginPath[i]);
 		return result;
 	}
+
 	private void processPluginPathEntry(PluginRegistryModel registry, URL location) {
 		if (debug)
 			debug("Path - " + location); //$NON-NLS-1$
@@ -127,6 +136,7 @@ public class RegistryLoader {
 				debug(found ? "Processed - " : "Processed (not found) - " + location); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
+
 	/**
 	 * @return true if a file was found at the given location, and false otherwise.
 	 */
@@ -169,6 +179,7 @@ public class RegistryLoader {
 		// InternalPlatform.addLastModifiedTime(location.getFile(), new File(location.getFile()).lastModified());
 		return true;
 	}
+
 	private String getQualifiedVersion(PluginModel entry, URL base) {
 		if (entry == null || entry.getVersion() == null || entry.getId() == null)
 			return null;
@@ -203,6 +214,7 @@ public class RegistryLoader {
 				}
 		}
 	}
+
 	private boolean requiredPluginModel(PluginModel plugin, URL location) {
 		String name = plugin.getName();
 		String id = plugin.getId();

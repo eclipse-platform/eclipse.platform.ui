@@ -22,6 +22,7 @@ import java.io.*;
 public class CipherInputStream extends FilterInputStream {
 	private static final int SKIP_BUFFER_SIZE = 2048;
 	private Cipher cipher;
+
 	/**
 	 * Constructs a new <code>CipherInputStream</code> that decrypts the
 	 * data in the given <code>InputStream</code>.  The data can only be
@@ -35,12 +36,14 @@ public class CipherInputStream extends FilterInputStream {
 		super(is);
 		cipher = new Cipher(Cipher.DECRYPT_MODE, password);
 	}
+
 	/**
 	 * @see InputStream#markSupported
 	 */
 	public boolean markSupported() {
 		return false;
 	}
+
 	/**
 	 * @see InputStream#read
 	 */
@@ -54,6 +57,7 @@ public class CipherInputStream extends FilterInputStream {
 			throw new IOException(e.getMessage());
 		}
 	}
+
 	/**
 	 * @see InputStream#read(byte, int, int)
 	 */
@@ -70,6 +74,7 @@ public class CipherInputStream extends FilterInputStream {
 			throw new IOException(e.getMessage());
 		}
 	}
+
 	/**
 	 * @see InputStream#skip(long)
 	 */

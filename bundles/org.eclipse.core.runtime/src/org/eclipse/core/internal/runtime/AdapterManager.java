@@ -9,9 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.core.internal.runtime;
+
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+
 /**
  * This class is the standard implementation of <code>IAdapterManager</code>. It provides
  * fast lookup of property values with the following semantics:
@@ -42,6 +44,7 @@ public final class AdapterManager implements IAdapterManager, IRegistryChangeLis
 	 * Cache of adapter search paths; <code>null</code> if none. 
 	 */
 	protected HashMap lookup;
+
 	/**
 	 * Constructs a new adapter manager.
 	 */
@@ -51,6 +54,7 @@ public final class AdapterManager implements IAdapterManager, IRegistryChangeLis
 		registerFactoryProxies();
 		Platform.getExtensionRegistry().addRegistryChangeListener(this);
 	}
+
 	/**
 	 * Given a type name, add all of the factories that respond to those types into
 	 * the given table. Each entry will be keyed by the adapter class name (supplied in
@@ -63,7 +67,7 @@ public final class AdapterManager implements IAdapterManager, IRegistryChangeLis
 		for (int i = 0, imax = factoryList.size(); i < imax; i++) {
 			IAdapterFactory factory = (IAdapterFactory) factoryList.get(i);
 			if (factory instanceof AdapterFactoryProxy) {
-				String[] adapters = ((AdapterFactoryProxy)factory).getAdapterNames();
+				String[] adapters = ((AdapterFactoryProxy) factory).getAdapterNames();
 				for (int j = 0; j < adapters.length; j++) {
 					if (table.get(adapters[j]) == null)
 						table.put(adapters[j], factory);
@@ -78,6 +82,7 @@ public final class AdapterManager implements IAdapterManager, IRegistryChangeLis
 			}
 		}
 	}
+
 	/**
 	 * Returns the class with the given fully qualified name, or null
 	 * if that class does not exist or belongs to a plug-in that has not
@@ -85,8 +90,8 @@ public final class AdapterManager implements IAdapterManager, IRegistryChangeLis
 	 */
 	private Class classForName(IAdapterFactory factory, String typeName) {
 		try {
-			if (factory instanceof AdapterFactoryProxy) 
-				factory = ((AdapterFactoryProxy)factory).loadFactory(false);
+			if (factory instanceof AdapterFactoryProxy)
+				factory = ((AdapterFactoryProxy) factory).loadFactory(false);
 			if (factory != null)
 				return factory.getClass().getClassLoader().loadClass(typeName);
 		} catch (ClassNotFoundException e) {
@@ -94,6 +99,7 @@ public final class AdapterManager implements IAdapterManager, IRegistryChangeLis
 		}
 		return null;
 	}
+
 	/**
 	 * Builds and returns a table of adapters for the given adaptable type.
 	 * The table is keyed by adapter class name. The
@@ -115,6 +121,7 @@ public final class AdapterManager implements IAdapterManager, IRegistryChangeLis
 		}
 		return table;
 	}
+
 	private void computeInterfaceOrder(Class[] interfaces, Map table, Set seen) {
 		List newInterfaces = new ArrayList(interfaces.length);
 		for (int i = 0; i < interfaces.length; i++) {
@@ -128,6 +135,7 @@ public final class AdapterManager implements IAdapterManager, IRegistryChangeLis
 		for (Iterator it = newInterfaces.iterator(); it.hasNext();)
 			computeInterfaceOrder(((Class) it.next()).getInterfaces(), table, seen);
 	}
+
 	/**
 	 * Flushes the cache of adapter search paths. This is generally required whenever an
 	 * adapter is added or removed.
@@ -139,6 +147,7 @@ public final class AdapterManager implements IAdapterManager, IRegistryChangeLis
 	public synchronized void flushLookup() {
 		lookup = null;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterManager#getAdapter(java.lang.Object, java.lang.Class)
 	 */
@@ -151,12 +160,14 @@ public final class AdapterManager implements IAdapterManager, IRegistryChangeLis
 			return adaptable;
 		return result;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterManager#getAdapter(java.lang.Object, java.lang.Class)
 	 */
 	public synchronized Object getAdapter(Object adaptable, String adapterType) {
 		return getAdapter(adaptable, adapterType, false);
 	}
+
 	/**
 	 * Returns an adapter of the given type for the provided adapter.
 	 * @param adaptable the object to adapt
@@ -168,7 +179,7 @@ public final class AdapterManager implements IAdapterManager, IRegistryChangeLis
 	private Object getAdapter(Object adaptable, String adapterType, boolean force) {
 		IAdapterFactory factory = getFactory(adaptable.getClass(), adapterType);
 		if (force && factory instanceof AdapterFactoryProxy)
-			factory = ((AdapterFactoryProxy)factory).loadFactory(true);
+			factory = ((AdapterFactoryProxy) factory).loadFactory(true);
 		Object result = null;
 		if (factory != null) {
 			Class clazz = classForName(factory, adapterType);
@@ -179,6 +190,7 @@ public final class AdapterManager implements IAdapterManager, IRegistryChangeLis
 			return adaptable;
 		return result;
 	}
+
 	/**
 	 * Gets the adapter factory installed for objects of class <code>extensibleClass</code>
 	 * which defines adapters of type <code>adapter</code>. If no such factories
@@ -199,15 +211,18 @@ public final class AdapterManager implements IAdapterManager, IRegistryChangeLis
 		lookup.put(adaptable, table);
 		return (IAdapterFactory) table.get(adapterName);
 	}
+
 	public boolean hasAdapter(Object adaptable, String adapterTypeName) {
-		 return getFactory(adaptable.getClass(), adapterTypeName) != null;
+		return getFactory(adaptable.getClass(), adapterTypeName) != null;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterManager#loadAdapter(java.lang.Object, java.lang.String)
 	 */
 	public Object loadAdapter(Object adaptable, String adapterTypeName) {
 		return getAdapter(adaptable, adapterTypeName, true);
 	}
+
 	/*
 	 * @see IAdapterManager#registerAdapters
 	 */
@@ -215,6 +230,7 @@ public final class AdapterManager implements IAdapterManager, IRegistryChangeLis
 		registerFactory(factory, adaptable.getName());
 		flushLookup();
 	}
+
 	private void registerExtension(IExtension extension) {
 		IConfigurationElement[] elements = extension.getConfigurationElements();
 		for (int j = 0; j < elements.length; j++) {
@@ -223,6 +239,7 @@ public final class AdapterManager implements IAdapterManager, IRegistryChangeLis
 				registerFactory(proxy, proxy.getAdaptableType());
 		}
 	}
+
 	/*
 	 * @see IAdapterManager#registerAdapters
 	 */
@@ -234,6 +251,7 @@ public final class AdapterManager implements IAdapterManager, IRegistryChangeLis
 		}
 		list.add(factory);
 	}
+
 	/**
 	 * Loads adapters registered with the adapters extension point from
 	 * the plug-in registry.  Note that the actual factory implementations
@@ -245,9 +263,10 @@ public final class AdapterManager implements IAdapterManager, IRegistryChangeLis
 		if (point == null)
 			return;
 		IExtension[] extensions = point.getExtensions();
-		for (int i = 0; i < extensions.length; i++) 
+		for (int i = 0; i < extensions.length; i++)
 			registerExtension(extensions[i]);
 	}
+
 	public void registryChanged(IRegistryChangeEvent event) {
 		//find the set of changed adapter extensions
 		HashSet toRemove = null;
@@ -259,7 +278,7 @@ public final class AdapterManager implements IAdapterManager, IRegistryChangeLis
 			if (!adapterId.equals(deltas[i].getExtensionPoint().getUniqueIdentifier()))
 				continue;
 			found = true;
-			if (deltas[i].getKind() == IExtensionDelta.ADDED) 
+			if (deltas[i].getKind() == IExtensionDelta.ADDED)
 				registerExtension(deltas[i].getExtension());
 			else {
 				//create the hash set lazily
@@ -275,16 +294,17 @@ public final class AdapterManager implements IAdapterManager, IRegistryChangeLis
 			return;
 		//remove any factories belonging to extensions that are going away
 		for (Iterator it = factories.values().iterator(); it.hasNext();) {
-			for (Iterator it2 = ((List)it.next()).iterator(); it2.hasNext();) {
+			for (Iterator it2 = ((List) it.next()).iterator(); it2.hasNext();) {
 				IAdapterFactory factory = (IAdapterFactory) it2.next();
 				if (factory instanceof AdapterFactoryProxy) {
-					IExtension ext = ((AdapterFactoryProxy)factory).getExtension();
+					IExtension ext = ((AdapterFactoryProxy) factory).getExtension();
 					if (toRemove.contains(ext))
 						it2.remove();
 				}
 			}
 		}
 	}
+
 	/*
 	 * @see IAdapterManager#unregisterAdapters
 	 */
@@ -293,6 +313,7 @@ public final class AdapterManager implements IAdapterManager, IRegistryChangeLis
 			((List) it.next()).remove(factory);
 		flushLookup();
 	}
+
 	/*
 	 * @see IAdapterManager#unregisterAdapters
 	 */
@@ -303,6 +324,7 @@ public final class AdapterManager implements IAdapterManager, IRegistryChangeLis
 		factoryList.remove(factory);
 		flushLookup();
 	}
+
 	/*
 	 * Shuts down the adapter manager by removing all factories
 	 * and removing the registry change listener. Should only be

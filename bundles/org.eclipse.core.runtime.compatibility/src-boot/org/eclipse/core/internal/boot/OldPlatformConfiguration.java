@@ -60,7 +60,7 @@ public class OldPlatformConfiguration implements IPlatformConfiguration {
 
 	public ISiteEntry findConfiguredSite(URL url) {
 		org.eclipse.update.configurator.IPlatformConfiguration.ISiteEntry siteEntry = newConfig.findConfiguredSite(url);
-		if (siteEntry==null)
+		if (siteEntry == null)
 			return null;
 		return new SiteEntry(siteEntry);
 	}
@@ -96,6 +96,7 @@ public class OldPlatformConfiguration implements IPlatformConfiguration {
 	public long getFeaturesChangeStamp() {
 		return newConfig.getFeaturesChangeStamp();
 	}
+
 	public long getPluginsChangeStamp() {
 		return newConfig.getPluginsChangeStamp();
 	}
@@ -131,17 +132,21 @@ public class OldPlatformConfiguration implements IPlatformConfiguration {
 	public void refresh() {
 		newConfig.refresh();
 	}
+
 	public void save() throws IOException {
 		newConfig.save();
 	}
+
 	public void save(URL url) throws IOException {
 		newConfig.save(url);
 	}
+
 	public boolean equals(Object o) {
 		if (o instanceof OldPlatformConfiguration)
 			return newConfig.equals(((OldPlatformConfiguration) o).newConfig);
 		return false;
 	}
+
 	public int hashCode() {
 		return newConfig.hashCode();
 	}

@@ -38,6 +38,7 @@ public class PluginDescriptorModel extends PluginModel {
 	public PluginDescriptorModel() {
 		super();
 	}
+
 	/**
 	 * Returns true if this plugin has all of it's prerequisites and is,
 	 * therefore enabled.
@@ -64,6 +65,7 @@ public class PluginDescriptorModel extends PluginModel {
 	public String getPluginClass() {
 		return pluginClass;
 	}
+
 	/**
 	 * Returns the unique identifier of the plug-in related to this model
 	 * or <code>null</code>.  

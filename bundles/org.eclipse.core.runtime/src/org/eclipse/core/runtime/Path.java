@@ -72,6 +72,7 @@ public class Path implements IPath, Cloneable {
 	private Path() {
 		// not allowed
 	}
+
 	/* (Intentionally not included in javadoc)
 	 * Private constructor.
 	 */
@@ -97,6 +98,7 @@ public class Path implements IPath, Cloneable {
 		// no segment validations are done for performance reasons 
 		initialize(null, fullPath);
 	}
+
 	/** 
 	 * Constructs a new path from the given device id and string path.
 	 * The given string path must be valid.
@@ -113,6 +115,7 @@ public class Path implements IPath, Cloneable {
 		// no segment validations are done for performance reasons
 		initialize(device, path);
 	}
+
 	/* (Intentionally not included in javadoc)
 	 * @see IPath#addFileExtension
 	 */
@@ -125,6 +128,7 @@ public class Path implements IPath, Cloneable {
 		newSegments[len - 1] = segments[len - 1] + "." + extension; //$NON-NLS-1$
 		return new Path(device, newSegments, separators);
 	}
+
 	/* (Intentionally not included in javadoc)
 	 * @see IPath#addTrailingSeparator
 	 */
@@ -138,6 +142,7 @@ public class Path implements IPath, Cloneable {
 		}
 		return new Path(device, segments, separators | HAS_TRAILING);
 	}
+
 	/* (Intentionally not included in javadoc)
 	 * @see IPath#append(java.lang.String)
 	 */
@@ -168,6 +173,7 @@ public class Path implements IPath, Cloneable {
 		//go with easy implementation
 		return append(new Path(tail));
 	}
+
 	/* (Intentionally not included in javadoc)
 	 * @see IPath#append(IPath)
 	 */
@@ -196,6 +202,7 @@ public class Path implements IPath, Cloneable {
 		}
 		return result;
 	}
+
 	/**
 	 * Destructively converts this path to its canonical form.
 	 * <p>
@@ -222,6 +229,7 @@ public class Path implements IPath, Cloneable {
 		}
 		return false;
 	}
+
 	/* (Intentionally not included in javadoc)
 	 * Clones this object.
 	 */
@@ -232,6 +240,7 @@ public class Path implements IPath, Cloneable {
 			return null;
 		}
 	}
+
 	/**
 	 * Destructively removes all occurrences of ".." segments from this path.
 	 */
@@ -269,6 +278,7 @@ public class Path implements IPath, Cloneable {
 		System.arraycopy(stack, 0, newSegments, 0, stackPointer);
 		this.segments = newSegments;
 	}
+
 	/**
 	 * Removes duplicate slashes from the given path, with the exception
 	 * of leading double slash which represents a UNC path.
@@ -311,6 +321,7 @@ public class Path implements IPath, Cloneable {
 		}
 		return new String(result, 0, count);
 	}
+
 	/* (Intentionally not included in javadoc)
 	 * Computes the hash code for this object.
 	 */
@@ -323,6 +334,7 @@ public class Path implements IPath, Cloneable {
 		}
 		return hash;
 	}
+
 	/* (Intentionally not included in javadoc)
 	 * Returns the size of the string that will be created by toString or toOSString.
 	 */
@@ -347,6 +359,7 @@ public class Path implements IPath, Cloneable {
 			length++;
 		return length;
 	}
+
 	/* (Intentionally not included in javadoc)
 	 * Returns the number of segments in the given path
 	 */
@@ -369,6 +382,7 @@ public class Path implements IPath, Cloneable {
 		}
 		return count;
 	}
+
 	/**
 	 * Computes the segment array for the given canonicalized path.
 	 */
@@ -401,6 +415,7 @@ public class Path implements IPath, Cloneable {
 		}
 		return newSegments;
 	}
+
 	/* (Intentionally not included in javadoc)
 	 * Compares objects for equality.
 	 */
@@ -432,6 +447,7 @@ public class Path implements IPath, Cloneable {
 	public String getDevice() {
 		return device;
 	}
+
 	/* (Intentionally not included in javadoc)
 	 * @see IPath#getFileExtension
 	 */
@@ -449,6 +465,7 @@ public class Path implements IPath, Cloneable {
 		}
 		return lastSegment.substring(index + 1);
 	}
+
 	/* (Intentionally not included in javadoc)
 	 * Computes the hash code for this object.
 	 */
@@ -462,6 +479,7 @@ public class Path implements IPath, Cloneable {
 	public boolean hasTrailingSeparator() {
 		return (separators & HAS_TRAILING) != 0;
 	}
+
 	/*
 	 * Initialize the current path with the given string.
 	 */
@@ -508,6 +526,7 @@ public class Path implements IPath, Cloneable {
 			separators = (separators & ALL_SEPARATORS) | (computeHashCode() << 3);
 		}
 	}
+
 	/* (Intentionally not included in javadoc)
 	 * @see IPath#isAbsolute
 	 */
@@ -515,6 +534,7 @@ public class Path implements IPath, Cloneable {
 		//it's absolute if it has a leading separator
 		return (separators & HAS_LEADING) != 0;
 	}
+
 	/* (Intentionally not included in javadoc)
 	 * @see IPath#isEmpty
 	 */
@@ -523,6 +543,7 @@ public class Path implements IPath, Cloneable {
 		return segments.length == 0 && ((separators & ALL_SEPARATORS) != HAS_LEADING);
 
 	}
+
 	/* (Intentionally not included in javadoc)
 	 * @see IPath#isPrefixOf
 	 */
@@ -550,6 +571,7 @@ public class Path implements IPath, Cloneable {
 		}
 		return true;
 	}
+
 	/* (Intentionally not included in javadoc)
 	 * @see IPath#isRoot
 	 */
@@ -557,6 +579,7 @@ public class Path implements IPath, Cloneable {
 		//must have no segments, a leading separator, and not be a UNC path.
 		return this == ROOT || (segments.length == 0 && ((separators & ALL_SEPARATORS) == HAS_LEADING));
 	}
+
 	/* (Intentionally not included in javadoc)
 	 * @see IPath#isUNC
 	 */
@@ -565,6 +588,7 @@ public class Path implements IPath, Cloneable {
 			return false;
 		return (separators & IS_UNC) != 0;
 	}
+
 	/* (Intentionally not included in javadoc)
 	 * @see IPath#isValidPath
 	 */
@@ -581,6 +605,7 @@ public class Path implements IPath, Cloneable {
 		}
 		return true;
 	}
+
 	/* (Intentionally not included in javadoc)
 	 * @see IPath#isValidSegment
 	 */
@@ -600,6 +625,7 @@ public class Path implements IPath, Cloneable {
 		}
 		return true;
 	}
+
 	/* (Intentionally not included in javadoc)
 	 * @see IPath#lastSegment
 	 */
@@ -607,6 +633,7 @@ public class Path implements IPath, Cloneable {
 		int len = segments.length;
 		return len == 0 ? null : segments[len - 1];
 	}
+
 	/* (Intentionally not included in javadoc)
 	 * @see IPath#makeAbsolute
 	 */
@@ -624,6 +651,7 @@ public class Path implements IPath, Cloneable {
 		}
 		return result;
 	}
+
 	/* (Intentionally not included in javadoc)
 	 * @see IPath#makeRelative
 	 */
@@ -633,6 +661,7 @@ public class Path implements IPath, Cloneable {
 		}
 		return new Path(device, segments, separators & HAS_TRAILING);
 	}
+
 	/* (Intentionally not included in javadoc)
 	 * @see IPath#makeUNC
 	 */
@@ -650,6 +679,7 @@ public class Path implements IPath, Cloneable {
 		}
 		return new Path(toUNC ? null : device, segments, newSeparators);
 	}
+
 	/* (Intentionally not included in javadoc)
 	 * @see IPath#matchingFirstSegments
 	 */
@@ -666,6 +696,7 @@ public class Path implements IPath, Cloneable {
 		}
 		return count;
 	}
+
 	/* (Intentionally not included in javadoc)
 	 * @see IPath#removeFileExtension
 	 */
@@ -678,6 +709,7 @@ public class Path implements IPath, Cloneable {
 		int index = lastSegment.lastIndexOf(extension) - 1;
 		return removeLastSegments(1).append(lastSegment.substring(0, index));
 	}
+
 	/* (Intentionally not included in javadoc)
 	 * @see IPath#removeFirstSegments
 	 */
@@ -695,6 +727,7 @@ public class Path implements IPath, Cloneable {
 		//result is always a relative path
 		return new Path(device, newSegments, separators & HAS_TRAILING);
 	}
+
 	/* (Intentionally not included in javadoc)
 	 * @see IPath#removeLastSegments
 	 */
@@ -711,6 +744,7 @@ public class Path implements IPath, Cloneable {
 		System.arraycopy(this.segments, 0, newSegments, 0, newSize);
 		return new Path(device, newSegments, separators);
 	}
+
 	/* (Intentionally not included in javadoc)
 	 * @see IPath#removeTrailingSeparator
 	 */
@@ -720,6 +754,7 @@ public class Path implements IPath, Cloneable {
 		}
 		return new Path(device, segments, separators & (HAS_LEADING | IS_UNC));
 	}
+
 	/* (Intentionally not included in javadoc)
 	 * @see IPath#segment
 	 */
@@ -728,12 +763,14 @@ public class Path implements IPath, Cloneable {
 			return null;
 		return segments[index];
 	}
+
 	/* (Intentionally not included in javadoc)
 	 * @see IPath#segmentCount
 	 */
 	public int segmentCount() {
 		return segments.length;
 	}
+
 	/* (Intentionally not included in javadoc)
 	 * @see IPath#segments
 	 */
@@ -742,6 +779,7 @@ public class Path implements IPath, Cloneable {
 		System.arraycopy(segments, 0, segmentCopy, 0, segments.length);
 		return segmentCopy;
 	}
+
 	/* (Intentionally not included in javadoc)
 	 * @see IPath#setDevice
 	 */
@@ -755,12 +793,14 @@ public class Path implements IPath, Cloneable {
 
 		return new Path(value, segments, separators);
 	}
+
 	/* (Intentionally not included in javadoc)
 	 * @see IPath#toFile
 	 */
 	public File toFile() {
 		return new File(toOSString());
 	}
+
 	/* (Intentionally not included in javadoc)
 	 * @see IPath#toOSString
 	 */
@@ -800,6 +840,7 @@ public class Path implements IPath, Cloneable {
 			result[offset++] = FILE_SEPARATOR;
 		return new String(result);
 	}
+
 	/* (Intentionally not included in javadoc)
 	 * @see IPath#toString
 	 */
@@ -836,6 +877,7 @@ public class Path implements IPath, Cloneable {
 			result[offset++] = SEPARATOR;
 		return new String(result);
 	}
+
 	/* (Intentionally not included in javadoc)
 	 * @see IPath#uptoSegment
 	 */

@@ -25,6 +25,7 @@ public class Log implements ILog {
 	public Log(Bundle plugin) {
 		this.bundle = plugin;
 	}
+
 	/**
 	 * Adds the given log listener to this log.  Subsequently the log listener will
 	 * receive notification of all log events passing through this log.
@@ -36,12 +37,14 @@ public class Log implements ILog {
 			logListeners.add(listener);
 		}
 	}
+
 	/**
 	 * Returns the plug-in with which this log is associated.
 	 */
 	public Bundle getBundle() {
 		return bundle;
 	}
+
 	/**
 	 * Logs the given status.  The status is distributed to the log listeners
 	 * installed on this log and then to the log listeners installed on the platform.
@@ -62,6 +65,7 @@ public class Log implements ILog {
 				public void run() throws Exception {
 					listener.logging(status, bundle.getSymbolicName());
 				}
+
 				public void handleException(Throwable e) {
 					//Ignore
 				}
@@ -69,6 +73,7 @@ public class Log implements ILog {
 			InternalPlatform.getDefault().run(code);
 		}
 	}
+
 	/**
 	 * Removes the given log listener to this log.  Subsequently the log listener will
 	 * no longer receive notification of log events passing through this log.

@@ -11,6 +11,7 @@
 package org.eclipse.core.runtime.model;
 
 import org.eclipse.core.internal.runtime.Assert;
+
 /**
  * An object which represents the relationship between a plug-in and a
  * prerequisite plug-in in the dependent's plug-in manifest.
@@ -46,6 +47,7 @@ public class PluginPrerequisiteModel extends PluginModelObject {
 	public PluginPrerequisiteModel() {
 		super();
 	}
+
 	/**
 	 * Returns whether or not the code in this pre-requisite is exported.
 	 *
@@ -54,6 +56,7 @@ public class PluginPrerequisiteModel extends PluginModelObject {
 	public boolean getExport() {
 		return export;
 	}
+
 	/**
 	 * Returns whether or not this pre-requisite requires an exact match.
 	 *
@@ -63,6 +66,7 @@ public class PluginPrerequisiteModel extends PluginModelObject {
 	public boolean getMatch() {
 		return (match == PREREQ_MATCH_EQUIVALENT);
 	}
+
 	/**
 	 * Returns a byte code indicating the type of match this pre-requisite requires.
 	 * The byte code can be any one of the following:
@@ -78,6 +82,7 @@ public class PluginPrerequisiteModel extends PluginModelObject {
 	public byte getMatchByte() {
 		return match;
 	}
+
 	/**
 	 * Returns whether this pre-requisite is optional.
 	 *
@@ -86,6 +91,7 @@ public class PluginPrerequisiteModel extends PluginModelObject {
 	public boolean getOptional() {
 		return optional;
 	}
+
 	/**
 	 * Returns the plug-in identifier of the prerequisite plug-in.
 	 * 
@@ -94,6 +100,7 @@ public class PluginPrerequisiteModel extends PluginModelObject {
 	public String getPlugin() {
 		return plugin;
 	}
+
 	/**
 	 * Returns the resolved version of the prerequisite plug-in.  The
 	 * returned value is in the format specified by <code>PluginVersionIdentifier</code>.
@@ -104,6 +111,7 @@ public class PluginPrerequisiteModel extends PluginModelObject {
 	public String getResolvedVersion() {
 		return resolvedVersion;
 	}
+
 	/**
 	 * Returns the version name of this plug-in.
 	 *
@@ -112,6 +120,7 @@ public class PluginPrerequisiteModel extends PluginModelObject {
 	public String getVersion() {
 		return version;
 	}
+
 	/**
 	 * Sets whether or not the code in this pre-requisite is exported.
 	 * This object must not be read-only.
@@ -122,6 +131,7 @@ public class PluginPrerequisiteModel extends PluginModelObject {
 		assertIsWriteable();
 		export = value;
 	}
+
 	/**
 	 * Sets whether or not this pre-requisite requires an exact match.
 	 * This object must not be read-only.
@@ -137,6 +147,7 @@ public class PluginPrerequisiteModel extends PluginModelObject {
 			setMatchByte(PREREQ_MATCH_COMPATIBLE);
 		}
 	}
+
 	/**
 	 * Sets whether or not this pre-requisite requires an exact match.
 	 * This object must not be read-only.
@@ -149,6 +160,7 @@ public class PluginPrerequisiteModel extends PluginModelObject {
 		Assert.isTrue((value == PREREQ_MATCH_PERFECT) || (value == PREREQ_MATCH_EQUIVALENT) || (value == PREREQ_MATCH_COMPATIBLE) || (value == PREREQ_MATCH_GREATER_OR_EQUAL));
 		match = value;
 	}
+
 	/**
 	 * Sets whether this pre-requisite is optional.
 	 * This object must not be read-only.
@@ -159,6 +171,7 @@ public class PluginPrerequisiteModel extends PluginModelObject {
 		assertIsWriteable();
 		optional = value;
 	}
+
 	/**
 	 * Sets the plug-in identifier of this prerequisite plug-in.
 	 * This object must not be read-only.
@@ -169,6 +182,7 @@ public class PluginPrerequisiteModel extends PluginModelObject {
 		assertIsWriteable();
 		plugin = value;
 	}
+
 	/**
 	 * Sets the resolved version of the prerequisite plug-in.  The
 	 * given value is in the format specified by <code>PluginVersionIdentifier</code>.
@@ -180,6 +194,7 @@ public class PluginPrerequisiteModel extends PluginModelObject {
 		assertIsWriteable();
 		resolvedVersion = value;
 	}
+
 	/**
 	 * Sets the version name of this plug-in prerequisite.
 	 * This object must not be read-only.

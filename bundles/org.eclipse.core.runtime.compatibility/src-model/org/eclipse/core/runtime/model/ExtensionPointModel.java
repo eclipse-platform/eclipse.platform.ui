@@ -31,12 +31,14 @@ public class ExtensionPointModel extends PluginModelObject {
 	// transient properties (not included in plug-in manifest)
 	private PluginModel plugin = null; // declaring plugin
 	private ExtensionModel[] extensions = null; // configured extensions
+
 	/**
 	 * Creates a new extension point model in which all fields are <code>null</code>.
 	 */
 	public ExtensionPointModel() {
 		super();
 	}
+
 	/**
 	 * Returns this extensions added to this extension point.
 	 * 
@@ -45,6 +47,7 @@ public class ExtensionPointModel extends PluginModelObject {
 	public ExtensionModel[] getDeclaredExtensions() {
 		return extensions;
 	}
+
 	/**
 	 * Returns the simple identifier of this extension point, or <code>null</code>
 	 * if this extension point does not have an identifier. This identifier is
@@ -58,6 +61,7 @@ public class ExtensionPointModel extends PluginModelObject {
 	public String getId() {
 		return id;
 	}
+
 	/**
 	 * Returns the plug-in model (descriptor or fragment) in which this
 	 * extension is declared.
@@ -67,6 +71,7 @@ public class ExtensionPointModel extends PluginModelObject {
 	public PluginModel getParent() {
 		return plugin;
 	}
+
 	/**
 	 * Returns the plug-in descriptor in which this extension point is
 	 * declared.
@@ -77,6 +82,7 @@ public class ExtensionPointModel extends PluginModelObject {
 	public PluginDescriptorModel getParentPluginDescriptor() {
 		return (PluginDescriptorModel) plugin;
 	}
+
 	/**
 	 * Returns the schema specification for this extension point.
 	 * 
@@ -85,6 +91,7 @@ public class ExtensionPointModel extends PluginModelObject {
 	public String getSchema() {
 		return schema;
 	}
+
 	/**
 	 * Sets this extensions added to this extension point. This object must not
 	 * be read-only.
@@ -95,6 +102,7 @@ public class ExtensionPointModel extends PluginModelObject {
 		assertIsWriteable();
 		extensions = value;
 	}
+
 	/**
 	 * Sets the simple identifier of this extension point, or <code>null</code>
 	 * if this extension point does not have an identifier. This identifier is
@@ -109,6 +117,7 @@ public class ExtensionPointModel extends PluginModelObject {
 		assertIsWriteable();
 		id = value;
 	}
+
 	/**
 	 * Sets the plug-in model in which this extension is declared. This object
 	 * must not be read-only.
@@ -119,6 +128,7 @@ public class ExtensionPointModel extends PluginModelObject {
 		assertIsWriteable();
 		plugin = value;
 	}
+
 	/**
 	 * Sets the plug-in descriptor in which this extension point is declared.
 	 * This object must not be read-only.
@@ -130,6 +140,7 @@ public class ExtensionPointModel extends PluginModelObject {
 		assertIsWriteable();
 		plugin = value;
 	}
+
 	/**
 	 * Sets the schema specification for this extension point. This object must
 	 * not be read-only.

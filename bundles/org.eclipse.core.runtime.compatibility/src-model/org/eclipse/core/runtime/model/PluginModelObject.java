@@ -47,6 +47,7 @@ public abstract class PluginModelObject {
 	protected void assertIsWriteable() {
 		Assert.isTrue(!isReadOnly(), "Model is read-only"); //$NON-NLS-1$
 	}
+
 	/**
 	 * Returns the name of this element.
 	 * 
@@ -55,6 +56,7 @@ public abstract class PluginModelObject {
 	public String getName() {
 		return name;
 	}
+
 	/**
 	 * Return the line number for the start tag for this plug-in object. This
 	 * is the line number of the element declaration from the plug-in manifest file.
@@ -64,6 +66,7 @@ public abstract class PluginModelObject {
 	public int getStartLine() {
 		return (flags & ~M_READ_ONLY) - 1;
 	}
+
 	/**
 	 * Returns whether or not this model object is read-only.
 	 * 
@@ -74,6 +77,7 @@ public abstract class PluginModelObject {
 	public boolean isReadOnly() {
 		return (flags & M_READ_ONLY) == M_READ_ONLY;
 	}
+
 	/**
 	 * Sets this model object and all of its descendents to be read-only.
 	 * Subclasses may extend this implementation.
@@ -91,6 +95,7 @@ public abstract class PluginModelObject {
 	public void setLocalizedName(String value) {
 		name = value;
 	}
+
 	/**
 	 * Sets the name of this element.
 	 * 
@@ -100,6 +105,7 @@ public abstract class PluginModelObject {
 		assertIsWriteable();
 		name = value;
 	}
+
 	/**
 	 * Set the line number for the start tag for this plug-in object. This is the
 	 * line number for the element declaration from the plug-in manifest file.
@@ -112,6 +118,7 @@ public abstract class PluginModelObject {
 		if (getStartLine() == -1)
 			flags = (lineNumber + 1) | (flags & M_READ_ONLY);
 	}
+
 	/**
 	 * Return a string representation of this object. This value is not to be relied
 	 * on and can change at any time. To be used for debugging purposes only.

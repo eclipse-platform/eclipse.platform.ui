@@ -38,6 +38,7 @@ public class ConfigurationElementModel extends PluginModelObject {
 	public ConfigurationElementModel() {
 		super();
 	}
+
 	/**
 	 * Returns the element which contains this element. If this element is an
 	 * immediate child of an extension, the returned value can be downcast to
@@ -49,6 +50,7 @@ public class ConfigurationElementModel extends PluginModelObject {
 	public Object getParent() {
 		return parent;
 	}
+
 	/**
 	 * Returns the extension in which this configuration element is declared.
 	 * If this element is a top-level child of an extension, the returned value
@@ -63,6 +65,7 @@ public class ConfigurationElementModel extends PluginModelObject {
 			p = ((ConfigurationElementModel) p).getParent();
 		return (ExtensionModel) p;
 	}
+
 	/**
 	 * Returns the properties associated with this element.
 	 * 
@@ -71,6 +74,7 @@ public class ConfigurationElementModel extends PluginModelObject {
 	public ConfigurationPropertyModel[] getProperties() {
 		return properties;
 	}
+
 	/**
 	 * Returns this element's sub-elements.
 	 * 
@@ -79,6 +83,7 @@ public class ConfigurationElementModel extends PluginModelObject {
 	public ConfigurationElementModel[] getSubElements() {
 		return children;
 	}
+
 	/**
 	 * Returns the value of this element.
 	 * 
@@ -87,6 +92,7 @@ public class ConfigurationElementModel extends PluginModelObject {
 	public String getValue() {
 		return value;
 	}
+
 	/**
 	 * Returns the value of this element.
 	 * 
@@ -96,6 +102,7 @@ public class ConfigurationElementModel extends PluginModelObject {
 	public String getValueAsIs() {
 		return value;
 	}
+
 	/**
 	 * Sets this model object and all of its descendents to be read-only.
 	 * Subclasses may extend this implementation.
@@ -111,6 +118,7 @@ public class ConfigurationElementModel extends PluginModelObject {
 			for (int i = 0; i < properties.length; i++)
 				properties[i].markReadOnly();
 	}
+
 	/**
 	 * Optimization to replace a non-localized key with its localized value.
 	 * Avoids having to access resource bundles for further lookups.
@@ -118,6 +126,7 @@ public class ConfigurationElementModel extends PluginModelObject {
 	public void setLocalizedValue(String value) {
 		this.value = value;
 	}
+
 	/**
 	 * Sets the parent of this element. The supplied parent is either an <code>ExtensionModel</code>,
 	 * if this element is to be a direct child of an extension, or another
@@ -130,6 +139,7 @@ public class ConfigurationElementModel extends PluginModelObject {
 		assertIsWriteable();
 		parent = value;
 	}
+
 	/**
 	 * Sets the properties associated with this element. This object must not
 	 * be read-only.
@@ -141,6 +151,7 @@ public class ConfigurationElementModel extends PluginModelObject {
 		assertIsWriteable();
 		properties = value;
 	}
+
 	/**
 	 * Sets configuration elements contained by this element This object must
 	 * not be read-only.
@@ -153,6 +164,7 @@ public class ConfigurationElementModel extends PluginModelObject {
 		assertIsWriteable();
 		children = value;
 	}
+
 	/**
 	 * Sets the value of this element. This object must not be read-only.
 	 * 

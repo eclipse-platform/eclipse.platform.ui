@@ -54,15 +54,19 @@ public abstract class PlatformURLConnection extends URLConnection {
 	public static boolean DEBUG_CONNECT = true;
 	public static boolean DEBUG_CACHE_LOOKUP = true;
 	public static boolean DEBUG_CACHE_COPY = true;
+
 	protected PlatformURLConnection(URL url) {
 		super(url);
 	}
+
 	protected boolean allowCaching() {
 		return false;
 	}
+
 	public void connect() throws IOException {
 		connect(false);
 	}
+
 	private synchronized void connect(boolean asLocal) throws IOException {
 		if (connected)
 			return;
@@ -84,6 +88,7 @@ public abstract class PlatformURLConnection extends URLConnection {
 		if (DEBUG && DEBUG_CONNECT)
 			debug("Connected as " + connection.getURL()); //$NON-NLS-1$
 	}
+
 	//TODO consider refactoring this method... it is too long
 	//TODO avoid cryptic identifiers such as ix, tgt, tmp, srcis, tgtos...
 	private void copyToCache() throws IOException {
@@ -180,35 +185,40 @@ public abstract class PlatformURLConnection extends URLConnection {
 				tgtos.close();
 		}
 	}
+
 	protected void debug(String s) {
 		System.out.println("URL " + getURL().toString() + "^" + Integer.toHexString(Thread.currentThread().hashCode()) + " " + s); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
+
 	private static void debugStartup(String s) {
 		System.out.println("URL " + s); //$NON-NLS-1$
 	}
+
 	public URL[] getAuxillaryURLs() throws IOException {
 		return null;
 	}
+
 	public synchronized InputStream getInputStream() throws IOException {
 		if (!connected)
 			connect();
 		return connection.getInputStream();
 	}
+
 	public URL getResolvedURL() {
 		return resolvedURL;
 	}
+
 	public URL getURLAsLocal() throws IOException {
 		connect(true); // connect and force caching if necessary
 		URL u = connection.getURL();
 		String up = u.getProtocol();
-		if (!up.equals(PlatformURLHandler.FILE) && 
-			!up.equals(PlatformURLHandler.JAR) &&
-			!up.startsWith(PlatformURLHandler.BUNDLE)) {
+		if (!up.equals(PlatformURLHandler.FILE) && !up.equals(PlatformURLHandler.JAR) && !up.startsWith(PlatformURLHandler.BUNDLE)) {
 			//TODO: this needs to be properly NL'd 
 			throw new IOException("url.noaccess");
 		}
 		return u;
 	}
+
 	//TODO consider refactoring this method... it is too long
 	private URL getURLInCache() throws IOException {
 
@@ -278,6 +288,7 @@ public abstract class PlatformURLConnection extends URLConnection {
 
 		return cachedURL;
 	}
+
 	/*
 	 * to be implemented by subclass
 	 * @return URL resolved URL
@@ -323,8 +334,8 @@ public abstract class PlatformURLConnection extends URLConnection {
 
 	void setResolvedURL(URL url) throws IOException {
 		if (url == null)
-			throw new IOException();		
-		if (resolvedURL != null) 
+			throw new IOException();
+		if (resolvedURL != null)
 			return;
 		int ix = url.getFile().lastIndexOf(PlatformURLHandler.JAR_SEPARATOR);
 		isJar = -1 != ix;
@@ -334,6 +345,7 @@ public abstract class PlatformURLConnection extends URLConnection {
 			url = new URL(PlatformURLHandler.JAR, "", -1, url.toExternalForm()); //$NON-NLS-1$
 		resolvedURL = url;
 	}
+
 	private boolean shouldCache(boolean asLocal) {
 
 		// don't cache files that are known to be local
@@ -352,6 +364,7 @@ public abstract class PlatformURLConnection extends URLConnection {
 		// XXX: add cache policy support
 		return true;
 	}
+
 	static void shutdown() {
 		if (indexName != null && cacheLocation != null) {
 			// weed out "not found" entries
@@ -381,6 +394,7 @@ public abstract class PlatformURLConnection extends URLConnection {
 			}
 		}
 	}
+
 	//TODO consider splitting this method into two or more steps - it is too long 
 	static void startup(String location, String os, String ws, String nl) {
 
@@ -477,6 +491,7 @@ public abstract class PlatformURLConnection extends URLConnection {
 			}
 		}
 	}
+
 	private static boolean verifyLocation(String location) {
 		// verify cache directory exists. Create if needed
 		File cacheDir = new File(location);

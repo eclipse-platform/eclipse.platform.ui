@@ -21,7 +21,7 @@ package org.eclipse.core.runtime;
  * Extensions and extension points are declared by generic entities called 
  * <cite>namespaces</cite>. The only fact known about namespaces is that they 
  * have unique string-based identifiers. One example of a namespace 
-  * is a plug-in, for which the namespace id is the plug-in id.
+ * is a plug-in, for which the namespace id is the plug-in id.
  * </p>
  * <p>
  * This interface is not intended to be implemented by clients.
@@ -30,43 +30,45 @@ package org.eclipse.core.runtime;
  */
 public interface IExtensionRegistry {
 	/**
-	* Adds the given listener for registry change events related to extension points 
-	* in the given namespace.
-	* Has no effect if an identical listener is already registered. After 
-	* completion of this method, the given listener will be registered for events 
-	* related to extension points in the specified namespace. If no namespace 
-	* is specified, the listener will receive notifications for changes to 
-	* extension points in any namespace.  
-	* <p>
-	* Once registered, a listener starts receiving notification of changes to
-	*  the registry. Registry change notifications are sent asynchronously.
-	* The listener continues to receive notifications until it is removed. 
-	* </p>
-	* @param listener the listener
-	* @param namespace the namespace in which to listen for changes
-	* @see IRegistryChangeListener
-	* @see IRegistryChangeEvent
-	* @see #removeRegistryChangeListener(IRegistryChangeListener) 
-	*/
+	 * Adds the given listener for registry change events related to extension points 
+	 * in the given namespace.
+	 * Has no effect if an identical listener is already registered. After 
+	 * completion of this method, the given listener will be registered for events 
+	 * related to extension points in the specified namespace. If no namespace 
+	 * is specified, the listener will receive notifications for changes to 
+	 * extension points in any namespace.  
+	 * <p>
+	 * Once registered, a listener starts receiving notification of changes to
+	 *  the registry. Registry change notifications are sent asynchronously.
+	 * The listener continues to receive notifications until it is removed. 
+	 * </p>
+	 * @param listener the listener
+	 * @param namespace the namespace in which to listen for changes
+	 * @see IRegistryChangeListener
+	 * @see IRegistryChangeEvent
+	 * @see #removeRegistryChangeListener(IRegistryChangeListener) 
+	 */
 	public void addRegistryChangeListener(IRegistryChangeListener listener, String namespace);
+
 	/**
-	* Adds the given listener for registry change events.
-	* Has no effect if an identical listener is already registered.
-	* 
-	* <p>
-	* This method is equivalent to:
-	* <pre>
-	*     addRegistryChangeListener(listener,null);
-	* </pre>
-	* </p>
-	* 
-	* @param listener the listener
-	* @see IRegistryChangeListener
-	* @see IRegistryChangeEvent
-	* @see #addRegistryChangeListener(IRegistryChangeListener, String)
-	* @see #removeRegistryChangeListener(IRegistryChangeListener)
-	*/
+	 * Adds the given listener for registry change events.
+	 * Has no effect if an identical listener is already registered.
+	 * 
+	 * <p>
+	 * This method is equivalent to:
+	 * <pre>
+	 *     addRegistryChangeListener(listener,null);
+	 * </pre>
+	 * </p>
+	 * 
+	 * @param listener the listener
+	 * @see IRegistryChangeListener
+	 * @see IRegistryChangeEvent
+	 * @see #addRegistryChangeListener(IRegistryChangeListener, String)
+	 * @see #removeRegistryChangeListener(IRegistryChangeListener)
+	 */
 	public void addRegistryChangeListener(IRegistryChangeListener listener);
+
 	/**
 	 * Returns all configuration elements from all extensions configured
 	 * into the identified extension point. Returns an empty array if the extension 
@@ -78,6 +80,7 @@ public interface IExtensionRegistry {
 	 * @return the configuration elements
 	 */
 	public IConfigurationElement[] getConfigurationElementsFor(String extensionPointId);
+
 	/**
 	 * Returns all configuration elements from all extensions configured
 	 * into the identified extension point. Returns an empty array if the extension 
@@ -91,6 +94,7 @@ public interface IExtensionRegistry {
 	 * @return the configuration elements
 	 */
 	public IConfigurationElement[] getConfigurationElementsFor(String namespace, String extensionPointName);
+
 	/**
 	 * Returns all configuration elements from the identified extension.
 	 * Returns an empty array if the extension does not exist or 
@@ -105,6 +109,7 @@ public interface IExtensionRegistry {
 	 * @return the configuration elements
 	 */
 	public IConfigurationElement[] getConfigurationElementsFor(String namespace, String extensionPointName, String extensionId);
+
 	/**
 	 * Returns the specified extension in this extension registry, 
 	 * or <code>null</code> if there is no such extension.
@@ -118,6 +123,7 @@ public interface IExtensionRegistry {
 	 * @return the extension, or <code>null</code>
 	 */
 	public IExtension getExtension(String extensionPointId, String extensionId);
+
 	/**
 	 * Returns the specified extension in this extension registry, 
 	 * or <code>null</code> if there is no such extension.
@@ -144,6 +150,7 @@ public interface IExtensionRegistry {
 	 * @return the extension point, or <code>null</code>
 	 */
 	public IExtensionPoint getExtensionPoint(String extensionPointId);
+
 	/**
 	 * Returns the extension point in this extension registry
 	 * with the given namespace and extension point simple identifier,
@@ -164,6 +171,7 @@ public interface IExtensionRegistry {
 	 * @return the extension points known to this extension registry
 	 */
 	public IExtensionPoint[] getExtensionPoints();
+
 	/**
 	 * Returns all extension points declared in the given namespace. Returns an empty array if 
 	 * there are no extension points declared in the namespace.
@@ -173,6 +181,7 @@ public interface IExtensionRegistry {
 	 * @return the extension points in this registry declared in the given namespace 
 	 */
 	public IExtensionPoint[] getExtensionPoints(String namespace);
+
 	/**
 	 * Returns all extensions declared in the given namespace. Returns an empty array if 
 	 * no extensions are declared in the namespace.
@@ -182,6 +191,7 @@ public interface IExtensionRegistry {
 	 * @return the extensions in this registry declared in the given namespace 
 	 */
 	public IExtension[] getExtensions(String namespace);
+
 	/**
 	 * Returns all elements that declare extensions and/or extension points. Returns an 
 	 * empty array if there are no known extensions/extension points in this registry. 
@@ -191,14 +201,16 @@ public interface IExtensionRegistry {
 	 * after M8
 	 */
 	public String[] getElementIdentifiers();
+
 	/**
 	 * Returns all namespaces where extensions and/or extension points. Returns an 
 	 * empty array if there are no known extensions/extension points in this registry.
 	 * 
 	 * @return all namespaces known to this registry
 	 * @since 3.0 
-	 */	
+	 */
 	public String[] getNamespaces();
+
 	/** 
 	 * Removes the given registry change listener from this registry.
 	 * Has no effect if an identical listener is not registered.

@@ -48,6 +48,7 @@ public class Cipher {
 	private MessageDigest digest;
 	private Random random;
 	private final byte[] toDigest;
+
 	/**
 	 * Initializes the cipher with the given mode and password. This method
 	 * must be called first (before any encryption of decryption takes
@@ -66,6 +67,7 @@ public class Cipher {
 		}
 		toDigest = new byte[password.length + RANDOM_SIZE];
 	}
+
 	/**
 	 * Encrypts or decrypts (depending on which mode the cipher is in) the
 	 * given data and returns the result.
@@ -76,6 +78,7 @@ public class Cipher {
 	public byte[] cipher(byte[] data) throws Exception {
 		return transform(data, 0, data.length, mode);
 	}
+
 	/**
 	 * Encrypts or decrypts (depending on which mode the cipher is in) the
 	 * given data and returns the result.
@@ -89,6 +92,7 @@ public class Cipher {
 	public byte[] cipher(byte[] data, int off, int len) throws Exception {
 		return transform(data, off, len, mode);
 	}
+
 	/**
 	 * Encrypts or decrypts (depending on which mode the cipher is in) the
 	 * given byte and returns the result.
@@ -97,9 +101,10 @@ public class Cipher {
 	 * @return      the result of encrypting or decrypting the given byte
 	 */
 	public byte cipher(byte datum) throws Exception {
-		byte[] data = { datum };
+		byte[] data = {datum};
 		return cipher(data)[0];
 	}
+
 	/**
 	 * Generates a secure stream of bytes based on the input seed.
 	 * This routine works by combining the input seed with random bytes
@@ -125,6 +130,7 @@ public class Cipher {
 		//compute and return SHA-1 hash of digest array
 		return digest.digest(toDigest);
 	}
+
 	/**
 	 * Returns a stream of cryptographically secure bytes of the given length.
 	 * The result is deterministically based on the input seed (password).
@@ -141,6 +147,7 @@ public class Cipher {
 		}
 		return nextRandom;
 	}
+
 	private byte[] transform(byte[] data, int off, int len, int mode) throws Exception {
 		byte[] result = nextRandom(len);
 		for (int i = 0; i < len; ++i) {

@@ -24,19 +24,21 @@ public class Policy {
 	public static String bind(String id) {
 		return bind(id, (String[]) null);
 	}
+
 	/**
 	 * Lookup the message with the given ID in this catalog and bind its
 	 * substitution locations with the given string.
 	 */
 	public static String bind(String id, String binding) {
-		return bind(id, new String[] { binding });
+		return bind(id, new String[] {binding});
 	}
+
 	/**
 	 * Lookup the message with the given ID in this catalog and bind its
 	 * substitution locations with the given strings.
 	 */
 	public static String bind(String id, String binding1, String binding2) {
-		return bind(id, new String[] { binding1, binding2 });
+		return bind(id, new String[] {binding1, binding2});
 	}
 
 	/**
@@ -58,11 +60,13 @@ public class Policy {
 			return message;
 		return MessageFormat.format(message, bindings);
 	}
+
 	public static IProgressMonitor monitorFor(IProgressMonitor monitor) {
 		if (monitor == null)
 			return new NullProgressMonitor();
 		return monitor;
 	}
+
 	public static IProgressMonitor subMonitorFor(IProgressMonitor monitor, int ticks) {
 		if (monitor == null)
 			return new NullProgressMonitor();
@@ -70,6 +74,7 @@ public class Policy {
 			return monitor;
 		return new SubProgressMonitor(monitor, ticks);
 	}
+
 	public static IProgressMonitor subMonitorFor(IProgressMonitor monitor, int ticks, int style) {
 		if (monitor == null)
 			return new NullProgressMonitor();
@@ -77,6 +82,7 @@ public class Policy {
 			return monitor;
 		return new SubProgressMonitor(monitor, ticks, style);
 	}
+
 	/**
 	 * Print a debug message to the console. If the given boolean is <code>true</code> then
 	 * pre-pend the message with the current date.

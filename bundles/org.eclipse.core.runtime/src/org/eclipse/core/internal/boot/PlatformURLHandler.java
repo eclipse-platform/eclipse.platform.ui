@@ -17,8 +17,8 @@ import java.util.Hashtable;
 import org.osgi.service.url.AbstractURLStreamHandlerService;
 
 /**
-* URL handler for the "platform" protocol
-*/
+ * URL handler for the "platform" protocol
+ */
 public class PlatformURLHandler extends AbstractURLStreamHandlerService {
 
 	private static Hashtable connectionType = new Hashtable();
@@ -58,7 +58,7 @@ public class PlatformURLHandler extends AbstractURLStreamHandlerService {
 
 		PlatformURLConnection connection = null;
 		try {
-			connection = (PlatformURLConnection) construct.newInstance(new Object[] { url });
+			connection = (PlatformURLConnection) construct.newInstance(new Object[] {url});
 		} catch (Exception e) {
 			//TODO original exception is lost - consider wrapping it into the IOException
 			//TODO need to create message in catalog and use Policy to retrieve it
@@ -68,9 +68,10 @@ public class PlatformURLHandler extends AbstractURLStreamHandlerService {
 		connection.setResolvedURL(connection.resolve());
 		return connection;
 	}
+
 	public static void register(String type, Class connectionClass) {
 		try {
-			Constructor c = connectionClass.getConstructor(new Class[] { URL.class });
+			Constructor c = connectionClass.getConstructor(new Class[] {URL.class});
 			connectionType.put(type, c);
 		} catch (NoSuchMethodException e) {
 			//don't register connection classes that don't conform to the spec

@@ -43,7 +43,7 @@ public final class InternalPlatform implements IPlatform {
 	private ServiceTracker instanceLocation = null;
 	private ServiceTracker configurationLocation = null;
 	private ServiceTracker installLocation = null;
-	private ServiceTracker debugTracker= null;
+	private ServiceTracker debugTracker = null;
 	private DebugOptions options = null;
 
 	private static IAdapterManager adapterManager;
@@ -74,8 +74,8 @@ public final class InternalPlatform implements IPlatform {
 	private static String pluginCustomizationFile = null;
 
 	private ArrayList groupProviders = new ArrayList(3);
-	private IProduct product;	
-	
+	private IProduct product;
+
 	/**
 	 * Name of the plug-in customization file (value "plugin_customization.ini")
 	 * located in the root of the primary feature plug-in and it's 
@@ -104,7 +104,7 @@ public final class InternalPlatform implements IPlatform {
 	private static final String NO_REGISTRY_CACHE = "-noregistrycache"; //$NON-NLS-1$	
 	private static final String NO_LAZY_REGISTRY_CACHE_LOADING = "-noLazyRegistryCacheLoading"; //$NON-NLS-1$		
 	private static final String PLUGIN_CUSTOMIZATION = "-plugincustomization"; //$NON-NLS-1$
-	
+
 	// obsolete command line args
 	private static final String NO_PACKAGE_PREFIXES = "-noPackagePrefixes"; //$NON-NLS-1$
 	private static final String CLASSLOADER_PROPERTIES = "-classloaderProperties"; //$NON-NLS-1$	
@@ -115,7 +115,7 @@ public final class InternalPlatform implements IPlatform {
 	private static final String NEW_UPDATES = "-newUpdates"; //$NON-NLS-1$
 	private static final String UPDATE = "-update"; //$NON-NLS-1$
 	private static final String FEATURE = "-feature"; //$NON-NLS-1$
-	
+
 	// debug support:  set in loadOptions()
 	public static boolean DEBUG = false;
 	public static boolean DEBUG_CONTEXT = false;
@@ -134,8 +134,8 @@ public final class InternalPlatform implements IPlatform {
 	public static final String PROP_PRODUCT = "eclipse.product"; //$NON-NLS-1$
 	public static final String PROP_APPLICATION = "eclipse.application"; //$NON-NLS-1$
 	public static final String PROP_CONSOLE_LOG = "eclipse.consoleLog"; //$NON-NLS-1$
-	public static final String PROP_NO_REGISTRY_CACHE = 	"eclipse.noRegistryCache"; //$NON-NLS-1$
-	public static final String PROP_NO_LAZY_CACHE_LOADING = 	"eclipse.noLazyRegistryCacheLoading"; //$NON-NLS-1$
+	public static final String PROP_NO_REGISTRY_CACHE = "eclipse.noRegistryCache"; //$NON-NLS-1$
+	public static final String PROP_NO_LAZY_CACHE_LOADING = "eclipse.noLazyRegistryCacheLoading"; //$NON-NLS-1$
 	public static final String PROP_EXITCODE = "eclipse.exitcode"; //$NON-NLS-1$
 
 	// OSGI system properties.  Copied from EclipseStarter
@@ -147,13 +147,13 @@ public final class InternalPlatform implements IPlatform {
 	public static final String PROP_DEBUG = "osgi.debug"; //$NON-NLS-1$
 	public static final String PROP_DEV = "osgi.dev"; //$NON-NLS-1$
 	public static final String PROP_CONSOLE = "osgi.console"; //$NON-NLS-1$
-	public static final String PROP_CONSOLE_CLASS= "osgi.consoleClass"; //$NON-NLS-1$
+	public static final String PROP_CONSOLE_CLASS = "osgi.consoleClass"; //$NON-NLS-1$
 	public static final String PROP_OS = "osgi.os"; //$NON-NLS-1$
 	public static final String PROP_WS = "osgi.ws"; //$NON-NLS-1$
 	public static final String PROP_NL = "osgi.nl"; //$NON-NLS-1$
 	public static final String PROP_ARCH = "osgi.arch"; //$NON-NLS-1$
 	public static final String PROP_ADAPTOR = "osgi.adaptor"; //$NON-NLS-1$
-	public static final String PROP_SYSPATH= "osgi.syspath";  //$NON-NLS-1$
+	public static final String PROP_SYSPATH = "osgi.syspath"; //$NON-NLS-1$
 
 	/**
 	 * Private constructor to block instance creation.
@@ -178,6 +178,7 @@ public final class InternalPlatform implements IPlatform {
 			logListeners.add(listener);
 		}
 	}
+
 	/**
 	 * @see Platform
 	 */
@@ -192,7 +193,7 @@ public final class InternalPlatform implements IPlatform {
 		// bundle entry to cache if the bundle is packaged as a jar.
 		if (result.getProtocol().startsWith(PlatformURLHandler.BUNDLE)) {
 			URLConverter urlConverter = getURLConverter();
-			if (urlConverter == null) 
+			if (urlConverter == null)
 				throw new IOException("url.noaccess");
 			result = urlConverter.convertToFileURL(result);
 		}
@@ -215,6 +216,7 @@ public final class InternalPlatform implements IPlatform {
 		if (!initialized)
 			Assert.isTrue(false, Policy.bind("meta.appNotInit")); //$NON-NLS-1$
 	}
+
 	/**
 	 * @see Platform
 	 */
@@ -236,7 +238,7 @@ public final class InternalPlatform implements IPlatform {
 		splashDown = true;
 		run(endOfInitializationHandler);
 	}
-	
+
 	/**
 	 * @see Platform#getAdapterManager
 	 */
@@ -295,7 +297,6 @@ public final class InternalPlatform implements IPlatform {
 		return new Path(location.getURL().getPath());
 	}
 
-
 	/**
 	 * Returns a log for the given plugin. Creates a new one if needed.
 	 */
@@ -307,27 +308,29 @@ public final class InternalPlatform implements IPlatform {
 		logs.put(bundle, result);
 		return result;
 	}
+
 	/**
 	 * Returns the object which defines the location and organization
 	 * of the platform's meta area.
 	 */
 	public DataArea getMetaArea() {
-		if (metaArea != null) 
+		if (metaArea != null)
 			return metaArea;
-		
+
 		metaArea = new DataArea();
-		metaArea.setKeyringFile(keyringFile);	//TODO Aren't those files suppose to be located into the config? Why does it need to happen here?
-		metaArea.setPassword(password);			
+		metaArea.setKeyringFile(keyringFile); //TODO Aren't those files suppose to be located into the config? Why does it need to happen here?
+		metaArea.setPassword(password);
 		return metaArea;
 	}
-	private  void handleException(ISafeRunnable code, Throwable e) {
+
+	private void handleException(ISafeRunnable code, Throwable e) {
 		if (!(e instanceof OperationCanceledException)) {
 			String pluginId = PI_RUNTIME;
 			String message = Policy.bind("meta.pluginProblems", pluginId); //$NON-NLS-1$
 			IStatus status;
 			if (e instanceof CoreException) {
 				status = new MultiStatus(pluginId, IPlatform.PLUGIN_ERROR, message, e);
-				((MultiStatus)status).merge(((CoreException)e).getStatus());
+				((MultiStatus) status).merge(((CoreException) e).getStatus());
 			} else {
 				status = new Status(IStatus.ERROR, pluginId, IPlatform.PLUGIN_ERROR, message, e);
 			}
@@ -340,6 +343,7 @@ public final class InternalPlatform implements IPlatform {
 		}
 		code.handleException(e);
 	}
+
 	/**
 	 * @return whether platform log writer has already been registered
 	 */
@@ -375,18 +379,18 @@ public final class InternalPlatform implements IPlatform {
 		this.context = context;
 		initializeLocationTrackers();
 		ResourceTranslator.start();
-		endOfInitializationHandler = getSplashHandler();	//TODO the call to getSplashHandler could be done into endSplash(). Then we could remove the variable
+		endOfInitializationHandler = getSplashHandler(); //TODO the call to getSplashHandler could be done into endSplash(). Then we could remove the variable
 		processCommandLine(infoService.getNonFrameworkArgs());
 		debugTracker = new ServiceTracker(context, DebugOptions.class.getName(), null);
 		debugTracker.open();
-		options = (DebugOptions) debugTracker.getService(); 
+		options = (DebugOptions) debugTracker.getService();
 		initializeDebugFlags();
 		initialized = true;
-		getMetaArea();	//TODO Why does this need to happen here?
+		getMetaArea(); //TODO Why does this need to happen here?
 		platformLog = new PlatformLogWriter();
 		addLogListener(platformLog);
 		platformRegistration = context.registerService(IPlatform.class.getName(), this, null);
-	}	
+	}
 
 	private Runnable getSplashHandler() {
 		ServiceReference[] ref;
@@ -407,7 +411,6 @@ public final class InternalPlatform implements IPlatform {
 		}
 		return null;
 	}
-
 
 	//TODO: what else must be done during the platform shutdown? See #loaderShutdown
 	public void stop(BundleContext bundleContext) {
@@ -433,6 +436,7 @@ public final class InternalPlatform implements IPlatform {
 			DEBUG_PREFERENCES = getBooleanOption(OPTION_DEBUG_PREFERENCES, false);
 		}
 	}
+
 	/**
 	 * Notifies all listeners of the platform log.  This includes the console log, if 
 	 * used, and the platform log file.  All Plugin log messages get funnelled
@@ -451,6 +455,7 @@ public final class InternalPlatform implements IPlatform {
 				public void run() throws Exception {
 					listener.logging(status, PI_RUNTIME);
 				}
+
 				public void handleException(Throwable e) {
 					//Ignore
 				}
@@ -467,7 +472,7 @@ public final class InternalPlatform implements IPlatform {
 		if (args == null)
 			return args;
 		allArgs = args;
-		int[] configArgs = new int[100];	//TODO Does this need to be this big, can't it be set to args.length (later it is only set to i or i-1)
+		int[] configArgs = new int[100]; //TODO Does this need to be this big, can't it be set to args.length (later it is only set to i or i-1)
 		//need to initialize the first element to something that could not be an index.
 		configArgs[0] = -1;
 		int configArgIndex = 0;
@@ -489,23 +494,23 @@ public final class InternalPlatform implements IPlatform {
 			}
 
 			// consume obsolete args
-			if (args[i].equalsIgnoreCase(CLASSLOADER_PROPERTIES)) 
-				found = true;				// ignored
+			if (args[i].equalsIgnoreCase(CLASSLOADER_PROPERTIES))
+				found = true; // ignored
 			if (args[i].equalsIgnoreCase(NO_PACKAGE_PREFIXES))
-				found = true;				// ignored
+				found = true; // ignored
 			if (args[i].equalsIgnoreCase(PLUGINS))
-				found = true;				// ignored
+				found = true; // ignored
 			if (args[i].equalsIgnoreCase(FIRST_USE))
-				found = true;				// ignored
+				found = true; // ignored
 			if (args[i].equalsIgnoreCase(NO_UPDATE))
-				found = true;				// ignored
+				found = true; // ignored
 			if (args[i].equalsIgnoreCase(NEW_UPDATES))
-				found = true;				// ignored
+				found = true; // ignored
 			if (args[i].equalsIgnoreCase(UPDATE))
-				found = true;				// ignored
+				found = true; // ignored
 			if (args[i].equalsIgnoreCase(FEATURE))
-				found = true;				// ignored
-			
+				found = true; // ignored
+
 			// done checking for args.  Remember where an arg was found 
 			if (found) {
 				configArgs[configArgIndex++] = i;
@@ -547,10 +552,10 @@ public final class InternalPlatform implements IPlatform {
 			}
 
 			// consume obsolete args for compatibilty
-			if (args[i - 1].equalsIgnoreCase(CLASSLOADER_PROPERTIES)) 
-				found = true;  // ignore
-			if (args[i - 1].equalsIgnoreCase(BOOT)) 
-				found = true;  // ignore
+			if (args[i - 1].equalsIgnoreCase(CLASSLOADER_PROPERTIES))
+				found = true; // ignore
+			if (args[i - 1].equalsIgnoreCase(BOOT))
+				found = true; // ignore
 
 			// done checking for args.  Remember where an arg was found 
 			if (found) {
@@ -588,6 +593,7 @@ public final class InternalPlatform implements IPlatform {
 			logListeners.remove(listener);
 		}
 	}
+
 	/**
 	 * @see Platform
 	 */
@@ -596,7 +602,7 @@ public final class InternalPlatform implements IPlatform {
 		if (!result.getProtocol().startsWith(PlatformURLHandler.BUNDLE))
 			return result;
 
-		URLConverter urlConverter = getURLConverter();	//TODO no need to use the method the field is declared here
+		URLConverter urlConverter = getURLConverter(); //TODO no need to use the method the field is declared here
 		if (urlConverter == null) {
 			// TODO: what is this string? should use a meaningful developer-level message or an NL'd user-level message
 			throw new IOException("url.noaccess");
@@ -605,6 +611,7 @@ public final class InternalPlatform implements IPlatform {
 
 		return result;
 	}
+
 	public void run(ISafeRunnable code) {
 		Assert.isNotNull(code);
 		try {
@@ -615,6 +622,7 @@ public final class InternalPlatform implements IPlatform {
 			handleException(code, e);
 		}
 	}
+
 	private void run(Runnable handler) {
 		// run end-of-initialization handler
 		if (handler == null)
@@ -625,6 +633,7 @@ public final class InternalPlatform implements IPlatform {
 			public void run() throws Exception {
 				finalHandler.run();
 			}
+
 			public void handleException(Throwable e) {
 				// just continue ... the exception has already been logged by
 				// the platform (see handleException(ISafeRunnable)
@@ -632,10 +641,12 @@ public final class InternalPlatform implements IPlatform {
 		};
 		run(code);
 	}
+
 	public void setOption(String option, String value) {
 		if (options != null)
 			options.setOption(option, value);
 	}
+
 	/**
 	 * Look for the companion preference translation file for a group
 	 * of preferences.  This method will attempt to find a companion 
@@ -837,23 +848,27 @@ public final class InternalPlatform implements IPlatform {
 			}
 		}
 	}
+
 	public void setExtensionRegistry(IExtensionRegistry value) {
 		registry = value;
 	}
+
 	public BundleContext getBundleContext() {
 		return context;
 	}
+
 	public Bundle getBundle(String symbolicName) {
-		Bundle[] bundles = packageAdmin.getBundles(symbolicName,null,null);
+		Bundle[] bundles = packageAdmin.getBundles(symbolicName, null, null);
 		if (bundles == null)
 			return null;
-		for(int i=0; i<bundles.length; i++) {
-			if ((bundles[i].getState() & (Bundle.INSTALLED | Bundle.UNINSTALLED)) == 0 ) {
+		for (int i = 0; i < bundles.length; i++) {
+			if ((bundles[i].getState() & (Bundle.INSTALLED | Bundle.UNINSTALLED)) == 0) {
 				return bundles[i];
 			}
 		}
 		return null;
 	}
+
 	public boolean isFragment(Bundle bundle) {
 		return (packageAdmin.getBundleType(bundle) & PackageAdmin.BUNDLE_TYPE_FRAGMENT) > 0;
 	}
@@ -865,7 +880,7 @@ public final class InternalPlatform implements IPlatform {
 	public Bundle[] getFragments(Bundle bundle) {
 		return packageAdmin.getFragments(bundle);
 	}
-	
+
 	public URL getInstallURL() {
 		Location location = getInstallLocation();
 		// it is pretty much impossible for the install location to be null.  If it is, the
@@ -879,18 +894,18 @@ public final class InternalPlatform implements IPlatform {
 		return infoService;
 	}
 
-	public URLConverter getURLConverter(){
+	public URLConverter getURLConverter() {
 		return urlConverter;
 	}
 
-	public FrameworkLog getFrameworkLog(){
+	public FrameworkLog getFrameworkLog() {
 		return frameworkLog;
 	}
 
 	public boolean isRunning() {
 		try {
 			return context.getBundle().getState() == Bundle.ACTIVE;
-		} catch(IllegalStateException e) {
+		} catch (IllegalStateException e) {
 			return false;
 		}
 	}
@@ -965,16 +980,17 @@ public final class InternalPlatform implements IPlatform {
 		}
 		return (URL[]) result.toArray(new URL[result.size()]);
 	}
+
 	public Location getConfigurationLocation() {
 		assertInitialized();
-		return (Location)configurationLocation.getService();
+		return (Location) configurationLocation.getService();
 	}
-	
+
 	public IContentTypeManager getContentTypeManager() {
 		return ContentTypeManager.getInstance();
 	}
-	
-	private void initializeLocationTrackers() {	//TODO What about having a constant for the prefix of the filter
+
+	private void initializeLocationTrackers() { //TODO What about having a constant for the prefix of the filter
 		Filter filter = null;
 		try {
 			filter = context.createFilter("(&(objectClass=org.eclipse.osgi.service.datalocation.Location)(type=" + PROP_CONFIG_AREA + "))");
@@ -983,7 +999,7 @@ public final class InternalPlatform implements IPlatform {
 		}
 		configurationLocation = new ServiceTracker(context, filter, null);
 		configurationLocation.open();
-		
+
 		try {
 			filter = context.createFilter("(&(objectClass=org.eclipse.osgi.service.datalocation.Location)(type=" + PROP_USER_AREA + "))");
 		} catch (InvalidSyntaxException e) {
@@ -991,7 +1007,7 @@ public final class InternalPlatform implements IPlatform {
 		}
 		userLocation = new ServiceTracker(context, filter, null);
 		userLocation.open();
-		
+
 		try {
 			filter = context.createFilter("(&(objectClass=org.eclipse.osgi.service.datalocation.Location)(type=" + PROP_INSTANCE_AREA + "))");
 		} catch (InvalidSyntaxException e) {
@@ -1008,12 +1024,12 @@ public final class InternalPlatform implements IPlatform {
 		installLocation = new ServiceTracker(context, filter, null);
 		installLocation.open();
 	}
-	
+
 	public Location getUserLocation() {
 		assertInitialized();
-		return (Location)userLocation.getService();
+		return (Location) userLocation.getService();
 	}
-	
+
 	public IPath getStateLocation(Bundle bundle, boolean create) throws IllegalStateException {
 		assertInitialized();
 		IPath result = getMetaArea().getStateLocation(bundle);
@@ -1021,12 +1037,15 @@ public final class InternalPlatform implements IPlatform {
 			result.toFile().mkdirs();
 		return result;
 	}
+
 	public URL find(Bundle b, IPath path) {
 		return FindSupport.find(b, path);
 	}
+
 	public URL find(Bundle bundle, IPath path, Map override) {
 		return FindSupport.find(bundle, path, override);
 	}
+
 	public IPath getStateLocation(Bundle bundle) {
 		return getStateLocation(bundle, true);
 	}
@@ -1034,34 +1053,44 @@ public final class InternalPlatform implements IPlatform {
 	public ResourceBundle getResourceBundle(Bundle bundle) {
 		return ResourceTranslator.getResourceBundle(bundle);
 	}
+
 	public String getResourceString(Bundle bundle, String value) {
 		return ResourceTranslator.getResourceString(bundle, value);
 	}
+
 	public String getResourceString(Bundle bundle, String value, ResourceBundle resourceBundle) {
 		return ResourceTranslator.getResourceString(bundle, value, resourceBundle);
 	}
+
 	public String getOSArch() {
 		return System.getProperty(PROP_ARCH);
 	}
+
 	public String getNL() {
 		return System.getProperty(PROP_NL);
 	}
+
 	public String getOS() {
 		return System.getProperty(PROP_OS);
 	}
+
 	public String getWS() {
 		return System.getProperty(PROP_WS);
 	}
+
 	public String[] getApplicationArgs() {
 		return appArgs;
 	}
+
 	//Those two methods are only used to register runtime once compatibility has been started.
 	public void setRuntimeInstance(Plugin runtime) {
 		runtimeInstance = runtime;
 	}
+
 	public Plugin getRuntimeInstance() {
 		return runtimeInstance;
 	}
+
 	public long getStateTimeStamp() {
 		ServiceReference platformAdminReference = context.getServiceReference(PlatformAdmin.class.getName());
 		if (platformAdminReference == null)
@@ -1069,38 +1098,46 @@ public final class InternalPlatform implements IPlatform {
 		else
 			return ((PlatformAdmin) context.getService(platformAdminReference)).getState(false).getTimeStamp();
 	}
+
 	public PlatformAdmin getPlatformAdmin() {
 		ServiceReference platformAdminReference = context.getServiceReference(PlatformAdmin.class.getName());
 		if (platformAdminReference == null)
 			return null;
 		return (PlatformAdmin) context.getService(platformAdminReference);
 	}
+
 	public void addAuthorizationInfo(URL serverUrl, String realm, String authScheme, Map info) throws CoreException {
-		getMetaArea().addAuthorizationInfo(serverUrl, realm, authScheme, info);	
+		getMetaArea().addAuthorizationInfo(serverUrl, realm, authScheme, info);
 	}
+
 	public void addProtectionSpace(URL resourceUrl, String realm) throws CoreException {
 		getMetaArea().addProtectionSpace(resourceUrl, realm);
 	}
+
 	public void flushAuthorizationInfo(URL serverUrl, String realm, String authScheme) throws CoreException {
 		getMetaArea().flushAuthorizationInfo(serverUrl, realm, authScheme);
 	}
+
 	public Map getAuthorizationInfo(URL serverUrl, String realm, String authScheme) {
 		return getMetaArea().getAuthorizationInfo(serverUrl, realm, authScheme);
 	}
+
 	public String getProtectionSpace(URL resourceUrl) {
 		return getMetaArea().getProtectionSpace(resourceUrl);
 	}
+
 	public Location getInstanceLocation() {
 		assertInitialized();
-		return (Location)instanceLocation.getService();
+		return (Location) instanceLocation.getService();
 	}
+
 	public Location getInstallLocation() {
 		assertInitialized();
-		return (Location)installLocation.getService();
+		return (Location) installLocation.getService();
 	}
-	
+
 	public IBundleGroupProvider[] getBundleGroupProviders() {
-		return (IBundleGroupProvider[])groupProviders.toArray(new IBundleGroupProvider[groupProviders.size()]);
+		return (IBundleGroupProvider[]) groupProviders.toArray(new IBundleGroupProvider[groupProviders.size()]);
 	}
 
 	public IProduct getProduct() {
@@ -1114,13 +1151,13 @@ public final class InternalPlatform implements IPlatform {
 			// There should only be one product with the given id so just take the first element
 			product = new Product(entries[0]);
 			return product;
-		} 
+		}
 		IConfigurationElement[] elements = getRegistry().getConfigurationElementsFor(PI_RUNTIME, IPlatform.PT_PRODUCT);
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
 			if (element.getName().equalsIgnoreCase("provider")) {
 				try {
-					IProductProvider provider = (IProductProvider)element.createExecutableExtension("run");
+					IProductProvider provider = (IProductProvider) element.createExecutableExtension("run");
 					IProduct[] products = provider.getProducts();
 					for (int j = 0; j < products.length; j++) {
 						IProduct provided = products[j];
@@ -1137,12 +1174,13 @@ public final class InternalPlatform implements IPlatform {
 			}
 		}
 		return null;
-	}	
+	}
 
 	public void registerBundleGroupProvider(IBundleGroupProvider provider) {
-		groupProviders.add(provider);		
+		groupProviders.add(provider);
 	}
+
 	public void unregisterBundleGroupProvider(IBundleGroupProvider provider) {
-		groupProviders.remove(provider);		
+		groupProviders.remove(provider);
 	}
 }

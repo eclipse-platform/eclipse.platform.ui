@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.core.runtime;
+
 /**
  * An adapter manager maintains a registry of adapter factories. Clients
  * directly invoke methods on an adapter manager to register and unregister
@@ -74,7 +75,8 @@ public interface IAdapterManager {
 	 * if the given adaptable object does not have an available adapter of the
 	 * given type
 	 */
-	public Object getAdapter(Object adaptable, Class adapterType);	
+	public Object getAdapter(Object adaptable, Class adapterType);
+
 	/**
 	 * Returns an object which is an instance of the given class name associated
 	 * with the given object. Returns <code>null</code> if no such object can
@@ -93,7 +95,8 @@ public interface IAdapterManager {
 	 * given type
 	 * @since 3.0
 	 */
-	public Object getAdapter(Object adaptable, String adapterTypeName);	
+	public Object getAdapter(Object adaptable, String adapterTypeName);
+
 	/**
 	 * Returns whether there is an adapter factory registered that may be able
 	 * to convert <code>adaptable</code> to an object of type <code>adapterTypeName</code>.
@@ -114,6 +117,7 @@ public interface IAdapterManager {
 	 * @since 3.0
 	 */
 	public boolean hasAdapter(Object adaptable, String adapterTypeName);
+
 	/**
 	 * Returns an object that is an instance of the given class name associated
 	 * with the given object. Returns <code>null</code> if no such object can
@@ -134,6 +138,7 @@ public interface IAdapterManager {
 	 * @since 3.0
 	 */
 	public Object loadAdapter(Object adaptable, String adapterTypeName);
+
 	/**
 	 * Registers the given adapter factory as extending objects of the given
 	 * type.
@@ -150,6 +155,7 @@ public interface IAdapterManager {
 	 * @see #unregisterAdapters(IAdapterFactory, Class)
 	 */
 	public void registerAdapters(IAdapterFactory factory, Class adaptable);
+
 	/**
 	 * Removes the given adapter factory completely from the list of registered
 	 * factories. Equivalent to calling <code>unregisterAdapters(IAdapterFactory,Class)</code>
@@ -160,6 +166,7 @@ public interface IAdapterManager {
 	 * @see #registerAdapters(IAdapterFactory, Class)
 	 */
 	public void unregisterAdapters(IAdapterFactory factory);
+
 	/**
 	 * Removes the given adapter factory from the list of factories registered
 	 * as extending the given class. Does nothing if the given factory and type

@@ -35,6 +35,7 @@ public class ConfigurationPropertyModel extends PluginModelObject {
 	public ConfigurationPropertyModel() {
 		super();
 	}
+
 	/**
 	 * Returns the value of this property.
 	 * 
@@ -43,6 +44,7 @@ public class ConfigurationPropertyModel extends PluginModelObject {
 	public String getValue() {
 		return value;
 	}
+
 	/**
 	 * Optimization to replace a non-localized key with its localized value.
 	 * Avoids having to access resource bundles for further lookups.
@@ -50,6 +52,7 @@ public class ConfigurationPropertyModel extends PluginModelObject {
 	public void setLocalizedValue(String value) {
 		this.value = value;
 	}
+
 	/**
 	 * Sets the value of this property. This object must not be read-only.
 	 * 

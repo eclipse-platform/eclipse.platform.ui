@@ -41,6 +41,7 @@ public class URLTool {
 	public static URL appendTrailingSlash(String url) throws MalformedURLException {
 		return appendTrailingSlash(new URL(url));
 	}
+
 	/**
 	 * Returns the given <code>URL</code> with a trailing slash appended to
 	 * it. If the <code>URL</code> already has a trailing slash the
@@ -72,6 +73,7 @@ public class URLTool {
 		}
 		return null;
 	}
+
 	/**
 	 * Returns the child URL formed by joining the given member with the
 	 * given parent URL.
@@ -82,6 +84,7 @@ public class URLTool {
 	public static URL getChild(String parent, String member) throws MalformedURLException {
 		return getChild(new URL(parent), member);
 	}
+
 	/**
 	 * Returns the child URL formed by joining the given member with the
 	 * given parent URL.
@@ -99,6 +102,7 @@ public class URLTool {
 		}
 		return null;
 	}
+
 	/**
 	 * Returns all elements in the given URLs path.
 	 * <table>
@@ -123,6 +127,7 @@ public class URLTool {
 	public static Vector getElements(String url) throws MalformedURLException {
 		return getElements(new URL(url));
 	}
+
 	/**
 	 * Returns all elements in the given URLs path.
 	 * <table>
@@ -152,6 +157,7 @@ public class URLTool {
 		}
 		return result;
 	}
+
 	/**
 	 * Returns the last element in the given URLs path, or <code>null</code>
 	 * if the URL is the root.
@@ -178,6 +184,7 @@ public class URLTool {
 	public static String getLastElement(String url) throws MalformedURLException {
 		return getLastElement(new URL(url));
 	}
+
 	/**
 	 * Returns the last element in the given URLs path, or <code>null</code>
 	 * if the URL is the root.
@@ -226,6 +233,7 @@ public class URLTool {
 			}
 		}
 	}
+
 	/**
 	 * Returns the parent URL of the given URL, or <code>null</code> if the
 	 * given URL is the root.
@@ -249,6 +257,7 @@ public class URLTool {
 	public static URL getParent(String url) throws MalformedURLException {
 		return getParent(new URL(url));
 	}
+
 	/**
 	 * Returns the parent URL of the given URL, or <code>null</code> if the
 	 * given URL is the root.
@@ -290,6 +299,7 @@ public class URLTool {
 		}
 		return url;
 	}
+
 	/**
 	 * Returns the root URL of the given URL.
 	 * <table>
@@ -312,6 +322,7 @@ public class URLTool {
 	public static URL getRoot(String urlString) throws MalformedURLException {
 		return getRoot(new URL(urlString));
 	}
+
 	/**
 	 * Returns the root URL of the given URL.
 	 * <table>
@@ -339,6 +350,7 @@ public class URLTool {
 
 		return null;
 	}
+
 	/**
 	 * Returns the given URL with its trailing slash removed. If the URL has
 	 * no trailing slash, the URL is returned unchanged.
@@ -362,6 +374,7 @@ public class URLTool {
 	public static URL removeTrailingSlash(String url) throws MalformedURLException {
 		return removeTrailingSlash(new URL(url));
 	}
+
 	/**
 	 * Returns the given URL with its trailing slash removed. If the URL has
 	 * no trailing slash, the URL is returned unchanged.
@@ -397,6 +410,7 @@ public class URLTool {
 
 		return null;
 	}
+
 	/**
 	 * Returns a boolean indicating whether the given URLs overlap.
 	 * <table>
@@ -429,6 +443,7 @@ public class URLTool {
 	public static boolean urlsOverlap(String url1, String url2) throws MalformedURLException {
 		return urlsOverlap(new URL(url1), new URL(url2));
 	}
+
 	/**
 	 * Returns a boolean indicating whether the given URLs overlap.
 	 * <table>

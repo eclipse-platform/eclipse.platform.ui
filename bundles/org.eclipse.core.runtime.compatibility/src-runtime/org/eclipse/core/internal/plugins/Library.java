@@ -14,11 +14,11 @@ import org.eclipse.core.runtime.*;
 
 public class Library implements ILibrary {
 	public String path;
-	
+
 	public Library(String path) {
 		this.path = path;
 	}
-	
+
 	public String[] getContentFilters() {
 		return null;
 	}

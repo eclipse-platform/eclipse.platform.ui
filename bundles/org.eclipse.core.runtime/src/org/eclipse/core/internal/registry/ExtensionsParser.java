@@ -101,16 +101,16 @@ public class ExtensionsParser extends DefaultHandler {
 	}
 
 	/**
-	     * Receive a Locator object for document events.
-	     *
-	     * <p>By default, do nothing.  Application writers may override this
-	     * method in a subclass if they wish to store the locator for use
-	     * with other document events.</p>
-	     *
-	     * @param locator A locator for all SAX document events.
-	     * @see org.xml.sax.ContentHandler#setDocumentLocator
-	     * @see org.xml.sax.Locator
-	     */
+	 * Receive a Locator object for document events.
+	 *
+	 * <p>By default, do nothing.  Application writers may override this
+	 * method in a subclass if they wish to store the locator for use
+	 * with other document events.</p>
+	 *
+	 * @param locator A locator for all SAX document events.
+	 * @see org.xml.sax.ContentHandler#setDocumentLocator
+	 * @see org.xml.sax.Locator
+	 */
 	public void setDocumentLocator(Locator locator) {
 		this.locator = locator;
 	}
@@ -133,8 +133,10 @@ public class ExtensionsParser extends DefaultHandler {
 			}
 		}
 	}
+
 	public void endDocument() {
 	}
+
 	public void endElement(String uri, String elementName, String qName) {
 		switch (((Integer) stateStack.peek()).intValue()) {
 			case IGNORED_ELEMENT_STATE :
@@ -215,9 +217,11 @@ public class ExtensionsParser extends DefaultHandler {
 				break;
 		}
 	}
+
 	public void error(SAXParseException ex) {
 		logStatus(ex);
 	}
+
 	public void fatalError(SAXParseException ex) throws SAXException {
 		logStatus(ex);
 		throw ex;
@@ -229,6 +233,7 @@ public class ExtensionsParser extends DefaultHandler {
 		stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
 		internalError(Policy.bind("parse.unknownElement", EXTENSION_POINT, elementName)); //$NON-NLS-1$
 	}
+
 	private void handleExtensionState(String elementName, Attributes attributes) {
 
 		// You need to change the state here even though we will be executing the same
@@ -251,6 +256,7 @@ public class ExtensionsParser extends DefaultHandler {
 		// configuration property for each attribute
 		parseConfigurationElementAttributes(attributes);
 	}
+
 	private void handleInitialState(String elementName, Attributes attributes) {
 		if (!elementName.equals(manifestType)) {
 			stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
@@ -266,6 +272,7 @@ public class ExtensionsParser extends DefaultHandler {
 		current.setStartLine(locator.getLineNumber());
 		objectStack.push(current);
 	}
+
 	/**
 	 * convert a list of comma-separated tokens into an array
 	 */
@@ -300,8 +307,10 @@ public class ExtensionsParser extends DefaultHandler {
 		stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
 		internalError(Policy.bind("parse.unknownElement", manifestType, elementName)); //$NON-NLS-1$ //$NON-NLS-2$
 	}
+
 	public void ignoreableWhitespace(char[] ch, int start, int length) {
 	}
+
 	private void logStatus(SAXParseException ex) {
 		String name = ex.getSystemId();
 		if (name == null)
@@ -315,8 +324,8 @@ public class ExtensionsParser extends DefaultHandler {
 		if (name.equals("")) //$NON-NLS-1$
 			msg = Policy.bind("parse.error", ex.getMessage()); //$NON-NLS-1$
 		else
-				msg = Policy.bind("parse.errorNameLineColumn", //$NON-NLS-1$
-	new String[] { name, Integer.toString(ex.getLineNumber()), Integer.toString(ex.getColumnNumber()), ex.getMessage()});
+			msg = Policy.bind("parse.errorNameLineColumn", //$NON-NLS-1$
+					new String[] {name, Integer.toString(ex.getLineNumber()), Integer.toString(ex.getColumnNumber()), ex.getMessage()});
 		factory.error(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, PARSE_PROBLEM, msg, ex));
 	}
 
@@ -396,6 +405,7 @@ public class ExtensionsParser extends DefaultHandler {
 		parentConfigurationElement.setProperties((ConfigurationProperty[]) propVector.toArray(new ConfigurationProperty[propVector.size()]));
 		propVector = null;
 	}
+
 	private void parseExtensionAttributes(Attributes attributes) {
 
 		BundleModel parent = (BundleModel) objectStack.peek();
@@ -426,6 +436,7 @@ public class ExtensionsParser extends DefaultHandler {
 				internalError(Policy.bind("parse.unknownAttribute", EXTENSION, attrName)); //$NON-NLS-1$
 		}
 	}
+
 	private void parseExtensionPointAttributes(Attributes attributes) {
 
 		ExtensionPoint currentExtPoint = factory.createExtensionPoint();
@@ -441,8 +452,8 @@ public class ExtensionsParser extends DefaultHandler {
 				currentExtPoint.setName(attrValue);
 			else if (attrName.equals(EXTENSION_POINT_ID))
 				currentExtPoint.setSimpleIdentifier(attrValue);
-			else if (attrName.equals(EXTENSION_POINT_SCHEMA)) 
-				currentExtPoint.setSchema(attrValue);			
+			else if (attrName.equals(EXTENSION_POINT_SCHEMA))
+				currentExtPoint.setSchema(attrValue);
 			else
 				internalError(Policy.bind("parse.unknownAttribute", EXTENSION_POINT, attrName)); //$NON-NLS-1$
 		}
@@ -460,6 +471,7 @@ public class ExtensionsParser extends DefaultHandler {
 			scratchVectors[i] = new Vector();
 		}
 	}
+
 	public void startElement(String uri, String elementName, String qName, Attributes attributes) {
 		switch (((Integer) stateStack.peek()).intValue()) {
 			case INITIAL_STATE :
@@ -480,11 +492,13 @@ public class ExtensionsParser extends DefaultHandler {
 				internalError(Policy.bind("parse.unknownTopElement", elementName)); //$NON-NLS-1$
 		}
 	}
+
 	public void warning(SAXParseException ex) {
 		// no warnings if in compatibility mode
 		if (!compatibilityMode)
 			logStatus(ex);
 	}
+
 	private void internalError(String message) {
 		// no warnings if in compatibility mode
 		if (compatibilityMode)
@@ -494,6 +508,7 @@ public class ExtensionsParser extends DefaultHandler {
 		else
 			factory.error(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, PARSE_PROBLEM, message, null));
 	}
+
 	/* (non-Javadoc)
 	 * @see org.xml.sax.ContentHandler#processingInstruction
 	 * @since 3.0

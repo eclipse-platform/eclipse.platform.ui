@@ -27,9 +27,11 @@ public class InternalPlatform {
 		}
 		return registry;
 	}
+
 	public static IPluginDescriptor getPluginDescriptor(String pluginId) {
 		return getPluginRegistry().getPluginDescriptor(pluginId);
 	}
+
 	public static void installPlugins(URL[] installURLs) throws CoreException {
 		String message = Policy.bind("platform.errorInstalling"); //$NON-NLS-1$
 		MultiStatus result = new MultiStatus(IPlatform.PI_RUNTIME, 0, message, null); //$NON-NLS-1$
@@ -46,12 +48,14 @@ public class InternalPlatform {
 		if (!result.isOK())
 			throw new CoreException(result);
 	}
+
 	/**
 	 * @see Platform#parsePlugins
 	 */
 	public static PluginRegistryModel parsePlugins(URL[] pluginPath, Factory factory) {
 		return parsePlugins(pluginPath, factory, false);
 	}
+
 	/**
 	 * @see Platform#parsePlugins
 	 */

@@ -71,7 +71,7 @@ public class SiteEntry implements ISiteEntry {
 			return newSiteEntry.equals(((SiteEntry) o).newSiteEntry);
 		return false;
 	}
-	
+
 	public int hashCode() {
 		return newSiteEntry.hashCode();
 	}

@@ -34,6 +34,7 @@ public abstract class ProgressMonitorWrapper implements IProgressMonitor, IProgr
 		Assert.isNotNull(monitor);
 		progressMonitor = monitor;
 	}
+
 	/** 
 	 * This implementation of a <code>IProgressMonitor</code>
 	 * method forwards to the wrapped progress monitor.
@@ -45,6 +46,7 @@ public abstract class ProgressMonitorWrapper implements IProgressMonitor, IProgr
 	public void beginTask(String name, int totalWork) {
 		progressMonitor.beginTask(name, totalWork);
 	}
+
 	/**
 	 * This implementation of a <code>IProgressMonitorWithBlocking</code>
 	 * method forwards to the wrapped progress monitor.
@@ -56,8 +58,9 @@ public abstract class ProgressMonitorWrapper implements IProgressMonitor, IProgr
 	 */
 	public void clearBlocked() {
 		if (progressMonitor instanceof IProgressMonitorWithBlocking)
-			 ((IProgressMonitorWithBlocking) progressMonitor).clearBlocked();
+			((IProgressMonitorWithBlocking) progressMonitor).clearBlocked();
 	}
+
 	/**
 	 * This implementation of a <code>IProgressMonitor</code>
 	 * method forwards to the wrapped progress monitor.
@@ -69,6 +72,7 @@ public abstract class ProgressMonitorWrapper implements IProgressMonitor, IProgr
 	public void done() {
 		progressMonitor.done();
 	}
+
 	/**
 	 * Returns the wrapped progress monitor.
 	 *
@@ -77,6 +81,7 @@ public abstract class ProgressMonitorWrapper implements IProgressMonitor, IProgr
 	public IProgressMonitor getWrappedProgressMonitor() {
 		return progressMonitor;
 	}
+
 	/**
 	 * This implementation of a <code>IProgressMonitor</code>
 	 * method forwards to the wrapped progress monitor.
@@ -88,6 +93,7 @@ public abstract class ProgressMonitorWrapper implements IProgressMonitor, IProgr
 	public void internalWorked(double work) {
 		progressMonitor.internalWorked(work);
 	}
+
 	/**
 	 * This implementation of a <code>IProgressMonitor</code>
 	 * method forwards to the wrapped progress monitor.
@@ -99,6 +105,7 @@ public abstract class ProgressMonitorWrapper implements IProgressMonitor, IProgr
 	public boolean isCanceled() {
 		return progressMonitor.isCanceled();
 	}
+
 	/**
 	 * This implementation of a <code>IProgressMonitorWithBlocking</code>
 	 * method forwards to the wrapped progress monitor.
@@ -110,8 +117,9 @@ public abstract class ProgressMonitorWrapper implements IProgressMonitor, IProgr
 	 */
 	public void setBlocked(IStatus reason) {
 		if (progressMonitor instanceof IProgressMonitorWithBlocking)
-			 ((IProgressMonitorWithBlocking) progressMonitor).setBlocked(reason);
+			((IProgressMonitorWithBlocking) progressMonitor).setBlocked(reason);
 	}
+
 	/**
 	 * This implementation of a <code>IProgressMonitor</code>
 	 * method forwards to the wrapped progress monitor.
@@ -123,6 +131,7 @@ public abstract class ProgressMonitorWrapper implements IProgressMonitor, IProgr
 	public void setCanceled(boolean b) {
 		progressMonitor.setCanceled(b);
 	}
+
 	/**
 	 * This implementation of a <code>IProgressMonitor</code>
 	 * method forwards to the wrapped progress monitor.
@@ -134,6 +143,7 @@ public abstract class ProgressMonitorWrapper implements IProgressMonitor, IProgr
 	public void setTaskName(String name) {
 		progressMonitor.setTaskName(name);
 	}
+
 	/**
 	 * This implementation of a <code>IProgressMonitor</code>
 	 * method forwards to the wrapped progress monitor.
@@ -145,6 +155,7 @@ public abstract class ProgressMonitorWrapper implements IProgressMonitor, IProgr
 	public void subTask(String name) {
 		progressMonitor.subTask(name);
 	}
+
 	/**
 	 * This implementation of a <code>IProgressMonitor</code>
 	 * method forwards to the wrapped progress monitor.

@@ -58,6 +58,7 @@ public class LibraryModel extends PluginModelObject {
 	public LibraryModel() {
 		super();
 	}
+
 	/**
 	 * Returns this library's export mask.
 	 *
@@ -66,6 +67,7 @@ public class LibraryModel extends PluginModelObject {
 	public String[] getExports() {
 		return exports;
 	}
+
 	/**
 	 * Returns this library's type.  
 	 *
@@ -76,6 +78,7 @@ public class LibraryModel extends PluginModelObject {
 	public String getType() {
 		return type;
 	}
+
 	/**
 	 * Returns whether or not any of the code in this library is exported.
 	 *
@@ -84,6 +87,7 @@ public class LibraryModel extends PluginModelObject {
 	public boolean isExported() {
 		return isExported;
 	}
+
 	/**
 	 * Returns whether or not all of the code in this library is exported.
 	 *
@@ -92,6 +96,7 @@ public class LibraryModel extends PluginModelObject {
 	public boolean isFullyExported() {
 		return isFullyExported;
 	}
+
 	/**
 	 * Sets this library's export mask.
 	 * This object must not be read-only.
@@ -113,6 +118,7 @@ public class LibraryModel extends PluginModelObject {
 			}
 		}
 	}
+
 	/**
 	 * Sets this library's type. The valid types are: <code>CODE</code> and <code>RESOURCE</code>.
 	 * The given type value is canonicalized before being set.
@@ -128,12 +134,14 @@ public class LibraryModel extends PluginModelObject {
 		Assert.isTrue(lcValue.equals(CODE) || lcValue.equals(RESOURCE));
 		type = lcValue;
 	}
+
 	/**
 	 * @see org.eclipse.core.runtime.ILibrary#getPackagePrefixes
 	 */
 	public String[] getPackagePrefixes() {
 		return packagePrefixes;
 	}
+
 	/**
 	 * Sets this library's package prefixes to be the specified array or <code>null</code>.
 	 */

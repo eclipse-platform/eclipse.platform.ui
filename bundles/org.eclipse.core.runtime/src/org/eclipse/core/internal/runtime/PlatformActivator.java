@@ -35,7 +35,7 @@ import org.osgi.service.url.URLStreamHandlerService;
 public class PlatformActivator extends Plugin implements BundleActivator {
 	private static final String PROP_ECLIPSE_EXITCODE = "eclipse.exitcode"; //$NON-NLS-1$
 	private static final String PROP_ECLIPSE_APPLICATION = "eclipse.application"; //$NON-NLS-1$
-	
+
 	private static BundleContext context;//TODO Could be renamed to runtimeContext would be clearer
 	private EclipseBundleListener pluginBundleListener;
 	private ExtensionRegistry registry;
@@ -44,7 +44,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 	private ServiceReference logServiceReference;
 	private ServiceReference packageAdminReference;
 	private long registryStamp;
-	
+
 	public static BundleContext getContext() {
 		return context;
 	}
@@ -55,7 +55,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		acquireURLConverterService();
 		acquireFrameworkLogService();
 		acquirePackageAdminService();
-		startInternalPlatform();		
+		startInternalPlatform();
 		startRegistry(context);
 		installPlatformURLSupport();
 		registerApplicationService();
@@ -73,7 +73,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		PlatformURLBaseConnection.startup(InternalPlatform.getDefault().getInstallURL());
 
 		Hashtable properties = new Hashtable(1);
-		properties.put(URLConstants.URL_HANDLER_PROTOCOL, new String[] { PlatformURLHandler.PROTOCOL });
+		properties.put(URLConstants.URL_HANDLER_PROTOCOL, new String[] {PlatformURLHandler.PROTOCOL});
 		context.registerService(URLStreamHandlerService.class.getName(), new PlatformURLHandler(), properties);
 	}
 
@@ -87,7 +87,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 			long start = 0;
 			if (InternalPlatform.DEBUG)
 				start = System.currentTimeMillis();
-			
+
 			boolean lazyLoading = !"true".equals(System.getProperty(InternalPlatform.PROP_NO_LAZY_CACHE_LOADING)); //$NON-NLS-1$
 			File cacheFile = new File(InternalPlatform.getDefault().getConfigurationLocation().getURL().getPath());
 			cacheFile = new File(cacheFile, ".registry"); //$NON-NLS-1$
@@ -131,6 +131,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		context.registerService(IExtensionRegistry.class.getName(), registry, new Hashtable()); //$NON-NLS-1$
 		InternalPlatform.getDefault().setExtensionRegistry(registry);
 	}
+
 	private long computeRegistryStamp() {
 		if (!"true".equalsIgnoreCase(System.getProperty("osgi.checkConfiguration"))) //$NON-NLS-1$  TODO In the config.ini this variable shoudl be set to false
 			return 0;
@@ -141,7 +142,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 			if (pluginManifest == null)
 				pluginManifest = allBundles[i].getEntry("fragment.xml"); //$NON-NLS-1$
 			if (pluginManifest == null)
-				continue;		
+				continue;
 			try {
 				URLConnection connection = pluginManifest.openConnection();
 				result ^= connection.getLastModified() + allBundles[i].getBundleId();
@@ -150,7 +151,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 			}
 		}
 		return result;
-	}	
+	}
 
 	public void stop(BundleContext context) throws Exception {
 		// Stop the registry
@@ -174,36 +175,36 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		}
 	}
 
-	private void acquireInfoService() throws Exception{
+	private void acquireInfoService() throws Exception {
 		environmentServiceReference = context.getServiceReference(EnvironmentInfo.class.getName());
 		if (environmentServiceReference == null)
 			return;
-		InternalPlatform.infoService  = (EnvironmentInfo) context.getService(environmentServiceReference);
+		InternalPlatform.infoService = (EnvironmentInfo) context.getService(environmentServiceReference);
 	}
 
-	private void acquireURLConverterService() throws Exception{
+	private void acquireURLConverterService() throws Exception {
 		urlServiceReference = context.getServiceReference(URLConverter.class.getName());
 		if (urlServiceReference == null)
 			return;
-		InternalPlatform.urlConverter  = (URLConverter) context.getService(urlServiceReference);
+		InternalPlatform.urlConverter = (URLConverter) context.getService(urlServiceReference);
 	}
 
-	private void acquireFrameworkLogService() throws Exception{
+	private void acquireFrameworkLogService() throws Exception {
 		logServiceReference = context.getServiceReference(FrameworkLog.class.getName());
 		if (logServiceReference == null)
 			return;
-		InternalPlatform.frameworkLog  = (FrameworkLog) context.getService(logServiceReference);
+		InternalPlatform.frameworkLog = (FrameworkLog) context.getService(logServiceReference);
 	}
 
-	private void acquirePackageAdminService() throws Exception{
+	private void acquirePackageAdminService() throws Exception {
 		packageAdminReference = context.getServiceReference(PackageAdmin.class.getName());
 		if (packageAdminReference == null)
 			return;
-		InternalPlatform.packageAdmin  = (PackageAdmin) context.getService(packageAdminReference);
+		InternalPlatform.packageAdmin = (PackageAdmin) context.getService(packageAdminReference);
 	}
 
 	private void startInternalPlatform() {
-		InternalPlatform.getDefault().start(context);	
+		InternalPlatform.getDefault().start(context);
 	}
 
 	private void environmentInfoServiceReleased(ServiceReference reference) {
@@ -264,7 +265,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 						System.setProperty(PROP_ECLIPSE_APPLICATION, applicationId);
 					}
 				}
-				if (applicationId	== null)
+				if (applicationId == null)
 					throw new RuntimeException("No application id found");
 				IExtension applicationExtension = registry.getExtension(IPlatform.PI_RUNTIME, IPlatform.PT_APPLICATIONS, applicationId);
 				if (applicationExtension == null)
@@ -281,7 +282,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 				int exitCode = result instanceof Integer ? ((Integer) result).intValue() : 0;
 				System.setProperty(PROP_ECLIPSE_EXITCODE, Integer.toString(exitCode));
 				if (InternalPlatform.DEBUG)
-					System.out.println(Policy.bind("application.returned", new String[]{applicationId, result.toString()})); //$NON-NLS-1$
+					System.out.println(Policy.bind("application.returned", new String[] {applicationId, result.toString()})); //$NON-NLS-1$
 				return result;
 			}
 		};

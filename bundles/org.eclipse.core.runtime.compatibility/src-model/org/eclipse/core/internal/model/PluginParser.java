@@ -70,16 +70,16 @@ public class PluginParser extends DefaultHandler implements IModel {
 	}
 
 	/**
-	     * Receive a Locator object for document events.
-	     *
-	     * <p>By default, do nothing.  Application writers may override this
-	     * method in a subclass if they wish to store the locator for use
-	     * with other document events.</p>
-	     *
-	     * @param locator A locator for all SAX document events.
-	     * @see org.xml.sax.ContentHandler#setDocumentLocator
-	     * @see org.xml.sax.Locator
-	     */
+	 * Receive a Locator object for document events.
+	 *
+	 * <p>By default, do nothing.  Application writers may override this
+	 * method in a subclass if they wish to store the locator for use
+	 * with other document events.</p>
+	 *
+	 * @param locator A locator for all SAX document events.
+	 * @see org.xml.sax.ContentHandler#setDocumentLocator
+	 * @see org.xml.sax.Locator
+	 */
 	public void setDocumentLocator(Locator locator) {
 		this.locator = locator;
 	}
@@ -102,8 +102,10 @@ public class PluginParser extends DefaultHandler implements IModel {
 			}
 		}
 	}
+
 	public void endDocument() {
 	}
+
 	public void endElement(String uri, String elementName, String qName) {
 		switch (((Integer) stateStack.peek()).intValue()) {
 			case IGNORED_ELEMENT_STATE :
@@ -234,9 +236,11 @@ public class PluginParser extends DefaultHandler implements IModel {
 				break;
 		}
 	}
+
 	public void error(SAXParseException ex) {
 		logStatus(ex);
 	}
+
 	public void fatalError(SAXParseException ex) throws SAXException {
 		logStatus(ex);
 		throw ex;
@@ -248,6 +252,7 @@ public class PluginParser extends DefaultHandler implements IModel {
 		stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
 		internalError(Policy.bind("parse.unknownElement", EXTENSION_POINT, elementName)); //$NON-NLS-1$
 	}
+
 	public void handleExtensionState(String elementName, Attributes attributes) {
 
 		// You need to change the state here even though we will be executing the same
@@ -270,6 +275,7 @@ public class PluginParser extends DefaultHandler implements IModel {
 		// configuration property for each attribute
 		parseConfigurationElementAttributes(attributes);
 	}
+
 	public void handleInitialState(String elementName, Attributes attributes) {
 		if (elementName.equals(PLUGIN)) {
 			stateStack.push(new Integer(PLUGIN_STATE));
@@ -282,12 +288,14 @@ public class PluginParser extends DefaultHandler implements IModel {
 			internalError(Policy.bind("parse.unknownTopElement", elementName)); //$NON-NLS-1$
 		}
 	}
+
 	public void handleLibraryExportState(String elementName, Attributes attributes) {
 
 		// All elements ignored.
 		stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
 		internalError(Policy.bind("parse.unknownElement", LIBRARY_EXPORT, elementName)); //$NON-NLS-1$
 	}
+
 	public void handleLibraryState(String elementName, Attributes attributes) {
 		if (elementName.equals(LIBRARY_EXPORT)) {
 			// Change State
@@ -342,6 +350,7 @@ public class PluginParser extends DefaultHandler implements IModel {
 		internalError(Policy.bind("parse.unknownElement", LIBRARY, elementName)); //$NON-NLS-1$
 		return;
 	}
+
 	/**
 	 * convert a list of comma-separated tokens into an array
 	 */
@@ -397,12 +406,14 @@ public class PluginParser extends DefaultHandler implements IModel {
 		stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
 		internalError(Policy.bind("parse.unknownElement", PLUGIN + " / " + FRAGMENT, elementName)); //$NON-NLS-1$ //$NON-NLS-2$
 	}
+
 	public void handleRequiresImportState(String elementName, Attributes attributes) {
 
 		// All elements ignored.
 		stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
 		internalError(Policy.bind("parse.unknownElement", PLUGIN_REQUIRES_IMPORT, elementName)); //$NON-NLS-1$
 	}
+
 	public void handleRequiresState(String elementName, Attributes attributes) {
 
 		if (elementName.equals(PLUGIN_REQUIRES_IMPORT)) {
@@ -414,6 +425,7 @@ public class PluginParser extends DefaultHandler implements IModel {
 		stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
 		internalError(Policy.bind("parse.unknownElement", PLUGIN_REQUIRES, elementName)); //$NON-NLS-1$
 	}
+
 	public void handleRuntimeState(String elementName, Attributes attributes) {
 
 		if (elementName.equals(LIBRARY)) {
@@ -431,6 +443,7 @@ public class PluginParser extends DefaultHandler implements IModel {
 
 	public void ignoreableWhitespace(char[] ch, int start, int length) {
 	}
+
 	private void logStatus(SAXParseException ex) {
 		String name = ex.getSystemId();
 		if (name == null)
@@ -444,8 +457,8 @@ public class PluginParser extends DefaultHandler implements IModel {
 		if (name.equals("")) //$NON-NLS-1$
 			msg = Policy.bind("parse.error", ex.getMessage()); //$NON-NLS-1$
 		else
-				msg = Policy.bind("parse.errorNameLineColumn", //$NON-NLS-1$
-	new String[] { name, Integer.toString(ex.getLineNumber()), Integer.toString(ex.getColumnNumber()), ex.getMessage()});
+			msg = Policy.bind("parse.errorNameLineColumn", //$NON-NLS-1$
+					new String[] {name, Integer.toString(ex.getLineNumber()), Integer.toString(ex.getColumnNumber()), ex.getMessage()});
 		factory.error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, msg, ex));
 	}
 
@@ -503,6 +516,7 @@ public class PluginParser extends DefaultHandler implements IModel {
 		parentConfigurationElement.setProperties((ConfigurationPropertyModel[]) propVector.toArray(new ConfigurationPropertyModel[propVector.size()]));
 		propVector = null;
 	}
+
 	public void parseExtensionAttributes(Attributes attributes) {
 
 		PluginModel parent = (PluginModel) objectStack.peek();
@@ -533,6 +547,7 @@ public class PluginParser extends DefaultHandler implements IModel {
 				internalError(Policy.bind("parse.unknownAttribute", EXTENSION, attrName)); //$NON-NLS-1$
 		}
 	}
+
 	public void parseExtensionPointAttributes(Attributes attributes) {
 
 		ExtensionPointModel currentExtPoint = factory.createExtensionPoint();
@@ -631,6 +646,7 @@ public class PluginParser extends DefaultHandler implements IModel {
 				internalError(Policy.bind("parse.unknownAttribute", LIBRARY, attrName)); //$NON-NLS-1$
 		}
 	}
+
 	public void parsePluginAttributes(Attributes attributes) {
 
 		PluginDescriptorModel current = factory.createPluginDescriptor();
@@ -657,6 +673,7 @@ public class PluginParser extends DefaultHandler implements IModel {
 				internalError(Policy.bind("parse.unknownAttribute", PLUGIN, attrName)); //$NON-NLS-1$
 		}
 	}
+
 	public void parsePluginRequiresImport(Attributes attributes) {
 		PluginPrerequisiteModel current = factory.createPluginPrerequisite();
 		current.setStartLine(locator.getLineNumber());
@@ -696,8 +713,9 @@ public class PluginParser extends DefaultHandler implements IModel {
 
 		}
 		// Populate the vector of prerequisites with this new element
-		 ((Vector) objectStack.peek()).addElement(current);
+		((Vector) objectStack.peek()).addElement(current);
 	}
+
 	public void parseRequiresAttributes(Attributes attributes) {
 	}
 
@@ -712,12 +730,14 @@ public class PluginParser extends DefaultHandler implements IModel {
 		}
 		return str;
 	}
+
 	public void startDocument() {
 		stateStack.push(new Integer(INITIAL_STATE));
 		for (int i = 0; i <= LAST_INDEX; i++) {
 			scratchVectors[i] = new Vector();
 		}
 	}
+
 	public void startElement(String uri, String elementName, String qName, Attributes attributes) {
 		switch (((Integer) stateStack.peek()).intValue()) {
 			case INITIAL_STATE :
@@ -756,9 +776,11 @@ public class PluginParser extends DefaultHandler implements IModel {
 				internalError(Policy.bind("parse.unknownTopElement", elementName)); //$NON-NLS-1$
 		}
 	}
+
 	public void warning(SAXParseException ex) {
 		logStatus(ex);
 	}
+
 	private void internalError(String message) {
 		if (locationName != null)
 			factory.error(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, locationName + ": " + message, null)); //$NON-NLS-1$

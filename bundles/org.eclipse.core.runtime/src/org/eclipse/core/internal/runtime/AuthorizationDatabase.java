@@ -44,6 +44,7 @@ public class AuthorizationDatabase {
 	private File file = null;
 	private String password = null;
 	private boolean needsSaving = true;
+
 	/**
 	 * Creates a new authorization database whose data cannot be saved to
 	 * disk.
@@ -51,6 +52,7 @@ public class AuthorizationDatabase {
 	public AuthorizationDatabase() {
 		super();
 	}
+
 	/**
 	 * Creates a new authorization database, or opens an existing one, whose
 	 * data is, or can be, saved to a file with the given filename. A
@@ -76,6 +78,7 @@ public class AuthorizationDatabase {
 		file = new File(filename);
 		load();
 	}
+
 	/**
 	 * Adds the given authorization information to the database. The
 	 * information is relevant for the specified protection space and the
@@ -118,6 +121,7 @@ public class AuthorizationDatabase {
 		authSchemeToInfo.put(authScheme.toLowerCase(), info);
 		needsSaving = true;
 	}
+
 	/**
 	 * Adds the specified resource to the protection space specified by the
 	 * given realm. All resources at or deeper than the depth of the last
@@ -157,6 +161,7 @@ public class AuthorizationDatabase {
 		protectionSpace.put(url1, realm);
 		needsSaving = true;
 	}
+
 	/**
 	 * Removes the authorization information for the specified protection
 	 * space and given authorization scheme. The protection space is defined
@@ -189,6 +194,7 @@ public class AuthorizationDatabase {
 
 		needsSaving = true;
 	}
+
 	/**
 	 * Returns the authorization information for the specified protection
 	 * space and given authorization scheme. The protection space is defined
@@ -219,6 +225,7 @@ public class AuthorizationDatabase {
 
 		return (Map) authSchemeToInfo.get(authScheme.toLowerCase());
 	}
+
 	/**
 	 * Returns the protection space (realm) for the specified resource, or
 	 * <code>null</code> if the realm is unknown.
@@ -239,6 +246,7 @@ public class AuthorizationDatabase {
 
 		return null;
 	}
+
 	private void load() throws CoreException {
 		if (file == null)
 			return;
@@ -259,6 +267,7 @@ public class AuthorizationDatabase {
 			throw new CoreException(new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IPlatform.FAILED_READ_METADATA, Policy.bind("meta.unableToReadAuthorization", file.toString()), e)); //$NON-NLS-1$
 		}
 	}
+
 	private void load(InputStream is) throws IOException, ClassNotFoundException, CoreException {
 		//try to read the file version number. Pre 2.0 versions had no number
 		int version = is.read();
@@ -274,8 +283,7 @@ public class AuthorizationDatabase {
 			}
 		} else {
 			//the format has changed, just log a warning
-			InternalPlatform.getDefault().log(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.FAILED_READ_METADATA, Policy.bind("meta.authFormatChanged"), //$NON-NLS-1$
-			null));
+			InternalPlatform.getDefault().log(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.FAILED_READ_METADATA, Policy.bind("meta.authFormatChanged"), null)); //$NON-NLS-1$
 			//close the stream and save a new file in the correct format
 			try {
 				is.close();
@@ -286,6 +294,7 @@ public class AuthorizationDatabase {
 			save();
 		}
 	}
+
 	/**
 	 * Saves the authorization database to disk.
 	 */
@@ -306,6 +315,7 @@ public class AuthorizationDatabase {
 		}
 		needsSaving = false;
 	}
+
 	private void save(OutputStream os) throws IOException {
 		//write the version number
 		os.write(KEYRING_FILE_VERSION);
@@ -320,6 +330,7 @@ public class AuthorizationDatabase {
 			oos.close();
 		}
 	}
+
 	/**
 	 * Sets the password to use for accessing this database.  If the database
 	 * is subsequently saved, this new password is used.

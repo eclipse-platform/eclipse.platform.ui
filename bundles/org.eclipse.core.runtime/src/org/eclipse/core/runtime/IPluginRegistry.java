@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.core.runtime;
+
 /**
  * The plug-in registry holds the master list of all
  * discovered plug-ins, extension points, and extensions.
@@ -46,6 +47,7 @@ public interface IPluginRegistry {
 	 * TODO @deprecated Replaced by {@link IExtensionRegistry#getConfigurationElementsFor(String)}.
 	 */
 	public IConfigurationElement[] getConfigurationElementsFor(String extensionPointId);
+
 	/**
 	 * Returns all configuration elements from all extensions configured
 	 * into the identified extension point. Returns an empty array if the extension 
@@ -60,6 +62,7 @@ public interface IPluginRegistry {
 	 * TODO @deprecated Replaced by {@link IExtensionRegistry#getConfigurationElementsFor(String, String)}.
 	 */
 	public IConfigurationElement[] getConfigurationElementsFor(String pluginId, String extensionPointName);
+
 	/**
 	 * Returns all configuration elements from the identified extension.
 	 * Returns an empty array if the extension does not exist or 
@@ -75,6 +78,7 @@ public interface IPluginRegistry {
 	 * TODO @deprecated Replaced by {@link IExtensionRegistry#getConfigurationElementsFor(String, String, String)}.
 	 */
 	public IConfigurationElement[] getConfigurationElementsFor(String pluginId, String extensionPointName, String extensionId);
+
 	/**
 	 * Returns the specified extension in this plug-in registry, 
 	 * or <code>null</code> if there is no such extension.
@@ -89,6 +93,7 @@ public interface IPluginRegistry {
 	 * TODO @deprecated Replaced by {@link IExtensionRegistry#getExtension(String, String)}.
 	 */
 	public IExtension getExtension(String extensionPointId, String extensionId);
+
 	/**
 	 * Returns the specified extension in this plug-in registry, 
 	 * or <code>null</code> if there is no such extension.
@@ -105,6 +110,7 @@ public interface IPluginRegistry {
 	 * TODO @deprecated Replaced by {@link IExtensionRegistry#getExtension(String, String, String)}.
 	 */
 	public IExtension getExtension(String pluginId, String extensionPointName, String extensionId);
+
 	/**
 	 * Returns the extension point with the given extension point identifier
 	 * in this plug-in registry, or <code>null</code> if there is no such
@@ -116,6 +122,7 @@ public interface IPluginRegistry {
 	 * TODO @deprecated Replaced by {@link IExtensionRegistry#getExtensionPoint(String)}.
 	 */
 	public IExtensionPoint getExtensionPoint(String extensionPointId);
+
 	/**
 	 * Returns the extension point in this plug-in registry
 	 * with the given plug-in identifier and extension point simple identifier,
@@ -154,6 +161,7 @@ public interface IPluginRegistry {
 	 * See the comments on {@link IPluginDescriptor} and its methods for details.
 	 */
 	public IPluginDescriptor getPluginDescriptor(String pluginId);
+
 	/**
 	 * Returns the plug-in descriptor with the given plug-in identifier
 	 * and version in this plug-in registry, or <code>null</code> if 
@@ -172,6 +180,7 @@ public interface IPluginRegistry {
 	 * See the comments on {@link IPluginDescriptor} and its methods for details.
 	 */
 	public IPluginDescriptor getPluginDescriptor(String pluginId, PluginVersionIdentifier version);
+
 	/**
 	 * Returns all plug-in descriptors known to this plug-in registry.
 	 * Returns an empty array if there are no installed plug-ins.
@@ -184,6 +193,7 @@ public interface IPluginRegistry {
 	 * See the comments on {@link IPluginDescriptor} and its methods for details.
 	 */
 	public IPluginDescriptor[] getPluginDescriptors();
+
 	/**
 	 * Returns all versions of the identified plug-in descriptor
 	 * known to this plug-in registry.

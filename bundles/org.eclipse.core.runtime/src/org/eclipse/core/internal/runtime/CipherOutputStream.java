@@ -21,6 +21,7 @@ import java.io.*;
  */
 public class CipherOutputStream extends FilterOutputStream {
 	private Cipher cipher;
+
 	/**
 	 * Constructs a new <code>CipherOutputStream</code> that encrypts the
 	 * data in the given <code>OutputStream</code>.  Once the data is
@@ -35,6 +36,7 @@ public class CipherOutputStream extends FilterOutputStream {
 		super(os);
 		cipher = new Cipher(Cipher.ENCRYPT_MODE, password);
 	}
+
 	/**
 	 * @see OutputStream#write(int)
 	 */

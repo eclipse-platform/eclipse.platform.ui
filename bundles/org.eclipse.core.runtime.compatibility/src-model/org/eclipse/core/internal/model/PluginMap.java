@@ -28,11 +28,13 @@ public class PluginMap {
 	public PluginMap(Map pluginModels) {
 		this(pluginModels, true, false);
 	}
+
 	public PluginMap(Map pluginModels, boolean preserveOrder, boolean replaceDuplicates) {
 		this.map = pluginModels;
 		this.preserveOrder = preserveOrder;
 		this.replaceDuplicates = replaceDuplicates;
 	}
+
 	public void add(PluginModel pluginModel) {
 
 		String key = pluginModel.getId();
@@ -60,6 +62,7 @@ public class PluginMap {
 		verList.add(i, pluginModel);
 		size++;
 	}
+
 	public PluginModel get(String id, String version) {
 		List versions = (List) map.get(id);
 		if (versions == null || versions.isEmpty())
@@ -75,31 +78,37 @@ public class PluginMap {
 		}
 		return null;
 	}
+
 	public List getVersions(String id) {
 		return (List) map.get(id);
 	}
+
 	public PluginModel getAny(String id) {
 		List versions = (List) map.get(id);
 		if (versions == null || versions.isEmpty())
 			return null;
 		return (PluginModel) versions.get(0);
 	}
+
 	private PluginVersionIdentifier getVersionIdentifier(PluginModel model) {
 		if (PluginVersionIdentifier.validateVersion(model.getVersion()).getSeverity() != IStatus.OK)
 			return new PluginVersionIdentifier("0.0.0"); //$NON-NLS-1$
 		return new PluginVersionIdentifier(model.getVersion());
 	}
+
 	public int size() {
 		return size;
 	}
+
 	public void markReadOnly() {
 		for (Iterator it = map.values().iterator(); it.hasNext();) {
 			List list = (List) it.next();
 			int count = list.size();
 			for (int i = 0; i < count; i++)
-				 ((PluginModel) list.get(i)).markReadOnly();
+				((PluginModel) list.get(i)).markReadOnly();
 		}
 	}
+
 	public PluginModel remove(String pluginId, String version) {
 		List versions = (List) map.get(pluginId);
 		if (versions == null)
@@ -117,11 +126,13 @@ public class PluginMap {
 		}
 		return null;
 	}
+
 	public void removeVersions(String pluginId) {
 		List versions = (List) map.remove(pluginId);
 		if (versions != null)
 			size -= versions.size();
 	}
+
 	public void copyToArray(Object[] array) {
 		int index = 0;
 		for (Iterator mapIter = map.values().iterator(); mapIter.hasNext();) {

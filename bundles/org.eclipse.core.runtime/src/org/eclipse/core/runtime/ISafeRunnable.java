@@ -15,7 +15,7 @@ package org.eclipse.core.runtime;
  * handlers.  They are typically used when a plug-in needs to call some
  * untrusted code (e.g., code contributed by another plug-in via an
  * extension).
-* <p>
+ * <p>
  * Clients may implement this interface.
  * </p>
  * 
@@ -34,6 +34,7 @@ public interface ISafeRunnable {
 	 * @see Platform#run(ISafeRunnable)
 	 */
 	public void handleException(Throwable exception);
+
 	/**
 	 * Runs this runnable.  Any exceptions thrown from this method will
 	 * be passed to this runnable's <code>handleException</code>

@@ -14,7 +14,7 @@ public class ResourceTranslator {
 	public static String getResourceString(Bundle bundle, String value) {
 		return getResourceString(bundle, value, null);
 	}
-	
+
 	public static String getResourceString(Bundle bundle, String value, ResourceBundle resourceBundle) {
 		String s = value.trim();
 		if (!s.startsWith(KEY_PREFIX))
@@ -44,15 +44,15 @@ public class ResourceTranslator {
 			return '%' + dflt; //$NON-NLS-1$
 		}
 	}
-	
+
 	public static void start() {
 		BundleContext context = InternalPlatform.getDefault().getBundleContext();
 		localizationServiceReference = InternalPlatform.getDefault().getBundleContext().getServiceReference(BundleLocalization.class.getName());
 		if (localizationServiceReference == null)
 			return;
-		localizationService  = (BundleLocalization) context.getService(localizationServiceReference);
+		localizationService = (BundleLocalization) context.getService(localizationServiceReference);
 	}
-	
+
 	public static void stop() {
 		if (localizationServiceReference == null)
 			return;
@@ -60,7 +60,7 @@ public class ResourceTranslator {
 		InternalPlatform.getDefault().getBundleContext().ungetService(localizationServiceReference);
 		localizationServiceReference = null;
 	}
-	
+
 	public static ResourceBundle getResourceBundle(Bundle bundle) {
 		return localizationService.getLocalization(bundle, null);
 	}

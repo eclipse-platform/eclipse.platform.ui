@@ -36,9 +36,11 @@ public class FindSupport {
 		result.add(""); //$NON-NLS-1$
 		return (String[]) result.toArray(new String[result.size()]);
 	}
+
 	private static String[] buildVanillaVariants() {
-		return new String[] { "" }; //$NON-NLS-1$
+		return new String[] {""}; //$NON-NLS-1$
 	}
+
 	private static String[] buildOSVariants() {
 		ArrayList result = new ArrayList();
 		result.add("os/" + InternalPlatform.getDefault().getOS() + "/" + InternalPlatform.getDefault().getOSArch()); //$NON-NLS-1$ //$NON-NLS-2$
@@ -46,6 +48,7 @@ public class FindSupport {
 		result.add(""); //$NON-NLS-1$
 		return (String[]) result.toArray(new String[result.size()]);
 	}
+
 	private static String[] buildNLVariants(String nl) {
 		ArrayList result = new ArrayList();
 		IPath base = new Path("nl"); //$NON-NLS-1$
@@ -61,7 +64,7 @@ public class FindSupport {
 
 		return (String[]) result.toArray(new String[result.size()]);
 	}
-	
+
 	/**
 	 * Returns a URL for the given path.  Returns <code>null</code> if the URL
 	 * could not be computed or created.
@@ -75,7 +78,7 @@ public class FindSupport {
 	 * is used.
 	 * @return a URL for the given path or <code>null</code>
 	 *
-	 */ 
+	 */
 	private String getFileFromURL(URL target) {
 		String protocol = target.getProtocol();
 		if (protocol.equals(PlatformURLHandler.FILE))
@@ -92,9 +95,11 @@ public class FindSupport {
 		}
 		return null;
 	}
+
 	public static URL find(Bundle bundle, IPath path) {
 		return find(bundle, path, null);
 	}
+
 	/**
 	 * See doc on @link Platform#find(Bundle, IPath) Platform#find(Bundle, IPath) 
 	 */
@@ -127,7 +132,7 @@ public class FindSupport {
 		// Worry about variable substitution
 		IPath rest = path.removeFirstSegments(1);
 		if (first.equalsIgnoreCase("$nl$")) //$NON-NLS-1$
-			return findNL(b,  rest, override);
+			return findNL(b, rest, override);
 		if (first.equalsIgnoreCase("$os$")) //$NON-NLS-1$
 			return findOS(b, rest, override);
 		if (first.equalsIgnoreCase("$ws$")) //$NON-NLS-1$
@@ -147,46 +152,46 @@ public class FindSupport {
 			} catch (ClassCastException e) {
 				// just in case
 			}
-			if (os == null)
-				// use default
-				os = InternalPlatform.getDefault().getOS();
-			if (os.length() == 0)
-				return null;
+		if (os == null)
+			// use default
+			os = InternalPlatform.getDefault().getOS();
+		if (os.length() == 0)
+			return null;
 
-			// Now do the same for osarch
-			String osArch = null;
-			if (override != null)
-				try {
-					// check for override
-					osArch = (String) override.get("$arch$"); //$NON-NLS-1$
-				} catch (ClassCastException e) {
-					// just in case
-				}
-				if (osArch == null)
-					// use default
-					osArch = InternalPlatform.getDefault().getOSArch();
-				if (osArch.length() == 0)
-					return null;
+		// Now do the same for osarch
+		String osArch = null;
+		if (override != null)
+			try {
+				// check for override
+				osArch = (String) override.get("$arch$"); //$NON-NLS-1$
+			} catch (ClassCastException e) {
+				// just in case
+			}
+		if (osArch == null)
+			// use default
+			osArch = InternalPlatform.getDefault().getOSArch();
+		if (osArch.length() == 0)
+			return null;
 
-				URL result = null;
-				IPath base = new Path("os").append(os).append(osArch); //$NON-NLS-1$
-				// Keep doing this until all you have left is "os" as a path
-				while (base.segmentCount() != 1) {
-					IPath filePath = base.append(path);
-					result = findInPlugin(b, filePath);
-					if (result != null)
-						return result;
-					result = findInFragments(b, filePath);
-					if (result != null)
-						return result;
-					base = base.removeLastSegments(1);
-				}
-				// If we get to this point, we haven't found it yet.
-				// Look in the plugin and fragment root directories
-				result = findInPlugin(b, path);
-				if (result != null)
-					return result;
-				return findInFragments(b, path);
+		URL result = null;
+		IPath base = new Path("os").append(os).append(osArch); //$NON-NLS-1$
+		// Keep doing this until all you have left is "os" as a path
+		while (base.segmentCount() != 1) {
+			IPath filePath = base.append(path);
+			result = findInPlugin(b, filePath);
+			if (result != null)
+				return result;
+			result = findInFragments(b, filePath);
+			if (result != null)
+				return result;
+			base = base.removeLastSegments(1);
+		}
+		// If we get to this point, we haven't found it yet.
+		// Look in the plugin and fragment root directories
+		result = findInPlugin(b, path);
+		if (result != null)
+			return result;
+		return findInFragments(b, path);
 	}
 
 	private static URL findWS(Bundle b, IPath path, Map override) {
@@ -198,24 +203,24 @@ public class FindSupport {
 			} catch (ClassCastException e) {
 				// just in case
 			}
-			if (ws == null)
-				// use default
-				ws = InternalPlatform.getDefault().getWS();
-			IPath filePath = new Path("ws").append(ws).append(path); //$NON-NLS-1$
-			// We know that there is only one segment to the ws path
-			// e.g. ws/win32	
-			URL result = findInPlugin(b, filePath);
-			if (result != null)
-				return result;
-			result = findInFragments(b, filePath);
-			if (result != null)
-				return result;
-			// If we get to this point, we haven't found it yet.
-			// Look in the plugin and fragment root directories
-			result = findInPlugin(b,path);
-			if (result != null)
-				return result;
-			return findInFragments(b, path);
+		if (ws == null)
+			// use default
+			ws = InternalPlatform.getDefault().getWS();
+		IPath filePath = new Path("ws").append(ws).append(path); //$NON-NLS-1$
+		// We know that there is only one segment to the ws path
+		// e.g. ws/win32	
+		URL result = findInPlugin(b, filePath);
+		if (result != null)
+			return result;
+		result = findInFragments(b, filePath);
+		if (result != null)
+			return result;
+		// If we get to this point, we haven't found it yet.
+		// Look in the plugin and fragment root directories
+		result = findInPlugin(b, path);
+		if (result != null)
+			return result;
+		return findInFragments(b, path);
 	}
 
 	private static URL findNL(Bundle b, IPath path, Map override) {
@@ -228,26 +233,26 @@ public class FindSupport {
 			} catch (ClassCastException e) {
 				// just in case
 			}
-			nlVariants = nl == null ? NL_JAR_VARIANTS : buildNLVariants(nl);
-			if (nl != null && nl.length() == 0)
-				return null;
+		nlVariants = nl == null ? NL_JAR_VARIANTS : buildNLVariants(nl);
+		if (nl != null && nl.length() == 0)
+			return null;
 
-			URL result = null;
-			for (int i = 0; i < nlVariants.length; i++) {
-				IPath filePath = new Path(nlVariants[i]).append(path);
-				result = findInPlugin(b, filePath);
-				if (result != null)
-					return result;
-				result = findInFragments(b, filePath);
-				if (result != null)
-					return result;
-			}
-			// If we get to this point, we haven't found it yet.
-			// Look in the plugin and fragment root directories
-			result = findInPlugin(b, path);
+		URL result = null;
+		for (int i = 0; i < nlVariants.length; i++) {
+			IPath filePath = new Path(nlVariants[i]).append(path);
+			result = findInPlugin(b, filePath);
 			if (result != null)
 				return result;
-			return findInFragments(b, path);
+			result = findInFragments(b, filePath);
+			if (result != null)
+				return result;
+		}
+		// If we get to this point, we haven't found it yet.
+		// Look in the plugin and fragment root directories
+		result = findInPlugin(b, path);
+		if (result != null)
+			return result;
+		return findInFragments(b, path);
 	}
 
 	private static URL findInPlugin(Bundle b, IPath filePath) {
@@ -287,16 +292,16 @@ public class FindSupport {
 	 */
 	public static final InputStream openStream(Bundle b, IPath file, boolean localized) throws IOException {
 		URL url = null;
-		if (! localized) {
+		if (!localized) {
 			url = findInPlugin(b, file);
-			if(url==null)
+			if (url == null)
 				url = findInFragments(b, file);
 		} else {
 			url = FindSupport.find(b, file);
 		}
 		if (url != null)
 			return url.openStream();
-		throw new IOException("Can not find " + file.toString());	//$NON-NLS-1$
+		throw new IOException("Cannot find " + file.toString()); //$NON-NLS-1$
 	}
-	
+
 }

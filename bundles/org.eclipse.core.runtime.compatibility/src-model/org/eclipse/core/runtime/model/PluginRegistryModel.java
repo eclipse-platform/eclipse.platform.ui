@@ -37,12 +37,14 @@ public class PluginRegistryModel {
 	protected PluginMap fragments = new PluginMap(new HashMap(30), false, true);
 	private boolean readOnly = false;
 	private boolean resolved = false;
+
 	/**
 	 * Creates a new plug-in registry model which contains no plug-ins.
 	 */
 	public PluginRegistryModel() {
 		super();
 	}
+
 	/**
 	 * Adds the specified plug-in fragment to this registry.  An existing fragment
 	 * with the same unique id and version is replaced by the new
@@ -54,6 +56,7 @@ public class PluginRegistryModel {
 		assertIsWriteable();
 		fragments.add(fragment);
 	}
+
 	/**
 	 * Adds the specified plug-in to this registry.  An existing plug-in
 	 * with the same unique id and version is replaced by the new
@@ -65,6 +68,7 @@ public class PluginRegistryModel {
 		assertIsWriteable();
 		plugins.add(plugin);
 	}
+
 	/**
 	 * Checks that this model object is writeable.  A runtime exception
 	 * is thrown if it is not.
@@ -72,6 +76,7 @@ public class PluginRegistryModel {
 	protected void assertIsWriteable() {
 		Assert.isTrue(!isReadOnly(), "Model is read-only"); //$NON-NLS-1$
 	}
+
 	/**
 	 * Returns the plug-in fragment with the given identifier
 	 * in this plug-in registry, or <code>null</code> if there is no such
@@ -85,6 +90,7 @@ public class PluginRegistryModel {
 	public PluginFragmentModel getFragment(String id) {
 		return (PluginFragmentModel) fragments.getAny(id);
 	}
+
 	/**
 	 * Returns the identified plug-in fragment or <code>null</code> if
 	 * the fragment does not exist.
@@ -98,6 +104,7 @@ public class PluginRegistryModel {
 	public PluginFragmentModel getFragment(String id, String version) {
 		return (PluginFragmentModel) fragments.get(id, version);
 	}
+
 	/**
 	 * Returns the list of plug-in fragments managed by this registry.
 	 *
@@ -108,6 +115,7 @@ public class PluginRegistryModel {
 		fragments.copyToArray(result);
 		return result;
 	}
+
 	/**
 	 * Returns all versions of the identified plug-in fragment
 	 * known to this plug-in registry.
@@ -124,6 +132,7 @@ public class PluginRegistryModel {
 			return new PluginFragmentModel[0];
 		return (PluginFragmentModel[]) versions.toArray(new PluginFragmentModel[versions.size()]);
 	}
+
 	/**
 	 * Returns the plug-in descriptor with the given plug-in identifier
 	 * in this plug-in registry, or <code>null</code> if there is no such
@@ -137,6 +146,7 @@ public class PluginRegistryModel {
 	public PluginDescriptorModel getPlugin(String pluginId) {
 		return (PluginDescriptorModel) plugins.getAny(pluginId);
 	}
+
 	/**
 	 * Returns the identified plug-in or <code>null</code> if
 	 * the plug-in does not exist. 
@@ -163,6 +173,7 @@ public class PluginRegistryModel {
 		}
 		return null;
 	}
+
 	/**
 	 * Returns the list of plug-ins managed by this registry.
 	 *
@@ -173,6 +184,7 @@ public class PluginRegistryModel {
 		plugins.copyToArray(result);
 		return result;
 	}
+
 	/**
 	 * Returns all versions of the identified plug-in descriptor
 	 * known to this plug-in registry.
@@ -190,6 +202,7 @@ public class PluginRegistryModel {
 		return (PluginDescriptorModel[]) versions.toArray(new PluginDescriptorModel[versions.size()]);
 
 	}
+
 	/**
 	 * Returns whether or not this model object is read-only.
 	 * 
@@ -200,6 +213,7 @@ public class PluginRegistryModel {
 	public boolean isReadOnly() {
 		return readOnly;
 	}
+
 	/**
 	 * Returns whether or not this model object has been resolved.
 	 * 
@@ -210,6 +224,7 @@ public class PluginRegistryModel {
 	public boolean isResolved() {
 		return resolved;
 	}
+
 	/**
 	 * Sets this model object and all of its descendents to be read-only.
 	 * Subclasses may extend this implementation.
@@ -221,12 +236,14 @@ public class PluginRegistryModel {
 		plugins.markReadOnly();
 		fragments.markReadOnly();
 	}
+
 	/**
 	 * Sets this model object to be resolved.
 	 */
 	public void markResolved() {
 		resolved = true;
 	}
+
 	/**
 	 * Removes the fragment with id and version if it exists in this registry.
 	 * This method has no effect if a fragment with the given id and version 
@@ -239,6 +256,7 @@ public class PluginRegistryModel {
 		assertIsWriteable();
 		fragments.remove(id, version);
 	}
+
 	/**
 	 * Removes all versions of the identified plug-in fragment from this registry.
 	 * This method has no effect if such a fragment cannot be found.
@@ -249,6 +267,7 @@ public class PluginRegistryModel {
 		assertIsWriteable();
 		fragments.removeVersions(id);
 	}
+
 	/**
 	 * Removes the plug-in with id and version if it exists in this registry.
 	 * This method has no effect if a plug-in with the given id and version 
@@ -261,6 +280,7 @@ public class PluginRegistryModel {
 		assertIsWriteable();
 		plugins.remove(pluginId, version);
 	}
+
 	/**
 	 * Removes all versions of the given plug-in from this registry.
 	 * This method has no effect if such a plug-in cannot be found.
@@ -271,6 +291,7 @@ public class PluginRegistryModel {
 		assertIsWriteable();
 		plugins.removeVersions(pluginId);
 	}
+
 	/**
 	 * Runs a resolve through the entire registry.  This resolve will
 	 * mark any PluginDescriptorModels which do not have access to all
@@ -297,7 +318,7 @@ public class PluginRegistryModel {
 		resolver.setCrossLink(doCrossLinking);
 		return resolver.resolve(this);
 	}
-	
+
 	public static PluginRegistryModel parsePlugins(URL[] pluginPath, Factory factory) {
 		return InternalPlatform.parsePlugins(pluginPath, factory, false);
 	}

@@ -33,18 +33,21 @@ public interface IExtensionDelta {
 	 * @see IExtensionDelta#getKind
 	 */
 	public int REMOVED = 2;
+
 	/**
 	 * The kind of this extension delta.
 	 * @see #ADDED
 	 * @see #REMOVED
 	 */
 	public int getKind();
+
 	/**
 	 * Returns the affected extension.
 	 * 
 	 * @return the affected extension
 	 */
 	public IExtension getExtension();
+
 	/**
 	 * Returns the affected extension point.
 	 * 

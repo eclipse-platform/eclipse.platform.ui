@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.MultiStatus;
 
 public class Factory {
 	private MultiStatus status;
+
 	/**
 	 * Creates a factory which can be used to create plug-in model objects.
 	 * Errors and warnings during parsing etc. can be logged to the given 
@@ -67,6 +68,7 @@ public class Factory {
 	public ExtensionModel createExtension() {
 		return new ExtensionModel();
 	}
+
 	/**
 	 * Returns a new extension point model which is not initialized.
 	 *
@@ -75,6 +77,7 @@ public class Factory {
 	public ExtensionPointModel createExtensionPoint() {
 		return new ExtensionPointModel();
 	}
+
 	/**
 	 * Returns a new library model which is initialized to not export any
 	 * of its code.
@@ -84,6 +87,7 @@ public class Factory {
 	public LibraryModel createLibrary() {
 		return new LibraryModel();
 	}
+
 	/**
 	 * Returns a new plug-in descriptor model which is not initialized.
 	 *
@@ -92,6 +96,7 @@ public class Factory {
 	public PluginDescriptorModel createPluginDescriptor() {
 		return new PluginDescriptorModel();
 	}
+
 	/**
 	 * Returns a new plug-in fragment model which is not initialized.
 	 *
@@ -100,6 +105,7 @@ public class Factory {
 	public PluginFragmentModel createPluginFragment() {
 		return new PluginFragmentModel();
 	}
+
 	/**
 	 * Returns a new plug-in prerequisite model which is initialized to
 	 * not export its code and to not require an exact match.
@@ -109,6 +115,7 @@ public class Factory {
 	public PluginPrerequisiteModel createPluginPrerequisite() {
 		return new PluginPrerequisiteModel();
 	}
+
 	/**
 	 * Returns a new plug-in registry model with an empty plug-in table.
 	 *
@@ -138,6 +145,7 @@ public class Factory {
 		if (InternalPlatform.DEBUG && InternalPlatform.DEBUG_REGISTRY)
 			System.out.println(error.toString());
 	}
+
 	/**
 	 * Returns all of the status objects logged thus far by this factory.
 	 *

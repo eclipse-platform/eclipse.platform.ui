@@ -12,6 +12,7 @@ package org.eclipse.core.runtime;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
+
 /**
  * A checked exception representing a failure.
  * <p>
@@ -25,6 +26,7 @@ public class CoreException extends Exception {
 
 	/** Status object. */
 	private IStatus status;
+
 	/**
 	 * Creates a new exception with the given status object.  The message
 	 * of the given status is used as the exception message.
@@ -35,6 +37,7 @@ public class CoreException extends Exception {
 		super(status.getMessage());
 		this.status = status;
 	}
+
 	/**
 	 * Returns the status object for this exception.
 	 *
@@ -43,6 +46,7 @@ public class CoreException extends Exception {
 	public final IStatus getStatus() {
 		return status;
 	}
+
 	/**
 	 * Prints a stack trace out for the exception, and
 	 * any nested exception that it may have embedded in
@@ -51,6 +55,7 @@ public class CoreException extends Exception {
 	public void printStackTrace() {
 		printStackTrace(System.err);
 	}
+
 	/**
 	 * Prints a stack trace out for the exception, and
 	 * any nested exception that it may have embedded in
@@ -67,6 +72,7 @@ public class CoreException extends Exception {
 				super.printStackTrace(output);
 		}
 	}
+
 	/**
 	 * Prints a stack trace out for the exception, and
 	 * any nested exception that it may have embedded in

@@ -57,6 +57,7 @@ public class PlatformURLPluginConnection extends PlatformURLConnection {
 		else
 			return new URL(result, spec.substring(ix + 1));
 	}
+
 	public static void startup() {
 		// register connection type for platform:/plugin handling
 		if (isRegistered)
@@ -64,6 +65,7 @@ public class PlatformURLPluginConnection extends PlatformURLConnection {
 		PlatformURLHandler.register(PLUGIN, PlatformURLPluginConnection.class);
 		isRegistered = true;
 	}
+
 	public URL[] getAuxillaryURLs() throws IOException {
 		if (target == null) {
 			String spec = url.getFile().trim();

@@ -33,6 +33,7 @@ public class RegistryCacheWriter {
 		super();
 		this.cacheFile = cacheFile;
 	}
+
 	private int addToObjectTable(Object object) {
 		if (objectTable == null) {
 			objectTable = new HashMap();
@@ -41,6 +42,7 @@ public class RegistryCacheWriter {
 		// return the index of the object just added (i.e. size - 1)
 		return (objectTable.size() - 1);
 	}
+
 	private int getFromObjectTable(Object object) {
 		if (objectTable != null) {
 			Object objectResult = objectTable.get(object);
@@ -71,6 +73,7 @@ public class RegistryCacheWriter {
 			problems.add(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOExceptionWriting", "ConfigruationElement"), ioe)); //$NON-NLS-1$
 		}
 	}
+
 	public void writeConfigurationProperty(ConfigurationProperty object, DataOutputStream out) {
 		try {
 			writeStringOrNull(object.getName(), out);
@@ -79,6 +82,7 @@ public class RegistryCacheWriter {
 			problems.add(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOExceptionWriting", "ConfigurationProperty"), ioe)); //$NON-NLS-1$
 		}
 	}
+
 	public void writeExtension(Extension object, DataOutputStream out) {
 		try {
 			if (writeIndex(object, out))
@@ -96,6 +100,7 @@ public class RegistryCacheWriter {
 			problems.add(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOExceptionWriting", "Extension"), ioe)); //$NON-NLS-1$
 		}
 	}
+
 	public void writeSubElements(Extension object, DataOutputStream out) throws IOException {
 		IConfigurationElement[] subElements = object.getConfigurationElements();
 		if (subElements == null) {
@@ -141,11 +146,12 @@ public class RegistryCacheWriter {
 			problems.add(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOExceptionWriting", "ExtensionPoint"), ioe)); //$NON-NLS-1$
 		}
 	}
+
 	public void writeHeaderInformation(long registryStamp, DataOutputStream out) {
 		try {
 			out.writeInt(RegistryCacheReader.REGISTRY_CACHE_VERSION);
 			out.writeLong(InternalPlatform.getDefault().getStateTimeStamp());
-			out.writeLong(registryStamp);			
+			out.writeLong(registryStamp);
 			IPlatform info = InternalPlatform.getDefault();
 			out.writeUTF(info.getOS());
 			out.writeUTF(info.getWS());
@@ -154,6 +160,7 @@ public class RegistryCacheWriter {
 			problems.add(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOExceptionWriting", "HeaderInformation"), ioe)); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
+
 	public void writeBundleModel(BundleModel object, DataOutputStream out) {
 		try {
 			if (writeIndex(object, out))
@@ -246,12 +253,13 @@ public class RegistryCacheWriter {
 				e.printStackTrace();
 		}
 	}
+
 	public void saveCache(ExtensionRegistry registry) {
 		this.saveCache(registry, 0);
 	}
 
 	private DataOutputStream openCacheFile() throws IOException {
-		return new DataOutputStream(new SafeFileOutputStream(cacheFile));	//TODO Do we need to use the safeFile? Failing would not really matter anyway. If this is removed then we can consider deleting the SafeFileOutputStream class
+		return new DataOutputStream(new SafeFileOutputStream(cacheFile)); //TODO Do we need to use the safeFile? Failing would not really matter anyway. If this is removed then we can consider deleting the SafeFileOutputStream class
 	}
 
 }

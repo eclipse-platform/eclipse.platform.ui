@@ -333,8 +333,8 @@ public class Preferences {
 		if (compatibility != null) {
 			try {
 				Class prefExporter = compatibility.loadClass("org.eclipse.core.internal.plugins.PreferenceExporter");
-				Method exportingMethod = prefExporter.getDeclaredMethod(methodName, new Class[]{IPath.class});
-				return exportingMethod.invoke(prefExporter, new Object[]{file});
+				Method exportingMethod = prefExporter.getDeclaredMethod(methodName, new Class[] {IPath.class});
+				return exportingMethod.invoke(prefExporter, new Object[] {file});
 			} catch (Exception e) {
 				throw new CoreException(new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IStatus.ERROR, "Error while " + methodName, e));
 			}
@@ -489,6 +489,7 @@ public class Preferences {
 					public void handleException(Throwable exception) {
 						// already being logged in Platform#run()
 					}
+
 					public void run() throws Exception {
 						l.propertyChange(pe);
 					}

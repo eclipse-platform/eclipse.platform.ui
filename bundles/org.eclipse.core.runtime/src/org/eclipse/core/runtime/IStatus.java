@@ -42,25 +42,25 @@ public interface IStatus {
 	 * This constant is also used as the status code representing the nominal case.
 	 * @see #getSeverity()
 	 * @see #isOK()
-		 */
+	 */
 	public static final int OK = 0;
 
 	/** Status type severity (bit mask, value 1) indicating this status is informational only.
 	 * @see #getSeverity()
 	 * @see #matches(int)
-		 */
+	 */
 	public static final int INFO = 0x01;
 
 	/** Status type severity (bit mask, value 2) indicating this status represents a warning.
 	 * @see #getSeverity()
 	 * @see #matches(int)
-		 */
+	 */
 	public static final int WARNING = 0x02;
 
 	/** Status type severity (bit mask, value 4) indicating this status represents an error.
 	 * @see #getSeverity()
 	 * @see #matches(int)
-		 */
+	 */
 	public static final int ERROR = 0x04;
 
 	/** Status type severity (bit mask, value 8) indicating this status represents a
@@ -78,12 +78,14 @@ public interface IStatus {
 	 * @see #isMultiStatus()
 	 */
 	public IStatus[] getChildren();
+
 	/**
 	 * Returns the plug-in-specific status code describing the outcome.
 	 *
 	 * @return plug-in-specific status code
 	 */
 	public int getCode();
+
 	/**
 	 * Returns the relevant low-level exception, or <code>null</code> if none. 
 	 * For example, when an operation fails because of a network communications
@@ -93,6 +95,7 @@ public interface IStatus {
 	 * @return the relevant low-level exception, or <code>null</code> if none
 	 */
 	public Throwable getException();
+
 	/**
 	 * Returns the message describing the outcome.
 	 * The message is localized to the current locale.
@@ -100,6 +103,7 @@ public interface IStatus {
 	 * @return a localized message
 	 */
 	public String getMessage();
+
 	/**
 	 * Returns the unique identifier of the plug-in associated with this status
 	 * (this is the plug-in that defines the meaning of the status code).
@@ -107,6 +111,7 @@ public interface IStatus {
 	 * @return the unique identifier of the relevant plug-in
 	 */
 	public String getPlugin();
+
 	/**
 	 * Returns the severity. The severities are as follows (in
 	 * descending order):
@@ -127,6 +132,7 @@ public interface IStatus {
 	 * @see #matches(int)
 	 */
 	public int getSeverity();
+
 	/**
 	 * Returns whether this status is a multi-status.
 	 * A multi-status describes the outcome of an operation
@@ -145,6 +151,7 @@ public interface IStatus {
 	 * @see #getChildren()
 	 */
 	public boolean isMultiStatus();
+
 	/**
 	 * Returns whether this status indicates everything is okay
 	 * (neither info, warning, nor error).
@@ -153,6 +160,7 @@ public interface IStatus {
 	 *    <code>OK</code>, and <code>false</code> otherwise
 	 */
 	public boolean isOK();
+
 	/**
 	 * Returns whether the severity of this status matches the given
 	 * specification.

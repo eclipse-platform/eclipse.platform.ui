@@ -345,6 +345,7 @@ public interface IPlatform {
 	 * @param code the runnable to run
 	 */
 	public void run(ISafeRunnable code);
+
 	/**
 	 * Returns the log for the given bundle.  If no such log exists, one is created.
 	 *
@@ -359,7 +360,7 @@ public interface IPlatform {
 	 * @return the job manager
 	 */
 	public IJobManager getJobManager();
-	
+
 	/**
 	 * Returns URL at which the Platform runtime executables and libraries are installed.
 	 * The returned value is distinct from the location of any given platform's data.
@@ -367,7 +368,7 @@ public interface IPlatform {
 	 *
 	 * @return the URL indicating where the platform runtime is installed.
 	 * @see #getInstallLocation()
-	 */	
+	 */
 	public URL getInstallURL();
 
 	/**
@@ -380,7 +381,7 @@ public interface IPlatform {
 	 * @return the location of the platform's installation area or <code>null</code> if none
 	 */
 	public Location getInstallLocation();
-	
+
 	/**
 	 * Returns the location of the configuration information 
 	 * used to run this instance of Eclipse.  The configuration area typically
@@ -396,12 +397,12 @@ public interface IPlatform {
 	 * @since 3.0
 	 */
 	public Location getConfigurationLocation();
-	
+
 	/**
 	 * Takes down the splash screen if one was put up.
 	 */
 	public void endSplash();
-	
+
 	/**
 	 * Returns a URL for the given path in the given bundle.  Returns <code>null</code> if the URL
 	 * could not be computed or created.
@@ -420,7 +421,7 @@ public interface IPlatform {
 	 * @since 3.0
 	 */
 	public URL find(Bundle bundle, IPath file);
-	
+
 	/**
 	 * Returns a URL for the given path in the given bundle.  Returns <code>null</code> if the URL
 	 * could not be computed or created.
@@ -475,7 +476,7 @@ public interface IPlatform {
 	 * @since 3.0
 	 */
 	public URL find(Bundle bundle, IPath path, Map override);
-	
+
 	/**
 	 * Returns the location in the local file system of the 
 	 * plug-in state area for the given bundle.
@@ -495,6 +496,7 @@ public interface IPlatform {
 	 * @since 3.0
 	 */
 	public IPath getStateLocation(Bundle bundle);
+
 	/**
 	 * Returns the given bundle's resource bundle for the current locale. 
 	 * <p>
@@ -509,6 +511,7 @@ public interface IPlatform {
 	 * @since 3.0
 	 */
 	public ResourceBundle getResourceBundle(Bundle bundle) throws MissingResourceException;
+
 	/**
 	 * Returns a resource string corresponding to the given argument value.
 	 * If the argument value specifies a resource key, the string
@@ -531,6 +534,7 @@ public interface IPlatform {
 	 * @see #getResourceBundle(Bundle)
 	 */
 	public String getResourceString(Bundle bundle, String value);
+
 	/**
 	 * Returns a resource string corresponding to the given argument 
 	 * value and bundle.
@@ -564,6 +568,7 @@ public interface IPlatform {
 	 * @see #getResourceBundle(Bundle)
 	 */
 	public String getResourceString(Bundle bundle, String value, ResourceBundle resourceBundle);
+
 	/**
 	 * Returns the string name of the current system architecture.  
 	 * The value is a user-defined string if the architecture is 
@@ -573,7 +578,7 @@ public interface IPlatform {
 	 * @return the string name of the current system architecture
 	 */
 	public String getOSArch();
-	
+
 	/**
 	 * Returns the string name of the current locale for use in finding files
 	 * whose path starts with <code>$nl$</code>.
@@ -581,7 +586,7 @@ public interface IPlatform {
 	 * @return the string name of the current locale
 	 */
 	public String getNL();
-	
+
 	/**
 	 * Returns the string name of the current operating system for use in finding
 	 * files whose path starts with <code>$os$</code>.  <code>OS_UNKNOWN</code> is
@@ -595,7 +600,7 @@ public interface IPlatform {
 	 * 
 	 */
 	public String getOS();
-	
+
 	/**
 	 * Returns the string name of the current window system for use in finding files
 	 * whose path starts with <code>$ws$</code>.  <code>null</code> is returned
@@ -604,7 +609,7 @@ public interface IPlatform {
 	 * @return the string name of the current window system or <code>null</code>
 	 */
 	public String getWS();
-	
+
 	/**
 	 * Returns the arguments not consumed by the framework implementation itself.  Which
 	 * arguments are consumed is implementation specific. These arguments are available 
@@ -612,15 +617,15 @@ public interface IPlatform {
 	 * @return the array of command line arguments not consumed by the framework.
 	 */
 	public String[] getApplicationArgs();
-	
+
 	public PlatformAdmin getPlatformAdmin();
-	
+
 	/**
 	 * Returns the currently registered bundle group providers
 	 * @return the currently registered bundle group providers
 	 */
 	public IBundleGroupProvider[] getBundleGroupProviders();
-	
+
 	/**
 	 * Return the currently registered preferences service.
 	 * 
@@ -640,14 +645,14 @@ public interface IPlatform {
 	 * @param provider a provider to register
 	 * @since 3.0
 	 */
-	public void registerBundleGroupProvider(IBundleGroupProvider provider);	
+	public void registerBundleGroupProvider(IBundleGroupProvider provider);
 
 	/**
 	 * Deregisters the given bundle group provider with the platform
 	 * @param provider a provider to deregister
 	 */
 	public void unregisterBundleGroupProvider(IBundleGroupProvider provider);
-	
+
 	/**
 	 * Returns the location of the platform's user data area.  The user data area is a location on the system
 	 * which is specific to the system's current user.  By default it is located relative to the 
@@ -671,12 +676,13 @@ public interface IPlatform {
 	 * @return the location of the platform's instance data area or <code>null</code> if none
 	 */
 	public Location getInstanceLocation();
-			
+
 	/**
 	 * Checks if the specified bundle is a fragment bundle.
 	 * @return true if the specified bundle is a fragment bundle; otherwise false is returned.
 	 */
-	public boolean isFragment(Bundle bundle);	
+	public boolean isFragment(Bundle bundle);
+
 	/**
 	 * Returns an array of host bundles that the specified fragment bundle is 
 	 * attached to or <tt>null</tt> if the specified bundle is not attached to a host.  
@@ -686,7 +692,8 @@ public interface IPlatform {
 	 * @return an array of host bundles or null if the bundle does not have any
 	 * host bundles.
 	 */
-	public Bundle[] getHosts(Bundle bundle);	
+	public Bundle[] getHosts(Bundle bundle);
+
 	/**
 	 * Returns an array of attached fragment bundles for the specified bundle.  If the 
 	 * specified bundle is a fragment then <tt>null</tt> is returned.  If no fragments are 
@@ -696,25 +703,26 @@ public interface IPlatform {
 	 * @return an array of fragment bundles or <tt>null</tt> if the bundle does not 
 	 * have any attached fragment bundles. 
 	 */
-	public Bundle[] getFragments(Bundle bundle);    
+	public Bundle[] getFragments(Bundle bundle);
+
 	/**
-     * Returns the resolved bundle with the specified symbolic name that has the
-     * highest version.  If no resolved bundles are installed that have the 
-     * specified symbolic name then null is returned.
-     * 
-     * @param symbolicName the symbolic name of the bundle to be returned.
-     * @return the bundle that has the specified symbolic name with the 
-     * highest version, or <tt>null</tt> if no bundle is found.
-     */
-	public Bundle getBundle(String symbolicName);	
-	
+	 * Returns the resolved bundle with the specified symbolic name that has the
+	 * highest version.  If no resolved bundles are installed that have the 
+	 * specified symbolic name then null is returned.
+	 * 
+	 * @param symbolicName the symbolic name of the bundle to be returned.
+	 * @return the bundle that has the specified symbolic name with the 
+	 * highest version, or <tt>null</tt> if no bundle is found.
+	 */
+	public Bundle getBundle(String symbolicName);
+
 	/**
 	 * Returns the content type manager.
 	 * 
 	 * @return the content type manager
 	 */
 	public IContentTypeManager getContentTypeManager();
-	
+
 	/**
 	 * Returns whether the platform is running.
 	 *

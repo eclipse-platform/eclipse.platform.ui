@@ -86,6 +86,7 @@ public interface IPluginDescriptor {
 	 * the relevant plug-in.
 	 */
 	public IExtension getExtension(String extensionName);
+
 	/**
 	 * Returns the extension point with the given simple identifier
 	 * declared in this plug-in, or <code>null</code> if there is no such extension point.
@@ -101,6 +102,7 @@ public interface IPluginDescriptor {
 	 * the relevant plug-in.
 	 */
 	public IExtensionPoint getExtensionPoint(String extensionPointId);
+
 	/**
 	 * Returns all extension points declared by this plug-in.
 	 * Returns an empty array if this plug-in does not declare any extension points.
@@ -115,6 +117,7 @@ public interface IPluginDescriptor {
 	 * the relevant plug-in.
 	 */
 	public IExtensionPoint[] getExtensionPoints();
+
 	/**
 	 * Returns all extensions declared by this plug-in.
 	 * Returns an empty array if this plug-in does not declare any extensions.
@@ -129,6 +132,7 @@ public interface IPluginDescriptor {
 	 * the relevant plug-in.
 	 */
 	public IExtension[] getExtensions();
+
 	/**
 	 * Returns the URL of this plug-in's install directory. 
 	 * This is the directory containing
@@ -149,6 +153,7 @@ public interface IPluginDescriptor {
 	 * the relevant plug-in.
 	 */
 	public URL getInstallURL();
+
 	/**
 	 * Returns a displayable label for this plug-in.
 	 * Returns the empty string if no label for this plug-in
@@ -169,6 +174,7 @@ public interface IPluginDescriptor {
 	 * the relevant plug-in.
 	 */
 	public String getLabel();
+
 	/**
 	 * Returns the plug-in runtime object corresponding to this
 	 * plug-in descriptor. Unlike other methods on this object,
@@ -196,6 +202,7 @@ public interface IPluginDescriptor {
 	 * the relevant plug-in.
 	 */
 	public Plugin getPlugin() throws CoreException;
+
 	/**
 	 * Returns the plug-in class loader used to load classes and resources
 	 * for this plug-in. The class loader can be used to directly access
@@ -242,6 +249,7 @@ public interface IPluginDescriptor {
 	 * the relevant plug-in.
 	 */
 	public ClassLoader getPluginClassLoader();
+
 	/**
 	 * Returns a list of plug-in prerequisites required
 	 * for correct execution of this plug-in.
@@ -262,6 +270,7 @@ public interface IPluginDescriptor {
 	 * entry for each required plug-in.
 	 */
 	public IPluginPrerequisite[] getPluginPrerequisites();
+
 	/**
 	 * Returns the name of the provider of this plug-in.
 	 * Returns the empty string if no provider name is specified in 
@@ -282,6 +291,7 @@ public interface IPluginDescriptor {
 	 * the relevant plug-in.
 	 */
 	public String getProviderName();
+
 	/**
 	 * Returns this plug-in's resource bundle for the current locale. 
 	 * <p>
@@ -302,6 +312,7 @@ public interface IPluginDescriptor {
 	 * the relevant plug-in.
 	 */
 	public ResourceBundle getResourceBundle() throws MissingResourceException;
+
 	/**
 	 * Returns a resource string corresponding to the given argument value.
 	 * If the argument value specifies a resource key, the string
@@ -331,6 +342,7 @@ public interface IPluginDescriptor {
 	 * the relevant plug-in.
 	 */
 	public String getResourceString(String value);
+
 	/**
 	 * Returns a resource string corresponding to the given argument 
 	 * value and bundle.
@@ -371,6 +383,7 @@ public interface IPluginDescriptor {
 	 * the relevant plug-in.
 	 */
 	public String getResourceString(String value, ResourceBundle resourceBundle);
+
 	/**
 	 * Returns all runtime libraries declared by this plug-in.
 	 * Returns an empty array if this plug-in has no runtime libraries.
@@ -390,6 +403,7 @@ public interface IPluginDescriptor {
 	 * entry for each entry on the bundle's classpath..
 	 */
 	public ILibrary[] getRuntimeLibraries();
+
 	/**
 	 * Returns the unique identifier of this plug-in.
 	 * This identifier is a non-empty string and is unique 
@@ -405,6 +419,7 @@ public interface IPluginDescriptor {
 	 * the relevant plug-in.
 	 */
 	public String getUniqueIdentifier();
+
 	/**
 	 * Returns the version identifier of this plug-in.
 	 *
@@ -419,6 +434,7 @@ public interface IPluginDescriptor {
 	 * the relevant plug-in.
 	 */
 	public PluginVersionIdentifier getVersionIdentifier();
+
 	/**
 	 * Returns whether the plug-in described by this descriptor
 	 * has been activated. Invoking this method will not cause the
@@ -436,6 +452,7 @@ public interface IPluginDescriptor {
 	 * the relevant plug-in.
 	 */
 	public boolean isPluginActivated();
+
 	/**
 	 * Returns a URL for the given path.  Returns <code>null</code> if the URL
 	 * could not be computed or created.
@@ -454,6 +471,7 @@ public interface IPluginDescriptor {
 	 * the relevant plug-in.
 	 */
 	public URL find(IPath path);
+
 	/**
 	 * Returns a URL for the given path.  Returns <code>null</code> if the URL
 	 * could not be computed or created.

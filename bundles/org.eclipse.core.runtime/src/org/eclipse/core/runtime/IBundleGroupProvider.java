@@ -25,7 +25,7 @@ public interface IBundleGroupProvider {
 	 * @return the name of this bundle group provider
 	 */
 	public String getName();
-	
+
 	/**
 	 * Returns the bundle groups provided by this provider.
 	 * @return the bundle groups provided by this provider

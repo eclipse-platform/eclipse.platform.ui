@@ -41,14 +41,17 @@ public class BundleModel extends RegistryModelObject implements IRegistryElement
 	public String getUniqueIdentifier() {
 		return getName();
 	}
+
 	public void setUniqueIdentifier(String value) {
 		setName(value);
 	}
+
 	public void setExtensions(IExtension[] value) {
 		assertIsWriteable();
 		extensions = value;
 		fixRenamedExtensionPoints();
 	}
+
 	public IExtension getExtension(String id) {
 		if (id == null)
 			return null;
@@ -61,22 +64,26 @@ public class BundleModel extends RegistryModelObject implements IRegistryElement
 		}
 		return null;
 	}
+
 	public IExtension[] getExtensions() {
 		return extensions == null ? new IExtension[0] : extensions;
 	}
+
 	public void markReadOnly() {
 		super.markReadOnly();
 		if (extensionPoints != null)
 			for (int i = 0; i < extensionPoints.length; i++)
-				 ((ExtensionPoint) extensionPoints[i]).markReadOnly();
+				((ExtensionPoint) extensionPoints[i]).markReadOnly();
 		if (extensions != null)
 			for (int i = 0; i < extensions.length; i++)
-				 ((Extension) extensions[i]).markReadOnly();
+				((Extension) extensions[i]).markReadOnly();
 	}
+
 	public void setExtensionPoints(IExtensionPoint[] value) {
 		assertIsWriteable();
 		extensionPoints = value;
 	}
+
 	// TODO is this method needed? does not appear to be called by anyone.
 	public IExtensionPoint getExtensionPoint(String xpt) {
 		if (xpt == null)
@@ -90,6 +97,7 @@ public class BundleModel extends RegistryModelObject implements IRegistryElement
 		}
 		return null;
 	}
+
 	public IExtensionPoint[] getExtensionPoints() {
 		return extensionPoints == null ? new IExtensionPoint[0] : extensionPoints;
 	}
@@ -112,18 +120,23 @@ public class BundleModel extends RegistryModelObject implements IRegistryElement
 		}
 		return fileURL;
 	}
+
 	public void setHostIdentifier(String value) {
 		hostId = value;
 	}
+
 	public String getHostIdentifier() {
 		return hostId;
 	}
+
 	public boolean isFragment() {
 		return hostId != null;
 	}
+
 	public String toString() {
 		return "BundleModel: " + getName();
 	}
+
 	/**
 	 * Fixes up the extension declarations in the given pre-3.0 plug-in or fragment to compensate
 	 * for extension points that were renamed between release 2.1 and 3.0.
@@ -171,9 +184,11 @@ public class BundleModel extends RegistryModelObject implements IRegistryElement
 	public long getId() {
 		return bundleId;
 	}
+
 	public void setId(long value) {
 		bundleId = value;
 	}
+
 	public String getResourceString(String value) {
 		if (resourceBundle == null)
 			resourceBundle = ResourceTranslator.getResourceBundle(InternalPlatform.getDefault().getBundleContext().getBundle(bundleId));
