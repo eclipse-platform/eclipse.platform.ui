@@ -281,16 +281,15 @@ public class DebugView extends LaunchesView implements IPartListener {
 			return;
 		}
 		
-		IEditorPart editor= null;
 		IEditorPart[] editorParts= page.getEditors();
-		
 		// restore editor on startup
 		if (fEditorMemento != null) {
 			if (editorParts.length > fEditorMemento.intValue())
 				fEditor = editorParts[fEditorMemento.intValue()];
 			fEditorMemento = null;
 		}
-
+		
+		IEditorPart editor= null;
 		for (int i= 0; i < editorParts.length; i++) {
 			IEditorPart part= editorParts[i];
 			if (input.equals(part.getEditorInput())) {
@@ -325,13 +324,13 @@ public class DebugView extends LaunchesView implements IPartListener {
 	}
 
 	/**
-	 * Deselect any source in the active editor that was 'programmatically' selected by
+	 * Deselects any source in the active editor that was 'programmatically' selected by
 	 * the debugger.
 	 */
 	public void clearSourceSelection() {		
 		// Get the active editor
 		IEditorPart editor= getSite().getPage().getActiveEditor();
-		if ((editor == null) || !(editor instanceof ITextEditor)) {
+		if (!(editor instanceof ITextEditor)) {
 			return;
 		}
 		ITextEditor textEditor= (ITextEditor)editor;
@@ -347,20 +346,21 @@ public class DebugView extends LaunchesView implements IPartListener {
 		int startLine= textSelection.getStartLine();
 		
 		// Check to see if the current selection looks the same as the last 'programmatic'
-		// selection in fSourceLocationMarker.  If not, it must be a user selection, which
+		// selection in fInstructionPointer.  If not, it must be a user selection, which
 		// we leave alone.  In practice, we can leave alone any user selections on other lines,
 		// but if the user makes a selection on the same line as the last programmatic selection,
 		// it will get cleared.
 		int lastCharStart= fInstructionPointer.getAttribute(IMarker.CHAR_START, -1);
-		int lastCharEnd= fInstructionPointer.getAttribute(IMarker.CHAR_END, -1);;
 		if (lastCharStart == -1) {
 			// subtract 1 since editor is 0-based
 			if (fInstructionPointer.getAttribute(IMarker.LINE_NUMBER, -1) - 1 != startLine) {
 				return;
 			}
-		} else if ((lastCharStart != startChar) ||
-			     (lastCharEnd != endChar)) {
-			return;			     
+		} else {
+			int lastCharEnd= fInstructionPointer.getAttribute(IMarker.CHAR_END, -1);
+			if ((lastCharStart != startChar) || (lastCharEnd != endChar)) {
+				return;			     
+			}
 		}
 		
 		ITextSelection nullSelection= getNullSelection(startLine, startChar);
