@@ -52,7 +52,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 /**
  * Not yet for public use. API under construction.
  * 
- * @since 3.0
+ * @since 3.1
  */
 public class SelectResourcesDialog extends Dialog {
 	
