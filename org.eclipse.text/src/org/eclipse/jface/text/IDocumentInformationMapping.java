@@ -102,10 +102,12 @@ public interface IDocumentInformationMapping {
 	int toImageLine(int originLine) throws BadLocationException;
 	
 	/**
-	 * Returns the line of the image document whose corresponding 
-	 * @param originLine
-	 * @return
-	 * @throws BadLocationException
+	 * Returns the line of the image document whose corresponding line in the original document
+	 * is closest to the given line in the original document.
+	 * 
+	 * @param originLine the line in the original document
+	 * @return the line in the image document that corresponds best to the given line in the original document
+	 * @throws BadLocationException if <code>originLine</code>is not a valid line in the original document
 	 */
 	int toClosestImageLine(int originLine) throws BadLocationException;
 }
