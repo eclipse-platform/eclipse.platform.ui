@@ -23,7 +23,7 @@ public class Import extends Command {
 		return "import";
 	}
 
-	protected ICVSResource[] computeWorkResources(Session session, String[] arguments)
+	protected ICVSResource[] computeWorkResources(Session session, String[] arguments, LocalOption[] localOptions)
 		throws CVSException {
 		if (arguments.length < 3) throw new IllegalArgumentException();
 		return new ICVSResource[0];

@@ -12,11 +12,9 @@ public interface IStatusListener {
 	public static final String FOLDER_REVISION = "";
 	
 	/**
-	 * provides access to the revision of a file through
-	 * the use of the Status command.
+	 * Provides access to the revision of a file through the use of the Status command.
 	 * 
-	 * @see StatusMessageHandler
-	 * @see StatusErrorHandler
+	 * The provided path is the absoulte remote path of the resource including the repository root directory
 	 */
 	public void fileStatus(IPath path, String remoteRevision);
 }

@@ -144,7 +144,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 			return null;
 		}
 	}
-
+	
 	/**
 	 * @see ICVSRemoteFile#getLogEntries()
 	 */
@@ -185,7 +185,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 	 * Therefore, we need a new parent so that we can fecth the contents of the remote file revision
 	 */
 	public RemoteFile toRevision(String revision) {
-		RemoteFolder newParent = new RemoteFolder(null, parent.getRepository(), new Path(parent.getRemotePath()), parent.getTag());
+		RemoteFolder newParent = new RemoteFolder(null, parent.getRepository(), new Path(parent.getRepositoryRelativePath()), parent.getTag());
 		RemoteFile file = new RemoteFile(newParent, getName(), revision, CVSTag.DEFAULT);
 		newParent.setChildren(new ICVSRemoteResource[] {file});
 		return file;
@@ -221,13 +221,6 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 	}
 	
 	/**
-	 * @see ICVSRemoteFolder#getRelativePath()
-	 */
-	public String getRelativePath() {
-		return getRemotePath();
-	}
-	
-	/**
 	 * @see ICVSResource#getRemoteLocation(ICVSFolder)
 	 */
 	public String getRemoteLocation(ICVSFolder stopSearching) throws CVSException {
@@ -237,8 +230,8 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 	/**
 	 * Get the remote path for the receiver relative to the repository location path
 	 */
-	public String getRemotePath() {
-		String parentPath = parent.getRemotePath();
+	public String getRepositoryRelativePath() {
+		String parentPath = parent.getRepositoryRelativePath();
 		return parentPath + Session.SERVER_SEPARATOR + getName();
 	}
 	

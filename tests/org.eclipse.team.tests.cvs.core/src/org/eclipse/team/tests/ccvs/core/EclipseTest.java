@@ -160,6 +160,10 @@ public class EclipseTest extends EclipseWorkspaceTest {
 		getProvider(project).update(new IResource[] {project}, IResource.DEPTH_INFINITE, tag, ignoreLocalChanges, DEFAULT_MONITOR);
 	}
 	
+	public void commitProject(IProject project) throws TeamException {
+		getProvider(project).checkin(new IResource[] {project}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
+	}
+	
 	/**
 	 * Commit the resources from an existing container to the CVS repository
 	 */
@@ -215,6 +219,15 @@ public class EclipseTest extends EclipseWorkspaceTest {
 		return copy;
 	 }
 	 
+	 
+	 protected IProject checkoutProject(IProject project, String moduleName, CVSTag tag) throws TeamException {
+	 	if (project == null)
+	 		project = getWorkspace().getRoot().getProject(moduleName);
+	 	if (moduleName == null)
+	 		moduleName = project.getName();
+		CVSProviderPlugin.getProvider().checkout(getRepository(), project, moduleName, tag, DEFAULT_MONITOR);
+		return project;
+	 }
 	/*
 	 * This method creates a project with the given resources, imports
 	 * it to CVS and checks it out

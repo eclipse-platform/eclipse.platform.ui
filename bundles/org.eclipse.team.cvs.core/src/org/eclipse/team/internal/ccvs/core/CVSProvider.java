@@ -33,7 +33,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
@@ -59,9 +58,7 @@ import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderTree;
-import org.eclipse.team.internal.ccvs.core.syncinfo.*;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
-import org.eclipse.team.internal.ccvs.core.syncinfo.FileSystemSynchronizer;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
 public class CVSProvider implements ICVSProvider {
@@ -228,7 +225,7 @@ public class CVSProvider implements ICVSProvider {
 							RemoteFolder resource = (RemoteFolder)resources[i];
 							if (projects != null) 
 								project = projects[i];
-							checkout(resource.getRepository(), project, resource.getRemotePath(), resource.getTag(), Policy.subMonitorFor(pm, 1000));
+							checkout(resource.getRepository(), project, resource.getRepositoryRelativePath(), resource.getTag(), Policy.subMonitorFor(pm, 1000));
 						}
 					}
 					catch (TeamException e) {

@@ -75,7 +75,7 @@ public interface ICVSResource {
 	public boolean exists() throws CVSException;	
 
 	/**
-	 * Answers a relative path to the given ancestor.
+	 * Answers the local relative path from the given ancestor to the receiver.
 	 * 
 	 * @return the ancestor relative path for this resource.
 	 */

@@ -34,30 +34,48 @@ import org.eclipse.team.internal.ccvs.core.client.listeners.IStatusListener;
 import org.eclipse.team.internal.ccvs.core.client.listeners.IUpdateMessageListener;
 import org.eclipse.team.internal.ccvs.core.client.listeners.StatusListener;
 import org.eclipse.team.internal.ccvs.core.client.listeners.UpdateListener;
-import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
-import org.eclipse.team.internal.ccvs.core.syncinfo.*;
+import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.util.Util;
 
 /**
  * This class provides the implementation of ICVSRemoteFolder
+ * 
+ * The parent of the RemoteFolder represents the folders parent in a local configuration.
+ * For instance, the parent may correspond to the remote parent or may be a folder in the
+ * same repository that has no physical relationship to the RemoteFolder (resulting from the use
+ * of a module definition, for instance). A RemoteFolder may not have a parent, indicating that it is
+ * the root of the local configuration it represents. 
+ * 
+ * A RemoteFolder has the following:
+ *   A name in the folder's local configuration
+ *   
  */
 public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, ICVSFolder {
 
+	public static final String VIRTUAL_DIRECTORY = "CVSROOT/Emptydir";
+	
+	private FolderSyncInfo folderInfo;
 	private ICVSRemoteResource[] children;
-	private CVSRepositoryLocation repository;
-	private IPath repositoryRelativePath;
-	private CVSTag tag;
+	private ICVSRepositoryLocation repository;
 	
 	/**
 	 * Constructor for RemoteFolder.
 	 */
 	public RemoteFolder(RemoteFolder parent, ICVSRepositoryLocation repository, IPath repositoryRelativePath, CVSTag tag) {
-		String name = repositoryRelativePath.lastSegment() == null ? "" : repositoryRelativePath.lastSegment();
+		this(parent, 
+			repositoryRelativePath.lastSegment() == null ? "" : repositoryRelativePath.lastSegment(),
+			repository,
+			repositoryRelativePath,
+			tag);	
+	}
+	
+	public RemoteFolder(RemoteFolder parent, String name, ICVSRepositoryLocation repository, IPath repositoryRelativePath, CVSTag tag) {
 		this.info = new ResourceSyncInfo(name);
 		this.parent = parent;
-		this.tag = tag;
-		this.repository = (CVSRepositoryLocation)repository;
-		this.repositoryRelativePath = repositoryRelativePath;		
+		this.folderInfo = new FolderSyncInfo(repositoryRelativePath.toString(), repository.getLocation(), tag, false);
+		this.repository = repository;	
 	}
 
 	// Get the file revisions for the given filenames
@@ -246,7 +264,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 				result.add(new RemoteFile(this, (String)newRemoteFiles.get(i), tag));
 			}
 			for (int i=0;i<newRemoteDirectories.size();i++)
-				result.add(new RemoteFolder(this, getRepository(), repositoryRelativePath.append((String)newRemoteDirectories.get(i)), tag));
+				result.add(new RemoteFolder(this, getRepository(), new Path(getRepositoryRelativePath()).append((String)newRemoteDirectories.get(i)), tag));
 			children = (ICVSRemoteResource[])result.toArray(new ICVSRemoteResource[0]);
 
 			// Get the revision numbers for the files
@@ -333,19 +351,31 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 
 	}
 
-	public String getRemotePath() {
-		return repositoryRelativePath.toString();
+	protected String getLocalPath() {
+		throw new UnsupportedOperationException();
+	}
+	
+	public String getRepositoryRelativePath() {
+		// The REPOSITORY property of the folder info is the repository relative path
+		return getFolderSyncInfo().getRepository();
 	}
 	
 	/**
 	 * @see ICVSResource#getRelativePath(ICVSFolder)
 	 */
 	public String getRelativePath(ICVSFolder ancestor) throws CVSException {
+		
 		if (ancestor == this)
 			return ".";
-		// NOTE: This is a quick and dirty way.
-		return this.getRemotePath().substring(((RemoteFolder)ancestor).getRemotePath().length() + 1);
-		// throw new CVSException(Policy.bind("RemoteFolder.invalidOperation"));
+
+		RemoteResource rootFolder;
+		try {
+			rootFolder = (RemoteResource)ancestor;
+		} catch (ClassCastException e) {
+			throw new CVSException(0,0,"two different implementations of ICVSResource used",e);
+		}
+		
+		return Util.getRelativePath(rootFolder.getLocalPath(), getLocalPath());	
 	}
 	
 	public ICVSRepositoryLocation getRepository() {
@@ -359,18 +389,6 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 		return true;
 	}
 	
-	/**
-	 * Return true if the exception from the cvs server is the no tag error, and false
-	 * otherwise.
-	 */
-	public static boolean isNoTagException(List errors) {
-		if (errors.size() != 1)
-			return false;
-		if (((IStatus)errors.get(0)).getMessage().startsWith("cvs [server aborted]: no such tag"))
-			return true;
-		return false;
-	}
-
 	/**
 	 * @see ICVSFolder#childExists(String)
 	 */
@@ -429,15 +447,15 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	/**
 	 * @see ICVSFolder#getFolderInfo()
 	 */
-	public FolderSyncInfo getFolderSyncInfo() throws CVSException {
-		return new FolderSyncInfo(getRemotePath(), getRepository().getLocation(), getTag(), false);
+	public FolderSyncInfo getFolderSyncInfo() {
+		return folderInfo;
 	}
 
 	/**
 	 * @see ICVSResource#getRemoteLocation(ICVSFolder)
 	 */
 	public String getRemoteLocation(ICVSFolder stopSearching) throws CVSException {
-		return getRepository().getRootDirectory() + Session.SERVER_SEPARATOR + getRemotePath();
+		return folderInfo.getRemoteLocation();
 	}
 	
 	/**
@@ -492,19 +510,22 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	 * @see ICVSRemoteFolder#setTag(String)
 	 */
 	public void setTag(CVSTag tag) {
-		this.tag = tag;
+		this.folderInfo = new FolderSyncInfo(folderInfo.getRepository(), folderInfo.getRoot(), tag, folderInfo.getIsStatic());
 	}
 
 	/*
 	 * @see ICVSRemoteFolder#getTag()
 	 */
 	public CVSTag getTag() {
-		return tag;
+		return folderInfo.getTag();
 	}
 	/*
 	 * @see ICVSFolder#setFolderInfo(FolderSyncInfo)
 	 */
 	public void setFolderSyncInfo(FolderSyncInfo folderInfo) throws CVSException {
+		this.folderInfo = folderInfo;
+		// XXX temporary to see if this ever occurs
+		throw new CVSException(Policy.bind("RemoteResource.invalidOperation"));
 	}
 	
 	/**
@@ -564,11 +585,5 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 		} finally {
 			children = oldChildren;
 		}
-	}
-	/*
-	 * @see ICVSRemoteFolder#getRelativePath()
-	 */
-	public String getRelativePath() {
-		return getRemotePath();
 	}
 }

@@ -5,14 +5,11 @@ package org.eclipse.team.internal.ccvs.core.util;
  * All Rights Reserved.
  */
 
-import org.eclipse.team.internal.ccvs.core.util.Assert;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.client.Session;
 
 /**
  * Unsorted static helper-methods 
@@ -264,7 +261,22 @@ public class Util {
 		
 		// Get rid of the seperator, that would be in the 
 		// beginning, if we did not go from +1
-		return resourceName.substring(rootName.length() + 1);
+		return resourceName.substring(rootName.length() + 1).replace('\\', '/');
+	}
+	
+	/**
+	 * Append the prefix and suffix to form a valid CVS path.
+	 */
+	public static String appendPath(String prefix, String suffix) {
+		if (prefix.endsWith(Session.SERVER_SEPARATOR)) {
+			if (suffix.startsWith(Session.SERVER_SEPARATOR))
+				return prefix + suffix.substring(1);
+			else
+				return prefix + suffix;
+		} else if (suffix.startsWith(Session.SERVER_SEPARATOR))
+			return prefix + suffix;
+		else
+			return prefix + Session.SERVER_SEPARATOR + suffix;
 	}
 	
 	/*

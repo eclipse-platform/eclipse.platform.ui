@@ -197,7 +197,7 @@ public abstract class Command {
 	 * can be more easily manipulated.  Subclasses must override this method
 	 * if this assumption is false.
 	 */
-	protected ICVSResource[] computeWorkResources(Session session, String[] arguments)
+	protected ICVSResource[] computeWorkResources(Session session, String[] arguments, LocalOption[] localOptions)
 		throws CVSException {
 		ICVSFolder localRoot = session.getLocalRoot();
 
@@ -310,7 +310,7 @@ public abstract class Command {
 	
 			// Ensure that the commands run with the latest contents of the CVS subdirectory sync files 
 			// and not the cached values. Allow 10% of work.
-			resources = computeWorkResources(session, arguments);
+			resources = computeWorkResources(session, arguments, localOptions);
 			reloadSyncInfo(resources, Policy.subMonitorFor(monitor, 10));
 			Policy.checkCanceled(monitor);
 	

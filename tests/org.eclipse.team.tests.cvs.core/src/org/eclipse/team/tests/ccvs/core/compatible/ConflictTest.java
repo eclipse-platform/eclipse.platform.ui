@@ -3,7 +3,6 @@ package org.eclipse.team.tests.ccvs.core.compatible;
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-import junit.awtui.TestRunner;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.team.internal.ccvs.core.CVSException;
@@ -13,6 +12,10 @@ public class ConflictTest extends JUnitTestCase {
 
 	SameResultEnv env1;
 	SameResultEnv env2;
+	
+	public ConflictTest() {
+		this(null);
+	}
 	
 	public ConflictTest(String arg) {
 		super(arg);

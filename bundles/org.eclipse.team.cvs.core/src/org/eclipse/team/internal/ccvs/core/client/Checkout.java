@@ -6,10 +6,14 @@ package org.eclipse.team.internal.ccvs.core.client;
  */
  
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.Option;
+import org.eclipse.team.internal.ccvs.core.client.listeners.ModuleDefinitionsListener;
+import org.eclipse.team.internal.ccvs.core.client.listeners.ModuleExpansion;
+import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSResourceVisitor;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
@@ -21,14 +25,20 @@ public class Checkout extends Command {
 		return new LocalOption("-d", moduleName);
 	}
 
+	/** Command options found in the CVSROOT/modules file */
+	public static LocalOption ALIAS = new LocalOption("-a");
+	public static LocalOption makeStatusOption(String status) {
+		return new LocalOption("-s", status);
+	}
+	
 	protected Checkout() { }	
 	protected String getCommandId() {
 		return "co";
 	}
 	
-	protected ICVSResource[] computeWorkResources(Session session, String[] arguments)
+	protected ICVSResource[] computeWorkResources(Session session, String[] arguments, LocalOption[] localOptions)
 		throws CVSException {
-		if (arguments.length < 1) throw new IllegalArgumentException();
+		if (arguments.length < 1 && ! FETCH_MODULE_ALIASES.isElementOf(localOptions)) throw new IllegalArgumentException();
 		return new ICVSResource[0];
 	}
 	
@@ -81,5 +91,23 @@ public class Checkout extends Command {
 			}
 		}	
 	}
-
+	
+	/**
+	 * Perform a checkout to get the module expansions defined in the CVSROOT/modules file
+	 */
+	public ModuleExpansion[] getModuleExpansions(Session session, IProgressMonitor monitor)
+		throws CVSException {
+		
+		ModuleDefinitionsListener moduleDefinitionListener = new ModuleDefinitionsListener();
+		
+		IStatus status = execute(session, NO_GLOBAL_OPTIONS, new LocalOption[] {FETCH_MODULE_ALIASES}, NO_ARGUMENTS, 
+			moduleDefinitionListener, monitor);
+			
+		if (status.getCode() == CVSException.SERVER_ERROR) {
+			// XXX diff errors??
+			throw new CVSServerException(status);
+		}
+		
+		return moduleDefinitionListener.getModuleExpansions();
+	}
 }

@@ -36,7 +36,6 @@ import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
-import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderTree;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteResource;
 import org.eclipse.team.internal.ccvs.core.syncinfo.*;
@@ -59,6 +58,7 @@ public class RemoteFolderTreeBuilder {
 
 	private Map fileDeltas;
 	private List changedFiles;
+	private Map remoteFolderTable;
 	
 	private ICVSFolder root;
 	private RemoteFolderTree remoteRoot;
@@ -83,6 +83,7 @@ public class RemoteFolderTreeBuilder {
 		this.tag = tag;
 		this.fileDeltas = new HashMap();
 		this.changedFiles = new ArrayList();
+		this.remoteFolderTable = new HashMap();
 		
 		// Build the local options
 		List localOptions = new ArrayList();
@@ -141,7 +142,7 @@ public class RemoteFolderTreeBuilder {
 		try {
 			buildRemoteTree(session, root, remoteRoot, Path.EMPTY, monitor);
 			if (!changedFiles.isEmpty())
-				fetchFileRevisions(session, remoteRoot, (String[])changedFiles.toArray(new String[changedFiles.size()]), monitor);
+				fetchFileRevisions(session, (String[])changedFiles.toArray(new String[changedFiles.size()]), monitor);
 			return remoteRoot;
 		} finally {
 			session.close();
@@ -201,6 +202,9 @@ public class RemoteFolderTreeBuilder {
 	 */
 	private void buildRemoteTree(Session session, ICVSFolder local, RemoteFolderTree remote, IPath localPath, IProgressMonitor monitor) throws CVSException {
 		
+		// Add the remote folder to the remote folder lookup table (used to update file revisions)
+		remoteFolderTable.put(remote.getFolderSyncInfo().getRemoteLocation(), remote);
+		
 		// Create a map to contain the created children
 		Map children = new HashMap();
 		
@@ -257,7 +261,7 @@ public class RemoteFolderTreeBuilder {
 			if (revision == FOLDER) {
 				// XXX should getRemotePath() return an IPath instead of a String?
 				children.put(name, new RemoteFolderTree(remote, repository, 
-					new Path(remote.getRemotePath()).append(name), 
+					new Path(remote.getRepositoryRelativePath()).append(name), 
 					tagForRemoteFolder(remote, tag)));
 			} else if (revision == ADDED) {
 				children.put(name, new RemoteFile(remote, name, tagForRemoteFolder(remote, tag)));
@@ -408,7 +412,7 @@ public class RemoteFolderTreeBuilder {
 		};
 
 		// NOTE: Should use the path relative to the remoteRoot
-		IPath path = new Path(newFolder.getRemotePath());
+		IPath path = new Path(newFolder.getRepositoryRelativePath());
 		IStatus status = Command.UPDATE.execute(session,
 			new GlobalOption[] { Command.DO_NOT_CHANGE },
 			updateLocalOptions,
@@ -437,7 +441,7 @@ public class RemoteFolderTreeBuilder {
 	}
 	
 	// Get the file revisions for the given filenames
-	private void fetchFileRevisions(Session session, final RemoteFolder root, String[] fileNames, IProgressMonitor monitor) throws CVSException {
+	private void fetchFileRevisions(Session session, String[] fileNames, IProgressMonitor monitor) throws CVSException {
 		
 		// Create a listener for receiving the revision info
 		final int[] count = new int[] {0};
@@ -445,7 +449,7 @@ public class RemoteFolderTreeBuilder {
 		IStatusListener listener = new IStatusListener() {
 			public void fileStatus(IPath path, String remoteRevision) {
 				try {
-					updateRevision(root, path, remoteRevision);
+					updateRevision(path, remoteRevision);
 					count[0]++;
 				} catch (CVSException e) {
 					// The count will be off which will trigger another exception
@@ -493,8 +497,9 @@ public class RemoteFolderTreeBuilder {
 		deltas.put(path.lastSegment(), revision);
 	}
 	
-	private void updateRevision(RemoteFolder root, IPath path, String revision) throws CVSException {
-		((RemoteFile)root.getFile(path.toString())).setRevision(revision);
+	private void updateRevision(IPath path, String revision) throws CVSException {
+		RemoteFolderTree folder = (RemoteFolderTree)remoteFolderTable.get(path.removeLastSegments(1).toString());
+		((RemoteFile)folder.getFile(path.lastSegment())).setRevision(revision);
 	}
 	
 	/*

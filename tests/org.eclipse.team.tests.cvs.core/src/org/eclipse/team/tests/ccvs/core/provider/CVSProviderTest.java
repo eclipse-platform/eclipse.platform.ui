@@ -39,7 +39,7 @@ public class CVSProviderTest extends EclipseTest {
 	public static Test suite() {
 		TestSuite suite = new TestSuite(CVSProviderTest.class);
 		return new CVSTestSetup(suite);
-		//return new CVSTestSetup(new CVSProviderTest("testVersionTag"));
+		//return new CVSTestSetup(new CVSProviderTest("testGet"));
 	}
 	
 	public void testAddAndDelete() throws TeamException, CoreException {
@@ -145,6 +145,22 @@ public class CVSProviderTest extends EclipseTest {
 		CVSProviderPlugin.getPlugin().setPruneEmptyDirectories(true);
 	}
 
+	public void testGet() throws TeamException, CoreException, IOException {
+		
+		// Create a project
+		IProject project = createProject("testGet", new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt" });
+		
+		// Checkout a copy and modify locally
+		IProject copy = checkoutCopy(project, "-copy");
+		addResources(copy, new String[] { "added.txt", "folder2/", "folder2/added.txt" }, false);
+		deleteResources(copy, new String[] {"deleted.txt"}, false);
+		IFile file = copy.getFile("changed.txt");
+		file.setContents(getRandomContents(), false, false, null);
+
+		// get the remote conetns
+		getProvider(copy).get(new IResource[] {copy}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
+		assertEquals("Get failed to retrieve proper contents", project, copy);
+	}
 
 }
 

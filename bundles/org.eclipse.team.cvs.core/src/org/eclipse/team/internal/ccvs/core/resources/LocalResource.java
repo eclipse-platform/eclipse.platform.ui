@@ -60,7 +60,7 @@ public abstract class LocalResource implements ICVSResource {
 		}
 		
 		result = Util.getRelativePath(rootFolder.getPath(),getPath()); 
-		return result.replace('\\', '/');	
+		return result;	
 	}
 
 	/**

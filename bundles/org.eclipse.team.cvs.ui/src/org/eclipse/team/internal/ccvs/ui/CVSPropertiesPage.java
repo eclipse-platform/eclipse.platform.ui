@@ -185,7 +185,7 @@ public class CVSPropertiesPage extends PropertyPage {
 				portLabel.setText("" + port);
 			}
 			pathLabel.setText(location.getRootDirectory());
-			moduleLabel.setText(resource.getRelativePath());
+			moduleLabel.setText(resource.getRepositoryRelativePath());
 		} catch (TeamException e) {
 			handle(e);
 		}

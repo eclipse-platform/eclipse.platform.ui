@@ -5,8 +5,6 @@ package org.eclipse.team.internal.ccvs.core.resources;
  * All Rights Reserved.
  */
  
-import java.io.PrintStream;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
@@ -15,7 +13,7 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.syncinfo.*;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
-import org.eclipse.team.internal.ccvs.core.util.NullOutputStream;
+import org.eclipse.team.internal.ccvs.core.util.Util;
 
 /**
  * The purpose of this class and its subclasses is to implement the corresponding
@@ -35,6 +33,9 @@ public abstract class RemoteResource extends PlatformObject implements ICVSRemot
 		return info.getName();
 	}
 
+	protected String getLocalPath() {
+		return Util.appendPath(parent.getLocalPath(), getName());
+	}
 	/*
 	 * @see ICVSRemoteResource#getParent()
 	 */
@@ -42,7 +43,7 @@ public abstract class RemoteResource extends PlatformObject implements ICVSRemot
 		return parent;
 	}
 			
-	public abstract String getRemotePath();
+	public abstract String getRepositoryRelativePath();
 	
 	public abstract ICVSRepositoryLocation getRepository();
 	
@@ -118,6 +119,6 @@ public abstract class RemoteResource extends PlatformObject implements ICVSRemot
 		if (!(target instanceof RemoteResource))
 			return false;
 		RemoteResource remote = (RemoteResource) target;
-		return remote.isContainer() == isContainer() && remote.getRelativePath().equals(getRelativePath());
+		return remote.isContainer() == isContainer() && remote.getRepositoryRelativePath().equals(getRepositoryRelativePath());
 	}
 }

@@ -315,7 +315,7 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 			ResourceSyncInfo leftInfo = ((ICVSResource)leftEdition).getSyncInfo();
 			ResourceSyncInfo rightInfo = ((ICVSResource)rightEdition).getSyncInfo();
 			
-			if (leftEdition.getRelativePath().equals(rightEdition.getRelativePath()) &&
+			if (leftEdition.getRepositoryRelativePath().equals(rightEdition.getRepositoryRelativePath()) &&
 				leftInfo.getRevision().equals(rightInfo.getRevision())) {
 				return NODE_EQUAL;
 			} else {

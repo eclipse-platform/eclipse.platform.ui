@@ -25,6 +25,7 @@ public class StatusListener implements ICommandOutputListener {
 
 	public IStatus messageLine(String line, ICVSFolder commandRoot,
 		IProgressMonitor monitor) {
+		
 		// We're only concerned about file revisions.
 		if (line.startsWith("   Repository revision:")) {
 			if (!line.startsWith("   Repository revision:	No revision control file")) {
@@ -34,15 +35,8 @@ public class StatusListener implements ICommandOutputListener {
 				// This is the full location on the server (e.g. /home/cvs/repo/project/file.txt)
 				String fileLocation = line.substring(separatingTabIndex + 1, line.length() - 2);
 
-				// This is the path relative to the ICVSResource used as the root of the command
-				IPath fullPath;
-				try {
-					fullPath = new Path(fileLocation.substring(
-						commandRoot.getRemoteLocation(commandRoot).length() + 1));
-				} catch (CVSException e) {
-					return new Status(IStatus.ERROR, CVSProviderPlugin.ID, CVSException.IO_FAILED,
-						"could not get remote location of resource", e);
-				}
+				// This is the absolute remote pathincluding the repository root directory
+				IPath fullPath = new Path(fileLocation);
 
 				// If the status returns that the file is in the Attic, then remove the
 				// Attic segment. This is because files added to a branch that are not in
