@@ -856,16 +856,34 @@ public String getFileExtension();
  */
 public IPath getFullPath();
 /**
- * Returns the path in the local file system to this resource, or
- * <code>null</code> if there is no corresponding location (for example, 
- * if there is no local location applicable to this resource).
+ * Returns the absolute path in the local file system to this resource, 
+ * or <code>null</code> if no path can be determined.
  * <p>
- * If this resource is a project, this returns a path to the
- * project's local content area.
+ * If this resource is the workspace root, this method returns
+ * the absolute local file system path of the platform working area.
  * </p>
- *
- * @return the path of this resource in the local file system
+ * <p>
+ * If this resource is a project that exists in the workspace, this
+ * method returns the path to the project's local content area. 
+ * This is true regardless of whether the project is open or closed.
+ * </p>
+ * <p>
+ * If this resource is a file or folder under a project that exists,
+ * this method returns a (non-<code>null</code>) path computed from
+ * the location of the project's local content area and the project-relative
+ * path of the file or folder. This is true regardless of whether the 
+ * file or folders exists, or whether the project is open or closed.
+ * </p>
+ * <p>
+ * If this resource is a project that does not exist in the workspace,
+ * or a file or folder below such a project, this method returns
+ * <code>null</code>.
+ * </p>
+ * 
+ * @return the absolute path of this resource in the local file system,
+ *  or <code>null</code> if no path can be determined
  * @see IProjectDescription#setLocation
+ * @see Platform#getLocation
  */
 public IPath getLocation();
 /**
