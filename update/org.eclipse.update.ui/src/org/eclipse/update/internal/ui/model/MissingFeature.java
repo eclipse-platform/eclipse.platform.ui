@@ -419,4 +419,11 @@ public class MissingFeature implements IFeature {
 		return null;
 	}
 
+	/**
+	 * @see org.eclipse.update.core.IFeature#getRawImports()
+	 */
+	public IImport[] getRawImports() {
+		return null;
+	}
+
 }
