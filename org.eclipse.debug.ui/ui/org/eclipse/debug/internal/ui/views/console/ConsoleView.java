@@ -19,6 +19,7 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.actions.ClearOutputAction;
+import org.eclipse.debug.internal.ui.actions.FollowHyperlinkAction;
 import org.eclipse.debug.internal.ui.actions.TextViewerAction;
 import org.eclipse.debug.internal.ui.actions.TextViewerGotoLineAction;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandlerView;
@@ -58,6 +59,7 @@ import org.eclipse.ui.texteditor.IUpdate;
 public class ConsoleView extends AbstractDebugEventHandlerView implements IDocumentListener, ISelectionListener {
 
 	protected ClearOutputAction fClearOutputAction= null;
+	protected FollowHyperlinkAction fFollowLinkAction = null;
 
 	protected Map fGlobalActions= new HashMap(10);
 	protected List fSelectionActions = new ArrayList(3);
@@ -211,7 +213,10 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 		setGlobalAction(actionBars, ITextEditorActionConstants.FIND, new FindReplaceAction(bundle, "find_replace_action.", this)); //$NON-NLS-1$
 	
 		action= new TextViewerGotoLineAction(getConsoleViewer());
-		setGlobalAction(actionBars, ITextEditorActionConstants.GOTO_LINE, action);				
+		setGlobalAction(actionBars, ITextEditorActionConstants.GOTO_LINE, action);
+		
+		fFollowLinkAction = new FollowHyperlinkAction(getConsoleViewer());
+						
 		actionBars.updateActionBars();
 		
 		getConsoleViewer().getTextWidget().addVerifyKeyListener(new VerifyKeyListener() {
@@ -269,6 +274,8 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 		menu.add(new Separator("FIND")); //$NON-NLS-1$
 		menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.FIND));
 		menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.GOTO_LINE));
+		fFollowLinkAction.setEnabled(fFollowLinkAction.getHyperLink() != null);
+		menu.add(fFollowLinkAction);
 		menu.add(fClearOutputAction);
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
@@ -341,6 +348,7 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 		if (fCurrentDocument != null) {
 			fCurrentDocument.removeDocumentListener(this);
 		}
+		fFollowLinkAction.dispose();
 		super.dispose();
 	}
 	

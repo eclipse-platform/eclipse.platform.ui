@@ -306,23 +306,13 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 			// out of the document range
 		}
 		if (offset >= 0) {
-			Position[] positions = null;
-			try {
-				positions = getDocument().getPositions(HyperlinkPosition.HYPER_LINK_CATEGORY);
-			} catch (BadPositionCategoryException ex) {
-				// no links have been added
-				return;
-			}
-			for (int i = 0; i < positions.length; i++) {
-				Position position = positions[i];
-				if (offset >= position.getOffset() && offset <= (position.getOffset() + position.getLength())) {
-					IConsoleHyperlink link = ((HyperlinkPosition)position).getHyperLink();
-					if (link.equals(fHyperLink)) {
-						return;
-					} else {
-						linkEntered(link);
-						return;
-					}
+			IConsoleHyperlink link = getHyperlink(offset);
+			if (link != null) {
+				if (link.equals(fHyperLink)) {
+					return;
+				} else {
+					linkEntered(link);
+					return;
 				}
 			}
 		}
@@ -331,6 +321,24 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 		}		
 	}
 
+	public IConsoleHyperlink getHyperlink(int offset) {
+		if (offset >= 0 && getDocument() != null) {
+			Position[] positions = null;
+			try {
+				positions = getDocument().getPositions(HyperlinkPosition.HYPER_LINK_CATEGORY);
+			} catch (BadPositionCategoryException ex) {
+				// no links have been added
+				return null;
+			}
+			for (int i = 0; i < positions.length; i++) {
+				Position position = positions[i];
+				if (offset >= position.getOffset() && offset <= (position.getOffset() + position.getLength())) {
+					return ((HyperlinkPosition)position).getHyperLink();
+				}
+			}
+		}
+		return null;
+	}
 
 	protected void linkEntered(IConsoleHyperlink link) {
 		Control control = getTextWidget();
@@ -420,7 +428,9 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 	 */
 	public void mouseDown(MouseEvent e) {
 		if (fHyperLink != null) {
-			fHyperLink.linkActivated();
+			if (e.button == 1) {
+				fHyperLink.linkActivated();
+			}
 		}
 	}
 
