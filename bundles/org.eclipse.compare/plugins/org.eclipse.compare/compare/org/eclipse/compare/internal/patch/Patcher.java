@@ -4,6 +4,8 @@ import java.io.*;
 import java.text.*;
 import java.util.*;
 
+import org.eclipse.swt.SWT;
+
 import org.eclipse.jface.util.Assert;
 
 import org.eclipse.core.runtime.*;
@@ -142,7 +144,8 @@ public class Patcher {
 		String fileName= null;
 		
 		LineReader lr= new LineReader(reader);
-		lr.ignoreSingleCR();
+		if (!"carbon".equals(SWT.getPlatform()))	//$NON-NLS-1$
+			lr.ignoreSingleCR();
 		
 		// read leading garbage
 		while (true) {
@@ -592,21 +595,6 @@ public class Patcher {
 	}
 
 	/**
-	 * Tries to patch the contents of the given reader with the specified Diff.
-	 * Any hunk that couldn't be applied is returned in the list failedHunks.
-	 */
-	/* package */ String patch(Diff diff, BufferedReader reader, List failedHunks) {
-		
-		List lines= new LineReader(reader).readLines();
-		if (lines == null)
-			lines= new ArrayList();
-
-		patch(diff, lines, failedHunks);
-		
-		return createString(lines);
-	}
-
-	/**
 	 * Tries to apply the specified hunk to the given lines.
 	 * If the hunk cannot be applied at the original position
 	 * the methods tries Fuzz lines before and after.
@@ -847,7 +835,10 @@ public class Patcher {
 				}
 				
 				BufferedReader reader= new BufferedReader(streamReader);
-				lines= new LineReader(reader).readLines();
+				LineReader lr= new LineReader(reader);
+				if (!"carbon".equals(SWT.getPlatform()))	//$NON-NLS-1$
+					lr.ignoreSingleCR();
+				lines= lr.readLines();
 			} catch(CoreException ex) {
 			} finally {
 				if (is != null)
