@@ -84,7 +84,7 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
 								}
 
                                 if (!DebugPlugin.getDefault().getBreakpointManager().isEnabled()) {
-                                    viewer.setGrayed(breakpoint, true);
+                                	fView.updateViewerBackground();
                                 }
 							} catch (CoreException e) {
 								status.add(DebugUIPlugin.newErrorStatus(DebugUIViewsMessages.getString("BreakpointsViewEventHandler.5"),e)); //$NON-NLS-1$

@@ -355,6 +355,7 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 		Table table = getCheckboxViewer().getTable();
 		TableItem[] items = table.getItems();
 		for (int i = 0; i < items.length; i++) {
+			items[i].setBackground(color);
 			items[i].setGrayed(!enabled);
 		}
 		table.setBackground(color);
