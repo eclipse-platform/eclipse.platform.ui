@@ -28,7 +28,7 @@
 <extension
 	point="org.eclipse.compare.contentMergeViewers">
 	<viewer
-		extensions="kv"
+		extensions="kvtxt"
 		class="org.eclipse.compare.examples.structurecreator.TextMergeViewerCreator">
 	</viewer>
 </extension>

@@ -56,11 +56,11 @@ public class KeyValuePairStructureCreator implements IStructureCreator {
 		}
 
 		/**
-		 * Every key/value pair is of type "txt" so that the builtin TextMergeViewer is used automatically.
+		 * Every key/value pair is of type "kvtxt". We register a TextMergeViewer for it. 
 		 * @see ITypedElement#getType
 		 */
 		public String getType() {
-			return "txt"; //$NON-NLS-1$
+			return "kvtxt"; //$NON-NLS-1$
 		}
 		
 		/**
