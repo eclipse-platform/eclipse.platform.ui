@@ -117,7 +117,7 @@ protected void createOptionsGroupButtons(Group optionsGroup) {
 		// overwrite... checkbox
 		overwriteExistingFilesCheckbox = new Button(optionsGroup, SWT.CHECK | SWT.LEFT);
 		overwriteExistingFilesCheckbox.setText(
-			DataTransferMessages.getString(Messages.getString("ExportFile.overwriteExisting_1"))); //$NON-NLS-1$
+			DataTransferMessages.getString("ExportFile.overwriteExisting")); //$NON-NLS-1$
 
 		// create directory structure radios
 		createDirectoryStructureButton = new Button(optionsGroup, SWT.RADIO | SWT.LEFT);
