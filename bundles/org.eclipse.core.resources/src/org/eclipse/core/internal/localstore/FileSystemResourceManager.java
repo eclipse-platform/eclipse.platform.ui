@@ -124,7 +124,12 @@ public void copy(IResource target, IResource destination, int updateFlags, IProg
 		String title = Policy.bind("localstore.copying", target.getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(title, totalWork);
 		// use locationFor() instead of getLocation() to avoid null 
-		if (locationFor(destination).toFile().exists()) {
+		IPath location = locationFor(destination);
+		if (location == null) {
+			String message = Policy.bind("localstore.locationUndefined", target.getFullPath().toString()); //$NON-NLS-1$
+			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, null);
+		}
+		if (location.toFile().exists()) {
 			String message = Policy.bind("localstore.resourceExists", destination.getFullPath().toString()); //$NON-NLS-1$
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, destination.getFullPath(), message, null);
 		}
