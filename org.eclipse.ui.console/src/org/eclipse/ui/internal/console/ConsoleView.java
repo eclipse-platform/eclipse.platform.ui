@@ -222,10 +222,19 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 					for (int i = 0; i < consoles.length; i++) {
 						if (isAvailable()) {
 							IConsole console = consoles[i];
-							ConsoleWorkbenchPart part = new ConsoleWorkbenchPart(console, getSite());
-							fConsoleToPart.put(console, part);
-							fPartToConsole.put(part, console);
-							partActivated(part);
+							// ensure it's still registered since this is done asynchronously
+							IConsole[] allConsoles = ConsolePlugin.getDefault().getConsoleManager().getConsoles();
+							for (int j = 0; j < allConsoles.length; j++) {
+                                IConsole registered = allConsoles[j];
+                                if (registered.equals(console)) {
+        							ConsoleWorkbenchPart part = new ConsoleWorkbenchPart(console, getSite());
+        							fConsoleToPart.put(console, part);
+        							fPartToConsole.put(part, console);
+        							partActivated(part);
+        							break;
+                                }
+                            }
+
 						}
 					}
 				}
