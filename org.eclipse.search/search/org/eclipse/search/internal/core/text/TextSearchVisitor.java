@@ -126,8 +126,8 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 		if (! fScope.encloses(file))
 			return false;
 
-		// Exclude to be ignored files
-		if (Team.isIgnoredHint(file))
+		// Exclude to derived resources
+		if (file.isDerived())
 			return false;
 
 		if (fPattern.length() == 0) {
@@ -135,10 +135,6 @@ public class TextSearchVisitor extends TypedResourceVisitor {
 			return true;
 		}
 
-		// Exclude binary files from text search
-		if (Team.getType(file) == Team.BINARY)
-			return false;
-			
 		try {
 			BufferedReader reader= null;
 			ITextEditor editor= findDirtyEditorFor(file);
