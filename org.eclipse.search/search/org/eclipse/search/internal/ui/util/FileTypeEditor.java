@@ -83,10 +83,8 @@ public class FileTypeEditor extends SelectionAdapter implements DisposeListener,
 					result.add(currentExtension);
 			}
 		}
-
 		return result;
 	}
-
 	/**
 	 *	Answer a collection of all registered extensions
 	 *
@@ -102,7 +100,6 @@ public class FileTypeEditor extends SelectionAdapter implements DisposeListener,
 		};
 		return result;
 	}
-
 	/**
 	 *	Populate self's import types field based upon the passed types collection
 	 *
@@ -128,7 +125,7 @@ public class FileTypeEditor extends SelectionAdapter implements DisposeListener,
 		ArrayList noClassMappings= new ArrayList(editorMappings.length);
 		for (int i= 0; i < editorMappings.length; i++) {
 			IFileEditorMapping currentMapping= editorMappings[i];
-			if (!currentMapping.getExtension().equals("class")) // See 1G7A6PP //$NON-NLS-1$
+			if (currentMapping.getName().equals("*") && !currentMapping.getExtension().equals("class")) // See 1G7A6PP //$NON-NLS-1$ //$NON-NLS-2$
 				noClassMappings.add(currentMapping);
 		}
 		return (IFileEditorMapping[])noClassMappings.toArray(new IFileEditorMapping[noClassMappings.size()]);
