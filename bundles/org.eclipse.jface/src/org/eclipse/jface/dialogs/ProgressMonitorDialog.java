@@ -502,10 +502,11 @@ public class ProgressMonitorDialog extends IconAndMessageDialog
 		cancel.setEnabled(b);
 	}
 	/*
+	 *  (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.IconAndMessageDialog#getImage()
 	 */
 	protected Image getImage() {
-		return getShell().getDisplay().getSystemImage(SWT.ICON_INFORMATION);
+		return getInfoImage();
 	}
 	/**
 	 * Set the message in the message label.

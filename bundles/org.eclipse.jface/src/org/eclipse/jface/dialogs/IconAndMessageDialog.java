@@ -146,4 +146,76 @@ public abstract class IconAndMessageDialog extends Dialog {
 		//Apply to the parent so that the message gets it too.
 		applyDialogFont(parent);
 	}
+	
+	/**
+	 * Return the <code>Image</code> to be used when 
+	 * displaying an error. 
+	 * 
+	 * @return image  the error image
+	 */
+	public Image getErrorImage() {
+		return getSWTImage(SWT.ICON_ERROR);
+	}
+
+	/**
+	 * Return the <code>Image</code> to be used when 
+	 * displaying a warning. 
+	 * 
+	 * @return image  the warning image
+	 */
+	public Image getWarningImage() {
+		return getSWTImage(SWT.ICON_WARNING);
+	}
+
+	/**
+	 * Return the <code>Image</code> to be used when 
+	 * displaying information. 
+	 * 
+	 * @return image  the information image
+	 */
+	public Image getInfoImage() {
+		return getSWTImage(SWT.ICON_INFORMATION);
+	}
+
+	/**
+	 * Return the <code>Image</code> to be used when 
+	 * displaying a question. 
+	 * 
+	 * @return image  the question image
+	 */
+	public Image getQuestionImage() {
+		return getSWTImage(SWT.ICON_QUESTION);
+	}
+
+	
+	/**
+	 * Get an <code>Image</code> from the provide SWT image
+	 * constant.
+	 * 
+	 * @param imageID the SWT image constant
+	 * @return image  the image
+	 */
+	private Image getSWTImage(final int imageID) {
+		Shell shell = getShell();
+		final Display display;
+		if (shell == null){
+			shell = getParentShell();
+		}
+		if (shell == null) {
+			display = Display.getCurrent();
+		} else {
+			display = shell.getDisplay();
+		}
+	
+		final Image[] image = new Image[1];
+		display.syncExec(new Runnable() {
+				public void run() {
+					image[0] = display.getSystemImage(imageID);
+				}
+		});
+		
+		return image[0];
+				
+	}
+	
 }

@@ -67,11 +67,16 @@ public class ImageRegistry {
 
 	/**
 	 * Creates an empty image registry.
+	 * 
+	 * @param display this <code>Display</code> must not be 
+	 *        <code>null</code> and must not be disposed in order
+	 *        to use this registry
 	 */
 	public ImageRegistry(Display display) {
 		super();
 		Assert.isNotNull(display);
 		hookDisplayDispose(display);
+		this.display = display;
 	}
 
 	/**
@@ -112,11 +117,11 @@ public class ImageRegistry {
 		// if we actually just want to return an SWT image do so without
 		// looking in the registry
 		if (swtKey != -1){
-			final Display d = (display == null) ? Display.getCurrent() : display;
 			final Image[] image = new Image[1];
-			d.syncExec(new Runnable() {
+			final int id = swtKey;
+			display.syncExec(new Runnable() {
 				public void run() {
-					image[0] = d.getSystemImage(SWT.ICON_INFORMATION);
+					image[0] = display.getSystemImage(id);
 				}
 			});
 			return image[0];

@@ -189,17 +189,18 @@ public class ErrorDialog extends IconAndMessageDialog {
 		}
 	}
 	/*
-	 * @see IconAndMessageDialog#getImage()
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IconAndMessageDialog#getImage()
 	 */
 	protected Image getImage() {
 		if (status != null) {
 			if (status.getSeverity() == IStatus.WARNING)
-				return getShell().getDisplay().getSystemImage(SWT.ICON_WARNING);
+				return getWarningImage();
 			if (status.getSeverity() == IStatus.INFO)
-				return getShell().getDisplay().getSystemImage(SWT.ICON_INFORMATION);
+				return getInfoImage();
 		}
 		//If it was not a warning or an error then return the error image
-		return getShell().getDisplay().getSystemImage(SWT.ICON_ERROR);
+		return getErrorImage();
 	}
 	/**
 	 * Create this dialog's drop-down list component.

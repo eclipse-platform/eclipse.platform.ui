@@ -377,12 +377,14 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 			return;
 		messageLabel.setText(message);
 	}
-	/**
-	 * This method returns the dialog's lock image.
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IconAndMessageDialog#getImage()
 	 */
 	protected Image getImage() {
-		return getShell().getDisplay().getSystemImage(SWT.ICON_INFORMATION);
+		return getInfoImage();
 	}
+	
 	/**
 	 * Returns the progress monitor being used for this dialog. This allows
 	 * recursive blockages to also respond to cancelation.

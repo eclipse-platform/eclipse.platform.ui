@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jface.dialogs;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.graphics.Image;
@@ -117,21 +118,22 @@ public class MessageDialog extends IconAndMessageDialog {
 		this.title = dialogTitle;
 		this.titleImage = dialogTitleImage;
 		this.message = dialogMessage;
+		
 		switch (dialogImageType) {
 			case ERROR : {
-				this.image = parentShell.getDisplay().getSystemImage(SWT.ICON_ERROR);
+				this.image = getErrorImage();
 				break;
 			}
 			case INFORMATION : {
-				this.image = parentShell.getDisplay().getSystemImage(SWT.ICON_INFORMATION);
+				this.image = getInfoImage();
 				break;
 			}
 			case QUESTION : {
-				this.image = parentShell.getDisplay().getSystemImage(SWT.ICON_QUESTION);
+				this.image = getQuestionImage();
 				break;
 			}
 			case WARNING : {
-				this.image = parentShell.getDisplay().getSystemImage(SWT.ICON_WARNING);
+				this.image = getWarningImage();
 				break;
 			}
 		}
