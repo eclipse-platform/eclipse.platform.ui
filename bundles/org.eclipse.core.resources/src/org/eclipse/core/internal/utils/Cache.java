@@ -96,7 +96,7 @@ public class Cache {
 		}
 
 		public String toString() {
-			return key + " -> " + cached + " [" + timestamp + "]";
+			return key + " -> " + cached + " [" + timestamp + ']'; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		/* Removes from the linked list, but not from the entries collection */

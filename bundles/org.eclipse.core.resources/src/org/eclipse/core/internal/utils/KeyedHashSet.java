@@ -23,8 +23,9 @@ public class KeyedHashSet {
 		public boolean compare(KeyedElement other);
 
 		public Object getKey();
+
 		public int getKeyHashCode();
-	}	
+	}
 
 	class KeyedHashSetIterator implements Iterator {
 		private int currentIndex = -1;
@@ -51,6 +52,7 @@ public class KeyedHashSet {
 			throw new UnsupportedOperationException();
 		}
 	}
+
 	protected static final int MINIMUM_SIZE = 7;
 	private int capacity;
 	protected int elementCount = 0;
@@ -396,18 +398,18 @@ public class KeyedHashSet {
 
 	public String toString() {
 		StringBuffer result = new StringBuffer(100);
-		result.append("{");
+		result.append('{');
 		boolean first = true;
 		for (int i = 0; i < elements.length; i++) {
 			if (elements[i] != null) {
 				if (first)
 					first = false;
 				else
-					result.append(", ");
+					result.append(", "); //$NON-NLS-1$
 				result.append(elements[i]);
 			}
 		}
-		result.append("}");
+		result.append('}');
 		return result.toString();
 	}
 }
