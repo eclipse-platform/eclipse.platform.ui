@@ -1410,6 +1410,13 @@
             command="org.eclipse.debug.ui.commands.RunToLine"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>          
+      <keyBinding
+      		platform="carbon"
+            string="Command+R"
+            scope="org.eclipse.debug.ui.debugging"
+            command="org.eclipse.debug.ui.commands.RunToLine"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
       <command
             name="%ActionDefinition.toggleBreakpoint.name"
             description="%ActionDefinition.toggleBreakpoint.description"
@@ -1418,6 +1425,13 @@
       </command>
       <keyBinding
             string="Ctrl+Shift+B"
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.debug.ui.commands.ToggleBreakpoint"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+      		platform="carbon"
+            string="Command+Shift+B"
             scope="org.eclipse.ui.globalScope"
             command="org.eclipse.debug.ui.commands.ToggleBreakpoint"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
