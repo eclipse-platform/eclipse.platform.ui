@@ -16,7 +16,6 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.presentations.IPresentablePart;
 
-
 public class SystemMenuCloseAll extends Action implements ISelfUpdatingAction {
 
     private DefaultPartPresentation presentation;
@@ -25,23 +24,24 @@ public class SystemMenuCloseAll extends Action implements ISelfUpdatingAction {
         this.presentation = presentation;
         setText(WorkbenchMessages.getString("PartPane.closeAll")); //$NON-NLS-1$
     }
-        
+
     public void dispose() {
         presentation = null;
     }
 
     public void run() {
-    	List parts = presentation.getPresentableParts();
-    	presentation.close((IPresentablePart[]) parts.toArray(new IPresentablePart[parts.size()]));
+        List parts = presentation.getPresentableParts();
+        presentation.close((IPresentablePart[]) parts
+                .toArray(new IPresentablePart[parts.size()]));
     }
-    
+
     public void update() {
-    	List parts = presentation.getPresentableParts();
-    	setEnabled(parts.size() != 0);
+        List parts = presentation.getPresentableParts();
+        setEnabled(parts.size() != 0);
     }
-    
+
     public boolean shouldBeVisible() {
-    	return true;
+        return true;
     }
 
 }

@@ -399,18 +399,18 @@ public class MessageDialogWithToggle extends MessageDialog {
 
         if (buttonId != IDialogConstants.CANCEL_ID && toggleState
                 && prefStore != null && prefKey != null) {
-        		switch (buttonId) {
-        			case IDialogConstants.YES_ID:
-        			case IDialogConstants.YES_TO_ALL_ID:
-        			case IDialogConstants.PROCEED_ID:
-        			case IDialogConstants.OK_ID:
-        				prefStore.setValue(prefKey, ALWAYS);
-        				break;
-        			case IDialogConstants.NO_ID:
-        			case IDialogConstants.NO_TO_ALL_ID:
-        				prefStore.setValue(prefKey, NEVER);
-        				break;
-        		}
+            switch (buttonId) {
+            case IDialogConstants.YES_ID:
+            case IDialogConstants.YES_TO_ALL_ID:
+            case IDialogConstants.PROCEED_ID:
+            case IDialogConstants.OK_ID:
+                prefStore.setValue(prefKey, ALWAYS);
+                break;
+            case IDialogConstants.NO_ID:
+            case IDialogConstants.NO_TO_ALL_ID:
+                prefStore.setValue(prefKey, NEVER);
+                break;
+            }
         }
     }
 
@@ -421,7 +421,7 @@ public class MessageDialogWithToggle extends MessageDialog {
         final String[] buttonLabels = getButtonLabels();
         final Button[] buttons = new Button[buttonLabels.length];
         final int defaultButtonIndex = getDefaultButtonIndex();
-        
+
         for (int i = 0; i < buttonLabels.length; i++) {
             int id = i;
             String label = buttonLabels[i];
@@ -461,20 +461,20 @@ public class MessageDialogWithToggle extends MessageDialog {
                 id = IDialogConstants.HELP_ID;
             } else if (IDialogConstants.NO_TO_ALL_LABEL.equals(label)) {
                 id = IDialogConstants.NO_TO_ALL_ID;
-            } 
-            
-//          No XXX_LABEL in IDialogConstants for these. Unlikely
-//            they would be used in a message dialog though.
-//        	public int DETAILS_ID = 13;
-//        	public int SELECT_ALL_ID = 18;
-//        	public int DESELECT_ALL_ID = 19;
-//        	public int SELECT_TYPES_ID = 20;
+            }
+
+            //          No XXX_LABEL in IDialogConstants for these. Unlikely
+            //            they would be used in a message dialog though.
+            //        	public int DETAILS_ID = 13;
+            //        	public int SELECT_ALL_ID = 18;
+            //        	public int DESELECT_ALL_ID = 19;
+            //        	public int SELECT_TYPES_ID = 20;
 
             Button button = createButton(parent, id, label,
                     defaultButtonIndex == i);
             buttons[i] = button;
         }
-        
+
         setButtons(buttons);
     }
 
@@ -513,7 +513,7 @@ public class MessageDialogWithToggle extends MessageDialog {
             }
 
         });
-        
+
         return button;
     }
 
@@ -589,8 +589,9 @@ public class MessageDialogWithToggle extends MessageDialog {
      *            The button to use; must not be <code>null</code>.
      */
     protected void setToggleButton(Button button) {
-        if (button == null) { throw new NullPointerException(
-                "A message dialog with toggle may not have a null toggle button."); } //$NON-NLS-1$
+        if (button == null) {
+            throw new NullPointerException(
+                    "A message dialog with toggle may not have a null toggle button.");} //$NON-NLS-1$
 
         if (!button.isDisposed()) {
             final String text;

@@ -21,7 +21,6 @@ import java.util.Set;
 
 import org.eclipse.ui.themes.IThemeManager;
 
-
 /**
  * The central manager for Theme descriptors.
  *
@@ -30,127 +29,128 @@ import org.eclipse.ui.themes.IThemeManager;
 public class ThemeRegistry implements IThemeRegistry {
 
     private List themes;
-	private List colors;
-	private List fonts;
-	private List categories;
-	private Map dataMap;
-	
-	/**
-	 * Map from String (categoryId) -> Set (presentationIds)
-	 */
-	private Map categoryBindingMap;
 
-	/**
-	 * Create a new ThemeRegistry.
-	 */
-	public ThemeRegistry() {
-		themes = new ArrayList();
-		colors = new ArrayList();
-		fonts = new ArrayList();
-		categories = new ArrayList();
-		dataMap = new HashMap();
-		categoryBindingMap = new HashMap();
-	}
+    private List colors;
 
-	/**
-	 * Add a descriptor to the registry.
-	 */
-	void add(IThemeDescriptor desc) {
-		themes.add(desc);
-	}
-	
-	/**
-	 * Add a descriptor to the registry.
-	 */
-	void add(ColorDefinition desc) {
-		colors.add(desc);
-	}
+    private List fonts;
+
+    private List categories;
+
+    private Map dataMap;
+
+    /**
+     * Map from String (categoryId) -> Set (presentationIds)
+     */
+    private Map categoryBindingMap;
+
+    /**
+     * Create a new ThemeRegistry.
+     */
+    public ThemeRegistry() {
+        themes = new ArrayList();
+        colors = new ArrayList();
+        fonts = new ArrayList();
+        categories = new ArrayList();
+        dataMap = new HashMap();
+        categoryBindingMap = new HashMap();
+    }
+
+    /**
+     * Add a descriptor to the registry.
+     */
+    void add(IThemeDescriptor desc) {
+        themes.add(desc);
+    }
+
+    /**
+     * Add a descriptor to the registry.
+     */
+    void add(ColorDefinition desc) {
+        colors.add(desc);
+    }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.themes.IThemeRegistry#findCategory(java.lang.String)
      */
     public ThemeElementCategory findCategory(String id) {
         return (ThemeElementCategory) findDescriptor(getCategories(), id);
-    }	
-	
+    }
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.themes.IThemeRegistry#findColor(java.lang.String)
      */
     public ColorDefinition findColor(String id) {
         return (ColorDefinition) findDescriptor(getColors(), id);
-    }	
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.registry.IThemeRegistry#find(java.lang.String)
-	 */
-	public IThemeDescriptor findTheme(String id) {
-	    return (IThemeDescriptor) findDescriptor(getThemes(), id);
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.registry.IThemeRegistry#find(java.lang.String)
+     */
+    public IThemeDescriptor findTheme(String id) {
+        return (IThemeDescriptor) findDescriptor(getThemes(), id);
+    }
 
-	/**
+    /**
      * @param descriptors
      * @param id
      * @return
      */
-    private IThemeElementDefinition findDescriptor(IThemeElementDefinition [] descriptors, String id) {
-        int idx =
-			Arrays.binarySearch(
-			        descriptors,
-				    id,
-				    ID_COMPARATOR);
-		if (idx < 0)
-			return null;
-		return descriptors[idx];
+    private IThemeElementDefinition findDescriptor(
+            IThemeElementDefinition[] descriptors, String id) {
+        int idx = Arrays.binarySearch(descriptors, id, ID_COMPARATOR);
+        if (idx < 0)
+            return null;
+        return descriptors[idx];
     }
 
     /* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.registry.IThemeRegistry#getLookNFeels()
-	 */
-	public IThemeDescriptor [] getThemes() {
-		int nSize = themes.size();
-		IThemeDescriptor [] retArray = new IThemeDescriptor[nSize];
-		themes.toArray(retArray);
-		Arrays.sort(retArray, ID_COMPARATOR);
-		return retArray;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.registry.IThemeRegistry#getLookNFeels()
-	 */
-	public ColorDefinition [] getColors() {
-		int nSize = colors.size();
-		ColorDefinition [] retArray = new ColorDefinition[nSize];
-		colors.toArray(retArray);
-		Arrays.sort(retArray, ID_COMPARATOR);
-		return retArray;
-	}
-	
-	 /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.registry.IThemeRegistry#getLookNFeels()
+     */
+    public IThemeDescriptor[] getThemes() {
+        int nSize = themes.size();
+        IThemeDescriptor[] retArray = new IThemeDescriptor[nSize];
+        themes.toArray(retArray);
+        Arrays.sort(retArray, ID_COMPARATOR);
+        return retArray;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.registry.IThemeRegistry#getLookNFeels()
+     */
+    public ColorDefinition[] getColors() {
+        int nSize = colors.size();
+        ColorDefinition[] retArray = new ColorDefinition[nSize];
+        colors.toArray(retArray);
+        Arrays.sort(retArray, ID_COMPARATOR);
+        return retArray;
+    }
+
+    /* (non-Javadoc)
      * @see org.eclipse.ui.internal.themes.IThemeRegistry#getColorsFor(java.lang.String)
      */
     public ColorDefinition[] getColorsFor(String themeId) {
-        ColorDefinition [] defs = getColors();
-        if (themeId.equals(IThemeManager.DEFAULT_THEME)) 
+        ColorDefinition[] defs = getColors();
+        if (themeId.equals(IThemeManager.DEFAULT_THEME))
             return defs;
-        
+
         IThemeDescriptor desc = findTheme(themeId);
-        ColorDefinition [] overrides = desc.getColors();
+        ColorDefinition[] overrides = desc.getColors();
         return (ColorDefinition[]) overlay(defs, overrides);
-    }	
-    
-	 /* (non-Javadoc)
+    }
+
+    /* (non-Javadoc)
      * @see org.eclipse.ui.internal.themes.IThemeRegistry#getFontsFor(java.lang.String)
      */
     public FontDefinition[] getFontsFor(String themeId) {
-        FontDefinition [] defs = getFonts();
-        if (themeId.equals(IThemeManager.DEFAULT_THEME)) 
+        FontDefinition[] defs = getFonts();
+        if (themeId.equals(IThemeManager.DEFAULT_THEME))
             return defs;
-        
+
         IThemeDescriptor desc = findTheme(themeId);
-        FontDefinition [] overrides = desc.getFonts();
+        FontDefinition[] overrides = desc.getFonts();
         return (FontDefinition[]) overlay(defs, overrides);
-    }	    
-    
+    }
+
     /**
      * Overlay the overrides onto the base definitions.
      * 
@@ -158,11 +158,13 @@ public class ThemeRegistry implements IThemeRegistry {
      * @param overrides the overrides
      * @return the overlayed elements
      */
-    private IThemeElementDefinition [] overlay(IThemeElementDefinition [] defs, IThemeElementDefinition [] overrides) {
+    private IThemeElementDefinition[] overlay(IThemeElementDefinition[] defs,
+            IThemeElementDefinition[] overrides) {
         for (int i = 0; i < overrides.length; i++) {
-            int idx = Arrays.binarySearch(defs, overrides[i], IThemeRegistry.ID_COMPARATOR);
+            int idx = Arrays.binarySearch(defs, overrides[i],
+                    IThemeRegistry.ID_COMPARATOR);
             if (idx >= 0) {
-                defs[idx] = overlay(defs[idx], overrides[i]); 
+                defs[idx] = overlay(defs[idx], overrides[i]);
             }
         }
         return defs;
@@ -175,16 +177,16 @@ public class ThemeRegistry implements IThemeRegistry {
      * @param overrides the override
      * @return the overlayed element
      */
-    private IThemeElementDefinition overlay(IThemeElementDefinition original, IThemeElementDefinition overlay) {
+    private IThemeElementDefinition overlay(IThemeElementDefinition original,
+            IThemeElementDefinition overlay) {
         if (original instanceof ColorDefinition) {
             ColorDefinition originalColor = (ColorDefinition) original;
-            ColorDefinition overlayColor = (ColorDefinition) overlay;            
+            ColorDefinition overlayColor = (ColorDefinition) overlay;
             return new ColorDefinition(originalColor, overlayColor.getValue());
-        }
-        else if (original instanceof FontDefinition){
+        } else if (original instanceof FontDefinition) {
             FontDefinition originalFont = (FontDefinition) original;
-            FontDefinition overlayFont = (FontDefinition) overlay;            
-            return new FontDefinition(originalFont, overlayFont.getValue());            
+            FontDefinition overlayFont = (FontDefinition) overlay;
+            return new FontDefinition(originalFont, overlayFont.getValue());
         }
         return null;
     }
@@ -199,18 +201,18 @@ public class ThemeRegistry implements IThemeRegistry {
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.themes.IThemeRegistry#getGradients()
      */
-    public FontDefinition [] getFonts() {
-		int nSize = fonts.size();
-		FontDefinition [] retArray = new FontDefinition[nSize];
-		fonts.toArray(retArray);
-		Arrays.sort(retArray, ID_COMPARATOR);
-		return retArray;
+    public FontDefinition[] getFonts() {
+        int nSize = fonts.size();
+        FontDefinition[] retArray = new FontDefinition[nSize];
+        fonts.toArray(retArray);
+        Arrays.sort(retArray, ID_COMPARATOR);
+        return retArray;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.themes.IThemeRegistry#findFont(java.lang.String)
      */
-    public FontDefinition findFont(String id) { 
+    public FontDefinition findFont(String id) {
         return (FontDefinition) findDescriptor(getFonts(), id);
     }
 
@@ -224,12 +226,12 @@ public class ThemeRegistry implements IThemeRegistry {
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.themes.IThemeRegistry#getCategories()
      */
-    public ThemeElementCategory [] getCategories() {
-		int nSize = categories.size();
-		ThemeElementCategory [] retArray = new ThemeElementCategory[nSize];
-		categories.toArray(retArray);
-		Arrays.sort(retArray, ID_COMPARATOR);
-		return retArray;
+    public ThemeElementCategory[] getCategories() {
+        int nSize = categories.size();
+        ThemeElementCategory[] retArray = new ThemeElementCategory[nSize];
+        categories.toArray(retArray);
+        Arrays.sort(retArray, ID_COMPARATOR);
+        return retArray;
     }
 
     /**
@@ -246,7 +248,7 @@ public class ThemeRegistry implements IThemeRegistry {
     public Map getData() {
         return Collections.unmodifiableMap(dataMap);
     }
-    
+
     /**
      * Add the data from another map to this data
      * 
@@ -255,7 +257,7 @@ public class ThemeRegistry implements IThemeRegistry {
     public void addData(Map otherData) {
         dataMap.putAll(otherData);
     }
-    
+
     /**
      * Add a category presentation binding.  The given category will only be 
      * availible if the given presentation is active.
@@ -263,7 +265,8 @@ public class ThemeRegistry implements IThemeRegistry {
      * @param categoryId the category id
      * @param presentationId the presentation id
      */
-    public void addCategoryPresentationBinding(String categoryId, String presentationId) {
+    public void addCategoryPresentationBinding(String categoryId,
+            String presentationId) {
         Set presentations = (Set) categoryBindingMap.get(categoryId);
         if (presentations == null) {
             presentations = new HashSet();

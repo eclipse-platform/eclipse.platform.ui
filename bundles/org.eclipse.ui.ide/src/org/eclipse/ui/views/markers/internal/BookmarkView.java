@@ -16,10 +16,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
-
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Item;
-
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.CellEditor;
@@ -30,7 +26,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.window.Window;
-
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Item;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
@@ -40,182 +37,184 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class BookmarkView extends MarkerView {
 
-	private final static ColumnLayoutData[] DEFAULT_COLUMN_LAYOUTS = { 
-		new ColumnWeightData(200),
-		new ColumnWeightData(75),
-		new ColumnWeightData(150),
-		new ColumnWeightData(60)
-	};
-	
-	private final static IField[] HIDDEN_FIELDS = { 
-		new FieldCreationTime() 
-	};
-	
-	private final static String[] ROOT_TYPES = { 
-		IMarker.BOOKMARK
-	};
+    private final static ColumnLayoutData[] DEFAULT_COLUMN_LAYOUTS = {
+            new ColumnWeightData(200), new ColumnWeightData(75),
+            new ColumnWeightData(150), new ColumnWeightData(60) };
 
-	private final static String[] TABLE_COLUMN_PROPERTIES = {
-		IMarker.MESSAGE,
-		"", //$NON-NLS-1$
-		"", //$NON-NLS-1$
-		"" //$NON-NLS-1$
-	}; 
+    private final static IField[] HIDDEN_FIELDS = { new FieldCreationTime() };
 
-	private final static String TAG_DIALOG_SECTION = "org.eclipse.ui.views.bookmark"; //$NON-NLS-1$
+    private final static String[] ROOT_TYPES = { IMarker.BOOKMARK };
 
-	private final static IField[] VISIBLE_FIELDS = { 
-		new FieldMessage(), 
-		new FieldResource(), 
-		new FieldFolder(), 
-		new FieldLineNumber() 
-	};
+    private final static String[] TABLE_COLUMN_PROPERTIES = { IMarker.MESSAGE,
+            "", //$NON-NLS-1$
+            "", //$NON-NLS-1$
+            "" //$NON-NLS-1$
+    };
 
-	private ICellModifier cellModifier = new ICellModifier() {
-		public Object getValue(Object element, String property) {
-			if (element instanceof ConcreteMarker && IMarker.MESSAGE.equals(property))
-				return ((ConcreteMarker) element).getDescription();
-			else 
-				return null;
-		}
+    private final static String TAG_DIALOG_SECTION = "org.eclipse.ui.views.bookmark"; //$NON-NLS-1$
 
-		public boolean canModify(Object element, String property) {
-			return true;
-		}
+    private final static IField[] VISIBLE_FIELDS = { new FieldMessage(),
+            new FieldResource(), new FieldFolder(), new FieldLineNumber() };
 
-		public void modify(Object element, String property, Object value) {
-			if (element instanceof Item) {
-				Item item = (Item) element;
-				Object data = item.getData();
-				
-				if (data instanceof ConcreteMarker) {				
-					IMarker marker = ((ConcreteMarker)data).getMarker();
-	
-					try {
-						if (!marker.getAttribute(property).equals(value)) {
-							if (IMarker.MESSAGE.equals(property))
-								marker.setAttribute(IMarker.MESSAGE, value);
-						}
-					} catch (CoreException e) {
-						ErrorDialog.openError(getSite().getShell(), Messages.getString("errorModifyingBookmark") , null, e.getStatus()); //$NON-NLS-1$
-					}
-				}
-			}
-		}
-	};
+    private ICellModifier cellModifier = new ICellModifier() {
+        public Object getValue(Object element, String property) {
+            if (element instanceof ConcreteMarker
+                    && IMarker.MESSAGE.equals(property))
+                return ((ConcreteMarker) element).getDescription();
+            else
+                return null;
+        }
 
-	private CellEditorActionHandler cellEditorActionHandler;
-	private BookmarkFilter bookmarkFilter = new BookmarkFilter();
+        public boolean canModify(Object element, String property) {
+            return true;
+        }
 
-	public void createPartControl(Composite parent) {		
-		super.createPartControl(parent);
-		
-		// TODO: Check for possible reliance on IMarker
-		TableViewer tableViewer = getViewer();
-		CellEditor cellEditors[] = new CellEditor[tableViewer.getTable().getColumnCount()];
-		CellEditor descriptionCellEditor = new TextCellEditor(tableViewer.getTable());
-		cellEditors[0] = descriptionCellEditor;
-		tableViewer.setCellEditors(cellEditors);
-		tableViewer.setCellModifier(cellModifier);
-		tableViewer.setColumnProperties(TABLE_COLUMN_PROPERTIES);
-		
-		cellEditorActionHandler = new CellEditorActionHandler(getViewSite().getActionBars());
-		cellEditorActionHandler.addCellEditor(descriptionCellEditor);
-		cellEditorActionHandler.setCopyAction(copyAction);
-		cellEditorActionHandler.setPasteAction(pasteAction);
-		cellEditorActionHandler.setDeleteAction(deleteAction);
-		cellEditorActionHandler.setSelectAllAction(selectAllAction);
-	}
+        public void modify(Object element, String property, Object value) {
+            if (element instanceof Item) {
+                Item item = (Item) element;
+                Object data = item.getData();
 
-	public void dispose() {
-		if (cellEditorActionHandler != null)
-			cellEditorActionHandler.dispose();
-		
-		super.dispose();
-	}
+                if (data instanceof ConcreteMarker) {
+                    IMarker marker = ((ConcreteMarker) data).getMarker();
 
-	public void init(IViewSite viewSite, IMemento memento) throws PartInitException {
-		super.init(viewSite, memento);
-		IDialogSettings dialogSettings = getDialogSettings();
-		bookmarkFilter.restoreState(dialogSettings);
-	}
+                    try {
+                        if (!marker.getAttribute(property).equals(value)) {
+                            if (IMarker.MESSAGE.equals(property))
+                                marker.setAttribute(IMarker.MESSAGE, value);
+                        }
+                    } catch (CoreException e) {
+                        ErrorDialog
+                                .openError(
+                                        getSite().getShell(),
+                                        Messages
+                                                .getString("errorModifyingBookmark"), null, e.getStatus()); //$NON-NLS-1$
+                    }
+                }
+            }
+        }
+    };
 
-	public void saveState(IMemento memento) {
-		IDialogSettings dialogSettings = getDialogSettings();
-		
-		bookmarkFilter.saveState(dialogSettings);
-		
-		super.saveState(memento);	
-	}
+    private CellEditorActionHandler cellEditorActionHandler;
 
-	protected ColumnLayoutData[] getDefaultColumnLayouts() {
-		return DEFAULT_COLUMN_LAYOUTS;
-	}
+    private BookmarkFilter bookmarkFilter = new BookmarkFilter();
 
-	protected IDialogSettings getDialogSettings() {
-		AbstractUIPlugin plugin = (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
-		IDialogSettings workbenchSettings = plugin.getDialogSettings();
-		IDialogSettings settings = workbenchSettings.getSection(TAG_DIALOG_SECTION);
-		
-		if (settings == null)
-			settings = workbenchSettings.addNewSection(TAG_DIALOG_SECTION);
+    public void createPartControl(Composite parent) {
+        super.createPartControl(parent);
 
-		return settings;
-	}
-		
-	protected IField[] getHiddenFields() {
-		return HIDDEN_FIELDS;
-	}
+        // TODO: Check for possible reliance on IMarker
+        TableViewer tableViewer = getViewer();
+        CellEditor cellEditors[] = new CellEditor[tableViewer.getTable()
+                .getColumnCount()];
+        CellEditor descriptionCellEditor = new TextCellEditor(tableViewer
+                .getTable());
+        cellEditors[0] = descriptionCellEditor;
+        tableViewer.setCellEditors(cellEditors);
+        tableViewer.setCellModifier(cellModifier);
+        tableViewer.setColumnProperties(TABLE_COLUMN_PROPERTIES);
 
-	protected String[] getRootTypes() {
-		return ROOT_TYPES;
-	}
+        cellEditorActionHandler = new CellEditorActionHandler(getViewSite()
+                .getActionBars());
+        cellEditorActionHandler.addCellEditor(descriptionCellEditor);
+        cellEditorActionHandler.setCopyAction(copyAction);
+        cellEditorActionHandler.setPasteAction(pasteAction);
+        cellEditorActionHandler.setDeleteAction(deleteAction);
+        cellEditorActionHandler.setSelectAllAction(selectAllAction);
+    }
 
-	protected Object getViewerInput() {
-		return ResourcesPlugin.getWorkspace().getRoot();
-	}
-	
-	protected IField[] getVisibleFields() {
-		return VISIBLE_FIELDS;
-	}
+    public void dispose() {
+        if (cellEditorActionHandler != null)
+            cellEditorActionHandler.dispose();
 
-	public void setSelection(IStructuredSelection structuredSelection, boolean reveal) {
-		// TODO: added because nick doesn't like public API inherited from internal classes
-		super.setSelection(structuredSelection, reveal);
-	}
+        super.dispose();
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getMarkerTypes()
-	 */
-	protected String[] getMarkerTypes() {
-		return new String[] {IMarker.BOOKMARK};
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.views.markers.internal.MarkerView#openFiltersDialog()
-	 */
-	public void openFiltersDialog() {
-		DialogBookmarkFilter dialog = new DialogBookmarkFilter(getSite().getShell(), bookmarkFilter);
-		
-		if (dialog.open() == Window.OK) {
-			bookmarkFilter = (BookmarkFilter)dialog.getFilter();
-			bookmarkFilter.saveState(getDialogSettings());
-			refresh();
-		}
-	}
+    public void init(IViewSite viewSite, IMemento memento)
+            throws PartInitException {
+        super.init(viewSite, memento);
+        IDialogSettings dialogSettings = getDialogSettings();
+        bookmarkFilter.restoreState(dialogSettings);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getFilter()
-	 */
-	protected MarkerFilter getFilter() {
-		return bookmarkFilter;
-	}
+    public void saveState(IMemento memento) {
+        IDialogSettings dialogSettings = getDialogSettings();
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.views.markers.internal.MarkerView#updateFilterSelection(org.eclipse.core.resources.IResource[])
-	 */
-	protected void updateFilterSelection(IResource[] resources) {
-		bookmarkFilter.setFocusResource(resources);
-	}
+        bookmarkFilter.saveState(dialogSettings);
+
+        super.saveState(memento);
+    }
+
+    protected ColumnLayoutData[] getDefaultColumnLayouts() {
+        return DEFAULT_COLUMN_LAYOUTS;
+    }
+
+    protected IDialogSettings getDialogSettings() {
+        AbstractUIPlugin plugin = (AbstractUIPlugin) Platform
+                .getPlugin(PlatformUI.PLUGIN_ID);
+        IDialogSettings workbenchSettings = plugin.getDialogSettings();
+        IDialogSettings settings = workbenchSettings
+                .getSection(TAG_DIALOG_SECTION);
+
+        if (settings == null)
+            settings = workbenchSettings.addNewSection(TAG_DIALOG_SECTION);
+
+        return settings;
+    }
+
+    protected IField[] getHiddenFields() {
+        return HIDDEN_FIELDS;
+    }
+
+    protected String[] getRootTypes() {
+        return ROOT_TYPES;
+    }
+
+    protected Object getViewerInput() {
+        return ResourcesPlugin.getWorkspace().getRoot();
+    }
+
+    protected IField[] getVisibleFields() {
+        return VISIBLE_FIELDS;
+    }
+
+    public void setSelection(IStructuredSelection structuredSelection,
+            boolean reveal) {
+        // TODO: added because nick doesn't like public API inherited from internal classes
+        super.setSelection(structuredSelection, reveal);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.views.markers.internal.MarkerView#getMarkerTypes()
+     */
+    protected String[] getMarkerTypes() {
+        return new String[] { IMarker.BOOKMARK };
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.views.markers.internal.MarkerView#openFiltersDialog()
+     */
+    public void openFiltersDialog() {
+        DialogBookmarkFilter dialog = new DialogBookmarkFilter(getSite()
+                .getShell(), bookmarkFilter);
+
+        if (dialog.open() == Window.OK) {
+            bookmarkFilter = (BookmarkFilter) dialog.getFilter();
+            bookmarkFilter.saveState(getDialogSettings());
+            refresh();
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.views.markers.internal.MarkerView#getFilter()
+     */
+    protected MarkerFilter getFilter() {
+        return bookmarkFilter;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.views.markers.internal.MarkerView#updateFilterSelection(org.eclipse.core.resources.IResource[])
+     */
+    protected void updateFilterSelection(IResource[] resources) {
+        bookmarkFilter.setFocusResource(resources);
+    }
 
 }

@@ -71,7 +71,8 @@ class CheckForWorkbench extends WorkbenchAdvisorObserver {
     public void eventLoopIdle(Display display) {
         super.eventLoopIdle(display);
 
-        if (checkComplete) return;
+        if (checkComplete)
+            return;
 
         Assert.assertNotNull(PlatformUI.getWorkbench());
         checkComplete = true;

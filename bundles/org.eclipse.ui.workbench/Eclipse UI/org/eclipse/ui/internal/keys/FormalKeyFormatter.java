@@ -25,46 +25,46 @@ import org.eclipse.ui.keys.KeyStroke;
  */
 public class FormalKeyFormatter extends AbstractKeyFormatter {
 
-	/**
-	 * A comparator that guarantees that modifier keys will be sorted the same
-	 * across different platforms.
-	 */
-	private static final Comparator FORMAL_MODIFIER_KEY_COMPARATOR = new AlphabeticModifierKeyComparator();
+    /**
+     * A comparator that guarantees that modifier keys will be sorted the same
+     * across different platforms.
+     */
+    private static final Comparator FORMAL_MODIFIER_KEY_COMPARATOR = new AlphabeticModifierKeyComparator();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.keys.KeyFormatter#format(org.eclipse.ui.keys.KeySequence)
-	 */
-	public String format(Key key) {
-		return key.toString();
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.keys.AbstractKeyFormatter#getKeyDelimiter()
-	 */
-	protected String getKeyDelimiter() {
-		return KeyStroke.KEY_DELIMITER;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.keys.KeyFormatter#format(org.eclipse.ui.keys.KeySequence)
+     */
+    public String format(Key key) {
+        return key.toString();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.keys.AbstractKeyFormatter#getKeyStrokeDelimiter()
-	 */
-	protected String getKeyStrokeDelimiter() {
-		return KeySequence.KEY_STROKE_DELIMITER;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.keys.AbstractKeyFormatter#getKeyDelimiter()
+     */
+    protected String getKeyDelimiter() {
+        return KeyStroke.KEY_DELIMITER;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.keys.AbstractKeyFormatter#getModifierKeyComparator()
-	 */
-	protected Comparator getModifierKeyComparator() {
-		return FORMAL_MODIFIER_KEY_COMPARATOR;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.keys.AbstractKeyFormatter#getKeyStrokeDelimiter()
+     */
+    protected String getKeyStrokeDelimiter() {
+        return KeySequence.KEY_STROKE_DELIMITER;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.keys.AbstractKeyFormatter#getModifierKeyComparator()
+     */
+    protected Comparator getModifierKeyComparator() {
+        return FORMAL_MODIFIER_KEY_COMPARATOR;
+    }
 
 }

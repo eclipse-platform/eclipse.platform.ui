@@ -28,90 +28,90 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * action is running in. The default input for the 
  * new window's page is application-specific.
  */
-public class OpenInNewWindowAction
-	extends Action
-	implements ActionFactory.IWorkbenchAction {
+public class OpenInNewWindowAction extends Action implements
+        ActionFactory.IWorkbenchAction {
 
-	/**
-	 * The workbench window; or <code>null</code> if this
-	 * action has been <code>dispose</code>d.
-	 */
-	private IWorkbenchWindow workbenchWindow;
-	
-	private IAdaptable pageInput;
+    /**
+     * The workbench window; or <code>null</code> if this
+     * action has been <code>dispose</code>d.
+     */
+    private IWorkbenchWindow workbenchWindow;
 
-	/**
-	 * Creates a new <code>OpenInNewWindowAction</code>. Sets
-	 * the new window page's input to be an application-specific
-	 * default.
-	 * 
-	 * @param window the workbench window containing this action
-	 */
-	public OpenInNewWindowAction(IWorkbenchWindow window) {
-		this(window, ((Workbench)window.getWorkbench()).getDefaultPageInput());
-	}
+    private IAdaptable pageInput;
 
-	/**
-	 * Creates a new <code>OpenInNewWindowAction</code>.
-	 * 
-	 * @param window the workbench window containing this action
-	 * @param input the input for the new window's page
-	 */
-	public OpenInNewWindowAction(IWorkbenchWindow window, IAdaptable input) {
-		super(WorkbenchMessages.getString("OpenInNewWindowAction.text")); //$NON-NLS-1$
-		if (window == null) {
-			throw new IllegalArgumentException();
-		}
-		this.workbenchWindow = window;
-		// @issue missing action id
-		setToolTipText(WorkbenchMessages.getString("OpenInNewWindowAction.toolTip")); //$NON-NLS-1$
-		pageInput = input;
-		WorkbenchHelp.setHelp(this,IHelpContextIds.OPEN_NEW_WINDOW_ACTION);
-	}
+    /**
+     * Creates a new <code>OpenInNewWindowAction</code>. Sets
+     * the new window page's input to be an application-specific
+     * default.
+     * 
+     * @param window the workbench window containing this action
+     */
+    public OpenInNewWindowAction(IWorkbenchWindow window) {
+        this(window, ((Workbench) window.getWorkbench()).getDefaultPageInput());
+    }
 
-	/**
-	 * Set the input to use for the new window's page.
-	 */
-	public void setPageInput(IAdaptable input) {
-		pageInput = input;
-	}
-	
-	/**
-	 * The implementation of this <code>IAction</code> method
-	 * opens a new window. The initial perspective
-	 * for the new window will be the same type as
-	 * the active perspective in the window which this
-	 * action is running in.
-	 */
-	public void run() {
-		if (workbenchWindow == null) {
-			// action has been disposed
-			return;
-		}
-		try {
-			String perspId;
-			
-			IWorkbenchPage page = workbenchWindow.getActivePage();
-			if (page != null && page.getPerspective() != null)
-				perspId = page.getPerspective().getId();
-			else
-				perspId = workbenchWindow.getWorkbench().getPerspectiveRegistry().getDefaultPerspective();
+    /**
+     * Creates a new <code>OpenInNewWindowAction</code>.
+     * 
+     * @param window the workbench window containing this action
+     * @param input the input for the new window's page
+     */
+    public OpenInNewWindowAction(IWorkbenchWindow window, IAdaptable input) {
+        super(WorkbenchMessages.getString("OpenInNewWindowAction.text")); //$NON-NLS-1$
+        if (window == null) {
+            throw new IllegalArgumentException();
+        }
+        this.workbenchWindow = window;
+        // @issue missing action id
+        setToolTipText(WorkbenchMessages
+                .getString("OpenInNewWindowAction.toolTip")); //$NON-NLS-1$
+        pageInput = input;
+        WorkbenchHelp.setHelp(this, IHelpContextIds.OPEN_NEW_WINDOW_ACTION);
+    }
 
-			workbenchWindow.getWorkbench().openWorkbenchWindow(perspId, pageInput);
-		} catch (WorkbenchException e) {
-			ErrorDialog.openError(
-				workbenchWindow.getShell(),
-				WorkbenchMessages.getString("OpenInNewWindowAction.errorTitle"), //$NON-NLS-1$,
-				e.getMessage(),
-				e.getStatus());
-		}
-	}
-	
-	/* (non-Javadoc)
-	 * Method declared on ActionFactory.IWorkbenchAction.
-	 * @since 3.0
-	 */
-	public void dispose() {
-		workbenchWindow = null;
-	}
+    /**
+     * Set the input to use for the new window's page.
+     */
+    public void setPageInput(IAdaptable input) {
+        pageInput = input;
+    }
+
+    /**
+     * The implementation of this <code>IAction</code> method
+     * opens a new window. The initial perspective
+     * for the new window will be the same type as
+     * the active perspective in the window which this
+     * action is running in.
+     */
+    public void run() {
+        if (workbenchWindow == null) {
+            // action has been disposed
+            return;
+        }
+        try {
+            String perspId;
+
+            IWorkbenchPage page = workbenchWindow.getActivePage();
+            if (page != null && page.getPerspective() != null)
+                perspId = page.getPerspective().getId();
+            else
+                perspId = workbenchWindow.getWorkbench()
+                        .getPerspectiveRegistry().getDefaultPerspective();
+
+            workbenchWindow.getWorkbench().openWorkbenchWindow(perspId,
+                    pageInput);
+        } catch (WorkbenchException e) {
+            ErrorDialog.openError(workbenchWindow.getShell(), WorkbenchMessages
+                    .getString("OpenInNewWindowAction.errorTitle"), //$NON-NLS-1$,
+                    e.getMessage(), e.getStatus());
+        }
+    }
+
+    /* (non-Javadoc)
+     * Method declared on ActionFactory.IWorkbenchAction.
+     * @since 3.0
+     */
+    public void dispose() {
+        workbenchWindow = null;
+    }
 }

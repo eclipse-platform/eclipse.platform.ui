@@ -25,41 +25,44 @@ import org.eclipse.ui.themes.IThemeManager;
  * @since 3.0
  */
 public class JFaceThemeTest extends ThemeTest {
-    
+
     public JFaceThemeTest(String testName) {
         super(testName);
     }
-    
+
     private void setAndTest(String themeId, IPropertyChangeListener listener) {
         JFaceResources.getFontRegistry().addListener(listener);
         JFaceResources.getColorRegistry().addListener(listener);
         fManager.setCurrentTheme(themeId);
         ITheme theme = fManager.getTheme(themeId);
-        assertEquals(theme, fManager.getCurrentTheme()); 
+        assertEquals(theme, fManager.getCurrentTheme());
         {
-	        FontRegistry jfaceFonts = JFaceResources.getFontRegistry();
-	        FontRegistry themeFonts = theme.getFontRegistry();
-	        // don't test for equality - other tests (or clients) may be pushing 
-	        // new items into jface
-	        assertTrue(jfaceFonts.getKeySet().containsAll(themeFonts.getKeySet()));	        
-	        for (Iterator i = themeFonts.getKeySet().iterator(); i.hasNext();) {
-	            String key = (String) i.next();
-	            assertArrayEquals(themeFonts.getFontData(key), jfaceFonts.getFontData(key));
-	        }
+            FontRegistry jfaceFonts = JFaceResources.getFontRegistry();
+            FontRegistry themeFonts = theme.getFontRegistry();
+            // don't test for equality - other tests (or clients) may be pushing 
+            // new items into jface
+            assertTrue(jfaceFonts.getKeySet().containsAll(
+                    themeFonts.getKeySet()));
+            for (Iterator i = themeFonts.getKeySet().iterator(); i.hasNext();) {
+                String key = (String) i.next();
+                assertArrayEquals(themeFonts.getFontData(key), jfaceFonts
+                        .getFontData(key));
+            }
         }
         {
             ColorRegistry jfaceColors = JFaceResources.getColorRegistry();
             ColorRegistry themeColors = theme.getColorRegistry();
-            assertTrue(jfaceColors.getKeySet().containsAll(themeColors.getKeySet()));
+            assertTrue(jfaceColors.getKeySet().containsAll(
+                    themeColors.getKeySet()));
             for (Iterator i = themeColors.getKeySet().iterator(); i.hasNext();) {
-	            String key = (String) i.next();
-	            assertEquals(themeColors.getRGB(key), jfaceColors.getRGB(key));
-	        }            
+                String key = (String) i.next();
+                assertEquals(themeColors.getRGB(key), jfaceColors.getRGB(key));
+            }
         }
         JFaceResources.getFontRegistry().removeListener(listener);
         JFaceResources.getColorRegistry().removeListener(listener);
     }
-    
+
     /**
      * TODO: detailed checking of the events
      */

@@ -19,27 +19,29 @@ import org.eclipse.ui.model.WorkbenchAdapter;
  * An IWorkbenchAdapter implementation for IWorkspaceRoot objects.
  */
 public class WorkbenchRootResource extends WorkbenchAdapter {
-/**
- * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(Object)
- * Returns the children of the root resource.
- */
-public Object[] getChildren(Object o) {
-	IWorkspaceRoot root = (IWorkspaceRoot) o;
-	return root.getProjects();
-}
-/**
- * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(Object)
- */
-public ImageDescriptor getImageDescriptor(Object object) {
-	return null;
-}
-/**
- * Returns the name of this element.  This will typically
- * be used to assign a label to this object when displayed
- * in the UI.
- */
-public String getLabel(Object o) {
-	//root resource has no name
-	return IDEWorkbenchMessages.getString("Workspace"); //$NON-NLS-1$
-}
+    /**
+     * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(Object)
+     * Returns the children of the root resource.
+     */
+    public Object[] getChildren(Object o) {
+        IWorkspaceRoot root = (IWorkspaceRoot) o;
+        return root.getProjects();
+    }
+
+    /**
+     * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(Object)
+     */
+    public ImageDescriptor getImageDescriptor(Object object) {
+        return null;
+    }
+
+    /**
+     * Returns the name of this element.  This will typically
+     * be used to assign a label to this object when displayed
+     * in the UI.
+     */
+    public String getLabel(Object o) {
+        //root resource has no name
+        return IDEWorkbenchMessages.getString("Workspace"); //$NON-NLS-1$
+    }
 }

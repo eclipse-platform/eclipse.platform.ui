@@ -60,111 +60,115 @@ import org.eclipse.ui.internal.util.Util;
  */
 public abstract class ViewPart extends WorkbenchPart implements IViewPart {
 
-/**
- * Listens to PROP_TITLE property changes in this object until the first call to
- * setContentDescription. Used for compatibility with old parts that call setTitle
- * or overload getTitle instead of using setContentDescription. 
- */
-private IPropertyListener compatibilityTitleListener = new IPropertyListener() {
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPropertyListener#propertyChanged(java.lang.Object, int)
-	 */
-	public void propertyChanged(Object source, int propId) {
-		if (propId == IWorkbenchPartConstants.PROP_TITLE) {
-			setDefaultContentDescription();
-		}
-	}
-};
+    /**
+     * Listens to PROP_TITLE property changes in this object until the first call to
+     * setContentDescription. Used for compatibility with old parts that call setTitle
+     * or overload getTitle instead of using setContentDescription. 
+     */
+    private IPropertyListener compatibilityTitleListener = new IPropertyListener() {
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.IPropertyListener#propertyChanged(java.lang.Object, int)
+         */
+        public void propertyChanged(Object source, int propId) {
+            if (propId == IWorkbenchPartConstants.PROP_TITLE) {
+                setDefaultContentDescription();
+            }
+        }
+    };
 
-/**
- * Creates a new view.
- */
-protected ViewPart() {
-	super();
-	
-	addPropertyListener(compatibilityTitleListener);
-}
-/* (non-Javadoc)
- * Method declared on IViewPart.
- */
-public IViewSite getViewSite() {
-	return (IViewSite)getSite();
-}
-/* (non-Javadoc)
- * Initializes this view at the given view site.
- */
-public void init(IViewSite site) throws PartInitException {
-	setSite(site);
-	
-	setDefaultContentDescription();
-}
-/* (non-Javadoc)
- * Initializes this view with the given view site.  A memento is passed to
- * the view which contains a snapshot of the views state from a previous
- * session.  Where possible, the view should try to recreate that state
- * within the part controls.
- * <p>
- * This implementation will ignore the memento and initialize the view in
- * a fresh state.  Subclasses may override the implementation to perform any
- * state restoration as needed.
- */
-public void init(IViewSite site,IMemento memento) throws PartInitException {
-	init(site);
-}
-/* (non-Javadoc)
- * Method declared on IViewPart.
- */
-public void saveState(IMemento memento){
-    // do nothing
-}
+    /**
+     * Creates a new view.
+     */
+    protected ViewPart() {
+        super();
 
-/* (non-Javadoc)
- * @see org.eclipse.ui.part.WorkbenchPart#setPartName(java.lang.String)
- */
-protected void setPartName(String partName) {
-	if (compatibilityTitleListener != null) {
-		removePropertyListener(compatibilityTitleListener);
-		compatibilityTitleListener = null;
-	}
+        addPropertyListener(compatibilityTitleListener);
+    }
 
-	super.setPartName(partName);
-}
+    /* (non-Javadoc)
+     * Method declared on IViewPart.
+     */
+    public IViewSite getViewSite() {
+        return (IViewSite) getSite();
+    }
 
-/* (non-Javadoc)
- * @see org.eclipse.ui.part.WorkbenchPart#setContentDescription(java.lang.String)
- */
-protected void setContentDescription(String description) {
-	if (compatibilityTitleListener != null) {
-		removePropertyListener(compatibilityTitleListener);
-		compatibilityTitleListener = null;
-	}
-	
-	super.setContentDescription(description);
-}
+    /* (non-Javadoc)
+     * Initializes this view at the given view site.
+     */
+    public void init(IViewSite site) throws PartInitException {
+        setSite(site);
 
-/* (non-Javadoc)
- * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
- */
-public void setInitializationData(IConfigurationElement cfig,
-		String propertyName, Object data) {
-	super.setInitializationData(cfig, propertyName, data);
-	
-	setDefaultContentDescription();
-}
+        setDefaultContentDescription();
+    }
 
-private void setDefaultContentDescription() {
-	if (compatibilityTitleListener == null) {
-		return;
-	}
-	
-	String partName = getPartName();
-	String title = getTitle();
-	
-	if (Util.equals(partName, title)) {
-		internalSetContentDescription(""); //$NON-NLS-1$
-	} else {
-		internalSetContentDescription(title);
-	}
-}
+    /* (non-Javadoc)
+     * Initializes this view with the given view site.  A memento is passed to
+     * the view which contains a snapshot of the views state from a previous
+     * session.  Where possible, the view should try to recreate that state
+     * within the part controls.
+     * <p>
+     * This implementation will ignore the memento and initialize the view in
+     * a fresh state.  Subclasses may override the implementation to perform any
+     * state restoration as needed.
+     */
+    public void init(IViewSite site, IMemento memento) throws PartInitException {
+        init(site);
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IViewPart.
+     */
+    public void saveState(IMemento memento) {
+        // do nothing
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.part.WorkbenchPart#setPartName(java.lang.String)
+     */
+    protected void setPartName(String partName) {
+        if (compatibilityTitleListener != null) {
+            removePropertyListener(compatibilityTitleListener);
+            compatibilityTitleListener = null;
+        }
+
+        super.setPartName(partName);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.part.WorkbenchPart#setContentDescription(java.lang.String)
+     */
+    protected void setContentDescription(String description) {
+        if (compatibilityTitleListener != null) {
+            removePropertyListener(compatibilityTitleListener);
+            compatibilityTitleListener = null;
+        }
+
+        super.setContentDescription(description);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
+     */
+    public void setInitializationData(IConfigurationElement cfig,
+            String propertyName, Object data) {
+        super.setInitializationData(cfig, propertyName, data);
+
+        setDefaultContentDescription();
+    }
+
+    private void setDefaultContentDescription() {
+        if (compatibilityTitleListener == null) {
+            return;
+        }
+
+        String partName = getPartName();
+        String title = getTitle();
+
+        if (Util.equals(partName, title)) {
+            internalSetContentDescription(""); //$NON-NLS-1$
+        } else {
+            internalSetContentDescription(title);
+        }
+    }
 
 }

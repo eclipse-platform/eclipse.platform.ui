@@ -21,31 +21,35 @@ package org.eclipse.ui;
  * </p>
  */
 public interface IEditorReference extends IWorkbenchPartReference {
-	/**
-	 * Returns the factory id of the factory used to 
-	 * restore this editor. Returns null if the editor
-	 * is not pesistable.
-	 */
-	public String getFactoryId();
-	/**
-	 * Returns the editor input name. May return null is the
-	 * name is not available or if the editor failed to be 
-	 * restored.
-	 */
-	public String getName();
-	/**
-	 * Returns the IEditorPart referenced by this object.
-	 * Returns null if the editors was not instanciated or
-	 * it failed to be restored. Tries to restore the editor
-	 * if <code>restore</code> is true.
-	 */
-	public IEditorPart getEditor(boolean restore);
-	/**
-	 * Returns true if the editor is dirty otherwise returns false.
-	 */
-	public boolean isDirty();
-	/**
-	 * Returns true if the editor is pinned otherwise returns false.
-	 */
-	public boolean isPinned();
+    /**
+     * Returns the factory id of the factory used to 
+     * restore this editor. Returns null if the editor
+     * is not pesistable.
+     */
+    public String getFactoryId();
+
+    /**
+     * Returns the editor input name. May return null is the
+     * name is not available or if the editor failed to be 
+     * restored.
+     */
+    public String getName();
+
+    /**
+     * Returns the IEditorPart referenced by this object.
+     * Returns null if the editors was not instanciated or
+     * it failed to be restored. Tries to restore the editor
+     * if <code>restore</code> is true.
+     */
+    public IEditorPart getEditor(boolean restore);
+
+    /**
+     * Returns true if the editor is dirty otherwise returns false.
+     */
+    public boolean isDirty();
+
+    /**
+     * Returns true if the editor is pinned otherwise returns false.
+     */
+    public boolean isPinned();
 }

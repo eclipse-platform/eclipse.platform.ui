@@ -54,644 +54,651 @@ import org.eclipse.swt.widgets.Shell;
  * Since 3.0 this class extends ResourceRegistry.
  */
 public class FontRegistry extends ResourceRegistry {
-	
-	/**
-	 * FontRecord is a private helper class that holds onto a font
-	 * and can be used to generate its bold and italic version. 
-	 */
-	private class FontRecord{
-		
-		Font baseFont;
-		Font boldFont;
-		Font italicFont;
-		
-		FontData[] baseData;
-		
-		/**
-		 * Create a new instance of the receiver based on the 
-		 * plain font and the data for it.
-		 * @param plainFont The base looked up font.
-		 * @param data The data used to look it up.
-		 */
-		FontRecord(Font plainFont, FontData[] data){
-			baseFont = plainFont;
-			baseData = data;
-		}
-		
-		/**
-		 * Dispose any of the fonts created for this record.
-		 */
-		void dispose(){
-			baseFont.dispose();
-			if(boldFont != null)
-				boldFont.dispose();
-			if(italicFont != null)
-				italicFont.dispose();
-		}
-		
-		/**
-		 * Return the base Font.
-		 * @return Font
-		 */
-		public Font getBaseFont() {
-			return baseFont;
-		}
-		/**
-		 * Return the bold Font. Create a bold version
-		 * of the base font to get it.
-		 * @return Font
-		 */
-		public Font getBoldFont() {
-			if(boldFont != null)
-				return boldFont;
-			
-			FontData[] boldData = getModifiedFontData(SWT.BOLD);
-			boldFont = new Font(Display.getCurrent(),boldData);
-			return boldFont;
-		}
-		
-		/**
-		 * Get a version of the base font data with the specified 
-		 * style.
-		 * @param style
-		 * @return
-		 * @todo Generated comment
-		 */
-		private FontData[] getModifiedFontData(int style){
-			FontData[] styleData = new FontData[baseData.length];
-			for (int i = 0; i < styleData.length; i++) {
-				FontData base = baseData[i];
-				styleData[i] = new FontData(base.getName(),base.getHeight(),base.getStyle() | style);
-			}
-			
-			return styleData;
-		}
-		
-		/**
-		 * Return the italic Font. Create an italic version of the
-		 * base font to get it.
-		 * @return Font
-		 */
-		public Font getItalicFont() {
-			if(italicFont != null)
-				return italicFont;
-			
-			FontData[] italicData = getModifiedFontData(SWT.ITALIC);
-			italicFont = new Font(Display.getCurrent(),italicData);
-			return italicFont;
-		}
-		
-		/**
-		 * Add any fonts that were allocated for this record to the
-		 * stale fonts. Anything that matches the default font will
-		 * be skipped.
-		 * @param defaultFont The system default.
-		 */
-		void addAllocatedFontsToStale(Font defaultFont){
-			//Return all of the fonts allocated by the receiver.
-			//if any of them are the defaultFont then don't bother.
-			if(defaultFont != baseFont)
-				staleFonts.add(baseFont);
-			if(defaultFont != boldFont)
-				staleFonts.add(baseFont);
-			if(defaultFont != italicFont)
-				staleFonts.add(baseFont);
-		}
-	}
 
     /**
-	 * Table of known fonts, keyed by symbolic font name
-	 * (key type: <code>String</code>, 
-	 *  value type: <code>FontRecord</code>.
-	 */
-	private Map stringToFontRecord = new HashMap(7);
-	/**
-	 * Table of known font data, keyed by symbolic font name
-	 * (key type: <code>String</code>, 
-	 *  value type: <code>org.eclipse.swt.graphics.FontData[]</code>).
-	 */
-	private Map stringToFontData = new HashMap(7);
+     * FontRecord is a private helper class that holds onto a font
+     * and can be used to generate its bold and italic version. 
+     */
+    private class FontRecord {
 
-	/**
-	 * Collection of Fonts that are now stale to be disposed
-	 * when it is safe to do so (i.e. on shutdown).
-	 * @see List
-	 */
-	private List staleFonts = new ArrayList();
-	
-	/**
-	 * Runnable that cleans up the manager on disposal of the display.
-	 */	
-	protected Runnable displayRunnable = new Runnable() {
-		public void run() {
-			clearCaches();
-		}
-	};
+        Font baseFont;
 
-	/**
-	 * Creates an empty font registry.
-	 * <p>
-	 * There must be an SWT Display created in the current 
-	 * thread before calling this method.
-	 * </p>
-	 */
-	public FontRegistry() {
-		Display display = Display.getCurrent();
-		Assert.isNotNull(display);
-		hookDisplayDispose(display);
-	}
-	/**
-	 * Creates a font registry and initializes its content from
-	 * a property file.
-	 * <p>
-	 * There must be an SWT Display created in the current 
-	 * thread before calling this method.
-	 * </p>
-	 * <p>
-	 * The OS name (retrieved using <code>System.getProperty("os.name")</code>)
-	 * is converted to lowercase, purged of whitespace, and appended 
-	 * as suffix (separated by an underscore <code>'_'</code>) to the given 
-	 * location string to yield the base name of a resource bundle
-	 * acceptable to <code>ResourceBundle.getBundle</code>.
-	 * The standard Java resource bundle mechanism is then used to locate
-	 * and open the appropriate properties file, taking into account
-	 * locale specific variations.
-	 * </p>
-	 * <p>
-	 * For example, on the Windows 2000 operating system the location string
-	 * <code>"com.example.myapp.Fonts"</code> yields the base name 
-	 * <code>"com.example.myapp.Fonts_windows2000"</code>. For the US English locale,
-	 * this further elaborates to the resource bundle name
-	 * <code>"com.example.myapp.Fonts_windows2000_en_us"</code>.
-	 * </p>
-	 * <p>
-	 * If no appropriate OS-specific resource bundle is found, the
-	 * process is repeated using the location as the base bundle name.
-	 * </p>
-	 * <p>
-	 * The property file contains entries that look like this:
-	 * <pre>
-	 *	textfont.0=MS Sans Serif-regular-10
-	 *	textfont.1=Times New Roman-regular-10
-	 *	
-	 *	titlefont.0=MS Sans Serif-regular-12
-	 *	titlefont.1=Times New Roman-regular-12
-	 * </pre>
-	 * Each entry maps a symbolic font names (the font registry keys) with
-	 * a "<code>.<it>n</it></code> suffix to standard font names
-	 * on the right. The suffix indicated order of preference: 
-	 * "<code>.0</code>" indicates the first choice,
-	 * "<code>.1</code>" indicates the second choice, and so on.
-	 * </p>
-	 * The following example shows how to use the font registry:
-	 * <pre>
-	 *	FontRegistry registry = new FontRegistry("com.example.myapp.fonts");
-	 *  Font font = registry.get("textfont");
-	 *  control.setFont(font);
-	 *  ...
-	 * </pre>
-	 *
-	 * @param location the name of the resource bundle
-	 * @param loader the ClassLoader to use to find the resource bundle
-	 * @exception MissingResourceException if the resource bundle cannot be found
-	 * @since 2.1
-	 */
-	public FontRegistry(String location, ClassLoader loader)
-		throws MissingResourceException {
-		Display display = Display.getCurrent();
-		Assert.isNotNull(display);
-		// FIXE: need to respect loader
-		//readResourceBundle(location, loader);
-		readResourceBundle(location);
+        Font boldFont;
 
-		hookDisplayDispose(display);
-	}
+        Font italicFont;
 
-	/**
-	 * Load the FontRegistry using the ClassLoader from the PlatformUI
-	 * plug-in
-	 */
-	public FontRegistry(String location) throws MissingResourceException {
-		// FIXE:
-		//	this(location, WorkbenchPlugin.getDefault().getDescriptor().getPluginClassLoader());
-		this(location, null);
-	}
+        FontData[] baseData;
 
-	/**
-	 * Read the resource bundle at location. Look for a file with the
-	 * extension _os_ws first, then _os then just the name.
-	 * @param location - String - the location of the file.
-	 */
+        /**
+         * Create a new instance of the receiver based on the 
+         * plain font and the data for it.
+         * @param plainFont The base looked up font.
+         * @param data The data used to look it up.
+         */
+        FontRecord(Font plainFont, FontData[] data) {
+            baseFont = plainFont;
+            baseData = data;
+        }
 
-	private void readResourceBundle(String location) {
-		String osname = System.getProperty("os.name").trim(); //$NON-NLS-1$
-		String wsname = SWT.getPlatform();
-		osname = StringConverter.removeWhiteSpaces(osname).toLowerCase();
-		wsname = StringConverter.removeWhiteSpaces(wsname).toLowerCase();
-		String OSLocation = location;
-		String WSLocation = location;
-		ResourceBundle bundle = null;
-		if (osname != null) {
-			OSLocation = location + "_" + osname; //$NON-NLS-1$
-			if (wsname != null)
-				WSLocation = OSLocation + "_" + wsname; //$NON-NLS-1$
-		}
+        /**
+         * Dispose any of the fonts created for this record.
+         */
+        void dispose() {
+            baseFont.dispose();
+            if (boldFont != null)
+                boldFont.dispose();
+            if (italicFont != null)
+                italicFont.dispose();
+        }
 
-		try {
-			bundle = ResourceBundle.getBundle(WSLocation);
-			readResourceBundle(bundle, WSLocation);
-		} catch (MissingResourceException wsException) {
-			try {
-				bundle = ResourceBundle.getBundle(OSLocation);
-				readResourceBundle(bundle, WSLocation);
-			} catch (MissingResourceException osException) {
-				if (location != OSLocation) {
-					bundle = ResourceBundle.getBundle(location);
-					readResourceBundle(bundle, WSLocation);
-				} else
-					throw osException;
-			}
-		}
-	}
+        /**
+         * Return the base Font.
+         * @return Font
+         */
+        public Font getBaseFont() {
+            return baseFont;
+        }
 
-	/**
-	 * Creates an empty font registry.
-	 *
-	 * @param display the Display
-	 */
-	public FontRegistry(Display display) {
-		Assert.isNotNull(display);
-		hookDisplayDispose(display);
-	}
+        /**
+         * Return the bold Font. Create a bold version
+         * of the base font to get it.
+         * @return Font
+         */
+        public Font getBoldFont() {
+            if (boldFont != null)
+                return boldFont;
 
-	/**
-	 * Find the first valid fontData in the provided list. 
-	 * If none are valid return the first one regardless.
-	 * If the list is empty return null.
-	 * Return null if one cannot be found.
-	 * @deprecated use bestDataArray in order to support 
-	 * Motif multiple entry fonts.
-	 */
-	public FontData bestData(FontData[] fonts, Display display) {
-		for (int i = 0; i < fonts.length; i++) {
-			FontData fd = fonts[i];
+            FontData[] boldData = getModifiedFontData(SWT.BOLD);
+            boldFont = new Font(Display.getCurrent(), boldData);
+            return boldFont;
+        }
 
-			if (fd == null)
-				break;
+        /**
+         * Get a version of the base font data with the specified 
+         * style.
+         * @param style
+         * @return
+         * @todo Generated comment
+         */
+        private FontData[] getModifiedFontData(int style) {
+            FontData[] styleData = new FontData[baseData.length];
+            for (int i = 0; i < styleData.length; i++) {
+                FontData base = baseData[i];
+                styleData[i] = new FontData(base.getName(), base.getHeight(),
+                        base.getStyle() | style);
+            }
 
-			FontData[] fixedFonts = display.getFontList(fd.getName(), false);
-			if (isFixedFont(fixedFonts, fd)) {
-				return fd;
-			}
+            return styleData;
+        }
 
-			FontData[] scalableFonts = display.getFontList(fd.getName(), true);
-			if (scalableFonts.length > 0) {
-				return fd;
-			}
-		}
+        /**
+         * Return the italic Font. Create an italic version of the
+         * base font to get it.
+         * @return Font
+         */
+        public Font getItalicFont() {
+            if (italicFont != null)
+                return italicFont;
 
-		//None of the provided datas are valid. Return the
-		//first one as it is at least the first choice.
-		if (fonts.length > 0)
-			return fonts[0];
-		else
-			//Nothing specified 
-			return null;
-	}
+            FontData[] italicData = getModifiedFontData(SWT.ITALIC);
+            italicFont = new Font(Display.getCurrent(), italicData);
+            return italicFont;
+        }
 
-	/**
-	 * Find the first valid fontData in the provided list. 
-	 * If none are valid return the first one regardless.
-	 * If the list is empty return null.
-	 */
-	public FontData[] bestDataArray(FontData[] fonts, Display display) {
+        /**
+         * Add any fonts that were allocated for this record to the
+         * stale fonts. Anything that matches the default font will
+         * be skipped.
+         * @param defaultFont The system default.
+         */
+        void addAllocatedFontsToStale(Font defaultFont) {
+            //Return all of the fonts allocated by the receiver.
+            //if any of them are the defaultFont then don't bother.
+            if (defaultFont != baseFont)
+                staleFonts.add(baseFont);
+            if (defaultFont != boldFont)
+                staleFonts.add(baseFont);
+            if (defaultFont != italicFont)
+                staleFonts.add(baseFont);
+        }
+    }
 
-		FontData bestData = bestData(fonts, display);
-		if (bestData == null)
-			return null;
-		else {
-			FontData[] datas = new FontData[1];
-			datas[0] = bestData;
-			return datas;
-		}
-	}
+    /**
+     * Table of known fonts, keyed by symbolic font name
+     * (key type: <code>String</code>, 
+     *  value type: <code>FontRecord</code>.
+     */
+    private Map stringToFontRecord = new HashMap(7);
 
-	/**
-	 * Creates a new font with the given font datas or <code>null</code>
-	 * if there is no data.
-	 * @return FontRecord for the new Font or <code>null</code>.
-	 */
-	private FontRecord createFont(String symbolicName, FontData[] fonts) {
-		Display display = Display.getCurrent();
-		if(display == null)
-			return null;
-			
-		FontData[] validData = bestDataArray(fonts, display);
-		if (validData == null) {
-			//Nothing specified 
-			return null;
-		} else {
-			//Do not fire the update from creation as it is not a property change
-			put(symbolicName, validData, false);
-			Font newFont = new Font(display, validData);
-			return new FontRecord(newFont,validData);
-		}
-	}
-	
-	/**
-	 * Calculates the default font and returns the result
-	 */
-	Font calculateDefaultFont() {
-		Display current = Display.getCurrent();
-		if (current == null) {
-			Shell shell = new Shell();
-			Font font = new Font(null, shell.getFont().getFontData());
-			shell.dispose();
-			return font;
-		} else
-			return new Font(current, current.getSystemFont().getFontData());
-	}
-	
-	/**
-	 * Returns the default font data.  Creates it if necessary.
-	 * @return Font
-	 */
-	public Font defaultFont() {
-		return defaultFontRecord().getBaseFont();
-	}
-	
-	/**
-	 * Returns the default font record.
-	 */
-	private FontRecord defaultFontRecord() {
-		
-		FontRecord record = (FontRecord) stringToFontRecord.get(JFaceResources.DEFAULT_FONT);
-		if(record == null){
-			Font defaultFont = calculateDefaultFont();
-			record = createFont(JFaceResources.DEFAULT_FONT,defaultFont.getFontData());
-			stringToFontRecord.put(JFaceResources.DEFAULT_FONT,record);
-		}
-		return record;
-	}
-	
-	/**
-	 * Returns the default font data.  Creates it if necessary.
-	 */
-	private FontData[] defaultFontData() {
-		return defaultFontRecord().baseData;
-	}
-	
-	/**
-	 * Returns the font data associated with the given symbolic font name.
-	 * Returns the default font data if there is no special value associated
-	 * with that name.
-	 *
-	 * @param symbolicName symbolic font name
-	 * @return the font
-	 */
-	public FontData[] getFontData(String symbolicName) {
+    /**
+     * Table of known font data, keyed by symbolic font name
+     * (key type: <code>String</code>, 
+     *  value type: <code>org.eclipse.swt.graphics.FontData[]</code>).
+     */
+    private Map stringToFontData = new HashMap(7);
 
-		Assert.isNotNull(symbolicName);
-		Object result = stringToFontData.get(symbolicName);
-		if (result == null)
-			return defaultFontData();
+    /**
+     * Collection of Fonts that are now stale to be disposed
+     * when it is safe to do so (i.e. on shutdown).
+     * @see List
+     */
+    private List staleFonts = new ArrayList();
 
-		return (FontData[]) result;
-	}
-	
-	/**
-	 * Returns the font associated with the given symbolic font name.
-	 * Returns the default font if there is no special value associated
-	 * with that name.
-	 *
-	 * @param symbolicName symbolic font name
-	 * @return the font
-	 */
-	public Font get(String symbolicName) {
+    /**
+     * Runnable that cleans up the manager on disposal of the display.
+     */
+    protected Runnable displayRunnable = new Runnable() {
+        public void run() {
+            clearCaches();
+        }
+    };
 
-		return getFontRecord(symbolicName).getBaseFont();
-	}
-	
-	/**
-	 * Returns the bold font associated with the given symbolic font name.
-	 * Returns the bolded default font if there is no special value associated
-	 * with that name.
-	 *
-	 * @param symbolicName symbolic font name
-	 * @return the font
-	 * @since 3.0
-	 */
-	public Font getBold(String symbolicName) {
+    /**
+     * Creates an empty font registry.
+     * <p>
+     * There must be an SWT Display created in the current 
+     * thread before calling this method.
+     * </p>
+     */
+    public FontRegistry() {
+        Display display = Display.getCurrent();
+        Assert.isNotNull(display);
+        hookDisplayDispose(display);
+    }
 
-		return getFontRecord(symbolicName).getBoldFont();
-	}
-	
-	/**
-	 * Returns the italic font associated with the given symbolic font name.
-	 * Returns the italic default font if there is no special value associated
-	 * with that name.
-	 *
-	 * @param symbolicName symbolic font name
-	 * @return the font
-	 * @since 3.0
-	 */
-	public Font getItalic(String symbolicName) {
+    /**
+     * Creates a font registry and initializes its content from
+     * a property file.
+     * <p>
+     * There must be an SWT Display created in the current 
+     * thread before calling this method.
+     * </p>
+     * <p>
+     * The OS name (retrieved using <code>System.getProperty("os.name")</code>)
+     * is converted to lowercase, purged of whitespace, and appended 
+     * as suffix (separated by an underscore <code>'_'</code>) to the given 
+     * location string to yield the base name of a resource bundle
+     * acceptable to <code>ResourceBundle.getBundle</code>.
+     * The standard Java resource bundle mechanism is then used to locate
+     * and open the appropriate properties file, taking into account
+     * locale specific variations.
+     * </p>
+     * <p>
+     * For example, on the Windows 2000 operating system the location string
+     * <code>"com.example.myapp.Fonts"</code> yields the base name 
+     * <code>"com.example.myapp.Fonts_windows2000"</code>. For the US English locale,
+     * this further elaborates to the resource bundle name
+     * <code>"com.example.myapp.Fonts_windows2000_en_us"</code>.
+     * </p>
+     * <p>
+     * If no appropriate OS-specific resource bundle is found, the
+     * process is repeated using the location as the base bundle name.
+     * </p>
+     * <p>
+     * The property file contains entries that look like this:
+     * <pre>
+     *	textfont.0=MS Sans Serif-regular-10
+     *	textfont.1=Times New Roman-regular-10
+     *	
+     *	titlefont.0=MS Sans Serif-regular-12
+     *	titlefont.1=Times New Roman-regular-12
+     * </pre>
+     * Each entry maps a symbolic font names (the font registry keys) with
+     * a "<code>.<it>n</it></code> suffix to standard font names
+     * on the right. The suffix indicated order of preference: 
+     * "<code>.0</code>" indicates the first choice,
+     * "<code>.1</code>" indicates the second choice, and so on.
+     * </p>
+     * The following example shows how to use the font registry:
+     * <pre>
+     *	FontRegistry registry = new FontRegistry("com.example.myapp.fonts");
+     *  Font font = registry.get("textfont");
+     *  control.setFont(font);
+     *  ...
+     * </pre>
+     *
+     * @param location the name of the resource bundle
+     * @param loader the ClassLoader to use to find the resource bundle
+     * @exception MissingResourceException if the resource bundle cannot be found
+     * @since 2.1
+     */
+    public FontRegistry(String location, ClassLoader loader)
+            throws MissingResourceException {
+        Display display = Display.getCurrent();
+        Assert.isNotNull(display);
+        // FIXE: need to respect loader
+        //readResourceBundle(location, loader);
+        readResourceBundle(location);
 
-		return getFontRecord(symbolicName).getItalicFont();
-	}
-	
-	/**
-	 * Return the font record for the key.
-	 * @param symbolicName The key for the record.
-	 * @return FontRecird
-	 */
-	private FontRecord getFontRecord(String symbolicName){
-		Assert.isNotNull(symbolicName);
-		Object result = stringToFontRecord.get(symbolicName);
-		if (result != null)
-			return (FontRecord) result;
+        hookDisplayDispose(display);
+    }
 
-		result = stringToFontData.get(symbolicName);
-		
-		FontRecord fontRecord;
-		
-		if (result == null)
-			fontRecord = defaultFontRecord();
-		else 
-			fontRecord = createFont(symbolicName, (FontData[]) result);
-			
-		if (fontRecord == null) // create may have failed.  Ensure we have a valid font.
-			fontRecord = defaultFontRecord();
-		
-		stringToFontRecord.put(symbolicName, fontRecord);
-		return fontRecord;
+    /**
+     * Load the FontRegistry using the ClassLoader from the PlatformUI
+     * plug-in
+     */
+    public FontRegistry(String location) throws MissingResourceException {
+        // FIXE:
+        //	this(location, WorkbenchPlugin.getDefault().getDescriptor().getPluginClassLoader());
+        this(location, null);
+    }
 
-	}
+    /**
+     * Read the resource bundle at location. Look for a file with the
+     * extension _os_ws first, then _os then just the name.
+     * @param location - String - the location of the file.
+     */
 
+    private void readResourceBundle(String location) {
+        String osname = System.getProperty("os.name").trim(); //$NON-NLS-1$
+        String wsname = SWT.getPlatform();
+        osname = StringConverter.removeWhiteSpaces(osname).toLowerCase();
+        wsname = StringConverter.removeWhiteSpaces(wsname).toLowerCase();
+        String OSLocation = location;
+        String WSLocation = location;
+        ResourceBundle bundle = null;
+        if (osname != null) {
+            OSLocation = location + "_" + osname; //$NON-NLS-1$
+            if (wsname != null)
+                WSLocation = OSLocation + "_" + wsname; //$NON-NLS-1$
+        }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.resource.ResourceRegistry#getKeySet()
-	 */
-	public Set getKeySet() {
-	    return Collections.unmodifiableSet(stringToFontData.keySet());
-	}	
+        try {
+            bundle = ResourceBundle.getBundle(WSLocation);
+            readResourceBundle(bundle, WSLocation);
+        } catch (MissingResourceException wsException) {
+            try {
+                bundle = ResourceBundle.getBundle(OSLocation);
+                readResourceBundle(bundle, WSLocation);
+            } catch (MissingResourceException osException) {
+                if (location != OSLocation) {
+                    bundle = ResourceBundle.getBundle(location);
+                    readResourceBundle(bundle, WSLocation);
+                } else
+                    throw osException;
+            }
+        }
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.resource.ResourceRegistry#hasValueFor(java.lang.String)
-	 */
-	public boolean hasValueFor(String fontKey){
-		return stringToFontData.containsKey(fontKey);
-	}
+    /**
+     * Creates an empty font registry.
+     *
+     * @param display the Display
+     */
+    public FontRegistry(Display display) {
+        Assert.isNotNull(display);
+        hookDisplayDispose(display);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.resource.ResourceRegistry#clearCaches()
-	 */
-	protected void clearCaches() {
+    /**
+     * Find the first valid fontData in the provided list. 
+     * If none are valid return the first one regardless.
+     * If the list is empty return null.
+     * Return null if one cannot be found.
+     * @deprecated use bestDataArray in order to support 
+     * Motif multiple entry fonts.
+     */
+    public FontData bestData(FontData[] fonts, Display display) {
+        for (int i = 0; i < fonts.length; i++) {
+            FontData fd = fonts[i];
 
-		Iterator iterator = stringToFontRecord.values().iterator();
-		while (iterator.hasNext()) {
-			Object next = iterator.next();
-			((FontRecord) next).dispose();
-		}
-		
-		disposeFonts(staleFonts.iterator());
-		stringToFontRecord.clear();
-		staleFonts.clear();
-	}
-	
-	/**
-	 * Dispose of all of the fonts in this iterator.
-	 * @param Iterator over Collection of Font
-	 */
-	private void disposeFonts(Iterator iterator) {
-		while (iterator.hasNext()) {
-			Object next = iterator.next();
-			((Font) next).dispose();
-		}
-	}
-	
-	/**
-	 * Hook a dispose listener on the SWT display.
-	 */
-	private void hookDisplayDispose(Display display) {
-		display.disposeExec(displayRunnable);
-	}
-	
-	/**
-	 * Checks whether the given font is in the list of fixed fonts.
-	 */
-	private boolean isFixedFont(FontData[] fixedFonts, FontData fd) {
-		// Can't use FontData.equals() since some values aren't
-		// set if a fontdata isn't used.
-		int height = fd.getHeight();
-		String name = fd.getName();
-		for (int i = 0; i < fixedFonts.length; i++) {
-			FontData fixed = fixedFonts[i];
-			if (fixed.getHeight() == height && fixed.getName().equals(name))
-				return true;
-		}
-		return false;
-	}
-	/**
-	 * Converts a String into a FontData object.
-	 */
-	private FontData makeFontData(String value)
-		throws MissingResourceException {
-		try {
-			return StringConverter.asFontData(value.trim());
-		} catch (DataFormatException e) {
-			throw new MissingResourceException("Wrong font data format. Value is: \"" + value + "\"", getClass().getName(), value); //$NON-NLS-2$//$NON-NLS-1$
-		}
-	}
+            if (fd == null)
+                break;
 
-	/**
-	 * Adds (or replaces) a font to this font registry under the given
-	 * symbolic name.
-	 * <p>
-	 * A property change event is reported whenever the mapping from
-	 * a symbolic name to a font changes. The source of the event is
-	 * this registry; the property name is the symbolic font name.
-	 * </p>
-	 *
-	 * @param symbolicName the symbolic font name
-	 * @param fontData an Array of FontData
-	 */
-	public void put(String symbolicName, FontData[] fontData) {
-		put(symbolicName, fontData, true);
-	}
+            FontData[] fixedFonts = display.getFontList(fd.getName(), false);
+            if (isFixedFont(fixedFonts, fd)) {
+                return fd;
+            }
 
-	/**
-	 * Adds (or replaces) a font to this font registry under the given
-	 * symbolic name.
-	 * <p>
-	 * A property change event is reported whenever the mapping from
-	 * a symbolic name to a font changes. The source of the event is
-	 * this registry; the property name is the symbolic font name.
-	 * </p>
-	 *
-	 * @param symbolicName the symbolic font name
-	 * @param fontData an Array of FontData
-	 * @param update - fire a font mapping changed if true. False
-	 * 	if this method is called from the get method as no setting
-	 *  has changed.
-	 */
-	private void put(
-		String symbolicName,
-		FontData[] fontData,
-		boolean update) {
+            FontData[] scalableFonts = display.getFontList(fd.getName(), true);
+            if (scalableFonts.length > 0) {
+                return fd;
+            }
+        }
 
-		Assert.isNotNull(symbolicName);
-		Assert.isNotNull(fontData);
+        //None of the provided datas are valid. Return the
+        //first one as it is at least the first choice.
+        if (fonts.length > 0)
+            return fonts[0];
+        else
+            //Nothing specified 
+            return null;
+    }
 
-		FontData[] existing = (FontData[]) stringToFontData.get(symbolicName);
-		if (Arrays.equals(existing, fontData))
-			return;
+    /**
+     * Find the first valid fontData in the provided list. 
+     * If none are valid return the first one regardless.
+     * If the list is empty return null.
+     */
+    public FontData[] bestDataArray(FontData[] fonts, Display display) {
 
-		FontRecord oldFont = (FontRecord) stringToFontRecord.remove(symbolicName);
-		stringToFontData.put(symbolicName, fontData);
-		if (update)
-			fireMappingChanged(symbolicName,existing,fontData);
+        FontData bestData = bestData(fonts, display);
+        if (bestData == null)
+            return null;
+        else {
+            FontData[] datas = new FontData[1];
+            datas[0] = bestData;
+            return datas;
+        }
+    }
 
-		if (oldFont != null)
-			oldFont.addAllocatedFontsToStale(defaultFontRecord().getBaseFont());
-	}
-	/**
-	 * Reads the resource bundle.  This puts FontData[] objects
-	 * in the mapping table.  These will lazily be turned into
-	 * real Font objects when requested.
-	 */
-	private void readResourceBundle(ResourceBundle bundle, String bundleName)
-		throws MissingResourceException {
-		Enumeration keys = bundle.getKeys();
-		while (keys.hasMoreElements()) {
-			String key = (String) keys.nextElement();
-			int pos = key.lastIndexOf('.');
-			if (pos == -1) {
-				stringToFontData.put(
-					key,
-					new FontData[] { makeFontData(bundle.getString(key))});
-			} else {
-				String name = key.substring(0, pos);
-				int i = 0;
-				try {
-					i = Integer.parseInt(key.substring(pos + 1));
-				} catch (NumberFormatException e) {
-					//Panic the file can not be parsed.
-					throw new MissingResourceException("Wrong key format ", bundleName, key); //$NON-NLS-1$
-				}
-				FontData[] elements = (FontData[]) stringToFontData.get(name);
-				if (elements == null) {
-					elements = new FontData[8];
-					stringToFontData.put(name, elements);
-				}
-				if (i > elements.length) {
-					FontData[] na = new FontData[i + 8];
-					System.arraycopy(elements, 0, na, 0, elements.length);
-					elements = na;
-					stringToFontData.put(name, elements);
-				}
-				elements[i] = makeFontData(bundle.getString(key));
-			}
-		}
-	}
+    /**
+     * Creates a new font with the given font datas or <code>null</code>
+     * if there is no data.
+     * @return FontRecord for the new Font or <code>null</code>.
+     */
+    private FontRecord createFont(String symbolicName, FontData[] fonts) {
+        Display display = Display.getCurrent();
+        if (display == null)
+            return null;
+
+        FontData[] validData = bestDataArray(fonts, display);
+        if (validData == null) {
+            //Nothing specified 
+            return null;
+        } else {
+            //Do not fire the update from creation as it is not a property change
+            put(symbolicName, validData, false);
+            Font newFont = new Font(display, validData);
+            return new FontRecord(newFont, validData);
+        }
+    }
+
+    /**
+     * Calculates the default font and returns the result
+     */
+    Font calculateDefaultFont() {
+        Display current = Display.getCurrent();
+        if (current == null) {
+            Shell shell = new Shell();
+            Font font = new Font(null, shell.getFont().getFontData());
+            shell.dispose();
+            return font;
+        } else
+            return new Font(current, current.getSystemFont().getFontData());
+    }
+
+    /**
+     * Returns the default font data.  Creates it if necessary.
+     * @return Font
+     */
+    public Font defaultFont() {
+        return defaultFontRecord().getBaseFont();
+    }
+
+    /**
+     * Returns the default font record.
+     */
+    private FontRecord defaultFontRecord() {
+
+        FontRecord record = (FontRecord) stringToFontRecord
+                .get(JFaceResources.DEFAULT_FONT);
+        if (record == null) {
+            Font defaultFont = calculateDefaultFont();
+            record = createFont(JFaceResources.DEFAULT_FONT, defaultFont
+                    .getFontData());
+            stringToFontRecord.put(JFaceResources.DEFAULT_FONT, record);
+        }
+        return record;
+    }
+
+    /**
+     * Returns the default font data.  Creates it if necessary.
+     */
+    private FontData[] defaultFontData() {
+        return defaultFontRecord().baseData;
+    }
+
+    /**
+     * Returns the font data associated with the given symbolic font name.
+     * Returns the default font data if there is no special value associated
+     * with that name.
+     *
+     * @param symbolicName symbolic font name
+     * @return the font
+     */
+    public FontData[] getFontData(String symbolicName) {
+
+        Assert.isNotNull(symbolicName);
+        Object result = stringToFontData.get(symbolicName);
+        if (result == null)
+            return defaultFontData();
+
+        return (FontData[]) result;
+    }
+
+    /**
+     * Returns the font associated with the given symbolic font name.
+     * Returns the default font if there is no special value associated
+     * with that name.
+     *
+     * @param symbolicName symbolic font name
+     * @return the font
+     */
+    public Font get(String symbolicName) {
+
+        return getFontRecord(symbolicName).getBaseFont();
+    }
+
+    /**
+     * Returns the bold font associated with the given symbolic font name.
+     * Returns the bolded default font if there is no special value associated
+     * with that name.
+     *
+     * @param symbolicName symbolic font name
+     * @return the font
+     * @since 3.0
+     */
+    public Font getBold(String symbolicName) {
+
+        return getFontRecord(symbolicName).getBoldFont();
+    }
+
+    /**
+     * Returns the italic font associated with the given symbolic font name.
+     * Returns the italic default font if there is no special value associated
+     * with that name.
+     *
+     * @param symbolicName symbolic font name
+     * @return the font
+     * @since 3.0
+     */
+    public Font getItalic(String symbolicName) {
+
+        return getFontRecord(symbolicName).getItalicFont();
+    }
+
+    /**
+     * Return the font record for the key.
+     * @param symbolicName The key for the record.
+     * @return FontRecird
+     */
+    private FontRecord getFontRecord(String symbolicName) {
+        Assert.isNotNull(symbolicName);
+        Object result = stringToFontRecord.get(symbolicName);
+        if (result != null)
+            return (FontRecord) result;
+
+        result = stringToFontData.get(symbolicName);
+
+        FontRecord fontRecord;
+
+        if (result == null)
+            fontRecord = defaultFontRecord();
+        else
+            fontRecord = createFont(symbolicName, (FontData[]) result);
+
+        if (fontRecord == null) // create may have failed.  Ensure we have a valid font.
+            fontRecord = defaultFontRecord();
+
+        stringToFontRecord.put(symbolicName, fontRecord);
+        return fontRecord;
+
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.resource.ResourceRegistry#getKeySet()
+     */
+    public Set getKeySet() {
+        return Collections.unmodifiableSet(stringToFontData.keySet());
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.resource.ResourceRegistry#hasValueFor(java.lang.String)
+     */
+    public boolean hasValueFor(String fontKey) {
+        return stringToFontData.containsKey(fontKey);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.resource.ResourceRegistry#clearCaches()
+     */
+    protected void clearCaches() {
+
+        Iterator iterator = stringToFontRecord.values().iterator();
+        while (iterator.hasNext()) {
+            Object next = iterator.next();
+            ((FontRecord) next).dispose();
+        }
+
+        disposeFonts(staleFonts.iterator());
+        stringToFontRecord.clear();
+        staleFonts.clear();
+    }
+
+    /**
+     * Dispose of all of the fonts in this iterator.
+     * @param Iterator over Collection of Font
+     */
+    private void disposeFonts(Iterator iterator) {
+        while (iterator.hasNext()) {
+            Object next = iterator.next();
+            ((Font) next).dispose();
+        }
+    }
+
+    /**
+     * Hook a dispose listener on the SWT display.
+     */
+    private void hookDisplayDispose(Display display) {
+        display.disposeExec(displayRunnable);
+    }
+
+    /**
+     * Checks whether the given font is in the list of fixed fonts.
+     */
+    private boolean isFixedFont(FontData[] fixedFonts, FontData fd) {
+        // Can't use FontData.equals() since some values aren't
+        // set if a fontdata isn't used.
+        int height = fd.getHeight();
+        String name = fd.getName();
+        for (int i = 0; i < fixedFonts.length; i++) {
+            FontData fixed = fixedFonts[i];
+            if (fixed.getHeight() == height && fixed.getName().equals(name))
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * Converts a String into a FontData object.
+     */
+    private FontData makeFontData(String value) throws MissingResourceException {
+        try {
+            return StringConverter.asFontData(value.trim());
+        } catch (DataFormatException e) {
+            throw new MissingResourceException(
+                    "Wrong font data format. Value is: \"" + value + "\"", getClass().getName(), value); //$NON-NLS-2$//$NON-NLS-1$
+        }
+    }
+
+    /**
+     * Adds (or replaces) a font to this font registry under the given
+     * symbolic name.
+     * <p>
+     * A property change event is reported whenever the mapping from
+     * a symbolic name to a font changes. The source of the event is
+     * this registry; the property name is the symbolic font name.
+     * </p>
+     *
+     * @param symbolicName the symbolic font name
+     * @param fontData an Array of FontData
+     */
+    public void put(String symbolicName, FontData[] fontData) {
+        put(symbolicName, fontData, true);
+    }
+
+    /**
+     * Adds (or replaces) a font to this font registry under the given
+     * symbolic name.
+     * <p>
+     * A property change event is reported whenever the mapping from
+     * a symbolic name to a font changes. The source of the event is
+     * this registry; the property name is the symbolic font name.
+     * </p>
+     *
+     * @param symbolicName the symbolic font name
+     * @param fontData an Array of FontData
+     * @param update - fire a font mapping changed if true. False
+     * 	if this method is called from the get method as no setting
+     *  has changed.
+     */
+    private void put(String symbolicName, FontData[] fontData, boolean update) {
+
+        Assert.isNotNull(symbolicName);
+        Assert.isNotNull(fontData);
+
+        FontData[] existing = (FontData[]) stringToFontData.get(symbolicName);
+        if (Arrays.equals(existing, fontData))
+            return;
+
+        FontRecord oldFont = (FontRecord) stringToFontRecord
+                .remove(symbolicName);
+        stringToFontData.put(symbolicName, fontData);
+        if (update)
+            fireMappingChanged(symbolicName, existing, fontData);
+
+        if (oldFont != null)
+            oldFont.addAllocatedFontsToStale(defaultFontRecord().getBaseFont());
+    }
+
+    /**
+     * Reads the resource bundle.  This puts FontData[] objects
+     * in the mapping table.  These will lazily be turned into
+     * real Font objects when requested.
+     */
+    private void readResourceBundle(ResourceBundle bundle, String bundleName)
+            throws MissingResourceException {
+        Enumeration keys = bundle.getKeys();
+        while (keys.hasMoreElements()) {
+            String key = (String) keys.nextElement();
+            int pos = key.lastIndexOf('.');
+            if (pos == -1) {
+                stringToFontData.put(key, new FontData[] { makeFontData(bundle
+                        .getString(key)) });
+            } else {
+                String name = key.substring(0, pos);
+                int i = 0;
+                try {
+                    i = Integer.parseInt(key.substring(pos + 1));
+                } catch (NumberFormatException e) {
+                    //Panic the file can not be parsed.
+                    throw new MissingResourceException(
+                            "Wrong key format ", bundleName, key); //$NON-NLS-1$
+                }
+                FontData[] elements = (FontData[]) stringToFontData.get(name);
+                if (elements == null) {
+                    elements = new FontData[8];
+                    stringToFontData.put(name, elements);
+                }
+                if (i > elements.length) {
+                    FontData[] na = new FontData[i + 8];
+                    System.arraycopy(elements, 0, na, 0, elements.length);
+                    elements = na;
+                    stringToFontData.put(name, elements);
+                }
+                elements[i] = makeFontData(bundle.getString(key));
+            }
+        }
+    }
 }

@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.tests.stress;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -17,19 +18,19 @@ import junit.framework.TestSuite;
  */
 public class OpenCloseTestSuite extends TestSuite {
 
-	/**
-	 * Returns the suite.  This is required to
-	 * use the JUnit Launcher.
-	 */
-	public static Test suite() {
-		return new OpenCloseTestSuite();
-	}
-	
-	/**
-	 * Construct the test suite.
-	 */
-	public OpenCloseTestSuite() {
-		addTest(new TestSuite(OpenCloseTest.class));
-	
-	}
+    /**
+     * Returns the suite.  This is required to
+     * use the JUnit Launcher.
+     */
+    public static Test suite() {
+        return new OpenCloseTestSuite();
+    }
+
+    /**
+     * Construct the test suite.
+     */
+    public OpenCloseTestSuite() {
+        addTest(new TestSuite(OpenCloseTest.class));
+
+    }
 }

@@ -86,7 +86,7 @@ public final class MutableContextManager extends AbstractContextManager
             if (compare == 0) {
                 compare = contextId1.compareTo(contextId2);
             }
-            
+
             return compare;
         }
     }
@@ -115,7 +115,7 @@ public final class MutableContextManager extends AbstractContextManager
             addAll(contextIds);
         }
     }
-    
+
     static boolean isContextDefinitionChildOf(String ancestor, String id,
             Map contextDefinitionsById) {
         Collection visited = new HashSet();
@@ -127,7 +127,8 @@ public final class MutableContextManager extends AbstractContextManager
 
             if (contextDefinition != null
                     && Util.equals(id = contextDefinition.getParentId(),
-                            ancestor)) return true;
+                            ancestor))
+                return true;
         }
 
         return false;
@@ -150,7 +151,8 @@ public final class MutableContextManager extends AbstractContextManager
     }
 
     public MutableContextManager(IContextRegistry contextRegistry) {
-        if (contextRegistry == null) throw new NullPointerException();
+        if (contextRegistry == null)
+            throw new NullPointerException();
 
         this.contextRegistry = contextRegistry;
 
@@ -167,7 +169,8 @@ public final class MutableContextManager extends AbstractContextManager
     }
 
     public IContext getContext(String contextId) {
-        if (contextId == null) throw new NullPointerException();
+        if (contextId == null)
+            throw new NullPointerException();
 
         Context context = (Context) contextsById.get(contextId);
 
@@ -196,7 +199,8 @@ public final class MutableContextManager extends AbstractContextManager
             ContextEvent contextEvent = (ContextEvent) entry.getValue();
             Context context = (Context) contextsById.get(contextId);
 
-            if (context != null) context.fireContextChanged(contextEvent);
+            if (context != null)
+                context.fireContextChanged(contextEvent);
         }
     }
 
@@ -212,13 +216,15 @@ public final class MutableContextManager extends AbstractContextManager
                     .next();
             String name = contextDefinition.getName();
 
-            if (name == null || name.length() == 0) iterator.remove();
+            if (name == null || name.length() == 0)
+                iterator.remove();
         }
 
         for (Iterator iterator = contextDefinitionsById.keySet().iterator(); iterator
                 .hasNext();)
             if (!isContextDefinitionChildOf(null, (String) iterator.next(),
-                    contextDefinitionsById)) iterator.remove();
+                    contextDefinitionsById))
+                iterator.remove();
         this.contextDefinitionsById = contextDefinitionsById;
         boolean definedContextIdsChanged = false;
         Set definedContextIds = new HashSet(contextDefinitionsById.keySet());
@@ -233,12 +239,12 @@ public final class MutableContextManager extends AbstractContextManager
         Map contextEventsByContextId = updateContexts(contextsById.keySet());
 
         if (definedContextIdsChanged)
-                fireContextManagerChanged(new ContextManagerEvent(this,
-                        definedContextIdsChanged, false,
-                        previouslyDefinedContextIds, null));
+            fireContextManagerChanged(new ContextManagerEvent(this,
+                    definedContextIdsChanged, false,
+                    previouslyDefinedContextIds, null));
 
         if (contextEventsByContextId != null)
-                notifyContexts(contextEventsByContextId);
+            notifyContexts(contextEventsByContextId);
     }
 
     public void setEnabledContextIds(Set enabledContextIds) {
@@ -255,11 +261,11 @@ public final class MutableContextManager extends AbstractContextManager
         }
 
         if (contextEventsByContextId != null)
-                notifyContexts(contextEventsByContextId);
+            notifyContexts(contextEventsByContextId);
 
         if (contextManagerChanged)
-                fireContextManagerChanged(new ContextManagerEvent(this, false,
-                        true, null, previouslyEnabledContextIds));
+            fireContextManagerChanged(new ContextManagerEvent(this, false,
+                    true, null, previouslyEnabledContextIds));
     }
 
     private ContextEvent updateContext(Context context) {
@@ -295,7 +301,7 @@ public final class MutableContextManager extends AbstractContextManager
                 ContextEvent contextEvent = updateContext(context);
 
                 if (contextEvent != null)
-                        contextEventsByContextId.put(contextId, contextEvent);
+                    contextEventsByContextId.put(contextId, contextEvent);
             }
         }
 

@@ -15,14 +15,14 @@ import org.eclipse.ui.presentations.IStackPresentationSite;
 
 public class SystemMenuMaximize extends SystemMenuStateChange {
 
-	/**
-	 * @param site
-	 * @param name
-	 * @param state
-	 */
-	public SystemMenuMaximize(IStackPresentationSite site) {
-		super(site, WorkbenchMessages.getString("PartPane.maximize"), //$NON-NLS-1$
-				IStackPresentationSite.STATE_MAXIMIZED);
-	}
+    /**
+     * @param site
+     * @param name
+     * @param state
+     */
+    public SystemMenuMaximize(IStackPresentationSite site) {
+        super(site, WorkbenchMessages.getString("PartPane.maximize"), //$NON-NLS-1$
+                IStackPresentationSite.STATE_MAXIMIZED);
+    }
 
 }

@@ -10,38 +10,37 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
-
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ICheckable;
 
-
 public abstract class StructuredItemViewerTest extends StructuredViewerTest {
 
-	public StructuredItemViewerTest(String name) {
-		super(name);
-	}
-public void testCheckElement() {
+    public StructuredItemViewerTest(String name) {
+        super(name);
+    }
 
-	if (fViewer instanceof ICheckable) {
-		TestElement first = fRootElement.getFirstChild();
-		TestElement firstfirst = first.getFirstChild();
+    public void testCheckElement() {
 
-		ICheckable ctv = (ICheckable) fViewer;
-		ctv.setChecked(first, true);
-		assertTrue(ctv.getChecked(first));
+        if (fViewer instanceof ICheckable) {
+            TestElement first = fRootElement.getFirstChild();
+            TestElement firstfirst = first.getFirstChild();
 
-		// checking an invisible element
-		if (fViewer instanceof AbstractTreeViewer) {
-			// The first child of the first child can only be resolved in a tree
-			assertTrue(ctv.setChecked(firstfirst, true));
-			assertTrue(ctv.getChecked(firstfirst));
-		} else {
-			assertTrue(!ctv.setChecked(firstfirst, true));
-			assertTrue(!ctv.getChecked(firstfirst));
-		}
+            ICheckable ctv = (ICheckable) fViewer;
+            ctv.setChecked(first, true);
+            assertTrue(ctv.getChecked(first));
 
-		ctv.setChecked(first, false);
-		assertTrue(!ctv.getChecked(first));
-	}
-}
+            // checking an invisible element
+            if (fViewer instanceof AbstractTreeViewer) {
+                // The first child of the first child can only be resolved in a tree
+                assertTrue(ctv.setChecked(firstfirst, true));
+                assertTrue(ctv.getChecked(firstfirst));
+            } else {
+                assertTrue(!ctv.setChecked(firstfirst, true));
+                assertTrue(!ctv.getChecked(firstfirst));
+            }
+
+            ctv.setChecked(first, false);
+            assertTrue(!ctv.getChecked(first));
+        }
+    }
 }

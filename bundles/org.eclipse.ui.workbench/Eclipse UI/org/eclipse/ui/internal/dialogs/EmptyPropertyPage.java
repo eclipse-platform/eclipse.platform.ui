@@ -20,11 +20,11 @@ import org.eclipse.ui.dialogs.PropertyPage;
  * for which no page is suppplied.
  */
 public class EmptyPropertyPage extends PropertyPage {
-/**
- * Creates empty composite for this page content.
- */
+    /**
+     * Creates empty composite for this page content.
+     */
 
-protected Control createContents(Composite parent) {
-	return new Composite(parent, SWT.NULL);
-}
+    protected Control createContents(Composite parent) {
+        return new Composite(parent, SWT.NULL);
+    }
 }

@@ -95,12 +95,13 @@ public class WidgetMethodHandler extends AbstractHandler implements
         final Control focusControl = Display.getCurrent().getFocusControl();
         try {
             if (focusControl != null) {
-                return focusControl.getClass().getMethod(methodName, NO_PARAMETERS);
+                return focusControl.getClass().getMethod(methodName,
+                        NO_PARAMETERS);
             }
         } catch (NoSuchMethodException e) {
             // Fall through....
         }
-        
+
         return null;
     }
 

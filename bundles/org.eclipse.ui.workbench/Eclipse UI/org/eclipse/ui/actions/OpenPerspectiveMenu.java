@@ -43,121 +43,134 @@ import org.eclipse.ui.internal.util.PrefUtil;
  * @deprecated  See IWorkbench.showPerspective methods.
  */
 public class OpenPerspectiveMenu extends PerspectiveMenu {
-	private IAdaptable pageInput;
-	private IMenuManager parentMenuManager;
-	private boolean replaceEnabled = true;
+    private IAdaptable pageInput;
 
-	private static String PAGE_PROBLEMS_TITLE = WorkbenchMessages.getString("OpenPerspectiveMenu.pageProblemsTitle"); //$NON-NLS-1$
-	private static String PAGE_PROBLEMS_MESSAGE = WorkbenchMessages.getString("OpenPerspectiveMenu.errorUnknownInput"); //$NON-NLS-1$
-/**
- * Constructs a new menu.
- */
-public OpenPerspectiveMenu(IMenuManager menuManager, IWorkbenchWindow window) {
-	this(window);
-	this.parentMenuManager = menuManager;
-}
-/**
- * Constructs a new instance of <code>OpenNewPageMenu</code>. 
- * <p>
- * If this method is used be sure to set the page input by invoking
- * <code>setPageInput</code>.  The page input is required when the user
- * selects an item in the menu.  At that point the menu will attempt to
- * open a new page with the selected perspective and page input.  If there
- * is no page input an error dialog will be opened.
- * </p>
- *
- * @param window the window where a new page is created if an item within
- *		the menu is selected
- */
-public OpenPerspectiveMenu(IWorkbenchWindow window) {
-	this(window, null);
-	showActive(true);
-}
-/**
- * Constructs a new instance of <code>OpenNewPageMenu</code>.  
- *
- * @param window the window where a new page is created if an item within
- *		the menu is selected
- * @param input the page input
- */
-public OpenPerspectiveMenu(IWorkbenchWindow window, IAdaptable input) {
-	super(window, "Open New Page Menu");//$NON-NLS-1$
-	this.pageInput = input;
-}
-/**
- * Return whether or not the menu can be run. Answer true unless the current mode
- * is replace and the replaceEnabled flag is false.
- */
-private boolean canRun() {
-	if (openPerspectiveSetting()
-		.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE))
-		return replaceEnabled;
-	return true;
-}
-/**
- * Return the current perspective setting.
- */
-private String openPerspectiveSetting() {
-    return PrefUtil.getAPIPreferenceStore().getString(IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE);
-}
-/**
- * Runs an action for a particular perspective. Opens the perspective supplied
- * in a new window or a new page depending on the workbench preference.
- *
- * @param desc the selected perspective
- */
-protected void run(IPerspectiveDescriptor desc) {
-	openPage(desc, 0);
-}
-/**
- * Runs an action for a particular perspective. Check for shift or control events
- * to decide which event to run.
- *
- * @param desc the selected perspective
- * @param event the event sent along with the selection callback
- */
-protected void run(IPerspectiveDescriptor desc, SelectionEvent event) {
-	openPage(desc, event.stateMask);
-}
-/* (non-Javadoc)
- * Opens a new page with a particular perspective and input.
- */
-private void openPage(IPerspectiveDescriptor desc, int keyStateMask) {
-	// Verify page input.
-	if (pageInput == null) {
-		MessageDialog.openError(
-			getWindow().getShell(),
-			PAGE_PROBLEMS_TITLE,
-			PAGE_PROBLEMS_MESSAGE);
-		return;
-	}
+    private IMenuManager parentMenuManager;
 
-	// Open the page.
-	try {
-		getWindow().getWorkbench().showPerspective(desc.getId(), getWindow(), pageInput);
-	} catch (WorkbenchException e) {
-		MessageDialog.openError(
-			getWindow().getShell(),
-			PAGE_PROBLEMS_TITLE,
-			e.getMessage());
-	}
-}
-/**
- * Sets the page input.  
- *
- * @param input the page input
- */
-public void setPageInput(IAdaptable input) {
-	pageInput = input;
-}
-/**
- * Set whether replace menu item is enabled within its parent menu.
- */
-public void setReplaceEnabled(boolean isEnabled) {
-	if (replaceEnabled != isEnabled) {
-		replaceEnabled = isEnabled;
-		if (canRun() && parentMenuManager != null)
-			parentMenuManager.update(true);
-	}
-}
+    private boolean replaceEnabled = true;
+
+    private static String PAGE_PROBLEMS_TITLE = WorkbenchMessages
+            .getString("OpenPerspectiveMenu.pageProblemsTitle"); //$NON-NLS-1$
+
+    private static String PAGE_PROBLEMS_MESSAGE = WorkbenchMessages
+            .getString("OpenPerspectiveMenu.errorUnknownInput"); //$NON-NLS-1$
+
+    /**
+     * Constructs a new menu.
+     */
+    public OpenPerspectiveMenu(IMenuManager menuManager, IWorkbenchWindow window) {
+        this(window);
+        this.parentMenuManager = menuManager;
+    }
+
+    /**
+     * Constructs a new instance of <code>OpenNewPageMenu</code>. 
+     * <p>
+     * If this method is used be sure to set the page input by invoking
+     * <code>setPageInput</code>.  The page input is required when the user
+     * selects an item in the menu.  At that point the menu will attempt to
+     * open a new page with the selected perspective and page input.  If there
+     * is no page input an error dialog will be opened.
+     * </p>
+     *
+     * @param window the window where a new page is created if an item within
+     *		the menu is selected
+     */
+    public OpenPerspectiveMenu(IWorkbenchWindow window) {
+        this(window, null);
+        showActive(true);
+    }
+
+    /**
+     * Constructs a new instance of <code>OpenNewPageMenu</code>.  
+     *
+     * @param window the window where a new page is created if an item within
+     *		the menu is selected
+     * @param input the page input
+     */
+    public OpenPerspectiveMenu(IWorkbenchWindow window, IAdaptable input) {
+        super(window, "Open New Page Menu");//$NON-NLS-1$
+        this.pageInput = input;
+    }
+
+    /**
+     * Return whether or not the menu can be run. Answer true unless the current mode
+     * is replace and the replaceEnabled flag is false.
+     */
+    private boolean canRun() {
+        if (openPerspectiveSetting().equals(
+                IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE))
+            return replaceEnabled;
+        return true;
+    }
+
+    /**
+     * Return the current perspective setting.
+     */
+    private String openPerspectiveSetting() {
+        return PrefUtil.getAPIPreferenceStore().getString(
+                IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE);
+    }
+
+    /**
+     * Runs an action for a particular perspective. Opens the perspective supplied
+     * in a new window or a new page depending on the workbench preference.
+     *
+     * @param desc the selected perspective
+     */
+    protected void run(IPerspectiveDescriptor desc) {
+        openPage(desc, 0);
+    }
+
+    /**
+     * Runs an action for a particular perspective. Check for shift or control events
+     * to decide which event to run.
+     *
+     * @param desc the selected perspective
+     * @param event the event sent along with the selection callback
+     */
+    protected void run(IPerspectiveDescriptor desc, SelectionEvent event) {
+        openPage(desc, event.stateMask);
+    }
+
+    /* (non-Javadoc)
+     * Opens a new page with a particular perspective and input.
+     */
+    private void openPage(IPerspectiveDescriptor desc, int keyStateMask) {
+        // Verify page input.
+        if (pageInput == null) {
+            MessageDialog.openError(getWindow().getShell(),
+                    PAGE_PROBLEMS_TITLE, PAGE_PROBLEMS_MESSAGE);
+            return;
+        }
+
+        // Open the page.
+        try {
+            getWindow().getWorkbench().showPerspective(desc.getId(),
+                    getWindow(), pageInput);
+        } catch (WorkbenchException e) {
+            MessageDialog.openError(getWindow().getShell(),
+                    PAGE_PROBLEMS_TITLE, e.getMessage());
+        }
+    }
+
+    /**
+     * Sets the page input.  
+     *
+     * @param input the page input
+     */
+    public void setPageInput(IAdaptable input) {
+        pageInput = input;
+    }
+
+    /**
+     * Set whether replace menu item is enabled within its parent menu.
+     */
+    public void setReplaceEnabled(boolean isEnabled) {
+        if (replaceEnabled != isEnabled) {
+            replaceEnabled = isEnabled;
+            if (canRun() && parentMenuManager != null)
+                parentMenuManager.update(true);
+        }
+    }
 }

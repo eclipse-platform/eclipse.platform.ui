@@ -34,50 +34,49 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * be filtered out.
  */
 class NewTaskAction extends TaskAction {
-	
-	/**
-	 * Creates the action.
-	 */
-	public NewTaskAction(TaskList tasklist, String id) {
-		super(tasklist, id);
-		WorkbenchHelp.setHelp(this, ITaskListHelpContextIds.NEW_TASK_ACTION);
-	}
 
-	/**
-	 * Opens the new task dialog and shows the newly created task when done.
-	 * The new task is created on the currently selected resource.
-	 */
-	public void run() {
-		TaskPropertiesDialog dialog = new TaskPropertiesDialog(getShell());
-		dialog.setResource(getTaskList().getResource());
-		int result = dialog.open();
-		if (result == Dialog.OK) {
-			showMarker(dialog.getMarker());
-		}
-	}
+    /**
+     * Creates the action.
+     */
+    public NewTaskAction(TaskList tasklist, String id) {
+        super(tasklist, id);
+        WorkbenchHelp.setHelp(this, ITaskListHelpContextIds.NEW_TASK_ACTION);
+    }
 
-	/**
-	 * Show the newly created marker.
-	 */
-	private void showMarker(final IMarker marker) {
-		if (marker == null) {
-			return;
-		}
-		if (getTaskList().shouldShow(marker)) {
-			// Need to do this in an asyncExec, even though we're in the UI thread here,
-			// since the task list updates itself with the addition in an asyncExec,
-			// which hasn't been processed yet.
-			getShell().getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					getTaskList().setSelection(new StructuredSelection(marker), true);
-				}
-			});
-		}
-		else {
-			MessageDialog.openInformation(
-				getShell(),
-				TaskListMessages.getString("NewTask.notShownTitle"), //$NON-NLS-1$
-				TaskListMessages.getString("NewTask.notShownMsg")); //$NON-NLS-1$
-		}
-	}
+    /**
+     * Opens the new task dialog and shows the newly created task when done.
+     * The new task is created on the currently selected resource.
+     */
+    public void run() {
+        TaskPropertiesDialog dialog = new TaskPropertiesDialog(getShell());
+        dialog.setResource(getTaskList().getResource());
+        int result = dialog.open();
+        if (result == Dialog.OK) {
+            showMarker(dialog.getMarker());
+        }
+    }
+
+    /**
+     * Show the newly created marker.
+     */
+    private void showMarker(final IMarker marker) {
+        if (marker == null) {
+            return;
+        }
+        if (getTaskList().shouldShow(marker)) {
+            // Need to do this in an asyncExec, even though we're in the UI thread here,
+            // since the task list updates itself with the addition in an asyncExec,
+            // which hasn't been processed yet.
+            getShell().getDisplay().asyncExec(new Runnable() {
+                public void run() {
+                    getTaskList().setSelection(new StructuredSelection(marker),
+                            true);
+                }
+            });
+        } else {
+            MessageDialog.openInformation(getShell(), TaskListMessages
+                    .getString("NewTask.notShownTitle"), //$NON-NLS-1$
+                    TaskListMessages.getString("NewTask.notShownMsg")); //$NON-NLS-1$
+        }
+    }
 }

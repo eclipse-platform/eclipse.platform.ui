@@ -18,39 +18,39 @@ import junit.framework.TestSuite;
  */
 public class KeysTestSuite extends TestSuite {
 
-	/**
-	 * Returns the suite. This is required to use the JUnit Launcher.
-	 */
-	public static Test suite() {
-		return new KeysTestSuite();
-	}
+    /**
+     * Returns the suite. This is required to use the JUnit Launcher.
+     */
+    public static Test suite() {
+        return new KeysTestSuite();
+    }
 
-	/**
-	 * Construct the test suite.
-	 */
-	public KeysTestSuite() {
-	    // TODO This no longer works due to focus issues related to key bindings
-		//addTest(new TestSuite(Bug36420Test.class));
-//		TODO This test is broken until JDT fixes Bug 44148
-//		addTest(new TestSuite(Bug36537Test.class));
-//		TODO Intermittent failure.  SWT Bug 44344.  XGrabPointer?
-//		addTest(new TestSuite(Bug40023Test.class));
-		addTest(new TestSuite(Bug42024Test.class));
-		addTest(new TestSuite(Bug42035Test.class));
-//		TODO Logging piece of fix did not go in M4.
-//		addTest(new TestSuite(Bug42627Test.class));
-		addTest(new TestSuite(Bug43168Test.class));
-		addTest(new TestSuite(Bug43321Test.class));
-		addTest(new TestSuite(Bug43538Test.class));
-		addTest(new TestSuite(Bug43597Test.class));
-		addTest(new TestSuite(Bug43610Test.class));
-		addTest(new TestSuite(Bug43800Test.class));
-//		TODO disabled since it refers to the Java builder and nature,
-//      which are not available in an RCP build
-//		addTest(new TestSuite(Bug44460Test.class));
-		/* TODO disabled as it is causing failures in the nightly builds.
-		 * focus related?
-		 */
-		//addTest(new TestSuite(Bug53489Test.class));
-	}
+    /**
+     * Construct the test suite.
+     */
+    public KeysTestSuite() {
+        // TODO This no longer works due to focus issues related to key bindings
+        //addTest(new TestSuite(Bug36420Test.class));
+        //		TODO This test is broken until JDT fixes Bug 44148
+        //		addTest(new TestSuite(Bug36537Test.class));
+        //		TODO Intermittent failure.  SWT Bug 44344.  XGrabPointer?
+        //		addTest(new TestSuite(Bug40023Test.class));
+        addTest(new TestSuite(Bug42024Test.class));
+        addTest(new TestSuite(Bug42035Test.class));
+        //		TODO Logging piece of fix did not go in M4.
+        //		addTest(new TestSuite(Bug42627Test.class));
+        addTest(new TestSuite(Bug43168Test.class));
+        addTest(new TestSuite(Bug43321Test.class));
+        addTest(new TestSuite(Bug43538Test.class));
+        addTest(new TestSuite(Bug43597Test.class));
+        addTest(new TestSuite(Bug43610Test.class));
+        addTest(new TestSuite(Bug43800Test.class));
+        //		TODO disabled since it refers to the Java builder and nature,
+        //      which are not available in an RCP build
+        //		addTest(new TestSuite(Bug44460Test.class));
+        /* TODO disabled as it is causing failures in the nightly builds.
+         * focus related?
+         */
+        //addTest(new TestSuite(Bug53489Test.class));
+    }
 }

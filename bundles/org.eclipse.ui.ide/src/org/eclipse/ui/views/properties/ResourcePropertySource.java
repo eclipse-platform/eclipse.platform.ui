@@ -23,298 +23,314 @@ import org.eclipse.jface.viewers.IBasicPropertyConstants;
  * A Resource property source.
  */
 public class ResourcePropertySource implements IPropertySource {
-	protected static String NOT_LOCAL_TEXT = IDEPropertiesMessages.getString("PropertySource.notLocal"); //$NON-NLS-1$
-	protected static String FILE_NOT_FOUND = IDEPropertiesMessages.getString("PropertySource.notFound"); //$NON-NLS-1$
-	protected static String UNDEFINED_PATH_VARIABLE = IDEPropertiesMessages.getString("PropertySource.undefinedPathVariable"); //$NON-NLS-1$
-	protected static String FILE_NOT_EXIST_TEXT = IDEPropertiesMessages.getString("PropertySource.fileNotExist"); //$NON-NLS-1$
-	
-	// The element for the property source
-	protected IResource element;
+    protected static String NOT_LOCAL_TEXT = IDEPropertiesMessages
+            .getString("PropertySource.notLocal"); //$NON-NLS-1$
 
-	// Error message when setting a property incorrectly
-	protected String errorMessage = IDEPropertiesMessages.getString("PropertySource.readOnly"); //$NON-NLS-1$
+    protected static String FILE_NOT_FOUND = IDEPropertiesMessages
+            .getString("PropertySource.notFound"); //$NON-NLS-1$
 
-	// Property Descriptors
-	static protected IPropertyDescriptor[] propertyDescriptors =
-		new IPropertyDescriptor[7];
-	static protected IPropertyDescriptor[] propertyDescriptorsLinkVariable =
-		new IPropertyDescriptor[8];
-	{
-		PropertyDescriptor descriptor;
+    protected static String UNDEFINED_PATH_VARIABLE = IDEPropertiesMessages
+            .getString("PropertySource.undefinedPathVariable"); //$NON-NLS-1$
 
-		// resource name
-		descriptor =
-			new PropertyDescriptor(
-				IBasicPropertyConstants.P_TEXT,
-				IResourcePropertyConstants.P_LABEL_RES);
-		descriptor.setAlwaysIncompatible(true);
-		descriptor.setCategory(IResourcePropertyConstants.P_FILE_SYSTEM_CATEGORY);
-		propertyDescriptors[0] = descriptor;
-		propertyDescriptorsLinkVariable[0] = descriptor;
+    protected static String FILE_NOT_EXIST_TEXT = IDEPropertiesMessages
+            .getString("PropertySource.fileNotExist"); //$NON-NLS-1$
 
-		// Relative path
-		descriptor =
-			new PropertyDescriptor(
-				IResourcePropertyConstants.P_PATH_RES,
-				IResourcePropertyConstants.P_DISPLAYPATH_RES);
-		descriptor.setAlwaysIncompatible(true);
-		descriptor.setCategory(IResourcePropertyConstants.P_FILE_SYSTEM_CATEGORY);
-		propertyDescriptors[1] = descriptor;
-		propertyDescriptorsLinkVariable[1] = descriptor;
-		
-		// readwrite state
-		descriptor =
-			new PropertyDescriptor(
-				IResourcePropertyConstants.P_EDITABLE_RES,
-				IResourcePropertyConstants.P_DISPLAYEDITABLE_RES);
-		descriptor.setAlwaysIncompatible(true);
-		descriptor.setCategory(IResourcePropertyConstants.P_FILE_SYSTEM_CATEGORY);
-		propertyDescriptors[2] = descriptor;
-		propertyDescriptorsLinkVariable[2] = descriptor;
+    // The element for the property source
+    protected IResource element;
 
-		// derived state
-		descriptor =
-			new PropertyDescriptor(
-				IResourcePropertyConstants.P_DERIVED_RES,
-				IResourcePropertyConstants.P_DISPLAYDERIVED_RES);
-		descriptor.setAlwaysIncompatible(true);
-		descriptor.setCategory(IResourcePropertyConstants.P_FILE_SYSTEM_CATEGORY);
-		propertyDescriptors[3] = descriptor;
-		propertyDescriptorsLinkVariable[3] = descriptor;
+    // Error message when setting a property incorrectly
+    protected String errorMessage = IDEPropertiesMessages
+            .getString("PropertySource.readOnly"); //$NON-NLS-1$
 
-		// last modified state
-		descriptor =
-			new PropertyDescriptor(
-				IResourcePropertyConstants.P_LAST_MODIFIED_RES,
-				IResourcePropertyConstants.P_DISPLAY_LAST_MODIFIED);
-		descriptor.setAlwaysIncompatible(true);
-		descriptor.setCategory(IResourcePropertyConstants.P_FILE_SYSTEM_CATEGORY);
-		propertyDescriptors[4] = descriptor;
-		propertyDescriptorsLinkVariable[4] = descriptor;
+    // Property Descriptors
+    static protected IPropertyDescriptor[] propertyDescriptors = new IPropertyDescriptor[7];
 
-		// link state
-		descriptor =
-			new PropertyDescriptor(
-				IResourcePropertyConstants.P_LINKED_RES,
-				IResourcePropertyConstants.P_DISPLAYLINKED_RES);
-		descriptor.setAlwaysIncompatible(true);
-		descriptor.setCategory(IResourcePropertyConstants.P_FILE_SYSTEM_CATEGORY);
-		propertyDescriptors[5] = descriptor;
-		propertyDescriptorsLinkVariable[5] = descriptor;
+    static protected IPropertyDescriptor[] propertyDescriptorsLinkVariable = new IPropertyDescriptor[8];
+    {
+        PropertyDescriptor descriptor;
 
-		// location
-		descriptor =
-			new PropertyDescriptor(
-				IResourcePropertyConstants.P_LOCATION_RES,
-				IResourcePropertyConstants.P_DISPLAYLOCATION_RES);
-		descriptor.setAlwaysIncompatible(true);
-		descriptor.setCategory(IResourcePropertyConstants.P_FILE_SYSTEM_CATEGORY);
-		propertyDescriptors[6] = descriptor;
-		propertyDescriptorsLinkVariable[6] = descriptor;
+        // resource name
+        descriptor = new PropertyDescriptor(IBasicPropertyConstants.P_TEXT,
+                IResourcePropertyConstants.P_LABEL_RES);
+        descriptor.setAlwaysIncompatible(true);
+        descriptor
+                .setCategory(IResourcePropertyConstants.P_FILE_SYSTEM_CATEGORY);
+        propertyDescriptors[0] = descriptor;
+        propertyDescriptorsLinkVariable[0] = descriptor;
 
-		// resolved location
-		descriptor =
-			new PropertyDescriptor(
-				IResourcePropertyConstants.P_RESOLVED_LOCATION_RES,
-				IResourcePropertyConstants.P_DISPLAYRESOLVED_LOCATION_RES);
-		descriptor.setAlwaysIncompatible(true);
-		descriptor.setCategory(IResourcePropertyConstants.P_FILE_SYSTEM_CATEGORY);
-		propertyDescriptorsLinkVariable[7] = descriptor;		
+        // Relative path
+        descriptor = new PropertyDescriptor(
+                IResourcePropertyConstants.P_PATH_RES,
+                IResourcePropertyConstants.P_DISPLAYPATH_RES);
+        descriptor.setAlwaysIncompatible(true);
+        descriptor
+                .setCategory(IResourcePropertyConstants.P_FILE_SYSTEM_CATEGORY);
+        propertyDescriptors[1] = descriptor;
+        propertyDescriptorsLinkVariable[1] = descriptor;
 
-	}
-/**
- * Creates a PropertySource and stores its IResource
- *
- * @param res the resource for which this is a property source
- */
-public ResourcePropertySource(IResource res) {
-	this.element = res;
-}
-/**
- * Return the value for the date String for the timestamp of the supplied resource.
- * @return String
- * @param IResource - the resource to query
- */
-private String getDateStringValue(IResource resource) {
+        // readwrite state
+        descriptor = new PropertyDescriptor(
+                IResourcePropertyConstants.P_EDITABLE_RES,
+                IResourcePropertyConstants.P_DISPLAYEDITABLE_RES);
+        descriptor.setAlwaysIncompatible(true);
+        descriptor
+                .setCategory(IResourcePropertyConstants.P_FILE_SYSTEM_CATEGORY);
+        propertyDescriptors[2] = descriptor;
+        propertyDescriptorsLinkVariable[2] = descriptor;
 
-	if (!resource.isLocal(IResource.DEPTH_ZERO))
-		return NOT_LOCAL_TEXT;
-		
-	IPath location = resource.getLocation();
-	if (location == null) {
-		if (resource.isLinked())
-			return UNDEFINED_PATH_VARIABLE;
-				
-		return FILE_NOT_FOUND;
-	}
-	else {
-		File localFile = location.toFile();
-		if (localFile.exists()) {
-			DateFormat format = new SimpleDateFormat();
-			return format.format(new Date(localFile.lastModified()));
-		}
-		return FILE_NOT_FOUND;
-	}		
-}
-/* (non-Javadoc)
- * Method declared on IPropertySource.
- */
-public Object getEditableValue() {
-	return this;
-}
-/**
- * Get the location of a resource
- */
-private String getLocationText(IResource resource) {
-	if (!resource.isLocal(IResource.DEPTH_ZERO))
-		return NOT_LOCAL_TEXT;
+        // derived state
+        descriptor = new PropertyDescriptor(
+                IResourcePropertyConstants.P_DERIVED_RES,
+                IResourcePropertyConstants.P_DISPLAYDERIVED_RES);
+        descriptor.setAlwaysIncompatible(true);
+        descriptor
+                .setCategory(IResourcePropertyConstants.P_FILE_SYSTEM_CATEGORY);
+        propertyDescriptors[3] = descriptor;
+        propertyDescriptorsLinkVariable[3] = descriptor;
 
-	IPath resolvedLocation = resource.getLocation();
-	IPath location = resolvedLocation;
-	if (resource.isLinked()) {
-		location = resource.getRawLocation();
-	}
-	if (location == null) {
-		return FILE_NOT_FOUND;
-	} 
-	else {
-		String locationString = location.toOSString();		
-		if (resolvedLocation != null && !isPathVariable(resource)) {
-			// No path variable used. Display the file not exist message 
-			// in the location. Fixes bug 33318. 
-			File file = resolvedLocation.toFile();
-			if (!file.exists()) {
-				locationString += " " + FILE_NOT_EXIST_TEXT; //$NON-NLS-1$ 
-			}
-		}
-		return locationString;
-	}
-}
-/**
- * Get the resolved location of a resource.
- * This resolves path variables if present in the resource path.
- */
-private String getResolvedLocationText(IResource resource) {
-	if (!resource.isLocal(IResource.DEPTH_ZERO))
-		return NOT_LOCAL_TEXT;
+        // last modified state
+        descriptor = new PropertyDescriptor(
+                IResourcePropertyConstants.P_LAST_MODIFIED_RES,
+                IResourcePropertyConstants.P_DISPLAY_LAST_MODIFIED);
+        descriptor.setAlwaysIncompatible(true);
+        descriptor
+                .setCategory(IResourcePropertyConstants.P_FILE_SYSTEM_CATEGORY);
+        propertyDescriptors[4] = descriptor;
+        propertyDescriptorsLinkVariable[4] = descriptor;
 
-	IPath location = resource.getLocation();
-	if (location == null) {
-		if (resource.isLinked())
-			return UNDEFINED_PATH_VARIABLE;
-				
-		return FILE_NOT_FOUND;
-	}
-	else {
-		String locationString = location.toOSString();
-		File file = location.toFile();
-		
-		if (!file.exists()) {
-			locationString += " " + FILE_NOT_EXIST_TEXT; //$NON-NLS-1$ 
-		}
-		return locationString;
-	}
-}
-/* (non-Javadoc)
- * Method declared on IPropertySource.
- */
-public IPropertyDescriptor[] getPropertyDescriptors() {
-	if (isPathVariable(element))
-		return propertyDescriptorsLinkVariable;
-	else 
-		return propertyDescriptors;
-}
-/* (non-Javadoc)
- * Method declared on IPropertySource.
- */
-public Object getPropertyValue(Object name) {
-	if (name.equals(IBasicPropertyConstants.P_TEXT)) {
-		return element.getName();
-	}
-	if (name.equals(IResourcePropertyConstants.P_PATH_RES)) {
-		return element.getFullPath().toString();
-	}
-	if (name.equals(IResourcePropertyConstants.P_LAST_MODIFIED_RES)) {
-		return getDateStringValue(element);
-	}
-	if (name.equals(IResourcePropertyConstants.P_EDITABLE_RES)) {
-		if (element.isReadOnly())
-			return IDEPropertiesMessages.getString("ResourceProperty.false"); //$NON-NLS-1$
-		else
-			return IDEPropertiesMessages.getString("ResourceProperty.true"); //$NON-NLS-1$
-	}
-	if (name.equals(IResourcePropertyConstants.P_DERIVED_RES)) {
-		return String.valueOf(element.isDerived());
-	}	
-	if (name.equals(IResourcePropertyConstants.P_LINKED_RES)) {
-		return String.valueOf(element.isLinked());
-	}	
-	if (name.equals(IResourcePropertyConstants.P_LOCATION_RES)) {
-		return getLocationText(element);
-	}	
-	if (name.equals(IResourcePropertyConstants.P_RESOLVED_LOCATION_RES)) {
-		return getResolvedLocationText(element);
-	}	
-	return null;
-}
-/**
- * Returns whether the given resource is a linked resource bound 
- * to a path variable.
- * 
- * @param resource resource to test
- * @return boolean <code>true</code> the given resource is a linked 
- * 	resource bound to a path variable. <code>false</code> the given 
- * 	resource is either not a linked resource or it is not using a
- * 	path variable.  
- */
-private boolean isPathVariable(IResource resource){
-	if (!resource.isLinked())
-		return false;
-		
-	IPath resolvedLocation = resource.getLocation();
-	if (resolvedLocation == null) {
-		// missing path variable
-		return true;
-	}		
-	IPath rawLocation = resource.getRawLocation();	
-	if (resolvedLocation.equals(rawLocation))
-		return false;
-		
-	return true;
-}
-/* (non-Javadoc)
- * Method declared on IPropertySource.
- */
-public boolean isPropertySet(Object property) {
-	return false;
-}
-/**
- * The <code>ResourcePropertySource</code> implementation of this
- * <code>IPropertySource</code> method does nothing since all
- * properties are read-only.
- */
-public void resetPropertyValue(Object property) {}
-/**
- * The <code>ResourcePropertySource</code> implementation of this
- * <code>IPropertySource</code> method does nothing since all
- * properties are read-only.
- */
-public void setPropertyValue(Object name, Object value) {
-}
+        // link state
+        descriptor = new PropertyDescriptor(
+                IResourcePropertyConstants.P_LINKED_RES,
+                IResourcePropertyConstants.P_DISPLAYLINKED_RES);
+        descriptor.setAlwaysIncompatible(true);
+        descriptor
+                .setCategory(IResourcePropertyConstants.P_FILE_SYSTEM_CATEGORY);
+        propertyDescriptors[5] = descriptor;
+        propertyDescriptorsLinkVariable[5] = descriptor;
 
-/** 
- * Get the java.io.File equivalent of the passed
- * IFile. If the location does not exist then return
- * <code>null</code>
- * @param resource the resource to lookup
- * @return java.io.File or <code>null</code>.
- */
-protected File getFile(IResource resource) {
-	IPath location = resource.getLocation();
-	if(location == null)
-		return null;
-	else
-		return location.toFile();
-}
+        // location
+        descriptor = new PropertyDescriptor(
+                IResourcePropertyConstants.P_LOCATION_RES,
+                IResourcePropertyConstants.P_DISPLAYLOCATION_RES);
+        descriptor.setAlwaysIncompatible(true);
+        descriptor
+                .setCategory(IResourcePropertyConstants.P_FILE_SYSTEM_CATEGORY);
+        propertyDescriptors[6] = descriptor;
+        propertyDescriptorsLinkVariable[6] = descriptor;
+
+        // resolved location
+        descriptor = new PropertyDescriptor(
+                IResourcePropertyConstants.P_RESOLVED_LOCATION_RES,
+                IResourcePropertyConstants.P_DISPLAYRESOLVED_LOCATION_RES);
+        descriptor.setAlwaysIncompatible(true);
+        descriptor
+                .setCategory(IResourcePropertyConstants.P_FILE_SYSTEM_CATEGORY);
+        propertyDescriptorsLinkVariable[7] = descriptor;
+
+    }
+
+    /**
+     * Creates a PropertySource and stores its IResource
+     *
+     * @param res the resource for which this is a property source
+     */
+    public ResourcePropertySource(IResource res) {
+        this.element = res;
+    }
+
+    /**
+     * Return the value for the date String for the timestamp of the supplied resource.
+     * @return String
+     * @param IResource - the resource to query
+     */
+    private String getDateStringValue(IResource resource) {
+
+        if (!resource.isLocal(IResource.DEPTH_ZERO))
+            return NOT_LOCAL_TEXT;
+
+        IPath location = resource.getLocation();
+        if (location == null) {
+            if (resource.isLinked())
+                return UNDEFINED_PATH_VARIABLE;
+
+            return FILE_NOT_FOUND;
+        } else {
+            File localFile = location.toFile();
+            if (localFile.exists()) {
+                DateFormat format = new SimpleDateFormat();
+                return format.format(new Date(localFile.lastModified()));
+            }
+            return FILE_NOT_FOUND;
+        }
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IPropertySource.
+     */
+    public Object getEditableValue() {
+        return this;
+    }
+
+    /**
+     * Get the location of a resource
+     */
+    private String getLocationText(IResource resource) {
+        if (!resource.isLocal(IResource.DEPTH_ZERO))
+            return NOT_LOCAL_TEXT;
+
+        IPath resolvedLocation = resource.getLocation();
+        IPath location = resolvedLocation;
+        if (resource.isLinked()) {
+            location = resource.getRawLocation();
+        }
+        if (location == null) {
+            return FILE_NOT_FOUND;
+        } else {
+            String locationString = location.toOSString();
+            if (resolvedLocation != null && !isPathVariable(resource)) {
+                // No path variable used. Display the file not exist message 
+                // in the location. Fixes bug 33318. 
+                File file = resolvedLocation.toFile();
+                if (!file.exists()) {
+                    locationString += " " + FILE_NOT_EXIST_TEXT; //$NON-NLS-1$ 
+                }
+            }
+            return locationString;
+        }
+    }
+
+    /**
+     * Get the resolved location of a resource.
+     * This resolves path variables if present in the resource path.
+     */
+    private String getResolvedLocationText(IResource resource) {
+        if (!resource.isLocal(IResource.DEPTH_ZERO))
+            return NOT_LOCAL_TEXT;
+
+        IPath location = resource.getLocation();
+        if (location == null) {
+            if (resource.isLinked())
+                return UNDEFINED_PATH_VARIABLE;
+
+            return FILE_NOT_FOUND;
+        } else {
+            String locationString = location.toOSString();
+            File file = location.toFile();
+
+            if (!file.exists()) {
+                locationString += " " + FILE_NOT_EXIST_TEXT; //$NON-NLS-1$ 
+            }
+            return locationString;
+        }
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IPropertySource.
+     */
+    public IPropertyDescriptor[] getPropertyDescriptors() {
+        if (isPathVariable(element))
+            return propertyDescriptorsLinkVariable;
+        else
+            return propertyDescriptors;
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IPropertySource.
+     */
+    public Object getPropertyValue(Object name) {
+        if (name.equals(IBasicPropertyConstants.P_TEXT)) {
+            return element.getName();
+        }
+        if (name.equals(IResourcePropertyConstants.P_PATH_RES)) {
+            return element.getFullPath().toString();
+        }
+        if (name.equals(IResourcePropertyConstants.P_LAST_MODIFIED_RES)) {
+            return getDateStringValue(element);
+        }
+        if (name.equals(IResourcePropertyConstants.P_EDITABLE_RES)) {
+            if (element.isReadOnly())
+                return IDEPropertiesMessages
+                        .getString("ResourceProperty.false"); //$NON-NLS-1$
+            else
+                return IDEPropertiesMessages.getString("ResourceProperty.true"); //$NON-NLS-1$
+        }
+        if (name.equals(IResourcePropertyConstants.P_DERIVED_RES)) {
+            return String.valueOf(element.isDerived());
+        }
+        if (name.equals(IResourcePropertyConstants.P_LINKED_RES)) {
+            return String.valueOf(element.isLinked());
+        }
+        if (name.equals(IResourcePropertyConstants.P_LOCATION_RES)) {
+            return getLocationText(element);
+        }
+        if (name.equals(IResourcePropertyConstants.P_RESOLVED_LOCATION_RES)) {
+            return getResolvedLocationText(element);
+        }
+        return null;
+    }
+
+    /**
+     * Returns whether the given resource is a linked resource bound 
+     * to a path variable.
+     * 
+     * @param resource resource to test
+     * @return boolean <code>true</code> the given resource is a linked 
+     * 	resource bound to a path variable. <code>false</code> the given 
+     * 	resource is either not a linked resource or it is not using a
+     * 	path variable.  
+     */
+    private boolean isPathVariable(IResource resource) {
+        if (!resource.isLinked())
+            return false;
+
+        IPath resolvedLocation = resource.getLocation();
+        if (resolvedLocation == null) {
+            // missing path variable
+            return true;
+        }
+        IPath rawLocation = resource.getRawLocation();
+        if (resolvedLocation.equals(rawLocation))
+            return false;
+
+        return true;
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IPropertySource.
+     */
+    public boolean isPropertySet(Object property) {
+        return false;
+    }
+
+    /**
+     * The <code>ResourcePropertySource</code> implementation of this
+     * <code>IPropertySource</code> method does nothing since all
+     * properties are read-only.
+     */
+    public void resetPropertyValue(Object property) {
+    }
+
+    /**
+     * The <code>ResourcePropertySource</code> implementation of this
+     * <code>IPropertySource</code> method does nothing since all
+     * properties are read-only.
+     */
+    public void setPropertyValue(Object name, Object value) {
+    }
+
+    /** 
+     * Get the java.io.File equivalent of the passed
+     * IFile. If the location does not exist then return
+     * <code>null</code>
+     * @param resource the resource to lookup
+     * @return java.io.File or <code>null</code>.
+     */
+    protected File getFile(IResource resource) {
+        IPath location = resource.getLocation();
+        if (location == null)
+            return null;
+        else
+            return location.toFile();
+    }
 
 }

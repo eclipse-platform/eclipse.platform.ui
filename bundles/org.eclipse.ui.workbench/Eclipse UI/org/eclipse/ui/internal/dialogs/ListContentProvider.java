@@ -19,39 +19,41 @@ import org.eclipse.jface.viewers.Viewer;
  * Provides elements from a List.
  */
 public class ListContentProvider implements IStructuredContentProvider {
-	List contents;
+    List contents;
 
-	public ListContentProvider() {
-	}
-	/**
-	 * Implements IStructuredContentProvider.
-	 * 
-	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(Object)
-	 */
-	public Object[] getElements(Object input) {
-		if (contents != null && contents == input) {
-			return contents.toArray();
-		}
-		return new Object[0];
-	}
-	/**
-	 * Implements IContentProvider.
-	 * 
-	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(Viewer, Object, Object)
-	 */
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		if (newInput instanceof List) {
-			contents = (List) newInput;
-		}
-		else {
-			contents = null;
-		}
-	}
-	/**
-	 * Implements IContentProvider.
-	 * 
-	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-	 */
-	public void dispose() {
-	}
+    public ListContentProvider() {
+    }
+
+    /**
+     * Implements IStructuredContentProvider.
+     * 
+     * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(Object)
+     */
+    public Object[] getElements(Object input) {
+        if (contents != null && contents == input) {
+            return contents.toArray();
+        }
+        return new Object[0];
+    }
+
+    /**
+     * Implements IContentProvider.
+     * 
+     * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(Viewer, Object, Object)
+     */
+    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+        if (newInput instanceof List) {
+            contents = (List) newInput;
+        } else {
+            contents = null;
+        }
+    }
+
+    /**
+     * Implements IContentProvider.
+     * 
+     * @see org.eclipse.jface.viewers.IContentProvider#dispose()
+     */
+    public void dispose() {
+    }
 }

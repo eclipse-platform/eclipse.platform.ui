@@ -46,21 +46,21 @@ public interface ICommandManager {
     void addCommandManagerListener(
             ICommandManagerListener commandManagerListener);
 
-	/**
-	 * Returns the set of identifiers to active contexts.
-	 * <p>
-	 * Notification is sent to all registered listeners if this property
-	 * changes.
-	 * </p>
-	 * 
-	 * @return the set of identifiers to active contexts. This set may be
-	 *         empty, but is guaranteed not to be <code>null</code>. If this
-	 *         set is not empty, it is guaranteed to only contain instances of
-	 *         <code>String</code>.
-	 */
+    /**
+     * Returns the set of identifiers to active contexts.
+     * <p>
+     * Notification is sent to all registered listeners if this property
+     * changes.
+     * </p>
+     * 
+     * @return the set of identifiers to active contexts. This set may be
+     *         empty, but is guaranteed not to be <code>null</code>. If this
+     *         set is not empty, it is guaranteed to only contain instances of
+     *         <code>String</code>.
+     */
     Set getActiveContextIds();
 
-	/**
+    /**
      * Returns the active key configuration.
      * <p>
      * Notification is sent to all registered listeners if this property
@@ -74,7 +74,7 @@ public interface ICommandManager {
      */
     String getActiveKeyConfigurationId();
 
-	/**
+    /**
      * Returns the active locale. While this property tends to be simply the
      * result of {@link java.util.Locale#getDefault()}, it may also be changed
      * at runtime by different implementations of command manager.
@@ -87,7 +87,7 @@ public interface ICommandManager {
      */
     String getActiveLocale();
 
-	/**
+    /**
      * Returns the active platform. While this property tends to be simply the
      * result of {@link org.eclipse.swt.SWT#getPlatform()}, it may also be
      * changed at runtime by different implementations of command manager.

@@ -12,9 +12,17 @@ package org.eclipse.ui.views.properties;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.*;
+import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.part.*;
+import org.eclipse.ui.part.IContributedContentsView;
+import org.eclipse.ui.part.IPage;
+import org.eclipse.ui.part.IPageBookViewPage;
+import org.eclipse.ui.part.PageBook;
+import org.eclipse.ui.part.PageBookView;
 
 /**
  * Main class for the Property Sheet View.
@@ -51,137 +59,150 @@ import org.eclipse.ui.part.*;
  * @see PropertySheetPage
  */
 public class PropertySheet extends PageBookView implements ISelectionListener {
-	/**
-	 * No longer used but preserved to avoid api change
-	 */
-	public static final String HELP_CONTEXT_PROPERTY_SHEET_VIEW = IPropertiesHelpContextIds.PROPERTY_SHEET_VIEW;
-	
-	/**
-	 * The initial selection when the property sheet opens
-	 */
-	private ISelection bootstrapSelection;
-/**
- * Creates a property sheet view.
- */
-public PropertySheet() {
-	super();
-}
-/* (non-Javadoc)
- * Method declared on PageBookView.
- * Returns the default property sheet page.
- */
-protected IPage createDefaultPage(PageBook book) { 
-	PropertySheetPage page = new PropertySheetPage();
-	initPage(page);
-	page.createControl(book);
-	return page;
-}
-/**
- * The <code>PropertySheet</code> implementation of this <code>IWorkbenchPart</code>
- * method creates a <code>PageBook</code> control with its default page showing.
- */
-public void createPartControl(Composite parent) {
-	super.createPartControl(parent);
-	WorkbenchHelp.setHelp(getPageBook(), IPropertiesHelpContextIds.PROPERTY_SHEET_VIEW);
-}
-/* (non-Javadoc)
- * Method declared on IWorkbenchPart.
- */
-public void dispose() {
-	// run super.
-	super.dispose();
+    /**
+     * No longer used but preserved to avoid api change
+     */
+    public static final String HELP_CONTEXT_PROPERTY_SHEET_VIEW = IPropertiesHelpContextIds.PROPERTY_SHEET_VIEW;
 
-	// remove ourselves as a selection listener
-	getSite().getPage().removeSelectionListener(this);
-}
-/* (non-Javadoc)
- * Method declared on PageBookView.
- */
-protected PageRec doCreatePage(IWorkbenchPart part) { 
-	// Try to get a custom property sheet page.
-	IPropertySheetPage page = (IPropertySheetPage)part.getAdapter(IPropertySheetPage.class);
-	if (page != null) {
-		if (page instanceof IPageBookViewPage) 
-			initPage((IPageBookViewPage) page);
-		page.createControl(getPageBook());
-		return new PageRec(part, page);
-	}
+    /**
+     * The initial selection when the property sheet opens
+     */
+    private ISelection bootstrapSelection;
 
-	// Use the default page		
-	return null;
-}
-/* (non-Javadoc)
- * Method declared on PageBookView.
- */
-protected void doDestroyPage(IWorkbenchPart part, PageRec rec) {
-	IPropertySheetPage page = (IPropertySheetPage) rec.page;
-	page.dispose();
-	rec.dispose();
-}
-/* (non-Javadoc)
- * Method declared on PageBookView.
- * Returns the active part on the same workbench page as this property 
- * sheet view.
- */
-protected IWorkbenchPart getBootstrapPart() {
-	IWorkbenchPage page = getSite().getPage();
-	if (page != null) {
-		bootstrapSelection = page.getSelection();
-		return page.getActivePart();
-	} else {
-		return null;
-	}
-}
-/* (non-Javadoc)
- * Method declared on IViewPart.
- */
-public void init(IViewSite site) throws PartInitException {
-	site.getPage().addSelectionListener(this);
-	super.init(site);
-}
-/* (non-Javadoc)
- * Method declared on PageBookView.
- * The property sheet may show properties for any view other than this view.
- */
-protected boolean isImportant(IWorkbenchPart part) {
-	return part != this;
-}
-/**
- * The <code>PropertySheet</code> implementation of this <code>IPartListener</code>
- * method first sees if the active part is an <code>IContributedContentsView</code>
- * adapter and if so, asks it for its contributing part.
- */
-public void partActivated(IWorkbenchPart part) {
-	IContributedContentsView view = (IContributedContentsView)part.getAdapter(IContributedContentsView.class);
-	IWorkbenchPart source = null;
-	if (view != null)
-		source = view.getContributingPart();
-	if (source != null) 
-		super.partActivated(source);
-	else
-		super.partActivated(part);
+    /**
+     * Creates a property sheet view.
+     */
+    public PropertySheet() {
+        super();
+    }
 
-	// When the view is first opened, pass the selection to the page		
-	if (bootstrapSelection != null) {
-		IPropertySheetPage page = (IPropertySheetPage)getCurrentPage();
-		if (page != null)
-			page.selectionChanged(part, bootstrapSelection);
-		bootstrapSelection = null;	
-	}
-}
+    /* (non-Javadoc)
+     * Method declared on PageBookView.
+     * Returns the default property sheet page.
+     */
+    protected IPage createDefaultPage(PageBook book) {
+        PropertySheetPage page = new PropertySheetPage();
+        initPage(page);
+        page.createControl(book);
+        return page;
+    }
 
-/* (non-Javadoc)
- * Method declared on ISelectionListener.
- * Notify the current page that the selection has changed.
- */
-public void selectionChanged(IWorkbenchPart part, ISelection sel) {
-	// we ignore our own selection or null selection
-	if (part == this || sel == null)
-		return;
-	
-	// pass the selection to the page		
-	IPropertySheetPage page = (IPropertySheetPage)getCurrentPage();
-	if(page != null)
-		page.selectionChanged(part, sel);
-}
+    /**
+     * The <code>PropertySheet</code> implementation of this <code>IWorkbenchPart</code>
+     * method creates a <code>PageBook</code> control with its default page showing.
+     */
+    public void createPartControl(Composite parent) {
+        super.createPartControl(parent);
+        WorkbenchHelp.setHelp(getPageBook(),
+                IPropertiesHelpContextIds.PROPERTY_SHEET_VIEW);
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IWorkbenchPart.
+     */
+    public void dispose() {
+        // run super.
+        super.dispose();
+
+        // remove ourselves as a selection listener
+        getSite().getPage().removeSelectionListener(this);
+    }
+
+    /* (non-Javadoc)
+     * Method declared on PageBookView.
+     */
+    protected PageRec doCreatePage(IWorkbenchPart part) {
+        // Try to get a custom property sheet page.
+        IPropertySheetPage page = (IPropertySheetPage) part
+                .getAdapter(IPropertySheetPage.class);
+        if (page != null) {
+            if (page instanceof IPageBookViewPage)
+                initPage((IPageBookViewPage) page);
+            page.createControl(getPageBook());
+            return new PageRec(part, page);
+        }
+
+        // Use the default page		
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * Method declared on PageBookView.
+     */
+    protected void doDestroyPage(IWorkbenchPart part, PageRec rec) {
+        IPropertySheetPage page = (IPropertySheetPage) rec.page;
+        page.dispose();
+        rec.dispose();
+    }
+
+    /* (non-Javadoc)
+     * Method declared on PageBookView.
+     * Returns the active part on the same workbench page as this property 
+     * sheet view.
+     */
+    protected IWorkbenchPart getBootstrapPart() {
+        IWorkbenchPage page = getSite().getPage();
+        if (page != null) {
+            bootstrapSelection = page.getSelection();
+            return page.getActivePart();
+        } else {
+            return null;
+        }
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IViewPart.
+     */
+    public void init(IViewSite site) throws PartInitException {
+        site.getPage().addSelectionListener(this);
+        super.init(site);
+    }
+
+    /* (non-Javadoc)
+     * Method declared on PageBookView.
+     * The property sheet may show properties for any view other than this view.
+     */
+    protected boolean isImportant(IWorkbenchPart part) {
+        return part != this;
+    }
+
+    /**
+     * The <code>PropertySheet</code> implementation of this <code>IPartListener</code>
+     * method first sees if the active part is an <code>IContributedContentsView</code>
+     * adapter and if so, asks it for its contributing part.
+     */
+    public void partActivated(IWorkbenchPart part) {
+        IContributedContentsView view = (IContributedContentsView) part
+                .getAdapter(IContributedContentsView.class);
+        IWorkbenchPart source = null;
+        if (view != null)
+            source = view.getContributingPart();
+        if (source != null)
+            super.partActivated(source);
+        else
+            super.partActivated(part);
+
+        // When the view is first opened, pass the selection to the page		
+        if (bootstrapSelection != null) {
+            IPropertySheetPage page = (IPropertySheetPage) getCurrentPage();
+            if (page != null)
+                page.selectionChanged(part, bootstrapSelection);
+            bootstrapSelection = null;
+        }
+    }
+
+    /* (non-Javadoc)
+     * Method declared on ISelectionListener.
+     * Notify the current page that the selection has changed.
+     */
+    public void selectionChanged(IWorkbenchPart part, ISelection sel) {
+        // we ignore our own selection or null selection
+        if (part == this || sel == null)
+            return;
+
+        // pass the selection to the page		
+        IPropertySheetPage page = (IPropertySheetPage) getCurrentPage();
+        if (page != null)
+            page.selectionChanged(part, sel);
+    }
 }

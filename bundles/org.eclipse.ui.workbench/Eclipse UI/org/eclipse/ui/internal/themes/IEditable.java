@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.internal.themes;
 
-
 /**
  * Theme elements which may potentially be editted by the user should implement 
  * this interface.
@@ -19,7 +18,7 @@ package org.eclipse.ui.internal.themes;
  * @since 3.0
  */
 public interface IEditable {
-    
+
     /**
      * Returns whether this object is editable.
      * 

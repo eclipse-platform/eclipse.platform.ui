@@ -20,61 +20,62 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class MaximizePartAction extends PageEventAction {
 
-	/**
-	 * Creates a MaximizePartAction.
-	 */
-	public MaximizePartAction(IWorkbenchWindow window) {
-		super(WorkbenchMessages.getString("MaximizePartAction.text"), window); //$NON-NLS-1$
-		setToolTipText(WorkbenchMessages.getString("MaximizePartAction.toolTip")); //$NON-NLS-1$
-		// @issue missing action id
-		updateState();
-		WorkbenchHelp.setHelp(this, IHelpContextIds.MAXIMIZE_PART_ACTION);
-		setActionDefinitionId("org.eclipse.ui.window.maximizePart"); //$NON-NLS-1$
-	}
-	
-	/* (non-Javadoc)
-	 * Method declared on PageEventAction.
-	 */
-	public void pageActivated(IWorkbenchPage page) {
-		super.pageActivated(page);
-		updateState();
-	}
-	
-	/* (non-Javadoc)
-	 * Method declared on PageEventAction.
-	 */
-	public void pageClosed(IWorkbenchPage page) {
-		super.pageClosed(page);
-		updateState();
-	}
-	
-	/* (non-Javadoc)
-	 * Method declared on IAction.
-	 */
-	public void run() {
-		if (getWorkbenchWindow() == null) {
-			// action has been dispose
-			return;
-		}
-		
-		IWorkbenchPage page = getActivePage();
-		if (page != null) {
-			if (page instanceof WorkbenchPage) {
-				WorkbenchPage realPage = (WorkbenchPage)page;
-				
-				IWorkbenchPartReference partRef = page.getActivePartReference();
-				
-				if (partRef != null) {
-					((WorkbenchPage) page).toggleZoom(partRef);
-				}
-			}
-		}
-	}
-	
-	/**
-	 * Updates the enabled state.
-	 */
-	private void updateState() {
-		setEnabled(getActivePage() != null);
-	}
+    /**
+     * Creates a MaximizePartAction.
+     */
+    public MaximizePartAction(IWorkbenchWindow window) {
+        super(WorkbenchMessages.getString("MaximizePartAction.text"), window); //$NON-NLS-1$
+        setToolTipText(WorkbenchMessages
+                .getString("MaximizePartAction.toolTip")); //$NON-NLS-1$
+        // @issue missing action id
+        updateState();
+        WorkbenchHelp.setHelp(this, IHelpContextIds.MAXIMIZE_PART_ACTION);
+        setActionDefinitionId("org.eclipse.ui.window.maximizePart"); //$NON-NLS-1$
+    }
+
+    /* (non-Javadoc)
+     * Method declared on PageEventAction.
+     */
+    public void pageActivated(IWorkbenchPage page) {
+        super.pageActivated(page);
+        updateState();
+    }
+
+    /* (non-Javadoc)
+     * Method declared on PageEventAction.
+     */
+    public void pageClosed(IWorkbenchPage page) {
+        super.pageClosed(page);
+        updateState();
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IAction.
+     */
+    public void run() {
+        if (getWorkbenchWindow() == null) {
+            // action has been dispose
+            return;
+        }
+
+        IWorkbenchPage page = getActivePage();
+        if (page != null) {
+            if (page instanceof WorkbenchPage) {
+                WorkbenchPage realPage = (WorkbenchPage) page;
+
+                IWorkbenchPartReference partRef = page.getActivePartReference();
+
+                if (partRef != null) {
+                    ((WorkbenchPage) page).toggleZoom(partRef);
+                }
+            }
+        }
+    }
+
+    /**
+     * Updates the enabled state.
+     */
+    private void updateState() {
+        setEnabled(getActivePage() != null);
+    }
 }

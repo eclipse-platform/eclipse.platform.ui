@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.misc;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A Stopwatch is used to measure the time elapsed during 
@@ -31,76 +31,88 @@ import java.util.HashMap;
  * unregistered when no longer needed.
  */
 public class Stopwatch {
-	private long startTime;
-	private long lastTime;
-	private String name;
-	private static Map registry;
-/**
- * Construct a new Stopwatch and start it.
- * To reset the watch at a later time just call start() again.
- */
-public Stopwatch(String name) {
-	this.name = name;
-	start();
-}
-/**
- * Get a stopwatch from the registry.
- */
-static public Stopwatch getStopwatch(String name) {
-	if (registry != null)
-		return (Stopwatch)registry.get(name);
-	else
-		return null;
-}
-/**
- * Print the elapsed time since start(), printInterval(), or 
- * resetInterval() was last called.
- */
-public void printInterval(String hint) {
-	long time = System.currentTimeMillis() - lastTime;
-	System.out.println(name + " '" + hint + "' took " + time + " ms");//$NON-NLS-3$//$NON-NLS-2$//$NON-NLS-1$
-	lastTime = System.currentTimeMillis();
-}
-/**
- * Print the current elapsed time.
- */
-public void printTime() {
-	long time = System.currentTimeMillis() - startTime;
-	System.out.print(name + " is now " + time + " ms");//$NON-NLS-2$//$NON-NLS-1$
-}
-/**
- * Add this stopwatch to the registry.
- */
-public void register() {
-	if (registry == null)
-		registry = new HashMap(2);
-	registry.put(name, this);
-}
-/**
- * Reset the interval timer.
- */
-public void resetInterval() {
-	lastTime = System.currentTimeMillis();
-}
-/**
- * Start the watch.
- */
-public void start() {
-	startTime = lastTime = System.currentTimeMillis();
-	System.out.println(name + " started");//$NON-NLS-1$
-}
-/**
- * Stop the watch and print the elapsed time.
- */
-public void stop() {
-	long time = System.currentTimeMillis() - startTime;
-	System.out.println(name + " finished in " + time + " ms");//$NON-NLS-2$//$NON-NLS-1$
-}
-/**
- * Remove this stopwatch from the registry.
- */
-public void unregister() {
-	if (registry != null)
-		registry.remove(name);
-}
+    private long startTime;
+
+    private long lastTime;
+
+    private String name;
+
+    private static Map registry;
+
+    /**
+     * Construct a new Stopwatch and start it.
+     * To reset the watch at a later time just call start() again.
+     */
+    public Stopwatch(String name) {
+        this.name = name;
+        start();
+    }
+
+    /**
+     * Get a stopwatch from the registry.
+     */
+    static public Stopwatch getStopwatch(String name) {
+        if (registry != null)
+            return (Stopwatch) registry.get(name);
+        else
+            return null;
+    }
+
+    /**
+     * Print the elapsed time since start(), printInterval(), or 
+     * resetInterval() was last called.
+     */
+    public void printInterval(String hint) {
+        long time = System.currentTimeMillis() - lastTime;
+        System.out.println(name + " '" + hint + "' took " + time + " ms");//$NON-NLS-3$//$NON-NLS-2$//$NON-NLS-1$
+        lastTime = System.currentTimeMillis();
+    }
+
+    /**
+     * Print the current elapsed time.
+     */
+    public void printTime() {
+        long time = System.currentTimeMillis() - startTime;
+        System.out.print(name + " is now " + time + " ms");//$NON-NLS-2$//$NON-NLS-1$
+    }
+
+    /**
+     * Add this stopwatch to the registry.
+     */
+    public void register() {
+        if (registry == null)
+            registry = new HashMap(2);
+        registry.put(name, this);
+    }
+
+    /**
+     * Reset the interval timer.
+     */
+    public void resetInterval() {
+        lastTime = System.currentTimeMillis();
+    }
+
+    /**
+     * Start the watch.
+     */
+    public void start() {
+        startTime = lastTime = System.currentTimeMillis();
+        System.out.println(name + " started");//$NON-NLS-1$
+    }
+
+    /**
+     * Stop the watch and print the elapsed time.
+     */
+    public void stop() {
+        long time = System.currentTimeMillis() - startTime;
+        System.out.println(name + " finished in " + time + " ms");//$NON-NLS-2$//$NON-NLS-1$
+    }
+
+    /**
+     * Remove this stopwatch from the registry.
+     */
+    public void unregister() {
+        if (registry != null)
+            registry.remove(name);
+    }
 }

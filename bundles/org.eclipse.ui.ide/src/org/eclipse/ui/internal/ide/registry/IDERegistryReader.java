@@ -15,7 +15,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Hashtable;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
@@ -33,134 +37,154 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  * done by default.
  */
 public abstract class IDERegistryReader {
-	protected static final String TAG_DESCRIPTION = "description";	//$NON-NLS-1$
-	protected static Hashtable extensionPoints = new Hashtable();
-	
-	private static final Comparator comparer = new Comparator() {
-		public int compare(Object arg0, Object arg1) {
-			String s1 = ((IExtension)arg0).getDeclaringPluginDescriptor().getUniqueIdentifier();
-			String s2 = ((IExtension)arg1).getDeclaringPluginDescriptor().getUniqueIdentifier();
-			return s1.compareToIgnoreCase(s2);
-		}
-	}; 
+    protected static final String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
 
-/**
- * The constructor.
- */
-protected IDERegistryReader() {
-}
-/**
- * This method extracts description as a subelement of
- * the given element.
- * @return description string if defined, or empty string
- * if not.
- */
-protected String getDescription(IConfigurationElement config) {
-	IConfigurationElement [] children = config.getChildren(TAG_DESCRIPTION);
-	if (children.length>=1) {
-		return children[0].getValue();
-	}
-	return "";//$NON-NLS-1$
-}
-/**
- * Logs the error in the workbench log using the provided
- * text and the information in the configuration element.
- */
-protected void logError(IConfigurationElement element, String text) {
-	IExtension extension = element.getDeclaringExtension();
-	IPluginDescriptor descriptor = extension.getDeclaringPluginDescriptor();
-	StringBuffer buf = new StringBuffer();
-	buf.append("Plugin " + descriptor.getUniqueIdentifier() + ", extension " + extension.getExtensionPointUniqueIdentifier());//$NON-NLS-2$//$NON-NLS-1$
-	buf.append("\n"+text);//$NON-NLS-1$
-	IDEWorkbenchPlugin.log(buf.toString());
-}
-/**
- * Logs a very common registry error when a required attribute is missing.
- */
-protected void logMissingAttribute(IConfigurationElement element, String attributeName) {
-	logError(element, "Required attribute '"+attributeName+"' not defined");//$NON-NLS-2$//$NON-NLS-1$
-}
+    protected static Hashtable extensionPoints = new Hashtable();
 
-/**
- * Logs a very common registry error when a required child is missing.
- */
-protected void logMissingElement(IConfigurationElement element, String elementName) {
-	logError(element, "Required sub element '"+elementName+"' not defined");//$NON-NLS-2$//$NON-NLS-1$
-}
+    private static final Comparator comparer = new Comparator() {
+        public int compare(Object arg0, Object arg1) {
+            String s1 = ((IExtension) arg0).getDeclaringPluginDescriptor()
+                    .getUniqueIdentifier();
+            String s2 = ((IExtension) arg1).getDeclaringPluginDescriptor()
+                    .getUniqueIdentifier();
+            return s1.compareToIgnoreCase(s2);
+        }
+    };
 
-/**
- * Logs a registry error when the configuration element is unknown.
- */
-protected void logUnknownElement(IConfigurationElement element) {
-	logError(element, "Unknown extension tag found: " + element.getName());//$NON-NLS-1$
-}
-/**
- *	Apply a reproducable order to the list of extensions
- * provided, such that the order will not change as
- * extensions are added or removed.
- */
-protected IExtension[] orderExtensions(IExtension[] extensions) {
-	// By default, the order is based on plugin id sorted
-	// in ascending order. The order for a plugin providing
-	// more than one extension for an extension point is
-	// dependent in the order listed in the XML file.
-	IExtension[] sortedExtension = new IExtension[extensions.length];
-	System.arraycopy(extensions, 0, sortedExtension, 0, extensions.length);
-	Collections.sort(Arrays.asList(sortedExtension), comparer);
-	return sortedExtension;
-}
-/**
- * Implement this method to read element's attributes.
- * If children should also be read, then implementor
- * is responsible for calling <code>readElementChildren</code>.
- * Implementor is also responsible for logging missing 
- * attributes.
- *
- * @return true if element was recognized, false if not.
- */
-protected abstract boolean readElement(IConfigurationElement element);
-/**
- * Read the element's children. This is called by
- * the subclass' readElement method when it wants
- * to read the children of the element.
- */
-protected void readElementChildren(IConfigurationElement element) {
-	readElements(element.getChildren());
-}
-/**
- * Read each element one at a time by calling the
- * subclass implementation of <code>readElement</code>.
- *
- * Logs an error if the element was not recognized.
- */
-protected void readElements(IConfigurationElement[] elements) {
-	for (int i = 0; i < elements.length; i++) {
-		if (!readElement(elements[i]))
-			logUnknownElement(elements[i]);
-	}
-}
-/**
- * Read one extension by looping through its
- * configuration elements.
- */
-protected void readExtension(IExtension extension) {
-	readElements(extension.getConfigurationElements());
-}
-/**
- *	Start the registry reading process using the
- * supplied plugin ID and extension point.
- */
-protected void readRegistry(IPluginRegistry registry, String pluginId, String extensionPoint) {
-	String pointId = pluginId + "-" + extensionPoint; //$NON-NLS-1$
-	IExtension[] extensions = (IExtension[])extensionPoints.get(pointId); 
-	if (extensions == null) {
-		IExtensionPoint point = registry.getExtensionPoint(pluginId, extensionPoint);
-		if (point == null) return;
-		extensions = point.getExtensions();
-		extensions = orderExtensions(extensions);
-		extensionPoints.put(pointId, extensions);
-	} 
-	for (int i = 0; i < extensions.length; i++)
-		readExtension(extensions[i]);
-}
+    /**
+     * The constructor.
+     */
+    protected IDERegistryReader() {
+    }
+
+    /**
+     * This method extracts description as a subelement of
+     * the given element.
+     * @return description string if defined, or empty string
+     * if not.
+     */
+    protected String getDescription(IConfigurationElement config) {
+        IConfigurationElement[] children = config.getChildren(TAG_DESCRIPTION);
+        if (children.length >= 1) {
+            return children[0].getValue();
+        }
+        return "";//$NON-NLS-1$
+    }
+
+    /**
+     * Logs the error in the workbench log using the provided
+     * text and the information in the configuration element.
+     */
+    protected void logError(IConfigurationElement element, String text) {
+        IExtension extension = element.getDeclaringExtension();
+        IPluginDescriptor descriptor = extension.getDeclaringPluginDescriptor();
+        StringBuffer buf = new StringBuffer();
+        buf
+                .append("Plugin " + descriptor.getUniqueIdentifier() + ", extension " + extension.getExtensionPointUniqueIdentifier());//$NON-NLS-2$//$NON-NLS-1$
+        buf.append("\n" + text);//$NON-NLS-1$
+        IDEWorkbenchPlugin.log(buf.toString());
+    }
+
+    /**
+     * Logs a very common registry error when a required attribute is missing.
+     */
+    protected void logMissingAttribute(IConfigurationElement element,
+            String attributeName) {
+        logError(element,
+                "Required attribute '" + attributeName + "' not defined");//$NON-NLS-2$//$NON-NLS-1$
+    }
+
+    /**
+     * Logs a very common registry error when a required child is missing.
+     */
+    protected void logMissingElement(IConfigurationElement element,
+            String elementName) {
+        logError(element,
+                "Required sub element '" + elementName + "' not defined");//$NON-NLS-2$//$NON-NLS-1$
+    }
+
+    /**
+     * Logs a registry error when the configuration element is unknown.
+     */
+    protected void logUnknownElement(IConfigurationElement element) {
+        logError(element, "Unknown extension tag found: " + element.getName());//$NON-NLS-1$
+    }
+
+    /**
+     *	Apply a reproducable order to the list of extensions
+     * provided, such that the order will not change as
+     * extensions are added or removed.
+     */
+    protected IExtension[] orderExtensions(IExtension[] extensions) {
+        // By default, the order is based on plugin id sorted
+        // in ascending order. The order for a plugin providing
+        // more than one extension for an extension point is
+        // dependent in the order listed in the XML file.
+        IExtension[] sortedExtension = new IExtension[extensions.length];
+        System.arraycopy(extensions, 0, sortedExtension, 0, extensions.length);
+        Collections.sort(Arrays.asList(sortedExtension), comparer);
+        return sortedExtension;
+    }
+
+    /**
+     * Implement this method to read element's attributes.
+     * If children should also be read, then implementor
+     * is responsible for calling <code>readElementChildren</code>.
+     * Implementor is also responsible for logging missing 
+     * attributes.
+     *
+     * @return true if element was recognized, false if not.
+     */
+    protected abstract boolean readElement(IConfigurationElement element);
+
+    /**
+     * Read the element's children. This is called by
+     * the subclass' readElement method when it wants
+     * to read the children of the element.
+     */
+    protected void readElementChildren(IConfigurationElement element) {
+        readElements(element.getChildren());
+    }
+
+    /**
+     * Read each element one at a time by calling the
+     * subclass implementation of <code>readElement</code>.
+     *
+     * Logs an error if the element was not recognized.
+     */
+    protected void readElements(IConfigurationElement[] elements) {
+        for (int i = 0; i < elements.length; i++) {
+            if (!readElement(elements[i]))
+                logUnknownElement(elements[i]);
+        }
+    }
+
+    /**
+     * Read one extension by looping through its
+     * configuration elements.
+     */
+    protected void readExtension(IExtension extension) {
+        readElements(extension.getConfigurationElements());
+    }
+
+    /**
+     *	Start the registry reading process using the
+     * supplied plugin ID and extension point.
+     */
+    protected void readRegistry(IPluginRegistry registry, String pluginId,
+            String extensionPoint) {
+        String pointId = pluginId + "-" + extensionPoint; //$NON-NLS-1$
+        IExtension[] extensions = (IExtension[]) extensionPoints.get(pointId);
+        if (extensions == null) {
+            IExtensionPoint point = registry.getExtensionPoint(pluginId,
+                    extensionPoint);
+            if (point == null)
+                return;
+            extensions = point.getExtensions();
+            extensions = orderExtensions(extensions);
+            extensionPoints.put(pointId, extensions);
+        }
+        for (int i = 0; i < extensions.length; i++)
+            readExtension(extensions[i]);
+    }
 }

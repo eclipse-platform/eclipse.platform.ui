@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.action;
 
-
 /**
  * The <code>IToolBarManager</code> interface provides protocol for managing
  * contributions to a tool bar. It extends <code>IContributionManager</code>

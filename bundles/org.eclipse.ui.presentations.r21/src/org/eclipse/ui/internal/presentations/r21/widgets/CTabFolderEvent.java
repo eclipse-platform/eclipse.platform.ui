@@ -11,13 +11,14 @@
 package org.eclipse.ui.internal.presentations.r21.widgets;
 
 import org.eclipse.swt.events.TypedEvent;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Widget;
 
 public class CTabFolderEvent extends TypedEvent {
- 	public Widget item;
- 	public boolean doit;
- 	
-CTabFolderEvent(Widget w) {
-	super(w);
-}
+    public Widget item;
+
+    public boolean doit;
+
+    CTabFolderEvent(Widget w) {
+        super(w);
+    }
 }

@@ -20,25 +20,25 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 class FiltersAction extends TaskAction {
 
-	/**
-	 * Creates the action.
-	 */
-	public FiltersAction(TaskList tasklist, String id) {
-		super(tasklist, id);
-		WorkbenchHelp.setHelp(this, ITaskListHelpContextIds.FILTERS_ACTION);
-	}
-	
-	/**
-	 * Performs this action.
-	 */
-	public void run() {
-		FiltersDialog dialog = new FiltersDialog(getShell());
-		TasksFilter filter = getTaskList().getFilter();
-		dialog.setFilter(filter);
-		int result = dialog.open();
-		if (result == FiltersDialog.OK) {
-			getTaskList().filterChanged();
-		}
-	}
+    /**
+     * Creates the action.
+     */
+    public FiltersAction(TaskList tasklist, String id) {
+        super(tasklist, id);
+        WorkbenchHelp.setHelp(this, ITaskListHelpContextIds.FILTERS_ACTION);
+    }
+
+    /**
+     * Performs this action.
+     */
+    public void run() {
+        FiltersDialog dialog = new FiltersDialog(getShell());
+        TasksFilter filter = getTaskList().getFilter();
+        dialog.setFilter(filter);
+        int result = dialog.open();
+        if (result == FiltersDialog.OK) {
+            getTaskList().filterChanged();
+        }
+    }
 
 }

@@ -19,25 +19,27 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * This action opens the properties dialog for the current task.
  */
 class TaskPropertiesAction extends TaskAction {
-	
-	/**
-	 * Creates the action.
-	 */
-	public TaskPropertiesAction(TaskList tasklist, String id) {
-		super(tasklist, id);
-		WorkbenchHelp.setHelp(this, ITaskListHelpContextIds.TASK_PROPERTIES_ACTION);
-	}
 
-	/**
-	 * Performs this action.
-	 */
-	public void run() {
-		IStructuredSelection sel = (IStructuredSelection) getTaskList().getSelection();
-		Object o = sel.getFirstElement();
-		if (o instanceof IMarker) {
-			TaskPropertiesDialog dialog = new TaskPropertiesDialog(getShell());
-			dialog.setMarker((IMarker) o);
-			dialog.open();
-		}
-	}
+    /**
+     * Creates the action.
+     */
+    public TaskPropertiesAction(TaskList tasklist, String id) {
+        super(tasklist, id);
+        WorkbenchHelp.setHelp(this,
+                ITaskListHelpContextIds.TASK_PROPERTIES_ACTION);
+    }
+
+    /**
+     * Performs this action.
+     */
+    public void run() {
+        IStructuredSelection sel = (IStructuredSelection) getTaskList()
+                .getSelection();
+        Object o = sel.getFirstElement();
+        if (o instanceof IMarker) {
+            TaskPropertiesDialog dialog = new TaskPropertiesDialog(getShell());
+            dialog.setMarker((IMarker) o);
+            dialog.open();
+        }
+    }
 }

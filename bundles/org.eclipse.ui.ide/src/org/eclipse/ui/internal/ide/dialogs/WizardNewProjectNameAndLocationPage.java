@@ -11,8 +11,9 @@ package org.eclipse.ui.internal.ide.dialogs;
  *    IBM Corporation - initial API and implementation
  *    Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font should be
  *        activated and used by other components.
-*********************************************************************/
+ *********************************************************************/
 import java.io.File;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
@@ -38,9 +39,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
 
 /**
  * First page for the new project creation wizard. This page
@@ -55,392 +56,418 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  * </p>
  */
 public class WizardNewProjectNameAndLocationPage extends WizardPage {
-	// Whether to use default or custom project location
-	private boolean useDefaults = true;
+    // Whether to use default or custom project location
+    private boolean useDefaults = true;
 
-	// initial value stores
-	private String initialProjectFieldValue;
-	private IPath initialLocationFieldValue;
+    // initial value stores
+    private String initialProjectFieldValue;
 
-	// the value the user has entered
-	private String customLocationFieldValue;
+    private IPath initialLocationFieldValue;
 
-	// widgets
-	private Text projectNameField;
-	private Text locationPathField;
-	private Label locationLabel;
-	private Button browseButton;
+    // the value the user has entered
+    private String customLocationFieldValue;
 
-	private Listener nameModifyListener = new Listener() {
-		public void handleEvent(Event e) {
-			setLocationForSelection();
-			setPageComplete(validatePage());
-		}
-	};
+    // widgets
+    private Text projectNameField;
 
-	private Listener locationModifyListener = new Listener() {
-		public void handleEvent(Event e) {
-			setPageComplete(validatePage());
-		}
-	};
+    private Text locationPathField;
 
-	// constants
-	private static final int SIZING_TEXT_FIELD_WIDTH = 250;
-	
-	/**
-	 * Creates a new project creation wizard page.
-	 *
-	 * @param pageName the name of this page
-	 */
-	public WizardNewProjectNameAndLocationPage(String pageName) {
-		super(pageName);
-		setPageComplete(false);
-		initialLocationFieldValue = Platform.getLocation();
-		customLocationFieldValue = ""; //$NON-NLS-1$
-	}
-	
-	/* (non-Javadoc)
-	 * Method declared on IWizardPage
-	 */
-	public boolean canFlipToNextPage() {
-		// Already know there is a next page...
-		return isPageComplete();
-	}
+    private Label locationLabel;
 
-	/* (non-Javadoc)
-	 * Method declared on IDialogPage.
-	 */
-	public void createControl(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NULL);
-		composite.setLayout(new GridLayout());
-		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		composite.setFont(parent.getFont());
+    private Button browseButton;
 
-		WorkbenchHelp.setHelp(composite, IHelpContextIds.NEW_PROJECT_WIZARD_PAGE);
+    private Listener nameModifyListener = new Listener() {
+        public void handleEvent(Event e) {
+            setLocationForSelection();
+            setPageComplete(validatePage());
+        }
+    };
 
-		createProjectNameGroup(composite);
-		createProjectLocationGroup(composite);
-		
-		validatePage();
-		
-		// Show description on opening
-		setErrorMessage(null);
-		setMessage(null);
-		setControl(composite);
-	}
-	
-	/**
-	 * Creates the project location specification controls.
-	 *
-	 * @param parent the parent composite
-	 */
-	private final void createProjectLocationGroup(Composite parent) {
-		Font font = parent.getFont();
-		// project specification group
-		Composite projectGroup = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 3;
-		projectGroup.setLayout(layout);
-		projectGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		projectGroup.setFont(font);
-		
-		// new project label
-		Label projectContentsLabel = new Label(projectGroup, SWT.NONE);
-		projectContentsLabel.setFont(font);
-		projectContentsLabel.setText(IDEWorkbenchMessages.getString("WizardNewProjectCreationPage.projectContentsLabel")); //$NON-NLS-1$
+    private Listener locationModifyListener = new Listener() {
+        public void handleEvent(Event e) {
+            setPageComplete(validatePage());
+        }
+    };
 
-		GridData labelData = new GridData();
-		labelData.horizontalSpan = 3;
-		projectContentsLabel.setLayoutData(labelData);
+    // constants
+    private static final int SIZING_TEXT_FIELD_WIDTH = 250;
 
-		final Button useDefaultsButton = new Button(projectGroup, SWT.CHECK | SWT.RIGHT);
-		useDefaultsButton.setText(IDEWorkbenchMessages.getString("WizardNewProjectCreationPage.useDefaultLabel")); //$NON-NLS-1$
-		useDefaultsButton.setSelection(useDefaults);
-		useDefaultsButton.setFont(font);
+    /**
+     * Creates a new project creation wizard page.
+     *
+     * @param pageName the name of this page
+     */
+    public WizardNewProjectNameAndLocationPage(String pageName) {
+        super(pageName);
+        setPageComplete(false);
+        initialLocationFieldValue = Platform.getLocation();
+        customLocationFieldValue = ""; //$NON-NLS-1$
+    }
 
-		GridData buttonData = new GridData();
-		buttonData.horizontalSpan = 3;
-		useDefaultsButton.setLayoutData(buttonData);
+    /* (non-Javadoc)
+     * Method declared on IWizardPage
+     */
+    public boolean canFlipToNextPage() {
+        // Already know there is a next page...
+        return isPageComplete();
+    }
 
-		createUserSpecifiedProjectLocationGroup(projectGroup, !useDefaults);
+    /* (non-Javadoc)
+     * Method declared on IDialogPage.
+     */
+    public void createControl(Composite parent) {
+        Composite composite = new Composite(parent, SWT.NULL);
+        composite.setLayout(new GridLayout());
+        composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+        composite.setFont(parent.getFont());
 
-		SelectionListener listener = new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				useDefaults = useDefaultsButton.getSelection();
-				browseButton.setEnabled(!useDefaults);
-				locationPathField.setEnabled(!useDefaults);
-				locationLabel.setEnabled(!useDefaults);
-				if (useDefaults) {
-					customLocationFieldValue = locationPathField.getText();
-					setLocationForSelection();
-				} else {
-					locationPathField.setText(customLocationFieldValue);
-				}
-			}
-		};
-		useDefaultsButton.addSelectionListener(listener);
-	}
-	
-	/**
-	 * Creates the project name specification controls.
-	 *
-	 * @param parent the parent composite
-	 */
-	private final void createProjectNameGroup(Composite parent) {
-		Font font = parent.getFont();
-		// project specification group
-		Composite projectGroup = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		projectGroup.setLayout(layout);
-		projectGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        WorkbenchHelp.setHelp(composite,
+                IHelpContextIds.NEW_PROJECT_WIZARD_PAGE);
 
-		// new project label
-		Label projectLabel = new Label(projectGroup, SWT.NONE);
-		projectLabel.setFont(font);
-		projectLabel.setText(IDEWorkbenchMessages.getString("WizardNewProjectCreationPage.nameLabel")); //$NON-NLS-1$
+        createProjectNameGroup(composite);
+        createProjectLocationGroup(composite);
 
-		// new project name entry field
-		projectNameField = new Text(projectGroup, SWT.BORDER);
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		data.widthHint = SIZING_TEXT_FIELD_WIDTH;
-		projectNameField.setLayoutData(data);
-		projectNameField.setFont(font);
+        validatePage();
 
-		// Set the initial value first before listener
-		// to avoid handling an event during the creation.
-		if (initialProjectFieldValue != null)
-			projectNameField.setText(initialProjectFieldValue);
-		projectNameField.addListener(SWT.Modify, nameModifyListener);
-	}
-	
-	/**
-	 * Creates the project location specification controls.
-	 *
-	 * @param projectGroup the parent composite
-	 * @param boolean - the initial enabled state of the widgets created
-	 */
-	private void createUserSpecifiedProjectLocationGroup(Composite projectGroup, boolean enabled) {
-		Font font = projectGroup.getFont();
-		// location label
-		locationLabel = new Label(projectGroup, SWT.NONE);
-		locationLabel.setFont(font);
-		locationLabel.setText(IDEWorkbenchMessages.getString("WizardNewProjectCreationPage.locationLabel")); //$NON-NLS-1$
-		locationLabel.setEnabled(enabled);
+        // Show description on opening
+        setErrorMessage(null);
+        setMessage(null);
+        setControl(composite);
+    }
 
-		// project location entry field
-		locationPathField = new Text(projectGroup, SWT.BORDER);
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		data.widthHint = SIZING_TEXT_FIELD_WIDTH;
-		locationPathField.setLayoutData(data);
-		locationPathField.setFont(font);
-		locationPathField.setEnabled(enabled);
+    /**
+     * Creates the project location specification controls.
+     *
+     * @param parent the parent composite
+     */
+    private final void createProjectLocationGroup(Composite parent) {
+        Font font = parent.getFont();
+        // project specification group
+        Composite projectGroup = new Composite(parent, SWT.NONE);
+        GridLayout layout = new GridLayout();
+        layout.numColumns = 3;
+        projectGroup.setLayout(layout);
+        projectGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        projectGroup.setFont(font);
 
-		// browse button
-		browseButton = new Button(projectGroup, SWT.PUSH);
-		browseButton.setFont(font);
-		browseButton.setText(IDEWorkbenchMessages.getString("WizardNewProjectCreationPage.browseLabel")); //$NON-NLS-1$
-		browseButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent event) {
-				handleLocationBrowseButtonPressed();
-			}
-		});
+        // new project label
+        Label projectContentsLabel = new Label(projectGroup, SWT.NONE);
+        projectContentsLabel.setFont(font);
+        projectContentsLabel
+                .setText(IDEWorkbenchMessages
+                        .getString("WizardNewProjectCreationPage.projectContentsLabel")); //$NON-NLS-1$
 
-		browseButton.setEnabled(enabled);
+        GridData labelData = new GridData();
+        labelData.horizontalSpan = 3;
+        projectContentsLabel.setLayoutData(labelData);
 
-		// Set the initial value first before listener
-		// to avoid handling an event during the creation.
-		if (initialLocationFieldValue != null)
-			locationPathField.setText(initialLocationFieldValue.toOSString());
-		locationPathField.addListener(SWT.Modify, locationModifyListener);
-	}
-	
-	/**
-	 * Returns the current project location path as entered by 
-	 * the user, or its anticipated initial value.
-	 *
-	 * @return the project location path, its anticipated initial value, or <code>null</code>
-	 *   if no project location path is known
-	 */
-	/* package */ IPath getLocationPath() {
-		if (useDefaults)
-			return initialLocationFieldValue;
+        final Button useDefaultsButton = new Button(projectGroup, SWT.CHECK
+                | SWT.RIGHT);
+        useDefaultsButton.setText(IDEWorkbenchMessages
+                .getString("WizardNewProjectCreationPage.useDefaultLabel")); //$NON-NLS-1$
+        useDefaultsButton.setSelection(useDefaults);
+        useDefaultsButton.setFont(font);
 
-		return new Path(getProjectLocationFieldValue());
-	}
-	
-	/**
-	 * Creates a project resource handle for the current project name field value.
-	 * <p>
-	 * This method does not create the project resource; this is the responsibility
-	 * of <code>IProject::create</code> invoked by the new project resource wizard.
-	 * </p>
-	 *
-	 * @return the new project resource handle
-	 */
-	/* package */ IProject getProjectHandle() {
-		return ResourcesPlugin.getWorkspace().getRoot().getProject(getProjectName());
-	}
-	
-	/**
-	 * Returns the current project name as entered by the user, or its anticipated
-	 * initial value.
-	 *
-	 * @return the project name, its anticipated initial value, or <code>null</code>
-	 *   if no project name is known
-	 */
-	/* package */ String getProjectName() {
-		if (projectNameField == null)
-			return initialProjectFieldValue;
+        GridData buttonData = new GridData();
+        buttonData.horizontalSpan = 3;
+        useDefaultsButton.setLayoutData(buttonData);
 
-		return getProjectNameFieldValue();
-	}
-	
-	/**
-	 * Returns the value of the project name field
-	 * with leading and trailing spaces removed.
-	 * 
-	 * @return the project name in the field
-	 */
-	private String getProjectNameFieldValue() {
-		if (projectNameField == null)
-			return ""; //$NON-NLS-1$
-		else
-			return projectNameField.getText().trim();
-	}
-	
-	/**
-	 * Returns the value of the project location field
-	 * with leading and trailing spaces removed.
-	 * 
-	 * @return the project location directory in the field
-	 */
-	private String getProjectLocationFieldValue() {
-		if (locationPathField == null)
-			return ""; //$NON-NLS-1$
-		else
-			return locationPathField.getText().trim();
-	}
-	
-	/**
-	 *	Open an appropriate directory browser
-	 */
-	private void handleLocationBrowseButtonPressed() {
-		DirectoryDialog dialog = new DirectoryDialog(locationPathField.getShell());
-		dialog.setMessage(IDEWorkbenchMessages.getString("WizardNewProjectCreationPage.directoryLabel")); //$NON-NLS-1$
+        createUserSpecifiedProjectLocationGroup(projectGroup, !useDefaults);
 
-		String dirName = getProjectLocationFieldValue();
-		if (!dirName.equals("")) { //$NON-NLS-1$
-			File path = new File(dirName);
-			if (path.exists())
-				dialog.setFilterPath(new Path(dirName).toOSString());
-		}
+        SelectionListener listener = new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                useDefaults = useDefaultsButton.getSelection();
+                browseButton.setEnabled(!useDefaults);
+                locationPathField.setEnabled(!useDefaults);
+                locationLabel.setEnabled(!useDefaults);
+                if (useDefaults) {
+                    customLocationFieldValue = locationPathField.getText();
+                    setLocationForSelection();
+                } else {
+                    locationPathField.setText(customLocationFieldValue);
+                }
+            }
+        };
+        useDefaultsButton.addSelectionListener(listener);
+    }
 
-		String selectedDirectory = dialog.open();
-		if (selectedDirectory != null) {
-			customLocationFieldValue = selectedDirectory;
-			locationPathField.setText(customLocationFieldValue);
-		}
-	}
-	
-	/**
-	 * Returns whether the currently specified project
-	 * content directory points to an exising project
-	 */
-	private boolean isExistingProjectLocation() {
-		IPath path = getLocationPath();
-		path = path.append(IProjectDescription.DESCRIPTION_FILE_NAME);
-		return path.toFile().exists();
-	}
-	
-	/**
-	 * Sets the initial project name that this page will use when
-	 * created. The name is ignored if the createControl(Composite)
-	 * method has already been called. Leading and trailing spaces
-	 * in the name are ignored.
-	 * 
-	 * @param name initial project name for this page
-	 */
-	/* package */ void setInitialProjectName(String name) {
-		if (name == null)
-			initialProjectFieldValue = null;
-		else
-			initialProjectFieldValue = name.trim();
-	}
-	
-	/**
-	 * Set the location to the default location if we are set to useDefaults.
-	 */
-	private void setLocationForSelection() {
-		if (useDefaults) {
-			IPath defaultPath = Platform.getLocation().append(getProjectNameFieldValue());
-			locationPathField.setText(defaultPath.toOSString());
-		}
-	}
-	
-	/**
-	 * Returns whether this page's controls currently all contain valid 
-	 * values.
-	 *
-	 * @return <code>true</code> if all controls are valid, and
-	 *   <code>false</code> if at least one is invalid
-	 */
-	private boolean validatePage() {
-		IWorkspace workspace = IDEWorkbenchPlugin.getPluginWorkspace();
+    /**
+     * Creates the project name specification controls.
+     *
+     * @param parent the parent composite
+     */
+    private final void createProjectNameGroup(Composite parent) {
+        Font font = parent.getFont();
+        // project specification group
+        Composite projectGroup = new Composite(parent, SWT.NONE);
+        GridLayout layout = new GridLayout();
+        layout.numColumns = 2;
+        projectGroup.setLayout(layout);
+        projectGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		String projectFieldContents = getProjectNameFieldValue();
-		if (projectFieldContents.equals("")) { //$NON-NLS-1$
-			setErrorMessage(null);
-			setMessage(IDEWorkbenchMessages.getString("WizardNewProjectCreationPage.projectNameEmpty")); //$NON-NLS-1$
-			return false;
-		}
+        // new project label
+        Label projectLabel = new Label(projectGroup, SWT.NONE);
+        projectLabel.setFont(font);
+        projectLabel.setText(IDEWorkbenchMessages
+                .getString("WizardNewProjectCreationPage.nameLabel")); //$NON-NLS-1$
 
-		IStatus nameStatus = workspace.validateName(projectFieldContents, IResource.PROJECT);
-		if (!nameStatus.isOK()) {
-			setErrorMessage(nameStatus.getMessage());
-			return false;
-		}
+        // new project name entry field
+        projectNameField = new Text(projectGroup, SWT.BORDER);
+        GridData data = new GridData(GridData.FILL_HORIZONTAL);
+        data.widthHint = SIZING_TEXT_FIELD_WIDTH;
+        projectNameField.setLayoutData(data);
+        projectNameField.setFont(font);
 
-		String locationFieldContents = getProjectLocationFieldValue();
+        // Set the initial value first before listener
+        // to avoid handling an event during the creation.
+        if (initialProjectFieldValue != null)
+            projectNameField.setText(initialProjectFieldValue);
+        projectNameField.addListener(SWT.Modify, nameModifyListener);
+    }
 
-		if (locationFieldContents.equals("")) { //$NON-NLS-1$
-			setErrorMessage(null);
-			setMessage(IDEWorkbenchMessages.getString("WizardNewProjectCreationPage.projectLocationEmpty")); //$NON-NLS-1$
-			return false;
-		}
+    /**
+     * Creates the project location specification controls.
+     *
+     * @param projectGroup the parent composite
+     * @param boolean - the initial enabled state of the widgets created
+     */
+    private void createUserSpecifiedProjectLocationGroup(
+            Composite projectGroup, boolean enabled) {
+        Font font = projectGroup.getFont();
+        // location label
+        locationLabel = new Label(projectGroup, SWT.NONE);
+        locationLabel.setFont(font);
+        locationLabel.setText(IDEWorkbenchMessages
+                .getString("WizardNewProjectCreationPage.locationLabel")); //$NON-NLS-1$
+        locationLabel.setEnabled(enabled);
 
-		IPath path = new Path(""); //$NON-NLS-1$
-		if (!path.isValidPath(locationFieldContents)) {
-			setErrorMessage(IDEWorkbenchMessages.getString("WizardNewProjectCreationPage.locationError")); //$NON-NLS-1$
-			return false;
-		}
-		if (!useDefaults && Platform.getLocation().isPrefixOf(new Path(locationFieldContents))) {
-			setErrorMessage(IDEWorkbenchMessages.getString("WizardNewProjectCreationPage.defaultLocationError")); //$NON-NLS-1$
-			return false;
-		}
+        // project location entry field
+        locationPathField = new Text(projectGroup, SWT.BORDER);
+        GridData data = new GridData(GridData.FILL_HORIZONTAL);
+        data.widthHint = SIZING_TEXT_FIELD_WIDTH;
+        locationPathField.setLayoutData(data);
+        locationPathField.setFont(font);
+        locationPathField.setEnabled(enabled);
 
-		if (getProjectHandle().exists()) {
-			setErrorMessage(IDEWorkbenchMessages.getString("WizardNewProjectCreationPage.projectExistsMessage")); //$NON-NLS-1$
-			return false;
-		}
+        // browse button
+        browseButton = new Button(projectGroup, SWT.PUSH);
+        browseButton.setFont(font);
+        browseButton.setText(IDEWorkbenchMessages
+                .getString("WizardNewProjectCreationPage.browseLabel")); //$NON-NLS-1$
+        browseButton.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent event) {
+                handleLocationBrowseButtonPressed();
+            }
+        });
 
-		if (isExistingProjectLocation()) {
-			setErrorMessage(IDEWorkbenchMessages.getString("WizardNewProjectCreationPage.projectLocationExistsMessage")); //$NON-NLS-1$
-			return false;
-		}
-		
-		setErrorMessage(null);
-		setMessage(null);
-		return true;
-	}
-	
-/*
- * see @DialogPage.setVisible(boolean)
- */
-public void setVisible(boolean visible) {
-	super.setVisible(visible);
-	if(visible)
-		projectNameField.setFocus();
-}
+        browseButton.setEnabled(enabled);
+
+        // Set the initial value first before listener
+        // to avoid handling an event during the creation.
+        if (initialLocationFieldValue != null)
+            locationPathField.setText(initialLocationFieldValue.toOSString());
+        locationPathField.addListener(SWT.Modify, locationModifyListener);
+    }
+
+    /**
+     * Returns the current project location path as entered by 
+     * the user, or its anticipated initial value.
+     *
+     * @return the project location path, its anticipated initial value, or <code>null</code>
+     *   if no project location path is known
+     */
+    /* package */IPath getLocationPath() {
+        if (useDefaults)
+            return initialLocationFieldValue;
+
+        return new Path(getProjectLocationFieldValue());
+    }
+
+    /**
+     * Creates a project resource handle for the current project name field value.
+     * <p>
+     * This method does not create the project resource; this is the responsibility
+     * of <code>IProject::create</code> invoked by the new project resource wizard.
+     * </p>
+     *
+     * @return the new project resource handle
+     */
+    /* package */IProject getProjectHandle() {
+        return ResourcesPlugin.getWorkspace().getRoot().getProject(
+                getProjectName());
+    }
+
+    /**
+     * Returns the current project name as entered by the user, or its anticipated
+     * initial value.
+     *
+     * @return the project name, its anticipated initial value, or <code>null</code>
+     *   if no project name is known
+     */
+    /* package */String getProjectName() {
+        if (projectNameField == null)
+            return initialProjectFieldValue;
+
+        return getProjectNameFieldValue();
+    }
+
+    /**
+     * Returns the value of the project name field
+     * with leading and trailing spaces removed.
+     * 
+     * @return the project name in the field
+     */
+    private String getProjectNameFieldValue() {
+        if (projectNameField == null)
+            return ""; //$NON-NLS-1$
+        else
+            return projectNameField.getText().trim();
+    }
+
+    /**
+     * Returns the value of the project location field
+     * with leading and trailing spaces removed.
+     * 
+     * @return the project location directory in the field
+     */
+    private String getProjectLocationFieldValue() {
+        if (locationPathField == null)
+            return ""; //$NON-NLS-1$
+        else
+            return locationPathField.getText().trim();
+    }
+
+    /**
+     *	Open an appropriate directory browser
+     */
+    private void handleLocationBrowseButtonPressed() {
+        DirectoryDialog dialog = new DirectoryDialog(locationPathField
+                .getShell());
+        dialog.setMessage(IDEWorkbenchMessages
+                .getString("WizardNewProjectCreationPage.directoryLabel")); //$NON-NLS-1$
+
+        String dirName = getProjectLocationFieldValue();
+        if (!dirName.equals("")) { //$NON-NLS-1$
+            File path = new File(dirName);
+            if (path.exists())
+                dialog.setFilterPath(new Path(dirName).toOSString());
+        }
+
+        String selectedDirectory = dialog.open();
+        if (selectedDirectory != null) {
+            customLocationFieldValue = selectedDirectory;
+            locationPathField.setText(customLocationFieldValue);
+        }
+    }
+
+    /**
+     * Returns whether the currently specified project
+     * content directory points to an exising project
+     */
+    private boolean isExistingProjectLocation() {
+        IPath path = getLocationPath();
+        path = path.append(IProjectDescription.DESCRIPTION_FILE_NAME);
+        return path.toFile().exists();
+    }
+
+    /**
+     * Sets the initial project name that this page will use when
+     * created. The name is ignored if the createControl(Composite)
+     * method has already been called. Leading and trailing spaces
+     * in the name are ignored.
+     * 
+     * @param name initial project name for this page
+     */
+    /* package */void setInitialProjectName(String name) {
+        if (name == null)
+            initialProjectFieldValue = null;
+        else
+            initialProjectFieldValue = name.trim();
+    }
+
+    /**
+     * Set the location to the default location if we are set to useDefaults.
+     */
+    private void setLocationForSelection() {
+        if (useDefaults) {
+            IPath defaultPath = Platform.getLocation().append(
+                    getProjectNameFieldValue());
+            locationPathField.setText(defaultPath.toOSString());
+        }
+    }
+
+    /**
+     * Returns whether this page's controls currently all contain valid 
+     * values.
+     *
+     * @return <code>true</code> if all controls are valid, and
+     *   <code>false</code> if at least one is invalid
+     */
+    private boolean validatePage() {
+        IWorkspace workspace = IDEWorkbenchPlugin.getPluginWorkspace();
+
+        String projectFieldContents = getProjectNameFieldValue();
+        if (projectFieldContents.equals("")) { //$NON-NLS-1$
+            setErrorMessage(null);
+            setMessage(IDEWorkbenchMessages
+                    .getString("WizardNewProjectCreationPage.projectNameEmpty")); //$NON-NLS-1$
+            return false;
+        }
+
+        IStatus nameStatus = workspace.validateName(projectFieldContents,
+                IResource.PROJECT);
+        if (!nameStatus.isOK()) {
+            setErrorMessage(nameStatus.getMessage());
+            return false;
+        }
+
+        String locationFieldContents = getProjectLocationFieldValue();
+
+        if (locationFieldContents.equals("")) { //$NON-NLS-1$
+            setErrorMessage(null);
+            setMessage(IDEWorkbenchMessages
+                    .getString("WizardNewProjectCreationPage.projectLocationEmpty")); //$NON-NLS-1$
+            return false;
+        }
+
+        IPath path = new Path(""); //$NON-NLS-1$
+        if (!path.isValidPath(locationFieldContents)) {
+            setErrorMessage(IDEWorkbenchMessages
+                    .getString("WizardNewProjectCreationPage.locationError")); //$NON-NLS-1$
+            return false;
+        }
+        if (!useDefaults
+                && Platform.getLocation().isPrefixOf(
+                        new Path(locationFieldContents))) {
+            setErrorMessage(IDEWorkbenchMessages
+                    .getString("WizardNewProjectCreationPage.defaultLocationError")); //$NON-NLS-1$
+            return false;
+        }
+
+        if (getProjectHandle().exists()) {
+            setErrorMessage(IDEWorkbenchMessages
+                    .getString("WizardNewProjectCreationPage.projectExistsMessage")); //$NON-NLS-1$
+            return false;
+        }
+
+        if (isExistingProjectLocation()) {
+            setErrorMessage(IDEWorkbenchMessages
+                    .getString("WizardNewProjectCreationPage.projectLocationExistsMessage")); //$NON-NLS-1$
+            return false;
+        }
+
+        setErrorMessage(null);
+        setMessage(null);
+        return true;
+    }
+
+    /*
+     * see @DialogPage.setVisible(boolean)
+     */
+    public void setVisible(boolean visible) {
+        super.setVisible(visible);
+        if (visible)
+            projectNameField.setFocus();
+    }
 
 }

@@ -19,20 +19,20 @@ import org.eclipse.swt.graphics.Image;
  */
 public class ProgressLabelProvider extends LabelProvider {
 
-	Image image;
+    Image image;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
-	 */
-	public Image getImage(Object element) {
-		return ((JobTreeElement) element).getDisplayImage();
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
+     */
+    public Image getImage(Object element) {
+        return ((JobTreeElement) element).getDisplayImage();
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
-	 */
-	public String getText(Object element) {
-		return ((JobTreeElement) element).getDisplayString();
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
+     */
+    public String getText(Object element) {
+        return ((JobTreeElement) element).getDisplayString();
+    }
 
 }

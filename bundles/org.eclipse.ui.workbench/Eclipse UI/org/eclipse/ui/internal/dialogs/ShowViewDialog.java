@@ -40,243 +40,241 @@ import org.eclipse.ui.internal.registry.ViewRegistry;
 /**
  * The Show View dialog.
  */
-public class ShowViewDialog
-	extends Dialog
-	implements ISelectionChangedListener, IDoubleClickListener {
+public class ShowViewDialog extends Dialog implements
+        ISelectionChangedListener, IDoubleClickListener {
 
-	private static final String DIALOG_SETTING_SECTION_NAME = "ShowViewDialog"; //$NON-NLS-1$
-	private static final int LIST_HEIGHT = 300;
-	private static final int LIST_WIDTH = 250;
-	private static final String STORE_EXPANDED_CATEGORIES_ID = DIALOG_SETTING_SECTION_NAME + ".STORE_EXPANDED_CATEGORIES_ID"; //$NON-NLS-1$    
-	private TreeViewer tree;
-	private Button okButton;
-	private IViewDescriptor[] viewDescs = new IViewDescriptor[0];
-	private IViewRegistry viewReg;
+    private static final String DIALOG_SETTING_SECTION_NAME = "ShowViewDialog"; //$NON-NLS-1$
 
-	/**
-	 * Constructs a new ShowViewDialog.
-	 */
-	public ShowViewDialog(Shell parentShell, IViewRegistry viewReg) {
-		super(parentShell);
-		this.viewReg = viewReg;
-	}
+    private static final int LIST_HEIGHT = 300;
 
-	/**
-	 * This method is called if a button has been pressed.
-	 */
-	protected void buttonPressed(int buttonId) {
-		if (buttonId == IDialogConstants.OK_ID)
-			saveWidgetValues();
-		super.buttonPressed(buttonId);
-	}
+    private static final int LIST_WIDTH = 250;
 
-	/**
-	 * Notifies that the cancel button of this dialog has been pressed.
-	 */
-	protected void cancelPressed() {
-		viewDescs = new IViewDescriptor[0];
-		super.cancelPressed();
-	}
+    private static final String STORE_EXPANDED_CATEGORIES_ID = DIALOG_SETTING_SECTION_NAME
+            + ".STORE_EXPANDED_CATEGORIES_ID"; //$NON-NLS-1$    
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
-	 */
-	protected void configureShell(Shell shell) {
-		super.configureShell(shell);
-		shell.setText(WorkbenchMessages.getString("ShowView.shellTitle")); //$NON-NLS-1$
-		WorkbenchHelp.setHelp(shell, IHelpContextIds.SHOW_VIEW_DIALOG);
-	}
+    private TreeViewer tree;
 
-	/**
-	 * Adds buttons to this dialog's button bar.
-	 * <p>
-	 * The default implementation of this framework method adds standard ok and
-	 * cancel buttons using the <code>createButton</code> framework method.
-	 * Subclasses may override.
-	 * </p>
-	 * 
-	 * @param parent the button bar composite
-	 */
-	protected void createButtonsForButtonBar(Composite parent) {
-		okButton =
-			createButton(
-				parent,
-				IDialogConstants.OK_ID,
-				IDialogConstants.OK_LABEL,
-				true);
-		createButton(
-			parent,
-			IDialogConstants.CANCEL_ID,
-			IDialogConstants.CANCEL_LABEL,
-			false);
-	}
+    private Button okButton;
 
-	/**
-	 * Creates and returns the contents of the upper part of this dialog (above
-	 * the button bar).
-	 * 
-	 * @param the parent composite to contain the dialog area
-	 * @return the dialog area control
-	 */
-	protected Control createDialogArea(Composite parent) {
-		// Run super.
-		Composite composite = (Composite) super.createDialogArea(parent);
-		composite.setFont(parent.getFont());		
+    private IViewDescriptor[] viewDescs = new IViewDescriptor[0];
 
-		createViewer(composite);
+    private IViewRegistry viewReg;
 
-		layoutTopControl(tree.getControl());		
-		
-		// Restore the last state
-		restoreWidgetValues();
+    /**
+     * Constructs a new ShowViewDialog.
+     */
+    public ShowViewDialog(Shell parentShell, IViewRegistry viewReg) {
+        super(parentShell);
+        this.viewReg = viewReg;
+    }
 
-		// Return results.
-		return composite;
-	}
+    /**
+     * This method is called if a button has been pressed.
+     */
+    protected void buttonPressed(int buttonId) {
+        if (buttonId == IDialogConstants.OK_ID)
+            saveWidgetValues();
+        super.buttonPressed(buttonId);
+    }
 
-	/**
-	 * Create a new viewer in the parent.
-	 * 
-	 * @param parent the parent <code>Composite</code>.
-	 */
-	private void createViewer(Composite parent) {
-		tree =
-			new TreeViewer(
-				parent,
-				SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
-		tree.setLabelProvider(new ViewLabelProvider());
-		tree.setContentProvider(new ViewContentProvider());
-		tree.setSorter(new ViewSorter((ViewRegistry) viewReg));
-		tree.setInput(viewReg);
-		tree.addSelectionChangedListener(this);
-		tree.addDoubleClickListener(this);
-		tree.getTree().setFont(parent.getFont());
-	}
+    /**
+     * Notifies that the cancel button of this dialog has been pressed.
+     */
+    protected void cancelPressed() {
+        viewDescs = new IViewDescriptor[0];
+        super.cancelPressed();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.IDoubleClickListener#doubleClick(org.eclipse.jface.viewers.DoubleClickEvent)
-	 */
-	public void doubleClick(DoubleClickEvent event) {
-		IStructuredSelection s = (IStructuredSelection) event.getSelection();
-		Object element = s.getFirstElement();
-		if (tree.isExpandable(element)) {
-			tree.setExpandedState(element, !tree.getExpandedState(element));
-		} else if (viewDescs.length > 0) {
-			saveWidgetValues();
-			setReturnCode(OK);
-			close();
-		}
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
+     */
+    protected void configureShell(Shell shell) {
+        super.configureShell(shell);
+        shell.setText(WorkbenchMessages.getString("ShowView.shellTitle")); //$NON-NLS-1$
+        WorkbenchHelp.setHelp(shell, IHelpContextIds.SHOW_VIEW_DIALOG);
+    }
 
-	/**
-	 * Return the dialog store to cache values into
-	 */
-	protected IDialogSettings getDialogSettings() {
-		IDialogSettings workbenchSettings =
-			WorkbenchPlugin.getDefault().getDialogSettings();
-		IDialogSettings section =
-			workbenchSettings.getSection(DIALOG_SETTING_SECTION_NAME);
-		if (section == null)
-			section =
-				workbenchSettings.addNewSection(DIALOG_SETTING_SECTION_NAME);
-		return section;
-	}
+    /**
+     * Adds buttons to this dialog's button bar.
+     * <p>
+     * The default implementation of this framework method adds standard ok and
+     * cancel buttons using the <code>createButton</code> framework method.
+     * Subclasses may override.
+     * </p>
+     * 
+     * @param parent the button bar composite
+     */
+    protected void createButtonsForButtonBar(Composite parent) {
+        okButton = createButton(parent, IDialogConstants.OK_ID,
+                IDialogConstants.OK_LABEL, true);
+        createButton(parent, IDialogConstants.CANCEL_ID,
+                IDialogConstants.CANCEL_LABEL, false);
+    }
 
-	/**
-	 * Returns the descriptors for the selected views.
-	 */
-	public IViewDescriptor[] getSelection() {
-		return viewDescs;
-	}
+    /**
+     * Creates and returns the contents of the upper part of this dialog (above
+     * the button bar).
+     * 
+     * @param the parent composite to contain the dialog area
+     * @return the dialog area control
+     */
+    protected Control createDialogArea(Composite parent) {
+        // Run super.
+        Composite composite = (Composite) super.createDialogArea(parent);
+        composite.setFont(parent.getFont());
 
-	/**
-	 * Layout the top control.
-	 * 
-	 * @param control the control.
-	 */
-	private void layoutTopControl(Control control) {
-		GridData spec = new GridData(GridData.FILL_BOTH);
-		spec.widthHint = LIST_WIDTH;
-		spec.heightHint = LIST_HEIGHT;
-		control.setLayoutData(spec);
-	}
+        createViewer(composite);
 
-	/**
-	 * Use the dialog store to restore widget values to the values that they
-	 * held last time this dialog was used to completion.
-	 */
-	protected void restoreWidgetValues() {
-		IDialogSettings settings = getDialogSettings();
+        layoutTopControl(tree.getControl());
 
-		String [] expandedCategoryIds = settings.getArray(STORE_EXPANDED_CATEGORIES_ID);
-		if (expandedCategoryIds == null)
-			return;
+        // Restore the last state
+        restoreWidgetValues();
 
-		ViewRegistry reg = (ViewRegistry) viewReg;
-		ArrayList categoriesToExpand =
-			new ArrayList(expandedCategoryIds.length);
-		for (int i = 0; i < expandedCategoryIds.length; i++) {
-			Category category = reg.findCategory(expandedCategoryIds[i]);
-			if (category != null) // ie.- it still exists
-				categoriesToExpand.add(category);
-		}
+        // Return results.
+        return composite;
+    }
 
-		if (!categoriesToExpand.isEmpty())
-			tree.setExpandedElements(categoriesToExpand.toArray());
-	}
+    /**
+     * Create a new viewer in the parent.
+     * 
+     * @param parent the parent <code>Composite</code>.
+     */
+    private void createViewer(Composite parent) {
+        tree = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL
+                | SWT.BORDER);
+        tree.setLabelProvider(new ViewLabelProvider());
+        tree.setContentProvider(new ViewContentProvider());
+        tree.setSorter(new ViewSorter((ViewRegistry) viewReg));
+        tree.setInput(viewReg);
+        tree.addSelectionChangedListener(this);
+        tree.addDoubleClickListener(this);
+        tree.getTree().setFont(parent.getFont());
+    }
 
-	/**
-	 * Since OK was pressed, write widget values to the dialog store so that
-	 * they will persist into the next invocation of this dialog
-	 */
-	protected void saveWidgetValues() {
-		IDialogSettings settings = getDialogSettings();
-		
-		// Collect the ids of the all expanded categories
-		Object[] expandedElements = tree.getExpandedElements();
-		String[] expandedCategoryIds = new String[expandedElements.length];
-		for (int i = 0; i < expandedElements.length; ++i)
-			expandedCategoryIds[i] = ((Category) expandedElements[i]).getId();
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.viewers.IDoubleClickListener#doubleClick(org.eclipse.jface.viewers.DoubleClickEvent)
+     */
+    public void doubleClick(DoubleClickEvent event) {
+        IStructuredSelection s = (IStructuredSelection) event.getSelection();
+        Object element = s.getFirstElement();
+        if (tree.isExpandable(element)) {
+            tree.setExpandedState(element, !tree.getExpandedState(element));
+        } else if (viewDescs.length > 0) {
+            saveWidgetValues();
+            setReturnCode(OK);
+            close();
+        }
+    }
 
-		// Save them for next time.
-		settings.put(STORE_EXPANDED_CATEGORIES_ID, expandedCategoryIds);
-		
-	}
+    /**
+     * Return the dialog store to cache values into
+     */
+    protected IDialogSettings getDialogSettings() {
+        IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault()
+                .getDialogSettings();
+        IDialogSettings section = workbenchSettings
+                .getSection(DIALOG_SETTING_SECTION_NAME);
+        if (section == null)
+            section = workbenchSettings
+                    .addNewSection(DIALOG_SETTING_SECTION_NAME);
+        return section;
+    }
 
-	/**
-	 * Notifies that the selection has changed.
-	 * 
-	 * @param event event object describing the change
-	 */
-	public void selectionChanged(SelectionChangedEvent event) {
-		updateSelection(event);
-		updateButtons();
-	}
+    /**
+     * Returns the descriptors for the selected views.
+     */
+    public IViewDescriptor[] getSelection() {
+        return viewDescs;
+    }
 
-	/**
-	 * Update the button enablement state.
-	 */
-	protected void updateButtons() {
-		okButton.setEnabled(getSelection() != null);
-	}
+    /**
+     * Layout the top control.
+     * 
+     * @param control the control.
+     */
+    private void layoutTopControl(Control control) {
+        GridData spec = new GridData(GridData.FILL_BOTH);
+        spec.widthHint = LIST_WIDTH;
+        spec.heightHint = LIST_HEIGHT;
+        control.setLayoutData(spec);
+    }
 
-	/**
-	 * Update the selection object.
-	 */
-	protected void updateSelection(SelectionChangedEvent event) {
-		ArrayList descs = new ArrayList();
-		IStructuredSelection sel = (IStructuredSelection) event.getSelection();
-		for (Iterator i = sel.iterator(); i.hasNext();) {
-			Object o = i.next();
-			if (o instanceof IViewDescriptor) {
-				descs.add(o);
-			}
-		}
-		viewDescs = new IViewDescriptor[descs.size()];
-		descs.toArray(viewDescs);
-	}
+    /**
+     * Use the dialog store to restore widget values to the values that they
+     * held last time this dialog was used to completion.
+     */
+    protected void restoreWidgetValues() {
+        IDialogSettings settings = getDialogSettings();
+
+        String[] expandedCategoryIds = settings
+                .getArray(STORE_EXPANDED_CATEGORIES_ID);
+        if (expandedCategoryIds == null)
+            return;
+
+        ViewRegistry reg = (ViewRegistry) viewReg;
+        ArrayList categoriesToExpand = new ArrayList(expandedCategoryIds.length);
+        for (int i = 0; i < expandedCategoryIds.length; i++) {
+            Category category = reg.findCategory(expandedCategoryIds[i]);
+            if (category != null) // ie.- it still exists
+                categoriesToExpand.add(category);
+        }
+
+        if (!categoriesToExpand.isEmpty())
+            tree.setExpandedElements(categoriesToExpand.toArray());
+    }
+
+    /**
+     * Since OK was pressed, write widget values to the dialog store so that
+     * they will persist into the next invocation of this dialog
+     */
+    protected void saveWidgetValues() {
+        IDialogSettings settings = getDialogSettings();
+
+        // Collect the ids of the all expanded categories
+        Object[] expandedElements = tree.getExpandedElements();
+        String[] expandedCategoryIds = new String[expandedElements.length];
+        for (int i = 0; i < expandedElements.length; ++i)
+            expandedCategoryIds[i] = ((Category) expandedElements[i]).getId();
+
+        // Save them for next time.
+        settings.put(STORE_EXPANDED_CATEGORIES_ID, expandedCategoryIds);
+
+    }
+
+    /**
+     * Notifies that the selection has changed.
+     * 
+     * @param event event object describing the change
+     */
+    public void selectionChanged(SelectionChangedEvent event) {
+        updateSelection(event);
+        updateButtons();
+    }
+
+    /**
+     * Update the button enablement state.
+     */
+    protected void updateButtons() {
+        okButton.setEnabled(getSelection() != null);
+    }
+
+    /**
+     * Update the selection object.
+     */
+    protected void updateSelection(SelectionChangedEvent event) {
+        ArrayList descs = new ArrayList();
+        IStructuredSelection sel = (IStructuredSelection) event.getSelection();
+        for (Iterator i = sel.iterator(); i.hasNext();) {
+            Object o = i.next();
+            if (o instanceof IViewDescriptor) {
+                descs.add(o);
+            }
+        }
+        viewDescs = new IViewDescriptor[descs.size()];
+        descs.toArray(viewDescs);
+    }
 }

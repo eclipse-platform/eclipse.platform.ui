@@ -77,7 +77,7 @@ public final class HandlerProxy extends AbstractHandler {
         configurationElement = newConfigurationElement;
         handler = null;
     }
-    
+
     /**
      * Passes the dipose on to the proxied handler, if it has been loaded.
      */
@@ -91,7 +91,9 @@ public final class HandlerProxy extends AbstractHandler {
      * @see IHandler#execute(Map)
      */
     public Object execute(Map parameterValuesByName) throws ExecutionException {
-        if (loadHandler()) { return handler.execute(parameterValuesByName); }
+        if (loadHandler()) {
+            return handler.execute(parameterValuesByName);
+        }
 
         return null;
     }

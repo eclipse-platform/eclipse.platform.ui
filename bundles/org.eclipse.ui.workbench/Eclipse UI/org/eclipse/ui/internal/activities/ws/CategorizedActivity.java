@@ -26,130 +26,131 @@ import org.eclipse.ui.activities.NotDefinedException;
  * @since 3.0
  */
 public class CategorizedActivity implements IActivity {
-	
-	/**
-	 * The real <code>IActivity</code>.
-	 */
-	private IActivity activity;
-	
-	/**
-	 * The <code>ICategory</code> under which this proxy will be rendered.
-	 */
-	private ICategory category;
 
-	/**
-	 * Create a new instance.
-	 * 
-	 * @param category the <code>ICategory</code> under which this proxy will be 
-	 * rendered.
-	 * @param activity the real <code>IActivity</code>.
-	 */
-	public CategorizedActivity(ICategory category, IActivity activity) {
-		this.activity = activity;
-		this.category = category;
-	}
+    /**
+     * The real <code>IActivity</code>.
+     */
+    private IActivity activity;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.activities.IActivity#addActivityListener(org.eclipse.ui.activities.IActivityListener)
-	 */
-	public void addActivityListener(IActivityListener activityListener) {
-		activity.addActivityListener(activityListener);
-	}
+    /**
+     * The <code>ICategory</code> under which this proxy will be rendered.
+     */
+    private ICategory category;
 
-	/* (non-Javadoc)
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
-	public int compareTo(Object o) {
-		return activity.compareTo(o);
-	}
+    /**
+     * Create a new instance.
+     * 
+     * @param category the <code>ICategory</code> under which this proxy will be 
+     * rendered.
+     * @param activity the real <code>IActivity</code>.
+     */
+    public CategorizedActivity(ICategory category, IActivity activity) {
+        this.activity = activity;
+        this.category = category;
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	public boolean equals(Object o) {
-		if (o instanceof CategorizedActivity) {
-			if (((CategorizedActivity) o).getCategory().equals(getCategory()))
-				return ((CategorizedActivity) o).getActivity().equals(getActivity());
-		}
-		return false;
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.activities.IActivity#addActivityListener(org.eclipse.ui.activities.IActivityListener)
+     */
+    public void addActivityListener(IActivityListener activityListener) {
+        activity.addActivityListener(activityListener);
+    }
 
-	/**
-	 * @return returns the <code>IActivity</code>.
-	 */
-	public IActivity getActivity() {
-		return activity;
-	}
+    /* (non-Javadoc)
+     * @see java.lang.Comparable#compareTo(java.lang.Object)
+     */
+    public int compareTo(Object o) {
+        return activity.compareTo(o);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.activities.IActivity#getActivityRequirementBindings()
-	 */
-	public Set getActivityRequirementBindings() {
-		return activity.getActivityRequirementBindings();
-	}
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    public boolean equals(Object o) {
+        if (o instanceof CategorizedActivity) {
+            if (((CategorizedActivity) o).getCategory().equals(getCategory()))
+                return ((CategorizedActivity) o).getActivity().equals(
+                        getActivity());
+        }
+        return false;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.activities.IActivity#getActivityPatternBindings()
-	 */
-	public Set getActivityPatternBindings() {
-		return activity.getActivityPatternBindings();
-	}
+    /**
+     * @return returns the <code>IActivity</code>.
+     */
+    public IActivity getActivity() {
+        return activity;
+    }
 
-	/**
-	 * @return returns the <code>ICategory</code>.
-	 */
-	public ICategory getCategory() {
-		return category;
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.activities.IActivity#getActivityRequirementBindings()
+     */
+    public Set getActivityRequirementBindings() {
+        return activity.getActivityRequirementBindings();
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.activities.IActivity#getId()
-	 */
-	public String getId() {
-		return activity.getId();
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.activities.IActivity#getActivityPatternBindings()
+     */
+    public Set getActivityPatternBindings() {
+        return activity.getActivityPatternBindings();
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.activities.IActivity#getName()
-	 */
-	public String getName() throws NotDefinedException {
-		return activity.getName();
-	}
+    /**
+     * @return returns the <code>ICategory</code>.
+     */
+    public ICategory getCategory() {
+        return category;
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	public int hashCode() {
-		return activity.hashCode();
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.activities.IActivity#getId()
+     */
+    public String getId() {
+        return activity.getId();
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.activities.IActivity#isDefined()
-	 */
-	public boolean isDefined() {
-		return activity.isDefined();
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.activities.IActivity#getName()
+     */
+    public String getName() throws NotDefinedException {
+        return activity.getName();
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.activities.IActivity#isEnabled()
-	 */
-	public boolean isEnabled() {
-		return activity.isEnabled();
-	}
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    public int hashCode() {
+        return activity.hashCode();
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.activities.IActivity#removeActivityListener(org.eclipse.ui.activities.IActivityListener)
-	 */
-	public void removeActivityListener(IActivityListener activityListener) {
-		activity.removeActivityListener(activityListener);
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.activities.IActivity#isDefined()
+     */
+    public boolean isDefined() {
+        return activity.isDefined();
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	public String toString() {
-		return category.getId() + " -> " + activity.getId(); //$NON-NLS-1$
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.activities.IActivity#isEnabled()
+     */
+    public boolean isEnabled() {
+        return activity.isEnabled();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.activities.IActivity#removeActivityListener(org.eclipse.ui.activities.IActivityListener)
+     */
+    public void removeActivityListener(IActivityListener activityListener) {
+        activity.removeActivityListener(activityListener);
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    public String toString() {
+        return category.getId() + " -> " + activity.getId(); //$NON-NLS-1$
+    }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.activities.IActivity#getDescription()

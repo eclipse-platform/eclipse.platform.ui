@@ -25,85 +25,86 @@ package org.eclipse.ui.activities;
  * @see ICategoryListener#categoryChanged(CategoryEvent)
  */
 public final class CategoryEvent {
-	private ICategory category;
-	private boolean categoryActivityBindingsChanged;
-	private boolean definedChanged;
-	private boolean nameChanged;
+    private ICategory category;
+
+    private boolean categoryActivityBindingsChanged;
+
+    private boolean definedChanged;
+
+    private boolean nameChanged;
+
     private boolean descriptionChanged;
 
-	/**
-	 * Creates a new instance of this class.
-	 * 
-	 * @param category
+    /**
+     * Creates a new instance of this class.
+     * 
+     * @param category
      *        the instance of the interface that changed.
-	 * @param categoryActivityBindingsChanged
+     * @param categoryActivityBindingsChanged
      *        <code>true</code>, iff the categoryActivityBindings property changed.
-	 * @param definedChanged
+     * @param definedChanged
      *        <code>true</code>, iff the defined property changed.
-	 * @param descriptionChanged
+     * @param descriptionChanged
      *        <code>true</code>, iff the description property changed. 
-	 * @param nameChanged
+     * @param nameChanged
      *        <code>true</code>, iff the name property changed.
-	 */
-	public CategoryEvent(
-		ICategory category,
-		boolean categoryActivityBindingsChanged,
-		boolean definedChanged,
-		boolean descriptionChanged, 
-		boolean nameChanged) {
-		if (category == null)
-			throw new NullPointerException();
+     */
+    public CategoryEvent(ICategory category,
+            boolean categoryActivityBindingsChanged, boolean definedChanged,
+            boolean descriptionChanged, boolean nameChanged) {
+        if (category == null)
+            throw new NullPointerException();
 
-		this.category = category;
-		this.categoryActivityBindingsChanged = categoryActivityBindingsChanged;
-		this.definedChanged = definedChanged;
-		this.nameChanged = nameChanged;
-		this.descriptionChanged = descriptionChanged;
-	}
+        this.category = category;
+        this.categoryActivityBindingsChanged = categoryActivityBindingsChanged;
+        this.definedChanged = definedChanged;
+        this.nameChanged = nameChanged;
+        this.descriptionChanged = descriptionChanged;
+    }
 
-	/**
-	 * Returns the instance of the interface that changed.
-	 * 
-	 * @return the instance of the interface that changed. Guaranteed not to be
-	 *         <code>null</code>.
-	 */
-	public ICategory getCategory() {
-		return category;
-	}
+    /**
+     * Returns the instance of the interface that changed.
+     * 
+     * @return the instance of the interface that changed. Guaranteed not to be
+     *         <code>null</code>.
+     */
+    public ICategory getCategory() {
+        return category;
+    }
 
-	/**
-	 * Returns whether or not the defined property changed.
-	 * 
-	 * @return <code>true</code>, iff the defined property changed.
-	 */
-	public boolean hasDefinedChanged() {
-		return definedChanged;
-	}
+    /**
+     * Returns whether or not the defined property changed.
+     * 
+     * @return <code>true</code>, iff the defined property changed.
+     */
+    public boolean hasDefinedChanged() {
+        return definedChanged;
+    }
 
-	/**
-	 * Returns whether or not the name property changed.
-	 * 
-	 * @return <code>true</code>, iff the name property changed.
-	 */
-	public boolean hasNameChanged() {
-		return nameChanged;
-	}
-	
-	/**
-	 * Returns whether or not the description property changed.
-	 * 
-	 * @return <code>true</code>, iff the description property changed.
-	 */
-	public boolean hasDescriptionChanged() {
-		return descriptionChanged;
-	}	
+    /**
+     * Returns whether or not the name property changed.
+     * 
+     * @return <code>true</code>, iff the name property changed.
+     */
+    public boolean hasNameChanged() {
+        return nameChanged;
+    }
 
-	/**
-	 * Returns whether or not the categoryActivityBindings property changed.
-	 * 
-	 * @return <code>true</code>, iff the categoryActivityBindings property changed.
-	 */
-	public boolean haveCategoryActivityBindingsChanged() {
-		return categoryActivityBindingsChanged;
-	}
+    /**
+     * Returns whether or not the description property changed.
+     * 
+     * @return <code>true</code>, iff the description property changed.
+     */
+    public boolean hasDescriptionChanged() {
+        return descriptionChanged;
+    }
+
+    /**
+     * Returns whether or not the categoryActivityBindings property changed.
+     * 
+     * @return <code>true</code>, iff the categoryActivityBindings property changed.
+     */
+    public boolean haveCategoryActivityBindingsChanged() {
+        return categoryActivityBindingsChanged;
+    }
 }

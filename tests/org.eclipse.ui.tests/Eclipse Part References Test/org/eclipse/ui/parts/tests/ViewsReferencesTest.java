@@ -31,215 +31,215 @@ import org.eclipse.ui.parts.tests.util.PartsWorkbenchAdvisor;
  */
 public class ViewsReferencesTest extends TestCase {
 
-	private Display display;
+    private Display display;
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param testName
-	 *            The test's name.
-	 */
-	public ViewsReferencesTest(String testName) {
-		super(testName);
-	}
+    /**
+     * Constructor.
+     * 
+     * @param testName
+     *            The test's name.
+     */
+    public ViewsReferencesTest(String testName) {
+        super(testName);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see junit.framework.TestCase#setUp()
-	 */
-	protected void setUp() throws Exception {
-		super.setUp();
-		display = PlatformUI.createDisplay();
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see junit.framework.TestCase#setUp()
+     */
+    protected void setUp() throws Exception {
+        super.setUp();
+        display = PlatformUI.createDisplay();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see junit.framework.TestCase#tearDown()
-	 */
-	protected void tearDown() throws Exception {
-		display.dispose();
-		super.tearDown();
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see junit.framework.TestCase#tearDown()
+     */
+    protected void tearDown() throws Exception {
+        display.dispose();
+        super.tearDown();
+    }
 
-	/**
-	 * Test that only view0's part has been created (ideally).
-	 *  
-	 */
-	public void testActivePartView0() {
-		openViews(0);
-		checkViewsParts(0);
+    /**
+     * Test that only view0's part has been created (ideally).
+     *  
+     */
+    public void testActivePartView0() {
+        openViews(0);
+        checkViewsParts(0);
 
-	}
+    }
 
-	/**
-	 * Test that only view1's part has been created (ideally).
-	 *  
-	 */
-	public void testActivePartView1() {
-		openViews(1);
-		checkViewsParts(1);
+    /**
+     * Test that only view1's part has been created (ideally).
+     *  
+     */
+    public void testActivePartView1() {
+        openViews(1);
+        checkViewsParts(1);
 
-	}
+    }
 
-	/**
-	 * Test that only view2's part has been created (ideally).
-	 *  
-	 */
-	public void testActivePartView2() {
-		openViews(2);
-		checkViewsParts(2);
-	}
+    /**
+     * Test that only view2's part has been created (ideally).
+     *  
+     */
+    public void testActivePartView2() {
+        openViews(2);
+        checkViewsParts(2);
+    }
 
-	/**
-	 * Test that zooming view0 on start up and navigating to other views behaves
-	 * correcly.
-	 *  
-	 */
-	public void testZoomActivePartView0() {
-		openViews(0);
-		zoomView(0);
-	}
+    /**
+     * Test that zooming view0 on start up and navigating to other views behaves
+     * correcly.
+     *  
+     */
+    public void testZoomActivePartView0() {
+        openViews(0);
+        zoomView(0);
+    }
 
-	/**
-	 * Test that zooming view1 on start up and navigating to other views behaves
-	 * correcly.
-	 *  
-	 */
-	public void testZoomActivePartView1() {
-		openViews(1);
-		zoomView(1);
-	}
+    /**
+     * Test that zooming view1 on start up and navigating to other views behaves
+     * correcly.
+     *  
+     */
+    public void testZoomActivePartView1() {
+        openViews(1);
+        zoomView(1);
+    }
 
-	/**
-	 * Test that zooming view2 on start up and navigating to other views behaves
-	 * correcly.
-	 *  
-	 */
-	public void testZoomActivePartView2() {
-		openViews(2);
-		zoomView(2);
-	}
+    /**
+     * Test that zooming view2 on start up and navigating to other views behaves
+     * correcly.
+     *  
+     */
+    public void testZoomActivePartView2() {
+        openViews(2);
+        zoomView(2);
+    }
 
-	/**
-	 * Open all the views.
-	 * 
-	 * @param lastViewToOpen
-	 *            The index of the last view to be opened.
-	 */
-	private void openViews(final int lastViewToOpen) {
-		PartsWorkbenchAdvisor wa = new PartsWorkbenchAdvisor() {
-			public void postWindowOpen(IWorkbenchWindowConfigurer configurer) {
-				super.postWindowOpen(configurer);
-				IWorkbenchPage page = configurer.getWindow().getActivePage();
-				try {
-					for (int index = 0; index < PartsTestUtil.numOfParts; index++) {
-						if (index != lastViewToOpen)
-							page.showView(PartsTestUtil.getView(index));
+    /**
+     * Open all the views.
+     * 
+     * @param lastViewToOpen
+     *            The index of the last view to be opened.
+     */
+    private void openViews(final int lastViewToOpen) {
+        PartsWorkbenchAdvisor wa = new PartsWorkbenchAdvisor() {
+            public void postWindowOpen(IWorkbenchWindowConfigurer configurer) {
+                super.postWindowOpen(configurer);
+                IWorkbenchPage page = configurer.getWindow().getActivePage();
+                try {
+                    for (int index = 0; index < PartsTestUtil.numOfParts; index++) {
+                        if (index != lastViewToOpen)
+                            page.showView(PartsTestUtil.getView(index));
 
-					}
-					page.showView(PartsTestUtil.getView(lastViewToOpen));
-				} catch (PartInitException e) {
-					e.printStackTrace(System.err);
-				}
-				assertEquals(page.getViewReferences().length,
-						PartsTestUtil.numOfParts);
-				assertTrue(page.getActivePart() instanceof IViewPart);
-				IViewPart activePart = (IViewPart) page.getActivePart();
-				assertEquals(activePart.getViewSite().getId(), PartsTestUtil
-						.getView(lastViewToOpen));
+                    }
+                    page.showView(PartsTestUtil.getView(lastViewToOpen));
+                } catch (PartInitException e) {
+                    e.printStackTrace(System.err);
+                }
+                assertEquals(page.getViewReferences().length,
+                        PartsTestUtil.numOfParts);
+                assertTrue(page.getActivePart() instanceof IViewPart);
+                IViewPart activePart = (IViewPart) page.getActivePart();
+                assertEquals(activePart.getViewSite().getId(), PartsTestUtil
+                        .getView(lastViewToOpen));
 
-			}
-		};
-		PlatformUI.createAndRunWorkbench(display, wa);
+            }
+        };
+        PlatformUI.createAndRunWorkbench(display, wa);
 
-	}
+    }
 
-	/**
-	 * Check that the active view's part has been created.
-	 * 
-	 * @param lastViewOpened
-	 *            The active file's index.
-	 */
-	private void checkViewsParts(final int lastViewOpened) {
+    /**
+     * Check that the active view's part has been created.
+     * 
+     * @param lastViewOpened
+     *            The active file's index.
+     */
+    private void checkViewsParts(final int lastViewOpened) {
 
-		PartsWorkbenchAdvisor wa = new PartsWorkbenchAdvisor() {
-			public void postWindowOpen(IWorkbenchWindowConfigurer configurer) {
-				super.postWindowOpen(configurer);
+        PartsWorkbenchAdvisor wa = new PartsWorkbenchAdvisor() {
+            public void postWindowOpen(IWorkbenchWindowConfigurer configurer) {
+                super.postWindowOpen(configurer);
 
-				IWorkbenchPage page = configurer.getWindow().getActivePage();
-				String activeViewId = PartsTestUtil.getView(lastViewOpened);
-				assertEquals(page.getViewReferences().length,
-						PartsTestUtil.numOfParts);
-				assertTrue(page.getActivePart() instanceof IViewPart);
+                IWorkbenchPage page = configurer.getWindow().getActivePage();
+                String activeViewId = PartsTestUtil.getView(lastViewOpened);
+                assertEquals(page.getViewReferences().length,
+                        PartsTestUtil.numOfParts);
+                assertTrue(page.getActivePart() instanceof IViewPart);
 
-				IViewPart activeViewPart = (IViewPart) page.getActivePart();
-				assertEquals(activeViewPart.getViewSite().getId(), activeViewId);
+                IViewPart activeViewPart = (IViewPart) page.getActivePart();
+                assertEquals(activeViewPart.getViewSite().getId(), activeViewId);
 
-				IViewReference[] viewReferences = page.getViewReferences();
-				int numActiveParts = 0;
-				for (int index = 0; index < viewReferences.length; index++) {
-					if (viewReferences[index].getView(false) != null)
-						numActiveParts++;
+                IViewReference[] viewReferences = page.getViewReferences();
+                int numActiveParts = 0;
+                for (int index = 0; index < viewReferences.length; index++) {
+                    if (viewReferences[index].getView(false) != null)
+                        numActiveParts++;
 
-				}
-				// TODO: Ideally, the number of active parts would be 1
-				assertTrue(numActiveParts <= 2);
-			}
-		};
+                }
+                // TODO: Ideally, the number of active parts would be 1
+                assertTrue(numActiveParts <= 2);
+            }
+        };
 
-		PlatformUI.createAndRunWorkbench(display, wa);
-	}
+        PlatformUI.createAndRunWorkbench(display, wa);
+    }
 
-	/**
-	 * Zoom the active view and navigate to the other open views.
-	 * 
-	 * @param viewIndex
-	 *            The active view's index.
-	 */
-	public void zoomView(final int viewIndex) {
-		PartsWorkbenchAdvisor wa = new PartsWorkbenchAdvisor() {
-			public void postWindowOpen(IWorkbenchWindowConfigurer configurer) {
-				super.postWindowOpen(configurer);
+    /**
+     * Zoom the active view and navigate to the other open views.
+     * 
+     * @param viewIndex
+     *            The active view's index.
+     */
+    public void zoomView(final int viewIndex) {
+        PartsWorkbenchAdvisor wa = new PartsWorkbenchAdvisor() {
+            public void postWindowOpen(IWorkbenchWindowConfigurer configurer) {
+                super.postWindowOpen(configurer);
 
-				IWorkbenchPage page = configurer.getWindow().getActivePage();
-				IWorkbenchPartReference activePartReference = page
-						.getActivePartReference();
-				String activePartReferenceId = activePartReference.getId();
-				assertTrue(activePartReference instanceof IViewReference);
-				assertEquals(activePartReferenceId, PartsTestUtil
-						.getView(viewIndex));
+                IWorkbenchPage page = configurer.getWindow().getActivePage();
+                IWorkbenchPartReference activePartReference = page
+                        .getActivePartReference();
+                String activePartReferenceId = activePartReference.getId();
+                assertTrue(activePartReference instanceof IViewReference);
+                assertEquals(activePartReferenceId, PartsTestUtil
+                        .getView(viewIndex));
 
-				IWorkbenchPart activePart = page.getActivePart();
-				assertTrue(activePart instanceof IViewPart);
+                IWorkbenchPart activePart = page.getActivePart();
+                assertTrue(activePart instanceof IViewPart);
 
-				PartsTestUtil.zoom(activePart, (WorkbenchPage) page);
-				assertTrue(PartsTestUtil.isZoomed(activePart));
+                PartsTestUtil.zoom(activePart, (WorkbenchPage) page);
+                assertTrue(PartsTestUtil.isZoomed(activePart));
 
-				IViewReference[] viewReferences = page.getViewReferences();
-				String currentViewId = null;
+                IViewReference[] viewReferences = page.getViewReferences();
+                String currentViewId = null;
 
-				for (int index = 0; index < viewReferences.length; index++) {
-					currentViewId = viewReferences[index].getId();
-					if (!currentViewId.equals(activePartReferenceId)) {
-						try {
-							page.showView(currentViewId);
-						} catch (PartInitException e) {
-							e.printStackTrace();
-						}
-						activePartReferenceId = currentViewId;
-					}
-				}
+                for (int index = 0; index < viewReferences.length; index++) {
+                    currentViewId = viewReferences[index].getId();
+                    if (!currentViewId.equals(activePartReferenceId)) {
+                        try {
+                            page.showView(currentViewId);
+                        } catch (PartInitException e) {
+                            e.printStackTrace();
+                        }
+                        activePartReferenceId = currentViewId;
+                    }
+                }
 
-				activePart = page.getActivePart();
-				assertTrue(activePart instanceof IViewPart);
+                activePart = page.getActivePart();
+                assertTrue(activePart instanceof IViewPart);
 
-				if (PartsTestUtil.isZoomed(activePart))
-					PartsTestUtil.zoom(activePart, (WorkbenchPage) page);
+                if (PartsTestUtil.isZoomed(activePart))
+                    PartsTestUtil.zoom(activePart, (WorkbenchPage) page);
 
-			}
-		};
-		PlatformUI.createAndRunWorkbench(display, wa);
-	}
+            }
+        };
+        PlatformUI.createAndRunWorkbench(display, wa);
+    }
 }

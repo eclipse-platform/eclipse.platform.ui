@@ -10,7 +10,7 @@ package org.eclipse.ui.views.navigator;
  * Contributors: 
  *   IBM Corporation - initial API and implementation 
  *   Sebastian Davids <sdavids@gmx.de> - Collapse all action (25826)
- ******************************************************************************/ 
+ ******************************************************************************/
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -21,24 +21,41 @@ import org.eclipse.ui.PlatformUI;
  * </p>
  * 
  */
-/*package*/ interface INavigatorHelpContextIds {
-	public static final String PREFIX = PlatformUI.PLUGIN_ID + "."; //$NON-NLS-1$
+/*package*/interface INavigatorHelpContextIds {
+    public static final String PREFIX = PlatformUI.PLUGIN_ID + "."; //$NON-NLS-1$
 
-	// Actions
-	public static final String FILTER_SELECTION_ACTION = PREFIX + "filter_selection_action_context"; //$NON-NLS-1$
-	public static final String GOTO_RESOURCE_ACTION = PREFIX + "goto_resource_action_context"; //$NON-NLS-1$
-	public static final String RESOURCE_NAVIGATOR_MOVE_ACTION = PREFIX + "resource_navigator_move_action_context"; //$NON-NLS-1$
-	public static final String RESOURCE_NAVIGATOR_RENAME_ACTION = PREFIX + "resource_navigator_rename_action_context"; //$NON-NLS-1$
-	public static final String SHOW_IN_NAVIGATOR_ACTION = PREFIX + "show_in_navigator_action_context"; //$NON-NLS-1$
-	public static final String SORT_VIEW_ACTION = PREFIX + "sort_view_action_context"; //$NON-NLS-1$
-	public static final String COPY_ACTION = PREFIX + "resource_navigator_copy_action_context"; //$NON-NLS-1$
-	public static final String PASTE_ACTION = PREFIX + "resource_navigator_paste_action_context"; //$NON-NLS-1$
-	public static final String COLLAPSE_ALL_ACTION = PREFIX + "collapse_all_action_context"; //$NON-NLS-1$
+    // Actions
+    public static final String FILTER_SELECTION_ACTION = PREFIX
+            + "filter_selection_action_context"; //$NON-NLS-1$
 
+    public static final String GOTO_RESOURCE_ACTION = PREFIX
+            + "goto_resource_action_context"; //$NON-NLS-1$
 
-	// Dialogs
-	public static final String GOTO_RESOURCE_DIALOG = PREFIX + "goto_resource_dialog_context"; //$NON-NLS-1$
-	
-	// Views
-	public static final String RESOURCE_VIEW = PREFIX + "resource_view_context"; //$NON-NLS-1$
+    public static final String RESOURCE_NAVIGATOR_MOVE_ACTION = PREFIX
+            + "resource_navigator_move_action_context"; //$NON-NLS-1$
+
+    public static final String RESOURCE_NAVIGATOR_RENAME_ACTION = PREFIX
+            + "resource_navigator_rename_action_context"; //$NON-NLS-1$
+
+    public static final String SHOW_IN_NAVIGATOR_ACTION = PREFIX
+            + "show_in_navigator_action_context"; //$NON-NLS-1$
+
+    public static final String SORT_VIEW_ACTION = PREFIX
+            + "sort_view_action_context"; //$NON-NLS-1$
+
+    public static final String COPY_ACTION = PREFIX
+            + "resource_navigator_copy_action_context"; //$NON-NLS-1$
+
+    public static final String PASTE_ACTION = PREFIX
+            + "resource_navigator_paste_action_context"; //$NON-NLS-1$
+
+    public static final String COLLAPSE_ALL_ACTION = PREFIX
+            + "collapse_all_action_context"; //$NON-NLS-1$
+
+    // Dialogs
+    public static final String GOTO_RESOURCE_DIALOG = PREFIX
+            + "goto_resource_dialog_context"; //$NON-NLS-1$
+
+    // Views
+    public static final String RESOURCE_VIEW = PREFIX + "resource_view_context"; //$NON-NLS-1$
 }

@@ -16,7 +16,9 @@ import java.util.Collection;
  * 
  */
 public interface ITableListener {
-	public void contentsFound(Collection contents);
-	public void invalid();
-	public void drawable();
+    public void contentsFound(Collection contents);
+
+    public void invalid();
+
+    public void drawable();
 }

@@ -20,87 +20,87 @@ import java.util.List;
  */
 public class Model {
 
-	/**
-	 * Current state of the model
-	 */
-	private Object state;
-	
-	/**
-	 * Set of objects that will be notified about state changes
-	 */
-	private List views = new ArrayList(1);
-	
-	/**
-	 * Creates a new model with the given initial state.
-	 * 
-	 * @param initialState
-	 */
-	public Model(Object initialState) {
-		state = initialState;
-	}
-	
-	/**
-	 * Returns the current state of the model.
-	 * 
-	 * @return the current model state
-	 */
-	public Object getState() {
-		return state;
-	}
+    /**
+     * Current state of the model
+     */
+    private Object state;
 
-	/**
-	 * Sets the current state of the model.
-	 * 
-	 * @param newState the new state of the model
-	 * @param toOmit change listener that should be omitted from change notifications (or null if all
-	 * listeners should be notified). 
-	 */
-	public void setState(Object newState, IChangeListener toOmit) {
-		if (areEqual(newState, state)) {
-			return;
-		}
-		
-		state = newState;
-		
-		Iterator iter = views.iterator();
-		while(iter.hasNext()) {
-			IChangeListener next = (IChangeListener)iter.next();
-			
-			if (next != toOmit) {
-				next.update(true);
-			}
-		}
-	}
+    /**
+     * Set of objects that will be notified about state changes
+     */
+    private List views = new ArrayList(1);
 
-	private boolean areEqual(Object o1, Object o2) {
-		if (o1 == null) {
-			return o2 == null;
-		}
-		if (o2 == null) {
-			return false;
-		}
-		
-		return o1.equals(o2);
-	}
-	
-	/**
-	 * Adds the given listener to the set of listeners that will be
-	 * notified when the state changes. 
-	 * 
-	 * @param toAdd
-	 */
-	public void addChangeListener(IChangeListener changeListener) {
-		changeListener.update(false);
-		views.add(changeListener);
-	}
+    /**
+     * Creates a new model with the given initial state.
+     * 
+     * @param initialState
+     */
+    public Model(Object initialState) {
+        state = initialState;
+    }
 
-	/**
-	 * Stops this model from sending change events from the given listener.
-	 * 
-	 * @param toRemove
-	 */
-	public void removeChangeListener(IChangeListener changeListener) {
-		views.remove(changeListener);
-	}
+    /**
+     * Returns the current state of the model.
+     * 
+     * @return the current model state
+     */
+    public Object getState() {
+        return state;
+    }
+
+    /**
+     * Sets the current state of the model.
+     * 
+     * @param newState the new state of the model
+     * @param toOmit change listener that should be omitted from change notifications (or null if all
+     * listeners should be notified). 
+     */
+    public void setState(Object newState, IChangeListener toOmit) {
+        if (areEqual(newState, state)) {
+            return;
+        }
+
+        state = newState;
+
+        Iterator iter = views.iterator();
+        while (iter.hasNext()) {
+            IChangeListener next = (IChangeListener) iter.next();
+
+            if (next != toOmit) {
+                next.update(true);
+            }
+        }
+    }
+
+    private boolean areEqual(Object o1, Object o2) {
+        if (o1 == null) {
+            return o2 == null;
+        }
+        if (o2 == null) {
+            return false;
+        }
+
+        return o1.equals(o2);
+    }
+
+    /**
+     * Adds the given listener to the set of listeners that will be
+     * notified when the state changes. 
+     * 
+     * @param toAdd
+     */
+    public void addChangeListener(IChangeListener changeListener) {
+        changeListener.update(false);
+        views.add(changeListener);
+    }
+
+    /**
+     * Stops this model from sending change events from the given listener.
+     * 
+     * @param toRemove
+     */
+    public void removeChangeListener(IChangeListener changeListener) {
+        views.remove(changeListener);
+    }
 
 }

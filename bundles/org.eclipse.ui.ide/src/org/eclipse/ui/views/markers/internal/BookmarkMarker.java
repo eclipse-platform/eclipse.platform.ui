@@ -20,11 +20,11 @@ import org.eclipse.core.resources.IMarker;
  */
 public class BookmarkMarker extends ConcreteMarker {
 
-	/**
-	 * @param toCopy
-	 */
-	public BookmarkMarker(IMarker toCopy) {
-		super(toCopy);
-	}
+    /**
+     * @param toCopy
+     */
+    public BookmarkMarker(IMarker toCopy) {
+        super(toCopy);
+    }
 
 }

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
-
 /**
  * Extends <code>IBaseLabelProvider</code> with the methods
  * to update the label for a given element.  The label is represented by a 
@@ -30,11 +29,11 @@ package org.eclipse.jface.viewers;
  */
 public interface IViewerLabelProvider extends IBaseLabelProvider {
 
-	/**
-	 * Updates the label for the given element.
-	 * 
-	 * @param label the label to update
-	 * @param element the element
-	 */
-	public void updateLabel(ViewerLabel label, Object element);
+    /**
+     * Updates the label for the given element.
+     * 
+     * @param label the label to update
+     * @param element the element
+     */
+    public void updateLabel(ViewerLabel label, Object element);
 }

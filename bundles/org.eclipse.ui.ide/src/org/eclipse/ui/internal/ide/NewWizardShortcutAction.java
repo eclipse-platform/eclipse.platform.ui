@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -28,7 +27,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.help.WorkbenchHelp;
-//@issue illegal reference to org.eclipse.ui.internal.dialogs.WorkbenchWizardElement
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
 
 /**
@@ -36,78 +34,85 @@ import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
  *	that have been marked as being available as workbench shortcut
  *	items
  */
-public class NewWizardShortcutAction extends Action implements IPluginContribution {
-	private WorkbenchWizardElement wizardElement;
-	private IWorkbenchWindow window;
-	/**
-	 *	Create an instance of this class.  Use this constructor if you do
-	 *	not wish to pre-specify the selection that should be provided to
-	 *	launched shortcut wizards.
-	 *
-	 *	@param element WorkbenchWizardElement
-	 */
-	public NewWizardShortcutAction(IWorkbenchWindow window, WorkbenchWizardElement element) {
-		super(element.getLabel(element));
-		setToolTipText(element.getDescription());
-		setImageDescriptor(element.getImageDescriptor());
-		setId(ActionFactory.NEW.getId());
-		wizardElement = element;
-		this.window = window;
-	}
-	/**
-	 *	This action has been invoked by the user
-	 */
-	public void run() {
-		// create instance of target wizard
+public class NewWizardShortcutAction extends Action implements
+        IPluginContribution {
+    private WorkbenchWizardElement wizardElement;
 
-		INewWizard wizard;
-		try {
-			wizard = (INewWizard) wizardElement.createExecutableExtension();
-		} catch (CoreException e) {
-			ErrorDialog.openError(
-				window.getShell(),
-				IDEWorkbenchMessages.getString("NewWizardShortcutAction.errorTitle"), //$NON-NLS-1$
-				IDEWorkbenchMessages.getString("NewWizardShortcutAction.errorMessage"), //$NON-NLS-1$
-				e.getStatus());
-			return;
-		}
+    private IWorkbenchWindow window;
 
-		ISelection selection = window.getSelectionService().getSelection();
-		IStructuredSelection selectionToPass = StructuredSelection.EMPTY;
-		if (selection instanceof IStructuredSelection) {
-			selectionToPass = wizardElement.adaptedSelection((IStructuredSelection) selection);
-		} else {
-			// Build the selection from the IFile of the editor
-			IWorkbenchPart part = window.getPartService().getActivePart();
-			if (part instanceof IEditorPart) {
-				IEditorInput input = ((IEditorPart) part).getEditorInput();
-				if (input instanceof IFileEditorInput) {
-					selectionToPass = new StructuredSelection(((IFileEditorInput) input).getFile());
-				}
-			}
-		}
+    /**
+     *	Create an instance of this class.  Use this constructor if you do
+     *	not wish to pre-specify the selection that should be provided to
+     *	launched shortcut wizards.
+     *
+     *	@param element WorkbenchWizardElement
+     */
+    public NewWizardShortcutAction(IWorkbenchWindow window,
+            WorkbenchWizardElement element) {
+        super(element.getLabel(element));
+        setToolTipText(element.getDescription());
+        setImageDescriptor(element.getImageDescriptor());
+        setId(ActionFactory.NEW.getId());
+        wizardElement = element;
+        this.window = window;
+    }
 
-		wizard.init(window.getWorkbench(), selectionToPass);
+    /**
+     *	This action has been invoked by the user
+     */
+    public void run() {
+        // create instance of target wizard
 
-		Shell parent = window.getShell();
-		WizardDialog dialog = new WizardDialog(parent, wizard);
-		dialog.create();
-		WorkbenchHelp.setHelp(dialog.getShell(), IHelpContextIds.NEW_WIZARD_SHORTCUT);
-		dialog.open();
-	}
+        INewWizard wizard;
+        try {
+            wizard = (INewWizard) wizardElement.createExecutableExtension();
+        } catch (CoreException e) {
+            ErrorDialog.openError(window.getShell(), IDEWorkbenchMessages
+                    .getString("NewWizardShortcutAction.errorTitle"), //$NON-NLS-1$
+                    IDEWorkbenchMessages
+                            .getString("NewWizardShortcutAction.errorMessage"), //$NON-NLS-1$
+                    e.getStatus());
+            return;
+        }
 
+        ISelection selection = window.getSelectionService().getSelection();
+        IStructuredSelection selectionToPass = StructuredSelection.EMPTY;
+        if (selection instanceof IStructuredSelection) {
+            selectionToPass = wizardElement
+                    .adaptedSelection((IStructuredSelection) selection);
+        } else {
+            // Build the selection from the IFile of the editor
+            IWorkbenchPart part = window.getPartService().getActivePart();
+            if (part instanceof IEditorPart) {
+                IEditorInput input = ((IEditorPart) part).getEditorInput();
+                if (input instanceof IFileEditorInput) {
+                    selectionToPass = new StructuredSelection(
+                            ((IFileEditorInput) input).getFile());
+                }
+            }
+        }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPluginContribution#getLocalId()
-	 */
-	public String getLocalId() {
-		return wizardElement.getLocalId();
-	}
+        wizard.init(window.getWorkbench(), selectionToPass);
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPluginContribution#getPluginId()
-	 */
-	public String getPluginId() {		
-		return wizardElement.getPluginId();
-	}
+        Shell parent = window.getShell();
+        WizardDialog dialog = new WizardDialog(parent, wizard);
+        dialog.create();
+        WorkbenchHelp.setHelp(dialog.getShell(),
+                IHelpContextIds.NEW_WIZARD_SHORTCUT);
+        dialog.open();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IPluginContribution#getLocalId()
+     */
+    public String getLocalId() {
+        return wizardElement.getLocalId();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IPluginContribution#getPluginId()
+     */
+    public String getPluginId() {
+        return wizardElement.getPluginId();
+    }
 }

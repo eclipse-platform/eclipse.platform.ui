@@ -13,34 +13,34 @@ package org.eclipse.ui.tests.api;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
+public class MockWorkbenchWindowActionDelegate extends MockActionDelegate
+        implements IWorkbenchWindowActionDelegate {
+    public static MockWorkbenchWindowActionDelegate lastDelegate;
 
-public class MockWorkbenchWindowActionDelegate extends MockActionDelegate 
-	implements IWorkbenchWindowActionDelegate
-{
-	public static MockWorkbenchWindowActionDelegate lastDelegate;
-	public static String SET_ID = "org.eclipse.ui.tests.api.MockActionSet";
-	public static String ID = "org.eclipse.ui.tests.api.MockWindowAction";
+    public static String SET_ID = "org.eclipse.ui.tests.api.MockActionSet";
 
-	/**
-	 * Constructor for MockWorkbenchWindowActionDelegate
-	 */
-	public MockWorkbenchWindowActionDelegate() {
-		super();
-		lastDelegate = this;
-	}
+    public static String ID = "org.eclipse.ui.tests.api.MockWindowAction";
 
-	/**
-	 * @see IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
-	 */
-	public void init(IWorkbenchWindow window) {
-		callHistory.add("init");
-	}
+    /**
+     * Constructor for MockWorkbenchWindowActionDelegate
+     */
+    public MockWorkbenchWindowActionDelegate() {
+        super();
+        lastDelegate = this;
+    }
 
-	/**
-	 * @see IWorkbenchWindowActionDelegate#dispose()
-	 */
-	public void dispose() {
-		callHistory.add("dispose");
-	}
+    /**
+     * @see IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
+     */
+    public void init(IWorkbenchWindow window) {
+        callHistory.add("init");
+    }
+
+    /**
+     * @see IWorkbenchWindowActionDelegate#dispose()
+     */
+    public void dispose() {
+        callHistory.add("dispose");
+    }
 }
 

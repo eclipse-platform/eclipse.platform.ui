@@ -17,20 +17,20 @@ import junit.framework.TestSuite;
  * Test suite for dynamic plug-in support.
  */
 public class DynamicPluginsTestSuite extends TestSuite {
-	/**
-	 * Returns the suite.  This is required to
-	 * use the JUnit Launcher.
-	 */
-	public static Test suite() {
-		return new DynamicPluginsTestSuite();
-	}
-	
-	/**
-	 * Construct the test suite.
-	 */
-	public DynamicPluginsTestSuite() {
-		addTest(new TestSuite(PerspectiveTests.class));		
-		addTest(new TestSuite(ViewTests.class));		
-		addTest(new TestSuite(ActionSetTests.class));		
-	}
+    /**
+     * Returns the suite.  This is required to
+     * use the JUnit Launcher.
+     */
+    public static Test suite() {
+        return new DynamicPluginsTestSuite();
+    }
+
+    /**
+     * Construct the test suite.
+     */
+    public DynamicPluginsTestSuite() {
+        addTest(new TestSuite(PerspectiveTests.class));
+        addTest(new TestSuite(ViewTests.class));
+        addTest(new TestSuite(ActionSetTests.class));
+    }
 }

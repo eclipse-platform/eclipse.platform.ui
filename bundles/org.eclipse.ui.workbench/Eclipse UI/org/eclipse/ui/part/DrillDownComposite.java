@@ -10,11 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.part;
 
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.layout.*;
+import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.ToolBar;
 
 /**
  * Class <code>DrillDownComposite</code> implements a simple web
@@ -30,63 +32,65 @@ import org.eclipse.swt.layout.*;
  *   calling <code>setChildTree</code>.</li>
  * </ol>
  */
-public class DrillDownComposite extends Composite
-{
-	private ToolBarManager toolBarMgr;
-	private TreeViewer fChildTree;
-	private DrillDownAdapter adapter;
-/**
- * Constructs a new DrillDownTreeViewer.
- *
- * @param parent the parent composite for this control
- * @param style the SWT style for this control
- */
-public DrillDownComposite(Composite parent, int style) {
-	super(parent, style);
-	createNavigationButtons();
-}
-/**
- * Creates the navigation buttons for this viewer.
- */
-protected void createNavigationButtons() 
-{
-	GridData gid;
-	GridLayout layout;
+public class DrillDownComposite extends Composite {
+    private ToolBarManager toolBarMgr;
 
-	// Define layout.
-	layout = new GridLayout();
-	layout.marginHeight = layout.marginWidth = 
-		layout.horizontalSpacing = layout.verticalSpacing = 0;
-	setLayout(layout);
+    private TreeViewer fChildTree;
 
-	// Create a toolbar.
-	toolBarMgr = new ToolBarManager(SWT.FLAT);
-	ToolBar toolBar = toolBarMgr.createControl(this);
-	gid = new GridData();
-	gid.horizontalAlignment = GridData.FILL;
-	gid.verticalAlignment = GridData.BEGINNING;
-	toolBar.setLayoutData(gid);
-}
-/**
- * Sets the child viewer.  This method should only be called once, after the
- * viewer has been created.
- *
- * @param aViewer the new child viewer
- */
-public void setChildTree(TreeViewer aViewer) {
-	// Save viewer.
-	fChildTree = aViewer;
+    private DrillDownAdapter adapter;
 
-	// Create adapter.
-	adapter = new DrillDownAdapter(fChildTree);
-	adapter.addNavigationActions(toolBarMgr);
-	toolBarMgr.update(true);
-	
-	// Set tree layout.
-	GridData gid = new GridData();
-	gid.grabExcessHorizontalSpace = gid.grabExcessVerticalSpace = true;
-	gid.horizontalAlignment = gid.verticalAlignment = GridData.FILL;
-	fChildTree.getTree().setLayoutData(gid);
-	layout();
-}
+    /**
+     * Constructs a new DrillDownTreeViewer.
+     *
+     * @param parent the parent composite for this control
+     * @param style the SWT style for this control
+     */
+    public DrillDownComposite(Composite parent, int style) {
+        super(parent, style);
+        createNavigationButtons();
+    }
+
+    /**
+     * Creates the navigation buttons for this viewer.
+     */
+    protected void createNavigationButtons() {
+        GridData gid;
+        GridLayout layout;
+
+        // Define layout.
+        layout = new GridLayout();
+        layout.marginHeight = layout.marginWidth = layout.horizontalSpacing = layout.verticalSpacing = 0;
+        setLayout(layout);
+
+        // Create a toolbar.
+        toolBarMgr = new ToolBarManager(SWT.FLAT);
+        ToolBar toolBar = toolBarMgr.createControl(this);
+        gid = new GridData();
+        gid.horizontalAlignment = GridData.FILL;
+        gid.verticalAlignment = GridData.BEGINNING;
+        toolBar.setLayoutData(gid);
+    }
+
+    /**
+     * Sets the child viewer.  This method should only be called once, after the
+     * viewer has been created.
+     *
+     * @param aViewer the new child viewer
+     */
+    public void setChildTree(TreeViewer aViewer) {
+        // Save viewer.
+        fChildTree = aViewer;
+
+        // Create adapter.
+        adapter = new DrillDownAdapter(fChildTree);
+        adapter.addNavigationActions(toolBarMgr);
+        toolBarMgr.update(true);
+
+        // Set tree layout.
+        GridData gid = new GridData();
+        gid.grabExcessHorizontalSpace = gid.grabExcessVerticalSpace = true;
+        gid.horizontalAlignment = gid.verticalAlignment = GridData.FILL;
+        fChildTree.getTree().setLayoutData(gid);
+        layout();
+    }
 }

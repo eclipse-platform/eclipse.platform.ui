@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
-import org.eclipse.jface.preference.*;
+import org.eclipse.jface.preference.PreferenceManager;
+
 /**
  * This class is created to avoid mentioning preferences
  * in this context. Ideally, JFace preference classes should be
@@ -19,10 +20,10 @@ import org.eclipse.jface.preference.*;
  */
 
 public class PropertyPageManager extends PreferenceManager {
-/**
- * The constructor.
- */
-public PropertyPageManager() {
-	super();
-}
+    /**
+     * The constructor.
+     */
+    public PropertyPageManager() {
+        super();
+    }
 }

@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.internal.commands;
 
-
 /**
  * This class allows clients to broker instances of <code>ICommandManager</code>.
  * <p>
@@ -22,18 +21,18 @@ package org.eclipse.ui.internal.commands;
  */
 public final class CommandManagerFactory {
 
-	/**
-	 * Creates a new instance of <code>IMutableCommandManager</code>.
-	 * 
-	 * @return a new instance of <code>IMutableCommandManager</code>.
-	 *         Clients should not make assumptions about the concrete
-	 *         implementation outside the contract of the interface. Guaranteed
-	 *         not to be <code>null</code>.
-	 */
-	public static IMutableCommandManager getMutableCommandManager() {
-		return new MutableCommandManager();
-	}
+    /**
+     * Creates a new instance of <code>IMutableCommandManager</code>.
+     * 
+     * @return a new instance of <code>IMutableCommandManager</code>.
+     *         Clients should not make assumptions about the concrete
+     *         implementation outside the contract of the interface. Guaranteed
+     *         not to be <code>null</code>.
+     */
+    public static IMutableCommandManager getMutableCommandManager() {
+        return new MutableCommandManager();
+    }
 
-	private CommandManagerFactory() {
-	}
+    private CommandManagerFactory() {
+    }
 }

@@ -28,42 +28,45 @@ import org.eclipse.ui.tests.util.UITestCase;
  */
 public class Bug43538Test extends UITestCase {
 
-	/**
-	 * Constructs a new instance of this test case.
-	 * 
-	 * @param testName
-	 *            The name of the test
-	 */
-	public Bug43538Test(String testName) {
-		super(testName);
-	}
+    /**
+     * Constructs a new instance of this test case.
+     * 
+     * @param testName
+     *            The name of the test
+     */
+    public Bug43538Test(String testName) {
+        super(testName);
+    }
 
-	/**
-	 * Tests that if "Shift+Alt+" is pressed, then the key code should
-	 * represent the "Alt+" key press.
-	 */
-	public void testShiftAlt() throws AWTException {
-		// Set up a working environment.
-		Display display = Display.getCurrent();
-		Listener listener = new Listener() {
-			int count = 0;
-			public void handleEvent(Event event) {
-				if (event.stateMask == SWT.CTRL) {
-					assertEquals("Multiple key down events for 'Ctrl+Space'", 0, count++); //$NON-NLS-1$
-				}
-			}
-		};
-		display.addFilter(SWT.KeyDown, listener);
+    /**
+     * Tests that if "Shift+Alt+" is pressed, then the key code should
+     * represent the "Alt+" key press.
+     */
+    public void testShiftAlt() throws AWTException {
+        // Set up a working environment.
+        Display display = Display.getCurrent();
+        Listener listener = new Listener() {
+            int count = 0;
 
-		// Test.
-		Robot robot = new Robot();
-		robot.keyPress(KeyEvent.VK_CONTROL);
-		robot.keyPress(KeyEvent.VK_SPACE);
-		robot.keyRelease(KeyEvent.VK_SPACE);
-		robot.keyRelease(KeyEvent.VK_CONTROL);
-		while (display.readAndDispatch());
+            public void handleEvent(Event event) {
+                if (event.stateMask == SWT.CTRL) {
+                    assertEquals(
+                            "Multiple key down events for 'Ctrl+Space'", 0, count++); //$NON-NLS-1$
+                }
+            }
+        };
+        display.addFilter(SWT.KeyDown, listener);
 
-		// Clean up the working environment.
-		display.removeFilter(SWT.KeyDown, listener);
-	}
+        // Test.
+        Robot robot = new Robot();
+        robot.keyPress(KeyEvent.VK_CONTROL);
+        robot.keyPress(KeyEvent.VK_SPACE);
+        robot.keyRelease(KeyEvent.VK_SPACE);
+        robot.keyRelease(KeyEvent.VK_CONTROL);
+        while (display.readAndDispatch())
+            ;
+
+        // Clean up the working environment.
+        display.removeFilter(SWT.KeyDown, listener);
+    }
 }

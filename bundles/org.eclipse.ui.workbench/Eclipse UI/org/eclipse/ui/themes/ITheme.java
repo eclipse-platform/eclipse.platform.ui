@@ -37,22 +37,22 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 public interface ITheme {
 
     /**
-	 * Adds a property listener to the theme.  Any events fired by the 
-	 * underlying registries will cause an event to be fired.  This event is the
-	 * same event that was fired by the registry.  As such, the "source" 
-	 * attribute of the event will not be this theme, but rather the color or 
-	 * font registry.
-	 * 
-	 * @param listener the listener to add
-	 */
-	void addPropertyChangeListener(IPropertyChangeListener listener);
+     * Adds a property listener to the theme.  Any events fired by the 
+     * underlying registries will cause an event to be fired.  This event is the
+     * same event that was fired by the registry.  As such, the "source" 
+     * attribute of the event will not be this theme, but rather the color or 
+     * font registry.
+     * 
+     * @param listener the listener to add
+     */
+    void addPropertyChangeListener(IPropertyChangeListener listener);
 
     /**
      * Dispose of this theme.  This method is called by the workbench when
      * appropriate and should never be called by a user.
      */
     void dispose();
-    
+
     /**
      * Get arbitrary data associated with this theme.
      *
@@ -61,7 +61,7 @@ public interface ITheme {
      * or if the value cannot be treated as a boolean.
      */
     boolean getBoolean(String key);
-    
+
     /**
      * Return this themes color registry.
      * 
@@ -75,14 +75,14 @@ public interface ITheme {
      * @return this themes font registry
      */
     FontRegistry getFontRegistry();
-    
-	/**
-	 * Returns the id of this theme.
-	 * 
-	 * @return the id of this theme.  Guarenteed not to be <code>null</code>.
-	 */
+
+    /**
+     * Returns the id of this theme.
+     * 
+     * @return the id of this theme.  Guarenteed not to be <code>null</code>.
+     */
     String getId();
-    
+
     /**
      * Get arbitrary data associated with this theme.
      *
@@ -91,14 +91,14 @@ public interface ITheme {
      * if the value cannot be treated as an integer.
      */
     public int getInt(String key);
-    
-	/**
-	 * Returns the label of this theme.
-	 * 
-	 * @return the label of this theme.  Guarenteed not be <code>null</code>.
-	 */    
+
+    /**
+     * Returns the label of this theme.
+     * 
+     * @return the label of this theme.  Guarenteed not be <code>null</code>.
+     */
     String getLabel();
-    
+
     /**
      * Get arbitrary data associated with this theme.
      *
@@ -106,18 +106,18 @@ public interface ITheme {
      * @return the data, or <code>null</code> if none exists.
      */
     String getString(String key);
-    
+
     /**
      * Get the set of keys associated with this theme.
      *  
      * @return the Set of keys
      */
     Set keySet();
-	
-	/**
-	 * Removes a property listener from the theme.
-	 * 
-	 * @param listener the listener to remove
-	 */
-	void removePropertyChangeListener(IPropertyChangeListener listener);    
+
+    /**
+     * Removes a property listener from the theme.
+     * 
+     * @param listener the listener to remove
+     */
+    void removePropertyChangeListener(IPropertyChangeListener listener);
 }

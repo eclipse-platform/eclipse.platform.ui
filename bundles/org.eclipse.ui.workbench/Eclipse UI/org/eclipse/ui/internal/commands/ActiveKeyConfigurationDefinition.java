@@ -13,83 +13,83 @@ package org.eclipse.ui.internal.commands;
 
 import org.eclipse.ui.internal.util.Util;
 
-public final class ActiveKeyConfigurationDefinition
-	implements Comparable {
+public final class ActiveKeyConfigurationDefinition implements Comparable {
 
-	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL =
-		ActiveKeyConfigurationDefinition.class.getName().hashCode();
+    private final static int HASH_FACTOR = 89;
 
-	private transient int hashCode;
-	private transient boolean hashCodeComputed;
+    private final static int HASH_INITIAL = ActiveKeyConfigurationDefinition.class
+            .getName().hashCode();
 
-	private String keyConfigurationId;
-	private String sourceId;
-	private transient String string;
+    private transient int hashCode;
 
-	public ActiveKeyConfigurationDefinition(
-		String keyConfigurationId,
-		String sourceId) {
-		this.keyConfigurationId = keyConfigurationId;
-		this.sourceId = sourceId;
-	}
+    private transient boolean hashCodeComputed;
 
-	public int compareTo(Object object) {
-		ActiveKeyConfigurationDefinition castedObject =
-			(ActiveKeyConfigurationDefinition) object;
-		int compareTo =
-			Util.compare(keyConfigurationId, castedObject.keyConfigurationId);
+    private String keyConfigurationId;
 
-		if (compareTo == 0)
-			compareTo = Util.compare(sourceId, castedObject.sourceId);
+    private String sourceId;
 
-		return compareTo;
-	}
+    private transient String string;
 
-	public boolean equals(Object object) {
-		if (!(object instanceof ActiveKeyConfigurationDefinition))
-			return false;
+    public ActiveKeyConfigurationDefinition(String keyConfigurationId,
+            String sourceId) {
+        this.keyConfigurationId = keyConfigurationId;
+        this.sourceId = sourceId;
+    }
 
-		ActiveKeyConfigurationDefinition castedObject =
-			(ActiveKeyConfigurationDefinition) object;
-		boolean equals = true;
-		equals
-			&= Util.equals(keyConfigurationId, castedObject.keyConfigurationId);
-		equals &= Util.equals(sourceId, castedObject.sourceId);
-		return equals;
-	}
+    public int compareTo(Object object) {
+        ActiveKeyConfigurationDefinition castedObject = (ActiveKeyConfigurationDefinition) object;
+        int compareTo = Util.compare(keyConfigurationId,
+                castedObject.keyConfigurationId);
 
-	public String getKeyConfigurationId() {
-		return keyConfigurationId;
-	}
+        if (compareTo == 0)
+            compareTo = Util.compare(sourceId, castedObject.sourceId);
 
-	public String getSourceId() {
-		return sourceId;
-	}
+        return compareTo;
+    }
 
-	public int hashCode() {
-		if (!hashCodeComputed) {
-			hashCode = HASH_INITIAL;
-			hashCode =
-				hashCode * HASH_FACTOR + Util.hashCode(keyConfigurationId);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(sourceId);
-			hashCodeComputed = true;
-		}
+    public boolean equals(Object object) {
+        if (!(object instanceof ActiveKeyConfigurationDefinition))
+            return false;
 
-		return hashCode;
-	}
+        ActiveKeyConfigurationDefinition castedObject = (ActiveKeyConfigurationDefinition) object;
+        boolean equals = true;
+        equals &= Util.equals(keyConfigurationId,
+                castedObject.keyConfigurationId);
+        equals &= Util.equals(sourceId, castedObject.sourceId);
+        return equals;
+    }
 
-	public String toString() {
-		if (string == null) {
-			final StringBuffer stringBuffer = new StringBuffer();
-			stringBuffer.append('[');
-			stringBuffer.append(keyConfigurationId);
-			stringBuffer.append(',');
-			stringBuffer.append(sourceId);
-			stringBuffer.append(']');
-			string = stringBuffer.toString();
-		}
+    public String getKeyConfigurationId() {
+        return keyConfigurationId;
+    }
 
-		return string;
-	}
+    public String getSourceId() {
+        return sourceId;
+    }
+
+    public int hashCode() {
+        if (!hashCodeComputed) {
+            hashCode = HASH_INITIAL;
+            hashCode = hashCode * HASH_FACTOR
+                    + Util.hashCode(keyConfigurationId);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(sourceId);
+            hashCodeComputed = true;
+        }
+
+        return hashCode;
+    }
+
+    public String toString() {
+        if (string == null) {
+            final StringBuffer stringBuffer = new StringBuffer();
+            stringBuffer.append('[');
+            stringBuffer.append(keyConfigurationId);
+            stringBuffer.append(',');
+            stringBuffer.append(sourceId);
+            stringBuffer.append(']');
+            string = stringBuffer.toString();
+        }
+
+        return string;
+    }
 }

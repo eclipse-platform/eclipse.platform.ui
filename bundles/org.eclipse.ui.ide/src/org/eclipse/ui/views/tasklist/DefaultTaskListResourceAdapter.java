@@ -21,36 +21,36 @@ import org.eclipse.core.runtime.IAdaptable;
  * TaskList for resource adaption.
  */
 class DefaultTaskListResourceAdapter implements ITaskListResourceAdapter {
-	
-	private static ITaskListResourceAdapter singleton;
 
-	/**
-	 * Constructor for DefaultTaskListResourceAdapter.
-	 */
-	DefaultTaskListResourceAdapter() {
-		super();
-	}
-	
-	/**
-	 * Return the default instance used for TaskList adapting.
-	 */
-	static ITaskListResourceAdapter getDefault(){
-		if(singleton == null)
-			singleton = new DefaultTaskListResourceAdapter();
-		return singleton;
-	}
+    private static ITaskListResourceAdapter singleton;
 
-	/*
-	 * @see ITaskListResourceAdapter#getAffectedResource(IAdaptable)
-	 */
-	public IResource getAffectedResource(IAdaptable adaptable) {
+    /**
+     * Constructor for DefaultTaskListResourceAdapter.
+     */
+    DefaultTaskListResourceAdapter() {
+        super();
+    }
 
-		IResource resource = (IResource) adaptable.getAdapter(IResource.class);
-		if (resource == null)
-			return (IFile) adaptable.getAdapter(IFile.class);
-		else
-			return resource;
+    /**
+     * Return the default instance used for TaskList adapting.
+     */
+    static ITaskListResourceAdapter getDefault() {
+        if (singleton == null)
+            singleton = new DefaultTaskListResourceAdapter();
+        return singleton;
+    }
 
-	}
+    /*
+     * @see ITaskListResourceAdapter#getAffectedResource(IAdaptable)
+     */
+    public IResource getAffectedResource(IAdaptable adaptable) {
+
+        IResource resource = (IResource) adaptable.getAdapter(IResource.class);
+        if (resource == null)
+            return (IFile) adaptable.getAdapter(IFile.class);
+        else
+            return resource;
+
+    }
 
 }

@@ -8,7 +8,7 @@
  * Contributors: 
  *        IBM Corporation - initial API and implementation 
  *        Sebastian Davids <sdavids@gmx.de> - Images for menu items (27481)
-************************************************************************/
+ ************************************************************************/
 package org.eclipse.ui.views.navigator;
 
 import java.net.MalformedURLException;
@@ -36,63 +36,64 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  */
 public abstract class ResourceNavigatorActionGroup extends ActionGroup {
 
-	/**
-	 * The resource navigator.
-	 */
-	protected IResourceNavigator navigator;
-	
-	/**
-	 * Constructs a new navigator action group and creates its actions.
-	 * 
-	 * @param navigator the resource navigator
-	 */
-	public ResourceNavigatorActionGroup(IResourceNavigator navigator) {
-		this.navigator = navigator;
-		makeActions();
-	}
-	
-	/**
-	 * Returns the image descriptor with the given relative path.
-	 */
-	protected ImageDescriptor getImageDescriptor(String relativePath) {
-		String iconPath = "icons/full/"; //$NON-NLS-1$
-		try {
-			AbstractUIPlugin plugin = (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
-			URL installURL = plugin.getDescriptor().getInstallURL();
-			URL url = new URL(installURL, iconPath + relativePath);
-			return ImageDescriptor.createFromURL(url);
-		} catch (MalformedURLException e) {
-			// should not happen
-			return ImageDescriptor.getMissingImageDescriptor();
-		}
-	}	
+    /**
+     * The resource navigator.
+     */
+    protected IResourceNavigator navigator;
 
-	/**
-	 * Returns the resource navigator.
-	 */
-	public IResourceNavigator getNavigator() {
-		return navigator;
-	}
-	
-	/**
- 	 * Handles a key pressed event by invoking the appropriate action.
-	 * Does nothing by default.
- 	 */
-	public void handleKeyPressed(KeyEvent event) {
-	}
+    /**
+     * Constructs a new navigator action group and creates its actions.
+     * 
+     * @param navigator the resource navigator
+     */
+    public ResourceNavigatorActionGroup(IResourceNavigator navigator) {
+        this.navigator = navigator;
+        makeActions();
+    }
 
-	/**
-	 * Makes the actions contained in this action group.
-	 */
-	protected abstract void makeActions();
-	
-	/**
-	 * Runs the default action in the group.
-	 * Does nothing by default.
-	 * 
-	 * @param selection the current selection
-	 */
-	public void runDefaultAction(IStructuredSelection selection) {
-	}
+    /**
+     * Returns the image descriptor with the given relative path.
+     */
+    protected ImageDescriptor getImageDescriptor(String relativePath) {
+        String iconPath = "icons/full/"; //$NON-NLS-1$
+        try {
+            AbstractUIPlugin plugin = (AbstractUIPlugin) Platform
+                    .getPlugin(PlatformUI.PLUGIN_ID);
+            URL installURL = plugin.getDescriptor().getInstallURL();
+            URL url = new URL(installURL, iconPath + relativePath);
+            return ImageDescriptor.createFromURL(url);
+        } catch (MalformedURLException e) {
+            // should not happen
+            return ImageDescriptor.getMissingImageDescriptor();
+        }
+    }
+
+    /**
+     * Returns the resource navigator.
+     */
+    public IResourceNavigator getNavigator() {
+        return navigator;
+    }
+
+    /**
+     * Handles a key pressed event by invoking the appropriate action.
+     * Does nothing by default.
+     */
+    public void handleKeyPressed(KeyEvent event) {
+    }
+
+    /**
+     * Makes the actions contained in this action group.
+     */
+    protected abstract void makeActions();
+
+    /**
+     * Runs the default action in the group.
+     * Does nothing by default.
+     * 
+     * @param selection the current selection
+     */
+    public void runDefaultAction(IStructuredSelection selection) {
+    }
 
 }

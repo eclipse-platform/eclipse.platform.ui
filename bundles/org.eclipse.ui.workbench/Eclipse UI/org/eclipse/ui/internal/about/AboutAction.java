@@ -49,9 +49,9 @@ public class AboutAction extends Action implements
         if (productName == null)
             productName = ""; //$NON-NLS-1$
         setText(WorkbenchMessages.format(
-                "AboutAction.text", new Object[] { productName})); //$NON-NLS-1$
+                "AboutAction.text", new Object[] { productName })); //$NON-NLS-1$
         setToolTipText(WorkbenchMessages.format(
-                "AboutAction.toolTip", new Object[] { productName})); //$NON-NLS-1$
+                "AboutAction.toolTip", new Object[] { productName })); //$NON-NLS-1$
         setId("about"); //$NON-NLS-1$
         setActionDefinitionId("org.eclipse.ui.help.aboutAction"); //$NON-NLS-1$
         WorkbenchHelp.setHelp(this, IHelpContextIds.ABOUT_ACTION);

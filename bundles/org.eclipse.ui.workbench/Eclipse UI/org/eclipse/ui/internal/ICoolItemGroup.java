@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal;
 
 public interface ICoolItemGroup {
-	public String getContributingId();  // id of the action set that contributed the group
-	public String getId(); // id of the contribution
+    public String getContributingId(); // id of the action set that contributed the group
+
+    public String getId(); // id of the contribution
 }

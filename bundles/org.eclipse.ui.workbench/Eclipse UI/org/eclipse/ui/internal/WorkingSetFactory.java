@@ -11,7 +11,6 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.core.runtime.IAdaptable;
-
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
 
@@ -21,25 +20,25 @@ import org.eclipse.ui.IMemento;
  */
 public class WorkingSetFactory implements IElementFactory {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IElementFactory
-	 */
-	public IAdaptable createElement(IMemento memento) {
-		String workingSetName = memento.getString(IWorkbenchConstants.TAG_NAME);
-		String workingSetEditPageId = memento.getString(IWorkbenchConstants.TAG_EDIT_PAGE_ID);
-		
-		if (workingSetName == null)
-			return null;
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IElementFactory
+     */
+    public IAdaptable createElement(IMemento memento) {
+        String workingSetName = memento.getString(IWorkbenchConstants.TAG_NAME);
+        String workingSetEditPageId = memento
+                .getString(IWorkbenchConstants.TAG_EDIT_PAGE_ID);
 
-		WorkingSet workingSet = new WorkingSet(workingSetName, memento);
-		if (workingSetEditPageId != null) {
-			workingSet.setId(workingSetEditPageId);
-		}
-		else {
-			// working sets created with builds 20020418 and 20020419 will not
-			// have an edit page id. fix this automatically.
-			workingSet.setId("org.eclipse.ui.resourceWorkingSetPage"); //$NON-NLS-1$
-		}
-		return workingSet;
-	}
+        if (workingSetName == null)
+            return null;
+
+        WorkingSet workingSet = new WorkingSet(workingSetName, memento);
+        if (workingSetEditPageId != null) {
+            workingSet.setId(workingSetEditPageId);
+        } else {
+            // working sets created with builds 20020418 and 20020419 will not
+            // have an edit page id. fix this automatically.
+            workingSet.setId("org.eclipse.ui.resourceWorkingSetPage"); //$NON-NLS-1$
+        }
+        return workingSet;
+    }
 }

@@ -21,7 +21,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.internal.misc.StringMatcher;
 
-
 /**
  * A filter used in conjunction with FilteredTree.  This filter is inefficient -
  * in order to see if a node should be filtered it must use the content provider
@@ -32,8 +31,9 @@ import org.eclipse.ui.internal.misc.StringMatcher;
  * @since 3.0
  */
 public class PatternFilter extends ViewerFilter {
-    
+
     private Map cache = new HashMap();
+
     private StringMatcher matcher;
 
     /* (non-Javadoc)
@@ -42,39 +42,41 @@ public class PatternFilter extends ViewerFilter {
     public Object[] filter(Viewer viewer, Object parent, Object[] elements) {
         if (matcher == null)
             return elements;
-        
-        Object [] filtered = (Object [])cache.get(parent);
+
+        Object[] filtered = (Object[]) cache.get(parent);
         if (filtered == null) {
             filtered = super.filter(viewer, parent, elements);
             cache.put(parent, filtered);
         }
         return filtered;
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
      */
     public boolean select(Viewer viewer, Object parentElement, Object element) {
-        Object [] children = ((ITreeContentProvider)((AbstractTreeViewer)viewer).getContentProvider()).getChildren(element);
-        if (children.length > 0)       
+        Object[] children = ((ITreeContentProvider) ((AbstractTreeViewer) viewer)
+                .getContentProvider()).getChildren(element);
+        if (children.length > 0)
             return filter(viewer, element, children).length > 0;
-        
-        String labelText = ((ILabelProvider)((StructuredViewer)viewer).getLabelProvider()).getText(element);
+
+        String labelText = ((ILabelProvider) ((StructuredViewer) viewer)
+                .getLabelProvider()).getText(element);
         return match(labelText);
     }
-    
+
     /**
      * 
      * @param pattern
      */
-    public void setPattern(String patternString) { 
-        cache.clear();        
+    public void setPattern(String patternString) {
+        cache.clear();
         if (patternString == null || patternString.equals("")) //$NON-NLS-1$
             matcher = null;
         else
             matcher = new StringMatcher(patternString + "*", true, false); //$NON-NLS-1$
     }
-    
+
     /**
      * Answers whether the given String matches the pattern.
      * 
@@ -82,6 +84,6 @@ public class PatternFilter extends ViewerFilter {
      * @return whether the string matches the pattern
      */
     protected boolean match(String string) {
-    	return matcher.match(string);
+        return matcher.match(string);
     }
 }

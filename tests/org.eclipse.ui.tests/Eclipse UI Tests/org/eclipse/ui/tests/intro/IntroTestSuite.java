@@ -13,23 +13,21 @@ package org.eclipse.ui.tests.intro;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-
 /**
  * @since 3.0
  */
 public class IntroTestSuite extends TestSuite {
 
+    public static Test suite() {
+        return new IntroTestSuite();
+    }
 
-	public static Test suite() {
-		return new IntroTestSuite();
-	}    
-	
     /**
      * 
      */
-    public IntroTestSuite() {        
-		addTest(new TestSuite(IntroPartTest.class));
-		addTest(new TestSuite(NoIntroPartTest.class));
-		addTest(new TestSuite(IntroTest.class));
+    public IntroTestSuite() {
+        addTest(new TestSuite(IntroPartTest.class));
+        addTest(new TestSuite(NoIntroPartTest.class));
+        addTest(new TestSuite(IntroTest.class));
     }
 }

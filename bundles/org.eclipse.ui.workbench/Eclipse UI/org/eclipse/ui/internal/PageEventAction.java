@@ -15,6 +15,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.PartEventAction;
+import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 
 /**
  * The abstract superclass for actions that listen to page activation and
@@ -58,102 +59,106 @@ import org.eclipse.ui.actions.PartEventAction;
  * opportunity to deregister its listeners and to perform any other cleanup.
  * </p>
  */
-public abstract class PageEventAction extends PartEventAction
-	implements IPageListener, ActionFactory.IWorkbenchAction
-{
-	/**
-	 * The active page, or <code>null</code> if none.
-	 */
-	private IWorkbenchPage activePage;
+public abstract class PageEventAction extends PartEventAction implements
+        IPageListener, ActionFactory.IWorkbenchAction {
+    /**
+     * The active page, or <code>null</code> if none.
+     */
+    private IWorkbenchPage activePage;
 
-	/**
-	 * The workbench window this action is registered with.
-	 */
-	 private IWorkbenchWindow workbenchWindow;
+    /**
+     * The workbench window this action is registered with.
+     */
+    private IWorkbenchWindow workbenchWindow;
 
-/**
- * Creates a new action with the given text. Register this
- * action with the workbench window for page lifecycle
- * events.
- *
- * @param text the string used as the text for the action, 
- *   or <code>null</code> if there is no text
- * @param window the workbench window this action is
- *   registered with
- */
-protected PageEventAction(String text, IWorkbenchWindow window) {
-	super(text);
-	if (window == null) {
-		throw new IllegalArgumentException();
-	}
-	this.workbenchWindow = window;
-	this.activePage = window.getActivePage();
-	this.workbenchWindow.addPageListener(this);
-	this.workbenchWindow.getPartService().addPartListener(this);
-}
-/**
- * Returns the currently active page in the workbench window.
- *
- * @return currently active page in the workbench window,
- * or <code>null</code> in none
- */
-public final IWorkbenchPage getActivePage() {
-	return activePage;
-}
-/**
- * Returns the workbench window this action applies to.
- *
- * @return the workbench window, or <code>null</code> if this action has been
- * disposed
- */
-public final IWorkbenchWindow getWorkbenchWindow() {
-	return workbenchWindow;
-}
-/**
- * The <code>PageEventAction</code> implementation of this 
- * <code>IPageListener</code> method records that the given page is active.
- * Subclasses may extend this method if action availability has to be
- * recalculated.
- */
-public void pageActivated(IWorkbenchPage page) {
-	this.activePage = page;
-}
-/**
- * The <code>PageEventAction</code> implementation of this 
- * <code>IPageListener</code> method clears the active page if it just closed.
- * Subclasses may extend this method if action availability has to be
- * recalculated.
- */
-public void pageClosed(IWorkbenchPage page) {
-	if (page == activePage) {
-		activePage = null;
-	}
-}
-/**
- * The <code>PageEventAction</code> implementation of this 
- * <code>IPageListener</code> method does nothing. Subclasses should extend
- * this method if action availability has to be recalculated.
- */
-public void pageOpened(IWorkbenchPage page) {
-	// do nothing
-}
+    /**
+     * Creates a new action with the given text. Register this
+     * action with the workbench window for page lifecycle
+     * events.
+     *
+     * @param text the string used as the text for the action, 
+     *   or <code>null</code> if there is no text
+     * @param window the workbench window this action is
+     *   registered with
+     */
+    protected PageEventAction(String text, IWorkbenchWindow window) {
+        super(text);
+        if (window == null) {
+            throw new IllegalArgumentException();
+        }
+        this.workbenchWindow = window;
+        this.activePage = window.getActivePage();
+        this.workbenchWindow.addPageListener(this);
+        this.workbenchWindow.getPartService().addPartListener(this);
+    }
 
-/**
- * The <code>PageEventAction</code> implementation of this 
- * <code>ActionFactory.IWorkbenchAction</code> method
- * deregisters the part and page listener adding by the constructor.
- * Subclasses should extend this method to do additional
- * cleanup.
- * 
- * @since 3.0
- */
-public void dispose() {
-	if (workbenchWindow == null) {
-		// action has already been disposed
-		return;
-	}
-	workbenchWindow.removePageListener(this);
-	workbenchWindow.getPartService().removePartListener(this);
-	workbenchWindow = null;
-}
+    /**
+     * Returns the currently active page in the workbench window.
+     *
+     * @return currently active page in the workbench window,
+     * or <code>null</code> in none
+     */
+    public final IWorkbenchPage getActivePage() {
+        return activePage;
+    }
+
+    /**
+     * Returns the workbench window this action applies to.
+     *
+     * @return the workbench window, or <code>null</code> if this action has been
+     * disposed
+     */
+    public final IWorkbenchWindow getWorkbenchWindow() {
+        return workbenchWindow;
+    }
+
+    /**
+     * The <code>PageEventAction</code> implementation of this 
+     * <code>IPageListener</code> method records that the given page is active.
+     * Subclasses may extend this method if action availability has to be
+     * recalculated.
+     */
+    public void pageActivated(IWorkbenchPage page) {
+        this.activePage = page;
+    }
+
+    /**
+     * The <code>PageEventAction</code> implementation of this 
+     * <code>IPageListener</code> method clears the active page if it just closed.
+     * Subclasses may extend this method if action availability has to be
+     * recalculated.
+     */
+    public void pageClosed(IWorkbenchPage page) {
+        if (page == activePage) {
+            activePage = null;
+        }
+    }
+
+    /**
+     * The <code>PageEventAction</code> implementation of this 
+     * <code>IPageListener</code> method does nothing. Subclasses should extend
+     * this method if action availability has to be recalculated.
+     */
+    public void pageOpened(IWorkbenchPage page) {
+        // do nothing
+    }
+
+    /**
+     * The <code>PageEventAction</code> implementation of this 
+     * <code>ActionFactory.IWorkbenchAction</code> method
+     * deregisters the part and page listener adding by the constructor.
+     * Subclasses should extend this method to do additional
+     * cleanup.
+     * 
+     * @since 3.0
+     */
+    public void dispose() {
+        if (workbenchWindow == null) {
+            // action has already been disposed
+            return;
+        }
+        workbenchWindow.removePageListener(this);
+        workbenchWindow.getPartService().removePartListener(this);
+        workbenchWindow = null;
+    }
 }

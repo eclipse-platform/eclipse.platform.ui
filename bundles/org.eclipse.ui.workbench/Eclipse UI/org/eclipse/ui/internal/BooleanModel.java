@@ -18,44 +18,44 @@ package org.eclipse.ui.internal;
  * @since 3.0
  */
 public class BooleanModel extends Model {
-	
-	/**
-	 * Creates a new BooleanModel with the given initial state
-	 * 
-	 * @param initialState initial value of the model
-	 */
-	public BooleanModel(boolean initialState) {
-		super(new Boolean(initialState));
-	}
-	
-	/**
-	 * Sets the value and notifies all change listeners
-	 * 
-	 * @param newValue new 
-	 */
-	public void set(boolean newValue) {
-		set(newValue, null);
-	}
-	
-	/**
-	 * Sets the value and notifies all change listeners except
-	 * the listener that caused the change.
-	 * 
-	 * @param newValue new boolean value
-	 * @param origin change listener that caused the change, or null if
-	 * the change was not caused by a change listener.
-	 *  
-	 */
-	public void set(boolean newValue, IChangeListener origin) {
-		super.setState(new Boolean(newValue), origin);
-	}
-	
-	/**
-	 * Returns the current value as a boolean
-	 * 
-	 * @return the current value
-	 */
-	public boolean get() {
-		return ((Boolean)getState()).booleanValue();
-	}
+
+    /**
+     * Creates a new BooleanModel with the given initial state
+     * 
+     * @param initialState initial value of the model
+     */
+    public BooleanModel(boolean initialState) {
+        super(new Boolean(initialState));
+    }
+
+    /**
+     * Sets the value and notifies all change listeners
+     * 
+     * @param newValue new 
+     */
+    public void set(boolean newValue) {
+        set(newValue, null);
+    }
+
+    /**
+     * Sets the value and notifies all change listeners except
+     * the listener that caused the change.
+     * 
+     * @param newValue new boolean value
+     * @param origin change listener that caused the change, or null if
+     * the change was not caused by a change listener.
+     *  
+     */
+    public void set(boolean newValue, IChangeListener origin) {
+        super.setState(new Boolean(newValue), origin);
+    }
+
+    /**
+     * Returns the current value as a boolean
+     * 
+     * @return the current value
+     */
+    public boolean get() {
+        return ((Boolean) getState()).booleanValue();
+    }
 }

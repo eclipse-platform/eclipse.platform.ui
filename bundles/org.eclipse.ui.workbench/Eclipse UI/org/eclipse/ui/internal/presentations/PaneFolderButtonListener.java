@@ -20,27 +20,27 @@ import org.eclipse.swt.custom.CTabItem;
  * @since 3.0
  */
 public abstract class PaneFolderButtonListener {
-	
-	/**
-	 * Called when the minimize, maximize, or restore buttons are pressed.
-	 *   
-	 * @param buttonId one of the IStackPresentationSite.STATE_* constants
-	 */
-	public void stateButtonPressed(int buttonId) {
-	}
-	
-	/**
-	 * Called when a close button is pressed.
-	 *   
-	 * @param item the tab whose close button was pressed
-	 */
-	public void closeButtonPressed(CTabItem item) {
-	}
-	
-	/**
-	 * 
-	 * @since 3.0
-	 */
-	public void showList(CTabFolderEvent event) {
-	}
+
+    /**
+     * Called when the minimize, maximize, or restore buttons are pressed.
+     *   
+     * @param buttonId one of the IStackPresentationSite.STATE_* constants
+     */
+    public void stateButtonPressed(int buttonId) {
+    }
+
+    /**
+     * Called when a close button is pressed.
+     *   
+     * @param item the tab whose close button was pressed
+     */
+    public void closeButtonPressed(CTabItem item) {
+    }
+
+    /**
+     * 
+     * @since 3.0
+     */
+    public void showList(CTabFolderEvent event) {
+    }
 }

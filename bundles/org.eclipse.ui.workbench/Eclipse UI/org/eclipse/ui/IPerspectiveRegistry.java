@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui;
 
-
 /**
  * The workbench's global registry of perspectives. 
  * <p>
@@ -24,79 +23,85 @@ package org.eclipse.ui;
  * @see IWorkbench#getPerspectiveRegistry
  */
 public interface IPerspectiveRegistry {
-/**
- * Clones an existing perspective.
- * 
- * @param id the id for the cloned perspective, which must not already be used by 
- *   any registered perspective
- * @param label the label assigned to the cloned perspective
- * @param desc the perspective to clone
- * @return the cloned perspective descriptor
- * 
- * @since 3.0
- */
-public IPerspectiveDescriptor clonePerspective(String id, String label, 
-		IPerspectiveDescriptor desc) throws IllegalArgumentException;
-/**
- * Finds and returns the registered perspective with the given perspective id.
- *
- * @param perspectiveId the perspective id 
- * @return the perspective, or <code>null</code> if none
- * @see IPerspectiveDescriptor#getId
- */
-public IPerspectiveDescriptor findPerspectiveWithId(String perspectiveId);
-/**
- * Finds and returns the registered perspective with the given label.
- *
- * @param label the label
- * @return the perspective, or <code>null</code> if none
- * @see IPerspectiveDescriptor#getLabel
- */
-public IPerspectiveDescriptor findPerspectiveWithLabel(String label);
-/**
- * Returns the id of the default perspective for the workbench.  This identifies one
- * perspective extension within the workbench's perspective registry.
- * <p>
- * On startup of the platform UI the default perspective is determined using a 
- * multistep process.
- * </p>
- * <ol>
- *   <li>Initially the <code>Resource Perspective</code> is default. </li>
- *   <li>If a single perspective extension within the registry has a <b>default</b>
- *			attribute it will become the default perspective.  If two or more
- *			extensions have the <b>default</b> attribute the registry will ignore all
- *			of them and select the <code>Resource Perspective</code>. </li>
- *   <li>If the user has set the default perspective within the 
- *			<code>Perspective</code> dialog their preference will be selected 
- *			over all others. </li>
- * </ol>
- * </p>
- *
- * @return the default perspective id; will never be <code>null</code>
- * Note: revise - this is out of date (even before RCP)
- */
-public String getDefaultPerspective();
-/**
- * Returns a list of the perspectives known to the workbench.
- *
- * @return a list of perspectives
- */
-public IPerspectiveDescriptor[] getPerspectives();
-/**
- * Sets the default perspective for the workbench to the given perspective id.
- * The id must correspond to one perspective extension within the workbench's 
- * perspective registry.
- *
- * @param id a perspective id; must not be <code>null</code>
- */
-public void setDefaultPerspective(String id);
-/**
- * Reverts a perspective back to its original definition
- * as specified in the plug-in manifest.
- * 
- * @param perspToRevert the perspective to revert  
- * 
- * @since 3.0
- */
-public void revertPerspective(IPerspectiveDescriptor perspToRevert);
+    /**
+     * Clones an existing perspective.
+     * 
+     * @param id the id for the cloned perspective, which must not already be used by 
+     *   any registered perspective
+     * @param label the label assigned to the cloned perspective
+     * @param desc the perspective to clone
+     * @return the cloned perspective descriptor
+     * 
+     * @since 3.0
+     */
+    public IPerspectiveDescriptor clonePerspective(String id, String label,
+            IPerspectiveDescriptor desc) throws IllegalArgumentException;
+
+    /**
+     * Finds and returns the registered perspective with the given perspective id.
+     *
+     * @param perspectiveId the perspective id 
+     * @return the perspective, or <code>null</code> if none
+     * @see IPerspectiveDescriptor#getId
+     */
+    public IPerspectiveDescriptor findPerspectiveWithId(String perspectiveId);
+
+    /**
+     * Finds and returns the registered perspective with the given label.
+     *
+     * @param label the label
+     * @return the perspective, or <code>null</code> if none
+     * @see IPerspectiveDescriptor#getLabel
+     */
+    public IPerspectiveDescriptor findPerspectiveWithLabel(String label);
+
+    /**
+     * Returns the id of the default perspective for the workbench.  This identifies one
+     * perspective extension within the workbench's perspective registry.
+     * <p>
+     * On startup of the platform UI the default perspective is determined using a 
+     * multistep process.
+     * </p>
+     * <ol>
+     *   <li>Initially the <code>Resource Perspective</code> is default. </li>
+     *   <li>If a single perspective extension within the registry has a <b>default</b>
+     *			attribute it will become the default perspective.  If two or more
+     *			extensions have the <b>default</b> attribute the registry will ignore all
+     *			of them and select the <code>Resource Perspective</code>. </li>
+     *   <li>If the user has set the default perspective within the 
+     *			<code>Perspective</code> dialog their preference will be selected 
+     *			over all others. </li>
+     * </ol>
+     * </p>
+     *
+     * @return the default perspective id; will never be <code>null</code>
+     * Note: revise - this is out of date (even before RCP)
+     */
+    public String getDefaultPerspective();
+
+    /**
+     * Returns a list of the perspectives known to the workbench.
+     *
+     * @return a list of perspectives
+     */
+    public IPerspectiveDescriptor[] getPerspectives();
+
+    /**
+     * Sets the default perspective for the workbench to the given perspective id.
+     * The id must correspond to one perspective extension within the workbench's 
+     * perspective registry.
+     *
+     * @param id a perspective id; must not be <code>null</code>
+     */
+    public void setDefaultPerspective(String id);
+
+    /**
+     * Reverts a perspective back to its original definition
+     * as specified in the plug-in manifest.
+     * 
+     * @param perspToRevert the perspective to revert  
+     * 
+     * @since 3.0
+     */
+    public void revertPerspective(IPerspectiveDescriptor perspToRevert);
 }

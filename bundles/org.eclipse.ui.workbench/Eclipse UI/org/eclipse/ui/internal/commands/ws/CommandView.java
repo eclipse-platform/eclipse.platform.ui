@@ -47,35 +47,37 @@ public class CommandView extends ViewPart {
             IStructuredContentProvider {
 
         private SortedSet commands = new TreeSet();
-        
+
         public void dispose() {
             for (Iterator iterator = commands.iterator(); iterator.hasNext();) {
                 ICommand command = (ICommand) iterator.next();
                 command.removeCommandListener(commandListener);
             }
-            
+
             commands.clear();
         }
-        
+
         public Object[] getElements(Object inputElement) {
-            Set definedCommandIds = new HashSet(commandManager.getDefinedCommandIds());
-            
+            Set definedCommandIds = new HashSet(commandManager
+                    .getDefinedCommandIds());
+
             for (Iterator iterator = commands.iterator(); iterator.hasNext();) {
                 ICommand command = (ICommand) iterator.next();
-                
+
                 if (!definedCommandIds.remove(command.getId())) {
                     command.removeCommandListener(commandListener);
-                    commands.remove(command);                    
+                    commands.remove(command);
                 }
             }
 
-            for (Iterator iterator = definedCommandIds.iterator(); iterator.hasNext();) {
+            for (Iterator iterator = definedCommandIds.iterator(); iterator
+                    .hasNext();) {
                 String commandId = (String) iterator.next();
                 ICommand command = commandManager.getCommand(commandId);
                 command.addCommandListener(commandListener);
                 commands.add(command);
             }
-            
+
             return commands.toArray();
         }
 
@@ -83,8 +85,8 @@ public class CommandView extends ViewPart {
         }
     }
 
-    private final class CommandLabelProvider extends LabelProvider
-            implements ITableLabelProvider {
+    private final class CommandLabelProvider extends LabelProvider implements
+            ITableLabelProvider {
 
         public Image getColumnImage(Object element, int columnIndex) {
             return null;
@@ -92,7 +94,7 @@ public class CommandView extends ViewPart {
 
         public String getColumnText(Object element, int columnIndex) {
             ICommand command = (ICommand) element;
-            
+
             if (columnIndex == 0)
                 return command.getId();
             else if (columnIndex == 1) {
@@ -101,24 +103,26 @@ public class CommandView extends ViewPart {
                 } catch (NotDefinedException eNotDefined) {
                     return "<not defined>"; //$NON-NLS-1$
                 }
-            	
+
             } else if (columnIndex == 2) {
                 StringBuffer stringBuffer = new StringBuffer();
                 List keySequenceBindings = command.getKeySequenceBindings();
-            
-            	for (int i = 0; i < keySequenceBindings.size(); i++) {
-            	    IKeySequenceBinding keySequenceBinding = (IKeySequenceBinding) keySequenceBindings.get(i);
-            	    KeySequence keySequence = keySequenceBinding.getKeySequence();
-            	    
-            	    if (i >= 1)
-            	        stringBuffer.append(", "); //$NON-NLS-1$
-            	    
-            	    stringBuffer.append(keySequence.format());            	    
-            	}
-            	
-            	return stringBuffer.toString();
-        	}
-            
+
+                for (int i = 0; i < keySequenceBindings.size(); i++) {
+                    IKeySequenceBinding keySequenceBinding = (IKeySequenceBinding) keySequenceBindings
+                            .get(i);
+                    KeySequence keySequence = keySequenceBinding
+                            .getKeySequence();
+
+                    if (i >= 1)
+                        stringBuffer.append(", "); //$NON-NLS-1$
+
+                    stringBuffer.append(keySequence.format());
+                }
+
+                return stringBuffer.toString();
+            }
+
             return null;
         }
     }
@@ -126,29 +130,34 @@ public class CommandView extends ViewPart {
     private ICommandListener commandListener = new ICommandListener() {
         public void commandChanged(CommandEvent commandEvent) {
             tableViewer.refresh();
-        }   
+        }
     };
+
     private ICommandManager commandManager;
+
     private ICommandManagerListener commandManagerListener = new ICommandManagerListener() {
-        public void commandManagerChanged(CommandManagerEvent commandManagerEvent) {
+        public void commandManagerChanged(
+                CommandManagerEvent commandManagerEvent) {
             tableViewer.refresh();
-        }   
+        }
     };
-    
+
     private Table table;
+
     private TableViewer tableViewer;
 
     public void dispose() {
         commandManager.removeCommandManagerListener(commandManagerListener);
         table.dispose();
     }
-    
+
     public void createPartControl(Composite parent) {
         GridLayout gridLayout = new GridLayout();
         gridLayout.marginHeight = 0;
         gridLayout.marginWidth = 0;
         parent.setLayout(gridLayout);
-        table = new Table(parent, SWT.BORDER | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
+        table = new Table(parent, SWT.BORDER | SWT.FULL_SELECTION
+                | SWT.H_SCROLL | SWT.V_SCROLL);
         table.setHeaderVisible(true);
         GridData gridData = new GridData(GridData.FILL_BOTH);
         gridData.heightHint = 200;
@@ -161,14 +170,16 @@ public class CommandView extends ViewPart {
         tableColumnName.setResizable(true);
         tableColumnName.setText("Name"); //$NON-NLS-1$
         tableColumnName.setWidth(200);
-        TableColumn tableColumnKeySequences = new TableColumn(table, SWT.NULL, 2);
+        TableColumn tableColumnKeySequences = new TableColumn(table, SWT.NULL,
+                2);
         tableColumnKeySequences.setResizable(true);
         tableColumnKeySequences.setText("Key Sequences"); //$NON-NLS-1$
         tableColumnKeySequences.setWidth(200);
-        commandManager = PlatformUI.getWorkbench().getCommandSupport().getCommandManager();
+        commandManager = PlatformUI.getWorkbench().getCommandSupport()
+                .getCommandManager();
         tableViewer = new TableViewer(table);
         tableViewer.setContentProvider(new CommandContentProvider());
-        tableViewer.setLabelProvider(new CommandLabelProvider()); 
+        tableViewer.setLabelProvider(new CommandLabelProvider());
         tableViewer.setInput(new Object());
         commandManager.addCommandManagerListener(commandManagerListener);
         tableViewer.refresh();

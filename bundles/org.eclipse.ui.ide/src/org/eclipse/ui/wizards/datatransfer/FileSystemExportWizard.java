@@ -29,7 +29,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
-
 /**
  * Standard workbench wizard for exporting resources from the workspace
  * to the local file system.
@@ -52,77 +51,85 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * </p>
  */
 public class FileSystemExportWizard extends Wizard implements IExportWizard {
-	private IStructuredSelection selection;
-	private WizardFileSystemResourceExportPage1 mainPage;
-/**
- * Creates a wizard for exporting workspace resources to the local file system.
- */
-public FileSystemExportWizard() {
-	AbstractUIPlugin plugin = (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
-	IDialogSettings workbenchSettings = plugin.getDialogSettings();
-	IDialogSettings section = workbenchSettings.getSection("FileSystemExportWizard");//$NON-NLS-1$
-	if(section == null)
-		section = workbenchSettings.addNewSection("FileSystemExportWizard");//$NON-NLS-1$
-	setDialogSettings(section);
-}
-/* (non-Javadoc)
- * Method declared on IWizard.
- */
-public void addPages() {
-	super.addPages();
-	mainPage = new WizardFileSystemResourceExportPage1(selection);
-	addPage(mainPage);
-}
-/**
- * Returns the image descriptor with the given relative path.
- */
-private ImageDescriptor getImageDescriptor(String relativePath) {
-	String iconPath = "icons/full/";//$NON-NLS-1$	
-	try {
-		AbstractUIPlugin plugin = (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
-		URL installURL = plugin.getDescriptor().getInstallURL();
-		URL url = new URL(installURL, iconPath + relativePath);
-		return ImageDescriptor.createFromURL(url);
-	}
-	catch (MalformedURLException e) {
-		// Should not happen
-		return null;
-	}
-}
+    private IStructuredSelection selection;
 
-/* (non-Javadoc)
- * Method declared on IWorkbenchWizard.
- */
-public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
-	this.selection = currentSelection;
-	List selectedResources = IDE.computeSelectedResources(currentSelection);
-	if (!selectedResources.isEmpty()) {
-		this.selection = new StructuredSelection(selectedResources);
-	}
+    private WizardFileSystemResourceExportPage1 mainPage;
 
-	// look it up if current selection (after resource adapting) is empty
-	if (selection.isEmpty() && workbench.getActiveWorkbenchWindow() != null) {
-		IWorkbenchPage page = workbench.getActiveWorkbenchWindow().getActivePage();
-		if( page != null) {
-			IEditorPart currentEditor = page.getActiveEditor();
-			if (currentEditor != null) {
-				Object selectedResource = currentEditor.getEditorInput().getAdapter(IResource.class);
-				if (selectedResource != null) {
-					selection = new StructuredSelection(selectedResource);
-				}
-			}
-		}
-	}
+    /**
+     * Creates a wizard for exporting workspace resources to the local file system.
+     */
+    public FileSystemExportWizard() {
+        AbstractUIPlugin plugin = (AbstractUIPlugin) Platform
+                .getPlugin(PlatformUI.PLUGIN_ID);
+        IDialogSettings workbenchSettings = plugin.getDialogSettings();
+        IDialogSettings section = workbenchSettings
+                .getSection("FileSystemExportWizard");//$NON-NLS-1$
+        if (section == null)
+            section = workbenchSettings.addNewSection("FileSystemExportWizard");//$NON-NLS-1$
+        setDialogSettings(section);
+    }
 
-	setWindowTitle(DataTransferMessages.getString("DataTransfer.export")); //$NON-NLS-1$
-	setDefaultPageImageDescriptor(getImageDescriptor("wizban/exportdir_wiz.gif"));//$NON-NLS-1$
-	setNeedsProgressMonitor(true);
-}
+    /* (non-Javadoc)
+     * Method declared on IWizard.
+     */
+    public void addPages() {
+        super.addPages();
+        mainPage = new WizardFileSystemResourceExportPage1(selection);
+        addPage(mainPage);
+    }
 
-/* (non-Javadoc)
- * Method declared on IWizard.
- */
-public boolean performFinish() {
-	return mainPage.finish();
-}
+    /**
+     * Returns the image descriptor with the given relative path.
+     */
+    private ImageDescriptor getImageDescriptor(String relativePath) {
+        String iconPath = "icons/full/";//$NON-NLS-1$	
+        try {
+            AbstractUIPlugin plugin = (AbstractUIPlugin) Platform
+                    .getPlugin(PlatformUI.PLUGIN_ID);
+            URL installURL = plugin.getDescriptor().getInstallURL();
+            URL url = new URL(installURL, iconPath + relativePath);
+            return ImageDescriptor.createFromURL(url);
+        } catch (MalformedURLException e) {
+            // Should not happen
+            return null;
+        }
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IWorkbenchWizard.
+     */
+    public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
+        this.selection = currentSelection;
+        List selectedResources = IDE.computeSelectedResources(currentSelection);
+        if (!selectedResources.isEmpty()) {
+            this.selection = new StructuredSelection(selectedResources);
+        }
+
+        // look it up if current selection (after resource adapting) is empty
+        if (selection.isEmpty() && workbench.getActiveWorkbenchWindow() != null) {
+            IWorkbenchPage page = workbench.getActiveWorkbenchWindow()
+                    .getActivePage();
+            if (page != null) {
+                IEditorPart currentEditor = page.getActiveEditor();
+                if (currentEditor != null) {
+                    Object selectedResource = currentEditor.getEditorInput()
+                            .getAdapter(IResource.class);
+                    if (selectedResource != null) {
+                        selection = new StructuredSelection(selectedResource);
+                    }
+                }
+            }
+        }
+
+        setWindowTitle(DataTransferMessages.getString("DataTransfer.export")); //$NON-NLS-1$
+        setDefaultPageImageDescriptor(getImageDescriptor("wizban/exportdir_wiz.gif"));//$NON-NLS-1$
+        setNeedsProgressMonitor(true);
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IWizard.
+     */
+    public boolean performFinish() {
+        return mainPage.finish();
+    }
 }

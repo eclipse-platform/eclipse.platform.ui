@@ -23,58 +23,65 @@ import org.eclipse.ui.internal.ide.registry.Capability;
  * wizard.
  */
 public class InstallCapabilityStep extends WizardStep {
-	private Capability capability;
-	private ICapabilityInstallWizard wizard;
-	private IWorkbench workbench;
-	private IProjectProvider projectProvider;
-	
-	/**
-	 * Creates the capability install step
-	 * 
-	 * @param number step order number
-	 * @param capability the capability to install
-	 */
-	public InstallCapabilityStep(int number, Capability capability, IWorkbench workbench, IProjectProvider projectProvider) {
-		super(number);
-		this.capability = capability;
-		this.workbench = workbench;
-		this.projectProvider = projectProvider;
-	}
+    private Capability capability;
 
-	/* (non-Javadoc)
-	 * Method declared on WizardStep.
-	 */
-	public String getLabel() {
-		return IDEWorkbenchMessages.format("InstallCapabilityStep.label", new Object[] {capability.getName()}); //$NON-NLS-1$
-	}
+    private ICapabilityInstallWizard wizard;
 
-	/* (non-Javadoc)
-	 * Method declared on WizardStep.
-	 */
-	public String getDetails() {
-		return capability.getInstallDetails();
-	}
-	
-	/* (non-Javadoc)
-	 * Method declared on WizardStep.
-	 */
-	public IWizard getWizard() {
-		if (wizard == null) {
-			wizard = capability.getInstallWizard();
-			if (wizard != null) {
-				wizard.init(workbench, StructuredSelection.EMPTY, projectProvider.getProject());
-				wizard.addPages();
-			}
-		}
-		
-		return wizard;
-	}
-	
-	interface IProjectProvider {
-		/**
-		 * Returns the project to which the capability
-		 * is to be configured against.
-		 */
-		public IProject getProject();
-	}
+    private IWorkbench workbench;
+
+    private IProjectProvider projectProvider;
+
+    /**
+     * Creates the capability install step
+     * 
+     * @param number step order number
+     * @param capability the capability to install
+     */
+    public InstallCapabilityStep(int number, Capability capability,
+            IWorkbench workbench, IProjectProvider projectProvider) {
+        super(number);
+        this.capability = capability;
+        this.workbench = workbench;
+        this.projectProvider = projectProvider;
+    }
+
+    /* (non-Javadoc)
+     * Method declared on WizardStep.
+     */
+    public String getLabel() {
+        return IDEWorkbenchMessages
+                .format(
+                        "InstallCapabilityStep.label", new Object[] { capability.getName() }); //$NON-NLS-1$
+    }
+
+    /* (non-Javadoc)
+     * Method declared on WizardStep.
+     */
+    public String getDetails() {
+        return capability.getInstallDetails();
+    }
+
+    /* (non-Javadoc)
+     * Method declared on WizardStep.
+     */
+    public IWizard getWizard() {
+        if (wizard == null) {
+            wizard = capability.getInstallWizard();
+            if (wizard != null) {
+                wizard.init(workbench, StructuredSelection.EMPTY,
+                        projectProvider.getProject());
+                wizard.addPages();
+            }
+        }
+
+        return wizard;
+    }
+
+    interface IProjectProvider {
+        /**
+         * Returns the project to which the capability
+         * is to be configured against.
+         */
+        public IProject getProject();
+    }
 }

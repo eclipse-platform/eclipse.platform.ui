@@ -17,7 +17,9 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IImportWizard;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -41,61 +43,65 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * </p>
  */
 
-public class ExternalProjectImportWizard
-	extends Wizard
-	implements IImportWizard {
-	private WizardExternalProjectImportPage mainPage;
+public class ExternalProjectImportWizard extends Wizard implements
+        IImportWizard {
+    private WizardExternalProjectImportPage mainPage;
 
-	/**
-	 * Constructor for ExternalProjectImportWizard.
-	 */
-	public ExternalProjectImportWizard() {
-		super();
-	}
+    /**
+     * Constructor for ExternalProjectImportWizard.
+     */
+    public ExternalProjectImportWizard() {
+        super();
+    }
 
-	/* (non-Javadoc)
-	* Method declared on IWizard.
-	*/
-	public void addPages() {
-		super.addPages();
-		mainPage = new WizardExternalProjectImportPage();
-		addPage(mainPage);
-	}
-	/**
-	 * Returns the image descriptor with the given relative path.
-	 */
-	private ImageDescriptor getImageDescriptor(String relativePath) {
-		String iconPath = "icons/full/"; //$NON-NLS-1$	
-		try {
-			AbstractUIPlugin plugin =
-				(AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
-			URL installURL = plugin.getDescriptor().getInstallURL();
-			URL url = new URL(installURL, iconPath + relativePath);
-			return ImageDescriptor.createFromURL(url);
-		} catch (MalformedURLException e) {
-			// Should not happen
-			return null;
-		}
-	}
-	/* (non-Javadoc)
-	 * Method declared on IWorkbenchWizard.
-	 */
-	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
-		setWindowTitle(DataTransferMessages.getString("DataTransfer.importTitle")); //$NON-NLS-1$
-		setDefaultPageImageDescriptor(getImageDescriptor("wizban/importdir_wiz.gif")); //$NON-NLS-1$
-		
-	}
-	/* (non-Javadoc)
-	 * Method declared on IWizard.
-	 */
-	public boolean performCancel() {
-		return true;
-	}
-	/* (non-Javadoc)
-	 * Method declared on IWizard.
-	 */
-	public boolean performFinish() {
-		return (mainPage.createExistingProject() != null);
-	}
+    /* (non-Javadoc)
+     * Method declared on IWizard.
+     */
+    public void addPages() {
+        super.addPages();
+        mainPage = new WizardExternalProjectImportPage();
+        addPage(mainPage);
+    }
+
+    /**
+     * Returns the image descriptor with the given relative path.
+     */
+    private ImageDescriptor getImageDescriptor(String relativePath) {
+        String iconPath = "icons/full/"; //$NON-NLS-1$	
+        try {
+            AbstractUIPlugin plugin = (AbstractUIPlugin) Platform
+                    .getPlugin(PlatformUI.PLUGIN_ID);
+            URL installURL = plugin.getDescriptor().getInstallURL();
+            URL url = new URL(installURL, iconPath + relativePath);
+            return ImageDescriptor.createFromURL(url);
+        } catch (MalformedURLException e) {
+            // Should not happen
+            return null;
+        }
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IWorkbenchWizard.
+     */
+    public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
+        setWindowTitle(DataTransferMessages
+                .getString("DataTransfer.importTitle")); //$NON-NLS-1$
+        setDefaultPageImageDescriptor(getImageDescriptor("wizban/importdir_wiz.gif")); //$NON-NLS-1$
+
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IWizard.
+     */
+    public boolean performCancel() {
+        return true;
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IWizard.
+     */
+    public boolean performFinish() {
+        return (mainPage.createExistingProject() != null);
+    }
 
 }

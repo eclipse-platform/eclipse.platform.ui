@@ -28,22 +28,24 @@ import org.eclipse.ui.internal.WorkbenchWindow;
 public class SystemMenuFastViewOrientation extends ContributionItem {
 
     private ViewPane viewPane;
+
     private IntModel currentOrientation = new IntModel(SWT.VERTICAL);
 
     public SystemMenuFastViewOrientation(ViewPane newViewPane) {
         this.viewPane = newViewPane;
-        
+
         currentOrientation.addChangeListener(new IChangeListener() {
-			public void update(boolean changed) {
-				if (changed) {
-			        WorkbenchWindow workbenchWindow = (WorkbenchWindow) viewPane.getPage()
-	                	.getWorkbenchWindow();
-			        FastViewBar bar = workbenchWindow.getFastViewBar();
-			        if (bar != null && viewPane != null) {
-			        	bar.setOrientation(viewPane.getViewReference(), currentOrientation.get());
-			        }
-				}
-			}
+            public void update(boolean changed) {
+                if (changed) {
+                    WorkbenchWindow workbenchWindow = (WorkbenchWindow) viewPane
+                            .getPage().getWorkbenchWindow();
+                    FastViewBar bar = workbenchWindow.getFastViewBar();
+                    if (bar != null && viewPane != null) {
+                        bar.setOrientation(viewPane.getViewReference(),
+                                currentOrientation.get());
+                    }
+                }
+            }
         });
     }
 
@@ -54,21 +56,30 @@ public class SystemMenuFastViewOrientation extends ContributionItem {
     public void fill(Menu menu, int index) {
         WorkbenchWindow workbenchWindow = (WorkbenchWindow) viewPane.getPage()
                 .getWorkbenchWindow();
-        FastViewBar bar = workbenchWindow.getFastViewBar(); 
+        FastViewBar bar = workbenchWindow.getFastViewBar();
         if (bar != null && viewPane != null) {
-        	
-        	currentOrientation.set(bar.getOrientation(viewPane.getViewReference()));
-			MenuItem orientationItem = new MenuItem(menu, SWT.CASCADE, index);
-			{
-				orientationItem.setText(WorkbenchMessages.getString("FastViewBar.view_orientation")); //$NON-NLS-1$
-				
-				Menu orientationSwtMenu = new Menu(orientationItem);
-				RadioMenu orientationMenu = new RadioMenu(orientationSwtMenu, currentOrientation);
-				orientationMenu.addMenuItem(WorkbenchMessages.getString("FastViewBar.horizontal"), new Integer(SWT.HORIZONTAL)); //$NON-NLS-1$
-				orientationMenu.addMenuItem(WorkbenchMessages.getString("FastViewBar.vertical"), new Integer(SWT.VERTICAL)); //$NON-NLS-1$
-				
-				orientationItem.setMenu(orientationSwtMenu);
-			}
+
+            currentOrientation.set(bar.getOrientation(viewPane
+                    .getViewReference()));
+            MenuItem orientationItem = new MenuItem(menu, SWT.CASCADE, index);
+            {
+                orientationItem.setText(WorkbenchMessages
+                        .getString("FastViewBar.view_orientation")); //$NON-NLS-1$
+
+                Menu orientationSwtMenu = new Menu(orientationItem);
+                RadioMenu orientationMenu = new RadioMenu(orientationSwtMenu,
+                        currentOrientation);
+                orientationMenu
+                        .addMenuItem(
+                                WorkbenchMessages
+                                        .getString("FastViewBar.horizontal"), new Integer(SWT.HORIZONTAL)); //$NON-NLS-1$
+                orientationMenu
+                        .addMenuItem(
+                                WorkbenchMessages
+                                        .getString("FastViewBar.vertical"), new Integer(SWT.VERTICAL)); //$NON-NLS-1$
+
+                orientationItem.setMenu(orientationSwtMenu);
+            }
         }
     }
 

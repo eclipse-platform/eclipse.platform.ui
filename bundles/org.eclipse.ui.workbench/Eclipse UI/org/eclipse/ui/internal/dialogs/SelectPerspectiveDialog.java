@@ -43,211 +43,211 @@ import org.eclipse.ui.model.PerspectiveLabelProvider;
 /**
  * A dialog for perspective creation
  */
-public class SelectPerspectiveDialog
-	extends Dialog
-	implements ISelectionChangedListener {
+public class SelectPerspectiveDialog extends Dialog implements
+        ISelectionChangedListener {
 
-	final private static int LIST_HEIGHT = 300;
-	final private static int LIST_WIDTH = 200;
-	private TableViewer list;
-	private Button okButton;
-	private IPerspectiveDescriptor perspDesc;
-	private IPerspectiveRegistry perspReg;
-	private ActivityViewerFilter activityViewerFilter = new ActivityViewerFilter();
-	private Button showAllButton;
+    final private static int LIST_HEIGHT = 300;
 
-	/**
-	 * PerspectiveDialog constructor comment.
-	 */
-	public SelectPerspectiveDialog(
-		Shell parentShell,
-		IPerspectiveRegistry perspReg) {
-		super(parentShell);
-		this.perspReg = perspReg;
-	}
+    final private static int LIST_WIDTH = 200;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.Dialog#cancelPressed()
-	 */
-	protected void cancelPressed() {
-		perspDesc = null;
-		super.cancelPressed();
-	}
+    private TableViewer list;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
-	 */
-	protected void configureShell(Shell shell) {
-		super.configureShell(shell);
-		shell.setText(WorkbenchMessages.getString("SelectPerspective.shellTitle")); //$NON-NLS-1$
-		WorkbenchHelp.setHelp(shell, IHelpContextIds.SELECT_PERSPECTIVE_DIALOG);
-	}
+    private Button okButton;
 
-	/**
-	 * Adds buttons to this dialog's button bar.
-	 * <p>
-	 * The default implementation of this framework method adds standard ok and
-	 * cancel buttons using the <code>createButton</code> framework method.
-	 * Subclasses may override.
-	 * </p>
-	 * 
-	 * @param parent the button bar composite
-	 */
-	protected void createButtonsForButtonBar(Composite parent) {
-		okButton =
-			createButton(
-				parent,
-				IDialogConstants.OK_ID,
-				IDialogConstants.OK_LABEL,
-				true);
-		createButton(
-			parent,
-			IDialogConstants.CANCEL_ID,
-			IDialogConstants.CANCEL_LABEL,
-			false);
-	}
+    private IPerspectiveDescriptor perspDesc;
 
-	/**
-	 * Creates and returns the contents of the upper part of this dialog (above
-	 * the button bar).
-	 * 
-	 * @param the parent composite to contain the dialog area
-	 * @return the dialog area control
-	 */
-	protected Control createDialogArea(Composite parent) {
-		// Run super.
-		Composite composite = (Composite) super.createDialogArea(parent);
-		composite.setFont(parent.getFont());
+    private IPerspectiveRegistry perspReg;
 
-		createViewer(composite);
-		layoutTopControl(list.getControl());
-		if (needsShowAllButton()) {
-			createShowAllButton(composite);
-		}
+    private ActivityViewerFilter activityViewerFilter = new ActivityViewerFilter();
 
-		// Return results.
-		return composite;
-	}
+    private Button showAllButton;
 
-	/**
-	 * @return whether a show-all button is needed.  A show all button is needed only if the list contains filtered items.
-	 */
-	private boolean needsShowAllButton() {		
-		return activityViewerFilter.getHasEncounteredFilteredItem();
-	}
+    /**
+     * PerspectiveDialog constructor comment.
+     */
+    public SelectPerspectiveDialog(Shell parentShell,
+            IPerspectiveRegistry perspReg) {
+        super(parentShell);
+        this.perspReg = perspReg;
+    }
 
-	/**
-	 * Create a show all button in the parent.
-	 * 
-	 * @param parent the parent <code>Composite</code>.
-	 */
-	private void createShowAllButton(Composite parent) {
-		showAllButton = new Button(parent, SWT.CHECK);
-		showAllButton.setText(ActivityMessages.getString("Perspective.showAll")); //$NON-NLS-1$
-		showAllButton.addSelectionListener(new SelectionAdapter() {
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-		 */
-		public void widgetSelected(SelectionEvent e) {
-			if (showAllButton.getSelection()) {
-				list.resetFilters();
-			}
-			else {
-				list.addFilter(activityViewerFilter);
-			}
-		}});
-		
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.dialogs.Dialog#cancelPressed()
+     */
+    protected void cancelPressed() {
+        perspDesc = null;
+        super.cancelPressed();
+    }
 
-	/**
-	 * Create a new viewer in the parent.
-	 * 
-	 * @param parent the parent <code>Composite</code>.
-	 */
-	private void  createViewer(Composite parent) {
-		// Add perspective list.
-		list =
-			new TableViewer(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
-		list.getTable().setFont(parent.getFont());
-		list.setLabelProvider(new PerspectiveLabelProvider());
-		list.setContentProvider(new PerspContentProvider());
-		list.addFilter(activityViewerFilter);
-		list.setSorter(new ViewerSorter());
-		list.setInput(perspReg);
-		list.addSelectionChangedListener(this);
-		list.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event) {
-				handleDoubleClickEvent();
-			}
-		});
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
+     */
+    protected void configureShell(Shell shell) {
+        super.configureShell(shell);
+        shell.setText(WorkbenchMessages
+                .getString("SelectPerspective.shellTitle")); //$NON-NLS-1$
+        WorkbenchHelp.setHelp(shell, IHelpContextIds.SELECT_PERSPECTIVE_DIALOG);
+    }
 
-	/**
-	 * Returns the current selection.
-	 */
-	public IPerspectiveDescriptor getSelection() {
-		return perspDesc;
-	}
+    /**
+     * Adds buttons to this dialog's button bar.
+     * <p>
+     * The default implementation of this framework method adds standard ok and
+     * cancel buttons using the <code>createButton</code> framework method.
+     * Subclasses may override.
+     * </p>
+     * 
+     * @param parent the button bar composite
+     */
+    protected void createButtonsForButtonBar(Composite parent) {
+        okButton = createButton(parent, IDialogConstants.OK_ID,
+                IDialogConstants.OK_LABEL, true);
+        createButton(parent, IDialogConstants.CANCEL_ID,
+                IDialogConstants.CANCEL_LABEL, false);
+    }
 
-	/**
-	 * Handle a double click event on the list
-	 */
-	protected void handleDoubleClickEvent() {
-		okPressed();
-	}
+    /**
+     * Creates and returns the contents of the upper part of this dialog (above
+     * the button bar).
+     * 
+     * @param the parent composite to contain the dialog area
+     * @return the dialog area control
+     */
+    protected Control createDialogArea(Composite parent) {
+        // Run super.
+        Composite composite = (Composite) super.createDialogArea(parent);
+        composite.setFont(parent.getFont());
 
-	/**
-	 * Layout the top control.
-	 * 
-	 * @param control the control.
-	 */
-	private void layoutTopControl(Control control) {
-		GridData spec = new GridData(GridData.FILL_BOTH);
-		spec.widthHint = LIST_WIDTH;
-		spec.heightHint = LIST_HEIGHT;
-		control.setLayoutData(spec);
-	}
+        createViewer(composite);
+        layoutTopControl(list.getControl());
+        if (needsShowAllButton()) {
+            createShowAllButton(composite);
+        }
 
-	/**
-	 * Notifies that the selection has changed.
-	 * 
-	 * @param event event object describing the change
-	 */
-	public void selectionChanged(SelectionChangedEvent event) {
-		updateSelection(event);
-		updateButtons();
-	}
+        // Return results.
+        return composite;
+    }
 
-	/**
-	 * Update the button enablement state.
-	 */
-	protected void updateButtons() {
-		okButton.setEnabled(getSelection() != null);
-	}
+    /**
+     * @return whether a show-all button is needed.  A show all button is needed only if the list contains filtered items.
+     */
+    private boolean needsShowAllButton() {
+        return activityViewerFilter.getHasEncounteredFilteredItem();
+    }
 
-	/**
-	 * Update the selection object.
-	 */
-	protected void updateSelection(SelectionChangedEvent event) {
-		perspDesc = null;
-		IStructuredSelection sel = (IStructuredSelection) event.getSelection();
-		if (!sel.isEmpty()) {
-			Object obj = sel.getFirstElement();
-			if (obj instanceof IPerspectiveDescriptor)
-				perspDesc = (IPerspectiveDescriptor) obj;
-		}
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-	 */
-	protected void okPressed() {
-		if (WorkbenchActivityHelper.allowUseOf(getSelection()))
-			super.okPressed();
-	}
+    /**
+     * Create a show all button in the parent.
+     * 
+     * @param parent the parent <code>Composite</code>.
+     */
+    private void createShowAllButton(Composite parent) {
+        showAllButton = new Button(parent, SWT.CHECK);
+        showAllButton
+                .setText(ActivityMessages.getString("Perspective.showAll")); //$NON-NLS-1$
+        showAllButton.addSelectionListener(new SelectionAdapter() {
+
+            /* (non-Javadoc)
+             * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+             */
+            public void widgetSelected(SelectionEvent e) {
+                if (showAllButton.getSelection()) {
+                    list.resetFilters();
+                } else {
+                    list.addFilter(activityViewerFilter);
+                }
+            }
+        });
+
+    }
+
+    /**
+     * Create a new viewer in the parent.
+     * 
+     * @param parent the parent <code>Composite</code>.
+     */
+    private void createViewer(Composite parent) {
+        // Add perspective list.
+        list = new TableViewer(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL
+                | SWT.BORDER);
+        list.getTable().setFont(parent.getFont());
+        list.setLabelProvider(new PerspectiveLabelProvider());
+        list.setContentProvider(new PerspContentProvider());
+        list.addFilter(activityViewerFilter);
+        list.setSorter(new ViewerSorter());
+        list.setInput(perspReg);
+        list.addSelectionChangedListener(this);
+        list.addDoubleClickListener(new IDoubleClickListener() {
+            public void doubleClick(DoubleClickEvent event) {
+                handleDoubleClickEvent();
+            }
+        });
+    }
+
+    /**
+     * Returns the current selection.
+     */
+    public IPerspectiveDescriptor getSelection() {
+        return perspDesc;
+    }
+
+    /**
+     * Handle a double click event on the list
+     */
+    protected void handleDoubleClickEvent() {
+        okPressed();
+    }
+
+    /**
+     * Layout the top control.
+     * 
+     * @param control the control.
+     */
+    private void layoutTopControl(Control control) {
+        GridData spec = new GridData(GridData.FILL_BOTH);
+        spec.widthHint = LIST_WIDTH;
+        spec.heightHint = LIST_HEIGHT;
+        control.setLayoutData(spec);
+    }
+
+    /**
+     * Notifies that the selection has changed.
+     * 
+     * @param event event object describing the change
+     */
+    public void selectionChanged(SelectionChangedEvent event) {
+        updateSelection(event);
+        updateButtons();
+    }
+
+    /**
+     * Update the button enablement state.
+     */
+    protected void updateButtons() {
+        okButton.setEnabled(getSelection() != null);
+    }
+
+    /**
+     * Update the selection object.
+     */
+    protected void updateSelection(SelectionChangedEvent event) {
+        perspDesc = null;
+        IStructuredSelection sel = (IStructuredSelection) event.getSelection();
+        if (!sel.isEmpty()) {
+            Object obj = sel.getFirstElement();
+            if (obj instanceof IPerspectiveDescriptor)
+                perspDesc = (IPerspectiveDescriptor) obj;
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#okPressed()
+     */
+    protected void okPressed() {
+        if (WorkbenchActivityHelper.allowUseOf(getSelection()))
+            super.okPressed();
+    }
 }

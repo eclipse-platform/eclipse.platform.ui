@@ -20,5 +20,5 @@ public interface IChangeListener {
      * attached to the model, and called with true
      * every time the model's state changes.
      */
-	void update(boolean changed);
+    void update(boolean changed);
 }

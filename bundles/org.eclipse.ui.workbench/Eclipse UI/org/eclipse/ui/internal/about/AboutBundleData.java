@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 
-
 /**
  * A small class to manage the about dialog information for a single bundle.
  * @since 3.0
@@ -23,9 +22,9 @@ public class AboutBundleData extends AboutData {
 
     public AboutBundleData(Bundle bundle) {
         super(getResourceString(bundle, Constants.BUNDLE_VENDOR),
-              getResourceString(bundle, Constants.BUNDLE_NAME),
-              getResourceString(bundle, Constants.BUNDLE_VERSION),
-              bundle.getSymbolicName());
+                getResourceString(bundle, Constants.BUNDLE_NAME),
+                getResourceString(bundle, Constants.BUNDLE_VERSION), bundle
+                        .getSymbolicName());
     }
 
     /**

@@ -23,30 +23,30 @@ import java.util.Collection;
  * @since 2.1
  */
 public class ArrayContentProvider implements IStructuredContentProvider {
-	
-	/**
-	 * Returns the elements in the input, which must be either an array or a
-	 * <code>Collection</code>. 
-	 */
-	public Object[] getElements(Object inputElement) {
-		if (inputElement instanceof Object[])
-			return (Object[]) inputElement;
-		if (inputElement instanceof Collection)
-			return ((Collection) inputElement).toArray();
-		return new Object[0];
-	}
-	
-	/**
-	 * This implementation does nothing.
-	 */
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		// do nothing.
-	}
 
-	/**
-	 * This implementation does nothing.
-	 */
-	public void dispose() {
-		// do nothing.
-	}
+    /**
+     * Returns the elements in the input, which must be either an array or a
+     * <code>Collection</code>. 
+     */
+    public Object[] getElements(Object inputElement) {
+        if (inputElement instanceof Object[])
+            return (Object[]) inputElement;
+        if (inputElement instanceof Collection)
+            return ((Collection) inputElement).toArray();
+        return new Object[0];
+    }
+
+    /**
+     * This implementation does nothing.
+     */
+    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+        // do nothing.
+    }
+
+    /**
+     * This implementation does nothing.
+     */
+    public void dispose() {
+        // do nothing.
+    }
 }

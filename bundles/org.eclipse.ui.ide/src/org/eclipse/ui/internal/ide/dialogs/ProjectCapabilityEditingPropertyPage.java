@@ -19,6 +19,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -63,295 +64,344 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
  * A property page for IProject resources to edit a single
  * capability at a time.
  */
-public class ProjectCapabilityEditingPropertyPage extends ProjectCapabilityPropertyPage {
-	private static final int SIZING_WIZARD_WIDTH = 500;
-	private static final int SIZING_WIZARD_HEIGHT = 500;
+public class ProjectCapabilityEditingPropertyPage extends
+        ProjectCapabilityPropertyPage {
+    private static final int SIZING_WIZARD_WIDTH = 500;
 
-	private TableViewer table;
-	private Button addButton;
-	private Button removeButton;
-	private ArrayList disabledCaps = new ArrayList();
-	private Capability selectedCap;
-	private CapabilityRegistry reg;
+    private static final int SIZING_WIZARD_HEIGHT = 500;
 
-	/**
-	 * Creates a new ProjectCapabilityEditingPropertyPage.
-	 */
-	public ProjectCapabilityEditingPropertyPage() {
-		super();
-	}
-	
-	/* (non-Javadoc)
-	 * Method declared on PreferencePage
-	 */
-	protected Control createContents(Composite parent) {
-		Font font = parent.getFont();
-		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.PROJECT_CAPABILITY_PROPERTY_PAGE);
-		noDefaultAndApplyButton();
-		reg = IDEWorkbenchPlugin.getDefault().getCapabilityRegistry();
-		
-		Composite topComposite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		topComposite.setLayout(layout);
-		topComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
-		String instructions;
-		if (reg.hasCapabilities())
-			instructions = IDEWorkbenchMessages.getString("ProjectCapabilityPropertyPage.chooseCapabilities"); //$NON-NLS-1$
-		else
-			instructions = IDEWorkbenchMessages.getString("ProjectCapabilityPropertyPage.noCapabilities"); //$NON-NLS-1$
-		Label label = new Label(topComposite, SWT.LEFT);
-		label.setFont(font);
-		label.setText(instructions);
+    private TableViewer table;
 
-		Capability[] caps = reg.getProjectDisabledCapabilities(getProject());
-		disabledCaps.addAll(Arrays.asList(caps));
+    private Button addButton;
 
-		Composite mainComposite = new Composite(topComposite, SWT.NONE);
-		layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		mainComposite.setLayout(layout);
-		mainComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+    private Button removeButton;
 
-		Composite capComposite = new Composite(mainComposite, SWT.NONE);
-		layout = new GridLayout();
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		capComposite.setLayout(layout);
-		capComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+    private ArrayList disabledCaps = new ArrayList();
 
-		label = new Label(capComposite, SWT.LEFT);
-		label.setFont(font);
-		label.setText(IDEWorkbenchMessages.getString("ProjectCapabilitySelectionGroup.capabilities")); //$NON-NLS-1$
-		
-		table = new TableViewer(capComposite, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
-		table.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
-		table.getTable().setFont(font);
-		table.setLabelProvider(new CapabilityLabelProvider());
-		table.setContentProvider(getContentProvider());
-		table.setInput(getProject());
-		
-		Composite buttonComposite = new Composite(mainComposite, SWT.NONE);
-		layout = new GridLayout();
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		buttonComposite.setLayout(layout);
-		buttonComposite.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+    private Capability selectedCap;
 
-		label = new Label(buttonComposite, SWT.LEFT);
-		label.setFont(font);
-		label.setText(""); //$NON-NLS-1$
-		
-		addButton = new Button(buttonComposite, SWT.PUSH);
-		addButton.setText(IDEWorkbenchMessages.getString("ProjectCapabilityEditingPropertyPage.add")); //$NON-NLS-1$
-		addButton.setEnabled(true);
-		addButton.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				addCapability();
-			}
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-		});
-		GridData data = new GridData();
-		data.horizontalAlignment = GridData.FILL;
-		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		data.widthHint = Math.max(widthHint, addButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
-		addButton.setLayoutData(data);
-		addButton.setFont(font);
-		
-		removeButton = new Button(buttonComposite, SWT.PUSH);
-		removeButton.setText(IDEWorkbenchMessages.getString("ProjectCapabilityEditingPropertyPage.remove")); //$NON-NLS-1$
-		removeButton.setEnabled(false);
-		removeButton.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				removeCapability(selectedCap);
-			}
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-		});
-		data = new GridData();
-		data.horizontalAlignment = GridData.FILL;
-		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-		widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		data.widthHint = Math.max(widthHint, removeButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
-		removeButton.setLayoutData(data);
-		removeButton.setFont(font);
+    private CapabilityRegistry reg;
 
-		table.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				selectedCap = null;
-				IStructuredSelection sel = (IStructuredSelection)event.getSelection();
-				if (sel != null)
-					selectedCap = (Capability)sel.getFirstElement();
-				removeButton.setEnabled(selectedCap != null);
-			}
-		});
-		
-		return topComposite;
-	}
-	
-	/**
-	 * Returns the content provider for the viewers
-	 */
-	private IContentProvider getContentProvider() {
-		return new WorkbenchContentProvider() {
-			public Object[] getChildren(Object parentElement) {
-				if (parentElement instanceof IProject)
-					return reg.getProjectCapabilities((IProject)parentElement);
-				else
-					return null;
-			}
-		};
-	}
-	
-	/**
-	 * Returns whether the category is considered disabled
-	 */
-	private boolean isDisabledCapability(Capability cap) {
-		return disabledCaps.contains(cap);
-	}
-	
-	private void addCapability() {
-		ProjectCapabilitySimpleAddWizard wizard;
-		wizard = new ProjectCapabilitySimpleAddWizard(PlatformUI.getWorkbench(), StructuredSelection.EMPTY, getProject());
-		WizardDialog dialog = new WizardDialog(getShell(), wizard);
-		dialog.create();
-		dialog.getShell().setSize( Math.max(SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x), SIZING_WIZARD_HEIGHT );
-		WorkbenchHelp.setHelp(dialog.getShell(), IHelpContextIds.UPDATE_CAPABILITY_WIZARD);
-		dialog.open();
-		
-		table.refresh();
-	}
-	
-	private void removeCapability(Capability cap) {
-		ArrayList results = new ArrayList();
-		results.addAll(Arrays.asList(reg.getProjectCapabilities(getProject())));
-		results.remove(cap);
-		Capability[] caps = new Capability[results.size()];
-		results.toArray(caps);
-		
-		for (int i = 0; i < caps.length; i++) {
-			List prereqs = Arrays.asList(reg.getPrerequisiteIds(caps[i]));
-			if (prereqs.contains(cap.getId())) {
-				MessageDialog.openWarning(
-					getShell(),
-					IDEWorkbenchMessages.getString("ProjectCapabilityPropertyPage.errorTitle"), //$NON-NLS-1$
-					IDEWorkbenchMessages.format("ProjectCapabilityPropertyPage.capabilityRequired", new Object[] {caps[i].getName()})); //$NON-NLS-1$
-				return;
-			}
-		}
-		
-		IStatus status = reg.validateCapabilities(caps);
-		if (!status.isOK()) {
-			ErrorDialog.openError(
-				getShell(),
-				IDEWorkbenchMessages.getString("ProjectCapabilityPropertyPage.errorTitle"), //$NON-NLS-1$
-				IDEWorkbenchMessages.getString("ProjectCapabilityPropertyPage.invalidSelection"), //$NON-NLS-1$
-				status);
-			return;
-		}
-		
-		String[] natureIds = new String[1];
-		natureIds[0] = cap.getNatureId();
-		
-		ICapabilityUninstallWizard wizard = cap.getUninstallWizard();
-		if (wizard == null)
-			wizard = new RemoveCapabilityWizard();
-		if (wizard != null) {
-			wizard.init(PlatformUI.getWorkbench(), StructuredSelection.EMPTY, getProject(), natureIds);
-			wizard.addPages();
-		}
-		
-		if (wizard.getStartingPage() == null) {
-			wizard.setContainer(new StubContainer());
-			wizard.performFinish();
-			wizard.setContainer(null);
-		} else {
-			wizard = cap.getUninstallWizard();
-			if (wizard == null)
-				wizard = new RemoveCapabilityWizard();
-			if (wizard != null)
-				wizard.init(PlatformUI.getWorkbench(), StructuredSelection.EMPTY, getProject(), natureIds);
-			WizardDialog dialog = new WizardDialog(getShell(), wizard);
-			dialog.create();
-			dialog.getShell().setSize( Math.max(SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x), SIZING_WIZARD_HEIGHT );
-			WorkbenchHelp.setHelp(dialog.getShell(), IHelpContextIds.UPDATE_CAPABILITY_WIZARD);
-			dialog.open();
-		}
-		
-		table.refresh();
-	}
-	
-	/* (non-Javadoc)
-	 * Method declared on PreferencePage
-	 */
-	public boolean performOk() {
-		return true;
-	}
-	
-		
-	class CapabilityLabelProvider extends LabelProvider {
-		private Map imageTable;
-		
-		public void dispose() {
-			if (imageTable != null) {
-				Iterator enum = imageTable.values().iterator();
-				while (enum.hasNext())
-					((Image) enum.next()).dispose();
-				imageTable = null;
-			}
-		}
+    /**
+     * Creates a new ProjectCapabilityEditingPropertyPage.
+     */
+    public ProjectCapabilityEditingPropertyPage() {
+        super();
+    }
 
-		public Image getImage(Object element) {
-			ImageDescriptor descriptor = ((Capability) element).getIconDescriptor();
-			if (descriptor == null)
-				return null;
-			
-			//obtain the cached image corresponding to the descriptor
-			if (imageTable == null) {
-				 imageTable = new Hashtable(40);
-			}
-			Image image = (Image) imageTable.get(descriptor);
-			if (image == null) {
-				image = descriptor.createImage();
-				imageTable.put(descriptor, image);
-			}
-			return image;
-		}
+    /* (non-Javadoc)
+     * Method declared on PreferencePage
+     */
+    protected Control createContents(Composite parent) {
+        Font font = parent.getFont();
+        WorkbenchHelp.setHelp(getControl(),
+                IHelpContextIds.PROJECT_CAPABILITY_PROPERTY_PAGE);
+        noDefaultAndApplyButton();
+        reg = IDEWorkbenchPlugin.getDefault().getCapabilityRegistry();
 
-		public String getText(Object element) {
-			Capability cap = (Capability) element;
-			String text = cap.getName();
-			if (isDisabledCapability(cap))
-				text = IDEWorkbenchMessages.format("ProjectCapabilitySelectionGroup.disabledLabel", new Object[] {text}); //$NON-NLS-1$
-			return text;
-		}
-	}
-	
-	class StubContainer implements IWizardContainer {
-		public IWizardPage getCurrentPage() {
-			return null;
-		}
-		public Shell getShell() {
-			return ProjectCapabilityEditingPropertyPage.this.getShell();
-		}
-		public void showPage(IWizardPage page) {
-		}
-		public void updateButtons() {
-		}
-		public void updateMessage() {
-		}
-		public void updateTitleBar() {
-		}
-		public void updateWindowTitle() {
-		}
-		public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
-			new ProgressMonitorJobsDialog(getShell()).run(fork, cancelable, runnable);
-		}
-	}
+        Composite topComposite = new Composite(parent, SWT.NONE);
+        GridLayout layout = new GridLayout();
+        layout.marginHeight = 0;
+        layout.marginWidth = 0;
+        topComposite.setLayout(layout);
+        topComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+        String instructions;
+        if (reg.hasCapabilities())
+            instructions = IDEWorkbenchMessages
+                    .getString("ProjectCapabilityPropertyPage.chooseCapabilities"); //$NON-NLS-1$
+        else
+            instructions = IDEWorkbenchMessages
+                    .getString("ProjectCapabilityPropertyPage.noCapabilities"); //$NON-NLS-1$
+        Label label = new Label(topComposite, SWT.LEFT);
+        label.setFont(font);
+        label.setText(instructions);
+
+        Capability[] caps = reg.getProjectDisabledCapabilities(getProject());
+        disabledCaps.addAll(Arrays.asList(caps));
+
+        Composite mainComposite = new Composite(topComposite, SWT.NONE);
+        layout = new GridLayout();
+        layout.numColumns = 2;
+        layout.marginHeight = 0;
+        layout.marginWidth = 0;
+        mainComposite.setLayout(layout);
+        mainComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+        Composite capComposite = new Composite(mainComposite, SWT.NONE);
+        layout = new GridLayout();
+        layout.marginHeight = 0;
+        layout.marginWidth = 0;
+        capComposite.setLayout(layout);
+        capComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+        label = new Label(capComposite, SWT.LEFT);
+        label.setFont(font);
+        label.setText(IDEWorkbenchMessages
+                .getString("ProjectCapabilitySelectionGroup.capabilities")); //$NON-NLS-1$
+
+        table = new TableViewer(capComposite, SWT.SINGLE | SWT.H_SCROLL
+                | SWT.V_SCROLL | SWT.BORDER);
+        table.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
+        table.getTable().setFont(font);
+        table.setLabelProvider(new CapabilityLabelProvider());
+        table.setContentProvider(getContentProvider());
+        table.setInput(getProject());
+
+        Composite buttonComposite = new Composite(mainComposite, SWT.NONE);
+        layout = new GridLayout();
+        layout.marginHeight = 0;
+        layout.marginWidth = 0;
+        buttonComposite.setLayout(layout);
+        buttonComposite.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+
+        label = new Label(buttonComposite, SWT.LEFT);
+        label.setFont(font);
+        label.setText(""); //$NON-NLS-1$
+
+        addButton = new Button(buttonComposite, SWT.PUSH);
+        addButton.setText(IDEWorkbenchMessages
+                .getString("ProjectCapabilityEditingPropertyPage.add")); //$NON-NLS-1$
+        addButton.setEnabled(true);
+        addButton.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent e) {
+                addCapability();
+            }
+
+            public void widgetDefaultSelected(SelectionEvent e) {
+            }
+        });
+        GridData data = new GridData();
+        data.horizontalAlignment = GridData.FILL;
+        data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+        int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+        data.widthHint = Math.max(widthHint, addButton.computeSize(SWT.DEFAULT,
+                SWT.DEFAULT, true).x);
+        addButton.setLayoutData(data);
+        addButton.setFont(font);
+
+        removeButton = new Button(buttonComposite, SWT.PUSH);
+        removeButton.setText(IDEWorkbenchMessages
+                .getString("ProjectCapabilityEditingPropertyPage.remove")); //$NON-NLS-1$
+        removeButton.setEnabled(false);
+        removeButton.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent e) {
+                removeCapability(selectedCap);
+            }
+
+            public void widgetDefaultSelected(SelectionEvent e) {
+            }
+        });
+        data = new GridData();
+        data.horizontalAlignment = GridData.FILL;
+        data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+        widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+        data.widthHint = Math.max(widthHint, removeButton.computeSize(
+                SWT.DEFAULT, SWT.DEFAULT, true).x);
+        removeButton.setLayoutData(data);
+        removeButton.setFont(font);
+
+        table.addSelectionChangedListener(new ISelectionChangedListener() {
+            public void selectionChanged(SelectionChangedEvent event) {
+                selectedCap = null;
+                IStructuredSelection sel = (IStructuredSelection) event
+                        .getSelection();
+                if (sel != null)
+                    selectedCap = (Capability) sel.getFirstElement();
+                removeButton.setEnabled(selectedCap != null);
+            }
+        });
+
+        return topComposite;
+    }
+
+    /**
+     * Returns the content provider for the viewers
+     */
+    private IContentProvider getContentProvider() {
+        return new WorkbenchContentProvider() {
+            public Object[] getChildren(Object parentElement) {
+                if (parentElement instanceof IProject)
+                    return reg.getProjectCapabilities((IProject) parentElement);
+                else
+                    return null;
+            }
+        };
+    }
+
+    /**
+     * Returns whether the category is considered disabled
+     */
+    private boolean isDisabledCapability(Capability cap) {
+        return disabledCaps.contains(cap);
+    }
+
+    private void addCapability() {
+        ProjectCapabilitySimpleAddWizard wizard;
+        wizard = new ProjectCapabilitySimpleAddWizard(
+                PlatformUI.getWorkbench(), StructuredSelection.EMPTY,
+                getProject());
+        WizardDialog dialog = new WizardDialog(getShell(), wizard);
+        dialog.create();
+        dialog.getShell().setSize(
+                Math.max(SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x),
+                SIZING_WIZARD_HEIGHT);
+        WorkbenchHelp.setHelp(dialog.getShell(),
+                IHelpContextIds.UPDATE_CAPABILITY_WIZARD);
+        dialog.open();
+
+        table.refresh();
+    }
+
+    private void removeCapability(Capability cap) {
+        ArrayList results = new ArrayList();
+        results.addAll(Arrays.asList(reg.getProjectCapabilities(getProject())));
+        results.remove(cap);
+        Capability[] caps = new Capability[results.size()];
+        results.toArray(caps);
+
+        for (int i = 0; i < caps.length; i++) {
+            List prereqs = Arrays.asList(reg.getPrerequisiteIds(caps[i]));
+            if (prereqs.contains(cap.getId())) {
+                MessageDialog
+                        .openWarning(
+                                getShell(),
+                                IDEWorkbenchMessages
+                                        .getString("ProjectCapabilityPropertyPage.errorTitle"), //$NON-NLS-1$
+                                IDEWorkbenchMessages
+                                        .format(
+                                                "ProjectCapabilityPropertyPage.capabilityRequired", new Object[] { caps[i].getName() })); //$NON-NLS-1$
+                return;
+            }
+        }
+
+        IStatus status = reg.validateCapabilities(caps);
+        if (!status.isOK()) {
+            ErrorDialog
+                    .openError(
+                            getShell(),
+                            IDEWorkbenchMessages
+                                    .getString("ProjectCapabilityPropertyPage.errorTitle"), //$NON-NLS-1$
+                            IDEWorkbenchMessages
+                                    .getString("ProjectCapabilityPropertyPage.invalidSelection"), //$NON-NLS-1$
+                            status);
+            return;
+        }
+
+        String[] natureIds = new String[1];
+        natureIds[0] = cap.getNatureId();
+
+        ICapabilityUninstallWizard wizard = cap.getUninstallWizard();
+        if (wizard == null)
+            wizard = new RemoveCapabilityWizard();
+        if (wizard != null) {
+            wizard.init(PlatformUI.getWorkbench(), StructuredSelection.EMPTY,
+                    getProject(), natureIds);
+            wizard.addPages();
+        }
+
+        if (wizard.getStartingPage() == null) {
+            wizard.setContainer(new StubContainer());
+            wizard.performFinish();
+            wizard.setContainer(null);
+        } else {
+            wizard = cap.getUninstallWizard();
+            if (wizard == null)
+                wizard = new RemoveCapabilityWizard();
+            if (wizard != null)
+                wizard.init(PlatformUI.getWorkbench(),
+                        StructuredSelection.EMPTY, getProject(), natureIds);
+            WizardDialog dialog = new WizardDialog(getShell(), wizard);
+            dialog.create();
+            dialog.getShell().setSize(
+                    Math
+                            .max(SIZING_WIZARD_WIDTH, dialog.getShell()
+                                    .getSize().x), SIZING_WIZARD_HEIGHT);
+            WorkbenchHelp.setHelp(dialog.getShell(),
+                    IHelpContextIds.UPDATE_CAPABILITY_WIZARD);
+            dialog.open();
+        }
+
+        table.refresh();
+    }
+
+    /* (non-Javadoc)
+     * Method declared on PreferencePage
+     */
+    public boolean performOk() {
+        return true;
+    }
+
+    class CapabilityLabelProvider extends LabelProvider {
+        private Map imageTable;
+
+        public void dispose() {
+            if (imageTable != null) {
+                Iterator enum = imageTable.values().iterator();
+                while (enum.hasNext())
+                    ((Image) enum.next()).dispose();
+                imageTable = null;
+            }
+        }
+
+        public Image getImage(Object element) {
+            ImageDescriptor descriptor = ((Capability) element)
+                    .getIconDescriptor();
+            if (descriptor == null)
+                return null;
+
+            //obtain the cached image corresponding to the descriptor
+            if (imageTable == null) {
+                imageTable = new Hashtable(40);
+            }
+            Image image = (Image) imageTable.get(descriptor);
+            if (image == null) {
+                image = descriptor.createImage();
+                imageTable.put(descriptor, image);
+            }
+            return image;
+        }
+
+        public String getText(Object element) {
+            Capability cap = (Capability) element;
+            String text = cap.getName();
+            if (isDisabledCapability(cap))
+                text = IDEWorkbenchMessages
+                        .format(
+                                "ProjectCapabilitySelectionGroup.disabledLabel", new Object[] { text }); //$NON-NLS-1$
+            return text;
+        }
+    }
+
+    class StubContainer implements IWizardContainer {
+        public IWizardPage getCurrentPage() {
+            return null;
+        }
+
+        public Shell getShell() {
+            return ProjectCapabilityEditingPropertyPage.this.getShell();
+        }
+
+        public void showPage(IWizardPage page) {
+        }
+
+        public void updateButtons() {
+        }
+
+        public void updateMessage() {
+        }
+
+        public void updateTitleBar() {
+        }
+
+        public void updateWindowTitle() {
+        }
+
+        public void run(boolean fork, boolean cancelable,
+                IRunnableWithProgress runnable)
+                throws InvocationTargetException, InterruptedException {
+            new ProgressMonitorJobsDialog(getShell()).run(fork, cancelable,
+                    runnable);
+        }
+    }
 }

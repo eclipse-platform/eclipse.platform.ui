@@ -29,12 +29,19 @@ public class OpenWorkspaceAction extends Action implements
         ActionFactory.IWorkbenchAction {
 
     private static final String PROP_VM = "eclipse.vm"; //$NON-NLS-1$
+
     private static final String PROP_VMARGS = "eclipse.vmargs"; //$NON-NLS-1$
+
     private static final String PROP_COMMANDS = "eclipse.commands"; //$NON-NLS-1$
+
     private static final String PROP_EXIT_CODE = "eclipse.exitcode"; //$NON-NLS-1$
+
     private static final String PROP_EXIT_DATA = "eclipse.exitdata"; //$NON-NLS-1$
+
     private static final String CMD_DATA = "-data"; //$NON-NLS-1$
+
     private static final String CMD_VMARGS = "-vmargs"; //$NON-NLS-1$
+
     private static final String NEW_LINE = "\n"; //$NON-NLS-1$
 
     private IWorkbenchWindow window;
@@ -120,7 +127,8 @@ public class OpenWorkspaceAction extends Action implements
                             IDEWorkbenchMessages
                                     .getString("OpenWorkspaceAction.errorTitle"), //$NON-NLS-1$
                             IDEWorkbenchMessages
-                                    .format("OpenWorkspaceAction.errorMessage", new Object[] { PROP_VM })); //$NON-NLS-1$
+                                    .format(
+                                            "OpenWorkspaceAction.errorMessage", new Object[] { PROP_VM })); //$NON-NLS-1$
             return null;
         }
 
@@ -130,7 +138,8 @@ public class OpenWorkspaceAction extends Action implements
 
         // append the vmargs and commands. Assume that these already end in \n
         String vmargs = System.getProperty(PROP_VMARGS);
-        if (vmargs != null) result.append(vmargs);
+        if (vmargs != null)
+            result.append(vmargs);
 
         // append the rest of the args, replacing or adding -data as required
         property = System.getProperty(PROP_COMMANDS);

@@ -24,31 +24,34 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
  */
 class SelectionProviderAdapter implements ISelectionProvider {
 
-	List listeners = new ArrayList();
-	ISelection theSelection = null;
-		
-	public void addSelectionChangedListener(ISelectionChangedListener listener) {
-		listeners.add(listener);
-	}
+    List listeners = new ArrayList();
 
-	public ISelection getSelection() {
-		return theSelection;
-	}
+    ISelection theSelection = null;
 
-	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
-		listeners.remove(listener);
-	}
+    public void addSelectionChangedListener(ISelectionChangedListener listener) {
+        listeners.add(listener);
+    }
 
-	public void setSelection(ISelection selection) {
-		theSelection = selection;
-		SelectionChangedEvent e = new SelectionChangedEvent(this, selection);
-		Iterator iter = listeners.iterator();
-		
-		while (iter.hasNext()) {
-			ISelectionChangedListener next = (ISelectionChangedListener)iter.next();
-			
-			next.selectionChanged(e);
-		}
-	}
+    public ISelection getSelection() {
+        return theSelection;
+    }
+
+    public void removeSelectionChangedListener(
+            ISelectionChangedListener listener) {
+        listeners.remove(listener);
+    }
+
+    public void setSelection(ISelection selection) {
+        theSelection = selection;
+        SelectionChangedEvent e = new SelectionChangedEvent(this, selection);
+        Iterator iter = listeners.iterator();
+
+        while (iter.hasNext()) {
+            ISelectionChangedListener next = (ISelectionChangedListener) iter
+                    .next();
+
+            next.selectionChanged(e);
+        }
+    }
 
 }

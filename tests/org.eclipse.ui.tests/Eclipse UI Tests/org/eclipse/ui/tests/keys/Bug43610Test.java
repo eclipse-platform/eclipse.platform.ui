@@ -28,43 +28,45 @@ import org.eclipse.ui.tests.util.UITestCase;
  */
 public class Bug43610Test extends UITestCase {
 
-	/**
-	 * Constructs a new instance of this test case.
-	 * 
-	 * @param testName
-	 *            The name of the test
-	 */
-	public Bug43610Test(String testName) {
-		super(testName);
-	}
+    /**
+     * Constructs a new instance of this test case.
+     * 
+     * @param testName
+     *            The name of the test
+     */
+    public Bug43610Test(String testName) {
+        super(testName);
+    }
 
-	/**
-	 * Tests that if "Shift+Alt+" is pressed, then the key code should
-	 * represent the "Alt+" key press.
-	 */
-	public void testShiftAlt() throws AWTException {
-		// Set up a working environment.
-		Display display = Display.getCurrent();
-		Listener listener = new Listener() {
-			public void handleEvent(Event event) {
-				if (event.stateMask == SWT.SHIFT) {
-					assertEquals("Incorrect key code for 'Shift+Alt+'", SWT.ALT, event.keyCode); //$NON-NLS-1$
-				}
-			}
-		};
-		display.addFilter(SWT.KeyDown, listener);
+    /**
+     * Tests that if "Shift+Alt+" is pressed, then the key code should
+     * represent the "Alt+" key press.
+     */
+    public void testShiftAlt() throws AWTException {
+        // Set up a working environment.
+        Display display = Display.getCurrent();
+        Listener listener = new Listener() {
+            public void handleEvent(Event event) {
+                if (event.stateMask == SWT.SHIFT) {
+                    assertEquals(
+                            "Incorrect key code for 'Shift+Alt+'", SWT.ALT, event.keyCode); //$NON-NLS-1$
+                }
+            }
+        };
+        display.addFilter(SWT.KeyDown, listener);
 
-		// Test.
-		Robot robot = new Robot();
-		robot.keyPress(KeyEvent.VK_SHIFT);
-		robot.keyPress(KeyEvent.VK_ALT);
-		robot.keyRelease(KeyEvent.VK_ALT);
-		robot.keyRelease(KeyEvent.VK_SHIFT);
-		robot.keyPress(KeyEvent.VK_ESCAPE);
-		robot.keyRelease(KeyEvent.VK_ESCAPE);
-		while (display.readAndDispatch());
+        // Test.
+        Robot robot = new Robot();
+        robot.keyPress(KeyEvent.VK_SHIFT);
+        robot.keyPress(KeyEvent.VK_ALT);
+        robot.keyRelease(KeyEvent.VK_ALT);
+        robot.keyRelease(KeyEvent.VK_SHIFT);
+        robot.keyPress(KeyEvent.VK_ESCAPE);
+        robot.keyRelease(KeyEvent.VK_ESCAPE);
+        while (display.readAndDispatch())
+            ;
 
-		// Clean up the working environment.
-		display.removeFilter(SWT.KeyDown, listener);
-	}
+        // Clean up the working environment.
+        display.removeFilter(SWT.KeyDown, listener);
+    }
 }

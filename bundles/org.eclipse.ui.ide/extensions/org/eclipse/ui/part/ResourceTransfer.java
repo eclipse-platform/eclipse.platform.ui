@@ -10,9 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ui.part;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.swt.dnd.ByteArrayTransfer;
 import org.eclipse.swt.dnd.TransferData;
@@ -47,141 +53,152 @@ import org.eclipse.swt.dnd.TransferData;
  */
 public class ResourceTransfer extends ByteArrayTransfer {
 
-	/**
-	 * Singleton instance.
-	 */
-	private static final ResourceTransfer instance = new ResourceTransfer();
-	
-	// Create a unique ID to make sure that different Eclipse
-	// applications use different "types" of <code>ResourceTransfer</code>
-	private static final String TYPE_NAME = "resource-transfer-format:" + System.currentTimeMillis() + ":" + instance.hashCode();//$NON-NLS-2$//$NON-NLS-1$
-	
-	private static final int TYPEID = registerType(TYPE_NAME);
-		
-	private IWorkspace workspace = ResourcesPlugin.getWorkspace();
-/**
- * Creates a new transfer object.
- */
-private ResourceTransfer() {
-}
-/**
- * Returns the singleton instance.
- *
- * @return the singleton instance
- */
-public static ResourceTransfer getInstance() {
-	return instance;
-}
-/* (non-Javadoc)
- * Method declared on Transfer.
- */
-protected int[] getTypeIds() {
-	return new int[] {TYPEID};
-}
-/* (non-Javadoc)
- * Returns the type names.
- *
- * @return the list of type names
- */
-protected String[] getTypeNames() {
-	return new String[] {TYPE_NAME};
-}
-/* (non-Javadoc)
- * Method declared on Transfer.
- */
-protected void javaToNative(Object data, TransferData transferData) {
-	if (!(data instanceof IResource[])) {
-		return;
-	}
+    /**
+     * Singleton instance.
+     */
+    private static final ResourceTransfer instance = new ResourceTransfer();
 
-	IResource[] resources = (IResource[]) data;
-	/**
-	 * The resource serialization format is:
-	 *  (int) number of resources
-	 * Then, the following for each resource:
-	 *  (int) resource type
-	 *  (String) path of resource
-	 */
+    // Create a unique ID to make sure that different Eclipse
+    // applications use different "types" of <code>ResourceTransfer</code>
+    private static final String TYPE_NAME = "resource-transfer-format:" + System.currentTimeMillis() + ":" + instance.hashCode();//$NON-NLS-2$//$NON-NLS-1$
 
-	int resourceCount = resources.length;
+    private static final int TYPEID = registerType(TYPE_NAME);
 
-	try {
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		DataOutputStream dataOut = new DataOutputStream(out);
+    private IWorkspace workspace = ResourcesPlugin.getWorkspace();
 
-		//write the number of resources
-		dataOut.writeInt(resourceCount);
+    /**
+     * Creates a new transfer object.
+     */
+    private ResourceTransfer() {
+    }
 
-		//write each resource
-		for (int i = 0; i < resources.length; i++) {
-			writeResource(dataOut, resources[i]);
-		}
+    /**
+     * Returns the singleton instance.
+     *
+     * @return the singleton instance
+     */
+    public static ResourceTransfer getInstance() {
+        return instance;
+    }
 
-		//cleanup
-		dataOut.close();
-		out.close();
-		byte[] bytes = out.toByteArray();
-		super.javaToNative(bytes, transferData);
-	} catch (IOException e) {
-		//it's best to send nothing if there were problems
-	}
-}
-/* (non-Javadoc)
- * Method declared on Transfer.
- */
-protected Object nativeToJava(TransferData transferData) {
-	/**
-	 * The resource serialization format is:
-	 *  (int) number of resources
-	 * Then, the following for each resource:
-	 *  (int) resource type
-	 *  (String) path of resource
-	 */
+    /* (non-Javadoc)
+     * Method declared on Transfer.
+     */
+    protected int[] getTypeIds() {
+        return new int[] { TYPEID };
+    }
 
-	byte[] bytes = (byte[]) super.nativeToJava(transferData);
-	if (bytes == null)
-		return null;
-	DataInputStream in = new DataInputStream(new ByteArrayInputStream(bytes));
-	try {
-		int count = in.readInt();
-		IResource[] results = new IResource[count];
-		for (int i = 0; i < count; i++) {
-			results[i] = readResource(in);
-		}
-		return results;
-	} catch (IOException e) {
-		return null;
-	}
-}
-/**
- * Reads a resource from the given stream.
- *
- * @param dataIn the input stream
- * @return the resource
- * @exception IOException if there is a problem reading from the stream
- */
-private IResource readResource(DataInputStream dataIn) throws IOException {
-	int type = dataIn.readInt();
-	String path = dataIn.readUTF();
-	switch (type) {
-		case IResource.FOLDER :
-			return workspace.getRoot().getFolder(new Path(path));
-		case IResource.FILE :
-			return workspace.getRoot().getFile(new Path(path));
-		case IResource.PROJECT :
-			return workspace.getRoot().getProject(path);
-	}
-	throw new IllegalArgumentException("Unknown resource type in ResourceTransfer.readResource"); //$NON-NLS-1$
-}
-/**
- * Writes the given resource to the given stream.
- *
- * @param dataOut the output stream
- * @param resource the resource
- * @exception IOException if there is a problem writing to the stream
- */
-private void writeResource(DataOutputStream dataOut, IResource resource) throws IOException {
-	dataOut.writeInt(resource.getType());
-	dataOut.writeUTF(resource.getFullPath().toString());
-}
+    /* (non-Javadoc)
+     * Returns the type names.
+     *
+     * @return the list of type names
+     */
+    protected String[] getTypeNames() {
+        return new String[] { TYPE_NAME };
+    }
+
+    /* (non-Javadoc)
+     * Method declared on Transfer.
+     */
+    protected void javaToNative(Object data, TransferData transferData) {
+        if (!(data instanceof IResource[])) {
+            return;
+        }
+
+        IResource[] resources = (IResource[]) data;
+        /**
+         * The resource serialization format is:
+         *  (int) number of resources
+         * Then, the following for each resource:
+         *  (int) resource type
+         *  (String) path of resource
+         */
+
+        int resourceCount = resources.length;
+
+        try {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            DataOutputStream dataOut = new DataOutputStream(out);
+
+            //write the number of resources
+            dataOut.writeInt(resourceCount);
+
+            //write each resource
+            for (int i = 0; i < resources.length; i++) {
+                writeResource(dataOut, resources[i]);
+            }
+
+            //cleanup
+            dataOut.close();
+            out.close();
+            byte[] bytes = out.toByteArray();
+            super.javaToNative(bytes, transferData);
+        } catch (IOException e) {
+            //it's best to send nothing if there were problems
+        }
+    }
+
+    /* (non-Javadoc)
+     * Method declared on Transfer.
+     */
+    protected Object nativeToJava(TransferData transferData) {
+        /**
+         * The resource serialization format is:
+         *  (int) number of resources
+         * Then, the following for each resource:
+         *  (int) resource type
+         *  (String) path of resource
+         */
+
+        byte[] bytes = (byte[]) super.nativeToJava(transferData);
+        if (bytes == null)
+            return null;
+        DataInputStream in = new DataInputStream(
+                new ByteArrayInputStream(bytes));
+        try {
+            int count = in.readInt();
+            IResource[] results = new IResource[count];
+            for (int i = 0; i < count; i++) {
+                results[i] = readResource(in);
+            }
+            return results;
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Reads a resource from the given stream.
+     *
+     * @param dataIn the input stream
+     * @return the resource
+     * @exception IOException if there is a problem reading from the stream
+     */
+    private IResource readResource(DataInputStream dataIn) throws IOException {
+        int type = dataIn.readInt();
+        String path = dataIn.readUTF();
+        switch (type) {
+        case IResource.FOLDER:
+            return workspace.getRoot().getFolder(new Path(path));
+        case IResource.FILE:
+            return workspace.getRoot().getFile(new Path(path));
+        case IResource.PROJECT:
+            return workspace.getRoot().getProject(path);
+        }
+        throw new IllegalArgumentException(
+                "Unknown resource type in ResourceTransfer.readResource"); //$NON-NLS-1$
+    }
+
+    /**
+     * Writes the given resource to the given stream.
+     *
+     * @param dataOut the output stream
+     * @param resource the resource
+     * @exception IOException if there is a problem writing to the stream
+     */
+    private void writeResource(DataOutputStream dataOut, IResource resource)
+            throws IOException {
+        dataOut.writeInt(resource.getType());
+        dataOut.writeUTF(resource.getFullPath().toString());
+    }
 }

@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-
 import java.util.ArrayList;
 
 import org.eclipse.jface.util.Geometry;
@@ -39,959 +38,1022 @@ import org.eclipse.ui.internal.dnd.IDropTarget;
  * layout part based on the location of sashes within
  * the container.
  */
-public abstract class PartSashContainer extends LayoutPart implements ILayoutContainer, IDragOverListener {
- 
-	protected Composite parent;
-	protected ControlListener resizeListener;
-	protected LayoutTree root;
-	protected LayoutTree unzoomRoot;
-	protected WorkbenchPage page;
-	boolean active = false;
-	
-	/* Array of LayoutPart */
-	protected ArrayList children = new ArrayList(); 
-	
-	protected static class RelationshipInfo {
-		protected LayoutPart part;
-		protected LayoutPart relative;
-		protected int relationship;
+public abstract class PartSashContainer extends LayoutPart implements
+        ILayoutContainer, IDragOverListener {
 
-		/**
-		 * Preferred size for the left child (this would be the size, in pixels of the child
-		 * at the time the sash was last moved)
-		 */
-		protected int left;
-	
-		/**
-		 * Preferred size for the right child (this would be the size, in pixels of the child
-		 * at the time the sash was last moved)
-		 */
-		protected int right;
-		
-		/**
-		 * Computes the "ratio" for this container. That is, the ratio of the left side over
-		 * the sum of left + right. This is only used for serializing PartSashContainers in 
-		 * a form that can be read by old versions of Eclipse. This can be removed if this
-		 * is no longer required. 
-		 * 
-		 * @return the pre-Eclipse 3.0 sash ratio
-		 */
-		public float getRatio() {
-			int total = left + right;
-			if (total > 0) {
-				return (float)left / (float)total;
-			} else {
-				return 0.5f;
-			}
-		}
-	}
+    protected Composite parent;
 
-	private class SashContainerDropTarget extends AbstractDropTarget {
-		private int side;
-		private int cursor;
-		private LayoutPart targetPart;
-		private LayoutPart sourcePart;
-		
-		public SashContainerDropTarget(LayoutPart sourcePart, int side, int cursor, LayoutPart targetPart) {
-			this.side = side;
-			this.targetPart = targetPart;
-			this.sourcePart = sourcePart;
-			this.cursor = cursor;
-		}
+    protected ControlListener resizeListener;
 
-		public void drop() {
-			if (side != SWT.NONE) {
-				LayoutPart visiblePart = sourcePart;
-				
-				if (sourcePart instanceof PartStack) {
-					visiblePart = getVisiblePart((PartStack)sourcePart);
-				}
-				
-				dropObject(getVisibleParts(sourcePart), visiblePart, targetPart, side);
-			}
-		}
+    protected LayoutTree root;
 
-		public Cursor getCursor() {			
-			return DragCursors.getCursor(DragCursors.positionToDragCursor(cursor));
-		}
+    protected LayoutTree unzoomRoot;
 
-		public Rectangle getSnapRectangle() {
-			Rectangle targetBounds;
-			
-			if (targetPart != null) {
-				targetBounds = DragUtil.getDisplayBounds(targetPart.getControl());
-			} else {
-				targetBounds = DragUtil.getDisplayBounds(getParent());
-			}
-			
-			if (side == SWT.CENTER || side == SWT.NONE) {
-				return targetBounds;
-			}
-			
-			int distance = Geometry.getDimension(targetBounds, !Geometry.isHorizontal(side));
-			
-			return Geometry.getExtrudedEdge(targetBounds, (int) (distance
-					* getDockingRatio(sourcePart, targetPart)), side);
-		}
-	}
-	
-public PartSashContainer(String id,final WorkbenchPage page) {
-	super(id);
-	this.page = page;
-	resizeListener = new ControlAdapter() {
-		public void controlResized(ControlEvent e) {
-			resizeSashes(parent.getClientArea());
-		}
-	};
-}
+    protected WorkbenchPage page;
 
-/**
- * Given an object associated with a drag (a PartPane or PartStack), this returns
- * the actual PartPanes being dragged.
- * 
- * @param pane
- * @return
- */
-private PartPane[] getVisibleParts(LayoutPart pane) {
-	if (pane instanceof PartPane) {
-		return new PartPane[] {(PartPane)pane};
-	} else if (pane instanceof PartStack) {
-		PartStack stack = (PartStack)pane;
-		
-		LayoutPart[] children = stack.getChildren();
-		ArrayList result = new ArrayList(children.length);
-		for (int idx = 0; idx < children.length; idx++) {
-			LayoutPart next = children[idx];
-			if (next instanceof PartPane) {
-				result.add(next);
-			}
-		}
-		
-		return (PartPane[]) result.toArray(new PartPane[result.size()]);
-	}
-	
-	return new PartPane[0];
-}
+    boolean active = false;
 
-/**
- * Find the sashs around the specified part.
- */
-public void findSashes(LayoutPart pane,PartPane.Sashes sashes) {
-	if(root == null) {
-		return;
-	}
-	LayoutTree part = root.find(pane);
-	if(part == null)
-		return;
-	part.findSashes(sashes);
-}
-/**
- * Add a part.
- */
-public void add(LayoutPart child) {		
-	if (child == null)
-		return;
-	
-	addEnhanced(child, SWT.RIGHT, 0.5f, findBottomRight());	
-}
+    /* Array of LayoutPart */
+    protected ArrayList children = new ArrayList();
 
-/**
- * Add a new part relative to another. This should be used in place of <code>add</code>. 
- * It differs as follows:
- * <ul>
- * <li>relationships are specified using SWT direction constants</li>
- * <li>the ratio applies to the newly added child -- not the upper-left child</li>
- * </ul>
- * 
- * @param child new part to add to the layout
- * @param swtDirectionConstant one of SWT.TOP, SWT.BOTTOM, SWT.LEFT, or SWT.RIGHT
- * @param ratioForNewPart a value between 0.0 and 1.0 specifying how much space will be allocated for the newly added part
- * @param relative existing part indicating where the new child should be attached
- * @since 3.0
- */
-void addEnhanced(LayoutPart child, int swtDirectionConstant, float ratioForNewPart, LayoutPart relative) {
-	int relativePosition = PageLayout.swtConstantToLayoutPosition(swtDirectionConstant);
-	
-	float ratioForUpperLeftPart;
-	
-	if (relativePosition == PageLayout.RIGHT || relativePosition == PageLayout.BOTTOM) {
-		ratioForUpperLeftPart = 1.0f - ratioForNewPart;
-	} else {
-		ratioForUpperLeftPart = ratioForNewPart;
-	}
-	
-	add(child, relativePosition, ratioForUpperLeftPart, relative);
-}
+    protected static class RelationshipInfo {
+        protected LayoutPart part;
 
-/**
- * Add a part relative to another. For compatibility only. New code should use
- * addEnhanced, above.
- * 
- * @param child the new part to add
- * @param relationship one of PageLayout.TOP, PageLayout.BOTTOM, PageLayout.LEFT, or PageLayout.RIGHT
- * @param ratio a value between 0.0 and 1.0, indicating how much space will be allocated to the UPPER-LEFT pane
- * @param relative part where the new part will be attached
- */
-public void add(LayoutPart child, int relationship, float ratio, LayoutPart relative) {
-	boolean isHorizontal = (relationship == IPageLayout.LEFT || relationship == IPageLayout.RIGHT); 
+        protected LayoutPart relative;
 
-	LayoutTree node = null;
-	if (root != null && relative != null) {
-		node = root.find(relative);
-	}
-	
-	Rectangle bounds;
-	if (getParent() == null) {
-		Control control = getPage().getClientComposite();
-		if (control != null && !control.isDisposed()) {
-			bounds = control.getBounds();
-		} else {
-			bounds = new Rectangle(0,0,800,600);
-		}
-		bounds.x = 0;
-		bounds.y = 0;
-	} else {
-		bounds = getBounds();
-	}
-	
-	int totalSize = measureTree(bounds, node, isHorizontal);
-		
-	int left = (int) (totalSize * ratio);
-	int right = totalSize - left;
+        protected int relationship;
 
-	add(child, relationship, left, right, relative);
-}
+        /**
+         * Preferred size for the left child (this would be the size, in pixels of the child
+         * at the time the sash was last moved)
+         */
+        protected int left;
 
-static int measureTree(Rectangle outerBounds, LayoutTree toMeasure, boolean horizontal) {
-	if (toMeasure == null) {
-		return Geometry.getDimension(outerBounds, horizontal);
-	}
-	
-	LayoutTreeNode parent = toMeasure.getParent();
-	if (parent == null) {
-		return Geometry.getDimension(outerBounds, horizontal);
-	}
+        /**
+         * Preferred size for the right child (this would be the size, in pixels of the child
+         * at the time the sash was last moved)
+         */
+        protected int right;
 
-	if (parent.getSash().isHorizontal() == horizontal) {
-		return measureTree(outerBounds, parent, horizontal);
-	}
+        /**
+         * Computes the "ratio" for this container. That is, the ratio of the left side over
+         * the sum of left + right. This is only used for serializing PartSashContainers in 
+         * a form that can be read by old versions of Eclipse. This can be removed if this
+         * is no longer required. 
+         * 
+         * @return the pre-Eclipse 3.0 sash ratio
+         */
+        public float getRatio() {
+            int total = left + right;
+            if (total > 0) {
+                return (float) left / (float) total;
+            } else {
+                return 0.5f;
+            }
+        }
+    }
 
-	boolean isLeft = parent.isLeftChild(toMeasure);
+    private class SashContainerDropTarget extends AbstractDropTarget {
+        private int side;
 
-	LayoutTree otherChild = parent.getChild(!isLeft);
-	if (otherChild.isVisible()) {
-		int left = parent.getSash().getLeft();
-		int right = parent.getSash().getRight();
-		int childSize = isLeft ? left : right;
-		
-		int bias = parent.getCompressionBias();
-		
-		// Normalize bias: 1 = we're fixed, -1 = other child is fixed
-		if (isLeft) {
-			bias = -bias;
-		}
-		
-		if (bias == 1) {
-			// If we're fixed, return the fixed size
-			return childSize;
-		} else if (bias == -1) {
-			
-			// If the other child is fixed, return the size of the parent minus the fixed size of the
-			// other child
-			return measureTree(outerBounds, parent, horizontal) - (left + right - childSize);
-		}
-		
-		// Else return the size of the parent, scaled appropriately
-		return measureTree(outerBounds, parent, horizontal) * childSize / (left + right);
-	}
+        private int cursor;
 
-	return measureTree(outerBounds, parent, horizontal);
-}
+        private LayoutPart targetPart;
 
-protected void addChild(RelationshipInfo info) {
-	LayoutPart child = info.part;
-	
-	children.add(child);
-	
-	if(root == null) {
-		root = new LayoutTree(child);
-	} else {
-		//Add the part to the tree.
-		int vertical = (info.relationship == IPageLayout.LEFT || info.relationship == IPageLayout.RIGHT)?SWT.VERTICAL:SWT.HORIZONTAL;
-		boolean left = info.relationship == IPageLayout.LEFT || info.relationship == IPageLayout.TOP; 
-		LayoutPartSash sash = new LayoutPartSash(this,vertical);
-		sash.setSizes(info.left, info.right);
-		if((parent != null) && !(child instanceof PartPlaceholder))
-			sash.createControl(parent);
-		root = root.insert(child,left,sash,info.relative);
-	}
-	
-	childAdded(child);
-	
-	if (active) {
-		child.createControl(parent);
-		child.setVisible(true);
-		child.setContainer(this);
-		resizeSashes(parent.getClientArea());
-	}
+        private LayoutPart sourcePart;
 
-}
+        public SashContainerDropTarget(LayoutPart sourcePart, int side,
+                int cursor, LayoutPart targetPart) {
+            this.side = side;
+            this.targetPart = targetPart;
+            this.sourcePart = sourcePart;
+            this.cursor = cursor;
+        }
 
-/**
- * Adds the child using ratio and position attributes
- * from the specified placeholder without replacing
- * the placeholder
- * 
- * FIXME: I believe there is a bug in computeRelation()
- * when a part is positioned relative to the editorarea.
- * We end up with a null relative and 0.0 for a ratio.
- */
-void addChildForPlaceholder(LayoutPart child, LayoutPart placeholder) {
-	RelationshipInfo newRelationshipInfo = new RelationshipInfo();
-	newRelationshipInfo.part = child;
-	if(root != null) {
-		newRelationshipInfo.relationship = IPageLayout.RIGHT;
-		newRelationshipInfo.relative = root.findBottomRight();
-		newRelationshipInfo.left = 200;
-		newRelationshipInfo.right = 200;
-	}
-	
-	// find the relationship info for the placeholder
-	RelationshipInfo[] relationships = computeRelation();
-	for (int i = 0; i < relationships.length; i ++) {
-		RelationshipInfo info = relationships[i];
-		if (info.part == placeholder) {
-			newRelationshipInfo.left = info.left;
-			newRelationshipInfo.right = info.right;
-			newRelationshipInfo.relationship = info.relationship;
-			newRelationshipInfo.relative = info.relative;
-		}
-	}
-	
-	addChild(newRelationshipInfo);
-	if(root != null) {
-		root.updateSashes(parent);
-	}
-	resizeSashes(parent.getClientArea());
-}
-/**
- * See ILayoutContainer#allowBorder
- */
-public boolean allowsBorder() {
-	return true;
-}
-/**
- * Notification that a child layout part has been
- * added to the container. Subclasses may override
- * this method to perform any container specific
- * work.
- */
-protected abstract void childAdded(LayoutPart child);
-/**
- * Notification that a child layout part has been
- * removed from the container. Subclasses may override
- * this method to perform any container specific
- * work.
- */
-protected abstract void childRemoved(LayoutPart child);
-/**
- * Returns an array with all the relation ship between the
- * parts.
- */
-public RelationshipInfo[] computeRelation() {
-	LayoutTree treeRoot = root;
-	if(isZoomed())
-		treeRoot = unzoomRoot;
-	ArrayList list = new ArrayList();
-	if(treeRoot == null)
-		return new RelationshipInfo[0];
-	RelationshipInfo r = new RelationshipInfo();
-	r.part = treeRoot.computeRelation(list);
-	list.add(0,r);
-	RelationshipInfo[] result = new RelationshipInfo[list.size()];
-	list.toArray(result);
-	return result;
-}
-/**
- * @see LayoutPart#getControl
- */
-public void createControl(Composite parentWidget) {
-	if (active)
-		return;
+        public void drop() {
+            if (side != SWT.NONE) {
+                LayoutPart visiblePart = sourcePart;
 
-	parent = createParent(parentWidget);
-	parent.addControlListener(resizeListener);
-	
-	DragUtil.addDragTarget(parent, this);
-	DragUtil.addDragTarget(parent.getShell(), this);
-	
-	ArrayList children = (ArrayList)this.children.clone();
-	for (int i = 0, length = children.size(); i < length; i++) {
-		LayoutPart child = (LayoutPart)children.get(i);
-		child.setContainer(this);
-		child.createControl(parent);
-	}
+                if (sourcePart instanceof PartStack) {
+                    visiblePart = getVisiblePart((PartStack) sourcePart);
+                }
 
-	if(root != null) {
-		root.updateSashes(parent);
-	}
-	active = true;
-	resizeSashes(parent.getClientArea());
-}
-/**
- * Subclasses override this method to specify
- * the composite to use to parent all children
- * layout parts it contains.
- */
-protected abstract Composite createParent(Composite parentWidget);
-/**
- * @see LayoutPart#dispose
- */
-public void dispose() {
-	if (!active)
-		return;
+                dropObject(getVisibleParts(sourcePart), visiblePart,
+                        targetPart, side);
+            }
+        }
 
-	DragUtil.removeDragTarget(parent, this);
-	DragUtil.removeDragTarget(parent.getShell(), this);
-	
-	// remove all Listeners
-	if (resizeListener != null && parent != null){
-		parent.removeControlListener(resizeListener);
-	}
-	
-	resizeSashes(new Rectangle(-200, -200, 0, 0));
+        public Cursor getCursor() {
+            return DragCursors.getCursor(DragCursors
+                    .positionToDragCursor(cursor));
+        }
 
-	if (children != null) {
-		for (int i = 0, length = children.size(); i < length; i++){
-			LayoutPart child = (LayoutPart)children.get(i);
-			child.setContainer(null);
-			// In PartSashContainer dispose really means deactivate, so we
-			// only dispose PartTabFolders.
-			if (child instanceof ViewStack)
-				child.dispose();
-		}
-	}
-	
-	disposeParent();
-	this.parent = null;
-	
-	active = false;
-}
-/**
- * Subclasses override this method to dispose
- * of any swt resources created during createParent.
- */
-protected abstract void disposeParent();
-/**
- * Dispose all sashs used in this perspective.
- */
-public void disposeSashes() {
-	if(root != null) {
-		root.disposeSashes();
-	}
-}
-/**
- * Return the most bottom right part or null if none.
- */
-public LayoutPart findBottomRight() {
-	if(root == null)
-		return null;
-	return root.findBottomRight();
-}
+        public Rectangle getSnapRectangle() {
+            Rectangle targetBounds;
 
-/**
- * @see LayoutPart#getBounds
- */
-public Rectangle getBounds() {
-	return this.parent.getBounds();
-}
+            if (targetPart != null) {
+                targetBounds = DragUtil.getDisplayBounds(targetPart
+                        .getControl());
+            } else {
+                targetBounds = DragUtil.getDisplayBounds(getParent());
+            }
 
+            if (side == SWT.CENTER || side == SWT.NONE) {
+                return targetBounds;
+            }
 
-// getMinimumHeight() added by cagatayk@acm.org 
-/**
- * @see LayoutPart#getMinimumHeight()
- */
-public int getMinimumHeight() {
-	return getLayoutTree().getMinimumHeight();
-}
+            int distance = Geometry.getDimension(targetBounds, !Geometry
+                    .isHorizontal(side));
 
-// getMinimumHeight() added by cagatayk@acm.org 
-/**
- * @see LayoutPart#getMinimumWidth()
- */
-public int getMinimumWidth() {
-	return getLayoutTree().getMinimumWidth();
-}
+            return Geometry.getExtrudedEdge(targetBounds,
+                    (int) (distance * getDockingRatio(sourcePart, targetPart)),
+                    side);
+        }
+    }
 
+    public PartSashContainer(String id, final WorkbenchPage page) {
+        super(id);
+        this.page = page;
+        resizeListener = new ControlAdapter() {
+            public void controlResized(ControlEvent e) {
+                resizeSashes(parent.getClientArea());
+            }
+        };
+    }
 
-/**
- * @see ILayoutContainer#getChildren
- */
-public LayoutPart[] getChildren() {
-	LayoutPart[] result = new LayoutPart[children.size()];
-	children.toArray(result);
-	return result;
-}
+    /**
+     * Given an object associated with a drag (a PartPane or PartStack), this returns
+     * the actual PartPanes being dragged.
+     * 
+     * @param pane
+     * @return
+     */
+    private PartPane[] getVisibleParts(LayoutPart pane) {
+        if (pane instanceof PartPane) {
+            return new PartPane[] { (PartPane) pane };
+        } else if (pane instanceof PartStack) {
+            PartStack stack = (PartStack) pane;
 
-/**
- * @see LayoutPart#getControl
- */
-public Control getControl() {
-	return this.parent;
-}
+            LayoutPart[] children = stack.getChildren();
+            ArrayList result = new ArrayList(children.length);
+            for (int idx = 0; idx < children.length; idx++) {
+                LayoutPart next = children[idx];
+                if (next instanceof PartPane) {
+                    result.add(next);
+                }
+            }
 
-public LayoutTree getLayoutTree() {
-	return root;
-}
+            return (PartPane[]) result.toArray(new PartPane[result.size()]);
+        }
 
-/**
- * For themes.
- * 
- * @return the current WorkbenchPage.
- */
-public WorkbenchPage getPage() {
-    return page;
-}
-/**
- * Returns the composite used to parent all the
- * layout parts contained within.
- */
-public Composite getParent() {
-	return parent;
-}
-protected boolean isChild(LayoutPart part) {
-	return children.indexOf(part) >= 0;
-}
-private boolean isRelationshipCompatible(int relationship,boolean isVertical) {
-	if(isVertical)
-		return (relationship == IPageLayout.RIGHT || relationship == IPageLayout.LEFT);
-	else 
-		return (relationship == IPageLayout.TOP || relationship == IPageLayout.BOTTOM);
-}
-/**
- * Returns whether this container is zoomed.
- */
-public boolean isZoomed() {
-	return (unzoomRoot != null);
-}
+        return new PartPane[0];
+    }
 
-/* (non-Javadoc)
- * @see org.eclipse.ui.internal.LayoutPart#forceLayout(org.eclipse.ui.internal.LayoutPart)
- */
-public void resizeChild(LayoutPart childThatChanged) {
-	forceLayout();
-	
-	if (root != null) {
-		root.setBounds(getParent().getClientArea());
-	}
-}
-/**
- * Remove a part.
- */ 
-public void remove(LayoutPart child) {
-	if (isZoomed())
-		zoomOut();
-		
-	if (!isChild(child))
-		return;
+    /**
+     * Find the sashs around the specified part.
+     */
+    public void findSashes(LayoutPart pane, PartPane.Sashes sashes) {
+        if (root == null) {
+            return;
+        }
+        LayoutTree part = root.find(pane);
+        if (part == null)
+            return;
+        part.findSashes(sashes);
+    }
 
-	children.remove(child); 
-	if(root != null) {
-		root = root.remove(child);
-		if(root != null) {
-			root.updateSashes(parent);
-		}
-	}
-	childRemoved(child);
-	
-	if (active){
-		child.setVisible(false);
-		child.setContainer(null);
-		resizeSashes(parent.getClientArea());
-	}
-}
-/**
- * Replace one part with another.
- */ 
-public void replace(LayoutPart oldChild, LayoutPart newChild) {
-	if (isZoomed())
-		zoomOut();
+    /**
+     * Add a part.
+     */
+    public void add(LayoutPart child) {
+        if (child == null)
+            return;
 
-	if (!isChild(oldChild)) {
-		return;
-	}
+        addEnhanced(child, SWT.RIGHT, 0.5f, findBottomRight());
+    }
 
-	LayoutTree leaf = null;
-	if (root != null) {
-		leaf = root.find(oldChild);
-	}
-	
-	if (leaf == null) {
-		return;
-	}
-	
-	children.remove(oldChild);
-	children.add(newChild);
-	
-	childAdded(newChild);
+    /**
+     * Add a new part relative to another. This should be used in place of <code>add</code>. 
+     * It differs as follows:
+     * <ul>
+     * <li>relationships are specified using SWT direction constants</li>
+     * <li>the ratio applies to the newly added child -- not the upper-left child</li>
+     * </ul>
+     * 
+     * @param child new part to add to the layout
+     * @param swtDirectionConstant one of SWT.TOP, SWT.BOTTOM, SWT.LEFT, or SWT.RIGHT
+     * @param ratioForNewPart a value between 0.0 and 1.0 specifying how much space will be allocated for the newly added part
+     * @param relative existing part indicating where the new child should be attached
+     * @since 3.0
+     */
+    void addEnhanced(LayoutPart child, int swtDirectionConstant,
+            float ratioForNewPart, LayoutPart relative) {
+        int relativePosition = PageLayout
+                .swtConstantToLayoutPosition(swtDirectionConstant);
 
-	leaf.setPart(newChild);
-	if (root != null) {
-		root.updateSashes(parent);
-	}
+        float ratioForUpperLeftPart;
 
-	childRemoved(oldChild);
-	if (active){
-		oldChild.setVisible(false);
-		oldChild.setContainer(null);
-		newChild.createControl(parent);
-		newChild.setContainer(this);
-		newChild.setVisible(true);		
-		resizeSashes(parent.getClientArea());
-	}
-}
-private void resizeSashes(Rectangle parentSize) {
-	if (!active) return;
-	if (root != null) {
-		root.setBounds(parentSize);
-	}
-}
-/**
- * @see LayoutPart#setBounds
- */
-public void setBounds(Rectangle r) {
-	this.parent.setBounds(r);
-}
-/**
- * Zoom in on a particular layout part.
- *
- * The implementation of zoom is quite simple.  When zoom occurs we create
- * a zoom root which only contains the zoom part.  We store the old
- * root in unzoomRoot and then active the zoom root.  When unzoom occurs
- * we restore the unzoomRoot and dispose the zoom root.
- *
- * Note: Method assumes we are active.
- */
-public void zoomIn(LayoutPart part) {
-	// Sanity check.
-	if (unzoomRoot != null)
-		return;
+        if (relativePosition == PageLayout.RIGHT
+                || relativePosition == PageLayout.BOTTOM) {
+            ratioForUpperLeftPart = 1.0f - ratioForNewPart;
+        } else {
+            ratioForUpperLeftPart = ratioForNewPart;
+        }
 
-	// Hide main root.
-	Rectangle oldBounds = root.getBounds();
-	root.setBounds(new Rectangle(0,0,0,0));
-	unzoomRoot = root;
+        add(child, relativePosition, ratioForUpperLeftPart, relative);
+    }
 
-	// Show zoom root.
-	root = new LayoutTree(part);
-	root.setBounds(oldBounds);
-}
-/**
- * Zoom out.
- *
- * See zoomIn for implementation details.
- * 
- * Note: Method assumes we are active.
- */
-public void zoomOut() {
-	// Sanity check.
-	if (unzoomRoot == null)
-		return;
+    /**
+     * Add a part relative to another. For compatibility only. New code should use
+     * addEnhanced, above.
+     * 
+     * @param child the new part to add
+     * @param relationship one of PageLayout.TOP, PageLayout.BOTTOM, PageLayout.LEFT, or PageLayout.RIGHT
+     * @param ratio a value between 0.0 and 1.0, indicating how much space will be allocated to the UPPER-LEFT pane
+     * @param relative part where the new part will be attached
+     */
+    public void add(LayoutPart child, int relationship, float ratio,
+            LayoutPart relative) {
+        boolean isHorizontal = (relationship == IPageLayout.LEFT || relationship == IPageLayout.RIGHT);
 
-	// Dispose zoom root.
-	Rectangle oldBounds = root.getBounds();
-	root.setBounds(new Rectangle(0,0,0,0));
+        LayoutTree node = null;
+        if (root != null && relative != null) {
+            node = root.find(relative);
+        }
 
-	// Show main root.
-	root = unzoomRoot;
-	root.setBounds(oldBounds);
-	unzoomRoot = null;
-}
+        Rectangle bounds;
+        if (getParent() == null) {
+            Control control = getPage().getClientComposite();
+            if (control != null && !control.isDisposed()) {
+                bounds = control.getBounds();
+            } else {
+                bounds = new Rectangle(0, 0, 800, 600);
+            }
+            bounds.x = 0;
+            bounds.y = 0;
+        } else {
+            bounds = getBounds();
+        }
 
-/* (non-Javadoc)
- * @see org.eclipse.ui.internal.dnd.IDragOverListener#drag(org.eclipse.swt.widgets.Control, java.lang.Object, org.eclipse.swt.graphics.Point, org.eclipse.swt.graphics.Rectangle)
- */
-public IDropTarget drag(Control currentControl, Object draggedObject,
-		Point position, Rectangle dragRectangle) {
-	
-	if (!(draggedObject instanceof LayoutPart)) {
-		return null;
-	}
-	
-	final LayoutPart sourcePart = (LayoutPart)draggedObject;
-	
-	if (!isStackType(sourcePart) && !isPaneType(sourcePart)) {
-		return null;
-	}
-	
-	if (sourcePart.getWorkbenchWindow() != getWorkbenchWindow()) {
-		return null;
-	}
-	
-	Rectangle containerBounds = DragUtil.getDisplayBounds(parent);
-	LayoutPart targetPart = null;
-	ILayoutContainer sourceContainer = isStackType(sourcePart) ? (ILayoutContainer)sourcePart : sourcePart.getContainer();
-	
-	if (containerBounds.contains(position)) {
-		
-		if (root != null) {
-			targetPart = root.findPart(parent.toControl(position));
-		}
-		
-		if (targetPart != null) {
-			final Control targetControl = targetPart.getControl();
-			
-			int side = CompatibilityDragTarget.getRelativePosition(targetControl, position);
-			
-			final Rectangle targetBounds = DragUtil.getDisplayBounds(targetControl);
-			
-			// Disallow stacking if this isn't a container
-			if (side == SWT.DEFAULT || (side == SWT.CENTER && !isStackType(targetPart))) {
-				side = Geometry.getClosestSide(targetBounds, position);
-			}
-			
-			// A "pointless drop" would be one that will put the dragged object back where it started.
-			// Note that it should be perfectly valid to drag an object back to where it came from -- however,
-			// the drop should be ignored.
-			
-			boolean pointlessDrop = isZoomed();
-	
-			if (sourcePart == targetPart) {
-				pointlessDrop = true;
-			}
-			
-			if ((sourceContainer != null) && (sourceContainer == targetPart) && getVisibleChildrenCount(sourceContainer) <= 1) {
-				pointlessDrop = true;
-			}
-			
-			if (side == SWT.CENTER && sourcePart.getContainer() == targetPart) {
-				pointlessDrop = true;
-			}
-			
-			int cursor = side;
-			
-			if (pointlessDrop) {
-				side = SWT.NONE;
-				cursor = SWT.CENTER;
-			}
-			
-			return new SashContainerDropTarget(sourcePart, side, cursor, targetPart);
-		}
-	} else {
-		
-		int side = Geometry.getClosestSide(containerBounds, position);
-		
-		boolean pointlessDrop = isZoomed();
-		
-		if (isStackType(sourcePart) 
-				|| (sourcePart.getContainer() != null && isPaneType(sourcePart) && getVisibleChildrenCount(sourcePart.getContainer()) <= 1)) {			
-			if (root == null || getVisibleChildrenCount(this) <= 1) {
-				pointlessDrop = true;
-			}
-		};
-		
-		int cursor = Geometry.getOppositeSide(side);
-		
-		if (pointlessDrop) {
-			side = SWT.NONE;			
-		}
-		
-		return new SashContainerDropTarget(sourcePart, side, cursor, null);
-	}
-		
-	return null;
-}
+        int totalSize = measureTree(bounds, node, isHorizontal);
 
-/**
- * Returns true iff this PartSashContainer allows its parts to be stacked onto the given
- * container.
- * 
- * @param container
- * @return
- */
-public abstract boolean isStackType(LayoutPart toTest);
+        int left = (int) (totalSize * ratio);
+        int right = totalSize - left;
 
-public abstract boolean isPaneType(LayoutPart toTest);
+        add(child, relationship, left, right, relative);
+    }
 
-/* (non-Javadoc)
- * @see org.eclipse.ui.internal.PartSashContainer#dropObject(org.eclipse.ui.internal.LayoutPart, org.eclipse.ui.internal.LayoutPart, int)
- */
-protected void dropObject(PartPane[] toDrop, LayoutPart visiblePart, LayoutPart targetPart, int side) {
-	getControl().setRedraw(false);	
-	
-	if (side == SWT.CENTER) {
-		if (isStackType(targetPart)) {
-			PartStack stack = (PartStack)targetPart;
-			for (int idx = 0; idx < toDrop.length; idx++) {
-				PartPane next = toDrop[idx];
+    static int measureTree(Rectangle outerBounds, LayoutTree toMeasure,
+            boolean horizontal) {
+        if (toMeasure == null) {
+            return Geometry.getDimension(outerBounds, horizontal);
+        }
 
-				stack(next, stack);
-			}
-		}
-	} else {
-		PartStack newPart = createStack();
-		
-		for (int idx = 0; idx < toDrop.length; idx++) {
-			PartPane next = toDrop[idx]; 
-			stack(next, newPart);
-		}
-					
-		addEnhanced(newPart, side, getDockingRatio(newPart, targetPart), targetPart);
-	}
-	
-	setVisiblePart(visiblePart.getContainer(), visiblePart);
-	
-	getControl().setRedraw(true);	
-	
-	visiblePart.setFocus();
-}
+        LayoutTreeNode parent = toMeasure.getParent();
+        if (parent == null) {
+            return Geometry.getDimension(outerBounds, horizontal);
+        }
 
-/**
- * @param sourcePart
- * @return
- */
-protected abstract PartStack createStack();
+        if (parent.getSash().isHorizontal() == horizontal) {
+            return measureTree(outerBounds, parent, horizontal);
+        }
 
-public void stack(LayoutPart newPart, PartStack container) {
-	
-	getControl().setRedraw(false);
-	// Remove the part from old container.
-	derefPart(newPart);
-	// Reparent part and add it to the workbook
-	newPart.reparent(getParent());
-	container.add(newPart);
-	getControl().setRedraw(true);
-	
-}
+        boolean isLeft = parent.isLeftChild(toMeasure);
 
-/**
- * @param container
- * @param visiblePart
- */
-protected abstract void setVisiblePart(ILayoutContainer container, LayoutPart visiblePart);
+        LayoutTree otherChild = parent.getChild(!isLeft);
+        if (otherChild.isVisible()) {
+            int left = parent.getSash().getLeft();
+            int right = parent.getSash().getRight();
+            int childSize = isLeft ? left : right;
 
-/**
- * @param container
- * @return
- */
-protected abstract LayoutPart getVisiblePart(ILayoutContainer container);
+            int bias = parent.getCompressionBias();
 
-/**
- * @param sourcePart
- */
-protected void derefPart(LayoutPart sourcePart) {
-	ILayoutContainer container = sourcePart.getContainer();
-	if (container != null) {
-		container.remove(sourcePart);
-	}
-	
-	if (container instanceof LayoutPart) {
-		if (isStackType((LayoutPart)container)) {
-			PartStack stack = (PartStack)container;
-			if (stack.getChildren().length == 0) {
-				remove(stack);
-				stack.dispose();
-			}
-		}
-	}
-}
+            // Normalize bias: 1 = we're fixed, -1 = other child is fixed
+            if (isLeft) {
+                bias = -bias;
+            }
 
-protected int getVisibleChildrenCount(ILayoutContainer container) {
-	// Treat null as an empty container
-	if (container == null) {
-		return 0;
-	}
-	
-	LayoutPart[] children = container.getChildren();
-	
-	int count = 0;
-	for (int idx = 0; idx < children.length; idx++) {
-		if (!(children[idx] instanceof PartPlaceholder)) {
-			count++;
-		}
-	}
-	
-	return count;
-}
+            if (bias == 1) {
+                // If we're fixed, return the fixed size
+                return childSize;
+            } else if (bias == -1) {
 
-protected float getDockingRatio(LayoutPart dragged, LayoutPart target) {
-	return 0.5f;
-}
+                // If the other child is fixed, return the size of the parent minus the fixed size of the
+                // other child
+                return measureTree(outerBounds, parent, horizontal)
+                        - (left + right - childSize);
+            }
 
-/**
- * Writes a description of the layout to the given string buffer.
- * This is used for drag-drop test suites to determine if two layouts are the
- * same. Like a hash code, the description should compare as equal iff the
- * layouts are the same. However, it should be user-readable in order to
- * help debug failed tests. Although these are english readable strings,
- * they should not be translated or equality tests will fail.
- * 
- * @param buf
- */
-public void describeLayout(StringBuffer buf) {
-	if (root == null) {
-		return;
-	}
-	
-	if (isZoomed()) {
-		buf.append("zoomed "); //$NON-NLS-1$
-		root.describeLayout(buf);
-	} else {
-		buf.append("layout "); //$NON-NLS-1$
-		root.describeLayout(buf);
-	}
-}
+            // Else return the size of the parent, scaled appropriately
+            return measureTree(outerBounds, parent, horizontal) * childSize
+                    / (left + right);
+        }
 
-/**
- * Adds a new child to the container relative to some part
- * 
- * @param child
- * @param relationship
- * @param left preferred pixel size of the left/top child
- * @param right preferred pixel size of the right/bottom child
- * @param relative relative part
- */
-void add(LayoutPart child, int relationship, int left, int right, LayoutPart relative) {
-	if (isZoomed())
-		zoomOut();
+        return measureTree(outerBounds, parent, horizontal);
+    }
 
-	if (child == null)
-		return;
-	if (relative != null && !isChild(relative))
-		return;
-	if (relationship < IPageLayout.LEFT || relationship > IPageLayout.BOTTOM)
-		relationship = IPageLayout.LEFT;
+    protected void addChild(RelationshipInfo info) {
+        LayoutPart child = info.part;
 
-	// store info about relative positions
-	RelationshipInfo info = new RelationshipInfo();
-	info.part = child;
-	info.relationship = relationship;
-	info.left = left;
-	info.right = right;
-	info.relative = relative;
-	addChild(info);
-}
+        children.add(child);
 
-/* (non-Javadoc)
- * @see org.eclipse.ui.internal.LayoutPart#resizesVertically()
- */
-public boolean resizesVertically() {
-	if (root == null) {
-		return true;
-	}
-	return !root.fixedHeight();
-}
+        if (root == null) {
+            root = new LayoutTree(child);
+        } else {
+            //Add the part to the tree.
+            int vertical = (info.relationship == IPageLayout.LEFT || info.relationship == IPageLayout.RIGHT) ? SWT.VERTICAL
+                    : SWT.HORIZONTAL;
+            boolean left = info.relationship == IPageLayout.LEFT
+                    || info.relationship == IPageLayout.TOP;
+            LayoutPartSash sash = new LayoutPartSash(this, vertical);
+            sash.setSizes(info.left, info.right);
+            if ((parent != null) && !(child instanceof PartPlaceholder))
+                sash.createControl(parent);
+            root = root.insert(child, left, sash, info.relative);
+        }
 
-/* (non-Javadoc)
- * @see org.eclipse.ui.internal.LayoutPart#testInvariants()
- */
-public void testInvariants() {
-	super.testInvariants();
-	
-	LayoutPart[] children = getChildren();
-	
-	for (int idx = 0; idx < children.length; idx++) {
-		children[idx].testInvariants();
-	}
-}
+        childAdded(child);
+
+        if (active) {
+            child.createControl(parent);
+            child.setVisible(true);
+            child.setContainer(this);
+            resizeSashes(parent.getClientArea());
+        }
+
+    }
+
+    /**
+     * Adds the child using ratio and position attributes
+     * from the specified placeholder without replacing
+     * the placeholder
+     * 
+     * FIXME: I believe there is a bug in computeRelation()
+     * when a part is positioned relative to the editorarea.
+     * We end up with a null relative and 0.0 for a ratio.
+     */
+    void addChildForPlaceholder(LayoutPart child, LayoutPart placeholder) {
+        RelationshipInfo newRelationshipInfo = new RelationshipInfo();
+        newRelationshipInfo.part = child;
+        if (root != null) {
+            newRelationshipInfo.relationship = IPageLayout.RIGHT;
+            newRelationshipInfo.relative = root.findBottomRight();
+            newRelationshipInfo.left = 200;
+            newRelationshipInfo.right = 200;
+        }
+
+        // find the relationship info for the placeholder
+        RelationshipInfo[] relationships = computeRelation();
+        for (int i = 0; i < relationships.length; i++) {
+            RelationshipInfo info = relationships[i];
+            if (info.part == placeholder) {
+                newRelationshipInfo.left = info.left;
+                newRelationshipInfo.right = info.right;
+                newRelationshipInfo.relationship = info.relationship;
+                newRelationshipInfo.relative = info.relative;
+            }
+        }
+
+        addChild(newRelationshipInfo);
+        if (root != null) {
+            root.updateSashes(parent);
+        }
+        resizeSashes(parent.getClientArea());
+    }
+
+    /**
+     * See ILayoutContainer#allowBorder
+     */
+    public boolean allowsBorder() {
+        return true;
+    }
+
+    /**
+     * Notification that a child layout part has been
+     * added to the container. Subclasses may override
+     * this method to perform any container specific
+     * work.
+     */
+    protected abstract void childAdded(LayoutPart child);
+
+    /**
+     * Notification that a child layout part has been
+     * removed from the container. Subclasses may override
+     * this method to perform any container specific
+     * work.
+     */
+    protected abstract void childRemoved(LayoutPart child);
+
+    /**
+     * Returns an array with all the relation ship between the
+     * parts.
+     */
+    public RelationshipInfo[] computeRelation() {
+        LayoutTree treeRoot = root;
+        if (isZoomed())
+            treeRoot = unzoomRoot;
+        ArrayList list = new ArrayList();
+        if (treeRoot == null)
+            return new RelationshipInfo[0];
+        RelationshipInfo r = new RelationshipInfo();
+        r.part = treeRoot.computeRelation(list);
+        list.add(0, r);
+        RelationshipInfo[] result = new RelationshipInfo[list.size()];
+        list.toArray(result);
+        return result;
+    }
+
+    /**
+     * @see LayoutPart#getControl
+     */
+    public void createControl(Composite parentWidget) {
+        if (active)
+            return;
+
+        parent = createParent(parentWidget);
+        parent.addControlListener(resizeListener);
+
+        DragUtil.addDragTarget(parent, this);
+        DragUtil.addDragTarget(parent.getShell(), this);
+
+        ArrayList children = (ArrayList) this.children.clone();
+        for (int i = 0, length = children.size(); i < length; i++) {
+            LayoutPart child = (LayoutPart) children.get(i);
+            child.setContainer(this);
+            child.createControl(parent);
+        }
+
+        if (root != null) {
+            root.updateSashes(parent);
+        }
+        active = true;
+        resizeSashes(parent.getClientArea());
+    }
+
+    /**
+     * Subclasses override this method to specify
+     * the composite to use to parent all children
+     * layout parts it contains.
+     */
+    protected abstract Composite createParent(Composite parentWidget);
+
+    /**
+     * @see LayoutPart#dispose
+     */
+    public void dispose() {
+        if (!active)
+            return;
+
+        DragUtil.removeDragTarget(parent, this);
+        DragUtil.removeDragTarget(parent.getShell(), this);
+
+        // remove all Listeners
+        if (resizeListener != null && parent != null) {
+            parent.removeControlListener(resizeListener);
+        }
+
+        resizeSashes(new Rectangle(-200, -200, 0, 0));
+
+        if (children != null) {
+            for (int i = 0, length = children.size(); i < length; i++) {
+                LayoutPart child = (LayoutPart) children.get(i);
+                child.setContainer(null);
+                // In PartSashContainer dispose really means deactivate, so we
+                // only dispose PartTabFolders.
+                if (child instanceof ViewStack)
+                    child.dispose();
+            }
+        }
+
+        disposeParent();
+        this.parent = null;
+
+        active = false;
+    }
+
+    /**
+     * Subclasses override this method to dispose
+     * of any swt resources created during createParent.
+     */
+    protected abstract void disposeParent();
+
+    /**
+     * Dispose all sashs used in this perspective.
+     */
+    public void disposeSashes() {
+        if (root != null) {
+            root.disposeSashes();
+        }
+    }
+
+    /**
+     * Return the most bottom right part or null if none.
+     */
+    public LayoutPart findBottomRight() {
+        if (root == null)
+            return null;
+        return root.findBottomRight();
+    }
+
+    /**
+     * @see LayoutPart#getBounds
+     */
+    public Rectangle getBounds() {
+        return this.parent.getBounds();
+    }
+
+    // getMinimumHeight() added by cagatayk@acm.org 
+    /**
+     * @see LayoutPart#getMinimumHeight()
+     */
+    public int getMinimumHeight() {
+        return getLayoutTree().getMinimumHeight();
+    }
+
+    // getMinimumHeight() added by cagatayk@acm.org 
+    /**
+     * @see LayoutPart#getMinimumWidth()
+     */
+    public int getMinimumWidth() {
+        return getLayoutTree().getMinimumWidth();
+    }
+
+    /**
+     * @see ILayoutContainer#getChildren
+     */
+    public LayoutPart[] getChildren() {
+        LayoutPart[] result = new LayoutPart[children.size()];
+        children.toArray(result);
+        return result;
+    }
+
+    /**
+     * @see LayoutPart#getControl
+     */
+    public Control getControl() {
+        return this.parent;
+    }
+
+    public LayoutTree getLayoutTree() {
+        return root;
+    }
+
+    /**
+     * For themes.
+     * 
+     * @return the current WorkbenchPage.
+     */
+    public WorkbenchPage getPage() {
+        return page;
+    }
+
+    /**
+     * Returns the composite used to parent all the
+     * layout parts contained within.
+     */
+    public Composite getParent() {
+        return parent;
+    }
+
+    protected boolean isChild(LayoutPart part) {
+        return children.indexOf(part) >= 0;
+    }
+
+    private boolean isRelationshipCompatible(int relationship,
+            boolean isVertical) {
+        if (isVertical)
+            return (relationship == IPageLayout.RIGHT || relationship == IPageLayout.LEFT);
+        else
+            return (relationship == IPageLayout.TOP || relationship == IPageLayout.BOTTOM);
+    }
+
+    /**
+     * Returns whether this container is zoomed.
+     */
+    public boolean isZoomed() {
+        return (unzoomRoot != null);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.LayoutPart#forceLayout(org.eclipse.ui.internal.LayoutPart)
+     */
+    public void resizeChild(LayoutPart childThatChanged) {
+        forceLayout();
+
+        if (root != null) {
+            root.setBounds(getParent().getClientArea());
+        }
+    }
+
+    /**
+     * Remove a part.
+     */
+    public void remove(LayoutPart child) {
+        if (isZoomed())
+            zoomOut();
+
+        if (!isChild(child))
+            return;
+
+        children.remove(child);
+        if (root != null) {
+            root = root.remove(child);
+            if (root != null) {
+                root.updateSashes(parent);
+            }
+        }
+        childRemoved(child);
+
+        if (active) {
+            child.setVisible(false);
+            child.setContainer(null);
+            resizeSashes(parent.getClientArea());
+        }
+    }
+
+    /**
+     * Replace one part with another.
+     */
+    public void replace(LayoutPart oldChild, LayoutPart newChild) {
+        if (isZoomed())
+            zoomOut();
+
+        if (!isChild(oldChild)) {
+            return;
+        }
+
+        LayoutTree leaf = null;
+        if (root != null) {
+            leaf = root.find(oldChild);
+        }
+
+        if (leaf == null) {
+            return;
+        }
+
+        children.remove(oldChild);
+        children.add(newChild);
+
+        childAdded(newChild);
+
+        leaf.setPart(newChild);
+        if (root != null) {
+            root.updateSashes(parent);
+        }
+
+        childRemoved(oldChild);
+        if (active) {
+            oldChild.setVisible(false);
+            oldChild.setContainer(null);
+            newChild.createControl(parent);
+            newChild.setContainer(this);
+            newChild.setVisible(true);
+            resizeSashes(parent.getClientArea());
+        }
+    }
+
+    private void resizeSashes(Rectangle parentSize) {
+        if (!active)
+            return;
+        if (root != null) {
+            root.setBounds(parentSize);
+        }
+    }
+
+    /**
+     * @see LayoutPart#setBounds
+     */
+    public void setBounds(Rectangle r) {
+        this.parent.setBounds(r);
+    }
+
+    /**
+     * Zoom in on a particular layout part.
+     *
+     * The implementation of zoom is quite simple.  When zoom occurs we create
+     * a zoom root which only contains the zoom part.  We store the old
+     * root in unzoomRoot and then active the zoom root.  When unzoom occurs
+     * we restore the unzoomRoot and dispose the zoom root.
+     *
+     * Note: Method assumes we are active.
+     */
+    public void zoomIn(LayoutPart part) {
+        // Sanity check.
+        if (unzoomRoot != null)
+            return;
+
+        // Hide main root.
+        Rectangle oldBounds = root.getBounds();
+        root.setBounds(new Rectangle(0, 0, 0, 0));
+        unzoomRoot = root;
+
+        // Show zoom root.
+        root = new LayoutTree(part);
+        root.setBounds(oldBounds);
+    }
+
+    /**
+     * Zoom out.
+     *
+     * See zoomIn for implementation details.
+     * 
+     * Note: Method assumes we are active.
+     */
+    public void zoomOut() {
+        // Sanity check.
+        if (unzoomRoot == null)
+            return;
+
+        // Dispose zoom root.
+        Rectangle oldBounds = root.getBounds();
+        root.setBounds(new Rectangle(0, 0, 0, 0));
+
+        // Show main root.
+        root = unzoomRoot;
+        root.setBounds(oldBounds);
+        unzoomRoot = null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.dnd.IDragOverListener#drag(org.eclipse.swt.widgets.Control, java.lang.Object, org.eclipse.swt.graphics.Point, org.eclipse.swt.graphics.Rectangle)
+     */
+    public IDropTarget drag(Control currentControl, Object draggedObject,
+            Point position, Rectangle dragRectangle) {
+
+        if (!(draggedObject instanceof LayoutPart)) {
+            return null;
+        }
+
+        final LayoutPart sourcePart = (LayoutPart) draggedObject;
+
+        if (!isStackType(sourcePart) && !isPaneType(sourcePart)) {
+            return null;
+        }
+
+        if (sourcePart.getWorkbenchWindow() != getWorkbenchWindow()) {
+            return null;
+        }
+
+        Rectangle containerBounds = DragUtil.getDisplayBounds(parent);
+        LayoutPart targetPart = null;
+        ILayoutContainer sourceContainer = isStackType(sourcePart) ? (ILayoutContainer) sourcePart
+                : sourcePart.getContainer();
+
+        if (containerBounds.contains(position)) {
+
+            if (root != null) {
+                targetPart = root.findPart(parent.toControl(position));
+            }
+
+            if (targetPart != null) {
+                final Control targetControl = targetPart.getControl();
+
+                int side = CompatibilityDragTarget.getRelativePosition(
+                        targetControl, position);
+
+                final Rectangle targetBounds = DragUtil
+                        .getDisplayBounds(targetControl);
+
+                // Disallow stacking if this isn't a container
+                if (side == SWT.DEFAULT
+                        || (side == SWT.CENTER && !isStackType(targetPart))) {
+                    side = Geometry.getClosestSide(targetBounds, position);
+                }
+
+                // A "pointless drop" would be one that will put the dragged object back where it started.
+                // Note that it should be perfectly valid to drag an object back to where it came from -- however,
+                // the drop should be ignored.
+
+                boolean pointlessDrop = isZoomed();
+
+                if (sourcePart == targetPart) {
+                    pointlessDrop = true;
+                }
+
+                if ((sourceContainer != null)
+                        && (sourceContainer == targetPart)
+                        && getVisibleChildrenCount(sourceContainer) <= 1) {
+                    pointlessDrop = true;
+                }
+
+                if (side == SWT.CENTER
+                        && sourcePart.getContainer() == targetPart) {
+                    pointlessDrop = true;
+                }
+
+                int cursor = side;
+
+                if (pointlessDrop) {
+                    side = SWT.NONE;
+                    cursor = SWT.CENTER;
+                }
+
+                return new SashContainerDropTarget(sourcePart, side, cursor,
+                        targetPart);
+            }
+        } else {
+
+            int side = Geometry.getClosestSide(containerBounds, position);
+
+            boolean pointlessDrop = isZoomed();
+
+            if (isStackType(sourcePart)
+                    || (sourcePart.getContainer() != null
+                            && isPaneType(sourcePart) && getVisibleChildrenCount(sourcePart
+                            .getContainer()) <= 1)) {
+                if (root == null || getVisibleChildrenCount(this) <= 1) {
+                    pointlessDrop = true;
+                }
+            }
+            ;
+
+            int cursor = Geometry.getOppositeSide(side);
+
+            if (pointlessDrop) {
+                side = SWT.NONE;
+            }
+
+            return new SashContainerDropTarget(sourcePart, side, cursor, null);
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns true iff this PartSashContainer allows its parts to be stacked onto the given
+     * container.
+     * 
+     * @param container
+     * @return
+     */
+    public abstract boolean isStackType(LayoutPart toTest);
+
+    public abstract boolean isPaneType(LayoutPart toTest);
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.PartSashContainer#dropObject(org.eclipse.ui.internal.LayoutPart, org.eclipse.ui.internal.LayoutPart, int)
+     */
+    protected void dropObject(PartPane[] toDrop, LayoutPart visiblePart,
+            LayoutPart targetPart, int side) {
+        getControl().setRedraw(false);
+
+        if (side == SWT.CENTER) {
+            if (isStackType(targetPart)) {
+                PartStack stack = (PartStack) targetPart;
+                for (int idx = 0; idx < toDrop.length; idx++) {
+                    PartPane next = toDrop[idx];
+
+                    stack(next, stack);
+                }
+            }
+        } else {
+            PartStack newPart = createStack();
+
+            for (int idx = 0; idx < toDrop.length; idx++) {
+                PartPane next = toDrop[idx];
+                stack(next, newPart);
+            }
+
+            addEnhanced(newPart, side, getDockingRatio(newPart, targetPart),
+                    targetPart);
+        }
+
+        setVisiblePart(visiblePart.getContainer(), visiblePart);
+
+        getControl().setRedraw(true);
+
+        visiblePart.setFocus();
+    }
+
+    /**
+     * @param sourcePart
+     * @return
+     */
+    protected abstract PartStack createStack();
+
+    public void stack(LayoutPart newPart, PartStack container) {
+
+        getControl().setRedraw(false);
+        // Remove the part from old container.
+        derefPart(newPart);
+        // Reparent part and add it to the workbook
+        newPart.reparent(getParent());
+        container.add(newPart);
+        getControl().setRedraw(true);
+
+    }
+
+    /**
+     * @param container
+     * @param visiblePart
+     */
+    protected abstract void setVisiblePart(ILayoutContainer container,
+            LayoutPart visiblePart);
+
+    /**
+     * @param container
+     * @return
+     */
+    protected abstract LayoutPart getVisiblePart(ILayoutContainer container);
+
+    /**
+     * @param sourcePart
+     */
+    protected void derefPart(LayoutPart sourcePart) {
+        ILayoutContainer container = sourcePart.getContainer();
+        if (container != null) {
+            container.remove(sourcePart);
+        }
+
+        if (container instanceof LayoutPart) {
+            if (isStackType((LayoutPart) container)) {
+                PartStack stack = (PartStack) container;
+                if (stack.getChildren().length == 0) {
+                    remove(stack);
+                    stack.dispose();
+                }
+            }
+        }
+    }
+
+    protected int getVisibleChildrenCount(ILayoutContainer container) {
+        // Treat null as an empty container
+        if (container == null) {
+            return 0;
+        }
+
+        LayoutPart[] children = container.getChildren();
+
+        int count = 0;
+        for (int idx = 0; idx < children.length; idx++) {
+            if (!(children[idx] instanceof PartPlaceholder)) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    protected float getDockingRatio(LayoutPart dragged, LayoutPart target) {
+        return 0.5f;
+    }
+
+    /**
+     * Writes a description of the layout to the given string buffer.
+     * This is used for drag-drop test suites to determine if two layouts are the
+     * same. Like a hash code, the description should compare as equal iff the
+     * layouts are the same. However, it should be user-readable in order to
+     * help debug failed tests. Although these are english readable strings,
+     * they should not be translated or equality tests will fail.
+     * 
+     * @param buf
+     */
+    public void describeLayout(StringBuffer buf) {
+        if (root == null) {
+            return;
+        }
+
+        if (isZoomed()) {
+            buf.append("zoomed "); //$NON-NLS-1$
+            root.describeLayout(buf);
+        } else {
+            buf.append("layout "); //$NON-NLS-1$
+            root.describeLayout(buf);
+        }
+    }
+
+    /**
+     * Adds a new child to the container relative to some part
+     * 
+     * @param child
+     * @param relationship
+     * @param left preferred pixel size of the left/top child
+     * @param right preferred pixel size of the right/bottom child
+     * @param relative relative part
+     */
+    void add(LayoutPart child, int relationship, int left, int right,
+            LayoutPart relative) {
+        if (isZoomed())
+            zoomOut();
+
+        if (child == null)
+            return;
+        if (relative != null && !isChild(relative))
+            return;
+        if (relationship < IPageLayout.LEFT
+                || relationship > IPageLayout.BOTTOM)
+            relationship = IPageLayout.LEFT;
+
+        // store info about relative positions
+        RelationshipInfo info = new RelationshipInfo();
+        info.part = child;
+        info.relationship = relationship;
+        info.left = left;
+        info.right = right;
+        info.relative = relative;
+        addChild(info);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.LayoutPart#resizesVertically()
+     */
+    public boolean resizesVertically() {
+        if (root == null) {
+            return true;
+        }
+        return !root.fixedHeight();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.LayoutPart#testInvariants()
+     */
+    public void testInvariants() {
+        super.testInvariants();
+
+        LayoutPart[] children = getChildren();
+
+        for (int idx = 0; idx < children.length; idx++) {
+            children[idx].testInvariants();
+        }
+    }
 }

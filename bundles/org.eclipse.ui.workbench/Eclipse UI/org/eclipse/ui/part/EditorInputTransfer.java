@@ -82,184 +82,196 @@ import org.eclipse.ui.XMLMemento;
  */
 public class EditorInputTransfer extends ByteArrayTransfer {
 
-	/**
-	 * Singleton instance.
-	 */
-	private static final EditorInputTransfer instance =
-		new EditorInputTransfer();
+    /**
+     * Singleton instance.
+     */
+    private static final EditorInputTransfer instance = new EditorInputTransfer();
 
-	// Create a unique ID to make sure that different Eclipse
-	// applications use different "types" of <code>EditorInputTransfer</code>
-	private static final String TYPE_NAME = "editor-input-transfer-format:" + System.currentTimeMillis() + ":" + instance.hashCode(); //$NON-NLS-2$//$NON-NLS-1$
+    // Create a unique ID to make sure that different Eclipse
+    // applications use different "types" of <code>EditorInputTransfer</code>
+    private static final String TYPE_NAME = "editor-input-transfer-format:" + System.currentTimeMillis() + ":" + instance.hashCode(); //$NON-NLS-2$//$NON-NLS-1$
 
-	private static final int TYPEID = registerType(TYPE_NAME);
+    private static final int TYPEID = registerType(TYPE_NAME);
 
-	public static class EditorInputData {
+    public static class EditorInputData {
 
-		public String editorId;
-		public IEditorInput input;
-		
-		private EditorInputData(String editorId, IEditorInput input) {
-			this.editorId = editorId;
-			this.input = input;
-		}
-	}
+        public String editorId;
 
-	/**
-	 * Creates a new transfer object.
-	 */
-	private EditorInputTransfer() {
-	}
-	/**
-	 * Returns the singleton instance.
-	 *
-	 * @return the singleton instance
-	 */
-	public static EditorInputTransfer getInstance() {
-		return instance;
-	}
-	/* (non-Javadoc)
-	 * Method declared on Transfer.
-	 */
-	protected int[] getTypeIds() {
-		return new int[] { TYPEID };
-	}
-	/* (non-Javadoc)
-	 * Returns the type names.
-	 *
-	 * @return the list of type names
-	 */
-	protected String[] getTypeNames() {
-		return new String[] { TYPE_NAME };
-	}
-	
-	/* (non-Javadoc)
-	 * Method declared on Transfer.
-	 */
-	public void javaToNative(Object data, TransferData transferData) {
-		
-		if (!(data instanceof EditorInputData[])) {
-			return;
-		}
+        public IEditorInput input;
 
-		EditorInputData[] editorInputs = (EditorInputData[]) data;
-		/**
-		 * The editor input serialization format is:
-		 * (int)	number of editor inputs
-		 * Then, the following for each editor input:
-		 * (String)	editorId
-		 * (String)	factoryId 
-		 * (String)	data used to recreate the IEditorInput
-		 */
+        private EditorInputData(String editorId, IEditorInput input) {
+            this.editorId = editorId;
+            this.input = input;
+        }
+    }
 
-		int editorInputCount = editorInputs.length;
+    /**
+     * Creates a new transfer object.
+     */
+    private EditorInputTransfer() {
+    }
 
-		try {
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			DataOutputStream dataOut = new DataOutputStream(out);
+    /**
+     * Returns the singleton instance.
+     *
+     * @return the singleton instance
+     */
+    public static EditorInputTransfer getInstance() {
+        return instance;
+    }
 
-			//write the number of resources
-			dataOut.writeInt(editorInputCount);
+    /* (non-Javadoc)
+     * Method declared on Transfer.
+     */
+    protected int[] getTypeIds() {
+        return new int[] { TYPEID };
+    }
 
-			//write each resource
-			for (int i = 0; i < editorInputs.length; i++) {
-				writeEditorInput(dataOut, editorInputs[i]);
-			}
+    /* (non-Javadoc)
+     * Returns the type names.
+     *
+     * @return the list of type names
+     */
+    protected String[] getTypeNames() {
+        return new String[] { TYPE_NAME };
+    }
 
-			//cleanup
-			dataOut.close();
-			out.close();
-			byte[] bytes = out.toByteArray();
-			super.javaToNative(bytes, transferData);
-		} catch (IOException e) {}
-	}
+    /* (non-Javadoc)
+     * Method declared on Transfer.
+     */
+    public void javaToNative(Object data, TransferData transferData) {
 
-	/* (non-Javadoc)
-	 * Method declared on Transfer.
-	 */
-	public Object nativeToJava(TransferData transferData) {
+        if (!(data instanceof EditorInputData[])) {
+            return;
+        }
 
-		byte[] bytes = (byte[]) super.nativeToJava(transferData);
-		if (bytes == null)
-			return null;
-		DataInputStream in = new DataInputStream(new ByteArrayInputStream(bytes));
-		try {
-			int count = in.readInt();
-			EditorInputData[] results = new EditorInputData[count];
-			for (int i = 0; i < count; i++) {
-				results[i] = readEditorInput(in);
-			}
-			return results;
-		} catch (IOException e) {
-			return null;
-		} catch (WorkbenchException e) {
-			return null;
-		}
+        EditorInputData[] editorInputs = (EditorInputData[]) data;
+        /**
+         * The editor input serialization format is:
+         * (int)	number of editor inputs
+         * Then, the following for each editor input:
+         * (String)	editorId
+         * (String)	factoryId 
+         * (String)	data used to recreate the IEditorInput
+         */
 
-	}
-	/**
-	 * Method readEditorInput.
-	 * @param in
-	 * @return EditorInputData
-	 */
-	private EditorInputData readEditorInput(DataInputStream dataIn) throws IOException, WorkbenchException {
-		
-		String editorId = dataIn.readUTF();
-		String factoryId = dataIn.readUTF();
-		String xmlString = dataIn.readUTF();
-		
-		if(xmlString == null || xmlString.length() == 0)
-			return null; 
+        int editorInputCount = editorInputs.length;
 
-		StringReader reader = new StringReader(xmlString);
-	
-		// Restore the editor input
-		XMLMemento memento = XMLMemento.createReadRoot(reader);
-		
-		IElementFactory factory = PlatformUI.getWorkbench().getElementFactory(factoryId);
-		
-		if (factory != null) {
-			IAdaptable adaptable = factory.createElement(memento);
-			if (adaptable != null && (adaptable instanceof IEditorInput)) {
-				return new EditorInputData(editorId, (IEditorInput) adaptable);
-			}
-		}
+        try {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            DataOutputStream dataOut = new DataOutputStream(out);
 
-		return null;
-	}
-	/**
-	 * Method writeEditorInput.
-	 * @param dataOut
-	 * @param editorInputData
-	 */
-	private void writeEditorInput(DataOutputStream dataOut, EditorInputData editorInputData) throws IOException {
-		//write the id of the editor
-		dataOut.writeUTF(editorInputData.editorId);
-		
-		//write the information needed to recreate the editor input
-		if (editorInputData.input != null) {
-			// Capture the editor information
-			XMLMemento memento = XMLMemento.createWriteRoot("IEditorInput");//$NON-NLS-1$
+            //write the number of resources
+            dataOut.writeInt(editorInputCount);
 
-			IPersistableElement element = editorInputData.input.getPersistable();
-			if (element != null) {
-				//get the IEditorInput to save its state
-				element.saveState(memento);
-				
-				//convert memento to String
-				StringWriter writer = new StringWriter();
-				memento.save(writer);
-				writer.close();
-				
-				//write the factor ID and state information
-				dataOut.writeUTF(element.getFactoryId());
-				dataOut.writeUTF(writer.toString());
-			}
-		}		
-	}
+            //write each resource
+            for (int i = 0; i < editorInputs.length; i++) {
+                writeEditorInput(dataOut, editorInputs[i]);
+            }
 
-	public static EditorInputData createEditorInputData(String editorId, IEditorInput input) {
-		return new EditorInputData(editorId, input);
-	}
+            //cleanup
+            dataOut.close();
+            out.close();
+            byte[] bytes = out.toByteArray();
+            super.javaToNative(bytes, transferData);
+        } catch (IOException e) {
+        }
+    }
+
+    /* (non-Javadoc)
+     * Method declared on Transfer.
+     */
+    public Object nativeToJava(TransferData transferData) {
+
+        byte[] bytes = (byte[]) super.nativeToJava(transferData);
+        if (bytes == null)
+            return null;
+        DataInputStream in = new DataInputStream(
+                new ByteArrayInputStream(bytes));
+        try {
+            int count = in.readInt();
+            EditorInputData[] results = new EditorInputData[count];
+            for (int i = 0; i < count; i++) {
+                results[i] = readEditorInput(in);
+            }
+            return results;
+        } catch (IOException e) {
+            return null;
+        } catch (WorkbenchException e) {
+            return null;
+        }
+
+    }
+
+    /**
+     * Method readEditorInput.
+     * @param in
+     * @return EditorInputData
+     */
+    private EditorInputData readEditorInput(DataInputStream dataIn)
+            throws IOException, WorkbenchException {
+
+        String editorId = dataIn.readUTF();
+        String factoryId = dataIn.readUTF();
+        String xmlString = dataIn.readUTF();
+
+        if (xmlString == null || xmlString.length() == 0)
+            return null;
+
+        StringReader reader = new StringReader(xmlString);
+
+        // Restore the editor input
+        XMLMemento memento = XMLMemento.createReadRoot(reader);
+
+        IElementFactory factory = PlatformUI.getWorkbench().getElementFactory(
+                factoryId);
+
+        if (factory != null) {
+            IAdaptable adaptable = factory.createElement(memento);
+            if (adaptable != null && (adaptable instanceof IEditorInput)) {
+                return new EditorInputData(editorId, (IEditorInput) adaptable);
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Method writeEditorInput.
+     * @param dataOut
+     * @param editorInputData
+     */
+    private void writeEditorInput(DataOutputStream dataOut,
+            EditorInputData editorInputData) throws IOException {
+        //write the id of the editor
+        dataOut.writeUTF(editorInputData.editorId);
+
+        //write the information needed to recreate the editor input
+        if (editorInputData.input != null) {
+            // Capture the editor information
+            XMLMemento memento = XMLMemento.createWriteRoot("IEditorInput");//$NON-NLS-1$
+
+            IPersistableElement element = editorInputData.input
+                    .getPersistable();
+            if (element != null) {
+                //get the IEditorInput to save its state
+                element.saveState(memento);
+
+                //convert memento to String
+                StringWriter writer = new StringWriter();
+                memento.save(writer);
+                writer.close();
+
+                //write the factor ID and state information
+                dataOut.writeUTF(element.getFactoryId());
+                dataOut.writeUTF(writer.toString());
+            }
+        }
+    }
+
+    public static EditorInputData createEditorInputData(String editorId,
+            IEditorInput input) {
+        return new EditorInputData(editorId, input);
+    }
 
 }

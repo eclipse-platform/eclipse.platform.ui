@@ -16,36 +16,36 @@ import org.eclipse.jface.action.ActionContributionItem;
  * @since 3.0
  */
 public class UpdatingActionContributionItem extends ActionContributionItem {
-	
-	/**
-	 * @param action
-	 */
-	public UpdatingActionContributionItem(ISelfUpdatingAction action) {
-		super(action);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IContributionItem#isVisible()
-	 */
-	public boolean isVisible() {
-		ISelfUpdatingAction action = (ISelfUpdatingAction) getAction();		
-		return super.isVisible() && action.shouldBeVisible();
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IContributionItem#update(java.lang.String)
-	 */
-	public void update(String propertyName) {
-		ISelfUpdatingAction action = (ISelfUpdatingAction) getAction();
-		action.update();
-		
-		super.update(propertyName);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IContributionItem#isDynamic()
-	 */
-	public boolean isDynamic() {
-		return true;
-	}
+
+    /**
+     * @param action
+     */
+    public UpdatingActionContributionItem(ISelfUpdatingAction action) {
+        super(action);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.action.IContributionItem#isVisible()
+     */
+    public boolean isVisible() {
+        ISelfUpdatingAction action = (ISelfUpdatingAction) getAction();
+        return super.isVisible() && action.shouldBeVisible();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.action.IContributionItem#update(java.lang.String)
+     */
+    public void update(String propertyName) {
+        ISelfUpdatingAction action = (ISelfUpdatingAction) getAction();
+        action.update();
+
+        super.update(propertyName);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.action.IContributionItem#isDynamic()
+     */
+    public boolean isDynamic() {
+        return true;
+    }
 }

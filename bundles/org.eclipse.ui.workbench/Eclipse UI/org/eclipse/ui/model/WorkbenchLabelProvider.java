@@ -33,185 +33,184 @@ import org.eclipse.ui.internal.util.SWTResourceUtil;
  * This class provides a facility for subclasses to define annotations
  * on the labels and icons of adaptable objects.
  */
-public class WorkbenchLabelProvider extends LabelProvider implements IColorProvider, IFontProvider {
-	
+public class WorkbenchLabelProvider extends LabelProvider implements
+        IColorProvider, IFontProvider {
 
-	/**
-	 * Returns a workbench label provider that is hooked up to the decorator
-	 * mechanism.
-	 * 
-	 * @return a new <code>DecoratingLabelProvider</code> which wraps a <code>
-	 *   new <code>WorkbenchLabelProvider</code>
-	 */
-	public static ILabelProvider getDecoratingWorkbenchLabelProvider() {
-		return new DecoratingLabelProvider(
-			new WorkbenchLabelProvider(),
-			PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator());
-	}
-	/**
-	 * Creates a new workbench label provider.
-	 */
-	public WorkbenchLabelProvider() {
-	    // no-op
-	}
+    /**
+     * Returns a workbench label provider that is hooked up to the decorator
+     * mechanism.
+     * 
+     * @return a new <code>DecoratingLabelProvider</code> which wraps a <code>
+     *   new <code>WorkbenchLabelProvider</code>
+     */
+    public static ILabelProvider getDecoratingWorkbenchLabelProvider() {
+        return new DecoratingLabelProvider(new WorkbenchLabelProvider(),
+                PlatformUI.getWorkbench().getDecoratorManager()
+                        .getLabelDecorator());
+    }
 
-	/**
-	 * Returns an image descriptor that is based on the given descriptor,
-	 * but decorated with additional information relating to the state
-	 * of the provided object.
-	 *
-	 * Subclasses may reimplement this method to decorate an object's
-	 * image.
-	 * 
-	 * @param input The base image to decorate.
-	 * @param element The element used to look up decorations.
-	 * @return the resuling ImageDescriptor.
-	 * @see org.eclipse.jface.resource.CompositeImageDescriptor
-	 */
-	protected ImageDescriptor decorateImage(
-		ImageDescriptor input,
-		Object element) {
-		return input;
-	}
-	/**
-	 * Returns a label that is based on the given label,
-	 * but decorated with additional information relating to the state
-	 * of the provided object.
-	 *
-	 * Subclasses may implement this method to decorate an object's
-	 * label.
-	 * @param input The base text to decorate.
-	 * @param element The element used to look up decorations.
-	 * @return the resulting text
-	 */
-	protected String decorateText(String input, Object element) {
-		return input;
-	}
-	
-	
-	/**
-	 * Returns the implementation of IWorkbenchAdapter for the given
-	 * object.  
-	 * @param o the object to look up.
-	 * @return IWorkbenchAdapter or<code>null</code> if the adapter is not defined or the
-	 * object is not adaptable. 
-	 */
-	protected final IWorkbenchAdapter getAdapter(Object o) {
-		if (!(o instanceof IAdaptable)) {
-			return null;
-		}
-		return (IWorkbenchAdapter) ((IAdaptable) o).getAdapter(
-			IWorkbenchAdapter.class);
-	}
-	
-	/**
-	 * Returns the implementation of IWorkbenchAdapter2 for the given
-	 * object.  
-	 * @param o the object to look up.
-	 * @return IWorkbenchAdapter2 or<code>null</code> if the adapter is not defined or the
-	 * object is not adaptable. 
-	 */
-	protected final IWorkbenchAdapter2 getAdapter2(Object o) {
-		if (!(o instanceof IAdaptable)) {
-			return null;
-		}
-		return (IWorkbenchAdapter2) ((IAdaptable) o).getAdapter(
-			IWorkbenchAdapter2.class);
-	}
-	
-	/* (non-Javadoc)
-	 * Method declared on ILabelProvider
-	 */
-	public final Image getImage(Object element) {
-		//obtain the base image by querying the element
-		IWorkbenchAdapter adapter = getAdapter(element);
-		if (adapter == null) {
-			return null;
-		}
-		ImageDescriptor descriptor = adapter.getImageDescriptor(element);
-		if (descriptor == null) {
-			return null;
-		}
+    /**
+     * Creates a new workbench label provider.
+     */
+    public WorkbenchLabelProvider() {
+        // no-op
+    }
 
-		//add any annotations to the image descriptor
-		descriptor = decorateImage(descriptor, element);
+    /**
+     * Returns an image descriptor that is based on the given descriptor,
+     * but decorated with additional information relating to the state
+     * of the provided object.
+     *
+     * Subclasses may reimplement this method to decorate an object's
+     * image.
+     * 
+     * @param input The base image to decorate.
+     * @param element The element used to look up decorations.
+     * @return the resuling ImageDescriptor.
+     * @see org.eclipse.jface.resource.CompositeImageDescriptor
+     */
+    protected ImageDescriptor decorateImage(ImageDescriptor input,
+            Object element) {
+        return input;
+    }
 
-		Image image = (Image) SWTResourceUtil.getImageTable().get(descriptor);
-		if (image == null) {
-			image = descriptor.createImage();
-			SWTResourceUtil.getImageTable().put(descriptor, image);
-		}
-		return image;
-	}
-	/* (non-Javadoc)
-	 * Method declared on ILabelProvider
-	 */
-	public final String getText(Object element) {
-		//query the element for its label
-		IWorkbenchAdapter adapter = getAdapter(element);
-		if (adapter == null) {
-			return ""; //$NON-NLS-1$
-		}
-		String label = adapter.getLabel(element);
+    /**
+     * Returns a label that is based on the given label,
+     * but decorated with additional information relating to the state
+     * of the provided object.
+     *
+     * Subclasses may implement this method to decorate an object's
+     * label.
+     * @param input The base text to decorate.
+     * @param element The element used to look up decorations.
+     * @return the resulting text
+     */
+    protected String decorateText(String input, Object element) {
+        return input;
+    }
 
-		//return the decorated label
-		return decorateText(label, element);
-	}
-	
+    /**
+     * Returns the implementation of IWorkbenchAdapter for the given
+     * object.  
+     * @param o the object to look up.
+     * @return IWorkbenchAdapter or<code>null</code> if the adapter is not defined or the
+     * object is not adaptable. 
+     */
+    protected final IWorkbenchAdapter getAdapter(Object o) {
+        if (!(o instanceof IAdaptable)) {
+            return null;
+        }
+        return (IWorkbenchAdapter) ((IAdaptable) o)
+                .getAdapter(IWorkbenchAdapter.class);
+    }
+
+    /**
+     * Returns the implementation of IWorkbenchAdapter2 for the given
+     * object.  
+     * @param o the object to look up.
+     * @return IWorkbenchAdapter2 or<code>null</code> if the adapter is not defined or the
+     * object is not adaptable. 
+     */
+    protected final IWorkbenchAdapter2 getAdapter2(Object o) {
+        if (!(o instanceof IAdaptable)) {
+            return null;
+        }
+        return (IWorkbenchAdapter2) ((IAdaptable) o)
+                .getAdapter(IWorkbenchAdapter2.class);
+    }
+
+    /* (non-Javadoc)
+     * Method declared on ILabelProvider
+     */
+    public final Image getImage(Object element) {
+        //obtain the base image by querying the element
+        IWorkbenchAdapter adapter = getAdapter(element);
+        if (adapter == null) {
+            return null;
+        }
+        ImageDescriptor descriptor = adapter.getImageDescriptor(element);
+        if (descriptor == null) {
+            return null;
+        }
+
+        //add any annotations to the image descriptor
+        descriptor = decorateImage(descriptor, element);
+
+        Image image = (Image) SWTResourceUtil.getImageTable().get(descriptor);
+        if (image == null) {
+            image = descriptor.createImage();
+            SWTResourceUtil.getImageTable().put(descriptor, image);
+        }
+        return image;
+    }
+
+    /* (non-Javadoc)
+     * Method declared on ILabelProvider
+     */
+    public final String getText(Object element) {
+        //query the element for its label
+        IWorkbenchAdapter adapter = getAdapter(element);
+        if (adapter == null) {
+            return ""; //$NON-NLS-1$
+        }
+        String label = adapter.getLabel(element);
+
+        //return the decorated label
+        return decorateText(label, element);
+    }
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
      */
     public Color getForeground(Object element) {
         return getColor(element, true);
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
      */
     public Color getBackground(Object element) {
         return getColor(element, false);
     }
-        
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
      */
     public Font getFont(Object element) {
-		IWorkbenchAdapter2 adapter = getAdapter2(element);
-		if (adapter == null) {
-			return null;
-		}
-		
-		FontData descriptor = adapter.getFont(element);
-		if (descriptor == null) {
-			return null;
-		}
+        IWorkbenchAdapter2 adapter = getAdapter2(element);
+        if (adapter == null) {
+            return null;
+        }
 
-		Font font = (Font) SWTResourceUtil.getFontTable().get(descriptor);
-		if (font == null) {
-			font = new Font(Display.getCurrent(), descriptor);
-			SWTResourceUtil.getFontTable().put(descriptor, font);
-		}
-		return font;
+        FontData descriptor = adapter.getFont(element);
+        if (descriptor == null) {
+            return null;
+        }
+
+        Font font = (Font) SWTResourceUtil.getFontTable().get(descriptor);
+        if (font == null) {
+            font = new Font(Display.getCurrent(), descriptor);
+            SWTResourceUtil.getFontTable().put(descriptor, font);
+        }
+        return font;
     }
-    
-    private Color getColor(Object element, boolean forground) {
-		IWorkbenchAdapter2 adapter = getAdapter2(element);
-		if (adapter == null) {
-			return null;
-		}
-		RGB descriptor = 
-		    forground ? 
-		            adapter.getForeground(element) 
-		            : adapter.getBackground(element);
-		if (descriptor == null) {
-			return null;
-		}
 
-		Color color = (Color) SWTResourceUtil.getColorTable().get(descriptor);
-		if (color == null) {
-			color = new Color(Display.getCurrent(), descriptor);
-			SWTResourceUtil.getColorTable().put(descriptor, color);
-		}
-		return color;        
-    }    
+    private Color getColor(Object element, boolean forground) {
+        IWorkbenchAdapter2 adapter = getAdapter2(element);
+        if (adapter == null) {
+            return null;
+        }
+        RGB descriptor = forground ? adapter.getForeground(element) : adapter
+                .getBackground(element);
+        if (descriptor == null) {
+            return null;
+        }
+
+        Color color = (Color) SWTResourceUtil.getColorTable().get(descriptor);
+        if (color == null) {
+            color = new Color(Display.getCurrent(), descriptor);
+            SWTResourceUtil.getColorTable().put(descriptor, color);
+        }
+        return color;
+    }
 }

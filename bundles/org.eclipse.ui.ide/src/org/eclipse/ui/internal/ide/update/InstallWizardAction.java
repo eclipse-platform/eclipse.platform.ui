@@ -24,40 +24,40 @@ import org.eclipse.update.ui.UpdateManagerUI;
  * 
  * @since 3.0
  */
-public class InstallWizardAction extends Action implements IWorkbenchWindowActionDelegate {
+public class InstallWizardAction extends Action implements
+        IWorkbenchWindowActionDelegate {
 
-	private IWorkbenchWindow window;
+    private IWorkbenchWindow window;
 
-	public InstallWizardAction() {
-	    // do nothing
-	}
+    public InstallWizardAction() {
+        // do nothing
+    }
 
-	public void run() {
-	    openInstaller(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
-	}
+    public void run() {
+        openInstaller(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
+    }
 
-	public void run(IAction action) {
-	    openInstaller(window);
-	}
-	
-	private void openInstaller(final IWorkbenchWindow window) {
-		BusyIndicator
-			.showWhile(window.getShell().getDisplay(), new Runnable() {
-			public void run() {
-			    UpdateManagerUI.openInstaller(window.getShell());
-			}
-		});
-	}
-	
-	public void selectionChanged(IAction action, ISelection selection) {
-	    // do nothing
-	}
+    public void run(IAction action) {
+        openInstaller(window);
+    }
 
-	public void dispose() {
-	    // do nothing
-	}
+    private void openInstaller(final IWorkbenchWindow window) {
+        BusyIndicator.showWhile(window.getShell().getDisplay(), new Runnable() {
+            public void run() {
+                UpdateManagerUI.openInstaller(window.getShell());
+            }
+        });
+    }
 
-	public void init(IWorkbenchWindow window) {
-		this.window = window;
-	}
+    public void selectionChanged(IAction action, ISelection selection) {
+        // do nothing
+    }
+
+    public void dispose() {
+        // do nothing
+    }
+
+    public void init(IWorkbenchWindow window) {
+        this.window = window;
+    }
 }

@@ -25,57 +25,57 @@ package org.eclipse.ui.activities;
  * @see IIdentifierListener#identifierChanged(IdentifierEvent)
  */
 public final class IdentifierEvent {
-	private boolean activityIdsChanged;
-	private boolean enabledChanged;
-	private IIdentifier identifier;
+    private boolean activityIdsChanged;
 
-	/**
-	 * Creates a new instance of this class.
-	 * 
-	 * @param identifier
-	 *            the instance of the interface that changed.
-	 * @param activityIdsChanged
-	 *            <code>true</code>, iff the activityIds property changed.
-	 * @param enabledChanged
-	 *            <code>true</code>, iff the enabled property changed.
-	 */
-	public IdentifierEvent(
-		IIdentifier identifier,
-		boolean activityIdsChanged,
-		boolean enabledChanged) {
-		if (identifier == null)
-			throw new NullPointerException();
+    private boolean enabledChanged;
 
-		this.identifier = identifier;
-		this.activityIdsChanged = activityIdsChanged;
-		this.enabledChanged = enabledChanged;
-	}
+    private IIdentifier identifier;
 
-	/**
-	 * Returns the instance of the interface that changed.
-	 * 
-	 * @return the instance of the interface that changed. Guaranteed not to be
-	 *         <code>null</code>.
-	 */
-	public IIdentifier getIdentifier() {
-		return identifier;
-	}
+    /**
+     * Creates a new instance of this class.
+     * 
+     * @param identifier
+     *            the instance of the interface that changed.
+     * @param activityIdsChanged
+     *            <code>true</code>, iff the activityIds property changed.
+     * @param enabledChanged
+     *            <code>true</code>, iff the enabled property changed.
+     */
+    public IdentifierEvent(IIdentifier identifier, boolean activityIdsChanged,
+            boolean enabledChanged) {
+        if (identifier == null)
+            throw new NullPointerException();
 
-	/**
-	 * Returns whether or not the activityIds property changed.
-	 * 
-	 * @return <code>true</code>, iff the activityIds property changed.
-	 */
-	public boolean hasActivityIdsChanged() {
-		return activityIdsChanged;
-	}
+        this.identifier = identifier;
+        this.activityIdsChanged = activityIdsChanged;
+        this.enabledChanged = enabledChanged;
+    }
 
-	/**
-	 * Returns whether or not the enabled property changed.
-	 * 
-	 * @return <code>true</code>, iff the enabled property changed.
-	 */
-	public boolean hasEnabledChanged() {
-		return enabledChanged;
-	}
+    /**
+     * Returns the instance of the interface that changed.
+     * 
+     * @return the instance of the interface that changed. Guaranteed not to be
+     *         <code>null</code>.
+     */
+    public IIdentifier getIdentifier() {
+        return identifier;
+    }
+
+    /**
+     * Returns whether or not the activityIds property changed.
+     * 
+     * @return <code>true</code>, iff the activityIds property changed.
+     */
+    public boolean hasActivityIdsChanged() {
+        return activityIdsChanged;
+    }
+
+    /**
+     * Returns whether or not the enabled property changed.
+     * 
+     * @return <code>true</code>, iff the enabled property changed.
+     */
+    public boolean hasEnabledChanged() {
+        return enabledChanged;
+    }
 }

@@ -22,43 +22,46 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 
 public class BooleanPropertyAction extends Action {
 
-	private IPreferenceStore preferenceStore;
-	private String property;	
+    private IPreferenceStore preferenceStore;
 
-	/**
-	 * Create a new instance of the receiver.
-	 * @param title The displayable name of the action.
-	 * @param preferenceStore The preference store to propogate changes to
-	 * @param property The property that is being updated
-	 * @throws IllegalArgumentException. Thrown if preferenceStore or
-	 * property are <code>null</code>.
-	 */
-	public BooleanPropertyAction(String title, IPreferenceStore preferenceStore, String property)
-		throws IllegalArgumentException {
-		super(title, AS_CHECK_BOX);
-		
-		if (preferenceStore == null || property == null)
-			throw new IllegalArgumentException();
-		
-		this.preferenceStore = preferenceStore;
-		this.property = property;
-		final String finalProprety = property;
-		
-		preferenceStore.addPropertyChangeListener(new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				if (finalProprety.equals(event.getProperty()))
-					setChecked(Boolean.TRUE.equals(event.getNewValue())); 
-			}
-		});
+    private String property;
 
-		setChecked(preferenceStore.getBoolean(property));		
-	}
+    /**
+     * Create a new instance of the receiver.
+     * @param title The displayable name of the action.
+     * @param preferenceStore The preference store to propogate changes to
+     * @param property The property that is being updated
+     * @throws IllegalArgumentException. Thrown if preferenceStore or
+     * property are <code>null</code>.
+     */
+    public BooleanPropertyAction(String title,
+            IPreferenceStore preferenceStore, String property)
+            throws IllegalArgumentException {
+        super(title, AS_CHECK_BOX);
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
-	public void run() {
-		preferenceStore.setValue(property, isChecked());
-	}
+        if (preferenceStore == null || property == null)
+            throw new IllegalArgumentException();
+
+        this.preferenceStore = preferenceStore;
+        this.property = property;
+        final String finalProprety = property;
+
+        preferenceStore
+                .addPropertyChangeListener(new IPropertyChangeListener() {
+                    public void propertyChange(PropertyChangeEvent event) {
+                        if (finalProprety.equals(event.getProperty()))
+                            setChecked(Boolean.TRUE.equals(event.getNewValue()));
+                    }
+                });
+
+        setChecked(preferenceStore.getBoolean(property));
+    }
+
+    /*
+     *  (non-Javadoc)
+     * @see org.eclipse.jface.action.IAction#run()
+     */
+    public void run() {
+        preferenceStore.setValue(property, isChecked());
+    }
 }

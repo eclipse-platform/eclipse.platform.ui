@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-
-import org.eclipse.ui.*;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveListener;
+import org.eclipse.ui.IWorkbenchPage;
 
 /**
  * Interface for listening to a perspective lifecycle events.
@@ -22,22 +23,24 @@ import org.eclipse.ui.*;
  * @see IPerspectiveService
  */
 public interface IInternalPerspectiveListener extends IPerspectiveListener {
-	
-	/**
-	 * Notifies this listener that the given page's perspective
-	 * has been closed.
-	 *
-	 * @param page the page whose perspective was closed
-	 * @param perspective the descriptor of the perspective that was closed
-	 */
-	public void perspectiveClosed(IWorkbenchPage page, IPerspectiveDescriptor perspective);
 
-	/**
-	 * Notifies this listener that the given page's perspective
-	 * has been opened. The perspective is not active yet.
-	 *
-	 * @param page the page whose perspective was opened
-	 * @param perspective the descriptor of the perspective that was opened
-	 */
-	public void perspectiveOpened(IWorkbenchPage page, IPerspectiveDescriptor perspective);
+    /**
+     * Notifies this listener that the given page's perspective
+     * has been closed.
+     *
+     * @param page the page whose perspective was closed
+     * @param perspective the descriptor of the perspective that was closed
+     */
+    public void perspectiveClosed(IWorkbenchPage page,
+            IPerspectiveDescriptor perspective);
+
+    /**
+     * Notifies this listener that the given page's perspective
+     * has been opened. The perspective is not active yet.
+     *
+     * @param page the page whose perspective was opened
+     * @param perspective the descriptor of the perspective that was opened
+     */
+    public void perspectiveOpened(IWorkbenchPage page,
+            IPerspectiveDescriptor perspective);
 }

@@ -16,20 +16,24 @@ import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.themes.IThemePreview;
 
-
 /**
  * @since 3.0
  */
-public class ThemeElementCategory implements IPluginContribution, IThemeElementDefinition {
-    
-	public static ThemeElementCategory [] categories;
-		
-    private String description;
-    private IConfigurationElement element;
-	private String id;
-	private String parentId;
+public class ThemeElementCategory implements IPluginContribution,
+        IThemeElementDefinition {
 
-    private String label;    
+    public static ThemeElementCategory[] categories;
+
+    private String description;
+
+    private IConfigurationElement element;
+
+    private String id;
+
+    private String parentId;
+
+    private String label;
+
     private String pluginId;
 
     /**
@@ -40,22 +44,17 @@ public class ThemeElementCategory implements IPluginContribution, IThemeElementD
      * @param pluginId
      * @param element
      */
-    public ThemeElementCategory(
-            String label,
-			String id,
-			String parentId,
-			String description,
-			String pluginId,
-			IConfigurationElement element) {
-	    
+    public ThemeElementCategory(String label, String id, String parentId,
+            String description, String pluginId, IConfigurationElement element) {
+
         this.label = label;
-	    this.id = id;
-	    this.parentId = parentId;
-	    this.description = description;
-	    this.pluginId = pluginId;
-	    this.element = element;	    
-	}
-    
+        this.id = id;
+        this.parentId = parentId;
+        this.description = description;
+        this.pluginId = pluginId;
+        this.element = element;
+    }
+
     /**
      * @return Returns the <code>IColorExample</code> for this category.  If one
      * is not available, <code>null</code> is returned.
@@ -64,8 +63,9 @@ public class ThemeElementCategory implements IPluginContribution, IThemeElementD
     public IThemePreview createPreview() throws CoreException {
         String classString = element.getAttribute("class"); //$NON-NLS-1$
         if (classString == null || "".equals(classString)) //$NON-NLS-1$
-                return null;
-        return (IThemePreview) WorkbenchPlugin.createExtension(element, ThemeRegistryReader.ATT_CLASS);
+            return null;
+        return (IThemePreview) WorkbenchPlugin.createExtension(element,
+                ThemeRegistryReader.ATT_CLASS);
     }
 
     /**
@@ -74,20 +74,20 @@ public class ThemeElementCategory implements IPluginContribution, IThemeElementD
     public String getDescription() {
         return description;
     }
-    
+
     /**
      * @return Returns the element.
      */
     public IConfigurationElement getElement() {
         return element;
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.themes.IThemeElementDefinition#getId()
      */
     public String getId() {
         return id;
-    }  
+    }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.themes.IThemeElementDefinition#getLabel()
@@ -109,7 +109,7 @@ public class ThemeElementCategory implements IPluginContribution, IThemeElementD
     public String getPluginId() {
         return pluginId;
     }
-    
+
     /**
      * @return Returns the parentId.  May be <code>null</code>.
      */

@@ -18,27 +18,28 @@ import org.eclipse.ui.internal.registry.IViewDescriptor;
 /**
  * A view container manages the services for a view.
  */
-public class ViewSite extends PartSite
-	implements IViewSite
-{
-/**
- * Creates a new ViewSite.
- */
-public ViewSite(IViewReference ref, IViewPart view, WorkbenchPage page, IViewDescriptor desc) {
-	super(ref, view, page);
-	setConfigurationElement(desc.getConfigurationElement());
-}
-/**
- * Returns the secondary id or <code>null</code>.
- */
-public String getSecondaryId() {
-    return ((IViewReference) getPartReference()).getSecondaryId();
-}
-/**
- * Returns the view.
- */
-public IViewPart getViewPart() {
-	return (IViewPart)getPart();
-}
+public class ViewSite extends PartSite implements IViewSite {
+    /**
+     * Creates a new ViewSite.
+     */
+    public ViewSite(IViewReference ref, IViewPart view, WorkbenchPage page,
+            IViewDescriptor desc) {
+        super(ref, view, page);
+        setConfigurationElement(desc.getConfigurationElement());
+    }
+
+    /**
+     * Returns the secondary id or <code>null</code>.
+     */
+    public String getSecondaryId() {
+        return ((IViewReference) getPartReference()).getSecondaryId();
+    }
+
+    /**
+     * Returns the view.
+     */
+    public IViewPart getViewPart() {
+        return (IViewPart) getPart();
+    }
 
 }

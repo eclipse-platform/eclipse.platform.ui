@@ -31,58 +31,56 @@ import org.eclipse.jface.util.IPropertyChangeListener;
  * @since 3.0
  */
 public interface IThemeManager {
-		
-	/**
-	 * Indicates that the current theme has changed to a new theme.
-	 */
-	public static final String CHANGE_CURRENT_THEME = "CHANGE_CURRENT_THEME"; //$NON-NLS-1$
-    
-    /**
-	 * The default theme id.
-	 */
-	public static final String DEFAULT_THEME = "org.eclipse.ui.defaultTheme"; //$NON-NLS-1$ 
 
     /**
-	 * Adds a property listener to the manager.  Any events fired by the 
-	 * underlying registries of the current theme will cause an event to be 
-	 * fired.  This event is the same event that was fired by the registry.
-	 * As such, the "source" attribute of the event will not be this manager, 
-	 * but rather the color or font registry.  Additionally, an event is fired 
-	 * when the current theme changes to a new theme.  The "property" attribute
-	 * of such an event will have the value {@link IThemeManager#CHANGE_CURRENT_THEME}.
-	 * 
-	 * @param listener the listener to add
-	 */
-    void addPropertyChangeListener(
-            IPropertyChangeListener listener);
+     * Indicates that the current theme has changed to a new theme.
+     */
+    public static final String CHANGE_CURRENT_THEME = "CHANGE_CURRENT_THEME"; //$NON-NLS-1$
 
     /**
-	 * Get the currently active theme.
-	 * 
-	 * @return the current theme.  This will never be <code>null</code>.
-	 */
+     * The default theme id.
+     */
+    public static final String DEFAULT_THEME = "org.eclipse.ui.defaultTheme"; //$NON-NLS-1$ 
+
+    /**
+     * Adds a property listener to the manager.  Any events fired by the 
+     * underlying registries of the current theme will cause an event to be 
+     * fired.  This event is the same event that was fired by the registry.
+     * As such, the "source" attribute of the event will not be this manager, 
+     * but rather the color or font registry.  Additionally, an event is fired 
+     * when the current theme changes to a new theme.  The "property" attribute
+     * of such an event will have the value {@link IThemeManager#CHANGE_CURRENT_THEME}.
+     * 
+     * @param listener the listener to add
+     */
+    void addPropertyChangeListener(IPropertyChangeListener listener);
+
+    /**
+     * Get the currently active theme.
+     * 
+     * @return the current theme.  This will never be <code>null</code>.
+     */
     ITheme getCurrentTheme();
-	
+
     /**
-	 * Get a theme.
-	 * 
-	 * @param id the theme to find.
-	 * @return the <code>ITheme</code> or <code>null</code> if it cannot be found.
-	 */
+     * Get a theme.
+     * 
+     * @param id the theme to find.
+     * @return the <code>ITheme</code> or <code>null</code> if it cannot be found.
+     */
     ITheme getTheme(String id);
 
     /**
-	 * Removes a property listener from the workbench.
-	 * 
-	 * @param listener the listener to remove 
-	 */    
-    void removePropertyChangeListener(
-            IPropertyChangeListener listener);
-    
+     * Removes a property listener from the workbench.
+     * 
+     * @param listener the listener to remove 
+     */
+    void removePropertyChangeListener(IPropertyChangeListener listener);
+
     /**
-	 * Set the currently active theme.
-	 * 
-	 * @param id the id of the new active theme
-	 */
-    void setCurrentTheme(String id);    
+     * Set the currently active theme.
+     * 
+     * @param id the id of the new active theme
+     */
+    void setCurrentTheme(String id);
 }

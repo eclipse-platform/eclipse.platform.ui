@@ -24,64 +24,64 @@ import org.eclipse.ui.internal.keys.FormalKeyFormatter;
  * @see org.eclipse.ui.keys.IKeyFormatter
  */
 public final class KeyFormatterFactory {
-	private static final IKeyFormatter COMPACT_KEY_FORMATTER =
-		new CompactKeyFormatter();
-	private static final IKeyFormatter FORMAL_KEY_FORMATTER =
-		new FormalKeyFormatter();
-	private static final IKeyFormatter EMACS_KEY_FORMATTER =
-		new EmacsKeyFormatter();
-	private static IKeyFormatter defaultKeyFormatter = FORMAL_KEY_FORMATTER;
+    private static final IKeyFormatter COMPACT_KEY_FORMATTER = new CompactKeyFormatter();
 
-	/**
-	 * Provides an instance of <code>CompactKeyFormatter</code>.
-	 * 
-	 * @return The compact formatter; never <code>null</code>.
-	 */
-	public static final IKeyFormatter getCompactKeyFormatter() {
-		return COMPACT_KEY_FORMATTER;
-	}
+    private static final IKeyFormatter FORMAL_KEY_FORMATTER = new FormalKeyFormatter();
 
-	/**
-	 * An accessor for the current default key formatter.
-	 * 
-	 * @return The default formatter; never <code>null</code>.
-	 */
-	public static IKeyFormatter getDefault() {
-		return defaultKeyFormatter;
-	}
+    private static final IKeyFormatter EMACS_KEY_FORMATTER = new EmacsKeyFormatter();
 
-	/**
-	 * Provides an instance of <code>EmacsKeyFormatter</code>.
-	 * 
-	 * @return The Xemacs formatter; never <code>null</code>.
-	 */
-	public static IKeyFormatter getEmacsKeyFormatter() {
-		return EMACS_KEY_FORMATTER;
-	}
+    private static IKeyFormatter defaultKeyFormatter = FORMAL_KEY_FORMATTER;
 
-	/**
-	 * Provides an instance of <code>FormalKeyFormatter</code>.
-	 * 
-	 * @return The formal formatter; never <code>null</code>.
-	 */
-	public static IKeyFormatter getFormalKeyFormatter() {
-		return FORMAL_KEY_FORMATTER;
-	}
+    /**
+     * Provides an instance of <code>CompactKeyFormatter</code>.
+     * 
+     * @return The compact formatter; never <code>null</code>.
+     */
+    public static final IKeyFormatter getCompactKeyFormatter() {
+        return COMPACT_KEY_FORMATTER;
+    }
 
-	/**
-	 * Sets the default key formatter.
-	 * 
-	 * @param defaultKeyFormatter
-	 *            the default key formatter. Must not be <code>null</code>.
-	 */
-	public static void setDefault(IKeyFormatter defaultKeyFormatter) {
-		if (defaultKeyFormatter == null)
-			throw new NullPointerException();
+    /**
+     * An accessor for the current default key formatter.
+     * 
+     * @return The default formatter; never <code>null</code>.
+     */
+    public static IKeyFormatter getDefault() {
+        return defaultKeyFormatter;
+    }
 
-		KeyFormatterFactory.defaultKeyFormatter = defaultKeyFormatter;
-	}
+    /**
+     * Provides an instance of <code>EmacsKeyFormatter</code>.
+     * 
+     * @return The Xemacs formatter; never <code>null</code>.
+     */
+    public static IKeyFormatter getEmacsKeyFormatter() {
+        return EMACS_KEY_FORMATTER;
+    }
 
-	private KeyFormatterFactory() {
-	    // Not to be constructred.
-	}
+    /**
+     * Provides an instance of <code>FormalKeyFormatter</code>.
+     * 
+     * @return The formal formatter; never <code>null</code>.
+     */
+    public static IKeyFormatter getFormalKeyFormatter() {
+        return FORMAL_KEY_FORMATTER;
+    }
+
+    /**
+     * Sets the default key formatter.
+     * 
+     * @param defaultKeyFormatter
+     *            the default key formatter. Must not be <code>null</code>.
+     */
+    public static void setDefault(IKeyFormatter defaultKeyFormatter) {
+        if (defaultKeyFormatter == null)
+            throw new NullPointerException();
+
+        KeyFormatterFactory.defaultKeyFormatter = defaultKeyFormatter;
+    }
+
+    private KeyFormatterFactory() {
+        // Not to be constructred.
+    }
 }

@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
- import org.eclipse.ui.*;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IWorkbenchWindow;
 
 /**
  * An action set is responsible for the creation of actions.
@@ -30,25 +31,26 @@ package org.eclipse.ui.internal.registry;
  * </p>
  */
 public interface IActionSet {
-/**
- * Disposes of this action set.
- * <p>
- * Implementation should remove any references to the window and action bars 
- * created in the <code>init</code>.
- * </p>
- * <p>
- * [Issue: Should this say: "...should remove anything they contributed
- *  in <code>init</code>? Or is most of the withdrawal done automatically?
- * ]
- * </p>
- */
-public void dispose();
-/**
- * Initializes this action set, which is expected to add it actions as required
- * to the given workbench window and action bars.
- *
- * @param window the workbench window
- * @param bars the action bars
- */
-public void init(IWorkbenchWindow window, IActionBars bars);
+    /**
+     * Disposes of this action set.
+     * <p>
+     * Implementation should remove any references to the window and action bars 
+     * created in the <code>init</code>.
+     * </p>
+     * <p>
+     * [Issue: Should this say: "...should remove anything they contributed
+     *  in <code>init</code>? Or is most of the withdrawal done automatically?
+     * ]
+     * </p>
+     */
+    public void dispose();
+
+    /**
+     * Initializes this action set, which is expected to add it actions as required
+     * to the given workbench window and action bars.
+     *
+     * @param window the workbench window
+     * @param bars the action bars
+     */
+    public void init(IWorkbenchWindow window, IActionBars bars);
 }

@@ -17,44 +17,46 @@ import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IStickyViewDescriptor;
 
-
 /**
  * Utility class that will test various view properties.
  * 
  * @since 3.0
  */
 public final class ViewUtils {
-    
+
     public static boolean findInStack(IViewPart[] stack, IViewPart target) {
         for (int i = 0; i < stack.length; i++) {
             if (stack[i] == target)
-                return true;                
+                return true;
         }
-        return false;        
+        return false;
     }
-    
+
     public static boolean isCloseable(IViewPart part) {
-        ViewSite viewSite = (ViewSite)part.getSite();
+        ViewSite viewSite = (ViewSite) part.getSite();
         String id = viewSite.getId();
-        IViewReference ref = viewSite.getPage().findViewReference(id);                
-        return ((WorkbenchPage)viewSite.getPage()).getActivePerspective().isCloseable(ref);
+        IViewReference ref = viewSite.getPage().findViewReference(id);
+        return ((WorkbenchPage) viewSite.getPage()).getActivePerspective()
+                .isCloseable(ref);
     }
 
     public static boolean isMoveable(IViewPart part) {
-        ViewSite viewSite = (ViewSite)part.getSite();
+        ViewSite viewSite = (ViewSite) part.getSite();
         String id = viewSite.getId();
-        IViewReference ref = viewSite.getPage().findViewReference(id);                
-        return ((WorkbenchPage)viewSite.getPage()).getActivePerspective().isMoveable(ref);
+        IViewReference ref = viewSite.getPage().findViewReference(id);
+        return ((WorkbenchPage) viewSite.getPage()).getActivePerspective()
+                .isMoveable(ref);
     }
-    
+
     public static boolean isSticky(IViewPart part) {
         String id = part.getSite().getId();
-        IStickyViewDescriptor [] descs = WorkbenchPlugin.getDefault().getViewRegistry().getStickyViews();
+        IStickyViewDescriptor[] descs = WorkbenchPlugin.getDefault()
+                .getViewRegistry().getStickyViews();
         for (int i = 0; i < descs.length; i++) {
             if (descs[i].getId().equals(id))
                 return true;
         }
-        return false;        
+        return false;
     }
 
     /**

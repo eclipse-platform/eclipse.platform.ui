@@ -101,15 +101,16 @@ public class KeysPreferencePage extends
                 compareTo = Util.compare(keySequence, castedObject.keySequence);
 
                 if (compareTo == 0)
-                        compareTo = Util.compare(assignment,
-                                castedObject.assignment);
+                    compareTo = Util.compare(assignment,
+                            castedObject.assignment);
             }
 
             return compareTo;
         }
 
         public boolean equals(Object object) {
-            if (!(object instanceof CommandAssignment)) return false;
+            if (!(object instanceof CommandAssignment))
+                return false;
 
             CommandAssignment castedObject = (CommandAssignment) object;
             boolean equals = true;
@@ -131,14 +132,14 @@ public class KeysPreferencePage extends
             int compareTo = Util.compare(contextId, castedObject.contextId);
 
             if (compareTo == 0)
-                    compareTo = Util.compare(assignment,
-                            castedObject.assignment);
+                compareTo = Util.compare(assignment, castedObject.assignment);
 
             return compareTo;
         }
 
         public boolean equals(Object object) {
-            if (!(object instanceof CommandAssignment)) return false;
+            if (!(object instanceof CommandAssignment))
+                return false;
 
             KeySequenceAssignment castedObject = (KeySequenceAssignment) object;
             boolean equals = true;
@@ -318,7 +319,7 @@ public class KeysPreferencePage extends
                     if (pluginCommandId != null) {
                         matchFoundInFirstKeyConfiguration = true;
                     }
-                } else if (!matchFoundInFirstKeyConfiguration) { 
+                } else if (!matchFoundInFirstKeyConfiguration) {
                     pluginCommandId = assignment.pluginCommandIdInInheritedKeyConfiguration;
                 } else {
                     createTableItem = false;
@@ -380,7 +381,7 @@ public class KeysPreferencePage extends
     private void buildKeySequenceAssignmentsTable() {
         tableAssignmentsForKeySequence.removeAll();
         boolean matchFoundInFirstKeyConfiguration = false;
-        
+
         for (Iterator iterator = keySequenceAssignments.iterator(); iterator
                 .hasNext();) {
             boolean createTableItem = true;
@@ -542,7 +543,7 @@ public class KeysPreferencePage extends
 
                     public void propertyChange(PropertyChangeEvent event) {
                         if (event.getProperty().equals(FieldEditor.IS_VALID))
-                                setValid(textMultiKeyAssistTime.isValid());
+                            setValid(textMultiKeyAssistTime.isValid());
                     }
                 });
 
@@ -929,8 +930,9 @@ public class KeysPreferencePage extends
 
     protected Control createContents(Composite parent) {
         // Initialize the minus colour.
-        minusColour = getShell().getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
-        
+        minusColour = getShell().getDisplay().getSystemColor(
+                SWT.COLOR_WIDGET_NORMAL_SHADOW);
+
         final TabFolder tabFolder = new TabFolder(parent, SWT.NULL);
 
         // Basic tab
@@ -1082,7 +1084,7 @@ public class KeysPreferencePage extends
 
     private void selectAssignmentForCommand(String contextId) {
         if (tableAssignmentsForCommand.getSelectionCount() > 1)
-                tableAssignmentsForCommand.deselectAll();
+            tableAssignmentsForCommand.deselectAll();
 
         int i = 0;
         int selection = -1;
@@ -1111,7 +1113,7 @@ public class KeysPreferencePage extends
 
     private void selectAssignmentForKeySequence(String contextId) {
         if (tableAssignmentsForKeySequence.getSelectionCount() > 1)
-                tableAssignmentsForKeySequence.deselectAll();
+            tableAssignmentsForKeySequence.deselectAll();
 
         int i = 0;
         int selection = -1;
@@ -1241,18 +1243,18 @@ public class KeysPreferencePage extends
             Map assignmentsByContextId = (Map) entry.getValue();
 
             if (assignmentsByContextId != null)
-                    for (Iterator iterator2 = assignmentsByContextId.entrySet()
-                            .iterator(); iterator2.hasNext();) {
-                        Map.Entry entry2 = (Map.Entry) iterator2.next();
-                        CommandAssignment commandAssignment = new CommandAssignment();
-                        commandAssignment.assignment = (KeySequenceBindingNode.Assignment) entry2
-                                .getValue();
-                        commandAssignment.contextId = (String) entry2.getKey();
-                        commandAssignment.keySequence = keySequence;
+                for (Iterator iterator2 = assignmentsByContextId.entrySet()
+                        .iterator(); iterator2.hasNext();) {
+                    Map.Entry entry2 = (Map.Entry) iterator2.next();
+                    CommandAssignment commandAssignment = new CommandAssignment();
+                    commandAssignment.assignment = (KeySequenceBindingNode.Assignment) entry2
+                            .getValue();
+                    commandAssignment.contextId = (String) entry2.getKey();
+                    commandAssignment.keySequence = keySequence;
 
-                        if (commandAssignment.assignment.contains(commandId))
-                                commandAssignments.add(commandAssignment);
-                    }
+                    if (commandAssignment.assignment.contains(commandId))
+                        commandAssignments.add(commandAssignment);
+                }
         }
 
         buildCommandAssignmentsTable();
@@ -1265,15 +1267,15 @@ public class KeysPreferencePage extends
                 .get(keySequence);
 
         if (assignmentsByContextId != null)
-                for (Iterator iterator = assignmentsByContextId.entrySet()
-                        .iterator(); iterator.hasNext();) {
-                    Map.Entry entry = (Map.Entry) iterator.next();
-                    KeySequenceAssignment keySequenceAssignment = new KeySequenceAssignment();
-                    keySequenceAssignment.assignment = (KeySequenceBindingNode.Assignment) entry
-                            .getValue();
-                    keySequenceAssignment.contextId = (String) entry.getKey();
-                    keySequenceAssignments.add(keySequenceAssignment);
-                }
+            for (Iterator iterator = assignmentsByContextId.entrySet()
+                    .iterator(); iterator.hasNext();) {
+                Map.Entry entry = (Map.Entry) iterator.next();
+                KeySequenceAssignment keySequenceAssignment = new KeySequenceAssignment();
+                keySequenceAssignment.assignment = (KeySequenceBindingNode.Assignment) entry
+                        .getValue();
+                keySequenceAssignment.contextId = (String) entry.getKey();
+                keySequenceAssignments.add(keySequenceAssignment);
+            }
 
         buildKeySequenceAssignmentsTable();
     }
@@ -1312,7 +1314,7 @@ public class KeysPreferencePage extends
         setCommandId(commandId);
 
         if (comboCommand.getSelectionIndex() == -1 && !commandNames.isEmpty())
-                comboCommand.select(0);
+            comboCommand.select(0);
     }
 
     /**
@@ -1370,7 +1372,7 @@ public class KeysPreferencePage extends
         setContextId(contextId);
 
         if (comboContext.getSelectionIndex() == -1 && !contextNames.isEmpty())
-                comboContext.select(0);
+            comboContext.select(0);
     }
 
     private void setKeyConfigurationId(String keyConfigurationId) {
@@ -1507,7 +1509,7 @@ public class KeysPreferencePage extends
                         String uniqueName = MessageFormat.format(
                                 Util.translateString(RESOURCE_BUNDLE,
                                         "uniqueName"), new Object[] { name, //$NON-NLS-1$
-                                        context.getId()});
+                                        context.getId() });
                         contextIdsByUniqueName.put(uniqueName, context.getId());
                         contextUniqueNamesById.put(context.getId(), uniqueName);
                     }
@@ -1533,7 +1535,7 @@ public class KeysPreferencePage extends
                         String uniqueName = MessageFormat.format(
                                 Util.translateString(RESOURCE_BUNDLE,
                                         "uniqueName"), new Object[] { name, //$NON-NLS-1$
-                                        category.getId()});
+                                        category.getId() });
                         categoryIdsByUniqueName.put(uniqueName, category
                                 .getId());
                         categoryUniqueNamesById.put(category.getId(),
@@ -1561,7 +1563,7 @@ public class KeysPreferencePage extends
                         String uniqueName = MessageFormat.format(
                                 Util.translateString(RESOURCE_BUNDLE,
                                         "uniqueName"), new Object[] { name, //$NON-NLS-1$
-                                        command.getId()});
+                                        command.getId() });
                         commandIdsByUniqueName.put(uniqueName, command.getId());
                         commandUniqueNamesById.put(command.getId(), uniqueName);
                     }
@@ -1591,7 +1593,7 @@ public class KeysPreferencePage extends
                         String uniqueName = MessageFormat.format(
                                 Util.translateString(RESOURCE_BUNDLE,
                                         "uniqueName"), new Object[] { name, //$NON-NLS-1$
-                                        keyConfiguration.getId()});
+                                        keyConfiguration.getId() });
                         keyConfigurationIdsByUniqueName.put(uniqueName,
                                 keyConfiguration.getId());
                         keyConfigurationUniqueNamesById.put(keyConfiguration
@@ -1643,7 +1645,8 @@ public class KeysPreferencePage extends
                 String keyConfigurationId = keySequenceBindingDefinition
                         .getKeyConfigurationId();
                 boolean validKeySequence = keySequence != null
-                        && MutableCommandManager.validateKeySequence(keySequence);
+                        && MutableCommandManager
+                                .validateKeySequence(keySequence);
                 boolean validContextId = contextId == null
                         || contextManager.getDefinedContextIds().contains(
                                 contextId);
@@ -1655,7 +1658,8 @@ public class KeysPreferencePage extends
                                 .contains(keyConfigurationId);
 
                 if (!validKeySequence || !validCommandId || !validContextId
-                        || !validKeyConfigurationId) iterator.remove();
+                        || !validKeyConfigurationId)
+                    iterator.remove();
             }
 
             List preferenceKeySequenceBindingDefinitions = new ArrayList(
@@ -1672,7 +1676,8 @@ public class KeysPreferencePage extends
                 String keyConfigurationId = keySequenceBindingDefinition
                         .getKeyConfigurationId();
                 boolean validKeySequence = keySequence != null
-                        && MutableCommandManager.validateKeySequence(keySequence);
+                        && MutableCommandManager
+                                .validateKeySequence(keySequence);
                 boolean validContextId = contextId == null
                         || contextManager.getDefinedContextIds().contains(
                                 contextId);
@@ -1684,7 +1689,8 @@ public class KeysPreferencePage extends
                                 .contains(keyConfigurationId);
 
                 if (!validKeySequence || !validCommandId || !validContextId
-                        || !validKeyConfigurationId) iterator.remove();
+                        || !validKeyConfigurationId)
+                    iterator.remove();
             }
 
             tree = new TreeMap();
@@ -1740,8 +1746,8 @@ public class KeysPreferencePage extends
             Collections.sort(categoryNames, Collator.getInstance());
 
             if (commandIdsByCategoryId.containsKey(null))
-                    categoryNames.add(0, Util.translateString(RESOURCE_BUNDLE,
-                            "other")); //$NON-NLS-1$
+                categoryNames.add(0, Util.translateString(RESOURCE_BUNDLE,
+                        "other")); //$NON-NLS-1$
 
             comboCategory.setItems((String[]) categoryNames
                     .toArray(new String[categoryNames.size()]));
@@ -1749,7 +1755,8 @@ public class KeysPreferencePage extends
             comboCategory.deselectAll();
 
             if (commandIdsByCategoryId.containsKey(null)
-                    || !categoryNames.isEmpty()) comboCategory.select(0);
+                    || !categoryNames.isEmpty())
+                comboCategory.select(0);
 
             List keyConfigurationNames = new ArrayList(
                     keyConfigurationIdsByUniqueName.keySet());
@@ -1771,11 +1778,12 @@ public class KeysPreferencePage extends
         String[] activeKeyConfigurationIds = MutableCommandManager
                 .extend(commandManager
                         .getKeyConfigurationIds(keyConfigurationId));
-        String[] activeLocales = MutableCommandManager.extend(MutableCommandManager.getPath(
-                commandManager.getActiveLocale(), MutableCommandManager.SEPARATOR));
-        String[] activePlatforms = MutableCommandManager.extend(MutableCommandManager
-                .getPath(commandManager.getActivePlatform(),
-                        MutableCommandManager.SEPARATOR));
+        String[] activeLocales = MutableCommandManager
+                .extend(MutableCommandManager.getPath(commandManager
+                        .getActiveLocale(), MutableCommandManager.SEPARATOR));
+        String[] activePlatforms = MutableCommandManager
+                .extend(MutableCommandManager.getPath(commandManager
+                        .getActivePlatform(), MutableCommandManager.SEPARATOR));
         KeySequenceBindingNode.solve(tree, activeKeyConfigurationIds,
                 activePlatforms, activeLocales);
         assignmentsByContextIdByKeySequence = KeySequenceBindingNode
@@ -1823,7 +1831,7 @@ public class KeysPreferencePage extends
                             labelContextExtends.setText(MessageFormat.format(
                                     Util.translateString(RESOURCE_BUNDLE,
                                             "extends"), //$NON-NLS-1$
-                                    new Object[] { name}));
+                                    new Object[] { name }));
 
                             return;
                         }
@@ -1851,7 +1859,7 @@ public class KeysPreferencePage extends
                 if (name != null) {
                     labelKeyConfigurationExtends.setText(MessageFormat.format(
                             Util.translateString(RESOURCE_BUNDLE, "extends"), //$NON-NLS-1$
-                            new Object[] { name}));
+                            new Object[] { name }));
                     return;
                 }
             } catch (org.eclipse.ui.commands.NotDefinedException eNotDefined) {

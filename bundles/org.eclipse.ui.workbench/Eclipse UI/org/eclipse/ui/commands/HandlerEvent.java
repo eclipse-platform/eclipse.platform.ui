@@ -60,16 +60,17 @@ public final class HandlerEvent {
      */
     public HandlerEvent(IHandler handler, boolean attributeValuesByNameChanged,
             Map previousAttributeValuesByName) {
-        if (handler == null) throw new NullPointerException();
+        if (handler == null)
+            throw new NullPointerException();
 
         if (!attributeValuesByNameChanged
                 && previousAttributeValuesByName != null)
-                throw new IllegalArgumentException();
+            throw new IllegalArgumentException();
 
         if (attributeValuesByNameChanged) {
-                this.previousAttributeValuesByName = Util.safeCopy(
-                        previousAttributeValuesByName, String.class,
-                        Object.class, false, true);
+            this.previousAttributeValuesByName = Util.safeCopy(
+                    previousAttributeValuesByName, String.class, Object.class,
+                    false, true);
         } else {
             this.previousAttributeValuesByName = null;
         }

@@ -19,32 +19,32 @@ import org.eclipse.ui.IContributorResourceAdapter;
  * implementation of the IContributorResourceAdapter used for 
  * one to one resource adaption.
  */
-public class DefaultContributorResourceAdapter
-	implements IContributorResourceAdapter {
-		
-	private static IContributorResourceAdapter singleton;
+public class DefaultContributorResourceAdapter implements
+        IContributorResourceAdapter {
 
-	/**
-	 * Constructor for DefaultContributorResourceAdapter.
-	 */
-	public DefaultContributorResourceAdapter() {
-		super();
-	}
+    private static IContributorResourceAdapter singleton;
 
-	/**
-	 * Return the default instance used for TaskList adapting.
-	 */
-	public static IContributorResourceAdapter getDefault(){
-		if(singleton == null)
-			singleton = new DefaultContributorResourceAdapter();
-		return singleton;
-	}
-	
-	/*
-	 * @see IContributorResourceAdapter#getAdaptedResource(IAdaptable)
-	 */
-	public IResource getAdaptedResource(IAdaptable adaptable) {
-		return (IResource) adaptable.getAdapter(IResource.class);
-	}
+    /**
+     * Constructor for DefaultContributorResourceAdapter.
+     */
+    public DefaultContributorResourceAdapter() {
+        super();
+    }
+
+    /**
+     * Return the default instance used for TaskList adapting.
+     */
+    public static IContributorResourceAdapter getDefault() {
+        if (singleton == null)
+            singleton = new DefaultContributorResourceAdapter();
+        return singleton;
+    }
+
+    /*
+     * @see IContributorResourceAdapter#getAdaptedResource(IAdaptable)
+     */
+    public IResource getAdaptedResource(IAdaptable adaptable) {
+        return (IResource) adaptable.getAdapter(IResource.class);
+    }
 }
 

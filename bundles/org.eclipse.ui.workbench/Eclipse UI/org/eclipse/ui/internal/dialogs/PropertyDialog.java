@@ -10,10 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * This dialog is created and shown when 'Properties' action is performed while
@@ -21,44 +20,45 @@ import org.eclipse.jface.viewers.ISelection;
  * type.
  */
 public class PropertyDialog extends FilteredPreferenceDialog {
-	private ISelection selection;
+    private ISelection selection;
 
-	//The id of the last page that was selected
-	private static String lastPropertyId = null;
+    //The id of the last page that was selected
+    private static String lastPropertyId = null;
 
-	/**
-	 * The constructor.
-	 */
-	public PropertyDialog(Shell parentShell, PreferenceManager mng, ISelection selection) {
-		super(parentShell, mng);
-		setSelection(selection);
-	}
-	
-	/**
-	 * Returns selection in the "Properties" action context.
-	 */
-	public ISelection getSelection() {
-		return selection;
-	}
+    /**
+     * The constructor.
+     */
+    public PropertyDialog(Shell parentShell, PreferenceManager mng,
+            ISelection selection) {
+        super(parentShell, mng);
+        setSelection(selection);
+    }
 
-	/**
-	 * Sets the selection that will be used to determine target object.
-	 */
-	public void setSelection(ISelection newSelection) {
-		selection = newSelection;
-	}
+    /**
+     * Returns selection in the "Properties" action context.
+     */
+    public ISelection getSelection() {
+        return selection;
+    }
 
-	/**
-	 * Get the name of the selected item preference
-	 */
-	protected String getSelectedNodePreference() {
-		return lastPropertyId;
-	}
+    /**
+     * Sets the selection that will be used to determine target object.
+     */
+    public void setSelection(ISelection newSelection) {
+        selection = newSelection;
+    }
 
-	/**
-	 * Get the name of the selected item preference
-	 */
-	protected void setSelectedNodePreference(String pageId) {
-		lastPropertyId = pageId;
-	}
+    /**
+     * Get the name of the selected item preference
+     */
+    protected String getSelectedNodePreference() {
+        return lastPropertyId;
+    }
+
+    /**
+     * Get the name of the selected item preference
+     */
+    protected void setSelectedNodePreference(String pageId) {
+        lastPropertyId = pageId;
+    }
 }

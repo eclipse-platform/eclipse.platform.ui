@@ -82,7 +82,7 @@ public abstract class BrandingProperties {
      * @return a URL for the given property, or <code>null</code>
      */
     public static URL[] getURLs(String value, Bundle definingBundle) {
-        if(value == null)
+        if (value == null)
             return null;
 
         StringTokenizer tokens = new StringTokenizer(value, ","); //$NON-NLS-1$
@@ -107,7 +107,8 @@ public abstract class BrandingProperties {
      * @return an array of image descriptors for the given property, or
      *         <code>null</code>
      */
-    public static ImageDescriptor[] getImages(String value, Bundle definingBundle) {
+    public static ImageDescriptor[] getImages(String value,
+            Bundle definingBundle) {
         URL[] urls = getURLs(value, definingBundle);
         if (urls == null || urls.length <= 0)
             return null;

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui;
 
-
 /**
  * Interface for listening to <code>null</code> selection changes.
  * <p>

@@ -11,7 +11,6 @@
 package org.eclipse.ui.tests.api;
 
 import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -20,159 +19,157 @@ import org.eclipse.ui.tests.util.UITestCase;
 
 public class IWorkbenchWindowTest extends UITestCase {
 
-	private IWorkbenchWindow fWin;
+    private IWorkbenchWindow fWin;
 
-	public IWorkbenchWindowTest(String testName) {
-		super(testName);
-	}
+    public IWorkbenchWindowTest(String testName) {
+        super(testName);
+    }
 
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
-		fWin = openTestWindow();
-	}
+    protected void doSetUp() throws Exception {
+        super.doSetUp();
+        fWin = openTestWindow();
+    }
 
-	public void testClose() throws Throwable {		
-		assertEquals(fWin.close(), true);
-		assertEquals(ArrayUtil.contains(fWorkbench.getWorkbenchWindows(), fWin), false);
-	}
+    public void testClose() throws Throwable {
+        assertEquals(fWin.close(), true);
+        assertEquals(
+                ArrayUtil.contains(fWorkbench.getWorkbenchWindows(), fWin),
+                false);
+    }
 
-	public void testGetActivePage() throws Throwable {
-/*
- * Commented out because until test case can be updated to work
- * with new window/page/perspective implementation
- * 
-		IWorkbenchPage page1, page2;
-		page1 = openTestPage(fWin);
-		assertEquals(fWin.getActivePage(), page1);
+    public void testGetActivePage() throws Throwable {
+        /*
+         * Commented out because until test case can be updated to work
+         * with new window/page/perspective implementation
+         * 
+         IWorkbenchPage page1, page2;
+         page1 = openTestPage(fWin);
+         assertEquals(fWin.getActivePage(), page1);
 
-		page2 = openTestPage(fWin);
-		assertEquals(fWin.getActivePage(), page2);
+         page2 = openTestPage(fWin);
+         assertEquals(fWin.getActivePage(), page2);
 
-		fWin.setActivePage(page1);
-		assertEquals(fWin.getActivePage(), page1);
+         fWin.setActivePage(page1);
+         assertEquals(fWin.getActivePage(), page1);
 
-		fWin.setActivePage(page2);
-		assertEquals(fWin.getActivePage(), page2);
+         fWin.setActivePage(page2);
+         assertEquals(fWin.getActivePage(), page2);
 
-		//no pages
-		closeAllPages(fWin);
-		assertNull(fWin.getActivePage());
-*/
-	}
+         //no pages
+         closeAllPages(fWin);
+         assertNull(fWin.getActivePage());
+         */
+    }
 
-	public void testSetActivePage() throws Throwable {
-		openTestPage(fWin, 5);
-		IWorkbenchPage[] pages = fWin.getPages();
+    public void testSetActivePage() throws Throwable {
+        openTestPage(fWin, 5);
+        IWorkbenchPage[] pages = fWin.getPages();
 
-		for (int i = 0; i < pages.length; i++) {
-			fWin.setActivePage(pages[i]);
-			assertEquals(pages[i], fWin.getActivePage());
-		}
-		
-		fWin.setActivePage( null );
-		assertNull( fWin.getActivePage() );
-	}
+        for (int i = 0; i < pages.length; i++) {
+            fWin.setActivePage(pages[i]);
+            assertEquals(pages[i], fWin.getActivePage());
+        }
 
-	public void testGetPages() throws Throwable {
-/*
- * Commented out because until test case can be updated to work
- * with new window/page/perspective implementation
- * 
-		int totalBefore;
-		IWorkbenchPage[] pages, domainPages;
+        fWin.setActivePage(null);
+        assertNull(fWin.getActivePage());
+    }
 
-		totalBefore = fWin.getPages().length;
-		int num = 5;
-		pages = openTestPage(fWin, num);
-		assertEquals(fWin.getPages().length, totalBefore + num);
+    public void testGetPages() throws Throwable {
+        /*
+         * Commented out because until test case can be updated to work
+         * with new window/page/perspective implementation
+         * 
+         int totalBefore;
+         IWorkbenchPage[] pages, domainPages;
 
-		domainPages = fWin.getPages();
-		for (int i = 0; i < pages.length; i++)
-			assertEquals(ArrayUtil.contains(domainPages, pages[i]), true);
+         totalBefore = fWin.getPages().length;
+         int num = 5;
+         pages = openTestPage(fWin, num);
+         assertEquals(fWin.getPages().length, totalBefore + num);
 
-		closeAllPages(fWin);
-		assertEquals(fWin.getPages().length, 0);
-*/
-	}
+         domainPages = fWin.getPages();
+         for (int i = 0; i < pages.length; i++)
+         assertEquals(ArrayUtil.contains(domainPages, pages[i]), true);
 
-	public void testGetShell() {
-		Shell sh = fWin.getShell();
-		assertNotNull(sh);
-	}
-	
-	public void testGetWorkbench() {
-		IWorkbenchWindow win = fWorkbench.getActiveWorkbenchWindow();
-		assertEquals(win.getWorkbench(), fWorkbench);
-	}
+         closeAllPages(fWin);
+         assertEquals(fWin.getPages().length, 0);
+         */
+    }
 
-	/**
-	 * tests openPage(String)
-	 */
-	public void testOpenPage() throws Throwable {
-/*
- * Commented out because until test case can be updated to work
- * with new window/page/perspective implementation
- * 
-		IWorkbenchPage page = null;
-		try {
-			page = fWin.openPage(ResourcesPlugin.getWorkspace());
-			assertNotNull(page);
-			assertEquals(fWin.getActivePage(), page);
-		} finally {
-			if (page != null)
-				page.close();
-		}
-*/
-	}
+    public void testGetShell() {
+        Shell sh = fWin.getShell();
+        assertNotNull(sh);
+    }
 
-	/**
-	 * tests openPage(String, IAdaptable)
-	 */
-	public void testOpenPage2() throws Throwable {
-/*
- * Commented out because until test case can be updated to work
- * with new window/page/perspective implementation
- * 
-		IWorkbenchPage page = null;
-		try {
-			page = fWin.openPage(EmptyPerspective.PERSP_ID, ResourcesPlugin.getWorkspace());
-			assertNotNull(page);
-			assertEquals(fWin.getActivePage(), page);
-			assertEquals(
-				fWin.getActivePage().getPerspective().getId(),
-				EmptyPerspective.PERSP_ID);
-		} finally {
-			if (page != null)
-				page.close();
-		}
+    public void testGetWorkbench() {
+        IWorkbenchWindow win = fWorkbench.getActiveWorkbenchWindow();
+        assertEquals(win.getWorkbench(), fWorkbench);
+    }
 
-		//test openPage() fails
-		try {
-			page = fWin.openPage("*************", ResourcesPlugin.getWorkspace());
-			fail();
-		} catch (WorkbenchException ex) {
-		}
+    /**
+     * tests openPage(String)
+     */
+    public void testOpenPage() throws Throwable {
+        /*
+         * Commented out because until test case can be updated to work
+         * with new window/page/perspective implementation
+         * 
+         IWorkbenchPage page = null;
+         try {
+         page = fWin.openPage(ResourcesPlugin.getWorkspace());
+         assertNotNull(page);
+         assertEquals(fWin.getActivePage(), page);
+         } finally {
+         if (page != null)
+         page.close();
+         }
+         */
+    }
 
-		page.close();
-*/
-	}
+    /**
+     * tests openPage(String, IAdaptable)
+     */
+    public void testOpenPage2() throws Throwable {
+        /*
+         * Commented out because until test case can be updated to work
+         * with new window/page/perspective implementation
+         * 
+         IWorkbenchPage page = null;
+         try {
+         page = fWin.openPage(EmptyPerspective.PERSP_ID, ResourcesPlugin.getWorkspace());
+         assertNotNull(page);
+         assertEquals(fWin.getActivePage(), page);
+         assertEquals(
+         fWin.getActivePage().getPerspective().getId(),
+         EmptyPerspective.PERSP_ID);
+         } finally {
+         if (page != null)
+         page.close();
+         }
 
-	public void testIsApplicationMenu() {
-		String[] ids = {
-			IWorkbenchActionConstants.M_FILE,
-			IWorkbenchActionConstants.M_WINDOW,
-		};
+         //test openPage() fails
+         try {
+         page = fWin.openPage("*************", ResourcesPlugin.getWorkspace());
+         fail();
+         } catch (WorkbenchException ex) {
+         }
 
-		for( int i = 0; i < ids.length; i ++ )
-			assertEquals( fWin.isApplicationMenu( ids[ i ] ), true );
-		
-		ids = new String[] {
-			IWorkbenchActionConstants.M_EDIT,
-			IWorkbenchActionConstants.M_HELP,
-			IWorkbenchActionConstants.M_LAUNCH
-		};
+         page.close();
+         */
+    }
 
-		for( int i = 0; i < ids.length; i ++ )
-			assertEquals( fWin.isApplicationMenu( ids[ i ] ), false );
-	}
+    public void testIsApplicationMenu() {
+        String[] ids = { IWorkbenchActionConstants.M_FILE,
+                IWorkbenchActionConstants.M_WINDOW, };
+
+        for (int i = 0; i < ids.length; i++)
+            assertEquals(fWin.isApplicationMenu(ids[i]), true);
+
+        ids = new String[] { IWorkbenchActionConstants.M_EDIT,
+                IWorkbenchActionConstants.M_HELP,
+                IWorkbenchActionConstants.M_LAUNCH };
+
+        for (int i = 0; i < ids.length; i++)
+            assertEquals(fWin.isApplicationMenu(ids[i]), false);
+    }
 }

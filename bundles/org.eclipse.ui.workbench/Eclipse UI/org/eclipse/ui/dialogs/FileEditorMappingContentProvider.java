@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
-import org.eclipse.ui.*;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.ui.IFileEditorMapping;
 
 /**
  * A content provider for displaying of <code>IFileEditorMapping</code>
@@ -24,33 +24,40 @@ import org.eclipse.jface.viewers.Viewer;
  * </p>
  *
  * @see org.eclipse.jface.viewers.IContentProvider
- */ 
-public class FileEditorMappingContentProvider implements IStructuredContentProvider {
+ */
+public class FileEditorMappingContentProvider implements
+        IStructuredContentProvider {
 
-	/**
-	 * Singleton instance accessor.
-	 */
-	public final static FileEditorMappingContentProvider INSTANCE = new FileEditorMappingContentProvider();
-/**
- * Creates an instance of this class.  The private visibility of this
- * constructor ensures that this class is only usable as a singleton.
- */
-private FileEditorMappingContentProvider() {
-	super();
-}
-/* (non-Javadoc)
- * Method declared on IContentProvider.
- */
-public void dispose() {}
-/* (non-Javadoc)
- * Method declared on IStructuredContentProvider.
- */
-public Object[] getElements(Object element) {
-	IFileEditorMapping[] array = (IFileEditorMapping[]) element;
-	return array == null ? new Object[0] : array;
-}
-/* (non-Javadoc)
- * Method declared on IContentProvider.
- */
-public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
+    /**
+     * Singleton instance accessor.
+     */
+    public final static FileEditorMappingContentProvider INSTANCE = new FileEditorMappingContentProvider();
+
+    /**
+     * Creates an instance of this class.  The private visibility of this
+     * constructor ensures that this class is only usable as a singleton.
+     */
+    private FileEditorMappingContentProvider() {
+        super();
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IContentProvider.
+     */
+    public void dispose() {
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IStructuredContentProvider.
+     */
+    public Object[] getElements(Object element) {
+        IFileEditorMapping[] array = (IFileEditorMapping[]) element;
+        return array == null ? new Object[0] : array;
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IContentProvider.
+     */
+    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+    }
 }

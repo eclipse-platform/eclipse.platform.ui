@@ -17,29 +17,30 @@ import org.eclipse.ui.progress.UIJob;
  * track of a message and UIJob to run.
  */
 public class AwaitingFeedbackInfo {
-	
-	private String message;
-	private UIJob job;
-	
-	public AwaitingFeedbackInfo(String infoMessage, UIJob infoJob){
-		this.message = infoMessage;
-		this.job = infoJob;
-	}
 
-	/**
-	 * Return the job for the receiver.
-	 * @return
-	 */
-	public UIJob getJob() {
-		return this.job;
-	}
+    private String message;
 
-	/**
-	 * Return the message for the receiver.
-	 * @return
-	 */
-	public String getMessage() {
-		return this.message;
-	}
+    private UIJob job;
+
+    public AwaitingFeedbackInfo(String infoMessage, UIJob infoJob) {
+        this.message = infoMessage;
+        this.job = infoJob;
+    }
+
+    /**
+     * Return the job for the receiver.
+     * @return
+     */
+    public UIJob getJob() {
+        return this.job;
+    }
+
+    /**
+     * Return the message for the receiver.
+     * @return
+     */
+    public String getMessage() {
+        return this.message;
+    }
 
 }

@@ -13,72 +13,76 @@ package org.eclipse.ui.internal.gestures;
 
 public final class Point implements Comparable {
 
-	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = Point.class.getName().hashCode();
+    private final static int HASH_FACTOR = 89;
 
-	private transient int hashCode;
-	private transient boolean hashCodeComputed;
-	private transient String string;
+    private final static int HASH_INITIAL = Point.class.getName().hashCode();
 
-	private int x;
-	private int y;
+    private transient int hashCode;
 
-	public Point(int x, int y) {
-		this.x = x;
-		this.y = y;
-	}
+    private transient boolean hashCodeComputed;
 
-	public int compareTo(Object object) {
-		Point castedObject = (Point) object;
-		int compareTo = x - castedObject.x;
+    private transient String string;
 
-		if (compareTo == 0)
-			compareTo = y - castedObject.y;
+    private int x;
 
-		return compareTo;
-	}
+    private int y;
 
-	public boolean equals(Object object) {
-		if (!(object instanceof Point))
-			return false;
+    public Point(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
 
-		Point castedObject = (Point) object;
-		boolean equals = true;
-		equals &= x == castedObject.x;
-		equals &= y == castedObject.y;
-		return equals;
-	}
+    public int compareTo(Object object) {
+        Point castedObject = (Point) object;
+        int compareTo = x - castedObject.x;
 
-	public int getX() {
-		return x;
-	}
+        if (compareTo == 0)
+            compareTo = y - castedObject.y;
 
-	public int getY() {
-		return y;
-	}
+        return compareTo;
+    }
 
-	public int hashCode() {
-		if (!hashCodeComputed) {
-			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + x;
-			hashCode = hashCode * HASH_FACTOR + y;
-			hashCodeComputed = true;
-		}
+    public boolean equals(Object object) {
+        if (!(object instanceof Point))
+            return false;
 
-		return hashCode;
-	}
+        Point castedObject = (Point) object;
+        boolean equals = true;
+        equals &= x == castedObject.x;
+        equals &= y == castedObject.y;
+        return equals;
+    }
 
-	public String toString() {
-		if (string == null) {
-			final StringBuffer stringBuffer = new StringBuffer();
-			stringBuffer.append('[');
-			stringBuffer.append(x);
-			stringBuffer.append(',');
-			stringBuffer.append(y);
-			stringBuffer.append(']');
-			string = stringBuffer.toString();
-		}
+    public int getX() {
+        return x;
+    }
 
-		return string;
-	}
+    public int getY() {
+        return y;
+    }
+
+    public int hashCode() {
+        if (!hashCodeComputed) {
+            hashCode = HASH_INITIAL;
+            hashCode = hashCode * HASH_FACTOR + x;
+            hashCode = hashCode * HASH_FACTOR + y;
+            hashCodeComputed = true;
+        }
+
+        return hashCode;
+    }
+
+    public String toString() {
+        if (string == null) {
+            final StringBuffer stringBuffer = new StringBuffer();
+            stringBuffer.append('[');
+            stringBuffer.append(x);
+            stringBuffer.append(',');
+            stringBuffer.append(y);
+            stringBuffer.append(']');
+            string = stringBuffer.toString();
+        }
+
+        return string;
+    }
 }

@@ -15,75 +15,79 @@ import org.eclipse.ui.internal.util.Util;
 
 public final class Match {
 
-	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = Match.class.getName().hashCode();
+    private final static int HASH_FACTOR = 89;
 
-	private String commandId;
+    private final static int HASH_INITIAL = Match.class.getName().hashCode();
 
-	private transient int hashCode;
-	private transient boolean hashCodeComputed;
-	private transient String string;
-	private int value;
+    private String commandId;
 
-	Match(String commandId, int value) {
-		if (value < 0)
-			throw new IllegalArgumentException();
+    private transient int hashCode;
 
-		this.commandId = commandId;
-		this.value = value;
-	}
+    private transient boolean hashCodeComputed;
 
-	public int compareTo(Object object) {
-		Match castedObject = (Match) object;
-		int compareTo = Util.compare(value, castedObject.value);
+    private transient String string;
 
-		if (compareTo == 0)
-			compareTo = Util.compare(commandId, castedObject.commandId);
+    private int value;
 
-		return compareTo;
-	}
+    Match(String commandId, int value) {
+        if (value < 0)
+            throw new IllegalArgumentException();
 
-	public boolean equals(Object object) {
-		if (!(object instanceof Match))
-			return false;
+        this.commandId = commandId;
+        this.value = value;
+    }
 
-		Match castedObject = (Match) object;
-		boolean equals = true;
-		equals &= Util.equals(commandId, castedObject.commandId);
-		equals &= Util.equals(value, castedObject.value);
-		return equals;
-	}
+    public int compareTo(Object object) {
+        Match castedObject = (Match) object;
+        int compareTo = Util.compare(value, castedObject.value);
 
-	public String getCommandId() {
-		return commandId;
-	}
+        if (compareTo == 0)
+            compareTo = Util.compare(commandId, castedObject.commandId);
 
-	public int getValue() {
-		return value;
-	}
+        return compareTo;
+    }
 
-	public int hashCode() {
-		if (!hashCodeComputed) {
-			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(commandId);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(value);
-			hashCodeComputed = true;
-		}
+    public boolean equals(Object object) {
+        if (!(object instanceof Match))
+            return false;
 
-		return hashCode;
-	}
+        Match castedObject = (Match) object;
+        boolean equals = true;
+        equals &= Util.equals(commandId, castedObject.commandId);
+        equals &= Util.equals(value, castedObject.value);
+        return equals;
+    }
 
-	public String toString() {
-		if (string == null) {
-			final StringBuffer stringBuffer = new StringBuffer();
-			stringBuffer.append('[');
-			stringBuffer.append(commandId);
-			stringBuffer.append(',');
-			stringBuffer.append(value);
-			stringBuffer.append(']');
-			string = stringBuffer.toString();
-		}
+    public String getCommandId() {
+        return commandId;
+    }
 
-		return string;
-	}
+    public int getValue() {
+        return value;
+    }
+
+    public int hashCode() {
+        if (!hashCodeComputed) {
+            hashCode = HASH_INITIAL;
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(commandId);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(value);
+            hashCodeComputed = true;
+        }
+
+        return hashCode;
+    }
+
+    public String toString() {
+        if (string == null) {
+            final StringBuffer stringBuffer = new StringBuffer();
+            stringBuffer.append('[');
+            stringBuffer.append(commandId);
+            stringBuffer.append(',');
+            stringBuffer.append(value);
+            stringBuffer.append(']');
+            string = stringBuffer.toString();
+        }
+
+        return string;
+    }
 }

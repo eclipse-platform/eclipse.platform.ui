@@ -13,7 +13,6 @@ package org.eclipse.ui.internal;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
-
 import org.eclipse.ui.internal.registry.IViewDescriptor;
 import org.eclipse.ui.internal.registry.IViewRegistry;
 
@@ -27,87 +26,86 @@ import org.eclipse.ui.internal.registry.IViewRegistry;
  * </p>
  */
 public class FolderLayout implements IFolderLayout {
-	private ViewStack folder;
-	private PageLayout pageLayout;
-	private ViewFactory viewFactory;
+    private ViewStack folder;
 
-	/**
-	 * Create an instance of a <code>FolderLayout</code> belonging to a 
-	 * <code>PageLayout</code>.
-	 */
-	public FolderLayout(
-		PageLayout pageLayout,
-		ViewStack folder,
-		ViewFactory viewFactory) {
-		super();
-		this.folder = folder;
-		this.viewFactory = viewFactory;
-		this.pageLayout = pageLayout;
-	}
+    private PageLayout pageLayout;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPlaceholderFolderLayout#addPlaceholder(java.lang.String)
-	 */
-	public void addPlaceholder(String viewId) {
-		if (pageLayout.checkPartInLayout(viewId))
-			return;
+    private ViewFactory viewFactory;
 
-		// Get the view's label.
-		// @issue: why do we need to ask the registry for the view??
-		if (viewId.indexOf(PartPlaceholder.WILD_CARD) == -1) { //$NON-NLS-1$
-			IViewRegistry reg = WorkbenchPlugin.getDefault().getViewRegistry();
-			IViewDescriptor desc = reg.find(viewId);
-			if (desc == null) {
-				// cannot safely open the dialog so log the problem
-				WorkbenchPlugin.log("Unable to find view label: " + viewId); //$NON-NLS-1$
-				return;
-			}
-		}
+    /**
+     * Create an instance of a <code>FolderLayout</code> belonging to a 
+     * <code>PageLayout</code>.
+     */
+    public FolderLayout(PageLayout pageLayout, ViewStack folder,
+            ViewFactory viewFactory) {
+        super();
+        this.folder = folder;
+        this.viewFactory = viewFactory;
+        this.pageLayout = pageLayout;
+    }
 
-		// Create the placeholder.
-		PartPlaceholder newPart = new PartPlaceholder(viewId);
-		linkPartToPageLayout(viewId, newPart);
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IPlaceholderFolderLayout#addPlaceholder(java.lang.String)
+     */
+    public void addPlaceholder(String viewId) {
+        if (pageLayout.checkPartInLayout(viewId))
+            return;
 
-		// Add it to the folder layout.
-		folder.add(newPart);
-	}
+        // Get the view's label.
+        // @issue: why do we need to ask the registry for the view??
+        if (viewId.indexOf(PartPlaceholder.WILD_CARD) == -1) { //$NON-NLS-1$
+            IViewRegistry reg = WorkbenchPlugin.getDefault().getViewRegistry();
+            IViewDescriptor desc = reg.find(viewId);
+            if (desc == null) {
+                // cannot safely open the dialog so log the problem
+                WorkbenchPlugin.log("Unable to find view label: " + viewId); //$NON-NLS-1$
+                return;
+            }
+        }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IFolderLayout#addView(java.lang.String)
-	 */
-	public void addView(String viewId) {
-		if (pageLayout.checkPartInLayout(viewId))
-			return;
+        // Create the placeholder.
+        PartPlaceholder newPart = new PartPlaceholder(viewId);
+        linkPartToPageLayout(viewId, newPart);
 
-		try {
-			IViewDescriptor descriptor =
-				viewFactory.getViewRegistry().find(viewId);
-			if (WorkbenchActivityHelper.filterItem(descriptor)) {
-				//create a placeholder instead.
-				addPlaceholder(viewId);
-				LayoutHelper.addViewActivator(pageLayout, viewId);
-			} else {
+        // Add it to the folder layout.
+        folder.add(newPart);
+    }
 
-				ViewPane newPart = LayoutHelper.createView(
-						pageLayout.getViewFactory(),
-						viewId);
-				linkPartToPageLayout(viewId, newPart);
-				folder.add(newPart);
-			}
-		} catch (PartInitException e) {
-			// cannot safely open the dialog so log the problem
-			WorkbenchPlugin.log(e.getMessage());
-		}
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IFolderLayout#addView(java.lang.String)
+     */
+    public void addView(String viewId) {
+        if (pageLayout.checkPartInLayout(viewId))
+            return;
 
-	/**
-	 * Inform the page layout of the new part created
-	 * and the folder the part belongs to.
-	 */
-	private void linkPartToPageLayout(String viewId, LayoutPart newPart) {
-		pageLayout.setRefPart(viewId, newPart);
-		pageLayout.setFolderPart(viewId, folder);
-		// force creation of the view layout rec
-		pageLayout.getViewLayoutRec(viewId, true);
-	}
+        try {
+            IViewDescriptor descriptor = viewFactory.getViewRegistry().find(
+                    viewId);
+            if (WorkbenchActivityHelper.filterItem(descriptor)) {
+                //create a placeholder instead.
+                addPlaceholder(viewId);
+                LayoutHelper.addViewActivator(pageLayout, viewId);
+            } else {
+
+                ViewPane newPart = LayoutHelper.createView(pageLayout
+                        .getViewFactory(), viewId);
+                linkPartToPageLayout(viewId, newPart);
+                folder.add(newPart);
+            }
+        } catch (PartInitException e) {
+            // cannot safely open the dialog so log the problem
+            WorkbenchPlugin.log(e.getMessage());
+        }
+    }
+
+    /**
+     * Inform the page layout of the new part created
+     * and the folder the part belongs to.
+     */
+    private void linkPartToPageLayout(String viewId, LayoutPart newPart) {
+        pageLayout.setRefPart(viewId, newPart);
+        pageLayout.setFolderPart(viewId, folder);
+        // force creation of the view layout rec
+        pageLayout.getViewLayoutRec(viewId, true);
+    }
 }

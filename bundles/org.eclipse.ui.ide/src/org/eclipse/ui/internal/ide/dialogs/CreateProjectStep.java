@@ -18,38 +18,41 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
  * wizard.
  */
 public class CreateProjectStep extends WizardStep {
-	private CreateProjectWizard stepWizard;
-	
-	/**
-	 * Creates the project creation step
-	 * 
-	 * @param number the step order number
-	 * @param page the wizard page containing the new project name and location
-	 * @param wizard the multi-step wizard for collecting new project information
-	 */
-	public CreateProjectStep(int number, WizardNewProjectNameAndLocationPage page, NewProjectWizard wizard) {
-		super(number);
-		stepWizard = new CreateProjectWizard(page, wizard);
-	}
+    private CreateProjectWizard stepWizard;
 
-	/* (non-Javadoc)
-	 * Method declared on WizardStep.
-	 */
-	public String getLabel() {
-		return IDEWorkbenchMessages.getString("CreateProjectStep.label"); //$NON-NLS-1$
-	}
+    /**
+     * Creates the project creation step
+     * 
+     * @param number the step order number
+     * @param page the wizard page containing the new project name and location
+     * @param wizard the multi-step wizard for collecting new project information
+     */
+    public CreateProjectStep(int number,
+            WizardNewProjectNameAndLocationPage page, NewProjectWizard wizard) {
+        super(number);
+        stepWizard = new CreateProjectWizard(page, wizard);
+    }
 
-	/* (non-Javadoc)
-	 * Method declared on WizardStep.
-	 */
-	public String getDetails() {
-		return IDEWorkbenchMessages.format("CreateProjectStep.details", new Object[] {stepWizard.getProjectName()}); //$NON-NLS-1$
-	}
+    /* (non-Javadoc)
+     * Method declared on WizardStep.
+     */
+    public String getLabel() {
+        return IDEWorkbenchMessages.getString("CreateProjectStep.label"); //$NON-NLS-1$
+    }
 
-	/* (non-Javadoc)
-	 * Method declared on WizardStep.
-	 */
-	public IWizard getWizard() {
-		return stepWizard;
-	}
+    /* (non-Javadoc)
+     * Method declared on WizardStep.
+     */
+    public String getDetails() {
+        return IDEWorkbenchMessages
+                .format(
+                        "CreateProjectStep.details", new Object[] { stepWizard.getProjectName() }); //$NON-NLS-1$
+    }
+
+    /* (non-Javadoc)
+     * Method declared on WizardStep.
+     */
+    public IWizard getWizard() {
+        return stepWizard;
+    }
 }

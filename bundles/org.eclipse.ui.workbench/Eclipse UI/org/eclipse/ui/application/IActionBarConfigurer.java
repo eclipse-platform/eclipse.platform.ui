@@ -11,9 +11,9 @@
 package org.eclipse.ui.application;
 
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.action.ICoolBarManager;
 
 /**
  * Interface providing special access for configuring the action bars
@@ -30,44 +30,41 @@ import org.eclipse.jface.action.ICoolBarManager;
  * @since 3.0
  */
 public interface IActionBarConfigurer {
-	/**
-	 * Returns the menu manager for the main menu bar of a workbench window.
-	 * 
-	 * @return the menu manager
-	 */
-	public IMenuManager getMenuManager();
-	
-	/**
-	 * Returns the status line manager of a workbench window.
-	 * 
-	 * @return the status line manager
-	 */
-	public IStatusLineManager getStatusLineManager();
-	
-	
-	/**
-	 * Returns the cool bar manager of the workbench window.
-	 * 
-	 * @return the cool bar manager
-	 */
-	public ICoolBarManager getCoolBarManager();
-	
-	
-	/**
-	 * Register the action as a global action with a workbench
-	 * window.
-	 * <p>
-	 * For a workbench retarget action 
-	 * ({@link org.eclipse.ui.actions.RetargetAction RetargetAction})
-	 * to work, it must be registered.
-	 * You should also register actions that will participate
-	 * in custom key bindings.
-	 * </p>
-	 *  
-	 * @param action the global action
-	 * @see org.eclipse.ui.actions.RetargetAction
-	 */
-	public void registerGlobalAction(IAction action);
-	
+    /**
+     * Returns the menu manager for the main menu bar of a workbench window.
+     * 
+     * @return the menu manager
+     */
+    public IMenuManager getMenuManager();
+
+    /**
+     * Returns the status line manager of a workbench window.
+     * 
+     * @return the status line manager
+     */
+    public IStatusLineManager getStatusLineManager();
+
+    /**
+     * Returns the cool bar manager of the workbench window.
+     * 
+     * @return the cool bar manager
+     */
+    public ICoolBarManager getCoolBarManager();
+
+    /**
+     * Register the action as a global action with a workbench
+     * window.
+     * <p>
+     * For a workbench retarget action 
+     * ({@link org.eclipse.ui.actions.RetargetAction RetargetAction})
+     * to work, it must be registered.
+     * You should also register actions that will participate
+     * in custom key bindings.
+     * </p>
+     *  
+     * @param action the global action
+     * @see org.eclipse.ui.actions.RetargetAction
+     */
+    public void registerGlobalAction(IAction action);
 
 }

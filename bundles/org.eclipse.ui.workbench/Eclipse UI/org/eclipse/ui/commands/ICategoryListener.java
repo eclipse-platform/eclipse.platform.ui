@@ -28,7 +28,7 @@ package org.eclipse.ui.commands;
  */
 public interface ICategoryListener {
 
-	/**
+    /**
      * Notifies that one or more attributes of an instance of
      * <code>ICategory</code> have changed. Specific details are described in
      * the <code>CategoryEvent</code>.
@@ -36,5 +36,5 @@ public interface ICategoryListener {
      * @param categoryEvent
      *            the category event. Guaranteed not to be <code>null</code>.
      */
-	void categoryChanged(CategoryEvent categoryEvent);
+    void categoryChanged(CategoryEvent categoryEvent);
 }

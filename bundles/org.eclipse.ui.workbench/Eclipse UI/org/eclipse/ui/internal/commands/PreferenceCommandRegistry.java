@@ -54,7 +54,8 @@ public final class PreferenceCommandRegistry extends
      *            The preference store to use; must not be <code>null</code>.
      */
     public PreferenceCommandRegistry(IPreferenceStore preferenceStore) {
-        if (preferenceStore == null) throw new NullPointerException();
+        if (preferenceStore == null)
+            throw new NullPointerException();
 
         this.preferenceStore = preferenceStore;
 
@@ -63,11 +64,12 @@ public final class PreferenceCommandRegistry extends
 
                     public void propertyChange(
                             PropertyChangeEvent propertyChangeEvent) {
-                        if (KEY.equals(propertyChangeEvent.getProperty())) try {
-                            load();
-                        } catch (final IOException e) {
-                            e.printStackTrace();
-                        }
+                        if (KEY.equals(propertyChangeEvent.getProperty()))
+                            try {
+                                load();
+                            } catch (final IOException e) {
+                                e.printStackTrace();
+                            }
                     }
                 });
 
@@ -144,7 +146,8 @@ public final class PreferenceCommandRegistry extends
                     commandRegistryChanged = true;
                 }
 
-                if (commandRegistryChanged) fireCommandRegistryChanged();
+                if (commandRegistryChanged)
+                    fireCommandRegistryChanged();
             } catch (WorkbenchException eWorkbench) {
                 throw new IOException();
             } finally {

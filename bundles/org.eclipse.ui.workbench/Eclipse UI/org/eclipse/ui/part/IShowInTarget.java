@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.part;
 
-
 /**
  * This interface must be provided by Show In targets (parts listed
  * in the Show In prompter).
@@ -23,7 +22,7 @@ package org.eclipse.ui.part;
  * @since 2.1
  */
 public interface IShowInTarget {
-	
+
     /**
      * Shows the given context in this target.
      * The target should check the context's selection for elements

@@ -23,20 +23,23 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * A page used as a filler for nodes in the preference tree
  * for which no page is suppplied.
  */
-public class EmptyPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
-protected Control createContents(Composite parent) {
-	return new Composite(parent, SWT.NULL);
-}
-/**
- * Hook method to get a page specific preference store. Reimplement this
- * method if a page don't want to use its parent's preference store.
- */
-protected IPreferenceStore doGetPreferenceStore() {
-	return WorkbenchPlugin.getDefault().getPreferenceStore();
-}
-/**
- * @see IWorkbenchPreferencePage
- */
-public void init(IWorkbench workbench){
-}
+public class EmptyPreferencePage extends PreferencePage implements
+        IWorkbenchPreferencePage {
+    protected Control createContents(Composite parent) {
+        return new Composite(parent, SWT.NULL);
+    }
+
+    /**
+     * Hook method to get a page specific preference store. Reimplement this
+     * method if a page don't want to use its parent's preference store.
+     */
+    protected IPreferenceStore doGetPreferenceStore() {
+        return WorkbenchPlugin.getDefault().getPreferenceStore();
+    }
+
+    /**
+     * @see IWorkbenchPreferencePage
+     */
+    public void init(IWorkbench workbench) {
+    }
 }

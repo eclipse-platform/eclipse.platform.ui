@@ -14,186 +14,203 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Sash;
 
 class LayoutPartSash extends LayoutPart {
 
-	private Sash sash;
-	private PartSashContainer rootContainer;
-	private int style;
+    private Sash sash;
 
-	private LayoutPartSash preLimit;
-	private LayoutPartSash postLimit;
+    private PartSashContainer rootContainer;
 
-	SelectionListener selectionListener;
-	private int left = 300, right = 300;
+    private int style;
 
-	/*
-	 * Optimize limit checks by calculating minimum and maximum ratios once per
-	 * drag
-	 */
-	private float minRatio;
-	private float maxRatio;
+    private LayoutPartSash preLimit;
 
-	LayoutPartSash(PartSashContainer rootContainer, int style) {
-		super(null);
-		this.style = style;
-		this.rootContainer = rootContainer;
+    private LayoutPartSash postLimit;
 
-		selectionListener = new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (e.detail == SWT.DRAG)
-					checkDragLimit(e);
-				else
-					LayoutPartSash.this.widgetSelected(e.x, e.y, e.width,
-							e.height);
-			}
-		};
+    SelectionListener selectionListener;
 
-		initDragRatios();
-	}
+    private int left = 300, right = 300;
 
-	// checkDragLimit contains changes by cagatayk@acm.org
-	private void checkDragLimit(SelectionEvent event) {
-		LayoutTree root = rootContainer.getLayoutTree();
-		LayoutTreeNode node = root.findSash(this);
-		Rectangle nodeBounds = node.getBounds();
+    /*
+     * Optimize limit checks by calculating minimum and maximum ratios once per
+     * drag
+     */
+    private float minRatio;
 
-		// optimization: compute ratios only once per drag
-		if (minRatio < 0)
-			minRatio = node.getMinimumRatioFor(nodeBounds);
-		if (maxRatio < 0)
-			maxRatio = node.getMaximumRatioFor(nodeBounds);
+    private float maxRatio;
 
-		if (style == SWT.VERTICAL) {
-			// limit drag to current node's bounds
-			if (event.x < nodeBounds.x)
-				event.x = nodeBounds.x;
-			if ((event.x + event.width) > (nodeBounds.x + nodeBounds.width))
-				event.x = nodeBounds.x + nodeBounds.width - event.width;
-			// limit drag to current node's ratios
-			float width = nodeBounds.width;
-			if (event.x - nodeBounds.x < width * minRatio)
-				event.x = nodeBounds.x + (int) (width * minRatio);
-			if (event.x - nodeBounds.x > width * maxRatio)
-				event.x = nodeBounds.x + (int) (width * maxRatio);
-		} else {
-			// limit drag to current node's bounds
-			if (event.y < nodeBounds.y)
-				event.y = nodeBounds.y;
-			if ((event.y + event.height) > (nodeBounds.y + nodeBounds.height))
-				event.y = nodeBounds.y + nodeBounds.height - event.height;
-			// limit drag to current node's ratios
-			float height = nodeBounds.height;
-			if (event.y - nodeBounds.y < height * minRatio)
-				event.y = nodeBounds.y + (int) (height * minRatio);
-			if (event.y - nodeBounds.y > height * maxRatio)
-				event.y = nodeBounds.y + (int) (height * maxRatio);
-		}
-	}
+    LayoutPartSash(PartSashContainer rootContainer, int style) {
+        super(null);
+        this.style = style;
+        this.rootContainer = rootContainer;
 
-	/**
-	 * Creates the control
-	 */
-	public void createControl(Composite parent) {
-		if (sash == null) {
-			sash = new Sash(parent, style);
-			sash.addSelectionListener(selectionListener);
-		}
-	}
-	/**
-	 * See LayoutPart#dispose
-	 */
-	public void dispose() {
+        selectionListener = new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                if (e.detail == SWT.DRAG)
+                    checkDragLimit(e);
+                else
+                    LayoutPartSash.this.widgetSelected(e.x, e.y, e.width,
+                            e.height);
+            }
+        };
 
-		if (sash != null)
-			sash.dispose();
-		sash = null;
-	}
-	/**
-	 * Gets the presentation bounds.
-	 */
-	public Rectangle getBounds() {
-		if (sash == null)
-			return super.getBounds();
-		return sash.getBounds();
-	}
-	/**
-	 * Returns the part control.
-	 */
-	public Control getControl() {
-		return sash;
-	}
-	/**
-	 *  
-	 */
-	public String getID() {
-		return null;
-	}
-	LayoutPartSash getPostLimit() {
-		return postLimit;
-	}
-	LayoutPartSash getPreLimit() {
-		return preLimit;
-	}
+        initDragRatios();
+    }
 
-	int getLeft() {
-		return left;
-	}
+    // checkDragLimit contains changes by cagatayk@acm.org
+    private void checkDragLimit(SelectionEvent event) {
+        LayoutTree root = rootContainer.getLayoutTree();
+        LayoutTreeNode node = root.findSash(this);
+        Rectangle nodeBounds = node.getBounds();
 
-	int getRight() {
-		return right;
-	}
+        // optimization: compute ratios only once per drag
+        if (minRatio < 0)
+            minRatio = node.getMinimumRatioFor(nodeBounds);
+        if (maxRatio < 0)
+            maxRatio = node.getMaximumRatioFor(nodeBounds);
 
-	boolean isHorizontal() {
-		return ((style & SWT.HORIZONTAL) == SWT.HORIZONTAL);
-	}
-	boolean isVertical() {
-		return ((style & SWT.VERTICAL) == SWT.VERTICAL);
-	}
-	void setPostLimit(LayoutPartSash newPostLimit) {
-		postLimit = newPostLimit;
-	}
-	void setPreLimit(LayoutPartSash newPreLimit) {
-		preLimit = newPreLimit;
-	}
+        if (style == SWT.VERTICAL) {
+            // limit drag to current node's bounds
+            if (event.x < nodeBounds.x)
+                event.x = nodeBounds.x;
+            if ((event.x + event.width) > (nodeBounds.x + nodeBounds.width))
+                event.x = nodeBounds.x + nodeBounds.width - event.width;
+            // limit drag to current node's ratios
+            float width = nodeBounds.width;
+            if (event.x - nodeBounds.x < width * minRatio)
+                event.x = nodeBounds.x + (int) (width * minRatio);
+            if (event.x - nodeBounds.x > width * maxRatio)
+                event.x = nodeBounds.x + (int) (width * maxRatio);
+        } else {
+            // limit drag to current node's bounds
+            if (event.y < nodeBounds.y)
+                event.y = nodeBounds.y;
+            if ((event.y + event.height) > (nodeBounds.y + nodeBounds.height))
+                event.y = nodeBounds.y + nodeBounds.height - event.height;
+            // limit drag to current node's ratios
+            float height = nodeBounds.height;
+            if (event.y - nodeBounds.y < height * minRatio)
+                event.y = nodeBounds.y + (int) (height * minRatio);
+            if (event.y - nodeBounds.y > height * maxRatio)
+                event.y = nodeBounds.y + (int) (height * maxRatio);
+        }
+    }
 
-	void setRatio(float newRatio) {
-		int total = left + right;
-		left = (int) (total * newRatio);
-		right = total - left;
-	}
+    /**
+     * Creates the control
+     */
+    public void createControl(Composite parent) {
+        if (sash == null) {
+            sash = new Sash(parent, style);
+            sash.addSelectionListener(selectionListener);
+        }
+    }
 
-	void setSizes(int left, int right) {
-		this.left = left;
-		this.right = right;
-	}
+    /**
+     * See LayoutPart#dispose
+     */
+    public void dispose() {
 
-	private void widgetSelected(int x, int y, int width, int height) {
-		LayoutTree root = rootContainer.getLayoutTree();
-		LayoutTreeNode node = root.findSash(this);
-		Rectangle nodeBounds = node.getBounds();
-		//Recompute ratio
-		x -= nodeBounds.x;
-		y -= nodeBounds.y;
-		if (style == SWT.VERTICAL) {
-			setSizes(x, nodeBounds.width - x - LayoutTreeNode.SASH_WIDTH);
-			//setRatio((float)(x - nodeBounds.x)/(float)nodeBounds.width);
-		} else {
-			setSizes(y, nodeBounds.height - y - LayoutTreeNode.SASH_WIDTH);
-			//setRatio((float)(y - nodeBounds.y)/(float)nodeBounds.height);
-		}
+        if (sash != null)
+            sash.dispose();
+        sash = null;
+    }
 
-		node.setBounds(nodeBounds);
-		initDragRatios();
-	}
+    /**
+     * Gets the presentation bounds.
+     */
+    public Rectangle getBounds() {
+        if (sash == null)
+            return super.getBounds();
+        return sash.getBounds();
+    }
 
-	private void initDragRatios() {
-		minRatio = maxRatio = -1f;
-	}
+    /**
+     * Returns the part control.
+     */
+    public Control getControl() {
+        return sash;
+    }
+
+    /**
+     *  
+     */
+    public String getID() {
+        return null;
+    }
+
+    LayoutPartSash getPostLimit() {
+        return postLimit;
+    }
+
+    LayoutPartSash getPreLimit() {
+        return preLimit;
+    }
+
+    int getLeft() {
+        return left;
+    }
+
+    int getRight() {
+        return right;
+    }
+
+    boolean isHorizontal() {
+        return ((style & SWT.HORIZONTAL) == SWT.HORIZONTAL);
+    }
+
+    boolean isVertical() {
+        return ((style & SWT.VERTICAL) == SWT.VERTICAL);
+    }
+
+    void setPostLimit(LayoutPartSash newPostLimit) {
+        postLimit = newPostLimit;
+    }
+
+    void setPreLimit(LayoutPartSash newPreLimit) {
+        preLimit = newPreLimit;
+    }
+
+    void setRatio(float newRatio) {
+        int total = left + right;
+        left = (int) (total * newRatio);
+        right = total - left;
+    }
+
+    void setSizes(int left, int right) {
+        this.left = left;
+        this.right = right;
+    }
+
+    private void widgetSelected(int x, int y, int width, int height) {
+        LayoutTree root = rootContainer.getLayoutTree();
+        LayoutTreeNode node = root.findSash(this);
+        Rectangle nodeBounds = node.getBounds();
+        //Recompute ratio
+        x -= nodeBounds.x;
+        y -= nodeBounds.y;
+        if (style == SWT.VERTICAL) {
+            setSizes(x, nodeBounds.width - x - LayoutTreeNode.SASH_WIDTH);
+            //setRatio((float)(x - nodeBounds.x)/(float)nodeBounds.width);
+        } else {
+            setSizes(y, nodeBounds.height - y - LayoutTreeNode.SASH_WIDTH);
+            //setRatio((float)(y - nodeBounds.y)/(float)nodeBounds.height);
+        }
+
+        node.setBounds(nodeBounds);
+        initDragRatios();
+    }
+
+    private void initDragRatios() {
+        minRatio = maxRatio = -1f;
+    }
 
 }

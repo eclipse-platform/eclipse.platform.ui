@@ -25,6 +25,7 @@ public class AboutFeaturesButtonManager {
 
     private static class Key {
         public String providerName;
+
         public Long crc;
 
         /**
@@ -81,15 +82,15 @@ public class AboutFeaturesButtonManager {
     public AboutBundleGroupData[] getRelatedInfos(AboutBundleGroupData info) {
         // if there's no image, then there won't be a button
         Long crc = info.getFeatureImageCrc();
-        if (crc == null) return
-        	new AboutBundleGroupData[0];
+        if (crc == null)
+            return new AboutBundleGroupData[0];
 
         String providerName = info.getProviderName();
         Key key = new Key(providerName, crc);
 
         List infoList = (List) providerMap.get(key);
-        if (infoList == null) return
-        	new AboutBundleGroupData[0];
+        if (infoList == null)
+            return new AboutBundleGroupData[0];
 
         return (AboutBundleGroupData[]) infoList
                 .toArray(new AboutBundleGroupData[0]);

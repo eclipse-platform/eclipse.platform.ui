@@ -21,13 +21,14 @@ package org.eclipse.ui.internal.misc;
  */
 /* package */
 class AssertionFailedException extends RuntimeException {
-/** Constructs a new exception.
- */
-public AssertionFailedException() {
-}
-/** Constructs a new exception with the given message.
- */
-public AssertionFailedException(String detail) {
-	super(detail);
-}
+    /** Constructs a new exception.
+     */
+    public AssertionFailedException() {
+    }
+
+    /** Constructs a new exception with the given message.
+     */
+    public AssertionFailedException(String detail) {
+        super(detail);
+    }
 }

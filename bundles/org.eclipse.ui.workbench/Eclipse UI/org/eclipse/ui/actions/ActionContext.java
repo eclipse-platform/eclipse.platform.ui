@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
-
 import org.eclipse.jface.viewers.ISelection;
 
 /**
@@ -23,51 +22,51 @@ import org.eclipse.jface.viewers.ISelection;
  * </p>
  */
 public class ActionContext {
-	
-	/**
-	 * The selection.
-	 */
-	private ISelection selection;
-	
-	/**
-	 * The input element.
-	 */
-	private Object input;
-	
-	/**
-	 * Creates a new action context with the given selection.
-	 */
-	public ActionContext(ISelection selection) {
-		setSelection(selection);
-	}
-	
-	/**
-	 * Returns the selection.
-	 */
-    public ISelection getSelection() {
-    	return selection;
+
+    /**
+     * The selection.
+     */
+    private ISelection selection;
+
+    /**
+     * The input element.
+     */
+    private Object input;
+
+    /**
+     * Creates a new action context with the given selection.
+     */
+    public ActionContext(ISelection selection) {
+        setSelection(selection);
     }
-    
+
+    /**
+     * Returns the selection.
+     */
+    public ISelection getSelection() {
+        return selection;
+    }
+
     /**
      * Sets the selection.
      */
     public void setSelection(ISelection selection) {
-    	this.selection = selection;
+        this.selection = selection;
     }
 
-	/**
-	 * Returns the input element.
-	 */    
+    /**
+     * Returns the input element.
+     */
     public Object getInput() {
-    	return input;
+        return input;
     }
-    
+
     /**
      * Sets the input element.
      * 
      * @param input
      */
     public void setInput(Object input) {
-    	this.input = input;
+        this.input = input;
     }
 }

@@ -13,17 +13,16 @@ package org.eclipse.ui.views.markers.internal;
 
 import java.util.List;
 
-
 /**
  * Listener interface that listens for changes in resource markers.
  */
 public interface IMarkerChangedListener {
-	
-	/**
-	 * @param additions new markers added
-	 * @param removals markers removed
-	 * @param changes changed markers
-	 */
-	public void markerChanged(List additions, List removals, List changes);
+
+    /**
+     * @param additions new markers added
+     * @param removals markers removed
+     * @param changes changed markers
+     */
+    public void markerChanged(List additions, List removals, List changes);
 
 }

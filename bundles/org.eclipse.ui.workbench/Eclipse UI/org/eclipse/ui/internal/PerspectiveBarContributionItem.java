@@ -28,10 +28,13 @@ public class PerspectiveBarContributionItem extends ContributionItem {
 
     private IPerspectiveDescriptor perspective;
 
-    private IPreferenceStore apiPreferenceStore = PrefUtil.getAPIPreferenceStore();
+    private IPreferenceStore apiPreferenceStore = PrefUtil
+            .getAPIPreferenceStore();
 
     private ToolItem toolItem = null;
+
     private Image image;
+
     private WorkbenchPage workbenchPage;
 
     public PerspectiveBarContributionItem(IPerspectiveDescriptor perspective,
@@ -40,21 +43,21 @@ public class PerspectiveBarContributionItem extends ContributionItem {
         this.perspective = perspective;
         this.workbenchPage = workbenchPage;
     }
-    
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.ContributionItem#dispose()
-	 */
-	public void dispose() {
-		super.dispose();
-		if (image != null && !image.isDisposed()) {
-			image.dispose();
-			image = null;
-		}
-		apiPreferenceStore = null;
-		workbenchPage = null;
-		perspective = null;
-		
-	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.action.ContributionItem#dispose()
+     */
+    public void dispose() {
+        super.dispose();
+        if (image != null && !image.isDisposed()) {
+            image.dispose();
+            image = null;
+        }
+        apiPreferenceStore = null;
+        workbenchPage = null;
+        perspective = null;
+
+    }
 
     public void fill(ToolBar parent, int index) {
         if (toolItem == null && parent != null && !parent.isDisposed()) {
@@ -65,17 +68,17 @@ public class PerspectiveBarContributionItem extends ContributionItem {
                 toolItem = new ToolItem(parent, SWT.CHECK);
 
             if (image == null || image.isDisposed()) {
-	            createImage();
+                createImage();
             }
             toolItem.setImage(image);
-                
+
             toolItem.setToolTipText(WorkbenchMessages.format(
                     "PerspectiveBarContributionItem.toolTip", //$NON-NLS-1$
-                    new Object[] { perspective.getLabel()}));
+                    new Object[] { perspective.getLabel() }));
             toolItem.addSelectionListener(new SelectionAdapter() {
 
                 public void widgetSelected(SelectionEvent event) {
-                	select();
+                    select();
                 }
             });
             toolItem.setData(this); //TODO review need for this
@@ -84,41 +87,45 @@ public class PerspectiveBarContributionItem extends ContributionItem {
     }
 
     private void createImage() {
-    	ImageDescriptor imageDescriptor = perspective.getImageDescriptor();
+        ImageDescriptor imageDescriptor = perspective.getImageDescriptor();
         if (imageDescriptor != null) {
-        	image = imageDescriptor.createImage();
+            image = imageDescriptor.createImage();
         } else {
-        	image = WorkbenchImages.getImageDescriptor(
+            image = WorkbenchImages.getImageDescriptor(
                     IWorkbenchGraphicConstants.IMG_ETOOL_DEF_PERSPECTIVE)
                     .createImage();
-        }	
-    } 
-    
-    Image getImage(){
-    	if (image == null) {
-    		createImage();
-    	}
-    	return image;
+        }
     }
-    
+
+    Image getImage() {
+        if (image == null) {
+            createImage();
+        }
+        return image;
+    }
+
     public void select() {
-    	if (workbenchPage.getPerspective() != perspective) {
-    		workbenchPage.setPerspective(perspective);
-    		update();
-    		getParent().update(true);
-    	} else
-    		toolItem.setSelection(true);
+        if (workbenchPage.getPerspective() != perspective) {
+            workbenchPage.setPerspective(perspective);
+            update();
+            getParent().update(true);
+        } else
+            toolItem.setSelection(true);
     }
 
     public void update() {
         if (toolItem != null && !toolItem.isDisposed()) {
-            toolItem.setSelection(workbenchPage.getPerspective() == perspective);
+            toolItem
+                    .setSelection(workbenchPage.getPerspective() == perspective);
             if (apiPreferenceStore
                     .getBoolean(IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR)) {
-            	if (apiPreferenceStore.getString(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR).equals(IWorkbenchPreferenceConstants.TOP_LEFT))
-                	toolItem.setText(perspective.getLabel());
+                if (apiPreferenceStore.getString(
+                        IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR)
+                        .equals(IWorkbenchPreferenceConstants.TOP_LEFT))
+                    toolItem.setText(perspective.getLabel());
                 else
-                	toolItem.setText(shortenText(perspective.getLabel(), toolItem));
+                    toolItem.setText(shortenText(perspective.getLabel(),
+                            toolItem));
             } else {
                 toolItem.setText(""); //$NON-NLS-1$
             }
@@ -138,7 +145,7 @@ public class PerspectiveBarContributionItem extends ContributionItem {
             }
             toolItem.setToolTipText(WorkbenchMessages.format(
                     "PerspectiveBarContributionItem.toolTip", //$NON-NLS-1$
-                    new Object[] { perspective.getLabel()}));
+                    new Object[] { perspective.getLabel() }));
         }
         update();
     }
@@ -150,9 +157,9 @@ public class PerspectiveBarContributionItem extends ContributionItem {
     IPerspectiveDescriptor getPerspective() {
         return perspective;
     }
-    
+
     ToolItem getToolItem() {
-    	return toolItem;
+        return toolItem;
     }
 
     public boolean handles(IPerspectiveDescriptor perspective,
@@ -168,30 +175,30 @@ public class PerspectiveBarContributionItem extends ContributionItem {
     // TODO review need for this method
     void setSelection(boolean b) {
         if (toolItem != null && !toolItem.isDisposed())
-                toolItem.setSelection(b);
+            toolItem.setSelection(b);
     }
 
     static int getMaxWidth(Image image) {
-    	return image.getBounds().width * 5;
+        return image.getBounds().width * 5;
     }
-    
+
     private static final String ellipsis = "..."; //$NON-NLS-1$
 
     protected String shortenText(String textValue, ToolItem item) {
         if (textValue == null || toolItem == null || toolItem.isDisposed())
-                return null;
+            return null;
         String returnText = textValue;
         GC gc = new GC(item.getDisplay());
         int maxWidth = getMaxWidth(item.getImage());
         if (gc.textExtent(textValue).x >= maxWidth) {
-        	for (int i = textValue.length(); i > 0; i--) {
-        		String test = textValue.substring(0, i);
-        		test = test + ellipsis;
-        		if (gc.textExtent(test).x < maxWidth){
-        			returnText = test;
-        			break;
-        		}
-        	}
+            for (int i = textValue.length(); i > 0; i--) {
+                String test = textValue.substring(0, i);
+                test = test + ellipsis;
+                if (gc.textExtent(test).x < maxWidth) {
+                    returnText = test;
+                    break;
+                }
+            }
         }
         gc.dispose();
         return returnText;

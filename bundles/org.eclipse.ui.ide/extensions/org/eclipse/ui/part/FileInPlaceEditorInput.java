@@ -16,7 +16,6 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-
 import org.eclipse.ui.IInPlaceEditor;
 import org.eclipse.ui.IInPlaceEditorInput;
 
@@ -28,92 +27,103 @@ import org.eclipse.ui.IInPlaceEditorInput;
  * 
  * @since 3.0
  */
-public class FileInPlaceEditorInput extends FileEditorInput implements IInPlaceEditorInput {
-	IInPlaceEditor embeddedEditor;
+public class FileInPlaceEditorInput extends FileEditorInput implements
+        IInPlaceEditorInput {
+    IInPlaceEditor embeddedEditor;
 
-	/**
-	 * A resource listener to update the input and in-place
-	 * editor if the input's file resource changes.
-	 */
-	private IResourceChangeListener resourceListener = new IResourceChangeListener() {
-		public void resourceChanged(IResourceChangeEvent event) {
-			IResourceDelta mainDelta = event.getDelta();
-			if (mainDelta != null && embeddedEditor != null) {
-				IResourceDelta affectedElement = mainDelta.findMember(getFile().getFullPath());
-				if (affectedElement != null) {
-					try {
-						processDelta(affectedElement);
-					} catch (CoreException exception) {
-						// Failed so close the receiver
-						if (embeddedEditor != null) {
-							embeddedEditor.getSite().getPage().closeEditor(embeddedEditor, true);
-						}
-					}
-				}
-			}
-		}
+    /**
+     * A resource listener to update the input and in-place
+     * editor if the input's file resource changes.
+     */
+    private IResourceChangeListener resourceListener = new IResourceChangeListener() {
+        public void resourceChanged(IResourceChangeEvent event) {
+            IResourceDelta mainDelta = event.getDelta();
+            if (mainDelta != null && embeddedEditor != null) {
+                IResourceDelta affectedElement = mainDelta.findMember(getFile()
+                        .getFullPath());
+                if (affectedElement != null) {
+                    try {
+                        processDelta(affectedElement);
+                    } catch (CoreException exception) {
+                        // Failed so close the receiver
+                        if (embeddedEditor != null) {
+                            embeddedEditor.getSite().getPage().closeEditor(
+                                    embeddedEditor, true);
+                        }
+                    }
+                }
+            }
+        }
 
-		private boolean processDelta(final IResourceDelta delta) throws CoreException {
-			Runnable changeRunnable = null;
+        private boolean processDelta(final IResourceDelta delta)
+                throws CoreException {
+            Runnable changeRunnable = null;
 
-			switch (delta.getKind()) {
-				case IResourceDelta.REMOVED :
-					if ((IResourceDelta.MOVED_TO & delta.getFlags()) != 0) {
-						changeRunnable = new Runnable() {
-							public void run() {
-								IPath path = delta.getMovedToPath();
-								IFile newFile = delta.getResource().getWorkspace().getRoot().getFile(path);
-								if (newFile != null && embeddedEditor != null) {
-									embeddedEditor.sourceChanged(new FileInPlaceEditorInput(newFile));
-								}
-							}
-						};
-					} else {
-						changeRunnable = new Runnable() {
-							public void run() {
-								if (embeddedEditor != null) {
-									embeddedEditor.sourceDeleted();
-									embeddedEditor.getSite().getPage().closeEditor(embeddedEditor, true);
-								}
-							}
-						};
+            switch (delta.getKind()) {
+            case IResourceDelta.REMOVED:
+                if ((IResourceDelta.MOVED_TO & delta.getFlags()) != 0) {
+                    changeRunnable = new Runnable() {
+                        public void run() {
+                            IPath path = delta.getMovedToPath();
+                            IFile newFile = delta.getResource().getWorkspace()
+                                    .getRoot().getFile(path);
+                            if (newFile != null && embeddedEditor != null) {
+                                embeddedEditor
+                                        .sourceChanged(new FileInPlaceEditorInput(
+                                                newFile));
+                            }
+                        }
+                    };
+                } else {
+                    changeRunnable = new Runnable() {
+                        public void run() {
+                            if (embeddedEditor != null) {
+                                embeddedEditor.sourceDeleted();
+                                embeddedEditor.getSite().getPage().closeEditor(
+                                        embeddedEditor, true);
+                            }
+                        }
+                    };
 
-					}
+                }
 
-					break;
-			}
+                break;
+            }
 
-			if (changeRunnable != null && embeddedEditor != null) {
-				embeddedEditor.getSite().getShell().getDisplay().asyncExec(changeRunnable);
-			}
+            if (changeRunnable != null && embeddedEditor != null) {
+                embeddedEditor.getSite().getShell().getDisplay().asyncExec(
+                        changeRunnable);
+            }
 
-			return true; // because we are sitting on files anyway
-		}
-	};
+            return true; // because we are sitting on files anyway
+        }
+    };
 
-	/**
-	 * Creates an in-place editor input based on a file resource.
-	 *
-	 * @param file the file resource
-	 */
-	public FileInPlaceEditorInput(IFile file) {
-		super(file);
-	}
+    /**
+     * Creates an in-place editor input based on a file resource.
+     *
+     * @param file the file resource
+     */
+    public FileInPlaceEditorInput(IFile file) {
+        super(file);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IInPlaceEditorInput#setInPlaceEditor(org.eclipse.ui.IInPlaceEditor)
-	 */
-	public void setInPlaceEditor(IInPlaceEditor editor) {
-		if (embeddedEditor != editor) {
-			if (embeddedEditor != null) {
-				getFile().getWorkspace().removeResourceChangeListener(resourceListener);
-			}
-			
-			embeddedEditor = editor;
-			
-			if (embeddedEditor != null) {
-				getFile().getWorkspace().addResourceChangeListener(resourceListener);
-			}
-		}
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IInPlaceEditorInput#setInPlaceEditor(org.eclipse.ui.IInPlaceEditor)
+     */
+    public void setInPlaceEditor(IInPlaceEditor editor) {
+        if (embeddedEditor != editor) {
+            if (embeddedEditor != null) {
+                getFile().getWorkspace().removeResourceChangeListener(
+                        resourceListener);
+            }
+
+            embeddedEditor = editor;
+
+            if (embeddedEditor != null) {
+                getFile().getWorkspace().addResourceChangeListener(
+                        resourceListener);
+            }
+        }
+    }
 }

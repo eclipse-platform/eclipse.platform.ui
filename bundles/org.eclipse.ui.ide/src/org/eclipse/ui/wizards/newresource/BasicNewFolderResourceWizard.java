@@ -42,54 +42,60 @@ import org.eclipse.ui.dialogs.WizardNewFolderMainPage;
  * </p>
  */
 public class BasicNewFolderResourceWizard extends BasicNewResourceWizard {
-	private WizardNewFolderMainPage mainPage;
-/**
- * Creates a wizard for creating a new folder resource in the workspace.
- */
-public BasicNewFolderResourceWizard() {
-	super();
-}
-/* (non-Javadoc)
- * Method declared on IWizard.
- */
-public void addPages() {
-	super.addPages();
-	mainPage = new WizardNewFolderMainPage(ResourceMessages.getString("NewFolder.text"), getSelection()); //$NON-NLS-1$
-	addPage(mainPage);
-}
-/* (non-Javadoc)
- * Method declared on IWorkbenchWizard.
- */
-public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
-	super.init(workbench, currentSelection);
-	setWindowTitle(ResourceMessages.getString("NewFolder.title")); //$NON-NLS-1$
-	setNeedsProgressMonitor(true);
-}
-/* (non-Javadoc)
- * Method declared on BasicNewResourceWizard.
- */
-protected void initializeDefaultPageImageDescriptor() {
-	String iconPath = "icons/full/";//$NON-NLS-1$
-	try {
-		URL installURL = Platform.getPlugin(PlatformUI.PLUGIN_ID).getDescriptor().getInstallURL();
-		URL url = new URL(installURL, iconPath + "wizban/newfolder_wiz.gif");//$NON-NLS-1$
-		ImageDescriptor desc = ImageDescriptor.createFromURL(url);
-		setDefaultPageImageDescriptor(desc);
-	}
-	catch (MalformedURLException e) {
-		// Should not happen.  Ignore.
-	}
-}
-/* (non-Javadoc)
- * Method declared on IWizard.
- */
-public boolean performFinish() {
-	IFolder folder = mainPage.createNewFolder();
-	if (folder == null)
-		return false;
+    private WizardNewFolderMainPage mainPage;
 
-	selectAndReveal(folder);	
-	
-	return true;
-}
+    /**
+     * Creates a wizard for creating a new folder resource in the workspace.
+     */
+    public BasicNewFolderResourceWizard() {
+        super();
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IWizard.
+     */
+    public void addPages() {
+        super.addPages();
+        mainPage = new WizardNewFolderMainPage(ResourceMessages
+                .getString("NewFolder.text"), getSelection()); //$NON-NLS-1$
+        addPage(mainPage);
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IWorkbenchWizard.
+     */
+    public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
+        super.init(workbench, currentSelection);
+        setWindowTitle(ResourceMessages.getString("NewFolder.title")); //$NON-NLS-1$
+        setNeedsProgressMonitor(true);
+    }
+
+    /* (non-Javadoc)
+     * Method declared on BasicNewResourceWizard.
+     */
+    protected void initializeDefaultPageImageDescriptor() {
+        String iconPath = "icons/full/";//$NON-NLS-1$
+        try {
+            URL installURL = Platform.getPlugin(PlatformUI.PLUGIN_ID)
+                    .getDescriptor().getInstallURL();
+            URL url = new URL(installURL, iconPath + "wizban/newfolder_wiz.gif");//$NON-NLS-1$
+            ImageDescriptor desc = ImageDescriptor.createFromURL(url);
+            setDefaultPageImageDescriptor(desc);
+        } catch (MalformedURLException e) {
+            // Should not happen.  Ignore.
+        }
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IWizard.
+     */
+    public boolean performFinish() {
+        IFolder folder = mainPage.createNewFolder();
+        if (folder == null)
+            return false;
+
+        selectAndReveal(folder);
+
+        return true;
+    }
 }

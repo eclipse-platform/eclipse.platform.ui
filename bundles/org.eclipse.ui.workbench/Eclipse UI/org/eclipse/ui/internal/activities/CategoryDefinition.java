@@ -20,142 +20,148 @@ import java.util.Map;
 import org.eclipse.ui.internal.util.Util;
 
 public final class CategoryDefinition implements Comparable {
-	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL =
-		CategoryDefinition.class.getName().hashCode();
+    private final static int HASH_FACTOR = 89;
 
-	static Map categoryDefinitionsById(
-		Collection categoryDefinitions,
-		boolean allowNullIds) {
-		if (categoryDefinitions == null)
-			throw new NullPointerException();
+    private final static int HASH_INITIAL = CategoryDefinition.class.getName()
+            .hashCode();
 
-		Map map = new HashMap();
-		Iterator iterator = categoryDefinitions.iterator();
+    static Map categoryDefinitionsById(Collection categoryDefinitions,
+            boolean allowNullIds) {
+        if (categoryDefinitions == null)
+            throw new NullPointerException();
 
-		while (iterator.hasNext()) {
-			Object object = iterator.next();
-			Util.assertInstance(object, CategoryDefinition.class);
-			CategoryDefinition categoryDefinition = (CategoryDefinition) object;
-			String id = categoryDefinition.getId();
+        Map map = new HashMap();
+        Iterator iterator = categoryDefinitions.iterator();
 
-			if (allowNullIds || id != null)
-				map.put(id, categoryDefinition);
-		}
+        while (iterator.hasNext()) {
+            Object object = iterator.next();
+            Util.assertInstance(object, CategoryDefinition.class);
+            CategoryDefinition categoryDefinition = (CategoryDefinition) object;
+            String id = categoryDefinition.getId();
 
-		return map;
-	}
+            if (allowNullIds || id != null)
+                map.put(id, categoryDefinition);
+        }
 
-	static Map categoryDefinitionsByName(
-		Collection categoryDefinitions,
-		boolean allowNullNames) {
-		if (categoryDefinitions == null)
-			throw new NullPointerException();
+        return map;
+    }
 
-		Map map = new HashMap();
-		Iterator iterator = categoryDefinitions.iterator();
+    static Map categoryDefinitionsByName(Collection categoryDefinitions,
+            boolean allowNullNames) {
+        if (categoryDefinitions == null)
+            throw new NullPointerException();
 
-		while (iterator.hasNext()) {
-			Object object = iterator.next();
-			Util.assertInstance(object, CategoryDefinition.class);
-			CategoryDefinition categoryDefinition = (CategoryDefinition) object;
-			String name = categoryDefinition.getName();
+        Map map = new HashMap();
+        Iterator iterator = categoryDefinitions.iterator();
 
-			if (allowNullNames || name != null) {
-				Collection categoryDefinitions2 = (Collection) map.get(name);
+        while (iterator.hasNext()) {
+            Object object = iterator.next();
+            Util.assertInstance(object, CategoryDefinition.class);
+            CategoryDefinition categoryDefinition = (CategoryDefinition) object;
+            String name = categoryDefinition.getName();
 
-				if (categoryDefinitions2 == null) {
-					categoryDefinitions2 = new HashSet();
-					map.put(name, categoryDefinitions2);
-				}
+            if (allowNullNames || name != null) {
+                Collection categoryDefinitions2 = (Collection) map.get(name);
 
-				categoryDefinitions2.add(categoryDefinition);
-			}
-		}
+                if (categoryDefinitions2 == null) {
+                    categoryDefinitions2 = new HashSet();
+                    map.put(name, categoryDefinitions2);
+                }
 
-		return map;
-	}
+                categoryDefinitions2.add(categoryDefinition);
+            }
+        }
 
-	private transient int hashCode;
-	private transient boolean hashCodeComputed;
-	private String id;
-	private String name;
-	private String sourceId;
-	private transient String string;
+        return map;
+    }
+
+    private transient int hashCode;
+
+    private transient boolean hashCodeComputed;
+
+    private String id;
+
+    private String name;
+
+    private String sourceId;
+
+    private transient String string;
+
     private String description;
 
-	public CategoryDefinition(String id, String name, String sourceId, String description) {
-		this.id = id;
-		this.name = name;
-		this.sourceId = sourceId;
-		this.description = description;
-	}
+    public CategoryDefinition(String id, String name, String sourceId,
+            String description) {
+        this.id = id;
+        this.name = name;
+        this.sourceId = sourceId;
+        this.description = description;
+    }
 
-	public int compareTo(Object object) {
-		CategoryDefinition castedObject = (CategoryDefinition) object;
-		int compareTo = Util.compare(id, castedObject.id);
+    public int compareTo(Object object) {
+        CategoryDefinition castedObject = (CategoryDefinition) object;
+        int compareTo = Util.compare(id, castedObject.id);
 
-		if (compareTo == 0) {
-			compareTo = Util.compare(name, castedObject.name);
+        if (compareTo == 0) {
+            compareTo = Util.compare(name, castedObject.name);
 
-			if (compareTo == 0)
-				compareTo = Util.compare(sourceId, castedObject.sourceId);
-		}
+            if (compareTo == 0)
+                compareTo = Util.compare(sourceId, castedObject.sourceId);
+        }
 
-		return compareTo;
-	}
+        return compareTo;
+    }
 
-	public boolean equals(Object object) {
-		if (!(object instanceof CategoryDefinition))
-			return false;
+    public boolean equals(Object object) {
+        if (!(object instanceof CategoryDefinition))
+            return false;
 
-		CategoryDefinition castedObject = (CategoryDefinition) object;
-		boolean equals = true;
-		equals &= Util.equals(id, castedObject.id);
-		equals &= Util.equals(name, castedObject.name);
-		equals &= Util.equals(sourceId, castedObject.sourceId);
-		return equals;
-	}
+        CategoryDefinition castedObject = (CategoryDefinition) object;
+        boolean equals = true;
+        equals &= Util.equals(id, castedObject.id);
+        equals &= Util.equals(name, castedObject.name);
+        equals &= Util.equals(sourceId, castedObject.sourceId);
+        return equals;
+    }
 
-	public String getId() {
-		return id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String getSourceId() {
-		return sourceId;
-	}
+    public String getSourceId() {
+        return sourceId;
+    }
 
-	public int hashCode() {
-		if (!hashCodeComputed) {
-			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(sourceId);
-			hashCodeComputed = true;
-		}
+    public int hashCode() {
+        if (!hashCodeComputed) {
+            hashCode = HASH_INITIAL;
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(sourceId);
+            hashCodeComputed = true;
+        }
 
-		return hashCode;
-	}
+        return hashCode;
+    }
 
-	public String toString() {
-		if (string == null) {
-			final StringBuffer stringBuffer = new StringBuffer();
-			stringBuffer.append('[');
-			stringBuffer.append(id);
-			stringBuffer.append(',');
-			stringBuffer.append(name);
-			stringBuffer.append(',');
-			stringBuffer.append(sourceId);
-			stringBuffer.append(']');
-			string = stringBuffer.toString();
-		}
+    public String toString() {
+        if (string == null) {
+            final StringBuffer stringBuffer = new StringBuffer();
+            stringBuffer.append('[');
+            stringBuffer.append(id);
+            stringBuffer.append(',');
+            stringBuffer.append(name);
+            stringBuffer.append(',');
+            stringBuffer.append(sourceId);
+            stringBuffer.append(']');
+            string = stringBuffer.toString();
+        }
 
-		return string;
-	}
+        return string;
+    }
 
     public String getDescription() {
         return description;

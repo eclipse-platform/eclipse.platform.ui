@@ -14,20 +14,16 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.Point;
-
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardNode;
-
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
-
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
@@ -40,144 +36,150 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * AND ensuring that this wizard is the "right" type of wizard (eg.-
  * New, Import, etc.).</p>
  */
-public abstract class WorkbenchWizardNode implements IWizardNode, IPluginContribution {
-	protected WorkbenchWizardSelectionPage parentWizardPage;
-	protected IWizard wizard;
-	protected WorkbenchWizardElement wizardElement;
+public abstract class WorkbenchWizardNode implements IWizardNode,
+        IPluginContribution {
+    protected WorkbenchWizardSelectionPage parentWizardPage;
 
-	/**
-	 * Creates a <code>WorkbenchWizardNode</code> that holds onto a wizard
-	 * element.  The wizard element provides information on how to create
-	 * the wizard supplied by the ISV's extension.
-	 */
-	public WorkbenchWizardNode(
-		WorkbenchWizardSelectionPage aWizardPage,
-		WorkbenchWizardElement element) {
-		super();
-		this.parentWizardPage = aWizardPage;
-		this.wizardElement = element;
-	}
+    protected IWizard wizard;
 
-	/**
-	 * Returns the wizard represented by this wizard node.  <b>Subclasses</b>
-	 * must override this method.
-	 */
-	public abstract IWorkbenchWizard createWizard() throws CoreException;
+    protected WorkbenchWizardElement wizardElement;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.IWizardNode#dispose()
-	 */
-	public void dispose() {
-		// Do nothing since the wizard wasn't created via reflection.
-	}
+    /**
+     * Creates a <code>WorkbenchWizardNode</code> that holds onto a wizard
+     * element.  The wizard element provides information on how to create
+     * the wizard supplied by the ISV's extension.
+     */
+    public WorkbenchWizardNode(WorkbenchWizardSelectionPage aWizardPage,
+            WorkbenchWizardElement element) {
+        super();
+        this.parentWizardPage = aWizardPage;
+        this.wizardElement = element;
+    }
 
-	/**
-	 * Returns the current resource selection that is being given to the wizard.
-	 */
-	protected IStructuredSelection getCurrentResourceSelection() {
-		return parentWizardPage.getCurrentResourceSelection();
-	}
+    /**
+     * Returns the wizard represented by this wizard node.  <b>Subclasses</b>
+     * must override this method.
+     */
+    public abstract IWorkbenchWizard createWizard() throws CoreException;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.IWizardNode#getExtent()
-	 */
-	public Point getExtent() {
-		return new Point(-1, -1);
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.wizard.IWizardNode#dispose()
+     */
+    public void dispose() {
+        // Do nothing since the wizard wasn't created via reflection.
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPluginContribution#getLocalId()
-	 */
-	public String getLocalId() {
-		return wizardElement.getLocalId();
-	}
+    /**
+     * Returns the current resource selection that is being given to the wizard.
+     */
+    protected IStructuredSelection getCurrentResourceSelection() {
+        return parentWizardPage.getCurrentResourceSelection();
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPluginContribution#getPluginId()
-	 */
-	public String getPluginId() {
-		return wizardElement.getPluginId();
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.wizard.IWizardNode#getExtent()
+     */
+    public Point getExtent() {
+        return new Point(-1, -1);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.IWizardNode#getWizard()
-	 */
-	public IWizard getWizard() {
-		if (wizard != null)
-			return wizard; // we've already created it
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IPluginContribution#getLocalId()
+     */
+    public String getLocalId() {
+        return wizardElement.getLocalId();
+    }
 
-		final IWorkbenchWizard[] workbenchWizard = new IWorkbenchWizard[1];
-		final IStatus statuses[] = new IStatus[1];
-		// Start busy indicator.
-		BusyIndicator.showWhile(parentWizardPage.getShell().getDisplay(), new Runnable() {
-			public void run() {
-				Platform.run(new SafeRunnable() {
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IPluginContribution#getPluginId()
+     */
+    public String getPluginId() {
+        return wizardElement.getPluginId();
+    }
 
-					/**
-					 * Add the exception details to status is one happens.
-						 */
-					public void handleException(Throwable e) {
-						statuses[0] =
-							new Status(
-								IStatus.ERROR,
-								wizardElement
-									.getConfigurationElement()
-									.getDeclaringExtension()
-									.getUniqueIdentifier(),
-								IStatus.OK,
-								e.getMessage() == null ? "" : e.getMessage(), //$NON-NLS-1$,
-								e);
-					}
-					public void run() {
-						try {
-							workbenchWizard[0] = createWizard();
-							// create instance of target wizard
-						} catch (CoreException e) {
-							statuses[0] = e.getStatus();
-						}
-					}
-				});
-			}
-		});
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.wizard.IWizardNode#getWizard()
+     */
+    public IWizard getWizard() {
+        if (wizard != null)
+            return wizard; // we've already created it
 
-		if (statuses[0] != null) {
-			parentWizardPage.setErrorMessage(WorkbenchMessages.getString("WorkbenchWizard.errorMessage")); //$NON-NLS-1$
-			ErrorDialog.openError(parentWizardPage.getShell(), WorkbenchMessages.getString("WorkbenchWizard.errorTitle"), //$NON-NLS-1$
-			WorkbenchMessages.getString("WorkbenchWizard.errorMessage"), //$NON-NLS-1$
-			statuses[0]);
-			return null;
-		}
+        final IWorkbenchWizard[] workbenchWizard = new IWorkbenchWizard[1];
+        final IStatus statuses[] = new IStatus[1];
+        // Start busy indicator.
+        BusyIndicator.showWhile(parentWizardPage.getShell().getDisplay(),
+                new Runnable() {
+                    public void run() {
+                        Platform.run(new SafeRunnable() {
 
-		IStructuredSelection currentSelection = getCurrentResourceSelection();
+                            /**
+                             * Add the exception details to status is one happens.
+                             */
+                            public void handleException(Throwable e) {
+                                statuses[0] = new Status(
+                                        IStatus.ERROR,
+                                        wizardElement.getConfigurationElement()
+                                                .getDeclaringExtension()
+                                                .getUniqueIdentifier(),
+                                        IStatus.OK,
+                                        e.getMessage() == null ? "" : e.getMessage(), //$NON-NLS-1$,
+                                        e);
+                            }
 
-		//Get the adapted version of the selection that works for the
-		//wizard node
-		currentSelection = wizardElement.adaptedSelection(currentSelection);
+                            public void run() {
+                                try {
+                                    workbenchWizard[0] = createWizard();
+                                    // create instance of target wizard
+                                } catch (CoreException e) {
+                                    statuses[0] = e.getStatus();
+                                }
+                            }
+                        });
+                    }
+                });
 
-		workbenchWizard[0].init(getWorkbench(), currentSelection);
+        if (statuses[0] != null) {
+            parentWizardPage.setErrorMessage(WorkbenchMessages
+                    .getString("WorkbenchWizard.errorMessage")); //$NON-NLS-1$
+            ErrorDialog
+                    .openError(parentWizardPage.getShell(), WorkbenchMessages
+                            .getString("WorkbenchWizard.errorTitle"), //$NON-NLS-1$
+                            WorkbenchMessages
+                                    .getString("WorkbenchWizard.errorMessage"), //$NON-NLS-1$
+                            statuses[0]);
+            return null;
+        }
 
-		wizard = workbenchWizard[0];
-		return wizard;
-	}
+        IStructuredSelection currentSelection = getCurrentResourceSelection();
 
-	/**
-	 * Returns the wizard element.
-	 */
-	public WorkbenchWizardElement getWizardElement() {
-		return wizardElement;
-	}
+        //Get the adapted version of the selection that works for the
+        //wizard node
+        currentSelection = wizardElement.adaptedSelection(currentSelection);
 
-	/**
-	 * Returns the current workbench.
-	 */
-	protected IWorkbench getWorkbench() {
-		return parentWizardPage.getWorkbench();
-	}
+        workbenchWizard[0].init(getWorkbench(), currentSelection);
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.IWizardNode#isContentCreated()
-	 */
-	public boolean isContentCreated() {
-		return wizard != null;
-	}
+        wizard = workbenchWizard[0];
+        return wizard;
+    }
+
+    /**
+     * Returns the wizard element.
+     */
+    public WorkbenchWizardElement getWizardElement() {
+        return wizardElement;
+    }
+
+    /**
+     * Returns the current workbench.
+     */
+    protected IWorkbench getWorkbench() {
+        return parentWizardPage.getWorkbench();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.wizard.IWizardNode#isContentCreated()
+     */
+    public boolean isContentCreated() {
+        return wizard != null;
+    }
 }

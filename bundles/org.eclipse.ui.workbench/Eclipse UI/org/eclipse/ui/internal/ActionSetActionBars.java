@@ -23,7 +23,6 @@ import org.eclipse.jface.action.SubMenuManager;
 import org.eclipse.jface.action.SubToolBarManager;
 import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
-
 import org.eclipse.ui.IActionBars2;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.SubActionBars2;
@@ -34,8 +33,11 @@ import org.eclipse.ui.SubActionBars2;
 public class ActionSetActionBars extends SubActionBars2 {
 
     private String actionSetId;
+
     private ArrayList adjunctContributions = new ArrayList();
+
     private IToolBarManager coolItemToolBarMgr = null;
+
     private ToolBarContributionItem toolBarContributionItem = null;
 
     /**
@@ -78,7 +80,8 @@ public class ActionSetActionBars extends SubActionBars2 {
      */
     public void dispose() {
         super.dispose();
-        if (coolItemToolBarMgr == null) return;
+        if (coolItemToolBarMgr == null)
+            return;
         IContributionItem[] items = coolItemToolBarMgr.getItems();
         // remove the action set's items from its action bar, don't use
         // removeAll since other items from other actions sets may be in
@@ -100,7 +103,8 @@ public class ActionSetActionBars extends SubActionBars2 {
 
         // remove items from this action set that are in other action bars
         for (int i = 0; i < adjunctContributions.size(); i++) {
-            ContributionItem item = (ContributionItem) adjunctContributions.get(i);
+            ContributionItem item = (ContributionItem) adjunctContributions
+                    .get(i);
             ToolBarManager parent = (ToolBarManager) item.getParent();
             if (parent != null) {
                 parent.remove(item);
@@ -127,15 +131,16 @@ public class ActionSetActionBars extends SubActionBars2 {
      * 
      * @since 3.0
      */
-    private IContributionItem findAlphabeticalOrder(String startId, String itemId,
-            IContributionManager mgr) {
+    private IContributionItem findAlphabeticalOrder(String startId,
+            String itemId, IContributionManager mgr) {
         IContributionItem[] items = mgr.getItems();
         int insertIndex = 0;
 
         // look for starting point
         while (insertIndex < items.length) {
             IContributionItem item = items[insertIndex];
-            if (item.getId() != null && item.getId().equals(startId)) break;
+            if (item.getId() != null && item.getId().equals(startId))
+                break;
             ++insertIndex;
         }
 
@@ -144,15 +149,19 @@ public class ActionSetActionBars extends SubActionBars2 {
             IContributionItem item = items[i];
             String testId = item.getId();
 
-            if (item.isGroupMarker()) break;
+            if (item.isGroupMarker())
+                break;
 
             if (itemId != null && testId != null) {
-                if (itemId.compareTo(testId) < 1) break;
+                if (itemId.compareTo(testId) < 1)
+                    break;
             }
             insertIndex = i;
         }
         // Should be inserted at the end
-        if (insertIndex >= items.length) { return null; }
+        if (insertIndex >= items.length) {
+            return null;
+        }
         return items[insertIndex];
     }
 
@@ -167,7 +176,9 @@ public class ActionSetActionBars extends SubActionBars2 {
      */
     public IToolBarManager getToolBarManager() {
         ICoolBarManager coolBarManager = getCastedParent().getCoolBarManager();
-        if (coolBarManager == null) { return null; }
+        if (coolBarManager == null) {
+            return null;
+        }
         return new ToolBarManager(coolBarManager.getStyle());
     }
 
@@ -192,11 +203,15 @@ public class ActionSetActionBars extends SubActionBars2 {
 
         // Rereive the cool bar manager
         ICoolBarManager coolBarManager = getCastedParent().getCoolBarManager();
-        if (coolBarManager == null) { return null; }
+        if (coolBarManager == null) {
+            return null;
+        }
 
         // Check to see that there isn't already a tool bar created
         // and the tool bar being requested is not for an adjunct action
-        if ((coolItemToolBarMgr != null) && (!isAdjunctType)) { return coolItemToolBarMgr; }
+        if ((coolItemToolBarMgr != null) && (!isAdjunctType)) {
+            return coolItemToolBarMgr;
+        }
 
         // Search for toolBarId in the cool Bar manager
         IContributionItem cbItem = coolBarManager.find(toolBarId);
@@ -221,16 +236,19 @@ public class ActionSetActionBars extends SubActionBars2 {
             // we don't create one for an adjunct type because another action
             // set action bars contains one
 
-            toolBarContributionItem = new ToolBarContributionItem(coolItemToolBarMgr, toolBarId);
+            toolBarContributionItem = new ToolBarContributionItem(
+                    coolItemToolBarMgr, toolBarId);
             toolBarContributionItem.setParent(coolItemToolBarMgr);
             toolBarContributionItem.setVisible(getActive());
             coolItemToolBarMgr.markDirty();
 
             // Now add the tool bar contribution Item to the cool bar manager
             IContributionItem refItem = findAlphabeticalOrder(
-                    IWorkbenchActionConstants.MB_ADDITIONS, toolBarId, coolBarManager);
+                    IWorkbenchActionConstants.MB_ADDITIONS, toolBarId,
+                    coolBarManager);
             if (refItem != null) {
-                coolBarManager.insertAfter(refItem.getId(), toolBarContributionItem);
+                coolBarManager.insertAfter(refItem.getId(),
+                        toolBarContributionItem);
             } else {
                 coolBarManager.add(toolBarContributionItem);
             }
@@ -250,7 +268,8 @@ public class ActionSetActionBars extends SubActionBars2 {
         super.setActive(set);
 
         ICoolBarManager coolBarManager = getCastedParent().getCoolBarManager();
-        if (coolBarManager == null) return;
+        if (coolBarManager == null)
+            return;
 
         // 1. Need to set visibility for all non-adjunct actions
         if (coolItemToolBarMgr != null) {
@@ -284,7 +303,8 @@ public class ActionSetActionBars extends SubActionBars2 {
                 IContributionItem item = (IContributionItem) i.next();
                 if (item instanceof ContributionItem) {
                     item.setVisible(set);
-                    IContributionManager manager = ((ContributionItem) item).getParent();
+                    IContributionManager manager = ((ContributionItem) item)
+                            .getParent();
                     manager.markDirty();
                     manager.update(false);
                     if (!coolBarManager.isDirty()) {

@@ -12,8 +12,9 @@ package org.eclipse.ui.internal.registry;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.ui.*;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPartDescriptor;
 
 /**
  * This is a view descriptor. It provides a "description" of a given
@@ -30,59 +31,65 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * 
  */
 public interface IViewDescriptor extends IWorkbenchPartDescriptor {
-/**
- * Creates an instance of the view defined in the descriptor.
- */
-public IViewPart createView() throws CoreException;
-/**
- * Returns an array of strings that represent
- * view's category path. This array will be used
- * for hierarchical presentation of the
- * view in places like submenus.
- * @return array of category tokens or null if not specified.
- */
-public String[] getCategoryPath();
-/**
- * Returns the configuration element which contributed this view.
- */
-public IConfigurationElement getConfigurationElement();
-/**
- * Returns the description of this view.
- * This is the value of its <code>"description"</code> attribute.
- *
- * @return the description
- */
-public String getDescription();
-/**
- * Returns the id of the view.
- */
-public String getID() ;
-/**
- * Returns the descriptor for the icon to show for this view.
- */
-public ImageDescriptor getImageDescriptor();
-/**
- * Returns the label to show for this view.
- */
-public String getLabel() ;
+    /**
+     * Creates an instance of the view defined in the descriptor.
+     */
+    public IViewPart createView() throws CoreException;
 
-/**
- * Returns the text of the accelerator to use for this view.
- */
-public String getAccelerator();
+    /**
+     * Returns an array of strings that represent
+     * view's category path. This array will be used
+     * for hierarchical presentation of the
+     * view in places like submenus.
+     * @return array of category tokens or null if not specified.
+     */
+    public String[] getCategoryPath();
 
-/**
- * Returns the default fast view width ratio for this view.
- * 
- * @since 2.0
- */
-public float getFastViewWidthRatio(); 
+    /**
+     * Returns the configuration element which contributed this view.
+     */
+    public IConfigurationElement getConfigurationElement();
 
-/**
- * Returns whether this view allows multiple instances.
- * 
- * @since 3.0
- */
-public boolean getAllowMultiple();
+    /**
+     * Returns the description of this view.
+     * This is the value of its <code>"description"</code> attribute.
+     *
+     * @return the description
+     */
+    public String getDescription();
+
+    /**
+     * Returns the id of the view.
+     */
+    public String getID();
+
+    /**
+     * Returns the descriptor for the icon to show for this view.
+     */
+    public ImageDescriptor getImageDescriptor();
+
+    /**
+     * Returns the label to show for this view.
+     */
+    public String getLabel();
+
+    /**
+     * Returns the text of the accelerator to use for this view.
+     */
+    public String getAccelerator();
+
+    /**
+     * Returns the default fast view width ratio for this view.
+     * 
+     * @since 2.0
+     */
+    public float getFastViewWidthRatio();
+
+    /**
+     * Returns whether this view allows multiple instances.
+     * 
+     * @since 3.0
+     */
+    public boolean getAllowMultiple();
 
 }

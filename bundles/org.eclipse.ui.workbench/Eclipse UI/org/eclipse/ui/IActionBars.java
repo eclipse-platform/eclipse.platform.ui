@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui;
 
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.action.IToolBarManager;
 
 /**
  * Used by a part to access its menu, toolbar, and status line managers.  
@@ -51,79 +54,85 @@ import org.eclipse.jface.action.*;
  * </p>
  */
 public interface IActionBars {
-/**
- * Clears the global action handler list.
- * <p>
- * Note: Clients who manipulate the global action list are
- * responsible for calling <code>updateActionBars</code> so that the changes
- * can be propagated throughout the workbench.
- * </p>
- */
-public void clearGlobalActionHandlers();
-/**
- * Returns the global action handler for the action with the given id.  
- *
- * @param actionId an action id declared in the registry
- * @return an action handler which implements the action id, or
- *	 <code>null</code> if none is registered
- * @see IWorkbenchActionConstants
- * @see #setGlobalActionHandler(String, IAction)
- */
-public IAction getGlobalActionHandler(String actionId);
-/**
- * Returns the menu manager.
- * <p>
- * Note: Clients who add or remove items from the returned menu manager are
- * responsible for calling <code>updateActionBars</code> so that the changes
- * can be propagated throughout the workbench.
- * </p>
- *
- * @return the menu manager
- */
-public IMenuManager getMenuManager();
-/**
- * Returns the status line manager.
- * <p>
- * Note: Clients who add or remove items from the returned status line manager 
- * are responsible for calling <code>updateActionBars</code> so that the changes
- * can be propagated throughout the workbench.
- * </p>
- *
- * @return the status line manager
- */
-public IStatusLineManager getStatusLineManager();
-/**
- * Returns the tool bar manager.
- * <p>
- * Note: Clients who add or remove items from the returned tool bar manager are
- * responsible for calling <code>updateActionBars</code> so that the changes
- * can be propagated throughout the workbench.
- * </p>
- *
- * @return the tool bar manager
- */
-public IToolBarManager getToolBarManager();
-/**
- * Sets the global action handler for the action with the given id.
- * <p>
- * Note: Clients who manipulate the global action list are
- * responsible for calling <code>updateActionBars</code> so that the changes
- * can be propagated throughout the workbench.
- * </p>
- *
- * @param actionId an action id declared in the registry
- * @param handler an action which implements the action id, or
- *	<code>null</code> to clear any existing handler
- * @see IWorkbenchActionConstants
- */
-public void setGlobalActionHandler(String actionId, IAction handler);
-/**
- * Updates the action bars.
- * <p>
- * Clients who add or remove items from the menu, tool bar, or status line
- * managers should call this method to propagated the changes throughout 
- * the workbench.
- * </p>
- */
-public void updateActionBars();
+    /**
+     * Clears the global action handler list.
+     * <p>
+     * Note: Clients who manipulate the global action list are
+     * responsible for calling <code>updateActionBars</code> so that the changes
+     * can be propagated throughout the workbench.
+     * </p>
+     */
+    public void clearGlobalActionHandlers();
+
+    /**
+     * Returns the global action handler for the action with the given id.  
+     *
+     * @param actionId an action id declared in the registry
+     * @return an action handler which implements the action id, or
+     *	 <code>null</code> if none is registered
+     * @see IWorkbenchActionConstants
+     * @see #setGlobalActionHandler(String, IAction)
+     */
+    public IAction getGlobalActionHandler(String actionId);
+
+    /**
+     * Returns the menu manager.
+     * <p>
+     * Note: Clients who add or remove items from the returned menu manager are
+     * responsible for calling <code>updateActionBars</code> so that the changes
+     * can be propagated throughout the workbench.
+     * </p>
+     *
+     * @return the menu manager
+     */
+    public IMenuManager getMenuManager();
+
+    /**
+     * Returns the status line manager.
+     * <p>
+     * Note: Clients who add or remove items from the returned status line manager 
+     * are responsible for calling <code>updateActionBars</code> so that the changes
+     * can be propagated throughout the workbench.
+     * </p>
+     *
+     * @return the status line manager
+     */
+    public IStatusLineManager getStatusLineManager();
+
+    /**
+     * Returns the tool bar manager.
+     * <p>
+     * Note: Clients who add or remove items from the returned tool bar manager are
+     * responsible for calling <code>updateActionBars</code> so that the changes
+     * can be propagated throughout the workbench.
+     * </p>
+     *
+     * @return the tool bar manager
+     */
+    public IToolBarManager getToolBarManager();
+
+    /**
+     * Sets the global action handler for the action with the given id.
+     * <p>
+     * Note: Clients who manipulate the global action list are
+     * responsible for calling <code>updateActionBars</code> so that the changes
+     * can be propagated throughout the workbench.
+     * </p>
+     *
+     * @param actionId an action id declared in the registry
+     * @param handler an action which implements the action id, or
+     *	<code>null</code> to clear any existing handler
+     * @see IWorkbenchActionConstants
+     */
+    public void setGlobalActionHandler(String actionId, IAction handler);
+
+    /**
+     * Updates the action bars.
+     * <p>
+     * Clients who add or remove items from the menu, tool bar, or status line
+     * managers should call this method to propagated the changes throughout 
+     * the workbench.
+     * </p>
+     */
+    public void updateActionBars();
 }

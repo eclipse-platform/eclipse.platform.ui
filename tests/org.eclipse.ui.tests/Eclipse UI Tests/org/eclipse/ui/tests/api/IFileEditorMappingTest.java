@@ -18,60 +18,54 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.tests.util.ArrayUtil;
 
 public class IFileEditorMappingTest extends TestCase {
-	private IFileEditorMapping[] fMappings;
-	
-	public IFileEditorMappingTest( String testName )
-	{
-		super( testName );
-	}
+    private IFileEditorMapping[] fMappings;
 
-	public void setUp()
-	{
-		fMappings = PlatformUI.getWorkbench().getEditorRegistry().getFileEditorMappings();
-	}
-	
-	public void testGetName() throws Throwable
-	{
-		for( int i = 0; i < fMappings.length; i ++ )
-			assertNotNull( fMappings[ i ].getName() );
-	}
+    public IFileEditorMappingTest(String testName) {
+        super(testName);
+    }
 
-	public void testGetLabel() throws Throwable
-	{
-		String label;
-		for( int i = 0; i < fMappings.length; i ++ ){
-			label = fMappings[ i ].getLabel();
-			assertNotNull( label );
-			assertTrue( label.equals( fMappings[ i ].getName() + "." + fMappings[ i ].getExtension() ) );			
-		}
-	}
+    public void setUp() {
+        fMappings = PlatformUI.getWorkbench().getEditorRegistry()
+                .getFileEditorMappings();
+    }
 
-	public void testGetExtension() throws Throwable
-	{
-		for( int i = 0; i < fMappings.length; i ++ )
-			assertNotNull( fMappings[ i ].getExtension() );
-	}
+    public void testGetName() throws Throwable {
+        for (int i = 0; i < fMappings.length; i++)
+            assertNotNull(fMappings[i].getName());
+    }
 
-	public void testGetEditors() throws Throwable
-	{
-		IEditorDescriptor[] editors;
-		
-		for( int i = 0; i < fMappings.length; i ++ ){
-			editors = fMappings[ i ].getEditors();
-			assertTrue( ArrayUtil.checkNotNull( editors ) == true );
-		}
-	}
+    public void testGetLabel() throws Throwable {
+        String label;
+        for (int i = 0; i < fMappings.length; i++) {
+            label = fMappings[i].getLabel();
+            assertNotNull(label);
+            assertTrue(label.equals(fMappings[i].getName() + "."
+                    + fMappings[i].getExtension()));
+        }
+    }
 
-	public void testGetImageDescriptor() throws Throwable
-	{
-		for( int i = 0; i < fMappings.length; i ++ )
-			assertNotNull( fMappings[ i ].getImageDescriptor() );
-	}
+    public void testGetExtension() throws Throwable {
+        for (int i = 0; i < fMappings.length; i++)
+            assertNotNull(fMappings[i].getExtension());
+    }
 
-//how do i set the default editor?
-	public void testGetDefaultEditor()  throws Throwable
-	{		
-/*		for( int i = 0; i < fMappings.length; i ++ )
-			assertNotNull( fMappings[ i ].getDefaultEditor() );*/
-	}
+    public void testGetEditors() throws Throwable {
+        IEditorDescriptor[] editors;
+
+        for (int i = 0; i < fMappings.length; i++) {
+            editors = fMappings[i].getEditors();
+            assertTrue(ArrayUtil.checkNotNull(editors) == true);
+        }
+    }
+
+    public void testGetImageDescriptor() throws Throwable {
+        for (int i = 0; i < fMappings.length; i++)
+            assertNotNull(fMappings[i].getImageDescriptor());
+    }
+
+    //how do i set the default editor?
+    public void testGetDefaultEditor() throws Throwable {
+        /*		for( int i = 0; i < fMappings.length; i ++ )
+         assertNotNull( fMappings[ i ].getDefaultEditor() );*/
+    }
 }

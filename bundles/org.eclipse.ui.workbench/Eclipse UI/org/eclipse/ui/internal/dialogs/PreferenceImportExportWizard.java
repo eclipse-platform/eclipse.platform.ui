@@ -39,245 +39,253 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  */
 public class PreferenceImportExportWizard extends Wizard {
 
-	/**
-	 * Whether this wizard should export. Once set, this value will not change
-	 * during the life of the wizard.
-	 */
-	private final boolean export;
-	/**
-	 * The page containing the file selection controls. This is the first page
-	 * shown to the user (and sometimes the only page). This value should not
-	 * be <code>null</code> after the pages have been added.
-	 */
-	private PreferenceImportExportFileSelectionPage fileSelectionPage;
-	/**
-	 * The dialog which opened this wizard. This is used to get a handle on the
-	 * preferences. This value should never be <code>null</code>.
-	 */
-	private final PreferenceDialog parent;
-	
-	/**
-	 * A flag representing success/failure of an operation.
-	 */
-	private boolean success;
-	/**
-	 * The selected file path.
-	 */
-	private String selectedFilePath;
-	/**
-	 * The selected file.
-	 */
-	private File selectedFile;
-	/**
-	 * The time at which the file was last modified.
-	 */
-	private long lastModified;
+    /**
+     * Whether this wizard should export. Once set, this value will not change
+     * during the life of the wizard.
+     */
+    private final boolean export;
 
-	/**
-	 * Constructs a new instance of <code>PreferenceImportExportWizard</code>
-	 * with the mode and parent dialog.
-	 * 
-	 * @param exportWizard
-	 *            Whether the wizard should act as an export tool.
-	 * @param parentDialog
-	 *            The dialog which created this wizard (<em>not</em> the
-	 *            wizard dialog itself). This parameter should not be <code>null</code>.
-	 */
-	public PreferenceImportExportWizard(final boolean exportWizard,
-			PreferenceDialog parentDialog) {
-		super();
-		export = exportWizard;
-		parent = parentDialog;
-		if (exportWizard) {
-			setWindowTitle(WorkbenchMessages.getString("ImportExportPages.exportWindowTitle")); //$NON-NLS-1$
-		} else {
-			setWindowTitle(WorkbenchMessages.getString("ImportExportPages.importWindowTitle")); //$NON-NLS-1$
-		}
-	}
+    /**
+     * The page containing the file selection controls. This is the first page
+     * shown to the user (and sometimes the only page). This value should not
+     * be <code>null</code> after the pages have been added.
+     */
+    private PreferenceImportExportFileSelectionPage fileSelectionPage;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.wizard.IWizard#addPages()
-	 */
-	public void addPages() {
-		super.addPages();
-		fileSelectionPage = new PreferenceImportExportFileSelectionPage(export);
-		addPage(fileSelectionPage);
-	}
+    /**
+     * The dialog which opened this wizard. This is used to get a handle on the
+     * preferences. This value should never be <code>null</code>.
+     */
+    private final PreferenceDialog parent;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.wizard.IWizard#canFinish()
-	 */
-	public boolean canFinish() {
-		return fileSelectionPage.canFinish();
-	}
+    /**
+     * A flag representing success/failure of an operation.
+     */
+    private boolean success;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.wizard.IWizard#performFinish()
-	 */
-	public boolean performFinish() {
-		success = true;
-		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-			public void run() {
-				// Save all the pages and give them a chance to abort
-				success = saveAllPages();
-				if (!success)
-					return;
-				// Save or load -- depending on the phase of moon.
-				IPath path = new Path(selectedFilePath);
-				if (export) {
-					success = exportFile(path);
-					if (!success)
-						return;
-				} else {
-					success = importFile(path);
-					if (!success)
-						return;
-				}
-			}
-		});
-		// If an operation failed, return false
-		if (!success)
-			return success;
-		// See if we actually created a file (there where preferences to export)
-		showMessageDialog();
-		// We have been successful!
-		WorkbenchPlugin.getDefault().getDialogSettings().put(
-				WorkbenchPreferenceDialog.FILE_PATH_SETTING,
-				fileSelectionPage.getPath());
-		return true;
-	}
-	/**
-	 * Save all the preference pages.
-	 * 
-	 * @return true if successful.
-	 */
-	private boolean saveAllPages() {
-		Iterator nodes = parent.getPreferenceManager().getElements(
-				PreferenceManager.PRE_ORDER).iterator();
-		while (nodes.hasNext()) {
-			IPreferenceNode node = (IPreferenceNode) nodes.next();
-			IPreferencePage page = node.getPage();
-			if (page != null) {
-				if (!page.performOk())
-					return false;
-			}
-		}
-		selectedFilePath = fileSelectionPage.getPath();
-		selectedFile = new File(selectedFilePath);
-		lastModified = selectedFile.lastModified();
-		return true;
-	}
+    /**
+     * The selected file path.
+     */
+    private String selectedFilePath;
 
-	/**
-	 * Export the preferences to a file.
-	 * 
-	 * @param path
-	 *            The file path.
-	 * @return true if successful.
-	 */
-	private boolean exportFile(IPath path) {
-		if (selectedFile.exists()) {
-			if (!MessageDialog.openConfirm(getShell(), WorkbenchMessages
-					.getString("WorkbenchPreferenceDialog.saveTitle"), //$NON-NLS-1$
-					WorkbenchMessages.format(
-							"WorkbenchPreferenceDialog.existsErrorMessage", //$NON-NLS-1$
-							new Object[]{selectedFilePath})))
-				return false;
-		}
+    /**
+     * The selected file.
+     */
+    private File selectedFile;
 
-		try {
-			Preferences.exportPreferences(path);
-		} catch (CoreException e) {
-			ErrorDialog.openError(getShell(), WorkbenchMessages
-					.getString("WorkbenchPreferenceDialog.saveErrorTitle"), //$NON-NLS-1$
-					WorkbenchMessages.format(
-							"WorkbenchPreferenceDialog.saveErrorMessage", //$NON-NLS-1$
-							new Object[]{selectedFilePath}), e.getStatus());
-			return false;
-		}
-		return true;
-	}
+    /**
+     * The time at which the file was last modified.
+     */
+    private long lastModified;
 
-	/**
-	 * Import a preference file.
-	 * 
-	 * @param path
-	 *            The file path.
-	 * @return true if successful.
-	 */
-	private boolean importFile(IPath path) {
-		IStatus status = Preferences.validatePreferenceVersions(path);
-		if (status.getSeverity() == IStatus.ERROR) {
-			// Show the error and about
-			ErrorDialog.openError(getShell(), WorkbenchMessages
-					.getString("WorkbenchPreferenceDialog.loadErrorTitle"), //$NON-NLS-1$
-					WorkbenchMessages.format(
-							"WorkbenchPreferenceDialog.verifyErrorMessage", //$NON-NLS-1$
-							new Object[]{selectedFilePath}), status);
-			return false;
-		} else if (status.getSeverity() == IStatus.WARNING) {
-			// Show the warning and give the option to continue
-			int result = PreferenceErrorDialog
-					.openError(
-							getShell(),
-							WorkbenchMessages
-									.getString("WorkbenchPreferenceDialog.loadErrorTitle"), //$NON-NLS-1$
-							WorkbenchMessages
-									.format(
-											"WorkbenchPreferenceDialog.verifyWarningMessage", //$NON-NLS-1$
-											new Object[]{selectedFilePath}),
-							status);
-			if (result != Window.OK) {
-				return false;
-			}
-		}
+    /**
+     * Constructs a new instance of <code>PreferenceImportExportWizard</code>
+     * with the mode and parent dialog.
+     * 
+     * @param exportWizard
+     *            Whether the wizard should act as an export tool.
+     * @param parentDialog
+     *            The dialog which created this wizard (<em>not</em> the
+     *            wizard dialog itself). This parameter should not be <code>null</code>.
+     */
+    public PreferenceImportExportWizard(final boolean exportWizard,
+            PreferenceDialog parentDialog) {
+        super();
+        export = exportWizard;
+        parent = parentDialog;
+        if (exportWizard) {
+            setWindowTitle(WorkbenchMessages
+                    .getString("ImportExportPages.exportWindowTitle")); //$NON-NLS-1$
+        } else {
+            setWindowTitle(WorkbenchMessages
+                    .getString("ImportExportPages.importWindowTitle")); //$NON-NLS-1$
+        }
+    }
 
-		try {
-			Preferences.importPreferences(path);
-		} catch (CoreException e) {
-			ErrorDialog.openError(getShell(), WorkbenchMessages
-					.getString("WorkbenchPreferenceDialog.loadErrorTitle"), //$NON-NLS-1$
-					WorkbenchMessages.format(
-							"WorkbenchPreferenceDialog.loadErrorMessage", //$NON-NLS-1$
-							new Object[]{selectedFilePath}), e.getStatus());
-			return false;
-		}
-		return true;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.wizard.IWizard#addPages()
+     */
+    public void addPages() {
+        super.addPages();
+        fileSelectionPage = new PreferenceImportExportFileSelectionPage(export);
+        addPage(fileSelectionPage);
+    }
 
-	/**
-	 * Show the appropriate message dialog.
-	 *  
-	 */
-	private void showMessageDialog() {
-		if (!export) {
-			MessageDialog.openInformation(getShell(), WorkbenchMessages
-					.getString("WorkbenchPreferenceDialog.loadTitle"), //$NON-NLS-1$
-					WorkbenchMessages.format(
-							"WorkbenchPreferenceDialog.loadMessage", //$NON-NLS-1$
-							new Object[]{selectedFilePath}));
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.wizard.IWizard#canFinish()
+     */
+    public boolean canFinish() {
+        return fileSelectionPage.canFinish();
+    }
 
-		} else if ((selectedFile.exists() && (selectedFile.lastModified() != lastModified))) {
-			MessageDialog.openInformation(getShell(), WorkbenchMessages
-					.getString("WorkbenchPreferenceDialog.saveTitle"), //$NON-NLS-1$
-					WorkbenchMessages.format(
-							"WorkbenchPreferenceDialog.saveMessage", //$NON-NLS-1$
-							new Object[]{selectedFilePath}));
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.wizard.IWizard#performFinish()
+     */
+    public boolean performFinish() {
+        success = true;
+        BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+            public void run() {
+                // Save all the pages and give them a chance to abort
+                success = saveAllPages();
+                if (!success)
+                    return;
+                // Save or load -- depending on the phase of moon.
+                IPath path = new Path(selectedFilePath);
+                if (export) {
+                    success = exportFile(path);
+                    if (!success)
+                        return;
+                } else {
+                    success = importFile(path);
+                    if (!success)
+                        return;
+                }
+            }
+        });
+        // If an operation failed, return false
+        if (!success)
+            return success;
+        // See if we actually created a file (there where preferences to export)
+        showMessageDialog();
+        // We have been successful!
+        WorkbenchPlugin.getDefault().getDialogSettings().put(
+                WorkbenchPreferenceDialog.FILE_PATH_SETTING,
+                fileSelectionPage.getPath());
+        return true;
+    }
 
-		} else {
-			MessageDialog
-					.openError(
-							getShell(),
-							WorkbenchMessages
-									.getString("WorkbenchPreferenceDialog.saveErrorTitle"), //$NON-NLS-1$
-							WorkbenchMessages
-									.getString("WorkbenchPreferenceDialog.noPreferencesMessage")); //$NON-NLS-1$
-		}
-	}
+    /**
+     * Save all the preference pages.
+     * 
+     * @return true if successful.
+     */
+    private boolean saveAllPages() {
+        Iterator nodes = parent.getPreferenceManager().getElements(
+                PreferenceManager.PRE_ORDER).iterator();
+        while (nodes.hasNext()) {
+            IPreferenceNode node = (IPreferenceNode) nodes.next();
+            IPreferencePage page = node.getPage();
+            if (page != null) {
+                if (!page.performOk())
+                    return false;
+            }
+        }
+        selectedFilePath = fileSelectionPage.getPath();
+        selectedFile = new File(selectedFilePath);
+        lastModified = selectedFile.lastModified();
+        return true;
+    }
+
+    /**
+     * Export the preferences to a file.
+     * 
+     * @param path
+     *            The file path.
+     * @return true if successful.
+     */
+    private boolean exportFile(IPath path) {
+        if (selectedFile.exists()) {
+            if (!MessageDialog.openConfirm(getShell(), WorkbenchMessages
+                    .getString("WorkbenchPreferenceDialog.saveTitle"), //$NON-NLS-1$
+                    WorkbenchMessages.format(
+                            "WorkbenchPreferenceDialog.existsErrorMessage", //$NON-NLS-1$
+                            new Object[] { selectedFilePath })))
+                return false;
+        }
+
+        try {
+            Preferences.exportPreferences(path);
+        } catch (CoreException e) {
+            ErrorDialog.openError(getShell(), WorkbenchMessages
+                    .getString("WorkbenchPreferenceDialog.saveErrorTitle"), //$NON-NLS-1$
+                    WorkbenchMessages.format(
+                            "WorkbenchPreferenceDialog.saveErrorMessage", //$NON-NLS-1$
+                            new Object[] { selectedFilePath }), e.getStatus());
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Import a preference file.
+     * 
+     * @param path
+     *            The file path.
+     * @return true if successful.
+     */
+    private boolean importFile(IPath path) {
+        IStatus status = Preferences.validatePreferenceVersions(path);
+        if (status.getSeverity() == IStatus.ERROR) {
+            // Show the error and about
+            ErrorDialog.openError(getShell(), WorkbenchMessages
+                    .getString("WorkbenchPreferenceDialog.loadErrorTitle"), //$NON-NLS-1$
+                    WorkbenchMessages.format(
+                            "WorkbenchPreferenceDialog.verifyErrorMessage", //$NON-NLS-1$
+                            new Object[] { selectedFilePath }), status);
+            return false;
+        } else if (status.getSeverity() == IStatus.WARNING) {
+            // Show the warning and give the option to continue
+            int result = PreferenceErrorDialog
+                    .openError(
+                            getShell(),
+                            WorkbenchMessages
+                                    .getString("WorkbenchPreferenceDialog.loadErrorTitle"), //$NON-NLS-1$
+                            WorkbenchMessages
+                                    .format(
+                                            "WorkbenchPreferenceDialog.verifyWarningMessage", //$NON-NLS-1$
+                                            new Object[] { selectedFilePath }),
+                            status);
+            if (result != Window.OK) {
+                return false;
+            }
+        }
+
+        try {
+            Preferences.importPreferences(path);
+        } catch (CoreException e) {
+            ErrorDialog.openError(getShell(), WorkbenchMessages
+                    .getString("WorkbenchPreferenceDialog.loadErrorTitle"), //$NON-NLS-1$
+                    WorkbenchMessages.format(
+                            "WorkbenchPreferenceDialog.loadErrorMessage", //$NON-NLS-1$
+                            new Object[] { selectedFilePath }), e.getStatus());
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Show the appropriate message dialog.
+     *  
+     */
+    private void showMessageDialog() {
+        if (!export) {
+            MessageDialog.openInformation(getShell(), WorkbenchMessages
+                    .getString("WorkbenchPreferenceDialog.loadTitle"), //$NON-NLS-1$
+                    WorkbenchMessages.format(
+                            "WorkbenchPreferenceDialog.loadMessage", //$NON-NLS-1$
+                            new Object[] { selectedFilePath }));
+
+        } else if ((selectedFile.exists() && (selectedFile.lastModified() != lastModified))) {
+            MessageDialog.openInformation(getShell(), WorkbenchMessages
+                    .getString("WorkbenchPreferenceDialog.saveTitle"), //$NON-NLS-1$
+                    WorkbenchMessages.format(
+                            "WorkbenchPreferenceDialog.saveMessage", //$NON-NLS-1$
+                            new Object[] { selectedFilePath }));
+
+        } else {
+            MessageDialog
+                    .openError(
+                            getShell(),
+                            WorkbenchMessages
+                                    .getString("WorkbenchPreferenceDialog.saveErrorTitle"), //$NON-NLS-1$
+                            WorkbenchMessages
+                                    .getString("WorkbenchPreferenceDialog.noPreferencesMessage")); //$NON-NLS-1$
+        }
+    }
 }

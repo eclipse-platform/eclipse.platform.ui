@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-
 /**
  * Objects of classes that implement this interface
  * can be registered for certain object type
@@ -27,14 +26,14 @@ package org.eclipse.ui.internal;
  */
 
 public interface IObjectContributor {
-/**
- * Returns true if this contributor should be considered
- * for the given object.
- */
-public boolean isApplicableTo(Object object);
+    /**
+     * Returns true if this contributor should be considered
+     * for the given object.
+     */
+    public boolean isApplicableTo(Object object);
 
-/**
- * Return whether or not the receiver can adapt to IResource.
- */
-public boolean canAdapt();
+    /**
+     * Return whether or not the receiver can adapt to IResource.
+     */
+    public boolean canAdapt();
 }

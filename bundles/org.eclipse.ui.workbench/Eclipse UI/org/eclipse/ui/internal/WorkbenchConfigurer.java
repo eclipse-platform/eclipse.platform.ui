@@ -21,6 +21,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
+import org.eclipse.ui.application.WorkbenchAdvisor;
 
 /**
  * Internal class providing special access for configuring the workbench.
@@ -37,128 +38,131 @@ import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 public final class WorkbenchConfigurer implements IWorkbenchConfigurer {
 
     /**
-	 * Table to hold arbitrary key-data settings (key type: <code>String</code>,
-	 * value type: <code>Object</code>).
-	 * @see #setData
-	 */
-	private Map extraData = new HashMap();
-	
-	/**
-	 * Indicates whether workbench state should be saved on close and 
-	 * restored on subsequent open.
-	 */
-	private boolean saveAndRestore = false;
-	
-	/**
-	 * Indicates whether the workbench is being force to close. During
-	 * an emergency close, no interaction with the user should be done.
-	 */
-	private boolean isEmergencyClosing = false;
-	
-	/**
-	 * Creates a new workbench configurer.
-	 * <p>
-	 * This method is declared package-private. Clients are passed an instance
-	 * only via {@link WorkbenchAdvisor#initialize WorkbenchAdvisor.initialize}
-	 * </p>
-	 */
-	/* package */ WorkbenchConfigurer() {
-		super();
-	}
+     * Table to hold arbitrary key-data settings (key type: <code>String</code>,
+     * value type: <code>Object</code>).
+     * @see #setData
+     */
+    private Map extraData = new HashMap();
 
-	/* (non-javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchConfigurer#getWorkbench
-	 */
-	public IWorkbench getWorkbench() {
-		return PlatformUI.getWorkbench();
-	}
+    /**
+     * Indicates whether workbench state should be saved on close and 
+     * restored on subsequent open.
+     */
+    private boolean saveAndRestore = false;
 
-	/* (non-javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchConfigurer#getWorkbenchWindowManager
-	 */
-	public WindowManager getWorkbenchWindowManager() {
-		// return the global workbench window manager
-		return ((Workbench)getWorkbench()).getWindowManager();
-	}	
-	
-	/* (non-javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchConfigurer#declareImage
-	 */
-	public void declareImage(String symbolicName, ImageDescriptor descriptor, boolean shared) {
-		if (symbolicName == null || descriptor == null) {
-			throw new IllegalArgumentException();
-		}
-		WorkbenchImages.declareImage(symbolicName, descriptor, shared);
-	}	
+    /**
+     * Indicates whether the workbench is being force to close. During
+     * an emergency close, no interaction with the user should be done.
+     */
+    private boolean isEmergencyClosing = false;
 
-	/* (non-javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchConfigurer#getWindowConfigurer
-	 */
-	public IWorkbenchWindowConfigurer getWindowConfigurer(IWorkbenchWindow window) {
-		if (window == null) {
-			throw new IllegalArgumentException();
-		}
-		return ((WorkbenchWindow) window).getWindowConfigurer();
-	}
+    /**
+     * Creates a new workbench configurer.
+     * <p>
+     * This method is declared package-private. Clients are passed an instance
+     * only via {@link WorkbenchAdvisor#initialize WorkbenchAdvisor.initialize}
+     * </p>
+     */
+    /* package */WorkbenchConfigurer() {
+        super();
+    }
 
+    /* (non-javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchConfigurer#getWorkbench
+     */
+    public IWorkbench getWorkbench() {
+        return PlatformUI.getWorkbench();
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchConfigurer#getSaveAndRestore()
-	 */
-	public boolean getSaveAndRestore() {
-		return saveAndRestore;
-	}
+    /* (non-javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchConfigurer#getWorkbenchWindowManager
+     */
+    public WindowManager getWorkbenchWindowManager() {
+        // return the global workbench window manager
+        return ((Workbench) getWorkbench()).getWindowManager();
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchConfigurer#setSaveAndRestore(boolean)
-	 */
-	public void setSaveAndRestore(boolean enabled) {
-		saveAndRestore = enabled;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchConfigurer#getData
-	 */
-	public Object getData(String key) {
-		if (key == null) {
-			throw new IllegalArgumentException();
-		}
-		return extraData.get(key);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchConfigurer#setData(String, Object)
-	 */
-	public void setData(String key, Object data) {
-		if (key == null) {
-			throw new IllegalArgumentException();
-		}
-		if (data != null) {
-			extraData.put(key, data);
-		} else {
-			extraData.remove(key);
-		}
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchConfigurer#emergencyClose()
-	 */
-	public void emergencyClose() {
-		if (!isEmergencyClosing) {
-			isEmergencyClosing = true;
-			if (Workbench.getInstance() != null && !Workbench.getInstance().isClosing()) {
-				Workbench.getInstance().close(PlatformUI.RETURN_EMERGENCY_CLOSE, true);
-			}
-		}
-		
-	}
+    /* (non-javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchConfigurer#declareImage
+     */
+    public void declareImage(String symbolicName, ImageDescriptor descriptor,
+            boolean shared) {
+        if (symbolicName == null || descriptor == null) {
+            throw new IllegalArgumentException();
+        }
+        WorkbenchImages.declareImage(symbolicName, descriptor, shared);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchConfigurer#emergencyClosing()
-	 */
-	public boolean emergencyClosing() {
-		return isEmergencyClosing;
-	}
+    /* (non-javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchConfigurer#getWindowConfigurer
+     */
+    public IWorkbenchWindowConfigurer getWindowConfigurer(
+            IWorkbenchWindow window) {
+        if (window == null) {
+            throw new IllegalArgumentException();
+        }
+        return ((WorkbenchWindow) window).getWindowConfigurer();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchConfigurer#getSaveAndRestore()
+     */
+    public boolean getSaveAndRestore() {
+        return saveAndRestore;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchConfigurer#setSaveAndRestore(boolean)
+     */
+    public void setSaveAndRestore(boolean enabled) {
+        saveAndRestore = enabled;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchConfigurer#getData
+     */
+    public Object getData(String key) {
+        if (key == null) {
+            throw new IllegalArgumentException();
+        }
+        return extraData.get(key);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchConfigurer#setData(String, Object)
+     */
+    public void setData(String key, Object data) {
+        if (key == null) {
+            throw new IllegalArgumentException();
+        }
+        if (data != null) {
+            extraData.put(key, data);
+        } else {
+            extraData.remove(key);
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchConfigurer#emergencyClose()
+     */
+    public void emergencyClose() {
+        if (!isEmergencyClosing) {
+            isEmergencyClosing = true;
+            if (Workbench.getInstance() != null
+                    && !Workbench.getInstance().isClosing()) {
+                Workbench.getInstance().close(
+                        PlatformUI.RETURN_EMERGENCY_CLOSE, true);
+            }
+        }
+
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchConfigurer#emergencyClosing()
+     */
+    public boolean emergencyClosing() {
+        return isEmergencyClosing;
+    }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.application.IWorkbenchConfigurer#restoreState()

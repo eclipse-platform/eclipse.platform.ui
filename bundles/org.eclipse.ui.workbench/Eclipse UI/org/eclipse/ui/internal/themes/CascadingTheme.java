@@ -19,20 +19,23 @@ import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.themes.ITheme;
 
-
 /**
  * @since 3.0
  */
 public class CascadingTheme implements ITheme {
 
     private CascadingFontRegistry fontRegistry;
+
     private CascadingColorRegistry colorRegistry;
+
     private ListenerList propListeners = new ListenerList();
+
     private ITheme currentTheme;
+
     private IPropertyChangeListener listener = new IPropertyChangeListener() {
 
         public void propertyChange(PropertyChangeEvent event) {
-        	fire(event);
+            fire(event);
         }
     };
 
@@ -40,37 +43,39 @@ public class CascadingTheme implements ITheme {
      * @param colorRegistry
      * @param fontRegistry
      */
-    public CascadingTheme(ITheme currentTheme, CascadingColorRegistry colorRegistry, CascadingFontRegistry fontRegistry) {
-    	this.currentTheme = currentTheme;
-    	this.colorRegistry = colorRegistry;
-    	this.fontRegistry = fontRegistry;
-    	
-    	fontRegistry.addListener(listener);
-    	colorRegistry.addListener(listener);
+    public CascadingTheme(ITheme currentTheme,
+            CascadingColorRegistry colorRegistry,
+            CascadingFontRegistry fontRegistry) {
+        this.currentTheme = currentTheme;
+        this.colorRegistry = colorRegistry;
+        this.fontRegistry = fontRegistry;
+
+        fontRegistry.addListener(listener);
+        colorRegistry.addListener(listener);
     }
 
     /**
      * @param event
      */
     protected void fire(PropertyChangeEvent event) {
-		Object[] listeners = propListeners.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			((IPropertyChangeListener) listeners[i]).propertyChange(event);
-		}
+        Object[] listeners = propListeners.getListeners();
+        for (int i = 0; i < listeners.length; i++) {
+            ((IPropertyChangeListener) listeners[i]).propertyChange(event);
+        }
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.themes.ITheme#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
      */
     public void addPropertyChangeListener(IPropertyChangeListener listener) {
-		propListeners.add(listener);    
-	}
+        propListeners.add(listener);
+    }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.themes.ITheme#removePropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
      */
     public void removePropertyChangeListener(IPropertyChangeListener listener) {
-    	propListeners.remove(propListeners);
+        propListeners.remove(propListeners);
     }
 
     /* (non-Javadoc)
@@ -105,15 +110,15 @@ public class CascadingTheme implements ITheme {
      * @see org.eclipse.ui.themes.ITheme#dispose()
      */
     public void dispose() {
-    	colorRegistry.removeListener(listener);
-    	fontRegistry.removeListener(listener);
+        colorRegistry.removeListener(listener);
+        fontRegistry.removeListener(listener);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.themes.ITheme#getString(java.lang.String)
      */
     public String getString(String key) {
-		return currentTheme.getString(key);
+        return currentTheme.getString(key);
     }
 
     /* (non-Javadoc)

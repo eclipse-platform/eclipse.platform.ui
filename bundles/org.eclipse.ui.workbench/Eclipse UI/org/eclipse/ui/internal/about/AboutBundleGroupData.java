@@ -28,23 +28,24 @@ public class AboutBundleGroupData extends AboutData {
     private IBundleGroup bundleGroup;
 
     private URL licenseUrl;
+
     private URL featureImageUrl;
+
     private Long featureImageCrc;
+
     private ImageDescriptor featureImage;
 
-	public AboutBundleGroupData(IBundleGroup bundleGroup) {
-	    super(bundleGroup.getProviderName(),
-	          bundleGroup.getName(),
-	          bundleGroup.getVersion(),
-	          bundleGroup.getIdentifier());
-	    this.bundleGroup = bundleGroup;
-	}
+    public AboutBundleGroupData(IBundleGroup bundleGroup) {
+        super(bundleGroup.getProviderName(), bundleGroup.getName(), bundleGroup
+                .getVersion(), bundleGroup.getIdentifier());
+        this.bundleGroup = bundleGroup;
+    }
 
-	public IBundleGroup getBundleGroup() {
-	    return bundleGroup;
-	}
+    public IBundleGroup getBundleGroup() {
+        return bundleGroup;
+    }
 
-	public URL getLicenseUrl() {
+    public URL getLicenseUrl() {
         if (licenseUrl == null)
             licenseUrl = getURL(bundleGroup
                     .getProperty(IBundleGroupConstants.LICENSE_HREF));
@@ -52,55 +53,55 @@ public class AboutBundleGroupData extends AboutData {
         return licenseUrl;
     }
 
-	public URL getFeatureImageUrl() {
+    public URL getFeatureImageUrl() {
         if (featureImageUrl == null)
             featureImageUrl = getURL(bundleGroup
                     .getProperty(IBundleGroupConstants.FEATURE_IMAGE));
         return featureImageUrl;
     }
 
-	public ImageDescriptor getFeatureImage() {
-	    if(featureImage == null)
-	        featureImage = getImage(getFeatureImageUrl());
-	    return featureImage;
-	}
+    public ImageDescriptor getFeatureImage() {
+        if (featureImage == null)
+            featureImage = getImage(getFeatureImageUrl());
+        return featureImage;
+    }
 
-	public Long getFeatureImageCrc() {
-	    if(featureImageCrc != null)
-	        return featureImageCrc;
+    public Long getFeatureImageCrc() {
+        if (featureImageCrc != null)
+            return featureImageCrc;
 
-	    URL url = getFeatureImageUrl();
-	    if(url == null)
-			return null;
+        URL url = getFeatureImageUrl();
+        if (url == null)
+            return null;
 
-		// Get the image bytes
-		InputStream in = null;
-		try {
-		    CRC32 checksum = new CRC32();
-		    in = new CheckedInputStream(url.openStream(), checksum);
+        // Get the image bytes
+        InputStream in = null;
+        try {
+            CRC32 checksum = new CRC32();
+            in = new CheckedInputStream(url.openStream(), checksum);
 
-		    // the contents don't matter, the read just needs a place to go
-		    byte[] sink = new byte[1024];
-		    while(true)
-		        if(in.read(sink) <= 0)
-		            break;
+            // the contents don't matter, the read just needs a place to go
+            byte[] sink = new byte[1024];
+            while (true)
+                if (in.read(sink) <= 0)
+                    break;
 
-			featureImageCrc = new Long(checksum.getValue());
-			return featureImageCrc;
+            featureImageCrc = new Long(checksum.getValue());
+            return featureImageCrc;
 
-		} catch (IOException e) {
-			return null;
-		} finally {
-			if (in != null)
-				try {
-					in.close();
-				} catch (IOException e) {
-					// do nothing
-				}
-		}
-	}
+        } catch (IOException e) {
+            return null;
+        } finally {
+            if (in != null)
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    // do nothing
+                }
+        }
+    }
 
-	public String getAboutText() {
-	    return bundleGroup.getProperty(IBundleGroupConstants.ABOUT_TEXT);
-	}
+    public String getAboutText() {
+        return bundleGroup.getProperty(IBundleGroupConstants.ABOUT_TEXT);
+    }
 }

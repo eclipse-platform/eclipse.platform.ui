@@ -11,7 +11,10 @@
 package org.eclipse.jface.action;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 
 /**
  * A separator is a special kind of contribution item which acts
@@ -24,48 +27,51 @@ import org.eclipse.swt.widgets.*;
  * </p>
  */
 public class Separator extends AbstractGroupMarker {
-/**
- * Creates a separator which does not start a new group.
- */
-public Separator() {
-	super();
-}
-/**
- * Creates a new separator which also defines a new group having the given group name.
- * The group name must not be <code>null</code> or the empty string.
- * The group name is also used as the item id.
- * 
- * @param groupName the group name of the separator
- */
-public Separator(String groupName) {
-	super(groupName);
-}
-/* (non-Javadoc)
- * Method declared on IContributionItem.
- * Fills the given menu with a SWT separator MenuItem.
- */
-public void fill(Menu menu, int index) {
-	if (index >= 0)
-		new MenuItem(menu, SWT.SEPARATOR, index);
-	else
-		new MenuItem(menu, SWT.SEPARATOR);
-}
-/* (non-Javadoc)
- * Method declared on IContributionItem.
- * Fills the given tool bar with a SWT separator ToolItem.
- */
-public void fill(ToolBar toolbar, int index) {
-	if (index >= 0)
-		new ToolItem(toolbar, SWT.SEPARATOR, index);
-	else
-		new ToolItem(toolbar, SWT.SEPARATOR);
-}
+    /**
+     * Creates a separator which does not start a new group.
+     */
+    public Separator() {
+        super();
+    }
 
-/** 
- * The <code>Separator</code> implementation of this <code>IContributionItem</code> 
- * method returns <code>true</code>
- */
-public boolean isSeparator() {
-	return true;
-}
+    /**
+     * Creates a new separator which also defines a new group having the given group name.
+     * The group name must not be <code>null</code> or the empty string.
+     * The group name is also used as the item id.
+     * 
+     * @param groupName the group name of the separator
+     */
+    public Separator(String groupName) {
+        super(groupName);
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IContributionItem.
+     * Fills the given menu with a SWT separator MenuItem.
+     */
+    public void fill(Menu menu, int index) {
+        if (index >= 0)
+            new MenuItem(menu, SWT.SEPARATOR, index);
+        else
+            new MenuItem(menu, SWT.SEPARATOR);
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IContributionItem.
+     * Fills the given tool bar with a SWT separator ToolItem.
+     */
+    public void fill(ToolBar toolbar, int index) {
+        if (index >= 0)
+            new ToolItem(toolbar, SWT.SEPARATOR, index);
+        else
+            new ToolItem(toolbar, SWT.SEPARATOR);
+    }
+
+    /** 
+     * The <code>Separator</code> implementation of this <code>IContributionItem</code> 
+     * method returns <code>true</code>
+     */
+    public boolean isSeparator() {
+        return true;
+    }
 }

@@ -26,50 +26,52 @@ import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
  */
 public final class BrokenWorkbenchWindowPulldownDelegate implements
         IWorkbenchWindowPulldownDelegate2 {
-	//whether we should throw on getMenu(Menu)
-	static boolean throwMenu = true;
-	//whether we should throw on getMenu(Control)
-	static boolean throwControl = true;
-	
-	//keep references to the menus for disposal
-	Menu menuMenu;
-	Menu menuControl;
+    //whether we should throw on getMenu(Menu)
+    static boolean throwMenu = true;
+
+    //whether we should throw on getMenu(Control)
+    static boolean throwControl = true;
+
+    //keep references to the menus for disposal
+    Menu menuMenu;
+
+    Menu menuControl;
 
     /**
      * @see org.eclipse.ui.IWorkbenchWindowPulldownDelegate2#getMenu(org.eclipse.swt.widgets.Menu)
      */
     public Menu getMenu(Menu parent) {
-    	if (throwMenu) {
-    		throwMenu = false;
-    		throw new RuntimeException(
-                "The workbench should handle hostile pulldown delegates.");
-    	}
-    	menuMenu = new Menu(parent);
-    	return menuMenu;
+        if (throwMenu) {
+            throwMenu = false;
+            throw new RuntimeException(
+                    "The workbench should handle hostile pulldown delegates.");
+        }
+        menuMenu = new Menu(parent);
+        return menuMenu;
     }
 
     /**
      * @see org.eclipse.ui.IWorkbenchWindowPulldownDelegate#getMenu(org.eclipse.swt.widgets.Control)
      */
     public Menu getMenu(Control parent) {
-    	if (throwControl) {
-    		throwControl = false;
-    		throw new RuntimeException(
-                "The workbench should handle hostile pulldown delegates.");
-    	}
-    	menuControl = new Menu(parent);
-    	return menuControl;
+        if (throwControl) {
+            throwControl = false;
+            throw new RuntimeException(
+                    "The workbench should handle hostile pulldown delegates.");
+        }
+        menuControl = new Menu(parent);
+        return menuControl;
     }
 
     /**
      * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
      */
     public void dispose() {
-    	if (menuControl != null)
-    		menuControl.dispose();
-    	
-    	if (menuMenu != null) 
-    		menuMenu.dispose();
+        if (menuControl != null)
+            menuControl.dispose();
+
+        if (menuMenu != null)
+            menuMenu.dispose();
     }
 
     /**

@@ -25,57 +25,57 @@ import org.eclipse.ui.tests.util.FileUtil;
  */
 public class PartsReferencesTestSuite {
 
-	/**
-	 * Constructor.
-	 * 
-	 * @return the test.
-	 */
-	public static Test suite() {
+    /**
+     * Constructor.
+     * 
+     * @return the test.
+     */
+    public static Test suite() {
 
-		TestSuite suite = new TestSuite();
+        TestSuite suite = new TestSuite();
 
-		suite.addTest(new TestSuite(ViewsReferencesTest.class));
-		suite.addTest(new TestSuite(EditorsReferencesTest.class));
+        suite.addTest(new TestSuite(ViewsReferencesTest.class));
+        suite.addTest(new TestSuite(EditorsReferencesTest.class));
 
-		/**
-		 * Wrapper to set up the tests. Ensures the creation of files on set up
-		 * and the deletion on tear down.
-		 */
-		TestSetup wrapper = new TestSetup(suite) {
+        /**
+         * Wrapper to set up the tests. Ensures the creation of files on set up
+         * and the deletion on tear down.
+         */
+        TestSetup wrapper = new TestSetup(suite) {
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see junit.extensions.TestSetup#setUp()
-			 */
-			protected void setUp() {
-				try {
-					IProject testProject = FileUtil
-							.createProject(PartsTestUtil.projectName); //$NON-NLS-1$
-					for (int index = 0; index < PartsTestUtil.numOfParts; index++) {
-						FileUtil.createFile(PartsTestUtil.getFileName(index),
-								testProject);
-					}
-				} catch (CoreException e) {
-					e.printStackTrace(System.err);
-				}
+            /*
+             * (non-Javadoc)
+             * 
+             * @see junit.extensions.TestSetup#setUp()
+             */
+            protected void setUp() {
+                try {
+                    IProject testProject = FileUtil
+                            .createProject(PartsTestUtil.projectName); //$NON-NLS-1$
+                    for (int index = 0; index < PartsTestUtil.numOfParts; index++) {
+                        FileUtil.createFile(PartsTestUtil.getFileName(index),
+                                testProject);
+                    }
+                } catch (CoreException e) {
+                    e.printStackTrace(System.err);
+                }
 
-			}
+            }
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see junit.extensions.TestSetup#tearDown()
-			 */
-			protected void tearDown() {
-				try {
-					FileUtil.deleteProject(PartsTestUtil.getProject());
-				} catch (CoreException e) {
-					e.printStackTrace(System.err);
-				}
-			}
-		};
+            /*
+             * (non-Javadoc)
+             * 
+             * @see junit.extensions.TestSetup#tearDown()
+             */
+            protected void tearDown() {
+                try {
+                    FileUtil.deleteProject(PartsTestUtil.getProject());
+                } catch (CoreException e) {
+                    e.printStackTrace(System.err);
+                }
+            }
+        };
 
-		return wrapper;
-	}
+        return wrapper;
+    }
 }

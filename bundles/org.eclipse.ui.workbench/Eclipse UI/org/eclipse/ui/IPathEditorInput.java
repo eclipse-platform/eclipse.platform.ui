@@ -32,10 +32,10 @@ import org.eclipse.core.runtime.IPath;
  * @since 3.0
  */
 public interface IPathEditorInput extends IEditorInput {
-	/**
-	 * Returns the local file system path of the file underlying this editor input.
-	 *
-	 * @return a local file system path
-	 */
-	public IPath getPath();
+    /**
+     * Returns the local file system path of the file underlying this editor input.
+     *
+     * @return a local file system path
+     */
+    public IPath getPath();
 }

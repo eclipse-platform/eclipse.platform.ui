@@ -29,11 +29,11 @@ package org.eclipse.ui;
  * @since 3.0
  */
 public interface IInPlaceEditorInput extends IPathEditorInput {
-	/**
-	 * Sets the in-place editor this input is associated with.
-	 * 
-	 * @param editor the in-place editor associated with this input
-	 * 		or <code>null</code> to disassociate.
-	 */
-	public void setInPlaceEditor(IInPlaceEditor editor);
+    /**
+     * Sets the in-place editor this input is associated with.
+     * 
+     * @param editor the in-place editor associated with this input
+     * 		or <code>null</code> to disassociate.
+     */
+    public void setInPlaceEditor(IInPlaceEditor editor);
 }

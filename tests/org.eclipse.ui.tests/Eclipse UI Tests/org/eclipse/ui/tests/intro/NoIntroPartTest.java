@@ -17,14 +17,13 @@ import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.tests.api.IWorkbenchPartTest;
 import org.eclipse.ui.tests.api.MockPart;
 
-
 /**
  * @since 3.0
  */
 public class NoIntroPartTest extends IWorkbenchPartTest {
 
     private IntroDescriptor oldDesc;
-    
+
     /**
      * @param testName
      */
@@ -37,7 +36,8 @@ public class NoIntroPartTest extends IWorkbenchPartTest {
      * @see org.eclipse.ui.tests.api.IWorkbenchPartTest#openPart(org.eclipse.ui.IWorkbenchPage)
      */
     protected MockPart openPart(IWorkbenchPage page) throws Throwable {
-        return (MockPart)page.getWorkbenchWindow().getWorkbench().getIntroManager().showIntro(page.getWorkbenchWindow(), false);
+        return (MockPart) page.getWorkbenchWindow().getWorkbench()
+                .getIntroManager().showIntro(page.getWorkbenchWindow(), false);
     }
 
     /* (non-Javadoc)
@@ -45,33 +45,32 @@ public class NoIntroPartTest extends IWorkbenchPartTest {
      */
     protected void closePart(IWorkbenchPage page, MockPart part)
             throws Throwable {
-		assertTrue(page.getWorkbenchWindow().getWorkbench().getIntroManager().closeIntro((IIntroPart) part));            
+        assertTrue(page.getWorkbenchWindow().getWorkbench().getIntroManager()
+                .closeIntro((IIntroPart) part));
     }
-    
-    
+
     //only test open..shouldn't work.
-	public void testOpenAndClose() throws Throwable {
-		// Open a part.
-		MockPart part = openPart(fPage);
-		assertNull(part);
-	}    
-    
+    public void testOpenAndClose() throws Throwable {
+        // Open a part.
+        MockPart part = openPart(fPage);
+        assertNull(part);
+    }
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.util.UITestCase#doSetUp()
      */
     protected void doSetUp() throws Exception {
         super.doSetUp();
         oldDesc = Workbench.getInstance().getIntroDescriptor();
-        Workbench.getInstance().setIntroDescriptor(null);        
+        Workbench.getInstance().setIntroDescriptor(null);
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.util.UITestCase#doTearDown()
      */
     protected void doTearDown() throws Exception {
         super.doTearDown();
         Workbench.getInstance().setIntroDescriptor(oldDesc);
-    }    
-
+    }
 
 }

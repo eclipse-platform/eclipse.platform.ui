@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.themes;
 
-
 /**
  * A basic element (color, font, gradient) of a theme must implement this 
  * interface.
@@ -18,14 +17,14 @@ package org.eclipse.ui.internal.themes;
  * @since 3.0
  */
 public interface IThemeElementDefinition {
-    
+
     /**
      * Returns the label for this element.
      * 
      * @return the label for this element
      */
     public String getLabel();
-    
+
     /**
      * Returns the id for this element.
      * 
@@ -37,7 +36,7 @@ public interface IThemeElementDefinition {
      * Returns the description for this element.
      * 
      * @return the description for this element.  This may be <code>null</code>.
-     */    
+     */
     public String getDescription();
 
 }

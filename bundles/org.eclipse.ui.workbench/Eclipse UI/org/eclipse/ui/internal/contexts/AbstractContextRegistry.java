@@ -16,52 +16,55 @@ import java.util.Collections;
 import java.util.List;
 
 abstract class AbstractContextRegistry implements IContextRegistry {
-	protected List contextContextBindingDefinitions = Collections.EMPTY_LIST;
-	protected List contextDefinitions = Collections.EMPTY_LIST;
-	private ContextRegistryEvent contextRegistryEvent;
-	private List contextRegistryListeners;
+    protected List contextContextBindingDefinitions = Collections.EMPTY_LIST;
 
-	protected AbstractContextRegistry() {
-	}
+    protected List contextDefinitions = Collections.EMPTY_LIST;
 
-	public void addContextRegistryListener(IContextRegistryListener contextRegistryListener) {
-		if (contextRegistryListener == null)
-			throw new NullPointerException();
+    private ContextRegistryEvent contextRegistryEvent;
 
-		if (contextRegistryListeners == null)
-			contextRegistryListeners = new ArrayList();
+    private List contextRegistryListeners;
 
-		if (!contextRegistryListeners.contains(contextRegistryListener))
-			contextRegistryListeners.add(contextRegistryListener);
-	}
+    protected AbstractContextRegistry() {
+    }
 
-	protected void fireContextRegistryChanged() {
-		if (contextRegistryListeners != null) {
-			for (int i = 0; i < contextRegistryListeners.size(); i++) {
-				if (contextRegistryEvent == null)
-					contextRegistryEvent = new ContextRegistryEvent(this);
+    public void addContextRegistryListener(
+            IContextRegistryListener contextRegistryListener) {
+        if (contextRegistryListener == null)
+            throw new NullPointerException();
 
-				(
-					(IContextRegistryListener) contextRegistryListeners.get(
-						i)).contextRegistryChanged(
-					contextRegistryEvent);
-			}
-		}
-	}
+        if (contextRegistryListeners == null)
+            contextRegistryListeners = new ArrayList();
 
-	public List getContextContextBindingDefinitions() {
-		return contextContextBindingDefinitions;
-	}
+        if (!contextRegistryListeners.contains(contextRegistryListener))
+            contextRegistryListeners.add(contextRegistryListener);
+    }
 
-	public List getContextDefinitions() {
-		return contextDefinitions;
-	}
+    protected void fireContextRegistryChanged() {
+        if (contextRegistryListeners != null) {
+            for (int i = 0; i < contextRegistryListeners.size(); i++) {
+                if (contextRegistryEvent == null)
+                    contextRegistryEvent = new ContextRegistryEvent(this);
 
-	public void removeContextRegistryListener(IContextRegistryListener contextRegistryListener) {
-		if (contextRegistryListener == null)
-			throw new NullPointerException();
+                ((IContextRegistryListener) contextRegistryListeners.get(i))
+                        .contextRegistryChanged(contextRegistryEvent);
+            }
+        }
+    }
 
-		if (contextRegistryListeners != null)
-			contextRegistryListeners.remove(contextRegistryListener);
-	}
+    public List getContextContextBindingDefinitions() {
+        return contextContextBindingDefinitions;
+    }
+
+    public List getContextDefinitions() {
+        return contextDefinitions;
+    }
+
+    public void removeContextRegistryListener(
+            IContextRegistryListener contextRegistryListener) {
+        if (contextRegistryListener == null)
+            throw new NullPointerException();
+
+        if (contextRegistryListeners != null)
+            contextRegistryListeners.remove(contextRegistryListener);
+    }
 }

@@ -9,7 +9,7 @@
  *		IBM Corporation - initial API and implementation 
  *  	Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
  * 		font should be activated and used by other components.
-************************************************************************/
+ ************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
 import java.net.URL;
@@ -48,48 +48,51 @@ import org.osgi.framework.Bundle;
  */
 public class AboutPluginsDialog extends ProductInfoDialog {
 
-	/**
-	 * Table height in dialog units (value 200).
-	 */
-	private static final int TABLE_HEIGHT = 200;
-	private static final String PLUGININFO = "about.html";	//$NON-NLS-1$
-	private final static int MORE_ID = IDialogConstants.CLIENT_ID + 1;
+    /**
+     * Table height in dialog units (value 200).
+     */
+    private static final int TABLE_HEIGHT = 200;
 
-	private Table vendorInfo;
-	private Button moreInfo;
+    private static final String PLUGININFO = "about.html"; //$NON-NLS-1$
 
-	private String title;
-	private String message;
-	private String helpContextId;
+    private final static int MORE_ID = IDialogConstants.CLIENT_ID + 1;
 
-	private String columnTitles[] = {
-		WorkbenchMessages.getString("AboutPluginsDialog.provider"), //$NON-NLS-1$
-		WorkbenchMessages.getString("AboutPluginsDialog.pluginName"), //$NON-NLS-1$
-		WorkbenchMessages.getString("AboutPluginsDialog.version"), //$NON-NLS-1$
-		WorkbenchMessages.getString("AboutPluginsDialog.pluginId"), //$NON-NLS-1$
-	};
+    private Table vendorInfo;
 
-	private String productName;
-	private AboutBundleData[] bundleInfos;
+    private Button moreInfo;
 
-	private int lastColumnChosen = 0;	// initially sort by provider
-	private boolean reverseSort = false;	// initially sort ascending
-	private AboutBundleData lastSelection = null;
+    private String title;
 
-	/**
-	 * Constructor for AboutPluginsDialog
-	 */
-	public AboutPluginsDialog(Shell parentShell, String productName) {
-		this(
-			parentShell,
-			productName,
-			WorkbenchPlugin.getDefault().getBundles(),
-			null,
-			null,
-			IHelpContextIds.ABOUT_PLUGINS_DIALOG);
-	}
+    private String message;
 
-	/**
+    private String helpContextId;
+
+    private String columnTitles[] = {
+            WorkbenchMessages.getString("AboutPluginsDialog.provider"), //$NON-NLS-1$
+            WorkbenchMessages.getString("AboutPluginsDialog.pluginName"), //$NON-NLS-1$
+            WorkbenchMessages.getString("AboutPluginsDialog.version"), //$NON-NLS-1$
+            WorkbenchMessages.getString("AboutPluginsDialog.pluginId"), //$NON-NLS-1$
+    };
+
+    private String productName;
+
+    private AboutBundleData[] bundleInfos;
+
+    private int lastColumnChosen = 0; // initially sort by provider
+
+    private boolean reverseSort = false; // initially sort ascending
+
+    private AboutBundleData lastSelection = null;
+
+    /**
+     * Constructor for AboutPluginsDialog
+     */
+    public AboutPluginsDialog(Shell parentShell, String productName) {
+        this(parentShell, productName, WorkbenchPlugin.getDefault()
+                .getBundles(), null, null, IHelpContextIds.ABOUT_PLUGINS_DIALOG);
+    }
+
+    /**
      * Constructor for AboutPluginsDialog
      * 
      * @param productName
@@ -97,28 +100,30 @@ public class AboutPluginsDialog extends ProductInfoDialog {
      * @param bundles
      *            must not be null
      */
-	public AboutPluginsDialog(Shell parentShell, String productName, Bundle[] bundles, String title, String message, String helpContextId) {
-		super(parentShell);
-		setShellStyle(SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MAX | SWT.APPLICATION_MODAL);
-		this.title = title;
-		this.message = message;
-		this.helpContextId = helpContextId;
-		this.productName = productName;
+    public AboutPluginsDialog(Shell parentShell, String productName,
+            Bundle[] bundles, String title, String message, String helpContextId) {
+        super(parentShell);
+        setShellStyle(SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MAX
+                | SWT.APPLICATION_MODAL);
+        this.title = title;
+        this.message = message;
+        this.helpContextId = helpContextId;
+        this.productName = productName;
 
-		// create a data object for each bundle, remove duplicates
+        // create a data object for each bundle, remove duplicates
         Map map = new HashMap();
         for (int i = 0; i < bundles.length; ++i) {
             AboutBundleData data = new AboutBundleData(bundles[i]);
             if (!map.containsKey(data.getVersionedId()))
-                    map.put(data.getVersionedId(), data);
+                map.put(data.getVersionedId(), data);
         }
         bundleInfos = (AboutBundleData[]) map.values().toArray(
                 new AboutBundleData[0]);
 
-		AboutData.sortByProvider(reverseSort, bundleInfos);
-	}
+        AboutData.sortByProvider(reverseSort, bundleInfos);
+    }
 
-	/*
+    /*
      * (non-Javadoc) Method declared on Dialog.
      */
     protected void buttonPressed(int buttonId) {
@@ -132,14 +137,13 @@ public class AboutPluginsDialog extends ProductInfoDialog {
         }
     }
 
-	/*
+    /*
      * (non-Javadoc) Method declared on Window.
      */
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
         if (title == null && productName != null)
-            title = WorkbenchMessages.format(
-                    "AboutPluginsDialog.shellTitle", //$NON-NLS-1$
+            title = WorkbenchMessages.format("AboutPluginsDialog.shellTitle", //$NON-NLS-1$
                     new Object[] { productName });
 
         if (title != null)
@@ -173,7 +177,7 @@ public class AboutPluginsDialog extends ProductInfoDialog {
                 true);
     }
 
-	/**
+    /**
      * Create the contents of the dialog (above the button bar).
      * 
      * Subclasses should overide.
@@ -217,14 +221,12 @@ public class AboutPluginsDialog extends ProductInfoDialog {
             }
         });
 
-        int[] columnWidths = {
-                convertHorizontalDLUsToPixels(120),
+        int[] columnWidths = { convertHorizontalDLUsToPixels(120),
                 convertHorizontalDLUsToPixels(120),
                 convertHorizontalDLUsToPixels(70),
-                convertHorizontalDLUsToPixels(130)
-        };
+                convertHorizontalDLUsToPixels(130) };
 
-		// create table headers
+        // create table headers
         for (int i = 0; i < columnTitles.length; i++) {
             TableColumn column = new TableColumn(vendorInfo, SWT.NULL);
             column.setWidth(columnWidths[i]);
@@ -237,19 +239,20 @@ public class AboutPluginsDialog extends ProductInfoDialog {
             });
         }
 
-		// create a row for each member of the bundleInfo array
-		for (int i = 0; i < bundleInfos.length; ++i) {
-		    TableItem item = new TableItem(vendorInfo, SWT.NULL);
-		    item.setText(createRow(bundleInfos[i]));
-		    item.setData(bundleInfos[i]);
-		}
+        // create a row for each member of the bundleInfo array
+        for (int i = 0; i < bundleInfos.length; ++i) {
+            TableItem item = new TableItem(vendorInfo, SWT.NULL);
+            item.setText(createRow(bundleInfos[i]));
+            item.setData(bundleInfos[i]);
+        }
 
-        GridData gridData = new GridData(GridData.FILL, GridData.FILL, true, true);
+        GridData gridData = new GridData(GridData.FILL, GridData.FILL, true,
+                true);
         gridData.heightHint = convertVerticalDLUsToPixels(TABLE_HEIGHT);
         vendorInfo.setLayoutData(gridData);
     }
 
-	/**
+    /**
      * Check if the currently selected plugin has additional information to
      * show.
      * 
@@ -272,42 +275,40 @@ public class AboutPluginsDialog extends ProductInfoDialog {
         return infoURL != null;
     }
 
-	/**
+    /**
      * Create the button to provide more info on the selected plugin.
      * 
      * @return true if there is an item selected in the table, false otherwise
      */
-	private boolean tableHasSelection() {
+    private boolean tableHasSelection() {
         return vendorInfo == null ? false : vendorInfo.getSelectionCount() > 0;
     }
 
-	/** 
-	 * The More Info button was pressed.  Open a browser showing the license information
-	 * for the selected bundle or an error dialog if the browser cannot be opened.
-	 */
-	protected void handleMoreInfoPressed() {
-	    if(vendorInfo == null)
-	        return;
+    /** 
+     * The More Info button was pressed.  Open a browser showing the license information
+     * for the selected bundle or an error dialog if the browser cannot be opened.
+     */
+    protected void handleMoreInfoPressed() {
+        if (vendorInfo == null)
+            return;
 
-		TableItem[] items = vendorInfo.getSelection();
-		if (items.length <= 0)
-		    return;
+        TableItem[] items = vendorInfo.getSelection();
+        if (items.length <= 0)
+            return;
 
-		AboutBundleData bundleInfo = (AboutBundleData)items[0].getData();
+        AboutBundleData bundleInfo = (AboutBundleData) items[0].getData();
         if (bundleInfo == null)
             return;
 
         if (!openBrowser(BundleUtility.find(bundleInfo.getId(), PLUGININFO)))
-            MessageDialog
-                    .openError(getShell(), WorkbenchMessages
-                            .getString("AboutPluginsDialog.errorTitle"), //$NON-NLS-1$
-                            WorkbenchMessages.format(
-                                    "AboutPluginsDialog.unableToOpenFile", //$NON-NLS-1$
-                                    new Object[] { PLUGININFO,
-                                            bundleInfo.getId()}));
+            MessageDialog.openError(getShell(), WorkbenchMessages
+                    .getString("AboutPluginsDialog.errorTitle"), //$NON-NLS-1$
+                    WorkbenchMessages.format(
+                            "AboutPluginsDialog.unableToOpenFile", //$NON-NLS-1$
+                            new Object[] { PLUGININFO, bundleInfo.getId() }));
     }
 
-	/**
+    /**
      * Sort the rows of the table based on the selected column.
      * 
      * @param column
@@ -346,7 +347,7 @@ public class AboutPluginsDialog extends ProductInfoDialog {
         refreshTable(column);
     }
 
-	/**
+    /**
      * Refresh the rows of the table based on the selected column. Maintain
      * selection from before sort action request.
      */
@@ -383,6 +384,6 @@ public class AboutPluginsDialog extends ProductInfoDialog {
      */
     private static String[] createRow(AboutBundleData info) {
         return new String[] { info.getProviderName(), info.getName(),
-                info.getVersion(), info.getId()};
+                info.getVersion(), info.getId() };
     }
 }

@@ -27,122 +27,124 @@ import org.eclipse.ui.PlatformUI;
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  */
-public class FileEditorInput implements IFileEditorInput, IPathEditorInput, IPersistableElement {
-	private IFile file;
-	
-	/**
-	 * Creates an editor input based of the given file resource.
-	 *
-	 * @param file the file resource
-	 */
-	public FileEditorInput(IFile file) {
-		if (file == null) {
-			throw new IllegalArgumentException();
-		}
-		this.file = file;
-	}
-	
-	/* (non-Javadoc)
-	 * Method declared on Object.
-	 */
-	public int hashCode() {
-		return file.hashCode();
-	}
-	
-	/* (non-Javadoc)
-	 * Method declared on Object.
-	 *
-	 * The <code>FileEditorInput</code> implementation of this <code>Object</code>
-	 * method bases the equality of two <code>FileEditorInput</code> objects on the
-	 * equality of their underlying <code>IFile</code> resources.
-	 */
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!(obj instanceof FileEditorInput))
-			return false;
-		FileEditorInput other = (FileEditorInput) obj;
-		return file.equals(other.file);
-	}
-	
-	/* (non-Javadoc)
-	 * Method declared on IEditorInput.
-	 */
-	public boolean exists() {
-		return file.exists();
-	}
-	
-	/* (non-Javadoc)
-	 * Method declared on IAdaptable.
-	 */
-	public Object getAdapter(Class adapter) {
-		if (adapter == IFile.class)
-			return file;
-		return file.getAdapter(adapter);
-	}
-	
-	/* (non-Javadoc)
-	 * Method declared on IPersistableElement.
-	 */
-	public String getFactoryId() {
-		return FileEditorInputFactory.getFactoryId();
-	}
-	
-	/* (non-Javadoc)
-	 * Method declared on IFileEditorInput.
-	 */
-	public IFile getFile() {
-		return file;
-	}
-	
-	/* (non-Javadoc)
-	 * Method declared on IEditorInput.
-	 */
-	public ImageDescriptor getImageDescriptor() {
-		return PlatformUI.getWorkbench().getEditorRegistry().getImageDescriptor(file.getName());
-	}
-	
-	/* (non-Javadoc)
-	 * Method declared on IEditorInput.
-	 */
-	public String getName() {
-		return file.getName();
-	}
-	
-	/* (non-Javadoc)
-	 * Method declared on IEditorInput.
-	 */
-	public IPersistableElement getPersistable() {
-		return this;
-	}
-	
-	/* (non-Javadoc)
-	 * Method declared on IStorageEditorInput.
-	 */
-	public IStorage getStorage() throws CoreException {
-		return file;
-	}
-	
-	/* (non-Javadoc)
-	 * Method declared on IEditorInput.
-	 */
-	public String getToolTipText() {
-		return file.getFullPath().makeRelative().toString();
-	}
-	
-	/* (non-Javadoc)
-	 * Method declared on IPersistableElement.
-	 */
-	public void saveState(IMemento memento) {
-		FileEditorInputFactory.saveState(memento, this);
-	}
-	
-	/* (non-Javadoc)
-	 * Method declared on IPathEditorInput
-	 * @since 3.0
-	 * @issue consider using an internal adapter for IPathEditorInput rather than adding this as API
-	 */
-	public IPath getPath() {
-		return file.getLocation();
-	}
+public class FileEditorInput implements IFileEditorInput, IPathEditorInput,
+        IPersistableElement {
+    private IFile file;
+
+    /**
+     * Creates an editor input based of the given file resource.
+     *
+     * @param file the file resource
+     */
+    public FileEditorInput(IFile file) {
+        if (file == null) {
+            throw new IllegalArgumentException();
+        }
+        this.file = file;
+    }
+
+    /* (non-Javadoc)
+     * Method declared on Object.
+     */
+    public int hashCode() {
+        return file.hashCode();
+    }
+
+    /* (non-Javadoc)
+     * Method declared on Object.
+     *
+     * The <code>FileEditorInput</code> implementation of this <code>Object</code>
+     * method bases the equality of two <code>FileEditorInput</code> objects on the
+     * equality of their underlying <code>IFile</code> resources.
+     */
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!(obj instanceof FileEditorInput))
+            return false;
+        FileEditorInput other = (FileEditorInput) obj;
+        return file.equals(other.file);
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IEditorInput.
+     */
+    public boolean exists() {
+        return file.exists();
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IAdaptable.
+     */
+    public Object getAdapter(Class adapter) {
+        if (adapter == IFile.class)
+            return file;
+        return file.getAdapter(adapter);
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IPersistableElement.
+     */
+    public String getFactoryId() {
+        return FileEditorInputFactory.getFactoryId();
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IFileEditorInput.
+     */
+    public IFile getFile() {
+        return file;
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IEditorInput.
+     */
+    public ImageDescriptor getImageDescriptor() {
+        return PlatformUI.getWorkbench().getEditorRegistry()
+                .getImageDescriptor(file.getName());
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IEditorInput.
+     */
+    public String getName() {
+        return file.getName();
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IEditorInput.
+     */
+    public IPersistableElement getPersistable() {
+        return this;
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IStorageEditorInput.
+     */
+    public IStorage getStorage() throws CoreException {
+        return file;
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IEditorInput.
+     */
+    public String getToolTipText() {
+        return file.getFullPath().makeRelative().toString();
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IPersistableElement.
+     */
+    public void saveState(IMemento memento) {
+        FileEditorInputFactory.saveState(memento, this);
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IPathEditorInput
+     * @since 3.0
+     * @issue consider using an internal adapter for IPathEditorInput rather than adding this as API
+     */
+    public IPath getPath() {
+        return file.getLocation();
+    }
 }

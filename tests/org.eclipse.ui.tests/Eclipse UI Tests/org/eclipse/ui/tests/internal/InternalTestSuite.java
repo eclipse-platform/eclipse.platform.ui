@@ -18,21 +18,21 @@ import junit.framework.TestSuite;
  */
 public class InternalTestSuite extends TestSuite {
 
-	/**
-	 * Returns the suite.  This is required to
-	 * use the JUnit Launcher.
-	 */
-	public static Test suite() {
-		return new InternalTestSuite();
-	}
-	
-	/**
-	 * Construct the test suite.
-	 */
-	public InternalTestSuite() {
-		addTest(new TestSuite(EditorActionBarsTest.class));
-		addTest(new TestSuite(ActionSetExpressionTest.class));
-		addTest(new TestSuite(PopupMenuExpressionTest.class));
-		addTest(new TestSuite(Bug41931Test.class));
-	}
+    /**
+     * Returns the suite.  This is required to
+     * use the JUnit Launcher.
+     */
+    public static Test suite() {
+        return new InternalTestSuite();
+    }
+
+    /**
+     * Construct the test suite.
+     */
+    public InternalTestSuite() {
+        addTest(new TestSuite(EditorActionBarsTest.class));
+        addTest(new TestSuite(ActionSetExpressionTest.class));
+        addTest(new TestSuite(PopupMenuExpressionTest.class));
+        addTest(new TestSuite(Bug41931Test.class));
+    }
 }

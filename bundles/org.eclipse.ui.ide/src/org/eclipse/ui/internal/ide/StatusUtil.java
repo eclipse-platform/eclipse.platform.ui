@@ -29,85 +29,83 @@ import org.eclipse.core.runtime.Status;
  */
 public class StatusUtil {
 
-/**
- *	Answer a flat collection of the passed status and its recursive children
- */
-protected static List flatten(IStatus aStatus) {
-	List result = new ArrayList();
+    /**
+     *	Answer a flat collection of the passed status and its recursive children
+     */
+    protected static List flatten(IStatus aStatus) {
+        List result = new ArrayList();
 
-	if (aStatus.isMultiStatus()) {
-		IStatus[] children = aStatus.getChildren();
-		for (int i = 0; i < children.length; i++){
-			IStatus currentChild = children[i];
-			if (currentChild.isMultiStatus()) {
-				Iterator childStatiiEnum = flatten(currentChild).iterator();
-				while (childStatiiEnum.hasNext())
-					result.add(childStatiiEnum.next());
-			} else
-				result.add(currentChild);
-		}
-	} else
-		result.add(aStatus);
-	
-	return result;
-}
-/**
- * This method must not be called outside the workbench.
- *
- * Utility method for creating status.
- */
-protected static IStatus newStatus(
-		IStatus[] stati, 
-		String message, 
-		Throwable exception) {
+        if (aStatus.isMultiStatus()) {
+            IStatus[] children = aStatus.getChildren();
+            for (int i = 0; i < children.length; i++) {
+                IStatus currentChild = children[i];
+                if (currentChild.isMultiStatus()) {
+                    Iterator childStatiiEnum = flatten(currentChild).iterator();
+                    while (childStatiiEnum.hasNext())
+                        result.add(childStatiiEnum.next());
+                } else
+                    result.add(currentChild);
+            }
+        } else
+            result.add(aStatus);
 
-	if (message == null || message.trim().length() == 0) {
-		throw new IllegalArgumentException();
-	}
-	return new MultiStatus(IDEWorkbenchPlugin.IDE_WORKBENCH, IStatus.ERROR, 
-		stati, message, exception);
-}
-/**
- * This method must not be called outside the workbench.
- *
- * Utility method for creating status.
- */
-public static IStatus newStatus(
-	int severity, 
-	String message, 
-	Throwable exception) {
+        return result;
+    }
 
-	String statusMessage = message;
-	if(message == null || message.trim().length() == 0){
-		if(exception.getMessage() == null)
-			statusMessage = exception.toString();
-		else
-			statusMessage = exception.getMessage();
-	}
+    /**
+     * This method must not be called outside the workbench.
+     *
+     * Utility method for creating status.
+     */
+    protected static IStatus newStatus(IStatus[] stati, String message,
+            Throwable exception) {
 
-	return new Status(severity, IDEWorkbenchPlugin.IDE_WORKBENCH, severity, statusMessage, exception);
-}
-/**
- * This method must not be called outside the workbench.
- *
- * Utility method for creating status.
- */
-public static IStatus newStatus(
-		List children, 
-		String message, 
-		Throwable exception) {
-	
-	List flatStatusCollection = new ArrayList();
-	Iterator iter = children.iterator();
-	while (iter.hasNext()) {
-		IStatus currentStatus = (IStatus)iter.next();
-		Iterator childrenIter = flatten(currentStatus).iterator();
-		while (childrenIter.hasNext())
-			flatStatusCollection.add(childrenIter.next());
-	}
+        if (message == null || message.trim().length() == 0) {
+            throw new IllegalArgumentException();
+        }
+        return new MultiStatus(IDEWorkbenchPlugin.IDE_WORKBENCH, IStatus.ERROR,
+                stati, message, exception);
+    }
 
-	IStatus[] stati = new IStatus[flatStatusCollection.size()];
-	flatStatusCollection.toArray(stati);
-	return newStatus(stati, message, exception);
-}
+    /**
+     * This method must not be called outside the workbench.
+     *
+     * Utility method for creating status.
+     */
+    public static IStatus newStatus(int severity, String message,
+            Throwable exception) {
+
+        String statusMessage = message;
+        if (message == null || message.trim().length() == 0) {
+            if (exception.getMessage() == null)
+                statusMessage = exception.toString();
+            else
+                statusMessage = exception.getMessage();
+        }
+
+        return new Status(severity, IDEWorkbenchPlugin.IDE_WORKBENCH, severity,
+                statusMessage, exception);
+    }
+
+    /**
+     * This method must not be called outside the workbench.
+     *
+     * Utility method for creating status.
+     */
+    public static IStatus newStatus(List children, String message,
+            Throwable exception) {
+
+        List flatStatusCollection = new ArrayList();
+        Iterator iter = children.iterator();
+        while (iter.hasNext()) {
+            IStatus currentStatus = (IStatus) iter.next();
+            Iterator childrenIter = flatten(currentStatus).iterator();
+            while (childrenIter.hasNext())
+                flatStatusCollection.add(childrenIter.next());
+        }
+
+        IStatus[] stati = new IStatus[flatStatusCollection.size()];
+        flatStatusCollection.toArray(stati);
+        return newStatus(stati, message, exception);
+    }
 }

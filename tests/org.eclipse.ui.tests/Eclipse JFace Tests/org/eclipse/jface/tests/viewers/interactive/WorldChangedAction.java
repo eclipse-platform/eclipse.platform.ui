@@ -14,10 +14,11 @@ import org.eclipse.jface.viewers.StructuredViewer;
 
 public class WorldChangedAction extends TestBrowserAction {
 
-	public WorldChangedAction(String label, TestBrowser browser) {
-		super(label, browser);
-	}
-	public void run() {
-		((StructuredViewer)getBrowser().getViewer()).refresh();
-	}
+    public WorldChangedAction(String label, TestBrowser browser) {
+        super(label, browser);
+    }
+
+    public void run() {
+        ((StructuredViewer) getBrowser().getViewer()).refresh();
+    }
 }

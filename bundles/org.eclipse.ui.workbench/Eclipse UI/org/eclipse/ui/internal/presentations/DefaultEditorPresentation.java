@@ -46,17 +46,19 @@ public class DefaultEditorPresentation extends DefaultPartPresentation {
 
     private IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault()
             .getPreferenceStore();
-    private IPreferenceStore apiPreferenceStore = PrefUtil.getAPIPreferenceStore();
+
+    private IPreferenceStore apiPreferenceStore = PrefUtil
+            .getAPIPreferenceStore();
 
     public static String DIRTY_PREFIX = "*"; //$NON-NLS-1$
-    
+
     private final IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
 
         public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-        	
-        	if(isDisposed())
-        		return;
-        	
+
+            if (isDisposed())
+                return;
+
             if (IPreferenceConstants.EDITOR_TAB_POSITION
                     .equals(propertyChangeEvent.getProperty())
                     && !isDisposed()) {
@@ -99,47 +101,48 @@ public class DefaultEditorPresentation extends DefaultPartPresentation {
         }
     };
 
-	/**
-	 * For editors we'll have to replace the contents instead of simply adding 
-	 * them to the presentation.
-	 * 
-	 * @see org.eclipse.ui.presentations.StackPresentation#restoreState(org.eclipse.ui.presentations.IPresentationSerializer, org.eclipse.ui.IMemento)
-	 */
-	public void restoreState(IPresentationSerializer serializer,
-			IMemento savedState) {
-		IMemento[] parts = savedState.getChildren(IWorkbenchConstants.TAG_PART);
+    /**
+     * For editors we'll have to replace the contents instead of simply adding 
+     * them to the presentation.
+     * 
+     * @see org.eclipse.ui.presentations.StackPresentation#restoreState(org.eclipse.ui.presentations.IPresentationSerializer, org.eclipse.ui.IMemento)
+     */
+    public void restoreState(IPresentationSerializer serializer,
+            IMemento savedState) {
+        IMemento[] parts = savedState.getChildren(IWorkbenchConstants.TAG_PART);
 
-		IPresentablePart currentPart = getCurrentPart();
+        IPresentablePart currentPart = getCurrentPart();
 
-		// the insertion index for the current part
-		int insert = 0;
-		for (int idx = 0; idx < parts.length; idx++) {
-			String id = parts[idx].getString(IWorkbenchConstants.TAG_ID);
+        // the insertion index for the current part
+        int insert = 0;
+        for (int idx = 0; idx < parts.length; idx++) {
+            String id = parts[idx].getString(IWorkbenchConstants.TAG_ID);
 
-		    // if the part is not around, then it doesn't get added  
-			IPresentablePart part = id == null ? null : serializer.getPart(id);
-			if (part == null)
-			    continue;
+            // if the part is not around, then it doesn't get added  
+            IPresentablePart part = id == null ? null : serializer.getPart(id);
+            if (part == null)
+                continue;
 
-			int partIndex = indexOf(part);
+            int partIndex = indexOf(part);
 
-			// otherwise if the part is in the right place then do nothing
-			if (partIndex == insert) {
-			    ++insert;
-			    continue;
-			}
-			
-			// otherwise remove the part and add it in the right place
-		    removePart(part);
-	        addPart(part, partIndex < insert ? insert - 1 : insert++);
+            // otherwise if the part is in the right place then do nothing
+            if (partIndex == insert) {
+                ++insert;
+                continue;
+            }
 
-	        // reselect the part if it was previously the current
-		    if (part == currentPart)
-		        selectPart(part);
-		}
-	}
-	
-    public DefaultEditorPresentation(Composite parent, IStackPresentationSite newSite) {
+            // otherwise remove the part and add it in the right place
+            removePart(part);
+            addPart(part, partIndex < insert ? insert - 1 : insert++);
+
+            // reselect the part if it was previously the current
+            if (part == currentPart)
+                selectPart(part);
+        }
+    }
+
+    public DefaultEditorPresentation(Composite parent,
+            IStackPresentationSite newSite) {
         super(new PaneFolder(parent, SWT.BORDER), newSite);
         final PaneFolder tabFolder = getTabFolder();
 
@@ -157,27 +160,33 @@ public class DefaultEditorPresentation extends DefaultPartPresentation {
         // do not support icons in unselected tabs.
         tabFolder.setUnselectedImageVisible(true);
 
-        getSystemMenuManager().add(new UpdatingActionContributionItem(new SystemMenuCloseOthers(this)));
-        getSystemMenuManager().add(new UpdatingActionContributionItem(new SystemMenuCloseAll(this)));
-        
+        getSystemMenuManager().add(
+                new UpdatingActionContributionItem(new SystemMenuCloseOthers(
+                        this)));
+        getSystemMenuManager()
+                .add(
+                        new UpdatingActionContributionItem(
+                                new SystemMenuCloseAll(this)));
+
         init();
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.presentations.DefaultPartPresentation#widgetDisposed()
-	 */
-	protected void widgetDisposed() {
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.presentations.DefaultPartPresentation#widgetDisposed()
+     */
+    protected void widgetDisposed() {
         preferenceStore.removePropertyChangeListener(propertyChangeListener);
         apiPreferenceStore.removePropertyChangeListener(propertyChangeListener);
         super.widgetDisposed();
-	}
-	
+    }
+
     protected void initTab(CTabItem tabItem, IPresentablePart part) {
-        tabItem.setText(getLabelText(part, (getTabFolder().getControl().getStyle() & SWT.MULTI) == 0));
+        tabItem.setText(getLabelText(part, (getTabFolder().getControl()
+                .getStyle() & SWT.MULTI) == 0));
         tabItem.setImage(getLabelImage(part));
         String toolTipText = part.getTitleToolTip();
         if (!toolTipText.equals(Util.ZERO_LENGTH_STRING)) {
-        	tabItem.setToolTipText(toolTipText);
+            tabItem.setToolTipText(toolTipText);
         }
     }
 
@@ -186,10 +195,11 @@ public class DefaultEditorPresentation extends DefaultPartPresentation {
      */
     public void setActive(int newState) {
         super.setActive(newState);
-       
+
         updateGradient();
 
     }
+
     /**
      * Set the tab folder tab style to a tradional style tab
      * 
@@ -201,7 +211,7 @@ public class DefaultEditorPresentation extends DefaultPartPresentation {
         // set the tab style to non-simple
         getTabFolder().setSimpleTab(traditionalTab);
     }
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -210,7 +220,7 @@ public class DefaultEditorPresentation extends DefaultPartPresentation {
     protected String getCurrentTitle() {
         return ""; //$NON-NLS-1$
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.presentations.DefaultPartPresentation#updateGradient()
      */
@@ -218,89 +228,92 @@ public class DefaultEditorPresentation extends DefaultPartPresentation {
         if (isDisposed())
             return;
 
-	    ITheme theme = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme();	    
-	    ColorRegistry colorRegistry = theme.getColorRegistry();
-	    
-	    
-	    if (getActive() == StackPresentation.AS_ACTIVE_FOCUS) {	        
-	        setActiveTabColors();
-	    }
-	    else if (getActive() == StackPresentation.AS_ACTIVE_NOFOCUS) {
-	        drawGradient(
-	                colorRegistry.get(IWorkbenchThemeConstants.INACTIVE_TAB_TEXT_COLOR), 
-	                new Color [] {
-	                        colorRegistry.get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_START) 
-	                }, 
-	                new int [0],
-	                true);	        
-	    }
-	    else {
-	        setInactiveTabColors();
-	    }
-	    
-	    boolean resizeNeeded = false;
-	    Font tabFont = theme.getFontRegistry().get(IWorkbenchThemeConstants.TAB_TEXT_FONT);
-	    Font oldTabFont = getTabFolder().getControl().getFont();
-	    if (!oldTabFont.equals(tabFont)) {	    	    
-	        getTabFolder().getControl().setFont(tabFont);
+        ITheme theme = PlatformUI.getWorkbench().getThemeManager()
+                .getCurrentTheme();
+        ColorRegistry colorRegistry = theme.getColorRegistry();
 
-	        //only layout on font changes.
-	        resizeNeeded = true;
-	    }
-	    
+        if (getActive() == StackPresentation.AS_ACTIVE_FOCUS) {
+            setActiveTabColors();
+        } else if (getActive() == StackPresentation.AS_ACTIVE_NOFOCUS) {
+            drawGradient(
+                    colorRegistry
+                            .get(IWorkbenchThemeConstants.INACTIVE_TAB_TEXT_COLOR),
+                    new Color[] { colorRegistry
+                            .get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_START) },
+                    new int[0], true);
+        } else {
+            setInactiveTabColors();
+        }
+
+        boolean resizeNeeded = false;
+        Font tabFont = theme.getFontRegistry().get(
+                IWorkbenchThemeConstants.TAB_TEXT_FONT);
+        Font oldTabFont = getTabFolder().getControl().getFont();
+        if (!oldTabFont.equals(tabFont)) {
+            getTabFolder().getControl().setFont(tabFont);
+
+            //only layout on font changes.
+            resizeNeeded = true;
+        }
+
         //call super to ensure that the toolbar is updated properly.
         super.updateGradient();
-        
+
         if (resizeNeeded) {
             getTabFolder().setTabHeight(computeTabHeight());
-		    //ensure proper control sizes for new fonts
-		    setControlSize();
+            //ensure proper control sizes for new fonts
+            setControlSize();
         }
     }
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.presentations.DefaultPartPresentation#getPaneName()
-	 */
-	protected String getPaneName() {		
-		return WorkbenchMessages.getString("EditorPane.moveEditor"); //$NON-NLS-1$ 
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.presentations.DefaultPartPresentation#getLabelText(org.eclipse.ui.presentations.IPresentablePart, boolean)
-	 */
-	String getLabelText(IPresentablePart presentablePart, boolean includePath) {
-	    String title = super.getLabelText(presentablePart, includePath); 
-		String text = title;
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.presentations.DefaultPartPresentation#getPaneName()
+     */
+    protected String getPaneName() {
+        return WorkbenchMessages.getString("EditorPane.moveEditor"); //$NON-NLS-1$ 
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.presentations.DefaultPartPresentation#getLabelText(org.eclipse.ui.presentations.IPresentablePart, boolean)
+     */
+    String getLabelText(IPresentablePart presentablePart, boolean includePath) {
+        String title = super.getLabelText(presentablePart, includePath);
+        String text = title;
 
         if (includePath) {
-        	String contentDescription = presentablePart.getTitleStatus();
-        	
-        	if (contentDescription.equals("")) { //$NON-NLS-1$
-	        	
-	            String titleTooltip = presentablePart.getTitleToolTip().trim();
-	
-	            if (titleTooltip.endsWith(title))
-	                    titleTooltip = titleTooltip.substring(0,
-	                            titleTooltip.lastIndexOf(title)).trim();
-	
-	            if (titleTooltip.endsWith("\\")) //$NON-NLS-1$
-	                    titleTooltip = titleTooltip.substring(0,
-	                            titleTooltip.lastIndexOf("\\")).trim(); //$NON-NLS-1$
-	
-	            if (titleTooltip.endsWith("/")) //$NON-NLS-1$
-	                    titleTooltip = titleTooltip.substring(0,
-	                            titleTooltip.lastIndexOf("/")).trim(); //$NON-NLS-1$
-	            
-	            contentDescription = titleTooltip;	            
-        	}
-        	
-        	if (!contentDescription.equals("")) {  //$NON-NLS-1$
-        		text = MessageFormat.format(WorkbenchMessages.getString("EditorPart.AutoTitleFormat"), new String[] {text, contentDescription}); //$NON-NLS-1$
-        	}
+            String contentDescription = presentablePart.getTitleStatus();
+
+            if (contentDescription.equals("")) { //$NON-NLS-1$
+
+                String titleTooltip = presentablePart.getTitleToolTip().trim();
+
+                if (titleTooltip.endsWith(title))
+                    titleTooltip = titleTooltip.substring(0,
+                            titleTooltip.lastIndexOf(title)).trim();
+
+                if (titleTooltip.endsWith("\\")) //$NON-NLS-1$
+                    titleTooltip = titleTooltip.substring(0,
+                            titleTooltip.lastIndexOf("\\")).trim(); //$NON-NLS-1$
+
+                if (titleTooltip.endsWith("/")) //$NON-NLS-1$
+                    titleTooltip = titleTooltip.substring(0,
+                            titleTooltip.lastIndexOf("/")).trim(); //$NON-NLS-1$
+
+                contentDescription = titleTooltip;
+            }
+
+            if (!contentDescription.equals("")) { //$NON-NLS-1$
+                text = MessageFormat
+                        .format(
+                                WorkbenchMessages
+                                        .getString("EditorPart.AutoTitleFormat"), new String[] { text, contentDescription }); //$NON-NLS-1$
+            }
         }
 
         if (presentablePart.isDirty()) {
-                text = DIRTY_PREFIX + text; //$NON-NLS-1$
+            text = DIRTY_PREFIX + text; //$NON-NLS-1$
         }
 
         return text;
-	}
+    }
 }

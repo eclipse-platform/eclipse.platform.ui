@@ -11,7 +11,6 @@
 
 package org.eclipse.jface.wizard;
 
-
 /**
  * <p><code>IWizardContainer2</code> is a supplement to 
  * <code>IWizardContainer</code> that adds a method for updating the size of 
@@ -27,7 +26,7 @@ package org.eclipse.jface.wizard;
  * @since 3.0
  */
 public interface IWizardContainer2 extends IWizardContainer {
-    
+
     /**
      * Updates the window size to reflect the state of the current wizard.
      * <p>
@@ -36,6 +35,6 @@ public interface IWizardContainer2 extends IWizardContainer {
      * by the wizard at other times to force a window 
      * size change.
      * </p>
-     */    
+     */
     public void updateSize();
 }

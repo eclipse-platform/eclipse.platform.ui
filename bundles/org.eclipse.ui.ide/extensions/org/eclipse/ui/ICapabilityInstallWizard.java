@@ -13,7 +13,6 @@ package org.eclipse.ui;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.ui.IWorkbench;
 
 /**
  * Interface for project capability install wizard. The wizard is
@@ -48,18 +47,19 @@ import org.eclipse.ui.IWorkbench;
  * @since 2.0
  */
 public interface ICapabilityInstallWizard extends IWizard {
-	
-	/**
-	 * Initializes this capability wizard using the passed workbench,
-	 * object selection, and project.
-	 * <p>
-	 * This method is called after the no argument constructor and
-	 * before other methods are called.
-	 * </p>
-	 *
-	 * @param workbench the current workbench
-	 * @param selection the current object selection
-	 * @param project the project to configure with a capability
-	 */
-	public void init(IWorkbench workbench, IStructuredSelection selection, IProject project);
+
+    /**
+     * Initializes this capability wizard using the passed workbench,
+     * object selection, and project.
+     * <p>
+     * This method is called after the no argument constructor and
+     * before other methods are called.
+     * </p>
+     *
+     * @param workbench the current workbench
+     * @param selection the current object selection
+     * @param project the project to configure with a capability
+     */
+    public void init(IWorkbench workbench, IStructuredSelection selection,
+            IProject project);
 }

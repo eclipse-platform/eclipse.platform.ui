@@ -27,39 +27,39 @@ import org.eclipse.ui.activities.WorkbenchActivityHelper;
  */
 public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 
-	/**
-	 * Creates a new preference dialog under the control of the given preference 
-	 * manager.
-	 *
-	 * @param shell the parent shell
-	 * @param manager the preference manager
-	 */
-	public FilteredPreferenceDialog(Shell parentShell, PreferenceManager manager) {
-		super(parentShell, manager);
-	}
+    /**
+     * Creates a new preference dialog under the control of the given preference 
+     * manager.
+     *
+     * @param shell the parent shell
+     * @param manager the preference manager
+     */
+    public FilteredPreferenceDialog(Shell parentShell, PreferenceManager manager) {
+        super(parentShell, manager);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.PreferenceDialog#createTreeViewer(org.eclipse.swt.widgets.Composite)
-	 */
-	protected TreeViewer createTreeViewer(Composite parent) {
-		TreeViewer tree = super.createTreeViewer(parent);
-		tree.setLabelProvider(new PreferenceLabelProvider());
-		tree.setContentProvider(new FilteredPreferenceContentProvider());
-		return tree;
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.preference.PreferenceDialog#createTreeViewer(org.eclipse.swt.widgets.Composite)
+     */
+    protected TreeViewer createTreeViewer(Composite parent) {
+        TreeViewer tree = super.createTreeViewer(parent);
+        tree.setLabelProvider(new PreferenceLabelProvider());
+        tree.setContentProvider(new FilteredPreferenceContentProvider());
+        return tree;
+    }
 
-	/**
-	 * Differs from super implementation in that if the node is found but should
-	 * be filtered based on a call to 
-	 * <code>WorkbenchActivityHelper.filterItem()</code> then <code>null</code> 
-	 * is returned.
-	 * 
-	 * @see org.eclipse.jface.preference.PreferenceDialog#findNodeMatching(java.lang.String)
-	 */
-	protected IPreferenceNode findNodeMatching(String nodeId) {
-		IPreferenceNode node = super.findNodeMatching(nodeId);
-		if (WorkbenchActivityHelper.filterItem(node))
-			return null;
-		return node;
-	}
+    /**
+     * Differs from super implementation in that if the node is found but should
+     * be filtered based on a call to 
+     * <code>WorkbenchActivityHelper.filterItem()</code> then <code>null</code> 
+     * is returned.
+     * 
+     * @see org.eclipse.jface.preference.PreferenceDialog#findNodeMatching(java.lang.String)
+     */
+    protected IPreferenceNode findNodeMatching(String nodeId) {
+        IPreferenceNode node = super.findNodeMatching(nodeId);
+        if (WorkbenchActivityHelper.filterItem(node))
+            return null;
+        return node;
+    }
 }

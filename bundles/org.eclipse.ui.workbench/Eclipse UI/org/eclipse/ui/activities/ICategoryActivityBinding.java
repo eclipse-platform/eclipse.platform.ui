@@ -25,19 +25,19 @@ package org.eclipse.ui.activities;
  */
 public interface ICategoryActivityBinding extends Comparable {
 
-	/**
-	 * Returns the identifier of the activity represented in this binding.
-	 * 
-	 * @return the identifier of the activity represented in this binding.
-	 *         Guaranteed not to be <code>null</code>.
-	 */
-	String getActivityId();
+    /**
+     * Returns the identifier of the activity represented in this binding.
+     * 
+     * @return the identifier of the activity represented in this binding.
+     *         Guaranteed not to be <code>null</code>.
+     */
+    String getActivityId();
 
-	/**
-	 * Returns the identifier of the category represented in this binding.
-	 * 
-	 * @return the identifier of the category represented in this binding.
-	 *         Guaranteed not to be <code>null</code>.
-	 */
-	String getCategoryId();
+    /**
+     * Returns the identifier of the category represented in this binding.
+     * 
+     * @return the identifier of the category represented in this binding.
+     *         Guaranteed not to be <code>null</code>.
+     */
+    String getCategoryId();
 }

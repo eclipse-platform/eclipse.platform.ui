@@ -14,44 +14,43 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IPerspectiveRegistry;
 
-public class PerspContentProvider
-	implements IStructuredContentProvider {
+public class PerspContentProvider implements IStructuredContentProvider {
 
-	/**
-	 * Create a new <code>PerspContentProvider</code>.
-	 */
-	public PerspContentProvider() {
-	    //no-op
-	}
+    /**
+     * Create a new <code>PerspContentProvider</code>.
+     */
+    public PerspContentProvider() {
+        //no-op
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-	 */
-	public void dispose() {
-	    //no-op
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.viewers.IContentProvider#dispose()
+     */
+    public void dispose() {
+        //no-op
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-	 */
-	public Object[] getElements(Object element) {
-		if (element instanceof IPerspectiveRegistry) {
-			return ((IPerspectiveRegistry) element).getPerspectives();
-		}
-		return null;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+     */
+    public Object[] getElements(Object element) {
+        if (element instanceof IPerspectiveRegistry) {
+            return ((IPerspectiveRegistry) element).getPerspectives();
+        }
+        return null;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
-	 *      java.lang.Object, java.lang.Object)
-	 */
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-	    //no-op
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
+     *      java.lang.Object, java.lang.Object)
+     */
+    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+        //no-op
+    }
 }

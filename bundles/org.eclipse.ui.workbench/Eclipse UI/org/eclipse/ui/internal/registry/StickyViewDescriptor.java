@@ -16,30 +16,38 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.IPageLayout;
 
-
-
 /**
  * @since 3.0
  */
 public class StickyViewDescriptor implements IStickyViewDescriptor {
     private static final String ATT_ID = "id"; //$NON-NLS-1$
+
     private static final String ATT_LOCATION = "location"; //$NON-NLS-1$
+
     private static final String ATT_CLOSEABLE = "closeable"; //$NON-NLS-1$    
+
     private static final String ATT_MOVEABLE = "moveable"; //$NON-NLS-1$
-        
+
     private String id;
+
     private String namespace;
+
     private int direction = IPageLayout.RIGHT;
+
     private boolean closeable = true;
+
     private boolean moveable = true;
-        
-    public StickyViewDescriptor(IConfigurationElement singleton) throws CoreException {
+
+    public StickyViewDescriptor(IConfigurationElement singleton)
+            throws CoreException {
         id = singleton.getAttribute(ATT_ID);
         if (id == null)
-        	throw new CoreException(new Status(IStatus.ERROR, singleton.getDeclaringExtension().getNamespace(), 0, "Invalid extension (missing id) ", null));//$NON-NLS-1$
+            throw new CoreException(new Status(IStatus.ERROR, singleton
+                    .getDeclaringExtension().getNamespace(), 0,
+                    "Invalid extension (missing id) ", null));//$NON-NLS-1$
         namespace = singleton.getDeclaringExtension().getNamespace();
-        
-        String location =singleton.getAttribute(ATT_LOCATION);
+
+        String location = singleton.getAttribute(ATT_LOCATION);
         if (location != null) {
             if (location.equalsIgnoreCase("left")) //$NON-NLS-1$
                 direction = IPageLayout.LEFT;
@@ -49,7 +57,7 @@ public class StickyViewDescriptor implements IStickyViewDescriptor {
                 direction = IPageLayout.BOTTOM;
             //no else for right - it is the default value;
         }
-        
+
         String closeableString = singleton.getAttribute(ATT_CLOSEABLE);
         if (closeableString != null) {
             closeable = !closeableString.equals("false"); //$NON-NLS-1$
@@ -62,11 +70,10 @@ public class StickyViewDescriptor implements IStickyViewDescriptor {
 
     }
 
-    
     public int getLocation() {
         return direction;
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.registry.IStickyViewDescriptor#getId()
      */

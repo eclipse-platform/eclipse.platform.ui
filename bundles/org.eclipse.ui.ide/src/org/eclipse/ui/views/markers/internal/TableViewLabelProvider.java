@@ -15,33 +15,33 @@ import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
+public class TableViewLabelProvider extends LabelProvider implements
+        ITableLabelProvider {
 
-public class TableViewLabelProvider extends LabelProvider implements ITableLabelProvider {
+    IField[] fields;
 
-	IField[] fields;
-	
-	public TableViewLabelProvider(IField[] fields) {
-		this.fields = fields;
-	}
+    public TableViewLabelProvider(IField[] fields) {
+        this.fields = fields;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
-	 */
-	public Image getColumnImage(Object element, int columnIndex) {
-		if (fields == null || columnIndex < 0 || columnIndex >= fields.length) {
-			return null;
-		}
-		return fields[columnIndex].getImage(element);
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
+     */
+    public Image getColumnImage(Object element, int columnIndex) {
+        if (fields == null || columnIndex < 0 || columnIndex >= fields.length) {
+            return null;
+        }
+        return fields[columnIndex].getImage(element);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
-	 */
-	public String getColumnText(Object element, int columnIndex) {
-		if (fields == null || columnIndex < 0 || columnIndex >= fields.length) {
-			return null;
-		}
-		return fields[columnIndex].getValue(element);
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
+     */
+    public String getColumnText(Object element, int columnIndex) {
+        if (fields == null || columnIndex < 0 || columnIndex >= fields.length) {
+            return null;
+        }
+        return fields[columnIndex].getValue(element);
+    }
 
 }

@@ -17,46 +17,48 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.dialogs.InstallCapabilityStep.IProjectProvider;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 
-public abstract class MultiStepCapabilityWizard extends MultiStepWizard implements IProjectProvider {
-	/**
-	 * Creates an empty wizard
-	 */
-	protected MultiStepCapabilityWizard() {
-		super();
-	}
-	
-	/**
-	 * Returns the IDs of the perspectives to present
-	 * as choices to the user.
-	 */
-	protected abstract String[] getPerspectiveChoices();
-	
-	/* (non-Javadoc)
-	 * Method declared on IWizard.
-	 */
-	public boolean performFinish() {
-		if (!super.performFinish())
-			return false;
-			
-		// Allow the user to choose which perspective to
-		// switch to.
-		if (isConfigureStepMode()) {
-			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-			String[] perspIds = getPerspectiveChoices();
-			if (perspIds.length > 0) {
-				ProjectPerspectiveChoiceDialog dialog;
-				dialog = new ProjectPerspectiveChoiceDialog(window, perspIds);
-				dialog.open();
-				if (dialog.getReturnCode() == Dialog.OK)
-					window = dialog.showChosenPerspective();
-			}
-			
-			IProject project = getProject();
-			if (project != null) {
-				BasicNewResourceWizard.selectAndReveal(project, window);
-			}
-		}
-			
-		return true;
-	}
+public abstract class MultiStepCapabilityWizard extends MultiStepWizard
+        implements IProjectProvider {
+    /**
+     * Creates an empty wizard
+     */
+    protected MultiStepCapabilityWizard() {
+        super();
+    }
+
+    /**
+     * Returns the IDs of the perspectives to present
+     * as choices to the user.
+     */
+    protected abstract String[] getPerspectiveChoices();
+
+    /* (non-Javadoc)
+     * Method declared on IWizard.
+     */
+    public boolean performFinish() {
+        if (!super.performFinish())
+            return false;
+
+        // Allow the user to choose which perspective to
+        // switch to.
+        if (isConfigureStepMode()) {
+            IWorkbenchWindow window = PlatformUI.getWorkbench()
+                    .getActiveWorkbenchWindow();
+            String[] perspIds = getPerspectiveChoices();
+            if (perspIds.length > 0) {
+                ProjectPerspectiveChoiceDialog dialog;
+                dialog = new ProjectPerspectiveChoiceDialog(window, perspIds);
+                dialog.open();
+                if (dialog.getReturnCode() == Dialog.OK)
+                    window = dialog.showChosenPerspective();
+            }
+
+            IProject project = getProject();
+            if (project != null) {
+                BasicNewResourceWizard.selectAndReveal(project, window);
+            }
+        }
+
+        return true;
+    }
 }

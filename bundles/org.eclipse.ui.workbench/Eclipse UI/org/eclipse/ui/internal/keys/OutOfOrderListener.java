@@ -25,48 +25,49 @@ import org.eclipse.swt.widgets.Widget;
  */
 public class OutOfOrderListener implements Listener {
 
-	/**
-	 * The keyboard interface to which the event should be passed if it is not
-	 * eaten.
-	 */
-	private final WorkbenchKeyboard keyboard;
+    /**
+     * The keyboard interface to which the event should be passed if it is not
+     * eaten.
+     */
+    private final WorkbenchKeyboard keyboard;
 
-	/**
-	 * Constructs a new instance of <code>OutOfOrderListener</code> with a
-	 * reference to the keyboard interface which should be allowed to process
-	 * uneaten events.
-	 * 
-	 * @param workbenchKeyboard
-	 *            The keyboard interface for the workbench capable of
-	 *            processing key bindings; must not be <code>null</code>.
-	 */
-	public OutOfOrderListener(WorkbenchKeyboard workbenchKeyboard) {
-		keyboard = workbenchKeyboard;
-	}
+    /**
+     * Constructs a new instance of <code>OutOfOrderListener</code> with a
+     * reference to the keyboard interface which should be allowed to process
+     * uneaten events.
+     * 
+     * @param workbenchKeyboard
+     *            The keyboard interface for the workbench capable of
+     *            processing key bindings; must not be <code>null</code>.
+     */
+    public OutOfOrderListener(WorkbenchKeyboard workbenchKeyboard) {
+        keyboard = workbenchKeyboard;
+    }
 
-	/**
-	 * Handles the key down event on a widget by passing uneaten events to the
-	 * key binding architecture. This is used to allow special keys to reach
-	 * the widget first -- before being processed by the key binding
-	 * architecture.
-	 * 
-	 * @param event
-	 *            The event to process; must not be <code>null</code>
-	 */
-	public void handleEvent(Event event) {
-		// Always remove myself as a listener.
-	    Widget widget = event.widget;
-	    if ((widget != null) && (!widget.isDisposed())) { 
-	        widget.removeListener(event.type, this);
-	    }
+    /**
+     * Handles the key down event on a widget by passing uneaten events to the
+     * key binding architecture. This is used to allow special keys to reach
+     * the widget first -- before being processed by the key binding
+     * architecture.
+     * 
+     * @param event
+     *            The event to process; must not be <code>null</code>
+     */
+    public void handleEvent(Event event) {
+        // Always remove myself as a listener.
+        Widget widget = event.widget;
+        if ((widget != null) && (!widget.isDisposed())) {
+            widget.removeListener(event.type, this);
+        }
 
-		/*
-		 * If the event is still up for grabs, then re-route through the global
-		 * key filter.
-		 */
-		if (event.doit) {
-			List keyStrokes = WorkbenchKeyboard.generatePossibleKeyStrokes(event);
-			keyboard.processKeyEvent(keyStrokes, event);
-		}
-	}
+        /*
+         * If the event is still up for grabs, then re-route through the global
+         * key filter.
+         */
+        if (event.doit) {
+            List keyStrokes = WorkbenchKeyboard
+                    .generatePossibleKeyStrokes(event);
+            keyboard.processKeyEvent(keyStrokes, event);
+        }
+    }
 }

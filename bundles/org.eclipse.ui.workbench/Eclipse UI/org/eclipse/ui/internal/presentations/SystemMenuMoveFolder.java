@@ -19,25 +19,25 @@ import org.eclipse.ui.presentations.IStackPresentationSite;
  * @since 3.0
  */
 public class SystemMenuMoveFolder extends Action implements ISelfUpdatingAction {
-	private IStackPresentationSite site;
-	
-	public SystemMenuMoveFolder(IStackPresentationSite site) {
-		this.site = site;
-		setText(WorkbenchMessages.getString("ViewPane.moveFolder")); //$NON-NLS-1$
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
-	public void run() {
-		site.dragStart(Display.getDefault().getCursorLocation(), true);
-	}
-	
-	public void update() {
-		setEnabled(site.isStackMoveable());
-	}
-	
+    private IStackPresentationSite site;
+
+    public SystemMenuMoveFolder(IStackPresentationSite site) {
+        this.site = site;
+        setText(WorkbenchMessages.getString("ViewPane.moveFolder")); //$NON-NLS-1$
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.action.IAction#run()
+     */
+    public void run() {
+        site.dragStart(Display.getDefault().getCursorLocation(), true);
+    }
+
+    public void update() {
+        setEnabled(site.isStackMoveable());
+    }
+
     public boolean shouldBeVisible() {
-    	return site.isStackMoveable();
+        return site.isStackMoveable();
     }
 }

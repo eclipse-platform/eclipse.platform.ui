@@ -16,9 +16,13 @@ import org.eclipse.ui.presentations.IPresentablePart;
  * @since 3.0
  */
 public interface IPresentablePartList {
-	public void insert(IPresentablePart part, int idx);
-	public void remove(IPresentablePart part);
-	public void move(IPresentablePart part, int newIndex);
-	public int size();
-	public void select(IPresentablePart part);
+    public void insert(IPresentablePart part, int idx);
+
+    public void remove(IPresentablePart part);
+
+    public void move(IPresentablePart part, int newIndex);
+
+    public int size();
+
+    public void select(IPresentablePart part);
 }

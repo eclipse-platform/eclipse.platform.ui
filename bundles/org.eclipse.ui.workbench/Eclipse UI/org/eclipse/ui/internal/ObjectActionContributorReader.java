@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.registry.RegistryReader;
 
@@ -20,49 +22,55 @@ import org.eclipse.ui.internal.registry.RegistryReader;
  */
 public class ObjectActionContributorReader extends RegistryReader {
 
-	public final static	String TAG_OBJECT_CONTRIBUTION = "objectContribution";//$NON-NLS-1$
-	private final static	String ATT_OBJECTCLASS = "objectClass";//$NON-NLS-1$
-	private ObjectActionContributorManager manager;
-/**
- * Creates popup menu contributor from this element.
- */
-protected void processObjectContribution(IConfigurationElement element) {
-	String objectClassName = element.getAttribute(ATT_OBJECTCLASS);
-	if (objectClassName == null) {
-		logMissingAttribute(element, ATT_OBJECTCLASS);
-		return;
-	}
-	
-	IObjectContributor contributor = new ObjectActionContributor(element);
-	manager.registerContributor(contributor, objectClassName);
-}
-/**
- * Implements abstract method to handle configuration elements. 
- */
-protected boolean readElement(IConfigurationElement element) {
-	String tagName = element.getName();
-	if (tagName.equals(TAG_OBJECT_CONTRIBUTION)) {
-		processObjectContribution(element);
-		return true;
-	}
-	if (tagName.equals(ViewerActionBuilder.TAG_CONTRIBUTION_TYPE)) {
-		return true;
-	}
+    public final static String TAG_OBJECT_CONTRIBUTION = "objectContribution";//$NON-NLS-1$
 
-	return false;
-}
-/**
- * Reads the registry and registers popup menu contributors
- * found there.
- */
-public void readPopupContributors(ObjectActionContributorManager mng) {
-	setManager(mng);
-	IExtensionRegistry registry = Platform.getExtensionRegistry();
-	readRegistry(registry, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_POPUP_MENU);
-}
+    private final static String ATT_OBJECTCLASS = "objectClass";//$NON-NLS-1$
 
-// for dynamic UI
-public void setManager(ObjectActionContributorManager mng) {
-	manager = mng;
-}
+    private ObjectActionContributorManager manager;
+
+    /**
+     * Creates popup menu contributor from this element.
+     */
+    protected void processObjectContribution(IConfigurationElement element) {
+        String objectClassName = element.getAttribute(ATT_OBJECTCLASS);
+        if (objectClassName == null) {
+            logMissingAttribute(element, ATT_OBJECTCLASS);
+            return;
+        }
+
+        IObjectContributor contributor = new ObjectActionContributor(element);
+        manager.registerContributor(contributor, objectClassName);
+    }
+
+    /**
+     * Implements abstract method to handle configuration elements. 
+     */
+    protected boolean readElement(IConfigurationElement element) {
+        String tagName = element.getName();
+        if (tagName.equals(TAG_OBJECT_CONTRIBUTION)) {
+            processObjectContribution(element);
+            return true;
+        }
+        if (tagName.equals(ViewerActionBuilder.TAG_CONTRIBUTION_TYPE)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Reads the registry and registers popup menu contributors
+     * found there.
+     */
+    public void readPopupContributors(ObjectActionContributorManager mng) {
+        setManager(mng);
+        IExtensionRegistry registry = Platform.getExtensionRegistry();
+        readRegistry(registry, PlatformUI.PLUGIN_ID,
+                IWorkbenchConstants.PL_POPUP_MENU);
+    }
+
+    // for dynamic UI
+    public void setManager(ObjectActionContributorManager mng) {
+        manager = mng;
+    }
 }

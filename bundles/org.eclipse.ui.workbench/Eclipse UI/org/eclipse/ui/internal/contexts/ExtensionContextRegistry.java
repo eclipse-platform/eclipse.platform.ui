@@ -25,126 +25,126 @@ import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.ui.internal.util.ConfigurationElementMemento;
 
 final class ExtensionContextRegistry extends AbstractContextRegistry {
-	private List contextContextBindingDefinitions;
-	private List contextDefinitions;
-	private IExtensionRegistry extensionRegistry;
+    private List contextContextBindingDefinitions;
 
-	ExtensionContextRegistry(IExtensionRegistry extensionRegistry) {
-		if (extensionRegistry == null)
-			throw new NullPointerException();
+    private List contextDefinitions;
 
-		this.extensionRegistry = extensionRegistry;
+    private IExtensionRegistry extensionRegistry;
 
-		this
-			.extensionRegistry
-			.addRegistryChangeListener(new IRegistryChangeListener() {
-			public void registryChanged(IRegistryChangeEvent registryChangeEvent) {
-				IExtensionDelta[] extensionDeltas =
-					registryChangeEvent.getExtensionDeltas(
-						Persistence.PACKAGE_PREFIX,
-						Persistence.PACKAGE_BASE);
+    ExtensionContextRegistry(IExtensionRegistry extensionRegistry) {
+        if (extensionRegistry == null)
+            throw new NullPointerException();
 
-				if (extensionDeltas.length != 0)
-					try {
-						load();
-					} catch (IOException eIO) {
-					}
-			}
-		});
+        this.extensionRegistry = extensionRegistry;
 
-		try {
-			load();
-		} catch (IOException eIO) {
-		}
-	}
+        this.extensionRegistry
+                .addRegistryChangeListener(new IRegistryChangeListener() {
+                    public void registryChanged(
+                            IRegistryChangeEvent registryChangeEvent) {
+                        IExtensionDelta[] extensionDeltas = registryChangeEvent
+                                .getExtensionDeltas(Persistence.PACKAGE_PREFIX,
+                                        Persistence.PACKAGE_BASE);
 
-	private String getNamespace(IConfigurationElement configurationElement) {
-		String namespace = null;
+                        if (extensionDeltas.length != 0)
+                            try {
+                                load();
+                            } catch (IOException eIO) {
+                            }
+                    }
+                });
 
-		if (configurationElement != null) {
-			IExtension extension = configurationElement.getDeclaringExtension();
+        try {
+            load();
+        } catch (IOException eIO) {
+        }
+    }
 
-			if (extension != null)
-				namespace = extension.getNamespace();
-		}
+    private String getNamespace(IConfigurationElement configurationElement) {
+        String namespace = null;
 
-		return namespace;
-	}
+        if (configurationElement != null) {
+            IExtension extension = configurationElement.getDeclaringExtension();
 
-	private void load() throws IOException {
-		if (contextContextBindingDefinitions == null)
-			contextContextBindingDefinitions = new ArrayList();
-		else
-			contextContextBindingDefinitions.clear();
+            if (extension != null)
+                namespace = extension.getNamespace();
+        }
 
-		if (contextDefinitions == null)
-			contextDefinitions = new ArrayList();
-		else
-			contextDefinitions.clear();
+        return namespace;
+    }
 
-		// TODO deprecated start
-		IConfigurationElement[] deprecatedConfigurationElements = extensionRegistry.getConfigurationElementsFor("org.eclipse.ui.acceleratorScopes"); //$NON-NLS-1$
+    private void load() throws IOException {
+        if (contextContextBindingDefinitions == null)
+            contextContextBindingDefinitions = new ArrayList();
+        else
+            contextContextBindingDefinitions.clear();
 
-		for (int i = 0; i < deprecatedConfigurationElements.length; i++) {
-			IConfigurationElement deprecatedConfigurationElement =
-				deprecatedConfigurationElements[i];
-			String name = deprecatedConfigurationElement.getName();
+        if (contextDefinitions == null)
+            contextDefinitions = new ArrayList();
+        else
+            contextDefinitions.clear();
 
-			if ("acceleratorScope".equals(name)) //$NON-NLS-1$
-				readContextDefinition(deprecatedConfigurationElement);
-		}
-		
-		deprecatedConfigurationElements = extensionRegistry.getConfigurationElementsFor("org.eclipse.ui.commands"); //$NON-NLS-1$
+        // TODO deprecated start
+        IConfigurationElement[] deprecatedConfigurationElements = extensionRegistry
+                .getConfigurationElementsFor("org.eclipse.ui.acceleratorScopes"); //$NON-NLS-1$
 
-		for (int i = 0; i < deprecatedConfigurationElements.length; i++) {
-			IConfigurationElement deprecatedConfigurationElement =
-				deprecatedConfigurationElements[i];
-			String name = deprecatedConfigurationElement.getName();
+        for (int i = 0; i < deprecatedConfigurationElements.length; i++) {
+            IConfigurationElement deprecatedConfigurationElement = deprecatedConfigurationElements[i];
+            String name = deprecatedConfigurationElement.getName();
 
-			if ("scope".equals(name)) //$NON-NLS-1$
-				readContextDefinition(deprecatedConfigurationElement);
-		}
-		// TODO deprecated end
-		
-		IConfigurationElement[] configurationElements =
-			extensionRegistry.getConfigurationElementsFor(
-				Persistence.PACKAGE_FULL);
+            if ("acceleratorScope".equals(name)) //$NON-NLS-1$
+                readContextDefinition(deprecatedConfigurationElement);
+        }
 
-		for (int i = 0; i < configurationElements.length; i++) {
-			IConfigurationElement configurationElement =
-				configurationElements[i];
-			String name = configurationElement.getName();
+        deprecatedConfigurationElements = extensionRegistry
+                .getConfigurationElementsFor("org.eclipse.ui.commands"); //$NON-NLS-1$
 
-			if (Persistence.TAG_CONTEXT.equals(name))
-				readContextDefinition(configurationElement);
-		}
+        for (int i = 0; i < deprecatedConfigurationElements.length; i++) {
+            IConfigurationElement deprecatedConfigurationElement = deprecatedConfigurationElements[i];
+            String name = deprecatedConfigurationElement.getName();
 
-		boolean contextRegistryChanged = false;
+            if ("scope".equals(name)) //$NON-NLS-1$
+                readContextDefinition(deprecatedConfigurationElement);
+        }
+        // TODO deprecated end
 
-		if (!contextContextBindingDefinitions
-			.equals(super.contextContextBindingDefinitions)) {
-			super.contextContextBindingDefinitions =
-				Collections.unmodifiableList(contextContextBindingDefinitions);
-			contextRegistryChanged = true;
-		}
+        IConfigurationElement[] configurationElements = extensionRegistry
+                .getConfigurationElementsFor(Persistence.PACKAGE_FULL);
 
-		if (!contextDefinitions.equals(super.contextDefinitions)) {
-			super.contextDefinitions =
-				Collections.unmodifiableList(contextDefinitions);
-			contextRegistryChanged = true;
-		}
+        for (int i = 0; i < configurationElements.length; i++) {
+            IConfigurationElement configurationElement = configurationElements[i];
+            String name = configurationElement.getName();
 
-		if (contextRegistryChanged)
-			fireContextRegistryChanged();
-	}
+            if (Persistence.TAG_CONTEXT.equals(name))
+                readContextDefinition(configurationElement);
+        }
 
-	private void readContextDefinition(IConfigurationElement configurationElement) {
-		ContextDefinition contextDefinition =
-			Persistence.readContextDefinition(
-				new ConfigurationElementMemento(configurationElement),
-				getNamespace(configurationElement));
+        boolean contextRegistryChanged = false;
 
-		if (contextDefinition != null)
-			contextDefinitions.add(contextDefinition);
-	}
+        if (!contextContextBindingDefinitions
+                .equals(super.contextContextBindingDefinitions)) {
+            super.contextContextBindingDefinitions = Collections
+                    .unmodifiableList(contextContextBindingDefinitions);
+            contextRegistryChanged = true;
+        }
+
+        if (!contextDefinitions.equals(super.contextDefinitions)) {
+            super.contextDefinitions = Collections
+                    .unmodifiableList(contextDefinitions);
+            contextRegistryChanged = true;
+        }
+
+        if (contextRegistryChanged)
+            fireContextRegistryChanged();
+    }
+
+    private void readContextDefinition(
+            IConfigurationElement configurationElement) {
+        ContextDefinition contextDefinition = Persistence
+                .readContextDefinition(new ConfigurationElementMemento(
+                        configurationElement),
+                        getNamespace(configurationElement));
+
+        if (contextDefinition != null)
+            contextDefinitions.add(contextDefinition);
+    }
 }

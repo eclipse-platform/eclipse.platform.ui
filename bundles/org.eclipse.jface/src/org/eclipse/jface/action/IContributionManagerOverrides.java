@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.action;
 
-
 /**
  * This interface is used by instances of <code>IContributionItem</code>
  * to determine if the values for certain properties have been overriden
@@ -23,25 +22,25 @@ package org.eclipse.jface.action;
  * @since 2.0
  */
 public interface IContributionManagerOverrides {
-	/**
-	 * Id for the enabled property. Value is <code>"enabled"</code>.
-	 * 
-	 * @since 2.0
-	 */
-	public final static String P_ENABLED = "enabled"; //$NON-NLS-1$
-	
-	/**
-	 * Returns <code>Boolean.TRUE</code> if the given contribution item should 
-	 * be enabled, <code>Boolean.FALSE</code> if the item should be disabled, and
-	 * <code>null</code> if the item may determine its own enablement.
-	 * 
-	 * @param item the contribution item for which the enable override value is 
-	 * determined
-	 * @since 2.0
-	 */
-	public Boolean getEnabled(IContributionItem item);
-	
-	/**
+    /**
+     * Id for the enabled property. Value is <code>"enabled"</code>.
+     * 
+     * @since 2.0
+     */
+    public final static String P_ENABLED = "enabled"; //$NON-NLS-1$
+
+    /**
+     * Returns <code>Boolean.TRUE</code> if the given contribution item should 
+     * be enabled, <code>Boolean.FALSE</code> if the item should be disabled, and
+     * <code>null</code> if the item may determine its own enablement.
+     * 
+     * @param item the contribution item for which the enable override value is 
+     * determined
+     * @since 2.0
+     */
+    public Boolean getEnabled(IContributionItem item);
+
+    /**
      * This is not intended to be called outside of the workbench. This method
      * is intended to be deprecated in 3.1.
      * 

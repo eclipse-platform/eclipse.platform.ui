@@ -16,29 +16,29 @@ import org.eclipse.swt.graphics.Point;
  * @since 3.0
  */
 public class EditorAreaDropTarget extends AbstractTestDropTarget {
-	int side;
+    int side;
 
-	/**
-	 * @param window
-	 * @param side
-	 */
-	public EditorAreaDropTarget(int side) {
-		super();
-		this.side = side;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.tests.dnd.TestDropTarget#getName()
-	 */
-	public String toString() {
-		return DragOperations.nameForConstant(side) + " of editor area";
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.tests.dnd.TestDropTarget#getLocation()
-	 */
-	public Point getLocation() {
-		return DragOperations.getPointInEditorArea(getPage(), side);
-	}
-	
+    /**
+     * @param window
+     * @param side
+     */
+    public EditorAreaDropTarget(int side) {
+        super();
+        this.side = side;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.tests.dnd.TestDropTarget#getName()
+     */
+    public String toString() {
+        return DragOperations.nameForConstant(side) + " of editor area";
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.tests.dnd.TestDropTarget#getLocation()
+     */
+    public Point getLocation() {
+        return DragOperations.getPointInEditorArea(getPage(), side);
+    }
+
 }

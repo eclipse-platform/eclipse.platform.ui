@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
-  
 /**
  * A cell modifier is used to access the data model from a cell
  * editor in an abstract way. It offers methods to:
@@ -26,45 +25,47 @@ package org.eclipse.jface.viewers;
  * </p>
  */
 public interface ICellModifier {
-/**
- * Checks whether the given property of the given element can be 
- * modified.
- *
- * @param element the element
- * @param property the property
- * @return <code>true</code> if the property can be modified,
- *   and <code>false</code> if it is not modifiable
- */
-public boolean canModify(Object element, String property);
-/**
- * Returns the value for the given property of the given element.
- * Returns <code>null</code> if the element does not have the given property.
- *
- * @param element the element
- * @param property the property
- * @return the property value
- */
-public Object getValue(Object element, String property);
-/**
- * Modifies the value for the given property of the given element.
- * Has no effect if the element does not have the given property,
- * or if the property cannot be modified.
- * <p>
- * Note that it is possible for an SWT Item to be passed instead of 
- * the model element. To handle this case in a safe way, use: 
- * <pre>
- *     if (element instanceof Item) {
- *         element = ((Item) element).getData();
- *     }
- *     // modify the element's property here
- * </pre>
- * </p>
- * 
- * @param element the model element or SWT Item (see above)
- * @param property the property
- * @param value the new property value
- * 
- * @see org.eclipse.swt.widgets.Item
- */
-public void modify(Object element, String property, Object value);
+    /**
+     * Checks whether the given property of the given element can be 
+     * modified.
+     *
+     * @param element the element
+     * @param property the property
+     * @return <code>true</code> if the property can be modified,
+     *   and <code>false</code> if it is not modifiable
+     */
+    public boolean canModify(Object element, String property);
+
+    /**
+     * Returns the value for the given property of the given element.
+     * Returns <code>null</code> if the element does not have the given property.
+     *
+     * @param element the element
+     * @param property the property
+     * @return the property value
+     */
+    public Object getValue(Object element, String property);
+
+    /**
+     * Modifies the value for the given property of the given element.
+     * Has no effect if the element does not have the given property,
+     * or if the property cannot be modified.
+     * <p>
+     * Note that it is possible for an SWT Item to be passed instead of 
+     * the model element. To handle this case in a safe way, use: 
+     * <pre>
+     *     if (element instanceof Item) {
+     *         element = ((Item) element).getData();
+     *     }
+     *     // modify the element's property here
+     * </pre>
+     * </p>
+     * 
+     * @param element the model element or SWT Item (see above)
+     * @param property the property
+     * @param value the new property value
+     * 
+     * @see org.eclipse.swt.widgets.Item
+     */
+    public void modify(Object element, String property, Object value);
 }

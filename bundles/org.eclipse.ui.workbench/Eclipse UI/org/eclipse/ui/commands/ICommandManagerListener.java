@@ -23,7 +23,7 @@ package org.eclipse.ui.commands;
  */
 public interface ICommandManagerListener {
 
-	/**
+    /**
      * Notifies that one or more properties of an instance of
      * <code>ICommandManager</code> have changed. Specific details are
      * described in the <code>CommandManagerEvent</code>.
@@ -32,5 +32,5 @@ public interface ICommandManagerListener {
      *            the commandManager event. Guaranteed not to be
      *            <code>null</code>.
      */
-	void commandManagerChanged(CommandManagerEvent commandManagerEvent);
+    void commandManagerChanged(CommandManagerEvent commandManagerEvent);
 }

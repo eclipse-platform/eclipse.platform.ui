@@ -41,7 +41,8 @@ public abstract class ThemeTest extends UITestCase {
             buffer.append('[');
             for (int i = 0; i < datas.length; i++) {
                 buffer.append(datas[i]);
-                if (i != datas.length - 1) buffer.append(',');
+                if (i != datas.length - 1)
+                    buffer.append(',');
             }
         }
         return buffer.toString();

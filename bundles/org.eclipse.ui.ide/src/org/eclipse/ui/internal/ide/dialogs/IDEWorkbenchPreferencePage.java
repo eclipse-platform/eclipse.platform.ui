@@ -14,7 +14,12 @@ import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Preferences;
-
+import org.eclipse.jface.preference.FieldEditor;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.IntegerFieldEditor;
+import org.eclipse.jface.preference.StringFieldEditor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -22,17 +27,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
-
-import org.eclipse.jface.preference.FieldEditor;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.IntegerFieldEditor;
-import org.eclipse.jface.preference.StringFieldEditor;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
-
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferencePage;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
@@ -48,7 +44,6 @@ import org.eclipse.ui.internal.ide.misc.WorkInProgressMessages;
  */
 public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage
         implements IWorkbenchPreferencePage {
-	
 
     private Button autoBuildButton;
 
@@ -80,8 +75,8 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage
         createSaveIntervalGroup(composite);
 
         createSpace(composite);
-        createOpenModeGroup(composite);   
-        
+        createOpenModeGroup(composite);
+
         applyDialogFont(composite);
 
         return composite;
@@ -125,7 +120,7 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage
         saveInterval = new IntegerFieldEditor(
                 IDEInternalPreferences.SAVE_INTERVAL, IDEWorkbenchMessages
                         .getString("WorkbenchPreference.saveInterval"), //$NON-NLS-1$
-                groupComposite); 
+                groupComposite);
 
         // @issue we should drop our preference constant and let clients use
         // core's pref. ours is not up-to-date anyway if someone changes this
@@ -137,7 +132,7 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage
         saveInterval.setErrorMessage(IDEWorkbenchMessages.format(
                 "WorkbenchPreference.saveIntervalError", //$NON-NLS-1$
                 new Object[] { new Integer(
-                        IDEInternalPreferences.MAX_SAVE_INTERVAL)})); 
+                        IDEInternalPreferences.MAX_SAVE_INTERVAL) }));
         saveInterval
                 .setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
         saveInterval.setValidRange(1, IDEInternalPreferences.MAX_SAVE_INTERVAL);
@@ -151,7 +146,7 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage
 
             public void propertyChange(PropertyChangeEvent event) {
                 if (event.getProperty().equals(FieldEditor.IS_VALID))
-                        setValid(saveInterval.isValid());
+                    setValid(saveInterval.isValid());
             }
         });
 
@@ -180,11 +175,11 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage
                 .setSelection(store
                         .getDefaultBoolean(IDEInternalPreferences.SAVE_ALL_BEFORE_BUILD));
         saveInterval.loadDefault();
-        
-    	boolean autoRefresh =
-			ResourcesPlugin.getPlugin().getPluginPreferences().getDefaultBoolean(
-				ResourcesPlugin.PREF_AUTO_REFRESH);
-		autoRefreshButton.setSelection(autoRefresh);
+
+        boolean autoRefresh = ResourcesPlugin.getPlugin()
+                .getPluginPreferences().getDefaultBoolean(
+                        ResourcesPlugin.PREF_AUTO_REFRESH);
+        autoRefreshButton.setSelection(autoRefresh);
 
         super.performDefaults();
     }
@@ -204,7 +199,7 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage
             } catch (CoreException e) {
                 IDEWorkbenchPlugin.log(
                         "Error changing auto build workspace setting.", e//$NON-NLS-1$
-                                .getStatus()); 
+                                .getStatus());
             }
         }
 
@@ -232,14 +227,15 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage
             } catch (CoreException e) {
                 IDEWorkbenchPlugin.log(
                         "Error changing save interval preference", e //$NON-NLS-1$
-                                .getStatus()); 
+                                .getStatus());
             }
         }
-        
-        Preferences preferences = ResourcesPlugin.getPlugin().getPluginPreferences();
-        
+
+        Preferences preferences = ResourcesPlugin.getPlugin()
+                .getPluginPreferences();
+
         boolean autoRefresh = autoRefreshButton.getSelection();
-		preferences.setValue(ResourcesPlugin.PREF_AUTO_REFRESH, autoRefresh);
+        preferences.setValue(ResourcesPlugin.PREF_AUTO_REFRESH, autoRefresh);
 
         return super.performOk();
     }
@@ -250,35 +246,37 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage
      * @param parent
      */
     private void createAutoRefreshControls(Composite parent) {
-        
 
         this.autoRefreshButton = new Button(parent, SWT.CHECK);
-        this.autoRefreshButton.setText(IDEWorkbenchMessages.getString("WorkbenchPreference.RefreshButtonText"));  //$NON-NLS-1$
-        this.autoRefreshButton.setToolTipText(IDEWorkbenchMessages.getString("WorkbenchPreference.RefreshButtonToolTip"));  //$NON-NLS-1$
+        this.autoRefreshButton.setText(IDEWorkbenchMessages
+                .getString("WorkbenchPreference.RefreshButtonText")); //$NON-NLS-1$
+        this.autoRefreshButton.setToolTipText(IDEWorkbenchMessages
+                .getString("WorkbenchPreference.RefreshButtonToolTip")); //$NON-NLS-1$
 
         boolean autoRefresh = ResourcesPlugin.getPlugin()
                 .getPluginPreferences().getBoolean(
                         ResourcesPlugin.PREF_AUTO_REFRESH);
         this.autoRefreshButton.setSelection(autoRefresh);
     }
-    
+
     /**
      * Check the state of the text
      * @param text The widget to check
      * @return <code>true</code> if the text has a valid number entered.
      */
-	protected boolean checkState(Text text) {
+    protected boolean checkState(Text text) {
 
-		if (text == null)
-			return false;
-		try {
-			Integer.valueOf(text.getText()).intValue();
-			setErrorMessage(null);
-			return true;
-		} catch (NumberFormatException e1) {
-			setErrorMessage(WorkInProgressMessages.getString("WorkInProgressPreferencePage.InvalidMessage")); //$NON-NLS-1$
-		}
+        if (text == null)
+            return false;
+        try {
+            Integer.valueOf(text.getText()).intValue();
+            setErrorMessage(null);
+            return true;
+        } catch (NumberFormatException e1) {
+            setErrorMessage(WorkInProgressMessages
+                    .getString("WorkInProgressPreferencePage.InvalidMessage")); //$NON-NLS-1$
+        }
 
-		return false;
-	}
+        return false;
+    }
 }

@@ -9,7 +9,7 @@
  *      IBM Corporation - initial API and implementation 
  *  	Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
  *      font should be activated and used by other components.
-************************************************************************/
+ ************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
 import java.util.HashMap;
@@ -60,42 +60,54 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
      * Table height in dialog units (value 150).
      */
     private static final int TABLE_HEIGHT = 150;
+
     private static final int INFO_HEIGHT = 100;
+
     private final static int MORE_ID = IDialogConstants.CLIENT_ID + 1;
+
     private final static int PLUGINS_ID = IDialogConstants.CLIENT_ID + 2;
 
-	private Table table;
-	private Label imageLabel;
-	private StyledText text;
-	private Composite infoArea;
+    private Table table;
 
-	private Map cachedImages = new HashMap();
+    private Label imageLabel;
 
-	private String columnTitles[] = {
-	    WorkbenchMessages.getString("AboutFeaturesDialog.provider"), //$NON-NLS-1$
-		WorkbenchMessages.getString("AboutFeaturesDialog.featureName"), //$NON-NLS-1$
-		WorkbenchMessages.getString("AboutFeaturesDialog.version"), //$NON-NLS-1$
-		WorkbenchMessages.getString("AboutFeaturesDialog.featureId"), //$NON-NLS-1$
-	};
+    private StyledText text;
 
-	private String productName;
-	private AboutBundleGroupData[] bundleGroupInfos;
+    private Composite infoArea;
 
-	private int lastColumnChosen = 0; // initially sort by provider
-	private boolean reverseSort = false; // initially sort ascending
-	private AboutBundleGroupData lastSelection = null;
-	private Button moreButton;
-	private Button pluginsButton;
+    private Map cachedImages = new HashMap();
 
-	private static Map featuresMap;
+    private String columnTitles[] = {
+            WorkbenchMessages.getString("AboutFeaturesDialog.provider"), //$NON-NLS-1$
+            WorkbenchMessages.getString("AboutFeaturesDialog.featureName"), //$NON-NLS-1$
+            WorkbenchMessages.getString("AboutFeaturesDialog.version"), //$NON-NLS-1$
+            WorkbenchMessages.getString("AboutFeaturesDialog.featureId"), //$NON-NLS-1$
+    };
 
-	/**
-	 * Constructor for AboutFeaturesDialog
-	 */
-	public AboutFeaturesDialog(Shell parentShell, String productName,
+    private String productName;
+
+    private AboutBundleGroupData[] bundleGroupInfos;
+
+    private int lastColumnChosen = 0; // initially sort by provider
+
+    private boolean reverseSort = false; // initially sort ascending
+
+    private AboutBundleGroupData lastSelection = null;
+
+    private Button moreButton;
+
+    private Button pluginsButton;
+
+    private static Map featuresMap;
+
+    /**
+     * Constructor for AboutFeaturesDialog
+     */
+    public AboutFeaturesDialog(Shell parentShell, String productName,
             AboutBundleGroupData[] bundleGroupInfos) {
         super(parentShell);
-        setShellStyle(SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MAX | SWT.APPLICATION_MODAL);
+        setShellStyle(SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MAX
+                | SWT.APPLICATION_MODAL);
 
         this.productName = productName;
 
@@ -108,12 +120,12 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
         AboutData.sortByProvider(reverseSort, this.bundleGroupInfos);
     }
 
-	/**
-	 * The More Info button was pressed.  Open a browser with the license for the
-	 * selected item or an information dialog if there is no license, or the browser
-	 * cannot be opened. 
-	 */
-	private void handleMoreInfoPressed() {
+    /**
+     * The More Info button was pressed.  Open a browser with the license for the
+     * selected item or an information dialog if there is no license, or the browser
+     * cannot be opened. 
+     */
+    private void handleMoreInfoPressed() {
         TableItem[] items = table.getSelection();
         if (items.length <= 0)
             return;
@@ -127,7 +139,7 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
         }
     }
 
-	/**
+    /**
      * The Plugins button was pressed. Open an about dialog on the plugins for
      * the selected feature.
      */
@@ -146,12 +158,12 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
                         .getString("AboutFeaturesDialog.pluginInfoTitle"), //$NON-NLS-1$
                 WorkbenchMessages.format(
                         "AboutFeaturesDialog.pluginInfoMessage", //$NON-NLS-1$
-                        new Object[] { bundleGroup.getIdentifier()}),
+                        new Object[] { bundleGroup.getIdentifier() }),
                 IHelpContextIds.ABOUT_FEATURES_PLUGINS_DIALOG);
         d.open();
     }
 
-	/*
+    /*
      * (non-Javadoc) Method declared on Dialog.
      */
     protected void buttonPressed(int buttonId) {
@@ -168,7 +180,7 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
         }
     }
 
-	/*
+    /*
      * (non-Javadoc) Method declared on Window.
      */
     protected void configureShell(Shell newShell) {
@@ -212,7 +224,7 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
             updateButtons((AboutBundleGroupData) items[0].getData());
     }
 
-	/**
+    /**
      * Create the contents of the dialog (above the button bar).
      * 
      * Subclasses should overide.
@@ -237,7 +249,8 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
         createTable(outer);
         createInfoArea(outer);
 
-        GridData gridData = new GridData(GridData.FILL, GridData.FILL, true, true);
+        GridData gridData = new GridData(GridData.FILL, GridData.FILL, true,
+                true);
         gridData.heightHint = convertVerticalDLUsToPixels(TABLE_HEIGHT);
         table.setLayoutData(gridData);
 
@@ -245,76 +258,75 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
     }
 
     /** 
-	 * Create the info area containing the image and text
-	 */
-	protected void createInfoArea(Composite parent) {
-		Font font = parent.getFont();
+     * Create the info area containing the image and text
+     */
+    protected void createInfoArea(Composite parent) {
+        Font font = parent.getFont();
 
-		infoArea = new Composite(parent, SWT.NULL);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		infoArea.setLayout(layout);
-		GridData data = new GridData(GridData.FILL_BOTH);
-		int infoAreaHeight = convertVerticalDLUsToPixels(INFO_HEIGHT);
-		data.heightHint = infoAreaHeight;
-		infoArea.setLayoutData(data);
+        infoArea = new Composite(parent, SWT.NULL);
+        GridLayout layout = new GridLayout();
+        layout.numColumns = 2;
+        infoArea.setLayout(layout);
+        GridData data = new GridData(GridData.FILL_BOTH);
+        int infoAreaHeight = convertVerticalDLUsToPixels(INFO_HEIGHT);
+        data.heightHint = infoAreaHeight;
+        infoArea.setLayoutData(data);
 
-		imageLabel = new Label(infoArea, SWT.NONE);
-		data = new GridData();
-		data.horizontalAlignment = GridData.FILL;
-		data.verticalAlignment = GridData.BEGINNING;
-		data.heightHint = 32;
-		data.widthHint = 32;
-		imageLabel.setLayoutData(data);
-		imageLabel.setFont(font);
+        imageLabel = new Label(infoArea, SWT.NONE);
+        data = new GridData();
+        data.horizontalAlignment = GridData.FILL;
+        data.verticalAlignment = GridData.BEGINNING;
+        data.heightHint = 32;
+        data.widthHint = 32;
+        imageLabel.setLayoutData(data);
+        imageLabel.setFont(font);
 
-		// text on the right
-		text = new StyledText(infoArea, SWT.MULTI | SWT.READ_ONLY);
-		text.setCaret(null);
-		text.setFont(parent.getFont());
-		data = new GridData();
-		data.horizontalAlignment = GridData.FILL;
-		data.verticalAlignment = GridData.BEGINNING;
-		data.grabExcessHorizontalSpace = true;
-		data.heightHint = infoAreaHeight;
-		text.setLayoutData(data);
-		text.setFont(font);
-		text.setCursor(null);
-		text.setBackground(infoArea.getBackground());
-		addListeners(text);
+        // text on the right
+        text = new StyledText(infoArea, SWT.MULTI | SWT.READ_ONLY);
+        text.setCaret(null);
+        text.setFont(parent.getFont());
+        data = new GridData();
+        data.horizontalAlignment = GridData.FILL;
+        data.verticalAlignment = GridData.BEGINNING;
+        data.grabExcessHorizontalSpace = true;
+        data.heightHint = infoAreaHeight;
+        text.setLayoutData(data);
+        text.setFont(font);
+        text.setCursor(null);
+        text.setBackground(infoArea.getBackground());
+        addListeners(text);
 
-		TableItem[] items = table.getSelection();
-		if (items.length > 0)
-			updateInfoArea((AboutBundleGroupData) items[0].getData());
-	}
+        TableItem[] items = table.getSelection();
+        if (items.length > 0)
+            updateInfoArea((AboutBundleGroupData) items[0].getData());
+    }
 
-	/**
-	 * Create the table part of the dialog.
-	 *
-	 * @param parent  the parent composite to contain the dialog area
-	 */
-	protected void createTable(Composite parent) {
+    /**
+     * Create the table part of the dialog.
+     *
+     * @param parent  the parent composite to contain the dialog area
+     */
+    protected void createTable(Composite parent) {
         table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE
                 | SWT.FULL_SELECTION | SWT.BORDER);
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
         table.setFont(parent.getFont());
         table.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				AboutBundleGroupData info = (AboutBundleGroupData) e.item.getData();
-				updateInfoArea(info);
-				updateButtons(info);
-			}
-		});
+            public void widgetSelected(SelectionEvent e) {
+                AboutBundleGroupData info = (AboutBundleGroupData) e.item
+                        .getData();
+                updateInfoArea(info);
+                updateButtons(info);
+            }
+        });
 
-    	int[] columnWidths = {
-    	        convertHorizontalDLUsToPixels(120),
+        int[] columnWidths = { convertHorizontalDLUsToPixels(120),
                 convertHorizontalDLUsToPixels(120),
                 convertHorizontalDLUsToPixels(70),
-                convertHorizontalDLUsToPixels(130)
-    	};
+                convertHorizontalDLUsToPixels(130) };
 
-		for (int i = 0; i < columnTitles.length; i++) {
+        for (int i = 0; i < columnTitles.length; i++) {
             TableColumn tableColumn = new TableColumn(table, SWT.NULL);
             tableColumn.setWidth(columnWidths[i]);
             tableColumn.setText(columnTitles[i]);
@@ -326,27 +338,27 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
             });
         }
 
-		// create a table row for each bundle group
-		String selId = lastSelection == null ? null : lastSelection.getId();
-		int sel = 0;
-		for (int i = 0; i < bundleGroupInfos.length; i++) {
-			if (bundleGroupInfos[i].getId().equals(selId))
-			    sel = i;
+        // create a table row for each bundle group
+        String selId = lastSelection == null ? null : lastSelection.getId();
+        int sel = 0;
+        for (int i = 0; i < bundleGroupInfos.length; i++) {
+            if (bundleGroupInfos[i].getId().equals(selId))
+                sel = i;
 
-			TableItem item = new TableItem(table, SWT.NULL);
-			item.setText(createRow(bundleGroupInfos[i]));
-			item.setData(bundleGroupInfos[i]);
-		}
+            TableItem item = new TableItem(table, SWT.NULL);
+            item.setText(createRow(bundleGroupInfos[i]));
+            item.setData(bundleGroupInfos[i]);
+        }
 
-		// if an item was specified during construction, it should be
-		// selected when the table is created
-		if (bundleGroupInfos.length > 0) {
-			table.setSelection(sel);
-			table.showSelection();
-		}
-	}
+        // if an item was specified during construction, it should be
+        // selected when the table is created
+        if (bundleGroupInfos.length > 0) {
+            table.setSelection(sel);
+            table.showSelection();
+        }
+    }
 
-	/**
+    /**
      * @see Window#close()
      */
     public boolean close() {
@@ -361,7 +373,7 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
         return ret;
     }
 
-	/**
+    /**
      * Update the button enablement
      */
     private void updateButtons(AboutBundleGroupData info) {
@@ -374,7 +386,7 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
         // Creating the feature map is too much just to determine enablement, so if
         // it doesn't already exist, just enable the buttons.  If this was the wrong
         // choice, then when the button is actually pressed an dialog will be opened. 
-        if(featuresMap == null) {
+        if (featuresMap == null) {
             moreButton.setEnabled(true);
             pluginsButton.setEnabled(true);
             return;
@@ -384,7 +396,7 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
         pluginsButton.setEnabled(true);
     }
 
-	/**
+    /**
      * Update the info area
      */
     private void updateInfoArea(AboutBundleGroupData info) {
@@ -417,14 +429,14 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
         }
     }
 
-	/**
+    /**
      * Select the initial selection
      */
     public void setInitialSelection(AboutBundleGroupData info) {
         lastSelection = info;
     }
 
-	/**
+    /**
      * Sort the rows of the table based on the selected column.
      * 
      * @param column
@@ -464,7 +476,7 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
         refreshTable(column);
     }
 
-	/**
+    /**
      * Refresh the rows of the table based on the selected column. Maintain
      * selection from before sort action request.
      */
@@ -501,6 +513,6 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
      */
     private static String[] createRow(AboutBundleGroupData info) {
         return new String[] { info.getProviderName(), info.getName(),
-                info.getVersion(), info.getId()};
+                info.getVersion(), info.getId() };
     }
 }

@@ -30,59 +30,59 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * @see IEditorRegistry
  */
 public interface IEditorDescriptor extends IWorkbenchPartDescriptor {
-	/**
-	 * Returns the editor id.
-	 * <p>
-	 * For internal editors, this is the extension id as defined in the workbench
-	 * registry; for external editors, it is path and file name of the external 
-	 * program.
-	 * </p>
-	 *
-	 * @return the id of the editor
-	 */
-	public String getId();
-	
-	/**
-	 * Returns the descriptor of the image for this editor.
-	 *
-	 * @return the descriptor of the image to display next to this editor
-	 */
-	public ImageDescriptor getImageDescriptor();
-	
-	/**
-	 * Returns the label to show for this editor.
-	 *
-	 * @return the editor label
-	 */
-	public String getLabel();
-	
-	/**
-	 * Returns whether this editor descriptor will open a regular editor
-	 * part inside the editor area.
-	 * 
-	 * @return <code>true</code> if editor is inside editor area, and
-	 * <code>false</code> otherwise
-	 * @since 3.0
-	 */
-	public boolean isInternal();
-	
-	/**
-	 * Returns whether this editor descriptor will open an external
-	 * editor in-place inside the editor area.
-	 * 
-	 * @return <code>true</code> if editor is in-place, and <code>false</code>
-	 * otherwise
-	 * @since 3.0
-	 */
-	public boolean isOpenInPlace();
+    /**
+     * Returns the editor id.
+     * <p>
+     * For internal editors, this is the extension id as defined in the workbench
+     * registry; for external editors, it is path and file name of the external 
+     * program.
+     * </p>
+     *
+     * @return the id of the editor
+     */
+    public String getId();
 
-	/**
-	 * Returns whether this editor descriptor will open an external editor
-	 * in a new window outside the workbench.
-	 * 
-	 * @return <code>true</code> if editor is external, and <code>false</code>
-	 * otherwise
-	 * @since 3.0
-	 */
-	public boolean isOpenExternal();
+    /**
+     * Returns the descriptor of the image for this editor.
+     *
+     * @return the descriptor of the image to display next to this editor
+     */
+    public ImageDescriptor getImageDescriptor();
+
+    /**
+     * Returns the label to show for this editor.
+     *
+     * @return the editor label
+     */
+    public String getLabel();
+
+    /**
+     * Returns whether this editor descriptor will open a regular editor
+     * part inside the editor area.
+     * 
+     * @return <code>true</code> if editor is inside editor area, and
+     * <code>false</code> otherwise
+     * @since 3.0
+     */
+    public boolean isInternal();
+
+    /**
+     * Returns whether this editor descriptor will open an external
+     * editor in-place inside the editor area.
+     * 
+     * @return <code>true</code> if editor is in-place, and <code>false</code>
+     * otherwise
+     * @since 3.0
+     */
+    public boolean isOpenInPlace();
+
+    /**
+     * Returns whether this editor descriptor will open an external editor
+     * in a new window outside the workbench.
+     * 
+     * @return <code>true</code> if editor is external, and <code>false</code>
+     * otherwise
+     * @since 3.0
+     */
+    public boolean isOpenExternal();
 }

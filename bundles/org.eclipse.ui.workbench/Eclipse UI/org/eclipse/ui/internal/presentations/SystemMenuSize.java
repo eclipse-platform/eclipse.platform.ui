@@ -19,23 +19,23 @@ public class SystemMenuSize extends ContributionItem {
     private PartPane partPane;
 
     public SystemMenuSize(PartPane pane) {
-    	setPane(pane);
+        setPane(pane);
     }
-    
+
     public void setPane(PartPane pane) {
-    	partPane = pane;
+        partPane = pane;
     }
 
     public void dispose() {
         partPane = null;
     }
-    
+
     public void fill(Menu menu, int index) {
-    	if (partPane != null) {
-    		partPane.addSizeMenuItem(menu, index);
-    	}
+        if (partPane != null) {
+            partPane.addSizeMenuItem(menu, index);
+        }
     }
-    
+
     public boolean isDynamic() {
         return true;
     }

@@ -19,162 +19,165 @@ import java.util.Set;
 import org.eclipse.ui.activities.IIdentifier;
 import org.eclipse.ui.activities.IIdentifierListener;
 import org.eclipse.ui.activities.IdentifierEvent;
-
 import org.eclipse.ui.internal.util.Util;
 
 final class Identifier implements IIdentifier {
-	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL =
-		Identifier.class.getName().hashCode();
-	private final static Set strongReferences = new HashSet();
+    private final static int HASH_FACTOR = 89;
 
-	private Set activityIds;
-	private transient String[] activityIdsAsArray;
-	private boolean enabled;
-	private transient int hashCode;
-	private transient boolean hashCodeComputed;
-	private String id;
-	private List identifierListeners;
-	private transient String string;
+    private final static int HASH_INITIAL = Identifier.class.getName()
+            .hashCode();
 
-	Identifier(String id) {
-		if (id == null)
-			throw new NullPointerException();
+    private final static Set strongReferences = new HashSet();
 
-		this.id = id;
-	}
+    private Set activityIds;
 
-	public void addIdentifierListener(IIdentifierListener identifierListener) {
-		if (identifierListener == null)
-			throw new NullPointerException();
+    private transient String[] activityIdsAsArray;
 
-		if (identifierListeners == null)
-			identifierListeners = new ArrayList();
+    private boolean enabled;
 
-		if (!identifierListeners.contains(identifierListener))
-			identifierListeners.add(identifierListener);
+    private transient int hashCode;
 
-		strongReferences.add(this);
-	}
+    private transient boolean hashCodeComputed;
 
-	public int compareTo(Object object) {
-		Identifier castedObject = (Identifier) object;
-		int compareTo =
-			Util.compare(
-				(Comparable[]) activityIdsAsArray,
-				(Comparable[]) castedObject.activityIdsAsArray);
+    private String id;
 
-		if (compareTo == 0) {
-			compareTo = Util.compare(enabled, castedObject.enabled);
+    private List identifierListeners;
 
-			if (compareTo == 0)
-				compareTo = Util.compare(id, castedObject.id);
-		}
+    private transient String string;
 
-		return compareTo;
-	}
+    Identifier(String id) {
+        if (id == null)
+            throw new NullPointerException();
 
-	public boolean equals(Object object) {
-		if (!(object instanceof Identifier))
-			return false;
+        this.id = id;
+    }
 
-		Identifier castedObject = (Identifier) object;
-		boolean equals = true;
-		equals &= Util.equals(activityIds, castedObject.activityIds);
-		equals &= Util.equals(enabled, castedObject.enabled);
-		equals &= Util.equals(id, castedObject.id);
-		return equals;
-	}
+    public void addIdentifierListener(IIdentifierListener identifierListener) {
+        if (identifierListener == null)
+            throw new NullPointerException();
 
-	void fireIdentifierChanged(IdentifierEvent identifierEvent) {
-		if (identifierEvent == null)
-			throw new NullPointerException();
+        if (identifierListeners == null)
+            identifierListeners = new ArrayList();
 
-		if (identifierListeners != null)
-			for (int i = 0; i < identifierListeners.size(); i++)
-				(
-					(IIdentifierListener) identifierListeners.get(
-						i)).identifierChanged(
-					identifierEvent);
-	}
+        if (!identifierListeners.contains(identifierListener))
+            identifierListeners.add(identifierListener);
 
-	public Set getActivityIds() {
-		return activityIds;
-	}
+        strongReferences.add(this);
+    }
 
-	public String getId() {
-		return id;
-	}
+    public int compareTo(Object object) {
+        Identifier castedObject = (Identifier) object;
+        int compareTo = Util.compare((Comparable[]) activityIdsAsArray,
+                (Comparable[]) castedObject.activityIdsAsArray);
 
-	public int hashCode() {
-		if (!hashCodeComputed) {
-			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityIds);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(enabled);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
-			hashCodeComputed = true;
-		}
+        if (compareTo == 0) {
+            compareTo = Util.compare(enabled, castedObject.enabled);
 
-		return hashCode;
-	}
+            if (compareTo == 0)
+                compareTo = Util.compare(id, castedObject.id);
+        }
 
-	public boolean isEnabled() {
-		return enabled;
-	}
+        return compareTo;
+    }
 
-	public void removeIdentifierListener(IIdentifierListener identifierListener) {
-		if (identifierListener == null)
-			throw new NullPointerException();
+    public boolean equals(Object object) {
+        if (!(object instanceof Identifier))
+            return false;
 
-		if (identifierListeners != null)
-			identifierListeners.remove(identifierListener);
+        Identifier castedObject = (Identifier) object;
+        boolean equals = true;
+        equals &= Util.equals(activityIds, castedObject.activityIds);
+        equals &= Util.equals(enabled, castedObject.enabled);
+        equals &= Util.equals(id, castedObject.id);
+        return equals;
+    }
 
-		if (identifierListeners.isEmpty())
-			strongReferences.remove(this);
-	}
+    void fireIdentifierChanged(IdentifierEvent identifierEvent) {
+        if (identifierEvent == null)
+            throw new NullPointerException();
 
-	boolean setActivityIds(Set activityIds) {
-		activityIds = Util.safeCopy(activityIds, String.class);
+        if (identifierListeners != null)
+            for (int i = 0; i < identifierListeners.size(); i++)
+                ((IIdentifierListener) identifierListeners.get(i))
+                        .identifierChanged(identifierEvent);
+    }
 
-		if (!Util.equals(activityIds, this.activityIds)) {
-			this.activityIds = activityIds;
-			this.activityIdsAsArray =
-				(String[]) this.activityIds.toArray(
-					new String[this.activityIds.size()]);
-			hashCodeComputed = false;
-			hashCode = 0;
-			string = null;
-			return true;
-		}
+    public Set getActivityIds() {
+        return activityIds;
+    }
 
-		return false;
-	}
+    public String getId() {
+        return id;
+    }
 
-	boolean setEnabled(boolean enabled) {
-		if (enabled != this.enabled) {
-			this.enabled = enabled;
-			hashCodeComputed = false;
-			hashCode = 0;
-			string = null;
-			return true;
-		}
+    public int hashCode() {
+        if (!hashCodeComputed) {
+            hashCode = HASH_INITIAL;
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityIds);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(enabled);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
+            hashCodeComputed = true;
+        }
 
-		return false;
-	}
+        return hashCode;
+    }
 
-	public String toString() {
-		if (string == null) {
-			final StringBuffer stringBuffer = new StringBuffer();
-			stringBuffer.append('[');
-			stringBuffer.append(activityIds);
-			stringBuffer.append(',');
-			stringBuffer.append(enabled);
-			stringBuffer.append(',');
-			stringBuffer.append(id);
-			stringBuffer.append(']');
-			string = stringBuffer.toString();
-		}
+    public boolean isEnabled() {
+        return enabled;
+    }
 
-		return string;
-	}
+    public void removeIdentifierListener(IIdentifierListener identifierListener) {
+        if (identifierListener == null)
+            throw new NullPointerException();
+
+        if (identifierListeners != null)
+            identifierListeners.remove(identifierListener);
+
+        if (identifierListeners.isEmpty())
+            strongReferences.remove(this);
+    }
+
+    boolean setActivityIds(Set activityIds) {
+        activityIds = Util.safeCopy(activityIds, String.class);
+
+        if (!Util.equals(activityIds, this.activityIds)) {
+            this.activityIds = activityIds;
+            this.activityIdsAsArray = (String[]) this.activityIds
+                    .toArray(new String[this.activityIds.size()]);
+            hashCodeComputed = false;
+            hashCode = 0;
+            string = null;
+            return true;
+        }
+
+        return false;
+    }
+
+    boolean setEnabled(boolean enabled) {
+        if (enabled != this.enabled) {
+            this.enabled = enabled;
+            hashCodeComputed = false;
+            hashCode = 0;
+            string = null;
+            return true;
+        }
+
+        return false;
+    }
+
+    public String toString() {
+        if (string == null) {
+            final StringBuffer stringBuffer = new StringBuffer();
+            stringBuffer.append('[');
+            stringBuffer.append(activityIds);
+            stringBuffer.append(',');
+            stringBuffer.append(enabled);
+            stringBuffer.append(',');
+            stringBuffer.append(id);
+            stringBuffer.append(']');
+            string = stringBuffer.toString();
+        }
+
+        return string;
+    }
 }

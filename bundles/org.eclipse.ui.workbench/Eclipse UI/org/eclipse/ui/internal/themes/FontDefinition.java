@@ -15,100 +15,100 @@ import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.ui.internal.Workbench;
 
-
 /**
  * The FontDefiniton is the representation of the fontDefinition
  * from the plugin.xml of a type.
  */
-public class FontDefinition implements IHierarchalThemeElementDefinition, ICategorizedThemeElementDefinition, IEditable {
-	
-	private String label;
-	private String id;
-	private String defaultsTo;
-	private String categoryId;
-	private String description;
+public class FontDefinition implements IHierarchalThemeElementDefinition,
+        ICategorizedThemeElementDefinition, IEditable {
+
+    private String label;
+
+    private String id;
+
+    private String defaultsTo;
+
+    private String categoryId;
+
+    private String description;
+
     private String value;
 
     private boolean isEditable;
 
-    private FontData [] parsedValue;
+    private FontData[] parsedValue;
 
-	/**
-	 * Create a new instance of the receiver.
-	 * 
-	 * @param fontName The name display
-	 * ed in the preference page.
-	 * @param uniqueId The id used to refer to this definition.
-	 * @param defaultsId The id of the font this defaults to.
-	 * @param fontDescription The description of the font in the preference page.
-	 */
-	public FontDefinition(
-		String fontName,
-		String uniqueId,
-		String defaultsId,
-		String value,
-		String categoryId,
-		boolean isEditable, 
-		String fontDescription) {
-		this.label = fontName;
-		this.id = uniqueId;
-		this.defaultsTo = defaultsId;
-		this.value = value;
-		this.categoryId = categoryId;
-		this.description = fontDescription;
-		this.isEditable = isEditable;
-	}
-
-	/**
-	 * Create a new instance of the receiver.
-	 * 
-	 * @param originalFont the original definition.  This will be used to populate 
-	 * all fields except defaultsTo and value.  defaultsTo will always be 
-	 * <code>null</code>.
-	 * @param datas the FontData[] value
-	 */
-    public FontDefinition(FontDefinition originalFont, FontData[] datas) {
-    	this.label = originalFont.getLabel();
-		this.id = originalFont.getId();		
-		this.categoryId = originalFont.getCategoryId();
-		this.description = originalFont.getDescription();
-		this.isEditable = originalFont.isEditable();
-		this.parsedValue = datas;
+    /**
+     * Create a new instance of the receiver.
+     * 
+     * @param fontName The name display
+     * ed in the preference page.
+     * @param uniqueId The id used to refer to this definition.
+     * @param defaultsId The id of the font this defaults to.
+     * @param fontDescription The description of the font in the preference page.
+     */
+    public FontDefinition(String fontName, String uniqueId, String defaultsId,
+            String value, String categoryId, boolean isEditable,
+            String fontDescription) {
+        this.label = fontName;
+        this.id = uniqueId;
+        this.defaultsTo = defaultsId;
+        this.value = value;
+        this.categoryId = categoryId;
+        this.description = fontDescription;
+        this.isEditable = isEditable;
     }
 
     /**
-	 * Returns the defaultsTo. This is the id of the text font
-	 * that this font defualts to.
-	 * @return String or <pre>null</pre>.
-	 */
-	public String getDefaultsTo() {
-		return defaultsTo;
-	}
+     * Create a new instance of the receiver.
+     * 
+     * @param originalFont the original definition.  This will be used to populate 
+     * all fields except defaultsTo and value.  defaultsTo will always be 
+     * <code>null</code>.
+     * @param datas the FontData[] value
+     */
+    public FontDefinition(FontDefinition originalFont, FontData[] datas) {
+        this.label = originalFont.getLabel();
+        this.id = originalFont.getId();
+        this.categoryId = originalFont.getCategoryId();
+        this.description = originalFont.getDescription();
+        this.isEditable = originalFont.isEditable();
+        this.parsedValue = datas;
+    }
 
-	/**
-	 * Returns the description.
-	 * @return String or <pre>null</pre>.
-	 */
-	public String getDescription() {
-		return description;
-	}
+    /**
+     * Returns the defaultsTo. This is the id of the text font
+     * that this font defualts to.
+     * @return String or <pre>null</pre>.
+     */
+    public String getDefaultsTo() {
+        return defaultsTo;
+    }
 
-	/**
-	 * Returns the label.
-	 * @return String
-	 */
-	public String getLabel() {
-		return label;
-	}
+    /**
+     * Returns the description.
+     * @return String or <pre>null</pre>.
+     */
+    public String getDescription() {
+        return description;
+    }
 
-	/**
-	 * Returns the id.
-	 * @return String
-	 */
-	public String getId() {
-		return id;
-	}
-	
+    /**
+     * Returns the label.
+     * @return String
+     */
+    public String getLabel() {
+        return label;
+    }
+
+    /**
+     * Returns the id.
+     * @return String
+     */
+    public String getId() {
+        return id;
+    }
+
     /**
      * Returns the categoryId.
      * @return String
@@ -116,26 +116,24 @@ public class FontDefinition implements IHierarchalThemeElementDefinition, ICateg
     public String getCategoryId() {
         return categoryId;
     }
-    
+
     /**
      * Returns the value.
      * 
      * @return FontData []
      */
-    public FontData [] getValue() {
+    public FontData[] getValue() {
         if (value == null)
             return null;
         if (parsedValue == null) {
-            parsedValue = JFaceResources
-            	.getFontRegistry()
-            	.bestDataArray(
-            	        StringConverter.asFontDataArray(value), 
-            	        Workbench.getInstance().getDisplay());
+            parsedValue = JFaceResources.getFontRegistry().bestDataArray(
+                    StringConverter.asFontDataArray(value),
+                    Workbench.getInstance().getDisplay());
         }
 
         return parsedValue;
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.themes.IEditable#isEditable()
      */

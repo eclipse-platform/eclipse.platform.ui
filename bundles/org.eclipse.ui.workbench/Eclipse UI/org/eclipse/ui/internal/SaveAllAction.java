@@ -33,108 +33,112 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * does not disconnect from the target when it
  * becomes deactivated.
  */
-public class SaveAllAction extends PageEventAction
-	implements IPropertyListener
-{
-	/**
-	 * List of parts (element type: <code>IWorkbenchPart</code>)
-	 * against which this class has outstanding property listeners registered.
-	 */
-	private List partsWithListeners = new ArrayList(1);
+public class SaveAllAction extends PageEventAction implements IPropertyListener {
+    /**
+     * List of parts (element type: <code>IWorkbenchPart</code>)
+     * against which this class has outstanding property listeners registered.
+     */
+    private List partsWithListeners = new ArrayList(1);
 
-/**
- * The default constructor.
- */
-public SaveAllAction(IWorkbenchWindow window) {
-	super(WorkbenchMessages.getString("SaveAll.text"), window); //$NON-NLS-1$
-	setToolTipText(WorkbenchMessages.getString("SaveAll.toolTip")); //$NON-NLS-1$
-	setId("saveAll"); //$NON-NLS-1$
-	setEnabled(false);
-	WorkbenchHelp.setHelp(this, IHelpContextIds.SAVE_ALL_ACTION);
-	setImageDescriptor(
-		WorkbenchImages.getImageDescriptor(
-			IWorkbenchGraphicConstants.IMG_ETOOL_SAVEALL_EDIT));
-	setDisabledImageDescriptor(
-		WorkbenchImages.getImageDescriptor(
-			IWorkbenchGraphicConstants.IMG_ETOOL_SAVEALL_EDIT_DISABLED));
-	setActionDefinitionId("org.eclipse.ui.file.saveAll"); //$NON-NLS-1$
-}
-/* (non-Javadoc)
- * Method declared on PageEventAction.
- */
-public void pageActivated(IWorkbenchPage page) {
-	super.pageActivated(page);
-	updateState();
-}
-/* (non-Javadoc)
- * Method declared on PageEventAction.
- */
-public void pageClosed(IWorkbenchPage page) {
-	super.pageClosed(page);
-	updateState();
-}
-/* (non-Javadoc)
- * Method declared on PartEventAction.
- */
-public void partClosed(IWorkbenchPart part) {
-	super.partClosed(part);
-	if (part instanceof IEditorPart) {
-		part.removePropertyListener(this);
-		partsWithListeners.remove(part);
-		updateState();	
-	}
-}
-/* (non-Javadoc)
- * Method declared on PartEventAction.
- */
-public void partOpened(IWorkbenchPart part) {
-	super.partOpened(part);
-	if (part instanceof IEditorPart) {
-		part.addPropertyListener(this);
-		partsWithListeners.add(part);
-		updateState();	
-	}
-}
-/* (non-Javadoc)
- * Method declared on IPropertyListener.
- */
-public void propertyChanged(Object source, int propID) {
-	if (source instanceof IEditorPart) {
-		if (propID == IEditorPart.PROP_DIRTY) {
-			updateState();
-		}
-	}
-}
-/* (non-Javadoc)
- * Method declared on Action.
- */
-public void run() {
-	if (getWorkbenchWindow() == null) {
-		// action has been disposed
-		return;
-	}
-	IWorkbenchPage page = getActivePage();
-	if (page != null) {
-		page.saveAllEditors(false);
-	}
-}
-/**
- * Updates availability depending on number of
- * targets that need saving.
- */
-protected void updateState() {
-	IWorkbenchPage page = getActivePage();
-	setEnabled(page != null && page.getDirtyEditors().length > 0);
-}
-/* (non-Javadoc)
- * Method declared on PageEventAction.
- */
-public void dispose() {
-	super.dispose();
-	for (Iterator it = partsWithListeners.iterator(); it.hasNext(); ) {
-		IWorkbenchPart part = (IWorkbenchPart) it.next();
-		part.removePropertyListener(this);
-	}
-	partsWithListeners.clear();
-}
+    /**
+     * The default constructor.
+     */
+    public SaveAllAction(IWorkbenchWindow window) {
+        super(WorkbenchMessages.getString("SaveAll.text"), window); //$NON-NLS-1$
+        setToolTipText(WorkbenchMessages.getString("SaveAll.toolTip")); //$NON-NLS-1$
+        setId("saveAll"); //$NON-NLS-1$
+        setEnabled(false);
+        WorkbenchHelp.setHelp(this, IHelpContextIds.SAVE_ALL_ACTION);
+        setImageDescriptor(WorkbenchImages
+                .getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_SAVEALL_EDIT));
+        setDisabledImageDescriptor(WorkbenchImages
+                .getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_SAVEALL_EDIT_DISABLED));
+        setActionDefinitionId("org.eclipse.ui.file.saveAll"); //$NON-NLS-1$
+    }
+
+    /* (non-Javadoc)
+     * Method declared on PageEventAction.
+     */
+    public void pageActivated(IWorkbenchPage page) {
+        super.pageActivated(page);
+        updateState();
+    }
+
+    /* (non-Javadoc)
+     * Method declared on PageEventAction.
+     */
+    public void pageClosed(IWorkbenchPage page) {
+        super.pageClosed(page);
+        updateState();
+    }
+
+    /* (non-Javadoc)
+     * Method declared on PartEventAction.
+     */
+    public void partClosed(IWorkbenchPart part) {
+        super.partClosed(part);
+        if (part instanceof IEditorPart) {
+            part.removePropertyListener(this);
+            partsWithListeners.remove(part);
+            updateState();
+        }
+    }
+
+    /* (non-Javadoc)
+     * Method declared on PartEventAction.
+     */
+    public void partOpened(IWorkbenchPart part) {
+        super.partOpened(part);
+        if (part instanceof IEditorPart) {
+            part.addPropertyListener(this);
+            partsWithListeners.add(part);
+            updateState();
+        }
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IPropertyListener.
+     */
+    public void propertyChanged(Object source, int propID) {
+        if (source instanceof IEditorPart) {
+            if (propID == IEditorPart.PROP_DIRTY) {
+                updateState();
+            }
+        }
+    }
+
+    /* (non-Javadoc)
+     * Method declared on Action.
+     */
+    public void run() {
+        if (getWorkbenchWindow() == null) {
+            // action has been disposed
+            return;
+        }
+        IWorkbenchPage page = getActivePage();
+        if (page != null) {
+            page.saveAllEditors(false);
+        }
+    }
+
+    /**
+     * Updates availability depending on number of
+     * targets that need saving.
+     */
+    protected void updateState() {
+        IWorkbenchPage page = getActivePage();
+        setEnabled(page != null && page.getDirtyEditors().length > 0);
+    }
+
+    /* (non-Javadoc)
+     * Method declared on PageEventAction.
+     */
+    public void dispose() {
+        super.dispose();
+        for (Iterator it = partsWithListeners.iterator(); it.hasNext();) {
+            IWorkbenchPart part = (IWorkbenchPart) it.next();
+            part.removePropertyListener(this);
+        }
+        partsWithListeners.clear();
+    }
 }

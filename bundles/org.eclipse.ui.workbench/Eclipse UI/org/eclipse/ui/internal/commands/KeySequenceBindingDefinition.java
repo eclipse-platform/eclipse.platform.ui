@@ -20,196 +20,193 @@ import java.util.Map;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 
-public final class KeySequenceBindingDefinition
-	implements Comparable {
+public final class KeySequenceBindingDefinition implements Comparable {
 
-	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL =
-		KeySequenceBindingDefinition.class.getName().hashCode();
+    private final static int HASH_FACTOR = 89;
 
-	static Map keySequenceBindingDefinitionsByCommandId(Collection keySequenceBindingDefinitions) {
-		if (keySequenceBindingDefinitions == null)
-			throw new NullPointerException();
+    private final static int HASH_INITIAL = KeySequenceBindingDefinition.class
+            .getName().hashCode();
 
-		Map map = new HashMap();
-		Iterator iterator = keySequenceBindingDefinitions.iterator();
+    static Map keySequenceBindingDefinitionsByCommandId(
+            Collection keySequenceBindingDefinitions) {
+        if (keySequenceBindingDefinitions == null)
+            throw new NullPointerException();
 
-		while (iterator.hasNext()) {
-			Object object = iterator.next();
-			Util.assertInstance(object, KeySequenceBindingDefinition.class);
-			KeySequenceBindingDefinition keySequenceBindingDefinition =
-				(KeySequenceBindingDefinition) object;
-			String commandId = keySequenceBindingDefinition.getCommandId();
+        Map map = new HashMap();
+        Iterator iterator = keySequenceBindingDefinitions.iterator();
 
-			if (commandId != null) {
-				Collection keySequenceBindingDefinitions2 =
-					(Collection) map.get(commandId);
+        while (iterator.hasNext()) {
+            Object object = iterator.next();
+            Util.assertInstance(object, KeySequenceBindingDefinition.class);
+            KeySequenceBindingDefinition keySequenceBindingDefinition = (KeySequenceBindingDefinition) object;
+            String commandId = keySequenceBindingDefinition.getCommandId();
 
-				if (keySequenceBindingDefinitions2 == null) {
-					keySequenceBindingDefinitions2 = new ArrayList();
-					map.put(commandId, keySequenceBindingDefinitions2);
-				}
+            if (commandId != null) {
+                Collection keySequenceBindingDefinitions2 = (Collection) map
+                        .get(commandId);
 
-				keySequenceBindingDefinitions2.add(
-					keySequenceBindingDefinition);
-			}
-		}
+                if (keySequenceBindingDefinitions2 == null) {
+                    keySequenceBindingDefinitions2 = new ArrayList();
+                    map.put(commandId, keySequenceBindingDefinitions2);
+                }
 
-		return map;
-	}
+                keySequenceBindingDefinitions2
+                        .add(keySequenceBindingDefinition);
+            }
+        }
 
-	private String contextId;
-	private String commandId;
+        return map;
+    }
 
-	private transient int hashCode;
-	private transient boolean hashCodeComputed;
-	private String keyConfigurationId;
-	private KeySequence keySequence;
-	private String locale;
-	private String platform;
-	private String sourceId;
-	private transient String string;
+    private String contextId;
 
-	public KeySequenceBindingDefinition(
-		String contextId,
-		String commandId,
-		String keyConfigurationId,
-		KeySequence keySequence,
-		String locale,
-		String platform,
-		String sourceId) {
-		this.contextId = contextId;
-		this.commandId = commandId;
-		this.keyConfigurationId = keyConfigurationId;
-		this.keySequence = keySequence;
-		this.locale = locale;
-		this.platform = platform;
-		this.sourceId = sourceId;
-	}
+    private String commandId;
 
-	public int compareTo(Object object) {
-		KeySequenceBindingDefinition castedObject =
-			(KeySequenceBindingDefinition) object;
-		int compareTo = Util.compare(contextId, castedObject.contextId);
+    private transient int hashCode;
 
-		if (compareTo == 0) {
-			compareTo = Util.compare(commandId, castedObject.commandId);
+    private transient boolean hashCodeComputed;
 
-			if (compareTo == 0) {
-				compareTo =
-					Util.compare(
-						keyConfigurationId,
-						castedObject.keyConfigurationId);
+    private String keyConfigurationId;
 
-				if (compareTo == 0) {
-					compareTo =
-						Util.compare(keySequence, castedObject.keySequence);
+    private KeySequence keySequence;
 
-					if (compareTo == 0) {
-						compareTo = Util.compare(locale, castedObject.locale);
+    private String locale;
 
-						if (compareTo == 0) {
-							compareTo =
-								Util.compare(platform, castedObject.platform);
+    private String platform;
 
-							if (compareTo == 0)
-								compareTo =
-									Util.compare(
-										sourceId,
-										castedObject.sourceId);
-						}
-					}
-				}
-			}
-		}
+    private String sourceId;
 
-		return compareTo;
-	}
+    private transient String string;
 
-	public boolean equals(Object object) {
-		if (!(object instanceof KeySequenceBindingDefinition))
-			return false;
+    public KeySequenceBindingDefinition(String contextId, String commandId,
+            String keyConfigurationId, KeySequence keySequence, String locale,
+            String platform, String sourceId) {
+        this.contextId = contextId;
+        this.commandId = commandId;
+        this.keyConfigurationId = keyConfigurationId;
+        this.keySequence = keySequence;
+        this.locale = locale;
+        this.platform = platform;
+        this.sourceId = sourceId;
+    }
 
-		KeySequenceBindingDefinition castedObject =
-			(KeySequenceBindingDefinition) object;
-		boolean equals = true;
-		equals &= Util.equals(contextId, castedObject.contextId);
-		equals &= Util.equals(commandId, castedObject.commandId);
-		equals
-			&= Util.equals(keyConfigurationId, castedObject.keyConfigurationId);
-		equals &= Util.equals(keySequence, castedObject.keySequence);
-		equals &= Util.equals(locale, castedObject.locale);
-		equals &= Util.equals(platform, castedObject.platform);
-		equals &= Util.equals(sourceId, castedObject.sourceId);
-		return equals;
-	}
+    public int compareTo(Object object) {
+        KeySequenceBindingDefinition castedObject = (KeySequenceBindingDefinition) object;
+        int compareTo = Util.compare(contextId, castedObject.contextId);
 
-	public String getContextId() {
-		return contextId;
-	}
+        if (compareTo == 0) {
+            compareTo = Util.compare(commandId, castedObject.commandId);
 
-	public String getCommandId() {
-		return commandId;
-	}
+            if (compareTo == 0) {
+                compareTo = Util.compare(keyConfigurationId,
+                        castedObject.keyConfigurationId);
 
-	public String getKeyConfigurationId() {
-		return keyConfigurationId;
-	}
+                if (compareTo == 0) {
+                    compareTo = Util.compare(keySequence,
+                            castedObject.keySequence);
 
-	public KeySequence getKeySequence() {
-		return keySequence;
-	}
+                    if (compareTo == 0) {
+                        compareTo = Util.compare(locale, castedObject.locale);
 
-	public String getLocale() {
-		return locale;
-	}
+                        if (compareTo == 0) {
+                            compareTo = Util.compare(platform,
+                                    castedObject.platform);
 
-	public String getPlatform() {
-		return platform;
-	}
+                            if (compareTo == 0)
+                                compareTo = Util.compare(sourceId,
+                                        castedObject.sourceId);
+                        }
+                    }
+                }
+            }
+        }
 
-	public String getSourceId() {
-		return sourceId;
-	}
+        return compareTo;
+    }
 
-	public int hashCode() {
-		if (!hashCodeComputed) {
-			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(contextId);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(commandId);
-			hashCode =
-				hashCode * HASH_FACTOR + Util.hashCode(keyConfigurationId);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(keySequence);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(locale);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(platform);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(sourceId);
-			hashCodeComputed = true;
-		}
+    public boolean equals(Object object) {
+        if (!(object instanceof KeySequenceBindingDefinition))
+            return false;
 
-		return hashCode;
-	}
+        KeySequenceBindingDefinition castedObject = (KeySequenceBindingDefinition) object;
+        boolean equals = true;
+        equals &= Util.equals(contextId, castedObject.contextId);
+        equals &= Util.equals(commandId, castedObject.commandId);
+        equals &= Util.equals(keyConfigurationId,
+                castedObject.keyConfigurationId);
+        equals &= Util.equals(keySequence, castedObject.keySequence);
+        equals &= Util.equals(locale, castedObject.locale);
+        equals &= Util.equals(platform, castedObject.platform);
+        equals &= Util.equals(sourceId, castedObject.sourceId);
+        return equals;
+    }
 
-	public String toString() {
-		if (string == null) {
-			final StringBuffer stringBuffer = new StringBuffer();
-			stringBuffer.append('[');
-			stringBuffer.append(contextId);
-			stringBuffer.append(',');
-			stringBuffer.append(commandId);
-			stringBuffer.append(',');
-			stringBuffer.append(keyConfigurationId);
-			stringBuffer.append(',');
-			stringBuffer.append(keySequence);
-			stringBuffer.append(',');
-			stringBuffer.append(locale);
-			stringBuffer.append(',');
-			stringBuffer.append(platform);
-			stringBuffer.append(',');
-			stringBuffer.append(sourceId);
-			stringBuffer.append(']');
-			string = stringBuffer.toString();
-		}
+    public String getContextId() {
+        return contextId;
+    }
 
-		return string;
-	}
+    public String getCommandId() {
+        return commandId;
+    }
+
+    public String getKeyConfigurationId() {
+        return keyConfigurationId;
+    }
+
+    public KeySequence getKeySequence() {
+        return keySequence;
+    }
+
+    public String getLocale() {
+        return locale;
+    }
+
+    public String getPlatform() {
+        return platform;
+    }
+
+    public String getSourceId() {
+        return sourceId;
+    }
+
+    public int hashCode() {
+        if (!hashCodeComputed) {
+            hashCode = HASH_INITIAL;
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(contextId);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(commandId);
+            hashCode = hashCode * HASH_FACTOR
+                    + Util.hashCode(keyConfigurationId);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(keySequence);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(locale);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(platform);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(sourceId);
+            hashCodeComputed = true;
+        }
+
+        return hashCode;
+    }
+
+    public String toString() {
+        if (string == null) {
+            final StringBuffer stringBuffer = new StringBuffer();
+            stringBuffer.append('[');
+            stringBuffer.append(contextId);
+            stringBuffer.append(',');
+            stringBuffer.append(commandId);
+            stringBuffer.append(',');
+            stringBuffer.append(keyConfigurationId);
+            stringBuffer.append(',');
+            stringBuffer.append(keySequence);
+            stringBuffer.append(',');
+            stringBuffer.append(locale);
+            stringBuffer.append(',');
+            stringBuffer.append(platform);
+            stringBuffer.append(',');
+            stringBuffer.append(sourceId);
+            stringBuffer.append(']');
+            string = stringBuffer.toString();
+        }
+
+        return string;
+    }
 }

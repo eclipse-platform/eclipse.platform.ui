@@ -11,8 +11,9 @@
 package org.eclipse.ui.internal;
 
 class PartDropTarget {
-	LayoutPart part;
-PartDropTarget(LayoutPart part) {
-	this.part = part;
-}
+    LayoutPart part;
+
+    PartDropTarget(LayoutPart part) {
+        this.part = part;
+    }
 }

@@ -16,191 +16,212 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 
 public class TaskFilter extends MarkerFilter {
 
-	private static final String TAG_CONTAINS = "contains"; //$NON-NLS-1$
-	private static final String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
-	private static final String TAG_DIALOG_SECTION = "filter"; //$NON-NLS-1$	
-	private static final String TAG_DONE = "done"; //$NON-NLS-1$
-	private static final String TAG_PRIORITY = "priority"; //$NON-NLS-1$
-	private static final String TAG_SELECT_BY_DONE = "selectByDone"; //$NON-NLS-1$
-	private static final String TAG_SELECT_BY_PRIORITY = "selectByPriority"; //$NON-NLS-1$
+    private static final String TAG_CONTAINS = "contains"; //$NON-NLS-1$
 
-	final static boolean DEFAULT_CONTAINS = true;
-	final static String DEFAULT_DESCRIPTION = ""; //$NON-NLS-1$	
-	final static boolean DEFAULT_DONE = false;
-	final static int DEFAULT_PRIORITY = 0;
-	final static boolean DEFAULT_SELECT_BY_DONE = false;
-	final static boolean DEFAULT_SELECT_BY_PRIORITY = false;
-	
-	final static int PRIORITY_HIGH = 1 << 2;
-	final static int PRIORITY_NORMAL = 1 << 1;
-	final static int PRIORITY_LOW = 1 << 0;
+    private static final String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
 
-	private boolean contains;
-	private String description;
-	private boolean done;
-	private int priority;
-	private boolean selectByPriority;
-	private boolean selectByDone;
+    private static final String TAG_DIALOG_SECTION = "filter"; //$NON-NLS-1$	
 
-	public TaskFilter() {
-		super(new String[] { IMarker.TASK });
-	}
-	
-	public boolean selectMarker(ConcreteMarker marker) {
-		if (!(marker instanceof TaskMarker)) {
-			return false;
-		}
-		
-		TaskMarker taskMarker = (TaskMarker)marker;
-		
-		return !isEnabled() || (super.selectMarker(taskMarker) && selectByDescription(taskMarker) 
-				&& selectByDone(taskMarker) && selectByPriority(taskMarker));
-	}
-	
-	private boolean selectByDescription(ConcreteMarker marker) {
-		if (description == null || description.equals("")) //$NON-NLS-1$
-			return true;
-		
-		int index = marker.getDescription().indexOf(description);
-		return contains ? (index >= 0) : (index < 0);		
-	}
+    private static final String TAG_DONE = "done"; //$NON-NLS-1$
 
-	private boolean selectByDone(TaskMarker item) {
-		if (selectByDone)
-			return done == (item.getDone() == 1);
-			
-		return true;
-	}
+    private static final String TAG_PRIORITY = "priority"; //$NON-NLS-1$
 
-	private boolean selectByPriority(TaskMarker marker) {
-		if (priority != 0 && selectByPriority) {
-			int markerPriority = marker.getPriority();
-		
-			if (markerPriority == IMarker.PRIORITY_HIGH)
-				return (priority & PRIORITY_HIGH) > 0;		
-			else if (markerPriority == IMarker.PRIORITY_NORMAL)
-				return (priority & PRIORITY_NORMAL) > 0;
-			else if (markerPriority == IMarker.PRIORITY_LOW)
-				return (priority & PRIORITY_LOW) > 0;
-		}
-		
-		return true;
-	}
+    private static final String TAG_SELECT_BY_DONE = "selectByDone"; //$NON-NLS-1$
 
-	public boolean getContains() {
-		return contains;
-	}
+    private static final String TAG_SELECT_BY_PRIORITY = "selectByPriority"; //$NON-NLS-1$
 
-	public String getDescription() {
-		return description;
-	}
+    final static boolean DEFAULT_CONTAINS = true;
 
-	public boolean getDone() {
-		return done;
-	}
+    final static String DEFAULT_DESCRIPTION = ""; //$NON-NLS-1$	
 
-	public int getPriority() {
-		return priority;
-	}
+    final static boolean DEFAULT_DONE = false;
 
-	public boolean getSelectByDone() {
-		return selectByDone;
-	}
+    final static int DEFAULT_PRIORITY = 0;
 
-	public boolean getSelectByPriority() {
-		return selectByPriority;
-	}
+    final static boolean DEFAULT_SELECT_BY_DONE = false;
 
-	public void setContains(boolean contains) {
-		this.contains = contains;
-	}
+    final static boolean DEFAULT_SELECT_BY_PRIORITY = false;
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
-	
-	public void setDone(boolean done) {
-		this.done = done;
-	}
+    final static int PRIORITY_HIGH = 1 << 2;
 
-	public void setPriority(int priority) {
-		this.priority = priority;
-	}
+    final static int PRIORITY_NORMAL = 1 << 1;
 
-	public void setSelectByDone(boolean selectByDone) {
-		this.selectByDone = selectByDone;
-	}
-	
-	public void setSelectByPriority(boolean selectByPriority) {
-		this.selectByPriority = selectByPriority;
-	}
+    final static int PRIORITY_LOW = 1 << 0;
 
-	public void resetState() {
-		super.resetState();
-		contains = DEFAULT_CONTAINS;
-		description = DEFAULT_DESCRIPTION;		
-		done = DEFAULT_DONE;
-		priority = DEFAULT_PRIORITY;
-		selectByDone = DEFAULT_SELECT_BY_DONE;
-		selectByPriority = DEFAULT_SELECT_BY_PRIORITY;
-	}
+    private boolean contains;
 
-	public void restoreState(IDialogSettings dialogSettings) {		
-		super.restoreState(dialogSettings);
-		IDialogSettings settings = dialogSettings.getSection(TAG_DIALOG_SECTION);
-		
-		if (settings != null) {
-			String setting = settings.get(TAG_CONTAINS);
+    private String description;
 
-			if (setting != null)
-				contains = Boolean.valueOf(setting).booleanValue();
-				
-			setting = settings.get(TAG_DESCRIPTION);
-			
-			if (setting != null)			
-				description = new String(setting);
+    private boolean done;
 
-			setting = settings.get(TAG_DONE);
-			
-			if (setting != null)
-				done = Boolean.valueOf(setting).booleanValue();
+    private int priority;
 
-			setting = settings.get(TAG_PRIORITY);
+    private boolean selectByPriority;
 
-			if (setting != null)
-				try {
-					priority = Integer.parseInt(setting);		
-				}
-				catch (NumberFormatException eNumberFormat) {
-				}
+    private boolean selectByDone;
 
-			setting = settings.get(TAG_SELECT_BY_DONE);
-			
-			if (setting != null)
-				selectByDone = Boolean.valueOf(setting).booleanValue();
+    public TaskFilter() {
+        super(new String[] { IMarker.TASK });
+    }
 
-			setting = settings.get(TAG_SELECT_BY_PRIORITY);
-			
-			if (setting != null)
-				selectByPriority = Boolean.valueOf(setting).booleanValue();
-		}
-	}
+    public boolean selectMarker(ConcreteMarker marker) {
+        if (!(marker instanceof TaskMarker)) {
+            return false;
+        }
 
-	public void saveState(IDialogSettings dialogSettings) {
-		super.saveState(dialogSettings);
-		
-		if (dialogSettings != null) {
-			IDialogSettings settings = dialogSettings.getSection(TAG_DIALOG_SECTION);
+        TaskMarker taskMarker = (TaskMarker) marker;
 
-			if (settings == null)
-				settings = dialogSettings.addNewSection(TAG_DIALOG_SECTION);
+        return !isEnabled()
+                || (super.selectMarker(taskMarker)
+                        && selectByDescription(taskMarker)
+                        && selectByDone(taskMarker) && selectByPriority(taskMarker));
+    }
 
-			settings.put(TAG_CONTAINS, contains);
-			settings.put(TAG_DESCRIPTION, description);
-			settings.put(TAG_DONE, done);		
-			settings.put(TAG_PRIORITY, priority);
-			settings.put(TAG_SELECT_BY_DONE, selectByDone);
-			settings.put(TAG_SELECT_BY_PRIORITY, selectByPriority);
-		}
-	}
+    private boolean selectByDescription(ConcreteMarker marker) {
+        if (description == null || description.equals("")) //$NON-NLS-1$
+            return true;
+
+        int index = marker.getDescription().indexOf(description);
+        return contains ? (index >= 0) : (index < 0);
+    }
+
+    private boolean selectByDone(TaskMarker item) {
+        if (selectByDone)
+            return done == (item.getDone() == 1);
+
+        return true;
+    }
+
+    private boolean selectByPriority(TaskMarker marker) {
+        if (priority != 0 && selectByPriority) {
+            int markerPriority = marker.getPriority();
+
+            if (markerPriority == IMarker.PRIORITY_HIGH)
+                return (priority & PRIORITY_HIGH) > 0;
+            else if (markerPriority == IMarker.PRIORITY_NORMAL)
+                return (priority & PRIORITY_NORMAL) > 0;
+            else if (markerPriority == IMarker.PRIORITY_LOW)
+                return (priority & PRIORITY_LOW) > 0;
+        }
+
+        return true;
+    }
+
+    public boolean getContains() {
+        return contains;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public boolean getDone() {
+        return done;
+    }
+
+    public int getPriority() {
+        return priority;
+    }
+
+    public boolean getSelectByDone() {
+        return selectByDone;
+    }
+
+    public boolean getSelectByPriority() {
+        return selectByPriority;
+    }
+
+    public void setContains(boolean contains) {
+        this.contains = contains;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setDone(boolean done) {
+        this.done = done;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
+
+    public void setSelectByDone(boolean selectByDone) {
+        this.selectByDone = selectByDone;
+    }
+
+    public void setSelectByPriority(boolean selectByPriority) {
+        this.selectByPriority = selectByPriority;
+    }
+
+    public void resetState() {
+        super.resetState();
+        contains = DEFAULT_CONTAINS;
+        description = DEFAULT_DESCRIPTION;
+        done = DEFAULT_DONE;
+        priority = DEFAULT_PRIORITY;
+        selectByDone = DEFAULT_SELECT_BY_DONE;
+        selectByPriority = DEFAULT_SELECT_BY_PRIORITY;
+    }
+
+    public void restoreState(IDialogSettings dialogSettings) {
+        super.restoreState(dialogSettings);
+        IDialogSettings settings = dialogSettings
+                .getSection(TAG_DIALOG_SECTION);
+
+        if (settings != null) {
+            String setting = settings.get(TAG_CONTAINS);
+
+            if (setting != null)
+                contains = Boolean.valueOf(setting).booleanValue();
+
+            setting = settings.get(TAG_DESCRIPTION);
+
+            if (setting != null)
+                description = new String(setting);
+
+            setting = settings.get(TAG_DONE);
+
+            if (setting != null)
+                done = Boolean.valueOf(setting).booleanValue();
+
+            setting = settings.get(TAG_PRIORITY);
+
+            if (setting != null)
+                try {
+                    priority = Integer.parseInt(setting);
+                } catch (NumberFormatException eNumberFormat) {
+                }
+
+            setting = settings.get(TAG_SELECT_BY_DONE);
+
+            if (setting != null)
+                selectByDone = Boolean.valueOf(setting).booleanValue();
+
+            setting = settings.get(TAG_SELECT_BY_PRIORITY);
+
+            if (setting != null)
+                selectByPriority = Boolean.valueOf(setting).booleanValue();
+        }
+    }
+
+    public void saveState(IDialogSettings dialogSettings) {
+        super.saveState(dialogSettings);
+
+        if (dialogSettings != null) {
+            IDialogSettings settings = dialogSettings
+                    .getSection(TAG_DIALOG_SECTION);
+
+            if (settings == null)
+                settings = dialogSettings.addNewSection(TAG_DIALOG_SECTION);
+
+            settings.put(TAG_CONTAINS, contains);
+            settings.put(TAG_DESCRIPTION, description);
+            settings.put(TAG_DONE, done);
+            settings.put(TAG_PRIORITY, priority);
+            settings.put(TAG_SELECT_BY_DONE, selectByDone);
+            settings.put(TAG_SELECT_BY_PRIORITY, selectByPriority);
+        }
+    }
 }

@@ -20,180 +20,176 @@ import java.util.Set;
 
 import org.eclipse.ui.internal.util.Util;
 
-public final class KeyConfigurationDefinition
-	implements Comparable {
+public final class KeyConfigurationDefinition implements Comparable {
 
-	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL =
-		KeyConfigurationDefinition.class.getName().hashCode();
+    private final static int HASH_FACTOR = 89;
 
-	public static Map keyConfigurationDefinitionsById(
-		Collection keyConfigurationDefinitions,
-		boolean allowNullIds) {
-		if (keyConfigurationDefinitions == null)
-			throw new NullPointerException();
+    private final static int HASH_INITIAL = KeyConfigurationDefinition.class
+            .getName().hashCode();
 
-		Map map = new HashMap();
-		Iterator iterator = keyConfigurationDefinitions.iterator();
+    public static Map keyConfigurationDefinitionsById(
+            Collection keyConfigurationDefinitions, boolean allowNullIds) {
+        if (keyConfigurationDefinitions == null)
+            throw new NullPointerException();
 
-		while (iterator.hasNext()) {
-			Object object = iterator.next();
-			Util.assertInstance(object, KeyConfigurationDefinition.class);
-			KeyConfigurationDefinition keyConfigurationDefinition =
-				(KeyConfigurationDefinition) object;
-			String id = keyConfigurationDefinition.getId();
+        Map map = new HashMap();
+        Iterator iterator = keyConfigurationDefinitions.iterator();
 
-			if (allowNullIds || id != null)
-				map.put(id, keyConfigurationDefinition);
-		}
+        while (iterator.hasNext()) {
+            Object object = iterator.next();
+            Util.assertInstance(object, KeyConfigurationDefinition.class);
+            KeyConfigurationDefinition keyConfigurationDefinition = (KeyConfigurationDefinition) object;
+            String id = keyConfigurationDefinition.getId();
 
-		return map;
-	}
+            if (allowNullIds || id != null)
+                map.put(id, keyConfigurationDefinition);
+        }
 
-	public static Map keyConfigurationDefinitionsByName(
-		Collection keyConfigurationDefinitions,
-		boolean allowNullNames) {
-		if (keyConfigurationDefinitions == null)
-			throw new NullPointerException();
+        return map;
+    }
 
-		Map map = new HashMap();
-		Iterator iterator = keyConfigurationDefinitions.iterator();
+    public static Map keyConfigurationDefinitionsByName(
+            Collection keyConfigurationDefinitions, boolean allowNullNames) {
+        if (keyConfigurationDefinitions == null)
+            throw new NullPointerException();
 
-		while (iterator.hasNext()) {
-			Object object = iterator.next();
-			Util.assertInstance(object, KeyConfigurationDefinition.class);
-			KeyConfigurationDefinition keyConfigurationDefinition =
-				(KeyConfigurationDefinition) object;
-			String name = keyConfigurationDefinition.getName();
+        Map map = new HashMap();
+        Iterator iterator = keyConfigurationDefinitions.iterator();
 
-			if (allowNullNames || name != null) {
-				Set keyConfigurationDefinitions2 = (Set) map.get(name);
+        while (iterator.hasNext()) {
+            Object object = iterator.next();
+            Util.assertInstance(object, KeyConfigurationDefinition.class);
+            KeyConfigurationDefinition keyConfigurationDefinition = (KeyConfigurationDefinition) object;
+            String name = keyConfigurationDefinition.getName();
 
-				if (keyConfigurationDefinitions2 == null) {
-					keyConfigurationDefinitions2 = new HashSet();
-					map.put(name, keyConfigurationDefinitions2);
-				}
+            if (allowNullNames || name != null) {
+                Set keyConfigurationDefinitions2 = (Set) map.get(name);
 
-				keyConfigurationDefinitions2.add(keyConfigurationDefinition);
-			}
-		}
+                if (keyConfigurationDefinitions2 == null) {
+                    keyConfigurationDefinitions2 = new HashSet();
+                    map.put(name, keyConfigurationDefinitions2);
+                }
 
-		return map;
-	}
+                keyConfigurationDefinitions2.add(keyConfigurationDefinition);
+            }
+        }
 
-	private String description;
+        return map;
+    }
 
-	private transient int hashCode;
-	private transient boolean hashCodeComputed;
-	private String id;
-	private String name;
-	private String parentId;
-	private String sourceId;
-	private transient String string;
+    private String description;
 
-	public KeyConfigurationDefinition(
-		String description,
-		String id,
-		String name,
-		String parentId,
-		String sourceId) {
-		this.description = description;
-		this.id = id;
-		this.name = name;
-		this.parentId = parentId;
-		this.sourceId = sourceId;
-	}
+    private transient int hashCode;
 
-	public int compareTo(Object object) {
-		KeyConfigurationDefinition castedObject =
-			(KeyConfigurationDefinition) object;
-		int compareTo = Util.compare(description, castedObject.description);
+    private transient boolean hashCodeComputed;
 
-		if (compareTo == 0) {
-			compareTo = Util.compare(id, castedObject.id);
+    private String id;
 
-			if (compareTo == 0) {
-				compareTo = Util.compare(name, castedObject.name);
+    private String name;
 
-				if (compareTo == 0) {
-					compareTo = Util.compare(parentId, castedObject.parentId);
+    private String parentId;
 
-					if (compareTo == 0)
-						compareTo =
-							Util.compare(sourceId, castedObject.sourceId);
-				}
-			}
-		}
+    private String sourceId;
 
-		return compareTo;
-	}
+    private transient String string;
 
-	public boolean equals(Object object) {
-		if (!(object instanceof KeyConfigurationDefinition))
-			return false;
+    public KeyConfigurationDefinition(String description, String id,
+            String name, String parentId, String sourceId) {
+        this.description = description;
+        this.id = id;
+        this.name = name;
+        this.parentId = parentId;
+        this.sourceId = sourceId;
+    }
 
-		KeyConfigurationDefinition castedObject =
-			(KeyConfigurationDefinition) object;
-		boolean equals = true;
-		equals &= Util.equals(description, castedObject.description);
-		equals &= Util.equals(id, castedObject.id);
-		equals &= Util.equals(name, castedObject.name);
-		equals &= Util.equals(parentId, castedObject.parentId);
-		equals &= Util.equals(sourceId, castedObject.sourceId);
-		return equals;
-	}
+    public int compareTo(Object object) {
+        KeyConfigurationDefinition castedObject = (KeyConfigurationDefinition) object;
+        int compareTo = Util.compare(description, castedObject.description);
 
-	public String getDescription() {
-		return description;
-	}
+        if (compareTo == 0) {
+            compareTo = Util.compare(id, castedObject.id);
 
-	public String getId() {
-		return id;
-	}
+            if (compareTo == 0) {
+                compareTo = Util.compare(name, castedObject.name);
 
-	public String getName() {
-		return name;
-	}
+                if (compareTo == 0) {
+                    compareTo = Util.compare(parentId, castedObject.parentId);
 
-	public String getParentId() {
-		return parentId;
-	}
+                    if (compareTo == 0)
+                        compareTo = Util.compare(sourceId,
+                                castedObject.sourceId);
+                }
+            }
+        }
 
-	public String getSourceId() {
-		return sourceId;
-	}
+        return compareTo;
+    }
 
-	public int hashCode() {
-		if (!hashCodeComputed) {
-			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(description);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(parentId);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(sourceId);
-			hashCodeComputed = true;
-		}
+    public boolean equals(Object object) {
+        if (!(object instanceof KeyConfigurationDefinition))
+            return false;
 
-		return hashCode;
-	}
+        KeyConfigurationDefinition castedObject = (KeyConfigurationDefinition) object;
+        boolean equals = true;
+        equals &= Util.equals(description, castedObject.description);
+        equals &= Util.equals(id, castedObject.id);
+        equals &= Util.equals(name, castedObject.name);
+        equals &= Util.equals(parentId, castedObject.parentId);
+        equals &= Util.equals(sourceId, castedObject.sourceId);
+        return equals;
+    }
 
-	public String toString() {
-		if (string == null) {
-			final StringBuffer stringBuffer = new StringBuffer();
-			stringBuffer.append('[');
-			stringBuffer.append(description);
-			stringBuffer.append(',');
-			stringBuffer.append(id);
-			stringBuffer.append(',');
-			stringBuffer.append(name);
-			stringBuffer.append(',');
-			stringBuffer.append(parentId);
-			stringBuffer.append(',');
-			stringBuffer.append(sourceId);
-			stringBuffer.append(']');
-			string = stringBuffer.toString();
-		}
+    public String getDescription() {
+        return description;
+    }
 
-		return string;
-	}
+    public String getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getParentId() {
+        return parentId;
+    }
+
+    public String getSourceId() {
+        return sourceId;
+    }
+
+    public int hashCode() {
+        if (!hashCodeComputed) {
+            hashCode = HASH_INITIAL;
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(description);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(parentId);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(sourceId);
+            hashCodeComputed = true;
+        }
+
+        return hashCode;
+    }
+
+    public String toString() {
+        if (string == null) {
+            final StringBuffer stringBuffer = new StringBuffer();
+            stringBuffer.append('[');
+            stringBuffer.append(description);
+            stringBuffer.append(',');
+            stringBuffer.append(id);
+            stringBuffer.append(',');
+            stringBuffer.append(name);
+            stringBuffer.append(',');
+            stringBuffer.append(parentId);
+            stringBuffer.append(',');
+            stringBuffer.append(sourceId);
+            stringBuffer.append(']');
+            string = stringBuffer.toString();
+        }
+
+        return string;
+    }
 }

@@ -26,207 +26,228 @@ import org.eclipse.ui.commands.HandlerSubmission;
 import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.plugin.AbstractUIPlugin; 
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * Capture the attributes of a view extension.
  */
 public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
-	private String id;
-	private String pluginId;
-	private ImageDescriptor imageDescriptor;
-	private static final String ATT_ID = "id"; //$NON-NLS-1$
-	private static final String ATT_NAME = "name"; //$NON-NLS-1$
-	private static final String ATT_ACCELERATOR = "accelerator"; //$NON-NLS-1$
-	private static final String ATT_ICON = "icon"; //$NON-NLS-1$
-	private static final String ATT_CATEGORY = "category"; //$NON-NLS-1$
-	private static final String ATT_CLASS = "class"; //$NON-NLS-1$
-	private static final String ATT_RATIO = "fastViewWidthRatio"; //$NON-NLS-1$
-	private static final String ATT_MULTIPLE = "allowMultiple"; //$NON-NLS-1$
-	private String label;
-	private String accelerator;
-	private String className;
-	private IConfigurationElement configElement;
-	private String[] categoryPath;
-	private String description;
-	private float fastViewWidthRatio;
-	private boolean allowMultiple;
-	
-	/**
-	 * Create a new ViewDescriptor for an extension.
-	 */
-	public ViewDescriptor(IConfigurationElement e, String desc)
-		throws CoreException {
-		configElement = e;
-		description = desc;
-		loadFromExtension();
-		registerShowViewHandler();
-	}
-    
-	private void registerShowViewHandler() {
+    private String id;
+
+    private String pluginId;
+
+    private ImageDescriptor imageDescriptor;
+
+    private static final String ATT_ID = "id"; //$NON-NLS-1$
+
+    private static final String ATT_NAME = "name"; //$NON-NLS-1$
+
+    private static final String ATT_ACCELERATOR = "accelerator"; //$NON-NLS-1$
+
+    private static final String ATT_ICON = "icon"; //$NON-NLS-1$
+
+    private static final String ATT_CATEGORY = "category"; //$NON-NLS-1$
+
+    private static final String ATT_CLASS = "class"; //$NON-NLS-1$
+
+    private static final String ATT_RATIO = "fastViewWidthRatio"; //$NON-NLS-1$
+
+    private static final String ATT_MULTIPLE = "allowMultiple"; //$NON-NLS-1$
+
+    private String label;
+
+    private String accelerator;
+
+    private String className;
+
+    private IConfigurationElement configElement;
+
+    private String[] categoryPath;
+
+    private String description;
+
+    private float fastViewWidthRatio;
+
+    private boolean allowMultiple;
+
+    /**
+     * Create a new ViewDescriptor for an extension.
+     */
+    public ViewDescriptor(IConfigurationElement e, String desc)
+            throws CoreException {
+        configElement = e;
+        description = desc;
+        loadFromExtension();
+        registerShowViewHandler();
+    }
+
+    private void registerShowViewHandler() {
         IHandler showViewHandler = new ShowViewHandler(id);
-        HandlerSubmission showViewSubmission = new HandlerSubmission(null, null, null, id, showViewHandler, Priority.MEDIUM);
-    	PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmission(showViewSubmission);
-	}
+        HandlerSubmission showViewSubmission = new HandlerSubmission(null,
+                null, null, id, showViewHandler, Priority.MEDIUM);
+        PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmission(
+                showViewSubmission);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.registry.IViewDescriptor#createView()
-	 */
-	public IViewPart createView() throws CoreException {
-		Object obj = WorkbenchPlugin.createExtension(configElement, ATT_CLASS);
-		return (IViewPart) obj;
-	}
-    
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.registry.IViewDescriptor#getCategoryPath()
-	 */
-	public String[] getCategoryPath() {
-		return categoryPath;
-	}
-    
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.registry.IViewDescriptor#getConfigurationElement()
-	 */
-	public IConfigurationElement getConfigurationElement() {
-		return configElement;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.registry.IViewDescriptor#getDescription()
-	 */
-	public String getDescription() {
-		return description;
-	}
-    
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.registry.IViewDescriptor#getID()
-	 */
-	public String getID() {
-		return id;
-	}
-    
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPartDescriptor#getId()
-	 */
-	public String getId() {
-		return id;
-	}
-    
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPartDescriptor#getImageDescriptor()
-	 */
-	public ImageDescriptor getImageDescriptor() {
-		if (imageDescriptor != null)
-			return imageDescriptor;
-		String iconName = configElement.getAttribute(ATT_ICON);
-		if (iconName == null)
-			return null;
-		IExtension extension = configElement.getDeclaringExtension();
-		String extendingPluginId = extension.getNamespace();
-		imageDescriptor =
-			AbstractUIPlugin.imageDescriptorFromPlugin(
-				extendingPluginId,
-				iconName);
-		return imageDescriptor;
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.registry.IViewDescriptor#createView()
+     */
+    public IViewPart createView() throws CoreException {
+        Object obj = WorkbenchPlugin.createExtension(configElement, ATT_CLASS);
+        return (IViewPart) obj;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPartDescriptor#getLabel()
-	 */
-	public String getLabel() {
-		return label;
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.registry.IViewDescriptor#getCategoryPath()
+     */
+    public String[] getCategoryPath() {
+        return categoryPath;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.registry.IViewDescriptor#getAccelerator()
-	 */
-	public String getAccelerator() {
-		return accelerator;
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.registry.IViewDescriptor#getConfigurationElement()
+     */
+    public IConfigurationElement getConfigurationElement() {
+        return configElement;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.registry.IViewDescriptor#getFastViewWidthRatio()
-	 */
-	public float getFastViewWidthRatio() {
-		return fastViewWidthRatio;
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.registry.IViewDescriptor#getDescription()
+     */
+    public String getDescription() {
+        return description;
+    }
 
-	/**
-	 * load a view descriptor from the registry.
-	 */
-	private void loadFromExtension() throws CoreException {
-		id = configElement.getAttribute(ATT_ID);
-		pluginId = configElement.getDeclaringExtension().getNamespace();
-		label = configElement.getAttribute(ATT_NAME);
-		accelerator = configElement.getAttribute(ATT_ACCELERATOR);
-		className = configElement.getAttribute(ATT_CLASS);
-		String category = configElement.getAttribute(ATT_CATEGORY);
-		String ratio = configElement.getAttribute(ATT_RATIO);
-		String mult = configElement.getAttribute(ATT_MULTIPLE);
-		
-		// Sanity check.
-		if ((label == null) || (className == null)) {
-			throw new CoreException(new Status(IStatus.ERROR, configElement.getDeclaringExtension().getNamespace(), 0, "Invalid extension (missing label or class name): " + id, //$NON-NLS-1$
-			null));
-		}
-		if (category != null) {
-			StringTokenizer stok = new StringTokenizer(category, "/"); //$NON-NLS-1$
-			categoryPath = new String[stok.countTokens()];
-			// Parse the path tokens and store them
-			for (int i = 0; stok.hasMoreTokens(); i++) {
-				categoryPath[i] = stok.nextToken();
-			}
-		}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.registry.IViewDescriptor#getID()
+     */
+    public String getID() {
+        return id;
+    }
 
-		if (ratio != null) {
-			try {
-				fastViewWidthRatio = new Float(ratio).floatValue();
-				if (fastViewWidthRatio > IPageLayout.RATIO_MAX)
-					fastViewWidthRatio = IPageLayout.RATIO_MAX;
-				if (fastViewWidthRatio < IPageLayout.RATIO_MIN)
-					fastViewWidthRatio = IPageLayout.RATIO_MIN;
-			} catch (NumberFormatException e) {
-				fastViewWidthRatio = IPageLayout.DEFAULT_FASTVIEW_RATIO;
-			}
-		} else {
-			fastViewWidthRatio = IPageLayout.DEFAULT_FASTVIEW_RATIO;
-		}
-		allowMultiple = mult != null && "true".equalsIgnoreCase(mult); //$NON-NLS-1$
-	}
-	/**
-	 * Returns a string representation of this descriptor. For debugging
-	 * purposes only.
-	 */
-	public String toString() {
-		return "View(" + getID() + ")"; //$NON-NLS-2$//$NON-NLS-1$
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkbenchPartDescriptor#getId()
+     */
+    public String getId() {
+        return id;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.activities.support.IPluginContribution#getPluginId()
-	 */
-	public String getPluginId() {
-		return pluginId == null ? "" : pluginId; //$NON-NLS-1$    
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkbenchPartDescriptor#getImageDescriptor()
+     */
+    public ImageDescriptor getImageDescriptor() {
+        if (imageDescriptor != null)
+            return imageDescriptor;
+        String iconName = configElement.getAttribute(ATT_ICON);
+        if (iconName == null)
+            return null;
+        IExtension extension = configElement.getDeclaringExtension();
+        String extendingPluginId = extension.getNamespace();
+        imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
+                extendingPluginId, iconName);
+        return imageDescriptor;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.activities.support.IPluginContribution#getLocalId()
-	 */
-	public String getLocalId() {
-		return id == null ? "" : id; //$NON-NLS-1$	
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkbenchPartDescriptor#getLabel()
+     */
+    public String getLabel() {
+        return label;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.activities.support.IPluginContribution#fromPlugin()
-	 */
-	public boolean fromPlugin() {
-		return true;
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.registry.IViewDescriptor#getAccelerator()
+     */
+    public String getAccelerator() {
+        return accelerator;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.registry.IViewDescriptor#getFastViewWidthRatio()
+     */
+    public float getFastViewWidthRatio() {
+        return fastViewWidthRatio;
+    }
+
+    /**
+     * load a view descriptor from the registry.
+     */
+    private void loadFromExtension() throws CoreException {
+        id = configElement.getAttribute(ATT_ID);
+        pluginId = configElement.getDeclaringExtension().getNamespace();
+        label = configElement.getAttribute(ATT_NAME);
+        accelerator = configElement.getAttribute(ATT_ACCELERATOR);
+        className = configElement.getAttribute(ATT_CLASS);
+        String category = configElement.getAttribute(ATT_CATEGORY);
+        String ratio = configElement.getAttribute(ATT_RATIO);
+        String mult = configElement.getAttribute(ATT_MULTIPLE);
+
+        // Sanity check.
+        if ((label == null) || (className == null)) {
+            throw new CoreException(new Status(IStatus.ERROR, configElement
+                    .getDeclaringExtension().getNamespace(), 0,
+                    "Invalid extension (missing label or class name): " + id, //$NON-NLS-1$
+                    null));
+        }
+        if (category != null) {
+            StringTokenizer stok = new StringTokenizer(category, "/"); //$NON-NLS-1$
+            categoryPath = new String[stok.countTokens()];
+            // Parse the path tokens and store them
+            for (int i = 0; stok.hasMoreTokens(); i++) {
+                categoryPath[i] = stok.nextToken();
+            }
+        }
+
+        if (ratio != null) {
+            try {
+                fastViewWidthRatio = new Float(ratio).floatValue();
+                if (fastViewWidthRatio > IPageLayout.RATIO_MAX)
+                    fastViewWidthRatio = IPageLayout.RATIO_MAX;
+                if (fastViewWidthRatio < IPageLayout.RATIO_MIN)
+                    fastViewWidthRatio = IPageLayout.RATIO_MIN;
+            } catch (NumberFormatException e) {
+                fastViewWidthRatio = IPageLayout.DEFAULT_FASTVIEW_RATIO;
+            }
+        } else {
+            fastViewWidthRatio = IPageLayout.DEFAULT_FASTVIEW_RATIO;
+        }
+        allowMultiple = mult != null && "true".equalsIgnoreCase(mult); //$NON-NLS-1$
+    }
+
+    /**
+     * Returns a string representation of this descriptor. For debugging
+     * purposes only.
+     */
+    public String toString() {
+        return "View(" + getID() + ")"; //$NON-NLS-2$//$NON-NLS-1$
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.activities.support.IPluginContribution#getPluginId()
+     */
+    public String getPluginId() {
+        return pluginId == null ? "" : pluginId; //$NON-NLS-1$    
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.activities.support.IPluginContribution#getLocalId()
+     */
+    public String getLocalId() {
+        return id == null ? "" : id; //$NON-NLS-1$	
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.activities.support.IPluginContribution#fromPlugin()
+     */
+    public boolean fromPlugin() {
+        return true;
+    }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.registry.IViewDescriptor#getAllowMultiple()

@@ -29,16 +29,16 @@ import org.eclipse.swt.dnd.Transfer;
  * combines the function of each <code>TransferDragSourceListener</code>, while 
  * allowing them to be implemented as if they were the only <code>DragSourceListener</code>.
  * </p>
-  * <p>
+ * <p>
  * NOTE: This API is experimental and subject to change including removal.
  * </p>
-* @since 2.2
+ * @since 2.2
  */
 public interface TransferDragSourceListener extends DragSourceListener {
-	/**
-	 * Returns the <code>Transfer</code> type that this listener can provide data for.
-	 * 
-	 * @return the <code>Transfer</code> associated with this listener
-	 */
-	Transfer getTransfer();
+    /**
+     * Returns the <code>Transfer</code> type that this listener can provide data for.
+     * 
+     * @return the <code>Transfer</code> associated with this listener
+     */
+    Transfer getTransfer();
 }

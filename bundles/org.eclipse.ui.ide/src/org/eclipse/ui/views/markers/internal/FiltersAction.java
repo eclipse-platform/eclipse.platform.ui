@@ -18,24 +18,25 @@ import org.eclipse.jface.action.Action;
  * modified the filter via the filters dialog.
  */
 class FiltersAction extends Action {
-	
-	private MarkerView view;
 
-	/**
-	 * Creates the action
-	 */
-	public FiltersAction(MarkerView view) {
-		super(Messages.getString("filtersAction.title")); //$NON-NLS-1$
-		setImageDescriptor(ImageFactory.getImageDescriptor("elcl16/filter_ps.gif")); //$NON-NLS-1$
-		setToolTipText(Messages.getString("filtersAction.tooltip")); //$NON-NLS-1$
-		this.view = view;
-		setEnabled(true);
-	}
-	
-	/**
-	 * Opens the dialog. Notifies the view if the filter has been modified.
-	 */
-	public void run() {
-		view.openFiltersDialog();
-	}
+    private MarkerView view;
+
+    /**
+     * Creates the action
+     */
+    public FiltersAction(MarkerView view) {
+        super(Messages.getString("filtersAction.title")); //$NON-NLS-1$
+        setImageDescriptor(ImageFactory
+                .getImageDescriptor("elcl16/filter_ps.gif")); //$NON-NLS-1$
+        setToolTipText(Messages.getString("filtersAction.tooltip")); //$NON-NLS-1$
+        this.view = view;
+        setEnabled(true);
+    }
+
+    /**
+     * Opens the dialog. Notifies the view if the filter has been modified.
+     */
+    public void run() {
+        view.openFiltersDialog();
+    }
 }

@@ -28,26 +28,27 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * @since 3.0
  */
 public class ShowViewHandler extends AbstractHandler {
-	private String viewId;
+    private String viewId;
 
-	public ShowViewHandler(String viewId) {
-		this.viewId = viewId;
-	}
-	public Object execute(Map parameterValuesByName) throws ExecutionException {
-		IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if (activeWorkbenchWindow == null) 
-			return null;
-		IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
-		if (activePage == null)
-			return null;
-		try {
-			activePage.showView(viewId);
-		}
-		catch (PartInitException e) {
-			ErrorDialog.openError(activePage.getWorkbenchWindow().getShell(), 
-					WorkbenchMessages.getString("ShowView.errorTitle"), //$NON-NLS-1$
-					e.getMessage(), e.getStatus());
-		}
-		return null;
-	}
+    public ShowViewHandler(String viewId) {
+        this.viewId = viewId;
+    }
+
+    public Object execute(Map parameterValuesByName) throws ExecutionException {
+        IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench()
+                .getActiveWorkbenchWindow();
+        if (activeWorkbenchWindow == null)
+            return null;
+        IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
+        if (activePage == null)
+            return null;
+        try {
+            activePage.showView(viewId);
+        } catch (PartInitException e) {
+            ErrorDialog.openError(activePage.getWorkbenchWindow().getShell(),
+                    WorkbenchMessages.getString("ShowView.errorTitle"), //$NON-NLS-1$
+                    e.getMessage(), e.getStatus());
+        }
+        return null;
+    }
 }

@@ -9,7 +9,7 @@
  *      IBM Corporation - initial API and implementation 
  *  	Dan Rubel <dan_rubel@instantiations.com>
  *        - Fix for bug 11490 - define hidden view (placeholder for view) in plugin.xml 
-************************************************************************/
+ ************************************************************************/
 package org.eclipse.ui.internal;
 
 import org.eclipse.ui.IPageLayout;
@@ -21,8 +21,12 @@ import org.eclipse.ui.IPageLayout;
  */
 public class ViewLayoutRec {
     boolean isCloseable = true;
+
     boolean isMoveable = true;
+
     boolean isStandalone = false;
+
     boolean showTitle = true;
+
     float fastViewWidthRatio = IPageLayout.INVALID_RATIO;
 }

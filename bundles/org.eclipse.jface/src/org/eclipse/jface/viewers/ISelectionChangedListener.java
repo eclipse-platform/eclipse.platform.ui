@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
-
 /** 
  * A listener which is notified when a viewer's selection changes.
  *
@@ -19,10 +18,10 @@ package org.eclipse.jface.viewers;
  * @see SelectionChangedEvent
  */
 public interface ISelectionChangedListener {
-/**
- * Notifies that the selection has changed.
- *
- * @param event event object describing the change
- */
-public void selectionChanged(SelectionChangedEvent event);
+    /**
+     * Notifies that the selection has changed.
+     *
+     * @param event event object describing the change
+     */
+    public void selectionChanged(SelectionChangedEvent event);
 }

@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.wizards.datatransfer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.ModalContext;
@@ -20,50 +22,51 @@ import org.eclipse.jface.operation.ModalContext;
  * just filled in.
  */
 class PopulateElementOperation extends PopulateRootOperation {
-/**
- * Create a new <code>PopulateElementsOperation</code>.
- * @param rootObject the object to be populated
- * @param structureProvider the object that defines how we are to populate it.
- */
-public PopulateElementOperation(
-	MinimizedFileSystemElement rootObject,
-	IImportStructureProvider structureProvider) {
-	super(rootObject, structureProvider);
-}
-/**
- * Populates the children of element down to level depth
- */
-private void populateElement(
-	MinimizedFileSystemElement element,
-	IProgressMonitor monitor)
-	throws InterruptedException {
+    /**
+     * Create a new <code>PopulateElementsOperation</code>.
+     * @param rootObject the object to be populated
+     * @param structureProvider the object that defines how we are to populate it.
+     */
+    public PopulateElementOperation(MinimizedFileSystemElement rootObject,
+            IImportStructureProvider structureProvider) {
+        super(rootObject, structureProvider);
+    }
 
-	Object fileSystemObject = element.getFileSystemObject();
-	ModalContext.checkCanceled(monitor);
+    /**
+     * Populates the children of element down to level depth
+     */
+    private void populateElement(MinimizedFileSystemElement element,
+            IProgressMonitor monitor) throws InterruptedException {
 
-	
-	List children = provider.getChildren(fileSystemObject);
-	if (children == null)
-		children = new ArrayList(1);
-	Iterator childrenEnum = children.iterator();
-	while (childrenEnum.hasNext()) {
-		//Create one level below
-		createElement(element, childrenEnum.next(), 1);
-	}
-	element.setPopulated();
-}
-/**
- * Runs the operation. The result of this operation is always the elemen provided.
- */
-public void run(IProgressMonitor monitor) throws InterruptedException {
-	try {
-		this.monitor = monitor;
-		monitor.beginTask(DataTransferMessages.getString("DataTransfer.scanningChildren"),IProgressMonitor.UNKNOWN); //$NON-NLS-1$
-		MinimizedFileSystemElement element = (MinimizedFileSystemElement) root;
-		populateElement(element,monitor);
-		
-	} finally {
-		monitor.done();
-	}
-}
+        Object fileSystemObject = element.getFileSystemObject();
+        ModalContext.checkCanceled(monitor);
+
+        List children = provider.getChildren(fileSystemObject);
+        if (children == null)
+            children = new ArrayList(1);
+        Iterator childrenEnum = children.iterator();
+        while (childrenEnum.hasNext()) {
+            //Create one level below
+            createElement(element, childrenEnum.next(), 1);
+        }
+        element.setPopulated();
+    }
+
+    /**
+     * Runs the operation. The result of this operation is always the elemen provided.
+     */
+    public void run(IProgressMonitor monitor) throws InterruptedException {
+        try {
+            this.monitor = monitor;
+            monitor
+                    .beginTask(
+                            DataTransferMessages
+                                    .getString("DataTransfer.scanningChildren"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
+            MinimizedFileSystemElement element = (MinimizedFileSystemElement) root;
+            populateElement(element, monitor);
+
+        } finally {
+            monitor.done();
+        }
+    }
 }

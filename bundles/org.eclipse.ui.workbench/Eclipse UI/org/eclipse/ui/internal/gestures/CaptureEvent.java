@@ -17,79 +17,81 @@ import org.eclipse.ui.internal.util.Util;
 
 public final class CaptureEvent implements Comparable {
 
-	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL =
-		CaptureEvent.class.getName().hashCode();
+    private final static int HASH_FACTOR = 89;
 
-	public static CaptureEvent create(int data, int pen, Point[] points) {
-		return new CaptureEvent(data, pen, points);
-	}
+    private final static int HASH_INITIAL = CaptureEvent.class.getName()
+            .hashCode();
 
-	private int data;
-	private int pen;
-	private Point[] points;
+    public static CaptureEvent create(int data, int pen, Point[] points) {
+        return new CaptureEvent(data, pen, points);
+    }
 
-	private CaptureEvent(int data, int pen, Point[] points) {
-		super();
-		this.data = data;
-		this.pen = pen;
+    private int data;
 
-		if (points == null)
-			throw new NullPointerException();
+    private int pen;
 
-		points = (Point[]) points.clone();
+    private Point[] points;
 
-		for (int i = 0; i < points.length; i++)
-			if (points[i] == null)
-				throw new IllegalArgumentException();
+    private CaptureEvent(int data, int pen, Point[] points) {
+        super();
+        this.data = data;
+        this.pen = pen;
 
-		this.points = points;
-	}
+        if (points == null)
+            throw new NullPointerException();
 
-	public int compareTo(Object object) {
-		CaptureEvent castedObject = (CaptureEvent) object;
-		int compareTo = data - castedObject.data;
+        points = (Point[]) points.clone();
 
-		if (compareTo == 0) {
-			compareTo = pen - castedObject.pen;
+        for (int i = 0; i < points.length; i++)
+            if (points[i] == null)
+                throw new IllegalArgumentException();
 
-			if (compareTo == 0)
-				compareTo = Util.compare(points, castedObject.points);
-		}
+        this.points = points;
+    }
 
-		return compareTo;
-	}
+    public int compareTo(Object object) {
+        CaptureEvent castedObject = (CaptureEvent) object;
+        int compareTo = data - castedObject.data;
 
-	public boolean equals(Object object) {
-		if (!(object instanceof CaptureEvent))
-			return false;
+        if (compareTo == 0) {
+            compareTo = pen - castedObject.pen;
 
-		CaptureEvent castedObject = (CaptureEvent) object;
-		return data == castedObject.data
-			&& pen == castedObject.pen
-			&& Arrays.equals(points, castedObject.points);
-	}
+            if (compareTo == 0)
+                compareTo = Util.compare(points, castedObject.points);
+        }
 
-	public int getData() {
-		return data;
-	}
+        return compareTo;
+    }
 
-	public int getPen() {
-		return pen;
-	}
+    public boolean equals(Object object) {
+        if (!(object instanceof CaptureEvent))
+            return false;
 
-	public Point[] getPoints() {
-		return (Point[]) points.clone();
-	}
+        CaptureEvent castedObject = (CaptureEvent) object;
+        return data == castedObject.data && pen == castedObject.pen
+                && Arrays.equals(points, castedObject.points);
+    }
 
-	public int hashCode() {
-		int result = HASH_INITIAL;
-		result = result * HASH_FACTOR + data;
-		result = result * HASH_FACTOR + pen;
+    public int getData() {
+        return data;
+    }
 
-		for (int i = 0; i < points.length; i++)
-			result = result * HASH_FACTOR + points[i].hashCode();
+    public int getPen() {
+        return pen;
+    }
 
-		return result;
-	}
+    public Point[] getPoints() {
+        return (Point[]) points.clone();
+    }
+
+    public int hashCode() {
+        int result = HASH_INITIAL;
+        result = result * HASH_FACTOR + data;
+        result = result * HASH_FACTOR + pen;
+
+        for (int i = 0; i < points.length; i++)
+            result = result * HASH_FACTOR + points[i].hashCode();
+
+        return result;
+    }
 }

@@ -9,38 +9,44 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.internal.decorators;
+
 /**
  * FullTextDecoratorRunnable is the decorator that runs the text
  * decoration.
  */
 public class FullTextDecoratorRunnable extends FullDecoratorRunnable {
-	String result = null;
-	String start;
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.ISafeRunnable#run()
-	 */
-	public void run() throws Exception {
-		result = decorator.decorateText(start, element);
-	}
-	/**
-	 * Get the result of the decoration or <code>null</code>
-	 * if there was a failure.
-	 * @return
-	 */
-	String getResult() {
-		return result;
-	}
-	/**
-	 * Set the values of the initialString and the decorator
-	 * and object that are going to be used to determine the
-	 * result.
-	 * @param initialString
-	 * @param object
-	 * @param definition
-	 */
-	void setValues(String initialString, Object object, FullDecoratorDefinition definition) {
-		setValues(object,definition);
-		start = initialString;
-		result = null;
-	}
+    String result = null;
+
+    String start;
+
+    /* (non-Javadoc)
+     * @see org.eclipse.core.runtime.ISafeRunnable#run()
+     */
+    public void run() throws Exception {
+        result = decorator.decorateText(start, element);
+    }
+
+    /**
+     * Get the result of the decoration or <code>null</code>
+     * if there was a failure.
+     * @return
+     */
+    String getResult() {
+        return result;
+    }
+
+    /**
+     * Set the values of the initialString and the decorator
+     * and object that are going to be used to determine the
+     * result.
+     * @param initialString
+     * @param object
+     * @param definition
+     */
+    void setValues(String initialString, Object object,
+            FullDecoratorDefinition definition) {
+        setValues(object, definition);
+        start = initialString;
+        result = null;
+    }
 }

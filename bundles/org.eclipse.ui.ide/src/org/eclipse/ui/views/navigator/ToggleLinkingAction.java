@@ -19,19 +19,19 @@ package org.eclipse.ui.views.navigator;
  */
 public class ToggleLinkingAction extends ResourceNavigatorAction {
 
-	/**
-	 * Constructs a new action.
-	 */
-	public ToggleLinkingAction(IResourceNavigator navigator, String label) {
-		super(navigator, label);
-		setChecked(navigator.isLinkingEnabled());
-	}
+    /**
+     * Constructs a new action.
+     */
+    public ToggleLinkingAction(IResourceNavigator navigator, String label) {
+        super(navigator, label);
+        setChecked(navigator.isLinkingEnabled());
+    }
 
-	/**
-	 * Runs the action.
-	 */
-	public void run() {
-		getNavigator().setLinkingEnabled(isChecked());
-	}
+    /**
+     * Runs the action.
+     */
+    public void run() {
+        getNavigator().setLinkingEnabled(isChecked());
+    }
 
 }

@@ -71,7 +71,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
      * The command identifier to which the verbose output should be restricted.
      */
     private static final String DEBUG_VERBOSE_COMMAND_ID = Policy.DEBUG_HANDLERS_VERBOSE_COMMAND_ID;
-    
+
     /**
      * The least specific way in which a submissions may match another item.
      * This means that the submissions will match any value.
@@ -89,7 +89,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
      * The items match exactly.
      */
     private static final int MATCH_EXACT = 2;
-    
+
     static {
         MutableCommandManager.DEBUG_HANDLERS = Policy.DEBUG_HANDLERS
                 && Policy.DEBUG_HANDLERS_VERBOSE;
@@ -115,7 +115,9 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
             final Shell activeShell) {
         if (shellToMatch == null) {
             return MATCH_ANY;
-        } else if (shellToMatch == activeShell) { return MATCH_EXACT; }
+        } else if (shellToMatch == activeShell) {
+            return MATCH_EXACT;
+        }
 
         return MATCH_PARTIAL;
     }
@@ -232,7 +234,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
             processHandlerSubmissions(false);
         }
     };
-    
+
     /**
      * Whether the command support should process handler submissions. If it is
      * not processing handler submissions, then it will update the listeners,
@@ -361,7 +363,9 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
             final Shell newActiveShell) {
 
         // We do not need to update the listeners until everything is done.
-        if (!processing) { return; }
+        if (!processing) {
+            return;
+        }
 
         IWorkbenchSite newWorkbenchSite = null;
         IWorkbenchWindow newWorkbenchWindow = workbench
@@ -417,10 +421,10 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
             final WorkbenchContextSupport contextSupport = (WorkbenchContextSupport) workbench
                     .getContextSupport();
             final Map contextTree = contextSupport
-                        .createFilteredContextTreeFor(contextSupport
-                                .getContextManager().getEnabledContextIds());
+                    .createFilteredContextTreeFor(contextSupport
+                            .getContextManager().getEnabledContextIds());
             final boolean dialogOpen = contextTree
-                                .containsKey(IWorkbenchContextSupport.CONTEXT_ID_DIALOG);
+                    .containsKey(IWorkbenchContextSupport.CONTEXT_ID_DIALOG);
 
             for (Iterator iterator = handlerSubmissionsByCommandId.entrySet()
                     .iterator(); iterator.hasNext();) {
@@ -439,7 +443,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 
                     if (activeWorkbenchSite2 != null
                             && activeWorkbenchSite2 != newWorkbenchSite)
-                            continue;
+                        continue;
 
                     final Shell activeShell2 = handlerSubmission
                             .getActiveShell();
@@ -452,7 +456,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 
                     if ((activeShell2 != null) && (activeShell2 != activeShell)
                             && ((activeShell2 != wbWinShell) || dialogOpen))
-                            continue;
+                        continue;
 
                     if (bestHandlerSubmission == null) {
                         bestHandlerSubmission = handlerSubmission;
@@ -486,15 +490,16 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
                              * they are given priority: ANY, PARTIAL or EXACT.
                              */
                             compareTo = -1;
-                            
+
                             if ((DEBUG_VERBOSE)
                                     && ((DEBUG_VERBOSE_COMMAND_ID == null) || (DEBUG_VERBOSE_COMMAND_ID
                                             .equals(commandId)))) {
                                 System.out
                                         .println("HANDLERS >>> A handler contributed via XML will win over a less than exact match: " //$NON-NLS-1$
-                                                + bestHandlerSubmission.getHandler());
+                                                + bestHandlerSubmission
+                                                        .getHandler());
                             }
-                            
+
                         } else if ((handlerSubmission.getHandler() instanceof HandlerProxy)
                                 && (bestMatch <= MATCH_PARTIAL) && (dialogOpen)) {
                             /*
@@ -518,9 +523,10 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
                                             .equals(commandId)))) {
                                 System.out
                                         .println("HANDLERS >>> A handler contributed via XML will win over a less than exact match: " //$NON-NLS-1$
-                                                + handlerSubmission.getHandler());
+                                                + handlerSubmission
+                                                        .getHandler());
                             }
-                            
+
                         } else if ((currentMatch > bestMatch)
                                 || (compareTo == 0)) {
 
@@ -530,11 +536,9 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
                             compareTo = currentMatch - bestMatch;
 
                             if (compareTo == 0)
-                                    compareTo = Util
-                                            .compare(handlerSubmission
-                                                    .getPriority(),
-                                                    bestHandlerSubmission
-                                                            .getPriority());
+                                compareTo = Util.compare(handlerSubmission
+                                        .getPriority(), bestHandlerSubmission
+                                        .getPriority());
                         }
 
                         if (compareTo > 0) {
@@ -573,8 +577,8 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
                 }
 
                 if (bestHandlerSubmission != null && !conflict)
-                        handlersByCommandId.put(commandId,
-                                bestHandlerSubmission.getHandler());
+                    handlersByCommandId.put(commandId, bestHandlerSubmission
+                            .getHandler());
             }
 
             mutableCommandManager.setHandlersByCommandId(handlersByCommandId);
@@ -611,7 +615,8 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
     public void removeHandlerSubmissions(Collection handlerSubmissions) {
         final Iterator submissionItr = handlerSubmissions.iterator();
         while (submissionItr.hasNext()) {
-            removeHandlerSubmissionReal((HandlerSubmission) submissionItr.next());
+            removeHandlerSubmissionReal((HandlerSubmission) submissionItr
+                    .next());
         }
 
         processHandlerSubmissions(true);
@@ -630,7 +635,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
     public void setActiveContextIds(Map activeContextIds) {
         mutableCommandManager.setActiveContextIds(activeContextIds);
     }
-    
+
     /**
      * Sets whether the workbench's command support should process handler
      * submissions. The workbench should not allow the event loop to spin unless
@@ -642,7 +647,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
      *            Whether to process handler submissions
      */
     public final void setProcessing(final boolean processing) {
-        final boolean reprocess = !this.processing && processing;        
+        final boolean reprocess = !this.processing && processing;
         this.processing = processing;
         if (reprocess) {
             processHandlerSubmissions(true);

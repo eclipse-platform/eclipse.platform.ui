@@ -11,28 +11,31 @@
 
 package org.eclipse.ui.internal;
 
-
 /**
  * Contribution item for actions provided by plugins via workbench
  * action extension points.
  */
-public class PluginActionCoolBarContributionItem extends PluginActionContributionItem implements IActionSetContributionItem {
-	private String actionSetId;
-	/**
-	 * Creates a new contribution item from the given action.
-	 * The id of the action is used as the id of the item.
-	 *
-	 * @param action the action
-	 */
-	public PluginActionCoolBarContributionItem(PluginAction action) {
-		super(action);
-		setActionSetId(((WWinPluginAction)action).getActionSetId());
-	}
-	public String getActionSetId() {
-		return actionSetId;
-	}
-	public void setActionSetId(String id) {
-		this.actionSetId = id;
-	}
+public class PluginActionCoolBarContributionItem extends
+        PluginActionContributionItem implements IActionSetContributionItem {
+    private String actionSetId;
+
+    /**
+     * Creates a new contribution item from the given action.
+     * The id of the action is used as the id of the item.
+     *
+     * @param action the action
+     */
+    public PluginActionCoolBarContributionItem(PluginAction action) {
+        super(action);
+        setActionSetId(((WWinPluginAction) action).getActionSetId());
+    }
+
+    public String getActionSetId() {
+        return actionSetId;
+    }
+
+    public void setActionSetId(String id) {
+        this.actionSetId = id;
+    }
 
 }

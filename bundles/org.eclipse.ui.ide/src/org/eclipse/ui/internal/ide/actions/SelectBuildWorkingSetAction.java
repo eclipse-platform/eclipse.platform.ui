@@ -24,33 +24,43 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
  * 
  * @since 3.0
  */
-public class SelectBuildWorkingSetAction extends Action implements ActionFactory.IWorkbenchAction {
-	private IWorkbenchWindow window;
-	private IActionBarConfigurer actionBars;
-	public SelectBuildWorkingSetAction(IWorkbenchWindow window, IActionBarConfigurer actionBars) {
-		super(IDEWorkbenchMessages.getString("SelectWorkingSetAction.text")); //$NON-NLS-1$
-		this.window = window;
-		this.actionBars = actionBars;
-	}
-	private IWorkingSet queryForWorkingSet() {
-		IWorkingSetManager manager = window.getWorkbench().getWorkingSetManager();
-		IWorkingSetSelectionDialog dialog = manager.createWorkingSetSelectionDialog(window.getShell(), false);
-		dialog.open();
-		IWorkingSet[] sets = dialog.getSelection();
-		//check for cancel
-		if (sets == null || sets.length == 0)
-			return null;
-		return sets[0];
-	}
-	public void run() {
-		IWorkingSet set = queryForWorkingSet();
-		if (set != null) {
-			new BuildSetAction(set, window, actionBars).run();
-		}
-	}
-	public void dispose() {
-	}
-	public void setActionBars(IActionBarConfigurer actionBars) {
-		this.actionBars = actionBars;
-	}
+public class SelectBuildWorkingSetAction extends Action implements
+        ActionFactory.IWorkbenchAction {
+    private IWorkbenchWindow window;
+
+    private IActionBarConfigurer actionBars;
+
+    public SelectBuildWorkingSetAction(IWorkbenchWindow window,
+            IActionBarConfigurer actionBars) {
+        super(IDEWorkbenchMessages.getString("SelectWorkingSetAction.text")); //$NON-NLS-1$
+        this.window = window;
+        this.actionBars = actionBars;
+    }
+
+    private IWorkingSet queryForWorkingSet() {
+        IWorkingSetManager manager = window.getWorkbench()
+                .getWorkingSetManager();
+        IWorkingSetSelectionDialog dialog = manager
+                .createWorkingSetSelectionDialog(window.getShell(), false);
+        dialog.open();
+        IWorkingSet[] sets = dialog.getSelection();
+        //check for cancel
+        if (sets == null || sets.length == 0)
+            return null;
+        return sets[0];
+    }
+
+    public void run() {
+        IWorkingSet set = queryForWorkingSet();
+        if (set != null) {
+            new BuildSetAction(set, window, actionBars).run();
+        }
+    }
+
+    public void dispose() {
+    }
+
+    public void setActionBars(IActionBarConfigurer actionBars) {
+        this.actionBars = actionBars;
+    }
 }

@@ -12,7 +12,8 @@ package org.eclipse.ui.internal.ide.dialogs;
 
 import java.text.MessageFormat;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IWorkspaceDescription;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -20,343 +21,352 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
+
 /**
  * The FileStatesPage is the page used to set the file states sizes for the workbench.
  */
-public class FileStatesPage
-	extends PreferencePage
-	implements IWorkbenchPreferencePage, Listener {
+public class FileStatesPage extends PreferencePage implements
+        IWorkbenchPreferencePage, Listener {
 
-	private static final String LONGEVITY_TITLE = IDEWorkbenchMessages.getString("FileHistory.longevity"); //$NON-NLS-1$
-	private static final String MAX_FILE_STATES_TITLE = IDEWorkbenchMessages.getString("FileHistory.entries"); //$NON-NLS-1$
-	private static final String MAX_FILE_STATE_SIZE_TITLE = IDEWorkbenchMessages.getString("FileHistory.diskSpace"); //$NON-NLS-1$
-	private static final String POSITIVE_MESSAGE = IDEWorkbenchMessages.getString("FileHistory.mustBePositive"); //$NON-NLS-1$
-	private static final String INVALID_VALUE_MESSAGE = IDEWorkbenchMessages.getString("FileHistory.invalid"); //$NON-NLS-1$
-	private static final String SAVE_ERROR_MESSAGE = IDEWorkbenchMessages.getString("FileHistory.exceptionSaving"); //$NON-NLS-1$
-	private static final String NOTE_MESSAGE = IDEWorkbenchMessages.getString("FileHistory.restartNote"); //$NON-NLS-1$
-	private static final String NOTE_LABEL = IDEWorkbenchMessages.getString("Preference.note"); //$NON-NLS-1$
+    private static final String LONGEVITY_TITLE = IDEWorkbenchMessages
+            .getString("FileHistory.longevity"); //$NON-NLS-1$
 
-	private static final int FAILED_VALUE = -1;
+    private static final String MAX_FILE_STATES_TITLE = IDEWorkbenchMessages
+            .getString("FileHistory.entries"); //$NON-NLS-1$
 
-	//Set the length of the day as we have to convert back and forth
-	private static final long DAY_LENGTH = 86400000;
-	private static final long MEGABYTES = 1024 * 1024;
+    private static final String MAX_FILE_STATE_SIZE_TITLE = IDEWorkbenchMessages
+            .getString("FileHistory.diskSpace"); //$NON-NLS-1$
 
-	private Text longevityText;
-	private Text maxStatesText;
-	private Text maxStateSizeText;
+    private static final String POSITIVE_MESSAGE = IDEWorkbenchMessages
+            .getString("FileHistory.mustBePositive"); //$NON-NLS-1$
 
-	//Choose a maximum to prevent OutOfMemoryErrors
-	private int FILE_STATES_MAXIMUM = 10000;
-	private long STATE_SIZE_MAXIMUM = 100;
+    private static final String INVALID_VALUE_MESSAGE = IDEWorkbenchMessages
+            .getString("FileHistory.invalid"); //$NON-NLS-1$
 
-	/**
-	 * This method takes the string for the title of a text field and the value for the
-	 * text of the field.
-	 * @return org.eclipse.swt.widgets.Text
-	 * @param labelString java.lang.String
-	 * @param textValue java.lang.String
-	 * @param parent Composite 
-	 */
-	private Text addLabelAndText(
-		String labelString,
-		String textValue,
-		Composite parent) {
-		Label label = new Label(parent, SWT.LEFT);
-		label.setText(labelString);
+    private static final String SAVE_ERROR_MESSAGE = IDEWorkbenchMessages
+            .getString("FileHistory.exceptionSaving"); //$NON-NLS-1$
 
-		Text text = new Text(parent, SWT.LEFT | SWT.BORDER);
-		GridData data = new GridData();
-		text.addListener(SWT.Modify, this);
-		data.horizontalAlignment = GridData.FILL;
-		data.grabExcessHorizontalSpace = true;
-		data.verticalAlignment = GridData.CENTER;
-		data.grabExcessVerticalSpace = false;
-		text.setLayoutData(data);
-		text.setText(textValue);
-		return text;
-	}
-	/**
-	 * Recomputes the page's error state by validating all
-	 * the fields.
-	 */
-	private void checkState() {
-		// Assume invalid if the controls not created yet
-		if (longevityText == null
-			|| maxStatesText == null
-			|| maxStateSizeText == null) {
-			setValid(false);
-			return;
-		}
+    private static final String NOTE_MESSAGE = IDEWorkbenchMessages
+            .getString("FileHistory.restartNote"); //$NON-NLS-1$
 
-		if (validateLongTextEntry(longevityText) == FAILED_VALUE) {
-			setValid(false);
-			return;
-		}
+    private static final String NOTE_LABEL = IDEWorkbenchMessages
+            .getString("Preference.note"); //$NON-NLS-1$
 
-		if (validateMaxFileStates() == FAILED_VALUE) {
-			setValid(false);
-			return;
-		}
+    private static final int FAILED_VALUE = -1;
 
-		if (validateMaxFileStateSize() == FAILED_VALUE) {
-			setValid(false);
-			return;
-		}
+    //Set the length of the day as we have to convert back and forth
+    private static final long DAY_LENGTH = 86400000;
 
-		setValid(true);
-		setErrorMessage(null);
-	}
-	/* 
-	* Create the contents control for the workspace file states.
-	* @returns Control
-	* @param parent Composite
-	*/
+    private static final long MEGABYTES = 1024 * 1024;
 
-	protected Control createContents(Composite parent) {
+    private Text longevityText;
 
-		WorkbenchHelp.setHelp(
-			parent,
-			IHelpContextIds.FILE_STATES_PREFERENCE_PAGE);
+    private Text maxStatesText;
 
-		// button group
-		Composite composite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		composite.setLayout(layout);
+    private Text maxStateSizeText;
 
-		IWorkspaceDescription description = getWorkspaceDescription();
+    //Choose a maximum to prevent OutOfMemoryErrors
+    private int FILE_STATES_MAXIMUM = 10000;
 
-		//Get the current value and make sure we get at least one day out of it.
-		long days = description.getFileStateLongevity() / DAY_LENGTH;
-		if (days < 1)
-			days = 1;
+    private long STATE_SIZE_MAXIMUM = 100;
 
-		long megabytes = description.getMaxFileStateSize() / MEGABYTES;
-		if (megabytes < 1)
-			megabytes = 1;
+    /**
+     * This method takes the string for the title of a text field and the value for the
+     * text of the field.
+     * @return org.eclipse.swt.widgets.Text
+     * @param labelString java.lang.String
+     * @param textValue java.lang.String
+     * @param parent Composite 
+     */
+    private Text addLabelAndText(String labelString, String textValue,
+            Composite parent) {
+        Label label = new Label(parent, SWT.LEFT);
+        label.setText(labelString);
 
-		this.longevityText =
-			addLabelAndText(LONGEVITY_TITLE, String.valueOf(days), composite);
-		this.maxStatesText =
-			addLabelAndText(
-				MAX_FILE_STATES_TITLE,
-				String.valueOf(description.getMaxFileStates()),
-				composite);
-		this.maxStateSizeText =
-			addLabelAndText(
-				MAX_FILE_STATE_SIZE_TITLE,
-				String.valueOf(megabytes),
-				composite);
+        Text text = new Text(parent, SWT.LEFT | SWT.BORDER);
+        GridData data = new GridData();
+        text.addListener(SWT.Modify, this);
+        data.horizontalAlignment = GridData.FILL;
+        data.grabExcessHorizontalSpace = true;
+        data.verticalAlignment = GridData.CENTER;
+        data.grabExcessVerticalSpace = false;
+        text.setLayoutData(data);
+        text.setText(textValue);
+        return text;
+    }
 
-		checkState();
+    /**
+     * Recomputes the page's error state by validating all
+     * the fields.
+     */
+    private void checkState() {
+        // Assume invalid if the controls not created yet
+        if (longevityText == null || maxStatesText == null
+                || maxStateSizeText == null) {
+            setValid(false);
+            return;
+        }
 
-		//Create a spacing label to breakup the note from the fields
-		Label spacer = new Label(composite, SWT.NONE);
-		GridData spacerData = new GridData();
-		spacerData.horizontalSpan = 2;
-		spacer.setLayoutData(spacerData);
+        if (validateLongTextEntry(longevityText) == FAILED_VALUE) {
+            setValid(false);
+            return;
+        }
 
-		Composite noteComposite =
-			createNoteComposite(
-				parent.getFont(),
-				composite,
-				NOTE_LABEL,
-				NOTE_MESSAGE);
-		GridData noteData = new GridData();
-		noteData.horizontalSpan = 2;
-		noteComposite.setLayoutData(noteData);
-		
-		applyDialogFont(composite);
+        if (validateMaxFileStates() == FAILED_VALUE) {
+            setValid(false);
+            return;
+        }
 
-		return composite;
-	}
-	/**
-	 * Get the Workspace Description this page is operating on.
-	 * @return org.eclipse.core.resources.IWorkspaceDescription
-	 */
-	private IWorkspaceDescription getWorkspaceDescription() {
-		return ResourcesPlugin.getWorkspace().getDescription();
-	}
-	/**
-	 * Sent when an event that the receiver has registered for occurs.
-	 *
-	 * @param event the event which occurred
-	 */
-	public void handleEvent(Event event) {
-		checkState();
-	}
-	/**
-	 * Initializes this preference page for the given workbench.
-	 * <p>
-	 * This method is called automatically as the preference page is being created
-	 * and initialized. Clients must not call this method.
-	 * </p>
-	 *
-	 * @param workbench the workbench
-	 */
-	public void init(org.eclipse.ui.IWorkbench workbench) {
-	}
-	/**
-	 * Performs special processing when this page's Defaults button has been pressed.
-	 * Reset the entries to thier default values.
-	 */
-	protected void performDefaults() {
-		super.performDefaults();
+        if (validateMaxFileStateSize() == FAILED_VALUE) {
+            setValid(false);
+            return;
+        }
 
-		Preferences prefs = ResourcesPlugin.getPlugin().getPluginPreferences();
+        setValid(true);
+        setErrorMessage(null);
+    }
 
-		long days =
-			prefs.getDefaultLong(ResourcesPlugin.PREF_FILE_STATE_LONGEVITY)
-				/ DAY_LENGTH;
-		long megabytes =
-			prefs.getDefaultLong(ResourcesPlugin.PREF_MAX_FILE_STATE_SIZE)
-				/ MEGABYTES;
-		this.longevityText.setText(String.valueOf(days));
-		this.maxStatesText.setText(
-			prefs.getDefaultString(ResourcesPlugin.PREF_MAX_FILE_STATES));
-		this.maxStateSizeText.setText(String.valueOf(megabytes));
-		checkState();
-	}
-	/** 
-	 * Perform the result of the OK from the receiver.
-	 */
-	public boolean performOk() {
+    /* 
+     * Create the contents control for the workspace file states.
+     * @returns Control
+     * @param parent Composite
+     */
 
-		long longevityValue = validateLongTextEntry(longevityText);
-		int maxFileStates = validateMaxFileStates();
-		long maxStateSize = validateMaxFileStateSize();
-		if (longevityValue == FAILED_VALUE
-			|| maxFileStates == FAILED_VALUE
-			|| maxStateSize == FAILED_VALUE)
-			return false;
+    protected Control createContents(Composite parent) {
 
-		IWorkspaceDescription description = getWorkspaceDescription();
-		description.setFileStateLongevity(longevityValue * DAY_LENGTH);
-		description.setMaxFileStates(maxFileStates);
-		description.setMaxFileStateSize(maxStateSize * MEGABYTES);
+        WorkbenchHelp.setHelp(parent,
+                IHelpContextIds.FILE_STATES_PREFERENCE_PAGE);
 
-		try {
-			//As it is only a copy save it back in
-			ResourcesPlugin.getWorkspace().setDescription(description);
-		} catch (CoreException exception) {
-			ErrorDialog.openError(
-				getShell(),
-				SAVE_ERROR_MESSAGE,
-				exception.getMessage(),
-				exception.getStatus());
-			return false;
-		}
+        // button group
+        Composite composite = new Composite(parent, SWT.NONE);
+        GridLayout layout = new GridLayout();
+        layout.numColumns = 2;
+        composite.setLayout(layout);
 
-		return true;
+        IWorkspaceDescription description = getWorkspaceDescription();
 
-	}
-	/**
-	 * Validate a text entry for an integer field. Return the result if there are
-	 * no errors, otherwise return -1 and set the entry field error. 
-	 * @return int
-	 */
-	private int validateIntegerTextEntry(Text text) {
+        //Get the current value and make sure we get at least one day out of it.
+        long days = description.getFileStateLongevity() / DAY_LENGTH;
+        if (days < 1)
+            days = 1;
 
-		int value;
+        long megabytes = description.getMaxFileStateSize() / MEGABYTES;
+        if (megabytes < 1)
+            megabytes = 1;
 
-		try {
-			value = Integer.parseInt(text.getText());
+        this.longevityText = addLabelAndText(LONGEVITY_TITLE, String
+                .valueOf(days), composite);
+        this.maxStatesText = addLabelAndText(MAX_FILE_STATES_TITLE, String
+                .valueOf(description.getMaxFileStates()), composite);
+        this.maxStateSizeText = addLabelAndText(MAX_FILE_STATE_SIZE_TITLE,
+                String.valueOf(megabytes), composite);
 
-		} catch (NumberFormatException exception) {
-			setErrorMessage(
-				MessageFormat.format(
-					INVALID_VALUE_MESSAGE,
-					new Object[] { exception.getLocalizedMessage()}));
-			return FAILED_VALUE;
-		}
+        checkState();
 
-		//Be sure all values are non zero and positive
-		if (value <= 0) {
-			setErrorMessage(POSITIVE_MESSAGE);
-			return FAILED_VALUE;
-		}
+        //Create a spacing label to breakup the note from the fields
+        Label spacer = new Label(composite, SWT.NONE);
+        GridData spacerData = new GridData();
+        spacerData.horizontalSpan = 2;
+        spacer.setLayoutData(spacerData);
 
-		return value;
-	}
-	/**
-	 * Validate a text entry for a long field. Return the result if there are
-	 * no errors, otherwise return -1 and set the entry field error. 
-	 * @return long
-	 */
-	private long validateLongTextEntry(Text text) {
+        Composite noteComposite = createNoteComposite(parent.getFont(),
+                composite, NOTE_LABEL, NOTE_MESSAGE);
+        GridData noteData = new GridData();
+        noteData.horizontalSpan = 2;
+        noteComposite.setLayoutData(noteData);
 
-		long value;
+        applyDialogFont(composite);
 
-		try {
-			value = Long.parseLong(text.getText());
+        return composite;
+    }
 
-		} catch (NumberFormatException exception) {
-			setErrorMessage(
-				MessageFormat.format(
-					INVALID_VALUE_MESSAGE,
-					new Object[] { exception.getLocalizedMessage()}));
-			return FAILED_VALUE;
-		}
+    /**
+     * Get the Workspace Description this page is operating on.
+     * @return org.eclipse.core.resources.IWorkspaceDescription
+     */
+    private IWorkspaceDescription getWorkspaceDescription() {
+        return ResourcesPlugin.getWorkspace().getDescription();
+    }
 
-		//Be sure all values are non zero and positive
-		if (value <= 0) {
-			setErrorMessage(POSITIVE_MESSAGE);
-			return FAILED_VALUE;
-		}
+    /**
+     * Sent when an event that the receiver has registered for occurs.
+     *
+     * @param event the event which occurred
+     */
+    public void handleEvent(Event event) {
+        checkState();
+    }
 
-		return value;
-	}
+    /**
+     * Initializes this preference page for the given workbench.
+     * <p>
+     * This method is called automatically as the preference page is being created
+     * and initialized. Clients must not call this method.
+     * </p>
+     *
+     * @param workbench the workbench
+     */
+    public void init(org.eclipse.ui.IWorkbench workbench) {
+    }
 
-	/**
-	 * Validate the maximum file states.
-	 * Return the value if successful, otherwise
-	 * return FAILED_VALUE.
-	 * Set the error message if it fails.
-	 * @return int
-	 */
-	private int validateMaxFileStates() {
-		int maxFileStates = validateIntegerTextEntry(this.maxStatesText);
-		if (maxFileStates == FAILED_VALUE)
-			return maxFileStates;
+    /**
+     * Performs special processing when this page's Defaults button has been pressed.
+     * Reset the entries to thier default values.
+     */
+    protected void performDefaults() {
+        super.performDefaults();
 
-		if (maxFileStates > FILE_STATES_MAXIMUM) {
-			setErrorMessage(
-				IDEWorkbenchMessages.format(
-					"FileHistory.aboveMaxEntries", //$NON-NLS-1$
-					new String[] { String.valueOf(FILE_STATES_MAXIMUM)}));
-			return FAILED_VALUE;
-		}
+        Preferences prefs = ResourcesPlugin.getPlugin().getPluginPreferences();
 
-		return maxFileStates;
-	}
+        long days = prefs
+                .getDefaultLong(ResourcesPlugin.PREF_FILE_STATE_LONGEVITY)
+                / DAY_LENGTH;
+        long megabytes = prefs
+                .getDefaultLong(ResourcesPlugin.PREF_MAX_FILE_STATE_SIZE)
+                / MEGABYTES;
+        this.longevityText.setText(String.valueOf(days));
+        this.maxStatesText.setText(prefs
+                .getDefaultString(ResourcesPlugin.PREF_MAX_FILE_STATES));
+        this.maxStateSizeText.setText(String.valueOf(megabytes));
+        checkState();
+    }
 
-	/**
-	 * Validate the maximum file state size.
-	 * Return the value if successful, otherwise
-	 * return FAILED_VALUE.
-	 * Set the error message if it fails.
-	 * @return long
-	 */
-	private long validateMaxFileStateSize() {
-		long maxFileStateSize = validateLongTextEntry(this.maxStateSizeText);
-		if (maxFileStateSize == FAILED_VALUE)
-			return maxFileStateSize;
+    /** 
+     * Perform the result of the OK from the receiver.
+     */
+    public boolean performOk() {
 
-		if (maxFileStateSize > STATE_SIZE_MAXIMUM) {
-			setErrorMessage(
-				IDEWorkbenchMessages.format(
-					"FileHistory.aboveMaxFileSize", //$NON-NLS-1$
-					new String[] { String.valueOf(STATE_SIZE_MAXIMUM)}));
-			return FAILED_VALUE;
-		}
+        long longevityValue = validateLongTextEntry(longevityText);
+        int maxFileStates = validateMaxFileStates();
+        long maxStateSize = validateMaxFileStateSize();
+        if (longevityValue == FAILED_VALUE || maxFileStates == FAILED_VALUE
+                || maxStateSize == FAILED_VALUE)
+            return false;
 
-		return maxFileStateSize;
-	}
+        IWorkspaceDescription description = getWorkspaceDescription();
+        description.setFileStateLongevity(longevityValue * DAY_LENGTH);
+        description.setMaxFileStates(maxFileStates);
+        description.setMaxFileStateSize(maxStateSize * MEGABYTES);
+
+        try {
+            //As it is only a copy save it back in
+            ResourcesPlugin.getWorkspace().setDescription(description);
+        } catch (CoreException exception) {
+            ErrorDialog.openError(getShell(), SAVE_ERROR_MESSAGE, exception
+                    .getMessage(), exception.getStatus());
+            return false;
+        }
+
+        return true;
+
+    }
+
+    /**
+     * Validate a text entry for an integer field. Return the result if there are
+     * no errors, otherwise return -1 and set the entry field error. 
+     * @return int
+     */
+    private int validateIntegerTextEntry(Text text) {
+
+        int value;
+
+        try {
+            value = Integer.parseInt(text.getText());
+
+        } catch (NumberFormatException exception) {
+            setErrorMessage(MessageFormat.format(INVALID_VALUE_MESSAGE,
+                    new Object[] { exception.getLocalizedMessage() }));
+            return FAILED_VALUE;
+        }
+
+        //Be sure all values are non zero and positive
+        if (value <= 0) {
+            setErrorMessage(POSITIVE_MESSAGE);
+            return FAILED_VALUE;
+        }
+
+        return value;
+    }
+
+    /**
+     * Validate a text entry for a long field. Return the result if there are
+     * no errors, otherwise return -1 and set the entry field error. 
+     * @return long
+     */
+    private long validateLongTextEntry(Text text) {
+
+        long value;
+
+        try {
+            value = Long.parseLong(text.getText());
+
+        } catch (NumberFormatException exception) {
+            setErrorMessage(MessageFormat.format(INVALID_VALUE_MESSAGE,
+                    new Object[] { exception.getLocalizedMessage() }));
+            return FAILED_VALUE;
+        }
+
+        //Be sure all values are non zero and positive
+        if (value <= 0) {
+            setErrorMessage(POSITIVE_MESSAGE);
+            return FAILED_VALUE;
+        }
+
+        return value;
+    }
+
+    /**
+     * Validate the maximum file states.
+     * Return the value if successful, otherwise
+     * return FAILED_VALUE.
+     * Set the error message if it fails.
+     * @return int
+     */
+    private int validateMaxFileStates() {
+        int maxFileStates = validateIntegerTextEntry(this.maxStatesText);
+        if (maxFileStates == FAILED_VALUE)
+            return maxFileStates;
+
+        if (maxFileStates > FILE_STATES_MAXIMUM) {
+            setErrorMessage(IDEWorkbenchMessages.format(
+                    "FileHistory.aboveMaxEntries", //$NON-NLS-1$
+                    new String[] { String.valueOf(FILE_STATES_MAXIMUM) }));
+            return FAILED_VALUE;
+        }
+
+        return maxFileStates;
+    }
+
+    /**
+     * Validate the maximum file state size.
+     * Return the value if successful, otherwise
+     * return FAILED_VALUE.
+     * Set the error message if it fails.
+     * @return long
+     */
+    private long validateMaxFileStateSize() {
+        long maxFileStateSize = validateLongTextEntry(this.maxStateSizeText);
+        if (maxFileStateSize == FAILED_VALUE)
+            return maxFileStateSize;
+
+        if (maxFileStateSize > STATE_SIZE_MAXIMUM) {
+            setErrorMessage(IDEWorkbenchMessages.format(
+                    "FileHistory.aboveMaxFileSize", //$NON-NLS-1$
+                    new String[] { String.valueOf(STATE_SIZE_MAXIMUM) }));
+            return FAILED_VALUE;
+        }
+
+        return maxFileStateSize;
+    }
 
 }

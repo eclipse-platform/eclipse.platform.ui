@@ -17,24 +17,26 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
 class MarkerLabelProvider extends LabelProvider implements ITableLabelProvider {
-	
-	IField[] properties;
-	
-	public MarkerLabelProvider(IField[] properties) {
-		this.properties = properties;
-	}
 
-	public Image getColumnImage(Object element, int columnIndex) {
-		if (element == null || !(element instanceof IMarker) || properties == null || columnIndex >= properties.length)
-			return null;
-			
-		return properties[columnIndex].getImage(element);
-	}
+    IField[] properties;
 
-	public String getColumnText(Object element, int columnIndex) {
-		if (element == null || !(element instanceof IMarker) || properties == null || columnIndex >= properties.length)
-			return ""; //$NON-NLS-1$
+    public MarkerLabelProvider(IField[] properties) {
+        this.properties = properties;
+    }
 
-		return properties[columnIndex].getValue(element);
-	}
+    public Image getColumnImage(Object element, int columnIndex) {
+        if (element == null || !(element instanceof IMarker)
+                || properties == null || columnIndex >= properties.length)
+            return null;
+
+        return properties[columnIndex].getImage(element);
+    }
+
+    public String getColumnText(Object element, int columnIndex) {
+        if (element == null || !(element instanceof IMarker)
+                || properties == null || columnIndex >= properties.length)
+            return ""; //$NON-NLS-1$
+
+        return properties[columnIndex].getValue(element);
+    }
 }

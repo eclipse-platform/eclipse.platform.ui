@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui;
 
-
 /**
  * Interface for an action that is contributed into a view's local tool bar,
  * pulldown menu, or popup menu. It extends <code>IActionDelegate</code>
@@ -18,10 +17,10 @@ package org.eclipse.ui;
  * should work with.
  */
 public interface IViewActionDelegate extends IActionDelegate {
-/**
- * Initializes this action delegate with the view it will work in.
- *
- * @param view the view that provides the context for this delegate
- */
-public void init(IViewPart view);
+    /**
+     * Initializes this action delegate with the view it will work in.
+     *
+     * @param view the view that provides the context for this delegate
+     */
+    public void init(IViewPart view);
 }

@@ -19,33 +19,36 @@ import org.eclipse.ui.internal.registry.IViewDescriptor;
  * @since 3.0
  */
 public class ViewDropTarget extends AbstractTestDropTarget {
-	
-	String targetPart;
-	int side;
-	
-	public ViewDropTarget(String part, int side) {
-		targetPart = part;
-		this.side = side;
-	}
-	
-	IViewPart getPart() {
-		return getPage().findView(targetPart);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.tests.dnd.TestDropTarget#getName()
-	 */
-	public String toString() {
-		IViewDescriptor desc = WorkbenchPlugin.getDefault().getViewRegistry().find(targetPart);
-		String title = desc.getLabel();
-		
-		return DragOperations.nameForConstant(side) + " of " + title;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.tests.dnd.TestDropTarget#getLocation()
-	 */
-	public Point getLocation() {
-		return DragOperations.getLocation(DragOperations.getPane(getPart()), side);
-	}
+
+    String targetPart;
+
+    int side;
+
+    public ViewDropTarget(String part, int side) {
+        targetPart = part;
+        this.side = side;
+    }
+
+    IViewPart getPart() {
+        return getPage().findView(targetPart);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.tests.dnd.TestDropTarget#getName()
+     */
+    public String toString() {
+        IViewDescriptor desc = WorkbenchPlugin.getDefault().getViewRegistry()
+                .find(targetPart);
+        String title = desc.getLabel();
+
+        return DragOperations.nameForConstant(side) + " of " + title;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.tests.dnd.TestDropTarget#getLocation()
+     */
+    public Point getLocation() {
+        return DragOperations.getLocation(DragOperations.getPane(getPart()),
+                side);
+    }
 }

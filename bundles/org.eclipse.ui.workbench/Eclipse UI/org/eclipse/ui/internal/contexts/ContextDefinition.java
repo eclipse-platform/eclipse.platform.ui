@@ -20,156 +20,157 @@ import java.util.Map;
 import org.eclipse.ui.internal.util.Util;
 
 final class ContextDefinition implements Comparable {
-	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL =
-		ContextDefinition.class.getName().hashCode();
+    private final static int HASH_FACTOR = 89;
 
-	static Map contextDefinitionsById(
-		Collection contextDefinitions,
-		boolean allowNullIds) {
-		if (contextDefinitions == null)
-			throw new NullPointerException();
+    private final static int HASH_INITIAL = ContextDefinition.class.getName()
+            .hashCode();
 
-		Map map = new HashMap();
-		Iterator iterator = contextDefinitions.iterator();
+    static Map contextDefinitionsById(Collection contextDefinitions,
+            boolean allowNullIds) {
+        if (contextDefinitions == null)
+            throw new NullPointerException();
 
-		while (iterator.hasNext()) {
-			Object object = iterator.next();
-			Util.assertInstance(object, ContextDefinition.class);
-			ContextDefinition contextDefinition = (ContextDefinition) object;
-			String id = contextDefinition.getId();
+        Map map = new HashMap();
+        Iterator iterator = contextDefinitions.iterator();
 
-			if (allowNullIds || id != null)
-				map.put(id, contextDefinition);
-		}
+        while (iterator.hasNext()) {
+            Object object = iterator.next();
+            Util.assertInstance(object, ContextDefinition.class);
+            ContextDefinition contextDefinition = (ContextDefinition) object;
+            String id = contextDefinition.getId();
 
-		return map;
-	}
+            if (allowNullIds || id != null)
+                map.put(id, contextDefinition);
+        }
 
-	static Map contextDefinitionsByName(
-		Collection contextDefinitions,
-		boolean allowNullNames) {
-		if (contextDefinitions == null)
-			throw new NullPointerException();
+        return map;
+    }
 
-		Map map = new HashMap();
-		Iterator iterator = contextDefinitions.iterator();
+    static Map contextDefinitionsByName(Collection contextDefinitions,
+            boolean allowNullNames) {
+        if (contextDefinitions == null)
+            throw new NullPointerException();
 
-		while (iterator.hasNext()) {
-			Object object = iterator.next();
-			Util.assertInstance(object, ContextDefinition.class);
-			ContextDefinition contextDefinition = (ContextDefinition) object;
-			String name = contextDefinition.getName();
+        Map map = new HashMap();
+        Iterator iterator = contextDefinitions.iterator();
 
-			if (allowNullNames || name != null) {
-				Collection contextDefinitions2 = (Collection) map.get(name);
+        while (iterator.hasNext()) {
+            Object object = iterator.next();
+            Util.assertInstance(object, ContextDefinition.class);
+            ContextDefinition contextDefinition = (ContextDefinition) object;
+            String name = contextDefinition.getName();
 
-				if (contextDefinitions2 == null) {
-					contextDefinitions2 = new HashSet();
-					map.put(name, contextDefinitions2);
-				}
+            if (allowNullNames || name != null) {
+                Collection contextDefinitions2 = (Collection) map.get(name);
 
-				contextDefinitions2.add(contextDefinition);
-			}
-		}
+                if (contextDefinitions2 == null) {
+                    contextDefinitions2 = new HashSet();
+                    map.put(name, contextDefinitions2);
+                }
 
-		return map;
-	}
+                contextDefinitions2.add(contextDefinition);
+            }
+        }
 
-	private transient int hashCode;
-	private transient boolean hashCodeComputed;
-	private String id;
-	private String name;
-	private String parentId;
-	private String sourceId;
-	private transient String string;
+        return map;
+    }
 
-	ContextDefinition(
-		String id,
-		String name,
-		String parentId,
-		String sourceId) {
-		this.id = id;
-		this.name = name;
-		this.parentId = parentId;
-		this.sourceId = sourceId;
-	}
+    private transient int hashCode;
 
-	public int compareTo(Object object) {
-		ContextDefinition castedObject = (ContextDefinition) object;
-		int compareTo = Util.compare(id, castedObject.id);
+    private transient boolean hashCodeComputed;
 
-		if (compareTo == 0) {
-			compareTo = Util.compare(name, castedObject.name);
+    private String id;
 
-			if (compareTo == 0) {
-				compareTo = Util.compare(parentId, castedObject.parentId);
+    private String name;
 
-				if (compareTo == 0)
-					compareTo = Util.compare(sourceId, castedObject.sourceId);
-			}
-		}
+    private String parentId;
 
-		return compareTo;
-	}
+    private String sourceId;
 
-	public boolean equals(Object object) {
-		if (!(object instanceof ContextDefinition))
-			return false;
+    private transient String string;
 
-		ContextDefinition castedObject = (ContextDefinition) object;
-		boolean equals = true;
-		equals &= Util.equals(id, castedObject.id);
-		equals &= Util.equals(name, castedObject.name);
-		equals &= Util.equals(parentId, castedObject.parentId);
-		equals &= Util.equals(sourceId, castedObject.sourceId);
-		return equals;
-	}
+    ContextDefinition(String id, String name, String parentId, String sourceId) {
+        this.id = id;
+        this.name = name;
+        this.parentId = parentId;
+        this.sourceId = sourceId;
+    }
 
-	public String getId() {
-		return id;
-	}
+    public int compareTo(Object object) {
+        ContextDefinition castedObject = (ContextDefinition) object;
+        int compareTo = Util.compare(id, castedObject.id);
 
-	public String getName() {
-		return name;
-	}
+        if (compareTo == 0) {
+            compareTo = Util.compare(name, castedObject.name);
 
-	public String getParentId() {
-		return parentId;
-	}
+            if (compareTo == 0) {
+                compareTo = Util.compare(parentId, castedObject.parentId);
 
-	public String getSourceId() {
-		return sourceId;
-	}
+                if (compareTo == 0)
+                    compareTo = Util.compare(sourceId, castedObject.sourceId);
+            }
+        }
 
-	public int hashCode() {
-		if (!hashCodeComputed) {
-			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(parentId);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(sourceId);
-			hashCodeComputed = true;
-		}
+        return compareTo;
+    }
 
-		return hashCode;
-	}
+    public boolean equals(Object object) {
+        if (!(object instanceof ContextDefinition))
+            return false;
 
-	public String toString() {
-		if (string == null) {
-			final StringBuffer stringBuffer = new StringBuffer();
-			stringBuffer.append('[');
-			stringBuffer.append(id);
-			stringBuffer.append(',');
-			stringBuffer.append(name);
-			stringBuffer.append(',');
-			stringBuffer.append(parentId);
-			stringBuffer.append(',');
-			stringBuffer.append(sourceId);
-			stringBuffer.append(']');
-			string = stringBuffer.toString();
-		}
+        ContextDefinition castedObject = (ContextDefinition) object;
+        boolean equals = true;
+        equals &= Util.equals(id, castedObject.id);
+        equals &= Util.equals(name, castedObject.name);
+        equals &= Util.equals(parentId, castedObject.parentId);
+        equals &= Util.equals(sourceId, castedObject.sourceId);
+        return equals;
+    }
 
-		return string;
-	}
+    public String getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getParentId() {
+        return parentId;
+    }
+
+    public String getSourceId() {
+        return sourceId;
+    }
+
+    public int hashCode() {
+        if (!hashCodeComputed) {
+            hashCode = HASH_INITIAL;
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(parentId);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(sourceId);
+            hashCodeComputed = true;
+        }
+
+        return hashCode;
+    }
+
+    public String toString() {
+        if (string == null) {
+            final StringBuffer stringBuffer = new StringBuffer();
+            stringBuffer.append('[');
+            stringBuffer.append(id);
+            stringBuffer.append(',');
+            stringBuffer.append(name);
+            stringBuffer.append(',');
+            stringBuffer.append(parentId);
+            stringBuffer.append(',');
+            stringBuffer.append(sourceId);
+            stringBuffer.append(']');
+            string = stringBuffer.toString();
+        }
+
+        return string;
+    }
 }

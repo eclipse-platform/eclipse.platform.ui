@@ -38,137 +38,144 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
  * to be used by the CreateProjectStep class only.
  */
 public class CreateProjectWizard extends Wizard {
-	private NewProjectWizard wizard;
-	private WizardNewProjectNameAndLocationPage page;
+    private NewProjectWizard wizard;
 
-	/**
-	 * Creates an empty wizard for creating a new project
-	 * in the workspace.
-	 */
-	/* package */ CreateProjectWizard(WizardNewProjectNameAndLocationPage page, NewProjectWizard wizard) {
-		super();
-		this.page = page;
-		this.wizard = wizard;
-	}
+    private WizardNewProjectNameAndLocationPage page;
 
-	/**
-	 * Creates a new project resource with the entered name.
-	 *
-	 * @return the created project resource, or <code>null</code> if the project
-	 *    was not created
-	 */
-	private IProject createNewProject() {
-		// get a project handle
-		final IProject newProjectHandle = page.getProjectHandle();
-	
-		// get a project descriptor
-		IPath defaultPath = Platform.getLocation();
-		IPath newPath = page.getLocationPath();
-		if (defaultPath.equals(newPath))
-			newPath = null;
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		final IProjectDescription description = workspace.newProjectDescription(newProjectHandle.getName());
-		description.setLocation(newPath);
-	
-		// define the operation to create a new project
-		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
-			protected void execute(IProgressMonitor monitor) throws CoreException {
-				createProject(description, newProjectHandle, monitor);
-			}
-		};
-	
-		// run the operation to create a new project
-		try {
-			getContainer().run(true, true, op);
-		}
-		catch (InterruptedException e) {
-			return null;
-		}
-		catch (InvocationTargetException e) {
-			Throwable t = e.getTargetException();
-			if (t instanceof CoreException) {
-				if (((CoreException)t).getStatus().getCode() == IResourceStatus.CASE_VARIANT_EXISTS) {
-					MessageDialog.openError(
-						getShell(), 
-						IDEWorkbenchMessages.getString("CreateProjectWizard.errorTitle"),  //$NON-NLS-1$
-						IDEWorkbenchMessages.getString("CreateProjectWizard.caseVariantExistsError")  //$NON-NLS-1$,
-						);	
-				} else {
-					ErrorDialog.openError(
-						getShell(), 
-						IDEWorkbenchMessages.getString("CreateProjectWizard.errorTitle"),  //$NON-NLS-1$
-						null, // no special message
-				 		((CoreException) t).getStatus());
-				}
-			} else {
-				// Unexpected runtime exceptions and errors may still occur.
-				Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog().log(
-					new Status(
-						Status.ERROR, 
-						PlatformUI.PLUGIN_ID, 
-						0, 
-						t.toString(),
-						t));
-				MessageDialog.openError(
-					getShell(),
-					IDEWorkbenchMessages.getString("CreateProjectWizard.errorTitle"),  //$NON-NLS-1$
-					IDEWorkbenchMessages.format("CreateProjectWizard.internalError", new Object[] {t.getMessage()})); //$NON-NLS-1$
-			}
-			return null;
-		}
-	
-		return newProjectHandle;
-	}
-	
-	/**
-	 * Creates a project resource given the project handle and description.
-	 *
-	 * @param description the project description to create a project resource for
-	 * @param projectHandle the project handle to create a project resource for
-	 * @param monitor the progress monitor to show visual progress with
-	 *
-	 * @exception CoreException if the operation fails
-	 * @exception OperationCanceledException if the operation is canceled
-	 */
-	private void createProject(IProjectDescription description, IProject projectHandle, IProgressMonitor monitor) throws CoreException, OperationCanceledException {
-		try {
-			monitor.beginTask("", 2000); //$NON-NLS-1$
-	
-			projectHandle.create(description, new SubProgressMonitor(monitor,1000));
-	
-			if (monitor.isCanceled())
-				throw new OperationCanceledException();
-	
-			projectHandle.open(new SubProgressMonitor(monitor,1000));
-	
-		} finally {
-			monitor.done();
-		}
-	}
+    /**
+     * Creates an empty wizard for creating a new project
+     * in the workspace.
+     */
+    /* package */CreateProjectWizard(WizardNewProjectNameAndLocationPage page,
+            NewProjectWizard wizard) {
+        super();
+        this.page = page;
+        this.wizard = wizard;
+    }
 
-	/**
-	 * Returns the current project name.
-	 *
-	 * @return the project name or <code>null</code>
-	 *   if no project name is known
-	 */
-	/* package */ String getProjectName() {
-		return page.getProjectName();
-	}
-	
-	/* (non-Javadoc)
-	 * Method declared on IWizard.
-	 */
-	public boolean performFinish() {
-		if (wizard.getNewProject() != null)
-			return true;
-			
-		IProject project = createNewProject();
-		if (project != null) {
-			wizard.setNewProject(project);
-			return true;
-		} else {
-			return false;
-		}
-	}
+    /**
+     * Creates a new project resource with the entered name.
+     *
+     * @return the created project resource, or <code>null</code> if the project
+     *    was not created
+     */
+    private IProject createNewProject() {
+        // get a project handle
+        final IProject newProjectHandle = page.getProjectHandle();
+
+        // get a project descriptor
+        IPath defaultPath = Platform.getLocation();
+        IPath newPath = page.getLocationPath();
+        if (defaultPath.equals(newPath))
+            newPath = null;
+        IWorkspace workspace = ResourcesPlugin.getWorkspace();
+        final IProjectDescription description = workspace
+                .newProjectDescription(newProjectHandle.getName());
+        description.setLocation(newPath);
+
+        // define the operation to create a new project
+        WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
+            protected void execute(IProgressMonitor monitor)
+                    throws CoreException {
+                createProject(description, newProjectHandle, monitor);
+            }
+        };
+
+        // run the operation to create a new project
+        try {
+            getContainer().run(true, true, op);
+        } catch (InterruptedException e) {
+            return null;
+        } catch (InvocationTargetException e) {
+            Throwable t = e.getTargetException();
+            if (t instanceof CoreException) {
+                if (((CoreException) t).getStatus().getCode() == IResourceStatus.CASE_VARIANT_EXISTS) {
+                    MessageDialog
+                            .openError(
+                                    getShell(),
+                                    IDEWorkbenchMessages
+                                            .getString("CreateProjectWizard.errorTitle"), //$NON-NLS-1$
+                                    IDEWorkbenchMessages
+                                            .getString("CreateProjectWizard.caseVariantExistsError") //$NON-NLS-1$,
+                            );
+                } else {
+                    ErrorDialog.openError(getShell(), IDEWorkbenchMessages
+                            .getString("CreateProjectWizard.errorTitle"), //$NON-NLS-1$
+                            null, // no special message
+                            ((CoreException) t).getStatus());
+                }
+            } else {
+                // Unexpected runtime exceptions and errors may still occur.
+                Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog().log(
+                        new Status(Status.ERROR, PlatformUI.PLUGIN_ID, 0, t
+                                .toString(), t));
+                MessageDialog
+                        .openError(
+                                getShell(),
+                                IDEWorkbenchMessages
+                                        .getString("CreateProjectWizard.errorTitle"), //$NON-NLS-1$
+                                IDEWorkbenchMessages
+                                        .format(
+                                                "CreateProjectWizard.internalError", new Object[] { t.getMessage() })); //$NON-NLS-1$
+            }
+            return null;
+        }
+
+        return newProjectHandle;
+    }
+
+    /**
+     * Creates a project resource given the project handle and description.
+     *
+     * @param description the project description to create a project resource for
+     * @param projectHandle the project handle to create a project resource for
+     * @param monitor the progress monitor to show visual progress with
+     *
+     * @exception CoreException if the operation fails
+     * @exception OperationCanceledException if the operation is canceled
+     */
+    private void createProject(IProjectDescription description,
+            IProject projectHandle, IProgressMonitor monitor)
+            throws CoreException, OperationCanceledException {
+        try {
+            monitor.beginTask("", 2000); //$NON-NLS-1$
+
+            projectHandle.create(description, new SubProgressMonitor(monitor,
+                    1000));
+
+            if (monitor.isCanceled())
+                throw new OperationCanceledException();
+
+            projectHandle.open(new SubProgressMonitor(monitor, 1000));
+
+        } finally {
+            monitor.done();
+        }
+    }
+
+    /**
+     * Returns the current project name.
+     *
+     * @return the project name or <code>null</code>
+     *   if no project name is known
+     */
+    /* package */String getProjectName() {
+        return page.getProjectName();
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IWizard.
+     */
+    public boolean performFinish() {
+        if (wizard.getNewProject() != null)
+            return true;
+
+        IProject project = createNewProject();
+        if (project != null) {
+            wizard.setNewProject(project);
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

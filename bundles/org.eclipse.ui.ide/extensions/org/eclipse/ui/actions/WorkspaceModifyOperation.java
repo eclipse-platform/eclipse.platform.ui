@@ -42,76 +42,82 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  * @see org.eclipse.core.resources.IWorkspace#run(IWorkspaceRunnable, IProgressMonitor)
  *  */
 public abstract class WorkspaceModifyOperation implements IRunnableWithProgress {
-	private ISchedulingRule rule;
-/**
- * Creates a new operation.
- */
-protected WorkspaceModifyOperation() {
-	this(IDEWorkbenchPlugin.getPluginWorkspace().getRoot());
-}
-/**
- * Creates a new operation that will run using the provided
- * scheduling rule.
- * @param rule  The ISchedulingRule to use or <code>null</code>.
- * @since 3.0
- */
-protected WorkspaceModifyOperation(ISchedulingRule rule) {
-	this.rule = rule;
-}
-/**
- * Performs the steps that are to be treated as a single logical workspace
- * change.
- * <p>
- * Subclasses must implement this method.
- * </p>
- *
- * @param monitor the progress monitor to use to display progress and field
- *   user requests to cancel
- * @exception CoreException if the operation fails due to a CoreException
- * @exception InvocationTargetException if the operation fails due to an exception other than CoreException
- * @exception InterruptedException if the operation detects a request to cancel, 
- *  using <code>IProgressMonitor.isCanceled()</code>, it should exit by throwing 
- *  <code>InterruptedException</code>.  It is also possible to throw 
- *  <code>OperationCanceledException</code>, which gets mapped to <code>InterruptedException</code>
- *  by the <code>run</code> method.
- */
-protected abstract void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException;
-/**
- * The <code>WorkspaceModifyOperation</code> implementation of this 
- * <code>IRunnableWithProgress</code> method initiates a batch of changes by 
- * invoking the <code>execute</code> method as a workspace runnable 
- * (<code>IWorkspaceRunnable</code>).
- */
-public synchronized final void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException { 
-	final InvocationTargetException[] iteHolder = new InvocationTargetException[1];
-	try {
-		IWorkspaceRunnable workspaceRunnable = new IWorkspaceRunnable() {
-			public void run(IProgressMonitor pm) throws CoreException {
-				try {
-					execute(pm);
-				}
-				catch (InvocationTargetException e) {
-					// Pass it outside the workspace runnable
-					iteHolder[0] = e;
-				}
-				catch (InterruptedException e) {
-					// Re-throw as OperationCanceledException, which will be
-					// caught and re-thrown as InterruptedException below.
-					throw new OperationCanceledException(e.getMessage());
-				}
-				// CoreException and OperationCanceledException are propagated
-			}
-		};
-		IDEWorkbenchPlugin.getPluginWorkspace().run(workspaceRunnable, rule, IResource.NONE, monitor);
-	} catch (CoreException e) {
-		throw new InvocationTargetException(e);
-	} catch (OperationCanceledException e) {
-		throw new InterruptedException(e.getMessage());
-	}
-	// Re-throw the InvocationTargetException, if any occurred
-	if (iteHolder[0] != null) {
-		throw iteHolder[0];
-	}
-}
+    private ISchedulingRule rule;
+
+    /**
+     * Creates a new operation.
+     */
+    protected WorkspaceModifyOperation() {
+        this(IDEWorkbenchPlugin.getPluginWorkspace().getRoot());
+    }
+
+    /**
+     * Creates a new operation that will run using the provided
+     * scheduling rule.
+     * @param rule  The ISchedulingRule to use or <code>null</code>.
+     * @since 3.0
+     */
+    protected WorkspaceModifyOperation(ISchedulingRule rule) {
+        this.rule = rule;
+    }
+
+    /**
+     * Performs the steps that are to be treated as a single logical workspace
+     * change.
+     * <p>
+     * Subclasses must implement this method.
+     * </p>
+     *
+     * @param monitor the progress monitor to use to display progress and field
+     *   user requests to cancel
+     * @exception CoreException if the operation fails due to a CoreException
+     * @exception InvocationTargetException if the operation fails due to an exception other than CoreException
+     * @exception InterruptedException if the operation detects a request to cancel, 
+     *  using <code>IProgressMonitor.isCanceled()</code>, it should exit by throwing 
+     *  <code>InterruptedException</code>.  It is also possible to throw 
+     *  <code>OperationCanceledException</code>, which gets mapped to <code>InterruptedException</code>
+     *  by the <code>run</code> method.
+     */
+    protected abstract void execute(IProgressMonitor monitor)
+            throws CoreException, InvocationTargetException,
+            InterruptedException;
+
+    /**
+     * The <code>WorkspaceModifyOperation</code> implementation of this 
+     * <code>IRunnableWithProgress</code> method initiates a batch of changes by 
+     * invoking the <code>execute</code> method as a workspace runnable 
+     * (<code>IWorkspaceRunnable</code>).
+     */
+    public synchronized final void run(IProgressMonitor monitor)
+            throws InvocationTargetException, InterruptedException {
+        final InvocationTargetException[] iteHolder = new InvocationTargetException[1];
+        try {
+            IWorkspaceRunnable workspaceRunnable = new IWorkspaceRunnable() {
+                public void run(IProgressMonitor pm) throws CoreException {
+                    try {
+                        execute(pm);
+                    } catch (InvocationTargetException e) {
+                        // Pass it outside the workspace runnable
+                        iteHolder[0] = e;
+                    } catch (InterruptedException e) {
+                        // Re-throw as OperationCanceledException, which will be
+                        // caught and re-thrown as InterruptedException below.
+                        throw new OperationCanceledException(e.getMessage());
+                    }
+                    // CoreException and OperationCanceledException are propagated
+                }
+            };
+            IDEWorkbenchPlugin.getPluginWorkspace().run(workspaceRunnable,
+                    rule, IResource.NONE, monitor);
+        } catch (CoreException e) {
+            throw new InvocationTargetException(e);
+        } catch (OperationCanceledException e) {
+            throw new InterruptedException(e.getMessage());
+        }
+        // Re-throw the InvocationTargetException, if any occurred
+        if (iteHolder[0] != null) {
+            throw iteHolder[0];
+        }
+    }
 
 }

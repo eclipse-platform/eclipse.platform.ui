@@ -20,7 +20,6 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Display;
 
-
 /**
  * @since 3.0
  */
@@ -30,9 +29,11 @@ public class CascadingFontRegistry extends FontRegistry {
 
     private IPropertyChangeListener listener = new IPropertyChangeListener() {
         public void propertyChange(PropertyChangeEvent event) {
-            fireMappingChanged(event.getProperty(), event.getOldValue(), event.getNewValue());
-        }};
-        
+            fireMappingChanged(event.getProperty(), event.getOldValue(), event
+                    .getNewValue());
+        }
+    };
+
     /**
      * 
      */
@@ -40,16 +41,15 @@ public class CascadingFontRegistry extends FontRegistry {
         this.parent = parent;
         parent.addListener(listener);
     }
-        
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.resource.FontRegistry#get(java.lang.String)
      */
     public Font get(String symbolicName) {
-		if (super.hasValueFor(symbolicName))        
-        	return super.get(symbolicName); 
-		else
-		    return parent.get(symbolicName);
+        if (super.hasValueFor(symbolicName))
+            return super.get(symbolicName);
+        else
+            return parent.get(symbolicName);
     }
 
     /* (non-Javadoc)
@@ -60,21 +60,21 @@ public class CascadingFontRegistry extends FontRegistry {
         keyUnion.addAll(parent.getKeySet());
         return keyUnion;
     }
-    
-    
-    public FontData [] getFontData(String symbolicName) {
-		if (super.hasValueFor(symbolicName))        
-        	return super.getFontData(symbolicName); 
-		else
-		    return parent.getFontData(symbolicName);
+
+    public FontData[] getFontData(String symbolicName) {
+        if (super.hasValueFor(symbolicName))
+            return super.getFontData(symbolicName);
+        else
+            return parent.getFontData(symbolicName);
     }
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.resource.ColorRegistry#hasValueFor(java.lang.String)
      */
-    public boolean hasValueFor(String colorKey) {        
+    public boolean hasValueFor(String colorKey) {
         return super.hasValueFor(colorKey) || parent.hasValueFor(colorKey);
     }
-    
+
     /**
      * Returns whether this cascading registry has an override for the provided 
      * color key.
@@ -84,8 +84,8 @@ public class CascadingFontRegistry extends FontRegistry {
      */
     public boolean hasOverrideFor(String fontKey) {
         return super.hasValueFor(fontKey);
-    }    
-    
+    }
+
     /**
      * Disposes of all allocated resources.
      */

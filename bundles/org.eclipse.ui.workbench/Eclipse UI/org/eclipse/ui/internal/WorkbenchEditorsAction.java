@@ -21,49 +21,48 @@ import org.eclipse.ui.internal.dialogs.WorkbenchEditorsDialog;
  * Implements an action to open a dialog showing all open editors
  * and the recent closed editors.
  */
-public class WorkbenchEditorsAction
-	extends Action 
-	implements ActionFactory.IWorkbenchAction {
-			
-	/**
-	 * The workbench window; or <code>null</code> if this
-	 * action has been <code>dispose</code>d.
-	 */
-	private IWorkbenchWindow workbenchWindow;
-		
-	/**
-	 * Constructor for NavigateWorkbenchAction.
-	 * @param text
-	 */
-	public WorkbenchEditorsAction(IWorkbenchWindow window) {
-		super(WorkbenchMessages.getString("WorkbenchEditorsAction.label")); //$NON-NLS-1$
-		if (window == null) {
-			throw new IllegalArgumentException();
-		}
-		this.workbenchWindow = window;
-		// @issue missing action id
-		WorkbenchHelp.setHelp(this, IHelpContextIds.WORKBENCH_EDITORS_ACTION);
-		setActionDefinitionId("org.eclipse.ui.window.switchToEditor"); //$NON-NLS-1$
-	}
-	
-	/* (non-Javadoc)
-	 * Method declared on IAction.
-	 */
-	public void run() {
-		if (workbenchWindow == null) {
-			// action has been disposed
-			return;
-		}
-		IWorkbenchPage page = workbenchWindow.getActivePage();
-		if (page != null) {
-			new WorkbenchEditorsDialog(workbenchWindow).open();
-		}		
-	}
-	
-	/* (non-Javadoc)
-	 * Method declared on ActionFactory.IWorkbenchAction.
-	 */
-	public void dispose() {
-		workbenchWindow = null;
-	}
+public class WorkbenchEditorsAction extends Action implements
+        ActionFactory.IWorkbenchAction {
+
+    /**
+     * The workbench window; or <code>null</code> if this
+     * action has been <code>dispose</code>d.
+     */
+    private IWorkbenchWindow workbenchWindow;
+
+    /**
+     * Constructor for NavigateWorkbenchAction.
+     * @param text
+     */
+    public WorkbenchEditorsAction(IWorkbenchWindow window) {
+        super(WorkbenchMessages.getString("WorkbenchEditorsAction.label")); //$NON-NLS-1$
+        if (window == null) {
+            throw new IllegalArgumentException();
+        }
+        this.workbenchWindow = window;
+        // @issue missing action id
+        WorkbenchHelp.setHelp(this, IHelpContextIds.WORKBENCH_EDITORS_ACTION);
+        setActionDefinitionId("org.eclipse.ui.window.switchToEditor"); //$NON-NLS-1$
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IAction.
+     */
+    public void run() {
+        if (workbenchWindow == null) {
+            // action has been disposed
+            return;
+        }
+        IWorkbenchPage page = workbenchWindow.getActivePage();
+        if (page != null) {
+            new WorkbenchEditorsDialog(workbenchWindow).open();
+        }
+    }
+
+    /* (non-Javadoc)
+     * Method declared on ActionFactory.IWorkbenchAction.
+     */
+    public void dispose() {
+        workbenchWindow = null;
+    }
 }

@@ -50,26 +50,27 @@ public final class AboutSystemDialog extends ProductInfoDialog {
     private final static int BROWSE_ERROR_LOG_BUTTON = IDialogConstants.CLIENT_ID;
 
     public AboutSystemDialog(Shell parentShell) {
-		super(parentShell);
-		setShellStyle(SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MAX | SWT.APPLICATION_MODAL);
-	}
+        super(parentShell);
+        setShellStyle(SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MAX
+                | SWT.APPLICATION_MODAL);
+    }
 
-	/* (non-Javadoc)
-	 * Method declared on Window.
-	 */
-	protected void configureShell(Shell newShell) {
-		super.configureShell(newShell);
-		newShell.setText(WorkbenchMessages.getString("SystemSummary.title")); //$NON-NLS-1$
-		WorkbenchHelp.setHelp(newShell, IHelpContextIds.SYSTEM_SUMMARY_DIALOG);
-	} 
+    /* (non-Javadoc)
+     * Method declared on Window.
+     */
+    protected void configureShell(Shell newShell) {
+        super.configureShell(newShell);
+        newShell.setText(WorkbenchMessages.getString("SystemSummary.title")); //$NON-NLS-1$
+        WorkbenchHelp.setHelp(newShell, IHelpContextIds.SYSTEM_SUMMARY_DIALOG);
+    }
 
-	/* (non-Javadoc)
-	 * Method declared on Dialog.
-	 */
-	protected void createButtonsForButtonBar(Composite parent) {
+    /* (non-Javadoc)
+     * Method declared on Dialog.
+     */
+    protected void createButtonsForButtonBar(Composite parent) {
         parent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-	    createButton(parent, BROWSE_ERROR_LOG_BUTTON, WorkbenchMessages
+        createButton(parent, BROWSE_ERROR_LOG_BUTTON, WorkbenchMessages
                 .getString("AboutSystemDialog.browseErrorLogName"), false); //$NON-NLS-1$
 
         new Label(parent, SWT.NONE).setLayoutData(new GridData(
@@ -78,88 +79,92 @@ public final class AboutSystemDialog extends ProductInfoDialog {
         layout.numColumns++;
         layout.makeColumnsEqualWidth = false;
 
-        createButton(parent, IDialogConstants.CLOSE_ID, IDialogConstants.CLOSE_LABEL, true);
-	}
+        createButton(parent, IDialogConstants.CLOSE_ID,
+                IDialogConstants.CLOSE_LABEL, true);
+    }
 
-	/* (non-Javadoc)
-	 * Method declared on Dialog.
-	 */
-	protected Control createDialogArea(Composite parent) {
-		Composite outer = (Composite) super.createDialogArea(parent);
+    /* (non-Javadoc)
+     * Method declared on Dialog.
+     */
+    protected Control createDialogArea(Composite parent) {
+        Composite outer = (Composite) super.createDialogArea(parent);
 
-		Text text = new Text(outer, SWT.MULTI | SWT.BORDER | SWT.READ_ONLY | SWT.V_SCROLL | SWT.NO_FOCUS | SWT.H_SCROLL);
-		text.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-		GridData gridData =
-			new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL);
-		gridData.grabExcessVerticalSpace = true;
-		gridData.grabExcessHorizontalSpace = true;
-		gridData.heightHint = convertVerticalDLUsToPixels(300);
-		gridData.widthHint = convertHorizontalDLUsToPixels(400);
-		text.setLayoutData(gridData);
-		text.setText(getSystemSummary());
-		return outer;
-	}
+        Text text = new Text(outer, SWT.MULTI | SWT.BORDER | SWT.READ_ONLY
+                | SWT.V_SCROLL | SWT.NO_FOCUS | SWT.H_SCROLL);
+        text.setBackground(parent.getDisplay().getSystemColor(
+                SWT.COLOR_LIST_BACKGROUND));
+        GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL
+                | GridData.VERTICAL_ALIGN_FILL);
+        gridData.grabExcessVerticalSpace = true;
+        gridData.grabExcessHorizontalSpace = true;
+        gridData.heightHint = convertVerticalDLUsToPixels(300);
+        gridData.widthHint = convertHorizontalDLUsToPixels(400);
+        text.setLayoutData(gridData);
+        text.setText(getSystemSummary());
+        return outer;
+    }
 
-	private String getSystemSummary() {
-		StringWriter out = new StringWriter();
-		PrintWriter writer = new PrintWriter(out);
-		writer.println(WorkbenchMessages.format("SystemSummary.timeStamp", new Object[] {new Date()})); //$NON-NLS-1$
+    private String getSystemSummary() {
+        StringWriter out = new StringWriter();
+        PrintWriter writer = new PrintWriter(out);
+        writer.println(WorkbenchMessages.format(
+                "SystemSummary.timeStamp", new Object[] { new Date() })); //$NON-NLS-1$
 
-		appendExtensions(writer);
-		writer.close();
-		return out.toString();
-	}
+        appendExtensions(writer);
+        writer.close();
+        return out.toString();
+    }
 
-	/*
-	 * Appends the contents of all extentions to the configurationLogSections
-	 * extension point. 
-	 */
-	private void appendExtensions(PrintWriter writer) {
-	    IConfigurationElement[] configElements = getSortedExtensions();
-	    for(int i = 0; i < configElements.length; ++i ) {
-	        IConfigurationElement element = configElements[i];
+    /*
+     * Appends the contents of all extentions to the configurationLogSections
+     * extension point. 
+     */
+    private void appendExtensions(PrintWriter writer) {
+        IConfigurationElement[] configElements = getSortedExtensions();
+        for (int i = 0; i < configElements.length; ++i) {
+            IConfigurationElement element = configElements[i];
 
-	        Object obj = null;
+            Object obj = null;
             try {
                 obj = WorkbenchPlugin.createExtension(element,
                         IWorkbenchConstants.TAG_CLASS);
             } catch (CoreException e) {
-    			WorkbenchPlugin.log(
+                WorkbenchPlugin.log(
                         "could not create class attribute for extension", //$NON-NLS-1$
                         e.getStatus());
             }
 
-	        writer.println();
-	        writer.println(WorkbenchMessages.format(
+            writer.println();
+            writer.println(WorkbenchMessages.format(
                     "SystemSummary.sectionTitle", //$NON-NLS-1$
-                    new Object[] { element.getAttribute("sectionTitle")})); //$NON-NLS-1$
+                    new Object[] { element.getAttribute("sectionTitle") })); //$NON-NLS-1$
 
-	        if(obj instanceof ISystemSummarySection) {
-	            ISystemSummarySection logSection = (ISystemSummarySection)obj;
-	            logSection.write(writer);
-	        }
-	        else
-	            writer.println(WorkbenchMessages
+            if (obj instanceof ISystemSummarySection) {
+                ISystemSummarySection logSection = (ISystemSummarySection) obj;
+                logSection.write(writer);
+            } else
+                writer.println(WorkbenchMessages
                         .getString("SystemSummary.sectionError")); //$NON-NLS-1$
-	    }
-	}
+        }
+    }
 
-	private IConfigurationElement[] getSortedExtensions() {
-	    IConfigurationElement[] configElements = Platform
-	    	.getExtensionRegistry().getConfigurationElementsFor(
-                PlatformUI.PLUGIN_ID,
-                IWorkbenchConstants.PL_SYSTEM_SUMMARY_SECTIONS);
+    private IConfigurationElement[] getSortedExtensions() {
+        IConfigurationElement[] configElements = Platform
+                .getExtensionRegistry().getConfigurationElementsFor(
+                        PlatformUI.PLUGIN_ID,
+                        IWorkbenchConstants.PL_SYSTEM_SUMMARY_SECTIONS);
 
         Arrays.sort(configElements, new Comparator() {
             Collator collator = Collator.getInstance(Locale.getDefault());
+
             public int compare(Object a, Object b) {
-                IConfigurationElement element1 = (IConfigurationElement)a;
-                IConfigurationElement element2 = (IConfigurationElement)b;
+                IConfigurationElement element1 = (IConfigurationElement) a;
+                IConfigurationElement element2 = (IConfigurationElement) b;
 
                 String id1 = element1.getAttribute("id"); //$NON-NLS-1$
                 String id2 = element2.getAttribute("id"); //$NON-NLS-1$
 
-                if(id1 != null && id2 != null && !id1.equals(id2))
+                if (id1 != null && id2 != null && !id1.equals(id2))
                     return collator.compare(id1, id2);
 
                 String title1 = element1.getAttribute("sectionTitle"); //$NON-NLS-1$ 
@@ -175,25 +180,25 @@ public final class AboutSystemDialog extends ProductInfoDialog {
         });
 
         return configElements;
-	}
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
-	 */
-	protected void buttonPressed(int buttonId) {
-	    switch (buttonId) {
-	    case IDialogConstants.CLOSE_ID:
-			close();
-	    	break;
-	    case BROWSE_ERROR_LOG_BUTTON:
-	        openErrorLogBrowser();
-	        break;
-		}
-		super.buttonPressed(buttonId);
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
+     */
+    protected void buttonPressed(int buttonId) {
+        switch (buttonId) {
+        case IDialogConstants.CLOSE_ID:
+            close();
+            break;
+        case BROWSE_ERROR_LOG_BUTTON:
+            openErrorLogBrowser();
+            break;
+        }
+        super.buttonPressed(buttonId);
+    }
 
-	private void openErrorLogBrowser() {
-	    String filename = Platform.getLogFileLocation().toOSString();
+    private void openErrorLogBrowser() {
+        String filename = Platform.getLogFileLocation().toOSString();
 
         File log = new File(filename);
         if (log.exists()) {
@@ -201,10 +206,9 @@ public final class AboutSystemDialog extends ProductInfoDialog {
             return;
         }
 
-        MessageDialog.openInformation(
-                getShell(),
-                WorkbenchMessages.getString("AboutSystemDialog.noLogTitle"), //$NON-NLS-1$
+        MessageDialog.openInformation(getShell(), WorkbenchMessages
+                .getString("AboutSystemDialog.noLogTitle"), //$NON-NLS-1$
                 WorkbenchMessages.format("AboutSystemDialog.noLogMessage", //$NON-NLS-1$
                         new String[] { filename }));
-	}
+    }
 }

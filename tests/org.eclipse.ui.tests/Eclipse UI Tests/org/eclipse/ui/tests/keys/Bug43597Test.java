@@ -27,48 +27,50 @@ import org.eclipse.ui.tests.util.UITestCase;
  */
 public class Bug43597Test extends UITestCase {
 
-	/**
-	 * Constructor for Bug43597Test.
-	 * 
-	 * @param name
-	 *            The name of the test
-	 */
-	public Bug43597Test(String name) {
-		super(name);
-	}
+    /**
+     * Constructor for Bug43597Test.
+     * 
+     * @param name
+     *            The name of the test
+     */
+    public Bug43597Test(String name) {
+        super(name);
+    }
 
-	/**
-	 * Tests that setting the text on a text widget to an empty string does not
-	 * reset the font. This was a problem only on carbon.
-	 */
-	public void testFontReset() {
-		String metaCharacter = "\u2325X"; //$NON-NLS-1$
+    /**
+     * Tests that setting the text on a text widget to an empty string does not
+     * reset the font. This was a problem only on carbon.
+     */
+    public void testFontReset() {
+        String metaCharacter = "\u2325X"; //$NON-NLS-1$
 
-		// Set up a working environment.
-		Display display = Display.getCurrent();
-		Shell shell = new Shell(display);
-		GridLayout gridLayout = new GridLayout();
-		shell.setLayout(gridLayout);
-		Text text = new Text(shell, SWT.LEFT);
-		text.setFont(new Font(text.getDisplay(), "Lucida Grande", 13, SWT.NORMAL)); //$NON-NLS-1$
-		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		shell.pack();
-		shell.open();
+        // Set up a working environment.
+        Display display = Display.getCurrent();
+        Shell shell = new Shell(display);
+        GridLayout gridLayout = new GridLayout();
+        shell.setLayout(gridLayout);
+        Text text = new Text(shell, SWT.LEFT);
+        text.setFont(new Font(text.getDisplay(),
+                "Lucida Grande", 13, SWT.NORMAL)); //$NON-NLS-1$
+        text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        shell.pack();
+        shell.open();
 
-		// Set the text once, and get the font.
-		text.setText(metaCharacter); //$NON-NLS-1$
-		Font fontBefore = text.getFont();
+        // Set the text once, and get the font.
+        text.setText(metaCharacter); //$NON-NLS-1$
+        Font fontBefore = text.getFont();
 
-		// Set the font again, and get the font afterward.
-		text.setText(""); //$NON-NLS-1$
-		text.setText(metaCharacter);
-		Font fontAfter = text.getFont();
+        // Set the font again, and get the font afterward.
+        text.setText(""); //$NON-NLS-1$
+        text.setText(metaCharacter);
+        Font fontAfter = text.getFont();
 
-		// Test.
-		assertEquals("Clearing text resets font.", fontBefore.handle, fontAfter.handle); //$NON-NLS-1$
+        // Test.
+        assertEquals(
+                "Clearing text resets font.", fontBefore.handle, fontAfter.handle); //$NON-NLS-1$
 
-		// Clean up after myself.
-		shell.close();
-		shell.dispose();
-	}
+        // Clean up after myself.
+        shell.close();
+        shell.dispose();
+    }
 }

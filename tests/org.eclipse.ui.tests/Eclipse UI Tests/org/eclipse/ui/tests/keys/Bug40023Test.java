@@ -17,19 +17,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.commands.CommandException;
+import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.internal.contexts.ws.WorkbenchContextSupport;
 import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.ui.keys.ParseException;
 import org.eclipse.ui.tests.util.UITestCase;
-
-import org.eclipse.ui.internal.Workbench;
-import org.eclipse.ui.internal.contexts.ws.WorkbenchContextSupport;
 
 /**
  * Tests Bug 40023
@@ -50,7 +47,9 @@ public class Bug40023Test extends UITestCase {
      */
     public static MenuItem getMenuItem(MenuItem[] menuItems, String text) {
         for (int i = 0; i < menuItems.length; i++) {
-            if (menuItems[i].getText().startsWith(text)) { return menuItems[i]; }
+            if (menuItems[i].getText().startsWith(text)) {
+                return menuItems[i];
+            }
         }
 
         return null;

@@ -17,10 +17,10 @@ package org.eclipse.ui.testing;
  * @since 3.0
  */
 public interface ITestHarness {
-	
-	/**
-	 * Runs the tests.
-	 */
-	public void runTests();
-	
+
+    /**
+     * Runs the tests.
+     */
+    public void runTests();
+
 }

@@ -15,21 +15,23 @@ import java.util.List;
 
 public interface ICommandRegistry {
 
-	void addCommandRegistryListener(ICommandRegistryListener commandRegistryListener);
+    void addCommandRegistryListener(
+            ICommandRegistryListener commandRegistryListener);
 
-	List getActiveKeyConfigurationDefinitions();
+    List getActiveKeyConfigurationDefinitions();
 
-	List getCategoryDefinitions();
+    List getCategoryDefinitions();
 
-	List getCommandDefinitions();
-	
-	List getHandlers();
+    List getCommandDefinitions();
 
-	List getImageBindingDefinitions();
+    List getHandlers();
 
-	List getKeyConfigurationDefinitions();
+    List getImageBindingDefinitions();
 
-	List getKeySequenceBindingDefinitions();
+    List getKeyConfigurationDefinitions();
 
-	void removeCommandRegistryListener(ICommandRegistryListener commandRegistryListener);
+    List getKeySequenceBindingDefinitions();
+
+    void removeCommandRegistryListener(
+            ICommandRegistryListener commandRegistryListener);
 }

@@ -209,7 +209,8 @@ public class R21Colors {
      * This list comes from the designers.
      */
     private static void initWorkbenchColors(Display d) {
-        if (workbenchColors != null) return;
+        if (workbenchColors != null)
+            return;
 
         workbenchColors = new Color[] {
         //Product pallet
@@ -239,7 +240,7 @@ public class R21Colors {
                 new Color(d, 132, 130, 132), new Color(d, 143, 141, 138),
                 new Color(d, 171, 168, 165),
                 //PreferenceDialog and TitleAreaDialog
-                new Color(d, 230, 226, 221)};
+                new Color(d, 230, 226, 221) };
     }
 
     /**
@@ -247,7 +248,8 @@ public class R21Colors {
      * be disposed.
      */
     static public void shutdown() {
-        if (!init) return;
+        if (!init)
+            return;
 
         disposeWorkbenchColors();
 
@@ -268,7 +270,8 @@ public class R21Colors {
      * Initializes the colors.
      */
     static public void startup() {
-        if (init) return;
+        if (init)
+            return;
 
         // Initialize the caches first.
         init = true;
@@ -282,18 +285,18 @@ public class R21Colors {
         Color clr3 = getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
         systemColorMap.put(CLR_VIEW_GRAD_START, clr1);
         systemColorMap.put(CLR_VIEW_GRAD_END, clr3);
-        activeViewGradient = new Color[] { clr1, clr2, clr3};
-        activeViewPercentages = new int[] { 50, 100};
+        activeViewGradient = new Color[] { clr1, clr2, clr3 };
+        activeViewPercentages = new int[] { 50, 100 };
 
         // Define active editor gradient using same OS title gradient colors.
         systemColorMap.put(CLR_EDITOR_GRAD_START, clr1);
         systemColorMap.put(CLR_EDITOR_GRAD_END, null); // use widget default
         // background
-        activeEditorGradient = new Color[] { clr1, clr2, null, null};
-        activeEditorPercentages = new int[] { 50, 90, 100};
+        activeEditorGradient = new Color[] { clr1, clr2, null, null };
+        activeEditorPercentages = new int[] { 50, 90, 100 };
 
         // Define active no focus editor gradient
-        activeNoFocusEditorGradient = new Color[] { getSystemColor(SWT.COLOR_LIST_BACKGROUND)};
+        activeNoFocusEditorGradient = new Color[] { getSystemColor(SWT.COLOR_LIST_BACKGROUND) };
         activeNoFocusEditorPercentages = new int[0];
 
         // Define view gradient for deactivated window using same OS title
@@ -301,13 +304,13 @@ public class R21Colors {
         clr1 = getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND);
         clr2 = getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT);
         clr3 = getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
-        deactivatedViewGradient = new Color[] { clr1, clr2, clr3};
-        deactivatedViewPercentages = new int[] { 70, 100};
+        deactivatedViewGradient = new Color[] { clr1, clr2, clr3 };
+        deactivatedViewPercentages = new int[] { 70, 100 };
 
         // Define editor gradient for deactivated window using same OS title
         // gradient colors.
-        deactivatedEditorGradient = new Color[] { clr1, clr2, null, null};
-        deactivatedEditorPercentages = new int[] { 70, 95, 100};
+        deactivatedEditorGradient = new Color[] { clr1, clr2, null, null };
+        deactivatedEditorPercentages = new int[] { 70, 95, 100 };
 
         // Preload.
         getSystemColor(SWT.COLOR_WIDGET_FOREGROUND);

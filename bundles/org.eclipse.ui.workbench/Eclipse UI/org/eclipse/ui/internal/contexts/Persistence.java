@@ -41,7 +41,7 @@ final class Persistence {
     final static String TAG_PARENT = "parent"; //$NON-NLS-1$
 
     final static String TAG_PARENT_ID = "parentId"; //$NON-NLS-1$
-    
+
     /**
      * Equivalent to <code>TAG_PARENT_ID</code>.
      * 
@@ -54,14 +54,15 @@ final class Persistence {
 
     static ContextDefinition readContextDefinition(IMemento memento,
             String sourceIdOverride) {
-        if (memento == null) throw new NullPointerException();
+        if (memento == null)
+            throw new NullPointerException();
 
         String id = memento.getString(TAG_ID);
         String name = memento.getString(TAG_NAME);
         String parentId = memento.getString(TAG_PARENT_ID);
         String sourceId = sourceIdOverride != null ? sourceIdOverride : memento
                 .getString(TAG_SOURCE_ID);
-        
+
         /* TODO DEPRECATED Support for the old "commands" extension point way
          * of specifying parents, and for the old "acceleratorScopes" extension
          * point way of specifying parents.
@@ -75,17 +76,19 @@ final class Persistence {
             parentId = memento.getString(TAG_PARENT);
         }
         // TODO DEPRECATED END
-        
+
         return new ContextDefinition(id, name, parentId, sourceId);
     }
 
     static List readContextDefinitions(IMemento memento, String name,
             String sourceIdOverride) {
-        if (memento == null || name == null) throw new NullPointerException();
+        if (memento == null || name == null)
+            throw new NullPointerException();
 
         IMemento[] mementos = memento.getChildren(name);
 
-        if (mementos == null) throw new NullPointerException();
+        if (mementos == null)
+            throw new NullPointerException();
 
         List list = new ArrayList(mementos.length);
 
@@ -98,7 +101,7 @@ final class Persistence {
     static void writeContextDefinition(IMemento memento,
             ContextDefinition contextDefinition) {
         if (memento == null || contextDefinition == null)
-                throw new NullPointerException();
+            throw new NullPointerException();
 
         memento.putString(TAG_ID, contextDefinition.getId());
         memento.putString(TAG_NAME, contextDefinition.getName());
@@ -109,7 +112,7 @@ final class Persistence {
     static void writeContextDefinitions(IMemento memento, String name,
             List contextDefinitions) {
         if (memento == null || name == null || contextDefinitions == null)
-                throw new NullPointerException();
+            throw new NullPointerException();
 
         contextDefinitions = new ArrayList(contextDefinitions);
         Iterator iterator = contextDefinitions.iterator();

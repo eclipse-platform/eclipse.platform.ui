@@ -41,82 +41,83 @@ package org.eclipse.ui.commands;
  */
 public interface IKeyConfiguration extends Comparable {
 
-	/**
-	 * Registers an instance of <code>IKeyConfigurationListener</code> to
-	 * listen for changes to attributes of this instance.
-	 * 
-	 * @param keyConfigurationListener
-	 *            the instance of <code>IKeyConfigurationListener</code> to
-	 *            register. Must not be <code>null</code>. If an attempt is
-	 *            made to register an instance of <code>IKeyConfigurationListener</code>
-	 *            which is already registered with this instance, no operation
-	 *            is performed.
-	 */
-	void addKeyConfigurationListener(IKeyConfigurationListener keyConfigurationListener);
+    /**
+     * Registers an instance of <code>IKeyConfigurationListener</code> to
+     * listen for changes to attributes of this instance.
+     * 
+     * @param keyConfigurationListener
+     *            the instance of <code>IKeyConfigurationListener</code> to
+     *            register. Must not be <code>null</code>. If an attempt is
+     *            made to register an instance of <code>IKeyConfigurationListener</code>
+     *            which is already registered with this instance, no operation
+     *            is performed.
+     */
+    void addKeyConfigurationListener(
+            IKeyConfigurationListener keyConfigurationListener);
 
-	/**
-	 * <p>
-	 * Returns the description of the key configuration represented by this
-	 * handle, suitable for display to the user.
-	 * </p>
-	 * <p>
-	 * Notification is sent to all registered listeners if this attribute
-	 * changes.
-	 * </p>
-	 * 
-	 * @return the description of the key configuration represented by this
-	 *         handle. Guaranteed not to be <code>null</code>.
-	 * @throws NotDefinedException
-	 *             if the key configuration represented by this handle is not
-	 *             defined.
-	 */
-	String getDescription() throws NotDefinedException;
+    /**
+     * <p>
+     * Returns the description of the key configuration represented by this
+     * handle, suitable for display to the user.
+     * </p>
+     * <p>
+     * Notification is sent to all registered listeners if this attribute
+     * changes.
+     * </p>
+     * 
+     * @return the description of the key configuration represented by this
+     *         handle. Guaranteed not to be <code>null</code>.
+     * @throws NotDefinedException
+     *             if the key configuration represented by this handle is not
+     *             defined.
+     */
+    String getDescription() throws NotDefinedException;
 
-	/**
+    /**
      * Returns the identifier of this handle.
      * 
      * @return the identifier of this handle. Guaranteed not to be
      *         <code>null</code>.
      */
-	String getId();
+    String getId();
 
-	/**
-	 * <p>
-	 * Returns the name of the key configuration represented by this handle,
-	 * suitable for display to the user.
-	 * </p>
-	 * <p>
-	 * Notification is sent to all registered listeners if this attribute
-	 * changes.
-	 * </p>
-	 * 
-	 * @return the name of the key configuration represented by this handle.
-	 *         Guaranteed not to be <code>null</code>.
-	 * @throws NotDefinedException
-	 *             if the key configuration represented by this handle is not
-	 *             defined.
-	 */
-	String getName() throws NotDefinedException;
+    /**
+     * <p>
+     * Returns the name of the key configuration represented by this handle,
+     * suitable for display to the user.
+     * </p>
+     * <p>
+     * Notification is sent to all registered listeners if this attribute
+     * changes.
+     * </p>
+     * 
+     * @return the name of the key configuration represented by this handle.
+     *         Guaranteed not to be <code>null</code>.
+     * @throws NotDefinedException
+     *             if the key configuration represented by this handle is not
+     *             defined.
+     */
+    String getName() throws NotDefinedException;
 
-	/**
-	 * <p>
-	 * Returns the identifier of the parent of the key configuration
-	 * represented by this handle.
-	 * </p>
-	 * <p>
-	 * Notification is sent to all registered listeners if this attribute
-	 * changes.
-	 * </p>
-	 * 
-	 * @return the identifier of the parent of the key configuration
-	 *         represented by this handle. May be <code>null</code>.
-	 * @throws NotDefinedException
-	 *             if the key configuration represented by this handle is not
-	 *             defined.
-	 */
-	String getParentId() throws NotDefinedException;
+    /**
+     * <p>
+     * Returns the identifier of the parent of the key configuration
+     * represented by this handle.
+     * </p>
+     * <p>
+     * Notification is sent to all registered listeners if this attribute
+     * changes.
+     * </p>
+     * 
+     * @return the identifier of the parent of the key configuration
+     *         represented by this handle. May be <code>null</code>.
+     * @throws NotDefinedException
+     *             if the key configuration represented by this handle is not
+     *             defined.
+     */
+    String getParentId() throws NotDefinedException;
 
-	/**
+    /**
      * <p>
      * Returns whether or not this command is active. Instances of
      * <code>ICommand</code> are activated and deactivated by the instance of
@@ -129,24 +130,24 @@ public interface IKeyConfiguration extends Comparable {
      * 
      * @return <code>true</code>, iff this command is active.
      */
-	boolean isActive();
+    boolean isActive();
 
-	/**
-	 * <p>
-	 * Returns whether or not the key configuration represented by this handle
-	 * is defined.
-	 * </p>
-	 * <p>
-	 * Notification is sent to all registered listeners if this attribute
-	 * changes.
-	 * </p>
-	 * 
-	 * @return <code>true</code>, iff the key configuration represented by
-	 *         this handle is defined.
-	 */
-	boolean isDefined();
+    /**
+     * <p>
+     * Returns whether or not the key configuration represented by this handle
+     * is defined.
+     * </p>
+     * <p>
+     * Notification is sent to all registered listeners if this attribute
+     * changes.
+     * </p>
+     * 
+     * @return <code>true</code>, iff the key configuration represented by
+     *         this handle is defined.
+     */
+    boolean isDefined();
 
-	/**
+    /**
      * Unregisters an instance of <code>IKeyConfigurationListener</code>
      * listening for changes to attributes of this instance.
      * 
@@ -157,5 +158,6 @@ public interface IKeyConfiguration extends Comparable {
      *            <code>IKeyConfigurationListener</code> which is not already
      *            registered with this instance, no operation is performed.
      */
-	void removeKeyConfigurationListener(IKeyConfigurationListener keyConfigurationListener);
+    void removeKeyConfigurationListener(
+            IKeyConfigurationListener keyConfigurationListener);
 }

@@ -17,33 +17,35 @@ import org.eclipse.ui.presentations.IStackPresentationSite;
 public class SystemMenuMove extends MenuManager {
 
     private IStackPresentationSite stackPresentationSite;
+
     private String movePart;
-    
+
     private SystemMenuMovePane movePaneAction;
+
     private SystemMenuMoveFolder moveFolderAction;
-        
-    public SystemMenuMove(IStackPresentationSite stackPresentationSite, String partName) {
-    	super(WorkbenchMessages.getString("PartPane.move")); //$NON-NLS-1$
+
+    public SystemMenuMove(IStackPresentationSite stackPresentationSite,
+            String partName) {
+        super(WorkbenchMessages.getString("PartPane.move")); //$NON-NLS-1$
         this.stackPresentationSite = stackPresentationSite;
         this.movePart = partName;
-        
+
         movePaneAction = new SystemMenuMovePane(stackPresentationSite);
         movePaneAction.setText(partName);
         moveFolderAction = new SystemMenuMoveFolder(stackPresentationSite);
-        
-        
+
         add(movePaneAction);
         add(moveFolderAction);
     }
-   
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.MenuManager#update(boolean, boolean)
-	 */
-	protected void update(boolean force, boolean recursive) {
-    	movePaneAction.update();
-    	moveFolderAction.update();
 
-		super.update(force, recursive);
-	}
-	
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.action.MenuManager#update(boolean, boolean)
+     */
+    protected void update(boolean force, boolean recursive) {
+        movePaneAction.update();
+        moveFolderAction.update();
+
+        super.update(force, recursive);
+    }
+
 }

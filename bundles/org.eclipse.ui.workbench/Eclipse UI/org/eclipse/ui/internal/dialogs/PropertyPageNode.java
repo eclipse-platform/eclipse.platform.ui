@@ -26,44 +26,50 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * without loading the page itself, thus loading the contributing plugin.
  * Only when the user selects the page will it be loaded.
  */
-public class PropertyPageNode extends PreferenceNode implements IPluginContribution {
+public class PropertyPageNode extends PreferenceNode implements
+        IPluginContribution {
     private RegistryPageContributor contributor;
+
     private IWorkbenchPropertyPage page;
+
     private Image icon;
+
     private IAdaptable element;
-    
+
     /**
-	 * PropertyPageNode constructor.
-	 */
-    public PropertyPageNode(RegistryPageContributor contributor, IAdaptable element) {
+     * PropertyPageNode constructor.
+     */
+    public PropertyPageNode(RegistryPageContributor contributor,
+            IAdaptable element) {
         super(contributor.getPageId());
         this.contributor = contributor;
         this.element = element;
     }
-    
+
     /**
-	 * Creates the preference page this node stands for. If the page is null,
+     * Creates the preference page this node stands for. If the page is null,
      * it will be created by loading the class. If loading fails,
      * empty filler page will be created instead.
-	 */
+     */
     public void createPage() {
         try {
             page = contributor.createPage(element);
-	} catch (CoreException e) {
+        } catch (CoreException e) {
             // Just inform the user about the error. The details are
             // written to the log by now.
-		ErrorDialog.openError(
-			(Shell)null, 
-			WorkbenchMessages.getString("PropertyPageNode.errorTitle"),  //$NON-NLS-1$
-            WorkbenchMessages.getString("PropertyPageNode.errorMessage"), //$NON-NLS-1$
-            e.getStatus());
+            ErrorDialog.openError((Shell) null, WorkbenchMessages
+                    .getString("PropertyPageNode.errorTitle"), //$NON-NLS-1$
+                    WorkbenchMessages
+                            .getString("PropertyPageNode.errorMessage"), //$NON-NLS-1$
+                    e.getStatus());
             page = new EmptyPropertyPage();
         }
         setPage(page);
     }
-   /** (non-Javadoc)
+
+    /** (non-Javadoc)
      * Method declared on IPreferenceNode.
-	 */
+     */
     public void disposeResources() {
 
         if (page != null) {
@@ -75,10 +81,10 @@ public class PropertyPageNode extends PreferenceNode implements IPluginContribut
             icon = null;
         }
     }
-    
+
     /**
-	 * Returns page icon, if defined.
-	 */
+     * Returns page icon, if defined.
+     */
     public Image getLabelImage() {
         if (icon == null) {
             ImageDescriptor desc = contributor.getPageIcon();
@@ -88,32 +94,32 @@ public class PropertyPageNode extends PreferenceNode implements IPluginContribut
         }
         return icon;
     }
-    
+
     /**
-	 * Returns page label as defined in the registry.
-	 */
+     * Returns page label as defined in the registry.
+     */
     public String getLabelText() {
         return contributor.getPageName();
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.activities.support.IPluginContribution#fromPlugin()
-	 */
-	public boolean fromPlugin() {
-		return true;
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.activities.support.IPluginContribution#fromPlugin()
+     */
+    public boolean fromPlugin() {
+        return true;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.activities.support.IPluginContribution#getLocalId()
-	 */
-	public String getLocalId() {
-		return getId();
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.activities.support.IPluginContribution#getLocalId()
+     */
+    public String getLocalId() {
+        return getId();
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.activities.support.IPluginContribution#getPluginId()
-	 */
-	public String getPluginId() {
-		return contributor.getPluginId();
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.activities.support.IPluginContribution#getPluginId()
+     */
+    public String getPluginId() {
+        return contributor.getPluginId();
+    }
 }

@@ -17,41 +17,42 @@ import org.eclipse.ui.internal.dnd.TestDropLocation;
  * @since 3.0
  */
 public class EditorDragSource extends TestDragSource {
-	
-	int editorIdx;
-	boolean wholeFolder;
-	
-	/**
-	 * @param editor
-	 * @param wholeFolder
-	 */
-	public EditorDragSource(int editorIdx, boolean wholeFolder) {
-		super();
-		this.editorIdx = editorIdx;
-		this.wholeFolder = wholeFolder;
-	}
-	
-	IEditorPart getPart() {
-		return getPage().getEditors()[editorIdx];
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.tests.dnd.TestDragSource#getName()
-	 */
-	public String toString() {
-		String title = "editor " + editorIdx;
-		
-		if (wholeFolder) {
-			return title + " folder";
-		}
-		return title;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.tests.dnd.TestDragSource#drag(org.eclipse.swt.graphics.Point)
-	 */
-	public void drag(TestDropLocation target) {
-		DragOperations.drag(getPart(), target, wholeFolder);
-	}
-	
+
+    int editorIdx;
+
+    boolean wholeFolder;
+
+    /**
+     * @param editor
+     * @param wholeFolder
+     */
+    public EditorDragSource(int editorIdx, boolean wholeFolder) {
+        super();
+        this.editorIdx = editorIdx;
+        this.wholeFolder = wholeFolder;
+    }
+
+    IEditorPart getPart() {
+        return getPage().getEditors()[editorIdx];
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.tests.dnd.TestDragSource#getName()
+     */
+    public String toString() {
+        String title = "editor " + editorIdx;
+
+        if (wholeFolder) {
+            return title + " folder";
+        }
+        return title;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.tests.dnd.TestDragSource#drag(org.eclipse.swt.graphics.Point)
+     */
+    public void drag(TestDropLocation target) {
+        DragOperations.drag(getPart(), target, wholeFolder);
+    }
+
 }

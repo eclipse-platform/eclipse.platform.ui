@@ -48,7 +48,7 @@ import org.eclipse.ui.internal.themes.ColorUtils;
  */
 public class RGBBlendColorFactory implements IColorFactory,
         IExecutableExtension {
-    
+
     private String color1, color2;
 
     /* (non-Javadoc)
@@ -56,15 +56,12 @@ public class RGBBlendColorFactory implements IColorFactory,
      */
     public RGB createColor() {
         if (color1 == null && color2 == null) {
-            return new RGB(0,0,0);
-        }
-        else if (color1 != null && color2 == null) {
+            return new RGB(0, 0, 0);
+        } else if (color1 != null && color2 == null) {
             return ColorUtils.getColorValue(color1);
-        }
-        else if (color1 == null && color2 != null) {
+        } else if (color1 == null && color2 != null) {
             return ColorUtils.getColorValue(color2);
-        }        
-        else {
+        } else {
             RGB rgb1 = ColorUtils.getColorValue(color1);
             RGB rgb2 = ColorUtils.getColorValue(color2);
             return ColorUtils.blend(rgb1, rgb2);
@@ -82,9 +79,9 @@ public class RGBBlendColorFactory implements IColorFactory,
      */
     public void setInitializationData(IConfigurationElement config,
             String propertyName, Object data) throws CoreException {
-        
+
         if (data instanceof Hashtable) {
-            Hashtable table = (Hashtable)data;
+            Hashtable table = (Hashtable) data;
             color1 = (String) table.get("color1"); //$NON-NLS-1$
             color2 = (String) table.get("color2"); //$NON-NLS-1$            
         }

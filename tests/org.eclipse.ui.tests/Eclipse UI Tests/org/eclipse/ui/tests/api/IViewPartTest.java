@@ -20,27 +20,26 @@ import org.eclipse.ui.IWorkbenchPage;
  */
 public class IViewPartTest extends IWorkbenchPartTest {
 
-	/**
-	 * Constructor for IEditorPartTest
-	 */
-	public IViewPartTest(String testName) {
-		super(testName);
-	}
+    /**
+     * Constructor for IEditorPartTest
+     */
+    public IViewPartTest(String testName) {
+        super(testName);
+    }
 
-	/**
-	 * @see IWorkbenchPartTest#openPart(IWorkbenchPage)
-	 */
-	protected MockPart openPart(IWorkbenchPage page) throws Throwable {
-		return (MockWorkbenchPart)page.showView(MockViewPart.ID);
-	}
+    /**
+     * @see IWorkbenchPartTest#openPart(IWorkbenchPage)
+     */
+    protected MockPart openPart(IWorkbenchPage page) throws Throwable {
+        return (MockWorkbenchPart) page.showView(MockViewPart.ID);
+    }
 
-	/**
-	 * @see IWorkbenchPartTest#closePart(IWorkbenchPage, MockWorkbenchPart)
-	 */
-	protected void closePart(IWorkbenchPage page, MockPart part)
-		throws Throwable 
-	{
-		page.hideView((IViewPart)part);
-	}
+    /**
+     * @see IWorkbenchPartTest#closePart(IWorkbenchPage, MockWorkbenchPart)
+     */
+    protected void closePart(IWorkbenchPage page, MockPart part)
+            throws Throwable {
+        page.hideView((IViewPart) part);
+    }
 }
 

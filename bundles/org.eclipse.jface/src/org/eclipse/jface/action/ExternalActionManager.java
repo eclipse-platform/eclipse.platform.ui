@@ -145,7 +145,8 @@ public final class ExternalActionManager {
      * @return The singleton instance; this value is never <code>null</code>.
      */
     public static ExternalActionManager getInstance() {
-        if (instance == null) instance = new ExternalActionManager();
+        if (instance == null)
+            instance = new ExternalActionManager();
 
         return instance;
     }

@@ -14,22 +14,22 @@ package org.eclipse.ui.views.markers.internal;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.window.Window;
 
-
 public class TableSortAction extends Action {
-	
-	private TableView view;
-	private TableSortDialog dialog;
-	
-	public TableSortAction(TableView view, TableSortDialog dialog) {
-		super(Messages.getString("sortAction.title")); //$NON-NLS-1$
-		this.view = view;
-		this.dialog = dialog;
-		setEnabled(true);
-	}
 
-	public void run() {
-		if (dialog.open() == Window.OK && dialog.isDirty()) {
-			view.setSorter(dialog.getSorter());
-		}
-	}
+    private TableView view;
+
+    private TableSortDialog dialog;
+
+    public TableSortAction(TableView view, TableSortDialog dialog) {
+        super(Messages.getString("sortAction.title")); //$NON-NLS-1$
+        this.view = view;
+        this.dialog = dialog;
+        setEnabled(true);
+    }
+
+    public void run() {
+        if (dialog.open() == Window.OK && dialog.isDirty()) {
+            view.setSorter(dialog.getSorter());
+        }
+    }
 }

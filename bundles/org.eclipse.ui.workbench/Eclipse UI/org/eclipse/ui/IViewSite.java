@@ -19,20 +19,20 @@ package org.eclipse.ui;
  */
 public interface IViewSite extends IWorkbenchPartSite {
 
-	/**
-	 * Returns the action bars for this part site.
-	 * Views have exclusive use of their site's action bars.
-	 *
-	 * @return the action bars
-	 */
-	public IActionBars getActionBars();
-	
-	/**
-	 * Returns the secondary id for this part site's part,
-	 * or <code>null</code> if it has none.
-	 * 
-	 * @see IWorkbenchPage#showView(String, String, int)
+    /**
+     * Returns the action bars for this part site.
+     * Views have exclusive use of their site's action bars.
+     *
+     * @return the action bars
+     */
+    public IActionBars getActionBars();
+
+    /**
+     * Returns the secondary id for this part site's part,
+     * or <code>null</code> if it has none.
+     * 
+     * @see IWorkbenchPage#showView(String, String, int)
      * @since 3.0
-	 */
-	public String getSecondaryId();
+     */
+    public String getSecondaryId();
 }

@@ -17,7 +17,6 @@ import java.util.Set;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-
 import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.ICategory;
@@ -37,84 +36,87 @@ import org.eclipse.ui.activities.ICategoryActivityBinding;
  */
 public class ActivityCategoryContentProvider implements ITreeContentProvider {
 
-	/**
-	 * The manager to extract content from.
-	 */
-	private IActivityManager manager;
+    /**
+     * The manager to extract content from.
+     */
+    private IActivityManager manager;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-	 */
-	public void dispose() {
-		manager = null;
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.IContentProvider#dispose()
+     */
+    public void dispose() {
+        manager = null;
+    }
 
-	/**
-	 * @param category the category to fetch.
-	 * @return all activities in the category.
-	 */
-	private IActivity[] getCategoryActivities(ICategory category) {
-		Set activityBindings = category.getCategoryActivityBindings();
-		List categoryActivities = new ArrayList(activityBindings.size());
-		for (Iterator j = activityBindings.iterator(); j.hasNext();) {
-			ICategoryActivityBinding binding = (ICategoryActivityBinding) j.next();
-			String activityId = binding.getActivityId();
-			IActivity activity = manager.getActivity(activityId);
-			if (activity.isDefined()) {
-				categoryActivities.add(new CategorizedActivity(category, activity));
-			}
-		}
-		return (IActivity[]) categoryActivities.toArray(new IActivity[categoryActivities.size()]);
-	}
+    /**
+     * @param category the category to fetch.
+     * @return all activities in the category.
+     */
+    private IActivity[] getCategoryActivities(ICategory category) {
+        Set activityBindings = category.getCategoryActivityBindings();
+        List categoryActivities = new ArrayList(activityBindings.size());
+        for (Iterator j = activityBindings.iterator(); j.hasNext();) {
+            ICategoryActivityBinding binding = (ICategoryActivityBinding) j
+                    .next();
+            String activityId = binding.getActivityId();
+            IActivity activity = manager.getActivity(activityId);
+            if (activity.isDefined()) {
+                categoryActivities.add(new CategorizedActivity(category,
+                        activity));
+            }
+        }
+        return (IActivity[]) categoryActivities
+                .toArray(new IActivity[categoryActivities.size()]);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
-	 */
-	public Object[] getChildren(Object parentElement) {
-		if (parentElement instanceof IActivityManager) {
-			Set categoryIds = manager.getDefinedCategoryIds();
-			ArrayList categories = new ArrayList(categoryIds.size());
-			for (Iterator i = categoryIds.iterator(); i.hasNext();) {
-				String categoryId = (String) i.next();
-				categories.add(manager.getCategory(categoryId));
-			}
-			return categories.toArray();
-		} else if (parentElement instanceof ICategory) {
-			return getCategoryActivities((ICategory) parentElement);
-		}
-		return new Object[0];
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
+     */
+    public Object[] getChildren(Object parentElement) {
+        if (parentElement instanceof IActivityManager) {
+            Set categoryIds = manager.getDefinedCategoryIds();
+            ArrayList categories = new ArrayList(categoryIds.size());
+            for (Iterator i = categoryIds.iterator(); i.hasNext();) {
+                String categoryId = (String) i.next();
+                categories.add(manager.getCategory(categoryId));
+            }
+            return categories.toArray();
+        } else if (parentElement instanceof ICategory) {
+            return getCategoryActivities((ICategory) parentElement);
+        }
+        return new Object[0];
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-	 */
-	public Object[] getElements(Object inputElement) {
-		return getChildren(inputElement);
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+     */
+    public Object[] getElements(Object inputElement) {
+        return getChildren(inputElement);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
-	 */
-	public Object getParent(Object element) {
-		if (element instanceof CategorizedActivity) {
-			return ((CategorizedActivity) element).getCategory();
-		}
-		return null;
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
+     */
+    public Object getParent(Object element) {
+        if (element instanceof CategorizedActivity) {
+            return ((CategorizedActivity) element).getCategory();
+        }
+        return null;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
-	 */
-	public boolean hasChildren(Object element) {
-		if (element instanceof IActivityManager || element instanceof ICategory)
-			return true;
-		return false;
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
+     */
+    public boolean hasChildren(Object element) {
+        if (element instanceof IActivityManager || element instanceof ICategory)
+            return true;
+        return false;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-	 */
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		manager = (IActivityManager) newInput;
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+     */
+    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+        manager = (IActivityManager) newInput;
+    }
 }

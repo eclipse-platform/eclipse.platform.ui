@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui;
 
-
 /**
  * Interface for creation wizards.
  * <p>

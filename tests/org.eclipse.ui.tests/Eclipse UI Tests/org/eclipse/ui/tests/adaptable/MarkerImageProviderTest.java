@@ -23,45 +23,46 @@ import org.eclipse.ui.tests.util.UITestCase;
  */
 public class MarkerImageProviderTest extends UITestCase {
 
-	public MarkerImageProviderTest(String testName) {
-		super(testName);
-	}
-	
-	/**
-	 * Tests the static form of the extension, where just a file path is given.
-	 */
-	public void testStatic() {
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IMarker marker = null;
-		try {
-			marker = workspace.getRoot().createMarker("org.eclipse.ui.tests.testmarker"); //$NON-NLS-1$
-		}
-		catch (CoreException e) {
-			fail(e.getMessage());
-		}
-		IWorkbenchAdapter adapter = (IWorkbenchAdapter) marker.getAdapter(IWorkbenchAdapter.class);
-		ImageDescriptor imageDesc = adapter.getImageDescriptor(marker);
-		assertNotNull(imageDesc);
-		assertTrue(imageDesc.toString().indexOf("anything") != -1); //$NON-NLS-1$
-	}
-	
-	/**
-	 * Tests the dynamic form of the extension, where an IMarkerImageProvider class is given.
-	 */
-	public void testDynamic() {
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IMarker marker = null;
-		try {
-			marker = workspace.getRoot().createMarker("org.eclipse.ui.tests.testmarker2"); //$NON-NLS-1$
-		}
-		catch (CoreException e) {
-			fail(e.getMessage());
-		}
-		IWorkbenchAdapter adapter = (IWorkbenchAdapter) marker.getAdapter(IWorkbenchAdapter.class);
-		ImageDescriptor imageDesc = adapter.getImageDescriptor(marker);
-		assertNotNull(imageDesc);
-		assertTrue(imageDesc.toString().indexOf("dynamic") != -1); //$NON-NLS-1$
-	}
-	
-	
+    public MarkerImageProviderTest(String testName) {
+        super(testName);
+    }
+
+    /**
+     * Tests the static form of the extension, where just a file path is given.
+     */
+    public void testStatic() {
+        IWorkspace workspace = ResourcesPlugin.getWorkspace();
+        IMarker marker = null;
+        try {
+            marker = workspace.getRoot().createMarker(
+                    "org.eclipse.ui.tests.testmarker"); //$NON-NLS-1$
+        } catch (CoreException e) {
+            fail(e.getMessage());
+        }
+        IWorkbenchAdapter adapter = (IWorkbenchAdapter) marker
+                .getAdapter(IWorkbenchAdapter.class);
+        ImageDescriptor imageDesc = adapter.getImageDescriptor(marker);
+        assertNotNull(imageDesc);
+        assertTrue(imageDesc.toString().indexOf("anything") != -1); //$NON-NLS-1$
+    }
+
+    /**
+     * Tests the dynamic form of the extension, where an IMarkerImageProvider class is given.
+     */
+    public void testDynamic() {
+        IWorkspace workspace = ResourcesPlugin.getWorkspace();
+        IMarker marker = null;
+        try {
+            marker = workspace.getRoot().createMarker(
+                    "org.eclipse.ui.tests.testmarker2"); //$NON-NLS-1$
+        } catch (CoreException e) {
+            fail(e.getMessage());
+        }
+        IWorkbenchAdapter adapter = (IWorkbenchAdapter) marker
+                .getAdapter(IWorkbenchAdapter.class);
+        ImageDescriptor imageDesc = adapter.getImageDescriptor(marker);
+        assertNotNull(imageDesc);
+        assertTrue(imageDesc.toString().indexOf("dynamic") != -1); //$NON-NLS-1$
+    }
+
 }

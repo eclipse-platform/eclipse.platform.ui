@@ -19,50 +19,42 @@ import org.eclipse.ui.keys.ModifierKey;
 
 public final class WindowsKeyFormatter extends AbstractKeyFormatter {
 
-	private final static class WindowsModifierKeyComparator
-		extends AbstractModifierKeyComparator {
+    private final static class WindowsModifierKeyComparator extends
+            AbstractModifierKeyComparator {
 
-		protected int rank(ModifierKey modifierKey) {
-			if (ModifierKey.CTRL.equals(modifierKey)) {
-				return 0;
-			}
+        protected int rank(ModifierKey modifierKey) {
+            if (ModifierKey.CTRL.equals(modifierKey)) {
+                return 0;
+            }
 
-			if (ModifierKey.ALT.equals(modifierKey)) {
-				return 1;
-			}
+            if (ModifierKey.ALT.equals(modifierKey)) {
+                return 1;
+            }
 
-			if (ModifierKey.SHIFT.equals(modifierKey)) {
-				return 2;
-			}
+            if (ModifierKey.SHIFT.equals(modifierKey)) {
+                return 2;
+            }
 
-			return Integer.MAX_VALUE;
-		}
-	}
+            return Integer.MAX_VALUE;
+        }
+    }
 
-	private final static Comparator MODIFIER_KEY_COMPARATOR =
-		new WindowsModifierKeyComparator();
-	private final static ResourceBundle RESOURCE_BUNDLE =
-		ResourceBundle.getBundle(WindowsKeyFormatter.class.getName());
+    private final static Comparator MODIFIER_KEY_COMPARATOR = new WindowsModifierKeyComparator();
 
-	protected String getKeyDelimiter() {
-		return Util.translateString(
-			RESOURCE_BUNDLE,
-			KEY_DELIMITER_KEY,
-			KeyStroke.KEY_DELIMITER,
-			false,
-			false);
-	}
+    private final static ResourceBundle RESOURCE_BUNDLE = ResourceBundle
+            .getBundle(WindowsKeyFormatter.class.getName());
 
-	protected String getKeyStrokeDelimiter() {
-		return Util.translateString(
-			RESOURCE_BUNDLE,
-			KEY_STROKE_DELIMITER_KEY,
-			KeySequence.KEY_STROKE_DELIMITER,
-			false,
-			false);
-	}
+    protected String getKeyDelimiter() {
+        return Util.translateString(RESOURCE_BUNDLE, KEY_DELIMITER_KEY,
+                KeyStroke.KEY_DELIMITER, false, false);
+    }
 
-	protected Comparator getModifierKeyComparator() {
-		return MODIFIER_KEY_COMPARATOR;
-	}
+    protected String getKeyStrokeDelimiter() {
+        return Util.translateString(RESOURCE_BUNDLE, KEY_STROKE_DELIMITER_KEY,
+                KeySequence.KEY_STROKE_DELIMITER, false, false);
+    }
+
+    protected Comparator getModifierKeyComparator() {
+        return MODIFIER_KEY_COMPARATOR;
+    }
 }

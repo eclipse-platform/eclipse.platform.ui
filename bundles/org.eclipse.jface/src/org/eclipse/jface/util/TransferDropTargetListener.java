@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jface.util;
 
-import org.eclipse.swt.dnd.*;
+import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.dnd.DropTargetListener;
+import org.eclipse.swt.dnd.Transfer;
 
 /**
  * A <code>TransferDropTargetListener</code> is a <code>DropTragetListener</code> 
@@ -26,32 +28,33 @@ import org.eclipse.swt.dnd.*;
  * separately for unrelated types of drags. <code>DelegatingDropAdapter</code> then 
  * combines the function of each <code>TransferDropTargetListener</code>, while 
  * allowing them to be implemented as if they were the only <code>DragSourceListener</code>.
-  * <p>
+ * <p>
  * NOTE: This API is experimental and subject to change including removal.
  * </p>
  * @since 2.2
-*/
+ */
 public interface TransferDropTargetListener extends DropTargetListener {
-	/**
-	 * Returns the <code>Transfer</code> type that this listener can 
-	 * accept a drop operation for.
-	 * 
-	 * @return the <code>Transfer</code> for this listener
-	 */
-	Transfer getTransfer();
-	/**
-	 * Returns <code>true</code> if this listener can handle the drop
-	 * based on the given <code>DropTargetEvent</code>.
-	 * <p>
-	 * This method is called by the <code>DelegatingDropAdapter</code> only
-	 * if the <code>DropTargetEvent</code> contains a transfer data type
-	 * supported by this listener. The <code>Transfer</code> returned by the 
-	 * <code>#getTransfer()</code> method is used for this purpose.
-	 * </p>
-	 * 
-	 * @param event the drop target event
-	 * @return <code>true</code> if the listener is enabled for the given
-	 * 	drop target event.
-	 */
-	boolean isEnabled(DropTargetEvent event);
+    /**
+     * Returns the <code>Transfer</code> type that this listener can 
+     * accept a drop operation for.
+     * 
+     * @return the <code>Transfer</code> for this listener
+     */
+    Transfer getTransfer();
+
+    /**
+     * Returns <code>true</code> if this listener can handle the drop
+     * based on the given <code>DropTargetEvent</code>.
+     * <p>
+     * This method is called by the <code>DelegatingDropAdapter</code> only
+     * if the <code>DropTargetEvent</code> contains a transfer data type
+     * supported by this listener. The <code>Transfer</code> returned by the 
+     * <code>#getTransfer()</code> method is used for this purpose.
+     * </p>
+     * 
+     * @param event the drop target event
+     * @return <code>true</code> if the listener is enabled for the given
+     * 	drop target event.
+     */
+    boolean isEnabled(DropTargetEvent event);
 }

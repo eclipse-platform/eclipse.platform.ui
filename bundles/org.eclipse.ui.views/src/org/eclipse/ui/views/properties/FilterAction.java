@@ -16,26 +16,27 @@ import org.eclipse.ui.help.WorkbenchHelp;
 /**
  * This action hides or shows expert properties in the <code>PropertySheetViewer</code>.
  */
-/*package*/ class FilterAction extends PropertySheetAction {
-/**
- * Create the Filter action. This action is used to show
- * or hide expert properties.
- */
-public FilterAction(PropertySheetViewer viewer, String name) {
-	super(viewer, name);
-	WorkbenchHelp.setHelp(this, IPropertiesHelpContextIds.FILTER_ACTION);
-}
-/**
- * Toggle the display of expert properties.
- */
+/*package*/class FilterAction extends PropertySheetAction {
+    /**
+     * Create the Filter action. This action is used to show
+     * or hide expert properties.
+     */
+    public FilterAction(PropertySheetViewer viewer, String name) {
+        super(viewer, name);
+        WorkbenchHelp.setHelp(this, IPropertiesHelpContextIds.FILTER_ACTION);
+    }
 
-public void run() {
-	PropertySheetViewer ps = getPropertySheet();
-	ps.deactivateCellEditor();
-	if (isChecked()) {
-		ps.showExpert();
-	} else {
-		ps.hideExpert();
-	}
-}
+    /**
+     * Toggle the display of expert properties.
+     */
+
+    public void run() {
+        PropertySheetViewer ps = getPropertySheet();
+        ps.deactivateCellEditor();
+        if (isChecked()) {
+            ps.showExpert();
+        } else {
+            ps.hideExpert();
+        }
+    }
 }

@@ -105,16 +105,17 @@ public final class CommandEvent {
             boolean descriptionChanged, boolean handledChanged,
             boolean keySequenceBindingsChanged, boolean nameChanged,
             Map previousAttributeValuesByName) {
-        if (command == null) throw new NullPointerException();
+        if (command == null)
+            throw new NullPointerException();
 
         if (!attributeValuesByNameChanged
                 && previousAttributeValuesByName != null)
-                throw new IllegalArgumentException();
+            throw new IllegalArgumentException();
 
         if (attributeValuesByNameChanged)
-                this.previousAttributeValuesByName = Util.safeCopy(
-                        previousAttributeValuesByName, String.class,
-                        Object.class, false, true);
+            this.previousAttributeValuesByName = Util.safeCopy(
+                    previousAttributeValuesByName, String.class, Object.class,
+                    false, true);
 
         this.command = command;
         this.attributeValuesByNameChanged = attributeValuesByNameChanged;
@@ -186,7 +187,7 @@ public final class CommandEvent {
     public boolean hasHandledChanged() {
         return handledChanged;
     }
-    
+
     /**
      * Returns whether or not the name property changed.
      * 

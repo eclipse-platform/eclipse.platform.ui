@@ -15,13 +15,13 @@ import org.eclipse.ui.presentations.IStackPresentationSite;
 
 public class SystemMenuRestore extends SystemMenuStateChange {
 
-	/**
-	 * @param site
-	 * @param name
-	 * @param state
-	 */
-	public SystemMenuRestore(IStackPresentationSite site) {
-		super(site, WorkbenchMessages.getString("PartPane.restore"), //$NON-NLS-1$
-				IStackPresentationSite.STATE_RESTORED);
-	}
+    /**
+     * @param site
+     * @param name
+     * @param state
+     */
+    public SystemMenuRestore(IStackPresentationSite site) {
+        super(site, WorkbenchMessages.getString("PartPane.restore"), //$NON-NLS-1$
+                IStackPresentationSite.STATE_RESTORED);
+    }
 }

@@ -21,7 +21,6 @@ import java.util.Locale;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 
-
 /**
  * An abstract parent that describes data that can be displayed in a table in one of
  * the about dialogs.
@@ -29,12 +28,17 @@ import org.eclipse.jface.resource.ImageDescriptor;
  */
 public abstract class AboutData {
     private String providerName;
+
     private String name;
+
     private String version;
+
     private String id;
+
     private String versionedId = null;
 
-    protected AboutData(String providerName, String name, String version, String id) {
+    protected AboutData(String providerName, String name, String version,
+            String id) {
         this.providerName = providerName == null ? "" : providerName; //$NON-NLS-1$
         this.name = name == null ? "" : name; //$NON-NLS-1$
         this.version = version == null ? "" : version; //$NON-NLS-1$
@@ -56,9 +60,9 @@ public abstract class AboutData {
     public String getVersion() {
         return version;
     }
-    
+
     public String getVersionedId() {
-        if(versionedId == null)
+        if (versionedId == null)
             versionedId = getId() + "_" + getVersion(); //$NON-NLS-1$
         return versionedId;
     }
@@ -73,7 +77,7 @@ public abstract class AboutData {
         for (int i = 0; i < infos.length; ++i)
             infos[i] = (AboutData) infoList.get(i);
     }
-    
+
     /**
      * Modify the argument array to be sorted by provider. If the reverse
      * boolean is true, the array is assumed to already be sorted and the
@@ -94,6 +98,7 @@ public abstract class AboutData {
 
         Arrays.sort(infos, new Comparator() {
             Collator collator = Collator.getInstance(Locale.getDefault());
+
             public int compare(Object a, Object b) {
                 AboutData info1 = (AboutData) a;
                 AboutData info2 = (AboutData) b;
@@ -128,6 +133,7 @@ public abstract class AboutData {
 
         Arrays.sort(infos, new Comparator() {
             Collator collator = Collator.getInstance(Locale.getDefault());
+
             public int compare(Object a, Object b) {
                 AboutData info1 = (AboutData) a;
                 AboutData info2 = (AboutData) b;
@@ -156,6 +162,7 @@ public abstract class AboutData {
 
         Arrays.sort(infos, new Comparator() {
             Collator collator = Collator.getInstance(Locale.getDefault());
+
             public int compare(Object a, Object b) {
                 AboutData info1 = (AboutData) a;
                 AboutData info2 = (AboutData) b;
@@ -191,6 +198,7 @@ public abstract class AboutData {
 
         Arrays.sort(infos, new Comparator() {
             Collator collator = Collator.getInstance(Locale.getDefault());
+
             public int compare(Object a, Object b) {
                 AboutData info1 = (AboutData) a;
                 AboutData info2 = (AboutData) b;
@@ -217,11 +225,11 @@ public abstract class AboutData {
         return null;
     }
 
-	protected static ImageDescriptor getImage(URL url) {
-		return url == null ? null : ImageDescriptor.createFromURL(url);
-	}
+    protected static ImageDescriptor getImage(URL url) {
+        return url == null ? null : ImageDescriptor.createFromURL(url);
+    }
 
-	protected static ImageDescriptor getImage(String value) {
-	    return getImage(getURL(value));
-	}
+    protected static ImageDescriptor getImage(String value) {
+        return getImage(getURL(value));
+    }
 }

@@ -23,239 +23,249 @@ import org.eclipse.ui.internal.util.Util;
 
 final class KeyConfiguration implements IKeyConfiguration {
 
-	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL =
-		KeyConfiguration.class.getName().hashCode();
+    private final static int HASH_FACTOR = 89;
 
-	private boolean active;
-	private boolean defined;
-	private String description;
+    private final static int HASH_INITIAL = KeyConfiguration.class.getName()
+            .hashCode();
 
-	private transient int hashCode;
-	private transient boolean hashCodeComputed;
-	private String id;
-	private List keyConfigurationListeners;
-	private Set keyConfigurationsWithListeners;
-	private String name;
-	private String parentId;
-	private transient String string;
+    private boolean active;
 
-	KeyConfiguration(Set keyConfigurationsWithListeners, String id) {
-		if (keyConfigurationsWithListeners == null || id == null)
-			throw new NullPointerException();
+    private boolean defined;
 
-		this.keyConfigurationsWithListeners = keyConfigurationsWithListeners;
-		this.id = id;
-	}
+    private String description;
 
-	public void addKeyConfigurationListener(IKeyConfigurationListener keyConfigurationListener) {
-		if (keyConfigurationListener == null)
-			throw new NullPointerException();
+    private transient int hashCode;
 
-		if (keyConfigurationListeners == null)
-			keyConfigurationListeners = new ArrayList();
+    private transient boolean hashCodeComputed;
 
-		if (!keyConfigurationListeners.contains(keyConfigurationListener))
-			keyConfigurationListeners.add(keyConfigurationListener);
+    private String id;
 
-		keyConfigurationsWithListeners.add(this);
-	}
+    private List keyConfigurationListeners;
 
-	public int compareTo(Object object) {
-		KeyConfiguration castedObject = (KeyConfiguration) object;
-		int compareTo = Util.compare(active, castedObject.active);
+    private Set keyConfigurationsWithListeners;
 
-		if (compareTo == 0) {
-			compareTo = Util.compare(defined, castedObject.defined);
+    private String name;
 
-			if (compareTo == 0) {
-				compareTo = Util.compare(description, castedObject.description);
+    private String parentId;
 
-				if (compareTo == 0) {
-					compareTo = Util.compare(id, castedObject.id);
+    private transient String string;
 
-					if (compareTo == 0) {
-						compareTo = Util.compare(name, castedObject.name);
+    KeyConfiguration(Set keyConfigurationsWithListeners, String id) {
+        if (keyConfigurationsWithListeners == null || id == null)
+            throw new NullPointerException();
 
-						if (compareTo == 0)
-							compareTo =
-								Util.compare(parentId, castedObject.parentId);
-					}
-				}
-			}
-		}
+        this.keyConfigurationsWithListeners = keyConfigurationsWithListeners;
+        this.id = id;
+    }
 
-		return compareTo;
-	}
+    public void addKeyConfigurationListener(
+            IKeyConfigurationListener keyConfigurationListener) {
+        if (keyConfigurationListener == null)
+            throw new NullPointerException();
 
-	public boolean equals(Object object) {
-		if (!(object instanceof KeyConfiguration))
-			return false;
+        if (keyConfigurationListeners == null)
+            keyConfigurationListeners = new ArrayList();
 
-		KeyConfiguration castedObject = (KeyConfiguration) object;
-		boolean equals = true;
-		equals &= Util.equals(active, castedObject.active);
-		equals &= Util.equals(defined, castedObject.defined);
-		equals &= Util.equals(description, castedObject.description);
-		equals &= Util.equals(id, castedObject.id);
-		equals &= Util.equals(name, castedObject.name);
-		equals &= Util.equals(parentId, castedObject.parentId);
-		return equals;
-	}
+        if (!keyConfigurationListeners.contains(keyConfigurationListener))
+            keyConfigurationListeners.add(keyConfigurationListener);
 
-	void fireKeyConfigurationChanged(KeyConfigurationEvent keyConfigurationEvent) {
-		if (keyConfigurationEvent == null)
-			throw new NullPointerException();
+        keyConfigurationsWithListeners.add(this);
+    }
 
-		if (keyConfigurationListeners != null)
-			for (int i = 0; i < keyConfigurationListeners.size(); i++)
-				(
-					(IKeyConfigurationListener) keyConfigurationListeners.get(
-						i)).keyConfigurationChanged(
-					keyConfigurationEvent);
-	}
+    public int compareTo(Object object) {
+        KeyConfiguration castedObject = (KeyConfiguration) object;
+        int compareTo = Util.compare(active, castedObject.active);
 
-	public String getDescription() throws NotDefinedException {
-		if (!defined)
-			throw new NotDefinedException(
-                        "Cannot get the description from an undefined key configuration."); //$NON-NLS-1$
+        if (compareTo == 0) {
+            compareTo = Util.compare(defined, castedObject.defined);
 
-		return description;
-	}
+            if (compareTo == 0) {
+                compareTo = Util.compare(description, castedObject.description);
 
-	public String getId() {
-		return id;
-	}
+                if (compareTo == 0) {
+                    compareTo = Util.compare(id, castedObject.id);
 
-	public String getName() throws NotDefinedException {
-		if (!defined)
-			throw new NotDefinedException(
-                        "Cannot get name from an undefined key configuration."); //$NON-NLS-1$
+                    if (compareTo == 0) {
+                        compareTo = Util.compare(name, castedObject.name);
 
-		return name;
-	}
+                        if (compareTo == 0)
+                            compareTo = Util.compare(parentId,
+                                    castedObject.parentId);
+                    }
+                }
+            }
+        }
 
-	public String getParentId() throws NotDefinedException {
-		if (!defined)
-			throw new NotDefinedException(
-                        "Cannot get the parent id from an undefined key configuration."); //$NON-NLS-1$
+        return compareTo;
+    }
 
-		return parentId;
-	}
+    public boolean equals(Object object) {
+        if (!(object instanceof KeyConfiguration))
+            return false;
 
-	public int hashCode() {
-		if (!hashCodeComputed) {
-			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(active);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(defined);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(description);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(parentId);
-			hashCodeComputed = true;
-		}
+        KeyConfiguration castedObject = (KeyConfiguration) object;
+        boolean equals = true;
+        equals &= Util.equals(active, castedObject.active);
+        equals &= Util.equals(defined, castedObject.defined);
+        equals &= Util.equals(description, castedObject.description);
+        equals &= Util.equals(id, castedObject.id);
+        equals &= Util.equals(name, castedObject.name);
+        equals &= Util.equals(parentId, castedObject.parentId);
+        return equals;
+    }
 
-		return hashCode;
-	}
+    void fireKeyConfigurationChanged(KeyConfigurationEvent keyConfigurationEvent) {
+        if (keyConfigurationEvent == null)
+            throw new NullPointerException();
 
-	public boolean isActive() {
-		return active;
-	}
+        if (keyConfigurationListeners != null)
+            for (int i = 0; i < keyConfigurationListeners.size(); i++)
+                ((IKeyConfigurationListener) keyConfigurationListeners.get(i))
+                        .keyConfigurationChanged(keyConfigurationEvent);
+    }
 
-	public boolean isDefined() {
-		return defined;
-	}
+    public String getDescription() throws NotDefinedException {
+        if (!defined)
+            throw new NotDefinedException(
+                    "Cannot get the description from an undefined key configuration."); //$NON-NLS-1$
 
-	public void removeKeyConfigurationListener(IKeyConfigurationListener keyConfigurationListener) {
-		if (keyConfigurationListener == null)
-			throw new NullPointerException();
+        return description;
+    }
 
-		if (keyConfigurationListeners != null)
-			keyConfigurationListeners.remove(keyConfigurationListener);
+    public String getId() {
+        return id;
+    }
 
-		if (keyConfigurationListeners.isEmpty())
-			keyConfigurationsWithListeners.remove(this);
-	}
+    public String getName() throws NotDefinedException {
+        if (!defined)
+            throw new NotDefinedException(
+                    "Cannot get name from an undefined key configuration."); //$NON-NLS-1$
 
-	boolean setActive(boolean active) {
-		if (active != this.active) {
-			this.active = active;
-			hashCodeComputed = false;
-			hashCode = 0;
-			string = null;
-			return true;
-		}
+        return name;
+    }
 
-		return false;
-	}
+    public String getParentId() throws NotDefinedException {
+        if (!defined)
+            throw new NotDefinedException(
+                    "Cannot get the parent id from an undefined key configuration."); //$NON-NLS-1$
 
-	boolean setDefined(boolean defined) {
-		if (defined != this.defined) {
-			this.defined = defined;
-			hashCodeComputed = false;
-			hashCode = 0;
-			string = null;
-			return true;
-		}
+        return parentId;
+    }
 
-		return false;
-	}
+    public int hashCode() {
+        if (!hashCodeComputed) {
+            hashCode = HASH_INITIAL;
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(active);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(defined);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(description);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(parentId);
+            hashCodeComputed = true;
+        }
 
-	boolean setDescription(String description) {
-		if (!Util.equals(description, this.description)) {
-			this.description = description;
-			hashCodeComputed = false;
-			hashCode = 0;
-			string = null;
-			return true;
-		}
+        return hashCode;
+    }
 
-		return false;
-	}
+    public boolean isActive() {
+        return active;
+    }
 
-	boolean setName(String name) {
-		if (!Util.equals(name, this.name)) {
-			this.name = name;
-			hashCodeComputed = false;
-			hashCode = 0;
-			string = null;
-			return true;
-		}
+    public boolean isDefined() {
+        return defined;
+    }
 
-		return false;
-	}
+    public void removeKeyConfigurationListener(
+            IKeyConfigurationListener keyConfigurationListener) {
+        if (keyConfigurationListener == null)
+            throw new NullPointerException();
 
-	boolean setParentId(String parentId) {
-		if (!Util.equals(parentId, this.parentId)) {
-			this.parentId = parentId;
-			hashCodeComputed = false;
-			hashCode = 0;
-			string = null;
-			return true;
-		}
+        if (keyConfigurationListeners != null)
+            keyConfigurationListeners.remove(keyConfigurationListener);
 
-		return false;
-	}
+        if (keyConfigurationListeners.isEmpty())
+            keyConfigurationsWithListeners.remove(this);
+    }
 
-	public String toString() {
-		if (string == null) {
-			final StringBuffer stringBuffer = new StringBuffer();
-			stringBuffer.append('[');
-			stringBuffer.append(active);
-			stringBuffer.append(',');
-			stringBuffer.append(defined);
-			stringBuffer.append(',');
-			stringBuffer.append(description);
-			stringBuffer.append(',');
-			stringBuffer.append(id);
-			stringBuffer.append(',');
-			stringBuffer.append(name);
-			stringBuffer.append(',');
-			stringBuffer.append(parentId);
-			stringBuffer.append(']');
-			string = stringBuffer.toString();
-		}
+    boolean setActive(boolean active) {
+        if (active != this.active) {
+            this.active = active;
+            hashCodeComputed = false;
+            hashCode = 0;
+            string = null;
+            return true;
+        }
 
-		return string;
-	}
+        return false;
+    }
+
+    boolean setDefined(boolean defined) {
+        if (defined != this.defined) {
+            this.defined = defined;
+            hashCodeComputed = false;
+            hashCode = 0;
+            string = null;
+            return true;
+        }
+
+        return false;
+    }
+
+    boolean setDescription(String description) {
+        if (!Util.equals(description, this.description)) {
+            this.description = description;
+            hashCodeComputed = false;
+            hashCode = 0;
+            string = null;
+            return true;
+        }
+
+        return false;
+    }
+
+    boolean setName(String name) {
+        if (!Util.equals(name, this.name)) {
+            this.name = name;
+            hashCodeComputed = false;
+            hashCode = 0;
+            string = null;
+            return true;
+        }
+
+        return false;
+    }
+
+    boolean setParentId(String parentId) {
+        if (!Util.equals(parentId, this.parentId)) {
+            this.parentId = parentId;
+            hashCodeComputed = false;
+            hashCode = 0;
+            string = null;
+            return true;
+        }
+
+        return false;
+    }
+
+    public String toString() {
+        if (string == null) {
+            final StringBuffer stringBuffer = new StringBuffer();
+            stringBuffer.append('[');
+            stringBuffer.append(active);
+            stringBuffer.append(',');
+            stringBuffer.append(defined);
+            stringBuffer.append(',');
+            stringBuffer.append(description);
+            stringBuffer.append(',');
+            stringBuffer.append(id);
+            stringBuffer.append(',');
+            stringBuffer.append(name);
+            stringBuffer.append(',');
+            stringBuffer.append(parentId);
+            stringBuffer.append(']');
+            string = stringBuffer.toString();
+        }
+
+        return string;
+    }
 }

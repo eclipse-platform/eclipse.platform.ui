@@ -13,7 +13,6 @@ package org.eclipse.ui;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.ui.IWorkbench;
 
 /**
  * Interface for project capability uninstall wizard. The wizard is
@@ -49,24 +48,25 @@ import org.eclipse.ui.IWorkbench;
  * @since 2.0
  */
 public interface ICapabilityUninstallWizard extends IWizard {
-	
-	/**
-	 * Initializes this capability wizard using the passed workbench,
-	 * object selection, project, and nature IDs.
-	 * <p>
-	 * This method is called after the no argument constructor and
-	 * before other methods are called.
-	 * </p><p>
-	 * The list of nature IDs contains the nature ID for this
-	 * capability. Also includes nature IDs for capabilities that
-	 * the user wants removed - capabilites that this capability
-	 * handles the UI for.
-	 * </p>
-	 *
-	 * @param workbench the current workbench
-	 * @param selection the current object selection
-	 * @param project the project to configure with a capability
-	 * @param natureIds the nature ids to be removed from the project
-	 */
-	public void init(IWorkbench workbench, IStructuredSelection selection, IProject project, String[] natureIds);
+
+    /**
+     * Initializes this capability wizard using the passed workbench,
+     * object selection, project, and nature IDs.
+     * <p>
+     * This method is called after the no argument constructor and
+     * before other methods are called.
+     * </p><p>
+     * The list of nature IDs contains the nature ID for this
+     * capability. Also includes nature IDs for capabilities that
+     * the user wants removed - capabilites that this capability
+     * handles the UI for.
+     * </p>
+     *
+     * @param workbench the current workbench
+     * @param selection the current object selection
+     * @param project the project to configure with a capability
+     * @param natureIds the nature ids to be removed from the project
+     */
+    public void init(IWorkbench workbench, IStructuredSelection selection,
+            IProject project, String[] natureIds);
 }

@@ -25,12 +25,12 @@ package org.eclipse.ui.activities;
  */
 public interface ICategoryListener {
 
-	/**
-	 * Notifies that one or more properties of an instance of <code>ICategory</code>
-	 * have changed. Specific details are described in the <code>CategoryEvent</code>.
-	 * 
-	 * @param categoryEvent
-	 *            the category event. Guaranteed not to be <code>null</code>.
-	 */
-	void categoryChanged(CategoryEvent categoryEvent);
+    /**
+     * Notifies that one or more properties of an instance of <code>ICategory</code>
+     * have changed. Specific details are described in the <code>CategoryEvent</code>.
+     * 
+     * @param categoryEvent
+     *            the category event. Guaranteed not to be <code>null</code>.
+     */
+    void categoryChanged(CategoryEvent categoryEvent);
 }

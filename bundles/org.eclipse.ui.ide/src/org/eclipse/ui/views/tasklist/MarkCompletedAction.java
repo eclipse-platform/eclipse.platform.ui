@@ -20,46 +20,48 @@ import org.eclipse.ui.help.WorkbenchHelp;
 
 class MarkCompletedAction extends TaskAction {
 
-	/**
-	 * Create a MarkCompletedAction.
-	 * @param tasklist
-	 * @param id
-	 */
-	protected MarkCompletedAction(TaskList tasklist, String id) {
-		super(tasklist, id);
-		WorkbenchHelp.setHelp(this, ITaskListHelpContextIds.MARK_COMPLETED_ACTION);
-	}
+    /**
+     * Create a MarkCompletedAction.
+     * @param tasklist
+     * @param id
+     */
+    protected MarkCompletedAction(TaskList tasklist, String id) {
+        super(tasklist, id);
+        WorkbenchHelp.setHelp(this,
+                ITaskListHelpContextIds.MARK_COMPLETED_ACTION);
+    }
 
-	/**
-	 * Sets the completed value of the currently selected
-	 * actions.
-	 */
-	public void run() {
-		ISelection markers = getTaskList().getSelection();
-		if (markers instanceof IStructuredSelection) {
-			Iterator selections = ((IStructuredSelection) markers).iterator();
-			while (selections.hasNext()) {
-				IMarker nextMarker = (IMarker) selections.next();
-				getTaskList().setProperty(nextMarker, IMarker.DONE, Boolean.TRUE);
-			}
-		}
-	}
+    /**
+     * Sets the completed value of the currently selected
+     * actions.
+     */
+    public void run() {
+        ISelection markers = getTaskList().getSelection();
+        if (markers instanceof IStructuredSelection) {
+            Iterator selections = ((IStructuredSelection) markers).iterator();
+            while (selections.hasNext()) {
+                IMarker nextMarker = (IMarker) selections.next();
+                getTaskList().setProperty(nextMarker, IMarker.DONE,
+                        Boolean.TRUE);
+            }
+        }
+    }
 
-	/**
-	 * Returns whether this action should be enabled for the given selection.
-	 */
-	public boolean shouldEnable(IStructuredSelection selection) {
-		if (selection.isEmpty())
-			return false;
-		for (Iterator i = selection.iterator(); i.hasNext();) {
-			IMarker marker = (IMarker) i.next();
-			if (!(MarkerUtil.isMarkerType(marker, IMarker.TASK)
-				&& !MarkerUtil.isComplete(marker)
-				&& MarkerUtil.isEditable(marker))) {
-					return false;
-			}
-		}
-		return true;
-	}
+    /**
+     * Returns whether this action should be enabled for the given selection.
+     */
+    public boolean shouldEnable(IStructuredSelection selection) {
+        if (selection.isEmpty())
+            return false;
+        for (Iterator i = selection.iterator(); i.hasNext();) {
+            IMarker marker = (IMarker) i.next();
+            if (!(MarkerUtil.isMarkerType(marker, IMarker.TASK)
+                    && !MarkerUtil.isComplete(marker) && MarkerUtil
+                    .isEditable(marker))) {
+                return false;
+            }
+        }
+        return true;
+    }
 
 }

@@ -19,16 +19,18 @@ import org.eclipse.ui.internal.dnd.TestDropLocation;
  * @since 3.0
  */
 public abstract class TestDragSource {
-	private WorkbenchPage page = (WorkbenchPage) ((WorkbenchWindow)PlatformUI.getWorkbench().getActiveWorkbenchWindow()).getActivePage();
-	
-	public abstract String toString();
-	public abstract void drag(TestDropLocation target);
-	
-	public void setPage(WorkbenchPage page) {
-		this.page = page;
-	}
-	
-	public WorkbenchPage getPage() {
-		return page;
-	}
+    private WorkbenchPage page = (WorkbenchPage) ((WorkbenchWindow) PlatformUI
+            .getWorkbench().getActiveWorkbenchWindow()).getActivePage();
+
+    public abstract String toString();
+
+    public abstract void drag(TestDropLocation target);
+
+    public void setPage(WorkbenchPage page) {
+        this.page = page;
+    }
+
+    public WorkbenchPage getPage() {
+        return page;
+    }
 }

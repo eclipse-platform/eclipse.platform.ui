@@ -20,39 +20,40 @@ import java.util.ResourceBundle;
  */
 public class ProgressMessages {
 
-	private static final String BUNDLE_NAME = "org.eclipse.ui.internal.progress.messages"; //$NON-NLS-1$
+    private static final String BUNDLE_NAME = "org.eclipse.ui.internal.progress.messages"; //$NON-NLS-1$
 
-	private static final ResourceBundle RESOURCE_BUNDLE =
-		ResourceBundle.getBundle(BUNDLE_NAME);
+    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
+            .getBundle(BUNDLE_NAME);
 
-	private ProgressMessages() {
-		//prevent instantiation of class
-	}
-	/**
-	 * Returns the resource object with the given key in
-	 * the resource bundle. If there isn't any value under
-	 * the given key, the key is returned.
-	 *
-	 * @param key the resource name
-	 * @return the string
-	 */
-	public static String getString(String key) {
-		try {
-			return RESOURCE_BUNDLE.getString(key);
-		} catch (MissingResourceException e) {
-			return key;
-		}
-	}
+    private ProgressMessages() {
+        //prevent instantiation of class
+    }
 
-	/**
-	 * Returns the formatted message for the given key in
-	 * the resource bundle. 
-	 *
-	 * @param key the resource name
-	 * @param args the message arguments
-	 * @return the string
-	 */
-	public static String format(String key, Object[] args) {
-		return MessageFormat.format(getString(key), args);
-	}
+    /**
+     * Returns the resource object with the given key in
+     * the resource bundle. If there isn't any value under
+     * the given key, the key is returned.
+     *
+     * @param key the resource name
+     * @return the string
+     */
+    public static String getString(String key) {
+        try {
+            return RESOURCE_BUNDLE.getString(key);
+        } catch (MissingResourceException e) {
+            return key;
+        }
+    }
+
+    /**
+     * Returns the formatted message for the given key in
+     * the resource bundle. 
+     *
+     * @param key the resource name
+     * @param args the message arguments
+     * @return the string
+     */
+    public static String format(String key, Object[] args) {
+        return MessageFormat.format(getString(key), args);
+    }
 }

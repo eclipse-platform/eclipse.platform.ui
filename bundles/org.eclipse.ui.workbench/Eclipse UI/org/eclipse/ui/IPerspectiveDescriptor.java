@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui;
 
-import org.eclipse.jface.resource.*;
+import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * A perspective descriptor describes a perspective in an
@@ -44,32 +44,35 @@ import org.eclipse.jface.resource.*;
  * @see IPerspectiveRegistry
  */
 public interface IPerspectiveDescriptor {
-/**
- * Returns the description of this perspective.
- * This is the value of its <code>"description"</code> attribute.
- *
- * @return the description
- * @since 3.0
- */
-public String getDescription();
-/**
- * Returns this perspective's id. For perspectives declared via an extension,
- * this is the value of its <code>"id"</code> attribute.
- *
- * @return the perspective id
- */
-public String getId();
-/**
- * Returns the descriptor of the image for this perspective.
- *
- * @return the descriptor of the image to display next to this perspective
- */
-public ImageDescriptor getImageDescriptor();
-/**
- * Returns this perspective's label. For perspectives declared via an extension,
- * this is the value of its <code>"label"</code> attribute.
- *
- * @return the label
- */
-public String getLabel();
+    /**
+     * Returns the description of this perspective.
+     * This is the value of its <code>"description"</code> attribute.
+     *
+     * @return the description
+     * @since 3.0
+     */
+    public String getDescription();
+
+    /**
+     * Returns this perspective's id. For perspectives declared via an extension,
+     * this is the value of its <code>"id"</code> attribute.
+     *
+     * @return the perspective id
+     */
+    public String getId();
+
+    /**
+     * Returns the descriptor of the image for this perspective.
+     *
+     * @return the descriptor of the image to display next to this perspective
+     */
+    public ImageDescriptor getImageDescriptor();
+
+    /**
+     * Returns this perspective's label. For perspectives declared via an extension,
+     * this is the value of its <code>"label"</code> attribute.
+     *
+     * @return the label
+     */
+    public String getLabel();
 }

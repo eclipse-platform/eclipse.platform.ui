@@ -62,7 +62,7 @@ public class EditorActionBars extends SubActionBars2 {
             return null;
         }
     }
-    
+
     /**
      * A switch controlling verbose debugging options surrounding the disposal
      * of tool bar contribution items.  There have been problems in the past
@@ -134,8 +134,10 @@ public class EditorActionBars extends SubActionBars2 {
      */
     public void dispose() {
         super.dispose();
-        if (editorContributor != null) editorContributor.dispose();
-        if (extensionContributor != null) extensionContributor.dispose();
+        if (editorContributor != null)
+            editorContributor.dispose();
+        if (extensionContributor != null)
+            extensionContributor.dispose();
 
         /*
          * Dispose of the contribution item, but also make sure that no one
@@ -152,21 +154,29 @@ public class EditorActionBars extends SubActionBars2 {
                 if (manager instanceof ContributionManager) {
                     final IContributionItem replacementItem = new PlaceholderContributionItem(
                             toolBarContributionItem);
-                    boolean succeeded = ((ContributionManager) manager).replaceItem(replacementItem
-                            .getId(), replacementItem);
+                    boolean succeeded = ((ContributionManager) manager)
+                            .replaceItem(replacementItem.getId(),
+                                    replacementItem);
                     if (!succeeded && DEBUG_TOOLBAR_DISPOSAL) {
-                    	System.out.println("FAILURE WHILE DISPOSING EditorActionBars"); //$NON-NLS-1$
-                    	System.out.println("Could not replace " + replacementItem.getId() + " in the contribution manager."); //$NON-NLS-1$ //$NON-NLS-2$
+                        System.out
+                                .println("FAILURE WHILE DISPOSING EditorActionBars"); //$NON-NLS-1$
+                        System.out
+                                .println("Could not replace " + replacementItem.getId() + " in the contribution manager."); //$NON-NLS-1$ //$NON-NLS-2$
                     }
                 } else if (DEBUG_TOOLBAR_DISPOSAL) {
-                	System.out.println("FAILURE WHILE DISPOSING EditorActionBars"); //$NON-NLS-1$
-                	System.out.println("The manager was not a ContributionManager."); //$NON-NLS-1$
-                	System.out.println("It was a " + manager.getClass().getName()); //$NON-NLS-1$
+                    System.out
+                            .println("FAILURE WHILE DISPOSING EditorActionBars"); //$NON-NLS-1$
+                    System.out
+                            .println("The manager was not a ContributionManager."); //$NON-NLS-1$
+                    System.out
+                            .println("It was a " + manager.getClass().getName()); //$NON-NLS-1$
                 }
             } else if (DEBUG_TOOLBAR_DISPOSAL) {
-            	System.out.println("FAILURE WHILE DISPOSING EditorActionBars"); //$NON-NLS-1$
-            	System.out.println("The coolBarManager was not a SubContributionManager"); //$NON-NLS-1$
-            	System.out.println("It was a " + coolBarManager.getClass().getName()); //$NON-NLS-1$
+                System.out.println("FAILURE WHILE DISPOSING EditorActionBars"); //$NON-NLS-1$
+                System.out
+                        .println("The coolBarManager was not a SubContributionManager"); //$NON-NLS-1$
+                System.out
+                        .println("It was a " + coolBarManager.getClass().getName()); //$NON-NLS-1$
             }
 
             // Dispose of the replaced item.
@@ -219,12 +229,15 @@ public class EditorActionBars extends SubActionBars2 {
 
         // by pass the sub coolBar and use the real cool bar.
         ICoolBarManager coolBarManager = getCastedParent().getCoolBarManager();
-        if (coolBarManager == null) { return null; }
+        if (coolBarManager == null) {
+            return null;
+        }
 
         // add the editor group if the app did not add it already,
         // otherwise the references to it below will fail
         if (coolBarManager.find(IWorkbenchActionConstants.GROUP_EDITOR) == null) {
-            coolBarManager.add(new GroupMarker(IWorkbenchActionConstants.GROUP_EDITOR));
+            coolBarManager.add(new GroupMarker(
+                    IWorkbenchActionConstants.GROUP_EDITOR));
         }
         if (toolBarContributionItem == null) {
             IContributionItem foundItem = coolBarManager.find(type);
@@ -279,7 +292,7 @@ public class EditorActionBars extends SubActionBars2 {
      */
     private boolean isVisible() {
         if (toolBarContributionItem != null)
-                return toolBarContributionItem.isVisible();
+            return toolBarContributionItem.isVisible();
         return false;
     }
 
@@ -294,9 +307,9 @@ public class EditorActionBars extends SubActionBars2 {
         if (part instanceof IEditorPart) {
             IEditorPart editor = (IEditorPart) part;
             if (editorContributor != null)
-                    editorContributor.setActiveEditor(editor);
+                editorContributor.setActiveEditor(editor);
             if (extensionContributor != null)
-                    extensionContributor.setActiveEditor(editor);
+                extensionContributor.setActiveEditor(editor);
         }
     }
 
@@ -318,11 +331,11 @@ public class EditorActionBars extends SubActionBars2 {
     private void setActive(boolean set, boolean forceVisibility) {
         basicSetActive(set);
         if (isSubMenuManagerCreated())
-                ((EditorMenuManager) getMenuManager()).setVisible(set,
-                        forceVisibility);
+            ((EditorMenuManager) getMenuManager()).setVisible(set,
+                    forceVisibility);
 
         if (isSubStatusLineManagerCreated())
-                ((SubStatusLineManager) getStatusLineManager()).setVisible(set);
+            ((SubStatusLineManager) getStatusLineManager()).setVisible(set);
 
         setVisible(set, forceVisibility);
     }
@@ -342,7 +355,8 @@ public class EditorActionBars extends SubActionBars2 {
      * @since 2.0
      */
     private void setEnabledAllowed(boolean enabledAllowed) {
-        if (this.enabledAllowed == enabledAllowed) return;
+        if (this.enabledAllowed == enabledAllowed)
+            return;
         this.enabledAllowed = enabledAllowed;
         if (coolItemToolBarMgr != null) {
             IContributionItem[] items = coolItemToolBarMgr.getItems();
@@ -390,14 +404,15 @@ public class EditorActionBars extends SubActionBars2 {
      * @param visible
      *            the new visibility
      * @param forceVisibility
-	 *            <code>true</code> to change the visibility or <code>false</code> 
-	 *            to change just the enablement state. This parameter is ignored 
-	 *            if visible is <code>true</code>.
+     *            <code>true</code> to change the visibility or <code>false</code> 
+     *            to change just the enablement state. This parameter is ignored 
+     *            if visible is <code>true</code>.
      */
     private void setVisible(boolean visible, boolean forceVisibility) {
         if (visible) {
-			setEnabledAllowed(true);
-            if (!isVisible()) setVisible(true);
+            setEnabledAllowed(true);
+            if (!isVisible())
+                setVisible(true);
         } else {
             if (forceVisibility)
                 // Remove the editor tool bar items
@@ -412,7 +427,7 @@ public class EditorActionBars extends SubActionBars2 {
             IContributionItem[] items = coolItemToolBarMgr.getItems();
             for (int i = 0; i < items.length; i++) {
                 IContributionItem item = items[i];
-				item.setVisible(visible || !forceVisibility);
+                item.setVisible(visible || !forceVisibility);
                 coolItemToolBarMgr.markDirty();
                 if (!coolBarManager.isDirty()) {
                     coolBarManager.markDirty();
@@ -421,7 +436,7 @@ public class EditorActionBars extends SubActionBars2 {
             // Update the manager
             coolItemToolBarMgr.update(false);
             if (toolBarContributionItem != null) {
-				toolBarContributionItem.setVisible(visible || !forceVisibility);
+                toolBarContributionItem.setVisible(visible || !forceVisibility);
             }
             coolBarManager.update(false);
         }

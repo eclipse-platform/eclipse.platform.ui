@@ -25,43 +25,42 @@ import org.eclipse.ui.ide.IDE;
 
 public class ActionRevealMarker extends SelectionProviderAction {
 
-	protected IWorkbenchPart part;
+    protected IWorkbenchPart part;
 
-	public ActionRevealMarker(IWorkbenchPart part, ISelectionProvider provider) {
-		super(provider, ""); //$NON-NLS-1$
-		this.part = part;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
-	public void run() {
-		IStructuredSelection selection = getStructuredSelection();
-		Object obj = selection.getFirstElement();
-		if (obj == null || !(obj instanceof IMarker))
-			return;
-			
-		IMarker marker = (IMarker) obj;
-		IEditorPart editor = part.getSite().getPage().getActiveEditor();
-		if (editor == null)
-			return;
-		IEditorInput input = editor.getEditorInput();
-		if (input instanceof IFileEditorInput) {
-			IFile file = ((IFileEditorInput) input).getFile();
-			if (marker.getResource().equals(file)) {
-				try {
-					IDE.openEditor(part.getSite().getPage(), marker, false);
-				}
-				catch (CoreException e) {
-				}
-			}
-		}
-	}
-	
-	public void selectionChanged(IStructuredSelection selection) {
-		setEnabled(selection != null && selection.size() == 1);
-		if (isEnabled()) {
-			run();
-		}
-	}
+    public ActionRevealMarker(IWorkbenchPart part, ISelectionProvider provider) {
+        super(provider, ""); //$NON-NLS-1$
+        this.part = part;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.action.Action#run()
+     */
+    public void run() {
+        IStructuredSelection selection = getStructuredSelection();
+        Object obj = selection.getFirstElement();
+        if (obj == null || !(obj instanceof IMarker))
+            return;
+
+        IMarker marker = (IMarker) obj;
+        IEditorPart editor = part.getSite().getPage().getActiveEditor();
+        if (editor == null)
+            return;
+        IEditorInput input = editor.getEditorInput();
+        if (input instanceof IFileEditorInput) {
+            IFile file = ((IFileEditorInput) input).getFile();
+            if (marker.getResource().equals(file)) {
+                try {
+                    IDE.openEditor(part.getSite().getPage(), marker, false);
+                } catch (CoreException e) {
+                }
+            }
+        }
+    }
+
+    public void selectionChanged(IStructuredSelection selection) {
+        setEnabled(selection != null && selection.size() == 1);
+        if (isEnabled()) {
+            run();
+        }
+    }
 }

@@ -25,79 +25,95 @@ import org.eclipse.ui.internal.ide.registry.CapabilityRegistry;
  * wizard.
  */
 public class RemoveCapabilityStep extends WizardStep {
-	private Capability capability;
-	private String[] natureIds;
-	private IProject project;
-	private ICapabilityUninstallWizard wizard;
-	
-	/**
-	 * Creates the remove capability step
-	 * 
-	 * @param number step order number
-	 * @param capability the capability to be removed
-	 * @param natureIds the list of nature ids to remove on the project
-	 * @param project the project to remove the capability from
-	 */
-	public RemoveCapabilityStep(int number, Capability capability, String[] natureIds, IProject project) {
-		super(number);
-		this.capability = capability;
-		this.natureIds = natureIds;
-		this.project = project;
-	}
+    private Capability capability;
 
-	/* (non-Javadoc)
-	 * Method declared on WizardStep.
-	 */
-	public String getLabel() {
-		return IDEWorkbenchMessages.format("RemoveCapabilityStep.label", new Object[] {capability.getName()}); //$NON-NLS-1$
-	}
+    private String[] natureIds;
 
-	/* (non-Javadoc)
-	 * Method declared on WizardStep.
-	 */
-	public String getDetails() {
-		String details = capability.getUninstallDetails();
-		if (details == null) {
-			if (natureIds.length == 1) {
-				details = IDEWorkbenchMessages.format("RemoveCapabilityStep.defaultDescription0", new Object[] {capability.getName()}); //$NON-NLS-1$
-			} else if (natureIds.length == 2) {
-				CapabilityRegistry reg = IDEWorkbenchPlugin.getDefault().getCapabilityRegistry();
-				Capability otherCapability = reg.getCapabilityForNature(natureIds[1]);
-				if (otherCapability == capability)
-					otherCapability = reg.getCapabilityForNature(natureIds[0]);
-				details = IDEWorkbenchMessages.format("RemoveCapabilityStep.defaultDescription1", new Object[] {capability.getName(), otherCapability.getName()}); //$NON-NLS-1$
-			} else {
-				StringBuffer msg = new StringBuffer();
-				CapabilityRegistry reg = IDEWorkbenchPlugin.getDefault().getCapabilityRegistry();
-				for (int i = 0; i < natureIds.length; i++) {
-					Capability cap = reg.getCapabilityForNature(natureIds[i]);
-					if (cap != capability) {
-						msg.append("\n    "); //$NON-NLS-1$
-						msg.append(cap.getName());
-					}
-				}
-				details = IDEWorkbenchMessages.format("RemoveCapabilityStep.defaultDescription2", new Object[] {capability.getName(), msg.toString()}); //$NON-NLS-1$
-			}
-		}
-		
-		return details;
-	}
+    private IProject project;
 
-	/* (non-Javadoc)
-	 * Method declared on WizardStep.
-	 */
-	public IWizard getWizard() {
-		if (wizard == null) {
-			wizard = capability.getUninstallWizard();
-			if (wizard == null)
-				wizard = new RemoveCapabilityWizard();
-			if (wizard != null) {
-				wizard.init(PlatformUI.getWorkbench(), StructuredSelection.EMPTY, project, natureIds);
-				wizard.addPages();
-			}
-		}
-		
-		return wizard;
-	}
+    private ICapabilityUninstallWizard wizard;
+
+    /**
+     * Creates the remove capability step
+     * 
+     * @param number step order number
+     * @param capability the capability to be removed
+     * @param natureIds the list of nature ids to remove on the project
+     * @param project the project to remove the capability from
+     */
+    public RemoveCapabilityStep(int number, Capability capability,
+            String[] natureIds, IProject project) {
+        super(number);
+        this.capability = capability;
+        this.natureIds = natureIds;
+        this.project = project;
+    }
+
+    /* (non-Javadoc)
+     * Method declared on WizardStep.
+     */
+    public String getLabel() {
+        return IDEWorkbenchMessages
+                .format(
+                        "RemoveCapabilityStep.label", new Object[] { capability.getName() }); //$NON-NLS-1$
+    }
+
+    /* (non-Javadoc)
+     * Method declared on WizardStep.
+     */
+    public String getDetails() {
+        String details = capability.getUninstallDetails();
+        if (details == null) {
+            if (natureIds.length == 1) {
+                details = IDEWorkbenchMessages
+                        .format(
+                                "RemoveCapabilityStep.defaultDescription0", new Object[] { capability.getName() }); //$NON-NLS-1$
+            } else if (natureIds.length == 2) {
+                CapabilityRegistry reg = IDEWorkbenchPlugin.getDefault()
+                        .getCapabilityRegistry();
+                Capability otherCapability = reg
+                        .getCapabilityForNature(natureIds[1]);
+                if (otherCapability == capability)
+                    otherCapability = reg.getCapabilityForNature(natureIds[0]);
+                details = IDEWorkbenchMessages
+                        .format(
+                                "RemoveCapabilityStep.defaultDescription1", new Object[] { capability.getName(), otherCapability.getName() }); //$NON-NLS-1$
+            } else {
+                StringBuffer msg = new StringBuffer();
+                CapabilityRegistry reg = IDEWorkbenchPlugin.getDefault()
+                        .getCapabilityRegistry();
+                for (int i = 0; i < natureIds.length; i++) {
+                    Capability cap = reg.getCapabilityForNature(natureIds[i]);
+                    if (cap != capability) {
+                        msg.append("\n    "); //$NON-NLS-1$
+                        msg.append(cap.getName());
+                    }
+                }
+                details = IDEWorkbenchMessages
+                        .format(
+                                "RemoveCapabilityStep.defaultDescription2", new Object[] { capability.getName(), msg.toString() }); //$NON-NLS-1$
+            }
+        }
+
+        return details;
+    }
+
+    /* (non-Javadoc)
+     * Method declared on WizardStep.
+     */
+    public IWizard getWizard() {
+        if (wizard == null) {
+            wizard = capability.getUninstallWizard();
+            if (wizard == null)
+                wizard = new RemoveCapabilityWizard();
+            if (wizard != null) {
+                wizard.init(PlatformUI.getWorkbench(),
+                        StructuredSelection.EMPTY, project, natureIds);
+                wizard.addPages();
+            }
+        }
+
+        return wizard;
+    }
 
 }

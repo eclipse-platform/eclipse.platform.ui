@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-
 import java.util.List;
 
 import org.eclipse.jface.action.IMenuManager;
@@ -24,30 +23,33 @@ import org.eclipse.ui.IWorkbenchPart;
  * with the popup menu manager.
  */
 public interface IObjectActionContributor extends IObjectContributor {
-	/**
-	 * Implement this method to add actions that deal with the currently
-	 * selected object or objects. Actions should be added to the
-	 * provided menu object. Current selection can be obtained from
-	 * the given selection provider.
-	 * 
-	 * @return <code>true</code> if any contributions were made, and <code>false</code> otherwise.
-	 */
-	public boolean contributeObjectActions(IWorkbenchPart part, IMenuManager menu, ISelectionProvider selProv, List actionIdOverrides);
-	
-	/**
-	 * Implement this method to add menus that deal with the currently
-	 * selected object or objects. Menus should be added to the
-	 * provided menu object. Current selection can be obtained from
-	 * the given selection provider.
-	 * 
-	 * @return <code>true</code> if any contributions were made, and <code>false</code> otherwise.
-	 */
-	public boolean contributeObjectMenus(IMenuManager menu, ISelectionProvider selProv);
-	
-	/**
-	 * Contribute to the list the action identifiers from other contributions that 
-	 * this contribution wants to override. Actions of these identifiers will
-	 * not be contributed.
-	 */
-	public void contributeObjectActionIdOverrides(List actionIdOverrides);
+    /**
+     * Implement this method to add actions that deal with the currently
+     * selected object or objects. Actions should be added to the
+     * provided menu object. Current selection can be obtained from
+     * the given selection provider.
+     * 
+     * @return <code>true</code> if any contributions were made, and <code>false</code> otherwise.
+     */
+    public boolean contributeObjectActions(IWorkbenchPart part,
+            IMenuManager menu, ISelectionProvider selProv,
+            List actionIdOverrides);
+
+    /**
+     * Implement this method to add menus that deal with the currently
+     * selected object or objects. Menus should be added to the
+     * provided menu object. Current selection can be obtained from
+     * the given selection provider.
+     * 
+     * @return <code>true</code> if any contributions were made, and <code>false</code> otherwise.
+     */
+    public boolean contributeObjectMenus(IMenuManager menu,
+            ISelectionProvider selProv);
+
+    /**
+     * Contribute to the list the action identifiers from other contributions that 
+     * this contribution wants to override. Actions of these identifiers will
+     * not be contributed.
+     */
+    public void contributeObjectActionIdOverrides(List actionIdOverrides);
 }

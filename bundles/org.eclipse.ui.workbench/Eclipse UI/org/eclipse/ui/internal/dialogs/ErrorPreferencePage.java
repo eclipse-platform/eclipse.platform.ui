@@ -10,13 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
+import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
-
-import org.eclipse.jface.resource.JFaceColors;
-
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
@@ -28,15 +26,17 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 public class ErrorPreferencePage extends EmptyPreferencePage {
 
     /*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
-	 */
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
+     */
     protected Control createContents(Composite parent) {
         Text text = new Text(parent, SWT.MULTI | SWT.READ_ONLY | SWT.WRAP);
         text.setForeground(JFaceColors.getErrorText(text.getDisplay()));
-        text.setBackground(text.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
-        text.setText(WorkbenchMessages.getString("ErrorPreferencePage.errorMessage")); //$NON-NLS-1$
+        text.setBackground(text.getDisplay().getSystemColor(
+                SWT.COLOR_WIDGET_BACKGROUND));
+        text.setText(WorkbenchMessages
+                .getString("ErrorPreferencePage.errorMessage")); //$NON-NLS-1$
         return text;
     }
 }

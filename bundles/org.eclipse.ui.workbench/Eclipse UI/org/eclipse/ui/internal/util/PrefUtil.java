@@ -28,7 +28,7 @@ import org.eclipse.ui.internal.misc.Assert;
  * @since 3.0
  */
 public class PrefUtil {
-    
+
     private PrefUtil() {
         // prevents instantiation
     }
@@ -38,10 +38,12 @@ public class PrefUtil {
      */
     public static interface ICallback {
         IPreferenceStore getPreferenceStore();
+
         void savePreferences();
     }
-    
+
     private static ICallback uiCallback;
+
     private static IPreferenceStore uiPreferenceStore;
 
     /**
@@ -51,7 +53,7 @@ public class PrefUtil {
         Assert.isTrue(uiCallback == null);
         uiCallback = callback;
     }
-    
+
     /**
      * Returns the API preference store.
      * 
@@ -73,7 +75,7 @@ public class PrefUtil {
     public static IPreferenceStore getInternalPreferenceStore() {
         return WorkbenchPlugin.getDefault().getPreferenceStore();
     }
-    
+
     /**
      * Saves both the API and internal preference stores.
      */
@@ -81,7 +83,7 @@ public class PrefUtil {
         saveAPIPrefs();
         saveInternalPrefs();
     }
-    
+
     /**
      * Saves the API preference store, if needed.
      */

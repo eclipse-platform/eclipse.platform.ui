@@ -18,30 +18,31 @@ import java.util.ResourceBundle;
  */
 public class ExtensionEventHandlerMessages {
 
-	private static final String BUNDLE_NAME = "org.eclipse.ui.internal.ExtensionEventHandler"; //$NON-NLS-1$
+    private static final String BUNDLE_NAME = "org.eclipse.ui.internal.ExtensionEventHandler"; //$NON-NLS-1$
 
-	private static final ResourceBundle RESOURCE_BUNDLE =
-		ResourceBundle.getBundle(BUNDLE_NAME);
+    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
+            .getBundle(BUNDLE_NAME);
 
-	/**
-	 * 
-	 * @since 3.0
-	 */
-	private ExtensionEventHandlerMessages() {
+    /**
+     * 
+     * @since 3.0
+     */
+    private ExtensionEventHandlerMessages() {
 
-		// TODO Auto-generated constructor stub
-	}
-	/**
-	 * @param key
-	 * @return
-	 * @since 3.0
-	 */
-	public static String getString(String key) {
-		// TODO Auto-generated method stub
-		try {
-			return RESOURCE_BUNDLE.getString(key);
-		} catch (MissingResourceException e) {
-			return '!' + key + '!';
-		}
-	}
+        // TODO Auto-generated constructor stub
+    }
+
+    /**
+     * @param key
+     * @return
+     * @since 3.0
+     */
+    public static String getString(String key) {
+        // TODO Auto-generated method stub
+        try {
+            return RESOURCE_BUNDLE.getString(key);
+        } catch (MissingResourceException e) {
+            return '!' + key + '!';
+        }
+    }
 }

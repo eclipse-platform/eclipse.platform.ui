@@ -21,32 +21,33 @@ import org.eclipse.ui.internal.dnd.DragUtil;
  * @since 3.0
  */
 public class FastViewBarDropTarget extends AbstractTestDropTarget {
-	
-	/**
-	 * @param window
-	 */
-	public FastViewBarDropTarget() {
-		super();
-	}
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	public String toString() {
-		return "fast view bar";
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.tests.dnd.TestDropTarget#getLocation()
-	 */
-	public Point getLocation() {
-		WorkbenchWindow window = (WorkbenchWindow)getPage().getWorkbenchWindow();
-		
-		Control control = window.getFastViewBar().getControl();
-		Rectangle region = DragUtil.getDisplayBounds(control);
-		Point result = Geometry.centerPoint(region); 
-		
-		return result;
-	}
+
+    /**
+     * @param window
+     */
+    public FastViewBarDropTarget() {
+        super();
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    public String toString() {
+        return "fast view bar";
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.tests.dnd.TestDropTarget#getLocation()
+     */
+    public Point getLocation() {
+        WorkbenchWindow window = (WorkbenchWindow) getPage()
+                .getWorkbenchWindow();
+
+        Control control = window.getFastViewBar().getControl();
+        Rectangle region = DragUtil.getDisplayBounds(control);
+        Point result = Geometry.centerPoint(region);
+
+        return result;
+    }
 
 }

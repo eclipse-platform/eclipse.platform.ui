@@ -18,80 +18,80 @@ import org.eclipse.ui.keys.SWTKeySupport;
 
 public final class GestureSupport {
 
-	public static void main(String[] args) {
-		final int HEIGHT = 300;
-		final int WIDTH = 400;
-		Display display = new Display();
-		Rectangle bounds = display.getBounds();
-		Shell shell = new Shell(display);
+    public static void main(String[] args) {
+        final int HEIGHT = 300;
+        final int WIDTH = 400;
+        Display display = new Display();
+        Rectangle bounds = display.getBounds();
+        Shell shell = new Shell(display);
 
-		if (bounds.height >= HEIGHT && bounds.width >= WIDTH)
-			shell.setBounds(
-				(bounds.x + bounds.width - WIDTH) / 2,
-				(bounds.y + bounds.height - HEIGHT) / 2,
-				WIDTH,
-				HEIGHT);
+        if (bounds.height >= HEIGHT && bounds.width >= WIDTH)
+            shell.setBounds((bounds.x + bounds.width - WIDTH) / 2, (bounds.y
+                    + bounds.height - HEIGHT) / 2, WIDTH, HEIGHT);
 
-		shell.setText(GestureSupport.class.getName());
-		shell.open();
-		Capture capture = new Capture();
+        shell.setText(GestureSupport.class.getName());
+        shell.open();
+        Capture capture = new Capture();
 
-		capture.addCaptureListener(new ICaptureListener() {
-			public void capture(CaptureEvent captureEvent) {
-				System.out.println("Pen: " + captureEvent.getPen() + //$NON-NLS-1$ 
-				" Key Stroke: " + SWTKeySupport.convertAcceleratorToKeyStroke(captureEvent.getData()) + //$NON-NLS-1$ 
-				" Points: " + captureEvent.getPoints().length + //$NON-NLS-1$
-				" Gesture: " + recognize(captureEvent.getPoints(), 20)); //$NON-NLS-1$		
-			}
-		});
+        capture.addCaptureListener(new ICaptureListener() {
+            public void capture(CaptureEvent captureEvent) {
+                System.out.println("Pen: " + captureEvent.getPen() + //$NON-NLS-1$ 
+                        " Key Stroke: " //$NON-NLS-1$
+                        + SWTKeySupport
+                                .convertAcceleratorToKeyStroke(captureEvent
+                                        .getData()) + //$NON-NLS-1$ 
+                        " Points: " + captureEvent.getPoints().length + //$NON-NLS-1$
+                        " Gesture: " + recognize(captureEvent.getPoints(), 20)); //$NON-NLS-1$		
+            }
+        });
 
-		capture.setControl(shell);
+        capture.setControl(shell);
 
-		while (!shell.isDisposed())
-			if (!display.readAndDispatch())
-				display.sleep();
+        while (!shell.isDisposed())
+            if (!display.readAndDispatch())
+                display.sleep();
 
-		display.dispose();
-	}
+        display.dispose();
+    }
 
-	public static String recognize(Point[] points, int sensitivity) {
-		char stroke = '\0';
-		StringBuffer sequence = new StringBuffer();
-		int x0 = 0;
-		int y0 = 0;
+    public static String recognize(Point[] points, int sensitivity) {
+        char stroke = '\0';
+        StringBuffer sequence = new StringBuffer();
+        int x0 = 0;
+        int y0 = 0;
 
-		for (int i = 0; i < points.length; i++) {
-			Point point = points[i];
+        for (int i = 0; i < points.length; i++) {
+            Point point = points[i];
 
-			if (i == 0) {
-				x0 = point.getX();
-				y0 = point.getY();
-				continue;
-			}
+            if (i == 0) {
+                x0 = point.getX();
+                y0 = point.getY();
+                continue;
+            }
 
-			int x1 = point.getX();
-			int y1 = point.getY();
-			int dx = (x1 - x0) / sensitivity;
-			int dy = (y1 - y0) / sensitivity;
+            int x1 = point.getX();
+            int y1 = point.getY();
+            int dx = (x1 - x0) / sensitivity;
+            int dy = (y1 - y0) / sensitivity;
 
-			if (dx != 0 || dy != 0) {
-				if (dx > 0 && stroke != 'E')
-					sequence.append(stroke = 'E');
-				else if (dx < 0 && stroke != 'W')
-					sequence.append(stroke = 'W');
-				else if (dy > 0 && stroke != 'S')
-					sequence.append(stroke = 'S');
-				else if (dy < 0 && stroke != 'N')
-					sequence.append(stroke = 'N');
+            if (dx != 0 || dy != 0) {
+                if (dx > 0 && stroke != 'E')
+                    sequence.append(stroke = 'E');
+                else if (dx < 0 && stroke != 'W')
+                    sequence.append(stroke = 'W');
+                else if (dy > 0 && stroke != 'S')
+                    sequence.append(stroke = 'S');
+                else if (dy < 0 && stroke != 'N')
+                    sequence.append(stroke = 'N');
 
-				x0 = x1;
-				y0 = y1;
-			}
-		}
+                x0 = x1;
+                y0 = y1;
+            }
+        }
 
-		return sequence.toString();
-	}
+        return sequence.toString();
+    }
 
-	private GestureSupport() {
-	}
+    private GestureSupport() {
+    }
 }

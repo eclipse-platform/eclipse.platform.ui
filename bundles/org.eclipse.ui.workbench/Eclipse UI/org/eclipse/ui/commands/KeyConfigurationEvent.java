@@ -66,7 +66,8 @@ public final class KeyConfigurationEvent {
     public KeyConfigurationEvent(IKeyConfiguration keyConfiguration,
             boolean activeChanged, boolean definedChanged, boolean nameChanged,
             boolean parentIdChanged) {
-        if (keyConfiguration == null) throw new NullPointerException();
+        if (keyConfiguration == null)
+            throw new NullPointerException();
 
         this.keyConfiguration = keyConfiguration;
         this.activeChanged = activeChanged;

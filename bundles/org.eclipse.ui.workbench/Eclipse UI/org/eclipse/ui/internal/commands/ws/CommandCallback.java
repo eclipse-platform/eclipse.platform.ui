@@ -171,10 +171,9 @@ public final class CommandCallback implements ICallback {
                     .getCommandManager().getCommand(commandId);
 
             if (command != null)
-                    return command.isDefined()
-                            && workbench.getActivitySupport()
-                                    .getActivityManager().getIdentifier(
-                                            command.getId()).isEnabled();
+                return command.isDefined()
+                        && workbench.getActivitySupport().getActivityManager()
+                                .getIdentifier(command.getId()).isEnabled();
         }
 
         return true;

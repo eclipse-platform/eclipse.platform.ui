@@ -30,73 +30,81 @@ import org.eclipse.swt.graphics.Image;
  * </p>
  */
 public class LabelProvider implements ILabelProvider {
-	private ListenerList listeners = new ListenerList(1);
-/**
- * Creates a new label provider.
- */
-public LabelProvider() {
-}
-/* (non-Javadoc)
- * Method declared on IBaseLabelProvider.
- */
-public void addListener(ILabelProviderListener listener) {
-	listeners.add(listener);
-}
-/**
- * The <code>LabelProvider</code> implementation of this 
- * <code>IBaseLabelProvider</code> method does nothing. Subclasses may extend.
- */
-public void dispose() {
-}
-/**
- * Fires a label provider changed event to all registered listeners
- * Only listeners registered at the time this method is called are notified.
- *
- * @param event a label provider changed event
- *
- * @see ILabelProviderListener#labelProviderChanged
- */
-protected void fireLabelProviderChanged(final LabelProviderChangedEvent event) {
-	Object[] listeners = this.listeners.getListeners();
-	for (int i = 0; i < listeners.length; ++i) {
-		final ILabelProviderListener l = (ILabelProviderListener)listeners[i];
-		Platform.run(new SafeRunnable() {
-			public void run() {
-				l.labelProviderChanged(event);
-			}
-		});	
-		
-		
-	}
-}
-/**
- * The <code>LabelProvider</code> implementation of this 
- * <code>ILabelProvider</code> method returns <code>null</code>. Subclasses may 
- * override.
- */
-public Image getImage(Object element) {
-	return null;
-}
-/**
- * The <code>LabelProvider</code> implementation of this 
- * <code>ILabelProvider</code> method returns the element's <code>toString</code>
- * string. Subclasses may override.
- */
-public String getText(Object element) {
-	return element == null ? "" : element.toString();//$NON-NLS-1$
-}
-/**
- * The <code>LabelProvider</code> implementation of this 
- * <code>IBaseLabelProvider</code> method returns <code>true</code>. Subclasses may 
- * override.
- */
-public boolean isLabelProperty(Object element, String property) {
-	return true;
-}
-/* (non-Javadoc)
- * Method declared on IBaseLabelProvider.
- */
-public void removeListener(ILabelProviderListener listener) {
-	listeners.remove(listener);
-}
+    private ListenerList listeners = new ListenerList(1);
+
+    /**
+     * Creates a new label provider.
+     */
+    public LabelProvider() {
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IBaseLabelProvider.
+     */
+    public void addListener(ILabelProviderListener listener) {
+        listeners.add(listener);
+    }
+
+    /**
+     * The <code>LabelProvider</code> implementation of this 
+     * <code>IBaseLabelProvider</code> method does nothing. Subclasses may extend.
+     */
+    public void dispose() {
+    }
+
+    /**
+     * Fires a label provider changed event to all registered listeners
+     * Only listeners registered at the time this method is called are notified.
+     *
+     * @param event a label provider changed event
+     *
+     * @see ILabelProviderListener#labelProviderChanged
+     */
+    protected void fireLabelProviderChanged(
+            final LabelProviderChangedEvent event) {
+        Object[] listeners = this.listeners.getListeners();
+        for (int i = 0; i < listeners.length; ++i) {
+            final ILabelProviderListener l = (ILabelProviderListener) listeners[i];
+            Platform.run(new SafeRunnable() {
+                public void run() {
+                    l.labelProviderChanged(event);
+                }
+            });
+
+        }
+    }
+
+    /**
+     * The <code>LabelProvider</code> implementation of this 
+     * <code>ILabelProvider</code> method returns <code>null</code>. Subclasses may 
+     * override.
+     */
+    public Image getImage(Object element) {
+        return null;
+    }
+
+    /**
+     * The <code>LabelProvider</code> implementation of this 
+     * <code>ILabelProvider</code> method returns the element's <code>toString</code>
+     * string. Subclasses may override.
+     */
+    public String getText(Object element) {
+        return element == null ? "" : element.toString();//$NON-NLS-1$
+    }
+
+    /**
+     * The <code>LabelProvider</code> implementation of this 
+     * <code>IBaseLabelProvider</code> method returns <code>true</code>. Subclasses may 
+     * override.
+     */
+    public boolean isLabelProperty(Object element, String property) {
+        return true;
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IBaseLabelProvider.
+     */
+    public void removeListener(ILabelProviderListener listener) {
+        listeners.remove(listener);
+    }
 }

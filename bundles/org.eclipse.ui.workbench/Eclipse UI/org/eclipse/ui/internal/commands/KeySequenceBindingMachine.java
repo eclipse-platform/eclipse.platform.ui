@@ -31,61 +31,68 @@ final class KeySequenceBindingMachine {
      * context does not have a parent, then the mapping will be to
      * <code>null</code>. Both the keys and the values are strings.
      */
-	private Map activeContextIdMap;
-	private String[] activeKeyConfigurationIds;
-	private String[] activeLocales;
-	private String[] activePlatforms;
-	private List[] keySequenceBindings;
-	private Map keySequenceBindingsByCommandId;
-	private Map matchesByKeySequence;
-	private boolean solved;
-	private SortedMap tree;
+    private Map activeContextIdMap;
 
-	KeySequenceBindingMachine() {
-		activeContextIdMap = new HashMap();
-		activeKeyConfigurationIds = new String[0];
-		activeLocales = new String[0];
-		activePlatforms = new String[0];
-		keySequenceBindings = new List[] { new ArrayList(), new ArrayList()};
-	}
+    private String[] activeKeyConfigurationIds;
 
-	Map getActiveContextIds() {
-		return activeContextIdMap;
-	}
+    private String[] activeLocales;
 
-	String[] getActiveKeyConfigurationIds() {
-		return (String[]) activeKeyConfigurationIds.clone();
-	}
+    private String[] activePlatforms;
 
-	String[] getActiveLocales() {
-		return (String[]) activeLocales.clone();
-	}
+    private List[] keySequenceBindings;
 
-	String[] getActivePlatforms() {
-		return (String[]) activePlatforms.clone();
-	}
+    private Map keySequenceBindingsByCommandId;
 
-	List getKeySequenceBindings0() {
-		return keySequenceBindings[0];
-	}
+    private Map matchesByKeySequence;
 
-	List getKeySequenceBindings1() {
-		return keySequenceBindings[1];
-	}
+    private boolean solved;
 
-	Map getKeySequenceBindingsByCommandId() {
-		if (keySequenceBindingsByCommandId == null) {
-			validateSolution();
-			keySequenceBindingsByCommandId =
-				Collections.unmodifiableMap(
-					KeySequenceBindingNode.getKeySequenceBindingsByCommandId(
-						getMatchesByKeySequence()));
-		}
+    private SortedMap tree;
 
-		return keySequenceBindingsByCommandId;
-	}
+    KeySequenceBindingMachine() {
+        activeContextIdMap = new HashMap();
+        activeKeyConfigurationIds = new String[0];
+        activeLocales = new String[0];
+        activePlatforms = new String[0];
+        keySequenceBindings = new List[] { new ArrayList(), new ArrayList() };
+    }
 
-	/**
+    Map getActiveContextIds() {
+        return activeContextIdMap;
+    }
+
+    String[] getActiveKeyConfigurationIds() {
+        return (String[]) activeKeyConfigurationIds.clone();
+    }
+
+    String[] getActiveLocales() {
+        return (String[]) activeLocales.clone();
+    }
+
+    String[] getActivePlatforms() {
+        return (String[]) activePlatforms.clone();
+    }
+
+    List getKeySequenceBindings0() {
+        return keySequenceBindings[0];
+    }
+
+    List getKeySequenceBindings1() {
+        return keySequenceBindings[1];
+    }
+
+    Map getKeySequenceBindingsByCommandId() {
+        if (keySequenceBindingsByCommandId == null) {
+            validateSolution();
+            keySequenceBindingsByCommandId = Collections
+                    .unmodifiableMap(KeySequenceBindingNode
+                            .getKeySequenceBindingsByCommandId(getMatchesByKeySequence()));
+        }
+
+        return keySequenceBindingsByCommandId;
+    }
+
+    /**
      * Gets all of the active key bindings as a map of <code>KeySequence</code>
      * to command identifiers (<code>String</code>). The map returned is not
      * a copy, and is not safe to modify. <em>Do not modify the return 
@@ -94,30 +101,28 @@ final class KeySequenceBindingMachine {
      * @return The active key bindings; never <code>null,/code>.  <em>Do not
      * modify the return value</em>.
      */
-	Map getMatchesByKeySequence() {
-		if (matchesByKeySequence == null) {
-			validateSolution();
-			matchesByKeySequence =
-				KeySequenceBindingNode.getMatchesByKeySequence(
-					tree,
-					KeySequence.getInstance());
-		}
+    Map getMatchesByKeySequence() {
+        if (matchesByKeySequence == null) {
+            validateSolution();
+            matchesByKeySequence = KeySequenceBindingNode
+                    .getMatchesByKeySequence(tree, KeySequence.getInstance());
+        }
 
-		return matchesByKeySequence;
-	}
+        return matchesByKeySequence;
+    }
 
-	private void invalidateSolution() {
-		solved = false;
-		keySequenceBindingsByCommandId = null;
-		matchesByKeySequence = null;
-	}
+    private void invalidateSolution() {
+        solved = false;
+        keySequenceBindingsByCommandId = null;
+        matchesByKeySequence = null;
+    }
 
-	private void invalidateTree() {
-		tree = null;
-		invalidateSolution();
-	}
+    private void invalidateTree() {
+        tree = null;
+        invalidateSolution();
+    }
 
-	/**
+    /**
      * A mutator for the tree of active contexts. If the tree is different then
      * the current tree, then the previous key binding map is invalidated.
      * 
@@ -129,132 +134,121 @@ final class KeySequenceBindingMachine {
      * @return <code>true</code> if the context tree has changed;
      *         <code>false</code> otherwise.
      */
-	boolean setActiveContextIds(Map activeContextTree) {
-		if (activeContextTree == null)
-			throw new NullPointerException();
-		
-		if (!activeContextTree.equals(this.activeContextIdMap)) { 
-			this.activeContextIdMap = activeContextTree;
-			invalidateSolution();
-			return true;
-		}
+    boolean setActiveContextIds(Map activeContextTree) {
+        if (activeContextTree == null)
+            throw new NullPointerException();
 
-		return false;
-	}
+        if (!activeContextTree.equals(this.activeContextIdMap)) {
+            this.activeContextIdMap = activeContextTree;
+            invalidateSolution();
+            return true;
+        }
 
-	boolean setActiveKeyConfigurationIds(String[] activeKeyConfigurationIds) {
-		if (activeKeyConfigurationIds == null)
-			throw new NullPointerException();
+        return false;
+    }
 
-		activeKeyConfigurationIds =
-			(String[]) activeKeyConfigurationIds.clone();
+    boolean setActiveKeyConfigurationIds(String[] activeKeyConfigurationIds) {
+        if (activeKeyConfigurationIds == null)
+            throw new NullPointerException();
 
-		if (!Arrays
-			.equals(
-				this.activeKeyConfigurationIds,
-				activeKeyConfigurationIds)) {
-			this.activeKeyConfigurationIds = activeKeyConfigurationIds;
-			invalidateSolution();
-			return true;
-		}
+        activeKeyConfigurationIds = (String[]) activeKeyConfigurationIds
+                .clone();
 
-		return false;
-	}
+        if (!Arrays.equals(this.activeKeyConfigurationIds,
+                activeKeyConfigurationIds)) {
+            this.activeKeyConfigurationIds = activeKeyConfigurationIds;
+            invalidateSolution();
+            return true;
+        }
 
-	boolean setActiveLocales(String[] activeLocales) {
-		if (activeLocales == null)
-			throw new NullPointerException();
+        return false;
+    }
 
-		activeLocales = (String[]) activeLocales.clone();
+    boolean setActiveLocales(String[] activeLocales) {
+        if (activeLocales == null)
+            throw new NullPointerException();
 
-		if (!Arrays.equals(this.activeLocales, activeLocales)) {
-			this.activeLocales = activeLocales;
-			invalidateSolution();
-			return true;
-		}
+        activeLocales = (String[]) activeLocales.clone();
 
-		return false;
-	}
+        if (!Arrays.equals(this.activeLocales, activeLocales)) {
+            this.activeLocales = activeLocales;
+            invalidateSolution();
+            return true;
+        }
 
-	boolean setActivePlatforms(String[] activePlatforms) {
-		if (activePlatforms == null)
-			throw new NullPointerException();
+        return false;
+    }
 
-		activePlatforms = (String[]) activePlatforms.clone();
+    boolean setActivePlatforms(String[] activePlatforms) {
+        if (activePlatforms == null)
+            throw new NullPointerException();
 
-		if (!Arrays.equals(this.activePlatforms, activePlatforms)) {
-			this.activePlatforms = activePlatforms;
-			invalidateSolution();
-			return true;
-		}
+        activePlatforms = (String[]) activePlatforms.clone();
 
-		return false;
-	}
+        if (!Arrays.equals(this.activePlatforms, activePlatforms)) {
+            this.activePlatforms = activePlatforms;
+            invalidateSolution();
+            return true;
+        }
 
-	boolean setKeySequenceBindings0(List keySequenceBindings0) {
-		keySequenceBindings0 =
-			Util.safeCopy(
-				keySequenceBindings0,
-				KeySequenceBindingDefinition.class);
+        return false;
+    }
 
-		if (!this.keySequenceBindings[0].equals(keySequenceBindings0)) {
-			this.keySequenceBindings[0] = keySequenceBindings0;
-			invalidateTree();
-			return true;
-		}
+    boolean setKeySequenceBindings0(List keySequenceBindings0) {
+        keySequenceBindings0 = Util.safeCopy(keySequenceBindings0,
+                KeySequenceBindingDefinition.class);
 
-		return false;
-	}
+        if (!this.keySequenceBindings[0].equals(keySequenceBindings0)) {
+            this.keySequenceBindings[0] = keySequenceBindings0;
+            invalidateTree();
+            return true;
+        }
 
-	boolean setKeySequenceBindings1(List keySequenceBindings1) {
-		keySequenceBindings1 =
-			Util.safeCopy(
-				keySequenceBindings1,
-				KeySequenceBindingDefinition.class);
+        return false;
+    }
 
-		if (!this.keySequenceBindings[1].equals(keySequenceBindings1)) {
-			this.keySequenceBindings[1] = keySequenceBindings1;
-			invalidateTree();
-			return true;
-		}
+    boolean setKeySequenceBindings1(List keySequenceBindings1) {
+        keySequenceBindings1 = Util.safeCopy(keySequenceBindings1,
+                KeySequenceBindingDefinition.class);
 
-		return false;
-	}
+        if (!this.keySequenceBindings[1].equals(keySequenceBindings1)) {
+            this.keySequenceBindings[1] = keySequenceBindings1;
+            invalidateTree();
+            return true;
+        }
 
-	private void validateSolution() {
-		if (!solved) {
-			validateTree();
-			KeySequenceBindingNode.solve(
-				tree,
-				activeContextIdMap,
-				activeKeyConfigurationIds,
-				activePlatforms,
-				activeLocales);
-			solved = true;
-		}
-	}
+        return false;
+    }
 
-	private void validateTree() {
-		if (tree == null) {
-			tree = new TreeMap();
+    private void validateSolution() {
+        if (!solved) {
+            validateTree();
+            KeySequenceBindingNode.solve(tree, activeContextIdMap,
+                    activeKeyConfigurationIds, activePlatforms, activeLocales);
+            solved = true;
+        }
+    }
 
-			for (int i = 0; i < keySequenceBindings.length; i++) {
-				Iterator iterator = keySequenceBindings[i].iterator();
+    private void validateTree() {
+        if (tree == null) {
+            tree = new TreeMap();
 
-				while (iterator.hasNext()) {
-					KeySequenceBindingDefinition keySequenceBindingDefinition =
-						(KeySequenceBindingDefinition) iterator.next();
-					KeySequenceBindingNode.add(
-						tree,
-						keySequenceBindingDefinition.getKeySequence(),
-						keySequenceBindingDefinition.getContextId(),
-						keySequenceBindingDefinition.getKeyConfigurationId(),
-						i,
-						keySequenceBindingDefinition.getPlatform(),
-						keySequenceBindingDefinition.getLocale(),
-						keySequenceBindingDefinition.getCommandId());
-				}
-			}
-		}
-	}
+            for (int i = 0; i < keySequenceBindings.length; i++) {
+                Iterator iterator = keySequenceBindings[i].iterator();
+
+                while (iterator.hasNext()) {
+                    KeySequenceBindingDefinition keySequenceBindingDefinition = (KeySequenceBindingDefinition) iterator
+                            .next();
+                    KeySequenceBindingNode.add(tree,
+                            keySequenceBindingDefinition.getKeySequence(),
+                            keySequenceBindingDefinition.getContextId(),
+                            keySequenceBindingDefinition
+                                    .getKeyConfigurationId(), i,
+                            keySequenceBindingDefinition.getPlatform(),
+                            keySequenceBindingDefinition.getLocale(),
+                            keySequenceBindingDefinition.getCommandId());
+                }
+            }
+        }
+    }
 }

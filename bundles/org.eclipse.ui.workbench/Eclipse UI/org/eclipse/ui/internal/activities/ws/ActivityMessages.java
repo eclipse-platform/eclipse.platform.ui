@@ -18,28 +18,29 @@ import java.util.ResourceBundle;
  */
 public class ActivityMessages {
 
-	private static final String BUNDLE_NAME = "org.eclipse.ui.internal.activities.ws.messages"; //$NON-NLS-1$
+    private static final String BUNDLE_NAME = "org.eclipse.ui.internal.activities.ws.messages"; //$NON-NLS-1$
 
-	private static final ResourceBundle RESOURCE_BUNDLE =
-		ResourceBundle.getBundle(BUNDLE_NAME);
-	/**
-	 * Get the value of String.
-	 * 
-	 * @param key
-	 * @return String
-	 */
-	public static String getString(String key) {
-		try {
-			return RESOURCE_BUNDLE.getString(key);
-		} catch (MissingResourceException e) {
-			return '!' + key + '!';
-		}
-	}
+    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
+            .getBundle(BUNDLE_NAME);
 
-	/**
-	 * Create the activity messages
-	 */
-	private ActivityMessages() {
+    /**
+     * Get the value of String.
+     * 
+     * @param key
+     * @return String
+     */
+    public static String getString(String key) {
+        try {
+            return RESOURCE_BUNDLE.getString(key);
+        } catch (MissingResourceException e) {
+            return '!' + key + '!';
+        }
+    }
 
-	}
+    /**
+     * Create the activity messages
+     */
+    private ActivityMessages() {
+
+    }
 }

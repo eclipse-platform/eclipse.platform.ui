@@ -27,38 +27,41 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * @since 2.0
  */
 public class ResourceNavigatorRenameAction extends RenameResourceAction {
-	private TreeViewer viewer;
-	/**
-	 * Create a ResourceNavigatorRenameAction and use the tree of the supplied viewer
-	 * for editing.
-	 * @param shell Shell
-	 * @param treeViewer TreeViewer
-	 */
-	public ResourceNavigatorRenameAction(Shell shell, TreeViewer treeViewer) {
-		super(shell, treeViewer.getTree());
-		WorkbenchHelp.setHelp(
-			this,
-			INavigatorHelpContextIds.RESOURCE_NAVIGATOR_RENAME_ACTION);
-		this.viewer = treeViewer;
-	}
-	/* (non-Javadoc)
-	 * Run the action to completion using the supplied path.
-	 */
-	protected void runWithNewPath(IPath path, IResource resource) {
-		IWorkspaceRoot root = resource.getProject().getWorkspace().getRoot();
-		super.runWithNewPath(path, resource);
-		if (this.viewer != null) {
-			IResource newResource = root.findMember(path);
-			if (newResource != null)
-				this.viewer.setSelection(new StructuredSelection(newResource), true);
-		}
-	}
-	/**
-	* Handle the key release
-	*/
-	public void handleKeyReleased(KeyEvent event) {
-		if (event.keyCode == SWT.F2 && event.stateMask == 0 && isEnabled()) {
-			run();
-		}
-	}
+    private TreeViewer viewer;
+
+    /**
+     * Create a ResourceNavigatorRenameAction and use the tree of the supplied viewer
+     * for editing.
+     * @param shell Shell
+     * @param treeViewer TreeViewer
+     */
+    public ResourceNavigatorRenameAction(Shell shell, TreeViewer treeViewer) {
+        super(shell, treeViewer.getTree());
+        WorkbenchHelp.setHelp(this,
+                INavigatorHelpContextIds.RESOURCE_NAVIGATOR_RENAME_ACTION);
+        this.viewer = treeViewer;
+    }
+
+    /* (non-Javadoc)
+     * Run the action to completion using the supplied path.
+     */
+    protected void runWithNewPath(IPath path, IResource resource) {
+        IWorkspaceRoot root = resource.getProject().getWorkspace().getRoot();
+        super.runWithNewPath(path, resource);
+        if (this.viewer != null) {
+            IResource newResource = root.findMember(path);
+            if (newResource != null)
+                this.viewer.setSelection(new StructuredSelection(newResource),
+                        true);
+        }
+    }
+
+    /**
+     * Handle the key release
+     */
+    public void handleKeyReleased(KeyEvent event) {
+        if (event.keyCode == SWT.F2 && event.stateMask == 0 && isEnabled()) {
+            run();
+        }
+    }
 }

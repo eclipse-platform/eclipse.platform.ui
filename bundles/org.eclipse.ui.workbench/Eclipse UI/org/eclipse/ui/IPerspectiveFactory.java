@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui;
 
-
 /**
  * A perspective factory generates the initial page layout and visible
  * action set for a page.
@@ -69,17 +68,17 @@ package org.eclipse.ui;
  * </p>
  */
 public interface IPerspectiveFactory {
-/**
- * Creates the initial layout for a page.
- * <p>
- * Implementors of this method may add additional views to a
- * perspective.  The perspective already contains an editor folder
- * identified by the result of <code>IPageLayout.getEditorArea()</code>.  
- * Additional views should be added to the layout using this value as 
- * the initial point of reference.  
- * </p>
- *
- * @param layout the page layout
- */
-public void createInitialLayout(IPageLayout layout);
+    /**
+     * Creates the initial layout for a page.
+     * <p>
+     * Implementors of this method may add additional views to a
+     * perspective.  The perspective already contains an editor folder
+     * identified by the result of <code>IPageLayout.getEditorArea()</code>.  
+     * Additional views should be added to the layout using this value as 
+     * the initial point of reference.  
+     * </p>
+     *
+     * @param layout the page layout
+     */
+    public void createInitialLayout(IPageLayout layout);
 }

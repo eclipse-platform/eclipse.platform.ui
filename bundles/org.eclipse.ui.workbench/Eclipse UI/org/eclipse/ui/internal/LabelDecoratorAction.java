@@ -11,7 +11,7 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.ui.internal.decorators.*;
+import org.eclipse.ui.internal.decorators.DecoratorDefinition;
 
 /**
  * The LabelDecoratorAction is an action that toggles the 
@@ -22,21 +22,22 @@ import org.eclipse.ui.internal.decorators.*;
  */
 public class LabelDecoratorAction extends Action {
 
-	private DecoratorDefinition decorator;
+    private DecoratorDefinition decorator;
 
-	/**
-	 * Constructor for LabelDecoratorAction.
-	 * @param text
-	 */
-	public LabelDecoratorAction(DecoratorDefinition definition) {
-		super(definition.getName());
-		decorator = definition;
-		setChecked(decorator.isEnabled());
-	}
+    /**
+     * Constructor for LabelDecoratorAction.
+     * @param text
+     */
+    public LabelDecoratorAction(DecoratorDefinition definition) {
+        super(definition.getName());
+        decorator = definition;
+        setChecked(decorator.isEnabled());
+    }
 
-	/*
-	 * see @Action.run()
-	 */
-	public void run() {}
+    /*
+     * see @Action.run()
+     */
+    public void run() {
+    }
 
 }

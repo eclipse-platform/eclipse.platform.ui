@@ -27,148 +27,160 @@ import org.eclipse.ui.internal.registry.IActionSetDescriptor;
  * Manage the configurable actions for one window.
  */
 public class ActionPresentation {
-	private WorkbenchWindow window;
-	private HashMap mapDescToRec = new HashMap(3);
-	private HashMap invisibleBars = new HashMap(3);
-	
-	private class SetRec {
-		public SetRec(IActionSetDescriptor desc, IActionSet set,
-			SubActionBars bars) {
-			this.desc = desc;
-			this.set = set;
-			this.bars = bars;
-		}
-		public IActionSetDescriptor desc;
-		public IActionSet set;
-		public SubActionBars bars;
-	}
-/**
- * ActionPresentation constructor comment.
- */
-public ActionPresentation(WorkbenchWindow window) {
-	super();
-	this.window = window;
-}
-/**
- * Remove all action sets.
- */
-public void clearActionSets() {
-	List oldList = copyActionSets();
-	Iterator iter = oldList.iterator();
-	while (iter.hasNext()) {
-		IActionSetDescriptor desc = (IActionSetDescriptor)iter.next();
-		removeActionSet(desc);
-	}
-}
-/**
- * Returns a copy of the visible action set.
- */
-private List copyActionSets() {
-	Set keys = mapDescToRec.keySet();
-	ArrayList list = new ArrayList(keys.size());
-	Iterator iter = keys.iterator();
-	while (iter.hasNext()) {
-		list.add(iter.next());
-	}
-	return list;
-}
-/**
- * Destroy an action set.
- */
-public void removeActionSet(IActionSetDescriptor desc) {
-	SetRec rec = (SetRec)mapDescToRec.get(desc);
-	if (rec != null) {
-		mapDescToRec.remove(desc);
-		// Remove from the map that stores invisible bars
-		invisibleBars.remove(desc);
-		IActionSet set = rec.set;
-		SubActionBars bars = rec.bars;
-		if (bars != null) {
-			bars.dispose();
-		}
-		if (set != null) {
-			set.dispose();
-		}
-	}
-}
-/**
- * Sets the list of visible action set.
- */
-public void setActionSets(IActionSetDescriptor [] newArray) {
-	// Convert array to list.
-	List newList = Arrays.asList(newArray);
-	List oldList = copyActionSets();
+    private WorkbenchWindow window;
 
-	// Remove obsolete actions.
-	Iterator iter = oldList.iterator();
-	while (iter.hasNext()) {
-		IActionSetDescriptor desc = (IActionSetDescriptor)iter.next();
-		if (!newList.contains(desc)) {
-			SetRec rec = (SetRec)mapDescToRec.get(desc);
-			if (rec != null) {
-				mapDescToRec.remove(desc);
-				IActionSet set = rec.set;
-				SubActionBars bars = rec.bars;
-				if (bars != null) {
-					SetRec invisibleRec = new SetRec(desc, set, bars);
-					invisibleBars.put(desc,invisibleRec);
-					bars.deactivate();
-				}
-			}
-		}
-	}
-	
-	// Add new actions.
-	iter = newList.iterator();
-	ArrayList sets = new ArrayList();
-	while (iter.hasNext()) {
-		IActionSetDescriptor desc = (IActionSetDescriptor)iter.next();
-		if (!mapDescToRec.containsKey(desc)) {
-			try {
-				SetRec rec; 
-				// If the action bars and sets have already been created then
-				// reuse those action sets
-				if (invisibleBars.containsKey(desc)) {
-					rec = (SetRec)invisibleBars.get(desc);
-					if (rec.bars != null) {
-						rec.bars.activate();
-					}
-					invisibleBars.remove(desc);
-				}else {
-					IActionSet set = desc.createActionSet();
-					SubActionBars bars = new ActionSetActionBars(window.getActionBars(),
-							desc.getId());
-					rec = new SetRec(desc, set, bars);
-					set.init(window, bars);
-					sets.add(set);
-				}
-				mapDescToRec.put(desc, rec);
-			} catch (CoreException e) {
-				WorkbenchPlugin.log("Unable to create ActionSet: " + desc.getId());//$NON-NLS-1$
-			}
-		}
-	}
-	// We process action sets in two passes for coolbar purposes.  First we process base contributions
-	// (i.e., actions that the action set contributes to its toolbar), then we process adjunct contributions
-	// (i.e., actions that the action set contributes to other toolbars).  This type of processing is
-	// necessary in order to maintain group order within a coolitem.
-	PluginActionSetBuilder.processActionSets(sets, window);
-	
-	iter = sets.iterator();
-	while (iter.hasNext()) {
-		PluginActionSet set = (PluginActionSet)iter.next();
-		set.getBars().activate();
-	}
-}
+    private HashMap mapDescToRec = new HashMap(3);
 
-/**
- */
-public IActionSet[] getActionSets() {
-	Collection setRecCollection = mapDescToRec.values();
-	IActionSet result[] = new IActionSet[setRecCollection.size()];
-	int i = 0;
-	for (Iterator iterator = setRecCollection.iterator(); iterator.hasNext();i++)
-		result[i] = ((SetRec)iterator.next()).set;
-	return result;	
-}
+    private HashMap invisibleBars = new HashMap(3);
+
+    private class SetRec {
+        public SetRec(IActionSetDescriptor desc, IActionSet set,
+                SubActionBars bars) {
+            this.desc = desc;
+            this.set = set;
+            this.bars = bars;
+        }
+
+        public IActionSetDescriptor desc;
+
+        public IActionSet set;
+
+        public SubActionBars bars;
+    }
+
+    /**
+     * ActionPresentation constructor comment.
+     */
+    public ActionPresentation(WorkbenchWindow window) {
+        super();
+        this.window = window;
+    }
+
+    /**
+     * Remove all action sets.
+     */
+    public void clearActionSets() {
+        List oldList = copyActionSets();
+        Iterator iter = oldList.iterator();
+        while (iter.hasNext()) {
+            IActionSetDescriptor desc = (IActionSetDescriptor) iter.next();
+            removeActionSet(desc);
+        }
+    }
+
+    /**
+     * Returns a copy of the visible action set.
+     */
+    private List copyActionSets() {
+        Set keys = mapDescToRec.keySet();
+        ArrayList list = new ArrayList(keys.size());
+        Iterator iter = keys.iterator();
+        while (iter.hasNext()) {
+            list.add(iter.next());
+        }
+        return list;
+    }
+
+    /**
+     * Destroy an action set.
+     */
+    public void removeActionSet(IActionSetDescriptor desc) {
+        SetRec rec = (SetRec) mapDescToRec.get(desc);
+        if (rec != null) {
+            mapDescToRec.remove(desc);
+            // Remove from the map that stores invisible bars
+            invisibleBars.remove(desc);
+            IActionSet set = rec.set;
+            SubActionBars bars = rec.bars;
+            if (bars != null) {
+                bars.dispose();
+            }
+            if (set != null) {
+                set.dispose();
+            }
+        }
+    }
+
+    /**
+     * Sets the list of visible action set.
+     */
+    public void setActionSets(IActionSetDescriptor[] newArray) {
+        // Convert array to list.
+        List newList = Arrays.asList(newArray);
+        List oldList = copyActionSets();
+
+        // Remove obsolete actions.
+        Iterator iter = oldList.iterator();
+        while (iter.hasNext()) {
+            IActionSetDescriptor desc = (IActionSetDescriptor) iter.next();
+            if (!newList.contains(desc)) {
+                SetRec rec = (SetRec) mapDescToRec.get(desc);
+                if (rec != null) {
+                    mapDescToRec.remove(desc);
+                    IActionSet set = rec.set;
+                    SubActionBars bars = rec.bars;
+                    if (bars != null) {
+                        SetRec invisibleRec = new SetRec(desc, set, bars);
+                        invisibleBars.put(desc, invisibleRec);
+                        bars.deactivate();
+                    }
+                }
+            }
+        }
+
+        // Add new actions.
+        iter = newList.iterator();
+        ArrayList sets = new ArrayList();
+        while (iter.hasNext()) {
+            IActionSetDescriptor desc = (IActionSetDescriptor) iter.next();
+            if (!mapDescToRec.containsKey(desc)) {
+                try {
+                    SetRec rec;
+                    // If the action bars and sets have already been created then
+                    // reuse those action sets
+                    if (invisibleBars.containsKey(desc)) {
+                        rec = (SetRec) invisibleBars.get(desc);
+                        if (rec.bars != null) {
+                            rec.bars.activate();
+                        }
+                        invisibleBars.remove(desc);
+                    } else {
+                        IActionSet set = desc.createActionSet();
+                        SubActionBars bars = new ActionSetActionBars(window
+                                .getActionBars(), desc.getId());
+                        rec = new SetRec(desc, set, bars);
+                        set.init(window, bars);
+                        sets.add(set);
+                    }
+                    mapDescToRec.put(desc, rec);
+                } catch (CoreException e) {
+                    WorkbenchPlugin
+                            .log("Unable to create ActionSet: " + desc.getId());//$NON-NLS-1$
+                }
+            }
+        }
+        // We process action sets in two passes for coolbar purposes.  First we process base contributions
+        // (i.e., actions that the action set contributes to its toolbar), then we process adjunct contributions
+        // (i.e., actions that the action set contributes to other toolbars).  This type of processing is
+        // necessary in order to maintain group order within a coolitem.
+        PluginActionSetBuilder.processActionSets(sets, window);
+
+        iter = sets.iterator();
+        while (iter.hasNext()) {
+            PluginActionSet set = (PluginActionSet) iter.next();
+            set.getBars().activate();
+        }
+    }
+
+    /**
+     */
+    public IActionSet[] getActionSets() {
+        Collection setRecCollection = mapDescToRec.values();
+        IActionSet result[] = new IActionSet[setRecCollection.size()];
+        int i = 0;
+        for (Iterator iterator = setRecCollection.iterator(); iterator
+                .hasNext(); i++)
+            result[i] = ((SetRec) iterator.next()).set;
+        return result;
+    }
 }

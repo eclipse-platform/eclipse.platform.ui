@@ -46,7 +46,7 @@ public class IDEWorkbenchActivityHelper {
      * coming into the workspace.
      */
     private IResourceChangeListener listener;
-    
+
     /**
      * Mapping from composite nature ID to IPluginContribution.  Used for proper
      * activity mapping of natures.
@@ -57,7 +57,7 @@ public class IDEWorkbenchActivityHelper {
      * Singleton instance.
      */
     private static IDEWorkbenchActivityHelper singleton;
-    
+
     /**
      * Get the singleton instance of this class.
      * @return the singleton instance of this class.
@@ -65,11 +65,11 @@ public class IDEWorkbenchActivityHelper {
      */
     public static IDEWorkbenchActivityHelper getInstance() {
         if (singleton == null) {
-            singleton = new IDEWorkbenchActivityHelper();            
+            singleton = new IDEWorkbenchActivityHelper();
         }
         return singleton;
     }
-    
+
     /**
      * Create a new <code>IDEWorkbenchActivityHelper</code> which will listen 
      * for workspace changes and promote activities accordingly.
@@ -77,17 +77,22 @@ public class IDEWorkbenchActivityHelper {
     private IDEWorkbenchActivityHelper() {
         natureMap = new HashMap();
         // for dynamic UI
-        Platform.getExtensionRegistry().addRegistryChangeListener(new IRegistryChangeListener() {
-            public void registryChanged(IRegistryChangeEvent event) {
-                if (event.getExtensionDeltas("org.eclipse.core.resources", "natures").length > 0) //$NON-NLS-1$ //$NON-NLS-2$
-                    loadNatures();
-            }}, "org.eclipse.core.resources"); //$NON-NLS-1$
+        Platform.getExtensionRegistry().addRegistryChangeListener(
+                new IRegistryChangeListener() {
+                    public void registryChanged(IRegistryChangeEvent event) {
+                        if (event.getExtensionDeltas(
+                                "org.eclipse.core.resources", "natures").length > 0) //$NON-NLS-1$ //$NON-NLS-2$
+                            loadNatures();
+                    }
+                }, "org.eclipse.core.resources"); //$NON-NLS-1$
         loadNatures();
         listener = getChangeListener();
         ResourcesPlugin.getWorkspace().addResourceChangeListener(listener);
         // crawl the initial projects to set up nature bindings
-        IProject [] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-        IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI.getWorkbench().getActivitySupport();
+        IProject[] projects = ResourcesPlugin.getWorkspace().getRoot()
+                .getProjects();
+        IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI
+                .getWorkbench().getActivitySupport();
         for (int i = 0; i < projects.length; i++) {
             try {
                 processProject(projects[i], workbenchActivitySupport);
@@ -95,31 +100,34 @@ public class IDEWorkbenchActivityHelper {
                 // do nothing
             }
         }
-   }
-    
-   /**
-    * For dynamic UI.  Clears the cache of known natures and recreates it.
-    */
-   public void loadNatures() {
-       natureMap.clear();
-       IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint("org.eclipse.core.resources.natures"); //$NON-NLS-1$
-       IExtension [] extensions = point.getExtensions();
-       for (int i = 0; i < extensions.length; i++) {
-           IExtension extension = extensions[i];
-           final String localId = extension.getSimpleIdentifier();
-           final String pluginId = extension.getDeclaringPluginDescriptor().getUniqueIdentifier();
-           String natureId = extension.getUniqueIdentifier();
-           natureMap.put(natureId, new IPluginContribution() {
-               public String getLocalId() {
-                   return localId;
-               }
+    }
 
-               public String getPluginId() {
-                   return pluginId;
-               }});
-       }      
-   }
-    
+    /**
+     * For dynamic UI.  Clears the cache of known natures and recreates it.
+     */
+    public void loadNatures() {
+        natureMap.clear();
+        IExtensionPoint point = Platform.getExtensionRegistry()
+                .getExtensionPoint("org.eclipse.core.resources.natures"); //$NON-NLS-1$
+        IExtension[] extensions = point.getExtensions();
+        for (int i = 0; i < extensions.length; i++) {
+            IExtension extension = extensions[i];
+            final String localId = extension.getSimpleIdentifier();
+            final String pluginId = extension.getDeclaringPluginDescriptor()
+                    .getUniqueIdentifier();
+            String natureId = extension.getUniqueIdentifier();
+            natureMap.put(natureId, new IPluginContribution() {
+                public String getLocalId() {
+                    return localId;
+                }
+
+                public String getPluginId() {
+                    return pluginId;
+                }
+            });
+        }
+    }
+
     /**
      * Get a change listener for listening to resource changes.
      * 
@@ -140,16 +148,20 @@ public class IDEWorkbenchActivityHelper {
                     return;
                 //Has the root changed?
                 if (mainDelta.getKind() == IResourceDelta.CHANGED
-                    && mainDelta.getResource().getType() == IResource.ROOT) {
+                        && mainDelta.getResource().getType() == IResource.ROOT) {
 
                     try {
-                        IResourceDelta[] children = mainDelta.getAffectedChildren();
-                        IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI.getWorkbench().getActivitySupport();
+                        IResourceDelta[] children = mainDelta
+                                .getAffectedChildren();
+                        IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI
+                                .getWorkbench().getActivitySupport();
                         for (int i = 0; i < children.length; i++) {
                             IResourceDelta delta = children[i];
                             if (delta.getResource().getType() == IResource.PROJECT) {
-                                IProject project = (IProject) delta.getResource();
-                                processProject(project, workbenchActivitySupport);
+                                IProject project = (IProject) delta
+                                        .getResource();
+                                processProject(project,
+                                        workbenchActivitySupport);
                             }
                         }
                     } catch (CoreException exception) {
@@ -166,26 +178,28 @@ public class IDEWorkbenchActivityHelper {
      * @param project the project
      * @param workbenchActivitySupport the activity support
      */
-    protected void processProject(IProject project, IWorkbenchActivitySupport workbenchActivitySupport) throws CoreException {
+    protected void processProject(IProject project,
+            IWorkbenchActivitySupport workbenchActivitySupport)
+            throws CoreException {
         if (!project.isOpen())
             return;
-        IActivityManager activityManager = workbenchActivitySupport.getActivityManager();
+        IActivityManager activityManager = workbenchActivitySupport
+                .getActivityManager();
         String[] ids = project.getDescription().getNatureIds();
         if (ids.length == 0)
             return;
         Set activities = new HashSet(activityManager.getEnabledActivityIds());
         boolean changed = false;
-        for (int j = 0; j < ids.length; j++) {                                                                    
-            IPluginContribution contribution = (IPluginContribution) natureMap.get(ids[j]);
+        for (int j = 0; j < ids.length; j++) {
+            IPluginContribution contribution = (IPluginContribution) natureMap
+                    .get(ids[j]);
             if (contribution == null)
                 continue; //bad nature ID.
-            IIdentifier identifier = 
-                activityManager
-                	.getIdentifier(
-                	        WorkbenchActivityHelper.createUnifiedId(
-                	                contribution));
+            IIdentifier identifier = activityManager
+                    .getIdentifier(WorkbenchActivityHelper
+                            .createUnifiedId(contribution));
             if (activities.addAll(identifier.getActivityIds())) {
-            	changed = true;
+                changed = true;
             }
         }
         if (changed)
@@ -194,12 +208,12 @@ public class IDEWorkbenchActivityHelper {
 
     /**
      * Unhooks the <code>IResourceChangeListener</code>.
-     */ 
+     */
     public void shutdown() {
         if (listener != null) {
-            ResourcesPlugin.getWorkspace().removeResourceChangeListener(listener);
-        }        
+            ResourcesPlugin.getWorkspace().removeResourceChangeListener(
+                    listener);
+        }
     }
 
-    
 }

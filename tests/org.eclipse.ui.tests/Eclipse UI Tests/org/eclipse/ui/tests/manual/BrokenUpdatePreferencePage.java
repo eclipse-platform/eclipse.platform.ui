@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.manual;
 
+import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -19,12 +23,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-
-import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
@@ -33,113 +31,103 @@ import org.eclipse.ui.PlatformUI;
  * This is a test preference page designed to
  * generate errors on update
  */
-public class BrokenUpdatePreferencePage
-	extends PreferencePage
-	implements IWorkbenchPreferencePage {
+public class BrokenUpdatePreferencePage extends PreferencePage implements
+        IWorkbenchPreferencePage {
 
-	private IPropertyChangeListener badListener =
-		new IPropertyChangeListener() {
-		public void propertyChange(PropertyChangeEvent event) {
-				//Intentionally generate an error
-			String[] strings = new String[1];
-			System.out.println(strings[2]);
-		}
-	};
+    private IPropertyChangeListener badListener = new IPropertyChangeListener() {
+        public void propertyChange(PropertyChangeEvent event) {
+            //Intentionally generate an error
+            String[] strings = new String[1];
+            System.out.println(strings[2]);
+        }
+    };
 
-	FontData[] data;
+    FontData[] data;
 
-	/**
-	 * @see org.eclipse.jface.preference.PreferencePage#createContents(Composite)
-	 */
-	protected Control createContents(Composite parent) {
+    /**
+     * @see org.eclipse.jface.preference.PreferencePage#createContents(Composite)
+     */
+    protected Control createContents(Composite parent) {
 
-		data = parent.getFont().getFontData();
+        data = parent.getFont().getFontData();
 
-		Composite buttonComposite = new Composite(parent, SWT.NULL);
-		buttonComposite.setLayout(new GridLayout());
-		buttonComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+        Composite buttonComposite = new Composite(parent, SWT.NULL);
+        buttonComposite.setLayout(new GridLayout());
+        buttonComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		Button fontButton = new Button(buttonComposite, SWT.PUSH);
-		fontButton.setText("Update Font");
-		fontButton.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				changeFont();
-			}
-			public void widgetDefaultSelected(SelectionEvent e) {
-				changeFont();
-			}
-		});
+        Button fontButton = new Button(buttonComposite, SWT.PUSH);
+        fontButton.setText("Update Font");
+        fontButton.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent e) {
+                changeFont();
+            }
 
-		Button preferencePluginButton = new Button(buttonComposite, SWT.PUSH);
-		preferencePluginButton.setText("Update Plugin Preferences");
-		preferencePluginButton.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				changePluginPreference();
-			}
-			public void widgetDefaultSelected(SelectionEvent e) {
-				changePluginPreference();
-			}
-		});
-		
-		Button preferenceButton = new Button(buttonComposite, SWT.PUSH);
-		preferenceButton.setText("Update Dialog Preferences");
-		preferenceButton.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				changePluginPreference();
-			}
-			public void widgetDefaultSelected(SelectionEvent e) {
-				changePluginPreference();
-			}
-		});
+            public void widgetDefaultSelected(SelectionEvent e) {
+                changeFont();
+            }
+        });
 
-		return buttonComposite;
+        Button preferencePluginButton = new Button(buttonComposite, SWT.PUSH);
+        preferencePluginButton.setText("Update Plugin Preferences");
+        preferencePluginButton.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent e) {
+                changePluginPreference();
+            }
 
-	}
+            public void widgetDefaultSelected(SelectionEvent e) {
+                changePluginPreference();
+            }
+        });
 
-	/**
-	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(IWorkbench)
-	 */
-	public void init(IWorkbench workbench) {
+        Button preferenceButton = new Button(buttonComposite, SWT.PUSH);
+        preferenceButton.setText("Update Dialog Preferences");
+        preferenceButton.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent e) {
+                changePluginPreference();
+            }
 
-		JFaceResources.getFontRegistry().addListener(badListener);
+            public void widgetDefaultSelected(SelectionEvent e) {
+                changePluginPreference();
+            }
+        });
 
-		PlatformUI
-			.getWorkbench()
-			.getPreferenceStore()
-			.addPropertyChangeListener(
-			badListener);
+        return buttonComposite;
 
-	}
+    }
 
-	/**	
-	 * see@DialogPage.dispose();
-	 */
-	public void dispose() {
-		super.dispose();
-		JFaceResources.getFontRegistry().removeListener(badListener);
+    /**
+     * @see org.eclipse.ui.IWorkbenchPreferencePage#init(IWorkbench)
+     */
+    public void init(IWorkbench workbench) {
 
-		PlatformUI
-			.getWorkbench()
-			.getPreferenceStore()
-			.removePropertyChangeListener(
-			badListener);
-	}
+        JFaceResources.getFontRegistry().addListener(badListener);
 
-	public void changeFont() {
-		JFaceResources.getFontRegistry().put("FAKO", data);
-	}
+        PlatformUI.getWorkbench().getPreferenceStore()
+                .addPropertyChangeListener(badListener);
 
-	public void changePluginPreference() {
-		PlatformUI.getWorkbench().getPreferenceStore().firePropertyChangeEvent(
-			"FAKO",
-			"Old",
-			"New");
-	}
-	
-	public void changePreference() {
-		getPreferenceStore().firePropertyChangeEvent(
-			"FAKO",
-			"Old",
-			"New");
-	}
+    }
+
+    /**	
+     * see@DialogPage.dispose();
+     */
+    public void dispose() {
+        super.dispose();
+        JFaceResources.getFontRegistry().removeListener(badListener);
+
+        PlatformUI.getWorkbench().getPreferenceStore()
+                .removePropertyChangeListener(badListener);
+    }
+
+    public void changeFont() {
+        JFaceResources.getFontRegistry().put("FAKO", data);
+    }
+
+    public void changePluginPreference() {
+        PlatformUI.getWorkbench().getPreferenceStore().firePropertyChangeEvent(
+                "FAKO", "Old", "New");
+    }
+
+    public void changePreference() {
+        getPreferenceStore().firePropertyChangeEvent("FAKO", "Old", "New");
+    }
 }

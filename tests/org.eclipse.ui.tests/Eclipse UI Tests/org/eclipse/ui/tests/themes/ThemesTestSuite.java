@@ -17,13 +17,13 @@ import junit.framework.TestSuite;
  * @since 3.0
  */
 public class ThemesTestSuite extends TestSuite {
-	
-	public static Test suite() {
-		return new ThemesTestSuite();
-	}	
-	
-	public ThemesTestSuite() {
-		addTest(new TestSuite(ThemeAPITest.class));
-		addTest(new TestSuite(JFaceThemeTest.class));
-	}
+
+    public static Test suite() {
+        return new ThemesTestSuite();
+    }
+
+    public ThemesTestSuite() {
+        addTest(new TestSuite(ThemeAPITest.class));
+        addTest(new TestSuite(JFaceThemeTest.class));
+    }
 }

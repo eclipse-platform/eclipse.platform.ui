@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.wizard.WizardPage;
@@ -19,10 +21,12 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -43,95 +47,104 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  * </p>
  */
 public class WizardNewProjectReferencePage extends WizardPage {
-	// widgets
-	private CheckboxTableViewer referenceProjectsViewer;
+    // widgets
+    private CheckboxTableViewer referenceProjectsViewer;
 
-	private static final String REFERENCED_PROJECTS_TITLE = IDEWorkbenchMessages.getString("WizardNewProjectReferences.title"); //$NON-NLS-1$
-	private static final int PROJECT_LIST_MULTIPLIER = 15;
-/**
- * Creates a new project reference wizard page.
- *
- * @param pageName the name of this page
- */
-public WizardNewProjectReferencePage(String pageName) {
-	super(pageName);
-}
-/** (non-Javadoc)
- * Method declared on IDialogPage.
- */
-public void createControl(Composite parent) {
-	
-	Font font = parent.getFont();
-	
-	Composite composite = new Composite(parent, SWT.NONE);
-	composite.setLayout(new GridLayout());
-	composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	composite.setFont(font);
+    private static final String REFERENCED_PROJECTS_TITLE = IDEWorkbenchMessages
+            .getString("WizardNewProjectReferences.title"); //$NON-NLS-1$
 
-	WorkbenchHelp.setHelp(composite, IHelpContextIds.NEW_PROJECT_REFERENCE_WIZARD_PAGE);
-	
-	Label referenceLabel = new Label(composite, SWT.NONE);
-	referenceLabel.setText(REFERENCED_PROJECTS_TITLE);
-	referenceLabel.setFont(font);
+    private static final int PROJECT_LIST_MULTIPLIER = 15;
 
-	referenceProjectsViewer = CheckboxTableViewer.newCheckList(composite, SWT.BORDER);
-	referenceProjectsViewer.getTable().setFont(composite.getFont());
-	GridData data = new GridData();
-	data.horizontalAlignment = GridData.FILL;
-	data.grabExcessHorizontalSpace = true;
+    /**
+     * Creates a new project reference wizard page.
+     *
+     * @param pageName the name of this page
+     */
+    public WizardNewProjectReferencePage(String pageName) {
+        super(pageName);
+    }
 
-	data.heightHint =
-		getDefaultFontHeight(
-			referenceProjectsViewer.getTable(),
-			PROJECT_LIST_MULTIPLIER);
-	referenceProjectsViewer.getTable().setLayoutData(data);
-	referenceProjectsViewer.setLabelProvider(WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider());
-	referenceProjectsViewer.setContentProvider(getContentProvider());
-	referenceProjectsViewer.setInput(ResourcesPlugin.getWorkspace());
+    /** (non-Javadoc)
+     * Method declared on IDialogPage.
+     */
+    public void createControl(Composite parent) {
 
-	setControl(composite);
-}
-/**
- * Returns a content provider for the reference project
- * viewer. It will return all projects in the workspace.
- *
- * @return the content provider
- */
-protected IStructuredContentProvider getContentProvider() {
-	return new WorkbenchContentProvider() {
-		public Object[] getChildren(Object element) {
-			if (!(element instanceof IWorkspace))
-				return new Object[0];
-			IProject[] projects = ((IWorkspace)element).getRoot().getProjects();
-			return projects == null ? new Object[0] : projects;
-		}
-	};
-}
-/**
- * Get the defualt widget height for the supplied control.
- * @return int
- * @param control - the control being queried about fonts
- * @param lines - the number of lines to be shown on the table.
- */
-private static int getDefaultFontHeight(Control control, int lines) {
-	FontData[] viewerFontData = control.getFont().getFontData();
-	int fontHeight = 10;
+        Font font = parent.getFont();
 
-	//If we have no font data use our guess
-	if (viewerFontData.length > 0)
-		fontHeight = viewerFontData[0].getHeight();
-	return lines * fontHeight;
+        Composite composite = new Composite(parent, SWT.NONE);
+        composite.setLayout(new GridLayout());
+        composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        composite.setFont(font);
 
-}
-/**
- * Returns the referenced projects selected by the user.
- *
- * @return the referenced projects
- */
-public IProject[] getReferencedProjects() {
-	Object[] elements = referenceProjectsViewer.getCheckedElements();
-	IProject[] projects = new IProject[elements.length];
-	System.arraycopy(elements, 0, projects, 0, elements.length);
-	return projects;	
-}
+        WorkbenchHelp.setHelp(composite,
+                IHelpContextIds.NEW_PROJECT_REFERENCE_WIZARD_PAGE);
+
+        Label referenceLabel = new Label(composite, SWT.NONE);
+        referenceLabel.setText(REFERENCED_PROJECTS_TITLE);
+        referenceLabel.setFont(font);
+
+        referenceProjectsViewer = CheckboxTableViewer.newCheckList(composite,
+                SWT.BORDER);
+        referenceProjectsViewer.getTable().setFont(composite.getFont());
+        GridData data = new GridData();
+        data.horizontalAlignment = GridData.FILL;
+        data.grabExcessHorizontalSpace = true;
+
+        data.heightHint = getDefaultFontHeight(referenceProjectsViewer
+                .getTable(), PROJECT_LIST_MULTIPLIER);
+        referenceProjectsViewer.getTable().setLayoutData(data);
+        referenceProjectsViewer.setLabelProvider(WorkbenchLabelProvider
+                .getDecoratingWorkbenchLabelProvider());
+        referenceProjectsViewer.setContentProvider(getContentProvider());
+        referenceProjectsViewer.setInput(ResourcesPlugin.getWorkspace());
+
+        setControl(composite);
+    }
+
+    /**
+     * Returns a content provider for the reference project
+     * viewer. It will return all projects in the workspace.
+     *
+     * @return the content provider
+     */
+    protected IStructuredContentProvider getContentProvider() {
+        return new WorkbenchContentProvider() {
+            public Object[] getChildren(Object element) {
+                if (!(element instanceof IWorkspace))
+                    return new Object[0];
+                IProject[] projects = ((IWorkspace) element).getRoot()
+                        .getProjects();
+                return projects == null ? new Object[0] : projects;
+            }
+        };
+    }
+
+    /**
+     * Get the defualt widget height for the supplied control.
+     * @return int
+     * @param control - the control being queried about fonts
+     * @param lines - the number of lines to be shown on the table.
+     */
+    private static int getDefaultFontHeight(Control control, int lines) {
+        FontData[] viewerFontData = control.getFont().getFontData();
+        int fontHeight = 10;
+
+        //If we have no font data use our guess
+        if (viewerFontData.length > 0)
+            fontHeight = viewerFontData[0].getHeight();
+        return lines * fontHeight;
+
+    }
+
+    /**
+     * Returns the referenced projects selected by the user.
+     *
+     * @return the referenced projects
+     */
+    public IProject[] getReferencedProjects() {
+        Object[] elements = referenceProjectsViewer.getCheckedElements();
+        IProject[] projects = new IProject[elements.length];
+        System.arraycopy(elements, 0, projects, 0, elements.length);
+        return projects;
+    }
 }

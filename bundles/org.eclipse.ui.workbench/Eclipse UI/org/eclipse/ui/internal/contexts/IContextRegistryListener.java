@@ -13,5 +13,5 @@ package org.eclipse.ui.internal.contexts;
 
 public interface IContextRegistryListener {
 
-	void contextRegistryChanged(ContextRegistryEvent contextRegistryEvent);
+    void contextRegistryChanged(ContextRegistryEvent contextRegistryEvent);
 }

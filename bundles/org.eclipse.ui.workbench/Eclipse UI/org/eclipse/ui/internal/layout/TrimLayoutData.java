@@ -44,48 +44,48 @@ import org.eclipse.swt.SWT;
  * @since 3.0  
  */
 public class TrimLayoutData {
-	/**
-	 * Width of the control (or SWT.DEFAULT if the control's preferred width should be used)
-	 */
-	int widthHint = SWT.DEFAULT;
+    /**
+     * Width of the control (or SWT.DEFAULT if the control's preferred width should be used)
+     */
+    int widthHint = SWT.DEFAULT;
 
-	/**
-	 * Height of the control (or SWT.DEFAULT if the control's preferred height should be used)
-	 */
-	int heightHint = SWT.DEFAULT;
-	
-	/**
-	 * Flag indicating whether the control should resize with the window. Note that 
-	 * available space is always divided equally among all resizable controls on the 
-	 * same side of the layout, regardless of their preferred size.
-	 */
-	boolean resizable = true;
-	
-	/**
-	 * Creates a default TrimLayoutData. The default trim layout data is resizable.
-	 */
-	public TrimLayoutData() {
-	}
-	
-	/**
-	 * Creates a TrimLayoutData with user-specified parameters.
-	 * 
-	 * @param resizable if true, the control will be resized with the layout. If there
-	 * is more than one resizable control on the same side of the layout, the available
-	 * space will be divided equally among all the controls.
-	 * 
-	 * @param widthHint overrides the preferred width of the control (pixels). If SWT.DEFAULT,
-	 * then the control's preferred width will be used. This has no effect for 
-	 * horizontally resizable controls.
-	 *  
-	 * @param heightHint overrides the preferred height of the control (pixels). If SWT.DEFAULT,
-	 * then the control's preferred height will be used. This has no effect for 
-	 * vertically resizable controls.
-	 */
-	public TrimLayoutData(boolean resizable, int widthHint, int heightHint) {
-		this.widthHint = widthHint;
-		this.heightHint = heightHint;
-		this.resizable = resizable;
-	}
-	
+    /**
+     * Height of the control (or SWT.DEFAULT if the control's preferred height should be used)
+     */
+    int heightHint = SWT.DEFAULT;
+
+    /**
+     * Flag indicating whether the control should resize with the window. Note that 
+     * available space is always divided equally among all resizable controls on the 
+     * same side of the layout, regardless of their preferred size.
+     */
+    boolean resizable = true;
+
+    /**
+     * Creates a default TrimLayoutData. The default trim layout data is resizable.
+     */
+    public TrimLayoutData() {
+    }
+
+    /**
+     * Creates a TrimLayoutData with user-specified parameters.
+     * 
+     * @param resizable if true, the control will be resized with the layout. If there
+     * is more than one resizable control on the same side of the layout, the available
+     * space will be divided equally among all the controls.
+     * 
+     * @param widthHint overrides the preferred width of the control (pixels). If SWT.DEFAULT,
+     * then the control's preferred width will be used. This has no effect for 
+     * horizontally resizable controls.
+     *  
+     * @param heightHint overrides the preferred height of the control (pixels). If SWT.DEFAULT,
+     * then the control's preferred height will be used. This has no effect for 
+     * vertically resizable controls.
+     */
+    public TrimLayoutData(boolean resizable, int widthHint, int heightHint) {
+        this.widthHint = widthHint;
+        this.heightHint = heightHint;
+        this.resizable = resizable;
+    }
+
 }

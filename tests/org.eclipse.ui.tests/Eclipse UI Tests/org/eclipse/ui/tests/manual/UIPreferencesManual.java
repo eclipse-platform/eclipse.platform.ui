@@ -14,7 +14,6 @@ import java.util.Iterator;
 
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceManager;
-
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.tests.dialogs.PreferenceDialogWrapper;
 import org.eclipse.ui.tests.dialogs.UIPreferencesAuto;
@@ -26,42 +25,41 @@ import org.eclipse.ui.tests.dialogs.UIPreferencesAuto;
  */
 
 public class UIPreferencesManual extends UIPreferencesAuto {
-	
-	public UIPreferencesManual(String name) {
-		super(name);
-	}
 
-	/**
-	 * Test the bad update preference page by generating all
-	 * of the dialog errors.
-	 */
-	public void testBrokenListenerPref() {
+    public UIPreferencesManual(String name) {
+        super(name);
+    }
 
-		PreferenceDialogWrapper dialog = null;
-		PreferenceManager manager =
-			WorkbenchPlugin.getDefault().getPreferenceManager();
-		if (manager != null) {
-			dialog = new PreferenceDialogWrapper(getShell(), manager);
-			dialog.create();
+    /**
+     * Test the bad update preference page by generating all
+     * of the dialog errors.
+     */
+    public void testBrokenListenerPref() {
 
-			for (Iterator iterator =
-				manager.getElements(PreferenceManager.PRE_ORDER).iterator();
-				iterator.hasNext();
-				) {
-				IPreferenceNode node = (IPreferenceNode) iterator.next();
-				if (node
-					.getId()
-					.equals("org.eclipse.ui.tests.manual.BrokenUpdatePreferencePage")) {
-					dialog.showPage(node);
-					BrokenUpdatePreferencePage page =
-						(BrokenUpdatePreferencePage) dialog.getPage(node);
-					page.changeFont();
-					page.changePluginPreference();
-					break;
-				}
-			}
-		}
+        PreferenceDialogWrapper dialog = null;
+        PreferenceManager manager = WorkbenchPlugin.getDefault()
+                .getPreferenceManager();
+        if (manager != null) {
+            dialog = new PreferenceDialogWrapper(getShell(), manager);
+            dialog.create();
 
-	}
+            for (Iterator iterator = manager.getElements(
+                    PreferenceManager.PRE_ORDER).iterator(); iterator.hasNext();) {
+                IPreferenceNode node = (IPreferenceNode) iterator.next();
+                if (node
+                        .getId()
+                        .equals(
+                                "org.eclipse.ui.tests.manual.BrokenUpdatePreferencePage")) {
+                    dialog.showPage(node);
+                    BrokenUpdatePreferencePage page = (BrokenUpdatePreferencePage) dialog
+                            .getPage(node);
+                    page.changeFont();
+                    page.changePluginPreference();
+                    break;
+                }
+            }
+        }
+
+    }
 
 }

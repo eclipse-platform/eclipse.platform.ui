@@ -19,48 +19,50 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 
-public abstract class MockWorkbenchPart extends MockPart implements IWorkbenchPart
-{	
+public abstract class MockWorkbenchPart extends MockPart implements
+        IWorkbenchPart {
 
-	private IWorkbenchPartSite site;
-	private String title;
-	public MockWorkbenchPart() {
-	    super();
-	}
-	
-	public void setSite(IWorkbenchPartSite site) {
-		this.site = site;
-		site.setSelectionProvider(selectionProvider);
-	}
-	
+    private IWorkbenchPartSite site;
+
+    private String title;
+
+    public MockWorkbenchPart() {
+        super();
+    }
+
+    public void setSite(IWorkbenchPartSite site) {
+        this.site = site;
+        site.setSelectionProvider(selectionProvider);
+    }
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.api.MockPart#createPartControl(org.eclipse.swt.widgets.Composite)
      */
     public void createPartControl(Composite parent) {
         // TODO Auto-generated method stub
         super.createPartControl(parent);
-    	Label label = new Label(parent, SWT.NONE);
-    	label.setText(title);
+        Label label = new Label(parent, SWT.NONE);
+        label.setText(title);
     }
-    
-	public IWorkbenchPartSite getSite() {
-		return site;
-	}
-	
-	/**
-	 * @see IWorkbenchPart#getTitle()
-	 */
-	public String getTitle() {
-		return title;
-	}
 
-	/**
-	 * @see IWorkbenchPart#getTitleToolTip()
-	 */
-	public String getTitleToolTip() {
-		return title;
-	}
-	
+    public IWorkbenchPartSite getSite() {
+        return site;
+    }
+
+    /**
+     * @see IWorkbenchPart#getTitle()
+     */
+    public String getTitle() {
+        return title;
+    }
+
+    /**
+     * @see IWorkbenchPart#getTitleToolTip()
+     */
+    public String getTitleToolTip() {
+        return title;
+    }
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.api.MockPart#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
      */
@@ -68,15 +70,15 @@ public abstract class MockWorkbenchPart extends MockPart implements IWorkbenchPa
             String propertyName, Object data) throws CoreException {
         // TODO Auto-generated method stub
         super.setInitializationData(config, propertyName, data);
-    	title = config.getAttribute("name");
+        title = config.getAttribute("name");
     }
-    
+
     protected void setSiteInitialized() {
-		setSiteInitialized(getSite().getKeyBindingService() != null 
-		        & getSite().getPage() != null
-		        & getSite().getSelectionProvider() != null
-		        & getSite().getWorkbenchWindow() != null
-		        & testActionBars(getActionBars()));        
+        setSiteInitialized(getSite().getKeyBindingService() != null
+                & getSite().getPage() != null
+                & getSite().getSelectionProvider() != null
+                & getSite().getWorkbenchWindow() != null
+                & testActionBars(getActionBars()));
     }
 
     /**
@@ -84,11 +86,10 @@ public abstract class MockWorkbenchPart extends MockPart implements IWorkbenchPa
      * @return
      */
     private boolean testActionBars(IActionBars bars) {
-        return bars != null 
-    	&& bars.getMenuManager() != null
-    	&& bars.getToolBarManager() != null
-    	&& bars.getStatusLineManager() != null;
-        
+        return bars != null && bars.getMenuManager() != null
+                && bars.getToolBarManager() != null
+                && bars.getStatusLineManager() != null;
+
     }
 
     protected abstract IActionBars getActionBars();

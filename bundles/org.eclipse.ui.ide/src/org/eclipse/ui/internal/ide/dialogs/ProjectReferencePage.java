@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.ide.dialogs;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
@@ -50,196 +51,199 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  * of projects referenced by a given project.
  */
 public class ProjectReferencePage extends PropertyPage {
-	private IProject project;
-	private boolean modified = false;
-	//widgets
-	private CheckboxTableViewer listViewer;
+    private IProject project;
 
-	private static final int PROJECT_LIST_MULTIPLIER = 30;
-	/**
-	 * Creates a new ProjectReferencePage.
-	 */
-	public ProjectReferencePage() {
-		//Do nothing on creation
-	}
-	/**
-	 * @see PreferencePage#createContents
-	 */
-	protected Control createContents(Composite parent) {
+    private boolean modified = false;
 
-		WorkbenchHelp.setHelp(
-			getControl(),
-			IHelpContextIds.PROJECT_REFERENCE_PROPERTY_PAGE);
-		Font font = parent.getFont();
+    //widgets
+    private CheckboxTableViewer listViewer;
 
-		Composite composite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		composite.setLayout(layout);
-		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		composite.setFont(font);
+    private static final int PROJECT_LIST_MULTIPLIER = 30;
 
-		initialize();
+    /**
+     * Creates a new ProjectReferencePage.
+     */
+    public ProjectReferencePage() {
+        //Do nothing on creation
+    }
 
-		createDescriptionLabel(composite);
+    /**
+     * @see PreferencePage#createContents
+     */
+    protected Control createContents(Composite parent) {
 
-		listViewer =
-			CheckboxTableViewer.newCheckList(composite, SWT.TOP | SWT.BORDER);
-		listViewer.getTable().setFont(font);
-		GridData data = new GridData(GridData.FILL_BOTH);
-		data.grabExcessHorizontalSpace = true;
+        WorkbenchHelp.setHelp(getControl(),
+                IHelpContextIds.PROJECT_REFERENCE_PROPERTY_PAGE);
+        Font font = parent.getFont();
 
-		//Only set a height hint if it will not result in a cut off dialog
-		if (DialogUtil.inRegularFontMode(parent))
-			data.heightHint =
-				getDefaultFontHeight(
-					listViewer.getTable(),
-					PROJECT_LIST_MULTIPLIER);
-		listViewer.getTable().setLayoutData(data);
-		listViewer.getTable().setFont(font);
+        Composite composite = new Composite(parent, SWT.NONE);
+        GridLayout layout = new GridLayout();
+        composite.setLayout(layout);
+        composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        composite.setFont(font);
 
-		listViewer.setLabelProvider(WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider());
-		listViewer.setContentProvider(getContentProvider(project));
-		listViewer.setSorter(new ViewerSorter());
-		listViewer.setInput(project.getWorkspace());
-		try {
-			listViewer.setCheckedElements(project.getDescription().getReferencedProjects());
-		} catch (CoreException e) {
-			//don't initial-check anything
-		}
+        initialize();
 
-		//check for initial modification to avoid work if no changes are made
-		listViewer.addCheckStateListener(new ICheckStateListener() {
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				modified = true;
-			}
-		});
+        createDescriptionLabel(composite);
 
-		return composite;
-	}
+        listViewer = CheckboxTableViewer.newCheckList(composite, SWT.TOP
+                | SWT.BORDER);
+        listViewer.getTable().setFont(font);
+        GridData data = new GridData(GridData.FILL_BOTH);
+        data.grabExcessHorizontalSpace = true;
 
-	/**
-	 * Returns a content provider for the list dialog. It
-	 * will return all projects in the workspace except
-	 * the given project, plus any projects referenced
-	 * by the given project which do no exist in the
-	 * workspace.
-	 * @param project the project to provide content for
-	 * @return the content provider that shows the project content
-	 */
-	protected IStructuredContentProvider getContentProvider(final IProject project) {
-		return new WorkbenchContentProvider() {
-			public Object[] getChildren(Object o) {
-				if (!(o instanceof IWorkspace)) {
-					return new Object[0];
-				}
+        //Only set a height hint if it will not result in a cut off dialog
+        if (DialogUtil.inRegularFontMode(parent))
+            data.heightHint = getDefaultFontHeight(listViewer.getTable(),
+                    PROJECT_LIST_MULTIPLIER);
+        listViewer.getTable().setLayoutData(data);
+        listViewer.getTable().setFont(font);
 
-				// Collect all the projects in the workspace except the given project
-				IProject[] projects = ((IWorkspace) o).getRoot().getProjects();
-				ArrayList referenced = new ArrayList(projects.length);
-				boolean found = false;
-				for (int i = 0; i < projects.length; i++) {
-					if (!found && projects[i].equals(project)) {
-						found = true;
-						continue;
-					}
-					referenced.add(projects[i]);
-				}
+        listViewer.setLabelProvider(WorkbenchLabelProvider
+                .getDecoratingWorkbenchLabelProvider());
+        listViewer.setContentProvider(getContentProvider(project));
+        listViewer.setSorter(new ViewerSorter());
+        listViewer.setInput(project.getWorkspace());
+        try {
+            listViewer.setCheckedElements(project.getDescription()
+                    .getReferencedProjects());
+        } catch (CoreException e) {
+            //don't initial-check anything
+        }
 
-				// Add any referenced that do not exist in the workspace currently
-				try {
-					projects = project.getDescription().getReferencedProjects();
-					for (int i = 0; i < projects.length; i++) {
-						if (!referenced.contains(projects[i]))
-							referenced.add(projects[i]);
-					}
-				} catch (CoreException e) {
-					//Ignore core exceptions
-				}
+        //check for initial modification to avoid work if no changes are made
+        listViewer.addCheckStateListener(new ICheckStateListener() {
+            public void checkStateChanged(CheckStateChangedEvent event) {
+                modified = true;
+            }
+        });
 
-				return referenced.toArray();
-			}
-		};
-	}
-	/**
-	 * Get the defualt widget height for the supplied control.
-	 * @return int
-	 * @param control - the control being queried about fonts
-	 * @param lines - the number of lines to be shown on the table.
-	 */
-	private static int getDefaultFontHeight(Control control, int lines) {
-		FontData[] viewerFontData = control.getFont().getFontData();
-		int fontHeight = 10;
+        return composite;
+    }
 
-		//If we have no font data use our guess
-		if (viewerFontData.length > 0)
-			fontHeight = viewerFontData[0].getHeight();
-		return lines * fontHeight;
+    /**
+     * Returns a content provider for the list dialog. It
+     * will return all projects in the workspace except
+     * the given project, plus any projects referenced
+     * by the given project which do no exist in the
+     * workspace.
+     * @param project the project to provide content for
+     * @return the content provider that shows the project content
+     */
+    protected IStructuredContentProvider getContentProvider(
+            final IProject project) {
+        return new WorkbenchContentProvider() {
+            public Object[] getChildren(Object o) {
+                if (!(o instanceof IWorkspace)) {
+                    return new Object[0];
+                }
 
-	}
-	/**
-	 * Handle the exception thrown when saving.
-	 * @param e the exception
-	 */
-	protected void handle(InvocationTargetException e) {
-		IStatus error;
-		Throwable target = e.getTargetException();
-		if (target instanceof CoreException) {
-			error = ((CoreException) target).getStatus();
-		} else {
-			String msg = target.getMessage();
-			if (msg == null)
-				msg = IDEWorkbenchMessages.getString("Internal_error"); //$NON-NLS-1$
-			error =
-				new Status(
-					IStatus.ERROR,
-					IDEWorkbenchPlugin.IDE_WORKBENCH,
-					1,
-					msg,
-					target);
-		}
-		ErrorDialog.openError(getControl().getShell(), null, null, error);
-	}
-	/**
-	 * Initializes a ProjectReferencePage.
-	 */
-	private void initialize() {
-		project = (IProject) getElement().getAdapter(IResource.class);
-		noDefaultAndApplyButton();
-		setDescription(IDEWorkbenchMessages.format("ProjectReferencesPage.label", new Object[] { project.getName()})); //$NON-NLS-1$
-	}
-	/**
-	 * @see PreferencePage#performOk
-	 */
-	public boolean performOk() {
-		if (!modified)
-			return true;
-		Object[] checked = listViewer.getCheckedElements();
-		final IProject[] refs = new IProject[checked.length];
-		System.arraycopy(checked, 0, refs, 0, checked.length);
-		IRunnableWithProgress runnable = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor)
-				throws InvocationTargetException {
+                // Collect all the projects in the workspace except the given project
+                IProject[] projects = ((IWorkspace) o).getRoot().getProjects();
+                ArrayList referenced = new ArrayList(projects.length);
+                boolean found = false;
+                for (int i = 0; i < projects.length; i++) {
+                    if (!found && projects[i].equals(project)) {
+                        found = true;
+                        continue;
+                    }
+                    referenced.add(projects[i]);
+                }
 
-				try {
-					IProjectDescription description = project.getDescription();
-					description.setReferencedProjects(refs);
-					project.setDescription(description, monitor);
-				} catch (CoreException e) {
-					throw new InvocationTargetException(e);
-				}
-			}
-		};
-		try {
-			new ProgressMonitorJobsDialog(getControl().getShell()).run(
-				true,
-				true,
-				runnable);
-		} catch (InterruptedException e) {
-			//Ignore interrupted exceptions
-		} catch (InvocationTargetException e) {
-			handle(e);
-			return false;
-		}
-		return true;
-	}
+                // Add any referenced that do not exist in the workspace currently
+                try {
+                    projects = project.getDescription().getReferencedProjects();
+                    for (int i = 0; i < projects.length; i++) {
+                        if (!referenced.contains(projects[i]))
+                            referenced.add(projects[i]);
+                    }
+                } catch (CoreException e) {
+                    //Ignore core exceptions
+                }
+
+                return referenced.toArray();
+            }
+        };
+    }
+
+    /**
+     * Get the defualt widget height for the supplied control.
+     * @return int
+     * @param control - the control being queried about fonts
+     * @param lines - the number of lines to be shown on the table.
+     */
+    private static int getDefaultFontHeight(Control control, int lines) {
+        FontData[] viewerFontData = control.getFont().getFontData();
+        int fontHeight = 10;
+
+        //If we have no font data use our guess
+        if (viewerFontData.length > 0)
+            fontHeight = viewerFontData[0].getHeight();
+        return lines * fontHeight;
+
+    }
+
+    /**
+     * Handle the exception thrown when saving.
+     * @param e the exception
+     */
+    protected void handle(InvocationTargetException e) {
+        IStatus error;
+        Throwable target = e.getTargetException();
+        if (target instanceof CoreException) {
+            error = ((CoreException) target).getStatus();
+        } else {
+            String msg = target.getMessage();
+            if (msg == null)
+                msg = IDEWorkbenchMessages.getString("Internal_error"); //$NON-NLS-1$
+            error = new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH,
+                    1, msg, target);
+        }
+        ErrorDialog.openError(getControl().getShell(), null, null, error);
+    }
+
+    /**
+     * Initializes a ProjectReferencePage.
+     */
+    private void initialize() {
+        project = (IProject) getElement().getAdapter(IResource.class);
+        noDefaultAndApplyButton();
+        setDescription(IDEWorkbenchMessages
+                .format(
+                        "ProjectReferencesPage.label", new Object[] { project.getName() })); //$NON-NLS-1$
+    }
+
+    /**
+     * @see PreferencePage#performOk
+     */
+    public boolean performOk() {
+        if (!modified)
+            return true;
+        Object[] checked = listViewer.getCheckedElements();
+        final IProject[] refs = new IProject[checked.length];
+        System.arraycopy(checked, 0, refs, 0, checked.length);
+        IRunnableWithProgress runnable = new IRunnableWithProgress() {
+            public void run(IProgressMonitor monitor)
+                    throws InvocationTargetException {
+
+                try {
+                    IProjectDescription description = project.getDescription();
+                    description.setReferencedProjects(refs);
+                    project.setDescription(description, monitor);
+                } catch (CoreException e) {
+                    throw new InvocationTargetException(e);
+                }
+            }
+        };
+        try {
+            new ProgressMonitorJobsDialog(getControl().getShell()).run(true,
+                    true, runnable);
+        } catch (InterruptedException e) {
+            //Ignore interrupted exceptions
+        } catch (InvocationTargetException e) {
+            handle(e);
+            return false;
+        }
+        return true;
+    }
 }

@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -19,48 +21,53 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * A strategy to read working set extensions from the registry.
  */
 public class WorkingSetRegistryReader extends RegistryReader {
-	private static final String TAG="workingSet";	//$NON-NLS-1$
-	private WorkingSetRegistry registry;
-	
-//for dynamic UI
-public WorkingSetRegistryReader() {
-	super();
-}
+    private static final String TAG = "workingSet"; //$NON-NLS-1$
 
-//for dynamic UI
-public WorkingSetRegistryReader(WorkingSetRegistry registry) {
-	super();
-	this.registry = registry;
-}
+    private WorkingSetRegistry registry;
 
-/**
- * Overrides method in RegistryReader.
- * 
- * @see RegistryReader#readElement(IConfigurationElement)
- */
-// for dynamic UI - change access from protected to public
-public boolean readElement(IConfigurationElement element) {
-	if (element.getName().equals(TAG)) {
-		try {
-			WorkingSetDescriptor desc = new WorkingSetDescriptor(element);
-			registry.addWorkingSetDescriptor(desc);
-		} catch (CoreException e) {
-			// log an error since its not safe to open a dialog here
-			WorkbenchPlugin.log("Unable to create working set descriptor.",e.getStatus());//$NON-NLS-1$
-		}
-		return true;
-	}
-	
-	return false;
-}
-/**
- * Reads the working set extensions within a registry.
- * 
- * @param in the plugin registry to read from
- * @param out the working set registry to store read entries in.
- */
-public void readWorkingSets(IExtensionRegistry in, WorkingSetRegistry out) {
-	registry = out;
-	readRegistry(in, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_WORKINGSETS);
-}
+    //for dynamic UI
+    public WorkingSetRegistryReader() {
+        super();
+    }
+
+    //for dynamic UI
+    public WorkingSetRegistryReader(WorkingSetRegistry registry) {
+        super();
+        this.registry = registry;
+    }
+
+    /**
+     * Overrides method in RegistryReader.
+     * 
+     * @see RegistryReader#readElement(IConfigurationElement)
+     */
+    // for dynamic UI - change access from protected to public
+    public boolean readElement(IConfigurationElement element) {
+        if (element.getName().equals(TAG)) {
+            try {
+                WorkingSetDescriptor desc = new WorkingSetDescriptor(element);
+                registry.addWorkingSetDescriptor(desc);
+            } catch (CoreException e) {
+                // log an error since its not safe to open a dialog here
+                WorkbenchPlugin
+                        .log(
+                                "Unable to create working set descriptor.", e.getStatus());//$NON-NLS-1$
+            }
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Reads the working set extensions within a registry.
+     * 
+     * @param in the plugin registry to read from
+     * @param out the working set registry to store read entries in.
+     */
+    public void readWorkingSets(IExtensionRegistry in, WorkingSetRegistry out) {
+        registry = out;
+        readRegistry(in, PlatformUI.PLUGIN_ID,
+                IWorkbenchConstants.PL_WORKINGSETS);
+    }
 }

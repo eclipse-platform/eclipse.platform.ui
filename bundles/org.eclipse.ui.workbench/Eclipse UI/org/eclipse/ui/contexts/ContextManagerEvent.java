@@ -84,13 +84,14 @@ public final class ContextManagerEvent {
     public ContextManagerEvent(IContextManager contextManager,
             boolean definedContextIdsChanged, boolean enabledContextIdsChanged,
             Set previouslyDefinedContextIds, Set previouslyEnabledContextIds) {
-        if (contextManager == null) throw new NullPointerException();
+        if (contextManager == null)
+            throw new NullPointerException();
 
         if (!definedContextIdsChanged && previouslyDefinedContextIds != null)
-                throw new IllegalArgumentException();
+            throw new IllegalArgumentException();
 
         if (!enabledContextIdsChanged && previouslyEnabledContextIds != null)
-                throw new IllegalArgumentException();
+            throw new IllegalArgumentException();
 
         if (definedContextIdsChanged) {
             this.previouslyDefinedContextIds = Util.safeCopy(

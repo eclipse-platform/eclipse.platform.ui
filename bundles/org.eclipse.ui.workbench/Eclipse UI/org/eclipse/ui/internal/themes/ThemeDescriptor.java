@@ -26,28 +26,33 @@ import org.eclipse.core.runtime.IConfigurationElement;
  * @since 3.0
  */
 public class ThemeDescriptor implements IThemeDescriptor {
-	
-	/* Theme */
-	private static final String ATT_ID="id";//$NON-NLS-1$
-	private static final String ATT_NAME="name";//$NON-NLS-1$	
-	
-	private Collection colors = new ArrayList();
-	private IConfigurationElement configElement;
-    private String description;
-	private Collection fonts = new ArrayList();
-	
-	private String id;
-	private String name;
-	
-	private Map dataMap = new HashMap();
 
-	/**
-	 * Create a new ThemeDescriptor for an extension.
-	 */
-	public ThemeDescriptor(IConfigurationElement e) throws CoreException {
-		configElement = e;
-		processExtension();
-	}
+    /* Theme */
+    private static final String ATT_ID = "id";//$NON-NLS-1$
+
+    private static final String ATT_NAME = "name";//$NON-NLS-1$	
+
+    private Collection colors = new ArrayList();
+
+    private IConfigurationElement configElement;
+
+    private String description;
+
+    private Collection fonts = new ArrayList();
+
+    private String id;
+
+    private String name;
+
+    private Map dataMap = new HashMap();
+
+    /**
+     * Create a new ThemeDescriptor for an extension.
+     */
+    public ThemeDescriptor(IConfigurationElement e) throws CoreException {
+        configElement = e;
+        processExtension();
+    }
 
     /**
      * Add a color override to this descriptor.
@@ -64,9 +69,9 @@ public class ThemeDescriptor implements IThemeDescriptor {
      * @param definition the definition to add
      */
     void add(FontDefinition definition) {
-        fonts.add(definition);        
-    } 
-    
+        fonts.add(definition);
+    }
+
     /**
      * Add a data object to this descriptor.
      * 
@@ -76,15 +81,16 @@ public class ThemeDescriptor implements IThemeDescriptor {
     void setData(String key, Object data) {
         dataMap.put(key, data);
     }
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.themes.IThemeDescriptor#getColorOverrides()
-	 */
-	public ColorDefinition [] getColors() {	    
-	    ColorDefinition [] defs = (ColorDefinition []) colors.toArray(new ColorDefinition [colors.size()]);
-	    Arrays.sort(defs, IThemeRegistry.ID_COMPARATOR);
-	    return defs;
-	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.themes.IThemeDescriptor#getColorOverrides()
+     */
+    public ColorDefinition[] getColors() {
+        ColorDefinition[] defs = (ColorDefinition[]) colors
+                .toArray(new ColorDefinition[colors.size()]);
+        Arrays.sort(defs, IThemeRegistry.ID_COMPARATOR);
+        return defs;
+    }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.themes.IThemeElementDefinition#getDescription()
@@ -96,34 +102,35 @@ public class ThemeDescriptor implements IThemeDescriptor {
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.themes.IThemeDescriptor#getFontOverrides()
      */
-    public FontDefinition[] getFonts() {       
-	    FontDefinition [] defs = (FontDefinition []) fonts.toArray(new FontDefinition [fonts.size()]);
-	    Arrays.sort(defs, IThemeRegistry.ID_COMPARATOR);
-	    return defs;
-    }	
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.registry.IThemeDescriptor#getID()
-	 */
-	public String getId()  {
-		return id;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.registry.IThemeDescriptor#getName()
-	 */
-	public String getLabel() {
-		return name;
-	}
-	
-	/*
-	 * load a theme descriptor from the registry.
-	 */
-	private void processExtension() throws CoreException {
-		id = configElement.getAttribute(ATT_ID);
-		name = configElement.getAttribute(ATT_NAME);
-	}
-    
+    public FontDefinition[] getFonts() {
+        FontDefinition[] defs = (FontDefinition[]) fonts
+                .toArray(new FontDefinition[fonts.size()]);
+        Arrays.sort(defs, IThemeRegistry.ID_COMPARATOR);
+        return defs;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.registry.IThemeDescriptor#getID()
+     */
+    public String getId() {
+        return id;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.registry.IThemeDescriptor#getName()
+     */
+    public String getLabel() {
+        return name;
+    }
+
+    /*
+     * load a theme descriptor from the registry.
+     */
+    private void processExtension() throws CoreException {
+        id = configElement.getAttribute(ATT_ID);
+        name = configElement.getAttribute(ATT_NAME);
+    }
+
     /**
      * Set the description.
      * 

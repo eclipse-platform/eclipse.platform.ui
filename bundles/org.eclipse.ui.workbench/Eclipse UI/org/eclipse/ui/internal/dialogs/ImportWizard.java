@@ -33,66 +33,69 @@ import org.eclipse.ui.model.AdaptableList;
  */
 public class ImportWizard extends Wizard {
 
-	//the list selection page
-	class SelectionPage extends WorkbenchWizardListSelectionPage {
-		SelectionPage(IWorkbench w, IStructuredSelection ss, AdaptableList e, String s) {
-			super(w, ss, e, s);
-		}
-		public void createControl(Composite parent) {
-			super.createControl(parent);
-			WorkbenchHelp.setHelp(
-				getControl(),
-				IHelpContextIds.IMPORT_WIZARD_SELECTION_WIZARD_PAGE);
-		}
-		public IWizardNode createWizardNode(WorkbenchWizardElement element) {
-			return new WorkbenchWizardNode(this, element) {
-				public IWorkbenchWizard createWizard() throws CoreException {
-					return (IWorkbenchWizard) wizardElement.createExecutableExtension();
-				}
-			};
-		}
-	}
+    //the list selection page
+    class SelectionPage extends WorkbenchWizardListSelectionPage {
+        SelectionPage(IWorkbench w, IStructuredSelection ss, AdaptableList e,
+                String s) {
+            super(w, ss, e, s);
+        }
 
-	private IStructuredSelection selection;
-	private IWorkbench workbench;
+        public void createControl(Composite parent) {
+            super.createControl(parent);
+            WorkbenchHelp.setHelp(getControl(),
+                    IHelpContextIds.IMPORT_WIZARD_SELECTION_WIZARD_PAGE);
+        }
 
-	/**
-	 * Creates the wizard's pages lazily.
-	 */
-	public void addPages() {
-		addPage(
-			new SelectionPage(
-				this.workbench,
-				this.selection,
-				getAvailableImportWizards(),
-				WorkbenchMessages.getString("ImportWizard.selectSource"))); //$NON-NLS-1$
-	}
+        public IWizardNode createWizardNode(WorkbenchWizardElement element) {
+            return new WorkbenchWizardNode(this, element) {
+                public IWorkbenchWizard createWizard() throws CoreException {
+                    return (IWorkbenchWizard) wizardElement
+                            .createExecutableExtension();
+                }
+            };
+        }
+    }
 
-	/**
-	 * Returns the import wizards that are available for invocation.
-	 */
-	protected AdaptableList getAvailableImportWizards() {
-		return new WizardsRegistryReader(IWorkbenchConstants.PL_IMPORT).getWizards();
-	}
+    private IStructuredSelection selection;
 
-	/**
-	 * Initializes the wizard.
-	 */
-	public void init(IWorkbench aWorkbench, IStructuredSelection currentSelection) {
-		this.workbench = aWorkbench;
-		this.selection = currentSelection;
+    private IWorkbench workbench;
 
-		setWindowTitle(WorkbenchMessages.getString("ImportWizard.title")); //$NON-NLS-1$
-		setDefaultPageImageDescriptor(
-			WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_WIZBAN_IMPORT_WIZ));
-		setNeedsProgressMonitor(true);
-	}
+    /**
+     * Creates the wizard's pages lazily.
+     */
+    public void addPages() {
+        addPage(new SelectionPage(this.workbench, this.selection,
+                getAvailableImportWizards(), WorkbenchMessages
+                        .getString("ImportWizard.selectSource"))); //$NON-NLS-1$
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.IWizard#performFinish()
-	 */
-	public boolean performFinish() {
-		((SelectionPage) getPages()[0]).saveWidgetValues();
-		return true;
-	}
+    /**
+     * Returns the import wizards that are available for invocation.
+     */
+    protected AdaptableList getAvailableImportWizards() {
+        return new WizardsRegistryReader(IWorkbenchConstants.PL_IMPORT)
+                .getWizards();
+    }
+
+    /**
+     * Initializes the wizard.
+     */
+    public void init(IWorkbench aWorkbench,
+            IStructuredSelection currentSelection) {
+        this.workbench = aWorkbench;
+        this.selection = currentSelection;
+
+        setWindowTitle(WorkbenchMessages.getString("ImportWizard.title")); //$NON-NLS-1$
+        setDefaultPageImageDescriptor(WorkbenchImages
+                .getImageDescriptor(IWorkbenchGraphicConstants.IMG_WIZBAN_IMPORT_WIZ));
+        setNeedsProgressMonitor(true);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.wizard.IWizard#performFinish()
+     */
+    public boolean performFinish() {
+        ((SelectionPage) getPages()[0]).saveWidgetValues();
+        return true;
+    }
 }

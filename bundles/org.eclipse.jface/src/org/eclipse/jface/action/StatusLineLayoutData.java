@@ -26,29 +26,28 @@ import org.eclipse.swt.SWT;
  * @since 2.1
  */
 public class StatusLineLayoutData {
-	/**
-	 * The <code>widthHint</code> specifies a minimum width for
-	 * the <code>Control</code>. A value of <code>SWT.DEFAULT</code>
-	 * indicates that no minimum width is specified.
-	 *
-	 * The default value is <code>SWT.DEFAULT</code>.
-	 */
-	public int widthHint = SWT.DEFAULT;
-	
-	/**
-	 * The <code>heightHint</code> specifies a minimum height for
-	 * the <code>Control</code>. A value of <code>SWT.DEFAULT</code>
-	 * indicates that no minimum height is specified.
-	 *
-	 * The default value is <code>SWT.DEFAULT</code>.
-	 */
-	public int heightHint = SWT.DEFAULT;
+    /**
+     * The <code>widthHint</code> specifies a minimum width for
+     * the <code>Control</code>. A value of <code>SWT.DEFAULT</code>
+     * indicates that no minimum width is specified.
+     *
+     * The default value is <code>SWT.DEFAULT</code>.
+     */
+    public int widthHint = SWT.DEFAULT;
 
+    /**
+     * The <code>heightHint</code> specifies a minimum height for
+     * the <code>Control</code>. A value of <code>SWT.DEFAULT</code>
+     * indicates that no minimum height is specified.
+     *
+     * The default value is <code>SWT.DEFAULT</code>.
+     */
+    public int heightHint = SWT.DEFAULT;
 
-	/**
-	 * Creates an initial status line layout data object.
-	 */
-	public StatusLineLayoutData() {
-		super();
-	}
+    /**
+     * Creates an initial status line layout data object.
+     */
+    public StatusLineLayoutData() {
+        super();
+    }
 }

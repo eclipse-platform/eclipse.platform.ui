@@ -33,63 +33,65 @@ import org.eclipse.ui.tests.util.UITestCase;
  */
 public class Bug41931Test extends UITestCase {
 
-	/**
-	 * Constructs a new instance of this test case.
-	 * 
-	 * @param testName
-	 *            The name of the test
-	 */
-	public Bug41931Test(String testName) {
-		super(testName);
-	}
+    /**
+     * Constructs a new instance of this test case.
+     * 
+     * @param testName
+     *            The name of the test
+     */
+    public Bug41931Test(String testName) {
+        super(testName);
+    }
 
-	/**
-	 * Tests that the <code>bringToTop(IWorkbenchPart)</code> correctly
-	 * updates the activation list.
-	 * 
-	 * @throws CoreException
-	 *             If the test project cannot be created or opened.
-	 */
-	public void testBringToTop() throws CoreException {
-		// Open a window.
-		IWorkbenchWindow window = openTestWindow();
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+    /**
+     * Tests that the <code>bringToTop(IWorkbenchPart)</code> correctly
+     * updates the activation list.
+     * 
+     * @throws CoreException
+     *             If the test project cannot be created or opened.
+     */
+    public void testBringToTop() throws CoreException {
+        // Open a window.
+        IWorkbenchWindow window = openTestWindow();
+        IWorkspace workspace = ResourcesPlugin.getWorkspace();
 
-		// Create a test project.
-		IProject testProject = workspace.getRoot().getProject("Bug41931"); //$NON-NLS-1$
-		testProject.create(null);
-		testProject.open(null);
+        // Create a test project.
+        IProject testProject = workspace.getRoot().getProject("Bug41931"); //$NON-NLS-1$
+        testProject.create(null);
+        testProject.open(null);
 
-		// Open three test files.
-		InputStream contents = new ByteArrayInputStream(new byte[0]);
-		IFile fileA = testProject.getFile("a.txt"); //$NON-NLS-1$
-		fileA.create(contents, true, null);
-		IFile fileB = testProject.getFile("b.txt"); //$NON-NLS-1$
-		fileB.create(contents, true, null);
-		IFile fileC = testProject.getFile("c.txt"); //$NON-NLS-1$
-		fileC.create(contents, true, null);
+        // Open three test files.
+        InputStream contents = new ByteArrayInputStream(new byte[0]);
+        IFile fileA = testProject.getFile("a.txt"); //$NON-NLS-1$
+        fileA.create(contents, true, null);
+        IFile fileB = testProject.getFile("b.txt"); //$NON-NLS-1$
+        fileB.create(contents, true, null);
+        IFile fileC = testProject.getFile("c.txt"); //$NON-NLS-1$
+        fileC.create(contents, true, null);
 
-		// Open editors on those files.
-		WorkbenchPage page = (WorkbenchPage) window.getActivePage();
-		IEditorPart editorA = IDE.openEditor(page, fileA, true);
-		IEditorPart editorB = IDE.openEditor(page, fileB, true);
-		IEditorPart editorC = IDE.openEditor(page, fileC, true);
+        // Open editors on those files.
+        WorkbenchPage page = (WorkbenchPage) window.getActivePage();
+        IEditorPart editorA = IDE.openEditor(page, fileA, true);
+        IEditorPart editorB = IDE.openEditor(page, fileB, true);
+        IEditorPart editorC = IDE.openEditor(page, fileC, true);
 
-		// Test that the editors are open in the order: A, B, C
-		IEditorPart[] expectedResults = { editorA, editorB, editorC };
-		IWorkbenchPartReference[] actualResults = page.getSortedParts();
-		for (int i = 0; i < expectedResults.length; i++) {
-			assertEquals("Pre-test order is not correct.", expectedResults[i].getTitle(), actualResults[i].getPart(false).getTitle()); //$NON-NLS-1$
-		}
-		
-		// Bring editor B to the top.
-		page.bringToTop(editorB);
-		
-		// Test that the editors are open in the order: A, C, B
-		expectedResults = new IEditorPart[] { editorA, editorC, editorB };
-		actualResults = page.getSortedParts();
-		for (int i = 0; i < expectedResults.length; i++) {
-			assertEquals("bringToTop() does not change sorted part order.", expectedResults[i].getTitle(), actualResults[i].getPart(false).getTitle()); //$NON-NLS-1$
-		}
-	}
+        // Test that the editors are open in the order: A, B, C
+        IEditorPart[] expectedResults = { editorA, editorB, editorC };
+        IWorkbenchPartReference[] actualResults = page.getSortedParts();
+        for (int i = 0; i < expectedResults.length; i++) {
+            assertEquals(
+                    "Pre-test order is not correct.", expectedResults[i].getTitle(), actualResults[i].getPart(false).getTitle()); //$NON-NLS-1$
+        }
+
+        // Bring editor B to the top.
+        page.bringToTop(editorB);
+
+        // Test that the editors are open in the order: A, C, B
+        expectedResults = new IEditorPart[] { editorA, editorC, editorB };
+        actualResults = page.getSortedParts();
+        for (int i = 0; i < expectedResults.length; i++) {
+            assertEquals(
+                    "bringToTop() does not change sorted part order.", expectedResults[i].getTitle(), actualResults[i].getPart(false).getTitle()); //$NON-NLS-1$
+        }
+    }
 }

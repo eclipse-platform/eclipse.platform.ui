@@ -35,420 +35,475 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  *	time and extracts workbench-related information from it as requested.
  */
 public class NewWizardsRegistryReader extends WizardsRegistryReader {
-	
-	private boolean projectsOnly;
-	private WizardCollectionElement wizardElements = null;
-	private ArrayList deferWizards = null;
-	private ArrayList deferCategories = null;
-	private ArrayList deferPrimary;
-	
-	// constants
-	public final static String		BASE_CATEGORY = "Base";//$NON-NLS-1$
-	public final static String		EXAMPLES_WIZARD_CATEGORY = "Examples";//$NON-NLS-1$
-	public final static String		FULL_EXAMPLES_WIZARD_CATEGORY = "org.eclipse.ui.Examples";//$NON-NLS-1$
-	private final static String		TAG_CATEGORY = "category";	//$NON-NLS-1$
-	private final static String		TAG_PRIMARYWIZARD = "primaryWizard";	//$NON-NLS-1$
-	private final static String		ATT_HELP_HREF = "helpHref";	//$NON-NLS-1$
-	private final static String		ATT_DESCRIPTION_IMAGE = "descriptionImage";	//$NON-NLS-1$
-	private final static String		UNCATEGORIZED_WIZARD_CATEGORY = "org.eclipse.ui.Other";//$NON-NLS-1$
-	private final static String		UNCATEGORIZED_WIZARD_CATEGORY_LABEL = WorkbenchMessages.getString("NewWizardsRegistryReader.otherCategory");//$NON-NLS-1$
-	private final static String		CATEGORY_SEPARATOR = "/";//$NON-NLS-1$
-	private final static String		ATT_CATEGORY = "category";//$NON-NLS-1$
-	// @issue project-specific attribute and behavior
-	private final static String ATT_PROJECT = "project";//$NON-NLS-1$
-	private final static String STR_TRUE = "true";//$NON-NLS-1$
-	
-	private WorkbenchWizardElement [] primaryWizards = new WorkbenchWizardElement[0];
 
-	private class CategoryNode {
-		private Category category;
-		private String path;
-		public CategoryNode(Category cat) {
-			category = cat;
-			path = ""; //$NON-NLS-1$
-			String[] categoryPath = category.getParentPath();
-			if (categoryPath != null) {
-				for (int nX = 0; nX < categoryPath.length; nX ++) {
-					path += categoryPath[nX] + '/'; //$NON-NLS-1$
-				}
-			}
-			path += cat.getId();
-		}
-		public String getPath() {
-			return path;
-		}
-		public Category getCategory() {
-			return category;
-		}
-	}
-	
-	private static final Comparator comparer = new Comparator() {
-		private Collator collator = Collator.getInstance();
+    private boolean projectsOnly;
 
-		public int compare(Object arg0, Object arg1) {
-			String s1 = ((CategoryNode)arg0).getPath();
-			String s2 = ((CategoryNode)arg1).getPath();
-			return collator.compare(s1, s2);
-		}
-	}; 
+    private WizardCollectionElement wizardElements = null;
 
-/**
- * Constructs a new reader.  All wizards are read, including projects.
- */
-public NewWizardsRegistryReader() {
-	this(false);
-}
-/**
- * Constructs a new reader.
- *
- * @param projectsOnly if true, only projects are read.
- */
-public NewWizardsRegistryReader(boolean projectsOnly) {
-	super(IWorkbenchConstants.PL_NEW);
-	this.projectsOnly = projectsOnly;
-}
-/* (non-Javadoc)
- * Method declared on WizardRegistryReader.  
- * <p>
- * This implementation uses a defering strategy.  For more info see
- * <code>readWizards</code>.
- * </p>
- */
-protected void addNewElementToResult(WorkbenchWizardElement element, IConfigurationElement config) {
-	deferWizard(element);
-}
-/**
- *	Create and answer a new WizardCollectionElement, configured as a
- *	child of <code>parent</code>
- *
- *	@return org.eclipse.ui.internal.model.WizardCollectionElement
- *	@param parent org.eclipse.ui.internal.model.WizardCollectionElement
- *  @param id the id of the new collection
- *  @param pluginId the originating plugin id of the collection, if any. <code>null</code> otherwise.
- *	@param label java.lang.String
- */
-protected WizardCollectionElement createCollectionElement(WizardCollectionElement parent, String id, String pluginId, String label) {
-	WizardCollectionElement newElement = new WizardCollectionElement(id, pluginId, label, parent);
+    private ArrayList deferWizards = null;
 
-	parent.add(newElement);
-	return newElement;
-}
-/**
- * Creates empty element collection. Overrider to fill
- * initial elements, if needed.
- */
-protected void createEmptyWizardCollection() {
-	wizardElements = new WizardCollectionElement("root", null, "root", null);//$NON-NLS-2$//$NON-NLS-1$
-}
-/**
- * Returns a new WorkbenchWizardElement configured according to the parameters
- * contained in the passed Registry.  
- *
- * May answer null if there was not enough information in the Extension to create 
- * an adequate wizard
- */
-protected WorkbenchWizardElement createWizardElement(IConfigurationElement element) {
-	if (projectsOnly) {
-		String flag = element.getAttribute(ATT_PROJECT);
-		if (flag == null || !flag.equalsIgnoreCase(STR_TRUE))
-			return null;
-	}
-	return super.createWizardElement(element);
-}
-/**
- * Stores a category element for deferred addition.
- */
-private void deferCategory(IConfigurationElement config) {
-	// Create category.
-	Category category = null;
-	try {
-		category = new Category(config);
-	} catch (CoreException e) {
-		WorkbenchPlugin.log("Cannot create category: ", e.getStatus());//$NON-NLS-1$
-		return;
-	}
+    private ArrayList deferCategories = null;
 
-	// Defer for later processing.
-	if (deferCategories == null)
-		deferCategories = new ArrayList(20);
-	deferCategories.add(category);
-}
-/**
- * Stores a wizard element for deferred addition.
- */
-private void deferWizard(WorkbenchWizardElement element) {
-	if (deferWizards == null)
-		deferWizards = new ArrayList(50);
-	deferWizards.add(element);
-}
-/**
- * Finishes the addition of categories.  The categories are sorted and
- * added in a root to depth traversal.
- */
-private void finishCategories() {
-	// If no categories just return.
-	if (deferCategories == null)
-		return;
+    private ArrayList deferPrimary;
 
-	// Sort categories by flattened name.
-	CategoryNode [] flatArray = new CategoryNode[deferCategories.size()];
-	for (int i=0; i < deferCategories.size(); i++) {
-		flatArray[i] = new CategoryNode((Category)deferCategories.get(i));
-	}
-	Collections.sort(Arrays.asList(flatArray), comparer);
+    // constants
+    public final static String BASE_CATEGORY = "Base";//$NON-NLS-1$
 
-	// Add each category.
-	for (int nX = 0; nX < flatArray.length; nX ++) {
-		Category cat = flatArray[nX].getCategory();
-		finishCategory(cat);
-	}
+    public final static String EXAMPLES_WIZARD_CATEGORY = "Examples";//$NON-NLS-1$
 
-	// Cleanup.
-	deferCategories = null;
-}
-/**
- * Save new category definition.
- */
-private void finishCategory(Category category) {
-	String[] categoryPath = category.getParentPath();
-	WizardCollectionElement parent = wizardElements; 		// ie.- root
+    public final static String FULL_EXAMPLES_WIZARD_CATEGORY = "org.eclipse.ui.Examples";//$NON-NLS-1$
 
-	// Traverse down into parent category.	
-	if (categoryPath != null) {
-		for (int i = 0; i < categoryPath.length; i++) {
-			WizardCollectionElement tempElement = getChildWithID(parent,categoryPath[i]);
-			if (tempElement == null) {
-				// The parent category is invalid.  By returning here the
-				// category will be dropped and any wizard within the category
-				// will be added to the "Other" category.
-				return;
-			} else
-				parent = tempElement;
-		}
-	}
+    private final static String TAG_CATEGORY = "category"; //$NON-NLS-1$
 
-	// If another category already exists with the same id ignore this one.
-	Object test = getChildWithID(parent, category.getId());
-	if (test != null)
-		return;
-		
-	if (parent != null)
-		createCollectionElement(parent, category.getId(), category.getPluginId(), category.getLabel());
-}
+    private final static String TAG_PRIMARYWIZARD = "primaryWizard"; //$NON-NLS-1$
 
-/**
- * Finishes the recognition of primary wizards.
- */
-private void finishPrimary() {
-    if (deferPrimary != null) {
-        ArrayList primary = new ArrayList();
-        for (Iterator i = deferPrimary.iterator(); i.hasNext();) {
-            String id = (String) i.next();
-            WorkbenchWizardElement element = getWizardElements().findWizard(id, true);
-            if (element != null) {
-                primary.add(element);
+    private final static String ATT_HELP_HREF = "helpHref"; //$NON-NLS-1$
+
+    private final static String ATT_DESCRIPTION_IMAGE = "descriptionImage"; //$NON-NLS-1$
+
+    private final static String UNCATEGORIZED_WIZARD_CATEGORY = "org.eclipse.ui.Other";//$NON-NLS-1$
+
+    private final static String UNCATEGORIZED_WIZARD_CATEGORY_LABEL = WorkbenchMessages
+            .getString("NewWizardsRegistryReader.otherCategory");//$NON-NLS-1$
+
+    private final static String CATEGORY_SEPARATOR = "/";//$NON-NLS-1$
+
+    private final static String ATT_CATEGORY = "category";//$NON-NLS-1$
+
+    // @issue project-specific attribute and behavior
+    private final static String ATT_PROJECT = "project";//$NON-NLS-1$
+
+    private final static String STR_TRUE = "true";//$NON-NLS-1$
+
+    private WorkbenchWizardElement[] primaryWizards = new WorkbenchWizardElement[0];
+
+    private class CategoryNode {
+        private Category category;
+
+        private String path;
+
+        public CategoryNode(Category cat) {
+            category = cat;
+            path = ""; //$NON-NLS-1$
+            String[] categoryPath = category.getParentPath();
+            if (categoryPath != null) {
+                for (int nX = 0; nX < categoryPath.length; nX++) {
+                    path += categoryPath[nX] + '/'; //$NON-NLS-1$
+                }
+            }
+            path += cat.getId();
+        }
+
+        public String getPath() {
+            return path;
+        }
+
+        public Category getCategory() {
+            return category;
+        }
+    }
+
+    private static final Comparator comparer = new Comparator() {
+        private Collator collator = Collator.getInstance();
+
+        public int compare(Object arg0, Object arg1) {
+            String s1 = ((CategoryNode) arg0).getPath();
+            String s2 = ((CategoryNode) arg1).getPath();
+            return collator.compare(s1, s2);
+        }
+    };
+
+    /**
+     * Constructs a new reader.  All wizards are read, including projects.
+     */
+    public NewWizardsRegistryReader() {
+        this(false);
+    }
+
+    /**
+     * Constructs a new reader.
+     *
+     * @param projectsOnly if true, only projects are read.
+     */
+    public NewWizardsRegistryReader(boolean projectsOnly) {
+        super(IWorkbenchConstants.PL_NEW);
+        this.projectsOnly = projectsOnly;
+    }
+
+    /* (non-Javadoc)
+     * Method declared on WizardRegistryReader.  
+     * <p>
+     * This implementation uses a defering strategy.  For more info see
+     * <code>readWizards</code>.
+     * </p>
+     */
+    protected void addNewElementToResult(WorkbenchWizardElement element,
+            IConfigurationElement config) {
+        deferWizard(element);
+    }
+
+    /**
+     *	Create and answer a new WizardCollectionElement, configured as a
+     *	child of <code>parent</code>
+     *
+     *	@return org.eclipse.ui.internal.model.WizardCollectionElement
+     *	@param parent org.eclipse.ui.internal.model.WizardCollectionElement
+     *  @param id the id of the new collection
+     *  @param pluginId the originating plugin id of the collection, if any. <code>null</code> otherwise.
+     *	@param label java.lang.String
+     */
+    protected WizardCollectionElement createCollectionElement(
+            WizardCollectionElement parent, String id, String pluginId,
+            String label) {
+        WizardCollectionElement newElement = new WizardCollectionElement(id,
+                pluginId, label, parent);
+
+        parent.add(newElement);
+        return newElement;
+    }
+
+    /**
+     * Creates empty element collection. Overrider to fill
+     * initial elements, if needed.
+     */
+    protected void createEmptyWizardCollection() {
+        wizardElements = new WizardCollectionElement("root", null, "root", null);//$NON-NLS-2$//$NON-NLS-1$
+    }
+
+    /**
+     * Returns a new WorkbenchWizardElement configured according to the parameters
+     * contained in the passed Registry.  
+     *
+     * May answer null if there was not enough information in the Extension to create 
+     * an adequate wizard
+     */
+    protected WorkbenchWizardElement createWizardElement(
+            IConfigurationElement element) {
+        if (projectsOnly) {
+            String flag = element.getAttribute(ATT_PROJECT);
+            if (flag == null || !flag.equalsIgnoreCase(STR_TRUE))
+                return null;
+        }
+        return super.createWizardElement(element);
+    }
+
+    /**
+     * Stores a category element for deferred addition.
+     */
+    private void deferCategory(IConfigurationElement config) {
+        // Create category.
+        Category category = null;
+        try {
+            category = new Category(config);
+        } catch (CoreException e) {
+            WorkbenchPlugin.log("Cannot create category: ", e.getStatus());//$NON-NLS-1$
+            return;
+        }
+
+        // Defer for later processing.
+        if (deferCategories == null)
+            deferCategories = new ArrayList(20);
+        deferCategories.add(category);
+    }
+
+    /**
+     * Stores a wizard element for deferred addition.
+     */
+    private void deferWizard(WorkbenchWizardElement element) {
+        if (deferWizards == null)
+            deferWizards = new ArrayList(50);
+        deferWizards.add(element);
+    }
+
+    /**
+     * Finishes the addition of categories.  The categories are sorted and
+     * added in a root to depth traversal.
+     */
+    private void finishCategories() {
+        // If no categories just return.
+        if (deferCategories == null)
+            return;
+
+        // Sort categories by flattened name.
+        CategoryNode[] flatArray = new CategoryNode[deferCategories.size()];
+        for (int i = 0; i < deferCategories.size(); i++) {
+            flatArray[i] = new CategoryNode((Category) deferCategories.get(i));
+        }
+        Collections.sort(Arrays.asList(flatArray), comparer);
+
+        // Add each category.
+        for (int nX = 0; nX < flatArray.length; nX++) {
+            Category cat = flatArray[nX].getCategory();
+            finishCategory(cat);
+        }
+
+        // Cleanup.
+        deferCategories = null;
+    }
+
+    /**
+     * Save new category definition.
+     */
+    private void finishCategory(Category category) {
+        String[] categoryPath = category.getParentPath();
+        WizardCollectionElement parent = wizardElements; // ie.- root
+
+        // Traverse down into parent category.	
+        if (categoryPath != null) {
+            for (int i = 0; i < categoryPath.length; i++) {
+                WizardCollectionElement tempElement = getChildWithID(parent,
+                        categoryPath[i]);
+                if (tempElement == null) {
+                    // The parent category is invalid.  By returning here the
+                    // category will be dropped and any wizard within the category
+                    // will be added to the "Other" category.
+                    return;
+                } else
+                    parent = tempElement;
             }
         }
-        
-        primaryWizards = (WorkbenchWizardElement []) primary.toArray(new WorkbenchWizardElement [primary.size()]);
-                
-        deferPrimary = null;
-    } 
-}
 
-/**
- *	Insert the passed wizard element into the wizard collection appropriately
- *	based upon its defining extension's CATEGORY tag value
- *
- *	@param element WorkbenchWizardElement
- *	@param extension 
- *	@param currentResult WizardCollectionElement
- */
-private void finishWizard(WorkbenchWizardElement element, IConfigurationElement config) {
-	StringTokenizer familyTokenizer = new StringTokenizer(getCategoryStringFor(config),CATEGORY_SEPARATOR);
+        // If another category already exists with the same id ignore this one.
+        Object test = getChildWithID(parent, category.getId());
+        if (test != null)
+            return;
 
-	// use the period-separated sections of the current Wizard's category
-	// to traverse through the NamedSolution "tree" that was previously created
-	WizardCollectionElement currentCollectionElement = wizardElements; // ie.- root
-	boolean moveToOther = false;
-	
-	while (familyTokenizer.hasMoreElements()) {
-		WizardCollectionElement tempCollectionElement =
-			getChildWithID(currentCollectionElement,familyTokenizer.nextToken());
-			
-		if (tempCollectionElement == null) {	// can't find the path; bump it to uncategorized
-			moveToOther = true;
-			break;
-		}
-		else
-			currentCollectionElement = tempCollectionElement;
-	}
-	
-	if (moveToOther)
-		moveElementToUncategorizedCategory(wizardElements, element);
-	else
-		currentCollectionElement.add(element);
-}
-/**
- * Finishes the addition of wizards.  The wizards are processed and categorized.
- */
-private void finishWizards() {
-	if (deferWizards != null) {
-		Iterator iter = deferWizards.iterator();
-		while (iter.hasNext()) {
-			WorkbenchWizardElement wizard = (WorkbenchWizardElement)iter.next();
-			IConfigurationElement config = wizard.getConfigurationElement();
-			finishWizard(wizard, config);
-		}
-		deferWizards = null;
-	}
-}
-/**
- *	Return the appropriate category (tree location) for this Wizard.
- *	If a category is not specified then return a default one.
- */
-protected String getCategoryStringFor(IConfigurationElement config) {
-	String result = config.getAttribute(ATT_CATEGORY);
-	if (result == null)
-		result = UNCATEGORIZED_WIZARD_CATEGORY;
+        if (parent != null)
+            createCollectionElement(parent, category.getId(), category
+                    .getPluginId(), category.getLabel());
+    }
 
-	return result;
-}
-/**
- *	Go through the children of  the passed parent and answer the child
- *	with the passed name.  If no such child is found then return null.
- *
- *	@return org.eclipse.ui.internal.model.WizardCollectionElement
- *	@param parent org.eclipse.ui.internal.model.WizardCollectionElement
- *	@param childName java.lang.String
- */
-protected WizardCollectionElement getChildWithID(WizardCollectionElement parent, String id) {
-	Object[] children = parent.getChildren(null);
-	for (int i = 0; i < children.length; ++i) {
-		WizardCollectionElement currentChild = (WizardCollectionElement)children[i];
-		if (currentChild.getId().equals(id))
-			return currentChild;
-	}
-	return null;
-}
-/**
- *	Moves given element to "Other" category, previously creating one if missing.
- */
-protected void moveElementToUncategorizedCategory(WizardCollectionElement root, WorkbenchWizardElement element) {
-	WizardCollectionElement otherCategory = getChildWithID(root, UNCATEGORIZED_WIZARD_CATEGORY);
-	
-	if (otherCategory == null)
-		otherCategory = createCollectionElement(root,UNCATEGORIZED_WIZARD_CATEGORY, null, UNCATEGORIZED_WIZARD_CATEGORY_LABEL);
+    /**
+     * Finishes the recognition of primary wizards.
+     */
+    private void finishPrimary() {
+        if (deferPrimary != null) {
+            ArrayList primary = new ArrayList();
+            for (Iterator i = deferPrimary.iterator(); i.hasNext();) {
+                String id = (String) i.next();
+                WorkbenchWizardElement element = getWizardElements()
+                        .findWizard(id, true);
+                if (element != null) {
+                    primary.add(element);
+                }
+            }
 
-	otherCategory.add(element);
-}
-/**
- * Removes the empty categories from a wizard collection. 
- */
-private void pruneEmptyCategories(WizardCollectionElement parent) {
-	Object [] children = parent.getChildren(null);
-	for (int nX = 0; nX < children.length; nX ++) {
-		WizardCollectionElement child = (WizardCollectionElement)children[nX];
-		pruneEmptyCategories(child);
-		boolean shouldPrune = projectsOnly || child.getId().equals(FULL_EXAMPLES_WIZARD_CATEGORY);
-		if (child.isEmpty() && shouldPrune)
-			parent.remove(child);
-	}
-}
-/**
- * Implement this method to read element attributes.
- */
-public boolean readElement(IConfigurationElement element) {
-	if (element.getName().equals(TAG_CATEGORY)) {
-		deferCategory(element);
-		return true;
-	} 
-	else if (element.getName().equals(TAG_PRIMARYWIZARD)) {
-		if (deferPrimary == null)
-		    deferPrimary = new ArrayList(50);
-		deferPrimary.add(element.getAttribute(ATT_ID));
+            primaryWizards = (WorkbenchWizardElement[]) primary
+                    .toArray(new WorkbenchWizardElement[primary.size()]);
 
-	    return true;
-	}
-	else {
-	
-		return super.readElement(element);
-	}
-}
-/**
- * Reads the wizards in a registry.  
- * <p>
- * This implementation uses a defering strategy.  All of the elements 
- * (categories, wizards) are read.  The categories are created as the read occurs. 
- * The wizards are just stored for later addition after the read completes.
- * This ensures that wizard categorization is performed after all categories
- * have been read.
- * </p>
- */
-protected void readWizards() {
-	super.readWizards();
-	finishCategories();
-	finishWizards();
-	finishPrimary();
-	if (wizardElements != null) {
-		pruneEmptyCategories(wizardElements);
-	}
-}
+            deferPrimary = null;
+        }
+    }
 
-/**
- * Returns the list of wizards that are considered 'primary'.
- * 
- * The return value for this method is cached since computing its value
- * requires non-trivial work.  
- */
-public WorkbenchWizardElement [] getPrimaryWizards() {
-	if (!areWizardsRead()) {
-		readWizards();
-	}
-	return primaryWizards;    
-}
+    /**
+     *	Insert the passed wizard element into the wizard collection appropriately
+     *	based upon its defining extension's CATEGORY tag value
+     *
+     *	@param element WorkbenchWizardElement
+     *	@param extension 
+     *	@param currentResult WizardCollectionElement
+     */
+    private void finishWizard(WorkbenchWizardElement element,
+            IConfigurationElement config) {
+        StringTokenizer familyTokenizer = new StringTokenizer(
+                getCategoryStringFor(config), CATEGORY_SEPARATOR);
 
-/**
- * Returns whether the wizards have been read already
- */
-protected boolean areWizardsRead() {
-	return wizardElements != null;
-}
-/**
- * Returns a list of wizards, project and not.
- *
- * The return value for this method is cached since computing its value
- * requires non-trivial work.  
- */
-public WizardCollectionElement getWizardElements() {
-	if (!areWizardsRead()) {
-		readWizards();
-	}
-	return wizardElements;
-}
-protected Object[] getWizardCollectionElements() {
-	if (!areWizardsRead()) {
-		readWizards();
-	}
-	return wizardElements.getChildren();
-}
-/* (non-Javadoc)
- * @see org.eclipse.ui.internal.registry.WizardsRegistryReader#initializeWizard(org.eclipse.ui.internal.dialogs.WorkbenchWizardElement, org.eclipse.core.runtime.IConfigurationElement)
- */
-protected boolean initializeWizard(WorkbenchWizardElement element,
-        IConfigurationElement config) {
-    boolean result = super.initializeWizard(element, config);
-    if (!result)
+        // use the period-separated sections of the current Wizard's category
+        // to traverse through the NamedSolution "tree" that was previously created
+        WizardCollectionElement currentCollectionElement = wizardElements; // ie.- root
+        boolean moveToOther = false;
+
+        while (familyTokenizer.hasMoreElements()) {
+            WizardCollectionElement tempCollectionElement = getChildWithID(
+                    currentCollectionElement, familyTokenizer.nextToken());
+
+            if (tempCollectionElement == null) { // can't find the path; bump it to uncategorized
+                moveToOther = true;
+                break;
+            } else
+                currentCollectionElement = tempCollectionElement;
+        }
+
+        if (moveToOther)
+            moveElementToUncategorizedCategory(wizardElements, element);
+        else
+            currentCollectionElement.add(element);
+    }
+
+    /**
+     * Finishes the addition of wizards.  The wizards are processed and categorized.
+     */
+    private void finishWizards() {
+        if (deferWizards != null) {
+            Iterator iter = deferWizards.iterator();
+            while (iter.hasNext()) {
+                WorkbenchWizardElement wizard = (WorkbenchWizardElement) iter
+                        .next();
+                IConfigurationElement config = wizard.getConfigurationElement();
+                finishWizard(wizard, config);
+            }
+            deferWizards = null;
+        }
+    }
+
+    /**
+     *	Return the appropriate category (tree location) for this Wizard.
+     *	If a category is not specified then return a default one.
+     */
+    protected String getCategoryStringFor(IConfigurationElement config) {
+        String result = config.getAttribute(ATT_CATEGORY);
+        if (result == null)
+            result = UNCATEGORIZED_WIZARD_CATEGORY;
+
         return result;
-    element.setHelpHref(config.getAttribute(ATT_HELP_HREF));
-	String descImage = config.getAttribute(ATT_DESCRIPTION_IMAGE);
-	if (descImage != null) {
-		IExtension extension = config.getDeclaringExtension();
-		String extendingPluginId = extension.getNamespace();
-		ImageDescriptor image =
-			AbstractUIPlugin.imageDescriptorFromPlugin(extendingPluginId, descImage);
-		element.setDescriptionImage(image);
-	}
-	return result;
-}
+    }
+
+    /**
+     *	Go through the children of  the passed parent and answer the child
+     *	with the passed name.  If no such child is found then return null.
+     *
+     *	@return org.eclipse.ui.internal.model.WizardCollectionElement
+     *	@param parent org.eclipse.ui.internal.model.WizardCollectionElement
+     *	@param childName java.lang.String
+     */
+    protected WizardCollectionElement getChildWithID(
+            WizardCollectionElement parent, String id) {
+        Object[] children = parent.getChildren(null);
+        for (int i = 0; i < children.length; ++i) {
+            WizardCollectionElement currentChild = (WizardCollectionElement) children[i];
+            if (currentChild.getId().equals(id))
+                return currentChild;
+        }
+        return null;
+    }
+
+    /**
+     *	Moves given element to "Other" category, previously creating one if missing.
+     */
+    protected void moveElementToUncategorizedCategory(
+            WizardCollectionElement root, WorkbenchWizardElement element) {
+        WizardCollectionElement otherCategory = getChildWithID(root,
+                UNCATEGORIZED_WIZARD_CATEGORY);
+
+        if (otherCategory == null)
+            otherCategory = createCollectionElement(root,
+                    UNCATEGORIZED_WIZARD_CATEGORY, null,
+                    UNCATEGORIZED_WIZARD_CATEGORY_LABEL);
+
+        otherCategory.add(element);
+    }
+
+    /**
+     * Removes the empty categories from a wizard collection. 
+     */
+    private void pruneEmptyCategories(WizardCollectionElement parent) {
+        Object[] children = parent.getChildren(null);
+        for (int nX = 0; nX < children.length; nX++) {
+            WizardCollectionElement child = (WizardCollectionElement) children[nX];
+            pruneEmptyCategories(child);
+            boolean shouldPrune = projectsOnly
+                    || child.getId().equals(FULL_EXAMPLES_WIZARD_CATEGORY);
+            if (child.isEmpty() && shouldPrune)
+                parent.remove(child);
+        }
+    }
+
+    /**
+     * Implement this method to read element attributes.
+     */
+    public boolean readElement(IConfigurationElement element) {
+        if (element.getName().equals(TAG_CATEGORY)) {
+            deferCategory(element);
+            return true;
+        } else if (element.getName().equals(TAG_PRIMARYWIZARD)) {
+            if (deferPrimary == null)
+                deferPrimary = new ArrayList(50);
+            deferPrimary.add(element.getAttribute(ATT_ID));
+
+            return true;
+        } else {
+
+            return super.readElement(element);
+        }
+    }
+
+    /**
+     * Reads the wizards in a registry.  
+     * <p>
+     * This implementation uses a defering strategy.  All of the elements 
+     * (categories, wizards) are read.  The categories are created as the read occurs. 
+     * The wizards are just stored for later addition after the read completes.
+     * This ensures that wizard categorization is performed after all categories
+     * have been read.
+     * </p>
+     */
+    protected void readWizards() {
+        super.readWizards();
+        finishCategories();
+        finishWizards();
+        finishPrimary();
+        if (wizardElements != null) {
+            pruneEmptyCategories(wizardElements);
+        }
+    }
+
+    /**
+     * Returns the list of wizards that are considered 'primary'.
+     * 
+     * The return value for this method is cached since computing its value
+     * requires non-trivial work.  
+     */
+    public WorkbenchWizardElement[] getPrimaryWizards() {
+        if (!areWizardsRead()) {
+            readWizards();
+        }
+        return primaryWizards;
+    }
+
+    /**
+     * Returns whether the wizards have been read already
+     */
+    protected boolean areWizardsRead() {
+        return wizardElements != null;
+    }
+
+    /**
+     * Returns a list of wizards, project and not.
+     *
+     * The return value for this method is cached since computing its value
+     * requires non-trivial work.  
+     */
+    public WizardCollectionElement getWizardElements() {
+        if (!areWizardsRead()) {
+            readWizards();
+        }
+        return wizardElements;
+    }
+
+    protected Object[] getWizardCollectionElements() {
+        if (!areWizardsRead()) {
+            readWizards();
+        }
+        return wizardElements.getChildren();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.registry.WizardsRegistryReader#initializeWizard(org.eclipse.ui.internal.dialogs.WorkbenchWizardElement, org.eclipse.core.runtime.IConfigurationElement)
+     */
+    protected boolean initializeWizard(WorkbenchWizardElement element,
+            IConfigurationElement config) {
+        boolean result = super.initializeWizard(element, config);
+        if (!result)
+            return result;
+        element.setHelpHref(config.getAttribute(ATT_HELP_HREF));
+        String descImage = config.getAttribute(ATT_DESCRIPTION_IMAGE);
+        if (descImage != null) {
+            IExtension extension = config.getDeclaringExtension();
+            String extendingPluginId = extension.getNamespace();
+            ImageDescriptor image = AbstractUIPlugin.imageDescriptorFromPlugin(
+                    extendingPluginId, descImage);
+            element.setDescriptionImage(image);
+        }
+        return result;
+    }
 }

@@ -12,58 +12,58 @@ package org.eclipse.ui.views.navigator;
 
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionProviderAction;
 
 /**
  * Superclass of all actions provided by the resource navigator.
  */
 public abstract class ResourceNavigatorAction extends SelectionProviderAction {
-	
-	private IResourceNavigator navigator;
 
-	/**
-	 * Creates a new instance of the class.
-	 */
-	public ResourceNavigatorAction(
-		IResourceNavigator navigator,
-		String label) {
-		super(navigator.getViewer(), label);
-		this.navigator = navigator;
-	}
+    private IResourceNavigator navigator;
 
-	/**
-	 * Returns the resource navigator for which this action was created.
-	 */
-	public IResourceNavigator getNavigator() {
-		return navigator;
-	}
+    /**
+     * Creates a new instance of the class.
+     */
+    public ResourceNavigatorAction(IResourceNavigator navigator, String label) {
+        super(navigator.getViewer(), label);
+        this.navigator = navigator;
+    }
 
-	/**
-	 * Returns the resource viewer
-	 */
-	protected Viewer getViewer() {
-		return getNavigator().getViewer();
-	}
+    /**
+     * Returns the resource navigator for which this action was created.
+     */
+    public IResourceNavigator getNavigator() {
+        return navigator;
+    }
 
-	/**
-	 * Returns the shell to use within actions.
-	 */
-	protected Shell getShell() {
-		return getNavigator().getSite().getShell();
-	}
+    /**
+     * Returns the resource viewer
+     */
+    protected Viewer getViewer() {
+        return getNavigator().getViewer();
+    }
 
-	/**
-	 * Returns the workbench.
-	 */
-	protected IWorkbench getWorkbench() {
-		return PlatformUI.getWorkbench();
-	}
+    /**
+     * Returns the shell to use within actions.
+     */
+    protected Shell getShell() {
+        return getNavigator().getSite().getShell();
+    }
 
-	/**
-	 * Returns the workbench window.
-	 */
-	protected IWorkbenchWindow getWorkbenchWindow() {
-		return getNavigator().getSite().getWorkbenchWindow();
-	}
+    /**
+     * Returns the workbench.
+     */
+    protected IWorkbench getWorkbench() {
+        return PlatformUI.getWorkbench();
+    }
+
+    /**
+     * Returns the workbench window.
+     */
+    protected IWorkbenchWindow getWorkbenchWindow() {
+        return getNavigator().getSite().getWorkbenchWindow();
+    }
 }

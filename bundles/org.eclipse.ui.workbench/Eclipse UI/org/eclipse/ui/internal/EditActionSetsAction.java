@@ -20,59 +20,59 @@ import org.eclipse.ui.help.WorkbenchHelp;
 /**
  * Edit the action sets.
  */
-public class EditActionSetsAction
-		extends Action 
-		implements ActionFactory.IWorkbenchAction {
-			
-/**
- * The workbench window; or <code>null</code> if this
- * action has been <code>dispose</code>d.
- */
-private IWorkbenchWindow workbenchWindow;
-	
-/**
- * This default constructor allows the the action to be called from the welcome page.
- */
-public EditActionSetsAction() {
-	this(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
-}
+public class EditActionSetsAction extends Action implements
+        ActionFactory.IWorkbenchAction {
 
-/**
- * 
- */
-public EditActionSetsAction(IWorkbenchWindow window) {
-	super(WorkbenchMessages.getString("EditActionSetsAction.text")); //$NON-NLS-1$
-	if (window == null) {
-		throw new IllegalArgumentException();
-	}
-	this.workbenchWindow = window;
-	setActionDefinitionId("org.eclipse.ui.window.customizePerspective"); //$NON-NLS-1$
-	// @issue missing action id
-	setToolTipText(WorkbenchMessages.getString("EditActionSetsAction.toolTip")); //$NON-NLS-1$
-	setEnabled(false);
-	WorkbenchHelp.setHelp(this, IHelpContextIds.EDIT_ACTION_SETS_ACTION);
-}
+    /**
+     * The workbench window; or <code>null</code> if this
+     * action has been <code>dispose</code>d.
+     */
+    private IWorkbenchWindow workbenchWindow;
 
-/* (non-Javadoc)
- * Method declared on IAction.
- */
-public void run() {
-	if (workbenchWindow == null) {
-		// action has been disposed
-		return;
-	}
-	IWorkbenchPage page = workbenchWindow.getActivePage();
-	if (page == null) {
-		return;
-	}
-	((WorkbenchPage) page).editActionSets();
-}
+    /**
+     * This default constructor allows the the action to be called from the welcome page.
+     */
+    public EditActionSetsAction() {
+        this(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
+    }
 
-/* (non-Javadoc)
- * Method declared on ActionFactory.IWorkbenchAction.
- */
-public void dispose() {
-	workbenchWindow = null;
-}
+    /**
+     * 
+     */
+    public EditActionSetsAction(IWorkbenchWindow window) {
+        super(WorkbenchMessages.getString("EditActionSetsAction.text")); //$NON-NLS-1$
+        if (window == null) {
+            throw new IllegalArgumentException();
+        }
+        this.workbenchWindow = window;
+        setActionDefinitionId("org.eclipse.ui.window.customizePerspective"); //$NON-NLS-1$
+        // @issue missing action id
+        setToolTipText(WorkbenchMessages
+                .getString("EditActionSetsAction.toolTip")); //$NON-NLS-1$
+        setEnabled(false);
+        WorkbenchHelp.setHelp(this, IHelpContextIds.EDIT_ACTION_SETS_ACTION);
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IAction.
+     */
+    public void run() {
+        if (workbenchWindow == null) {
+            // action has been disposed
+            return;
+        }
+        IWorkbenchPage page = workbenchWindow.getActivePage();
+        if (page == null) {
+            return;
+        }
+        ((WorkbenchPage) page).editActionSets();
+    }
+
+    /* (non-Javadoc)
+     * Method declared on ActionFactory.IWorkbenchAction.
+     */
+    public void dispose() {
+        workbenchWindow = null;
+    }
 
 }

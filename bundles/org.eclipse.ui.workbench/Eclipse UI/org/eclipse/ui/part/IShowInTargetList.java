@@ -23,14 +23,14 @@ package org.eclipse.ui.part;
  * @since 2.1
  */
 public interface IShowInTargetList {
-	
-	/**
-	 * Returns the identifiers for the target parts to show.
-	 * The target parts must be Show In targets.
-	 * 
-	 * @return the identifiers for the target parts to show
-	 * 
-	 * @see IShowInTarget
-	 */
-	public String[] getShowInTargetIds();
+
+    /**
+     * Returns the identifiers for the target parts to show.
+     * The target parts must be Show In targets.
+     * 
+     * @return the identifiers for the target parts to show
+     * 
+     * @see IShowInTarget
+     */
+    public String[] getShowInTargetIds();
 }

@@ -30,8 +30,8 @@ import org.eclipse.ui.commands.ICommandManager;
  * @see CommandManagerFactory
  */
 public interface IMutableCommandManager extends ICommandManager {
-   
-	/**
+
+    /**
      * Sets the map of identifiers to active contexts. The mapping represents
      * the hierarchical structure of the contexts.
      * 
@@ -42,9 +42,9 @@ public interface IMutableCommandManager extends ICommandManager {
      *            If this tree is not empty, it must only contain instances of
      *            <code>String</code>.
      */
-	void setActiveContextIds(Map activeContextIds);
-    
-	/**
+    void setActiveContextIds(Map activeContextIds);
+
+    /**
      * Sets the active key configuration.
      * 
      * @param activeKeyConfigurationId
@@ -52,7 +52,7 @@ public interface IMutableCommandManager extends ICommandManager {
      */
     void setActiveKeyConfigurationId(String activeKeyConfigurationId);
 
-	/**
+    /**
      * Sets the active locale. The locale can be any arbitrary string, but is
      * typically the locale returned from {@link java.util.Locale#getDefault()}.
      * 
@@ -61,13 +61,13 @@ public interface IMutableCommandManager extends ICommandManager {
      */
     void setActiveLocale(String activeLocale);
 
-	/**
-	 * Sets the active platform.  The locale can be any arbitrary string, but is
-	 * typically the locale returned from {@link org.eclipse.swt.SWT#getPlatform()}.
-	 * 
-	 * @param activePlatform
-	 *            the active platform; must not be <code>null</code>.
-	 */
+    /**
+     * Sets the active platform.  The locale can be any arbitrary string, but is
+     * typically the locale returned from {@link org.eclipse.swt.SWT#getPlatform()}.
+     * 
+     * @param activePlatform
+     *            the active platform; must not be <code>null</code>.
+     */
     void setActivePlatform(String activePlatform);
 
     /**

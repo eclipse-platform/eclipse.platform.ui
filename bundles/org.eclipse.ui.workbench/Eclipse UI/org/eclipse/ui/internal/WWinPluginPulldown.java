@@ -10,25 +10,28 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IActionDelegate;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkbenchWindowPulldownDelegate;
+import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
+import org.eclipse.ui.WorkbenchException;
 
 /**
  * A workbench window pulldown action.  
  */
 public class WWinPluginPulldown extends WWinPluginAction {
-    
+
     /**
      * The proxy for creating the menu.  There is always a menu proxy.  This
      * value can't be <code>null</code>.
      */
-	private final IMenuCreator menuProxy;
+    private final IMenuCreator menuProxy;
 
     private class MenuProxy implements IMenuCreator {
 
@@ -164,39 +167,42 @@ public class WWinPluginPulldown extends WWinPluginAction {
             // do nothing
         }
     }
-	
-	/**
-	 * WWinPluginPulldown constructor comment.
-	 * @param actionElement org.eclipse.core.runtime.IConfigurationElement
-	 * @param id java.lang.String
-	 * @param window org.eclipse.ui.IWorkbenchWindow
-	 */
-	public WWinPluginPulldown(IConfigurationElement actionElement, IWorkbenchWindow window, String id, int style) {
-		super(actionElement, window, id, style);
-		menuProxy = new MenuProxy();
-		setMenuCreator(menuProxy);
-	}
 
-	/* (non-Javadoc)
-	 * Method declared on PluginAction.
-	 */
-	protected IActionDelegate validateDelegate(Object obj) throws WorkbenchException {
-		if (obj instanceof IWorkbenchWindowPulldownDelegate)
-			return (IWorkbenchWindowPulldownDelegate)obj;
-		else
-			throw new WorkbenchException("Action must implement IWorkbenchWindowPulldownDelegate"); //$NON-NLS-1$
-	}
+    /**
+     * WWinPluginPulldown constructor comment.
+     * @param actionElement org.eclipse.core.runtime.IConfigurationElement
+     * @param id java.lang.String
+     * @param window org.eclipse.ui.IWorkbenchWindow
+     */
+    public WWinPluginPulldown(IConfigurationElement actionElement,
+            IWorkbenchWindow window, String id, int style) {
+        super(actionElement, window, id, style);
+        menuProxy = new MenuProxy();
+        setMenuCreator(menuProxy);
+    }
 
-	/**
-	 * Returns the pulldown delegate. If it does not exist it is created.
-	 * Can return <code>null</code> if delegate creation failed.
-	 */
-	protected IWorkbenchWindowPulldownDelegate getPulldownDelegate() {
-		IActionDelegate delegate = getDelegate();
-		if (delegate == null) {
-			createDelegate();
-			delegate = getDelegate();
-		}
-		return (IWorkbenchWindowPulldownDelegate) delegate;
-	}
+    /* (non-Javadoc)
+     * Method declared on PluginAction.
+     */
+    protected IActionDelegate validateDelegate(Object obj)
+            throws WorkbenchException {
+        if (obj instanceof IWorkbenchWindowPulldownDelegate)
+            return (IWorkbenchWindowPulldownDelegate) obj;
+        else
+            throw new WorkbenchException(
+                    "Action must implement IWorkbenchWindowPulldownDelegate"); //$NON-NLS-1$
+    }
+
+    /**
+     * Returns the pulldown delegate. If it does not exist it is created.
+     * Can return <code>null</code> if delegate creation failed.
+     */
+    protected IWorkbenchWindowPulldownDelegate getPulldownDelegate() {
+        IActionDelegate delegate = getDelegate();
+        if (delegate == null) {
+            createDelegate();
+            delegate = getDelegate();
+        }
+        return (IWorkbenchWindowPulldownDelegate) delegate;
+    }
 }

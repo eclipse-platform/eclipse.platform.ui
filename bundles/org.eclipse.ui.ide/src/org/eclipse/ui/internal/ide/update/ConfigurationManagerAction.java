@@ -23,47 +23,48 @@ import org.eclipse.update.ui.UpdateManagerUI;
  * 
  * @since 3.0
  */
-public class ConfigurationManagerAction implements IWorkbenchWindowActionDelegate {
+public class ConfigurationManagerAction implements
+        IWorkbenchWindowActionDelegate {
 
-	private IWorkbenchWindow window;
-	private ApplicationWindow applicationWindow;
-	
-	/**
-	 * The constructor.
-	 */
-	public ConfigurationManagerAction() {
-	    // do nothing
-	}
+    private IWorkbenchWindow window;
 
-	/**
-	 * Runs the action when selected
-	 */
-	public void run(IAction action) {
-		BusyIndicator
-			.showWhile(window.getShell().getDisplay(), new Runnable() {
-			public void run() {
-				UpdateManagerUI.openConfigurationManager(window.getShell());
-			}
-		});
-	}
+    private ApplicationWindow applicationWindow;
 
-	/**
-	 */
-	public void selectionChanged(IAction action, ISelection selection) {
-	    // do nothing
-	}
+    /**
+     * The constructor.
+     */
+    public ConfigurationManagerAction() {
+        // do nothing
+    }
 
-	/**
-	 * @see IWorkbenchWindowActionDelegate#dispose
-	 */
-	public void dispose() {
-	    // do nothing
-	}
+    /**
+     * Runs the action when selected
+     */
+    public void run(IAction action) {
+        BusyIndicator.showWhile(window.getShell().getDisplay(), new Runnable() {
+            public void run() {
+                UpdateManagerUI.openConfigurationManager(window.getShell());
+            }
+        });
+    }
 
-	/**
-	 * @see IWorkbenchWindowActionDelegate#init
-	 */
-	public void init(IWorkbenchWindow window) {
-		this.window = window;
-	}
+    /**
+     */
+    public void selectionChanged(IAction action, ISelection selection) {
+        // do nothing
+    }
+
+    /**
+     * @see IWorkbenchWindowActionDelegate#dispose
+     */
+    public void dispose() {
+        // do nothing
+    }
+
+    /**
+     * @see IWorkbenchWindowActionDelegate#init
+     */
+    public void init(IWorkbenchWindow window) {
+        this.window = window;
+    }
 }

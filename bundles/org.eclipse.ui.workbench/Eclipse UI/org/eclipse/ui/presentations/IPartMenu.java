@@ -20,11 +20,11 @@ import org.eclipse.swt.graphics.Point;
  * @since 3.0
  */
 public interface IPartMenu {
-	/**
-	 * Displays the local menu for this part as a popup at the given location.
-	 * 
-	 * @param location position to display the menu at (display coordinates, not null)
-	 * @since 3.0
-	 */
-	public void showMenu(Point location);
+    /**
+     * Displays the local menu for this part as a popup at the given location.
+     * 
+     * @param location position to display the menu at (display coordinates, not null)
+     * @since 3.0
+     */
+    public void showMenu(Point location);
 }

@@ -7,7 +7,7 @@
  * 
  * Contributors: 
  *      IBM Corporation - initial API and implementation 
-************************************************************************/
+ ************************************************************************/
 package org.eclipse.ui.internal;
 
 import org.eclipse.core.internal.runtime.Assert;
@@ -21,6 +21,7 @@ import org.eclipse.ui.IViewLayout;
  */
 public class ViewLayout implements IViewLayout {
     private PageLayout pageLayout;
+
     private ViewLayoutRec rec;
 
     public ViewLayout(PageLayout pageLayout, ViewLayoutRec rec) {
@@ -62,7 +63,7 @@ public class ViewLayout implements IViewLayout {
      * @see org.eclipse.ui.IViewLayout#setCloseable(boolean)
      */
     public void setCloseable(boolean closeable) {
-       rec.isCloseable = closeable;
+        rec.isCloseable = closeable;
     }
 
     /* (non-Javadoc)

@@ -15,11 +15,13 @@ import java.util.List;
 
 public interface IContextRegistry {
 
-	void addContextRegistryListener(IContextRegistryListener contextRegistryListener);
+    void addContextRegistryListener(
+            IContextRegistryListener contextRegistryListener);
 
-	List getContextContextBindingDefinitions();
+    List getContextContextBindingDefinitions();
 
-	List getContextDefinitions();
+    List getContextDefinitions();
 
-	void removeContextRegistryListener(IContextRegistryListener contextRegistryListener);
+    void removeContextRegistryListener(
+            IContextRegistryListener contextRegistryListener);
 }

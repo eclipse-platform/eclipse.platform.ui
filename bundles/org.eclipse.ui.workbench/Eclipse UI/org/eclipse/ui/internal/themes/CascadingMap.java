@@ -15,12 +15,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-
 /**
  * @since 3.0
  */
-public class CascadingMap  {
-    
+public class CascadingMap {
+
     private Map base, override;
 
     /** 
@@ -31,7 +30,7 @@ public class CascadingMap  {
         this.base = base;
         this.override = override;
     }
-    
+
     /**
      * Return the union of the parent and child key sets.  
      * 
@@ -40,7 +39,7 @@ public class CascadingMap  {
     public Set keySet() {
         Set keySet = new HashSet(base.keySet());
         keySet.addAll(override.keySet());
-        return Collections.unmodifiableSet(keySet);        
+        return Collections.unmodifiableSet(keySet);
     }
 
     /**

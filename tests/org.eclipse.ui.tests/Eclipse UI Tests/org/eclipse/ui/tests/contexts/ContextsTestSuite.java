@@ -23,12 +23,12 @@ import junit.framework.TestSuite;
  */
 public final class ContextsTestSuite extends TestSuite {
 
-	/**
-	 * Returns the suite. This is required to use the JUnit Launcher.
-	 */
-	public static final Test suite() {
-		return new ContextsTestSuite();
-	}
+    /**
+     * Returns the suite. This is required to use the JUnit Launcher.
+     */
+    public static final Test suite() {
+        return new ContextsTestSuite();
+    }
 
     /**
      * Constructs a new instance of <code>ContextsTestSuite</code> with all of

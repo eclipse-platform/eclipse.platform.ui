@@ -37,75 +37,78 @@ import org.eclipse.ui.tests.util.UITestCase;
  */
 public class Bug36420Test extends UITestCase {
 
-	/**
-	 * Constructor for Bug36420Test.
-	 * 
-	 * @param name
-	 *            The name of the test
-	 */
-	public Bug36420Test(String name) {
-		super(name);
-	}
+    /**
+     * Constructor for Bug36420Test.
+     * 
+     * @param name
+     *            The name of the test
+     */
+    public Bug36420Test(String name) {
+        super(name);
+    }
 
-	/**
-	 * Tests that importing key preferences actually has an effect.
-	 * 
-	 * @throws CoreException
-	 *             If the preferences can't be imported.
-	 * @throws FileNotFoundException
-	 *             If the temporary file is removed after it is created, but
-	 *             before it is opened. (Wow)
-	 * @throws IOException
-	 *             If something fails during output of the preferences file.
-	 */
-	public void testImportKeyPreferences()
-		throws CoreException, FileNotFoundException, IOException {
-		String commandId = "org.eclipse.ui.window.nextView"; //$NON-NLS-1$
-		String keySequenceText = "F S C K"; //$NON-NLS-1$
+    /**
+     * Tests that importing key preferences actually has an effect.
+     * 
+     * @throws CoreException
+     *             If the preferences can't be imported.
+     * @throws FileNotFoundException
+     *             If the temporary file is removed after it is created, but
+     *             before it is opened. (Wow)
+     * @throws IOException
+     *             If something fails during output of the preferences file.
+     */
+    public void testImportKeyPreferences() throws CoreException,
+            FileNotFoundException, IOException {
+        String commandId = "org.eclipse.ui.window.nextView"; //$NON-NLS-1$
+        String keySequenceText = "F S C K"; //$NON-NLS-1$
 
-		/*
-		 * DO NOT USE PreferenceMutator for this section. This test case must
-		 * use these exact steps, while PreferenceMutator might use something
-		 * else in the future.
-		 */
-		// Set up the preferences.
-		Properties preferences = new Properties();
-		String key = "org.eclipse.ui.workbench/org.eclipse.ui.commands"; //$NON-NLS-1$
-		String value = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<org.eclipse.ui.commands><activeKeyConfiguration keyConfigurationId=\"" + IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID + "\"></activeKeyConfiguration><keyBinding	keyConfigurationId=\"org.eclipse.ui.defaultAcceleratorConfiguration\" commandId=\"" + commandId + "\" keySequence=\"" + keySequenceText + "\"/></org.eclipse.ui.commands>"; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		preferences.put(key, value);
-		IPluginDescriptor[] descriptors = Platform.getPluginRegistry().getPluginDescriptors();
-		for (int i = 0; i < descriptors.length; i++) {
-			preferences.put(
-				descriptors[i].getUniqueIdentifier(),
-				descriptors[i].getVersionIdentifier().toString());
-		}
+        /*
+         * DO NOT USE PreferenceMutator for this section. This test case must
+         * use these exact steps, while PreferenceMutator might use something
+         * else in the future.
+         */
+        // Set up the preferences.
+        Properties preferences = new Properties();
+        String key = "org.eclipse.ui.workbench/org.eclipse.ui.commands"; //$NON-NLS-1$
+        String value = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<org.eclipse.ui.commands><activeKeyConfiguration keyConfigurationId=\"" + IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID + "\"></activeKeyConfiguration><keyBinding	keyConfigurationId=\"org.eclipse.ui.defaultAcceleratorConfiguration\" commandId=\"" + commandId + "\" keySequence=\"" + keySequenceText + "\"/></org.eclipse.ui.commands>"; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+        preferences.put(key, value);
+        IPluginDescriptor[] descriptors = Platform.getPluginRegistry()
+                .getPluginDescriptors();
+        for (int i = 0; i < descriptors.length; i++) {
+            preferences.put(descriptors[i].getUniqueIdentifier(),
+                    descriptors[i].getVersionIdentifier().toString());
+        }
 
-		// Export the preferences.
-		File file = File.createTempFile("preferences", ".txt"); //$NON-NLS-1$//$NON-NLS-2$
-		file.deleteOnExit();
-		BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
-		preferences.store(bos, null);
-		bos.close();
+        // Export the preferences.
+        File file = File.createTempFile("preferences", ".txt"); //$NON-NLS-1$//$NON-NLS-2$
+        file.deleteOnExit();
+        BufferedOutputStream bos = new BufferedOutputStream(
+                new FileOutputStream(file));
+        preferences.store(bos, null);
+        bos.close();
 
-		// Attempt to import the key binding.
-		Preferences.importPreferences(new Path(file.getAbsolutePath()));
-		/*
-		 * END SECTION
-		 */
+        // Attempt to import the key binding.
+        Preferences.importPreferences(new Path(file.getAbsolutePath()));
+        /*
+         * END SECTION
+         */
 
-		// Check to see that the key binding for the given command matches.
-		ICommandManager manager = fWorkbench.getCommandSupport().getCommandManager();
-		List keyBindings = manager.getCommand(commandId).getKeySequenceBindings();
-		Iterator keyBindingItr = keyBindings.iterator();
-		boolean found = false;
-		while (keyBindingItr.hasNext()) {
-			KeySequence keyBinding = (KeySequence) keyBindingItr.next();
-			String currentText = keyBinding.toString();
-			if (keySequenceText.equals(currentText)) {
-				found = true;
-			}
-		}
+        // Check to see that the key binding for the given command matches.
+        ICommandManager manager = fWorkbench.getCommandSupport()
+                .getCommandManager();
+        List keyBindings = manager.getCommand(commandId)
+                .getKeySequenceBindings();
+        Iterator keyBindingItr = keyBindings.iterator();
+        boolean found = false;
+        while (keyBindingItr.hasNext()) {
+            KeySequence keyBinding = (KeySequence) keyBindingItr.next();
+            String currentText = keyBinding.toString();
+            if (keySequenceText.equals(currentText)) {
+                found = true;
+            }
+        }
 
-		assertTrue("Key binding not imported.", found); //$NON-NLS-1$
-	}
+        assertTrue("Key binding not imported.", found); //$NON-NLS-1$
+    }
 }

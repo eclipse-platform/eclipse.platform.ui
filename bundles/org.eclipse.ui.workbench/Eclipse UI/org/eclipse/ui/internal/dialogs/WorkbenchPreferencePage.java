@@ -49,14 +49,13 @@ public class WorkbenchPreferencePage extends PreferencePage implements
 
     private Button openAfterDelayButton;
 
-	private Button showUserDialogButton;
+    private Button showUserDialogButton;
 
     private boolean openOnSingleClick;
 
     private boolean selectOnHover;
 
     private boolean openAfterDelay;
-    
 
     /*
      * (non-Javadoc)
@@ -77,7 +76,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements
 
         createSpace(composite);
         createOpenModeGroup(composite);
-        
+
         applyDialogFont(composite);
 
         return composite;
@@ -90,9 +89,11 @@ public class WorkbenchPreferencePage extends PreferencePage implements
      */
     protected void createShowUserDialogPref(Composite composite) {
         showUserDialogButton = new Button(composite, SWT.CHECK);
-        showUserDialogButton.setText(WorkbenchMessages.getString("WorkbenchPreference.RunInBackgroundButton")); //$NON-NLS-1$
-        showUserDialogButton.setToolTipText(WorkbenchMessages.getString("WorkbenchPreference.RunInBackgroundToolTip"));//$NON-NLS-1$
-		showUserDialogButton.setSelection(WorkbenchPlugin.getDefault()
+        showUserDialogButton.setText(WorkbenchMessages
+                .getString("WorkbenchPreference.RunInBackgroundButton")); //$NON-NLS-1$
+        showUserDialogButton.setToolTipText(WorkbenchMessages
+                .getString("WorkbenchPreference.RunInBackgroundToolTip"));//$NON-NLS-1$
+        showUserDialogButton.setSelection(WorkbenchPlugin.getDefault()
                 .getPreferenceStore().getBoolean(
                         IPreferenceConstants.RUN_IN_BACKGROUND));
     }
@@ -123,7 +124,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements
         stickyCycleButton.setSelection(getPreferenceStore().getBoolean(
                 IPreferenceConstants.STICKY_CYCLE));
     }
-    
+
     protected void createOpenModeGroup(Composite composite) {
 
         Font font = composite.getFont();
@@ -329,7 +330,8 @@ public class WorkbenchPreferencePage extends PreferencePage implements
                 openOnSingleClick);
         store.setValue(IPreferenceConstants.SELECT_ON_HOVER, selectOnHover);
         store.setValue(IPreferenceConstants.OPEN_AFTER_DELAY, openAfterDelay);
-        store.setValue(IPreferenceConstants.RUN_IN_BACKGROUND,showUserDialogButton.getSelection());
+        store.setValue(IPreferenceConstants.RUN_IN_BACKGROUND,
+                showUserDialogButton.getSelection());
 
         int singleClickMethod = openOnSingleClick ? OpenStrategy.SINGLE_CLICK
                 : OpenStrategy.DOUBLE_CLICK;

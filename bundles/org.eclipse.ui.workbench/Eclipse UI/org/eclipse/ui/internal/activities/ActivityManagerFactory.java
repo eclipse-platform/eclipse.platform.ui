@@ -23,18 +23,18 @@ import org.eclipse.ui.activities.IMutableActivityManager;
  */
 public final class ActivityManagerFactory {
 
-	/**
-	 * Creates a new instance of <code>IMutableActivityManager</code>.
-	 * 
-	 * @return a new instance of <code>IMutableActivityManager</code>.
-	 *         Clients should not make assumptions about the concrete
-	 *         implementation outside the contract of the interface. Guaranteed
-	 *         not to be <code>null</code>.
-	 */
-	public static IMutableActivityManager getMutableActivityManager() {
-		return new MutableActivityManager();
-	}
+    /**
+     * Creates a new instance of <code>IMutableActivityManager</code>.
+     * 
+     * @return a new instance of <code>IMutableActivityManager</code>.
+     *         Clients should not make assumptions about the concrete
+     *         implementation outside the contract of the interface. Guaranteed
+     *         not to be <code>null</code>.
+     */
+    public static IMutableActivityManager getMutableActivityManager() {
+        return new MutableActivityManager();
+    }
 
-	private ActivityManagerFactory() {
-	}
+    private ActivityManagerFactory() {
+    }
 }

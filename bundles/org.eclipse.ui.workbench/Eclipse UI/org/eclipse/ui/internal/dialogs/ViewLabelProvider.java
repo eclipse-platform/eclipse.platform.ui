@@ -24,52 +24,58 @@ import org.eclipse.ui.internal.registry.IViewDescriptor;
 import org.eclipse.ui.internal.registry.ViewDescriptor;
 
 public class ViewLabelProvider extends LabelProvider {
-	private HashMap images;
-Image cacheImage(ImageDescriptor desc) {
-	if (images == null)
-		images = new HashMap(21);
-	Image image = (Image) images.get(desc);
-	if (image == null) {
-		image = desc.createImage();
-		images.put(desc, image);
-	}
-	return image;
-}
-/* (non-Javadoc)
- * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
- */
-public void dispose() {
-	if (images != null) {
-		for (Iterator i = images.values().iterator(); i.hasNext();) {
-			((Image) i.next()).dispose();
-		}
-		images = null;
-	}
-	super.dispose();
-}
-/* (non-Javadoc)
- * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
- */
-public Image getImage(Object element) {
-	if (element instanceof IViewDescriptor) {
-		ImageDescriptor desc = ((IViewDescriptor)element).getImageDescriptor();
-		if (desc != null)
-			return cacheImage(desc);
-	} else if (element instanceof Category) {
-		ImageDescriptor desc = WorkbenchImages.getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
-		return cacheImage(desc);
-	}
-	return null;
-}
-/* (non-Javadoc)
- * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
- */
-public String getText(Object element) {
-	String label = WorkbenchMessages.getString("ViewLabel.unknown"); //$NON-NLS-1$
-	if (element instanceof Category)
-		label = ((Category)element).getLabel();
-	else if (element instanceof IViewDescriptor)
-		label = ((ViewDescriptor)element).getLabel();
-	return DialogUtil.removeAccel(label);
-}
+    private HashMap images;
+
+    Image cacheImage(ImageDescriptor desc) {
+        if (images == null)
+            images = new HashMap(21);
+        Image image = (Image) images.get(desc);
+        if (image == null) {
+            image = desc.createImage();
+            images.put(desc, image);
+        }
+        return image;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
+     */
+    public void dispose() {
+        if (images != null) {
+            for (Iterator i = images.values().iterator(); i.hasNext();) {
+                ((Image) i.next()).dispose();
+            }
+            images = null;
+        }
+        super.dispose();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
+     */
+    public Image getImage(Object element) {
+        if (element instanceof IViewDescriptor) {
+            ImageDescriptor desc = ((IViewDescriptor) element)
+                    .getImageDescriptor();
+            if (desc != null)
+                return cacheImage(desc);
+        } else if (element instanceof Category) {
+            ImageDescriptor desc = WorkbenchImages
+                    .getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
+            return cacheImage(desc);
+        }
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
+     */
+    public String getText(Object element) {
+        String label = WorkbenchMessages.getString("ViewLabel.unknown"); //$NON-NLS-1$
+        if (element instanceof Category)
+            label = ((Category) element).getLabel();
+        else if (element instanceof IViewDescriptor)
+            label = ((ViewDescriptor) element).getLabel();
+        return DialogUtil.removeAccel(label);
+    }
 }

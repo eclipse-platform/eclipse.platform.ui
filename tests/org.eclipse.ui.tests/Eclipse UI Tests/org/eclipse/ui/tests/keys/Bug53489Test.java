@@ -24,9 +24,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.swt.widgets.Display;
-
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.commands.CommandException;
@@ -77,8 +75,9 @@ public class Bug53489Test extends UITestCase {
         ByteArrayInputStream inputStream = new ByteArrayInputStream(
                 originalContents.getBytes());
         textFile.create(inputStream, true, null);
-        IEditorPart editor = IDE.openEditor(window.getActivePage(), textFile, true);
-        
+        IEditorPart editor = IDE.openEditor(window.getActivePage(), textFile,
+                true);
+
         // Allow the editor to finish opening.
         Display display = Display.getCurrent();
         while (display.readAndDispatch())
@@ -92,7 +91,7 @@ public class Bug53489Test extends UITestCase {
         robot.keyPress(KeyEvent.VK_S);
         robot.keyRelease(KeyEvent.VK_S);
         robot.keyRelease(KeyEvent.VK_CONTROL);
-        
+
         // Spin the event loop.
         while (display.readAndDispatch())
             ;

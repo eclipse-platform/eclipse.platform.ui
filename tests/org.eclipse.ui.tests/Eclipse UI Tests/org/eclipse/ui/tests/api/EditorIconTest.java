@@ -27,34 +27,41 @@ import org.eclipse.ui.tests.util.UITestCase;
  */
 public class EditorIconTest extends UITestCase {
 
-	/**
-	 * @param testName
-	 */
-	public EditorIconTest(String testName) {
-		super(testName);
-	}
-	
-	public void testDependantBundleIcon() {
-		Image i1 = fWorkbench.getEditorRegistry().getDefaultEditor("foo.icontest1").getImageDescriptor().createImage();
-		Image i2 = AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.ui", "icons/full/obj16/font.gif").createImage();
-		compareImages(i1, i2);
-	}
-	
-	public void testNonDependantBundleIcon() {
-		Image i1 = fWorkbench.getEditorRegistry().getDefaultEditor("foo.icontest2").getImageDescriptor().createImage();
-		Image i2 = AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.jdt.ui", "icons/full/obj16/class_obj.gif").createImage();
-		compareImages(i1, i2);		
-	}
-	
-	public void testBadIcon() {
-		Image i1 = fWorkbench.getEditorRegistry().getDefaultEditor("foo.icontest3").getImageDescriptor().createImage();
-		Image i2 = AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.ui", "icons/full/obj16/file_obj.gif").createImage();
-		compareImages(i1, i2);				
-	}
+    /**
+     * @param testName
+     */
+    public EditorIconTest(String testName) {
+        super(testName);
+    }
 
-	private void compareImages(Image i1, Image i2) {
-		ImageData data1 = i1.getImageData();
-		ImageData data2 = i2.getImageData();
-		assertTrue(Arrays.equals(data1.data, data2.data));
-	}	
+    public void testDependantBundleIcon() {
+        Image i1 = fWorkbench.getEditorRegistry().getDefaultEditor(
+                "foo.icontest1").getImageDescriptor().createImage();
+        Image i2 = AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.ui",
+                "icons/full/obj16/font.gif").createImage();
+        compareImages(i1, i2);
+    }
+
+    public void testNonDependantBundleIcon() {
+        Image i1 = fWorkbench.getEditorRegistry().getDefaultEditor(
+                "foo.icontest2").getImageDescriptor().createImage();
+        Image i2 = AbstractUIPlugin.imageDescriptorFromPlugin(
+                "org.eclipse.jdt.ui", "icons/full/obj16/class_obj.gif")
+                .createImage();
+        compareImages(i1, i2);
+    }
+
+    public void testBadIcon() {
+        Image i1 = fWorkbench.getEditorRegistry().getDefaultEditor(
+                "foo.icontest3").getImageDescriptor().createImage();
+        Image i2 = AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.ui",
+                "icons/full/obj16/file_obj.gif").createImage();
+        compareImages(i1, i2);
+    }
+
+    private void compareImages(Image i1, Image i2) {
+        ImageData data1 = i1.getImageData();
+        ImageData data2 = i2.getImageData();
+        assertTrue(Arrays.equals(data1.data, data2.data));
+    }
 }

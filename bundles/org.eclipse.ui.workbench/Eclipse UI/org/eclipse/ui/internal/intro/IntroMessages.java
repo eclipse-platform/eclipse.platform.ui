@@ -20,26 +20,27 @@ import java.util.ResourceBundle;
  */
 public class IntroMessages {
 
-	private static final String BUNDLE_NAME = "org.eclipse.ui.internal.intro.intro"; //$NON-NLS-1$
+    private static final String BUNDLE_NAME = "org.eclipse.ui.internal.intro.intro"; //$NON-NLS-1$
 
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
+    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
+            .getBundle(BUNDLE_NAME);
 
-	/**
-	 */
-	private IntroMessages() {
-	    //no-op
-	}
-	
-	/**
-	 * @param key
-	 * @return
-	 * @since 3.0
-	 */
-	public static String getString(String key) {
-		try {
-			return RESOURCE_BUNDLE.getString(key);
-		} catch (MissingResourceException e) {
-			return '!' + key + '!';
-		}
-	}
+    /**
+     */
+    private IntroMessages() {
+        //no-op
+    }
+
+    /**
+     * @param key
+     * @return
+     * @since 3.0
+     */
+    public static String getString(String key) {
+        try {
+            return RESOURCE_BUNDLE.getString(key);
+        } catch (MissingResourceException e) {
+            return '!' + key + '!';
+        }
+    }
 }

@@ -75,7 +75,7 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
      * stack -- letting you know what caused the context change to occur.
      */
     private static final boolean DEBUG_VERBOSE = Policy.DEBUG_CONTEXTS_VERBOSE;
-    
+
     /**
      * Creates a tree of context identifiers, representing the hierarchical
      * structure of the given contexts. The tree is structured as a mapping from
@@ -110,7 +110,7 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
 
         return contextTree;
     }
-    
+
     /**
      * <p>
      * Creates a tree of context identifiers, representing the hierarchical
@@ -128,7 +128,7 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
      * @return The tree of contexts to use; may be empty, but never
      *         <code>null</code>. The keys and values are both strings.
      */
-    public final Map createFilteredContextTreeFor(final Set contextIds) {        
+    public final Map createFilteredContextTreeFor(final Set contextIds) {
         // Check to see whether a dialog or window is active.
         boolean dialog = false;
         boolean window = false;
@@ -287,7 +287,7 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
             processEnabledSubmissions(false);
         }
     };
-    
+
     /**
      * Whether the context support should process enabled submissions. If it is
      * not processing enabled submissions, then it will update the listeners,
@@ -440,7 +440,7 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
                 } else {
                     // Shells that are not dialogs by default must register.
                     newSubmissions = (List) registeredWindows.get(newShell);
-                    
+
                 }
 
                 if (newSubmissions != null) {
@@ -470,7 +470,7 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
     public final WorkbenchKeyboard getKeyboard() {
         return keyboard;
     }
-    
+
     /**
      * Initializes the key binding support.
      */
@@ -505,8 +505,10 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
             final Shell newActiveShell) {
 
         // If we are not currently processing, then wait.
-        if (!processing) { return; }
-        
+        if (!processing) {
+            return;
+        }
+
         IWorkbenchSite newActiveWorkbenchSite = null;
         final IWorkbenchWindow newActiveWorkbenchWindow = workbench
                 .getActiveWorkbenchWindow();
@@ -553,7 +555,7 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
                         .getActivePart();
 
                 if (activeWorkbenchPart != null)
-                        newActiveWorkbenchSite = activeWorkbenchPart.getSite();
+                    newActiveWorkbenchSite = activeWorkbenchPart.getSite();
             }
         }
 
@@ -574,14 +576,14 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
                     Shell activeShell2 = enabledSubmission.getActiveShell();
 
                     if (activeShell2 != null && activeShell2 != newActiveShell)
-                            continue;
+                        continue;
 
                     IWorkbenchSite activeWorkbenchSite2 = enabledSubmission
                             .getActiveWorkbenchPartSite();
 
                     if (activeWorkbenchSite2 != null
                             && activeWorkbenchSite2 != newActiveWorkbenchSite)
-                            continue;
+                        continue;
 
                     enabledContextIds.add(contextId);
                     break;
@@ -620,8 +622,8 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
      */
     public boolean registerShell(final Shell shell, final int type) {
         // We do not allow null shell registration. It is reserved.
-        if (shell == null) { throw new NullPointerException(
-                "The shell was null"); //$NON-NLS-1$
+        if (shell == null) {
+            throw new NullPointerException("The shell was null"); //$NON-NLS-1$
         }
 
         // Build the list of submissions.
@@ -698,7 +700,7 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
             enabledSubmissions2.remove(enabledSubmission);
 
             if (enabledSubmissions2.isEmpty())
-                    enabledSubmissionsByContextId.remove(contextId);
+                enabledSubmissionsByContextId.remove(contextId);
         }
     }
 
@@ -740,7 +742,9 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
      */
     public boolean unregisterShell(Shell shell) {
         // Don't allow this method to play with the special null slot.
-        if (shell == null) { return false; }
+        if (shell == null) {
+            return false;
+        }
 
         List previousSubmissions = (List) registeredWindows.get(shell);
         if (previousSubmissions != null) {
@@ -751,7 +755,7 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
 
         return false;
     }
-    
+
     /**
      * Sets whether the workbench's context support should process enabled
      * submissions. The workbench should not allow the event loop to spin unless
@@ -763,7 +767,7 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
      *            Whether to process enabled submissions
      */
     public final void setProcessing(final boolean processing) {
-        final boolean reprocess = !this.processing && processing;        
+        final boolean reprocess = !this.processing && processing;
         this.processing = processing;
         if (reprocess) {
             processEnabledSubmissions(true);

@@ -25,113 +25,123 @@ import org.eclipse.ui.help.WorkbenchHelp;
 /**
  *	Closes all editors except ones with unsaved changes.
  */
-public class CloseAllSavedAction extends PageEventAction implements IPropertyListener {
-	
-	/**
-	 * List of parts (element type: <code>IWorkbenchPart</code>)
-	 * against which this class has outstanding property listeners registered.
-	 */
-	private List partsWithListeners = new ArrayList(1);
+public class CloseAllSavedAction extends PageEventAction implements
+        IPropertyListener {
 
-/**
- *	Create an instance of this class
- */
-public CloseAllSavedAction(IWorkbenchWindow window) {
-	super(WorkbenchMessages.getString("CloseAllSavedAction.text"), window); //$NON-NLS-1$
-	setToolTipText(WorkbenchMessages.getString("CloseAllSavedAction.toolTip")); //$NON-NLS-1$
-	// @issue Should create a ID in IWorkbenchActionConstants when it becames API?
-	setId("closeAllSaved"); //$NON-NLS-1$
-	updateState();
-	WorkbenchHelp.setHelp(this, IHelpContextIds.CLOSE_ALL_SAVED_ACTION);
-	setActionDefinitionId("org.eclipse.ui.file.closeAllSaved"); //$NON-NLS-1$
-}
-/* (non-Javadoc)
- * Method declared on PageEventAction.
- */
-public void pageActivated(IWorkbenchPage page) {
-	super.pageActivated(page);
-	updateState();
-}
-/* (non-Javadoc)
- * Method declared on PageEventAction.
- */
-public void pageClosed(IWorkbenchPage page) {
-	super.pageClosed(page);
-	updateState();
-}
-/* (non-Javadoc)
- * Method declared on PartEventAction.
- */
-public void partClosed(IWorkbenchPart part) {
-	super.partClosed(part);
-	if (part instanceof IEditorPart) {
-		part.removePropertyListener(this);
-		partsWithListeners.remove(part);
-		updateState();	
-	}
-}
-/* (non-Javadoc)
- * Method declared on PartEventAction.
- */
-public void partOpened(IWorkbenchPart part) {	
-	super.partOpened(part);
-	if (part instanceof IEditorPart) {
-		part.addPropertyListener(this);
-		partsWithListeners.add(part);
-		updateState();	
-	}
-}
-/* (non-Javadoc)
- * Method declared on IPropertyListener.
- */
-public void propertyChanged(Object source, int propID) {
-	if (source instanceof IEditorPart) {
-		if (propID == IEditorPart.PROP_DIRTY) {
-			updateState();
-		}
-	}
-}
-/* (non-Javadoc)
- * Method declared on Action.
- */
-public void run() {
-	if (getWorkbenchWindow() == null) {
-		// action has been dispose
-		return;
-	}
-	IWorkbenchPage page = getActivePage();
-	if (page != null) {
-		((WorkbenchPage) page).closeAllSavedEditors();
-	}
-}
-/**
- * Enable the action if there at least one editor open.
- */
-private void updateState() {
-	IWorkbenchPage page = getActivePage();
-	if (page == null) {
-		setEnabled(false);
-		return;
-	}
-	IEditorReference editors[] = page.getEditorReferences();
-	for (int i = 0; i < editors.length; i++) {
-		if (!editors[i].isDirty()) {
-			setEnabled(true);
-			return;
-		}
-	}
-	setEnabled(false);
-}
-/* (non-Javadoc)
- * Method declared on PageEventAction.
- */
-public void dispose() {
-	super.dispose();
-	for (Iterator it = partsWithListeners.iterator(); it.hasNext(); ) {
-		IWorkbenchPart part = (IWorkbenchPart) it.next();
-		part.removePropertyListener(this);
-	}
-	partsWithListeners.clear();
-}
+    /**
+     * List of parts (element type: <code>IWorkbenchPart</code>)
+     * against which this class has outstanding property listeners registered.
+     */
+    private List partsWithListeners = new ArrayList(1);
+
+    /**
+     *	Create an instance of this class
+     */
+    public CloseAllSavedAction(IWorkbenchWindow window) {
+        super(WorkbenchMessages.getString("CloseAllSavedAction.text"), window); //$NON-NLS-1$
+        setToolTipText(WorkbenchMessages
+                .getString("CloseAllSavedAction.toolTip")); //$NON-NLS-1$
+        // @issue Should create a ID in IWorkbenchActionConstants when it becames API?
+        setId("closeAllSaved"); //$NON-NLS-1$
+        updateState();
+        WorkbenchHelp.setHelp(this, IHelpContextIds.CLOSE_ALL_SAVED_ACTION);
+        setActionDefinitionId("org.eclipse.ui.file.closeAllSaved"); //$NON-NLS-1$
+    }
+
+    /* (non-Javadoc)
+     * Method declared on PageEventAction.
+     */
+    public void pageActivated(IWorkbenchPage page) {
+        super.pageActivated(page);
+        updateState();
+    }
+
+    /* (non-Javadoc)
+     * Method declared on PageEventAction.
+     */
+    public void pageClosed(IWorkbenchPage page) {
+        super.pageClosed(page);
+        updateState();
+    }
+
+    /* (non-Javadoc)
+     * Method declared on PartEventAction.
+     */
+    public void partClosed(IWorkbenchPart part) {
+        super.partClosed(part);
+        if (part instanceof IEditorPart) {
+            part.removePropertyListener(this);
+            partsWithListeners.remove(part);
+            updateState();
+        }
+    }
+
+    /* (non-Javadoc)
+     * Method declared on PartEventAction.
+     */
+    public void partOpened(IWorkbenchPart part) {
+        super.partOpened(part);
+        if (part instanceof IEditorPart) {
+            part.addPropertyListener(this);
+            partsWithListeners.add(part);
+            updateState();
+        }
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IPropertyListener.
+     */
+    public void propertyChanged(Object source, int propID) {
+        if (source instanceof IEditorPart) {
+            if (propID == IEditorPart.PROP_DIRTY) {
+                updateState();
+            }
+        }
+    }
+
+    /* (non-Javadoc)
+     * Method declared on Action.
+     */
+    public void run() {
+        if (getWorkbenchWindow() == null) {
+            // action has been dispose
+            return;
+        }
+        IWorkbenchPage page = getActivePage();
+        if (page != null) {
+            ((WorkbenchPage) page).closeAllSavedEditors();
+        }
+    }
+
+    /**
+     * Enable the action if there at least one editor open.
+     */
+    private void updateState() {
+        IWorkbenchPage page = getActivePage();
+        if (page == null) {
+            setEnabled(false);
+            return;
+        }
+        IEditorReference editors[] = page.getEditorReferences();
+        for (int i = 0; i < editors.length; i++) {
+            if (!editors[i].isDirty()) {
+                setEnabled(true);
+                return;
+            }
+        }
+        setEnabled(false);
+    }
+
+    /* (non-Javadoc)
+     * Method declared on PageEventAction.
+     */
+    public void dispose() {
+        super.dispose();
+        for (Iterator it = partsWithListeners.iterator(); it.hasNext();) {
+            IWorkbenchPart part = (IWorkbenchPart) it.next();
+            part.removePropertyListener(this);
+        }
+        partsWithListeners.clear();
+    }
 
 }

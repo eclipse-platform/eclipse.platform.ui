@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.ui.internal.presentations.PresentationFactoryUtil;
 import org.eclipse.ui.internal.presentations.SystemMenuFastView;
@@ -36,38 +35,42 @@ import org.eclipse.ui.presentations.IPresentablePart;
 public class ViewStack extends PartStack {
 
     private boolean allowStateChanges;
+
     private WorkbenchPage page;
-    
+
     private SystemMenuSize sizeItem = new SystemMenuSize(null);
+
     private SystemMenuFastView fastViewAction;
-    
-	public void addSystemActions(IMenuManager menuManager) {
-		appendToGroupIfPossible(menuManager, "misc", new UpdatingActionContributionItem(fastViewAction)); //$NON-NLS-1$
-		sizeItem = new SystemMenuSize((PartPane)getVisiblePart());
-		appendToGroupIfPossible(menuManager, "size", sizeItem); //$NON-NLS-1$
-	}
-    
+
+    public void addSystemActions(IMenuManager menuManager) {
+        appendToGroupIfPossible(menuManager,
+                "misc", new UpdatingActionContributionItem(fastViewAction)); //$NON-NLS-1$
+        sizeItem = new SystemMenuSize((PartPane) getVisiblePart());
+        appendToGroupIfPossible(menuManager, "size", sizeItem); //$NON-NLS-1$
+    }
+
     public ViewStack(WorkbenchPage page) {
-    	this(page, true);
+        this(page, true);
     }
-    
+
     public ViewStack(WorkbenchPage page, boolean allowsStateChanges) {
-    	this(page, allowsStateChanges, PresentationFactoryUtil.ROLE_VIEW);
+        this(page, allowsStateChanges, PresentationFactoryUtil.ROLE_VIEW);
     }
-    
-    public ViewStack(WorkbenchPage page, boolean allowsStateChanges, int appearance) {
-    	super(appearance);
-    	
-    	this.page = page;
+
+    public ViewStack(WorkbenchPage page, boolean allowsStateChanges,
+            int appearance) {
+        super(appearance);
+
+        this.page = page;
         setID(this.toString());
         // Each folder has a unique ID so relative positioning is unambiguous.
 
         this.allowStateChanges = allowsStateChanges;
         fastViewAction = new SystemMenuFastView(getPresentationSite());
     }
-    
+
     protected WorkbenchPage getPage() {
-    	return page;
+        return page;
     }
 
     protected boolean canMoveFolder() {
@@ -76,71 +79,70 @@ public class ViewStack extends PartStack {
         if (perspective == null) {
             // Shouldn't happen -- can't have a ViewStack without a
             // perspective
-            return false; 
-        }        	
-    	
-        return !perspective.isFixedLayout();    	
+            return false;
+        }
+
+        return !perspective.isFixedLayout();
     }
 
     protected void updateActions() {
-    	ViewPane pane = null;
-    	PartPane part = getVisiblePart();
-    	
-    	if (part instanceof ViewPane) {
-    		pane = (ViewPane)part;
-    	}
-    	
-        fastViewAction.setPane(pane);        
+        ViewPane pane = null;
+        PartPane part = getVisiblePart();
+
+        if (part instanceof ViewPane) {
+            pane = (ViewPane) part;
+        }
+
+        fastViewAction.setPane(pane);
         sizeItem.setPane(pane);
     }
 
     public boolean isCloseable(IPresentablePart part) {
-        ViewPane pane = (ViewPane)getPaneFor(part);
+        ViewPane pane = (ViewPane) getPaneFor(part);
         Perspective perspective = page.getActivePerspective();
         if (perspective == null) {
             // Shouldn't happen -- can't have a ViewStack without a
             // perspective
-            return true; 
+            return true;
         }
         return perspective.isCloseable(pane.getViewReference());
     }
-    
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.PartStack#isMoveable(org.eclipse.ui.presentations.IPresentablePart)
-	 */
-	protected boolean isMoveable(IPresentablePart part) {
-        ViewPane pane = (ViewPane)getPaneFor(part);
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.PartStack#isMoveable(org.eclipse.ui.presentations.IPresentablePart)
+     */
+    protected boolean isMoveable(IPresentablePart part) {
+        ViewPane pane = (ViewPane) getPaneFor(part);
         Perspective perspective = page.getActivePerspective();
         if (perspective == null) {
             // Shouldn't happen -- can't have a ViewStack without a
             // perspective
-            return true; 
+            return true;
         }
         return perspective.isMoveable(pane.getViewReference());
-	}
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.PartStack#supportsState(int)
-	 */
-	protected boolean supportsState(int newState) {
-	    if (page.isFixedLayout())
-	        return false;
-		return allowStateChanges;
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.PartStack#supportsState(int)
+     */
+    protected boolean supportsState(int newState) {
+        if (page.isFixedLayout())
+            return false;
+        return allowStateChanges;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.PartStack#derefPart(org.eclipse.ui.internal.LayoutPart)
-	 */
-	protected void derefPart(LayoutPart toDeref) {
-		page.getActivePerspective().getPresentation()
-        	.derefPart(toDeref);
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.PartStack#derefPart(org.eclipse.ui.internal.LayoutPart)
+     */
+    protected void derefPart(LayoutPart toDeref) {
+        page.getActivePerspective().getPresentation().derefPart(toDeref);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.PartStack#allowsDrop(org.eclipse.ui.internal.PartPane)
-	 */
-	protected boolean allowsDrop(PartPane part) {
-		return part instanceof ViewPane;
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.PartStack#allowsDrop(org.eclipse.ui.internal.PartPane)
+     */
+    protected boolean allowsDrop(PartPane part) {
+        return part instanceof ViewPane;
+    }
 
 }

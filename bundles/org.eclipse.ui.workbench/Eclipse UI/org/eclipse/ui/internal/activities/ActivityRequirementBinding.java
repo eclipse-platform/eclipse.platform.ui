@@ -12,80 +12,88 @@
 package org.eclipse.ui.internal.activities;
 
 import org.eclipse.ui.activities.IActivityRequirementBinding;
-
 import org.eclipse.ui.internal.util.Util;
 
-public final class ActivityRequirementBinding implements IActivityRequirementBinding {
-	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL =
-		ActivityRequirementBinding.class.getName().hashCode();
-	private String requiredActivityId;
-	private transient int hashCode;
-	private transient boolean hashCodeComputed;
-	private String activityId;
-	private transient String string;
+public final class ActivityRequirementBinding implements
+        IActivityRequirementBinding {
+    private final static int HASH_FACTOR = 89;
 
-	public ActivityRequirementBinding(String requiredActivityId, String activityId) {
-		if (requiredActivityId == null || activityId == null)
-			throw new NullPointerException();
+    private final static int HASH_INITIAL = ActivityRequirementBinding.class
+            .getName().hashCode();
 
-		this.requiredActivityId = requiredActivityId;
-		this.activityId = activityId;
-	}
+    private String requiredActivityId;
 
-	public int compareTo(Object object) {
-		ActivityRequirementBinding castedObject = (ActivityRequirementBinding) object;
-		int compareTo =
-			Util.compare(requiredActivityId, castedObject.requiredActivityId);
+    private transient int hashCode;
 
-		if (compareTo == 0)
-			compareTo =
-				Util.compare(activityId, castedObject.activityId);
+    private transient boolean hashCodeComputed;
 
-		return compareTo;
-	}
+    private String activityId;
 
-	public boolean equals(Object object) {
-		if (!(object instanceof ActivityRequirementBinding))
-			return false;
+    private transient String string;
 
-		ActivityRequirementBinding castedObject = (ActivityRequirementBinding) object;
-		boolean equals = true;
-		equals &= Util.equals(requiredActivityId, castedObject.requiredActivityId);
-		equals &= Util.equals(activityId, castedObject.activityId);
-		return equals;
-	}
+    public ActivityRequirementBinding(String requiredActivityId,
+            String activityId) {
+        if (requiredActivityId == null || activityId == null)
+            throw new NullPointerException();
 
-	public String getRequiredActivityId() {
-		return requiredActivityId;
-	}
+        this.requiredActivityId = requiredActivityId;
+        this.activityId = activityId;
+    }
 
-	public String getActivityId() {
-		return activityId;
-	}
+    public int compareTo(Object object) {
+        ActivityRequirementBinding castedObject = (ActivityRequirementBinding) object;
+        int compareTo = Util.compare(requiredActivityId,
+                castedObject.requiredActivityId);
 
-	public int hashCode() {
-		if (!hashCodeComputed) {
-			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(requiredActivityId);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityId);
-			hashCodeComputed = true;
-		}
+        if (compareTo == 0)
+            compareTo = Util.compare(activityId, castedObject.activityId);
 
-		return hashCode;
-	}
+        return compareTo;
+    }
 
-	public String toString() {
-		if (string == null) {
-			final StringBuffer stringBuffer = new StringBuffer();
-			stringBuffer.append('[');
-			stringBuffer.append(requiredActivityId);
-			stringBuffer.append(',');
-			stringBuffer.append(activityId);
-			stringBuffer.append(']');
-			string = stringBuffer.toString();
-		}
+    public boolean equals(Object object) {
+        if (!(object instanceof ActivityRequirementBinding))
+            return false;
 
-		return string;
-	}
+        ActivityRequirementBinding castedObject = (ActivityRequirementBinding) object;
+        boolean equals = true;
+        equals &= Util.equals(requiredActivityId,
+                castedObject.requiredActivityId);
+        equals &= Util.equals(activityId, castedObject.activityId);
+        return equals;
+    }
+
+    public String getRequiredActivityId() {
+        return requiredActivityId;
+    }
+
+    public String getActivityId() {
+        return activityId;
+    }
+
+    public int hashCode() {
+        if (!hashCodeComputed) {
+            hashCode = HASH_INITIAL;
+            hashCode = hashCode * HASH_FACTOR
+                    + Util.hashCode(requiredActivityId);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityId);
+            hashCodeComputed = true;
+        }
+
+        return hashCode;
+    }
+
+    public String toString() {
+        if (string == null) {
+            final StringBuffer stringBuffer = new StringBuffer();
+            stringBuffer.append('[');
+            stringBuffer.append(requiredActivityId);
+            stringBuffer.append(',');
+            stringBuffer.append(activityId);
+            stringBuffer.append(']');
+            string = stringBuffer.toString();
+        }
+
+        return string;
+    }
 }

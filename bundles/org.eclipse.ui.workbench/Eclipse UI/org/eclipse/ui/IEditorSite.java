@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui;
 
-
 /**
  * The primary interface between an editor part and the workbench.
  * <p>
@@ -20,26 +19,26 @@ package org.eclipse.ui;
  */
 public interface IEditorSite extends IWorkbenchPartSite {
 
-	/**
-	 * Returns the action bar contributor for this editor.
-	 * <p>
-	 * An action contributor is responsable for the creation of actions.
-	 * By design, this contributor is used for one or more editors of the same type.
-	 * Thus, the contributor returned by this method is not owned completely
-	 * by the editor - it is shared.
-	 * </p>
-	 *
-	 * @return the editor action bar contributor, or <code>null</code> if none exists
-	 */
-	public IEditorActionBarContributor getActionBarContributor();
+    /**
+     * Returns the action bar contributor for this editor.
+     * <p>
+     * An action contributor is responsable for the creation of actions.
+     * By design, this contributor is used for one or more editors of the same type.
+     * Thus, the contributor returned by this method is not owned completely
+     * by the editor - it is shared.
+     * </p>
+     *
+     * @return the editor action bar contributor, or <code>null</code> if none exists
+     */
+    public IEditorActionBarContributor getActionBarContributor();
 
-	/**
-	 * Returns the action bars for this part site. Editors of the same type
-	 * share the same action bars. Contributions to the action bars are done
-	 * by the <code>IEditorActionBarContributor</code>.
-	 *
-	 * @return the action bars
-	 * @since 2.1
-	 */
-	public IActionBars getActionBars();
+    /**
+     * Returns the action bars for this part site. Editors of the same type
+     * share the same action bars. Contributions to the action bars are done
+     * by the <code>IEditorActionBarContributor</code>.
+     *
+     * @return the action bars
+     * @since 2.1
+     */
+    public IActionBars getActionBars();
 }

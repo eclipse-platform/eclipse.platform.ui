@@ -26,34 +26,49 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 
     public void initializeDefaultPreferences() {
         IPreferenceStore store = UIPlugin.getDefault().getPreferenceStore();
-		store.setDefault(IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE, IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
+        store.setDefault(IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE,
+                IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
 
-		//Deprecated but kept for backwards compatibility
-		store.setDefault(IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE, IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
-		store.setDefault(IWorkbenchPreferenceConstants.SHIFT_OPEN_NEW_PERSPECTIVE, IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
-		store.setDefault(IWorkbenchPreferenceConstants.ALTERNATE_OPEN_NEW_PERSPECTIVE, IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
-		
-		// Although there is no longer any item on the preference pages 
-		// for setting the linking preference, since it is now a per-part setting, 
-		// it remains as a preference to allow product overrides of the 
-		// initial state of linking in the Navigator.
-		// By default, linking is off.
-		store.setDefault(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR, false);
+        //Deprecated but kept for backwards compatibility
+        store.setDefault(
+                IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE,
+                IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
+        store.setDefault(
+                IWorkbenchPreferenceConstants.SHIFT_OPEN_NEW_PERSPECTIVE,
+                IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
+        store.setDefault(
+                IWorkbenchPreferenceConstants.ALTERNATE_OPEN_NEW_PERSPECTIVE,
+                IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
 
-		// Appearance / Presentation preferences
-		store.setDefault(IWorkbenchPreferenceConstants.PRESENTATION_FACTORY_ID, "org.eclipse.ui.presentations.default"); //$NON-NLS-1$
-		store.setDefault(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS, true);
-	    store.setDefault(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR, IWorkbenchPreferenceConstants.TOP_LEFT);
-		store.setDefault(IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR, true);
-		// the fast view bar should be on the bottom of a fresh workspace
-		store.setDefault(
+        // Although there is no longer any item on the preference pages 
+        // for setting the linking preference, since it is now a per-part setting, 
+        // it remains as a preference to allow product overrides of the 
+        // initial state of linking in the Navigator.
+        // By default, linking is off.
+        store.setDefault(
+                IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR, false);
+
+        // Appearance / Presentation preferences
+        store.setDefault(IWorkbenchPreferenceConstants.PRESENTATION_FACTORY_ID,
+                "org.eclipse.ui.presentations.default"); //$NON-NLS-1$
+        store
+                .setDefault(
+                        IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS,
+                        true);
+        store.setDefault(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR,
+                IWorkbenchPreferenceConstants.TOP_LEFT);
+        store.setDefault(
+                IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR,
+                true);
+        // the fast view bar should be on the bottom of a fresh workspace
+        store.setDefault(
                 IWorkbenchPreferenceConstants.INITIAL_FAST_VIEW_BAR_LOCATION,
                 IWorkbenchPreferenceConstants.BOTTOM);
 
-		// default to showing intro on startup
-		store.setDefault(IWorkbenchPreferenceConstants.SHOW_INTRO, true);
-		
-		store.addPropertyChangeListener(new PlatformUIPreferenceListener());
+        // default to showing intro on startup
+        store.setDefault(IWorkbenchPreferenceConstants.SHOW_INTRO, true);
+
+        store.addPropertyChangeListener(new PlatformUIPreferenceListener());
     }
 
 }

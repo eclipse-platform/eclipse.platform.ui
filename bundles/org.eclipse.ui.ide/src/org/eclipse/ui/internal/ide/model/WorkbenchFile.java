@@ -10,24 +10,27 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.model;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.jface.resource.ImageDescriptor;
+
 /**
  * An IWorkbenchAdapter that represents IFiles.
  */
 public class WorkbenchFile extends WorkbenchResource {
-/**
- *	Answer the appropriate base image to use for the passed resource, optionally
- *	considering the passed open status as well iff appropriate for the type of
- *	passed resource
- */
-protected ImageDescriptor getBaseImage(IResource resource) {
-	// @issue move IDE specific images
-	ImageDescriptor image = PlatformUI.getWorkbench().getEditorRegistry().getImageDescriptor(resource.getName());
-	if (image == null)
-		image = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FILE);
-	return image;
-}
+    /**
+     *	Answer the appropriate base image to use for the passed resource, optionally
+     *	considering the passed open status as well iff appropriate for the type of
+     *	passed resource
+     */
+    protected ImageDescriptor getBaseImage(IResource resource) {
+        // @issue move IDE specific images
+        ImageDescriptor image = PlatformUI.getWorkbench().getEditorRegistry()
+                .getImageDescriptor(resource.getName());
+        if (image == null)
+            image = PlatformUI.getWorkbench().getSharedImages()
+                    .getImageDescriptor(ISharedImages.IMG_OBJ_FILE);
+        return image;
+    }
 }

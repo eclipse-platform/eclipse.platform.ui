@@ -35,53 +35,57 @@ import org.eclipse.ui.part.ViewPart;
  */
 public final class ViewIntroAdapterPart extends ViewPart {
 
-	private IIntroPart introPart;
-	private IIntroSite introSite;
-	private boolean handleZoomEvents = true;
+    private IIntroPart introPart;
 
-	/**
-	 * Adds a listener that toggles standby state if the view pane is zoomed. 
-	 */
-	private void addPaneListener() {	
-		((PartSite)getSite()).getPane().addPropertyChangeListener(new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-			    if (handleZoomEvents) {
-					if (event.getProperty().equals(PartPane.PROP_ZOOMED)) {
-						boolean standby = !((Boolean)event.getNewValue()).booleanValue();
-						setStandby(standby);
-					}
-			    }
-			}
-		});
-	}
+    private IIntroSite introSite;
 
-	/**
-	 * Forces the standby state of the intro part.
-	 * 
+    private boolean handleZoomEvents = true;
+
+    /**
+     * Adds a listener that toggles standby state if the view pane is zoomed. 
+     */
+    private void addPaneListener() {
+        ((PartSite) getSite()).getPane().addPropertyChangeListener(
+                new IPropertyChangeListener() {
+                    public void propertyChange(PropertyChangeEvent event) {
+                        if (handleZoomEvents) {
+                            if (event.getProperty()
+                                    .equals(PartPane.PROP_ZOOMED)) {
+                                boolean standby = !((Boolean) event
+                                        .getNewValue()).booleanValue();
+                                setStandby(standby);
+                            }
+                        }
+                    }
+                });
+    }
+
+    /**
+     * Forces the standby state of the intro part.
+     * 
      * @param standby update the standby state
      */
     public void setStandby(final boolean standby) {
-        final Control control = ((PartSite)getSite()).getPane().getControl();
+        final Control control = ((PartSite) getSite()).getPane().getControl();
         BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
             public void run() {
-                try {                    
+                try {
                     control.setRedraw(false);
                     introPart.standbyStateChanged(standby);
+                } finally {
+                    control.setRedraw(true);
                 }
-        		finally {
-        		    control.setRedraw(true);
-        		}
-                
-        		WorkbenchWindow window = ((WorkbenchWindow)((PartSite)getSite()).getPane().getWorkbenchWindow());
-        		if (standby) {
-        			window.setCoolBarVisible(true);
-        			window.setPerspectiveBarVisible(true);
-        		}
-        		else {
-        			window.setCoolBarVisible(false);
-        			window.setPerspectiveBarVisible(false);						
-        		}
-        		window.getShell().layout();                
+
+                WorkbenchWindow window = ((WorkbenchWindow) ((PartSite) getSite())
+                        .getPane().getWorkbenchWindow());
+                if (standby) {
+                    window.setCoolBarVisible(true);
+                    window.setPerspectiveBarVisible(true);
+                } else {
+                    window.setCoolBarVisible(false);
+                    window.setPerspectiveBarVisible(false);
+                }
+                window.getShell().layout();
             }
         });
     }
@@ -94,64 +98,72 @@ public final class ViewIntroAdapterPart extends ViewPart {
     public void setHandleZoomEvents(boolean handle) {
         handleZoomEvents = handle;
     }
-    
+
     /* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
-	 */
-	public void createPartControl(Composite parent) {
-		addPaneListener();
-		introPart.createPartControl(parent);
-	}
+     * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
+     */
+    public void createPartControl(Composite parent) {
+        addPaneListener();
+        introPart.createPartControl(parent);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
-	 */
-	public void dispose() {		
-		super.dispose();
-		getSite().getWorkbenchWindow().getWorkbench().getIntroManager().closeIntro(introPart);
-		introPart.dispose();
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkbenchPart#dispose()
+     */
+    public void dispose() {
+        super.dispose();
+        getSite().getWorkbenchWindow().getWorkbench().getIntroManager()
+                .closeIntro(introPart);
+        introPart.dispose();
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
-	public Object getAdapter(Class adapter) {
-		return introPart.getAdapter(adapter);
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+     */
+    public Object getAdapter(Class adapter) {
+        return introPart.getAdapter(adapter);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPart#getTitleImage()
-	 */
-	public Image getTitleImage() {
-		return introPart.getTitleImage();
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkbenchPart#getTitleImage()
+     */
+    public Image getTitleImage() {
+        return introPart.getTitleImage();
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IViewPart#init(org.eclipse.ui.IViewSite, org.eclipse.ui.IMemento)
-	 */
-	public void init(IViewSite site, IMemento memento) throws PartInitException {
-		super.init(site);
-		Workbench workbench = (Workbench)site.getWorkbenchWindow().getWorkbench();
-		try {
-			introPart = workbench.getWorkbenchIntroManager().createNewIntroPart();
-			introPart.addPropertyListener(new IPropertyListener() {
-				public void propertyChanged(Object source, int propId) {
-					firePropertyChange(propId);					
-				}});
-			introSite = new ViewIntroAdapterSite(site, workbench.getIntroDescriptor());
-			introPart.init(introSite, memento);
-		} catch (CoreException e) {
-			WorkbenchPlugin.log(IntroMessages.getString("Intro.could_not_create_proxy"), new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR, IntroMessages.getString("Intro.could_not_create_proxy"), e)); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IViewPart#init(org.eclipse.ui.IViewSite, org.eclipse.ui.IMemento)
+     */
+    public void init(IViewSite site, IMemento memento) throws PartInitException {
+        super.init(site);
+        Workbench workbench = (Workbench) site.getWorkbenchWindow()
+                .getWorkbench();
+        try {
+            introPart = workbench.getWorkbenchIntroManager()
+                    .createNewIntroPart();
+            introPart.addPropertyListener(new IPropertyListener() {
+                public void propertyChanged(Object source, int propId) {
+                    firePropertyChange(propId);
+                }
+            });
+            introSite = new ViewIntroAdapterSite(site, workbench
+                    .getIntroDescriptor());
+            introPart.init(introSite, memento);
+        } catch (CoreException e) {
+            WorkbenchPlugin
+                    .log(
+                            IntroMessages
+                                    .getString("Intro.could_not_create_proxy"), new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR, IntroMessages.getString("Intro.could_not_create_proxy"), e)); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
-	 */
-	public void setFocus() {
-		introPart.setFocus();
-	}
-	
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkbenchPart#setFocus()
+     */
+    public void setFocus() {
+        introPart.setFocus();
+    }
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.IViewPart#saveState(org.eclipse.ui.IMemento)
      */

@@ -49,18 +49,21 @@ final class Context implements IContext {
     private transient String string;
 
     Context(String id) {
-        if (id == null) throw new NullPointerException();
+        if (id == null)
+            throw new NullPointerException();
 
         this.id = id;
     }
 
     public void addContextListener(IContextListener contextListener) {
-        if (contextListener == null) throw new NullPointerException();
+        if (contextListener == null)
+            throw new NullPointerException();
 
-        if (contextListeners == null) contextListeners = new ArrayList();
+        if (contextListeners == null)
+            contextListeners = new ArrayList();
 
         if (!contextListeners.contains(contextListener))
-                contextListeners.add(contextListener);
+            contextListeners.add(contextListener);
 
         strongReferences.add(this);
     }
@@ -79,8 +82,8 @@ final class Context implements IContext {
                     compareTo = Util.compare(name, castedObject.name);
 
                     if (compareTo == 0)
-                            compareTo = Util.compare(parentId,
-                                    castedObject.parentId);
+                        compareTo = Util.compare(parentId,
+                                castedObject.parentId);
                 }
             }
         }
@@ -89,7 +92,8 @@ final class Context implements IContext {
     }
 
     public boolean equals(Object object) {
-        if (!(object instanceof Context)) return false;
+        if (!(object instanceof Context))
+            return false;
 
         Context castedObject = (Context) object;
         boolean equals = true;
@@ -102,12 +106,13 @@ final class Context implements IContext {
     }
 
     void fireContextChanged(ContextEvent contextEvent) {
-        if (contextEvent == null) throw new NullPointerException();
+        if (contextEvent == null)
+            throw new NullPointerException();
 
         if (contextListeners != null)
-                for (int i = 0; i < contextListeners.size(); i++)
-                    ((IContextListener) contextListeners.get(i))
-                            .contextChanged(contextEvent);
+            for (int i = 0; i < contextListeners.size(); i++)
+                ((IContextListener) contextListeners.get(i))
+                        .contextChanged(contextEvent);
     }
 
     public String getId() {
@@ -116,16 +121,16 @@ final class Context implements IContext {
 
     public String getName() throws NotDefinedException {
         if (!defined)
-                throw new NotDefinedException(
-                        "Cannot get the name from an undefined context."); //$NON-NLS-1$
+            throw new NotDefinedException(
+                    "Cannot get the name from an undefined context."); //$NON-NLS-1$
 
         return name;
     }
 
     public String getParentId() throws NotDefinedException {
         if (!defined)
-                throw new NotDefinedException(
-                        "Cannot get the parent identifier from an undefined context."); //$NON-NLS-1$
+            throw new NotDefinedException(
+                    "Cannot get the parent identifier from an undefined context."); //$NON-NLS-1$
 
         return parentId;
     }
@@ -153,11 +158,14 @@ final class Context implements IContext {
     }
 
     public void removeContextListener(IContextListener contextListener) {
-        if (contextListener == null) throw new NullPointerException();
+        if (contextListener == null)
+            throw new NullPointerException();
 
-        if (contextListeners != null) contextListeners.remove(contextListener);
+        if (contextListeners != null)
+            contextListeners.remove(contextListener);
 
-        if (contextListeners.isEmpty()) strongReferences.remove(this);
+        if (contextListeners.isEmpty())
+            strongReferences.remove(this);
     }
 
     boolean setDefined(boolean defined) {

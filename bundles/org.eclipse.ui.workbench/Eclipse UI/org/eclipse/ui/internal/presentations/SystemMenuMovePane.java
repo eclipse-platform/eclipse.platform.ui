@@ -21,26 +21,27 @@ import org.eclipse.ui.presentations.IStackPresentationSite;
  */
 public class SystemMenuMovePane extends Action implements ISelfUpdatingAction {
 
-	IStackPresentationSite site;
-	
-	public SystemMenuMovePane(IStackPresentationSite site) {
-		this.site = site;
-		setText(WorkbenchMessages.getString("SystemMenuMovePane.PaneName")); //$NON-NLS-1$
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
-	public void run() {
-		 site.dragStart(site.getSelectedPart(), Display.getDefault().getCursorLocation(), true);
-	}
-	
-	public void update() {
-		IPresentablePart part = site.getSelectedPart();
-		setEnabled(part != null && site.isPartMoveable(part));
-	}
-	
+    IStackPresentationSite site;
+
+    public SystemMenuMovePane(IStackPresentationSite site) {
+        this.site = site;
+        setText(WorkbenchMessages.getString("SystemMenuMovePane.PaneName")); //$NON-NLS-1$
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.action.IAction#run()
+     */
+    public void run() {
+        site.dragStart(site.getSelectedPart(), Display.getDefault()
+                .getCursorLocation(), true);
+    }
+
+    public void update() {
+        IPresentablePart part = site.getSelectedPart();
+        setEnabled(part != null && site.isPartMoveable(part));
+    }
+
     public boolean shouldBeVisible() {
-    	return true;
+        return true;
     }
 }

@@ -11,14 +11,16 @@
 
 package org.eclipse.ui.views.markers.internal;
 
-
-
 public interface ITableViewContentProvider {
-	
-	public Object[] getElements();
-	public IFilter getFilter();
-	public void setFilter(IFilter filter);
-	public void addItemsChangedListener(IItemsChangedListener listener);
-	public void removeItemsChangedListener(IItemsChangedListener listener);
+
+    public Object[] getElements();
+
+    public IFilter getFilter();
+
+    public void setFilter(IFilter filter);
+
+    public void addItemsChangedListener(IItemsChangedListener listener);
+
+    public void removeItemsChangedListener(IItemsChangedListener listener);
 
 }

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui;
 
-
 /**
  * An adapter which performs action filtering.
  * <p>
@@ -48,14 +47,14 @@ package org.eclipse.ui;
  * @see org.eclipse.core.runtime.IAdaptable
  */
 public interface IActionFilter {
-/**
- * Returns whether the specific attribute matches the state of the target
- * object.
- *
- * @param target the target object
- * @param name the attribute name
- * @param value the attribute value
- * @return <code>true</code> if the attribute matches; <code>false</code> otherwise
- */
-public boolean testAttribute(Object target, String name, String value);
+    /**
+     * Returns whether the specific attribute matches the state of the target
+     * object.
+     *
+     * @param target the target object
+     * @param name the attribute name
+     * @param value the attribute value
+     * @return <code>true</code> if the attribute matches; <code>false</code> otherwise
+     */
+    public boolean testAttribute(Object target, String name, String value);
 }

@@ -13,11 +13,11 @@ package org.eclipse.ui.actions;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
 
 /**
  * Standard action for scrubbing the local content in the local file system of
@@ -28,52 +28,61 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class ScrubLocalAction extends WorkspaceAction {
 
-	/**
-	 * The id of this action.
-	 */
-	public static final String ID = "org.eclipse.ui.ScrubLocalAction";//$NON-NLS-1$
-/**
- * Creates a new action.
- *
- * @param shell the shell for any dialogs
- */
-public ScrubLocalAction(Shell shell) {
-	super(shell, IDEWorkbenchMessages.getString("ScrubLocalAction.text")); //$NON-NLS-1$
-	setToolTipText(IDEWorkbenchMessages.getString("ScrubLocalAction.toolTip")); //$NON-NLS-1$
-	setId(ID);
-	WorkbenchHelp.setHelp(this, IHelpContextIds.SCRUB_LOCAL_ACTION);
-}
-/* (non-Javadoc)
- * Method declared on WorkspaceAction.
- */
-String getOperationMessage() {
-	return IDEWorkbenchMessages.getString("ScrubLocalAction.progress"); //$NON-NLS-1$
-}
-/* (non-Javadoc)
- * Method declared on WorkspaceAction.
- */
-String getProblemsMessage() {
-	return IDEWorkbenchMessages.getString("ScrubLocalAction.problemsMessage"); //$NON-NLS-1$
-}
-/* (non-Javadoc)
- * Method declared on WorkspaceAction.
- */
-String getProblemsTitle() {
-	return IDEWorkbenchMessages.getString("ScrubLocalAction.problemsTitle"); //$NON-NLS-1$
-}
-/* (non-Javadoc)
- * Method declared on WorkspaceAction.
- */
-void invokeOperation(IResource resource, IProgressMonitor monitor) throws CoreException {
-	resource.setLocal(false, IResource.DEPTH_INFINITE,monitor);
-}
-/**
- * The <code>ScrubLocalAction</code> implementation of this
- * <code>SelectionListenerAction</code> method ensures that this action is
- * disabled if any of the selections are not resources.
- */
-protected boolean updateSelection(IStructuredSelection s) {
-	return super.updateSelection(s)
-		&& getSelectedNonResources().size() == 0;
-}
+    /**
+     * The id of this action.
+     */
+    public static final String ID = "org.eclipse.ui.ScrubLocalAction";//$NON-NLS-1$
+
+    /**
+     * Creates a new action.
+     *
+     * @param shell the shell for any dialogs
+     */
+    public ScrubLocalAction(Shell shell) {
+        super(shell, IDEWorkbenchMessages.getString("ScrubLocalAction.text")); //$NON-NLS-1$
+        setToolTipText(IDEWorkbenchMessages
+                .getString("ScrubLocalAction.toolTip")); //$NON-NLS-1$
+        setId(ID);
+        WorkbenchHelp.setHelp(this, IHelpContextIds.SCRUB_LOCAL_ACTION);
+    }
+
+    /* (non-Javadoc)
+     * Method declared on WorkspaceAction.
+     */
+    String getOperationMessage() {
+        return IDEWorkbenchMessages.getString("ScrubLocalAction.progress"); //$NON-NLS-1$
+    }
+
+    /* (non-Javadoc)
+     * Method declared on WorkspaceAction.
+     */
+    String getProblemsMessage() {
+        return IDEWorkbenchMessages
+                .getString("ScrubLocalAction.problemsMessage"); //$NON-NLS-1$
+    }
+
+    /* (non-Javadoc)
+     * Method declared on WorkspaceAction.
+     */
+    String getProblemsTitle() {
+        return IDEWorkbenchMessages.getString("ScrubLocalAction.problemsTitle"); //$NON-NLS-1$
+    }
+
+    /* (non-Javadoc)
+     * Method declared on WorkspaceAction.
+     */
+    void invokeOperation(IResource resource, IProgressMonitor monitor)
+            throws CoreException {
+        resource.setLocal(false, IResource.DEPTH_INFINITE, monitor);
+    }
+
+    /**
+     * The <code>ScrubLocalAction</code> implementation of this
+     * <code>SelectionListenerAction</code> method ensures that this action is
+     * disabled if any of the selections are not resources.
+     */
+    protected boolean updateSelection(IStructuredSelection s) {
+        return super.updateSelection(s)
+                && getSelectedNonResources().size() == 0;
+    }
 }

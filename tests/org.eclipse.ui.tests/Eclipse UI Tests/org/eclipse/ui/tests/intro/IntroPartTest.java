@@ -23,7 +23,6 @@ import org.eclipse.ui.tests.api.IWorkbenchPartTest;
 import org.eclipse.ui.tests.api.MockPart;
 import org.eclipse.ui.tests.util.CallHistory;
 
-
 /**
  * @since 3.0
  */
@@ -42,7 +41,8 @@ public class IntroPartTest extends IWorkbenchPartTest {
      * @see org.eclipse.ui.tests.api.IWorkbenchPartTest#openPart(org.eclipse.ui.IWorkbenchPage)
      */
     protected MockPart openPart(IWorkbenchPage page) throws Throwable {
-        return (MockIntroPart)page.getWorkbenchWindow().getWorkbench().getIntroManager().showIntro(page.getWorkbenchWindow(), false);
+        return (MockIntroPart) page.getWorkbenchWindow().getWorkbench()
+                .getIntroManager().showIntro(page.getWorkbenchWindow(), false);
     }
 
     /* (non-Javadoc)
@@ -50,44 +50,45 @@ public class IntroPartTest extends IWorkbenchPartTest {
      */
     protected void closePart(IWorkbenchPage page, MockPart part)
             throws Throwable {
-		assertTrue(page.getWorkbenchWindow().getWorkbench().getIntroManager().closeIntro((IIntroPart) part));            
+        assertTrue(page.getWorkbenchWindow().getWorkbench().getIntroManager()
+                .closeIntro((IIntroPart) part));
     }
-    
-	public void testOpenAndClose() throws Throwable {
-		// Open a part.
-		MockPart part = openPart(fPage);
-		CallHistory history = part.getCallHistory();
-		assertTrue(history.verifyOrder(new String[] {
-			"init", "createPartControl", "setFocus", "standbyStateChanged"}));
-		
-		// Close the part.
-		closePart(fPage, part);
-		assertTrue(history.verifyOrder(new String[] {
-			"init", "createPartControl", "setFocus", "dispose"}));
-	}
-	
-	/**
-	 * Tests to ensure that the image of the descriptor is the same as the part.
-	 * 
-	 * @throws Throwable
-	 */
-	public void testImage() throws Throwable {
-		MockPart part = openPart(fPage);				
-		ImageDescriptor imageDescriptor = getIntroDesc().getImageDescriptor();
-		assertNotNull(imageDescriptor);
-		
+
+    public void testOpenAndClose() throws Throwable {
+        // Open a part.
+        MockPart part = openPart(fPage);
+        CallHistory history = part.getCallHistory();
+        assertTrue(history.verifyOrder(new String[] { "init",
+                "createPartControl", "setFocus", "standbyStateChanged" }));
+
+        // Close the part.
+        closePart(fPage, part);
+        assertTrue(history.verifyOrder(new String[] { "init",
+                "createPartControl", "setFocus", "dispose" }));
+    }
+
+    /**
+     * Tests to ensure that the image of the descriptor is the same as the part.
+     * 
+     * @throws Throwable
+     */
+    public void testImage() throws Throwable {
+        MockPart part = openPart(fPage);
+        ImageDescriptor imageDescriptor = getIntroDesc().getImageDescriptor();
+        assertNotNull(imageDescriptor);
+
         Image descImage = imageDescriptor.createImage(false);
         assertNotNull(descImage);
 
         Image partImage = part.getTitleImage();
         assertNotNull(partImage);
-        assertTrue(Arrays.equals(descImage.getImageData().data, partImage.getImageData().data));
+        assertTrue(Arrays.equals(descImage.getImageData().data, partImage
+                .getImageData().data));
         if (descImage != null)
             descImage.dispose();
         closePart(fPage, part);
-	}
-    
-    
+    }
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.tests.util.UITestCase#doSetUp()
      */
@@ -95,14 +96,15 @@ public class IntroPartTest extends IWorkbenchPartTest {
         super.doSetUp();
         oldDesc = Workbench.getInstance().getIntroDescriptor();
         IntroDescriptor testDesc = getIntroDesc();
-        Workbench.getInstance().setIntroDescriptor(testDesc);        
+        Workbench.getInstance().setIntroDescriptor(testDesc);
     }
-    
+
     /**
      * @return
      */
     private IntroDescriptor getIntroDesc() {
-        return (IntroDescriptor)WorkbenchPlugin.getDefault().getIntroRegistry().getIntro("org.eclipse.ui.testintro");
+        return (IntroDescriptor) WorkbenchPlugin.getDefault()
+                .getIntroRegistry().getIntro("org.eclipse.ui.testintro");
     }
 
     /* (non-Javadoc)

@@ -15,37 +15,35 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
-
 import org.eclipse.ui.actions.SelectionProviderAction;
 
 public class ActionSelectAll extends SelectionProviderAction {
-	
-	
-	/**
-	 * @param provider
-	 */
-	public ActionSelectAll(TableViewer provider) {
-		super(provider, Messages.getString("selectAllAction.title")); //$NON-NLS-1$
-		setEnabled(true);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
-	public void run() {
-		TableViewer viewer = (TableViewer)getSelectionProvider();
-		
-		Object[] elements = ((IStructuredContentProvider)viewer.getContentProvider())
-			.getElements(viewer.getInput());
-		
-		StructuredSelection newSelection = new StructuredSelection(elements);
-		super.getSelectionProvider().setSelection(newSelection);
-	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.actions.SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
-	 */
-	public void selectionChanged(IStructuredSelection selection) {
-		setEnabled(!selection.isEmpty());
-	}
+    /**
+     * @param provider
+     */
+    public ActionSelectAll(TableViewer provider) {
+        super(provider, Messages.getString("selectAllAction.title")); //$NON-NLS-1$
+        setEnabled(true);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.action.Action#run()
+     */
+    public void run() {
+        TableViewer viewer = (TableViewer) getSelectionProvider();
+
+        Object[] elements = ((IStructuredContentProvider) viewer
+                .getContentProvider()).getElements(viewer.getInput());
+
+        StructuredSelection newSelection = new StructuredSelection(elements);
+        super.getSelectionProvider().setSelection(newSelection);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.actions.SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
+     */
+    public void selectionChanged(IStructuredSelection selection) {
+        setEnabled(!selection.isEmpty());
+    }
 }

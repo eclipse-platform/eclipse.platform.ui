@@ -15,7 +15,9 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkingSetFilterActionGroup;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -29,48 +31,52 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * @since 2.1
  */
 public class SelectWorkingSetAction extends Action {
-	private Shell shell;
-	private WorkingSetFilterActionGroup actionGroup;
+    private Shell shell;
 
-	/**
-	 * Creates a new instance of the receiver.
-	 * 
-	 * @param actionGroup the action group this action is created in
-	 * @param shell shell to use for opening working set selection dialog.
-	 */
-	public SelectWorkingSetAction(WorkingSetFilterActionGroup actionGroup, Shell shell) {
-		super(WorkbenchMessages.getString("SelectWorkingSetAction.text")); //$NON-NLS-1$
-		Assert.isNotNull(actionGroup);
-		setToolTipText(WorkbenchMessages.getString("SelectWorkingSetAction.toolTip")); //$NON-NLS-1$
-		
-		this.shell = shell;
-		this.actionGroup = actionGroup;
-		WorkbenchHelp.setHelp(this, IHelpContextIds.SELECT_WORKING_SET_ACTION);
-	}
-	/**
-	 * Overrides method from Action
-	 * 
-	 * @see org.eclipse.jface.Action#run
-	 */
-	public void run() {
-		IWorkingSetManager manager = PlatformUI.getWorkbench().getWorkingSetManager();
-		IWorkingSetSelectionDialog dialog = manager.createWorkingSetSelectionDialog(shell, false);
-		IWorkingSet workingSet = actionGroup.getWorkingSet();
-		
-		if (workingSet != null)
-			dialog.setSelection(new IWorkingSet[]{workingSet});
+    private WorkingSetFilterActionGroup actionGroup;
 
-		if (dialog.open() == Window.OK) {
-			IWorkingSet[] result = dialog.getSelection();
-			if (result != null && result.length > 0) {
-				actionGroup.setWorkingSet(result[0]);
-				manager.addRecentWorkingSet(result[0]);
-			}
-			else {
-				actionGroup.setWorkingSet(null);
-			}
-		}
-		else
-			actionGroup.setWorkingSet(workingSet);
-	}
+    /**
+     * Creates a new instance of the receiver.
+     * 
+     * @param actionGroup the action group this action is created in
+     * @param shell shell to use for opening working set selection dialog.
+     */
+    public SelectWorkingSetAction(WorkingSetFilterActionGroup actionGroup,
+            Shell shell) {
+        super(WorkbenchMessages.getString("SelectWorkingSetAction.text")); //$NON-NLS-1$
+        Assert.isNotNull(actionGroup);
+        setToolTipText(WorkbenchMessages
+                .getString("SelectWorkingSetAction.toolTip")); //$NON-NLS-1$
+
+        this.shell = shell;
+        this.actionGroup = actionGroup;
+        WorkbenchHelp.setHelp(this, IHelpContextIds.SELECT_WORKING_SET_ACTION);
+    }
+
+    /**
+     * Overrides method from Action
+     * 
+     * @see org.eclipse.jface.Action#run
+     */
+    public void run() {
+        IWorkingSetManager manager = PlatformUI.getWorkbench()
+                .getWorkingSetManager();
+        IWorkingSetSelectionDialog dialog = manager
+                .createWorkingSetSelectionDialog(shell, false);
+        IWorkingSet workingSet = actionGroup.getWorkingSet();
+
+        if (workingSet != null)
+            dialog.setSelection(new IWorkingSet[] { workingSet });
+
+        if (dialog.open() == Window.OK) {
+            IWorkingSet[] result = dialog.getSelection();
+            if (result != null && result.length > 0) {
+                actionGroup.setWorkingSet(result[0]);
+                manager.addRecentWorkingSet(result[0]);
+            } else {
+                actionGroup.setWorkingSet(null);
+            }
+        } else
+            actionGroup.setWorkingSet(workingSet);
+    }
 }

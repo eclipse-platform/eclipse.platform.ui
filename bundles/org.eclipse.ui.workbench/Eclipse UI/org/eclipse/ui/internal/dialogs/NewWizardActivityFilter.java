@@ -17,7 +17,6 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.model.AdaptableList;
 
-
 /**
  * Viewer filter designed to work with the new wizard page (and its input/content provider).
  * This will filter all non-primary wizards that are not enabled by activity.
@@ -30,16 +29,17 @@ public class NewWizardActivityFilter extends ViewerFilter {
      * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
      */
     public boolean select(Viewer viewer, Object parentElement, Object element) {
-        Object [] children = ((ITreeContentProvider)((AbstractTreeViewer)viewer).getContentProvider()).getChildren(element);
-        if (children.length > 0)       
+        Object[] children = ((ITreeContentProvider) ((AbstractTreeViewer) viewer)
+                .getContentProvider()).getChildren(element);
+        if (children.length > 0)
             return filter(viewer, element, children).length > 0;
-        
+
         if (parentElement.getClass().equals(AdaptableList.class))
             return true; //top-level ("primary") wizards should always be returned
-        
+
         if (WorkbenchActivityHelper.filterItem(element))
             return false;
-        
+
         return true;
     }
 }

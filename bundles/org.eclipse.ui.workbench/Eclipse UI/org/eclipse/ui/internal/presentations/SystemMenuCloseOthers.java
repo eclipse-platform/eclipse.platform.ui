@@ -16,7 +16,8 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.presentations.IPresentablePart;
 
-public class SystemMenuCloseOthers extends Action implements ISelfUpdatingAction {
+public class SystemMenuCloseOthers extends Action implements
+        ISelfUpdatingAction {
 
     private DefaultPartPresentation stackPresentation;
 
@@ -28,21 +29,22 @@ public class SystemMenuCloseOthers extends Action implements ISelfUpdatingAction
     public void dispose() {
         stackPresentation = null;
     }
-    
+
     public void run() {
-    	IPresentablePart current = stackPresentation.getCurrent();
-    	List others = stackPresentation.getPresentableParts();
-    	others.remove(current);
-    	stackPresentation.close((IPresentablePart[]) others.toArray(new IPresentablePart[others.size()]));
+        IPresentablePart current = stackPresentation.getCurrent();
+        List others = stackPresentation.getPresentableParts();
+        others.remove(current);
+        stackPresentation.close((IPresentablePart[]) others
+                .toArray(new IPresentablePart[others.size()]));
     }
-    
+
     public void update() {
-    	IPresentablePart current = stackPresentation.getCurrent();
-    	
-    	setEnabled(current != null);
+        IPresentablePart current = stackPresentation.getCurrent();
+
+        setEnabled(current != null);
     }
-    
+
     public boolean shouldBeVisible() {
-    	return true;
-    }    
+        return true;
+    }
 }

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.decorators;
 
-
 import java.util.List;
 import java.util.ListIterator;
 
@@ -22,101 +21,98 @@ import org.eclipse.swt.graphics.Image;
  */
 class DecorationResult {
 
-	private List prefixes;
-	private List suffixes;
-	private ImageDescriptor[] descriptors;
+    private List prefixes;
 
-	DecorationResult(
-		List prefixList,
-		List suffixList,
-		ImageDescriptor[] imageDescriptors) {
-		prefixes = prefixList;
-		suffixes = suffixList;
-		
-		//Don't set the field if there are no entries
-		if(hasOverlays(imageDescriptors))
-			descriptors = imageDescriptors;
-	}
+    private List suffixes;
 
+    private ImageDescriptor[] descriptors;
 
-	/**
-	 * Return whether or not any of the imageDescriptors
-	 * are non-null.
-	 * @param imageDescriptors
-	 * @return <code>true</code> if there are some non-null
-	 * overlays
-	 */
-	private boolean hasOverlays(ImageDescriptor[] imageDescriptors) {
-		for (int i = 0; i < imageDescriptors.length; i++) {
-			if(imageDescriptors[i] != null)
-				return true;
-		}
-		return false;
-	}
+    DecorationResult(List prefixList, List suffixList,
+            ImageDescriptor[] imageDescriptors) {
+        prefixes = prefixList;
+        suffixes = suffixList;
 
+        //Don't set the field if there are no entries
+        if (hasOverlays(imageDescriptors))
+            descriptors = imageDescriptors;
+    }
 
-	/**
-	 * Decorate the Image supplied with the overlays.
-	 */
-	Image decorateWithOverlays(Image image, OverlayCache overlayCache) {
+    /**
+     * Return whether or not any of the imageDescriptors
+     * are non-null.
+     * @param imageDescriptors
+     * @return <code>true</code> if there are some non-null
+     * overlays
+     */
+    private boolean hasOverlays(ImageDescriptor[] imageDescriptors) {
+        for (int i = 0; i < imageDescriptors.length; i++) {
+            if (imageDescriptors[i] != null)
+                return true;
+        }
+        return false;
+    }
 
-		//Do not try to do anything if there is no source or overlays
-		if (image == null || descriptors == null)
-			return image;
+    /**
+     * Decorate the Image supplied with the overlays.
+     */
+    Image decorateWithOverlays(Image image, OverlayCache overlayCache) {
 
-		return overlayCache.applyDescriptors(image, descriptors);
-	}
+        //Do not try to do anything if there is no source or overlays
+        if (image == null || descriptors == null)
+            return image;
 
-	/**
-	 * Decorate the String supplied with the prefixes and suffixes.
-	 */
-	String decorateWithText(String text) {
+        return overlayCache.applyDescriptors(image, descriptors);
+    }
 
-		if (prefixes.isEmpty() && suffixes.isEmpty())
-			return text;
+    /**
+     * Decorate the String supplied with the prefixes and suffixes.
+     */
+    String decorateWithText(String text) {
 
-		StringBuffer result = new StringBuffer();
+        if (prefixes.isEmpty() && suffixes.isEmpty())
+            return text;
 
-		ListIterator prefixIterator = prefixes.listIterator();
+        StringBuffer result = new StringBuffer();
 
-		while (prefixIterator.hasNext()) {
-			result.append(prefixIterator.next());
-		}
+        ListIterator prefixIterator = prefixes.listIterator();
 
-		result.append(text);
+        while (prefixIterator.hasNext()) {
+            result.append(prefixIterator.next());
+        }
 
-		ListIterator suffixIterator = suffixes.listIterator();
+        result.append(text);
 
-		while (suffixIterator.hasNext()) {
-			result.append(suffixIterator.next());
-		}
+        ListIterator suffixIterator = suffixes.listIterator();
 
-		return result.toString();
-	}
+        while (suffixIterator.hasNext()) {
+            result.append(suffixIterator.next());
+        }
 
+        return result.toString();
+    }
 
-	/**
-	 * Get the descriptor array for the receiver.
-	 * @return ImageDescriptor[] or <code>null</code>
-	 */
-	ImageDescriptor[] getDescriptors() {
-		return descriptors;
-	}
+    /**
+     * Get the descriptor array for the receiver.
+     * @return ImageDescriptor[] or <code>null</code>
+     */
+    ImageDescriptor[] getDescriptors() {
+        return descriptors;
+    }
 
-	/**
-	 * Get the prefixes for the receiver.
-	 * @return List
-	 */
-	List getPrefixes() {
-		return prefixes;
-	}
+    /**
+     * Get the prefixes for the receiver.
+     * @return List
+     */
+    List getPrefixes() {
+        return prefixes;
+    }
 
-	/**
-	 * Get the suffixes for the receiver.
-	 * @return List
-	 */
-	List getSuffixes() {
-		return suffixes;
-	}
+    /**
+     * Get the suffixes for the receiver.
+     * @return List
+     */
+    List getSuffixes() {
+        return suffixes;
+    }
 
 }

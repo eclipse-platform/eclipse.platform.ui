@@ -25,8 +25,8 @@ public class ComboBoxLabelProvider extends LabelProvider {
     /**
      * The array of String labels.
      */
-    private String [] values;
-    
+    private String[] values;
+
     /**
      * @param values the possible label values that this 
      * <code>ILabelProvider</code> may return.
@@ -65,17 +65,16 @@ public class ComboBoxLabelProvider extends LabelProvider {
         if (element == null) {
             return ""; //$NON-NLS-1$
         }
-    
+
         if (element instanceof Integer) {
-            int index = ((Integer)element).intValue();
+            int index = ((Integer) element).intValue();
             if (index >= 0 && index < values.length) {
                 return values[index];
-            }
-            else {
+            } else {
                 return ""; //$NON-NLS-1$
             }
         }
-               
+
         return ""; //$NON-NLS-1$
     }
 }

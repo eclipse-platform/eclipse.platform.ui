@@ -10,9 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ui.part;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 import org.eclipse.swt.dnd.ByteArrayTransfer;
 import org.eclipse.swt.dnd.TransferData;
-import java.io.*;
 
 /**
  * This class can be used to transfer an instance of <code>PluginTransferData</code>
@@ -40,76 +45,84 @@ import java.io.*;
  */
 public class PluginTransfer extends ByteArrayTransfer {
 
-	private static final String TYPE_NAME = "pluggable-transfer-format";//$NON-NLS-1$
-	private static final int TYPEID = registerType(TYPE_NAME);
+    private static final String TYPE_NAME = "pluggable-transfer-format";//$NON-NLS-1$
 
-	/**
-	 * Singleton instance.
-	 */
-	private static PluginTransfer instance = new PluginTransfer();
-/**
- * Creates a new transfer object.
- */
-private PluginTransfer() {
-	super();
-}
-/**
- * Returns the singleton instance.
- *
- * @return the singleton instance
- */
-public static PluginTransfer getInstance () {
-	return instance;
-}
-/* (non-Javadoc)
- * Method declared on Transfer.
- */
-protected int[] getTypeIds() {
-	return new int[] {TYPEID};
-}
-/* (non-Javadoc)
- * Returns the type names.
- *
- * @return the list of type names
- */
-protected String[] getTypeNames() {
-	return new String[] {TYPE_NAME};
-}
-/* (non-Javadoc)
- * Method declared on Transfer.
- */
-protected void javaToNative (Object data, TransferData transferData){
-	PluginTransferData realData = (PluginTransferData)data;
-	if (data == null) return;
-	try {
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		DataOutputStream dataOut = new DataOutputStream(out);
-		dataOut.writeUTF(realData.getExtensionId());
-		dataOut.writeInt(realData.getData().length);
-		dataOut.write(realData.getData());
-		dataOut.close();
-		super.javaToNative(out.toByteArray(), transferData);
-	} catch (IOException e) {
-		e.printStackTrace();
-	}	
-}
-/* (non-Javadoc)
- * Method declared on Transfer.
- */
-protected Object nativeToJava(TransferData transferData) {
-	try {
-		byte[] bytes = (byte[]) super.nativeToJava(transferData);
-		ByteArrayInputStream in = new ByteArrayInputStream(bytes);
-		DataInputStream dataIn = new DataInputStream(in);
-		String extensionName = dataIn.readUTF();
-		int len = dataIn.readInt();
-		byte[] pluginData = new byte[len];
-		dataIn.readFully(pluginData);
-		return new PluginTransferData(extensionName, pluginData);
-	} catch (IOException e) {
-		e.printStackTrace();
-	}
-	//can't get here
-	return null;
-}
+    private static final int TYPEID = registerType(TYPE_NAME);
+
+    /**
+     * Singleton instance.
+     */
+    private static PluginTransfer instance = new PluginTransfer();
+
+    /**
+     * Creates a new transfer object.
+     */
+    private PluginTransfer() {
+        super();
+    }
+
+    /**
+     * Returns the singleton instance.
+     *
+     * @return the singleton instance
+     */
+    public static PluginTransfer getInstance() {
+        return instance;
+    }
+
+    /* (non-Javadoc)
+     * Method declared on Transfer.
+     */
+    protected int[] getTypeIds() {
+        return new int[] { TYPEID };
+    }
+
+    /* (non-Javadoc)
+     * Returns the type names.
+     *
+     * @return the list of type names
+     */
+    protected String[] getTypeNames() {
+        return new String[] { TYPE_NAME };
+    }
+
+    /* (non-Javadoc)
+     * Method declared on Transfer.
+     */
+    protected void javaToNative(Object data, TransferData transferData) {
+        PluginTransferData realData = (PluginTransferData) data;
+        if (data == null)
+            return;
+        try {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            DataOutputStream dataOut = new DataOutputStream(out);
+            dataOut.writeUTF(realData.getExtensionId());
+            dataOut.writeInt(realData.getData().length);
+            dataOut.write(realData.getData());
+            dataOut.close();
+            super.javaToNative(out.toByteArray(), transferData);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /* (non-Javadoc)
+     * Method declared on Transfer.
+     */
+    protected Object nativeToJava(TransferData transferData) {
+        try {
+            byte[] bytes = (byte[]) super.nativeToJava(transferData);
+            ByteArrayInputStream in = new ByteArrayInputStream(bytes);
+            DataInputStream dataIn = new DataInputStream(in);
+            String extensionName = dataIn.readUTF();
+            int len = dataIn.readInt();
+            byte[] pluginData = new byte[len];
+            dataIn.readFully(pluginData);
+            return new PluginTransferData(extensionName, pluginData);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //can't get here
+        return null;
+    }
 }

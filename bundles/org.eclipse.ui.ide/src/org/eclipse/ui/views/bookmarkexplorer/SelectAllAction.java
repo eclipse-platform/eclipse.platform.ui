@@ -21,19 +21,20 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 class SelectAllAction extends BookmarkAction {
 
-	public SelectAllAction(BookmarkNavigator view) {
-		super(view, BookmarkMessages.getString("SelectAll.text")); //$NON-NLS-1$
-		setToolTipText(BookmarkMessages.getString("SelectAll.toolTip")); //$NON-NLS-1$
-		WorkbenchHelp.setHelp(this, IBookmarkHelpContextIds.SELECT_ALL_BOOKMARK_ACTION);
-		setEnabled(true);
-	}
-	
-	public void run() {
-		Viewer viewer = getView().getViewer();
-		Control control = viewer.getControl();
-		if (control instanceof Table) {
-			((Table) control).selectAll();
-			viewer.setSelection(viewer.getSelection(), false);
-		}
-	}
+    public SelectAllAction(BookmarkNavigator view) {
+        super(view, BookmarkMessages.getString("SelectAll.text")); //$NON-NLS-1$
+        setToolTipText(BookmarkMessages.getString("SelectAll.toolTip")); //$NON-NLS-1$
+        WorkbenchHelp.setHelp(this,
+                IBookmarkHelpContextIds.SELECT_ALL_BOOKMARK_ACTION);
+        setEnabled(true);
+    }
+
+    public void run() {
+        Viewer viewer = getView().getViewer();
+        Control control = viewer.getControl();
+        if (control instanceof Table) {
+            ((Table) control).selectAll();
+            viewer.setSelection(viewer.getSelection(), false);
+        }
+    }
 }

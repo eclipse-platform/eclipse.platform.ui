@@ -20,17 +20,17 @@ package org.eclipse.ui;
  * @since 3.0
  */
 public interface IInPlaceEditor extends IEditorPart {
-	/**
-	 * Informs the in-place editor that the system file it is
-	 * editing was deleted by the application.
-	 */
-	public void sourceDeleted();
-	
-	/**
-	 * Informs the in-place editor that the system file it is
-	 * editing was moved or renamed by the application.
-	 * 
-	 * @param input the new in-place editor input to use
-	 */
-	public void sourceChanged(IInPlaceEditorInput input);
+    /**
+     * Informs the in-place editor that the system file it is
+     * editing was deleted by the application.
+     */
+    public void sourceDeleted();
+
+    /**
+     * Informs the in-place editor that the system file it is
+     * editing was moved or renamed by the application.
+     * 
+     * @param input the new in-place editor input to use
+     */
+    public void sourceChanged(IInPlaceEditorInput input);
 }

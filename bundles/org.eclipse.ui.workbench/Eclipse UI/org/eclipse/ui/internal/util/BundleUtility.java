@@ -26,62 +26,62 @@ import org.osgi.framework.Bundle;
 
 // TODO: needs a better name
 public class BundleUtility {
-	public static boolean isActivated(Bundle bundle) {
-		if (bundle == null)
-			return false;
+    public static boolean isActivated(Bundle bundle) {
+        if (bundle == null)
+            return false;
 
-		switch (bundle.getState()) {
-			case Bundle.STARTING :
-			case Bundle.ACTIVE :
-			case Bundle.STOPPING :
-				return true;
-			default :
-				return false;
-		}
-	}
+        switch (bundle.getState()) {
+        case Bundle.STARTING:
+        case Bundle.ACTIVE:
+        case Bundle.STOPPING:
+            return true;
+        default:
+            return false;
+        }
+    }
 
-	// TODO: needs a better name
-	public static boolean isReady(Bundle bundle) {
-		if (bundle == null)
-			return false;
+    // TODO: needs a better name
+    public static boolean isReady(Bundle bundle) {
+        if (bundle == null)
+            return false;
 
-		switch (bundle.getState()) {
-			case Bundle.RESOLVED :
-			case Bundle.STARTING :
-			case Bundle.ACTIVE :
-			case Bundle.STOPPING :
-				return true;
-			default :
-				return false;
-		}
-	}
+        switch (bundle.getState()) {
+        case Bundle.RESOLVED:
+        case Bundle.STARTING:
+        case Bundle.ACTIVE:
+        case Bundle.STOPPING:
+            return true;
+        default:
+            return false;
+        }
+    }
 
-	public static boolean isActivated(String bundleId) {
-		return isActivated(Platform.getBundle(bundleId));
-	}
+    public static boolean isActivated(String bundleId) {
+        return isActivated(Platform.getBundle(bundleId));
+    }
 
-	public static boolean isReady(String bundleId) {
-		return isReady(Platform.getBundle(bundleId));
-	}
+    public static boolean isReady(String bundleId) {
+        return isReady(Platform.getBundle(bundleId));
+    }
 
-	public static URL find(Bundle bundle, String path) {
-	    if(bundle == null)
-	        return null;
-		return Platform.find(bundle, new Path(path));
-	}
+    public static URL find(Bundle bundle, String path) {
+        if (bundle == null)
+            return null;
+        return Platform.find(bundle, new Path(path));
+    }
 
-	public static URL find(String bundleId, String path) {
-	    return find(Platform.getBundle(bundleId), path);
-	}
- 
- public static void log(String bundleId, Throwable exception) {
+    public static URL find(String bundleId, String path) {
+        return find(Platform.getBundle(bundleId), path);
+    }
+
+    public static void log(String bundleId, Throwable exception) {
         Bundle bundle = Platform.getBundle(bundleId);
         if (bundle == null)
             return;
 
         IStatus status = new Status(IStatus.ERROR, bundleId, IStatus.ERROR,
-        		exception.getMessage() == null ? "" : exception.getMessage(), //$NON-NLS-1$
-        		exception);
+                exception.getMessage() == null ? "" : exception.getMessage(), //$NON-NLS-1$
+                exception);
 
         Platform.getLog(bundle).log(status);
     }

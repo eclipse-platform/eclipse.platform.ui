@@ -30,7 +30,8 @@ public class PerspectiveBarNewContributionItem extends ContributionItem {
 
     private MenuManager menuManager = null;
 
-	private Image image;
+    private Image image;
+
     private ToolItem toolItem = null;
 
     public PerspectiveBarNewContributionItem(IWorkbenchWindow workbenchWindow) {
@@ -40,34 +41,35 @@ public class PerspectiveBarNewContributionItem extends ContributionItem {
                 .create(workbenchWindow));
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.ContributionItem#dispose()
-	 */
-	public void dispose() {
-		super.dispose();
-		if (image != null && !image.isDisposed()) {
-			image.dispose();
-			image = null;
-		}
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.action.ContributionItem#dispose()
+     */
+    public void dispose() {
+        super.dispose();
+        if (image != null && !image.isDisposed()) {
+            image.dispose();
+            image = null;
+        }
+    }
 
     public void fill(final ToolBar parent, int index) {
         if (toolItem == null && parent != null) {
-            parent.addDisposeListener(new DisposeListener(){
-				public void widgetDisposed(DisposeEvent e) {
-					//toolItem.getImage().dispose();
-					toolItem.dispose();
-					toolItem = null;		
-				}});
-            
+            parent.addDisposeListener(new DisposeListener() {
+                public void widgetDisposed(DisposeEvent e) {
+                    //toolItem.getImage().dispose();
+                    toolItem.dispose();
+                    toolItem = null;
+                }
+            });
+
             toolItem = new ToolItem(parent, SWT.PUSH);
             if (image == null || image.isDisposed()) {
-            	image = WorkbenchImages.getImageDescriptor(
-                    IWorkbenchGraphicConstants.IMG_ETOOL_NEW_PAGE)
-                    .createImage();
-			}
-			toolItem.setImage(image);
-			
+                image = WorkbenchImages.getImageDescriptor(
+                        IWorkbenchGraphicConstants.IMG_ETOOL_NEW_PAGE)
+                        .createImage();
+            }
+            toolItem.setImage(image);
+
             toolItem.setText(""); //$NON-NLS-1$
             toolItem.setToolTipText(WorkbenchMessages
                     .getString("PerspectiveBarNewContributionItem.toolTip")); //$NON-NLS-1$

@@ -26,7 +26,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
-
 /**
  * Standard workbench wizard for exporting resources from the workspace
  * to a zip file.
@@ -47,65 +46,71 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * are exported to the user-specified zip file, the dialog closes, and the call
  * to <code>open</code> returns.
  * </p>
-  */
+ */
 public class ZipFileExportWizard extends Wizard implements IExportWizard {
-	private IStructuredSelection selection;
-	private WizardZipFileResourceExportPage1 mainPage;
-/**
- * Creates a wizard for exporting workspace resources to a zip file.
- */
-public ZipFileExportWizard() {
-	AbstractUIPlugin plugin = (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
-	IDialogSettings workbenchSettings = plugin.getDialogSettings();
-	IDialogSettings section = workbenchSettings.getSection("ZipFileExportWizard");//$NON-NLS-1$
-	if(section == null)
-		section = workbenchSettings.addNewSection("ZipFileExportWizard");//$NON-NLS-1$
-	setDialogSettings(section);
-}
-/* (non-Javadoc)
- * Method declared on IWizard.
- */
-public void addPages() {
-	super.addPages();
-	mainPage = new WizardZipFileResourceExportPage1(selection);
-	addPage(mainPage);
-}
-/**
- * Returns the image descriptor with the given relative path.
- */
-private ImageDescriptor getImageDescriptor(String relativePath) {
-	String iconPath = "icons/full/";//$NON-NLS-1$
-	try {
-		AbstractUIPlugin plugin = (AbstractUIPlugin) Platform.getPlugin(PlatformUI.PLUGIN_ID);
-		URL installURL = plugin.getDescriptor().getInstallURL();
-		URL url = new URL(installURL, iconPath + relativePath);
-		return ImageDescriptor.createFromURL(url);
-	}
-	catch (MalformedURLException e) {
-		// Should not happen
-		return null;
-	}
-}
+    private IStructuredSelection selection;
 
-/* (non-Javadoc)
- * Method declared on IWorkbenchWizard.
- */
-public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
-	this.selection = currentSelection;
-	List selectedResources = IDE.computeSelectedResources(currentSelection);
-	if (!selectedResources.isEmpty()) {
-		this.selection = new StructuredSelection(selectedResources);
-	}
+    private WizardZipFileResourceExportPage1 mainPage;
 
-	setWindowTitle(DataTransferMessages.getString("DataTransfer.export")); //$NON-NLS-1$
-	setDefaultPageImageDescriptor(getImageDescriptor("wizban/exportzip_wiz.gif"));//$NON-NLS-1$
-	setNeedsProgressMonitor(true);
-}
+    /**
+     * Creates a wizard for exporting workspace resources to a zip file.
+     */
+    public ZipFileExportWizard() {
+        AbstractUIPlugin plugin = (AbstractUIPlugin) Platform
+                .getPlugin(PlatformUI.PLUGIN_ID);
+        IDialogSettings workbenchSettings = plugin.getDialogSettings();
+        IDialogSettings section = workbenchSettings
+                .getSection("ZipFileExportWizard");//$NON-NLS-1$
+        if (section == null)
+            section = workbenchSettings.addNewSection("ZipFileExportWizard");//$NON-NLS-1$
+        setDialogSettings(section);
+    }
 
-/* (non-Javadoc)
- * Method declared on IWizard.
- */
-public boolean performFinish() {
-	return mainPage.finish();
-}
+    /* (non-Javadoc)
+     * Method declared on IWizard.
+     */
+    public void addPages() {
+        super.addPages();
+        mainPage = new WizardZipFileResourceExportPage1(selection);
+        addPage(mainPage);
+    }
+
+    /**
+     * Returns the image descriptor with the given relative path.
+     */
+    private ImageDescriptor getImageDescriptor(String relativePath) {
+        String iconPath = "icons/full/";//$NON-NLS-1$
+        try {
+            AbstractUIPlugin plugin = (AbstractUIPlugin) Platform
+                    .getPlugin(PlatformUI.PLUGIN_ID);
+            URL installURL = plugin.getDescriptor().getInstallURL();
+            URL url = new URL(installURL, iconPath + relativePath);
+            return ImageDescriptor.createFromURL(url);
+        } catch (MalformedURLException e) {
+            // Should not happen
+            return null;
+        }
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IWorkbenchWizard.
+     */
+    public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
+        this.selection = currentSelection;
+        List selectedResources = IDE.computeSelectedResources(currentSelection);
+        if (!selectedResources.isEmpty()) {
+            this.selection = new StructuredSelection(selectedResources);
+        }
+
+        setWindowTitle(DataTransferMessages.getString("DataTransfer.export")); //$NON-NLS-1$
+        setDefaultPageImageDescriptor(getImageDescriptor("wizban/exportzip_wiz.gif"));//$NON-NLS-1$
+        setNeedsProgressMonitor(true);
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IWizard.
+     */
+    public boolean performFinish() {
+        return mainPage.finish();
+    }
 }

@@ -27,33 +27,35 @@ import org.eclipse.ui.internal.registry.IViewDescriptor;
  * @since 3.0
  */
 public class ViewTabDropTarget extends AbstractTestDropTarget {
-	
-	String targetPart;
-	
-	public ViewTabDropTarget(String part) {
-		targetPart = part;
-	}
-	
-	IViewPart getPart() {
-		return getPage().findView(targetPart);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.tests.dnd.TestDropTarget#getName()
-	 */
-	public String toString() {
-		IViewDescriptor desc = WorkbenchPlugin.getDefault().getViewRegistry().find(targetPart);
-		String title = desc.getLabel();
-		
-		return title + " view tab area";
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.tests.dnd.TestDropTarget#getLocation()
-	 */
-	public Point getLocation() {
-		Rectangle bounds = DragOperations.getDisplayBounds(DragOperations.getPane(getPart()));
-		
-		return new Point(bounds.x + 8, bounds.y + 8);
-	}
+
+    String targetPart;
+
+    public ViewTabDropTarget(String part) {
+        targetPart = part;
+    }
+
+    IViewPart getPart() {
+        return getPage().findView(targetPart);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.tests.dnd.TestDropTarget#getName()
+     */
+    public String toString() {
+        IViewDescriptor desc = WorkbenchPlugin.getDefault().getViewRegistry()
+                .find(targetPart);
+        String title = desc.getLabel();
+
+        return title + " view tab area";
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.tests.dnd.TestDropTarget#getLocation()
+     */
+    public Point getLocation() {
+        Rectangle bounds = DragOperations.getDisplayBounds(DragOperations
+                .getPane(getPart()));
+
+        return new Point(bounds.x + 8, bounds.y + 8);
+    }
 }

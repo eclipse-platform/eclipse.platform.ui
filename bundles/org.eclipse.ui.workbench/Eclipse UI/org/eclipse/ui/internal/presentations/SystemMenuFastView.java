@@ -19,6 +19,7 @@ import org.eclipse.ui.presentations.IStackPresentationSite;
 public class SystemMenuFastView extends Action implements ISelfUpdatingAction {
 
     private ViewPane viewPane;
+
     private IStackPresentationSite site;
 
     public SystemMenuFastView(IStackPresentationSite site) {
@@ -26,42 +27,44 @@ public class SystemMenuFastView extends Action implements ISelfUpdatingAction {
         setText(WorkbenchMessages.getString("ViewPane.fastView")); //$NON-NLS-1$
         update();
     }
-    
+
     public void setPane(ViewPane newPane) {
-    	viewPane = newPane;
-    	update();
+        viewPane = newPane;
+        update();
     }
 
     public void update() {
-    	if (viewPane == null || !site.isPartMoveable(viewPane.getPresentablePart()) ) {
-    		setEnabled(false);
-    	} else {
-    		setEnabled(true);
-    		setChecked(viewPane.getPage().getActivePerspective().isFastView(viewPane.getViewReference()));
-    	}
+        if (viewPane == null
+                || !site.isPartMoveable(viewPane.getPresentablePart())) {
+            setEnabled(false);
+        } else {
+            setEnabled(true);
+            setChecked(viewPane.getPage().getActivePerspective().isFastView(
+                    viewPane.getViewReference()));
+        }
     }
-    
+
     public boolean shouldBeVisible() {
-    	if (viewPane == null || viewPane.getPage() == null) {
-    		return false;
-    	}
-    	
+        if (viewPane == null || viewPane.getPage() == null) {
+            return false;
+        }
+
         WorkbenchWindow workbenchWindow = (WorkbenchWindow) viewPane.getPage()
-    		.getWorkbenchWindow();
-    
-        return workbenchWindow.getShowFastViewBars() 
-			&& viewPane != null && site.isPartMoveable(viewPane.getPresentablePart());
+                .getWorkbenchWindow();
+
+        return workbenchWindow.getShowFastViewBars() && viewPane != null
+                && site.isPartMoveable(viewPane.getPresentablePart());
     }
-    
+
     public void dispose() {
         viewPane = null;
     }
 
     public void run() {
-    	if (!isChecked()) {
-    		viewPane.doMakeFast();
-    	} else {
-    		viewPane.doRemoveFast();
-    	}
-    }    
+        if (!isChecked()) {
+            viewPane.doMakeFast();
+        } else {
+            viewPane.doRemoveFast();
+        }
+    }
 }

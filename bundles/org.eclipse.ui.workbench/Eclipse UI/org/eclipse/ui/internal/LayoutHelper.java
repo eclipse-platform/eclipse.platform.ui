@@ -22,7 +22,6 @@ import org.eclipse.ui.activities.IIdentifierListener;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.activities.IdentifierEvent;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
-
 import org.eclipse.ui.internal.registry.IViewDescriptor;
 
 /**
@@ -32,171 +31,166 @@ import org.eclipse.ui.internal.registry.IViewDescriptor;
  * @since 3.0
  */
 class LayoutHelper {
-	
-	/**
-	 * Not intended to be instantiated.
-	 */
-	private LayoutHelper() {
-		//no-op
-	}
 
-	/**
-	 * Creates a series of listeners that will activate the provided view on the
-	 * provided page layout when <code>IIdenfier</code> enablement changes. The 
-	 * rules for this activation are as follows: <p>
-	 * <ul>
-	 * <li> if the identifier becomes enabled and the perspective of the page 
-	 * layout is the currently active perspective in its window, then activate 
-	 * the views immediately.
-	 * <li> if the identifier becomes enabled and the perspective of the page 
-	 * layout is not the currently active perspecitve in its window, then add an
-	 * <code>IPerspectiveListener</code> to the window and activate the views 
-	 * when the perspective becomes active. 
-	 * 
-	 * @param pageLayout <code>PageLayout</code>.
-	 * @param viewId the view id to activate upon <code>IIdentifier</code> enablement.
-	 */
-	public static final void addViewActivator(
-		PageLayout pageLayout,
-		final String viewId) {
-		if (viewId == null)
-			return;
+    /**
+     * Not intended to be instantiated.
+     */
+    private LayoutHelper() {
+        //no-op
+    }
 
-		ViewFactory viewFactory = pageLayout.getViewFactory();
+    /**
+     * Creates a series of listeners that will activate the provided view on the
+     * provided page layout when <code>IIdenfier</code> enablement changes. The 
+     * rules for this activation are as follows: <p>
+     * <ul>
+     * <li> if the identifier becomes enabled and the perspective of the page 
+     * layout is the currently active perspective in its window, then activate 
+     * the views immediately.
+     * <li> if the identifier becomes enabled and the perspective of the page 
+     * layout is not the currently active perspecitve in its window, then add an
+     * <code>IPerspectiveListener</code> to the window and activate the views 
+     * when the perspective becomes active. 
+     * 
+     * @param pageLayout <code>PageLayout</code>.
+     * @param viewId the view id to activate upon <code>IIdentifier</code> enablement.
+     */
+    public static final void addViewActivator(PageLayout pageLayout,
+            final String viewId) {
+        if (viewId == null)
+            return;
 
-		final IWorkbenchPage partPage = viewFactory.getWorkbenchPage();
-		if (partPage == null)
-			return;
+        ViewFactory viewFactory = pageLayout.getViewFactory();
 
-		final IPerspectiveDescriptor partPerspective =
-			pageLayout.getDescriptor();
+        final IWorkbenchPage partPage = viewFactory.getWorkbenchPage();
+        if (partPage == null)
+            return;
 
-		IWorkbenchActivitySupport support = PlatformUI.getWorkbench().getActivitySupport();
+        final IPerspectiveDescriptor partPerspective = pageLayout
+                .getDescriptor();
 
-		IViewDescriptor descriptor = viewFactory.getViewRegistry().find(viewId);
-		if (!(descriptor instanceof IPluginContribution))
-			return;
+        IWorkbenchActivitySupport support = PlatformUI.getWorkbench()
+                .getActivitySupport();
 
-		IIdentifier identifier =
-			support.getActivityManager().getIdentifier(
-				WorkbenchActivityHelper.createUnifiedId(
-					(IPluginContribution) descriptor));
+        IViewDescriptor descriptor = viewFactory.getViewRegistry().find(viewId);
+        if (!(descriptor instanceof IPluginContribution))
+            return;
 
-		identifier.addIdentifierListener(new IIdentifierListener() {
-			
-			/* (non-Javadoc)
-			 * @see org.eclipse.ui.activities.IIdentifierListener#identifierChanged(org.eclipse.ui.activities.IdentifierEvent)
-			 */
-			public void identifierChanged(IdentifierEvent identifierEvent) {
-				if (identifierEvent.hasEnabledChanged()) {
-					IIdentifier thisIdentifier =
-						identifierEvent.getIdentifier();
-					if (thisIdentifier.isEnabled()) {
-						// show view
-						thisIdentifier.removeIdentifierListener(this);
-						IWorkbenchPage activePage =
-							partPage.getWorkbenchWindow().getActivePage();
-						if (partPage == activePage
-							&& partPerspective == activePage.getPerspective()) {
-							// show immediately.
-							try {
-								partPage.showView(viewId);
-							} catch (PartInitException e) {
-								WorkbenchPlugin.log(e.getMessage());
-							}
-						} else { // show when the perspective becomes active							
-							partPage
-								.getWorkbenchWindow()
-								.addPerspectiveListener(
-									new IPerspectiveListener() {
+        IIdentifier identifier = support.getActivityManager().getIdentifier(
+                WorkbenchActivityHelper
+                        .createUnifiedId((IPluginContribution) descriptor));
 
-								/* (non-Javadoc)
-								 * @see org.eclipse.ui.IPerspectiveListener#perspectiveActivated(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor)
-								 */
-								public void perspectiveActivated(
-									IWorkbenchPage page,
-									IPerspectiveDescriptor newPerspective) {
-									if (partPerspective == newPerspective) {
-										partPage
-											.getWorkbenchWindow()
-											.removePerspectiveListener(
-											this);
-										try {
-											page.showView(viewId);
-										} catch (PartInitException e) {
-											WorkbenchPlugin.log(e.getMessage());
-										}
-									}
-								}
+        identifier.addIdentifierListener(new IIdentifierListener() {
 
-								/* (non-Javadoc)
-								 * @see org.eclipse.ui.IPerspectiveListener#perspectiveChanged(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor, java.lang.String)
-								 */
-								public void perspectiveChanged(
-									IWorkbenchPage page,
-									IPerspectiveDescriptor perspective,
-									String changeId) {
-									// no-op
-								}
-							});
-						}
-					} 
-				}
-			}
-		});
-	}
+            /* (non-Javadoc)
+             * @see org.eclipse.ui.activities.IIdentifierListener#identifierChanged(org.eclipse.ui.activities.IdentifierEvent)
+             */
+            public void identifierChanged(IdentifierEvent identifierEvent) {
+                if (identifierEvent.hasEnabledChanged()) {
+                    IIdentifier thisIdentifier = identifierEvent
+                            .getIdentifier();
+                    if (thisIdentifier.isEnabled()) {
+                        // show view
+                        thisIdentifier.removeIdentifierListener(this);
+                        IWorkbenchPage activePage = partPage
+                                .getWorkbenchWindow().getActivePage();
+                        if (partPage == activePage
+                                && partPerspective == activePage
+                                        .getPerspective()) {
+                            // show immediately.
+                            try {
+                                partPage.showView(viewId);
+                            } catch (PartInitException e) {
+                                WorkbenchPlugin.log(e.getMessage());
+                            }
+                        } else { // show when the perspective becomes active							
+                            partPage.getWorkbenchWindow()
+                                    .addPerspectiveListener(
+                                            new IPerspectiveListener() {
 
-	/**
-	 * Create the view.  If it's already been been created in the provided 
-	 * factory, return the shared instance.
-	 * 
-	 * @param factory the <code>ViewFactory</code> to use.
-	 * @param viewID the view id to use.
-	 * @return the new <code>ViewPane</code>.
-	 * @throws PartInitException thrown if there is a problem creating the view.
-	 */
-	public static final ViewPane createView(
-		ViewFactory factory,
-		String viewId)
-		throws PartInitException {
-		WorkbenchPartReference ref =
-			(WorkbenchPartReference) factory.createView(
-				viewId);
-		ViewPane newPart = (ViewPane) ref.getPane();
-		if (newPart == null) {
-			WorkbenchPage page = (WorkbenchPage) ref.getPage();
-			newPart = new ViewPane((IViewReference)ref, page);
-			ref.setPane(newPart);
-		}
-		return newPart;
-	}
-	
-	/**
-	 * Create the view with a specified theme.  
-	 * If it's already been been created in the provided 
-	 * factory, return the shared instance.
-	 * 
-	 * @param factory the <code>ViewFactory</code> to use.
-	 * @param viewID the view id to use.
-	 * @return the new <code>ViewPane</code>.
-	 * @throws PartInitException thrown if there is a problem creating the view.
-	 *
-	 * @issue view should refer to current perspective for theme setting
-	 */
-	public static final ViewPane createView(
-			ViewFactory factory,
-			String viewId, 
-			String theme)
-	throws PartInitException {
-		WorkbenchPartReference ref =
-		(WorkbenchPartReference) factory.createView(
-				viewId);
-		ViewPane newPart = (ViewPane) ref.getPane();
-		if (newPart == null) {
-			WorkbenchPage page = (WorkbenchPage) ref.getPage();
-			newPart = new ViewPane((IViewReference)ref, page);
-			ref.setPane(newPart);
-		}
-		return newPart;
-	}
+                                                /* (non-Javadoc)
+                                                 * @see org.eclipse.ui.IPerspectiveListener#perspectiveActivated(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor)
+                                                 */
+                                                public void perspectiveActivated(
+                                                        IWorkbenchPage page,
+                                                        IPerspectiveDescriptor newPerspective) {
+                                                    if (partPerspective == newPerspective) {
+                                                        partPage
+                                                                .getWorkbenchWindow()
+                                                                .removePerspectiveListener(
+                                                                        this);
+                                                        try {
+                                                            page
+                                                                    .showView(viewId);
+                                                        } catch (PartInitException e) {
+                                                            WorkbenchPlugin
+                                                                    .log(e
+                                                                            .getMessage());
+                                                        }
+                                                    }
+                                                }
+
+                                                /* (non-Javadoc)
+                                                 * @see org.eclipse.ui.IPerspectiveListener#perspectiveChanged(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor, java.lang.String)
+                                                 */
+                                                public void perspectiveChanged(
+                                                        IWorkbenchPage page,
+                                                        IPerspectiveDescriptor perspective,
+                                                        String changeId) {
+                                                    // no-op
+                                                }
+                                            });
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * Create the view.  If it's already been been created in the provided 
+     * factory, return the shared instance.
+     * 
+     * @param factory the <code>ViewFactory</code> to use.
+     * @param viewID the view id to use.
+     * @return the new <code>ViewPane</code>.
+     * @throws PartInitException thrown if there is a problem creating the view.
+     */
+    public static final ViewPane createView(ViewFactory factory, String viewId)
+            throws PartInitException {
+        WorkbenchPartReference ref = (WorkbenchPartReference) factory
+                .createView(viewId);
+        ViewPane newPart = (ViewPane) ref.getPane();
+        if (newPart == null) {
+            WorkbenchPage page = (WorkbenchPage) ref.getPage();
+            newPart = new ViewPane((IViewReference) ref, page);
+            ref.setPane(newPart);
+        }
+        return newPart;
+    }
+
+    /**
+     * Create the view with a specified theme.  
+     * If it's already been been created in the provided 
+     * factory, return the shared instance.
+     * 
+     * @param factory the <code>ViewFactory</code> to use.
+     * @param viewID the view id to use.
+     * @return the new <code>ViewPane</code>.
+     * @throws PartInitException thrown if there is a problem creating the view.
+     *
+     * @issue view should refer to current perspective for theme setting
+     */
+    public static final ViewPane createView(ViewFactory factory, String viewId,
+            String theme) throws PartInitException {
+        WorkbenchPartReference ref = (WorkbenchPartReference) factory
+                .createView(viewId);
+        ViewPane newPart = (ViewPane) ref.getPane();
+        if (newPart == null) {
+            WorkbenchPage page = (WorkbenchPage) ref.getPage();
+            newPart = new ViewPane((IViewReference) ref, page);
+            ref.setPane(newPart);
+        }
+        return newPart;
+    }
 }

@@ -19,39 +19,41 @@ import org.eclipse.ui.contexts.IContextManager;
 import org.eclipse.ui.contexts.IContextManagerListener;
 
 public final class ProxyContextManager extends AbstractContextManager {
-	private IContextManager contextManager;
+    private IContextManager contextManager;
 
-	public ProxyContextManager(IContextManager contextManager) {
-		if (contextManager == null)
-			throw new NullPointerException();
+    public ProxyContextManager(IContextManager contextManager) {
+        if (contextManager == null)
+            throw new NullPointerException();
 
-		this.contextManager = contextManager;
+        this.contextManager = contextManager;
 
-		this
-			.contextManager
-			.addContextManagerListener(new IContextManagerListener() {
-			public void contextManagerChanged(ContextManagerEvent contextManagerEvent) {
-				ContextManagerEvent proxyContextManagerEvent =
-					new ContextManagerEvent(
-						ProxyContextManager.this,
-						contextManagerEvent.haveDefinedContextIdsChanged(),
-						contextManagerEvent.haveEnabledContextIdsChanged(),
-						contextManagerEvent.getPreviouslyDefinedContextIds(),
-						contextManagerEvent.getPreviouslyEnabledContextIds());
-				fireContextManagerChanged(proxyContextManagerEvent);
-			}
-		});
-	}
+        this.contextManager
+                .addContextManagerListener(new IContextManagerListener() {
+                    public void contextManagerChanged(
+                            ContextManagerEvent contextManagerEvent) {
+                        ContextManagerEvent proxyContextManagerEvent = new ContextManagerEvent(
+                                ProxyContextManager.this, contextManagerEvent
+                                        .haveDefinedContextIdsChanged(),
+                                contextManagerEvent
+                                        .haveEnabledContextIdsChanged(),
+                                contextManagerEvent
+                                        .getPreviouslyDefinedContextIds(),
+                                contextManagerEvent
+                                        .getPreviouslyEnabledContextIds());
+                        fireContextManagerChanged(proxyContextManagerEvent);
+                    }
+                });
+    }
 
-	public IContext getContext(String contextId) {
-		return contextManager.getContext(contextId);
-	}
+    public IContext getContext(String contextId) {
+        return contextManager.getContext(contextId);
+    }
 
-	public SortedSet getDefinedContextIds() {
-		return contextManager.getDefinedContextIds();
-	}
+    public SortedSet getDefinedContextIds() {
+        return contextManager.getDefinedContextIds();
+    }
 
-	public SortedSet getEnabledContextIds() {
-		return contextManager.getEnabledContextIds();
-	}
+    public SortedSet getEnabledContextIds() {
+        return contextManager.getEnabledContextIds();
+    }
 }

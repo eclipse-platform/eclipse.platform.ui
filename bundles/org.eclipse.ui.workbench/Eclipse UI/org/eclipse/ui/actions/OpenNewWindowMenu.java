@@ -12,7 +12,9 @@ package org.eclipse.ui.actions;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
@@ -35,59 +37,67 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * @deprecated See IWorkbench.showPerspective methods.
  */
 public class OpenNewWindowMenu extends PerspectiveMenu {
-	private IAdaptable pageInput;
-/**
- * Constructs a new instance of <code>OpenNewPageMenu</code>. 
- * <p>
- * If this method is used be sure to set the page input by invoking
- * <code>setPageInput</code>.  The page input is required when the user
- * selects an item in the menu.  At that point the menu will attempt to
- * open a new page with the selected perspective and page input.  If there
- * is no page input an error dialog will be opened.
- * </p>
- *
- * @param window the window where a new page is created if an item within
- *		the menu is selected
- */
-public OpenNewWindowMenu(IWorkbenchWindow window) {
-	this(window, null);
-}
-/**
- * Constructs a new instance of <code>OpenNewPageMenu</code>.  
- *
- * @param window the window where a new page is created if an item within
- *		the menu is selected
- * @param input the page input
- */
-public OpenNewWindowMenu(IWorkbenchWindow window, IAdaptable input) {
-	super(window, "Open New Page Menu");//$NON-NLS-1$
-	this.pageInput = input;
-}
-/* (non-Javadoc)
- * Opens a new window with a particular perspective and input.
- */
-protected void run(IPerspectiveDescriptor desc) {
-	// Verify page input.
-	if (pageInput == null) {
-		MessageDialog.openError(getWindow().getShell(), WorkbenchMessages.getString("OpenNewWindowMenu.dialogTitle"), //$NON-NLS-1$
-			WorkbenchMessages.getString("OpenNewWindowMenu.unknownInput")); //$NON-NLS-1$
-		return;
-	}
+    private IAdaptable pageInput;
 
-	// Open the page.
-	try {
-		getWindow().getWorkbench().openWorkbenchWindow(desc.getId(), pageInput);
-	} catch (WorkbenchException e) {
-		MessageDialog.openError(getWindow().getShell(), WorkbenchMessages.getString("OpenNewWindowMenu.dialogTitle"), //$NON-NLS-1$
-			e.getMessage());
-	}
-}
-/**
- * Sets the page input.  
- *
- * @param input the page input
- */
-public void setPageInput(IAdaptable input) {
-	pageInput = input;
-}
+    /**
+     * Constructs a new instance of <code>OpenNewPageMenu</code>. 
+     * <p>
+     * If this method is used be sure to set the page input by invoking
+     * <code>setPageInput</code>.  The page input is required when the user
+     * selects an item in the menu.  At that point the menu will attempt to
+     * open a new page with the selected perspective and page input.  If there
+     * is no page input an error dialog will be opened.
+     * </p>
+     *
+     * @param window the window where a new page is created if an item within
+     *		the menu is selected
+     */
+    public OpenNewWindowMenu(IWorkbenchWindow window) {
+        this(window, null);
+    }
+
+    /**
+     * Constructs a new instance of <code>OpenNewPageMenu</code>.  
+     *
+     * @param window the window where a new page is created if an item within
+     *		the menu is selected
+     * @param input the page input
+     */
+    public OpenNewWindowMenu(IWorkbenchWindow window, IAdaptable input) {
+        super(window, "Open New Page Menu");//$NON-NLS-1$
+        this.pageInput = input;
+    }
+
+    /* (non-Javadoc)
+     * Opens a new window with a particular perspective and input.
+     */
+    protected void run(IPerspectiveDescriptor desc) {
+        // Verify page input.
+        if (pageInput == null) {
+            MessageDialog.openError(getWindow().getShell(), WorkbenchMessages
+                    .getString("OpenNewWindowMenu.dialogTitle"), //$NON-NLS-1$
+                    WorkbenchMessages
+                            .getString("OpenNewWindowMenu.unknownInput")); //$NON-NLS-1$
+            return;
+        }
+
+        // Open the page.
+        try {
+            getWindow().getWorkbench().openWorkbenchWindow(desc.getId(),
+                    pageInput);
+        } catch (WorkbenchException e) {
+            MessageDialog.openError(getWindow().getShell(), WorkbenchMessages
+                    .getString("OpenNewWindowMenu.dialogTitle"), //$NON-NLS-1$
+                    e.getMessage());
+        }
+    }
+
+    /**
+     * Sets the page input.  
+     *
+     * @param input the page input
+     */
+    public void setPageInput(IAdaptable input) {
+        pageInput = input;
+    }
 }

@@ -137,17 +137,18 @@ public final class CommandManagerEvent {
             boolean definedKeyConfigurationIdsChanged,
             Set previouslyDefinedCategoryIds, Set previouslyDefinedCommandIds,
             Set previouslyDefinedKeyConfigurationIds) {
-        if (commandManager == null) throw new NullPointerException();
+        if (commandManager == null)
+            throw new NullPointerException();
 
         if (!definedCategoryIdsChanged && previouslyDefinedCategoryIds != null)
-                throw new IllegalArgumentException();
+            throw new IllegalArgumentException();
 
         if (!definedCommandIdsChanged && previouslyDefinedCommandIds != null)
-                throw new IllegalArgumentException();
+            throw new IllegalArgumentException();
 
         if (!definedKeyConfigurationIdsChanged
                 && previouslyDefinedKeyConfigurationIds != null)
-                throw new IllegalArgumentException();
+            throw new IllegalArgumentException();
 
         if (definedCategoryIdsChanged) {
             this.previouslyDefinedCategoryIds = Util.safeCopy(
@@ -164,8 +165,8 @@ public final class CommandManagerEvent {
         }
 
         if (definedKeyConfigurationIdsChanged) {
-                this.previouslyDefinedKeyConfigurationIds = Util.safeCopy(
-                        previouslyDefinedKeyConfigurationIds, String.class);
+            this.previouslyDefinedKeyConfigurationIds = Util.safeCopy(
+                    previouslyDefinedKeyConfigurationIds, String.class);
         } else {
             this.previouslyDefinedKeyConfigurationIds = null;
         }

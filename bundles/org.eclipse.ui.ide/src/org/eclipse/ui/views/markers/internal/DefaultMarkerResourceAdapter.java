@@ -22,34 +22,34 @@ import org.eclipse.ui.views.tasklist.ITaskListResourceAdapter;
  * MarkerView for resource adaption.
  */
 class DefaultMarkerResourceAdapter implements ITaskListResourceAdapter {
-	
-	private static ITaskListResourceAdapter singleton;
 
-	/**
-	 * Constructor for DefaultMarkerResourceAdapter.
-	 */
-	DefaultMarkerResourceAdapter() {
-		super();
-	}
-	
-	/**
-	 * Return the default instance used for MarkerView adapting.
-	 */
-	static ITaskListResourceAdapter getDefault(){
-		if(singleton == null)
-			singleton = new DefaultMarkerResourceAdapter();
-		return singleton;
-	}
+    private static ITaskListResourceAdapter singleton;
 
-	/**
-	 * @see IMarkerResourceAdapter#getAffectedResource(IAdaptable)
-	 */
-	public IResource getAffectedResource(IAdaptable adaptable) {
-		IResource resource = (IResource) adaptable.getAdapter(IResource.class);
-		
-		if (resource == null)
-			return (IFile) adaptable.getAdapter(IFile.class);
-		else
-			return resource;
-	}
+    /**
+     * Constructor for DefaultMarkerResourceAdapter.
+     */
+    DefaultMarkerResourceAdapter() {
+        super();
+    }
+
+    /**
+     * Return the default instance used for MarkerView adapting.
+     */
+    static ITaskListResourceAdapter getDefault() {
+        if (singleton == null)
+            singleton = new DefaultMarkerResourceAdapter();
+        return singleton;
+    }
+
+    /**
+     * @see IMarkerResourceAdapter#getAffectedResource(IAdaptable)
+     */
+    public IResource getAffectedResource(IAdaptable adaptable) {
+        IResource resource = (IResource) adaptable.getAdapter(IResource.class);
+
+        if (resource == null)
+            return (IFile) adaptable.getAdapter(IFile.class);
+        else
+            return resource;
+    }
 }

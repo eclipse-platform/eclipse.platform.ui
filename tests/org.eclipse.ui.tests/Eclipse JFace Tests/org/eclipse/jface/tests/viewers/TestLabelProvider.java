@@ -10,28 +10,30 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
-import org.eclipse.swt.graphics.Image;
-
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.graphics.Image;
 
 public class TestLabelProvider extends LabelProvider {
-	
-	static Image fgImage= null;
-	
-/**
- *
- */
-public static Image getImage() {
-	if (fgImage == null)
-		fgImage = ImageDescriptor.createFromFile(TestLabelProvider.class, "images/java.gif").createImage();
-	return fgImage;
-}
-	public Image getImage(Object element) {
-		return getImage();
-	}
-	public String getText(Object element) {
-		String label= element.toString();
-		return label+ " <rendered>";
-	}
+
+    static Image fgImage = null;
+
+    /**
+     *
+     */
+    public static Image getImage() {
+        if (fgImage == null)
+            fgImage = ImageDescriptor.createFromFile(TestLabelProvider.class,
+                    "images/java.gif").createImage();
+        return fgImage;
+    }
+
+    public Image getImage(Object element) {
+        return getImage();
+    }
+
+    public String getText(Object element) {
+        String label = element.toString();
+        return label + " <rendered>";
+    }
 }

@@ -28,10 +28,10 @@ import org.eclipse.ui.keys.KeySequence;
  */
 public interface IKeySequenceBinding extends Comparable {
 
-	/**
-	 * Returns the key sequence represented in this binding.
-	 * 
-	 * @return the key sequence. Guaranteed not to be <code>null</code>.
-	 */
-	KeySequence getKeySequence();
+    /**
+     * Returns the key sequence represented in this binding.
+     * 
+     * @return the key sequence. Guaranteed not to be <code>null</code>.
+     */
+    KeySequence getKeySequence();
 }

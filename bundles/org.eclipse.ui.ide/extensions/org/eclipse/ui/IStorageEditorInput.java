@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui;
 
-
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.resources.IStorage;
-import org.eclipse.ui.IEditorInput;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * Interface for a <code>IStorage</code> input to an editor.
@@ -36,11 +34,11 @@ import org.eclipse.ui.IEditorInput;
  * </p>
  */
 public interface IStorageEditorInput extends IEditorInput {
-/**
- * Returns the underlying IStorage object.
- *
- * @return an IStorage object.
- * @exception CoreException if this method fails
- */
-public IStorage getStorage() throws CoreException;
+    /**
+     * Returns the underlying IStorage object.
+     *
+     * @return an IStorage object.
+     * @exception CoreException if this method fails
+     */
+    public IStorage getStorage() throws CoreException;
 }

@@ -32,74 +32,82 @@ import org.eclipse.ui.part.FileEditorInput;
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  */
-public class OpenSystemEditorAction extends SelectionListenerAction  {
+public class OpenSystemEditorAction extends SelectionListenerAction {
 
-	/**
-	 * The id of this action.
-	 */
-	public static final String ID = PlatformUI.PLUGIN_ID + ".OpenSystemEditorAction";//$NON-NLS-1$
-	
-	/**
-	 * The workbench page to open the editor in.
-	 */
-	private IWorkbenchPage workbenchPage;
-/**
- * Creates a new action that will open system editors on the then-selected file 
- * resources.
- *
- * @param page the workbench page in which to open the editor
- */
-public OpenSystemEditorAction(IWorkbenchPage page) {
-	super(IDEWorkbenchMessages.getString("OpenSystemEditorAction.text")); //$NON-NLS-1$
-	setToolTipText(IDEWorkbenchMessages.getString("OpenSystemEditorAction.toolTip")); //$NON-NLS-1$
-	setId(ID);
-	WorkbenchHelp.setHelp(this, IHelpContextIds.OPEN_SYSTEM_EDITOR_ACTION);
-	if (page == null) {
-		throw new IllegalArgumentException();
-	}
-	this.workbenchPage = page;
-}
-/**
- * Return the workbench page to open the editor in.
- *
- * @return the workbench page to open the editor in
- */
-/* package */ final IWorkbenchPage getWorkbenchPage() {
-	return workbenchPage;
-}
-/**
- * Opens a system editor on the given file resource.
- *
- * @param file the file resource
- */
-/* package */ void openFile(IFile file) {
-	try {
-		getWorkbenchPage().openEditor(new FileEditorInput(file), IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
-	} catch (PartInitException e) {
-		DialogUtil.openError(
-			getWorkbenchPage().getWorkbenchWindow().getShell(),
-			IDEWorkbenchMessages.getString("OpenSystemEditorAction.dialogTitle"), //$NON-NLS-1$
-			e.getMessage(),
-			e);
-	}
-}
-/* (non-Javadoc)
- * Method declared on IAction.
- */
-public void run() {
-	Iterator enum = getSelectedResources().iterator();
-	while (enum.hasNext()) {
-		IResource resource = (IResource) enum.next();
-		if (resource instanceof IFile)
-			openFile((IFile) resource);
-	}
-}
-/**
- * The <code>OpenSystemEditorAction</code> implementation of this
- * <code>SelectionListenerAction</code> method enables the action only
- * if the selection contains just file resources.
- */
-protected boolean updateSelection(IStructuredSelection selection) {
-	return super.updateSelection(selection) && selectionIsOfType(IResource.FILE);
-}
+    /**
+     * The id of this action.
+     */
+    public static final String ID = PlatformUI.PLUGIN_ID
+            + ".OpenSystemEditorAction";//$NON-NLS-1$
+
+    /**
+     * The workbench page to open the editor in.
+     */
+    private IWorkbenchPage workbenchPage;
+
+    /**
+     * Creates a new action that will open system editors on the then-selected file 
+     * resources.
+     *
+     * @param page the workbench page in which to open the editor
+     */
+    public OpenSystemEditorAction(IWorkbenchPage page) {
+        super(IDEWorkbenchMessages.getString("OpenSystemEditorAction.text")); //$NON-NLS-1$
+        setToolTipText(IDEWorkbenchMessages
+                .getString("OpenSystemEditorAction.toolTip")); //$NON-NLS-1$
+        setId(ID);
+        WorkbenchHelp.setHelp(this, IHelpContextIds.OPEN_SYSTEM_EDITOR_ACTION);
+        if (page == null) {
+            throw new IllegalArgumentException();
+        }
+        this.workbenchPage = page;
+    }
+
+    /**
+     * Return the workbench page to open the editor in.
+     *
+     * @return the workbench page to open the editor in
+     */
+    /* package */final IWorkbenchPage getWorkbenchPage() {
+        return workbenchPage;
+    }
+
+    /**
+     * Opens a system editor on the given file resource.
+     *
+     * @param file the file resource
+     */
+    /* package */void openFile(IFile file) {
+        try {
+            getWorkbenchPage().openEditor(new FileEditorInput(file),
+                    IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
+        } catch (PartInitException e) {
+            DialogUtil.openError(getWorkbenchPage().getWorkbenchWindow()
+                    .getShell(), IDEWorkbenchMessages
+                    .getString("OpenSystemEditorAction.dialogTitle"), //$NON-NLS-1$
+                    e.getMessage(), e);
+        }
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IAction.
+     */
+    public void run() {
+        Iterator enum = getSelectedResources().iterator();
+        while (enum.hasNext()) {
+            IResource resource = (IResource) enum.next();
+            if (resource instanceof IFile)
+                openFile((IFile) resource);
+        }
+    }
+
+    /**
+     * The <code>OpenSystemEditorAction</code> implementation of this
+     * <code>SelectionListenerAction</code> method enables the action only
+     * if the selection contains just file resources.
+     */
+    protected boolean updateSelection(IStructuredSelection selection) {
+        return super.updateSelection(selection)
+                && selectionIsOfType(IResource.FILE);
+    }
 }

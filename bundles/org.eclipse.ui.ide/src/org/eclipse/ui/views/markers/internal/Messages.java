@@ -16,17 +16,18 @@ import java.util.ResourceBundle;
 
 public class Messages {
 
-	private final static ResourceBundle bundle = ResourceBundle.getBundle(Messages.class.getName());
-	
-	private Messages() {
-		super();
-	}
+    private final static ResourceBundle bundle = ResourceBundle
+            .getBundle(Messages.class.getName());
 
-	public static String format(String key, Object[] args) {
-		return MessageFormat.format(getString(key), args);
-	}
+    private Messages() {
+        super();
+    }
 
-	public static String getString(String key) {
-		return Util.getString(bundle, key);
-	}
+    public static String format(String key, Object[] args) {
+        return MessageFormat.format(getString(key), args);
+    }
+
+    public static String getString(String key) {
+        return Util.getString(bundle, key);
+    }
 }

@@ -10,82 +10,82 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
-
 /**
  * SubTaskInfo is the class that displays a subtask in the 
  * tree.
  */
 class SubTaskInfo extends JobTreeElement {
 
-	protected String taskName;
-	JobInfo jobInfo;
+    protected String taskName;
 
-	/**
-	 * Create a new instance of the receiver.
-	 * @param parentJob
-	 * @param name
-	 */
-	SubTaskInfo(JobInfo parentJob, String name) {
-		taskName = name;
-		jobInfo = parentJob;
-	}
+    JobInfo jobInfo;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.progress.JobTreeElement#getChildren()
-	 */
-	Object[] getChildren() {
-		return new Object[0];
-	}
+    /**
+     * Create a new instance of the receiver.
+     * @param parentJob
+     * @param name
+     */
+    SubTaskInfo(JobInfo parentJob, String name) {
+        taskName = name;
+        jobInfo = parentJob;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.progress.JobTreeElement#getDisplayString()
-	 */
-	String getDisplayString() {
-		if (taskName == null)
-			return ProgressMessages.getString("SubTaskInfo.UndefinedTaskName"); //$NON-NLS-1$
-		return taskName;
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.progress.JobTreeElement#getChildren()
+     */
+    Object[] getChildren() {
+        return new Object[0];
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.progress.JobTreeElement#hasChildren()
-	 */
-	boolean hasChildren() {
-		return false;
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.progress.JobTreeElement#getDisplayString()
+     */
+    String getDisplayString() {
+        if (taskName == null)
+            return ProgressMessages.getString("SubTaskInfo.UndefinedTaskName"); //$NON-NLS-1$
+        return taskName;
+    }
 
-	/**
-	 * Set the taskName of the receiver.
-	 * @param taskName
-	 */
-	void setTaskName(String name) {
-		this.taskName = name;
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.progress.JobTreeElement#hasChildren()
+     */
+    boolean hasChildren() {
+        return false;
+    }
 
-	/**
-	 * Returns the taskName of the receiver.
-	 */
-	String getTaskName() {
-		return taskName;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.progress.JobTreeElement#getParent()
-	 */
-	Object getParent() {
-		return jobInfo;
-	}
+    /**
+     * Set the taskName of the receiver.
+     * @param taskName
+     */
+    void setTaskName(String name) {
+        this.taskName = name;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.progress.JobTreeElement#isJobInfo()
-	 */
-	boolean isJobInfo() {
-		return false;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.progress.JobTreeElement#isActive()
-	 */
-	boolean isActive() {
-		return jobInfo.isActive();
-	}
+    /**
+     * Returns the taskName of the receiver.
+     */
+    String getTaskName() {
+        return taskName;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.progress.JobTreeElement#getParent()
+     */
+    Object getParent() {
+        return jobInfo;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.progress.JobTreeElement#isJobInfo()
+     */
+    boolean isJobInfo() {
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.progress.JobTreeElement#isActive()
+     */
+    boolean isActive() {
+        return jobInfo.isActive();
+    }
 }

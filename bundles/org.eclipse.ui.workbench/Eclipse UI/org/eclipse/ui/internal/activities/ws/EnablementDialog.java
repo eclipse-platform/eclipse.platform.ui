@@ -48,14 +48,14 @@ import org.eclipse.ui.activities.NotDefinedException;
  */
 public class EnablementDialog extends Dialog {
 
-	/**
-	 * The translation bundle in which to look up internationalized text.
-	 */
-	private final static ResourceBundle RESOURCE_BUNDLE =
-		ResourceBundle.getBundle(EnablementDialog.class.getName());
+    /**
+     * The translation bundle in which to look up internationalized text.
+     */
+    private final static ResourceBundle RESOURCE_BUNDLE = ResourceBundle
+            .getBundle(EnablementDialog.class.getName());
 
     private Button dontAskButton;
-    
+
     private Collection activitiesToEnable = new HashSet(7);
 
     private Collection activityIds;
@@ -63,17 +63,17 @@ public class EnablementDialog extends Dialog {
     private boolean dontAsk;
 
     private Button detailsButton;
-    
+
     boolean showDetails = false;
 
     private Composite detailsComposite;
 
     private Label detailsLabel;
-    
+
     private String selectedActivity;
 
     private Text detailsText;
-    
+
     /**
      * Create a new instance of the reciever.
      * 
@@ -84,52 +84,51 @@ public class EnablementDialog extends Dialog {
         super(parentShell);
         this.activityIds = activityIds;
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
-    protected Control createDialogArea(Composite parent) {            
-		Composite composite = (Composite)super.createDialogArea(parent);		
-		Font dialogFont = parent.getFont();
+    protected Control createDialogArea(Composite parent) {
+        Composite composite = (Composite) super.createDialogArea(parent);
+        Font dialogFont = parent.getFont();
         composite.setFont(dialogFont);
-		Label text = new Label(composite, SWT.NONE);
-		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		text.setFont(dialogFont);
-		IActivityManager manager = PlatformUI.getWorkbench().getActivitySupport().getActivityManager();
-		
-		if (activityIds.size() == 1) {
-		    String activityId = (String) activityIds.iterator().next();
+        Label text = new Label(composite, SWT.NONE);
+        text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        text.setFont(dialogFont);
+        IActivityManager manager = PlatformUI.getWorkbench()
+                .getActivitySupport().getActivityManager();
+
+        if (activityIds.size() == 1) {
+            String activityId = (String) activityIds.iterator().next();
             activitiesToEnable.add(activityId);
             selectedActivity = activityId;
-		    
-		    IActivity activity = manager.getActivity(activityId);
-		    String activityText;
-		    try {
-		        activityText = activity.getName();
+
+            IActivity activity = manager.getActivity(activityId);
+            String activityText;
+            try {
+                activityText = activity.getName();
             } catch (NotDefinedException e) {
                 activityText = activity.getId();
             }
-			text.setText(
-			        MessageFormat.format(
-			                RESOURCE_BUNDLE
-			                	.getString("requiresSingle"), //$NON-NLS-1$
-			                new Object [] {activityText})); 
+            text.setText(MessageFormat.format(RESOURCE_BUNDLE
+                    .getString("requiresSingle"), //$NON-NLS-1$
+                    new Object[] { activityText }));
 
             text = new Label(composite, SWT.NONE);
             text.setText(RESOURCE_BUNDLE.getString("proceedSingle")); //$NON-NLS-1$
             text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
             text.setFont(dialogFont);
-		}
-		else {
-		    text.setText(RESOURCE_BUNDLE.getString("requiresMulti")); //$NON-NLS-1$
-		    Set activityIdsCopy = new HashSet(activityIds);
-		    CheckboxTableViewer viewer = new CheckboxTableViewer(composite, SWT.CHECK | SWT.BORDER | SWT.SINGLE);
-		    viewer.setContentProvider(new ActivityContentProvider());
-		    viewer.setLabelProvider(new ActivityLabelProvider(manager));
-		    viewer.setInput(activityIdsCopy);
-		    viewer.setCheckedElements(activityIdsCopy.toArray());
-		    viewer.addCheckStateListener(new ICheckStateListener() {
-                
+        } else {
+            text.setText(RESOURCE_BUNDLE.getString("requiresMulti")); //$NON-NLS-1$
+            Set activityIdsCopy = new HashSet(activityIds);
+            CheckboxTableViewer viewer = new CheckboxTableViewer(composite,
+                    SWT.CHECK | SWT.BORDER | SWT.SINGLE);
+            viewer.setContentProvider(new ActivityContentProvider());
+            viewer.setLabelProvider(new ActivityLabelProvider(manager));
+            viewer.setInput(activityIdsCopy);
+            viewer.setCheckedElements(activityIdsCopy.toArray());
+            viewer.addCheckStateListener(new ICheckStateListener() {
+
                 /* (non-Javadoc)
                  * @see org.eclipse.jface.viewers.ICheckStateListener#checkStateChanged(org.eclipse.jface.viewers.CheckStateChangedEvent)
                  */
@@ -137,59 +136,65 @@ public class EnablementDialog extends Dialog {
                     if (event.getChecked())
                         activitiesToEnable.add(event.getElement());
                     else
-                        activitiesToEnable.remove(event.getElement());     
-                    
-                    getButton(Window.OK).setEnabled(!activitiesToEnable.isEmpty());
-                }});
-		    viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-	            /* (non-Javadoc)
-	             * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
-	             */
-	            public void selectionChanged(SelectionChangedEvent event) {
-	                selectedActivity = (String) ((IStructuredSelection)event.getSelection()).getFirstElement();
-	                setDetails();
-	            }});
-		    activitiesToEnable.addAll(activityIdsCopy);
-		    
-		    viewer.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		    viewer.getControl().setFont(dialogFont);
-		    
-			text = new Label(composite, SWT.NONE);
-			text.setText(RESOURCE_BUNDLE.getString("proceedMulti")); //$NON-NLS-1$
-			text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			text.setFont(dialogFont);
-		}
-		Label seperator = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
-		seperator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
-		dontAskButton = new Button(composite, SWT.CHECK);
+                        activitiesToEnable.remove(event.getElement());
+
+                    getButton(Window.OK).setEnabled(
+                            !activitiesToEnable.isEmpty());
+                }
+            });
+            viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+                /* (non-Javadoc)
+                 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
+                 */
+                public void selectionChanged(SelectionChangedEvent event) {
+                    selectedActivity = (String) ((IStructuredSelection) event
+                            .getSelection()).getFirstElement();
+                    setDetails();
+                }
+            });
+            activitiesToEnable.addAll(activityIdsCopy);
+
+            viewer.getControl().setLayoutData(
+                    new GridData(GridData.FILL_HORIZONTAL));
+            viewer.getControl().setFont(dialogFont);
+
+            text = new Label(composite, SWT.NONE);
+            text.setText(RESOURCE_BUNDLE.getString("proceedMulti")); //$NON-NLS-1$
+            text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+            text.setFont(dialogFont);
+        }
+        Label seperator = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
+        seperator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+        dontAskButton = new Button(composite, SWT.CHECK);
         dontAskButton.setSelection(false);
         dontAskButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		dontAskButton.setText(RESOURCE_BUNDLE.getString("dontAsk")); //$NON-NLS-1$
-		dontAskButton.setFont(dialogFont);		
-				
-		detailsComposite = new Composite(composite, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		detailsComposite.setLayout(layout);
-		detailsLabel = new Label(detailsComposite, SWT.NONE);
-		detailsLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		detailsLabel.setFont(dialogFont);
-		
-		detailsText = new Text(detailsComposite, SWT.WRAP | SWT.V_SCROLL | SWT.BORDER | SWT.READ_ONLY);
-		detailsText.setLayoutData(new GridData(GridData.FILL_BOTH));
-		detailsText.setFont(dialogFont);
-		
-		setDetails();
-		
-		GridData data = new GridData(GridData.FILL_BOTH);
-		detailsComposite.setLayoutData(data);
-		setDetailHints();
-		
-		return composite;
+        dontAskButton.setText(RESOURCE_BUNDLE.getString("dontAsk")); //$NON-NLS-1$
+        dontAskButton.setFont(dialogFont);
+
+        detailsComposite = new Composite(composite, SWT.NONE);
+        GridLayout layout = new GridLayout();
+        layout.marginHeight = 0;
+        layout.marginWidth = 0;
+        detailsComposite.setLayout(layout);
+        detailsLabel = new Label(detailsComposite, SWT.NONE);
+        detailsLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        detailsLabel.setFont(dialogFont);
+
+        detailsText = new Text(detailsComposite, SWT.WRAP | SWT.V_SCROLL
+                | SWT.BORDER | SWT.READ_ONLY);
+        detailsText.setLayoutData(new GridData(GridData.FILL_BOTH));
+        detailsText.setFont(dialogFont);
+
+        setDetails();
+
+        GridData data = new GridData(GridData.FILL_BOTH);
+        detailsComposite.setLayoutData(data);
+        setDetailHints();
+
+        return composite;
     }
-    
+
     /**
      * Set the text of the detail label and text area.
      */
@@ -197,24 +202,25 @@ public class EnablementDialog extends Dialog {
         if (selectedActivity == null) {
             detailsLabel.setText(RESOURCE_BUNDLE.getString("noDetails")); //$NON-NLS-1$
             detailsText.setText(""); //$NON-NLS-1$
-        }
-        else {
-        	IActivity activity = PlatformUI.getWorkbench().getActivitySupport().getActivityManager().getActivity(selectedActivity);
-        	String name;
-        	try {
+        } else {
+            IActivity activity = PlatformUI.getWorkbench().getActivitySupport()
+                    .getActivityManager().getActivity(selectedActivity);
+            String name;
+            try {
                 name = activity.getName();
             } catch (NotDefinedException e1) {
-            	name = selectedActivity;
+                name = selectedActivity;
             }
-        	String desc;
-        	try {
+            String desc;
+            try {
                 desc = activity.getDescription();
             } catch (NotDefinedException e) {
-				desc =  RESOURCE_BUNDLE.getString("noDescAvailable"); //$NON-NLS-1$
-            }        	
-            detailsLabel.setText(MessageFormat.format(RESOURCE_BUNDLE.getString("detailsLabel"), new Object[] {name})); //$NON-NLS-1$
+                desc = RESOURCE_BUNDLE.getString("noDescAvailable"); //$NON-NLS-1$
+            }
+            detailsLabel.setText(MessageFormat.format(RESOURCE_BUNDLE
+                    .getString("detailsLabel"), new Object[] { name })); //$NON-NLS-1$
             detailsText.setText(desc);
-        }        
+        }
     }
 
     /**
@@ -225,11 +231,10 @@ public class EnablementDialog extends Dialog {
         if (showDetails) {
             data.widthHint = SWT.DEFAULT;
             data.heightHint = convertHeightInCharsToPixels(5);
-        }
-        else {
+        } else {
             data.widthHint = 0;
-            data.heightHint = 0;            
-        }        
+            data.heightHint = 0;
+        }
     }
 
     /**
@@ -249,7 +254,7 @@ public class EnablementDialog extends Dialog {
         super.configureShell(newShell);
         newShell.setText(RESOURCE_BUNDLE.getString("title")); //$NON-NLS-1$
     }
-    
+
     /** 
      * @return Returns whether the user has declared that there is to be no further 
      * prompting for the supplied activities
@@ -257,14 +262,14 @@ public class EnablementDialog extends Dialog {
     public boolean getDontAsk() {
         return dontAsk;
     }
-    
+
     /**
      * @return Returns the activities to enable
      */
     public Collection getActivitiesToEnable() {
         return activitiesToEnable;
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#okPressed()
      */
@@ -272,23 +277,24 @@ public class EnablementDialog extends Dialog {
         dontAsk = dontAskButton.getSelection();
         super.okPressed();
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
      */
     protected void createButtonsForButtonBar(Composite parent) {
-    	super.createButtonsForButtonBar(parent);
-    	detailsButton = createButton(parent, IDialogConstants.DETAILS_ID, "", false); //$NON-NLS-1$
-		setDetailButtonLabel();
+        super.createButtonsForButtonBar(parent);
+        detailsButton = createButton(parent, IDialogConstants.DETAILS_ID,
+                "", false); //$NON-NLS-1$
+        setDetailButtonLabel();
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
      */
     protected void buttonPressed(int buttonId) {
         if (buttonId == IDialogConstants.DETAILS_ID) {
-            detailsPressed();		
-		    return;
+            detailsPressed();
+            return;
         }
         super.buttonPressed(buttonId);
     }
@@ -301,7 +307,7 @@ public class EnablementDialog extends Dialog {
         setDetailButtonLabel();
         setDetailHints();
         setDetails();
-        ((Composite)getDialogArea()).layout(true);
+        ((Composite) getDialogArea()).layout(true);
         getShell().setSize(getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT));
     }
 }

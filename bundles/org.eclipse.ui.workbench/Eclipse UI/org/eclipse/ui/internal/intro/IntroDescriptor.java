@@ -28,85 +28,89 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  */
 public class IntroDescriptor implements IIntroDescriptor, IPluginContribution {
 
-	private static final String ATT_ID = "id"; //$NON-NLS-1$
-	private static final String ATT_CLASS = "class"; //$NON-NLS-1$
-	private static final String ATT_ICON = "icon"; //$NON-NLS-1$	
-	
-	private IConfigurationElement configElement;
-	private String id;
-	private String pluginId;
-	private String iconName;
+    private static final String ATT_ID = "id"; //$NON-NLS-1$
+
+    private static final String ATT_CLASS = "class"; //$NON-NLS-1$
+
+    private static final String ATT_ICON = "icon"; //$NON-NLS-1$	
+
+    private IConfigurationElement configElement;
+
+    private String id;
+
+    private String pluginId;
+
+    private String iconName;
+
     private ImageDescriptor imageDescriptor;
-	
-	/**
-	 * Create a new IntroDescriptor for an extension.
-	 */
-	public IntroDescriptor(IConfigurationElement configElement)
-	throws CoreException {
-		this.configElement = configElement;
-		loadFromExtension();
-	}
-	
-	/**
-	 * load a intro descriptor from the registry.
-	 */
-	private void loadFromExtension() throws CoreException {
-		id = configElement.getAttribute(ATT_ID);
-		pluginId = configElement.getDeclaringExtension().getNamespace();
-		String className = configElement.getAttribute(ATT_CLASS);
-		iconName = configElement.getAttribute(ATT_ICON);
-		// Sanity check.
-		if (className == null) {
-			throw new CoreException(new Status(IStatus.ERROR, configElement
-					.getDeclaringExtension().getNamespace(), 0,
-					"Invalid extension (Missing class name): " + id, //$NON-NLS-1$
-					null));
-		}
-	}	
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.intro.IIntroDescriptor#createIntro()
-	 */
-	public IIntroPart createIntro() throws CoreException {
-		return (IIntroPart) WorkbenchPlugin.createExtension(configElement, ATT_CLASS);
-	}
+    /**
+     * Create a new IntroDescriptor for an extension.
+     */
+    public IntroDescriptor(IConfigurationElement configElement)
+            throws CoreException {
+        this.configElement = configElement;
+        loadFromExtension();
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IIntroDescriptor#getId()
-	 */
-	public String getId() {
-		return id;
-	}
+    /**
+     * load a intro descriptor from the registry.
+     */
+    private void loadFromExtension() throws CoreException {
+        id = configElement.getAttribute(ATT_ID);
+        pluginId = configElement.getDeclaringExtension().getNamespace();
+        String className = configElement.getAttribute(ATT_CLASS);
+        iconName = configElement.getAttribute(ATT_ICON);
+        // Sanity check.
+        if (className == null) {
+            throw new CoreException(new Status(IStatus.ERROR, configElement
+                    .getDeclaringExtension().getNamespace(), 0,
+                    "Invalid extension (Missing class name): " + id, //$NON-NLS-1$
+                    null));
+        }
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IIntroDescriptor#getImageDescriptor()
-	 */
-	public ImageDescriptor getImageDescriptor() {
-		if (imageDescriptor != null)
-			return imageDescriptor;		
-		if (iconName == null)
-			return null;
-		IExtension extension = configElement.getDeclaringExtension();
-		String extendingPluginId = extension.getNamespace();
-		imageDescriptor =
-			AbstractUIPlugin.imageDescriptorFromPlugin(
-				extendingPluginId,
-				iconName);
-		return imageDescriptor;
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.intro.IIntroDescriptor#createIntro()
+     */
+    public IIntroPart createIntro() throws CoreException {
+        return (IIntroPart) WorkbenchPlugin.createExtension(configElement,
+                ATT_CLASS);
+    }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IIntroDescriptor#getId()
+     */
+    public String getId() {
+        return id;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPluginContribution#getLocalId()
-	 */
-	public String getLocalId() {
-		return id;
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IIntroDescriptor#getImageDescriptor()
+     */
+    public ImageDescriptor getImageDescriptor() {
+        if (imageDescriptor != null)
+            return imageDescriptor;
+        if (iconName == null)
+            return null;
+        IExtension extension = configElement.getDeclaringExtension();
+        String extendingPluginId = extension.getNamespace();
+        imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
+                extendingPluginId, iconName);
+        return imageDescriptor;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPluginContribution#getPluginId()
-	 */
-	public String getPluginId() {
-		return pluginId;
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IPluginContribution#getLocalId()
+     */
+    public String getLocalId() {
+        return id;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IPluginContribution#getPluginId()
+     */
+    public String getPluginId() {
+        return pluginId;
+    }
 }

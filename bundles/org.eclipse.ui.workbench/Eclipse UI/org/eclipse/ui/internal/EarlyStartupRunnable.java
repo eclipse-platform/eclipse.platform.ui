@@ -12,6 +12,7 @@ package org.eclipse.ui.internal;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -32,9 +33,13 @@ import org.osgi.framework.Bundle;
 public class EarlyStartupRunnable extends SafeRunnable {
 
     private static final String EXTENSION_CLASS = "org.eclipse.core.runtime.IExtension"; //$NON-NLS-1$
+
     private static final String PLUGIN_DESC_CLASS = "org.eclipse.core.runtime.IPluginDescriptor"; //$NON-NLS-1$
+
     private static final String GET_PLUGIN_METHOD = "getPlugin"; //$NON-NLS-1$
+
     private static final String GET_DESC_METHOD = "getDeclaringPluginDescriptor"; //$NON-NLS-1$
+
     private static final String PI_RUNTIME_COMPATIBILITY = "org.eclipse.core.runtime.compatibility"; //$NON-NLS-1$ 
 
     private IExtension extension;
@@ -48,7 +53,8 @@ public class EarlyStartupRunnable extends SafeRunnable {
     }
 
     public void run() throws Exception {
-        IConfigurationElement[] configElements = extension.getConfigurationElements();
+        IConfigurationElement[] configElements = extension
+                .getConfigurationElements();
 
         // look for the startup tag in each element and run the extension
         boolean foundAtLeastOne = false;
@@ -56,8 +62,7 @@ public class EarlyStartupRunnable extends SafeRunnable {
             IConfigurationElement element = configElements[i];
             if (element != null
                     && element.getName()
-                            .equals(IWorkbenchConstants.TAG_STARTUP))
-            {
+                            .equals(IWorkbenchConstants.TAG_STARTUP)) {
                 runEarlyStartup(getExecutableExtension(element));
                 foundAtLeastOne = true;
             }
@@ -96,14 +101,15 @@ public class EarlyStartupRunnable extends SafeRunnable {
      * @return an executable extension for this startup element or null if an
      *         extension (or plugin) could not be found
      */
-    private Object getExecutableExtension(IConfigurationElement element) throws CoreException {
+    private Object getExecutableExtension(IConfigurationElement element)
+            throws CoreException {
 
         String classname = element.getAttribute(IWorkbenchConstants.TAG_CLASS);
 
         // if class attribute is absent then try to use the compatibility
         // bundle to return the plugin object
         if (classname == null || classname.length() <= 0)
-                return getPluginForCompatibility();
+            return getPluginForCompatibility();
 
         // otherwise the 3.0 runtime should be able to do it
         return WorkbenchPlugin.createExtension(element,
@@ -117,8 +123,7 @@ public class EarlyStartupRunnable extends SafeRunnable {
      */
     private Object getPluginForCompatibility() {
         // make sure the compatibility bundle is available
-        Bundle compatBundle = Platform
-                .getBundle(PI_RUNTIME_COMPATIBILITY);
+        Bundle compatBundle = Platform.getBundle(PI_RUNTIME_COMPATIBILITY);
         if (compatBundle == null)
             return null;
 

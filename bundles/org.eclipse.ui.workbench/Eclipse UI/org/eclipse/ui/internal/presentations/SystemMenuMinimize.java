@@ -15,14 +15,14 @@ import org.eclipse.ui.presentations.IStackPresentationSite;
 
 public class SystemMenuMinimize extends SystemMenuStateChange {
 
-	/**
-	 * @param site
-	 * @param name
-	 * @param state
-	 */
-	public SystemMenuMinimize(IStackPresentationSite site) {
-		super(site, WorkbenchMessages.getString("ViewPane.minimizeView"), //$NON-NLS-1$
-				IStackPresentationSite.STATE_MINIMIZED);
-	}
+    /**
+     * @param site
+     * @param name
+     * @param state
+     */
+    public SystemMenuMinimize(IStackPresentationSite site) {
+        super(site, WorkbenchMessages.getString("ViewPane.minimizeView"), //$NON-NLS-1$
+                IStackPresentationSite.STATE_MINIMIZED);
+    }
 
 }

@@ -20,79 +20,90 @@ import org.eclipse.ui.IWorkbenchPage;
  * Perspective listener list.
  */
 public class PerspectiveListenerList {
-	private ListenerList listeners = new ListenerList();
-/**
- * PerspectiveListenerList constructor comment.
- */
-public PerspectiveListenerList() {
-	super();
-}
-/**
- * Adds an IInternalPerspectiveListener to the perspective service.
- */
-public void addPerspectiveListener(IInternalPerspectiveListener l) {
-	listeners.add(l);
-}
-/**
- * Notifies the listener that a perspective has been activated.
- */
-public void firePerspectiveActivated(final IWorkbenchPage page, final IPerspectiveDescriptor perspective) {
-	Object [] array = listeners.getListeners();
-	for (int nX = 0; nX < array.length; nX ++) {
-		final IInternalPerspectiveListener l = (IInternalPerspectiveListener)array[nX];
-		Platform.run(new SafeRunnable() {
-			public void run() {
-				l.perspectiveActivated(page, perspective);
-			}
-		});
-	}
-}
-/**
- * Notifies the listener that a perspective has been changed.
- */
-public void firePerspectiveChanged(final IWorkbenchPage page, final IPerspectiveDescriptor perspective, final String changeId) {
-	Object [] array = listeners.getListeners();
-	for (int nX = 0; nX < array.length; nX ++) {
-		final IInternalPerspectiveListener l = (IInternalPerspectiveListener)array[nX];
-		Platform.run(new SafeRunnable() {
-			public void run() {
-				l.perspectiveChanged(page, perspective, changeId);
-			}
-		});
-	}
-}
-/**
- * Notifies the listener that a perspective has been closed.
- */
-public void firePerspectiveClosed(final IWorkbenchPage page, final IPerspectiveDescriptor perspective) {
-	Object [] array = listeners.getListeners();
-	for (int nX = 0; nX < array.length; nX ++) {
-		final IInternalPerspectiveListener l = (IInternalPerspectiveListener)array[nX];
-		Platform.run(new SafeRunnable() {
-			public void run() {
-				l.perspectiveClosed(page, perspective);
-			}
-		});
-	}
-}
-/**
- * Notifies the listener that a perspective has been opened.
- */
-public void firePerspectiveOpened(final IWorkbenchPage page, final IPerspectiveDescriptor perspective) {
-	Object [] array = listeners.getListeners();
-	for (int nX = 0; nX < array.length; nX ++) {
-		final IInternalPerspectiveListener l = (IInternalPerspectiveListener)array[nX];
-		Platform.run(new SafeRunnable() {
-			public void run() {
-				l.perspectiveOpened(page, perspective);
-			}
-		});
-	}
-}
-/**
- * Removes an IInternalPerspectiveListener from the perspective service.
- */
-public void removePerspectiveListener(IInternalPerspectiveListener l) {
-	listeners.remove(l);
-}
+    private ListenerList listeners = new ListenerList();
+
+    /**
+     * PerspectiveListenerList constructor comment.
+     */
+    public PerspectiveListenerList() {
+        super();
+    }
+
+    /**
+     * Adds an IInternalPerspectiveListener to the perspective service.
+     */
+    public void addPerspectiveListener(IInternalPerspectiveListener l) {
+        listeners.add(l);
+    }
+
+    /**
+     * Notifies the listener that a perspective has been activated.
+     */
+    public void firePerspectiveActivated(final IWorkbenchPage page,
+            final IPerspectiveDescriptor perspective) {
+        Object[] array = listeners.getListeners();
+        for (int nX = 0; nX < array.length; nX++) {
+            final IInternalPerspectiveListener l = (IInternalPerspectiveListener) array[nX];
+            Platform.run(new SafeRunnable() {
+                public void run() {
+                    l.perspectiveActivated(page, perspective);
+                }
+            });
+        }
+    }
+
+    /**
+     * Notifies the listener that a perspective has been changed.
+     */
+    public void firePerspectiveChanged(final IWorkbenchPage page,
+            final IPerspectiveDescriptor perspective, final String changeId) {
+        Object[] array = listeners.getListeners();
+        for (int nX = 0; nX < array.length; nX++) {
+            final IInternalPerspectiveListener l = (IInternalPerspectiveListener) array[nX];
+            Platform.run(new SafeRunnable() {
+                public void run() {
+                    l.perspectiveChanged(page, perspective, changeId);
+                }
+            });
+        }
+    }
+
+    /**
+     * Notifies the listener that a perspective has been closed.
+     */
+    public void firePerspectiveClosed(final IWorkbenchPage page,
+            final IPerspectiveDescriptor perspective) {
+        Object[] array = listeners.getListeners();
+        for (int nX = 0; nX < array.length; nX++) {
+            final IInternalPerspectiveListener l = (IInternalPerspectiveListener) array[nX];
+            Platform.run(new SafeRunnable() {
+                public void run() {
+                    l.perspectiveClosed(page, perspective);
+                }
+            });
+        }
+    }
+
+    /**
+     * Notifies the listener that a perspective has been opened.
+     */
+    public void firePerspectiveOpened(final IWorkbenchPage page,
+            final IPerspectiveDescriptor perspective) {
+        Object[] array = listeners.getListeners();
+        for (int nX = 0; nX < array.length; nX++) {
+            final IInternalPerspectiveListener l = (IInternalPerspectiveListener) array[nX];
+            Platform.run(new SafeRunnable() {
+                public void run() {
+                    l.perspectiveOpened(page, perspective);
+                }
+            });
+        }
+    }
+
+    /**
+     * Removes an IInternalPerspectiveListener from the perspective service.
+     */
+    public void removePerspectiveListener(IInternalPerspectiveListener l) {
+        listeners.remove(l);
+    }
 }

@@ -22,28 +22,29 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * @since 2.1
  */
 public final class ViewsPlugin extends AbstractUIPlugin {
-	/**
-	 * Views UI plug-in id (value <code>"org.eclipse.ui.views"</code>).
-	 */
-	public static final String PLUGIN_ID = "org.eclipse.ui.views"; //$NON-NLS-1$
+    /**
+     * Views UI plug-in id (value <code>"org.eclipse.ui.views"</code>).
+     */
+    public static final String PLUGIN_ID = "org.eclipse.ui.views"; //$NON-NLS-1$
 
-	private static ViewsPlugin instance;
-	
-	/**
-	 * Returns the singleton instance.
-	 * 
-	 * @return the singleton instance.
-	 */
-	public static ViewsPlugin getDefault() {
-		return instance;
-	}
-	/**
-	 * Creates a new instance of the receiver.
-	 * 
-	 * @see org.eclipse.core.runtime.Plugin#Plugin()
-	 */
-	public ViewsPlugin() {
-		super();
-		instance = this;
-	}
+    private static ViewsPlugin instance;
+
+    /**
+     * Returns the singleton instance.
+     * 
+     * @return the singleton instance.
+     */
+    public static ViewsPlugin getDefault() {
+        return instance;
+    }
+
+    /**
+     * Creates a new instance of the receiver.
+     * 
+     * @see org.eclipse.core.runtime.Plugin#Plugin()
+     */
+    public ViewsPlugin() {
+        super();
+        instance = this;
+    }
 }

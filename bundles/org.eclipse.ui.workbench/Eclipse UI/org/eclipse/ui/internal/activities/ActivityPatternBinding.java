@@ -14,79 +14,84 @@ package org.eclipse.ui.internal.activities;
 import java.util.regex.Pattern;
 
 import org.eclipse.ui.activities.IActivityPatternBinding;
-
 import org.eclipse.ui.internal.util.Util;
 
 public final class ActivityPatternBinding implements IActivityPatternBinding {
-	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL =
-		ActivityPatternBinding.class.getName().hashCode();
-	private String activityId;
-	private transient int hashCode;
-	private transient boolean hashCodeComputed;
-	private Pattern pattern;
-	private transient String string;
+    private final static int HASH_FACTOR = 89;
 
-	public ActivityPatternBinding(String activityId, Pattern pattern) {
-		if (pattern == null)
-			throw new NullPointerException();
+    private final static int HASH_INITIAL = ActivityPatternBinding.class
+            .getName().hashCode();
 
-		this.activityId = activityId;
-		this.pattern = pattern;
-	}
+    private String activityId;
 
-	public int compareTo(Object object) {
-		ActivityPatternBinding castedObject = (ActivityPatternBinding) object;
-		int compareTo = Util.compare(activityId, castedObject.activityId);
+    private transient int hashCode;
 
-		if (compareTo == 0)
-			compareTo =
-				Util.compare(pattern.pattern(), castedObject.pattern.pattern());
+    private transient boolean hashCodeComputed;
 
-		return compareTo;
-	}
+    private Pattern pattern;
 
-	public boolean equals(Object object) {
-		if (!(object instanceof ActivityPatternBinding))
-			return false;
+    private transient String string;
 
-		ActivityPatternBinding castedObject = (ActivityPatternBinding) object;
-		boolean equals = true;
-		equals &= Util.equals(activityId, castedObject.activityId);
-		equals &= Util.equals(pattern, castedObject.pattern);
-		return equals;
-	}
+    public ActivityPatternBinding(String activityId, Pattern pattern) {
+        if (pattern == null)
+            throw new NullPointerException();
 
-	public String getActivityId() {
-		return activityId;
-	}
+        this.activityId = activityId;
+        this.pattern = pattern;
+    }
 
-	public Pattern getPattern() {
-		return pattern;
-	}
+    public int compareTo(Object object) {
+        ActivityPatternBinding castedObject = (ActivityPatternBinding) object;
+        int compareTo = Util.compare(activityId, castedObject.activityId);
 
-	public int hashCode() {
-		if (!hashCodeComputed) {
-			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityId);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(pattern);
-			hashCodeComputed = true;
-		}
+        if (compareTo == 0)
+            compareTo = Util.compare(pattern.pattern(), castedObject.pattern
+                    .pattern());
 
-		return hashCode;
-	}
+        return compareTo;
+    }
 
-	public String toString() {
-		if (string == null) {
-			final StringBuffer stringBuffer = new StringBuffer();
-			stringBuffer.append('[');
-			stringBuffer.append(activityId);
-			stringBuffer.append(',');
-			stringBuffer.append(pattern);
-			stringBuffer.append(']');
-			string = stringBuffer.toString();
-		}
+    public boolean equals(Object object) {
+        if (!(object instanceof ActivityPatternBinding))
+            return false;
 
-		return string;
-	}
+        ActivityPatternBinding castedObject = (ActivityPatternBinding) object;
+        boolean equals = true;
+        equals &= Util.equals(activityId, castedObject.activityId);
+        equals &= Util.equals(pattern, castedObject.pattern);
+        return equals;
+    }
+
+    public String getActivityId() {
+        return activityId;
+    }
+
+    public Pattern getPattern() {
+        return pattern;
+    }
+
+    public int hashCode() {
+        if (!hashCodeComputed) {
+            hashCode = HASH_INITIAL;
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityId);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(pattern);
+            hashCodeComputed = true;
+        }
+
+        return hashCode;
+    }
+
+    public String toString() {
+        if (string == null) {
+            final StringBuffer stringBuffer = new StringBuffer();
+            stringBuffer.append('[');
+            stringBuffer.append(activityId);
+            stringBuffer.append(',');
+            stringBuffer.append(pattern);
+            stringBuffer.append(']');
+            string = stringBuffer.toString();
+        }
+
+        return string;
+    }
 }

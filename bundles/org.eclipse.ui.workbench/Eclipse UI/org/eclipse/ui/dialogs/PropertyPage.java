@@ -9,9 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
+
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.ui.IWorkbenchPropertyPage;
+
 /**
  * Abstract base implementation of a workbench property page (
  * <code>IWorkbenchPropertyPage</code>). The implementation is a JFace
@@ -38,32 +40,34 @@ import org.eclipse.ui.IWorkbenchPropertyPage;
  * 
  * @see IWorkbenchPropertyPage
  */
-public abstract class PropertyPage extends PreferencePage
-		implements
-			IWorkbenchPropertyPage {
-	/**
-	 * The element.
-	 */
-	private IAdaptable element;
-	/**
-	 * Creates a new property page.
-	 */
-	public PropertyPage() {
-	}
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPropertyPage#getElement()
-	 */
-	public IAdaptable getElement() {
-		return element;
-	}
-	/**
-	 * Sets the element that owns properties shown on this page.
-	 * 
-	 * @param element
-	 *            the element
-	 */
-	public void setElement(IAdaptable element) {
-		this.element = element;
-	}
+public abstract class PropertyPage extends PreferencePage implements
+        IWorkbenchPropertyPage {
+    /**
+     * The element.
+     */
+    private IAdaptable element;
+
+    /**
+     * Creates a new property page.
+     */
+    public PropertyPage() {
+    }
+
+    /*
+     *  (non-Javadoc)
+     * @see org.eclipse.ui.IWorkbenchPropertyPage#getElement()
+     */
+    public IAdaptable getElement() {
+        return element;
+    }
+
+    /**
+     * Sets the element that owns properties shown on this page.
+     * 
+     * @param element
+     *            the element
+     */
+    public void setElement(IAdaptable element) {
+        this.element = element;
+    }
 }

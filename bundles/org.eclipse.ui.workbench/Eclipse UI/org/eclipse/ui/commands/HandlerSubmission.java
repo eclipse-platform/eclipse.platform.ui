@@ -129,7 +129,7 @@ public final class HandlerSubmission implements Comparable {
             IWorkbenchPartSite activeWorkbenchPartSite, String commandId,
             IHandler handler, Priority priority) {
         if (commandId == null || handler == null || priority == null)
-                throw new NullPointerException();
+            throw new NullPointerException();
 
         this.activePartId = activePartId;
         this.activeShell = activeShell;
@@ -161,8 +161,8 @@ public final class HandlerSubmission implements Comparable {
                                 castedObject.commandId);
 
                         if (compareTo == 0)
-                                compareTo = Util.compare(handler,
-                                        castedObject.handler);
+                            compareTo = Util.compare(handler,
+                                    castedObject.handler);
                     }
                 }
             }

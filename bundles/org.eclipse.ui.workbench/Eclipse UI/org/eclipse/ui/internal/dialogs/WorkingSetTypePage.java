@@ -12,21 +12,34 @@
  * *****************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
-import java.util.*;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
+import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.WorkingSetDescriptor;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
 
@@ -38,133 +51,153 @@ import org.eclipse.ui.internal.registry.WorkingSetRegistry;
  * @since 2.0
  */
 public class WorkingSetTypePage extends WizardPage {
-	private final static int SIZING_SELECTION_WIDGET_WIDTH = 50;
-	private final static int SIZING_SELECTION_WIDGET_HEIGHT = 200;
+    private final static int SIZING_SELECTION_WIDGET_WIDTH = 50;
 
-	private TableViewer typesListViewer;
-	private Map icons;
+    private final static int SIZING_SELECTION_WIDGET_HEIGHT = 200;
 
-	/**
-	 * Creates a new instance of the receiver
-	 */
-	public WorkingSetTypePage() {
-		super("workingSetTypeSelectionPage", WorkbenchMessages.getString("Select"), WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_WIZBAN_WORKINGSET_WIZ)); //$NON-NLS-1$ //$NON-NLS-2$
-		setDescription(WorkbenchMessages.getString("WorkingSetTypePage.description")); //$NON-NLS-1$				
-		icons = new Hashtable();
-	}
-	/** 
-	 * Overrides method in WizardPage
-	 * 
-	 * @see org.eclipse.jface.wizard.IWizardPage#canFlipToNextPage()
-	 */
-	public boolean canFlipToNextPage() {
-		return isPageComplete();
-	}
-	/**
-	 * Populates the working set types list.
-	 */
-	private void createContent() {
-		WorkingSetRegistry registry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
-		WorkingSetDescriptor[] descriptors = registry.getWorkingSetDescriptors();
-		Table table = (Table) typesListViewer.getControl();
+    private TableViewer typesListViewer;
 
-		for (int i = 0; i < descriptors.length; i++) {
-			TableItem tableItem = new TableItem(table, SWT.NULL);
-			ImageDescriptor imageDescriptor = descriptors[i].getIcon();
-			
-			if (imageDescriptor != null) {
-				Image icon = (Image) icons.get(imageDescriptor);
-				if (icon == null) {
-					icon = imageDescriptor.createImage();
-					icons.put(imageDescriptor, icon);
-				}
-				tableItem.setImage(icon);
-			}
-			tableItem.setText(descriptors[i].getName());
-			tableItem.setData(descriptors[i]);
-		}
-	}
-	/** 
-	 * Implements IDialogPage
-	 * 
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(Composite)
-	 */
-	public void createControl(Composite parent) {
-		Font font = parent.getFont();
-		Composite composite = new Composite(parent, SWT.NULL);
-		composite.setLayout(new GridLayout());
-		composite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
-		setControl(composite);
+    private Map icons;
 
-		WorkbenchHelp.setHelp(composite, IHelpContextIds.WORKING_SET_TYPE_PAGE);
-		Label typesLabel = new Label(composite, SWT.NONE);
-		typesLabel.setText(WorkbenchMessages.getString("WorkingSetTypePage.typesLabel")); //$NON-NLS-1$
-		GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
-		typesLabel.setLayoutData(data);
-		typesLabel.setFont(font);
+    /**
+     * Creates a new instance of the receiver
+     */
+    public WorkingSetTypePage() {
+        super(
+                "workingSetTypeSelectionPage", WorkbenchMessages.getString("Select"), WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_WIZBAN_WORKINGSET_WIZ)); //$NON-NLS-1$ //$NON-NLS-2$
+        setDescription(WorkbenchMessages
+                .getString("WorkingSetTypePage.description")); //$NON-NLS-1$				
+        icons = new Hashtable();
+    }
 
-		typesListViewer = new TableViewer(composite, SWT.BORDER | SWT.MULTI);
-		data = new GridData(GridData.FILL_BOTH);
-		data.heightHint = SIZING_SELECTION_WIDGET_HEIGHT;
-		data.widthHint = SIZING_SELECTION_WIDGET_WIDTH;
-		typesListViewer.getTable().setLayoutData(data);
-		typesListViewer.getTable().setFont(font);
-		typesListViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				handleSelectionChanged();
-			}
-		});
-		typesListViewer.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event) {
-				handleDoubleClick();
-			}
-		});		
-		createContent();
-		setPageComplete(false);
-	}
-	/** 
-	 * Overrides method in DialogPage
-	 * 
-	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
-	 */
-	public void dispose() {
-		Iterator iterator = icons.values().iterator();
-		
-		while (iterator.hasNext()) {
-			Image icon = (Image) iterator.next();
-			icon.dispose();
-		}
-		super.dispose();
-	}
-	/**
-	 * Returns the page id of the selected working set type.
-	 * 
-	 * @return the page id of the selected working set type.
-	 */
-	public String getSelection() {
-		ISelection selection = typesListViewer.getSelection();
-		boolean hasSelection = selection != null && selection.isEmpty() == false;
+    /** 
+     * Overrides method in WizardPage
+     * 
+     * @see org.eclipse.jface.wizard.IWizardPage#canFlipToNextPage()
+     */
+    public boolean canFlipToNextPage() {
+        return isPageComplete();
+    }
 
-		if (hasSelection && selection instanceof IStructuredSelection) {
-			WorkingSetDescriptor workingSetDescriptor = (WorkingSetDescriptor) ((IStructuredSelection) selection).getFirstElement();
-			return workingSetDescriptor.getId();
-		}
-		return null;
-	}
-	/**
-	 * Called when a working set type is double clicked.
-	 */
-	private void handleDoubleClick() {
-		handleSelectionChanged();
-		getContainer().showPage(getNextPage());
-	}
-	/**
-	 * Called when the selection has changed.
-	 */
-	private void handleSelectionChanged() {
-		ISelection selection = typesListViewer.getSelection();
-		boolean hasSelection = selection != null && selection.isEmpty() == false;
+    /**
+     * Populates the working set types list.
+     */
+    private void createContent() {
+        WorkingSetRegistry registry = WorkbenchPlugin.getDefault()
+                .getWorkingSetRegistry();
+        WorkingSetDescriptor[] descriptors = registry
+                .getWorkingSetDescriptors();
+        Table table = (Table) typesListViewer.getControl();
 
-		setPageComplete(hasSelection);
-	}
+        for (int i = 0; i < descriptors.length; i++) {
+            TableItem tableItem = new TableItem(table, SWT.NULL);
+            ImageDescriptor imageDescriptor = descriptors[i].getIcon();
+
+            if (imageDescriptor != null) {
+                Image icon = (Image) icons.get(imageDescriptor);
+                if (icon == null) {
+                    icon = imageDescriptor.createImage();
+                    icons.put(imageDescriptor, icon);
+                }
+                tableItem.setImage(icon);
+            }
+            tableItem.setText(descriptors[i].getName());
+            tableItem.setData(descriptors[i]);
+        }
+    }
+
+    /** 
+     * Implements IDialogPage
+     * 
+     * @see org.eclipse.jface.dialogs.IDialogPage#createControl(Composite)
+     */
+    public void createControl(Composite parent) {
+        Font font = parent.getFont();
+        Composite composite = new Composite(parent, SWT.NULL);
+        composite.setLayout(new GridLayout());
+        composite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+        setControl(composite);
+
+        WorkbenchHelp.setHelp(composite, IHelpContextIds.WORKING_SET_TYPE_PAGE);
+        Label typesLabel = new Label(composite, SWT.NONE);
+        typesLabel.setText(WorkbenchMessages
+                .getString("WorkingSetTypePage.typesLabel")); //$NON-NLS-1$
+        GridData data = new GridData(GridData.GRAB_HORIZONTAL
+                | GridData.GRAB_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL
+                | GridData.VERTICAL_ALIGN_CENTER);
+        typesLabel.setLayoutData(data);
+        typesLabel.setFont(font);
+
+        typesListViewer = new TableViewer(composite, SWT.BORDER | SWT.MULTI);
+        data = new GridData(GridData.FILL_BOTH);
+        data.heightHint = SIZING_SELECTION_WIDGET_HEIGHT;
+        data.widthHint = SIZING_SELECTION_WIDGET_WIDTH;
+        typesListViewer.getTable().setLayoutData(data);
+        typesListViewer.getTable().setFont(font);
+        typesListViewer
+                .addSelectionChangedListener(new ISelectionChangedListener() {
+                    public void selectionChanged(SelectionChangedEvent event) {
+                        handleSelectionChanged();
+                    }
+                });
+        typesListViewer.addDoubleClickListener(new IDoubleClickListener() {
+            public void doubleClick(DoubleClickEvent event) {
+                handleDoubleClick();
+            }
+        });
+        createContent();
+        setPageComplete(false);
+    }
+
+    /** 
+     * Overrides method in DialogPage
+     * 
+     * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
+     */
+    public void dispose() {
+        Iterator iterator = icons.values().iterator();
+
+        while (iterator.hasNext()) {
+            Image icon = (Image) iterator.next();
+            icon.dispose();
+        }
+        super.dispose();
+    }
+
+    /**
+     * Returns the page id of the selected working set type.
+     * 
+     * @return the page id of the selected working set type.
+     */
+    public String getSelection() {
+        ISelection selection = typesListViewer.getSelection();
+        boolean hasSelection = selection != null
+                && selection.isEmpty() == false;
+
+        if (hasSelection && selection instanceof IStructuredSelection) {
+            WorkingSetDescriptor workingSetDescriptor = (WorkingSetDescriptor) ((IStructuredSelection) selection)
+                    .getFirstElement();
+            return workingSetDescriptor.getId();
+        }
+        return null;
+    }
+
+    /**
+     * Called when a working set type is double clicked.
+     */
+    private void handleDoubleClick() {
+        handleSelectionChanged();
+        getContainer().showPage(getNextPage());
+    }
+
+    /**
+     * Called when the selection has changed.
+     */
+    private void handleSelectionChanged() {
+        ISelection selection = typesListViewer.getSelection();
+        boolean hasSelection = selection != null
+                && selection.isEmpty() == false;
+
+        setPageComplete(hasSelection);
+    }
 }

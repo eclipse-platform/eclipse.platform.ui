@@ -19,17 +19,17 @@ import org.eclipse.jface.action.IAction;
  * part it should work with.
  */
 public interface IObjectActionDelegate extends IActionDelegate {
-/**
- * Sets the active part for the delegate.  
- * The active part is commonly used to get a working context for the action, such
- * as the shell for any dialog which is needed.
- * <p>
- * This method will be called every time the action appears in a popup menu.  The
- * targetPart may change with each invocation.
- * </p>
- *
- * @param action the action proxy that handles presentation portion of the action
- * @param targetPart the new part target
- */
-public void setActivePart(IAction action, IWorkbenchPart targetPart);
+    /**
+     * Sets the active part for the delegate.  
+     * The active part is commonly used to get a working context for the action, such
+     * as the shell for any dialog which is needed.
+     * <p>
+     * This method will be called every time the action appears in a popup menu.  The
+     * targetPart may change with each invocation.
+     * </p>
+     *
+     * @param action the action proxy that handles presentation portion of the action
+     * @param targetPart the new part target
+     */
+    public void setActivePart(IAction action, IWorkbenchPart targetPart);
 }

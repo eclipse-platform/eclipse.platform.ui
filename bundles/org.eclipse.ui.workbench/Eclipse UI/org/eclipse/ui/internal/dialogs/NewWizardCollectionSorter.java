@@ -16,7 +16,6 @@ import java.text.Collator;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
-
 import org.eclipse.ui.internal.registry.NewWizardsRegistryReader;
 import org.eclipse.ui.model.WorkbenchAdapter;
 
@@ -30,57 +29,65 @@ import org.eclipse.ui.model.WorkbenchAdapter;
  *	ultimately be placed at the beginning of the sorted result.
  */
 class NewWizardCollectionSorter extends ViewerSorter {
-	public final static NewWizardCollectionSorter INSTANCE = new NewWizardCollectionSorter();
-	private Collator collator = Collator.getInstance();
-/**
- * Creates an instance of <code>NewWizardCollectionSorter</code>.  Since this
- * is a stateless sorter, it is only accessible as a singleton; the private
- * visibility of this constructor ensures this.
- */
-private NewWizardCollectionSorter() {
-	super();
-}
-/**
- * The 'compare' method of the sort operation.
- *
- * @return  the value <code>0</code> if the argument o1 is equal to o2;
- * 			a value less than <code>0</code> if o1 is less than o2;
- *			and a value greater than <code>0</code> if o1 is greater than o2.
- */
-public int compare(Viewer viewer,Object o1,Object o2) {
-    // wizards before categories
-    if (o1 instanceof WorkbenchWizardElement && o2 instanceof WizardCollectionElement) 
-        return -1;
-    if (o2 instanceof WorkbenchWizardElement && o1 instanceof WizardCollectionElement) 
-        return 1; 
+    public final static NewWizardCollectionSorter INSTANCE = new NewWizardCollectionSorter();
 
-	String name1 = ((WorkbenchAdapter)o1).getLabel(o1);
-	String name2 = ((WorkbenchAdapter)o2).getLabel(o2);
-	if (name1.equals(name2))
-		return 0;
-		
-	// Be sure that the examples category is at the end of the wizard categories
-	if (name2.equalsIgnoreCase(NewWizardsRegistryReader.EXAMPLES_WIZARD_CATEGORY))
-		return -1;
-		
-	if (name1.equalsIgnoreCase(NewWizardsRegistryReader.EXAMPLES_WIZARD_CATEGORY))
-		return 1;
+    private Collator collator = Collator.getInstance();
 
-	// note that this must be checked for name2 before name1 because if they're
-	// BOTH equal to BASE_CATEGORY then we want to answer false by convention
-	if (name2.equalsIgnoreCase(NewWizardsRegistryReader.BASE_CATEGORY))
-		return 1;
-		
-	if (name1.equalsIgnoreCase(NewWizardsRegistryReader.BASE_CATEGORY))
-		return -1;
-		
-	return collator.compare(name1, name2);
-}
-/**
- *	Return true if this sorter is affected by a property 
- *	change of propertyName on the specified element.
- */
-public boolean isSorterProperty(Object object, String propertyId) {
-	return propertyId.equals(IBasicPropertyConstants.P_TEXT);
-}
+    /**
+     * Creates an instance of <code>NewWizardCollectionSorter</code>.  Since this
+     * is a stateless sorter, it is only accessible as a singleton; the private
+     * visibility of this constructor ensures this.
+     */
+    private NewWizardCollectionSorter() {
+        super();
+    }
+
+    /**
+     * The 'compare' method of the sort operation.
+     *
+     * @return  the value <code>0</code> if the argument o1 is equal to o2;
+     * 			a value less than <code>0</code> if o1 is less than o2;
+     *			and a value greater than <code>0</code> if o1 is greater than o2.
+     */
+    public int compare(Viewer viewer, Object o1, Object o2) {
+        // wizards before categories
+        if (o1 instanceof WorkbenchWizardElement
+                && o2 instanceof WizardCollectionElement)
+            return -1;
+        if (o2 instanceof WorkbenchWizardElement
+                && o1 instanceof WizardCollectionElement)
+            return 1;
+
+        String name1 = ((WorkbenchAdapter) o1).getLabel(o1);
+        String name2 = ((WorkbenchAdapter) o2).getLabel(o2);
+        if (name1.equals(name2))
+            return 0;
+
+        // Be sure that the examples category is at the end of the wizard categories
+        if (name2
+                .equalsIgnoreCase(NewWizardsRegistryReader.EXAMPLES_WIZARD_CATEGORY))
+            return -1;
+
+        if (name1
+                .equalsIgnoreCase(NewWizardsRegistryReader.EXAMPLES_WIZARD_CATEGORY))
+            return 1;
+
+        // note that this must be checked for name2 before name1 because if they're
+        // BOTH equal to BASE_CATEGORY then we want to answer false by convention
+        if (name2.equalsIgnoreCase(NewWizardsRegistryReader.BASE_CATEGORY))
+            return 1;
+
+        if (name1.equalsIgnoreCase(NewWizardsRegistryReader.BASE_CATEGORY))
+            return -1;
+
+        return collator.compare(name1, name2);
+    }
+
+    /**
+     *	Return true if this sorter is affected by a property 
+     *	change of propertyName on the specified element.
+     */
+    public boolean isSorterProperty(Object object, String propertyId) {
+        return propertyId.equals(IBasicPropertyConstants.P_TEXT);
+    }
 }

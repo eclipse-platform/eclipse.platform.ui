@@ -20,14 +20,16 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * for a string pattern used to filter the list of resources.
  *
  */
-/*package*/ class GotoResourceDialog extends ResourceListSelectionDialog {
+/*package*/class GotoResourceDialog extends ResourceListSelectionDialog {
 
-/**
- * Creates a new instance of the class.
- */
-protected GotoResourceDialog(Shell parentShell, IContainer container, int typesMask) {
-	super(parentShell, container, typesMask);
-	setTitle(ResourceNavigatorMessages.getString("Goto.title")); //$NON-NLS-1$
-	WorkbenchHelp.setHelp(parentShell, INavigatorHelpContextIds.GOTO_RESOURCE_DIALOG);
-}
+    /**
+     * Creates a new instance of the class.
+     */
+    protected GotoResourceDialog(Shell parentShell, IContainer container,
+            int typesMask) {
+        super(parentShell, container, typesMask);
+        setTitle(ResourceNavigatorMessages.getString("Goto.title")); //$NON-NLS-1$
+        WorkbenchHelp.setHelp(parentShell,
+                INavigatorHelpContextIds.GOTO_RESOURCE_DIALOG);
+    }
 }

@@ -19,16 +19,17 @@ import org.eclipse.ui.presentations.StackDropResult;
  */
 public abstract class TabDragHandler {
 
-	/**
-	 * Returns the StackDropResult for the location being dragged over.
-	 * 
-	 * @param currentControl control being dragged over
-	 * @param location mouse position (display coordinates)
-	 * @param initialTab the index of the tab in this stack being dragged, 
-	 * 			or -1 if dragging a tab from another stack. 
-	 * @return the StackDropResult for this drag location
-	 */
-	public abstract StackDropResult dragOver(Control currentControl, Point location, int initialTab);
-	
-	public abstract int getInsertionPosition(Object cookie);
+    /**
+     * Returns the StackDropResult for the location being dragged over.
+     * 
+     * @param currentControl control being dragged over
+     * @param location mouse position (display coordinates)
+     * @param initialTab the index of the tab in this stack being dragged, 
+     * 			or -1 if dragging a tab from another stack. 
+     * @return the StackDropResult for this drag location
+     */
+    public abstract StackDropResult dragOver(Control currentControl,
+            Point location, int initialTab);
+
+    public abstract int getInsertionPosition(Object cookie);
 }

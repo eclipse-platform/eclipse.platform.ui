@@ -22,159 +22,158 @@ import org.eclipse.ui.internal.util.Util;
 
 public final class CategoryDefinition implements Comparable {
 
-	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL =
-		CategoryDefinition.class.getName().hashCode();
+    private final static int HASH_FACTOR = 89;
 
-	public static Map categoryDefinitionsById(
-		Collection categoryDefinitions,
-		boolean allowNullIds) {
-		if (categoryDefinitions == null)
-			throw new NullPointerException();
+    private final static int HASH_INITIAL = CategoryDefinition.class.getName()
+            .hashCode();
 
-		Map map = new HashMap();
-		Iterator iterator = categoryDefinitions.iterator();
+    public static Map categoryDefinitionsById(Collection categoryDefinitions,
+            boolean allowNullIds) {
+        if (categoryDefinitions == null)
+            throw new NullPointerException();
 
-		while (iterator.hasNext()) {
-			Object object = iterator.next();
-			Util.assertInstance(object, CategoryDefinition.class);
-			CategoryDefinition categoryDefinition =
-				(CategoryDefinition) object;
-			String id = categoryDefinition.getId();
+        Map map = new HashMap();
+        Iterator iterator = categoryDefinitions.iterator();
 
-			if (allowNullIds || id != null)
-				map.put(id, categoryDefinition);
-		}
+        while (iterator.hasNext()) {
+            Object object = iterator.next();
+            Util.assertInstance(object, CategoryDefinition.class);
+            CategoryDefinition categoryDefinition = (CategoryDefinition) object;
+            String id = categoryDefinition.getId();
 
-		return map;
-	}
+            if (allowNullIds || id != null)
+                map.put(id, categoryDefinition);
+        }
 
-	public static Map categoryDefinitionsByName(
-		Collection categoryDefinitions,
-		boolean allowNullNames) {
-		if (categoryDefinitions == null)
-			throw new NullPointerException();
+        return map;
+    }
 
-		Map map = new HashMap();
-		Iterator iterator = categoryDefinitions.iterator();
+    public static Map categoryDefinitionsByName(Collection categoryDefinitions,
+            boolean allowNullNames) {
+        if (categoryDefinitions == null)
+            throw new NullPointerException();
 
-		while (iterator.hasNext()) {
-			Object object = iterator.next();
-			Util.assertInstance(object, CategoryDefinition.class);
-			CategoryDefinition categoryDefinition =
-				(CategoryDefinition) object;
-			String name = categoryDefinition.getName();
+        Map map = new HashMap();
+        Iterator iterator = categoryDefinitions.iterator();
 
-			if (allowNullNames || name != null) {
-				Set categoryDefinitions2 = (Set) map.get(name);
+        while (iterator.hasNext()) {
+            Object object = iterator.next();
+            Util.assertInstance(object, CategoryDefinition.class);
+            CategoryDefinition categoryDefinition = (CategoryDefinition) object;
+            String name = categoryDefinition.getName();
 
-				if (categoryDefinitions2 == null) {
-					categoryDefinitions2 = new HashSet();
-					map.put(name, categoryDefinitions2);
-				}
+            if (allowNullNames || name != null) {
+                Set categoryDefinitions2 = (Set) map.get(name);
 
-				categoryDefinitions2.add(categoryDefinition);
-			}
-		}
+                if (categoryDefinitions2 == null) {
+                    categoryDefinitions2 = new HashSet();
+                    map.put(name, categoryDefinitions2);
+                }
 
-		return map;
-	}
+                categoryDefinitions2.add(categoryDefinition);
+            }
+        }
 
-	private String description;
+        return map;
+    }
 
-	private transient int hashCode;
-	private transient boolean hashCodeComputed;
-	private String id;
-	private String name;
-	private String sourceId;
-	private transient String string;
+    private String description;
 
-	public CategoryDefinition(
-		String description,
-		String id,
-		String name,
-		String sourceId) {
-		this.description = description;
-		this.id = id;
-		this.name = name;
-		this.sourceId = sourceId;
-	}
+    private transient int hashCode;
 
-	public int compareTo(Object object) {
-		CategoryDefinition castedObject = (CategoryDefinition) object;
-		int compareTo = Util.compare(description, castedObject.description);
+    private transient boolean hashCodeComputed;
 
-		if (compareTo == 0) {
-			compareTo = Util.compare(id, castedObject.id);
+    private String id;
 
-			if (compareTo == 0) {
-				compareTo = Util.compare(name, castedObject.name);
+    private String name;
 
-				if (compareTo == 0)
-					compareTo = Util.compare(sourceId, castedObject.sourceId);
-			}
-		}
+    private String sourceId;
 
-		return compareTo;
-	}
+    private transient String string;
 
-	public boolean equals(Object object) {
-		if (!(object instanceof CategoryDefinition))
-			return false;
+    public CategoryDefinition(String description, String id, String name,
+            String sourceId) {
+        this.description = description;
+        this.id = id;
+        this.name = name;
+        this.sourceId = sourceId;
+    }
 
-		CategoryDefinition castedObject = (CategoryDefinition) object;
-		boolean equals = true;
-		equals &= Util.equals(description, castedObject.description);
-		equals &= Util.equals(id, castedObject.id);
-		equals &= Util.equals(name, castedObject.name);
-		equals &= Util.equals(sourceId, castedObject.sourceId);
-		return equals;
-	}
+    public int compareTo(Object object) {
+        CategoryDefinition castedObject = (CategoryDefinition) object;
+        int compareTo = Util.compare(description, castedObject.description);
 
-	public String getDescription() {
-		return description;
-	}
+        if (compareTo == 0) {
+            compareTo = Util.compare(id, castedObject.id);
 
-	public String getId() {
-		return id;
-	}
+            if (compareTo == 0) {
+                compareTo = Util.compare(name, castedObject.name);
 
-	public String getName() {
-		return name;
-	}
+                if (compareTo == 0)
+                    compareTo = Util.compare(sourceId, castedObject.sourceId);
+            }
+        }
 
-	public String getSourceId() {
-		return sourceId;
-	}
+        return compareTo;
+    }
 
-	public int hashCode() {
-		if (!hashCodeComputed) {
-			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(description);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(sourceId);
-			hashCodeComputed = true;
-		}
+    public boolean equals(Object object) {
+        if (!(object instanceof CategoryDefinition))
+            return false;
 
-		return hashCode;
-	}
+        CategoryDefinition castedObject = (CategoryDefinition) object;
+        boolean equals = true;
+        equals &= Util.equals(description, castedObject.description);
+        equals &= Util.equals(id, castedObject.id);
+        equals &= Util.equals(name, castedObject.name);
+        equals &= Util.equals(sourceId, castedObject.sourceId);
+        return equals;
+    }
 
-	public String toString() {
-		if (string == null) {
-			final StringBuffer stringBuffer = new StringBuffer();
-			stringBuffer.append('[');
-			stringBuffer.append(description);
-			stringBuffer.append(',');
-			stringBuffer.append(id);
-			stringBuffer.append(',');
-			stringBuffer.append(name);
-			stringBuffer.append(',');
-			stringBuffer.append(sourceId);
-			stringBuffer.append(']');
-			string = stringBuffer.toString();
-		}
+    public String getDescription() {
+        return description;
+    }
 
-		return string;
-	}
+    public String getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getSourceId() {
+        return sourceId;
+    }
+
+    public int hashCode() {
+        if (!hashCodeComputed) {
+            hashCode = HASH_INITIAL;
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(description);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(sourceId);
+            hashCodeComputed = true;
+        }
+
+        return hashCode;
+    }
+
+    public String toString() {
+        if (string == null) {
+            final StringBuffer stringBuffer = new StringBuffer();
+            stringBuffer.append('[');
+            stringBuffer.append(description);
+            stringBuffer.append(',');
+            stringBuffer.append(id);
+            stringBuffer.append(',');
+            stringBuffer.append(name);
+            stringBuffer.append(',');
+            stringBuffer.append(sourceId);
+            stringBuffer.append(']');
+            string = stringBuffer.toString();
+        }
+
+        return string;
+    }
 }

@@ -12,7 +12,9 @@ package org.eclipse.ui.internal.ide.dialogs;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * A dialog to show a multi-step wizard to the end user. 
@@ -34,107 +36,108 @@ import org.eclipse.swt.widgets.*;
  * </p>
  */
 public class MultiStepWizardDialog extends WizardDialog {
-	private MultiStepWizard multiStepWizard;
-	
-	/**
-	 * Creates a new wizard dialog for the given wizard. 
-	 *
-	 * @param parentShell the parent shell
-	 * @param newWizard the multi-step wizard this dialog is working on
-	 */
-	public MultiStepWizardDialog(Shell parentShell, MultiStepWizard newWizard) {
-		super(parentShell, newWizard);
-		multiStepWizard = newWizard;
-		multiStepWizard.setWizardDialog(this);
-	}
+    private MultiStepWizard multiStepWizard;
 
-	/**
-	 * Forces the wizard dialog to close
-	 */
-	/* package */ void forceClose() {
-		super.finishPressed();
-	}
-	
-	/* (non-Javadoc)
-	 * Method declared on WizardDialog.
-	 */
-	protected void backPressed() {
-		if (multiStepWizard.isConfigureStepMode())
-			multiStepWizard.getStepContainer().backPressed();
-		else
-			super.backPressed();
-	}
-	
-	/* (non-Javadoc)
-	 * Method declared on WizardDialog.
-	 */
-	protected void finishPressed() {
-		if (multiStepWizard.isConfigureStepMode()) {
-			boolean success = multiStepWizard.getStepContainer().performFinish();
-			if (success)
-				multiStepWizard.getStepContainer().processCurrentStep();
-		} else {
-			super.finishPressed();
-		}
-	}	
+    /**
+     * Creates a new wizard dialog for the given wizard. 
+     *
+     * @param parentShell the parent shell
+     * @param newWizard the multi-step wizard this dialog is working on
+     */
+    public MultiStepWizardDialog(Shell parentShell, MultiStepWizard newWizard) {
+        super(parentShell, newWizard);
+        multiStepWizard = newWizard;
+        multiStepWizard.setWizardDialog(this);
+    }
 
-	/**
-	 * Returns the multi-step wizard for this dialog
-	 */
-	/* package */ MultiStepWizard getMultiStepWizard() {
-		return multiStepWizard;
-	}
-	
-	/* (non-Javadoc)
-	 * Method declared on WizardDialog.
-	 */
-	protected void helpPressed() {
-		if (multiStepWizard.isConfigureStepMode())
-			multiStepWizard.getStepContainer().helpPressed();
-		else
-			super.helpPressed();
-	}
+    /**
+     * Forces the wizard dialog to close
+     */
+    /* package */void forceClose() {
+        super.finishPressed();
+    }
 
-	/* (non-Javadoc)
-	 * Method declared on WizardDialog.
-	 */
-	protected void nextPressed() {
-		if (multiStepWizard.isConfigureStepMode())
-			multiStepWizard.getStepContainer().nextPressed();
-		else
-			super.nextPressed();
-	}
-	
-	/**
-	 * Sets the label for the finish button
-	 */
-	/* package */ void setFinishLabel(String label) {
-		Button button = getButton(IDialogConstants.FINISH_ID);
-		if (button == null)
-			return;
+    /* (non-Javadoc)
+     * Method declared on WizardDialog.
+     */
+    protected void backPressed() {
+        if (multiStepWizard.isConfigureStepMode())
+            multiStepWizard.getStepContainer().backPressed();
+        else
+            super.backPressed();
+    }
 
-		if (label == null) {
-			if (!button.getText().equals(IDialogConstants.FINISH_LABEL)) {
-				button.setText(IDialogConstants.FINISH_LABEL);
-				((Composite)button.getParent()).layout(true);
-			}
-		} else {
-			button.setText(label);
-			((Composite)button.getParent()).layout(true);
-		}
-	}
-	
-	/**
-	 * Updates everything in the dialog
-	 */
-	/* package */ void updateAll() {
-		super.update();
-	}
-	
-	/**
-	 * Updates the layout of the dialog
-	 */
-	/* package */ void updateLayout() {
-		super.updateSize(getCurrentPage());
-	}
+    /* (non-Javadoc)
+     * Method declared on WizardDialog.
+     */
+    protected void finishPressed() {
+        if (multiStepWizard.isConfigureStepMode()) {
+            boolean success = multiStepWizard.getStepContainer()
+                    .performFinish();
+            if (success)
+                multiStepWizard.getStepContainer().processCurrentStep();
+        } else {
+            super.finishPressed();
+        }
+    }
+
+    /**
+     * Returns the multi-step wizard for this dialog
+     */
+    /* package */MultiStepWizard getMultiStepWizard() {
+        return multiStepWizard;
+    }
+
+    /* (non-Javadoc)
+     * Method declared on WizardDialog.
+     */
+    protected void helpPressed() {
+        if (multiStepWizard.isConfigureStepMode())
+            multiStepWizard.getStepContainer().helpPressed();
+        else
+            super.helpPressed();
+    }
+
+    /* (non-Javadoc)
+     * Method declared on WizardDialog.
+     */
+    protected void nextPressed() {
+        if (multiStepWizard.isConfigureStepMode())
+            multiStepWizard.getStepContainer().nextPressed();
+        else
+            super.nextPressed();
+    }
+
+    /**
+     * Sets the label for the finish button
+     */
+    /* package */void setFinishLabel(String label) {
+        Button button = getButton(IDialogConstants.FINISH_ID);
+        if (button == null)
+            return;
+
+        if (label == null) {
+            if (!button.getText().equals(IDialogConstants.FINISH_LABEL)) {
+                button.setText(IDialogConstants.FINISH_LABEL);
+                ((Composite) button.getParent()).layout(true);
+            }
+        } else {
+            button.setText(label);
+            ((Composite) button.getParent()).layout(true);
+        }
+    }
+
+    /**
+     * Updates everything in the dialog
+     */
+    /* package */void updateAll() {
+        super.update();
+    }
+
+    /**
+     * Updates the layout of the dialog
+     */
+    /* package */void updateLayout() {
+        super.updateSize(getCurrentPage());
+    }
 }

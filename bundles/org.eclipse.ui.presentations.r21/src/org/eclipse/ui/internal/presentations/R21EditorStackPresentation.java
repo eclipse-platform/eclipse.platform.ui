@@ -79,7 +79,7 @@ public class R21EditorStackPresentation extends StackPresentation {
 
             if (tabUnderPointer == null) {
                 // drag the entire stack
-                if(getSite().isStackMoveable())
+                if (getSite().isStackMoveable())
                     getSite().dragStart(tabFolder.toDisplay(localPos), false);
                 return;
             }
@@ -100,7 +100,7 @@ public class R21EditorStackPresentation extends StackPresentation {
             CTabItem item = (CTabItem) e.item;
             if (null != item) {
                 e.doit = false; // otherwise tab is auto disposed on return
-                getSite().close(new IPresentablePart[]{getPartForTab(item)});
+                getSite().close(new IPresentablePart[] { getPartForTab(item) });
             }
         }
     };
@@ -147,7 +147,8 @@ public class R21EditorStackPresentation extends StackPresentation {
                     // PR#1GDEZ25 - If selection will change in mouse up ignore
                     // mouse down.
                     CTabItem oldItem = tabFolder.getSelection();
-                    if (newItem != oldItem) return;
+                    if (newItem != oldItem)
+                        return;
                 }
 
                 // set focus
@@ -200,7 +201,8 @@ public class R21EditorStackPresentation extends StackPresentation {
 
         public void handleEvent(Event e) {
             IPresentablePart item = getPartForTab((CTabItem) e.item);
-            if (item != null) getSite().selectPart(item);
+            if (item != null)
+                getSite().selectPart(item);
         }
     };
 
@@ -245,14 +247,15 @@ public class R21EditorStackPresentation extends StackPresentation {
             updateGradient();
         }
     };
-    
+
     /** the listener for preference changes */
     private IPropertyChangeListener preferenceListener = new IPropertyChangeListener() {
 
         public void propertyChange(PropertyChangeEvent event) {
-            if(IPreferenceConstants.EDITOR_TAB_POSITION.equals(event.getProperty())) {
+            if (IPreferenceConstants.EDITOR_TAB_POSITION.equals(event
+                    .getProperty())) {
                 int tabPos = preferenceStore
-                .getInt(IPreferenceConstants.EDITOR_TAB_POSITION);
+                        .getInt(IPreferenceConstants.EDITOR_TAB_POSITION);
                 getTabFolder().setTabPosition(tabPos);
             }
         }
@@ -266,7 +269,7 @@ public class R21EditorStackPresentation extends StackPresentation {
         int tabPos = preferenceStore
                 .getInt(IPreferenceConstants.EDITOR_TAB_POSITION);
         tabFolder = new CTabFolder(parent, tabPos | SWT.BORDER);
-        
+
         // add listener for preference changes
         preferenceStore.addPropertyChangeListener(preferenceListener);
 
@@ -339,11 +342,13 @@ public class R21EditorStackPresentation extends StackPresentation {
      *         there is no such tab
      */
     private final int indexOf(IPresentablePart part) {
-        if (part == null) return tabFolder.getItemCount();
+        if (part == null)
+            return tabFolder.getItemCount();
 
         CTabItem[] items = tabFolder.getItems();
         for (int idx = 0; idx < items.length; idx++)
-            if (part == getPartForTab(items[idx])) return idx;
+            if (part == getPartForTab(items[idx]))
+                return idx;
 
         return items.length;
     }
@@ -386,11 +391,12 @@ public class R21EditorStackPresentation extends StackPresentation {
      */
     private void setControlSize() {
         if (current != null && tabFolder != null)
-                current.setBounds(calculatePageBounds(tabFolder));
+            current.setBounds(calculatePageBounds(tabFolder));
     }
 
     public static Rectangle calculatePageBounds(CTabFolder folder) {
-        if (folder == null) return new Rectangle(0, 0, 0, 0);
+        if (folder == null)
+            return new Rectangle(0, 0, 0, 0);
 
         Rectangle bounds = folder.getBounds();
         Rectangle offset = folder.getClientArea();
@@ -407,7 +413,8 @@ public class R21EditorStackPresentation extends StackPresentation {
      * @see org.eclipse.ui.internal.skins.Presentation#dispose()
      */
     public void dispose() {
-        if (isDisposed()) return;
+        if (isDisposed())
+            return;
 
         // remove shell listener
         tabFolder.getShell().removeShellListener(shellListener);
@@ -417,7 +424,7 @@ public class R21EditorStackPresentation extends StackPresentation {
 
         // remove drag listener
         PresentationUtil.removeDragListener(tabFolder, dragListener);
-        
+
         // remove preference listener
         preferenceStore.removePropertyChangeListener(preferenceListener);
 
@@ -438,9 +445,10 @@ public class R21EditorStackPresentation extends StackPresentation {
      * active state
      */
     private void updateGradient() {
-        
-        if(isDisposed()) return;
-        
+
+        if (isDisposed())
+            return;
+
         Color fgColor;
         Color[] bgColors;
         int[] bgPercents;
@@ -503,7 +511,8 @@ public class R21EditorStackPresentation extends StackPresentation {
         Control ctrl = getControl();
         if (ctrl != null) {
             Object data = ctrl.getShell().getData();
-            if (data instanceof Window) return (Window) data;
+            if (data instanceof Window)
+                return (Window) data;
         }
         return null;
     }
@@ -595,18 +604,19 @@ public class R21EditorStackPresentation extends StackPresentation {
             String titleTooltip = presentablePart.getTitleToolTip().trim();
 
             if (titleTooltip.endsWith(title))
-                    titleTooltip = titleTooltip.substring(0,
-                            titleTooltip.lastIndexOf(title)).trim();
+                titleTooltip = titleTooltip.substring(0,
+                        titleTooltip.lastIndexOf(title)).trim();
 
             if (titleTooltip.endsWith("\\")) //$NON-NLS-1$
-                    titleTooltip = titleTooltip.substring(0,
-                            titleTooltip.lastIndexOf("\\")).trim(); //$NON-NLS-1$
+                titleTooltip = titleTooltip.substring(0,
+                        titleTooltip.lastIndexOf("\\")).trim(); //$NON-NLS-1$
 
             if (titleTooltip.endsWith("/")) //$NON-NLS-1$
-                    titleTooltip = titleTooltip.substring(0,
-                            titleTooltip.lastIndexOf("/")).trim(); //$NON-NLS-1$
+                titleTooltip = titleTooltip.substring(0,
+                        titleTooltip.lastIndexOf("/")).trim(); //$NON-NLS-1$
 
-            if (titleTooltip.length() >= 1) text += " - " + titleTooltip; //$NON-NLS-1$
+            if (titleTooltip.length() >= 1)
+                text += " - " + titleTooltip; //$NON-NLS-1$
         }
 
         if (presentablePart.isDirty()) {
@@ -639,37 +649,40 @@ public class R21EditorStackPresentation extends StackPresentation {
         return presentablePart.getTitleToolTip();
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.skins.StackPresentation#addPart(org.eclipse.ui.internal.skins.IPresentablePart, org.eclipse.ui.internal.skins.IPresentablePart)
-	 */
-	public void addPart(IPresentablePart newPart, Object cookie) {
-		
-		int idx;
-		
-		if (cookie instanceof Integer) {
-			idx = ((Integer)cookie).intValue();
-		} else {
-			// Select a location for newly inserted parts
-			idx = tabFolder.getItemCount();
-		}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.skins.StackPresentation#addPart(org.eclipse.ui.internal.skins.IPresentablePart, org.eclipse.ui.internal.skins.IPresentablePart)
+     */
+    public void addPart(IPresentablePart newPart, Object cookie) {
 
-		if (getTab(newPart) != null) {
-			return;
-		}
-		
-		createPartTab(newPart, idx);
-	}
-	    
+        int idx;
+
+        if (cookie instanceof Integer) {
+            idx = ((Integer) cookie).intValue();
+        } else {
+            // Select a location for newly inserted parts
+            idx = tabFolder.getItemCount();
+        }
+
+        if (getTab(newPart) != null) {
+            return;
+        }
+
+        createPartTab(newPart, idx);
+    }
+
     /*
      * (non-Javadoc)
      * 
      * @see org.eclipse.ui.internal.skins.StackPresentation#removePart(org.eclipse.ui.internal.skins.IPresentablePart)
      */
     public void removePart(IPresentablePart oldPart) {
-        if (current == oldPart) current = null;
+        if (current == oldPart)
+            current = null;
 
         CTabItem item = getTab(oldPart);
-        if (item == null) { return; }
+        if (item == null) {
+            return;
+        }
         oldPart.setVisible(false);
 
         item.dispose();
@@ -681,7 +694,9 @@ public class R21EditorStackPresentation extends StackPresentation {
      * @see org.eclipse.ui.internal.skins.StackPresentation#selectPart(org.eclipse.ui.internal.skins.IPresentablePart)
      */
     public void selectPart(IPresentablePart toSelect) {
-        if (toSelect == current) { return; }
+        if (toSelect == current) {
+            return;
+        }
 
         if (current != null) {
             current.setVisible(false);
@@ -693,7 +708,7 @@ public class R21EditorStackPresentation extends StackPresentation {
             tabFolder.setSelection(indexOf(current));
             current.setVisible(true);
             setControlSize();
-           
+
         }
     }
 
@@ -722,7 +737,8 @@ public class R21EditorStackPresentation extends StackPresentation {
      * @see org.eclipse.ui.internal.skins.Presentation#setVisible(boolean)
      */
     public void setVisible(boolean isVisible) {
-        if (current != null) current.setVisible(isVisible);
+        if (current != null)
+            current.setVisible(isVisible);
 
         getTabFolder().setVisible(isVisible);
     }
@@ -781,7 +797,8 @@ public class R21EditorStackPresentation extends StackPresentation {
 
         // This drop target only deals with tabs... if we're not dragging over
         // a tab, exit.
-        if (tabUnderPointer == null) return null;
+        if (tabUnderPointer == null)
+            return null;
 
         // workaround when left tab is dragged over next
         int dragOverIndex = tabFolder.indexOf(tabUnderPointer);
@@ -802,7 +819,7 @@ public class R21EditorStackPresentation extends StackPresentation {
             getSite().selectPart(getCurrentPart());
             Rectangle bounds = item.getBounds();
             int y = bounds.height;
-            if(getTabFolder().getTabPosition() == SWT.BOTTOM)
+            if (getTabFolder().getTabPosition() == SWT.BOTTOM)
                 y += bounds.y;
             showSystemMenu(getTabFolder().toDisplay(bounds.x, y));
         }
@@ -834,7 +851,9 @@ public class R21EditorStackPresentation extends StackPresentation {
      */
     protected IPartMenu getPartMenu() {
         IPresentablePart part = getCurrentPart();
-        if (part == null) { return null; }
+        if (part == null) {
+            return null;
+        }
 
         return part.getMenu();
     }
@@ -846,9 +865,12 @@ public class R21EditorStackPresentation extends StackPresentation {
      */
     public Control[] getTabList(IPresentablePart part) {
         ArrayList list = new ArrayList();
-        if (getControl() != null) list.add(getControl());
-        if (part.getToolBar() != null) list.add(part.getToolBar());
-        if (part.getControl() != null) list.add(part.getControl());
+        if (getControl() != null)
+            list.add(getControl());
+        if (part.getToolBar() != null)
+            list.add(part.getToolBar());
+        if (part.getControl() != null)
+            list.add(part.getControl());
         return (Control[]) list.toArray(new Control[list.size()]);
     }
 
@@ -865,11 +887,11 @@ public class R21EditorStackPresentation extends StackPresentation {
         return R21PresentationMessages.getString("EditorPane.moveEditor"); //$NON-NLS-1$ 
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.presentations.StackPresentation#setActive(int)
-	 */
-	public void setActive(int newState) {
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.presentations.StackPresentation#setActive(int)
+     */
+    public void setActive(int newState) {
         activeState = newState;
         updateGradient();
-	}
+    }
 }

@@ -25,49 +25,56 @@ import org.eclipse.swt.widgets.Label;
  * @see PageBookView
  */
 public class MessagePage extends Page {
-	private Composite pgComp;
-	private Label msgLabel;
-	private String message = "";//$NON-NLS-1$
-/**
- * Creates a new page. The message is the empty string.
- */
-public MessagePage() {
-    // do nothing
-}
-/* (non-Javadoc)
- * Method declared on IPage.
- */
-public void createControl(Composite parent) {
-	// Message in default page of Outline should have margins
-	pgComp = new Composite(parent, SWT.NULL);
-	pgComp.setLayout(new FillLayout());
-	
-	msgLabel = new Label(pgComp, SWT.LEFT | SWT.TOP | SWT.WRAP);
-	msgLabel.setText(message);
-}
-/* (non-Javadoc)
- * Method declared on IPage.
- */
-public Control getControl() {
-	return pgComp;
-}
-/**
- * Sets focus to a part in the page.
- */
-public void setFocus() {
-    // important to give focus to the composite rather than the label
-    // as the composite will actually take focus (though hidden),
-    // but setFocus on a Label is a no-op
-    pgComp.setFocus();
-}
-/**
- * Sets the message to the given string.
- *
- * @param message the message text
- */
-public void setMessage(String message) {
-	this.message = message;
-	if (msgLabel != null)
-		msgLabel.setText(message);
-}
+    private Composite pgComp;
+
+    private Label msgLabel;
+
+    private String message = "";//$NON-NLS-1$
+
+    /**
+     * Creates a new page. The message is the empty string.
+     */
+    public MessagePage() {
+        // do nothing
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IPage.
+     */
+    public void createControl(Composite parent) {
+        // Message in default page of Outline should have margins
+        pgComp = new Composite(parent, SWT.NULL);
+        pgComp.setLayout(new FillLayout());
+
+        msgLabel = new Label(pgComp, SWT.LEFT | SWT.TOP | SWT.WRAP);
+        msgLabel.setText(message);
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IPage.
+     */
+    public Control getControl() {
+        return pgComp;
+    }
+
+    /**
+     * Sets focus to a part in the page.
+     */
+    public void setFocus() {
+        // important to give focus to the composite rather than the label
+        // as the composite will actually take focus (though hidden),
+        // but setFocus on a Label is a no-op
+        pgComp.setFocus();
+    }
+
+    /**
+     * Sets the message to the given string.
+     *
+     * @param message the message text
+     */
+    public void setMessage(String message) {
+        this.message = message;
+        if (msgLabel != null)
+            msgLabel.setText(message);
+    }
 }

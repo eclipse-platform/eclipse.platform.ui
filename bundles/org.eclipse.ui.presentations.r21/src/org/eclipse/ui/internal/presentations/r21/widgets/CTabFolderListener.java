@@ -11,5 +11,5 @@
 package org.eclipse.ui.internal.presentations.r21.widgets;
 
 public interface CTabFolderListener {
-	public void itemClosed(CTabFolderEvent event);
+    public void itemClosed(CTabFolderEvent event);
 }

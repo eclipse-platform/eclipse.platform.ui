@@ -38,14 +38,15 @@ import org.eclipse.ui.presentations.StackPresentation;
  * editors and views should be handled by the presentation or the editors/views themselves.
  */
 public class EditorStack extends PartStack {
-	
+
     private EditorSashContainer editorArea;
 
-    private WorkbenchPage page;  
-    
+    private WorkbenchPage page;
+
     private SystemMenuSize sizeItem = new SystemMenuSize(null);
+
     private SystemMenuPinEditor pinEditorItem = new SystemMenuPinEditor(null);
-	 
+
     public EditorStack(EditorSashContainer editorArea, WorkbenchPage page) {
         super(PresentationFactoryUtil.ROLE_EDITOR); //$NON-NLS-1$
         this.editorArea = editorArea;
@@ -57,38 +58,39 @@ public class EditorStack extends PartStack {
         //not used on more than one page.
         this.page = page;
     }
-    
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.PartStack#getPage()
-	 */
-	protected WorkbenchPage getPage() {
-		return page;
-	}
-	
-	public void addSystemActions(IMenuManager menuManager) {
-		pinEditorItem = new SystemMenuPinEditor((EditorPane)getVisiblePart());
-		appendToGroupIfPossible(menuManager, "misc", new UpdatingActionContributionItem(pinEditorItem)); //$NON-NLS-1$
-		sizeItem = new SystemMenuSize((PartPane)getVisiblePart());
-		appendToGroupIfPossible(menuManager, "size", sizeItem); //$NON-NLS-1$
-	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.PartStack#getPage()
+     */
+    protected WorkbenchPage getPage() {
+        return page;
+    }
+
+    public void addSystemActions(IMenuManager menuManager) {
+        pinEditorItem = new SystemMenuPinEditor((EditorPane) getVisiblePart());
+        appendToGroupIfPossible(menuManager,
+                "misc", new UpdatingActionContributionItem(pinEditorItem)); //$NON-NLS-1$
+        sizeItem = new SystemMenuSize((PartPane) getVisiblePart());
+        appendToGroupIfPossible(menuManager, "size", sizeItem); //$NON-NLS-1$
+    }
 
     public boolean isMoveable(IPresentablePart part) {
-    	return true;
+        return true;
     }
 
     public boolean isCloseable(IPresentablePart part) {
         return true;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.presentations.IStackPresentationSite#supportsState(int)
-	 */
-	public boolean supportsState(int state) {
-	    if (page.isFixedLayout())
-	        return false;
-	    
-	    return true;
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.presentations.IStackPresentationSite#supportsState(int)
+     */
+    public boolean supportsState(int state) {
+        if (page.isFixedLayout())
+            return false;
+
+        return true;
+    }
 
     /**
      * Factory method for editor workbooks.
@@ -97,38 +99,38 @@ public class EditorStack extends PartStack {
             WorkbenchPage page) {
         return new EditorStack(editorArea, page);
     }
-    
+
     protected void add(LayoutPart newChild, Object cookie) {
-    	super.add(newChild, cookie);
-        
-        ((EditorPane) newChild).setWorkbook(this);    	
+        super.add(newChild, cookie);
+
+        ((EditorPane) newChild).setWorkbook(this);
     }
-    
+
     /**
      * See IVisualContainer#add
      */
     public void add(LayoutPart child) {
-    	super.add(child);
+        super.add(child);
 
-    	if (child instanceof EditorPane) {
-	        ((EditorPane) child).setWorkbook(this);
-    	}
+        if (child instanceof EditorPane) {
+            ((EditorPane) child).setWorkbook(this);
+        }
     }
-    
+
     protected void updateActions() {
-        EditorPane pane = (EditorPane)getVisiblePart();
-        
+        EditorPane pane = (EditorPane) getVisiblePart();
+
         sizeItem.setPane(pane);
         pinEditorItem.setPane(pane);
     }
-    
+
     public Control[] getTabList() {
-    	return getTabList(getVisiblePart());
+        return getTabList(getVisiblePart());
     }
 
     public void removeAll() {
-    	LayoutPart[] children = getChildren();
-    	
+        LayoutPart[] children = getChildren();
+
         for (int i = 0; i < children.length; i++)
             remove((EditorPane) children[i]);
     }
@@ -145,17 +147,18 @@ public class EditorStack extends PartStack {
     public void becomeActiveWorkbook(boolean hasFocus) {
         EditorSashContainer area = getEditorArea();
 
-        if (area != null) area.setActiveWorkbook(this, hasFocus);
+        if (area != null)
+            area.setActiveWorkbook(this, hasFocus);
     }
-	
+
     public EditorPane[] getEditors() {
-    	LayoutPart[] children = getChildren();
-    	
-    	EditorPane[] panes = new EditorPane[children.length];
-    	for (int idx = 0; idx < children.length; idx++) {
-    		panes[idx] = (EditorPane)children[idx];
-    	}
-    	
+        LayoutPart[] children = getChildren();
+
+        EditorPane[] panes = new EditorPane[children.length];
+        for (int idx = 0; idx < children.length; idx++) {
+            panes[idx] = (EditorPane) children[idx];
+        }
+
         return panes;
     }
 
@@ -174,107 +177,109 @@ public class EditorStack extends PartStack {
     public void showVisibleEditor() {
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.PartStack#canMoveFolder()
-	 */
-	protected boolean canMoveFolder() {
-		return true;
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.PartStack#canMoveFolder()
+     */
+    protected boolean canMoveFolder() {
+        return true;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.PartStack#derefPart(org.eclipse.ui.internal.LayoutPart)
-	 */
-	protected void derefPart(LayoutPart toDeref) {
-		EditorAreaHelper.derefPart(toDeref);
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.PartStack#derefPart(org.eclipse.ui.internal.LayoutPart)
+     */
+    protected void derefPart(LayoutPart toDeref) {
+        EditorAreaHelper.derefPart(toDeref);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.PartStack#allowsDrop(org.eclipse.ui.internal.PartPane)
-	 */
-	protected boolean allowsDrop(PartPane part) {
-		return part instanceof EditorPane;
-	}
-	
-	public void setFocus() {
-		super.setFocus();
-		becomeActiveWorkbook(true);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.PartStack#close(org.eclipse.ui.presentations.IPresentablePart[])
-	 */
-	protected void close(IPresentablePart[] parts) {
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.PartStack#allowsDrop(org.eclipse.ui.internal.PartPane)
+     */
+    protected boolean allowsDrop(PartPane part) {
+        return part instanceof EditorPane;
+    }
 
-		if (parts.length == 1) {
-			close(parts[0]);
-			return;
-		}
-		
-		IEditorReference[] toClose = new IEditorReference[parts.length];
-		for (int idx = 0; idx < parts.length; idx++) {
-			EditorPane part = (EditorPane)getPaneFor(parts[idx]);
-			toClose[idx] = part.getEditorReference();
-		}
-		
-		WorkbenchPage page = getPage();
-		
-		if (page != null) {
-			page.closeEditors(toClose, true);
-		}
-	}
-		
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.LayoutPart#testInvariants()
-	 */
-	public void testInvariants() {
-		super.testInvariants();
-		
-		int active = getActive();
-		
-		if (active == StackPresentation.AS_ACTIVE_FOCUS) {
-			Assert.isTrue(isActiveWorkbook());
-		} else if (active == StackPresentation.AS_ACTIVE_NOFOCUS) {
-			Assert.isTrue(isActiveWorkbook());
-		} else if (active == StackPresentation.AS_INACTIVE) {
-			Assert.isTrue(!isActiveWorkbook());
-		}
-	}
+    public void setFocus() {
+        super.setFocus();
+        becomeActiveWorkbook(true);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.PartStack#restoreState(org.eclipse.ui.IMemento)
-	 */
-	public IStatus restoreState(IMemento memento) { 
-	    Integer expanded = memento.getInteger(IWorkbenchConstants.TAG_EXPANDED);
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.PartStack#close(org.eclipse.ui.presentations.IPresentablePart[])
+     */
+    protected void close(IPresentablePart[] parts) {
+
+        if (parts.length == 1) {
+            close(parts[0]);
+            return;
+        }
+
+        IEditorReference[] toClose = new IEditorReference[parts.length];
+        for (int idx = 0; idx < parts.length; idx++) {
+            EditorPane part = (EditorPane) getPaneFor(parts[idx]);
+            toClose[idx] = part.getEditorReference();
+        }
+
+        WorkbenchPage page = getPage();
+
+        if (page != null) {
+            page.closeEditors(toClose, true);
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.LayoutPart#testInvariants()
+     */
+    public void testInvariants() {
+        super.testInvariants();
+
+        int active = getActive();
+
+        if (active == StackPresentation.AS_ACTIVE_FOCUS) {
+            Assert.isTrue(isActiveWorkbook());
+        } else if (active == StackPresentation.AS_ACTIVE_NOFOCUS) {
+            Assert.isTrue(isActiveWorkbook());
+        } else if (active == StackPresentation.AS_INACTIVE) {
+            Assert.isTrue(!isActiveWorkbook());
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.PartStack#restoreState(org.eclipse.ui.IMemento)
+     */
+    public IStatus restoreState(IMemento memento) {
+        Integer expanded = memento.getInteger(IWorkbenchConstants.TAG_EXPANDED);
         setState((expanded == null || expanded.intValue() != IStackPresentationSite.STATE_MINIMIZED) ? IStackPresentationSite.STATE_RESTORED
                 : IStackPresentationSite.STATE_MINIMIZED);
-	
-        Integer appearance = memento.getInteger(IWorkbenchConstants.TAG_APPEARANCE);
+
+        Integer appearance = memento
+                .getInteger(IWorkbenchConstants.TAG_APPEARANCE);
         if (appearance != null) {
-        	this.appearance = appearance.intValue();
+            this.appearance = appearance.intValue();
         }
-	        
+
         // Determine if the presentation has saved any info here
         savedPresentationState = null;
-        IMemento[] presentationMementos = memento.getChildren(IWorkbenchConstants.TAG_PRESENTATION);
-        
+        IMemento[] presentationMementos = memento
+                .getChildren(IWorkbenchConstants.TAG_PRESENTATION);
+
         for (int idx = 0; idx < presentationMementos.length; idx++) {
-        	IMemento child = presentationMementos[idx];
-        	
-        	String id = child.getString(IWorkbenchConstants.TAG_ID);
-        	
-        	if (Util.equals(id, getFactory().getId())) {
-        		savedPresentationState = child;
-        		break;
-        	}
+            IMemento child = presentationMementos[idx];
+
+            String id = child.getString(IWorkbenchConstants.TAG_ID);
+
+            if (Util.equals(id, getFactory().getId())) {
+                savedPresentationState = child;
+                break;
+            }
         }
-        
+
         return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
-	}
-		
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.PartStack#saveState(org.eclipse.ui.IMemento)
-	 */
-	public IStatus saveState(IMemento memento) {
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.PartStack#saveState(org.eclipse.ui.IMemento)
+     */
+    public IStatus saveState(IMemento memento) {
         memento
                 .putInteger(
                         IWorkbenchConstants.TAG_EXPANDED,
@@ -282,14 +287,15 @@ public class EditorStack extends PartStack {
                                 : IStackPresentationSite.STATE_RESTORED);
 
         memento.putInteger(IWorkbenchConstants.TAG_APPEARANCE, appearance);
-        
+
         savePresentationState();
-        
+
         if (savedPresentationState != null) {
-       		IMemento presentationState = memento.createChild(IWorkbenchConstants.TAG_PRESENTATION);
-       		presentationState.putMemento(savedPresentationState);
+            IMemento presentationState = memento
+                    .createChild(IWorkbenchConstants.TAG_PRESENTATION);
+            presentationState.putMemento(savedPresentationState);
         }
-       
-       return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
- 	}
+
+        return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
+    }
 }

@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-
 import org.eclipse.ui.IPlaceholderFolderLayout;
-import org.eclipse.ui.internal.registry.*;
+import org.eclipse.ui.internal.registry.IViewDescriptor;
+import org.eclipse.ui.internal.registry.IViewRegistry;
 
 /**
  * This layout is used to define the initial set of placeholders
@@ -23,50 +23,53 @@ import org.eclipse.ui.internal.registry.*;
  * instantiate the IViewPart.
  * </p>
  */
-public class PlaceholderFolderLayout implements IPlaceholderFolderLayout{
-	private PageLayout pageLayout;
-	private ContainerPlaceholder placeholder;
+public class PlaceholderFolderLayout implements IPlaceholderFolderLayout {
+    private PageLayout pageLayout;
 
-	public PlaceholderFolderLayout(PageLayout pageLayout, ContainerPlaceholder folder) {
-		super();
-		this.placeholder = folder;
-		this.pageLayout = pageLayout;
-	}
-	/**
-	 * @see IPlaceholderFolderLayout
-	 */
-	public void addPlaceholder(String viewId) {
-		if (pageLayout.checkPartInLayout(viewId))
-			return;
+    private ContainerPlaceholder placeholder;
 
-		// Get the view's label.
-		IViewRegistry reg = WorkbenchPlugin.getDefault().getViewRegistry();
-		IViewDescriptor desc = reg.find(viewId);
-		if (desc == null) {
-			// cannot safely open the dialog so log the problem
-			WorkbenchPlugin.log("Unable to find view label: " + viewId);//$NON-NLS-1$
-			return;
-		}
+    public PlaceholderFolderLayout(PageLayout pageLayout,
+            ContainerPlaceholder folder) {
+        super();
+        this.placeholder = folder;
+        this.pageLayout = pageLayout;
+    }
 
-		// Create the placeholder.
-		LayoutPart newPart = new PartPlaceholder(viewId);
-		
-		linkPartToPageLayout(viewId, newPart);
-	
-		// Add it to the placeholder layout.
-		placeholder.add(newPart);		
-	}
+    /**
+     * @see IPlaceholderFolderLayout
+     */
+    public void addPlaceholder(String viewId) {
+        if (pageLayout.checkPartInLayout(viewId))
+            return;
 
-	/**
-	 * Inform the page layout of the new part created
-	 * and the placeholder the part belongs to.
-	 */
-	private void linkPartToPageLayout(String viewId, LayoutPart newPart) {
-		pageLayout.setRefPart(viewId, newPart);
-		// force creation of the view layout rec
-		pageLayout.getViewLayoutRec(viewId, true);
+        // Get the view's label.
+        IViewRegistry reg = WorkbenchPlugin.getDefault().getViewRegistry();
+        IViewDescriptor desc = reg.find(viewId);
+        if (desc == null) {
+            // cannot safely open the dialog so log the problem
+            WorkbenchPlugin.log("Unable to find view label: " + viewId);//$NON-NLS-1$
+            return;
+        }
 
-		pageLayout.setFolderPart(viewId, placeholder);
-		newPart.setContainer(placeholder);
-	}
+        // Create the placeholder.
+        LayoutPart newPart = new PartPlaceholder(viewId);
+
+        linkPartToPageLayout(viewId, newPart);
+
+        // Add it to the placeholder layout.
+        placeholder.add(newPart);
+    }
+
+    /**
+     * Inform the page layout of the new part created
+     * and the placeholder the part belongs to.
+     */
+    private void linkPartToPageLayout(String viewId, LayoutPart newPart) {
+        pageLayout.setRefPart(viewId, newPart);
+        // force creation of the view layout rec
+        pageLayout.getViewLayoutRec(viewId, true);
+
+        pageLayout.setFolderPart(viewId, placeholder);
+        newPart.setContainer(placeholder);
+    }
 }

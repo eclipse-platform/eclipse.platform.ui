@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui;
+
 /**
  * Manages a list of entries to keep history of locations on editors
  * to enable the user to go back and forward without losing context.
@@ -33,24 +34,26 @@ package org.eclipse.ui;
  * @since 2.1
  */
 public interface INavigationHistory {
-	/**
-	 * Mark the current location into the history. This message 
-	 * should be sent by clients whenever significant changes
-	 * in location are detected.
-	 * 
-	 * The location is obtened by calling <code>INavigationLocationProvider.createNavigationLocation</code>
-	 */
-	public void markLocation(IEditorPart part);
-	/**
-	 * Return the current location;
-	 * 
-	 * @return INavigationLocation the current location
-	 */
-	public INavigationLocation getCurrentLocation();
-	/**
-	 * Return all entries in the history.
-	 * 
-	 * @return INavigationLocation[]
-	 */
-	public INavigationLocation[] getLocations();
+    /**
+     * Mark the current location into the history. This message 
+     * should be sent by clients whenever significant changes
+     * in location are detected.
+     * 
+     * The location is obtened by calling <code>INavigationLocationProvider.createNavigationLocation</code>
+     */
+    public void markLocation(IEditorPart part);
+
+    /**
+     * Return the current location;
+     * 
+     * @return INavigationLocation the current location
+     */
+    public INavigationLocation getCurrentLocation();
+
+    /**
+     * Return all entries in the history.
+     * 
+     * @return INavigationLocation[]
+     */
+    public INavigationLocation[] getLocations();
 }

@@ -20,39 +20,42 @@ import org.eclipse.ui.IActionBars;
  */
 public class SortAndFilterActionGroup extends ResourceNavigatorActionGroup {
 
-	private SortViewAction sortByTypeAction;
-	private SortViewAction sortByNameAction;
-	private FilterSelectionAction filterAction;
+    private SortViewAction sortByTypeAction;
 
-	public SortAndFilterActionGroup(IResourceNavigator navigator) {
-		super(navigator);
-	}
+    private SortViewAction sortByNameAction;
 
-	protected void makeActions() {
-		sortByNameAction = new SortViewAction(navigator, false);
-		sortByTypeAction = new SortViewAction(navigator, true);
+    private FilterSelectionAction filterAction;
 
-		filterAction =
-			new FilterSelectionAction(
-				navigator,
-				ResourceNavigatorMessages.getString("ResourceNavigator.filterText")); //$NON-NLS-1$
-		filterAction.setDisabledImageDescriptor(getImageDescriptor("dlcl16/filter_ps.gif"));//$NON-NLS-1$
-		filterAction.setImageDescriptor(getImageDescriptor("elcl16/filter_ps.gif"));//$NON-NLS-1$
-	}
+    public SortAndFilterActionGroup(IResourceNavigator navigator) {
+        super(navigator);
+    }
 
-	public void fillActionBars(IActionBars actionBars) {
-		IMenuManager menu = actionBars.getMenuManager();
-		IMenuManager submenu =
-			new MenuManager(ResourceNavigatorMessages.getString("ResourceNavigator.sort")); //$NON-NLS-1$
-		menu.add(submenu);
-		submenu.add(sortByNameAction);
-		submenu.add(sortByTypeAction);
-		menu.add(filterAction);
-	}
+    protected void makeActions() {
+        sortByNameAction = new SortViewAction(navigator, false);
+        sortByTypeAction = new SortViewAction(navigator, true);
 
-	public void updateActionBars() {
-		int criteria = navigator.getSorter().getCriteria();
-		sortByNameAction.setChecked(criteria == ResourceSorter.NAME);
-		sortByTypeAction.setChecked(criteria == ResourceSorter.TYPE);
-	}
+        filterAction = new FilterSelectionAction(navigator,
+                ResourceNavigatorMessages
+                        .getString("ResourceNavigator.filterText")); //$NON-NLS-1$
+        filterAction
+                .setDisabledImageDescriptor(getImageDescriptor("dlcl16/filter_ps.gif"));//$NON-NLS-1$
+        filterAction
+                .setImageDescriptor(getImageDescriptor("elcl16/filter_ps.gif"));//$NON-NLS-1$
+    }
+
+    public void fillActionBars(IActionBars actionBars) {
+        IMenuManager menu = actionBars.getMenuManager();
+        IMenuManager submenu = new MenuManager(ResourceNavigatorMessages
+                .getString("ResourceNavigator.sort")); //$NON-NLS-1$
+        menu.add(submenu);
+        submenu.add(sortByNameAction);
+        submenu.add(sortByTypeAction);
+        menu.add(filterAction);
+    }
+
+    public void updateActionBars() {
+        int criteria = navigator.getSorter().getCriteria();
+        sortByNameAction.setChecked(criteria == ResourceSorter.NAME);
+        sortByTypeAction.setChecked(criteria == ResourceSorter.TYPE);
+    }
 }

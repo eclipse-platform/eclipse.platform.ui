@@ -24,21 +24,20 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.activities.ws.ActivityEnabler;
 import org.eclipse.ui.internal.activities.ws.ActivityMessages;
 
-
 /**
  * Preference page that allows configuration of the activity set.
 
  * @since 3.0
  */
-public class ActivitiesPreferencePage 
-	extends PreferencePage 
-	implements IWorkbenchPreferencePage {
-
+public class ActivitiesPreferencePage extends PreferencePage implements
+        IWorkbenchPreferencePage {
 
     private Button activityPromptButton;
+
     private IWorkbench workbench;
-    private ActivityEnabler enabler; 
-    
+
+    private ActivityEnabler enabler;
+
     /**
      * Create the prompt for activity enablement.
      * 
@@ -50,22 +49,20 @@ public class ActivitiesPreferencePage
                 .getString("activityPromptButton")); //$NON-NLS-1$
         activityPromptButton.setToolTipText(ActivityMessages
                 .getString("activityPromptToolTip")); //$NON-NLS-1$
-        
+
         activityPromptButton.setFont(composite.getFont());
         setActivityButtonState();
-    }    
+    }
 
-    
     /**
-	 * Sets the state of the activity prompt button from preferences.
-	 */
-	private void setActivityButtonState() {
-		activityPromptButton.setSelection(getPreferenceStore().getBoolean(
+     * Sets the state of the activity prompt button from preferences.
+     */
+    private void setActivityButtonState() {
+        activityPromptButton.setSelection(getPreferenceStore().getBoolean(
                 IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT));
-	}
+    }
 
-
-	/* (non-Javadoc)
+    /* (non-Javadoc)
      * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
      */
     protected Control createContents(Composite parent) {
@@ -74,44 +71,48 @@ public class ActivitiesPreferencePage
         layout.marginHeight = 0;
         layout.marginWidth = 0;
         composite.setLayout(layout);
-		composite.setFont(parent.getFont());
-		
-		createActivityPromptPref(composite);
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		activityPromptButton.setLayoutData(data);
-		
-		data = new GridData(GridData.FILL_BOTH);
-		enabler = new ActivityEnabler(workbench.getActivitySupport());
-		enabler.createControl(composite).setLayoutData(data);
+        composite.setFont(parent.getFont());
 
-		return composite;        
+        createActivityPromptPref(composite);
+        GridData data = new GridData(GridData.FILL_HORIZONTAL);
+        activityPromptButton.setLayoutData(data);
+
+        data = new GridData(GridData.FILL_BOTH);
+        enabler = new ActivityEnabler(workbench.getActivitySupport());
+        enabler.createControl(composite).setLayoutData(data);
+
+        return composite;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
      */
     public void init(IWorkbench aWorkbench) {
-        this.workbench = aWorkbench;    
+        this.workbench = aWorkbench;
         setPreferenceStore(WorkbenchPlugin.getDefault().getPreferenceStore());
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.preference.IPreferencePage#performOk()
      */
     public boolean performOk() {
         enabler.updateActivityStates();
 
-        getPreferenceStore().setValue(IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT, activityPromptButton
-                .getSelection());
-        
+        getPreferenceStore().setValue(
+                IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT,
+                activityPromptButton.getSelection());
+
         return true;
     }
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
      */
     protected void performDefaults() {
-        enabler.restoreDefaults();     
-        activityPromptButton.setSelection(getPreferenceStore().getDefaultBoolean(IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT));
+        enabler.restoreDefaults();
+        activityPromptButton.setSelection(getPreferenceStore()
+                .getDefaultBoolean(
+                        IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT));
         super.performDefaults();
     }
 }

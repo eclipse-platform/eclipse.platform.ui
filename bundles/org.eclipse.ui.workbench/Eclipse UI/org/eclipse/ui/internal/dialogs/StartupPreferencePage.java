@@ -34,14 +34,16 @@ import org.osgi.framework.Constants;
 /**
  * The Startup preference page.
  */
-public class StartupPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
-	private Table pluginsList;
-	private Workbench workbench;
-	
-	/**
-	 * @see PreferencePage#createContents(Composite)
-	 */
-	protected Control createContents(Composite parent) {
+public class StartupPreferencePage extends PreferencePage implements
+        IWorkbenchPreferencePage {
+    private Table pluginsList;
+
+    private Workbench workbench;
+
+    /**
+     * @see PreferencePage#createContents(Composite)
+     */
+    protected Control createContents(Composite parent) {
         WorkbenchHelp.setHelp(parent, IHelpContextIds.STARTUP_PREFERENCE_PAGE);
 
         Composite composite = createComposite(parent);
@@ -51,7 +53,7 @@ public class StartupPreferencePage extends PreferencePage implements IWorkbenchP
         return composite;
     }
 
-	protected Composite createComposite(Composite parent) {
+    protected Composite createComposite(Composite parent) {
         Composite composite = new Composite(parent, SWT.NULL);
         GridLayout layout = new GridLayout();
         layout.marginWidth = 0;
@@ -65,7 +67,7 @@ public class StartupPreferencePage extends PreferencePage implements IWorkbenchP
         return composite;
     }
 
-	protected void createEarlyStartupSelection(Composite parent) {
+    protected void createEarlyStartupSelection(Composite parent) {
         Label label = new Label(parent, SWT.NONE);
         label.setText(WorkbenchMessages
                 .getString("StartupPreferencePage.label")); //$NON-NLS-1$
@@ -79,53 +81,59 @@ public class StartupPreferencePage extends PreferencePage implements IWorkbenchP
         pluginsList.setLayoutData(data);
         populatePluginsList();
     }
-	
-	private void populatePluginsList() {
-		String descriptors[] = workbench.getEarlyActivatedPlugins();
-		IPreferenceStore store = workbench.getPreferenceStore();
-		String pref = store.getString(IPreferenceConstants.PLUGINS_NOT_ACTIVATED_ON_STARTUP);
-		if(pref == null)
-			pref = new String();
-		for (int i = 0; i < descriptors.length; i++) {
-			String desc = descriptors[i];
-			TableItem item = new TableItem(pluginsList,SWT.NONE);
-			item.setText((String) Platform.getBundle(desc).getHeaders().get(Constants.BUNDLE_NAME));
-			item.setData(desc);
-			String id = desc + IPreferenceConstants.SEPARATOR;
-			item.setChecked(pref.indexOf(id) < 0);
-		}
-	}
-	/**
-	 * @see IWorkbenchPreferencePage
-	 */
-	public void init(IWorkbench workbench) {
-		this.workbench = (Workbench) workbench;
-	}
-	/**
-	 * @see PreferencePage
-	 */
-	protected void performDefaults() {
-		TableItem items[] = pluginsList.getItems();
-		for (int i = 0; i < items.length; i++) {
-			items[i].setChecked(true);
-		}
-	}
-	/**
-	 * @see PreferencePage
-	 */
-	public boolean performOk() {
-		StringBuffer preference = new StringBuffer();
-		TableItem items[] = pluginsList.getItems();
-		for (int i = 0; i < items.length; i++) {
-			if(!items[i].getChecked()) {
-				preference.append((String)items[i].getData());
-				preference.append(IPreferenceConstants.SEPARATOR);
-			}
-		}
-		String pref = preference.toString();
-		IPreferenceStore store = workbench.getPreferenceStore();
-		store.putValue(IPreferenceConstants.PLUGINS_NOT_ACTIVATED_ON_STARTUP,pref);
-		PrefUtil.savePrefs();
-		return true;
-	}
+
+    private void populatePluginsList() {
+        String descriptors[] = workbench.getEarlyActivatedPlugins();
+        IPreferenceStore store = workbench.getPreferenceStore();
+        String pref = store
+                .getString(IPreferenceConstants.PLUGINS_NOT_ACTIVATED_ON_STARTUP);
+        if (pref == null)
+            pref = new String();
+        for (int i = 0; i < descriptors.length; i++) {
+            String desc = descriptors[i];
+            TableItem item = new TableItem(pluginsList, SWT.NONE);
+            item.setText((String) Platform.getBundle(desc).getHeaders().get(
+                    Constants.BUNDLE_NAME));
+            item.setData(desc);
+            String id = desc + IPreferenceConstants.SEPARATOR;
+            item.setChecked(pref.indexOf(id) < 0);
+        }
+    }
+
+    /**
+     * @see IWorkbenchPreferencePage
+     */
+    public void init(IWorkbench workbench) {
+        this.workbench = (Workbench) workbench;
+    }
+
+    /**
+     * @see PreferencePage
+     */
+    protected void performDefaults() {
+        TableItem items[] = pluginsList.getItems();
+        for (int i = 0; i < items.length; i++) {
+            items[i].setChecked(true);
+        }
+    }
+
+    /**
+     * @see PreferencePage
+     */
+    public boolean performOk() {
+        StringBuffer preference = new StringBuffer();
+        TableItem items[] = pluginsList.getItems();
+        for (int i = 0; i < items.length; i++) {
+            if (!items[i].getChecked()) {
+                preference.append((String) items[i].getData());
+                preference.append(IPreferenceConstants.SEPARATOR);
+            }
+        }
+        String pref = preference.toString();
+        IPreferenceStore store = workbench.getPreferenceStore();
+        store.putValue(IPreferenceConstants.PLUGINS_NOT_ACTIVATED_ON_STARTUP,
+                pref);
+        PrefUtil.savePrefs();
+        return true;
+    }
 }

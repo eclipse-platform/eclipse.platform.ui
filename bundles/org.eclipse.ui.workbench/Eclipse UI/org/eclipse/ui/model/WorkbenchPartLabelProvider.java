@@ -25,54 +25,53 @@ import org.eclipse.ui.IWorkbenchPart;
  * 
  * @since 3.0
  */
-public final class WorkbenchPartLabelProvider
-	extends LabelProvider
-	implements ITableLabelProvider {
+public final class WorkbenchPartLabelProvider extends LabelProvider implements
+        ITableLabelProvider {
 
-	/**
-	 * Creates a new label provider for workbench parts.
-	 */
-	public WorkbenchPartLabelProvider() {
-		super();
-	}
+    /**
+     * Creates a new label provider for workbench parts.
+     */
+    public WorkbenchPartLabelProvider() {
+        super();
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ILabelProvider
-	 */
-	public final Image getImage(Object element) {
-		if (element instanceof IWorkbenchPart) {
-			return ((IWorkbenchPart) element).getTitleImage();
-		}
-		return null;
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.ILabelProvider
+     */
+    public final Image getImage(Object element) {
+        if (element instanceof IWorkbenchPart) {
+            return ((IWorkbenchPart) element).getTitleImage();
+        }
+        return null;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ILabelProvider
-	 */
-	public final String getText(Object element) {
-		if (element instanceof IWorkbenchPart) {
-			IWorkbenchPart part = (IWorkbenchPart) element;
-			String path = part.getTitleToolTip();
-			if (path.length() == 0) {
-				return part.getTitle();
-			} else {
-				return part.getTitle() + "  [" + part.getTitleToolTip() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
-			}
-		}
-		return null;
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.ILabelProvider
+     */
+    public final String getText(Object element) {
+        if (element instanceof IWorkbenchPart) {
+            IWorkbenchPart part = (IWorkbenchPart) element;
+            String path = part.getTitleToolTip();
+            if (path.length() == 0) {
+                return part.getTitle();
+            } else {
+                return part.getTitle() + "  [" + part.getTitleToolTip() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
+            }
+        }
+        return null;
+    }
 
-	/**
-	 * @see ITableLabelProvider#getColumnImage
-	 */
-	public final Image getColumnImage(Object element, int columnIndex) {
-		return getImage(element);
-	}
+    /**
+     * @see ITableLabelProvider#getColumnImage
+     */
+    public final Image getColumnImage(Object element, int columnIndex) {
+        return getImage(element);
+    }
 
-	/**
-	 * @see ITableLabelProvider#getColumnText
-	 */
-	public final String getColumnText(Object element, int columnIndex) {
-		return getText(element);
-	}
+    /**
+     * @see ITableLabelProvider#getColumnText
+     */
+    public final String getColumnText(Object element, int columnIndex) {
+        return getText(element);
+    }
 }

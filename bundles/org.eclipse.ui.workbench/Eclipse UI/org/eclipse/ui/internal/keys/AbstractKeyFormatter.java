@@ -34,110 +34,110 @@ import org.eclipse.ui.keys.NaturalKey;
  * @since 3.0
  */
 public abstract class AbstractKeyFormatter implements IKeyFormatter {
-	
-	/**
-	 * The key for the delimiter between keys. This is used in the
-	 * internationalization bundles.
-	 */
-	protected final static String KEY_DELIMITER_KEY = "KEY_DELIMITER"; //$NON-NLS-1$
 
-	/**
-	 * The key for the delimiter between key strokes. This is used in the
-	 * internationalization bundles.
-	 */
-	protected final static String KEY_STROKE_DELIMITER_KEY = "KEY_STROKE_DELIMITER"; //$NON-NLS-1$
+    /**
+     * The key for the delimiter between keys. This is used in the
+     * internationalization bundles.
+     */
+    protected final static String KEY_DELIMITER_KEY = "KEY_DELIMITER"; //$NON-NLS-1$
 
-	/**
-	 * The bundle in which to look up the internationalized text for all of the
-	 * individual keys in the system. This is the platform-agnostic version of
-	 * the internationalized strings. Some platforms (namely Carbon) provide
-	 * special Unicode characters and glyphs for some keys.
-	 */
-	private final static ResourceBundle RESOURCE_BUNDLE =
-		ResourceBundle.getBundle(AbstractKeyFormatter.class.getName());
+    /**
+     * The key for the delimiter between key strokes. This is used in the
+     * internationalization bundles.
+     */
+    protected final static String KEY_STROKE_DELIMITER_KEY = "KEY_STROKE_DELIMITER"; //$NON-NLS-1$
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.keys.KeyFormatter#format(org.eclipse.ui.keys.KeySequence)
-	 */
-	public String format(Key key) {
-		String name = key.toString();
-		return Util.translateString(RESOURCE_BUNDLE, name, name, false, false);
-	}
+    /**
+     * The bundle in which to look up the internationalized text for all of the
+     * individual keys in the system. This is the platform-agnostic version of
+     * the internationalized strings. Some platforms (namely Carbon) provide
+     * special Unicode characters and glyphs for some keys.
+     */
+    private final static ResourceBundle RESOURCE_BUNDLE = ResourceBundle
+            .getBundle(AbstractKeyFormatter.class.getName());
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.keys.KeyFormatter#format(org.eclipse.ui.keys.KeySequence)
-	 */
-	public String format(KeySequence keySequence) {
-		StringBuffer stringBuffer = new StringBuffer();
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.keys.KeyFormatter#format(org.eclipse.ui.keys.KeySequence)
+     */
+    public String format(Key key) {
+        String name = key.toString();
+        return Util.translateString(RESOURCE_BUNDLE, name, name, false, false);
+    }
 
-		Iterator keyStrokeItr = keySequence.getKeyStrokes().iterator();
-		while (keyStrokeItr.hasNext()) {
-			stringBuffer.append(format((KeyStroke) keyStrokeItr.next()));
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.keys.KeyFormatter#format(org.eclipse.ui.keys.KeySequence)
+     */
+    public String format(KeySequence keySequence) {
+        StringBuffer stringBuffer = new StringBuffer();
 
-			if (keyStrokeItr.hasNext()) {
-				stringBuffer.append(getKeyStrokeDelimiter());
-			}
-		}
+        Iterator keyStrokeItr = keySequence.getKeyStrokes().iterator();
+        while (keyStrokeItr.hasNext()) {
+            stringBuffer.append(format((KeyStroke) keyStrokeItr.next()));
 
-		return stringBuffer.toString();
-	}
+            if (keyStrokeItr.hasNext()) {
+                stringBuffer.append(getKeyStrokeDelimiter());
+            }
+        }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.keys.KeyFormatter#formatKeyStroke(org.eclipse.ui.keys.KeyStroke)
-	 */
-	public String format(KeyStroke keyStroke) {
-		String keyDelimiter = getKeyDelimiter();
+        return stringBuffer.toString();
+    }
 
-		// Format the modifier keys, in sorted order.
-		SortedSet modifierKeys = new TreeSet(getModifierKeyComparator());
-		modifierKeys.addAll(keyStroke.getModifierKeys());
-		StringBuffer stringBuffer = new StringBuffer();
-		Iterator modifierKeyItr = modifierKeys.iterator();
-		while (modifierKeyItr.hasNext()) {
-			stringBuffer.append(format((ModifierKey) modifierKeyItr.next()));
-			stringBuffer.append(keyDelimiter);
-		}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.keys.KeyFormatter#formatKeyStroke(org.eclipse.ui.keys.KeyStroke)
+     */
+    public String format(KeyStroke keyStroke) {
+        String keyDelimiter = getKeyDelimiter();
 
-		// Format the natural key, if any.
-		NaturalKey naturalKey = keyStroke.getNaturalKey();
-		if (naturalKey != null) {
-			stringBuffer.append(format(naturalKey));
-		}
+        // Format the modifier keys, in sorted order.
+        SortedSet modifierKeys = new TreeSet(getModifierKeyComparator());
+        modifierKeys.addAll(keyStroke.getModifierKeys());
+        StringBuffer stringBuffer = new StringBuffer();
+        Iterator modifierKeyItr = modifierKeys.iterator();
+        while (modifierKeyItr.hasNext()) {
+            stringBuffer.append(format((ModifierKey) modifierKeyItr.next()));
+            stringBuffer.append(keyDelimiter);
+        }
 
-		return stringBuffer.toString();
+        // Format the natural key, if any.
+        NaturalKey naturalKey = keyStroke.getNaturalKey();
+        if (naturalKey != null) {
+            stringBuffer.append(format(naturalKey));
+        }
 
-	}
+        return stringBuffer.toString();
 
-	/**
-	 * An accessor for the delimiter you wish to use between keys. This is used
-	 * by the default format implementations to determine the key delimiter.
-	 * 
-	 * @return The delimiter to use between keys; should not be <code>null</code>.
-	 */
-	protected abstract String getKeyDelimiter();
+    }
 
-	/**
-	 * An accessor for the delimiter you wish to use between key strokes. This
-	 * used by the default format implementations to determine the key stroke
-	 * delimiter.
-	 * 
-	 * @return The delimiter to use between key strokes; should not be <code>null</code>.
-	 */
-	protected abstract String getKeyStrokeDelimiter();
+    /**
+     * An accessor for the delimiter you wish to use between keys. This is used
+     * by the default format implementations to determine the key delimiter.
+     * 
+     * @return The delimiter to use between keys; should not be <code>null</code>.
+     */
+    protected abstract String getKeyDelimiter();
 
-	/**
-	 * An accessor for the comparator to use for sorting modifier keys. This is
-	 * used by the default format implementations to sort the modifier keys
-	 * before formatting them into a string.
-	 * 
-	 * @return The comparator to use to sort modifier keys; must not be <code>null</code>.
-	 */
-	protected abstract Comparator getModifierKeyComparator();
+    /**
+     * An accessor for the delimiter you wish to use between key strokes. This
+     * used by the default format implementations to determine the key stroke
+     * delimiter.
+     * 
+     * @return The delimiter to use between key strokes; should not be <code>null</code>.
+     */
+    protected abstract String getKeyStrokeDelimiter();
+
+    /**
+     * An accessor for the comparator to use for sorting modifier keys. This is
+     * used by the default format implementations to sort the modifier keys
+     * before formatting them into a string.
+     * 
+     * @return The comparator to use to sort modifier keys; must not be <code>null</code>.
+     */
+    protected abstract Comparator getModifierKeyComparator();
 
 }

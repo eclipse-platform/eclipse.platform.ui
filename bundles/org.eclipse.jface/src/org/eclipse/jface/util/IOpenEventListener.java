@@ -9,7 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jface.util;
+
 import org.eclipse.swt.events.SelectionEvent;
+
 /**
  * Listener for open events which are generated on selection
  * of default selection depending on the user preferences.
@@ -29,9 +31,9 @@ import org.eclipse.swt.events.SelectionEvent;
  * @see OpenStrategy
  */
 public interface IOpenEventListener {
-	/**
-	 * Called when a selection or default selection occurs 
-	 * depending on the user preference. 
-	 */
-	public void handleOpen(SelectionEvent e);
+    /**
+     * Called when a selection or default selection occurs 
+     * depending on the user preference. 
+     */
+    public void handleOpen(SelectionEvent e);
 }

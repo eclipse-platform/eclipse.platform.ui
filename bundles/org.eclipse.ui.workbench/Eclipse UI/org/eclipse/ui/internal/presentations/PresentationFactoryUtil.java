@@ -21,41 +21,47 @@ import org.eclipse.ui.presentations.StackPresentation;
  * 
  */
 public class PresentationFactoryUtil {
-	
-	public static final int ROLE_EDITOR = 0x01;
-	public static final int ROLE_VIEW = 0x02;
-	public static final int ROLE_STANDALONE = 0x03;
-	public static final int ROLE_STANDALONE_NOTITLE = 0x04;
-	
-	public static StackPresentation createPresentation(AbstractPresentationFactory factory, 
-			int role, Composite parent, IStackPresentationSite site,
-			IPresentationSerializer serializer, IMemento memento) {
-		
-		StackPresentation presentation = null;
-		
-		switch (role) {
-			case ROLE_EDITOR: 
-				presentation = factory.createEditorPresentation(parent, site);
-				break;
-			case ROLE_STANDALONE: 
-				presentation = factory.createStandaloneViewPresentation(parent, site, true);
-				break;
-			case ROLE_STANDALONE_NOTITLE: 
-				presentation = factory.createStandaloneViewPresentation(parent, site, false);
-				break;
-			default:
-				presentation = factory.createViewPresentation(parent, site);
-		}
 
-		//don't initialize editors at creation time - it will not contain any parts
-		if (role != ROLE_EDITOR && memento != null && serializer != null) {
-		    presentation.restoreState(serializer, memento);
-		}
+    public static final int ROLE_EDITOR = 0x01;
 
-		return presentation;
-	}
-	
-	private PresentationFactoryUtil() {
-		
-	}
+    public static final int ROLE_VIEW = 0x02;
+
+    public static final int ROLE_STANDALONE = 0x03;
+
+    public static final int ROLE_STANDALONE_NOTITLE = 0x04;
+
+    public static StackPresentation createPresentation(
+            AbstractPresentationFactory factory, int role, Composite parent,
+            IStackPresentationSite site, IPresentationSerializer serializer,
+            IMemento memento) {
+
+        StackPresentation presentation = null;
+
+        switch (role) {
+        case ROLE_EDITOR:
+            presentation = factory.createEditorPresentation(parent, site);
+            break;
+        case ROLE_STANDALONE:
+            presentation = factory.createStandaloneViewPresentation(parent,
+                    site, true);
+            break;
+        case ROLE_STANDALONE_NOTITLE:
+            presentation = factory.createStandaloneViewPresentation(parent,
+                    site, false);
+            break;
+        default:
+            presentation = factory.createViewPresentation(parent, site);
+        }
+
+        //don't initialize editors at creation time - it will not contain any parts
+        if (role != ROLE_EDITOR && memento != null && serializer != null) {
+            presentation.restoreState(serializer, memento);
+        }
+
+        return presentation;
+    }
+
+    private PresentationFactoryUtil() {
+
+    }
 }

@@ -12,7 +12,9 @@ package org.eclipse.ui.internal.ide.model;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IElementFactory;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPersistableElement;
 
 /**
  * The ResourceFactory is used to save and recreate an IResource object.
@@ -24,28 +26,32 @@ import org.eclipse.ui.*;
  * @see IElementFactory
  */
 public class WorkspaceFactory implements IElementFactory, IPersistableElement {
-	private static final String FACTORY_ID = "org.eclipse.ui.internal.model.WorkspaceFactory";//$NON-NLS-1$
-/**
- * Create a ResourceFactory.  This constructor is typically used
- * for our IElementFactory side.
- */
-public WorkspaceFactory() {
-}
-/**
- * @see IElementFactory
- */
-public IAdaptable createElement(IMemento memento) {
-	return ResourcesPlugin.getWorkspace();
-}
-/**
- * @see IPersistableElement
- */
-public String getFactoryId() {
-	return FACTORY_ID;
-}
-/**
- * @see IPersistableElement
- */
-public void saveState(IMemento memento) {
-}
+    private static final String FACTORY_ID = "org.eclipse.ui.internal.model.WorkspaceFactory";//$NON-NLS-1$
+
+    /**
+     * Create a ResourceFactory.  This constructor is typically used
+     * for our IElementFactory side.
+     */
+    public WorkspaceFactory() {
+    }
+
+    /**
+     * @see IElementFactory
+     */
+    public IAdaptable createElement(IMemento memento) {
+        return ResourcesPlugin.getWorkspace();
+    }
+
+    /**
+     * @see IPersistableElement
+     */
+    public String getFactoryId() {
+        return FACTORY_ID;
+    }
+
+    /**
+     * @see IPersistableElement
+     */
+    public void saveState(IMemento memento) {
+    }
 }

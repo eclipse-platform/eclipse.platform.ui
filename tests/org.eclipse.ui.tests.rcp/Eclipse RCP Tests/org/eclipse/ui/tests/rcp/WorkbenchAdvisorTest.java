@@ -134,7 +134,7 @@ public class WorkbenchAdvisorTest extends TestCase {
 
             public void postWindowClose(IWorkbenchWindowConfigurer c) {
                 if (false) // which should be called first?
-                        assertTrue(windowCloseCalled);
+                    assertTrue(windowCloseCalled);
                 super.postWindowClose(c);
             }
         };
@@ -262,7 +262,8 @@ public class WorkbenchAdvisorTest extends TestCase {
 
                 Shell[] shells = disp.getShells();
                 for (int i = 0; i < shells.length; ++i)
-                    if (shells[i] != null) shells[i].close();
+                    if (shells[i] != null)
+                        shells[i].close();
             }
         };
 
@@ -298,7 +299,8 @@ class WorkbenchAdvisorExceptionObserver extends WorkbenchAdvisorObserver {
         super.eventLoopIdle(disp);
 
         // only crash the loop one time
-        if (runtimeException != null) return;
+        if (runtimeException != null)
+            return;
 
         runtimeException = new RuntimeException();
         throw runtimeException;

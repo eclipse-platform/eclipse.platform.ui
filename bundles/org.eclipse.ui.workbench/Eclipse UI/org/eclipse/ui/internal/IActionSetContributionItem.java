@@ -16,12 +16,13 @@ package org.eclipse.ui.internal;
  */
 public interface IActionSetContributionItem {
 
-/**
- * Returns the action set id.
- */
-public String getActionSetId();
-/**
- * Sets the action set id.
- */
-public void setActionSetId(String newActionSetId);
+    /**
+     * Returns the action set id.
+     */
+    public String getActionSetId();
+
+    /**
+     * Sets the action set id.
+     */
+    public void setActionSetId(String newActionSetId);
 }

@@ -24,10 +24,11 @@ import org.eclipse.jface.viewers.ISelection;
  * @since 2.1
  */
 public class ShowInContext {
-	
-	private Object input;
-	private ISelection selection;
-	
+
+    private Object input;
+
+    private ISelection selection;
+
     /**
      * Constructs a new <code>ShowInContext</code> with the given input and 
      * selection.
@@ -36,8 +37,8 @@ public class ShowInContext {
      * @param selection the selection or <code>null</code>
      */
     public ShowInContext(Object input, ISelection selection) {
-    	setInput(input);
-    	setSelection(selection);
+        setInput(input);
+        setSelection(selection);
     }
 
     /**
@@ -46,7 +47,7 @@ public class ShowInContext {
      * @return the input or <code>null</code>.
      */
     public Object getInput() {
-    	return input;
+        return input;
     }
 
     /**
@@ -55,16 +56,16 @@ public class ShowInContext {
      * @return the selection or <code>null</code>
      */
     public ISelection getSelection() {
-    	return selection;
+        return selection;
     }
-    
+
     /**
      * Sets the input, or <code>null</code> to indicate no input.
      * 
      * @param input the input or <code>null</code> 
      */
     public void setInput(Object input) {
-    	this.input = input;
+        this.input = input;
     }
 
     /**
@@ -73,7 +74,7 @@ public class ShowInContext {
      * @param selection the selection or <code>null</code>
      */
     public void setSelection(ISelection selection) {
-    	this.selection = selection;
+        this.selection = selection;
     }
 
 }

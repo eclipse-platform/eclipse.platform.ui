@@ -22,97 +22,99 @@ import org.eclipse.swt.widgets.Control;
 
 public final class Capture {
 
-	private List captureListeners;
-	private boolean capturing;
-	private Control control;
-	private int data;
+    private List captureListeners;
 
-	private MouseListener mouseListener = new MouseListener() {
-		public void mouseDoubleClick(MouseEvent mouseEvent) {
-		}
+    private boolean capturing;
 
-		public void mouseDown(MouseEvent mouseEvent) {
-			if (!capturing) {
-				capturing = true;
-				data = mouseEvent.stateMask;
-				pen = mouseEvent.button;
-				points.clear();
-				points.add(new Point(mouseEvent.x, mouseEvent.y));
-				control.addMouseMoveListener(mouseMoveListener);
-			}
-		}
+    private Control control;
 
-		public void mouseUp(MouseEvent mouseEvent) {
-			if (capturing && mouseEvent.button == pen) {
-				control.removeMouseMoveListener(mouseMoveListener);
-				points.add(new Point(mouseEvent.x, mouseEvent.y));
-				CaptureEvent captureEvent =
-					CaptureEvent.create(
-						data,
-						pen,
-						(Point[]) points.toArray(new Point[points.size()]));
-				capturing = false;
-				data = 0;
-				pen = 0;
-				points.clear();
-				Iterator iterator = captureListeners.iterator();
+    private int data;
 
-				while (iterator.hasNext())
-					((ICaptureListener) iterator.next()).capture(captureEvent);
-			}
-		}
-	};
+    private MouseListener mouseListener = new MouseListener() {
+        public void mouseDoubleClick(MouseEvent mouseEvent) {
+        }
 
-	private MouseMoveListener mouseMoveListener = new MouseMoveListener() {
-		public void mouseMove(MouseEvent mouseEvent) {
-			if (capturing)
-				points.add(new Point(mouseEvent.x, mouseEvent.y));
-		}
-	};
-	private int pen;
-	private List points = new ArrayList();
+        public void mouseDown(MouseEvent mouseEvent) {
+            if (!capturing) {
+                capturing = true;
+                data = mouseEvent.stateMask;
+                pen = mouseEvent.button;
+                points.clear();
+                points.add(new Point(mouseEvent.x, mouseEvent.y));
+                control.addMouseMoveListener(mouseMoveListener);
+            }
+        }
 
-	public Capture() {
-	}
+        public void mouseUp(MouseEvent mouseEvent) {
+            if (capturing && mouseEvent.button == pen) {
+                control.removeMouseMoveListener(mouseMoveListener);
+                points.add(new Point(mouseEvent.x, mouseEvent.y));
+                CaptureEvent captureEvent = CaptureEvent.create(data, pen,
+                        (Point[]) points.toArray(new Point[points.size()]));
+                capturing = false;
+                data = 0;
+                pen = 0;
+                points.clear();
+                Iterator iterator = captureListeners.iterator();
 
-	public void addCaptureListener(ICaptureListener captureListener) {
-		if (captureListener == null)
-			throw new NullPointerException();
+                while (iterator.hasNext())
+                    ((ICaptureListener) iterator.next()).capture(captureEvent);
+            }
+        }
+    };
 
-		if (captureListeners == null)
-			captureListeners = new ArrayList();
+    private MouseMoveListener mouseMoveListener = new MouseMoveListener() {
+        public void mouseMove(MouseEvent mouseEvent) {
+            if (capturing)
+                points.add(new Point(mouseEvent.x, mouseEvent.y));
+        }
+    };
 
-		if (!captureListeners.contains(captureListener))
-			captureListeners.add(captureListener);
-	}
+    private int pen;
 
-	public Control getControl() {
-		return control;
-	}
+    private List points = new ArrayList();
 
-	public void removeCaptureListener(ICaptureListener captureListener) {
-		if (captureListener == null)
-			throw new NullPointerException();
+    public Capture() {
+    }
 
-		if (captureListeners != null)
-			captureListeners.remove(captureListener);
-	}
+    public void addCaptureListener(ICaptureListener captureListener) {
+        if (captureListener == null)
+            throw new NullPointerException();
 
-	public void setControl(Control control) {
-		if (this.control != control) {
-			if (this.control != null) {
-				control.removeMouseMoveListener(mouseMoveListener);
-				control.removeMouseListener(mouseListener);
-			}
+        if (captureListeners == null)
+            captureListeners = new ArrayList();
 
-			this.control = control;
-			capturing = false;
-			data = 0;
-			pen = 0;
-			points.clear();
+        if (!captureListeners.contains(captureListener))
+            captureListeners.add(captureListener);
+    }
 
-			if (this.control != null)
-				control.addMouseListener(mouseListener);
-		}
-	}
+    public Control getControl() {
+        return control;
+    }
+
+    public void removeCaptureListener(ICaptureListener captureListener) {
+        if (captureListener == null)
+            throw new NullPointerException();
+
+        if (captureListeners != null)
+            captureListeners.remove(captureListener);
+    }
+
+    public void setControl(Control control) {
+        if (this.control != control) {
+            if (this.control != null) {
+                control.removeMouseMoveListener(mouseMoveListener);
+                control.removeMouseListener(mouseListener);
+            }
+
+            this.control = control;
+            capturing = false;
+            data = 0;
+            pen = 0;
+            points.clear();
+
+            if (this.control != null)
+                control.addMouseListener(mouseListener);
+        }
+    }
 }

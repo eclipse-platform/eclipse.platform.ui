@@ -45,201 +45,198 @@ import org.eclipse.swt.widgets.Display;
  */
 public class ColorRegistry extends ResourceRegistry {
 
-	/**
-	 * This registries <code>Display</code>. All colors will be allocated using 
-	 * it.
-	 */
-	protected Display display;
+    /**
+     * This registries <code>Display</code>. All colors will be allocated using 
+     * it.
+     */
+    protected Display display;
 
-	/**
-	 * Collection of <code>Color</code> that are now stale to be disposed when 
-	 * it is safe to do so (i.e. on shutdown).
-	 */
-	private List staleColors = new ArrayList();
+    /**
+     * Collection of <code>Color</code> that are now stale to be disposed when 
+     * it is safe to do so (i.e. on shutdown).
+     */
+    private List staleColors = new ArrayList();
 
-	/**
-	 * Table of known colors, keyed by symbolic color name (key type: <code>String</code>,
-	 * value type: <code>org.eclipse.swt.graphics.Color</code>.
-	 */
-	private Map stringToColor = new HashMap(7);
+    /**
+     * Table of known colors, keyed by symbolic color name (key type: <code>String</code>,
+     * value type: <code>org.eclipse.swt.graphics.Color</code>.
+     */
+    private Map stringToColor = new HashMap(7);
 
-	/**
-	 * Table of known color data, keyed by symbolic color name (key type:
-	 * <code>String</code>, value type: <code>org.eclipse.swt.graphics.RGB</code>).
-	 */
-	private Map stringToRGB = new HashMap(7);
-	
-	/**
-	 * Runnable that cleans up the manager on disposal of the display.
-	 */
-	protected Runnable displayRunnable = new Runnable() {
-		public void run() {
-			clearCaches();
-		}
-	};
+    /**
+     * Table of known color data, keyed by symbolic color name (key type:
+     * <code>String</code>, value type: <code>org.eclipse.swt.graphics.RGB</code>).
+     */
+    private Map stringToRGB = new HashMap(7);
 
-	/**
-	 * Create a new instance of the receiver that is hooked to the current 
-	 * display.
-	 * 
-	 * @see org.eclipse.swt.widgets.Display#getCurrent()
-	 */
-	public ColorRegistry() {
-		this(Display.getCurrent());
-	}
+    /**
+     * Runnable that cleans up the manager on disposal of the display.
+     */
+    protected Runnable displayRunnable = new Runnable() {
+        public void run() {
+            clearCaches();
+        }
+    };
 
-	/**
-	 * Create a new instance of the receiver.
-	 * 
-	 * @param display the <code>Display</code> to hook into.
-	 */
-	public ColorRegistry(Display display) {
-		Assert.isNotNull(display);
-		this.display = display;
-		hookDisplayDispose();
-	}
+    /**
+     * Create a new instance of the receiver that is hooked to the current 
+     * display.
+     * 
+     * @see org.eclipse.swt.widgets.Display#getCurrent()
+     */
+    public ColorRegistry() {
+        this(Display.getCurrent());
+    }
 
-	
+    /**
+     * Create a new instance of the receiver.
+     * 
+     * @param display the <code>Display</code> to hook into.
+     */
+    public ColorRegistry(Display display) {
+        Assert.isNotNull(display);
+        this.display = display;
+        hookDisplayDispose();
+    }
 
-	/**
-	 * Create a new <code>Color</code> on the receivers <code>Display</code>.
-	 * 
-	 * @param symbolicName the symbolic color name.
-	 * @param rgb the <code>RGB</code> data for the color.
-	 * @return the new <code>Color</code> object.
-	 */
-	private Color createColor(String symbolicName, RGB rgb) {
-		return new Color(display, rgb);
-	}
+    /**
+     * Create a new <code>Color</code> on the receivers <code>Display</code>.
+     * 
+     * @param symbolicName the symbolic color name.
+     * @param rgb the <code>RGB</code> data for the color.
+     * @return the new <code>Color</code> object.
+     */
+    private Color createColor(String symbolicName, RGB rgb) {
+        return new Color(display, rgb);
+    }
 
-	/**
-	 * Dispose of all of the <code>Color</code>s in this iterator.
-	 * 
-	 * @param Iterator over <code>Collection</code> of <code>Color</code>
-	 */
-	private void disposeColors(Iterator iterator) {
-		while (iterator.hasNext()) {
-			Object next = iterator.next();
-			((Color) next).dispose();
-		}
-	}
+    /**
+     * Dispose of all of the <code>Color</code>s in this iterator.
+     * 
+     * @param Iterator over <code>Collection</code> of <code>Color</code>
+     */
+    private void disposeColors(Iterator iterator) {
+        while (iterator.hasNext()) {
+            Object next = iterator.next();
+            ((Color) next).dispose();
+        }
+    }
 
-	/**
-	 * Returns the <code>color</code> associated with the given symbolic color 
-	 * name, or <code>null</code> if no such definition exists.
-	 * 
-	 * @param symbolicName symbolic color name
-	 * @return the <code>Color</code> or <code>null</code>
-	 */
-	public Color get(String symbolicName) {
+    /**
+     * Returns the <code>color</code> associated with the given symbolic color 
+     * name, or <code>null</code> if no such definition exists.
+     * 
+     * @param symbolicName symbolic color name
+     * @return the <code>Color</code> or <code>null</code>
+     */
+    public Color get(String symbolicName) {
 
-		Assert.isNotNull(symbolicName);
-		Object result = stringToColor.get(symbolicName);
-		if (result != null)
-			return (Color) result;
+        Assert.isNotNull(symbolicName);
+        Object result = stringToColor.get(symbolicName);
+        if (result != null)
+            return (Color) result;
 
-		Color color = null;
-		
-		result = stringToRGB.get(symbolicName);
-		if (result == null)
-		    return null;
+        Color color = null;
 
-		color = createColor(symbolicName, (RGB) result);
-		
-		stringToColor.put(symbolicName, color);
+        result = stringToRGB.get(symbolicName);
+        if (result == null)
+            return null;
 
-		return color;
-	}
-	    
+        color = createColor(symbolicName, (RGB) result);
+
+        stringToColor.put(symbolicName, color);
+
+        return color;
+    }
+
     /* (non-Javadoc)
-	 * @see org.eclipse.jface.resource.ResourceRegistry#getKeySet()
-	 */	
-	public Set getKeySet() {	    
-	    return Collections.unmodifiableSet(stringToRGB.keySet());
-	}
+     * @see org.eclipse.jface.resource.ResourceRegistry#getKeySet()
+     */
+    public Set getKeySet() {
+        return Collections.unmodifiableSet(stringToRGB.keySet());
+    }
 
-	/**
-	 * Returns the color data associated with the given symbolic color name.
-	 *
-	 * @param symbolicName symbolic color name.
-	 * @return the <code>RGB</code> data.
-	 */
-	public RGB getRGB(String symbolicName) {
-		Assert.isNotNull(symbolicName);
-		return (RGB) stringToRGB.get(symbolicName);
-	}
+    /**
+     * Returns the color data associated with the given symbolic color name.
+     *
+     * @param symbolicName symbolic color name.
+     * @return the <code>RGB</code> data.
+     */
+    public RGB getRGB(String symbolicName) {
+        Assert.isNotNull(symbolicName);
+        return (RGB) stringToRGB.get(symbolicName);
+    }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.resource.ResourceRegistry#clearCaches()
+     */
+    protected void clearCaches() {
+        disposeColors(stringToColor.values().iterator());
+        disposeColors(staleColors.iterator());
+        stringToColor.clear();
+        staleColors.clear();
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.resource.ResourceRegistry#clearCaches()
-	 */
-	protected void clearCaches() {
-		disposeColors(stringToColor.values().iterator());
-		disposeColors(staleColors.iterator());
-		stringToColor.clear();
-		staleColors.clear();					
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.resource.ResourceRegistry#hasValueFor(java.lang.String)
+     */
+    public boolean hasValueFor(String colorKey) {
+        return stringToRGB.containsKey(colorKey);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.resource.ResourceRegistry#hasValueFor(java.lang.String)
-	 */
-	public boolean hasValueFor(String colorKey) {
-		return stringToRGB.containsKey(colorKey);
-	}
+    /**
+     * Hook a dispose listener on the SWT display.
+     */
+    private void hookDisplayDispose() {
+        display.disposeExec(displayRunnable);
+    }
 
-	/**
-	 * Hook a dispose listener on the SWT display.
-	 */
-	private void hookDisplayDispose() {
-		display.disposeExec(displayRunnable);
-	}
+    /**
+     * Adds (or replaces) a color to this color registry under the given 
+     * symbolic name.
+     * <p>
+     * A property change event is reported whenever the mapping from a symbolic
+     * name to a color changes. The source of the event is this registry; the
+     * property name is the symbolic color name.
+     * </p>
+     * 
+     * @param symbolicName the symbolic color name
+     * @param colorData an <code>RGB</code> object
+     */
+    public void put(String symbolicName, RGB colorData) {
+        put(symbolicName, colorData, true);
+    }
 
-	/**
-	 * Adds (or replaces) a color to this color registry under the given 
-	 * symbolic name.
-	 * <p>
-	 * A property change event is reported whenever the mapping from a symbolic
-	 * name to a color changes. The source of the event is this registry; the
-	 * property name is the symbolic color name.
-	 * </p>
-	 * 
-	 * @param symbolicName the symbolic color name
-	 * @param colorData an <code>RGB</code> object
-	 */
-	public void put(String symbolicName, RGB colorData) {
-		put(symbolicName, colorData, true);
-	}
+    /**
+     * Adds (or replaces) a color to this color registry under the given 
+     * symbolic name.
+     * <p>
+     * A property change event is reported whenever the mapping from a symbolic
+     * name to a color changes. The source of the event is this registry; the
+     * property name is the symbolic color name.
+     * </p>
+     * 
+     * @param symbolicName the symbolic color name
+     * @param colorData an <code>RGB</code> object
+     * @param update - fire a color mapping changed if true. False if this
+     *            method is called from the get method as no setting has
+     *            changed.
+     */
+    private void put(String symbolicName, RGB colorData, boolean update) {
 
-	/**
-	 * Adds (or replaces) a color to this color registry under the given 
-	 * symbolic name.
-	 * <p>
-	 * A property change event is reported whenever the mapping from a symbolic
-	 * name to a color changes. The source of the event is this registry; the
-	 * property name is the symbolic color name.
-	 * </p>
-	 * 
-	 * @param symbolicName the symbolic color name
-	 * @param colorData an <code>RGB</code> object
-	 * @param update - fire a color mapping changed if true. False if this
-	 *            method is called from the get method as no setting has
-	 *            changed.
-	 */
-	private void put(String symbolicName, RGB colorData, boolean update) {
+        Assert.isNotNull(symbolicName);
+        Assert.isNotNull(colorData);
 
-		Assert.isNotNull(symbolicName);
-		Assert.isNotNull(colorData);
+        RGB existing = (RGB) stringToRGB.get(symbolicName);
+        if (colorData.equals(existing))
+            return;
 
-		RGB existing = (RGB) stringToRGB.get(symbolicName);
-		if (colorData.equals(existing))
-			return;
+        Color oldColor = (Color) stringToColor.remove(symbolicName);
+        stringToRGB.put(symbolicName, colorData);
+        if (update)
+            fireMappingChanged(symbolicName, existing, colorData);
 
-		Color oldColor = (Color) stringToColor.remove(symbolicName);
-		stringToRGB.put(symbolicName, colorData);
-		if (update)
-			fireMappingChanged(symbolicName, existing, colorData);
-
-		if (oldColor != null)
-			staleColors.add(oldColor);
-	}	
+        if (oldColor != null)
+            staleColors.add(oldColor);
+    }
 }

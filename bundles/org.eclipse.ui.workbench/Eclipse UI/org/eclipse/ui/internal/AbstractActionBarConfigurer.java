@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.ui.application.IActionBarConfigurer;
 
 /**
@@ -20,22 +20,23 @@ import org.eclipse.ui.application.IActionBarConfigurer;
  * 
  * @since 3.0
  */
-public abstract class AbstractActionBarConfigurer implements IActionBarConfigurer {
-	
-	/* (non-javadoc)
-	 * @see org.eclipse.ui.application.IActionBarConfigurer
-	 */
-	public abstract IStatusLineManager getStatusLineManager(); 
-	
-	/* (non-javadoc)
-	 * @see org.eclipse.ui.application.IActionBarConfigurer
-	 */
-	public abstract IMenuManager getMenuManager();
+public abstract class AbstractActionBarConfigurer implements
+        IActionBarConfigurer {
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.application.IActionBarConfigurer#getCoolBarManager()
-	 */
-	public abstract ICoolBarManager getCoolBarManager();
-	
+    /* (non-javadoc)
+     * @see org.eclipse.ui.application.IActionBarConfigurer
+     */
+    public abstract IStatusLineManager getStatusLineManager();
+
+    /* (non-javadoc)
+     * @see org.eclipse.ui.application.IActionBarConfigurer
+     */
+    public abstract IMenuManager getMenuManager();
+
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.ui.application.IActionBarConfigurer#getCoolBarManager()
+     */
+    public abstract ICoolBarManager getCoolBarManager();
+
 }

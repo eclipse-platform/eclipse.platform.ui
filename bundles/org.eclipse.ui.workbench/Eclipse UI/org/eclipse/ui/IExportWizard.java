@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui;
 
-
 /**
  * Interface for export wizards.
  * <p>
@@ -31,7 +30,7 @@ package org.eclipse.ui;
  * &LT;/extension&GT;
  * </pre>
  * </p>
-*
+ *
  * @see org.eclipse.jface.wizard.IWizard
  */
 public interface IExportWizard extends IWorkbenchWizard {

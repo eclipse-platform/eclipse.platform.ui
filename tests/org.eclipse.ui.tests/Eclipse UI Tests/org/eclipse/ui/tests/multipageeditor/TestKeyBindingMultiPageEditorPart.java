@@ -12,12 +12,10 @@ package org.eclipse.ui.tests.multipageeditor;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IProgressMonitor;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
-
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IKeyBindingService;
@@ -139,6 +137,6 @@ public final class TestKeyBindingMultiPageEditorPart extends EditorPart {
         final String scope2 = "org.eclipse.ui.tests.scope2"; //$NON-NLS-1$
         IKeyBindingService keyBindingService = getEditorSite()
                 .getKeyBindingService();
-        keyBindingService.setScopes(new String[] { (odds) ? scope1 : scope2});
+        keyBindingService.setScopes(new String[] { (odds) ? scope1 : scope2 });
     }
 }

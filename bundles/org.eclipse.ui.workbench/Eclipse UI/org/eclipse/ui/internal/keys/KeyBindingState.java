@@ -35,133 +35,136 @@ import org.eclipse.ui.keys.KeySequence;
  */
 class KeyBindingState {
 
-	/**
-	 * The workbench window associated with this state. The state can only
-	 * exist for one window. When the focus leaves this window then the mode
-	 * must automatically be reset.
-	 */
-	private IWorkbenchWindow associatedWindow;
-	/**
-	 * This is the current extent of the sequence entered by the user. In an
-	 * application with only single-stroke key bindings, this will also be
-	 * empty. However, in applications with multi-stroke key bindings, this is
-	 * the sequence entered by the user that partially matches another one of
-	 * the application's active key bindings.
-	 */
-	private KeySequence currentSequence;
-	/**
-	 * The workbench that should be notified of changes to the key binding
-	 * state. This is done by updating one of the contribution items on the
-	 * status line.
-	 */
-	private final IWorkbench workbench;
+    /**
+     * The workbench window associated with this state. The state can only
+     * exist for one window. When the focus leaves this window then the mode
+     * must automatically be reset.
+     */
+    private IWorkbenchWindow associatedWindow;
 
-	/**
-	 * Constructs a new instance of <code>KeyBindingState</code> with an
-	 * empty key sequence, set to reset fully.
-	 * 
-	 * @param workbenchToNotify
-	 *            The workbench that this state should keep advised of changes
-	 *            to the key binding state; must not be <code>null</code>.
-	 */
-	KeyBindingState(IWorkbench workbenchToNotify) {
-		currentSequence = KeySequence.getInstance();
-		workbench = workbenchToNotify;
-		associatedWindow = workbench.getActiveWorkbenchWindow();
-	}
+    /**
+     * This is the current extent of the sequence entered by the user. In an
+     * application with only single-stroke key bindings, this will also be
+     * empty. However, in applications with multi-stroke key bindings, this is
+     * the sequence entered by the user that partially matches another one of
+     * the application's active key bindings.
+     */
+    private KeySequence currentSequence;
 
-	/**
-	 * An accessor for the workbench window associated with this state. This
-	 * should never be <code>null</code>, as the setting follows the last
-	 * workbench window to have focus.
-	 * 
-	 * @return The workbench window to which the key binding architecture is
-	 *         currently attached; should never be <code>null</code>.
-	 */
-	IWorkbenchWindow getAssociatedWindow() {
-		return associatedWindow;
-	}
+    /**
+     * The workbench that should be notified of changes to the key binding
+     * state. This is done by updating one of the contribution items on the
+     * status line.
+     */
+    private final IWorkbench workbench;
 
-	/**
-	 * An accessor for the current key sequence waiting for completion.
-	 * 
-	 * @return The current incomplete key sequence; never <code>null</code>,
-	 *         but may be empty.
-	 */
-	KeySequence getCurrentSequence() {
-		return currentSequence;
-	}
+    /**
+     * Constructs a new instance of <code>KeyBindingState</code> with an
+     * empty key sequence, set to reset fully.
+     * 
+     * @param workbenchToNotify
+     *            The workbench that this state should keep advised of changes
+     *            to the key binding state; must not be <code>null</code>.
+     */
+    KeyBindingState(IWorkbench workbenchToNotify) {
+        currentSequence = KeySequence.getInstance();
+        workbench = workbenchToNotify;
+        associatedWindow = workbench.getActiveWorkbenchWindow();
+    }
 
-	/**
-	 * Gets the status line contribution item which the key binding
-	 * architecture uses to keep the user up-to-date as to the current state.
-	 * 
-	 * @return The status line contribution item, if any; <code>null</code>,
-	 *         if none.
-	 */
-	StatusLineContributionItem getStatusLine() {
-		if (associatedWindow instanceof WorkbenchWindow) {
-			WorkbenchWindow window = (WorkbenchWindow) associatedWindow;
-			IStatusLineManager statusLine = window.getStatusLineManager();
-			// TODO implicit dependency on IDE's action builder
-			// @issue implicit dependency on IDE's action builder
-			if (statusLine != null) { // this can be null if we're exiting
-				IContributionItem item = statusLine.find("ModeContributionItem"); //$NON-NLS-1$
-				if (item instanceof StatusLineContributionItem) {
-					return ((StatusLineContributionItem) item);
-				}
-			}
-		}
+    /**
+     * An accessor for the workbench window associated with this state. This
+     * should never be <code>null</code>, as the setting follows the last
+     * workbench window to have focus.
+     * 
+     * @return The workbench window to which the key binding architecture is
+     *         currently attached; should never be <code>null</code>.
+     */
+    IWorkbenchWindow getAssociatedWindow() {
+        return associatedWindow;
+    }
 
-		return null;
-	}
+    /**
+     * An accessor for the current key sequence waiting for completion.
+     * 
+     * @return The current incomplete key sequence; never <code>null</code>,
+     *         but may be empty.
+     */
+    KeySequence getCurrentSequence() {
+        return currentSequence;
+    }
 
-	/**
-	 * <p>
-	 * Resets the state based on the current properties. If the state is to
-	 * collapse fully or if there are no key strokes, then it sets the state to
-	 * have an empty key sequence. Otherwise, it leaves the first key stroke in
-	 * the sequence.
-	 * </p>
-	 * <p>
-	 * The workbench's status lines are updated, if appropriate.
-	 * </p>
-	 */
-	void reset() {
-		currentSequence = KeySequence.getInstance();
-		updateStatusLines();
-	}
+    /**
+     * Gets the status line contribution item which the key binding
+     * architecture uses to keep the user up-to-date as to the current state.
+     * 
+     * @return The status line contribution item, if any; <code>null</code>,
+     *         if none.
+     */
+    StatusLineContributionItem getStatusLine() {
+        if (associatedWindow instanceof WorkbenchWindow) {
+            WorkbenchWindow window = (WorkbenchWindow) associatedWindow;
+            IStatusLineManager statusLine = window.getStatusLineManager();
+            // TODO implicit dependency on IDE's action builder
+            // @issue implicit dependency on IDE's action builder
+            if (statusLine != null) { // this can be null if we're exiting
+                IContributionItem item = statusLine
+                        .find("ModeContributionItem"); //$NON-NLS-1$
+                if (item instanceof StatusLineContributionItem) {
+                    return ((StatusLineContributionItem) item);
+                }
+            }
+        }
 
-	/**
-	 * A mutator for the workbench window to which this state is associated.
-	 * 
-	 * @param window
-	 *            The workbench window to associated; should never be <code>null</code>.
-	 */
-	void setAssociatedWindow(IWorkbenchWindow window) {
-		associatedWindow = window;
-	}
+        return null;
+    }
 
-	/**
-	 * A mutator for the partial sequence entered by the user.
-	 * 
-	 * @param sequence
-	 *            The current key sequence; should not be <code>null</code>,
-	 *            but may be empty.
-	 */
-	void setCurrentSequence(KeySequence sequence) {
-		currentSequence = sequence;
-		updateStatusLines();
-	}
+    /**
+     * <p>
+     * Resets the state based on the current properties. If the state is to
+     * collapse fully or if there are no key strokes, then it sets the state to
+     * have an empty key sequence. Otherwise, it leaves the first key stroke in
+     * the sequence.
+     * </p>
+     * <p>
+     * The workbench's status lines are updated, if appropriate.
+     * </p>
+     */
+    void reset() {
+        currentSequence = KeySequence.getInstance();
+        updateStatusLines();
+    }
 
-	/**
-	 * Updates the text of the status line of the associated shell with the
-	 * current sequence.
-	 */
-	private void updateStatusLines() {
-		StatusLineContributionItem statusLine = getStatusLine();
-		if (statusLine != null) {
-			statusLine.setText(getCurrentSequence().format());
-		}
-	}
+    /**
+     * A mutator for the workbench window to which this state is associated.
+     * 
+     * @param window
+     *            The workbench window to associated; should never be <code>null</code>.
+     */
+    void setAssociatedWindow(IWorkbenchWindow window) {
+        associatedWindow = window;
+    }
+
+    /**
+     * A mutator for the partial sequence entered by the user.
+     * 
+     * @param sequence
+     *            The current key sequence; should not be <code>null</code>,
+     *            but may be empty.
+     */
+    void setCurrentSequence(KeySequence sequence) {
+        currentSequence = sequence;
+        updateStatusLines();
+    }
+
+    /**
+     * Updates the text of the status line of the associated shell with the
+     * current sequence.
+     */
+    private void updateStatusLines() {
+        StatusLineContributionItem statusLine = getStatusLine();
+        if (statusLine != null) {
+            statusLine.setText(getCurrentSequence().format());
+        }
+    }
 }

@@ -38,452 +38,437 @@ import org.eclipse.ui.PlatformUI;
  * 
  * @since 2.0
  */
-public abstract class AbstractElementListSelectionDialog
-	extends SelectionStatusDialog {
+public abstract class AbstractElementListSelectionDialog extends
+        SelectionStatusDialog {
 
-	private ILabelProvider fRenderer;
-	private boolean fIgnoreCase = true;
-	private boolean fIsMultipleSelection = false;
-	private boolean fMatchEmptyString = true;
-	private boolean fAllowDuplicates = true;
+    private ILabelProvider fRenderer;
 
-	private Label fMessage;
+    private boolean fIgnoreCase = true;
 
-	protected FilteredList fFilteredList;
-	private Text fFilterText;
+    private boolean fIsMultipleSelection = false;
 
-	private ISelectionStatusValidator fValidator;
-	private String fFilter = null;
+    private boolean fMatchEmptyString = true;
 
-	private String fEmptyListMessage = ""; //$NON-NLS-1$
-	private String fEmptySelectionMessage = ""; //$NON-NLS-1$
+    private boolean fAllowDuplicates = true;
 
-	private int fWidth = 60;
-	private int fHeight = 18;
+    private Label fMessage;
 
-	private Object[] fSelection = new Object[0];
+    protected FilteredList fFilteredList;
 
-	/**
-	 * Constructs a list selection dialog.
-	 * @param parent The parent for the list.
-	 * @param renderer ILabelProvider for the list
-	 */
-	protected AbstractElementListSelectionDialog(
-		Shell parent,
-		ILabelProvider renderer) {
-		super(parent);
-		fRenderer = renderer;
+    private Text fFilterText;
 
-		int shellStyle = getShellStyle();
-		setShellStyle(shellStyle | SWT.MAX | SWT.RESIZE);
-	}
+    private ISelectionStatusValidator fValidator;
 
-	/**
-	 * Handles default selection (double click).
-	 * By default, the OK button is pressed.
-	 */
-	protected void handleDefaultSelected() {
-		if (validateCurrentSelection())
-			buttonPressed(IDialogConstants.OK_ID);
-	}
+    private String fFilter = null;
 
-	/**
-	 * Specifies if sorting, filtering and folding is case sensitive.
-	 * @param ignoreCase
-	 */
-	public void setIgnoreCase(boolean ignoreCase) {
-		fIgnoreCase = ignoreCase;
-	}
+    private String fEmptyListMessage = ""; //$NON-NLS-1$
 
-	/**
-	 * Returns if sorting, filtering and folding is case sensitive.
-	 * @return boolean
-	 */
-	public boolean isCaseIgnored() {
-		return fIgnoreCase;
-	}
+    private String fEmptySelectionMessage = ""; //$NON-NLS-1$
 
-	/**
-	 * Specifies whether everything or nothing should be filtered on
-	 * empty filter string.
-	 * @param matchEmptyString boolean
-	 */
-	public void setMatchEmptyString(boolean matchEmptyString) {
-		fMatchEmptyString = matchEmptyString;
-	}
+    private int fWidth = 60;
 
-	/**
-	 * Specifies if multiple selection is allowed.
-	 * @param multipleSelection
-	 */
-	public void setMultipleSelection(boolean multipleSelection) {
-		fIsMultipleSelection = multipleSelection;
-	}
+    private int fHeight = 18;
 
-	/**
-	 * Specifies whether duplicate entries are displayed or not.
-	 * @param allowDuplicates
-	 */
-	public void setAllowDuplicates(boolean allowDuplicates) {
-		fAllowDuplicates = allowDuplicates;
-	}
+    private Object[] fSelection = new Object[0];
 
-	/**
-	 * Sets the list size in unit of characters.
-	 * @param width  the width of the list.
-	 * @param height the height of the list.
-	 */
-	public void setSize(int width, int height) {
-		fWidth = width;
-		fHeight = height;
-	}
+    /**
+     * Constructs a list selection dialog.
+     * @param parent The parent for the list.
+     * @param renderer ILabelProvider for the list
+     */
+    protected AbstractElementListSelectionDialog(Shell parent,
+            ILabelProvider renderer) {
+        super(parent);
+        fRenderer = renderer;
 
-	/**
-	 * Sets the message to be displayed if the list is empty.
-	 * @param message the message to be displayed.
-	 */
-	public void setEmptyListMessage(String message) {
-		fEmptyListMessage = message;
-	}
+        int shellStyle = getShellStyle();
+        setShellStyle(shellStyle | SWT.MAX | SWT.RESIZE);
+    }
 
-	/**
-	 * Sets the message to be displayed if the selection is empty.
-	 * @param message the message to be displayed.
-	 */
-	public void setEmptySelectionMessage(String message) {
-		fEmptySelectionMessage = message;
-	}
+    /**
+     * Handles default selection (double click).
+     * By default, the OK button is pressed.
+     */
+    protected void handleDefaultSelected() {
+        if (validateCurrentSelection())
+            buttonPressed(IDialogConstants.OK_ID);
+    }
 
-	/**
-	 * Sets an optional validator to check if the selection is valid.
-	 * The validator is invoked whenever the selection changes.
-	 * @param validator the validator to validate the selection.
-	 */
-	public void setValidator(ISelectionStatusValidator validator) {
-		fValidator = validator;
-	}
+    /**
+     * Specifies if sorting, filtering and folding is case sensitive.
+     * @param ignoreCase
+     */
+    public void setIgnoreCase(boolean ignoreCase) {
+        fIgnoreCase = ignoreCase;
+    }
 
-	/**
-	 * Sets the elements of the list (widget).
-	 * To be called within open().
-	 * @param elements the elements of the list.
-	 */
-	protected void setListElements(Object[] elements) {
-		Assert.isNotNull(fFilteredList);
-		fFilteredList.setElements(elements);
-	}
+    /**
+     * Returns if sorting, filtering and folding is case sensitive.
+     * @return boolean
+     */
+    public boolean isCaseIgnored() {
+        return fIgnoreCase;
+    }
 
-	/**
-	 * Sets the filter pattern.
-	 * @param filter the filter pattern.
-	 */
-	public void setFilter(String filter) {
-		if (fFilterText == null)
-			fFilter = filter;
-		else
-			fFilterText.setText(filter);
-	}
+    /**
+     * Specifies whether everything or nothing should be filtered on
+     * empty filter string.
+     * @param matchEmptyString boolean
+     */
+    public void setMatchEmptyString(boolean matchEmptyString) {
+        fMatchEmptyString = matchEmptyString;
+    }
 
-	/**
-	 * Returns the current filter pattern.
-	 * @return returns the current filter pattern or <code>null<code> if filter was not set.
-	 */
-	public String getFilter() {
-		if (fFilteredList == null)
-			return fFilter;
-		else
-			return fFilteredList.getFilter();
-	}
+    /**
+     * Specifies if multiple selection is allowed.
+     * @param multipleSelection
+     */
+    public void setMultipleSelection(boolean multipleSelection) {
+        fIsMultipleSelection = multipleSelection;
+    }
 
-	/**
-	 * Returns the indices referring the current selection.
-	 * To be called within open().
-	 * @return returns the indices of the current selection.
-	 */
-	protected int[] getSelectionIndices() {
-		Assert.isNotNull(fFilteredList);
-		return fFilteredList.getSelectionIndices();
-	}
+    /**
+     * Specifies whether duplicate entries are displayed or not.
+     * @param allowDuplicates
+     */
+    public void setAllowDuplicates(boolean allowDuplicates) {
+        fAllowDuplicates = allowDuplicates;
+    }
 
-	/**
-	 * Returns an index referring the first current selection.
-	 * To be called within open().
-	 * @return returns the indices of the current selection.
-	 */
-	protected int getSelectionIndex() {
-		Assert.isNotNull(fFilteredList);
-		return fFilteredList.getSelectionIndex();
-	}
+    /**
+     * Sets the list size in unit of characters.
+     * @param width  the width of the list.
+     * @param height the height of the list.
+     */
+    public void setSize(int width, int height) {
+        fWidth = width;
+        fHeight = height;
+    }
 
-	/**
-	 * Sets the selection referenced by an array of elements.
-	 * Empty or null array removes selection.
-	 * To be called within open().
-	 * @param selection the indices of the selection.
-	 */
-	protected void setSelection(Object[] selection) {
-		Assert.isNotNull(fFilteredList);
-		fFilteredList.setSelection(selection);
-	}
+    /**
+     * Sets the message to be displayed if the list is empty.
+     * @param message the message to be displayed.
+     */
+    public void setEmptyListMessage(String message) {
+        fEmptyListMessage = message;
+    }
 
-	/**
-	 * Returns an array of the currently selected elements.
-	 * To be called within or after open().
-	 * @return returns an array of the currently selected elements.
-	 */
-	protected Object[] getSelectedElements() {
-		Assert.isNotNull(fFilteredList);
-		return fFilteredList.getSelection();
-	}
+    /**
+     * Sets the message to be displayed if the selection is empty.
+     * @param message the message to be displayed.
+     */
+    public void setEmptySelectionMessage(String message) {
+        fEmptySelectionMessage = message;
+    }
 
-	/**
-	 * Returns all elements which are folded together to one entry in the list.
-	 * @param  index the index selecting the entry in the list.
-	 * @return returns an array of elements folded together.
-	 */
-	public Object[] getFoldedElements(int index) {
-		Assert.isNotNull(fFilteredList);
-		return fFilteredList.getFoldedElements(index);
-	}
+    /**
+     * Sets an optional validator to check if the selection is valid.
+     * The validator is invoked whenever the selection changes.
+     * @param validator the validator to validate the selection.
+     */
+    public void setValidator(ISelectionStatusValidator validator) {
+        fValidator = validator;
+    }
 
-	/**
-	 * Creates the message text widget and sets layout data.
-	 * @param composite the parent composite of the message area.
-	 */
-	protected Label createMessageArea(Composite composite) {
-		Label label = super.createMessageArea(composite);
+    /**
+     * Sets the elements of the list (widget).
+     * To be called within open().
+     * @param elements the elements of the list.
+     */
+    protected void setListElements(Object[] elements) {
+        Assert.isNotNull(fFilteredList);
+        fFilteredList.setElements(elements);
+    }
 
-		GridData data = new GridData();
-		data.grabExcessVerticalSpace = false;
-		data.grabExcessHorizontalSpace = true;
-		data.horizontalAlignment = GridData.FILL;
-		data.verticalAlignment = GridData.BEGINNING;
-		label.setLayoutData(data);
+    /**
+     * Sets the filter pattern.
+     * @param filter the filter pattern.
+     */
+    public void setFilter(String filter) {
+        if (fFilterText == null)
+            fFilter = filter;
+        else
+            fFilterText.setText(filter);
+    }
 
-		fMessage = label;
+    /**
+     * Returns the current filter pattern.
+     * @return returns the current filter pattern or <code>null<code> if filter was not set.
+     */
+    public String getFilter() {
+        if (fFilteredList == null)
+            return fFilter;
+        else
+            return fFilteredList.getFilter();
+    }
 
-		return label;
-	}
+    /**
+     * Returns the indices referring the current selection.
+     * To be called within open().
+     * @return returns the indices of the current selection.
+     */
+    protected int[] getSelectionIndices() {
+        Assert.isNotNull(fFilteredList);
+        return fFilteredList.getSelectionIndices();
+    }
 
-	/**
-	 * Handles a selection changed event.
-	 * By default, the current selection is validated.
-	 */
-	protected void handleSelectionChanged() {
-		validateCurrentSelection();
-	}
+    /**
+     * Returns an index referring the first current selection.
+     * To be called within open().
+     * @return returns the indices of the current selection.
+     */
+    protected int getSelectionIndex() {
+        Assert.isNotNull(fFilteredList);
+        return fFilteredList.getSelectionIndex();
+    }
 
-	/**
-	 * Validates the current selection and updates the status line
-	 * accordingly.
-	 * @return boolean <code>true</code> if the current selection is
-	 * valid.
-	 */
-	protected boolean validateCurrentSelection() {
-		Assert.isNotNull(fFilteredList);
+    /**
+     * Sets the selection referenced by an array of elements.
+     * Empty or null array removes selection.
+     * To be called within open().
+     * @param selection the indices of the selection.
+     */
+    protected void setSelection(Object[] selection) {
+        Assert.isNotNull(fFilteredList);
+        fFilteredList.setSelection(selection);
+    }
 
-		IStatus status;
-		Object[] elements = getSelectedElements();
+    /**
+     * Returns an array of the currently selected elements.
+     * To be called within or after open().
+     * @return returns an array of the currently selected elements.
+     */
+    protected Object[] getSelectedElements() {
+        Assert.isNotNull(fFilteredList);
+        return fFilteredList.getSelection();
+    }
 
-		if (elements.length > 0) {
-			if (fValidator != null) {
-				status = fValidator.validate(elements);
-			} else {
-				status =
-					new Status(
-						IStatus.OK,
-						PlatformUI.PLUGIN_ID,
-						IStatus.OK,
-						"", //$NON-NLS-1$
-						null);
-			}
-		} else {
-			if (fFilteredList.isEmpty()) {
-				status =
-					new Status(
-						IStatus.ERROR,
-						PlatformUI.PLUGIN_ID,
-						IStatus.ERROR,
-						fEmptyListMessage,
-						null);
-			} else {
-				status =
-					new Status(
-						IStatus.ERROR,
-						PlatformUI.PLUGIN_ID,
-						IStatus.ERROR,
-						fEmptySelectionMessage,
-						null);
-			}
-		}
+    /**
+     * Returns all elements which are folded together to one entry in the list.
+     * @param  index the index selecting the entry in the list.
+     * @return returns an array of elements folded together.
+     */
+    public Object[] getFoldedElements(int index) {
+        Assert.isNotNull(fFilteredList);
+        return fFilteredList.getFoldedElements(index);
+    }
 
-		updateStatus(status);
+    /**
+     * Creates the message text widget and sets layout data.
+     * @param composite the parent composite of the message area.
+     */
+    protected Label createMessageArea(Composite composite) {
+        Label label = super.createMessageArea(composite);
 
-		return status.isOK();
-	}
+        GridData data = new GridData();
+        data.grabExcessVerticalSpace = false;
+        data.grabExcessHorizontalSpace = true;
+        data.horizontalAlignment = GridData.FILL;
+        data.verticalAlignment = GridData.BEGINNING;
+        label.setLayoutData(data);
 
-	/*
-	 * @see Dialog#cancelPressed
-	 */
-	protected void cancelPressed() {
-		setResult(null);
-		super.cancelPressed();
-	}
+        fMessage = label;
 
-	/**
-	 * Creates a filtered list.
-	 * @param parent the parent composite.
-	 * @return returns the filtered list widget.
-	 */
-	protected FilteredList createFilteredList(Composite parent) {
-		int flags =
-			SWT.BORDER
-				| SWT.V_SCROLL
-				| SWT.H_SCROLL
-				| (fIsMultipleSelection ? SWT.MULTI : SWT.SINGLE);
+        return label;
+    }
 
-		FilteredList list =
-			new FilteredList(
-				parent,
-				flags,
-				fRenderer,
-				fIgnoreCase,
-				fAllowDuplicates,
-				fMatchEmptyString);
+    /**
+     * Handles a selection changed event.
+     * By default, the current selection is validated.
+     */
+    protected void handleSelectionChanged() {
+        validateCurrentSelection();
+    }
 
-		GridData data = new GridData();
-		data.widthHint = convertWidthInCharsToPixels(fWidth);
-		data.heightHint = convertHeightInCharsToPixels(fHeight);
-		data.grabExcessVerticalSpace = true;
-		data.grabExcessHorizontalSpace = true;
-		data.horizontalAlignment = GridData.FILL;
-		data.verticalAlignment = GridData.FILL;
-		list.setLayoutData(data);
-		list.setFont(parent.getFont());
-		list.setFilter((fFilter == null ? "" : fFilter)); //$NON-NLS-1$		
+    /**
+     * Validates the current selection and updates the status line
+     * accordingly.
+     * @return boolean <code>true</code> if the current selection is
+     * valid.
+     */
+    protected boolean validateCurrentSelection() {
+        Assert.isNotNull(fFilteredList);
 
-		list.addSelectionListener(new SelectionListener() {
-			public void widgetDefaultSelected(SelectionEvent e) {
-				handleDefaultSelected();
-			}
-			public void widgetSelected(SelectionEvent e) {
-				handleWidgetSelected();
-			}
-		});
+        IStatus status;
+        Object[] elements = getSelectedElements();
 
-		fFilteredList = list;
+        if (elements.length > 0) {
+            if (fValidator != null) {
+                status = fValidator.validate(elements);
+            } else {
+                status = new Status(IStatus.OK, PlatformUI.PLUGIN_ID,
+                        IStatus.OK, "", //$NON-NLS-1$
+                        null);
+            }
+        } else {
+            if (fFilteredList.isEmpty()) {
+                status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID,
+                        IStatus.ERROR, fEmptyListMessage, null);
+            } else {
+                status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID,
+                        IStatus.ERROR, fEmptySelectionMessage, null);
+            }
+        }
 
-		return list;
-	}
+        updateStatus(status);
 
-	// 3515	
-	private void handleWidgetSelected() {
-		Object[] newSelection = fFilteredList.getSelection();
+        return status.isOK();
+    }
 
-		if (newSelection.length != fSelection.length) {
-			fSelection = newSelection;
-			handleSelectionChanged();
-		} else {
-			for (int i = 0; i != newSelection.length; i++) {
-				if (!newSelection[i].equals(fSelection[i])) {
-					fSelection = newSelection;
-					handleSelectionChanged();
-					break;
-				}
-			}
-		}
-	}
+    /*
+     * @see Dialog#cancelPressed
+     */
+    protected void cancelPressed() {
+        setResult(null);
+        super.cancelPressed();
+    }
 
-	protected Text createFilterText(Composite parent) {
-		Text text = new Text(parent, SWT.BORDER);
+    /**
+     * Creates a filtered list.
+     * @param parent the parent composite.
+     * @return returns the filtered list widget.
+     */
+    protected FilteredList createFilteredList(Composite parent) {
+        int flags = SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL
+                | (fIsMultipleSelection ? SWT.MULTI : SWT.SINGLE);
 
-		GridData data = new GridData();
-		data.grabExcessVerticalSpace = false;
-		data.grabExcessHorizontalSpace = true;
-		data.horizontalAlignment = GridData.FILL;
-		data.verticalAlignment = GridData.BEGINNING;
-		text.setLayoutData(data);
-		text.setFont(parent.getFont());
+        FilteredList list = new FilteredList(parent, flags, fRenderer,
+                fIgnoreCase, fAllowDuplicates, fMatchEmptyString);
 
-		text.setText((fFilter == null ? "" : fFilter)); //$NON-NLS-1$
+        GridData data = new GridData();
+        data.widthHint = convertWidthInCharsToPixels(fWidth);
+        data.heightHint = convertHeightInCharsToPixels(fHeight);
+        data.grabExcessVerticalSpace = true;
+        data.grabExcessHorizontalSpace = true;
+        data.horizontalAlignment = GridData.FILL;
+        data.verticalAlignment = GridData.FILL;
+        list.setLayoutData(data);
+        list.setFont(parent.getFont());
+        list.setFilter((fFilter == null ? "" : fFilter)); //$NON-NLS-1$		
 
-		Listener listener = new Listener() {
-			public void handleEvent(Event e) {
-				fFilteredList.setFilter(fFilterText.getText());
-			}
-		};
-		text.addListener(SWT.Modify, listener);
+        list.addSelectionListener(new SelectionListener() {
+            public void widgetDefaultSelected(SelectionEvent e) {
+                handleDefaultSelected();
+            }
 
-		text.addKeyListener(new KeyListener() {
-			public void keyPressed(KeyEvent e) {
-				if (e.keyCode == SWT.ARROW_DOWN)
-					fFilteredList.setFocus();
-			}
+            public void widgetSelected(SelectionEvent e) {
+                handleWidgetSelected();
+            }
+        });
 
-			public void keyReleased(KeyEvent e) {
-			}
-		});
+        fFilteredList = list;
 
-		fFilterText = text;
+        return list;
+    }
 
-		return text;
-	}
+    // 3515	
+    private void handleWidgetSelected() {
+        Object[] newSelection = fFilteredList.getSelection();
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.window.Window#open()
-	 */
-	public int open() {
-		super.open();
-		return getReturnCode();
-	}
+        if (newSelection.length != fSelection.length) {
+            fSelection = newSelection;
+            handleSelectionChanged();
+        } else {
+            for (int i = 0; i != newSelection.length; i++) {
+                if (!newSelection[i].equals(fSelection[i])) {
+                    fSelection = newSelection;
+                    handleSelectionChanged();
+                    break;
+                }
+            }
+        }
+    }
 
-	private void access$superCreate() {
-		super.create();
-	}
+    protected Text createFilterText(Composite parent) {
+        Text text = new Text(parent, SWT.BORDER);
 
-	/*
-	 *  (non-Javadoc)
-	 * @see org.eclipse.jface.window.Window#create()
-	 */
-	public void create() {
+        GridData data = new GridData();
+        data.grabExcessVerticalSpace = false;
+        data.grabExcessHorizontalSpace = true;
+        data.horizontalAlignment = GridData.FILL;
+        data.verticalAlignment = GridData.BEGINNING;
+        text.setLayoutData(data);
+        text.setFont(parent.getFont());
 
-		BusyIndicator.showWhile(null, new Runnable() {
-			public void run() {
-				access$superCreate();
+        text.setText((fFilter == null ? "" : fFilter)); //$NON-NLS-1$
 
-				Assert.isNotNull(fFilteredList);
+        Listener listener = new Listener() {
+            public void handleEvent(Event e) {
+                fFilteredList.setFilter(fFilterText.getText());
+            }
+        };
+        text.addListener(SWT.Modify, listener);
 
-				if (fFilteredList.isEmpty()) {
-					handleEmptyList();
-				} else {
-					validateCurrentSelection();
-					fFilterText.selectAll();
-					fFilterText.setFocus();
-				}
-			}
-		});
+        text.addKeyListener(new KeyListener() {
+            public void keyPressed(KeyEvent e) {
+                if (e.keyCode == SWT.ARROW_DOWN)
+                    fFilteredList.setFocus();
+            }
 
-	}
+            public void keyReleased(KeyEvent e) {
+            }
+        });
 
-	/**
-	 * Handles empty list by disabling widgets.
-	 */
-	protected void handleEmptyList() {
-		fMessage.setEnabled(false);
-		fFilterText.setEnabled(false);
-		fFilteredList.setEnabled(false);
-		updateOkState();
-	}
+        fFilterText = text;
 
-	/**
-		 * Update the enablement of the OK button based on whether or not there
-		 * is a selection.
-		 *
-		 */
-	protected void updateOkState() {
-		Button okButton = getOkButton();
-		if (okButton != null)
-			okButton.setEnabled(getSelectedElements().length != 0);
-	}
+        return text;
+    }
+
+    /*
+     *  (non-Javadoc)
+     * @see org.eclipse.jface.window.Window#open()
+     */
+    public int open() {
+        super.open();
+        return getReturnCode();
+    }
+
+    private void access$superCreate() {
+        super.create();
+    }
+
+    /*
+     *  (non-Javadoc)
+     * @see org.eclipse.jface.window.Window#create()
+     */
+    public void create() {
+
+        BusyIndicator.showWhile(null, new Runnable() {
+            public void run() {
+                access$superCreate();
+
+                Assert.isNotNull(fFilteredList);
+
+                if (fFilteredList.isEmpty()) {
+                    handleEmptyList();
+                } else {
+                    validateCurrentSelection();
+                    fFilterText.selectAll();
+                    fFilterText.setFocus();
+                }
+            }
+        });
+
+    }
+
+    /**
+     * Handles empty list by disabling widgets.
+     */
+    protected void handleEmptyList() {
+        fMessage.setEnabled(false);
+        fFilterText.setEnabled(false);
+        fFilteredList.setEnabled(false);
+        updateOkState();
+    }
+
+    /**
+     * Update the enablement of the OK button based on whether or not there
+     * is a selection.
+     *
+     */
+    protected void updateOkState() {
+        Button okButton = getOkButton();
+        if (okButton != null)
+            okButton.setEnabled(getSelectedElements().length != 0);
+    }
 }

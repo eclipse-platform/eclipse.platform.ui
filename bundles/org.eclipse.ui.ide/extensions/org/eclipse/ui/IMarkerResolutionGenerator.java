@@ -11,7 +11,7 @@
 package org.eclipse.ui;
 
 import org.eclipse.core.resources.IMarker;
- 
+
 /** 
  * Creates resolutions for a given marker. 
  * When run, a resolution would typically eliminate 
@@ -25,7 +25,7 @@ public interface IMarkerResolutionGenerator {
      * be empty). 
      * 
      * @return resolutions for the given marker
-     */ 
-    public IMarkerResolution[] getResolutions(IMarker marker); 
+     */
+    public IMarkerResolution[] getResolutions(IMarker marker);
 }
 

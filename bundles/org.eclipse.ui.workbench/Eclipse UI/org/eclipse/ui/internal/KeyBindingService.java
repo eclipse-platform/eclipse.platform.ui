@@ -143,7 +143,8 @@ final class KeyBindingService implements INestableKeyBindingService {
      * @see org.eclipse.ui.INestableKeyBindingService#activateKeyBindingService(org.eclipse.ui.IWorkbenchSite)
      */
     public boolean activateKeyBindingService(IWorkbenchSite nestedSite) {
-        if (disposed) return false;
+        if (disposed)
+            return false;
 
         // Check if we should do a deactivation.
         if (nestedSite == null) {
@@ -161,11 +162,14 @@ final class KeyBindingService implements INestableKeyBindingService {
         // Attempt to activate a service.
         final IKeyBindingService service = (IKeyBindingService) nestedServices
                 .get(nestedSite);
-        if (service == null) { return false; }
+        if (service == null) {
+            return false;
+        }
 
         if (service == activeService) {
-        // The service is already active.
-        return false; }
+            // The service is already active.
+            return false;
+        }
 
         deactivateNestedService();
         activateNestedService(service);
@@ -183,7 +187,8 @@ final class KeyBindingService implements INestableKeyBindingService {
      *            <code>null</code> but nothing else happens.
      */
     private final void activateNestedService(final IKeyBindingService service) {
-        if (disposed) return;
+        if (disposed)
+            return;
 
         /*
          * If I have a parent, and I'm the active service, then deactivate so
@@ -202,7 +207,9 @@ final class KeyBindingService implements INestableKeyBindingService {
         activeService = service;
 
         // Check to see that the service isn't null.
-        if (service == null) { return; }
+        if (service == null) {
+            return;
+        }
 
         if (haveParent) {
             if (active) {
@@ -232,10 +239,13 @@ final class KeyBindingService implements INestableKeyBindingService {
      * removes all the enabled submissions for the nested service.
      */
     private final void deactivateNestedService() {
-        if (disposed) return;
+        if (disposed)
+            return;
 
         // Don't do anything if there is no active service.
-        if (activeService == null) { return; }
+        if (activeService == null) {
+            return;
+        }
 
         // Check to see if there is a parent.
         boolean active = false;
@@ -256,7 +266,7 @@ final class KeyBindingService implements INestableKeyBindingService {
              * Remove all of the nested handler submissions. The handlers here
              * weren't created by this instance (but by the nest instance), and
              * hence can't be disposed here.
-             */ 
+             */
             Workbench.getInstance().getCommandSupport()
                     .removeHandlerSubmissions(nestedHandlerSubmissions);
 
@@ -285,7 +295,7 @@ final class KeyBindingService implements INestableKeyBindingService {
                     .getContextSupport()
                     .removeEnabledSubmissions(new ArrayList(enabledSubmissions));
             enabledSubmissions.clear();
-            
+
             /*
              * Each removed handler submission, must dispose its corresponding
              * handler -- as these handlers only exist inside of this class.
@@ -322,7 +332,8 @@ final class KeyBindingService implements INestableKeyBindingService {
      *         <code>null</code>.
      */
     private final List getEnabledSubmissions() {
-        if (disposed) return null;
+        if (disposed)
+            return null;
 
         final List submissions = new ArrayList(enabledSubmissions);
         if (activeService instanceof KeyBindingService) {
@@ -340,7 +351,8 @@ final class KeyBindingService implements INestableKeyBindingService {
      *         <code>null</code>.
      */
     private final List getHandlerSubmissions() {
-        if (disposed) return null;
+        if (disposed)
+            return null;
 
         final List submissions = new ArrayList(handlerSubmissionsByCommandId
                 .values());
@@ -357,9 +369,12 @@ final class KeyBindingService implements INestableKeyBindingService {
      * @see org.eclipse.ui.INestableKeyBindingService#getKeyBindingService(org.eclipse.ui.IWorkbenchSite)
      */
     public IKeyBindingService getKeyBindingService(IWorkbenchSite nestedSite) {
-        if (disposed) return null;
+        if (disposed)
+            return null;
 
-        if (nestedSite == null) { return null; }
+        if (nestedSite == null) {
+            return null;
+        }
 
         IKeyBindingService service = (IKeyBindingService) nestedServices
                 .get(nestedSite);
@@ -379,7 +394,8 @@ final class KeyBindingService implements INestableKeyBindingService {
     }
 
     public String[] getScopes() {
-        if (disposed) return null;
+        if (disposed)
+            return null;
 
         // Get the nested scopes, if any.
         final String[] nestedScopes;
@@ -412,7 +428,8 @@ final class KeyBindingService implements INestableKeyBindingService {
      *            but may be empty.
      */
     private final void normalizeSites(final List submissionsToModify) {
-        if (disposed) return;
+        if (disposed)
+            return;
 
         final int size = submissionsToModify.size();
         for (int i = 0; i < size; i++) {
@@ -423,8 +440,8 @@ final class KeyBindingService implements INestableKeyBindingService {
                 final EnabledSubmission enabledSubmission = (EnabledSubmission) submission;
                 if (!workbenchPartSite.equals(enabledSubmission
                         .getActiveWorkbenchPartSite())) {
-                    replacementSubmission = new EnabledSubmission(
-                            null, enabledSubmission.getActiveShell(),
+                    replacementSubmission = new EnabledSubmission(null,
+                            enabledSubmission.getActiveShell(),
                             workbenchPartSite, enabledSubmission.getContextId());
                 } else {
                     replacementSubmission = enabledSubmission;
@@ -454,7 +471,8 @@ final class KeyBindingService implements INestableKeyBindingService {
     }
 
     public void registerAction(IAction action) {
-        if (disposed) return;
+        if (disposed)
+            return;
 
         unregisterAction(action);
         String commandId = action.getActionDefinitionId();
@@ -494,11 +512,14 @@ final class KeyBindingService implements INestableKeyBindingService {
      * @see org.eclipse.ui.INestableKeyBindingService#removeKeyBindingService(org.eclipse.ui.IWorkbenchSite)
      */
     public boolean removeKeyBindingService(IWorkbenchSite nestedSite) {
-        if (disposed) return false;
+        if (disposed)
+            return false;
 
         final IKeyBindingService service = (IKeyBindingService) nestedServices
                 .remove(nestedSite);
-        if (service == null) { return false; }
+        if (service == null) {
+            return false;
+        }
 
         if (service.equals(activeService)) {
             deactivateNestedService();
@@ -508,7 +529,8 @@ final class KeyBindingService implements INestableKeyBindingService {
     }
 
     public void setScopes(String[] scopes) {
-        if (disposed) return;
+        if (disposed)
+            return;
 
         // Either deactivate myself, or remove the previous submissions myself.
         boolean active = false;
@@ -542,7 +564,8 @@ final class KeyBindingService implements INestableKeyBindingService {
     }
 
     public void unregisterAction(IAction action) {
-        if (disposed) return;
+        if (disposed)
+            return;
 
         String commandId = action.getActionDefinitionId();
 

@@ -18,17 +18,19 @@ import org.eclipse.ui.IPerspectiveFactory;
  * @since 3.0
  */
 public class DragDropPerspectiveFactory implements IPerspectiveFactory {
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPerspectiveFactory#createInitialLayout(org.eclipse.ui.IPageLayout)
-	 */
-	public void createInitialLayout(IPageLayout layout) {
-		String folderId = "org.eclipse.ui.test.dnd.mystack";
-		
-		IFolderLayout folder = layout.createFolder(folderId, IPageLayout.BOTTOM, 0.5f, IPageLayout.ID_EDITOR_AREA);
-		folder.addView(IPageLayout.ID_OUTLINE);
-		folder.addView(IPageLayout.ID_PROBLEM_VIEW);
-		folder.addView(IPageLayout.ID_PROP_SHEET);
-		
-		layout.addView(IPageLayout.ID_RES_NAV, IPageLayout.LEFT, 0.5f, IPageLayout.ID_EDITOR_AREA);
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IPerspectiveFactory#createInitialLayout(org.eclipse.ui.IPageLayout)
+     */
+    public void createInitialLayout(IPageLayout layout) {
+        String folderId = "org.eclipse.ui.test.dnd.mystack";
+
+        IFolderLayout folder = layout.createFolder(folderId,
+                IPageLayout.BOTTOM, 0.5f, IPageLayout.ID_EDITOR_AREA);
+        folder.addView(IPageLayout.ID_OUTLINE);
+        folder.addView(IPageLayout.ID_PROBLEM_VIEW);
+        folder.addView(IPageLayout.ID_PROP_SHEET);
+
+        layout.addView(IPageLayout.ID_RES_NAV, IPageLayout.LEFT, 0.5f,
+                IPageLayout.ID_EDITOR_AREA);
+    }
 }

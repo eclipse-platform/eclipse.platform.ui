@@ -37,8 +37,8 @@ public abstract class AbstractPresentationFactory {
      *            the workbench
      * @return a newly created part presentation
      */
-    public abstract StackPresentation createEditorPresentation(Composite parent,
-            IStackPresentationSite site);
+    public abstract StackPresentation createEditorPresentation(
+            Composite parent, IStackPresentationSite site);
 
     /**
      * Creates a stack presentation for presenting regular docked views.
@@ -57,8 +57,8 @@ public abstract class AbstractPresentationFactory {
             IStackPresentationSite site);
 
     /**
-	 * <em>EXPERIMENTAL<em>
-	 * 
+     * <em>EXPERIMENTAL<em>
+     * 
      * Creates a standalone stack presentation for presenting a standalone view.
      * A standalone view cannot be docked together with other views. The title
      * of a standalone view may be hidden.
@@ -76,9 +76,9 @@ public abstract class AbstractPresentationFactory {
      *            <code>false</code> to hide it
      * @return a newly created part presentation
      */
-    public abstract StackPresentation createStandaloneViewPresentation(Composite parent,
-            IStackPresentationSite site, boolean showTitle);
-    
+    public abstract StackPresentation createStandaloneViewPresentation(
+            Composite parent, IStackPresentationSite site, boolean showTitle);
+
     /**
      * Creates the status line manager for the window.
      * Subclasses may override.
@@ -97,10 +97,11 @@ public abstract class AbstractPresentationFactory {
      * @param parent the parent composite
      * @return the window's status line control
      */
-    public Control createStatusLineControl(IStatusLineManager statusLine, Composite parent) {
+    public Control createStatusLineControl(IStatusLineManager statusLine,
+            Composite parent) {
         return ((StatusLineManager) statusLine).createControl(parent, SWT.NONE);
     }
-    
+
     /**
      * Returns a globally unique identifier for this type of presentation factory. This is used
      * to ensure that one presentation is not restored from mementos saved by a different
@@ -108,7 +109,7 @@ public abstract class AbstractPresentationFactory {
      * 
      * @return a globally unique identifier for this type of presentation factory.
      */
-	public String getId() {
-		return this.getClass().getName();
-	}
+    public String getId() {
+        return this.getClass().getName();
+    }
 }

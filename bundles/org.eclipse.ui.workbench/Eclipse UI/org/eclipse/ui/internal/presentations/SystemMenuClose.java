@@ -22,32 +22,33 @@ import org.eclipse.ui.presentations.IStackPresentationSite;
  * 
  * @since 3.0
  */
-public final class SystemMenuClose extends Action implements ISelfUpdatingAction {
+public final class SystemMenuClose extends Action implements
+        ISelfUpdatingAction {
 
     private IStackPresentationSite site;
 
     public SystemMenuClose(IStackPresentationSite site) {
-    	this.site = site;
-    	setText(WorkbenchMessages.getString("PartPane.close")); //$NON-NLS-1$
+        this.site = site;
+        setText(WorkbenchMessages.getString("PartPane.close")); //$NON-NLS-1$
     }
 
     public void dispose() {
-    	site = null;
+        site = null;
     }
-    
+
     public void run() {
-    	IPresentablePart part = site.getSelectedPart();
-    	if (part != null) {
-    		site.close(new IPresentablePart[]{part});
-    	}
+        IPresentablePart part = site.getSelectedPart();
+        if (part != null) {
+            site.close(new IPresentablePart[] { part });
+        }
     }
-    
+
     public void update() {
-    	IPresentablePart presentablePart = site.getSelectedPart();
-    	setEnabled(presentablePart != null && site.isCloseable(presentablePart));
+        IPresentablePart presentablePart = site.getSelectedPart();
+        setEnabled(presentablePart != null && site.isCloseable(presentablePart));
     }
-    
+
     public boolean shouldBeVisible() {
-    	return true;
+        return true;
     }
 }

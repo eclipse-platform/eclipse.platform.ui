@@ -30,65 +30,67 @@ import org.eclipse.ui.actions.SelectionProviderAction;
  * Action to remove the selected bookmarks.
  */
 public class ActionRemoveMarker extends SelectionProviderAction {
-	
-	private IWorkbenchPart part;
 
-	/**
-	 * Creates the action.
-	 */
-	public ActionRemoveMarker(IWorkbenchPart part, ISelectionProvider provider) {
-		super(provider, Messages.getString("deleteAction.title")); //$NON-NLS-1$
-		this.part = part;
-		setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
-		setDisabledImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
-		setToolTipText(Messages.getString("deleteAction.tooltip")); //$NON-NLS-1$
-		setEnabled(false);
-	}
-	
-	/**
-	 * Delete the marker selection.
-	 */
-	public void run() {
-		if (!isEnabled()) {
-			return;
-		}
-		final IStructuredSelection selection = getStructuredSelection();
-		if (selection.isEmpty()) {
-			return;
-		}
-		try {
-			ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
-				public void run(IProgressMonitor monitor) throws CoreException {
-					for (Iterator iter = selection.iterator(); iter.hasNext();) {
-						Object o = iter.next();
-						if (o instanceof IMarker) {
-							IMarker marker = (IMarker) o;
-							marker.delete();
-						}
-					}
-				}
-			}, null);
-		} 
-		catch (CoreException e) {
-			ErrorDialog.openError(part.getSite().getShell(), Messages.getString("RemoveMarker.errorTitle"), null, e.getStatus()); //$NON-NLS-1$
-		}
-	}
-	
-	public void selectionChanged(IStructuredSelection selection) {
-		setEnabled(false);
-		if (selection == null || selection.isEmpty()) {
-			return;
-		}
-		for (Iterator iterator = selection.iterator(); iterator.hasNext();) {
-			Object obj = iterator.next();
-			if (!(obj instanceof IMarker)) {
-				return;
-			}
-			IMarker marker = (IMarker) obj;
-			if (!Util.isEditable(marker)) {
-				return;
-			}
-		}
-		setEnabled(true);			
-	}
+    private IWorkbenchPart part;
+
+    /**
+     * Creates the action.
+     */
+    public ActionRemoveMarker(IWorkbenchPart part, ISelectionProvider provider) {
+        super(provider, Messages.getString("deleteAction.title")); //$NON-NLS-1$
+        this.part = part;
+        setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+                .getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
+        setDisabledImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+                .getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
+        setToolTipText(Messages.getString("deleteAction.tooltip")); //$NON-NLS-1$
+        setEnabled(false);
+    }
+
+    /**
+     * Delete the marker selection.
+     */
+    public void run() {
+        if (!isEnabled()) {
+            return;
+        }
+        final IStructuredSelection selection = getStructuredSelection();
+        if (selection.isEmpty()) {
+            return;
+        }
+        try {
+            ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+                public void run(IProgressMonitor monitor) throws CoreException {
+                    for (Iterator iter = selection.iterator(); iter.hasNext();) {
+                        Object o = iter.next();
+                        if (o instanceof IMarker) {
+                            IMarker marker = (IMarker) o;
+                            marker.delete();
+                        }
+                    }
+                }
+            }, null);
+        } catch (CoreException e) {
+            ErrorDialog.openError(part.getSite().getShell(), Messages
+                    .getString("RemoveMarker.errorTitle"), null, e.getStatus()); //$NON-NLS-1$
+        }
+    }
+
+    public void selectionChanged(IStructuredSelection selection) {
+        setEnabled(false);
+        if (selection == null || selection.isEmpty()) {
+            return;
+        }
+        for (Iterator iterator = selection.iterator(); iterator.hasNext();) {
+            Object obj = iterator.next();
+            if (!(obj instanceof IMarker)) {
+                return;
+            }
+            IMarker marker = (IMarker) obj;
+            if (!Util.isEditable(marker)) {
+                return;
+            }
+        }
+        setEnabled(true);
+    }
 }

@@ -17,41 +17,42 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class GoIntoAction extends FrameAction {
 
-	/**
-	 * Constructs a new action for the specified frame list.
-	 * 
-	 * @param frameList the frame list
-	 */
-	public GoIntoAction(FrameList frameList) {
-		super(frameList);
-		setText(FrameListMessages.getString("GoInto.text")); //$NON-NLS-1$
-		setToolTipText(FrameListMessages.getString("GoInto.toolTip")); //$NON-NLS-1$
-		WorkbenchHelp.setHelp(this, IFrameListHelpContextIds.GO_INTO_ACTION);
-		update();
-	}
-	
-	private Frame getSelectionFrame(int flags) {
-		return getFrameList().getSource().getFrame(IFrameSource.SELECTION_FRAME, flags);
-	}
-	
-	/**
-	 * Calls <code>gotoFrame</code> on the frame list with a frame
-	 * representing the currently selected container.
-	 */
-	public void run() {
-		Frame selectionFrame = getSelectionFrame(IFrameSource.FULL_CONTEXT);
-		if (selectionFrame != null) {
-			getFrameList().gotoFrame(selectionFrame);
-		}
-	}
-	
-	/**
-	 * Updates this action's enabled state.
-	 * This action is enabled only when there is a frame for the current selection.
-	 */
-	public void update() {
-		super.update();
-		Frame selectionFrame = getSelectionFrame(0);
-		setEnabled(selectionFrame != null);
-	}
+    /**
+     * Constructs a new action for the specified frame list.
+     * 
+     * @param frameList the frame list
+     */
+    public GoIntoAction(FrameList frameList) {
+        super(frameList);
+        setText(FrameListMessages.getString("GoInto.text")); //$NON-NLS-1$
+        setToolTipText(FrameListMessages.getString("GoInto.toolTip")); //$NON-NLS-1$
+        WorkbenchHelp.setHelp(this, IFrameListHelpContextIds.GO_INTO_ACTION);
+        update();
+    }
+
+    private Frame getSelectionFrame(int flags) {
+        return getFrameList().getSource().getFrame(
+                IFrameSource.SELECTION_FRAME, flags);
+    }
+
+    /**
+     * Calls <code>gotoFrame</code> on the frame list with a frame
+     * representing the currently selected container.
+     */
+    public void run() {
+        Frame selectionFrame = getSelectionFrame(IFrameSource.FULL_CONTEXT);
+        if (selectionFrame != null) {
+            getFrameList().gotoFrame(selectionFrame);
+        }
+    }
+
+    /**
+     * Updates this action's enabled state.
+     * This action is enabled only when there is a frame for the current selection.
+     */
+    public void update() {
+        super.update();
+        Frame selectionFrame = getSelectionFrame(0);
+        setEnabled(selectionFrame != null);
+    }
 }

@@ -20,22 +20,18 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-
-import org.eclipse.swt.widgets.Event;
-
 import org.eclipse.jface.action.IAction;
-
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.commands.CommandException;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.internal.contexts.ws.WorkbenchContextSupport;
 import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.ui.keys.ParseException;
 import org.eclipse.ui.tests.util.UITestCase;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
-
-import org.eclipse.ui.internal.Workbench;
-import org.eclipse.ui.internal.contexts.ws.WorkbenchContextSupport;
 
 /**
  * Tests Bug 43321

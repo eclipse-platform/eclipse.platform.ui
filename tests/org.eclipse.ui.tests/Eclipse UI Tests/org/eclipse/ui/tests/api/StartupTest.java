@@ -15,24 +15,24 @@ import org.eclipse.ui.tests.util.UITestCase;
 
 public class StartupTest extends UITestCase {
 
-	/** 
-	 * Construct an instance.
-	 */
-	public StartupTest(String arg) {
-		super(arg);
-	}
-	
-	public void testStartup() {
-		assertTrue("Startup - explicit", StartupClass.wasEarlyStartupCalled());
-		assertTrue("Startup - implicit", TestPlugin.wasEarlyStartupCalled());
-	}
-	
-	protected void doTearDown() throws Exception {
-		super.doTearDown();
-		// NOTE:  tearDown will run after each test.  Therefore, we
-		// only want one test in this suite (or the values set when
-		// this plugin started up will be lost).
-		StartupClass.clearEarlyStartup();
-		TestPlugin.clearEarlyStartup();
-	}
+    /** 
+     * Construct an instance.
+     */
+    public StartupTest(String arg) {
+        super(arg);
+    }
+
+    public void testStartup() {
+        assertTrue("Startup - explicit", StartupClass.wasEarlyStartupCalled());
+        assertTrue("Startup - implicit", TestPlugin.wasEarlyStartupCalled());
+    }
+
+    protected void doTearDown() throws Exception {
+        super.doTearDown();
+        // NOTE:  tearDown will run after each test.  Therefore, we
+        // only want one test in this suite (or the values set when
+        // this plugin started up will be lost).
+        StartupClass.clearEarlyStartup();
+        TestPlugin.clearEarlyStartup();
+    }
 }

@@ -18,16 +18,20 @@ import org.eclipse.ui.presentations.IStackPresentationSite;
  * 
  * @since 3.0
  */
-public class SystemMenuStateChange extends Action implements ISelfUpdatingAction {
+public class SystemMenuStateChange extends Action implements
+        ISelfUpdatingAction {
     private IStackPresentationSite site;
+
     private String name;
+
     private int state;
 
-    public SystemMenuStateChange(IStackPresentationSite site, String name, int state) {
+    public SystemMenuStateChange(IStackPresentationSite site, String name,
+            int state) {
         this.site = site;
         this.state = state;
         this.name = name;
-        
+
         setText(name);
         update();
     }
@@ -35,17 +39,17 @@ public class SystemMenuStateChange extends Action implements ISelfUpdatingAction
     public void dispose() {
         this.site = null;
     }
-    
+
     public void run() {
         site.setState(state);
     }
-    
+
     public void update() {
-    	setEnabled(site.getState() != state && site.supportsState(state));
+        setEnabled(site.getState() != state && site.supportsState(state));
     }
-    
+
     public boolean shouldBeVisible() {
-    	return site.supportsState(state);
+        return site.supportsState(state);
     }
-	
+
 }

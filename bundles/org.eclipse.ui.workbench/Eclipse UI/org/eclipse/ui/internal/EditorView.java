@@ -12,40 +12,41 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.part.ViewPart;
 
 public class EditorView extends ViewPart {
-	private EditorList editorList;
-	
-/**
- * Constructs a new editorList view.
- */
-public EditorView() {
-}
+    private EditorList editorList;
 
-/* (non-Javadoc)
- * Method declared on IWorkbenchPart.
- */
-public void createPartControl(Composite parent) {
-	IWorkbenchWindow window = getSite().getPage().getWorkbenchWindow();
-	editorList = new EditorList(window, null);
-	editorList.createControl(parent);
-}
+    /**
+     * Constructs a new editorList view.
+     */
+    public EditorView() {
+    }
 
-/* (non-Javadoc)
- * Method declared on IWorkbenchPart.
- */
-public void dispose() {
-	editorList.dispose();
-	editorList = null;
-	super.dispose();
-}
+    /* (non-Javadoc)
+     * Method declared on IWorkbenchPart.
+     */
+    public void createPartControl(Composite parent) {
+        IWorkbenchWindow window = getSite().getPage().getWorkbenchWindow();
+        editorList = new EditorList(window, null);
+        editorList.createControl(parent);
+    }
 
-/**
- * @see IWorkbenchPart#setFocus()
- */
-public void setFocus() {
-	editorList.getControl().setFocus();
-}
+    /* (non-Javadoc)
+     * Method declared on IWorkbenchPart.
+     */
+    public void dispose() {
+        editorList.dispose();
+        editorList = null;
+        super.dispose();
+    }
+
+    /**
+     * @see IWorkbenchPart#setFocus()
+     */
+    public void setFocus() {
+        editorList.getControl().setFocus();
+    }
 }

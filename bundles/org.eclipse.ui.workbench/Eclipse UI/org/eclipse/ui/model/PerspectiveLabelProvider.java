@@ -33,106 +33,102 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * 
  * @since 3.0
  */
-public final class PerspectiveLabelProvider
-		extends LabelProvider
-		implements ITableLabelProvider {
-	
-	/**
-	 * List of all Image objects this label provider is responsible for.
-	 */
-	private HashMap imageCache = new HashMap(5);
-	
-	/**
-	 * Indicates whether the default perspective is visually marked.
-	 */
-	private boolean markDefault;
+public final class PerspectiveLabelProvider extends LabelProvider implements
+        ITableLabelProvider {
 
-	/**
-	 * Creates a new label provider for perspectives.
-	 * The default perspective is visually marked.
-	 */
-	public PerspectiveLabelProvider() {
-		this(true);
-	}
+    /**
+     * List of all Image objects this label provider is responsible for.
+     */
+    private HashMap imageCache = new HashMap(5);
 
-	/**
-	 * Creates a new label provider for perspectives.
-	 * 
-	 * @param markDefault <code>true</code> if the default perspective is to be
-	 * visually marked, and <code>false</code> if the default perspective is
-	 * not treated as anything special
-	 */
-	public PerspectiveLabelProvider(boolean markDefault) {
-		super();
-		this.markDefault = markDefault;
-	}
+    /**
+     * Indicates whether the default perspective is visually marked.
+     */
+    private boolean markDefault;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ILabelProvider
-	 */
-	public final Image getImage(Object element) {
-		if (element instanceof IPerspectiveDescriptor) {
-			IPerspectiveDescriptor desc = (IPerspectiveDescriptor) element;
-			ImageDescriptor imageDescriptor = desc.getImageDescriptor();
-			if (imageDescriptor == null) {
-				imageDescriptor =
-					WorkbenchImages.getImageDescriptor(
-						IWorkbenchGraphicConstants
-							.IMG_ETOOL_DEF_PERSPECTIVE_HOVER);
-			}
-			Image image = (Image) imageCache.get(imageDescriptor);
-			if (image == null) {
-				image = imageDescriptor.createImage();
-				imageCache.put(imageDescriptor, image);
-			}
-			return image;
-		}
-		return null;
-	}
+    /**
+     * Creates a new label provider for perspectives.
+     * The default perspective is visually marked.
+     */
+    public PerspectiveLabelProvider() {
+        this(true);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ILabelProvider
-	 */
-	public final void dispose() {
-		for (Iterator i = imageCache.values().iterator(); i.hasNext();) {
-			((Image) i.next()).dispose();
-		}
-		imageCache.clear();
-	}
+    /**
+     * Creates a new label provider for perspectives.
+     * 
+     * @param markDefault <code>true</code> if the default perspective is to be
+     * visually marked, and <code>false</code> if the default perspective is
+     * not treated as anything special
+     */
+    public PerspectiveLabelProvider(boolean markDefault) {
+        super();
+        this.markDefault = markDefault;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ILabelProvider
-	 */
-	public final String getText(Object element) {
-		if (element instanceof IPerspectiveDescriptor) {
-			IPerspectiveDescriptor desc = (IPerspectiveDescriptor) element;
-			String label = desc.getLabel();
-			if (markDefault) {
-				String def =
-					PlatformUI
-						.getWorkbench()
-						.getPerspectiveRegistry()
-						.getDefaultPerspective();
-				if (desc.getId().equals(def)) {
-					label = WorkbenchMessages.format("PerspectivesPreference.defaultLabel", new Object[] { label }); //$NON-NLS-1$
-				}
-			}
-			return label;
-		}
-		return WorkbenchMessages.getString("PerspectiveLabelProvider.unknown"); //$NON-NLS-1$
-	}
-	
-	/**
-	 * @see ITableLabelProvider#getColumnImage
-	 */
-	public final Image getColumnImage(Object element, int columnIndex) {
-		return getImage(element);
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.ILabelProvider
+     */
+    public final Image getImage(Object element) {
+        if (element instanceof IPerspectiveDescriptor) {
+            IPerspectiveDescriptor desc = (IPerspectiveDescriptor) element;
+            ImageDescriptor imageDescriptor = desc.getImageDescriptor();
+            if (imageDescriptor == null) {
+                imageDescriptor = WorkbenchImages
+                        .getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_DEF_PERSPECTIVE_HOVER);
+            }
+            Image image = (Image) imageCache.get(imageDescriptor);
+            if (image == null) {
+                image = imageDescriptor.createImage();
+                imageCache.put(imageDescriptor, image);
+            }
+            return image;
+        }
+        return null;
+    }
 
-	/**
-	 * @see ITableLabelProvider#getColumnText
-	 */
-	public final String getColumnText(Object element, int columnIndex) {
-		return getText(element);
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.ILabelProvider
+     */
+    public final void dispose() {
+        for (Iterator i = imageCache.values().iterator(); i.hasNext();) {
+            ((Image) i.next()).dispose();
+        }
+        imageCache.clear();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.ILabelProvider
+     */
+    public final String getText(Object element) {
+        if (element instanceof IPerspectiveDescriptor) {
+            IPerspectiveDescriptor desc = (IPerspectiveDescriptor) element;
+            String label = desc.getLabel();
+            if (markDefault) {
+                String def = PlatformUI.getWorkbench().getPerspectiveRegistry()
+                        .getDefaultPerspective();
+                if (desc.getId().equals(def)) {
+                    label = WorkbenchMessages
+                            .format(
+                                    "PerspectivesPreference.defaultLabel", new Object[] { label }); //$NON-NLS-1$
+                }
+            }
+            return label;
+        }
+        return WorkbenchMessages.getString("PerspectiveLabelProvider.unknown"); //$NON-NLS-1$
+    }
+
+    /**
+     * @see ITableLabelProvider#getColumnImage
+     */
+    public final Image getColumnImage(Object element, int columnIndex) {
+        return getImage(element);
+    }
+
+    /**
+     * @see ITableLabelProvider#getColumnText
+     */
+    public final String getColumnText(Object element, int columnIndex) {
+        return getText(element);
+    }
 }

@@ -37,5 +37,5 @@ public interface IColorFactory {
      * 
      * @return a new color.  This must never be <code>null</code>.
      */
-    RGB createColor();    
+    RGB createColor();
 }

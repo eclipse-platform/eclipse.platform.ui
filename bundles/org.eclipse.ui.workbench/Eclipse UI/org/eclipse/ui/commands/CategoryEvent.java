@@ -50,7 +50,8 @@ public final class CategoryEvent {
      */
     public CategoryEvent(ICategory category, boolean definedChanged,
             boolean nameChanged) {
-        if (category == null) throw new NullPointerException();
+        if (category == null)
+            throw new NullPointerException();
 
         this.category = category;
         this.definedChanged = definedChanged;

@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.jface.action;
 
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.CoolBar;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.ToolBar;
 
 /**
  * A <code>SubContributionItem</code> is a wrapper for an <code>IContributionItem</code>.  
@@ -21,135 +24,153 @@ import org.eclipse.swt.widgets.*;
  * </p>
  */
 public class SubContributionItem implements IContributionItem {
-	/**
-	 * The visibility of the item.
-	 */
-	private boolean visible;
+    /**
+     * The visibility of the item.
+     */
+    private boolean visible;
 
-	/**
-	 * The inner item for this contribution.  
-	 */
-	private IContributionItem innerItem;
-/**
- * Creates a new <code>SubContributionItem</code>.
- */
-public SubContributionItem(IContributionItem item) {
-	innerItem = item;
-}
-/**
- * The default implementation of this <code>IContributionItem</code>
- * delegates to the inner item. Subclasses may override.
- */
-public void dispose() {
-	innerItem.dispose();
-}
-/* (non-Javadoc)
- * Method declared on IContributionItem.
- */
-public void fill(Composite parent) {
-	if (visible)
-		innerItem.fill(parent);
-}
-/* (non-Javadoc)
- * Method declared on IContributionItem.
- */
-public void fill(Menu parent, int index) {
-	if (visible)
-		innerItem.fill(parent, index);
-}
-/* (non-Javadoc)
- * Method declared on IContributionItem.
- */
-public void fill(ToolBar parent, int index) {
-	if (visible)
-		innerItem.fill(parent, index);
-}
-/* (non-Javadoc)
- * Method declared on IContributionItem.
- */
-public String getId() {
-	return innerItem.getId();
-}
-/**
- * Returns the inner contribution item.
- *
- * @return the inner contribution item
- */
-public IContributionItem getInnerItem() {
-	return innerItem;
-}
-/* (non-Javadoc)
- * Method declared on IContributionItem.
- */
-public boolean isEnabled() {
-	return innerItem.isEnabled();
-}
-/* (non-Javadoc)
- * Method declared on IContributionItem.
- */
-public boolean isDirty() {
-	return innerItem.isDirty();
-}
-/* (non-Javadoc)
- * Method declared on IContributionItem.
- */
-public boolean isDynamic() {
-	return innerItem.isDynamic();
-}
-/* (non-Javadoc)
- * Method declared on IContributionItem.
- */
-public boolean isGroupMarker() {
-	return innerItem.isGroupMarker();
-}
-/* (non-Javadoc)
- * Method declared on IContributionItem.
- */
-public boolean isSeparator() {
-	return innerItem.isSeparator();
-}
-/* (non-Javadoc)
- * Method declared on IContributionItem.
- */
-public boolean isVisible() {
-	return visible && innerItem.isVisible();
-}
-/* (non-Javadoc)
- * Method declared on IContributionItem.
- */
-public void setParent(IContributionManager parent) {
-	// do nothing, the parent of our inner item
-	// is its SubContributionManager
-}
-/* (non-Javadoc)
- * Method declared on IContributionItem.
- */
-public void setVisible(boolean visible) {
-	this.visible = visible;
-}
-/* (non-Javadoc)
- * Method declared on IContributionItem.
- */
-public void update() {
-	innerItem.update();
-}
-/* (non-Javadoc)
- * Method declared on IContributionItem.
- */
-public void update(String id) {
-	innerItem.update(id);
-}
-/* (non-Javadoc)
- * @see org.eclipse.jface.action.IContributionItem#fill(org.eclipse.swt.widgets.CoolBar, int)
- */
-public void fill(CoolBar parent, int index) {
-	
-}
+    /**
+     * The inner item for this contribution.  
+     */
+    private IContributionItem innerItem;
 
-/* (non-Javadoc)
- * @see org.eclipse.jface.action.IContributionItem#saveWidgetState()
- */
-public void saveWidgetState() {	
-}
+    /**
+     * Creates a new <code>SubContributionItem</code>.
+     */
+    public SubContributionItem(IContributionItem item) {
+        innerItem = item;
+    }
+
+    /**
+     * The default implementation of this <code>IContributionItem</code>
+     * delegates to the inner item. Subclasses may override.
+     */
+    public void dispose() {
+        innerItem.dispose();
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IContributionItem.
+     */
+    public void fill(Composite parent) {
+        if (visible)
+            innerItem.fill(parent);
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IContributionItem.
+     */
+    public void fill(Menu parent, int index) {
+        if (visible)
+            innerItem.fill(parent, index);
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IContributionItem.
+     */
+    public void fill(ToolBar parent, int index) {
+        if (visible)
+            innerItem.fill(parent, index);
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IContributionItem.
+     */
+    public String getId() {
+        return innerItem.getId();
+    }
+
+    /**
+     * Returns the inner contribution item.
+     *
+     * @return the inner contribution item
+     */
+    public IContributionItem getInnerItem() {
+        return innerItem;
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IContributionItem.
+     */
+    public boolean isEnabled() {
+        return innerItem.isEnabled();
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IContributionItem.
+     */
+    public boolean isDirty() {
+        return innerItem.isDirty();
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IContributionItem.
+     */
+    public boolean isDynamic() {
+        return innerItem.isDynamic();
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IContributionItem.
+     */
+    public boolean isGroupMarker() {
+        return innerItem.isGroupMarker();
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IContributionItem.
+     */
+    public boolean isSeparator() {
+        return innerItem.isSeparator();
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IContributionItem.
+     */
+    public boolean isVisible() {
+        return visible && innerItem.isVisible();
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IContributionItem.
+     */
+    public void setParent(IContributionManager parent) {
+        // do nothing, the parent of our inner item
+        // is its SubContributionManager
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IContributionItem.
+     */
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IContributionItem.
+     */
+    public void update() {
+        innerItem.update();
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IContributionItem.
+     */
+    public void update(String id) {
+        innerItem.update(id);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.action.IContributionItem#fill(org.eclipse.swt.widgets.CoolBar, int)
+     */
+    public void fill(CoolBar parent, int index) {
+
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.action.IContributionItem#saveWidgetState()
+     */
+    public void saveWidgetState() {
+    }
 
 }

@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.model;
 
-import org.eclipse.jface.viewers.*;
 import java.text.Collator;
+
+import org.eclipse.jface.viewers.IBasicPropertyConstants;
+import org.eclipse.jface.viewers.ViewerSorter;
 
 /**
  * A viewer sorter that sorts elements with registered workbench adapters by their text property.
@@ -22,24 +24,26 @@ import java.text.Collator;
  */
 public class WorkbenchViewerSorter extends ViewerSorter {
 
-/**
- * Creates a workbench viewer sorter using the default collator.
- */
-public WorkbenchViewerSorter() {
-	super();
-}
-/**
- * Creates a workbench viewer sorter using the given collator.
- *
- * @param collator the collator to use to sort strings
- */
-public WorkbenchViewerSorter(Collator collator) {
-	super(collator);
-}
-/* (non-Javadoc)
- * Method declared on ViewerSorter.
- */
-public boolean isSorterProperty(Object element,String propertyId) {
-	return propertyId.equals(IBasicPropertyConstants.P_TEXT);
-}
+    /**
+     * Creates a workbench viewer sorter using the default collator.
+     */
+    public WorkbenchViewerSorter() {
+        super();
+    }
+
+    /**
+     * Creates a workbench viewer sorter using the given collator.
+     *
+     * @param collator the collator to use to sort strings
+     */
+    public WorkbenchViewerSorter(Collator collator) {
+        super(collator);
+    }
+
+    /* (non-Javadoc)
+     * Method declared on ViewerSorter.
+     */
+    public boolean isSorterProperty(Object element, String propertyId) {
+        return propertyId.equals(IBasicPropertyConstants.P_TEXT);
+    }
 }

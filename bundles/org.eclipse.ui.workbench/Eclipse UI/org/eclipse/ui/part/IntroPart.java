@@ -102,7 +102,8 @@ public abstract class IntroPart implements IIntroPart, IExecutableExtension {
         Image image = (Image) imageCache.get(imageDescriptor);
         if (image != null) {
             int count = imageCache.removeRef(imageDescriptor);
-            if (count <= 0) image.dispose();
+            if (count <= 0)
+                image.dispose();
         }
 
         // Clear out the property change listeners as we
@@ -173,12 +174,14 @@ public abstract class IntroPart implements IIntroPart, IExecutableExtension {
     public final IIntroSite getIntroSite() {
         return partSite;
     }
-  
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.intro.IIntroPart#getTitleImage()
      */
     public Image getTitleImage() {
-        if (titleImage != null) { return titleImage; }
+        if (titleImage != null) {
+            return titleImage;
+        }
         return getDefaultImage();
     }
 
@@ -212,7 +215,6 @@ public abstract class IntroPart implements IIntroPart, IExecutableExtension {
         this.partSite = site;
     }
 
-    
     /* (non-Javadoc)
      * @see org.eclipse.ui.intro.IIntroPart#removePropertyListener(org.eclipse.ui.IPropertyListener)
      */
@@ -260,14 +262,14 @@ public abstract class IntroPart implements IIntroPart, IExecutableExtension {
 
         // Icon.
         String strIcon = cfig.getAttribute("icon");//$NON-NLS-1$
-        if (strIcon == null) 
-        	return;
+        if (strIcon == null)
+            return;
 
         imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
                 configElement.getDeclaringExtension().getNamespace(), strIcon);
-        
+
         if (imageDescriptor == null)
-    		return;
+            return;
 
         /*
          * remember the image in a separatly from titleImage, since it must be
@@ -293,7 +295,8 @@ public abstract class IntroPart implements IIntroPart, IExecutableExtension {
     protected void setTitleImage(Image titleImage) {
         Assert.isTrue(titleImage == null || !titleImage.isDisposed());
         //Do not send changes if they are the same
-        if (this.titleImage == titleImage) return;
+        if (this.titleImage == titleImage)
+            return;
         this.titleImage = titleImage;
         firePropertyChange(IIntroPart.PROP_TITLE);
     }

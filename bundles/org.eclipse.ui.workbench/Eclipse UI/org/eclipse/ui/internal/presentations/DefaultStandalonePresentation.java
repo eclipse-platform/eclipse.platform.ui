@@ -18,8 +18,7 @@ import org.eclipse.ui.presentations.IStackPresentationSite;
  * parts.  A standalone part cannot be docked together with other parts in
  * the same folder, and can optionally have its title hidden.
  */
-public class DefaultStandalonePresentation extends
-        DefaultViewPresentation {
+public class DefaultStandalonePresentation extends DefaultViewPresentation {
 
     /**
      * Constructs a new <code>DefaultStandalonePresentation</code>.
@@ -37,6 +36,5 @@ public class DefaultStandalonePresentation extends
             folder.hideTitle();
         }
     }
-
 
 }

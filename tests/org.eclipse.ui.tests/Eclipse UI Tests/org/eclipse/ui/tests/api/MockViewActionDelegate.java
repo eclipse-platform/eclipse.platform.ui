@@ -16,21 +16,20 @@ import org.eclipse.ui.IViewPart;
 /**
  * This mock is used to test IViewActionDelegate lifecycle.
  */
-public class MockViewActionDelegate extends MockActionDelegate 
-	implements IViewActionDelegate
-{
-	/**
-	 * Constructor for MockWorkbenchWindowActionDelegate
-	 */
-	public MockViewActionDelegate() {
-		super();
-	}
+public class MockViewActionDelegate extends MockActionDelegate implements
+        IViewActionDelegate {
+    /**
+     * Constructor for MockWorkbenchWindowActionDelegate
+     */
+    public MockViewActionDelegate() {
+        super();
+    }
 
-	/**
-	 * @see IViewActionDelegate#init(IViewPart)
-	 */
-	public void init(IViewPart view) {
-		callHistory.add("init");
-	}
+    /**
+     * @see IViewActionDelegate#init(IViewPart)
+     */
+    public void init(IViewPart view) {
+        callHistory.add("init");
+    }
 }
 

@@ -19,9 +19,9 @@ import org.eclipse.jface.window.Window;
  * passed along.
  */
 public final class ExceptionHandler implements Window.IExceptionHandler {
-    
+
     private static final ExceptionHandler instance = new ExceptionHandler();
-    
+
     /**
      * Returns the singleton exception handler.
      * 
@@ -30,39 +30,39 @@ public final class ExceptionHandler implements Window.IExceptionHandler {
     public static ExceptionHandler getInstance() {
         return instance;
     }
-    
-	private int exceptionCount = 0; // To avoid recursive errors
 
-	private ExceptionHandler() {
-		// prevents instantiation
-	}
-	
-	/* (non-javadoc)
-	 * @see org.eclipse.jface.window.Window.IExceptionHandler#handleException
-	 */
-	public void handleException(Throwable t) {
-		try {
-			// Ignore ThreadDeath error as its normal to get this when thread dies
-			if (t instanceof ThreadDeath) {
-				throw (ThreadDeath) t;
-			}
-			
-			// Check to avoid recursive errors
-			exceptionCount++;
-			if (exceptionCount > 2) {
-				if (t instanceof RuntimeException)
-					throw (RuntimeException) t;
-				else
-					throw (Error) t;
-			}
+    private int exceptionCount = 0; // To avoid recursive errors
 
-			// Let the advisor handle this now
-			Workbench wb = Workbench.getInstance();
-			if (wb != null) {
-				wb.getAdvisor().eventLoopException(t);
-			}
-		} finally {
-			exceptionCount--;
-		}
-	}
+    private ExceptionHandler() {
+        // prevents instantiation
+    }
+
+    /* (non-javadoc)
+     * @see org.eclipse.jface.window.Window.IExceptionHandler#handleException
+     */
+    public void handleException(Throwable t) {
+        try {
+            // Ignore ThreadDeath error as its normal to get this when thread dies
+            if (t instanceof ThreadDeath) {
+                throw (ThreadDeath) t;
+            }
+
+            // Check to avoid recursive errors
+            exceptionCount++;
+            if (exceptionCount > 2) {
+                if (t instanceof RuntimeException)
+                    throw (RuntimeException) t;
+                else
+                    throw (Error) t;
+            }
+
+            // Let the advisor handle this now
+            Workbench wb = Workbench.getInstance();
+            if (wb != null) {
+                wb.getAdvisor().eventLoopException(t);
+            }
+        } finally {
+            exceptionCount--;
+        }
+    }
 }

@@ -30,69 +30,68 @@ public class SystemMenuPinEditor extends Action implements ISelfUpdatingAction {
     public void dispose() {
         editorPane = null;
     }
-    
+
     public void setPane(EditorPane pane) {
-    	editorPane = pane;
+        editorPane = pane;
         update();
     }
-    
+
     public void run() {
-        IWorkbenchPart part = editorPane.getPartReference().getPart(
-                true);
+        IWorkbenchPart part = editorPane.getPartReference().getPart(true);
 
         ((EditorSite) part.getSite()).setReuseEditor(isChecked());
     }
-    
-//    public void fill(Menu menu, int index) {
-//        boolean reuseEditor = WorkbenchPlugin.getDefault().getPreferenceStore()
-//                .getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN);
-//        if (!reuseEditor) return;
-//        IWorkbenchPart part = editorPane.getPartReference().getPart(false);
-//        if (part == null) return;
-//        final MenuItem item = new MenuItem(menu, SWT.CHECK);
-//        item.setText(WorkbenchMessages.getString("EditorPane.pinEditor")); //$NON-NLS-1$
-//        item.addSelectionListener(new SelectionAdapter() {
-//
-//            public void widgetSelected(SelectionEvent e) {
-//                IWorkbenchPart part = editorPane.getPartReference().getPart(
-//                        true);
-//                if (part == null) {
-//                    // this should never happen
-//                    item.setSelection(false);
-//                    item.setEnabled(false);
-//                } else {
-//                    ((EditorSite) part.getSite()).setReuseEditor(!item
-//                            .getSelection());
-//                }
-//            }
-//        });
-//        item.setEnabled(true);
-//        item.setSelection(!((EditorSite) part.getSite()).getReuseEditor());
-//    }
+
+    //    public void fill(Menu menu, int index) {
+    //        boolean reuseEditor = WorkbenchPlugin.getDefault().getPreferenceStore()
+    //                .getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN);
+    //        if (!reuseEditor) return;
+    //        IWorkbenchPart part = editorPane.getPartReference().getPart(false);
+    //        if (part == null) return;
+    //        final MenuItem item = new MenuItem(menu, SWT.CHECK);
+    //        item.setText(WorkbenchMessages.getString("EditorPane.pinEditor")); //$NON-NLS-1$
+    //        item.addSelectionListener(new SelectionAdapter() {
+    //
+    //            public void widgetSelected(SelectionEvent e) {
+    //                IWorkbenchPart part = editorPane.getPartReference().getPart(
+    //                        true);
+    //                if (part == null) {
+    //                    // this should never happen
+    //                    item.setSelection(false);
+    //                    item.setEnabled(false);
+    //                } else {
+    //                    ((EditorSite) part.getSite()).setReuseEditor(!item
+    //                            .getSelection());
+    //                }
+    //            }
+    //        });
+    //        item.setEnabled(true);
+    //        item.setSelection(!((EditorSite) part.getSite()).getReuseEditor());
+    //    }
 
     public void update() {
-    	if (editorPane == null) {
-        	setEnabled(false);
-        	return;
-    	}
-    	
+        if (editorPane == null) {
+            setEnabled(false);
+            return;
+        }
+
         IWorkbenchPart part = editorPane.getPartReference().getPart(false);
         if (part == null) {
-        	setEnabled(false);
-        	return;
+            setEnabled(false);
+            return;
         }
         setEnabled(true);
-    	setChecked(!((EditorSite) part.getSite()).getReuseEditor());
+        setChecked(!((EditorSite) part.getSite()).getReuseEditor());
     }
-    
+
     public boolean shouldBeVisible() {
-    	if (editorPane == null) {
-    		return false;
-    	}
-    	
+        if (editorPane == null) {
+            return false;
+        }
+
         boolean reuseEditor = WorkbenchPlugin.getDefault().getPreferenceStore()
-        	.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN);
+                .getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN);
         return reuseEditor;
     }
-    
+
 }

@@ -46,15 +46,25 @@ public class WorkbenchAdvisorObserver extends WorkbenchAdvisor {
     private int idleBeforeExit = -1;
 
     public final static String INITIALIZE = "initialize"; //$NON-NLS-1$
+
     public final static String PRE_STARTUP = "preStartup"; //$NON-NLS-1$
+
     public final static String POST_STARTUP = "postStartup"; //$NON-NLS-1$
+
     public final static String PRE_WINDOW_OPEN = "preWindowOpen"; //$NON-NLS-1$
+
     public final static String FILL_ACTION_BARS = "fillActionBars"; //$NON-NLS-1$
+
     public final static String POST_WINDOW_RESTORE = "postWindowRestore"; //$NON-NLS-1$
+
     public final static String POST_WINDOW_OPEN = "postWindowOpen"; //$NON-NLS-1$
+
     public final static String PRE_WINDOW_SHELL_CLOSE = "preWindowShellClose"; //$NON-NLS-1$
+
     public final static String EVENT_LOOP_EXCEPTION = "eventLoopException"; //$NON-NLS-1$
+
     public final static String PRE_SHUTDOWN = "preShutdown"; //$NON-NLS-1$
+
     public final static String POST_SHUTDOWN = "postShutdown"; //$NON-NLS-1$
 
     public IWorkbenchConfigurer workbenchConfig;
@@ -129,7 +139,8 @@ public class WorkbenchAdvisorObserver extends WorkbenchAdvisor {
     }
 
     public boolean preWindowShellClose(IWorkbenchWindowConfigurer configurer) {
-        if (!super.preWindowShellClose(configurer)) return false;
+        if (!super.preWindowShellClose(configurer))
+            return false;
         addOperation(PRE_WINDOW_SHELL_CLOSE);
         return true;
     }

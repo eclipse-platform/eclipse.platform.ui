@@ -39,10 +39,12 @@ public abstract class AbstractHandler implements IHandler {
      * @see IHandler#addHandlerListener(IHandlerListener)
      */
     public void addHandlerListener(IHandlerListener handlerListener) {
-        if (handlerListener == null) throw new NullPointerException();
-        if (handlerListeners == null) handlerListeners = new ArrayList();
+        if (handlerListener == null)
+            throw new NullPointerException();
+        if (handlerListeners == null)
+            handlerListeners = new ArrayList();
         if (!handlerListeners.contains(handlerListener))
-                handlerListeners.add(handlerListener);
+            handlerListeners.add(handlerListener);
     }
 
     /**
@@ -54,7 +56,7 @@ public abstract class AbstractHandler implements IHandler {
     public void dispose() {
         // Do nothing.
     }
-    
+
     /**
      * Fires an event to all registered listeners describing changes to this
      * instance.
@@ -64,11 +66,12 @@ public abstract class AbstractHandler implements IHandler {
      *            <code>null</code>.
      */
     protected void fireHandlerChanged(HandlerEvent handlerEvent) {
-        if (handlerEvent == null) throw new NullPointerException();
+        if (handlerEvent == null)
+            throw new NullPointerException();
         if (handlerListeners != null)
-                for (int i = 0; i < handlerListeners.size(); i++)
-                    ((IHandlerListener) handlerListeners.get(i))
-                            .handlerChanged(handlerEvent);
+            for (int i = 0; i < handlerListeners.size(); i++)
+                ((IHandlerListener) handlerListeners.get(i))
+                        .handlerChanged(handlerEvent);
     }
 
     /**
@@ -85,7 +88,9 @@ public abstract class AbstractHandler implements IHandler {
      * @see IHandler#removeHandlerListener(IHandlerListener)
      */
     public void removeHandlerListener(IHandlerListener handlerListener) {
-        if (handlerListener == null) throw new NullPointerException();
-        if (handlerListeners != null) handlerListeners.remove(handlerListener);
+        if (handlerListener == null)
+            throw new NullPointerException();
+        if (handlerListeners != null)
+            handlerListeners.remove(handlerListener);
     }
 }

@@ -18,7 +18,6 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
-
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchConstants;
@@ -31,271 +30,303 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * newWizardAction, or actionSet.
  */
 public class PerspectiveExtensionReader extends RegistryReader {
-	private String targetID;
-	private PageLayout pageLayout;
-	private Set includeOnlyTags = null;  
-	
-	public static final String TAG_EXTENSION="perspectiveExtension";//$NON-NLS-1$
-	public static final String TAG_ACTION_SET="actionSet";//$NON-NLS-1$
-	public static final String TAG_WIZARD_SHORTCUT="newWizardShortcut";//$NON-NLS-1$
-	public static final String TAG_VIEW_SHORTCUT="viewShortcut";//$NON-NLS-1$
-	public static final String TAG_PERSP_SHORTCUT="perspectiveShortcut";//$NON-NLS-1$
-	public static final String TAG_VIEW="view";//$NON-NLS-1$
-	public static final String TAG_SHOW_IN_PART="showInPart";//$NON-NLS-1$
-	private static final String ATT_ID="id";//$NON-NLS-1$
-	private static final String ATT_TARGET_ID="targetID";//$NON-NLS-1$
-	private static final String ATT_RELATIVE="relative";//$NON-NLS-1$
-	private static final String ATT_RELATIONSHIP="relationship";//$NON-NLS-1$
-	private static final String ATT_RATIO="ratio";//$NON-NLS-1$
-	// ATT_VISIBLE added by dan_rubel@instantiations.com  
-	private static final String ATT_VISIBLE="visible";//$NON-NLS-1$
-	private static final String ATT_CLOSEABLE="closeable";//$NON-NLS-1$
-	private static final String ATT_MOVEABLE="moveable";//$NON-NLS-1$
-	private static final String ATT_STANDALONE="standalone";//$NON-NLS-1$
-	private static final String ATT_SHOW_TITLE="showTitle";//$NON-NLS-1$
-	private static final String VAL_LEFT="left";//$NON-NLS-1$
-	private static final String VAL_RIGHT="right";//$NON-NLS-1$
-	private static final String VAL_TOP="top";//$NON-NLS-1$
-	private static final String VAL_BOTTOM="bottom";//$NON-NLS-1$
-	private static final String VAL_STACK="stack";//$NON-NLS-1$
-	private static final String VAL_FAST="fast";//$NON-NLS-1$
-	private static final String VAL_TRUE="true";//$NON-NLS-1$	
-	// VAL_FALSE added by dan_rubel@instantiations.com  
-	private static final String VAL_FALSE="false";//$NON-NLS-1$	
+    private String targetID;
 
-/**
- * PerspectiveExtensionReader constructor..
- */
-public PerspectiveExtensionReader() {
-    // do nothing
-}
-/**
- * Read the view extensions within a registry.
- */
-public void extendLayout(String id, PageLayout out)
-{
-	targetID = id;
-	pageLayout = out;
-	readRegistry(Platform.getExtensionRegistry(), 
-		PlatformUI.PLUGIN_ID, 
-		IWorkbenchConstants.PL_PERSPECTIVE_EXTENSIONS);
-}
+    private PageLayout pageLayout;
 
-/**
- * Returns whether the given tag should be included.
- */
-private boolean includeTag(String tag) {
-	return includeOnlyTags == null || includeOnlyTags.contains(tag);
-}
+    private Set includeOnlyTags = null;
 
-/**
- * Process an action set.
- */
-private boolean processActionSet(IConfigurationElement element) {
-	String id = element.getAttribute(ATT_ID);
-	if (id != null)
-		pageLayout.addActionSet(id);
-	return true;
-}
-/**
- * Process an extension.
- * Assumption: Extension is for current perspective.
- */
-private boolean processExtension(IConfigurationElement element) {
-	IConfigurationElement [] children = element.getChildren();
-	for (int nX = 0; nX < children.length; nX ++) {
-		IConfigurationElement child = children[nX];
-		String type = child.getName();
-		if (includeTag(type)) { 
-			boolean result = false;
-			if (type.equals(TAG_ACTION_SET)) 
-				result = processActionSet(child);
-			else if (type.equals(TAG_VIEW))
-				result = processView(child);
-			else if (type.equals(TAG_VIEW_SHORTCUT))
-				result = processViewShortcut(child);
-			else if (type.equals(TAG_WIZARD_SHORTCUT))
-				result = processWizardShortcut(child);
-			else if (type.equals(TAG_PERSP_SHORTCUT))
-				result = processPerspectiveShortcut(child);
-			else if (type.equals(TAG_SHOW_IN_PART))
-				result = processShowInPart(child);
-			if (!result) {
-				WorkbenchPlugin.log("Unable to process element: " +//$NON-NLS-1$
-					type +
-					" in perspective extension: " +//$NON-NLS-1$
-					element.getDeclaringExtension().getUniqueIdentifier());
-			}
-		}
-	}
-	return true;
-}
-/**
- * Process a perspective shortcut
- */
-private boolean processPerspectiveShortcut(IConfigurationElement element) {
-	String id = element.getAttribute(ATT_ID);
-	if (id != null)
-		pageLayout.addPerspectiveShortcut(id);
-	return true;
-}
+    public static final String TAG_EXTENSION = "perspectiveExtension";//$NON-NLS-1$
 
-/**
- * Process a show in element.
- */
-private boolean processShowInPart(IConfigurationElement element) {
-	String id = element.getAttribute(ATT_ID);
-	if (id != null)
-		pageLayout.addShowInPart(id);
-	return true;
-}
+    public static final String TAG_ACTION_SET = "actionSet";//$NON-NLS-1$
 
-// processView(IConfigurationElement) modified by dan_rubel@instantiations.com
-/**
- * Process a view
- */
-private boolean processView(IConfigurationElement element) {
-	// Get id, relative, and relationship.
-	String id = element.getAttribute(ATT_ID);
-	String relative = element.getAttribute(ATT_RELATIVE);
-	String relationship = element.getAttribute(ATT_RELATIONSHIP);
-	String ratioString = element.getAttribute(ATT_RATIO);
-	boolean visible = !VAL_FALSE.equals(element.getAttribute(ATT_VISIBLE));
-	String closeable = element.getAttribute(ATT_CLOSEABLE);
-	String moveable = element.getAttribute(ATT_MOVEABLE);
-	String standalone = element.getAttribute(ATT_STANDALONE);
-	String showTitle = element.getAttribute(ATT_SHOW_TITLE);
-	
-	float ratio;
-	
-	if (id == null) {
-	    logMissingAttribute(element, ATT_ID);
-	    return false;
-	}
-	if (relationship == null) {
-	    logMissingAttribute(element, ATT_RELATIONSHIP); 
-	    return false;
-	}
-	if (!VAL_FAST.equals(relationship) && relative == null) {
-	    logMissingAttribute(element, ATT_RELATIVE);
-		return false;
-	}
-	
-	// Get the ratio.
-	if (ratioString == null) {
-		// The ratio has not been specified.
-		ratio = IPageLayout.NULL_RATIO;
-	} else {
-		try {
-			ratio = new Float(ratioString).floatValue();
-		} catch (NumberFormatException e) {
-			return false;
-		}
-		// If the ratio is outside the allowable range, mark it as invalid.
-		if (ratio < IPageLayout.RATIO_MIN || ratio > IPageLayout.RATIO_MAX)
-			ratio = IPageLayout.INVALID_RATIO;
-	}
+    public static final String TAG_WIZARD_SHORTCUT = "newWizardShortcut";//$NON-NLS-1$
 
-	// Get relationship details.
-	boolean stack = false;
-	boolean fast = false;
-	int intRelation = 0;
-	if (relationship.equals(VAL_LEFT))
-		intRelation = IPageLayout.LEFT;
-	else if (relationship.equals(VAL_RIGHT))
-		intRelation = IPageLayout.RIGHT;
-	else if (relationship.equals(VAL_TOP))
-		intRelation = IPageLayout.TOP;
-	else if (relationship.equals(VAL_BOTTOM))
-		intRelation = IPageLayout.BOTTOM;
-	else if (relationship.equals(VAL_STACK)) 
-		stack = true;
-	else if (relationship.equals(VAL_FAST))
-		fast = true;
-	else
-		return false;
+    public static final String TAG_VIEW_SHORTCUT = "viewShortcut";//$NON-NLS-1$
 
-	// If stack ..
-	if (stack) {
-		if (visible)
-			pageLayout.stackView(id, relative);
-		else
-			pageLayout.stackPlaceholder(id, relative);
-	}
-	
-	// If the view is a fast view...
-	else if (fast) {
-		if (ratio == IPageLayout.NULL_RATIO) {
-			// The ratio has not been specified.
-			pageLayout.addFastView(id);
-		} else {
-			pageLayout.addFastView(id, ratio);
-		}
-	}
-	else {
-		
-		// The view is a regular view.
-		// If the ratio is not specified or is invalid, use the default ratio.
-		if (ratio == IPageLayout.NULL_RATIO || ratio == IPageLayout.INVALID_RATIO)
-			ratio = IPageLayout.DEFAULT_VIEW_RATIO;
-	
-		if (visible) {
-		    if (VAL_TRUE.equals(standalone)) {
-		        pageLayout.addStandaloneView(id, !VAL_FALSE.equals(showTitle), intRelation, ratio, relative);
-		    }
-		    else {
-		        pageLayout.addView(id, intRelation, ratio, relative);
-		    }
-		} else {
-			pageLayout.addPlaceholder(id, intRelation, ratio, relative);
-		}
-	}
-	if (closeable != null) {
-	    pageLayout.getViewLayout(id).setCloseable(!VAL_FALSE.equals(closeable));
-	}
-	if (moveable != null) {
-	    pageLayout.getViewLayout(id).setMoveable(!VAL_FALSE.equals(moveable));
-	}
-	
-	return true;
-}
-/**
- * Process a view shortcut
- */
-private boolean processViewShortcut(IConfigurationElement element) {
-	String id = element.getAttribute(ATT_ID);
-	if (id != null)
-		pageLayout.addShowViewShortcut(id);
-	return true;
-}
-/**
- * Process a wizard shortcut
- */
-private boolean processWizardShortcut(IConfigurationElement element) {
-	String id = element.getAttribute(ATT_ID);
-	if (id != null)
-		pageLayout.addNewWizardShortcut(id);
-	return true;
-}
+    public static final String TAG_PERSP_SHORTCUT = "perspectiveShortcut";//$NON-NLS-1$
 
-protected boolean readElement(IConfigurationElement element) {
-	String type = element.getName();
-	if (type.equals(TAG_EXTENSION)) {
-		String id = element.getAttribute(ATT_TARGET_ID);
-		if (targetID.equals(id))
-			return processExtension(element);
-		return true;
-	}
-	return false;
-}
+    public static final String TAG_VIEW = "view";//$NON-NLS-1$
 
-/**
- * Sets the tags to include.  All others are ignored.
- */
-public void setIncludeOnlyTags(String[] tags) {
-	includeOnlyTags = new HashSet();
-	for (int i = 0; i < tags.length; i++) {
-		includeOnlyTags.add(tags[i]);
-	}
-}
+    public static final String TAG_SHOW_IN_PART = "showInPart";//$NON-NLS-1$
+
+    private static final String ATT_ID = "id";//$NON-NLS-1$
+
+    private static final String ATT_TARGET_ID = "targetID";//$NON-NLS-1$
+
+    private static final String ATT_RELATIVE = "relative";//$NON-NLS-1$
+
+    private static final String ATT_RELATIONSHIP = "relationship";//$NON-NLS-1$
+
+    private static final String ATT_RATIO = "ratio";//$NON-NLS-1$
+
+    // ATT_VISIBLE added by dan_rubel@instantiations.com  
+    private static final String ATT_VISIBLE = "visible";//$NON-NLS-1$
+
+    private static final String ATT_CLOSEABLE = "closeable";//$NON-NLS-1$
+
+    private static final String ATT_MOVEABLE = "moveable";//$NON-NLS-1$
+
+    private static final String ATT_STANDALONE = "standalone";//$NON-NLS-1$
+
+    private static final String ATT_SHOW_TITLE = "showTitle";//$NON-NLS-1$
+
+    private static final String VAL_LEFT = "left";//$NON-NLS-1$
+
+    private static final String VAL_RIGHT = "right";//$NON-NLS-1$
+
+    private static final String VAL_TOP = "top";//$NON-NLS-1$
+
+    private static final String VAL_BOTTOM = "bottom";//$NON-NLS-1$
+
+    private static final String VAL_STACK = "stack";//$NON-NLS-1$
+
+    private static final String VAL_FAST = "fast";//$NON-NLS-1$
+
+    private static final String VAL_TRUE = "true";//$NON-NLS-1$	
+
+    // VAL_FALSE added by dan_rubel@instantiations.com  
+    private static final String VAL_FALSE = "false";//$NON-NLS-1$	
+
+    /**
+     * PerspectiveExtensionReader constructor..
+     */
+    public PerspectiveExtensionReader() {
+        // do nothing
+    }
+
+    /**
+     * Read the view extensions within a registry.
+     */
+    public void extendLayout(String id, PageLayout out) {
+        targetID = id;
+        pageLayout = out;
+        readRegistry(Platform.getExtensionRegistry(), PlatformUI.PLUGIN_ID,
+                IWorkbenchConstants.PL_PERSPECTIVE_EXTENSIONS);
+    }
+
+    /**
+     * Returns whether the given tag should be included.
+     */
+    private boolean includeTag(String tag) {
+        return includeOnlyTags == null || includeOnlyTags.contains(tag);
+    }
+
+    /**
+     * Process an action set.
+     */
+    private boolean processActionSet(IConfigurationElement element) {
+        String id = element.getAttribute(ATT_ID);
+        if (id != null)
+            pageLayout.addActionSet(id);
+        return true;
+    }
+
+    /**
+     * Process an extension.
+     * Assumption: Extension is for current perspective.
+     */
+    private boolean processExtension(IConfigurationElement element) {
+        IConfigurationElement[] children = element.getChildren();
+        for (int nX = 0; nX < children.length; nX++) {
+            IConfigurationElement child = children[nX];
+            String type = child.getName();
+            if (includeTag(type)) {
+                boolean result = false;
+                if (type.equals(TAG_ACTION_SET))
+                    result = processActionSet(child);
+                else if (type.equals(TAG_VIEW))
+                    result = processView(child);
+                else if (type.equals(TAG_VIEW_SHORTCUT))
+                    result = processViewShortcut(child);
+                else if (type.equals(TAG_WIZARD_SHORTCUT))
+                    result = processWizardShortcut(child);
+                else if (type.equals(TAG_PERSP_SHORTCUT))
+                    result = processPerspectiveShortcut(child);
+                else if (type.equals(TAG_SHOW_IN_PART))
+                    result = processShowInPart(child);
+                if (!result) {
+                    WorkbenchPlugin.log("Unable to process element: " + //$NON-NLS-1$
+                            type
+                            + " in perspective extension: " + //$NON-NLS-1$
+                            element.getDeclaringExtension()
+                                    .getUniqueIdentifier());
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Process a perspective shortcut
+     */
+    private boolean processPerspectiveShortcut(IConfigurationElement element) {
+        String id = element.getAttribute(ATT_ID);
+        if (id != null)
+            pageLayout.addPerspectiveShortcut(id);
+        return true;
+    }
+
+    /**
+     * Process a show in element.
+     */
+    private boolean processShowInPart(IConfigurationElement element) {
+        String id = element.getAttribute(ATT_ID);
+        if (id != null)
+            pageLayout.addShowInPart(id);
+        return true;
+    }
+
+    // processView(IConfigurationElement) modified by dan_rubel@instantiations.com
+    /**
+     * Process a view
+     */
+    private boolean processView(IConfigurationElement element) {
+        // Get id, relative, and relationship.
+        String id = element.getAttribute(ATT_ID);
+        String relative = element.getAttribute(ATT_RELATIVE);
+        String relationship = element.getAttribute(ATT_RELATIONSHIP);
+        String ratioString = element.getAttribute(ATT_RATIO);
+        boolean visible = !VAL_FALSE.equals(element.getAttribute(ATT_VISIBLE));
+        String closeable = element.getAttribute(ATT_CLOSEABLE);
+        String moveable = element.getAttribute(ATT_MOVEABLE);
+        String standalone = element.getAttribute(ATT_STANDALONE);
+        String showTitle = element.getAttribute(ATT_SHOW_TITLE);
+
+        float ratio;
+
+        if (id == null) {
+            logMissingAttribute(element, ATT_ID);
+            return false;
+        }
+        if (relationship == null) {
+            logMissingAttribute(element, ATT_RELATIONSHIP);
+            return false;
+        }
+        if (!VAL_FAST.equals(relationship) && relative == null) {
+            logMissingAttribute(element, ATT_RELATIVE);
+            return false;
+        }
+
+        // Get the ratio.
+        if (ratioString == null) {
+            // The ratio has not been specified.
+            ratio = IPageLayout.NULL_RATIO;
+        } else {
+            try {
+                ratio = new Float(ratioString).floatValue();
+            } catch (NumberFormatException e) {
+                return false;
+            }
+            // If the ratio is outside the allowable range, mark it as invalid.
+            if (ratio < IPageLayout.RATIO_MIN || ratio > IPageLayout.RATIO_MAX)
+                ratio = IPageLayout.INVALID_RATIO;
+        }
+
+        // Get relationship details.
+        boolean stack = false;
+        boolean fast = false;
+        int intRelation = 0;
+        if (relationship.equals(VAL_LEFT))
+            intRelation = IPageLayout.LEFT;
+        else if (relationship.equals(VAL_RIGHT))
+            intRelation = IPageLayout.RIGHT;
+        else if (relationship.equals(VAL_TOP))
+            intRelation = IPageLayout.TOP;
+        else if (relationship.equals(VAL_BOTTOM))
+            intRelation = IPageLayout.BOTTOM;
+        else if (relationship.equals(VAL_STACK))
+            stack = true;
+        else if (relationship.equals(VAL_FAST))
+            fast = true;
+        else
+            return false;
+
+        // If stack ..
+        if (stack) {
+            if (visible)
+                pageLayout.stackView(id, relative);
+            else
+                pageLayout.stackPlaceholder(id, relative);
+        }
+
+        // If the view is a fast view...
+        else if (fast) {
+            if (ratio == IPageLayout.NULL_RATIO) {
+                // The ratio has not been specified.
+                pageLayout.addFastView(id);
+            } else {
+                pageLayout.addFastView(id, ratio);
+            }
+        } else {
+
+            // The view is a regular view.
+            // If the ratio is not specified or is invalid, use the default ratio.
+            if (ratio == IPageLayout.NULL_RATIO
+                    || ratio == IPageLayout.INVALID_RATIO)
+                ratio = IPageLayout.DEFAULT_VIEW_RATIO;
+
+            if (visible) {
+                if (VAL_TRUE.equals(standalone)) {
+                    pageLayout.addStandaloneView(id, !VAL_FALSE
+                            .equals(showTitle), intRelation, ratio, relative);
+                } else {
+                    pageLayout.addView(id, intRelation, ratio, relative);
+                }
+            } else {
+                pageLayout.addPlaceholder(id, intRelation, ratio, relative);
+            }
+        }
+        if (closeable != null) {
+            pageLayout.getViewLayout(id).setCloseable(
+                    !VAL_FALSE.equals(closeable));
+        }
+        if (moveable != null) {
+            pageLayout.getViewLayout(id).setMoveable(
+                    !VAL_FALSE.equals(moveable));
+        }
+
+        return true;
+    }
+
+    /**
+     * Process a view shortcut
+     */
+    private boolean processViewShortcut(IConfigurationElement element) {
+        String id = element.getAttribute(ATT_ID);
+        if (id != null)
+            pageLayout.addShowViewShortcut(id);
+        return true;
+    }
+
+    /**
+     * Process a wizard shortcut
+     */
+    private boolean processWizardShortcut(IConfigurationElement element) {
+        String id = element.getAttribute(ATT_ID);
+        if (id != null)
+            pageLayout.addNewWizardShortcut(id);
+        return true;
+    }
+
+    protected boolean readElement(IConfigurationElement element) {
+        String type = element.getName();
+        if (type.equals(TAG_EXTENSION)) {
+            String id = element.getAttribute(ATT_TARGET_ID);
+            if (targetID.equals(id))
+                return processExtension(element);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Sets the tags to include.  All others are ignored.
+     */
+    public void setIncludeOnlyTags(String[] tags) {
+        includeOnlyTags = new HashSet();
+        for (int i = 0; i < tags.length; i++) {
+            includeOnlyTags.add(tags[i]);
+        }
+    }
 }

@@ -19,11 +19,11 @@ import org.eclipse.core.resources.IMarker;
  * @since 3.0
  */
 public interface IGotoMarker {
-	/**
+    /**
      * Sets the cursor and selection state for an editor to 
-	 * reveal the position of the given marker.
-	 *  
-	 * @param marker the marker
-	 */
-	public void gotoMarker(IMarker marker);
+     * reveal the position of the given marker.
+     *  
+     * @param marker the marker
+     */
+    public void gotoMarker(IMarker marker);
 }

@@ -12,16 +12,16 @@
 package org.eclipse.ui.internal.contexts;
 
 final class ContextRegistryEvent {
-	private IContextRegistry contextRegistry;
+    private IContextRegistry contextRegistry;
 
-	ContextRegistryEvent(IContextRegistry contextRegistry) {
-		if (contextRegistry == null)
-			throw new NullPointerException();
+    ContextRegistryEvent(IContextRegistry contextRegistry) {
+        if (contextRegistry == null)
+            throw new NullPointerException();
 
-		this.contextRegistry = contextRegistry;
-	}
+        this.contextRegistry = contextRegistry;
+    }
 
-	IContextRegistry getContextRegistry() {
-		return contextRegistry;
-	}
+    IContextRegistry getContextRegistry() {
+        return contextRegistry;
+    }
 }

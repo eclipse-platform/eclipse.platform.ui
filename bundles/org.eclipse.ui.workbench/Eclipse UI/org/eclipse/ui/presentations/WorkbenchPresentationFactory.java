@@ -13,8 +13,8 @@ package org.eclipse.ui.presentations;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.internal.presentations.DefaultEditorPresentation;
-import org.eclipse.ui.internal.presentations.DefaultViewPresentation;
 import org.eclipse.ui.internal.presentations.DefaultStandalonePresentation;
+import org.eclipse.ui.internal.presentations.DefaultViewPresentation;
 
 /**
  * The default presentation factory for the Workbench.

@@ -19,35 +19,37 @@ import org.eclipse.ui.actions.SelectionProviderAction;
 
 public class ActionProblemProperties extends SelectionProviderAction {
 
-	private IWorkbenchPart part;
+    private IWorkbenchPart part;
 
-	public ActionProblemProperties(IWorkbenchPart part, ISelectionProvider provider) {
-		super(provider, Messages.getString("propertiesAction.title")); //$NON-NLS-1$
-		setEnabled(false);
-		this.part = part;
-	}
+    public ActionProblemProperties(IWorkbenchPart part,
+            ISelectionProvider provider) {
+        super(provider, Messages.getString("propertiesAction.title")); //$NON-NLS-1$
+        setEnabled(false);
+        this.part = part;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
-	public void run() {
-		if (!isEnabled()) {
-			return;
-		}
-		Object obj = getStructuredSelection().getFirstElement();
-		if (!(obj instanceof IMarker)) {
-			return;
-		}
-		IMarker marker = (IMarker) obj;
-		DialogMarkerProperties dialog = new DialogProblemProperties(part.getSite().getShell());
-		dialog.setMarker(marker);
-		dialog.open();
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.action.Action#run()
+     */
+    public void run() {
+        if (!isEnabled()) {
+            return;
+        }
+        Object obj = getStructuredSelection().getFirstElement();
+        if (!(obj instanceof IMarker)) {
+            return;
+        }
+        IMarker marker = (IMarker) obj;
+        DialogMarkerProperties dialog = new DialogProblemProperties(part
+                .getSite().getShell());
+        dialog.setMarker(marker);
+        dialog.open();
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.actions.SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
-	 */
-	public void selectionChanged(IStructuredSelection selection) {
-		setEnabled(selection != null && selection.size() == 1);
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.actions.SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
+     */
+    public void selectionChanged(IStructuredSelection selection) {
+        setEnabled(selection != null && selection.size() == 1);
+    }
 }

@@ -21,48 +21,48 @@ import org.eclipse.ui.presentations.IPresentationSerializer;
  */
 public class PresentationSerializer implements IPresentationSerializer {
 
-	private boolean disposed = false;
-	private List parts = Collections.EMPTY_LIST;
-	
-	public PresentationSerializer(List presentableParts) {
-		parts = presentableParts;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.presentations.IPresentationSerializer#getId(org.eclipse.ui.presentations.IPresentablePart)
-	 */
-	public String getId(IPresentablePart part) {
-		int index = parts.indexOf(part);
+    private boolean disposed = false;
 
-		return "" + index; //$NON-NLS-1$
-	}
+    private List parts = Collections.EMPTY_LIST;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.presentations.IPresentationSerializer#getPart(java.lang.String)
-	 */
-	public IPresentablePart getPart(String id) {		
-		try {
-			Integer integer = new Integer(id);
-			int index = integer.intValue();
-			
-			IPresentablePart result = (IPresentablePart)parts.get(index);
-			return result;
-		
+    public PresentationSerializer(List presentableParts) {
+        parts = presentableParts;
+    }
 
-		} catch (NumberFormatException e) {
-		} catch (IndexOutOfBoundsException e) {
-		}
-		
-		return null;
-	}
-	
-	/**
-	 * Prevent this object from being used further. Ensure that none
-	 * of the methods return anything useful in order to discourage clients
-	 * from hanging onto references to this object.
-	 */
-	public void dispose() {
-		parts = Collections.EMPTY_LIST;
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.presentations.IPresentationSerializer#getId(org.eclipse.ui.presentations.IPresentablePart)
+     */
+    public String getId(IPresentablePart part) {
+        int index = parts.indexOf(part);
+
+        return "" + index; //$NON-NLS-1$
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.presentations.IPresentationSerializer#getPart(java.lang.String)
+     */
+    public IPresentablePart getPart(String id) {
+        try {
+            Integer integer = new Integer(id);
+            int index = integer.intValue();
+
+            IPresentablePart result = (IPresentablePart) parts.get(index);
+            return result;
+
+        } catch (NumberFormatException e) {
+        } catch (IndexOutOfBoundsException e) {
+        }
+
+        return null;
+    }
+
+    /**
+     * Prevent this object from being used further. Ensure that none
+     * of the methods return anything useful in order to discourage clients
+     * from hanging onto references to this object.
+     */
+    public void dispose() {
+        parts = Collections.EMPTY_LIST;
+    }
 
 }

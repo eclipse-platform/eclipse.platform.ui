@@ -27,59 +27,65 @@ import org.eclipse.core.runtime.CoreException;
  * @see IActionSetRegistry
  */
 public interface IActionSetDescriptor {
-/**
- * Creates a new action set from this descriptor.
- * <p>
- * [Issue: Consider throwing WorkbenchException rather than CoreException.]
- * </p>
- *
- * @return the new action set
- * @exception CoreException if the action set cannot be created
- */
-public IActionSet createActionSet() throws CoreException;
-/**
- * Returns the category id of this action set.
- *
- * @return a non-empty category id or <cod>null</code> if none specified
- */
-public String getCategory();
-/**
- * Returns the description of this action set.
- * This is the value of its <code>"description"</code> attribute.
- *
- * @return the description
- */
-public String getDescription();
-/**
- * Returns the id of this action set. 
- * This is the value of its <code>"id"</code> attribute.
- *
- * @return the action set id
- */
-public String getId();
-/**
- * Returns the label of this action set. 
- * This is the value of its <code>"label"</code> attribute.
- *
- * @return the label
- */
-public String getLabel();
-/**
- * Returns whether this action set is initially visible.
- */
-public boolean isInitiallyVisible();
-/**
- * Sets the category of this action set.
- *
- * @param cat a non-empty category id
- */
-public void setCategory(String id);
+    /**
+     * Creates a new action set from this descriptor.
+     * <p>
+     * [Issue: Consider throwing WorkbenchException rather than CoreException.]
+     * </p>
+     *
+     * @return the new action set
+     * @exception CoreException if the action set cannot be created
+     */
+    public IActionSet createActionSet() throws CoreException;
 
-/**
- * Sets whether this action set is initially visible.
- * 
- * @since 3.0
- */
-public void setInitiallyVisible(boolean visible);
+    /**
+     * Returns the category id of this action set.
+     *
+     * @return a non-empty category id or <cod>null</code> if none specified
+     */
+    public String getCategory();
+
+    /**
+     * Returns the description of this action set.
+     * This is the value of its <code>"description"</code> attribute.
+     *
+     * @return the description
+     */
+    public String getDescription();
+
+    /**
+     * Returns the id of this action set. 
+     * This is the value of its <code>"id"</code> attribute.
+     *
+     * @return the action set id
+     */
+    public String getId();
+
+    /**
+     * Returns the label of this action set. 
+     * This is the value of its <code>"label"</code> attribute.
+     *
+     * @return the label
+     */
+    public String getLabel();
+
+    /**
+     * Returns whether this action set is initially visible.
+     */
+    public boolean isInitiallyVisible();
+
+    /**
+     * Sets the category of this action set.
+     *
+     * @param cat a non-empty category id
+     */
+    public void setCategory(String id);
+
+    /**
+     * Sets whether this action set is initially visible.
+     * 
+     * @since 3.0
+     */
+    public void setInitiallyVisible(boolean visible);
 
 }

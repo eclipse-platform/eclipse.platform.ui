@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IObjectActionDelegate;
@@ -24,51 +23,55 @@ import org.eclipse.ui.IWorkbenchPart;
  * </p>
  */
 public class ObjectPluginAction extends PluginAction {
-	public static final String ATT_OVERRIDE_ACTION_ID = "overrideActionId";//$NON-NLS-1$
+    public static final String ATT_OVERRIDE_ACTION_ID = "overrideActionId";//$NON-NLS-1$
 
-	private String overrideActionId;
-	private IWorkbenchPart activePart;
-	
-	/**
-	 * Constructs a new ObjectPluginAction.
-	 */
-	public ObjectPluginAction(IConfigurationElement actionElement, String id, int style) {
-		super(actionElement, id, style);
-		overrideActionId = actionElement.getAttribute(ATT_OVERRIDE_ACTION_ID);
-	}
+    private String overrideActionId;
 
-	/* (non-Javadoc)
-	 * Method declared on PluginAction.
-	 */
-	protected void initDelegate() {
-		super.initDelegate();
-		if (getDelegate() instanceof IObjectActionDelegate && activePart != null)
-			((IObjectActionDelegate)getDelegate()).setActivePart(this, activePart);
-	}
+    private IWorkbenchPart activePart;
 
-	/**
-	 * Sets the active part for the delegate.
-	 * <p>
-	 * This method will be called every time the action appears in a popup menu.  The
-	 * targetPart may change with each invocation.
-	 * </p>
-	 *
-	 * @param action the action proxy that handles presentation portion of the action
-	 * @param targetPart the new part target
-	 */
-	public void setActivePart(IWorkbenchPart targetPart) {
-		activePart = targetPart;
-		IActionDelegate delegate = getDelegate();
-		if (delegate != null && delegate instanceof IObjectActionDelegate)
-			 ((IObjectActionDelegate) delegate).setActivePart(this, activePart);
-	}
+    /**
+     * Constructs a new ObjectPluginAction.
+     */
+    public ObjectPluginAction(IConfigurationElement actionElement, String id,
+            int style) {
+        super(actionElement, id, style);
+        overrideActionId = actionElement.getAttribute(ATT_OVERRIDE_ACTION_ID);
+    }
 
-	/**
-	 * Returns the action identifier this action overrides.
-	 * 
-	 * @return the action identifier to override or <code>null</code>
-	 */
-	public String getOverrideActionId() {
-		return overrideActionId;
-	}
+    /* (non-Javadoc)
+     * Method declared on PluginAction.
+     */
+    protected void initDelegate() {
+        super.initDelegate();
+        if (getDelegate() instanceof IObjectActionDelegate
+                && activePart != null)
+            ((IObjectActionDelegate) getDelegate()).setActivePart(this,
+                    activePart);
+    }
+
+    /**
+     * Sets the active part for the delegate.
+     * <p>
+     * This method will be called every time the action appears in a popup menu.  The
+     * targetPart may change with each invocation.
+     * </p>
+     *
+     * @param action the action proxy that handles presentation portion of the action
+     * @param targetPart the new part target
+     */
+    public void setActivePart(IWorkbenchPart targetPart) {
+        activePart = targetPart;
+        IActionDelegate delegate = getDelegate();
+        if (delegate != null && delegate instanceof IObjectActionDelegate)
+            ((IObjectActionDelegate) delegate).setActivePart(this, activePart);
+    }
+
+    /**
+     * Returns the action identifier this action overrides.
+     * 
+     * @return the action identifier to override or <code>null</code>
+     */
+    public String getOverrideActionId() {
+        return overrideActionId;
+    }
 }

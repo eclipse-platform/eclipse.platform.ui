@@ -15,10 +15,10 @@ import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.ide.Category;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
-import org.eclipse.ui.internal.ide.Category;
 import org.eclipse.ui.internal.ide.misc.ProjectCapabilitySelectionGroup;
 import org.eclipse.ui.internal.ide.registry.Capability;
 import org.eclipse.ui.internal.ide.registry.CapabilityRegistry;
@@ -36,75 +36,81 @@ import org.eclipse.ui.internal.ide.registry.CapabilityRegistry;
  * </p>
  */
 public class WizardNewProjectCapabilityPage extends WizardPage {
-	// initial value stores
-	private Capability[] initialProjectCapabilities;
-	private Category[] initialSelectedCategories;
+    // initial value stores
+    private Capability[] initialProjectCapabilities;
 
-	// widgets
-	private ProjectCapabilitySelectionGroup capabilityGroup;
-	
-	/**
-	 * Creates a new project capabilities wizard page.
-	 *
-	 * @param pageName the name of this page
-	 */
-	public WizardNewProjectCapabilityPage(String pageName) {
-		super(pageName);
-	}
+    private Category[] initialSelectedCategories;
 
-	/* (non-Javadoc)
-	 * Method declared on IWizardPage
-	 */
-	public boolean canFlipToNextPage() {
-		// Already know there is a next page...
-		return isPageComplete();
-	}
+    // widgets
+    private ProjectCapabilitySelectionGroup capabilityGroup;
 
-	/* (non-Javadoc)
-	 * Method declared on IDialogPage.
-	 */
-	public void createControl(Composite parent) {
-		WorkbenchHelp.setHelp(parent, IHelpContextIds.NEW_PROJECT_CAPABILITY_WIZARD_PAGE);
-		CapabilityRegistry reg = IDEWorkbenchPlugin.getDefault().getCapabilityRegistry();
-		capabilityGroup = new ProjectCapabilitySelectionGroup(initialSelectedCategories, initialProjectCapabilities, reg);
-		setControl(capabilityGroup.createContents(parent));
-		
-		capabilityGroup.setCheckStateListener(new ICheckStateListener() {
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				getWizard().getContainer().updateButtons();
-			}
-		});
-		
-		if (!reg.hasCapabilities())
-			setMessage(IDEWorkbenchMessages.getString("WizardNewProjectCapabilityPage.noCapabilities"), WARNING); //$NON-NLS-1$
-	}
+    /**
+     * Creates a new project capabilities wizard page.
+     *
+     * @param pageName the name of this page
+     */
+    public WizardNewProjectCapabilityPage(String pageName) {
+        super(pageName);
+    }
 
-	/**
-	 * Returns the collection of capabilities selected
-	 * by the user. The collection is not in prerequisite
-	 * order.
-	 * 
-	 * @return array of selected capabilities
-	 */
-	/* package */ Capability[] getSelectedCapabilities() {
-		return capabilityGroup.getSelectedCapabilities();
-	}
-	
-	/**
-	 * Sets the initial categories to be selected.
-	 * 
-	 * @param categories initial categories to select
-	 */
-	/* package */ void setInitialSelectedCategories(Category[] categories) {
-		initialSelectedCategories = categories;
-	}
-	
-	/**
-	 * Sets the initial project capabilities to be selected.
-	 * 
-	 * @param capabilities initial project capabilities to select
-	 */
-	/* package */ void setInitialProjectCapabilities(Capability[] capabilities) {
-		initialProjectCapabilities = capabilities;
-	}
+    /* (non-Javadoc)
+     * Method declared on IWizardPage
+     */
+    public boolean canFlipToNextPage() {
+        // Already know there is a next page...
+        return isPageComplete();
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IDialogPage.
+     */
+    public void createControl(Composite parent) {
+        WorkbenchHelp.setHelp(parent,
+                IHelpContextIds.NEW_PROJECT_CAPABILITY_WIZARD_PAGE);
+        CapabilityRegistry reg = IDEWorkbenchPlugin.getDefault()
+                .getCapabilityRegistry();
+        capabilityGroup = new ProjectCapabilitySelectionGroup(
+                initialSelectedCategories, initialProjectCapabilities, reg);
+        setControl(capabilityGroup.createContents(parent));
+
+        capabilityGroup.setCheckStateListener(new ICheckStateListener() {
+            public void checkStateChanged(CheckStateChangedEvent event) {
+                getWizard().getContainer().updateButtons();
+            }
+        });
+
+        if (!reg.hasCapabilities())
+            setMessage(
+                    IDEWorkbenchMessages
+                            .getString("WizardNewProjectCapabilityPage.noCapabilities"), WARNING); //$NON-NLS-1$
+    }
+
+    /**
+     * Returns the collection of capabilities selected
+     * by the user. The collection is not in prerequisite
+     * order.
+     * 
+     * @return array of selected capabilities
+     */
+    /* package */Capability[] getSelectedCapabilities() {
+        return capabilityGroup.getSelectedCapabilities();
+    }
+
+    /**
+     * Sets the initial categories to be selected.
+     * 
+     * @param categories initial categories to select
+     */
+    /* package */void setInitialSelectedCategories(Category[] categories) {
+        initialSelectedCategories = categories;
+    }
+
+    /**
+     * Sets the initial project capabilities to be selected.
+     * 
+     * @param capabilities initial project capabilities to select
+     */
+    /* package */void setInitialProjectCapabilities(Capability[] capabilities) {
+        initialProjectCapabilities = capabilities;
+    }
 }

@@ -28,13 +28,13 @@ package org.eclipse.ui.keys;
  */
 public abstract class NaturalKey extends Key {
 
-	/**
-	 * Constructs an instance of <code>NaturalKey</code> given a name.
-	 * 
-	 * @param name
-	 *            The name of the key, must not be null.
-	 */
-	NaturalKey(String name) {
-		super(name);
-	}
+    /**
+     * Constructs an instance of <code>NaturalKey</code> given a name.
+     * 
+     * @param name
+     *            The name of the key, must not be null.
+     */
+    NaturalKey(String name) {
+        super(name);
+    }
 }

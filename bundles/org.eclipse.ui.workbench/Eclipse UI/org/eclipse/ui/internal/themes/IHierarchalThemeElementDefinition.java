@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.themes;
 
-
 /**
  * A theme element whose value may default to that of another theme element.
  * 
@@ -18,7 +17,7 @@ package org.eclipse.ui.internal.themes;
  */
 public interface IHierarchalThemeElementDefinition extends
         IThemeElementDefinition {
-    
+
     /**
      * Return the id of the element this element defaults to.
      * 

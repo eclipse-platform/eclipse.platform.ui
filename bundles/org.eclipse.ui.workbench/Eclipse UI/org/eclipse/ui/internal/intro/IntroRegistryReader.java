@@ -24,70 +24,75 @@ import org.eclipse.ui.internal.registry.RegistryReader;
  * @since 3.0
  */
 public class IntroRegistryReader extends RegistryReader {
-	private static final String TAG_INTRO = "intro";//$NON-NLS-1$	
-	private static final String TAG_INTROPRODUCTBINDING = "introProductBinding";//$NON-NLS-1$
-	private IntroRegistry introRegistry;
+    private static final String TAG_INTRO = "intro";//$NON-NLS-1$	
 
-	/**
-	 */
-	public IntroRegistryReader() {
-		super();
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.registry.RegistryReader#readElement(org.eclipse.core.runtime.IConfigurationElement)
-	 */
-	protected boolean readElement(IConfigurationElement element) {
-		if (element.getName().equals(TAG_INTRO)) {
-			readIntro(element);
-			return true;
-		}
-		else if (element.getName().equals(TAG_INTROPRODUCTBINDING)) {
-		    readBinding(element);
-		    return true;
-		}
-		return false;
-	}
+    private static final String TAG_INTROPRODUCTBINDING = "introProductBinding";//$NON-NLS-1$
 
-	/**
-	 * Read binding information.
-	 * 
+    private IntroRegistry introRegistry;
+
+    /**
+     */
+    public IntroRegistryReader() {
+        super();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.registry.RegistryReader#readElement(org.eclipse.core.runtime.IConfigurationElement)
+     */
+    protected boolean readElement(IConfigurationElement element) {
+        if (element.getName().equals(TAG_INTRO)) {
+            readIntro(element);
+            return true;
+        } else if (element.getName().equals(TAG_INTROPRODUCTBINDING)) {
+            readBinding(element);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Read binding information.
+     * 
      * @param element the configuration element to be read.
      */
     private void readBinding(IConfigurationElement element) {
         try {
             introRegistry.addBinding(element);
-        }
-        catch (CoreException e) {
+        } catch (CoreException e) {
             // log an error since its not safe to open a dialog here
-			WorkbenchPlugin.log(IntroMessages.getString("Intro.could_not_create_binding") , e.getStatus());//$NON-NLS-1$            
+            WorkbenchPlugin
+                    .log(
+                            IntroMessages
+                                    .getString("Intro.could_not_create_binding"), e.getStatus());//$NON-NLS-1$            
         }
     }
 
     /**
-	 * Read introduction information.
-	 * 
-	 * @param element the configuration element to read. 
-	 */
-	private void readIntro(IConfigurationElement element) {
-		try {
-			IIntroDescriptor descriptor = new IntroDescriptor(element);
-			introRegistry.add(descriptor);
-		}
-		catch (CoreException e) {
-			// log an error since its not safe to open a dialog here
-			WorkbenchPlugin.log(IntroMessages.getString("Intro.could_not_create_descriptor") , e.getStatus());//$NON-NLS-1$
-		}		
-	}
-	
-	/**
-	 * Read all introdcution extensions from the registry.
-	 * 
-	 * @param in the registry to read.
-	 * @param out the registry to populate.
-	 */
-	public void readIntros(IExtensionRegistry in, IntroRegistry out) {
-		introRegistry = out;
-		readRegistry(in, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_INTRO);		
-	}
+     * Read introduction information.
+     * 
+     * @param element the configuration element to read. 
+     */
+    private void readIntro(IConfigurationElement element) {
+        try {
+            IIntroDescriptor descriptor = new IntroDescriptor(element);
+            introRegistry.add(descriptor);
+        } catch (CoreException e) {
+            // log an error since its not safe to open a dialog here
+            WorkbenchPlugin
+                    .log(
+                            IntroMessages
+                                    .getString("Intro.could_not_create_descriptor"), e.getStatus());//$NON-NLS-1$
+        }
+    }
+
+    /**
+     * Read all introdcution extensions from the registry.
+     * 
+     * @param in the registry to read.
+     * @param out the registry to populate.
+     */
+    public void readIntros(IExtensionRegistry in, IntroRegistry out) {
+        introRegistry = out;
+        readRegistry(in, PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_INTRO);
+    }
 }

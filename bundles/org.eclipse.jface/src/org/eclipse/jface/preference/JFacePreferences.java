@@ -10,49 +10,50 @@
  *******************************************************************************/
 package org.eclipse.jface.preference;
 
-
 /**
  * 
  * JFacePreferences is a class used to administer the preferences
  * used by JFace objects.
  */
 public final class JFacePreferences {
-	
-	/**
-	 * Identifier for the Error Color
-	 */
-	public static final String ERROR_COLOR = "ERROR_COLOR"; //$NON-NLS-1$
-	/**
-	 * Identifier for the Hyperlink Color
-	 */
-	public static final String HYPERLINK_COLOR = "HYPERLINK_COLOR"; //$NON-NLS-1$
-	/**
-	 * Identifier for the Active Hyperlink Colour
-	 */
-	public static final String ACTIVE_HYPERLINK_COLOR = "ACTIVE_HYPERLINK_COLOR"; //$NON-NLS-1$
 
-		
-	private static IPreferenceStore preferenceStore;
-	/**
-	 * Prevent construction.
-	 */
-	private JFacePreferences() {
-	}
-	
-	/**
-	 * Return the preference store for the receiver.
-	 * @return IPreferenceStore or null
-	 */
-	public static IPreferenceStore getPreferenceStore(){
-		return preferenceStore;
-	}
-	
-	/**
-	 * Set the preference store for the receiver.
-	 * @param store IPreferenceStore
-	 */
-	public static void setPreferenceStore(IPreferenceStore store){
-		preferenceStore = store;
-	}
+    /**
+     * Identifier for the Error Color
+     */
+    public static final String ERROR_COLOR = "ERROR_COLOR"; //$NON-NLS-1$
+
+    /**
+     * Identifier for the Hyperlink Color
+     */
+    public static final String HYPERLINK_COLOR = "HYPERLINK_COLOR"; //$NON-NLS-1$
+
+    /**
+     * Identifier for the Active Hyperlink Colour
+     */
+    public static final String ACTIVE_HYPERLINK_COLOR = "ACTIVE_HYPERLINK_COLOR"; //$NON-NLS-1$
+
+    private static IPreferenceStore preferenceStore;
+
+    /**
+     * Prevent construction.
+     */
+    private JFacePreferences() {
+    }
+
+    /**
+     * Return the preference store for the receiver.
+     * @return IPreferenceStore or null
+     */
+    public static IPreferenceStore getPreferenceStore() {
+        return preferenceStore;
+    }
+
+    /**
+     * Set the preference store for the receiver.
+     * @param store IPreferenceStore
+     */
+    public static void setPreferenceStore(IPreferenceStore store) {
+        preferenceStore = store;
+    }
 
 }

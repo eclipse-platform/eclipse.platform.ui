@@ -31,22 +31,24 @@ import java.lang.reflect.InvocationTargetException;
  * @see org.eclipse.jface.wizard.WizardDialog
  */
 public interface IRunnableContext {
-/**
- * Runs the given <code>IRunnableWithProgress</code> in this context.
- * For example, if this is a <code>ProgressMonitorDialog</code> then the runnable
- * is run using this dialog's progress monitor.
- *
- * @param fork <code>true</code> if the runnable should be run in a separate thread,
- *  and <code>false</code> to run in the same thread
- * @param cancelable <code>true</code> to enable the cancelation, and
- *  <code>false</code> to make the operation uncancellable
- * @param runnable the runnable to run
- *
- * @exception InvocationTargetException wraps any exception or error which occurs 
- *  while running the runnable
- * @exception InterruptedException propagated by the context if the runnable 
- *  acknowledges cancelation by throwing this exception.  This should not be thrown
- *  if cancelable is <code>false</code>.
- */
-public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException;
+    /**
+     * Runs the given <code>IRunnableWithProgress</code> in this context.
+     * For example, if this is a <code>ProgressMonitorDialog</code> then the runnable
+     * is run using this dialog's progress monitor.
+     *
+     * @param fork <code>true</code> if the runnable should be run in a separate thread,
+     *  and <code>false</code> to run in the same thread
+     * @param cancelable <code>true</code> to enable the cancelation, and
+     *  <code>false</code> to make the operation uncancellable
+     * @param runnable the runnable to run
+     *
+     * @exception InvocationTargetException wraps any exception or error which occurs 
+     *  while running the runnable
+     * @exception InterruptedException propagated by the context if the runnable 
+     *  acknowledges cancelation by throwing this exception.  This should not be thrown
+     *  if cancelable is <code>false</code>.
+     */
+    public void run(boolean fork, boolean cancelable,
+            IRunnableWithProgress runnable) throws InvocationTargetException,
+            InterruptedException;
 }

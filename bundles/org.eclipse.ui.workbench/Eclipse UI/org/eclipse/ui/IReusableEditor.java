@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui;
+
 /**
  * Interface for reusable editors. 
  * 
@@ -17,11 +18,11 @@ package org.eclipse.ui;
  * opening a new editor.
  */
 public interface IReusableEditor extends IEditorPart {
-/**
- * Sets the input to this editor.
- *
- * @param input the editor input
- */
-public void setInput(IEditorInput input);
+    /**
+     * Sets the input to this editor.
+     *
+     * @param input the editor input
+     */
+    public void setInput(IEditorInput input);
 }
 

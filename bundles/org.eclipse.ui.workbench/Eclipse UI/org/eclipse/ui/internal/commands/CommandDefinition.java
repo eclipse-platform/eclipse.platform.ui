@@ -19,176 +19,176 @@ import java.util.Map;
 
 import org.eclipse.ui.internal.util.Util;
 
-public final class CommandDefinition
-	implements Comparable {
+public final class CommandDefinition implements Comparable {
 
-	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL =
-		CommandDefinition.class.getName().hashCode();
+    private final static int HASH_FACTOR = 89;
 
-	public static Map commandDefinitionsById(
-		Collection commandDefinitions,
-		boolean allowNullIds) {
-		if (commandDefinitions == null)
-			throw new NullPointerException();
+    private final static int HASH_INITIAL = CommandDefinition.class.getName()
+            .hashCode();
 
-		Map map = new HashMap();
-		Iterator iterator = commandDefinitions.iterator();
+    public static Map commandDefinitionsById(Collection commandDefinitions,
+            boolean allowNullIds) {
+        if (commandDefinitions == null)
+            throw new NullPointerException();
 
-		while (iterator.hasNext()) {
-			Object object = iterator.next();
-			Util.assertInstance(object, CommandDefinition.class);
-			CommandDefinition commandDefinition = (CommandDefinition) object;
-			String id = commandDefinition.getId();
+        Map map = new HashMap();
+        Iterator iterator = commandDefinitions.iterator();
 
-			if (allowNullIds || id != null)
-				map.put(id, commandDefinition);
-		}
+        while (iterator.hasNext()) {
+            Object object = iterator.next();
+            Util.assertInstance(object, CommandDefinition.class);
+            CommandDefinition commandDefinition = (CommandDefinition) object;
+            String id = commandDefinition.getId();
 
-		return map;
-	}
+            if (allowNullIds || id != null)
+                map.put(id, commandDefinition);
+        }
 
-	public static Map commandDefinitionsByName(
-		Collection commandDefinitions,
-		boolean allowNullNames) {
-		if (commandDefinitions == null)
-			throw new NullPointerException();
+        return map;
+    }
 
-		Map map = new HashMap();
-		Iterator iterator = commandDefinitions.iterator();
+    public static Map commandDefinitionsByName(Collection commandDefinitions,
+            boolean allowNullNames) {
+        if (commandDefinitions == null)
+            throw new NullPointerException();
 
-		while (iterator.hasNext()) {
-			Object object = iterator.next();
-			Util.assertInstance(object, CommandDefinition.class);
-			CommandDefinition commandDefinition = (CommandDefinition) object;
-			String name = commandDefinition.getName();
+        Map map = new HashMap();
+        Iterator iterator = commandDefinitions.iterator();
 
-			if (allowNullNames || name != null) {
-				Collection commandDefinitions2 = (Collection) map.get(name);
+        while (iterator.hasNext()) {
+            Object object = iterator.next();
+            Util.assertInstance(object, CommandDefinition.class);
+            CommandDefinition commandDefinition = (CommandDefinition) object;
+            String name = commandDefinition.getName();
 
-				if (commandDefinitions2 == null) {
-					commandDefinitions2 = new HashSet();
-					map.put(name, commandDefinitions2);
-				}
+            if (allowNullNames || name != null) {
+                Collection commandDefinitions2 = (Collection) map.get(name);
 
-				commandDefinitions2.add(commandDefinition);
-			}
-		}
+                if (commandDefinitions2 == null) {
+                    commandDefinitions2 = new HashSet();
+                    map.put(name, commandDefinitions2);
+                }
 
-		return map;
-	}
+                commandDefinitions2.add(commandDefinition);
+            }
+        }
 
-	private String categoryId;
-	private String description;
+        return map;
+    }
 
-	private transient int hashCode;
-	private transient boolean hashCodeComputed;
-	private String id;
-	private String name;
-	private String sourceId;
-	private transient String string;
+    private String categoryId;
 
-	public CommandDefinition(
-		String categoryId,
-		String description,
-		String id,
-		String name,
-		String sourceId) {
-		this.categoryId = categoryId;
-		this.description = description;
-		this.id = id;
-		this.name = name;
-		this.sourceId = sourceId;
-	}
+    private String description;
 
-	public int compareTo(Object object) {
-		CommandDefinition castedObject = (CommandDefinition) object;
-		int compareTo = Util.compare(categoryId, castedObject.categoryId);
+    private transient int hashCode;
 
-		if (compareTo == 0) {
-			compareTo = Util.compare(description, castedObject.description);
+    private transient boolean hashCodeComputed;
 
-			if (compareTo == 0) {
-				compareTo = Util.compare(id, castedObject.id);
+    private String id;
 
-				if (compareTo == 0) {
-					compareTo = Util.compare(name, castedObject.name);
+    private String name;
 
-					if (compareTo == 0)
-						compareTo =
-							Util.compare(sourceId, castedObject.sourceId);
-				}
-			}
-		}
+    private String sourceId;
 
-		return compareTo;
-	}
+    private transient String string;
 
-	public boolean equals(Object object) {
-		if (!(object instanceof CommandDefinition))
-			return false;
+    public CommandDefinition(String categoryId, String description, String id,
+            String name, String sourceId) {
+        this.categoryId = categoryId;
+        this.description = description;
+        this.id = id;
+        this.name = name;
+        this.sourceId = sourceId;
+    }
 
-		CommandDefinition castedObject = (CommandDefinition) object;
-		boolean equals = true;
-		equals &= Util.equals(categoryId, castedObject.categoryId);
-		equals &= Util.equals(description, castedObject.description);
-		equals &= Util.equals(id, castedObject.id);
-		equals &= Util.equals(name, castedObject.name);
-		equals &= Util.equals(sourceId, castedObject.sourceId);
-		return equals;
-	}
+    public int compareTo(Object object) {
+        CommandDefinition castedObject = (CommandDefinition) object;
+        int compareTo = Util.compare(categoryId, castedObject.categoryId);
 
-	public String getCategoryId() {
-		return categoryId;
-	}
+        if (compareTo == 0) {
+            compareTo = Util.compare(description, castedObject.description);
 
-	public String getDescription() {
-		return description;
-	}
+            if (compareTo == 0) {
+                compareTo = Util.compare(id, castedObject.id);
 
-	public String getId() {
-		return id;
-	}
+                if (compareTo == 0) {
+                    compareTo = Util.compare(name, castedObject.name);
 
-	public String getName() {
-		return name;
-	}
+                    if (compareTo == 0)
+                        compareTo = Util.compare(sourceId,
+                                castedObject.sourceId);
+                }
+            }
+        }
 
-	public String getSourceId() {
-		return sourceId;
-	}
+        return compareTo;
+    }
 
-	public int hashCode() {
-		if (!hashCodeComputed) {
-			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(categoryId);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(description);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(sourceId);
-			hashCodeComputed = true;
-		}
+    public boolean equals(Object object) {
+        if (!(object instanceof CommandDefinition))
+            return false;
 
-		return hashCode;
-	}
+        CommandDefinition castedObject = (CommandDefinition) object;
+        boolean equals = true;
+        equals &= Util.equals(categoryId, castedObject.categoryId);
+        equals &= Util.equals(description, castedObject.description);
+        equals &= Util.equals(id, castedObject.id);
+        equals &= Util.equals(name, castedObject.name);
+        equals &= Util.equals(sourceId, castedObject.sourceId);
+        return equals;
+    }
 
-	public String toString() {
-		if (string == null) {
-			final StringBuffer stringBuffer = new StringBuffer();
-			stringBuffer.append('[');
-			stringBuffer.append(categoryId);
-			stringBuffer.append(',');
-			stringBuffer.append(description);
-			stringBuffer.append(',');
-			stringBuffer.append(id);
-			stringBuffer.append(',');
-			stringBuffer.append(name);
-			stringBuffer.append(',');
-			stringBuffer.append(sourceId);
-			stringBuffer.append(']');
-			string = stringBuffer.toString();
-		}
+    public String getCategoryId() {
+        return categoryId;
+    }
 
-		return string;
-	}
+    public String getDescription() {
+        return description;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getSourceId() {
+        return sourceId;
+    }
+
+    public int hashCode() {
+        if (!hashCodeComputed) {
+            hashCode = HASH_INITIAL;
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(categoryId);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(description);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(sourceId);
+            hashCodeComputed = true;
+        }
+
+        return hashCode;
+    }
+
+    public String toString() {
+        if (string == null) {
+            final StringBuffer stringBuffer = new StringBuffer();
+            stringBuffer.append('[');
+            stringBuffer.append(categoryId);
+            stringBuffer.append(',');
+            stringBuffer.append(description);
+            stringBuffer.append(',');
+            stringBuffer.append(id);
+            stringBuffer.append(',');
+            stringBuffer.append(name);
+            stringBuffer.append(',');
+            stringBuffer.append(sourceId);
+            stringBuffer.append(']');
+            string = stringBuffer.toString();
+        }
+
+        return string;
+    }
 }

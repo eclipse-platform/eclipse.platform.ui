@@ -25,17 +25,14 @@ import java.util.TreeSet;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
-
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
-
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPersistableElement;
@@ -47,7 +44,6 @@ import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.dialogs.IWorkingSetEditWizard;
 import org.eclipse.ui.dialogs.IWorkingSetPage;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
-
 import org.eclipse.ui.internal.dialogs.WorkingSetEditWizard;
 import org.eclipse.ui.internal.dialogs.WorkingSetSelectionDialog;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
@@ -61,402 +57,438 @@ import org.eclipse.ui.internal.registry.WorkingSetRegistry;
  * @since 2.0
  */
 public class WorkingSetManager implements IWorkingSetManager {
-	
-	// Working set persistence
-	private static final String WORKING_SET_STATE_FILENAME = "workingsets.xml"; //$NON-NLS-1$
-	
-	/**
-	 * Size of the list of most recently used working sets.
-	 */
-	private static final int MRU_SIZE = 5;
 
-	private SortedSet workingSets = new TreeSet(new WorkingSetComparator());
-	private List recentWorkingSets = new ArrayList();
-	private ListenerList propertyChangeListeners = new ListenerList();
+    // Working set persistence
+    private static final String WORKING_SET_STATE_FILENAME = "workingsets.xml"; //$NON-NLS-1$
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkingSetManager
-	 */
-	public void addRecentWorkingSet(IWorkingSet workingSet) {
-		internalAddRecentWorkingSet(workingSet);
-		saveState();
-	}
+    /**
+     * Size of the list of most recently used working sets.
+     */
+    private static final int MRU_SIZE = 5;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkingSetManager
-	 */
-	public void addWorkingSet(IWorkingSet workingSet) {
-		Assert.isTrue(!workingSets.contains(workingSet), "working set already registered"); //$NON-NLS-1$
-		workingSets.add(workingSet);
-		saveState();
-		firePropertyChange(CHANGE_WORKING_SET_ADD, null, workingSet);
-	}
+    private SortedSet workingSets = new TreeSet(new WorkingSetComparator());
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkingSetManager
-	 */
-	public void addPropertyChangeListener(IPropertyChangeListener listener) {
-		propertyChangeListeners.add(listener);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkingSetManager
-	 */
-	public IWorkingSet createWorkingSet(String name, IAdaptable[] elements) {
-		return new WorkingSet(name, elements);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkingSetManager
-	 */
-	public IWorkingSet createWorkingSet(IMemento memento) {
-		return restoreWorkingSet(memento);
-	}
-	
-	/**
-	 * @see org.eclipse.ui.IWorkingSetManager#createWorkingSetEditWizard(org.eclipse.ui.IWorkingSet)
-	 * @since 2.1
-	 */
-	public IWorkingSetEditWizard createWorkingSetEditWizard(IWorkingSet workingSet) {
-		String editPageId = workingSet.getId();
-		WorkingSetRegistry registry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
-		IWorkingSetPage editPage = null;
-				
-		if (editPageId != null) {
-			editPage = registry.getWorkingSetPage(editPageId);
-		}						
-		if (editPage == null) {
-			editPage = registry.getDefaultWorkingSetPage();
-			if (editPage == null) {
-				return null;
-			}
-		}
-		WorkingSetEditWizard editWizard = new WorkingSetEditWizard(editPage);
-		editWizard.setSelection(workingSet);
-		return editWizard;
-	}	
-	
-	/**
-	 * @deprecated use createWorkingSetSelectionDialog(parent, true) instead
-	 */
-	public IWorkingSetSelectionDialog createWorkingSetSelectionDialog(Shell parent) {
-		return createWorkingSetSelectionDialog(parent, true);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkingSetManager
-	 */
-	public IWorkingSetSelectionDialog createWorkingSetSelectionDialog(Shell parent, boolean multi) {
-		return new WorkingSetSelectionDialog(parent, multi);
-	}
-	
-	/**
-	 * Tests the receiver and the object for equality
-	 * 
-	 * @param object object to compare the receiver to
-	 * @return true=the object equals the receiver, it has the same 
-	 * 	working sets. false otherwise
-	 */
-	public boolean equals(Object object) {
-		if (this == object) {
-			return true;
-		}
-		if (object instanceof WorkingSetManager) {
-			WorkingSetManager workingSetManager = (WorkingSetManager) object;
-			return workingSetManager.workingSets.equals(workingSets);
-		}
-		return false;
-	}
-	
-	/**
-	 * Notify property change listeners about a change to the list of 
-	 * working sets.
-	 * 
-	 * @param changeId one of 
-	 * 	IWorkingSetManager#CHANGE_WORKING_SET_ADD 
-	 * 	IWorkingSetManager#CHANGE_WORKING_SET_REMOVE
-	 * 	IWorkingSetManager#CHANGE_WORKING_SET_CONTENT_CHANGE 
-	 * 	IWorkingSetManager#CHANGE_WORKING_SET_NAME_CHANGE
-	 * @param oldValue the removed working set or null if a working set 
-	 * 	was added or changed.
-	 * @param newValue the new or changed working set or null if a working 
-	 * 	set was removed.
-	 */
-	private void firePropertyChange(String changeId, Object oldValue, Object newValue) {
-		final PropertyChangeEvent event = new PropertyChangeEvent(this, changeId, oldValue, newValue);
-		
-		Display.getDefault().syncExec(new Runnable() {
-			public void run() {
-				Object[] listeners = propertyChangeListeners.getListeners();
-				for (int i = 0; i < listeners.length; i++) {
-					((IPropertyChangeListener) listeners[i]).propertyChange(event);
-				}
-			}
-		});
-	}
+    private List recentWorkingSets = new ArrayList();
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkingSetManager
-	 */
-	public IWorkingSet[] getRecentWorkingSets() {
-		return (IWorkingSet[]) recentWorkingSets.toArray(new IWorkingSet[recentWorkingSets.size()]);
-	}
+    private ListenerList propertyChangeListeners = new ListenerList();
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkingSetManager
-	 */
-	public IWorkingSet getWorkingSet(String name) {
-		if (name == null || workingSets == null)
-			return null;
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkingSetManager
+     */
+    public void addRecentWorkingSet(IWorkingSet workingSet) {
+        internalAddRecentWorkingSet(workingSet);
+        saveState();
+    }
 
-		Iterator iter = workingSets.iterator();
-		while (iter.hasNext()) {
-			IWorkingSet workingSet = (IWorkingSet) iter.next();
-			if (name.equals(workingSet.getName()))
-				return workingSet;
-		}
-		return null;
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkingSetManager
+     */
+    public void addWorkingSet(IWorkingSet workingSet) {
+        Assert.isTrue(!workingSets.contains(workingSet),
+                "working set already registered"); //$NON-NLS-1$
+        workingSets.add(workingSet);
+        saveState();
+        firePropertyChange(CHANGE_WORKING_SET_ADD, null, workingSet);
+    }
 
-	/**
-	 * Returns the hash code.
-	 * 
-	 * @return the hash code.
-	 */
-	public int hashCode() {
-		return workingSets.hashCode();
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkingSetManager
+     */
+    public void addPropertyChangeListener(IPropertyChangeListener listener) {
+        propertyChangeListeners.add(listener);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkingSetManager
-	 */
-	public IWorkingSet[] getWorkingSets() {
-		return (IWorkingSet[]) workingSets.toArray(new IWorkingSet[workingSets.size()]);
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkingSetManager
+     */
+    public IWorkingSet createWorkingSet(String name, IAdaptable[] elements) {
+        return new WorkingSet(name, elements);
+    }
 
-	/**
-	 * Returns the file used as the persistence store
-	 * 
-	 * @return the file used as the persistence store
-	 */
-	private File getWorkingSetStateFile() {
-		IPath path = WorkbenchPlugin.getDefault().getStateLocation();
-		path = path.append(WORKING_SET_STATE_FILENAME);
-		return path.toFile();
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkingSetManager
+     */
+    public IWorkingSet createWorkingSet(IMemento memento) {
+        return restoreWorkingSet(memento);
+    }
 
-	/**
-	 * Adds the specified working set to the list of recently used
-	 * working sets.
-	 * 
-	 * @param workingSet working set to added to the list of recently 
-	 * 	used working sets.
-	 */
-	private void internalAddRecentWorkingSet(IWorkingSet workingSet) {
-		recentWorkingSets.remove(workingSet);
-		recentWorkingSets.add(0, workingSet);
-		if (recentWorkingSets.size() > MRU_SIZE) {
-			recentWorkingSets.remove(MRU_SIZE);
-		}
-	}
+    /**
+     * @see org.eclipse.ui.IWorkingSetManager#createWorkingSetEditWizard(org.eclipse.ui.IWorkingSet)
+     * @since 2.1
+     */
+    public IWorkingSetEditWizard createWorkingSetEditWizard(
+            IWorkingSet workingSet) {
+        String editPageId = workingSet.getId();
+        WorkingSetRegistry registry = WorkbenchPlugin.getDefault()
+                .getWorkingSetRegistry();
+        IWorkingSetPage editPage = null;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkingSetManager
-	 */
-	public void removePropertyChangeListener(IPropertyChangeListener listener) {
-		propertyChangeListeners.remove(listener);
-	}
+        if (editPageId != null) {
+            editPage = registry.getWorkingSetPage(editPageId);
+        }
+        if (editPage == null) {
+            editPage = registry.getDefaultWorkingSetPage();
+            if (editPage == null) {
+                return null;
+            }
+        }
+        WorkingSetEditWizard editWizard = new WorkingSetEditWizard(editPage);
+        editWizard.setSelection(workingSet);
+        return editWizard;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkingSetManager
-	 */
-	public void removeWorkingSet(IWorkingSet workingSet) {
-		boolean workingSetRemoved = workingSets.remove(workingSet);
-		boolean recentWorkingSetRemoved = recentWorkingSets.remove(workingSet);
-		 
-		if (workingSetRemoved || recentWorkingSetRemoved) { 
-			saveState();
-			firePropertyChange(CHANGE_WORKING_SET_REMOVE, workingSet, null);
-		}
-	}
+    /**
+     * @deprecated use createWorkingSetSelectionDialog(parent, true) instead
+     */
+    public IWorkingSetSelectionDialog createWorkingSetSelectionDialog(
+            Shell parent) {
+        return createWorkingSetSelectionDialog(parent, true);
+    }
 
-	/**
-	 * Restores the list of most recently used working sets from the 
-	 * persistence store.
-	 * 
-	 * @param memento the persistence store
-	 */
-	private void restoreMruList(IMemento memento) {
-		IMemento[] mruWorkingSets = memento.getChildren(IWorkbenchConstants.TAG_MRU_LIST);
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkingSetManager
+     */
+    public IWorkingSetSelectionDialog createWorkingSetSelectionDialog(
+            Shell parent, boolean multi) {
+        return new WorkingSetSelectionDialog(parent, multi);
+    }
 
-		for (int i = mruWorkingSets.length - 1; i >= 0; i--) {
-			String workingSetName = mruWorkingSets[i].getString(IWorkbenchConstants.TAG_NAME);
-			if (workingSetName != null) {
-				IWorkingSet workingSet = getWorkingSet(workingSetName);		
-				if (workingSet != null) {
-					internalAddRecentWorkingSet(workingSet);		
-				}
-			}
-		}
-	}
+    /**
+     * Tests the receiver and the object for equality
+     * 
+     * @param object object to compare the receiver to
+     * @return true=the object equals the receiver, it has the same 
+     * 	working sets. false otherwise
+     */
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (object instanceof WorkingSetManager) {
+            WorkingSetManager workingSetManager = (WorkingSetManager) object;
+            return workingSetManager.workingSets.equals(workingSets);
+        }
+        return false;
+    }
 
-	/**
-	 * Reads the persistence store and creates the working sets 
-	 * stored in it.
-	 */
-	public void restoreState() {
-		File stateFile = getWorkingSetStateFile();
+    /**
+     * Notify property change listeners about a change to the list of 
+     * working sets.
+     * 
+     * @param changeId one of 
+     * 	IWorkingSetManager#CHANGE_WORKING_SET_ADD 
+     * 	IWorkingSetManager#CHANGE_WORKING_SET_REMOVE
+     * 	IWorkingSetManager#CHANGE_WORKING_SET_CONTENT_CHANGE 
+     * 	IWorkingSetManager#CHANGE_WORKING_SET_NAME_CHANGE
+     * @param oldValue the removed working set or null if a working set 
+     * 	was added or changed.
+     * @param newValue the new or changed working set or null if a working 
+     * 	set was removed.
+     */
+    private void firePropertyChange(String changeId, Object oldValue,
+            Object newValue) {
+        final PropertyChangeEvent event = new PropertyChangeEvent(this,
+                changeId, oldValue, newValue);
 
-		if (stateFile.exists()) {
-			try {
-				FileInputStream input = new FileInputStream(stateFile);
-				BufferedReader reader = new BufferedReader(new InputStreamReader(input, "utf-8")); //$NON-NLS-1$
+        Display.getDefault().syncExec(new Runnable() {
+            public void run() {
+                Object[] listeners = propertyChangeListeners.getListeners();
+                for (int i = 0; i < listeners.length; i++) {
+                    ((IPropertyChangeListener) listeners[i])
+                            .propertyChange(event);
+                }
+            }
+        });
+    }
 
-				IMemento memento = XMLMemento.createReadRoot(reader);
-				restoreWorkingSetState(memento);
-				restoreMruList(memento);
-				reader.close();
-			} catch (IOException e) {
-				MessageDialog.openError(
-					(Shell) null,
-					WorkbenchMessages.getString("ProblemRestoringWorkingSetState.title"), //$NON-NLS-1$
-					WorkbenchMessages.getString("ProblemRestoringWorkingSetState.message")); //$NON-NLS-1$
-			} catch (WorkbenchException e) {
-				ErrorDialog.openError(
-					(Shell) null, 
-					WorkbenchMessages.getString("ProblemRestoringWorkingSetState.title"),//$NON-NLS-1$
-					WorkbenchMessages.getString("ProblemRestoringWorkingSetState.message"), //$NON-NLS-1$
-					e.getStatus());
-			}
-		}
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkingSetManager
+     */
+    public IWorkingSet[] getRecentWorkingSets() {
+        return (IWorkingSet[]) recentWorkingSets
+                .toArray(new IWorkingSet[recentWorkingSets.size()]);
+    }
 
-	/**
-	 * Recreates a working set from the persistence store.
-	 * 
-	 * @param memento the persistence store
-	 * @return the working set created from the memento or null if
-	 * 	creation failed.
-	 */
-	private IWorkingSet restoreWorkingSet(IMemento memento) {
-		String factoryID = memento.getString(IWorkbenchConstants.TAG_FACTORY_ID);
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkingSetManager
+     */
+    public IWorkingSet getWorkingSet(String name) {
+        if (name == null || workingSets == null)
+            return null;
 
-		if (factoryID == null) {
-			// if the factory id was not set in the memento
-			// then assume that the memento was created using
-			// IMemento.saveState, and should be restored using WorkingSetFactory
-			factoryID = WorkingSet.FACTORY_ID;
-		}
-		IElementFactory factory = PlatformUI.getWorkbench().getElementFactory(factoryID);
-		if (factory == null) {
-			WorkbenchPlugin.log("Unable to restore working set - cannot instantiate factory: " + factoryID); //$NON-NLS-1$
-			return null;
-		}
-		IAdaptable adaptable = factory.createElement(memento);
-		if (adaptable == null) {
-			WorkbenchPlugin.log("Unable to restore working set - cannot instantiate working set: " + factoryID); //$NON-NLS-1$
-			return null;
-		}
-		if ((adaptable instanceof IWorkingSet) == false) {
-			WorkbenchPlugin.log("Unable to restore working set - element is not an IWorkingSet: " + factoryID); //$NON-NLS-1$
-			return null;
-		}
-		return (IWorkingSet) adaptable;
-	}
+        Iterator iter = workingSets.iterator();
+        while (iter.hasNext()) {
+            IWorkingSet workingSet = (IWorkingSet) iter.next();
+            if (name.equals(workingSet.getName()))
+                return workingSet;
+        }
+        return null;
+    }
 
-	/**
-	 * Recreates all working sets from the persistence store
-	 * and adds them to the receiver.
-	 * 
-	 * @param memento the persistence store
-	 */
-	private void restoreWorkingSetState(IMemento memento) {
-		IMemento[] children = memento.getChildren(IWorkbenchConstants.TAG_WORKING_SET);
+    /**
+     * Returns the hash code.
+     * 
+     * @return the hash code.
+     */
+    public int hashCode() {
+        return workingSets.hashCode();
+    }
 
-		for (int i = 0; i < children.length; i++) {
-			IWorkingSet workingSet = restoreWorkingSet(children[i]);
-			if (workingSet != null) {
-				this.workingSets.add(workingSet);
-				firePropertyChange(CHANGE_WORKING_SET_ADD, null, workingSet);
-			}
-		}
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkingSetManager
+     */
+    public IWorkingSet[] getWorkingSets() {
+        return (IWorkingSet[]) workingSets.toArray(new IWorkingSet[workingSets
+                .size()]);
+    }
 
-	/**
-	 * Saves the working sets in the persistence store
-	 */
-	private void saveState() {
-		XMLMemento memento = XMLMemento.createWriteRoot(IWorkbenchConstants.TAG_WORKING_SET_MANAGER);
-		File stateFile = getWorkingSetStateFile();
+    /**
+     * Returns the file used as the persistence store
+     * 
+     * @return the file used as the persistence store
+     */
+    private File getWorkingSetStateFile() {
+        IPath path = WorkbenchPlugin.getDefault().getStateLocation();
+        path = path.append(WORKING_SET_STATE_FILENAME);
+        return path.toFile();
+    }
 
-		saveWorkingSetState(memento);
-		saveMruList(memento);
-		try {
-			FileOutputStream stream = new FileOutputStream(stateFile);
-			OutputStreamWriter writer = new OutputStreamWriter(stream, "utf-8"); //$NON-NLS-1$
-			memento.save(writer);
-			writer.close();
-		} catch (IOException e) {
-			stateFile.delete();
-			MessageDialog.openError((Shell) null, WorkbenchMessages.getString("ProblemSavingWorkingSetState.title"), //$NON-NLS-1$
-			WorkbenchMessages.getString("ProblemSavingWorkingSetState.message")); //$NON-NLS-1$
-		}
-	}
+    /**
+     * Adds the specified working set to the list of recently used
+     * working sets.
+     * 
+     * @param workingSet working set to added to the list of recently 
+     * 	used working sets.
+     */
+    private void internalAddRecentWorkingSet(IWorkingSet workingSet) {
+        recentWorkingSets.remove(workingSet);
+        recentWorkingSets.add(0, workingSet);
+        if (recentWorkingSets.size() > MRU_SIZE) {
+            recentWorkingSets.remove(MRU_SIZE);
+        }
+    }
 
-	/**
-	 * Saves the list of most recently used working sets in the persistence 
-	 * store.
-	 * 
-	 * @param memento the persistence store
-	 */
-	private void saveMruList(IMemento memento) {
-		Iterator iterator = recentWorkingSets.iterator();
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkingSetManager
+     */
+    public void removePropertyChangeListener(IPropertyChangeListener listener) {
+        propertyChangeListeners.remove(listener);
+    }
 
-		while (iterator.hasNext()) {
-			IWorkingSet workingSet = (IWorkingSet) iterator.next();
-			IMemento mruMemento = memento.createChild(IWorkbenchConstants.TAG_MRU_LIST);
-			
-			mruMemento.putString(IWorkbenchConstants.TAG_NAME, workingSet.getName());
-		}
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkingSetManager
+     */
+    public void removeWorkingSet(IWorkingSet workingSet) {
+        boolean workingSetRemoved = workingSets.remove(workingSet);
+        boolean recentWorkingSetRemoved = recentWorkingSets.remove(workingSet);
 
-	/**
-	 * Saves all persistable working sets in the persistence store.
-	 * 
-	 * @param memento the persistence store
-	 * @see IPersistableElement
-	 */
-	private void saveWorkingSetState(IMemento memento) {
-		Iterator iterator = workingSets.iterator();
+        if (workingSetRemoved || recentWorkingSetRemoved) {
+            saveState();
+            firePropertyChange(CHANGE_WORKING_SET_REMOVE, workingSet, null);
+        }
+    }
 
-		while (iterator.hasNext()) {
-			IWorkingSet workingSet = (IWorkingSet) iterator.next();
-			IPersistableElement persistable = null;
+    /**
+     * Restores the list of most recently used working sets from the 
+     * persistence store.
+     * 
+     * @param memento the persistence store
+     */
+    private void restoreMruList(IMemento memento) {
+        IMemento[] mruWorkingSets = memento
+                .getChildren(IWorkbenchConstants.TAG_MRU_LIST);
 
-			if (workingSet instanceof IPersistableElement) {
-				persistable = (IPersistableElement) workingSet;
-			} else if (workingSet instanceof IAdaptable) {
-				persistable = (IPersistableElement) ((IAdaptable) workingSet).getAdapter(IPersistableElement.class);
-			}
-			if (persistable != null) {
-				IMemento workingSetMemento = memento.createChild(IWorkbenchConstants.TAG_WORKING_SET);
-				workingSetMemento.putString(IWorkbenchConstants.TAG_FACTORY_ID, persistable.getFactoryId());
-				persistable.saveState(workingSetMemento);
-			}
-		}
-	}
+        for (int i = mruWorkingSets.length - 1; i >= 0; i--) {
+            String workingSetName = mruWorkingSets[i]
+                    .getString(IWorkbenchConstants.TAG_NAME);
+            if (workingSetName != null) {
+                IWorkingSet workingSet = getWorkingSet(workingSetName);
+                if (workingSet != null) {
+                    internalAddRecentWorkingSet(workingSet);
+                }
+            }
+        }
+    }
 
-	/**
-	 * Persists all working sets and fires a property change event for 
-	 * the changed working set.
-	 * Should only be called by org.eclipse.ui.internal.WorkingSet.
-	 * 
-	 * @param changedWorkingSet the working set that has changed
-	 * @param propertyChangeId the changed property. one of 
-	 * 	CHANGE_WORKING_SET_CONTENT_CHANGE and CHANGE_WORKING_SET_NAME_CHANGE
-	 */
-	public void workingSetChanged(IWorkingSet changedWorkingSet, String propertyChangeId) {
-		saveState();
-		firePropertyChange(propertyChangeId, null, changedWorkingSet);
-	}
+    /**
+     * Reads the persistence store and creates the working sets 
+     * stored in it.
+     */
+    public void restoreState() {
+        File stateFile = getWorkingSetStateFile();
+
+        if (stateFile.exists()) {
+            try {
+                FileInputStream input = new FileInputStream(stateFile);
+                BufferedReader reader = new BufferedReader(
+                        new InputStreamReader(input, "utf-8")); //$NON-NLS-1$
+
+                IMemento memento = XMLMemento.createReadRoot(reader);
+                restoreWorkingSetState(memento);
+                restoreMruList(memento);
+                reader.close();
+            } catch (IOException e) {
+                MessageDialog
+                        .openError(
+                                (Shell) null,
+                                WorkbenchMessages
+                                        .getString("ProblemRestoringWorkingSetState.title"), //$NON-NLS-1$
+                                WorkbenchMessages
+                                        .getString("ProblemRestoringWorkingSetState.message")); //$NON-NLS-1$
+            } catch (WorkbenchException e) {
+                ErrorDialog
+                        .openError(
+                                (Shell) null,
+                                WorkbenchMessages
+                                        .getString("ProblemRestoringWorkingSetState.title"),//$NON-NLS-1$
+                                WorkbenchMessages
+                                        .getString("ProblemRestoringWorkingSetState.message"), //$NON-NLS-1$
+                                e.getStatus());
+            }
+        }
+    }
+
+    /**
+     * Recreates a working set from the persistence store.
+     * 
+     * @param memento the persistence store
+     * @return the working set created from the memento or null if
+     * 	creation failed.
+     */
+    private IWorkingSet restoreWorkingSet(IMemento memento) {
+        String factoryID = memento
+                .getString(IWorkbenchConstants.TAG_FACTORY_ID);
+
+        if (factoryID == null) {
+            // if the factory id was not set in the memento
+            // then assume that the memento was created using
+            // IMemento.saveState, and should be restored using WorkingSetFactory
+            factoryID = WorkingSet.FACTORY_ID;
+        }
+        IElementFactory factory = PlatformUI.getWorkbench().getElementFactory(
+                factoryID);
+        if (factory == null) {
+            WorkbenchPlugin
+                    .log("Unable to restore working set - cannot instantiate factory: " + factoryID); //$NON-NLS-1$
+            return null;
+        }
+        IAdaptable adaptable = factory.createElement(memento);
+        if (adaptable == null) {
+            WorkbenchPlugin
+                    .log("Unable to restore working set - cannot instantiate working set: " + factoryID); //$NON-NLS-1$
+            return null;
+        }
+        if ((adaptable instanceof IWorkingSet) == false) {
+            WorkbenchPlugin
+                    .log("Unable to restore working set - element is not an IWorkingSet: " + factoryID); //$NON-NLS-1$
+            return null;
+        }
+        return (IWorkingSet) adaptable;
+    }
+
+    /**
+     * Recreates all working sets from the persistence store
+     * and adds them to the receiver.
+     * 
+     * @param memento the persistence store
+     */
+    private void restoreWorkingSetState(IMemento memento) {
+        IMemento[] children = memento
+                .getChildren(IWorkbenchConstants.TAG_WORKING_SET);
+
+        for (int i = 0; i < children.length; i++) {
+            IWorkingSet workingSet = restoreWorkingSet(children[i]);
+            if (workingSet != null) {
+                this.workingSets.add(workingSet);
+                firePropertyChange(CHANGE_WORKING_SET_ADD, null, workingSet);
+            }
+        }
+    }
+
+    /**
+     * Saves the working sets in the persistence store
+     */
+    private void saveState() {
+        XMLMemento memento = XMLMemento
+                .createWriteRoot(IWorkbenchConstants.TAG_WORKING_SET_MANAGER);
+        File stateFile = getWorkingSetStateFile();
+
+        saveWorkingSetState(memento);
+        saveMruList(memento);
+        try {
+            FileOutputStream stream = new FileOutputStream(stateFile);
+            OutputStreamWriter writer = new OutputStreamWriter(stream, "utf-8"); //$NON-NLS-1$
+            memento.save(writer);
+            writer.close();
+        } catch (IOException e) {
+            stateFile.delete();
+            MessageDialog.openError((Shell) null, WorkbenchMessages
+                    .getString("ProblemSavingWorkingSetState.title"), //$NON-NLS-1$
+                    WorkbenchMessages
+                            .getString("ProblemSavingWorkingSetState.message")); //$NON-NLS-1$
+        }
+    }
+
+    /**
+     * Saves the list of most recently used working sets in the persistence 
+     * store.
+     * 
+     * @param memento the persistence store
+     */
+    private void saveMruList(IMemento memento) {
+        Iterator iterator = recentWorkingSets.iterator();
+
+        while (iterator.hasNext()) {
+            IWorkingSet workingSet = (IWorkingSet) iterator.next();
+            IMemento mruMemento = memento
+                    .createChild(IWorkbenchConstants.TAG_MRU_LIST);
+
+            mruMemento.putString(IWorkbenchConstants.TAG_NAME, workingSet
+                    .getName());
+        }
+    }
+
+    /**
+     * Saves all persistable working sets in the persistence store.
+     * 
+     * @param memento the persistence store
+     * @see IPersistableElement
+     */
+    private void saveWorkingSetState(IMemento memento) {
+        Iterator iterator = workingSets.iterator();
+
+        while (iterator.hasNext()) {
+            IWorkingSet workingSet = (IWorkingSet) iterator.next();
+            IPersistableElement persistable = null;
+
+            if (workingSet instanceof IPersistableElement) {
+                persistable = (IPersistableElement) workingSet;
+            } else if (workingSet instanceof IAdaptable) {
+                persistable = (IPersistableElement) ((IAdaptable) workingSet)
+                        .getAdapter(IPersistableElement.class);
+            }
+            if (persistable != null) {
+                IMemento workingSetMemento = memento
+                        .createChild(IWorkbenchConstants.TAG_WORKING_SET);
+                workingSetMemento.putString(IWorkbenchConstants.TAG_FACTORY_ID,
+                        persistable.getFactoryId());
+                persistable.saveState(workingSetMemento);
+            }
+        }
+    }
+
+    /**
+     * Persists all working sets and fires a property change event for 
+     * the changed working set.
+     * Should only be called by org.eclipse.ui.internal.WorkingSet.
+     * 
+     * @param changedWorkingSet the working set that has changed
+     * @param propertyChangeId the changed property. one of 
+     * 	CHANGE_WORKING_SET_CONTENT_CHANGE and CHANGE_WORKING_SET_NAME_CHANGE
+     */
+    public void workingSetChanged(IWorkingSet changedWorkingSet,
+            String propertyChangeId) {
+        saveState();
+        firePropertyChange(propertyChangeId, null, changedWorkingSet);
+    }
 }

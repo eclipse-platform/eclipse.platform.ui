@@ -10,35 +10,33 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dialogs;
 
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.swt.widgets.Shell;
 
 public class PreferenceDialogWrapper extends PreferenceDialog {
 
-	public PreferenceDialogWrapper(
-		Shell parentShell,
-		PreferenceManager manager) {
-		super(parentShell, manager);
-	}
-	public boolean showPage(IPreferenceNode node) {
-		return super.showPage(node);
-	}
+    public PreferenceDialogWrapper(Shell parentShell, PreferenceManager manager) {
+        super(parentShell, manager);
+    }
 
-	public IPreferencePage getPage(IPreferenceNode node) {
-		if (node == null)
-			return null;
+    public boolean showPage(IPreferenceNode node) {
+        return super.showPage(node);
+    }
 
-		// Create the page if nessessary
-		if (node.getPage() == null)
-			node.createPage();
+    public IPreferencePage getPage(IPreferenceNode node) {
+        if (node == null)
+            return null;
 
-		if (node.getPage() == null)
-			return null;
+        // Create the page if nessessary
+        if (node.getPage() == null)
+            node.createPage();
 
-		return node.getPage();
-	}
+        if (node.getPage() == null)
+            return null;
+
+        return node.getPage();
+    }
 }

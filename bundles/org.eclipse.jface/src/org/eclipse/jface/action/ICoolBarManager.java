@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.action;
 
+import org.eclipse.swt.widgets.CoolBar;
+
 /**
  * The <code>ICoolBarManager</code> interface provides protocol for managing
  * contributions to a cool bar. A cool bar manager delegates responsibility for

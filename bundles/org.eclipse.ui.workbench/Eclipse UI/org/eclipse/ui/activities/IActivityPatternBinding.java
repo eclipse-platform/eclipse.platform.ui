@@ -29,20 +29,20 @@ import java.util.regex.Pattern;
  */
 public interface IActivityPatternBinding extends Comparable {
 
-	/**
-	 * Returns the identifier of the activity represented in this binding.
-	 * 
-	 * @return the identifier of the activity represented in this binding.
-	 *         Guaranteed not to be <code>null</code>.
-	 */
-	String getActivityId();
+    /**
+     * Returns the identifier of the activity represented in this binding.
+     * 
+     * @return the identifier of the activity represented in this binding.
+     *         Guaranteed not to be <code>null</code>.
+     */
+    String getActivityId();
 
-	/**
-	 * Returns the pattern represented in this binding.  This pattern should 
-	 * conform to the regular expression syntax described by the 
-	 * <code>java.util.regex.Pattern</code> class.
-	 * 
-	 * @return the pattern. Guaranteed not to be <code>null</code>.
-	 */
-	Pattern getPattern();
+    /**
+     * Returns the pattern represented in this binding.  This pattern should 
+     * conform to the regular expression syntax described by the 
+     * <code>java.util.regex.Pattern</code> class.
+     * 
+     * @return the pattern. Guaranteed not to be <code>null</code>.
+     */
+    Pattern getPattern();
 }

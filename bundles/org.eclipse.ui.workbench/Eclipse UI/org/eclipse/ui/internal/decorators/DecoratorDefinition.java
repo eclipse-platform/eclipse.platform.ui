@@ -25,205 +25,208 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 
 public abstract class DecoratorDefinition {
 
-	private String name;
-	private String description;
-	private ActionExpression enablement;
-	private boolean adaptable;
-	protected boolean enabled;
-	private boolean defaultEnabled;
-	private String id;
-	protected IConfigurationElement definingElement;
+    private String name;
 
-	//A flag that is set if there is an error creating the decorator
-	protected boolean labelProviderCreationFailed = false;
+    private String description;
 
-	/**
-	 * Create a new instance of the receiver with the
-	 * supplied values.
-	 */
+    private ActionExpression enablement;
 
-	DecoratorDefinition(
-		String identifier,
-		String label,
-		String decoratorDescription,
-		ActionExpression expression,
-		boolean isAdaptable,
-		boolean initEnabled,
-		IConfigurationElement element) {
+    private boolean adaptable;
 
-		this.id = identifier;
-		this.name = label;
-		this.enablement = expression;
-		this.adaptable = isAdaptable;
-		this.description = decoratorDescription;
-		this.enabled = initEnabled;
-		this.defaultEnabled = initEnabled;
-		this.definingElement = element;
-	}
+    protected boolean enabled;
 
-	/**
-	 * Gets the name.
-	 * @return Returns a String
-	 */
-	public String getName() {
-		return name;
-	}
+    private boolean defaultEnabled;
 
-	/**
-	 * Returns the description.
-	 * @return String
-	 */
-	public String getDescription() {
-		return this.description;
-	}
+    private String id;
 
-	/**
-	 * Gets the enabled.
-	 * @return Returns a boolean
-	 */
-	public boolean isEnabled() {
-		return enabled;
-	}
+    protected IConfigurationElement definingElement;
 
-	/**
-	 * Sets the enabled flag and adds or removes the decorator
-	 * manager as a listener as appropriate.
-	 * @param enabled The enabled to set
-	 */
-	public void setEnabled(boolean newState) {
+    //A flag that is set if there is an error creating the decorator
+    protected boolean labelProviderCreationFailed = false;
 
-		//Only refresh if there has been a change
-		if (this.enabled != newState) {
-			this.enabled = newState;
-			try {
-				refreshDecorator();
-			} catch (CoreException exception) {
-				handleCoreException(exception);
-			}
+    /**
+     * Create a new instance of the receiver with the
+     * supplied values.
+     */
 
-		}
-	}
+    DecoratorDefinition(String identifier, String label,
+            String decoratorDescription, ActionExpression expression,
+            boolean isAdaptable, boolean initEnabled,
+            IConfigurationElement element) {
 
-	/**
-	 * Refresh the current decorator based on our enable
-	 * state.
-	 */
-	protected abstract void refreshDecorator() throws CoreException;
+        this.id = identifier;
+        this.name = label;
+        this.enablement = expression;
+        this.adaptable = isAdaptable;
+        this.description = decoratorDescription;
+        this.enabled = initEnabled;
+        this.defaultEnabled = initEnabled;
+        this.definingElement = element;
+    }
 
-	/**
-	 * Dispose the decorator instance and remove listeners
-	 * as appropirate.
-	 *  @param decorator
-	 */
-	protected void disposeCachedDecorator(IBaseLabelProvider disposedDecorator) {
-		disposedDecorator.removeListener(
-			WorkbenchPlugin.getDefault().getDecoratorManager());
-		disposedDecorator.dispose();
+    /**
+     * Gets the name.
+     * @return Returns a String
+     */
+    public String getName() {
+        return name;
+    }
 
-	}
+    /**
+     * Returns the description.
+     * @return String
+     */
+    public String getDescription() {
+        return this.description;
+    }
 
-	/**
-	 * Return whether or not this decorator should be 
-	 * applied to adapted types.
-	 */
+    /**
+     * Gets the enabled.
+     * @return Returns a boolean
+     */
+    public boolean isEnabled() {
+        return enabled;
+    }
 
-	public boolean isAdaptable() {
-		return adaptable;
-	}
-	/**
-	 * Gets the id.
-	 * @return Returns a String
-	 */
-	public String getId() {
-		return id;
-	}
+    /**
+     * Sets the enabled flag and adds or removes the decorator
+     * manager as a listener as appropriate.
+     * @param enabled The enabled to set
+     */
+    public void setEnabled(boolean newState) {
 
-	/**
-	 * Return the default value for this type - this value
-	 * is the value read from the element description.
-	 */
-	public boolean getDefaultValue() {
-		return defaultEnabled;
-	}
+        //Only refresh if there has been a change
+        if (this.enabled != newState) {
+            this.enabled = newState;
+            try {
+                refreshDecorator();
+            } catch (CoreException exception) {
+                handleCoreException(exception);
+            }
 
-	/**
-	 * Returns the enablement.
-	 * @return ActionExpression
-	 */
-	public ActionExpression getEnablement() {
-		return enablement;
-	}
+        }
+    }
 
-	/**
-	 * Add a listener for the decorator.If there is an exception
-	 * then inform the user and disable the receiver.
-	 * This method should not be called unless a check for
-	 * isEnabled() has been done first.
-	 */
-	void addListener(ILabelProviderListener listener) {
-		try {
-			//Internal decorator might be null so be prepared
-			IBaseLabelProvider currentDecorator = internalGetLabelProvider();
-			if (currentDecorator != null)
-				currentDecorator.addListener(listener);
-		} catch (CoreException exception) {
-			handleCoreException(exception);
-		}
-	}
+    /**
+     * Refresh the current decorator based on our enable
+     * state.
+     */
+    protected abstract void refreshDecorator() throws CoreException;
 
-	/**
-	* Return whether or not the decorator registered for element
-	* has a label property called property name. If there is an 
-	* exception disable the receiver and return false.
-	* This method should not be called unless a check for
-	* isEnabled() has been done first.
-	*/
-	boolean isLabelProperty(Object element, String property) {
-		try { //Internal decorator might be null so be prepared
-			IBaseLabelProvider currentDecorator = internalGetLabelProvider();
-			if (currentDecorator != null)
-				return currentDecorator.isLabelProperty(element, property);
-		} catch (CoreException exception) {
-			handleCoreException(exception);
-			return false;
-		}
-		return false;
-	}
+    /**
+     * Dispose the decorator instance and remove listeners
+     * as appropirate.
+     *  @param decorator
+     */
+    protected void disposeCachedDecorator(IBaseLabelProvider disposedDecorator) {
+        disposedDecorator.removeListener(WorkbenchPlugin.getDefault()
+                .getDecoratorManager());
+        disposedDecorator.dispose();
 
-	/**
-	 * Gets the label provider and creates it if it does not exist yet. 
-	 * Throws a CoreException if there is a problem
-	 * creating the labelProvider.
-	 * This method should not be called unless a check for
-	 * enabled to be true is done first.
-	 * @return Returns a ILabelDecorator
-	 */
-	protected abstract IBaseLabelProvider internalGetLabelProvider()
-		throws CoreException;
+    }
 
-	/** 
-	* A CoreException has occured. Inform the user and disable
-	* the receiver.
-	*/
+    /**
+     * Return whether or not this decorator should be 
+     * applied to adapted types.
+     */
 
-	protected void handleCoreException(CoreException exception) {
+    public boolean isAdaptable() {
+        return adaptable;
+    }
 
-		//If there is an error then reset the enabling to false
-		WorkbenchPlugin.getDefault().getLog().log(exception.getStatus());
-		crashDisable();
-	}
+    /**
+     * Gets the id.
+     * @return Returns a String
+     */
+    public String getId() {
+        return id;
+    }
 
-	/**
-	 * A crash has occured. Disable the receiver without notification.
-	 */
-	public void crashDisable() {
-		this.enabled = false;
-	}
+    /**
+     * Return the default value for this type - this value
+     * is the value read from the element description.
+     */
+    public boolean getDefaultValue() {
+        return defaultEnabled;
+    }
 
-	/**
-	 * Return whether or not this is a full or lightweight definition.
-	 */
-	public abstract boolean isFull();
-	
+    /**
+     * Returns the enablement.
+     * @return ActionExpression
+     */
+    public ActionExpression getEnablement() {
+        return enablement;
+    }
+
+    /**
+     * Add a listener for the decorator.If there is an exception
+     * then inform the user and disable the receiver.
+     * This method should not be called unless a check for
+     * isEnabled() has been done first.
+     */
+    void addListener(ILabelProviderListener listener) {
+        try {
+            //Internal decorator might be null so be prepared
+            IBaseLabelProvider currentDecorator = internalGetLabelProvider();
+            if (currentDecorator != null)
+                currentDecorator.addListener(listener);
+        } catch (CoreException exception) {
+            handleCoreException(exception);
+        }
+    }
+
+    /**
+     * Return whether or not the decorator registered for element
+     * has a label property called property name. If there is an 
+     * exception disable the receiver and return false.
+     * This method should not be called unless a check for
+     * isEnabled() has been done first.
+     */
+    boolean isLabelProperty(Object element, String property) {
+        try { //Internal decorator might be null so be prepared
+            IBaseLabelProvider currentDecorator = internalGetLabelProvider();
+            if (currentDecorator != null)
+                return currentDecorator.isLabelProperty(element, property);
+        } catch (CoreException exception) {
+            handleCoreException(exception);
+            return false;
+        }
+        return false;
+    }
+
+    /**
+     * Gets the label provider and creates it if it does not exist yet. 
+     * Throws a CoreException if there is a problem
+     * creating the labelProvider.
+     * This method should not be called unless a check for
+     * enabled to be true is done first.
+     * @return Returns a ILabelDecorator
+     */
+    protected abstract IBaseLabelProvider internalGetLabelProvider()
+            throws CoreException;
+
+    /** 
+     * A CoreException has occured. Inform the user and disable
+     * the receiver.
+     */
+
+    protected void handleCoreException(CoreException exception) {
+
+        //If there is an error then reset the enabling to false
+        WorkbenchPlugin.getDefault().getLog().log(exception.getStatus());
+        crashDisable();
+    }
+
+    /**
+     * A crash has occured. Disable the receiver without notification.
+     */
+    public void crashDisable() {
+        this.enabled = false;
+    }
+
+    /**
+     * Return whether or not this is a full or lightweight definition.
+     */
+    public abstract boolean isFull();
 
 }

@@ -28,89 +28,102 @@ import org.eclipse.ui.application.IActionBarConfigurer;
  * @since 3.0
  */
 public class BuildSetMenu extends ContributionItem {
-	private IActionBarConfigurer actionBars;
-	boolean dirty = true;
-	private IMenuListener menuListener = new IMenuListener() {
-		public void menuAboutToShow(IMenuManager manager) {
-			manager.markDirty();
-			dirty = true;
-		}
-	};
-	private IAction selectBuildWorkingSetAction;
+    private IActionBarConfigurer actionBars;
 
-	private IWorkbenchWindow window;
-	public BuildSetMenu(IWorkbenchWindow window, IActionBarConfigurer actionBars) {
-		this.window = window;
-		this.actionBars = actionBars;
-		selectBuildWorkingSetAction = new SelectBuildWorkingSetAction(window, actionBars);
-	}
-	/**
-	 * Adds a mnemonic accelerator to actions in the MRU list of
-	 * recently built working sets
-	 */
-	private void addMnemonic(BuildSetAction action, int index) {
-		StringBuffer label = new StringBuffer();
-		//add the numerical accelerator
-		if (index < 9) {
-			label.append('&');
-			label.append(index);
-			label.append(' ');
-		}
-		label.append(action.getWorkingSet().getName());
-		action.setText(label.toString());
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IContributionItem#fill(org.eclipse.swt.widgets.Menu, int)
-	 */
-	public void fill(Menu menu, int index) {
-		if(getParent() instanceof MenuManager)
-			((MenuManager)getParent()).addMenuListener(menuListener);
-		if(!dirty)
-			return;
-		fillMenu(menu);
-		dirty = false;
-	}
-	/**
-	 * Fills the menu with Show View actions.
-	 */
-	private void fillMenu(Menu menu) {
-		boolean isAutoBuilding = ResourcesPlugin.getWorkspace().isAutoBuilding();
-	
-		//build MRU list of recently built working sets:
-		IWorkingSet[] sets = window.getWorkbench().getWorkingSetManager().getRecentWorkingSets();
-		BuildSetAction last = BuildSetAction.lastBuilt;
-		IWorkingSet lastSet = null;
-		//add build action for the last working set that was built
-		int accel = 1;
-		if (last != null) {
-			last.setChecked(true);
-			last.setEnabled(!isAutoBuilding);
-			last.setActionDefinitionId("org.eclipse.ui.project.buildLast"); //$NON-NLS-1$
-			addMnemonic(last, accel++);
-			new ActionContributionItem(last).fill(menu, -1);
-			lastSet = last.getWorkingSet();
-		}
-		//add build actions for the most recently used working sets
-		for (int i = 0; i < sets.length; i++) {
-			if (lastSet != null && lastSet.equals(sets[i]))
-				continue;
-			BuildSetAction action = new BuildSetAction(sets[i], window, actionBars);
-			addMnemonic(action, accel++);
-			action.setEnabled(!isAutoBuilding);
-			new ActionContributionItem(action).fill(menu, -1);
-		}
-		//add the action to select a different working set
-		new Separator().fill(menu, -1);
-		selectBuildWorkingSetAction.setEnabled(!isAutoBuilding);
-		new ActionContributionItem(selectBuildWorkingSetAction).fill(menu, -1);
-	}
-	public boolean isDirty() {
-		return dirty;
-	}	
-	/**
-	 * Overridden to always return true and force dynamic menu building.
-	 */
-	public boolean isDynamic() {
-		return true;
-	}
+    boolean dirty = true;
+
+    private IMenuListener menuListener = new IMenuListener() {
+        public void menuAboutToShow(IMenuManager manager) {
+            manager.markDirty();
+            dirty = true;
+        }
+    };
+
+    private IAction selectBuildWorkingSetAction;
+
+    private IWorkbenchWindow window;
+
+    public BuildSetMenu(IWorkbenchWindow window, IActionBarConfigurer actionBars) {
+        this.window = window;
+        this.actionBars = actionBars;
+        selectBuildWorkingSetAction = new SelectBuildWorkingSetAction(window,
+                actionBars);
+    }
+
+    /**
+     * Adds a mnemonic accelerator to actions in the MRU list of
+     * recently built working sets
+     */
+    private void addMnemonic(BuildSetAction action, int index) {
+        StringBuffer label = new StringBuffer();
+        //add the numerical accelerator
+        if (index < 9) {
+            label.append('&');
+            label.append(index);
+            label.append(' ');
+        }
+        label.append(action.getWorkingSet().getName());
+        action.setText(label.toString());
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.action.IContributionItem#fill(org.eclipse.swt.widgets.Menu, int)
+     */
+    public void fill(Menu menu, int index) {
+        if (getParent() instanceof MenuManager)
+            ((MenuManager) getParent()).addMenuListener(menuListener);
+        if (!dirty)
+            return;
+        fillMenu(menu);
+        dirty = false;
+    }
+
+    /**
+     * Fills the menu with Show View actions.
+     */
+    private void fillMenu(Menu menu) {
+        boolean isAutoBuilding = ResourcesPlugin.getWorkspace()
+                .isAutoBuilding();
+
+        //build MRU list of recently built working sets:
+        IWorkingSet[] sets = window.getWorkbench().getWorkingSetManager()
+                .getRecentWorkingSets();
+        BuildSetAction last = BuildSetAction.lastBuilt;
+        IWorkingSet lastSet = null;
+        //add build action for the last working set that was built
+        int accel = 1;
+        if (last != null) {
+            last.setChecked(true);
+            last.setEnabled(!isAutoBuilding);
+            last.setActionDefinitionId("org.eclipse.ui.project.buildLast"); //$NON-NLS-1$
+            addMnemonic(last, accel++);
+            new ActionContributionItem(last).fill(menu, -1);
+            lastSet = last.getWorkingSet();
+        }
+        //add build actions for the most recently used working sets
+        for (int i = 0; i < sets.length; i++) {
+            if (lastSet != null && lastSet.equals(sets[i]))
+                continue;
+            BuildSetAction action = new BuildSetAction(sets[i], window,
+                    actionBars);
+            addMnemonic(action, accel++);
+            action.setEnabled(!isAutoBuilding);
+            new ActionContributionItem(action).fill(menu, -1);
+        }
+        //add the action to select a different working set
+        new Separator().fill(menu, -1);
+        selectBuildWorkingSetAction.setEnabled(!isAutoBuilding);
+        new ActionContributionItem(selectBuildWorkingSetAction).fill(menu, -1);
+    }
+
+    public boolean isDirty() {
+        return dirty;
+    }
+
+    /**
+     * Overridden to always return true and force dynamic menu building.
+     */
+    public boolean isDynamic() {
+        return true;
+    }
 }

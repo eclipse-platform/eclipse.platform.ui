@@ -10,13 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.decorators;
 
-
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.SafeRunnable;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.ActionExpression;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * The RunnableDecoratorDefinition is the definition for 
@@ -25,146 +28,141 @@ import org.eclipse.ui.internal.*;
 
 class FullDecoratorDefinition extends DecoratorDefinition {
 
-	ILabelDecorator decorator;
+    ILabelDecorator decorator;
 
-	/**
-	 * Create a new instance of the receiver with the
-	 * supplied values.
-	 */
+    /**
+     * Create a new instance of the receiver with the
+     * supplied values.
+     */
 
-	FullDecoratorDefinition(
-		String identifier,
-		String label,
-		String decoratorDescription,
-		ActionExpression expression,
-		boolean isAdaptable,
-		boolean initEnabled,
-		IConfigurationElement element) {
-		super(
-			identifier,
-			label,
-			decoratorDescription,
-			expression,
-			isAdaptable,
-			initEnabled,
-			element);
-	}
-	/**
-	 * Gets the decorator and creates it if it does
-	 * not exist yet. Throws a CoreException if there is a problem
-	 * creating the decorator.
-	 * This method should not be called unless a check for
-	 * enabled to be true is done first.
-	 * @return Returns a ILabelDecorator
-	 */
-	protected ILabelDecorator internalGetDecorator() throws CoreException {
-		if (labelProviderCreationFailed)
-			return null;
+    FullDecoratorDefinition(String identifier, String label,
+            String decoratorDescription, ActionExpression expression,
+            boolean isAdaptable, boolean initEnabled,
+            IConfigurationElement element) {
+        super(identifier, label, decoratorDescription, expression, isAdaptable,
+                initEnabled, element);
+    }
 
-		final CoreException[] exceptions = new CoreException[1];
+    /**
+     * Gets the decorator and creates it if it does
+     * not exist yet. Throws a CoreException if there is a problem
+     * creating the decorator.
+     * This method should not be called unless a check for
+     * enabled to be true is done first.
+     * @return Returns a ILabelDecorator
+     */
+    protected ILabelDecorator internalGetDecorator() throws CoreException {
+        if (labelProviderCreationFailed)
+            return null;
 
-		if (decorator == null) {
-			Platform.run(new SafeRunnable(WorkbenchMessages.format("DecoratorManager.ErrorActivatingDecorator", new String[] { getName()})) { //$NON-NLS-1$
-				public void run() {
-					try {
-						decorator =
-							(ILabelDecorator) WorkbenchPlugin.createExtension(
-								definingElement,
-								DecoratorRegistryReader.ATT_CLASS);
-						decorator.addListener(
-							WorkbenchPlugin.getDefault().getDecoratorManager());
-					} catch (CoreException exception) {
-						exceptions[0] = exception;
-					}
-				}
-			});
-		} else
-			return decorator;
+        final CoreException[] exceptions = new CoreException[1];
 
-		if (decorator == null) {
-			this.labelProviderCreationFailed = true;
-			setEnabled(false);
-		}
+        if (decorator == null) {
+            Platform
+                    .run(new SafeRunnable(
+                            WorkbenchMessages
+                                    .format(
+                                            "DecoratorManager.ErrorActivatingDecorator", new String[] { getName() })) { //$NON-NLS-1$
+                        public void run() {
+                            try {
+                                decorator = (ILabelDecorator) WorkbenchPlugin
+                                        .createExtension(
+                                                definingElement,
+                                                DecoratorRegistryReader.ATT_CLASS);
+                                decorator.addListener(WorkbenchPlugin
+                                        .getDefault().getDecoratorManager());
+                            } catch (CoreException exception) {
+                                exceptions[0] = exception;
+                            }
+                        }
+                    });
+        } else
+            return decorator;
 
-		if (exceptions[0] != null)
-			throw exceptions[0];
+        if (decorator == null) {
+            this.labelProviderCreationFailed = true;
+            setEnabled(false);
+        }
 
-		return decorator;
-	}
+        if (exceptions[0] != null)
+            throw exceptions[0];
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.decorators.DecoratorDefinition#refreshDecorator()
-	 */
+        return decorator;
+    }
 
-	protected void refreshDecorator() throws CoreException {
-		//Only do something if disabled so as to prevent
-		//gratutitous activation
-		if (!this.enabled && decorator != null) {
-			IBaseLabelProvider cached = decorator;
-			decorator = null;
-			disposeCachedDecorator(cached);
-		}
-	}
-	
-	/**
-	 * Decorate the image provided for the element type.
-	 * This method should not be called unless a check for
-	 * isEnabled() has been done first.
-	 * Return null if there is no image or if an error occurs.
-	 */
-	Image decorateImage(Image image, Object element) {
-		try {
-			//Internal decorator might be null so be prepared
-			ILabelDecorator currentDecorator = internalGetDecorator();
-			if (currentDecorator != null)
-				return currentDecorator.decorateImage(image, element);
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.decorators.DecoratorDefinition#refreshDecorator()
+     */
 
-		} catch (CoreException exception) {
-			handleCoreException(exception);
-		}
-		return null;
-	}
+    protected void refreshDecorator() throws CoreException {
+        //Only do something if disabled so as to prevent
+        //gratutitous activation
+        if (!this.enabled && decorator != null) {
+            IBaseLabelProvider cached = decorator;
+            decorator = null;
+            disposeCachedDecorator(cached);
+        }
+    }
 
-	/**
-	 * Decorate the text provided for the element type.
-	 * This method should not be called unless a check for
-	 * isEnabled() has been done first.
-	 * Return null if there is no text or if there is an exception.
-	 */
-	String decorateText(String text, Object element) {
-		try {
-			//Internal decorator might be null so be prepared
-			ILabelDecorator currentDecorator = internalGetDecorator();
-			if (currentDecorator != null)
-				return currentDecorator.decorateText(text, element);
-		} catch (CoreException exception) {
-			handleCoreException(exception);
-		}
-		return null;
-	}
+    /**
+     * Decorate the image provided for the element type.
+     * This method should not be called unless a check for
+     * isEnabled() has been done first.
+     * Return null if there is no image or if an error occurs.
+     */
+    Image decorateImage(Image image, Object element) {
+        try {
+            //Internal decorator might be null so be prepared
+            ILabelDecorator currentDecorator = internalGetDecorator();
+            if (currentDecorator != null)
+                return currentDecorator.decorateImage(image, element);
 
-	/**
-	 * Returns the decorator, or <code>null</code> if not enabled.
-	 * 
-	 * @return the decorator, or <code>null</code> if not enabled
-	 */
-	public ILabelDecorator getDecorator() {
-		return decorator;
-	}
+        } catch (CoreException exception) {
+            handleCoreException(exception);
+        }
+        return null;
+    }
 
-	/**
-	 * @see org.eclipse.ui.internal.DecoratorDefinition#internalGetLabelProvider()
-	 */
-	protected IBaseLabelProvider internalGetLabelProvider()
-		throws CoreException {
-		return internalGetDecorator();
-	}
+    /**
+     * Decorate the text provided for the element type.
+     * This method should not be called unless a check for
+     * isEnabled() has been done first.
+     * Return null if there is no text or if there is an exception.
+     */
+    String decorateText(String text, Object element) {
+        try {
+            //Internal decorator might be null so be prepared
+            ILabelDecorator currentDecorator = internalGetDecorator();
+            if (currentDecorator != null)
+                return currentDecorator.decorateText(text, element);
+        } catch (CoreException exception) {
+            handleCoreException(exception);
+        }
+        return null;
+    }
 
-	/**
-	 * @see org.eclipse.ui.internal.DecoratorDefinition#isFull()
-	 */
-	public boolean isFull() {
-		return true;
-	}
+    /**
+     * Returns the decorator, or <code>null</code> if not enabled.
+     * 
+     * @return the decorator, or <code>null</code> if not enabled
+     */
+    public ILabelDecorator getDecorator() {
+        return decorator;
+    }
+
+    /**
+     * @see org.eclipse.ui.internal.DecoratorDefinition#internalGetLabelProvider()
+     */
+    protected IBaseLabelProvider internalGetLabelProvider()
+            throws CoreException {
+        return internalGetDecorator();
+    }
+
+    /**
+     * @see org.eclipse.ui.internal.DecoratorDefinition#isFull()
+     */
+    public boolean isFull() {
+        return true;
+    }
 
 }

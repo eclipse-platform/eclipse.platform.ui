@@ -55,5 +55,5 @@ public class NativePresentationFactory extends WorkbenchPresentationFactory {
         // TODO honour showTitle
         return new NativeStackPresentation(parent, site);
     }
-    
+
 }

@@ -142,7 +142,9 @@ public final class WorkbenchKeyboard {
          * can happen if we are listening to focus traversal events.
          */
         if ((event.stateMask == 0) && (event.keyCode == 0)
-                && (event.character == 0)) { return keyStrokes; }
+                && (event.character == 0)) {
+            return keyStrokes;
+        }
 
         // Add each unique key stroke to the list for consideration.
         final int firstAccelerator = SWTKeySupport
@@ -151,7 +153,9 @@ public final class WorkbenchKeyboard {
                 .convertAcceleratorToKeyStroke(firstAccelerator));
 
         // We shouldn't allow delete to undergo shift resolution.
-        if (event.character == SWT.DEL) { return keyStrokes; }
+        if (event.character == SWT.DEL) {
+            return keyStrokes;
+        }
 
         final int secondAccelerator = SWTKeySupport
                 .convertEventToUnshiftedModifiedAccelerator(event);
@@ -215,7 +219,9 @@ public final class WorkbenchKeyboard {
         Iterator keyStrokeItr = keyStrokes.iterator();
         List outOfOrderKeyStrokes = outOfOrderKeys.getKeyStrokes();
         while (keyStrokeItr.hasNext()) {
-            if (outOfOrderKeyStrokes.contains(keyStrokeItr.next())) { return true; }
+            if (outOfOrderKeyStrokes.contains(keyStrokeItr.next())) {
+                return true;
+            }
         }
         return false;
     }
@@ -426,8 +432,7 @@ public final class WorkbenchKeyboard {
      *             log the message, display a dialog, or ignore this exception
      *             entirely.
      */
-    private boolean executeCommand(String commandId)
-            throws CommandException {
+    private boolean executeCommand(String commandId) throws CommandException {
         if (DEBUG) {
             System.out
                     .println("KEYS >>> WorkbenchKeyboard.executeCommand(commandId = '" //$NON-NLS-1$
@@ -466,7 +471,7 @@ public final class WorkbenchKeyboard {
 
         final boolean commandDefined = command.isDefined();
         final boolean commandHandled = command.isHandled();
-        
+
         if (commandDefined && commandHandled && isEnabled(command)) {
             command.execute(null);
         }
@@ -498,7 +503,8 @@ public final class WorkbenchKeyboard {
          * Only process key strokes containing natural keys to trigger key
          * bindings.
          */
-        if ((event.keyCode & SWT.MODIFIER_MASK) != 0) return;
+        if ((event.keyCode & SWT.MODIFIER_MASK) != 0)
+            return;
 
         // Allow special key out-of-order processing.
         List keyStrokes = generatePossibleKeyStrokes(event);
@@ -684,9 +690,13 @@ public final class WorkbenchKeyboard {
 
         // Get the status line. If none, then abort.
         StatusLineContributionItem statusLine = state.getStatusLine();
-        if (statusLine == null) { return; }
+        if (statusLine == null) {
+            return;
+        }
         Point statusLineLocation = statusLine.getDisplayLocation();
-        if (statusLineLocation == null) { return; }
+        if (statusLineLocation == null) {
+            return;
+        }
 
         // Set up the shell.
         multiKeyAssistShell = new Shell(display, SWT.NO_TRIM);
@@ -751,7 +761,7 @@ public final class WorkbenchKeyboard {
                 String commandId = (String) entry.getValue();
                 ICommand command = commandManager.getCommand(commandId);
                 try {
-                    String[] text = { sequence.format(), command.getName()};
+                    String[] text = { sequence.format(), command.getName() };
                     TableItem item = new TableItem(completionsTable, SWT.NULL);
                     item.setText(text);
                     commands.add(command);
@@ -894,10 +904,10 @@ public final class WorkbenchKeyboard {
                             || (event.keyCode == SWT.ARROW_UP)
                             || (event.keyCode == SWT.ARROW_LEFT)
                             || (event.keyCode == SWT.ARROW_RIGHT) || (event.keyCode == SWT.CR))) {
-            // We don't want to swallow keyboard navigation keys.
-            return false;
+                // We don't want to swallow keyboard navigation keys.
+                return false;
 
-            } 
+            }
         }
 
         resetState();

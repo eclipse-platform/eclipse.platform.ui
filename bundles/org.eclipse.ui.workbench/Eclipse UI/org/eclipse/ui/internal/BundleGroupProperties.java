@@ -26,20 +26,29 @@ import org.eclipse.ui.branding.IBundleGroupConstants;
  * @see org.eclipse.ui.branding.IBundleGroupConstants
  * @since 3.0
  */
-public class BundleGroupProperties extends BrandingProperties
-        implements IBundleGroupConstants {
+public class BundleGroupProperties extends BrandingProperties implements
+        IBundleGroupConstants {
 
     private final IBundleGroup bundleGroup;
 
     private ImageDescriptor featureImageDescriptor;
+
     private URL featureImageUrl;
+
     private String tipsAndTricksHref;
+
     private URL welcomePageUrl;
+
     private String welcomePerspective;
+
     private URL licenseUrl;
+
     private String featureLabel;
+
     private String featureId;
+
     private String providerName;
+
     private String versionId;
 
     /**
@@ -110,8 +119,8 @@ public class BundleGroupProperties extends BrandingProperties
     }
 
     /**
-	 * Returns a label for the feature plugn, or <code>null</code>.
-	 */
+     * Returns a label for the feature plugn, or <code>null</code>.
+     */
     public String getFeatureLabel() {
         if (featureLabel == null)
             featureLabel = getFeatureLabel(bundleGroup);
@@ -119,17 +128,17 @@ public class BundleGroupProperties extends BrandingProperties
     }
 
     /**
-	 * Returns the id for this bundleGroup.
-	 */
+     * Returns the id for this bundleGroup.
+     */
     public String getFeatureId() {
         if (featureId == null)
             featureId = getFeatureId(bundleGroup);
         return featureId;
     }
-    
-	/**
-	 * Returns the provider name.
-	 */
+
+    /**
+     * Returns the provider name.
+     */
     public String getProviderName() {
         if (providerName == null)
             providerName = getProviderName(bundleGroup);
@@ -137,7 +146,7 @@ public class BundleGroupProperties extends BrandingProperties
     }
 
     /**
-	 * Returns the feature version id.
+     * Returns the feature version id.
      */
     public String getFeatureVersion() {
         if (versionId == null)
@@ -191,28 +200,28 @@ public class BundleGroupProperties extends BrandingProperties
     }
 
     /**
-	 * Returns a label for the feature plugn, or <code>null</code>.
-	 */
+     * Returns a label for the feature plugn, or <code>null</code>.
+     */
     public static String getFeatureLabel(IBundleGroup bundleGroup) {
         return bundleGroup.getName();
     }
 
     /**
-	 * Returns the id for this bundleGroup.
-	 */
+     * Returns the id for this bundleGroup.
+     */
     public static String getFeatureId(IBundleGroup bundleGroup) {
         return bundleGroup.getIdentifier();
     }
-    
-	/**
-	 * Returns the provider name.
-	 */
+
+    /**
+     * Returns the provider name.
+     */
     public static String getProviderName(IBundleGroup bundleGroup) {
         return bundleGroup.getProviderName();
     }
 
     /**
-	 * Returns the feature version id.
+     * Returns the feature version id.
      */
     public static String getFeatureVersion(IBundleGroup bundleGroup) {
         return bundleGroup.getVersion();

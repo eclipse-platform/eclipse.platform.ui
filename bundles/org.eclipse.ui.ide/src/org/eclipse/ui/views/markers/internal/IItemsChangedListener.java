@@ -13,14 +13,13 @@ package org.eclipse.ui.views.markers.internal;
 
 import java.util.List;
 
-
 public interface IItemsChangedListener {
 
-	/**
-	 * @param additions new items added
-	 * @param removals items removed
-	 * @param changes changed items
-	 */
-	public void itemsChanged(List additions, List removals, List changes);
+    /**
+     * @param additions new items added
+     * @param removals items removed
+     * @param changes changed items
+     */
+    public void itemsChanged(List additions, List removals, List changes);
 
 }

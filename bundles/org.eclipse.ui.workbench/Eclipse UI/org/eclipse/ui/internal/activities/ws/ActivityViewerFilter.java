@@ -21,30 +21,30 @@ import org.eclipse.ui.activities.WorkbenchActivityHelper;
  */
 public class ActivityViewerFilter extends ViewerFilter {
 
-	private boolean hasEncounteredFilteredItem = false;
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-	 */
-	public boolean select(Viewer viewer, Object parentElement, Object element) {
+    private boolean hasEncounteredFilteredItem = false;
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+     */
+    public boolean select(Viewer viewer, Object parentElement, Object element) {
         if (WorkbenchActivityHelper.filterItem(element)) {
-        	setHasEncounteredFilteredItem(true);
-        	return false;
+            setHasEncounteredFilteredItem(true);
+            return false;
         }
         return true;
-	}
-	
-	/**
-	 * @return returns whether the filter has filtered an item
-	 */
-	public boolean getHasEncounteredFilteredItem() {
-		return hasEncounteredFilteredItem;
-	}
-	
-	/**
-	 * @param sets whether the filter has filtered an item
-	 */
-	public void setHasEncounteredFilteredItem(boolean hasEncounteredFilteredItem) {
-		this.hasEncounteredFilteredItem = hasEncounteredFilteredItem;
-	}
+    }
+
+    /**
+     * @return returns whether the filter has filtered an item
+     */
+    public boolean getHasEncounteredFilteredItem() {
+        return hasEncounteredFilteredItem;
+    }
+
+    /**
+     * @param sets whether the filter has filtered an item
+     */
+    public void setHasEncounteredFilteredItem(boolean hasEncounteredFilteredItem) {
+        this.hasEncounteredFilteredItem = hasEncounteredFilteredItem;
+    }
 }

@@ -12,7 +12,6 @@ package org.eclipse.ui.internal.decorators;
 
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
-
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.StatusUtil;
 
@@ -21,30 +20,29 @@ import org.eclipse.ui.internal.misc.StatusUtil;
  * the full decorators
  */
 abstract class FullDecoratorRunnable implements ISafeRunnable {
-	protected Object element;
-	protected FullDecoratorDefinition decorator;
+    protected Object element;
 
-	/**
-	 * Set the values for the element and the decorator.
-	 * @param object
-	 * @param definition
-	 */
-	protected void setValues(
-		Object object,
-		FullDecoratorDefinition definition) {
-		element = object;
-		decorator = definition;
+    protected FullDecoratorDefinition decorator;
 
-	}
-	/*
-	 * @see ISafeRunnable.handleException(Throwable).
-	 */
-	public void handleException(Throwable exception) {
-		IStatus status = StatusUtil.newStatus(IStatus.ERROR,exception.getMessage(),exception);
-		WorkbenchPlugin.log("Exception in Decorator",status); //$NON-NLS-1$
-		decorator.crashDisable();
-	}
-	
-	
-	
+    /**
+     * Set the values for the element and the decorator.
+     * @param object
+     * @param definition
+     */
+    protected void setValues(Object object, FullDecoratorDefinition definition) {
+        element = object;
+        decorator = definition;
+
+    }
+
+    /*
+     * @see ISafeRunnable.handleException(Throwable).
+     */
+    public void handleException(Throwable exception) {
+        IStatus status = StatusUtil.newStatus(IStatus.ERROR, exception
+                .getMessage(), exception);
+        WorkbenchPlugin.log("Exception in Decorator", status); //$NON-NLS-1$
+        decorator.crashDisable();
+    }
+
 }

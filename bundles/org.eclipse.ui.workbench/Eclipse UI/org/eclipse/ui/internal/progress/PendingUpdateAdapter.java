@@ -18,68 +18,67 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * The PendingUpdateAdapter is a convenience object that can be used
  * by a BaseWorkbenchContentProvider that wants to show a pending update.
  */
-public class PendingUpdateAdapter
-	implements IWorkbenchAdapter, IAdaptable {
-		
-	boolean removed = false;
+public class PendingUpdateAdapter implements IWorkbenchAdapter, IAdaptable {
 
-	/**
-	 * Return whether or not this has been removed from the tree.
-	 * @return boolean
-	 */
-	public boolean isRemoved() {
-		return removed;
-	}
+    boolean removed = false;
 
-	/**
-	 * Set whether or not this has been removed from the tree.
-	 * @param removed boolean
-	 */
-	public void setRemoved(boolean removedValue) {
-		this.removed = removedValue;
-	}
+    /**
+     * Return whether or not this has been removed from the tree.
+     * @return boolean
+     */
+    public boolean isRemoved() {
+        return removed;
+    }
 
-	/**
-	 * Create a new instance of the receiver.
-	 */
-	public PendingUpdateAdapter() {
-		//No initial behavior
-	}
+    /**
+     * Set whether or not this has been removed from the tree.
+     * @param removed boolean
+     */
+    public void setRemoved(boolean removedValue) {
+        this.removed = removedValue;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
-	public Object getAdapter(Class adapter) {
-		if (adapter == IWorkbenchAdapter.class)
-			return this;
-		return null;
-	}
+    /**
+     * Create a new instance of the receiver.
+     */
+    public PendingUpdateAdapter() {
+        //No initial behavior
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
-	 */
-	public Object[] getChildren(Object o) {
-		return new Object[0];
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+     */
+    public Object getAdapter(Class adapter) {
+        if (adapter == IWorkbenchAdapter.class)
+            return this;
+        return null;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
-	 */
-	public ImageDescriptor getImageDescriptor(Object object) {
-		return null;
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
+     */
+    public Object[] getChildren(Object o) {
+        return new Object[0];
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
-	 */
-	public String getLabel(Object o) {
-		return ProgressMessages.getString("PendingUpdateAdapter.PendingLabel"); //$NON-NLS-1$
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
+     */
+    public ImageDescriptor getImageDescriptor(Object object) {
+        return null;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
-	 */
-	public Object getParent(Object o) {
-		return null;
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
+     */
+    public String getLabel(Object o) {
+        return ProgressMessages.getString("PendingUpdateAdapter.PendingLabel"); //$NON-NLS-1$
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
+     */
+    public Object getParent(Object o) {
+        return null;
+    }
 }

@@ -14,6 +14,8 @@ package org.eclipse.jface.action;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -29,9 +31,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.util.Policy;
 
 /**
  * The <code>ToolBarContributionItem</code> class provides a wrapper for tool
@@ -182,7 +181,9 @@ public class ToolBarContributionItem extends ContributionItem {
      *      int)
      */
     public void fill(CoolBar coolBar, int index) {
-        if (checkDisposed()) { return; }
+        if (checkDisposed()) {
+            return;
+        }
 
         if (coolItem == null && coolBar != null) {
             ToolBar oldToolBar = toolBarManager.getControl();
@@ -191,9 +192,10 @@ public class ToolBarContributionItem extends ContributionItem {
                 // We are using an old tool bar, so we need to update.
                 toolBarManager.update(true);
             }
-            
+
             // Do not create a coolItem if the toolbar is empty
-            if (toolBar.getItemCount() < 1) return;
+            if (toolBar.getItemCount() < 1)
+                return;
             int flags = SWT.DROP_DOWN;
             if (index >= 0) {
                 coolItem = new CoolItem(coolBar, flags, index);
@@ -252,7 +254,7 @@ public class ToolBarContributionItem extends ContributionItem {
     private int[] getAdjustedWrapIndices(int[] wraps) {
         int[] adjustedWrapIndices;
         if (wraps.length == 0) {
-            adjustedWrapIndices = new int[] { 0};
+            adjustedWrapIndices = new int[] { 0 };
         } else {
             if (wraps[0] != 0) {
                 adjustedWrapIndices = new int[wraps.length + 1];
@@ -273,7 +275,9 @@ public class ToolBarContributionItem extends ContributionItem {
      * @return the current height
      */
     public int getCurrentHeight() {
-        if (checkDisposed()) { return -1; }
+        if (checkDisposed()) {
+            return -1;
+        }
         return currentHeight;
     }
 
@@ -283,7 +287,9 @@ public class ToolBarContributionItem extends ContributionItem {
      * @return the current size
      */
     public int getCurrentWidth() {
-        if (checkDisposed()) { return -1; }
+        if (checkDisposed()) {
+            return -1;
+        }
         return currentWidth;
     }
 
@@ -295,7 +301,9 @@ public class ToolBarContributionItem extends ContributionItem {
      * @see #setMinimumItemsToShow(int)
      */
     public int getMinimumItemsToShow() {
-        if (checkDisposed()) { return -1; }
+        if (checkDisposed()) {
+            return -1;
+        }
         return minimumItemsToShow;
     }
 
@@ -307,7 +315,9 @@ public class ToolBarContributionItem extends ContributionItem {
      * @see IToolBarManager
      */
     public IToolBarManager getToolBarManager() {
-        if (checkDisposed()) { return null; }
+        if (checkDisposed()) {
+            return null;
+        }
         return toolBarManager;
     }
 
@@ -318,7 +328,9 @@ public class ToolBarContributionItem extends ContributionItem {
      *         otherwise
      */
     public boolean getUseChevron() {
-        if (checkDisposed()) { return false; }
+        if (checkDisposed()) {
+            return false;
+        }
         return useChevron;
     }
 
@@ -328,7 +340,9 @@ public class ToolBarContributionItem extends ContributionItem {
     private void handleChevron(SelectionEvent event) {
         CoolItem item = (CoolItem) event.widget;
         Control control = item.getControl();
-        if ((control instanceof ToolBar) == false) { return; }
+        if ((control instanceof ToolBar) == false) {
+            return;
+        }
         CoolBar coolBar = item.getParent();
         ToolBar toolBar = (ToolBar) control;
         Rectangle toolBarBounds = toolBar.getBounds();
@@ -336,7 +350,8 @@ public class ToolBarContributionItem extends ContributionItem {
         ArrayList hidden = new ArrayList();
         for (int i = 0; i < items.length; ++i) {
             Rectangle itemBounds = items[i].getBounds();
-            if (!((itemBounds.x + itemBounds.width <= toolBarBounds.width) && (itemBounds.y + itemBounds.height <= toolBarBounds.height))) {
+            if (!((itemBounds.x + itemBounds.width <= toolBarBounds.width) && (itemBounds.y
+                    + itemBounds.height <= toolBarBounds.height))) {
                 hidden.add(items[i]);
             }
         }
@@ -346,7 +361,7 @@ public class ToolBarContributionItem extends ContributionItem {
             chevronMenuManager.dispose();
         }
         chevronMenuManager = new MenuManager();
-        for (Iterator i = hidden.iterator(); i.hasNext(); ) {
+        for (Iterator i = hidden.iterator(); i.hasNext();) {
             ToolItem toolItem = (ToolItem) i.next();
             IContributionItem data = (IContributionItem) toolItem.getData();
             if (data instanceof ActionContributionItem) {
@@ -422,7 +437,9 @@ public class ToolBarContributionItem extends ContributionItem {
      *         set to be visible.
      */
     public boolean isVisible() {
-        if (checkDisposed()) { return false; }
+        if (checkDisposed()) {
+            return false;
+        }
 
         boolean visibleItem = false;
         if (toolBarManager != null) {
@@ -446,8 +463,11 @@ public class ToolBarContributionItem extends ContributionItem {
      * @see org.eclipse.jface.action.IContributionItem#saveWidgetState()
      */
     public void saveWidgetState() {
-        if (checkDisposed()) { return; }
-        if (coolItem == null) return;
+        if (checkDisposed()) {
+            return;
+        }
+        if (coolItem == null)
+            return;
 
         //1. Save current size
         CoolBar coolBar = coolItem.getParent();
@@ -494,7 +514,9 @@ public class ToolBarContributionItem extends ContributionItem {
      *            the current height to set
      */
     public void setCurrentHeight(int currentHeight) {
-        if (checkDisposed()) { return; }
+        if (checkDisposed()) {
+            return;
+        }
         this.currentHeight = currentHeight;
     }
 
@@ -506,7 +528,9 @@ public class ToolBarContributionItem extends ContributionItem {
      *            the current width to set
      */
     public void setCurrentWidth(int currentWidth) {
-        if (checkDisposed()) { return; }
+        if (checkDisposed()) {
+            return;
+        }
         this.currentWidth = currentWidth;
     }
 
@@ -522,7 +546,9 @@ public class ToolBarContributionItem extends ContributionItem {
      * @see #setUseChevron(boolean)
      */
     public void setMinimumItemsToShow(int minimumItemsToShow) {
-        if (checkDisposed()) { return; }
+        if (checkDisposed()) {
+            return;
+        }
         this.minimumItemsToShow = minimumItemsToShow;
     }
 
@@ -535,7 +561,9 @@ public class ToolBarContributionItem extends ContributionItem {
      *            otherwise.
      */
     public void setUseChevron(boolean value) {
-        if (checkDisposed()) { return; }
+        if (checkDisposed()) {
+            return;
+        }
         useChevron = value;
     }
 
@@ -545,13 +573,15 @@ public class ToolBarContributionItem extends ContributionItem {
      * @see org.eclipse.jface.action.IContributionItem#update(java.lang.String)
      */
     public void update(String propertyName) {
-        if (checkDisposed()) { return; }
+        if (checkDisposed()) {
+            return;
+        }
         if (coolItem != null) {
             IToolBarManager manager = getToolBarManager();
             if (manager != null) {
                 manager.update(true);
             }
-            
+
             if ((propertyName == null)
                     || propertyName.equals(ICoolBarManager.SIZE)) {
                 updateSize(true);
@@ -569,9 +599,13 @@ public class ToolBarContributionItem extends ContributionItem {
      *            current size
      */
     private void updateSize(boolean changeCurrentSize) {
-        if (checkDisposed()) { return; }
+        if (checkDisposed()) {
+            return;
+        }
         // cannot set size if coolItem is null
-        if (coolItem == null || coolItem.isDisposed()) { return; }
+        if (coolItem == null || coolItem.isDisposed()) {
+            return;
+        }
         boolean locked = false;
         CoolBar coolBar = coolItem.getParent();
         try {

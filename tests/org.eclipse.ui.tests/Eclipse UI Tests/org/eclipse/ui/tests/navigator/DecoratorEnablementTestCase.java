@@ -12,10 +12,8 @@ package org.eclipse.ui.tests.navigator;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
-
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.decorators.DecoratorDefinition;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
@@ -23,83 +21,83 @@ import org.eclipse.ui.internal.decorators.DecoratorManager;
 /**
  * @version 	1.0
  */
-public abstract class DecoratorEnablementTestCase
-	extends AbstractNavigatorTest
-	implements ILabelProviderListener {
+public abstract class DecoratorEnablementTestCase extends AbstractNavigatorTest
+        implements ILabelProviderListener {
 
-	protected DecoratorDefinition definition;
-	protected boolean updated = false;
+    protected DecoratorDefinition definition;
 
-	/**
-	 * Constructor for DecoratorTestCase.
-	 * @param testName
-	 */
-	public DecoratorEnablementTestCase(String testName) {
-		super(testName);
-	}
+    protected boolean updated = false;
 
-	/**
-	 * Sets up the hierarchy.
-	 */
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
-		createTestFile();
-		showNav();
-		
-		WorkbenchPlugin.getDefault().getDecoratorManager().addListener(this);
+    /**
+     * Constructor for DecoratorTestCase.
+     * @param testName
+     */
+    public DecoratorEnablementTestCase(String testName) {
+        super(testName);
+    }
 
-		DecoratorDefinition[] definitions =
-			WorkbenchPlugin.getDefault().getDecoratorManager().getAllDecoratorDefinitions();
-		for (int i = 0; i < definitions.length; i++) {
-			if (definitions[i].getId().equals("org.eclipse.ui.tests.navigator.lightweightdecorator"))
-				definition = definitions[i];
-		}
-	}
+    /**
+     * Sets up the hierarchy.
+     */
+    protected void doSetUp() throws Exception {
+        super.doSetUp();
+        createTestFile();
+        showNav();
 
-	protected DecoratorManager getDecoratorManager() {
-		return WorkbenchPlugin.getDefault().getDecoratorManager();
-	}
+        WorkbenchPlugin.getDefault().getDecoratorManager().addListener(this);
 
-	/**
-	 * Remove the listener.
-	 */
-	protected void doTearDown() throws Exception {
-		super.doTearDown();
-		getDecoratorManager().removeListener(this);
-	}
+        DecoratorDefinition[] definitions = WorkbenchPlugin.getDefault()
+                .getDecoratorManager().getAllDecoratorDefinitions();
+        for (int i = 0; i < definitions.length; i++) {
+            if (definitions[i].getId().equals(
+                    "org.eclipse.ui.tests.navigator.lightweightdecorator"))
+                definition = definitions[i];
+        }
+    }
 
-	/**
-	 * Make a label changed event for resource.
-	 */
-	private LabelProviderChangedEvent getLabelChangedEvent(IResource resource) {
-		return new LabelProviderChangedEvent(getDecoratorManager(), resource);
-	}
+    protected DecoratorManager getDecoratorManager() {
+        return WorkbenchPlugin.getDefault().getDecoratorManager();
+    }
 
-	/**
-	 * Test enabling the contributor
-	 */
-	public void testEnableDecorator() throws CoreException{
-		getDecoratorManager().clearCaches();
-		definition.setEnabled(true);
-		getDecoratorManager().updateForEnablementChange();
-		
-	}
+    /**
+     * Remove the listener.
+     */
+    protected void doTearDown() throws Exception {
+        super.doTearDown();
+        getDecoratorManager().removeListener(this);
+    }
 
-	/**
-	 * Test disabling the contributor
-	 */
-	public void testDisableDecorator() throws CoreException{
-		getDecoratorManager().clearCaches();
-		definition.setEnabled(false);
-		getDecoratorManager().updateForEnablementChange();
-	}
+    /**
+     * Make a label changed event for resource.
+     */
+    private LabelProviderChangedEvent getLabelChangedEvent(IResource resource) {
+        return new LabelProviderChangedEvent(getDecoratorManager(), resource);
+    }
 
-	
-	/*
-	 * @see ILabelProviderListener#labelProviderChanged(LabelProviderChangedEvent)
-	 */
-	public void labelProviderChanged(LabelProviderChangedEvent event) {
-		updated = true;
-	}
+    /**
+     * Test enabling the contributor
+     */
+    public void testEnableDecorator() throws CoreException {
+        getDecoratorManager().clearCaches();
+        definition.setEnabled(true);
+        getDecoratorManager().updateForEnablementChange();
+
+    }
+
+    /**
+     * Test disabling the contributor
+     */
+    public void testDisableDecorator() throws CoreException {
+        getDecoratorManager().clearCaches();
+        definition.setEnabled(false);
+        getDecoratorManager().updateForEnablementChange();
+    }
+
+    /*
+     * @see ILabelProviderListener#labelProviderChanged(LabelProviderChangedEvent)
+     */
+    public void labelProviderChanged(LabelProviderChangedEvent event) {
+        updated = true;
+    }
 
 }

@@ -10,8 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.decorators;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
+import org.eclipse.jface.viewers.IDecoration;
+import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 import org.eclipse.ui.internal.ActionExpression;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
@@ -23,162 +28,147 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  */
 class LightweightDecoratorDefinition extends DecoratorDefinition {
 
-	/**
-	 * The DeclarativeDecorator is the internal decorator
-	 * supplied by the decorator definition.
-	 */
-	private ILightweightLabelDecorator decorator;
-	private int quadrant;
-	private String iconLocation;
+    /**
+     * The DeclarativeDecorator is the internal decorator
+     * supplied by the decorator definition.
+     */
+    private ILightweightLabelDecorator decorator;
 
-	LightweightDecoratorDefinition(
-		String identifier,
-		String label,
-		String decoratorDescription,
-		ActionExpression expression,
-		boolean isAdaptable,
-		boolean initEnabled,
-		int quadrantValue,
-		String iconPath,
-		IConfigurationElement element) {
-		super(
-			identifier,
-			label,
-			decoratorDescription,
-			expression,
-			isAdaptable,
-			initEnabled,
-			element);
-		this.iconLocation = iconPath;
-		this.quadrant = quadrantValue;
-	}
+    private int quadrant;
 
-	/**
-	 * Gets the decorator and creates it if it does
-	 * not exist yet. Throws a CoreException if there is a problem
-	 * creating the decorator.
-	 * This method should not be called unless a check for
-	 * enabled to be true is done first.
-	 * @return Returns a ILabelDecorator
-	 */
-	protected ILightweightLabelDecorator internalGetDecorator()
-		throws CoreException {
-		if (labelProviderCreationFailed)
-			return null;
+    private String iconLocation;
 
-		final CoreException[] exceptions = new CoreException[1];
+    LightweightDecoratorDefinition(String identifier, String label,
+            String decoratorDescription, ActionExpression expression,
+            boolean isAdaptable, boolean initEnabled, int quadrantValue,
+            String iconPath, IConfigurationElement element) {
+        super(identifier, label, decoratorDescription, expression, isAdaptable,
+                initEnabled, element);
+        this.iconLocation = iconPath;
+        this.quadrant = quadrantValue;
+    }
 
-		if (decorator == null) {
+    /**
+     * Gets the decorator and creates it if it does
+     * not exist yet. Throws a CoreException if there is a problem
+     * creating the decorator.
+     * This method should not be called unless a check for
+     * enabled to be true is done first.
+     * @return Returns a ILabelDecorator
+     */
+    protected ILightweightLabelDecorator internalGetDecorator()
+            throws CoreException {
+        if (labelProviderCreationFailed)
+            return null;
 
-			if (definingElement.getAttribute(DecoratorRegistryReader.ATT_CLASS)
-				== null)
-				decorator =
-					new DeclarativeDecorator(definingElement, iconLocation);
-			else {
+        final CoreException[] exceptions = new CoreException[1];
 
-				Platform.run(new ISafeRunnable() {
-					public void run() {
-						try {
-							decorator =	(ILightweightLabelDecorator) WorkbenchPlugin
-								.createExtension(
-									definingElement,
-									DecoratorRegistryReader.ATT_CLASS);
-							decorator.addListener(
-								WorkbenchPlugin
-									.getDefault()
-									.getDecoratorManager());
-						} catch (CoreException exception) {
-							exceptions[0] = exception;
-						}
-					}
+        if (decorator == null) {
 
-					/* (non-Javadoc)
-					 * Method declared on ISafeRunnable.
-					 */
-					public void handleException(Throwable e) {
-						//Do nothing as Core will handle the logging
-					}
-				});
-			}
-		} else
-			return decorator;
+            if (definingElement.getAttribute(DecoratorRegistryReader.ATT_CLASS) == null)
+                decorator = new DeclarativeDecorator(definingElement,
+                        iconLocation);
+            else {
 
-		if (decorator == null) {
-			this.labelProviderCreationFailed = true;
-			setEnabled(false);
-		}
+                Platform.run(new ISafeRunnable() {
+                    public void run() {
+                        try {
+                            decorator = (ILightweightLabelDecorator) WorkbenchPlugin
+                                    .createExtension(definingElement,
+                                            DecoratorRegistryReader.ATT_CLASS);
+                            decorator.addListener(WorkbenchPlugin.getDefault()
+                                    .getDecoratorManager());
+                        } catch (CoreException exception) {
+                            exceptions[0] = exception;
+                        }
+                    }
 
-		if (exceptions[0] != null)
-			throw exceptions[0];
+                    /* (non-Javadoc)
+                     * Method declared on ISafeRunnable.
+                     */
+                    public void handleException(Throwable e) {
+                        //Do nothing as Core will handle the logging
+                    }
+                });
+            }
+        } else
+            return decorator;
 
-		return decorator;
-	}
+        if (decorator == null) {
+            this.labelProviderCreationFailed = true;
+            setEnabled(false);
+        }
 
-	/**
-	 * @see org.eclipse.ui.internal.DecoratorDefinition#internalGetLabelProvider()
-	 */
-	protected IBaseLabelProvider internalGetLabelProvider()
-		throws CoreException {
-		return internalGetDecorator();
-	}
+        if (exceptions[0] != null)
+            throw exceptions[0];
 
-	/**
-	 * @see org.eclipse.ui.internal.DecoratorDefinition#isFull()
-	 */
-	public boolean isFull() {
-		return false;
-	}
+        return decorator;
+    }
 
-	/**
-	 * Returns the quadrant.One of the following constants in
-	 * DecoratorRegistryReader:
-	 * 	TOP_LEFT 
-	 *  TOP_RIGHT
-	 *  BOTTOM_LEFT
-	 *  BOTTOM_RIGHT
-	 *  UNDERLAY
-	 * @return int
-	 */
-	public int getQuadrant() {
-		return quadrant;
-	}
+    /**
+     * @see org.eclipse.ui.internal.DecoratorDefinition#internalGetLabelProvider()
+     */
+    protected IBaseLabelProvider internalGetLabelProvider()
+            throws CoreException {
+        return internalGetDecorator();
+    }
 
-	/**
-	 * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#getOverlay(java.lang.Object)
-	 */
-	public void decorate(Object element, IDecoration decoration) {
-		try {
-			//Internal decorator might be null so be prepared
-			ILightweightLabelDecorator currentDecorator =
-				internalGetDecorator();
-			if (currentDecorator != null)
-				currentDecorator.decorate(element, decoration);
-		} catch (CoreException exception) {
-			handleCoreException(exception);
-		}
+    /**
+     * @see org.eclipse.ui.internal.DecoratorDefinition#isFull()
+     */
+    public boolean isFull() {
+        return false;
+    }
 
-	}
+    /**
+     * Returns the quadrant.One of the following constants in
+     * DecoratorRegistryReader:
+     * 	TOP_LEFT 
+     *  TOP_RIGHT
+     *  BOTTOM_LEFT
+     *  BOTTOM_RIGHT
+     *  UNDERLAY
+     * @return int
+     */
+    public int getQuadrant() {
+        return quadrant;
+    }
 
-	/**
-	 * Returns the lightweight decorator, or <code>null</code> if not enabled.
-	 * 
-	 * @return the lightweight decorator, or <code>null</code> if not enabled
-	 */
-	public ILightweightLabelDecorator getDecorator() {
-		return decorator;
-	}
+    /**
+     * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#getOverlay(java.lang.Object)
+     */
+    public void decorate(Object element, IDecoration decoration) {
+        try {
+            //Internal decorator might be null so be prepared
+            ILightweightLabelDecorator currentDecorator = internalGetDecorator();
+            if (currentDecorator != null)
+                currentDecorator.decorate(element, decoration);
+        } catch (CoreException exception) {
+            handleCoreException(exception);
+        }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.decorators.DecoratorDefinition#refreshDecorator()
-	 */
+    }
 
-	protected void refreshDecorator() throws CoreException {
-		//Only do something if disabled so as to prevent
-		//gratutitous activation
-		if (!this.enabled && decorator != null) {
-			IBaseLabelProvider cached = decorator;
-			decorator = null;
-			disposeCachedDecorator(cached);
-		}
-	}
+    /**
+     * Returns the lightweight decorator, or <code>null</code> if not enabled.
+     * 
+     * @return the lightweight decorator, or <code>null</code> if not enabled
+     */
+    public ILightweightLabelDecorator getDecorator() {
+        return decorator;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.decorators.DecoratorDefinition#refreshDecorator()
+     */
+
+    protected void refreshDecorator() throws CoreException {
+        //Only do something if disabled so as to prevent
+        //gratutitous activation
+        if (!this.enabled && decorator != null) {
+            IBaseLabelProvider cached = decorator;
+            decorator = null;
+            disposeCachedDecorator(cached);
+        }
+    }
 }

@@ -19,27 +19,28 @@ import org.eclipse.swt.widgets.Shell;
  * @since 3.0
  */
 public class WindowDropTarget extends AbstractTestDropTarget {
-	
-	private int side;
-	
-	public WindowDropTarget(int side) {
-		this.side = side;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.tests.dnd.TestDropTarget#getName()
-	 */
-	public String toString() {		
-		return DragOperations.nameForConstant(side) + " of window";
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.tests.dnd.TestDropTarget#getLocation()
-	 */
-	public Point getLocation() {
-		Shell shell = getPage().getWorkbenchWindow().getShell();
-		Rectangle clientArea = shell.getClientArea();
-		
-		return DragOperations.getPoint(Geometry.toDisplay(shell, clientArea), side);
-	}
+
+    private int side;
+
+    public WindowDropTarget(int side) {
+        this.side = side;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.tests.dnd.TestDropTarget#getName()
+     */
+    public String toString() {
+        return DragOperations.nameForConstant(side) + " of window";
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.tests.dnd.TestDropTarget#getLocation()
+     */
+    public Point getLocation() {
+        Shell shell = getPage().getWorkbenchWindow().getShell();
+        Rectangle clientArea = shell.getClientArea();
+
+        return DragOperations.getPoint(Geometry.toDisplay(shell, clientArea),
+                side);
+    }
 }

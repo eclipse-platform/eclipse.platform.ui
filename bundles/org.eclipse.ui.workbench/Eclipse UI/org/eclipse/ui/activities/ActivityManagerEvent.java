@@ -29,10 +29,13 @@ import org.eclipse.ui.internal.util.Util;
  * @see IActivityManagerListener#activityManagerChanged(ActivityManagerEvent)
  */
 public final class ActivityManagerEvent {
-	private IActivityManager activityManager;
-	private boolean definedActivityIdsChanged;
-	private boolean definedCategoryIdsChanged;
-	private boolean enabledActivityIdsChanged;
+    private IActivityManager activityManager;
+
+    private boolean definedActivityIdsChanged;
+
+    private boolean definedCategoryIdsChanged;
+
+    private boolean enabledActivityIdsChanged;
 
     /**
      * The set of activity identifiers (strings) that were defined before the
@@ -55,7 +58,7 @@ public final class ActivityManagerEvent {
      */
     private final Set previouslyEnabledActivityIds;
 
-	/**
+    /**
      * Creates a new instance of this class.
      * 
      * @param activityManager
@@ -91,7 +94,7 @@ public final class ActivityManagerEvent {
      *            <code>false</code> and must not be null if
      *            enabledActivityIdsChanged is <code>true</code>.
      */
-	public ActivityManagerEvent(IActivityManager activityManager,
+    public ActivityManagerEvent(IActivityManager activityManager,
             boolean definedActivityIdsChanged,
             boolean definedCategoryIdsChanged,
             boolean enabledActivityIdsChanged,
@@ -99,16 +102,16 @@ public final class ActivityManagerEvent {
             final Set previouslyDefinedCategoryIds,
             final Set previouslyEnabledActivityIds) {
         if (activityManager == null)
-			throw new NullPointerException();
+            throw new NullPointerException();
 
         if (!definedActivityIdsChanged && previouslyDefinedActivityIds != null)
-                throw new IllegalArgumentException();
+            throw new IllegalArgumentException();
 
         if (!definedCategoryIdsChanged && previouslyDefinedCategoryIds != null)
-                throw new IllegalArgumentException();
+            throw new IllegalArgumentException();
 
         if (!enabledActivityIdsChanged && previouslyEnabledActivityIds != null)
-                throw new IllegalArgumentException();
+            throw new IllegalArgumentException();
 
         if (definedActivityIdsChanged) {
             this.previouslyDefinedActivityIds = Util.safeCopy(
@@ -131,21 +134,21 @@ public final class ActivityManagerEvent {
             this.previouslyEnabledActivityIds = null;
         }
 
-		this.activityManager = activityManager;
-		this.definedActivityIdsChanged = definedActivityIdsChanged;
-		this.definedCategoryIdsChanged = definedCategoryIdsChanged;
-		this.enabledActivityIdsChanged = enabledActivityIdsChanged;
-	}
+        this.activityManager = activityManager;
+        this.definedActivityIdsChanged = definedActivityIdsChanged;
+        this.definedCategoryIdsChanged = definedCategoryIdsChanged;
+        this.enabledActivityIdsChanged = enabledActivityIdsChanged;
+    }
 
-	/**
-	 * Returns the instance of the interface that changed.
-	 * 
-	 * @return the instance of the interface that changed. Guaranteed not to be
-	 *         <code>null</code>.
-	 */
-	public IActivityManager getActivityManager() {
-		return activityManager;
-	}
+    /**
+     * Returns the instance of the interface that changed.
+     * 
+     * @return the instance of the interface that changed. Guaranteed not to be
+     *         <code>null</code>.
+     */
+    public IActivityManager getActivityManager() {
+        return activityManager;
+    }
 
     /**
      * Returns the activity identifiers that were previously defined.
@@ -180,30 +183,30 @@ public final class ActivityManagerEvent {
         return previouslyEnabledActivityIds;
     }
 
-	/**
-	 * Returns whether or not the definedActivityIds property changed.
-	 * 
-	 * @return <code>true</code>, iff the definedActivityIds property changed.
-	 */
-	public boolean haveDefinedActivityIdsChanged() {
-		return definedActivityIdsChanged;
-	}
+    /**
+     * Returns whether or not the definedActivityIds property changed.
+     * 
+     * @return <code>true</code>, iff the definedActivityIds property changed.
+     */
+    public boolean haveDefinedActivityIdsChanged() {
+        return definedActivityIdsChanged;
+    }
 
-	/**
-	 * Returns whether or not the definedCategoryIds property changed.
-	 * 
-	 * @return <code>true</code>, iff the definedCategoryIds property changed.
-	 */
-	public boolean haveDefinedCategoryIdsChanged() {
-		return definedCategoryIdsChanged;
-	}
+    /**
+     * Returns whether or not the definedCategoryIds property changed.
+     * 
+     * @return <code>true</code>, iff the definedCategoryIds property changed.
+     */
+    public boolean haveDefinedCategoryIdsChanged() {
+        return definedCategoryIdsChanged;
+    }
 
-	/**
-	 * Returns whether or not the enabledActivityIds property changed.
-	 * 
-	 * @return <code>true</code>, iff the enabledActivityIds property changed.
-	 */
-	public boolean haveEnabledActivityIdsChanged() {
-		return enabledActivityIdsChanged;
-	}
+    /**
+     * Returns whether or not the enabledActivityIds property changed.
+     * 
+     * @return <code>true</code>, iff the enabledActivityIds property changed.
+     */
+    public boolean haveEnabledActivityIdsChanged() {
+        return enabledActivityIdsChanged;
+    }
 }

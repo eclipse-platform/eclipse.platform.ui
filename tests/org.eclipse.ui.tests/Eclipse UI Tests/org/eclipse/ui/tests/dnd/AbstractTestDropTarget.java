@@ -20,20 +20,22 @@ import org.eclipse.ui.internal.dnd.TestDropLocation;
  * @since 3.0
  */
 public abstract class AbstractTestDropTarget implements TestDropLocation {
-	//TestDragSource source;
-	
-	public abstract String toString();
-	public abstract Point getLocation();
-	
-//	public void setSource(TestDragSource source) {
-//		this.source = source;
-//	}
-	
-	public WorkbenchPage getPage() {
-		return (WorkbenchPage) ((WorkbenchWindow)PlatformUI.getWorkbench().getActiveWorkbenchWindow()).getActivePage();
-	}
-	
-//	public TestDragSource getSource() {
-//		return source;
-//	}
+    //TestDragSource source;
+
+    public abstract String toString();
+
+    public abstract Point getLocation();
+
+    //	public void setSource(TestDragSource source) {
+    //		this.source = source;
+    //	}
+
+    public WorkbenchPage getPage() {
+        return (WorkbenchPage) ((WorkbenchWindow) PlatformUI.getWorkbench()
+                .getActiveWorkbenchWindow()).getActivePage();
+    }
+
+    //	public TestDragSource getSource() {
+    //		return source;
+    //	}
 }

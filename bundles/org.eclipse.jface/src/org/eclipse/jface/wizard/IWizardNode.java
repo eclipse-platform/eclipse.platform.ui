@@ -33,42 +33,45 @@ import org.eclipse.swt.graphics.Point;
  * @see WizardSelectionPage
  */
 public interface IWizardNode {
-/**
- * Disposes the wizard managed by this node. Does nothing
- * if the wizard has not been created.
- * <p>
- * This is the last message that should ever be sent to this node.
- * </p>
- */
-public void dispose();
-/**
- * Returns the extent of the wizard for this node.
- * <p>
- * If the content has not yet been created, calling this method
- * does not trigger the creation of the wizard. This allows
- * this node to suggest an extent in advance of actually creating 
- * the wizard.
- * </p>
- *
- * @return the extent, or <code>(-1, -1)</code> extent is not known
- */
-public Point getExtent();
-/**
- * Returns the wizard this node stands for.
- * <p>
- * If the content has not been created beforehand, calling this
- * method triggers the creation of the wizard and caches it so that
- * the identical wizard object is returned on subsequent calls.
- * </p>
- *
- * @return the wizard
- */ 
-public IWizard getWizard();
-/**
- * Returns whether a wizard has been created for this node.
- *
- * @return <code>true</code> if a wizard has been created,
- *   and <code>false</code> otherwise
- */
-public boolean isContentCreated();
+    /**
+     * Disposes the wizard managed by this node. Does nothing
+     * if the wizard has not been created.
+     * <p>
+     * This is the last message that should ever be sent to this node.
+     * </p>
+     */
+    public void dispose();
+
+    /**
+     * Returns the extent of the wizard for this node.
+     * <p>
+     * If the content has not yet been created, calling this method
+     * does not trigger the creation of the wizard. This allows
+     * this node to suggest an extent in advance of actually creating 
+     * the wizard.
+     * </p>
+     *
+     * @return the extent, or <code>(-1, -1)</code> extent is not known
+     */
+    public Point getExtent();
+
+    /**
+     * Returns the wizard this node stands for.
+     * <p>
+     * If the content has not been created beforehand, calling this
+     * method triggers the creation of the wizard and caches it so that
+     * the identical wizard object is returned on subsequent calls.
+     * </p>
+     *
+     * @return the wizard
+     */
+    public IWizard getWizard();
+
+    /**
+     * Returns whether a wizard has been created for this node.
+     *
+     * @return <code>true</code> if a wizard has been created,
+     *   and <code>false</code> otherwise
+     */
+    public boolean isContentCreated();
 }

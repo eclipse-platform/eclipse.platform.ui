@@ -16,7 +16,7 @@ import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 
 final class KeySequenceBinding implements IKeySequenceBinding {
-    
+
     /**
      * This is the identifier for the default context.  This is used wherever
      * some default is needed.  For example, this is the context that is used
@@ -25,79 +25,83 @@ final class KeySequenceBinding implements IKeySequenceBinding {
      */
     public static final String DEFAULT_CONTEXT_ID = "org.eclipse.ui.contexts.window"; //$NON-NLS-1$
 
-	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL =
-		KeySequenceBinding.class.getName().hashCode();
+    private final static int HASH_FACTOR = 89;
 
-	private transient int hashCode;
-	private transient boolean hashCodeComputed;
+    private final static int HASH_INITIAL = KeySequenceBinding.class.getName()
+            .hashCode();
 
-	private KeySequence keySequence;
-	private int match;
-	private transient String string;
+    private transient int hashCode;
 
-	KeySequenceBinding(KeySequence keySequence, int match) {
-		if (keySequence == null)
-			throw new NullPointerException();
+    private transient boolean hashCodeComputed;
 
-		if (match < 0)
-			throw new IllegalArgumentException();
+    private KeySequence keySequence;
 
-		this.keySequence = keySequence;
-		this.match = match;
-	}
+    private int match;
 
-	public int compareTo(Object object) {
-		KeySequenceBinding castedObject = (KeySequenceBinding) object;
-		int compareTo = Util.compare(match, castedObject.match);
+    private transient String string;
 
-		if (compareTo == 0)
-			compareTo = Util.compare(keySequence, castedObject.keySequence);
+    KeySequenceBinding(KeySequence keySequence, int match) {
+        if (keySequence == null)
+            throw new NullPointerException();
 
-		return compareTo;
-	}
+        if (match < 0)
+            throw new IllegalArgumentException();
 
-	public boolean equals(Object object) {
-		if (!(object instanceof KeySequenceBinding))
-			return false;
+        this.keySequence = keySequence;
+        this.match = match;
+    }
 
-		KeySequenceBinding castedObject = (KeySequenceBinding) object;
-		boolean equals = true;
-		equals &= Util.equals(keySequence, castedObject.keySequence);
-		equals &= Util.equals(match, castedObject.match);
-		return equals;
-	}
+    public int compareTo(Object object) {
+        KeySequenceBinding castedObject = (KeySequenceBinding) object;
+        int compareTo = Util.compare(match, castedObject.match);
 
-	public KeySequence getKeySequence() {
-		return keySequence;
-	}
+        if (compareTo == 0)
+            compareTo = Util.compare(keySequence, castedObject.keySequence);
 
-	public int getMatch() {
-		return match;
-	}
+        return compareTo;
+    }
 
-	public int hashCode() {
-		if (!hashCodeComputed) {
-			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(keySequence);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(match);
-			hashCodeComputed = true;
-		}
+    public boolean equals(Object object) {
+        if (!(object instanceof KeySequenceBinding))
+            return false;
 
-		return hashCode;
-	}
+        KeySequenceBinding castedObject = (KeySequenceBinding) object;
+        boolean equals = true;
+        equals &= Util.equals(keySequence, castedObject.keySequence);
+        equals &= Util.equals(match, castedObject.match);
+        return equals;
+    }
 
-	public String toString() {
-		if (string == null) {
-			final StringBuffer stringBuffer = new StringBuffer();
-			stringBuffer.append('[');
-			stringBuffer.append(keySequence);
-			stringBuffer.append(',');
-			stringBuffer.append(match);
-			stringBuffer.append(']');
-			string = stringBuffer.toString();
-		}
+    public KeySequence getKeySequence() {
+        return keySequence;
+    }
 
-		return string;
-	}
+    public int getMatch() {
+        return match;
+    }
+
+    public int hashCode() {
+        if (!hashCodeComputed) {
+            hashCode = HASH_INITIAL;
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(keySequence);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(match);
+            hashCodeComputed = true;
+        }
+
+        return hashCode;
+    }
+
+    public String toString() {
+        if (string == null) {
+            final StringBuffer stringBuffer = new StringBuffer();
+            stringBuffer.append('[');
+            stringBuffer.append(keySequence);
+            stringBuffer.append(',');
+            stringBuffer.append(match);
+            stringBuffer.append(']');
+            string = stringBuffer.toString();
+        }
+
+        return string;
+    }
 }

@@ -37,7 +37,9 @@ public class IDEStartupPreferencePage extends StartupPreferencePage implements
         IWorkbenchPreferencePage {
 
     private Button refreshButton;
+
     private Button launchPromptButton;
+
     private Button exitPromptButton;
 
     /*
@@ -55,8 +57,8 @@ public class IDEStartupPreferencePage extends StartupPreferencePage implements
         createRefreshWorkspaceOnStartupPref(composite);
         createExitPromptPref(composite);
 
-		Label separator = new Label(composite, SWT.HORIZONTAL | SWT.SEPARATOR);
-		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        Label separator = new Label(composite, SWT.HORIZONTAL | SWT.SEPARATOR);
+        separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
         createEarlyStartupSelection(composite);
 
@@ -96,14 +98,15 @@ public class IDEStartupPreferencePage extends StartupPreferencePage implements
         //       being worked out. Hopefully it will be available soon, at which time
         //       the entire recentWorkspaces.xml file can be removed. But until then,
         //       this preference reads/writes the file each time.
-        ChooseWorkspaceData.setShowDialogValue(launchPromptButton.getSelection());
+        ChooseWorkspaceData.setShowDialogValue(launchPromptButton
+                .getSelection());
 
         // store the exit prompt on last window close setting
         store.setValue(IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW,
                 exitPromptButton.getSelection());
 
         IDEWorkbenchPlugin.getDefault().savePluginPreferences();
-        
+
         return super.performOk();
     }
 
@@ -127,7 +130,8 @@ public class IDEStartupPreferencePage extends StartupPreferencePage implements
         //       being worked out. Hopefully it will be available soon, at which time
         //       the entire recentWorkspaces.xml file can be removed. But until then,
         //       this preference reads/writes the file each time.
-        launchPromptButton.setSelection(ChooseWorkspaceData.getShowDialogValue());
+        launchPromptButton.setSelection(ChooseWorkspaceData
+                .getShowDialogValue());
     }
 
     protected void createExitPromptPref(Composite composite) {

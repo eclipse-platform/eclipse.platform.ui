@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.preference;
 
-import org.eclipse.swt.graphics.Image;
-
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.graphics.Image;
 
 /**
  * Provides labels for <code>IPreferenceNode</code> objects.
@@ -21,19 +20,19 @@ import org.eclipse.jface.viewers.LabelProvider;
  */
 public class PreferenceLabelProvider extends LabelProvider {
 
-	/**
-	 * @param element must be an instance of <code>IPreferenceNode</code>.
-	 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
-	 */
-	public String getText(Object element) {
-		return ((IPreferenceNode)element).getLabelText();
-	}
+    /**
+     * @param element must be an instance of <code>IPreferenceNode</code>.
+     * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
+     */
+    public String getText(Object element) {
+        return ((IPreferenceNode) element).getLabelText();
+    }
 
-	/**
-	 * @param element must be an instance of <code>IPreferenceNode</code>.
-	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
-	 */
-	public Image getImage(Object element) {
-		return ((IPreferenceNode)element).getLabelImage();
-	}
+    /**
+     * @param element must be an instance of <code>IPreferenceNode</code>.
+     * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
+     */
+    public Image getImage(Object element) {
+        return ((IPreferenceNode) element).getLabelImage();
+    }
 }

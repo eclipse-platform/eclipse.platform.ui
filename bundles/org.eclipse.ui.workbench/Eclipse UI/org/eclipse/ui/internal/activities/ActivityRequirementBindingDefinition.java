@@ -20,129 +20,130 @@ import java.util.Map;
 import org.eclipse.ui.internal.util.Util;
 
 public final class ActivityRequirementBindingDefinition {
-	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL =
-		ActivityRequirementBindingDefinition.class.getName().hashCode();
+    private final static int HASH_FACTOR = 89;
 
-	static Map activityRequirementBindingDefinitionsByActivityId(Collection activityRequirementBindingDefinitions) {
-		if (activityRequirementBindingDefinitions == null)
-			throw new NullPointerException();
+    private final static int HASH_INITIAL = ActivityRequirementBindingDefinition.class
+            .getName().hashCode();
 
-		Map map = new HashMap();
-		Iterator iterator = activityRequirementBindingDefinitions.iterator();
+    static Map activityRequirementBindingDefinitionsByActivityId(
+            Collection activityRequirementBindingDefinitions) {
+        if (activityRequirementBindingDefinitions == null)
+            throw new NullPointerException();
 
-		while (iterator.hasNext()) {
-			Object object = iterator.next();
-			Util.assertInstance(
-				object,
-				ActivityRequirementBindingDefinition.class);
-			ActivityRequirementBindingDefinition activityRequirementBindingDefinition =
-				(ActivityRequirementBindingDefinition) object;
-			String parentActivityId =
-				activityRequirementBindingDefinition.getActivityId();
+        Map map = new HashMap();
+        Iterator iterator = activityRequirementBindingDefinitions.iterator();
 
-			if (parentActivityId != null) {
-				Collection activityRequirementBindingDefinitions2 =
-					(Collection) map.get(parentActivityId);
+        while (iterator.hasNext()) {
+            Object object = iterator.next();
+            Util.assertInstance(object,
+                    ActivityRequirementBindingDefinition.class);
+            ActivityRequirementBindingDefinition activityRequirementBindingDefinition = (ActivityRequirementBindingDefinition) object;
+            String parentActivityId = activityRequirementBindingDefinition
+                    .getActivityId();
 
-				if (activityRequirementBindingDefinitions2 == null) {
-					activityRequirementBindingDefinitions2 = new HashSet();
-					map.put(
-						parentActivityId,
-						activityRequirementBindingDefinitions2);
-				}
+            if (parentActivityId != null) {
+                Collection activityRequirementBindingDefinitions2 = (Collection) map
+                        .get(parentActivityId);
 
-				activityRequirementBindingDefinitions2.add(
-					activityRequirementBindingDefinition);
-			}
-		}
+                if (activityRequirementBindingDefinitions2 == null) {
+                    activityRequirementBindingDefinitions2 = new HashSet();
+                    map.put(parentActivityId,
+                            activityRequirementBindingDefinitions2);
+                }
 
-		return map;
-	}
+                activityRequirementBindingDefinitions2
+                        .add(activityRequirementBindingDefinition);
+            }
+        }
 
-	private String requiredActivityId;
-	private transient int hashCode;
-	private transient boolean hashCodeComputed;
-	private String activityId;
-	private String sourceId;
-	private transient String string;
+        return map;
+    }
 
-	public ActivityRequirementBindingDefinition(
-		String requiredActivityId,
-		String activityId,
-		String sourceId) {
-		this.requiredActivityId = requiredActivityId;
-		this.activityId = activityId;
-		this.sourceId = sourceId;
-	}
+    private String requiredActivityId;
 
-	public int compareTo(Object object) {
-		ActivityRequirementBindingDefinition castedObject =
-			(ActivityRequirementBindingDefinition) object;
-		int compareTo =
-			Util.compare(requiredActivityId, castedObject.requiredActivityId);
+    private transient int hashCode;
 
-		if (compareTo == 0) {
-			compareTo =
-				Util.compare(activityId, castedObject.activityId);
+    private transient boolean hashCodeComputed;
 
-			if (compareTo == 0)
-				compareTo = Util.compare(sourceId, castedObject.sourceId);
-		}
+    private String activityId;
 
-		return compareTo;
-	}
+    private String sourceId;
 
-	public boolean equals(Object object) {
-		if (!(object instanceof ActivityRequirementBindingDefinition))
-			return false;
+    private transient String string;
 
-		ActivityRequirementBindingDefinition castedObject =
-			(ActivityRequirementBindingDefinition) object;
-		boolean equals = true;
-		equals &= Util.equals(requiredActivityId, castedObject.requiredActivityId);
-		equals &= Util.equals(activityId, castedObject.activityId);
-		equals &= Util.equals(sourceId, castedObject.sourceId);
-		return equals;
-	}
+    public ActivityRequirementBindingDefinition(String requiredActivityId,
+            String activityId, String sourceId) {
+        this.requiredActivityId = requiredActivityId;
+        this.activityId = activityId;
+        this.sourceId = sourceId;
+    }
 
-	public String getRequiredActivityId() {
-		return requiredActivityId;
-	}
+    public int compareTo(Object object) {
+        ActivityRequirementBindingDefinition castedObject = (ActivityRequirementBindingDefinition) object;
+        int compareTo = Util.compare(requiredActivityId,
+                castedObject.requiredActivityId);
 
-	public String getActivityId() {
-		return activityId;
-	}
+        if (compareTo == 0) {
+            compareTo = Util.compare(activityId, castedObject.activityId);
 
-	public String getSourceId() {
-		return sourceId;
-	}
+            if (compareTo == 0)
+                compareTo = Util.compare(sourceId, castedObject.sourceId);
+        }
 
-	public int hashCode() {
-		if (!hashCodeComputed) {
-			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(requiredActivityId);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityId);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(sourceId);
-			hashCodeComputed = true;
-		}
+        return compareTo;
+    }
 
-		return hashCode;
-	}
+    public boolean equals(Object object) {
+        if (!(object instanceof ActivityRequirementBindingDefinition))
+            return false;
 
-	public String toString() {
-		if (string == null) {
-			final StringBuffer stringBuffer = new StringBuffer();
-			stringBuffer.append('[');
-			stringBuffer.append(requiredActivityId);
-			stringBuffer.append(',');
-			stringBuffer.append(activityId);
-			stringBuffer.append(',');
-			stringBuffer.append(sourceId);
-			stringBuffer.append(']');
-			string = stringBuffer.toString();
-		}
+        ActivityRequirementBindingDefinition castedObject = (ActivityRequirementBindingDefinition) object;
+        boolean equals = true;
+        equals &= Util.equals(requiredActivityId,
+                castedObject.requiredActivityId);
+        equals &= Util.equals(activityId, castedObject.activityId);
+        equals &= Util.equals(sourceId, castedObject.sourceId);
+        return equals;
+    }
 
-		return string;
-	}
+    public String getRequiredActivityId() {
+        return requiredActivityId;
+    }
+
+    public String getActivityId() {
+        return activityId;
+    }
+
+    public String getSourceId() {
+        return sourceId;
+    }
+
+    public int hashCode() {
+        if (!hashCodeComputed) {
+            hashCode = HASH_INITIAL;
+            hashCode = hashCode * HASH_FACTOR
+                    + Util.hashCode(requiredActivityId);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(activityId);
+            hashCode = hashCode * HASH_FACTOR + Util.hashCode(sourceId);
+            hashCodeComputed = true;
+        }
+
+        return hashCode;
+    }
+
+    public String toString() {
+        if (string == null) {
+            final StringBuffer stringBuffer = new StringBuffer();
+            stringBuffer.append('[');
+            stringBuffer.append(requiredActivityId);
+            stringBuffer.append(',');
+            stringBuffer.append(activityId);
+            stringBuffer.append(',');
+            stringBuffer.append(sourceId);
+            stringBuffer.append(']');
+            string = stringBuffer.toString();
+        }
+
+        return string;
+    }
 }

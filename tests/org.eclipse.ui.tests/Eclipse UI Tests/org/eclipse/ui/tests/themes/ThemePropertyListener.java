@@ -16,14 +16,13 @@ import java.util.List;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
-
 /**
  * @since 3.0
  */
 public class ThemePropertyListener implements IPropertyChangeListener {
-    
+
     private ArrayList events = new ArrayList();
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
      */

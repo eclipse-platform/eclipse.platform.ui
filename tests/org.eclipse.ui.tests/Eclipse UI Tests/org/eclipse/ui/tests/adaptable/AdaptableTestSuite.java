@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.adaptable;
 
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -19,23 +18,21 @@ import junit.framework.TestSuite;
  * adaptable support in the UI.
  */
 public class AdaptableTestSuite extends TestSuite {
-	
-	/**
-	 * Returns the suite.  This is required to
-	 * use the JUnit Launcher.
-	 */
-	public static Test suite() {
-		return new AdaptableTestSuite();
-	}
 
-	/**
-	 * Constructor for AdaptableTestSuite.
-	 */
-	public AdaptableTestSuite() {
-		addTest(new TestSuite(AdaptableDecoratorTestCase.class));
-		addTest(new TestSuite(MarkerImageProviderTest.class));
-	}
+    /**
+     * Returns the suite.  This is required to
+     * use the JUnit Launcher.
+     */
+    public static Test suite() {
+        return new AdaptableTestSuite();
+    }
 
-	
+    /**
+     * Constructor for AdaptableTestSuite.
+     */
+    public AdaptableTestSuite() {
+        addTest(new TestSuite(AdaptableDecoratorTestCase.class));
+        addTest(new TestSuite(MarkerImageProviderTest.class));
+    }
 
 }

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.action;
 
-
 /**
  * A group marker is a special kind of contribution item denoting
  * the beginning of a group. These groups are used to structure
@@ -23,21 +22,22 @@ package org.eclipse.jface.action;
  * </p>
  */
 public class GroupMarker extends AbstractGroupMarker {
-/**
- * Create a new group marker with the given name.
- * The group name must not be <code>null</code> or the empty string.
- * The group name is also used as the item id.
- * 
- * @param groupName the name of the group
- */
-public GroupMarker(String groupName) {
-	super(groupName);
-}
-/**
- * The <code>GroupMarker</code> implementation of this method
- * returns <code>false</code> since group markers are always invisible.
- */
-public boolean isVisible() {
-	return false;
-}
+    /**
+     * Create a new group marker with the given name.
+     * The group name must not be <code>null</code> or the empty string.
+     * The group name is also used as the item id.
+     * 
+     * @param groupName the name of the group
+     */
+    public GroupMarker(String groupName) {
+        super(groupName);
+    }
+
+    /**
+     * The <code>GroupMarker</code> implementation of this method
+     * returns <code>false</code> since group markers are always invisible.
+     */
+    public boolean isVisible() {
+        return false;
+    }
 }

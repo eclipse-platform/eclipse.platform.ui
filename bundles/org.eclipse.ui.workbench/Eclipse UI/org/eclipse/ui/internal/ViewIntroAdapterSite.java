@@ -27,89 +27,89 @@ import org.eclipse.ui.intro.IIntroSite;
  * @since 3.0
  */
 final class ViewIntroAdapterSite implements IIntroSite {
-	private IntroDescriptor descriptor;
+    private IntroDescriptor descriptor;
 
-	private IViewSite viewSite;
-	
-	public ViewIntroAdapterSite(IViewSite viewSite, IntroDescriptor descriptor) {
-		this.viewSite = viewSite;
-		this.descriptor = descriptor;
-	}
+    private IViewSite viewSite;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.intro.IIntroSite#getActionBars()
-	 */
-	public IActionBars getActionBars() {
-		return viewSite.getActionBars();
-	}
+    public ViewIntroAdapterSite(IViewSite viewSite, IntroDescriptor descriptor) {
+        this.viewSite = viewSite;
+        this.descriptor = descriptor;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
-	public Object getAdapter(Class adapter) {
-		return viewSite.getAdapter(adapter);
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.intro.IIntroSite#getActionBars()
+     */
+    public IActionBars getActionBars() {
+        return viewSite.getActionBars();
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPartSite#getId()
-	 */
-	public String getId() {
-		return descriptor.getId();
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+     */
+    public Object getAdapter(Class adapter) {
+        return viewSite.getAdapter(adapter);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPartSite#getKeyBindingService()
-	 */
-	public IKeyBindingService getKeyBindingService() {
-		return viewSite.getKeyBindingService();
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkbenchPartSite#getId()
+     */
+    public String getId() {
+        return descriptor.getId();
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchSite#getPage()
-	 */
-	public IWorkbenchPage getPage() {
-		return viewSite.getPage();
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkbenchPartSite#getKeyBindingService()
+     */
+    public IKeyBindingService getKeyBindingService() {
+        return viewSite.getKeyBindingService();
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPartSite#getPluginId()
-	 */
-	public String getPluginId() {
-		return descriptor.getPluginId();
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkbenchSite#getPage()
+     */
+    public IWorkbenchPage getPage() {
+        return viewSite.getPage();
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchSite#getSelectionProvider()
-	 */
-	public ISelectionProvider getSelectionProvider() {
-		return viewSite.getSelectionProvider();
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkbenchPartSite#getPluginId()
+     */
+    public String getPluginId() {
+        return descriptor.getPluginId();
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchSite#getShell()
-	 */
-	public Shell getShell() {
-		return viewSite.getShell();
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkbenchSite#getSelectionProvider()
+     */
+    public ISelectionProvider getSelectionProvider() {
+        return viewSite.getSelectionProvider();
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchSite#getWorkbenchWindow()
-	 */
-	public IWorkbenchWindow getWorkbenchWindow() {
-		return viewSite.getWorkbenchWindow();
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkbenchSite#getShell()
+     */
+    public Shell getShell() {
+        return viewSite.getShell();
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchSite#setSelectionProvider(org.eclipse.jface.viewers.ISelectionProvider)
-	 */
-	public void setSelectionProvider(ISelectionProvider provider) {
-		viewSite.setSelectionProvider(provider);
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkbenchSite#getWorkbenchWindow()
+     */
+    public IWorkbenchWindow getWorkbenchWindow() {
+        return viewSite.getWorkbenchWindow();
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	public String toString() {
-		return viewSite.toString();
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkbenchSite#setSelectionProvider(org.eclipse.jface.viewers.ISelectionProvider)
+     */
+    public void setSelectionProvider(ISelectionProvider provider) {
+        viewSite.setSelectionProvider(provider);
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    public String toString() {
+        return viewSite.toString();
+    }
 }

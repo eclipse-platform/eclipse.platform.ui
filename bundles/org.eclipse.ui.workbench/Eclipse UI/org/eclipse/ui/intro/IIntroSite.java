@@ -35,7 +35,7 @@ public interface IIntroSite extends IWorkbenchSite {
      * @return the registry extension id
      */
     public String getId();
-    
+
     /**
      * Returns the unique identifier of the plug-in that defines this intro
      * site's part.
@@ -44,7 +44,7 @@ public interface IIntroSite extends IWorkbenchSite {
      * @see org.eclipse.core.runtime.IPluginDescriptor#getUniqueIdentifier()
      */
     public String getPluginId();
-    
+
     /**
      * Returns the key binding service in use.
      * <p>
@@ -54,13 +54,13 @@ public interface IIntroSite extends IWorkbenchSite {
      * 
      * @return the key binding service in use
      */
-    public IKeyBindingService getKeyBindingService();    
-	
+    public IKeyBindingService getKeyBindingService();
+
     /**
-	 * Returns the action bars for this part site.
-	 * The intro part has exclusive use of its site's action bars.
-	 * 
-	 * @return the action bars
-	 */
-	public IActionBars getActionBars();
+     * Returns the action bars for this part site.
+     * The intro part has exclusive use of its site's action bars.
+     * 
+     * @return the action bars
+     */
+    public IActionBars getActionBars();
 }

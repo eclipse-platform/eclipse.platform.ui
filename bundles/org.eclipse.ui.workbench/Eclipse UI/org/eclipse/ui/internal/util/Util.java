@@ -28,7 +28,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 public final class Util {
-	
+
     public final static SortedMap EMPTY_SORTED_MAP = Collections
             .unmodifiableSortedMap(new TreeMap());
 
@@ -37,34 +37,36 @@ public final class Util {
 
     public final static String ZERO_LENGTH_STRING = ""; //$NON-NLS-1$
 
-	/**
-	 * Ensures that a string is not null. Converts null strings into empty
-	 * strings, and leaves any other string unmodified. Use this to help
-	 * wrap calls to methods that return null instead of the empty string.
-	 * Can also help protect against implementation errors in methods that
-	 * are not supposed to return null. 
-	 * 
-	 * @param input input string (may be null)
-	 * @return input if not null, or the empty string if input is null
-	 */
-	public static String safeString(String input) {
-		if (input != null) {
-			return input;
-		}
-		
-		return ZERO_LENGTH_STRING;
-	}
-    
+    /**
+     * Ensures that a string is not null. Converts null strings into empty
+     * strings, and leaves any other string unmodified. Use this to help
+     * wrap calls to methods that return null instead of the empty string.
+     * Can also help protect against implementation errors in methods that
+     * are not supposed to return null. 
+     * 
+     * @param input input string (may be null)
+     * @return input if not null, or the empty string if input is null
+     */
+    public static String safeString(String input) {
+        if (input != null) {
+            return input;
+        }
+
+        return ZERO_LENGTH_STRING;
+    }
+
     public static void assertInstance(Object object, Class c) {
         assertInstance(object, c, false);
     }
 
     public static void assertInstance(Object object, Class c, boolean allowNull) {
-        if (object == null && allowNull) return;
+        if (object == null && allowNull)
+            return;
 
         if (object == null || c == null)
             throw new NullPointerException();
-        else if (!c.isInstance(object)) throw new IllegalArgumentException();
+        else if (!c.isInstance(object))
+            throw new IllegalArgumentException();
     }
 
     public static int compare(boolean left, boolean right) {
@@ -99,7 +101,8 @@ public final class Util {
                 for (int i = 0; i < l; i++) {
                     int compareTo = compare(left[i], right[i]);
 
-                    if (compareTo != 0) return compareTo;
+                    if (compareTo != 0)
+                        return compareTo;
                 }
 
                 return 0;
@@ -129,7 +132,8 @@ public final class Util {
                     int compareTo = compare((Comparable) left.get(i),
                             (Comparable) right.get(i));
 
-                    if (compareTo != 0) return compareTo;
+                    if (compareTo != 0)
+                        return compareTo;
                 }
 
                 return 0;
@@ -178,7 +182,7 @@ public final class Util {
             Set rightOnly) {
         if (left == null || right == null || leftOnly == null
                 || different == null || rightOnly == null)
-                throw new NullPointerException();
+            throw new NullPointerException();
 
         Iterator iterator = left.keySet().iterator();
 
@@ -188,7 +192,7 @@ public final class Util {
             if (!right.containsKey(key))
                 leftOnly.add(key);
             else if (!Util.equals(left.get(key), right.get(key)))
-                    different.add(key);
+                different.add(key);
         }
 
         iterator = right.keySet().iterator();
@@ -196,20 +200,23 @@ public final class Util {
         while (iterator.hasNext()) {
             Object key = iterator.next();
 
-            if (!left.containsKey(key)) rightOnly.add(key);
+            if (!left.containsKey(key))
+                rightOnly.add(key);
         }
     }
 
     public static void diff(Set left, Set right, Set leftOnly, Set rightOnly) {
         if (left == null || right == null || leftOnly == null
-                || rightOnly == null) throw new NullPointerException();
+                || rightOnly == null)
+            throw new NullPointerException();
 
         Iterator iterator = left.iterator();
 
         while (iterator.hasNext()) {
             Object object = iterator.next();
 
-            if (!right.contains(object)) leftOnly.add(object);
+            if (!right.contains(object))
+                leftOnly.add(object);
         }
 
         iterator = right.iterator();
@@ -217,7 +224,8 @@ public final class Util {
         while (iterator.hasNext()) {
             Object object = iterator.next();
 
-            if (!left.contains(object)) rightOnly.add(object);
+            if (!left.contains(object))
+                rightOnly.add(object);
         }
     }
 
@@ -228,11 +236,12 @@ public final class Util {
             int l = left.size();
             int r = right.size();
 
-            if (r > l || !equals && r == l) return false;
+            if (r > l || !equals && r == l)
+                return false;
 
             for (int i = 0; i < r; i++)
                 if (!equals(left.get(l - i - 1), right.get(r - i - 1)))
-                        return false;
+                    return false;
 
             return true;
         }
@@ -245,10 +254,12 @@ public final class Util {
             int l = left.length;
             int r = right.length;
 
-            if (r > l || !equals && r == l) return false;
+            if (r > l || !equals && r == l)
+                return false;
 
             for (int i = 0; i < r; i++)
-                if (!equals(left[l - i - 1], right[r - i - 1])) return false;
+                if (!equals(left[l - i - 1], right[r - i - 1]))
+                    return false;
 
             return true;
         }
@@ -285,9 +296,11 @@ public final class Util {
 
     public static Collection safeCopy(Collection collection, Class c,
             boolean allowNullElements) {
-        if (collection == null || c == null) throw new NullPointerException();
+        if (collection == null || c == null)
+            throw new NullPointerException();
 
-        collection = Collections.unmodifiableCollection(new ArrayList(collection));
+        collection = Collections.unmodifiableCollection(new ArrayList(
+                collection));
         Iterator iterator = collection.iterator();
 
         while (iterator.hasNext())
@@ -301,7 +314,8 @@ public final class Util {
     }
 
     public static List safeCopy(List list, Class c, boolean allowNullElements) {
-        if (list == null || c == null) throw new NullPointerException();
+        if (list == null || c == null)
+            throw new NullPointerException();
 
         list = Collections.unmodifiableList(new ArrayList(list));
         Iterator iterator = list.iterator();
@@ -319,7 +333,7 @@ public final class Util {
     public static Map safeCopy(Map map, Class keyClass, Class valueClass,
             boolean allowNullKeys, boolean allowNullValues) {
         if (map == null || keyClass == null || valueClass == null)
-                throw new NullPointerException();
+            throw new NullPointerException();
 
         map = Collections.unmodifiableMap(new HashMap(map));
         Iterator iterator = map.entrySet().iterator();
@@ -338,7 +352,8 @@ public final class Util {
     }
 
     public static Set safeCopy(Set set, Class c, boolean allowNullElements) {
-        if (set == null || c == null) throw new NullPointerException();
+        if (set == null || c == null)
+            throw new NullPointerException();
 
         set = Collections.unmodifiableSet(new HashSet(set));
         Iterator iterator = set.iterator();
@@ -357,7 +372,7 @@ public final class Util {
     public static SortedMap safeCopy(SortedMap sortedMap, Class keyClass,
             Class valueClass, boolean allowNullKeys, boolean allowNullValues) {
         if (sortedMap == null || keyClass == null || valueClass == null)
-                throw new NullPointerException();
+            throw new NullPointerException();
 
         sortedMap = Collections.unmodifiableSortedMap(new TreeMap(sortedMap));
         Iterator iterator = sortedMap.entrySet().iterator();
@@ -377,7 +392,8 @@ public final class Util {
 
     public static SortedSet safeCopy(SortedSet sortedSet, Class c,
             boolean allowNullElements) {
-        if (sortedSet == null || c == null) throw new NullPointerException();
+        if (sortedSet == null || c == null)
+            throw new NullPointerException();
 
         sortedSet = Collections.unmodifiableSortedSet(new TreeSet(sortedSet));
         Iterator iterator = sortedSet.iterator();
@@ -395,10 +411,12 @@ public final class Util {
             int l = left.size();
             int r = right.size();
 
-            if (r > l || !equals && r == l) return false;
+            if (r > l || !equals && r == l)
+                return false;
 
             for (int i = 0; i < r; i++)
-                if (!equals(left.get(i), right.get(i))) return false;
+                if (!equals(left.get(i), right.get(i)))
+                    return false;
 
             return true;
         }
@@ -412,10 +430,12 @@ public final class Util {
             int l = left.length;
             int r = right.length;
 
-            if (r > l || !equals && r == l) return false;
+            if (r > l || !equals && r == l)
+                return false;
 
             for (int i = 0; i < r; i++)
-                if (!equals(left[i], right[i])) return false;
+                if (!equals(left[i], right[i]))
+                    return false;
 
             return true;
         }
@@ -429,16 +449,15 @@ public final class Util {
     public static String translateString(ResourceBundle resourceBundle,
             String key, String string, boolean signal, boolean trim) {
         if (resourceBundle != null && key != null)
-                try {
-                    final String translatedString = resourceBundle
-                            .getString(key);
+            try {
+                final String translatedString = resourceBundle.getString(key);
 
-                    if (translatedString != null)
-                            return trim ? translatedString.trim()
-                                    : translatedString;
-                } catch (MissingResourceException eMissingResource) {
-                    if (signal) System.err.println(eMissingResource);
-                }
+                if (translatedString != null)
+                    return trim ? translatedString.trim() : translatedString;
+            } catch (MissingResourceException eMissingResource) {
+                if (signal)
+                    System.err.println(eMissingResource);
+            }
 
         return trim ? string.trim() : string;
     }

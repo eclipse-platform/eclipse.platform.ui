@@ -25,217 +25,224 @@ import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.ui.internal.util.ConfigurationElementMemento;
 
 final class ExtensionActivityRegistry extends AbstractActivityRegistry {
-	private List activityRequirementBindingDefinitions;
-	private List activityDefinitions;
-	private List activityPatternBindingDefinitions;
-	private List categoryActivityBindingDefinitions;
-	private List categoryDefinitions;
-	private List defaultEnabledActivities;
-	private IExtensionRegistry extensionRegistry;
+    private List activityRequirementBindingDefinitions;
 
-	ExtensionActivityRegistry(IExtensionRegistry extensionRegistry) {
-		if (extensionRegistry == null)
-			throw new NullPointerException();
+    private List activityDefinitions;
 
-		this.extensionRegistry = extensionRegistry;
+    private List activityPatternBindingDefinitions;
 
-		this
-			.extensionRegistry
-			.addRegistryChangeListener(new IRegistryChangeListener() {
-			public void registryChanged(IRegistryChangeEvent registryChangeEvent) {
-				IExtensionDelta[] extensionDeltas =
-					registryChangeEvent.getExtensionDeltas(
-						Persistence.PACKAGE_PREFIX,
-						Persistence.PACKAGE_BASE);
+    private List categoryActivityBindingDefinitions;
 
-				if (extensionDeltas.length != 0)
-					try {
-						load();
-					} catch (IOException eIO) {
-					}
-			}
-		});
+    private List categoryDefinitions;
 
-		try {
-			load();
-		} catch (IOException eIO) {
-		}
-	}
+    private List defaultEnabledActivities;
 
-	private String getNamespace(IConfigurationElement configurationElement) {
-		String namespace = null;
+    private IExtensionRegistry extensionRegistry;
 
-		if (configurationElement != null) {
-			IExtension extension = configurationElement.getDeclaringExtension();
+    ExtensionActivityRegistry(IExtensionRegistry extensionRegistry) {
+        if (extensionRegistry == null)
+            throw new NullPointerException();
 
-			if (extension != null)
-				namespace = extension.getNamespace();
-		}
+        this.extensionRegistry = extensionRegistry;
 
-		return namespace;
-	}
+        this.extensionRegistry
+                .addRegistryChangeListener(new IRegistryChangeListener() {
+                    public void registryChanged(
+                            IRegistryChangeEvent registryChangeEvent) {
+                        IExtensionDelta[] extensionDeltas = registryChangeEvent
+                                .getExtensionDeltas(Persistence.PACKAGE_PREFIX,
+                                        Persistence.PACKAGE_BASE);
 
-	private void load() throws IOException {
-		if (activityRequirementBindingDefinitions == null)
-			activityRequirementBindingDefinitions = new ArrayList();
-		else
-			activityRequirementBindingDefinitions.clear();
+                        if (extensionDeltas.length != 0)
+                            try {
+                                load();
+                            } catch (IOException eIO) {
+                            }
+                    }
+                });
 
-		if (activityDefinitions == null)
-			activityDefinitions = new ArrayList();
-		else
-			activityDefinitions.clear();
-
-		if (activityPatternBindingDefinitions == null)
-			activityPatternBindingDefinitions = new ArrayList();
-		else
-			activityPatternBindingDefinitions.clear();
-
-		if (categoryActivityBindingDefinitions == null)
-			categoryActivityBindingDefinitions = new ArrayList();
-		else
-			categoryActivityBindingDefinitions.clear();
-
-		if (categoryDefinitions == null)
-			categoryDefinitions = new ArrayList();
-		else
-			categoryDefinitions.clear();
-		
-		if (defaultEnabledActivities == null)
-		    defaultEnabledActivities = new ArrayList();
-		else
-		    defaultEnabledActivities.clear();
-
-		IConfigurationElement[] configurationElements =
-			extensionRegistry.getConfigurationElementsFor(
-				Persistence.PACKAGE_FULL);
-
-		for (int i = 0; i < configurationElements.length; i++) {
-			IConfigurationElement configurationElement =
-				configurationElements[i];
-			String name = configurationElement.getName();
-
-			if (Persistence.TAG_ACTIVITY_REQUIREMENT_BINDING.equals(name))
-				readActivityRequirementBindingDefinition(configurationElement);
-			else if (Persistence.TAG_ACTIVITY.equals(name))
-				readActivityDefinition(configurationElement);
-			else if (Persistence.TAG_ACTIVITY_PATTERN_BINDING.equals(name))
-				readActivityPatternBindingDefinition(configurationElement);
-			else if (Persistence.TAG_CATEGORY_ACTIVITY_BINDING.equals(name))
-				readCategoryActivityBindingDefinition(configurationElement);
-			else if (Persistence.TAG_CATEGORY.equals(name))
-				readCategoryDefinition(configurationElement);
-			else if (Persistence.TAG_DEFAULT_ENABLEMENT.equals(name)) 
-			    readDefaultEnablement(configurationElement);
-		}
-
-		boolean activityRegistryChanged = false;
-
-		if (!activityRequirementBindingDefinitions
-			.equals(super.activityRequirementBindingDefinitions)) {
-			super.activityRequirementBindingDefinitions =
-				Collections.unmodifiableList(
-					activityRequirementBindingDefinitions);
-			activityRegistryChanged = true;
-		}
-
-		if (!activityDefinitions.equals(super.activityDefinitions)) {
-			super.activityDefinitions =
-				Collections.unmodifiableList(activityDefinitions);
-			activityRegistryChanged = true;
-		}
-
-		if (!activityPatternBindingDefinitions
-			.equals(super.activityPatternBindingDefinitions)) {
-			super.activityPatternBindingDefinitions =
-				Collections.unmodifiableList(activityPatternBindingDefinitions);
-			activityRegistryChanged = true;
-		}
-
-		if (!categoryActivityBindingDefinitions
-			.equals(super.categoryActivityBindingDefinitions)) {
-			super.categoryActivityBindingDefinitions =
-				Collections.unmodifiableList(
-					categoryActivityBindingDefinitions);
-			activityRegistryChanged = true;
-		}
-
-		if (!categoryDefinitions.equals(super.categoryDefinitions)) {
-			super.categoryDefinitions =
-				Collections.unmodifiableList(categoryDefinitions);
-			activityRegistryChanged = true;
-		}
-		
-		if (!defaultEnabledActivities.equals(super.defaultEnabledActivities)) {
-			super.defaultEnabledActivities =
-				Collections.unmodifiableList(defaultEnabledActivities);
-			activityRegistryChanged = true;
-		}		
-
-		if (activityRegistryChanged)
-			fireActivityRegistryChanged();
-	}
-
-    private void readDefaultEnablement(IConfigurationElement configurationElement) {
-		String enabledActivity =
-			Persistence.readDefaultEnablement(
-				new ConfigurationElementMemento(configurationElement));
-
-		if (enabledActivity != null)
-			defaultEnabledActivities.add(enabledActivity);
-        
+        try {
+            load();
+        } catch (IOException eIO) {
+        }
     }
 
-    private void readActivityRequirementBindingDefinition(IConfigurationElement configurationElement) {
-		ActivityRequirementBindingDefinition activityRequirementBindingDefinition =
-			Persistence.readActivityRequirementBindingDefinition(
-				new ConfigurationElementMemento(configurationElement),
-				getNamespace(configurationElement));
+    private String getNamespace(IConfigurationElement configurationElement) {
+        String namespace = null;
 
-		if (activityRequirementBindingDefinition != null)
-			activityRequirementBindingDefinitions.add(
-				activityRequirementBindingDefinition);
-	}
+        if (configurationElement != null) {
+            IExtension extension = configurationElement.getDeclaringExtension();
 
-	private void readActivityDefinition(IConfigurationElement configurationElement) {
-		ActivityDefinition activityDefinition =
-			Persistence.readActivityDefinition(
-				new ConfigurationElementMemento(configurationElement),
-				getNamespace(configurationElement));
+            if (extension != null)
+                namespace = extension.getNamespace();
+        }
 
-		if (activityDefinition != null)
-			activityDefinitions.add(activityDefinition);
-	}
+        return namespace;
+    }
 
-	private void readActivityPatternBindingDefinition(IConfigurationElement configurationElement) {
-		ActivityPatternBindingDefinition activityPatternBindingDefinition =
-			Persistence.readActivityPatternBindingDefinition(
-				new ConfigurationElementMemento(configurationElement),
-				getNamespace(configurationElement));
+    private void load() throws IOException {
+        if (activityRequirementBindingDefinitions == null)
+            activityRequirementBindingDefinitions = new ArrayList();
+        else
+            activityRequirementBindingDefinitions.clear();
 
-		if (activityPatternBindingDefinition != null)
-			activityPatternBindingDefinitions.add(
-				activityPatternBindingDefinition);
-	}
+        if (activityDefinitions == null)
+            activityDefinitions = new ArrayList();
+        else
+            activityDefinitions.clear();
 
-	private void readCategoryActivityBindingDefinition(IConfigurationElement configurationElement) {
-		CategoryActivityBindingDefinition categoryActivityBindingDefinition =
-			Persistence.readCategoryActivityBindingDefinition(
-				new ConfigurationElementMemento(configurationElement),
-				getNamespace(configurationElement));
+        if (activityPatternBindingDefinitions == null)
+            activityPatternBindingDefinitions = new ArrayList();
+        else
+            activityPatternBindingDefinitions.clear();
 
-		if (categoryActivityBindingDefinition != null)
-			categoryActivityBindingDefinitions.add(
-				categoryActivityBindingDefinition);
-	}
+        if (categoryActivityBindingDefinitions == null)
+            categoryActivityBindingDefinitions = new ArrayList();
+        else
+            categoryActivityBindingDefinitions.clear();
 
-	private void readCategoryDefinition(IConfigurationElement configurationElement) {
-		CategoryDefinition categoryDefinition =
-			Persistence.readCategoryDefinition(
-				new ConfigurationElementMemento(configurationElement),
-				getNamespace(configurationElement));
+        if (categoryDefinitions == null)
+            categoryDefinitions = new ArrayList();
+        else
+            categoryDefinitions.clear();
 
-		if (categoryDefinition != null)
-			categoryDefinitions.add(categoryDefinition);
-	}
+        if (defaultEnabledActivities == null)
+            defaultEnabledActivities = new ArrayList();
+        else
+            defaultEnabledActivities.clear();
+
+        IConfigurationElement[] configurationElements = extensionRegistry
+                .getConfigurationElementsFor(Persistence.PACKAGE_FULL);
+
+        for (int i = 0; i < configurationElements.length; i++) {
+            IConfigurationElement configurationElement = configurationElements[i];
+            String name = configurationElement.getName();
+
+            if (Persistence.TAG_ACTIVITY_REQUIREMENT_BINDING.equals(name))
+                readActivityRequirementBindingDefinition(configurationElement);
+            else if (Persistence.TAG_ACTIVITY.equals(name))
+                readActivityDefinition(configurationElement);
+            else if (Persistence.TAG_ACTIVITY_PATTERN_BINDING.equals(name))
+                readActivityPatternBindingDefinition(configurationElement);
+            else if (Persistence.TAG_CATEGORY_ACTIVITY_BINDING.equals(name))
+                readCategoryActivityBindingDefinition(configurationElement);
+            else if (Persistence.TAG_CATEGORY.equals(name))
+                readCategoryDefinition(configurationElement);
+            else if (Persistence.TAG_DEFAULT_ENABLEMENT.equals(name))
+                readDefaultEnablement(configurationElement);
+        }
+
+        boolean activityRegistryChanged = false;
+
+        if (!activityRequirementBindingDefinitions
+                .equals(super.activityRequirementBindingDefinitions)) {
+            super.activityRequirementBindingDefinitions = Collections
+                    .unmodifiableList(activityRequirementBindingDefinitions);
+            activityRegistryChanged = true;
+        }
+
+        if (!activityDefinitions.equals(super.activityDefinitions)) {
+            super.activityDefinitions = Collections
+                    .unmodifiableList(activityDefinitions);
+            activityRegistryChanged = true;
+        }
+
+        if (!activityPatternBindingDefinitions
+                .equals(super.activityPatternBindingDefinitions)) {
+            super.activityPatternBindingDefinitions = Collections
+                    .unmodifiableList(activityPatternBindingDefinitions);
+            activityRegistryChanged = true;
+        }
+
+        if (!categoryActivityBindingDefinitions
+                .equals(super.categoryActivityBindingDefinitions)) {
+            super.categoryActivityBindingDefinitions = Collections
+                    .unmodifiableList(categoryActivityBindingDefinitions);
+            activityRegistryChanged = true;
+        }
+
+        if (!categoryDefinitions.equals(super.categoryDefinitions)) {
+            super.categoryDefinitions = Collections
+                    .unmodifiableList(categoryDefinitions);
+            activityRegistryChanged = true;
+        }
+
+        if (!defaultEnabledActivities.equals(super.defaultEnabledActivities)) {
+            super.defaultEnabledActivities = Collections
+                    .unmodifiableList(defaultEnabledActivities);
+            activityRegistryChanged = true;
+        }
+
+        if (activityRegistryChanged)
+            fireActivityRegistryChanged();
+    }
+
+    private void readDefaultEnablement(
+            IConfigurationElement configurationElement) {
+        String enabledActivity = Persistence
+                .readDefaultEnablement(new ConfigurationElementMemento(
+                        configurationElement));
+
+        if (enabledActivity != null)
+            defaultEnabledActivities.add(enabledActivity);
+
+    }
+
+    private void readActivityRequirementBindingDefinition(
+            IConfigurationElement configurationElement) {
+        ActivityRequirementBindingDefinition activityRequirementBindingDefinition = Persistence
+                .readActivityRequirementBindingDefinition(
+                        new ConfigurationElementMemento(configurationElement),
+                        getNamespace(configurationElement));
+
+        if (activityRequirementBindingDefinition != null)
+            activityRequirementBindingDefinitions
+                    .add(activityRequirementBindingDefinition);
+    }
+
+    private void readActivityDefinition(
+            IConfigurationElement configurationElement) {
+        ActivityDefinition activityDefinition = Persistence
+                .readActivityDefinition(new ConfigurationElementMemento(
+                        configurationElement),
+                        getNamespace(configurationElement));
+
+        if (activityDefinition != null)
+            activityDefinitions.add(activityDefinition);
+    }
+
+    private void readActivityPatternBindingDefinition(
+            IConfigurationElement configurationElement) {
+        ActivityPatternBindingDefinition activityPatternBindingDefinition = Persistence
+                .readActivityPatternBindingDefinition(
+                        new ConfigurationElementMemento(configurationElement),
+                        getNamespace(configurationElement));
+
+        if (activityPatternBindingDefinition != null)
+            activityPatternBindingDefinitions
+                    .add(activityPatternBindingDefinition);
+    }
+
+    private void readCategoryActivityBindingDefinition(
+            IConfigurationElement configurationElement) {
+        CategoryActivityBindingDefinition categoryActivityBindingDefinition = Persistence
+                .readCategoryActivityBindingDefinition(
+                        new ConfigurationElementMemento(configurationElement),
+                        getNamespace(configurationElement));
+
+        if (categoryActivityBindingDefinition != null)
+            categoryActivityBindingDefinitions
+                    .add(categoryActivityBindingDefinition);
+    }
+
+    private void readCategoryDefinition(
+            IConfigurationElement configurationElement) {
+        CategoryDefinition categoryDefinition = Persistence
+                .readCategoryDefinition(new ConfigurationElementMemento(
+                        configurationElement),
+                        getNamespace(configurationElement));
+
+        if (categoryDefinition != null)
+            categoryDefinitions.add(categoryDefinition);
+    }
 }

@@ -27,95 +27,100 @@ import org.eclipse.ui.activities.IWorkbenchActivitySupport;
  */
 class ActivityPersistanceHelper {
 
-	/**
-	 * Prefix for all activity preferences
-	 */
-	private static String PREFIX = "UIActivities."; //$NON-NLS-1$    
+    /**
+     * Prefix for all activity preferences
+     */
+    private static String PREFIX = "UIActivities."; //$NON-NLS-1$    
 
-	/**
-	 * Singleton instance.
-	 */
-	private static ActivityPersistanceHelper singleton;
+    /**
+     * Singleton instance.
+     */
+    private static ActivityPersistanceHelper singleton;
 
-	/**
-	 * Get the singleton instance of this class.
-	 * 
-	 * @return the singleton instance of this class.
-	 */
-	public static ActivityPersistanceHelper getInstance() {
-		if (singleton == null) {
-			singleton = new ActivityPersistanceHelper();
-		}
-		return singleton;
-	}
+    /**
+     * Get the singleton instance of this class.
+     * 
+     * @return the singleton instance of this class.
+     */
+    public static ActivityPersistanceHelper getInstance() {
+        if (singleton == null) {
+            singleton = new ActivityPersistanceHelper();
+        }
+        return singleton;
+    }
 
-	/**
-	 * Create a new <code>ActivityPersistanceHelper</code> which will restore
-	 * previously enabled activity states.
-	 */
-	private ActivityPersistanceHelper() {
-		loadEnabledStates();
-	}
+    /**
+     * Create a new <code>ActivityPersistanceHelper</code> which will restore
+     * previously enabled activity states.
+     */
+    private ActivityPersistanceHelper() {
+        loadEnabledStates();
+    }
 
-	/**
-	 * Create the preference key for the activity.
-	 * 
-	 * @param activityId the activity id.
-	 * @return String a preference key representing the activity.
-	 */
-	private String createPreferenceKey(String activityId) {
-		return PREFIX + activityId;
-	}
+    /**
+     * Create the preference key for the activity.
+     * 
+     * @param activityId the activity id.
+     * @return String a preference key representing the activity.
+     */
+    private String createPreferenceKey(String activityId) {
+        return PREFIX + activityId;
+    }
 
-	/**
-	 * Loads the enabled states from the preference store.
-	 */
-	void loadEnabledStates() {
-		IPreferenceStore store =
-			WorkbenchPlugin.getDefault().getPreferenceStore();
+    /**
+     * Loads the enabled states from the preference store.
+     */
+    void loadEnabledStates() {
+        IPreferenceStore store = WorkbenchPlugin.getDefault()
+                .getPreferenceStore();
 
-		IWorkbenchActivitySupport support = PlatformUI.getWorkbench().getActivitySupport();
+        IWorkbenchActivitySupport support = PlatformUI.getWorkbench()
+                .getActivitySupport();
 
-		IActivityManager activityManager = support.getActivityManager();
-		
-		for (Iterator i = activityManager.getEnabledActivityIds().iterator(); i.hasNext(); ) { // default enabled IDs		    
-		    store.setDefault(createPreferenceKey((String) i.next()), true);
-		}
+        IActivityManager activityManager = support.getActivityManager();
 
-		Set enabledActivities = new HashSet();			
-		for (Iterator i = activityManager.getDefinedActivityIds().iterator(); i.hasNext(); ) {
-		    String activityId = (String) i.next();
+        for (Iterator i = activityManager.getEnabledActivityIds().iterator(); i
+                .hasNext();) { // default enabled IDs		    
+            store.setDefault(createPreferenceKey((String) i.next()), true);
+        }
 
-		    if (store.getBoolean(createPreferenceKey(activityId)))
-				enabledActivities.add(activityId);
-		}
+        Set enabledActivities = new HashSet();
+        for (Iterator i = activityManager.getDefinedActivityIds().iterator(); i
+                .hasNext();) {
+            String activityId = (String) i.next();
 
-		support.setEnabledActivityIds(enabledActivities);
-	}
+            if (store.getBoolean(createPreferenceKey(activityId)))
+                enabledActivities.add(activityId);
+        }
 
-	/**
-	 * Save the enabled states in the preference store.
-	 */
-	private void saveEnabledStates() {
-		IPreferenceStore store =
-			WorkbenchPlugin.getDefault().getPreferenceStore();
+        support.setEnabledActivityIds(enabledActivities);
+    }
 
-		IWorkbenchActivitySupport support = PlatformUI.getWorkbench().getActivitySupport();
-		IActivityManager activityManager = support.getActivityManager();
-		Iterator values = activityManager.getDefinedActivityIds().iterator();
-		while (values.hasNext()) {
-			IActivity activity =
-				activityManager.getActivity((String) values.next());
+    /**
+     * Save the enabled states in the preference store.
+     */
+    private void saveEnabledStates() {
+        IPreferenceStore store = WorkbenchPlugin.getDefault()
+                .getPreferenceStore();
 
-			store.setValue(createPreferenceKey(activity.getId()), activity.isEnabled());
-		}
-		WorkbenchPlugin.getDefault().savePluginPreferences();
-	}
+        IWorkbenchActivitySupport support = PlatformUI.getWorkbench()
+                .getActivitySupport();
+        IActivityManager activityManager = support.getActivityManager();
+        Iterator values = activityManager.getDefinedActivityIds().iterator();
+        while (values.hasNext()) {
+            IActivity activity = activityManager.getActivity((String) values
+                    .next());
 
-	/**
-	 * Save the enabled state of all activities.
-	 */
-	public void shutdown() {
-		saveEnabledStates();
-	}
+            store.setValue(createPreferenceKey(activity.getId()), activity
+                    .isEnabled());
+        }
+        WorkbenchPlugin.getDefault().savePluginPreferences();
+    }
+
+    /**
+     * Save the enabled state of all activities.
+     */
+    public void shutdown() {
+        saveEnabledStates();
+    }
 }

@@ -22,25 +22,25 @@ import org.eclipse.swt.graphics.Rectangle;
  * @see org.eclipse.ui.internal.dnd.IDragOverListener
  */
 public interface IDropTarget {
-	
-	/**
-	 * Drops the object in this position
-	 */
-	void drop();	
-	
-	/**
-	 * Returns a cursor describing this drop operation
-	 * 
-	 * @return a cursor describing this drop operation
-	 */
-	Cursor getCursor();
-	
-	/**
-	 * Returns a rectangle (screen coordinates) describing the target location
-	 * for this drop operation.
-	 * 
-	 * @return a snap rectangle or null if this drop target does not have a specific snap
-	 * location.
-	 */
-	Rectangle getSnapRectangle();
+
+    /**
+     * Drops the object in this position
+     */
+    void drop();
+
+    /**
+     * Returns a cursor describing this drop operation
+     * 
+     * @return a cursor describing this drop operation
+     */
+    Cursor getCursor();
+
+    /**
+     * Returns a rectangle (screen coordinates) describing the target location
+     * for this drop operation.
+     * 
+     * @return a snap rectangle or null if this drop target does not have a specific snap
+     * location.
+     */
+    Rectangle getSnapRectangle();
 }

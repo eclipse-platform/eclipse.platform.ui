@@ -21,9 +21,9 @@ import org.eclipse.core.resources.IFile;
  * alternative that implements this interface.
  */
 public interface IReadmeFileParser {
-/**
- * Parses the contents of the provided file
- * and generates a collection of sections.
- */
-public MarkElement[] parse(IFile readmeFile);
+    /**
+     * Parses the contents of the provided file
+     * and generates a collection of sections.
+     */
+    public MarkElement[] parse(IFile readmeFile);
 }

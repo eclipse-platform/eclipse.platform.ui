@@ -19,16 +19,16 @@ package org.eclipse.ui;
  * @since 3.0 
  */
 public interface IWorkbenchPart2 extends IWorkbenchPart {
-	/**
+    /**
      * Returns the name of this part. If this value changes the part must fire a
      * property listener event with {@link IWorkbenchPartConstants#PROP_PART_NAME}.
      * 
      * @return the name of this view, or the empty string if the name is being managed
      * by the workbench (not <code>null</code>)
      */
-	public String getPartName();
-	
-	/**
+    public String getPartName();
+
+    /**
      * Returns the content description of this part. The content description is an optional
      * user-readable string that describes what is currently being displayed in the part. 
      * By default, the workbench will display the content description in a line
@@ -39,6 +39,6 @@ public interface IWorkbenchPart2 extends IWorkbenchPart {
      * 
      * @return the content description of this part (not <code>null</code>)
      */
-	public String getContentDescription();
-	
+    public String getContentDescription();
+
 }

@@ -35,55 +35,64 @@ import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemePreview;
 
-
 /**
  * @since 3.0
  */
 public class WorkbenchPreview implements IThemePreview {
 
-    private IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+    private IPreferenceStore store = WorkbenchPlugin.getDefault()
+            .getPreferenceStore();
+
     private IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 
     private boolean disposed = false;
+
     private CTabFolder folder;
+
     private ITheme theme;
+
     private ToolBar toolBar;
+
     private CLabel viewMessage;
+
     private ViewForm viewForm;
-    
-    private IPropertyChangeListener fontAndColorListener = new IPropertyChangeListener(){        
-        public void propertyChange(PropertyChangeEvent event) {  
+
+    private IPropertyChangeListener fontAndColorListener = new IPropertyChangeListener() {
+        public void propertyChange(PropertyChangeEvent event) {
             if (!disposed) {
                 setColorsAndFonts();
                 //viewMessage.setSize(viewMessage.computeSize(SWT.DEFAULT, SWT.DEFAULT, true));
                 viewForm.layout(true);
             }
-        }};
-        
+        }
+    };
+
     private IPropertyChangeListener preferenceListener = new IPropertyChangeListener() {
 
         public void propertyChange(PropertyChangeEvent event) {
             if (!disposed) {
-				if (IPreferenceConstants.VIEW_TAB_POSITION.equals(event.getProperty())) {				 
-					setTabPosition();
-				} else if (IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS.equals(event.getProperty())) {				
-					setTabStyle();
-				}				
+                if (IPreferenceConstants.VIEW_TAB_POSITION.equals(event
+                        .getProperty())) {
+                    setTabPosition();
+                } else if (IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS
+                        .equals(event.getProperty())) {
+                    setTabStyle();
+                }
             }
-        }};
-
+        }
+    };
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPresentationPreview#createControl(org.eclipse.swt.widgets.Composite, org.eclipse.ui.themes.ITheme)
      */
-    public void createControl(Composite parent, ITheme currentTheme) {        
+    public void createControl(Composite parent, ITheme currentTheme) {
         this.theme = currentTheme;
         folder = new CTabFolder(parent, SWT.BORDER);
         folder.setUnselectedCloseVisible(false);
         folder.setEnabled(false);
         folder.setMaximizeVisible(true);
         folder.setMinimizeVisible(true);
-        
+
         viewForm = new ViewForm(folder, SWT.NONE);
         viewForm.marginHeight = 0;
         viewForm.marginWidth = 0;
@@ -92,17 +101,17 @@ public class WorkbenchPreview implements IThemePreview {
         toolBar = new ToolBar(viewForm, SWT.FLAT | SWT.WRAP);
         ToolItem toolItem = new ToolItem(toolBar, SWT.PUSH);
 
-        Image hoverImage =
-			WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU_HOVER);
+        Image hoverImage = WorkbenchImages
+                .getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU_HOVER);
         toolItem.setImage(hoverImage);
-        
+
         viewForm.setTopRight(toolBar);
-        
+
         viewMessage = new CLabel(viewForm, SWT.NONE);
         viewMessage.setText("Etu?"); //$NON-NLS-1$
-        viewForm.setTopLeft(viewMessage);        
-        
-        CTabItem item = new CTabItem(folder, SWT.CLOSE);  
+        viewForm.setTopLeft(viewMessage);
+
+        CTabItem item = new CTabItem(folder, SWT.CLOSE);
         item.setText("Lorem"); //$NON-NLS-1$
         Label text = new Label(viewForm, SWT.NONE);
         viewForm.setContent(text);
@@ -110,16 +119,16 @@ public class WorkbenchPreview implements IThemePreview {
         text.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
         item = new CTabItem(folder, SWT.CLOSE);
         item.setText("Ipsum"); //$NON-NLS-1$
-        item.setControl(viewForm);        
+        item.setControl(viewForm);
         item.setImage(WorkbenchImages.getImage(ISharedImages.IMG_TOOL_COPY));
-            
+
         folder.setSelection(item);
-        
+
         item = new CTabItem(folder, SWT.CLOSE);
         item.setText("Dolor"); //$NON-NLS-1$
         item = new CTabItem(folder, SWT.CLOSE);
         item.setText("Sit"); //$NON-NLS-1$
-        
+
         currentTheme.addPropertyChangeListener(fontAndColorListener);
         store.addPropertyChangeListener(preferenceListener);
         apiStore.addPropertyChangeListener(preferenceListener);
@@ -132,7 +141,8 @@ public class WorkbenchPreview implements IThemePreview {
      * Set the tab style from preferences.
      */
     protected void setTabStyle() {
-        boolean traditionalTab = apiStore.getBoolean(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS);
+        boolean traditionalTab = apiStore
+                .getBoolean(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS);
         folder.setSimple(traditionalTab);
     }
 
@@ -141,27 +151,36 @@ public class WorkbenchPreview implements IThemePreview {
      */
     protected void setTabPosition() {
         int tabLocation = store.getInt(IPreferenceConstants.VIEW_TAB_POSITION);
-        folder.setTabPosition(tabLocation);        
+        folder.setTabPosition(tabLocation);
     }
 
     /**
      * Set the folder colors and fonts
      */
     private void setColorsAndFonts() {
-        folder.setSelectionForeground(theme.getColorRegistry().get(IWorkbenchThemeConstants.ACTIVE_TAB_TEXT_COLOR));               
-        folder.setForeground(theme.getColorRegistry().get(IWorkbenchThemeConstants.INACTIVE_TAB_TEXT_COLOR));
-        
-        Color [] colors = new Color[2];
-        colors[0] = theme.getColorRegistry().get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_START);
-        colors[1] = theme.getColorRegistry().get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_END);
-        colors[0] = theme.getColorRegistry().get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_START);
-        colors[1] = theme.getColorRegistry().get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_END);
-        folder.setSelectionBackground(colors, new int [] {theme.getInt(IWorkbenchThemeConstants.ACTIVE_TAB_PERCENT)}, theme.getBoolean(IWorkbenchThemeConstants.ACTIVE_TAB_VERTICAL));
-        
-        folder.setFont(theme.getFontRegistry().get(IWorkbenchThemeConstants.TAB_TEXT_FONT));
-        viewMessage.setFont(theme.getFontRegistry().get(IWorkbenchThemeConstants.VIEW_MESSAGE_TEXT_FONT));
-    }
+        folder.setSelectionForeground(theme.getColorRegistry().get(
+                IWorkbenchThemeConstants.ACTIVE_TAB_TEXT_COLOR));
+        folder.setForeground(theme.getColorRegistry().get(
+                IWorkbenchThemeConstants.INACTIVE_TAB_TEXT_COLOR));
 
+        Color[] colors = new Color[2];
+        colors[0] = theme.getColorRegistry().get(
+                IWorkbenchThemeConstants.INACTIVE_TAB_BG_START);
+        colors[1] = theme.getColorRegistry().get(
+                IWorkbenchThemeConstants.INACTIVE_TAB_BG_END);
+        colors[0] = theme.getColorRegistry().get(
+                IWorkbenchThemeConstants.ACTIVE_TAB_BG_START);
+        colors[1] = theme.getColorRegistry().get(
+                IWorkbenchThemeConstants.ACTIVE_TAB_BG_END);
+        folder.setSelectionBackground(colors, new int[] { theme
+                .getInt(IWorkbenchThemeConstants.ACTIVE_TAB_PERCENT) }, theme
+                .getBoolean(IWorkbenchThemeConstants.ACTIVE_TAB_VERTICAL));
+
+        folder.setFont(theme.getFontRegistry().get(
+                IWorkbenchThemeConstants.TAB_TEXT_FONT));
+        viewMessage.setFont(theme.getFontRegistry().get(
+                IWorkbenchThemeConstants.VIEW_MESSAGE_TEXT_FONT));
+    }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPresentationPreview#dispose()

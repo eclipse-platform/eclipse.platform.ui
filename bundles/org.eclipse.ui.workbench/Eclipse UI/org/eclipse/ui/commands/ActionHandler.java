@@ -81,7 +81,7 @@ public final class ActionHandler extends AbstractHandler {
      * <code>Object</code>.
      */
     private Map attributeValuesByName;
-    
+
     /**
      * The property change listener hooked on to the action. This is initialized
      * in the constructor, and attached to the action. When the handler is
@@ -97,8 +97,9 @@ public final class ActionHandler extends AbstractHandler {
      *            the action. Must not be <code>null</code>.
      */
     public ActionHandler(IAction action) {
-        if (action == null) throw new NullPointerException();
-        
+        if (action == null)
+            throw new NullPointerException();
+
         this.action = action;
         this.attributeValuesByName = getAttributeValuesByNameFromAction();
 
@@ -112,9 +113,8 @@ public final class ActionHandler extends AbstractHandler {
                     attributeValuesByName = getAttributeValuesByNameFromAction();
                     if (!attributeValuesByName
                             .equals(previousAttributeValuesByName))
-                            fireHandlerChanged(new HandlerEvent(
-                                    ActionHandler.this, true,
-                                    previousAttributeValuesByName));
+                        fireHandlerChanged(new HandlerEvent(ActionHandler.this,
+                                true, previousAttributeValuesByName));
                 }
             }
         };
@@ -129,14 +129,14 @@ public final class ActionHandler extends AbstractHandler {
     public void dispose() {
         action.removePropertyChangeListener(propertyChangeListener);
     }
-    
+
     /**
      * @see IHandler#execute(Map)
      */
     public Object execute(Map parameterValuesByName) throws ExecutionException {
         if ((action.getStyle() == IAction.AS_CHECK_BOX)
                 || (action.getStyle() == IAction.AS_RADIO_BUTTON))
-                action.setChecked(!action.isChecked());
+            action.setChecked(!action.isChecked());
         try {
             action.runWithEvent(new Event());
         } catch (Exception e) {

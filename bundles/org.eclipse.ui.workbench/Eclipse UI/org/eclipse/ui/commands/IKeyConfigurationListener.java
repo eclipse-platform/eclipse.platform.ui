@@ -28,12 +28,12 @@ package org.eclipse.ui.commands;
  */
 public interface IKeyConfigurationListener {
 
-	/**
-	 * Notifies that one or more attributes of an instance of <code>IKeyConfiguration</code>
-	 * have changed. Specific details are described in the <code>KeyConfigurationEvent</code>.
-	 * 
-	 * @param keyConfigurationEvent
-	 *            the keyConfiguration event. Guaranteed not to be <code>null</code>.
-	 */
-	void keyConfigurationChanged(KeyConfigurationEvent keyConfigurationEvent);
+    /**
+     * Notifies that one or more attributes of an instance of <code>IKeyConfiguration</code>
+     * have changed. Specific details are described in the <code>KeyConfigurationEvent</code>.
+     * 
+     * @param keyConfigurationEvent
+     *            the keyConfiguration event. Guaranteed not to be <code>null</code>.
+     */
+    void keyConfigurationChanged(KeyConfigurationEvent keyConfigurationEvent);
 }

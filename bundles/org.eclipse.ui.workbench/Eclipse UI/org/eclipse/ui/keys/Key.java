@@ -34,94 +34,94 @@ package org.eclipse.ui.keys;
  */
 public abstract class Key implements Comparable {
 
-	/**
-	 * An internal constant used only in this object's hash code algorithm.
-	 */
-	private final static int HASH_FACTOR = 89;
+    /**
+     * An internal constant used only in this object's hash code algorithm.
+     */
+    private final static int HASH_FACTOR = 89;
 
-	/**
-	 * An internal constant used only in this object's hash code algorithm.
-	 */
-	private final static int HASH_INITIAL = Key.class.getName().hashCode();
+    /**
+     * An internal constant used only in this object's hash code algorithm.
+     */
+    private final static int HASH_INITIAL = Key.class.getName().hashCode();
 
-	/**
-	 * The cached hash code for this object. Because Key objects are immutable,
-	 * their hash codes need only to be computed once. After the first call to
-	 * <code>hashCode()</code>, the computed value is cached here to be used
-	 * for all subsequent calls.
-	 */
-	private transient int hashCode;
+    /**
+     * The cached hash code for this object. Because Key objects are immutable,
+     * their hash codes need only to be computed once. After the first call to
+     * <code>hashCode()</code>, the computed value is cached here to be used
+     * for all subsequent calls.
+     */
+    private transient int hashCode;
 
-	/**
-	 * A flag to determine if the <code>hashCode</code> field has been
-	 * computed and cached.
-	 */
-	private transient boolean hashCodeComputed;
+    /**
+     * A flag to determine if the <code>hashCode</code> field has been
+     * computed and cached.
+     */
+    private transient boolean hashCodeComputed;
 
-	/**
-	 * The formal string representation for this object. Equality of Key
-	 * objects is determined solely by this field.
-	 */
-	protected String name;
+    /**
+     * The formal string representation for this object. Equality of Key
+     * objects is determined solely by this field.
+     */
+    protected String name;
 
-	/**
-	 * Constructs an instance of <code>Key</code> given its formal string
-	 * representation.
-	 * 
-	 * @param name
-	 *            the formal string representation of this key. Must not be
-	 *            <code>null</code>.
-	 */
-	Key(String name) {
-		if (name == null)
-			throw new NullPointerException();
+    /**
+     * Constructs an instance of <code>Key</code> given its formal string
+     * representation.
+     * 
+     * @param name
+     *            the formal string representation of this key. Must not be
+     *            <code>null</code>.
+     */
+    Key(String name) {
+        if (name == null)
+            throw new NullPointerException();
 
-		this.name = name;
-	}
+        this.name = name;
+    }
 
-	/**
+    /**
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
-	public int compareTo(Object object) {
-		Key castedObject = (Key) object;
-		int compareTo = name.compareTo(castedObject.name);
-		return compareTo;
-	}
+    public int compareTo(Object object) {
+        Key castedObject = (Key) object;
+        int compareTo = name.compareTo(castedObject.name);
+        return compareTo;
+    }
 
-	/**
+    /**
      * @see java.lang.Object#equals(java.lang.Object)
      */
-	public boolean equals(Object object) {
-		if (!(object instanceof Key))
-			return false;
+    public boolean equals(Object object) {
+        if (!(object instanceof Key))
+            return false;
 
-		Key castedObject = (Key) object;
-		boolean equals = true;
-		equals &= name.equals(castedObject.name);
-		return equals;
-	}
+        Key castedObject = (Key) object;
+        boolean equals = true;
+        equals &= name.equals(castedObject.name);
+        return equals;
+    }
 
-	/**
+    /**
      * @see java.lang.Object#hashCode()
      */
-	public int hashCode() {
-		if (!hashCodeComputed) {
-			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + name.hashCode();
-			hashCodeComputed = true;
-		}
+    public int hashCode() {
+        if (!hashCodeComputed) {
+            hashCode = HASH_INITIAL;
+            hashCode = hashCode * HASH_FACTOR + name.hashCode();
+            hashCodeComputed = true;
+        }
 
-		return hashCode;
-	}
+        return hashCode;
+    }
 
-	/**
-	 * Returns the formal string representation for this key.
-	 * 
-	 * @return The formal string representation for this key. Guaranteed not to
-	 *         be <code>null</code>.
-	 * @see java.lang.Object#toString()
-	 */
-	public String toString() {
-		return name;
-	}
+    /**
+     * Returns the formal string representation for this key.
+     * 
+     * @return The formal string representation for this key. Guaranteed not to
+     *         be <code>null</code>.
+     * @see java.lang.Object#toString()
+     */
+    public String toString() {
+        return name;
+    }
 }

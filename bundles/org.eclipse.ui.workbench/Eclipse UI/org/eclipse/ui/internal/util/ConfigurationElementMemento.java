@@ -16,100 +16,99 @@ import org.eclipse.ui.IMemento;
 
 public final class ConfigurationElementMemento implements IMemento {
 
-	private IConfigurationElement configurationElement;
+    private IConfigurationElement configurationElement;
 
-	public ConfigurationElementMemento(IConfigurationElement configurationElement) {
-		if (configurationElement == null)
-			throw new NullPointerException();
+    public ConfigurationElementMemento(
+            IConfigurationElement configurationElement) {
+        if (configurationElement == null)
+            throw new NullPointerException();
 
-		this.configurationElement = configurationElement;
-	}
+        this.configurationElement = configurationElement;
+    }
 
-	public IMemento createChild(String type) {
-		return null;
-	}
+    public IMemento createChild(String type) {
+        return null;
+    }
 
-	public IMemento createChild(String type, String id) {
-		return null;
-	}
+    public IMemento createChild(String type, String id) {
+        return null;
+    }
 
-	public IMemento getChild(String type) {
-		IConfigurationElement[] configurationElements =
-			configurationElement.getChildren(type);
+    public IMemento getChild(String type) {
+        IConfigurationElement[] configurationElements = configurationElement
+                .getChildren(type);
 
-		if (configurationElements != null && configurationElements.length >= 1)
-			return new ConfigurationElementMemento(configurationElements[0]);
+        if (configurationElements != null && configurationElements.length >= 1)
+            return new ConfigurationElementMemento(configurationElements[0]);
 
-		return null;
-	}
+        return null;
+    }
 
-	public IMemento[] getChildren(String type) {
-		IConfigurationElement[] configurationElements =
-			configurationElement.getChildren(type);
+    public IMemento[] getChildren(String type) {
+        IConfigurationElement[] configurationElements = configurationElement
+                .getChildren(type);
 
-		if (configurationElements != null
-			&& configurationElements.length >= 1) {
-			IMemento mementos[] =
-				new ConfigurationElementMemento[configurationElements.length];
+        if (configurationElements != null && configurationElements.length >= 1) {
+            IMemento mementos[] = new ConfigurationElementMemento[configurationElements.length];
 
-			for (int i = 0; i < configurationElements.length; i++)
-				mementos[i] =
-					new ConfigurationElementMemento(configurationElements[i]);
+            for (int i = 0; i < configurationElements.length; i++)
+                mementos[i] = new ConfigurationElementMemento(
+                        configurationElements[i]);
 
-			return mementos;
-		}
+            return mementos;
+        }
 
-		return new IMemento[0];
-	}
+        return new IMemento[0];
+    }
 
-	public Float getFloat(String key) {
-		String string = configurationElement.getAttribute(key);
+    public Float getFloat(String key) {
+        String string = configurationElement.getAttribute(key);
 
-		if (string != null)
-			try {
-				return new Float(string);
-			} catch (NumberFormatException eNumberFormat) {
-			}
+        if (string != null)
+            try {
+                return new Float(string);
+            } catch (NumberFormatException eNumberFormat) {
+            }
 
-		return null;
-	}
+        return null;
+    }
 
-	public String getID() {
-		return configurationElement.getAttribute(TAG_ID);
-	}
+    public String getID() {
+        return configurationElement.getAttribute(TAG_ID);
+    }
 
-	public Integer getInteger(String key) {
-		String string = configurationElement.getAttribute(key);
+    public Integer getInteger(String key) {
+        String string = configurationElement.getAttribute(key);
 
-		if (string != null)
-			try {
-				return new Integer(string);
-			} catch (NumberFormatException eNumberFormat) {
-			}
+        if (string != null)
+            try {
+                return new Integer(string);
+            } catch (NumberFormatException eNumberFormat) {
+            }
 
-		return null;
-	}
+        return null;
+    }
 
-	public String getString(String key) {
-		return configurationElement.getAttribute(key);
-	}
+    public String getString(String key) {
+        return configurationElement.getAttribute(key);
+    }
 
-	public String getTextData() {
-		return configurationElement.getValue();
-	}
+    public String getTextData() {
+        return configurationElement.getValue();
+    }
 
-	public void putFloat(String key, float value) {
-	}
+    public void putFloat(String key, float value) {
+    }
 
-	public void putInteger(String key, int value) {
-	}
+    public void putInteger(String key, int value) {
+    }
 
-	public void putMemento(IMemento memento) {
-	}
+    public void putMemento(IMemento memento) {
+    }
 
-	public void putString(String key, String value) {
-	}
+    public void putString(String key, String value) {
+    }
 
-	public void putTextData(String data) {
-	}
+    public void putTextData(String data) {
+    }
 }

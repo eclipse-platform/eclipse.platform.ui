@@ -12,6 +12,7 @@
 package org.eclipse.ui;
 
 import org.eclipse.swt.graphics.Image;
+
 /**
  * Implements a reference to a IWorkbenchPart.
  * The IWorkbenchPart will not be instanciated until the part 
@@ -21,64 +22,64 @@ import org.eclipse.swt.graphics.Image;
  * </p>
  */
 public interface IWorkbenchPartReference {
-	/**
-	 * Returns the IWorkbenchPart referenced by this object.
-	 * Returns <code>null</code> if the editors was not instantiated or
-	 * it failed to be restored. Tries to restore the editor
-	 * if <code>restore</code> is true.
-	 */
-	public IWorkbenchPart getPart(boolean restore);
+    /**
+     * Returns the IWorkbenchPart referenced by this object.
+     * Returns <code>null</code> if the editors was not instantiated or
+     * it failed to be restored. Tries to restore the editor
+     * if <code>restore</code> is true.
+     */
+    public IWorkbenchPart getPart(boolean restore);
 
-	/**
-	 * @see IWorkbenchPart#getTitle
-	 */	
-	public String getTitle();
+    /**
+     * @see IWorkbenchPart#getTitle
+     */
+    public String getTitle();
 
-	/**
-	 * @see IWorkbenchPart#getTitleImage
-	 */	
-	public Image getTitleImage();
+    /**
+     * @see IWorkbenchPart#getTitleImage
+     */
+    public Image getTitleImage();
 
-	/**
-	 * @see IWorkbenchPart#getTitleToolTip
-	 */		
-	public String getTitleToolTip();
+    /**
+     * @see IWorkbenchPart#getTitleToolTip
+     */
+    public String getTitleToolTip();
 
-	/**
-	 * @see IWorkbenchPartSite#getId
-	 */		
-	public String getId();
+    /**
+     * @see IWorkbenchPartSite#getId
+     */
+    public String getId();
 
-	/**
-	 * @see IWorkbenchPart#addPropertyListener
-	 */
-	public void addPropertyListener(IPropertyListener listener);
-	
-	/**
-	 * @see IWorkbenchPart#removePropertyListener
-	 */
-	public void removePropertyListener(IPropertyListener listener);
-	
-	/**
-	 * Returns the workbench page that contains this part
-	 */
-	public IWorkbenchPage getPage();
-	
-	/**
-	 * Returns the name of the part, as it should be shown in tabs.
-	 * 
-	 * @return the part name
-	 * 
-	 * @since 3.0
-	 */
-	public String getPartName();
-	
-	/**
-	 * Returns the content description for the part (or the empty string if none)
-	 * 
-	 * @return the content description for the part
-	 * 
-	 * @since 3.0  
-	 */
-	public String getContentDescription();
+    /**
+     * @see IWorkbenchPart#addPropertyListener
+     */
+    public void addPropertyListener(IPropertyListener listener);
+
+    /**
+     * @see IWorkbenchPart#removePropertyListener
+     */
+    public void removePropertyListener(IPropertyListener listener);
+
+    /**
+     * Returns the workbench page that contains this part
+     */
+    public IWorkbenchPage getPage();
+
+    /**
+     * Returns the name of the part, as it should be shown in tabs.
+     * 
+     * @return the part name
+     * 
+     * @since 3.0
+     */
+    public String getPartName();
+
+    /**
+     * Returns the content description for the part (or the empty string if none)
+     * 
+     * @return the content description for the part
+     * 
+     * @since 3.0  
+     */
+    public String getContentDescription();
 }

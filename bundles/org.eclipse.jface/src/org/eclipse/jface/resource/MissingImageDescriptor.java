@@ -21,28 +21,31 @@ import org.eclipse.swt.graphics.ImageData;
  * </p>
  */
 class MissingImageDescriptor extends ImageDescriptor {
-	private static MissingImageDescriptor instance;
-/**
- * Constructs a new missing image descriptor.
- */
-private MissingImageDescriptor() {
-	super();
-}
-/* (non-Javadoc)
- * Method declared on ImageDesciptor.
- */
-public ImageData getImageData() {
-	return DEFAULT_IMAGE_DATA;
-}
-/**
- * Returns the shared missing image descriptor instance.
- *
- * @return the image descriptor for a missing image
- */
-static MissingImageDescriptor getInstance() {
-	if (instance == null) {
-		instance = new MissingImageDescriptor();
-	}
-	return instance;
-}
+    private static MissingImageDescriptor instance;
+
+    /**
+     * Constructs a new missing image descriptor.
+     */
+    private MissingImageDescriptor() {
+        super();
+    }
+
+    /* (non-Javadoc)
+     * Method declared on ImageDesciptor.
+     */
+    public ImageData getImageData() {
+        return DEFAULT_IMAGE_DATA;
+    }
+
+    /**
+     * Returns the shared missing image descriptor instance.
+     *
+     * @return the image descriptor for a missing image
+     */
+    static MissingImageDescriptor getInstance() {
+        if (instance == null) {
+            instance = new MissingImageDescriptor();
+        }
+        return instance;
+    }
 }

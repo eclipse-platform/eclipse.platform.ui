@@ -27,7 +27,6 @@ import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.tests.util.CallHistory;
 
-
 /**
  * Base class for mock intro and workbench parts.
  * 
@@ -39,50 +38,57 @@ public class MockPart implements IExecutableExtension {
      * 
      */
     public MockPart() {
-		callTrace = new CallHistory(this);
-		selectionProvider = new MockSelectionProvider();    
+        callTrace = new CallHistory(this);
+        selectionProvider = new MockSelectionProvider();
     }
 
     protected CallHistory callTrace;
+
     protected MockSelectionProvider selectionProvider;
+
     private IConfigurationElement config;
+
     private Object data;
+
     private Image titleImage;
+
     private ListenerList propertyListeners = new ListenerList();
 
     public CallHistory getCallHistory() {
-    	return callTrace;
+        return callTrace;
     }
 
     public ISelectionProvider getSelectionProvider() {
-    	return selectionProvider;
+        return selectionProvider;
     }
 
-    public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
-    	this.config = config;
-    	this.data = data;
-    
-    	// Icon.
-    	String strIcon = config.getAttribute("icon");//$NON-NLS-1$
-    	if (strIcon != null) {
-    		try {
-    			IPluginDescriptor pd = config.getDeclaringExtension()
-    				.getDeclaringPluginDescriptor();
-    			URL fullPathString = new URL(pd.getInstallURL(), strIcon);
-    			ImageDescriptor imageDesc = ImageDescriptor.createFromURL(fullPathString);
-    			titleImage = imageDesc.createImage();
-    		} catch (MalformedURLException e) {
-    		    // ignore
-    		}
-    	}
+    public void setInitializationData(IConfigurationElement config,
+            String propertyName, Object data) throws CoreException {
+        this.config = config;
+        this.data = data;
+
+        // Icon.
+        String strIcon = config.getAttribute("icon");//$NON-NLS-1$
+        if (strIcon != null) {
+            try {
+                IPluginDescriptor pd = config.getDeclaringExtension()
+                        .getDeclaringPluginDescriptor();
+                URL fullPathString = new URL(pd.getInstallURL(), strIcon);
+                ImageDescriptor imageDesc = ImageDescriptor
+                        .createFromURL(fullPathString);
+                titleImage = imageDesc.createImage();
+            } catch (MalformedURLException e) {
+                // ignore
+            }
+        }
     }
 
     protected IConfigurationElement getConfig() {
-    	return config;
+        return config;
     }
 
     protected Object getData() {
-    	return data;
+        return data;
     }
 
     /**
@@ -96,60 +102,60 @@ public class MockPart implements IExecutableExtension {
      * @see IWorkbenchPart#createPartControl(Composite)
      */
     public void createPartControl(Composite parent) {
-    	callTrace.add("createPartControl" );
+        callTrace.add("createPartControl");
     }
 
     /**
      * @see IWorkbenchPart#dispose()
      */
     public void dispose() {
-    	callTrace.add("dispose" );
+        callTrace.add("dispose");
     }
 
     /**
      * @see IWorkbenchPart#getTitleImage()
      */
     public Image getTitleImage() {
-    	return titleImage;
+        return titleImage;
     }
 
     /**
      * @see IWorkbenchPart#removePropertyListener(IPropertyListener)
      */
     public void removePropertyListener(IPropertyListener listener) {
-    	propertyListeners.remove(listener);
+        propertyListeners.remove(listener);
     }
 
     /**
      * @see IWorkbenchPart#setFocus()
      */
     public void setFocus() {
-    	callTrace.add("setFocus" );
+        callTrace.add("setFocus");
     }
 
     /**
      * @see IAdaptable#getAdapter(Class)
      */
     public Object getAdapter(Class arg0) {
-    	return null;
+        return null;
     }
 
     /**
      * Fires a selection out.
      */
     public void fireSelection() {
-    	selectionProvider.fireSelection();
+        selectionProvider.fireSelection();
     }
 
     /**
      * Fires a property change event.
      */
     protected void firePropertyChange(int propertyId) {
-    	Object [] listeners = propertyListeners.getListeners();
-    	for (int i = 0; i < listeners.length; i ++) {
-    		IPropertyListener l = (IPropertyListener)listeners[i];
-    		l.propertyChanged(this, propertyId);
-    	}
+        Object[] listeners = propertyListeners.getListeners();
+        for (int i = 0; i < listeners.length; i++) {
+            IPropertyListener l = (IPropertyListener) listeners[i];
+            l.propertyChanged(this, propertyId);
+        }
     }
 
     /**

@@ -19,31 +19,31 @@ import org.eclipse.ui.IPerspectiveFactory;
  */
 public class PerspectiveWithFastView implements IPerspectiveFactory {
 
-	public static String PERSP_ID = "org.eclipse.ui.tests.fastview_perspective"; //$NON-NLS-1$
+    public static String PERSP_ID = "org.eclipse.ui.tests.fastview_perspective"; //$NON-NLS-1$
 
-	/**
-	 * Constructs a new Default layout engine.
-	 */
-	public PerspectiveWithFastView() {
-		super();
-	}
+    /**
+     * Constructs a new Default layout engine.
+     */
+    public PerspectiveWithFastView() {
+        super();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IPerspectiveFactory#createInitialLayout(org.eclipse.ui.IPageLayout)
-	 */
-	public void createInitialLayout(IPageLayout layout) {
-		defineLayout(layout);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.IPerspectiveFactory#createInitialLayout(org.eclipse.ui.IPageLayout)
+     */
+    public void createInitialLayout(IPageLayout layout) {
+        defineLayout(layout);
+    }
 
-	/**
-	 * Define the initial layout by adding a fast view.
-	 * 
-	 * @param layout
-	 *            The page layout.
-	 */
-	public void defineLayout(IPageLayout layout) {
-		layout.addFastView("org.eclipse.ui.views.ResourceNavigator", .8f); //$NON-NLS-1$
-	}
+    /**
+     * Define the initial layout by adding a fast view.
+     * 
+     * @param layout
+     *            The page layout.
+     */
+    public void defineLayout(IPageLayout layout) {
+        layout.addFastView("org.eclipse.ui.views.ResourceNavigator", .8f); //$NON-NLS-1$
+    }
 }

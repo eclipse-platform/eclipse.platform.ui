@@ -14,22 +14,22 @@ import org.eclipse.ui.IStartup;
 
 public class StartupClass implements IStartup {
 
-	// This boolean should only be true if the earlyStartup() method
-	// has been called.
-	private static boolean earlyStartupCalled = false;
+    // This boolean should only be true if the earlyStartup() method
+    // has been called.
+    private static boolean earlyStartupCalled = false;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IStartup#earlyStartup()
-	 */
-	public void earlyStartup() {
-		earlyStartupCalled = true;
-	}
-	
-	public static boolean wasEarlyStartupCalled() {
-		return earlyStartupCalled;
-	}
-	
-	public static void clearEarlyStartup() {
-		earlyStartupCalled = false;
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IStartup#earlyStartup()
+     */
+    public void earlyStartup() {
+        earlyStartupCalled = true;
+    }
+
+    public static boolean wasEarlyStartupCalled() {
+        return earlyStartupCalled;
+    }
+
+    public static void clearEarlyStartup() {
+        earlyStartupCalled = false;
+    }
 }

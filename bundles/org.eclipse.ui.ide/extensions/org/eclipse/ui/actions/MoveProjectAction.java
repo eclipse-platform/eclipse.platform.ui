@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
- 
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
@@ -30,131 +30,147 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
+
 /**
  * The MoveProjectAction is the action designed to move projects specifically
  * as they have different semantics from other resources.
  */
 public class MoveProjectAction extends CopyProjectAction {
-	private static String MOVE_TOOL_TIP = IDEWorkbenchMessages.getString("MoveProjectAction.toolTip"); //$NON-NLS-1$
-	private static String MOVE_TITLE = IDEWorkbenchMessages.getString("MoveProjectAction.text"); //$NON-NLS-1$
-	private static String PROBLEMS_TITLE = IDEWorkbenchMessages.getString("MoveProjectAction.dialogTitle"); //$NON-NLS-1$
-	private static String MOVE_PROGRESS_TITLE = IDEWorkbenchMessages.getString("MoveProjectAction.progressMessage"); //$NON-NLS-1$
+    private static String MOVE_TOOL_TIP = IDEWorkbenchMessages
+            .getString("MoveProjectAction.toolTip"); //$NON-NLS-1$
 
-	
-	/**
-	 * The id of this action.
-	 */
-	public static final String ID = PlatformUI.PLUGIN_ID + ".MoveProjectAction";//$NON-NLS-1$
+    private static String MOVE_TITLE = IDEWorkbenchMessages
+            .getString("MoveProjectAction.text"); //$NON-NLS-1$
 
-/**
- * Creates a new project move action with the given text.
- *
- * @param shell the shell for any dialogs
- */
-public MoveProjectAction(Shell shell) {
-	super(shell,MOVE_TITLE);
-	setToolTipText(MOVE_TOOL_TIP);
-	setId(MoveProjectAction.ID);
-	WorkbenchHelp.setHelp(this, IHelpContextIds.MOVE_PROJECT_ACTION);
-}
-/**
- * Return the title of the errors dialog.
- * @return java.lang.String
- */
-protected String getErrorsTitle() {
-	return PROBLEMS_TITLE;
-}
-/**
- * Moves the project to the new values.
- *
- * @param project the project to copy
- * @param projectName the name of the copy
- * @param newLocation IPath
- * @return <code>true</code> if the copy operation completed, and 
- *   <code>false</code> if it was abandoned part way
- */
-boolean performMove(
-	final IProject project,
-	final String projectName,
-	final IPath newLocation) {
-	WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
-		public void execute(IProgressMonitor monitor) {
+    private static String PROBLEMS_TITLE = IDEWorkbenchMessages
+            .getString("MoveProjectAction.dialogTitle"); //$NON-NLS-1$
 
-			monitor.beginTask(MOVE_PROGRESS_TITLE, 100);
-			try {
-				if (monitor.isCanceled())
-					throw new OperationCanceledException();
-				//Get a copy of the current description and modify it
-				IProjectDescription newDescription =
-					createDescription(project, projectName, newLocation);
+    private static String MOVE_PROGRESS_TITLE = IDEWorkbenchMessages
+            .getString("MoveProjectAction.progressMessage"); //$NON-NLS-1$
 
-				monitor.worked(50);
+    /**
+     * The id of this action.
+     */
+    public static final String ID = PlatformUI.PLUGIN_ID + ".MoveProjectAction";//$NON-NLS-1$
 
-				project.move(newDescription, IResource.FORCE | IResource.SHALLOW, monitor);
+    /**
+     * Creates a new project move action with the given text.
+     *
+     * @param shell the shell for any dialogs
+     */
+    public MoveProjectAction(Shell shell) {
+        super(shell, MOVE_TITLE);
+        setToolTipText(MOVE_TOOL_TIP);
+        setId(MoveProjectAction.ID);
+        WorkbenchHelp.setHelp(this, IHelpContextIds.MOVE_PROJECT_ACTION);
+    }
 
-				monitor.worked(50);
+    /**
+     * Return the title of the errors dialog.
+     * @return java.lang.String
+     */
+    protected String getErrorsTitle() {
+        return PROBLEMS_TITLE;
+    }
 
-			} catch (CoreException e) {
-				recordError(e); // log error
-			} finally {
-				monitor.done();
-			}
-		}
-	};
+    /**
+     * Moves the project to the new values.
+     *
+     * @param project the project to copy
+     * @param projectName the name of the copy
+     * @param newLocation IPath
+     * @return <code>true</code> if the copy operation completed, and 
+     *   <code>false</code> if it was abandoned part way
+     */
+    boolean performMove(final IProject project, final String projectName,
+            final IPath newLocation) {
+        WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
+            public void execute(IProgressMonitor monitor) {
 
-	try {
-		new ProgressMonitorJobsDialog(shell).run(true, true, op);
-	} catch (InterruptedException e) {
-		return false;
-	} catch (InvocationTargetException e) {
-		// CoreExceptions are collected above, but unexpected runtime exceptions and errors may still occur.
-		IDEWorkbenchPlugin.log(
-			MessageFormat.format("Exception in {0}.performMove(): {1}", new Object[] {getClass().getName(),e.getTargetException()}));//$NON-NLS-1$
-		displayError(IDEWorkbenchMessages.format("MoveProjectAction.internalError", new Object[] {e.getTargetException().getMessage()})); //$NON-NLS-1$
-		return false;
-	}
+                monitor.beginTask(MOVE_PROGRESS_TITLE, 100);
+                try {
+                    if (monitor.isCanceled())
+                        throw new OperationCanceledException();
+                    //Get a copy of the current description and modify it
+                    IProjectDescription newDescription = createDescription(
+                            project, projectName, newLocation);
 
-	return true;
-}
-/**
- * Query for a new project destination using the parameters in the existing
- * project.
- * @return Object[]  or null if the selection is cancelled
- * @param project  the project we are going to move.
- */
-protected Object[] queryDestinationParameters(IProject project) {
-	ProjectLocationMoveDialog dialog =
-		new ProjectLocationMoveDialog(shell, project);
-	dialog.setTitle(IDEWorkbenchMessages.getString("MoveProjectAction.moveTitle")); //$NON-NLS-1$
-	dialog.open();
-	return dialog.getResult();
-}
-/**
- * Implementation of method defined on <code>IAction</code>.
- */
-public void run() {
+                    monitor.worked(50);
 
-	errorStatus = null; 
+                    project.move(newDescription, IResource.FORCE
+                            | IResource.SHALLOW, monitor);
 
-	IProject project = (IProject) getSelectedResources().get(0);
+                    monitor.worked(50);
 
-	//Get the project name and location in a two element list
-	Object[] destinationPaths = queryDestinationParameters(project);
-	if (destinationPaths == null)
-		return;
+                } catch (CoreException e) {
+                    recordError(e); // log error
+                } finally {
+                    monitor.done();
+                }
+            }
+        };
 
-	String projectName = (String) destinationPaths[0];
-	IPath newLocation = new Path((String) destinationPaths[1]);
+        try {
+            new ProgressMonitorJobsDialog(shell).run(true, true, op);
+        } catch (InterruptedException e) {
+            return false;
+        } catch (InvocationTargetException e) {
+            // CoreExceptions are collected above, but unexpected runtime exceptions and errors may still occur.
+            IDEWorkbenchPlugin
+                    .log(MessageFormat
+                            .format(
+                                    "Exception in {0}.performMove(): {1}", new Object[] { getClass().getName(), e.getTargetException() }));//$NON-NLS-1$
+            displayError(IDEWorkbenchMessages
+                    .format(
+                            "MoveProjectAction.internalError", new Object[] { e.getTargetException().getMessage() })); //$NON-NLS-1$
+            return false;
+        }
 
-	boolean completed = performMove(project, projectName, newLocation);
+        return true;
+    }
 
-	if (!completed) // ie.- canceled
-		return; // not appropriate to show errors
+    /**
+     * Query for a new project destination using the parameters in the existing
+     * project.
+     * @return Object[]  or null if the selection is cancelled
+     * @param project  the project we are going to move.
+     */
+    protected Object[] queryDestinationParameters(IProject project) {
+        ProjectLocationMoveDialog dialog = new ProjectLocationMoveDialog(shell,
+                project);
+        dialog.setTitle(IDEWorkbenchMessages
+                .getString("MoveProjectAction.moveTitle")); //$NON-NLS-1$
+        dialog.open();
+        return dialog.getResult();
+    }
 
-	// If errors occurred, open an Error dialog
-	if (errorStatus != null) {
-		ErrorDialog.openError(this.shell, PROBLEMS_TITLE, null, errorStatus);
-		errorStatus = null; 
-	}
-}
+    /**
+     * Implementation of method defined on <code>IAction</code>.
+     */
+    public void run() {
+
+        errorStatus = null;
+
+        IProject project = (IProject) getSelectedResources().get(0);
+
+        //Get the project name and location in a two element list
+        Object[] destinationPaths = queryDestinationParameters(project);
+        if (destinationPaths == null)
+            return;
+
+        String projectName = (String) destinationPaths[0];
+        IPath newLocation = new Path((String) destinationPaths[1]);
+
+        boolean completed = performMove(project, projectName, newLocation);
+
+        if (!completed) // ie.- canceled
+            return; // not appropriate to show errors
+
+        // If errors occurred, open an Error dialog
+        if (errorStatus != null) {
+            ErrorDialog
+                    .openError(this.shell, PROBLEMS_TITLE, null, errorStatus);
+            errorStatus = null;
+        }
+    }
 }

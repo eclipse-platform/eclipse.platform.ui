@@ -125,103 +125,117 @@ import org.eclipse.ui.tests.util.UITestCase;
  * @since 3.0
  */
 public class DragTest extends UITestCase {
-	TestDragSource dragSource;
-	AbstractTestDropTarget dropTarget;
-	String intendedResult;
+    TestDragSource dragSource;
 
-	// 
-	static IProject project;
-	static IFile file1, file2;
-	IEditorPart editor1, editor2;
-	static IFile file3;
-	IEditorPart editor3;
-	static WorkbenchWindow window;
-	static WorkbenchPage page;
-	
-	public DragTest(TestDragSource dragSource, AbstractTestDropTarget dropTarget) {
-		super("drag " + dragSource.toString() + " to " + dropTarget.toString());
-		this.dragSource = dragSource;
-		this.dropTarget = dropTarget;
-	}
-	
-	public void setExpectedResult(String intended) {
-		intendedResult = intended;
-	}
-	
-	protected void runTest() throws Throwable {
-		String resultingLayout = internalTest();
-		
-		if (intendedResult != null) {
-			if (!resultingLayout.equals(intendedResult)) {
-				String errorMessage = "Expecting '" + intendedResult + "' and found '" + resultingLayout + "'"; 
-				
-				System.out.println("Failed " + getName() + ": " + errorMessage);
-				
-				Assert.assertEquals("Drag operation resulted in incorrect layout", intendedResult, resultingLayout);
-			}
-		} else {
-			fail("data/dragtests.xml is missing data for test" + getName());
-		}
-		
-		page.getActivePerspective().testInvariants();
-	}
-	
-	public void doSetUp() throws Exception {
-		// don't allow UITestCase to manage the deactivation of our window
-		manageWindows(false);
-		//window = (WorkbenchWindow)openTestWindow();
-		
-		//initialize the window
-		if (window == null) {
-			window = (WorkbenchWindow)
-				fWorkbench.openWorkbenchWindow(
-						"org.eclipse.ui.tests.dnd.dragdrop",
-						ResourcesPlugin.getWorkspace());
-					
-			page = (WorkbenchPage) window.getActivePage();
-			
-			project = FileUtil.createProject("DragTest"); //$NON-NLS-1$
-			file1 = FileUtil.createFile("DragTest1.txt", project); //$NON-NLS-1$
-			file2 = FileUtil.createFile("DragTest2.txt", project); //$NON-NLS-1$
-			file3 = FileUtil.createFile("DragTest3.txt", project); //$NON-NLS-1$
-		}
-		
-		page.resetPerspective();
-		page.closeAllEditors(false);
-		//ensure that contentoutline is the focus part (and at the top of its stack)
-		page.showView("org.eclipse.ui.views.ContentOutline");
+    AbstractTestDropTarget dropTarget;
 
-		editor1 = page.openEditor(new FileEditorInput(file1), MockEditorPart.ID1);
-		editor2 = page.openEditor(new FileEditorInput(file2), MockEditorPart.ID2);
-		editor3 = page.openEditor(new FileEditorInput(file3), MockEditorPart.ID2);
+    String intendedResult;
 
-		DragOperations.drag(editor2, new EditorDropTarget(0, SWT.CENTER), false);
-		DragOperations.drag(editor3, new EditorAreaDropTarget(SWT.RIGHT), false);
-	}
-	
-	private String internalTest() throws Exception {
-		dragSource.setPage(page);
-		//dropTarget.setSource(dragSource);
-		
-		dragSource.drag(dropTarget);
+    // 
+    static IProject project;
 
-		return DragOperations.getLayoutDescription(page);
-	}	
-	
-	/**
-	 * Programatically run the test
-	 * 
-	 * @return
-	 * @throws Exception
-	 */
-	public String performTest() throws Exception {
-		setUp();
-		try {
-			String result = internalTest();
-			return result;
-		}
-		finally {
-			tearDown();
-		}
-	}
+    static IFile file1, file2;
+
+    IEditorPart editor1, editor2;
+
+    static IFile file3;
+
+    IEditorPart editor3;
+
+    static WorkbenchWindow window;
+
+    static WorkbenchPage page;
+
+    public DragTest(TestDragSource dragSource, AbstractTestDropTarget dropTarget) {
+        super("drag " + dragSource.toString() + " to " + dropTarget.toString());
+        this.dragSource = dragSource;
+        this.dropTarget = dropTarget;
+    }
+
+    public void setExpectedResult(String intended) {
+        intendedResult = intended;
+    }
+
+    protected void runTest() throws Throwable {
+        String resultingLayout = internalTest();
+
+        if (intendedResult != null) {
+            if (!resultingLayout.equals(intendedResult)) {
+                String errorMessage = "Expecting '" + intendedResult
+                        + "' and found '" + resultingLayout + "'";
+
+                System.out.println("Failed " + getName() + ": " + errorMessage);
+
+                Assert.assertEquals(
+                        "Drag operation resulted in incorrect layout",
+                        intendedResult, resultingLayout);
+            }
+        } else {
+            fail("data/dragtests.xml is missing data for test" + getName());
+        }
+
+        page.getActivePerspective().testInvariants();
+    }
+
+    public void doSetUp() throws Exception {
+        // don't allow UITestCase to manage the deactivation of our window
+        manageWindows(false);
+        //window = (WorkbenchWindow)openTestWindow();
+
+        //initialize the window
+        if (window == null) {
+            window = (WorkbenchWindow) fWorkbench.openWorkbenchWindow(
+                    "org.eclipse.ui.tests.dnd.dragdrop", ResourcesPlugin
+                            .getWorkspace());
+
+            page = (WorkbenchPage) window.getActivePage();
+
+            project = FileUtil.createProject("DragTest"); //$NON-NLS-1$
+            file1 = FileUtil.createFile("DragTest1.txt", project); //$NON-NLS-1$
+            file2 = FileUtil.createFile("DragTest2.txt", project); //$NON-NLS-1$
+            file3 = FileUtil.createFile("DragTest3.txt", project); //$NON-NLS-1$
+        }
+
+        page.resetPerspective();
+        page.closeAllEditors(false);
+        //ensure that contentoutline is the focus part (and at the top of its stack)
+        page.showView("org.eclipse.ui.views.ContentOutline");
+
+        editor1 = page.openEditor(new FileEditorInput(file1),
+                MockEditorPart.ID1);
+        editor2 = page.openEditor(new FileEditorInput(file2),
+                MockEditorPart.ID2);
+        editor3 = page.openEditor(new FileEditorInput(file3),
+                MockEditorPart.ID2);
+
+        DragOperations
+                .drag(editor2, new EditorDropTarget(0, SWT.CENTER), false);
+        DragOperations
+                .drag(editor3, new EditorAreaDropTarget(SWT.RIGHT), false);
+    }
+
+    private String internalTest() throws Exception {
+        dragSource.setPage(page);
+        //dropTarget.setSource(dragSource);
+
+        dragSource.drag(dropTarget);
+
+        return DragOperations.getLayoutDescription(page);
+    }
+
+    /**
+     * Programatically run the test
+     * 
+     * @return
+     * @throws Exception
+     */
+    public String performTest() throws Exception {
+        setUp();
+        try {
+            String result = internalTest();
+            return result;
+        } finally {
+            tearDown();
+        }
+    }
 }

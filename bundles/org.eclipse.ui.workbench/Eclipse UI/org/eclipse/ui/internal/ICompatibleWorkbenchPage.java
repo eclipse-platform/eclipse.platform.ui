@@ -19,5 +19,5 @@ package org.eclipse.ui.internal;
  * @since 3.0
  */
 public interface ICompatibleWorkbenchPage {
-	// dummy version that declares no methods
+    // dummy version that declares no methods
 }

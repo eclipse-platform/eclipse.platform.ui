@@ -55,80 +55,83 @@ import org.eclipse.swt.widgets.Layout;
  * @since 3.0
  */
 public class CacheWrapper {
-	private Composite proxy;
-	private SizeCache cache = new SizeCache();
-	private Rectangle lastBounds = new Rectangle(0,0,0,0);
-	
-	private class WrapperLayout extends Layout implements ICachingLayout {
-		protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) {
-			Control[] children = composite.getChildren();
-			if (children.length != 1) {
-				return new Point(0,0);
-			}
-			
-			cache.setControl(children[0]);
-			
-			return cache.computeSize(wHint, hHint);
-		}
+    private Composite proxy;
 
-		protected void layout(Composite composite, boolean flushCache) {
-			Control[] children = composite.getChildren();
-			if (children.length != 1) {
-				return;
-			}
+    private SizeCache cache = new SizeCache();
 
-			Control child = children[0];
-			Rectangle newBounds = composite.getClientArea();
-			if (!newBounds.equals(lastBounds)) {
-				child.setBounds(newBounds);
-				lastBounds = newBounds;
-			}
-			
-		}
+    private Rectangle lastBounds = new Rectangle(0, 0, 0, 0);
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.internal.layout.ICachingLayout#flush(org.eclipse.swt.widgets.Control)
-		 */
-		public void flush(Control dirtyControl) {
-			flushCache();
-		}
-	}
-	
-	/**
-	 * Creates a <code>CacheWrapper</code> with the given parent
-	 * 
-	 * @param parent
-	 */
-	public CacheWrapper(Composite parent) {
-		proxy = new Composite(parent, SWT.NONE);
-		
-		proxy.setLayout(new WrapperLayout());
-	}
-	
-	/**
-	 * Flush the cache. Call this when the child has changed in order to force
-	 * the size to be recomputed in the next resize event.
-	 */
-	public void flushCache() {
-		cache.flush();
-	}
-	
-	/**
-	 * Use this as the parent of the real control.
-	 * 
-	 * @return the proxy contol. It should be given exactly one child.
-	 */
-	public Composite getControl() {
-		return proxy;
-	}
-	
-	/**
-	 * Dispose of any widgets created by this wrapper.
-	 */
-	public void dispose() {
-		if (proxy != null) {
-			proxy.dispose();
-			proxy = null;
-		}
-	}
+    private class WrapperLayout extends Layout implements ICachingLayout {
+        protected Point computeSize(Composite composite, int wHint, int hHint,
+                boolean flushCache) {
+            Control[] children = composite.getChildren();
+            if (children.length != 1) {
+                return new Point(0, 0);
+            }
+
+            cache.setControl(children[0]);
+
+            return cache.computeSize(wHint, hHint);
+        }
+
+        protected void layout(Composite composite, boolean flushCache) {
+            Control[] children = composite.getChildren();
+            if (children.length != 1) {
+                return;
+            }
+
+            Control child = children[0];
+            Rectangle newBounds = composite.getClientArea();
+            if (!newBounds.equals(lastBounds)) {
+                child.setBounds(newBounds);
+                lastBounds = newBounds;
+            }
+
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.internal.layout.ICachingLayout#flush(org.eclipse.swt.widgets.Control)
+         */
+        public void flush(Control dirtyControl) {
+            flushCache();
+        }
+    }
+
+    /**
+     * Creates a <code>CacheWrapper</code> with the given parent
+     * 
+     * @param parent
+     */
+    public CacheWrapper(Composite parent) {
+        proxy = new Composite(parent, SWT.NONE);
+
+        proxy.setLayout(new WrapperLayout());
+    }
+
+    /**
+     * Flush the cache. Call this when the child has changed in order to force
+     * the size to be recomputed in the next resize event.
+     */
+    public void flushCache() {
+        cache.flush();
+    }
+
+    /**
+     * Use this as the parent of the real control.
+     * 
+     * @return the proxy contol. It should be given exactly one child.
+     */
+    public Composite getControl() {
+        return proxy;
+    }
+
+    /**
+     * Dispose of any widgets created by this wrapper.
+     */
+    public void dispose() {
+        if (proxy != null) {
+            proxy.dispose();
+            proxy = null;
+        }
+    }
 }

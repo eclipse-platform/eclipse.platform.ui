@@ -15,8 +15,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ResourceListSelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
 
 /**
  * Shows a list of resources to the user with a text entry field
@@ -26,22 +26,23 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
  */
 public class OpenResourceDialog extends ResourceListSelectionDialog {
 
-/**
- * Creates a new instance of the class.
- */
-public OpenResourceDialog(Shell parentShell, IContainer container, int typesMask) {
-	super(parentShell, container, typesMask);
-	setTitle(IDEWorkbenchMessages.getString("OpenResourceDialog.title")); //$NON-NLS-1$
-	WorkbenchHelp.setHelp(parentShell, IHelpContextIds.OPEN_RESOURCE_DIALOG);
-}
+    /**
+     * Creates a new instance of the class.
+     */
+    public OpenResourceDialog(Shell parentShell, IContainer container,
+            int typesMask) {
+        super(parentShell, container, typesMask);
+        setTitle(IDEWorkbenchMessages.getString("OpenResourceDialog.title")); //$NON-NLS-1$
+        WorkbenchHelp
+                .setHelp(parentShell, IHelpContextIds.OPEN_RESOURCE_DIALOG);
+    }
 
-
-/**
- * Extends the super's filter to exclude derived resources.
- * 
- * @since 3.0
- */
-protected boolean select(IResource resource) {
-    return super.select(resource) && !resource.isDerived();
-}
+    /**
+     * Extends the super's filter to exclude derived resources.
+     * 
+     * @since 3.0
+     */
+    protected boolean select(IResource resource) {
+        return super.select(resource) && !resource.isDerived();
+    }
 }

@@ -13,17 +13,17 @@ package org.eclipse.ui.internal.ide;
 import org.eclipse.core.runtime.Platform;
 
 public class Policy {
-	public static final boolean DEFAULT = false;
-	
-	public static boolean DEBUG_OPEN_ERROR_DIALOG = DEFAULT;
+    public static final boolean DEFAULT = false;
 
-	static {
-		if (getDebugOption("/debug")) { //$NON-NLS-1$
-			DEBUG_OPEN_ERROR_DIALOG = getDebugOption("/debug/internalerror/openDialog"); //$NON-NLS-1$
-		}
-	}
-	
-	private static boolean getDebugOption(String option) {
-		return "true".equalsIgnoreCase(Platform.getDebugOption(IDEWorkbenchPlugin.IDE_WORKBENCH + option)); //$NON-NLS-1$
-	}
+    public static boolean DEBUG_OPEN_ERROR_DIALOG = DEFAULT;
+
+    static {
+        if (getDebugOption("/debug")) { //$NON-NLS-1$
+            DEBUG_OPEN_ERROR_DIALOG = getDebugOption("/debug/internalerror/openDialog"); //$NON-NLS-1$
+        }
+    }
+
+    private static boolean getDebugOption(String option) {
+        return "true".equalsIgnoreCase(Platform.getDebugOption(IDEWorkbenchPlugin.IDE_WORKBENCH + option)); //$NON-NLS-1$
+    }
 }

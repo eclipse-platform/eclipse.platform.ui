@@ -16,20 +16,20 @@ import org.eclipse.swt.graphics.Rectangle;
 /**
  */
 public abstract class AbstractDropTarget implements IDropTarget {
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.dnd.IDropTarget#drop()
-	 */
-	public abstract void drop(); 
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.dnd.IDropTarget#getCursor()
-	 */
-	public abstract Cursor getCursor();
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.dnd.IDropTarget#drop()
+     */
+    public abstract void drop();
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.dnd.IDropTarget#getSnapRectangle()
-	 */
-	public Rectangle getSnapRectangle() {
-		return null;
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.dnd.IDropTarget#getCursor()
+     */
+    public abstract Cursor getCursor();
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.dnd.IDropTarget#getSnapRectangle()
+     */
+    public Rectangle getSnapRectangle() {
+        return null;
+    }
 }

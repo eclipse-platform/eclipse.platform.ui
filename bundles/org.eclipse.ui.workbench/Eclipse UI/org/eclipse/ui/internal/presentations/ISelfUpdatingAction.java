@@ -16,10 +16,10 @@ import org.eclipse.jface.action.IAction;
  * @since 3.0
  */
 public interface ISelfUpdatingAction extends IAction {
-	/**
-	 * Refreshes the action.
-	 */
-	public void update();
-	
-	public boolean shouldBeVisible();
+    /**
+     * Refreshes the action.
+     */
+    public void update();
+
+    public boolean shouldBeVisible();
 }

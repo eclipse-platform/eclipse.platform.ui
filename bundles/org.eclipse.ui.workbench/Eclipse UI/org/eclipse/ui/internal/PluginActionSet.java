@@ -26,67 +26,77 @@ import org.eclipse.ui.internal.registry.IActionSet;
  * cleanup on dispose.
  */
 public class PluginActionSet implements IActionSet {
-	private ActionSetDescriptor desc;
-	private ArrayList pluginActions = new ArrayList(4);
-	private ActionSetActionBars bars;
-/**
- * PluginActionSet constructor comment.
- */
-public PluginActionSet(ActionSetDescriptor desc) {
-	super();
-	this.desc = desc;
-}
-/**
- * Adds one plugin action ref to the list.
- */
-public void addPluginAction(WWinPluginAction action) {
-	pluginActions.add(action);
-}
-/**
- * Returns the list of plugin actions for the set.
- */
-public IAction[] getPluginActions() {
-	IAction result[] = new IAction[pluginActions.size()];
-	pluginActions.toArray(result);
-	return result;
-}
-/**
- * Disposes of this action set.
- */
-public void dispose() {
-	Iterator iter = pluginActions.iterator();
-	while (iter.hasNext()) {
-		WWinPluginAction action = (WWinPluginAction)iter.next();
-		action.dispose();
-	}
-	pluginActions.clear();
-	bars = null;
-}
-/**
- */
-/* package */ ActionSetActionBars getBars() {
-	return bars;
-}
-/**
- * Returns the config element.
- */
-public IConfigurationElement getConfigElement() {
-	return desc.getConfigElement();
-}
-/**
- * Returns the underlying descriptor.
- */
-public ActionSetDescriptor getDesc() {
-	return desc;
-}
-/**
- * Initializes this action set, which is expected to add it actions as required
- * to the given workbench window and action bars.
- *
- * @param window the workbench window
- * @param bars the action bars
- */
-public void init(IWorkbenchWindow window, IActionBars bars) {
-	this.bars = (ActionSetActionBars)bars;
-}
+    private ActionSetDescriptor desc;
+
+    private ArrayList pluginActions = new ArrayList(4);
+
+    private ActionSetActionBars bars;
+
+    /**
+     * PluginActionSet constructor comment.
+     */
+    public PluginActionSet(ActionSetDescriptor desc) {
+        super();
+        this.desc = desc;
+    }
+
+    /**
+     * Adds one plugin action ref to the list.
+     */
+    public void addPluginAction(WWinPluginAction action) {
+        pluginActions.add(action);
+    }
+
+    /**
+     * Returns the list of plugin actions for the set.
+     */
+    public IAction[] getPluginActions() {
+        IAction result[] = new IAction[pluginActions.size()];
+        pluginActions.toArray(result);
+        return result;
+    }
+
+    /**
+     * Disposes of this action set.
+     */
+    public void dispose() {
+        Iterator iter = pluginActions.iterator();
+        while (iter.hasNext()) {
+            WWinPluginAction action = (WWinPluginAction) iter.next();
+            action.dispose();
+        }
+        pluginActions.clear();
+        bars = null;
+    }
+
+    /**
+     */
+    /* package */ActionSetActionBars getBars() {
+        return bars;
+    }
+
+    /**
+     * Returns the config element.
+     */
+    public IConfigurationElement getConfigElement() {
+        return desc.getConfigElement();
+    }
+
+    /**
+     * Returns the underlying descriptor.
+     */
+    public ActionSetDescriptor getDesc() {
+        return desc;
+    }
+
+    /**
+     * Initializes this action set, which is expected to add it actions as required
+     * to the given workbench window and action bars.
+     *
+     * @param window the workbench window
+     * @param bars the action bars
+     */
+    public void init(IWorkbenchWindow window, IActionBars bars) {
+        this.bars = (ActionSetActionBars) bars;
+    }
 }

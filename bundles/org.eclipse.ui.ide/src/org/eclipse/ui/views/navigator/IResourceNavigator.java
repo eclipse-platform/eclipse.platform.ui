@@ -28,68 +28,68 @@ import org.eclipse.ui.views.framelist.FrameList;
  */
 public interface IResourceNavigator extends IViewPart {
 
-	/**
-	 * Returns the pattern filter.
-	 *
-	 * @return the pattern filter
-	 */
-	ResourcePatternFilter getPatternFilter();
+    /**
+     * Returns the pattern filter.
+     *
+     * @return the pattern filter
+     */
+    ResourcePatternFilter getPatternFilter();
 
-	/**
-	 * Returns the active working set, or <code>null<code> if none.
-	 *
-	 * @return the active working set, or <code>null<code> if none
-	 * @since 2.0
-	 */
-	IWorkingSet getWorkingSet();
+    /**
+     * Returns the active working set, or <code>null<code> if none.
+     *
+     * @return the active working set, or <code>null<code> if none
+     * @since 2.0
+     */
+    IWorkingSet getWorkingSet();
 
-	/**
-	 * Returns the current sorter.
-	 */
-	ResourceSorter getSorter();
+    /**
+     * Returns the current sorter.
+     */
+    ResourceSorter getSorter();
 
-	/**
-	 * Sets the current sorter.
-	 */
-	void setSorter(ResourceSorter sorter);
+    /**
+     * Sets the current sorter.
+     */
+    void setSorter(ResourceSorter sorter);
 
-	/**
-	 * Sets the values of the filter preference to be the 
-	 * strings in preference values
-	 */
-	void setFiltersPreference(String[] patterns);
-	
-	/**
-	 * Returns the viewer which shows the resource tree.
-	 */
-	TreeViewer getViewer();
-	
-	/**
-	 * Returns the frame list for this navigator.
-	 */
-	FrameList getFrameList();
-	
-	/**
-	 * Returns whether this navigator's selection automatically tracks the active editor.
-	 * 
-	 * @return <code>true</code> if linking is enabled, <code>false</code> if not
-	 * @since 2.1
-	 */
-	boolean isLinkingEnabled();
-	
-	/**
-	 * Sets the working set for this view, or <code>null</code> to clear it.
-	 * 
-	 * @param workingSet the working set, or <code>null</code> to clear it
-	 * @since 2.0
-	 */
-	void setWorkingSet(IWorkingSet workingSet);
-	
-	/**
-	 * Sets whether this navigator's selection automatically tracks the active editor.
-	 * 
-	 * @param enabled <code>true</code> to enable, <code>false</code> to disable
-	 * @since 2.1
-	 */
-	void setLinkingEnabled(boolean enabled);
+    /**
+     * Sets the values of the filter preference to be the 
+     * strings in preference values
+     */
+    void setFiltersPreference(String[] patterns);
+
+    /**
+     * Returns the viewer which shows the resource tree.
+     */
+    TreeViewer getViewer();
+
+    /**
+     * Returns the frame list for this navigator.
+     */
+    FrameList getFrameList();
+
+    /**
+     * Returns whether this navigator's selection automatically tracks the active editor.
+     * 
+     * @return <code>true</code> if linking is enabled, <code>false</code> if not
+     * @since 2.1
+     */
+    boolean isLinkingEnabled();
+
+    /**
+     * Sets the working set for this view, or <code>null</code> to clear it.
+     * 
+     * @param workingSet the working set, or <code>null</code> to clear it
+     * @since 2.0
+     */
+    void setWorkingSet(IWorkingSet workingSet);
+
+    /**
+     * Sets whether this navigator's selection automatically tracks the active editor.
+     * 
+     * @param enabled <code>true</code> to enable, <code>false</code> to disable
+     * @since 2.1
+     */
+    void setLinkingEnabled(boolean enabled);
 }

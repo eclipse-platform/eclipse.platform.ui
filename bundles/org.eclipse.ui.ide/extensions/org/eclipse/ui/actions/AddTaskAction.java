@@ -13,13 +13,13 @@ package org.eclipse.ui.actions;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.jface.util.Assert;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
 import org.eclipse.ui.views.markers.internal.DialogTaskProperties;
 
 /**
@@ -31,67 +31,72 @@ import org.eclipse.ui.views.markers.internal.DialogTaskProperties;
  * @since 2.1
  */
 public class AddTaskAction extends SelectionListenerAction {
-	/**
-	 * The id of this action.
-	 */
-	public static final String ID = PlatformUI.PLUGIN_ID + ".AddTaskAction";//$NON-NLS-1$
-	/**
-	 * The shell in which to show any dialogs.
-	 */
-	private Shell shell;
+    /**
+     * The id of this action.
+     */
+    public static final String ID = PlatformUI.PLUGIN_ID + ".AddTaskAction";//$NON-NLS-1$
 
- 	/**
- 	 * Creates a new instance of the receiver.
- 	 * 
- 	 * @param shell shell to use to show any dialogs
- 	 */
-	public AddTaskAction(Shell shell) {
-		super(IDEWorkbenchMessages.getString("AddTaskLabel")); //$NON-NLS-1$		
-		setId(ID);
-		this.shell = shell;
-		Assert.isNotNull(shell);
-		setToolTipText(IDEWorkbenchMessages.getString("AddTaskToolTip")); //$NON-NLS-1$		
-		WorkbenchHelp.setHelp(this, IHelpContextIds.ADD_TASK_ACTION);
-	}
-	private IResource getElement(IStructuredSelection selection) {
-		if (selection.size() != 1)
-			return null;
+    /**
+     * The shell in which to show any dialogs.
+     */
+    private Shell shell;
 
-		Object element = selection.getFirstElement();
-		IResource resource = null;
-		if (element instanceof IResource)
-			resource = (IResource) element;
-		if (element instanceof IAdaptable)
-			resource = (IResource) ((IAdaptable) element).getAdapter(IResource.class);
+    /**
+     * Creates a new instance of the receiver.
+     * 
+     * @param shell shell to use to show any dialogs
+     */
+    public AddTaskAction(Shell shell) {
+        super(IDEWorkbenchMessages.getString("AddTaskLabel")); //$NON-NLS-1$		
+        setId(ID);
+        this.shell = shell;
+        Assert.isNotNull(shell);
+        setToolTipText(IDEWorkbenchMessages.getString("AddTaskToolTip")); //$NON-NLS-1$		
+        WorkbenchHelp.setHelp(this, IHelpContextIds.ADD_TASK_ACTION);
+    }
 
-		if (resource != null && resource instanceof IProject) {
-			IProject project = (IProject) resource;
-			if (project.isOpen() == false)
-				resource = null;
-		}			
-		return resource;		
-	}	
-	/* (non-Javadoc)
-	 * Method declared on IAction.
-	 */
-	public void run() {
-		IResource resource = getElement(getStructuredSelection());
-		if (resource != null) {
-			DialogTaskProperties dialog= new DialogTaskProperties(shell);
-			dialog.setResource(resource);
-			dialog.open();
-		}
-	}
+    private IResource getElement(IStructuredSelection selection) {
+        if (selection.size() != 1)
+            return null;
 
-	/**
-	 * The <code>AddTaskAction</code> implementation of this
-	 * <code>SelectionListenerAction</code> method enables the action only
-	 * if the selection contains a single resource and the resource is
-	 * not a closed project.
-	 * 
-	 * @param selection the selection to update the enabled state for
-	 */
-	protected boolean updateSelection(IStructuredSelection selection) {
-		return super.updateSelection(selection) && getElement(selection) != null;
-	}
+        Object element = selection.getFirstElement();
+        IResource resource = null;
+        if (element instanceof IResource)
+            resource = (IResource) element;
+        if (element instanceof IAdaptable)
+            resource = (IResource) ((IAdaptable) element)
+                    .getAdapter(IResource.class);
+
+        if (resource != null && resource instanceof IProject) {
+            IProject project = (IProject) resource;
+            if (project.isOpen() == false)
+                resource = null;
+        }
+        return resource;
+    }
+
+    /* (non-Javadoc)
+     * Method declared on IAction.
+     */
+    public void run() {
+        IResource resource = getElement(getStructuredSelection());
+        if (resource != null) {
+            DialogTaskProperties dialog = new DialogTaskProperties(shell);
+            dialog.setResource(resource);
+            dialog.open();
+        }
+    }
+
+    /**
+     * The <code>AddTaskAction</code> implementation of this
+     * <code>SelectionListenerAction</code> method enables the action only
+     * if the selection contains a single resource and the resource is
+     * not a closed project.
+     * 
+     * @param selection the selection to update the enabled state for
+     */
+    protected boolean updateSelection(IStructuredSelection selection) {
+        return super.updateSelection(selection)
+                && getElement(selection) != null;
+    }
 }

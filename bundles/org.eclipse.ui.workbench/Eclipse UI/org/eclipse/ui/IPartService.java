@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui;
 
-
 /**
  * A part service tracks the creation and activation of parts within a
  * workbench page.
@@ -22,50 +21,50 @@ package org.eclipse.ui;
  */
 public interface IPartService {
 
-/**
- * Adds the given listener for part lifecycle events.
- * Has no effect if an identical listener is already registered.
- *
- * @param listener a part listener
- */
-public void addPartListener(IPartListener listener);
+    /**
+     * Adds the given listener for part lifecycle events.
+     * Has no effect if an identical listener is already registered.
+     *
+     * @param listener a part listener
+     */
+    public void addPartListener(IPartListener listener);
 
-/**
- * Adds the given listener for part lifecycle events.
- * Has no effect if an identical listener is already registered.
- *
- * @param listener a part listener
- */
-public void addPartListener(IPartListener2 listener);
+    /**
+     * Adds the given listener for part lifecycle events.
+     * Has no effect if an identical listener is already registered.
+     *
+     * @param listener a part listener
+     */
+    public void addPartListener(IPartListener2 listener);
 
-/**
- * Returns the active part.
- *
- * @return the active part, or <code>null</code> if no part is currently active
- */
-public IWorkbenchPart getActivePart();
+    /**
+     * Returns the active part.
+     *
+     * @return the active part, or <code>null</code> if no part is currently active
+     */
+    public IWorkbenchPart getActivePart();
 
-/**
- * Returns the active part reference.
- *
- * @return the active part reference, or <code>null</code> if no part
- * is currently active
- */
-public IWorkbenchPartReference getActivePartReference();
+    /**
+     * Returns the active part reference.
+     *
+     * @return the active part reference, or <code>null</code> if no part
+     * is currently active
+     */
+    public IWorkbenchPartReference getActivePartReference();
 
-/**
- * Removes the given part listener.
- * Has no affect if an identical listener is not registered.
- *
- * @param listener a part listener
- */
-public void removePartListener(IPartListener listener);
+    /**
+     * Removes the given part listener.
+     * Has no affect if an identical listener is not registered.
+     *
+     * @param listener a part listener
+     */
+    public void removePartListener(IPartListener listener);
 
-/**
- * Removes the given part listener.
- * Has no affect if an identical listener is not registered.
- *
- * @param listener a part listener
- */
-public void removePartListener(IPartListener2 listener);
+    /**
+     * Removes the given part listener.
+     * Has no affect if an identical listener is not registered.
+     *
+     * @param listener a part listener
+     */
+    public void removePartListener(IPartListener2 listener);
 }

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
-
 /**
  * The view registry maintains a list of views explicitly registered
  * against the view extension point..
@@ -24,29 +23,34 @@ package org.eclipse.ui.internal.registry;
  * </p>
  */
 public interface IViewRegistry {
-/**
- * Return a view descriptor with the given extension ID.  If no view exists
- * with the ID return null.
- */
-public IViewDescriptor find(String id);
-/**
- * Returns an enumeration of view categories, if defined.
- */
-public Category [] getCategories();
-/**
- * Return the view category count.
- */
-public int getCategoryCount();
-/**
- * Return the view count.
- */
-public int getViewCount();
-/**
- * Return a list of views defined in the registry.
- */
-public IViewDescriptor [] getViews();
-/**
- * Return a list of sticky views defined in the registry.
- */
-public IStickyViewDescriptor [] getStickyViews();
+    /**
+     * Return a view descriptor with the given extension ID.  If no view exists
+     * with the ID return null.
+     */
+    public IViewDescriptor find(String id);
+
+    /**
+     * Returns an enumeration of view categories, if defined.
+     */
+    public Category[] getCategories();
+
+    /**
+     * Return the view category count.
+     */
+    public int getCategoryCount();
+
+    /**
+     * Return the view count.
+     */
+    public int getViewCount();
+
+    /**
+     * Return a list of views defined in the registry.
+     */
+    public IViewDescriptor[] getViews();
+
+    /**
+     * Return a list of sticky views defined in the registry.
+     */
+    public IStickyViewDescriptor[] getStickyViews();
 }

@@ -18,30 +18,31 @@ import org.eclipse.ui.IEditorPart;
  * @since 3.0
  */
 public class EditorTabDropTarget extends AbstractTestDropTarget {
-	
-	int editorIdx;
-	
-	public EditorTabDropTarget(int editorIdx) {
-		this.editorIdx = editorIdx;
-	}
-	
-	IEditorPart getPart() {
-		return getPage().getEditors()[editorIdx];
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.tests.dnd.TestDropTarget#getName()
-	 */
-	public String toString() {
-		return "editor " + editorIdx + " tab area";
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.tests.dnd.TestDropTarget#getLocation()
-	 */
-	public Point getLocation() {
-		Rectangle bounds = DragOperations.getDisplayBounds(DragOperations.getPane(getPart()));
-		
-		return new Point(bounds.x + 8, bounds.y + 8);
-	}
+
+    int editorIdx;
+
+    public EditorTabDropTarget(int editorIdx) {
+        this.editorIdx = editorIdx;
+    }
+
+    IEditorPart getPart() {
+        return getPage().getEditors()[editorIdx];
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.tests.dnd.TestDropTarget#getName()
+     */
+    public String toString() {
+        return "editor " + editorIdx + " tab area";
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.tests.dnd.TestDropTarget#getLocation()
+     */
+    public Point getLocation() {
+        Rectangle bounds = DragOperations.getDisplayBounds(DragOperations
+                .getPane(getPart()));
+
+        return new Point(bounds.x + 8, bounds.y + 8);
+    }
 }

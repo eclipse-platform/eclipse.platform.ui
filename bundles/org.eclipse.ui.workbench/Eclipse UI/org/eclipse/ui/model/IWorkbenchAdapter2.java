@@ -26,7 +26,7 @@ import org.eclipse.swt.graphics.RGB;
  * @since 3.0
  */
 public interface IWorkbenchAdapter2 {
-    
+
     /**
      * Provides a foreground color for the given element.
      * 
@@ -43,8 +43,8 @@ public interface IWorkbenchAdapter2 {
      * @return	the background color for the element, or <code>null</code> 
      *   to use the default background color
      */
-    public RGB getBackground(Object element);   
-    
+    public RGB getBackground(Object element);
+
     /**
      * Provides a font the given element.
      * 
@@ -53,5 +53,5 @@ public interface IWorkbenchAdapter2 {
      *   to use the default font
      */
     public FontData getFont(Object element);
-    
+
 }

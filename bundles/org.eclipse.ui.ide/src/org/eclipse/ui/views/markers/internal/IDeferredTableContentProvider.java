@@ -16,5 +16,5 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * 
  */
 public interface IDeferredTableContentProvider {
-	public Object[] getElements(IProgressMonitor monitor);
+    public Object[] getElements(IProgressMonitor monitor);
 }

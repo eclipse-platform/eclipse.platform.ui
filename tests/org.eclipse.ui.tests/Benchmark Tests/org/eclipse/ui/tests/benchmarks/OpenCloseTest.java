@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.benchmarks;
 
-
 import org.eclipse.ui.tests.util.UITestCase;
 
 /**
@@ -19,19 +18,19 @@ import org.eclipse.ui.tests.util.UITestCase;
  */
 public class OpenCloseTest extends UITestCase {
 
-	/**
-	 * Constructor for OpenCloseTest.
-	 * @param testName
-	 */
-	public OpenCloseTest(String testName) {
-		super(testName);
-	}
-		
-	/**
-	 * Tests that the Navigator is initially populated with
-	 * the correct elements from the workspace.
-	 */
-	public void testOpenClose()  {
-	}
+    /**
+     * Constructor for OpenCloseTest.
+     * @param testName
+     */
+    public OpenCloseTest(String testName) {
+        super(testName);
+    }
+
+    /**
+     * Tests that the Navigator is initially populated with
+     * the correct elements from the workspace.
+     */
+    public void testOpenClose() {
+    }
 
 }

@@ -17,9 +17,9 @@ import org.eclipse.swt.SWT;
  */
 public class PlatformUtil {
 
-	public static boolean onLinux(){
-		
-		String platform = SWT.getPlatform();
-		return (platform.equals("motif") || platform.equals("gtk"));
-	}
+    public static boolean onLinux() {
+
+        String platform = SWT.getPlatform();
+        return (platform.equals("motif") || platform.equals("gtk"));
+    }
 }

@@ -12,7 +12,7 @@
 package org.eclipse.ui;
 
 import org.eclipse.core.resources.IMarker;
- 
+
 /** 
  * A marker resolution generator should implement this interface rather than   
  * <code>IMarkerResolutionGenerator</code> if it can determine whether a particular marker 
@@ -27,7 +27,7 @@ public interface IMarkerResolutionGenerator2 extends IMarkerResolutionGenerator 
      * 
      * @return <code>true</code> if there are resolutions for the given marker,
      *   <code>false</code> if not
-     */ 
-    public boolean hasResolutions(IMarker marker); 
+     */
+    public boolean hasResolutions(IMarker marker);
 }
 

@@ -16,31 +16,31 @@ package org.eclipse.ui;
  * @since 3.0
  */
 public interface IWorkbenchPartConstants {
-	
-	/**
-	 * The property id for <code>getTitle</code>, <code>getTitleImage</code>
-	 * and <code>getTitleToolTip</code>.
-	 */
-	int PROP_TITLE = 0x001;
-	
-	/**
-	 * The property id for <code>ISaveablePart.isDirty()</code>.
-	 */
-	int PROP_DIRTY = 0x101;
-	
-	/**
-	 * The property id for <code>IEditorPart.getEditorInput()</code>.
-	 */
-	int PROP_INPUT = 0x102;
-	
-	/**
-	 * The property id for <code>IWorkbenchPart2.getPartName</code>
-	 */
-	int PROP_PART_NAME = 0x104;
-	
-	/**
-	 * The property id for <code>IWorkbenchPart2.getContentDescription()</code>
-	 */
-	int PROP_CONTENT_DESCRIPTION = 0x105;
-	
+
+    /**
+     * The property id for <code>getTitle</code>, <code>getTitleImage</code>
+     * and <code>getTitleToolTip</code>.
+     */
+    int PROP_TITLE = 0x001;
+
+    /**
+     * The property id for <code>ISaveablePart.isDirty()</code>.
+     */
+    int PROP_DIRTY = 0x101;
+
+    /**
+     * The property id for <code>IEditorPart.getEditorInput()</code>.
+     */
+    int PROP_INPUT = 0x102;
+
+    /**
+     * The property id for <code>IWorkbenchPart2.getPartName</code>
+     */
+    int PROP_PART_NAME = 0x104;
+
+    /**
+     * The property id for <code>IWorkbenchPart2.getContentDescription()</code>
+     */
+    int PROP_CONTENT_DESCRIPTION = 0x105;
+
 }

@@ -19,10 +19,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
-
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -33,181 +31,179 @@ import org.eclipse.ui.tests.util.UITestCase;
 /**
  * @version 	1.0
  */
-public class AdaptableDecoratorTestCase
-	extends UITestCase
-	implements ILabelProviderListener {
+public class AdaptableDecoratorTestCase extends UITestCase implements
+        ILabelProviderListener {
 
-	private DecoratorDefinition fullDefinition;
-	private DecoratorDefinition lightDefinition;
-	private AdaptedResourceNavigator adaptedNavigator;
-	private boolean updated = false;
-	public String ADAPTED_NAVIGATOR_ID =
-		"org.eclipse.ui.tests.adaptable.adaptedHierarchy";
-	protected IProject testProject;
-	protected IFolder testFolder;
-	protected IFile testFile;
+    private DecoratorDefinition fullDefinition;
 
-	/**
-	 * Constructor for DecoratorTestCase.
-	 * @param testName
-	 */
-	public AdaptableDecoratorTestCase(String testName) {
-		super(testName);
-	}
+    private DecoratorDefinition lightDefinition;
 
-	/**
-	 * Sets up the hierarchy.
-	 */
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
-		createTestFile();
-		showAdaptedNav();
+    private AdaptedResourceNavigator adaptedNavigator;
 
-		WorkbenchPlugin.getDefault().getDecoratorManager().addListener(this);
+    private boolean updated = false;
 
-		DecoratorDefinition[] definitions =
-			WorkbenchPlugin
-				.getDefault()
-				.getDecoratorManager()
-				.getAllDecoratorDefinitions();
-		for (int i = 0; i < definitions.length; i++) {
-			if (definitions[i]
-				.getId()
-				.equals("org.eclipse.ui.tests.adaptable.decorator"))
-				fullDefinition = definitions[i];
-			if (definitions[i]
-				.getId()
-				.equals("org.eclipse.ui.tests.navigator.lightweightdecorator"))
-				lightDefinition = definitions[i];
-		}
-	}
+    public String ADAPTED_NAVIGATOR_ID = "org.eclipse.ui.tests.adaptable.adaptedHierarchy";
 
-	private DecoratorManager getDecoratorManager() {
-		return WorkbenchPlugin.getDefault().getDecoratorManager();
-	}
+    protected IProject testProject;
 
-	/**
-	 * Remove the listener.
-	 */
-	protected void doTearDown() throws Exception {
-		
-		if (testProject != null) {
-			try {
-				testProject.delete(true, null);
-			} catch (CoreException e) {
-				fail(e.toString());
-			}
-			testProject = null;
-			testFolder = null;
-			testFile = null;
-		}
-		super.doTearDown();
-		adaptedNavigator = null;
+    protected IFolder testFolder;
 
-		getDecoratorManager().removeListener(this);
-	}
+    protected IFile testFile;
 
-	/**
-	 * Make a label changed event for resource.
-	 */
-	private LabelProviderChangedEvent getLabelChangedEvent(IResource resource) {
-		return new LabelProviderChangedEvent(getDecoratorManager(), resource);
-	}
+    /**
+     * Constructor for DecoratorTestCase.
+     * @param testName
+     */
+    public AdaptableDecoratorTestCase(String testName) {
+        super(testName);
+    }
 
-	/**
-	 * Test enabling the contributor
-	 */
-	public void testEnableDecorator() throws CoreException {
-		getDecoratorManager().updateForEnablementChange();
-		fullDefinition.setEnabled(true);
-		lightDefinition.setEnabled(true);
-		getDecoratorManager().updateForEnablementChange();
+    /**
+     * Sets up the hierarchy.
+     */
+    protected void doSetUp() throws Exception {
+        super.doSetUp();
+        createTestFile();
+        showAdaptedNav();
 
-	}
+        WorkbenchPlugin.getDefault().getDecoratorManager().addListener(this);
 
-	/**
-	 * Test disabling the contributor
-	 */
-	public void testDisableDecorator() throws CoreException {
-		getDecoratorManager().updateForEnablementChange();
-		fullDefinition.setEnabled(false);
-		lightDefinition.setEnabled(false);
-		getDecoratorManager().updateForEnablementChange();
-	}
+        DecoratorDefinition[] definitions = WorkbenchPlugin.getDefault()
+                .getDecoratorManager().getAllDecoratorDefinitions();
+        for (int i = 0; i < definitions.length; i++) {
+            if (definitions[i].getId().equals(
+                    "org.eclipse.ui.tests.adaptable.decorator"))
+                fullDefinition = definitions[i];
+            if (definitions[i].getId().equals(
+                    "org.eclipse.ui.tests.navigator.lightweightdecorator"))
+                lightDefinition = definitions[i];
+        }
+    }
 
-	/**
-	 * Refresh the full decorator.
-	 */
-	public void testRefreshFullContributor() throws CoreException {
+    private DecoratorManager getDecoratorManager() {
+        return WorkbenchPlugin.getDefault().getDecoratorManager();
+    }
 
-		updated = false;
-		getDecoratorManager().updateForEnablementChange();
-		fullDefinition.setEnabled(true);
-		lightDefinition.setEnabled(false);
-		getDecoratorManager().updateForEnablementChange();
-		assertTrue("Got an update", updated);
-		updated = false;
+    /**
+     * Remove the listener.
+     */
+    protected void doTearDown() throws Exception {
 
-	}
+        if (testProject != null) {
+            try {
+                testProject.delete(true, null);
+            } catch (CoreException e) {
+                fail(e.toString());
+            }
+            testProject = null;
+            testFolder = null;
+            testFile = null;
+        }
+        super.doTearDown();
+        adaptedNavigator = null;
 
-	/**
-		 * Refresh the full decorator.
-		 */
-	public void testRefreshLightContributor() throws CoreException {
+        getDecoratorManager().removeListener(this);
+    }
 
-		updated = false;
-		getDecoratorManager().updateForEnablementChange();
-		lightDefinition.setEnabled(true);
-		fullDefinition.setEnabled(false);
-		getDecoratorManager().updateForEnablementChange();
-		assertTrue("Got an update", updated);
-		updated = false;
+    /**
+     * Make a label changed event for resource.
+     */
+    private LabelProviderChangedEvent getLabelChangedEvent(IResource resource) {
+        return new LabelProviderChangedEvent(getDecoratorManager(), resource);
+    }
 
-	}
+    /**
+     * Test enabling the contributor
+     */
+    public void testEnableDecorator() throws CoreException {
+        getDecoratorManager().updateForEnablementChange();
+        fullDefinition.setEnabled(true);
+        lightDefinition.setEnabled(true);
+        getDecoratorManager().updateForEnablementChange();
 
-	/*
-	 * @see ILabelProviderListener#labelProviderChanged(LabelProviderChangedEvent)
-	 */
-	public void labelProviderChanged(LabelProviderChangedEvent event) {
-		updated = true;
-	}
+    }
 
-	/** 
-	 * Shows the Adapted Resource Navigator in a new test window. 
-	 */
-	protected void showAdaptedNav() throws PartInitException {
-		IWorkbenchWindow window = openTestWindow();
-		adaptedNavigator =
-			(AdaptedResourceNavigator) window.getActivePage().showView(
-				ADAPTED_NAVIGATOR_ID);
-	}
+    /**
+     * Test disabling the contributor
+     */
+    public void testDisableDecorator() throws CoreException {
+        getDecoratorManager().updateForEnablementChange();
+        fullDefinition.setEnabled(false);
+        lightDefinition.setEnabled(false);
+        getDecoratorManager().updateForEnablementChange();
+    }
 
-	protected void createTestProject() throws CoreException {
-		if (testProject == null) {
-			IWorkspace workspace = ResourcesPlugin.getWorkspace();
-			testProject = workspace.getRoot().getProject("AdaptedTestProject");
-			testProject.create(null);
-			testProject.open(null);
-		}
-	}
+    /**
+     * Refresh the full decorator.
+     */
+    public void testRefreshFullContributor() throws CoreException {
 
-	protected void createTestFolder() throws CoreException {
-		if (testFolder == null) {
-			createTestProject();
-			testFolder = testProject.getFolder("AdaptedTestFolder");
-			testFolder.create(false, false, null);
-		}
-	}
+        updated = false;
+        getDecoratorManager().updateForEnablementChange();
+        fullDefinition.setEnabled(true);
+        lightDefinition.setEnabled(false);
+        getDecoratorManager().updateForEnablementChange();
+        assertTrue("Got an update", updated);
+        updated = false;
 
-	protected void createTestFile() throws CoreException {
-		if (testFile == null) {
-			createTestFolder();
-			testFile = testFolder.getFile("AdaptedFoo.txt");
-			testFile.create(
-				new ByteArrayInputStream("Some content.".getBytes()),
-				false,
-				null);
-		}
-	}
+    }
+
+    /**
+     * Refresh the full decorator.
+     */
+    public void testRefreshLightContributor() throws CoreException {
+
+        updated = false;
+        getDecoratorManager().updateForEnablementChange();
+        lightDefinition.setEnabled(true);
+        fullDefinition.setEnabled(false);
+        getDecoratorManager().updateForEnablementChange();
+        assertTrue("Got an update", updated);
+        updated = false;
+
+    }
+
+    /*
+     * @see ILabelProviderListener#labelProviderChanged(LabelProviderChangedEvent)
+     */
+    public void labelProviderChanged(LabelProviderChangedEvent event) {
+        updated = true;
+    }
+
+    /** 
+     * Shows the Adapted Resource Navigator in a new test window. 
+     */
+    protected void showAdaptedNav() throws PartInitException {
+        IWorkbenchWindow window = openTestWindow();
+        adaptedNavigator = (AdaptedResourceNavigator) window.getActivePage()
+                .showView(ADAPTED_NAVIGATOR_ID);
+    }
+
+    protected void createTestProject() throws CoreException {
+        if (testProject == null) {
+            IWorkspace workspace = ResourcesPlugin.getWorkspace();
+            testProject = workspace.getRoot().getProject("AdaptedTestProject");
+            testProject.create(null);
+            testProject.open(null);
+        }
+    }
+
+    protected void createTestFolder() throws CoreException {
+        if (testFolder == null) {
+            createTestProject();
+            testFolder = testProject.getFolder("AdaptedTestFolder");
+            testFolder.create(false, false, null);
+        }
+    }
+
+    protected void createTestFile() throws CoreException {
+        if (testFile == null) {
+            createTestFolder();
+            testFile = testFolder.getFile("AdaptedFoo.txt");
+            testFile.create(
+                    new ByteArrayInputStream("Some content.".getBytes()),
+                    false, null);
+        }
+    }
 
 }

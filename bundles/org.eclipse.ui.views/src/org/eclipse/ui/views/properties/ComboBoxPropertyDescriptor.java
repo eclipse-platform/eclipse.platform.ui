@@ -13,7 +13,6 @@ package org.eclipse.ui.views.properties;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.ILabelProvider;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
@@ -36,10 +35,10 @@ import org.eclipse.swt.widgets.Composite;
  */
 public class ComboBoxPropertyDescriptor extends PropertyDescriptor {
 
-	/**
-	 * The list of possible values to display in the combo box
-	 */
-	private String[] values;
+    /**
+     * The list of possible values to display in the combo box
+     */
+    private String[] values;
 
     /**
      * Creates an property descriptor with the given id, display name, and list
@@ -49,11 +48,12 @@ public class ComboBoxPropertyDescriptor extends PropertyDescriptor {
      * @param displayName the name to display for the property
      * @param valuesArray the list of possible values to display in the combo box
      */
-    public ComboBoxPropertyDescriptor(Object id, String displayName, String[] valuesArray) {
-    	super(id, displayName);
-    	values = valuesArray;
+    public ComboBoxPropertyDescriptor(Object id, String displayName,
+            String[] valuesArray) {
+        super(id, displayName);
+        values = valuesArray;
     }
-    
+
     /**
      * The <code>ComboBoxPropertyDescriptor</code> implementation of this 
      * <code>IPropertyDescriptor</code> method creates and returns a new
@@ -63,12 +63,13 @@ public class ComboBoxPropertyDescriptor extends PropertyDescriptor {
      * </p>
      */
     public CellEditor createPropertyEditor(Composite parent) {
-    	CellEditor editor = new ComboBoxCellEditor(parent, values, SWT.READ_ONLY);
-    	if (getValidator() != null)
-    		editor.setValidator(getValidator());
-    	return editor;
+        CellEditor editor = new ComboBoxCellEditor(parent, values,
+                SWT.READ_ONLY);
+        if (getValidator() != null)
+            editor.setValidator(getValidator());
+        return editor;
     }
-    
+
     /**
      * The <code>ComboBoxPropertyDescriptor</code> implementation of this 
      * <code>IPropertyDescriptor</code> method returns the value set by
@@ -82,6 +83,6 @@ public class ComboBoxPropertyDescriptor extends PropertyDescriptor {
         if (isLabelProviderSet())
             return super.getLabelProvider();
         else
-            return new ComboBoxLabelProvider(values); 
-    }    
+            return new ComboBoxLabelProvider(values);
+    }
 }

@@ -18,10 +18,10 @@ package org.eclipse.ui.views.properties;
  * </p>
  */
 public interface IPropertySourceProvider {
-/**
- * Returns a property source for the given object.
- *
- * @param object the object
- */
-public IPropertySource getPropertySource(Object object);
+    /**
+     * Returns a property source for the given object.
+     *
+     * @param object the object
+     */
+    public IPropertySource getPropertySource(Object object);
 }

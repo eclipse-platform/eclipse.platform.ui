@@ -90,491 +90,505 @@ import org.eclipse.ui.internal.util.PrefUtil;
  * </p>
  */
 public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
-		implements
-			IExecutableExtension {
-	private WizardNewProjectCreationPage mainPage;
-	private WizardNewProjectReferencePage referencePage;
+        implements IExecutableExtension {
+    private WizardNewProjectCreationPage mainPage;
 
-	// cache of newly-created project
-	private IProject newProject;
+    private WizardNewProjectReferencePage referencePage;
 
-	/**
-	 * The config element which declares this wizard.
-	 */
-	private IConfigurationElement configElement;
+    // cache of newly-created project
+    private IProject newProject;
 
-	private static String WINDOW_PROBLEMS_TITLE = ResourceMessages
-			.getString("NewProject.errorOpeningWindow"); //$NON-NLS-1$
+    /**
+     * The config element which declares this wizard.
+     */
+    private IConfigurationElement configElement;
 
-	/**
-	 * Extension attribute name for final perspective.
-	 */
-	private static final String FINAL_PERSPECTIVE = "finalPerspective"; //$NON-NLS-1$
+    private static String WINDOW_PROBLEMS_TITLE = ResourceMessages
+            .getString("NewProject.errorOpeningWindow"); //$NON-NLS-1$
 
-	/**
-	 * Extension attribute name for preferred perspectives.
-	 */
-	private static final String PREFERRED_PERSPECTIVES = "preferredPerspectives"; //$NON-NLS-1$
+    /**
+     * Extension attribute name for final perspective.
+     */
+    private static final String FINAL_PERSPECTIVE = "finalPerspective"; //$NON-NLS-1$
 
-	/**
-	 * Creates a wizard for creating a new project resource in the workspace.
-	 */
-	public BasicNewProjectResourceWizard() {
-		IDialogSettings workbenchSettings = IDEWorkbenchPlugin.getDefault()
-				.getDialogSettings();
-		IDialogSettings section = workbenchSettings
-				.getSection("BasicNewProjectResourceWizard");//$NON-NLS-1$
-		if (section == null)
-			section = workbenchSettings
-					.addNewSection("BasicNewProjectResourceWizard");//$NON-NLS-1$
-		setDialogSettings(section);
-	}
-	/*
-	 * (non-Javadoc) Method declared on IWizard.
-	 */
-	public void addPages() {
-		super.addPages();
+    /**
+     * Extension attribute name for preferred perspectives.
+     */
+    private static final String PREFERRED_PERSPECTIVES = "preferredPerspectives"; //$NON-NLS-1$
 
-		mainPage = new WizardNewProjectCreationPage("basicNewProjectPage");//$NON-NLS-1$
-		mainPage.setTitle(ResourceMessages.getString("NewProject.title")); //$NON-NLS-1$
-		mainPage.setDescription(ResourceMessages
-				.getString("NewProject.description")); //$NON-NLS-1$
-		this.addPage(mainPage);
+    /**
+     * Creates a wizard for creating a new project resource in the workspace.
+     */
+    public BasicNewProjectResourceWizard() {
+        IDialogSettings workbenchSettings = IDEWorkbenchPlugin.getDefault()
+                .getDialogSettings();
+        IDialogSettings section = workbenchSettings
+                .getSection("BasicNewProjectResourceWizard");//$NON-NLS-1$
+        if (section == null)
+            section = workbenchSettings
+                    .addNewSection("BasicNewProjectResourceWizard");//$NON-NLS-1$
+        setDialogSettings(section);
+    }
 
-		// only add page if there are already projects in the workspace
-		if (ResourcesPlugin.getWorkspace().getRoot().getProjects().length > 0) {
-			referencePage = new WizardNewProjectReferencePage(
-					"basicReferenceProjectPage");//$NON-NLS-1$
-			referencePage.setTitle(ResourceMessages
-					.getString("NewProject.referenceTitle")); //$NON-NLS-1$
-			referencePage.setDescription(ResourceMessages
-					.getString("NewProject.referenceDescription")); //$NON-NLS-1$
-			this.addPage(referencePage);
-		}
-	}
-	/**
-	 * Creates a new project resource with the selected name.
-	 * <p>
-	 * In normal usage, this method is invoked after the user has pressed Finish
-	 * on the wizard; the enablement of the Finish button implies that all
-	 * controls on the pages currently contain valid values.
-	 * </p>
-	 * <p>
-	 * Note that this wizard caches the new project once it has been
-	 * successfully created; subsequent invocations of this method will answer
-	 * the same project resource without attempting to create it again.
-	 * </p>
-	 * 
-	 * @return the created project resource, or <code>null</code> if the
-	 *         project was not created
-	 */
-	private IProject createNewProject() {
-		if (newProject != null)
-			return newProject;
+    /*
+     * (non-Javadoc) Method declared on IWizard.
+     */
+    public void addPages() {
+        super.addPages();
 
-		// get a project handle
-		final IProject newProjectHandle = mainPage.getProjectHandle();
+        mainPage = new WizardNewProjectCreationPage("basicNewProjectPage");//$NON-NLS-1$
+        mainPage.setTitle(ResourceMessages.getString("NewProject.title")); //$NON-NLS-1$
+        mainPage.setDescription(ResourceMessages
+                .getString("NewProject.description")); //$NON-NLS-1$
+        this.addPage(mainPage);
 
-		// get a project descriptor
-		IPath newPath = null;
-		if (!mainPage.useDefaults())
-			newPath = mainPage.getLocationPath();
+        // only add page if there are already projects in the workspace
+        if (ResourcesPlugin.getWorkspace().getRoot().getProjects().length > 0) {
+            referencePage = new WizardNewProjectReferencePage(
+                    "basicReferenceProjectPage");//$NON-NLS-1$
+            referencePage.setTitle(ResourceMessages
+                    .getString("NewProject.referenceTitle")); //$NON-NLS-1$
+            referencePage.setDescription(ResourceMessages
+                    .getString("NewProject.referenceDescription")); //$NON-NLS-1$
+            this.addPage(referencePage);
+        }
+    }
 
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		final IProjectDescription description = workspace
-				.newProjectDescription(newProjectHandle.getName());
-		description.setLocation(newPath);
+    /**
+     * Creates a new project resource with the selected name.
+     * <p>
+     * In normal usage, this method is invoked after the user has pressed Finish
+     * on the wizard; the enablement of the Finish button implies that all
+     * controls on the pages currently contain valid values.
+     * </p>
+     * <p>
+     * Note that this wizard caches the new project once it has been
+     * successfully created; subsequent invocations of this method will answer
+     * the same project resource without attempting to create it again.
+     * </p>
+     * 
+     * @return the created project resource, or <code>null</code> if the
+     *         project was not created
+     */
+    private IProject createNewProject() {
+        if (newProject != null)
+            return newProject;
 
-		// update the referenced project if provided
-		if (referencePage != null) {
-			IProject[] refProjects = referencePage.getReferencedProjects();
-			if (refProjects.length > 0)
-				description.setReferencedProjects(refProjects);
-		}
+        // get a project handle
+        final IProject newProjectHandle = mainPage.getProjectHandle();
 
-		// create the new project operation
-		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
-			protected void execute(IProgressMonitor monitor)
-					throws CoreException {
-				createProject(description, newProjectHandle, monitor);
-			}
-		};
+        // get a project descriptor
+        IPath newPath = null;
+        if (!mainPage.useDefaults())
+            newPath = mainPage.getLocationPath();
 
-		// run the new project creation operation
-		try {
-			getContainer().run(true, true, op);
-		} catch (InterruptedException e) {
-			return null;
-		} catch (InvocationTargetException e) {
-			// ie.- one of the steps resulted in a core exception
-			Throwable t = e.getTargetException();
-			if (t instanceof CoreException) {
-				if (((CoreException) t).getStatus().getCode() == IResourceStatus.CASE_VARIANT_EXISTS) {
-					MessageDialog
-							.openError(
-									getShell(),
-									ResourceMessages
-											.getString("NewProject.errorMessage"), //$NON-NLS-1$
-									ResourceMessages
-											.format(
-													"NewProject.caseVariantExistsError", new String[]{newProjectHandle.getName()}) //$NON-NLS-1$,
-							);
-				} else {
-					ErrorDialog.openError(getShell(), ResourceMessages
-							.getString("NewProject.errorMessage"), //$NON-NLS-1$
-							null, // no special message
-							((CoreException) t).getStatus());
-				}
-			} else {
-				// CoreExceptions are handled above, but unexpected runtime
-				// exceptions and errors may still occur.
-				IDEWorkbenchPlugin.getDefault().getLog().log(
-						new Status(IStatus.ERROR,
-								IDEWorkbenchPlugin.IDE_WORKBENCH, 0, t
-										.toString(), t));
-				MessageDialog
-						.openError(
-								getShell(),
-								ResourceMessages
-										.getString("NewProject.errorMessage"), //$NON-NLS-1$
-								ResourceMessages
-										.format(
-												"NewProject.internalError", new Object[]{t.getMessage()})); //$NON-NLS-1$
-			}
-			return null;
-		}
+        IWorkspace workspace = ResourcesPlugin.getWorkspace();
+        final IProjectDescription description = workspace
+                .newProjectDescription(newProjectHandle.getName());
+        description.setLocation(newPath);
 
-		newProject = newProjectHandle;
+        // update the referenced project if provided
+        if (referencePage != null) {
+            IProject[] refProjects = referencePage.getReferencedProjects();
+            if (refProjects.length > 0)
+                description.setReferencedProjects(refProjects);
+        }
 
-		return newProject;
-	}
-	/**
-	 * Creates a project resource given the project handle and description.
-	 * 
-	 * @param description
-	 *            the project description to create a project resource for
-	 * @param projectHandle
-	 *            the project handle to create a project resource for
-	 * @param monitor
-	 *            the progress monitor to show visual progress with
-	 * 
-	 * @exception CoreException
-	 *                if the operation fails
-	 * @exception OperationCanceledException
-	 *                if the operation is canceled
-	 */
-	void createProject(IProjectDescription description, IProject projectHandle,
-			IProgressMonitor monitor) throws CoreException,
-			OperationCanceledException {
-		try {
-			monitor.beginTask("", 2000);//$NON-NLS-1$
+        // create the new project operation
+        WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
+            protected void execute(IProgressMonitor monitor)
+                    throws CoreException {
+                createProject(description, newProjectHandle, monitor);
+            }
+        };
 
-			projectHandle.create(description, new SubProgressMonitor(monitor,
-					1000));
+        // run the new project creation operation
+        try {
+            getContainer().run(true, true, op);
+        } catch (InterruptedException e) {
+            return null;
+        } catch (InvocationTargetException e) {
+            // ie.- one of the steps resulted in a core exception
+            Throwable t = e.getTargetException();
+            if (t instanceof CoreException) {
+                if (((CoreException) t).getStatus().getCode() == IResourceStatus.CASE_VARIANT_EXISTS) {
+                    MessageDialog
+                            .openError(
+                                    getShell(),
+                                    ResourceMessages
+                                            .getString("NewProject.errorMessage"), //$NON-NLS-1$
+                                    ResourceMessages
+                                            .format(
+                                                    "NewProject.caseVariantExistsError", new String[] { newProjectHandle.getName() }) //$NON-NLS-1$,
+                            );
+                } else {
+                    ErrorDialog.openError(getShell(), ResourceMessages
+                            .getString("NewProject.errorMessage"), //$NON-NLS-1$
+                            null, // no special message
+                            ((CoreException) t).getStatus());
+                }
+            } else {
+                // CoreExceptions are handled above, but unexpected runtime
+                // exceptions and errors may still occur.
+                IDEWorkbenchPlugin.getDefault().getLog().log(
+                        new Status(IStatus.ERROR,
+                                IDEWorkbenchPlugin.IDE_WORKBENCH, 0, t
+                                        .toString(), t));
+                MessageDialog
+                        .openError(
+                                getShell(),
+                                ResourceMessages
+                                        .getString("NewProject.errorMessage"), //$NON-NLS-1$
+                                ResourceMessages
+                                        .format(
+                                                "NewProject.internalError", new Object[] { t.getMessage() })); //$NON-NLS-1$
+            }
+            return null;
+        }
 
-			if (monitor.isCanceled())
-				throw new OperationCanceledException();
+        newProject = newProjectHandle;
 
-			projectHandle.open(new SubProgressMonitor(monitor, 1000));
+        return newProject;
+    }
 
-		} finally {
-			monitor.done();
-		}
-	}
-	/**
-	 * Returns the newly created project.
-	 * 
-	 * @return the created project, or <code>null</code> if project not
-	 *         created
-	 */
-	public IProject getNewProject() {
-		return newProject;
-	}
-	/*
-	 * (non-Javadoc) Method declared on IWorkbenchWizard.
-	 */
-	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
-		super.init(workbench, currentSelection);
-		setNeedsProgressMonitor(true);
-		setWindowTitle(ResourceMessages.getString("NewProject.windowTitle")); //$NON-NLS-1$
-	}
-	/*
-	 * (non-Javadoc) Method declared on BasicNewResourceWizard.
-	 */
-	protected void initializeDefaultPageImageDescriptor() {
-		String iconPath = "icons/full/";//$NON-NLS-1$		
-		try {
-			URL installURL = IDEWorkbenchPlugin.getDefault().getDescriptor()
-					.getInstallURL();
-			URL url = new URL(installURL, iconPath + "wizban/newprj_wiz.gif");//$NON-NLS-1$
-			ImageDescriptor desc = ImageDescriptor.createFromURL(url);
-			setDefaultPageImageDescriptor(desc);
-		} catch (MalformedURLException e) {
-			// Should not happen. Ignore.
-		}
-	}
-	/*
-	 * (non-Javadoc) Opens a new window with a particular perspective and input.
-	 */
-	private static void openInNewWindow(IPerspectiveDescriptor desc) {
+    /**
+     * Creates a project resource given the project handle and description.
+     * 
+     * @param description
+     *            the project description to create a project resource for
+     * @param projectHandle
+     *            the project handle to create a project resource for
+     * @param monitor
+     *            the progress monitor to show visual progress with
+     * 
+     * @exception CoreException
+     *                if the operation fails
+     * @exception OperationCanceledException
+     *                if the operation is canceled
+     */
+    void createProject(IProjectDescription description, IProject projectHandle,
+            IProgressMonitor monitor) throws CoreException,
+            OperationCanceledException {
+        try {
+            monitor.beginTask("", 2000);//$NON-NLS-1$
 
-		// Open the page.
-		try {
-			PlatformUI.getWorkbench().openWorkbenchWindow(desc.getId(),
-					ResourcesPlugin.getWorkspace().getRoot());
-		} catch (WorkbenchException e) {
-			IWorkbenchWindow window = PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow();
-			if (window != null) {
-				ErrorDialog.openError(window.getShell(), WINDOW_PROBLEMS_TITLE,
-						e.getMessage(), e.getStatus());
-			}
-		}
-	}
-	/*
-	 * (non-Javadoc) Method declared on IWizard.
-	 */
-	public boolean performFinish() {
-		createNewProject();
+            projectHandle.create(description, new SubProgressMonitor(monitor,
+                    1000));
 
-		if (newProject == null)
-			return false;
+            if (monitor.isCanceled())
+                throw new OperationCanceledException();
 
-		updatePerspective();
-		selectAndReveal(newProject);
+            projectHandle.open(new SubProgressMonitor(monitor, 1000));
 
-		return true;
-	}
-	/*
-	 * (non-Javadoc) Replaces the current perspective with the new one.
-	 */
-	private static void replaceCurrentPerspective(IPerspectiveDescriptor persp) {
+        } finally {
+            monitor.done();
+        }
+    }
 
-		//Get the active page.
-		IWorkbenchWindow window = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow();
-		if (window == null)
-			return;
-		IWorkbenchPage page = window.getActivePage();
-		if (page == null)
-			return;
+    /**
+     * Returns the newly created project.
+     * 
+     * @return the created project, or <code>null</code> if project not
+     *         created
+     */
+    public IProject getNewProject() {
+        return newProject;
+    }
 
-		// Set the perspective.
-		page.setPerspective(persp);
-	}
-	/**
-	 * Stores the configuration element for the wizard. The config element will
-	 * be used in <code>performFinish</code> to set the result perspective.
-	 */
-	public void setInitializationData(IConfigurationElement cfig,
-			String propertyName, Object data) {
-		configElement = cfig;
-	}
-	/**
-	 * Updates the perspective for the active page within the window.
-	 */
-	protected void updatePerspective() {
-		updatePerspective(configElement);
-	}
-	/**
-	 * Updates the perspective based on the current settings in the
-	 * Workbench/Perspectives preference page.
-	 * 
-	 * Use the setting for the new perspective opening if we
-	 * are set to open in a new perspective.
-	 * <p>
-	 * A new project wizard class will need to implement the
-	 * <code>IExecutableExtension</code> interface so as to gain access to the
-	 * wizard's <code>IConfigurationElement</code>. That is the configuration
-	 * element to pass into this method.
-	 * </p>
-	 * @param configElement - the element we are updating with
-	 * 
-	 * @see IPreferenceConstants#OPM_NEW_WINDOW
-	 * @see IPreferenceConstants#OPM_ACTIVE_PAGE
-	 * @see IWorkbenchPreferenceConstants#NO_NEW_PERSPECTIVE
-	 */
-	public static void updatePerspective(IConfigurationElement configElement) {
-		// Do not change perspective if the configuration element is
-		// not specified.
-		if (configElement == null)
-			return;
+    /*
+     * (non-Javadoc) Method declared on IWorkbenchWizard.
+     */
+    public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
+        super.init(workbench, currentSelection);
+        setNeedsProgressMonitor(true);
+        setWindowTitle(ResourceMessages.getString("NewProject.windowTitle")); //$NON-NLS-1$
+    }
 
-		// Retrieve the new project open perspective preference setting
-		String perspSetting = PrefUtil.getAPIPreferenceStore().getString(
-				IDE.Preferences.PROJECT_OPEN_NEW_PERSPECTIVE);
+    /*
+     * (non-Javadoc) Method declared on BasicNewResourceWizard.
+     */
+    protected void initializeDefaultPageImageDescriptor() {
+        String iconPath = "icons/full/";//$NON-NLS-1$		
+        try {
+            URL installURL = IDEWorkbenchPlugin.getDefault().getDescriptor()
+                    .getInstallURL();
+            URL url = new URL(installURL, iconPath + "wizban/newprj_wiz.gif");//$NON-NLS-1$
+            ImageDescriptor desc = ImageDescriptor.createFromURL(url);
+            setDefaultPageImageDescriptor(desc);
+        } catch (MalformedURLException e) {
+            // Should not happen. Ignore.
+        }
+    }
 
-		String promptSetting = IDEWorkbenchPlugin.getDefault()
-				.getPreferenceStore().getString(
-						IDEInternalPreferences.PROJECT_SWITCH_PERSP_MODE);
+    /*
+     * (non-Javadoc) Opens a new window with a particular perspective and input.
+     */
+    private static void openInNewWindow(IPerspectiveDescriptor desc) {
 
-		// Return if do not switch perspective setting and are not prompting
-		if (!(promptSetting.equals(MessageDialogWithToggle.PROMPT))
-				&& perspSetting
-						.equals(IWorkbenchPreferenceConstants.NO_NEW_PERSPECTIVE))
-			return;
+        // Open the page.
+        try {
+            PlatformUI.getWorkbench().openWorkbenchWindow(desc.getId(),
+                    ResourcesPlugin.getWorkspace().getRoot());
+        } catch (WorkbenchException e) {
+            IWorkbenchWindow window = PlatformUI.getWorkbench()
+                    .getActiveWorkbenchWindow();
+            if (window != null) {
+                ErrorDialog.openError(window.getShell(), WINDOW_PROBLEMS_TITLE,
+                        e.getMessage(), e.getStatus());
+            }
+        }
+    }
 
-		// Read the requested perspective id to be opened.
-		String finalPerspId = configElement.getAttribute(FINAL_PERSPECTIVE);
-		if (finalPerspId == null)
-			return;
+    /*
+     * (non-Javadoc) Method declared on IWizard.
+     */
+    public boolean performFinish() {
+        createNewProject();
 
-		// Map perspective id to descriptor.
-		IPerspectiveRegistry reg = PlatformUI.getWorkbench()
-				.getPerspectiveRegistry();
+        if (newProject == null)
+            return false;
 
-		// leave this code in - the perspective of a given project may map to
-		// activities other than those that the wizard itself maps to.
-		IPerspectiveDescriptor finalPersp = reg
-				.findPerspectiveWithId(finalPerspId);
-		if (finalPersp != null && finalPersp instanceof IPluginContribution) {
-			IPluginContribution contribution = (IPluginContribution) finalPersp;
-			if (contribution.getPluginId() != null) {
-				IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI
-						.getWorkbench().getActivitySupport();
-				IActivityManager activityManager = workbenchActivitySupport
-						.getActivityManager();
-				IIdentifier identifier = activityManager
-						.getIdentifier(WorkbenchActivityHelper
-								.createUnifiedId(contribution));
-				Set idActivities = identifier.getActivityIds();
+        updatePerspective();
+        selectAndReveal(newProject);
 
-				if (!idActivities.isEmpty()) {
-					Set enabledIds = new HashSet(activityManager
-							.getEnabledActivityIds());
+        return true;
+    }
 
-					if (enabledIds.addAll(idActivities))
-						workbenchActivitySupport
-								.setEnabledActivityIds(enabledIds);
-				}
-			}
-		} else {
-			IDEWorkbenchPlugin.log("Unable to find persective " //$NON-NLS-1$
-					+ finalPerspId
-					+ " in BasicNewProjectResourceWizard.updatePerspective"); //$NON-NLS-1$
-			return;
-		}
+    /*
+     * (non-Javadoc) Replaces the current perspective with the new one.
+     */
+    private static void replaceCurrentPerspective(IPerspectiveDescriptor persp) {
 
-		// gather the preferred perspectives
-		// always consider the final perspective (and those derived from it)
-		// to be preferred
-		ArrayList preferredPerspIds = new ArrayList();
-		addPerspectiveAndDescendants(preferredPerspIds, finalPerspId);
-		String preferred = configElement.getAttribute(PREFERRED_PERSPECTIVES);
-		if (preferred != null) {
-			StringTokenizer tok = new StringTokenizer(preferred, " \t\n\r\f,"); //$NON-NLS-1$
-			while (tok.hasMoreTokens()) {
-				addPerspectiveAndDescendants(preferredPerspIds, tok.nextToken());
-			}
-		}
+        //Get the active page.
+        IWorkbenchWindow window = PlatformUI.getWorkbench()
+                .getActiveWorkbenchWindow();
+        if (window == null)
+            return;
+        IWorkbenchPage page = window.getActivePage();
+        if (page == null)
+            return;
 
-		IWorkbenchWindow window = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow();
-		if (window != null) {
-			IWorkbenchPage page = window.getActivePage();
-			if (page != null) {
-				IPerspectiveDescriptor currentPersp = page.getPerspective();
+        // Set the perspective.
+        page.setPerspective(persp);
+    }
 
-				// don't switch if the current perspective is a preferred
-				// perspective
-				if (currentPersp != null
-						&& preferredPerspIds.contains(currentPersp.getId())) {
-					return;
-				}
-			}
+    /**
+     * Stores the configuration element for the wizard. The config element will
+     * be used in <code>performFinish</code> to set the result perspective.
+     */
+    public void setInitializationData(IConfigurationElement cfig,
+            String propertyName, Object data) {
+        configElement = cfig;
+    }
 
-			// prompt the user to switch
-			if (!confirmPerspectiveSwitch(window, finalPersp)) {
-				return;
-			}
-		}
+    /**
+     * Updates the perspective for the active page within the window.
+     */
+    protected void updatePerspective() {
+        updatePerspective(configElement);
+    }
 
-		int workbenchPerspectiveSetting =
-			WorkbenchPlugin.getDefault().getPreferenceStore().getInt(IPreferenceConstants.OPEN_PERSP_MODE);
-		
-		// open perspective in new window setting
-		if (workbenchPerspectiveSetting == IPreferenceConstants.OPM_NEW_WINDOW) {
-			openInNewWindow(finalPersp);
-			return;
-		}
+    /**
+     * Updates the perspective based on the current settings in the
+     * Workbench/Perspectives preference page.
+     * 
+     * Use the setting for the new perspective opening if we
+     * are set to open in a new perspective.
+     * <p>
+     * A new project wizard class will need to implement the
+     * <code>IExecutableExtension</code> interface so as to gain access to the
+     * wizard's <code>IConfigurationElement</code>. That is the configuration
+     * element to pass into this method.
+     * </p>
+     * @param configElement - the element we are updating with
+     * 
+     * @see IPreferenceConstants#OPM_NEW_WINDOW
+     * @see IPreferenceConstants#OPM_ACTIVE_PAGE
+     * @see IWorkbenchPreferenceConstants#NO_NEW_PERSPECTIVE
+     */
+    public static void updatePerspective(IConfigurationElement configElement) {
+        // Do not change perspective if the configuration element is
+        // not specified.
+        if (configElement == null)
+            return;
 
-		// replace active perspective setting otherwise
-		replaceCurrentPerspective(finalPersp);
-	}
-	/**
-	 * Adds to the list all perspective IDs in the Workbench who's original ID
-	 * matches the given ID.
-	 * 
-	 * @param perspectiveIds
-	 *            the list of perspective IDs to supplement.
-	 * @param id
-	 *            the id to query.
-	 * @since 3.0
-	 */
-	private static void addPerspectiveAndDescendants(List perspectiveIds,
-			String id) {
-		IPerspectiveRegistry registry = PlatformUI.getWorkbench()
-				.getPerspectiveRegistry();
-		IPerspectiveDescriptor[] perspectives = registry.getPerspectives();
-		for (int i = 0; i < perspectives.length; i++) {
-			// @issue illegal ref to workbench internal class;
-			// consider adding getOriginalId() as API on IPerspectiveDescriptor
-			PerspectiveDescriptor descriptor = ((PerspectiveDescriptor) perspectives[i]);
-			if (descriptor.getOriginalId().equals(id)) {
-				perspectiveIds.add(descriptor.getId());
-			}
-		}
-	}
+        // Retrieve the new project open perspective preference setting
+        String perspSetting = PrefUtil.getAPIPreferenceStore().getString(
+                IDE.Preferences.PROJECT_OPEN_NEW_PERSPECTIVE);
 
-	/**
-	 * Prompts the user for whether to switch perspectives.
-	 * 
-	 * @param window
-	 *            The workbench window in which to switch perspectives; must not
-	 *            be <code>null</code>
-	 * @param finalPersp
-	 *            The perspective to switch to; must not be <code>null</code>.
-	 * 
-	 * @return <code>true</code> if it's OK to switch, <code>false</code>
-	 *         otherwise
-	 */
-	private static boolean confirmPerspectiveSwitch(IWorkbenchWindow window,
-			IPerspectiveDescriptor finalPersp) {
-		IPreferenceStore store = IDEWorkbenchPlugin.getDefault()
-				.getPreferenceStore();
-		String pspm = store
-				.getString(IDEInternalPreferences.PROJECT_SWITCH_PERSP_MODE);
-		if (!IDEInternalPreferences.PSPM_PROMPT.equals(pspm)) {
-			// Return whether or not we should always switch
-			return IDEInternalPreferences.PSPM_ALWAYS.equals(pspm);
-		}
+        String promptSetting = IDEWorkbenchPlugin.getDefault()
+                .getPreferenceStore().getString(
+                        IDEInternalPreferences.PROJECT_SWITCH_PERSP_MODE);
 
-		MessageDialogWithToggle dialog = MessageDialogWithToggle
-				.openYesNoQuestion(window.getShell(), ResourceMessages
-						.getString("NewProject.perspSwitchTitle"), //$NON-NLS-1$
-						ResourceMessages.format(
-								"NewProject.perspSwitchMessage", //$NON-NLS-1$
-								new Object[]{finalPersp.getLabel()}),
-						null /* use the default message for the toggle */,
-						false /* toggle is initially unchecked */, store,
-						IDEInternalPreferences.PROJECT_SWITCH_PERSP_MODE);
-		int result = dialog.getReturnCode();
+        // Return if do not switch perspective setting and are not prompting
+        if (!(promptSetting.equals(MessageDialogWithToggle.PROMPT))
+                && perspSetting
+                        .equals(IWorkbenchPreferenceConstants.NO_NEW_PERSPECTIVE))
+            return;
 
-		//If we are not going to prompt anymore propogate the choice.
-		if (dialog.getToggleState()) {
-			String preferenceValue;
-			if (result == IDialogConstants.YES_ID) 
-				//Doesn't matter if it is replace or new window
-				//as we are going to use the open perspective setting
-				preferenceValue = IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE;
-			else
-				preferenceValue = IWorkbenchPreferenceConstants.NO_NEW_PERSPECTIVE;
+        // Read the requested perspective id to be opened.
+        String finalPerspId = configElement.getAttribute(FINAL_PERSPECTIVE);
+        if (finalPerspId == null)
+            return;
 
-			// update PROJECT_OPEN_NEW_PERSPECTIVE to correspond
-			PrefUtil.getAPIPreferenceStore().setValue(
-					IDE.Preferences.PROJECT_OPEN_NEW_PERSPECTIVE,
-					preferenceValue);
-		}
-		return result == IDialogConstants.YES_ID;
-	}
+        // Map perspective id to descriptor.
+        IPerspectiveRegistry reg = PlatformUI.getWorkbench()
+                .getPerspectiveRegistry();
+
+        // leave this code in - the perspective of a given project may map to
+        // activities other than those that the wizard itself maps to.
+        IPerspectiveDescriptor finalPersp = reg
+                .findPerspectiveWithId(finalPerspId);
+        if (finalPersp != null && finalPersp instanceof IPluginContribution) {
+            IPluginContribution contribution = (IPluginContribution) finalPersp;
+            if (contribution.getPluginId() != null) {
+                IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI
+                        .getWorkbench().getActivitySupport();
+                IActivityManager activityManager = workbenchActivitySupport
+                        .getActivityManager();
+                IIdentifier identifier = activityManager
+                        .getIdentifier(WorkbenchActivityHelper
+                                .createUnifiedId(contribution));
+                Set idActivities = identifier.getActivityIds();
+
+                if (!idActivities.isEmpty()) {
+                    Set enabledIds = new HashSet(activityManager
+                            .getEnabledActivityIds());
+
+                    if (enabledIds.addAll(idActivities))
+                        workbenchActivitySupport
+                                .setEnabledActivityIds(enabledIds);
+                }
+            }
+        } else {
+            IDEWorkbenchPlugin.log("Unable to find persective " //$NON-NLS-1$
+                    + finalPerspId
+                    + " in BasicNewProjectResourceWizard.updatePerspective"); //$NON-NLS-1$
+            return;
+        }
+
+        // gather the preferred perspectives
+        // always consider the final perspective (and those derived from it)
+        // to be preferred
+        ArrayList preferredPerspIds = new ArrayList();
+        addPerspectiveAndDescendants(preferredPerspIds, finalPerspId);
+        String preferred = configElement.getAttribute(PREFERRED_PERSPECTIVES);
+        if (preferred != null) {
+            StringTokenizer tok = new StringTokenizer(preferred, " \t\n\r\f,"); //$NON-NLS-1$
+            while (tok.hasMoreTokens()) {
+                addPerspectiveAndDescendants(preferredPerspIds, tok.nextToken());
+            }
+        }
+
+        IWorkbenchWindow window = PlatformUI.getWorkbench()
+                .getActiveWorkbenchWindow();
+        if (window != null) {
+            IWorkbenchPage page = window.getActivePage();
+            if (page != null) {
+                IPerspectiveDescriptor currentPersp = page.getPerspective();
+
+                // don't switch if the current perspective is a preferred
+                // perspective
+                if (currentPersp != null
+                        && preferredPerspIds.contains(currentPersp.getId())) {
+                    return;
+                }
+            }
+
+            // prompt the user to switch
+            if (!confirmPerspectiveSwitch(window, finalPersp)) {
+                return;
+            }
+        }
+
+        int workbenchPerspectiveSetting = WorkbenchPlugin.getDefault()
+                .getPreferenceStore().getInt(
+                        IPreferenceConstants.OPEN_PERSP_MODE);
+
+        // open perspective in new window setting
+        if (workbenchPerspectiveSetting == IPreferenceConstants.OPM_NEW_WINDOW) {
+            openInNewWindow(finalPersp);
+            return;
+        }
+
+        // replace active perspective setting otherwise
+        replaceCurrentPerspective(finalPersp);
+    }
+
+    /**
+     * Adds to the list all perspective IDs in the Workbench who's original ID
+     * matches the given ID.
+     * 
+     * @param perspectiveIds
+     *            the list of perspective IDs to supplement.
+     * @param id
+     *            the id to query.
+     * @since 3.0
+     */
+    private static void addPerspectiveAndDescendants(List perspectiveIds,
+            String id) {
+        IPerspectiveRegistry registry = PlatformUI.getWorkbench()
+                .getPerspectiveRegistry();
+        IPerspectiveDescriptor[] perspectives = registry.getPerspectives();
+        for (int i = 0; i < perspectives.length; i++) {
+            // @issue illegal ref to workbench internal class;
+            // consider adding getOriginalId() as API on IPerspectiveDescriptor
+            PerspectiveDescriptor descriptor = ((PerspectiveDescriptor) perspectives[i]);
+            if (descriptor.getOriginalId().equals(id)) {
+                perspectiveIds.add(descriptor.getId());
+            }
+        }
+    }
+
+    /**
+     * Prompts the user for whether to switch perspectives.
+     * 
+     * @param window
+     *            The workbench window in which to switch perspectives; must not
+     *            be <code>null</code>
+     * @param finalPersp
+     *            The perspective to switch to; must not be <code>null</code>.
+     * 
+     * @return <code>true</code> if it's OK to switch, <code>false</code>
+     *         otherwise
+     */
+    private static boolean confirmPerspectiveSwitch(IWorkbenchWindow window,
+            IPerspectiveDescriptor finalPersp) {
+        IPreferenceStore store = IDEWorkbenchPlugin.getDefault()
+                .getPreferenceStore();
+        String pspm = store
+                .getString(IDEInternalPreferences.PROJECT_SWITCH_PERSP_MODE);
+        if (!IDEInternalPreferences.PSPM_PROMPT.equals(pspm)) {
+            // Return whether or not we should always switch
+            return IDEInternalPreferences.PSPM_ALWAYS.equals(pspm);
+        }
+
+        MessageDialogWithToggle dialog = MessageDialogWithToggle
+                .openYesNoQuestion(window.getShell(), ResourceMessages
+                        .getString("NewProject.perspSwitchTitle"), //$NON-NLS-1$
+                        ResourceMessages.format(
+                                "NewProject.perspSwitchMessage", //$NON-NLS-1$
+                                new Object[] { finalPersp.getLabel() }),
+                        null /* use the default message for the toggle */,
+                        false /* toggle is initially unchecked */, store,
+                        IDEInternalPreferences.PROJECT_SWITCH_PERSP_MODE);
+        int result = dialog.getReturnCode();
+
+        //If we are not going to prompt anymore propogate the choice.
+        if (dialog.getToggleState()) {
+            String preferenceValue;
+            if (result == IDialogConstants.YES_ID)
+                //Doesn't matter if it is replace or new window
+                //as we are going to use the open perspective setting
+                preferenceValue = IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE;
+            else
+                preferenceValue = IWorkbenchPreferenceConstants.NO_NEW_PERSPECTIVE;
+
+            // update PROJECT_OPEN_NEW_PERSPECTIVE to correspond
+            PrefUtil.getAPIPreferenceStore().setValue(
+                    IDE.Preferences.PROJECT_OPEN_NEW_PERSPECTIVE,
+                    preferenceValue);
+        }
+        return result == IDialogConstants.YES_ID;
+    }
 }

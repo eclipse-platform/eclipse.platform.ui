@@ -18,19 +18,19 @@ import junit.framework.TestSuite;
  */
 public class PreferencesTestSuite extends TestSuite {
 
-	/**
-	 * Returns the suite.  This is required to
-	 * use the JUnit Launcher.
-	 */
-	public static Test suite() {
-		return new PreferencesTestSuite();
-	}
-	
-	/**
-	 * Construct the test suite.
-	 */
-	public PreferencesTestSuite() {
-		addTest(new TestSuite(FontPreferenceTestCase.class));		
-		addTest(new TestSuite(DeprecatedFontPreferenceTestCase.class));		
-	}
+    /**
+     * Returns the suite.  This is required to
+     * use the JUnit Launcher.
+     */
+    public static Test suite() {
+        return new PreferencesTestSuite();
+    }
+
+    /**
+     * Construct the test suite.
+     */
+    public PreferencesTestSuite() {
+        addTest(new TestSuite(FontPreferenceTestCase.class));
+        addTest(new TestSuite(DeprecatedFontPreferenceTestCase.class));
+    }
 }

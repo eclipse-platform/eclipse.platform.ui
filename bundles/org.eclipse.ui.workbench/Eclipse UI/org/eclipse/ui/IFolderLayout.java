@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui;
 
-
- 
 /**
  * An <code>IFolderLayout</code> is used to define the initial pages within a folder.
  * The folder itself is component within an <code>IPageLayout</code>.
@@ -22,12 +20,12 @@ package org.eclipse.ui;
  * @see IPageLayout#createFolder
  */
 public interface IFolderLayout extends IPlaceholderFolderLayout {
-/**
- * Adds a view with the given id to this folder.
- * The id must name a view contributed to the workbench's view extension point 
- * (named <code>"org.eclipse.ui.views"</code>).
- *
- * @param viewId the view id
- */
-public void addView(String viewId);
+    /**
+     * Adds a view with the given id to this folder.
+     * The id must name a view contributed to the workbench's view extension point 
+     * (named <code>"org.eclipse.ui.views"</code>).
+     *
+     * @param viewId the view id
+     */
+    public void addView(String viewId);
 }

@@ -54,373 +54,387 @@ import org.eclipse.ui.themes.IThemeManager;
  * @see org.eclipse.ui.PlatformUI#getWorkbench
  */
 public interface IWorkbench {
-	/**
-	 * Returns the display for this workbench.
-	 * <p>
-	 * Code should always ask the workbench for the display rather than rely on
-	 * {@link Display#getDefault Display.getDefault()}.
-	 * </p>
-	 * 
-	 * @return the display to be used for all UI interactions with this
-	 *         workbench
-	 * @since 3.0
-	 */
-	public Display getDisplay();
+    /**
+     * Returns the display for this workbench.
+     * <p>
+     * Code should always ask the workbench for the display rather than rely on
+     * {@link Display#getDefault Display.getDefault()}.
+     * </p>
+     * 
+     * @return the display to be used for all UI interactions with this
+     *         workbench
+     * @since 3.0
+     */
+    public Display getDisplay();
 
-	/**
-	 * Returns the progress service for the workbench.
-	 * 
-	 * @return the progress service
-	 * @since 3.0
-	 */
-	public IProgressService getProgressService();
+    /**
+     * Returns the progress service for the workbench.
+     * 
+     * @return the progress service
+     * @since 3.0
+     */
+    public IProgressService getProgressService();
 
-	/**
-	 * Adds a window listener.
-	 * 
-	 * @param listener
-	 *            the window listener to add
-	 * @since 2.0
-	 */
-	public void addWindowListener(IWindowListener listener);
-	/**
-	 * Removes a window listener.
-	 * 
-	 * @param listener
-	 *            the window listener to remove
-	 * @since 2.0
-	 */
-	public void removeWindowListener(IWindowListener listener);
-	/**
-	 * Closes this workbench and all its open windows.
-	 * <p>
-	 * If the workbench has an open editor with unsaved content, the user will
-	 * be given the opportunity to save it.
-	 * </p>
-	 * 
-	 * @return <code>true</code> if the workbench was successfully closed,
-	 *         and <code>false</code> if it is still open
-	 */
-	public boolean close();
-	/**
-	 * Returns the currently active window for this workbench (if any).
-	 * Returns <code>null</code> if there is no active workbench window.
-	 * Returns <code>null</code> if called from a non-UI thread.
-	 * 
-	 * @return the active workbench window, or <code>null</code> if there
-	 *         is no active workbench window or if called from a non-UI thread
-	 */
-	public IWorkbenchWindow getActiveWorkbenchWindow();
-	/**
-	 * Returns the editor registry for the workbench.
-	 * 
-	 * @return the workbench editor registry
-	 */
-	public IEditorRegistry getEditorRegistry();
-	/**
-	 * Returns the perspective registry for the workbench.
-	 * 
-	 * @return the workbench perspective registry
-	 */
-	public IPerspectiveRegistry getPerspectiveRegistry();
-	/**
-	 * Returns the preference manager for the workbench.
-	 * 
-	 * @return the workbench preference manager
-	 */
-	public PreferenceManager getPreferenceManager();
-	/**
-	 * Returns the preference store for the workbench.
-	 * 
-	 * @return the workbench preference store
-	 * @since 2.0
-	 */
-	public IPreferenceStore getPreferenceStore();
-	/**
-	 * Returns the shared images for the workbench.
-	 * 
-	 * @return the shared image manager
-	 */
-	public ISharedImages getSharedImages();
-	/**
-	 * Returns the number of open main windows associated with this workbench.
-	 * Note that wizards and dialogs are not included in this list since they
-	 * are not considered main windows.
-	 * 
-	 * @return the number of open windows
-	 * @since 3.0 @issue Use getWorkbenchWindows().length?
-	 */
-	public int getWorkbenchWindowCount();
-	/**
-	 * Returns a list of the open main windows associated with this workbench.
-	 * Note that wizards and dialogs are not included in this list since they
-	 * are not considered main windows.
-	 * 
-	 * @return a list of open windows
-	 */
-	public IWorkbenchWindow[] getWorkbenchWindows();
-	/**
-	 * Returns the working set manager for the workbench.
-	 * 
-	 * @return the working set manager
-	 * @since 2.0
-	 */
-	public IWorkingSetManager getWorkingSetManager();
-	/**
-	 * Creates and opens a new workbench window with one page. The perspective
-	 * of the new page is defined by the specified perspective ID. The new
-	 * window and new page become active.
-	 * <p>
-	 * <b>Note:</b> The caller is responsible to ensure the action using this
-	 * method will explicitly inform the user a new window will be opened.
-	 * Otherwise, callers are strongly recommended to use the <code>openPerspective</code>
-	 * APIs to programmatically show a perspective to avoid confusing the user.
-	 * </p>
-	 * <p>
-	 * In most cases where this method is used the caller is tightly coupled to
-	 * a particular perspective. They define it in the registry and contribute
-	 * some user interface action to open or activate it. In situations like
-	 * this a static variable is often used to identify the perspective Id.
-	 * </p>
-	 * <p>
-	 * The workbench also defines a number of menu items to activate or open
-	 * each registered perspective. A complete list of these perspectives is
-	 * available from the perspective registry found on <code>IWorkbench</code>.
-	 * </p>
-	 * 
-	 * @param perspectiveId
-	 *            the perspective id for the window's initial page
-	 * @param input
-	 *            the page input, or <code>null</code> if there is no current
-	 *            input. This is used to seed the input for the new page's
-	 *            views.
-	 * @return the new workbench window
-	 * @exception WorkbenchException
-	 *                if a new window and page could not be opened
-	 * 
-	 * @see IWorkbench#showPerspective
-	 */
-	public IWorkbenchWindow openWorkbenchWindow(String perspectiveId, IAdaptable input)
-		throws WorkbenchException;
-	/**
-	 * Creates and opens a new workbench window with one page. The perspective
-	 * of the new page is defined by the default perspective ID. The new window
-	 * and new page become active.
-	 * <p>
-	 * <b>Note:</b> The caller is responsible to ensure the action using this
-	 * method will explicitly inform the user a new window will be opened.
-	 * Otherwise, callers are strongly recommended to use the <code>openPerspective</code>
-	 * APIs to programmatically show a perspective to avoid confusing the user.
-	 * </p>
-	 * <p>
-	 * The workbench also defines a number of menu items to activate or open
-	 * each registered perspective. A complete list of these perspectives is
-	 * available from the perspective registry found on <code>IWorkbench</code>.
-	 * </p>
-	 * 
-	 * @param input
-	 *            the page input, or <code>null</code> if there is no current
-	 *            input. This is used to seed the input for the new page's
-	 *            views.
-	 * @return the new workbench window
-	 * @exception WorkbenchException
-	 *                if a new window and page could not be opened
-	 * 
-	 * @see IWorkbench#showPerspective
-	 */
-	public IWorkbenchWindow openWorkbenchWindow(IAdaptable input) throws WorkbenchException;
-	/**
-	 * Closes then restarts this workbench.
-	 * <p>
-	 * If the workbench has an open editor with unsaved content, the user will
-	 * be given the opportunity to save it.
-	 * </p>
-	 * 
-	 * @return <code>true</code> if the workbench was successfully closed,
-	 *         and <code>false</code> if it could not be closed
-	 * 
-	 * @since 2.0
-	 */
-	public boolean restart();
+    /**
+     * Adds a window listener.
+     * 
+     * @param listener
+     *            the window listener to add
+     * @since 2.0
+     */
+    public void addWindowListener(IWindowListener listener);
 
-	/**
-	 * Shows the specified perspective to the user. The caller should use this
-	 * method when the perspective to be shown is not dependent on the page's
-	 * input. That is, the perspective can open in any page depending on user
-	 * preferences.
-	 * <p>
-	 * The perspective may be shown in the specified window, in another
-	 * existing window, or in a new window depending on user preferences. The
-	 * exact policy is controlled by the workbench to ensure consistency to the
-	 * user. The policy is subject to change. The current policy is as follows:
-	 * <ul>
-	 * <li>If the specified window has the requested perspective open, then
-	 * the window is given focus and the perspective is shown. The page's input
-	 * is ignored.</li>
-	 * <li>If another window that has the workspace root as input and the
-	 * requested perpective open and active, then the window is given focus.
-	 * </li>
-	 * <li>Otherwise the requested perspective is opened and shown in the
-	 * specified window or in a new window depending on the current user
-	 * preference for opening perspectives, and that window is given focus.
-	 * </li>
-	 * </ul>
-	 * </p>
-	 * <p>
-	 * The workbench also defines a number of menu items to activate or open
-	 * each registered perspective. A complete list of these perspectives is
-	 * available from the perspective registry found on <code>IWorkbench</code>.
-	 * </p>
-	 * 
-	 * @param perspectiveId
-	 *            the perspective ID to show
-	 * @param window
-	 *            the workbench window of the action calling this method.
-	 * @return the workbench page that the perspective was shown
-	 * @exception WorkbenchException
-	 *                if the perspective could not be shown
-	 * 
-	 * @since 2.0
-	 */
-	public IWorkbenchPage showPerspective(String perspectiveId, IWorkbenchWindow window)
-		throws WorkbenchException;
+    /**
+     * Removes a window listener.
+     * 
+     * @param listener
+     *            the window listener to remove
+     * @since 2.0
+     */
+    public void removeWindowListener(IWindowListener listener);
 
-	/**
-	 * Shows the specified perspective to the user. The caller should use this
-	 * method when the perspective to be shown is dependent on the page's
-	 * input. That is, the perspective can only open in any page with the
-	 * specified input.
-	 * <p>
-	 * The perspective may be shown in the specified window, in another
-	 * existing window, or in a new window depending on user preferences. The
-	 * exact policy is controlled by the workbench to ensure consistency to the
-	 * user. The policy is subject to change. The current policy is as follows:
-	 * <ul>
-	 * <li>If the specified window has the requested perspective open and the
-	 * same requested input, then the window is given focus and the perspective
-	 * is shown.</li>
-	 * <li>If another window has the requested input and the requested
-	 * perpective open and active, then that window is given focus.</li>
-	 * <li>If the specified window has the same requested input but not the
-	 * requested perspective, then the window is given focus and the
-	 * perspective is opened and shown on condition that the user preference is
-	 * not to open perspectives in a new window.</li>
-	 * <li>Otherwise the requested perspective is opened and shown in a new
-	 * window, and the window is given focus.</li>
-	 * </ul>
-	 * </p>
-	 * <p>
-	 * The workbench also defines a number of menu items to activate or open
-	 * each registered perspective. A complete list of these perspectives is
-	 * available from the perspective registry found on <code>IWorkbench</code>.
-	 * </p>
-	 * 
-	 * @param perspectiveId
-	 *            the perspective ID to show
-	 * @param window
-	 *            the workbench window of the action calling this method.
-	 * @param input
-	 *            the page input, or <code>null</code> if there is no current
-	 *            input. This is used to seed the input for the page's views
-	 * @return the workbench page that the perspective was shown
-	 * @exception WorkbenchException
-	 *                if the perspective could not be shown
-	 * 
-	 * @since 2.0
-	 */
-	public IWorkbenchPage showPerspective(
-		String perspectiveId,
-		IWorkbenchWindow window,
-		IAdaptable input)
-		throws WorkbenchException;
+    /**
+     * Closes this workbench and all its open windows.
+     * <p>
+     * If the workbench has an open editor with unsaved content, the user will
+     * be given the opportunity to save it.
+     * </p>
+     * 
+     * @return <code>true</code> if the workbench was successfully closed,
+     *         and <code>false</code> if it is still open
+     */
+    public boolean close();
 
-	/**
-	 * Returns the decorator manager.
-	 * <p>
-	 * Any client using the decorator manager should come up with the text and
-	 * image for the element (including any of the part's own decorations)
-	 * before calling the decorator manager. It should also add a listener to
-	 * be notified when decorations change.
-	 * </p>
-	 * <p>
-	 * Note that if the element implements <code>IAdaptable</code>,
-	 * decorators may use this mechanism to obtain an adapter (for example an
-	 * <code>IResource</code>), and derive the decoration from the adapter
-	 * rather than the element. Since the adapter may differ from the original
-	 * element, those using the decorator manager should be prepared to handle
-	 * notification that the decoration for the adapter has changed, in
-	 * addition to handling notification that the decoration for the element
-	 * has changed. That is, it needs to be able to map back from the adapter
-	 * to the element.
-	 * </p>
-	 * 
-	 * @return the decorator manager
-	 */
-	public IDecoratorManager getDecoratorManager();
-	/**
-	 * Save all dirty editors in the workbench. Opens a dialog to prompt the
-	 * user if <code>confirm</code> is true. Return true if successful.
-	 * Return false if the user has cancelled the command.
-	 * 
-	 * @param confirm
-	 *            prompt the user if true
-	 * @return boolean false if the operation was cancelled.
-	 */
-	public boolean saveAllEditors(boolean confirm);
+    /**
+     * Returns the currently active window for this workbench (if any).
+     * Returns <code>null</code> if there is no active workbench window.
+     * Returns <code>null</code> if called from a non-UI thread.
+     * 
+     * @return the active workbench window, or <code>null</code> if there
+     *         is no active workbench window or if called from a non-UI thread
+     */
+    public IWorkbenchWindow getActiveWorkbenchWindow();
 
-	/**
-	 * Returns the element factory with the given id.
-	 * 
-	 * @param factoryId
-	 *            the id of the element factory
-	 * @return the elment factory, or <code>null</code> if none
-	 * @see IElementFactory
-	 * @since 3.0
-	 */
-	public IElementFactory getElementFactory(String factoryId);
+    /**
+     * Returns the editor registry for the workbench.
+     * 
+     * @return the workbench editor registry
+     */
+    public IEditorRegistry getEditorRegistry();
 
-	/**
-	 * Returns an interface to manage activities at the workbench level.
-	 * 
-	 * @return an interface to manage activities at the workbench level.
-	 *         Guaranteed not to be <code>null</code>.
-	 * @since 3.0
-	 */
-	IWorkbenchActivitySupport getActivitySupport();
+    /**
+     * Returns the perspective registry for the workbench.
+     * 
+     * @return the workbench perspective registry
+     */
+    public IPerspectiveRegistry getPerspectiveRegistry();
 
-	/**
-	 * Returns an interface to manage commands at the workbench level.
-	 * 
-	 * @return an interface to manage commands at the workbench level.
-	 *         Guaranteed not to be <code>null</code>.
-	 * @since 3.0
-	 */
-	IWorkbenchCommandSupport getCommandSupport();
+    /**
+     * Returns the preference manager for the workbench.
+     * 
+     * @return the workbench preference manager
+     */
+    public PreferenceManager getPreferenceManager();
 
-	/**
-	 * Returns an interface to manage contexts at the workbench level.
-	 * 
-	 * @return an interface to manage contexts at the workbench level.
-	 *         Guaranteed not to be <code>null</code>.
-	 * @since 3.0
-	 */
-	IWorkbenchContextSupport getContextSupport();
-		
-	/**
-	 * Return the theme manager for this workbench.
-	 *  
-	 * @return the theme manager for this workbench.Guaranteed not to be 
-	 * <code>null</code>.
-	 * @since 3.0
-	 */
-	public IThemeManager getThemeManager();
-	
-	/**
-	 * Return the intro manager for this workbench.
-	 * 
-	 * @return the intro manager for this workbench.  Guaranteed not to be 
-	 * <code>null</code>.
-	 * @since 3.0
-	 */
-	public IIntroManager getIntroManager();
+    /**
+     * Returns the preference store for the workbench.
+     * 
+     * @return the workbench preference store
+     * @since 2.0
+     */
+    public IPreferenceStore getPreferenceStore();
+
+    /**
+     * Returns the shared images for the workbench.
+     * 
+     * @return the shared image manager
+     */
+    public ISharedImages getSharedImages();
+
+    /**
+     * Returns the number of open main windows associated with this workbench.
+     * Note that wizards and dialogs are not included in this list since they
+     * are not considered main windows.
+     * 
+     * @return the number of open windows
+     * @since 3.0 @issue Use getWorkbenchWindows().length?
+     */
+    public int getWorkbenchWindowCount();
+
+    /**
+     * Returns a list of the open main windows associated with this workbench.
+     * Note that wizards and dialogs are not included in this list since they
+     * are not considered main windows.
+     * 
+     * @return a list of open windows
+     */
+    public IWorkbenchWindow[] getWorkbenchWindows();
+
+    /**
+     * Returns the working set manager for the workbench.
+     * 
+     * @return the working set manager
+     * @since 2.0
+     */
+    public IWorkingSetManager getWorkingSetManager();
+
+    /**
+     * Creates and opens a new workbench window with one page. The perspective
+     * of the new page is defined by the specified perspective ID. The new
+     * window and new page become active.
+     * <p>
+     * <b>Note:</b> The caller is responsible to ensure the action using this
+     * method will explicitly inform the user a new window will be opened.
+     * Otherwise, callers are strongly recommended to use the <code>openPerspective</code>
+     * APIs to programmatically show a perspective to avoid confusing the user.
+     * </p>
+     * <p>
+     * In most cases where this method is used the caller is tightly coupled to
+     * a particular perspective. They define it in the registry and contribute
+     * some user interface action to open or activate it. In situations like
+     * this a static variable is often used to identify the perspective Id.
+     * </p>
+     * <p>
+     * The workbench also defines a number of menu items to activate or open
+     * each registered perspective. A complete list of these perspectives is
+     * available from the perspective registry found on <code>IWorkbench</code>.
+     * </p>
+     * 
+     * @param perspectiveId
+     *            the perspective id for the window's initial page
+     * @param input
+     *            the page input, or <code>null</code> if there is no current
+     *            input. This is used to seed the input for the new page's
+     *            views.
+     * @return the new workbench window
+     * @exception WorkbenchException
+     *                if a new window and page could not be opened
+     * 
+     * @see IWorkbench#showPerspective
+     */
+    public IWorkbenchWindow openWorkbenchWindow(String perspectiveId,
+            IAdaptable input) throws WorkbenchException;
+
+    /**
+     * Creates and opens a new workbench window with one page. The perspective
+     * of the new page is defined by the default perspective ID. The new window
+     * and new page become active.
+     * <p>
+     * <b>Note:</b> The caller is responsible to ensure the action using this
+     * method will explicitly inform the user a new window will be opened.
+     * Otherwise, callers are strongly recommended to use the <code>openPerspective</code>
+     * APIs to programmatically show a perspective to avoid confusing the user.
+     * </p>
+     * <p>
+     * The workbench also defines a number of menu items to activate or open
+     * each registered perspective. A complete list of these perspectives is
+     * available from the perspective registry found on <code>IWorkbench</code>.
+     * </p>
+     * 
+     * @param input
+     *            the page input, or <code>null</code> if there is no current
+     *            input. This is used to seed the input for the new page's
+     *            views.
+     * @return the new workbench window
+     * @exception WorkbenchException
+     *                if a new window and page could not be opened
+     * 
+     * @see IWorkbench#showPerspective
+     */
+    public IWorkbenchWindow openWorkbenchWindow(IAdaptable input)
+            throws WorkbenchException;
+
+    /**
+     * Closes then restarts this workbench.
+     * <p>
+     * If the workbench has an open editor with unsaved content, the user will
+     * be given the opportunity to save it.
+     * </p>
+     * 
+     * @return <code>true</code> if the workbench was successfully closed,
+     *         and <code>false</code> if it could not be closed
+     * 
+     * @since 2.0
+     */
+    public boolean restart();
+
+    /**
+     * Shows the specified perspective to the user. The caller should use this
+     * method when the perspective to be shown is not dependent on the page's
+     * input. That is, the perspective can open in any page depending on user
+     * preferences.
+     * <p>
+     * The perspective may be shown in the specified window, in another
+     * existing window, or in a new window depending on user preferences. The
+     * exact policy is controlled by the workbench to ensure consistency to the
+     * user. The policy is subject to change. The current policy is as follows:
+     * <ul>
+     * <li>If the specified window has the requested perspective open, then
+     * the window is given focus and the perspective is shown. The page's input
+     * is ignored.</li>
+     * <li>If another window that has the workspace root as input and the
+     * requested perpective open and active, then the window is given focus.
+     * </li>
+     * <li>Otherwise the requested perspective is opened and shown in the
+     * specified window or in a new window depending on the current user
+     * preference for opening perspectives, and that window is given focus.
+     * </li>
+     * </ul>
+     * </p>
+     * <p>
+     * The workbench also defines a number of menu items to activate or open
+     * each registered perspective. A complete list of these perspectives is
+     * available from the perspective registry found on <code>IWorkbench</code>.
+     * </p>
+     * 
+     * @param perspectiveId
+     *            the perspective ID to show
+     * @param window
+     *            the workbench window of the action calling this method.
+     * @return the workbench page that the perspective was shown
+     * @exception WorkbenchException
+     *                if the perspective could not be shown
+     * 
+     * @since 2.0
+     */
+    public IWorkbenchPage showPerspective(String perspectiveId,
+            IWorkbenchWindow window) throws WorkbenchException;
+
+    /**
+     * Shows the specified perspective to the user. The caller should use this
+     * method when the perspective to be shown is dependent on the page's
+     * input. That is, the perspective can only open in any page with the
+     * specified input.
+     * <p>
+     * The perspective may be shown in the specified window, in another
+     * existing window, or in a new window depending on user preferences. The
+     * exact policy is controlled by the workbench to ensure consistency to the
+     * user. The policy is subject to change. The current policy is as follows:
+     * <ul>
+     * <li>If the specified window has the requested perspective open and the
+     * same requested input, then the window is given focus and the perspective
+     * is shown.</li>
+     * <li>If another window has the requested input and the requested
+     * perpective open and active, then that window is given focus.</li>
+     * <li>If the specified window has the same requested input but not the
+     * requested perspective, then the window is given focus and the
+     * perspective is opened and shown on condition that the user preference is
+     * not to open perspectives in a new window.</li>
+     * <li>Otherwise the requested perspective is opened and shown in a new
+     * window, and the window is given focus.</li>
+     * </ul>
+     * </p>
+     * <p>
+     * The workbench also defines a number of menu items to activate or open
+     * each registered perspective. A complete list of these perspectives is
+     * available from the perspective registry found on <code>IWorkbench</code>.
+     * </p>
+     * 
+     * @param perspectiveId
+     *            the perspective ID to show
+     * @param window
+     *            the workbench window of the action calling this method.
+     * @param input
+     *            the page input, or <code>null</code> if there is no current
+     *            input. This is used to seed the input for the page's views
+     * @return the workbench page that the perspective was shown
+     * @exception WorkbenchException
+     *                if the perspective could not be shown
+     * 
+     * @since 2.0
+     */
+    public IWorkbenchPage showPerspective(String perspectiveId,
+            IWorkbenchWindow window, IAdaptable input)
+            throws WorkbenchException;
+
+    /**
+     * Returns the decorator manager.
+     * <p>
+     * Any client using the decorator manager should come up with the text and
+     * image for the element (including any of the part's own decorations)
+     * before calling the decorator manager. It should also add a listener to
+     * be notified when decorations change.
+     * </p>
+     * <p>
+     * Note that if the element implements <code>IAdaptable</code>,
+     * decorators may use this mechanism to obtain an adapter (for example an
+     * <code>IResource</code>), and derive the decoration from the adapter
+     * rather than the element. Since the adapter may differ from the original
+     * element, those using the decorator manager should be prepared to handle
+     * notification that the decoration for the adapter has changed, in
+     * addition to handling notification that the decoration for the element
+     * has changed. That is, it needs to be able to map back from the adapter
+     * to the element.
+     * </p>
+     * 
+     * @return the decorator manager
+     */
+    public IDecoratorManager getDecoratorManager();
+
+    /**
+     * Save all dirty editors in the workbench. Opens a dialog to prompt the
+     * user if <code>confirm</code> is true. Return true if successful.
+     * Return false if the user has cancelled the command.
+     * 
+     * @param confirm
+     *            prompt the user if true
+     * @return boolean false if the operation was cancelled.
+     */
+    public boolean saveAllEditors(boolean confirm);
+
+    /**
+     * Returns the element factory with the given id.
+     * 
+     * @param factoryId
+     *            the id of the element factory
+     * @return the elment factory, or <code>null</code> if none
+     * @see IElementFactory
+     * @since 3.0
+     */
+    public IElementFactory getElementFactory(String factoryId);
+
+    /**
+     * Returns an interface to manage activities at the workbench level.
+     * 
+     * @return an interface to manage activities at the workbench level.
+     *         Guaranteed not to be <code>null</code>.
+     * @since 3.0
+     */
+    IWorkbenchActivitySupport getActivitySupport();
+
+    /**
+     * Returns an interface to manage commands at the workbench level.
+     * 
+     * @return an interface to manage commands at the workbench level.
+     *         Guaranteed not to be <code>null</code>.
+     * @since 3.0
+     */
+    IWorkbenchCommandSupport getCommandSupport();
+
+    /**
+     * Returns an interface to manage contexts at the workbench level.
+     * 
+     * @return an interface to manage contexts at the workbench level.
+     *         Guaranteed not to be <code>null</code>.
+     * @since 3.0
+     */
+    IWorkbenchContextSupport getContextSupport();
+
+    /**
+     * Return the theme manager for this workbench.
+     *  
+     * @return the theme manager for this workbench.Guaranteed not to be 
+     * <code>null</code>.
+     * @since 3.0
+     */
+    public IThemeManager getThemeManager();
+
+    /**
+     * Return the intro manager for this workbench.
+     * 
+     * @return the intro manager for this workbench.  Guaranteed not to be 
+     * <code>null</code>.
+     * @since 3.0
+     */
+    public IIntroManager getIntroManager();
 }

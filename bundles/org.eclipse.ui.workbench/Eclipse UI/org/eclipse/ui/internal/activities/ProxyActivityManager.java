@@ -21,53 +21,57 @@ import org.eclipse.ui.activities.ICategory;
 import org.eclipse.ui.activities.IIdentifier;
 
 public final class ProxyActivityManager extends AbstractActivityManager {
-	private IActivityManager activityManager;
+    private IActivityManager activityManager;
 
-	public ProxyActivityManager(IActivityManager activityManager) {
-		if (activityManager == null)
-			throw new NullPointerException();
+    public ProxyActivityManager(IActivityManager activityManager) {
+        if (activityManager == null)
+            throw new NullPointerException();
 
-		this.activityManager = activityManager;
+        this.activityManager = activityManager;
 
-		this
-			.activityManager
-			.addActivityManagerListener(new IActivityManagerListener() {
-			public void activityManagerChanged(ActivityManagerEvent activityManagerEvent) {
-				ActivityManagerEvent proxyActivityManagerEvent =
-					new ActivityManagerEvent(
-						ProxyActivityManager.this,
-						activityManagerEvent.haveDefinedActivityIdsChanged(),
-						activityManagerEvent.haveDefinedCategoryIdsChanged(),
-						activityManagerEvent.haveEnabledActivityIdsChanged(),
-						activityManagerEvent.getPreviouslyDefinedActivityIds(),
-						activityManagerEvent.getPreviouslyDefinedCategoryIds(),
-						activityManagerEvent.getPreviouslyEnabledActivityIds());
-				fireActivityManagerChanged(proxyActivityManagerEvent);
-			}
-		});
-	}
+        this.activityManager
+                .addActivityManagerListener(new IActivityManagerListener() {
+                    public void activityManagerChanged(
+                            ActivityManagerEvent activityManagerEvent) {
+                        ActivityManagerEvent proxyActivityManagerEvent = new ActivityManagerEvent(
+                                ProxyActivityManager.this, activityManagerEvent
+                                        .haveDefinedActivityIdsChanged(),
+                                activityManagerEvent
+                                        .haveDefinedCategoryIdsChanged(),
+                                activityManagerEvent
+                                        .haveEnabledActivityIdsChanged(),
+                                activityManagerEvent
+                                        .getPreviouslyDefinedActivityIds(),
+                                activityManagerEvent
+                                        .getPreviouslyDefinedCategoryIds(),
+                                activityManagerEvent
+                                        .getPreviouslyEnabledActivityIds());
+                        fireActivityManagerChanged(proxyActivityManagerEvent);
+                    }
+                });
+    }
 
-	public IActivity getActivity(String activityId) {
-		return activityManager.getActivity(activityId);
-	}
+    public IActivity getActivity(String activityId) {
+        return activityManager.getActivity(activityId);
+    }
 
-	public ICategory getCategory(String categoryId) {
-		return activityManager.getCategory(categoryId);
-	}
+    public ICategory getCategory(String categoryId) {
+        return activityManager.getCategory(categoryId);
+    }
 
-	public Set getDefinedActivityIds() {
-		return activityManager.getDefinedActivityIds();
-	}
+    public Set getDefinedActivityIds() {
+        return activityManager.getDefinedActivityIds();
+    }
 
-	public Set getDefinedCategoryIds() {
-		return activityManager.getDefinedCategoryIds();
-	}
+    public Set getDefinedCategoryIds() {
+        return activityManager.getDefinedCategoryIds();
+    }
 
-	public Set getEnabledActivityIds() {
-		return activityManager.getEnabledActivityIds();
-	}
+    public Set getEnabledActivityIds() {
+        return activityManager.getEnabledActivityIds();
+    }
 
-	public IIdentifier getIdentifier(String identifierId) {
-		return activityManager.getIdentifier(identifierId);
-	}
+    public IIdentifier getIdentifier(String identifierId) {
+        return activityManager.getIdentifier(identifierId);
+    }
 }

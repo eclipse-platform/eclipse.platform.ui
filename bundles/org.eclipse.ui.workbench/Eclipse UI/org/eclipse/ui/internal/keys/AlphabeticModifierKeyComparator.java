@@ -22,14 +22,15 @@ import org.eclipse.ui.keys.ModifierKey;
  */
 public class AlphabeticModifierKeyComparator implements Comparator {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
-	public int compare(Object left, Object right) {
-		ModifierKey modifierKeyLeft = (ModifierKey) left;
-		ModifierKey modifierKeyRight = (ModifierKey) right;
-		return modifierKeyLeft.toString().compareTo(modifierKeyRight.toString());
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Comparable#compareTo(java.lang.Object)
+     */
+    public int compare(Object left, Object right) {
+        ModifierKey modifierKeyLeft = (ModifierKey) left;
+        ModifierKey modifierKeyRight = (ModifierKey) right;
+        return modifierKeyLeft.toString()
+                .compareTo(modifierKeyRight.toString());
+    }
 }

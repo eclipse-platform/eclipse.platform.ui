@@ -13,16 +13,16 @@ package org.eclipse.ui.internal.commands;
 
 final class CommandRegistryEvent {
 
-	private ICommandRegistry commandRegistry;
+    private ICommandRegistry commandRegistry;
 
-	CommandRegistryEvent(ICommandRegistry commandRegistry) {
-		if (commandRegistry == null)
-			throw new NullPointerException();
+    CommandRegistryEvent(ICommandRegistry commandRegistry) {
+        if (commandRegistry == null)
+            throw new NullPointerException();
 
-		this.commandRegistry = commandRegistry;
-	}
+        this.commandRegistry = commandRegistry;
+    }
 
-	public ICommandRegistry getCommandRegistry() {
-		return commandRegistry;
-	}
+    public ICommandRegistry getCommandRegistry() {
+        return commandRegistry;
+    }
 }

@@ -8,7 +8,7 @@
  * Contributors: 
  *   IBM Corporation - initial API and implementation 
  *   Sebastian Davids <sdavids@gmx.de> - Collapse all action (25826)
- ******************************************************************************/ 
+ ******************************************************************************/
 package org.eclipse.ui.views.navigator;
 
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -17,23 +17,24 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * Collapse all project nodes.
  */
 public class CollapseAllAction extends ResourceNavigatorAction {
-	
-/**
- * Creates the action.
- * 
- * @param navigator the resource navigator
- * @param label the label for the action
- */
-public CollapseAllAction(IResourceNavigator navigator, String label) {
-	super(navigator, label);
-	WorkbenchHelp.setHelp(this, INavigatorHelpContextIds.COLLAPSE_ALL_ACTION);
-	setEnabled(true);
-}
 
-/*
- * Implementation of method defined on <code>IAction</code>.
- */
-public void run() {
-	getNavigator().getViewer().collapseAll();
-}
+    /**
+     * Creates the action.
+     * 
+     * @param navigator the resource navigator
+     * @param label the label for the action
+     */
+    public CollapseAllAction(IResourceNavigator navigator, String label) {
+        super(navigator, label);
+        WorkbenchHelp.setHelp(this,
+                INavigatorHelpContextIds.COLLAPSE_ALL_ACTION);
+        setEnabled(true);
+    }
+
+    /*
+     * Implementation of method defined on <code>IAction</code>.
+     */
+    public void run() {
+        getNavigator().getViewer().collapseAll();
+    }
 }

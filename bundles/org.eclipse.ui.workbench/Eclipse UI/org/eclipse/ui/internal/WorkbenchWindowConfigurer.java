@@ -49,427 +49,429 @@ import org.eclipse.ui.presentations.WorkbenchPresentationFactory;
  * 
  * @since 3.0
  */
-public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigurer {
-	
-	/**
-	 * The workbench window associated with this configurer.
-	 */
-	private WorkbenchWindow window;
+public final class WorkbenchWindowConfigurer implements
+        IWorkbenchWindowConfigurer {
 
-	/**
-	 * The shell style bits to use when the window's shell is being created.
-	 */
-	private int shellStyle = SWT.SHELL_TRIM;
-	
-	/**
-	 * The window title to set when the window's shell has been created.
-	 */
-	private String windowTitle;
-	
-	/**
-	 * Whether the workbench window should show the fast view bars.
-	 */
-	private boolean showFastViewBars = false;
-	
-	/**
-	 * Whether the workbench window should show the perspective bar
-	 */
-	private boolean showPerspectiveBar = false;
-	
-	/**
-	 * Whether the workbench window should show the status line.
-	 */
-	private boolean showStatusLine = true;
-	
-	/**
-	 * Whether the workbench window should show the main tool bar.
-	 */
-	private boolean showToolBar = true;
-	
-	/**
-	 * Whether the workbench window should show the main menu bar.
-	 */
-	private boolean showMenuBar = true;
-	
-	/**
-	 * Whether the workbench window should have a progress indicator.
-	 */
-	private boolean showProgressIndicator = false;
-	
-	/**
-	 * Table to hold arbitrary key-data settings (key type: <code>String</code>,
-	 * value type: <code>Object</code>).
-	 * @see #setData
-	 */
-	private Map extraData = new HashMap(1);
+    /**
+     * The workbench window associated with this configurer.
+     */
+    private WorkbenchWindow window;
 
-	/**
-	 * Holds the list drag and drop <code>Transfer</code> for the
-	 * editor area
-	 */
-	private ArrayList transferTypes = new ArrayList(3);
+    /**
+     * The shell style bits to use when the window's shell is being created.
+     */
+    private int shellStyle = SWT.SHELL_TRIM;
 
-	/**
-	 * The <code>DropTargetListener</code> implementation for handling a
-	 * drop into the editor area.
-	 */
-	private DropTargetListener dropTargetListener = null;
-	 
-	
-	/**
-	 * Object for configuring this workbench window's action bars. 
-	 * Lazily initialized to an instance unique to this window.
-	 */
-	private WindowActionBarConfigurer actionBarConfigurer = null;
+    /**
+     * The window title to set when the window's shell has been created.
+     */
+    private String windowTitle;
 
-	/**
-	 * The initial size to use for the shell.
-	 */
-	private Point initialSize = new Point(1024, 768);
+    /**
+     * Whether the workbench window should show the fast view bars.
+     */
+    private boolean showFastViewBars = false;
 
-	/**
-	 * The presentation factory.  Lazily initialized in getPresentationFactory
-	 * if not already assigned in setPresentationFactory.
-	 */
-	private AbstractPresentationFactory presentationFactory = null;
-	    
-	/**
-	 * Action bar configurer that changes this workbench window.
-	 * This implementation keeps track of of cool bar items
-	 */
-	class WindowActionBarConfigurer extends AbstractActionBarConfigurer {
-	
-		/**
-		 * Returns whether the given id is for a cool item.
-		 * 
-		 * @param the item id
-		 * @return <code>true</code> if it is a cool item,
-		 * and <code>false</code> otherwise
-		 */
-		/* package */ boolean containsCoolItem(String id) {
-			ICoolBarManager cbManager = getCoolBarManager();
-			if (cbManager == null) return false; 
-			IContributionItem cbItem = cbManager.find(id);
-			if (cbItem == null) return false;
-			//@ issue: maybe we should check if cbItem is visible?
-			return true;
-		}
+    /**
+     * Whether the workbench window should show the perspective bar
+     */
+    private boolean showPerspectiveBar = false;
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.application.IActionBarConfigurer
-		 */
-		public IStatusLineManager getStatusLineManager() {
-			return window.getStatusLineManager();
-		}
+    /**
+     * Whether the workbench window should show the status line.
+     */
+    private boolean showStatusLine = true;
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.application.IActionBarConfigurer
-		 */
-		public IMenuManager getMenuManager() {
-			return window.getMenuManager();
-		}
+    /**
+     * Whether the workbench window should show the main tool bar.
+     */
+    private boolean showToolBar = true;
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.internal.AbstractActionBarConfigurer
-		 */
-		public ICoolBarManager getCoolBarManager() {
-			return window.getCoolBarManager();
-		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.ui.application.IActionBarConfigurer
-		 */
-		public void registerGlobalAction(IAction action) {
-			window.registerGlobalAction(action);
-		}
-	}
-	
-	/**
-	 * Creates a new workbench window configurer.
-	 * <p>
-	 * This method is declared package-private. Clients obtain instances
-	 * via {@link WorkbenchAdvisor#getWindowConfigurer 
-	 * WorkbenchAdvisor.getWindowConfigurer}
-	 * </p>
-	 * 
-	 * @param window the workbench window that this object configures
-	 * @see WorkbenchAdvisor#getWindowConfigurer
-	 */
-	WorkbenchWindowConfigurer(WorkbenchWindow window) {
-		if (window == null) {
-			throw new IllegalArgumentException();
-		}
-		this.window = window;
-	    windowTitle = WorkbenchPlugin.getDefault().getProductName();
-	    if (windowTitle == null) {
-	        windowTitle = ""; //$NON-NLS-1$
-	    }
-	}
+    /**
+     * Whether the workbench window should show the main menu bar.
+     */
+    private boolean showMenuBar = true;
 
-	/* (non-javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getWindow
-	 */
-	public IWorkbenchWindow getWindow() {
-		return window;
-	}
+    /**
+     * Whether the workbench window should have a progress indicator.
+     */
+    private boolean showProgressIndicator = false;
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getWorkbenchConfigurer()
-	 */
-	public IWorkbenchConfigurer getWorkbenchConfigurer() {
-		return Workbench.getInstance().getWorkbenchConfigurer();
-	}
-	
-	/**
-	 * Returns the title as set by <code>setTitle</code>, without consulting the shell.
-	 * 
-	 * @return the window title as set, or <code>null</code> if not set
-	 */
-	/* package */ String basicGetTitle() {
-		return windowTitle;
-	}
-	
-	/* (non-javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getTitle
-	 */
-	public String getTitle() {
-		Shell shell =  window.getShell();
-		if (shell != null) {
-			// update the cached title
-			windowTitle = shell.getText();
-			return windowTitle;
-		} else {
-			return windowTitle;
-		}
-	}
-	
-	/* (non-javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#setTitle
-	 */
-	public void setTitle(String title) {
-		if (title == null) {
-			throw new IllegalArgumentException();
-		}
-		windowTitle = title;
-		Shell shell =  window.getShell();
-		if (shell != null && !shell.isDisposed()) {
-			shell.setText(title);
-		}
-	}
-	
-	/* (non-javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getShowMenuBar
-	 */
-	public boolean getShowMenuBar() {
-		return showMenuBar;
-	}
+    /**
+     * Table to hold arbitrary key-data settings (key type: <code>String</code>,
+     * value type: <code>Object</code>).
+     * @see #setData
+     */
+    private Map extraData = new HashMap(1);
 
-	/* (non-javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#setShowMenuBar
-	 */
-	public void setShowMenuBar(boolean show) {
-		showMenuBar = show;
-		WorkbenchWindow win = (WorkbenchWindow) getWindow();
-		Shell shell = win.getShell();
-		if (shell != null) {
-			boolean showing = shell.getMenuBar() != null;
-			if (show != showing) {
-				if (show) {
-					shell.setMenuBar(win.getMenuBarManager().getMenu());
-				}
-				else {
-					shell.setMenuBar(null);
-				}
-			}
-		}
-	}
+    /**
+     * Holds the list drag and drop <code>Transfer</code> for the
+     * editor area
+     */
+    private ArrayList transferTypes = new ArrayList(3);
 
-	/* (non-javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getShowToolBar
-	 */
-	public boolean getShowCoolBar() {
-		return showToolBar;
-	}
+    /**
+     * The <code>DropTargetListener</code> implementation for handling a
+     * drop into the editor area.
+     */
+    private DropTargetListener dropTargetListener = null;
 
-	/* (non-javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
-	 */
-	public void setShowCoolBar(boolean show) {
-		showToolBar = show;
-		// @issue need to be able to reconfigure after window's controls created
-	}
+    /**
+     * Object for configuring this workbench window's action bars. 
+     * Lazily initialized to an instance unique to this window.
+     */
+    private WindowActionBarConfigurer actionBarConfigurer = null;
 
-	/* (non-javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
-	 */
-	public boolean getShowFastViewBars() {
-		return showFastViewBars ;
-	}
+    /**
+     * The initial size to use for the shell.
+     */
+    private Point initialSize = new Point(1024, 768);
 
-	/* (non-javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
-	 */
-	public void setShowFastViewBars(boolean show) {
-		showFastViewBars = show;
-		// @issue need to be able to reconfigure after window's controls created
-	}
+    /**
+     * The presentation factory.  Lazily initialized in getPresentationFactory
+     * if not already assigned in setPresentationFactory.
+     */
+    private AbstractPresentationFactory presentationFactory = null;
 
-	/* (non-javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
-	 */
-	public boolean getShowPerspectiveBar() {
-		return showPerspectiveBar;
-	}
+    /**
+     * Action bar configurer that changes this workbench window.
+     * This implementation keeps track of of cool bar items
+     */
+    class WindowActionBarConfigurer extends AbstractActionBarConfigurer {
 
-	/* (non-javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
-	 */
-	public void setShowPerspectiveBar(boolean show) {
-		showPerspectiveBar = show;
-		// @issue need to be able to reconfigure after window's controls created
-	}
+        /**
+         * Returns whether the given id is for a cool item.
+         * 
+         * @param the item id
+         * @return <code>true</code> if it is a cool item,
+         * and <code>false</code> otherwise
+         */
+        /* package */boolean containsCoolItem(String id) {
+            ICoolBarManager cbManager = getCoolBarManager();
+            if (cbManager == null)
+                return false;
+            IContributionItem cbItem = cbManager.find(id);
+            if (cbItem == null)
+                return false;
+            //@ issue: maybe we should check if cbItem is visible?
+            return true;
+        }
 
-	/* (non-javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getShowStatusLine
-	 */
-	public boolean getShowStatusLine() {
-		return showStatusLine;
-	}
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.application.IActionBarConfigurer
+         */
+        public IStatusLineManager getStatusLineManager() {
+            return window.getStatusLineManager();
+        }
 
-	/* (non-javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#setShowStatusLine
-	 */
-	public void setShowStatusLine(boolean show) {
-		showStatusLine = show;
-		// @issue need to be able to reconfigure after window's controls created
-	}
-	
-	
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.application.IActionBarConfigurer
+         */
+        public IMenuManager getMenuManager() {
+            return window.getMenuManager();
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.internal.AbstractActionBarConfigurer
+         */
+        public ICoolBarManager getCoolBarManager() {
+            return window.getCoolBarManager();
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.application.IActionBarConfigurer
+         */
+        public void registerGlobalAction(IAction action) {
+            window.registerGlobalAction(action);
+        }
+    }
+
+    /**
+     * Creates a new workbench window configurer.
+     * <p>
+     * This method is declared package-private. Clients obtain instances
+     * via {@link WorkbenchAdvisor#getWindowConfigurer 
+     * WorkbenchAdvisor.getWindowConfigurer}
+     * </p>
+     * 
+     * @param window the workbench window that this object configures
+     * @see WorkbenchAdvisor#getWindowConfigurer
+     */
+    WorkbenchWindowConfigurer(WorkbenchWindow window) {
+        if (window == null) {
+            throw new IllegalArgumentException();
+        }
+        this.window = window;
+        windowTitle = WorkbenchPlugin.getDefault().getProductName();
+        if (windowTitle == null) {
+            windowTitle = ""; //$NON-NLS-1$
+        }
+    }
+
+    /* (non-javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getWindow
+     */
+    public IWorkbenchWindow getWindow() {
+        return window;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getWorkbenchConfigurer()
+     */
+    public IWorkbenchConfigurer getWorkbenchConfigurer() {
+        return Workbench.getInstance().getWorkbenchConfigurer();
+    }
+
+    /**
+     * Returns the title as set by <code>setTitle</code>, without consulting the shell.
+     * 
+     * @return the window title as set, or <code>null</code> if not set
+     */
+    /* package */String basicGetTitle() {
+        return windowTitle;
+    }
+
+    /* (non-javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getTitle
+     */
+    public String getTitle() {
+        Shell shell = window.getShell();
+        if (shell != null) {
+            // update the cached title
+            windowTitle = shell.getText();
+            return windowTitle;
+        } else {
+            return windowTitle;
+        }
+    }
+
+    /* (non-javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#setTitle
+     */
+    public void setTitle(String title) {
+        if (title == null) {
+            throw new IllegalArgumentException();
+        }
+        windowTitle = title;
+        Shell shell = window.getShell();
+        if (shell != null && !shell.isDisposed()) {
+            shell.setText(title);
+        }
+    }
+
+    /* (non-javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getShowMenuBar
+     */
+    public boolean getShowMenuBar() {
+        return showMenuBar;
+    }
+
+    /* (non-javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#setShowMenuBar
+     */
+    public void setShowMenuBar(boolean show) {
+        showMenuBar = show;
+        WorkbenchWindow win = (WorkbenchWindow) getWindow();
+        Shell shell = win.getShell();
+        if (shell != null) {
+            boolean showing = shell.getMenuBar() != null;
+            if (show != showing) {
+                if (show) {
+                    shell.setMenuBar(win.getMenuBarManager().getMenu());
+                } else {
+                    shell.setMenuBar(null);
+                }
+            }
+        }
+    }
+
+    /* (non-javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getShowToolBar
+     */
+    public boolean getShowCoolBar() {
+        return showToolBar;
+    }
+
+    /* (non-javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
+     */
+    public void setShowCoolBar(boolean show) {
+        showToolBar = show;
+        // @issue need to be able to reconfigure after window's controls created
+    }
+
+    /* (non-javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
+     */
+    public boolean getShowFastViewBars() {
+        return showFastViewBars;
+    }
+
+    /* (non-javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
+     */
+    public void setShowFastViewBars(boolean show) {
+        showFastViewBars = show;
+        // @issue need to be able to reconfigure after window's controls created
+    }
+
+    /* (non-javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
+     */
+    public boolean getShowPerspectiveBar() {
+        return showPerspectiveBar;
+    }
+
+    /* (non-javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
+     */
+    public void setShowPerspectiveBar(boolean show) {
+        showPerspectiveBar = show;
+        // @issue need to be able to reconfigure after window's controls created
+    }
+
+    /* (non-javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getShowStatusLine
+     */
+    public boolean getShowStatusLine() {
+        return showStatusLine;
+    }
+
+    /* (non-javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#setShowStatusLine
+     */
+    public void setShowStatusLine(boolean show) {
+        showStatusLine = show;
+        // @issue need to be able to reconfigure after window's controls created
+    }
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
      */
     public boolean getShowProgressIndicator() {
         return showProgressIndicator;
     }
-    
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
      */
     public void setShowProgressIndicator(boolean show) {
         showProgressIndicator = show;
-		// @issue need to be able to reconfigure after window's controls created
+        // @issue need to be able to reconfigure after window's controls created
     }
-    
-	/* (non-javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getData
-	 */
-	public Object getData(String key) {
-		if (key == null) {
-			throw new IllegalArgumentException();
-		}
-		return extraData.get(key);
-	}
 
-	/* (non-javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#setData
-	 */
-	public void setData(String key, Object data) {
-		if (key == null) {
-			throw new IllegalArgumentException();
-		}
-		if (data != null) {
-			extraData.put(key, data);
-		} else {
-			extraData.remove(key);
-		}
-	}
+    /* (non-javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#getData
+     */
+    public Object getData(String key) {
+        if (key == null) {
+            throw new IllegalArgumentException();
+        }
+        return extraData.get(key);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#addEditorAreaTransfer
-	 */
-	public void addEditorAreaTransfer(Transfer tranfer) {
-		if (tranfer != null && !transferTypes.contains(tranfer)) {
-			transferTypes.add(tranfer);
-			Transfer[] transfers = new Transfer[transferTypes.size()];
-			transferTypes.toArray(transfers);
-			IWorkbenchPage[] pages = window.getPages();
-			for (int i = 0; i < pages.length; i++) {
-				WorkbenchPage page = (WorkbenchPage) pages[i];
-				DropTarget dropTarget = ((EditorSashContainer) page.getEditorPresentation().getLayoutPart()).getDropTarget();
-				if (dropTarget != null) {
-					dropTarget.setTransfer(transfers);
-				}
-			}
-		}
-	}
+    /* (non-javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#setData
+     */
+    public void setData(String key, Object data) {
+        if (key == null) {
+            throw new IllegalArgumentException();
+        }
+        if (data != null) {
+            extraData.put(key, data);
+        } else {
+            extraData.remove(key);
+        }
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
-	 */
-	public void configureEditorAreaDropListener(DropTargetListener dropTargetListener) {
-		if (dropTargetListener != null) {
-			this.dropTargetListener = dropTargetListener;
-			IWorkbenchPage[] pages = window.getPages();
-			for (int i = 0; i < pages.length; i++) {
-				WorkbenchPage page = (WorkbenchPage) pages[i];
-				DropTarget dropTarget = ((EditorSashContainer) page.getEditorPresentation().getLayoutPart()).getDropTarget();
-				if (dropTarget != null) {
-					dropTarget.addDropListener(this.dropTargetListener);
-				}
-			}
-		}
-	}
-	
-	/**
-	 * Returns the array of <code>Transfer</code> added by the application
-	 */
-	/* package */ Transfer[] getTransfers() {
-		Transfer[] transfers = new Transfer[transferTypes.size()];
-		transferTypes.toArray(transfers);
-		return transfers;
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer#addEditorAreaTransfer
+     */
+    public void addEditorAreaTransfer(Transfer tranfer) {
+        if (tranfer != null && !transferTypes.contains(tranfer)) {
+            transferTypes.add(tranfer);
+            Transfer[] transfers = new Transfer[transferTypes.size()];
+            transferTypes.toArray(transfers);
+            IWorkbenchPage[] pages = window.getPages();
+            for (int i = 0; i < pages.length; i++) {
+                WorkbenchPage page = (WorkbenchPage) pages[i];
+                DropTarget dropTarget = ((EditorSashContainer) page
+                        .getEditorPresentation().getLayoutPart())
+                        .getDropTarget();
+                if (dropTarget != null) {
+                    dropTarget.setTransfer(transfers);
+                }
+            }
+        }
+    }
 
-	/**
-	 * Returns the drop listener provided by the application.
-	 */	
-	/* package */ DropTargetListener getDropTargetListener() {
-		return dropTargetListener;
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
+     */
+    public void configureEditorAreaDropListener(
+            DropTargetListener dropTargetListener) {
+        if (dropTargetListener != null) {
+            this.dropTargetListener = dropTargetListener;
+            IWorkbenchPage[] pages = window.getPages();
+            for (int i = 0; i < pages.length; i++) {
+                WorkbenchPage page = (WorkbenchPage) pages[i];
+                DropTarget dropTarget = ((EditorSashContainer) page
+                        .getEditorPresentation().getLayoutPart())
+                        .getDropTarget();
+                if (dropTarget != null) {
+                    dropTarget.addDropListener(this.dropTargetListener);
+                }
+            }
+        }
+    }
 
-	/* (non-javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
-	 */
-	public IActionBarConfigurer getActionBarConfigurer() {
-		if (actionBarConfigurer == null) {
-			// lazily initialize
-			actionBarConfigurer = new WindowActionBarConfigurer();
-		}
-		return actionBarConfigurer;
-	}
-	
-	/**
-	 * Returns whether the given id is for a cool item.
-	 * 
-	 * @param the item id
-	 * @return <code>true</code> if it is a cool item,
-	 * and <code>false</code> otherwise
-	 */
-	/* package */ boolean containsCoolItem(String id) {
-		// trigger lazy initialization
-		getActionBarConfigurer();
-		return actionBarConfigurer.containsCoolItem(id);
-	}
-	
-	
+    /**
+     * Returns the array of <code>Transfer</code> added by the application
+     */
+    /* package */Transfer[] getTransfers() {
+        Transfer[] transfers = new Transfer[transferTypes.size()];
+        transferTypes.toArray(transfers);
+        return transfers;
+    }
+
+    /**
+     * Returns the drop listener provided by the application.
+     */
+    /* package */DropTargetListener getDropTargetListener() {
+        return dropTargetListener;
+    }
+
+    /* (non-javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
+     */
+    public IActionBarConfigurer getActionBarConfigurer() {
+        if (actionBarConfigurer == null) {
+            // lazily initialize
+            actionBarConfigurer = new WindowActionBarConfigurer();
+        }
+        return actionBarConfigurer;
+    }
+
+    /**
+     * Returns whether the given id is for a cool item.
+     * 
+     * @param the item id
+     * @return <code>true</code> if it is a cool item,
+     * and <code>false</code> otherwise
+     */
+    /* package */boolean containsCoolItem(String id) {
+        // trigger lazy initialization
+        getActionBarConfigurer();
+        return actionBarConfigurer.containsCoolItem(id);
+    }
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
      */
     public int getShellStyle() {
         return shellStyle;
     }
-    
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
      */
@@ -477,19 +479,19 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
         this.shellStyle = shellStyle;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
-	 */
-	public Point getInitialSize() {
-		return initialSize;
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
+     */
+    public Point getInitialSize() {
+        return initialSize;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
-	 */
-	public void setInitialSize(Point size) {
-		initialSize = size;
-	}
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
+     */
+    public void setInitialSize(Point size) {
+        initialSize = size;
+    }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
@@ -508,14 +510,16 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
      * factory default presentation factory is used.
      */
     private AbstractPresentationFactory createDefaultPresentationFactory() {
-        String factoryId = ((Workbench)window.getWorkbench()).getPresentationId(); 
-        
-	    if (factoryId != null && factoryId.length() > 0) {
-	        AbstractPresentationFactory factory = WorkbenchPlugin.getDefault().getPresentationFactory(factoryId);
-	        if (factory != null) {
-	            return factory;
-	        }
-	    }
+        String factoryId = ((Workbench) window.getWorkbench())
+                .getPresentationId();
+
+        if (factoryId != null && factoryId.length() > 0) {
+            AbstractPresentationFactory factory = WorkbenchPlugin.getDefault()
+                    .getPresentationFactory(factoryId);
+            if (factory != null) {
+                return factory;
+            }
+        }
         return new WorkbenchPresentationFactory();
     }
 
@@ -523,9 +527,9 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
      */
     public void setPresentationFactory(AbstractPresentationFactory factory) {
-		if (factory == null) {
-			throw new IllegalArgumentException();
-		}
+        if (factory == null) {
+            throw new IllegalArgumentException();
+        }
         presentationFactory = factory;
     }
 
@@ -542,7 +546,7 @@ public final class WorkbenchWindowConfigurer implements IWorkbenchWindowConfigur
      * @see org.eclipse.ui.application.IWorkbenchWindowConfigurer
      */
     public Menu createMenuBar() {
-       return window.getMenuManager().createMenuBar(window.getShell());
+        return window.getMenuManager().createMenuBar(window.getShell());
     }
 
     /* (non-Javadoc)
