@@ -182,4 +182,14 @@ public void removePropertyListener(IPropertyListener listener);
  * @param editorId the editor id
  */
 public void setDefaultEditor(IFile file, String editorId);
+/**
+ * Sets the default editor id for a the files that match that
+ * specified file name or extension. The specified editor must be
+ * defined as an editor for that file name or extension.
+ *
+ * @param fileNamePattern the file name or pattern (e.g. "*.xml");
+ * @param editorId the editor id
+ */
+public void setDefaultEditor(String fileNameOrExtension, String editorId);
+
 }

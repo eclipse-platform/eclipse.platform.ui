@@ -1876,9 +1876,13 @@ public void resetPerspective() {
 	});
 }
 /**
- * @see IPersistable.
+ * Restore this page from the memento and ensure that
+ * the active perspective is equals the active descriptor otherwise
+ * create a new perspective for that descriptor.
+ * If activeDescriptor is null active the old perspective.
  */
-public IStatus restoreState(IMemento memento) {
+public IStatus restoreState(IMemento memento,IPerspectiveDescriptor activeDescritor) {
+
 	// Restore working set
 	String pageName = memento.getString(IWorkbenchConstants.TAG_LABEL);
 	if(pageName == null) pageName = "";
@@ -1913,12 +1917,30 @@ public IStatus restoreState(IMemento memento) {
 		try {
 			Perspective persp = new Perspective(null, this);
 			result.merge(persp.restoreState(perspMems[i]));
-			if (persp.getDesc().getId().equals(activePerspectiveID))
+			IPerspectiveDescriptor desc = persp.getDesc();
+			if (desc.equals(activeDescritor))
+				activePerspective = persp;
+			else if((activePerspective == null) && desc.getId().equals(activePerspectiveID))
 				activePerspective = persp;
 			perspList.add(persp);
 		} catch (WorkbenchException e) {
 		}
 	}
+	boolean restoreActivePerspective = false;
+	if(activeDescritor == null)
+		restoreActivePerspective = true;
+	else if (activePerspective != null && activePerspective.getDesc().equals(activeDescritor)) {
+		restoreActivePerspective = true;
+	} else {
+		restoreActivePerspective = false;
+		activePerspective = createPerspective((PerspectiveDescriptor)activeDescritor);
+		if(activePerspective == null) {
+			result.merge(new Status(IStatus.ERROR,PlatformUI.PLUGIN_ID,0,
+				WorkbenchMessages.format("Workbench.showPerspectiveError",new String[]{activeDescritor.getId()}),
+				null));			
+		}
+	}
+	
 	perspList.setActive(activePerspective);
 	
 	// Make sure we have a valid perspective to work with,
@@ -1927,18 +1949,20 @@ public IStatus restoreState(IMemento memento) {
 	if (activePerspective == null) {
 		activePerspective = perspList.getNextActive();
 		perspList.setActive(activePerspective);
+		result.merge(activePerspective.restoreState());
 	}
-	if (activePerspective == null)
-		return result;
-
-	result.merge(activePerspective.restoreState());
-	window.firePerspectiveActivated(this, activePerspective.getDesc());
-
-	// Restore active part.
-	if (activePartID != null) {
-		IViewPart view = activePerspective.findView(activePartID);
-		if (view != null)
-			activePart = view;
+	if (activePerspective != null && restoreActivePerspective)
+		result.merge(activePerspective.restoreState());
+	
+	if (activePerspective != null) {	
+		window.firePerspectiveActivated(this, activePerspective.getDesc());
+	
+		// Restore active part.
+		if (activePartID != null) {
+			IViewPart view = activePerspective.findView(activePartID);
+			if (view != null)
+				activePart = view;
+		}
 	}
 	return result;
 }

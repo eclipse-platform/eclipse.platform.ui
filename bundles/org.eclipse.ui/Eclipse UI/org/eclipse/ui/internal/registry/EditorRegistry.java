@@ -782,6 +782,17 @@ public void setFileEditorMappings(FileEditorMapping[] newResourceTypes) {
 	rebuildEditorMap();
 	firePropertyChange(PROP_CONTENTS);
 }
+/* (non-Javadoc)
+ * Method declared on IEditorRegistry.
+ */
+public void setDefaultEditor(String fileName, String editorId) {
+	EditorDescriptor desc = (EditorDescriptor)findEditor(editorId);
+	FileEditorMapping[] mapping = getMappingForFilename(fileName);
+	if (mapping[0] != null)
+		mapping[0].setDefaultEditor(desc);
+	if (mapping[1] != null)
+		mapping[1].setDefaultEditor(desc);		
+}
 /**
  * Alphabetically sort the internal editors
  */
