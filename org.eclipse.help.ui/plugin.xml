@@ -17,6 +17,7 @@
       <import plugin="org.eclipse.help.appserver"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.ui.forms"/>
    </requires>
 
 
@@ -66,5 +67,24 @@
             id="org.eclipse.help.ui.systembrowser">
       </browser>
    </extension>
-
+<!-- Help view (new since 3.1) -->
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="%HelpViewCategory"
+            id="org.eclipse.help.ui">
+      </category>
+      <view
+            allowMultiple="false"
+            icon="icons/help.gif"
+            class="org.eclipse.help.ui.internal.views.HelpView"
+            category="org.eclipse.help.ui"
+            name="%HelpViewName"
+            id="org.eclipse.help.ui.HelpView"/>
+       <stickyView
+            closeable="true"
+            moveable="true"
+            location="RIGHT"
+            id="org.eclipse.help.ui.HelpView"/>            
+   </extension>
 </plugin>

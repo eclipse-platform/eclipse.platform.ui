@@ -14,6 +14,8 @@ import java.text.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.resource.*;
+import org.eclipse.swt.graphics.Image;
 /**
  * Uses a resource bundle to load images and strings from a property file. This
  * class needs to properly use the desired locale.
@@ -35,6 +37,37 @@ public class HelpUIResources {
 	public static URL getImagePath(String name) {
 		IPath path = new Path("icons/").append(name); //$NON-NLS-1$
 		return Platform.find(HelpUIPlugin.getDefault().getBundle(), path);
+	}
+	
+	/**
+	 * Returns an image descriptor from a property file
+	 * @param name simple image file name
+	 * @return the descriptor
+	 */
+
+	public static ImageDescriptor getImageDescriptor(String name) {
+		URL imagePath = getImagePath(name);
+		ImageRegistry registry = HelpUIPlugin.getDefault().getImageRegistry();
+		ImageDescriptor desc = registry.getDescriptor(name);
+		if (desc==null) {
+			desc = ImageDescriptor.createFromURL(imagePath);
+			registry.put(name, desc);
+		}
+		return desc;
+	}
+	
+	/**
+	 * Returns an image from a property file
+	 * @param name simple image file name
+	 * @return the new image or <code>null</code> if image
+	 * could not be created
+	 */
+
+	public static Image getImage(String name) {
+		ImageRegistry registry = HelpUIPlugin.getDefault().getImageRegistry();
+		//Ensure we have the descriptor
+		getImageDescriptor(name);
+		return registry.get(name);
 	}
 	/**
 	 * Returns a string from a property file
