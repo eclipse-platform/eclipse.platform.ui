@@ -16,7 +16,6 @@ public static Test suite() {
 	TestSuite suite = new TestSuite();
 	suite.setName("Regular Remove Tests");
 	
-	// R2.0 STARTUP ISSUE
 	//suite.addTest(new TestSuite(TestRemove.class));
 	
 	return suite;

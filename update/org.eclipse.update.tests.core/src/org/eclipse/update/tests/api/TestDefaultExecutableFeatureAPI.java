@@ -183,18 +183,16 @@ public class TestDefaultExecutableFeatureAPI extends UpdateManagerTestCase {
 	 */
 	public void testDescription2() throws CoreException, MalformedURLException {
 		
-		//DO NOT TEST YET
-		return;
-		
-		URL url = null;
+ 	 URL url = null;
 		try {
 			url = new URL("http://www.oti.com");
 		} catch (MalformedURLException e){/*pretty impossible*/}
-		String desc = "pretty long description as a string with \r\n and \t and \n";
+		String desc = "pretty long description as a string with \r\n and \t and";
 		IURLEntry info = new MyURLEntry(desc,url);
 		DefaultFeature feature = getFeature();
 		feature.setDescription(info);
-		assertEquals(desc,feature.getDescription().getAnnotation());
+		String result = feature.getDescription().getAnnotation();
+		assertEquals(desc,result);
 		assertEquals(url,feature.getDescription().getURL());
 	}	
 

@@ -23,7 +23,6 @@ public class AllPlatformConfigurationTests
 		TestSuite suite = new TestSuite();
 		suite.setName("PlatformConfiguration Tests");
 
-		// DO NOT TEST YET
 		//suite.addTest(new TestSuite(TestPlatCfgAPI.class));
 
 		return suite;

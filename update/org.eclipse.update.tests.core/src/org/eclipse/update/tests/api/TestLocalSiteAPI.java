@@ -10,6 +10,7 @@ import org.eclipse.update.core.ICategory;
 import org.eclipse.update.core.Category;
 import org.eclipse.update.core.model.SiteCategoryModel;
 import org.eclipse.update.core.model.SiteMapModel;
+import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.core.FeatureReference;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 
@@ -51,16 +52,11 @@ public class TestLocalSiteAPI extends UpdateManagerTestCase {
 	
 	public void testCategories() throws Exception {
 
-		// DO NOT TEST YET
-		return;
-
 		ISite site = SiteManager.getSite(SOURCE_FILE_SITE);
-		IFeatureReference[] ref = site.getFeatureReferences();
 		
 		ICategory category = new Category("category","Label of category");
 		
 		((SiteMapModel)site).addCategoryModel((SiteCategoryModel)category);
-		ref[0].addCategory(category);
 		
 		ICategory[] categories = site.getCategories();
 		boolean found = false;
@@ -69,8 +65,11 @@ public class TestLocalSiteAPI extends UpdateManagerTestCase {
 			if (element.getName().equals("category")) found = true;
 		}
 		if (!found) fail("cannot find category 'category' in site");
-		
-		categories = ref[0].getCategories();
+
+		IFeatureReference ref = new FeatureReference();
+		ref.setSite(site);
+		ref.addCategory(category);		
+		categories = ref.getCategories();
 		found = false;
 		for (int index = 0; index < categories.length; index++) {
 			ICategory element = categories[index];
