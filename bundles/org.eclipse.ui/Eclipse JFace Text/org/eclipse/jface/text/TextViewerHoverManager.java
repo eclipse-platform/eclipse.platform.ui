@@ -70,53 +70,61 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 		
 		Point location= getHoverEventLocation();
 		int offset= computeOffsetAtLocation(location.x, location.y);
-		if (offset == -1)
+		if (offset == -1) {
+			setInformation(null, null);
 			return;
+		}
 			
 		final ITextHover hover= fTextViewer.getTextHover(offset);
-		if (hover == null)
+		if (hover == null) {
+			setInformation(null, null);
 			return;
+		}
 			
 		final IRegion region= hover.getHoverRegion(fTextViewer, offset);
-		if (region == null)
+		if (region == null) {
+			setInformation(null, null);
 			return;
+		}
 			
 		final Rectangle area= computeArea(region);
-		if (area == null || area.isEmpty())
+		if (area == null || area.isEmpty()) {
+			setInformation(null, null);
 			return;
+		}
 		
-		if (fThread == null) {
-			
-			fThread= new Thread() {
-				public void run() {
+		if (fThread != null) {
+			setInformation(null, null);
+			return;
+		}
+		
+		fThread= new Thread() {
+			public void run() {
+				// http://bugs.eclipse.org/bugs/show_bug.cgi?id=17693			
+				try {
 					
-					// http://bugs.eclipse.org/bugs/show_bug.cgi?id=17693
+					if (fThread != null) {
+						String information= hover.getHoverInfo(fTextViewer, region);
+						setInformation(information, area);
+					} else {
+						setInformation(null, null);
+					}
 					
-					try {
-						
-						if (fThread != null) {
-							String information= hover.getHoverInfo(fTextViewer, region);
-							setInformation(information, area);
-						} else {
-							setInformation(null, null);
-						}
-						
-					} finally {
-						synchronized (fMutex) {
-							if (fTextViewer != null)
-								fTextViewer.removeTextListener(fStopper);
-							fThread= null;
-						}
+				} finally {
+					synchronized (fMutex) {
+						if (fTextViewer != null)
+							fTextViewer.removeTextListener(fStopper);
+						fThread= null;
 					}
 				}
-			};
-			
-			fThread.setDaemon(true);
-			fThread.setPriority(Thread.MIN_PRIORITY);
-			synchronized (fMutex) {
-				fTextViewer.addTextListener(fStopper);
-				fThread.start();
 			}
+		};
+		
+		fThread.setDaemon(true);
+		fThread.setPriority(Thread.MIN_PRIORITY);
+		synchronized (fMutex) {
+			fTextViewer.addTextListener(fStopper);
+			fThread.start();
 		}
 	}
 	
