@@ -95,6 +95,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.INullSelectionListener;
 import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.actions.ActionFactory;
@@ -301,15 +302,6 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	private ViewerState fLastState = null;
 	
 	/**
-	 * The last part and selection change notification
-	 * sent by the debug view. Cached, since selection
-	 * changes are ignored when the variable is not visible.
-	 * Used to update when the view becomes visible again.
-	 */
-	private ISelection fLastSelection = null;
-	private IWorkbenchPart fLastPart = null;
-	
-	/**
 	 * Remembers which viewer (tree viewer or details viewer) had focus, so we
 	 * can reset the focus properly when re-activated.
 	 */
@@ -347,8 +339,6 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		if (viewer != null) {
 			getDetailDocument().removeDocumentListener(getDetailDocumentListener());
 		}
-		fLastPart = null;
-		fLastSelection = null;
 		super.dispose();
 	}
 
@@ -723,17 +713,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	protected void setLastSashWeights(int[] weights) {
 		fLastSashWeights = weights;
 	}
-
-	/**
-	 * Initializes the viewer input on creation
-	 */
-	protected void setInitialContent() {
-		ISelection selection= getSite().getPage().getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
-		if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
-			setViewerInput((IStructuredSelection) selection);
-		}
-	}
-
+	
 	/**
 	 * Create the context menu particular to the detail pane.  Note that anyone
 	 * wishing to contribute an action to this menu must use
@@ -810,9 +790,6 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		fSelectionActions.add(ActionFactory.CUT.getId());
 		fSelectionActions.add(ActionFactory.PASTE.getId());
 		updateAction(ActionFactory.FIND.getId());
-					
-		// set initial content here, as viewer has to be set
-		setInitialContent();
 	} 
 	
 	private void createOrientationActions() {
@@ -1205,8 +1182,6 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 * @see ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
 	 */
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		fLastPart = part;
-		fLastSelection = selection;
 		if (!isAvailable() || !isVisible()) {
 			return;
 		}
@@ -1351,7 +1326,11 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 */
 	protected void becomesVisible() {
 		super.becomesVisible();
-		selectionChanged(fLastPart, fLastSelection);
+		IViewPart part = getSite().getPage().findView(IDebugUIConstants.ID_DEBUG_VIEW);
+		if (part != null) {
+			ISelection selection = getSite().getPage().getSelection(IDebugUIConstants.ID_DEBUG_VIEW);
+			selectionChanged(part, selection);
+		}
 	}
 
 }

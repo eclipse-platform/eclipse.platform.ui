@@ -212,4 +212,12 @@ public class ExpressionView extends VariablesView {
 		return VariablesViewMessages.getString("ExpressionView.4"); //$NON-NLS-1$
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractDebugView#createActions()
+	 */
+	protected void createActions() {
+		super.createActions();
+		setInitialContent();
+	}
+
 }
