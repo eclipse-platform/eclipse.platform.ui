@@ -329,12 +329,8 @@ protected void requestActivation() {
  */
 public void setContainer(ILayoutContainer container) {
 	super.setContainer(container);
-	if (control != null) {
-		if (container != null && !container.allowsBorder())
-			control.setBorderVisible(false);
-		else
-			control.setBorderVisible(true);
-	}
+	if (control != null && container != null)
+		control.setBorderVisible(container.allowsBorder());
 }
 /**
  * Sets focus to this part.
