@@ -36,6 +36,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
+import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaJRETab;
 import org.eclipse.jdt.internal.debug.ui.jres.DefaultJREDescriptor;
 import org.eclipse.jdt.internal.debug.ui.launcher.VMArgumentsBlock;
@@ -222,6 +223,20 @@ public class AntJRETab extends JavaJRETab {
 		}
 		configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_CUSTOM_CLASSPATH, urlString.substring(0, urlString.length() - 1));
 		previousJRE= vm;
+		updateTargetsTab();
+	}
+	
+	private void updateTargetsTab() {
+		//the classpath has changed...set the targets tab to 
+		//need to be recomputed
+		ILaunchConfigurationTab[] tabs=  getLaunchConfigurationDialog().getTabs();
+		for (int i = 0; i < tabs.length; i++) {
+			ILaunchConfigurationTab tab = tabs[i];
+			if (tab instanceof AntTargetsTab) {
+				((AntTargetsTab)tab).setDirty(true);
+				break;
+			}
+		}
 	}
 	
 	private void getURLs(AntCorePreferences prefs, ILaunchConfigurationWorkingCopy configuration, List antURLs, List userURLs) {
