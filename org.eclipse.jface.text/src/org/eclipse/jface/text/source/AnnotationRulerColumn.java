@@ -474,7 +474,6 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 		for (int layer= 0; layer < maxLayer; layer++) {
 			Iterator iter= fModel.getAnnotationIterator();
 			while (iter.hasNext()) {
-
 				Annotation annotation= (Annotation) iter.next();
 				
 				if (skip(annotation))

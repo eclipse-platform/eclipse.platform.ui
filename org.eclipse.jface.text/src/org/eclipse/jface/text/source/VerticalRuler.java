@@ -388,7 +388,6 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 		for (int layer= 0; layer < maxLayer; layer++) {
 			Iterator iter= fModel.getAnnotationIterator();
 			while (iter.hasNext()) {
-
 				Annotation annotation= (Annotation) iter.next();
 
 				int lay= IAnnotationAccessExtension.DEFAULT_LAYER;
