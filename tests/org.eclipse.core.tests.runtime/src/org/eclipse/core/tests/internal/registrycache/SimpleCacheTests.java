@@ -637,6 +637,7 @@ public String[] fragmentSetup() {
 	fragment.setName("The fragment's name");
 	fragment.setId("fragmentId");
 	fragment.setVersion("1.9");
+	fragment.setMatch(PluginFragmentModel.FRAGMENT_MATCH_PERFECT);
 	regWriter.writePluginFragment(fragment, w, 0);
 	fs = new ByteArrayOutputStream();
 	w = new PrintWriter(fs);
@@ -671,41 +672,125 @@ public void fragmentTest() {
 	factory = null;
 }
 public String[] fragmentPluginSetup() {
+	PluginDescriptor[] plugins = new PluginDescriptor[5];
+	
 	PluginDescriptor plugin = new PluginDescriptor();
 	plugin.setName("A simple test");
-	plugin.setId("org.eclipse.webdav");
+	plugin.setId("id1.0");
 	plugin.setProviderName("IBM");
 	plugin.setVersion("1.0");
+	plugins[0] = plugin;
 
+	plugin = new PluginDescriptor();
+	plugin.setName("A simple test");
+	plugin.setId("id1.5");
+	plugin.setProviderName("IBM");
+	plugin.setVersion("1.5");
+	plugins[1] = plugin;
+
+	plugin = new PluginDescriptor();
+	plugin.setName("A simple test");
+	plugin.setId("id1.9");
+	plugin.setProviderName("IBM");
+	plugin.setVersion("1.9");
+	plugins[2] = plugin;
+
+	plugin = new PluginDescriptor();
+	plugin.setName("A simple test");
+	plugin.setId("id3.2");
+	plugin.setProviderName("IBM");
+	plugin.setVersion("3.2");
+	plugins[3] = plugin;
+
+	plugin = new PluginDescriptor();
+	plugin.setName("A simple test");
+	plugin.setId("id4.7");
+	plugin.setProviderName("IBM");
+	plugin.setVersion("4.7");
+	plugins[4] = plugin;	
+
+	FragmentDescriptor[] fragmentList = new FragmentDescriptor[5];
+
+	FragmentDescriptor[] pluginFragmentList = new FragmentDescriptor[1];
 	FragmentDescriptor fragment = new FragmentDescriptor();
-	fragment.setPlugin("org.eclipse.webdav");
+	fragment.setPlugin("id1.0");
 	fragment.setPluginVersion("1.0");
 	fragment.setName("The fragment's name");
-	fragment.setId("fragmentId");
+	fragment.setId("frag1");
 	fragment.setVersion("1.1");
+	pluginFragmentList[0] = fragment;
+	plugins[0].setFragments(pluginFragmentList);
+	fragmentList[0] = fragment;
 
-	// FragmentDescriptor[] fragmentList = new FragmentDescriptor[1];
-	// fragmentList[0] = fragment;
+	pluginFragmentList = new FragmentDescriptor[1];
+	fragment = new FragmentDescriptor();
+	fragment.setPlugin("id1.5");
+	fragment.setPluginVersion("1.5");
+	fragment.setName("The fragment's name");
+	fragment.setId("frag2");
+	fragment.setVersion("1.1");
+	fragment.setMatch(PluginFragmentModel.FRAGMENT_MATCH_PERFECT);
+	pluginFragmentList[0] = fragment;
+	plugins[1].setFragments(pluginFragmentList);
+	fragmentList[1] = fragment;
+
+	pluginFragmentList = new FragmentDescriptor[1];
+	fragment = new FragmentDescriptor();
+	fragment.setPlugin("id1.9");
+	fragment.setPluginVersion("1.9");
+	fragment.setName("The fragment's name");
+	fragment.setId("frag3");
+	fragment.setVersion("1.1");
+	fragment.setMatch(PluginFragmentModel.FRAGMENT_MATCH_EQUIVALENT);
+	pluginFragmentList[0] = fragment;
+	plugins[2].setFragments(pluginFragmentList);
+	fragmentList[2] = fragment;
+
+	pluginFragmentList = new FragmentDescriptor[1];
+	fragment = new FragmentDescriptor();
+	fragment.setPlugin("id3.2");
+	fragment.setPluginVersion("3.0");
+	fragment.setName("The fragment's name");
+	fragment.setId("frag4");
+	fragment.setVersion("1.1");
+	fragment.setMatch(PluginFragmentModel.FRAGMENT_MATCH_COMPATIBLE);
+	pluginFragmentList[0] = fragment;
+	plugins[3].setFragments(pluginFragmentList);
+	fragmentList[3] = fragment;
+
+	pluginFragmentList = new FragmentDescriptor[1];
+	fragment = new FragmentDescriptor();
+	fragment.setPlugin("id4.7");
+	fragment.setPluginVersion("1.5");
+	fragment.setName("The fragment's name");
+	fragment.setId("frag5");
+	fragment.setVersion("1.1");
+	fragment.setMatch(PluginFragmentModel.FRAGMENT_MATCH_GREATER_OR_EQUAL);
+	pluginFragmentList[0] = fragment;
+	plugins[4].setFragments(pluginFragmentList);
+	fragmentList[4] = fragment;
+
+	String[] localXMLFiles = new String[plugins.length + fragmentList.length];
+	for (int i = 0; i < plugins.length; i++) {
+		ByteArrayOutputStream fs = new ByteArrayOutputStream();
+		PrintWriter w = new PrintWriter(fs);
+		RegistryWriter regWriter = new RegistryWriter();
+		regWriter.writePluginDescriptor(plugins[i], w, 0);
+		w.flush();
+		w.close();
 	
-	// plugin.setFragments(fragmentList);
-
-	ByteArrayOutputStream fs = new ByteArrayOutputStream();
-	PrintWriter w = new PrintWriter(fs);
-	RegistryWriter regWriter = new RegistryWriter();
-	regWriter.writePluginDescriptor(plugin, w, 0);
-	w.flush();
-	w.close();
-
-	String[] localXMLFiles = new String[2];
-	localXMLFiles[0] = fs.toString();
+		localXMLFiles[i] = fs.toString();
+	}
 	
-	fs = new ByteArrayOutputStream();
-	w = new PrintWriter(fs);
-	regWriter = new RegistryWriter();
-	regWriter.writePluginFragment(fragment, w, 0);
-	w.flush();
-	w.close();
-	localXMLFiles[1] = fs.toString();
+	for (int i = 0; i < fragmentList.length; i++) {
+		ByteArrayOutputStream fs = new ByteArrayOutputStream();
+		PrintWriter w = new PrintWriter(fs);
+		RegistryWriter regWriter = new RegistryWriter();
+		regWriter.writePluginFragment(fragmentList[i], w, 0);
+		w.flush();
+		w.close();
+		localXMLFiles[plugins.length + i] = fs.toString();
+	}
 
 	return localXMLFiles;
 }

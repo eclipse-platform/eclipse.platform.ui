@@ -205,6 +205,23 @@ public void writePluginFragment(PluginFragmentModel fragment, PrintWriter w, int
 		w.print(" " + IModel.FRAGMENT_PLUGIN_ID + "=\"" + xmlSafe(fragment.getPluginId()) + "\"");
 	if (fragment.getPluginVersion() != null)
 		w.print(" " + IModel.FRAGMENT_PLUGIN_VERSION + "=\"" + xmlSafe(fragment.getPluginVersion()) + "\"");
+	if (fragment.getMatch() != PluginFragmentModel.FRAGMENT_MATCH_UNSPECIFIED) {
+		switch (fragment.getMatch()) {
+			case PluginFragmentModel.FRAGMENT_MATCH_PERFECT:
+				w.print(" " + IModel.FRAGMENT_PLUGIN_MATCH + "=\"" + IModel.FRAGMENT_PLUGIN_MATCH_PERFECT + "\"");
+				break;
+			case PluginFragmentModel.FRAGMENT_MATCH_EQUIVALENT:
+				w.print(" " + IModel.FRAGMENT_PLUGIN_MATCH + "=\"" + IModel.FRAGMENT_PLUGIN_MATCH_EQUIVALENT + "\"");
+				break;
+			case PluginFragmentModel.FRAGMENT_MATCH_COMPATIBLE:
+				w.print(" " + IModel.FRAGMENT_PLUGIN_MATCH + "=\"" + IModel.FRAGMENT_PLUGIN_MATCH_COMPATIBLE + "\"");
+				break;
+			case PluginFragmentModel.FRAGMENT_MATCH_GREATER_OR_EQUAL:
+				w.print(" " + IModel.FRAGMENT_PLUGIN_MATCH + "=\"" + IModel.FRAGMENT_PLUGIN_MATCH_GREATER_OR_EQUAL + "\"");
+				break;
+		}
+	}
+	
 	w.println(">");
 
 	PluginPrerequisiteModel[] requires = fragment.getRequires();

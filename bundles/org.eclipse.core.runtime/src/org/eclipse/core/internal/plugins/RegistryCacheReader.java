@@ -25,7 +25,7 @@ public class RegistryCacheReader {
 
 	public MultiStatus cacheReadProblems = null;
 
-	public static final byte REGISTRY_CACHE_VERSION = 3;
+	public static final byte REGISTRY_CACHE_VERSION = 4;
 
 	public static final byte NONLABEL = 0;
 
@@ -52,7 +52,8 @@ public class RegistryCacheReader {
 	public static final byte FRAGMENT_END_LABEL = 49;
 	public static final byte FRAGMENT_PLUGIN_LABEL = 50;
 	public static final byte FRAGMENT_PLUGIN_VERSION_LABEL = 51;
-
+	public static final byte FRAGMENT_PLUGIN_MATCH_LABEL = 55;
+	
 	public static final byte ID_LABEL = 15;
 	public static final byte LIBRARY_END_LABEL = 16;
 	public static final byte LIBRARY_EXPORTS_LABEL = 17;
@@ -89,6 +90,9 @@ public class RegistryCacheReader {
 	public static final byte TYPE_LABEL = 54;
 	public static final byte VALUE_LABEL = 43;
 	public static final byte VERSION_LABEL = 44;
+	
+	// So it's easier to add a new label ...
+	public static final byte LARGEST_LABEL = 55;
 	
 public RegistryCacheReader(Factory factory) {
 	super();
@@ -742,6 +746,9 @@ public PluginFragmentModel readPluginFragment(DataInputStream in) {
 					break;
 				case FRAGMENT_PLUGIN_VERSION_LABEL :
 					fragment.setPluginVersion(in.readUTF());
+					break;
+				case FRAGMENT_PLUGIN_MATCH_LABEL :
+					fragment.setMatch(in.readByte());
 					break;
 				case PLUGIN_REQUIRES_LABEL :
 					PluginPrerequisiteModel requires = readPluginPrerequisite(in);

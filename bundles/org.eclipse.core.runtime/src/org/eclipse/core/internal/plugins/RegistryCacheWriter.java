@@ -442,6 +442,7 @@ public void writePluginFragment(PluginFragmentModel fragment, DataOutputStream o
 		// add this object to the object table first
 		addToObjectTable(fragment);
 		String outString;
+		byte outByte;
 
 		writeLabel(RegistryCacheReader.FRAGMENT_LABEL, out);
 		writeLabel(RegistryCacheReader.READONLY_LABEL, out);
@@ -473,6 +474,10 @@ public void writePluginFragment(PluginFragmentModel fragment, DataOutputStream o
 		if ((outString = fragment.getPluginVersion()) != null) {
 			writeLabel(RegistryCacheReader.FRAGMENT_PLUGIN_VERSION_LABEL, out);
 			out.writeUTF(outString);
+		}
+		if ((outByte = fragment.getMatch()) != PluginFragmentModel.FRAGMENT_MATCH_UNSPECIFIED) {
+			writeLabel(RegistryCacheReader.FRAGMENT_PLUGIN_MATCH_LABEL, out);
+			out.writeByte(outByte);
 		}
 
 		// write out prerequisites
