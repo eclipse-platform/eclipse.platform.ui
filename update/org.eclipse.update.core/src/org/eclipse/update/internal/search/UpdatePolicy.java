@@ -33,7 +33,6 @@ import org.xml.sax.*;
 public class UpdatePolicy {
 	private static final String KEY_MAP = "url-map";
 	private static final String KEY_FALLBACK = "try-embedded";
-	private boolean fallbackAllowed = true;
 	private static final String TAG_POLICY = "update-policy";
 	private static final String TAG_URL_MAP = "url-map";
 	private static final String ATT_URL = "url";
@@ -74,6 +73,7 @@ public class UpdatePolicy {
 	private ArrayList entries;
 	private IUpdateSiteAdapter defaultSite;
 	private boolean loaded = false;
+	private boolean fallbackAllowed = true;
 
 	public UpdatePolicy() {
 		entries = new ArrayList();

@@ -11,24 +11,22 @@
 package org.eclipse.update.internal.ui.preferences;
 
 import java.net.*;
-import java.net.MalformedURLException;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.preference.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.custom.*;
+import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.help.*;
-import org.eclipse.update.core.*;
-import org.eclipse.update.internal.core.*;
-import org.eclipse.update.internal.model.SiteLocalModel;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.update.core.SiteManager;
+import org.eclipse.update.internal.core.UpdateCore;
 import org.eclipse.update.internal.operations.UpdateUtils;
-import org.eclipse.update.internal.ui.*;
+import org.eclipse.update.internal.ui.UpdateUI;
 
 /**
  * Insert the type's description here.
@@ -67,17 +65,14 @@ public class MainPreferencePage
 	 */
 	public void init(IWorkbench workbench) {
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared on PreferencePage.
 	 */
 	protected Control createContents(Composite parent) {
-		WorkbenchHelp.setHelp(
-			parent,
-			"org.eclipse.update.ui.MainPreferencePage"); //$NON-NLS-1$
+		WorkbenchHelp.setHelp(parent, "org.eclipse.update.ui.MainPreferencePage"); //$NON-NLS-1$
 
-		Composite mainComposite =
-			new Composite(parent, SWT.NULL);
+		Composite mainComposite = new Composite(parent, SWT.NULL);
 		mainComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
@@ -103,9 +98,9 @@ public class MainPreferencePage
 				}
 			}
 		});
-		
+
 		createSpacer(mainComposite, 2);
-		
+
 		Group group = new Group(mainComposite, SWT.NONE);
 		group.setText(UpdateUI.getString("MainPreferencePage.updateVersions")); //$NON-NLS-1$
 		group.setLayout(new GridLayout());
@@ -114,15 +109,13 @@ public class MainPreferencePage
 		group.setLayoutData(gd);
 
 		equivalentButton = new Button(group, SWT.RADIO);
-		equivalentButton.setText(
-			UpdateUI.getString("MainPreferencePage.updateVersions.equivalent")); //$NON-NLS-1$
+		equivalentButton.setText(UpdateUI.getString("MainPreferencePage.updateVersions.equivalent")); //$NON-NLS-1$
 
 		compatibleButton = new Button(group, SWT.RADIO);
-		compatibleButton.setText(
-			UpdateUI.getString("MainPreferencePage.updateVersions.compatible")); //$NON-NLS-1$
-			
+		compatibleButton.setText(UpdateUI.getString("MainPreferencePage.updateVersions.compatible")); //$NON-NLS-1$
+
 		createSpacer(mainComposite, 2);
-		
+
 		group = new Group(mainComposite, SWT.NONE);
 		group.setText(UpdateUI.getString("MainPreferencePage.updatePolicy")); //$NON-NLS-1$
 		layout = new GridLayout();
@@ -131,7 +124,7 @@ public class MainPreferencePage
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		group.setLayoutData(gd);
-			
+
 		Label label = new Label(group, SWT.NULL);
 		label.setText(UpdateUI.getString("MainPreferencePage.updatePolicyURL")); //$NON-NLS-1$
 		updatePolicyText = new Text(group, SWT.SINGLE | SWT.BORDER);
@@ -201,21 +194,23 @@ public class MainPreferencePage
 		});
 
 	}
-	
+
 	private int getHistoryCount() {
 		try {
 			Integer count = new Integer(historySizeText.getText());
 			return count.intValue();
 		} catch (NumberFormatException e) {
 		}
-		return UpdateCore.getPlugin().getPluginPreferences().getDefaultInt(UpdateCore.P_HISTORY_SIZE);
+		return UpdateCore.getPlugin().getPluginPreferences().getDefaultInt(
+			UpdateCore.P_HISTORY_SIZE);
 	}
-	
+
 	public boolean performOk() {
 		BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
 			public void run() {
 				try {
-					SiteManager.getLocalSite().setMaximumHistoryCount(getHistoryCount());
+					SiteManager.getLocalSite().setMaximumHistoryCount(
+						getHistoryCount());
 					SiteManager.setHttpProxyInfo(
 						enableHttpProxy.getSelection(),
 						httpProxyHostText.getText(),
@@ -233,14 +228,17 @@ public class MainPreferencePage
 		prefs.setValue(UpdateCore.P_HISTORY_SIZE, historySizeText.getText());
 		prefs.setValue(
 			UpdateCore.P_UPDATE_VERSIONS,
-			equivalentButton.getSelection() ? EQUIVALENT_VALUE : COMPATIBLE_VALUE);
-		prefs.setValue(UpdateUtils.P_UPDATE_POLICY_URL,
+			equivalentButton.getSelection()
+				? EQUIVALENT_VALUE
+				: COMPATIBLE_VALUE);
+		prefs.setValue(
+			UpdateUtils.P_UPDATE_POLICY_URL,
 			updatePolicyText.getText());
 
 		UpdateCore.getPlugin().savePluginPreferences();
 		return super.performOk();
 	}
-	
+
 	public void performApply() {
 		super.performApply();
 		BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
@@ -262,9 +260,10 @@ public class MainPreferencePage
 			equivalentButton.getSelection()
 				? EQUIVALENT_VALUE
 				: COMPATIBLE_VALUE);
-		prefs.setValue(UpdateUtils.P_UPDATE_POLICY_URL,
+		prefs.setValue(
+			UpdateUtils.P_UPDATE_POLICY_URL,
 			updatePolicyText.getText());
-				
+
 		UpdateCore.getPlugin().savePluginPreferences();
 	}
 
@@ -312,9 +311,10 @@ public class MainPreferencePage
 		setValid(true);
 		setErrorMessage(null);
 	}
-	
+
 	public void performDefaults() {
 		super.performDefaults();
+		Preferences prefs = UpdateCore.getPlugin().getPluginPreferences();
 
 		enableHttpProxy.setSelection(false);
 		httpProxyHostText.setText("");
@@ -323,20 +323,18 @@ public class MainPreferencePage
 		httpProxyHostLabel.setEnabled(false);
 		httpProxyPortText.setEnabled(false);
 		httpProxyHostText.setEnabled(false);
-		
+
 		updatePolicyText.setText("");
 
 		checkSignatureCheckbox.setSelection(true);
-		int defaultHistory = SiteLocalModel.DEFAULT_HISTORY;
-		historySizeText.setText(Integer.toString(defaultHistory));
+		historySizeText.setText(
+			prefs.getDefaultString(UpdateCore.P_HISTORY_SIZE));
 		equivalentButton.setSelection(true);
 		compatibleButton.setSelection(false);
 	}
 
 	private void warnSignatureCheck(Shell shell) {
-		MessageDialog.openWarning(
-			shell,
-			UpdateUI.getString("MainPreferencePage.digitalSignature.title"), //$NON-NLS-1$
-			UpdateUI.getString("MainPreferencePage.digitalSignature.message")); //$NON-NLS-1$
+		MessageDialog.openWarning(shell, UpdateUI.getString("MainPreferencePage.digitalSignature.title"), //$NON-NLS-1$
+		UpdateUI.getString("MainPreferencePage.digitalSignature.message")); //$NON-NLS-1$
 	}
 }

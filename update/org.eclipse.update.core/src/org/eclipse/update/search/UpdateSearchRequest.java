@@ -233,7 +233,7 @@ public class UpdateSearchRequest {
  * Load the update map using the map URL found in the scope.
  */	
 	private IStatus loadUpdatePolicy(UpdatePolicy map, URL url, IProgressMonitor monitor) throws CoreException {
-		monitor.subTask("Loading update policy from "+url.toString());
+		monitor.subTask("Loading update policy ...");
 		try {
 			map.load(url, monitor);
 			monitor.worked(1);
