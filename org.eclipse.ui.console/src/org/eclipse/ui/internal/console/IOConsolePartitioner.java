@@ -215,7 +215,7 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 			    }
 			}
 		} else {// user input.
-			int amountDeleted = event.getLength() - event.getText().length();
+			int amountDeleted = event.getLength() ;//- event.getText().length();
 			
 			if (amountDeleted > 0) {
 				int offset = event.fOffset;    
