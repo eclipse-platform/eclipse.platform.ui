@@ -7,6 +7,8 @@
     <classpathentry kind="lib" path="C:/eclipse/plugins/org.eclipse.core.runtime/runtime.jar"/>
     <classpathentry kind="lib" path="C:/eclipse/plugins/org.eclipse.ui/workbench.jar"/>
     <classpathentry kind="src" path="/org.eclipse.debug.core"/>
-    <classpathentry kind="lib" path="C:/eclipse/plugins/org.eclipse.swt/swt0108.jar"/>
+    <classpathentry kind="lib"
+        path="C:/eclipse/plugins/org.eclipse.swt/swt0108.jar"
+        rootpath="" sourcepath="C:/eclipse/plugins/org.eclipse.swt/swtsrc.zip"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>
