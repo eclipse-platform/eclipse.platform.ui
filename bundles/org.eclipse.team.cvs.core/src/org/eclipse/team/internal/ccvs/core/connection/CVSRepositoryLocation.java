@@ -844,6 +844,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	}
 	
 	public boolean equals(Object o) {
+		if (this == o) return true;
 		if (!(o instanceof CVSRepositoryLocation)) return false;
 		return getLocation().equals(((CVSRepositoryLocation)o).getLocation());
 	}
