@@ -257,6 +257,18 @@ public class TableTreeViewer extends AbstractTreeViewer {
             return ((TableTree) o).getItems();
         return null;
     }
+   
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.AbstractTreeViewer#getChild(org.eclipse.swt.widgets.Widget, int)
+     */
+    protected Item getChild (Widget widget, int index) {
+      if (widget instanceof TableTreeItem)
+        return ((TableTreeItem) widget).getItem (index);
+      if (widget instanceof TableTree)
+        return ((TableTree) widget).getItem (index);
+      return null;
+    }
 
     /**
      * Returns the column properties of this viewer.

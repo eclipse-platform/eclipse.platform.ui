@@ -34,204 +34,218 @@ import org.eclipse.jface.util.Assert;
 /**
  * A concrete viewer based on an SWT <code>Tree</code> control.
  * <p>
- * This class is not intended to be subclassed outside the viewer framework. 
- * It is designed to be instantiated with a pre-existing SWT tree control and configured
- * with a domain-specific content provider, label provider, element filter (optional),
- * and element sorter (optional).
+ * This class is not intended to be subclassed outside the viewer framework. It
+ * is designed to be instantiated with a pre-existing SWT tree control and
+ * configured with a domain-specific content provider, label provider, element
+ * filter (optional), and element sorter (optional).
  * </p>
  * <p>
- * Content providers for tree viewers must implement the <code>ITreeContentProvider</code>
- * interface.
+ * Content providers for tree viewers must implement the
+ * <code>ITreeContentProvider</code> interface.
  * </p>
  */
 public class TreeViewer extends AbstractTreeViewer {
 
 	/**
-	 * TreeColorAndFontCollector is an helper class for color and font
-	 * support for trees that support the ITableFontProvider and
-	 * the ITableColorProvider.
+	 * TreeColorAndFontCollector is an helper class for color and font support
+	 * for trees that support the ITableFontProvider and the
+	 * ITableColorProvider.
+	 * 
 	 * @see ITableColorProvider
 	 * @see ITableFontProvider
 	 */
-	 
-    private class TreeColorAndFontCollector{
-		
+
+	private class TreeColorAndFontCollector {
+
 		ITableFontProvider fontProvider = null;
+
 		ITableColorProvider colorProvider = null;
-		
+
 		/**
-		 * Create an instance of the receiver. Set the color and font
-		 * providers if provider can be cast to the correct type.
-		 * @param provider IBaseLabelProvider
+		 * Create an instance of the receiver. Set the color and font providers
+		 * if provider can be cast to the correct type.
+		 * 
+		 * @param provider
+		 *            IBaseLabelProvider
 		 */
-		public TreeColorAndFontCollector(IBaseLabelProvider provider){
-			if(provider instanceof ITableFontProvider)
+		public TreeColorAndFontCollector(IBaseLabelProvider provider) {
+			if (provider instanceof ITableFontProvider)
 				fontProvider = (ITableFontProvider) provider;
-			if(provider instanceof ITableColorProvider)
+			if (provider instanceof ITableColorProvider)
 				colorProvider = (ITableColorProvider) provider;
 		}
-		
+
 		/**
-		 * Create an instance of the receiver with no color and font
-		 * providers.
+		 * Create an instance of the receiver with no color and font providers.
 		 */
-		public TreeColorAndFontCollector(){
+		public TreeColorAndFontCollector() {
 		}
-		
+
 		/**
-		 * Set the fonts and colors for the treeItem if there is a color
-		 * and font provider available.
-		 * @param treeItem The item to update.
-		 * @param element The element being represented
-		 * @param column The column index
+		 * Set the fonts and colors for the treeItem if there is a color and
+		 * font provider available.
+		 * 
+		 * @param treeItem
+		 *            The item to update.
+		 * @param element
+		 *            The element being represented
+		 * @param column
+		 *            The column index
 		 */
-		public void setFontsAndColors(TreeItem treeItem, Object element, int column){
+		public void setFontsAndColors(TreeItem treeItem, Object element,
+				int column) {
 			if (colorProvider != null) {
-				treeItem.setBackground(column, colorProvider.getBackground(element,
-						column));
-				treeItem.setForeground(column, colorProvider.getForeground(element,
-						column));
+				treeItem.setBackground(column, colorProvider.getBackground(
+						element, column));
+				treeItem.setForeground(column, colorProvider.getForeground(
+						element, column));
 			}
-			if(fontProvider != null)
-				treeItem.setFont(column,fontProvider.getFont(element,column));
-		}	
-		
+			if (fontProvider != null)
+				treeItem.setFont(column, fontProvider.getFont(element, column));
+		}
+
 	}
-	
+
 	/**
 	 * Internal tree viewer implementation.
 	 */
 	private TreeEditorImpl treeViewerImpl;
-	
-    /**
-     * This viewer's control.
-     */
-    private Tree tree;
 
-    /**
+	/**
+	 * This viewer's control.
+	 */
+	private Tree tree;
+
+	/**
 	 * This viewer's tree editor.
 	 */
 	private TreeEditor treeEditor;
-	
-    /**
+
+	/**
 	 * The color and font collector for the cells.
 	 */
 	private TreeColorAndFontCollector treeColorAndFont = new TreeColorAndFontCollector();
-	
-    /**
-     * Creates a tree viewer on a newly-created tree control under the given parent.
-     * The tree control is created using the SWT style bits <code>MULTI, H_SCROLL, V_SCROLL,</code> and <code>BORDER</code>.
-     * The viewer has no input, no content provider, a default label provider, 
-     * no sorter, and no filters.
-     *
-     * @param parent the parent control
-     */
-    public TreeViewer(Composite parent) {
-        this(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
-    }
 
-    /**
-     * Creates a tree viewer on a newly-created tree control under the given parent.
-     * The tree control is created using the given SWT style bits.
-     * The viewer has no input, no content provider, a default label provider, 
-     * no sorter, and no filters.
-     *
-     * @param parent the parent control
-     * @param style the SWT style bits used to create the tree.
-     */
-    public TreeViewer(Composite parent, int style) {
-        this(new Tree(parent, style));
-    }
+	/**
+	 * Creates a tree viewer on a newly-created tree control under the given
+	 * parent. The tree control is created using the SWT style bits
+	 * <code>MULTI, H_SCROLL, V_SCROLL,</code> and <code>BORDER</code>. The
+	 * viewer has no input, no content provider, a default label provider, no
+	 * sorter, and no filters.
+	 * 
+	 * @param parent
+	 *            the parent control
+	 */
+	public TreeViewer(Composite parent) {
+		this(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+	}
 
-    /**
-     * Creates a tree viewer on the given tree control.
-     * The viewer has no input, no content provider, a default label provider, 
-     * no sorter, and no filters.
-     *
-     * @param tree the tree control
-     */
-    public TreeViewer(Tree tree) {
-        super();
-        this.tree = tree;
-        hookControl(tree);
-        treeEditor = new TreeEditor(tree);
+	/**
+	 * Creates a tree viewer on a newly-created tree control under the given
+	 * parent. The tree control is created using the given SWT style bits. The
+	 * viewer has no input, no content provider, a default label provider, no
+	 * sorter, and no filters.
+	 * 
+	 * @param parent
+	 *            the parent control
+	 * @param style
+	 *            the SWT style bits used to create the tree.
+	 */
+	public TreeViewer(Composite parent, int style) {
+		this(new Tree(parent, style));
+	}
+
+	/**
+	 * Creates a tree viewer on the given tree control. The viewer has no input,
+	 * no content provider, a default label provider, no sorter, and no filters.
+	 * 
+	 * @param tree
+	 *            the tree control
+	 */
+	public TreeViewer(Tree tree) {
+		super();
+		this.tree = tree;
+		hookControl(tree);
+		treeEditor = new TreeEditor(tree);
 		initTreeViewerImpl();
-    }
+	}
 
-    /* (non-Javadoc)
-     * Method declared in AbstractTreeViewer.
-     */
-    protected void addTreeListener(Control c, TreeListener listener) {
-        ((Tree) c).addTreeListener(listener);
-    }
+	/*
+	 * (non-Javadoc) Method declared in AbstractTreeViewer.
+	 */
+	protected void addTreeListener(Control c, TreeListener listener) {
+		((Tree) c).addTreeListener(listener);
+	}
 
-    /**
+	/**
 	 * Cancels a currently active cell editor. All changes already done in the
 	 * cell editor are lost.
+	 * 
 	 * @since 3.1
 	 */
 	public void cancelEditing() {
 		treeViewerImpl.cancelEditing();
 	}
-	
-    /* (non-Javadoc)
-     * Method declared in AbstractTreeViewer.
-     */
-    protected void doUpdateItem(final Item item, Object element) {
-		 if (!(item instanceof TreeItem)) return;
-        TreeItem treeItem = (TreeItem)item;
-        if (treeItem.isDisposed()) {
-            unmapElement(element);
-            return;
-        }        
-        
-        colorAndFontCollector.setFontsAndColors(element);
-        
-        IBaseLabelProvider prov = getLabelProvider();
+
+	/*
+	 * (non-Javadoc) Method declared in AbstractTreeViewer.
+	 */
+	protected void doUpdateItem(final Item item, Object element) {
+		if (!(item instanceof TreeItem))
+			return;
+		TreeItem treeItem = (TreeItem) item;
+		if (treeItem.isDisposed()) {
+			unmapElement(element);
+			return;
+		}
+
+		colorAndFontCollector.setFontsAndColors(element);
+
+		IBaseLabelProvider prov = getLabelProvider();
 		ITableLabelProvider tprov = null;
 		if (prov instanceof ITableLabelProvider) {
 			tprov = (ITableLabelProvider) prov;
-		} 
-        int columnCount = tree.getColumnCount();
-		if(columnCount == 0){//If no columns were created use the label provider
-
-			ViewerLabel updateLabel = new ViewerLabel(treeItem
-					.getText(), treeItem.getImage());
-			buildLabel(updateLabel,element);
-			
-			//As it is possible for user code to run the event 
-            //loop check here.
-			if (treeItem.isDisposed()) {
-                unmapElement(element);
-                return;
-            }   
-			
-			if(updateLabel.hasNewText())
-				treeItem.setText(updateLabel.getText());
-			if(updateLabel.hasNewImage())
-				treeItem.setImage(updateLabel.getImage());
-		
 		}
-		else{//Use the table based support
+		int columnCount = tree.getColumnCount();
+		if (columnCount == 0) {// If no columns were created use the label
+								// provider
+
+			ViewerLabel updateLabel = new ViewerLabel(treeItem.getText(),
+					treeItem.getImage());
+			buildLabel(updateLabel, element);
+
+			// As it is possible for user code to run the event
+			// loop check here.
+			if (treeItem.isDisposed()) {
+				unmapElement(element);
+				return;
+			}
+
+			if (updateLabel.hasNewText())
+				treeItem.setText(updateLabel.getText());
+			if (updateLabel.hasNewImage())
+				treeItem.setImage(updateLabel.getImage());
+
+		} else {// Use the table based support
 			for (int column = 0; column < columnCount; column++) {
 				// Similar code in TableViewer.doUpdateItem()
 				String text = "";//$NON-NLS-1$
 				Image image = null;
-				treeColorAndFont.setFontsAndColors(treeItem, element,column);
-	
+				treeColorAndFont.setFontsAndColors(treeItem, element, column);
+
 				if (tprov == null) {
 					if (column == 0) {
 						ViewerLabel updateLabel = new ViewerLabel(treeItem
 								.getText(), treeItem.getImage());
-						buildLabel(updateLabel,element);
-						
-						//As it is possible for user code to run the event 
-			            //loop check here.
+						buildLabel(updateLabel, element);
+
+						// As it is possible for user code to run the event
+						// loop check here.
 						if (treeItem.isDisposed()) {
-			                unmapElement(element);
-			                return;
-			            }   
-						
+							unmapElement(element);
+							return;
+						}
+
 						text = updateLabel.getText();
 						image = updateLabel.getImage();
 					}
@@ -239,8 +253,8 @@ public class TreeViewer extends AbstractTreeViewer {
 					text = tprov.getColumnText(element, column);
 					image = tprov.getColumnImage(element, column);
 				}
-	
-				//Avoid setting text to null
+
+				// Avoid setting text to null
 				if (text == null)
 					text = ""; //$NON-NLS-1$
 				treeItem.setText(column, text);
@@ -250,9 +264,9 @@ public class TreeViewer extends AbstractTreeViewer {
 			}
 		}
 		colorAndFontCollector.applyFontsAndColors(treeItem);
-    }
+	}
 
-    /**
+	/**
 	 * Starts editing the given element.
 	 * 
 	 * @param element
@@ -264,8 +278,8 @@ public class TreeViewer extends AbstractTreeViewer {
 	public void editElement(Object element, int column) {
 		treeViewerImpl.editElement(element, column);
 	}
-	
-    /**
+
+	/**
 	 * Returns the cell editors of this tree viewer.
 	 * 
 	 * @return the list of cell editors
@@ -284,17 +298,17 @@ public class TreeViewer extends AbstractTreeViewer {
 	public ICellModifier getCellModifier() {
 		return treeViewerImpl.getCellModifier();
 	}
-	
-    /* (non-Javadoc)
-     * Method declared in AbstractTreeViewer.
-     */
-    protected Item[] getChildren(Widget o) {
-        if (o instanceof TreeItem)
-            return ((TreeItem) o).getItems();
-        if (o instanceof Tree)
-            return ((Tree) o).getItems();
-        return null;
-    }
+
+	/*
+	 * (non-Javadoc) Method declared in AbstractTreeViewer.
+	 */
+	protected Item[] getChildren(Widget o) {
+		if (o instanceof TreeItem)
+			return ((TreeItem) o).getItems();
+		if (o instanceof Tree)
+			return ((Tree) o).getItems();
+		return null;
+	}
 
 	/**
 	 * Returns the column properties of this tree viewer. The properties must
@@ -307,49 +321,50 @@ public class TreeViewer extends AbstractTreeViewer {
 	public Object[] getColumnProperties() {
 		return treeViewerImpl.getColumnProperties();
 	}
-    /* (non-Javadoc)
-     * Method declared in Viewer.
-     */
-    public Control getControl() {
-        return tree;
-    }
 
-    /* (non-Javadoc)
-     * Method declared in AbstractTreeViewer.
-     */
-    protected boolean getExpanded(Item item) {
-        return ((TreeItem) item).getExpanded();
-    }
+	/*
+	 * (non-Javadoc) Method declared in Viewer.
+	 */
+	public Control getControl() {
+		return tree;
+	}
 
-    /* (non-Javadoc)
-     * Method declared in StructuredViewer.
-     */
-    protected Item getItem(int x, int y) {
-        return getTree().getItem(getTree().toControl(new Point(x, y)));
-    }
+	/*
+	 * (non-Javadoc) Method declared in AbstractTreeViewer.
+	 */
+	protected boolean getExpanded(Item item) {
+		return ((TreeItem) item).getExpanded();
+	}
 
-    /* (non-Javadoc)
-     * Method declared in AbstractTreeViewer.
-     */
-    protected int getItemCount(Control widget) {
-        return ((Tree) widget).getItemCount();
-    }
+	/*
+	 * (non-Javadoc) Method declared in StructuredViewer.
+	 */
+	protected Item getItem(int x, int y) {
+		return getTree().getItem(getTree().toControl(new Point(x, y)));
+	}
 
-    /* (non-Javadoc)
-     * Method declared in AbstractTreeViewer.
-     */
-    protected int getItemCount(Item item) {
-        return ((TreeItem) item).getItemCount();
-    }
+	/*
+	 * (non-Javadoc) Method declared in AbstractTreeViewer.
+	 */
+	protected int getItemCount(Control widget) {
+		return ((Tree) widget).getItemCount();
+	}
 
-    /* (non-Javadoc)
-     * Method declared in AbstractTreeViewer.
-     */
-    protected Item[] getItems(Item item) {
-        return ((TreeItem) item).getItems();
-    }
+	/*
+	 * (non-Javadoc) Method declared in AbstractTreeViewer.
+	 */
+	protected int getItemCount(Item item) {
+		return ((TreeItem) item).getItemCount();
+	}
 
-    /**
+	/*
+	 * (non-Javadoc) Method declared in AbstractTreeViewer.
+	 */
+	protected Item[] getItems(Item item) {
+		return ((TreeItem) item).getItems();
+	}
+
+	/**
 	 * The tree viewer implementation of this <code>Viewer</code> framework
 	 * method ensures that the given label provider is an instance of either
 	 * <code>ITableLabelProvider</code> or <code>ILabelProvider</code>. If
@@ -358,35 +373,36 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * <code>ILabelProvider</code>, then it provides only the label text and
 	 * image for the first column, and any remaining columns are blank.
 	 */
-    public IBaseLabelProvider getLabelProvider() {
-        return super.getLabelProvider();
-    }
+	public IBaseLabelProvider getLabelProvider() {
+		return super.getLabelProvider();
+	}
 
-    /* (non-Javadoc)
-     * Method declared in AbstractTreeViewer.
-     */
-    protected Item getParentItem(Item item) {
-        return ((TreeItem) item).getParentItem();
-    }
+	/*
+	 * (non-Javadoc) Method declared in AbstractTreeViewer.
+	 */
+	protected Item getParentItem(Item item) {
+		return ((TreeItem) item).getParentItem();
+	}
 
-    /* (non-Javadoc)
-     * Method declared in AbstractTreeViewer.
-     */
-    protected Item[] getSelection(Control widget) {
-        return ((Tree) widget).getSelection();
-    }
+	/*
+	 * (non-Javadoc) Method declared in AbstractTreeViewer.
+	 */
+	protected Item[] getSelection(Control widget) {
+		return ((Tree) widget).getSelection();
+	}
 
-    /**
-     * Returns this tree viewer's tree control.
-     *
-     * @return the tree control
-     */
-    public Tree getTree() {
-        return tree;
-    }
+	/**
+	 * Returns this tree viewer's tree control.
+	 * 
+	 * @return the tree control
+	 */
+	public Tree getTree() {
+		return tree;
+	}
 
-    /*
-	 *  (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#hookControl(org.eclipse.swt.widgets.Control)
 	 */
 	protected void hookControl(Control control) {
@@ -398,8 +414,8 @@ public class TreeViewer extends AbstractTreeViewer {
 			}
 		});
 	}
-	
-    /**
+
+	/**
 	 * Initializes the tree viewer implementation.
 	 */
 	private void initTreeViewerImpl() {
@@ -442,7 +458,7 @@ public class TreeViewer extends AbstractTreeViewer {
 			}
 		};
 	}
-	
+
 	/**
 	 * Returns whether there is an active cell editor.
 	 * 
@@ -453,34 +469,34 @@ public class TreeViewer extends AbstractTreeViewer {
 	public boolean isCellEditorActive() {
 		return treeViewerImpl.isCellEditorActive();
 	}
-	
-    /* (non-Javadoc)
-     * Method declared in AbstractTreeViewer.
-     */
-    protected Item newItem(Widget parent, int flags, int ix) {
-        TreeItem item;
-        if (ix >= 0) {
-            if (parent instanceof TreeItem)
-                item = new TreeItem((TreeItem) parent, flags, ix);
-            else
-                item = new TreeItem((Tree) parent, flags, ix);
-        } else {
-            if (parent instanceof TreeItem)
-                item = new TreeItem((TreeItem) parent, flags);
-            else
-                item = new TreeItem((Tree) parent, flags);
-        }
-        return item;
-    }
 
-    /* (non-Javadoc)
-     * Method declared in AbstractTreeViewer.
-     */
-    protected void removeAll(Control widget) {
-        ((Tree) widget).removeAll();
-    }
+	/*
+	 * (non-Javadoc) Method declared in AbstractTreeViewer.
+	 */
+	protected Item newItem(Widget parent, int flags, int ix) {
+		TreeItem item;
+		if (ix >= 0) {
+			if (parent instanceof TreeItem)
+				item = new TreeItem((TreeItem) parent, flags, ix);
+			else
+				item = new TreeItem((Tree) parent, flags, ix);
+		} else {
+			if (parent instanceof TreeItem)
+				item = new TreeItem((TreeItem) parent, flags);
+			else
+				item = new TreeItem((Tree) parent, flags);
+		}
+		return item;
+	}
 
-    	/**
+	/*
+	 * (non-Javadoc) Method declared in AbstractTreeViewer.
+	 */
+	protected void removeAll(Control widget) {
+		((Tree) widget).removeAll();
+	}
+
+	/**
 	 * Sets the cell editors of this tree viewer.
 	 * 
 	 * @param editors
@@ -514,78 +530,92 @@ public class TreeViewer extends AbstractTreeViewer {
 	public void setColumnProperties(String[] columnProperties) {
 		treeViewerImpl.setColumnProperties(columnProperties);
 	}
-	
-    /* (non-Javadoc)
-     * Method declared in AbstractTreeViewer.
-     */
-    protected void setExpanded(Item node, boolean expand) {
-        ((TreeItem) node).setExpanded(expand);
-    }
 
-    /**
-     * The tree viewer implementation of this <code>Viewer</code> framework
-     * method ensures that the given label provider is an instance
-     * of <code>ILabelProvider</code>.
-     */
-    public void setLabelProvider(IBaseLabelProvider labelProvider) {
-        Assert.isTrue(labelProvider instanceof ITableLabelProvider
-                || labelProvider instanceof ILabelProvider);
-        super.setLabelProvider(labelProvider);
-        treeColorAndFont = new TreeColorAndFontCollector(labelProvider);
-    }
-	
-    /* (non-Javadoc)
-     * Method declared in AbstractTreeViewer.
-     */
-    protected void setSelection(List items) {
+	/*
+	 * (non-Javadoc) Method declared in AbstractTreeViewer.
+	 */
+	protected void setExpanded(Item node, boolean expand) {
+		((TreeItem) node).setExpanded(expand);
+	}
 
-        Item[] current = getSelection(getTree());
+	/**
+	 * The tree viewer implementation of this <code>Viewer</code> framework
+	 * method ensures that the given label provider is an instance of
+	 * <code>ILabelProvider</code>.
+	 */
+	public void setLabelProvider(IBaseLabelProvider labelProvider) {
+		Assert.isTrue(labelProvider instanceof ITableLabelProvider
+				|| labelProvider instanceof ILabelProvider);
+		super.setLabelProvider(labelProvider);
+		treeColorAndFont = new TreeColorAndFontCollector(labelProvider);
+	}
 
-        //Don't bother resetting the same selection
-        if (isSameSelection(items, current))
-            return;
+	/*
+	 * (non-Javadoc) Method declared in AbstractTreeViewer.
+	 */
+	protected void setSelection(List items) {
 
-        TreeItem[] newItems = new TreeItem[items.size()];
-        items.toArray(newItems);
-        getTree().setSelection(newItems);
-    }
+		Item[] current = getSelection(getTree());
 
-    /**
-     * Returns <code>true</code> if the given list and array of items
-     * refer to the same model elements.  Order is unimportant.
-     * 
-     * @param items the list of items
-     * @param current the array of items
-     * @return <code>true</code> if the refer to the same elements, <code>false</code> otherwise
-     */
-    protected boolean isSameSelection(List items, Item[] current) {
-        //If they are not the same size then they are not equivalent
-        int n = items.size();
-        if (n != current.length)
-            return false;
+		// Don't bother resetting the same selection
+		if (isSameSelection(items, current))
+			return;
 
-        CustomHashtable itemSet = newHashtable(n * 2 + 1);
-        for (Iterator i = items.iterator(); i.hasNext();) {
-            Item item = (Item) i.next();
-            Object element = item.getData();
-            itemSet.put(element, element);
-        }
+		TreeItem[] newItems = new TreeItem[items.size()];
+		items.toArray(newItems);
+		getTree().setSelection(newItems);
+	}
 
-        //Go through the items of the current collection
-        //If there is a mismatch return false
-        for (int i = 0; i < current.length; i++) {
-            if (!itemSet.containsKey(current[i].getData()))
-                return false;
-        }
+	/**
+	 * Returns <code>true</code> if the given list and array of items refer to
+	 * the same model elements. Order is unimportant.
+	 * 
+	 * @param items
+	 *            the list of items
+	 * @param current
+	 *            the array of items
+	 * @return <code>true</code> if the refer to the same elements,
+	 *         <code>false</code> otherwise
+	 */
+	protected boolean isSameSelection(List items, Item[] current) {
+		// If they are not the same size then they are not equivalent
+		int n = items.size();
+		if (n != current.length)
+			return false;
 
-        return true;
-    }
+		CustomHashtable itemSet = newHashtable(n * 2 + 1);
+		for (Iterator i = items.iterator(); i.hasNext();) {
+			Item item = (Item) i.next();
+			Object element = item.getData();
+			itemSet.put(element, element);
+		}
 
-    /* (non-Javadoc)
-     * Method declared in AbstractTreeViewer.
-     */
-    protected void showItem(Item item) {
-        getTree().showItem((TreeItem) item);
-    }
- 
+		// Go through the items of the current collection
+		// If there is a mismatch return false
+		for (int i = 0; i < current.length; i++) {
+			if (!itemSet.containsKey(current[i].getData()))
+				return false;
+		}
+
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc) Method declared in AbstractTreeViewer.
+	 */
+	protected void showItem(Item item) {
+		getTree().showItem((TreeItem) item);
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#getChild(org.eclipse.swt.widgets.Widget, int)
+	 */
+	protected Item getChild(Widget widget, int index) {
+		if (widget instanceof TreeItem)
+			return ((TreeItem) widget).getItem(index);
+		if (widget instanceof Tree)
+			return ((Tree) widget).getItem(index);
+		return null;
+	}
 }

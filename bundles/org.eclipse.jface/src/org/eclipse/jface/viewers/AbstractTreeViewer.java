@@ -184,16 +184,28 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
         if (equals(element, widget.getData()))
             return;
 
-        Item[] items = getChildren(widget);
-        for (int i = 0; i < items.length; i++) {
-            if (items[i].getData().equals(element)) {
-            	//refresh the element in case it has new children
-            	refresh(element);
-                return;
-            }
+        if (getSorter () == null) {
+          Item[] items = getChildren(widget);
+          for (int i = 0; i < items.length; i++) {
+              if (items[i].getData().equals(element)) {
+              	//refresh the element in case it has new children
+              	refresh(element);
+                  return;
+              }
+          }
         }
 
         int index = indexForElement(widget, element);
+        if (getSorter () != null) {
+          // ASSUME sorter is consistent with equals() - therefore we can
+          // just check against the item prior to this index (if any)
+          if (index > 0
+              && getChild (widget, index - 1).getData().equals(element)) {
+            //refresh the element in case it has new children
+            refresh(element);
+              return;
+          }
+        }
         createTreeItem(widget, element, index);
     }
 
@@ -208,16 +220,15 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
      */
     protected int indexForElement(Widget parent, Object element) {
         ViewerSorter sorter = getSorter();
-        Item[] items = getChildren(parent);
+        int count = getItemCount((Control) parent);
 
         if (sorter == null)
-            return items.length;
-        int count = items.length;
+            return count;
         int min = 0, max = count - 1;
 
         while (min <= max) {
             int mid = (min + max) / 2;
-            Object data = items[mid].getData();
+            Object data = getChild (parent, mid).getData();
             int compare = sorter.compare(this, data, element);
             if (compare == 0) {
                 // find first item > element
@@ -226,7 +237,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
                     if (mid >= count) {
                         break;
                     }
-                    data = items[mid].getData();
+                    data = getChild (parent, mid).getData();
                     compare = sorter.compare(this, data, element);
                 }
                 return mid;
@@ -586,6 +597,20 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
      * @return the child items
      */
     protected abstract Item[] getChildren(Widget widget);
+	
+	/**
+	 * Get the child for the widget at index. Note that the default
+	 * implementation is not very effecient and should be overridden
+	 * if this class is implemented.
+	 * @param widget the widget to check
+	 * @param index the index of the widget
+	 * @return Item or <code>null</code> if widget is not a type
+	 * that can contain items.
+	 * @throws ArrayIndexOutOfBoundsException if the index is not valid.
+	 */
+    protected Item getChild (Widget widget, int index) {
+		return getChildren(widget)[index];
+    }
 
     /**
      * Returns whether the given SWT item is expanded or collapsed.
