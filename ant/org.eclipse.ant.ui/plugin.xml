@@ -25,6 +25,7 @@
       <import plugin="org.eclipse.core.variables"/>
       <import plugin="org.eclipse.ui.externaltools"/>
       <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.ui.console"/>
       <import plugin="org.eclipse.debug.core"/>
       <import plugin="org.eclipse.debug.ui"/>
       <import plugin="org.eclipse.jdt.debug.ui"/>
