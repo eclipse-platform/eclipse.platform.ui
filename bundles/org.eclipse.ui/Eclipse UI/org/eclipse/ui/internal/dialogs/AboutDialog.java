@@ -13,6 +13,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.DisposeEvent;
@@ -85,7 +86,11 @@ protected void buttonPressed(int buttonId) {
 			return;
 		}
 		case INFO_ID : {
-			((Workbench)PlatformUI.getWorkbench()).openSystemSummaryEditor();
+			BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+				public void run() {
+					((Workbench)PlatformUI.getWorkbench()).openSystemSummaryEditor();
+				}
+			});
 			close();
 			return;
 		}
