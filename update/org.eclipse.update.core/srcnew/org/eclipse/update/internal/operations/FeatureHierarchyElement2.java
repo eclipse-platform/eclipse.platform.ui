@@ -194,20 +194,35 @@ public class FeatureHierarchyElement2 {
 	 * Computes children by linking matching features from the
 	 * old feature's and new feature's hierarchy.
 	 */
-	public Object[] getChildren(boolean update, boolean patch, IInstallConfiguration config) {
+	public FeatureHierarchyElement2[] getChildren(
+		boolean update,
+		boolean patch,
+		IInstallConfiguration config) {
 		computeChildren(update, patch, config);
-		return children.toArray();
+		FeatureHierarchyElement2[] array =
+			new FeatureHierarchyElement2[children.size()];
+		children.toArray(array);
+		return array;
 	}
-	
-	public Object [] getChildren() {
-		if (children!=null) return children.toArray();
-		return new Object[0];
+
+	public FeatureHierarchyElement2[] getChildren() {
+		if (children != null) {
+			FeatureHierarchyElement2[] array =
+				new FeatureHierarchyElement2[children.size()];
+			children.toArray(array);
+			return array;
+		}
+
+		return new FeatureHierarchyElement2[0];
 	}
 	/**
 	 * Computes children of this node.
 	 * @return true if some of the children are optional, false otherwise.
 	 */
-	public void computeChildren(boolean update, boolean patch, IInstallConfiguration config) {
+	public void computeChildren(
+		boolean update,
+		boolean patch,
+		IInstallConfiguration config) {
 		if (children == null) {
 			children = new ArrayList();
 			try {
@@ -217,7 +232,13 @@ public class FeatureHierarchyElement2 {
 				if (oldFeatureRef != null)
 					oldFeature = oldFeatureRef.getFeature(null);
 				optionalChildren =
-					computeElements(oldFeature, newFeature, update, patch, config, children);
+					computeElements(
+						oldFeature,
+						newFeature,
+						update,
+						patch,
+						config,
+						children);
 				for (int i = 0; i < children.size(); i++) {
 					FeatureHierarchyElement2 element =
 						(FeatureHierarchyElement2) children.get(i);
@@ -236,7 +257,11 @@ public class FeatureHierarchyElement2 {
 	/**
 	 * Adds checked optional features to the provided set.
 	 */
-	public void addCheckedOptionalFeatures(boolean update, boolean patch, IInstallConfiguration config, Set set) {
+	public void addCheckedOptionalFeatures(
+		boolean update,
+		boolean patch,
+		IInstallConfiguration config,
+		Set set) {
 		if (isOptional() && isChecked()) {
 			// Do not add checked optional features
 			// if this is an update case but
@@ -245,10 +270,9 @@ public class FeatureHierarchyElement2 {
 			if (!update || !isFalseUpdate())
 				set.add(newFeatureRef);
 		}
-		Object[] list = getChildren(update, patch, config);
-		for (int i = 0; i < list.length; i++) {
-			FeatureHierarchyElement2 element = (FeatureHierarchyElement2) list[i];
-			element.addCheckedOptionalFeatures(update, patch, config, set);
+		FeatureHierarchyElement2[] elements = getChildren(update, patch, config);
+		for (int i = 0; i < elements.length; i++) {
+			elements[i].addCheckedOptionalFeatures(update, patch, config, set);
 		}
 	}
 
@@ -305,10 +329,11 @@ public class FeatureHierarchyElement2 {
 				if (oldRef != null
 					&& ((oldRef instanceof IIncludedFeatureReference
 						&& ((IIncludedFeatureReference) oldRef).isOptional())
-					|| patch)) {
+						|| patch)) {
 					try {
 						IFeature f = oldRef.getFeature(null);
-						if (f==null) oldRef = null;
+						if (f == null)
+							oldRef = null;
 					} catch (CoreException e) {
 						// missing
 						oldRef = null;
@@ -414,7 +439,7 @@ public class FeatureHierarchyElement2 {
 		}
 		return new Object[0];
 	}
-	
+
 	private static String getUpdateVersionsMode() {
 		Preferences store = UpdateCore.getPlugin().getPluginPreferences();
 		return store.getString(UpdateCore.P_UPDATE_VERSIONS);

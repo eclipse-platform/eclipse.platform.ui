@@ -235,7 +235,7 @@ public class UnifiedInstallWizard extends Wizard {
 	private void executeOneJob(PendingOperation job, IProgressMonitor monitor)
 		throws CoreException {
 		IConfiguredSite targetSite = null;
-		Object[] optionalElements = null;
+		FeatureHierarchyElement2[] optionalElements = null;
 		IFeatureReference[] optionalFeatures = null;
 
 		if (optionalFeaturesPage != null) {
@@ -247,43 +247,11 @@ public class UnifiedInstallWizard extends Wizard {
 			targetSite = targetPage.getTargetSite(job);
 		}
 
-		UpdateManager.getOperationsManager().installFeature(job, config, targetSite, optionalFeatures, getVerificationListener(), monitor);
+		UpdateManager.getOperationsManager().installFeature(job, config, targetSite, optionalFeatures, optionalElements, getVerificationListener(), monitor);
 
 		IFeature oldFeature = job.getOldFeature();
-		if (oldFeature != null
-			&& !job.isOptionalDelta()
-			&& optionalElements != null) {
-			preserveOptionalState(
-				config,
-				targetSite,
-				UpdateManager.isPatch(job.getFeature()),
-				optionalElements);
-		} else if (oldFeature == null && optionalFeatures != null) {
+		if (oldFeature == null && optionalFeatures != null) {
 			preserveOriginatingURLs(job.getFeature(), optionalFeatures);
-		}
-	}
-
-	static void preserveOptionalState(
-		IInstallConfiguration config,
-		IConfiguredSite targetSite,
-		boolean patch,
-		Object[] optionalElements) {
-		for (int i = 0; i < optionalElements.length; i++) {
-			FeatureHierarchyElement2 fe =
-				(FeatureHierarchyElement2) optionalElements[i];
-			Object[] children = fe.getChildren(true, patch, config);
-			preserveOptionalState(config, targetSite, patch, children);
-			if (!fe.isEnabled(config)) {
-				IFeature newFeature = fe.getFeature();
-				try {
-					IFeature localFeature =
-						UpdateManager.getLocalFeature(targetSite, newFeature);
-					if (localFeature != null)
-						targetSite.unconfigure(localFeature);
-				} catch (CoreException e) {
-					// Eat this - we will leave with it
-				}
-			}
 		}
 	}
 

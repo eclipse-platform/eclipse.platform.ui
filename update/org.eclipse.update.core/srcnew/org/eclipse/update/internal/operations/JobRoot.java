@@ -19,7 +19,7 @@ import org.eclipse.update.core.*;
 public class JobRoot {
 	private IInstallConfiguration config;
 	private PendingOperation job;
-	private Object[] elements;
+	private FeatureHierarchyElement2[] elements;
 	
 	public JobRoot(IInstallConfiguration config, PendingOperation job) {
 		this.config = config;
@@ -30,7 +30,7 @@ public class JobRoot {
 		return job;
 	}
 
-	public Object[] getElements() {
+	public FeatureHierarchyElement2[] getElements() {
 		if (elements == null)
 			computeElements();
 		return elements;
@@ -48,11 +48,10 @@ public class JobRoot {
 			patch,
 			config,
 			list);
-		elements = list.toArray();
+		elements = new FeatureHierarchyElement2[list.size()];
+		list.toArray(elements);
 		for (int i = 0; i < elements.length; i++) {
-			FeatureHierarchyElement2 element =
-				(FeatureHierarchyElement2) elements[i];
-			element.setRoot(this);
+			elements[i].setRoot(this);
 		}
 	}
 }

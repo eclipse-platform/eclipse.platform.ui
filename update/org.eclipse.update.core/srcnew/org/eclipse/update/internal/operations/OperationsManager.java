@@ -488,6 +488,7 @@ public class OperationsManager implements IAdaptable {
 		IInstallConfiguration config,
 		IConfiguredSite targetSite,
 		IFeatureReference[] optionalFeatures,
+		FeatureHierarchyElement2[] optionalElements,
 		IVerificationListener verificationListener,
 		IProgressMonitor monitor)
 		throws CoreException {
@@ -508,6 +509,40 @@ public class OperationsManager implements IAdaptable {
 			installJob,
 			null);
 
+		IFeature oldFeature = job.getOldFeature();
+		if (oldFeature != null
+			&& !job.isOptionalDelta()
+			&& optionalElements != null) {
+			preserveOptionalState(
+				config,
+				targetSite,
+				UpdateManager.isPatch(job.getFeature()),
+				optionalElements);
+		}
+
 		return needsRestart;
+	}
+
+	private void preserveOptionalState(
+		IInstallConfiguration config,
+		IConfiguredSite targetSite,
+		boolean patch,
+		FeatureHierarchyElement2[] optionalElements) {
+		for (int i = 0; i < optionalElements.length; i++) {
+			FeatureHierarchyElement2[] children =
+				optionalElements[i].getChildren(true, patch, config);
+			preserveOptionalState(config, targetSite, patch, children);
+			if (!optionalElements[i].isEnabled(config)) {
+				IFeature newFeature = optionalElements[i].getFeature();
+				try {
+					IFeature localFeature =
+						UpdateManager.getLocalFeature(targetSite, newFeature);
+					if (localFeature != null)
+						targetSite.unconfigure(localFeature);
+				} catch (CoreException e) {
+					// Eat this - we will leave with it
+				}
+			}
+		}
 	}
 }

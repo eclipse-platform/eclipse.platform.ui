@@ -298,7 +298,7 @@ public class MultiOptionalFeaturesPage2 extends BannerPage2 implements IDynamicP
 		}
 	}
 	
-	public Object [] getOptionalElements(PendingOperation job) {
+	public FeatureHierarchyElement2 [] getOptionalElements(PendingOperation job) {
 		for (int i = 0; i < jobRoots.length; i++) {
 			JobRoot root = jobRoots[i];
 			PendingOperation curr = root.getJob();
@@ -327,11 +327,9 @@ public class MultiOptionalFeaturesPage2 extends BannerPage2 implements IDynamicP
 		PendingOperation job = jobRoot.getJob();
 		boolean update = job.getOldFeature() != null;
 		boolean patch = UpdateUI.isPatch(job.getFeature());
-		Object[] elements = jobRoot.getElements();
+		FeatureHierarchyElement2[] elements = jobRoot.getElements();
 		for (int i = 0; i < elements.length; i++) {
-			FeatureHierarchyElement2 element =
-				(FeatureHierarchyElement2) elements[i];
-			element.addCheckedOptionalFeatures(update, patch, config, set);
+			elements[i].addCheckedOptionalFeatures(update, patch, config, set);
 		}
 		return (IFeatureReference[]) set.toArray(
 			new IFeatureReference[set.size()]);
