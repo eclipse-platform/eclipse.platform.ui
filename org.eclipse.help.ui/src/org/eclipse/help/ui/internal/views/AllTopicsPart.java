@@ -268,7 +268,7 @@ public class AllTopicsPart extends AbstractFormPart implements IHelpPart {
 			public void run() {
 				BusyIndicator.showWhile(container.getDisplay(), new Runnable() {
 					public void run() {
-						treeViewer.collapseAll();
+						doCollapseAll();
 					}
 				});
 			}
@@ -277,6 +277,12 @@ public class AllTopicsPart extends AbstractFormPart implements IHelpPart {
 		collapseAllAction.setToolTipText(HelpUIResources.getString("AllTopicsPart.collapseAll.tooltip")); //$NON-NLS-1$
 		tbm.insertBefore("back", collapseAllAction); //$NON-NLS-1$
 		tbm.insertBefore("back", new Separator()); //$NON-NLS-1$
+	}
+	
+	private void doCollapseAll() {
+		Object [] expanded = treeViewer.getExpandedElements();
+		treeViewer.collapseAll();
+		treeViewer.update(expanded, null);
 	}
 
 	/*
