@@ -232,20 +232,28 @@ public class CVSDecorationRunnable implements Runnable {
 	protected static CVSTag getTagToShow(IResource resource) throws CVSException {
 		ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
 		CVSTag tag = null;
+		
+		// for unmanaged resources don't show a tag since they will be added in
+		// the context of their parents tag. For managed resources only show tags
+		// if different than parent.
+		boolean managed = false;
+		
 		if(cvsResource.isFolder()) {
 			FolderSyncInfo folderInfo = ((ICVSFolder)cvsResource).getFolderSyncInfo();
 			if(folderInfo != null) {
 				tag = folderInfo.getTag();
+				managed = true;
 			}  
 		} else {
 			ResourceSyncInfo info = ((ICVSFile)cvsResource).getSyncInfo();
 			if(info != null) {
 				tag = info.getTag();
+				managed = true;
 			}
 		}
 		
 		ICVSFolder parent = cvsResource.getParent();
-		if(parent != null && tag != null) {
+		if(parent != null && managed) {
 			FolderSyncInfo parentInfo = parent.getFolderSyncInfo();
 			if(parentInfo != null) {												
 				CVSTag parentTag = parentInfo.getTag();
