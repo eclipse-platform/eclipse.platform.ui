@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
+import java.util.Date;
+
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.Image;
 
@@ -19,17 +22,19 @@ import org.eclipse.swt.graphics.Image;
  */
 public class ErrorInfo extends JobTreeElement {
 
-    private IStatus errorStatus;
-
-    private String jobName;
+    private final IStatus errorStatus;
+    private final Job job;
+    private final long timestamp;
 
     /**
      * Create a new instance of the receiver.
      * @param status
+     * @param job The Job to create
      */
-    public ErrorInfo(IStatus status, String name) {
+    public ErrorInfo(IStatus status, Job job) {
         errorStatus = status;
-        jobName = name;
+        this.job = job;
+        timestamp = System.currentTimeMillis();
     }
 
     /* (non-Javadoc)
@@ -58,7 +63,7 @@ public class ErrorInfo extends JobTreeElement {
      */
     String getDisplayString() {
         return ProgressMessages.format("JobInfo.Error", //$NON-NLS-1$
-                new Object[] { jobName, errorStatus.getMessage() });
+                new Object[] { job.getName(), new Date(timestamp) });
     }
 
     /**
@@ -89,5 +94,39 @@ public class ErrorInfo extends JobTreeElement {
      */
     boolean isActive() {
         return true;
+    }
+    
+    /**
+     * Return the job that generated the error.
+     * @return the job that generated the error
+     */
+    public Job getJob() {
+        return job;
+    }
+    
+    /**
+     * Return the timestamp for the job.
+     * @return long
+     */
+    public long getTimestamp() {
+        return timestamp;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.progress.JobTreeElement#compareTo(java.lang.Object)
+     */
+    public int compareTo(Object arg0) {
+        if (arg0 instanceof ErrorInfo) {
+            // Order ErrorInfo by time received
+            long otherTimestamp = ((ErrorInfo)arg0).timestamp;
+            if (timestamp < otherTimestamp) {
+                return -1;
+            } else if (timestamp > otherTimestamp) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+        return super.compareTo(arg0);
     }
 }

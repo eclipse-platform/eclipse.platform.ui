@@ -48,8 +48,12 @@ public interface IProgressConstants {
      * set of kept Jobs. That is, whenever a Job that has the KEEPONE_PROPERTY starts or finishes,
      * all other kept Jobs of the same family are removed first.
      * <p>
-     * Membership to family is established by implementing a Job's <code>belongsTo</code>
-     * method and returning <code>true</code>.
+     * Membership to family is determined using a Job's <code>belongsTo</code>
+     * method. The progress service will pass each job that currently exists in the
+     * view to the <code>belongsTo</code> method of a newly added job. Clients who
+     * set the <code>KEEPONE_PROPERTY</code> must implement a <code>belongsTo</code>
+     * method that determines if the passed job is of the same family as their job
+     * and return <code>true</code> if it is.
      * </p>
      * <p>
      * Please note that other Jobs of the same family are only removed if they have finished.
@@ -108,4 +112,16 @@ public interface IProgressConstants {
      */
     public static final QualifiedName PROPERTY_IN_DIALOG = new QualifiedName(
             IProgressConstants.PROPERTY_PREFIX, "inDialog"); //$NON-NLS-1$
+    
+    /**
+     * This property provides a hint to the progress UI to not prompt on errors
+     * immediatly but instead make the errors available through the progress UI.
+     * <p>
+     * The property must be of type <code>Boolean</code> and the hint is used
+     * if its value is <code>true</code>.
+     * </p>
+     * @since 3.1
+     */
+    public static final QualifiedName NO_IMMEDIATE_ERROR_PROMPT_PROPERTY = new QualifiedName(
+            PROPERTY_PREFIX, "delayErrorPrompt"); //$NON-NLS-1$
 }

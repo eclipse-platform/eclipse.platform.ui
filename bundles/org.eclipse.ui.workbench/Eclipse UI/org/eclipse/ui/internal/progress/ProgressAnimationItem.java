@@ -10,28 +10,19 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
+import java.util.Collection;
+import java.util.Iterator;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.ProgressBar;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.util.ImageSupport;
 import org.eclipse.ui.progress.IProgressConstants;
@@ -92,17 +83,27 @@ public class ProgressAnimationItem extends AnimationItem implements
 
                     IStatus status = job.getResult();
                     if (status != null && status.getSeverity() == IStatus.ERROR) {
+                        // The showErrorFor method will show the user all the accumulated errors
+                        // and clear then when done
                         String title = ProgressMessages
-                                .getString("NewProgressView.errorDialogTitle"); //$NON-NLS-1$
-                        String msg = ProgressMessages
-                                .getString("NewProgressView.errorDialogMessage"); //$NON-NLS-1$
-                        ErrorDialog.openError(toolbar.getShell(), title, msg,
-                                status);
-                        JobTreeElement topElement = (JobTreeElement) ji
-                                .getParent();
-                        if (topElement == null)
-                            topElement = ji;
-                        FinishedJobs.getInstance().remove(topElement);
+	                            .getString("NewProgressView.errorDialogTitle"); //$NON-NLS-1$
+	                    String msg = ProgressMessages
+	                            .getString("NewProgressView.errorDialogMessage"); //$NON-NLS-1$
+                        if (!getManager().showErrorFor(toolbar.getShell(), job, title, msg)) {
+                            // The error is missing from the error manager.
+                            // This should only occur if what the progress view is showing is
+                            // out-of-sync with the ErrorNotificationManager
+                            // In other words, it shouldn't happen but may so it is
+                            // better to show the user something and clean up
+                            // than fail silently.
+		                    ErrorDialog.openError(toolbar.getShell(), title, msg,
+		                            status);
+		                    JobTreeElement topElement = (JobTreeElement) ji
+		                            .getParent();
+		                    if (topElement == null)
+		                        topElement = ji;
+		                    FinishedJobs.getInstance().remove(topElement);
+                        }
                         return;
                     }
 
@@ -124,6 +125,10 @@ public class ProgressAnimationItem extends AnimationItem implements
             }
         }
 
+        if (getManager().hasErrors()) {
+            getManager().showErrorFor(toolbar.getShell(), null, null, null);
+        }
+        
         progressRegion.processDoubleClick();
         refresh();
     }
@@ -181,6 +186,22 @@ public class ProgressAnimationItem extends AnimationItem implements
                             .getString("ProgressAnimationItem.tasks")); //$NON-NLS-1$
                     return;
                 }
+            }
+        }
+        
+        // If the error manager has errors, display the error indication
+        // just in case a previous job ended in error but wasn't kept
+        ErrorNotificationManager errorNotificationManager = ProgressManager.getInstance().errorManager;
+        if (errorNotificationManager.hasErrors()) {
+            Collection errors = errorNotificationManager.getErrors();
+            for (Iterator iter = errors.iterator(); iter.hasNext();) {
+                ErrorInfo info = (ErrorInfo) iter.next();
+	            initButton(
+	                    errorImage,
+	                    ProgressMessages
+	                            .format(
+	                                    "ProgressAnimationItem.error", new Object[] { info.getJob().getName() })); //$NON-NLS-1$
+	            return;
             }
         }
 
@@ -317,5 +338,12 @@ public class ProgressAnimationItem extends AnimationItem implements
                 refresh();
             }
         });
+    }
+    
+    /*
+     * Get the notificationManager that this is being created for.
+     */
+    private ErrorNotificationManager getManager() {
+        return ProgressManager.getInstance().errorManager;
     }
 }

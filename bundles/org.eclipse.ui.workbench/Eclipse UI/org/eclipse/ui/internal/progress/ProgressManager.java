@@ -389,8 +389,7 @@ public class ProgressManager extends ProgressProvider implements
                 JobInfo info = getJobInfo(event.getJob());
                 if (event.getResult() != null
                         && event.getResult().getSeverity() == IStatus.ERROR) {
-                    errorManager.addError(event.getResult(), event.getJob()
-                            .getName());
+                    errorManager.addError(event.getResult(), event.getJob());
                 }
                 jobs.remove(event.getJob());
                 //Only refresh if we are showing it

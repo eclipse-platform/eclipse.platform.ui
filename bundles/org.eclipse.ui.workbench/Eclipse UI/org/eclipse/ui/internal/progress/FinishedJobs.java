@@ -288,11 +288,13 @@ class FinishedJobs {
         }
     }
 
-    void remove(JobTreeElement jte) {
+    boolean remove(JobTreeElement jte) {
         boolean fire = false;
+        boolean removed = false;
 
         synchronized (keptjobinfos) {
             if (keptjobinfos.remove(jte)) {
+                removed = true;
                 finishedTime.remove(jte);
                 disposeAction(jte);
                 if (NewProgressViewer.DEBUG)
@@ -324,6 +326,7 @@ class FinishedJobs {
                 jv.removed(jte);
             }
         }
+        return removed;
     }
 
     /**

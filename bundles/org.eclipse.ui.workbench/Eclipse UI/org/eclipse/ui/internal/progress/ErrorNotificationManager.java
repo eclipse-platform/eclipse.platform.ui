@@ -12,24 +12,16 @@ package org.eclipse.ui.internal.progress;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.ExceptionHandler;
-import org.eclipse.ui.internal.Workbench;
-import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.progress.UIJob;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.*;
+import org.eclipse.ui.internal.*;
+import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
@@ -44,9 +36,7 @@ public class ErrorNotificationManager {
 
     private Collection errors = Collections.synchronizedSet(new HashSet());
 
-    private ErrorNotificationDialog dialog;
-
-    private boolean dialogActive = false;
+    private JobErrorDialog dialog;
 
     /**
      * Create a new instance of the receiver.
@@ -66,11 +56,11 @@ public class ErrorNotificationManager {
     }
 
     /**
-     * Add a new error to the list.
+     * Add a new error to the list for the supplied job.
      * @param status
-     * @param jobName
+     * @param job
      */
-    void addError(IStatus status, String jobName) {
+    void addError(IStatus status, Job job) {
 
         //Handle out of memory errors via the workbench
         final Throwable exception = status.getException();
@@ -86,33 +76,48 @@ public class ErrorNotificationManager {
 
             return;
         }
-        errors.add(new ErrorInfo(status, jobName));
-        if (dialogActive) {
-            if (dialog != null)
-                refreshDialog();
-        } else
-            openErrorDialog(jobName, status);
+        ErrorInfo errorInfo = new ErrorInfo(status, job);
+        showError(errorInfo);
     }
 
     /**
-     * 
+     * Show the error in the error dialog. This is done from the UI thread to
+     * ensure that no errors are dropped.
+     * @param errorInfo the error to be displayed
      */
-    private void refreshDialog() {
+    private void showError(final ErrorInfo errorInfo) {
+        
+        if (!PlatformUI.isWorkbenchRunning()) {
+            //We are shutdown so just log
+            WorkbenchPlugin.log(errorInfo.getJob().getName(), errorInfo.getErrorStatus());
+            return;
+        }
 
-        UIJob refreshJob = new UIJob(ProgressMessages
-                .getString("ErrorNotificationManager.RefreshErrorDialogJob")) { //$NON-NLS-1$
-            /* (non-Javadoc)
-             * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-             */
+        // We must open or update the error dialog in the UI thread to ensure that
+        // errors are not dropped
+        WorkbenchJob job = new WorkbenchJob(ProgressMessages
+                .getString("ErrorNotificationManager.OpenErrorDialogJob")) { //$NON-NLS-1$
             public IStatus runInUIThread(IProgressMonitor monitor) {
-                dialog.refresh();
+                // Add the error in the UI thread to ensure thread safety in the dialog
+                errors.add(errorInfo);
+                if (dialog != null) {
+                    dialog.refresh();
+                } else if (Platform.isRunning()) {
+                    // Delay prompting if the job property is set
+                    Object noPromptProperty = errorInfo.getJob().getProperty(IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY);
+                    boolean prompt= true;
+                    if (noPromptProperty instanceof Boolean) 
+                        prompt = !((Boolean)noPromptProperty).booleanValue();
+                    
+                    if (prompt) {
+                        return openErrorDialog(null /* use default title */, null /* use default message */, errorInfo);
+                    }
+                }
                 return Status.OK_STATUS;
             }
         };
-
-        refreshJob.setSystem(true);
-        refreshJob.schedule();
-
+        job.setSystem(true);
+        job.schedule();
     }
 
     /**
@@ -126,43 +131,31 @@ public class ErrorNotificationManager {
     /**
      * The job caleed jobName has just failed with status status.
      * Open the error dialog if possible - otherwise log the error.
-     * @param jobName String. The name of the Job
-     * @param status IStatus The status of the failure.
+     * @param title the title of the dialog or <code>null</code>
+     * @param msg the message for the dialog oe <code>null</code>
+     * @param errorInfo The info the dialog is being opened for.
+     * @return IStatus
      */
-    private void openErrorDialog(String jobName, IStatus status) {
+    private IStatus openErrorDialog(String title, String msg, final ErrorInfo errorInfo) {
+        IWorkbench workbench = PlatformUI.getWorkbench();
 
-        if (!PlatformUI.isWorkbenchRunning()) {
-            //We are shutdown so just log
-            WorkbenchPlugin.log(jobName, status);
-            return;
+        //Abort on shutdown
+        if (workbench instanceof Workbench
+                && ((Workbench) workbench).isClosing())
+            return Status.CANCEL_STATUS;
+        IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
+
+        if (window == null)
+            return Status.CANCEL_STATUS;
+        dialog = new JobErrorDialog(window.getShell(), title, msg, errorInfo, IStatus.OK
+                | IStatus.INFO | IStatus.WARNING | IStatus.ERROR);
+        try {
+	        dialog.open();
+        } finally {
+            dialog = null;
+            clearAllErrors();
         }
-
-        dialogActive = true;
-        WorkbenchJob job = new WorkbenchJob(ProgressMessages
-                .getString("ErrorNotificationManager.OpenErrorDialogJob")) { //$NON-NLS-1$
-            /*
-             * (non-Javadoc)
-             * 
-             * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-             */
-            public IStatus runInUIThread(IProgressMonitor monitor) {
-                IWorkbench workbench = PlatformUI.getWorkbench();
-
-                //Abort on shutdown
-                if (workbench instanceof Workbench
-                        && ((Workbench) workbench).isClosing())
-                    return Status.CANCEL_STATUS;
-                IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
-
-                if (window == null)
-                    return Status.CANCEL_STATUS;
-                dialog = new ErrorNotificationDialog(window.getShell());
-                dialog.open();
-                return Status.OK_STATUS;
-            }
-        };
-        job.setSystem(true);
-        job.schedule();
+        return Status.OK_STATUS;
     }
 
     /**
@@ -200,16 +193,72 @@ public class ErrorNotificationManager {
 	/**
      * Clear all of the errors held onto by the receiver.
      */
-    void clearAllErrors() {
+    private void clearAllErrors() {
     	removeFromFinishedJobs(errors);
         errors.clear();
     }
 
     /**
-     * Remove the reference to the errors dialog.
+     * Display the error for the given job and any other errors
+     * that have been accumulated. This method must be invoked
+     * from the UI thread.
+     * @param shell the shell used to parent the dialog
+     * @param job the job whose error should be displayed
+     * @param title The title for the dialog
+     * @param msg The message for the dialog.
+     * @return <code>true</code> if the info for the job was found and the error
+     * displayed and <code>false</code> otherwise.
      */
-    void clearDialog() {
-        dialog = null;
-        dialogActive = false;
+    public boolean showErrorFor(Shell shell, Job job, String title, String msg) {
+        if (dialog != null) {
+            // The dialog is already open so the error is being displayed
+            return true;
+        }
+        ErrorInfo info = getErrorInfo(job);
+        if (job == null) {
+            info = getMostRecentError();
+        } else {
+            info = getErrorInfo(job);
+        }
+        if (info != null) {
+	        openErrorDialog(title, msg, info);
+	        return true;
+        }
+        return false;
+    }
+
+    /*
+     * Return the most recent error.
+     */
+    private ErrorInfo getMostRecentError() {
+        ErrorInfo mostRecentInfo = null;
+        for (Iterator iter = errors.iterator(); iter.hasNext();) {
+            ErrorInfo info = (ErrorInfo) iter.next();
+            if (mostRecentInfo == null || info.getTimestamp() > mostRecentInfo.getTimestamp()) {
+                mostRecentInfo = info;
+            }
+        }
+        return mostRecentInfo;
+    }
+
+    /*
+     * Return the error info for the given job
+     */
+    private ErrorInfo getErrorInfo(Job job) {
+        for (Iterator iter = errors.iterator(); iter.hasNext();) {
+            ErrorInfo info = (ErrorInfo) iter.next();
+            if (info.getJob() == job) {
+                return info;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Return whether the manager has errors to report.
+     * @return whether the manager has errors to report
+     */
+    public boolean hasErrors() {
+        return !errors.isEmpty();
     }
 }

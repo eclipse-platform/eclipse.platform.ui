@@ -12,29 +12,18 @@ package org.eclipse.jface.dialogs;
  * 		Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font should
  * 			be activated and used by other components.
  ******************************************************************************/
-import java.util.Arrays;
-import java.util.Iterator;
-
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 
 /**
  * A dialog to display one or more errors to the user, as contained in an
@@ -95,11 +84,7 @@ public class ErrorDialog extends IconAndMessageDialog {
      */
     private Clipboard clipboard;
 
-    /**
-     * List of the main error object's detailed errors (element type:
-     * <code>IStatus</code>).
-     */
-    private java.util.List statusList;
+	private boolean shouldIncludeTopLevelErrorInDetails = false;
 
     /**
      * Creates an error dialog. Note that the dialog will have no visual
@@ -138,7 +123,6 @@ public class ErrorDialog extends IconAndMessageDialog {
                         .format(
                                 "Reason", new Object[] { message, status.getMessage() }); //$NON-NLS-1$
         this.status = status;
-        statusList = Arrays.asList(status.getChildren());
         this.displayMask = displayMask;
         setShellStyle(getShellStyle() | SWT.RESIZE);
     }
@@ -174,7 +158,7 @@ public class ErrorDialog extends IconAndMessageDialog {
         // create OK and Details buttons
         createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL,
                 true);
-        if (status.isMultiStatus()) {
+        if (shouldShowDetailsButton()) {
             detailsButton = createButton(parent, IDialogConstants.DETAILS_ID,
                     IDialogConstants.SHOW_DETAILS_LABEL, false);
         }
@@ -362,27 +346,48 @@ public class ErrorDialog extends IconAndMessageDialog {
      * @param listToPopulate The list to fill.
      */
     private void populateList(List listToPopulate) {
-        Iterator it = statusList.iterator();
-        while (it.hasNext()) {
-            IStatus childStatus = (IStatus) it.next();
-            populateList(listToPopulate, childStatus, 0);
-        }
+        populateList(listToPopulate, status, 0, shouldIncludeTopLevelErrorInDetails);
     }
 
+    /**
+     * Populate the list with the messages from the given status. Traverse the
+     * childen of the status deeply and also traverse CoreExceptions that appear
+     * in the status.
+     * @param listToPopulate the list to populate
+     * @param buildingStatus the status being displayed
+     * @param nesting the nesting level (increases one level for each level of children)
+     * @param includeStatus whether to include the buildingStatus in the display or
+     * just its children
+     */
     private void populateList(List listToPopulate, IStatus buildingStatus,
-            int nesting) {
+            int nesting, boolean includeStatus) {
+        
         if (!buildingStatus.matches(displayMask)) {
             return;
         }
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < nesting; i++) {
-            sb.append(NESTING_INDENT); //$NON-NLS-1$
+        
+        int childNesting = nesting;
+        if (includeStatus) {
+	        StringBuffer sb = new StringBuffer();
+	        for (int i = 0; i < nesting; i++) {
+	            sb.append(NESTING_INDENT); //$NON-NLS-1$
+	        }
+	        sb.append(buildingStatus.getMessage());
+	        listToPopulate.add(sb.toString());
+	        childNesting++;
         }
-        sb.append(buildingStatus.getMessage());
-        listToPopulate.add(sb.toString());
+        
+        // Look for a nested core exception
+        Throwable t = buildingStatus.getException();
+        if (t instanceof CoreException) {
+            CoreException ce = (CoreException)t;
+            populateList(listToPopulate, ce.getStatus(), childNesting, true);
+        }
+        
+        // Look for child status
         IStatus[] children = buildingStatus.getChildren();
         for (int i = 0; i < children.length; i++) {
-            populateList(listToPopulate, children[i], nesting + 1);
+            populateList(listToPopulate, children[i], childNesting, true);
         }
     }
 
@@ -448,6 +453,14 @@ public class ErrorDialog extends IconAndMessageDialog {
         }
         buffer.append(buildingStatus.getMessage());
         buffer.append("\n"); //$NON-NLS-1$
+        
+        // Look for a nested core exception
+        Throwable t = buildingStatus.getException();
+        if (t instanceof CoreException) {
+            CoreException ce = (CoreException)t;
+            populateCopyBuffer(ce.getStatus(), buffer, nesting + 1);
+        }
+        
         IStatus[] children = buildingStatus.getChildren();
         for (int i = 0; i < children.length; i++) {
             populateCopyBuffer(children[i], buffer, nesting + 1);
@@ -476,5 +489,64 @@ public class ErrorDialog extends IconAndMessageDialog {
         if (clipboard != null)
             clipboard.dispose();
         return super.close();
+    }
+    
+    /**
+     * Show the details portion of the dialog if it is not already visible.
+     * This method will only work when it is invoked after the control of the dialog
+     * has been set. In other words, after the <code>createContents</code> method
+     * has been invoked and has returned the control for the content area of the dialog.
+     * Invoking the method before the content area has been set or after the dialog has been
+     * disposed will have no effect.
+     * @since 3.1
+     */
+    protected final void showDetailsArea() {
+        if (!listCreated) {
+            Control control = getContents();
+            if (control != null && ! control.isDisposed())
+                toggleDetailsArea();
+        }
+    }
+    
+    /**
+     * Return whether the Details button should be included.
+     * This method is invoked once when the dialog is built.
+     * By default, the Details button is only included if
+     * the status used when creating the dialog was a multi-status
+     * or if the status contains an exception that is a CoreException.
+     * Subclasses may override.
+     * @return whether the Details button should be included
+     * @since 3.1
+     */
+    protected boolean shouldShowDetailsButton() {
+        return status.isMultiStatus() || status.getException() instanceof CoreException;
+    }
+    
+    /**
+     * Set the status displayed by this error dialog to the given status.
+     * This only affects the status displayed by the Details list.
+     * The message, image and title should be updated by the subclass,
+     * if desired.
+     * @param status the status to be displayed in the details list
+     * @since 3.1
+     */
+    protected final void setStatus(IStatus status) {
+        if (this.status != status) {
+	        this.status = status;
+        }
+        shouldIncludeTopLevelErrorInDetails = true;
+        if (listCreated) {
+            repopulateList();
+        }
+    }
+    
+    /**
+     * Repopulate the supplied list widget.
+     */
+    private void repopulateList() {
+        if (list != null && !list.isDisposed()) {
+	        list.removeAll();
+	        populateList(list);
+        }
     }
 }

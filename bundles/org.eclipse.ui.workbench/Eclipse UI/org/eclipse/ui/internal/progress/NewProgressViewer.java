@@ -12,10 +12,7 @@ package org.eclipse.ui.internal.progress;
 
 import java.net.URL;
 import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
@@ -24,47 +21,15 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.JFaceColors;
-import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.TreeListener;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Cursor;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.FontMetrics;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Canvas;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Item;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Layout;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.ProgressBar;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.Widget;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.util.ImageSupport;
 import org.eclipse.ui.progress.IProgressConstants;
@@ -234,7 +199,7 @@ public class NewProgressViewer extends TreeViewer implements
             return null;
         }
 
-        public boolean kill(boolean refresh, boolean broadcast) {
+        public boolean kill() {
             return true;
         }
 
@@ -509,7 +474,7 @@ public class NewProgressViewer extends TreeViewer implements
                 jobitem.locked = true;
                 gotoAction.run();
                 if (jobitem.jobTerminated)
-                    jobitem.kill(true, true);
+                    jobitem.kill();
                 return true;
             }
             return false;
@@ -520,7 +485,7 @@ public class NewProgressViewer extends TreeViewer implements
             if (jobTreeElement == null) // shouldn't happen
                 return false;
 
-            Job job = getJob();
+            final Job job = getJob();
             if (job != null) {
                 // check for icon property and propagate to parent
                 if (jobitem.image == null)
@@ -542,11 +507,24 @@ public class NewProgressViewer extends TreeViewer implements
                         setAction(new Action() {
                             public void run() {
                                 String title = ProgressMessages
-                                        .getString("NewProgressView.errorDialogTitle"); //$NON-NLS-1$
-                                String msg = ProgressMessages
-                                        .getString("NewProgressView.errorDialogMessage"); //$NON-NLS-1$
-                                ErrorDialog.openError(getShell(), title, msg,
-                                        result);
+	                                    .getString("NewProgressView.errorDialogTitle"); //$NON-NLS-1$
+	                            String msg = ProgressMessages
+	                                    .getString("NewProgressView.errorDialogMessage"); //$NON-NLS-1$
+                                if (!getManager().showErrorFor(getShell(), job, title, msg)) {
+                                    // The error is missing from the error manager.
+                                    // This should only occur if what the progress view is showing is
+                                    // out-of-sync with the ErrorNotificationManager and/or FinishedJobs
+                                    // manager. In other words, it shouldn't happen but may so it is
+                                    // better to show the user something than fail silently
+		                            ErrorDialog.openError(getShell(), title, msg,
+		                                    result);
+                                }
+                            }
+                            /*
+                             * Get the notificationManager that this is being created for.
+                             */
+                            private ErrorNotificationManager getManager() {
+                                return ProgressManager.getInstance().errorManager;
                             }
                         });
                     }
@@ -786,7 +764,7 @@ public class NewProgressViewer extends TreeViewer implements
 
         boolean cancelOrRemove() {
             if (jobTerminated)
-                return kill(true, true);
+                return kill();
             jobTreeElement.cancel();
             return false;
         }
@@ -879,14 +857,17 @@ public class NewProgressViewer extends TreeViewer implements
             return changed;
         }
 
-        public boolean kill(boolean refresh, boolean broadcast) {
+        public boolean kill() {
             if (jobTerminated) {
-
-                if (broadcast)
-                    finishedJobs.remove(jobTreeElement);
-                else {
+                // Removing the job from the list of jobs will 
+                // remove the job from the view using a callback
+                if (!finishedJobs.remove(jobTreeElement)) {
+                    // The terminated job has already been removed
+                    // from the list of finished jobs but was somehow
+                    // left in the view. Dispose of the item and refresh 
+                    // the view
                     dispose();
-                    relayout(refresh, refresh);
+                    relayout(true, true);
                     return true;
                 }
             }
