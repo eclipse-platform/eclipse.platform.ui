@@ -9,13 +9,10 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.resources.LocalFile;
@@ -44,7 +41,7 @@ public class ReplaceWithTagAction extends TeamAction {
 					CVSTeamProvider provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(resource.getProject());
 					// To do: check for local changes and warn of overwriting.
 					LocalResource cvsResource = null;
-					if (resources[0].getType()==IResource.FILE) {
+					if (resources[0].getType() == IResource.FILE) {
 						cvsResource = new LocalFile(resource.getLocation().toFile());
 					} else {
 						cvsResource = new LocalFolder(resource.getLocation().toFile());
@@ -52,18 +49,19 @@ public class ReplaceWithTagAction extends TeamAction {
 		
 					TagSelectionDialog dialog = new TagSelectionDialog(getShell(), resource);
 					dialog.setBlockOnOpen(true);
-					int result = dialog.open();
-					if (result == Dialog.CANCEL || dialog.getResult() == null) {
+					if (dialog.open() == Dialog.CANCEL) {
 						return;
 					}
 					CVSTag tag = dialog.getResult();
-					ICVSRemoteResource remoteResource = (ICVSRemoteResource)provider.getRemoteTree(resource, tag, new NullProgressMonitor());
-					System.out.println("Not implemented");
+					if (tag == null) {
+						return;
+					}
+					provider.get(new IResource[] { resource }, IResource.DEPTH_INFINITE, tag, monitor);
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
 				}
 			}
-		}, Policy.bind("ReplaceWithTagAction.compare"), this.PROGRESS_BUSYCURSOR);			
+		}, Policy.bind("ReplaceWithTagAction.replace"), this.PROGRESS_BUSYCURSOR);			
 	}
 	
 	protected boolean isEnabled() {

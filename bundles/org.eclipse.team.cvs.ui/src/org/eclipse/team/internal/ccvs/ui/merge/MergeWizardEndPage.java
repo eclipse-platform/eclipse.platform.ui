@@ -40,51 +40,6 @@ public class MergeWizardEndPage extends CVSWizardPage {
 	ICVSRemoteFolder remote;
 	CVSTeamProvider provider;
 	
-	class ProjectElement implements IWorkbenchAdapter, IAdaptable {
-		public Object[] getChildren(Object o) {
-			return new Object[] {
-				new BranchesElement(),
-				new TagElement(CVSTag.DEFAULT),
-				new VersionsElement(remote)
-			};
-		}
-		public Object getAdapter(Class adapter) {
-			if (adapter == IWorkbenchAdapter.class) return this;
-			return null;
-		}
-		public ImageDescriptor getImageDescriptor(Object object) {
-			return null;
-		}
-		public String getLabel(Object o) {
-			return null;
-		}
-		public Object getParent(Object o) {
-			return null;
-		}
-	};
-	class BranchesElement implements IWorkbenchAdapter, IAdaptable {
-		public Object[] getChildren(Object o) {
-			BranchTag[] tags = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownBranchTags(remote.getRepository());
-			TagElement[] result = new TagElement[tags.length];
-			for (int i = 0; i < tags.length; i++) {
-				result[i] = new TagElement(tags[i].getTag());
-			}
-			return result;
-		}
-		public Object getAdapter(Class adapter) {
-			if (adapter == IWorkbenchAdapter.class) return this;
-			return null;
-		}
-		public ImageDescriptor getImageDescriptor(Object object) {
-			return CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_BRANCHES_CATEGORY);
-		}
-		public String getLabel(Object o) {
-			return Policy.bind("MergeWizardEndPage.branches");
-		}
-		public Object getParent(Object o) {
-			return project;
-		}
-	};
 	/**
 	 * MergeWizardEndPage constructor.
 	 * 
@@ -126,7 +81,7 @@ public class MergeWizardEndPage extends CVSWizardPage {
 			}
 		});
 		setControl(composite);
-		tree.setInput(new ProjectElement());
+		tree.setInput(new ProjectElement(remote));
 	}
 	protected TreeViewer createTree(Composite parent) {
 		Tree tree = new Tree(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.SINGLE);

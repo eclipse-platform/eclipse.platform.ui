@@ -19,6 +19,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
@@ -40,16 +41,21 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
+import org.eclipse.team.internal.ccvs.ui.merge.ProjectElement;
+import org.eclipse.team.internal.ccvs.ui.merge.TagElement;
 import org.eclipse.team.internal.ccvs.ui.model.BranchTag;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 
 /**
  * Dialog to prompt the user to choose a tag for a selected resource
@@ -60,7 +66,7 @@ public class TagSelectionDialog extends Dialog {
 	private CVSTag result;
 	
 	// widgets;
-	private TableViewer tagTable;
+	private TreeViewer tagTree;
 	private Button okButton;
 	private Label messageLine;
 	private Button useDefinedTagButton;
@@ -89,7 +95,7 @@ public class TagSelectionDialog extends Dialog {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText(Policy.bind("TagSelectionDialog.version"));
+		newShell.setText(Policy.bind("TagSelectionDialog.Select_a_Tag_1")); //$NON-NLS-1$
 		// set F1 help
 		//WorkbenchHelp.setHelp(newShell, new Object[] {IVCMHelpContextIds.VERSION_SELECTION_DIALOG});
 	}
@@ -148,24 +154,8 @@ public class TagSelectionDialog extends Dialog {
 
 		Composite top = (Composite)super.createDialogArea(parent);
 	
-		Composite tagTypeComposite = new Composite(top, SWT.NULL);
-		tagTypeComposite.setLayoutData(new GridData());
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		tagTypeComposite.setLayout(layout);
-		createLabel(tagTypeComposite, "Tag Type:");
-		
-		tagTypeCombo = new Combo(tagTypeComposite, SWT.READ_ONLY);
-		tagTypeCombo.add("Version");
-		tagTypeCombo.add("Branch");
-		tagTypeCombo.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				handleComboSelectionChanged();
-			}
-		});
-		
 		useDefinedTagButton = new Button(top, SWT.RADIO);
-		useDefinedTagButton.setText("Use Defined Tag:");
+		useDefinedTagButton.setText(Policy.bind("TagSelectionDialog.Use_Defined_Tag__2")); //$NON-NLS-1$
 		useDefinedTagButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				handleRadioSelectionChanged();
@@ -177,52 +167,21 @@ public class TagSelectionDialog extends Dialog {
 		data.widthHint = SIZING_DIALOG_WIDTH;
 		data.heightHint = SIZING_DIALOG_HEIGHT;
 		inner.setLayoutData(data);
-		layout = new GridLayout();
+		GridLayout layout = new GridLayout();
 		layout.marginWidth = 10;
 		inner.setLayout(layout);
-		tagTable = createTable(inner);
-		tagTable.setContentProvider(getEditionsContentProvider());
-		tagTable.setLabelProvider(new LabelProvider() {
-			public Image getImage(Object element) {
-				if (element instanceof CVSTag) {
-					return versionImage;
-				} else if (element instanceof BranchTag) {
-					return branchImage;
-				}
-				return null;
-			}
-			public String getText(Object element) {
-				if (element instanceof CVSTag) {
-					return ((CVSTag)element).getName();
-				} else if (element instanceof BranchTag) {
-					return ((BranchTag)element).getTag().getName();
-				}
-				return "";
-			}
-		});
-		tagTable.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				updateEnablement();
-			}
-		});
-		// select and close on double click
-		tagTable.getTable().addMouseListener(new MouseAdapter() {
-			public void mouseDoubleClick(MouseEvent e) {
-				IStructuredSelection selection = (IStructuredSelection)tagTable.getSelection();
-				if (!selection.isEmpty())
-					okPressed();
-			}
-		});
-		tagTable.setSorter(new RepositorySorter());
+		tagTree = createTree(inner);
 		
 		useSpecifiedTagButton = new Button(top, SWT.RADIO);
-		useSpecifiedTagButton.setText("Use User-Specified Tag:");
+		useSpecifiedTagButton.setText(Policy.bind("TagSelectionDialog.Use_User-Specified_Tag__3")); //$NON-NLS-1$
 		
 		inner = new Composite(top, SWT.NULL);
 		inner.setLayoutData(new GridData());
 		layout = new GridLayout();
 		layout.marginWidth = 10;
+		layout.numColumns = 2;
 		inner.setLayout(layout);
+		createLabel(inner, Policy.bind("TagSelectionDialog.Tag_name__4")); //$NON-NLS-1$
 		tagText = new Text(inner, SWT.SINGLE | SWT.BORDER);
 		tagText.setEnabled(false);
 		tagText.addListener(SWT.Modify, new Listener() {
@@ -233,16 +192,13 @@ public class TagSelectionDialog extends Dialog {
 		data = new GridData();
 		data.widthHint = 250;
 		tagText.setLayoutData(data);
+
+		createLabel(inner, Policy.bind("TagSelectionDialog.Tag_type__5")); //$NON-NLS-1$
+		tagTypeCombo = new Combo(inner, SWT.READ_ONLY);
+		tagTypeCombo.setEnabled(false);
+		tagTypeCombo.add(Policy.bind("TagSelectionDialog.Version_6")); //$NON-NLS-1$
+		tagTypeCombo.add(Policy.bind("TagSelectionDialog.Branch_7")); //$NON-NLS-1$
 		
-		// add a listener to resize the columns when the shell is resized
-		getShell().addControlListener(new ControlAdapter() {
-			public void controlResized(ControlEvent e) {
-				Table table = tagTable.getTable();
-				setLayout(table);
-				table.layout();
-			}
-		});
-	
 		messageLine = new Label(top, SWT.NONE);
 		messageLine.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	
@@ -250,26 +206,27 @@ public class TagSelectionDialog extends Dialog {
 		tagTypeCombo.select(0);
 
 		// initialize the table contents
-		tagTable.setInput(resource);
+		try {
+			CVSTeamProvider provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(resource);
+			tagTree.setInput(new ProjectElement((ICVSRemoteFolder)provider.getRemoteResource(resource)));
+		} catch (TeamException e) {
+			// To do: error dialog
+		}
 
 		return top;
-	}
-	
-	private void handleComboSelectionChanged() {
-		tagTable.refresh(resource);
-		// update the widget enablement
-		updateEnablement();
 	}
 	
 	private void handleRadioSelectionChanged() {
 		if (useDefinedTagButton.getSelection()) {
 			// Enable the table, disable the text widget
-			tagTable.getTable().setEnabled(true);
+			tagTree.getTree().setEnabled(true);
 			tagText.setEnabled(false);
+			tagTypeCombo.setEnabled(false);
 		} else {
 			// Disable the table, enable the text widget
-			tagTable.getTable().setEnabled(false);
+			tagTree.getTree().setEnabled(false);
 			tagText.setEnabled(true);
+			tagTypeCombo.setEnabled(true);
 		}
 		// update the widget enablement
 		updateEnablement();
@@ -293,57 +250,30 @@ public class TagSelectionDialog extends Dialog {
 		return label;
 	}
 	
-	/**
-	 * Creates the group that displays lists of the available repositories
-	 * and team streams.
-	 *
-	 * @param the parent composite to contain the group
-	 * @return the group control
-	 */
-	protected TableViewer createTable(Composite parent) {
-		Table table = new Table(parent, SWT.SINGLE | SWT.BORDER);
-		table.setLayoutData(new GridData(GridData.FILL_BOTH));
-		TableLayout layout = new TableLayout();
-		table.setLayout(layout);
-	
-		TableColumn col = new TableColumn(table, SWT.NONE);
-		col.setResizable(false);
-		layout.addColumnData(new ColumnWeightData(100, false));
-	
-		return new TableViewer(table);
-	}
-	
-	/**
-	 * Returns a content provider for repositories that only returns
-	 * resource editions for the input resource.
-	 */
-	protected IStructuredContentProvider getEditionsContentProvider() {
-		return new SimpleContentProvider() {
-			public Object[] getElements(Object o) {
-				if (o == null) return null;
-				if (!(o instanceof IResource)) return null;
-				IResource resource = (IResource)o;
-				try {
-					RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
-					CVSTeamProvider provider = (CVSTeamProvider)TeamPlugin.getManager().getProvider(resource);
-					ICVSRemoteResource remoteResource = provider.getRemoteResource(resource);
-					switch (tagTypeCombo.getSelectionIndex()) {
-						case 1:
-							// Branch tags
-							return manager.getKnownBranchTags(remoteResource.getRepository());
-						case 0:
-						default:						
-							// Version tags
-							return manager.getKnownVersionTags(remoteResource, new NullProgressMonitor());
-					}
-				} catch (TeamException e) {
-					ErrorDialog.openError(getShell(), null, null, e.getStatus());
-					return null;
-				}
+	protected TreeViewer createTree(Composite parent) {
+		Tree tree = new Tree(parent, SWT.SINGLE | SWT.BORDER);
+		tree.setLayoutData(new GridData(GridData.FILL_BOTH));	
+		TreeViewer result = new TreeViewer(tree);
+		result.setContentProvider(new WorkbenchContentProvider());
+		result.setLabelProvider(new WorkbenchLabelProvider());
+		result.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				updateEnablement();
 			}
-		};
+		});
+		// select and close on double click
+		// To do: use defaultselection instead of double click
+		result.getTree().addMouseListener(new MouseAdapter() {
+			public void mouseDoubleClick(MouseEvent e) {
+				IStructuredSelection selection = (IStructuredSelection)tagTree.getSelection();
+				if (!selection.isEmpty())
+					okPressed();
+			}
+		});
+		result.setSorter(new RepositorySorter());
+		return result;
 	}
-
+	
 	/**
 	 * Returns the selected tag.
 	 */
@@ -369,22 +299,22 @@ public class TagSelectionDialog extends Dialog {
 	 */
 	protected void okPressed() {
 		if (useDefinedTagButton.getSelection()) {
-			IStructuredSelection selection = (IStructuredSelection)tagTable.getSelection();
+			IStructuredSelection selection = (IStructuredSelection)tagTree.getSelection();
 			Object o = selection.getFirstElement();
-			if (o instanceof CVSTag) {
-				result = (CVSTag)o;
-			} else {
-				result = ((BranchTag)o).getTag();
-			}
+			TagElement element = (TagElement)o;
+			result = element.getTag();
 		} else {
 			String text = tagText.getText();
-			int type = CVSTag.VERSION;
+			int type;
 			switch (tagTypeCombo.getSelectionIndex()) {
 				case 0:
 					type = CVSTag.VERSION;
 					break;
 				case 1:
 					type = CVSTag.BRANCH;
+					break;
+				default:
+					type = CVSTag.HEAD;
 					break;
 			}
 			result = new CVSTag(text, type);
@@ -393,20 +323,11 @@ public class TagSelectionDialog extends Dialog {
 	}
 
 	/**
-	 * Sets a new layout for the given table.
-	 */
-	protected void setLayout(Table table) {
-		TableLayout layout = new TableLayout();
-		layout.addColumnData(new ColumnWeightData(100, true));
-		table.setLayout(layout);
-	}
-
-	/**
 	 * Shows an error message in the message line.
 	 */
 	void showError(String errorMsg) {
 		messageLine.setForeground(messageLine.getDisplay().getSystemColor(SWT.COLOR_RED));
-		messageLine.setText(errorMsg == null ? "" : errorMsg);
+		messageLine.setText(errorMsg == null ? "" : errorMsg); //$NON-NLS-1$
 	}
 
 	/**
@@ -414,9 +335,10 @@ public class TagSelectionDialog extends Dialog {
 	 */
 	protected void updateEnablement() {
 		if (useDefinedTagButton.getSelection()) {
-			if (tagTable.getSelection().isEmpty()) {
+			IStructuredSelection selection = (IStructuredSelection)tagTree.getSelection();
+			if (selection.isEmpty() || !(selection.getFirstElement() instanceof TagElement)) {
 				okButton.setEnabled(false);
-				showError("Please select a tag.");
+				showError(Policy.bind("TagSelectionDialog.Please_select_a_tag_9")); //$NON-NLS-1$
 			} else {
 				okButton.setEnabled(true);
 				showError(null);

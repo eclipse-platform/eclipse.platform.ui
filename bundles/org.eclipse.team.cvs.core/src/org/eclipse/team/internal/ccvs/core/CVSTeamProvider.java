@@ -459,6 +459,10 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	 * @see ITeamProvider#get(IResource[], int, IProgressMonitor)
 	 */
 	public void get(IResource[] resources, final int depth, IProgressMonitor progress) throws TeamException {
+		get(resources, depth, null, progress);
+	}
+	
+	public void get(IResource[] resources, final int depth, CVSTag tag, IProgressMonitor progress) throws TeamException {
 			
 		// Need to correct any outgoing additions and deletions so the remote contents will be retrieved properly
 		ICVSResourceVisitor visitor = new ICVSResourceVisitor() {
@@ -494,7 +498,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		}
 				
 		// Perform an update, ignoring any local file modifications
-		update(resources, depth, null, true, progress);
+		update(resources, depth, tag, true, progress);
 	}
 	
 	/*
