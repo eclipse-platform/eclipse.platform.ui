@@ -584,7 +584,7 @@
                label="%DetailPaneWordWrapAction.label"
                helpContextId="detail_pane_word_wrap_action_context"
                tooltip="%DetailPaneWordWrapAction.tooltip"
-               state="false"
+               style="toggle"
                class="org.eclipse.debug.internal.ui.views.variables.DetailPaneWordWrapAction"
                menubarPath="viewActions"
                id="org.eclipse.debug.ui.variableViewActions.toolbar.detailPaneWordWrap">

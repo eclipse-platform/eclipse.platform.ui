@@ -22,17 +22,11 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.texteditor.IUpdate;
 
 /**
  * 
  */
-public abstract class VariableViewToggleAction implements IViewActionDelegate, IActionDelegate2, IUpdate {
-	
-	/**
-	 * Current value of this filter - on/off.
-	 */
-	private boolean fValue;
+public abstract class VariableViewToggleAction implements IViewActionDelegate, IActionDelegate2 {
 	
 	private IViewPart fView;
 	private IAction fAction;
@@ -46,13 +40,9 @@ public abstract class VariableViewToggleAction implements IViewActionDelegate, I
 	 */
 	public void init(IViewPart view) {
 		fView = view;
-		setValue(getPreferenceValue(view));
-		fAction.setChecked(getValue());
+		boolean checked = getPreferenceValue(view);
+		fAction.setChecked(checked);
 		run(fAction);
-		IDebugView debugView = (IDebugView)view.getAdapter(IDebugView.class);
-		if (debugView != null) {
-			debugView.add(this);
-		}
 	}
 
 	/* (non-Javadoc)
@@ -79,10 +69,9 @@ public abstract class VariableViewToggleAction implements IViewActionDelegate, I
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		setValue(action.isChecked());
 		IPreferenceStore store = getPreferenceStore();
 		String key = getView().getSite().getId() + "." + getPreferenceKey(); //$NON-NLS-1$
-		store.setValue(key, getValue());
+		store.setValue(key, action.isChecked());
 		DebugUIPlugin.getDefault().savePluginPreferences();
 	}
 
@@ -123,20 +112,7 @@ public abstract class VariableViewToggleAction implements IViewActionDelegate, I
 	 * @return String
 	 */
 	protected abstract String getPreferenceKey(); 
-	
-	protected void setValue(boolean value) {
-		fValue = value;
-	}
-	
-	/**
-	 * Returns the current value of this toggle - on/off.
-	 * 
-	 * @return boolean
-	 */
-	protected boolean getValue() {
-		return fValue;
-	}
-	
+		
 	protected IViewPart getView() {
 		return fView;
 	}
@@ -150,12 +126,5 @@ public abstract class VariableViewToggleAction implements IViewActionDelegate, I
 			}
 		}		
 		return null;
-	}
-	
-	/**
-	 * @see IUpdate#update()
-	 */
-	public void update() {
-		fAction.setChecked(getValue());
 	}
 }
