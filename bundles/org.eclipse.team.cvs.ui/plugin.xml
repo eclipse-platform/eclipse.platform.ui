@@ -521,7 +521,7 @@
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
-            name="%CVS"
+            name="%CVSRepositoryExploring"
             icon="icons/full/cview16/cvs_persp.gif"
             class="org.eclipse.team.internal.ccvs.ui.CVSPerspective"
             id="org.eclipse.team.cvs.ui.cvsPerspective">
