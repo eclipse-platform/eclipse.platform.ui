@@ -170,7 +170,7 @@ class FastViewBar implements IWindowTrim {
 				 * @see org.eclipse.ui.internal.dnd.IDropTarget#getCursor()
 				 */
 				public Cursor getCursor() {
-					return DragCursors.getFastViewCursor();
+					return DragCursors.getCursor(DragCursors.FASTVIEW);
 				}
 			}
 			

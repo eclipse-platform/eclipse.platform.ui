@@ -44,32 +44,11 @@ public class DragCursors {
 	}
 	
 	/**
-	 * TODO delete this method
-	 * Returns the cursor displayed when something is dragged over an invalid location
-	 * 
-	 * @return
-	 */
-	public static Cursor getInvalidCursor() {
-		return getCursor(INVALID);
-	}
-
-	/**
-	 * TODO delete this method
-	 * Returns the cursor to be displayed when dragging over the fast view bar
-	 * 
-	 * @return
-	 */
-	public static Cursor getFastViewCursor() {
-		return getCursor(FASTVIEW);
-	}
-	
-	/**
 	 * Return the cursor for a drop scenario, as identified by code.
 	 * Code must be one of INVALID, LEFT, RIGHT, TOP, etc.
 	 * If the code is not found default to INVALID.
 	 */
 	public static Cursor getCursor(int code) {
-		
 		Display display = Display.getCurrent();
 		if (cursors[code] == null) {
 			ImageDescriptor source = null;

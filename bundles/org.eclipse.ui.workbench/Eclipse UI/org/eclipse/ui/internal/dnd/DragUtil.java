@@ -125,7 +125,7 @@ public class DragUtil {
 				if (target != null) {
 					tracker.setCursor(target.getCursor());
 				} else {
-					tracker.setCursor(DragCursors.getInvalidCursor());
+					tracker.setCursor(DragCursors.getCursor(DragCursors.INVALID));
 				}				
 			}
 		});
