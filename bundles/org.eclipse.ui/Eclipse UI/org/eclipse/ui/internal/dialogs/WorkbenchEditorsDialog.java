@@ -52,11 +52,13 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 	private boolean reverse = false;
 	private Collator collator = Collator.getInstance();
 	private Rectangle bounds;
+	private int columnsWidth[];
 	
 	private static final String SORT = "sort";
 	private static final String HISTORY = "history";
 	private static final String ALLPERSP = "allPersp";
 	private static final String BOUNDS = "bounds";
+	private static final String COLUMNS = "columns";
 	
 	private SelectionListener headerListener = new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
@@ -87,13 +89,19 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 			showAllPersp = s.getBoolean(ALLPERSP);
 			showHistory = s.getBoolean(HISTORY);
 			sortColumn = s.getInt(SORT);
-			String[] b = s.getArray(BOUNDS);
-			if(b != null) {
+			String[] array = s.getArray(BOUNDS);
+			if(array != null) {
 				bounds = new Rectangle(0,0,0,0);
-				bounds.x = new Integer(b[0]).intValue();
-				bounds.y = new Integer(b[1]).intValue();
-				bounds.width = new Integer(b[2]).intValue();
-				bounds.height = new Integer(b[3]).intValue();
+				bounds.x = new Integer(array[0]).intValue();
+				bounds.y = new Integer(array[1]).intValue();
+				bounds.width = new Integer(array[2]).intValue();
+				bounds.height = new Integer(array[3]).intValue();
+			}
+			array = s.getArray(COLUMNS);
+			if(array != null) {
+				columnsWidth = new int[array.length];
+				for (int i = 0; i < columnsWidth.length; i++)
+					columnsWidth[i] = new Integer(array[i]).intValue();
 			}
 		}
 	}
@@ -138,10 +146,16 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 			}
 			protected void layout(Composite composite, boolean flushCache){
 				TableColumn c[] = editorsTable.getColumns();
-				int w = editorsTable.getClientArea().width;
-				c[0].setWidth(w * 2 / 8);
-				c[1].setWidth(w * 3 / 8);
-				c[2].setWidth(w - c[0].getWidth() - c[1].getWidth());
+				if(columnsWidth == null) {
+					int w = editorsTable.getClientArea().width;
+					c[0].setWidth(w * 2 / 8);
+					c[1].setWidth(w * 3 / 8);
+					c[2].setWidth(w - c[0].getWidth() - c[1].getWidth());
+				} else {
+					c[0].setWidth(columnsWidth[0]);
+					c[1].setWidth(columnsWidth[1]);
+					c[2].setWidth(columnsWidth[2]);
+				}
 				editorsTable.setLayout(null);
 			}
 		});
@@ -383,12 +397,16 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 		s.put(HISTORY,showHistory);
 		s.put(SORT,sortColumn);
 		bounds = getShell().getBounds();
-		String b[] = new String[4];
-		b[0] = String.valueOf(bounds.x);
-		b[1] = String.valueOf(bounds.y);
-		b[2] = String.valueOf(bounds.width);
-		b[3] = String.valueOf(bounds.height);
-		s.put(BOUNDS,b);
+		String array[] = new String[4];
+		array[0] = String.valueOf(bounds.x);
+		array[1] = String.valueOf(bounds.y);
+		array[2] = String.valueOf(bounds.width);
+		array[3] = String.valueOf(bounds.height);
+		s.put(BOUNDS,array);
+		array = new String[editorsTable.getColumnCount()];
+		for (int i = 0; i < array.length; i++)
+			array[i] = String.valueOf(editorsTable.getColumn(i).getWidth());
+		s.put(COLUMNS,array);
 	}
 
 	/**
