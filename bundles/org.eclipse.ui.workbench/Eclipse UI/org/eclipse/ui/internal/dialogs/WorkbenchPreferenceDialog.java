@@ -13,27 +13,14 @@ package org.eclipse.ui.internal.dialogs;
 import java.io.File;
 import java.util.Iterator;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.preference.IPreferenceNode;
-import org.eclipse.jface.preference.IPreferencePage;
-import org.eclipse.jface.preference.PreferenceDialog;
-import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.preference.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
@@ -46,10 +33,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  */
 public class WorkbenchPreferenceDialog extends PreferenceDialog {
 	/**
-	 * The Load button.
-	 */
-	private Button loadButton;
-	/**
 	 * The Load button id.
 	 */
 	private final static int LOAD_ID = IDialogConstants.CLIENT_ID + 1;
@@ -57,11 +40,7 @@ public class WorkbenchPreferenceDialog extends PreferenceDialog {
 	 * The Load dialogs settings key
 	 */
 	private final static String LOAD_SETTING = "WorkbenchPreferenceDialog.load";	//$NON-NLS-1$
-	
-	/**
-	 * The Save button.
-	 */
-	private Button saveButton;
+
 	/**
 	 * The Save button id.
 	 */
@@ -115,8 +94,8 @@ public class WorkbenchPreferenceDialog extends PreferenceDialog {
 	protected void createButtonsForButtonBar(Composite parent) {
 		parent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		loadButton = createButton(parent, LOAD_ID, WorkbenchMessages.getString("WorkbenchPreferenceDialog.load"), false); //$NON-NLS-1$
-		saveButton = createButton(parent, SAVE_ID, WorkbenchMessages.getString("WorkbenchPreferenceDialog.save"), false); //$NON-NLS-1$
+		createButton(parent, LOAD_ID, WorkbenchMessages.getString("WorkbenchPreferenceDialog.load"), false); //$NON-NLS-1$
+		createButton(parent, SAVE_ID, WorkbenchMessages.getString("WorkbenchPreferenceDialog.save"), false); //$NON-NLS-1$
 		Label l = new Label(parent, SWT.NONE);
 		l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		GridLayout layout = (GridLayout)parent.getLayout();
