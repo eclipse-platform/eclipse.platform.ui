@@ -137,7 +137,6 @@ public class DetailsForm extends PropertyWebForm {
 	private Image providerImage;
 	//private Button uninstallButton;
 	private Button addButton;
-	private Button removeButton;
 	private Button doButton;
 	private IFeature currentFeature;
 	private IFeatureAdapter currentAdapter;
@@ -380,7 +379,6 @@ public class DetailsForm extends PropertyWebForm {
 		td = new TableData();
 		td.colspan = 2;
 		td.align = TableData.FILL;
-		//td.valign = TableData.FILL;
 		footer.setLayoutData(td);
 		footer.setLayout(glayout);
 
@@ -389,6 +387,7 @@ public class DetailsForm extends PropertyWebForm {
 				return infoLinkURL;
 			}
 		};
+		
 		infoLinkLabel = new SelectableFormLabel(footer, SWT.NULL);
 		infoLinkLabel.setText(UpdateUI.getResourceString(KEY_INFO_LINK));
 		factory.turnIntoHyperlink(infoLinkLabel, listener);
@@ -411,10 +410,10 @@ public class DetailsForm extends PropertyWebForm {
 			public void widgetSelected(SelectionEvent e) {
 				doButtonSelected();
 			}
-		});
+		});		
 		gd =
 			new GridData(
-				GridData.HORIZONTAL_ALIGN_END
+				GridData.HORIZONTAL_ALIGN_CENTER
 					| GridData.VERTICAL_ALIGN_BEGINNING);
 		gd.grabExcessHorizontalSpace = true;
 		doButton.setLayoutData(gd);
@@ -428,7 +427,7 @@ public class DetailsForm extends PropertyWebForm {
 		td = new TableData();
 		td.colspan = 2;
 		td.align = TableData.FILL;
-		td.grabHorizontal = true;
+		//td.grabHorizontal = true;
 		batch.setLayoutData(td);
 		groupUpdatesLabel =
 			createHeading(

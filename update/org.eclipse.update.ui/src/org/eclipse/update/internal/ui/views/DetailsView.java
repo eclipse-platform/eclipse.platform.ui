@@ -122,12 +122,12 @@ public class DetailsView extends MultiPageView {
 		if (useEmbedded) {
 			IWorkbenchPage page = UpdateUI.getActivePage();
 			try {
-				IViewPart part = page.findView(UpdatePerspective.ID_BROWSER);
-				if (part == null) {
-					part = page.showView(UpdatePerspective.ID_BROWSER);
+				//IViewPart part = page.findView(UpdatePerspective.ID_BROWSER);
+				//if (part == null) {
+					IViewPart part = page.showView(UpdatePerspective.ID_BROWSER);
 					focusGrabbed = true;
-				} else
-					page.bringToTop(part);
+				//} else
+					//page.bringToTop(part);
 				((IEmbeddedWebBrowser) part).openTo(url);
 			} catch (PartInitException e) {
 				UpdateUI.logException(e);
@@ -157,6 +157,7 @@ public class DetailsView extends MultiPageView {
 			tmpFiles.add(file.getAbsolutePath());
 			showURL("file:///" + file.getAbsolutePath());
 		} catch (IOException e) {
+			UpdateUI.logException(e);
 		}
 	}
 
@@ -232,6 +233,8 @@ public class DetailsView extends MultiPageView {
 	public void selectionChanged(IWorkbenchPart part, ISelection sel) {
 		if (part == this)
 			return;
+		if (part.getSite().getId().equals(UpdatePerspective.ID_BROWSER))
+			return;
 		Object el = null;
 		if (sel instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) sel;
@@ -293,7 +296,7 @@ public class DetailsView extends MultiPageView {
 			} else
 				// defect 14692
 				showPageWithInput(part, 
-					/*(homeAction != null) ? HOME_PAGE : */UNKNOWN_PAGE,
+					/*(homeAction != null) ? HOME_PAGE :*/ UNKNOWN_PAGE,
 					null);
 		}
 	}

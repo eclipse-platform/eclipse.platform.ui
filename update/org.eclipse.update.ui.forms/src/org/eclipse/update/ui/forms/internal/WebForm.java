@@ -46,6 +46,7 @@ public class WebForm extends AbstractSectionForm {
 				y = getHeadingHeight(parent);
 			}
 			Point csize;
+
 			Layout layout = client.getLayout();
 			if (layout != null && layout instanceof HTMLTableLayout) {
 				HTMLTableLayout hlayout = (HTMLTableLayout) layout;
@@ -72,6 +73,7 @@ public class WebForm extends AbstractSectionForm {
 			}
 			Point csize;
 			Layout layout = client.getLayout();
+
 			if (layout != null && layout instanceof HTMLTableLayout) {
 				HTMLTableLayout hlayout = (HTMLTableLayout) layout;
 				csize = hlayout.computeSize(client, width, SWT.DEFAULT, true);
