@@ -113,7 +113,10 @@ public class RectangleAnimation extends Job {
 	 * 
 	 * Note that this is a Job, so you must invoke schedule() before the animation will begin 
 	 * 
-	 * @param whereToDraw 
+	 * @param whereToDraw specifies the composite where the animation will be drawn. Note that
+	 * although the start and end rectangles can accept any value in display coordinates, the
+	 * actual animation will be clipped to the boundaries of this composite. For this reason,
+	 * it is good to select a composite that encloses both the start and end rectangles.
 	 * @param start initial rectangle (display coordinates)
 	 * @param end final rectangle (display coordinates)
 	 * @param duration number of milliseconds over which the animation will run 
