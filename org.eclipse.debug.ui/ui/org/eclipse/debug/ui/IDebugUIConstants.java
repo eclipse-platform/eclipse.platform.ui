@@ -559,7 +559,7 @@ public interface IDebugUIConstants {
 	
 	// launch configuration attribute keys
 	/**
-	 * Launch configuartion attribute - the perspective to
+	 * Launch configuration attribute - the perspective to
 	 * switch to when a launch configuration is launched in
 	 * run mode (value <code>org.eclipse.debug.ui.target_run_perspective</code>).
 	 * Value is a string corresponding to a perspective identifier,
@@ -570,7 +570,7 @@ public interface IDebugUIConstants {
 	public static final String ATTR_TARGET_RUN_PERSPECTIVE = PLUGIN_ID + ".target_run_perspective";	 //$NON-NLS-1$
 	
 	/**
-	 * Launch configuartion attribute - the perspective to
+	 * Launch configuration attribute - the perspective to
 	 * switch to when a launch configuration is launched in
 	 * debug mode (value <code>org.eclipse.debug.ui.target_debug_perspective</code>).
 	 * Value is a string corresponding to a perspective identifier,
