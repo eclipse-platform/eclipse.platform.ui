@@ -40,6 +40,7 @@ public class WorkInProgressPreferencePage extends FieldEditorPreferencePage impl
 	public void createFieldEditors() {		
 		addField(new BooleanFieldEditor(ICVSUIConstants.BACKGROUND_REPOVIEW, "Enable background fetching of resources in the CVS Repositories view", SWT.NONE, getFieldEditorParent()));	
 		addField(new BooleanFieldEditor(ICVSUIConstants.BACKGROUND_OPERATIONS, "Enable operations to be run in the background (e.g. checkout, update, commit)", SWT.NONE, getFieldEditorParent()));
+		addField(new BooleanFieldEditor(ICVSUIConstants.USE_NEW_SYNCVIEW, "Enable the CVS sync actions to open the new sync view", SWT.NONE, getFieldEditorParent()));
 	}
 	
 	/* (non-Javadoc)

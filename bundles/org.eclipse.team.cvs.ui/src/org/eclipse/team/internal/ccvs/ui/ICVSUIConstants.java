@@ -136,5 +136,6 @@ public interface ICVSUIConstants {
 	// work in progress preferences
 	public final String BACKGROUND_REPOVIEW = PREFIX + "background_repoview";
 	public final String BACKGROUND_OPERATIONS = PREFIX + "background_operations";
+	public final String USE_NEW_SYNCVIEW = PREFIX + "old_sync_view";
 }
 
