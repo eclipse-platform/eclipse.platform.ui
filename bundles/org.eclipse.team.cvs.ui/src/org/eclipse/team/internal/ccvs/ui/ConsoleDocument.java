@@ -10,15 +10,18 @@
  ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.text.AbstractDocument;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.GapTextStore;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.client.listeners.IConsoleListener;
+import org.eclipse.team.internal.ccvs.core.CVSStatus;
 
 public class ConsoleDocument extends AbstractDocument {
 	public static final int COMMAND = 0; // command text
@@ -64,7 +67,7 @@ public class ConsoleDocument extends AbstractDocument {
 	/**
 	 * Appends a line of the specified type to the end of the console.
 	 */
-	public void appendConsoleLine(int type, String line) {
+	public void appendConsoleLine(int type, String line, boolean purgeExcess) {
 		if (lineTypes == null) {
 			lineTypes = new int[16];
 		} else if (currentLine >= lineTypes.length) {
@@ -75,8 +78,49 @@ public class ConsoleDocument extends AbstractDocument {
 		lineTypes[currentLine++] = type;
 		try { 
 			replace(getLength(), 0, line + "\n"); //$NON-NLS-1$
+			if (purgeExcess && type == COMMAND) {
+				keepPreviousCommands(2);
+			}
 		} catch (BadLocationException e) {
 			CVSProviderPlugin.log(CVSException.wrapException(e));
 		}
+	}
+	
+	/**
+	 * Return the indicies of the lines that contain command strings
+	 */
+	private int[] getCommandLines() {
+		List commandLineList = new ArrayList();
+		for (int i = 0; i < currentLine; i++) {
+			if (lineTypes[i] == COMMAND) {
+				commandLineList.add(new Integer(i));
+			}			
+		}
+		int[] commandLines = new int[commandLineList.size()];
+		int i = 0;
+		for (Iterator iter = commandLineList.iterator(); iter.hasNext(); ) {
+			commandLines[i++] = ((Integer) iter.next()).intValue();
+		}
+		return commandLines;
+	}
+	
+	/**
+	 * Purge all but the output of the last N commands from the document
+	 */
+	private void keepPreviousCommands(int number) throws BadLocationException{
+		// Get the index of the line and character to keep
+		int[] commandLines = getCommandLines();
+		if (commandLines.length <= number) return;
+		int lineIndex = commandLines[commandLines.length - number];
+		int characterIndex = getLineOffset(lineIndex);
+		
+		// Keep everything from the character to the end
+		set(get(characterIndex, getLength() - characterIndex));
+		
+		// Adjust the line types
+		int[] oldLineTypes = lineTypes;
+		lineTypes = new int[oldLineTypes.length];
+		System.arraycopy(oldLineTypes, lineIndex, lineTypes, 0, oldLineTypes.length - lineIndex);
+		currentLine -= lineIndex;
 	}
 }

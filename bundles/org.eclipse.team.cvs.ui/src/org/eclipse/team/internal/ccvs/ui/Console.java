@@ -115,7 +115,7 @@ public class Console extends ViewPart {
 			propertyChangeListener = null;
 		}
 		instances.remove(this);
-		if (instances.isEmpty()) document.clear();
+		//if (instances.isEmpty()) document.clear();
 		
 		// dispose of allocated colors and fonts
 		super.dispose();
@@ -350,8 +350,8 @@ public class Console extends ViewPart {
 				if (getPreferenceStore().getBoolean(ICVSUIConstants.PREF_CONSOLE_AUTO_OPEN)) {
 					findInActivePerspective();
 				}
-				if (instances.isEmpty() || document == null) return;
-				document.appendConsoleLine(type, line);
+				if (document == null) return;
+				document.appendConsoleLine(type, line, instances.isEmpty());
 			}
 		});
 	}
