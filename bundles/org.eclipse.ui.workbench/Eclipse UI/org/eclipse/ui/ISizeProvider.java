@@ -63,7 +63,7 @@ public interface ISizeProvider {
      *     to degrade to exponential worst-case runtime.</li>
      * </ul>
      * 
-     * @param horizontal a value of true or false determines whether the return value applies when computing
+     * @param width a value of true or false determines whether the return value applies when computing
      * widths or heights respectively. That is, getSizeFlags(true) will be used when calling 
      * computePreferredSize(true,...)
      * @return any bitwise combination of SWT.MAX, SWT.MIN, SWT.WRAP, and SWT.FILL

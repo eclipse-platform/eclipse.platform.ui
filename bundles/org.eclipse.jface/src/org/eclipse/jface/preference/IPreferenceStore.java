@@ -113,7 +113,12 @@ public interface IPreferenceStore {
      * @param listener a property change listener
      * @see org.eclipse.jface.util.PropertyChangeEvent
      * @see #setToDefault(String)
-     * @see #setValue(String, <type>)
+     * @see #setValue(String, boolean)
+     * @see #setValue(String, double)
+     * @see #setValue(String, float)
+     * @see #setValue(String, int)
+     * @see #setValue(String, long)
+     * @see #setValue(String, String)
      * @see org.osgi.service.prefs.Preferences
      */
     public void addPropertyChangeListener(IPropertyChangeListener listener);

@@ -344,11 +344,8 @@ public final class ImageCache {
 		/**
 		 * Constructs a new instance of <code>ReferenceCleanerThread</code>.
 		 * 
-		 * @param referenceQueue
-		 *            The reference queue to check for garbage.
-		 * @param map
-		 *            Map of equivalence sets to ImageMapEntry (Image[3],
-		 *            EquivalenceSet).
+		 * @param imageCache
+		 *            The given image cache
 		 */
 		private ReferenceCleanerThread(final ImageCache imageCache) {
 			super("Reference Cleaner: " + ++threads); //$NON-NLS-1$
@@ -631,8 +628,8 @@ public final class ImageCache {
 	 * 
 	 * @param imageDescriptor
 	 *            The image descriptor.
-	 * @param temporaryKey
-	 *            The temporary key.
+	 * @param equivalenceKey
+	 *            The equivalence key.
 	 * @param typeOfImage
 	 *            The type of image requested.
 	 * @return the requested image, or the missing image if an error occurs in
@@ -723,7 +720,7 @@ public final class ImageCache {
 	 * created. This clean up makes no guarantees about how long or when it will
 	 * take place.
 	 * 
-	 * @param descriptor
+	 * @param imageDescriptor
 	 *            The image descriptor with which a regular image should be
 	 *            created; may be <code>null</code>.
 	 * @return The regular image, either newly created or from the cache. This
@@ -744,7 +741,7 @@ public final class ImageCache {
 	 * created. This clean up makes no guarantees about how long or when it will
 	 * take place.
 	 * 
-	 * @param descriptor
+	 * @param imageDescriptor
 	 *            The image descriptor with which the requested image should be
 	 *            created; may be <code>null</code>.
 	 * @param typeOfImage

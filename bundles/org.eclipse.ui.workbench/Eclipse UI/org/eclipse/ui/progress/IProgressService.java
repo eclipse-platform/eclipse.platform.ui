@@ -69,7 +69,7 @@ public interface IProgressService extends IRunnableContext {
      * be a modal progress dialog open when this operation runs.
      * </p>
      * @see org.eclipse.jface.dialogs.Dialog
-     * @see SWT#APPLICATION_MODAL
+     * @see org.eclipse.swt.SWT#APPLICATION_MODAL
      * 
      * @param context The runnable context to run the operation in
      * @param runnable The operation to run

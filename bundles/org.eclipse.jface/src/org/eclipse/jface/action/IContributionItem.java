@@ -127,8 +127,8 @@ public interface IContributionItem {
      *  <code>false</code> for normal items
      *
      * @see GroupMarker
-     * @see IContributionManager#appendToGroup
-     * @see IContributionManager#prependToGroup
+     * @see IContributionManager#appendToGroup(String, IContributionItem)
+     * @see IContributionManager#prependToGroup(String, IContributionItem)
      */
     public boolean isGroupMarker();
 

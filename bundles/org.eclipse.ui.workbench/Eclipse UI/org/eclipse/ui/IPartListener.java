@@ -16,7 +16,7 @@ package org.eclipse.ui;
  * This interface may be implemented by clients.
  * </p>
  *
- * @see IPartService#addPartListener
+ * @see IPartService#addPartListener(IPartListener)
  */
 public interface IPartListener {
 
@@ -47,7 +47,7 @@ public interface IPartListener {
      * Notifies this listener that the given part has been closed.
      *
      * @param part the part that was closed
-     * @see IWorkbenchPage#hideView
+     * @see IWorkbenchPage#hideView(IViewPart)
      */
     public void partClosed(IWorkbenchPart part);
 
@@ -55,7 +55,7 @@ public interface IPartListener {
      * Notifies this listener that the given part has been deactivated.
      *
      * @param part the part that was deactivated
-     * @see IWorkbenchPage#activate
+     * @see IWorkbenchPage#activate(IWorkbenchPart)
      */
     public void partDeactivated(IWorkbenchPart part);
 
@@ -63,7 +63,7 @@ public interface IPartListener {
      * Notifies this listener that the given part has been opened.
      *
      * @param part the part that was opened
-     * @see IWorkbenchPage#showView
+     * @see IWorkbenchPage#showView(String)
      */
     public void partOpened(IWorkbenchPart part);
 }
