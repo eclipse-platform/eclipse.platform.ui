@@ -14,6 +14,7 @@ import java.io.File;
 
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
@@ -125,6 +126,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
         createWorkspaceBrowseRow(composite);
         if (!suppressAskAgain)
             createShowDialogButton(composite);
+        Dialog.applyDialogFont(composite);
         return composite;
     }
 
