@@ -14,9 +14,14 @@ package org.eclipse.debug.internal.ui;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.launchConfigurations.PersistableLaunchConfigurationFactory;
 import org.eclipse.debug.internal.ui.launchConfigurations.PersistableLaunchConfigurationTypeFactory;
+import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainerWorkbenchAdapter;
+import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointPersistableElementAdapter;
+import org.eclipse.debug.internal.ui.views.breakpoints.OrganizedBreakpointContainer;
 import org.eclipse.ui.IPersistableElement;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 public class DebugUIAdapterFactory implements IAdapterFactory {
 
@@ -33,8 +38,19 @@ public class DebugUIAdapterFactory implements IAdapterFactory {
 				return new PersistableLaunchConfigurationFactory((ILaunchConfiguration)obj);
 			} else if (obj instanceof ILaunchConfigurationType) {
 				return new PersistableLaunchConfigurationTypeFactory((ILaunchConfigurationType)obj);
-			}
+			} else if (obj instanceof IBreakpoint) {
+			    return new BreakpointPersistableElementAdapter((IBreakpoint)obj);
+            }
 		}
+        
+        if (adapterType == IWorkbenchAdapter.class) {
+        	if (obj instanceof IWorkbenchAdapter) {
+        		return obj;
+        	}
+            if (obj instanceof OrganizedBreakpointContainer) {
+                return new BreakpointContainerWorkbenchAdapter();
+            }
+        }
 		
 		return null;
 	}

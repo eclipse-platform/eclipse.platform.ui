@@ -10,18 +10,21 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.breakpointGroups;
 
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
+import org.eclipse.debug.internal.ui.views.breakpoints.WorkingSetBreakpointOrganizer;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 
 /**
  * An action which prompts the user to asign a breakpoint to a group.
@@ -38,24 +41,28 @@ public class AddBreakpointToGroupAction extends AbstractBreakpointsViewAction {
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		IPreferenceStore preferenceStore = DebugUIPlugin.getDefault().getPreferenceStore();
-		String initialValue= preferenceStore.getString(IDebugPreferenceConstants.LAST_BREAKPOINT_GROUP);
-		if (initialValue == null || initialValue.length() < 1) {
-		    initialValue= DebugPlugin.getDefault().getBreakpointManager().getAutoGroup();
-		}
-		SelectBreakpointGroupDialog dialog = new SelectBreakpointGroupDialog(fView, BreakpointGroupMessages.getString("AddBreakpointToGroupAction.0"), BreakpointGroupMessages.getString("AddBreakpointToGroupAction.1"), initialValue, null); //$NON-NLS-1$ //$NON-NLS-2$
-		int dialogResult = dialog.open();
-		if (dialogResult == Window.OK) {
-			String value= dialog.getValue();
-			preferenceStore.putValue(IDebugPreferenceConstants.LAST_BREAKPOINT_GROUP, value);
-			try {
-				for (int i = 0; i < fBreakpoints.length; i++) {
-					((IBreakpoint) fBreakpoints[i]).setGroup(value);
-				}
-			} catch (CoreException e) {
-				DebugUIPlugin.errorDialog(dialog.getShell(), BreakpointGroupMessages.getString("AddBreakpointToGroupAction.3"), BreakpointGroupMessages.getString("AddBreakpointToGroupAction.4"), e); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-		}
+        IWorkingSet workingSet = WorkingSetBreakpointOrganizer.getDefaultWorkingSet();
+        IWorkingSetSelectionDialog selectionDialog = PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSetSelectionDialog(DebugUIPlugin.getShell(), false);
+        if (workingSet != null) {
+            selectionDialog.setSelection(new IWorkingSet[]{workingSet});
+        }
+        if (selectionDialog.open() == Window.OK) {
+            IWorkingSet[] sets = selectionDialog.getSelection();
+            if (sets.length == 1) {
+                IWorkingSet set = sets[0];
+                if ("org.eclipse.debug.ui.breakpointWorkingSet".equals(set.getId())) { //$NON-NLS-1$
+                    IAdaptable[] elements = set.getElements();
+                    Set newElements = new HashSet(elements.length + fBreakpoints.length);
+                    for (int i = 0; i < elements.length; i++) {
+                        newElements.add(elements[i]);
+                    }
+                    for (int i = 0; i < fBreakpoints.length; i++) {
+                        newElements.add(fBreakpoints[i]);
+                    }
+                    set.setElements((IAdaptable[]) newElements.toArray(new IAdaptable[newElements.size()]));
+                }
+            }
+        }	    
 	}
 
 	/* (non-Javadoc)

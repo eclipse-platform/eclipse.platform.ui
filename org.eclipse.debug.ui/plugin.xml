@@ -42,7 +42,7 @@
    <extension-point id="contextViewBindings" name="%ContextViewBindingsName" schema="schema/contextViewBindings.exsd"/>
    <extension-point id="memoryRenderingTypes" name="%renderingExtensionPointName" schema="schema/memoryRenderingTypes.exsd"/>
    <extension-point id="memoryRenderings" name="%memoryRenderingsExtensionPointName" schema="schema/memoryRenderings.exsd"/>
-   <extension-point id="breakpointContainerFactories" name="%BreakpointContainerFactoriesName" schema="schema/breakpointContainerFactories.exsd"/>
+   <extension-point id="breakpointOrganizers" name="%BreakpointOrganizersName" schema="schema/breakpointOrganizers.exsd"/>
    <extension-point id="variableValueEditors" name="%VariableValueEditorsName" schema="schema/variableValueEditors.exsd"/>
 
 <!-- Extensions -->
@@ -730,15 +730,6 @@
                tooltip="%ExpandAll.tooltip">
          </action>
          <action
-               id="org.eclipse.debug.ui.breakpointsView.toolbar.setDefaultBreakpointGroup"
-               menubarPath="defaultBreakpointGroup"
-               class="org.eclipse.debug.internal.ui.actions.breakpointGroups.SetDefaultBreakpointGroupAction"
-               icon="icons/full/obj16/brkp_grp.gif"
-               helpContextId="set_default_breakpoint_group_action_context"
-               label="%setDefaultGroup.label"
-               tooltip="%setDefaultGroup.tooltip">
-         </action>
-         <action
                id="org.eclipse.debug.ui.breakpointsView.toolbar.clearDefaultBreakpointGroup"
                menubarPath="defaultBreakpointGroup"
                class="org.eclipse.debug.internal.ui.actions.breakpointGroups.ClearDefaultBreakpointGroupAction"
@@ -746,6 +737,15 @@
                label="%clearDefaultGroup.label"
                tooltip="%clearDefaultGroup.tooltip">
          </action>
+         <action
+               id="org.eclipse.debug.ui.breakpointsView.toolbar.setDefaultBreakpointGroup"
+               menubarPath="defaultBreakpointGroup"
+               class="org.eclipse.debug.internal.ui.actions.breakpointGroups.SetDefaultBreakpointGroupAction"
+               icon="icons/full/obj16/brkp_grp.gif"
+               helpContextId="set_default_breakpoint_group_action_context"
+               label="%setDefaultGroup.label"
+               tooltip="%setDefaultGroup.tooltip">
+         </action>         
          <action
                id="org.eclipse.debug.ui.breakpointsView.toolbar.groupByAction"
                menubarPath="defaultBreakpointGroup"
@@ -1157,7 +1157,7 @@
                id="org.eclipse.debug.ui.actions.RemoveAllBreakpoints">
          </action>
         <action
-               label="%GroupBreakpointsByAction.label"
+               label="%GroupBy.label"
                style="pulldown"
                class="org.eclipse.debug.internal.ui.actions.breakpointGroups.GroupBreakpointsByAction"
                menubarPath="breakpointGroupGroup"
@@ -1210,15 +1210,6 @@
                enablesFor="1+"
                id="org.eclipse.debug.ui.actions.AddBreakpointToGroup">
          </action>
-         <action
-               label="%removeFromGroup.label"
-               icon="icons/full/elcl16/dissolve_group.gif"
-               helpContextId="remove_breakpoint_from_group_action_context"
-               class="org.eclipse.debug.internal.ui.actions.breakpointGroups.RemoveBreakpointFromGroupAction"
-               menubarPath="breakpointGroupGroup"
-               enablesFor="1+"
-               id="org.eclipse.debug.ui.actions.RemoveBreakpointFromGroup">
-         </action>
       </viewerContribution>
       <!-- Breakpoint group actions -->
       <viewerContribution
@@ -1226,25 +1217,15 @@
             id="org.eclipse.debug.ui.breakpointview.breakpointGroupActions">
          <visibility>
             <objectClass
-               name="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointGroupContainer">
+               name="org.eclipse.debug.internal.ui.views.breakpoints.OrganizedBreakpointContainer">
             </objectClass>
          </visibility>
          <action
-               label="%renameGroup.label"
-               helpContextId="rename_breakpoint_group_action_context"
-               class="org.eclipse.debug.internal.ui.actions.breakpointGroups.RenameBreakpointGroupAction"
+               label="%editGroup.label"
+               class="org.eclipse.debug.internal.ui.actions.breakpointGroups.EditBreakpointGroupAction"
                menubarPath="breakpointGroupGroup"
-               enablesFor="1+"
-               id="org.eclipse.debug.ui.actions.RenameBreakpointGroup">
-         </action>
-         <action
-               label="%dissolveGroup.label"
-               icon="icons/full/elcl16/dissolve_group.gif"
-               helpContextId="dissolve_breakpoint_group_action_context"
-               class="org.eclipse.debug.internal.ui.actions.breakpointGroups.DissolveBreakpointGroupAction"
-               menubarPath="breakpointGroupGroup"
-               enablesFor="1+"
-               id="org.eclipse.debug.ui.actions.DissolveBreakpointGroup">
+               enablesFor="1"
+               id="org.eclipse.debug.ui.actions.editBreakpointGroup">
          </action>
       </viewerContribution>
 <!-- Contributions to Variables View Popup Menu -->
@@ -2362,28 +2343,55 @@ M4 = Platform-specific fourth key
 		<initializer class="org.eclipse.debug.internal.ui.DebugUIPreferenceInitializer"/>
 	</extension>
     <extension
-          point="org.eclipse.debug.ui.breakpointContainerFactories">
-          <breakpointContainerFactory
-          	class="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointProjectContainerFactoryDelegate"
-          	id="org.eclipse.debug.ui.breakpointProjectContainerFactory"
+          point="org.eclipse.debug.ui.breakpointOrganizers">
+          <breakpointOrganizer
+          	class="org.eclipse.debug.internal.ui.views.breakpoints.ProjectBreakpointOrganizer"
+          	id="org.eclipse.debug.ui.breakpointProjectOrganizer"
           	label="%Project.label"
           	icon="icons/full/obj16/prj_obj.gif"/>
-          <breakpointContainerFactory
-          	class="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointFileContainerFactoryDelegate"
-          	id="org.eclipse.debug.ui.breakpointFileContainerFactory"
+          <breakpointOrganizer
+          	class="org.eclipse.debug.internal.ui.views.breakpoints.FileBreakpointOrganizer"
+          	id="org.eclipse.debug.ui.breakpointFileOrganizer"
           	label="%File.label"
           	icon="icons/full/obj16/file_obj.gif"/>
-          <breakpointContainerFactory
-          	class="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointTypeContainerFactoryDelegate"
-          	id="org.eclipse.debug.ui.breakpointTypeContainerFactory"
+		  <breakpointOrganizer
+          	class="org.eclipse.debug.internal.ui.views.breakpoints.WorkingSetBreakpointOrganizer"
+          	id="org.eclipse.debug.ui.breakpointWorkingSetOrganizer"
+          	label="%WorkingSet.label"/>          	
+          <breakpointOrganizer
+          	class="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointTypeOrganizer"
+          	id="org.eclipse.debug.ui.breakpointTypeOrganizer"
           	label="%BreakpointType.label"
           	icon="icons/full/obj16/brkp_type.gif"/>
-          <breakpointContainerFactory
-          	class="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointGroupContainerFactoryDelegate"
-          	id="org.eclipse.debug.ui.breakpointGroupContainerFactory"
-          	label="%CustomGroups.label"
-          	icon="icons/full/obj16/brkp_grp.gif"/>
+    </extension>    
+	<extension point="org.eclipse.core.runtime.adapters">
+         <factory 
+            class="org.eclipse.debug.internal.ui.DebugUIAdapterFactory"
+            adaptableType="org.eclipse.debug.internal.ui.views.breakpoints.OrganizedBreakpointContainer">
+            <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
+         </factory>
+         <factory 
+            class="org.eclipse.debug.internal.ui.DebugUIAdapterFactory"
+            adaptableType="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointTypeCategory">
+            <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
+         </factory>
+         <factory
+               class="org.eclipse.debug.internal.ui.DebugUIAdapterFactory"
+               adaptableType="org.eclipse.debug.core.model.IBreakpoint">
+            <adapter type="org.eclipse.ui.IPersistableElement"/>
+         </factory>
+         <factory
+               class="org.eclipse.debug.internal.ui.DebugUIAdapterFactory"
+               adaptableType="org.eclipse.debug.internal.ui.views.breakpoints.WorkingSetCategory">
+            <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
+         </factory>         
     </extension>
+ <extension
+       point="org.eclipse.ui.elementFactories">
+    <factory
+          class="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointFactory"
+          id="org.eclipse.debug.ui.elementFactory.breakpoints"/>
+ </extension>    
     <extension
           point="org.eclipse.ui.popupMenus">
        <viewerContribution
@@ -2404,6 +2412,14 @@ M4 = Platform-specific fourth key
                 menubarPath="additions"
                 id="org.eclipse.debug.ui.consoleTerminateAction"/>
        </viewerContribution>
+    </extension>
+    <extension
+          point="org.eclipse.ui.workingSets">
+       <workingSet
+             icon="icons/full/obj16/brkp_grp.gif"
+             name="%BreakpointWorkingSet.name"
+             pageClass="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointWorkingSetPage"
+             id="org.eclipse.debug.ui.breakpointWorkingSet"/>
     </extension>
     
     <!-- Console action contributions -->

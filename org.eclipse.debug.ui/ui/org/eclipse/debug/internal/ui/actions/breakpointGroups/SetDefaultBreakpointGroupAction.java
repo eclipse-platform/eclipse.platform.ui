@@ -10,11 +10,14 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.breakpointGroups;
 
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IBreakpointManager;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.views.breakpoints.WorkingSetBreakpointOrganizer;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.window.Window;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 
 /**
  * Action which prompts the user to set a default breakpoint group.
@@ -26,17 +29,17 @@ public class SetDefaultBreakpointGroupAction extends AbstractBreakpointsViewActi
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
     public void run(IAction action) {
-        IBreakpointManager manager = DebugPlugin.getDefault().getBreakpointManager();
-        String currentGroup= manager.getAutoGroup();
-        if (currentGroup == null) {
-            currentGroup= ""; //$NON-NLS-1$
+        IWorkingSet workingSet = WorkingSetBreakpointOrganizer.getDefaultWorkingSet();
+        IWorkingSetSelectionDialog selectionDialog = PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSetSelectionDialog(DebugUIPlugin.getShell(), false);
+        if (workingSet != null) {
+            selectionDialog.setSelection(new IWorkingSet[]{workingSet});
         }
-        SelectBreakpointGroupDialog dialog= new SelectBreakpointGroupDialog(fView, BreakpointGroupMessages.getString("SetDefaultBreakpointGroupAction.1"), BreakpointGroupMessages.getString("SetDefaultBreakpointGroupAction.2"), currentGroup, null); //$NON-NLS-1$ //$NON-NLS-2$
-        if (dialog.open() != Window.OK) {
-            return;
+        if (selectionDialog.open() == Window.OK) {
+            IWorkingSet[] sets = selectionDialog.getSelection();
+            if (sets.length == 1) {
+                WorkingSetBreakpointOrganizer.setDefaultWorkingSet(sets[0]);
+            }
         }
-        String group= dialog.getValue();
-        manager.setAutoGroup(group);
     }
 
     /* (non-Javadoc)

@@ -18,7 +18,7 @@ import java.util.List;
 import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainerFactoryManager;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
-import org.eclipse.debug.ui.IBreakpointContainerFactory;
+import org.eclipse.debug.ui.IBreakpointOrganizer;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -58,11 +58,11 @@ public class GroupBreakpointsByDialog extends Dialog {
 	
 	// Table viewer that presents available containers
 	private TableViewer fAvailableViewer;
-	private AvailableContainersProvider fAvailableContainersProvider= new AvailableContainersProvider();
+	private AvailableOrganizersProvider fAvailableOrganizersProvider= new AvailableOrganizersProvider();
 	
 	// Tree viewer that presents selected containers
 	private TreeViewer fSelectedViewer;
-	private SelectedContainerProvider fSelectedContainersProvider= new SelectedContainerProvider();
+	private SelectedOrganizerProvider fSelectedOrganizersProvider= new SelectedOrganizerProvider();
 	
 	private List fResult= new ArrayList();
 
@@ -100,7 +100,7 @@ public class GroupBreakpointsByDialog extends Dialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
-		ILabelProvider labelProvider= new BreakpointContainerFactoryLabelProvider();
+		ILabelProvider labelProvider= new BreakpointOrganzierLabelProvider();
 		
 		Composite parentComposite= (Composite) super.createDialogArea(parent);
 		parentComposite.setFont(parent.getFont());
@@ -134,15 +134,14 @@ public class GroupBreakpointsByDialog extends Dialog {
 	 * appropriate viewers ("available" or "selected").
 	 */
 	private void initializeContent() {
-		IBreakpointContainerFactory[] factories = BreakpointContainerFactoryManager.getDefault().getFactories();
-		for (int i = 0; i < factories.length; i++) {
-			fAvailableContainersProvider.addAvailable(factories[i]);
+		IBreakpointOrganizer[] organizers= BreakpointContainerFactoryManager.getDefault().getOrganizers();
+		for (int i = 0; i < organizers.length; i++) {
+			fAvailableOrganizersProvider.addAvailable(organizers[i]);
 		}
-		List activeFactories = fView.getBreakpointContainerFactories();
-		Iterator iter = activeFactories.iterator();
-		while (iter.hasNext()) {
-			fSelectedContainersProvider.addSelected((IBreakpointContainerFactory) iter.next());
-		}
+		organizers = fView.getBreakpointOrganizers();
+		for (int i = 0; i < organizers.length; i++) {
+            fSelectedOrganizersProvider.addSelected(organizers[i]);
+        }
 	}
 
 	/**
@@ -166,7 +165,7 @@ public class GroupBreakpointsByDialog extends Dialog {
         label.setLayoutData(gridData);
 		
 		fAvailableViewer= new TableViewer(availableComposite);
-		fAvailableViewer.setContentProvider(fAvailableContainersProvider);
+		fAvailableViewer.setContentProvider(fAvailableOrganizersProvider);
 		fAvailableViewer.setLabelProvider(labelProvider);
 		fAvailableViewer.setInput(new Object());
 		Table table = fAvailableViewer.getTable();
@@ -207,7 +206,7 @@ public class GroupBreakpointsByDialog extends Dialog {
         label.setLayoutData(gridData);
 		
 		fSelectedViewer= new TreeViewer(selectedComposite);
-		fSelectedViewer.setContentProvider(fSelectedContainersProvider);
+		fSelectedViewer.setContentProvider(fSelectedOrganizersProvider);
 		fSelectedViewer.setLabelProvider(labelProvider);
 		fSelectedViewer.setInput(new Object());
 		Tree tree = fSelectedViewer.getTree();
@@ -246,24 +245,24 @@ public class GroupBreakpointsByDialog extends Dialog {
 	}
 
 	/**
-	 * Returns the container factories chosen by the user. The order
-	 * of the list is the order that the containers should be displayed
+	 * Returns the organizers chosen by the user. The order
+	 * of the list is the order that the organizers should be displayed
 	 * in the breakpoints view.
-	 * @return the breakpoint container factories chosen by the user
+	 * @return the breakpoint organizers chosen by the user
 	 */
-	public List getSelectedContainers() {
-		return fResult;
+	public IBreakpointOrganizer[] getOrganizers() {
+		return (IBreakpointOrganizer[]) fResult.toArray(new IBreakpointOrganizer[fResult.size()]);
 	}
 	
 	/**
 	 * When the user presses OK, convert the tree selection into a list.
 	 */
 	protected void okPressed() {
-		Object[] factories= fSelectedContainersProvider.getElements(null);
+		Object[] factories= fSelectedOrganizersProvider.getElements(null);
 		while (factories.length > 0) {
 			Object factory= factories[0];
 			fResult.add(factory);
-			factories= fSelectedContainersProvider.getChildren(factory);
+			factories= fSelectedOrganizersProvider.getChildren(factory);
 		}
 		super.okPressed();
 	}
@@ -279,7 +278,7 @@ public class GroupBreakpointsByDialog extends Dialog {
 		}
 		Iterator iter= selection.iterator();
 		while (iter.hasNext()) {
-			fSelectedContainersProvider.addSelected((IBreakpointContainerFactory) iter.next());
+			fSelectedOrganizersProvider.addSelected((IBreakpointOrganizer) iter.next());
 		}
 		updateViewers();
 	}
@@ -295,7 +294,7 @@ public class GroupBreakpointsByDialog extends Dialog {
 		}
 		Iterator iter= selection.iterator();
 		while (iter.hasNext()) {
-			fAvailableContainersProvider.addAvailable((IBreakpointContainerFactory) iter.next());
+			fAvailableOrganizersProvider.addAvailable((IBreakpointOrganizer) iter.next());
 		}
 		updateViewers();
 	}
@@ -307,7 +306,7 @@ public class GroupBreakpointsByDialog extends Dialog {
 		IStructuredSelection selection = (IStructuredSelection) fSelectedViewer.getSelection();
 		Iterator iter = selection.iterator();
 		while (iter.hasNext()) {
-			fSelectedContainersProvider.moveUp(iter.next());
+			fSelectedOrganizersProvider.moveUp(iter.next());
 		}
 		updateViewers();
 	}
@@ -319,7 +318,7 @@ public class GroupBreakpointsByDialog extends Dialog {
 		IStructuredSelection selection = (IStructuredSelection) fSelectedViewer.getSelection();
 		Object[] elements= selection.toArray();
 		for (int i= elements.length - 1; i >= 0; i--) {
-			fSelectedContainersProvider.moveDown(elements[i]);
+			fSelectedOrganizersProvider.moveDown(elements[i]);
 		}
 		updateViewers();
 	}
@@ -361,8 +360,8 @@ public class GroupBreakpointsByDialog extends Dialog {
 			enabled= false;
 		} else {
 			Object firstSelected= selection.getFirstElement();
-			Object parent= fSelectedContainersProvider.getParent(firstSelected);
-			if (!(parent instanceof IBreakpointContainerFactory)) {
+			Object parent= fSelectedOrganizersProvider.getParent(firstSelected);
+			if (!(parent instanceof IBreakpointOrganizer)) {
 				enabled= false;
 			}
 		}
@@ -376,7 +375,7 @@ public class GroupBreakpointsByDialog extends Dialog {
 			enabled= false;
 		} else {
 			Object lastSelected= selection.toList().get(selection.size() - 1);
-			Object[] children= fSelectedContainersProvider.getChildren(lastSelected);
+			Object[] children= fSelectedOrganizersProvider.getChildren(lastSelected);
 			if (children.length < 1) {
 				enabled= false;
 			}
@@ -385,19 +384,19 @@ public class GroupBreakpointsByDialog extends Dialog {
 	}
 	
 	/**
-	 * Content provider that provides the list of breakpoint container
-	 * factories that are available but not currently selected.
+	 * Content provider that provides the list of breakpoint organaisers
+     * that are available but not currently selected.
 	 */
-	private class AvailableContainersProvider implements IStructuredContentProvider {
-		protected List availableFactories= new ArrayList();
+	private class AvailableOrganizersProvider implements IStructuredContentProvider {
+		protected List availableOrganziers= new ArrayList();
 		
-		public void addAvailable(IBreakpointContainerFactory factory) {
-			availableFactories.add(factory);
-			fSelectedContainersProvider.selectedFactories.remove(factory);
+		public void addAvailable(IBreakpointOrganizer organizer) {
+            availableOrganziers.add(organizer);
+			fSelectedOrganizersProvider.selectedOrganizers.remove(organizer);
 		}
 		
 		public Object[] getElements(Object inputElement) {
-			return availableFactories.toArray();
+			return availableOrganziers.toArray();
 		}
 		
 		public void dispose() {
@@ -407,62 +406,62 @@ public class GroupBreakpointsByDialog extends Dialog {
 	}
 	
 	/**
-	 * Content provider that returns the selected breakpoint container factories
-	 * as a tree. This tree shows the list of container factories as they will
+	 * Content provider that returns the selected breakpoint organizers
+	 * as a tree. This tree shows the list of organzizers as they will
 	 * appear in the breakpoints view.
 	 */
-	private class SelectedContainerProvider implements ITreeContentProvider {
-		protected List selectedFactories= new ArrayList();
+	private class SelectedOrganizerProvider implements ITreeContentProvider {
+		protected List selectedOrganizers= new ArrayList();
 		
-		public void addSelected(IBreakpointContainerFactory factory) {
-			selectedFactories.add(factory);
-			fAvailableContainersProvider.availableFactories.remove(factory);
+		public void addSelected(IBreakpointOrganizer organizer) {
+            selectedOrganizers.add(organizer);
+			fAvailableOrganizersProvider.availableOrganziers.remove(organizer);
 		}
 		
 		public void moveUp(Object object) {
-			int index = selectedFactories.indexOf(object);
+			int index = selectedOrganizers.indexOf(object);
 			if (index > 0) {
-				selectedFactories.remove(object);
-				selectedFactories.add(index - 1, object);
+                selectedOrganizers.remove(object);
+                selectedOrganizers.add(index - 1, object);
 			}
 		}
 		
 		public void moveDown(Object object) {
-			int index = selectedFactories.indexOf(object);
-			if (index < selectedFactories.size() - 1) {
-				selectedFactories.remove(object);
-				selectedFactories.add(index + 1, object);
+			int index = selectedOrganizers.indexOf(object);
+			if (index < selectedOrganizers.size() - 1) {
+                selectedOrganizers.remove(object);
+                selectedOrganizers.add(index + 1, object);
 			}
 		}
 
 		public Object[] getChildren(Object parentElement) {
 			// A factory's "child" is the next factory in the list
-			int index = selectedFactories.indexOf(parentElement);
-			if (index < selectedFactories.size() - 1) {
-				return new Object[] { selectedFactories.get(index + 1) };
+			int index = selectedOrganizers.indexOf(parentElement);
+			if (index < selectedOrganizers.size() - 1) {
+				return new Object[] { selectedOrganizers.get(index + 1) };
 			}
 			return new Object[0];
 		}
 
 		public Object getParent(Object element) {
 			// A factory's "parent" is the factory before it
-			int index = selectedFactories.indexOf(element);
-			if (index <= 0 || selectedFactories.size() <= 1) {
+			int index = selectedOrganizers.indexOf(element);
+			if (index <= 0 || selectedOrganizers.size() <= 1) {
 				return null;
 			}
-			return selectedFactories.get(index - 1);
+			return selectedOrganizers.get(index - 1);
 		}
 
 		public boolean hasChildren(Object element) {
 			// A factory has "children" if there are more
 			// factories after it.
-			int index = selectedFactories.indexOf(element);
-			return index != -1 && index < selectedFactories.size() - 1;
+			int index = selectedOrganizers.indexOf(element);
+			return index != -1 && index < selectedOrganizers.size() - 1;
 		}
 
 		public Object[] getElements(Object inputElement) {
-			if (selectedFactories.size() > 0) {
-				return new Object[] { selectedFactories.get(0) };
+			if (selectedOrganizers.size() > 0) {
+				return new Object[] { selectedOrganizers.get(0) };
 			}
 			return new Object[0];
 		}
@@ -475,18 +474,18 @@ public class GroupBreakpointsByDialog extends Dialog {
 	/**
 	 * Label provider which provides text and images for breakpoint container factories
 	 */
-	private class BreakpointContainerFactoryLabelProvider extends ViewLabelProvider {
+	private class BreakpointOrganzierLabelProvider extends ViewLabelProvider {
 		private HashMap fImageCache= new HashMap();
 		
 		public String getText(Object element) {
-			if (element instanceof IBreakpointContainerFactory) {
-				return ((IBreakpointContainerFactory) element).getLabel();
+			if (element instanceof IBreakpointOrganizer) {
+				return ((IBreakpointOrganizer) element).getLabel();
 			}
 			return super.getText(element);
 		}
 		public Image getImage(Object element) {
-			if (element instanceof IBreakpointContainerFactory) {
-				ImageDescriptor imageDescriptor = ((IBreakpointContainerFactory) element).getImageDescriptor();
+			if (element instanceof IBreakpointOrganizer) {
+				ImageDescriptor imageDescriptor = ((IBreakpointOrganizer) element).getImageDescriptor();
 				if (imageDescriptor != null) {
 					Image image = (Image) fImageCache.get(imageDescriptor);
 					if (image == null) {

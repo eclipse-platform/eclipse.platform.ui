@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.ui.IBreakpointContainer;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -50,15 +49,9 @@ public class BreakpointsSorter extends ViewerSorter {
 		 *  element is greater than the second element
 		 */
 		public int compare(Viewer viewer, Object e1, Object e2) {
-			// Show sorted containers, then sorted breakpoints.
-			if (e1 instanceof IBreakpointContainer) {
-				if (e2 instanceof IBreakpointContainer) {
-					return ((IBreakpointContainer) e1).getName().compareTo(((IBreakpointContainer) e2).getName());
-				}
-				return -1;
-			} else if (e2 instanceof IBreakpointContainer) {
-				return 1;
-			}
+            if (!(e1 instanceof IBreakpoint)) {
+                return super.compare(viewer, e1, e2);
+            }
 	
 			IBreakpoint b1= (IBreakpoint)e1;
 			IBreakpoint b2= (IBreakpoint)e2;

@@ -10,10 +10,9 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.breakpointGroups;
 
-import java.util.List;
-
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.window.Window;
 
 /**
@@ -26,6 +25,7 @@ public class AdvancedGroupBreakpointsByAction extends Action {
 	private BreakpointsView fView;
 	
 	public AdvancedGroupBreakpointsByAction(BreakpointsView view) {
+        super("", IAction.AS_RADIO_BUTTON); //$NON-NLS-1$
 		fView= view;
 	}
 	
@@ -33,11 +33,12 @@ public class AdvancedGroupBreakpointsByAction extends Action {
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
-	    GroupBreakpointsByDialog dialog = new GroupBreakpointsByDialog(fView);
-		if (dialog.open() == Window.OK) {
-			List selectedContainers = dialog.getSelectedContainers();
-			fView.setBreakpointContainerFactories(selectedContainers);
-		}
+        if (isChecked()) {
+    	    GroupBreakpointsByDialog dialog = new GroupBreakpointsByDialog(fView);
+    		if (dialog.open() == Window.OK) {
+    			fView.setBreakpointOrganizers(dialog.getOrganizers());
+    		}
+        }
 	}
 
 }

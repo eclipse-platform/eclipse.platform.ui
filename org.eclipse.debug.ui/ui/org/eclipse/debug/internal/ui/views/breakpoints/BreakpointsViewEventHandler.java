@@ -12,17 +12,13 @@
 package org.eclipse.debug.internal.ui.views.breakpoints;
 
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointsListener;
 import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.PlatformUI;
@@ -70,12 +66,15 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
 				public void run() {
 					if (fView.isAvailable()) {
 						CheckboxTreeViewer viewer = fView.getCheckboxViewer();
-						viewer.refresh();
+                        viewer.getControl().setRedraw(false);
+                        ((OrganizedBreakpointsContentProvider)viewer.getContentProvider()).reorganize();
+                        fView.initializeCheckedState();
 						// This code is left in as a test case for platform bug 77075
 						//for (int i = 0; i < breakpoints.length; i++) { 
 							//viewer.expandToLevel(breakpoints[i], AbstractTreeViewer.ALL_LEVELS);
 						//}
 						viewer.setSelection(new StructuredSelection(breakpoints));
+                        viewer.getControl().setRedraw(true);
 						fView.updateObjects();
 					}
 				}
@@ -92,7 +91,10 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
 				public void run() {
 					if (fView.isAvailable()) {
 						CheckboxTreeViewer viewer= (CheckboxTreeViewer)fView.getViewer();
-						viewer.refresh();
+                        viewer.getControl().setRedraw(false);
+                        ((OrganizedBreakpointsContentProvider)viewer.getContentProvider()).reorganize();
+                        fView.initializeCheckedState();
+                        viewer.getControl().setRedraw(true);
 						fView.updateObjects();
 					}
 				}
@@ -109,72 +111,29 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
 				public void run() {
 					if (fView.isAvailable()) {
 						CheckboxTreeViewer viewer = (CheckboxTreeViewer)fView.getViewer();
-						List groupChanged= getGroupChangeBreakpoints(breakpoints, deltas);
-						if (groupChanged.size() > 0) {
-							// If the groups has changed, completely refresh the view to
-							// pick up structural changes.
-							fView.getViewer().refresh();
-							fView.updateObjects();
-							// Fire a selection change to update contributed actions
-							viewer.setSelection(viewer.getSelection());
-							return;
-						}
-						
+                        viewer.getControl().setRedraw(false);
+                        OrganizedBreakpointsContentProvider provider = (OrganizedBreakpointsContentProvider) viewer.getContentProvider();
+                        Set updates = new HashSet();
 						for (int i = 0; i < breakpoints.length; i++) {
 							IBreakpoint breakpoint = breakpoints[i];
-							IMarker marker= breakpoint.getMarker();
-							if (marker != null && marker.exists()) {
-								try {
-									boolean enabled= breakpoint.isEnabled();
-									if (viewer.getChecked(breakpoint) != enabled) {
-										viewer.setChecked(breakpoint, breakpoint.isEnabled());
-										fView.updateParents(breakpoint, enabled);
-									}
-									viewer.update(breakpoint, null);
-								} catch (CoreException e) {
-									DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), DebugUIViewsMessages.getString("BreakpointsViewEventHandler.1"), DebugUIViewsMessages.getString("BreakpointsViewEventHandler.2"), e); //$NON-NLS-1$ //$NON-NLS-2$
-									DebugUIPlugin.log(e);
-								}
-							}
+                            viewer.update(breakpoint, null);
+                            OrganizedBreakpointContainer[] containers = provider.getContainers(breakpoint);
+                            if (containers != null) {
+                                for (int j = 0; j < containers.length; j++ ) {
+                                    updates.add(containers[j]);
+                                }
+                            }
 						}
+                        Object[] objects = updates.toArray();
+                        for (int i = 0; i < objects.length; i++) {
+                            fView.updateCheckedState(objects[i]);
+                        }
+                        viewer.getControl().setRedraw(true);
 						fView.updateObjects();
 					}
 				}
 			});
 		}
-	}
-	
-	/**
-	 * Returns a list of breakpoints (from the given list) that have changed groups.
-	 * @param breakpoints
-	 * @param deltas
-	 * @return
-	 */
-	private List getGroupChangeBreakpoints(IBreakpoint[] breakpoints, IMarkerDelta[] deltas) {
-		List groupChanged= new ArrayList();
-	    for (int i = 0; i < breakpoints.length; i++) {
-			IBreakpoint breakpoint = breakpoints[i];
-			IMarker marker= breakpoint.getMarker();
-			if (marker != null && marker.exists()) {
-				IMarkerDelta delta= deltas[i];
-				if (delta != null) {
-					String oldGroup= (String) delta.getAttribute(IBreakpoint.GROUP);
-					String newGroup= null;
-					try {
-						newGroup= breakpoint.getGroup();
-					} catch (CoreException e1) {
-					}
-					if (newGroup != oldGroup) { // new == old if they're both null
-						if (newGroup == null || oldGroup == null || !newGroup.equals(oldGroup)) {
-							// one is null, one isn't => changed
-						    // both not null && !one.equals(other) => changed
-							groupChanged.add(breakpoint);
-						}
-					}
-				}
-			}
-		}
-	    return groupChanged;
 	}
 
 	/**

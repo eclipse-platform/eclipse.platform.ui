@@ -15,11 +15,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainerFactoryManager;
-import org.eclipse.debug.ui.IBreakpointContainerFactory;
+import org.eclipse.debug.ui.IBreakpointOrganizer;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
-import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
@@ -67,51 +66,58 @@ public class GroupBreakpointsByAction extends AbstractBreakpointsViewAction impl
 	 * Fill pull down menu with the "group by" options
 	 */
 	private void fillMenu(Menu menu) {
-		// Add actions for each contributed factory
-	    Iterator actionIter = getActions().iterator();
+        int accel = 1;
+        // Add hard-coded action for flat breakpoints list
+        IAction action = new GroupBreakpointsAction(null, fView);
+        addAccel(accel, action, BreakpointGroupMessages.getString("GroupBreakpointsByAction.0")); //$NON-NLS-1$
+        accel++;
+        ActionContributionItem item= new ActionContributionItem(action);
+        item.fill(menu, -1);
+
+		// Add actions for each contributed orgranizer
+	    List actions = getActions(accel);
+        accel = accel + actions.size();
+        Iterator actionIter = actions.iterator();
 	    while (actionIter.hasNext()) {
-			ActionContributionItem item= new ActionContributionItem((IAction) actionIter.next());
+			item= new ActionContributionItem((IAction) actionIter.next());
 			item.fill(menu, -1);
 	    }
-	    
-	    Separator separator = new Separator();
-	    separator.fill(menu, -1);
-        
-	    // Add hard-coded actions
-        IAction action = new GroupBreakpointsAction(null, fView);
-        action.setText(BreakpointGroupMessages.getString("GroupBreakpointsByAction.0")); //$NON-NLS-1$
-		ActionContributionItem item= new ActionContributionItem(action);
-		item.fill(menu, -1);
-        
+	                    
+        // advanced action
         AdvancedGroupBreakpointsByAction advancedAction = new AdvancedGroupBreakpointsByAction(fView);
-        advancedAction.setText(BreakpointGroupMessages.getString("GroupBreakpointsByAction.1")); //$NON-NLS-1$
+        addAccel(accel, advancedAction,BreakpointGroupMessages.getString("GroupBreakpointsByAction.1")); //$NON-NLS-1$
 		item= new ActionContributionItem(advancedAction);
 		item.fill(menu, -1);
 	}
     
-    public List getActions() {
+    public List getActions(int accel) {
         List actions= new ArrayList();
-        IBreakpointContainerFactory[] factories = BreakpointContainerFactoryManager.getDefault().getFactories();
-        for (int i = 0; i < factories.length; i++) {
-        	IBreakpointContainerFactory factory= factories[i];
-            IAction action = new GroupBreakpointsAction(factory, fView);
-            StringBuffer actionLabel= new StringBuffer();
-    		if (i != 9) {
-                if (i < 9) {
-                    // add the numerical accelerators 1 through 9
-                    actionLabel.append('&');
-                }
-                actionLabel.append(i + 1);
-    		} else {
-                actionLabel.append("1&0"); //$NON-NLS-1$
-            }
-            actionLabel.append(' ');
-			actionLabel.append(factory.getLabel());
-			action.setText(actionLabel.toString());
-			action.setImageDescriptor(factory.getImageDescriptor());
+        IBreakpointOrganizer[] organizers = BreakpointContainerFactoryManager.getDefault().getOrganizers();
+        for (int i = 0; i < organizers.length; i++) {
+        	IBreakpointOrganizer organizer = organizers[i];
+            IAction action = new GroupBreakpointsAction(organizer, fView);
+            addAccel(accel, action, organizer.getLabel());
+            accel++;
             actions.add(action);
         }        
         return actions;
+    }
+    
+    private void addAccel(int accel, IAction action, String label) {
+        StringBuffer actionLabel= new StringBuffer();
+        if (accel != 10) {
+            if (accel < 10) {
+                // add the numerical accelerators 1 through 9
+                actionLabel.append('&');
+            }
+            actionLabel.append(accel);
+        } else {
+            actionLabel.append("1&0"); //$NON-NLS-1$
+        }
+        accel++;
+        actionLabel.append(' ');
+        actionLabel.append(label);
+        action.setText(actionLabel.toString());        
     }
     
     /* (non-Javadoc)

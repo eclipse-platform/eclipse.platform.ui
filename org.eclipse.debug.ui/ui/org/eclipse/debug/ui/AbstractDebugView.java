@@ -635,7 +635,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * 
 	 * @param viewer viewer
 	 */
-	private void setViewer(Viewer viewer) {
+	protected void setViewer(Viewer viewer) {
 		fViewer = viewer;
 	}
 	

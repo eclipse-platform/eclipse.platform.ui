@@ -10,12 +10,10 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.breakpointGroups;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
-import org.eclipse.debug.ui.IBreakpointContainerFactory;
+import org.eclipse.debug.ui.IBreakpointOrganizer;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 
 /**
  * An action which sets the breakpoint factory on a breakpoint view,
@@ -24,7 +22,7 @@ import org.eclipse.jface.action.Action;
  */
 public class GroupBreakpointsAction extends Action {
     
-    private IBreakpointContainerFactory fFactory;
+    private IBreakpointOrganizer fOrganzier;
     private BreakpointsView fView;
 
     /**
@@ -34,8 +32,9 @@ public class GroupBreakpointsAction extends Action {
      *  when this action is run
      * @param view the breakpoints view
      */
-    public GroupBreakpointsAction(IBreakpointContainerFactory factory, BreakpointsView view) {
-        fFactory= factory;
+    public GroupBreakpointsAction(IBreakpointOrganizer organizer, BreakpointsView view) {
+        super("", IAction.AS_RADIO_BUTTON); //$NON-NLS-1$
+        fOrganzier= organizer;
         fView= view;
     }
 
@@ -43,10 +42,10 @@ public class GroupBreakpointsAction extends Action {
      * @see org.eclipse.jface.action.IAction#run()
      */
     public void run() {
-        List list= new ArrayList();
-        if (fFactory != null) {
-            list.add(fFactory);
+        if (fOrganzier == null) {
+            fView.setBreakpointOrganizers(null);
+        } else {
+            fView.setBreakpointOrganizers(new IBreakpointOrganizer[]{fOrganzier});
         }
-        fView.setBreakpointContainerFactories(list);
     }
 }

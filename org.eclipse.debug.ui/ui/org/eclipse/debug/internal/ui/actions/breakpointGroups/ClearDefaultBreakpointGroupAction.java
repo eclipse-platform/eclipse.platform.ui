@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.breakpointGroups;
 
-import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.internal.ui.views.breakpoints.WorkingSetBreakpointOrganizer;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 
@@ -24,7 +24,7 @@ public class ClearDefaultBreakpointGroupAction extends AbstractBreakpointsViewAc
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
     public void run(IAction action) {
-        DebugPlugin.getDefault().getBreakpointManager().setAutoGroup(null);
+        WorkingSetBreakpointOrganizer.setDefaultWorkingSet(null);
     }
 
     /* (non-Javadoc)

@@ -988,4 +988,12 @@ public interface IDebugUIConstants {
      * @since 3.1
      */
     public static final String EXTENSION_POINT_MEMORY_RENDERIGNS = "memoryRenderings"; //$NON-NLS-1$
+    
+    /**
+     * Breakpoint organizers extension point identifier (value
+     * <code>"breakpointOrganizers"</code>
+     * 
+     * @since 3.1
+     */
+    public static final String EXTENSION_POINT_BREAKPOINT_ORGANIZERS = "breakpointOrganizers"; //$NON-NLS-1$    
 }
