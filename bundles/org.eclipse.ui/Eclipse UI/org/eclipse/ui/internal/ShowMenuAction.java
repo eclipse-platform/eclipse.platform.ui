@@ -19,8 +19,7 @@ public class ShowMenuAction extends PartEventAction {
  * @param text
  */
 public ShowMenuAction(WorkbenchWindow window) {
-	super("");
-	setText(WorkbenchMessages.getString("ShowMenuAction.text"));
+	super(WorkbenchMessages.getString("ShowMenuAction.text"));
 	setToolTipText(WorkbenchMessages.getString("ShowMenuAction.toolTip"));
 	window.getPartService().addPartListener(this);
 }
@@ -28,7 +27,7 @@ public ShowMenuAction(WorkbenchWindow window) {
  * See Action
  */
 public void run() {
-	WorkbenchPart part = (WorkbenchPart)getActivePart();
+	IWorkbenchPart part = getActivePart();
 	if(part != null)
 		((PartSite)part.getSite()).getPane().showPaneMenu();
 }
@@ -64,8 +63,7 @@ public void partDeactivated(IWorkbenchPart part) {
  * Updates the enabled state.
  */
 private void updateState() {
-	WorkbenchPart part = (WorkbenchPart)getActivePart();
-	setEnabled(part != null);
+	setEnabled(getActivePart() != null);
 }
 }
 
