@@ -73,7 +73,7 @@ protected void keyReleaseOccured(KeyEvent e) {
 		if (dirty) commit();
 	}
 	else if (e.character == '\u001b') { // Escape character
-		text.setText(value); // restore old
+		text.setText(value!=null?value:""); // restore old
 		dirty= false;
 	}
 }
@@ -84,7 +84,7 @@ public void setDirty(boolean newDirty) {
 	dirty = newDirty;
 }
 public void setValue(String value) {
-	if (text!=null) text.setText(value);
+	if (text!=null) text.setText(value!=null?value:"");
 	this.value = value;
 }
 
