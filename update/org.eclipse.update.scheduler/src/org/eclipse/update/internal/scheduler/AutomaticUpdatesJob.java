@@ -100,7 +100,7 @@ public class AutomaticUpdatesJob extends Job {
 					for (int i=0; i<updates.size(); i++) {
 						IInstallFeatureOperation op = (IInstallFeatureOperation)updates.get(i);
 						IFeature feature = op.getFeature();
-						UpdateUtils.downloadFeatureContent(feature, null, monitor);
+						UpdateUtils.downloadFeatureContent(op.getTargetSite(), feature, null, monitor);
 					}
 					if (UpdateCore.DEBUG) {
 						UpdateCore.debug("Automatic download of updates finished."); //$NON-NLS-1$

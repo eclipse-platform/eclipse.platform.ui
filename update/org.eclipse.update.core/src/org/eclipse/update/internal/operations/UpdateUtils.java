@@ -542,6 +542,7 @@ public class UpdateUtils {
 	}
 
 	public static void downloadFeatureContent(
+        IConfiguredSite targetSite,
 		IFeature feature,
 		IFeatureReference[] optionalChildren, // null when feature has no optional features
 		IProgressMonitor progress)
@@ -564,10 +565,11 @@ public class UpdateUtils {
 		// on the target site, and plugin entries packaged in source feature
 		IPluginEntry[] sourceFeaturePluginEntries = feature.getPluginEntries();
 
-		IConfiguredSite targetSite =
-			getSiteWithFeature(
-				SiteManager.getLocalSite().getCurrentConfiguration(),
-				((Feature)feature).getFeatureIdentifier());
+        boolean featureAlreadyInstalled = false;
+        if (targetSite == null)
+            targetSite = getSiteWithFeature(SiteManager.getLocalSite()
+                    .getCurrentConfiguration(), ((Feature) feature)
+                    .getFeatureIdentifier());
 		if (targetSite == null) {
 			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_INSTALL) {
 				UpdateCore.debug("The site to install in is null"); //$NON-NLS-1$
@@ -576,6 +578,7 @@ public class UpdateUtils {
 			targetSitePluginEntries = new IPluginEntry[0];
 		} else {
 			targetSitePluginEntries = targetSite.getSite().getPluginEntries();
+            featureAlreadyInstalled = UpdateUtils.getLocalFeature(targetSite,feature) != null;
 		}
 		IPluginEntry[] pluginsToInstall =
 			UpdateManagerUtils.diff(
@@ -626,11 +629,17 @@ public class UpdateUtils {
 			}
 
 			// Download non-plugin archives. Verification handled by optional install handler
-			for (int i = 0; i < nonPluginsToInstall.length; i++) {
-				provider.getNonPluginEntryArchiveReferences(nonPluginsToInstall[i], monitor);
-				monitorWork(monitor,1);
-			}
-
+            // Note: do not download non-plugin archives for installed features
+            if (nonPluginsToInstall.length > 0)
+                if (!featureAlreadyInstalled)
+                    for (int i = 0; i < nonPluginsToInstall.length; i++) {
+                        provider.getNonPluginEntryArchiveReferences(
+                                nonPluginsToInstall[i], monitor);
+                        monitorWork(monitor, 1);
+                    }
+                else
+                    monitorWork(monitor, nonPluginsToInstall.length);
+           
 			// Download child features
 			for (int i = 0; i < children.length; i++) {
 				IFeature childFeature = null;
@@ -641,7 +650,7 @@ public class UpdateUtils {
 				}
 				if (childFeature != null) {
 					SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 3);
-					downloadFeatureContent(childFeature, optionalChildren, subMonitor);
+					downloadFeatureContent(targetSite, childFeature, optionalChildren, subMonitor);
 				}
 			}
 		} finally {

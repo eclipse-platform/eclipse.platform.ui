@@ -447,7 +447,7 @@ public class InstallWizard
 				IInstallFeatureOperation op = (IInstallFeatureOperation)ops[i];
 				SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 3);
 				try {
-					UpdateUtils.downloadFeatureContent(op.getFeature(), op.getOptionalFeatures(), subMonitor);
+					UpdateUtils.downloadFeatureContent(op.getTargetSite(), op.getFeature(), op.getOptionalFeatures(), subMonitor);
 				} catch (final CoreException e) {
 					if(e instanceof FeatureDownloadException){
 						boolean retry = retryDownload((FeatureDownloadException)e);
