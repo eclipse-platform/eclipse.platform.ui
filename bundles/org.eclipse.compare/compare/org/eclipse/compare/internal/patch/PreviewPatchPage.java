@@ -190,15 +190,14 @@ import org.eclipse.compare.structuremergeviewer.*;
 					Object data= e.item.getData();
 					if (e.detail == SWT.CHECK) {
 						boolean checked= ti.getChecked();
+						String s= ti.getText();
 						if (data instanceof Hunk) {
 							Hunk hunk= (Hunk) data;
 							checked= checked && hunk.fMatches;
-							hunk.setEnabled(checked);
+							//hunk.setEnabled(checked);
 							ti.setChecked(checked);
 							updateGrayedState(ti);
 						} else if (data instanceof Diff) {
-							Diff diff= (Diff) data;
-							diff.setEnabled(checked && diff.fMatches);
 							updateCheckedState(ti);
 						}
 					} else {
@@ -438,9 +437,7 @@ import org.eclipse.compare.structuremergeviewer.*;
 					error= PatchMessages.getString("PreviewPatchPage.FileDoesNotExist.error"); //$NON-NLS-1$
 				}
 			}			
-			
-			boolean checked= false;
-				
+							
 			ArrayList failedHunks= new ArrayList();
 			fPatchWizard.getPatcher().apply(diff, file, create, failedHunks);
 
@@ -455,12 +452,12 @@ import org.eclipse.compare.structuremergeviewer.*;
 				String hunkError= null;
 				if (failed)
 					hunkError= PatchMessages.getString("PreviewPatchPage.NoMatch.error"); //$NON-NLS-1$
-				hunk.setEnabled(diff.isEnabled() && !failed);
-				hunkItems[h].setChecked(hunk.isEnabled());
-				if (hunk.isEnabled()) {
+
+				boolean check= !failed;
+				hunkItems[h].setChecked(check);
+				if (check)
 					checkedSubs++;
-					checked= true;
-				}
+
 				String hunkLabel= hunk.getDescription();
 				if (hunkError != null)
 					hunkLabel+= "   " + hunkError; //$NON-NLS-1$
@@ -473,22 +470,37 @@ import org.eclipse.compare.structuremergeviewer.*;
 				label+= "    " + error; //$NON-NLS-1$
 			item.setText(label);
 			item.setImage(getImage(diff));
-			item.setChecked(checked);
+			item.setChecked(checkedSubs > 0);
 			boolean gray= (checkedSubs > 0 &&  checkedSubs < hunkItems.length);
 			item.setGrayed(gray);
 			item.setExpanded(gray);
 		}
+		setPageComplete(updateModel());
 	}
 	
 	/**
 	 * Updates the gray state of the given diff and the checked state of its children.
 	 */
-	private void updateCheckedState(TreeItem diff) {
-		boolean checked= diff.getChecked();
-		diff.setGrayed(false);
-		TreeItem[] hunks= diff.getItems();
-		for (int i= 0; i < hunks.length; i++)
-			hunks[i].setChecked(checked);
+	private void updateCheckedState(TreeItem diffItem) {
+		boolean checked= diffItem.getChecked();
+		// check whether we can enable all hunks
+		TreeItem[] hunks= diffItem.getItems();
+		int checkedCount= 0;
+		for (int i= 0; i < hunks.length; i++) {
+			Hunk hunk= (Hunk) hunks[i].getData();
+			if (checked) {
+				if (hunk.fMatches) {
+					hunks[i].setChecked(true);
+					checkedCount++;
+				}
+			} else {
+				hunks[i].setChecked(false);
+			}
+		}
+		diffItem.setGrayed(checkedCount > 0 && checkedCount < hunks.length);
+		diffItem.setChecked(checkedCount > 0);
+		
+		setPageComplete(updateModel());
 	}
 	
 	/**
@@ -503,6 +515,8 @@ import org.eclipse.compare.structuremergeviewer.*;
 				checked++;
 		diff.setChecked(checked > 0);
 		diff.setGrayed(checked > 0 && checked < hunks.length);
+		
+		setPageComplete(updateModel());
 	}
 	
 	private void addSpacer(Composite parent) {
@@ -534,5 +548,37 @@ import org.eclipse.compare.structuremergeviewer.*;
 			}
 		}
 		return fuzzFactor;
+	}
+	
+	public boolean updateModel() {
+		boolean atLeastOneIsEnabled= false;
+		if (fTree != null && !fTree.isDisposed()) {
+			TreeItem [] diffItems= fTree.getItems();
+			for (int i= 0; i < diffItems.length; i++) {
+				TreeItem diffItem= diffItems[i];
+				Object data= diffItem.getData();
+				if (data instanceof Diff) {
+					Diff diff= (Diff) data;
+					boolean b= diffItem.getChecked();
+					diff.setEnabled(b);
+					if (b) {
+						TreeItem [] hunkItems= diffItem.getItems();
+						for (int j= 0; j < hunkItems.length; j++) {
+							TreeItem hunkItem= hunkItems[j];
+							data= hunkItem.getData();
+							if (data instanceof Hunk) {
+								Hunk hunk= (Hunk) data;
+								b= hunkItem.getChecked();
+								hunk.setEnabled(b);
+								if (b) {
+									atLeastOneIsEnabled= true;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return atLeastOneIsEnabled;
 	}
 }

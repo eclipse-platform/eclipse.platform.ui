@@ -148,9 +148,11 @@ import org.eclipse.compare.internal.Utilities;
 			
 			Diff[] diffs= patcher.getDiffs();
 			if (diffs == null || diffs.length == 0) {
+				String source= getUseClipboard() ? "Clipboard"	//$NON-NLS-1$
+												   : "File";	//$NON-NLS-1$
 				MessageDialog.openError(null,
 					PatchMessages.getString("InputPatchPage.PatchErrorDialog.title"),	//$NON-NLS-1$
-					PatchMessages.getString("InputPatchPage.NoDiffsFound.message"));  //$NON-NLS-1$
+					PatchMessages.getString("InputPatchPage.NoDiffsFound_"+source+".message")); //$NON-NLS-1$ //$NON-NLS-2$
 				return this;
 			}
 			
@@ -162,6 +164,7 @@ import org.eclipse.compare.internal.Utilities;
 	}
 		
 	private int guessPrefix(Diff[] diffs) {
+		/*
 		ArrayList list= new ArrayList();
 		IResource target= fPatchWizard.getTarget();
 		if (target instanceof IFile) {
@@ -180,6 +183,7 @@ import org.eclipse.compare.internal.Utilities;
 				}
 			}
 		}
+		*/
 		return 0;
 	}
 	
