@@ -10,7 +10,6 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IStep;
-import org.eclipse.jface.action.IAction;
 
 public abstract class StepActionDelegate extends AbstractListenerActionDelegate {
 	
@@ -45,15 +44,4 @@ public abstract class StepActionDelegate extends AbstractListenerActionDelegate 
 	 * @exception DebugException if the action fails
 	 */
 	protected abstract void stepAction(IStep element) throws DebugException;
-	
-	/**
-	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.
-	 * IAction)
-	 */
-  		
- 	public void init(IAction action) {
- 		action.setActionDefinitionId(getActionDefinitionId());
-	}
-	
-	protected abstract String getActionDefinitionId();
 }
