@@ -175,8 +175,10 @@ public class TemplateReaderWriter {
 			Throwable t= e.getCause();
 			if (t instanceof IOException)
 				throw (IOException) t;
-			else
+			else if (t != null)
 				throw new IOException(t.getMessage());
+			else
+				throw new IOException();
 		}
 		
 		return null; // dummy
