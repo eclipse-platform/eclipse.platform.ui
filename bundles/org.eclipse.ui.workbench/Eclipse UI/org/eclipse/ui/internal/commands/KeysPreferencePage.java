@@ -1307,6 +1307,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	public boolean performOk() {
 		// Save the preferences.
 		try {
+			// TODO This is not working for the active scheme.
 			bindingService.savePreferences(
 					localChangeManager.getActiveScheme(), localChangeManager
 							.getBindings());
