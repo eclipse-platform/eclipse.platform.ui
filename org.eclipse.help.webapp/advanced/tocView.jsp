@@ -66,8 +66,12 @@ function onloadHandler()
 	var topic = '<%=data.getSelectedTopic()%>';
 	if (topic != "about:blank")
 	{
-		if (topic.indexOf(window.location.protocol) != 0)
+		if (topic.indexOf(window.location.protocol) != 0 && topic.length > 3)
+		{
+			// remove the ../
+			topic = topic.substring(3);
 			topic = window.location.protocol + "//" +window.location.host +"<%=request.getContextPath()%>" + "/"+ topic;
+		}
 		selectTopic(topic);
 	}
 	else
