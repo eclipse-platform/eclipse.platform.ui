@@ -35,13 +35,9 @@ public interface IRegistryChangeListener extends EventListener {
 	 * Note: This method is called by the platform; it is not intended
 	 * to be called directly by clients.
 	 * </p>
-	 * <p>
-	 * Note that during registry change event notification, further changes
-	 * to the registry are disallowed.
-	 * </p>
 	 * 
 	 * @param event the registry change event
-	 * @see IExtensionDelta
+	 * @see IRegistryChangeEvent
 	*/
 	public void registryChanged(IRegistryChangeEvent event);
 }
