@@ -22,6 +22,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IActionBars;
@@ -175,5 +176,15 @@ public class ProblemView extends MarkerView {
 		IMenuManager menu = actionBars.getMenuManager();
 		menu.add(new Separator());
 		menu.add(new ActionShowOnBuild());
+	}
+	
+	public IStructuredSelection getSelection() {
+		// TODO: added because nick doesn't like public API inherited from internal classes
+		return super.getSelection();
+	}
+
+	public void setSelection(IStructuredSelection structuredSelection, boolean reveal) {
+		// TODO: added because nick doesn't like public API inherited from internal classes
+		super.setSelection(structuredSelection, reveal);
 	}
 }

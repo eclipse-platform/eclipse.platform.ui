@@ -23,6 +23,7 @@ import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ICellModifier;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.widgets.Composite;
@@ -209,5 +210,15 @@ public class BookmarkView extends MarkerView {
 	
 	protected IField[] getVisibleFields() {
 		return VISIBLE_FIELDS;
+	}
+
+	public IStructuredSelection getSelection() {
+		// TODO: added because nick doesn't like public API inherited from internal classes
+		return super.getSelection();
+	}
+
+	public void setSelection(IStructuredSelection structuredSelection, boolean reveal) {
+		// TODO: added because nick doesn't like public API inherited from internal classes
+		super.setSelection(structuredSelection, reveal);
 	}
 }

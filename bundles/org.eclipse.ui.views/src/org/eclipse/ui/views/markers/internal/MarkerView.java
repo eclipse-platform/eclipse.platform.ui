@@ -537,18 +537,11 @@ public abstract class MarkerView extends TableView {
 		}
 	}
 
-	// TODO: I'd like this API to formally return IStructuredSelection
-	public ISelection getSelection() {
+	public IStructuredSelection getSelection() {
 		return (IStructuredSelection) viewer.getSelection();
 	}
 
-	// TODO: I'd like this API to formally accept IStructuredSelection
-	public void setSelection(ISelection selection, boolean reveal) {
-		if (!(selection instanceof IStructuredSelection))
-			return;
-			
-		IStructuredSelection structuredSelection = (IStructuredSelection) selection;
-		
+	public void setSelection(IStructuredSelection structuredSelection, boolean reveal) {
 		for (Iterator i = structuredSelection.iterator(); i.hasNext();)
 			if (!(i.next() instanceof IMarker))
 				return;

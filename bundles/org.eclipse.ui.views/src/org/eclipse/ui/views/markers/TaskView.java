@@ -29,6 +29,7 @@ import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
@@ -297,5 +298,15 @@ public class TaskView extends MarkerView {
 	protected void initToolBar(IToolBarManager toolBarManager) {
 		toolBarManager.add(addGlobalTaskAction);
 		super.initToolBar(toolBarManager);
+	}
+	
+	public IStructuredSelection getSelection() {
+		// TODO: added because nick doesn't like public API inherited from internal classes
+		return super.getSelection();
+	}
+
+	public void setSelection(IStructuredSelection structuredSelection, boolean reveal) {
+		// TODO: added because nick doesn't like public API inherited from internal classes
+		super.setSelection(structuredSelection, reveal);
 	}
 }
