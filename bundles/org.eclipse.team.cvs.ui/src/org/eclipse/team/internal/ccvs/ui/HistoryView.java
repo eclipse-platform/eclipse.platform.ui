@@ -109,7 +109,6 @@ public class HistoryView extends ViewPart {
 	private IFile file;
 	// cached for efficiency
 	private ILogEntry[] entries;
-	private CVSTeamProvider provider;
 	
 	private HistoryTableProvider historyTableProvider;
 	
@@ -142,6 +141,8 @@ public class HistoryView extends ViewPart {
 	private FetchLogEntriesJob fetchLogEntriesJob;
 	private JobBusyCursor jobBusyCursor;
 	
+	private boolean shutdown = false;
+	
 	public static final String VIEW_ID = "org.eclipse.team.ccvs.ui.HistoryView"; //$NON-NLS-1$
 	
 	private IPartListener partListener = new IPartListener() {
@@ -170,9 +171,9 @@ public class HistoryView extends ViewPart {
 		}
 		public IStatus run(IProgressMonitor monitor) {
 			try {
-				if(remoteFile != null) {
+				if(remoteFile != null && !shutdown) {
 					entries = remoteFile.getLogEntries(monitor);
-					final String revisionId = remoteFile.getRevision();					
+					final String revisionId = remoteFile.getRevision();
 					getSite().getShell().getDisplay().asyncExec(new Runnable() {
 						public void run() {
 							if(tableViewer != null && ! tableViewer.getTable().isDisposed()) {
@@ -546,6 +547,7 @@ public class HistoryView extends ViewPart {
 		return result;
 	}
 	public void dispose() {
+		shutdown = true;
 		if (branchImage != null) {
 			branchImage.dispose();
 			branchImage = null;
@@ -554,6 +556,18 @@ public class HistoryView extends ViewPart {
 			versionImage.dispose();
 			versionImage = null;
 		}
+		
+		if(fetchLogEntriesJob != null) {
+			if(fetchLogEntriesJob.getState() != Job.NONE) {
+				fetchLogEntriesJob.cancel();
+				try {
+					fetchLogEntriesJob.join();
+				} catch (InterruptedException e) {
+					CVSUIPlugin.log(new CVSException(Policy.bind("HistoryView.errorFetchingEntries", ""), e)); //$NON-NLS-1$
+				}
+			}
+		}
+		
 		getSite().getPage().removePartListener(partListener);
 		jobBusyCursor.dispose();
 	}	
@@ -631,25 +645,26 @@ public class HistoryView extends ViewPart {
 			this.file = file;
 			RepositoryProvider teamProvider = RepositoryProvider.getProvider(file.getProject(), CVSProviderPlugin.getTypeId());
 			if (teamProvider != null) {
-				this.provider = (CVSTeamProvider)teamProvider;
 				try {
 					// for a file this will return the base
 					ICVSRemoteFile remoteFile = (ICVSRemoteFile)CVSWorkspaceRoot.getRemoteResourceFor(file);
 					if(remoteFile != null) {
 						historyTableProvider.setFile(remoteFile);
+						// input is set asynchronously so we can't assume that the view
+						// has been populated until the job that queries for the history
+						// has completed.
 						tableViewer.setInput(remoteFile);
 						setTitle(Policy.bind("HistoryView.titleWithArgument", remoteFile.getName())); //$NON-NLS-1$
-						selectRevision(remoteFile.getRevision());
 					}
 				} catch (TeamException e) {
 					CVSUIPlugin.openError(getViewSite().getShell(), null, null, e);
 				}				
 			}
-			return;
+		} else {
+			this.file = null;
+			tableViewer.setInput(null);
+			setTitle(Policy.bind("HistoryView.title")); //$NON-NLS-1$
 		}
-		this.file = null;
-		tableViewer.setInput(null);
-		setTitle(Policy.bind("HistoryView.title")); //$NON-NLS-1$
 	}
 	
 	/**
