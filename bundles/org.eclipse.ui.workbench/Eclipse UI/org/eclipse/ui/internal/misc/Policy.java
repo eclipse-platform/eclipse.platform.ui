@@ -61,6 +61,13 @@ public class Policy {
 	 * workbench.
 	 */
 	public static boolean DEBUG_HANDLERS_VERBOSE = DEFAULT;
+	
+	/**
+	 * Whether to print out a warning about UI jobs that take
+	 * longer than 100ms.
+	 */
+	public static boolean DEBUG_LONG_UI_WARNING = DEFAULT;
+	
 	/**
 	 * Which command identifier to print handler information for.  This
 	 * restricts the debugging output, so a developer can focus on one command
@@ -86,6 +93,7 @@ public class Policy {
 			DEBUG_CONTEXTS_VERBOSE = getDebugOption("/trace/contexts.verbose"); //$NON-NLS-1$
 			DEBUG_HANDLERS = getDebugOption("/trace/handlers"); //$NON-NLS-1$
 			DEBUG_HANDLERS_VERBOSE = getDebugOption("/trace/handlers.verbose"); //$NON-NLS-1$
+			DEBUG_LONG_UI_WARNING = getDebugOption("/debug/uijob.longwarning"); //$NON-NLS-1$
 			DEBUG_HANDLERS_VERBOSE_COMMAND_ID = Platform.getDebugOption(PlatformUI.PLUGIN_ID + "/trace/handlers.verbose.commandId"); //$NON-NLS-1$
 		}
 	}
