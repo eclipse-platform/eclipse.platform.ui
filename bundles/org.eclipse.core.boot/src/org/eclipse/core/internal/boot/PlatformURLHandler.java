@@ -1,9 +1,8 @@
 package org.eclipse.core.internal.boot;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 
 import java.net.*;
@@ -33,18 +32,26 @@ protected URLConnection openConnection(URL url) throws IOException {
 	String spec = url.getFile().trim();
 	if (spec.startsWith("/")) spec = spec.substring(1);
 	int ix = spec.indexOf("/");
-	if (ix==-1) throw new MalformedURLException("Invalid \""+PROTOCOL+":\" URL "+url.toString());
+	if (ix==-1) {
+		String message = Policy.bind("url.invalidURL", url.toString());
+		throw new MalformedURLException(message);
+	}
 
 	String type = spec.substring(0,ix);
 	Constructor construct = (Constructor) connectionType.get(type);
-	if (construct==null) throw new MalformedURLException("Unsupported \""+PROTOCOL+":\" protocol variation "+url.toString());
+	if (construct==null) {
+		String message = Policy.bind("url.badVariant", url.toString());
+		throw new MalformedURLException(message);
+	}
 
 	PlatformURLConnection c = null;
 	try {
 		c = (PlatformURLConnection) construct.newInstance(new Object[] { url });
 	}
-	catch(Exception e) { throw new IOException("Unable to create connection "+url.toString()+"\n"+e); }
-	
+	catch(Exception e) {
+		String message = Policy.bind("url.createConnection", url.toString());
+		throw new IOException(message);
+	}
 	c.setResolvedURL(c.resolve());
 	return c;
 }

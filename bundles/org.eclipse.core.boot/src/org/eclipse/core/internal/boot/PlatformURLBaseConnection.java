@@ -1,9 +1,8 @@
 package org.eclipse.core.internal.boot;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 
 /**
@@ -29,12 +28,13 @@ protected boolean allowCaching() {
 	return true;
 }
 protected URL resolve() throws IOException {
-	
 	String spec = url.getFile().trim();
-	if (spec.startsWith("/")) spec = spec.substring(1);
-
-	if (!spec.startsWith(PLATFORM+"/")) throw new IOException("Unsupported protocol variation "+url.toString());
-
+	if (spec.startsWith("/"))
+		spec = spec.substring(1);
+	if (!spec.startsWith(PLATFORM+"/")) {
+		String message = Policy.bind("url.badVariant", url.toString());
+		throw new IOException(message);
+	}
 	return spec.length()==PLATFORM.length()+1 ? installURL : new URL(installURL,spec.substring(PLATFORM.length()+1)); 
 }
 public static void startup(URL url) {
