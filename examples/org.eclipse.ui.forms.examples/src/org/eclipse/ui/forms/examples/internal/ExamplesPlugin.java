@@ -39,7 +39,9 @@ public class ExamplesPlugin extends AbstractUIPlugin {
 	public static final String IMG_VERTICAL = "vertical";
 	public static final String IMG_SAMPLE = "sample";
 	public static final String IMG_WIZBAN = "wizban";
-	public static final String IMG_HELP_TOPIC = "linkto_help";
+	public static final String IMG_LINKTO_HELP = "linkto_help";
+	public static final String IMG_HELP_TOPIC = "help_topic";
+	public static final String IMG_CLOSE = "close";
 
 	/**
 	 * The constructor.
@@ -61,7 +63,9 @@ public class ExamplesPlugin extends AbstractUIPlugin {
 		registerImage(registry, IMG_VERTICAL, "th_vertical.gif");
 		registerImage(registry, IMG_SAMPLE, "sample.gif");
 		registerImage(registry, IMG_WIZBAN, "newprj_wiz.gif");
-		registerImage(registry, IMG_HELP_TOPIC, "linkto_help.gif");
+		registerImage(registry, IMG_LINKTO_HELP, "linkto_help.gif");
+		registerImage(registry, IMG_HELP_TOPIC, "help_topic.gif");
+		registerImage(registry, IMG_CLOSE, "close_view.gif");
 	}
 
 	private void registerImage(ImageRegistry registry, String key,
@@ -126,5 +130,8 @@ public class ExamplesPlugin extends AbstractUIPlugin {
 	}
 	public Image getImage(String key) {
 		return getImageRegistry().get(key);
+	}
+	public ImageDescriptor getImageDescriptor(String key) {
+		return getImageRegistry().getDescriptor(key);
 	}
 }

@@ -51,7 +51,7 @@ import org.eclipse.ui.part.EditorPart;
  * required.
  * </p>
  */
-public class WizardFormEditor extends EditorPart implements IWizardContainer2 {
+public class WizardFormEditor extends EditorPart implements IWizardContainer2, IFormToolkitProvider {
 	/**
 	 * Image registry key for error message image (value
 	 * <code>"dialog_title_error_image"</code>).

@@ -27,7 +27,7 @@ public class WizardFormEditorOutline implements IContentOutlinePage {
 
 	public WizardFormEditorOutline(WizardFormEditor editor) {
 		this.editor = editor;
-		contextHelpPart = new ContextHelpPart();
+		contextHelpPart = new ContextHelpPart(editor.getEditorSite().getWorkbenchWindow());
 	}
 
 	public void createControl(Composite parent) {

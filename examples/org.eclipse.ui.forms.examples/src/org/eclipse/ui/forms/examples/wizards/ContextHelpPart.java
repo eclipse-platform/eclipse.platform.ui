@@ -7,11 +7,16 @@
 package org.eclipse.ui.forms.examples.wizards;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URLEncoder;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.context.IStyledContext;
-import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.help.internal.search.SearchHit;
+import org.eclipse.help.ui.internal.search.*;
+import org.eclipse.jface.operation.*;
+import org.eclipse.search.ui.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
@@ -22,7 +27,6 @@ import org.eclipse.ui.forms.examples.internal.ExamplesPlugin;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 
-
 /**
  * @author dejan
  * 
@@ -31,14 +35,26 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class ContextHelpPart {
 	private ScrolledForm form;
+
 	private Label title;
+
 	private Text phraseText;
+
 	private FormText text;
+
+	private FormText searchResults;
+
 	private String defaultText;
+
+	private IRunnableContext runnableContext;
+
+	private SorterByScore resultSorter;
 
 	private static final String HELP_KEY = "org.eclipse.ui.help"; //$NON-NLS-1$
 
-	public ContextHelpPart() {
+	public ContextHelpPart(IRunnableContext runnableContext) {
+		this.runnableContext = runnableContext;
+		resultSorter = new SorterByScore();
 	}
 
 	public void createControl(Composite parent, FormToolkit toolkit) {
@@ -46,18 +62,15 @@ public class ContextHelpPart {
 		form = toolkit.createScrolledForm(parent);
 		TableWrapLayout layout = new TableWrapLayout();
 		form.getBody().setLayout(layout);
-		//Util.highlight(form.getBody(), SWT.COLOR_YELLOW);
-		// help container. Has three colums (search, text, go)
-//		title = toolkit.createLabel(form.getBody(), null, SWT.WRAP);
-//		title.setText("Context Help");
-//		title.setFont(JFaceResources.getHeaderFont());
-//		title.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
-		Section section = toolkit.createSection(form.getBody(), Section.TITLE_BAR|Section.TWISTIE|Section.EXPANDED);
+		form.setText("");
+		Section section = toolkit.createSection(form.getBody(),
+				Section.TITLE_BAR | Section.TWISTIE | Section.EXPANDED);
 		section.setText("About");
 		text = toolkit.createFormText(section, true);
-		text.setColor(FormColors.TITLE, toolkit.getColors().getColor(FormColors.TITLE));
-		text.setImage(ExamplesPlugin.IMG_HELP_TOPIC, 
-				ExamplesPlugin.getDefault().getImage(ExamplesPlugin.IMG_HELP_TOPIC));
+		text.setColor(FormColors.TITLE, toolkit.getColors().getColor(
+				FormColors.TITLE));
+		text.setImage(ExamplesPlugin.IMG_HELP_TOPIC, ExamplesPlugin
+				.getDefault().getImage(ExamplesPlugin.IMG_HELP_TOPIC));
 		text.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				openLink(e.getHref());
@@ -69,7 +82,8 @@ public class ContextHelpPart {
 		text.setText(defaultText, false, false);
 
 		toolkit.createLabel(form.getBody(), null);
-		section = toolkit.createSection(form.getBody(), Section.TITLE_BAR|Section.TWISTIE|Section.EXPANDED);
+		section = toolkit.createSection(form.getBody(), Section.TITLE_BAR
+				| Section.TWISTIE | Section.EXPANDED);
 		section.setText("Search");
 		Composite helpContainer = toolkit.createComposite(section);
 		section.setClient(helpContainer);
@@ -110,13 +124,34 @@ public class ContextHelpPart {
 			}
 		});
 		toolkit.paintBordersFor(form.getBody());
+
+		searchResults = toolkit.createFormText(form.getBody(), true);
+		//searchResults.setBackground(helpContainer.getDisplay().getSystemColor(SWT.COLOR_CYAN));
+		searchResults.setColor(FormColors.TITLE, toolkit.getColors().getColor(
+				FormColors.TITLE));
+		searchResults.setImage(ExamplesPlugin.IMG_HELP_TOPIC, ExamplesPlugin
+				.getDefault().getImage(ExamplesPlugin.IMG_HELP_TOPIC));
+		searchResults.addHyperlinkListener(new HyperlinkAdapter() {
+			public void linkActivated(HyperlinkEvent e) {
+				Object href = e.getHref();
+				if (href.toString().equals("_more"))
+					doExternalSearch(phraseText.getText());
+				else
+					openLink(e.getHref());
+			}
+		});
+		searchResults.setText("", false, false);
 	}
 
 	public Control getControl() {
 		return form;
 	}
+	
+	public ScrolledForm getForm() {
+		return form;
+	}
 
-	private void doSearch(String phrase) {
+	private void doExternalSearch(String phrase) {
 		try {
 			String ephrase = URLEncoder.encode(phrase, "UTF-8"); //$NON-NLS-1$
 			String query = "tab=search&searchWord=" + ephrase; //$NON-NLS-1$
@@ -126,13 +161,76 @@ public class ContextHelpPart {
 		}
 	}
 
+	private void doSearch(String phrase) {
+		SearchQueryData data = new SearchQueryData();
+		data.setMaxHits(5);
+		data.setSearchWord(phrase);
+		final HelpSearchQuery query = new HelpSearchQuery(data);
+		final ISearchResult result = query.getSearchResult();
+		final StringBuffer resultBuffer = new StringBuffer();
+		result.addListener(new ISearchResultListener() {
+			public void searchResultChanged(SearchResultEvent e) {
+				final HelpSearchResult hresult = (HelpSearchResult) result;
+				getControl().getDisplay().asyncExec(new Runnable() {
+					public void run() {
+						updateResults(resultBuffer, hresult);
+					}
+				});
+			}
+		});
+		IRunnableWithProgress op = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) {
+				query.run(monitor);
+			}
+		};
+		try {
+			runnableContext.run(true, true, op);
+		} catch (InvocationTargetException e) {
+		} catch (InterruptedException e) {
+		}
+	}
+
+	private void updateResults(StringBuffer buff, HelpSearchResult hresult) {
+		buff.delete(0, buff.length());
+		if (hresult.getMatchCount() > 0) {
+			buff.append("<form>");
+			buff.append("<p><span color=\"");
+			buff.append(FormColors.TITLE);
+			buff.append("\">Search results:</span></p>");
+			Object[] elements = hresult.getElements();
+			resultSorter.sort(null, elements);
+
+			for (int i = 0; i < elements.length; i++) {
+				SearchHit hit = (SearchHit) elements[i];
+				buff.append("<li indent=\"21\" style=\"image\" value=\"");
+				buff.append(ExamplesPlugin.IMG_HELP_TOPIC);
+				buff.append("\">");
+				buff.append("<a href=\"");
+				buff.append(hit.getHref());
+				buff.append("\">");
+				buff.append(hit.getLabel());
+				buff.append("</a>");
+				buff.append("</li>");
+			}
+			if (elements.length > 0) {
+				buff.append("<p><a href=\"_more\">More results...</a></p>");
+			}
+			buff.append("</form>");
+			searchResults.setText(buff.toString(), true, false);
+		}
+		else
+			searchResults.setText("", false, false);
+		form.reflow(true);
+	}
+
 	private void handlePageActivation(Control page) {
 		if (text.isDisposed())
 			return;
-		//title.setText("What is"	+ " \"" + part.getSite().getRegisteredName() + "\"?"); //$NON-NLS-1$ //$NON-NLS-2$
+		//title.setText("What is" + " \"" + part.getSite().getRegisteredName()
+		// + "\"?"); //$NON-NLS-1$ //$NON-NLS-2$
 		String helpText = createContextHelp(page);
 		text.setText(helpText != null ? helpText : "", helpText != null, //$NON-NLS-1$
-					false);
+				false);
 		//form.getBody().layout();
 		form.reflow(true);
 	}
@@ -140,7 +238,7 @@ public class ContextHelpPart {
 	private String createContextHelp(Control page) {
 		String text = null;
 		if (page != null) {
-			if (page != null /*&& page.isVisible() */&& !page.isDisposed()) {
+			if (page != null /* && page.isVisible() */&& !page.isDisposed()) {
 				IContext helpContext = findHelpContext(page);
 				if (helpContext != null) {
 					text = formatHelpContext(helpContext);
@@ -172,7 +270,7 @@ public class ContextHelpPart {
 		sbuf.append(decodeContextBoldTags(context));
 		sbuf.append("</p>"); //$NON-NLS-1$
 		IHelpResource[] links = context.getRelatedTopics();
-		if (links!=null && links.length > 0) {
+		if (links != null && links.length > 0) {
 			sbuf.append("<p><span color=\"");
 			sbuf.append(FormColors.TITLE);
 			sbuf.append("\">See also:</span></p>");
@@ -218,10 +316,11 @@ public class ContextHelpPart {
 		if (url != null)
 			WorkbenchHelp.displayHelpResource(url);
 	}
-	
+
 	public void dispose() {
-		
+
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -232,7 +331,7 @@ public class ContextHelpPart {
 	}
 
 	public void update(Control control) {
-		if (form!=null)
+		if (form != null)
 			handlePageActivation(control);
 	}
 }

@@ -11,6 +11,7 @@ import org.eclipse.ui.forms.examples.internal.ExamplesPlugin;
 public class SampleEditorFormWizard extends Wizard {
 	public SampleEditorFormWizard() {
 		setForcePreviousAndNextButtons(true);
+		setNeedsProgressMonitor(true);
 		setDefaultPageImageDescriptor(ExamplesPlugin.getDefault().getImageRegistry().getDescriptor(ExamplesPlugin.IMG_WIZBAN));
 		setWindowTitle("New Plug-in Project");
 	}
