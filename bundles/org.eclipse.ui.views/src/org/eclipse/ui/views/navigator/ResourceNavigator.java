@@ -1105,34 +1105,51 @@ public class ResourceNavigator
 	protected IShowInTarget getShowInTarget() {
 		return new IShowInTarget() {
 			public boolean show(ShowInContext context) {
-				IResource res = null;
+				ArrayList toSelect = new ArrayList();
 				ISelection sel = context.getSelection();
 				if (sel instanceof IStructuredSelection) {
-					Object o = ((IStructuredSelection) sel).getFirstElement();
-					if (o instanceof IResource) {
-						res = (IResource) o;
-					}
-					else {
-						if (o instanceof IAdaptable) {
-							o = ((IAdaptable) o).getAdapter(IResource.class);
+					IStructuredSelection ssel = (IStructuredSelection) sel;
+					for (Iterator i = ssel.iterator(); i.hasNext();) {
+						Object o = i.next();
+						if (o instanceof IResource) {
+							toSelect.add(o);
+						}
+						else if (o instanceof IMarker) {
+							IResource r = ((IMarker) o).getResource();
+							if (r.getType() != IResource.ROOT) {
+								toSelect.add(r);
+							}
+						}
+						else if (o instanceof IAdaptable) {
+							IAdaptable adaptable = (IAdaptable) o;
+							o = adaptable.getAdapter(IResource.class);
 							if (o instanceof IResource) {
-								res = (IResource) o;
+								toSelect.add(o);
+							}
+							else {
+								o = adaptable.getAdapter(IMarker.class);
+								if (o instanceof IMarker) {
+									IResource r = ((IMarker) o).getResource();
+									if (r.getType() != IResource.ROOT) {
+										toSelect.add(r);
+									}
+								}
 							}
 						}
 					}
 				}
-				if (res == null) {
+				if (toSelect.isEmpty()) {
 					Object input = context.getInput();
 					if (input instanceof IAdaptable) {
 						IAdaptable adaptable = (IAdaptable) input;
 						Object o = adaptable.getAdapter(IResource.class);
 						if (o instanceof IResource) {
-							res = (IResource) o;
+							toSelect.add(o);
 						}
 					}
 				}
-				if (res != null) {
-					selectReveal(new StructuredSelection(res));
+				if (!toSelect.isEmpty()) {
+					selectReveal(new StructuredSelection(toSelect));
 					return true;
 				}
 				return false; 

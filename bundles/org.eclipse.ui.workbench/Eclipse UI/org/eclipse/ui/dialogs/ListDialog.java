@@ -29,6 +29,13 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 
+/**
+ * A dialog that prompts for one element out of a list of elements.
+ * Uses <code>IStructuredContentProvider</code> to provide the elements
+ * and <code>ILabelProvider</code> to provide their labels.
+ * 
+ * @since 2.1
+ */
 public class ListDialog extends SelectionDialog {
 
 	private IStructuredContentProvider fContentProvider;
@@ -61,11 +68,6 @@ public class ListDialog extends SelectionDialog {
 
 	public TableViewer getTableViewer() {
 		return fTableViewer;
-	}
-
-	public void create() {
-		setShellStyle(SWT.DIALOG_TRIM | SWT.RESIZE);
-		super.create();
 	}
 
 	protected void createButtonsForButtonBar(Composite parent) {

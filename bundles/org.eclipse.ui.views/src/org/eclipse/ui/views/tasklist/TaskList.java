@@ -653,6 +653,28 @@ public class TaskList extends ViewPart {
 		updateFocusResource(event.getSelection());
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		if (adapter == IShowInSource.class) {
+			return new IShowInSource() {
+				public ShowInContext getShowInContext() {
+					return new ShowInContext(null, getSelection());
+				}
+			};
+		}
+		if (adapter == IShowInTargetList.class) {
+			return new IShowInTargetList() {
+				public String[] getShowInTargetIds() {
+					return new String[] { IPageLayout.ID_RES_NAV };
+				}
+
+			};
+		}
+		return super.getAdapter(adapter);
+	}
+
 	/**
 	 * Returns a clipboard for cut/copy/paste actions.
 	 * <p>

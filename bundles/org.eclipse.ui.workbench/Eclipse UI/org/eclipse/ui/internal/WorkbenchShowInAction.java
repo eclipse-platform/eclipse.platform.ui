@@ -29,7 +29,7 @@ class WorkbenchShowInAction extends ShowInAction implements IPartListener {
 	}
 
 	public void partActivated(IWorkbenchPart part) {
-		updateState(part);
+		updateState();
 	}
 	
 	public void partBroughtToTop(IWorkbenchPart part) {

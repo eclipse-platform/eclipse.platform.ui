@@ -39,6 +39,7 @@ import org.eclipse.ui.internal.registry.IViewDescriptor;
 import org.eclipse.ui.internal.registry.IViewRegistry;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTarget;
+import org.eclipse.ui.part.IShowInTargetList;
 import org.eclipse.ui.part.ShowInContext;
 
 /**
@@ -81,7 +82,6 @@ public class ShowInAction extends Action {
 	
 	/**
 	 * Updates the enabled state of this action.
-	 * Calls <code>updateState(getSourcePart())</code>.
 	 */
 	public void updateState() {
 		updateState(getSourcePart());
@@ -95,28 +95,41 @@ public class ShowInAction extends Action {
 	 * 
 	 * @param sourcePart the source part
 	 */
-	protected void updateState(IWorkbenchPart sourcePart) {
+	private void updateState(IWorkbenchPart sourcePart) {
 		setEnabled(sourcePart != null && (
 			(sourcePart instanceof IEditorPart)
 				|| getShowInSource(sourcePart) != null) && hasShowInItems(sourcePart));
 	}
 
 	/**
-	 * Returns the Show In... part ids.  
-	 * Don't expose this internal array to subclasses.
+	 * Returns the Show In... target part ids for the given source part.  
+	 * Merges the contributions from the current perspective and the source part.
 	 */
-	private ArrayList getShowInPartIds() {
+	private ArrayList getShowInPartIds(IWorkbenchPart sourcePart) {
+		ArrayList targetIds = new ArrayList();
 		WorkbenchPage page = (WorkbenchPage) getWindow().getActivePage();
-		if (page != null)
-			return page.getShowInPartIds();
-		return new ArrayList();
+		if (page != null) {
+			targetIds.addAll(page.getShowInPartIds());
+		}
+		IShowInTargetList targetList = getShowInTargetList(sourcePart);
+		if (targetList != null) {
+			String[] partIds = targetList.getShowInTargetIds();
+			if (partIds != null) {
+				for (int i = 0; i < partIds.length; ++i) {
+					if (!targetIds.contains(partIds[i])) {
+						targetIds.add(partIds[i]);
+					}
+				}
+			}
+		}
+		return targetIds;
 	}
 	
 	/**
 	 * Returns whether there are any items to list for the given part.
 	 */
 	private boolean hasShowInItems(IWorkbenchPart sourcePart) {
-		ArrayList ids = getShowInPartIds();
+		ArrayList ids = getShowInPartIds(sourcePart);
 		if (ids.isEmpty())
 			return false;
 		String srcId = sourcePart.getSite().getId();
@@ -135,7 +148,7 @@ public class ShowInAction extends Action {
 	 * 
 	 * @return the source part or <code>null</code>
 	 */
-	protected IWorkbenchPart getSourcePart() {
+	private IWorkbenchPart getSourcePart() {
 		IWorkbenchPage page = getWindow().getActivePage();
 		if (page != null) {
 			return page.getActivePart();
@@ -150,7 +163,7 @@ public class ShowInAction extends Action {
 	 * @param sourcePart the source part
 	 * @return an <code>IShowInSource</code> or <code>null</code>
 	 */
-	protected IShowInSource getShowInSource(IWorkbenchPart sourcePart) {
+	private IShowInSource getShowInSource(IWorkbenchPart sourcePart) {
 		if (sourcePart instanceof IShowInSource) {
 			return (IShowInSource) sourcePart;
 		}
@@ -168,13 +181,31 @@ public class ShowInAction extends Action {
 	 * @param targetPart the target part
 	 * @return the <code>IShowInTarget</code> or <code>null</code>
 	 */
-	protected IShowInTarget getShowInTarget(IWorkbenchPart targetPart) {
+	private IShowInTarget getShowInTarget(IWorkbenchPart targetPart) {
 		if (targetPart instanceof IShowInTarget) {
 			return (IShowInTarget) targetPart;
 		}
 		Object o = targetPart.getAdapter(IShowInTarget.class);
 		if (o instanceof IShowInTarget) {
 			return (IShowInTarget) o;
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the <code>IShowInTargetList</code> for the given source part,
+	 * or <code>null</code> if it does not provide one.
+	 * 
+	 * @param sourcePart the source part
+	 * @return the <code>IShowInTargetList</code> or <code>null</code>
+	 */
+	private IShowInTargetList getShowInTargetList(IWorkbenchPart sourcePart) {
+		if (sourcePart instanceof IShowInTargetList) {
+			return (IShowInTargetList) sourcePart;
+		}
+		Object o = sourcePart.getAdapter(IShowInTargetList.class);
+		if (o instanceof IShowInTargetList) {
+			return (IShowInTargetList) o;
 		}
 		return null;
 	}
@@ -191,11 +222,7 @@ public class ShowInAction extends Action {
 	 * 
 	 * @return the <code>ShowInContext</code> to show or <code>null</code>
 	 */
-	protected ShowInContext getContext() {
-		IWorkbenchPart sourcePart = getSourcePart();
-		if (sourcePart == null) {
-			return null;
-		}
+	private ShowInContext getContext(IWorkbenchPart sourcePart) {
 		IShowInSource source = getShowInSource(sourcePart);
 		if (source != null) {
 			ShowInContext context = source.getShowInContext();
@@ -215,13 +242,9 @@ public class ShowInAction extends Action {
 	/**
 	 * Returns the view descriptors to show in the dialog.
 	 */
-	private IViewDescriptor[] getViewDescriptors() {
-		IWorkbenchPart sourcePart = getSourcePart();
-		if (sourcePart == null) {
-			return new IViewDescriptor[0];
-		}
+	private IViewDescriptor[] getViewDescriptors(IWorkbenchPart sourcePart) {
 		String srcId = sourcePart.getSite().getId();
-		ArrayList ids = getShowInPartIds();
+		ArrayList ids = getShowInPartIds(sourcePart);
 		ArrayList descs = new ArrayList();
 		IViewRegistry reg = WorkbenchPlugin.getDefault().getViewRegistry();
 		for (Iterator i = ids.iterator(); i.hasNext();) {
@@ -242,14 +265,19 @@ public class ShowInAction extends Action {
 	 * to the target to show.
 	 */
 	public void run() {
-		ShowInContext context = getContext();
-		if (context == null) {
-			getWindow().getShell().getDisplay().beep();
+		IWorkbenchPart sourcePart = getSourcePart();
+		if (sourcePart == null) {
+			beep();
 			return;
 		}
-		Object[] viewDescs = getViewDescriptors();
+		ShowInContext context = getContext(sourcePart);
+		if (context == null) {
+			beep();
+			return;
+		}
+		Object[] viewDescs = getViewDescriptors(sourcePart);
 		if (viewDescs.length == 0) {
-			getWindow().getShell().getDisplay().beep();
+			beep();
 			return;
 		}
 		ListDialog dialog = new ListDialog(getWindow().getShell());
@@ -271,7 +299,7 @@ public class ShowInAction extends Action {
 	/**
 	 * Shows the context in the specified target view.
 	 */	
-	protected void showIn(ShowInContext context, String targetId) {
+	private void showIn(ShowInContext context, String targetId) {
 		IWorkbenchPage page = getWindow().getActivePage();
 		if (page != null) {
 			try {
@@ -280,7 +308,7 @@ public class ShowInAction extends Action {
 				if (target != null && target.show(context)) {
 				}
 				else {
-					getWindow().getShell().getDisplay().beep();
+					beep();
 				}
 				((WorkbenchPage) page).performedShowIn(targetId);  // TODO: move back up
 			}
@@ -288,5 +316,12 @@ public class ShowInAction extends Action {
 				WorkbenchPlugin.log("Error showing view in ShowInAction.run", e.getStatus()); //$NON-NLS-1$
 			}
 		}
+	}
+
+	/**
+	 * Generates a system beep.
+	 */
+	private void beep() {
+		getWindow().getShell().getDisplay().beep();
 	}
 }
