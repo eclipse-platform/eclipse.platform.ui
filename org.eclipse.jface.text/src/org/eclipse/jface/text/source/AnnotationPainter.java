@@ -1068,7 +1068,33 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			try {
 				IDocument document= fSourceViewer.getDocument();
 				return document.getLineOffset(top);
-			} catch (BadLocationException ex) {
+			} catch (BadLocationException x) {
+			}
+		}
+		
+		return -1;
+	}
+	
+	/**
+	 * Returns the first invisible document offset of the lower right corner of the source viewer's viewport,
+	 * possibly including partially visible lines.
+	 * 
+	 * @return the first invisible document offset of the lower right corner of the viewport
+	 */
+	private int getExclusiveBottomIndexEndOffset() {
+		
+		if (fTextWidget != null && !fTextWidget.isDisposed()) {	
+			int bottom= fSourceViewer.getBottomIndex();
+			if (((fTextWidget.getTopPixel() + fTextWidget.getClientArea().height) % fTextWidget.getLineHeight()) != 0)
+				bottom++;
+			try {
+				IDocument document= fSourceViewer.getDocument();
+				
+				if (bottom >= document.getNumberOfLines())
+					bottom= document.getNumberOfLines() - 1;
+				
+				return document.getLineOffset(bottom) + document.getLineLength(bottom);
+			} catch (BadLocationException x) {
 			}
 		}
 		
@@ -1099,7 +1125,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 
 		int vOffset= getInclusiveTopIndexStartOffset();
 		// http://bugs.eclipse.org/bugs/show_bug.cgi?id=17147
-		int vLength= fSourceViewer.getBottomIndexEndOffset() + 1 - vOffset;		
+		int vLength= getExclusiveBottomIndexEndOffset() - vOffset;
 
 		for (int layer= 0, maxLayer= 1;	layer < maxLayer; layer++) {
 			

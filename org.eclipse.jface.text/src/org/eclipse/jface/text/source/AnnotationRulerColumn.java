@@ -378,7 +378,33 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 			try {
 				IDocument document= fCachedTextViewer.getDocument();
 				return document.getLineOffset(top);
-			} catch (BadLocationException ex) {
+			} catch (BadLocationException x) {
+			}
+		}
+		
+		return -1;
+	}
+	
+	/**
+	 * Returns the first invisible document offset of the lower right corner of the source viewer's viewport,
+	 * possibly including partially visible lines.
+	 * 
+	 * @return the first invisible document offset of the lower right corner of the viewport
+	 */
+	private int getExclusiveBottomIndexEndOffset() {
+		
+		if (fCachedTextWidget != null && !fCachedTextWidget.isDisposed()) {	
+			int bottom= fCachedTextViewer.getBottomIndex();
+			if (((fCachedTextWidget.getTopPixel() + fCachedTextWidget.getClientArea().height) % fCachedTextWidget.getLineHeight()) != 0)
+				bottom++;
+			try {
+				IDocument document= fCachedTextViewer.getDocument();
+				
+				if (bottom >= document.getNumberOfLines())
+					bottom= document.getNumberOfLines() - 1;
+				
+				return document.getLineOffset(bottom) + document.getLineLength(bottom);
+			} catch (BadLocationException x) {
 			}
 		}
 		
@@ -494,7 +520,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 					if (r.y < dimension.y && annotationAccessExtension != null)  // annotation within visible area
 						annotationAccessExtension.paint(annotation, gc, fCanvas, r);
 					
-				} catch (BadLocationException e) {
+				} catch (BadLocationException x) {
 				}
 			}
 		}
@@ -523,8 +549,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 		int shift= fCachedTextViewer.getTopInset();
 
 		int vOffset= getInclusiveTopIndexStartOffset();
-		IRegion coverage= extension.getModelCoverage();
-		int vLength= coverage.getOffset() + coverage.getLength() - vOffset;		
+		int vLength= getExclusiveBottomIndexEndOffset() - vOffset;		
 
 		// draw Annotations
 		Rectangle r= new Rectangle(0, 0, 0, 0);

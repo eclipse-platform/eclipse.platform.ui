@@ -51,13 +51,6 @@ public class ProjectionSupport {
 		}
 		
 		/*
-		 * @see org.eclipse.jface.text.source.AnnotationPainter#isRepaintReason(int)
-		 */
-		protected boolean isRepaintReason(int reason) {
-			return true;
-		}
-		
-		/*
 		 * @see org.eclipse.jface.text.source.AnnotationPainter#findAnnotationModel(org.eclipse.jface.text.source.ISourceViewer)
 		 */
 		protected IAnnotationModel findAnnotationModel(ISourceViewer sourceViewer) {
