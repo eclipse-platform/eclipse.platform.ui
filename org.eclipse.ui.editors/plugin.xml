@@ -98,7 +98,58 @@
             command="org.eclipse.quickdiff.toggle"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
+      
+      <!-- folding -->
+      <command
+            name="%command.folding.toggle.name"
+            description="%command.folding.toggle.description"
+            categoryId="org.eclipse.ui.category.edit"
+            id="org.eclipse.ui.edit.text.folding.toggle">
+      </command>
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.folding.toggle"
+            contextId="org.eclipse.ui.textEditorScope"
+            keySequence="M1+P M1+P"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
+            name="%command.folding.expandAll.name"
+            description="%command.folding.expandAll.description"
+            categoryId="org.eclipse.ui.category.edit"
+            id="org.eclipse.ui.edit.text.folding.expand_all">
+      </command>
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.folding.expand_all"
+            contextId="org.eclipse.ui.textEditorScope"
+            keySequence="M1+P M1+A"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
+            name="%command.folding.expand.name"
+            description="%command.folding.expand.description"
+            categoryId="org.eclipse.ui.category.edit"
+            id="org.eclipse.ui.edit.text.folding.expand">
+      </command>
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.folding.expand"
+            contextId="org.eclipse.ui.textEditorScope"
+            keySequence="M1+P M1+X"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
+            name="%command.folding.collapse.name"
+            description="%command.folding.collapse.description"
+            categoryId="org.eclipse.ui.category.edit"
+            id="org.eclipse.ui.edit.text.folding.collapse">
+      </command>
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.folding.collapse"
+            contextId="org.eclipse.ui.textEditorScope"
+            keySequence="M1+P M1+C"
+            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
    </extension>
+   
    <extension
          point="org.eclipse.ui.editors">
       <editor

@@ -69,6 +69,17 @@ import org.eclipse.jface.text.source.SourceViewer;
  */
 public class ProjectionViewer extends SourceViewer implements ITextViewerExtension5 {
 	
+	private static final int BASE= INFORMATION; // see ISourceViewer.INFORMATION
+	
+	/** Operation constant for the expand operation. */
+	public static final int EXPAND= BASE + 1;
+	/** Operation constant for the collapse operation. */
+	public static final int COLLAPSE= BASE + 2;
+	/** Operation constant for the toggle projection operation. */
+	public static final int TOGGLE= BASE + 3;
+	/** Operation constant for the expand all operation. */
+	public static final int EXPAND_ALL= BASE + 4;
+	
 	/**
 	 * Internal listener to changes of the annotation model.
 	 */
@@ -180,6 +191,8 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 * 
 	 * @param parent the SWT parent control
 	 * @param ruler the vertical ruler
+	 * @param overviewRuler the overview ruler
+	 * @param showsAnnotationOverview <code>true</code> if the overview ruler should be shown 
 	 * @param styles the SWT style bits
 	 */
 	public ProjectionViewer(Composite parent, IVerticalRuler ruler, IOverviewRuler overviewRuler, boolean showsAnnotationOverview, int styles) {
@@ -372,6 +385,65 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			addProjectionAnnotationModel(getVisualAnnotationModel());
 			fFindReplaceDocumentAdapter= null;
 			fireProjectionEnabled();
+		}
+	}
+	
+	private void expandAll() {
+		int offset= 0;
+		IDocument doc= getDocument();
+		int length= doc == null ? 0 : doc.getLength();
+		if (isProjectionMode()) {
+			fProjectionAnnotationModel.expandAll(offset, length);
+		}
+	}
+	
+	private void expand() {
+		if (isProjectionMode()) {
+			Position found= null;
+			Annotation bestMatch= null;
+			Point selection= getSelectedRange();
+			for (Iterator it= fProjectionAnnotationModel.getAnnotationIterator(); it.hasNext();) {
+				ProjectionAnnotation pa= (ProjectionAnnotation) it.next();
+				if (pa.isCollapsed()) {
+					Position pos= fProjectionAnnotationModel.getPosition(pa);
+					// take the first most finegrained match
+					if (touches(selection, pos))
+						if (found == null || pos.includes(found.offset) && pos.includes(found.offset + found.length)) {
+							found= pos;
+							bestMatch= pa;
+						}
+				}
+			}
+			
+			if (bestMatch != null)
+				fProjectionAnnotationModel.expand(bestMatch);
+		}
+	}
+	
+	private boolean touches(Point selection, Position pos) {
+		return pos.overlapsWith(selection.x, selection.y) || selection.y == 0 && pos.offset + pos.length == selection.x + selection.y;
+	}
+
+	private void collapse() {
+		if (isProjectionMode()) {
+			Position found= null;
+			Annotation bestMatch= null;
+			Point selection= getSelectedRange();
+			for (Iterator it= fProjectionAnnotationModel.getAnnotationIterator(); it.hasNext();) {
+				ProjectionAnnotation pa= (ProjectionAnnotation) it.next();
+				if (!pa.isCollapsed()) {
+					Position pos= fProjectionAnnotationModel.getPosition(pa);
+					// take the first most finegrained match
+					if (touches(selection, pos))
+						if (found == null || found.includes(pos.offset) && found.includes(pos.offset + pos.length)) {
+							found= pos;
+							bestMatch= pa;
+						}
+				}
+			}
+			
+			if (bestMatch != null)
+				fProjectionAnnotationModel.collapse(bestMatch);
 		}
 	}
 	
@@ -600,16 +672,16 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 							public void run() {
 								Iterator e= fPendingRequests.iterator();
 								while (true) {
-									AnnotationModelEvent event= null;
+									AnnotationModelEvent ame= null;
 									synchronized (fLock) {
 										if (e.hasNext()) {
-											event= (AnnotationModelEvent) e.next();
+											ame= (AnnotationModelEvent) e.next();
 										} else {
 											fPendingRequests.clear();
 											return;
 										}
 									}
-									catchupWithProjectionAnnotationModel(event);
+									catchupWithProjectionAnnotationModel(ame);
 								}
 							}
 						});
@@ -930,6 +1002,13 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 * @see org.eclipse.jface.text.ITextOperationTarget#doOperation(int)
 	 */
 	public void doOperation(int operation) {
+		switch (operation) {
+			case TOGGLE:
+				if (!isProjectionMode() && canDoOperation(TOGGLE)) {
+					enableProjection();
+					return;
+				}
+		}
 		
 		if (!isProjectionMode()) {
 			super.doOperation(operation);
@@ -968,11 +1047,60 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				}
 				break;
 			
+			case EXPAND_ALL:
+				if (redraws())
+					expandAll();
+				break;
+				
+			case TOGGLE:
+				if (redraws()) {
+					expandAll();
+					disableProjection();
+				}
+				break;
+			
+			case EXPAND:
+				if (redraws()) {
+					expand();
+				}
+				break;
+			
+			case COLLAPSE:
+				if (redraws()) {
+					collapse();
+				}
+
+			
 			default:
 				super.doOperation(operation);
 		}
 	}
 	
+	/*
+	 * @see org.eclipse.jface.text.source.SourceViewer#canDoOperation(int)
+	 */
+	public boolean canDoOperation(int operation) {
+		
+		switch (operation) {
+			case COLLAPSE:
+			case EXPAND:
+			case EXPAND_ALL:
+				return isProjectionMode();
+			case TOGGLE:
+				return !isSegmented();
+		}
+		
+		return super.canDoOperation(operation);
+	}
+	
+	private boolean isSegmented() {
+		IDocument document= getDocument();
+		int length= document == null ? 0 : document.getLength();
+		IRegion visible= getModelCoverage();
+		boolean isSegmented= visible != null && !visible.equals(new Region(0, length));
+		return isSegmented;
+	}
+
 	/*
 	 * @see org.eclipse.jface.text.TextViewer#copyMarkedRegion(boolean)
 	 */
