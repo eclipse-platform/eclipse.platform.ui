@@ -316,7 +316,7 @@ private void findAllSelectedListElements(
 	Collection result,
 	IProgressMonitor monitor) {
 		
-	if(monitor.isCanceled())
+	if(monitor != null && monitor.isCanceled())
 		return;
 
 	if (addAll) {
@@ -388,7 +388,7 @@ public List getAllCheckedListItems(IProgressMonitor monitor) {
 			monitor);
 	}
 
-	if(monitor.isCanceled())
+	if(monitor != null && monitor.isCanceled())
 		return null;
 	else
 		return result;
@@ -397,10 +397,16 @@ public List getAllCheckedListItems(IProgressMonitor monitor) {
 /**
  *	Returns a flat list of all of the leaf elements which are checked.
  *
- *	@return all of the leaf elements which are checked
+ *	@return all of the leaf elements which are checked. This API does not
+ * 	return null in order to keep backwards compatibility.
  */
 public List getAllCheckedListItems() {
-	return getAllCheckedListItems(null);
+	List returnValue = getAllCheckedListItems(null);
+	if(returnValue == null)
+		return new ArrayList();
+	else
+		return returnValue;
+		
 }
 
 /**
