@@ -99,14 +99,8 @@
   with the introduction of background launching, this method can no longer be 
   called, as the launch dialog is be closed before the resulting launch object 
   exists.</p>
-<h3>Stream Close Notification</h3>
-<p>The <code>org.eclipse.debug.core.IStreamListener</code> and <code>org.eclipse.debug.ui.IConsoleLineTracker</code>
-  interfaces now include a method to notify the listener when the stream closes. Implementors must now
-  implement this method to compile. To maintain current behavior, clients do not need to do any work in the new method. Implementors of
-  <code>org.eclipse.debug.core.model.IStreamMonitor</code> must now notify IStreamListeners via the new
-  method when they are finished appending text.</p>
- <h3>Generic Console</h3> 
- <p>With the work for the generic console support <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=37263"> (Bug 37263)</a>, the view id for the Eclipse (formerly debug) console has changed. 
+<h3>Generic Console</h3>
+<p>With the work for the generic console support <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=37263"> (Bug 37263)</a>, the view id for the Eclipse (formerly debug) console has changed. 
     This results in problems at startup such as "Could not restore workbench layout" with details that "Could not create view: org.eclipse.debug.ui.ConsoleView" for the particular perspective that contained reference to the old view id. 
     The equivalent view id is now: "org.eclipse.ui.console.ConsoleView".<br>
     The generic console is available via the Window>Show View>Basic>Console and is used by the Eclipse debug and Ant integration. </p>
