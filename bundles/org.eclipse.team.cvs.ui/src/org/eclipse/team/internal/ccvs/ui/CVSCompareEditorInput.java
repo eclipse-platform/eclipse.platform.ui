@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -59,12 +60,19 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 	private static final int NODE_UNKNOWN = 2;
 	
 	String toolTipText;
+    private String title;
 	
 	/**
 	 * Creates a new CVSCompareEditorInput.
 	 */
 	public CVSCompareEditorInput(ResourceEditionNode left, ResourceEditionNode right) {
 		this(left, right, null);
+	}
+	
+	public CVSCompareEditorInput(String title, String toolTip, ResourceEditionNode left, ResourceEditionNode right) {
+		this(left, right, null);
+		this.title = title;
+		this.toolTipText = toolTip;
 	}
 	
 	/**
@@ -216,20 +224,21 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 		CompareConfiguration cc = getCompareConfiguration();
 		setLabels(cc, new StructuredSelection());
 		
-		String title;
-		if (ancestor != null) {
-			title = Policy.bind("CVSCompareEditorInput.titleAncestor", new Object[] {guessResourceName(), getVersionLabel(ancestor), getVersionLabel(left), getVersionLabel(right)} ); //$NON-NLS-1$
-			toolTipText = Policy.bind("CVSCompareEditorInput.titleAncestor", new Object[] {guessResourcePath(), getVersionLabel(ancestor), getVersionLabel(left), getVersionLabel(right)} ); //$NON-NLS-1$
-		} else {
-			String leftName = null;
-			if (left != null) leftName = left.getName();
-			String rightName = null;
-			if (right != null) rightName = right.getName();
-			if (leftName != null && !leftName.equals(rightName)) {
-				title = Policy.bind("CVSCompareEditorInput.titleNoAncestorDifferent", new Object[] {leftName, getVersionLabel(left), rightName, getVersionLabel(right)} );  //$NON-NLS-1$
+		if (title == null) {
+			if (ancestor != null) {
+				title = Policy.bind("CVSCompareEditorInput.titleAncestor", new Object[] {guessResourceName(), getVersionLabel(ancestor), getVersionLabel(left), getVersionLabel(right)} ); //$NON-NLS-1$
+				toolTipText = Policy.bind("CVSCompareEditorInput.titleAncestor", new Object[] {guessResourcePath(), getVersionLabel(ancestor), getVersionLabel(left), getVersionLabel(right)} ); //$NON-NLS-1$
 			} else {
-				title = Policy.bind("CVSCompareEditorInput.titleNoAncestor", new Object[] {guessResourceName(), getVersionLabel(left), getVersionLabel(right)} ); //$NON-NLS-1$
-				title = Policy.bind("CVSCompareEditorInput.titleNoAncestor", new Object[] {guessResourcePath(), getVersionLabel(left), getVersionLabel(right)} ); //$NON-NLS-1$
+				String leftName = null;
+				if (left != null) leftName = left.getName();
+				String rightName = null;
+				if (right != null) rightName = right.getName();
+				if (leftName != null && !leftName.equals(rightName)) {
+					title = Policy.bind("CVSCompareEditorInput.titleNoAncestorDifferent", new Object[] {leftName, getVersionLabel(left), rightName, getVersionLabel(right)} );  //$NON-NLS-1$
+				} else {
+					title = Policy.bind("CVSCompareEditorInput.titleNoAncestor", new Object[] {guessResourceName(), getVersionLabel(left), getVersionLabel(right)} ); //$NON-NLS-1$
+					title = Policy.bind("CVSCompareEditorInput.titleNoAncestor", new Object[] {guessResourcePath(), getVersionLabel(left), getVersionLabel(right)} ); //$NON-NLS-1$
+				}
 			}
 		}
 		setTitle(title);
@@ -398,10 +407,44 @@ public class CVSCompareEditorInput extends CompareEditorInput {
 				setLabels(cc, (IStructuredSelection)event.getSelection());
 			}
 		});
+		((StructuredViewer)viewer).addOpenListener(new IOpenListener() {
+            public void open(OpenEvent event) {
+                ISelection selection = event.getSelection();
+                if (! selection.isEmpty() && selection instanceof IStructuredSelection) {
+                    Object o = ((IStructuredSelection)selection).getFirstElement();
+                    if (o instanceof DiffNode) {
+                        updateLabelsFor((DiffNode)o);
+                    }
+                }
+            }
+        });
 		return viewer;
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * Update the labels for the given DiffNode
+     */
+    protected void updateLabelsFor(DiffNode node) {
+        CompareConfiguration cc = getCompareConfiguration();
+        ITypedElement l = node.getLeft();
+        if (l == null) {
+            cc.setLeftLabel(Policy.bind("CVSCompareEditorInput.0")); //$NON-NLS-1$
+            cc.setLeftImage(null);
+        } else {
+	        cc.setLeftLabel(getLabel(l));
+	        cc.setLeftImage(l.getImage());
+        }
+        ITypedElement r = node.getRight();
+        if (r == null) {
+            cc.setRightLabel(Policy.bind("CVSCompareEditorInput.1")); //$NON-NLS-1$
+            cc.setRightImage(null);
+        } else {
+	        cc.setRightLabel(getLabel(r));
+	        cc.setRightImage(r.getImage());
+        }
+    }
+
+    /* (non-Javadoc)
 	 * @see org.eclipse.compare.CompareEditorInput#getToolTipText()
 	 */
 	public String getToolTipText() {

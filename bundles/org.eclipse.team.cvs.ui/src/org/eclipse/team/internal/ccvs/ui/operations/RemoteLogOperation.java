@@ -15,10 +15,12 @@ import java.util.*;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.listeners.LogListener;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.util.Util;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -42,7 +44,7 @@ public class RemoteLogOperation extends RepositoryLocationOperation {
 		/**
 		 * Return the log entry that was fetch for the given resource
 		 * or <code>null</code> if no entry was fetched.
-		 * @param resource the resource
+		 * @param getFullPath(resource) the resource
 		 * @return the fetched log entry or <code>null</code>
 		 */
 		public ILogEntry getLogEntry(ICVSRemoteResource resource) {
@@ -51,16 +53,30 @@ public class RemoteLogOperation extends RepositoryLocationOperation {
 		/**
 		 * Return the log entries that were fetched for the given resource
 		 * or an empty list if no entry was fetched.
-		 * @param resource the resource
+		 * @param getFullPath(resource) the resource
 		 * @return the fetched log entries or an empty list is none were found
 		 */
 		public ILogEntry[] getLogEntries(ICVSRemoteResource resource) {
-			return (ILogEntry[])allEntries.get(resource);
+			return (ILogEntry[])allEntries.get(getFullPath(resource));
 		}
 		
+		/*
+         * Return the full path that uniquely identifies the resource
+         * accross repositories. This path include the repository and
+         * resource path but does not include the revision so that 
+         * all log entries for a file can be retrieved.
+         */
+        private String getFullPath(ICVSRemoteResource resource) {
+            return Util.appendPath(resource.getRepository().getLocation(), resource.getRepositoryRelativePath());
+        }
+        
+        /**
+		 * Clear all the cached entries associated with the given resource
+		 * @param getFullPath(resource) the remote resource
+		 */
 		public void clearEntriesFor(ICVSRemoteResource resource) {
 			entries.remove(resource);
-			allEntries.remove(resource);
+			allEntries.remove(getFullPath(resource));
 		}
 		
 		public void clearEntries() {
@@ -79,10 +95,89 @@ public class RemoteLogOperation extends RepositoryLocationOperation {
 	        			entries.put(file, entry);
 	        		}
 	        		ILogEntry allLogs[] = listener.getEntriesFor(file);
-	        		allEntries.put(file, allLogs);
+	        		allEntries.put(getFullPath(file), allLogs);
 	        	}
 	        }
 	    }
+	    
+	    public ICVSRemoteFile getImmediatePredecessor(ICVSRemoteFile file) throws TeamException {
+	        ILogEntry[] allLogs = (ILogEntry[])allEntries.get(getFullPath(file));
+            String revision = file.getRevision();
+            // First decrement the last digit and see if that revision exists
+            String predecessorRevision = getPredecessorRevision(revision);
+            ICVSRemoteFile predecessor = findRevison(allLogs, predecessorRevision);
+            // If nothing was found, try to fond the base of a branch
+            if (predecessor == null && isBrancheRevision(revision)) {
+                predecessorRevision = getBaseRevision(revision);
+                predecessor = findRevison(allLogs, predecessorRevision);
+            }
+            // If that fails, it is still possible that there is a revision.
+            // This can happen if the revision has been manually set.
+            if (predecessor == null) {
+                // We don't search in this case since this is costly and would be done
+                // for any file that is new as well.
+            }
+            return predecessor;
+	    }
+        
+	    /*
+         * Find the given revision in the list of log entries.
+         * Return null if the revision wasn't found.
+         */
+        private ICVSRemoteFile findRevison(ILogEntry[] allLogs, String predecessorRevision) throws TeamException {
+            for (int i = 0; i < allLogs.length; i++) {
+                ILogEntry entry = allLogs[i];
+                ICVSRemoteFile file = entry.getRemoteFile();
+                if (file.getRevision().equals(predecessorRevision)) {
+                    return file;
+                }
+            }
+            return null;
+        }
+        /*
+	     * Decrement the trailing digit by one.
+	     */
+        private String getPredecessorRevision(String revision) {
+            int digits[] = Util.convertToDigits(revision);
+            digits[digits.length -1]--;
+            StringBuffer buffer = new StringBuffer(revision.length());
+            for (int i = 0; i < digits.length; i++) {
+                buffer.append(Integer.toString(digits[i]));
+                if (i < digits.length - 1) {
+                    buffer.append('.');
+                }
+            }
+            return buffer.toString();
+        }
+        
+        /*
+         * Return true if there are more than 2 digits in the revision number
+         * (i.e. the revision is on a branch)
+         */
+        private boolean isBrancheRevision(String revision) {
+            return Util.convertToDigits(revision).length > 2;
+        }
+        
+        /*
+         * Remove the trailing revision digits such that the
+         * returned revision is shorter than the given revision 
+         * and is an even number of digits long
+         */
+        private String getBaseRevision(String revision) {
+            int digits[] = Util.convertToDigits(revision);
+            int length = digits.length - 1;
+            if (length % 2 == 1) {
+                length--;
+            }
+            StringBuffer buffer = new StringBuffer(revision.length());
+            for (int i = 0; i < length; i++) {
+                buffer.append(Integer.toString(digits[i]));
+                if (i < length - 1) {
+                    buffer.append('.');
+                }
+            }
+            return buffer.toString();
+        }
 	}
 	
 	public RemoteLogOperation(IWorkbenchPart part, ICVSRemoteResource[] remoteResources, CVSTag tag1, CVSTag tag2, LogEntryCache cache) {

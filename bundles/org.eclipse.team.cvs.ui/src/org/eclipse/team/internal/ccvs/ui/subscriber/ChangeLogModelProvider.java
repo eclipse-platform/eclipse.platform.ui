@@ -42,6 +42,7 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.RemoteLogOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.RemoteCompareOperation.CompareTreeBuilder;
 import org.eclipse.team.internal.ccvs.ui.operations.RemoteLogOperation.LogEntryCache;
 import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
@@ -264,6 +265,148 @@ public class ChangeLogModelProvider extends CompositeModelProvider implements IC
         }
 	}
 	
+	/*
+	 * Action that will open a commit set in a compare editor.
+	 * It provides a comparison between the files in the
+	 * commit set and their immediate predecessors.
+	 */
+	private class OpenCommitSetAction extends SynchronizeModelAction {
+
+        protected OpenCommitSetAction(ISynchronizePageConfiguration configuration) {
+            super(Policy.bind("ChangeLogModelProvider.20"), configuration); //$NON-NLS-1$
+        }
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.team.ui.synchronize.SynchronizeModelAction#getSyncInfoFilter()
+         */
+        protected FastSyncInfoFilter getSyncInfoFilter() {
+            return new AndSyncInfoFilter(new FastSyncInfoFilter[] {
+                    new FastSyncInfoFilter() {
+                        public boolean select(SyncInfo info) {
+                            return info.getLocal().getType() == IResource.FILE;
+                        }
+                    },
+                    //TODO: Should be incoming or two-way
+                    new SyncInfoDirectionFilter(new int[] { SyncInfo.INCOMING, SyncInfo.CONFLICTING })
+            });
+        }
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.team.ui.synchronize.SynchronizeModelAction#updateSelection(org.eclipse.jface.viewers.IStructuredSelection)
+         */
+        protected boolean updateSelection(IStructuredSelection selection) {
+            boolean enabled = super.updateSelection(selection);
+            if (enabled) {
+                // The selection only contains appropriate files
+                // only enable if there is only one item selected and 
+                // it is a file or a commit set
+                if (selection.size() == 1) {
+                    Object o = selection.getFirstElement();
+                    if (o instanceof ChangeLogDiffNode) return true;
+                    if (o instanceof ISynchronizeModelElement) {
+                        ISynchronizeModelElement element = (ISynchronizeModelElement)o;
+                        IResource resource = element.getResource();
+                        return (resource != null && resource.getType() == IResource.FILE);
+                    }
+                }
+            }
+            return false;
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.team.ui.synchronize.SynchronizeModelAction#getSubscriberOperation(org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration, org.eclipse.compare.structuremergeviewer.IDiffElement[])
+         */
+        protected SynchronizeModelOperation getSubscriberOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
+            return new SynchronizeModelOperation(configuration, elements) {
+                public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+                    SyncInfoSet set = getSyncInfoSet();
+                    SyncInfo[] infos = set.getSyncInfos();
+                    if (infos.length > 0) {
+                        ICVSRepositoryLocation location = getLocation(infos[0]);
+                        if (location == null) {
+                            handle(new CVSException(Policy.bind("ChangeLogModelProvider.21"))); //$NON-NLS-1$
+                            return;
+                        }
+	                    CompareTreeBuilder builder = new CompareTreeBuilder(location, null, null);
+	                    if (buildTrees(builder, infos)) {
+	                        try {
+                                builder.cacheContents(monitor);
+		                        builder.openCompareEditor(getConfiguration().getSite().getPart().getSite().getPage(), getCompareTitle(), getCompareToolTip());
+                            } catch (CVSException e) {
+                                handle(e);
+                                return;
+                            }
+	                    }
+                    }
+                }
+
+                private String getCompareToolTip() {
+                    IDiffElement[] elements = getSelectedDiffElements();
+                    for (int i = 0; i < elements.length; i++) {
+                        IDiffElement element = elements[i];
+                        while (element != null) {
+	                        if (element instanceof ChangeLogDiffNode) {
+	                            return ((ChangeLogDiffNode)element).getName();
+	                        }
+	                        element = element.getParent();
+                        }
+                    }
+                    return null;
+                }
+                
+                private String getCompareTitle() {
+                    IDiffElement[] elements = getSelectedDiffElements();
+                    for (int i = 0; i < elements.length; i++) {
+                        IDiffElement element = elements[i];
+                        while (element != null) {
+	                        if (element instanceof ChangeLogDiffNode) {
+	                            return ((ChangeLogDiffNode)element).getShortName();
+	                        }
+	                        element = element.getParent();
+                        }
+                    }
+                    return null;
+                }
+
+                private ICVSRepositoryLocation getLocation(SyncInfo info) {
+                    IResourceVariant remote = info.getRemote();
+                    if (remote == null) {
+                        remote = info.getBase();
+                    }
+                    if (remote != null) {
+                        return ((ICVSRemoteResource)remote).getRepository();
+                    }
+                    return null;
+                }
+
+                /*
+                 * Build the trees that will be compared
+                 */
+                private boolean buildTrees(CompareTreeBuilder builder, SyncInfo[] infos) {
+                    for (int i = 0; i < infos.length; i++) {
+                        SyncInfo info = infos[i];
+                        IResourceVariant remote = info.getRemote();
+                        if (remote == null) {
+                            IResourceVariant predecessor = info.getBase();
+                            if (predecessor instanceof ICVSRemoteFile) {
+                                builder.addToTrees((ICVSRemoteFile)predecessor, null);
+                            }
+                        } else if (remote instanceof ICVSRemoteFile) {
+                            try {
+                                ICVSRemoteFile predecessor = logs.getImmediatePredecessor((ICVSRemoteFile)remote);
+                                builder.addToTrees(predecessor, (ICVSRemoteFile)remote);
+                            } catch (TeamException e) {
+                                handle(e);
+                                return false;
+                            }
+                        }
+                    }
+                    return true;
+                }
+            };
+        } 
+	}
+	
 	/* *****************************************************************************
 	 * Action group for this layout. It is added and removed for this layout only.
 	 */
@@ -273,6 +416,7 @@ public class ChangeLogModelProvider extends CompositeModelProvider implements IC
 		private MenuManager addToCommitSet;
         private EditCommitSetAction editCommitSet;
         private MakeDefaultCommitSetAction makeDefault;
+        private OpenCommitSetAction openCommitSet;
 		public void initialize(ISynchronizePageConfiguration configuration) {
 			super.initialize(configuration);
 			sortByComment = new MenuManager(Policy.bind("ChangeLogModelProvider.0a"));	 //$NON-NLS-1$
@@ -288,6 +432,12 @@ public class ChangeLogModelProvider extends CompositeModelProvider implements IC
 			addToCommitSet.add(new Separator());
 			editCommitSet = new EditCommitSetAction(configuration);
 			makeDefault = new MakeDefaultCommitSetAction(configuration);
+			openCommitSet = new OpenCommitSetAction(configuration);
+			
+			appendToGroup(
+					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+					ISynchronizePageConfiguration.FILE_GROUP, 
+					openCommitSet);
 			
 			appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 

@@ -74,4 +74,9 @@ public class ChangeLogDiffNode extends SynchronizeModelElement {
 	public IResource getResource() {
 		return null;
 	}
+
+    public String getShortName() {
+		String date = DateFormat.getDateTimeInstance().format(logEntry.getDate());
+		return "["+logEntry.getAuthor()+ "] (" + date +")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+    }
 }

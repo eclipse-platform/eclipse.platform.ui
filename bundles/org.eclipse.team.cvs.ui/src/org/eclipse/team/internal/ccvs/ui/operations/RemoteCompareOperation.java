@@ -32,13 +32,231 @@ import org.eclipse.ui.IWorkbenchPart;
 /**
  * Compare the two versions of given remote folders obtained from the two tags specified.
  */
-public class RemoteCompareOperation extends RemoteOperation  implements RDiffSummaryListener.IFileDiffListener {
-
-	private CVSTag left;
-	private CVSTag right;
+public class RemoteCompareOperation extends RemoteOperation {
+    
+    private CompareTreeBuilder builder;
+    private CVSTag left, right;
 	
-	private RemoteFolderTree leftTree, rightTree;
+    /**
+     * Helper class for builder and comparing the resource trees
+     */
+	public static class CompareTreeBuilder implements RDiffSummaryListener.IFileDiffListener {
+	    private ICVSRepositoryLocation location;
+		private RemoteFolderTree leftTree, rightTree;
+		private CVSTag left, right;
 
+        public CompareTreeBuilder(ICVSRepositoryLocation location, CVSTag left, CVSTag right) {
+            this.left = left;
+            this.right = right;
+            this.location = location;
+            reset();
+        }
+		
+        public RemoteFolderTree getLeftTree() {
+            return leftTree;
+        }
+        public RemoteFolderTree getRightTree() {
+            return rightTree;
+        }
+        
+        /**
+         * Reset the builder to prepare for a new build
+         */
+        public void reset() {
+            leftTree = new RemoteFolderTree(null, location, ICVSRemoteFolder.REPOSITORY_ROOT_FOLDER_NAME, left);
+    		leftTree.setChildren(new ICVSRemoteResource[0]);
+    		rightTree = new RemoteFolderTree(null, location, ICVSRemoteFolder.REPOSITORY_ROOT_FOLDER_NAME, right);
+    		rightTree.setChildren(new ICVSRemoteResource[0]);
+        }
+        
+        /**
+         * Cache the contents for the files that are about to be compares
+         * @throws CVSException
+         */
+        public void cacheContents(IProgressMonitor monitor) throws CVSException {
+			String[] overlappingFilePaths = getOverlappingFilePaths();
+			if (overlappingFilePaths.length > 0) {
+			    monitor.beginTask(null, 100);
+				fetchFileContents(leftTree, overlappingFilePaths, Policy.subMonitorFor(monitor, 50));
+				fetchFileContents(rightTree, overlappingFilePaths, Policy.subMonitorFor(monitor, 50));
+				monitor.done();
+			}
+        }
+        
+	    /**
+         * Open the comparison in a compare editor
+         */
+        public void openCompareEditor(final IWorkbenchPage page, final String title, final String toolTip) {
+			if (leftTree == null || rightTree == null) return;
+			Display.getDefault().asyncExec(new Runnable() {
+				public void run() {
+					CompareUI.openCompareEditorOnPage(
+						new CVSCompareEditorInput(title, toolTip, new ResourceEditionNode(leftTree), new ResourceEditionNode(rightTree)), page);
+				}
+			});
+        }
+		
+        /**
+         * Add the predecessor to the left tree and the remote to the right tree.
+         * @param predecessor
+         * @param remote
+         */
+        public void addToTrees(ICVSRemoteFile predecessor, ICVSRemoteFile remote) {
+            if (remote != null) {
+				try {
+					Path filePath = new Path(remote.getRepositoryRelativePath());
+                    addFile(rightTree, right, filePath, remote.getRevision());
+					getFolder(leftTree, left, filePath.removeLastSegments(1), Path.EMPTY);
+				} catch (TeamException e) {
+					CVSUIPlugin.log(e);
+				}
+            }
+            if (predecessor != null) {
+				try {
+					Path filePath = new Path(predecessor.getRepositoryRelativePath());
+                    addFile(leftTree, left, filePath, predecessor.getRevision());
+					getFolder(rightTree, right, filePath.removeLastSegments(1), Path.EMPTY);
+				} catch (TeamException e) {
+					CVSUIPlugin.log(e);
+				}
+            }
+        }
+        
+		private void addFile(RemoteFolderTree tree, CVSTag tag, Path filePath, String revision) throws CVSException {
+			RemoteFolderTree parent = (RemoteFolderTree)getFolder(tree, tag, filePath.removeLastSegments(1), Path.EMPTY);
+			String name = filePath.lastSegment();
+			ICVSRemoteFile file = new RemoteFile(parent, 0, name, revision, null, getTag(revision, tag));
+			addChild(parent, file);
+		}
+		
+        private CVSTag getTag(String revision, CVSTag tag) {
+            if (tag == null) {
+                tag = new CVSTag(revision, CVSTag.VERSION);
+            }
+            return tag;
+        }
+
+        /* 
+		 * Get the folder at the given path in the given tree, creating any missing folders as needed.
+		 */
+		private ICVSRemoteFolder getFolder(RemoteFolderTree tree, CVSTag tag, IPath remoteFolderPath, IPath parentPath) throws CVSException {
+			if (remoteFolderPath.segmentCount() == 0) return tree;
+			String name = remoteFolderPath.segment(0);
+			ICVSResource child;
+			IPath childPath = parentPath.append(name);
+			if (tree.childExists(name)) {
+				child = tree.getChild(name);
+			}  else {
+				child = new RemoteFolderTree(tree, tree.getRepository(), childPath.toString(), tag);
+				((RemoteFolderTree)child).setChildren(new ICVSRemoteResource[0]);
+				addChild(tree, (ICVSRemoteResource)child);
+			}
+			return getFolder((RemoteFolderTree)child, tag, remoteFolderPath.removeFirstSegments(1), childPath);
+		}
+
+		private void addChild(RemoteFolderTree tree, ICVSRemoteResource resource) {
+			ICVSRemoteResource[] children = tree.getChildren();
+			ICVSRemoteResource[] newChildren;
+			if (children == null) {
+				newChildren = new ICVSRemoteResource[] { resource };
+			} else {
+				newChildren = new ICVSRemoteResource[children.length + 1];
+				System.arraycopy(children, 0, newChildren, 0, children.length);
+				newChildren[children.length] = resource;
+			}
+			tree.setChildren(newChildren);
+		}
+        
+		/* (non-Javadoc)
+		 * @see org.eclipse.team.internal.ccvs.core.client.listeners.RDiffSummaryListener.IFileDiffListener#fileDiff(java.lang.String, java.lang.String, java.lang.String)
+		 */
+		public void fileDiff(String remoteFilePath, String leftRevision, String rightRevision) {
+			try {
+				addFile(rightTree, right, new Path(remoteFilePath), rightRevision);
+			} catch (CVSException e) {
+				CVSUIPlugin.log(e);
+			}
+			try {
+				addFile(leftTree, left, new Path(remoteFilePath), leftRevision);
+			} catch (CVSException e) {
+				CVSUIPlugin.log(e);
+			}
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.team.internal.ccvs.core.client.listeners.RDiffSummaryListener.IFileDiffListener#newFile(java.lang.String, java.lang.String)
+		 */
+		public void newFile(String remoteFilePath, String rightRevision) {
+			try {
+				addFile(rightTree, right, new Path(remoteFilePath), rightRevision);
+			} catch (CVSException e) {
+				CVSUIPlugin.log(e);
+			}
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.team.internal.ccvs.core.client.listeners.RDiffSummaryListener.IFileDiffListener#deletedFile(java.lang.String)
+		 */
+		public void deletedFile(String remoteFilePath, String leftRevision) {
+			// The leftRevision may be null in which case the tag is used
+			try {
+				addFile(leftTree, left, new Path(remoteFilePath), leftRevision);
+			} catch (CVSException e) {
+				CVSUIPlugin.log(e);
+			}
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.team.internal.ccvs.core.client.listeners.RDiffSummaryListener.IFileDiffListener#directory(java.lang.String)
+		 */
+		public void directory(String remoteFolderPath) {
+			try {
+				getFolder(leftTree, left, new Path(remoteFolderPath), Path.EMPTY);
+			} catch (CVSException e) {
+				CVSUIPlugin.log(e);
+			}
+			try {
+				getFolder(rightTree, right, new Path(remoteFolderPath), Path.EMPTY);
+			} catch (CVSException e) {
+				CVSUIPlugin.log(e);
+			}
+		}
+		
+		private String[] getOverlappingFilePaths() {
+			String[] leftFiles = getFilePaths(leftTree);
+			String[] rightFiles = getFilePaths(rightTree);
+			Set set = new HashSet();
+			for (int i = 0; i < rightFiles.length; i++) {
+				String rightFile = rightFiles[i];
+				for (int j = 0; j < leftFiles.length; j++) {
+					String leftFile = leftFiles[j];
+					if (leftFile.equals(rightFile)) {
+						set.add(leftFile);
+					}
+				}
+			}
+			return (String[]) set.toArray(new String[set.size()]);
+		}
+
+		private void fetchFileContents(RemoteFolderTree tree, String[] overlappingFilePaths, IProgressMonitor monitor) throws CVSException {
+			FileContentCachingService.fetchFileContents(tree, overlappingFilePaths, monitor);
+		}
+
+		private String[] getFilePaths(RemoteFolderTree tree) {
+			ICVSRemoteResource[] children = tree.getChildren();
+			List result = new ArrayList();
+			for (int i = 0; i < children.length; i++) {
+				ICVSRemoteResource resource = children[i];
+				if (resource.isContainer()) {
+					result.addAll(Arrays.asList(getFilePaths((RemoteFolderTree)resource)));
+				} else {
+					result.add(resource.getRepositoryRelativePath());
+				}
+			}
+			return (String[]) result.toArray(new String[result.size()]);
+		}
+	}
+	
 	public static CVSTag getTag(ICVSRemoteResource resource) throws CVSException {
 		CVSTag tag = null;
 		try {
@@ -81,6 +299,7 @@ public class RemoteCompareOperation extends RemoteOperation  implements RDiffSum
 		if (this.left == null) {
 			this.left = CVSTag.DEFAULT;
 		}
+		builder = new CompareTreeBuilder(remoteResource.getRepository(), left, right);
 	}
 
 	/*
@@ -94,71 +313,36 @@ public class RemoteCompareOperation extends RemoteOperation  implements RDiffSum
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected void execute(IProgressMonitor monitor) throws CVSException {
-		leftTree = rightTree = null;
 		boolean fetchContents = CVSUIPlugin.getPlugin().getPluginPreferences().getBoolean(ICVSUIConstants.PREF_CONSIDER_CONTENTS);
 		monitor.beginTask(getTaskName(), 50 + (fetchContents ? 100 : 0));
 		try {
 			ICVSRemoteResource resource = getRemoteResource();
 			IStatus status = buildTrees(resource, Policy.subMonitorFor(monitor, 50));
 			if (status.isOK() && fetchContents) {
-				String[] overlappingFilePaths = getOverlappingFilePaths();
-				if (overlappingFilePaths.length > 0) {
-					fetchFileContents(leftTree, overlappingFilePaths, Policy.subMonitorFor(monitor, 50));
-					fetchFileContents(rightTree, overlappingFilePaths, Policy.subMonitorFor(monitor, 50));
-				}
+			    builder.cacheContents(Policy.subMonitorFor(monitor, 100));
 			}
 			collectStatus(status);
-			openCompareEditor(leftTree, rightTree);
+			openCompareEditor(builder);
 		} finally {
 			monitor.done();
 		}
 	}
 
-	private String[] getOverlappingFilePaths() {
-		String[] leftFiles = getFilePaths(leftTree);
-		String[] rightFiles = getFilePaths(rightTree);
-		Set set = new HashSet();
-		for (int i = 0; i < rightFiles.length; i++) {
-			String rightFile = rightFiles[i];
-			for (int j = 0; j < leftFiles.length; j++) {
-				String leftFile = leftFiles[j];
-				if (leftFile.equals(rightFile)) {
-					set.add(leftFile);
-				}
-			}
-		}
-		return (String[]) set.toArray(new String[set.size()]);
-	}
+	/**
+     * This method is here to allow subclasses to override
+     */
+    protected void openCompareEditor(CompareTreeBuilder builder) {
+        builder.openCompareEditor(getTargetPage(), null, null);
+    }
 
-	private void fetchFileContents(RemoteFolderTree tree, String[] overlappingFilePaths, IProgressMonitor monitor) throws CVSException {
-		FileContentCachingService.fetchFileContents(tree, overlappingFilePaths, monitor);
-	}
-
-	private String[] getFilePaths(RemoteFolderTree tree) {
-		ICVSRemoteResource[] children = tree.getChildren();
-		List result = new ArrayList();
-		for (int i = 0; i < children.length; i++) {
-			ICVSRemoteResource resource = children[i];
-			if (resource.isContainer()) {
-				result.addAll(Arrays.asList(getFilePaths((RemoteFolderTree)resource)));
-			} else {
-				result.add(resource.getRepositoryRelativePath());
-			}
-		}
-		return (String[]) result.toArray(new String[result.size()]);
-	}
-
-	/*
+    /*
 	 * Build the two trees uses the reponses from "cvs rdiff -s ...".
 	 */
 	private IStatus buildTrees(ICVSRemoteResource resource, IProgressMonitor monitor) throws CVSException {
 		// Initialize the resulting trees
-		leftTree = new RemoteFolderTree(null, resource.getRepository(), ICVSRemoteFolder.REPOSITORY_ROOT_FOLDER_NAME, left);
-		leftTree.setChildren(new ICVSRemoteResource[0]);
-		rightTree = new RemoteFolderTree(null, resource.getRepository(), ICVSRemoteFolder.REPOSITORY_ROOT_FOLDER_NAME, right);
-		rightTree.setChildren(new ICVSRemoteResource[0]);
+	    builder.reset();
 		Command.QuietOption oldOption= CVSProviderPlugin.getPlugin().getQuietness();
-		Session session = new Session(resource.getRepository(), leftTree, false);
+		Session session = new Session(resource.getRepository(), builder.getLeftTree(), false);
 		try {
 			monitor.beginTask(getTaskName(), 100);
 			CVSProviderPlugin.getPlugin().setQuietness(Command.VERBOSE);
@@ -167,7 +351,7 @@ public class RemoteCompareOperation extends RemoteOperation  implements RDiffSum
 					Command.NO_GLOBAL_OPTIONS,
 					getLocalOptions(),
 					new ICVSResource[] { resource },
-					new RDiffSummaryListener(this),
+					new RDiffSummaryListener(builder),
 					Policy.subMonitorFor(monitor, 90));
 			return status;
 		} finally {
@@ -180,7 +364,7 @@ public class RemoteCompareOperation extends RemoteOperation  implements RDiffSum
 		}
 	}
 
-	private LocalOption[] getLocalOptions() {
+    private LocalOption[] getLocalOptions() {
 		return new LocalOption[] {RDiff.SUMMARY, RDiff.makeTagOption(left), RDiff.makeTagOption(right)};
 	}
 
@@ -189,113 +373,6 @@ public class RemoteCompareOperation extends RemoteOperation  implements RDiffSum
 	 */
 	protected String getTaskName() {
 		return Policy.bind("RemoteCompareOperation.0", new Object[] {left.getName(), right.getName(), getRemoteResource().getRepositoryRelativePath()}); //$NON-NLS-1$
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.core.client.listeners.RDiffSummaryListener.IFileDiffListener#fileDiff(java.lang.String, java.lang.String, java.lang.String)
-	 */
-	public void fileDiff(String remoteFilePath, String leftRevision, String rightRevision) {
-		try {
-			addFile(rightTree, right, new Path(remoteFilePath), rightRevision);
-		} catch (CVSException e) {
-			CVSUIPlugin.log(e);
-		}
-		try {
-			addFile(leftTree, left, new Path(remoteFilePath), leftRevision);
-		} catch (CVSException e) {
-			CVSUIPlugin.log(e);
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.core.client.listeners.RDiffSummaryListener.IFileDiffListener#newFile(java.lang.String, java.lang.String)
-	 */
-	public void newFile(String remoteFilePath, String rightRevision) {
-		try {
-			addFile(rightTree, right, new Path(remoteFilePath), rightRevision);
-		} catch (CVSException e) {
-			CVSUIPlugin.log(e);
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.core.client.listeners.RDiffSummaryListener.IFileDiffListener#deletedFile(java.lang.String)
-	 */
-	public void deletedFile(String remoteFilePath, String leftRevision) {
-		// The leftRevision may be null in which case the tag is used
-		try {
-			addFile(leftTree, left, new Path(remoteFilePath), leftRevision);
-		} catch (CVSException e) {
-			CVSUIPlugin.log(e);
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.core.client.listeners.RDiffSummaryListener.IFileDiffListener#directory(java.lang.String)
-	 */
-	public void directory(String remoteFolderPath) {
-		try {
-			getFolder(leftTree, left, new Path(remoteFolderPath), Path.EMPTY);
-		} catch (CVSException e) {
-			CVSUIPlugin.log(e);
-		}
-		try {
-			getFolder(rightTree, right, new Path(remoteFolderPath), Path.EMPTY);
-		} catch (CVSException e) {
-			CVSUIPlugin.log(e);
-		}
-	}
-
-	/* 
-	 * Get the folder at the given path in the given tree, creating any missing folders as needed.
-	 */
-	private ICVSRemoteFolder getFolder(RemoteFolderTree tree, CVSTag tag, IPath remoteFolderPath, IPath parentPath) throws CVSException {
-		if (remoteFolderPath.segmentCount() == 0) return tree;
-		String name = remoteFolderPath.segment(0);
-		ICVSResource child;
-		IPath childPath = parentPath.append(name);
-		if (tree.childExists(name)) {
-			child = tree.getChild(name);
-		}  else {
-			child = new RemoteFolderTree(tree, tree.getRepository(), childPath.toString(), tag);
-			((RemoteFolderTree)child).setChildren(new ICVSRemoteResource[0]);
-			addChild(tree, (ICVSRemoteResource)child);
-		}
-		return getFolder((RemoteFolderTree)child, tag, remoteFolderPath.removeFirstSegments(1), childPath);
-	}
-
-	private void addChild(RemoteFolderTree tree, ICVSRemoteResource resource) {
-		ICVSRemoteResource[] children = tree.getChildren();
-		ICVSRemoteResource[] newChildren;
-		if (children == null) {
-			newChildren = new ICVSRemoteResource[] { resource };
-		} else {
-			newChildren = new ICVSRemoteResource[children.length + 1];
-			System.arraycopy(children, 0, newChildren, 0, children.length);
-			newChildren[children.length] = resource;
-		}
-		tree.setChildren(newChildren);
-	}
-
-	private void addFile(RemoteFolderTree tree, CVSTag tag, Path filePath, String revision) throws CVSException {
-		RemoteFolderTree parent = (RemoteFolderTree)getFolder(tree, tag, filePath.removeLastSegments(1), Path.EMPTY);
-		String name = filePath.lastSegment();
-		ICVSRemoteFile file = new RemoteFile(parent, 0, name, revision, null, tag);
-		addChild(parent, file);
-	}
-	
-	/*
-	 * Only intended to be overridden by test cases.
-	 */
-	protected void openCompareEditor(final ICVSRemoteFolder leftTree, final ICVSRemoteFolder rightTree) {
-		if (leftTree == null || rightTree == null) return;
-		Display.getDefault().asyncExec(new Runnable() {
-			public void run() {
-				CompareUI.openCompareEditorOnPage(
-						new CVSCompareEditorInput(new ResourceEditionNode(leftTree), new ResourceEditionNode(rightTree)),
-						getTargetPage());
-			}
-		});
 	}
 	
 	protected IWorkbenchPage getTargetPage() {

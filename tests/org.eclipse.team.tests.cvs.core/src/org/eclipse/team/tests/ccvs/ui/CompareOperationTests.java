@@ -38,9 +38,9 @@ public class CompareOperationTests extends CVSOperationTest {
 		/*
 		 * Override to prevent compare editor from opening and to capture the results
 		 */
-		protected void openCompareEditor(ICVSRemoteFolder leftTree, ICVSRemoteFolder rightTree) {
-			this.leftTree = leftTree;
-			this.rightTree = rightTree;
+		protected void openCompareEditor(CompareTreeBuilder builder) {
+			this.leftTree = builder.getLeftTree();
+			this.rightTree = builder.getRightTree();
 		}
 
 		public ICVSRemoteFolder getLeftTree() {
