@@ -242,6 +242,9 @@ private final static void declareImages() {
 	declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_EXPORTDIR_WIZ, PATH_WIZBAN+"exportdir_wiz.gif");//$NON-NLS-1$
 	declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_EXPORTZIP_WIZ, PATH_WIZBAN+"exportzip_wiz.gif");//$NON-NLS-1$
 
+	// dialog images
+	declareImage(IWorkbenchGraphicConstants.IMG_DLGBAN_SAVEAS_DLG, PATH_WIZBAN+"saveas_dlg.gif");//$NON-NLS-1$
+
 	/* Cache the commonly used ones */
 	
 	// object images -- these are also shared images.

@@ -18,6 +18,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.graphics.Image;
 import java.util.*;
 
 /**
@@ -42,6 +43,12 @@ public class SaveAsDialog extends TitleAreaDialog {
 	private ResourceAndContainerGroup resourceGroup;
 	private Button okButton;
 	private Button cancelButton;
+
+	/**
+	 * Image for title area
+	 */
+	private Image dlgTitleImage = null;
+	
 /**
  * Creates a new Save As dialog for no specific file.
  *
@@ -58,6 +65,9 @@ protected void configureShell(Shell shell) {
 	shell.setText(WorkbenchMessages.getString("SaveAsDialog.text")); //$NON-NLS-1$
 	WorkbenchHelp.setHelp(shell, new Object[] {IHelpContextIds.SAVE_AS_DIALOG});
 }
+/* (non-Javadoc)
+ * Method declared in Window.
+ */
 public void create() {
 	super.create();
 	
@@ -65,6 +75,18 @@ public void create() {
 	validatePage();
 	resourceGroup.setFocus();
 	setTitle(WorkbenchMessages.getString("SaveAsDialog.title")); //$NON-NLS-1$
+	dlgTitleImage = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_DLGBAN_SAVEAS_DLG).createImage();
+	setTitleImage(dlgTitleImage);
+	setMessage(WorkbenchMessages.getString("SaveAsDialog.message")); //$NON-NLS-1$
+}
+/** 
+ * The <code>SaveAsDialog</code> iplementation of this <code>Window</code>
+ * method disposes of the banner image when the dialog is closed.
+ */
+public boolean close() {
+	if (dlgTitleImage != null) 
+		dlgTitleImage.dispose();
+	return super.close();
 }
 /* (non-Javadoc)
  * Method declared on Dialog.
