@@ -18,7 +18,6 @@ import org.eclipse.update.configuration.*;
 import org.eclipse.update.configurator.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
-import org.eclipse.update.internal.configurator.ConfigurationActivator;
 import org.eclipse.update.internal.model.*;
 import org.eclipse.update.internal.operations.*;
 
@@ -104,7 +103,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			configSite.setPlatformURLString(site.getURL().toExternalForm());
 
 			// obtain the list of plugins
-			IPlatformConfiguration runtimeConfiguration = ConfigurationActivator.getCurrentPlatformConfiguration();
+			IPlatformConfiguration runtimeConfiguration = ConfiguratorUtils.getCurrentPlatformConfiguration();
 			ConfigurationPolicy configurationPolicy = configSite.getConfigurationPolicy();
 			String[] pluginPath = new String[0];
 			if (configurationPolicy.getPolicy() == IPlatformConfiguration.ISitePolicy.USER_INCLUDE)
@@ -152,7 +151,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			configSite.setPlatformURLString(site.getURL().toExternalForm());
 
 			// obtain the list of plugins
-			IPlatformConfiguration runtimeConfiguration = ConfigurationActivator.getCurrentPlatformConfiguration();
+			IPlatformConfiguration runtimeConfiguration = ConfiguratorUtils.getCurrentPlatformConfiguration();
 			ConfigurationPolicy configurationPolicy = configSite.getConfigurationPolicy();
 			String[] pluginPath = new String[0];
 			if (configurationPolicy.getPolicy() == IPlatformConfiguration.ISitePolicy.USER_INCLUDE)
@@ -311,7 +310,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		saveConfigurationFile(isTransient);
 
 		// Write info  into platform for the next runtime
-		IPlatformConfiguration runtimeConfiguration = ConfigurationActivator.getCurrentPlatformConfiguration();
+		IPlatformConfiguration runtimeConfiguration = ConfiguratorUtils.getCurrentPlatformConfiguration();
 		ConfiguredSiteModel[] configurationSites = getConfigurationSitesModel();
 
 		// clean configured Entries from platform runtime
@@ -325,7 +324,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		// correct lookup)
 		IPlatformConfiguration tempConfig = null;
 		try {
-			tempConfig = ConfigurationActivator.getPlatformConfiguration(null);
+			tempConfig = ConfiguratorUtils.getPlatformConfiguration(null);
 			IPlatformConfiguration.ISiteEntry[] tmpSites = runtimeConfiguration.getConfiguredSites();
 			for (int i = 0; i < tmpSites.length; i++) {
 				tempConfig.configureSite(tmpSites[i]);
@@ -777,7 +776,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	 */
 	private URL asInstallRelativeURL(URL url) {
 		// get location of install
-		URL install = ConfigurationActivator.getInstallURL();
+		URL install = ConfiguratorUtils.getInstallURL();
 
 		// try to determine if supplied URL can be recast as install-relative
 		if (install.getProtocol().equals(url.getProtocol())) {

@@ -16,7 +16,6 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.configurator.*;
 import org.eclipse.update.configurator.*;
 
 
@@ -102,7 +101,7 @@ public class ErrorRecoveryLog {
 	 */
 	public File getRecoveryLogFile() {
 		IPlatformConfiguration configuration =
-			ConfigurationActivator.getCurrentPlatformConfiguration();
+			ConfiguratorUtils.getCurrentPlatformConfiguration();
 		URL location = configuration.getConfigurationLocation();
 		String locationString = location.getFile();
 		File platformConfiguration = new File(locationString);

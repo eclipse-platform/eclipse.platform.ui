@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.configurator.*;
-import org.eclipse.update.internal.configurator.*;
 import org.eclipse.update.internal.model.*;
 import org.xml.sax.*;
 
@@ -55,7 +54,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 		SiteLocal localSite = new SiteLocal();
 	
 		// obtain platform configuration
-		IPlatformConfiguration currentPlatformConfiguration = ConfigurationActivator.getCurrentPlatformConfiguration();
+		IPlatformConfiguration currentPlatformConfiguration = ConfiguratorUtils.getCurrentPlatformConfiguration();
 		localSite.isTransient(currentPlatformConfiguration.isTransient());
 	
 		try {
@@ -249,7 +248,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 	public void write(int indent, PrintWriter w) {
 
 		// force the recalculation to avoid reconciliation
-		IPlatformConfiguration platformConfig = ConfigurationActivator.getCurrentPlatformConfiguration();
+		IPlatformConfiguration platformConfig = ConfiguratorUtils.getCurrentPlatformConfiguration();
 		platformConfig.refresh();
 		long changeStamp = platformConfig.getChangeStamp();
 		this.setStamp(changeStamp);
@@ -517,7 +516,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 	 */
 	private void preserveRuntimePluginPath() throws CoreException {
 
-		IPlatformConfiguration platformConfig = ConfigurationActivator.getCurrentPlatformConfiguration();
+		IPlatformConfiguration platformConfig = ConfiguratorUtils.getCurrentPlatformConfiguration();
 		IPlatformConfiguration.ISiteEntry[] siteEntries = platformConfig.getConfiguredSites();
 
 		// sites from the current configuration

@@ -22,7 +22,6 @@ import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.model.*;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.configurator.*;
-import org.eclipse.update.internal.configurator.ConfigurationActivator;
 
 /**
  * A Configured site manages the Configured and unconfigured features of a Site
@@ -990,7 +989,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 	 */
 	private static File getProductFile() {
 
-		String productInstallDirectory = ConfigurationActivator.getInstallURL().getFile();
+		String productInstallDirectory = ConfiguratorUtils.getInstallURL().getFile();
 		if (productInstallDirectory != null) {
 			File productFile = new File(productInstallDirectory, PRODUCT_SITE_MARKER);
 			if (productFile.exists()) {
@@ -1161,7 +1160,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 			// check if the site exists and is updatable
 			// update configSite
 			URL urlToCheck = new URL(platformString);
-			IPlatformConfiguration runtimeConfig = ConfigurationActivator.getCurrentPlatformConfiguration();
+			IPlatformConfiguration runtimeConfig = ConfiguratorUtils.getCurrentPlatformConfiguration();
 			IPlatformConfiguration.ISiteEntry entry = runtimeConfig.findConfiguredSite(urlToCheck);
 			if (entry != null) {
 				return entry.isNativelyLinked();

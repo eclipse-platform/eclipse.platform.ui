@@ -17,7 +17,6 @@ import javax.xml.parsers.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
-import org.eclipse.update.internal.configurator.*;
 import org.eclipse.update.configurator.*;
 import org.eclipse.update.internal.core.*;
 import org.xml.sax.*;
@@ -149,7 +148,7 @@ public class InstallConfigurationParser extends DefaultHandler {
 		// check if the site exists and is updatable
 		// update configSite
 		URL	urlToCheck = new URL(configSite.getPlatformURLString());
-	 	IPlatformConfiguration runtimeConfig = ConfigurationActivator.getCurrentPlatformConfiguration();			
+	 	IPlatformConfiguration runtimeConfig = ConfiguratorUtils.getCurrentPlatformConfiguration();			
 	 	IPlatformConfiguration.ISiteEntry entry = runtimeConfig.findConfiguredSite(urlToCheck);	 
 	 	if (entry!=null){	
 		 	configSite.setUpdatable(entry.isUpdateable());
