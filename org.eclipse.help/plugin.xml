@@ -16,6 +16,7 @@
    <requires>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.apache.xerces"/>
+      <import plugin="org.apache.lucene"/>
    </requires>
 
    <runtime>
@@ -80,4 +81,13 @@
 		<handler protocol="help" class="org.eclipse.help.internal.protocols.help.Handler"/> 
 	</extension> 
    
+   <!-- ================================================================ -->
+   <!-- Declares an extension point for pre-built indexes                -->
+   <!-- ================================================================ -->
+   <extension-point id="prebuiltIndex" name="%prebuilt_index" /> 
+      
+	<extension point="org.eclipse.core.runtime.urlHandlers"> 
+		<handler protocol="search" class="org.eclipse.help.internal.protocols.search.Handler"/> 
+	</extension> 
+
 </plugin>
