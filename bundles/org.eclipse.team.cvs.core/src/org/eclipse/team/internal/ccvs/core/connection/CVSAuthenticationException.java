@@ -13,8 +13,6 @@ package org.eclipse.team.internal.ccvs.core.connection;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.internal.ccvs.core.*;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.Policy;
 
 public class CVSAuthenticationException extends CVSException {
 
@@ -50,4 +48,9 @@ public class CVSAuthenticationException extends CVSException {
 	public CVSAuthenticationException(IStatus status) {
 		super(status);
 	}
+
+    public CVSAuthenticationException(String string, int code, Exception e) {
+        this(new CVSStatus(IStatus.ERROR, code, 
+                Policy.bind("CVSAuthenticationException.detail", new Object[] { string }), e)); //$NON-NLS-1$ 
+    }
 }

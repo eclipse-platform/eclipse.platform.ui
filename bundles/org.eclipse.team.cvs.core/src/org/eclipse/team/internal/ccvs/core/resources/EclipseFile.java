@@ -492,12 +492,19 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 		        // This is a commit. Put the file timestamp in the entry
 		        timeStamp = getTimeStamp();
 		    } else {
-		        // This is an update. Reset the file timestamp to match the entry
+		        // This is an update. We need to change the tiemstamp in the
+                // entry file to match the file timestamp returned by Java
 		        timeStamp = oldInfo.getTimeStamp();
 		        if (timeStamp == null) {
 		            timeStamp = getTimeStamp();
 		        } else {
+                    // First, set the timestamp of the file to the timestamp from the entry
+                    // There is a chance this will do nothing as the call to Java on some
+                    // file systems munges the timestamps
 		            setTimeStamp(timeStamp);
+                    // To compensate for the above, reset the timestamp in the entry
+                    // to match the timestamp in the file
+                    timeStamp = getTimeStamp();
 		        }
 		    }
 	        newInfo = new ResourceSyncInfo(entryLine, timeStamp);
