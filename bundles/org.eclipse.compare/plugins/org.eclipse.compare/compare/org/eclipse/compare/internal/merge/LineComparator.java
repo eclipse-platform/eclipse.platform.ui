@@ -31,10 +31,10 @@ class LineComparator implements IRangeComparator {
                 ar.add(line);
         } catch (IOException e) {
         }
-        try {
-            is.close();
-        } catch (IOException e1) {
-        }
+//        try {
+//            is.close();
+//        } catch (IOException e1) {
+//        }
         fLines = (String[]) ar.toArray(new String[ar.size()]);
     }
 
