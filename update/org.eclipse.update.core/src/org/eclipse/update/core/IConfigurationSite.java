@@ -44,7 +44,7 @@ public interface IConfigurationSite {
 	 * @param installConfiguration the configuration to modify
 	 * @param monitor the Progress Monitor
 	 */
-	void install(IFeature feature, IProgressMonitor monitor) throws CoreException;
+	IFeatureReference install(IFeature feature, IProgressMonitor monitor) throws CoreException;
 	
 	/**
 	 * Configure the Feature to be available at next startup

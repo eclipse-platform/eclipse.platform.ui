@@ -239,6 +239,7 @@ public class FeaturePackaged extends Feature {
 	private String[] getJAREntries(String path) throws CoreException {
 		String[] result = new String[0];
 		try {
+			System.out.println(path);
 			JarFile jarFile = new JarFile(path);
 			List list = new ArrayList();
 			Enumeration enum = jarFile.entries();

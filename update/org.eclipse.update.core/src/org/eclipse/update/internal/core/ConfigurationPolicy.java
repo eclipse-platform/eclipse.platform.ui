@@ -103,14 +103,17 @@ public class ConfigurationPolicy implements IConfigurationPolicy {
 	void configure(IFeatureReference feature) throws CoreException {
 		if (configuredFeatureReferences == null)
 			configuredFeatureReferences = new ArrayList(0);
-		configuredFeatureReferences.add(feature);
+
+		//Start UOW ?
+		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_UNCONFIGURE);
+		activity.setLabel(feature.getURL().toExternalForm());
+		activity.setDate(new Date());
+			
+		addConfiguredFeatureReference(feature);
 		
-		// when user configure a feature,
-		// we have to remove it from unconfigured feature if it exists
-		// because the user doesn't know...
-		if (unconfiguredFeatureReferences != null){
-			remove(feature,unconfiguredFeatureReferences);
-		}
+		// everything done ok
+		activity.setStatus(IActivity.STATUS_OK);
+		((InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration()).addActivity(activity);		
 	}
 
 	/**
@@ -120,12 +123,17 @@ public class ConfigurationPolicy implements IConfigurationPolicy {
 	void unconfigure(IFeatureReference feature) throws CoreException {
 		if (unconfiguredFeatureReferences == null)
 			unconfiguredFeatureReferences = new ArrayList(0);
-		unconfiguredFeatureReferences.add(feature);
-		// an unconfigured feature is always from a configured one no ?
-		// unless it was parsed right ?
-		if (configuredFeatureReferences != null){
-			remove(feature,configuredFeatureReferences);
-		}
+			
+		//Start UOW ?
+		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_UNCONFIGURE);
+		activity.setLabel(feature.getURL().toExternalForm());
+		activity.setDate(new Date());
+			
+		addUnconfiguredFeatureReference(feature);
+		
+		// everything done ok
+		activity.setStatus(IActivity.STATUS_OK);
+		((InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration()).addActivity(activity);
 		
 	}
 
@@ -157,7 +165,11 @@ public class ConfigurationPolicy implements IConfigurationPolicy {
 		}
 		return result;
 	}
-	
+
+
+	/**
+	 * 
+	 */	
 	private void remove(IFeatureReference feature, List list){
 		String featureURLString = feature.getURL().toExternalForm();
 		boolean found = false;
@@ -170,5 +182,58 @@ public class ConfigurationPolicy implements IConfigurationPolicy {
 			}
 		}
 	}
+	
+	/**
+	 * 
+	 */	
+	private void add(IFeatureReference feature, List list){
+		String featureURLString = feature.getURL().toExternalForm();
+		boolean found = false;
+		Iterator iter = list.iterator();
+		while (iter.hasNext() && !found) {
+			IFeatureReference element = (IFeatureReference) iter.next();
+				if (element.getURL().toExternalForm().trim().equalsIgnoreCase(featureURLString)) {
+					found = true;
+			}
+		}
+		
+		if (!found){
+			list.add(feature);
+		}
+	}
+	
+
+	/**
+	 * adds a feature in the configuredReference list
+	 * also used by the parser to avoid creating another activity
+	 */
+	void addConfiguredFeatureReference(IFeatureReference feature) {
+		if (configuredFeatureReferences==null) configuredFeatureReferences = new ArrayList(0);
+		add(feature,configuredFeatureReferences);
+		
+			// when user configure a feature,
+		// we have to remove it from unconfigured feature if it exists
+		// because the user doesn't know...
+		if (unconfiguredFeatureReferences != null){
+			remove(feature,unconfiguredFeatureReferences);
+		}
+		
+	}
+
+	/**
+	 * adds a feature in teh list
+	 * also used by the parser to avoid creating another activity
+	 */
+	void addUnconfiguredFeatureReference(IFeatureReference feature) {
+		if (unconfiguredFeatureReferences==null) unconfiguredFeatureReferences = new ArrayList(0);
+		add(feature,unconfiguredFeatureReferences);
+		
+		// an unconfigured feature is always from a configured one no ?
+		// unless it was parsed right ?
+		if (configuredFeatureReferences != null){
+			remove(feature,configuredFeatureReferences);
+		}
+	}
+
 
 }

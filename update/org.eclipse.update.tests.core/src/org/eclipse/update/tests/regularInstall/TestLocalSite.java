@@ -102,6 +102,12 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		assertEquals(feature2.getIdentifier().toString(),"org.eclipse.update.core.tests.feature3_1.0.0");
 		assertTrue("Wrong id  version of feature",feature2.getIdentifier().toString().equalsIgnoreCase("org.eclipse.update.core.tests.feature3_1.0.0"));
 		
+		// only one feature configured
+		assertTrue("too many features configured",configSite2.getConfiguredFeatures().length==1);
+		
+		// no feature unconfigured
+		assertTrue("too many unconfigured features",configSite2.getConfigurationPolicy().getUnconfiguredFeatures().length==0);
+		
 		// test only 2 install config in local site
 		assertTrue("wrong number of history in Local site",site.getConfigurationHistory().length==2);
 		

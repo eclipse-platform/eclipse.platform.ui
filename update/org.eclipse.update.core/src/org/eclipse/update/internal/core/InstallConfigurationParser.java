@@ -161,11 +161,10 @@ public class InstallConfigurationParser extends DefaultHandler {
 			IFeatureReference ref = new FeatureReference(((Site) configSite.getSite()),url);
 			if (ref != null)
 				if (configured){
-					((ConfigurationSite)configSite).addFeatureReference(ref);
-					((ConfigurationPolicy)configSite.getConfigurationPolicy()).configure(ref);					
+					((ConfigurationPolicy)configSite.getConfigurationPolicy()).addConfiguredFeatureReference(ref);					
 				}
 				else
-					((ConfigurationPolicy)configSite.getConfigurationPolicy()).unconfigure(ref);
+					((ConfigurationPolicy)configSite.getConfigurationPolicy()).addUnconfiguredFeatureReference(ref);
 
 			// DEBUG:		
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {

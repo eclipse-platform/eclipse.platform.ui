@@ -13,7 +13,7 @@ public interface IActivity {
 	public static final int ACTION_FEATURE_REMOVE 	= 2;
 	public static final int ACTION_SITE_INSTALL 			= 3;
 	public static final int ACTION_SITE_REMOVE 			= 4;
-	public static final int ACTION_UNCONFIGURE 		= 5;
+	public static final int ACTION_UNCONFIGURE 			= 5;
 	public static final int ACTION_CONFIGURE 				= 6;
 	
 	public static final int STATUS_OK 			= 0;

@@ -8,6 +8,11 @@ import java.util.Date;
 
 import java.util.List;
 import java.util.*;
+
+import java.util.*;
+import java.util.*;
+
+import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.*;
@@ -21,8 +26,6 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 	private ISite site;
 	private IConfigurationPolicy policy;
 	private boolean installable = false;
-	private List configuredFeatures;
-
 	/**
 	 * Constructor
 	 */
@@ -133,20 +136,21 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 	/*
 	 * @see IConfigurationSite#install(IFeature, IProgressMonitor)
 	 */
-	public void install(IFeature feature, IProgressMonitor monitor) throws CoreException {
+	public IFeatureReference install(IFeature feature, IProgressMonitor monitor) throws CoreException {
 		if (!installable) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 			IStatus status = new Status(IStatus.WARNING, id, IStatus.OK, "The site is not considered to be installable:" + site.getURL().toExternalForm(), null);
 			throw new CoreException(status);
 		}
 
+		IFeatureReference installedFeature;
 		//Start UOW ?
 		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_FEATURE_INSTALL);
 		activity.setLabel(feature.getIdentifier().toString());
 		activity.setDate(new Date());
 
 		try {
-			IFeatureReference installedFeature = getSite().install(feature, monitor);
+			installedFeature = getSite().install(feature, monitor);
 			configure(installedFeature);
 
 			// everything done ok
@@ -159,82 +163,137 @@ public class ConfigurationSite implements IConfigurationSite, IWritable {
 			((InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration()).addActivity(activity);
 		}
 
+		return installedFeature;
 	}
 
 	/*
 	 * @see IConfigurationSite#configure(IFeatureReference)
 	 */
 	public void configure(IFeatureReference feature) throws CoreException {
-		
-		//Start UOW ?
-		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_CONFIGURE);
-		activity.setLabel(feature.getURL().toExternalForm());
-		activity.setDate(new Date());
-			
-		addFeatureReference(feature);
-		((ConfigurationPolicy)getConfigurationPolicy()).configure(feature);		
-
-		// everything done ok
-		activity.setStatus(IActivity.STATUS_OK);
-		((InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration()).addActivity(activity);
+		((ConfigurationPolicy)getConfigurationPolicy()).configure(feature);
 	}
 
-	/**
-	 * adds a feature in teh list
-	 * also used by the parser to avoid creating another activity
-	 */
-	void addFeatureReference(IFeatureReference feature) {
-		if (configuredFeatures==null) configuredFeatures = new ArrayList(0);
-		configuredFeatures.add(feature);
-	}
-
+	
 	/*
 	 * @see IConfigurationSite#unconfigure(IFeatureReference)
 	 */
 	public void unconfigure(IFeatureReference feature) throws CoreException {
-		if (configuredFeatures!=null){
-			
-				//Start UOW ?
-			ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_UNCONFIGURE);
-			activity.setLabel(feature.getURL().toExternalForm());
-			activity.setDate(new Date());
-			configuredFeatures.remove(feature);
-			((ConfigurationPolicy)getConfigurationPolicy()).unconfigure(feature);
-
-			// everything done ok
-			activity.setStatus(IActivity.STATUS_OK);
-			((InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration()).addActivity(activity);
-		}
+		((ConfigurationPolicy)getConfigurationPolicy()).unconfigure(feature);
 	}
 
 	/*
 	 * @see IConfigurationSite#getConfiguredFeatures()
 	 */
 	public IFeatureReference[] getConfiguredFeatures() {
-		IFeatureReference[] result = new IFeatureReference[0];
-		if (configuredFeatures!=null && !configuredFeatures.isEmpty()){
-			result = new IFeatureReference[configuredFeatures.size()];
-			configuredFeatures.toArray(result);
-		}
-		
-		return result;
+		return getConfigurationPolicy().getConfiguredFeatures();
 	}
 
 	/**
 	 * process the delta with the configuration site
 	 */
 	/*package*/
-	void deltaWith(IConfigurationSite currentConfiguration){
+	void deltaWith(IConfigurationSite currentConfiguration, IProgressMonitor monitor) throws CoreException {
 		// we keep our configured feature
-		// we remove the unconfigured one
-		// but we process teh delat between what was configured in the current
-		// configuration that is not configured now
+		// check if they are all valid
+		IFeatureReference[] configuredFeatures = getConfiguredFeatures();
+		if (configuredFeatures!=null){
+			for (int i=0; i<configuredFeatures.length; i++) {
+				IFeature feature = null;
+				try {
+					feature = configuredFeatures[i].getFeature();
+				} catch (CoreException e){
+					//FIXME notify we cannot find the feature
+				}
+				
+				
+				if (feature!=null){
+					// get plugin identifier
+					List siteIdentifiers = new ArrayList(0);
+					IPluginEntry[] siteEntries = feature.getSite().getPluginEntries();
+					for (int index = 0; index < siteEntries.length; index++) {
+						IPluginEntry entry = siteEntries[index];
+						siteIdentifiers.add(entry.getIdentifier());										
+					}				
+					
+						
+					if (siteEntries!=null){
+						IPluginEntry[] entries = feature.getPluginEntries();
+							for (int index = 0; index < entries.length; index++) {
+								IPluginEntry entry = entries[index];
+								if (!siteIdentifiers.contains(entry.getIdentifier())){
+									// FIXME: teh plugin defined by teh feature
+									// doesn't see to exist on the site
+								}
+						}
+					}
+				}
+			}
+		}
 		
-		//is it as simple as  get all configured, add configured
-		// the do teh delat and add to unconfigured
-		// what about history ? I have no idea about history...
+		if (getConfigurationPolicy().getPolicy()==IPlatformConfiguration.ISitePolicy.USER_EXCLUDE){
+			// but we process teh delta between what was configured in the current
+			// configuration that is not configured now
+			// we have to figure out what feature have been unconfigure for the whole
+			// history between current and us... (based on the date ???)
+			//is it as simple as  get all configured, add configured
+			// the do teh delat and add to unconfigured
+			// what about history ? I have no idea about history...
+			
+			
+			List featureToUnconfigure = new ArrayList(0);
+			
+			// loop for all history
+			// get the history I am interested in
+			// try to see if teh site config exists
+			// if it does, get the unconfigured features
+			IInstallConfiguration[] history = SiteManager.getLocalSite().getConfigurationHistory();
+			for (int i = 0; i < history.length; i++) {
+				IInstallConfiguration element = history[i];
+				IConfigurationSite[] configSites = element.getConfigurationSites();
+				for (int j = 0; j < configSites.length; j++) {
+					IConfigurationSite configSite = configSites[j];
+					if (configSite.getSite().getURL().equals(getSite().getURL())) {
+						featureToUnconfigure.addAll(Arrays.asList(configSite.getConfigurationPolicy().getUnconfiguredFeatures()));
+					}
+				}	
+			}
+					
+			// ok
+			// we have all teh unconfigured feature for this site config
+			// for the history
+			// remove the one that are configured 
+			for (int i=0; i<configuredFeatures.length; i++) {
+				remove(configuredFeatures[i],featureToUnconfigure);				
+			}			
+			
+			// for each unconfigured feature
+			// check if it still exists
+			Iterator iter = featureToUnconfigure.iterator();
+			while (iter.hasNext()) {
+				IFeatureReference element = (IFeatureReference) iter.next();
+				try {
+					element.getFeature();
+					((ConfigurationPolicy)getConfigurationPolicy()).unconfigure(element);
+				} catch (CoreException e){
+					// feature does not exist ?
+					featureToUnconfigure.remove(element);
+				}
+			}	
+		}		
 		
-		
+	}
+
+private void remove(IFeatureReference feature, List list){
+		String featureURLString = feature.getURL().toExternalForm();
+		boolean found = false;
+		Iterator iter = list.iterator();
+		while (iter.hasNext() && !found) {
+			IFeatureReference element = (IFeatureReference) iter.next();
+				if (element.getURL().toExternalForm().trim().equalsIgnoreCase(featureURLString)) {
+					list.remove(element);
+					found = true;
+			}
+		}
 	}
 
 }

@@ -374,7 +374,7 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 				key = element.getSite().getURL().toExternalForm();
 				IConfigurationSite oldSite = (IConfigurationSite)oldSitesMap.get(key);
 				if (oldSite!=null){
-					((ConfigurationSite)oldSite).deltaWith(element);		
+					((ConfigurationSite)oldSite).deltaWith(element,monitor);		
 				}
 				
 			}
