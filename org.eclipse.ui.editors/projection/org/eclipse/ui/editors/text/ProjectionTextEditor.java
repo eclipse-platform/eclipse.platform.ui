@@ -90,7 +90,7 @@ public class ProjectionTextEditor extends TextEditor {
 		ruler.addDecorator(0, new AnnotationRulerColumn(VERTICAL_RULER_WIDTH));
 		ruler.addDecorator(1, new LineNumberRulerColumn());
 		fProjectionAnnotationModel= new AnnotationModel();
-		IVerticalRulerColumn column= new OutlinerRulerColumn(fProjectionAnnotationModel, VERTICAL_RULER_WIDTH);
+		IVerticalRulerColumn column= new OutlinerRulerColumn(fProjectionAnnotationModel, VERTICAL_RULER_WIDTH -1);
 		ruler.addDecorator(2, column);
 		return ruler;
 	}

@@ -50,7 +50,7 @@ public class ProjectionAnnotation extends Annotation {
 		gc.setForeground(canvas.getDisplay().getSystemColor(SWT.COLOR_BLUE));
 					
 
-		Rectangle r= new Rectangle(rectangle.x + OUTER_MARGIN, rectangle.y + OUTER_MARGIN, SIZE , SIZE);
+		Rectangle r= new Rectangle(rectangle.x + OUTER_MARGIN, rectangle.y + OUTER_MARGIN, SIZE -1 , SIZE -1);
 		gc.drawRectangle(r);
 		gc.drawLine(r.x + PIXELS + INNER_MARGIN, r.y + MIDDLE, r.x + r.width - PIXELS - INNER_MARGIN , r.y + MIDDLE);
 		if (fIsFolded) {
