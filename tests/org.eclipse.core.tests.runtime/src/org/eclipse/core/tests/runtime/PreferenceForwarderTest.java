@@ -403,7 +403,7 @@ public class PreferenceForwarderTest extends RuntimeTest {
 
 	}
 
-	public void testListeners2() {
+	public void test55138() {
 		final Preferences ps = new PreferenceForwarder(getUniqueString());
 
 		final Tracer tracer1 = new Tracer();
@@ -413,11 +413,73 @@ public class PreferenceForwarderTest extends RuntimeTest {
 		ps.addPropertyChangeListener(tracer1);
 		assertEquals("1.0", "", tracer1.log.toString());
 
-		ps.setDefault(key, true);
+		// boolean value
+		boolean booleanDefault = true;
+		boolean booleanValue = false;
+		ps.setDefault(key, booleanDefault);
 		assertEquals("2.0", "", tracer1.log.toString());
 
-		ps.setValue(key, false);
-		assertEquals("3.0", "[foo:Btrue->Bfalse]", tracer1.log.toString());
+		tracer1.log.setLength(0);
+		ps.setValue(key, booleanValue);
+		assertEquals("2.1", "[foo:Btrue->Bfalse]", tracer1.log.toString());
+
+		ps.setValue(key, booleanDefault);
+		assertEquals("2.2", "[foo:Btrue->Bfalse][foo:Bfalse->Btrue]", tracer1.log.toString());
+
+		// int value
+		int intDefault = 10;
+		int intValue = 11;
+		tracer1.log.setLength(0);
+		ps.setDefault(key, intDefault);
+		assertEquals("3.0", "", tracer1.log.toString());
+
+		ps.setValue(key, intValue);
+		assertEquals("3.1", "[foo:I10->I11]", tracer1.log.toString());
+
+		ps.setValue(key, intDefault);
+		assertEquals("3.2", "[foo:I10->I11][foo:I11->I10]", tracer1.log.toString());
+
+		// double value
+		double doubleDefault = 10.0;
+		double doubleValue = 11.0;
+		tracer1.log.setLength(0);
+		ps.setDefault(key, doubleDefault);
+		assertEquals("4.0", "", tracer1.log.toString());
+
+		tracer1.log.setLength(0);
+		ps.setValue(key, doubleValue);
+		assertEquals("4.1", "[foo:D10.0->D11.0]", tracer1.log.toString());
+
+		ps.setValue(key, doubleDefault);
+		assertEquals("4.2", "[foo:D10.0->D11.0][foo:D11.0->D10.0]", tracer1.log.toString());
+
+		// float value
+		float floatDefault = 10.0f;
+		float floatValue = 11.0f;
+		tracer1.log.setLength(0);
+		ps.setDefault(key, floatDefault);
+		assertEquals("5.0", "", tracer1.log.toString());
+
+		tracer1.log.setLength(0);
+		ps.setValue(key, floatValue);
+		assertEquals("5.1", "[foo:F10.0->F11.0]", tracer1.log.toString());
+
+		ps.setValue(key, floatDefault);
+		assertEquals("5.2", "[foo:F10.0->F11.0][foo:F11.0->F10.0]", tracer1.log.toString());
+
+		// long value
+		long longDefault = 10L;
+		long longValue = 11L;
+		tracer1.log.setLength(0);
+		ps.setDefault(key, longDefault);
+		assertEquals("6.0", "", tracer1.log.toString());
+
+		tracer1.log.setLength(0);
+		ps.setValue(key, longValue);
+		assertEquals("6.1", "[foo:L10->L11]", tracer1.log.toString());
+
+		ps.setValue(key, longDefault);
+		assertEquals("6.2", "[foo:L10->L11][foo:L11->L10]", tracer1.log.toString());
 	}
 
 	public void testListeners() {

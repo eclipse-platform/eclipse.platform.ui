@@ -164,6 +164,9 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * @see org.osgi.service.prefs.Preferences#get(java.lang.String, java.lang.String)
 	 */
 	public String get(String key, String defaultValue) {
+		// throw NPE if key is null
+		if (key == null)
+			throw new NullPointerException();
 		// illegal state if this node has been removed
 		checkRemoved();
 		return properties == null ? defaultValue : properties.getProperty(key, defaultValue);
@@ -177,14 +180,95 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		checkRemoved();
 		if (properties == null)
 			return;
-		Object oldValue = properties.get(key);
+		String oldValue = properties.getProperty(key);
+		if (oldValue != null)
+			internalRemove(key, oldValue);
+	}
+
+	public void removeInt(String key) {
+		// illegal state if this node has been removed
+		checkRemoved();
+		if (properties == null)
+			return;
+		String stringValue = properties.getProperty(key);
+		if (stringValue != null) {
+			Object oldValue = null;
+			try {
+				oldValue = Integer.valueOf(stringValue);
+			} catch (NumberFormatException e) {
+				// ignore - oldValue will be null
+			}
+			internalRemove(key, oldValue);
+		}
+	}
+
+	public void removeDouble(String key) {
+		// illegal state if this node has been removed
+		checkRemoved();
+		if (properties == null)
+			return;
+		String stringValue = properties.getProperty(key);
+		if (stringValue != null) {
+			Object oldValue = null;
+			try {
+				oldValue = Double.valueOf(stringValue);
+			} catch (NumberFormatException e) {
+				// ignore - oldValue will be null
+			}
+			internalRemove(key, oldValue);
+		}
+	}
+
+	public void removeFloat(String key) {
+		// illegal state if this node has been removed
+		checkRemoved();
+		if (properties == null)
+			return;
+		String stringValue = properties.getProperty(key);
+		if (stringValue != null) {
+			Object oldValue = null;
+			try {
+				oldValue = Float.valueOf(stringValue);
+			} catch (NumberFormatException e) {
+				// ignore - oldValue will be null
+			}
+			internalRemove(key, oldValue);
+		}
+	}
+
+	public void removeLong(String key) {
+		// illegal state if this node has been removed
+		checkRemoved();
+		if (properties == null)
+			return;
+		String stringValue = properties.getProperty(key);
+		if (stringValue != null) {
+			Object oldValue = null;
+			try {
+				oldValue = Long.valueOf(stringValue);
+			} catch (NumberFormatException e) {
+				// ignore - oldValue will be null
+			}
+			internalRemove(key, oldValue);
+		}
+	}
+
+	public void removeBoolean(String key) {
+		// illegal state if this node has been removed
+		checkRemoved();
+		if (properties == null)
+			return;
+		String stringValue = properties.getProperty(key);
+		if (stringValue != null)
+			internalRemove(key, Boolean.valueOf(stringValue));
+	}
+
+	private void internalRemove(String key, Object oldValue) {
+		properties.remove(key);
 		if (properties.size() == 0)
 			properties = null;
-		if (oldValue != null) {
-			properties.remove(key);
-			makeDirty();
-			preferenceChanged(key, oldValue, null);
-		}
+		makeDirty();
+		preferenceChanged(key, oldValue, null);
 	}
 
 	/*
@@ -230,6 +314,9 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * @see org.osgi.service.prefs.Preferences#getInt(java.lang.String, int)
 	 */
 	public int getInt(String key, int defaultValue) {
+		// throw NPE if key is null
+		if (key == null)
+			throw new NullPointerException();
 		// illegal state if this node has been removed
 		checkRemoved();
 		if (properties == null)
@@ -272,6 +359,9 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * @see org.osgi.service.prefs.Preferences#getLong(java.lang.String, long)
 	 */
 	public long getLong(String key, long defaultValue) {
+		// throw NPE if key is null
+		if (key == null)
+			throw new NullPointerException();
 		// illegal state if this node has been removed
 		checkRemoved();
 		if (properties == null)
@@ -308,6 +398,9 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * @see org.osgi.service.prefs.Preferences#getBoolean(java.lang.String, boolean)
 	 */
 	public boolean getBoolean(String key, boolean defaultValue) {
+		// throw NPE if key is null
+		if (key == null)
+			throw new NullPointerException();
 		// illegal state if this node has been removed
 		checkRemoved();
 		if (properties == null)
@@ -343,6 +436,9 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * @see org.osgi.service.prefs.Preferences#getFloat(java.lang.String, float)
 	 */
 	public float getFloat(String key, float defaultValue) {
+		// throw NPE if key is null
+		if (key == null)
+			throw new NullPointerException();
 		// illegal state if this node has been removed
 		checkRemoved();
 		if (properties == null)
@@ -385,6 +481,9 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * @see org.osgi.service.prefs.Preferences#getDouble(java.lang.String, double)
 	 */
 	public double getDouble(String key, double defaultValue) {
+		// throw NPE if key is null
+		if (key == null)
+			throw new NullPointerException();
 		// illegal state if this node has been removed
 		checkRemoved();
 		if (properties == null)
@@ -423,6 +522,9 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * @see org.osgi.service.prefs.Preferences#getByteArray(java.lang.String, byte[])
 	 */
 	public byte[] getByteArray(String key, byte[] defaultValue) {
+		// throw NPE if key is null
+		if (key == null)
+			throw new NullPointerException();
 		// illegal state if this node has been removed
 		checkRemoved();
 		if (properties == null)
