@@ -1295,6 +1295,27 @@ public class Main {
 		showProcess = runCommand(false, showSplash, location, " " + SHOWSPLASH); //$NON-NLS-1$
 	}
 
+    //Split the input into an array. The split uses '"' and ' ' as separators, where '"' is of stronger grouping.
+    //For example if the input is "foo bar" -name Hello, the return values should be: foo bar, -name, Hello
+	static private String[] split(String input) {
+		String read = null;
+		String FULL_TOKEN = " \"";
+		StringTokenizer tokenizer = new StringTokenizer(input, FULL_TOKEN, true);
+		ArrayList values = new ArrayList(tokenizer.countTokens());
+		while(tokenizer.hasMoreTokens()) {
+			read = tokenizer.nextToken(FULL_TOKEN);
+			if (read.equals("\"") || read.equals(" ")) {
+				values.add(tokenizer.nextToken(read)); //Get the value
+				tokenizer.nextToken(read); //Skip the next token
+				continue;
+			}
+			values.add(read);
+		}
+		String[] result = new String[values.size()];
+		values.toArray(result);
+		return result;
+	}
+	
 	private Process runCommand(boolean block, String command, String data, String separator) {
 		// Parse the showsplash command into its separate arguments.
 		// The command format is: 
@@ -1324,9 +1345,13 @@ public class Main {
 		if (data != null)
 			args[3] = data;
 
+		String[] results = split(args[0]);
+		String[] argsToExec = new String[results.length + args.length - 1];
+		System.arraycopy(results, 0, argsToExec, 0, results.length);
+		System.arraycopy(args, 1, argsToExec, results.length, args.length - 1);
 		Process result = null;
 		try {
-			result = Runtime.getRuntime().exec(args);
+			result = Runtime.getRuntime().exec(argsToExec);
 			if (block)
 				result.waitFor();
 		} catch (Exception e) {
