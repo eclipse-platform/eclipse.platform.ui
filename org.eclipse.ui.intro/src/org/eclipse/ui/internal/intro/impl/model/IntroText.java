@@ -35,7 +35,7 @@ public class IntroText extends AbstractBaseIntroElement {
             return;
         if (textNode.getNodeType() == Node.TEXT_NODE) {
             text = textNode.getNodeValue();
-            if (text.equals(" ")) {
+            if (text.equals(" ")) { //$NON-NLS-1$
                 // we may have CDATA nodes, use first one.
                 Text childText = (Text) element.getChildNodes().item(1);
                 if (childText != null)
