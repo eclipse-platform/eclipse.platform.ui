@@ -17,10 +17,9 @@
 	// query
 	// contextId
 	
-	// url of NavFrame
-	String srcNavFrame = "navFrame.jsp";
-	if (request.getQueryString() != null) 
-		srcNavFrame += "?"+request.getQueryString();
+	String query = "";
+	if (request.getQueryString() != null && request.getQueryString().length() > 0)
+		query = "?" + request.getQueryString();
 	
 	// url of MainFrame
 	String srcMainFrame = "home.jsp";
@@ -34,10 +33,6 @@
 		srcMainFrame=topic;
 	}
 	
-	// url of BannerFrame
-	String srcBannerFrame = "banner.jsp";
-	if (request.getParameter("searchWord") != null)
-		srcBannerFrame += "?"+request.getQueryString();
 %>
 
 
@@ -58,15 +53,15 @@
 </head>
 
 <frameset onload="onloadFrameset()"  rows="45,*"  frameborder="0" framespacing="0" border="0" spacing="0">
-	<frame name="BannerFrame" src="<%=srcBannerFrame%>"  marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize>
+	<frame name="BannerFrame" src='<%="banner.jsp"+query%>'  marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize>
 	<frameset id="helpFrameset" cols="25%,*"  framespacing="0" border="0"  framebroder="0" spacing="0">
 		<frameset name="navFrameset" rows="24,*,23" marginwidth="0" marginheight="0" scrolling="no"frameborder="0" >
-		        <frame name="NavToolbarFrame" src="navToolbar.jsp" marginwidth="0" marginheight="0" scrolling="no"frameborder="0" >
-		        <frame name="NavFrame" src="nav.html" marginwidth="0" marginheight="0" scrolling="no"frameborder="0" >
-		        <frame name="TabsFrame" src="tabs.jsp" marginwidth="0" marginheight="0" scrolling="no"frameborder="0" >
+		        <frame name="NavToolbarFrame" src='<%="navToolbar.jsp"+query%>' marginwidth="0" marginheight="0" scrolling="no"frameborder="0" >
+		        <frame name="NavFrame" src='<%="nav.html"+query%>' marginwidth="0" marginheight="0" scrolling="no"frameborder="0" >
+		        <frame name="TabsFrame" src='<%="tabs.jsp"+query%>' marginwidth="0" marginheight="0" scrolling="no"frameborder="0" >
 		</frameset>
         <frameset id="contentFrameset" rows="24,*", frameborder=0 framespacing=0 border=0>
-        	<frame name="ToolbarFrame" src="toolbar.jsp" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize>
+        	<frame name="ToolbarFrame" src='<%="toolbar.jsp"+query%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize>
              <frame name="MainFrame" src="<%=srcMainFrame%>" marginwidth="10" marginheight="10" scrolling="auto"  frameborder="0" resize="yes">
         </frameset>
      </frameset>
