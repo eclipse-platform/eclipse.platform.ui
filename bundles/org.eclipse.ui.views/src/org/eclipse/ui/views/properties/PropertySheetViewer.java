@@ -1114,7 +1114,7 @@ class PropertySheetViewer extends Viewer {
                     set.add(e);
                 }
             } else if (data == null) { // the dummy
-                item.dispose();
+                childItems[i].dispose();
             }
         }
 
