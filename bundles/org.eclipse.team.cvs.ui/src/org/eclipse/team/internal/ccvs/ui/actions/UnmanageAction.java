@@ -164,7 +164,6 @@ public class UnmanageAction extends TeamAction {
 							} finally {
 								// We want to remove the nature even if the unmanage operation fails
 								Team.removeNatureFromProject((IProject)resource, CVSProviderPlugin.getTypeId(), Policy.subMonitorFor(subMonitor, 10));							
-								CVSDecorator.refresh(resource);
 							}
 						}											
 					}										

@@ -216,7 +216,6 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 							// Create the remote module for the project
 							CVSProviderPlugin.getProvider().createModule(location, project, getModuleName(), new SubProgressMonitor(monitor, 50));
 						}
-						CVSDecorator.refresh(project);
 					} catch (TeamException e) {
 						throw new InvocationTargetException(e);
 					} finally {

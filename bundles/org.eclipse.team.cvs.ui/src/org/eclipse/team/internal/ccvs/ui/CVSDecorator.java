@@ -6,17 +6,23 @@ package org.eclipse.team.internal.ccvs.ui;
  */
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IResourceVisitor;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -30,7 +36,6 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.IResourceStateChangeListener;
-import org.eclipse.team.internal.ccvs.core.util.ResourceDeltaVisitor;
 import org.eclipse.ui.internal.DecoratorDefinition;
 import org.eclipse.ui.internal.DecoratorManager;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -50,7 +55,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * the queue used between the decorator and the decorator runnable such that priority can be
  * given to visible elements when decoration requests are made.]
  */
-public class CVSDecorator extends LabelProvider implements ILabelDecorator, IResourceStateChangeListener, IDecorationNotifier {
+public class CVSDecorator extends LabelProvider implements ILabelDecorator, IResourceChangeListener, IResourceStateChangeListener, IDecorationNotifier {
 	
 	// Resources that need an icon and text computed for display to the user
 	private List decoratorNeedsUpdating = new ArrayList();
@@ -65,43 +70,15 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 	
 	private Hashtable imageCache = new Hashtable();
 	
-	private ChangeListener changeListener;
-	
-	private class ChangeListener extends ResourceDeltaVisitor {
-		List changedResources = new ArrayList();
-		protected void handleAdded(IResource[] resources) {
-		}
-		// remove the cached decoration for any removed resource
-		protected void handleRemoved(IResource[] resources) {
-			for (int i = 0; i < resources.length; i++) {
-				IResource resource = resources[i];
-				if(RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId())!=null) {
-					cache.remove(resources[i]);
-				}
-			}
-		}
-		// for changed resources we have to update the decoration
-		protected void handleChanged(IResource[] resources) {
-			changedResources.addAll(Arrays.asList(resources));
-		}
-		protected void finished() {
-			resourceStateChanged((IResource[])changedResources.toArray(new IResource[changedResources.size()]));
-			changedResources.clear();
-		}
-		protected int getEventMask() {
-			return IResourceChangeEvent.PRE_AUTO_BUILD;
-		}
-	}
+	// Keep track of deconfigured projects
+	private Set deconfiguredProjects = new HashSet();
 	
 	public CVSDecorator() {
 		// thread that calculates the decoration for a resource
 		decoratorUpdateThread = new Thread(new CVSDecorationRunnable(this), "CVS"); //$NON-NLS-1$
 		decoratorUpdateThread.start();
 		CVSProviderPlugin.addResourceStateChangeListener(this);
-		
-		// listener for workspace resource changes
-		changeListener = new ChangeListener();
-		changeListener.register();
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.PRE_AUTO_BUILD);
 	}
 
 	public String decorateText(String text, Object o) {
@@ -215,6 +192,54 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 		return decoratorNeedsUpdating.size();
 	}
 	/*
+	 * Handle resource changes and project description changes
+	 * 
+	 * @see IResourceChangeListener#resourceChanged(IResourceChangeEvent)
+	 */
+	public void resourceChanged(IResourceChangeEvent event) {
+		try {
+			final List changedResources = new ArrayList();
+			event.getDelta().accept(new IResourceDeltaVisitor() {
+				public boolean visit(IResourceDelta delta) throws CoreException {
+					IResource resource = delta.getResource();
+					
+					if(resource.getType()==IResource.ROOT) {
+						// continue with the delta
+						return true;
+					}
+					
+					if (resource.getType() == IResource.PROJECT) {
+						// If there is no CVS nature, don't continue
+						if (RepositoryProvider.getProvider((IProject)resource, CVSProviderPlugin.getTypeId()) == null) {
+							// deconfigure if appropriate (see CVSDecorator#projectDeconfigured(IProject))
+							if (deconfiguredProjects.contains(resource)) {
+								refresh((IProject)resource);
+								deconfiguredProjects.remove(resource);
+							}
+							return false;
+						}
+					}
+					
+					switch (delta.getKind()) {
+						case IResourceDelta.REMOVED:
+							// remove the cached decoration for any removed resource
+							cache.remove(resource);
+							break;
+						case IResourceDelta.CHANGED:
+							// for changed resources we have to update the decoration
+							changedResources.add(resource);	
+					}
+					
+					return true;
+				}
+			});
+			resourceStateChanged((IResource[])changedResources.toArray(new IResource[changedResources.size()]));
+			changedResources.clear();	
+		} catch (CoreException e) {
+			CVSProviderPlugin.log(e.getStatus());
+		}
+	}
+	/*
 	 * @see IResourceStateChangeListener#resourceStateChanged(IResource[])
 	 */
 	public void resourceStateChanged(IResource[] changedResources) {
@@ -283,16 +308,16 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 		WorkbenchPlugin.getDefault().getDecoratorManager().reset();
 	}
 
-	public static void refresh(IResource resource) {
+	public void refresh(IProject project) {
 		final List resources = new ArrayList();
 		try {
-			resource.accept(new IResourceVisitor() {
+			project.accept(new IResourceVisitor() {
 				public boolean visit(IResource resource) {
 					resources.add(resource);
 					return true;
 				}
 			});
-			CVSProviderPlugin.broadcastResourceStateChanges((IResource[]) resources.toArray(new IResource[resources.size()]));	
+			resourceStateChanged((IResource[]) resources.toArray(new IResource[resources.size()]));	
 		} catch (CoreException e) {
 		}
 	}
@@ -391,7 +416,7 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 		shutdown();
 		
 		// unregister change listeners
-		changeListener.deregister();
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 		CVSProviderPlugin.removeResourceStateChangeListener(this);
 		
 		// dispose of images created as overlays
@@ -407,4 +432,21 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 		}
 		imageCache = new Hashtable();
 	}
+	/**
+	 * @see IResourceStateChangeListener#projectConfigured(IProject)
+	 */
+	public void projectConfigured(IProject project) {
+		refresh(project);
+	}
+
+	/**
+	 * @see IResourceStateChangeListener#projectDeconfigured(IProject)
+	 */
+	public void projectDeconfigured(IProject project) {
+		// Unfortunately, the nature is still associated with the project at this point.
+		// Therefore, we will remember that the project has been deconfigured and we will 
+		// refresh the decorators in the resource delta listener
+		deconfiguredProjects.add(project);
+	}
+
 }

@@ -50,8 +50,6 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	public static final String DECORATOR_ID = "org.eclipse.team.cvs.ui.decorator"; //$NON-NLS-1$
 	
 	private Hashtable imageDescriptors = new Hashtable(20);
-	
-	private ChangeListener changeListener = new ChangeListener();
 
 	public final static String ICON_PATH;
 	static {
@@ -231,7 +229,6 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		initializeImages();
 		initializePreferences();
 		repositoryManager = new RepositoryManager();
-		changeListener.register();
 		
 		// if the global ignores list is changed then update decorators.
 		TeamUIPlugin.getPlugin().addPropertyChangeListener(new IPropertyChangeListener() {
@@ -257,7 +254,6 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	 * @see Plugin#shutdown()
 	 */
 	public void shutdown() throws CoreException {
-		changeListener.deregister();
 		super.shutdown();
 		try {
 			repositoryManager.shutdown();
