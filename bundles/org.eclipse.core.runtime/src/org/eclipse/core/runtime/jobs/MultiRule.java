@@ -24,6 +24,7 @@ import java.util.ArrayList;
  * <p>
  * This class is not intended to be subclassed by clients.
  * </p>
+ * @since 3.0
  */
 public class MultiRule implements ISchedulingRule {
 	private final ISchedulingRule[] rules;
