@@ -50,9 +50,9 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		}
 		
 		if (ExternalToolsUtil.isBackground(configuration)) {
-			monitor.beginTask(MessageFormat.format("Launching {0}", new String[] {configuration.getName()}), 10);
+			monitor.beginTask(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntLaunchDelegate.Launching_{0}_1"), new String[] {configuration.getName()}), 10); //$NON-NLS-1$
 		} else {
-			monitor.beginTask(MessageFormat.format("Running {0}", new String[] {configuration.getName()}), 100);
+			monitor.beginTask(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntLaunchDelegate.Running_{0}_2"), new String[] {configuration.getName()}), 100); //$NON-NLS-1$
 		}
 		
 		// get variable context
@@ -86,7 +86,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		// link the process to its build logger via a timestamp
 		long timeStamp = System.currentTimeMillis();
 		String idStamp = new Long(timeStamp).toString();
-		String idProperty = "-D" + AntProcess.ATTR_ANT_PROCESS_ID + "=" + idStamp;
+		String idProperty = "-D" + AntProcess.ATTR_ANT_PROCESS_ID + "=" + idStamp; //$NON-NLS-1$ //$NON-NLS-2$
 		
 		// resolve arguments
 		String[] arguments = ExternalToolsUtil.getArguments(configuration, resourceContext);

@@ -43,12 +43,12 @@ public class AntTargetLabelProvider extends LabelProvider {
 			StringBuffer result = new StringBuffer(target.getName());
 			if (target.getName().equals(defaultTargetName)) {
 				result.append(" ("); //$NON-NLS-1$;
-				result.append("default target");
+				result.append(AntLaunchConfigurationMessages.getString("AntTargetLabelProvider.default_target_1")); //$NON-NLS-1$
 				result.append(")"); //$NON-NLS-1$;
 			} 
 			return result.toString();
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	/**

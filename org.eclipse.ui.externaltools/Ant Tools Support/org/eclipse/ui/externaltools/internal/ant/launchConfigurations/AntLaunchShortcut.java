@@ -74,7 +74,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 	 * Inform the user that an ant file was not found to run.
 	 */
 	protected void antFileNotFound() {
-		reportError("Unable to determine which Ant file to run.", null);
+		reportError(AntLaunchConfigurationMessages.getString("AntLaunchShortcut.Unable_to_determine_which_Ant_file_to_run._1"), null); //$NON-NLS-1$
 	}
 	
 	/**
@@ -84,7 +84,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 	 * @param mode
 	 */
 	protected void launch(IFile file, String mode) {
-		if ("xml".equalsIgnoreCase(file.getFileExtension())) {
+		if ("xml".equalsIgnoreCase(file.getFileExtension())) { //$NON-NLS-1$
 			if (verifyMode(mode)) {
 				ILaunchConfiguration configuration= null;
 				List configurations = findExistingLaunchConfigurations(file);
@@ -127,7 +127,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 		for (int i = 0; i < segments.length; i++) {
 			String string = segments[i];
 			buffer.append(string);
-			buffer.append(" ");
+			buffer.append(" "); //$NON-NLS-1$
 		}
 		String name = buffer.toString().trim();
 		name= manager.generateUniqueLaunchConfigurationNameFrom(name);
@@ -145,7 +145,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 			
 			return workingCopy.doSave();
 		} catch (CoreException e) {
-			reportError(MessageFormat.format("An exception occurred while creating a default Ant launch configuration for {0}", new String[]{file.toString()}), e);
+			reportError(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntLaunchShortcut.An_exception_occurred_while_creating_a_default_Ant_launch_configuration_for_{0}_2"), new String[]{file.toString()}), e); //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -165,7 +165,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 				try {
 					configs = manager.getLaunchConfigurations(type);
 				} catch (CoreException e) {
-					reportError("An exception occurred while retrieving Ant launch configurations.", e);
+					reportError(AntLaunchConfigurationMessages.getString("AntLaunchShortcut.An_exception_occurred_while_retrieving_Ant_launch_configurations._3"), e); //$NON-NLS-1$
 				}
 				if (configs != null && configs.length > 0) {
 					IPath filePath = file.getLocation();
@@ -199,8 +199,8 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 		ILabelProvider labelProvider = DebugUIPlugin.getModelPresentation();
 		ElementListSelectionDialog dialog= new ElementListSelectionDialog(Display.getCurrent().getActiveShell(), labelProvider);
 		dialog.setElements((ILaunchConfiguration[]) configs.toArray(new ILaunchConfiguration[configs.size()]));
-		dialog.setTitle("Ant Configuration Selection");
-		dialog.setMessage("Choose an ant configuration to run");
+		dialog.setTitle(AntLaunchConfigurationMessages.getString("AntLaunchShortcut.Ant_Configuration_Selection_4")); //$NON-NLS-1$
+		dialog.setMessage(AntLaunchConfigurationMessages.getString("AntLaunchShortcut.Choose_an_ant_configuration_to_run_5")); //$NON-NLS-1$
 		dialog.setMultipleSelection(false);
 		int result = dialog.open();
 		labelProvider.dispose();
@@ -218,7 +218,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 	 */
 	protected boolean verifyMode(String mode) {
 		if (!mode.equals(ILaunchManager.RUN_MODE)) {
-			reportError("Ant scripts only support 'run' mode.", null);
+			reportError(AntLaunchConfigurationMessages.getString("AntLaunchShortcut.Ant_scripts_only_support___run___mode._6"), null); //$NON-NLS-1$
 			return false;
 		}
 		return true;
@@ -244,7 +244,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 		} else {
 			status = new Status(IStatus.ERROR, IExternalToolConstants.PLUGIN_ID, 0, message, throwable);
 		}
-		ErrorDialog.openError(ExternalToolsPlugin.getActiveWorkbenchWindow().getShell(), "Error", message, status);
+		ErrorDialog.openError(ExternalToolsPlugin.getActiveWorkbenchWindow().getShell(), AntLaunchConfigurationMessages.getString("AntLaunchShortcut.Error_7"), message, status); //$NON-NLS-1$
 	}
 
 }

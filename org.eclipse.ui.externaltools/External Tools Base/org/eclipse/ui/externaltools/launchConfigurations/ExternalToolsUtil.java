@@ -91,7 +91,7 @@ public class ExternalToolsUtil {
 	public static IPath getLocation(ILaunchConfiguration configuration, ExpandVariableContext context) throws CoreException {
 		String location = configuration.getAttribute(IExternalToolConstants.ATTR_LOCATION, (String) null);
 		if (location == null) {
-			abort(MessageFormat.format("Location not specified by {0}", new String[] { configuration.getName()}), null, 0);
+			abort(MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.Location_not_specified_by_{0}_1"), new String[] { configuration.getName()}), null, 0); //$NON-NLS-1$
 		} else {
 			MultiStatus status = new MultiStatus(IExternalToolConstants.PLUGIN_ID, 0, ToolMessages.getString("RunExternalToolAction.runProblem"), null); //$NON-NLS-1$;
 			String expandedLocation = ToolUtil.expandFileLocation(location, context, status);
@@ -244,7 +244,7 @@ public class ExternalToolsUtil {
 		monitor.beginTask(ToolMessages.getString("DefaultRunnerContext.refreshResources"), //$NON-NLS-1$
 		resources.length);
 
-		MultiStatus status = new MultiStatus(IExternalToolConstants.PLUGIN_ID, 0, "Exception(s) occurred during refresh.", null);
+		MultiStatus status = new MultiStatus(IExternalToolConstants.PLUGIN_ID, 0, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.Exception(s)_occurred_during_refresh._2"), null); //$NON-NLS-1$
 		for (int i = 0; i < resources.length; i++) {
 			if (monitor.isCanceled())
 				break;
@@ -306,7 +306,7 @@ public class ExternalToolsUtil {
 		if (attribute == null) {
 			return null;
 		} else {
-			return AntUtil.parseString(attribute, ",");
+			return AntUtil.parseString(attribute, ","); //$NON-NLS-1$
 		}
 	}
 

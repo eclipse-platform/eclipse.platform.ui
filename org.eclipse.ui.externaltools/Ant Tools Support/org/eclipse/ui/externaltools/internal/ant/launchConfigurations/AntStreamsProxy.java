@@ -22,9 +22,9 @@ public class AntStreamsProxy implements IStreamsProxy {
 	private AntStreamMonitor fErrorMonitor = new AntStreamMonitor();
 	private AntStreamMonitor fOutputMonitor = new AntStreamMonitor();
 	
-	public static final String ANT_DEBUG_STREAM = IExternalToolConstants.PLUGIN_ID + ".ANT_DEBUG_STREAM";
-	public static final String ANT_VERBOSE_STREAM = IExternalToolConstants.PLUGIN_ID + ".ANT_VERBOSE_STREAM";
-	public static final String ANT_WARNING_STREAM = IExternalToolConstants.PLUGIN_ID + ".ANT_WARNING_STREAM";
+	public static final String ANT_DEBUG_STREAM = IExternalToolConstants.PLUGIN_ID + ".ANT_DEBUG_STREAM"; //$NON-NLS-1$
+	public static final String ANT_VERBOSE_STREAM = IExternalToolConstants.PLUGIN_ID + ".ANT_VERBOSE_STREAM"; //$NON-NLS-1$
+	public static final String ANT_WARNING_STREAM = IExternalToolConstants.PLUGIN_ID + ".ANT_WARNING_STREAM"; //$NON-NLS-1$
 	
 	private AntStreamMonitor fDebugMonitor = new AntStreamMonitor();
 	private AntStreamMonitor fVerboseMonitor = new AntStreamMonitor();

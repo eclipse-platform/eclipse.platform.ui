@@ -28,7 +28,7 @@ public class AntProcess implements IProcess {
 	 * Process attribute with process identifier - links the ant process build
 	 * logger to a process.
 	 */
-	public static final String ATTR_ANT_PROCESS_ID = IExternalToolConstants.PLUGIN_ID + ".ATTR_ANT_PROCESS_ID";
+	public static final String ATTR_ANT_PROCESS_ID = IExternalToolConstants.PLUGIN_ID + ".ATTR_ANT_PROCESS_ID"; //$NON-NLS-1$
 	
 	private AntStreamsProxy fProxy = new AntStreamsProxy();
 	private String fLabel = null;
