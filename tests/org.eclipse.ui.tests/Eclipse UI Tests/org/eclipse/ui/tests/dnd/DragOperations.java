@@ -78,11 +78,16 @@ public class DragOperations {
 		return ((ViewSite)view.getSite()).getPane();
 	}
 
-	public static Point getLocation(PartPane pane, int side) {
+	public static Rectangle getDisplayBounds(PartPane pane) {
 		LayoutPart parent = ((LayoutPart)(pane.getContainer()));
 		Rectangle bounds = DragUtil.getDisplayBounds(parent.getControl());
+
+		return bounds;
+	}
+	
+	public static Point getLocation(PartPane pane, int side) {
 		
-		return DragOperations.getPoint(bounds, side);
+		return DragOperations.getPoint(getDisplayBounds(pane), side);
 	}
 	
 	/**
@@ -126,10 +131,16 @@ public class DragOperations {
 		return targetPart.getTitle();
 	}
 	
+	/**
+	 * 
+	 * 
+	 * @param page
+	 * @return
+	 */
 	public static String getLayoutDescription(WorkbenchPage page) {
 		StringBuffer buf = new StringBuffer();
 		
-		page.getActivePerspective().getPresentation().getLayout().describeLayout(buf);
+		page.getActivePerspective().describeLayout(buf);
 
 		// Test result -- this will be a value in the resulting map
 		return buf.toString();

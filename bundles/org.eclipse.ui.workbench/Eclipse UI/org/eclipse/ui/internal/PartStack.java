@@ -236,40 +236,41 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.LayoutPart#describeLayout(java.lang.StringBuffer)
 	 */
-	public void describeLayout(StringBuffer buf) {
-		
+	public void describeLayout(StringBuffer buf) {		
 		testInvariants();
 		
-		super.describeLayout(buf);
-//		
-//		int activeState = getActive();
-//		if (activeState == StackPresentation.AS_ACTIVE_FOCUS) {
-//			buf.append("active ");
-//		} else if (activeState == StackPresentation.AS_ACTIVE_NOFOCUS) {
-//			buf.append("active_nofocus ");
-//		}
-//		
-//		LayoutPart[] children = ((ILayoutContainer)this).getChildren();
-//		
-//		int visibleChildren = 0;
-//		
-//		for (int idx = 0; idx < children.length; idx++) {
-//			
-//			LayoutPart next = children[idx];
-//			if (!(next instanceof PartPlaceholder)) {
-//				if (visibleChildren > 0) {
-//					buf.append(", "); //$NON-NLS-1$
-//				}
-//				
-//				if (next == current) {
-//					buf.append("*");
-//				}
-//				
-//				next.describeLayout(buf);
-//				
-//				visibleChildren++;				
-//			}
-//		}
+		int activeState = getActive();
+		if (activeState == StackPresentation.AS_ACTIVE_FOCUS) {
+			buf.append("active ");
+		} else if (activeState == StackPresentation.AS_ACTIVE_NOFOCUS) {
+			buf.append("active_nofocus ");
+		}
+		
+		buf.append("(");
+		
+		LayoutPart[] children = ((ILayoutContainer)this).getChildren();
+		
+		int visibleChildren = 0;
+		
+		for (int idx = 0; idx < children.length; idx++) {
+			
+			LayoutPart next = children[idx];
+			if (!(next instanceof PartPlaceholder)) {
+				if (idx > 0) {
+					buf.append(", "); //$NON-NLS-1$
+				}
+				
+				if (next == current) {
+					buf.append("*");
+				}
+				
+				next.describeLayout(buf);
+				
+				visibleChildren++;				
+			}
+		}
+		
+		buf.append(")");
 	}
 	
     /**

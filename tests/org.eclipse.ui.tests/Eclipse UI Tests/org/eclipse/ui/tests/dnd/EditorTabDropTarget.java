@@ -10,43 +10,38 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dnd;
 
-import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.internal.WorkbenchWindow;
-import org.eclipse.ui.internal.dnd.DragUtil;
+import org.eclipse.ui.IEditorPart;
 
 /**
  * @since 3.0
  */
-public class FastViewBarDropTarget extends AbstractTestDropTarget {
+public class EditorTabDropTarget extends AbstractTestDropTarget {
 	
-	/**
-	 * @param window
-	 */
-	public FastViewBarDropTarget() {
-		super();
+	int editorIdx;
+	
+	public EditorTabDropTarget(int editorIdx) {
+		this.editorIdx = editorIdx;
+	}
+	
+	IEditorPart getPart() {
+		return getPage().getEditors()[editorIdx];
 	}
 	
 	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
+	 * @see org.eclipse.ui.tests.dnd.TestDropTarget#getName()
 	 */
 	public String toString() {
-		return "fast view bar";
+		return "editor " + editorIdx + " tab area";
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.tests.dnd.TestDropTarget#getLocation()
 	 */
 	public Point getLocation() {
-		WorkbenchWindow window = (WorkbenchWindow)getPage().getWorkbenchWindow();
+		Rectangle bounds = DragOperations.getDisplayBounds(DragOperations.getPane(getPart()));
 		
-		Control control = window.getFastViewBar().getControl();
-		Rectangle region = DragUtil.getDisplayBounds(control);
-		Point result = Geometry.centerPoint(region); 
-		
-		return result;
+		return new Point(bounds.x + 8, bounds.y + 8);
 	}
-
 }

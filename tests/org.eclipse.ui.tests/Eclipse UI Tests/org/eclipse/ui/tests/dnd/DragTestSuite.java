@@ -68,6 +68,7 @@ public class DragTestSuite extends TestSuite {
 		
 		// Drop targets that will only be tested for views
 		AbstractTestDropTarget[] viewDropTargets = new AbstractTestDropTarget[] {
+				
 			// Editor area
 			new EditorAreaDropTarget(SWT.LEFT),
 			new EditorAreaDropTarget(SWT.RIGHT),
@@ -87,7 +88,14 @@ public class DragTestSuite extends TestSuite {
 			new ViewDropTarget(probView, SWT.LEFT),
 			new ViewDropTarget(probView, SWT.RIGHT),
 			new ViewDropTarget(probView, SWT.BOTTOM),
-			new ViewDropTarget(probView, SWT.CENTER)
+			new ViewDropTarget(probView, SWT.CENTER),
+			
+			// Fast view bar
+			new FastViewBarDropTarget(),
+			
+			// View tabs
+			new ViewTabDropTarget(resNav),
+			new ViewTabDropTarget(probView)
 		};
 		
 		// Drop targets that will only be tested for editors

@@ -341,32 +341,13 @@ protected ListenerList getPropertyListeners() {
  * @param buf
  */
 public void describeLayout(StringBuffer buf) {
-	if (this instanceof ILayoutContainer) {
-		LayoutPart[] children = ((ILayoutContainer)this).getChildren();
-		
-		int visibleChildren = 0;
-		
-		for (int idx = 0; idx < children.length; idx++) {
-			
-			LayoutPart next = children[idx];
-			if (!(next instanceof PartPlaceholder)) {
-				if (visibleChildren > 0) {
-					buf.append(", "); //$NON-NLS-1$
-				}
-				
-				next.describeLayout(buf);
-				
-				visibleChildren++;				
-			}
-		}
-	} else {
-		IPresentablePart part = getPresentablePart();
-		
-		if (part != null) {
-			buf.append(part.getName());
-			return;
-		}
-	}
+	
+	IPresentablePart part = getPresentablePart();
+	
+	if (part != null) {
+		buf.append(part.getName());
+		return;
+	}	
 }
 
 /**

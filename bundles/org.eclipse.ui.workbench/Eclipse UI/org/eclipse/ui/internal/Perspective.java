@@ -1651,4 +1651,38 @@ public boolean isMoveable(IViewReference reference) {
         return rec.isMoveable;
     return true;
 }
+
+/**
+ * Writes a description of the layout to the given string buffer.
+ * This is used for drag-drop test suites to determine if two layouts are the
+ * same. Like a hash code, the description should compare as equal iff the
+ * layouts are the same. However, it should be user-readable in order to
+ * help debug failed tests. Although these are english readable strings,
+ * they should not be translated or equality tests will fail.
+ * <p>
+ * This is only intended for use by test suites.
+ * </p>
+ * 
+ * @param buf
+ */
+public void describeLayout(StringBuffer buf) {
+	IViewReference[] fastViews = getFastViews();
+	
+	if (fastViews.length != 0) {
+		buf.append("fastviews (");
+		for (int idx = 0; idx < fastViews.length; idx++) {
+			IViewReference ref = fastViews[idx];
+			
+			if (idx > 0) {
+				buf.append(", ");
+			}
+			
+			buf.append(ref.getPartName());
+		}
+		buf.append("), ");
+	}
+	
+	getPresentation().getLayout().describeLayout(buf);
+}
+
 }

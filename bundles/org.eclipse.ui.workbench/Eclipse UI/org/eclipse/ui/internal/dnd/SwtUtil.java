@@ -50,7 +50,7 @@ public class SwtUtil {
 	
 	/**
 	 * Finds and returns the most specific SWT control at the given location. 
-	 * (Note: this does a DFS on the SWT widget hierarchy, which is very slow).
+	 * (Note: this does a DFS on the SWT widget hierarchy, which is slow).
 	 * 
 	 * @param displayToSearch
 	 * @param locationToFind
@@ -68,8 +68,7 @@ public class SwtUtil {
 	 * searched to find the most specific child that contains the point.
 	 * 
 	 * @param toSearch an array of composites 
-	 * @param locationToFind a point (in the same coordinate system as the parent of
-	 * the 
+	 * @param locationToFind a point (in display coordinates)
 	 * @return
 	 */
 	public static Control findControl(Control[] toSearch, Point locationToFind) {
@@ -78,17 +77,13 @@ public class SwtUtil {
 			
 			if (!next.isDisposed() && next.isVisible()) {
 			
-				Rectangle bounds = next.getBounds();
+				Rectangle bounds = DragUtil.getDisplayBounds(next);
 				
 				if (bounds.contains(locationToFind)) {
 					if (next instanceof Composite) {
-						locationToFind.x -= bounds.x;
-						locationToFind.y -= bounds.y;
+						Composite nextComposite = (Composite)next;
 						
 						Control result = findControl((Composite)next, locationToFind);
-					
-						locationToFind.x += bounds.x;
-						locationToFind.y += bounds.y;
 						
 						if (result != null) {
 							return result;
@@ -107,7 +102,7 @@ public class SwtUtil {
 	 * Finds the control in the given location
 	 * 
 	 * @param toSearch
-	 * @param locationToFind location (in coordinates relative to the given composite) 
+	 * @param locationToFind location (in display coordinates) 
 	 * @return
 	 */
 	public static Control findControl(Composite toSearch, Point locationToFind) {
