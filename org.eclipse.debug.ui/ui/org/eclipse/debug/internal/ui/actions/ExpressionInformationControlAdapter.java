@@ -56,6 +56,7 @@ public class ExpressionInformationControlAdapter implements IPopupInformationCon
 			((VariablesViewContentProvider)viewer.getContentProvider()).setShowLogicalStructure(debugView.isShowLogicalStructure());
 		}
 		viewer.setInput(new Object[]{exp});
+		viewer.expandToLevel(2);
 	}
 
 	public boolean hasContents() {
@@ -66,20 +67,14 @@ public class ExpressionInformationControlAdapter implements IPopupInformationCon
 		Composite composite = new Composite(parent, parent.getStyle());
 		GridLayout layout = new GridLayout();
 		composite.setLayout(layout);
-		
 
-//		Tree tree= new Tree(parent, SWT.SINGLE | (style & ~SWT.MULTI));
-//		tree.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
 		GridData gd = new GridData(GridData.FILL_BOTH);
-//		gd.widthHint = 300;
-//		gd.heightHint = 300;
+
 		viewer = new VariablesViewer(composite, SWT.NO_TRIM);
 		viewer.setContentProvider(new ExpressionPopupContentProvider());
 		viewer.setLabelProvider(DebugUITools.newDebugModelPresentation());
-		viewer.setAutoExpandLevel(2);
-		viewer.expandToLevel(2);
-		viewer.getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+//		gd.widthHint = 300;
+		gd.heightHint = 100;
 		viewer.getControl().setLayoutData(gd);
 
 		Tree tree = viewer.getTree();

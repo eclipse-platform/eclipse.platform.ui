@@ -11,24 +11,21 @@
 
 package org.eclipse.debug.ui.actions;
 
-import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlExtension;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -51,7 +48,7 @@ public class PopupInformationControl implements IInformationControl, IInformatio
 	/**
 	 * Default border size
 	 */
-	private static final int BORDER= 1;
+	private static final int BORDER= 5;
 	
 	/**
 	 * The popup window
@@ -120,41 +117,37 @@ public class PopupInformationControl implements IInformationControl, IInformatio
 		shell.setForeground(display.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
 		shell.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 		
-//		Point parentSize = parent.getSize();
-//		maxWidth = parentSize.x;
-//		maxHeight = parentSize.y;
-		
 		GridLayout layout= new GridLayout(1, false);
 		int border= ((shellStyle & SWT.NO_TRIM) == 0) ? 0 : BORDER;
 		layout.marginHeight= border;
 		layout.marginWidth= border;
 		shell.setLayout(layout);
+		shell.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		GridData data= new GridData(GridData.BEGINNING | GridData.FILL_BOTH);
+		GridData data= new GridData(GridData.FILL_BOTH);
 		Composite composite = createInformationComposite();
 		composite.setLayoutData(data);
 		
 		if (action != null) {
-			ImageDescriptor imageDescriptor = action.getImageDescriptor();
-			Image image = (imageDescriptor != null ? imageDescriptor.createImage() : null);
-			Button button = SWTUtil.createPushButton(shell, action.getText(), image);
-			button.setToolTipText(action.getDescription());
-			shell.setDefaultButton(button);
-			button.setFocus();
+			Label separator= new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL | SWT.LINE_DOT);
+			separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			
+			Label label = new Label(shell, SWT.SHADOW_NONE | SWT.RIGHT);
+			label.setText(action.getText());
+			label.setToolTipText(action.getDescription());
+			label.setForeground(display.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
+			label.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+			label.setEnabled(false);
+			label.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			
 			final IAction finalAction = action;
-			button.addSelectionListener(new SelectionListener() {
-				public void widgetDefaultSelected(SelectionEvent e) {
-				}
-				
-				public void widgetSelected(SelectionEvent e) {
-					finalAction.run();
+			composite.addKeyListener(new KeyAdapter() {
+				public void keyPressed(KeyEvent e) {
+					if (e.character == SWT.CR)
+						finalAction.run();
 					dispose();
 				}
 			});
-			
-			data = new GridData();
-			data.horizontalAlignment = GridData.END;
-			button.setLayoutData(data);				
 		}
 
 	}
@@ -175,21 +168,22 @@ public class PopupInformationControl implements IInformationControl, IInformatio
 		shell.addFocusListener(listener);
 	}
 	
-	/**
-	 * Computes and returns a proposal for the size of this information 
-	 * control depending on the information to present. The method tries
-	 * to honor known size constraints but might returns a size that 
-	 * exceeds them. 
-	 * @return The size suggested size for the control.
-	 */
-	public Point computeSizeHint() {		
-		Point computedSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-		if (maxWidth > 0 && computedSize.x > maxWidth)
-			computedSize.x = maxWidth;
-		if (maxHeight > 0 && computedSize.y > maxHeight)
-			computedSize.y = maxHeight;
-		return computedSize;
-	}
+		/**
+		 * Computes and returns a proposal for the size of this information 
+		 * control depending on the information to present. The method tries
+		 * to honor known size constraints but might returns a size that 
+		 * exceeds them. 
+		 * @return The size suggested size for the control.
+		 */
+		public Point computeSizeHint() {
+			Point computedSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+
+			if (maxWidth > 0 && computedSize.x > maxWidth)
+				computedSize.x = maxWidth;
+			if (maxHeight > 0 && computedSize.y > maxHeight)
+				computedSize.y = maxHeight;
+			return computedSize;
+		}
 
 	/**
 	 * Disposes this control
@@ -262,8 +256,8 @@ public class PopupInformationControl implements IInformationControl, IInformatio
 	 * @param maxHeight The maximum height of the control
 	 */
 	public void setSizeConstraints(int maxWidth, int maxHeight) {
-		this.maxWidth = maxWidth;
-		this.maxHeight = maxHeight;
+		this.maxWidth = 300;
+		this.maxHeight = 175;
 	}
 
 	/**
