@@ -214,6 +214,9 @@ public void handleMouseDown(MouseEvent event) {
 	if (event.button != 1)
 		return;
 
+	if (cellEditor != null)
+		applyEditorValue();
+	
 	// activate the cell editor immediately.  If a second mouseDown
 	// is received prior to the expiration of the doubleClick time then
 	// the cell editor will be deactivated and a doubleClick event will
