@@ -327,8 +327,8 @@ public final class PresentablePartFolder implements IPresentablePartList {
         case IPresentablePart.PROP_TOOLBAR:
         case IPresentablePart.PROP_PANE_MENU:
         case IPresentablePart.PROP_TITLE:
+            initTab(tab, part);
             if (getCurrent() == part) {
-                initTab(tab, part);
                 layout(true);
             }
             break;
