@@ -301,6 +301,7 @@ public abstract class MarkerView extends TableView {
 		revealAction.dispose();
 		showInNavigatorAction.dispose();
 		propertiesAction.dispose();
+		clipboard.dispose();
 	}
 
 	/* (non-Javadoc)
