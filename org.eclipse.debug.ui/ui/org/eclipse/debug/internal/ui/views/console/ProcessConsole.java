@@ -74,10 +74,11 @@ public class ProcessConsole extends AbstractConsole implements IDebugEventSetLis
 	protected String computeName() {	
 		String label = null;
 		IProcess process = getProcess();
+		ILaunchConfiguration config = process.getLaunch().getLaunchConfiguration();
 		
 		label = process.getAttribute(IProcess.ATTR_PROCESS_LABEL);
 		if (label == null) {
-			label = process.getLabel();
+			label = config.getName() + " [" + process.getLaunch().getLaunchMode() +"] " + process.getLabel(); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
 		if (process.isTerminated()) {
