@@ -331,15 +331,18 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		}
 		
 		String key;
-		for (Iterator iter = properties.iterator(); iter.hasNext();) {
-			Property property = (Property) iter.next();
-			key= property.getName();
-			String value= property.getValue();
-			//if we have user properties this means that the user has chosen to override the global properties
-			//if in a separate VM and have only two user properties these are really only Eclipse generated properties
-			//and the user is still using the global properties
-			if (value != null && (userProperties == null || (separateVM && userProperties.size() == 2))) {
-				appendProperty(commandLine, key, value);
+		//if we have user properties this means that the user has chosen to override the global properties
+		//if in a separate VM and have only two user properties these are really only Eclipse generated properties
+		//and the user is still using the global properties
+		boolean useGlobalProperties = userProperties == null || (separateVM && userProperties.size() == 2);
+		if (useGlobalProperties) {
+			for (Iterator iter = properties.iterator(); iter.hasNext();) {
+				Property property = (Property) iter.next();
+				key= property.getName();
+				String value= property.getValue();
+				if (value != null) {
+					appendProperty(commandLine, key, value);
+				}
 			}
 		}
 		
