@@ -14,12 +14,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.StringTokenizer;
 import org.eclipse.ant.internal.ui.AntSourceViewerConfiguration;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.editor.text.AntDocumentSetupParticipant;
 import org.eclipse.ant.internal.ui.editor.text.IAntEditorColorConstants;
-import org.eclipse.jdt.internal.ui.preferences.CHyperLink;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.JFaceResources;
@@ -44,12 +42,12 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Widget;
@@ -692,68 +690,15 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 	}
 	
 	private void createHeader(Composite contents) {
-		String before= AntPreferencesMessages.getString("AntEditorPreferencePage.0"); //$NON-NLS-1$
-		String linktext= AntPreferencesMessages.getString("AntEditorPreferencePage.2"); //$NON-NLS-1$
+		final Link link= new Link(contents, SWT.NONE);
+		final String target= "org.eclipse.ui.preferencePages.GeneralTextEditor"; //$NON-NLS-1$
+		link.setText(AntPreferencesMessages.getString("AntEditorPreferencePage.0")); //$NON-NLS-1$
+		link.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				PreferencesUtil.createPreferenceDialogOn(link.getShell(), target, null, null);
+			}
+		});
 		String linktooltip= AntPreferencesMessages.getString("AntEditorPreferencePage.3"); //$NON-NLS-1$
-		String after= AntPreferencesMessages.getString("AntEditorPreferencePage.4"); //$NON-NLS-1$
-		Control description= createLinkText(contents, new Object[] {
-				before, 
-				new String[] {linktext, "org.eclipse.ui.preferencePages.GeneralTextEditor", linktooltip }, //$NON-NLS-1$
-				after});
-		GridData gridData= new GridData(SWT.FILL, SWT.BEGINNING, true, false);
-		gridData.widthHint= 150; // only expand further if anyone else requires it
-		description.setLayoutData(gridData);
+		link.setToolTipText(linktooltip);
 	}
-	
-	private Control createLinkText(Composite contents, Object[] tokens) {
-		Composite description= new Composite(contents, SWT.NONE);
-		RowLayout rowLayout= new RowLayout(SWT.HORIZONTAL);
-		rowLayout.justify= false;
-		rowLayout.fill= true;
-		rowLayout.marginBottom= 0;
-		rowLayout.marginHeight= 0;
-		rowLayout.marginLeft= 0;
-		rowLayout.marginRight= 0;
-		rowLayout.marginTop= 0;
-		rowLayout.marginWidth= 0;
-		rowLayout.spacing= 0;
-		description.setLayout(rowLayout);
-		
-		for (int i= 0; i < tokens.length; i++) {
-			String text;
-			if (tokens[i] instanceof String[]) {
-				String[] strings= (String[]) tokens[i];
-				text= strings[0];
-				final String target= strings[1];
-				final CHyperLink link= new CHyperLink(description, SWT.NONE);
-				link.setText(text);
-				link.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
-						PreferencesUtil.createPreferenceDialogOn(link.getShell(), target, null, null);
-					}
-				});
-				if (strings.length > 2)
-					link.setToolTipText(strings[2]);
-				continue;
-			}
-			
-			text= (String) tokens[i];
-			StringTokenizer tokenizer= new StringTokenizer(text, " ", true); //$NON-NLS-1$
-			boolean addSpace= false;
-			while (tokenizer.hasMoreTokens()) {
-				String token= tokenizer.nextToken();
-				if (token.trim().length() == 0 && tokenizer.hasMoreTokens()) {
-					addSpace= true;
-					continue;
-				}
-					
-				Label label= new Label(description, SWT.NONE);
-				label.setText((addSpace ? " " : "") + token); //$NON-NLS-1$ //$NON-NLS-2$
-				addSpace= false;
-			}
-		}
-		
-		return description;
-	}
-
 }
