@@ -224,12 +224,6 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 		importAction.selectionChanged(selection);
 		exportAction.selectionChanged(selection);
 		menu.add(new Separator());
-				
-		if (onlyFilesSelected) {
-			addBookmarkAction.selectionChanged(selection);
-			menu.add(addBookmarkAction);
-		}
-		menu.add(new Separator());
 		
 		workspaceGroup.fillContextMenu(menu);
 		
