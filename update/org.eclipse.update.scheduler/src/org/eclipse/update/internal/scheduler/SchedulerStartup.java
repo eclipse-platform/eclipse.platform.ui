@@ -20,6 +20,7 @@ import org.eclipse.swt.custom.*;
 import org.eclipse.ui.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.wizards.*;
+import org.eclipse.update.search.*;
 
 
 /**
@@ -42,6 +43,7 @@ public class SchedulerStartup implements IStartup {
 
 	// Keeps track of running job
 	private UpdateJob job;
+    private static final Object automaticJobFamily = new Object();
 	// Listener for job changes
 	private UpdateJobChangeAdapter jobListener;
 
@@ -84,6 +86,21 @@ public class SchedulerStartup implements IStartup {
 			UpdateScheduler.getString("SchedulerStartup.12AM"), //$NON-NLS-1$
 			};
 
+    private class AutomaticUpdateJob extends UpdateJob {
+
+        public AutomaticUpdateJob(String name, boolean isUpdate, boolean isAutomatic, boolean download) {
+            super(name, isUpdate, isAutomatic, download);
+        }
+
+        public AutomaticUpdateJob(String name, UpdateSearchRequest searchRequest) {
+            super(name, searchRequest);
+        }
+
+        public boolean belongsTo(Object family) {
+            return SchedulerStartup.automaticJobFamily == family;
+        }    
+    }
+    
 	private class UpdateJobChangeAdapter extends JobChangeAdapter {
 		public void done(IJobChangeEvent event) {
 			if (event.getJob() == SchedulerStartup.this.job) {
@@ -295,12 +312,12 @@ public class SchedulerStartup implements IStartup {
 			// cancel old job.
 			// We need to deregister the listener first,so we won't automatically start another job
 			Platform.getJobManager().removeJobChangeListener(jobListener);
-			Platform.getJobManager().cancel(UpdateJob.family);
+			Platform.getJobManager().cancel(job);
 			Platform.getJobManager().addJobChangeListener(jobListener);
 		}
         String jobName = UpdateScheduler.getString("AutomaticUpdatesJob.AutomaticUpdateSearch"); //$NON-NLS-1$);
         boolean download = UpdateScheduler.getDefault().getPluginPreferences().getBoolean(UpdateScheduler.P_DOWNLOAD);
-		job = new UpdateJob(jobName, true, true, download ); 
+		job = new AutomaticUpdateJob(jobName, true, true, download );
 		job.schedule(delay);
 	}
 }

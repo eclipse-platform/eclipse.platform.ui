@@ -136,8 +136,7 @@ public class InstallWizard
 	private void launchInBackground() {
 		// Downloads the feature content in the background.
 		// The job listener will then install the feature when download is finished.
-		
-		// TODO: should we cancel existing jobs?
+
 		if (jobListener != null)
 			Platform.getJobManager().removeJobChangeListener(jobListener);
 		if (job != null)
