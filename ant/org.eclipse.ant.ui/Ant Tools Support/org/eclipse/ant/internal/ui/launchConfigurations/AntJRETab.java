@@ -339,18 +339,17 @@ public class AntJRETab extends JavaJRETab {
 		super.initializeFrom(configuration);
 		fVMArgumentsBlock.initializeFrom(configuration);
 		fWorkingDirectoryBlock.initializeFrom(configuration);
-		warningShown= false;
 	}
 	
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(ILaunchConfiguration)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public boolean isValid(ILaunchConfiguration config) {
 		return fWorkingDirectoryBlock.isValid(config);
 	}
 	
-	/**
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setLaunchConfigurationDialog(ILaunchConfigurationDialog)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setLaunchConfigurationDialog(org.eclipse.debug.ui.ILaunchConfigurationDialog)
 	 */
 	public void setLaunchConfigurationDialog(ILaunchConfigurationDialog dialog) {
 		super.setLaunchConfigurationDialog(dialog);
@@ -358,7 +357,7 @@ public class AntJRETab extends JavaJRETab {
 		fVMArgumentsBlock.setLaunchConfigurationDialog(dialog);
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getErrorMessage()
 	 */
 	public String getErrorMessage() {
@@ -369,7 +368,7 @@ public class AntJRETab extends JavaJRETab {
 		return m;
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getMessage()
 	 */
 	public String getMessage() {
@@ -379,6 +378,7 @@ public class AntJRETab extends JavaJRETab {
 		}
 		return m;
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaJRETab#handleSelectedJREChanged()
 	 */
@@ -399,4 +399,11 @@ public class AntJRETab extends JavaJRETab {
 		super.handleSelectedJREChanged();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	 */
+	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
+		warningShown= false;
+		super.activated(workingCopy);
+	}
 }
