@@ -38,6 +38,7 @@ public interface IThread extends IDebugElement, ISuspendResume, IStep, ITerminat
 	 * <ul><li>Failure communicating with the VM.  The DebugException's
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
+	 * </ul>
 	 * @since 2.0
 	 */
 	public IStackFrame[] getStackFrames() throws DebugException;
@@ -51,6 +52,7 @@ public interface IThread extends IDebugElement, ISuspendResume, IStep, ITerminat
 	 * <ul><li>Failure communicating with the debug target.  The DebugException's
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
+	 * </ul>
 	 * @since 2.0
 	 */
 	public boolean hasStackFrames() throws DebugException;

@@ -80,7 +80,7 @@ public interface IVariable extends IDebugElement, IValueModification {
 	 * </p>
 	 * 
 	 * @return whether this variable's value has changed since the last suspend event 
-	 * @exception DebugException if an exception occurrs determining if this variable's 
+	 * @exception DebugException if an exception occurs determining if this variable's 
 	 *   value has changed since the last suspend event 
 	 */ 
 	public boolean hasValueChanged() throws DebugException; 
