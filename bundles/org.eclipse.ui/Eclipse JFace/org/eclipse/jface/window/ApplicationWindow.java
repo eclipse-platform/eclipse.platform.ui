@@ -217,12 +217,10 @@ protected void configureShell(Shell shell) {
 	Font font = getFont();
 	if (toolBarManager != null) {
 		Control control = toolBarManager.createControl(shell);
-		control.setFont(font);
 	}
 
 	if (statusLineManager != null) {
 		Control control = statusLineManager.createControl(shell);
-		control.setFont(font);
 	}
 }
 /**
@@ -292,6 +290,7 @@ public MenuManager getMenuBarManager() {
 protected StatusLineManager getStatusLineManager() {
 	return statusLineManager;
 }
+
 /**
  * Returns the symbolic font name of the font to be
  * used to display text in this window.
@@ -299,7 +298,7 @@ protected StatusLineManager getStatusLineManager() {
  * @return the symbolic font name
  */
 public String getSymbolicFontName() {
-	return JFaceResources.WINDOW_FONT;
+	return JFaceResources.DEFAULT_FONT;
 }
 /**
  * Returns the tool bar manager for this window (if it has one).
@@ -311,20 +310,7 @@ public String getSymbolicFontName() {
 public ToolBarManager getToolBarManager() {
 	return toolBarManager;
 }
-/* (non-Javadoc)
- * Method declared on Window.
- */
-protected void handleFontChange(final PropertyChangeEvent event) {
-	if (getShell() == null)
-		return;
-	if (event.getProperty() == null)
-		return;
-	if (event.getProperty().equals(getSymbolicFontName()))	{
-		Control control = statusLineManager.getControl();
-		control.setFont(getFont());		
-		getShell().layout();
-	}
-}
+
 /* (non-Javadoc)
  * Method declared on IRunnableContext.
  */
