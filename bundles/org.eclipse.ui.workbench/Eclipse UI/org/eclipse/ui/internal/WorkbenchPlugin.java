@@ -447,7 +447,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
 		// Set the default configuration for the key binding service
 		store.setDefault(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID, IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID);
-		
+
+		// @issue get rid of PreferenceConverter - just hard code the RGB string		
 		//Set the default error colour to red
 		PreferenceConverter.setDefault(store,JFacePreferences.ERROR_COLOR, new RGB(255, 0, 0));
 		//Set the default hyperlink line colour to dark blue
@@ -468,6 +469,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault("DISABLE_DIALOG_FONT", false); //$NON-NLS-1$
 		store.setDefault(IWorkbenchConstants.SHOW_PROGRESS_INDICATOR, true); //$NON-NLS-1$	
 
+		// @issue get rid of PreferenceConverter - defer setting default fonts until Display created.
 		FontRegistry registry = JFaceResources.getFontRegistry();
 		initializeFont(JFaceResources.DIALOG_FONT, registry, store);
 		initializeFont(JFaceResources.BANNER_FONT, registry, store);
