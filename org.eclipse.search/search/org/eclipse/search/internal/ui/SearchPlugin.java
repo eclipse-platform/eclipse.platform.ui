@@ -230,7 +230,7 @@ public class SearchPlugin extends AbstractUIPlugin {
 	 * Shuts down this plug-in.
 	 */
 	public void shutdown() throws CoreException {
-		InternalSearchUI.getInstance().shutdown();
+		InternalSearchUI.shutdown();
 		unregisterAdapters();
 		getWorkspace().removeResourceChangeListener(SearchManager.getDefault());
 		super.shutdown();

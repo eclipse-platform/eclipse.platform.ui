@@ -44,7 +44,7 @@ public class InternalSearchUI {
 	private static final int HISTORY_COUNT= 10;
 	
 	//The shared instance.
-	private static InternalSearchUI plugin;
+	private static InternalSearchUI fgInstance;
 	private HashMap fSearchJobs;
 	
 	private QueryManager fSearchResultsManager;
@@ -107,7 +107,7 @@ public class InternalSearchUI {
 	 * The constructor.
 	 */
 	public InternalSearchUI() {
-		plugin= this;
+		fgInstance= this;
 		fSearchJobs= new HashMap();
 		fSearchResultsManager= new QueryManager();
 		fPositionTracker= new PositionTracker();
@@ -120,9 +120,9 @@ public class InternalSearchUI {
 	 * Returns the shared instance.
 	 */
 	public static InternalSearchUI getInstance() {
-		if (plugin ==null)
-			plugin= new InternalSearchUI();
-		return plugin;
+		if (fgInstance ==null)
+			fgInstance= new InternalSearchUI();
+		return fgInstance;
 	}
 
 	public ISearchResultViewPart getSearchView() {
@@ -216,14 +216,17 @@ public class InternalSearchUI {
 		return temp[0];
 	}
 
-	/**
-	 * @return
-	 */
 	private IRunnableContext getContext() {
 		return new ProgressMonitorDialog(null);
 	}
 
-	public void shutdown() {
+	public static void shutdown() {
+		InternalSearchUI instance= fgInstance;
+		if (instance != null) 
+			instance.doShutdown();
+	}
+	
+	private void doShutdown() {
 		Iterator jobRecs= fSearchJobs.values().iterator();
 		while (jobRecs.hasNext()) {
 			SearchJobRecord element= (SearchJobRecord) jobRecs.next();
