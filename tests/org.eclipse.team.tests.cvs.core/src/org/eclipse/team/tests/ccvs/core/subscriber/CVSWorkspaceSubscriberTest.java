@@ -13,38 +13,22 @@ package org.eclipse.team.tests.ccvs.core.subscriber;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceVisitor;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.subscribers.ContentComparisonCriteria;
-import org.eclipse.team.core.subscribers.SyncInfo;
-import org.eclipse.team.core.subscribers.TeamDelta;
-import org.eclipse.team.core.subscribers.TeamSubscriber;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.core.subscribers.*;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberAction;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.ui.synchronize.actions.SyncInfoSet;
@@ -1230,5 +1214,42 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		
 		project.close(null);
 		assertProjectRemoved(getWorkspaceSubscriber(), project);
+	}
+	
+	public void testUpdateBinaryConflict() throws TeamException, CoreException, InvocationTargetException, InterruptedException {
+		// Create a shared project with a binary file
+		IProject project = createProject(new String[] { "binary.gif"});
+		assertIsBinary(project.getFile("binary.gif"));
+		
+		// Checkout a copy, modify the binary file and commit
+		IProject copy = checkoutCopy(project, "-copy");
+		assertIsBinary(copy.getFile("binary.gif"));
+		setContentsAndEnsureModified(copy.getFile("binary.gif"));
+		commitProject(copy);
+		
+		// Modify the same binary file and ensure sync is correct
+		setContentsAndEnsureModified(project.getFile("binary.gif"));
+		assertSyncEquals("testProjectClose sync check", project,
+			new String[] { "binary.gif"},
+			true, new int[] { 
+				SyncInfo.CONFLICTING | SyncInfo.CHANGE,
+		});
+		
+		// Perform an update and ensure the binary conflict is skipped
+		update(project, new String[] { "binary.gif"});
+		assertSyncEquals("testProjectClose sync check", project,
+			new String[] { "binary.gif"},
+			true, new int[] { 
+				SyncInfo.CONFLICTING | SyncInfo.CHANGE,
+		});
+	}
+
+	private void assertIsBinary(IFile local) throws CVSException {
+		ICVSFile file = CVSWorkspaceRoot.getCVSFileFor((IFile)local);
+		byte[] syncBytes = file.getSyncBytes();
+		if (syncBytes != null) {
+			assertTrue(ResourceSyncInfo.isBinary(syncBytes));
+		}
+		
 	}
 }

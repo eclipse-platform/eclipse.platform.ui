@@ -11,11 +11,7 @@
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -25,16 +21,18 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.core.sync.IRemoteResource;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.UpdateOnlyMergableOperation;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.synchronize.actions.SyncInfoFilter;
 import org.eclipse.team.ui.synchronize.actions.SyncInfoSet;
-import org.eclipse.team.ui.synchronize.actions.SyncInfoFilter.AndSyncInfoFilter;
-import org.eclipse.team.ui.synchronize.actions.SyncInfoFilter.OrSyncInfoFilter;
-import org.eclipse.team.ui.synchronize.actions.SyncInfoFilter.SyncInfoDirectionFilter;
+import org.eclipse.team.ui.synchronize.actions.SyncInfoFilter.*;
 
 /**
  * This update action will update all mergable resources first and then prompt the
@@ -231,6 +229,31 @@ public abstract class SafeUpdateAction extends CVSSubscriberAction {
 							// no local and base != remote
 							return (base != null && remote != null && !base.equals(remote));
 						}
+					}
+				}
+			}),
+			// Conflicts where the file type is binary will work but are not merged
+			// so they should be skipped
+			new AndSyncInfoFilter(new SyncInfoFilter[] {
+				SyncInfoFilter.getDirectionAndChangeFilter(SyncInfo.CONFLICTING, SyncInfo.CHANGE),
+				new SyncInfoFilter() {
+					public boolean select(SyncInfo info) {
+						IResource local = info.getLocal();
+						if (local.getType() == IResource.FILE) {
+							try {
+								ICVSFile file = CVSWorkspaceRoot.getCVSFileFor((IFile)local);
+								byte[] syncBytes = file.getSyncBytes();
+								if (syncBytes != null) {
+									return ResourceSyncInfo.isBinary(syncBytes);
+								}
+							} catch (CVSException e) {
+								// There was an error obtaining or interpreting the sync bytes
+								// Log it and skip the file
+								CVSProviderPlugin.log(e);
+								return true;
+							}
+						}
+						return false;
 					}
 				}
 			}),
