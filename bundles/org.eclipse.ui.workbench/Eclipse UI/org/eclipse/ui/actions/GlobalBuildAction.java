@@ -183,7 +183,7 @@ public void doBuild() {
 	};
 	
 	try {
-		new ProgressMonitorDialog(getShell()).run(true, true, op);
+		window.queueJob(op);
 	}
 	catch (InterruptedException e) {
 		// do nothing

@@ -10,9 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ui;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.runtime.IAdaptable; 
+import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.internal.progress.*;
 
 /**
  * A workbench window is a top level window in a workbench. Visually, a workbench 
@@ -65,12 +70,9 @@ public IWorkbenchPage[] getPages();
  * @return the part service
  */
 public IPartService getPartService();
-/**
- * Returns the selection service which tracks selection within this workbench
- * window.
- *
- * @return the selection service
- */
+
+public IProgressService getProgressService();
+
 public ISelectionService getSelectionService();
 /**
  * Returns this workbench window's shell.
@@ -147,4 +149,6 @@ public IWorkbenchPage openPage(IAdaptable input)
  * @param page the new active page
  */
 public void setActivePage(IWorkbenchPage page);
+
+public void queueJob(IRunnableWithProgress runnable) throws InterruptedException ,InvocationTargetException;
 }
