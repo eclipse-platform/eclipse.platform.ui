@@ -63,13 +63,7 @@ public class RestoreAction extends QuickDiffRestoreAction {
 		if (info.getRemovedLinesBelow() == 0) {
 			fLine--;
 		} else if (info.getRemovedLinesAbove() != 0) {
-//			// if there are deleted lines above and below the line, take the closer one;
-//			int lineHeight= fCachedTextWidget.getLineHeight();
-//			if (fMousePosition != null
-//			&& fMousePosition.y % lineHeight <= lineHeight / 2) {
-//			fLine--;
-//			}
-			// take the one below for now TODO adjust to old viewer-dependent behavior
+			// take the line below
 		}
 		info= differ.getLineInfo(fLine);
 		if (info.getRemovedLinesBelow() == 1)
