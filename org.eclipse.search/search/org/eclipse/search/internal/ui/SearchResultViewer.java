@@ -225,23 +225,10 @@ class SearchResultViewer extends TableViewer {
 		// need to hook F5 to table
 		getTable().addKeyListener(new KeyAdapter() {
 			public void keyReleased(KeyEvent e) {
-				
 				if (e.keyCode == SWT.F5) {
 					fSearchAgainAction.run();
 					return;
 				}
-				/*
-				System.out.println("released keyCode: " + e.keyCode);
-				System.out.println("released char: " + e.character);
-				System.out.println("released mask: " + e.stateMask);
-				if (e.keyCode == 0 && (SWT.SHIFT ^ e.stateMask) == 0) {
-					char c= Character.toUpperCase(e.character);
-					if (c == 'P')
-						showPreviousResult();
-					if (c == 'N')
-						showNextResult();
-				}
-				*/
 			}
 		});
 	}	
