@@ -14,6 +14,7 @@ import java.lang.reflect.Method;
 import org.eclipse.core.runtime.*;
 import org.osgi.framework.Bundle;
 
+//TODO Some comments could be welcomed here.
 public class CompatibilityHelper {
 	public static void setPlugin(IPluginDescriptor descriptor, Plugin plugin) {
 		//Here we use reflection so the runtime code can run without the compatibility
@@ -21,7 +22,6 @@ public class CompatibilityHelper {
 		if (compatibility == null)
 			return;
 
-		Class oldInternalPlatform = null;
 		try {
 			Method setPlugin = descriptor.getClass().getMethod("setPlugin", new Class[] { Plugin.class }); //$NON-NLS-1$
 			setPlugin.invoke(descriptor, new Object[] { plugin });
@@ -51,7 +51,6 @@ public class CompatibilityHelper {
 		if (compatibility == null)
 			return;
 
-		Class oldInternalPlatform = null;
 		try {
 			Method setPlugin = descriptor.getClass().getMethod("setActive", null); //$NON-NLS-1$
 			setPlugin.invoke(descriptor, null);
