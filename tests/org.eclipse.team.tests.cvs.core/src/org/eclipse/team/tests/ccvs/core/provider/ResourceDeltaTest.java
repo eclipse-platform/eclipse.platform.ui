@@ -10,12 +10,23 @@
  ******************************************************************************/
 package org.eclipse.team.tests.ccvs.core.provider;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.TeamException;
@@ -154,5 +165,46 @@ public class ResourceDeltaTest extends EclipseTest {
 		assertAdditionMarkerFor(folder, true);
 		getProvider(project).add(new IResource[] {folder}, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
 		assertAdditionMarkerFor(folder, false);
+	}
+	
+	/**
+	 * Method setContents is used to set the contents of a java.io.File so we
+	 * can test out-of-sync situations
+	 * 
+	 * @param ioFile
+	 */
+	private void setContents(File ioFile) throws IOException {
+		// wait to ensure the timestamp differs from the one Core has
+		waitMsec(1500);
+		InputStream in = new BufferedInputStream(getRandomContents());
+		OutputStream out = new BufferedOutputStream(new FileOutputStream(ioFile));
+		try {
+			int next = in.read();
+			while (next != -1) {
+				out.write(next);
+				next = in.read();
+			}
+		} finally {
+			out.close();
+		}
+	}
+	
+	/**
+	 * This tests maks sure that performing a CVS operation on a file that is
+	 * out-of-sync results in the proper exception.
+	 */
+	public void testOperationOnOutOfSync() throws CoreException, TeamException, IOException {
+		IProject project = createProject("testFolderAdditionHandling", new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt", "folder1/folder2/b.txt"});
+		IFile file = project.getFile("changed.txt");
+		setContentsAndEnsureModified(file);
+		File ioFile = file.getLocation().toFile();
+		setContents(ioFile);
+		try {
+			updateProject(project, null, false);
+		} catch (CVSException e) {
+			// We expect to get an out-of-sync exception
+			if (e.getStatus().getCode() != IResourceStatus.OUT_OF_SYNC_LOCAL)
+				throw e;
+		}
 	}
 }
