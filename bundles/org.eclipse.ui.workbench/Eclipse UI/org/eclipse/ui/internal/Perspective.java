@@ -1402,9 +1402,16 @@ void showFastView(IViewReference ref) {
 	if(ref.getPart(true) == null)
 		return;
 	
-	// Show pane fast
 	ViewPane pane = getPane(ref);	
+
+	// Create the control first
 	Control ctrl = pane.getControl();
+	if(ctrl == null) {
+		pane.createControl(getClientComposite());
+		ctrl = pane.getControl();
+	}
+		
+	// Show pane fast.
 	ctrl.setEnabled(true); // Add focus support.
 	Composite parent = ctrl.getParent();
 	Rectangle bounds = getFastViewBounds(ref);

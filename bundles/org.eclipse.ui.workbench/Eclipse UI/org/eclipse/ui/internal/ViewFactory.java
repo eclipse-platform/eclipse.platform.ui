@@ -12,7 +12,6 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.registry.*;
@@ -159,11 +158,6 @@ public IStatus busyRestoreView(final IViewReference ref) {
 			site.setPane(pane);
 			site.setActionBars(new ViewActionBars(page.getActionBars(), (ViewPane)pane));
 			resetPart[0] = false;
-
-			Control ctrl = pane.getControl();
-			if(ctrl == null)
-				pane.createControl(page.getClientComposite());
-				
 			site.getPane().createChildControl();
 			result[0] =  new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null); //$NON-NLS-1$
 		}

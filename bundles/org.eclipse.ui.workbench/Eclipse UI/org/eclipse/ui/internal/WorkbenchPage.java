@@ -1155,10 +1155,16 @@ public IViewPart findView(String id) {
 	if (persp == null)
 		return null;
 	IViewReference ref = persp.findView(id);
-	if(ref != null)
-		return ref.getView(true);
-	else
+	if(ref == null)
 		return null;
+			
+	// Create the control first - needed for fast views only
+	IViewPart view = ref.getView(true);
+	ViewPane pane = (ViewPane)((WorkbenchPartReference)ref).getPane();	
+	Control ctrl = pane.getControl();
+	if(ctrl == null)
+		pane.createControl(getClientComposite());
+	return view;
 }
 /**
  * Fire part activation out.
