@@ -44,7 +44,7 @@ public abstract class PlatformURLConnection extends URLConnection {
 	private static final String CACHE_INDEX_PROP = "index"; //$NON-NLS-1$
 	private static final String CACHE_PREFIX_PROP = "prefix"; //$NON-NLS-1$
 	private static final String CACHE_INDEX = ".index.properties"; //$NON-NLS-1$
-	private static final String CACHE_DIR = PlatformURLHandler.PROTOCOL + File.separator;
+	private static final String CACHE_DIR = ".eclipse-" + PlatformURLHandler.PROTOCOL + File.separator;
 
 	// debug tracing
 	public static boolean DEBUG = false;
@@ -385,7 +385,8 @@ static void startup(String location) {
 	if (props==null) {
 		// first time up, or failed to load previous settings
 		props = new Properties();
-		String tmp = System.getProperty("java.io.tmpdir"); //$NON-NLS-1$
+
+		String tmp = System.getProperty("user.home"); //$NON-NLS-1$
 		if (!tmp.endsWith(File.separator)) tmp += File.separator;
 		tmp += CACHE_DIR;
 		props.put(CACHE_LOCATION_PROP,tmp);
