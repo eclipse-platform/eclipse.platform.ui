@@ -287,22 +287,9 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 					iterator.remove();
 			}
 
-			for (Iterator iterator = keyConfigurationDefinitionsById.values().iterator(); iterator.hasNext();) {
-				IKeyConfigurationDefinition keyConfigurationDefinition = (IKeyConfigurationDefinition) iterator.next();				
-				String parentId = keyConfigurationDefinition.getParentId();
-				
-				// TODO this does not prevent circular graphs higher up the hierarchy
-				while (parentId != null) {
-					keyConfigurationDefinition = (IKeyConfigurationDefinition) keyConfigurationDefinitionsById.get(parentId);
-				
-					if (keyConfigurationDefinition == null) {
-						iterator.remove();
-						break;
-					}
-					
-					parentId = keyConfigurationDefinition.getParentId();
-				} 
-			}
+			for (Iterator iterator = keyConfigurationDefinitionsById.keySet().iterator(); iterator.hasNext();)
+				if (!CommandManager.isKeyConfigurationDefinitionChildOf(null, (String) iterator.next(), keyConfigurationDefinitionsById))
+					iterator.remove();
 
 			List activeKeyConfigurationDefinitions = new ArrayList();
 			activeKeyConfigurationDefinitions.addAll(pluginCommandRegistry.getActiveKeyConfigurationDefinitions());
@@ -332,22 +319,9 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 					iterator.remove();
 			}
 
-			for (Iterator iterator = contextDefinitionsById.values().iterator(); iterator.hasNext();) {
-				IContextDefinition contextDefinition = (IContextDefinition) iterator.next();
-				String parentId = contextDefinition.getParentId();
-					
-				// TODO this does not prevent circular graphs higher up the hierarchy
-				while (parentId != null) {
-					contextDefinition = (IContextDefinition) contextDefinitionsById.get(parentId);
-					
-					if (contextDefinition == null) {
-						iterator.remove();
-						break;
-					}
-						
-					parentId = contextDefinition.getParentId();
-				} 
-			}
+			for (Iterator iterator = contextDefinitionsById.keySet().iterator(); iterator.hasNext();)
+				if (!CommandManager.isContextDefinitionChildOf(null, (String) iterator.next(), contextDefinitionsById))
+					iterator.remove();
 
 			List contextBindingDefinitions = new ArrayList();
 			contextBindingDefinitions.addAll(pluginCommandRegistry.getContextBindingDefinitions());

@@ -49,6 +49,7 @@ import org.eclipse.ui.internal.commands.api.IContextBindingDefinition;
 import org.eclipse.ui.internal.commands.api.IImageBindingDefinition;
 import org.eclipse.ui.internal.commands.api.IKeyBindingDefinition;
 import org.eclipse.ui.internal.commands.api.IKeyConfigurationDefinition;
+import org.eclipse.ui.internal.contexts.api.IContextDefinition;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.CharacterKey;
 import org.eclipse.ui.keys.KeySequence;
@@ -154,6 +155,34 @@ public final class CommandManager implements ICommandManager {
 	public static boolean validateKeyStroke(KeyStroke keyStroke) {
 		return !keyStroke.getNaturalKey().equals(CharacterKey.getInstance('\0'));
 	}
+
+	static boolean isContextDefinitionChildOf(String ancestor, String id, Map contextDefinitionsById) {
+		Set visited = new HashSet();
+
+		while (id != null && !visited.contains(id)) {
+			IContextDefinition contextDefinition = (IContextDefinition) contextDefinitionsById.get(id);				
+			visited.add(id);
+
+			if (contextDefinition != null && Util.equals(id = contextDefinition.getParentId(), ancestor))
+				return true;
+		}
+
+		return false;
+	}	
+
+	static boolean isKeyConfigurationDefinitionChildOf(String ancestor, String id, Map keyConfigurationDefinitionsById) {
+		Set visited = new HashSet();
+
+		while (id != null && !visited.contains(id)) {
+			IKeyConfigurationDefinition keyConfigurationDefinition = (IKeyConfigurationDefinition) keyConfigurationDefinitionsById.get(id);				
+			visited.add(id);
+
+			if (keyConfigurationDefinition != null && Util.equals(id = keyConfigurationDefinition.getParentId(), ancestor))
+				return true;
+		}
+
+		return false;
+	}	
 
 	private Map actionsById = new HashMap();	
 	private List activeContextIds = Collections.EMPTY_LIST;
