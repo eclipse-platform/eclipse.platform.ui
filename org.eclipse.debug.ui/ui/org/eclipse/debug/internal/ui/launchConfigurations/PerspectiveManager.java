@@ -29,10 +29,6 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.WorkbenchException;
-import sun.security.krb5.internal.i;
-import sun.security.krb5.internal.r;
-import sun.security.krb5.internal.crypto.d;
-import sun.security.krb5.internal.crypto.e;
 
 /**
  * The perspective manager manages the 'perspective' settings
