@@ -575,6 +575,8 @@ public class TextSegment extends ParagraphSegment {
 			int lineY = rect.y + lineHeight - descent + 1;
 			repaintString(gc, text, extent.x, textX, rect.y, lineY, selData,
 					rect, hover, rollover);
+			if (selected)
+				gc.drawFocus(rect.x, rect.y, rect.width, rect.height);			
 		}
 		if (oldFont != null) {
 			gc.setFont(oldFont);

@@ -494,6 +494,7 @@ public final class FormText extends Canvas {
 	 */
 	public void setText(String text, boolean parseTags, boolean expandURLs) {
 		disposeResourceTable(false);
+		entered = null;
 		if (parseTags)
 			model.parseTaggedText(text, expandURLs);
 		else
@@ -516,6 +517,7 @@ public final class FormText extends Canvas {
 	 *            converted into hyperlinks.
 	 */
 	public void setContents(InputStream is, boolean expandURLs) {
+		entered = null;
 		disposeResourceTable(false);
 		model.parseInputStream(is, expandURLs);
 		loading = false;
@@ -861,8 +863,10 @@ public final class FormText extends Canvas {
 
 	void clearSelection() {
 		selData = null;
-		redraw();
-		notifySelectionChanged();
+		if (!isDisposed()) {
+			redraw();
+			notifySelectionChanged();
+		}
 	}
 
 	private void notifySelectionChanged() {

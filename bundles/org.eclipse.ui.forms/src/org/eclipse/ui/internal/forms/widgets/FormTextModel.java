@@ -345,10 +345,15 @@ public class FormTextModel {
 		NamedNodeMap atts = link.getAttributes();
 		String href = null;
 		boolean wrapAllowed = true;
+		String boldFontId = null;
 
 		Node hrefAtt = atts.getNamedItem("href");
 		if (hrefAtt != null) {
 			href = hrefAtt.getNodeValue();
+		}
+		Node boldAtt = atts.getNamedItem("bold");
+		if (boldAtt != null) {
+			boldFontId = BOLD_FONT_ID;
 		}
 		Node nowrap = atts.getNamedItem("nowrap");
 		if (nowrap != null) {
@@ -372,6 +377,7 @@ public class FormTextModel {
 			TextHyperlinkSegment segment = new TextHyperlinkSegment(text,
 					settings, null);
 			segment.setHref(href);
+			segment.setFontId(boldFontId);
 			Node alt = atts.getNamedItem("alt");
 			if (alt!=null)
 				segment.setTooltipText(alt.getNodeValue());			

@@ -171,7 +171,6 @@ public class ImageSegment extends ParagraphSegment {
 		return bounds.contains(x, y);
 	}
 	public boolean intersects(Rectangle rect) {
-		System.out.println("rect="+rect+", bounds="+bounds);
 		if (bounds==null)
 			return false;
 		return bounds.intersects(rect);
@@ -208,7 +207,7 @@ public class ImageSegment extends ParagraphSegment {
 			return;
 		int ix = bounds.x+(isSelectable()?1:0);
 		int iy = bounds.y+(isSelectable()?1:0);
-			
+
 		if (selData != null) {
 			int leftOffset = selData.getLeftOffset(bounds.height);
 			int rightOffset = selData.getRightOffset(bounds.height);
