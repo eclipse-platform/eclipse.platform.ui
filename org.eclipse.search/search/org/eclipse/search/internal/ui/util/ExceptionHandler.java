@@ -4,109 +4,131 @@
  */
 package org.eclipse.search.internal.ui.util;
 
-import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
-import org.eclipse.swt.widgets.Shell;
-
+import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.ui.SearchUI;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 
-import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.ui.SearchUI;
-
 /**
- * Shows an error dialog for exceptions that contain an <code>IStatus</code>.
- * If the throwable passed to the methods is of a kind that the methods can handle, 
- * the error dialog is shown and <code>true</code> is returned. Otherwise <code>false
- * </code>is returned, and the client has to handle the error itself. If the passed
- * throwable is of type <code>InvocationTargetException</code> the wrapped excpetion
- * is considered.
+ * The default exception handler shows an error dialog when one of its handle methods
+ * is called. If the passed exception is a <code>CoreException</code> an error dialog
+ * pops up showing the exception's status information. For a <code>InvocationTargetException</code>
+ * a normal message dialog pops up showing the exception's message. Additionally the exception
+ * is written to the platform log.
  */
 public class ExceptionHandler {
 
 	private static ExceptionHandler fgInstance= new ExceptionHandler();
-
+	
 	/**
-	 * Shows an error dialog for exceptions that contain an <code>IStatus</code>.
-	 */
-	public static boolean handle(Throwable t, String title, String message) {
-		return handle(t, SearchPlugin.getActiveWorkbenchShell(), title, message);	
-	}
-	/**
-	 * Shows an error dialog for exceptions that contain an <code>IStatus</code>.
-	 */
-	public static boolean handle(Throwable t, Shell shell, String title, String message) {
-		if (fgInstance == null)
-			return false;
-		return fgInstance.perform(t, shell, title, message);	
-	}
-	/**
-	 * Logs the given exception using the platforms logging mechanism.
+	 * Logs the given exception using the platform's logging mechanism. The exception is
+	 * logged as an error with the error code <code>JavaStatusConstants.INTERNAL_ERROR</code>.
 	 */
 	public static void log(Throwable t, String message) {
-		SearchPlugin.log(new Status(IStatus.ERROR, SearchUI.PLUGIN_ID, 
-			IStatus.ERROR, message, t));
+		SearchPlugin.log(new Status(IStatus.ERROR, SearchUI.PLUGIN_ID, IStatus.ERROR, message, t));
 	}
+	
 	/**
-	 * Actually displays the error message. Subclasses may override the method to
-	 * perform their own error handling.
+	 * Handles the given <code>CoreException</code>. The workbench shell is used as a parent
+	 * for the dialog window.
+	 * 
+	 * @param e the <code>CoreException</code> to be handled
+	 * @param title the dialog window's window title
+	 * @param message message to be displayed by the dialog window
 	 */
-	protected boolean perform(Throwable t, Shell shell, String title, String message) {
-		if (t instanceof InvocationTargetException)
-			t= ((InvocationTargetException)t).getTargetException();
-		if (handleCoreException(t, shell, title, message))
-			return true;
-		return handleCriticalExceptions(t, shell, title, message);
+	public static void handle(CoreException e, String title, String message) {
+		handle(e, SearchPlugin.getActiveWorkbenchShell(), title, message);
+	}
+	
+	/**
+	 * Handles the given <code>CoreException</code>. 
+	 * 
+	 * @param e the <code>CoreException</code> to be handled
+	 * @param parent the dialog window's parent shell
+	 * @param title the dialog window's window title
+	 * @param message message to be displayed by the dialog window
+	 */
+	public static void handle(CoreException e, Shell parent, String title, String message) {
+		fgInstance.perform(e, parent, title, message);
+	}
+	
+	/**
+	 * Handles the given <code>InvocationTargetException</code>. The workbench shell is used 
+	 * as a parent for the dialog window.
+	 * 
+	 * @param e the <code>InvocationTargetException</code> to be handled
+	 * @param title the dialog window's window title
+	 * @param message message to be displayed by the dialog window
+	 */
+	public static void handle(InvocationTargetException e, String title, String message) {
+		handle(e, SearchPlugin.getActiveWorkbenchShell(), title, message);
+	}
+	
+	/**
+	 * Handles the given <code>InvocationTargetException</code>. 
+	 * 
+	 * @param e the <code>InvocationTargetException</code> to be handled
+	 * @param parent the dialog window's parent shell
+	 * @param title the dialog window's window title
+	 * @param message message to be displayed by the dialog window
+	 */
+	public static void handle(InvocationTargetException e, Shell parent, String title, String message) {
+		fgInstance.perform(e, parent, title, message);
 	}
 
-	protected boolean handleCoreException(Throwable t, Shell shell, String title, String message) {
-		IStatus status= null;
-		if (t instanceof CoreException) {
-			status= ((CoreException)t).getStatus();
-			if (status != null)
-				ErrorDialog.openError(shell, title, message, status);
-			else
-				displayMessageDialog(t, shell, title, message);
-			return true;
+	//---- Hooks for subclasses to control exception handling ------------------------------------
+	
+	protected void perform(CoreException e, Shell shell, String title, String message) {
+		IStatus status= e.getStatus();
+		if (status != null) {
+			ErrorDialog.openError(shell, title, message, status);
+		} else {
+			displayMessageDialog(e, e.getMessage(), shell, title, message);
 		}
-		return false;
 	}
 
-	protected boolean handleCriticalExceptions(Throwable t, Shell shell, String title, String message) {
-		if (t instanceof RuntimeException || t instanceof Error) {
-			log(t, message);
-			displayMessageDialog(t, shell, title, message);
-			return true;
+	protected void perform(InvocationTargetException e, Shell shell, String title, String message) {
+		Throwable target= e.getTargetException();
+		if (target instanceof CoreException) {
+			perform((CoreException)target, shell, title, message);
+		} else {
+			if (e.getMessage() != null && e.getMessage().length() > 0) {
+				displayMessageDialog(e, e.getMessage(), shell, title, message);
+			} else {
+				displayMessageDialog(e, target.getMessage(), shell, title, message);
+			}
 		}
-		return false;	
 	}
-	/**
-	 * Shows the error in a message dialog
-	 */
-	protected void displayMessageDialog(Throwable t, Shell shell, String title, String message) {
+
+	//---- Helper methods -----------------------------------------------------------------------
+
+	public static void displayMessageDialog(Throwable t, Shell shell, String title, String message) {
+		fgInstance.displayMessageDialog(t, t.getMessage(), shell, title, message);
+	}
+
+	public static void displayMessageDialog(Throwable t, String title, String message) {
+		displayMessageDialog(t, SearchPlugin.getActiveWorkbenchShell(), title, message);
+	}
+	
+	private void displayMessageDialog(Throwable t, String exceptionMessage, Shell shell, String title, String message) {
 		StringWriter msg= new StringWriter();
 		if (message != null) {
 			msg.write(message);
 			msg.write("\n\n"); //$NON-NLS-1$
 		}
-		if (t.getMessage() == null || t.getMessage().length() == 0)
+		if (exceptionMessage == null || exceptionMessage.length() == 0)
 			msg.write(t.toString());
 		else
-			msg.write(t.getMessage());
+			msg.write(exceptionMessage);
 		MessageDialog.openError(shell, title, msg.toString());			
-	}
-	/**
-	 * Shows a dialog containing the stack trace of the exception
-	 */
-	public static void showStackTraceDialog(Throwable t, Shell shell, String title) {
-		StringWriter writer= new StringWriter();
-		t.printStackTrace(new PrintWriter(writer));
-		MessageDialog.openError(shell, title, writer.toString());
 	}	
 }
