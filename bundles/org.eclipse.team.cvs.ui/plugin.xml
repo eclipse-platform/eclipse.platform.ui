@@ -103,6 +103,12 @@
 				menubarPath="compareWithMenu/compareWithGroup"
 				class="org.eclipse.team.internal.ccvs.ui.actions.DiffAction"/>
 			<action 
+				id="org.eclipse.team.ccvs.ui.compareWithStream"
+				label="%CompareWithStreamAction.label"
+				tooltip="%CompareWithStreamAction.tooltip"
+				menubarPath="compareWithMenu/compareWithGroup"
+				class="org.eclipse.team.internal.ccvs.ui.actions.CompareWithStreamAction"/>
+			<action 
 				id="org.eclipse.team.ccvs.ui.update"
 				label="%UpdateAction.label"
 				tooltip="%UpdateAction.tooltip"
