@@ -636,8 +636,8 @@ public class KeysPreferencePage
 			menuItem.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					textKeySequenceManager.insert(trappedKey);
-					// TODO Focus selects everything.
-					//textKeySequence.setFocus();
+					textKeySequence.setFocus();
+					textKeySequence.setSelection(textKeySequence.getTextLimit());
 				}
 			});
 		}

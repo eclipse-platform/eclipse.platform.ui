@@ -6,11 +6,8 @@
 		<project>org.eclipse.core.resources</project>
 		<project>org.eclipse.core.runtime.compatibility</project>
 		<project>org.eclipse.help</project>
-		<project>org.eclipse.jface</project>
-		<project>org.eclipse.swt</project>
 		<project>org.eclipse.ui</project>
 		<project>org.eclipse.ui.views</project>
-		<project>org.eclipse.ui.workbench</project>
 		<project>org.eclipse.update.core</project>
 	</projects>
 	<buildSpec>

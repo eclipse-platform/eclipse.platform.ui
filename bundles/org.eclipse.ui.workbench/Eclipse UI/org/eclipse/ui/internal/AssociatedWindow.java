@@ -25,6 +25,8 @@ import org.eclipse.jface.window.Window;
 
 /**
  * The AssociatedWindow is a window that is associated with another shell.
+ *
+ * @since 3.0
  */
 public class AssociatedWindow extends Window {
 

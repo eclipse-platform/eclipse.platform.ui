@@ -294,6 +294,12 @@ class ProgressFloatingWindow extends AssociatedWindow {
 			 */
 			public void widgetSelected(SelectionEvent e) {
 				window.toggleFloatingWindow();
+				//If the minimize failed to close the floating
+				//window do a close anyways
+				Shell remainingShell = getShell();
+				if(remainingShell == null || remainingShell.isDisposed())
+					return;
+				close();
 			}
 		});
 		

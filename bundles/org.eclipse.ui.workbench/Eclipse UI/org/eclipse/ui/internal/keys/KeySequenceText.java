@@ -319,7 +319,8 @@ public final class KeySequenceText {
 						event.type = SWT.None;
 						event.doit = false;
 						break;
-					}
+					} 
+					
 					// fall through -- either no modifiers, or just shift.
 
 				case SWT.TRAVERSE_ARROW_NEXT :
@@ -356,8 +357,6 @@ public final class KeySequenceText {
 		 */
 		public void focusGained(FocusEvent event) {
 			Display.getCurrent().addFilter(SWT.Traverse, filter);
-			// TODO This doesn't work. Bug 46059.
-			//selectAll();
 		}
 
 		/**
@@ -698,13 +697,6 @@ public final class KeySequenceText {
 	 */
 	private boolean isCursorInLastPosition() {
 		return (text.getSelection().y >= getText().length());
-	}
-
-	/**
-	 * Selects all of the text in the widget.
-	 */
-	private void selectAll() {
-		text.setSelection(0, getText().length());
 	}
 
 	/**

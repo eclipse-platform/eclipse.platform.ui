@@ -24,7 +24,6 @@ import org.eclipse.jface.action.SubStatusLineManager;
 import org.eclipse.jface.action.SubToolBarManager;
 import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
-
 import org.eclipse.ui.IActionBars2;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorPart;
@@ -32,6 +31,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.SubActionBars2;
 import org.eclipse.ui.actions.RetargetAction;
+import org.eclipse.ui.internal.misc.Policy;
 
 /**
  * The action bars for an editor.
@@ -61,6 +61,14 @@ public class EditorActionBars extends SubActionBars2 {
             return null;
         }
     }
+    
+    /**
+     * A switch controlling verbose debugging options surrounding the disposal
+     * of tool bar contribution items.  There have been problems in the past
+     * with reusing disposed items, and leaking memory by failing to drop
+     * references to disposed items.  
+     */
+    private static final boolean DEBUG_TOOLBAR_DISPOSAL = Policy.DEBUG_TOOLBAR_DISPOSAL;
 
     private IToolBarManager coolItemToolBarMgr = null;
 
@@ -143,9 +151,21 @@ public class EditorActionBars extends SubActionBars2 {
                 if (manager instanceof ContributionManager) {
                     final IContributionItem replacementItem = new PlaceholderContributionItem(
                             toolBarContributionItem);
-                    ((ContributionManager) manager).replaceItem(replacementItem
+                    boolean succeeded = ((ContributionManager) manager).replaceItem(replacementItem
                             .getId(), replacementItem);
+                    if (!succeeded && DEBUG_TOOLBAR_DISPOSAL) {
+                    	System.out.println("FAILURE WHILE DISPOSING EditorActionBars"); //$NON-NLS-1$
+                    	System.out.println("Could not replace " + replacementItem.getId() + " in the contribution manager."); //$NON-NLS-1$ //$NON-NLS-2$
+                    }
+                } else if (DEBUG_TOOLBAR_DISPOSAL) {
+                	System.out.println("FAILURE WHILE DISPOSING EditorActionBars"); //$NON-NLS-1$
+                	System.out.println("The manager was not a ContributionManager."); //$NON-NLS-1$
+                	System.out.println("It was a " + manager.getClass().getName()); //$NON-NLS-1$
                 }
+            } else if (DEBUG_TOOLBAR_DISPOSAL) {
+            	System.out.println("FAILURE WHILE DISPOSING EditorActionBars"); //$NON-NLS-1$
+            	System.out.println("The coolBarManager was not a SubContributionManager"); //$NON-NLS-1$
+            	System.out.println("It was a " + coolBarManager.getClass().getName()); //$NON-NLS-1$
             }
 
             // Dispose of the replaced item.

@@ -344,7 +344,6 @@ protected void createStatusLine(Shell shell) {
 		statusLineManager.createControl(shell);
 	}
 }
-
 /**
  * Returns a new menu manager for the window.
  * <p>

@@ -184,7 +184,7 @@ public class EditorsPreferencePage extends PreferencePage implements IWorkbenchP
 		GridLayout layout = new GridLayout();
 		// Line up with other entries in preference page
 		layout.marginWidth = 0;
-		//layout.marginHeight = 0;
+		layout.marginHeight = 0;
 		editorReuseGroup.setLayout(layout);
 		editorReuseGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));	
 		editorReuseGroup.setFont(font);	
