@@ -167,28 +167,33 @@ public class PresentationReconciler implements IPresentationReconciler {
 	 		if (!e.getViewerRedrawState())
 	 			return;
 	 			
-		 	DocumentEvent de= e.getDocumentEvent();
-		 	
-		 	if (de == null) {
-		 		IDocument document= fViewer.getDocument();
+	 		IRegion damage= null;
+	 		IDocument document= null;
+	 		
+		 	if (e.getDocumentEvent() == null) {
+		 		document= fViewer.getDocument();
 		 		if (document != null)  {
 			 		if (e.getOffset() == 0 && e.getLength() == 0 && e.getText() == null) {
-						// redraw state change		 			
-						de= new DocumentEvent(document, 0, document.getLength(), document.get());
+						// redraw state change, damage the whole document
+						damage= new Region(0, document.getLength());
 			 		} else {
 						IRegion region= widgetRegion2ModelRegion(e);
 						try {
 							String text= document.get(region.getOffset(), region.getLength());
-							de= new DocumentEvent(document, region.getOffset(), region.getLength(), text);
+							DocumentEvent de= new DocumentEvent(document, region.getOffset(), region.getLength(), text);
+							damage= getDamage(de, false);
 						} catch (BadLocationException x) {
 						}
 			 		}
 		 		}
+		 	} else  {
+		 		DocumentEvent de= e.getDocumentEvent();
+		 		document= de.getDocument();
+		 		damage= getDamage(de, true);
 		 	}
 		 	
-		 	IRegion damage= de != null ? getDamage(de) : null;
-			if (damage != null)
-				processDamage(damage, de.getDocument());
+			if (damage != null && document != null)
+				processDamage(damage, document);
 		 	
 			fDocumentPartitioningChanged= false;
 			fChangedDocumentPartitions= null;
@@ -393,9 +398,10 @@ public class PresentationReconciler implements IPresentationReconciler {
 	 * until the end of the damage for the last partition.
 	 *
 	 * @param e the event describing the document change
+	 * @param optimize <code>true</code> if partition changes should be considered for optimization
 	 * @return the damaged caused by the change
 	 */
-	private IRegion getDamage(DocumentEvent e) {
+	private IRegion getDamage(DocumentEvent e, boolean optimize) {
 		
 		IRegion damage= null;
 		
@@ -408,7 +414,7 @@ public class PresentationReconciler implements IPresentationReconciler {
 				
 			IRegion r= damager.getDamageRegion(partition, e, fDocumentPartitioningChanged);
 			
-			if (!fDocumentPartitioningChanged) {
+			if (!fDocumentPartitioningChanged && optimize) {
 				damage= r;
 			} else {
 				
