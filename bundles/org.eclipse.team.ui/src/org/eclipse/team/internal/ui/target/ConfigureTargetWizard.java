@@ -68,8 +68,6 @@ public class ConfigureTargetWizard extends Wizard implements IConfigurationWizar
 	public static final String MAPPING_PAGE_NAME = "mapping-page"; //$NON-NLS-1$
 	
 	protected SiteSelectionPage siteSelectionPage = null;
-	protected IWizardPage firstTargetPage = null;
-	
 	/**
 	 * @see ConfigureProjectWizard#getExtensionPoint()
 	 */
@@ -108,7 +106,6 @@ public class ConfigureTargetWizard extends Wizard implements IConfigurationWizar
 	public void addPages() {
 		Site[] sites = TargetManager.getSites();
 		AdaptableList wizards = getAvailableWizards();
-		setWindowTitle(getWizardWindowTitle());
 		
 		if(sites.length > 0 && project != null) {
 			TargetProvider provider = null;
@@ -153,29 +150,10 @@ public class ConfigureTargetWizard extends Wizard implements IConfigurationWizar
 	}
 	
 	public IWizardPage getNextPage(IWizardPage page) {
-		// This is what we really want to do, but will have to rework the 
-		// target wizards first.
-		//		if(getPage(page.getName()) != null) {
-		//			// this is one of our pages
-		//			// 1. site selection 
-		//			// 2. target selection
-		//			// 3. mapping
-		//		} else {
-		//			// not one of our pages, is a target specific page
-		//			IWizardPage nextPage;
-		//			if(wizard != null) {
-		//				nextPage = wizard.getNextPage(page);
-		//			} else {
-		//				nextPage = mainPage.getSelectedWizard().getNextPage(page);
-		//			}
-		//			if(nextPage != null) {
-		//				return nextPage;
-		//			} else {
-		//				MappingSelectionPage mappingPage = getMappingPage();
-		//				mappingPage.setPreviousPage(page);
-		//			}
-		//		}		
 		if(page == siteSelectionPage) {
+			if(siteSelectionPage.isDisconnect()) {
+				return null;
+			}
 			if(siteSelectionPage.getSite() != null) {
 				mappingPage.setSite(siteSelectionPage.getSite());
 				mappingPage.setPreviousPage(page);
@@ -205,8 +183,10 @@ public class ConfigureTargetWizard extends Wizard implements IConfigurationWizar
 			}
 			return false;
 		} else if(currentPage == siteSelectionPage) {
-			if(siteSelectionPage.getSite() != null) {
+			if(siteSelectionPage.getSite() != null || siteSelectionPage.isDisconnect()) {
 				return true;
+			} else {
+				return false;
 			}
 		}
 		
