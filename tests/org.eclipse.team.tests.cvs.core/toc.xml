@@ -112,8 +112,12 @@
         <topic label="Performance" href="html/perf00001.html">
             <topic label="Timings" href="html/perf00002.html">
             </topic>
-            <topic label="Memory Usage" href="html/perf00003.html">
+            <topic label="Memory Footprint" href="html/perf00003.html">
                 <topic label="Resource Data Structures" href="html/perf00004.html">
+                </topic>
+                <topic label="Looking For Leaks" href="html/perf00005.html">
+                </topic>
+                <topic label="Team Data Structures" href="html/perf00006.html">
                 </topic>
             </topic>
         </topic>

@@ -4,9 +4,22 @@
 <meta NAME="since" content="">
 </head><h2>Timings</h2>
 <p>Since: 3.0<br>
-Last Modified: $Date: 2004/05/31 14:22:48 $</p><body>
+Last Modified: $Date: 2004/05/31 20:24:10 $</p><body>
 
 This section contains various timing results and comparisons.
+
+<h3>Overview</h3>
+
+The purpose of this section is to provide a small set of tests that can 
+be used to benchmark the Eclipse CVS client. The areas tested are:
+
+<ol>
+<li>Checkout
+<li>Synchronizing
+<li>Updating
+</ol>
+
+<h3>Setup</h3>
 
 The following should be considered when obtaining timings:
 
@@ -72,7 +85,7 @@ in 393 incoming changes.
 <li>CLI over pserver: 0:45 ("cvs -n update")
 </ul>
 
-The timing for Eclipse also includes the status commadn to fetch the revisions for the 393 incoming changes.
+The timing for Eclipse also includes the status command to fetch the revisions for the 393 incoming changes.
 
 <h3>Update</h3>
 

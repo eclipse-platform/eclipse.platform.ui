@@ -1,0 +1,36 @@
+<html><head><title>Looking For Leaks</title>
+<LINK REL=STYLESHEET HREF=../book.css CHARSET=ISO-8859-1 TYPE=text/css>
+<meta NAME="keywords" content="">
+<meta NAME="since" content="">
+</head><h2>Looking For Leaks</h2>
+<p>Since: <br>
+Last Modified: $Date: 2004/05/31 20:01:46 $</p><body>
+
+<h3>Removing synchronize view entries</h3>
+
+<ol>
+<li>Start with an empty synchronize view
+<li>Create an entry in the Synchronize view for each of the following cases:
+	<ul>
+	<li>Team>Synchronize
+	<li>Compare with>Branch or Version
+	<li>Team>Merge
+	</ul>
+<li>Open the context menu
+<li>Select all mode and layout combinations
+<li>Remove the entry (making the sync view empty).
+<li>Select an item in another view
+<li>Using a memory profiler, look for instances of the following classes:
+	<ul>
+	<li>ISynchronizeParticipant
+	<li>SynchronizeModelElement
+	<li>SyncInfo/SyncInfoSet
+	</ul>
+</ol>
+
+<h3>Closing the Synchronize view</h3>
+
+Close all instances of the Synchronize view and ensure that no instances
+of ISynchronizeView remain.
+
+</body></html>
