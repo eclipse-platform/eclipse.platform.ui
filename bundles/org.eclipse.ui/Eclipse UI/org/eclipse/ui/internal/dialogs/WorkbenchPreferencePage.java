@@ -38,13 +38,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	private Button autoSaveAllButton;
 	private Button linkButton;
 	private Button refreshButton;
-	private Combo accelConfigCombo;
-
-	private Button reuseEditors;
-	private IntegerFieldEditor reuseEditorsThreshold;
-	private Composite editorReuseGroup;
-	
-	private IntegerFieldEditor recentFilesEditor;
 
 	private Button doubleClickButton;
 	private Button singleClickButton;
@@ -53,11 +46,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	private boolean openOnSingleClick;
 	private boolean selectOnHover;
 	private boolean openAfterDelay;
-	
-	// hashtable mapping accelerator configuration names to accelerator configuration
-	private Hashtable namesToConfiguration;
-	// the name of the active accelerator configuration
-	private String activeAcceleratorConfigurationName;
 
 	/**
 	 * Creates composite control and sets the default layout data.
@@ -111,15 +99,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		refreshButton.setText(WorkbenchMessages.getString("WorkbenchPreference.refreshButton")); //$NON-NLS-1$
 
 		createSpace(composite);
-		createEditorHistoryGroup(composite);
-		
-		createSpace(composite);
-		createEditorReuseGroup(composite);
-				
-		createSpace(composite);
-		createAcceleratorConfigurationGroup(composite, WorkbenchMessages.getString("WorkbenchPreference.acceleratorConfiguration"));
-
-		createSpace(composite);
 		createSingleClickGroup(composite);
 
 		// set initial values
@@ -130,114 +109,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		refreshButton.setSelection(store.getBoolean(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP));
 
 		return composite;
-	}
-	/**
-	 * Creates a composite that contains a label and combo box specifying the active
-	 * accelerator configuration.
-	 */
-	protected void createAcceleratorConfigurationGroup(Composite composite, String label) {
-		Composite groupComposite = new Composite(composite, SWT.LEFT);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
-		groupComposite.setLayout(layout);
-		GridData gd = new GridData();
-		gd.horizontalAlignment = gd.FILL;
-		gd.grabExcessHorizontalSpace = true;
-		groupComposite.setLayoutData(gd);
-		
-		Label configLabel = createLabel(groupComposite, label);
-		accelConfigCombo = createCombo(groupComposite);
-
-		if(namesToConfiguration.size() > 0) { 
-			String[] comboItems = new String[namesToConfiguration.size()];
-			namesToConfiguration.keySet().toArray(comboItems);
-			Arrays.sort(comboItems,Collator.getInstance());
-			accelConfigCombo.setItems(comboItems);
-		
-			if(activeAcceleratorConfigurationName != null)
-				accelConfigCombo.select(accelConfigCombo.indexOf(activeAcceleratorConfigurationName));
-		} else {
-			accelConfigCombo.setEnabled(false);
-		}	
-	}
-	/**
-	 * Create a composite that contains entry fields specifying editor reuse preferences.
-	 */
-	private void createEditorReuseGroup(Composite composite) {
-		editorReuseGroup = new Composite(composite, SWT.LEFT);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		editorReuseGroup.setLayout(layout);
-		GridData gd = new GridData();
-		gd.horizontalAlignment = gd.FILL;
-		gd.grabExcessHorizontalSpace = true;
-		editorReuseGroup.setLayoutData(gd);		
-		
-		reuseEditors = new Button(editorReuseGroup, SWT.CHECK);
-		reuseEditors.setText(WorkbenchMessages.getString("WorkbenchPreference.reuseEditors")); //$NON-NLS-1$
-		GridData reuseEditorsData = new GridData();
-		reuseEditorsData.horizontalSpan = layout.numColumns;
-		reuseEditors.setLayoutData(reuseEditorsData);
-		
-		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		reuseEditors.setSelection(store.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN));
-		reuseEditors.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e){
-				reuseEditorsThreshold.getLabelControl(editorReuseGroup).setEnabled(reuseEditors.getSelection());
-				reuseEditorsThreshold.getTextControl(editorReuseGroup).setEnabled(reuseEditors.getSelection());
-			}
-		});
-		
-		reuseEditorsThreshold = new IntegerFieldEditor(IPreferenceConstants.REUSE_EDITORS, WorkbenchMessages.getString("WorkbenchPreference.reuseEditorsThreshold"), editorReuseGroup); //$NON-NLS-1$
-		
-		reuseEditorsThreshold.setPreferenceStore(WorkbenchPlugin.getDefault().getPreferenceStore());
-		reuseEditorsThreshold.setPreferencePage(this);
-		reuseEditorsThreshold.setTextLimit(2);
-		reuseEditorsThreshold.setErrorMessage(WorkbenchMessages.getString("WorkbenchPreference.reuseEditorsThresholdError")); //$NON-NLS-1$
-		reuseEditorsThreshold.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
-		reuseEditorsThreshold.setValidRange(1, 99);
-		reuseEditorsThreshold.load();
-		reuseEditorsThreshold.getLabelControl(editorReuseGroup).setEnabled(reuseEditors.getSelection());
-		reuseEditorsThreshold.getTextControl(editorReuseGroup).setEnabled(reuseEditors.getSelection());
-		reuseEditorsThreshold.setPropertyChangeListener(new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				if (event.getProperty().equals(FieldEditor.IS_VALID)) 
-					setValid(reuseEditorsThreshold.isValid());
-			}
-		});
-	}
-	/**
-	 * Create a composite that contains entry fields specifying editor history preferences.
-	 */
-	private void createEditorHistoryGroup(Composite composite) {
-		Composite groupComposite = new Composite(composite, SWT.LEFT);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		groupComposite.setLayout(layout);
-		GridData gd = new GridData();
-		gd.horizontalAlignment = gd.FILL;
-		gd.grabExcessHorizontalSpace = true;
-		groupComposite.setLayoutData(gd);	
-		
-		recentFilesEditor = new IntegerFieldEditor(IPreferenceConstants.RECENT_FILES, WorkbenchMessages.getString("WorkbenchPreference.recentFiles"), groupComposite); //$NON-NLS-1$
-
-		int recentFilesMax = IPreferenceConstants.MAX_RECENT_FILES_SIZE;
-		recentFilesEditor.setPreferenceStore(WorkbenchPlugin.getDefault().getPreferenceStore());
-		recentFilesEditor.setPreferencePage(this);
-		recentFilesEditor.setTextLimit(Integer.toString(recentFilesMax).length());
-		recentFilesEditor.setErrorMessage(WorkbenchMessages.format("WorkbenchPreference.recentFilesError", new Object[] { new Integer(recentFilesMax)})); //$NON-NLS-1$
-		recentFilesEditor.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
-		recentFilesEditor.setValidRange(0, recentFilesMax);
-		recentFilesEditor.load();
-		recentFilesEditor.setPropertyChangeListener(new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				if (event.getProperty().equals(FieldEditor.IS_VALID)) 
-					setValid(recentFilesEditor.isValid());
-			}
-		});
-		
 	}
 	
 	private void createSingleClickGroup(Composite composite) {
@@ -327,7 +198,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	 * @param parent  the parent for the new label
 	 * @return the new widget
 	 */
-	private Combo createCombo(Composite parent) {
+	protected static Combo createCombo(Composite parent) {
 		Combo combo = new Combo(parent, SWT.READ_ONLY);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
@@ -342,7 +213,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	 * @param text  the text for the new label
 	 * @return the new label
 	 */
-	private Label createLabel(Composite parent, String text) {
+	protected static Label createLabel(Composite parent, String text) {
 		Label label = new Label(parent, SWT.LEFT);
 		label.setText(text);
 		GridData data = new GridData();
@@ -379,23 +250,10 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	 */
 	public void init(IWorkbench aWorkbench) {
 		workbench = aWorkbench;
-		acceleratorInit(aWorkbench);
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		openOnSingleClick = store.getBoolean(IPreferenceConstants.OPEN_ON_SINGLE_CLICK); //$NON-NLS-1$
 		selectOnHover = store.getBoolean(IPreferenceConstants.SELECT_ON_HOVER); //$NON-NLS-1$
 		openAfterDelay = store.getBoolean(IPreferenceConstants.OPEN_AFTER_DELAY); //$NON-NLS-1$
-	}
-	protected void acceleratorInit(IWorkbench aWorkbench) {
-		namesToConfiguration = new Hashtable();
-		WorkbenchPlugin plugin = WorkbenchPlugin.getDefault();
-		AcceleratorRegistry registry = plugin.getAcceleratorRegistry();
-		AcceleratorConfiguration configs[] = registry.getConfigsWithSets();
-		for (int i = 0; i < configs.length; i++)
-			namesToConfiguration.put(configs[i].getName(), configs[i]);	
-		
-		AcceleratorConfiguration config = ((Workbench)aWorkbench).getActiveAcceleratorConfiguration();
-		if(config != null)
-			activeAcceleratorConfigurationName = config.getName();
 	}
 	/**
 	 * The default button has been pressed. 
@@ -406,14 +264,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		autoSaveAllButton.setSelection(store.getDefaultBoolean(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD));
 		linkButton.setSelection(store.getDefaultBoolean(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR));
 		refreshButton.setSelection(store.getDefaultBoolean(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP));
-
-		reuseEditors.setSelection(store.getDefaultBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN));
-		reuseEditorsThreshold.loadDefault();
-		reuseEditorsThreshold.getLabelControl(editorReuseGroup).setEnabled(reuseEditors.getSelection());
-		reuseEditorsThreshold.getTextControl(editorReuseGroup).setEnabled(reuseEditors.getSelection());
-
-
-		recentFilesEditor.loadDefault();
 		
 		openOnSingleClick = store.getDefaultBoolean(IPreferenceConstants.OPEN_ON_SINGLE_CLICK); //$NON-NLS-1$
 		selectOnHover = store.getDefaultBoolean(IPreferenceConstants.SELECT_ON_HOVER); //$NON-NLS-1$
@@ -425,20 +275,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		selectOnHoverButton.setEnabled(openOnSingleClick);
 		openAfterDelayButton.setEnabled(openOnSingleClick);		
 		
-		acceleratorPerformDefaults(store);
 		super.performDefaults();
-	}
-	
-	protected void acceleratorPerformDefaults(IPreferenceStore store) {
-		// Sets the accelerator configuration selection to the default configuration
-		String id = store.getDefaultString(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID);
-		AcceleratorRegistry registry = WorkbenchPlugin.getDefault().getAcceleratorRegistry();
-		AcceleratorConfiguration config = registry.getConfiguration(id);
-		String name = null;
-		if(config != null) 
-			name = config.getName();
-		if((name != null) && (accelConfigCombo != null))
-			accelConfigCombo.select(accelConfigCombo.indexOf(name));
 	}
 	/**
 	 *	The user has pressed Ok.  Store/apply this page's values appropriately.
@@ -479,13 +316,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		// store the link navigator to editor setting
 		store.setValue(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP, refreshButton.getSelection());
 
-		// store the reuse editors setting
-		store.setValue(IPreferenceConstants.REUSE_EDITORS_BOOLEAN,reuseEditors.getSelection());
-		reuseEditorsThreshold.store();
-
-		// store the recent files setting
-		recentFilesEditor.store();
-
 		store.setValue(IPreferenceConstants.OPEN_ON_SINGLE_CLICK,openOnSingleClick); //$NON-NLS-1$
 		store.setValue(IPreferenceConstants.SELECT_ON_HOVER,selectOnHover); //$NON-NLS-1$
 		store.setValue(IPreferenceConstants.OPEN_AFTER_DELAY,openAfterDelay); //$NON-NLS-1$
@@ -498,22 +328,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		}
 		OpenStrategy.setOpenMethod(singleClickMethod);
 		
-		acceleratorPerformOk(store);
-
 		WorkbenchPlugin.getDefault().savePluginPreferences();
 		return true;
-	}
-	
-	protected void acceleratorPerformOk(IPreferenceStore store) {
-		// store the active accelerator configuration id
-		if(accelConfigCombo != null) {
-			String configName = accelConfigCombo.getText();
-			AcceleratorConfiguration config = (AcceleratorConfiguration)namesToConfiguration.get(configName);
-			if(config != null) {
-				Workbench workbench = (Workbench)PlatformUI.getWorkbench();
-				workbench.setActiveAcceleratorConfiguration(config);
-				store.setValue(IWorkbenchConstants.ACCELERATOR_CONFIGURATION_ID, config.getId());
-			}
-		}
 	}
 }

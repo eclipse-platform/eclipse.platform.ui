@@ -1335,7 +1335,13 @@
             category="org.eclipse.ui.preferencePages.Workbench"
             class="org.eclipse.ui.internal.dialogs.StartupPreferencePage"
             id="org.eclipse.ui.preferencePages.Startup">
-      </page>      
+      </page>
+      <page
+            name="%PreferencePages.Editors"
+            category="org.eclipse.ui.preferencePages.Workbench"
+            class="org.eclipse.ui.internal.dialogs.EditorsPreferencePage"
+            id="org.eclipse.ui.preferencePages.Editors">
+      </page>              
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
