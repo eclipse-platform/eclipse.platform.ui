@@ -17,6 +17,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyAdapter;
@@ -153,6 +155,15 @@ public class FilteredTree extends Composite {
 	 */
 	protected void createFilterControl(Composite parent) {
 		filterText =  new Text(parent, SWT.SINGLE | SWT.BORDER);
+		filterText.getAccessible().addAccessibleListener(new AccessibleAdapter(){
+			public void getName(AccessibleEvent e) {
+				if(filterText.getText().length() == 0){
+					e.result = initialText;
+					return;
+				}
+				e.result = filterText.getText();
+			}
+		});
 	}
 
     /**
