@@ -67,11 +67,11 @@ public interface IConsoleConstants {
 
 	/**
 	 * Console Pattern Match Listener extension point identifier
-	 * (value <code>"consolePatternMatchListener"</code>).
+	 * (value <code>"consolePatternMatchListeners"</code>).
 	 * 
 	 * @since 3.1 
 	 */
-    public static final String EXTENSION_POINT_CONSOLE_PATTERN_MATCH_LISTENER = "consolePatternMatchListener"; //$NON-NLS-1$
+    public static final String EXTENSION_POINT_CONSOLE_PATTERN_MATCH_LISTENER = "consolePatternMatchListeners"; //$NON-NLS-1$
 
     /**
      * Console Page Participant extension point identifier

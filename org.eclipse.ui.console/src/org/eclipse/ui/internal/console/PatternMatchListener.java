@@ -20,16 +20,10 @@ public class PatternMatchListener implements IPatternMatchListener {
 
     private PatternMatchListenerExtension fExtension;
     private IPatternMatchListenerDelegate fDelegate;
-    private int fMatchContext;
     
     public PatternMatchListener(PatternMatchListenerExtension extension) throws CoreException {
         fExtension = extension;
         fDelegate = fExtension.createDelegate();
-        if (fExtension.getMatchContext().equals("document")) { //$NON-NLS-1$
-            fMatchContext = IPatternMatchListener.DOCUMENT_MATCH;
-        } else {
-            fMatchContext = IPatternMatchListener.LINE_MATCH;
-        }
     }   
 
     /* (non-Javadoc)
@@ -44,13 +38,6 @@ public class PatternMatchListener implements IPatternMatchListener {
      */
     public int getCompilerFlags() {
         return fExtension.getCompilerFlags();
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.console.IPatternMatchListener#getMatchContext()
-     */
-    public int getMatchContext() {
-        return fMatchContext;
     }
     
     /* (non-Javadoc)
@@ -73,5 +60,12 @@ public class PatternMatchListener implements IPatternMatchListener {
     public void disconnect() {
         fDelegate.disconnect();
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.console.IPatternMatchListener#getQuickPattern()
+	 */
+	public String getLineQualifier() {
+		return fExtension.getQuickPattern();
+	}
 
 }

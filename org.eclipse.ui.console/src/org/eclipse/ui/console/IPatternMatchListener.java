@@ -19,8 +19,6 @@ package org.eclipse.ui.console;
  * @since 3.1
  */
 public interface IPatternMatchListener {
-    public static final int LINE_MATCH = 0;
-    public static final int DOCUMENT_MATCH = 1;
     /**
      * Returns the pattern to be used for matching. The pattern is
      * a string representing a regular expression. 
@@ -36,14 +34,18 @@ public interface IPatternMatchListener {
     public int getCompilerFlags();
     
     /**
-     * Returns the match context for this pattern match listener. Allowable values
-     * are <code>LINE_MATCH</code> and <code>DOCUMENT_MATCH</code>.
-     * @return <code>LINE_MATCH</code> if pattern should be matched against individual lines
-     * or <code>DOCUMENT_MATCH</code> if pattern should be matched against the console's entire
-     * document.
+     * Returns a simple regular expression used to identify lines that may
+     * match this pattern matcher's complete pattern, or <code>null</code>.
+     * Use of this attribute can improve performance by disqualifying lines
+     * from the search. When a line is found containing a match for this expression,
+     * the line is searched from the beginning for this pattern matcher's
+     * complete pattern.
+     * 
+     * @return a simple regular expression used to identify lines that may
+     * match this pattern matcher's complete pattern, or <code>null</code>
      */
-    public int getMatchContext();
-    
+    public String getLineQualifier();
+        
     /**
      * Notification that a match has been found.
      * 

@@ -2126,7 +2126,7 @@ M4 = Platform-specific fourth key
 	  </rendering>
    </extension>
    <extension
-         point="org.eclipse.ui.console.consolePatternMatchListener">
+         point="org.eclipse.ui.console.consolePatternMatchListeners">
       <consolePatternMatchListener
             class="org.eclipse.debug.internal.ui.views.console.ConsoleLineNotifier"
             id="org.eclipse.debug.ui.consoleLineNotifier"

@@ -415,14 +415,15 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
             }
             
             Pattern pattern = Pattern.compile(matchListener.getPattern(), matchListener.getCompilerFlags());
-            CompiledPatternMatchListener notifier = new CompiledPatternMatchListener(pattern, matchListener);
+            String qualifier = matchListener.getLineQualifier();
+            Pattern qPattern = null;
+            if (qualifier != null) {
+            	qPattern = Pattern.compile(qualifier, matchListener.getCompilerFlags());
+            }
+            CompiledPatternMatchListener notifier = new CompiledPatternMatchListener(pattern, qPattern, matchListener);
             patterns.add(notifier);
             matchListener.connect(this);
-            
-            try {
-                testForMatch(notifier, 0);
-            } catch (BadLocationException e){
-            }
+            matchJob.schedule(100);
         }
     }
     
@@ -453,107 +454,89 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
      * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
      */
     public void documentChanged(DocumentEvent event) {
-        synchronized(patterns) {
-            for (Iterator iter = patterns.iterator(); iter.hasNext();) {
-                CompiledPatternMatchListener pattern = (CompiledPatternMatchListener) iter.next();
-                try {
-                    testForMatch(pattern, event.fOffset);
-                } catch (BadLocationException e) {
-                }
-            }
-        }
+    	if (event.getOffset() == 0 && event.getLength() == 0) {
+    		// buffer has been emptied, reset match listeners
+    		synchronized (patterns) {
+    			Iterator iter = patterns.iterator();
+    			while (iter.hasNext()) {
+    				CompiledPatternMatchListener notifier = (CompiledPatternMatchListener)iter.next();
+    				notifier.end = 0;
+    			}
+    		}
+    	}
+    	matchJob.schedule(50);
     }
     
-    private void testForMatch(CompiledPatternMatchListener compiled, int eventOffset) throws BadLocationException {
-        switch (compiled.listener.getMatchContext()) {
-        	case IPatternMatchListener.LINE_MATCH:
-        	    matchByLine(compiled, eventOffset);
-        		break;
-        	case IPatternMatchListener.DOCUMENT_MATCH:
-        	    matchByDocument(compiled, eventOffset);
-        		break;
-        }
-    }
-    private void matchByLine(final CompiledPatternMatchListener compiled, final int eventOffset) throws BadLocationException {
-        IDocument document = getDocument();
-        int curLine = document.getLineOfOffset(eventOffset);
-        int numLines = document.getNumberOfLines();
-        
-        for(; curLine<numLines; curLine++) {
-            int start = document.getLineOffset(curLine);
-            String line = document.get(start, document.getLineLength(curLine));
-            matchJob.addMatchUnit(new MatchUnit(compiled, line, start, false));
-        }
-    }
-    
-    private void matchByDocument(final CompiledPatternMatchListener compiled, final int eventOffset) throws BadLocationException {
-        final int start = Math.min(compiled.end, eventOffset);
-        IDocument document = getDocument();
-        final String contents = document.get(start, document.getLength()-start);
-        matchJob.addMatchUnit(new MatchUnit(compiled, contents, start, true));
-    }
-
     private class CompiledPatternMatchListener {
         Pattern pattern;
+        Pattern qualifier;
         IPatternMatchListener listener;
         int end = 0;
         
-        CompiledPatternMatchListener(Pattern pattern, IPatternMatchListener matchListener) {
+        CompiledPatternMatchListener(Pattern pattern, Pattern qualifier, IPatternMatchListener matchListener) {
             this.pattern = pattern;
             this.listener = matchListener;
-        }
-    }
-    
-    private class MatchUnit {
-        String content;
-        int docOffset;
-        CompiledPatternMatchListener listener;
-        boolean docMatch = false;
-        
-        public MatchUnit(CompiledPatternMatchListener listener, String content, int docOffset, boolean docMatch) {
-            this.listener = listener;
-            this.content = content;
-            this.docOffset = docOffset;
-            this.docMatch = docMatch;
+            this.qualifier = qualifier;
         }
     }
     
     private class MatchJob extends Job {
-        private ArrayList matchUnits = new ArrayList();
         
         MatchJob() {
             super("Match Job"); //$NON-NLS-1$
             setSystem(true);
         }
-        
-        void addMatchUnit(MatchUnit unit) {
-            synchronized(matchUnits) {
-                matchUnits.add(unit);
-            }
-            schedule();
-        }
-        
-        protected IStatus run(IProgressMonitor monitor) {
-            while(!matchUnits.isEmpty()) {
-                ArrayList copy = matchUnits;
-                synchronized(matchUnits) {
-                    matchUnits = new ArrayList();
-                }
                 
-                for (Iterator iter = copy.iterator(); iter.hasNext();) {
-                    MatchUnit unit = (MatchUnit) iter.next();
-                    Matcher matcher = unit.listener.pattern.matcher(unit.content);
-                    while(matcher.find()) {
-                        String group = matcher.group();
-                        int matchOffset = unit.docOffset + matcher.start();
-                        unit.listener.listener.matchFound(new PatternMatchEvent(IOConsole.this, matchOffset, group.length()));
-                        if(unit.docMatch) {
-                            unit.listener.end = matcher.end() + unit.docOffset;
-                        }
-                    }        
-                }
-            }
-            
+        protected IStatus run(IProgressMonitor monitor) {
+        	IDocument doc = getDocument();
+        	String text = null;
+        	int prevBaseOffset = -1;
+        	if (doc != null) {
+	        	int docLength = doc.getLength();
+	        	for (int i = 0; i < patterns.size(); i++) {
+	        		CompiledPatternMatchListener notifier = (CompiledPatternMatchListener) patterns.get(i);
+	        		int baseOffset = notifier.end;
+					int length = docLength - baseOffset;
+					if (length > 0) {
+						try {
+							if (prevBaseOffset != baseOffset) {
+								// reuse the text string if possible
+								text = doc.get(baseOffset, length);
+							}
+							Matcher reg = notifier.pattern.matcher(text);
+							Matcher quick = null;
+							if (notifier.qualifier != null) {
+								quick = notifier.qualifier.matcher(text);
+							}
+							int start = 0;
+							while (start < length) {
+								if (quick != null) {
+									if (quick.find(start)) {
+										int line = doc.getLineOfOffset(baseOffset + quick.start());
+										start = doc.getLineOffset(line) - baseOffset;
+									} else {
+										start = length;
+									}
+								}
+								if (start < length) {
+									if (reg.find(start)) {
+										start = reg.end();
+										int regStart = reg.start();
+										notifier.listener.matchFound(new PatternMatchEvent(IOConsole.this, baseOffset + regStart, start - regStart));
+									} else {
+										start = length;
+									}
+								}
+								notifier.end = baseOffset + start;
+							}
+		        		} catch (BadLocationException e) {
+		        			// TODO:
+		            		e.printStackTrace();
+		            	}
+					}
+					prevBaseOffset = baseOffset;
+		        }
+        	}
             return Status.OK_STATUS;
         } 
 
