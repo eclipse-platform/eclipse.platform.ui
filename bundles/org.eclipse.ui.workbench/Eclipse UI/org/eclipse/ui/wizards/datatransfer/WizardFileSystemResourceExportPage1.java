@@ -47,7 +47,8 @@ class WizardFileSystemResourceExportPage1
 		"WizardFileSystemResourceExportPage1.STORE_CREATE_STRUCTURE_ID";	//$NON-NLS-1$
 	//messages
 	private static final String DESTINATION_EMPTY_MESSAGE = DataTransferMessages.getString("FileExport.destinationEmpty"); //$NON-NLS-1$
-	private static final String SELECT_DESTINATION_MESSAGE = DataTransferMessages.getString("DataTransfer.selectDestination"); //$NON-NLS-1$
+	private static final String SELECT_DESTINATION_MESSAGE = DataTransferMessages.getString("FileExport.selectDestinationMessage"); //$NON-NLS-1$
+	private static final String SELECT_DESTINATION_TITLE = DataTransferMessages.getString("FileExport.selectDestinationTitle"); //$NON-NLS-1$
 	/**
 	 *	Create an instance of this class
 	 */
@@ -306,6 +307,7 @@ class WizardFileSystemResourceExportPage1
 		DirectoryDialog dialog =
 			new DirectoryDialog(getContainer().getShell(), SWT.SAVE);
 		dialog.setMessage(SELECT_DESTINATION_MESSAGE);
+		dialog.setText(SELECT_DESTINATION_TITLE);
 		dialog.setFilterPath(getDestinationValue());
 		String selectedDirectoryName = dialog.open();
 
