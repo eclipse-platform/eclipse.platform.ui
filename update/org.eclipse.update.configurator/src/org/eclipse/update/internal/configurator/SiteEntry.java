@@ -35,6 +35,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 	private long pluginsChangeStamp;
 	private String linkFileName;
 	private boolean enabled = true;
+	private Configuration config;
 	
 	private static FeatureParser featureParser = new FeatureParser();
 	private static PluginParser pluginParser = new PluginParser();
@@ -75,6 +76,14 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		}
 	}
 
+	public void setConfig(Configuration config) {
+		this.config = config;
+	}
+	
+	public Configuration getConfig() {
+		return config;
+	}
+	
 	/*
 	 * @see ISiteEntry#getURL()
 	 */
@@ -533,6 +542,10 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 	}
 	
 	public FeatureEntry[] getFeatureEntries() {
+		// PDE generated config, don't detect anything.
+		if (config != null && config.isTransient())
+			return new FeatureEntry[0];
+		
 		if (featureEntries == null)
 			detectFeatures();
 		return (FeatureEntry[])featureEntries.values().toArray(new FeatureEntry[featureEntries.size()]);

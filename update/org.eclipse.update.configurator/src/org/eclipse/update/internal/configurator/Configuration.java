@@ -69,8 +69,10 @@ public class Configuration implements IConfigurationConstants {
 	
 	public void addSiteEntry(String url, SiteEntry site) {
 		// only add the same site once
-		if (sites.get(url) == null && (linkedConfig == null || linkedConfig.sites.get(url) == null))
+		if (sites.get(url) == null && (linkedConfig == null || linkedConfig.sites.get(url) == null)) {
+			site.setConfig(this);
 			sites.put(url, site);
+		}
 	}
 	
 	public void removeSiteEntry(String url) {
