@@ -181,11 +181,17 @@ public interface IOperationHistory {
 	IStatus execute(IOperation operation, IProgressMonitor monitor);
 
 	/**
-	 * Return the specified limit on the undo and redo history.
+	 * Return the limit on the undo and redo history for a particular context.
 	 * 
-	 * @return limit
+	 * @param context -
+	 *            the context whose limit is requested, or <code>null</code> if the global
+	 *            limit is requested
+	 * 
+	 * @return limit - the undo and redo history limit for the specified
+	 *         context, or -1 if there is no limit established for the
+	 *         context.
 	 */
-	int getLimit();
+	int getLimit(OperationContext context);
 
 	/**
 	 * Get the array of operations in the redo history for a given context. The
@@ -326,13 +332,17 @@ public interface IOperationHistory {
 	void removeOperationHistoryListener(IOperationHistoryListener listener);
 
 	/**
-	 * Set the limit on the undo and redo history.
+	 * Set the limit on the undo and redo history for a particular context.
+	 * 
+	 * @param context -
+	 *            the context whose limit is being set, or null if the global
+	 *            limit is being set
 	 * 
 	 * @param limit -
 	 *            the maximum number of operations that should be kept in the
-	 *            history
+	 *            undo or redo history for the specified context.
 	 */
-	void setLimit(int limit);
+	void setLimit(OperationContext context, int limit);
 
 	/**
 	 * Undo the most recently undone operation in the given context

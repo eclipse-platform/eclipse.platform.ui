@@ -11,6 +11,7 @@
 package org.eclipse.core.commands.operations;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -50,7 +51,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 
 	protected List fApprovers = new ArrayList();
 
-	private int fLimit = 20;
+	private HashMap fLimits = new HashMap();
 
 	/**
 	 * the list of {@link IOperationHistoryListener}s
@@ -60,6 +61,14 @@ public class DefaultOperationHistory implements IOperationHistory {
 	private List fRedo = new ArrayList();
 
 	private List fUndo = new ArrayList();
+	
+	/**
+	 * Construct a default operation history with a preconfigured global limit.
+	 */
+	public DefaultOperationHistory() {
+		super();
+		fLimits.put(null, new Integer(100));
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -75,7 +84,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 			flushRedo(contexts[i]);
 		}
 
-		checkUndoLimit();
+		checkUndoLimit(operation);
 		fUndo.add(operation);
 		notifyAdd(operation);
 	}
@@ -111,17 +120,31 @@ public class DefaultOperationHistory implements IOperationHistory {
 	}
 
 	/**
-	 * Check the redo limit before adding something.
+	 * Check the redo limit before adding an operation.  In theory the redo limit
+	 * should never be reached, because the redo items are transferred from the undo
+	 * history, which has the same limit.  The redo history is cleared whenever a new
+	 * operation is added.  We check for completeness since implementations may change
+	 * over time.
 	 */
-	private void checkRedoLimit() {
-		forceRedoLimit(getLimit() - 1);
+	private void checkRedoLimit(IOperation operation) {
+		OperationContext [] contexts = operation.getContexts();
+		for (int i=0; i<contexts.length; i++) {
+			int limit = getLimit(contexts[i]);
+			if (limit > 0) forceRedoLimit(contexts[i], limit - 1);
+		}
+		forceRedoLimit(null, getLimit(null) - 1);
 	}
 
 	/**
-	 * Check the undo limit before adding something.
+	 * Check the undo limit before adding an operation.
 	 */
-	private void checkUndoLimit() {
-		forceUndoLimit(getLimit() - 1);
+	private void checkUndoLimit(IOperation operation) {
+		OperationContext [] contexts = operation.getContexts();
+		for (int i=0; i<contexts.length; i++) {
+			int limit = getLimit(contexts[i]);
+			if (limit > 0) forceUndoLimit(contexts[i], limit - 1);
+		}
+		forceUndoLimit(null, getLimit(null) - 1);
 	}
 
 	/*
@@ -133,6 +156,10 @@ public class DefaultOperationHistory implements IOperationHistory {
 			flushUndo(context);
 		if (flushRedo)
 			flushRedo(context);
+		/* we currently do not dispose of any limit that was set for the
+		 * context since it may be used again. 
+		 */
+		
 	}
 
 	/**
@@ -154,7 +181,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 		// placed back in the undo history.
 		if (status.isOK()) {
 			fRedo.remove(operation);
-			checkUndoLimit();
+			checkUndoLimit(operation);
 			fUndo.add(operation);
 
 			// notify listeners must happen after history is updated
@@ -186,7 +213,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 		// placed in the redo history.
 		if (status.isOK()) {
 			fUndo.remove(operation);
-			checkRedoLimit();
+			checkRedoLimit(operation);
 			fRedo.add(operation);
 
 			// notification occurs after the undo and redo histories are
@@ -223,6 +250,15 @@ public class DefaultOperationHistory implements IOperationHistory {
 	}
 
 	private IOperation[] filter(List list, OperationContext context) {
+		/*
+		 * This method is used whenever there is a need to filter the undo or
+		 * redo history on a particular context.  Currently there are no caches
+		 * kept to optimize repeated requests for the same filter.  If benchmarks
+		 * show this to be a common pattern that causes performances problems,
+		 * we could implement a filtered cache here that is nullified whenever
+		 * the global history changes.
+		 */
+		
 		// when the context is null, do not filter the list.
 		if (context == null)
 			return (IOperation[]) list.toArray(new IOperation[list.size()]);
@@ -240,11 +276,12 @@ public class DefaultOperationHistory implements IOperationHistory {
 	}
 
 	void flushRedo(OperationContext context) {
+		// null context indicates flushing all
 		Object[] filtered = filter(fRedo, context);
 		for (int i = 0; i < filtered.length; i++) {
 			IOperation operation = (IOperation) filtered[i];
-			if (operation.getContexts().length == 1) {
-				// remove the operation if it only has the context
+			if (context == null || operation.getContexts().length == 1) {
+				// remove the operation if it only has the context or we are flushing all
 				fRedo.remove(operation);
 				internalRemove(operation);
 			} else {
@@ -255,11 +292,12 @@ public class DefaultOperationHistory implements IOperationHistory {
 	}
 
 	void flushUndo(OperationContext context) {
+		// null context indicates flushing all
 		Object[] filtered = filter(fUndo, context);
 		for (int i = 0; i < filtered.length; i++) {
 			IOperation operation = (IOperation) filtered[i];
-			if (operation.getContexts().length == 1) {
-				// remove the operation if it only has the context
+			if (context == null || operation.getContexts().length == 1) {
+				// remove the operation if it only has the context or we are flushing all
 				fUndo.remove(operation);
 				internalRemove(operation);
 			} else {
@@ -269,22 +307,52 @@ public class DefaultOperationHistory implements IOperationHistory {
 		}
 	}
 
-	private void forceRedoLimit(int max) {
-		if (fRedo.size() > 0) {
-			while (fRedo.size() > max) {
-				IOperation removed = (IOperation) fRedo.get(0);
-				fRedo.remove(removed);
-				internalRemove(removed);
+	private void forceRedoLimit(OperationContext context, int max) {
+		Object[] filtered = filter(fRedo, context);
+		int size = filtered.length;
+		if (size > 0) {
+			int index = 0;
+			while (size > max) {
+				IOperation removed = (IOperation)filtered[index];
+				if (context == null || removed.getContexts().length == 1) {
+					/* remove the operation if we are enforcing the global limit or if
+					 * the operation only has the specified context
+					 */
+					fRedo.remove(removed);
+					internalRemove(removed);
+				} else {
+					/* if the operation has multiple contexts and we've reached the limit 
+					 * for only one of them, then just remove the context, not the operation.
+					 */
+					removed.removeContext(context);
+				}
+				size--;
+				index++;
 			}
 		}
 	}
 
-	private void forceUndoLimit(int max) {
-		if (fUndo.size() > 0) {
-			while (fUndo.size() > max) {
-				IOperation removed = (IOperation) fUndo.get(0);
-				fUndo.remove(removed);
-				internalRemove(removed);
+	private void forceUndoLimit(OperationContext context, int max) {
+		Object[] filtered = filter(fUndo, context);
+		int size = filtered.length;
+		if (size > 0) {
+			int index = 0;
+			while (size > max) {
+				IOperation removed = (IOperation)filtered[index];
+				if (context == null || removed.getContexts().length == 1) {
+					/* remove the operation if we are enforcing the global limit or if
+					 * the operation only has the specified context
+					 */
+					fUndo.remove(removed);
+					internalRemove(removed);
+				} else {
+					/* if the operation has multiple contexts and we've reached the limit 
+					 * for only one of them, then just remove the context, not the operation.
+					 */
+					removed.removeContext(context);
+				}
+				size--;
+				index++;
 			}
 		}
 	}
@@ -294,8 +362,11 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * 
 	 * @see org.eclipse.runtime.operations.IOperationHistory#getLimit()
 	 */
-	public int getLimit() {
-		return fLimit;
+	public int getLimit(OperationContext context) {
+		if (!fLimits.containsKey(context)) {
+			return -1;
+		}
+		return ((Integer)(fLimits.get(context))).intValue();
 	}
 
 	protected IStatus getRedoApproval(IOperation operation) {
@@ -516,12 +587,12 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 * 
 	 * @see org.eclipse.runtime.operations.IOperationHistory#setLimit(int)
 	 */
-	public void setLimit(int limit) {
+	public void setLimit(OperationContext context, int limit) {
 		if (limit <= 0)
 			return;
-		fLimit = limit;
-		forceUndoLimit(limit);
-		forceRedoLimit(limit);
+		fLimits.put(context, new Integer(limit));
+		forceUndoLimit(context, limit);
+		forceRedoLimit(context, limit);
 
 	}
 

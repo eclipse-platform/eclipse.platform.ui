@@ -80,9 +80,9 @@ public class WorkbenchOperationSupport implements IWorkbenchOperationSupport {
 			 */
 			operationHistory
 					.addOperationApprover(new ContextConsultingOperationApprover());
-			// set a limit on the history
-			operationHistory.setLimit(25);
-
+			
+			// set a limit for the workbench operation context
+			operationHistory.setLimit(getOperationContext(), 25);
 		}
 		return operationHistory;
 	}

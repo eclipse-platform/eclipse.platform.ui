@@ -49,7 +49,7 @@ public class OperationsAPITest extends TestCase {
 
 	protected void setUp() throws Exception {
 		history = new DefaultOperationHistory();
-		history.setLimit(10);
+		history.setLimit(null, 10);
 		c1 = new ObjectOperationContext("c1");
 		c2 = new ObjectOperationContext("c2");
 		c3 = new ObjectOperationContext("c3");
@@ -116,13 +116,13 @@ public class OperationsAPITest extends TestCase {
 	}
 
 	public void testHistoryLimit() {
-		history.setLimit(3);
+		history.setLimit(null, 3);
 		assertTrue(history.getUndoHistory(null).length == 3);
 		history.add(op1);
 		history.add(op3);
 		assertTrue(history.getUndoHistory(null).length == 3);
 		assertFalse(history.canUndo(c2));
-		history.setLimit(1);
+		history.setLimit(null, 1);
 		assertTrue(history.getUndoHistory(null).length == 1);
 		history.undo(null, null);
 		assertTrue(history.getRedoHistory(null).length == 1);
@@ -131,12 +131,26 @@ public class OperationsAPITest extends TestCase {
 		assertTrue(history.getRedoHistory(null).length == 0);
 		assertTrue(history.getUndoHistory(null).length == 1);
 		assertSame(history.getUndoOperation(null), op3);
-		history.setLimit(10);
+		history.setLimit(null, 10);
 		history.add(op2);
 		history.add(op1);
 		assertSame(history.getUndoOperation(null), op1);
 		assertTrue(history.getUndoHistory(null).length == 3);
-
+	}
+	
+	public void testLocalHistoryLimits() {
+		history.setLimit(c3, 2);
+		assertTrue(history.getUndoHistory(c3).length == 2);
+		// op2 should have context c3 removed as part of forcing the limit
+		assertFalse(op2.hasContext(c3));
+		assertTrue(history.getUndoHistory(c2).length == 2);
+		history.setLimit(c2, 1);
+		assertTrue(history.getUndoHistory(c2).length == 1);
+		history.undo(c2, null);
+		op2.addContext(c3);
+		history.add(op2);
+		assertSame(history.getUndoOperation(c2), op2);
+		assertTrue(history.getUndoHistory(c2).length == 1);
 	}
 
 	public void testOperationApproval() {
