@@ -339,7 +339,8 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 		
 		Control result= super.createButtonBar(composite);
 		getButton(SEARCH_ID).setEnabled(fDescriptors.size() > 0);
-		applyDialogFont(result);
+		applyDialogFont(composite);
+
 		return result;
 	}
 
@@ -417,7 +418,7 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 			fCurrentPage.setVisible(true);
 		}
 		Control newControl= item.getControl();
-		resizeDialogIfNeeded(folder, oldControl.getSize(), newControl.computeSize(SWT.DEFAULT, SWT.DEFAULT, true));
+		resizeDialogIfNeeded(oldControl.getSize(), newControl.computeSize(SWT.DEFAULT, SWT.DEFAULT, true));
 	}
 	
 	private int getPreferredPageIndex() {
@@ -548,7 +549,7 @@ class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer 
 		return pageWrapper;
 	}
 	
-	private void resizeDialogIfNeeded(TabFolder tabFolder, Point oldSize, Point newSize) {
+	private void resizeDialogIfNeeded(Point oldSize, Point newSize) {
 		if (oldSize == null || newSize == null)
 			return;
 		Shell shell= getShell();
