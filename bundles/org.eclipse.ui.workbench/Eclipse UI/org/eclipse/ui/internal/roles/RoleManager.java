@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.roles;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -75,7 +76,12 @@ public class RoleManager {
 		}
 		try {
 			location = Platform.asLocalURL(location);
-			FileReader reader = new FileReader(location.getFile());
+			
+			File xmlDefinition = new File(location.getFile());
+			if(!xmlDefinition.exists()){
+				return false;
+			}
+			FileReader reader = new FileReader(xmlDefinition);
 			XMLMemento memento = XMLMemento.createReadRoot(reader);
 			roles = RoleParser.readRoleDefinitions(memento);
 
