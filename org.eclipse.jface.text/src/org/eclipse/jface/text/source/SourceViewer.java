@@ -103,28 +103,29 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		protected void layout(Composite composite, boolean flushCache) {
 			Rectangle clArea= composite.getClientArea();
 			Rectangle trim= getTextWidget().computeTrim(0, 0, 0, 0);
-			int scrollbarHeight= trim.height;
+			int topTrim= - trim.y;
+			int scrollbarHeight= trim.height - topTrim; // scrollbar is only under the client area
 			
-			int x= 0;
+			int x= clArea.x;
 			int width= clArea.width;
 
 			if (fOverviewRuler != null && fIsOverviewRulerVisible) {
 				int overviewRulerWidth= fOverviewRuler.getWidth();
-				fOverviewRuler.getControl().setBounds(clArea.width - overviewRulerWidth -1, scrollbarHeight, overviewRulerWidth, clArea.height - 3*scrollbarHeight);
-				fOverviewRuler.getHeaderControl().setBounds(clArea.width - overviewRulerWidth -1, 0, overviewRulerWidth, scrollbarHeight);
+				fOverviewRuler.getControl().setBounds(clArea.x + clArea.width - overviewRulerWidth - 1, clArea.y + scrollbarHeight, overviewRulerWidth, clArea.height - 3*scrollbarHeight);
+				fOverviewRuler.getHeaderControl().setBounds(clArea.x + clArea.width - overviewRulerWidth - 1, clArea.y, overviewRulerWidth, scrollbarHeight);
 				
 				width -= overviewRulerWidth + fGap;
 			}				
 				
 			if (fVerticalRuler != null && fIsVerticalRulerVisible) {
 				int verticalRulerWidth= fVerticalRuler.getWidth();
-				fVerticalRuler.getControl().setBounds(0, 0, verticalRulerWidth, clArea.height - scrollbarHeight);
+				fVerticalRuler.getControl().setBounds(clArea.x, clArea.y + topTrim, verticalRulerWidth, clArea.height - scrollbarHeight - topTrim);
 				
-				x= verticalRulerWidth + fGap;
+				x += verticalRulerWidth + fGap;
 				width -= verticalRulerWidth + fGap;
 			}
 			
-			getTextWidget().setBounds(x, 0, width, clArea.height);
+			getTextWidget().setBounds(x, clArea.y, width, clArea.height);
 		}
 	}
 	

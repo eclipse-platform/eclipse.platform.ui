@@ -687,8 +687,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 
 		int baselineBias= getBaselineBias(gc);
 
-		int topInset= fCachedTextViewer.getTopInset();
-		int y= topInset - partialLineHidden;
+		int y= -partialLineHidden;
 		int canvasheight= fCanvas.getSize().y;
 
 		for (int line= topLine; line <= bottomLine; line++, y+= lineheight) {
@@ -766,8 +765,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 
 		int baselineBias= getBaselineBias(gc);
 
-		int topInset= fCachedTextViewer.getTopInset();
-		int y= topInset - partialLineHidden;
+		int y= -partialLineHidden;
 		int canvasheight= fCanvas.getSize().y;
 		
 		for (int modelLine= modelTopLine; modelLine <= modelBottomLine; modelLine++) {
