@@ -39,7 +39,7 @@ public class HelpContribution implements Contribution {
 		if (this.label == null)
 			this.label = id;
 		if (this.label == null)
-			this.label = " ";
+			this.label = "undefined";
 	}
 	/**
 	 * Implements the method for the Visitor pattern

@@ -59,27 +59,15 @@ public class InfosetBuilder {
 		public boolean execute() {
 			String fromID = insertNode.getSource();
 			String toID = insertNode.getTarget();
-			String asType = insertNode.getMode();
+   
 			String newLabel = insertNode.getRawLabel();
 			// check conditions
 			if (isKnownView(fromID))
 				return false;
 			if ((isKnownTopic(fromID) || isKnownTopicSet(fromID))
-				&& (isKnownView(toID) || isKnownTopic(toID))) {
-				int pref = HelpContribution.NORMAL;
-				if (asType.equals(ActionContributor.INSERT_AS_FIRST_CHILD)) {
-					pref = HelpContribution.FIRST;
-				} else
-					if (asType.equals(ActionContributor.INSERT_AS_LAST_CHILD)) {
-						pref = HelpContribution.LAST;
-					} else
-						if (asType.equals(ActionContributor.INSERT_AS_PREV_SIB)) {
-							pref = HelpContribution.PREV;
-						} else
-							if (asType.equals(ActionContributor.INSERT_AS_NEXT_SIB)) {
-								pref = HelpContribution.NEXT;
-							}
-				if (insertTopic(fromID, toID, view, pref, newLabel))
+				&& (isKnownView(toID) || isKnownTopic(toID))) 
+			{
+				if (insertTopic(fromID, toID, view, insertNode.getMode(), newLabel))
 					return true;
 			}
 			return executeNested();
@@ -203,11 +191,11 @@ public class InfosetBuilder {
 		}
 	}
 	/**
-		 * Builds the view object by wiring up the topics
-		 * as specified in the insert actions.
-		 * @return 
-		 * @param viewName java.lang.String
-		 */
+	 * Builds the view object by wiring up the topics
+	 * as specified in the insert actions.
+	 * @return 
+	 * @param viewName java.lang.String
+	 */
 	private void executeActions(InfoView view, List actions) {
 		if (actions == null)
 			return;
@@ -241,7 +229,7 @@ public class InfosetBuilder {
 		}
 	}
 	/**
-	 * Returns the actions are valid as solo actions.
+	 * Returns the actions are valid as standalone actions.
 	 * Valid actions are those whose "from" topics are from non-integrated plugins.
 	 */
 	private List getValidSoloActions(List actions) {
@@ -366,7 +354,7 @@ public class InfosetBuilder {
 				newSib,
 				positionPreference);
 
-			// keep track of this insertion for handling solo actions
+			// keep track of this insertion for handling stanalone actions
 			trackTopic(fromTopic);
 
 			// now recursively insert all the children
@@ -468,7 +456,7 @@ public class InfosetBuilder {
 	}
 	/**
 	 * Tracks the topics by its plugin.
-	 * All the integrated plugins will be remembered, so the solo actions
+	 * All the integrated plugins will be remembered, so the standalone actions
 	 * will not be applied to them.
 	 */
 	private void trackTopic(String topicId) {

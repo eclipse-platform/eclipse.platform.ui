@@ -107,6 +107,7 @@ public class HelpHttpRequest {
 
 				// Flush all the buffered data before closing the stream
 				out.flush();
+				inputStream.close();
 			} catch (IOException e) {
 				Logger.logDebugMessage(
 					"HelpHttpRequest",
