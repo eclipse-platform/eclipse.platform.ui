@@ -12,7 +12,7 @@
 package org.eclipse.ui.editors.text;
 
 /**
- * @deprecated use <code>org.eclipse.ui.texteditor.ISchedulingRuleProvider</code> instead
+ * @deprecated and will be removed in final 3.0 - use {@link org.eclipse.ui.texteditor.ISchedulingRuleProvider} instead
  */
 public interface ISchedulingRuleProvider extends org.eclipse.ui.texteditor.ISchedulingRuleProvider {
 }
