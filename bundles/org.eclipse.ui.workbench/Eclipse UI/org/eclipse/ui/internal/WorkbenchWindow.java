@@ -2030,29 +2030,35 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 */
 	private void setLayoutDataForContents() {
 		layout.addTrim(topBar, SWT.TOP, null);
-		layout.addTrim(animationItem.getControl(), SWT.BOTTOM, null, animationItem.getPreferredWidth(), SWT.DEFAULT);
-		layout.addTrim(getStatusLineManager().getControl(), SWT.BOTTOM, null);
+		if (getWindowConfigurer().getShowProgressIndicator()) {
+			layout.addTrim(animationItem.getControl(), SWT.BOTTOM, null, animationItem.getPreferredWidth(), SWT.DEFAULT);
+		}
+		if (getWindowConfigurer().getShowStatusLine()) {
+			layout.addTrim(getStatusLineManager().getControl(), SWT.BOTTOM, null);
+		}
 		layout.setTrimSize(SWT.BOTTOM, 
-				getStatusLineManager().getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
+			getStatusLineManager().getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
 		layout.setCenterControl(getClientComposite());
 		
-		fastViewBar.addDockingListener(new IChangeListener() {
-			public void update(boolean changed) {
-				layout.addTrim(fastViewBar.getControl(), fastViewBar.getSide(), null);
-				WorkbenchPage page = getActiveWorkbenchPage(); 
-				
-				if (page != null) {
-					Perspective persp = page.getActivePerspective();
-					IViewReference activeFastView = persp.getActiveFastView(); 
-					if (activeFastView != null) {
-						persp.setActiveFastView(null);
-						persp.setActiveFastView(activeFastView);
+		if (getWindowConfigurer().getShowShortcutBar()) {
+			fastViewBar.addDockingListener(new IChangeListener() {
+				public void update(boolean changed) {
+					layout.addTrim(fastViewBar.getControl(), fastViewBar.getSide(), null);
+					WorkbenchPage page = getActiveWorkbenchPage(); 
+					
+					if (page != null) {
+						Perspective persp = page.getActivePerspective();
+						IViewReference activeFastView = persp.getActiveFastView(); 
+						if (activeFastView != null) {
+							persp.setActiveFastView(null);
+							persp.setActiveFastView(activeFastView);
+						}
 					}
+					
+					getShell().layout();
 				}
-				
-				getShell().layout();
-			}
-		});
+			});
+		}
 	}
 	
 	public void hideFastViewBar() {
