@@ -431,6 +431,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 					addUnchangedElementListeners(element, info);
 				}
 				fireElementContentReplaced(element);
+				fireElementDirtyStateChanged(element, false);
 			}
 		}
 	}

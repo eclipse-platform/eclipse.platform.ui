@@ -2896,6 +2896,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	protected void performSaveOperation(WorkspaceModifyOperation operation, IProgressMonitor progressMonitor) {
 		
 		IDocumentProvider provider= getDocumentProvider();
+		if (provider == null)
+			return;
 		
 		try {
 		
@@ -3011,23 +3013,61 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if (p == null)
 			return;
 			
+		performRevertOperation(createRevertOperation(), new NullProgressMonitor());
+	}
+	
+	/**
+	 * Creates a workspace modify operation which reverts the content of the editor
+	 * to the last saved state of the editor's input element. Clients may reimplement this method.
+	 * 
+	 * @return the revert operation
+	 */
+	protected WorkspaceModifyOperation createRevertOperation() {
+		return new WorkspaceModifyOperation() {
+			protected void execute(final IProgressMonitor monitor) throws CoreException {
+				IEditorInput input= getEditorInput();
+				IDocumentProvider provider= getDocumentProvider();
+				
+				provider.resetDocument(input);
+				
+				IAnnotationModel model= provider.getAnnotationModel(input);
+				if (model instanceof AbstractMarkerAnnotationModel) {
+					AbstractMarkerAnnotationModel markerModel= (AbstractMarkerAnnotationModel) model;
+					markerModel.resetMarkers();
+				}
+			}
+		};
+	}
+	
+	/**
+	 * Performs the given revert operation and handles errors appropriatly.
+	 * 
+	 * @param operation the operation to be performed
+	 * @param progressMonitor the monitor in which to run the operation
+	 */
+	protected void performRevertOperation(WorkspaceModifyOperation operation, IProgressMonitor progressMonitor) {
+		
+		IDocumentProvider provider= getDocumentProvider();
+		if (provider == null)
+			return;
+			
 		try {
 			
-			p.resetDocument(getEditorInput());
+			provider.aboutToChange(getEditorInput());
+			operation.run(progressMonitor);
+			editorSaved();
 			
-			IAnnotationModel model= p.getAnnotationModel(getEditorInput());
-			if (model instanceof AbstractMarkerAnnotationModel) {
-				AbstractMarkerAnnotationModel markerModel= (AbstractMarkerAnnotationModel) model;
-				markerModel.resetMarkers();
-			}
-						
-			firePropertyChange(PROP_DIRTY);
+		} catch (InterruptedException x) {
+		} catch (InvocationTargetException x) {
 			
-		} catch (CoreException x) {
+			Throwable t= x.getTargetException();
+			Shell shell= getSite().getShell();
 			String title= EditorMessages.getString("Editor.error.revert.title"); //$NON-NLS-1$
 			String msg= EditorMessages.getString("Editor.error.revert.message"); //$NON-NLS-1$
-			Shell shell= getSite().getShell();
-			ErrorDialog.openError(shell, title, msg, x.getStatus());
+			MessageDialog.openError(shell, title, msg + t.getMessage());
+			
+		} finally {
+			provider.changed(getEditorInput());
 		}
 	}
 	
@@ -3889,7 +3929,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	/**
 	 * Subclasses may extend.
-	 * 2.1 - WORK_IN_PROGRESS do not use.
 	 */
 	protected void editorSaved() {
 		IWorkbenchPage page= getEditorSite().getPage();
