@@ -377,6 +377,7 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 		
 		if(rule != null)
 			backgroundJob.setRule(rule);
+		backgroundJob.setUser(true);
 		backgroundJob.schedule();
 		
 
