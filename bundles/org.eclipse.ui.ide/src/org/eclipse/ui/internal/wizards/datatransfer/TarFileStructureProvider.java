@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.wizards.datatransfer.IImportStructureProvider;
@@ -117,6 +118,20 @@ public class TarFileStructureProvider implements IImportStructureProvider {
         } catch (IOException e) {
             return null;
         }
+    }
+    
+    /**
+     * Returns the resource attributes for this file.
+     * 
+     * @param element
+     * @return the attributes of the file
+     */
+    public ResourceAttributes getResourceAttributes(Object element) {
+    	ResourceAttributes attributes = new ResourceAttributes();
+    	TarEntry entry = (TarEntry) element;
+    	attributes.setExecutable((entry.getMode() & 0100) != 0);
+    	attributes.setReadOnly((entry.getMode() & 0200) == 0);
+    	return attributes;
     }
 
     /* (non-Javadoc)

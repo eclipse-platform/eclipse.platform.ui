@@ -40,8 +40,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.ContainerGenerator;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
-
 import org.eclipse.ui.internal.wizards.datatransfer.DataTransferMessages;
+import org.eclipse.ui.internal.wizards.datatransfer.TarFileStructureProvider;
 
 /**
  * An operation which does the actual work of copying objects from the local file
@@ -547,6 +547,14 @@ public class ImportOperation extends WorkspaceModifyOperation {
                         IResource.KEEP_HISTORY, null);
             else
                 targetResource.create(contentStream, false, null);
+            
+            if (provider instanceof TarFileStructureProvider) {
+            	try {
+            		targetResource.setResourceAttributes(((TarFileStructureProvider) provider).getResourceAttributes(fileObject));
+            	} catch (CoreException e) {
+            		errorTable.add(e.getStatus());
+            	}
+            }
         } catch (CoreException e) {
             errorTable.add(e.getStatus());
         } finally {

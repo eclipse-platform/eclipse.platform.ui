@@ -217,6 +217,16 @@ public class TarInputStream extends FilterInputStream
 			entry.setFileType(header[156]);
 		}
 		
+		pos = 100;
+		StringBuffer mode = new StringBuffer();
+		for(i = 0; i < 8; i++) {
+			if(header[pos + i] == 0) break;
+			mode.append((char) header[pos + i]);
+		}
+		if(mode.length() > 0 && mode.charAt(0) != '0') mode.insert(0, '0');
+		long fileMode = Long.decode(mode.toString()).longValue();
+		entry.setMode(fileMode);
+		
 		pos = 100 + 24;
 		StringBuffer size = new StringBuffer();
 		for(i = 0; i < 12; i++) {

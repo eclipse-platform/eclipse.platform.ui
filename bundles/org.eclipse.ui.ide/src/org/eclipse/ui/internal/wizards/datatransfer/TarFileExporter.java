@@ -19,6 +19,7 @@ import java.util.zip.GZIPOutputStream;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -109,6 +110,13 @@ public class TarFileExporter implements IFileExporter {
         TarEntry newEntry = new TarEntry(destinationPath);
         if(resource.getLocalTimeStamp() != IResource.NULL_STAMP) {
         	newEntry.setTime(resource.getLocalTimeStamp() / 1000);
+        }
+        ResourceAttributes attributes = resource.getResourceAttributes();
+        if (attributes.isExecutable()) {
+        	newEntry.setMode(newEntry.getMode() | 0111);
+        }
+        if (attributes.isReadOnly()) {
+        	newEntry.setMode(newEntry.getMode() & ~0222);
         }
         write(newEntry,output.toByteArray());
     }
