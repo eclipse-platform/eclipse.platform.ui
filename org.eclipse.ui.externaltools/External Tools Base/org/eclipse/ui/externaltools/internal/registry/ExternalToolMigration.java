@@ -26,6 +26,7 @@ import org.eclipse.debug.core.variables.LaunchVariableUtil;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
+import org.eclipse.ui.externaltools.internal.ui.ExternalToolsUIMessages;
 
 /**
  * Responsible reading an old external tool format and creating
@@ -294,12 +295,13 @@ public final class ExternalToolMigration {
 			return config;
 		}
 		if (noValueFlag.equals(attr)) {
-			String ATTR_RUN_IN_BACKGROUND= IExternalToolConstants.PLUGIN_ID + ".ATTR_SHOW_CONSOLE"; //$NON-NLS-1$
+			//the old constant
+			String ATTR_RUN_IN_BACKGROUND= IExternalToolConstants.PLUGIN_ID + ".ATTR_RUN_IN_BACKGROUND"; //$NON-NLS-1$
 			boolean runInBackground= false;
 			try {
 				runInBackground = config.getAttribute(ATTR_RUN_IN_BACKGROUND, runInBackground);
 			} catch (CoreException e) {
-				ExternalToolsPlugin.getDefault().log("An exception occurred accessing external tool's \"run in background\" attribute", e);
+				ExternalToolsPlugin.getDefault().log(ExternalToolsUIMessages.getString("ExternalToolMigration.37"), e); //$NON-NLS-1$
 			}
 			ILaunchConfigurationWorkingCopy workingCopy;
 			try {
@@ -307,7 +309,7 @@ public final class ExternalToolMigration {
 				workingCopy.setAttribute(IDebugUIConstants.ATTR_RUN_IN_BACKGROUND, runInBackground);
 				config= workingCopy.doSave();
 			} catch (CoreException e) {
-				ExternalToolsPlugin.getDefault().log("An exception occured attempting to migrate external tool's \"run in background\" attribute", e);
+				ExternalToolsPlugin.getDefault().log(ExternalToolsUIMessages.getString("ExternalToolMigration.38"), e); //$NON-NLS-1$
 			}
 		}
 		return config;

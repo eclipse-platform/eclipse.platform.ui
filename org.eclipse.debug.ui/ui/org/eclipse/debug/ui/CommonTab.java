@@ -214,7 +214,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 */
 	protected void createRunInBackgroundComponent(Composite parent) {
 		fRunInBackgroundButton = new Button(parent, SWT.CHECK);
-		fRunInBackgroundButton.setText("Run in bac&kground");
+		fRunInBackgroundButton.setText(LaunchConfigurationsMessages.getString("CommonTab.10")); //$NON-NLS-1$
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		data.horizontalSpan = 2;
 		fRunInBackgroundButton.setLayoutData(data);
