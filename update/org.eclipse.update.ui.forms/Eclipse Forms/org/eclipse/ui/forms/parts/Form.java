@@ -50,7 +50,14 @@ public class Form extends ScrolledComposite {
 	private String text;
 	private Composite body;
 
-	private class FormLayout extends Layout {
+	private class FormLayout extends Layout implements ILayoutExtension {
+		
+		public int computeMinimumWidth(Composite composite, boolean flushCache) {
+			return computeSize(composite, 5, SWT.DEFAULT, flushCache).x;
+		}
+		public int computeMaximumWidth(Composite composite, boolean flushCache) {
+			return computeSize(composite, SWT.DEFAULT, SWT.DEFAULT, flushCache).x;
+		}
 		protected Point computeSize(
 			Composite composite,
 			int wHint,
@@ -112,8 +119,7 @@ public class Form extends ScrolledComposite {
 		super(parent, SWT.V_SCROLL | SWT.H_SCROLL);
 		addListener(SWT.Resize, new Listener() {
 			public void handleEvent(Event e) {
-				if (FormUtil.isWrapControl(body))
-					reflow(false);
+				reflow(true);
 			}
 		});
 		final Composite content = new Composite(this, SWT.NULL);
@@ -259,6 +265,7 @@ public class Form extends ScrolledComposite {
 		if (c == null)
 			return;
 		body.layout(flushCache);
+		c.layout(flushCache);
 		Point newSize =
 			c.computeSize(
 				FormUtil.getWidthHint(clientArea.width, c),

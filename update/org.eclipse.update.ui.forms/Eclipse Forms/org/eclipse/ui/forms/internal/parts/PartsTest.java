@@ -31,8 +31,14 @@ public class PartsTest {
 			HyperlinkSettings.UNDERLINE_ROLLOVER);
 		CTabFolder folder = new CTabFolder(shell, SWT.NULL);
 		CTabItem t1 = new CTabItem(folder, SWT.NULL);
-		t1.setText("Wrapped Form");
-		t1.setControl(createForm1(folder, toolkit));
+		Form f1 = createForm1(folder, toolkit);
+		t1.setControl(f1);
+		t1.setText(f1.getText());
+		
+		CTabItem t2 = new CTabItem(folder, SWT.NULL);
+		Form f2 = createForm2(folder, toolkit);
+		t2.setControl(f2);
+		t2.setText(f2.getText());
 		
 		shell.open();
 		while (!shell.isDisposed()) {
@@ -96,36 +102,11 @@ public class PartsTest {
 		form.setBackground(toolkit.getColors().getBackground());
 		form.setForeground(toolkit.getColors().getForeground());
 		form.setFont(JFaceResources.getHeaderFont());
-		TableWrapLayout layout = new TableWrapLayout();
-		layout.leftMargin = 0;
-		layout.rightMargin = 0;
+		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
-		layout.makeColumnsEqualWidth = true;
 		form.getBody().setLayout(layout);
-
-		Label label;
-		Button b;
-		TableWrapData td;
-		Hyperlink link =
-			toolkit.createHyperlink(
-					form.getBody(),
-					"Sample hyperlink with longer text.",
-					SWT.WRAP);
-		link.addHyperlinkListener(new HyperlinkAdapter() {
-			public void linkActivated(HyperlinkEvent e) {
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException ex) {
-				}
-			}
-		});
-		td = new TableWrapData();
-		td.colspan = 2;
-		td.align = TableWrapData.LEFT;
-		link.setLayoutData(td);
-		createExpandable(form, toolkit);
-		createTableSection(form, toolkit);
-		createTableSection(form, toolkit);
+		createTableSection(form, toolkit, "Extensions");
+		createTableSection(form, toolkit, "Extension Points");
 		return form;
 	}
 
@@ -155,7 +136,7 @@ public class PartsTest {
 		});
 		exp.setText("Expandable Section with a longer title");
 		TableWrapData td = new TableWrapData();
-		td.colspan = 2;
+		//td.colspan = 2;
 		td.align = TableWrapData.LEFT;
 		//td.align = TableWrapData.FILL;
 		exp.setLayoutData(td);
@@ -184,7 +165,7 @@ public class PartsTest {
 			"This is a section description that should be rendered below the separator.");
 		TableWrapData td = new TableWrapData();
 		td.align = TableWrapData.FILL;
-		//td.grabHorizontal = true;
+		td.grabHorizontal = true;
 		section.setLayoutData(td);
 	}
 
@@ -223,7 +204,7 @@ public class PartsTest {
 		section.setLayoutData(td);
 	}
 
-	private static void createTableSection(final Form form, FormToolkit toolkit) {
+	private static void createTableSection(final Form form, FormToolkit toolkit, String title) {
 		Section section =
 			toolkit.createSection(
 				form.getBody(),
@@ -240,12 +221,14 @@ public class PartsTest {
 		client.setLayout(layout);
 		Table t = toolkit.createTable(client, SWT.NULL);
 		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.heightHint = 200;
+		gd.widthHint = 100;
 		t.setLayoutData(gd);
 		toolkit.paintBordersFor(client);
 		Button b = toolkit.createButton(client, "Add...", SWT.PUSH);
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		b.setLayoutData(gd);
-		section.setText("Tree Section");
+		section.setText(title);
 		section.setDescription("This section a tree and a button.");
 		section.setClient(client);
 		section.setExpanded(true);
@@ -254,11 +237,10 @@ public class PartsTest {
 				form.reflow(false);
 			}
 		});
-		TableWrapData td = new TableWrapData();
-		td.align = TableWrapData.FILL;
+		gd = new GridData(GridData.FILL_BOTH);
 		//td.valign = TableWrapData.FILL;
 		//td.grabHorizontal = true;
-		section.setLayoutData(td);
+		section.setLayoutData(gd);
 	}
 
 	private static void loadRichText(RichText rtext, FormToolkit toolkit) {

@@ -68,7 +68,7 @@ public class RichText extends Canvas {
 		}
 
 		public int computeMinimumWidth(Composite parent, boolean changed) {
-			return 30;
+			return computeSize(parent, 5, SWT.DEFAULT, true).x;
 		}
 
 		/*
@@ -599,6 +599,7 @@ public class RichText extends Canvas {
 			model.traverseLinks(true);
 			enterLink(model.getSelectedLink());
 			paintFocusTransfer(null, model.getSelectedLink());
+			ensureVisible(model.getSelectedLink());
 		} else {
 			paintFocusTransfer(model.getSelectedLink(), null);
 			model.selectLink(null);

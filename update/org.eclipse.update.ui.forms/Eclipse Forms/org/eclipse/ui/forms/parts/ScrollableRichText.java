@@ -32,8 +32,6 @@ public class ScrollableRichText {
 		this.style = style;
 		toolkit = new FormToolkit(colors);
 	}
-	
-	
 
 	public void createControl(Composite parent) {
 		if (toolkit==null) toolkit = new FormToolkit(parent.getDisplay());

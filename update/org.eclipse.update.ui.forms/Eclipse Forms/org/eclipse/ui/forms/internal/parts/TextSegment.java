@@ -121,8 +121,12 @@ public class TextSegment extends ParagraphSegment {
 		
 		for (int i=0; i<areaRectangles.size(); i++) {
 			AreaRectangle ar = (AreaRectangle)areaRectangles.get(i);
-			if (i==0) y = ar.rect.y;
-			x = Math.min(ar.rect.x, x);
+			if (i==0) {
+				x = ar.rect.x;
+				y = ar.rect.y;
+			}
+			else
+				x = Math.min(ar.rect.x, x);
 			width = Math.max(ar.rect.width, width);
 			height += ar.rect.height;
 		}

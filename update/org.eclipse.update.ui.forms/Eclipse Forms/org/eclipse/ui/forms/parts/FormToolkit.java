@@ -237,6 +237,8 @@ public class FormToolkit {
 		section.setForeground(colors.getForeground());
 		section.textLabel.addFocusListener(visibilityHandler);
 		section.textLabel.addKeyListener(keyboardHandler);
+		if (section.toggle!=null)
+			section.toggle.addFocusListener(visibilityHandler);
 		section.setFont(
 				JFaceResources.getFontRegistry().get(JFaceResources.BANNER_FONT));
 		return section;
@@ -247,6 +249,8 @@ public class FormToolkit {
 		ec.setBackground(colors.getBackground());
 		ec.setForeground(colors.getForeground());
 		//hyperlinkGroup.add(ec.textLabel);
+		if (ec.toggle!=null)
+			ec.toggle.addFocusListener(visibilityHandler);
 		ec.textLabel.addFocusListener(visibilityHandler);
 		ec.textLabel.addKeyListener(keyboardHandler);
 		ec.setFont(

@@ -193,7 +193,7 @@ public class FormUtil {
 		}
 		return null;
 	}
-
+	
 	static void ensureVisible(Control c) {
 		ScrolledComposite scomp = getScrolledComposite(c);
 		if (scomp != null) {
@@ -212,6 +212,7 @@ public class FormUtil {
 		Point controlSize) {
 		Point area = scomp.getContent().getSize();
 		Point scompOrigin = scomp.getOrigin();
+		System.out.println("visible: origin="+controlOrigin+", size="+controlSize);
 
 		int x = scompOrigin.x;
 		int y = scompOrigin.y;
@@ -219,6 +220,7 @@ public class FormUtil {
 		if (controlOrigin.x + controlSize.x > scompOrigin.x + area.x) {
 			x = controlOrigin.x + controlSize.x - area.x;
 		}
+
 		if (controlOrigin.x < x) {
 			x = controlOrigin.x;
 		}
@@ -226,9 +228,11 @@ public class FormUtil {
 		if (controlOrigin.y + controlSize.y > scompOrigin.y + area.y) {
 			y = controlOrigin.y + controlSize.y - area.y;
 		}
+
 		if (controlOrigin.y < y) {
 			y = controlOrigin.y;
 		}
+		System.out.println("Origin: "+x+","+y);
 		scomp.setOrigin(x, y);
 	}
 
@@ -308,7 +312,7 @@ public class FormUtil {
 		}
 	}
 	
-	public static boolean isWrapControl(Control c) {
+	static boolean isWrapControl(Control c) {
 		if (c instanceof Composite) {
 			return ((Composite)c).getLayout() instanceof ILayoutExtension;
 		}
@@ -317,8 +321,24 @@ public class FormUtil {
 		}
 	}
 	
-	public static int getWidthHint(int wHint, Control c) {
+	static int getWidthHint(int wHint, Control c) {
 		boolean wrap=isWrapControl(c);
 		return wrap ? wHint : SWT.DEFAULT;
+	}
+	static int computeMinimumWidth(Control c, boolean changed) {
+		if (c instanceof Composite) {
+			Layout layout = ((Composite)c).getLayout();
+			if (layout instanceof ILayoutExtension)
+				return ((ILayoutExtension)layout).computeMinimumWidth((Composite)c, changed);
+		}
+		return c.computeSize(FormUtil.getWidthHint(5, c), SWT.DEFAULT, changed).x;
+	}
+	static int computeMaximumWidth(Control c, boolean changed) {
+		if (c instanceof Composite) {
+			Layout layout = ((Composite)c).getLayout();
+			if (layout instanceof ILayoutExtension)
+				return ((ILayoutExtension)layout).computeMaximumWidth((Composite)c, changed);
+		}
+		return c.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed).x;
 	}
 }
