@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *		Object Factory Inc. - Initial implementation
+ *		IBM Corporation - fix for Bug 40951
  *******************************************************************************/
 package org.eclipse.ant.ui.internal.dtd.schema;
 
@@ -22,9 +23,8 @@ import org.eclipse.ant.ui.internal.dtd.ParseError;
 public class Element extends Atom implements IElement {
 	private boolean fUndefined = true;
 	private boolean fText;
-	private boolean fMixed;
 	private IModel fModel;
-	private HashMap fMap = new HashMap(4); 
+	private Map fMap = new HashMap(4); 
 	private Dfm fElementDfm;
 
 	/**
@@ -49,15 +49,6 @@ public class Element extends Atom implements IElement {
 	 */
 	public void setText(boolean text) {
 		fText = text;
-	}
-	
-	/**
-	 * Set mixed property.
-	 * @param mixed True if text plus element content allowed; otherwise false
-	 * (default).
-	 */
-	public void setMixed(boolean mixed) {
-		fMixed = mixed;
 	}
 	
 	/**
@@ -91,12 +82,6 @@ public class Element extends Atom implements IElement {
 		return fModel;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ant.ui.internal.dtd.IElement#isMixed()
-	 */
-	public boolean isMixed() {
-		return fMixed;
-	}
 	/**
 	 * @see org.eclipse.ant.ui.internal.dtd.IElement#isText()
 	 */

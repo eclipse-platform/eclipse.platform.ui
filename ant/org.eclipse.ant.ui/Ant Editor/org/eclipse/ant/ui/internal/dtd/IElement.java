@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *		Object Factory Inc. - Initial implementation
+ *		IBM Corporation - fix for Bug 40951
  *******************************************************************************/
 package org.eclipse.ant.ui.internal.dtd;
 
@@ -28,13 +29,6 @@ public interface IElement extends IAtom {
 	 * @return true if element model is <code>"(#PCDATA)"</code>.
 	 */
 	public boolean isText();
-	
-	/**
-	 * @return true if element model is mixed, i.e., 
-	 * <code>"(#PCDATA|...)*"</code>.
-	 * @return String
-	 */
-	public boolean isMixed();
 	
 	/**
 	 * @return true if element model is EMPTY.

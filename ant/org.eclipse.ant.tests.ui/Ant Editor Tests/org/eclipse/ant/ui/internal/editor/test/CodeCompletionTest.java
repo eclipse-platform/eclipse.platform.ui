@@ -276,6 +276,25 @@ public class CodeCompletionTest extends AbstractAntUITest {
         assertEquals(1, proposals.length);
     }
 
+	/**
+	 * Test for bug 40951
+	 */
+	public void testMixedElements() {
+		TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
+		String string = "<project><target><sql driver=\"\" password=\"\" url=\"\" userid=\"\"><T</sql>";
+		ICompletionProposal[] proposals = processor.getTaskProposals(string, processor.findParentElement(string, 0, 64), "t");
+		assertEquals(1, proposals.length);
+		ICompletionProposal proposal = proposals[0];
+		assertEquals("transaction", proposal.getDisplayString());
+		
+		
+		string = "<project><target><concat></concat>";
+		proposals = processor.getTaskProposals(string, processor.findParentElement(string, 0, 25), "");
+		assertEquals(2, proposals.length);
+		proposal = proposals[0];
+		assertEquals("filelist", proposal.getDisplayString());
+	}
+	
     /**
      * Tests the algorithm for finding a child as used by the processor.
      */

@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *		Object Factory Inc. - Initial implementation
+ *      IBM Corporation - Fix for bug 40951
  *******************************************************************************/
 package org.eclipse.ant.ui.internal.dtd.schema;
 
