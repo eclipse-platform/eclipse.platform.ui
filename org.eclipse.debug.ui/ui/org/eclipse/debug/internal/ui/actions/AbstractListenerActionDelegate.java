@@ -21,7 +21,7 @@ public abstract class AbstractListenerActionDelegate extends AbstractDebugAction
 
 	/**
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
-	 * @see org.eclipse.ui.IActionDelegate#dispose()
+	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */
 	public void dispose() {
 		super.dispose();
