@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.search.internal.core.text;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -31,6 +32,8 @@ import org.eclipse.ui.IWorkingSet;
  * A special text search scope that take file extensions into account.
  */
 public class TextSearchScope extends SearchScope {
+	
+	private static final boolean IS_CASE_SENSITIVE_FILESYSTEM = !new File("Temp").equals(new File("temp")); //$NON-NLS-1$ //$NON-NLS-2$
 	
 	private static class WorkspaceScope extends TextSearchScope {
 	
@@ -126,7 +129,7 @@ public class TextSearchScope extends SearchScope {
 			int i= 0;
 			for (Iterator iter= fExtensions.iterator(); iter.hasNext();) {
 				String ext= (String) iter.next();
-				Pattern pattern= PatternConstructor.createPattern(ext, true, false); // case insensitive pattern
+				Pattern pattern= PatternConstructor.createPattern(ext, IS_CASE_SENSITIVE_FILESYSTEM, false); 
 				fFileNameMatchers[i++]= pattern.matcher(""); //$NON-NLS-1$
 			}
 		}
