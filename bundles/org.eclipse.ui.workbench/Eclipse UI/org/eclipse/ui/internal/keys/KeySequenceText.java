@@ -56,7 +56,35 @@ public final class KeySequenceText {
 		 * a replacement occurring in the middle of the stroke, and the first
 		 * key stroke was incomplete.
 		 */
-		private int index = -1;
+		private int insertionIndex = -1;
+
+		/**
+		 * Deletes the current selection. If there is no selection, then it
+		 * deletes the last key stroke.
+		 * 
+		 * @param keyStrokes
+		 *            The key strokes from which to delete. This list must not
+		 *            be <code>null</code>, and must represent a valid key
+		 *            sequence.
+		 */
+		private void deleteKeyStroke(List keyStrokes) {
+			insertionIndex = -1;
+
+			if (hasSelection()) {
+				/*
+				 * Delete the current selection -- disallowing incomplete
+				 * strokes in the middle of the sequence.
+				 */
+				deleteSelection(keyStrokes, false);
+
+			} else {
+				// Remove the last key stroke.
+				if (!keyStrokes.isEmpty()) {
+					keyStrokes.remove(keyStrokes.size() - 1);
+				}
+
+			}
+		}
 
 		/**
 		 * Handles the key pressed and released events on the wrapped text
@@ -72,104 +100,11 @@ public final class KeySequenceText {
 		public void handleEvent(Event event) {
 			List keyStrokes = new ArrayList(getKeySequence().getKeyStrokes());
 
+			// Dispatch the event to the correct handler.
 			if (event.type == SWT.KeyDown) {
-				// Is it a backspace character?
-				if ((event.character == SWT.BS) && (event.stateMask == 0)) {
-					index = -1;
-
-					// Is there a selection?
-					if (hasSelection()) {
-						/*
-						 * Delete the current selection -- disallowing
-						 * incomplete strokes in the middle of the sequence.
-						 */
-						deleteSelection(keyStrokes, false);
-					} else {
-						// No selection, so remove the last key stroke.
-						if (!keyStrokes.isEmpty()) {
-							keyStrokes.remove(keyStrokes.size() - 1);
-						}
-					}
-
-				} else {
-					// Handles the regular key pressed event.
-					int key = KeySupport.convertEventToUnmodifiedAccelerator(event);
-					KeyStroke stroke = KeySupport.convertAcceleratorToKeyStroke(key);
-					if (index != -1) {
-						// There is a previously replacement still going on.
-						if (stroke.isComplete()) {
-							insertStrokeAt(keyStrokes, stroke, index);
-							index = -1;
-						}
-					} else if (hasSelection()) {
-						// There is a selection that needs to be replaced.
-						index = deleteSelection(keyStrokes, stroke.isComplete());
-						if ((stroke.isComplete()) || (index >= keyStrokes.size())) {
-							insertStrokeAt(keyStrokes, stroke, index);
-							index = -1;
-						}
-					} else {
-						// No selection, so remove the incomplete stroke, if
-						// any
-						if ((hasIncompleteStroke()) && (!keyStrokes.isEmpty())) {
-							keyStrokes.remove(keyStrokes.size() - 1);
-						}
-
-						// And then add the new stroke.
-						if ((keyStrokes.isEmpty()) || (keyStrokes.size() <= index)) {
-							insertStrokeAt(keyStrokes, stroke, keyStrokes.size());
-							index = -1;
-						} else {
-							/* I'm just getting the index here.  No actual 
-							 * deletion should occur.
-							 */
-							index = deleteSelection(keyStrokes, stroke.isComplete());
-							if (stroke.isComplete()) {
-								insertStrokeAt(keyStrokes, stroke, index);
-								index = -1;
-							}
-						}
-					}
-
-				}
-
+				handleKeyDown(event, keyStrokes);
 			} else if (event.type == SWT.KeyUp) {
-				index = -1;
-				if (hasIncompleteStroke()) {
-					/*
-					 * Handles the key released event, which is only relevant
-					 * if there is an incomplete stroke.
-					 */
-
-					/*
-					 * Figure out the SWT integer representation of the
-					 * remaining values.
-					 */
-					Event mockEvent = new Event();
-					if ((event.keyCode & SWT.MODIFIER_MASK) != 0) {
-						// This key up is a modifier key being released.
-						mockEvent.stateMask = event.stateMask - event.keyCode;
-					} else {
-						/*
-						 * This key up is the other end of a key down that was
-						 * trapped by the operating system.
-						 */
-						mockEvent.stateMask = event.stateMask;
-					}
-
-					/*
-					 * Get a reasonable facsimile of the stroke that is still
-					 * pressed.
-					 */
-					int key = KeySupport.convertEventToUnmodifiedAccelerator(mockEvent);
-					KeyStroke remainingStroke = KeySupport.convertAcceleratorToKeyStroke(key);
-					if (!keyStrokes.isEmpty()) {
-						keyStrokes.remove(keyStrokes.size() - 1);
-					}
-					if (!remainingStroke.getModifierKeys().isEmpty()) {
-						keyStrokes.add(remainingStroke);
-					}
-				}
+				handleKeyUp(event, keyStrokes);
 			}
 
 			// Update the underlying widget.
@@ -177,6 +112,149 @@ public final class KeySequenceText {
 
 			// Prevent the event from reaching the widget.
 			event.doit = false;
+		}
+
+		/**
+		 * Handles the case where the key event is an <code>SWT.KeyDown</code>
+		 * event. This either causes a deletion (if it is an unmodified
+		 * backspace key stroke), or an insertion (if it is any other key).
+		 * 
+		 * @param event
+		 *            The trigger key down event; must not be <code>null</code>.
+		 * @param keyStrokes
+		 *            The current list of key strokes. This valud must not be
+		 *            <code>null</code>, and it must represent a valid key
+		 *            sequence.
+		 */
+		private void handleKeyDown(Event event, List keyStrokes) {
+			// Is it an unmodified backspace character?
+			if ((event.character == SWT.BS) && (event.stateMask == 0)) {
+				deleteKeyStroke(keyStrokes);
+			} else {
+				insertKeyStroke(event, keyStrokes);
+			}
+		}
+
+		/**
+		 * Handles the case where the key event is an <code>SWT.KeyUp</code>
+		 * event. This resets the insertion index. If there is an incomplete
+		 * stroke, then that incomplete stroke is modified to match the keys
+		 * that are still held. If no keys are held, then the incomplete stroke
+		 * is removed.
+		 * 
+		 * @param event
+		 *            The triggering event; must not be <code>null</code>
+		 * @param keyStrokes
+		 *            The key strokes that are part of the current key
+		 *            sequence; these key strokes are guaranteed to represent a
+		 *            valid key sequence. This valud must not be <code>null</code>.
+		 */
+		private void handleKeyUp(Event event, List keyStrokes) {
+			if (hasIncompleteStroke()) {
+				/*
+				 * Figure out the SWT integer representation of the remaining
+				 * values.
+				 */
+				Event mockEvent = new Event();
+				if ((event.keyCode & SWT.MODIFIER_MASK) != 0) {
+					// This key up is a modifier key being released.
+					mockEvent.stateMask = event.stateMask - event.keyCode;
+				} else {
+					/*
+					 * This key up is the other end of a key down that was
+					 * trapped by the operating system or window manager.
+					 */
+					mockEvent.stateMask = event.stateMask;
+				}
+
+				/*
+				 * Get a reasonable facsimile of the stroke that is still
+				 * pressed.
+				 */
+				int key = KeySupport.convertEventToUnmodifiedAccelerator(mockEvent);
+				KeyStroke remainingStroke = KeySupport.convertAcceleratorToKeyStroke(key);
+				if (!keyStrokes.isEmpty()) {
+					keyStrokes.remove(keyStrokes.size() - 1);
+				}
+				if (!remainingStroke.getModifierKeys().isEmpty()) {
+					keyStrokes.add(remainingStroke);
+				}
+			}
+
+		}
+
+		/**
+		 * <p>
+		 * Handles the case where a key down event is leading to a key stroke
+		 * being inserted. The current selection is deleted, and an invalid
+		 * remanents of the stroke are also removed. The insertion is carried
+		 * out at the cursor position.
+		 * </p>
+		 * <p>
+		 * If only a natural key is selected (as part of a larger key stroke),
+		 * then it is possible for the user to press a natural key to replace
+		 * the old natural key. In this situation, pressing any modifier keys
+		 * will replace the whole thing.
+		 * </p>
+		 * <p>
+		 * If the insertion point is not at the end of the sequence, then
+		 * incomplete strokes will not be immediately inserted. Only when the
+		 * sequence is completed is the stroke inserted. This is a requirement
+		 * as the widget must always represent a valid key sequence. The
+		 * insertion point is tracked using <code>insertionIndex</code>,
+		 * which is an index into the key stroke array.
+		 * </p>
+		 * 
+		 * @param event
+		 *            The triggering key down event; must not be <code>null</code>.
+		 * @param keyStrokes
+		 *            The key strokes into which the current stroke should be
+		 *            inserted. This value must not be <code>null</code>,
+		 *            and must represent a valid key sequence.
+		 */
+		private void insertKeyStroke(Event event, List keyStrokes) {
+			// Compute the key stroke to insert.
+			int key = KeySupport.convertEventToUnmodifiedAccelerator(event);
+			KeyStroke stroke = KeySupport.convertAcceleratorToKeyStroke(key);
+
+			if (insertionIndex != -1) {
+				// There is a previous replacement still going on.
+				if (stroke.isComplete()) {
+					insertStrokeAt(keyStrokes, stroke, insertionIndex);
+					insertionIndex = -1;
+				}
+
+			} else if (hasSelection()) {
+				// There is a selection that needs to be replaced.
+				insertionIndex = deleteSelection(keyStrokes, stroke.isComplete());
+				if ((stroke.isComplete()) || (insertionIndex >= keyStrokes.size())) {
+					insertStrokeAt(keyStrokes, stroke, insertionIndex);
+					insertionIndex = -1;
+				}
+
+			} else {
+				// No selection, so remove the incomplete stroke, if any
+				if ((hasIncompleteStroke()) && (!keyStrokes.isEmpty())) {
+					keyStrokes.remove(keyStrokes.size() - 1);
+				}
+
+				// And then add the new stroke.
+				if ((keyStrokes.isEmpty()) || (insertionIndex >= keyStrokes.size()) || (isCursorInLastPosition())) {
+					insertStrokeAt(keyStrokes, stroke, keyStrokes.size());
+					insertionIndex = -1;
+				} else {
+					/*
+					 * I'm just getting the insertionIndex here. No actual
+					 * deletion should occur.
+					 */
+					insertionIndex = deleteSelection(keyStrokes, stroke.isComplete());
+					if (stroke.isComplete()) {
+						insertStrokeAt(keyStrokes, stroke, insertionIndex);
+						insertionIndex = -1;
+					}
+				}
+
+			}
 		}
 	}
 
@@ -208,7 +286,8 @@ public final class KeySequenceText {
 
 				case SWT.TRAVERSE_TAB_NEXT :
 				case SWT.TRAVERSE_TAB_PREVIOUS :
-					// Check if modifiers other than just 'Shift' were down.
+					// Check if modifiers other than just 'Shift' were
+					// down.
 					if ((event.stateMask & (SWT.MODIFIER_MASK ^ SWT.SHIFT)) != 0) {
 						// Modifiers other than shift were down.
 						event.type = SWT.None;
@@ -332,7 +411,8 @@ public final class KeySequenceText {
 		text = new Text(composite, SWT.BORDER);
 
 		if ("carbon".equals(SWT.getPlatform())) { //$NON-NLS-1$
-			// don't worry about this font name here, it is the official menu
+			// don't worry about this font name here, it is the official
+			// menu
 			// font and point size on the mac.
 			final Font font = new Font(text.getDisplay(), "Lucida Grande", 13, SWT.NORMAL); //$NON-NLS-1$
 
@@ -350,7 +430,8 @@ public final class KeySequenceText {
 		text.addListener(SWT.KeyUp, keyFilter);
 		text.addListener(SWT.KeyDown, keyFilter);
 
-		// Add the focus listener that attaches the global traversal filter.
+		// Add the focus listener that attaches the global traversal
+		// filter.
 		text.addFocusListener(new TraversalFilterManager());
 
 		// Add an internal modify listener.
@@ -363,14 +444,14 @@ public final class KeySequenceText {
 	 * @param modifyListener
 	 *            The listener that is to be added; must not be <code>null</code>.
 	 */
-	public final void addModifyListener(final ModifyListener modifyListener) {
+	public void addModifyListener(final ModifyListener modifyListener) {
 		text.addModifyListener(modifyListener);
 	}
 
 	/**
 	 * Clears the text field and resets all the internal values.
 	 */
-	public final void clear() {
+	public void clear() {
 		keySequence = KeySequence.getInstance();
 		text.setText(EMPTY_STRING);
 	}
@@ -392,7 +473,7 @@ public final class KeySequenceText {
 	 * @return The index at which a subsequent insert should occur. This index
 	 *         only has meaning to the <code>insertStrokeAt</code> method.
 	 */
-	public int deleteSelection(List keyStrokes, boolean allowIncomplete) {
+	int deleteSelection(List keyStrokes, boolean allowIncomplete) {
 		// Get the current selection.
 		Point selection = text.getSelection();
 		int start = selection.x;
@@ -460,7 +541,7 @@ public final class KeySequenceText {
 	 * 
 	 * @return The key sequence representation; never <code>null</code>.
 	 */
-	public final KeySequence getKeySequence() {
+	public KeySequence getKeySequence() {
 		return keySequence;
 	}
 
@@ -469,7 +550,7 @@ public final class KeySequenceText {
 	 * 
 	 * @return The text contents of this entry; never <code>null</code>.
 	 */
-	final String getText() {
+	String getText() {
 		return text.getText();
 	}
 
@@ -489,7 +570,7 @@ public final class KeySequenceText {
 	 * @param <code>true</code> if the number of selected characters it greater
 	 *            than zero; <code>false</code> otherwise.
 	 */
-	public boolean hasSelection() {
+	boolean hasSelection() {
 		return (text.getSelectionCount() > 0);
 	}
 
@@ -509,7 +590,7 @@ public final class KeySequenceText {
 	 *            The index at which to insert; must be a valid index into the
 	 *            list of key strokes.
 	 */
-	public void insertStrokeAt(List keyStrokes, KeyStroke stroke, int index) {
+	void insertStrokeAt(List keyStrokes, KeyStroke stroke, int index) {
 		KeyStroke currentStroke = (index >= keyStrokes.size()) ? null : (KeyStroke) keyStrokes.get(index);
 		if ((currentStroke != null) && (!currentStroke.isComplete())) {
 			SortedSet modifierKeys = new TreeSet(currentStroke.getModifierKeys());
@@ -522,13 +603,17 @@ public final class KeySequenceText {
 		}
 	}
 
+	boolean isCursorInLastPosition() {
+		return (text.getSelection().y >= getText().length());
+	}
+
 	/**
 	 * A mutator for the enabled state of the wrapped widget.
 	 * 
 	 * @param enabled
 	 *            Whether the text field should be enabled.
 	 */
-	public final void setEnabled(final boolean enabled) {
+	public void setEnabled(final boolean enabled) {
 		text.setEnabled(enabled);
 	}
 
