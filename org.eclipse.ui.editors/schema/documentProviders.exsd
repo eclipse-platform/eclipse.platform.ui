@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui">
+<schema targetNamespace="org.eclipse.ui.editors">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.ui" id="documentProviders" name="Document Providers"/>
+         <meta.schema plugin="org.eclipse.ui.editors" id="documentProviders" name="Document Providers"/>
       </appInfo>
       <documentation>
          This extension point is used to define mappings between file types and document providers or between types of editor inputs and document providers that can be used by editors. Document providers must implement the interface &lt;samp&gt;org.eclipse.ui.texteditor.IDocumentProvider&lt;/samp&gt;. Editor inputs must be instance of &lt;samp&gt;org.eclipse.ui.IEditorInput&lt;/samp&gt;.
@@ -90,7 +90,7 @@
       </appInfo>
       <documentation>
          &lt;pre&gt;
-&lt;extension point=&quot;org.eclipse.ui.documentProviders&quot;&gt; 
+&lt;extension point=&quot;org.eclipse.ui.editors.documentProviders&quot;&gt; 
     &lt;provider 
         extensions=&quot;.jav&quot; 
         class=&quot;org.eclipse.ui.examples.javaeditor.JavaDocumentProvider&quot; 
@@ -102,7 +102,7 @@
 This example registers &lt;samp&gt;org.eclipse.ui.examples.javaeditor.JavaDocumentProvider&lt;/samp&gt; as the default provider for files with the extension &quot;.jav&quot;. 
 &lt;p&gt;
 &lt;pre&gt;
-&lt;extension point=&quot;org.eclipse.ui.documentProviders&quot;&gt; 
+&lt;extension point=&quot;org.eclipse.ui.editors.documentProviders&quot;&gt; 
     &lt;provider 
         inputTypes=&quot;org.eclipse.ui.IStorageEditorInput&quot; 
         class=&quot;org.eclipse.ui.editors.text.FileDocumentProvider&quot; 

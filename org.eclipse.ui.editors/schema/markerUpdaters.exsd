@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui">
+<schema targetNamespace="org.eclipse.ui.editors">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.ui" id="markerUpdaters" name="Marker Updaters"/>
+         <meta.schema plugin="org.eclipse.ui.editors" id="markerUpdaters" name="Marker Updaters"/>
       </appInfo>
       <documentation>
          This extension point is used for registering marker update strategies with marker annotation models. A resource that is opened in a text editor is associated with a marker annotation model. For each marker attached to the resource this model manages a position that is updated with each change applied to the text in the editor. If the resource is saved, the text in the editor and the position managed for a marker are passed over to the registered marker update strategies. These strategies can then update the marker&apos;s attributes based on the text and the position. Marker update strategies are requested to implement the interface &lt;samp&gt;org.eclipse.ui.texteditor.IMarkerUpdater&lt;/samp&gt;. The update strategies can be registered either for a particular marker type or all marker types. The latter by omitting any marker type in the extension.
@@ -83,7 +83,7 @@
       </appInfo>
       <documentation>
          &lt;pre&gt;
-&lt;extension point= &quot;org.eclipse.ui.markerUpdaters&quot;&gt; 
+&lt;extension point= &quot;org.eclipse.ui.editors.markerUpdaters&quot;&gt; 
     &lt;updater 
         id=&quot;org.eclipse.jdt.ui.markerUpdaters.JavaSearchMarkerUpdater&quot; 
         class=&quot;org.eclipse.jdt.internal.ui.search.JavaSearchMarkerUpdater&quot; 
@@ -96,7 +96,7 @@ This example registers &lt;samp&gt;org.eclipse.jdt.internal.ui.search.JavaSearch
 type &lt;samp&gt;org.eclipse.search.searchmarker&lt;/samp&gt; including all its derived types.
 &lt;/p&gt;
 &lt;pre&gt;
-&lt;extension point= &quot;org.eclipse.ui.markerUpdaters&quot;&gt; 
+&lt;extension point= &quot;org.eclipse.ui.editors.markerUpdaters&quot;&gt; 
     &lt;updater 
         id=&quot;org.eclipse.ui.texteditor.BasicMarkerUpdater&quot; 
         class=&quot;org.eclipse.ui.texteditor.BasicMarkerUpdater&quot;&gt; 
