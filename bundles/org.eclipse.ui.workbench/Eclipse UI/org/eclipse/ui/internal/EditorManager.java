@@ -101,9 +101,9 @@ import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchPartLabelProvider;
+import org.eclipse.ui.part.IWorkbenchPartOrientation;
 import org.eclipse.ui.part.MultiEditor;
 import org.eclipse.ui.part.MultiEditorInput;
-import org.eclipse.ui.part.WorkbenchPart;
 import org.eclipse.ui.presentations.IPresentablePart;
 
 /**
@@ -1214,8 +1214,8 @@ public class EditorManager implements IExtensionChangeHandler {
             
             // Create controls
             int style = SWT.NONE;
-            if(part instanceof WorkbenchPart){
-                style = ((WorkbenchPart) part).getOrientation();
+            if(part instanceof IWorkbenchPartOrientation){
+                style = ((IWorkbenchPartOrientation) part).getOrientation();
             }
 
             // Link everything up to the part reference (the part reference itself should not have

@@ -41,7 +41,7 @@ import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.registry.ViewDescriptor;
 import org.eclipse.ui.internal.util.Util;
-import org.eclipse.ui.part.WorkbenchPart;
+import org.eclipse.ui.part.IWorkbenchPartOrientation;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
 
@@ -414,8 +414,8 @@ import org.eclipse.ui.views.IViewRegistry;
             } else {
                 
                 int style = SWT.NONE;
-                if(view instanceof WorkbenchPart) {
-                    style = ((WorkbenchPart) view).getOrientation();
+                if(view instanceof IWorkbenchPartOrientation) {
+                    style = ((IWorkbenchPartOrientation) view).getOrientation();
                 }
 
                 // Create the top-level composite
