@@ -18,11 +18,20 @@ import org.eclipse.swt.widgets.Display;
  * a lock when the thread owning the lock is attempting to syncExec.
  */
 public class UILockListener extends LockListener {
+	
+	/**
+	 * The Queue is the construct that keeps track of Sempahores.
+	 */
 	public class Queue {
 		private static final int BASE_SIZE = 8;
 		protected Semaphore[] elements = new Semaphore[BASE_SIZE];
 		protected int head = 0;
 		protected int tail = 0;
+		
+		/**
+		 * Add the semaphore to the queue.
+		 * @param element
+		 */
 		public synchronized void add(Semaphore element) {
 			int newTail = increment(tail);
 			if (newTail == head) {
@@ -48,6 +57,11 @@ public class UILockListener extends LockListener {
 		private int increment(int index) {
 			return (index == (elements.length - 1)) ? 0 : index + 1;
 		}
+		
+		/**
+		 * Remove the next semaphore to be woken up.
+		 * @return
+		 */
 		public synchronized Semaphore remove() {
 			if (tail == head)
 				return null;
@@ -70,6 +84,10 @@ public class UILockListener extends LockListener {
 	protected Semaphore currentWork = null;
 	protected Thread ui;
 
+	/**
+	 * Create a new instance of the receiver.
+	 * @param display
+	 */
 	public UILockListener(Display display) {
 		this.display = display;
 	}
@@ -105,7 +123,10 @@ public class UILockListener extends LockListener {
 		while ((work = pendingWork.remove()) != null) {
 			try {
 				currentWork = work;
-				work.getRunnable().run();
+				Runnable runnable = work.getRunnable();
+				if (runnable != null)
+					runnable.run();
+
 			} finally {
 				currentWork = null;
 				work.release();
