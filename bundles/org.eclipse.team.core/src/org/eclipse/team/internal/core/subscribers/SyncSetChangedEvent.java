@@ -66,10 +66,10 @@ public class SyncSetChangedEvent implements ISyncInfoSetChangeEvent {
 		IResource resource = info.getLocal();
 		if (addedResources.containsKey(resource)) {
 			// An addition followed by a change is an addition
-			addedResources.put(info.getLocal(), info);
+			addedResources.put(resource, info);
 			return;
 		}
-		changedResources.put(info.getLocal(), info);
+		changedResources.put(resource, info);
 	}
 	
 	public SyncInfo[] getAddedResources() {
