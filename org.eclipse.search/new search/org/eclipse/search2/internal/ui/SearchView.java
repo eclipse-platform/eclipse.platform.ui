@@ -60,6 +60,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	private DummyPart fDefaultPart;
 	private long fLastUpdateTime= 0;
 	private SearchAgainAction fSearchAgainAction;
+	private CancelSearchAction fCancelAction;
 	
 	class DummyPart implements IWorkbenchPart {
 		public void addPropertyListener(IPropertyListener listener) {/*dummy*/}
@@ -211,7 +212,9 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	private void updateTitle(ISearchResult search) {
 		String label= SearchMessages.getString("SearchView.title.search"); //$NON-NLS-1$
 		if (search != null) {
-			if (InternalSearchUI.getInstance().isQueryRunning(search.getQuery())) {
+			boolean queryRunning= InternalSearchUI.getInstance().isQueryRunning(search.getQuery());
+			fCancelAction.setEnabled(queryRunning);
+			if (queryRunning) {
 				label= label+SearchMessages.getString("SearchView.title.running"); //$NON-NLS-1$
 			}
 			label= label+" ("+search.getText()+")"; //$NON-NLS-1$ //$NON-NLS-2$
@@ -245,6 +248,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		tbm.add(new Separator("ViewSpecificGroup")); //$NON-NLS-1$
 		tbm.add(new Separator("SearchesGroup")); //$NON-NLS-1$
 		tbm.appendToGroup("SearchesGroup", fSearchesDropDownAction); //$NON-NLS-1$
+		tbm.appendToGroup("SearchesGroup", fCancelAction); //$NON-NLS-1$
 		getViewSite().getActionBars().updateActionBars();
 	}
 		
@@ -252,6 +256,8 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		fSearchesDropDownAction= new SearchDropDownAction(this);
 		fSearchesDropDownAction.setEnabled(NewSearchUI.getSearchManager().getSearchResults().length != 0);
 		fSearchAgainAction= new SearchAgainAction(this);
+		fCancelAction= new CancelSearchAction(this);
+		fCancelAction.setEnabled(false);
 	}
 
 	public void dispose() {
