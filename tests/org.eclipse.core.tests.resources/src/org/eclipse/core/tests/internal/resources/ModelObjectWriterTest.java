@@ -6,7 +6,7 @@ package org.eclipse.core.tests.internal.resources;
  */
 
 import java.io.FileInputStream;
-import java.util.Hashtable;
+import java.util.HashMap;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -47,9 +47,11 @@ public void testProjectDescription() throws Throwable {
 	ProjectDescription description = new ProjectDescription();
 	description.setLocation(location);
 	description.setName("MyProjectDescription");
-	Hashtable args = new Hashtable(3);
+	HashMap args = new HashMap(3);
 	args.put("ArgOne", "ARGH!");
 	args.put("ArgTwo", "2 x ARGH!");
+	args.put("NullArg", null);
+	args.put("EmptyArg", "");
 	ICommand[] commands = new ICommand[2];
 	commands[0] = description.newCommand();
 	commands[0].setBuilderName("MyCommand");
@@ -74,9 +76,13 @@ public void testProjectDescription() throws Throwable {
 	assertEquals("2.01", "MyCommand", commands2[0].getBuilderName());
 	assertEquals("2.02", "ARGH!", commands2[0].getArguments().get("ArgOne"));
 	assertEquals("2.03", "2 x ARGH!", commands2[0].getArguments().get("ArgTwo"));
-	assertEquals("2.02", "MyOtherCommand", commands2[1].getBuilderName());
-	assertEquals("2.02", "ARGH!", commands2[1].getArguments().get("ArgOne"));
-	assertEquals("2.03", "2 x ARGH!", commands2[1].getArguments().get("ArgTwo"));
+	assertEquals("2.04", "", commands2[0].getArguments().get("NullArg"));
+	assertEquals("2.05", "", commands2[0].getArguments().get("EmptyArg"));
+	assertEquals("2.06", "MyOtherCommand", commands2[1].getBuilderName());
+	assertEquals("2.07", "ARGH!", commands2[1].getArguments().get("ArgOne"));
+	assertEquals("2.08", "2 x ARGH!", commands2[1].getArguments().get("ArgTwo"));
+	assertEquals("2.09", "", commands2[0].getArguments().get("NullArg"));
+	assertEquals("2.10", "", commands2[0].getArguments().get("EmptyArg"));
 
 	/* remove trash */
 	Workspace.clear(location.toFile());
