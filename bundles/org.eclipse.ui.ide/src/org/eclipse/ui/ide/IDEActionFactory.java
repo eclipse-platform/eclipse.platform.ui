@@ -13,17 +13,14 @@ package org.eclipse.ui.ide;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.actions.ExportResourcesAction;
 import org.eclipse.ui.actions.GlobalBuildAction;
-import org.eclipse.ui.actions.ImportResourcesAction;
-import org.eclipse.ui.actions.NewWizardAction;
 import org.eclipse.ui.actions.QuickStartAction;
 import org.eclipse.ui.actions.RetargetAction;
-import org.eclipse.ui.internal.actions.AboutAction;
-import org.eclipse.ui.internal.NewWizardDropDownAction;
-import org.eclipse.ui.internal.TipsAndTricksAction;
-import org.eclipse.ui.internal.actions.ProjectPropertyDialogAction;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.NewWizardDropDownAction;
+import org.eclipse.ui.internal.ide.TipsAndTricksAction;
+import org.eclipse.ui.internal.ide.actions.AboutAction;
+import org.eclipse.ui.internal.ide.actions.ProjectPropertyDialogAction;
 
 /**
  * Access to standard actions provided by the IDE workbench (including
@@ -188,22 +185,6 @@ public abstract class IDEActionFactory extends ActionFactory {
 	};
 	
 	/**
-	 * IDE-specific workbench action: New.
-	 * This action maintains its enablement state.
-	 */
-	public static final ActionFactory NEW = new ActionFactory("new") { //$NON-NLS-1$
-		/* (non-javadoc) method declared on ActionFactory */
-		public IWorkbenchAction create(IWorkbenchWindow window) {
-			if (window == null) {
-				throw new IllegalArgumentException();
-			}
-			IWorkbenchAction action = new NewWizardAction(window);
-			action.setId(getId());
-			return action;
-		}
-	};
-	
-	/**
 	 * IDE-specific workbench action: Opens the "new" wizard drop down.
 	 * This action maintains its enablement state.
 	 */
@@ -214,40 +195,8 @@ public abstract class IDEActionFactory extends ActionFactory {
 				throw new IllegalArgumentException();
 			}
 			// @issue we are creating a NEW action just to pass to NewWizardDropDownAction
-			IWorkbenchAction innerAction = IDEActionFactory.NEW.create(window);
+			IWorkbenchAction innerAction = ActionFactory.NEW.create(window);
 			IWorkbenchAction action = new NewWizardDropDownAction(window, innerAction);
-			action.setId(getId());
-			return action;
-		}
-	};
-	
-	/**
-	 * IDE-specific workbench action: Import.
-	 * This action maintains its enablement state.
-	 */
-	public static final ActionFactory IMPORT = new ActionFactory("import") { //$NON-NLS-1$
-		/* (non-javadoc) method declared on ActionFactory */
-		public IWorkbenchAction create(IWorkbenchWindow window) {
-			if (window == null) {
-				throw new IllegalArgumentException();
-			}
-			IWorkbenchAction action = new ImportResourcesAction(window);
-			action.setId(getId());
-			return action;
-		}
-	};
-	
-	/**
-	 * IDE-specific workbench action: Export.
-	 * This action maintains its enablement state.
-	 */
-	public static final ActionFactory EXPORT = new ActionFactory("export") { //$NON-NLS-1$
-		/* (non-javadoc) method declared on ActionFactory */
-		public IWorkbenchAction create(IWorkbenchWindow window) {
-			if (window == null) {
-				throw new IllegalArgumentException();
-			}
-			IWorkbenchAction action = new ExportResourcesAction(window);
 			action.setId(getId());
 			return action;
 		}

@@ -23,8 +23,8 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.registry.MarkerHelpRegistry;
-import org.eclipse.ui.internal.registry.MarkerHelpRegistryReader;
+import org.eclipse.ui.internal.ide.registry.MarkerHelpRegistry;
+import org.eclipse.ui.internal.ide.registry.MarkerHelpRegistryReader;
 import org.eclipse.ui.part.FileEditorInput;
 
 /**
@@ -338,21 +338,6 @@ public final class IDE {
 		 * Identifies the default image used to indicate a bookmark.
 		 */
 		public final static String IMG_OBJS_BKMRK_TSK = "IMG_OBJS_BKMRK_TSK"; //$NON-NLS-1$
-	
-		/**
-		 * Identifies the new wizard image in the enabled state.
-		 */
-		public final static String IMG_TOOL_NEW_WIZARD = "IMG_TOOL_NEW_WIZARD"; //$NON-NLS-1$
-
-		/**
-		 * Identifies the new wizard image in the hover (colored) state.
-		 */
-		public final static String IMG_TOOL_NEW_WIZARD_HOVER = "IMG_TOOL_NEW_WIZARD_HOVER"; //$NON-NLS-1$
-
-		/**
-		 * Identifies the new wizard image in the disabled state.
-		 */
-		public final static String IMG_TOOL_NEW_WIZARD_DISABLED = "IMG_TOOL_NEW_WIZARD_DISABLED"; //$NON-NLS-1$
 	}
 	
 	/**

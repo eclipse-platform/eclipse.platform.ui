@@ -16,8 +16,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ContributionItemFactory;
 import org.eclipse.ui.actions.GlobalBuildAction;
 import org.eclipse.ui.actions.RetargetAction;
-import org.eclipse.ui.internal.actions.BuildContributionItem;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.actions.BuildContributionItem;
 
 /**
  * Access to standard contribution items provided by the IDE workbench (including
