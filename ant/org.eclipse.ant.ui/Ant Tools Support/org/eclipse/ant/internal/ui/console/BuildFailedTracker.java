@@ -11,6 +11,9 @@
 package org.eclipse.ant.internal.ui.console;
 
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
@@ -19,7 +22,6 @@ import org.eclipse.debug.ui.console.IConsole;
 import org.eclipse.debug.ui.console.IConsoleLineTracker;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IRegion;
-import org.eclipse.ui.externaltools.internal.model.StringMatcher;
 
 /**
  * Generates hyperlinks for build failures
@@ -27,8 +29,8 @@ import org.eclipse.ui.externaltools.internal.model.StringMatcher;
 public class BuildFailedTracker implements IConsoleLineTracker {
 	
 	private IConsole fConsole;
-	private StringMatcher fErrorMatcher;
-	private StringMatcher fErrorMatcher2;
+    private Pattern fErrorPattern;
+    private Pattern fErrorPattern2;
 	private boolean fBuildFailed= false;
 	
 	/* (non-Javadoc)
@@ -37,8 +39,8 @@ public class BuildFailedTracker implements IConsoleLineTracker {
 	public void init(IConsole console) {
 		fConsole = console;
 		//BUILD FAILED: file:c:/1115/test/buildFiles/23638.xml:12:
-		fErrorMatcher = new StringMatcher("*BUILD FAILED: *.xml*", false, false); //$NON-NLS-1$
-		fErrorMatcher2= new StringMatcher("*.xml*", false, false); //$NON-NLS-1$
+        fErrorPattern = Pattern.compile(".*BUILD FAILED:.*\\.xml.*"); //$NON-NLS-1$
+        fErrorPattern2 = Pattern.compile(".*\\.xml.*"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -53,7 +55,10 @@ public class BuildFailedTracker implements IConsoleLineTracker {
 			String lineNumber = ""; //$NON-NLS-1$
 			int fileStart = -1;
 			int index= -1;
-			if (fErrorMatcher.match(text)) {
+            
+            Matcher errorMatcher = fErrorPattern.matcher(text);            
+            Matcher errorMatcher2 = fErrorPattern2.matcher(text);
+			if (errorMatcher.find()) {
 				fBuildFailed= true;
 				index = text.indexOf("file:"); //$NON-NLS-1$
 				if (index > 0) {
@@ -62,7 +67,7 @@ public class BuildFailedTracker implements IConsoleLineTracker {
 					fileStart = text.indexOf("BUILD FAILED:") + 14; //$NON-NLS-1$
 					index= fileStart;
 				}
-			} else if (fBuildFailed && fErrorMatcher2.match(text)) {
+			} else if (fBuildFailed && errorMatcher2.find()) {
 				//output resulting from failures which occurred in nested build from using the ant task:
 				//BUILD FAILED: C:\Darins\Debugger\20021213\eclipse\runtime-workspace\Mine\build.xml:4: Following error occured while executing this line
 				//C:\Darins\Debugger\20021213\eclipse\runtime-workspace\Mine\subbuild.xml:4: srcdir attribute must be set!

@@ -12,6 +12,9 @@
 package org.eclipse.ant.internal.ui.console;
 
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -21,7 +24,6 @@ import org.eclipse.debug.ui.console.IConsole;
 import org.eclipse.debug.ui.console.IConsoleLineTracker;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IRegion;
-import org.eclipse.ui.externaltools.internal.model.StringMatcher;
 
 /**
  * Generates hyperlinks for javac output
@@ -30,16 +32,15 @@ public class JavacLineTracker implements IConsoleLineTracker {
 	
 	private IConsole fConsole;
 	private IFile fLastFile;
-	private StringMatcher fEclipseCompilerMatcher;
-	/** used to find the end of the javac task label within matches found by fEclipseCompilerMatcher */
-	private StringMatcher fEclipseCompilerTaskEndMatcher;
 
-	private StringMatcher fJavacMatcher;
-	/** used to find the end of the javac task label within matches found by fJavacMatcher */
-	private StringMatcher fJavacTaskEndMatcher;
-	private StringMatcher fJikesMatcher;
-	/** used to find the end of the javac task label when trolling for errors after a match found by fJikesMatcher */
-	private StringMatcher fJikesTrollingTaskEndMatcher;
+    /** used to find the end of the javac task label within matches found by fEclipseCompilerMatcher */
+	private Pattern fEclipseCompilerTaskEndPattern;
+
+	private Pattern fJavacPattern;
+	private Pattern fJikesPattern;
+    
+    /** used to find the end of the javac task label */
+    private Pattern fJavacTaskEndPattern;
 	
 	// trolling for errors after a Jikes error header was found
 	private boolean fTrolling = false;
@@ -56,12 +57,10 @@ public class JavacLineTracker implements IConsoleLineTracker {
 	 */
 	public void init(IConsole console) {
 		fConsole = console;
-		fEclipseCompilerMatcher = new StringMatcher("*[*javac*]*ERROR in*.java*(at line*)*",false, false); //$NON-NLS-1$
-		fEclipseCompilerTaskEndMatcher = new StringMatcher("javac*]*ERROR in",false, false); //$NON-NLS-1$
-		fJavacMatcher = new StringMatcher("*[*javac*] *.java:*:*",false, false); //$NON-NLS-1$
-		fJavacTaskEndMatcher = new StringMatcher("javac*] ", false, false); //$NON-NLS-1$
-		fJikesMatcher = new StringMatcher("*[*javac*] *\"*.java\":", false, false); //$NON-NLS-1$
-		fJikesTrollingTaskEndMatcher = new StringMatcher("javac*]", false, false); //$NON-NLS-1$
+		fEclipseCompilerTaskEndPattern = Pattern.compile("javac.*\\].*ERROR in "); //$NON-NLS-1$
+		fJavacPattern = Pattern.compile(".*\\[.*javac.*\\] .*\\.java:.*:.*"); //$NON-NLS-1$
+		fJikesPattern = Pattern.compile("\\[javac\\] "); //$NON-NLS-1$
+        fJavacTaskEndPattern = Pattern.compile("\\[javac\\] "); //$NON-NLS-1$
 	}
 
 	/**
@@ -75,68 +74,70 @@ public class JavacLineTracker implements IConsoleLineTracker {
 			String fileName = null;
 			String lineNumber = ""; //$NON-NLS-1$
 			int fileStart = -1;
-			if (fEclipseCompilerMatcher.match(text)) {
-				fTrolling = false;
-				StringMatcher.Position matchPos = fEclipseCompilerMatcher.find(text, 0, text.length());
-				StringMatcher.Position taskEndPos = fEclipseCompilerTaskEndMatcher.find(text, matchPos.getStart(), matchPos.getEnd());
-				if (taskEndPos != null) {
-					fileStart = taskEndPos.getEnd();
-					int index = text.lastIndexOf("(at line "); //$NON-NLS-1$
-					if (index > 0) {
-						int fileEnd = index - 1;
-						int numberStart = index + 9;
-						index = text.lastIndexOf(')');
-						if (index > 0) {
-							int numberEnd = index;
-							fileName = text.substring(fileStart, fileEnd).trim();
-							lineNumber = text.substring(numberStart, numberEnd).trim();
-						}
-					}
-				}
-			} else if (fJavacMatcher.match(text)) {
-				fTrolling = false;
-				StringMatcher.Position matchPos = fJavacMatcher.find(text, 0, text.length());
-				StringMatcher.Position taskEndPos = fJavacTaskEndMatcher.find(text, matchPos.getStart(), matchPos.getEnd());
-				if(taskEndPos != null) {
-					fileStart = taskEndPos.getEnd();
-					int index = text.indexOf(".java:", fileStart); //$NON-NLS-1$
-					if (index > 0) {
-						int numberStart = index + 6;
-						fileName = text.substring(fileStart, numberStart - 1).trim();
-						index = text.indexOf(":", numberStart); //$NON-NLS-1$
-						if (index > numberStart) {
-							lineNumber = text.substring(numberStart, index);
-						}
-					}
-				}
-			} else if (fJikesMatcher.match(text)) {
-				fileStart = text.indexOf('"');
-				fileStart++;
-				int index = text.indexOf(".java\"", fileStart); //$NON-NLS-1$
-				if (index > 0) {
-					index += 5;
-					fileName = text.substring(fileStart, index).trim();
-					fTrolling = true;
-				}
-			} else if (fTrolling) {
-				StringMatcher.Position taskEndPos = fJikesTrollingTaskEndMatcher.find(text, 0, text.length());
-				if (taskEndPos != null) {
-					// look for a line number
-					int index = taskEndPos.getEnd();
-					int numEnd = text.indexOf(".", index); //$NON-NLS-1$
-					if (numEnd > 0) {
-						String number = text.substring(index, numEnd).trim();
-						try {
-							int num = Integer.parseInt(number);
-							int numStart = text.indexOf(number, index);
-							if (fLastFile != null && fLastFile.exists()) {
-								FileLink link = new FileLink(fLastFile, null, -1, -1, num);
-								fConsole.addLink(link, lineOffset + numStart, lineLength - numStart);
-							}
-						} catch (NumberFormatException e) {
-							// not a line number
-						}
-					}
+            
+            Matcher eclipseCompilerTaskEndMatcher = fEclipseCompilerTaskEndPattern.matcher(text);
+            Matcher javacMatcher = fJavacPattern.matcher(text);
+            Matcher jikesMatcher = fJikesPattern.matcher(text);
+            Matcher javacTaskEndMatcher = fJavacTaskEndPattern.matcher(text);
+            
+            if (eclipseCompilerTaskEndMatcher.find()) {
+                fTrolling = false;
+                int taskEndPos = eclipseCompilerTaskEndMatcher.end();
+                
+                fileStart = taskEndPos;
+                int index = text.lastIndexOf("(at line "); //$NON-NLS-1$
+                if (index > 0) {
+                    int fileEnd = index - 1;
+                    int numberStart = index + 9;
+                    index = text.lastIndexOf(')');
+                    if (index > 0) {
+                        int numberEnd = index;
+                        fileName = text.substring(fileStart, fileEnd).trim();
+                        lineNumber = text.substring(numberStart, numberEnd).trim();
+                    }
+                }
+            } else if (javacMatcher.find() && javacTaskEndMatcher.find()) {
+                fTrolling = false;
+                int taskEndPos = javacTaskEndMatcher.end();
+                
+                fileStart = taskEndPos;
+                int index = text.indexOf(".java:", fileStart); //$NON-NLS-1$
+                if (index > 0) {
+                    int numberStart = index + 6;
+                    fileName = text.substring(fileStart, numberStart - 1).trim();
+                    index = text.indexOf(":", numberStart); //$NON-NLS-1$
+                    if (index > numberStart) {
+                        lineNumber = text.substring(numberStart, index);
+                    }
+                }
+                
+            } else if (jikesMatcher.find()) {
+                fileStart = text.indexOf('"');
+                fileStart++;
+                int index = text.indexOf(".java\"", fileStart); //$NON-NLS-1$
+                if (index > 0) {
+                    index += 5;
+                    fileName = text.substring(fileStart, index).trim();
+                    fTrolling = true;
+                }
+            } else if (fTrolling && javacTaskEndMatcher.find()) {
+                int taskEndPos = javacTaskEndMatcher.end();
+                
+			    // look for a line number
+			    int index = taskEndPos;
+			    int numEnd = text.indexOf(".", index); //$NON-NLS-1$
+			    if (numEnd > 0) {
+			        String number = text.substring(index, numEnd).trim();
+			        try {
+			            int num = Integer.parseInt(number);
+			            int numStart = text.indexOf(number, index);
+			            if (fLastFile != null && fLastFile.exists()) {
+			                FileLink link = new FileLink(fLastFile, null, -1, -1, num);
+			                fConsole.addLink(link, lineOffset + numStart, lineLength - numStart);
+			            }
+			        } catch (NumberFormatException e) {
+			            // not a line number
+			        }
 				} else {
 					fTrolling = false;
 				}

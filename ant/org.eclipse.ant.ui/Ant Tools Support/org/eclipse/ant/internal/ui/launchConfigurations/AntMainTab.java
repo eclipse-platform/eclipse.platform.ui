@@ -128,7 +128,7 @@ public class AntMainTab extends ExternalToolsMainTab {
 	protected void handleWorkspaceLocationButtonSelected() {
 		FileSelectionDialog dialog;
 		dialog = new FileSelectionDialog(getShell(), ResourcesPlugin.getWorkspace().getRoot(), AntLaunchConfigurationMessages.getString("AntMainTab.&Select_a_build_file__1")); //$NON-NLS-1$
-		dialog.setFileFilter("*.xml", true); //$NON-NLS-1$
+		dialog.setFileFilter(".*\\.xml", true); //$NON-NLS-1$
 		dialog.open();
 		IStructuredSelection result = dialog.getResult();
 		if (result == null) {

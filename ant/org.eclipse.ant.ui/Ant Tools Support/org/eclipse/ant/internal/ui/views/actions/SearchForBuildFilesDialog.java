@@ -14,6 +14,8 @@ package org.eclipse.ant.internal.ui.views.actions;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
@@ -45,7 +47,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
-import org.eclipse.ui.externaltools.internal.model.StringMatcher;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -386,14 +387,28 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	 * Searches for files whose name matches the given regular expression.
 	 */
 	class ResourceProxyVisitor implements IResourceProxyVisitor {
-		StringMatcher matcher= new StringMatcher(getInput(), true, false);
+        Pattern pattern;
+        
+        ResourceProxyVisitor() {
+//          Users use "*" and "?" where regex uses ".*" and ".?"
+//          The character "." must be escaped in regex
+            String input = getInput();
+//          replace "." with "\\."
+            input = input.replaceAll("\\.", "\\\\."); //$NON-NLS-1$ //$NON-NLS-2$ 
+//          replace "*" with ".*" 
+            input = input.replaceAll("\\*", "\\.\\*"); //$NON-NLS-1$ //$NON-NLS-2$
+//          replace "?" with ".?"
+            input = input.replaceAll("\\?", "\\.\\?"); //$NON-NLS-1$ //$NON-NLS-2$ 
+            pattern = Pattern.compile(input);
+        }
 
 		/**
 		 * @see org.eclipse.core.resources.IResourceProxyVisitor#visit(org.eclipse.core.resources.IResourceProxy)
 		 */
 		public boolean visit(IResourceProxy proxy) {
 			if (proxy.getType() == IResource.FILE) {
-				if (matcher.match(proxy.getName())) {
+                Matcher matcher = pattern.matcher(proxy.getName());
+				if (matcher.find()) {
 					results.add(proxy.requestResource());
 				}
 				return false;
