@@ -56,8 +56,11 @@ class ImplicitJobs {
 					queued = true;
 					schedule();
 					while (!running) {
-						if (monitor.isCanceled())
+						if (monitor.isCanceled()) {
+							//cancel the running job
+							running = !cancel();
 							throw new OperationCanceledException();
+						}
 						blocker = manager.getBlockingThread(this);
 						if (manager.getLockManager().aboutToWait(blocker))
 							break;
