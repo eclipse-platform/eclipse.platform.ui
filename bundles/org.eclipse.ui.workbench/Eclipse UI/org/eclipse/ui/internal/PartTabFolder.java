@@ -26,6 +26,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder2;
 import org.eclipse.swt.custom.CTabFolderCloseAdapter;
 import org.eclipse.swt.custom.CTabFolderEvent;
+import org.eclipse.swt.custom.CTabFolderExpandListener;
 import org.eclipse.swt.custom.CTabItem2;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -60,12 +61,45 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 	private Map mapTabToPart = new HashMap();
 	private LayoutPart current;
 	private boolean assignFocusOnSelection = true;
+	private boolean minimized = false;
 
 	// inactiveCurrent is only used when restoring the persisted state of
 	// perspective on startup.
 	private LayoutPart inactiveCurrent;
 	private Composite parent;
 	private boolean active = false;
+	
+	CTabFolderExpandListener expandListener = new CTabFolderExpandListener() {
+		public void collapse(CTabFolderEvent event) {
+			parent.getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					PartSashContainer cont = (PartSashContainer) getContainer();
+					if (cont != null) {
+						WorkbenchPage page = ((PartPane) current).getPage();
+						if (page.isZoomed()) {
+							page.zoomOut();
+						}
+						
+						tabFolder.setSize(tabFolder.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+						
+						cont.getLayoutTree().setBounds(PartTabFolder.this.parent.getClientArea());
+					}
+				}
+			});
+		}
+		public void expand(CTabFolderEvent event) {
+			parent.getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					PartSashContainer cont = (PartSashContainer) getContainer();
+					if (cont != null) {
+						tabFolder.setSize(tabFolder.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+						
+						cont.getLayoutTree().setBounds(PartTabFolder.this.parent.getClientArea());
+					}
+				}
+			});
+		}
+	};
 	
 	// listen for mouse down on tab to set focus.
 	private MouseListener mouseListener = new MouseAdapter() {
@@ -78,6 +112,9 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 			if (current instanceof PartPane) {
 				WorkbenchPage page = ((PartPane) current).getPage();
 				if (current instanceof ViewPane) {
+					if (!page.isZoomed()) {
+						tabFolder.setExpanded(true);
+					}
 					page.toggleZoom(((ViewPane) PartTabFolder.this.current).partReference);
 				}
 			}
@@ -106,6 +143,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 		private LayoutPart part;
 	}
 	TabInfo[] invisibleChildren;
+
 	/**
 	 * PartTabFolder constructor comment.
 	 */
@@ -229,7 +267,8 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 		tabFolder = new CTabFolder2(parent, tabLocation | SWT.BORDER | SWT.FLAT);
 		tabFolder.setBorderVisible(false);
 		ColorSchemeService.setTabColors(tabFolder);
-
+		tabFolder.setExpanded(!minimized);
+		
 		// listener to switch between visible tabItems
 		tabFolder.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
@@ -277,7 +316,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 				//remove(item);
 			}
 		});
-		
+				
 		DragUtil.addDragSource(tabFolder, new AbstractDragSource() {
 
 			public Object getDraggedItem(Point position) {
@@ -331,7 +370,12 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 				newPage = indexOf(current);
 			setSelection(newPage);
 		}
+		
+		if (getContainer() != null) {
+			attachExpandListener(true);
+		}
 	}
+		
 	private CTabItem2 createPartTab(LayoutPart part, String tabName, int tabIndex) {
 		CTabItem2 tabItem;
 
@@ -424,7 +468,14 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 	 * Gets the presentation bounds.
 	 */
 	public Rectangle getBounds() {
-		return tabFolder.getBounds();
+		Rectangle result = tabFolder.getBounds();
+		
+		int minHeight = getMinimumHeight();
+		if (result.height < minHeight) {
+			result.height = minHeight;
+		}
+		
+		return result;
 	}
 
 	// getMinimumHeight() added by cagatayk@acm.org 
@@ -435,7 +486,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 		if (current == null || tabFolder == null || tabFolder.isDisposed())
 			return super.getMinimumHeight();
 
-		if (getItemCount() > 1) {
+		if (getItemCount() > 0) {
 			Rectangle trim = tabFolder.computeTrim(0, 0, 0, current.getMinimumHeight());
 			return trim.height;
 		} else
@@ -757,7 +808,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 	public IStatus restoreState(IMemento memento) {
 		// Read the active tab.
 		String activeTabID = memento.getString(IWorkbenchConstants.TAG_ACTIVE_PAGE_ID);
-
+		
 		// Read the page elements.
 		IMemento[] children = memento.getChildren(IWorkbenchConstants.TAG_PAGE);
 		if (children != null) {
@@ -788,6 +839,10 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 				}
 			}
 		}
+		
+		Integer expanded = memento.getInteger(IWorkbenchConstants.TAG_EXPANDED);
+		setMinimized(expanded != null && expanded.intValue() == 0);
+		
 		return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
 	}
 	/**
@@ -846,6 +901,9 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 				}
 			}
 		}
+		
+		memento.putInteger(IWorkbenchConstants.TAG_EXPANDED, tabFolder.getExpanded() ? 1 : 0);
+		
 		return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
 	}
 	/**
@@ -866,6 +924,10 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 		current.moveAbove(tabFolder);
 	}
 
+	public boolean isMinimized() {
+		return !tabFolder.getExpanded();
+	}
+	
 	public void setSelection(int index) {
 		if (!active)
 			return;
@@ -961,6 +1023,13 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 
 		}
 	}
+	
+	private void setMinimized(boolean state) {
+		minimized = state;
+		if (tabFolder != null && !tabFolder.isDisposed()) {
+			tabFolder.setExpanded(!minimized);
+		}
+	}
 
 	/**
 	 * Indicate busy state in the supplied partPane.
@@ -1001,5 +1070,26 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 			updateJob.schedule();
 		}
 			
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.LayoutPart#setContainer(org.eclipse.ui.internal.ILayoutContainer)
+	 */
+	public void setContainer(ILayoutContainer container) {
+		
+		super.setContainer(container);
+
+		if (tabFolder != null) {
+			attachExpandListener(container != null);
+		}
+	}
+	/**
+	 * @param b
+	 */
+	private void attachExpandListener(boolean b) {
+		if (container != null) {
+			tabFolder.addCTabFolderExpandListener(expandListener);
+		} else {
+			tabFolder.removeCTabFolderExpandListener(expandListener);
+		}
 	}
 }
