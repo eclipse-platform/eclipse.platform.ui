@@ -419,7 +419,11 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		if (isLocal()) {
 			return null;
 		}
-		return ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(getLocation());
+		IFile[] files= ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(getLocation());
+		if (files.length > 0) {
+			return files[0];
+		}
+		return null;
 	}
 
 	/**
