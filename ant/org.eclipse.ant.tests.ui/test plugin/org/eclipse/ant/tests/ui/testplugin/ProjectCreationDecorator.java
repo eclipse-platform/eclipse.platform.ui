@@ -65,7 +65,7 @@ public class ProjectCreationDecorator extends AbstractAntUITest {
             
             createLaunchConfigurationForBoth("breakpoints");
 			
-			createLaunchConfiguration("big", "buildfiles/performance/build.xml");
+			createLaunchConfiguration("big", ProjectHelper.PROJECT_NAME + "/buildfiles/performance/build.xml");
 			
 		} finally {
 			//do not show the Ant build failed error dialog
