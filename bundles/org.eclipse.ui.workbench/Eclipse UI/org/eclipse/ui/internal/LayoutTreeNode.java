@@ -333,20 +333,13 @@ public class LayoutTreeNode extends LayoutTree {
 				getSash().getLeft(), getSash().getRight(), availablePerpendicular);
     		
     		// Use this information to compute the dimension of the child sizes parallel to the sash.
-    		// Return the preferred size of whichever child is closest to the ideal size
+    		// Return the preferred size of whichever child is largest
     		int leftSize = children[0].computePreferredSize(width, availableParallel, sizes.left, preferredParallel);
-    		
-    		// If the preferred size of the left child *IS* the ideal size, then there's no way the right child
-    		// can do better. Return the ideal size.
-    		if (leftSize == preferredParallel) {
-    			assertValidSize(leftSize);
-    			return leftSize;
-    		}
     		
     		// Compute the preferred size of the right child
     		int rightSize = children[1].computePreferredSize(width, availableParallel, sizes.right, preferredParallel); 
     		
-    		// Return leftSize or rightSize: whichever one is closest to the ideal size
+    		// Return leftSize or rightSize: whichever one is largest
     		int result = rightSize;
     		if (leftSize > rightSize) {
     			result = leftSize;
@@ -446,6 +439,7 @@ public class LayoutTreeNode extends LayoutTree {
     	
     	// Ensure that the left child is larger than its minimum size
     	idealLeft = Math.max(idealLeft, leftMinimum);
+        idealLeft = Math.min(idealLeft, leftAvailable);
     	
     	// Compute the right child width
     	int idealRight = Math.max(rightMinimum, preferredWidth - idealLeft);
