@@ -1608,20 +1608,31 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 * Save and launch.
 	 */
 	protected void handleLaunchPressed() {
+		int result = CANCEL;
 		try {
 			doSave();
-			doLaunch(getLaunchConfiguration());
+			result = doLaunch(getLaunchConfiguration());
 		} catch (CoreException e) {
 			DebugUIPlugin.errorDialog(getShell(), "Launch Configuration Error", "Exception occurred while launching configuration.", e.getStatus());
 			return;
 		}
-		close();
+		if (result == OK) {
+			close();
+		} else {
+			getShell().setFocus();
+		}
 	}
 	
 	/**
 	 * Autosave the working copy if necessary, then launch the underlying configuration.
+	 * 
+	 * @return one of CANCEL or OK
 	 */
-	protected void doLaunch(ILaunchConfiguration config) throws CoreException {
+	protected int doLaunch(ILaunchConfiguration config) throws CoreException {
+		
+		if (!DebugUIPlugin.saveAndBuild()) {
+			return CANCEL;
+		}
 		
 		// If the configuration is a working copy and is dirty or doesn't yet exist, autosave it
 		if (config instanceof ILaunchConfigurationWorkingCopy) {
@@ -1654,6 +1665,8 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 				}
 			}
 		}
+		
+		return OK;
 	}
 	
 	protected IPreferenceStore getPreferenceStore() {
