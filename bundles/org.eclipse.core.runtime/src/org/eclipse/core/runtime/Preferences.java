@@ -12,8 +12,8 @@ package org.eclipse.core.runtime;
 
 import java.io.*;
 import java.util.*;
-import org.eclipse.core.internal.preferences.ListenerList;
 import org.eclipse.core.internal.preferences.PreferencesService;
+import org.eclipse.core.internal.runtime.ListenerList;
 import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IPreferencesService;

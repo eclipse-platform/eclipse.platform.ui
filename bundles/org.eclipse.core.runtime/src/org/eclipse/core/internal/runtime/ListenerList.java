@@ -8,10 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.core.internal.registry;
+package org.eclipse.core.internal.runtime;
 
 /**
- * Internal class is used to maintain a list of listeners.
+ * Internal class to maintain a list of listeners. This class is a thread safe
+ * list that is optimized for frequent reads and infrequent writes.  Copy on write
+ * is used to ensure readers can access the list without synchronization overhead.
+ * Readers are given access to the underlying array data structure for reading,
+ * with the trust that they will not modify the underlying array.
  * <p>
  * N.B.: This class is similar to other ListenerLists available throughout
  * Eclipse code base, except that it uses equality instead of identity
@@ -23,67 +27,47 @@ package org.eclipse.core.internal.registry;
  */
 public class ListenerList {
 	/**
-	 * The empty array singleton instance, returned by getListeners()
-	 * when size == 0.
+	 * The empty array singleton instance.
 	 */
 	private static final Object[] EmptyArray = new Object[0];
 	/**
-	 * The initial capacity of the list. Always >= 1.
-	 */
-	private int capacity;
-	/**
 	 * The list of listeners.  Initially <code>null</code> but initialized
 	 * to an array of size capacity the first time a listener is added.
-	 * Maintains invariant: listeners != null IFF size != 0
+	 * Maintains invariant: listeners != null
 	 */
-	private Object[] listeners = null;
-	/**
-	 * The current number of listeners.
-	 * Maintains invariant: 0 <= size <= listeners.length.
-	 */
-	private int size;
+	private Object[] listeners = EmptyArray;
 
 	/**
-	 * Creates a listener list with an initial capacity of 3.
+	 * Creates a listener list.
 	 */
 	public ListenerList() {
-		this(1);
+		super();
 	}
 
 	/**
-	 * Creates a listener list with the given initial capacity.
-	 *
-	 * @param capacity the number of listeners which this list can initially 
-	 *    accept without growing its internal representation; must be at
-	 *    least 1
-	 */
-	public ListenerList(int capacity) {
-		if (capacity < 1)
-			throw new IllegalArgumentException();
-		this.capacity = capacity;
-	}
-
-	/**
-	 * Adds the given listener to this list. Has no effect if an identical 
+	 * Adds the given listener to this list. Has no effect if an equal
 	 * listener is already registered.
-	 *
-	 * @param listener the listener
+	 *<p>
+	 * This method is synchronized to protect against multiple threads
+	 * adding or removing listeners concurrently. This does not block
+	 * concurrent readers.
+	 * 
+	 * @param listener the listener to add
 	 */
-	public void add(Object listener) {
+	public synchronized void add(Object listener) {
 		if (listener == null)
 			throw new IllegalArgumentException();
-		if (size == 0)
-			listeners = new Object[capacity];
-		else {
-			// check for duplicates using identity
-			for (int i = 0; i < size; ++i)
-				if (listener.equals(listeners[i]))
-					return;
-			// grow array if necessary
-			if (size == listeners.length)
-				System.arraycopy(listeners, 0, listeners = new Object[size * 2 + 1], 0, size);
-		}
-		listeners[size++] = listener;
+		// check for duplicates using equality
+		final int oldSize = listeners.length;
+		for (int i = 0; i < oldSize; ++i)
+			if (listener.equals(listeners[i]))
+				return;
+		// Thread safety: create new array to avoid affecting concurrent readers
+		Object[] newListeners = new Object[oldSize+1];
+		System.arraycopy(listeners, 0, newListeners, 0, oldSize);
+		newListeners[oldSize] = listener;
+		//atomic assignment
+		this.listeners = newListeners;
 	}
 
 	/**
@@ -94,15 +78,13 @@ public class ListenerList {
 	 * Use this method when notifying listeners, so that any modifications
 	 * to the listener list during the notification will have no effect on 
 	 * the notification itself.
+	 * <p>
+	 * Note: callers must not modify the returned array. 
 	 *
 	 * @return the list of registered listeners
 	 */
 	public Object[] getListeners() {
-		if (size == 0)
-			return EmptyArray;
-		Object[] result = new Object[size];
-		System.arraycopy(listeners, 0, result, 0, size);
-		return result;
+		return listeners;
 	}
 
 	/**
@@ -112,26 +94,34 @@ public class ListenerList {
 	 *   <code>false</code> otherwise
 	 */
 	public boolean isEmpty() {
-		return size == 0;
+		return listeners.length == 0;
 	}
 
 	/**
 	 * Removes the given listener from this list. Has no effect if an 
 	 * identical listener was not already registered.
+	 * <p>
+	 * This method is synchronized to protect against multiple threads
+	 * adding or removing listeners concurrently. This does not block
+	 * concurrent readers.
 	 *
 	 * @param listener the listener
 	 */
-	public void remove(Object listener) {
+	public synchronized void remove(Object listener) {
 		if (listener == null)
 			throw new IllegalArgumentException();
-		for (int i = 0; i < size; ++i) {
+		int oldSize = listeners.length;
+		for (int i = 0; i < oldSize; ++i) {
 			if (listener.equals(listeners[i])) {
-				if (size == 1) {
-					listeners = null;
-					size = 0;
+				if (oldSize == 1) {
+					listeners = EmptyArray;
 				} else {
-					System.arraycopy(listeners, i + 1, listeners, i, --size - i);
-					listeners[size] = null;
+					// Thread safety: create new array to avoid affecting concurrent readers
+					Object[] newListeners = new Object[oldSize-1];
+					System.arraycopy(listeners, 0, newListeners, 0, i);
+					System.arraycopy(listeners, i+1, newListeners, i, oldSize-i-1);
+					//atomic assignment to field
+					this.listeners = newListeners;
 				}
 				return;
 			}
@@ -144,6 +134,6 @@ public class ListenerList {
 	 * @return the number of registered listeners
 	 */
 	public int size() {
-		return size;
+		return listeners.length;
 	}
 }

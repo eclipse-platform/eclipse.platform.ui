@@ -139,7 +139,7 @@ class JobListeners {
 			e.printStackTrace();
 	}
 
-	public void add(IJobChangeListener listener) {
+	public synchronized void add(IJobChangeListener listener) {
 		//check for duplicate
 		IJobChangeListener[] tempListeners = global;
 		int oldCount = tempListeners.length;
@@ -154,7 +154,7 @@ class JobListeners {
 		global = newListeners;
 	}
 
-	public void remove(IJobChangeListener listener) {
+	public synchronized void remove(IJobChangeListener listener) {
 		IJobChangeListener[] tempListeners = global;
 		int oldCount = tempListeners.length;
 		if (oldCount == 0 || (oldCount == 1 && tempListeners[0] == listener)) {
@@ -166,7 +166,7 @@ class JobListeners {
 			if (tempListeners[i] == listener) {
 				IJobChangeListener[] newListeners = new IJobChangeListener[oldCount-1];
 				System.arraycopy(tempListeners, 0, newListeners, 0, i);
-				System.arraycopy(tempListeners, 0, newListeners, i, oldCount-i-1);
+				System.arraycopy(tempListeners, i+1, newListeners, i, oldCount-i-1);
 				global = newListeners;
 				return;
 			}

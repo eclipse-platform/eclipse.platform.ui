@@ -12,6 +12,7 @@ package org.eclipse.core.internal.registry;
 
 import java.lang.reflect.Array;
 import java.util.*;
+import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
@@ -93,7 +94,7 @@ public class ExtensionRegistry extends NestedRegistryModelObject implements IExt
 	private Map elements = new HashMap(11);
 	private transient boolean isDirty = false;
 	// all registry change listeners
-	private transient ListenerList listeners = new ListenerList(10);
+	private transient ListenerList listeners = new ListenerList();
 	// extensions without extension point
 	private Map orphanExtensions = new HashMap(11);
 	private transient RegistryCacheReader reader = null;

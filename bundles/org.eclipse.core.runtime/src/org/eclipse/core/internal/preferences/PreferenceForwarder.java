@@ -14,6 +14,7 @@ import java.io.*;
 import java.util.Iterator;
 import java.util.Properties;
 import org.eclipse.core.internal.runtime.InternalPlatform;
+import org.eclipse.core.internal.runtime.ListenerList;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
