@@ -125,7 +125,7 @@ public class JobProgressManager implements IProgressProvider {
 				provider.worked(job, work);
 			}
 		}
-	};
+	}
 
 	/**
 	 * Create a new instance of the receiver.
