@@ -33,15 +33,19 @@ public class UpdateModel {
 		return (ChecklistJob[])
 			v.toArray(new ChecklistJob[v.size()]);
 	}
-			
 	
-	public boolean checklistContains(IFeature feature) {
+	public ChecklistJob findJob(IFeature feature) {
 		for (int i=0; i<jobs.size(); i++) {
 			ChecklistJob job = (ChecklistJob)jobs.elementAt(i);
 			if (job.getFeature().equals(feature))
-			   return true;
+			   return job;
 		}
-		return false;
+		return null;
+	}
+			
+	
+	public boolean checklistContains(IFeature feature) {
+		return findJob(feature)!=null;
 	}
 	
 	public void addJob(ChecklistJob job) {
@@ -55,7 +59,13 @@ public class UpdateModel {
 		job.setModel(null);
 		fireObjectRemoved(null, job);
 	}
-
+	
+	public void removeJob(IFeature scheduledFeature) {
+		ChecklistJob job = findJob(scheduledFeature);
+		if (job!=null)
+		   removeJob(job);
+	}	
+
 	public void addBookmark(SiteBookmark bookmark) {
 		bookmarks.add(bookmark);
 		bookmark.setModel(this);

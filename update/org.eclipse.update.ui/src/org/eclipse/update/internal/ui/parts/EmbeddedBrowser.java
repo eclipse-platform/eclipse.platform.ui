@@ -40,7 +40,7 @@ public class EmbeddedBrowser implements IUpdateFormPage {
 			if (child instanceof ChecklistJob) {
 				ChecklistJob job = (ChecklistJob)child;
 				if (job.getFeature().equals(getInput()))
-				   openTo(input);
+				   browser.refresh();
 			}
 		}
 
@@ -51,7 +51,7 @@ public class EmbeddedBrowser implements IUpdateFormPage {
 			if (child instanceof ChecklistJob) {
 				ChecklistJob job = (ChecklistJob)child;
 				if (job.getFeature().equals(getInput()))
-				   openTo(input);
+				   browser.refresh();
 			}
 		}
 
@@ -60,23 +60,33 @@ public class EmbeddedBrowser implements IUpdateFormPage {
 		 */
 		public void objectChanged(Object object, String property) {
 			if (object.equals(input))
-			   openTo(input);
+			   browser.refresh();
 		}
-
 }	
 	
 	class ScheduleURLAction implements IURLAction {
 		public void run(Hashtable params) {
 			String mode = (String)params.get("mode");
 			if (mode==null) mode = "install";
-			int jobMode = ChecklistJob.INSTALL;
-			if (mode.equals("uninstall")) 
-			   jobMode = ChecklistJob.UNINSTALL;
-			if (input instanceof IFeature) {
-				IFeature feature = (IFeature)input;
-				ChecklistJob job = new ChecklistJob(feature, jobMode);
+			if (mode.equals("cancel")) {
 				UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
-				model.addJob(job);
+				if (input instanceof IFeature) {
+					model.removeJob((IFeature)input);
+				}
+				else if (input instanceof ChecklistJob) {
+					model.removeJob((ChecklistJob)input);
+				}
+			}
+			else {
+			   int jobMode = ChecklistJob.INSTALL;
+			   if (mode.equals("uninstall"))
+			      jobMode = ChecklistJob.UNINSTALL;
+			   if (input instanceof IFeature) {
+				  IFeature feature = (IFeature)input;
+				  ChecklistJob job = new ChecklistJob(feature, jobMode);
+				  UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+				  model.addJob(job);
+			   }
 			}
 		}
 	}
