@@ -19,11 +19,15 @@ import org.eclipse.core.runtime.Status;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
@@ -31,7 +35,11 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import org.eclipse.ui.IWindowListener;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.commands.ICommand;
+import org.eclipse.ui.commands.ICommandManager;
+import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.ui.keys.KeySupport;
@@ -163,6 +171,11 @@ public class WorkbenchKeyboard {
 	}
 
 	/**
+	 * The command manager to be used to resolve key bindings. This member
+	 * variable should never be <code>null</code>.
+	 */
+	private final ICommandManager commandManager;
+	/**
 	 * The listener that runs key events past the global key bindings.
 	 */
 	final Listener keyDownFilter = new Listener() {
@@ -251,7 +264,7 @@ public class WorkbenchKeyboard {
 	/**
 	 * The workbench on which this keyboard interface should act.
 	 */
-	private final Workbench workbench;
+	private final IWorkbench workbench;
 
 	/**
 	 * Constructs a new instance of <code>WorkbenchKeyboard</code> associated
@@ -264,6 +277,8 @@ public class WorkbenchKeyboard {
 	public WorkbenchKeyboard(Workbench associatedWorkbench) {
 		workbench = associatedWorkbench;
 		state = new KeyBindingState(associatedWorkbench);
+		commandManager = workbench.getCommandManager();
+
 		workbench.addWindowListener(windowListener);
 	}
 
@@ -392,7 +407,7 @@ public class WorkbenchKeyboard {
 	 *         <code>null</code> if no command matches.
 	 */
 	private String getPerfectMatch(KeySequence keySequence) {
-		return workbench.getCommandManager().getPerfectMatch(keySequence);
+		return commandManager.getPerfectMatch(keySequence);
 	}
 
 	/**
@@ -414,20 +429,61 @@ public class WorkbenchKeyboard {
 		state.setAssociatedWindow(workbench.getActiveWorkbenchWindow());
 
 		// After 1s, open a shell displaying the possible completions.
-		final Display display = Display.getCurrent();
+		final Display display = workbench.getDisplay();
 		display.timerExec(1000, new Runnable() {
 			public void run() {
 				if (System.currentTimeMillis() > (startTime - 1000L)) {
-					multiKeyAssistShell =
-						new Shell(display.getActiveShell(), SWT.MODELESS | SWT.DIALOG_TRIM);
-					multiKeyAssistShell.setLayout(new FillLayout());
+					// Set up the shell.
+					multiKeyAssistShell = new Shell(display, SWT.NO_TRIM);
+					multiKeyAssistShell.setLayout(new GridLayout());
 					Composite composite = new Composite(multiKeyAssistShell, SWT.NULL);
-					composite.setLayout(new FillLayout());
-					org.eclipse.swt.widgets.List completionsList =
-						new org.eclipse.swt.widgets.List(multiKeyAssistShell, SWT.SINGLE);
-					completionsList.setItems(
-						new String[] { "Ctrl+S   Search", "Ctrl+H   Open Hierarchy" });
-					multiKeyAssistShell.setSize(200, 200);
+					composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+					composite.setLayout(new GridLayout());
+
+					// Get the list of items.
+					Map partialMatches =
+						commandManager.getPartialMatches(state.getCurrentSequence());
+					String[] items = new String[partialMatches.size()];
+					Iterator partialMatchItr = partialMatches.entrySet().iterator();
+					int i = 0;
+					while (partialMatchItr.hasNext()) {
+						Map.Entry entry = (Map.Entry) partialMatchItr.next();
+						KeySequence partialMatch = (KeySequence) entry.getKey();
+						String commandId = (String) entry.getValue();
+						ICommand command = commandManager.getCommand(commandId);
+						try {
+							// TODO The enabled property of ICommand is broken.
+							if (command.isDefined()
+								&& command.isActive() /* && command.isEnabled() */
+								) {
+								items[i++] = partialMatch.format() + "   " + command.getName(); //$NON-NLS-1$
+							}
+						} catch (NotDefinedException e) {
+							// Simply don't insert the item.
+						}
+					}
+					if (i < items.length) {
+						String[] tempItems = new String[i];
+						System.arraycopy(items, 0, tempItems, 0, i);
+						items = tempItems;
+					}
+
+					// Layout the partial matches.
+					if (items.length < 1) {
+						Label noMatchesLabel = new Label(composite, SWT.NULL);
+						noMatchesLabel.setText("No Matches Possible");
+						noMatchesLabel.setLayoutData(new GridData(GridData.FILL_BOTH));
+					} else {
+						org.eclipse.swt.widgets.List completionsList =
+							new org.eclipse.swt.widgets.List(composite, SWT.SINGLE);
+						completionsList.setLayoutData(new GridData(GridData.FILL_BOTH));
+						completionsList.setItems(items);
+					}
+
+					// Size and position the shell, and then open it.
+					multiKeyAssistShell.pack();
+					Point point = multiKeyAssistShell.getSize();
+					Rectangle displayBounds = display.getBounds();
 					multiKeyAssistShell.open();
 				}
 			}
@@ -445,7 +501,7 @@ public class WorkbenchKeyboard {
 	 *         otherwise.
 	 */
 	private boolean isPartialMatch(KeySequence keySequence) {
-		return workbench.getCommandManager().isPartialMatch(keySequence);
+		return commandManager.isPartialMatch(keySequence);
 	}
 
 	/**
@@ -459,7 +515,7 @@ public class WorkbenchKeyboard {
 	 *         otherwise.
 	 */
 	private boolean isPerfectMatch(KeySequence keySequence) {
-		return workbench.getCommandManager().isPerfectMatch(keySequence);
+		return commandManager.isPerfectMatch(keySequence);
 	}
 
 	/**
