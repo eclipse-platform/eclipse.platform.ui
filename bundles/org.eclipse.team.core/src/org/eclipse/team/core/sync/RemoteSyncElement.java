@@ -27,48 +27,26 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.internal.Assert;
 
+/**
+ * A standard abstract class that provides implementations for interesting 
+ * <code>IRemoteSyncElement</code> methods. The <code>members</code> method
+ * provided will create a unified tree based on the local, base, and remote
+ * children. The <code>getSyncKind</code> method will calculate the relative
+ * sync kind of the remote node.
+ */
 public abstract class RemoteSyncElement extends LocalSyncElement implements IRemoteSyncElement {
-	
-	/*
-	 * @see ILocalSyncElement#getName()
-	 */
-	public String getName() {
-		if (getLocal() != null) {
-			return getLocal().getName();
-		}
-		if (getRemote() != null) {
-			return getRemote().getName();
-		}
-		if (getBase() != null) {
-			return getBase().getName();
-		}
-		// A sync tree should never of been created without at least one
-		// contributor.
-		Assert.isTrue(false);
-		return null;
-	}
 
-	/*
-	 * @see ILocalSyncElement#isContainer()
-	 */
-	public boolean isContainer() {
-		if (getLocal() != null) {
-			return getLocal().getType() != IResource.FILE;
-		}
-		if (getRemote() != null) {
-			return getRemote().isContainer();
-		}
-		if (getBase() != null) {
-			return getBase().isContainer();
-		}
-		// A sync tree should never of been created without at least one
-		// contributor.
-		Assert.isTrue(false);
-		return false;
-	}
-
-	/*
-	 * Helper method to create a remote sync element.
+	/**
+	 * Creates a client specific sync element from a <b>local</b>, <b>base</b>, and 
+	 * <b>remote</b> resources. The <b>base</b> and <b>remote</b> resource may be 
+	 * <code>null</code>.
+	 * 
+	 * @param local the local resource in the workbench. Will never be <code>null</code>.
+	 * @param base the base resource, may me <code>null</code>.
+	 * @param remote the remote resource, may be <code>null</code>.
+	 * @param data client specific data.
+	 * 
+	 * @return a client specific sync element.
 	 */
 	public abstract IRemoteSyncElement create(IResource local, IRemoteResource base, IRemoteResource remote, Object data);
 		
@@ -293,7 +271,7 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 	/**
 	 * Helper method for comparisons
 	 */
-	protected boolean compare(int granularity, boolean timestampDiff, InputStream is1, InputStream is2) {
+	private boolean compare(int granularity, boolean timestampDiff, InputStream is1, InputStream is2) {
 		if (granularity == GRANULARITY_CONTENTS) {
 			return timestampDiff || contentsEqual(is1, is2);
 		} else {
@@ -301,15 +279,15 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 		}
 	}
 	
-	protected boolean compare(int granularity, boolean timestampDiff, IResource e1, IRemoteResource e2) {
+	private boolean compare(int granularity, boolean timestampDiff, IResource e1, IRemoteResource e2) {
 		return compare(granularity, timestampDiff, getContents(e1), getContents(e2));
 	}
 	
-	protected boolean compare(int granularity, boolean timestampDiff, IRemoteResource e1, IRemoteResource e2) {
+	private boolean compare(int granularity, boolean timestampDiff, IRemoteResource e1, IRemoteResource e2) {
 		return compare(granularity, timestampDiff, getContents(e1), getContents(e2));
 	}
 	
-	protected InputStream getContents(IResource resource) {
+	private InputStream getContents(IResource resource) {
 		try {
 			if (resource instanceof IStorage)
 				return new BufferedInputStream(((IStorage) resource).getContents());
@@ -319,7 +297,7 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 		}
 	}
 	
-	protected InputStream getContents(IRemoteResource remote) {
+	private InputStream getContents(IRemoteResource remote) {
 		try {
 			return new BufferedInputStream(remote.getContents(new NullProgressMonitor()));
 		} catch (TeamException exception) {
@@ -335,7 +313,7 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 	 * @param input2 second input to contents compare
 	 * @return <code>true</code> if content is equal
 	 */
-	protected boolean contentsEqual(InputStream is1, InputStream is2) {
+	private boolean contentsEqual(InputStream is1, InputStream is2) {
 		if (is1 == is2)
 			return true;
 

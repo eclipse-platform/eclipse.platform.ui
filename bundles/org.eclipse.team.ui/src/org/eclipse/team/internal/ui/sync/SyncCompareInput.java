@@ -6,13 +6,10 @@ package org.eclipse.team.internal.ui.sync;
  */
  
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Set;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
-import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
@@ -21,18 +18,16 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
@@ -43,7 +38,6 @@ import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.core.sync.ILocalSyncElement;
-import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.ui.TeamUIPlugin;
@@ -320,7 +314,7 @@ public class SyncCompareInput extends CompareEditorInput implements ICompareInpu
 				public void run(IProgressMonitor monitor) throws CoreException {
 					// collect changes and build the diff tree
 					diffRoot = new DiffNode(0);
-					try {
+					try {						
 						doServerDelta(pm);
 					} catch (InterruptedException e) {
 						exceptions[0] = e;
@@ -346,9 +340,12 @@ public class SyncCompareInput extends CompareEditorInput implements ICompareInpu
 	}
 	
 	void doServerDelta(IProgressMonitor pm) throws InterruptedException {
+		pm.beginTask("", trees.length * 1000);
+		pm.setTaskName(Policy.bind("Synchronizing with server..."));
 		for (int i = 0; i < trees.length; i++) {
+			IProgressMonitor subMonitor = new SubProgressMonitor(pm, 1000);
 			IRemoteSyncElement tree = trees[i];
-			IDiffElement localRoot = collectResourceChanges(null, tree, new NullProgressMonitor());
+			IDiffElement localRoot = collectResourceChanges(null, tree, subMonitor);
 			makeParents(localRoot);
 		}
 	}

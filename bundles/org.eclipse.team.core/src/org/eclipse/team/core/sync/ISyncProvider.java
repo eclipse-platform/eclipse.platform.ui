@@ -10,7 +10,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
 
 /**
- * The <code>ISyncProvider</code> interface exposes a standard mechanism for retrieving
+ * The <code>ISyncProvider</code> interface exposes a standard mechanism for retreiving
  * local (e.g. checkedout, dirty) and remote (outOfDate) synchronization information from a 
  * provider.
  * <p>

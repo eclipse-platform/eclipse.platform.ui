@@ -16,35 +16,42 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
 
+/**
+ * A standard abstract class that provides implementations for <code>ILocalSyncElement</code>
+ * methods.
+ */
 public abstract class LocalSyncElement implements ILocalSyncElement {
 
-	/*
-	 * Helper method to create a remote sync element.
+	/**
+	 * Creates a client specific sync element from a <b>local</b> and <b>base</b>
+	 * resources. The <b>base</b> resource may be <code>null</code> and should be
+	 * intialized by the client if available.
+	 * 
+	 * @param local the local resource in the workbench. Will never be <code>null</code>.
+	 * @param base the base resource, may me <code>null</code>.
+	 * @param data client specific data.
+	 * 
+	 * @return a client specific sync element.
 	 */
 	public abstract ILocalSyncElement create(IResource local, IRemoteResource base, Object data);
+	
+	/**
+	 * Client data that is passed to every <code>create()</code> call.
+	 * 
+	 * @return client specific data that will be passed to create.
+	 */
 	protected abstract Object getData();
 
 	/*
 	 * @see ILocalSyncElement#getSyncKind(int, IProgressMonitor)
 	 */
 	public int getSyncKind(int granularity, IProgressMonitor progress) {
-		IRemoteResource base = getBase();
-		IResource local = getLocal();
-		
-		int sync = IN_SYNC;
-		
-		if(isDirty()) {
-				if(hasRemote()) {
-					sync = OUTGOING | CHANGE;	
-				} else {
-					sync = OUTGOING | ADDITION;
-				}
-		}
+				
+		// XXX not sure how local sync will be used?
+		int sync = IN_SYNC;		
 		return sync;
 	}
-	
-	
-	
+			
 	/*
 	 * @see ILocalSyncElement#getName()
 	 */
@@ -69,7 +76,8 @@ public abstract class LocalSyncElement implements ILocalSyncElement {
 				List syncElements = new ArrayList(5);
 				for (int i = 0; i < members.length; i++) {
 					IResource iResource = members[i];
-					// XXX: not sure what to do about the base?
+					// the base is initialy set to null, however the concrete subclass should
+					// initialize the base if one is available.
 					syncElements.add(create(iResource, null, getData()));
 				}
 				return (ILocalSyncElement[]) syncElements.toArray(new ILocalSyncElement[syncElements.size()]);		

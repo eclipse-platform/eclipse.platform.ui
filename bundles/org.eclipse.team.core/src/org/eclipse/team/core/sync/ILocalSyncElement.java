@@ -138,16 +138,16 @@ public interface ILocalSyncElement {
 	public boolean isContainer();
 
 	/**
-	 * Answer the local sync element of this node. Returns a non-existing local
-	 * resource handle if the local resource does not exist in the workspace.
+	 * Answers the local sync element of this node. Returns a non-existing local
+	 * resource handle if the local resource does not exist in the workspace. 
 	 * 
-	 * @return the local resource in this node, or <code>null</code> is there
-	 * is none.
+	 * @return the local resource handle in this node. There should always be a local
+	 * resource available, however the resource may not exist.
 	 */
 	public IResource getLocal();
 
 	/**
-	 * Answer the base sync element of this node. Returns <code>null</code> 
+	 * Answers the base sync element of this node. Returns <code>null</code> 
 	 * if there is no base (e.g. conflicting add).
 	 * 
 	 * @return the base resource in this node, or <code>null</code> is there
@@ -156,12 +156,13 @@ public interface ILocalSyncElement {
 	public IRemoteResource getBase();
 	
 	/**
-	 * Answer if the local resource currently has a different timestamp to the base timestamp
+	 * Answers if the local resource currently has a different timestamp to the base timestamp
 	 * for this resource.
 	 * 
 	 * @param resource the resource to test.
 	 * @return <code>true</code> if the resource has a different modification
-	 * timestamp, and <code>false</code> otherwise.
+	 * timestamp, and <code>false</code> otherwise. If a base does not exist, this method
+	 * must return <code>false</code>.
 	 */
 	public boolean isDirty();
 	
@@ -194,7 +195,14 @@ public interface ILocalSyncElement {
 	public boolean hasRemote();
 	
 	/**
-	 * Answers the members of this sync element. 
+	 * Answers and array of <code>ILocalSyncElement</code> elements that are immediate 
+	 * children of this sync element, in no particular order. The returned sync nodes are
+	 * a combination of the nodes represented by the sync element (e.g. local, base, remote).
+	 * 
+ 	 * @param progress a progress monitor to indicate the duration of the operation, or
+	 * <code>null</code> if progress reporting is not required.
+	 * 
+	 * @return array of immediate children of this sync node. 
 	 */
 	public ILocalSyncElement[] members(IProgressMonitor monitor) throws TeamException;
 	

@@ -58,14 +58,7 @@ public abstract class RemoteResource extends PlatformObject implements ICVSRemot
 		}
 		return localOptions;
 	}
-	
-	/**
-	 * @see ICVSRemoteResource#getType()
-	 */
-	public int getType() {
-		return 0;
-	}
-
+		
 	public abstract String getRemotePath();
 	
 	public abstract ICVSRepositoryLocation getRepository();

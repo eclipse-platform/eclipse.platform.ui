@@ -12,6 +12,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
@@ -100,7 +101,9 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IM
 	/**
 	 * Get the members for the given tag
 	 */
-	public ICVSRemoteResource[] getMembers(final String tagName, final IProgressMonitor monitor) throws TeamException {
+	public ICVSRemoteResource[] getMembers(final String tagName, IProgressMonitor monitor) throws TeamException {
+		
+		final IProgressMonitor progress = Policy.monitorFor(monitor);
 		
 		// Forget about our children
 		children = null;
@@ -111,21 +114,21 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IM
 		final List newRemoteFiles = new ArrayList();
 		IUpdateMessageListener listener = new IUpdateMessageListener() {
 			public void directoryInformation(IPath path, boolean newDirectory) {
-				if (newDirectory && path.segmentCount() == 1)
+				if (newDirectory && path.segmentCount() == 1) {
 					newRemoteDirectories.add(path.lastSegment());
-//				monitor.subTask(path.lastSegment().toString());
-//				monitor.worked(1);
+					progress.subTask(path.lastSegment().toString());
+					progress.worked(1);
+				}
 			}
 			public void directoryDoesNotExist(IPath path) {
-//				monitor.worked(1);
 			}
 			public void fileInformation(char type, String filename) {
 				IPath filePath = new Path(filename);	
 				if( filePath.segmentCount() == 1 ) {
 					String properFilename = filePath.lastSegment();
 					newRemoteFiles.add(properFilename);
-//					monitor.subTask(properFilename);
-//					monitor.worked(1);
+					progress.subTask(properFilename);
+					progress.worked(1);
 				}
 			}
 		};
@@ -152,6 +155,10 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IM
 				getPrintStream(),
 				c,
 				new IResponseHandler[]{new UpdateMessageHandler(listener), new UpdateErrorHandler(listener, errors)});
+
+			if (progress.isCanceled()) {
+				throw new OperationCanceledException();
+			}
 
 			// Convert the file and folder names to IManagedResources
 			List result = new ArrayList();
@@ -272,9 +279,12 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IM
 
 	/**
 	 * @see IManagedFolder#getChild(String)
+	 * 
+	 * XXX: shouldn't this consider the case where children is null. Maybe
+	 * by running the update + status with only one member?
 	 */
 	public IManagedResource getChild(String path) throws CVSException {
-		if (path.equals(Client.CURRENT_LOCAL_FOLDER))
+		if (path.equals(Client.CURRENT_LOCAL_FOLDER) || children == null)
 			return this;
 		// NOTE: We only search down one level for now!!!
 		if (path.indexOf(Client.SERVER_SEPARATOR) == -1) {

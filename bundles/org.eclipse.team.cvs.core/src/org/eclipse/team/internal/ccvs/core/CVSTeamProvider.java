@@ -31,6 +31,7 @@ import org.eclipse.team.core.ITeamNature;
 import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
+import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.CVSDiffException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
@@ -677,33 +678,35 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		IManagedResource managed = getChild(resource);
 		if (managed.isFolder()) {
 			IManagedFolder folder = (IManagedFolder)managed;
-			new RemoteFolder(CVSRepositoryLocation.fromString(folder.getFolderInfo().getRoot()), new Path(folder.getFolderInfo().getRepository()), folder.getFolderInfo().getTag());
+			return new RemoteFolder(CVSRepositoryLocation.fromString(folder.getFolderInfo().getRoot()), new Path(folder.getFolderInfo().getRepository()), folder.getFolderInfo().getTag());
 		} else {
 			// NOTE: This may not provide a proper parent!
-			new RemoteFile((RemoteFolder)getRemoteResource(resource.getParent()), managed.getName(), ((IManagedFile)managed).getFileInfo().getVersion());
+			return new RemoteFile((RemoteFolder)getRemoteResource(resource.getParent()), managed.getName(), ((IManagedFile)managed).getFileInfo().getVersion());
 		}
-		return null;
 	}
 	
-	/**
-	 * 
-	 */
 	public IRemoteSyncElement getRemoteSyncTree(IResource resource, String tag, IProgressMonitor progress) throws TeamException {
 		checkIsChild(resource);
 		IManagedResource managed = getChild(resource);
 		
+		// XXX: there must be a quicker way of determining is a folder/file has a remote (e.g. in one round trip
+		// at the time of this call).
 		ICVSRemoteResource remote;
-		if (managed.isFolder()) {
-			IManagedFolder folder = (IManagedFolder)managed;
-			remote = new RemoteFolder(CVSRepositoryLocation.fromString(folder.getFolderInfo().getRoot()), new Path(folder.getFolderInfo().getRepository()), tag);
-		} else {
-			// NOTE: This may not provide a proper parent!
-			remote = new RemoteFile((RemoteFolder)getRemoteResource(resource.getParent()), managed.getName(), tag);
+		try {
+			if(resource.getType()!=IResource.PROJECT) {
+				RemoteFolder remoteParent = (RemoteFolder)getRemoteResource(resource.getParent());
+				remoteParent.getMembers(progress);
+				// if an exception is thrown then just ignore
+				remote = (ICVSRemoteResource)remoteParent.getChild(resource.getName());						
+			} else {
+				remote = (RemoteFolder)getRemoteResource(resource);
+			}
+		} catch(CVSException e) {
+			remote = null;
 		}
 		
-		IManagedFolder parent = managed.isFolder() ? (IManagedFolder)managed : managed.getParent();
-			
-		return new CVSRemoteSyncElement(resource, null, remote, parent);
+		IManagedFolder localParent = managed.isFolder() ? (IManagedFolder)managed : managed.getParent();			
+		return new CVSRemoteSyncElement(resource, null, remote, localParent);
 	}
 	
 	/**
