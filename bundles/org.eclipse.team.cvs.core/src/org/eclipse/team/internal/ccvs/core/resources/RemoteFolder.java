@@ -708,6 +708,13 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 	}
 	
 	/*
+	 * @see ICVSFolder#run(ICVSRunnable, int, IProgressMonitor)
+	 */
+	public void run(ICVSRunnable job, int flags, IProgressMonitor monitor) throws CVSException {
+		job.run(monitor);
+	}
+	
+	/*
 	 * @see ICVSFolder#tag(CVSTag, LocalOption[], IProgressMonitor)
 	 */
 	public IStatus tag(final CVSTag tag, final LocalOption[] localOptions, IProgressMonitor monitor) throws CVSException {

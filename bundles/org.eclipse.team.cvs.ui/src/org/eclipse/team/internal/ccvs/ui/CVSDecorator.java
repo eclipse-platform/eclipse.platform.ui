@@ -467,7 +467,7 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 						isDirty[0] = cvsFile.isModified();
 					}
 				}
-			}, null);
+			}, ICVSFolder.READ_ONLY, null);
 			return isDirty[0];
 		} catch (CVSException e) {
 			//if we get an error report it to the log but assume dirty

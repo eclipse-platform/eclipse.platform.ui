@@ -289,20 +289,11 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 		try {
 			ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) throws CoreException {
-					monitor = Policy.monitorFor(monitor);
 					try {
-						monitor.beginTask(null, 100);
-						try {
-							CVSTeamProvider.setMoveDeleteHook(null);
-							EclipseSynchronizer.getInstance().beginOperation(Policy.subMonitorFor(monitor, 5));
-							job.run(Policy.subMonitorFor(monitor, 60));
-						} finally {
-							EclipseSynchronizer.getInstance().endOperation(Policy.subMonitorFor(monitor, 35));
-						}
+						CVSTeamProvider.setMoveDeleteHook(null);
+						internalRun(job, monitor);
 					} catch(CVSException e) {
 						error[0] = e; 
-					} finally {						
-						monitor.done();
 					}
 				}
 			}, monitor);
@@ -315,6 +306,26 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 			throw error[0];
 		}
 	}
+	
+	public void run(final ICVSRunnable job, int flags, IProgressMonitor monitor) throws CVSException {
+		if (flags == READ_ONLY)
+			internalRun(job, monitor);
+		else
+			run(job, monitor);
+	}
+
+	private void internalRun(ICVSRunnable job, IProgressMonitor monitor) throws CVSException {
+		monitor = Policy.monitorFor(monitor);
+		monitor.beginTask(null, 100);
+		try {
+			EclipseSynchronizer.getInstance().beginOperation(Policy.subMonitorFor(monitor, 5));
+			job.run(Policy.subMonitorFor(monitor, 60));
+		} finally {
+			EclipseSynchronizer.getInstance().endOperation(Policy.subMonitorFor(monitor, 35));
+			monitor.done();
+		}
+	}
+		
 	/**
 	 * @see ICVSFolder#fetchChildren(IProgressMonitor)
 	 */

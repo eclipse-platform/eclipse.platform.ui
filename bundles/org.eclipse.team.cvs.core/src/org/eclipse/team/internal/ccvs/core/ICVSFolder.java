@@ -37,6 +37,10 @@ public interface ICVSFolder extends ICVSResource {
 		| UNMANAGED_MEMBERS 
 		| MANAGED_MEMBERS 
 		| EXISTING_MEMBERS;
+		
+	// flags used by run method
+	public static final int READ_ONLY = 1;
+	public static final int READ_WRITE = 2;
 	
 	/**
 	 * Answers and array of <code>ICVSResource</code> elements that are immediate 
@@ -161,10 +165,18 @@ public interface ICVSFolder extends ICVSResource {
 	 * call, this method simply runs the action.
 	 * </p>
 	 *
-	 * @param action the action to perform
+	 * @param job the action to perform
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancellation are not desired
 	 * @exception CVSException if the operation failed.
 	 */
 	public void run(ICVSRunnable job, IProgressMonitor monitor) throws CVSException;
+	
+	/**
+	 * Differentiates the run of an atomic operation between those that may change sync
+	 * info and/or file contents and those that are just querying the sync info. If flags
+	 * contains READ_ONLY then the operation assumes that the local workspace will not be changed
+	 * in any way.
+	 * 	 * @param job the action to perform	 * @param flags flags indicating READ_ONLY or READ_WRITE	 * @param monitor	 * @throws CVSException	 */
+	public void run(ICVSRunnable job, int flags, IProgressMonitor monitor) throws CVSException;
 }
