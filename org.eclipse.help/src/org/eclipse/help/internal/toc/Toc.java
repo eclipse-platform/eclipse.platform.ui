@@ -29,8 +29,11 @@ public class Toc extends TocNode implements IToc, ITocElement{
 	/**
 	 * Collection of Toc
 	 */
-	private Collection childrenTocs;
+	private List childrenTocs;
 	private DirectoryToc directoryToc;
+	/** map of all topics contained by this TOC by href.
+	 * Description topic is not in the map.
+	 */
 	private Map topicMap = new HashMap();
 	private int size=SIZE_UNINITIALIZED;
 	/**
@@ -96,18 +99,6 @@ public class Toc extends TocNode implements IToc, ITocElement{
 		return label;
 	}
 	/**
-	 * Returns a topic with the specified href defined by this TOC,
-	 * without looking in children TOCs
-	 * <br> If the TOC contains multiple 
-	 * topics with the same href only of them (arbitrarily chosen) will 
-	 * be returned.
-	 * @param href the topic's URL.
-	 * @return ITopic or null
-	 */
-	public ITopic getOwnedTopic(String href) {		
-		return(ITopic)topicMap.get(href);
-	}
-	/**
 	 * Returns a topic with the specified href defined by this TOC.
 	 * <br> If the TOC contains multiple 
 	 * topics with the same href only of them (arbitrarily chosen) will 
@@ -119,15 +110,16 @@ public class Toc extends TocNode implements IToc, ITocElement{
 	 * @return ITopic or null
 	 */
 	public ITopic getTopic(String href) {
-		if (href == null){
+		if (href == null || href.equals(descriptionTopic.getHref())){
 			return descriptionTopic;
 		}
+
 		ITopic result=getOwnedTopic(href);
 		if(result!=null){
 			return result;
 		}
 		
-		// check in children TOCs
+		// check inside children TOCs
 		for(Iterator it=getChildrenTocs().iterator(); it.hasNext();){
 			Toc childToc=(Toc)it.next();
 			// can call getTopic because href!=null,
@@ -159,10 +151,34 @@ public class Toc extends TocNode implements IToc, ITocElement{
 		return topicArray;
 	}
 	/**
+	 * @return ITopic or null;
+	 */
+	public String getTocTopicHref(){
+		if(descriptionTopic!=null){
+			return descriptionTopic.getHref();
+		}
+		return null;
+	}
+	/**
+	 * Returns a topic with the specified href defined by this TOC,
+	 * without looking in children TOCs
+	 * <br> If the TOC contains multiple 
+	 * topics with the same href only of them (arbitrarily chosen) will 
+	 * be returned.
+	 * @param href the topic's URL.
+	 * @return ITopic or null
+	 */
+	public ITopic getOwnedTopic(String href) {		
+		return(ITopic)topicMap.get(href);
+	}
+	/**
 	 * @return ITopic[]
 	 */
 	public ITopic[] getExtraTopics() {
-		ITopic[] dirTopics = directoryToc.getExtraTopics();
+		Collection dirTopicCollection = directoryToc.getExtraTopics().values();
+		ITopic[] dirTopics = (ITopic[]) dirTopicCollection.toArray(new ITopic[dirTopicCollection.size()]);
+
+		
 		// add extra topics from children TOCs.
 		for (Iterator it = childrenTocs.iterator(); it.hasNext();) {
 			IToc toc = (IToc) it.next();
@@ -191,6 +207,16 @@ public class Toc extends TocNode implements IToc, ITocElement{
 		return dirTopics;
 	}
 	/**
+	 * Returns a topic with the specified href found in extra dir defined by this TOC,
+	 * without looking in children TOCs
+	 * @param href the topic's URL.
+	 * @return ITopic or null
+	 */
+	public ITopic getOwnedExtraTopic(String href) {
+		return(ITopic)directoryToc.getExtraTopics().get(href);
+
+	}
+	/**
 	 * Used by debugger
 	 */
 	public String toString() {
@@ -201,7 +227,7 @@ public class Toc extends TocNode implements IToc, ITocElement{
 	 * Gets the childrenTocs.
 	 * @return Returns a Collection of Toc
 	 */
-	public Collection getChildrenTocs() {
+	public List getChildrenTocs() {
 		return childrenTocs;
 	}
 	public int size(){
@@ -213,7 +239,7 @@ public class Toc extends TocNode implements IToc, ITocElement{
 		}
 		return size;
 	}
-	void cacheTopic(ITopic topic){
+	void registerTopic(ITopic topic){
 		String topicHref = topic.getHref();
 		if (topicHref != null) {
 			topicMap.put(topicHref, topic);

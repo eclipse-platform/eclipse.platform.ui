@@ -36,7 +36,7 @@ public class Topic extends TocNode implements ITopic, ITopicElement{
 		if(label==null){
 			throw new RuntimeException("topic label==null");
 		}
-		tocFile.getToc().cacheTopic(this);
+		tocFile.getToc().registerTopic(this);
 	}
 	/**
 	 * Implements abstract method.

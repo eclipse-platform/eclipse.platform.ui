@@ -17,6 +17,7 @@ import javax.servlet.http.*;
 
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.base.*;
+import org.eclipse.help.internal.model.*;
 import org.eclipse.help.internal.search.*;
 import org.eclipse.help.internal.webapp.*;
 import org.eclipse.help.internal.webapp.servlet.*;
@@ -137,6 +138,67 @@ public class SearchData extends RequestData {
 			return UrlUtil.htmlEncode(hits[i].getToc().getLabel());
 		else
 			return "";
+	}
+	
+	/**
+	 * @param i
+	 * @return true of result belong to an enabled TOC
+	 */
+	public boolean isEnabled(int i) {
+		String href = hits[i].getHref();
+		if (href == null) {
+			return false;
+		}
+		int ix=href.indexOf("?resultof=");
+		if(ix>=0){
+			href=href.substring(0, ix);
+		}
+		// Find out if description topic for enabled top level TOCs matches the
+		// topic
+		ITocElement[] tocs = HelpPlugin.getTocManager().getTocs(getLocale());
+		for (int t = 0; t < tocs.length; t++) {
+			String descriptionHref = tocs[t].getTocTopicHref();
+			if (descriptionHref != null && descriptionHref.length()>0
+					&& descriptionHref.equals(href)
+					&& HelpBasePlugin.getActivitySupport().isEnabled(
+							tocs[t].getHref())) {
+				return true;
+			}
+		}
+		// Find out if any contributed toc that is enabled contains the topic
+		return isInTocSubtree(href, Arrays.asList(tocs));
+	}
+	/**
+	 * @param href
+	 *            href of a topic
+	 * @param tocList
+	 *            List of ITocElement
+	 * @return true if given topic belongs to one of enabled ITocElements or
+	 *         their children
+	 */
+	private boolean isInTocSubtree(String href, List tocList) {
+		for (Iterator it = tocList.iterator(); it.hasNext();) {
+			ITocElement toc = (ITocElement) it.next();
+			if (!HelpBasePlugin.getActivitySupport().isEnabled(toc.getHref())) {
+				// TOC is not enabled, check other TOCs
+				continue;
+			}
+			// Check topics in navigation
+			if (toc.getOwnedTopic(href) != null) {
+				return true;
+			}
+			// Check extra dir
+			if (toc.getOwnedExtraTopic(href)!=null){
+				return true;
+			}
+			// check children TOCs
+			if (isInTocSubtree(href, toc.getChildrenTocs())) {
+				return true;
+			} else {
+				// try other TOCs at this level
+			}
+		}
+		return false;
 	}
 
 	/**

@@ -22,7 +22,10 @@ import org.eclipse.help.internal.*;
  */
 public class DirectoryToc {
 	private String dir;
-	private ITopic[] extraTopics;
+	/**
+	 * Map of ITopic by href String;
+	 */
+	private Map extraTopics;
 	private String locale;
 	/**
 	 * Constructor.
@@ -42,12 +45,11 @@ public class DirectoryToc {
 	 * With assumption that TOC model is not modifiable
 	 * after the build, this method caches topics in an array
 	 * and releases objects used only during build.
-	 * @return ITopic[]
+	 * @return Map of ITopic
 	 */
-	public ITopic[] getExtraTopics() {
+	public Map getExtraTopics() {
 		if (extraTopics == null) {
-			Collection col = createExtraTopics();
-			extraTopics = (ITopic[]) col.toArray(new ITopic[col.size()]);
+			extraTopics = createExtraTopics();
 			// for memory foot print, release TocFile and dir
 			dir = null;
 		}
@@ -60,10 +62,10 @@ public class DirectoryToc {
 	 *  <em>/pluginID/directory/containing/docs<em>
 	 *  or
 	 *  <em>/pluginID<em> for all documents in a given plugin
-	 * @return Collection of ITopic
+	 * @return Map of ITopic by href
 	 */
-	private Collection createExtraTopics() {
-		Collection ret = new HashSet();
+	private Map createExtraTopics() {
+		Map ret = new HashMap();
 		String pluginID = HrefUtil.getPluginIDFromHref(dir);
 		if (pluginID == null) {
 			return ret;
@@ -94,7 +96,7 @@ public class DirectoryToc {
 		}
 		if (url != null) {
 			// collect topics from doc.zip file
-			ret.addAll(createExtraTopicsFromZip(pluginID, directory, url));
+			ret.putAll(createExtraTopicsFromZip(pluginID, directory, url));
 		}
 		// Find directory on the filesystem
 		iPath = new Path("$nl$/" + directory);
@@ -116,7 +118,7 @@ public class DirectoryToc {
 		}
 		if (url != null) {
 			// collect topics from doc.zip file
-			ret.addAll(
+			ret.putAll(
 				createExtraTopicsFromDirectory(pluginID, directory, url));
 		}
 		return ret;
@@ -125,12 +127,13 @@ public class DirectoryToc {
 	/**
 	 * @param directory path in the form "segment1/segment2...",
 	 *  "" will return names of all files in a zip
+	 * @return Map of ITopic by href String
 	 */
-	private Collection createExtraTopicsFromZip(
+	private Map createExtraTopicsFromZip(
 		String pluginID,
 		String directory,
 		URL url) {
-		Collection ret = new ArrayList(0);
+		Map ret = new HashMap(0);
 		URL realZipURL;
 		try {
 			realZipURL = Platform.asLocalURL(Platform.resolve(url));
@@ -138,7 +141,7 @@ public class DirectoryToc {
 			HelpPlugin.logError(
 				HelpResources.getString("E036", url.toString()),
 				ioe);
-			return new ArrayList(0);
+			return new HashMap(0);
 		}
 		ZipFile zipFile;
 		try {
@@ -149,7 +152,7 @@ public class DirectoryToc {
 			HelpPlugin.logError(
 				HelpResources.getString("E037", realZipURL.getFile()),
 				ioe);
-			return new ArrayList(0);
+			return new HashMap(0);
 		}
 
 		return ret;
@@ -161,14 +164,14 @@ public class DirectoryToc {
 	* Files in subdirectories are included as well.
 	* @param directory path in the form "segment1/segment2...",
 	*  "" will return names of all files in a zip
-	* @return Collection of ITopic
+	* @return Map of ITopic by href String
 	*/
-	private Collection createExtraTopicsFromZipFile(
+	private Map createExtraTopicsFromZipFile(
 		String pluginID,
 		ZipFile zipFile,
 		String directory) {
 		String constantHrefSegment = "/" + pluginID + "/";
-		Collection ret = new ArrayList();
+		Map ret = new HashMap();
 		for (Enumeration enum = zipFile.entries(); enum.hasMoreElements();) {
 			ZipEntry zEntry = (ZipEntry) enum.nextElement();
 			if (zEntry.isDirectory()) {
@@ -180,7 +183,8 @@ public class DirectoryToc {
 				|| docName.length() > l
 				&& docName.charAt(l) == '/'
 				&& directory.equals(docName.substring(0, l))) {
-				ret.add(new ExtraTopic(constantHrefSegment + docName));
+				String href=constantHrefSegment + docName;
+				ret.put(href, new ExtraTopic(href));
 			}
 		}
 		return ret;
@@ -188,12 +192,13 @@ public class DirectoryToc {
 	/**
 	 * @param directory path in the form "segment1/segment2...",
 	 *  "" will return names of all files in a directory
+	 * @return Map of ITopic by href String
 	 */
-	private Collection createExtraTopicsFromDirectory(
+	private Map createExtraTopicsFromDirectory(
 		String pluginID,
 		String directory,
 		URL url) {
-		Collection col = new ArrayList();
+		Map m = new HashMap();
 		URL realURL;
 		try {
 			realURL = Platform.asLocalURL(Platform.resolve(url));
@@ -201,7 +206,7 @@ public class DirectoryToc {
 			HelpPlugin.logError(
 				HelpResources.getString("E038", url.toString()),
 				ioe);
-			return col;
+			return m;
 		}
 		File dirFile = new File(realURL.getFile());
 		if (dirFile.exists() && dirFile.isDirectory()) {
@@ -211,28 +216,29 @@ public class DirectoryToc {
 			} else {
 				prefix = "/" + pluginID;
 			}
-			createExtraTopicsFromDirectoryFile(prefix, dirFile, col);
+			createExtraTopicsFromDirectoryFile(prefix, dirFile, m);
 		}
-		return col;
+		return m;
 
 	}
 	/**
 	 * @prefix /pluginID/segment1/segment2
+	 * @return Map of ITopic by href String
 	 */
-	private Collection createExtraTopicsFromDirectoryFile(
+	private Map createExtraTopicsFromDirectoryFile(
 		String prefix,
 		File dir,
-		Collection col) {
+		Map m) {
 		File[] files = dir.listFiles();
 		for (int i = 0; i < files.length; i++) {
 			String href = prefix + "/" + files[i].getName();
 			if (files[i].isDirectory()) {
-				createExtraTopicsFromDirectoryFile(href, files[i], col);
+				createExtraTopicsFromDirectoryFile(href, files[i], m);
 			} else {
-				col.add(new ExtraTopic(href));
+				m.put(href, new ExtraTopic(href));
 			}
 		}
-		return col;
+		return m;
 	}
 	class ExtraTopic implements ITopic {
 		private String topicHref;

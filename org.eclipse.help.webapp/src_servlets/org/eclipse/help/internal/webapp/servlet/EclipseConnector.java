@@ -63,7 +63,7 @@ public class EclipseConnector {
 				}
 			} else {
 				// enable activities matching url
-				HelpBasePlugin.getActivitySupport().enableActivities(url);
+				// HelpBasePlugin.getActivitySupport().enableActivities(url);
 
 				url = "help:" + url;
 			}
