@@ -21,7 +21,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.dialogs.ReadOnlyStateChecker;
 import org.eclipse.ui.internal.misc.Assert;
 
 /**
