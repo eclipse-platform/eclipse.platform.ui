@@ -21,7 +21,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.core.UpdateManagerPlugin;
 import org.eclipse.update.internal.model.SiteLocalModel;
 import org.eclipse.update.internal.ui.forms.UpdateAdapterFactory;
 import org.eclipse.update.internal.ui.model.*;
@@ -167,7 +166,7 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 		try {
 			WebappManager.start(WEB_APP_ID, PLUGIN_ID, new Path("webapp"));
 		} catch (CoreException e) {
-			UpdateManagerPlugin.warn("",e);
+			UpdateUIPlugin.logException(e);
 			return;
 		}
 		
