@@ -521,23 +521,20 @@ public class ConfiguredSite
 				getConfigurationPolicy().addUnconfiguredFeatureReference(
 					(FeatureReferenceModel) element);
 			} catch (CoreException e) {
-				// feature does not exist ?
-				featureToUnconfigure.remove(element);
 				// log no feature to unconfigure
-
-					String url = element.getURL().toString();
-					ISite site = element.getSite();
-					String siteString =
-						(site != null)
-							? site.getURL().toExternalForm()
-							: Policy.bind("ConfiguredSite.NoSite");
+				String url = element.getURL().toString();
+				ISite site = element.getSite();
+				String siteString =
+					(site != null)
+						? site.getURL().toExternalForm()
+						: Policy.bind("ConfiguredSite.NoSite");
 					//$NON-NLS-1$
-					UpdateManagerPlugin.warn(
-						Policy.bind(
-							"ConfiguredSite.CannotFindFeatureToUnconfigure",
-							url,
-							siteString),e);
-					//$NON-NLS-1$ 
+				UpdateManagerPlugin.warn(
+					Policy.bind(
+						"ConfiguredSite.CannotFindFeatureToUnconfigure",
+						url,
+						siteString),e);
+				//$NON-NLS-1$ 
 			}
 		}
 		//} // end USER_EXCLUDE
@@ -908,24 +905,20 @@ public class ConfiguredSite
 			return null;
 			
 		UpdateManagerPlugin.warn("IsContained: Checking for markers at:" + file);			
-		if (!file.isDirectory())
-			return getSiteContaining(file.getParentFile());
-
-		File productFile = new File(file, PRODUCT_SITE_MARKER);
-		File extensionFile = new File(file, EXTENSION_SITE_MARKER);
-		File privateFile = new File(file, PRIVATE_SITE_MARKER);
-		if (productFile.exists()||extensionFile.exists()||privateFile.exists())
-			return privateFile.getParentFile();
-
-		File[] childrenFiles = file.listFiles();
-		for (int i = 0; i < childrenFiles.length; i++) {
-			if (childrenFiles[i].isDirectory() && !childrenFiles[i].equals(file)) {
-				 File container = getSiteContaining(childrenFiles[i]);
-				 if (container!=null) return container;
+		if (file.exists() && file.isDirectory()) {
+			File productFile = new File(file, PRODUCT_SITE_MARKER);
+			File extensionFile = new File(file, EXTENSION_SITE_MARKER);
+			if (productFile.exists()||extensionFile.exists())
+				return file;
+			// do not check if a marker exists in the current but start from the parent
+			// the current is analyze by getProductname()
+			if (file.getParentFile()!=null){
+				File privateFile = new File(file.getParentFile(), PRIVATE_SITE_MARKER);								
+				 if (privateFile.exists())
+					return file.getParentFile();				 
 			}
 		}
-		
-		return null;
+		return getSiteContaining(file.getParentFile());
 	}
 	
 	/*
@@ -934,20 +927,30 @@ public class ConfiguredSite
 	 * If the product is the same, return null.
 	 */
 	private static String getProductName(File file) {
-		File privateFile = new File(file, PRIVATE_SITE_MARKER);
+		
+		if (file==null)
+			return null;
+		
+		File markerFile = new File(file, PRIVATE_SITE_MARKER);
+		if (!markerFile.exists()){
+			return null;
+		}
+		
 		File productFile = getProductFile();
 		if (productFile!=null){		
 			String productId = getProductIdentifier("id",productFile);
-			String privateId = getProductIdentifier("id",privateFile);
+			String privateId = getProductIdentifier("id",markerFile);
 			if (productId == null){
 				UpdateManagerPlugin.warn("Product ID is null at:"+productFile);
 				return null;
 			}
 			if (!productId.equalsIgnoreCase(privateId)){
-				UpdateManagerPlugin.warn("Product id at"+productFile+" Different than:" + privateFile);
-				String name = getProductIdentifier("id",productFile);
-				String version = getProductIdentifier("version",productFile);
-				return (name==null)?version:name+":"+version;
+				UpdateManagerPlugin.warn("Product id at"+productFile+" Different than:" + markerFile);
+				String name = getProductIdentifier("name",markerFile);
+				String version = getProductIdentifier("version",markerFile);
+				String markerID = (name==null)?version:name+":"+version;
+				if (markerID==null) markerID="";
+				return markerID;
 			}
 		} else {
 			UpdateManagerPlugin.warn("Product Marker doesn't exist:"+productFile);			
@@ -967,6 +970,12 @@ public class ConfiguredSite
 			PropertyResourceBundle bundle = new PropertyResourceBundle(in);
 			result = bundle.getString(identifier);
 		} catch (IOException e) {
+			if (UpdateManagerPlugin.DEBUG
+				&& UpdateManagerPlugin.DEBUG_SHOW_INSTALL)
+				UpdateManagerPlugin.debug(
+					"Exception reading property file:"
+						+ propertyFile);
+		} catch (MissingResourceException e) {
 			if (UpdateManagerPlugin.DEBUG
 				&& UpdateManagerPlugin.DEBUG_SHOW_INSTALL)
 				UpdateManagerPlugin.debug(
@@ -1011,7 +1020,7 @@ public class ConfiguredSite
 		if (productFile!=null){
 			String productId = getProductIdentifier("id",productFile);
 			String productName = getProductIdentifier("name",productFile);
-			String productVer = getProductIdentifier("ver",productFile);			
+			String productVer = getProductIdentifier("version",productFile);			
 			if (productId!=null){
 				File file = new File(siteLocation,PRIVATE_SITE_MARKER);				
 				if (!file.exists()){
@@ -1025,7 +1034,7 @@ public class ConfiguredSite
 						if (productName!=null)
 							w.println("name="+productName);
 						if (productVer!=null)
-							w.println("name="+productVer);
+							w.println("version="+productVer);
 					} catch (Exception e){
 						UpdateManagerPlugin.warn("Unable to create private Marker at:"+file,e);
 					} finally {

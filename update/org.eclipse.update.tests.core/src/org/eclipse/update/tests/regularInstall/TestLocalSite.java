@@ -100,12 +100,12 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		ConfigurationPolicyModel configPolicy = new BaseSiteLocalFactory().createConfigurationPolicyModel();
 		configPolicy.setPolicy(IPlatformConfiguration.ISitePolicy.USER_INCLUDE);
 		((ConfiguredSite)configSite).setConfigurationPolicy((ConfigurationPolicy)configPolicy);
+		int oldNumberOfhistory = site.getConfigurationHistory().length;		
 		site.addConfiguration(newConfig);	
 		assertNotNull(feature);	
-		
+
 		((ConfiguredSite)configSite).isUpdatable(true);				
 		configSite.install(feature,null,null);
-
 				
 		// teh current one points to a real fature
 		// does not throw error.
@@ -125,7 +125,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		assertTrue("too many unconfigured features",((ConfiguredSite)configSite2).getConfigurationPolicy().getUnconfiguredFeatures().length==0);
 		
 		// test only 2 install config in local site
-		assertTrue("wrong number of history in Local site",site.getConfigurationHistory().length==2);
+		assertEquals("wrong number of history in Local site:",oldNumberOfhistory+1,site.getConfigurationHistory().length);
 		
 		// test same # of sites in current config
 		assertTrue("Wrong number of config sites in current config",site.getCurrentConfiguration().getConfiguredSites().length==oldNumber);
@@ -180,7 +180,8 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		IConfiguredSite configSite = newConfig.getConfiguredSites()[0];
 		ConfigurationPolicyModel configPolicy = new BaseSiteLocalFactory().createConfigurationPolicyModel();
 		configPolicy.setPolicy(IPlatformConfiguration.ISitePolicy.USER_INCLUDE);
-		((ConfiguredSite)configSite).setConfigurationPolicy((ConfigurationPolicy)configPolicy);		
+		((ConfiguredSite)configSite).setConfigurationPolicy((ConfigurationPolicy)configPolicy);	
+		int oldNumberOfhistory = site.getConfigurationHistory().length;			
 		site.addConfiguration(newConfig);
 		assertNotNull(feature);			
 		
@@ -219,7 +220,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		assertTrue("Wrong id  version of feature",feature2.getVersionedIdentifier().toString().equalsIgnoreCase("org.eclipse.update.core.tests.feature3_1.0.0"));
 		
 		// test only 2 install config in local site
-		assertTrue("wrong number of history in Local site: found "+site.getConfigurationHistory().length,site.getConfigurationHistory().length==2);
+		assertEquals("wrong number of history in Local site:",oldNumberOfhistory+1,site.getConfigurationHistory().length);
 		
 		// test # of sites in current config
 		assertTrue("Wrong number of config sites in current config",site.getCurrentConfiguration().getConfiguredSites().length==oldNumber);
@@ -262,9 +263,11 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		IConfiguredSite configSite = newConfig.getConfiguredSites()[0];
 		ConfigurationPolicyModel configPolicy = new BaseSiteLocalFactory().createConfigurationPolicyModel();
 		configPolicy.setPolicy(IPlatformConfiguration.ISitePolicy.USER_INCLUDE);
-		((ConfiguredSite)configSite).setConfigurationPolicy((ConfigurationPolicy)configPolicy);		
+		((ConfiguredSite)configSite).setConfigurationPolicy((ConfigurationPolicy)configPolicy);	
+		int oldNumberOfhistory = site.getConfigurationHistory().length;			
 		site.addConfiguration(newConfig);
 		
+	
 		((ConfiguredSite)configSite).isUpdatable(true);				
 		configSite.install(feature,null,null);
 		site.save();
@@ -303,7 +306,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		assertTrue("Wrong id  version of feature",feature2.getVersionedIdentifier().toString().equalsIgnoreCase("org.test1.ident1_1.0.0"));
 		
 		// test only 2 install config in local site
-		assertTrue("wrong number of history in Local site",site.getConfigurationHistory().length==2);
+		assertEquals("wrong number of history in Local site:",oldNumberOfhistory+1,site.getConfigurationHistory().length);
 		
 		// test same number of sites in current config
 		assertTrue("Wrong number of config sites in current config",site.getCurrentConfiguration().getConfiguredSites().length==oldNumber);
