@@ -118,7 +118,7 @@ public class ScopedPreferenceStore implements IPreferenceStore, IPersistentPrefe
 
 		getStorePreferences().addPreferenceChangeListener(preferencesListener);
 		
-		Platform.getPreferencesService().getRootNode().addNodeChangeListener(
+		((IEclipsePreferences) getStorePreferences().parent()).addNodeChangeListener(
 				getNodeChangeListener());
 	}
 
@@ -141,8 +141,7 @@ public class ScopedPreferenceStore implements IPreferenceStore, IPersistentPrefe
 			 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener#removed(org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent)
 			 */
 			public void removed(NodeChangeEvent event) {
-				if (nodeQualifier.equals(event.getChild().name()))
-					getStorePreferences().removePreferenceChangeListener(preferencesListener);
+				//Do nothing as there are no events from removed node
 			}
 		};
 	}
