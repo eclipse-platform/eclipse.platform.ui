@@ -694,7 +694,8 @@ public void remove(LayoutPart child) {
 		child.setContainer(null);
 	}
 	// disable the pulldown menu of editors if necessary
-	pullDownBar.setVisible(getItemCount() != 0);	
+	if(!pullDownBar.isDisposed())	
+		pullDownBar.setVisible(getItemCount() != 0);	
 }
 /**
  * See IVisualContainer#remove
@@ -728,7 +729,8 @@ public void removeAll() {
 	handleTabSelection = true;
 	
 	// disable the pulldown menu of editors
-	pullDownBar.setVisible(false);
+	if(!pullDownBar.isDisposed())	
+		pullDownBar.setVisible(false);
 }
 private void removeListeners(EditorPane editor) {
 	if (editor == null)
