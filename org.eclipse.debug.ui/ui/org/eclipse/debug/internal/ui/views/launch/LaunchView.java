@@ -39,6 +39,7 @@ import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.InstructionPointerManager;
+import org.eclipse.debug.internal.ui.actions.EditLaunchConfigurationAction;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandlerView;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -147,6 +148,8 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 */
 	private IResourceDeltaVisitor fVisitor = null;
 	
+	private EditLaunchConfigurationAction fEditConfigAction = null;
+	
 	/**
 	 * Creates a launch view and an instruction pointer marker for the view
 	 */
@@ -167,6 +170,8 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 */
 	protected void createActions() {
 		setAction("Properties", new PropertyDialogAction(getSite().getWorkbenchWindow().getShell(), getSite().getSelectionProvider())); //$NON-NLS-1$
+		fEditConfigAction = new EditLaunchConfigurationAction();
+		getSite().getSelectionProvider().addSelectionChangedListener(fEditConfigAction);
 				
 		// submit an async exec to update the selection once the
 		// view has been created - i.e. auto-expand and select the
@@ -389,6 +394,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		getSite().getPage().removePartListener(this);
 		getSite().getWorkbenchWindow().removePerspectiveListener(this);
 		getSite().getWorkbenchWindow().removePageListener(this);
+		getSite().getSelectionProvider().removeSelectionChangedListener(fEditConfigAction);
 		
 		cleanup();
 		
@@ -883,6 +889,9 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		menu.add(new Separator(IDebugUIConstants.THREAD_GROUP));
 		menu.add(new Separator(IDebugUIConstants.EMPTY_LAUNCH_GROUP));
 		menu.add(new Separator(IDebugUIConstants.LAUNCH_GROUP));
+		if (fEditConfigAction.isEnabled()) {
+			menu.add(fEditConfigAction);
+		}
 		menu.add(new Separator(IDebugUIConstants.EMPTY_RENDER_GROUP));
 		menu.add(new Separator(IDebugUIConstants.RENDER_GROUP));
 		menu.add(new Separator(IDebugUIConstants.PROPERTY_GROUP));
