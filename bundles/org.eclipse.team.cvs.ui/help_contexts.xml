@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.contexts"?>
+<contexts>
+   <context  id="new_cvs_connection_action_context" >
+      <description>example</description>
+	<topic label="Repositories - Concept" href="concepts/concepts-27c.htm"/>
+ 	<topic label="Repositories - Reference" href="reference/ref-47.htm"/> 
+   	<topic label="CVS Repositories" href="reference/ref-47.htm"/>
+	<topic label="Create a Repository Location" href="tasks/tasks-92.htm"/>
+   	<topic label="Disconnecting from a Repository" href="tasks/tasks-94.htm"/>
+   </context>	
+
+   <context  id="tag_configuration_overview" >
+      <description>Configure the branch and version tags that are shown in the workbench. By browing remote CVS files for tags you can selectively choose, from the list of tags on each file, which tags should be remembered and which ones shouldn't. You can also select the files that will be automatically examined for tags.
+      </description>
+   </context>
+   
+    <context  id="tag_configuration_refreshlist" >
+      <description>This lists the files that are automatically examined for tags. By default, the .project file	is examined. But in some cases other files may have a more complete tag history and should be examined instead.
+      </description>
+   </context>
+   
+   <context  id="tag_configuration_refreshaction" >
+      <description>This will fetch branch and version tags from the files that have been configured to be automatically searched for tags. If tags that you expected to see don't appear, try changing the list of files to examined via the tag configuration dialog.
+      </description>
+   </context>   
+
+</contexts>
