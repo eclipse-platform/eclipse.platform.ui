@@ -154,10 +154,10 @@ public class CVSProjectPropertiesPage extends PropertyPage {
 		layout.numColumns = 2;
 		composite.setLayout(layout);
 		
-		Label label = createLabel(composite, Policy.bind("CVSPropertiesPage.connectionType"), 1); //$NON-NLS-1$
+		Label label = createLabel(composite, Policy.bind("CVSProjectPropertiesPage.connectionType"), 1); //$NON-NLS-1$
 		methodLabel = createLabel(composite, "", 1); //$NON-NLS-1$
 		
-		label = createLabel(composite, Policy.bind("CVSPropertiesPage.user"), 1); //$NON-NLS-1$
+		label = createLabel(composite, Policy.bind("CVSProjectPropertiesPage.user"), 1); //$NON-NLS-1$
 		userLabel = createLabel(composite, "", 1); //$NON-NLS-1$
 		
 		label = createLabel(composite, Policy.bind("CVSPropertiesPage.host"), 1); //$NON-NLS-1$
@@ -328,9 +328,8 @@ public class CVSProjectPropertiesPage extends PropertyPage {
 	private void initializeTag() {
 		provider = (CVSTeamProvider)RepositoryProvider.getProvider(project, CVSProviderPlugin.getTypeId());
 		if (provider == null) return;
-		CVSWorkspaceRoot cvsRoot = provider.getCVSWorkspaceRoot();
 		try {
-			ICVSFolder local = cvsRoot.getCVSFolderFor(project);
+			ICVSFolder local = CVSWorkspaceRoot.getCVSFolderFor(project);
 			CVSTag tag = local.getFolderSyncInfo().getTag();
 			String tagName;
 			if (tag == null) {
