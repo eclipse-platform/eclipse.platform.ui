@@ -36,6 +36,7 @@ import org.eclipse.ui.internal.commands.*;
 import org.eclipse.ui.internal.dialogs.MessageDialogWithToggle;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.UIStats;
+import org.eclipse.ui.internal.progress.ProgressControl;
 import org.eclipse.ui.internal.registry.*;
 
 /**
@@ -74,6 +75,7 @@ public class WorkbenchWindow
 	private Menu perspectiveBarMenu;
 	private Menu fastViewBarMenu;
 	private MenuItem restoreItem;
+	private ProgressControl progressControl;
 
 	private CoolBarManager coolBarManager = new CoolBarManager();
 	private Label noOpenPerspective;
@@ -151,6 +153,24 @@ public class WorkbenchWindow
 			clientArea.y += sep1Size.y;
 			clientArea.height -= sep1Size.y;
 
+			int toolBarWidth = clientArea.width;
+			//Layout the progress indicator
+			if (showProgressIndicator()) {
+				if (progressControl != null) {
+					Control progressWidget =
+						progressControl.getCanvas().getControl();
+					Rectangle bounds =
+					progressControl.getCanvas().getImageBounds();
+					toolBarWidth -= (bounds.width + CLIENT_INSET);
+					progressWidget.setBounds(
+						clientArea.x + toolBarWidth,
+						clientArea.y,
+						bounds.width,
+						bounds.height);
+
+				}
+			}
+
 			//Layout the toolbar	
 			Control toolBar = getToolBarControl();
 			if (toolBar != null) {
@@ -168,7 +188,7 @@ public class WorkbenchWindow
 					toolBar.setBounds(
 						clientArea.x,
 						clientArea.y,
-						clientArea.width,
+						toolBarWidth,
 						height);
 					clientArea.y += height;
 					clientArea.height -= height;
@@ -672,6 +692,7 @@ public class WorkbenchWindow
 		shell.setSize(800, 600);
 		separator2 = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
 		createShortcutBar(shell);
+		createProgressIndicator(shell);
 		separator3 = new Label(shell, SWT.SEPARATOR | SWT.VERTICAL);
 
 		WorkbenchHelp.setHelp(shell, IHelpContextIds.WORKBENCH_WINDOW);
@@ -2071,7 +2092,17 @@ public class WorkbenchWindow
 		return PlatformUI.getWorkbench().getPreferenceStore().getBoolean(
 			IWorkbenchConstants.SHOW_PROGRESS_INDICATOR);
 	}
+	/**
+	 * Create the progress indicator for the receiver.
+	 * @param shell	the parent shell
+	 */
+	private void createProgressIndicator(Shell shell) {
+		if (showProgressIndicator()) {
+			progressControl = new ProgressControl();
+			progressControl.createCanvas(shell);
+		}
 
+	}
 	class PageList {
 		//List of pages in the order they were created;
 		private List pageList;
