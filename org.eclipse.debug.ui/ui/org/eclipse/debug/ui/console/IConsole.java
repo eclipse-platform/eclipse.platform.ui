@@ -24,9 +24,6 @@ import org.eclipse.jface.text.IRegion;
  * <p>
  * Clients are <b>not</b> intended to implement this interface.
  * </p>
- * <p>
- * <b>This interface is still evolving</b>
- * </p>
  * @see org.eclipse.debug.internal.ui.views.console.IConsoleColorProvider
  * @since 2.1
  */

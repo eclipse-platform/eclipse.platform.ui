@@ -23,16 +23,16 @@ import org.eclipse.swt.graphics.Color;
  * process type. A proccess type is defined via the process attribute
  * <code>IProcess. ATTR_PROCESS_TYPE</code>.
  * <p>
- * A console document color provider extension is defined in <code>plugin.
- * xml</code>. Following is an example definition of a console document color
+ * A console color provider extension is defined in <code>plugin.xml</code>.
+ * Following is an example definition of a console color
  * provider extension.
  * <pre>
- * &lt;extension point="org.eclipse.debug.ui.consoleDocumentColorProviders"&gt;
- *   &lt;consoleDocumentColorProvider 
- *      id="com.example.ExampleConsoleDocumentColorProvider"
- *      class="com.example.ExampleConsoleDocumentColorProviderClass"
+ * &lt;extension point="org.eclipse.debug.ui.consoleColorProviders"&gt;
+ *   &lt;consoleColorProvider 
+ *      id="com.example.ExampleConsoleColorProvider"
+ *      class="com.example.ExampleConsoleColorProviderClass"
  *      processType="ExampleProcessType"&gt;
- *   &lt;/consoleDocumentColorProvider&gt;
+ *   &lt;/consoleColorProvider&gt;
  * &lt;/extension&gt;
  * </pre>
  * The attributes are specified as follows:
@@ -48,9 +48,6 @@ import org.eclipse.swt.graphics.Color;
  * <p>
  * Clients may implement this interface.
  * </p>
- * <p>
- * <b>This interface is still evolving</b>
- * </p>
  * @since 2.1
  */
 
@@ -58,11 +55,11 @@ public interface IConsoleColorProvider {
 
 	/**
 	 * Returns whether the console associated with this color provider's
-	 * process can accept keyboard input. This attribute may change over the life
-	 * of a process/document.
+	 * process can currently accept keyboard input. This attribute is dynamic
+	 * and may change over the lifetime of a process/document.
 	 * 
 	 * @return whether the console associated with this color provider's
-	 * process can accept keyboard input
+	 * process can currently accept keyboard input
 	 */
 	public boolean isReadOnly();
 	

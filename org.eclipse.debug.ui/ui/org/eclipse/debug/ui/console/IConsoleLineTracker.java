@@ -14,11 +14,10 @@ package org.eclipse.debug.ui.console;
 import org.eclipse.jface.text.IRegion;
 
 /**
- * Notified of lines appended to the console. A line tracker registers itself
- * as an extension via plug-in XML, via the extension point
- * <code>org.eclipse.debug.ui.consoleLineTrackers</code>. A line tracker is
- * associated with a type of process. Following is an example definition of
- * a console line tracker extension.
+ * Notified of lines appended to the console. A line tracker is defined in
+ * <code>plugin.xml</code>. A line tracker is associated with a type of
+ * process. Following is an example definition of a console line tracker
+ * extension.
  * <pre>
  * &lt;extension point="org.eclipse.debug.ui.consoleLineTrackers"&gt;
  *   &lt;consoleLineTracker 
@@ -39,9 +38,6 @@ import org.eclipse.jface.text.IRegion;
  * </ul>
  * <p>
  * Clients may implement this interface.
- * </p>
- * <p>
- * <b>This interface is still evolving</b>
  * </p>
  * @since 2.1
  */

@@ -16,9 +16,6 @@ package org.eclipse.debug.ui.console;
  * <p>
  * Clients may implement this interface.
  * </p>
- * <p>
- * <b>This interface is still evolving</b>
- * </p>
  * @since 2.1
  */
 public interface IConsoleHyperlink {

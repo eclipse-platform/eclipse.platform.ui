@@ -30,9 +30,6 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * This class is not intended to be subclassed; clients may instantiate this
  * class.
  * </p>
- * <p>
- * <b>This class is still evolving</b>
- * </p>
  * @since 2.1
  */
 public class FileLink implements IConsoleHyperlink {
