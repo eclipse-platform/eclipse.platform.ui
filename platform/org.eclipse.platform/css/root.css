@@ -5,8 +5,10 @@
  */
 body {
 	min-width : 611px;
+	min-height : 600px;
 	/* since IE doesn't support min-width, try expression */
 	width:expression(document.body.clientWidth < 611? "611px": "auto" );
+	height:expression(document.body.clientWidth < 600? "600px": "auto" );
 	background-image : url(graphics/watermark/eclipse_logo.gif);
 	background-position : bottom left;
 }
@@ -26,17 +28,17 @@ body {
 
 #background {
 	background-color : #BCCEE4;
-	min-height : 10%; /* same as background-image top and variable-space height */
+	min-height : 6%; /* same as background-image top and variable-space height */
 }
 
 #variable-space {
 	background-color : #BCCEE4;
-	height : 10%; /* same as background-image and background height */
+	height : 6%; /* same as background-image and background height */
 }
 
 #background-image {
 	position : relative;
-	top : 10%; /* same as variable-space and background height */
+	top : 6%; /* same as variable-space and background height */
 	height : 253px;
 	width : 100%;
 	background-image : url(graphics/background/background.jpg);
@@ -59,8 +61,7 @@ body {
  */
 #navigation-links {
 	position : relative;
-	top : 10%;
-	height : 253px;
+	top : 6%;
 	width : 320px;
 	left : 50%;
 	margin-left : -160px;
@@ -127,7 +128,7 @@ a#news:hover p .text { left : -220px; width : 240px; }
 
 a#workbench { 
 	position : absolute; 
-	top : 100px;
+	top : 80px;
 	width : 200px; 
 	left : 50%;
 	margin-left : -100px;
@@ -150,7 +151,7 @@ a#workbench:hover img {
 a#workbench:hover p .text {
 	width : 360px;
 	position : relative;
-	top : -105px;
+	top : -85px;
 	left : 50%;
 	margin-left : -180px;
 }
