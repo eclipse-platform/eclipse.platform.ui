@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.console;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -19,10 +20,16 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
@@ -56,6 +63,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
@@ -68,6 +76,7 @@ import org.eclipse.ui.console.IOConsoleOutputStream;
 import org.eclipse.ui.console.IPatternMatchListener;
 import org.eclipse.ui.console.PatternMatchEvent;
 import org.eclipse.ui.editors.text.EditorsUI;
+import org.eclipse.ui.part.FileEditorInput;
 
 /**
  * A console for a system process
@@ -118,16 +127,36 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         }
 
         if (file != null) {
+            IWorkspace workspace = ResourcesPlugin.getWorkspace();
+            IWorkspaceRoot root = workspace.getRoot();
+            Path path = new Path(file);
+            IFile ifile = root.getFileForLocation(path);
             String message = null;
+            
             try {
+                String fileLoc = null;
+                if (ifile != null) {
+                    if (append && ifile.exists()) {
+                        ifile.appendContents(new ByteArrayInputStream(new byte[0]), true, true, new NullProgressMonitor());
+                    } else {
+                        if (ifile.exists()) {
+                            ifile.delete(true, new NullProgressMonitor());
+                        }
+                        ifile.create(new ByteArrayInputStream(new byte[0]), true, new NullProgressMonitor());
+                    }
+                }
+                
                 File outputFile = new File(file);
                 fFileOutputStream = new FileOutputStream(outputFile, append);
-                String fileLoc = outputFile.getAbsolutePath();
+                fileLoc = outputFile.getAbsolutePath();
+                
                 message = MessageFormat.format(ConsoleMessages.getString("ProcessConsole.1"), new String[] {fileLoc}); //$NON-NLS-1$
                 addPatternMatchListener(new ConsoleLogFilePatternMatcher(fileLoc));
             } catch (FileNotFoundException e) {
                 DebugUIPlugin.log(e);
                 message = MessageFormat.format(ConsoleMessages.getString("ProcessConsole.2"), new String[] {file}); //$NON-NLS-1$
+            } catch (CoreException e) {
+                DebugUIPlugin.log(e);
             }
             if (message != null) { 
                 try { 
@@ -709,9 +738,19 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         }
         
         public void linkActivated() {
-            File file = new File(fFilePath);
-            LocalFileStorage lfs = new LocalFileStorage(file);
-            StorageEditorInput input = new StorageEditorInput(lfs, file);
+            IEditorInput input;
+            Path path = new Path(fFilePath);
+            IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+            IFile ifile = root.getFileForLocation(path);
+            if (ifile == null) { // The file is not in the workspace
+                File file = new File(fFilePath);
+                LocalFileStorage lfs = new LocalFileStorage(file);
+                input = new StorageEditorInput(lfs, file);
+
+            } else {
+                input = new FileEditorInput(ifile);
+            }
+            
             IWorkbenchPage activePage = DebugUIPlugin.getActiveWorkbenchWindow().getActivePage();
             try {
                 activePage.openEditor(input, EditorsUI.DEFAULT_TEXT_EDITOR_ID, true);
