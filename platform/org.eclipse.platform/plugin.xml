@@ -59,6 +59,24 @@
             <implementation
                   kind="swt">
             </implementation>
+            <launchBar location="right">
+               <shortcut
+                     tooltip="%shortcut.overview.tooltip"
+                     icon="css/graphics/icons/etool/overview.gif"
+                     url="http://org.eclipse.ui.intro/showPage?id=overview"/>
+               <shortcut
+                     tooltip="%shortcut.tutorials.tooltip"
+                     icon="css/graphics/icons/etool/tutorials.gif"
+                     url="http://org.eclipse.ui.intro/showPage?id=tutorials"/>
+               <shortcut
+                     tooltip="%shortcut.samples.tooltip"
+                     icon="css/graphics/icons/etool/samples.gif"
+                     url="http://org.eclipse.ui.intro/showPage?id=samples"/>
+               <shortcut
+                     tooltip="%shortcut.whatsnew.tooltip"
+                     icon="css/graphics/icons/etool/whatsnew.gif"
+                     url="http://org.eclipse.ui.intro/showPage?id=news"/>                                             
+            </launchBar>
          </presentation>
       </config>
    </extension>
