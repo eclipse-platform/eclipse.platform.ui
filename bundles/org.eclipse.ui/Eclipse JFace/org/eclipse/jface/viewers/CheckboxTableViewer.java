@@ -81,7 +81,12 @@ public void addCheckStateListener(ICheckStateListener listener) {
  * @return a new table control
  */
 protected static Table createTable(Composite parent, int style) {
-	return new Table(parent, SWT.CHECK | style);
+	Table table = new Table(parent, SWT.CHECK | style);
+	new TableColumn(table, SWT.NONE);
+	TableLayout layout = new TableLayout();
+	layout.addColumnData(new ColumnWeightData(100));
+	table.setLayout(layout);
+	return table;
 }
 /**
  * Notifies any check state listeners that a check state changed  has been received.
