@@ -24,6 +24,9 @@ import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.RemoteFileEditorInput;
 import org.eclipse.team.internal.ui.actions.TeamAction;
+import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IEditorRegistry;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 
@@ -65,17 +68,28 @@ public class OpenLogEntryAction extends TeamAction {
 	public void run(IAction action) {
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
-				IWorkbenchPage page = CVSUIPlugin.getPlugin().getWorkbench().getActiveWorkbenchWindow().getActivePage();
+				IWorkbench workbench = CVSUIPlugin.getPlugin().getWorkbench();
+				IEditorRegistry registry = workbench.getEditorRegistry();
+				IWorkbenchPage page = workbench.getActiveWorkbenchWindow().getActivePage();
 				final ILogEntry[] entries = getSelectedLogEntries();
 				for (int i = 0; i < entries.length; i++) {
-					try {
-						if (entries[i].isDeletion()) {
-							MessageDialog.openError(getShell(), Policy.bind("OpenLogEntryAction.deletedTitle"), Policy.bind("OpenLogEntryAction.deleted")); //$NON-NLS-1$ //$NON-NLS-2$
+					if (entries[i].isDeletion()) {
+						MessageDialog.openError(getShell(), Policy.bind("OpenLogEntryAction.deletedTitle"), Policy.bind("OpenLogEntryAction.deleted")); //$NON-NLS-1$ //$NON-NLS-2$
+					} else {
+						ICVSRemoteFile file = entries[i].getRemoteFile();
+						String filename = file.getName();
+						IEditorDescriptor descriptor = registry.getDefaultEditor(filename);
+						String id;
+						if (descriptor == null) {
+							id = "org.eclipse.ui.DefaultTextEditor"; //$NON-NLS-1$
 						} else {
-							page.openEditor(new RemoteFileEditorInput(entries[i].getRemoteFile()), "org.eclipse.ui.DefaultTextEditor"); //$NON-NLS-1$
+							id = descriptor.getId();
 						}
-					} catch (PartInitException e) {
-						throw new InvocationTargetException(e);
+						try {
+							page.openEditor(new RemoteFileEditorInput(file), id);
+						} catch (PartInitException e) {
+							throw new InvocationTargetException(e);
+						}
 					}
 				}
 			}
