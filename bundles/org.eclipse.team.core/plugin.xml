@@ -51,6 +51,8 @@
   <fileTypes extension="so" type="binary"/>
   <fileTypes extension="project" type="text"/>
   <fileTypes extension="options" type="text"/>
+  <fileTypes extension="emsd" type="text"/>
+  <fileTypes extension="mxsd" type="text"/>
 </extension>
 
 <extension point="org.eclipse.core.resources.fileModificationValidator" id="FileValidator">
