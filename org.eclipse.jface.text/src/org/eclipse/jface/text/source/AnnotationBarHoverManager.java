@@ -267,7 +267,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		fAllowMouseExit= false;
 		MouseEvent event= getHoverEvent();
 		IAnnotationHover hover= getHover(event);
-
+	
 		int line= getHoverLine(event);
 		
 		if (hover instanceof IAnnotationHoverExtension2) {
@@ -277,7 +277,10 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		} else if (hover instanceof IAnnotationHoverExtension) {
 			IAnnotationHoverExtension extension= (IAnnotationHoverExtension) hover;
 			setCustomInformationControlCreator(extension.getInformationControlCreator());
-			setInformation(extension.getHoverInfo(fSourceViewer, line, fSourceViewer.getTopIndex(), fSourceViewer.getBottomIndex()), computeArea(line));
+			
+			int startLine= fSourceViewer.getTopIndex();
+			int endLine= fSourceViewer.getBottomIndex();
+			setInformation(extension.getHoverInfo(fSourceViewer, line, startLine, endLine - startLine), computeArea(line));
 		} else {
 			setCustomInformationControlCreator(null);
 			setInformation(hover.getHoverInfo(fSourceViewer, line), computeArea(line));
@@ -417,7 +420,9 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		IAnnotationHover hover= getHover(event);
 
 		if (hover instanceof IAnnotationHoverExtension)  {
-			ITextSelection lineRange= ((IAnnotationHoverExtension) hover).getLineRange(fSourceViewer, getHoverLine(event), fSourceViewer.getTopIndex(), fSourceViewer.getBottomIndex());
+			int startLine= fSourceViewer.getTopIndex();
+			int endLine= fSourceViewer.getBottomIndex();
+			ITextSelection lineRange= ((IAnnotationHoverExtension) hover).getLineRange(fSourceViewer, getHoverLine(event), startLine, endLine - startLine);
 			if (lineRange != null && !lineRange.isEmpty())
 				return computeViewerRange(lineRange);
 		}
@@ -460,7 +465,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		StyledText textWidget= fSourceViewer.getTextWidget();
 		int lineHeight= textWidget.getLineHeight();
 		// note that this works independently of the widget2model mapping, since we just get the 
-		// pixels of the first paritally visible line, if there is one.
+		// pixels of the first partially visible line, if there is one.
 		int partial= (lineHeight - (textWidget.getTopPixel() % lineHeight)) % lineHeight;
 		int y= lineDelta * lineHeight + partial;
 		int x= 1; // avoids line overlay of the hover and the editor border.
