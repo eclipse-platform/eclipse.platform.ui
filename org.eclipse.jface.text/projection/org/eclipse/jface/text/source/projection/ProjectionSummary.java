@@ -18,7 +18,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ISynchronizable;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationAccess;
@@ -61,16 +63,42 @@ public class ProjectionSummary {
 	}
 	
 	public void updateSummaries(IProgressMonitor monitor) {
+		
+		Object previousLockObject= null;
 		fAnnotationModel= fProjectionViewer.getVisualAnnotationModel();
-		removeSummaries(monitor);
-		createSummaries(monitor);
+		if (fAnnotationModel == null)
+			return;
+		
+		try {
+			
+			
+			IDocument document= fProjectionViewer.getDocument();
+			if (document instanceof ISynchronizable && fAnnotationModel instanceof ISynchronizable) {
+				ISynchronizable sync= (ISynchronizable) fAnnotationModel;
+				previousLockObject= sync.getLockObject();
+				sync.setLockObject(((ISynchronizable) document).getLockObject());
+			}
+			
+			
+			removeSummaries(monitor);
+			createSummaries(monitor);
+			
+		} finally {
+			
+			if (fAnnotationModel instanceof ISynchronizable) {
+				ISynchronizable sync= (ISynchronizable) fAnnotationModel;
+				sync.setLockObject(previousLockObject);
+			}
+			fAnnotationModel= null;
+			
+		}
 	}
 	
 	private boolean isCanceled(IProgressMonitor monitor) {
 		return monitor != null && monitor.isCanceled();
 	}
 	
-	public void removeSummaries(IProgressMonitor monitor) {
+	private void removeSummaries(IProgressMonitor monitor) {
 		IAnnotationModelExtension extension= null;
 		List bags= null;
 		
@@ -101,7 +129,7 @@ public class ProjectionSummary {
 		}
 	}
 	
-	public void createSummaries(IProgressMonitor monitor) {
+	private void createSummaries(IProgressMonitor monitor) {
 		Map additions= new HashMap();
 		
 		ProjectionAnnotationModel model= fProjectionViewer.getProjectionAnnotationModel();
