@@ -5,10 +5,14 @@ package org.eclipse.team.internal.ccvs.core.client;
  * All Rights Reserved.
  */
  
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.ccvs.core.CVSStatus;
 import org.eclipse.team.ccvs.core.CVSTag;
+import org.eclipse.team.ccvs.core.ICVSFolder;
 import org.eclipse.team.ccvs.core.ICVSResource;
 import org.eclipse.team.ccvs.core.ICVSResourceVisitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
@@ -76,7 +80,17 @@ public class Checkout extends Command {
 		Assert.isTrue(session.getLocalRoot().isFolder());
 		
 		// Send the information about the local workspace resources to the server
-		new FileStructureVisitor(session, true, true, monitor).visit(session, resources);
+		List resourcesToSend = new ArrayList(resources.length);
+		for (int i = 0; i < resources.length; i++) {
+			ICVSResource resource = resources[i];
+			if (resource.exists() && resource.isFolder() && ((ICVSFolder)resource).isCVSFolder()) {
+				resourcesToSend.add(resource);
+			}
+		}
+		if ( ! resourcesToSend.isEmpty()) {
+			resources = (ICVSResource[]) resourcesToSend.toArray(new ICVSResource[resourcesToSend.size()]);
+			new FileStructureVisitor(session, true, true, monitor).visit(session, resources);
+		}
 	}
 
 	protected void sendLocalWorkingDirectory(Session session) throws CVSException {

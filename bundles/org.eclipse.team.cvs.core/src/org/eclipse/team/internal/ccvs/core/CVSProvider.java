@@ -139,15 +139,16 @@ public class CVSProvider implements ICVSProvider {
 					// delete children, keep project 
 					monitor.subTask(Policy.bind("CVSProvider.Scrubbing_local_project_1")); //$NON-NLS-1$
 					IResource[] children = project.members();
-					IProgressMonitor subMonitor = Policy.subMonitorFor(monitor, 90);
+					IProgressMonitor subMonitor = Policy.subMonitorFor(monitor, 80);
 					subMonitor.beginTask(null, children.length * 100);
 					try {
 						for (int j = 0; j < children.length; j++) {
-								children[j].delete(true /*force*/, Policy.subMonitorFor(subMonitor, 100));
+							children[j].delete(true /*force*/, Policy.subMonitorFor(subMonitor, 100));
 						}
 					} finally {
 						subMonitor.done();
 					}
+					CVSWorkspaceRoot.getCVSFolderFor(project).unmanage(Policy.subMonitorFor(monitor, 10));
 				}
 			}
 		} catch (CoreException e) {
@@ -540,8 +541,7 @@ public class CVSProvider implements ICVSProvider {
 	}
 	
 	private CVSException wrapException(CoreException e) {
-		CVSProviderPlugin.log(e.getStatus());
-		return new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, CVSException.UNABLE, Policy.bind("CVSProvider.exception"), e)); //$NON-NLS-1$
+		return new CVSException(e.getStatus()); //$NON-NLS-1$
 	}
 
 	public static void startup() {
