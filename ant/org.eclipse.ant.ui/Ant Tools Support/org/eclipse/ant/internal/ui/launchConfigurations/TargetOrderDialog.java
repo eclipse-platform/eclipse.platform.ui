@@ -12,7 +12,6 @@ package org.eclipse.ant.internal.ui.launchConfigurations;
 
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
@@ -57,20 +56,12 @@ public class TargetOrderDialog extends Dialog implements ISelectionChangedListen
 	protected Control createDialogArea(Composite parent) {
 		getShell().setText(AntLaunchConfigurationMessages.getString("TargetOrderDialog.Order_Targets_1")); //$NON-NLS-1$
 		
-		Composite comp = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout(2, false);
-		layout.marginHeight= convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
-		layout.marginWidth= convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
-		
-		comp.setLayout(layout);
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		comp.setLayoutData(gd);
-		comp.setFont(parent.getFont());
+		Composite comp = (Composite)super.createDialogArea(parent);
 		
 		Label label = new Label(comp, SWT.NONE);
 		label.setText(AntLaunchConfigurationMessages.getString("TargetOrderDialog.&Specify_target_execution_order__2")); //$NON-NLS-1$
 		label.setFont(comp.getFont());
-		gd = new GridData(GridData.FILL_HORIZONTAL);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);		
 		
