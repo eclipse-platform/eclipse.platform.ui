@@ -6,10 +6,4 @@
   plugin-id="codePluginF"
   plugin-version="1.0">
 
- <runtime>
-    <library name="codePluginF.jar">
-      <export name="org.eclipse.core.tests.internal.runtimetests.*"/>
-    </library>
-  </runtime>
-
 </fragment>

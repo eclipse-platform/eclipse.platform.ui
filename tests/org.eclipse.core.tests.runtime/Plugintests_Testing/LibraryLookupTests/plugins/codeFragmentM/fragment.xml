@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fragment
+  name="Code Fragment Test M"
+  id="codeFragmentM"
+  version="1.0.0"
+  plugin-id="codePluginM"
+  plugin-version="1.0">
+
+ <runtime>
+    <library name="codePluginM.jar">
+      <export name="org.eclipse.core.tests.internal.runtimetests.*"/>
+    </library>
+  </runtime>
+
+</fragment>

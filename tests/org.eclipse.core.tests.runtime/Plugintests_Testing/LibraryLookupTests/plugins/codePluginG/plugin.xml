@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+  name="Code Plugin TestG"
+  id="codePluginG"
+  version="1.0"
+  vendor-name="OTI"
+  class="org.eclipse.core.tests.internal.runtimetests.SampleGPR">
+
+</plugin>

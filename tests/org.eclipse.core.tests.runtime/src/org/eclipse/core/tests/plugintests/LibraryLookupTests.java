@@ -93,7 +93,7 @@ public void testResources() {
 	// The one in the plugin bin directory should be found first and %key
 	// translated to
 	// "Test string from pluginI bin directory".
-//	resourceHelper(registry, "plugini", "I", "Test string from pluginI bin directory");
+	resourceHelper(registry, "plugini", "I", "Test string from pluginI bin directory");
 
 	// PluginJ has two plugin.properties files
 	// 	<pluginRootDirectory>/bin/plugin.properties
@@ -137,7 +137,7 @@ public void testResources() {
 	// The one in the plugin bin directory should be found first and %key
 	// translated to
 	// "Test string from pluginN bin directory".
-//	resourceHelper(registry, "pluginn", "N", "Test string from pluginN bin directory");
+	resourceHelper(registry, "pluginn", "N", "Test string from pluginN bin directory");
 
 	// PluginH has four plugin.properties files
 	// 	<pluginRootDirectory>/plugin.properties
@@ -196,5 +196,56 @@ public void testCode() {
 	//	<fragmentRootDirectory>/codePluginF.jar (with class SampleFFR)
 	//	<fragmentRootDirectory>/bin/codePluginF.jar (with class SampleFFB).
 	codeHelper(registry, "codePluginF", "F", classNamePrefix + "SampleFFR");
+
+	// codePluginG has two jar files
+	//	<pluginRootDirectory>/codePluginG.jar (with class SampleGPR)
+	//	<fragmentRootDirectory>/codePluginG.jar (with class SampleGFR).
+	codeHelper(registry, "codePluginG", "G", classNamePrefix + "SampleGPR");
+
+	// codePluginH has two jar files
+	//	<pluginRootDirectory>/codePluginH.jar (with class SampleGHPR)
+	//	<fragmentRootDirectory>/bin/codePluginH.jar (with class SampleHFB).
+	codeHelper(registry, "codePluginH", "H", classNamePrefix + "SampleHPR");
+
+	// codePluginI has two jar files
+	//	<pluginRootDirectory>/bin/codePluginI.jar (with class SampleIPB)
+	//	<fragmentRootDirectory>/codePluginI.jar (with class SampleIFR).
+	codeHelper(registry, "codePluginI", "I", classNamePrefix + "SampleIPB");
+
+	// codePluginJ has two jar files
+	//	<pluginRootDirectory>/bin/codePluginJ.jar (with class SampleJPB)
+	//	<fragmentRootDirectory>/bin/codePluginJ.jar (with class SampleJFB).
+	codeHelper(registry, "codePluginJ", "J", classNamePrefix + "SampleJPB");
+
+	// codePluginK has three jar files
+	//	<pluginRootDirectory>/codePluginK.jar (with class SampleKPR)
+	//	<pluginRootDirectory>/bin/codePluginK.jar (with class SampleKPB)
+	//	<fragmentRootDirectory>/codePluginK.jar (with class SampleKFR).
+	codeHelper(registry, "codePluginK", "K", classNamePrefix + "SampleKPR");
+
+	// codePluginL has three jar files
+	//	<pluginRootDirectory>/codePluginL.jar (with class SampleLPR)
+	//	<pluginRootDirectory>/bin/codePluginL.jar (with class SampleLPB)
+	//	<fragmentRootDirectory>/bin/codePluginL.jar (with class SampleLFB).
+	codeHelper(registry, "codePluginL", "L", classNamePrefix + "SampleLPR");
+
+	// codePluginM has three jar files
+	//	<pluginRootDirectory>/codePluginM.jar (with class SampleMPR)
+	//	<fragmentRootDirectory>/codePluginM.jar (with class SampleMFR).
+	//	<fragmentRootDirectory>/bin/codePluginM.jar (with class SampleMFB).
+	codeHelper(registry, "codePluginM", "M", classNamePrefix + "SampleMPR");
+
+	// codePluginN has three jar files
+	//	<pluginRootDirectory>/bin/codePluginN.jar (with class SampleNPB)
+	//	<fragmentRootDirectory>/codePluginN.jar (with class SampleNFR).
+	//	<fragmentRootDirectory>/bin/codePluginN.jar (with class SampleNFB).
+	codeHelper(registry, "codePluginN", "N", classNamePrefix + "SampleNPR");
+
+	// codePluginO has four jar files
+	//	<pluginRootDirectory>/codePluginO.jar (with class SampleOPR)
+	//	<pluginRootDirectory>/bin/codePluginO.jar (with class SampleOPB)
+	//	<fragmentRootDirectory>/codePluginO.jar (with class SampleOFR).
+	//	<fragmentRootDirectory>/bin/codePluginO.jar (with class SampleOFB).
+	codeHelper(registry, "codePluginO", "O", classNamePrefix + "SampleOPR");
 }
 }

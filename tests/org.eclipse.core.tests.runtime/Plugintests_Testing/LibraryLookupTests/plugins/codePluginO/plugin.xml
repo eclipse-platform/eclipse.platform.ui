@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+  name="Code Plugin TestO"
+  id="codePluginO"
+  version="1.0"
+  vendor-name="OTI"
+  class="org.eclipse.core.tests.internal.runtimetests.SampleOPR">
+
+</plugin>
