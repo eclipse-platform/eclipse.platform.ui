@@ -28,7 +28,11 @@ public class HelpURLConnection extends URLConnection {
 	}
 	public InputStream getInputStream() throws IOException {
 		// must override parent implementation, since it does nothing.
-		return helpURL.openStream();
+		InputStream is = helpURL.openStream();
+		if (is == null) {
+			throw new IOException("Resource not found.");
+		}
+		return is;
 	}
 	public String getContentType() {
 		return helpURL.getContentType();

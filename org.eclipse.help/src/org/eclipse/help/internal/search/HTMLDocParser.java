@@ -50,9 +50,6 @@ public class HTMLDocParser {
 	 */
 	public void openDocument(URL url) throws IOException {
 		inputStream = url.openStream();
-		if (inputStream == null) {
-			throw new IOException(); // bug 26715
-		}
 
 		String encoding = getCharsetFromHTML(inputStream);
 		try {
@@ -60,9 +57,6 @@ public class HTMLDocParser {
 		} catch (IOException closeIOE) {
 		}
 		inputStream = url.openStream();
-		if (inputStream == null) {
-			throw new IOException(); // bug 26715
-		}
 		if (encoding != null) {
 			try {
 				htmlParser =

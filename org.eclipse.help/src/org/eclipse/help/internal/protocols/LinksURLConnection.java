@@ -26,6 +26,10 @@ public class LinksURLConnection extends URLConnection {
 	}
 	public InputStream getInputStream() throws IOException {
 		// must override parent implementation, since it does nothing.
-		return linksURL.openStream();
+		InputStream is = linksURL.openStream();
+		if (is == null) {
+			throw new IOException("Resource not found.");
+		}
+		return is;
 	}
 }

@@ -69,15 +69,20 @@ public class EclipseConnector {
 				"Cache-Control",
 				"max-age="
 					+ (con.getExpiration() - System.currentTimeMillis()));
-			InputStream is = con.getInputStream();
-			if (is == null
-				&& (url.toLowerCase().endsWith("htm")
-					|| url.toLowerCase().endsWith("html"))) {
-				String error =
-					errorPageBegin
-						+ WebappResources.getString("noTopic", req)
-						+ errorPageEnd;
-				is = new ByteArrayInputStream(error.getBytes("UTF8"));
+			InputStream is;
+			try {
+				is = con.getInputStream();
+			} catch (IOException ioe) {
+				if (url.toLowerCase().endsWith("htm")
+					|| url.toLowerCase().endsWith("html")) {
+					String error =
+						errorPageBegin
+							+ WebappResources.getString("noTopic", req)
+							+ errorPageEnd;
+					is = new ByteArrayInputStream(error.getBytes("UTF8"));
+				} else {
+					return;
+				}
 			}
 			OutputStream os = resp.getOutputStream();
 
