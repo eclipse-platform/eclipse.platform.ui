@@ -218,7 +218,11 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 			
 			try {
 				IStorage storage= input.getStorage();
+				// check for null for backward compatibility (we used to check before...)
+				if (storage == null)
+					return;
 				fProgressMonitor= monitor;
+				ISchedulingRule rule= getSchedulingRule(storage);
 
 				// this protects others from not being able to delete the file,
 				// and protects ourselves from concurrent access to fReference
@@ -230,7 +234,7 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 				// 2) we do not take long, or require other locks etc. -> short
 				// delay for any other job requiring the lock on file
 				try {
-					lockDocument(monitor, jobMgr, storage);
+					lockDocument(monitor, jobMgr, rule);
 					
 					String encoding;
 					if (storage instanceof IEncodedStorage)
@@ -242,7 +246,7 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 					
 					setDocumentContent(doc, storage, encoding, monitor, skipUTF8BOM);
 				} finally {
-					unlockDocument(jobMgr, storage);
+					unlockDocument(jobMgr, rule);
 					fProgressMonitor= null;
 				}
 				
@@ -266,15 +270,17 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 		}
 	}
 
+	private ISchedulingRule getSchedulingRule(IStorage storage) {
+		if (storage instanceof ISchedulingRule)
+			return (ISchedulingRule) storage;
+		else if (storage != null)
+			return (ISchedulingRule) storage.getAdapter(ISchedulingRule.class);
+		return null;
+	}
+
 	/* utility methods */
 
-	private void lockDocument(IProgressMonitor monitor, IJobManager jobMgr, IStorage storage) {
-		ISchedulingRule rule= null;
-		if (storage instanceof ISchedulingRule)
-			rule= (ISchedulingRule) storage;
-		else if (storage != null)
-			rule= (ISchedulingRule) storage.getAdapter(ISchedulingRule.class);
-		
+	private void lockDocument(IProgressMonitor monitor, IJobManager jobMgr, ISchedulingRule rule) {
 		if (rule != null) {
 			jobMgr.beginRule(rule, monitor);
 		} else synchronized (fDocumentAccessorLock) {
@@ -290,13 +296,7 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 		}
 	}
 
-	private void unlockDocument(IJobManager jobMgr, IStorage storage) {
-		ISchedulingRule rule= null;
-		if (storage instanceof ISchedulingRule)
-			rule= (ISchedulingRule) storage;
-		else if (storage != null)
-			rule= (ISchedulingRule) storage.getAdapter(ISchedulingRule.class);
-		
+	private void unlockDocument(IJobManager jobMgr, ISchedulingRule rule) {
 		if (rule != null) {
 			jobMgr.endRule(rule);
 		} else synchronized (fDocumentAccessorLock) {
