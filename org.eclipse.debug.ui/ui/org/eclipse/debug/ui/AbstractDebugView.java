@@ -604,7 +604,9 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		if (id != null) {
 			Integer state= memento.getInteger(id);
 			if (state != null) {
-				action.setChecked(state.intValue() == 1);
+				if (action.isEnabled()) {
+					action.setChecked(state.intValue() == 1);
+				}
 			}
 		}
 	}
