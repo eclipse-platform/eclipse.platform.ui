@@ -48,6 +48,8 @@ public class Bug43321Test extends UITestCase {
 	 * Tests that non-check box items on the menu are not checked when
 	 * activated from the keyboard.
 	 * 
+	 * @throws CoreException
+	 *            If the test project cannot be created and opened.
 	 * @throws ParseException
 	 *            If "CTRL+C" isn't a valid key stroke.
 	 */
