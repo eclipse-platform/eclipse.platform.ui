@@ -262,7 +262,7 @@ public boolean interpretHeaderInformation(DataInputStream in) {
 			(windowsStamp.equals(BootLoader.getWS())) &&
 			(localeStamp.equals(BootLoader.getNL())) );
 	} catch (IOException ioe) {
-		cacheReadProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", "HeaderInformation"), ioe)); //$NON-NLS-1$
+		cacheReadProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", "HeaderInformation"), ioe)); //$NON-NLS-1$ //$NON-NLS-2$
 		return false;
 	}
 }

@@ -292,7 +292,7 @@ public void writeHeaderInformation(DataOutputStream out) {
 		// locale stamp
 		out.writeUTF(BootLoader.getNL());
 	} catch (IOException ioe) {
-		cacheWriteProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", "HeaderInformation"), ioe)); //$NON-NLS-1$
+		cacheWriteProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", "HeaderInformation"), ioe)); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }
 public void writeLibrary(LibraryModel library, DataOutputStream out) {
