@@ -273,6 +273,7 @@ public abstract class PreferencePage
 				}
 			});
 			applyButton.setEnabled(isValid());
+			applyDialogFont(buttonBar);
 		} else {
 			/* Check if there are any other buttons on the button bar.
 			 * If not, throw away the button bar composite.  Otherwise
@@ -281,7 +282,6 @@ public abstract class PreferencePage
 			if (buttonBar.getChildren().length < 1)
 				buttonBar.dispose();
 		}
-		applyDialogFont(buttonBar);
 	}
 	
 	/**

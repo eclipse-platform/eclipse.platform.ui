@@ -986,6 +986,7 @@ public class PreferenceDialog
 					currentPage.createControl(pageContainer);
 				}
 				public void handleException(Throwable e) {
+					e.printStackTrace();
 					failed[0] = true;
 				}
 			});
