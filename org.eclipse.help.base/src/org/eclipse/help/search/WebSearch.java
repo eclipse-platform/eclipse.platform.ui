@@ -15,6 +15,7 @@ import java.net.URLEncoder;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.IHelpResource;
+import org.eclipse.help.internal.base.HelpBaseResources;
 
 /**
  * This implementation of <code>ISearchEngine</code> interface performs search
@@ -61,14 +62,14 @@ public final class WebSearch implements ISearchEngine {
 		}
 
 		public String getDescription() {
-			return "Click on this link to see the results";
+			return HelpBaseResources.getString("WebSearch.click"); //$NON-NLS-1$
 		}
 
 		public String getHref() {
 			String href = null;
 			String equery;
 			try {
-				equery = URLEncoder.encode(query, "UTF-8");
+				equery = URLEncoder.encode(query, "UTF-8"); //$NON-NLS-1$
 
 			} catch (UnsupportedEncodingException e) {
 				equery = query;
@@ -78,7 +79,7 @@ public final class WebSearch implements ISearchEngine {
 		}
 
 		public String getLabel() {
-			return "Web Search";
+			return HelpBaseResources.getString("WebSearch.label"); //$NON-NLS-1$
 		}
 
 		public float getScore() {
@@ -171,7 +172,7 @@ public final class WebSearch implements ISearchEngine {
 	}
 
 	private static String getVariable(String key, String query) {
-		if (key.equals("expression"))
+		if (key.equals("expression")) //$NON-NLS-1$
 			return query;
 		return key;
 	}

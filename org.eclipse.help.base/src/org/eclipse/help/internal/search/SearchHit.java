@@ -98,7 +98,7 @@ public class SearchHit implements ISearchEngineResult {
 	 * @return Returns the summary.
 	 */
 	public String getSummary() {
-		return summary!=null?(summary+"..."):null;
+		return summary!=null?(summary+"..."):null; //$NON-NLS-1$
 	}
 	/**
 	 * @param summary The summary to set.

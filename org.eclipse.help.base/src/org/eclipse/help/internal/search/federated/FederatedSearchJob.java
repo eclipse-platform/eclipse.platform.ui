@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.jobs.Job;
  * A federated search job.
  */
 public class FederatedSearchJob extends Job {
-	public static final String FAMILY = "org.eclipse.help.base.searchEngine";
+	public static final String FAMILY = "org.eclipse.help.base.searchEngine"; //$NON-NLS-1$
 	private String expression;
 	private FederatedSearchEntry entry;
 
