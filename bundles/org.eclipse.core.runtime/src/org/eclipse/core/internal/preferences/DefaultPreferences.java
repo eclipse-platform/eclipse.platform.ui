@@ -16,7 +16,8 @@ import java.util.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.preferences.*;
+import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
@@ -65,15 +66,13 @@ public class DefaultPreferences extends EclipsePreferences {
 		initializeChildren();
 
 		// cache the segment count
-		IPath path = new Path(absolutePath());
-		segmentCount = path.segmentCount();
+		String path = absolutePath();
+		segmentCount = getSegmentCount(path);
 		if (segmentCount < 2)
 			return;
 
 		// cache the qualifier
-		String scope = path.segment(0);
-		if (DefaultScope.SCOPE.equals(scope))
-			qualifier = path.segment(1);
+		qualifier = getSegment(path, 1);
 	}
 
 	/*

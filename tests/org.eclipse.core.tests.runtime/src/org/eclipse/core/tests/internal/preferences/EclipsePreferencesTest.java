@@ -1172,4 +1172,39 @@ public class EclipsePreferencesTest extends RuntimeTest {
 			assertEquals("c" + i + item.key, item.key, result[1]);
 		}
 	}
+
+	public void testGetSegment() {
+		String[][] data = new String[][] {new String[] {"instance", "/instance/foo", "0"}, //	
+				new String[] {"instance", "instance/foo", "0"}, //
+				new String[] {"instance", "instance", "0"}, //
+				new String[] {"instance", "instance", "0"}, //
+				new String[] {"foo", "/instance/foo", "1"}, //
+				new String[] {"foo", "instance/foo", "1"}, //
+				new String[] {"foo", "/instance/foo/", "1"}, //
+				new String[] {"foo", "instance/foo/", "1"}, //
+				new String[] {"foo", "/instance/foo/bar", "1"}, //
+				new String[] {null, "/instance", "1"}, //
+				new String[] {null, "instance", "1"}, //
+				new String[] {null, "instance/", "1"}, //
+		};
+		for (int i = 0; i < data.length; i++) {
+			String[] line = data[i];
+			assertEquals("1.0." + i + ':' + line[1] + " (" + line[2] + ')', line[0], EclipsePreferences.getSegment(line[1], Integer.parseInt(line[2])));
+		}
+	}
+
+	public void testGetSegmentCount() {
+		String[][] data = new String[][] {new String[] {"/instance/foo", "2"}, //
+				new String[] {"instance/foo", "2"}, //
+				new String[] {"/instance/foo/", "2"}, //
+				new String[] {"/instance", "1"}, //
+				new String[] {"instance", "1"}, //
+				new String[] {"/instance/", "1"}, //
+				new String[] {"instance/", "1"}, //
+		};
+		for (int i = 0; i < data.length; i++) {
+			String[] line = data[i];
+			assertEquals("1.0:" + line[0], Integer.parseInt(line[1]), EclipsePreferences.getSegmentCount(line[0]));
+		}
+	}
 }

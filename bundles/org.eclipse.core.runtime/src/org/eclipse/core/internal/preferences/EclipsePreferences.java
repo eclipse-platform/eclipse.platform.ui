@@ -1087,6 +1087,31 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	}
 
 	/*
+	 * Return the segment from the given path or null.
+	 * "segment" parameter is 0-based.
+	 */
+	public static String getSegment(String path, int segment) {
+		int start = path.indexOf(IPath.SEPARATOR) == 0 ? 1 : 0;
+		int end = path.indexOf(IPath.SEPARATOR, start);
+		if (end == path.length() - 1)
+			end = -1;
+		for (int i = 0; i < segment; i++) {
+			if (end == -1)
+				return null;
+			start = end + 1;
+			end = path.indexOf(IPath.SEPARATOR, start);
+		}
+		if (end == -1)
+			end = path.length();
+		return path.substring(start, end);
+	}
+
+	public static int getSegmentCount(String path) {
+		StringTokenizer tokenizer = new StringTokenizer(path, String.valueOf(IPath.SEPARATOR));
+		return tokenizer.countTokens();
+	}
+
+	/*
 	 * Return a relative path
 	 */
 	public static String makeRelative(String path) {

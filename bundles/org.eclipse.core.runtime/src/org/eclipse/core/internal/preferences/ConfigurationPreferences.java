@@ -15,7 +15,6 @@ import java.util.HashSet;
 import java.util.Set;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 
 /**
@@ -52,15 +51,13 @@ public class ConfigurationPreferences extends EclipsePreferences {
 		initializeChildren();
 
 		// cache the segment count
-		IPath path = new Path(absolutePath());
-		segmentCount = path.segmentCount();
+		String path = absolutePath();
+		segmentCount = getSegmentCount(path);
 		if (segmentCount < 2)
 			return;
 
 		// cache the qualifier
-		String scope = path.segment(0);
-		if (ConfigurationScope.SCOPE.equals(scope))
-			qualifier = path.segment(1);
+		qualifier = getSegment(path, 1);
 
 		// cache the location
 		if (qualifier == null)

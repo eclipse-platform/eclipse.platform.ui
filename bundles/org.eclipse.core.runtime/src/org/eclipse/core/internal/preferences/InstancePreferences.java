@@ -16,20 +16,16 @@ import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * @since 3.0
  */
 public class InstancePreferences extends EclipsePreferences {
 
-	private static final String DEFAULT_PREFERENCES_FILENAME = "prefs.ini"; //$NON-NLS-1$
-
 	// cached values
 	private String qualifier;
 	private int segmentCount;
-	private EclipsePreferences loadLevel;
+	private IEclipsePreferences loadLevel;
 	private IPath location;
 	// cache which nodes have been loaded from disk
 	private static Set loadedNodes = new HashSet();
@@ -53,15 +49,13 @@ public class InstancePreferences extends EclipsePreferences {
 		initializeChildren();
 
 		// cache the segment count
-		IPath path = new Path(absolutePath());
-		segmentCount = path.segmentCount();
+		String path = absolutePath();
+		segmentCount = getSegmentCount(path);
 		if (segmentCount < 2)
 			return;
 
 		// cache the qualifier
-		String scope = path.segment(0);
-		if (InstanceScope.SCOPE.equals(scope))
-			qualifier = path.segment(1);
+		qualifier = getSegment(path, 1);
 
 		// cache the location
 		if (qualifier == null)
@@ -162,9 +156,9 @@ public class InstancePreferences extends EclipsePreferences {
 			// Make it relative to this node rather than navigating to it from the root.
 			// Walk backwards up the tree starting at this node.
 			// This is important to avoid a chicken/egg thing on startup.
-			EclipsePreferences node = this;
+			IEclipsePreferences node = this;
 			for (int i = 2; i < segmentCount; i++)
-				node = (EclipsePreferences) node.parent();
+				node = (IEclipsePreferences) node.parent();
 			loadLevel = node;
 		}
 		return loadLevel;
