@@ -59,8 +59,6 @@ public class SpellingPreferencePage extends AbstractConfigurationBlockPreference
 	 * @see org.eclipse.ui.internal.editors.text.AbstractConfigurationBlockPreferencePage#setDescription()
 	 */
 	protected void setDescription() {
-		String description= TextEditorMessages.getString("SpellingConfigurationBlock.title"); //$NON-NLS-1$
-		setDescription(description);
 	}
 	
 	/*
