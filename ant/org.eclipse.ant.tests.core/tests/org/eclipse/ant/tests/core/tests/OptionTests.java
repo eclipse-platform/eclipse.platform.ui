@@ -7,6 +7,10 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
 
 import org.eclipse.ant.tests.core.AbstractAntTest;
@@ -96,11 +100,27 @@ public class OptionTests extends AbstractAntTest {
 	/**
 	 * Tests specifying the -logfile
 	 */
-	public void testLogFile() throws CoreException {
+	public void testLogFile() throws CoreException, IOException {
 		run("TestForEcho.xml", new String[]{"-logfile", "TestLogFile.txt"});
 		IFile file= checkFileExists("TestLogFile.txt");
-	//	InputStream stream =file.getContents();
-	//	stream.	
+		InputStream stream =file.getContents();
+		
+		InputStreamReader in= null;
+		try {		
+			in= new InputStreamReader(new BufferedInputStream(stream));
+			StringBuffer buffer= new StringBuffer();
+			char[] readBuffer= new char[2048];
+			int n= in.read(readBuffer);
+			while (n > 0) {
+				buffer.append(readBuffer, 0, n);
+				n= in.read(readBuffer);
+			}
+			assertTrue("File should have ended with echo3", buffer.toString().endsWith("echo3"));
+		} finally {
+			in.close();
+			stream.close();
+		}
+		
 	}
 	
 	/**
