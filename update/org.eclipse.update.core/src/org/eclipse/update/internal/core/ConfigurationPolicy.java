@@ -21,8 +21,7 @@ import org.eclipse.update.internal.core.Policy;
 /**
  * 
  */
-public class ConfigurationPolicy extends ConfigurationPolicyModel{
-
+public class ConfigurationPolicy extends ConfigurationPolicyModel {
 
 	private IConfiguredSite configuredSite;
 
@@ -31,8 +30,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel{
 	 */
 	public ConfigurationPolicy() {
 	}
-	
-	
+
 	/**
 	 * Copy Constructor for ConfigurationPolicyModel.
 	 */
@@ -43,7 +41,6 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel{
 		setUnconfiguredFeatureReferences(configPolicy.getUnconfiguredFeatures());
 		setConfiguredSite(configPolicy.getConfiguredSite());
 	}
-
 
 	/**
 	 * @since 2.0
@@ -58,22 +55,22 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel{
 	/*package*/
 	void configure(IFeatureReference featureReference) throws CoreException {
 
+		if (featureReference == null)
+			return;
 
-		if (featureReference==null) return;
-		
-		//Start UOW ?
+		//FIXME: Start UOW ?
 		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_CONFIGURE);
 		IFeature feature = featureReference.getFeature();
-		if (feature!=null){
+		if (feature != null) {
 			activity.setLabel(feature.getVersionedIdentifier().toString());
 			activity.setDate(new Date());
-	
-			addConfiguredFeatureReference((FeatureReferenceModel)featureReference);
-	
+
+			addConfiguredFeatureReference((FeatureReferenceModel) featureReference);
+
 			// everything done ok
 			activity.setStatus(IActivity.STATUS_OK);
-			((InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration()).addActivityModel((ConfigurationActivityModel)activity);
-		} 
+			((InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration()).addActivityModel((ConfigurationActivityModel) activity);
+		}
 	}
 
 	/**
@@ -81,52 +78,28 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel{
 	 * adds teh feature to teh list of features if the policy is USER_EXCLUDE
 	 */
 	/*package*/
-	boolean unconfigure(IFeatureReference featureReference,IProblemHandler handler) throws CoreException {
+	boolean unconfigure(IFeatureReference featureReference) throws CoreException {
 
-		if (featureReference==null) return false;
-		
-		boolean unconfigure = true;
-		String uniqueId = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-		MultiStatus multiStatus = new MultiStatus(uniqueId, IStatus.WARNING, Policy.bind("ConfigurationPolicy.RequiredPlugins"), null); //$NON-NLS-1$
+		if (featureReference == null)
+			return false;
 
-		// plugins to remove	
-		ISite site = configuredSite.getSite();
-		IFeature feature = featureReference.getFeature();	
-		IPluginEntry[] pluginsToRemove = site.getPluginEntriesOnlyReferencedBy(feature);
+		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_UNCONFIGURE);
+		activity.setLabel(featureReference.getFeature().getVersionedIdentifier().toString());
+		activity.setDate(new Date());
 
-		// all other plugins that are configured
-		IPluginDescriptor[] descriptors = Platform.getPluginRegistry().getPluginDescriptors();
+		addUnconfiguredFeatureReference((FeatureReferenceModel) featureReference);
 
-		for (int i = 0; i < descriptors.length; i++) {
-			if (require(descriptors[i], pluginsToRemove)) {
-				Status status = new Status(IStatus.WARNING, uniqueId, IStatus.OK, descriptors[i].getUniqueIdentifier(), null);
-				multiStatus.add(status);
-			}
-		}
+		// everything done ok
+		activity.setStatus(IActivity.STATUS_OK);
+		((InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration()).addActivityModel((ConfigurationActivityModel) activity);
 
-		if (multiStatus.getChildren().length > 0 && handler!=null) {
-			unconfigure = handler.reportProblem(Policy.bind("ConfigurationPolicy.DoYouWantToUnconfigure"), multiStatus); //$NON-NLS-1$
-		}
-
-		if (unconfigure) {
-			ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_UNCONFIGURE);
-			activity.setLabel(featureReference.getFeature().getVersionedIdentifier().toString());
-			activity.setDate(new Date());
-
-			addUnconfiguredFeatureReference((FeatureReferenceModel)featureReference);
-
-			// everything done ok
-			activity.setStatus(IActivity.STATUS_OK);
-			((InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration()).addActivityModel((ConfigurationActivityModel)activity);
-			return true;
-		}
-		
-		return false;
+		return true;
 	}
 
 	/**
 	 * Returns true if the pluginDescriptor requires one or more pluginEntry
 	 * and the pluginDescriptor is not part of the pluginEntries
+	 * @deprecated (remove we are not in the runtime business)
 	 */
 	private boolean require(IPluginDescriptor descriptor, IPluginEntry[] entries) {
 		boolean result = false;
@@ -144,7 +117,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel{
 	 * are not 'unconfigured' if the type is Exclude or 'configured' if the type is Include
 	 */
 	/*package*/
-	String[] getPluginPath(ISite site,String[] include) throws CoreException {
+	String[] getPluginPath(ISite site, String[] include) throws CoreException {
 		String[] result = new String[0];
 
 		// which features
@@ -163,12 +136,13 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel{
 			for (int i = 0; i < arrayOfFeatureRef.length; i++) {
 				IFeatureReference element = arrayOfFeatureRef[i];
 				IFeature feature = element.getFeature();
-				IPluginEntry[] entries = (feature==null)?new IPluginEntry[0]:feature.getPluginEntries();
+				IPluginEntry[] entries = (feature == null) ? new IPluginEntry[0] : feature.getPluginEntries();
 
 				for (int index = 0; index < entries.length; index++) {
 					IPluginEntry entry = entries[index];
 					// obtain the path of the plugin directories on the site	
-					ContentReference[] featureContentReference = feature.getFeatureContentProvider().getPluginEntryArchiveReferences(entry, null/*IProgressMonitor*/);
+					ContentReference[] featureContentReference = feature.getFeatureContentProvider().getPluginEntryArchiveReferences(entry, null /*IProgressMonitor*/
+					);
 					for (int j = 0; j < featureContentReference.length; j++) {
 						URL url = site.getSiteContentProvider().getArchiveReference(featureContentReference[j].getIdentifier());
 						if (url != null) {
@@ -190,27 +164,23 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel{
 				pluginsString.toArray(result);
 			}
 		}
-		
+
 		// remove from include the plugins that should not be saved 
 		String[] toInclude = null;
 		if (getPolicy() == IPlatformConfiguration.ISitePolicy.USER_EXCLUDE) {
 			if (getConfiguredFeatures() != null)
-				toInclude = remove(getConfiguredFeatures(),include);
+				toInclude = delta(getConfiguredFeatures(), include);
 		} else {
 			if (getUnconfiguredFeatures() != null)
-				toInclude = remove(getUnconfiguredFeatures(),include);
-		}		
-		
+				toInclude = delta(getUnconfiguredFeatures(), include);
+		}
+
 		// FIXME 
 		//result = union(toInclude,result);
 
 		return result;
 	}
 
-	
-	
-	
-	
 	/**
 	 * @since 2.0
 	 */
@@ -219,7 +189,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel{
 		if (result.length == 0)
 			return new IFeatureReference[0];
 		else
-			return (IFeatureReference[])result;
+			return (IFeatureReference[]) result;
 	}
 
 	/**
@@ -230,12 +200,12 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel{
 		if (result.length == 0)
 			return new IFeatureReference[0];
 		else
-			return (IFeatureReference[])result;
+			return (IFeatureReference[]) result;
 	}
 
-/**
-	 * Returns and array with the union of plugins
-	 */
+	/**
+		 * Returns and array with the union of plugins
+		 */
 	private String[] union(String[] targetArray, String[] sourceArray) {
 
 		// No string 
@@ -250,7 +220,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel{
 
 		// if a String from sourceArray is NOT in
 		// targetArray, add it to targetArray
-		List list1 =  new ArrayList();
+		List list1 = new ArrayList();
 		list1.addAll(Arrays.asList(targetArray));
 		for (int i = 0; i < sourceArray.length; i++) {
 			if (!list1.contains(sourceArray[i]))
@@ -264,23 +234,21 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel{
 		return resultEntry;
 	}
 
-	String[] remove(IFeatureReference[] arrayOfFeatureRef, String[] include){
-		if (arrayOfFeatureRef==null || arrayOfFeatureRef.length<1)
+	private String[] delta(IFeatureReference[] arrayOfFeatureRef, String[] include) {
+		if (arrayOfFeatureRef == null || arrayOfFeatureRef.length < 1)
 			return include;
-		
-		if (include==null || include.length<1)
+
+		if (include == null || include.length < 1)
 			return include;
-			
+
 		String[] result = include;
-		
+
 		// we need to figure out which plugin SHOULD NOT be written and
 		// remove them from include
 		// we need to get a URL[] 
-		
+
 		return result;
 	}
-
-
 
 	/**
 	 * Gets the configuredSite.

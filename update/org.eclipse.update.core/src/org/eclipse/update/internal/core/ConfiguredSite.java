@@ -189,20 +189,22 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 		activity.setDate(new Date());
 
 		try {
-			IFeatureReference referenceToUnconfigure = null;
+			FeatureReferenceModel referenceToRemove = null;
 			FeatureReferenceModel[] featureRef = getSiteModel().getFeatureReferenceModels();
+			IFeatureReference ref = getSite().getFeatureReference(feature);			
+			
 			for (int i = 0; i < featureRef.length; i++) {
-				if (featureRef[i].equals(feature)) {
-					referenceToUnconfigure = (IFeatureReference) featureRef[i];
+				if (featureRef[i].equals(ref)) {
+					referenceToRemove = featureRef[i];
 					break;
 				}
 			}
 			
 			// UI will check. For non-UI application, throw error is feature is configured
-			if (referenceToUnconfigure!=null){
-				if (getConfigurationPolicy().isConfigured(referenceToUnconfigure)){
-					IFeature featureToUnconfigure = referenceToUnconfigure.getFeature();
-					String featureLabel = (featureToUnconfigure==null)?null:featureToUnconfigure.getLabel();
+			if (referenceToRemove!=null){
+				if (getConfigurationPolicy().isConfigured(referenceToRemove)){
+					IFeature featureToRemove = ((IFeatureReference)referenceToRemove).getFeature();
+					String featureLabel = (featureToRemove==null)?null:featureToRemove.getLabel();
 					throw Utilities.newCoreException("Unable to remove a configured feature: {0} You must unconfigure the feature first"+featureLabel,null);
 				}
 			} else {
@@ -211,6 +213,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 			}
 			
 			getSite().remove(feature, monitor);
+			getConfigurationPolicy().removeFeatureReference(referenceToRemove);
 
 			// everything done ok
 			activity.setStatus(IActivity.STATUS_OK);
@@ -230,7 +233,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 	}
 
 	/*
-	 * @see IConfiguredSite#configure(IFeatureReference)
+	 * @see IConfiguredSite#configure(IFeature)
 	 */
 	public void configure(IFeature feature) throws CoreException {
 		IFeatureReference featureReference = getSite().getFeatureReference(feature);
@@ -238,11 +241,11 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 	}
 
 	/*
-	 * @see IConfiguredSite#unconfigure(IFeatureReference)
+	 * @see IConfiguredSite#unconfigure(IFeature)
 	 */
-	public boolean unconfigure(IFeature feature, IProblemHandler handler) throws CoreException {
+	public boolean unconfigure(IFeature feature) throws CoreException {
 		IFeatureReference featureReference = getSite().getFeatureReference(feature);		
-		return ((ConfigurationPolicy) getConfigurationPolicyModel()).unconfigure(featureReference,handler);
+		return ((ConfigurationPolicy) getConfigurationPolicyModel()).unconfigure(featureReference);
 	}
 
 	/*

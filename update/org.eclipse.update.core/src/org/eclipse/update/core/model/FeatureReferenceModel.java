@@ -3,7 +3,7 @@ package org.eclipse.update.core.model;
 /*
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
- */ 
+ */
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -21,13 +21,14 @@ import org.eclipse.update.core.ISite;
  */
 
 public class FeatureReferenceModel extends ModelObject {
-	
+
 	private String type;
 	private URL url;
-	private String urlString;	
+	private String urlString;
 	private SiteModel site;
-	private List /* of String*/ categoryNames;
-	
+	private List /* of String*/
+	categoryNames;
+
 	/**
 	 * Creates an uninitialized model object.
 	 * 
@@ -37,22 +38,23 @@ public class FeatureReferenceModel extends ModelObject {
 		super();
 	}
 
-/**
- * 
- * @since 2.0 
- */
+	/**
+	 * 
+	 * @since 2.0 
+	 */
 
-public boolean equals(Object object) {
-	if (!(object instanceof IFeatureReference))
-		return false;
-	if (getURL()==null) return false;
-	
-	FeatureReferenceModel f = (FeatureReferenceModel) object;
-	return (getURL().equals(f.getURL()));
+	public boolean equals(Object object) {
 
-}
+		if (object == null)
+			return false;
+		if (getURL() == null)
+			return false;
 
-
+		if (!(object instanceof FeatureReferenceModel)) return false;
+		
+		FeatureReferenceModel f = (FeatureReferenceModel) object;
+		return (getURL().equals(f.getURL()));
+	}
 
 	/**
 	 * @since 2.0
@@ -67,14 +69,14 @@ public boolean equals(Object object) {
 	public SiteModel getSiteModel() {
 		return site;
 	}
-	
+
 	/**
 	 * @since 2.0
-	 */	
+	 */
 	public String getURLString() {
 		return urlString;
 	}
-	
+
 	/**
 	 * Returns the resolved URL for the feature reference.
 	 * 
@@ -87,11 +89,11 @@ public boolean equals(Object object) {
 
 	/**
 	 * @since 2.0
-	 */	
-	public String[] getCategoryNames() {		
+	 */
+	public String[] getCategoryNames() {
 		if (categoryNames == null)
 			return new String[0];
-			
+
 		return (String[]) categoryNames.toArray(new String[0]);
 	}
 
@@ -110,7 +112,7 @@ public boolean equals(Object object) {
 		assertIsWriteable();
 		this.site = site;
 	}
-	
+
 	/**
 	 * @since 2.0
 	 */
@@ -149,14 +151,13 @@ public boolean equals(Object object) {
 		if (this.categoryNames != null)
 			this.categoryNames.remove(categoryName);
 	}
-	
+
 	/**
 	 * @since 2.0
 	 */
 	public void resolve(URL base, ResourceBundle bundle) throws MalformedURLException {
 		// resolve local elements
-		url = resolveURL(base, bundle,urlString);
+		url = resolveURL(base, bundle, urlString);
 	}
-	
-	
-	}
+
+}

@@ -320,7 +320,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 					// unconfigure everything from this site so it is still present
 					IFeatureReference[] featuresToUnconfigure = nowConfigSites[i].getSite().getFeatureReferences();
 					for (int j = 0; j < featuresToUnconfigure.length; j++) {
-						nowConfigSites[i].unconfigure(featuresToUnconfigure[j].getFeature(), null);
+						nowConfigSites[i].unconfigure(featuresToUnconfigure[j].getFeature());
 					}
 				}
 			}

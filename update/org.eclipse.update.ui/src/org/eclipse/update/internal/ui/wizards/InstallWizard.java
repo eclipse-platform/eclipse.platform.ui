@@ -187,7 +187,7 @@ public class InstallWizard extends Wizard {
 	private boolean unconfigure(IFeature feature) throws CoreException {
 		IConfiguredSite site = findConfigSite(feature);
 		if (site != null) {
-			return site.unconfigure(feature, new UIProblemHandler());
+			return site.unconfigure(feature);
 		}
 		return false;
 	}

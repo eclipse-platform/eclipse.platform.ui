@@ -90,7 +90,7 @@ public interface IConfiguredSite {
 	 * @since 2.0 
 	 */
 
-	boolean unconfigure(IFeature feature,IProblemHandler handler) throws CoreException;
+	boolean unconfigure(IFeature feature) throws CoreException;
 
 	/**
 	 * returns the feature used in this configurationSite

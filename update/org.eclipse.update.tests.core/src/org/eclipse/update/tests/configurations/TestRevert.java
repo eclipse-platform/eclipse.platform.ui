@@ -60,7 +60,7 @@ public class TestRevert extends UpdateManagerTestCase {
 		IFeatureReference installedFeature = configSite.install(feature,null,null);
 		site.save();
 
-		configSite.unconfigure(installedFeature.getFeature(),null);
+		configSite.unconfigure(installedFeature.getFeature());
 
 		IFeature feature2 = featureRef2.getFeature();
 		IInstallConfiguration newConfig2 = site.cloneCurrentConfiguration();

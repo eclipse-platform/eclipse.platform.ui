@@ -181,6 +181,18 @@ public class ConfigurationPolicyModel extends ModelObject {
 		}
 	}
 
+	/**
+	 * removes a feature from any list
+	 */
+	public void removeFeatureReference(FeatureReferenceModel feature) {
+		assertIsWriteable();
+		if (unconfiguredFeatureReferences!=null)
+			remove(feature, unconfiguredFeatureReferences);	
+
+		if (configuredFeatureReferences != null) {
+			remove(feature, configuredFeatureReferences);
+		}
+	}
 	
 	
 	/**

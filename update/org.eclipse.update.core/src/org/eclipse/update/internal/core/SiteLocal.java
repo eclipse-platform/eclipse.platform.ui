@@ -607,10 +607,10 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 							int result = compare(featureToCompare, possibleFeatureReference[j]);
 							if (result != 0) {
 								if (result == 1) {
-									configuredSites[i].unconfigure(possibleFeatureReference[j].getFeature(), null);
+									configuredSites[i].unconfigure(possibleFeatureReference[j].getFeature());
 								};
 								if (result == 2) {
-									configuredSites[indexConfiguredSites].unconfigure(featureToCompare.getFeature(), null);
+									configuredSites[indexConfiguredSites].unconfigure(featureToCompare.getFeature());
 									// do not break, we can continue, even if the feature is unconfigured
 									// if we find another feature in another site, we may unconfigure it.
 									// but it would have been unconfigured anyway because we confured another version of the same feature
