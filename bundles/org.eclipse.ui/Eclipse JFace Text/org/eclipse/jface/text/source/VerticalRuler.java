@@ -205,6 +205,25 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 		dest.drawImage(fBuffer, 0, 0);
 	}
 	
+	/*
+	 * Returns the document offset of the upper left corner of the widgets viewport,
+	 * possibly including partially visible lines.
+	 */
+	private static int getInclusiveTopIndexStartOffset(StyledText text, IDocument document, int visibleRegionOffset) {
+		
+		if (text != null) {	
+			int top= text.getTopIndex();
+			if ((text.getTopPixel() % text.getLineHeight()) != 0)
+				top--;
+			try {
+				top= document.getLineOffset(top -  visibleRegionOffset);
+				return top + visibleRegionOffset;
+			} catch (BadLocationException ex) {
+			}
+		}
+		
+		return -1;
+	}
 	
 	/**
 	 * Draws the vertical ruler w/o drawing the Canvas background.
@@ -214,19 +233,21 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 		if (fModel == null || fTextViewer == null)
 			return;
 
-		int topLeft= fTextViewer.getTopIndexStartOffset();
+		StyledText styledText= fTextViewer.getTextWidget();
+		IDocument doc= fTextViewer.getDocument();
+
+		int topLeft= getInclusiveTopIndexStartOffset(styledText, doc, fTextViewer.getVisibleRegion().getOffset());
+//		int topLeft= fTextViewer.getTopIndexStartOffset();
 		int bottomRight= fTextViewer.getBottomIndexEndOffset();
 		int viewPort= bottomRight - topLeft;
-		
-		IDocument doc= fTextViewer.getDocument();
-		StyledText styledText= fTextViewer.getTextWidget();
-		
 		
 		Point d= fCanvas.getSize();
 		fScrollPos= styledText.getTopPixel();
 		int lineheight= styledText.getLineHeight();
 			
 		int shift= fTextViewer.getTopInset();
+		
+		System.err.println("top inset = " + shift);
 		
 		int topLine= -1, bottomLine= -1;
 		try {

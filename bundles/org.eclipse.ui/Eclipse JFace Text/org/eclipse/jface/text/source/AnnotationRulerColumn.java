@@ -212,6 +212,26 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 		
 		dest.drawImage(fBuffer, 0, 0);
 	}
+
+	/*
+	 * Returns the document offset of the upper left corner of the widgets viewport,
+	 * possibly including partially visible lines.
+	 */
+	private static int getInclusiveTopIndexStartOffset(StyledText text, IDocument document, int visibleRegionOffset) {
+		
+		if (text != null) {	
+			int top= text.getTopIndex();
+			if ((text.getTopPixel() % text.getLineHeight()) != 0)
+				top--;
+			try {
+				top= document.getLineOffset(top -  visibleRegionOffset);
+				return top + visibleRegionOffset;
+			} catch (BadLocationException ex) {
+			}
+		}
+		
+		return -1;
+	}
 	
 	/**
 	 * Draws the vertical ruler w/o drawing the Canvas background.
@@ -221,7 +241,8 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 		if (fModel == null || fCachedTextViewer == null)
 			return;
 
-		int topLeft= fCachedTextViewer.getTopIndexStartOffset();
+		int topLeft= getInclusiveTopIndexStartOffset(fCachedTextWidget, fCachedTextViewer.getDocument(), fCachedTextViewer.getVisibleRegion().getOffset());
+//		int topLeft= fCachedTextViewer.getTopIndexStartOffset();
 		int bottomRight= fCachedTextViewer.getBottomIndexEndOffset();
 		int viewPort= bottomRight - topLeft;
 		
