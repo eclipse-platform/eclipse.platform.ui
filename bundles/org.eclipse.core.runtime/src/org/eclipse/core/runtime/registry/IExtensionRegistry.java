@@ -27,7 +27,6 @@ package org.eclipse.core.runtime.registry;
  * </p>
  * @since 3.0
  */
-//TODO: check missing @param and @return and explain if returns null / empty array
 public interface IExtensionRegistry {
 	/**
 	* Adds the given listener for registry change events related to the given element.
