@@ -56,7 +56,7 @@ These plugins are listed in the workbench preferences and the user may disable a
 Since release 3.0.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.IStartup"/>
                </appInfo>
             </annotation>
          </attribute>
