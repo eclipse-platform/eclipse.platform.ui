@@ -9,6 +9,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -177,6 +179,11 @@ private void initializeDialog() {
 	selectionGroup.addSelectionChangedListener(new ISelectionChangedListener() {
 		public void selectionChanged(SelectionChangedEvent event) {
 			getOkButton().setEnabled(!selectionGroup.getListTableSelection().isEmpty());
+		}
+	});
+	selectionGroup.addDoubleClickListener(new IDoubleClickListener() {
+		public void doubleClick(DoubleClickEvent event) {
+			buttonPressed(0);
 		}
 	});
 

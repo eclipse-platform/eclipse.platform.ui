@@ -7,10 +7,12 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
-import java.util.Collection;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -36,7 +38,8 @@ import org.eclipse.swt.widgets.Tree;
 public class TreeAndListGroup implements ISelectionChangedListener {
 	private Object root;
 	private Object currentTreeSelection;
-	private Collection listeners = new HashSet();
+	private List selectionChangedListeners = new ArrayList();
+	private List doubleClickListeners= new ArrayList();
 
 	private ITreeContentProvider treeContentProvider;
 	private IStructuredContentProvider listContentProvider;
@@ -92,17 +95,38 @@ public class TreeAndListGroup implements ISelectionChangedListener {
 	 *	@param listener ISelectionChangedListener
 	 */
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
-		listeners.add(listener);
+		selectionChangedListeners.add(listener);
+	}
+	
+	/**
+	 * Add the given listener to the collection of clients that listen to
+	 * double-click events in the list viewer
+	 * 
+	 * @param listener IDoubleClickListener
+	 */
+	public void addDoubleClickListener(IDoubleClickListener listener) {
+		doubleClickListeners.add(listener);
 	}
 
 	/**
-	 *	Notify				all checked state listeners that the passed element
-	 *has had its checked state changed to the passed state
-		 */
+	 * Notify all selection listeners that a selection has occurred in the list
+	 * viewer
+	 */
 	protected void notifySelectionListeners(SelectionChangedEvent event) {
-		Iterator listenersEnum = listeners.iterator();
-		while (listenersEnum.hasNext()) {
-			 ((ISelectionChangedListener) listenersEnum.next()).selectionChanged(event);
+		Iterator iter = selectionChangedListeners.iterator();
+		while (iter.hasNext()) {
+			 ((ISelectionChangedListener) iter.next()).selectionChanged(event);
+		}
+	}
+	
+	/**
+	 * Notify all double click listeners that a double click event has occurred
+	 * in the list viewer
+	 */
+	protected void notifyDoubleClickListeners(DoubleClickEvent event) {
+		Iterator iter= doubleClickListeners.iterator();
+		while (iter.hasNext()) {
+			((IDoubleClickListener) iter.next()).doubleClick(event);
 		}
 	}
 
@@ -151,6 +175,11 @@ public class TreeAndListGroup implements ISelectionChangedListener {
 		listViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				notifySelectionListeners(event);
+			}
+		});
+		listViewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				notifyDoubleClickListeners(event);
 			}
 		});
 	}
