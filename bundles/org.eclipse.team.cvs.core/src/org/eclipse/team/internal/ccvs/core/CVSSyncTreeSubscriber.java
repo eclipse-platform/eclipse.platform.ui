@@ -306,16 +306,25 @@ public abstract class CVSSyncTreeSubscriber extends TeamSubscriber {
 	 * @see org.eclipse.team.core.sync.ISyncTreeSubscriber#isSupervised(org.eclipse.core.resources.IResource)
 	 */
 	public boolean isSupervised(IResource resource) throws TeamException {
-		RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId());
-		if (provider == null) return false;
-		// TODO: what happens for resources that don't exist?
-		// TODO: is it proper to use ignored here?
-		ICVSResource cvsThing = CVSWorkspaceRoot.getCVSResourceFor(resource);
-		if (cvsThing.isIgnored()) {
-			// An ignored resource could have an incoming addition (conflict)
-			return getRemoteSynchronizer().hasRemote(resource);
+		try {
+			RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId());
+			if (provider == null) return false;
+			// TODO: what happens for resources that don't exist?
+			// TODO: is it proper to use ignored here?
+			ICVSResource cvsThing = CVSWorkspaceRoot.getCVSResourceFor(resource);
+			if (cvsThing.isIgnored()) {
+				// An ignored resource could have an incoming addition (conflict)
+				return getRemoteSynchronizer().hasRemote(resource);
+			}
+			return true;
+		} catch (TeamException e) {
+			// If there is no resource in coe this measn there is no local and no remote
+			// so the resource is not supervised.
+			if (e.getStatus().getCode() == IResourceStatus.RESOURCE_NOT_FOUND) {
+				return false;
+			}
+			throw e;
 		}
-		return true;
 	}
 	
 	/* (non-Javadoc)
