@@ -10,7 +10,7 @@
  * Contributors:
  *     GEBIT Gesellschaft fuer EDV-Beratung und Informatik-Technologien mbH - initial API and implementation
  * 	   IBM Corporation - bug fixes
- *     John-Mason P. Shackelford (john-mason.shackelford@pearson.com) - bug 49383, 58299, 59024
+ *     John-Mason P. Shackelford (john-mason.shackelford@pearson.com) - bug 49383, 56299, 59024
  *******************************************************************************/
 
 package org.eclipse.ant.internal.ui.editor;
