@@ -82,9 +82,9 @@ public class IndexToolApplication
 			delete(indexPath);
 		}
 		// index
-		HelpSystem.getSearchManager().updateIndex(
+		BaseHelpSystem.getSearchManager().updateIndex(
 			new NullProgressMonitor(),
-			HelpSystem.getSearchManager().getIndex(locale.toString()));
+			BaseHelpSystem.getSearchManager().getIndex(locale.toString()));
 		// zip up
 		File d =
 			new File(outputDir, "nl" + File.separator + locale.getLanguage());

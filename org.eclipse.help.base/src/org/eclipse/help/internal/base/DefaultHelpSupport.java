@@ -38,7 +38,7 @@ public class DefaultHelpSupport implements IHelp {
 		// Do not start help view if documentaton is not available, display error
 		if (getTocs().length == 0) {
 			// There is no documentation
-			HelpSystem.getDefaultErrorUtil().displayError(
+			BaseHelpSystem.getDefaultErrorUtil().displayError(
 				HelpBaseResources.getString("WW001"));
 			//Documentation is not installed.
 			return;
@@ -124,7 +124,7 @@ public class DefaultHelpSupport implements IHelp {
 		String topic) { // Do not start help view if documentaton is not available, display error
 		if (getTocs().length == 0) {
 			// There is no documentation
-			HelpSystem.getDefaultErrorUtil().displayError(
+			BaseHelpSystem.getDefaultErrorUtil().displayError(
 				HelpBaseResources.getString("WW001"));
 			//Documentation is not installed.
 			return;
@@ -194,27 +194,27 @@ public class DefaultHelpSupport implements IHelp {
 	 * The url can contain query parameters to identify how help displays the document
 	 */
 	void displayHelpURL(String helpURL) {
-		if (!HelpSystem.ensureWebappRunning()) {
-			HelpSystem.getDefaultErrorUtil().displayError(
+		if (!BaseHelpSystem.ensureWebappRunning()) {
+			BaseHelpSystem.getDefaultErrorUtil().displayError(
 				HelpBaseResources.getString("E043"));
 			return;
 		}
 
 		try {
 			if (helpURL == null || helpURL.length() == 0) {
-				HelpSystem.getHelpBrowser().displayURL(getBaseURL());
+				BaseHelpSystem.getHelpBrowser().displayURL(getBaseURL());
 			} else if (
 				helpURL.startsWith("tab=")
 					|| helpURL.startsWith("toc=")
 					|| helpURL.startsWith("topic=")
 					|| helpURL.startsWith("contextId=")) {
-				HelpSystem.getHelpBrowser().displayURL(
+				BaseHelpSystem.getHelpBrowser().displayURL(
 					getBaseURL() + "?" + helpURL);
 			} else {
-				HelpSystem.getHelpBrowser().displayURL(helpURL);
+				BaseHelpSystem.getHelpBrowser().displayURL(helpURL);
 			}
 		} catch (Exception e) {
-			HelpSystem.getDefaultErrorUtil().displayError(e.getMessage());
+			BaseHelpSystem.getDefaultErrorUtil().displayError(e.getMessage());
 		}
 	}
 	/**

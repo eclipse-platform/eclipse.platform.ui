@@ -140,7 +140,7 @@ public class SearchProgressMonitor implements IProgressMonitor {
 		Thread indexer = new Thread(new Runnable() {
 			public void run() {
 				try {
-					HelpSystem.getSearchManager().search(
+					BaseHelpSystem.getSearchManager().search(
 						new DummySearchQuery(locale),
 						dummy_collector,
 						pm);

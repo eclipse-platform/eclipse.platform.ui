@@ -25,8 +25,8 @@ import org.eclipse.help.internal.workingset.*;
 /**
  * The actual implementation of the help system plugin.
  */
-public final class HelpSystem {
-	protected static final HelpSystem instance = new HelpSystem();
+public final class BaseHelpSystem {
+	protected static final BaseHelpSystem instance = new BaseHelpSystem();
 
 	private final static String WEBAPP_EXTENSION_ID = HelpBasePlugin.PLUGIN_ID+".webapp";
 	private static final String WEBAPP_DEFAULT_ATTRIBUTE = "default";
@@ -54,10 +54,10 @@ public final class HelpSystem {
 	/**
 	 * HelpSystem constructor comment.
 	 */
-	private HelpSystem() {
+	private BaseHelpSystem() {
 		super();
 	}
-	public static HelpSystem getInstance() {
+	public static BaseHelpSystem getInstance() {
 		return instance;
 	}
 	/**
@@ -66,7 +66,7 @@ public final class HelpSystem {
 	 */
 	public static SearchManager getSearchManager() {
 		if (getInstance().searchManager == null) {
-			synchronized (HelpSystem.class) {
+			synchronized (BaseHelpSystem.class) {
 				if (getInstance().searchManager == null) {
 					getInstance().searchManager = new SearchManager();
 				}
@@ -109,7 +109,7 @@ public final class HelpSystem {
 	}
 	/**
 	 */
-	public HelpSystem newInstance() {
+	public BaseHelpSystem newInstance() {
 		return null;
 	}
 

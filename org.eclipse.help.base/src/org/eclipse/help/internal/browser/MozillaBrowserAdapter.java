@@ -165,7 +165,7 @@ public class MozillaBrowserAdapter implements IBrowser {
 						"MozillaBrowserAdapter.executeFailed",
 						executableName);
 				HelpBasePlugin.logError(msg, e);
-				HelpSystem.getDefaultErrorUtil().displayError(msg, uiThread);
+				BaseHelpSystem.getDefaultErrorUtil().displayError(msg, uiThread);
 				// return success, so second command does not execute
 				return 0;
 			}

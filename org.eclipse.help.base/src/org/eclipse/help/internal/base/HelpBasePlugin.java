@@ -94,7 +94,7 @@ public class HelpBasePlugin extends Plugin {
 	 *   this plug-in 
 	 */
 	public void shutdown() throws CoreException {
-		HelpSystem.shutdown();
+		BaseHelpSystem.shutdown();
 	}
 	/**
 	 * Starts up this plug-in.
@@ -134,7 +134,7 @@ public class HelpBasePlugin extends Plugin {
 			DEBUG_SEARCH = "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.help.base/debug/search")); //$NON-NLS-1$
 		}
 
-		HelpSystem.startup();
+		BaseHelpSystem.startup();
 	}
 
 	/**

@@ -105,7 +105,7 @@ public class BrowserManager {
 							String msg =
 								HelpBaseResources.getString("no_browsers", url);
 							HelpBasePlugin.logError(msg, null);
-							HelpSystem.getDefaultErrorUtil().displayError(msg);
+							BaseHelpSystem.getDefaultErrorUtil().displayError(msg);
 						}
 						public boolean isCloseSupported() {
 							return false;

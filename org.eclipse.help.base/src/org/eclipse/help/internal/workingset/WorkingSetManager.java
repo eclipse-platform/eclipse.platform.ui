@@ -466,12 +466,12 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 	}
 	public String getCurrentWorkingSet() {
 		return HelpBasePlugin.getDefault().getPluginPreferences().getString(
-			HelpSystem.WORKING_SET);
+			BaseHelpSystem.WORKING_SET);
 	}
 
 	public void setCurrentWorkingSet(String workingSet) {
 		HelpBasePlugin.getDefault().getPluginPreferences().setValue(
-				HelpSystem.WORKING_SET,
+				BaseHelpSystem.WORKING_SET,
 				workingSet);
 			HelpBasePlugin.getDefault().savePluginPreferences();
 	}

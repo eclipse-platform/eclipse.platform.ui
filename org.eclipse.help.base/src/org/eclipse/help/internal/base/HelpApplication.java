@@ -48,7 +48,7 @@ public class HelpApplication
 	 * Runs help service application.
 	 */
 	public Object run(Object args) throws Exception {
-		if (!HelpSystem.ensureWebappRunning()) {
+		if (!BaseHelpSystem.ensureWebappRunning()) {
 			System.out.println(
 				"Help web application could not start.  Check log file for details.");
 			return EXIT_OK;
@@ -78,9 +78,9 @@ public class HelpApplication
 		Object data) {
 		String value = (String) ((Map) data).get("mode");
 		if ("infocenter".equalsIgnoreCase(value)) {
-			HelpSystem.setMode(HelpSystem.MODE_INFOCENTER);
+			BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
 		} else if ("standalone".equalsIgnoreCase(value)) {
-			HelpSystem.setMode(HelpSystem.MODE_STANDALONE);
+			BaseHelpSystem.setMode(BaseHelpSystem.MODE_STANDALONE);
 		}
 	}
 	private void writeHostAndPort() throws IOException {
