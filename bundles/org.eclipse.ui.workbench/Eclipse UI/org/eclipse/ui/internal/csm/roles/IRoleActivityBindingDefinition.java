@@ -9,15 +9,13 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.csm.activities;
+package org.eclipse.ui.internal.csm.roles;
 
-public interface IPatternBindingDefinition extends Comparable {
+public interface IRoleActivityBindingDefinition extends Comparable {
 
 	String getActivityId();
 
-	String getPattern();
-
 	String getPluginId();
 	
-	boolean isInclusive();
+	String getRoleId();	
 }

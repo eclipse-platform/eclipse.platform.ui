@@ -63,7 +63,7 @@ final class Persistence {
 		return list;				
 	}	
 	
-	static IPatternBindingDefinition readPatternBindingDefinition(IMemento memento, String pluginIdOverride) {
+	static IActivityPatternBindingDefinition readActivityPatternBindingDefinition(IMemento memento, String pluginIdOverride) {
 		if (memento == null)
 			throw new NullPointerException();			
 
@@ -71,10 +71,10 @@ final class Persistence {
 		boolean inclusive = Boolean.valueOf(memento.getString(TAG_INCLUSIVE)).booleanValue();
 		String pattern = memento.getString(TAG_PATTERN);
 		String pluginId = pluginIdOverride != null ? pluginIdOverride : memento.getString(TAG_PLUGIN_ID);
-		return new PatternBindingDefinition(activityId, inclusive, pattern, pluginId);
+		return new ActivityPatternBindingDefinition(activityId, inclusive, pattern, pluginId);
 	}
 
-	static List readPatternBindingDefinitions(IMemento memento, String name, String pluginIdOverride) {
+	static List readActivityPatternBindingDefinitions(IMemento memento, String name, String pluginIdOverride) {
 		if (memento == null || name == null)
 			throw new NullPointerException();			
 	
@@ -86,7 +86,7 @@ final class Persistence {
 		List list = new ArrayList(mementos.length);
 	
 		for (int i = 0; i < mementos.length; i++)
-			list.add(readPatternBindingDefinition(mementos[i], pluginIdOverride));
+			list.add(readActivityPatternBindingDefinition(mementos[i], pluginIdOverride));
 	
 		return list;				
 	}
@@ -118,30 +118,30 @@ final class Persistence {
 			writeActivityDefinition(memento.createChild(name), (IActivityDefinition) iterator.next());
 	}	
 	
-	static void writePatternBindingDefinition(IMemento memento, IPatternBindingDefinition patternBindingDefinition) {
-		if (memento == null || patternBindingDefinition == null)
+	static void writeActivityPatternBindingDefinition(IMemento memento, IActivityPatternBindingDefinition activityPatternBindingDefinition) {
+		if (memento == null || activityPatternBindingDefinition == null)
 			throw new NullPointerException();
 
-		memento.putString(TAG_ACTIVITY_ID, patternBindingDefinition.getActivityId());
-		memento.putString(TAG_INCLUSIVE, Boolean.toString(patternBindingDefinition.isInclusive()));
-		memento.putString(TAG_PATTERN, patternBindingDefinition.getActivityId());
-		memento.putString(TAG_PLUGIN_ID, patternBindingDefinition.getPluginId());
+		memento.putString(TAG_ACTIVITY_ID, activityPatternBindingDefinition.getActivityId());
+		memento.putString(TAG_INCLUSIVE, Boolean.toString(activityPatternBindingDefinition.isInclusive()));
+		memento.putString(TAG_PATTERN, activityPatternBindingDefinition.getActivityId());
+		memento.putString(TAG_PLUGIN_ID, activityPatternBindingDefinition.getPluginId());
 	}
 
-	static void writePatternBindingDefinitions(IMemento memento, String name, List patternBindingDefinitions) {
-		if (memento == null || name == null || patternBindingDefinitions == null)
+	static void writeActivityPatternBindingDefinitions(IMemento memento, String name, List activityPatternBindingDefinitions) {
+		if (memento == null || name == null || activityPatternBindingDefinitions == null)
 			throw new NullPointerException();
 		
-		patternBindingDefinitions = new ArrayList(patternBindingDefinitions);
-		Iterator iterator = patternBindingDefinitions.iterator();
+		activityPatternBindingDefinitions = new ArrayList(activityPatternBindingDefinitions);
+		Iterator iterator = activityPatternBindingDefinitions.iterator();
 
 		while (iterator.hasNext())
-			Util.assertInstance(iterator.next(), IPatternBindingDefinition.class);
+			Util.assertInstance(iterator.next(), IActivityPatternBindingDefinition.class);
 
-		iterator = patternBindingDefinitions.iterator();
+		iterator = activityPatternBindingDefinitions.iterator();
 
 		while (iterator.hasNext()) 
-			writePatternBindingDefinition(memento.createChild(name), (IPatternBindingDefinition) iterator.next());
+			writeActivityPatternBindingDefinition(memento.createChild(name), (IActivityPatternBindingDefinition) iterator.next());
 	}
 
 	private Persistence() {

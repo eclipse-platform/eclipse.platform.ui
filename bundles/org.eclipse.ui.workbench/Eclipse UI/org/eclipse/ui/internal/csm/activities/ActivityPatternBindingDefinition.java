@@ -19,33 +19,33 @@ import java.util.Map;
 
 import org.eclipse.ui.internal.util.Util;
 
-final class PatternBindingDefinition implements IPatternBindingDefinition {
+final class ActivityPatternBindingDefinition implements IActivityPatternBindingDefinition {
 
 	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = PatternBindingDefinition.class.getName().hashCode();
+	private final static int HASH_INITIAL = ActivityPatternBindingDefinition.class.getName().hashCode();
 
-	static Map patternBindingDefinitionsByActivityId(Collection patternBindingDefinitions, boolean allowNullNames) {
-		if (patternBindingDefinitions == null)
+	static Map activityPatternBindingDefinitionsByActivityId(Collection activityPatternBindingDefinitions, boolean allowNullNames) {
+		if (activityPatternBindingDefinitions == null)
 			throw new NullPointerException();
 
 		Map map = new HashMap();			
-		Iterator iterator = patternBindingDefinitions.iterator();
+		Iterator iterator = activityPatternBindingDefinitions.iterator();
 		
 		while (iterator.hasNext()) {
 			Object object = iterator.next();
-			Util.assertInstance(object, IPatternBindingDefinition.class);			
-			IPatternBindingDefinition patternBindingDefinition = (IPatternBindingDefinition) object;
-			String activityId = patternBindingDefinition.getActivityId();
+			Util.assertInstance(object, IActivityPatternBindingDefinition.class);			
+			IActivityPatternBindingDefinition activityPatternBindingDefinition = (IActivityPatternBindingDefinition) object;
+			String activityId = activityPatternBindingDefinition.getActivityId();
 			
 			if (allowNullNames || activityId != null) {
-				Collection patternBindingDefinitions2 = (Collection) map.get(activityId);
+				Collection activityPatternBindingDefinitions2 = (Collection) map.get(activityId);
 					
-				if (patternBindingDefinitions2 == null) {
-					patternBindingDefinitions2 = new ArrayList();
-					map.put(activityId, patternBindingDefinitions2);					
+				if (activityPatternBindingDefinitions2 == null) {
+					activityPatternBindingDefinitions2 = new ArrayList();
+					map.put(activityId, activityPatternBindingDefinitions2);					
 				}
 	
-				patternBindingDefinitions2.add(patternBindingDefinition);		
+				activityPatternBindingDefinitions2.add(activityPatternBindingDefinition);		
 			}											
 		}				
 	
@@ -61,7 +61,7 @@ final class PatternBindingDefinition implements IPatternBindingDefinition {
 	private transient boolean hashCodeComputed;
 	private transient String string;
 
-	PatternBindingDefinition(String activityId, boolean inclusive, String pattern, String pluginId) {
+	ActivityPatternBindingDefinition(String activityId, boolean inclusive, String pattern, String pluginId) {
 		this.activityId = activityId;
 		this.inclusive = inclusive;
 		this.pattern = pattern;
@@ -69,17 +69,17 @@ final class PatternBindingDefinition implements IPatternBindingDefinition {
 	}
 	
 	public int compareTo(Object object) {
-		PatternBindingDefinition patternBindingDefinition = (PatternBindingDefinition) object;
-		int compareTo = Util.compare(activityId, patternBindingDefinition.activityId);
+		ActivityPatternBindingDefinition activityPatternBindingDefinition = (ActivityPatternBindingDefinition) object;
+		int compareTo = Util.compare(activityId, activityPatternBindingDefinition.activityId);
 
 		if (compareTo == 0) {		
-			compareTo = Util.compare(inclusive, patternBindingDefinition.inclusive);			
+			compareTo = Util.compare(inclusive, activityPatternBindingDefinition.inclusive);			
 		
 			if (compareTo == 0) {		
-				compareTo = Util.compare(pattern, patternBindingDefinition.pattern);				
+				compareTo = Util.compare(pattern, activityPatternBindingDefinition.pattern);				
 		
 				if (compareTo == 0)
-					compareTo = Util.compare(pluginId, patternBindingDefinition.pluginId);							
+					compareTo = Util.compare(pluginId, activityPatternBindingDefinition.pluginId);							
 			}
 		}
 		
@@ -87,15 +87,15 @@ final class PatternBindingDefinition implements IPatternBindingDefinition {
 	}
 	
 	public boolean equals(Object object) {
-		if (!(object instanceof PatternBindingDefinition))
+		if (!(object instanceof ActivityPatternBindingDefinition))
 			return false;
 
-		PatternBindingDefinition patternBindingDefinition = (PatternBindingDefinition) object;	
+		ActivityPatternBindingDefinition activityPatternBindingDefinition = (ActivityPatternBindingDefinition) object;	
 		boolean equals = true;
-		equals &= Util.equals(activityId, patternBindingDefinition.activityId);
-		equals &= Util.equals(inclusive, patternBindingDefinition.inclusive);
-		equals &= Util.equals(pattern, patternBindingDefinition.pattern);
-		equals &= Util.equals(pluginId, patternBindingDefinition.pluginId);
+		equals &= Util.equals(activityId, activityPatternBindingDefinition.activityId);
+		equals &= Util.equals(inclusive, activityPatternBindingDefinition.inclusive);
+		equals &= Util.equals(pattern, activityPatternBindingDefinition.pattern);
+		equals &= Util.equals(pluginId, activityPatternBindingDefinition.pluginId);
 		return equals;
 	}
 

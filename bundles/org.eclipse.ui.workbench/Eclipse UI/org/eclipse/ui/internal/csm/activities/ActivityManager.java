@@ -46,14 +46,14 @@ public final class ActivityManager implements IActivityManager {
 	}	
 
 	private Set activeActivityIds = new HashSet();
+	private Map activitiesById = new HashMap();
+	private Map activityDefinitionsById = new HashMap();
 	private IActivityManagerEvent activityManagerEvent;
 	private List activityManagerListeners;
-	private Map activityDefinitionsById = new HashMap();
-	private Map activitiesById = new HashMap();
+	private Map activityPatternBindingDefinitionsByActivityId = new HashMap();
 	private Set definedActivityIds = new HashSet();
 	private Set enabledActivityIds = new HashSet();	
 	private ExtensionActivityRegistry extensionActivityRegistry;
-	private Map patternBindingDefinitionsByActivityId = new HashMap();
 	private Map patternBindingsByActivityId = new HashMap();	
 
 	public ActivityManager() {
@@ -201,24 +201,24 @@ public final class ActivityManager implements IActivityManager {
 			if (!isActivityDefinitionChildOf(null, (String) iterator.next(), activityDefinitionsById))
 				iterator.remove();
 
-		Collection patternBindingDefinitions = new ArrayList();
-		patternBindingDefinitions.addAll(extensionActivityRegistry.getPatternBindingDefinitions());
-		Map patternBindingDefinitionsByActivityId = new HashMap(PatternBindingDefinition.patternBindingDefinitionsByActivityId(patternBindingDefinitions, false));
+		Collection activityPatternBindingDefinitions = new ArrayList();
+		activityPatternBindingDefinitions.addAll(extensionActivityRegistry.getActivityPatternBindingDefinitions());
+		Map activityPatternBindingDefinitionsByActivityId = new HashMap(ActivityPatternBindingDefinition.activityPatternBindingDefinitionsByActivityId(activityPatternBindingDefinitions, false));
 
-		for (Iterator iterator = patternBindingDefinitionsByActivityId.values().iterator(); iterator.hasNext();) {
-			IPatternBindingDefinition patternBindingDefinition = (IPatternBindingDefinition) iterator.next();
-			String pattern = patternBindingDefinition.getPattern();
+		for (Iterator iterator = activityPatternBindingDefinitionsByActivityId.values().iterator(); iterator.hasNext();) {
+			IActivityPatternBindingDefinition activityPatternBindingDefinition = (IActivityPatternBindingDefinition) iterator.next();
+			String pattern = activityPatternBindingDefinition.getPattern();
 				
 			if (pattern == null || pattern.length() == 0)
 				iterator.remove();
 		}
 
-		for (Iterator iterator = patternBindingDefinitionsByActivityId.keySet().iterator(); iterator.hasNext();)
+		for (Iterator iterator = activityPatternBindingDefinitionsByActivityId.keySet().iterator(); iterator.hasNext();)
 			if (!activityDefinitionsById.containsKey(iterator.next()))
 				iterator.remove();		
 
 		this.activityDefinitionsById = activityDefinitionsById;
-		this.patternBindingDefinitionsByActivityId = patternBindingsByActivityId;			
+		this.activityPatternBindingDefinitionsByActivityId = activityPatternBindingDefinitionsByActivityId;			
 		boolean activityManagerChanged = false;			
 		Set definedActivityIds = new TreeSet(activityDefinitionsById.keySet());		
 

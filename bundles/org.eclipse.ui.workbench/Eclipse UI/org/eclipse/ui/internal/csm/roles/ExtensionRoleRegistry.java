@@ -26,8 +26,8 @@ import org.eclipse.ui.internal.util.ConfigurationElementMemento;
 
 final class ExtensionRoleRegistry extends AbstractRoleRegistry {
 
-	private List activityBindingDefinitions;
 	private IExtensionRegistry extensionRegistry;
+	private List roleActivityBindingDefinitions;
 	private List roleDefinitions;
 	
 	ExtensionRoleRegistry(IExtensionRegistry extensionRegistry) {
@@ -56,10 +56,10 @@ final class ExtensionRoleRegistry extends AbstractRoleRegistry {
 
 	private void load()
 		throws IOException {	
-		if (activityBindingDefinitions == null)
-			activityBindingDefinitions = new ArrayList();
+		if (roleActivityBindingDefinitions == null)
+			roleActivityBindingDefinitions = new ArrayList();
 		else 
-			activityBindingDefinitions.clear();
+			roleActivityBindingDefinitions.clear();
 
 		if (roleDefinitions == null)
 			roleDefinitions = new ArrayList();
@@ -73,15 +73,15 @@ final class ExtensionRoleRegistry extends AbstractRoleRegistry {
 			String name = configurationElement.getName();
 
 			if (Persistence.TAG_ACTIVITY_BINDING.equals(name))
-				readActivityBindingDefinition(configurationElement);
+				readRoleActivityBindingDefinition(configurationElement);
 			else if (Persistence.TAG_ROLE.equals(name))
 				readRoleDefinition(configurationElement);			
 		}
 
 		boolean roleRegistryChanged = false;
 			
-		if (!activityBindingDefinitions.equals(super.activityBindingDefinitions)) {
-			super.activityBindingDefinitions = Collections.unmodifiableList(activityBindingDefinitions);		
+		if (!roleActivityBindingDefinitions.equals(super.roleActivityBindingDefinitions)) {
+			super.roleActivityBindingDefinitions = Collections.unmodifiableList(roleActivityBindingDefinitions);		
 			roleRegistryChanged = true;
 		}				
 
@@ -107,11 +107,11 @@ final class ExtensionRoleRegistry extends AbstractRoleRegistry {
 		return pluginId;
 	}
 
-	private void readActivityBindingDefinition(IConfigurationElement configurationElement) {
-		IActivityBindingDefinition activityBindingDefinition = Persistence.readActivityBindingDefinition(new ConfigurationElementMemento(configurationElement), getPluginId(configurationElement));
+	private void readRoleActivityBindingDefinition(IConfigurationElement configurationElement) {
+		IRoleActivityBindingDefinition roleActivityBindingDefinition = Persistence.readRoleActivityBindingDefinition(new ConfigurationElementMemento(configurationElement), getPluginId(configurationElement));
 	
-		if (activityBindingDefinition != null)
-			activityBindingDefinitions.add(activityBindingDefinition);	
+		if (roleActivityBindingDefinition != null)
+			roleActivityBindingDefinitions.add(roleActivityBindingDefinition);	
 	}
 	
 	private void readRoleDefinition(IConfigurationElement configurationElement) {

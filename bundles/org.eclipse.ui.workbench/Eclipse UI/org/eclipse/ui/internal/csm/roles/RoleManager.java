@@ -30,10 +30,10 @@ import org.eclipse.ui.roles.IRoleManagerListener;
 
 public final class RoleManager implements IRoleManager {
 
-	private Map activityBindingDefinitionsByRoleId = new HashMap();
 	private Map activityBindingsByRoleId = new HashMap();	
 	private Set definedRoleIds = new HashSet();
 	private ExtensionRoleRegistry extensionRoleRegistry;
+	private Map roleActivityBindingDefinitionsByRoleId = new HashMap();
 	private Map roleDefinitionsById = new HashMap();
 	private IRoleManagerEvent roleManagerEvent;
 	private List roleManagerListeners;	
@@ -123,24 +123,24 @@ public final class RoleManager implements IRoleManager {
 				iterator.remove();
 		}
 
-		Collection activityBindingDefinitions = new ArrayList();
-		activityBindingDefinitions.addAll(extensionRoleRegistry.getActivityBindingDefinitions());
-		Map activityBindingDefinitionsByRoleId = new HashMap(ActivityBindingDefinition.activityBindingDefinitionsByRoleId(activityBindingDefinitions, false));
+		Collection roleActivityBindingDefinitions = new ArrayList();
+		roleActivityBindingDefinitions.addAll(extensionRoleRegistry.getRoleActivityBindingDefinitions());
+		Map roleActivityBindingDefinitionsByRoleId = new HashMap(RoleActivityBindingDefinition.roleActivityBindingDefinitionsByRoleId(roleActivityBindingDefinitions, false));
 
-		for (Iterator iterator = activityBindingDefinitionsByRoleId.values().iterator(); iterator.hasNext();) {
-			IActivityBindingDefinition activityBindingDefinition = (IActivityBindingDefinition) iterator.next();
+		for (Iterator iterator = roleActivityBindingDefinitionsByRoleId.values().iterator(); iterator.hasNext();) {
+			IRoleActivityBindingDefinition activityBindingDefinition = (IRoleActivityBindingDefinition) iterator.next();
 			String roleId = activityBindingDefinition.getRoleId();
 				
 			if (roleId == null || roleId.length() == 0)
 				iterator.remove();
 		}
 
-		for (Iterator iterator = activityBindingDefinitionsByRoleId.keySet().iterator(); iterator.hasNext();)
+		for (Iterator iterator = roleActivityBindingDefinitionsByRoleId.keySet().iterator(); iterator.hasNext();)
 			if (!roleDefinitionsById.containsKey(iterator.next()))
 				iterator.remove();		
 
 		this.roleDefinitionsById = roleDefinitionsById;
-		this.activityBindingDefinitionsByRoleId = activityBindingsByRoleId;			
+		this.roleActivityBindingDefinitionsByRoleId = roleActivityBindingDefinitionsByRoleId;			
 		boolean roleManagerChanged = false;			
 		Set definedRoleIds = new TreeSet(roleDefinitionsById.keySet());		
 
