@@ -143,11 +143,15 @@ protected void addChildren(UnifiedTreeNode node) throws CoreException {
  */
 protected UnifiedTreeNode createChildForLinkedResource(IResource target) {
 	IPath location = target.getLocation();
-	if (location == null)
-		return null;
-	String locationString = location.toOSString();
-	long stat = CoreFileSystemLibrary.getStat(locationString);
-	return createNode(target, stat, locationString, location.lastSegment(), true);
+	long stat = 0;
+	String locationString = null;
+	String name = null;
+	if (location != null) {
+		locationString = location.toOSString();
+		name = location.lastSegment();
+		stat = CoreFileSystemLibrary.getStat(locationString);
+	}
+	return createNode(target, stat, locationString, name, true);
 }
 protected void addChildrenFromFileSystem(UnifiedTreeNode node, String parentLocalLocation, Object[] list, int index) throws CoreException {
 	if (list == null)
@@ -172,6 +176,8 @@ protected void addElementToQueue(UnifiedTreeNode target) {
  * Creates a string representing the OS path for the given parent and child name.
  */
 protected String createChildLocation(String parentLocation, String childLocation) {
+	if (parentLocation == null)
+		return null;
 	StringBuffer buffer = new StringBuffer(parentLocation.length() + childLocation.length() + 1);
 	buffer.append(parentLocation);
 	buffer.append(java.io.File.separatorChar);
@@ -193,12 +199,15 @@ protected void addNodeChildrenToQueue(UnifiedTreeNode node) throws CoreException
 		addElementToQueue(levelMarker);
 }
 protected void addRootToQueue() throws CoreException {
-	//can't refresh a resource with an undefined location
-	if (rootLocalLocation == null)
-		return;
-	String rootLocationString = rootLocalLocation.toOSString();
-	long stat = CoreFileSystemLibrary.getStat(rootLocationString);
-	UnifiedTreeNode node = createNode(root, stat, rootLocationString, rootLocalLocation.lastSegment(), root.exists());
+	long stat = 0;
+	String rootLocationString = null;
+	String name = null;
+	if (rootLocalLocation != null) {
+		rootLocationString = rootLocalLocation.toOSString();
+		name = rootLocalLocation.lastSegment();
+		stat = CoreFileSystemLibrary.getStat(rootLocationString);
+	}
+	UnifiedTreeNode node = createNode(root, stat, rootLocationString, name, root.exists());
 	if (!node.existsInFileSystem() && !node.existsInWorkspace())
 		return;
 	addElementToQueue(node);
@@ -263,6 +272,8 @@ protected Enumeration getChildren(UnifiedTreeNode node) throws CoreException {
 }
 
 protected  String getLocalLocation(IResource target) {
+	if (rootLocalLocation == null)
+		return null;
 	int segments = target.getFullPath().matchingFirstSegments(root.getFullPath());
 	return rootLocalLocation.append(target.getFullPath().removeFirstSegments(segments)).toOSString();
 }
@@ -271,7 +282,7 @@ protected int getLevel() {
 	return level;
 }
 protected Object[] getLocalList(UnifiedTreeNode node, String location) {
-	if (node.isFile())
+	if (node.isFile() || location == null)
 		return null;
 	String[] list = new java.io.File(location).list();
 	if (list == null)

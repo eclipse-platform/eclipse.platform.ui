@@ -25,6 +25,8 @@ public class RefreshLocalAliasVisitor extends RefreshLocalVisitor {
 	}
 	protected void createResource(UnifiedTreeNode node, Resource target) throws CoreException {
 		super.createResource(node, target);
+		if (node.getLocalLocation() == null)
+			return;
 		IResource[] aliases = workspace.getAliasManager().computeAliases(target, new Path(node.getLocalLocation()));
 		if (aliases != null)
 			for (int i = 0; i < aliases.length; i++)
@@ -32,6 +34,8 @@ public class RefreshLocalAliasVisitor extends RefreshLocalVisitor {
 	}
 	protected void deleteResource(UnifiedTreeNode node, Resource target) throws CoreException {
 		super.deleteResource(node, target);
+		if (node.getLocalLocation() == null)
+			return;
 		IResource[] aliases = workspace.getAliasManager().computeAliases(target, new Path(node.getLocalLocation()));
 		if (aliases != null)
 			for (int i = 0; i < aliases.length; i++)
@@ -39,6 +43,8 @@ public class RefreshLocalAliasVisitor extends RefreshLocalVisitor {
 	}
 	protected void resourceChanged(UnifiedTreeNode node, Resource target) throws CoreException {
 		super.resourceChanged(node, target);
+		if (node.getLocalLocation() == null)
+			return;
 		IResource[] aliases = workspace.getAliasManager().computeAliases(target, new Path(node.getLocalLocation()));
 		if (aliases != null)
 			for (int i = 0; i < aliases.length; i++)
@@ -46,6 +52,8 @@ public class RefreshLocalAliasVisitor extends RefreshLocalVisitor {
 	}
 	protected void fileToFolder(UnifiedTreeNode node, Resource target) throws CoreException {
 		super.fileToFolder(node, target);
+		if (node.getLocalLocation() == null)
+			return;
 		IResource[] aliases = workspace.getAliasManager().computeAliases(target, new Path(node.getLocalLocation()));
 		if (aliases != null)
 			for (int i = 0; i < aliases.length; i++)
@@ -53,6 +61,8 @@ public class RefreshLocalAliasVisitor extends RefreshLocalVisitor {
 	}
 	protected void folderToFile(UnifiedTreeNode node, Resource target) throws CoreException {
 		super.folderToFile(node, target);
+		if (node.getLocalLocation() == null)
+			return;
 		IResource[] aliases = workspace.getAliasManager().computeAliases(target, new Path(node.getLocalLocation()));
 		if (aliases != null)
 			for (int i = 0; i < aliases.length; i++)

@@ -56,7 +56,7 @@ public int getLevel() {
 	return tree.getLevel();
 }
 /**
- * Returns the local location of this resource.
+ * Returns the local location of this resource.  May be null.
  */
 public String getLocalLocation() {
 	return localLocation != null ? localLocation : tree.getLocalLocation(resource);
