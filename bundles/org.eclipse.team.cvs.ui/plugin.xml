@@ -776,7 +776,7 @@
 	<extension
          point="org.eclipse.ui.fontDefinitions">
       <fontDefinition
-            label="CVS Console Font"
+            label="%CVSConsoleFont.label"
             defaultsTo="org.eclipse.jface.textfont"
             id="pref_console_font">
       	<description>
