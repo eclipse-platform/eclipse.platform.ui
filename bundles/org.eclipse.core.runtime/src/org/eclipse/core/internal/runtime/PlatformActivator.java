@@ -38,8 +38,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 	private ServiceReference urlServiceReference;
 	private ServiceReference logServiceReference;
 	private ServiceReference packageAdminReference;
-	private static File cacheFile = InternalPlatform.getDefault().getConfigurationLocation().append(".registry").toFile(); //$NON-NLS-1$
-
+	
 	public static BundleContext getContext() {
 		return context;
 	}
@@ -84,7 +83,9 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 				start = System.currentTimeMillis();
 			
 			boolean lazyLoading = !"true".equals(System.getProperty(InternalPlatform.PROP_NO_LAZY_CACHE_LOADING)); //$NON-NLS-1$
-			if (cacheFile.isFile())			
+			File cacheFile = InternalPlatform.getDefault().getConfigurationMetadataLocation().append(".registry").toFile(); //$NON-NLS-1$
+
+			if (cacheFile.isFile())
 				registry = new RegistryCacheReader(cacheFile, factory, lazyLoading).loadCache();
 
 			if (InternalPlatform.DEBUG && registry != null)
@@ -131,6 +132,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 	private void stopRegistry(BundleContext context) {
 		context.removeBundleListener(this.pluginBundleListener);
 		if (registry != null && registry.isDirty()) {
+			File cacheFile = InternalPlatform.getDefault().getConfigurationMetadataLocation().append(".registry").toFile(); //$NON-NLS-1$
 			new RegistryCacheWriter(cacheFile).saveCache(registry);
 			registry = null;
 		}
@@ -212,31 +214,6 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		packageAdminReference = null;
 	}
 
-//	public void serviceChanged(ServiceEvent event) {
-//		int type = event.getType();
-//		ServiceReference reference = event.getServiceReference();
-//		switch (type) {
-//			case ServiceEvent.REGISTERED :
-//				String[] servicesInterfaces = (String[]) reference.getProperty(Constants.OBJECTCLASS);
-//				for (int i = 0; i < servicesInterfaces.length; i++) {
-//					if (servicesInterfaces[i].equals(EnvironmentInfo.class.getName()))
-//						try {
-//							environmentInfoServiceAquired(reference);
-//						} catch (Exception e) {
-//							// TODO Auto-generated catch block
-//							e.printStackTrace();
-//						}
-//				}
-//				break;
-//			case ServiceEvent.UNREGISTERING :
-//				servicesInterfaces = (String[]) reference.getProperty(Constants.OBJECTCLASS);
-//				for (int i = 0; i < servicesInterfaces.length; i++) {
-//					if (servicesInterfaces[i].equals(EnvironmentInfo.class.getName()))
-//						environmentInfoServiceReleased(reference);
-//				}
-//				break;
-//		}
-//	}
 	private void registerApplicationService() {
 		Runnable work = new Runnable() {
 			public void run() {

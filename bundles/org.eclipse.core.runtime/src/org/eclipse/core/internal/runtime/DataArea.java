@@ -16,6 +16,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.service.datalocation.Location;
 import org.osgi.framework.Bundle;
 
 public class DataArea {
@@ -34,7 +35,6 @@ public class DataArea {
 	/* package */static final String PREFERENCES_FILE_NAME = "pref_store.ini"; //$NON-NLS-1$
 	
 	private IPath location; //The location of the instance data
-	private boolean locationCreated = false;
 	private PlatformMetaAreaLock metaAreaLock = null;
 	
 	//Authorization related informations
@@ -44,23 +44,21 @@ public class DataArea {
 	private String password = ""; //$NON-NLS-1$
 	private boolean initialized = false;
 	
-	public boolean hasInstanceData() {
-		return isInstanceDataLocationInitiliazed();
-	}
-	boolean isInstanceDataLocationInitiliazed() {
-		return location != null && initialized;
-	}
 	protected void assertLocationInitialized() throws IllegalStateException {
+		if (location != null && initialized)
+			return;
+		Location service = InternalPlatform.getDefault().getInstanceLocation();
+		if (service == null)
+			throw new IllegalStateException(Policy.bind("meta.noDataModeSpecified")); //$NON-NLS-1$
 		try {
-			if (location == null || ! initialized)
-				initializeLocation();
-			if (!locationCreated)
-				createLocation();
+			URL url = service.getURL();
+			if (url == null)
+				throw new IllegalStateException(Policy.bind("meta.instanceDataUnspecified")); //$NON-NLS-1$
+			// TODO assume the URL is a file: 
+			location = new Path(url.getFile());
+			initializeLocation();
 		} catch (CoreException e) {
 			throw new IllegalStateException(e.getMessage());
-		}
-		if (!isInstanceDataLocationInitiliazed()) {
-			throw new IllegalStateException(Policy.bind("meta.instanceDataUnspecified")); //$NON-NLS-1$
 		}
 	}
 	public IPath getBackupFilePathFor(IPath file) throws IllegalStateException {
@@ -103,16 +101,7 @@ public class DataArea {
 		assertLocationInitialized();
 		return getMetadataLocation().append(F_VERSION);
 	}
-	public void setInstanceDataLocation(IPath loc) throws IllegalStateException {
-		if (isInstanceDataLocationInitiliazed())
-			throw new IllegalStateException(Policy.bind("meta.instanceDataAlreadySpecified", loc.toOSString())); //$NON-NLS-1$
-		location = loc;
-	}
-	protected void initializeLocation() throws CoreException {
-		if (location == null) {
-			// Default location for the workspace is <user.dir>/workspace/
-			location = new Path(System.getProperty("user.dir")).append(InternalPlatform.WORKSPACE); //$NON-NLS-1$
-		}
+	private void initializeLocation() throws CoreException {
 		// check if the location can be created
 		if (location.toFile().exists()) {
 			if (!location.toFile().isDirectory()) {
@@ -123,10 +112,12 @@ public class DataArea {
 		//try infer the device if there isn't one (windows)
 		if (location.getDevice() == null)
 			location = new Path(location.toFile().getAbsolutePath());		
+		createLocation();
 		initialized = true;
 	}
 	private void createLocation() throws CoreException {
-		File file = location.toFile();
+		// append on the metadata location so that the whole structure is created.  
+		File file = location.append(F_META_AREA).toFile();
 		try {
 			file.mkdirs();
 		} catch (Exception e) {
@@ -137,11 +128,10 @@ public class DataArea {
 			String message = Policy.bind("meta.readonly", file.getAbsolutePath()); //$NON-NLS-1$
 			throw new CoreException(new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IPlatform.FAILED_WRITE_METADATA, message, null));
 		}
-		locationCreated = true;
 		// set the log file location now that we created the data area
-		IPath path = getMetadataLocation().append(F_LOG);
+		IPath path = location.append(F_META_AREA).append(F_LOG);
 		try {
-			InternalPlatform.getDefault().getFrameworkLog().setFile(path.toFile(),true);
+			InternalPlatform.getDefault().getFrameworkLog().setFile(path.toFile(), true);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -219,7 +209,7 @@ public class DataArea {
 		if (keyring != null && new File(keyringFile).lastModified()==keyringTimeStamp)
 			return;
 		if (keyringFile == null) {
-			keyringFile = InternalPlatform.getDefault().getConfigurationLocation().append(F_KEYRING).toOSString();
+			keyringFile = InternalPlatform.getDefault().getConfigurationMetadataLocation().append(F_KEYRING).toOSString();
 		}
 		try {
 			keyring = new AuthorizationDatabase(keyringFile, password);

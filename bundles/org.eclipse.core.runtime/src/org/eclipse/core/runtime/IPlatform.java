@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 import org.eclipse.core.runtime.jobs.IJobManager;
+import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.service.resolver.PlatformAdmin;
 import org.osgi.framework.Bundle;
 
@@ -349,6 +350,7 @@ public interface IPlatform {
 	 * Returns the log for the given bundle.  If no such log exists, one is created.
 	 *
 	 * @return the log for the given bundle
+	 * @since 3.0
 	 */
 	public ILog getLog(Bundle bundle);
 
@@ -377,7 +379,7 @@ public interface IPlatform {
 	 * @return the path indicating the directory containing the configuration 
 	 * location for this running Eclipse.
 	 */
-	public IPath getConfigurationLocation();
+	public Location getConfigurationLocation();
 	
 	/**
 	 * Returns the location in the filesystem of the configuration information 
@@ -600,33 +602,34 @@ public interface IPlatform {
 	public void unregisterBundleGroupProvider(IBundleGroupProvider provider);
 	
 	/**
-	 * Returns the location of the platform working directory (also known as instance data).  
-	 * This corresponds to the <i>-data</i> command line argument if
-	 * present or, to the value set using @see #setInstanceLocation(IPath), or if 
-	 * none of these has been specified, the current working directory when the platform
-	 * was started.
-	 * The method throws an IllegalStateException if no instance data has been specified.  
+	 * Returns the location of the platform's user data area.  
 	 *
-	 * @return the location of the platform
+	 * @return the location of the platform's user data area
 	 * @since 3.0
 	 */
-	public IPath getInstanceLocation() throws IllegalStateException;
-	
+	public Location getUserLocation() throws IllegalStateException;
+
 	/**
-	 * Set the location of the platform working directory.
-	 * The method throws an IllegalStateException if an instance data as already been set.  
+	 * Returns the location of the platform's working directory (also known as the instance data area).  
+	 * The platform may be running in one of three modes:
+	 * <dl>
+	 *   <dt>data</dt>
+	 *   <dd>The platform may have an instance data area.  The value returned is either the one
+	 * 		explicitly set using <code>Location.setLocation</code> or a value computed by 
+	 * 		the platform.</dd>
+	 *   <dt>noDefault</dt>
+	 *   <dd>The platform may have an instance data area.  The value returned is the one
+	 * 		explicitly set using <code>Location.setLocation</code>.  If no such value has been
+	 * 		set, the platform does <b>not</b> compute a default value and <code>null</code> returned.</dd>
+	 *   <dt>none</dt>
+	 *   <dd>The platform may not have an instance data area.  In all cases <code>null</code> is returned.</dd>
+	 * </dl>
+	 *
+	 * @return the location of the platform's instance data area
 	 * @since 3.0
 	 */
-	public void setInstanceLocation(IPath location) throws IllegalStateException;
-	
-	/**
-	 * Indicate if an instance data has been set.
-	 * 
-	 * @return true if an instance data location has been specified. Return false otherwise. 
-	 * @since 3.0
-	 */
-	public boolean hasInstanceData();
-	
+	public Location getInstanceLocation();
+			
 	/**
 	 * Lock the instance data. 
 	 * The method throws a CoreException if the lock can not be acquired or 

@@ -18,6 +18,7 @@ import java.util.*;
 import org.eclipse.core.internal.runtime.FindSupport;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.jobs.IJobManager;
+import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.service.resolver.PlatformAdmin;
 import org.osgi.framework.Bundle;
 
@@ -895,37 +896,36 @@ public final class Platform {
 		return InternalPlatform.getDefault().getPlatformAdmin();
 	}
 	/**
-	 * Returns the location of the platform working directory (also known as instance data).  
-	 * This corresponds to the <i>-data</i> command line argument if
-	 * present or, to the value set using @see #setInstanceLocation(IPath), or if 
-	 * none of these has been specified, the current working directory when the platform
-	 * was started.
-	 * The method throws an IllegalStateException if no instance data has been specified.  
+	 * Returns the location of the platform's working directory (also known as the instance data area).  
+	 * The platform may be running in one of three modes:
+	 * <dl>
+	 *   <dt>data</dt>
+	 *   <dd>The platform may have an instance data area.  The value returned is either the one
+	 * 		explicitly set using <code>Location.setLocation</code> or a value computed by 
+	 * 		the platform.</dd>
+	 *   <dt>noDefault</dt>
+	 *   <dd>The platform may have an instance data area.  The value returned is the one
+	 * 		explicitly set using <code>Location.setLocation</code>.  If no such value has been
+	 * 		set, the platform does <b>not</b> compute a default value and <code>null</code> returned.</dd>
+	 *   <dt>none</dt>
+	 *   <dd>The platform may not have an instance data area.  In all cases <code>null</code> is returned.</dd>
+	 * </dl>
 	 *
-	 * @return the location of the platform
+	 * @return the location of the platform's instance data area
 	 * @since 3.0
 	 */
-	public static IPath getInstanceLocation() throws IllegalStateException {
-		return InternalPlatform.getDefault().getLocation();
+	public static Location getInstanceLocation() {
+		return InternalPlatform.getDefault().getInstanceLocation();
 	}
 	
 	/**
 	 * Set the location of the platform working directory.
 	 * The method throws an IllegalStateException if an instance data as already been set.  
 	 * @since 3.0
+	 * @deprecated will be removed before 3.0 ships  Use getInstanceLocation().setLocation()
 	 */
 	public static void setInstanceLocation(IPath location) throws IllegalStateException {
 		InternalPlatform.getDefault().setInstanceLocation(location);		
-	}
-	
-	/**
-	 * Indicate if an instance data has been set.
-	 * 
-	 * @return true if an instance data location has been specified. Return false otherwise. 
-	 * @since 3.0
-	 */
-	public static boolean hasInstanceData() {
-		return InternalPlatform.getDefault().hasInstanceData();
 	}
 	
 	/**
@@ -946,8 +946,8 @@ public final class Platform {
 	}
 	/**
 	 * Set the location of the keyring file. 
-	 * Throws an IllegalStateException if the file as already been set explicitly or the authorization mechanism used before.
-	 * @param keyringFile, the location of the keyring file
+	 * @param keyringFile the location of the keyring file
+	 * @exception IllegalStateException if the file as already been set explicitly or the authorization mechanism used before.
 	 * @since 3.0
 	 */
 	public static void setKeyringLocation(String keyringFile) throws IllegalStateException {
@@ -1001,7 +1001,7 @@ public final class Platform {
 	 * @return the path indicating the directory containing the configuration 
 	 * information for this running Eclipse.
 	 */
-	public static IPath getConfigurationLocation() {
+	public static Location getConfigurationLocation() {
 		return InternalPlatform.getDefault().getConfigurationLocation();
 	}
 
@@ -1017,7 +1017,7 @@ public final class Platform {
 	 * @deprecated see getConfigurationLocation This method will be removed by M8
 	 */
 	public static IPath getConfigurationMetadataLocation() {
-		return InternalPlatform.getDefault().getConfigurationLocation();
+		return InternalPlatform.getDefault().getConfigurationMetadataLocation();
 	}
 
 }

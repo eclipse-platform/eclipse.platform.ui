@@ -20,6 +20,7 @@ import org.eclipse.core.internal.registry.ExtensionRegistry;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.osgi.framework.log.FrameworkLog;
+import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.service.environment.EnvironmentInfo;
 import org.eclipse.osgi.service.resolver.PlatformAdmin;
@@ -37,17 +38,13 @@ public final class InternalPlatform implements IPlatform {
 	private IExtensionRegistry registry;
 	private static IAdapterManager adapterManager;
 	private Plugin runtimeInstance; //Keep track of the plugin object for runtime in case the backward compatibility is run.
-	
 	private static final InternalPlatform singleton = new InternalPlatform();
-
-	private IPath configMetadataLocation;
 
 	static ServiceRegistration platformRegistration;
 	static EnvironmentInfo infoService;
 	static URLConverter urlConverter;
 	static FrameworkLog frameworkLog;
 	static PackageAdmin packageAdmin;
-
 	// registry index - used to store last modified times for
 	// registry caching
 	// ASSUMPTION:  Only the plugin registry in 'registry' above will be cached
@@ -59,14 +56,15 @@ public final class InternalPlatform implements IPlatform {
 	private static DataArea metaArea;
 	private static boolean initialized;
 	private static Runnable endOfInitializationHandler = null;
-	private static IPath location;	//The location as set on the command line - this is just used as a temporary location
 	private static String password = "";
 	private static String keyringFile;
-	private static boolean noData = false;
-	private static boolean noDefaultData = false;
 	private ServiceTracker debugTracker;
 	private DebugOptions options = null;
 
+	private ServiceTracker userLocation = null;
+	private ServiceTracker instanceLocation = null;
+	private ServiceTracker configurationLocation = null;
+	
 	// Command line args as seen by the Eclipse runtime. allArgs does NOT
 	// include args consumed by the underlying framework (e.g., OSGi)
 	private static String[] allArgs = new String[0];
@@ -111,11 +109,8 @@ public final class InternalPlatform implements IPlatform {
 	private static final String OPTION_DEBUG_PREFERENCES = PI_RUNTIME + "/preferences/debug"; //$NON-NLS-1$
 
 	// command line options
-	private static final String NO_DEFAULT_DATA = "-noDefaultData"; //$NON-NLS-1$
-	private static final String NO_DATA = "-noData"; //$NON-NLS-1$
 	private static final String PRODUCT = "-product"; //$NON-NLS-1$	
 	private static final String APPLICATION = "-application"; //$NON-NLS-1$	
-	private static final String DATA = "-data"; //$NON-NLS-1$	
 	private static final String KEYRING = "-keyring"; //$NON-NLS-1$
 	protected static final String PASSWORD = "-password"; //$NON-NLS-1$
 	private static final String NOREGISTRYCACHE = "-noregistrycache"; //$NON-NLS-1$	
@@ -326,7 +321,11 @@ public final class InternalPlatform implements IPlatform {
 	 * @see Platform#getLocation
 	 */
 	public IPath getLocation() throws IllegalStateException {
-		return getInstanceLocation();
+		Location location = getInstanceLocation();
+		if (location == null)
+			return null;
+		// TODO assumes the instance location is a file: URL
+		return new Path(location.getURL().getFile());
 	}
 
 
@@ -349,21 +348,14 @@ public final class InternalPlatform implements IPlatform {
 		if (metaArea != null) 
 			return metaArea;
 		
-		if (noData) {
-			metaArea = new NoDataArea();
-			return metaArea;
-		}
-		
-		if (noDefaultData) {
-			metaArea = new NoDefaultDataArea();
-		} else {
-			metaArea = new DataArea();
-			metaArea.setInstanceDataLocation(location);
-			try {
-				metaArea.createLockFile();
-			} catch (CoreException e) {
-				throw new IllegalStateException(e.getStatus().getMessage());
-			}
+		metaArea = new DataArea();
+		try {
+			metaArea.createLockFile();
+		} catch (CoreException e) {
+			throw new IllegalStateException(e.getStatus().getMessage());
+		} catch (IllegalStateException e) {
+			// do nothing.  This happens when there is no instance area
+			// or it has not been defined yet.
 		}
 		metaArea.setKeyringFile(keyringFile);
 		metaArea.setPasswork(password);			
@@ -471,27 +463,20 @@ public final class InternalPlatform implements IPlatform {
 
 	public void start(BundleContext context) {
 		this.context = context;
+		initializeLocationTrackers();
 		// TODO figure out how to do the splash.  This really should be something that is in the OSGi implementation
 		endOfInitializationHandler = getSplashHandler();
 		processCommandLine(infoService.getAllArgs());
-		processSystemProperties();
 		debugTracker = new ServiceTracker(context, DebugOptions.class.getName(), null);
 		debugTracker.open();
 		options = (DebugOptions) debugTracker.getService(); //TODO This is not good, but is avoids problems
 		initializeDebugFlags();
-		getMetaArea();
 		initialized = true;
+		getMetaArea();
 		platformLog = new PlatformLogWriter();
 		addLogListener(platformLog);
 		platformRegistration = context.registerService(IPlatform.class.getName(), this, null);
 	}	
-	/**
-	 * 
-	 */
-	private void processSystemProperties() {
-		noData = "true".equalsIgnoreCase(System.getProperties().getProperty(PROP_NO_DATA));
-		noDefaultData = "true".equalsIgnoreCase(System.getProperties().getProperty(PROP_NO_DEFAULT_DATA));
-	}
 
 	private Runnable getSplashHandler() {
 		ServiceReference[] ref;
@@ -686,18 +671,6 @@ public final class InternalPlatform implements IPlatform {
 				found = true;
 			}
 			
-			// look for the flag to run without workspace 
-			if (args[i].equalsIgnoreCase(NO_DATA)) {
-				System.setProperty(PROP_NO_DATA, "true");
-				found = true;
-			}
-			
-			// look for the flag to run with a workspace specified programmatically
-			if (args[i].equalsIgnoreCase(NO_DEFAULT_DATA)) {
-				System.setProperty(PROP_NO_DEFAULT_DATA, "true");
-				found = true;
-			}
-			
 			// look for the flag to turn off the workspace metadata version check
 			if (args[i].equalsIgnoreCase(NO_VERSION_CHECK)) {
 				System.setProperty(PROP_NO_VERSION_CHECK, "true"); //$NON-NLS-1$
@@ -721,12 +694,6 @@ public final class InternalPlatform implements IPlatform {
 			if (i == args.length - 1 || args[i + 1].startsWith("-")) //$NON-NLS-1$
 				continue;
 			String arg = args[++i];
-
-			// look for the default data location
-			if (args[i - 1].equalsIgnoreCase(DATA)) {
-				location = new Path(arg);
-				found = true;
-			}
 
 			// look for the keyring file
 			if (args[i - 1].equalsIgnoreCase(KEYRING)) {
@@ -1070,16 +1037,13 @@ public final class InternalPlatform implements IPlatform {
 	public Bundle getBundle(String id) {
 		return packageAdmin.getResolvedBundle(id,null,null);
 	}
-	public Bundle[] getFragments(Bundle bundle) {
-		return packageAdmin.getFragments(bundle);
-	}
-	public Bundle[] getHosts(Bundle bundle) {
-		return packageAdmin.getHosts(bundle);
-	}
 	public boolean isFragment(Bundle bundle) {
 		return packageAdmin.isFragment(bundle);
+	}	public Bundle[] getHosts(Bundle bundle) {
+		return packageAdmin.getHosts(bundle);
+	}	public Bundle[] getFragments(Bundle bundle) {
+		return packageAdmin.getFragments(bundle);
 	}
-
 	public URL getInstallURL() {
 		if (installLocation == null)
 			try {
@@ -1175,14 +1139,57 @@ public final class InternalPlatform implements IPlatform {
 		}
 		return (URL[]) result.toArray(new URL[result.size()]);
 	}
-	public IPath getConfigurationLocation() {
-		if (configMetadataLocation == null)
-			configMetadataLocation = new Path(System.getProperty(PROP_CONFIG_AREA));
-		return configMetadataLocation;
+	public Location getConfigurationLocation() {
+		assertInitialized();
+		return (Location)configurationLocation.getService();
 	}
+	
+	private void initializeLocationTrackers() {
+		Filter filter = null;
+		try {
+			filter = context.createFilter("(&(objectClass=org.eclipse.osgi.service.datalocation.Location)(type=" + PROP_CONFIG_AREA + "))");
+		} catch (InvalidSyntaxException e) {
+			// ignore this.  It should never happen as we have tested the above format.
+		}
+		configurationLocation = new ServiceTracker(context, filter, null);
+		configurationLocation.open();
+		
+		try {
+			filter = context.createFilter("(&(objectClass=org.eclipse.osgi.service.datalocation.Location)(type=" + PROP_USER_AREA + "))");
+		} catch (InvalidSyntaxException e) {
+			// ignore this.  It should never happen as we have tested the above format.
+		}
+		userLocation = new ServiceTracker(context, filter, null);
+		userLocation.open();
+		
+		try {
+			filter = context.createFilter("(&(objectClass=org.eclipse.osgi.service.datalocation.Location)(type=" + PROP_INSTANCE_AREA + "))");
+		} catch (InvalidSyntaxException e) {
+			// ignore this.  It should never happen as we have tested the above format.
+		}
+		instanceLocation = new ServiceTracker(context, filter, null);
+		instanceLocation.open();
+	}
+	
+	/**
+	 * @deprecated
+	 */
+	// TODO remove this method
 	public IPath getConfigurationMetadataLocation() {
-		return this.getConfigurationLocation();
+		Location location = getConfigurationLocation();
+		if (location == null)
+			return null;
+		String result = location.getURL().toExternalForm();
+		if (result.startsWith("file:"))
+			return new Path(result.substring(5));
+		throw new IllegalStateException("Configuration location is not a file: URL - " + result);
 	}
+	
+	public Location getUserLocation() {
+		assertInitialized();
+		return (Location)userLocation.getService();
+	}
+	
 	public IPath getStateLocation(Bundle bundle, boolean create) throws IllegalStateException {
 		assertInitialized();
 		IPath result = getMetaArea().getStateLocation(bundle);
@@ -1258,9 +1265,6 @@ public final class InternalPlatform implements IPlatform {
 	public void unlockInstanceData() {
 		getMetaArea().clearLockFile();
 	}
-	public boolean hasInstanceData() {
-		return getMetaArea().hasInstanceData();
-	}
 	public void addAuthorizationInfo(URL serverUrl, String realm, String authScheme, Map info) throws CoreException {
 		getMetaArea().addAuthorizationInfo(serverUrl, realm, authScheme, info);	
 	}
@@ -1279,24 +1283,23 @@ public final class InternalPlatform implements IPlatform {
 	public void setKeyringLocation(String keyringFile) {
 		getMetaArea().setKeyringFile(keyringFile);
 	}
-	public void setInstanceLocation(IPath location) throws IllegalStateException {
-		getMetaArea().setInstanceDataLocation(location);
-	}
-	public IPath getInstanceLocation() throws IllegalStateException {
-		assertInitialized();
-		if (! metaArea.isInstanceDataLocationInitiliazed()) {
-			if (noData) 
-				throw new IllegalStateException(Policy.bind("meta.noDataModeSpecified"));
-			if (noDefaultData)
-				throw new IllegalStateException(Policy.bind("meta.instanceDataUnspecified"));
-			try {
-				metaArea.initializeLocation();
-			} catch (CoreException e) {
-				throw new IllegalStateException(e.getLocalizedMessage());
-			} 
+	public void setInstanceLocation(IPath value) throws IllegalStateException {
+		try {
+			setInstanceLocation(value.toFile().toURL());
+		} catch (MalformedURLException e) {
 		}
-		return metaArea.getInstanceDataLocation();
-	}	
+	}
+	public void setInstanceLocation(URL value) throws IllegalStateException {
+		Location location = getInstanceLocation();
+		if (location == null)
+			throw new IllegalStateException("Instance location service could not be found");
+		location.setURL(value);
+	}
+	public Location getInstanceLocation() {
+		assertInitialized();
+		return (Location)instanceLocation.getService();
+	}
+	
 	public IBundleGroupProvider[] getBundleGroupProviders() {
 		return (IBundleGroupProvider[])groupProviders.toArray(new IBundleGroupProvider[groupProviders.size()]);
 	}
