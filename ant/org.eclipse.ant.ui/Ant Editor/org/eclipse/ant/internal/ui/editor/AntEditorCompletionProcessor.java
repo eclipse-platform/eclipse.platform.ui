@@ -11,6 +11,7 @@
  *     GEBIT Gesellschaft fuer EDV-Beratung und Informatik-Technologien mbH - initial API and implementation
  * 	   IBM Corporation - bug fixes
  *     John-Mason P. Shackelford (john-mason.shackelford@pearson.com) - bug 49383, 56299, 59024
+ *     Brock Janiczak (brockj_eclipse@ihug.com.au ) - bug 78028, 78030 
  *******************************************************************************/
 
 package org.eclipse.ant.internal.ui.editor;
@@ -19,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -30,7 +32,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.ComponentHelper;
 import org.apache.tools.ant.IntrospectionHelper;
@@ -201,12 +202,22 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
      * Parses the dtd.
      */
     private ISchema parseDtd() throws ParseError, IOException {
-        InputStream stream = getClass().getResourceAsStream(ANT_DTD_FILENAME);
-        InputStreamReader reader = new InputStreamReader(stream, "UTF-8"); //$NON-NLS-1$
-        Parser parser = new Parser();
-        ISchema schema= parser.parseDTD(reader, "project"); //$NON-NLS-1$
-        reader.close();
-        return schema;
+        InputStream stream= null;
+        Reader reader= null;
+        try {
+        	stream= getClass().getResourceAsStream(ANT_DTD_FILENAME);
+        	reader=new InputStreamReader(stream, "UTF-8"); //$NON-NLS-1$
+        	Parser parser = new Parser();
+        	ISchema schema= parser.parseDTD(reader, "project"); //$NON-NLS-1$
+        	return schema;
+        } finally {
+        	if (reader != null) {
+        		reader.close();
+        	}
+        	if (stream != null) {
+        		stream.close();
+        	}
+        }
     }
     
 	/* (non-Javadoc)
@@ -358,6 +369,8 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
                 String attributeString = getAttributeStringFromDocumentStringToPrefix(textToSearch);
                 if ("target".equalsIgnoreCase(currentTaskString)) { //$NON-NLS-1$
                 	proposals= getTargetAttributeValueProposals(document, textToSearch, prefix, attributeString);
+                } else if ("project".equalsIgnoreCase(currentTaskString)) { //$NON-NLS-1$
+                	proposals= getProjectAttributeValueProposals(prefix, attributeString);
                 } else if ("refid".equalsIgnoreCase(attributeString) || "classpathref".equalsIgnoreCase(attributeString)   //$NON-NLS-1$//$NON-NLS-2$
                         || "sourcepathref".equalsIgnoreCase(attributeString) || "bootpathref".equalsIgnoreCase(attributeString)) { //$NON-NLS-1$ //$NON-NLS-2$
                 	proposals= getReferencesValueProposals(prefix);
@@ -386,6 +399,33 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
         return proposals;
 
     }
+    
+    private ICompletionProposal[] getProjectAttributeValueProposals(String prefix, String attributeName) {
+		if (attributeName.equalsIgnoreCase("default")) { //$NON-NLS-1$
+			return getDefaultValueProposals(prefix);
+		}
+
+		return NO_PROPOSALS;
+	}
+
+	private ICompletionProposal[] getDefaultValueProposals(String prefix) {
+		Map targets = getTargets();
+		List defaultProposals = new ArrayList(targets.size());
+		Iterator itr = targets.values().iterator();
+
+		Target target;
+		String targetName;
+		while (itr.hasNext()) {
+			target = (Target) itr.next();
+			targetName= target.getName();
+			if (targetName.toLowerCase().startsWith(prefix) && targetName.length() > 0) {
+				defaultProposals.add(new AntCompletionProposal(targetName, cursorPosition - prefix.length(), prefix.length(), targetName.length(), null, targetName, target.getDescription(), AntCompletionProposal.TASK_PROPOSAL));
+			}
+		}
+
+		ICompletionProposal[] proposals = new ICompletionProposal[defaultProposals.size()];
+		return (ICompletionProposal[])defaultProposals.toArray(proposals);
+	}
     
 	private ICompletionProposal[] getReferencesValueProposals(String prefix) {
 		Project project= antModel.getProjectNode().getProject();
@@ -463,7 +503,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 		int i= 0;
 		for (Iterator iter = possibleDependencies.iterator(); iter.hasNext(); i++) {
 			String targetName = (String) iter.next();
-			ICompletionProposal proposal = new AntCompletionProposal(targetName, cursorPosition - prefix.length(), prefix.length(), targetName.length(), null, targetName, null, AntCompletionProposal.TASK_PROPOSAL);
+			ICompletionProposal proposal = new AntCompletionProposal(targetName, cursorPosition - prefix.length(), prefix.length(), targetName.length(), null, targetName, ((Target)targets.get(targetName)).getDescription(), AntCompletionProposal.TASK_PROPOSAL);
 			proposals[i]= proposal;
 		}
 		return proposals;
@@ -1517,7 +1557,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 	 * @see org.eclipse.jface.text.templates.TemplateCompletionProcessor#getTemplates(java.lang.String)
 	 */
 	protected Template[] getTemplates(String contextTypeId) {
-		return AntTemplateAccess.getDefault().getTemplateStore().getTemplates();
+		return AntTemplateAccess.getDefault().getTemplateStore().getTemplates(contextTypeId);
 	}
 
 	/* (non-Javadoc)
