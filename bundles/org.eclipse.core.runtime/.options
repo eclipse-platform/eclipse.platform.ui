@@ -64,8 +64,10 @@ org.eclipse.core.runtime/url/debug/cachecopy=false
 # Turn on debugging for install/update.
 org.eclipse.core.runtime/config/debug=false
 
-# Turn on debugging for customization of default preference settings
+# Turn on debugging for preferences
 org.eclipse.core.runtime/preferences/debug=false
+org.eclipse.core.runtime/preferences/debug/get=false
+org.eclipse.core.runtime/preferences/debug/put=false
 
 # Turn on debugging for the plugin stopper
 org.eclipse.core.runtime/debug/pluginstopper=false
