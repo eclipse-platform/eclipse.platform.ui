@@ -301,16 +301,16 @@ public PluginRegistryModel doCacheWriteAndRead(PluginRegistryModel inRegistry, F
 	} catch (IOException ioe) {
 		fail("1.0 IOException encountered", ioe);
 	}
-	doCacheWrite(inRegistry, output, factory);
+	doCacheWrite(inRegistry, output);
 	DataInputStream input = null;
 	try {
 		input = new DataInputStream(new FileInputStream(cacheFile));
 	} catch (IOException ioe) {
 		fail("2.0 IOException encountered", ioe);
 	}
-	return doCacheRead(inRegistry, input, factory);
+	return doCacheRead(input, factory);
 }
-public PluginRegistryModel doCacheRead(PluginRegistryModel inRegistry, DataInputStream input, Factory factory) {
+public PluginRegistryModel doCacheRead(DataInputStream input, Factory factory) {
 	// Cobble together a plugin path
 	Map regIndex = InternalPlatform.getRegIndex();
 	URL[] pluginPath = null;
@@ -332,7 +332,7 @@ public PluginRegistryModel doCacheRead(PluginRegistryModel inRegistry, DataInput
 	PluginRegistryModel newRegistry = cacheReader.readPluginRegistry(input, pluginPath, true);
 	return newRegistry;
 }
-public void doCacheWrite(PluginRegistryModel inRegistry, DataOutputStream output, Factory factory) {
+public void doCacheWrite(PluginRegistryModel inRegistry, DataOutputStream output) {
 	// write the registry to the cache
 	RegistryCacheWriter cacheWriter = new RegistryCacheWriter();
 	cacheWriter.writePluginRegistry(inRegistry, output);

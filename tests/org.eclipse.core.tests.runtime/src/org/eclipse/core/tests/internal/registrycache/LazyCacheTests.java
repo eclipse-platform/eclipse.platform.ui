@@ -28,7 +28,7 @@ public class LazyCacheTests extends SimpleCacheTests {
 	public LazyCacheTests(String name) {
 		super(name);
 	}
-	public PluginRegistryModel doCacheRead(PluginRegistryModel inRegistry, DataInputStream input, Factory factory) {
+	public PluginRegistryModel doCacheRead(DataInputStream input, Factory factory) {
 		// Cobble together a plugin path
 		Map regIndex = InternalPlatform.getRegIndex();
 		URL[] pluginPath = null;

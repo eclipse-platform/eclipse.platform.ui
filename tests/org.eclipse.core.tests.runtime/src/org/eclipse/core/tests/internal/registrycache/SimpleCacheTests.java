@@ -118,7 +118,7 @@ public String[] extensionSetup() {
 /*  extensionTest
  *  Tests to ensure we cache extension entries correctly.
  */
-public void extensionTest() {
+public void extensionTest() { 
 	MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind("registryTestProblems", new String[0]), null);
 	InternalFactory factory = new InternalFactory(problems);
 
@@ -1264,14 +1264,14 @@ public void testRegistryEOF() {
 	// write to a cache file and read it back in
 	ByteArrayOutputStream b = new ByteArrayOutputStream();
 	DataOutputStream output = new DataOutputStream(b);
-	doCacheWrite(registry, output, factory);
+	doCacheWrite(registry, output);
 
 	byte[] source = b.toByteArray();
 	byte[] dest = new byte[source.length-1];
 	System.arraycopy(source, 0, dest, 0, source.length - 1);
 	
 	DataInputStream input = new DataInputStream(new ByteArrayInputStream(dest));
-	PluginRegistryModel cachedRegistry = doCacheRead(registry, input, factory);
+	PluginRegistryModel cachedRegistry = doCacheRead(input, factory);
 
 	assertNull("1.0", cachedRegistry);
 
