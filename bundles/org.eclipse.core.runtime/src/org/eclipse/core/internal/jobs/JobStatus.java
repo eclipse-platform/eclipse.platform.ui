@@ -20,18 +20,7 @@ import org.eclipse.core.runtime.jobs.Job;
  */
 public class JobStatus extends Status implements IJobStatus {
 	private Job job;
-	/**
-	 * Creates a new job status.
-	 * @param severity
-	 * @param code
-	 * @param job
-	 * @param message
-	 * @param exception
-	 */
-	public JobStatus(int severity, int code, Job job, String message, Throwable exception) {
-		super(severity, Platform.PI_RUNTIME, code, message, exception);
-		this.job = job;
-	}
+
 	/**
 	 * Creates a new job status with no interesting error code or exception.
 	 * @param severity

@@ -52,33 +52,12 @@ public class Queue {
 		tail = newTail;
 	}
 
-	public void clear() {
-		if (tail >= head) {
-			for (int i = head; i < tail; i++)
-				elements[i] = null;
-		} else {
-			for (int i = head; i < elements.length; i++)
-				elements[i] = null;
-			for (int i = 0; i < tail; i++)
-				elements[i] = null;
-		}
-		tail = head = 0;
-	}
-
-	public boolean contains(Object o) {
-		return get(o) != null;
-	}
-
 	/**
 	 * This method does not affect the queue itself. It is only a
 	 * helper to decrement an index in the queue.
 	 */
 	public int decrement(int index) {
 		return (index == 0) ? (elements.length - 1) : index - 1;
-	}
-
-	public Object elementAt(int index) {
-		return elements[index];
 	}
 
 	public Iterator elements() {
@@ -141,25 +120,6 @@ public class Queue {
 		return true;
 	}
 
-	/**
-	 * Returns an object that has been removed from the queue, if any.
-	 * The intention is to support reuse of objects that have already
-	 * been processed and removed from the queue.  Returns null if there
-	 * are no available objects.
-	 */
-	public Object getNextAvailableObject() {
-		int index = tail;
-		while (index != head) {
-			if (elements[index] != null) {
-				Object result = elements[index];
-				elements[index] = null;
-				return result;
-			}
-			index = increment(index);
-		}
-		return null;
-	}
-
 	protected void grow() {
 		int newSize = (int) (elements.length * 1.5);
 		Object[] newElements = new Object[newSize];
@@ -180,22 +140,6 @@ public class Queue {
 	 */
 	public int increment(int index) {
 		return (index == (elements.length - 1)) ? 0 : index + 1;
-	}
-
-	public int indexOf(Object target) {
-		if (tail >= head) {
-			for (int i = head; i < tail; i++)
-				if (target.equals(elements[i]))
-					return i;
-		} else {
-			for (int i = head; i < elements.length; i++)
-				if (target.equals(elements[i]))
-					return i;
-			for (int i = 0; i < tail; i++)
-				if (target.equals(elements[i]))
-					return i;
-		}
-		return -1;
 	}
 
 	public boolean isEmpty() {
@@ -221,18 +165,6 @@ public class Queue {
 			elements[head] = null;
 		head = increment(head);
 		return result;
-	}
-
-	public Object removeTail() {
-		Object result = peekTail();
-		tail = decrement(tail);
-		if (!reuse)
-			elements[tail] = null;
-		return result;
-	}
-
-	public void reset() {
-		tail = head = 0;
 	}
 
 	public int size() {

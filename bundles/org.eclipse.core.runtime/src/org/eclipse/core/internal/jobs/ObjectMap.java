@@ -26,13 +26,6 @@ public class ObjectMap implements Map {
 	protected Object[] elements = null;
 
 	/**
-	 * Creates a new object map of default size
-	 */
-	public ObjectMap() {
-		this(DEFAULT_SIZE);
-	}
-
-	/**
 	 * Creates a new object map.
 	 * 
 	 * @param initialCapacity

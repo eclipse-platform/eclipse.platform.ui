@@ -55,17 +55,6 @@ public class JobQueue {
 	}
 
 	/**
-	 * Returns true if the given element is in the queue, and false otherwise.
-	 * NOTE: Containment is based on identity, not equality.
-	 */
-	public boolean contains(Object object) {
-		InternalJob entry = dummy.next();
-		while (entry != dummy && entry != object)
-			entry = entry.next();
-		return entry == object;
-	}
-
-	/**
 	 * Return and remove the element with highest priority, or null if empty. 
 	 */
 	public InternalJob dequeue() {

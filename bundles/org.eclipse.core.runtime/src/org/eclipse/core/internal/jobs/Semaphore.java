@@ -44,10 +44,6 @@ public class Semaphore {
 		return (runnable == ((Semaphore) obj).runnable);
 	}
 
-	public Runnable getRunnable() {
-		return runnable;
-	}
-
 	public int hashCode() {
 		return runnable == null ? 0 : runnable.hashCode();
 	}
