@@ -256,5 +256,11 @@
          id="myContent"
          file-extensions="resources-mc"
          default-charset="PROVIDER_CHARSET"/>         
+</extension>
+<extension
+      point="org.eclipse.core.resources.refreshProviders">
+   <refreshProvider
+         class="org.eclipse.core.tests.resources.refresh.TestRefreshProvider"
+         name="org.eclipse.core.tests.resources.testRefreshProvider"/>
 </extension>            
 </plugin>
