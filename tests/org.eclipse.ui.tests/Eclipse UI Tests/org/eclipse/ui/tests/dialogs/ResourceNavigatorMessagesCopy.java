@@ -22,7 +22,7 @@ import java.util.ResourceBundle;
  * Utility class which helps managing messages
  */
 public class ResourceNavigatorMessagesCopy {
-    private static final String RESOURCE_BUNDLE = "org.eclipse.ui.views.navigator.messages";//$NON-NLS-1$
+    private static final String RESOURCE_BUNDLE = "org.eclipse.ui.internal.views.navigator.messages";//$NON-NLS-1$
 
     private static ResourceBundle bundle = ResourceBundle
             .getBundle(RESOURCE_BUNDLE);
