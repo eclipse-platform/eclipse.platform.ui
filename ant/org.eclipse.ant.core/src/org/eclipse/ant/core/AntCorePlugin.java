@@ -196,6 +196,8 @@ public class AntCorePlugin extends Plugin implements Preferences.IPropertyChange
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(IAntCoreConstants.PREFERENCE_URLS)) {
 			classLoader= null;
+		} else if (event.getProperty().equals(IAntCoreConstants.PREFERENCE_ANT_URLS)) {
+			classLoader= null;
 		}
 	}
 	
