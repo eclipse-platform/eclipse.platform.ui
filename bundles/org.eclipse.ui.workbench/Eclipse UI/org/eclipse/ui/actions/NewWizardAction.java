@@ -12,6 +12,7 @@ Contributors:
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.wizard.TableOfContentsWizardDialog;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
@@ -102,7 +103,7 @@ public void run() {
 	wizard.setForcePreviousAndNextButtons(true);
 	
 	Shell parent = workbench.getActiveWorkbenchWindow().getShell();
-	WizardDialog dialog = new WizardDialog(parent, wizard);
+	TableOfContentsWizardDialog dialog = new TableOfContentsWizardDialog(parent, wizard);
 	dialog.create();
 	dialog.getShell().setSize( Math.max(SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x), SIZING_WIZARD_HEIGHT );
 	WorkbenchHelp.setHelp(dialog.getShell(), IHelpContextIds.NEW_WIZARD);

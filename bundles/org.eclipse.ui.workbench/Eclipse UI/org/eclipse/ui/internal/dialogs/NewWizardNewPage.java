@@ -10,6 +10,7 @@ import java.util.List;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.wizard.IDecisionPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.*;
@@ -23,7 +24,7 @@ import org.eclipse.ui.model.*;
  *New wizard selection tab that allows the user to select a registered
  *'New' wizard to be launched
  */
-class NewWizardNewPage implements ISelectionChangedListener, IDoubleClickListener {
+class NewWizardNewPage implements ISelectionChangedListener, IDoubleClickListener, IDecisionPage {
 	private WizardCollectionElement wizardCategories;
 	private IWorkbench workbench;
 	private NewWizardSelectionPage page;

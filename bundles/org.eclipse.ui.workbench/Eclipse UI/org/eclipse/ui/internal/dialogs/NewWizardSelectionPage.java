@@ -6,6 +6,7 @@ package org.eclipse.ui.internal.dialogs;
  */
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.wizard.IDecisionPage;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
@@ -18,7 +19,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  *	projects to be retrieved from an available server.  This page
  *	contains two visual tabs that allow the user to perform these tasks.
  */
-class NewWizardSelectionPage extends WorkbenchWizardSelectionPage {
+class NewWizardSelectionPage extends WorkbenchWizardSelectionPage implements IDecisionPage{
 	private WizardCollectionElement	wizardCategories;
 	
 	// widgets
