@@ -70,6 +70,9 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	private int fLowWaterMark;
 	private int fHighWaterMark;
 	
+	// max amount of output (characters) processed per poll
+	private int fMaxAppendSize;
+	
 	class StreamEntry {
 		/**
 		 * Identifier of the stream written to.
@@ -493,9 +496,11 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 		if (limit) {
 			fLowWaterMark = store.getInt(IDebugPreferenceConstants.CONSOLE_LOW_WATER_MARK);
 			fHighWaterMark = store.getInt(IDebugPreferenceConstants.CONSOLE_HIGH_WATER_MARK);
+			fMaxAppendSize = fLowWaterMark;
 		} else {
 			fLowWaterMark = -1;
 			fHighWaterMark = -1;
+			fMaxAppendSize = 80000;
 		}
 		DebugPlugin.getDefault().addDebugEventListener(this);
 	}
@@ -571,7 +576,7 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 			int amount = 0;
 			String[] lds = fDocument.getLegalLineDelimiters();
 			boolean closed= false;
-			while (!fKilled && !closed && processed < fQueue.size() && amount < 8096) {
+			while (!fKilled && !closed && processed < fQueue.size() && amount < fMaxAppendSize) {
 				StreamEntry entry = (StreamEntry)fQueue.get(processed);
 				if (entry.isClosedEntry()) {
 					closed = true;
@@ -629,7 +634,9 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 				if (display != null) {
 					display.asyncExec(new Runnable() {
 						public void run() {
-							fLineNotifier.streamsClosed();
+							if (fLineNotifier != null) {
+								fLineNotifier.streamsClosed();
+							}
 						}
 					});
 				}
