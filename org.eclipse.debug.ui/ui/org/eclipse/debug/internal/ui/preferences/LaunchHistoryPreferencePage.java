@@ -29,6 +29,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -53,6 +54,7 @@ public class LaunchHistoryPreferencePage extends PreferencePage implements IWork
 	protected LaunchHistoryPreferenceTab[] fTabs;
 		
 	protected Control createContents(Composite parent) {
+		Font font= parent.getFont();
 		initializeDialogUnits(parent);
 		Composite composite = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
@@ -70,6 +72,9 @@ public class LaunchHistoryPreferencePage extends PreferencePage implements IWork
 		fHistoryMaxEditor.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
 		fHistoryMaxEditor.setValidRange(1, historyMax);
 		fHistoryMaxEditor.load();
+		fHistoryMaxEditor.getTextControl(composite).setFont(font);
+		fHistoryMaxEditor.getLabelControl(composite).setFont(font);
+		
 		fHistoryMaxEditor.setPropertyChangeListener(new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
 				if (event.getProperty().equals(FieldEditor.IS_VALID)) 
@@ -82,6 +87,7 @@ public class LaunchHistoryPreferencePage extends PreferencePage implements IWork
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan= 2;
 		tabFolder.setLayoutData(gd);
+		tabFolder.setFont(font);
 		
 		// create tabs (debug and run first) 
 		LaunchConfigurationManager manager = DebugUIPlugin.getDefault().getLaunchConfigurationManager();

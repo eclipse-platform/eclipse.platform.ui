@@ -176,6 +176,7 @@ public class LaunchHistoryPreferenceTab {
 		topComp.setLayout(layout);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		topComp.setLayoutData(gd);
+		topComp.setFont(parent.getFont());
 	
 		// Create "favorite config" area
 		createLabel(topComp, DebugPreferencesMessages.getString("LaunchHistoryPreferenceTab.Fa&vorites__1")); //$NON-NLS-1$
@@ -210,6 +211,7 @@ public class LaunchHistoryPreferenceTab {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
 		composite.setLayout(layout);
+		composite.setFont(parent.getFont());
 		return composite;
 	}
 	
