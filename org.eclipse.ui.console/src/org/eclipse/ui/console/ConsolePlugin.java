@@ -73,7 +73,7 @@ public class ConsolePlugin extends AbstractUIPlugin {
 	 * @param t throwable to log 
 	 */
 	public static void log(Throwable t) {
-		log(newErrorStatus("Error logged from Debug UI: ", t)); //$NON-NLS-1$
+		log(newErrorStatus("Error logged from Console plug-in: ", t)); //$NON-NLS-1$
 	}
 	
 	/**

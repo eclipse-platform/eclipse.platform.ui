@@ -50,7 +50,7 @@ public abstract class AbstractConsole implements IConsole {
 	class Lifecycle implements IConsoleListener {
 		
 		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.console.IConsoleListener#consolesAdded(org.eclipse.debug.internal.ui.console.IConsole[])
+		 * @see org.eclipse.ui.console.IConsoleListener#consolesAdded(org.eclipse.ui.console.IConsole[])
 		 */
 		public void consolesAdded(IConsole[] consoles) {
 			for (int i = 0; i < consoles.length; i++) {
@@ -63,7 +63,7 @@ public abstract class AbstractConsole implements IConsole {
 		}
 
 		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.console.IConsoleListener#consolesRemoved(org.eclipse.debug.internal.ui.console.IConsole[])
+		 * @see org.eclipse.ui.console.IConsoleListener#consolesRemoved(org.eclipse.ui.console.IConsole[])
 		 */
 		public void consolesRemoved(IConsole[] consoles) {
 			for (int i = 0; i < consoles.length; i++) {
@@ -131,7 +131,7 @@ public abstract class AbstractConsole implements IConsole {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.console.IConsole#getName()
+	 * @see org.eclipse.ui.console.IConsole#getName()
 	 */
 	public String getName() {
 		return fName;
@@ -150,7 +150,7 @@ public abstract class AbstractConsole implements IConsole {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.console.IConsole#getImageDescriptor()
+	 * @see org.eclipse.ui.console.IConsole#getImageDescriptor()
 	 */
 	public ImageDescriptor getImageDescriptor() {
 		return fImageDescriptor;
@@ -169,7 +169,7 @@ public abstract class AbstractConsole implements IConsole {
 	}	
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.console.IConsole#addPropertyChangeListener(IPropertyChangeListener)
+	 * @see org.eclipse.ui.console.IConsole#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
 	 */
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
 		if (fListeners == null) {
@@ -179,7 +179,7 @@ public abstract class AbstractConsole implements IConsole {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.console.IConsole#removePropertyChangeListener(IPropertyChangeListener)
+	 * @see org.eclipse.ui.console.IConsole#removePropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
 	 */
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
 		if (fListeners != null) {

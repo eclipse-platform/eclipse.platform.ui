@@ -58,7 +58,7 @@ public class MessageConsole extends AbstractConsole {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.console.IConsole#createPage(org.eclipse.debug.internal.ui.console.IConsoleView)
+	 * @see org.eclipse.ui.console.IConsole#createPage(org.eclipse.ui.console.IConsoleView)
 	 */
 	public IPageBookViewPage createPage(IConsoleView view) {
 		return new MessageConsolePage(view, this);
@@ -116,4 +116,3 @@ public class MessageConsole extends AbstractConsole {
 		return fPartitioner.getDocument();
 	}
 }
- 

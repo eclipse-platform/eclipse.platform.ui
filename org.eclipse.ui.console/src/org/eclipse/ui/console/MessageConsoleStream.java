@@ -82,5 +82,4 @@ public class MessageConsoleStream {
 	public Color getColor() {
 		return fColor;
 	}
-
 }
