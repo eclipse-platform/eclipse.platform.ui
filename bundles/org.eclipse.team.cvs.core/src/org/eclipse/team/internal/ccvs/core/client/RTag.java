@@ -102,7 +102,7 @@ public class RTag extends RemoteCommand {
 		
 		ICVSResource[] resources = (ICVSResource[])Arrays.asList(arguments).toArray(new ICVSResource[arguments.length]);
 		Session session = getOpenSession(resources);
-		String[] stringArguments = convertArgumentsForOpenSession(resources, session);
+		String[] stringArguments = convertArgumentsForOpenSession(arguments);
 
 		return execute(session, globalOptions, localOptions, sourceTag, tag, stringArguments, monitor);
 	}
