@@ -571,7 +571,7 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 		}
 		if (host.startsWith(" ") || host.endsWith(" ")) { //$NON-NLS-1$ //$NON-NLS-2$
 			return new Status(IStatus.ERROR, CVSUIPlugin.ID, INVALID_FIELD_CONTENTS, 
-					Policy.bind("ConfigurationWizardMainPage.0"), null); //$NON-NLS-1$
+					Policy.bind("ConfigurationWizardMainPage.5"), null); //$NON-NLS-1$
 		}
 		return Status.OK_STATUS;
 	}

@@ -13,12 +13,9 @@ package org.eclipse.team.internal.ccvs.ui.repo;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.List;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
@@ -523,6 +520,18 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 		status = ConfigurationWizardMainPage.validatePath(pathString);
 		if (!isStatusOK(status)) {
 			return;
+		}
+		
+		try {
+			CVSRepositoryLocation l = CVSRepositoryLocation.fromProperties(createProperties());
+			if (!l.equals(location) && KnownRepositories.getInstance().isKnownRepository(l.getLocation())) {
+				setErrorMessage(Policy.bind("ConfigurationWizardMainPage.0")); //$NON-NLS-1$
+				setValid(false);
+				return;
+			}
+		} catch (CVSException e) {
+			CVSUIPlugin.log(e);
+			// Let it pass. Creation should fail
 		}
 		
 		setErrorMessage(null);
