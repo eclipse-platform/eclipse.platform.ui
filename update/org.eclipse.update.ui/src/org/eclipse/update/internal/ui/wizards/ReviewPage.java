@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.wizards;
 import java.net.URL;
+import java.util.*;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
@@ -27,6 +28,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.operations.UpdateUtils;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.SimpleFeatureAdapter;
@@ -42,6 +44,11 @@ public class ReviewPage
 	private Label counterLabel;
 	private CheckboxTableViewer tableViewer;
 	private IStatus validationStatus;
+	private Collection problematicFeatures = new HashSet();
+	// feature that was recently selected or null
+	private IFeature newlySelectedFeature;
+	// 
+	private FeatureStatus lastDisplayedStatus;
 	private PropertyDialogAction propertiesAction;
 	private Text descLabel;
 	private Button statusButton;
@@ -63,7 +70,7 @@ public class ReviewPage
 	}
 
 	class JobsLabelProvider
-		extends LabelProvider
+		extends SharedLabelProvider
 		implements ITableLabelProvider {
 		public String getColumnText(Object obj, int column) {
 			IInstallFeatureOperation job = (IInstallFeatureOperation) obj;
@@ -86,12 +93,14 @@ public class ReviewPage
 			if (column == 0) {
 				IFeature feature = ((IInstallFeatureOperation) obj).getFeature();
 				boolean patch = feature.isPatch();
-				UpdateLabelProvider provider =
-					UpdateUI.getDefault().getLabelProvider();
-				if (patch)
-					return provider.get(UpdateUIImages.DESC_EFIX_OBJ);
-				else
-					return provider.get(UpdateUIImages.DESC_FEATURE_OBJ);
+				
+				boolean problematic=problematicFeatures.contains(feature);
+				
+				if (patch) {
+					return get(UpdateUIImages.DESC_EFIX_OBJ, problematic? F_ERROR : 0);
+				} else {
+					return get(UpdateUIImages.DESC_FEATURE_OBJ, problematic? F_ERROR : 0);
+				}
 			}
 			return null;
 		}
@@ -420,6 +429,14 @@ public class ReviewPage
 		tableViewer.setLabelProvider(new JobsLabelProvider());
 		tableViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
+				newlySelectedFeature = null;
+				if(event.getChecked()){
+					// save checked feeature, so its error can be shown if any
+					Object checked = event.getElement();
+					if(checked instanceof IInstallFeatureOperation){
+						newlySelectedFeature= ((IInstallFeatureOperation)checked).getFeature();
+					}
+				}
 				tableViewer
 					.getControl()
 					.getDisplay()
@@ -516,10 +533,13 @@ public class ReviewPage
 		if (checked.length > 0) {
 			validateSelection();
 		} else {
+			lastDisplayedStatus = null;
 			setErrorMessage(null);
 			setPageComplete(false);
 			validationStatus = null;
+			problematicFeatures.clear();
 		}
+		tableViewer.update(jobs.toArray(), null);
 		statusButton.setEnabled(validationStatus != null);
 	}
 
@@ -606,25 +626,147 @@ public class ReviewPage
 		IInstallFeatureOperation[] jobs = getSelectedJobs();
 		validationStatus =
 			OperationsManager.getValidator().validatePendingChanges(jobs);
+		problematicFeatures.clear();
+		if (validationStatus != null) {
+			IStatus[] status = validationStatus.getChildren();
+			for (int i = 0; i < status.length; i++) {
+				IStatus singleStatus = status[i];
+				if(isSpecificStatus(singleStatus)){
+					IFeature f = ((FeatureStatus) singleStatus).getFeature();
+					problematicFeatures.add(f);				
+				}
+			}
+		}
+
 		setPageComplete(validationStatus == null || validationStatus.getCode() == IStatus.WARNING);
 		
-		if (validationStatus == null) {
-			setErrorMessage(null);
-		} else if (validationStatus.getCode() == IStatus.WARNING) {
-			setErrorMessage(null);
-			setMessage(validationStatus.getMessage(), IMessageProvider.WARNING);
-		} else {
-			setErrorMessage(UpdateUI.getString("InstallWizard.ReviewPage.invalid.long")); //$NON-NLS-1$
-		}
+		updateWizardMessage();
 	}
 
 	private void showStatus() {
 		if (validationStatus != null) {
-			ErrorDialog.openError(
-				UpdateUI.getActiveWorkbenchShell(),
-				UpdateUI.getString("InstallWizard.ReviewPage.invalid.short"), //$NON-NLS-1$
-				null,
-				validationStatus);
+//			ErrorDialog.openError(
+//				UpdateUI.getActiveWorkbenchShell(),
+//				UpdateUI.getString("InstallWizard.ReviewPage.invalid.short"), //$NON-NLS-1$
+//				null,
+//				validationStatus);
+			new StatusDialog().open();
+		}
+
+	}
+	/**
+	 * Check whether status is relevant to show for
+	 * a specific feature or is a other problem
+	 * @param status
+	 * @return true if status is FeatureStatus with
+	 * specified feature and certain error codes
+	 */
+	private boolean isSpecificStatus(IStatus status){
+		if(!(status instanceof FeatureStatus)){
+			return false;
+		}
+		if(status.getSeverity()!=IStatus.ERROR){
+			return false;
+		}
+		FeatureStatus featureStatus = (FeatureStatus) status;
+		if(featureStatus.getFeature()==null){
+			return false;
+		}
+		return 0!= (featureStatus.getCode()
+				& FeatureStatus.CODE_CYCLE
+				+ FeatureStatus.CODE_ENVIRONMENT
+				+ FeatureStatus.CODE_EXCLUSIVE
+				+ FeatureStatus.CODE_OPTIONAL_CHILD
+				+ FeatureStatus.CODE_PREREQ_FEATURE
+				+ FeatureStatus.CODE_PREREQ_PLUGIN);
+	}
+	/**
+	 * Update status in the wizard status area
+	 */
+	private void updateWizardMessage() {
+		if (validationStatus == null) {
+			lastDisplayedStatus=null;
+			setErrorMessage(null);
+		} else if (validationStatus.getCode() == IStatus.WARNING) {
+			lastDisplayedStatus=null;
+			setErrorMessage(null);
+			setMessage(validationStatus.getMessage(), IMessageProvider.WARNING);
+		} else {
+			// 1.  Feature selected, creating a problem for it, show status for it
+			if(newlySelectedFeature !=null){
+				IStatus[] status = validationStatus.getChildren();
+				for(int s =0; s< status.length; s++){
+					if(isSpecificStatus(status[s])){
+						FeatureStatus featureStatus = (FeatureStatus)status[s];
+						if(newlySelectedFeature.equals(featureStatus.getFeature())){
+							lastDisplayedStatus=featureStatus;
+							setErrorMessage(featureStatus.getMessage());
+							return;
+						}
+					}
+				}
+			}
+			
+			// 2.  show old status if possible (it is still valid)
+			if(lastDisplayedStatus !=null){
+				IStatus[] status = validationStatus.getChildren();
+				for(int i=0; i<status.length; i++){
+					if(lastDisplayedStatus.equals(status[i])){
+						//lastDisplayedStatus=lastDisplayedStatus;
+						//setErrorMessage(status[i].getMessage());
+						return;
+					}
+				}
+				lastDisplayedStatus = null;
+			}
+			
+			// 3.  pick the first problem that is specific to some feature
+			IStatus[] status = validationStatus.getChildren();
+			for(int s =0; s< status.length; s++){
+				if(isSpecificStatus(status[s])){
+					lastDisplayedStatus = (FeatureStatus)status[s];
+					setErrorMessage(status[s].getMessage());
+					return;
+				}
+			}
+				
+			// 4.  display the first problem (no problems specify a feature)
+			if(status.length>0){
+				IStatus singleStatus=status[0];
+				setErrorMessage(singleStatus.getMessage());
+			}else{
+			// 5. not multi or empty multi status
+				setErrorMessage(UpdateUI.getString("InstallWizard.ReviewPage.invalid.long")); //$NON-NLS-1$
+			}
 		}
 	}
+
+	class StatusDialog extends ErrorDialog {
+		Button detailsButton;
+		public StatusDialog() {
+			super(UpdateUI.getActiveWorkbenchShell(), UpdateUI
+					.getString("InstallWizard.ReviewPage.invalid.short"), null,
+					validationStatus, IStatus.OK | IStatus.INFO
+							| IStatus.WARNING | IStatus.ERROR);
+		}
+		protected Button createButton(
+				Composite parent,
+				int id,
+				String label,
+				boolean defaultButton) {
+			Button b = super.createButton(parent, id, label, defaultButton);
+			if(IDialogConstants.DETAILS_ID == id){
+				detailsButton = b;
+			}
+			return b;
+		}
+		public void create() {
+			super.create();
+			buttonPressed(IDialogConstants.DETAILS_ID);
+//			if(detailsButton!=null){
+//				detailsButton.dispose();
+//			}
+		}
+	}
+
 }

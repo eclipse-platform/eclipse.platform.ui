@@ -50,14 +50,10 @@ public class OperationValidator implements IOperationValidator {
 		"ActivityConstraints.prereqCompatible";
 	private static final String KEY_PREREQ_GREATER =
 		"ActivityConstraints.prereqGreaterOrEqual";
-	private static final String KEY_PATCH_REGRESSION =
-		"ActivityConstraints.patchRegression";
 	private static final String KEY_PATCH_UNCONFIGURE =
 		"ActivityConstraints.patchUnconfigure";
 	private static final String KEY_PATCH_UNCONFIGURE_BACKUP =
 		"ActivityConstraints.patchUnconfigureBackup";
-	private static final String KEY_PATCH_MISSING_TARGET =
-		"ActivityConstraints.patchMissingTarget";
 	private static final String KEY_OPTIONAL_CHILD =
 		"ActivityConstraints.optionalChild";
 	private static final String KEY_CYCLE = "ActivityConstraints.cycle";
@@ -67,69 +63,6 @@ public class OperationValidator implements IOperationValidator {
 		"ActivityConstraints.timeline";
 	private static final String KEY_NO_LICENSE =
 		"ActivityConstraints.noLicense";
-
-	/**
-	 * The feature status provide info about the broken features and what is
-	 * wrong.
-	 */
-	private static class FeatureStatus implements IStatus {
-		IStatus status;
-		IFeature feature;
-
-		public FeatureStatus(IFeature feature, IStatus status) {
-			this.status = status;
-			this.feature = feature;
-		}
-		public IStatus[] getChildren() {
-			return status.getChildren();
-		}
-		public int getCode() {
-			return status.getCode();
-		}
-		public Throwable getException() {
-			return status.getException();
-		}
-		public String getMessage() {
-			return status.getMessage();
-		}
-		public String getPlugin() {
-			return status.getPlugin();
-		}
-		public int getSeverity() {
-			return status.getSeverity();
-		}
-		public boolean isMultiStatus() {
-			return status.isMultiStatus();
-		}
-		public boolean isOK() {
-			return status.isOK();
-		}
-		public boolean matches(int severityMask) {
-			return status.matches(severityMask);
-		}
-		public IFeature getFeature() {
-			return feature;
-		}
-		public boolean equals(Object obj) {
-			if (!(obj instanceof FeatureStatus))
-				return false;
-			FeatureStatus fs = (FeatureStatus) obj;
-			// only check for feature, regardless of status type
-			if (fs.getFeature() == feature)
-				return true;
-			else if (fs.getFeature() == null && feature == null)
-				return fs.getMessage().equals(getMessage());
-			else if (fs.getFeature() == null && feature != null)
-				return false;
-			else if (fs.getFeature() != null && feature == null)
-				return false;
-			else if (fs.getFeature().equals(feature))
-				return true;
-			else
-				return false;
-		}
-
-	}
 
 	/*
 	 * Called by UI before performing operation. Returns null if no errors, a
@@ -318,7 +251,7 @@ public class OperationValidator implements IOperationValidator {
 						backup.getLabel());
 			else
 				msg = UpdateUtils.getString(KEY_PATCH_UNCONFIGURE);
-			status.add(createStatus(feature, msg));
+			status.add(createStatus(feature, FeatureStatus.CODE_OTHER, msg));
 			return true;
 		}
 		return false;
@@ -373,8 +306,6 @@ public class OperationValidator implements IOperationValidator {
 		try {
 			checkSiteReadOnly(oldFeature,status);
 			ArrayList features = computeFeatures();
-			if (oldFeature == null && isPatch(newFeature))
-				checkUnique(newFeature, features, status);
 			checkForCycles(newFeature, null, features);
 			features =
 				computeFeaturesAfterOperation(features, newFeature, oldFeature);
@@ -446,6 +377,7 @@ public class OperationValidator implements IOperationValidator {
 					status.add(
 						createStatus(
 							newFeature,
+							FeatureStatus.CODE_EXCLUSIVE,
 							UpdateUtils.getString(KEY_EXCLUSIVE)));
 					continue;
 				}
@@ -481,6 +413,7 @@ public class OperationValidator implements IOperationValidator {
 					IStatus conflict =
 						createStatus(
 							newFeature,
+							FeatureStatus.CODE_OTHER,
 							UpdateUtils.getString(KEY_CONFLICT));
 					status.add(0, conflict);
 					return;
@@ -494,7 +427,8 @@ public class OperationValidator implements IOperationValidator {
 	private static void checkSiteReadOnly(IFeature feature, ArrayList status) {
 		IConfiguredSite csite = feature.getSite().getCurrentConfiguredSite();
 		if (csite != null && !csite.isUpdatable())
-			status.add(createStatus(feature, UpdateUtils
+			status.add(createStatus(feature, FeatureStatus.CODE_OTHER,
+					UpdateUtils
 					.getFormattedMessage("ActivityConstraints.readOnly",
 							csite.getSite().getURL().toExternalForm())));
 	}
@@ -560,7 +494,7 @@ public class OperationValidator implements IOperationValidator {
 		// check for <includes> cycle
 		if (visitedFeatures.contains(feature)) {
 			IStatus status =
-			createStatus(top, UpdateUtils.getString(KEY_CYCLE));
+			createStatus(top, FeatureStatus.CODE_CYCLE, UpdateUtils.getString(KEY_CYCLE));
 			throw new CoreException(status);
 		} else {
 			// keep track of visited features so we can detect cycles
@@ -601,7 +535,7 @@ public class OperationValidator implements IOperationValidator {
 				return;
 		}
 		status.add(
-			createStatus(feature, UpdateUtils.getString(KEY_NO_LICENSE)));
+			createStatus(feature, FeatureStatus.CODE_OTHER, UpdateUtils.getString(KEY_NO_LICENSE)));
 	}
 
 	/*
@@ -821,7 +755,7 @@ public class OperationValidator implements IOperationValidator {
 					KEY_CYCLE, 
 					new String[] {feature.getLabel(), 
 							feature.getVersionedIdentifier().toString()});
-			IStatus status = createStatus(feature, msg);
+			IStatus status = createStatus(feature, FeatureStatus.CODE_CYCLE, msg);
 			throw new CoreException(status);
 		}
 
@@ -844,76 +778,6 @@ public class OperationValidator implements IOperationValidator {
 		candidates.remove(feature);
 	}
 	
-	/*
-	 *  
-	 */
-	private static void checkUnique(
-		IFeature feature,
-		ArrayList features,
-		ArrayList status)
-		throws CoreException {
-		if (features == null)
-			return;
-		IIncludedFeatureReference[] irefs =
-			feature.getIncludedFeatureReferences();
-		for (int i = 0; i < irefs.length; i++) {
-			IIncludedFeatureReference iref = irefs[i];
-			IFeature ifeature = iref.getFeature(null);
-			boolean patch = isPatch(ifeature);
-			VersionedIdentifier vid = ifeature.getVersionedIdentifier();
-			String id = vid.getIdentifier();
-			PluginVersionIdentifier version = vid.getVersion();
-			boolean found = false;
-			for (int j = 0; j < features.size(); j++) {
-				IFeature candidate = (IFeature) features.get(j);
-				VersionedIdentifier cvid = candidate.getVersionedIdentifier();
-				String cid = cvid.getIdentifier();
-				PluginVersionIdentifier cversion = cvid.getVersion();
-				if (cid.equals(id)) {
-					// The same identifier - this one will
-					// be unconfigured. Check if it is lower,
-					// otherwise flag.
-					found = true;
-					// Ignore equal - will be filtered in the download
-					if (version.equals(cversion))
-						continue;
-					// Flag only the case when the installed one is
-					// newer than the one that will be installed.
-					if (!version.isGreaterThan(cversion)) {
-						// Don't allow this.
-						String msg =
-							UpdateUtils.getFormattedMessage(
-								KEY_PATCH_REGRESSION,
-								new String[] {
-									ifeature.getLabel(),
-									version.toString()});
-						status.add(createStatus(feature, msg));
-
-					}
-				}
-			}
-			if (!found) {
-				// All the features carried in a patch must
-				// already be present, unless this feature
-				// is a patch itself
-
-				// 30849: optional feature does not
-				// need to be present.
-				if (!patch && iref.isOptional() == false) {
-					String msg =
-						UpdateUtils.getFormattedMessage(
-							KEY_PATCH_MISSING_TARGET,
-							new String[] {
-								ifeature.getLabel(),
-								version.toString()});
-					status.add(createStatus(feature, msg));
-				}
-			}
-			if (patch)
-				checkUnique(ifeature, features, status);
-		}
-	}
-
 	/*
 	 * validate constraints
 	 */
@@ -951,7 +815,7 @@ public class OperationValidator implements IOperationValidator {
 			if (fos.size() > 0) {
 				if (!fos.contains(os)) {
 					IStatus s =
-						createStatus(feature, UpdateUtils.getString(KEY_OS));
+						createStatus(feature, FeatureStatus.CODE_ENVIRONMENT, UpdateUtils.getString(KEY_OS));
 					if (!status.contains(s))
 						status.add(s);
 					continue;
@@ -961,7 +825,7 @@ public class OperationValidator implements IOperationValidator {
 			if (fws.size() > 0) {
 				if (!fws.contains(ws)) {
 					IStatus s =
-						createStatus(feature, UpdateUtils.getString(KEY_WS));
+						createStatus(feature, FeatureStatus.CODE_ENVIRONMENT, UpdateUtils.getString(KEY_WS));
 					if (!status.contains(s))
 						status.add(s);
 					continue;
@@ -971,7 +835,7 @@ public class OperationValidator implements IOperationValidator {
 			if (farch.size() > 0) {
 				if (!farch.contains(arch)) {
 					IStatus s =
-						createStatus(feature, UpdateUtils.getString(KEY_ARCH));
+						createStatus(feature, FeatureStatus.CODE_ENVIRONMENT, UpdateUtils.getString(KEY_ARCH));
 					if (!status.contains(s))
 						status.add(s);
 					continue;
@@ -1005,7 +869,7 @@ public class OperationValidator implements IOperationValidator {
 			}
 			if (!found) {
 				IStatus s =
-					createStatus(null, UpdateUtils.getString(KEY_PLATFORM));
+					createStatus(null, FeatureStatus.CODE_OTHER, UpdateUtils.getString(KEY_PLATFORM));
 				if (!status.contains(s))
 					status.add(s);
 
@@ -1036,7 +900,7 @@ public class OperationValidator implements IOperationValidator {
 				return;
 		}
 
-		IStatus s = createStatus(null, UpdateUtils.getString(KEY_PRIMARY));
+		IStatus s = createStatus(null, FeatureStatus.CODE_OTHER, UpdateUtils.getString(KEY_PRIMARY));
 		if (!status.contains(s))
 			status.add(s);
 	}
@@ -1124,6 +988,9 @@ public class OperationValidator implements IOperationValidator {
 						featurePrereq
 							? UpdateUtils.getString(KEY_PREREQ_FEATURE)
 							: UpdateUtils.getString(KEY_PREREQ_PLUGIN);
+					int errorCode = featurePrereq
+							? FeatureStatus.CODE_PREREQ_FEATURE
+							: FeatureStatus.CODE_PREREQ_PLUGIN;
 					String msg =
 						UpdateUtils.getFormattedMessage(
 							KEY_PREREQ,
@@ -1163,7 +1030,7 @@ public class OperationValidator implements IOperationValidator {
 										id,
 										version.toString()});
 					}
-					IStatus s = createStatus(feature, msg);
+					IStatus s = createStatus(feature, errorCode, msg);
 					if (!status.contains(s))
 						status.add(s);
 				}
@@ -1242,7 +1109,7 @@ public class OperationValidator implements IOperationValidator {
 			// feature is included as optional but
 			// no parent is currently configured.
 			String msg = UpdateUtils.getString(KEY_OPTIONAL_CHILD);
-			status.add(createStatus(feature, msg));
+			status.add(createStatus(feature, FeatureStatus.CODE_OPTIONAL_CHILD, msg));
 		} else {
 			//feature is root - can be configured
 		}
@@ -1341,7 +1208,7 @@ public class OperationValidator implements IOperationValidator {
 					UpdateUtils.getFormattedMessage(
 						KEY_WRONG_TIMELINE,
 						config.getLabel());
-				status.add(createStatus(null, msg));
+				status.add(createStatus(null, FeatureStatus.CODE_OTHER, msg));
 				return false;
 			}
 		} catch (CoreException e) {
@@ -1365,7 +1232,7 @@ public class OperationValidator implements IOperationValidator {
 			null);
 	}
 
-	private static IStatus createStatus(IFeature feature, String message) {
+	private static IStatus createStatus(IFeature feature, int errorCode, String message) {
 
 		String fullMessage;
 		if (feature == null)
@@ -1382,14 +1249,13 @@ public class OperationValidator implements IOperationValidator {
 						message });
 		}
 
-		IStatus status =
-			new Status(
-				IStatus.ERROR,
-				UpdateCore.getPlugin().getDescriptor().getUniqueIdentifier(),
-				IStatus.OK,
-				fullMessage,
-				null);
-		return new FeatureStatus(feature, status);
+		return new FeatureStatus(
+			feature,
+			IStatus.ERROR,
+			UpdateCore.getPlugin().getDescriptor().getUniqueIdentifier(),
+			errorCode,
+			fullMessage,
+			null);
 	}
 
 	//	private static IStatus createReportStatus(ArrayList beforeStatus,
