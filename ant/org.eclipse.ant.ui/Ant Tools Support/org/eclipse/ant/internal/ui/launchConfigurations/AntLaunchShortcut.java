@@ -324,7 +324,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 			
 			return workingCopy.doSave();
 		} catch (CoreException e) {
-			reportError(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntLaunchShortcut.An_exception_occurred_while_creating_a_default_Ant_launch_configuration_for_{0}_2"), new String[]{filePath.toString()}), e); //$NON-NLS-1$
+			reportError(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntLaunchShortcut.2"), new String[]{filePath.toString()}), e); //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -355,11 +355,11 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 			try {
 				configs = manager.getLaunchConfigurations(type);
 			} catch (CoreException e) {
-				reportError(AntLaunchConfigurationMessages.getString("AntLaunchShortcut.An_exception_occurred_while_retrieving_Ant_launch_configurations._3"), e); //$NON-NLS-1$
+				reportError(AntLaunchConfigurationMessages.getString("AntLaunchShortcut.3"), e); //$NON-NLS-1$
 			}
 			if (configs != null && configs.length > 0) {
 				if (filePath == null) {
-					reportError(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntLaunchShortcut.12"), new String[] {"no location able to be resolved for buildfile"}), null);
+					reportError(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntLaunchShortcut.12"), new String[] {AntLaunchConfigurationMessages.getString("AntLaunchShortcut.0")}), null); //$NON-NLS-1$ //$NON-NLS-2$
 				} else {
 					for (int i = 0; i < configs.length; i++) {
 						ILaunchConfiguration configuration = configs[i];
@@ -391,8 +391,8 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 		ILabelProvider labelProvider = DebugUITools.newDebugModelPresentation();
 		ElementListSelectionDialog dialog= new ElementListSelectionDialog(Display.getDefault().getActiveShell(), labelProvider);
 		dialog.setElements(configs.toArray(new ILaunchConfiguration[configs.size()]));
-		dialog.setTitle(AntLaunchConfigurationMessages.getString("AntLaunchShortcut.Ant_Configuration_Selection_4")); //$NON-NLS-1$
-		dialog.setMessage(AntLaunchConfigurationMessages.getString("AntLaunchShortcut.Choose_an_ant_configuration_to_run_5")); //$NON-NLS-1$
+		dialog.setTitle(AntLaunchConfigurationMessages.getString("AntLaunchShortcut.4")); //$NON-NLS-1$
+		dialog.setMessage(AntLaunchConfigurationMessages.getString("AntLaunchShortcut.5")); //$NON-NLS-1$
 		dialog.setMultipleSelection(false);
 		int result = dialog.open();
 		labelProvider.dispose();
@@ -410,7 +410,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 	 */
 	protected boolean verifyMode(String mode) {
 		if (!mode.equals(ILaunchManager.RUN_MODE)) {
-			reportError(AntLaunchConfigurationMessages.getString("AntLaunchShortcut.Ant_builds_only_support___run___mode._6"), null); //$NON-NLS-1$
+			reportError(AntLaunchConfigurationMessages.getString("AntLaunchShortcut.6"), null); //$NON-NLS-1$
 			return false;
 		}
 		return true;
@@ -428,7 +428,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 		}
 		if (input instanceof ILocationProvider) {
 			IPath filePath= ((ILocationProvider)input).getPath(input);
-			if ("xml".equals(filePath.getFileExtension())) {
+			if ("xml".equals(filePath.getFileExtension())) { //$NON-NLS-1$
 				launch(filePath, mode, null);
 				return;
 			}
