@@ -46,10 +46,8 @@
 </head>
 
 <body>
-<div style="position:absolute; left:0; top:0; ">
-     <img border="0" src="images/helpbanner.gif" width="604" height="45"  margin=0>
-</div>
-<div id="bannerTitle" style="position:absolute; left:10; top:6; font: 14pt Tahoma;">
+
+<div id="bannerTitle" style="background:ActiveBorder; width:100%; position:absolute; left:10; top:20; font: 14pt Tahoma;">
 	<%=title%>
 </div>
 </body>
