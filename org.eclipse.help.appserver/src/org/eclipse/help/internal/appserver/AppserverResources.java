@@ -21,7 +21,7 @@ import org.eclipse.core.boot.*;
 class AppserverResources {
 	private static ResourceBundle resBundle;
 	static {
-		resBundle = ResourceBundle.getBundle("appserver", getDefaultLocale());
+		resBundle = ResourceBundle.getBundle(AppserverResources.class.getName());
 	}
 	/**
 	 * Resources constructor.
