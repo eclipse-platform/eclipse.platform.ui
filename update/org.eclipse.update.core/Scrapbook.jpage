@@ -69,6 +69,9 @@ while (k.hasNext()){
 	System.out.println("KeyStore:"+handle.getLocation()+":"+handle.getType());
 }
 
+int i = (13/3);
+i
+
 *****************************************
 OLD Feature Code
 

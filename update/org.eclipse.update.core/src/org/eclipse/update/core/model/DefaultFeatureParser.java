@@ -87,8 +87,8 @@ public class DefaultFeatureParser extends DefaultHandler {
 		this.parser = new SAXParser();
 		try {
 			parser.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+		} catch (SAXException e) {
 		}
-		catch (SAXException e) {}		
 		this.parser.setContentHandler(this);
 		this.parser.setErrorHandler(this); // 18350		
 	}
@@ -167,27 +167,12 @@ public class DefaultFeatureParser extends DefaultHandler {
 				break;
 
 			case STATE_FEATURE :
-				handleFeatureState(localName, attributes);
-				break;
-
 			case STATE_INCLUDES :
-				handleIncludesState(localName, attributes);
-				break;
-
 			case STATE_HANDLER :
-				handleHandlerState(localName, attributes);
-				break;
-
 			case STATE_DESCRIPTION :
-				handleDescriptionState(localName, attributes);
-				break;
-
 			case STATE_COPYRIGHT :
-				handleCopyrightState(localName, attributes);
-				break;
-
 			case STATE_LICENSE :
-				handleLicenseState(localName, attributes);
+				handleFeatureState(localName, attributes);
 				break;
 
 			case STATE_URL :
@@ -197,11 +182,8 @@ public class DefaultFeatureParser extends DefaultHandler {
 				break;
 
 			case STATE_UPDATE :
-				handleUpdateState(localName, attributes);
-				break;
-
 			case STATE_DISCOVERY :
-				handleDiscoveryState(localName, attributes);
+				handleUpdateDiscoveryState(localName, attributes);
 				break;
 
 			case STATE_REQUIRES :
@@ -209,15 +191,12 @@ public class DefaultFeatureParser extends DefaultHandler {
 				break;
 
 			case STATE_IMPORT :
-				handleImportState(localName, attributes);
+				handleImportState(localName,attributes);
 				break;
-
+				
 			case STATE_PLUGIN :
-				handlePluginState(localName, attributes);
-				break;
-
 			case STATE_DATA :
-				handleDataState(localName, attributes);
+				handleFeatureState(localName, attributes);
 				break;
 
 			default :
@@ -589,81 +568,6 @@ public class DefaultFeatureParser extends DefaultHandler {
 		//$NON-NLS-1$
 	}
 
-	private void handleHandlerState(String elementName, Attributes attributes) throws SAXException {
-		if (elementName.equals(DESCRIPTION)) {
-			stateStack.push(new Integer(STATE_DESCRIPTION));
-			processInfo(attributes);
-		} else if (elementName.equals(COPYRIGHT)) {
-			stateStack.push(new Integer(STATE_COPYRIGHT));
-			processInfo(attributes);
-		} else if (elementName.equals(LICENSE)) {
-			stateStack.push(new Integer(STATE_LICENSE));
-			processInfo(attributes);
-		} else if (elementName.equals(URL)) {
-			stateStack.push(new Integer(STATE_URL));
-			//No process as URL tag does not contain any element itself
-		} else if (elementName.equals(INCLUDES)) {
-			stateStack.push(new Integer(STATE_INCLUDES));
-			processIncludes(attributes);
-		} else if (elementName.equals(REQUIRES)) {
-			stateStack.push(new Integer(STATE_REQUIRES));
-			processRequire(attributes);
-		} else if (elementName.equals(PLUGIN)) {
-			stateStack.push(new Integer(STATE_PLUGIN));
-			processPlugin(attributes);
-		} else if (elementName.equals(DATA)) {
-			stateStack.push(new Integer(STATE_DATA));
-			processData(attributes);
-		} else
-			internalErrorUnknownTag(Policy.bind("DefaultFeatureParser.UnknownElement", elementName, getState(currentState)));
-		//$NON-NLS-1$
-	}
-
-	private void handleCopyrightState(String elementName, Attributes attributes) throws SAXException {
-		if (elementName.equals(LICENSE)) {
-			stateStack.push(new Integer(STATE_LICENSE));
-			processInfo(attributes);
-		} else if (elementName.equals(URL)) {
-			stateStack.push(new Integer(STATE_URL));
-			//No process as URL tag does not contain any element itself
-		} else if (elementName.equals(INCLUDES)) {
-			stateStack.push(new Integer(STATE_INCLUDES));
-			processIncludes(attributes);
-		} else if (elementName.equals(REQUIRES)) {
-			stateStack.push(new Integer(STATE_REQUIRES));
-			processRequire(attributes);
-		} else if (elementName.equals(PLUGIN)) {
-			stateStack.push(new Integer(STATE_PLUGIN));
-			processPlugin(attributes);
-		} else if (elementName.equals(DATA)) {
-			stateStack.push(new Integer(STATE_DATA));
-			processData(attributes);
-		} else
-			internalErrorUnknownTag(Policy.bind("DefaultFeatureParser.UnknownElement", elementName, getState(currentState)));
-		//$NON-NLS-1$
-	}
-
-	private void handleLicenseState(String elementName, Attributes attributes) throws SAXException {
-		if (elementName.equals(URL)) {
-			stateStack.push(new Integer(STATE_URL));
-			//No process as URL tag does not contain any element itself
-		} else if (elementName.equals(INCLUDES)) {
-			stateStack.push(new Integer(STATE_INCLUDES));
-			processIncludes(attributes);
-		} else if (elementName.equals(REQUIRES)) {
-			stateStack.push(new Integer(STATE_REQUIRES));
-			processRequire(attributes);
-		} else if (elementName.equals(PLUGIN)) {
-			stateStack.push(new Integer(STATE_PLUGIN));
-			processPlugin(attributes);
-		} else if (elementName.equals(DATA)) {
-			stateStack.push(new Integer(STATE_DATA));
-			processData(attributes);
-		} else
-			internalErrorUnknownTag(Policy.bind("DefaultFeatureParser.UnknownElement", elementName, getState(currentState)));
-		//$NON-NLS-1$
-	}
-
 	private void handleDescriptionState(String elementName, Attributes attributes) throws SAXException {
 		if (elementName.equals(COPYRIGHT)) {
 			stateStack.push(new Integer(STATE_COPYRIGHT));
@@ -703,29 +607,31 @@ public class DefaultFeatureParser extends DefaultHandler {
 		//$NON-NLS-1$
 	}
 
-	private void handleUpdateState(String elementName, Attributes attributes) throws SAXException {
-		if (elementName.equals(INCLUDES)) {
-			stateStack.push(new Integer(STATE_INCLUDES));
-			processIncludes(attributes);
-		} else if (elementName.equals(REQUIRES)) {
-			stateStack.push(new Integer(STATE_REQUIRES));
-			processRequire(attributes);
-		} else if (elementName.equals(PLUGIN)) {
-			stateStack.push(new Integer(STATE_PLUGIN));
-			processPlugin(attributes);
-		} else if (elementName.equals(DATA)) {
-			stateStack.push(new Integer(STATE_DATA));
-			processData(attributes);
-		} else if (elementName.equals(DISCOVERY)) {
-			stateStack.push(new Integer(STATE_DISCOVERY));
-			processURLInfo(attributes);
+	private void handleRequiresState(String elementName, Attributes attributes) throws SAXException {
+		if (elementName.equals(IMPORT)) {
+			stateStack.push(new Integer(STATE_IMPORT));
+			processImport(attributes);
 		} else
 			internalErrorUnknownTag(Policy.bind("DefaultFeatureParser.UnknownElement", elementName, getState(currentState)));
 		//$NON-NLS-1$
 	}
-
-	private void handleDiscoveryState(String elementName, Attributes attributes) throws SAXException {
-		if (elementName.equals(INCLUDES)) {
+	private void handleUpdateDiscoveryState(String elementName, Attributes attributes) throws SAXException {
+		if (elementName.equals(HANDLER)) {
+			stateStack.push(new Integer(STATE_HANDLER));
+			processHandler(attributes);
+		} else if (elementName.equals(DESCRIPTION)) {
+			stateStack.push(new Integer(STATE_DESCRIPTION));
+			processInfo(attributes);
+		} else if (elementName.equals(COPYRIGHT)) {
+			stateStack.push(new Integer(STATE_COPYRIGHT));
+			processInfo(attributes);
+		} else if (elementName.equals(LICENSE)) {
+			stateStack.push(new Integer(STATE_LICENSE));
+			processInfo(attributes);
+		} else if (elementName.equals(URL)) {
+			stateStack.push(new Integer(STATE_URL));
+			//No process as URL tag does not contain any element itself
+		} else if (elementName.equals(INCLUDES)) {
 			stateStack.push(new Integer(STATE_INCLUDES));
 			processIncludes(attributes);
 		} else if (elementName.equals(REQUIRES)) {
@@ -748,8 +654,25 @@ public class DefaultFeatureParser extends DefaultHandler {
 		//$NON-NLS-1$
 	}
 
-	private void handleIncludesState(String elementName, Attributes attributes) throws SAXException {
-		if (elementName.equals(INCLUDES)) {
+
+
+	private void handleImportState(String elementName, Attributes attributes) throws SAXException {
+		if (elementName.equals(HANDLER)) {
+			stateStack.push(new Integer(STATE_HANDLER));
+			processHandler(attributes);
+		} else if (elementName.equals(DESCRIPTION)) {
+			stateStack.push(new Integer(STATE_DESCRIPTION));
+			processInfo(attributes);
+		} else if (elementName.equals(COPYRIGHT)) {
+			stateStack.push(new Integer(STATE_COPYRIGHT));
+			processInfo(attributes);
+		} else if (elementName.equals(LICENSE)) {
+			stateStack.push(new Integer(STATE_LICENSE));
+			processInfo(attributes);
+		} else if (elementName.equals(URL)) {
+			stateStack.push(new Integer(STATE_URL));
+			//No process as URL tag does not contain any element itself
+		} else if (elementName.equals(INCLUDES)) {
 			stateStack.push(new Integer(STATE_INCLUDES));
 			processIncludes(attributes);
 		} else if (elementName.equals(REQUIRES)) {
@@ -761,51 +684,9 @@ public class DefaultFeatureParser extends DefaultHandler {
 		} else if (elementName.equals(DATA)) {
 			stateStack.push(new Integer(STATE_DATA));
 			processData(attributes);
-		} else
-			internalErrorUnknownTag(Policy.bind("DefaultFeatureParser.UnknownElement", elementName, getState(currentState)));
-		//$NON-NLS-1$
-	}
-
-	private void handleRequiresState(String elementName, Attributes attributes) throws SAXException {
-		if (elementName.equals(IMPORT)) {
-			stateStack.push(new Integer(STATE_IMPORT));
-			processImport(attributes);
-		} else
-			internalErrorUnknownTag(Policy.bind("DefaultFeatureParser.UnknownElement", elementName, getState(currentState)));
-		//$NON-NLS-1$
-	}
-
-	private void handleImportState(String elementName, Attributes attributes) throws SAXException {
-		if (elementName.equals(PLUGIN)) {
-			stateStack.push(new Integer(STATE_PLUGIN));
-			processPlugin(attributes);
-		} else if (elementName.equals(DATA)) {
-			stateStack.push(new Integer(STATE_DATA));
-			processData(attributes);
 		} else if (elementName.equals(IMPORT)) {
 			stateStack.push(new Integer(STATE_IMPORT));
 			processImport(attributes);
-		} else
-			internalErrorUnknownTag(Policy.bind("DefaultFeatureParser.UnknownElement", elementName, getState(currentState)));
-		//$NON-NLS-1$
-	}
-
-	private void handlePluginState(String elementName, Attributes attributes) throws SAXException {
-		if (elementName.equals(PLUGIN)) {
-			stateStack.push(new Integer(STATE_PLUGIN));
-			processPlugin(attributes);
-		} else if (elementName.equals(DATA)) {
-			stateStack.push(new Integer(STATE_DATA));
-			processData(attributes);
-		} else
-			internalErrorUnknownTag(Policy.bind("DefaultFeatureParser.UnknownElement", elementName, getState(currentState)));
-		//$NON-NLS-1$
-	}
-
-	private void handleDataState(String elementName, Attributes attributes) throws SAXException {
-		if (elementName.equals(DATA)) {
-			stateStack.push(new Integer(STATE_DATA));
-			processData(attributes);
 		} else
 			internalErrorUnknownTag(Policy.bind("DefaultFeatureParser.UnknownElement", elementName, getState(currentState)));
 		//$NON-NLS-1$

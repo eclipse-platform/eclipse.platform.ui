@@ -49,11 +49,8 @@ public class TestFeatureParse extends UpdateManagerTestCase {
 			FeatureModel remoteFeature = parser.parse(resolvedURL.openStream());
 			remoteFeature.resolve(remoteURL, null);
 
-			fail("Exception should be thrown");
 		} catch (SAXParseException e) {
-			if (e.getMessage().indexOf("</copyright>") == -1) {	
-				throw e;	
-			}
+			fail("Exception should NOT be thrown");
 		}
 	}
 	
@@ -69,11 +66,9 @@ public class TestFeatureParse extends UpdateManagerTestCase {
 			FeatureModel remoteFeature = parser.parse(resolvedURL.openStream());
 			remoteFeature.resolve(remoteURL, null);
 
-			fail("Exception should be thrown");
+			
 		} catch (SAXParseException e) {
-			if (e.getMessage().indexOf("</copyright>") == -1) {	
-				throw e;	
-			}
+			fail("Exception should NOT be thrown");
 		}
 	}	
 	
