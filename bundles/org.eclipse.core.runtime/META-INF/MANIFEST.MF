@@ -23,6 +23,7 @@ Provide-Package:
  org.eclipse.core.internal.boot
 Import-Package: 
  org.osgi.framework,
+ org.eclipse.osgi.service.debug,
  org.eclipse.osgi.service.environment,
  org.osgi.service.packageadmin,
  org.osgi.service.url,
