@@ -55,7 +55,7 @@ public abstract class AbstractRulerActionDelegate implements IEditorActionDelega
 
 
 	/*
-	 * @see IEditorActionDelegate#setActiveEditor(IAction, IEditorPart)
+	 * @see IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
 	 */
 	public void setActiveEditor(IAction callerAction, IEditorPart targetEditor) {
 		if (fEditor != null) {
@@ -91,7 +91,7 @@ public abstract class AbstractRulerActionDelegate implements IEditorActionDelega
 	}
 
 	/*
-	 * @see IActionDelegate#run(IAction)
+	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction callerAction) {
 		if (fAction != null)
@@ -99,7 +99,7 @@ public abstract class AbstractRulerActionDelegate implements IEditorActionDelega
 	}
 
 	/*
-	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
+	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
 	}
@@ -118,27 +118,27 @@ public abstract class AbstractRulerActionDelegate implements IEditorActionDelega
 	}
 
 	/*
-	 * @see IMenuListener#menuAboutToShow(IMenuManager)
+	 * @see IMenuListener#menuAboutToShow(org.eclipse.jface.action.IMenuManager)
 	 */
 	public void menuAboutToShow(IMenuManager manager) {
 		update();
 	}
 
 	/*
-	 * @see MouseListener#mouseDoubleClick(MouseEvent)	
+	 * @see MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)	
 	 */
 	public void mouseDoubleClick(MouseEvent e) {
 	}
 
 	/*
-	 * @see MouseListener#mouseDown(MouseEvent)	
+	 * @see MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)	
 	 */
 	public void mouseDown(MouseEvent e) {
 		update();
 	}
 
 	/*
-	 * @see MouseListener#mouseUp(MouseEvent)
+	 * @see MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
 	 */
 	public void mouseUp(MouseEvent e) {
 	}

@@ -33,7 +33,7 @@ import org.eclipse.ui.part.EditorActionBarContributor;
  * <p>
  * If instantiated and used as-is, this contributor connects to all of the workbench defined
  * global editor actions the corresponding actions of the current editor. It also adds addition 
- * actions for searching and navigation (go to line) as well as a set of status fields.
+ * actions for searching and navigation (go to line) as well as a set of status fields.</p>
  * <p>
  * Subclasses may override the following methods:
  * <ul>
@@ -43,7 +43,7 @@ import org.eclipse.ui.part.EditorActionBarContributor;
  *   <li><code>setActiveEditor</code> - extend to react to editor changes</li>
  * </ul>
  * </p>
- * #see ITextEditorActionConstants
+ * @see org.eclipse.ui.texteditor.ITextEditorActionConstants
  */
 public class BasicTextEditorActionContributor extends EditorActionBarContributor {
 	
@@ -73,32 +73,36 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 		ITextEditorActionConstants.STATUS_CATEGORY_INPUT_POSITION
 	};
 	
-	/** The active editor part */
+	/**
+	 * The active editor part.
+	 */
 	private IEditorPart fActiveEditorPart;
 	/** 
-	 * The find next action
+	 * The find next action.
 	 * @since 2.0
 	 */
 	private RetargetTextEditorAction fFindNext;
 	/** 
-	 * The find previous action
+	 * The find previous action.
 	 * @since 2.0
 	 */
 	private RetargetTextEditorAction fFindPrevious;	
 	/** 
-	 * The incremental find action
+	 * The incremental find action.
 	 * @since 2.0
 	 */
 	private RetargetTextEditorAction fIncrementalFind;	
 	/**
-	 * The reverse incremental find action
+	 * The reverse incremental find action.
 	 * @since 2.1
 	 */
 	private RetargetTextEditorAction fIncrementalFindReverse;	
-	/** The go to line action */
+	/**
+	 * The go to line action.
+	 */
 	private RetargetTextEditorAction fGotoLine;
 	/** 
-	 * The map of status fields
+	 * The map of status fields.
 	 * @since 2.0
 	 */
 	private Map fStatusFields;
@@ -108,7 +112,7 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	 * Creates an empty editor action bar contributor. The action bars are
 	 * furnished later via the <code>init</code> method.
 	 *
-	 * @see org.eclipse.ui.IEditorActionBarContributor#init
+	 * @see org.eclipse.ui.IEditorActionBarContributor#init(org.eclipse.ui.IActionBars, org.eclipse.ui.IWorkbenchPage)
 	 */
 	public BasicTextEditorActionContributor() {
 		
@@ -150,7 +154,8 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	
 	/**
 	 * The method installs the global action handlers for the given text editor.
-	 * This method cannot be overridden by subclasses.
+	 * <p>
+	 * This method cannot be overridden by subclasses.</p>
 	 * @since 2.0
 	 */
 	private void doSetActiveEditor(IEditorPart part) {
@@ -190,7 +195,9 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	 * The <code>BasicTextEditorActionContributor</code> implementation of this 
 	 * <code>IEditorActionBarContributor</code> method installs the global 
 	 * action handler for the given text editor by calling a private helper 
-	 * method. Subclasses may extend.
+	 * method.
+	 * <p>
+	 * Subclasses may extend.</p>
 	 */
 	public void setActiveEditor(IEditorPart part) {
 		doSetActiveEditor(part);
@@ -216,7 +223,7 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	}
 	
 	/*
-	 * @see EditorActionBarContributor#contributeToStatusLine(IStatusLineManager)
+	 * @see EditorActionBarContributor#contributeToStatusLine(org.eclipse.jface.action.IStatusLineManager)
 	 * @since 2.0
 	 */
 	public void contributeToStatusLine(IStatusLineManager statusLineManager) {
@@ -226,7 +233,7 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	}
 	
 	/*
-	 * @see IEditorActionBarContributor#dispose()
+	 * @see org.eclipse.ui.IEditorActionBarContributor#dispose()
 	 * @since 2.0
 	 */
 	public void dispose() {

@@ -118,6 +118,9 @@ public abstract class ResourceAction extends Action {
 		WorkbenchHelp.setHelp(this, contextId);
 	}	
 
+	/**
+	 * @since 2.1
+	 */
 	private void initialize(ResourceBundle bundle, String prefix) {
 		String labelKey= "label"; //$NON-NLS-1$
 		String tooltipKey= "tooltip"; //$NON-NLS-1$

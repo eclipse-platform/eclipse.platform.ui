@@ -75,7 +75,7 @@ public class AddMarkerAction extends TextEditorAction {
 	 * @param prefix a prefix to be prepended to the various resource keys
 	 *   (described in <code>ResourceAction</code> constructor), or 
 	 *   <code>null</code> if none
-	 * @param editor the text editor
+	 * @param textEditor the text editor
 	 * @param markerType the type of marker to add
 	 * @param askForLabel <code>true</code> if the user should be asked for 
 	 *   a label for the new marker
@@ -183,7 +183,8 @@ public class AddMarkerAction extends TextEditorAction {
 	
 	/**
 	 * Returns the attributes the new marker will be initialized with.
-	 * Subclasses may extend or replace this method.
+	 * <p>
+	 * Subclasses may extend or replace this method.</p>
 	 *
 	 * @return the attributes the new marker will be initialized with
 	 */

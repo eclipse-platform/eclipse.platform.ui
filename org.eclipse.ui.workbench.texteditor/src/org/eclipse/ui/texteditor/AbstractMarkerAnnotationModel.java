@@ -45,7 +45,7 @@ import org.eclipse.ui.PlatformUI;
  * to force the model to update the source's markers with any changes to their 
  * locations due to edits. Clients can register <code>IMarkerUpdater</code> 
  * objects in order to define the process of marker updating. Registration can be done
- * using the <code>"org.eclipse.ui.markerUpdaters"</code> extension point.
+ * using the <code>"org.eclipse.ui.markerUpdaters"</code> extension point.</p>
  * <p>
  * Subclasses must implement the following methods:
  * <ul>
@@ -67,8 +67,9 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 	
 	
 	/**
-	 * Retrieves all markers from this model.<p>
-	 * Subclasses must implement this method.
+	 * Retrieves all markers from this model.
+	 * <p>
+	 * Subclasses must implement this method.</p>
 	 *
 	 * @return the list of markers
 	 * @exception CoreException if there is a problem getting the markers
@@ -76,17 +77,19 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 	protected abstract IMarker[] retrieveMarkers() throws CoreException;
 
 	/**
-	 * Deletes the given markers from this model.<p>
-	 * Subclasses must implement this method.
+	 * Deletes the given markers from this model.
+	 * <p>
+	 * Subclasses must implement this method.</p>
 	 *
-	 * @param markers the list of markers
+	 * @param markers the array of markers
 	 * @exception CoreException if there are problems deleting the markers
 	 */
 	protected abstract void deleteMarkers(IMarker[] markers) throws CoreException;
 
 	/**
-	 * Tells the model whether it should listen for marker changes. <p>
-	 * Subclasses must implement this method.
+	 * Tells the model whether it should listen for marker changes.
+	 * <p>
+	 * Subclasses must implement this method.</p>
 	 *
 	 * @param listen <code>true</code> if this model should listen, and
 	 *   <code>false</code> otherwise
@@ -96,8 +99,9 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 	/**
 	 * Determines whether the marker is acceptable as an addition to this model.
 	 * If the marker, say, represents an aspect or range of no interest to this
-	 * model, the marker is rejected.<p>
-	 * Subclasses must implement this method.
+	 * model, the marker is rejected.
+	 * <p>
+	 * Subclasses must implement this method.</p>
 	 *
 	 * @param marker the marker
 	 * @return <code>true</code> if the marker is acceptable
@@ -113,8 +117,8 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 	
 	/**
 	 * Adds the given marker updater to this annotation model.
-	 * It is client's responsibility to ensure the consitency of the
-	 * set of registered marker updaters.
+	 * It is the client's responsibility to ensure the consitency
+	 * of the set of registered marker updaters.
 	 *
 	 * @param markerUpdater the marker updater to be added
 	 */
@@ -133,8 +137,9 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 	}
 
 	/**
-	 * Creates a new annotation for the given marker.<p>
-	 * Subclasses may override.
+	 * Creates a new annotation for the given marker.
+	 * <p>
+	 * Subclasses may override.</p>
 	 *
 	 * @param marker the marker
 	 * @return the new marker annotation
@@ -162,11 +167,12 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 	
 	/**
 	 * Creates and returns the character position of the given marker based
-	 * on its attributes. <p>
-	 * Subclasses may override.
+	 * on its attributes.
+	 * <p>
+	 * Subclasses may override.</p>
 	 *
 	 * @param marker the marker
-	 * @return the new position or <code>null</code> if no valid position
+	 * @return the new position or <code>null</code> if the marker attributes do not specify a valid position
 	 */
 	protected Position createPositionFromMarker(IMarker marker) {
 		
@@ -202,7 +208,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 	 * Does nothing if the marker is not acceptable to this model.
 	 *
 	 * @param marker the marker
-	 * @see #isAcceptable
+	 * @see #isAcceptable(IMarker)
 	 */
 	protected final void addMarkerAnnotation(IMarker marker) {
 		
@@ -215,7 +221,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 
 	/**
 	 * Connects to the source of markers as marker change listener.
-	 * @see AnnotationModel#connected
+	 * @see AnnotationModel#connected()
 	 */
 	protected void connected() {
 				
@@ -266,7 +272,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 	
 	/**
 	 * Removes the marker change listener.
-	 * @see AnnotationModel#disconnected
+	 * @see AnnotationModel#disconnected()
 	 */
 	protected void disconnected() {
 		listenToMarkerChanges(false);
@@ -289,8 +295,9 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 	
 	/**
 	 * Updates the annotation corresponding to the given marker which has changed
-	 * in some way. <p>
-	 * Subclasses may override.
+	 * in some way.
+	 * <p>
+	 * Subclasses may override.</p>
 	 *
 	 * @param marker the marker
 	 */
@@ -312,7 +319,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 	}
 
 	/*
-	 * @see AnnotationModel#removeAnnotations
+	 * @see AnnotationModel#removeAnnotations(List, boolean, boolean)
 	 */
 	protected void removeAnnotations(List annotations, boolean fireModelChanged, boolean modelInitiated) {
 		if (annotations != null && annotations.size() > 0) {

@@ -36,8 +36,6 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.PlatformUI;
 
 
-
-
 /**
  * This registry manages shareable document provider. Document
  * providers are specified in <code>plugin.xml</code> either 
@@ -157,7 +155,7 @@ public class DocumentProviderRegistry {
 	 * Returns a shareable document provider for the given name extension.
 	 *
 	 * @param extension the name extension to be used for lookup
-	 * @return the shareable document provider
+	 * @return the shareable document provider or <code>null</code>
 	 */
 	public IDocumentProvider getDocumentProvider(String extension) {
 		
@@ -172,6 +170,8 @@ public class DocumentProviderRegistry {
 	/**
 	 * Computes the class hierarchy of the given type. The type is
 	 * part of the computed hierarchy.
+	 * 
+	 * @return a list with elements of type <code>Class</code>
 	 */
 	private List computeClassList(Class type) {
 		
@@ -190,6 +190,8 @@ public class DocumentProviderRegistry {
 	 * Computes the list of all interfaces for the given list of
 	 * classes. The interface lists of the given classes are 
 	 * concatenated.
+	 * 
+	 * @return a list with elements of type <code>Class</code>
 	 */
 	private List computeInterfaceList(List classes) {
 		
@@ -232,6 +234,8 @@ public class DocumentProviderRegistry {
 	/**
 	 * Returns the configuration elements for the first class in the list
 	 * of given classes for which configuration elements have been remembered.
+	 * 
+	 * returns an input type mapping or <code>null</code>
 	 */
 	private Object getFirstInputTypeMapping(List classes) {
 		Iterator e= classes.iterator();
@@ -248,6 +252,8 @@ public class DocumentProviderRegistry {
 	 * Returns the appropriate configuration element for the given type. If
 	 * there is no configuration element for the type's name, first the list of
 	 * super classes is searched, and if not successful the list of all interfaces.
+	 * 
+	 * returns an input type mapping or <code>null</code>
 	 */
 	private Object findInputTypeMapping(Class type) {
 		

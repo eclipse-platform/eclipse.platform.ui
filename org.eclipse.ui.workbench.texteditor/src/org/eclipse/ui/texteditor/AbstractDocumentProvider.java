@@ -39,7 +39,7 @@ import org.eclipse.core.runtime.Status;
 
 
 /**
- * An abstract  implementation of a shareable document provider.
+ * An abstract implementation of a shareable document provider.
  * <p>
  * Subclasses must implement <code>createDocument</code>,
  * <code>createAnnotationModel</code>, and <code>doSaveDocument</code>.
@@ -92,7 +92,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 			/**
 			 * An element info equals another object if this object is an element info
 			 * and if the documents of the two element infos are equal.
-			 * @see Object#equals
+			 * @see Object#equals(java.lang.Object)
 			 */
 			public boolean equals(Object o) {
 				if (o instanceof ElementInfo) {
@@ -103,7 +103,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 			}
 			
 			/*
-			 * @see Object#hashCode
+			 * @see Object#hashCode()
 			 */
 			public int hashCode() {
 				return fDocument.hashCode();
@@ -146,19 +146,19 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	static final protected boolean PR14469_ENABLED= true;
 	
 	/**
-	 * Constant for representing an ok status. This is considered a value object.
+	 * Constant for representing the ok status. This is considered a value object.
 	 * @since 2.0
 	 */
 	static final protected IStatus STATUS_OK= new Status(IStatus.OK, PlatformUI.PLUGIN_ID, IStatus.OK, EditorMessages.getString("AbstractDocumentProvider.ok"), null); //$NON-NLS-1$
 	
 	/**
-	 * Constant for representing an error status. This is considered a value object.
+	 * Constant for representing the error status. This is considered a value object.
 	 * @since 2.0
 	 */
 	static final protected IStatus STATUS_ERROR= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.INFO, EditorMessages.getString("AbstractDocumentProvider.error"), null); //$NON-NLS-1$
 	
 	
-	/** Information of all connected elements */
+	/** Element information of all connected elements */
 	private Map fElementInfoMap= new HashMap();
 	/** The element state listeners */
 	private List fElementStateListeners= new ArrayList();
@@ -167,7 +167,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * @since 2.1
 	 */
 	private IProgressMonitor fProgressMonitor;
-	
+
 	
 	/**
 	 * Creates a new document provider.
@@ -176,8 +176,9 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	}
 	
 	/**
-	 * Creates the document for the given element.<p>
-	 * Subclasses must implement this method.
+	 * Creates the document for the given element.
+	 * <p>
+	 * Subclasses must implement this method.</p>
 	 *
 	 * @param element the element
 	 * @return the document
@@ -197,8 +198,9 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	
 	/**
 	 * Performs the actual work of saving the given document provided for the 
-	 * given element. <p>
-	 * Subclasses must implement this method.
+	 * given element.
+	 * <p>
+	 * Subclasses must implement this method.</p>
 	 *
 	 * @param monitor a progress monitor to report progress and request cancelation
 	 * @param element the element
@@ -220,13 +222,14 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	}
 	
 	/**
-	 * Creates a new element info object for the given element.<p>
+	 * Creates a new element info object for the given element.
+	 * <p>
 	 * This method is called from <code>connect</code> when an element info needs
 	 * to be created. The <code>AbstractDocumentProvider</code> implementation 
 	 * of this method returns a new element info object whose document and 
 	 * annotation model are the values of <code>createDocument(element)</code> 
 	 * and  <code>createAnnotationModel(element)</code>, respectively. Subclasses 
-	 * may override.
+	 * may override.</p>
 	 *
 	 * @param element the element
 	 * @return a new element info object
@@ -237,10 +240,11 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	}
 	
 	/**
-	 * Disposes of the given element info object. <p>
+	 * Disposes of the given element info object.
+	 * <p>
 	 * This method is called when an element info is disposed. The 
 	 * <code>AbstractDocumentProvider</code> implementation of this
-	 * method does nothing. Subclasses may reimplement.
+	 * method does nothing. Subclasses may reimplement.</p>
 	 *
 	 * @param element the element
 	 * @param info the element info object
@@ -293,7 +297,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	}
 	
 	/*
-	 * @see IDocumentProvider#connect
+	 * @see IDocumentProvider#connect(Object)
 	 */
 	public final void connect(Object element) throws CoreException {
 		ElementInfo info= (ElementInfo) fElementInfoMap.get(element);
@@ -355,7 +359,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	}
 	
 	/*
-	 * @see IDocumentProvider#getDocument
+	 * @see IDocumentProvider#getDocument(Object)
 	 */
 	public IDocument getDocument(Object element) {
 		
@@ -367,7 +371,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	}
 	
 	/*
-	 * @see IDocumentProvider#mustSaveDocument
+	 * @see IDocumentProvider#mustSaveDocument(Object)
 	 */
 	public boolean mustSaveDocument(Object element) {
 		
@@ -379,7 +383,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	}	
 	
 	/*
-	 * @see IDocumentProvider#getAnnotationModel
+	 * @see IDocumentProvider#getAnnotationModel(Object)
 	 */
 	public IAnnotationModel getAnnotationModel(Object element) {
 		
@@ -505,7 +509,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 *
 	 * @param element the element
 	 * @param isDirty the new dirty state
-	 * @see IElementStateListener#elementDirtyStateChanged
+	 * @see IElementStateListener#elementDirtyStateChanged(Object, boolean)
 	 */
 	protected void fireElementDirtyStateChanged(Object element, boolean isDirty) {
 		Iterator e= new ArrayList(fElementStateListeners).iterator();
@@ -520,7 +524,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * replace of the given element's content.
 	 *
 	 * @param element the element
-	 * @see IElementStateListener#elementContentAboutToBeReplaced
+	 * @see IElementStateListener#elementContentAboutToBeReplaced(Object)
 	 */
 	protected void fireElementContentAboutToBeReplaced(Object element) {
 		Iterator e= new ArrayList(fElementStateListeners).iterator();
@@ -535,7 +539,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * replace of the given element's content.
 	 *
 	 * @param element the element
-	 * @see IElementStateListener#elementContentReplaced
+	 * @see IElementStateListener#elementContentReplaced(Object)
 	 */
 	protected void fireElementContentReplaced(Object element) {
 		Iterator e= new ArrayList(fElementStateListeners).iterator();
@@ -550,7 +554,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 * of the given element.
 	 *
 	 * @param element the element
-	 * @see IElementStateListener#elementDeleted
+	 * @see IElementStateListener#elementDeleted(Object)
 	 */
 	protected void fireElementDeleted(Object element) {
 		Iterator e= new ArrayList(fElementStateListeners).iterator();
@@ -565,7 +569,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	 *
 	 * @param originalElement the element before the move
 	 * @param movedElement the element after the move
-	 * @see IElementStateListener#elementMoved
+	 * @see IElementStateListener#elementMoved(Object, Object)
 	 */
 	protected void fireElementMoved(Object originalElement, Object movedElement) {
 		Iterator e= new ArrayList(fElementStateListeners).iterator();
@@ -739,7 +743,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	}
 	
 	/**
-	 * Informs all registered element state listeners about the current
+	 * Informs all registered element state listeners about the current state
 	 * change of the element
 	 *
 	 * @param element the element
@@ -759,7 +763,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 	
 	/**
 	 * Informs all registered element state listeners about the failed
-	 * change of the element
+	 * state change of the element
 	 *
 	 * @param element the element
 	 * @see IElementStateListenerExtension#elementStateChangeFailed(Object)

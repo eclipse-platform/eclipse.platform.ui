@@ -180,6 +180,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 	/**
 	 * The text input listener.
+	 * @since 2.1
 	 */
 	private static class TextInputListener implements ITextInputListener {
 		/** Indicates whether the editor input changed during the process of state validation. */
@@ -385,7 +386,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		/** Display used for posting the updater code. */
 		private Display fDisplay;
-		/** Display used for posting the updater code. */
+		/**
+		 * Display used for posting the updater code.
+		 * @since 2.1
+		 */
 		private ArrayList fTextEventQueue= new ArrayList(5);
 		
 		/*
@@ -488,6 +492,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 	/**
 	 * Internal property change listener for handling workbench font changes.
+	 * @since 2.1
 	 */
 	class FontPropertyChangeListener implements IPropertyChangeListener {
 		/*
@@ -830,7 +835,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * - if smart home/end is enabled and the caret is before the line's last non-whitespace and then the caret is moved directly after it 
 	 * - if the caret is after last non-whitespace the caret is moved at the end of the line
 	 * - if the caret is at the end of the line the caret is moved directly after the line's last non-whitespace character
-	 *  @since 2.1
+	 * @since 2.1
 	 */
 	class LineEndAction extends TextNavigationAction {
 
@@ -926,7 +931,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * - if smart home/end is enabled and the caret is after the line's first non-whitespace then the caret is moved directly before it
 	 * - if the caret is before the line's first non-whitespace the caret is moved to the beginning of the line 
 	 * - if the caret is at the beginning of the line the caret is moved directly before the line's first non-whitespace character
-	 *  @since 2.1
+	 * @since 2.1
 	 */
 	class LineStartAction extends TextNavigationAction {
 		
@@ -1044,6 +1049,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	/** 
 	 * Editor specific selection provider which wraps the source viewer's selection provider.
+	 * @since 2.1
 	 * 
 	 */
 	class SelectionProvider implements ISelectionProvider {
@@ -1216,7 +1222,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	private SourceViewerConfiguration fConfiguration;
 	/** The editor's source viewer */
 	private ISourceViewer fSourceViewer;
-	/** The editor's selection provider */
+	/**
+	 * The editor's selection provider
+	 * @since 2.1
+	 */
 	private SelectionProvider fSelectionProvider= new SelectionProvider();
 	/** The editor's font */
 	private Font fFont;	/** 
@@ -1235,7 +1244,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	private Color fFindScopeHighlightColor;
 
-	/** The editor's status line */
+	/**
+	 * The editor's status line
+	 * @since 2.1
+	 */
 	private IEditorStatusLine fEditorStatusLine;
 	/** The editor's vertical ruler */
 	private IVerticalRuler fVerticalRuler;
@@ -1281,13 +1293,19 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	private Menu fRulerContextMenu;
 	/** The editor's element state listener */
 	private IElementStateListener fElementStateListener= new ElementStateListener();
-	/** The editor's text input listener. */
+	/**
+	 * The editor's text input listener.
+	 * @since 2.1
+	 */
 	private TextInputListener fTextInputListener= new TextInputListener();
 	/** The editor's text listener */
 	private ITextListener fTextListener= new TextListener();
 	/** The editor's property change listener */
 	private IPropertyChangeListener fPropertyChangeListener= new PropertyChangeListener();
-	/** The editor's font properties change listener */
+	/**
+	 * The editor's font properties change listener 
+	 * @since 2.1
+	 */
 	private IPropertyChangeListener fFontPropertyChangeListener= new FontPropertyChangeListener();
 	
 	/** 
@@ -1327,6 +1345,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	private int fErrorCorrectionOnSave;
 	/**
 	 * The delete line target.
+	 * @since 2.1
 	 */
 	private DeleteLineTarget fDeleteLineTarget;
 	/** 
@@ -1546,6 +1565,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * Sets the keybinding scopes for this editor.
 	 * 
 	 * @param scopes the scopes 
+	 * @since 2.1
 	 */
 	protected void setKeyBindingScopes(String[] scopes) {
 		Assert.isTrue(scopes != null && scopes.length > 0);
@@ -1607,6 +1627,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	/**
 	 * Returns the current selection.
 	 * @return ISelection
+	 * @since 2.1
 	 */
 	protected ISelection doGetSelection() {
 		ISelectionProvider sp= null;
@@ -1633,6 +1654,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		fRememberedSelection= null;
 	}
 	
+	/**
+	 * @since 2.1
+	 */
 	private boolean isValidSelection(int offset, int length) {
 		IDocumentProvider provider= getDocumentProvider();
 		if (provider != null) {
@@ -1649,6 +1673,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	/**
 	 * Sets the given selection.
 	 * @param selection
+	 * @since 2.1
 	 */
 	protected void doSetSelection(ISelection selection) {
 		if (selection instanceof ITextSelection) {
@@ -1798,6 +1823,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 	/*
 	 * @see IEditorPart#init
+	 * @since 2.1
 	 */
 	protected final void internalInit(IWorkbenchWindow window, final IEditorSite site, final IEditorInput input) throws PartInitException {
 		
@@ -2017,6 +2043,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		JFaceResources.getFontRegistry().addListener(fFontPropertyChangeListener);
 	}
 	
+	/**
+	 * @since 2.1
+	 */
 	private void initializeActivationCodeTrigger() {
 		fActivationCodeTrigger.install();
 		fActivationCodeTrigger.setScopes(fKeyBindingScopes);
@@ -2863,6 +2892,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 	/*
 	 * @see org.eclipse.ui.texteditor.ITextEditorExtension2.validateEditorInputState()
+	 * @since 2.1
 	 */
 	public boolean validateEditorInputState() {
 		
@@ -3072,6 +3102,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * to the last saved state of the editor's input element. Clients may reimplement this method.
 	 * 
 	 * @return the revert operation
+	 * @since 2.1
 	 */
 	protected WorkspaceModifyOperation createRevertOperation() {
 		return new WorkspaceModifyOperation() {
@@ -3095,6 +3126,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * 
 	 * @param operation the operation to be performed
 	 * @param progressMonitor the monitor in which to run the operation
+	 * @since 2.1
 	 */
 	protected void performRevertOperation(WorkspaceModifyOperation operation, IProgressMonitor progressMonitor) {
 		
@@ -3976,6 +4008,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	/*
 	 * @see org.eclipse.ui.INavigationLocationProvider#createNavigationLocation()
+	 * @since 2.1
 	 */
 	public INavigationLocation createEmptyNavigationLocation() {
 		return new TextSelectionNavigationLocation(this, false);
@@ -3990,6 +4023,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	/**
 	 * Writes a check mark of the given situation into the navigation history.
+	 * @since 2.1
 	 */
 	protected void markInNavigationHistory() {
 		IWorkbenchPage page= getEditorSite().getPage();
@@ -3998,6 +4032,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	/**
 	 * Subclasses may extend.
+	 * @since 2.1
 	 */
 	protected void editorSaved() {
 		IWorkbenchPage page= getEditorSite().getPage();
@@ -4209,6 +4244,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		return true;
 	}
 	
+	/**
+	 * @since 2.1
+	 */
 	protected final static int widgetOffset2ModelOffset(ISourceViewer viewer, int widgetOffset) {
 		if (viewer instanceof ITextViewerExtension3) {
 			ITextViewerExtension3 extension= (ITextViewerExtension3) viewer;
@@ -4217,6 +4255,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		return widgetOffset + viewer.getVisibleRegion().getOffset();
 	}
 	
+	/**
+	 * @since 2.1
+	 */
 	protected final static IRegion getCoverage(ISourceViewer viewer) {
 		if (viewer instanceof ITextViewerExtension3) {
 			ITextViewerExtension3 extension= (ITextViewerExtension3) viewer;
@@ -4225,6 +4266,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		return viewer.getVisibleRegion();
 	}
 	
+	/**
+	 * @since 2.1
+	 */
 	protected final static boolean isVisible(ISourceViewer viewer, int offset, int length) {
 		if (viewer instanceof ITextViewerExtension3) {
 			ITextViewerExtension3 extension= (ITextViewerExtension3) viewer;

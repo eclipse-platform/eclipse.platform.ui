@@ -26,12 +26,21 @@ import org.eclipse.jface.action.StatusLineLayoutData;
  */
 public class StatusLineContributionItem extends ContributionItem implements IStatusField {
 	
-	/** Left and right margin used in CLabel */
+	/**
+	 * Left and right margin used in CLabel.
+	 * @since 2.1
+	 */
 	private static final int INDENT= 3;
-	/** Number of characters that should fit into the item */
+	/** 
+	 * Number of characters that should fit into the item.
+	 * @since 2.1
+	 */
 	private static final int LENGTH= 14;
 	
-	/** Precomputed label width hint */
+	/**
+	 * Precomputed label width hint.
+	 * @since 2.1
+	 */
 	private int fFixedWidth= -1;
 
 	/** The label text */
@@ -90,6 +99,7 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 	 * 
 	 * @param control
 	 * @return the width hint for this label
+	 * @since 2.1
 	 */
 	private int getWidthHint(Composite control) {
 		if (fFixedWidth < 0) {

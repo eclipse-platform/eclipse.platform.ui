@@ -102,6 +102,9 @@ public class MarkRegionTarget implements IMarkRegionTarget {
 		fStatusLine.setMessage(EditorMessages.getString("Editor.mark.status.message.mark.swapped")); //$NON-NLS-1$
 	}
 	
+	/**
+	 * @since 2.1
+	 */
 	protected final static boolean isVisible(ITextViewer viewer, int offset) {
 		if (viewer instanceof ITextViewerExtension3) {
 			ITextViewerExtension3 extension= (ITextViewerExtension3) viewer;

@@ -26,14 +26,27 @@ import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
  */
 public class DefaultMarkerAnnotationAccess implements IAnnotationAccess {
 	
+	/** Constant for the unknown marker type */
 	public final static String UNKNOWN= TextEditorPlugin.PLUGIN_ID + ".unknown";  //$NON-NLS-1$
 	
+	/** The marker annotation preferences */
 	protected MarkerAnnotationPreferences fMarkerAnnotationPreferences;
 	
+	/**
+	 * Returns a new default marker annotation access with the given preferences.
+	 * 
+	 * @param markerAnnotationPreferences
+	 */
 	public DefaultMarkerAnnotationAccess(MarkerAnnotationPreferences markerAnnotationPreferences) {
 		fMarkerAnnotationPreferences= markerAnnotationPreferences;
 	}
-	
+
+	/**
+	 * Returns the annotation preference for the given marker.
+	 * 
+	 * @param marker
+	 * @return the annotation preference or <code>null</code> if none
+	 */	
 	private AnnotationPreference getAnnotationPreference(IMarker marker) {
 		
 		try {
@@ -52,6 +65,7 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess {
 		
 		return null;
 	}
+	
 	/*
 	 * @see org.eclipse.jface.text.source.IAnnotationAccess#getType(org.eclipse.jface.text.source.Annotation)
 	 */

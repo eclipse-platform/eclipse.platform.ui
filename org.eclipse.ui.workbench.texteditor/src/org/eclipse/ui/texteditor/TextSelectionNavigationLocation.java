@@ -46,6 +46,9 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 	private Position fSavedPosition;
 	
 	
+	/**
+	 * @since 2.1
+	 */
 	public TextSelectionNavigationLocation(ITextEditor part, boolean initialize) {
 		super(part);
 		
@@ -120,6 +123,9 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 		return "Selection<" + fPosition + ">"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
+	/**
+	 * @since 2.1
+	 */
 	private boolean equalsLocationOf(ITextEditor part) {
 		
 		if (fPosition == null)
@@ -154,6 +160,9 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 		super.dispose();
 	}
 
+	/**
+	 * @since 2.1
+	 */
 	public void releaseState() {
 		// deactivate
 		uninstallFromDocument(fDocument, fPosition);		
@@ -163,6 +172,9 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 		super.releaseState();
 	}
 	
+	/**
+	 * @since 2.1
+	 */
 	public boolean mergeInto(INavigationLocation location) {
 		
 		if (location == null)
@@ -186,6 +198,9 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 		return s.fDocument == fDocument && s.fPosition.equals(fPosition);
 	}
 	
+	/**
+	 * @since 2.1
+	 */
 	public void restoreLocation() {
 		if (fPosition == null || fPosition.isDeleted)
 			return;
@@ -240,6 +255,9 @@ public class TextSelectionNavigationLocation extends NavigationLocation {
 			fSavedPosition= new Position(fPosition.offset, fPosition.length);
 	}
 	
+	/**
+	 * @since 2.1
+	 */
 	public void update() {
 		IEditorPart part= getEditorPart();
 		if (part instanceof ITextEditor) {

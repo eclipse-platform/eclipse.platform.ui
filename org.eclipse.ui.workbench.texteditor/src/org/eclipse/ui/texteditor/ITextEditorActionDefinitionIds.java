@@ -285,14 +285,16 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	public static final String DELETE_NEXT= "org.eclipse.ui.edit.text.deleteNext"; //$NON-NLS-1$
 	
 	/**
-	 * Action definition id of the edit delete previous word action. Value:
-	 * <code>"org.eclipse.ui.edit.text.deletePreviousWord"</code>
+	 * Action definition id of the edit delete previous word action.
+	 * Value: <code>"org.eclipse.ui.edit.text.deletePreviousWord"</code>
+	 * @since 2.1
 	 */
 	public static final String DELETE_PREVIOUS_WORD= "org.eclipse.ui.edit.text.deletePreviousWord"; //$NON-NLS-1$
 	
 	/**
-	 * Action definition id of the edit delete next word action. Value: <code>"
-	 * org.eclipse.ui.edit.text.deleteNextWord"</code>
+	 * Action definition id of the edit delete next word action.
+	 * Value: <code>"org.eclipse.ui.edit.text.deleteNextWord"</code>
+	 * @since 2.1
 	 */
 	public static final String DELETE_NEXT_WORD= "org.eclipse.ui.edit.text.deleteNextWord"; //$NON-NLS-1$
 	
@@ -350,14 +352,14 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	
 	/**
 	 * Action definition ID of the edit -> content assist proposal action
-	 * (value <code>"org.eclipse.ui.edit.text.contentAssist.proposals"</code>).
+	 * Value: <code>"org.eclipse.ui.edit.text.contentAssist.proposals"</code>).
 	 * @since 2.1
 	 */
 	public static final String CONTENT_ASSIST_PROPOSALS= "org.eclipse.ui.edit.text.contentAssist.proposals"; //$NON-NLS-1$
 	
 	/**
 	 * Action definition ID of the edit -> content assist context information action
-	 * (value <code>"org.eclipse.ui.edit.text.contentAssist.contextInformation"</code>).
+	 * Value: <code>"org.eclipse.ui.edit.text.contentAssist.contextInformation"</code>).
 	 * @since 2.1
 	 */
 	public static final String CONTENT_ASSIST_CONTEXT_INFORMATION= "org.eclipse.ui.edit.text.contentAssist.contextInformation"; //$NON-NLS-1$

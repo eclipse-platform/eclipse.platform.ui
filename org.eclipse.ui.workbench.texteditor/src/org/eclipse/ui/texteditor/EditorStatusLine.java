@@ -31,6 +31,9 @@ class EditorStatusLine implements IEditorStatusLine {
 	 * Clears the status line on selection changed.
 	 */
 	private class StatusLineClearer implements ISelectionChangedListener {
+		/*
+		 * @see ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
+		 */
 		public void selectionChanged(SelectionChangedEvent event) {
 			fStatusLineManager.setErrorMessage(null);
 
@@ -90,10 +93,19 @@ class EditorStatusLine implements IEditorStatusLine {
 			installStatusLineClearer();
 	}
 
+	/**
+	 * Returns whether this given string is empty.
+	 * 
+	 * @param message a string
+	 * @return <code>true</code> if the string is <code>null</code>, has 0 length or only white space characters. 
+	 */
 	private static boolean isMessageEmpty(String message) {
 		return message == null || message.trim().length() == 0;
 	}
 
+	/**
+	 * Uninstalls the status line clearer.
+	 */
 	private void uninstallStatusLineClearer() {
 		if (fStatusLineClearer == null)
 			return;
@@ -101,7 +113,10 @@ class EditorStatusLine implements IEditorStatusLine {
 		fSelectionProvider.removeSelectionChangedListener(fStatusLineClearer);
 		fStatusLineClearer= null;
 	}
-	
+
+	/**
+	 * Installs the status line clearer.
+	 */
 	private void installStatusLineClearer() {
 		if (fStatusLineClearer != null)
 			return;

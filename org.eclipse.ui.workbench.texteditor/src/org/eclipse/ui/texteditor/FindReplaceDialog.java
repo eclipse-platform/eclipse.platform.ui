@@ -1056,8 +1056,8 @@ class FindReplaceDialog extends Dialog {
 	
 	/**
 	 * Validates the state of the find/replace target.
-	 * @return <code>true</code> if target can be changed, <code>false</code>
-	 *    otherwise
+	 * @return <code>true</code> if target can be changed, <code>false</code> otherwise
+	 * @since 2.1
 	 */
 	private boolean validateTargetState() {
 		

@@ -35,7 +35,10 @@ public class IncrementalFindAction extends ResourceAction implements IUpdate {
 	private IWorkbenchPart fWorkbenchPart;
 	/** The workbench window */
 	private IWorkbenchWindow fWorkbenchWindow;
-	/** The direction to run the incremental find */
+	/**
+	 * The direction to run the incremental find
+	 * @since 2.1
+	 */
 	private boolean fForward;
 	
 	/**
@@ -50,6 +53,7 @@ public class IncrementalFindAction extends ResourceAction implements IUpdate {
 	 * @param editor the text editor
 	 * @param forward <code>true</code> if the search direction is forward
 	 * @see ResourceAction#ResourceAction
+	 * @since 2.1
 	 */
 	public IncrementalFindAction(ResourceBundle bundle, String prefix, IWorkbenchPart workbenchPart, boolean forward) {
 		super(bundle, prefix);
@@ -72,6 +76,7 @@ public class IncrementalFindAction extends ResourceAction implements IUpdate {
 	 * @see ResourceAction#ResourceAction
 	 * 
 	 * @deprecated use FindReplaceAction(ResourceBundle, String, IWorkbenchPart, boolean) instead
+	 * @since 2.1
 	 */
 	public IncrementalFindAction(ResourceBundle bundle, String prefix, IWorkbenchWindow workbenchWindow, boolean forward) {
 		super(bundle, prefix);

@@ -27,18 +27,31 @@ import org.eclipse.jface.viewers.ISelectionProvider;
  */
 public class DeleteLineAction extends TextEditorAction {
 
-	/** Delete the whole line. */
+	/**
+	 * Delete the whole line.
+	 */
 	public static final int WHOLE= 0;
-	/** Delete to the beginning of line. */
+	/**
+	 * Delete to the beginning of line.
+	 */
 	public static final int TO_BEGINNING= 1;
-	/** Delete to the end of line. */
+	/**
+	 * Delete to the end of line.
+	 */
 	public static final int TO_END= 2;
 
-	/** The type of deletion */
+	/**
+	 * The type of deletion.
+	 */
 	private final int fType;
-	/** Should the deleted line be copied to the clipboard */
+	/**
+	 * Should the deleted line be copied to the clipboard.
+	 * @since 2.1
+	 */
 	private final boolean fCopyToClipboard;
-	/** The deletion target */
+	/** The deletion target.
+	 * @since 2.1
+	 */
 	private DeleteLineTarget fTarget;
 
 	/**
@@ -53,11 +66,12 @@ public class DeleteLineAction extends TextEditorAction {
 	}
 	
 	/**
-	 * Creates a line delimiter conversion action.
+	 * Creates a line deletion action.
 	 * 
 	 * @param editor the editor
 	 * @param type the line deletion type, must be one of
 	 * 	<code>WHOLE_LINE</code>, <code>TO_BEGINNING</code> or <code>TO_END</code>
+	 * @since 2.1
 	 */
 	public DeleteLineAction(ResourceBundle bundle, String prefix, ITextEditor editor, int type, boolean copyToClipboard) {
 		super(bundle, prefix, editor);

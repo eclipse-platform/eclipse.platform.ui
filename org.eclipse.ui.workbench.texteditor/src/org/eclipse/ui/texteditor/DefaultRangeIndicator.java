@@ -38,7 +38,9 @@ import org.eclipse.swt.widgets.Display;
  */
 public class DefaultRangeIndicator extends Annotation {
 
+	 /** The color palette data of this range indicator */
 	private static PaletteData fgPaletteData;
+	/** The image of this range indicator */
 	private Image fImage;
 	
 	/**
@@ -50,7 +52,7 @@ public class DefaultRangeIndicator extends Annotation {
 	}
 	
 	/*
-	 * @see Annotation#paint
+	 * @see Annotation#paint(GC, Canvas, Rectangle)
 	 */
 	public void paint(GC gc, Canvas canvas, Rectangle bounds) {
 
@@ -81,6 +83,12 @@ public class DefaultRangeIndicator extends Annotation {
 		gc.fillRectangle(x, bounds.y + bounds.height - b, w, b);
 	}
 
+	/**
+	 * Returns the image of this range indicator.
+	 * 
+	 * @param the control
+	 * @return an image
+	 */
 	private Image getImage(Control control) {
 		if (fImage == null) {
 				fImage= createImage(control.getDisplay(), control.getSize());
@@ -105,7 +113,14 @@ public class DefaultRangeIndicator extends Annotation {
 		
 		return fImage;
 	}
-	
+
+	/**
+	 * Creates and returns a new SWT image with the given size on
+	 * the given display which is used as this range indicator's image.
+	 *
+	 * @param display the display on which to create the image
+	 * @return a new image
+ 	 */
 	private static Image createImage(Display display, Point size) {
 
 		int width= size.x;
@@ -123,6 +138,12 @@ public class DefaultRangeIndicator extends Annotation {
 		return new Image(display, imageData);
 	}
 
+	/**
+	 * Creates and returns a new color palette data.
+	 * 
+	 * @param display
+	 * @return
+	 */
 	private static PaletteData createPalette(Display display) {
 		Color c1;
 		Color c2;

@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IStatus;
 /**
  * Formerly thrown by <code>AbstractDocumentProvider.doValidateState(Object, Object)</code>.
  * @deprecated
+ * @since 2.1
  */
 public class ValidateStateException extends CoreException {
 

@@ -22,7 +22,7 @@ import org.eclipse.jface.text.source.IVerticalRulerInfo;
  */
 public class BookmarkRulerAction extends AbstractRulerActionDelegate {
 	
-	/*
+	/**
 	 * @see AbstractRulerActionDelegate#createAction(ITextEditor, IVerticalRulerInfo)
 	 */
 	protected IAction createAction(ITextEditor editor, IVerticalRulerInfo rulerInfo) {

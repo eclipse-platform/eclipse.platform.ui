@@ -68,7 +68,7 @@ class DeleteLineTarget {
 		private Clipboard fClipboard;
 		/** A string buffer. */
 		private final StringBuffer fBuffer= new StringBuffer();
-		/** The deleting flag. */
+		/** The delete flag indicates if a deletion is in progress. */
 		private boolean fDeleting;
 
 		/**
@@ -78,7 +78,10 @@ class DeleteLineTarget {
 			Assert.isNotNull(viewer);
 			fViewer= viewer;	
 		}
-		
+
+		/**
+		 * Returns the text viewer.
+		 */
 		public ITextViewer getViewer() {
 			return fViewer;	
 		}
@@ -101,6 +104,9 @@ class DeleteLineTarget {
 			return fIndex == fViewer.getTextWidget().getCaretOffset();
 		}
 		
+		/**
+		 * Checks the state of the clipboard.
+		 */
 		public void checkState() {
 
 			if (fClipboard == null) {
@@ -121,6 +127,11 @@ class DeleteLineTarget {
 			}
 		}
 
+		/**
+		 * Appends the given string to this clipboard.
+		 * 
+		 * @param deltaString the string to append
+		 */
 		public void append(String deltaString) {
 			fBuffer.append(deltaString);
 			String string= fBuffer.toString();
@@ -150,6 +161,11 @@ class DeleteLineTarget {
 			fClipboard= null;
 		}
 
+		/** 
+		 * Mark whether a deletion is in progress.
+		 * 
+		 * @param deleting <code>true</code> if a deletion is in progress
+		 */
 		public void setDeleting(boolean deleting) {
 			fDeleting= deleting;	
 		}
@@ -212,7 +228,9 @@ class DeleteLineTarget {
 		}		
 	}
 
-	/** The clipboard manager. */
+	/**
+	 * The clipboard manager.
+	 */
 	private final DeleteLineClipboard fClipboard;
 
 	/**
@@ -222,6 +240,16 @@ class DeleteLineTarget {
 		fClipboard= new DeleteLineClipboard(viewer);
 	}
 
+	/**
+	 * Returns the document's delete region specified by position and type.
+	 * 
+	 * @param document	the document
+	 * @param position	the position
+	 * @param type the line deletion type, must be one of
+	 * 	<code>WHOLE_LINE</code>, <code>TO_BEGINNING</code> or <code>TO_END</code>
+	 * @return
+	 * @throws BadLocationException
+	 */
 	private static IRegion getDeleteRegion(IDocument document, int position, int type) throws BadLocationException {
 
 		int line= document.getLineOfOffset(position);
@@ -266,7 +294,8 @@ class DeleteLineTarget {
 	 * 
 	 * @param document the document
 	 * @param position the offset
-	 * @param type the specification of what to delete
+	 * @param type the line deletion type, must be one of
+	 * 	<code>WHOLE_LINE</code>, <code>TO_BEGINNING</code> or <code>TO_END</code>
 	 * @param copyToClipboard <code>true</code> if the deleted line should be copied to the clipboard
 	 * @throws BadLocationException if position is not valid in the given document
 	 */

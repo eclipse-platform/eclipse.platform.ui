@@ -20,6 +20,7 @@ import org.eclipse.jface.text.IRegion;
 
 /**
  * Internal find/replace target wrapping the editor's source viewer.
+ * @since 2.1
  */
 class FindReplaceTarget implements IFindReplaceTarget, IFindReplaceTargetExtension, IFindReplaceTargetExtension2 {
 	

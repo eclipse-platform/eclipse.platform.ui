@@ -26,11 +26,10 @@ import org.eclipse.ui.IWorkbenchPartSite;
 
 
 /**
- * A content asisst action which gets its target from its text editor.
+ * A content assist action which gets its target from its text editor.
  * <p>
  * The action is initially associated with a text editor via the constructor,
- * but can subsequently be changed using <code>setEditor</code>.
- * </p>
+ * but can subsequently be changed using <code>setEditor</code>.</p>
  * <p>
  * If this class is used as is, it works by asking the text editor for its text operation target
  * (using <code>getAdapter(ITextOperationTarget.class)</code> and runs the content assist
@@ -116,7 +115,7 @@ public final class ContentAssistAction extends TextEditorAction {
 		setEnabled(fOperationTarget.canDoOperation(ISourceViewer.CONTENTASSIST_PROPOSALS));
 	}
 	
-	/*
+	/**
 	 * @see TextEditorAction#setEditor(ITextEditor)
 	 */
 	public void setEditor(ITextEditor editor) {

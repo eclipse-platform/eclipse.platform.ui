@@ -40,7 +40,10 @@ public final class RetargetTextEditorAction extends ResourceAction {
 	private IAction fAction;
 	/** The default label if there is no target action */
 	private String fDefaultText;
-	/** The local help listener */
+	/**
+	 * The local help listener
+	 * @since 2.1
+	 */
 	private HelpListener fLocalHelpListener;
 	/** The listener to pick up changes of the target action */
 	private IPropertyChangeListener fListener= new IPropertyChangeListener() {
@@ -194,6 +197,9 @@ public final class RetargetTextEditorAction extends ResourceAction {
 		}
 	}
 
+	/**
+	 * @since 2.1
+	 */
 	private void installHelpListener() {
 		super.setHelpListener(new HelpListener() {
 			public void helpRequested(HelpEvent e) {
@@ -216,6 +222,7 @@ public final class RetargetTextEditorAction extends ResourceAction {
 	 * The <code>RetargetTextEditorAction</code> implementation of this method declared on
 	 * <code>IAction</code> stores the help listener in a local field. The
 	 * supplied listener is only used if there is no handler.
+	 * @since 2.1
 	 */
 	public void setHelpListener(HelpListener listener) {
 		fLocalHelpListener= listener;

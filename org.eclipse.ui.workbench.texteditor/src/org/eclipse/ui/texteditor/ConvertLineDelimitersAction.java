@@ -15,10 +15,10 @@ package org.eclipse.ui.texteditor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ResourceBundle;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -69,7 +69,7 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 	}
 		
 	/*
-	 * @see Action#run()
+	 * @see org.eclipse.jface.action.Action#run()
 	 */
 	public void run() {
 
@@ -111,18 +111,29 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 	}
 
 	/**
-	 * Converts all line delimiters of the document to <code>lineDelimiter</code>.
+	 * A runnable that converts all line delimiters of a document to <code>lineDelimiter</code>.
 	 */
 	private static class ConvertRunnable implements IRunnableWithProgress, Runnable {
 
-		private final IRewriteTarget fRewriteTarget;		
+		/** The rewrite target */
+		private final IRewriteTarget fRewriteTarget;
+		/** The line delimiter to which to convert to */		
 		private final String fLineDelimiter;
 		
+		/**
+		 * Returns a new runnable for converting all line delimiters in
+		 * the <code>rewriteTarget</code> to <code>lineDelimter</code>.
+		 * @param rewriteTarget
+		 * @param lineDelimiter
+		 */
 		public ConvertRunnable(IRewriteTarget rewriteTarget, String lineDelimiter) {
 			fRewriteTarget= rewriteTarget;
 			fLineDelimiter= lineDelimiter;	
 		}
 		
+		/*
+		 * XXX: should be replaced with NullProgressMonitor (see bug 35478)
+		 */
 		private static class DummyMonitor implements IProgressMonitor {		
 			public void beginTask(String name, int totalWork) {}
 			public void done() {}
@@ -135,7 +146,7 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 		}
 		
 		/*
-		 * @see IRunnableWithProgress#run(IProgressMonitor)
+		 * @see IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
 		public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 
