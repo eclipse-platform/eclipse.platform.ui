@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 Keith Seitz and others.
+ * Copyright (c) 2000, 2004 Keith Seitz and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,11 +27,11 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.DialogSettingsHelper;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.launchConfigurations.EnvironmentVariable;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
 import org.eclipse.debug.internal.ui.launchConfigurations.NewEnvironmentVariableDialog;
-import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.preferences.MultipleInputDialog;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -625,12 +625,12 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		// do nothing when deactivated
 	}
 	
-	
 	private class NativeEnvironmentDialog extends ListSelectionDialog {
 		public NativeEnvironmentDialog(Shell parentShell, Object input, IStructuredContentProvider contentProvider, ILabelProvider labelProvider, String message) {
 			super(parentShell, input, contentProvider, labelProvider, message);
 			setShellStyle(getShellStyle() | SWT.RESIZE);
-}
+		}
+		
 		protected IDialogSettings getDialogSettings() {
 			IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
 			IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
@@ -648,58 +648,33 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		protected String getDialogSettingsSectionName() {
 			return IDebugUIConstants.PLUGIN_ID + ".ENVIRONMENT_TAB.NATIVE_ENVIROMENT_DIALOG"; //$NON-NLS-1$
 		}
-		
-		private void persistShellGeometry() {
-			Point shellLocation = getShell().getLocation();
-			Point shellSize = getShell().getSize();
-			IDialogSettings settings = getDialogSettings();
-			settings.put(IDebugPreferenceConstants.DIALOG_ORIGIN_X, shellLocation.x);
-			settings.put(IDebugPreferenceConstants.DIALOG_ORIGIN_Y, shellLocation.y);
-			settings.put(IDebugPreferenceConstants.DIALOG_WIDTH, shellSize.x);
-			settings.put(IDebugPreferenceConstants.DIALOG_HEIGHT, shellSize.y);
-		}	
 
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.window.Window#getInitialLocation(org.eclipse.swt.graphics.Point)
 		 */
 		protected Point getInitialLocation(Point initialSize) {
-			IDialogSettings settings = getDialogSettings();
-			try {
-				int x, y;
-				x = settings.getInt(IDebugPreferenceConstants.DIALOG_ORIGIN_X);
-				y = settings.getInt(IDebugPreferenceConstants.DIALOG_ORIGIN_Y);
-				return new Point(x,y);
-			} catch (NumberFormatException e) {
+			Point initialLocation= DialogSettingsHelper.getInitialLocation(getDialogSettingsSectionName());
+			if (initialLocation != null) {
+				return initialLocation;
 			}
 			return super.getInitialLocation(initialSize);
 		}
-
+			
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.window.Window#getInitialSize()
 		 */
 		protected Point getInitialSize() {
 			Point size = super.getInitialSize();
-			
-			IDialogSettings settings = getDialogSettings();
-			try {
-				int x, y;
-				x = settings.getInt(IDebugPreferenceConstants.DIALOG_WIDTH);
-				y = settings.getInt(IDebugPreferenceConstants.DIALOG_HEIGHT);
-				return new Point(Math.max(x,size.x),Math.max(y,size.y));
-			} catch (NumberFormatException e) {
-			}
-			return size;
+			return DialogSettingsHelper.getInitialSize(getDialogSettingsSectionName(), size);
 		}
-		
 		
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.window.Window#close()
 		 */
 		public boolean close() {
-			persistShellGeometry();
+			DialogSettingsHelper.persistShellGeometry(getShell(), getDialogSettingsSectionName());
 			return super.close();
 		}
-
 	}
 }

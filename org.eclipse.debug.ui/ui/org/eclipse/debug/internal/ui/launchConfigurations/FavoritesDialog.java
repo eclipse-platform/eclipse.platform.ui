@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.DialogSettingsHelper;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.Dialog;
@@ -37,6 +38,7 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -488,5 +490,41 @@ public class FavoritesDialog extends Dialog {
 		saveFavorites();
 		super.okPressed();
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#close()
+	 */
+	public boolean close() {
+		DialogSettingsHelper.persistShellGeometry(getShell(), getDialogSettingsSectionName());
+		return super.close();
+	}		
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#getInitialLocation(org.eclipse.swt.graphics.Point)
+	 */
+	protected Point getInitialLocation(Point initialSize) {
+		Point initialLocation= DialogSettingsHelper.getInitialLocation(getDialogSettingsSectionName());
+		if (initialLocation != null) {
+			return initialLocation;
+		}
+		return super.getInitialLocation(initialSize);
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#getInitialSize()
+	 */
+	protected Point getInitialSize() {
+		Point size = super.getInitialSize();
+		return DialogSettingsHelper.getInitialSize(getDialogSettingsSectionName(), size);
+	}
+	
+	/**
+	 * Returns the name of the section that this dialog stores its settings in
+	 * 
+	 * @return String
+	 */
+	private String getDialogSettingsSectionName() {
+		return "FAVORITES_DIALOG_SECTION"; //$NON-NLS-1$
+	}
 }

@@ -27,6 +27,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.DialogSettingsHelper;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.PixelConverter;
 import org.eclipse.debug.internal.ui.SWTUtil;
@@ -384,16 +385,10 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	}
 	
 	/**
-	 * Write out this dialog's Shell size, location & sash weights to the preference store.
+	 * Write out this dialog's Shell size, location to the preference store.
 	 */
 	protected void persistShellGeometry() {
-		Point shellLocation = getShell().getLocation();
-		Point shellSize = getShell().getSize();
-		IDialogSettings settings = getDialogSettings();
-		settings.put(IDebugPreferenceConstants.DIALOG_ORIGIN_X, shellLocation.x);
-		settings.put(IDebugPreferenceConstants.DIALOG_ORIGIN_Y, shellLocation.y);
-		settings.put(IDebugPreferenceConstants.DIALOG_WIDTH, shellSize.x);
-		settings.put(IDebugPreferenceConstants.DIALOG_HEIGHT, shellSize.y);
+		DialogSettingsHelper.persistShellGeometry(getShell(), getDialogSettingsSectionName());
 	}
 	
 	protected void persistSashWeights() {

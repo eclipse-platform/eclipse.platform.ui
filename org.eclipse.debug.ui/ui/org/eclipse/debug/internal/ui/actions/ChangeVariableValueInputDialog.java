@@ -10,12 +10,10 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions;
 
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
+import org.eclipse.debug.internal.ui.DialogSettingsHelper;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -258,15 +256,6 @@ public class ChangeVariableValueInputDialog extends Dialog {
 		}
 	}
 	
-	protected IDialogSettings getDialogSettings() {
-		IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
-		IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
-		if (section == null) {
-			section = settings.addNewSection(getDialogSettingsSectionName());
-		} 
-		return section;
-	}
-	
 	/**
 	 * Returns the name of the section that this dialog stores its settings in
 	 * 
@@ -280,50 +269,27 @@ public class ChangeVariableValueInputDialog extends Dialog {
 	 * @see org.eclipse.jface.window.Window#close()
 	 */
 	public boolean close() {
-		persistShellGeometry();
+		DialogSettingsHelper.persistShellGeometry(getShell(), getDialogSettingsSectionName());
 		return super.close();
 	}	
 	
-	protected void persistShellGeometry() {
-		Point shellLocation = getShell().getLocation();
-		Point shellSize = getShell().getSize();
-		IDialogSettings settings = getDialogSettings();
-		settings.put(IDebugPreferenceConstants.DIALOG_ORIGIN_X, shellLocation.x);
-		settings.put(IDebugPreferenceConstants.DIALOG_ORIGIN_Y, shellLocation.y);
-		settings.put(IDebugPreferenceConstants.DIALOG_WIDTH, shellSize.x);
-		settings.put(IDebugPreferenceConstants.DIALOG_HEIGHT, shellSize.y);
-	}	
-	
-	
-	/**
-	 * @see Window#getInitialLocation(Point)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#getInitialLocation(org.eclipse.swt.graphics.Point)
 	 */
 	protected Point getInitialLocation(Point initialSize) {
-		IDialogSettings settings = getDialogSettings();
-		try {
-			int x, y;
-			x = settings.getInt(IDebugPreferenceConstants.DIALOG_ORIGIN_X);
-			y = settings.getInt(IDebugPreferenceConstants.DIALOG_ORIGIN_Y);
-			return new Point(x,y);
-		} catch (NumberFormatException e) {
+		Point initialLocation= DialogSettingsHelper.getInitialLocation(getDialogSettingsSectionName());
+		if (initialLocation != null) {
+			return initialLocation;
 		}
 		return super.getInitialLocation(initialSize);
 	}
 	
-	/**
-	 * @see Window#getInitialSize()
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#getInitialSize()
 	 */
 	protected Point getInitialSize() {
 		Point size = super.getInitialSize();
-		
-		IDialogSettings settings = getDialogSettings();
-		try {
-			int x, y;
-			x = settings.getInt(IDebugPreferenceConstants.DIALOG_WIDTH);
-			y = settings.getInt(IDebugPreferenceConstants.DIALOG_HEIGHT);
-			return new Point(Math.max(x,size.x),Math.max(y,size.y));
-		} catch (NumberFormatException e) {
-		}
-		return size;
+		return DialogSettingsHelper.getInitialSize(getDialogSettingsSectionName(), size);
 	}
 }
