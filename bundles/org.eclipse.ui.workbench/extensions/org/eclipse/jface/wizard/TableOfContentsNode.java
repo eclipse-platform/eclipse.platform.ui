@@ -127,12 +127,6 @@ class TableOfContentsNode implements ITableOfContentsNode {
 	}
 
 	/*
-	 * @see ITableOfContentsNode.dispose()
-	 */
-	public void dispose() {
-	}
-
-	/*
 	 * @see ITableOfContentsNode.setEnabled(boolean)
 	 */
 	public void setEnabled(boolean enabledValue) {

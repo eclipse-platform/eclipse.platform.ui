@@ -40,20 +40,20 @@ class TableOfContentsArea {
 		} else {
 			IWizardPage[] pages = wizard.getPages();
 			int nodesLength = pages.length;
-			if(pages[nodesLength -1] instanceof IDecisionPage){
-				nodesLength++;//Leave room for an unknown page
+			if (pages[nodesLength - 1] instanceof IDecisionPage) {
+				nodesLength++; //Leave room for an unknown page
 				addUnknown = true;
 			}
-				
+
 			newNodes = new TableOfContentsNode[nodesLength];
-			for(int i = 0; i <pages.length; i++){
+			for (int i = 0; i < pages.length; i++) {
 				newNodes[i] = new TableOfContentsNode(pages[i]);
 			}
 		}
 
-		if(addUnknown)
+		if (addUnknown)
 			newNodes[newNodes.length - 1] = new TableOfContentsNode(null);
-			
+
 		addNodes(newNodes);
 
 	}
@@ -96,27 +96,14 @@ class TableOfContentsArea {
 			initialWizard = newWizard;
 		else {
 			if (currentNode != null) {
-				int currentIndex = indexOfPage(currentNode.getPage());
+				int currentIndex = indexOfPage(newWizard.getStartingPage());
 
-				if (nodes.length > currentIndex + 1) {
-					ITableOfContentsNode nextNode = nodes[currentIndex];
-
-					//Replace the next pages if required
-					if (nextNode.getPage().getWizard().equals(newWizard))
-						return;
-					else {
-						for (int i = currentIndex + 1; i < nodes.length; i++) {
-							nodes[i].dispose();
-						}
-						ITableOfContentsNode[] newNodes =
-							new ITableOfContentsNode[currentIndex + 1];
-						for (int i = 0; i <= currentIndex; i++) {
-							newNodes[i] = nodes[i];
-						}
-
-						nodes = newNodes;
-					}
-				}
+				if (currentIndex >= 0) {
+					ITableOfContentsNode[] newNodes =
+						new ITableOfContentsNode[currentIndex];
+					System.arraycopy(nodes, 0, newNodes, 0, currentIndex);
+					nodes = newNodes;
+				} 
 			}
 			addNodesForWizard(newWizard);
 		}
@@ -152,7 +139,7 @@ class TableOfContentsArea {
 				nodes[i].setEnabled(checkNode.getPage().canFlipToNextPage());
 				checkNode = nodes[i];
 			}
-			if(canvas != null)
+			if (canvas != null)
 				canvas.redraw();
 		}
 	}
@@ -162,35 +149,34 @@ class TableOfContentsArea {
 	 * @param IWorkbenchPage
 	 */
 	private int indexOfPage(IWizardPage page) {
-
-		for (int i = 0; i < nodes.length; i++) {
-			if (nodes[i].getPage().equals(page))
-				return i;
+		if (page != null) {
+			for (int i = 0; i < nodes.length; i++) {
+				IWizardPage nextPage = nodes[i].getPage();
+				if (page.equals(nextPage))
+					return i;
+			}
 		}
 		return -1;
-
 	}
 
 	/**
-	 * Create the table of contents canvas area.
-	 */
+						 * Create the table of contents canvas area.
+							 */
 	public Control createControl(Composite parent) {
 
 		canvas = new Canvas(parent, SWT.BORDER);
-
 		canvas.addPaintListener(new PaintListener() {
 			/**
-			 * @see org.eclipse.swt.events.PaintListener#paintControl(org.eclipse.swt.events.PaintEvent)
-			 */
+			* @see org.eclipse.swt.events.PaintListener#paintControl(org.eclipse.swt.events.PaintEvent)
+			*/
 			public void paintControl(PaintEvent event) {
 				drawNodes(event.gc);
 			}
 		});
-
 		canvas.addMouseListener(new MouseListener() {
 			/**
-			 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
-			 */
+			* @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
+			*/
 			public void mouseDown(MouseEvent event) {
 
 				int index = event.x / NODE_SIZE;
@@ -199,19 +185,16 @@ class TableOfContentsArea {
 					IWizardPage page = selectedNode.getPage();
 					page.getWizard().getContainer().showPage(page);
 				}
-			}
-			/**
-			 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
-			 */
+			} /**
+																								 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
+																								 */
 			public void mouseDoubleClick(MouseEvent e) {
-			}
-			/**
-			 * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
-			 */
+			} /**
+																								 * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
+																								 */
 			public void mouseUp(MouseEvent e) {
 			}
 		});
-
 		//Create the nodes if the wizard has not been set.
 		if (initialWizard != null) {
 			addNodesForWizard(initialWizard);
@@ -219,17 +202,13 @@ class TableOfContentsArea {
 		}
 
 		return canvas;
-
-	}
-
-	/**
-	 * Draw the nodes for the receiver on the supplied gc.
-	 */
+	} /**
+												 * Draw the nodes for the receiver on the supplied gc.
+												 */
 	private void drawNodes(GC gc) {
 		Point size = canvas.getSize();
 		gc.drawLine(0, size.y / 2, size.x, size.y / 2);
 		boolean past = true;
-
 		for (int i = 0; i < nodes.length; i++) {
 			int positionConstant = ITableOfContentsNode.FUTURE_NODE;
 			if (past) {

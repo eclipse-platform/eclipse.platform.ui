@@ -27,11 +27,6 @@ interface ITableOfContentsNode {
 	public void setEnabled(boolean enabled);
 	
 	/**
-	 * Dispose the widgets for the receiver.
-	 */
-	public void dispose();
-	
-	/**
 	 * Get the image for the receiver based on the positionConstant.
 	 * @param positionConstant - one of PAST_NODE, CURRENT_NODE or FUTURTE_NODE
 	 */
