@@ -135,7 +135,7 @@ public void fill(Menu menu, int index)
  * the the product perspectives (static).  For performance, we implement a
  * shortcut cache which is only updated if the default perspective changes.
  */
-private ArrayList getShortcuts() 
+protected ArrayList getShortcuts() 
 {
 	ArrayList list = new ArrayList();
 
