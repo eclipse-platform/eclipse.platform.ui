@@ -164,11 +164,8 @@ public abstract class IconAndMessageDialog extends Dialog {
 		dialogArea = createDialogArea(parent);
 		buttonBar = createButtonBar(parent);
 
-		if (applyDialogFont()) {
-			//Apply higher as we need to get direct children
-			//of the shell
-			applyDialogFont(parent);
-		}
+		//Apply to the parent so that the message gets it too.
+		applyDialogFont(parent);
 	}
 
 }
