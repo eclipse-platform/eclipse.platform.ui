@@ -12,6 +12,8 @@ Contributors:
 package org.eclipse.jface.text.contentassist;
 
 
+import org.eclipse.jface.text.DocumentEvent;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
 
 
@@ -53,4 +55,14 @@ public interface ICompletionProposalExtension2 {
 	 * @param viewer the text viewer.
 	 */
 	void unselected(ITextViewer viewer);
+	
+	/**
+	 * Requests the proposal to be validated with respect to the document event.
+	 * If the proposal cannot be validated, the methods returns <code>false</code>.
+	 * If the document event was <code>null</code>, only the caret offset was changed, but not the document.
+	 *
+	 * This method deprecates ICompletionProposalExtension.isValidFor(IDocument, int)
+	 * 	 * @param document the document	 * @param offset the caret offset	 * @param event the document event, may be <code>null</code>	 * @return boolean	 */
+	boolean validate(IDocument document, int offset, DocumentEvent event);
+	
 }

@@ -13,6 +13,7 @@ package org.eclipse.jface.text.contentassist;
 
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -34,7 +35,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
+import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.ITextViewer;
 
 
@@ -58,6 +61,13 @@ class CompletionProposalPopup implements IContentAssistListener {
 	private Table fProposalTable;
 	private boolean fInserting= false;
 	private KeyListener fKeyListener;
+	private List fDocumentEvents= new ArrayList();
+	private IDocumentListener fDocumentListener= new IDocumentListener() {
+		public void documentAboutToBeChanged(DocumentEvent event) {}
+		public void documentChanged(DocumentEvent event) {
+			fDocumentEvents.add(event);
+		}
+	};
 	
 	private long fInvocationCounter= 0;
 	private ICompletionProposal[] fFilteredProposals;
@@ -90,6 +100,11 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * @return an error message or <code>null</code> in case of no error
 	 */
 	public String showProposals(final boolean autoActivated) {
+		
+		IDocument document= fViewer.getDocument();
+		if (document != null)
+			document.addDocumentListener(fDocumentListener);		
+		
 		final StyledText styledText= fViewer.getTextWidget();
 
 		if (fKeyListener == null && styledText != null && !styledText.isDisposed()) {
@@ -330,6 +345,10 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * Hides this popup.
 	 */
 	public void hide() {
+
+		IDocument document= fViewer.getDocument();
+		if (document != null)
+			document.removeDocumentListener(fDocumentListener);		
 
 		StyledText styledText= fViewer.getTextWidget();
 		if (fKeyListener != null && styledText != null && !styledText.isDisposed())
@@ -589,6 +608,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 				
 				int offset= fViewer.getSelectedRange().x;
 				ICompletionProposal[] proposals= (offset == -1 ? null : computeFilteredProposals(offset));
+				fDocumentEvents.clear();
 				fFilterOffset= offset;
 				
 				if (proposals != null && proposals.length > 0)
@@ -629,8 +649,28 @@ class CompletionProposalPopup implements IContentAssistListener {
 		int length= proposals.length;
 		List filtered= new ArrayList(length);
 		for (int i= 0; i < length; i++) {
-			if (proposals[i] instanceof ICompletionProposalExtension) {
-				
+			
+			if (proposals[i] instanceof ICompletionProposalExtension2) {
+
+				ICompletionProposalExtension2 p= (ICompletionProposalExtension2) proposals[i];
+
+				if (fDocumentEvents.size() == 0) {
+					if (p.validate(document, offset, null))
+						filtered.add(p);
+
+				} else {
+					boolean validated= true;
+					Iterator iterator= fDocumentEvents.iterator();
+					while (validated && iterator.hasNext()) {
+						DocumentEvent event= (DocumentEvent) iterator.next();
+						validated= p.validate(document, offset, event);
+					}
+					if (validated)
+						filtered.add(p);				
+				}
+			
+			} else if (proposals[i] instanceof ICompletionProposalExtension) {
+								
 				ICompletionProposalExtension p= (ICompletionProposalExtension) proposals[i];
 				if (p.isValidFor(document, offset))
 					filtered.add(p);
