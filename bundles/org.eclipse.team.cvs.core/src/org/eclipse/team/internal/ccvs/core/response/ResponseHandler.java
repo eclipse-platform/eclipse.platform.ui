@@ -76,7 +76,7 @@ public abstract class ResponseHandler implements IResponseHandler {
 		ICVSFolder mFolder;
 		String repo;
 		String root;
-
+		CVSEntryLineTag newTag = null;
 		
 		mFolder = mRoot.getFolder(local);
 		
@@ -84,13 +84,13 @@ public abstract class ResponseHandler implements IResponseHandler {
 			info = mFolder.getFolderSyncInfo();
 			root = info.getRoot();
 			repo = info.getRepository();
+			newTag = info.getTag();
 		} else {
 			mFolder.mkdir();
 			root = connection.getCVSRoot().getLocation();
 			repo = Util.getRelativePath(connection.getRootDirectory(), remote);
 		}
 		
-		CVSEntryLineTag newTag = null;
 		boolean isStatic = setStatic ? staticFolder : false;
 		
 		if (setTag) {
