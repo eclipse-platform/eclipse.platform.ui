@@ -672,5 +672,19 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 				});
 			}
 		}
-	}	
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#addAnnotationListener(org.eclipse.jface.text.source.IAnnotationListener)
+	 */
+	public void addAnnotationListener(IAnnotationListener listener) {
+		throw new UnsupportedOperationException();
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#removeAnnotationListener(org.eclipse.jface.text.source.IAnnotationListener)
+	 */
+	public void removeAnnotationListener(IAnnotationListener listener) {
+		throw new UnsupportedOperationException();
+	}
 }

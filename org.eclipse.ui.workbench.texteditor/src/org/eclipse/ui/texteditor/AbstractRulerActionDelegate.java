@@ -102,6 +102,7 @@ public abstract class AbstractRulerActionDelegate implements IEditorActionDelega
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
+		update();
 	}
 
 	/**

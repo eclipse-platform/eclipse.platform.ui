@@ -52,12 +52,20 @@ public interface IAnnotationAccessExtension {
 	 * Draws a graphical representation of the given annotation within the given bounds.
 	 * 
 	 * @param annotation the given annotation
-	 * @param GC the drawing GC
+	 * @param gc the drawing GC
 	 * @param canvas the canvas to draw on
 	 * @param bounds the bounds inside the canvas to draw on
 	 */
 	void paint(Annotation annotation, GC gc, Canvas canvas, Rectangle bounds);
 	
+	/**
+	 * Returns <code>true</code> if painting <code>annotation</code> will produce something
+	 * meaningful, <code>false</code> if not, e.g. if no image is available.
+	 * 
+	 * @param annotation the annotation to check for paintability
+	 * @return <code>true</code> if painting <code>annotation</code> will succeed
+	 */
+	boolean isPaintable(Annotation annotation);
 	
 	/**
 	 * Returns <code>true</code> if the given annotation is of the given type
@@ -72,6 +80,8 @@ public interface IAnnotationAccessExtension {
 	/**
 	 * Returns the list of super types for the given annotation type. This does not include the type 
 	 * itself.
+	 * 
+	 * @param annotationType the annotation type to check
 	 * @return the super types for the given annotation type
 	 */
 	Object[] getSupertypes(Object annotationType);

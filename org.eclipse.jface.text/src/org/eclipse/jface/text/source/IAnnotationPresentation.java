@@ -33,7 +33,7 @@ public interface IAnnotationPresentation {
 	 * Implement this method to draw a graphical representation 
 	 * of this annotation within the given bounds.
 	 *
-	 * @param GC the drawing GC
+	 * @param gc the drawing GC
 	 * @param canvas the canvas to draw on
 	 * @param bounds the bounds inside the canvas to draw on
 	 */

@@ -13,8 +13,10 @@ package org.eclipse.jface.text.source;
 
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -62,7 +64,7 @@ import org.eclipse.jface.text.ITextViewerExtension3;
  * @see ITextViewer
  * @since 2.0
  */
-public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension {
+public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, IVerticalRulerInfoExtension, IAnnotationListener {
 	
 	
 	/**
@@ -158,7 +160,7 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension {
 		}
 		
 		/**
-		 * Adds the given listener object as listner of the given type (<code>clazz</code>) to
+		 * Adds the given listener object as listener of the given type (<code>clazz</code>) to
 		 * the given control.
 		 * 
 		 * @param clazz the listener type
@@ -510,7 +512,12 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension {
 	private int fLastMouseButtonActivityLine= -1;
 	/** The gap between the individual columns of this composite ruler */
 	private int fGap;
-	
+	/**
+	 * The set of annotation listeners.
+	 * @since 3.0
+	 */
+	private Set fAnnotationListeners= new HashSet();
+
 	
 	/**
 	 * Constructs a new composite vertical ruler.
@@ -771,4 +778,62 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension {
 		return fDecorators.iterator();
 	}
 
+	/*
+	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#getHover()
+	 */
+	public IAnnotationHover getHover() {
+		return null;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#addAnnotationListener(org.eclipse.jface.text.source.IAnnotationListener)
+	 * @since 3.0
+	 */
+	public void addAnnotationListener(IAnnotationListener listener) {
+		fAnnotationListeners.add(listener);
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#removeAnnotationListener(org.eclipse.jface.text.source.IAnnotationListener)
+	 * @since 3.0
+	 */
+	public void removeAnnotationListener(IAnnotationListener listener) {
+		fAnnotationListeners.remove(listener);
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.IAnnotationListener#annotationSelected(org.eclipse.jface.text.source.AnnotationEvent)
+	 * @since 3.0
+	 */
+	public void annotationSelected(AnnotationEvent event) {
+		// forward to listeners
+		for (Iterator it= fAnnotationListeners.iterator(); it.hasNext();) {
+			IAnnotationListener listener= (IAnnotationListener) it.next();
+			listener.annotationSelected(event);
+		}
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.IAnnotationListener#annotationDefaultSelected(org.eclipse.jface.text.source.AnnotationEvent)
+	 * @since 3.0
+	 */
+	public void annotationDefaultSelected(AnnotationEvent event) {
+		// forward to listeners
+		for (Iterator it= fAnnotationListeners.iterator(); it.hasNext();) {
+			IAnnotationListener listener= (IAnnotationListener) it.next();
+			listener.annotationDefaultSelected(event);
+		}
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.IAnnotationListener#annotationContextMenuAboutToShow(org.eclipse.jface.text.source.AnnotationEvent, org.eclipse.swt.widgets.Menu)
+	 * @since 3.0
+	 */
+	public void annotationContextMenuAboutToShow(AnnotationEvent event, Menu menu) {
+		// forward to listeners
+		for (Iterator it= fAnnotationListeners.iterator(); it.hasNext();) {
+			IAnnotationListener listener= (IAnnotationListener) it.next();
+			listener.annotationContextMenuAboutToShow(event, menu);
+		}
+	}
 }

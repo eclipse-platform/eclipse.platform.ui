@@ -218,6 +218,24 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 	}
 	
 	/*
+	 * @see org.eclipse.jface.text.source.IAnnotationAccessExtension#isPaintable(org.eclipse.jface.text.source.Annotation)
+	 * @since 3.0
+	 */
+	public boolean isPaintable(Annotation annotation) {
+		if (annotation instanceof IAnnotationPresentation)
+			return true;
+		
+		AnnotationPreference preference= getAnnotationPreference(annotation);
+		if (preference == null)
+			return false;
+		
+		Object type= getType(annotation);
+		String annotationType= (type == null ? null : type.toString());
+		Image image= getImage(annotation, preference, annotationType);
+		return image != null;
+	}
+	
+	/*
 	 * @see org.eclipse.jface.text.source.IAnnotationAccessExtension#isSubtype(java.lang.Object, java.lang.Object)
 	 */
 	public boolean isSubtype(Object annotationType, Object potentialSupertype) {

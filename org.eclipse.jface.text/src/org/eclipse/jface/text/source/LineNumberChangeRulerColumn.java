@@ -98,6 +98,11 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 	/** The shared text colors. */
 	private ISharedTextColors fSharedColors;
 	
+	/**
+	 * Creates a new instance.
+	 * 
+	 * @param sharedColors the shared colors provider to use
+	 */
 	public LineNumberChangeRulerColumn(ISharedTextColors sharedColors) {
 		Assert.isNotNull(sharedColors);
 		fSharedColors= sharedColors;
@@ -411,4 +416,17 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 			return super.computeNumberOfDigits();
 	}
 
+	/*
+	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#addAnnotationListener(org.eclipse.jface.text.source.IAnnotationListener)
+	 */
+	public void addAnnotationListener(IAnnotationListener listener) {
+		throw new UnsupportedOperationException();
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#removeAnnotationListener(org.eclipse.jface.text.source.IAnnotationListener)
+	 */
+	public void removeAnnotationListener(IAnnotationListener listener) {
+		throw new UnsupportedOperationException();
+	}
 }

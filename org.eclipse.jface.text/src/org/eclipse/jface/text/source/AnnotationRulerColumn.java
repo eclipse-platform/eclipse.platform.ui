@@ -52,7 +52,7 @@ import org.eclipse.jface.text.TextViewer;
  * Will become final. Do not subclass.
  * @since 2.0
  */
-public class AnnotationRulerColumn implements IVerticalRulerColumn {
+public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRulerInfo, IVerticalRulerInfoExtension {
 	
 	/**
 	 * Internal listener class.
@@ -119,11 +119,17 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 	 * @since 3.0
 	 */
 	private IAnnotationAccess fAnnotationAccess;
+	/** 
+	 * The hover for this column.
+	 * @since 3.0
+	 */
+	private IAnnotationHover fHover;
 	
 	
 	/**
 	 * Constructs this column with the given arguments.
 	 *
+	 * @param model the annotation model to get the annotations from
 	 * @param width the width of the vertical ruler
 	 * @param annotationAccess the annotation access
 	 * @since 3.0
@@ -151,6 +157,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 	/**
 	 * Constructs this column with the given arguments.
 	 *
+	 * @param model the annotation model to get the annotations from
 	 * @param width the width of the vertical ruler
 	 */
 	public AnnotationRulerColumn(IAnnotationModel model, int width) {
@@ -571,12 +578,10 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 		return fCachedTextViewer;
 	}
 	
-	/**
-	 * Returns this column's annotation model.
-	 * 
-	 * @return this column's annotation model
+	/*
+	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#getModel()
 	 */
-	protected IAnnotationModel getModel() {
+	public IAnnotationModel getModel() {
 		return fModel;
 	}
 	
@@ -592,6 +597,20 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 		fConfiguredAnnotationTypes.add(annotationType);
 	}
 	
+	/*
+	 * @see org.eclipse.jface.text.source.IVerticalRulerInfo#getLineOfLastMouseButtonActivity()
+	 */
+	public int getLineOfLastMouseButtonActivity() {
+		return fParentRuler.getLineOfLastMouseButtonActivity();
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.source.IVerticalRulerInfo#toDocumentLineNumber(int)
+	 */
+	public int toDocumentLineNumber(int y_coordinate) {
+		return fParentRuler.toDocumentLineNumber(y_coordinate);
+	}
+
 	/**
 	 * Removes the given annotation type from this annotation ruler column.
 	 * Annotations of the given type are no longer shown in this annotation
@@ -626,7 +645,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 	}
 	
 	/**
-	 * Computes whether the annotation of the given type should be skiped or
+	 * Computes whether the annotation of the given type should be skipped or
 	 * not.
 	 * 
 	 * @param annotation the annotation
@@ -646,5 +665,35 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn {
 			return true;
 		}
 		return !fConfiguredAnnotationTypes.contains(annotationType);
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#getHover()
+	 */
+	public IAnnotationHover getHover() {
+		return fHover;
+	}
+	
+	/**
+	 * @param hover The hover to set.
+	 */
+	public void setHover(IAnnotationHover hover) {
+		fHover= hover;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#addAnnotationListener(org.eclipse.jface.text.source.IAnnotationListener)
+	 * @since 3.0
+	 */
+	public void addAnnotationListener(IAnnotationListener listener) {
+		throw new UnsupportedOperationException();
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.source.IVerticalRulerInfoExtension#removeAnnotationListener(org.eclipse.jface.text.source.IAnnotationListener)
+	 * @since 3.0
+	 */
+	public void removeAnnotationListener(IAnnotationListener listener) {
+		throw new UnsupportedOperationException();
 	}
 }
