@@ -62,7 +62,7 @@ public class LaunchHistory implements ILaunchListener, IPropertyChangeListener, 
 	public void launchAdded(ILaunch launch) {
 		ILaunchConfiguration configuration = launch.getLaunchConfiguration();
 		if (configuration != null && !configuration.isWorkingCopy() && accepts(configuration)) {
-			addHistory(configuration);
+			addHistory(configuration, true);
 			setRecentLaunch(configuration);
 		}
 	}
@@ -70,8 +70,11 @@ public class LaunchHistory implements ILaunchListener, IPropertyChangeListener, 
 	/**
 	 * Adds the givev configuration to this hisotry
 	 * 
-	 * @param configuration	 */
-	protected void addHistory(ILaunchConfiguration configuration) {
+	 * @param configuration
+	 * @param prepend whether the configuration should be added to the beginning of
+	 * the history list
+	 */
+	protected void addHistory(ILaunchConfiguration configuration, boolean prepend) {
 		clearDirty();
 		if (fFavorites.contains(configuration)) {
 			return;
@@ -82,7 +85,11 @@ public class LaunchHistory implements ILaunchListener, IPropertyChangeListener, 
 		}
 		int index = fHistory.indexOf(configuration);
 		if (index < 0) {
-			fHistory.add(0, configuration);
+			if (prepend) {
+				fHistory.add(0, configuration);
+			} else {
+				fHistory.add(configuration);
+			}
 			resizeHistory();
 			setDirty();
 		} else if (index > 0) {

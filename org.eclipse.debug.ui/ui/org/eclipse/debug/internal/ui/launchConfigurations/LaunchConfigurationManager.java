@@ -368,7 +368,7 @@ public class LaunchConfigurationManager implements ILaunchListener {
 				for (int i = 0; i < histories.length; i++) {
 					LaunchHistory history = histories[i];
 					if (history.accepts(launchConfig) && history.getLaunchGroup().getMode().equals(mode)) {
-						history.addHistory(launchConfig);
+						history.addHistory(launchConfig, false);
 					}
 				}
 			}
