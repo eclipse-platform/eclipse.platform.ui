@@ -297,13 +297,7 @@ public class SearchIndex {
 	 */
 	public HelpProperties getIndexedDocs() {
 		HelpProperties indexedDocs =
-			new HelpProperties(
-				"nl"
-					+ File.separator
-					+ locale
-					+ File.separator
-					+ INDEXED_DOCS_FILE,
-				HelpPlugin.getDefault());
+			new HelpProperties(indexedDocsFile, HelpPlugin.getDefault());
 		if (exists())
 			indexedDocs.restore();
 		return indexedDocs;
