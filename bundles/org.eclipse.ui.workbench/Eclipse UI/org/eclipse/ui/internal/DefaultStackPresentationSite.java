@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
@@ -18,7 +19,7 @@ import org.eclipse.ui.presentations.StackPresentation;
 /**
  * @since 3.0
  */
-public class DefaultStackPresentationSite implements IStackPresentationSite {
+public abstract class DefaultStackPresentationSite implements IStackPresentationSite {
 	
 	private StackPresentation presentation;
 	private int state = IStackPresentationSite.STATE_RESTORED;
@@ -91,21 +92,34 @@ public class DefaultStackPresentationSite implements IStackPresentationSite {
 	 * @see org.eclipse.ui.internal.skins.IPresentationSite#dragStart(org.eclipse.ui.internal.skins.IPresentablePart, boolean)
 	 */
 	public void dragStart(IPresentablePart beingDragged, Point initialPosition, boolean keyboard) {
-
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.skins.IPresentationSite#close(org.eclipse.ui.internal.skins.IPresentablePart)
 	 */
 	public void close(IPresentablePart toClose) {
-		// TODO Auto-generated method stub
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.skins.IPresentationSite#dragStart(boolean)
 	 */
 	public void dragStart(Point initialPosition, boolean keyboard) {
-		// TODO Auto-generated method stub
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.presentations.IStackPresentationSite#supportsState(int)
+	 */
+	public boolean supportsState(int state) {
+		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.presentations.IStackPresentationSite#getSelectedPart()
+	 */
+	public abstract IPresentablePart getSelectedPart();
+	
+	public void addSystemActions(IMenuManager menuManager) {
+		
 	}
 
 }
