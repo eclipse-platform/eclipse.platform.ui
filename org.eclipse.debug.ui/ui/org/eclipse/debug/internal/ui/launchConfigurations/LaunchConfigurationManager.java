@@ -137,7 +137,6 @@ public class LaunchConfigurationManager implements ILaunchListener {
 		try {
 			return !(launchConfiguration.getAttribute(IDebugUIConstants.ATTR_PRIVATE, false));
 		} catch (CoreException e) {
-			DebugUIPlugin.log(e);
 		}
 		return false;
 	}
