@@ -14,6 +14,8 @@ package org.eclipse.debug.core.model;
 import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceRuleFactory;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -22,6 +24,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
@@ -179,7 +182,7 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
 				}
 			};
 			
-		workspace.run(runnable, null, 0, null);
+		workspace.run(runnable, getMarkerRule(), 0, null);
 	}
 	
 	/**
@@ -201,7 +204,7 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
 				}
 			};
 			
-		workspace.run(runnable, null, 0, null);
+		workspace.run(runnable, getMarkerRule(), 0, null);
 	}
 
 	/**
@@ -223,7 +226,7 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
 				}
 			};
 			
-		workspace.run(runnable, null, 0, null);
+		workspace.run(runnable, getMarkerRule(), 0, null);
 	}
 
 	/**
@@ -245,7 +248,7 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
 				}
 			};
 			
-		workspace.run(runnable, null, 0, null);
+		workspace.run(runnable, getMarkerRule(), 0, null);
 	}
 
 	/**
@@ -266,7 +269,7 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
 				}
 			};
 			
-		workspace.run(runnable, null, 0, null);
+		workspace.run(runnable, getMarkerRule(), 0, null);
 	}
 
 	/**
@@ -295,5 +298,45 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint {
 		IMarker m = getMarker();
 		return (m != null && m.exists());
 	}
+
+	/**
+	 * Returns a scheduling rule to use when modifying markers on the given resource,
+	 * possibly <code>null</code>.
+	 * 
+	 * @param resource a resource on which a marker will be created, modified, or deleted
+	 * @return a scheduling rule to use when modifying markers on the given resource
+	 * 	possibly <code>null</code>
+	 * @since 3.1
+	 */
+    protected ISchedulingRule getMarkerRule(IResource resource) {
+        ISchedulingRule rule = null;
+        if (resource != null) {
+            IResourceRuleFactory ruleFactory = ResourcesPlugin.getWorkspace().getRuleFactory();
+            rule = ruleFactory.markerRule(resource);
+        }
+        return rule;
+    }
+    
+	/**
+	 * Returns a scheduling rule to use when modifying or deleting this breakpoint's marker, 
+	 * possibly <code>null</code>. This method is only valid when this breakpoint's
+	 * marker has already been created. When creating a marker on a specific resource,
+	 * use <code>getMarkerRule(IResource)</code> instead.
+	 * 
+	 * @return a scheduling rule to use when modifying or deleting this breakpoint's marker
+	 * @since 3.1
+	 */
+    protected ISchedulingRule getMarkerRule() {
+        ISchedulingRule rule = null;
+        IMarker marker = getMarker();
+        if (marker != null) {
+	        IResource resource = marker.getResource();
+	        if (resource != null) {
+	            IResourceRuleFactory ruleFactory = ResourcesPlugin.getWorkspace().getRuleFactory();
+	            rule = ruleFactory.markerRule(resource);
+	        }
+        }
+        return rule;
+    }    
 }
 
