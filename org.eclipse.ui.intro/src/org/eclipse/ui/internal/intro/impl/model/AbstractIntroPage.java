@@ -266,7 +266,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
         Element[] pages = ModelLoaderUtil.getElementsByTagName(dom,
                 IntroPage.TAG_PAGE);
         if (pages.length == 0) {
-            Log.warning("Content file has no pages.");
+            Log.warning("Content file has no pages."); //$NON-NLS-1$
             return;
         }
         // point the element of this page to the new element. Pick first page

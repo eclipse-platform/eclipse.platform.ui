@@ -137,8 +137,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
 
         // now load all children of the config. There should only be pages and
         // groups here. And order is not important. These elements are loaded
-        // from
-        // the content file DOM.
+        // from the content file DOM.
         Document document = loadDOM(getCfgElement());
         if (document == null) {
             // we failed to parse the content file. Intro Parser would have
@@ -266,7 +265,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
 
             if (extensionContentElement.hasAttribute("failed")) { //$NON-NLS-1$
                 // we failed to resolve this configExtension, because target
-                // could nopt be found or is not an anchor, add the extension
+                // could not be found or is not an anchor, add the extension
                 // as a (unresolved) child of this model.
                 children.add(new IntroExtensionContent(extensionContentElement,
                         bundle));

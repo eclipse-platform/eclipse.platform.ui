@@ -227,7 +227,7 @@ public class BrowserIntroPartImplementation extends
         else {
             // trick model into firing event, outside thread.
             String currentPageId = getModel().getCurrentPageId();
-            getModel().setCurrentPageId("", false);
+            getModel().setCurrentPageId("", false); //$NON-NLS-1$
             getModel().setCurrentPageId(currentPageId);
         }
 
@@ -405,13 +405,13 @@ public class BrowserIntroPartImplementation extends
 
         if (url == null) {
             // We have no content to display. log an error
-            Log.error("Url is null; no content to display in browser", null);
+            Log.error("Url is null; no content to display in browser", null); //$NON-NLS-1$
             return;
         }
         // set the URL the browser should display
         boolean success = browser.setUrl(url);
         if (!success) {
-            Log.error("Unable to set the following ULR in browser: " + url,
+            Log.error("Unable to set the following ULR in browser: " + url, //$NON-NLS-1$
                     null);
             return;
         }

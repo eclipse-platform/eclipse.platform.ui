@@ -66,11 +66,11 @@ public class IntroURL implements IIntroURL {
     public static final String KEY_INPUT = "input"; //$NON-NLS-1$
     public static final String KEY_MESSAGE = "message"; //$NON-NLS-1$
     public static final String KEY_URL = "url"; //$NON-NLS-1$
-    public static final String KEY_DIRECTION = "direction";
+    public static final String KEY_DIRECTION = "direction"; //$NON-NLS-1$
 
-    public static final String VALUE_BACKWARD = "backward";
-    public static final String VALUE_FORWARD = "forward";
-    public static final String VALUE_HOME = "home";
+    public static final String VALUE_BACKWARD = "backward"; //$NON-NLS-1$
+    public static final String VALUE_FORWARD = "forward"; //$NON-NLS-1$
+    public static final String VALUE_HOME = "home"; //$NON-NLS-1$
 
     private String action = null;
     private Properties parameters = null;
@@ -188,7 +188,7 @@ public class IntroURL implements IIntroURL {
             introPart = (CustomizableIntroPart) IntroPlugin.showIntro(true);
         // store the flag to indicate that standbypart is needed.
         introPart.getControl().setData(IIntroConstants.SHOW_STANDBY_PART,
-                "true");
+                "true"); //$NON-NLS-1$
         IntroPlugin.setIntroStandby(true);
         StandbyPart standbyPart = (StandbyPart) introPart
                 .getAdapter(StandbyPart.class);

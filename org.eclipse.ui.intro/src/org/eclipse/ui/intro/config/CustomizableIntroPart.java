@@ -251,7 +251,7 @@ public final class CustomizableIntroPart extends IntroPart implements
         standbyPart.init(this, getMemento(memento, MEMENTO_STANDBY_PART_TAG));
         standbyPart.createPartControl((Composite) getControl());
         restoreStandby = false;
-        container.setData(SHOW_STANDBY_PART, "true");
+        container.setData(SHOW_STANDBY_PART, "true"); //$NON-NLS-1$
     }
 
 
@@ -347,7 +347,7 @@ public final class CustomizableIntroPart extends IntroPart implements
 
 
         // Find out if presentation or standby is at the top and restore
-        // them.container has stack layout. safe to cast.
+        // them. Container has stack layout. safe to cast.
         boolean restorePresentation = false;
         StackLayout layout = (StackLayout) container.getLayout();
         if (getPresentationControl().equals(layout.topControl))
@@ -358,9 +358,9 @@ public final class CustomizableIntroPart extends IntroPart implements
         IMemento standbyPartMemento = memento
                 .createChild(MEMENTO_STANDBY_PART_TAG);
         if (restorePresentation)
-            presentationMemento.putString(MEMENTO_RESTORE_ATT, "true");
+            presentationMemento.putString(MEMENTO_RESTORE_ATT, "true"); //$NON-NLS-1$
         else
-            standbyPartMemento.putString(MEMENTO_RESTORE_ATT, "true");
+            standbyPartMemento.putString(MEMENTO_RESTORE_ATT, "true"); //$NON-NLS-1$
         if (presentation != null)
             presentation.saveState(presentationMemento);
         if (standbyPart != null)

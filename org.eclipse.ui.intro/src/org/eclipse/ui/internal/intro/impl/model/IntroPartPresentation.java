@@ -56,7 +56,7 @@ public class IntroPartPresentation extends AbstractIntroElement {
     private static final String ATT_OS = "os"; //$NON-NLS-1$
     private static final String ATT_WS = "ws"; //$NON-NLS-1$
     protected static final String ATT_HOME_PAGE_ID = "home-page-id"; //$NON-NLS-1$
-    protected static final String ATT_STANDBY_PAGE_ID = "standby-page-id";
+    protected static final String ATT_STANDBY_PAGE_ID = "standby-page-id"; //$NON-NLS-1$
 
     private static final String BROWSER_IMPL_KIND = "html"; //$NON-NLS-1$
     private static final String FORMS_IMPL_KIND = "swt"; //$NON-NLS-1$

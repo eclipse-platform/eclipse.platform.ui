@@ -393,7 +393,7 @@ public class FormIntroPartImplementation extends
 
         GridLayout gl = new GridLayout();
         body.setLayout(gl);
-        String label = IntroPlugin.getString("StaticHTML.welcome");
+        String label = IntroPlugin.getString("StaticHTML.welcome"); //$NON-NLS-1$
         Hyperlink link = toolkit.createHyperlink(body, label, SWT.WRAP);
         link.setFont(PageStyleManager.getHeaderFont());
         GridData gd = new GridData(GridData.GRAB_HORIZONTAL
