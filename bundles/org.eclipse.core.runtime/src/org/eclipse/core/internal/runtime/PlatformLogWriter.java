@@ -158,7 +158,7 @@ protected void writeHeader() throws IOException {
 }
 protected String getDate() {
 	try {
-		DateFormat formatter = new SimpleDateFormat("MMM dd, yyyy kk:mm:ss.SS"); //$NON-NLS-1$
+		DateFormat formatter = new SimpleDateFormat("MMM dd, yyyy HH:mm:ss.SS"); //$NON-NLS-1$
 		return formatter.format(new Date());
 	} catch (Exception e) {
 		// If there were problems writing out the date, ignore and
