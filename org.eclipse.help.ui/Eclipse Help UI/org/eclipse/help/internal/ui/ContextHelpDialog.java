@@ -298,6 +298,7 @@ public class ContextHelpDialog implements Runnable {
 	protected Control createLinksArea(Composite parent) {
 		// get links from first context with links
 		relatedTopics = cmgr.getRelatedTopics(contexts);
+		relatedTopics = filterDuplicateLinks(relatedTopics, null);
 
 		if (relatedTopics == null)
 			// none of the contexts have Topics
@@ -421,6 +422,7 @@ public class ContextHelpDialog implements Runnable {
 	 */
 	public void run() {
 		farRelatedTopics = cmgr.getMoreRelatedTopics(contexts);
+		farRelatedTopics = filterDuplicateLinks(farRelatedTopics, relatedTopics);
 	}
 	protected void showMoreLinks() {
 		Menu menu = new Menu(shell);
@@ -441,5 +443,42 @@ public class ContextHelpDialog implements Runnable {
 			}
 		}
 		menu.setVisible(true);
+	}
+	/**
+	 * Filters out the topics from first argument
+	 * that are duplicated in first argument
+	 * or in the second argument if provided
+	 * @param varlinks array of IHelpTopics that
+	 *  will be filtered
+	 * @param constlinks null or array of IHelpTopics
+	 *  that should not appear in in the filtered varlinks
+	 */
+	protected IHelpTopic[] filterDuplicateLinks(IHelpTopic varlinks[], IHelpTopic constlinks[]){
+		if (varlinks==null || varlinks.length <=0 )
+			return varlinks;
+		ArrayList filtered = new ArrayList();
+		for(int i=0; i<varlinks.length;i++){
+			boolean dup=false;
+			// check if it is a duplicate of already added topic
+			for(int j=0; j<filtered.size(); j++){
+				if( varlinks[i].getHref().equals( ((IHelpTopic)filtered.get(j)).getHref() )
+					&& varlinks[i].getLabel().equals( ((IHelpTopic)filtered.get(j)).getLabel() ) ){
+						dup=true;
+						break;
+				}
+			}
+			// check if it exists in constlinks
+			if(constlinks !=null)
+				for(int j=0; j<constlinks.length; j++){
+					if( varlinks[i].getHref().equals( constlinks[j].getHref() )
+						&& varlinks[i].getLabel().equals( constlinks[j].getLabel() ) ){
+							dup=true;
+							break;
+					}
+				}
+			if(!dup)
+				filtered.add(varlinks[i]);
+		}
+		return (IHelpTopic[])filtered.toArray(new IHelpTopic[filtered.size()]);			
 	}
 }
