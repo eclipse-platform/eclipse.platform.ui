@@ -71,11 +71,11 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		
 		if (lastTimeStamp==configuration.getChangeStamp() && System.getProperties().get("osgi.dev") == null) {		
 			Utils.debug("Same last time stamp *****");
-			if (System.getProperty("eclipse.application") == null) {
+			if (System.getProperty("eclipse.application") == null && application != null) {
 				Utils.debug("no eclipse.application, setting it and returning");
 				System.setProperty("eclipse.application", application);
 			}
-			if (System.getProperty("eclipse.product") == null) {
+			if (System.getProperty("eclipse.product") == null && product != null) {
 				Utils.debug("no eclipse.product, setting it and returning");
 				System.setProperty("eclipse.product", product);
 			}
@@ -190,9 +190,9 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 			context.ungetService(reference);
 			refreshPackages((Bundle[]) toRefresh.toArray(new Bundle[toRefresh.size()]));
 			
-			if (System.getProperty("eclipse.application") == null)
+			if (System.getProperty("eclipse.application") == null && configuration.getApplicationIdentifier() != null)
 				System.setProperty("eclipse.application", configuration.getApplicationIdentifier());
-			if (System.getProperty("eclipse.product") == null)
+			if (System.getProperty("eclipse.product") == null && configuration.getPrimaryFeatureIdentifier() != null)
 				System.setProperty("eclipse.product", configuration.getPrimaryFeatureIdentifier());
 			
 			// keep track of the last config successfully processed
