@@ -246,7 +246,6 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 			orientation= SWT.VERTICAL;
 		}		
 		setViewOrientation(orientation);
-		setTitle(AntViewMessages.getString("AntView.Build_Files")); //$NON-NLS-1$
 		
 		IActionBars actionBars= getViewSite().getActionBars();
 		IMenuManager menuManager= actionBars.getMenuManager();
