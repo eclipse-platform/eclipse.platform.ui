@@ -9,6 +9,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IExpressionManager;
 import org.eclipse.debug.core.model.IExpression;
+import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.variables.VariablesViewContentProvider;
@@ -58,6 +59,17 @@ public class ExpressionViewContentProvider extends VariablesViewContentProvider 
 	public boolean hasChildren(Object element) {
 		if (element instanceof IExpressionManager) {
 			return ((IExpressionManager)element).hasExpressions();
+		} else if (element instanceof IExpression) {
+			IValue v = ((IExpression)element).getValue();
+			if (v == null) {
+				return false;
+			}
+			try {
+				return v.hasVariables();
+			} catch (DebugException e) {
+				DebugUIPlugin.log(e);
+				return false;
+			}
 		}
 		return super.hasChildren(element);
 	}	
