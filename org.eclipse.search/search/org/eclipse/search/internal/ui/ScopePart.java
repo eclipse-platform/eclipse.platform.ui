@@ -293,7 +293,7 @@ public class ScopePart {
 
 		fUseProject= new Button(fPart, SWT.RADIO);
 		fUseProject.setData(new Integer(ISearchPageContainer.SELECTED_PROJECTS_SCOPE));
-		fUseProject.setText(SearchMessages.getString("ScopePart.selectedProjectsScope.text"));  //$NON-NLS-1$
+		fUseProject.setText(SearchMessages.getString("ScopePart.enclosingProjectsScope.text"));  //$NON-NLS-1$
 		fUseProject.setEnabled(selection instanceof IStructuredSelection && !fSearchPageContainer.getSelection().isEmpty());
 		
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
