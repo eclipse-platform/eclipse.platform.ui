@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.texteditor.quickdiff;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,6 +21,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
@@ -64,6 +66,9 @@ import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.Ran
  * @since 3.0
  */
 public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnnotationModel {
+
+	/** Tells whether this class is in debug mode. */
+	private static boolean DEBUG= "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.ui.workbench.texteditor/debug/DocumentLineDiffer"));  //$NON-NLS-1$//$NON-NLS-2$
 
 	/** The provider for the reference document. */
 	IQuickDiffReferenceProvider fReferenceProvider;
@@ -531,6 +536,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 				} catch (NullPointerException x) {
 				} catch (ArrayStoreException x) {
 				} catch (IndexOutOfBoundsException x) {
+				} catch (ConcurrentModificationException e) {
 				}
 				return null;
 			}
@@ -556,7 +562,8 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		try {
 			handleAboutToBeChanged(event);
 		} catch (BadLocationException e) {
-			TextEditorPlugin.getDefault().getLog().log(new Status(IStatus.WARNING, TextEditorPlugin.PLUGIN_ID, IStatus.OK, "reinitializing quickdiff", e)); //$NON-NLS-1$
+			if (DEBUG)
+				System.err.println("reinitializing quickdiff:\n" + e.getLocalizedMessage() + "\n" + e.getStackTrace());  //$NON-NLS-1$//$NON-NLS-2$
 			initialize();
 		}
 	}
@@ -596,7 +603,8 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		try {
 			handleChanged(event);
 		} catch (BadLocationException e) {
-			TextEditorPlugin.getDefault().getLog().log(new Status(IStatus.WARNING, TextEditorPlugin.PLUGIN_ID, IStatus.OK, "reinitializing quickdiff", e)); //$NON-NLS-1$
+			if (DEBUG)
+				System.err.println("reinitializing quickdiff:\n" + e.getLocalizedMessage() + "\n" + e.getStackTrace());  //$NON-NLS-1$//$NON-NLS-2$
 			initialize();
 			return;
 		}
