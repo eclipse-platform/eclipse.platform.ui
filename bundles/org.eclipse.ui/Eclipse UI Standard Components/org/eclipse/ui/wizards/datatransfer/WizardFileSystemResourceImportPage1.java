@@ -255,8 +255,10 @@ protected MinimizedFileSystemElement createRootElement(
 	boolean isContainer = provider.isFolder(fileSystemObject);
 	String elementLabel = provider.getLabel(fileSystemObject);
 
+	// Use an empty label so that display of the element's full name
+	// doesn't include a confusing label
 	MinimizedFileSystemElement dummyParent =
-		new MinimizedFileSystemElement("Dummy", null, true);//$NON-NLS-1$
+		new MinimizedFileSystemElement("", null, true);//$NON-NLS-1$
 	dummyParent.setPopulated();
 	MinimizedFileSystemElement result =
 		new MinimizedFileSystemElement(elementLabel, dummyParent, isContainer);
@@ -667,41 +669,17 @@ protected void setSourceName(String path) {
  * Update the tree to only select those elements that match the selected types
  */
 protected void setupSelectionsBasedOnSelectedTypes() {
-	
-	Map selectionMap = getFilteredElements();	
-	
-	
-	if(selectionMap != null)
-		updateSelections(selectionMap);
-
-}
-
-
-/**
- * Get the elements selected by the select types dialog. If the progress
- * is cancelled return null.
- * @return Map - key FileSystem element, value Collection of FileSystemElement or null
- */
-
-private Map getFilteredElements(){
-	
-	ProgressMonitorDialog dialog = new ProgressMonitorDialog(getContainer().getShell());
-	
+	ProgressMonitorDialog dialog = new ProgressMonitorDialog(getContainer().getShell());	
 	final Map selectionMap = new Hashtable();
 	
-	
 	IRunnableWithProgress runnable  = new IRunnableWithProgress() {
-		public void run(IProgressMonitor monitor) throws InterruptedException{
-
+		public void run(final IProgressMonitor monitor) throws InterruptedException{		
 			monitor.beginTask(WorkbenchMessages.getString("WizardImportPage.filterSelections"), IProgressMonitor.UNKNOWN);
-
 			List files = getSelectedResources(monitor);
 			if(files == null){
 				throw new InterruptedException();
-			}
-				
+			}				
 			Iterator filesList = files.iterator();			
-
 			while (filesList.hasNext()) {
 				if(monitor.isCanceled())
 					throw new InterruptedException();
@@ -715,21 +693,30 @@ private Map getFilteredElements(){
 					selectionMap.put(parent, elements);
 				}
 			}
-
 		}
 	};
 	
 	try{
 		dialog.run(true,true,runnable);
-		return selectionMap;
 	}
 	catch (InvocationTargetException exception){
 		//Couldn't start. Do nothing.
+		return;
 	}
 	catch (InterruptedException exception){
 		//Got interrupted. Do nothing.
+		return;
 	}
-	return null;
+	// make sure that all paint operations caused by closing the progress 
+	// dialog get flushed, otherwise extra pixels will remain on the screen until 
+	// updateSelections is completed
+	getShell().update();
+	// The updateSelections method accesses SWT widgets so cannot be executed
+	// as part of the above progress dialog operation since the operation forks
+	// a new process.	
+	if (selectionMap != null) {
+		updateSelections(selectionMap);
+	}
 }
 /* (non-Javadoc)
  * Method declared on IDialogPage. Set the selection up when it becomes visible.

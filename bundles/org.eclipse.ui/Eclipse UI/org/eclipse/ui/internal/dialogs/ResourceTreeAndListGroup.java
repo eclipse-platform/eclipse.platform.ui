@@ -15,6 +15,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.Table;
+import java.io.File;
 
 /**
  *	Workbench-level composite that combines a CheckboxTreeViewer and CheckboxListViewer.
@@ -23,15 +24,15 @@ import org.eclipse.swt.widgets.Table;
 public class ResourceTreeAndListGroup implements ICheckStateListener, ISelectionChangedListener, ITreeViewerListener {
 	private	Object			root;
 	private	Object			currentTreeSelection;
-	private	Collection			expandedTreeNodes = new HashSet();
-	private	Map		checkedStateStore = new HashMap(9);
-	private Collection			whiteCheckedTreeItems = new HashSet();
-	private	Collection			listeners = new HashSet();
+	private	Collection		expandedTreeNodes = new HashSet();
+	private	Map				checkedStateStore = new HashMap(9);
+	private 	Collection		whiteCheckedTreeItems = new HashSet();
+	private	Collection		listeners = new HashSet();
 	
 	private	ITreeContentProvider		treeContentProvider;
 	private	IStructuredContentProvider	listContentProvider;
-	private ILabelProvider				treeLabelProvider;
-	private ILabelProvider				listLabelProvider;
+	private 	ILabelProvider				treeLabelProvider;
+	private 	ILabelProvider				listLabelProvider;
 	
 	// widgets
 	private	CheckboxTreeViewer	treeViewer;
@@ -312,12 +313,18 @@ private void expandTreeElement(final Object item) {
 */
 private void findAllSelectedListElements(
 	Object treeElement,
+	String parentLabel,
 	boolean addAll,
 	Collection result,
 	IProgressMonitor monitor) {
 		
+	String fullLabel = null;
 	if(monitor != null && monitor.isCanceled())
 		return;
+	if(monitor != null){
+		fullLabel = getFullLabel(treeElement,parentLabel);
+		monitor.subTask(fullLabel);
+	}
 
 	if (addAll) {
 		Object[] listItems = listContentProvider.getElements(treeElement);
@@ -333,11 +340,12 @@ private void findAllSelectedListElements(
 	for (int i = 0; i < treeChildren.length; i++) {
 		Object child = treeChildren[i];
 		if (addAll)
-			findAllSelectedListElements(child, true, result,monitor);
+			findAllSelectedListElements(child, fullLabel,true, result,monitor);
 		else { //Only continue for those with checked state
 			if (checkedStateStore.containsKey(child))
 				findAllSelectedListElements(
 					child,
+					fullLabel,
 					whiteCheckedTreeItems.contains(child),
 					result,
 					monitor);
@@ -383,6 +391,7 @@ public List getAllCheckedListItems(IProgressMonitor monitor) {
 	for (int i = 0; i < children.length; ++i) {
 		findAllSelectedListElements(
 			children[i],
+			null,
 			whiteCheckedTreeItems.contains(children[i]),
 			result,
 			monitor);
@@ -436,6 +445,23 @@ public List getAllWhiteCheckedItems() {
  */
 public int getCheckedElementCount() {
 	return checkedStateStore.size();
+}
+/**
+ * Get the full label of the treeElement (its name and its parent's name).
+ * @param treeElement - the element being exported
+ * @param parentLabel - the label of the parent, can be null
+ * @return String
+ */
+protected String getFullLabel(Object treeElement,String parentLabel) {
+	String parentName = parentLabel;
+	
+	if (parentLabel == null) 
+		parentName = "";
+		
+	if (parentName.length() > 0 && (!parentName.endsWith(File.separator))) {
+		parentName += File.separatorChar;
+	}
+	return parentName + treeLabelProvider.getText(treeElement);
 }
 /**
  *	Return a count of the number of list items associated with a
@@ -828,64 +854,45 @@ protected void updateHierarchy(Object treeElement) {
  * Update the selections of the tree elements in items to reflect the new
  * selections provided.
  * @param Map with keys of Object (the tree element) and values of List (the selected
- * list elements).
+ * list elements).  NOTE: This method does not special case keys with no values (i.e., 
+ * a tree element with an empty list).  If a tree element does not have any selected
+ * items, do not include the element in the Map.
  */
-public void updateSelections(final Map items) {
-
-	//Deselect the list selection first
+public void updateSelections(Map items) {
+	// We are replacing all selected items with the given selected items,
+	// so reinitialize everything.
 	this.listViewer.setAllChecked(false);
-	Iterator keyIterator = items.keySet().iterator();
+	this.treeViewer.setCheckedElements(new Object[0]);
+	this.whiteCheckedTreeItems = new HashSet();
 	Set selectedNodes = new HashSet();
+	checkedStateStore = new HashMap();
 
 	//Update the store before the hierarchy to prevent updating parents before all of the children are done
+	Iterator keyIterator = items.keySet().iterator();
 	while (keyIterator.hasNext()) {
 		Object key = keyIterator.next();
 		List selections = (List) items.get(key);
-		if (selections.size() > 0) {
-			//Replace the items in the checked state store with those from the supplied items			
-			checkedStateStore.put(key, selections);
-			selectedNodes.add(key);
-			// proceed up the tree element hierarchy
-			Object parent = treeContentProvider.getParent(key);
-			if (parent != null) {
-				// proceed up the tree element hierarchy and make sure everything is in the table		
-				primeHierarchyForSelection(parent, selectedNodes);
-			}
-		} else{
-			//If it is not in the check list then remove from the list
-			if (selectedNodes.contains(key))
-				checkedStateStore.put(key, selections);
-			else
-				checkedStateStore.remove(key);
-		}
-
-	}
-
-	//First remove anything from the checked state store that we did not select
-	Set checkedKeys = new HashSet();
-	checkedKeys.addAll(checkedStateStore.keySet());
-	Iterator checkedStateIterator = checkedKeys.iterator();
-	while (checkedStateIterator.hasNext()) {
-		Object nextDeselection = checkedStateIterator.next();
-		if (!selectedNodes.contains(nextDeselection)) {
-			treeViewer.setGrayChecked(nextDeselection, false);
-			setWhiteChecked(nextDeselection, false);
-			checkedStateStore.remove(nextDeselection);
+		//Replace the items in the checked state store with those from the supplied items			
+		checkedStateStore.put(key, selections);
+		selectedNodes.add(key);
+		// proceed up the tree element hierarchy
+		Object parent = treeContentProvider.getParent(key);
+		if (parent != null) {
+			// proceed up the tree element hierarchy and make sure everything is in the table		
+			primeHierarchyForSelection(parent, selectedNodes);
 		}
 	}
 
-	//Update the currently checked items and those in the items collection
-	keyIterator = items.keySet().iterator();
-	while (keyIterator.hasNext()) {
-		Object key = keyIterator.next();
-		grayUpdateHierarchy(key);
-		if (currentTreeSelection != null && currentTreeSelection.equals(key)) {
-			listViewer.setAllChecked(false);
-			Object displayItems = items.get(key);
-			//See if the items exist - if so then set the new selection
-			if (displayItems != null)
-				listViewer.setCheckedElements(((List) displayItems).toArray());
-		}
+	// Update the checked tree items.  Since each tree item has a selected
+	// item, all the tree items will be gray checked.
+	treeViewer.setCheckedElements(checkedStateStore.keySet().toArray());
+	treeViewer.setGrayedElements(checkedStateStore.keySet().toArray());
+	
+	// Update the listView of the currently selected tree item.
+	if (currentTreeSelection != null) {
+		Object displayItems = items.get(currentTreeSelection);
+		if (displayItems != null)
+			listViewer.setCheckedElements(((List) displayItems).toArray());
 	}
 }
 /** 

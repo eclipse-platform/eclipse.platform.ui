@@ -133,8 +133,10 @@ protected Control createDialogArea(Composite parent) {
 	
 	createMessageArea(composite);
 
-	//create a fake parent of the root to be the dialog input element
-	FileSystemElement input = new FileSystemElement("Dummy", null, true);//$NON-NLS-1$
+	// Create a fake parent of the root to be the dialog input element.
+	// Use an empty label so that display of the element's full name
+	// doesn't include a confusing label
+	FileSystemElement input = new FileSystemElement("", null, true);//$NON-NLS-1$
 	input.addChild(root);
 	root.setParent(input);
 

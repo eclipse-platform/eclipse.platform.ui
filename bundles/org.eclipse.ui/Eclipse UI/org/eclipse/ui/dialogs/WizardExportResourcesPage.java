@@ -601,9 +601,10 @@ private void setupSelectionsBasedOnSelectedTypes(
 	for (int i = 0; i < resources.length; i++) {
 		IResource resource = resources[i];
 		if (resource.getType() == IResource.FILE) {
-			hasFiles = true;
-			if (hasExportableExtension(resource.getName()))
+			if (hasExportableExtension(resource.getName())) {
+				hasFiles = true;
 				selections.add(resource);
+			}
 		} else {
 			setupSelectionsBasedOnSelectedTypes(selectionMap, (IContainer) resource);
 		}
