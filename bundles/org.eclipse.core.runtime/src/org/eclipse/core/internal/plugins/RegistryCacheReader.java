@@ -136,6 +136,9 @@ public class RegistryCacheReader {
 	private static final String ELEMENT_INDEX = "<index of element>"; //$NON-NLS-1$
 	private static final String REGISTRY_INDEX = "<index of registry>"; //$NON-NLS-1$
 	private static final String FRAGMENT_INDEX = "<index of fragment>"; //$NON-NLS-1$
+	private static final String EXTENSION_POINT_INDEX = "<index of extension point>"; //$NON-NLS-1$
+	private static final String LIBRARY_INDEX = "<index of library>"; //$NON-NLS-1$
+	private static final String REQUIRES_INDEX = "<index of prerequisite>"; //$NON-NLS-1$
 	private static final String UNKNOWN = "<unknown label>"; //$NON-NLS-1$
 
 public RegistryCacheReader(Factory factory) {
@@ -143,7 +146,7 @@ public RegistryCacheReader(Factory factory) {
 	cacheFactory = factory;
 	objectTable = null;
 }
-public int addToObjectTable(Object object) {
+private int addToObjectTable(Object object) {
 	if (objectTable == null) {
 		objectTable = new ArrayList();
 	}
@@ -323,6 +326,15 @@ public static String decipherLabel(byte labelValue) {
 			break;
 		case TYPE_LABEL:
 			retValue += IModel.LIBRARY_TYPE;
+			break;
+		case EXTENSION_POINT_INDEX_LABEL:
+			retValue += EXTENSION_POINT_INDEX;
+			break;
+		case LIBRARY_INDEX_LABEL:
+			retValue += LIBRARY_INDEX;
+			break;
+		case REQUIRES_INDEX_LABEL:
+			retValue += REQUIRES_INDEX;
 			break;
 		default:
 			retValue += UNKNOWN;
