@@ -161,6 +161,12 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
 	                    weave(ranges, new StyleRange(overlap[i].offset, overlap[i].length, hyperlinkText, null));
 	                }
                 }
+                if (hyperlink != null) {
+                    IRegion region = console.getRegion(hyperlink);
+                    Color color = JFaceColors.getActiveHyperlinkText(Display.getCurrent());
+                    StyleRange linkRange = new StyleRange(region.getOffset(), region.getLength(), color, null);
+                    override(ranges, linkRange);
+                }
             } catch (BadPositionCategoryException e) {
             }
             
@@ -178,19 +184,19 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
      * @param ranges
      * @param styleRange
      */
-    private void weave(List ranges, StyleRange styleRange) {
+    private void weave(List ranges, StyleRange newRange) {
         if (ranges.isEmpty()) {
-            ranges.add(styleRange);
+            ranges.add(newRange);
             return;
         }
-        int start = styleRange.start;
-        int end = start + styleRange.length;
+        int start = newRange.start;
+        int end = start + newRange.length;
         for (int i = 0; i < ranges.size(); i++) {
-            StyleRange r = (StyleRange) ranges.get(i);
-            int rEnd = r.start + r.length;
-            if (start < r.start) {
-                if (end >= r.start) {
-                    ranges.add(i, new StyleRange(start, r.start - start, styleRange.foreground, styleRange.background));
+            StyleRange existingRange = (StyleRange) ranges.get(i);
+            int rEnd = existingRange.start + existingRange.length;
+            if (start < existingRange.start) {
+                if (end >= existingRange.start) {
+                    ranges.add(i, new StyleRange(start, existingRange.start - start, newRange.foreground, newRange.background));
                     if (end > rEnd) {
                         start = rEnd + 1;
                     } else {
@@ -208,10 +214,42 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
             }
         }
         if (start < end) {
-            ranges.add(new StyleRange(start, end - start, styleRange.foreground, styleRange.background));
+            ranges.add(new StyleRange(start, end - start, newRange.foreground, newRange.background));
         }
     }
     
+    private void override(List ranges, StyleRange newRange) {
+        if (ranges.isEmpty()) {
+            ranges.add(newRange);
+            return;
+        }
+        
+        int start = newRange.start;
+        int end = start + newRange.length;
+        for (int i = 0; i < ranges.size(); i++) {
+            StyleRange existingRange = (StyleRange) ranges.get(i);
+            int rEnd = existingRange.start + existingRange.length;
+            if (end <= existingRange.start || start >= rEnd) {
+                continue;
+            }
+            
+            if (start >= existingRange.start && end <=rEnd) {
+                existingRange.length = start - existingRange.start - 1;
+                ranges.add(++i, newRange);
+                if (end != rEnd) {
+                    ranges.add(++i, new StyleRange(end, rEnd-end-1, existingRange.foreground, existingRange.background));                    
+                }
+                return;
+            } else if (start >= existingRange.start && start < rEnd) {
+                existingRange.length = start-existingRange.start;
+                ranges.add(++i, newRange);
+            } else if (end >= rEnd) {
+                ranges.remove(i);
+            } else {
+                ranges.add(++i, new StyleRange(end+1, rEnd-end+1, existingRange.foreground, existingRange.background));
+            }
+        }
+    }
 	/**
 	 * Binary search for the positions overlapping the given range
 	 *
@@ -328,9 +366,6 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
                     Point p1 = text.getLocationAtOffset(styleStart);
                     Point p2 = text.getLocationAtOffset(styleEnd - 1);
                     e.gc.drawLine(p1.x, p1.y + height + baseLineBias, p2.x + width, p2.y + height + baseLineBias);
-                    
-                    String hyperlinkText = text.getText(styleStart, styleEnd-1);
-                    e.gc.drawString(hyperlinkText, p1.x, p1.y + baseLineBias);
                 }
                 e.gc.setForeground(color);
             }
