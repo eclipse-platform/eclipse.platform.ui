@@ -392,8 +392,9 @@ public class MessageDialog extends IconAndMessageDialog {
 			return (customArea.getStyle() & SWT.NO_FOCUS) > 0;
 		return true;
 	}
-	/**
-	 * @see IconAndMessageDialog#getImage()
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IconAndMessageDialog#getImage()
 	 */
 	public Image getImage() {
 		return image;
