@@ -23,11 +23,13 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelExtension;
 
 /**
- * Spelling problem collector.
+ * Default spelling problem collector, that manages spelling annotations
+ * corresponding to spelling problems on an {@link IAnnotationModel}. If more
+ * than one thread reports problems to this collector in parallel, only the
+ * thread which called {@link #beginReporting()} last will be adhered to.
  * <p>
  * This class is not intended to be subclassed by clients.
  * </p>
- * TODO Not yet thread aware.
  * <p>
  * Not yet for public use. API under construction.
  * </p>
@@ -40,10 +42,13 @@ public class DefaultSpellingProblemCollector implements ISpellingProblemCollecto
 	private static final String SPELLING_ANNOTATION_TYPE= "org.eclipse.ui.workbench.texteditor.spelling"; //$NON-NLS-1$
 
 	/** Annotation model */
-	private IAnnotationModel fAnnotationModel;
+	private final IAnnotationModel fAnnotationModel;
 
 	/** Annotations to add */
 	private Map fAddAnnotations;
+	
+	/** Last thread that called {@link #beginReporting()} */
+	private Thread fThread;
 
 	/**
 	 * Initializes this collector with the given annotation model.
@@ -58,13 +63,22 @@ public class DefaultSpellingProblemCollector implements ISpellingProblemCollecto
 	 * @see org.eclipse.ui.texteditor.spelling.ISpellingProblemCollector#accept(org.eclipse.ui.texteditor.spelling.SpellingProblem)
 	 */
 	public void accept(SpellingProblem problem) {
-		fAddAnnotations.put(new Annotation(SPELLING_ANNOTATION_TYPE, false, problem.getMessage()), new Position(problem.getOffset(), problem.getLength()));
+		String message= problem.getMessage();
+		int offset= problem.getOffset();
+		int length= problem.getLength();
+		
+		synchronized (this) {
+			if (fThread != Thread.currentThread())
+				return;
+			fAddAnnotations.put(new Annotation(SPELLING_ANNOTATION_TYPE, false, message), new Position(offset, length));
+		}
 	}
 
 	/*
 	 * @see org.eclipse.ui.texteditor.spelling.ISpellingProblemCollector#beginReporting()
 	 */
-	public void beginReporting() {
+	public synchronized void beginReporting() {
+		fThread= Thread.currentThread();
 		fAddAnnotations= new HashMap();
 	}
 
@@ -72,6 +86,11 @@ public class DefaultSpellingProblemCollector implements ISpellingProblemCollecto
 	 * @see org.eclipse.ui.texteditor.spelling.ISpellingProblemCollector#endReporting()
 	 */
 	public void endReporting() {
+		synchronized (this) {
+			if (fThread != Thread.currentThread())
+				return;
+		}
+		
 		List removeAnnotations= new ArrayList();
 		for (Iterator iter= fAnnotationModel.getAnnotationIterator(); iter.hasNext();) {
 			Annotation annotation= (Annotation) iter.next();
@@ -79,17 +98,29 @@ public class DefaultSpellingProblemCollector implements ISpellingProblemCollecto
 				removeAnnotations.add(annotation);
 		}
 		
+		Map addAnnotations;
+		synchronized (this) {
+			if (fThread != Thread.currentThread())
+				return;
+			addAnnotations= fAddAnnotations;
+		}
+		
 		if (fAnnotationModel instanceof IAnnotationModelExtension)
-			((IAnnotationModelExtension) fAnnotationModel).replaceAnnotations((Annotation[]) removeAnnotations.toArray(new Annotation[removeAnnotations.size()]), fAddAnnotations);
+			((IAnnotationModelExtension) fAnnotationModel).replaceAnnotations((Annotation[]) removeAnnotations.toArray(new Annotation[removeAnnotations.size()]), addAnnotations);
 		else {
 			for (Iterator iter= removeAnnotations.iterator(); iter.hasNext();)
 				fAnnotationModel.removeAnnotation((Annotation) iter.next());
-			for (Iterator iter= fAddAnnotations.keySet().iterator(); iter.hasNext();) {
+			for (Iterator iter= addAnnotations.keySet().iterator(); iter.hasNext();) {
 				Annotation annotation= (Annotation) iter.next();
-				fAnnotationModel.addAnnotation(annotation, (Position) fAddAnnotations.get(annotation));
+				fAnnotationModel.addAnnotation(annotation, (Position) addAnnotations.get(annotation));
 			}
 		}
 		
-		fAddAnnotations= null;
+		synchronized (this) {
+			if (fThread != Thread.currentThread())
+				return;
+			fThread= null;
+			fAddAnnotations= null;
+		}
 	}
 }
