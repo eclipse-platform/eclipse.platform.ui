@@ -321,6 +321,16 @@ public class Project extends Container implements IProject {
 	}
 
 	/* (non-Javadoc)
+	 * @see IContainer#getDefaultCharset(boolean)
+	 */
+	public String getDefaultCharset(boolean checkImplicit) throws CoreException {
+		// non-existing resources default to parent's charset
+		if (!exists())
+			return checkImplicit ? ResourcesPlugin.getEncoding() : null;
+		return workspace.getCharsetManager().getCharsetFor(getFullPath(), checkImplicit);
+	}
+
+	/* (non-Javadoc)
 	 * @see IProject#getDescription()
 	 */
 	public IProjectDescription getDescription() throws CoreException {
@@ -867,7 +877,7 @@ public class Project extends Container implements IProject {
 				checkAccessible(getFlags(info));
 				//if nothing has changed, we don't need to do anything
 				ProjectDescription oldDescription = internalGetDescription();
-				ProjectDescription newDescription = (ProjectDescription)description;
+				ProjectDescription newDescription = (ProjectDescription) description;
 				boolean hasPublicChanges = oldDescription.hasPublicChanges(newDescription);
 				boolean hasPrivateChanges = oldDescription.hasPrivateChanges(newDescription);
 				if (!hasPublicChanges && !hasPrivateChanges)
@@ -983,6 +993,7 @@ public class Project extends Container implements IProject {
 	public void writeDescription(int updateFlags) throws CoreException {
 		writeDescription(internalGetDescription(), updateFlags, true, true);
 	}
+
 	/**
 	 * Writes the project description file to disk.  This is the only method
 	 * that should ever be writing the description, because it ensures that

@@ -147,10 +147,26 @@ public class CharsetManager implements IManager {
 	}
 
 	public String getCharsetFor(IPath resourcePath) {
+		return getCharsetFor(resourcePath, false);
+	}
+
+	public String getCharsetFor(IPath resourcePath, boolean recurse) {
 		Assert.isLegal(resourcePath.segmentCount() >= 1);
 		IProject project = workspace.getRoot().getProject(resourcePath.segment(0));
 		Preferences encodingSettings = getPreferences(project);
-		return encodingSettings.get(getKeyFor(resourcePath), null);
+		return internalGetCharsetFor(resourcePath, encodingSettings, recurse);
+	}
+
+	private String internalGetCharsetFor(IPath resourcePath, Preferences encodingSettings, boolean recurse) {
+		String charset = encodingSettings.get(getKeyFor(resourcePath), null);
+		if (!recurse)
+			return charset;
+		while (charset == null && resourcePath.segmentCount() > 1) {
+			resourcePath = resourcePath.removeLastSegments(1);
+			charset = encodingSettings.get(getKeyFor(resourcePath), null);
+		}
+		// ensure we default to the workspace encoding if none is found
+		return charset == null ? ResourcesPlugin.getEncoding() : charset;
 	}
 
 	String getKeyFor(IPath resourcePath) {

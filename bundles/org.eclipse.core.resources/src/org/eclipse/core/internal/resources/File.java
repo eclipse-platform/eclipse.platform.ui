@@ -211,17 +211,20 @@ public class File extends Resource implements IFile {
 		ResourceInfo info = getResourceInfo(false, false);
 		int flags = getFlags(info);		
 		if (!exists(flags, false))
-			return checkImplicit ? getParent().getDefaultCharset() : null;
+			return checkImplicit ? workspace.getCharsetManager().getCharsetFor(getFullPath().removeLastSegments(1), true) : null;
 		// if there is a file-specific user setting, use it
-		String charset = workspace.getCharsetManager().getCharsetFor(getFullPath());
+		String charset = workspace.getCharsetManager().getCharsetFor(getFullPath(), false);
 		if (charset != null || !checkImplicit)
 			return charset;
 		// tries to obtain a description for the file contents
 		IContentDescription description = workspace.getContentDescriptionManager().getDescriptionFor(this, info);
-		if (description == null)
-			return getParent().getDefaultCharset();
-		String contentCharset = description.getCharset();
-		return contentCharset == null ? getParent().getDefaultCharset() : contentCharset;
+		if (description != null) {
+			String contentCharset = description.getCharset();
+			if (contentCharset != null)
+				return contentCharset;
+		}
+		// could not find out the encoding based on the contents... default to parent's
+		return workspace.getCharsetManager().getCharsetFor(getFullPath().removeLastSegments(1), true);
 	}
 
 	/*

@@ -143,6 +143,16 @@ public class Folder extends Container implements IFolder {
 	}
 
 	/* (non-Javadoc)
+	 * @see IContainer#getDefaultCharset(boolean)
+	 */
+	public String getDefaultCharset(boolean checkImplicit) throws CoreException {
+		// non-existing resources default to parent's charset
+		if (!exists())
+			return checkImplicit ? workspace.getCharsetManager().getCharsetFor(getFullPath().removeLastSegments(1), true) : null;
+		return workspace.getCharsetManager().getCharsetFor(getFullPath(), checkImplicit);
+	}
+
+	/* (non-Javadoc)
 	 * @see IResource#getType()
 	 */
 	public int getType() {

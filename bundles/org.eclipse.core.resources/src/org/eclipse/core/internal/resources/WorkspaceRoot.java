@@ -78,13 +78,6 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 	}
 
 	/**
-	 * @see IContainer#getDefaultCharset()
-	 */
-	public String getDefaultCharset() {
-		return getDefaultCharset(true);
-	}
-
-	/**
 	 * @see IContainer#getDefaultCharset(boolean)
 	 */
 	public String getDefaultCharset(boolean checkImplicit) {

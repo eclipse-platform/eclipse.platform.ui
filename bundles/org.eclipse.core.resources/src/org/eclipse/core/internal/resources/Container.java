@@ -205,17 +205,6 @@ protected IResource[] getChildren(IPath parentPath, boolean phantom) {
 	}
 
 	/* (non-Javadoc)
-	 * @see IContainer#getDefaultCharset(boolean)
-	 */
-	public String getDefaultCharset(boolean checkImplicit) throws CoreException {
-		// non-existing resources default to parent's charset
-		if (!exists())
-			return checkImplicit ? getParent().getDefaultCharset() : null;
-		String charset = workspace.getCharsetManager().getCharsetFor(getFullPath());
-		return (charset == null && checkImplicit) ? getParent().getDefaultCharset() : charset;
-	}
-
-	/* (non-Javadoc)
 	 * @see IContainer#findDeletedMembersWithHistory(int, IProgressMonitor)
 	 */
 	public IFile[] findDeletedMembersWithHistory(int depth, IProgressMonitor monitor) throws CoreException {
