@@ -98,6 +98,12 @@ public class SearchPluginImages {
 	 * Sets all available image descriptors for the given action.
 	 */	
 	public static void setImageDescriptors(IAction action, String type, String relPath) {
+		// HACK UNTIL WE GET THE CORRESPONDING ICON
+		if (relPath == IMG_LCL_SEARCH_REM_ALL) {
+			action.setImageDescriptor(create(T + "c" + type, relPath.substring(NAME_PREFIX_LENGTH)));
+			return;
+		}
+
 		relPath= relPath.substring(NAME_PREFIX_LENGTH);
 		action.setDisabledImageDescriptor(create(T + "d" + type, relPath));
 		action.setHoverImageDescriptor(create(T + "c" + type, relPath));
