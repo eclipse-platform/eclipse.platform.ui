@@ -29,7 +29,7 @@ public class UrlUtil {
 		return new URL(concatString(root, end));
 	}
 
-	private static String concatString(String root, IPath end) {
+	public static String concatString(String root, IPath end) {
 		if(end.isEmpty())
 			return root;
 		if(root.length() == 0)
