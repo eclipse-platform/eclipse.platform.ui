@@ -345,7 +345,6 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 		createImageDescriptor(ICVSUIConstants.IMG_BRANCHES_CATEGORY, baseURL);
 		createImageDescriptor(ICVSUIConstants.IMG_VERSIONS_CATEGORY, baseURL);
 		createImageDescriptor(ICVSUIConstants.IMG_PROJECT_VERSION, baseURL);
-		createImageDescriptor(ICVSUIConstants.IMG_WIZBAN_BRANCH, baseURL);
 		createImageDescriptor(ICVSUIConstants.IMG_WIZBAN_MERGE, baseURL);
 		createImageDescriptor(ICVSUIConstants.IMG_WIZBAN_SHARE, baseURL);
 		createImageDescriptor(ICVSUIConstants.IMG_WIZBAN_DIFF, baseURL);
