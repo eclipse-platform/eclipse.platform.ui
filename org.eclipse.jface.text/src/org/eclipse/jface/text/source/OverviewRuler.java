@@ -671,15 +671,17 @@ public class OverviewRuler implements IOverviewRuler {
 	 * @param lineNumbers the line range
 	 * @return the position of the first found annotation
 	 */
-	private Position getAnnotationPosition(int[] lineNumbers) {
+	private Position getAnnotationPosition(int[] lineNumbers, boolean ignoreSelectedAnnotation) {
 		if (lineNumbers[0] == -1)
 			return null;
-		
+
 		Position found= null;
 		
 		try {
 			IDocument d= fTextViewer.getDocument();
 			IRegion line= d.getLineInformation(lineNumbers[0]);
+
+			Point currentSelection= fTextViewer.getSelectedRange();		
 
 			int start= line.getOffset();
 			
@@ -699,7 +701,7 @@ public class OverviewRuler implements IOverviewRuler {
 					
 					Position p= fModel.getPosition(a);
 					if (start <= p.getOffset() && p.getOffset() < end) {
-						if (found == null || p.getOffset() < found.getOffset())
+						if ((found == null || p.getOffset() < found.getOffset()) && (ignoreSelectedAnnotation || currentSelection.x != p.getOffset() || currentSelection.y != p.getLength()))
 							found= p;
 					}
 				}
@@ -721,7 +723,7 @@ public class OverviewRuler implements IOverviewRuler {
 			return -1;
 
 		try {
-			Position pos= getAnnotationPosition(lineNumbers);
+			Position pos= getAnnotationPosition(lineNumbers, true);
 			if (pos == null)
 				return -1;
 			return fTextViewer.getDocument().getLineOfOffset(pos.getOffset());
@@ -738,7 +740,7 @@ public class OverviewRuler implements IOverviewRuler {
 	private void handleMouseDown(MouseEvent event) {
 		if (fTextViewer != null) {
 			int[] lines= toLineNumbers(event.y);
-			Position p= getAnnotationPosition(lines);
+			Position p= getAnnotationPosition(lines, false);
 			if (p != null) {
 				fTextViewer.revealRange(p.getOffset(), p.getLength());
 				fTextViewer.setSelectedRange(p.getOffset(), p.getLength());
@@ -756,7 +758,7 @@ public class OverviewRuler implements IOverviewRuler {
 	private void handleMouseMove(MouseEvent event) {
 		if (fTextViewer != null) {
 			int[] lines= toLineNumbers(event.y);
-			Position p= getAnnotationPosition(lines);
+			Position p= getAnnotationPosition(lines, true);
 			Cursor cursor= (p != null ? fHitDetectionCursor : null);
 			if (cursor != fLastCursor) {
 				fCanvas.setCursor(cursor);
