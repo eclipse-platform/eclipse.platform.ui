@@ -47,6 +47,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceNode;
 import org.eclipse.ui.internal.registry.ActionSetPartAssociationsReader;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
@@ -59,6 +60,7 @@ import org.eclipse.ui.internal.registry.IViewRegistry;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 import org.eclipse.ui.internal.registry.PerspectiveRegistryReader;
 import org.eclipse.ui.internal.registry.PreferencePageRegistryReader;
+import org.eclipse.ui.internal.registry.PropertyPagesRegistryReader;
 import org.eclipse.ui.internal.registry.ViewRegistry;
 import org.eclipse.ui.internal.registry.ViewRegistryReader;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
@@ -186,6 +188,19 @@ public class ExtensionEventHandler implements IRegistryChangeListener {
 		if (name.equalsIgnoreCase(IWorkbenchConstants.PL_PREFERENCES)) {
 			loadPreferencePages(ext);
 			return;
+		}
+		if (name.equalsIgnoreCase(IWorkbenchConstants.PL_PROPERTY_PAGES)) {
+			loadPropertyPages(ext);
+			return;
+		}		
+	}
+	
+	private void loadPropertyPages(IExtension ext) {
+		PropertyPageContributorManager manager = PropertyPageContributorManager.getManager();
+		PropertyPagesRegistryReader reader = new PropertyPagesRegistryReader(manager);
+		IConfigurationElement [] elements = ext.getConfigurationElements();
+		for (int i = 0; i < elements.length; i++) {
+			reader.readElement(elements[i]);
 		}
 	}
 
