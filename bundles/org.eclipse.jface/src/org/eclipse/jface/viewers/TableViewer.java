@@ -319,9 +319,6 @@ protected void hookControl(Control control) {
 		public void mouseDown(MouseEvent e) {
 			tableViewerImpl.handleMouseDown(e);
 		}
-		public void mouseDoubleClick(MouseEvent e) {
-			tableViewerImpl.handleMouseDoubleClick(e);
-		}
 	});
 }
 /*
@@ -360,7 +357,7 @@ protected int indexForElement(Object element) {
  * Initializes the table viewer implementation.
  */
 private void initTableViewerImpl() {
-	tableViewerImpl = new TableViewerImpl() {
+	tableViewerImpl = new TableViewerImpl(this) {
 		Rectangle getBounds(Item item, int columnNumber) {
 			return ((TableItem)item).getBounds(columnNumber);
 		}
@@ -383,6 +380,11 @@ private void initTableViewerImpl() {
 			tableEditor.grabHorizontal = layoutData.grabHorizontal;
 			tableEditor.horizontalAlignment = layoutData.horizontalAlignment;
 			tableEditor.minimumWidth = layoutData.minimumWidth;
+		}
+		void handleDoubleClickEvent() {
+			Viewer viewer = getViewer();
+			fireDoubleClick (new DoubleClickEvent(viewer, viewer.getSelection()));
+			fireOpen (new OpenEvent(viewer, viewer.getSelection()));
 		}
 	};
 }

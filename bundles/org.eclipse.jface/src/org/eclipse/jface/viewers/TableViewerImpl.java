@@ -1,20 +1,32 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
+
 package org.eclipse.jface.viewers;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
- 
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Item;
 
 /**
  * Internal table viewer implementation.
  */ 
 /* package */ abstract class TableViewerImpl {
 	
-	private boolean isActivating = false;
 	private CellEditor cellEditor;
 	private CellEditor[] cellEditors;
 	private ICellModifier cellModifier;
@@ -23,14 +35,25 @@ import org.eclipse.swt.widgets.*;
 	private int columnNumber;
 	private ICellEditorListener cellEditorListener;
 	private FocusListener focusListener;
+	private MouseListener mouseListener;
+	private int doubleClickExpirationTime;
+	private StructuredViewer viewer;
 	
-	
-TableViewerImpl() {
+
+TableViewerImpl(StructuredViewer viewer) {
+	this.viewer = viewer;
 	initCellEditorListener();
 }
+
 /**
- * Activate a cell editor for the given column.
+ * Returns this <code>TableViewerImpl</code> viewer
+ * 
+ * @return the viewer
  */
+public StructuredViewer getViewer() {
+	return viewer;
+}
+
 private void activateCellEditor() {
 	if (cellEditors != null) {
 		if(cellEditors[columnNumber] != null && cellModifier != null) {
@@ -45,7 +68,7 @@ private void activateCellEditor() {
 				// Tricky flow of control here:
 				// activate() can trigger callback to cellEditorListener which will clear cellEditor
 				// so must get control first, but must still call activate() even if there is no control.
-				Control control = cellEditor.getControl();
+				final Control control = cellEditor.getControl();
 				cellEditor.activate();
 				if (control == null)
 					return;
@@ -60,6 +83,20 @@ private void activateCellEditor() {
 					};
 				}
 				control.addFocusListener(focusListener);
+				mouseListener = new MouseAdapter() {
+					public void mouseDown(MouseEvent e) {
+						// time wrap?	
+						// check for expiration of doubleClickTime
+						if (e.time <= doubleClickExpirationTime ) {
+							control.removeMouseListener(mouseListener);
+							cancelEditing();
+							handleDoubleClickEvent();
+						} else if (mouseListener != null) {
+							control.removeMouseListener(mouseListener);
+						}
+					} 
+				};				
+				control.addMouseListener(mouseListener);
 			}
 		}
 	}
@@ -113,6 +150,15 @@ public void applyEditorValue() {
 		}
 		setEditor(null, null, 0);
 		c.removeListener(cellEditorListener);
+		Control control = c.getControl();
+		if (control != null) {
+			if (mouseListener != null) {
+				control.removeMouseListener(mouseListener);
+			}
+			if (focusListener != null) {
+				control.removeFocusListener(focusListener);
+			}
+		}
 		c.deactivate();
 	}
 }
@@ -162,29 +208,18 @@ public Object[] getColumnProperties() {
 }
 abstract Item[] getSelection();
 /**
- * Handles the double click event.
- */
-public void handleMouseDoubleClick(MouseEvent event) {
-	//The last mouse down was a double click. Cancel
-	//the cell editor activation.
-	isActivating = false;
-}
-/**
- * Handles the mouse down event.
- * Activates the cell editor if it is not a double click.
- *
- * This implementation must:
- *	i) activate the cell editor when clicking over the item's text or over the item's image.
- *	ii) activate it only if the item is already selected.
- *	iii) do NOT activate it on a double click (whether the item is selected or not).
+ * Handles the mouse down event; activates the cell editor.
  */
 public void handleMouseDown(MouseEvent event) {
 	if (event.button != 1)
 		return;
-		
-	boolean wasActivated = isCellEditorActive();
-	if (wasActivated)
-		applyEditorValue();
+
+	// activate the cell editor immediately.  If a second mouseDown
+	// is received prior to the expiration of the doubleClick time then
+	// the cell editor will be deactivated and a doubleClick event will
+	// be processed.
+	//
+	doubleClickExpirationTime = event.time + Display.getCurrent().getDoubleClickTime();								
 
 	Item[] items = getSelection();
 	// Do not edit if more than one row is selected.
@@ -192,20 +227,8 @@ public void handleMouseDown(MouseEvent event) {
 		tableItem = null;
 		return;
 	}
-
-	if(tableItem != items[0]) {
-		//This mouse down was a selection. Keep the selection and return;
-		tableItem = items[0];
-		return;
-	}
-
-	//It may be a double click. If so, the activation was started by the first click.
-	if(isActivating || wasActivated)
-		return;
-		
-	isActivating = true;
-	//Post the activation. So it may be canceled if it was a double click.
-	postActivation(event);
+	tableItem = items[0];
+	activateCellEditor(event);
 }
 private void initCellEditorListener() {
 	cellEditorListener = new ICellEditorListener() {
@@ -228,28 +251,6 @@ private void initCellEditorListener() {
  */
 public boolean isCellEditorActive() {
 	return cellEditor != null;
-}
-/**
- * Handle the mouse down event.
- * Activate the cell editor if it is not a doble click.
- */
-private void postActivation(final MouseEvent event) {
-	if(!isActivating)
-		return;
-	
-	(new Thread() {
-		public void run() {
-			try { Thread.sleep(400); } catch (Exception e){}
-			if(isActivating) {
-				Display.getDefault().asyncExec(new Runnable() {
-					public void run() {
-						activateCellEditor(event);
-						isActivating = false;
-					}
-				});
-			}
-		}
-	}).start();
 }
 /**
  * Saves the value of the currently active cell editor,
@@ -279,4 +280,5 @@ abstract void setEditor(Control w, Item item, int fColumnNumber);
 abstract void setLayoutData(CellEditor.LayoutData layoutData);
 abstract void setSelection(StructuredSelection selection, boolean b);
 abstract void showSelection();
+abstract void handleDoubleClickEvent();
 }

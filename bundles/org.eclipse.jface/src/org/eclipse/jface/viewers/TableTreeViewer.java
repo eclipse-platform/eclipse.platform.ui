@@ -1,18 +1,33 @@
-package org.eclipse.jface.viewers;
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
+
+package org.eclipse.jface.viewers;
  
 import java.util.List;
 
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.custom.TableTree;
+import org.eclipse.swt.custom.TableTreeEditor;
+import org.eclipse.swt.custom.TableTreeItem;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.TreeListener;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Widget;
 /**
  * A concrete viewer based on a SWT <code>TableTree</code> control.
  * <p>
@@ -51,6 +66,9 @@ public class TableTreeViewer extends AbstractTreeViewer {
 	 * Private implementation class.
 	 */
 	class TableTreeViewerImpl extends TableViewerImpl {
+		public  TableTreeViewerImpl(TableTreeViewer viewer) {
+			super(viewer);
+		}
 		Rectangle getBounds(Item item, int columnNumber) {
 			return ((TableTreeItem)item).getBounds(columnNumber);
 		}
@@ -75,6 +93,11 @@ public class TableTreeViewer extends AbstractTreeViewer {
 			tableTreeEditor.grabHorizontal = layoutData.grabHorizontal;
 			tableTreeEditor.minimumWidth = layoutData.minimumWidth;
 		}
+		void handleDoubleClickEvent() {
+			Viewer viewer = getViewer(); 
+			fireDoubleClick (new DoubleClickEvent(viewer, viewer.getSelection()));
+			fireOpen(new OpenEvent(viewer, viewer.getSelection()));
+		}
 	}
 /**
  * Creates a table tree viewer on the given table tree control.
@@ -88,7 +111,7 @@ public TableTreeViewer(TableTree tree) {
 	tableTree = tree;
 	hookControl(tree);
 	tableTreeEditor = new TableTreeEditor(tableTree);
-	tableViewerImpl = new TableTreeViewerImpl();
+	tableViewerImpl = new TableTreeViewerImpl(this);
 }
 /**
  * Creates a table tree viewer on a newly-created table tree control under the given parent.
@@ -319,10 +342,6 @@ protected void hookControl(Control control) {
 	
 			tableViewerImpl.handleMouseDown(e);
 		}
-		public void mouseDoubleClick(MouseEvent e) {
-			tableViewerImpl.handleMouseDoubleClick(e);
-		}
-	
 	});
 }
 /**
