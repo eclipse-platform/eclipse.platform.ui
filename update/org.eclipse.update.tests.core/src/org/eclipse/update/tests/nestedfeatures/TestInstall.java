@@ -12,8 +12,6 @@ package org.eclipse.update.tests.nestedfeatures;
 import java.io.File;
 import java.net.URL;
 
-import org.eclipse.update.configuration.IConfiguredSite;
-import org.eclipse.update.configuration.ILocalSite;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.tests.UpdateManagerTestCase;
