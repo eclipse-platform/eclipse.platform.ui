@@ -13,12 +13,14 @@ package org.eclipse.ui.internal.dialogs;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.internal.model.AdaptableList;
+import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 /**
  * Instances of this class are a collection of WizardCollectionElements,
  * thereby facilitating the definition of tree structures composed of 
  * these elements. Instances also store a list of wizards.
+ * 
+ * @issue reimplement not as subclass of AdaptableList
  */
 public class WizardCollectionElement extends AdaptableList {
 	private String id;

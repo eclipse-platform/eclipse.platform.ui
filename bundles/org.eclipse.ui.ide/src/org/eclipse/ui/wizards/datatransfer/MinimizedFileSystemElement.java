@@ -11,7 +11,7 @@
 package org.eclipse.ui.wizards.datatransfer;
 
 import java.util.*;
-import org.eclipse.ui.internal.model.AdaptableList;
+import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.dialogs.FileSystemElement;
 
 /**
@@ -26,7 +26,7 @@ class MinimizedFileSystemElement extends FileSystemElement {
  * @param parent the containing parent
  * @param isDirectory indicated if this could have children or not
  */
-MinimizedFileSystemElement(String name, org.eclipse.ui.dialogs.FileSystemElement parent, boolean isDirectory) {
+MinimizedFileSystemElement(String name, FileSystemElement parent, boolean isDirectory) {
 	super(name, parent, isDirectory);
 }
 /**
@@ -35,12 +35,10 @@ MinimizedFileSystemElement(String name, org.eclipse.ui.dialogs.FileSystemElement
  * of this folder.
  */
 public AdaptableList getFiles(IImportStructureProvider provider) {
-	if(!populated)
+	if (!populated) {
 		populate(provider);
-
-	// @issue public API refers to AdaptableList - private class	
+	}
 	return super.getFiles();
-		
 }
 /**
  * Returns a list of the folders that are immediate children. Use the supplied provider
@@ -48,12 +46,10 @@ public AdaptableList getFiles(IImportStructureProvider provider) {
  * of this folder.
  */
 public AdaptableList getFolders(IImportStructureProvider provider) {
-	if(!populated)
+	if (!populated) {
 		populate(provider);
-	
-	// @issue public API refers to AdaptableList - private class	
+	}
 	return super.getFolders();
-		
 }
 /**
  * Return whether or not population has happened for the receiver.
@@ -76,8 +72,9 @@ private void populate(IImportStructureProvider provider) {
 	Object fileSystemObject = getFileSystemObject();
 
 	List children = provider.getChildren(fileSystemObject);
-	if (children == null)
+	if (children == null) {
 		children = new ArrayList(1);
+	}
 	Iterator childrenEnum = children.iterator();
 	while (childrenEnum.hasNext()) {
 		Object child = childrenEnum.next();

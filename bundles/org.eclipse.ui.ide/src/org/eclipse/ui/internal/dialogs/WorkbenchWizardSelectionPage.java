@@ -16,7 +16,7 @@ import org.eclipse.jface.wizard.IWizardNode;
 import org.eclipse.jface.wizard.WizardSelectionPage;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.model.AdaptableList;
+import org.eclipse.ui.model.AdaptableList;
 
 /**
  * Page for selecting a wizard from a group of available wizards.
@@ -46,7 +46,7 @@ public WorkbenchWizardSelectionPage(String name, IWorkbench aWorkbench, IStructu
  *	@param searchPath java.lang.String
  */
 protected WorkbenchWizardElement findWizard(String searchId) {
-	Object[] children = wizardElements.getChildren();
+	Object[] children = wizardElements.toArray();
 	for (int i = 0; i < children.length; ++i) {
 		WorkbenchWizardElement currentWizard = (WorkbenchWizardElement)children[i];
 		if (currentWizard.getID().equals(searchId))

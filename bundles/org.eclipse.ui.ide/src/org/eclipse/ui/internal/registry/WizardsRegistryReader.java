@@ -15,7 +15,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.dialogs.WizardCollectionElement;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
-import org.eclipse.ui.internal.model.AdaptableList;
+import org.eclipse.ui.model.AdaptableList;
 
 /**
  *  Instances access the registry that is provided at creation time
@@ -80,7 +80,7 @@ protected WorkbenchWizardElement createWizardElement(IConfigurationElement eleme
  *	Returns the first wizard with a given id.
  */
 public WorkbenchWizardElement findWizard(String id) {
-	Object [] wizards = getWizards().getChildren();
+	Object [] wizards = getWizards().toArray();
 	for (int nX = 0; nX < wizards.length; nX ++) {
 		WizardCollectionElement collection = (WizardCollectionElement)wizards[nX];
 		WorkbenchWizardElement element = collection.findWizard(id,true);
