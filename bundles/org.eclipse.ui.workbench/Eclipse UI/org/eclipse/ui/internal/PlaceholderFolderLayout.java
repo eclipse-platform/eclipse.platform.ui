@@ -11,8 +11,6 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.ui.IPlaceholderFolderLayout;
-import org.eclipse.ui.internal.registry.IViewDescriptor;
-import org.eclipse.ui.internal.registry.IViewRegistry;
 
 /**
  * This layout is used to define the initial set of placeholders
@@ -39,15 +37,7 @@ public class PlaceholderFolderLayout implements IPlaceholderFolderLayout {
      * @see IPlaceholderFolderLayout
      */
     public void addPlaceholder(String viewId) {
-        if (pageLayout.checkPartInLayout(viewId))
-            return;
-
-        // Get the view's label.
-        IViewRegistry reg = WorkbenchPlugin.getDefault().getViewRegistry();
-        IViewDescriptor desc = reg.find(viewId);
-        if (desc == null) {
-            // cannot safely open the dialog so log the problem
-            WorkbenchPlugin.log("Unable to find view label: " + viewId);//$NON-NLS-1$
+        if (!pageLayout.checkValidPlaceholderId(viewId)) {
             return;
         }
 

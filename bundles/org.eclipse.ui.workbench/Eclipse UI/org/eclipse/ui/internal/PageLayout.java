@@ -32,6 +32,7 @@ import org.eclipse.ui.internal.presentations.PresentationFactoryUtil;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
+import org.eclipse.ui.internal.registry.IViewRegistry;
 
 /**
  * This factory is used to define the initial layout of a part sash container.
@@ -269,14 +270,45 @@ public class PageLayout implements IPageLayout {
      */
     public void addPlaceholder(String viewId, int relationship, float ratio,
             String refId) {
-        if (checkPartInLayout(viewId))
+        if (!checkValidPlaceholderId(viewId)) {
             return;
+        }
 
         // Create the placeholder.
         PartPlaceholder newPart = new PartPlaceholder(viewId);
         addPart(newPart, viewId, relationship, ratio, refId);
         // force creation of the view layout rec
         getViewLayoutRec(viewId, true);
+    }
+
+    /**
+     * Checks whether the given id is a valid placeholder id.
+     * A placeholder id may be simple or compound, and can optionally contain a wildcard.
+     * 
+     * @param id the placeholder id
+     * @return <code>true</code> if the given id is a valid placeholder id, <code>false</code> otherwise
+     */
+    boolean checkValidPlaceholderId(String id) {
+        // Check that view is not already in layout.
+        // This check is done even if the id has a wildcard, since it's incorrect to create
+        // multiple placeholders with the same id, wildcard or not.
+        if (checkPartInLayout(id)) {
+            return false;
+        }
+
+        // check that primary view id is valid, but only if it has no wildcard
+        String primaryId = ViewFactory.extractPrimaryId(id);
+        if (!ViewFactory.hasWildcard(primaryId)) {
+	        IViewRegistry reg = WorkbenchPlugin.getDefault().getViewRegistry();
+	        IViewDescriptor desc = reg.find(primaryId);
+	        if (desc == null) {
+	            // cannot safely open the dialog so log the problem
+	            WorkbenchPlugin.log("Unable to find view with id: " + primaryId + ", when creating perspective " + getDescriptor().getId()); //$NON-NLS-1$ //$NON-NLS-2$
+	            return false;
+	        }
+        }
+
+        return true;
     }
 
     /* (non-Javadoc)
@@ -351,13 +383,11 @@ public class PageLayout implements IPageLayout {
      */
     /*package*/
     boolean checkPartInLayout(String partId) {
-        if (getRefPart(partId) != null) {
+        if (getRefPart(partId) != null || isFastViewId(partId)) {
             WorkbenchPlugin.log(WorkbenchMessages.format(
                     "PageLayout.duplicateRefPart", new Object[] { partId })); //$NON-NLS-1$
             return true;
         }
-        if (isFastViewId(partId))
-            return true;
 
         return false;
     }
