@@ -153,10 +153,10 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 	 * @see TargetProvider.put(IResource[], IProgressMonitor)
 	 */
 	public void put(IResource[] resources, IProgressMonitor progress) throws TeamException {
-		execute(new IRecursiveOperation() {
-			public void visit(IResource resource, IProgressMonitor progress) throws TeamException {
+		execute(new IIterativeOperation() {
+			public void visit(IResource resource, int depth, IProgressMonitor progress) throws TeamException {
 				// The resource state must be checked-out.
-				getState(resource).checkin(progress);
+				getState(resource).put(progress);
 			}
 		}, resources, IResource.DEPTH_INFINITE, progress);
 	}

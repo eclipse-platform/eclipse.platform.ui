@@ -18,8 +18,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
@@ -329,7 +331,7 @@ public abstract class ResourceState {
 	 * If the receiver has no members (or is incapable of having members)
 	 * answer an empty array.
 	 */
-	public abstract ResourceState[] getRemoteChildren() throws TeamException;
+	public abstract ResourceState[] getRemoteChildren(IProgressMonitor monitor) throws TeamException;
 
 	/**
 	 * Create the necessary remote directories corresponding to the local resource.
@@ -418,6 +420,7 @@ public abstract class ResourceState {
 				localResource,
 				toBytes());
 			// Ensure that the parent has base info recorded (otherwise deleting the parent will cause the lose of sync info)
+			if (localResource.getType() == IResource.PROJECT) return;
 			IContainer parent = localResource.getParent();
 			if (parent != null && parent.getType() != IResource.PROJECT &&
 				SynchronizedTargetProvider.getSynchronizer().getSyncInfo(stateKey, parent) == null) {
@@ -491,8 +494,12 @@ public abstract class ResourceState {
 	}
 	
 	private ResourceState getParent() throws TeamException {
-		TargetProvider provider = TargetManager.getProvider(localResource.getProject());
-		return ((SynchronizedTargetProvider)provider).newState(localResource.getParent());
+		return getResourceStateFor(localResource.getParent());
+	}
+	
+	private ResourceState getResourceStateFor(IResource resource) throws TeamException {
+		TargetProvider provider = TargetManager.getProvider(resource.getProject());
+		return ((SynchronizedTargetProvider)provider).newState(resource);
 	}
 	
 	/**
@@ -590,7 +597,7 @@ public abstract class ResourceState {
 		IContainer localContainer = (IContainer)getLocal();
 
 		// Get list of all _remote_ children.
-		ResourceState[] remoteChildren = getRemoteChildren();
+		ResourceState[] remoteChildren = getRemoteChildren(progress);
 
 		// This will be the list of remote children that are themselves containers.
 		Set remoteChildFolders = new HashSet();
@@ -684,5 +691,64 @@ public abstract class ResourceState {
 				throw TeamPlugin.wrapException(exception);
 			}
 		return new IResource[0];
+	}
+	
+	/**
+	 * Put the resource from the workspace to the remote provider.
+	 * Assume that the 'local' resource is correct, and change the remote
+	 * resource to look like the local resource. This includes removing any
+	 * child resources that exist remotely but do not exist locally.
+	 */
+	protected final void put(IProgressMonitor progress) throws TeamException {
+
+		// Ensure that the remote type matches the local type
+		boolean hasRemote = hasRemote(progress);
+		if ((getRemoteType() != localResource.getType() && localResource.getType() != IResource.PROJECT)) {
+			if (hasRemote) delete(progress);
+			hasRemote = false;
+		}
+				
+		// Upload the resource (this is a shallow operation for folders)
+		checkin(progress);
+		
+		// If we're putting a file, we're done
+		if (localResource.getType() == IResource.FILE) return;
+		
+		// If the local doesn't exist then we just deleted the remote so we're done
+		if (!hasLocal()) return;
+
+		// Make a list of _remote_ children that have not yet been processed,
+		Map surplusRemoteChildren = new HashMap();
+		if (hasRemote) {
+			ResourceState[] remoteChildren = remoteChildren = getRemoteChildren(progress);
+			for (int i = 0; i < remoteChildren.length; i++) {
+				ResourceState resourceState = remoteChildren[i];
+				surplusRemoteChildren.put(resourceState.getLocal(), resourceState);
+			}
+		}
+
+		// For each local child that is a file, make the remote file content equivalent.
+		IResource[] localChildren = getLocalChildren();
+		for (int i = 0; i < localChildren.length; i++) {
+			IResource localChild = localChildren[i];
+			// Get the resource state corresponding to the local resource
+			ResourceState state = (ResourceState)surplusRemoteChildren.get(localChild);
+			if (state == null) {
+				// There is no remote corresponding to the local
+				state = getResourceStateFor(localChild);
+			} else {
+				// There is a remote. Remember that we have processed this child.
+				surplusRemoteChildren.remove(localChild);
+			}
+			// Put the child (this is a deep operation for folders)
+			state.put(progress);
+		}
+
+		// Remove each remote child that does not have a corresponding local resource.
+		Iterator childrenItr = surplusRemoteChildren.values().iterator();
+		while (childrenItr.hasNext()) {
+			ResourceState unseenChild = (ResourceState) childrenItr.next();
+			unseenChild.delete(progress);
+		}
 	}
 }
