@@ -14,8 +14,7 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
-import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.internal.runtime.Policy;
+import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -193,8 +192,9 @@ public class DefaultPreferences extends EclipsePreferences {
 				}
 		}
 
-		// No extension exists. Get the plug-in object and call #initializeDefaultPluginPreferences()
-		if (plugin == null)
+		// No extension exists. Get the plug-in object and call #initializeDefaultPluginPreferences().
+		// We can only call this if the runtime compatibility layer is installed.
+		if (plugin == null && InternalPlatform.getDefault().getBundle(CompatibilityHelper.PI_RUNTIME_COMPATIBILITY) != null)
 			plugin = Platform.getPlugin(name());
 		if (plugin == null) {
 			if (InternalPlatform.DEBUG_PREFERENCES)
