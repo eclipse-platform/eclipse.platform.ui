@@ -417,7 +417,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 }
 
 	private String getPluginClass() {
-		return (String) bundleOsgi.getHeaders().get("Plugin-class"); //$NON-NLS-1$
+		return (String) bundleOsgi.getHeaders().get("Plugin-Class"); //$NON-NLS-1$
 	}
 
 	private String getId() {
