@@ -152,7 +152,7 @@ public class EditionSelectionDialog extends Dialog {
 	private boolean fReplaceMode= true;
 	
 	private ResourceBundle fBundle;
-	private boolean fTargetIsRight;
+	private boolean fTargetIsRight= false;
 	
 	/**
 	 * Maps from members to their corresponding editions.
@@ -188,7 +188,6 @@ public class EditionSelectionDialog extends Dialog {
 	 *	width       Integer       initial width of dialog
 	 *	height      Integer       initial height of dialog
 	 *	mode        String        "replace" or "add"; default is "replace"
-	 * 	targetSide  String	      whether target is on "right" or "left" side; default is "right"
 	 *	treeTitleFormat   MessageFormat pane title for edition tree; arg 0 is the target
 	 *	dateIcon    String        icon for node in edition tree; path relative to plugin
 	 *	timeIcon    String        icon for leaf in edition tree; path relative to plugin
@@ -209,7 +208,6 @@ public class EditionSelectionDialog extends Dialog {
 		
 		fBundle= bundle;
 	
-		fTargetIsRight= "right".equals(Utilities.getString(fBundle, "targetSide", "right")); //$NON-NLS-2$ //$NON-NLS-1$ //$NON-NLS-3$
 		fReplaceMode= "replace".equals(Utilities.getString(fBundle, "mode", "replace")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 									    
 		fCompareConfiguration= new CompareConfiguration();
@@ -367,13 +365,22 @@ public class EditionSelectionDialog extends Dialog {
 	}
 	
 	/**
-	 * Controls whether identical entries are shown or not.
+	 * Controls whether identical entries are shown or not (default).
 	 * This method must be called before <code>selectEdition</code>.
-	 * *
+	 *
 	 * @param hide if true identical entries are hidden; otherwise they are shown.
 	 */
 	public void setHideIdenticalEntries(boolean hide) {
 		fHideIdentical= hide;
+	}
+	
+	/**
+	 * Controls whether workspace target is on the left (the default) or right hand side.
+	 *
+	 * @param isRight if true target is shown on right hand side.
+	 */
+	public void setTargetIsRight(boolean isRight) {
+		fTargetIsRight= isRight;
 	}
 		
 	/**
@@ -719,7 +726,12 @@ public class EditionSelectionDialog extends Dialog {
 		}
 		TreeItem ti= new TreeItem(lastDay, SWT.NONE);
 		ti.setImage(fTimeImage);
-		ti.setText(DateFormat.getTimeInstance().format(date));
+		
+		String t= DateFormat.getTimeInstance().format(date);
+		if (item instanceof ResourceNode)
+			t= t + " (Workspace)";
+		
+		ti.setText(t);
 		ti.setData(new Pair(edition, item));
 		if (first) {
 			fEditionTree.setSelection(new TreeItem[] {ti});
@@ -730,7 +742,7 @@ public class EditionSelectionDialog extends Dialog {
 		if (first) // expand first node
 			lastDay.setExpanded(true);
 	}
-					
+						
 	/**
 	 * Feeds selection from member viewer to edition viewer.
 	 */

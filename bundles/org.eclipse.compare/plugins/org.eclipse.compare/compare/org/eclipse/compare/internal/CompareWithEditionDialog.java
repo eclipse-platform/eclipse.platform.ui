@@ -7,13 +7,13 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.compare.EditionSelectionDialog;
 
 
-public class CompareWithEditionDialog extends EditionSelectionDialog {
+public class CompareWithEditionDialog extends EditionSelectionDialog {		ResourceBundle fBundle;
 	
 	CompareWithEditionDialog(Shell parent, ResourceBundle bundle) {
-		super(parent, bundle);
+		super(parent, bundle);		fBundle= bundle;
 	}
 	
 	protected void createButtonsForButtonBar(Composite parent) {
-		createButton(parent, IDialogConstants.CANCEL_ID, Utilities.getString("CompareWithEditionDialog.closeButton.label"), false); //$NON-NLS-1$
+		createButton(parent, IDialogConstants.CANCEL_ID, Utilities.getString(fBundle, "closeButton.label"), false); //$NON-NLS-1$
 	}		/**	 * Overidden to disable dismiss on double click (see PR 1GI3KUR).	 */	protected void okPressed() {	}
 }
