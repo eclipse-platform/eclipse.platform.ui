@@ -503,6 +503,34 @@ public class OptionTests extends AbstractAntTest {
 	}
 	
 	/**
+	 * Tests the "-inputhandler" option with a test input handler and the -noinput option
+	 */
+	public void testInputHandlerWithMinusNoInput() {
+		try {
+			run("input.xml", new String[]{"-inputhandler", "org.eclipse.ant.tests.core.support.inputHandlers.AntTestInputHandler", "-noinput"});
+		} catch (CoreException ce) {
+			assertTrue("Message incorrect: " + ce.getMessage(), ce.getMessage().endsWith("Unable to respond to input request likely as a result of specifying the -noinput command"));
+			return;
+		}
+		
+		assertTrue("Build should have failed", false);
+	}
+	
+	/**
+	 * Tests the -noinput option with the default input handler
+	 */
+	public void testMinusNoInput() {
+		try {
+			run("input.xml", new String[]{"-noinput"});
+		} catch (CoreException ce) {
+			assertTrue("Message incorrect: " + ce.getMessage(), ce.getMessage().endsWith("Failed to read input from Console."));
+			return;
+		}
+	
+		assertTrue("Build should have failed", false);
+	}
+	
+	/**
 	 * Tests the "-diagnostics" option with no ANT_HOME set
 	 * bug 25693
 	 */
@@ -543,7 +571,26 @@ public class OptionTests extends AbstractAntTest {
 		run("TestForEcho.xml", new String[]{"-quiet"});
 		assertSuccessful();	
 	}
-	
+
+		/**
+		 * Tests the "-keep-going" option
+		 * On hold as I figure out what -keep-going is supposed to do
+		 */
+		//public void testMinusKeepGoing() throws CoreException {
+		//	run("failingTargets.xml", new String[]{"-keep-going"});
+		//	assertTrue("no messages should have been logged; was " + AntTestChecker.getDefault().getMessagesLoggedCount(), AntTestChecker.getDefault().getMessagesLoggedCount() == 0);
+		//}
+		
+		/**
+		 * Tests the "-k" option
+		 * On hold as I figure out what -keep-going is supposed to do
+		 */
+	//	public void testMinusK() throws CoreException {
+	//		run("failingTargets.xml", new String[]{"-k"});
+	//		assertTrue("no messages should have been logged; was " + AntTestChecker.getDefault().getMessagesLoggedCount(), AntTestChecker.getDefault().getMessagesLoggedCount() == 0);
+	//	}
+		
+
 	/**
 	 * Tests the "-keep-going" option
 	 * On hold as I figure out what -keep-going is supposed to do

@@ -91,6 +91,7 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.BuildListener;
 import org.apache.tools.ant.BuildLogger;
 import org.apache.tools.ant.DefaultLogger;
+import org.apache.tools.ant.DemuxInputStream;
 import org.apache.tools.ant.DemuxOutputStream;
 import org.apache.tools.ant.Diagnostics;
 import org.apache.tools.ant.Main;
@@ -124,7 +125,8 @@ public class InternalAntRunner {
 	private String buildFileLocation;
 
 	/** 
-	 * Targets we want to run.	 */
+	 * Targets we want to run.
+	 */
 	private Vector targets;
 
 	private Map userProperties;
@@ -179,7 +181,18 @@ public class InternalAntRunner {
     private String inputHandlerClassname = null;
     
     private String buildAntHome= null;
+    
+    /** 
+     * Indicates whether to execute all targets that 
+     * do not depend on failed targes(s)
+     */
+    private boolean keepGoing= false;
 
+    /** 
+     * Indicates whether this build is to support interactive input 
+     */
+    private boolean allowInput = true;
+    
 	/**
 	 * Adds a build listener.
 	 * 
@@ -557,6 +570,8 @@ public class InternalAntRunner {
 		Throwable error = null;
 		PrintStream originalErr = System.err;
 		PrintStream originalOut = System.out;
+		InputStream originalIn= System.in;
+		
 		SecurityManager originalSM= System.getSecurityManager();
 		setJavaClassPath();
 		scriptExecuted= true;
@@ -581,9 +596,11 @@ public class InternalAntRunner {
 			setProperties(getCurrentProject());
 			
 			addInputHandler(getCurrentProject());
+			
+			System.setIn(new DemuxInputStream(getCurrentProject()));
 			System.setOut(new PrintStream(new DemuxOutputStream(getCurrentProject(), false)));
 			System.setErr(new PrintStream(new DemuxOutputStream(getCurrentProject(), true)));
-
+			
 			if (!projectHelp) {
 				fireBuildStarted(getCurrentProject());
 			}
@@ -600,10 +617,20 @@ public class InternalAntRunner {
 				return;
 			}
 			
+			if (!allowInput) {
+				//set the system property that any input handler
+				//can check to see if handling input is allowed
+				System.setProperty("eclipse.ant.noInput", "true");  //$NON-NLS-1$//$NON-NLS-2$
+			} else {
+				getCurrentProject().setDefaultInputStream(System.in);
+			}
+			
 			getCurrentProject().log(MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Build_file__{0}_1"), new String[]{getBuildFileLocation()})); //$NON-NLS-1$
 
 			setTasks(getCurrentProject());
 			setTypes(getCurrentProject());
+			
+			getCurrentProject().setKeepGoingMode(keepGoing);
 			
 			parseBuildFile(getCurrentProject());
 			validateDefaultTarget();
@@ -640,6 +667,7 @@ public class InternalAntRunner {
 		} finally {
 			System.setErr(originalErr);
 			System.setOut(originalOut);
+			System.setIn(originalIn);
 			if (System.getSecurityManager() instanceof AntSecurityManager) {
 				System.setSecurityManager(originalSM);
 			}
@@ -657,6 +685,9 @@ public class InternalAntRunner {
 			}
 			
 			processAntHome(true);
+			if (!allowInput) {
+				System.getProperties().remove("eclipse.ant.noInput");  //$NON-NLS-1$
+			}
 		}
 	}
 	
@@ -1035,9 +1066,26 @@ public class InternalAntRunner {
 			setBuildFileLocation(args[0]);
 		}
 		
+		if (commands.remove("-k") || commands.remove("-keep-going")) { //$NON-NLS-1$ //$NON-NLS-2$
+			keepGoing= true;
+		} 
+		
+		if (commands.remove("-noinput")) { //$NON-NLS-1$
+			allowInput= false;
+		}
+		
 		args= getArgument(commands, "-find"); //$NON-NLS-1$
+		if (args == null) {
+			args= getArgument(commands, "-s"); //$NON-NLS-1$
+		}
 		if (args != null) {
 			logMessage(currentProject, InternalAntMessages.getString("InternalAntRunner.-find_not_supported"), Project.MSG_ERR); //$NON-NLS-1$
+			return false;
+		}
+		
+		args= getArgument(commands, "-lib"); //$NON-NLS-1$
+		if (args != null) {
+			logMessage(currentProject, InternalAntMessages.getString("InternalAntRunner.157"), Project.MSG_ERR); //$NON-NLS-1$
 			return false;
 		}
 
@@ -1102,7 +1150,8 @@ public class InternalAntRunner {
 	 * Creates the log file with the name specified by the user.
 	 * If the fileName is not absolute, the file will be created in the
 	 * working directory if specified or in the same directory as the location
-	 * of the build file.	 */
+	 * of the build file.
+	 */
 	private void createLogFile(String fileName) throws FileNotFoundException, IOException {
 		File logFile = getFileRelativeToBaseDir(fileName);
 		
@@ -1257,22 +1306,22 @@ public class InternalAntRunner {
 		msg.append(lSep);
 		msg.append(InternalAntMessages.getString("InternalAntRunner.13")); //$NON-NLS-1$
 		msg.append(lSep);
-		msg.append("\t-quiet, -q\t\t\t\t"); //$NON-NLS-1$
+		msg.append("\t-quiet, -q\t\t\t"); //$NON-NLS-1$
 		msg.append(InternalAntMessages.getString("InternalAntRunner.be_extra_quiet_29")); //$NON-NLS-1$
 		msg.append(lSep);
 		msg.append("\t-verbose, -v\t\t\t"); //$NON-NLS-1$
 		msg.append(InternalAntMessages.getString("InternalAntRunner.be_extra_verbose_31")); //$NON-NLS-1$
 		msg.append(lSep);
-		msg.append("\t-debug, -d\t\t\t\t"); //$NON-NLS-1$
+		msg.append("\t-debug, -d\t\t\t"); //$NON-NLS-1$
 		msg.append(InternalAntMessages.getString("InternalAntRunner.print_debugging_information_33")); //$NON-NLS-1$
 		msg.append(lSep);
-		msg.append("\t-emacs, -e\t\t\t\t"); //$NON-NLS-1$
+		msg.append("\t-emacs, -e\t\t\t"); //$NON-NLS-1$
 		msg.append(InternalAntMessages.getString("InternalAntRunner.produce_logging_information_without_adornments_35")); //$NON-NLS-1$
 		msg.append(lSep);
 		msg.append("\t-logfile\t<file>\t\t"); //$NON-NLS-1$
 		msg.append(InternalAntMessages.getString("InternalAntRunner.use_given_file_for_log_37")); //$NON-NLS-1$
 		msg.append(lSep);
-		msg.append("\t\t-l\t\t<file>"); //$NON-NLS-1$
+		msg.append("\t\t-l\t<file>"); //$NON-NLS-1$
 		msg.append(InternalAntMessages.getString("InternalAntRunner.1")); //$NON-NLS-1$ //$NON-NLS-2$
 		msg.append(lSep);  
 		msg.append("\t-logger <classname>\t\t"); //$NON-NLS-1$
@@ -1280,8 +1329,11 @@ public class InternalAntRunner {
 		msg.append(lSep);  
 		msg.append("\t-listener <classname>\t"); //$NON-NLS-1$
 		msg.append(InternalAntMessages.getString("InternalAntRunner.add_an_instance_of_class_as_a_project_listener_41")); //$NON-NLS-1$
+		msg.append(lSep);
+		msg.append("\t-noinput\t"); //$NON-NLS-1$
+		msg.append(InternalAntMessages.getString("InternalAntRunner.158")); //$NON-NLS-1$
 		msg.append(lSep); 
-		msg.append("\t-buildfile\t<file>\t\t"); //$NON-NLS-1$
+		msg.append("\t-buildfile\t<file>\t"); //$NON-NLS-1$
 		msg.append(InternalAntMessages.getString("InternalAntRunner.use_given_buildfile_43")); //$NON-NLS-1$
 		msg.append(lSep); 
 		msg.append("\t\t-file\t<file>"); //$NON-NLS-1$
@@ -1293,6 +1345,11 @@ public class InternalAntRunner {
 		msg.append("\t-D<property>=<value>\t"); //$NON-NLS-1$
 		msg.append(InternalAntMessages.getString("InternalAntRunner.use_value_for_given_property_45")); //$NON-NLS-1$
 		msg.append(lSep);
+		msg.append("\t-keep-going, -k"); //$NON-NLS-1$
+		msg.append(InternalAntMessages.getString("InternalAntRunner.159")); //$NON-NLS-1$
+		msg.append(lSep);
+		msg.append(InternalAntMessages.getString("InternalAntRunner.160")); //$NON-NLS-1$
+		msg.append(lSep); 
 		msg.append("\t-propertyfile <name>\t"); //$NON-NLS-1$
 		msg.append(InternalAntMessages.getString("InternalAntRunner.19")); //$NON-NLS-1$
 		msg.append(lSep);
@@ -1378,7 +1435,8 @@ public class InternalAntRunner {
 	
 	/**
 	 * Load all properties from the files 
-	 * specified by -propertyfile.	 */
+	 * specified by -propertyfile.
+	 */
 	private void loadPropertyFiles() {
 		Iterator itr= propertyFiles.iterator();
         while (itr.hasNext()) {

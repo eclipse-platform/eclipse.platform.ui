@@ -24,13 +24,18 @@ import org.eclipse.swt.widgets.Display;
  * The default input handler when using Ant within Eclipse.
  * This is the class that will respond to <input> requests from
  * within an Ant build file.
+ * If the build is occurring in Ant 1.6.0 and the -noinput option has been specified
+ * this input handler will fail.
  */
 public class AntInputHandler extends DefaultInputHandler {
 	
-	/**
+	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.input.InputHandler#handleInput(org.apache.tools.ant.input.InputRequest)
 	 */
 	public void handleInput(InputRequest request) throws BuildException {
+		if (System.getProperty("eclipse.ant.noInput") != null) { //$NON-NLS-1$
+			throw new BuildException(AntSupportMessages.getString("AntInputHandler.5")); //$NON-NLS-1$
+		}
 		BuildException[] problem= new BuildException[1];
 		Runnable runnable= getHandleInputRunnable(request, problem);
 		Display.getDefault().syncExec(runnable);
