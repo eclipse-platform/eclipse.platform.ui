@@ -83,6 +83,7 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 		 */
 		public ReadJob() {
 			super(QuickDiffMessages.getString("LastSaveReferenceProvider.LastSaveReferenceProvider.readJob.label")); //$NON-NLS-1$
+			setSystem(true);
 			setPriority(SHORT);
 		}
 
