@@ -76,6 +76,8 @@ public class HelpPreferencePage
 		//GridLayout
 		GridLayout layout = new GridLayout();
 		layout.numColumns = numColumns;
+		layout.verticalSpacing = 1;
+		layout.marginHeight=2;
 		composite.setLayout(layout);
 
 		//GridData
@@ -278,8 +280,10 @@ public class HelpPreferencePage
 	private Group createGroup(Composite parent, String label) {
 		Group group = new Group(parent, SWT.SHADOW_NONE);
 		group.setText(label);
-		//GridLayout
-		group.setLayout(new GridLayout());
+		GridLayout layout = new GridLayout();
+		layout.verticalSpacing = 1;		
+		layout.marginHeight=2;
+		group.setLayout(layout);
 		//GridData
 		GridData data = new GridData();
 		data.verticalAlignment = GridData.FILL;
