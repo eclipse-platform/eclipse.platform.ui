@@ -198,6 +198,7 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 	protected void performDefaults() {
 		super.performDefaults();
 		updateWidthEditor();
+		updateBufferSizeEditor();
 	}
 	
 	protected boolean canClearErrorMessage() {
