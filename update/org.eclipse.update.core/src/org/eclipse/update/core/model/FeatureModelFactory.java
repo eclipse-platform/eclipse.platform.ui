@@ -38,7 +38,7 @@ public class FeatureModelFactory {
 	 * (feature.xml) as documented by the platform.
 	 * 
 	 * @param stream feature stream
-	 * @return populated feature
+	 * @return populated feature model
 	 * @exception ParsingException
 	 * @exception IOException
 	 * @exception SAXException

@@ -7,25 +7,17 @@ package org.eclipse.update.core;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.update.core.model.FeatureModel;
-import org.eclipse.update.core.model.FeatureModelFactory;
-import org.eclipse.update.core.model.ImportModel;
-import org.eclipse.update.core.model.InstallHandlerEntryModel;
-import org.eclipse.update.core.model.NonPluginEntryModel;
-import org.eclipse.update.core.model.PluginEntryModel;
-import org.eclipse.update.core.model.URLEntryModel;
+import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.core.UpdateManagerPlugin;
 
 /**
  * Base implementation of a feature factory.
  * The factory is responsible for constructing the correct
  * concrete implementation of the model objects for each particular
- * feature type. This class creates model objects  corresponding
+ * feature type. This class creates model objects that correspond
  * to the concrete implementation classes provided in this package.
  * The actual feature creation method is subclass responsibility.
  * <p>
