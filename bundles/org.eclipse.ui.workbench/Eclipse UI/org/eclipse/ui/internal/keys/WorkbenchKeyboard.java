@@ -834,7 +834,7 @@ public final class WorkbenchKeyboard {
             if ((widget instanceof Control) && (!widget.isDisposed())) {
                 shell = ((Control) widget).getShell();
             } else {
-                shell = event.display.getActiveShell();
+                shell = Display.getCurrent().getActiveShell();
             }
             
             ((WorkbenchCommandSupport) workbench.getCommandSupport()).processHandlerSubmissions(false, shell);
