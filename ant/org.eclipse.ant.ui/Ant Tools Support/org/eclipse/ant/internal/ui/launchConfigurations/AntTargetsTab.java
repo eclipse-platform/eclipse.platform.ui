@@ -324,8 +324,9 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		Table table= new Table(parent, SWT.CHECK | SWT.BORDER | SWT.FULL_SELECTION | SWT.RESIZE);
 		
 		GridData data= new GridData(GridData.FILL_BOTH);
-		data.heightHint = 200;
-		data.widthHint = 250;
+		int availableRows= availableRows(parent);
+		data.heightHint = table.getItemHeight() * (availableRows / 20);
+		data.widthHint= 250;
 		table.setLayoutData(data);
 		table.setFont(font);
 				
@@ -387,6 +388,20 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 				}
 			});
 		}
+	}
+	
+	/**
+	 * Return the number of rows available in the current display using the
+	 * current font.
+	 * @param parent The Composite whose Font will be queried.
+	 * @return int The result of the display size divided by the font size.
+	 */
+	private int availableRows(Composite parent) {
+
+		int fontHeight = (parent.getFont().getFontData())[0].getHeight();
+		int displayHeight = parent.getDisplay().getClientArea().height;
+
+		return displayHeight / fontHeight;
 	}
 	
 	/**
