@@ -4,6 +4,7 @@ package org.eclipse.update.internal.ui;
  * All Rights Reserved.
  */
 
+import org.eclipse.swt.SWT;
 import org.eclipse.ui.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 
@@ -29,6 +30,7 @@ public class UpdatePerspective implements IPerspectiveFactory {
 		factory.addView(ID_UPDATES, IPageLayout.BOTTOM, 0.5f, ID_CONFIGURATION);
 		IFolderLayout folder = factory.createFolder("details", IPageLayout.RIGHT, 0.67f, factory.getEditorArea());
 		folder.addView(ID_DETAILS);
-		folder.addPlaceholder(ID_BROWSER);
+		if (SWT.getPlatform().equals("win32"))
+			folder.addPlaceholder(ID_BROWSER);
 	}
 }
