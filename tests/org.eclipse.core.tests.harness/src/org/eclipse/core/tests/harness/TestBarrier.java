@@ -19,6 +19,7 @@ import junit.framework.Assert;
  * result in an indefinite hang.
  */
 public class TestBarrier {
+
 	/**
 	 * Convience status constant that can be interpreted differently by each
 	 * test.
@@ -54,6 +55,11 @@ public class TestBarrier {
 	 * test.
 	 */
 	public static final int STATUS_WAIT_FOR_START = 0;
+	private final int myIndex;
+	/**
+	 * The status array and index for this barrier object
+	 */
+	private final int[] myStatus;
 
 	/**
 	 * Blocks the calling thread until the status integer at the given index
@@ -114,11 +120,42 @@ public class TestBarrier {
 	}
 
 	/**
+	 * Creates a new test barrier suitable for a single thread
+	 */
+	public TestBarrier() {
+		this(new int[1], 0);
+	}
+
+	/**
+	 * Creates a new test barrier on the provided status array, suitable for 
+	 * acting as a barrier for multiple threads.
+	 */
+	public TestBarrier(int[] location, int index) {
+		this.myStatus = location;
+		this.myIndex = index;
+	}
+
+	/**
+	 * Sets this barrier object's status.
+	 */
+	public void setStatus(int status) {
+		myStatus[myIndex] = status;
+	}
+
+	/**
+	 * Blocks the current thread until the receiver's status is set to the given
+	 * value. Times out after a predefined period to avoid hanging tests
+	 */
+	public void waitForStatus(int status) {
+		waitForStatus(myStatus, myIndex, status);
+	}
+
+	/**
 	 * The same as other barrier methods, except it will not fail if the job
 	 * does not start in a "reasonable" time. This is only appropriate for tests
 	 * that are explicitly very long running.
 	 */
-	public static void waitForStatusNoFail(int[] location, int index, int status) {
-		doWaitForStatus(location, index, status, 100000);
+	public void waitForStatusNoFail(int status) {
+		doWaitForStatus(myStatus, myIndex, status, 100000);
 	}
 }

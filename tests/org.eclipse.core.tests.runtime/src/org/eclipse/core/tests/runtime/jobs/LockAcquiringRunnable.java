@@ -12,7 +12,7 @@ package org.eclipse.core.tests.runtime.jobs;
 import java.util.Random;
 import org.eclipse.core.runtime.jobs.ILock;
 
-public class TestRunnable implements Runnable {
+public class LockAcquiringRunnable implements Runnable {
 	private ILock[] locks;
 	private Random random = new Random();
 	private boolean alive;
@@ -22,7 +22,7 @@ public class TestRunnable implements Runnable {
 	 * This runnable will randomly acquire the given lock for
 	 * random periods of time, in the given order
 	 */
-	public TestRunnable(ILock[] locks) {
+	public LockAcquiringRunnable(ILock[] locks) {
 		this.locks = locks;
 		this.alive = true;
 		done = false;
@@ -37,12 +37,14 @@ public class TestRunnable implements Runnable {
 			try {
 				Thread.sleep(random.nextInt(500));
 			} catch (InterruptedException e) {
+				//ignore
 			}
 			for (int i = 0; i < locks.length; i++) {
 				locks[i].acquire();
 				try {
 					Thread.sleep(random.nextInt(500));
 				} catch (InterruptedException e1) {
+					//ignore
 				}
 			}
 			//release all locks
@@ -60,6 +62,7 @@ public class TestRunnable implements Runnable {
 				Thread.sleep(100);
 				Thread.yield();
 			} catch (InterruptedException e) {
+				//ignore
 			}
 		}
 	}

@@ -62,38 +62,6 @@ public class DeadlockDetectionTest extends TestCase {
 	}
 
 	/**
-	 * A monitor that will receive the event when a thread is blocked on a rule 
-	 *
-	 */
-	private class BlockingMonitor extends TestProgressMonitor implements IProgressMonitorWithBlocking {
-		int[] status;
-		int index;
-		boolean cancelled;
-
-		public BlockingMonitor(int[] status, int index) {
-			this.status = status;
-			this.index = index;
-			cancelled = false;
-		}
-
-		public void setBlocked(IStatus reason) {
-			status[index] = TestBarrier.STATUS_BLOCKED;
-		}
-
-		public void clearBlocked() {
-			//leave empty for now
-		}
-
-		public void setCanceled(boolean b) {
-			cancelled = true;
-		}
-
-		public boolean isCanceled() {
-			return cancelled;
-		}
-	}
-
-	/**
 	 * Test that deadlock between locks is detected and resolved.
 	 * Test with 6 threads competing for 3 locks from a set of 6.
 	 */
@@ -360,7 +328,7 @@ public class DeadlockDetectionTest extends TestCase {
 					monitor.beginTask("Testing", 1);
 					locks[0].acquire();
 					TestBarrier.waitForStatus(status, 1, TestBarrier.STATUS_START);
-					manager.beginRule(rules[1], new BlockingMonitor(status, 1));
+					manager.beginRule(rules[1], new TestBlockingMonitor(status, 1));
 					status[1] = TestBarrier.STATUS_WAIT_FOR_RUN;
 					locks[1].acquire();
 					locks[1].release();
@@ -381,7 +349,7 @@ public class DeadlockDetectionTest extends TestCase {
 					monitor.beginTask("Testing", 1);
 					locks[1].acquire();
 					TestBarrier.waitForStatus(status, 2, TestBarrier.STATUS_START);
-					manager.beginRule(rules[2], new BlockingMonitor(status, 2));
+					manager.beginRule(rules[2], new TestBlockingMonitor(status, 2));
 					status[2] = TestBarrier.STATUS_WAIT_FOR_RUN;
 					TestBarrier.waitForStatus(status, 2, TestBarrier.STATUS_RUNNING);
 					manager.endRule(rules[2]);
@@ -468,7 +436,7 @@ public class DeadlockDetectionTest extends TestCase {
 					monitor.beginTask("Testing", 1);
 					lock.acquire();
 					TestBarrier.waitForStatus(status, 1, TestBarrier.STATUS_START);
-					manager.beginRule(rules[0], new BlockingMonitor(status, 1));
+					manager.beginRule(rules[0], new TestBlockingMonitor(status, 1));
 					status[1] = TestBarrier.STATUS_WAIT_FOR_RUN;
 					TestBarrier.waitForStatus(status, 1, TestBarrier.STATUS_RUNNING);
 					manager.endRule(rules[0]);
@@ -546,8 +514,8 @@ public class DeadlockDetectionTest extends TestCase {
 		final int[] status = new int[NUM_JOBS];
 		Arrays.fill(status, TestBarrier.STATUS_WAIT_FOR_START);
 		final ISchedulingRule[] rules = {new PathRule("/testMultipleColumnRemoval"), new PathRule("/testMultipleColumnRemoval/B"), new PathRule("/testMultipleColumnRemoval/C")};
-		final IProgressMonitor first = new BlockingMonitor(status, 1);
-		final IProgressMonitor second = new BlockingMonitor(status, 2);
+		final IProgressMonitor first = new TestBlockingMonitor(status, 1);
+		final IProgressMonitor second = new TestBlockingMonitor(status, 2);
 		Job[] jobs = new Job[NUM_JOBS];
 
 		jobs[0] = new Job("Test 0") {
@@ -742,7 +710,7 @@ public class DeadlockDetectionTest extends TestCase {
 				try {
 					monitor.beginTask("Testing", 1);
 					TestBarrier.waitForStatus(status, 2, TestBarrier.STATUS_START);
-					manager.beginRule(rules[0], new BlockingMonitor(status, 2));
+					manager.beginRule(rules[0], new TestBlockingMonitor(status, 2));
 					status[2] = TestBarrier.STATUS_WAIT_FOR_RUN;
 					TestBarrier.waitForStatus(status, 2, TestBarrier.STATUS_RUNNING);
 					manager.endRule(rules[0]);
@@ -759,7 +727,7 @@ public class DeadlockDetectionTest extends TestCase {
 				try {
 					monitor.beginTask("Testing", 1);
 					TestBarrier.waitForStatus(status, 3, TestBarrier.STATUS_START);
-					manager.beginRule(rules[1], new BlockingMonitor(status, 3));
+					manager.beginRule(rules[1], new TestBlockingMonitor(status, 3));
 					status[3] = TestBarrier.STATUS_WAIT_FOR_RUN;
 					TestBarrier.waitForStatus(status, 3, TestBarrier.STATUS_RUNNING);
 					manager.endRule(rules[1]);
@@ -870,7 +838,7 @@ public class DeadlockDetectionTest extends TestCase {
 				try {
 					monitor.beginTask("Testing", 1);
 					TestBarrier.waitForStatus(status, 2, TestBarrier.STATUS_START);
-					manager.beginRule(rules[0], new BlockingMonitor(status, 2));
+					manager.beginRule(rules[0], new TestBlockingMonitor(status, 2));
 					status[2] = TestBarrier.STATUS_WAIT_FOR_RUN;
 					TestBarrier.waitForStatus(status, 2, TestBarrier.STATUS_RUNNING);
 					manager.endRule(rules[0]);
@@ -887,7 +855,7 @@ public class DeadlockDetectionTest extends TestCase {
 				try {
 					monitor.beginTask("Testing", 1);
 					TestBarrier.waitForStatus(status, 3, TestBarrier.STATUS_START);
-					manager.beginRule(rules[2], new BlockingMonitor(status, 3));
+					manager.beginRule(rules[2], new TestBlockingMonitor(status, 3));
 					status[3] = TestBarrier.STATUS_WAIT_FOR_RUN;
 					TestBarrier.waitForStatus(status, 3, TestBarrier.STATUS_RUNNING);
 					manager.endRule(rules[2]);
@@ -904,7 +872,7 @@ public class DeadlockDetectionTest extends TestCase {
 				try {
 					monitor.beginTask("Testing", 1);
 					TestBarrier.waitForStatus(status, 4, TestBarrier.STATUS_START);
-					manager.beginRule(rules[2], new BlockingMonitor(status, 4));
+					manager.beginRule(rules[2], new TestBlockingMonitor(status, 4));
 					status[4] = TestBarrier.STATUS_WAIT_FOR_RUN;
 					TestBarrier.waitForStatus(status, 4, TestBarrier.STATUS_RUNNING);
 					manager.endRule(rules[2]);

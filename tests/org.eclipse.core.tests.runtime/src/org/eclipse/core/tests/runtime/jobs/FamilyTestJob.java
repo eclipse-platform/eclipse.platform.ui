@@ -12,17 +12,17 @@ package org.eclipse.core.tests.runtime.jobs;
 import org.eclipse.core.tests.harness.TestJob;
 
 /**
- * 
+ * A test job that belongs to a particular family.
  */
-class CustomTestJob extends TestJob {
+class FamilyTestJob extends TestJob {
 	private int familyType = TestJobFamily.TYPE_NONE;
 
-	public CustomTestJob(String name, int type) {
+	public FamilyTestJob(String name, int type) {
 		super(name);
 		familyType = type;
 	}
 
-	public CustomTestJob(String name, int ticks, int tickLength, int type) {
+	public FamilyTestJob(String name, int ticks, int tickLength, int type) {
 		super(name, ticks, tickLength);
 		familyType = type;
 	}

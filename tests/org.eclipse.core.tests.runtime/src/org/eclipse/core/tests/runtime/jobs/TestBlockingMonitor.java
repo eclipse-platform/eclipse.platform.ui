@@ -15,19 +15,34 @@ import org.eclipse.core.tests.harness.TestBarrier;
 import org.eclipse.core.tests.harness.TestProgressMonitor;
 
 /**
- * 
+ * A test progress monitor that sends a signal to a barrier object when it
+ * becomes blocked.
  */
-class BlockingMonitor extends TestProgressMonitor implements IProgressMonitorWithBlocking {
-	int[] status;
-	int index;
-	public BlockingMonitor(int[] status, int index) {
-		this.status = status;
-		this.index = index;
+class TestBlockingMonitor extends TestProgressMonitor implements IProgressMonitorWithBlocking {
+	private TestBarrier barrier;
+	private boolean cancelled;
+
+	public TestBlockingMonitor(int[] status, int index) {
+		this(new TestBarrier(status, index));
 	}
-	public void setBlocked(IStatus reason) {
-		status[index] = TestBarrier.STATUS_BLOCKED;
+
+	public TestBlockingMonitor(TestBarrier barrier) {
+		this.barrier = barrier;
 	}
+
 	public void clearBlocked() {
 		//leave empty for now
+	}
+
+	public boolean isCanceled() {
+		return cancelled;
+	}
+
+	public void setBlocked(IStatus reason) {
+		barrier.setStatus(TestBarrier.STATUS_BLOCKED);
+	}
+
+	public void setCanceled(boolean b) {
+		cancelled = true;
 	}
 }

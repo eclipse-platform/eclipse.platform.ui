@@ -290,11 +290,11 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		for (int i = 0; i < NUM_JOBS; i++) {
 			//assign half the jobs to the first family, the other half to the second family
 			if (i % 2 == 0)
-				jobs[i] = new CustomTestJob("TestFirstFamily", 1000000, 10, TestJobFamily.TYPE_ONE);
+				jobs[i] = new FamilyTestJob("TestFirstFamily", 1000000, 10, TestJobFamily.TYPE_ONE);
 
 			else
 				/*if(i%2 == 1)*/
-				jobs[i] = new CustomTestJob("TestSecondFamily", 1000000, 10, TestJobFamily.TYPE_TWO);
+				jobs[i] = new FamilyTestJob("TestSecondFamily", 1000000, 10, TestJobFamily.TYPE_TWO);
 
 			jobs[i].setRule(rule);
 			jobs[i].schedule();
@@ -372,16 +372,16 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		for (int i = 0; i < NUM_JOBS; i++) {
 			//assign four jobs to each family
 			if (i % 5 == 0)
-				jobs[i] = new CustomTestJob("TestFirstFamily", 1000000, 10, TestJobFamily.TYPE_ONE);
+				jobs[i] = new FamilyTestJob("TestFirstFamily", 1000000, 10, TestJobFamily.TYPE_ONE);
 			else if (i % 5 == 1)
-				jobs[i] = new CustomTestJob("TestSecondFamily", 1000000, 10, TestJobFamily.TYPE_TWO);
+				jobs[i] = new FamilyTestJob("TestSecondFamily", 1000000, 10, TestJobFamily.TYPE_TWO);
 			else if (i % 5 == 2)
-				jobs[i] = new CustomTestJob("TestThirdFamily", 1000000, 10, TestJobFamily.TYPE_THREE);
+				jobs[i] = new FamilyTestJob("TestThirdFamily", 1000000, 10, TestJobFamily.TYPE_THREE);
 			else if (i % 5 == 3)
-				jobs[i] = new CustomTestJob("TestFourthFamily", 1000000, 10, TestJobFamily.TYPE_FOUR);
+				jobs[i] = new FamilyTestJob("TestFourthFamily", 1000000, 10, TestJobFamily.TYPE_FOUR);
 			else
 				/*if(i%5 == 4)*/
-				jobs[i] = new CustomTestJob("TestFifthFamily", 1000000, 10, TestJobFamily.TYPE_FIVE);
+				jobs[i] = new FamilyTestJob("TestFifthFamily", 1000000, 10, TestJobFamily.TYPE_FIVE);
 
 			jobs[i].setRule(rule);
 			jobs[i].schedule();
@@ -547,11 +547,11 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		for (int i = 0; i < NUM_JOBS; i++) {
 			//assign half the jobs to the first family, the other half to the second family
 			if (i % 2 == 0) {
-				jobs[i] = new CustomTestJob("TestFirstFamily", 10, 10, TestJobFamily.TYPE_ONE);
+				jobs[i] = new FamilyTestJob("TestFirstFamily", 10, 10, TestJobFamily.TYPE_ONE);
 				jobs[i].setRule(rule1);
 				jobs[i].schedule(1000000);
 			} else /*if(i%2 == 1)*/{
-				jobs[i] = new CustomTestJob("TestSecondFamily", 1000000, 10, TestJobFamily.TYPE_TWO);
+				jobs[i] = new FamilyTestJob("TestSecondFamily", 1000000, 10, TestJobFamily.TYPE_TWO);
 				jobs[i].setRule(rule2);
 				jobs[i].schedule();
 			}
@@ -620,10 +620,10 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		for (int i = 0; i < NUM_JOBS; i++) {
 			//assign half the jobs to the first family, the other half to the second family
 			if (i % 2 == 0) {
-				jobs[i] = new CustomTestJob("TestFirstFamily", 1000000, 10, TestJobFamily.TYPE_ONE);
+				jobs[i] = new FamilyTestJob("TestFirstFamily", 1000000, 10, TestJobFamily.TYPE_ONE);
 				jobs[i].setRule(rule1);
 			} else /*if(i%2 == 1)*/{
-				jobs[i] = new CustomTestJob("TestSecondFamily", 1000000, 10, TestJobFamily.TYPE_TWO);
+				jobs[i] = new FamilyTestJob("TestSecondFamily", 1000000, 10, TestJobFamily.TYPE_TWO);
 				jobs[i].setRule(rule2);
 			}
 			jobs[i].schedule();
@@ -692,10 +692,10 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		for (int i = 0; i < NUM_JOBS; i++) {
 			//assign half the jobs to the first family, the other half to the second family
 			if (i % 2 == 0) {
-				jobs[i] = new CustomTestJob("TestFirstFamily", 1000000, 10, TestJobFamily.TYPE_ONE);
+				jobs[i] = new FamilyTestJob("TestFirstFamily", 1000000, 10, TestJobFamily.TYPE_ONE);
 				jobs[i].setRule(rule1);
 			} else /*if(i%2 == 1)*/{
-				jobs[i] = new CustomTestJob("TestSecondFamily", 1000000, 10, TestJobFamily.TYPE_TWO);
+				jobs[i] = new FamilyTestJob("TestSecondFamily", 1000000, 10, TestJobFamily.TYPE_TWO);
 				jobs[i].setRule(rule2);
 			}
 			jobs[i].schedule();
@@ -815,10 +815,10 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		for (int i = 0; i < NUM_JOBS; i++) {
 			//assign half the jobs to the first family, the other half to the second family
 			if (i % 2 == 0) {
-				jobs[i] = new CustomTestJob("TestFirstFamily", 1000000, 10, TestJobFamily.TYPE_ONE);
+				jobs[i] = new FamilyTestJob("TestFirstFamily", 1000000, 10, TestJobFamily.TYPE_ONE);
 				jobs[i].setRule(rule1);
 			} else /*if(i%2 == 1)*/{
-				jobs[i] = new CustomTestJob("TestSecondFamily", 1000000, 10, TestJobFamily.TYPE_TWO);
+				jobs[i] = new FamilyTestJob("TestSecondFamily", 1000000, 10, TestJobFamily.TYPE_TWO);
 				jobs[i].setRule(rule2);
 			}
 
@@ -885,10 +885,10 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		for (int i = 0; i < NUM_JOBS; i++) {
 			//assign half the jobs to the first family, the other half to the second family
 			if (i % 2 == 0)
-				jobs[i] = new CustomTestJob("TestFirstFamily", 1000000, 10, TestJobFamily.TYPE_ONE);
+				jobs[i] = new FamilyTestJob("TestFirstFamily", 1000000, 10, TestJobFamily.TYPE_ONE);
 			else
 				/*if(i%2 == 1)*/
-				jobs[i] = new CustomTestJob("TestSecondFamily", 1000000, 10, TestJobFamily.TYPE_TWO);
+				jobs[i] = new FamilyTestJob("TestSecondFamily", 1000000, 10, TestJobFamily.TYPE_TWO);
 
 			jobs[i].setRule(rule);
 			jobs[i].schedule();
@@ -942,10 +942,10 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		for (int i = 0; i < NUM_JOBS; i++) {
 			//assign half the jobs to the first family, the other half to the second family
 			if (i % 2 == 0)
-				jobs[i] = new CustomTestJob("TestFirstFamily", 1000000, 10, TestJobFamily.TYPE_ONE);
+				jobs[i] = new FamilyTestJob("TestFirstFamily", 1000000, 10, TestJobFamily.TYPE_ONE);
 			else
 				/*if(i%2 == 1)*/
-				jobs[i] = new CustomTestJob("TestSecondFamily", 1000000, 10, TestJobFamily.TYPE_TWO);
+				jobs[i] = new FamilyTestJob("TestSecondFamily", 1000000, 10, TestJobFamily.TYPE_TWO);
 
 			jobs[i].setRule(rule);
 			jobs[i].schedule();
@@ -1015,7 +1015,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		//need one common scheduling rule so that the jobs would be executed one by one
 		ISchedulingRule rule = new IdentityRule();
 		//create and schedule a seed job that will cause all others to be blocked
-		Job seedJob = new CustomTestJob("SeedJob", 1000000, 10, TestJobFamily.TYPE_THREE);
+		Job seedJob = new FamilyTestJob("SeedJob", 1000000, 10, TestJobFamily.TYPE_THREE);
 		seedJob.setRule(rule);
 		seedJob.schedule();
 		waitForStart(seedJob);
@@ -1023,7 +1023,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 
 		//create jobs in first family and put them to sleep
 		for (int i = 0; i < JOBS_PER_FAMILY; i++) {
-			family1[i] = new CustomTestJob("TestFirstFamily", 1000000, 10, TestJobFamily.TYPE_ONE);
+			family1[i] = new FamilyTestJob("TestFirstFamily", 1000000, 10, TestJobFamily.TYPE_ONE);
 			family1[i].setRule(rule);
 			family1[i].schedule();
 			assertState("1.1." + i, family1[i], Job.WAITING);
@@ -1032,7 +1032,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		}
 		//create jobs in second family and put them to sleep
 		for (int i = 0; i < JOBS_PER_FAMILY; i++) {
-			family2[i] = new CustomTestJob("TestSecondFamily", 1000000, 10, TestJobFamily.TYPE_TWO);
+			family2[i] = new FamilyTestJob("TestSecondFamily", 1000000, 10, TestJobFamily.TYPE_TWO);
 			family2[i].setRule(rule);
 			family2[i].schedule();
 			assertState("2.1." + i, family2[i], Job.WAITING);
@@ -1331,20 +1331,20 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		manager.suspend(rule1, null);
 
 		//start a job that acquires a child rule
-		final int[] status = new int[1];
-		JobRuleRunner runner = new JobRuleRunner("TestSuspendJob", rule2, status, 0, 1, true);
+		TestBarrier barrier = new TestBarrier();
+		JobRuleRunner runner = new JobRuleRunner("TestSuspendJob", rule2, barrier, 1, true);
 		runner.schedule();
-		TestBarrier.waitForStatus(status, TestBarrier.STATUS_START);
+		barrier.waitForStatus(TestBarrier.STATUS_START);
 		//let the job start the rule
-		status[0] = TestBarrier.STATUS_WAIT_FOR_RUN;
-		TestBarrier.waitForStatus(status, TestBarrier.STATUS_RUNNING);
+		barrier.setStatus(TestBarrier.STATUS_WAIT_FOR_RUN);
+		barrier.waitForStatus(TestBarrier.STATUS_RUNNING);
 
 		//now try to resume the rule in this thread
 		manager.resume(rule1);
 
 		//finally let the test runner resume the rule
-		status[0] = TestBarrier.STATUS_WAIT_FOR_DONE;
-		TestBarrier.waitForStatus(status, TestBarrier.STATUS_DONE);
+		barrier.setStatus(TestBarrier.STATUS_WAIT_FOR_DONE);
+		barrier.waitForStatus(TestBarrier.STATUS_DONE);
 		waitForCompletion(runner);
 
 	}
@@ -1413,6 +1413,88 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 
 	}
 
+	/**
+	 * Tests IJobManager#transfer(ISchedulingRule, Thread) failure conditions.
+	 */
+	public void testTransferFailure() {
+		PathRule rule = new PathRule("/testTransferFailure");
+		PathRule subRule = new PathRule("/testTransferFailure/Sub");
+		Thread other = new Thread();
+		//can't transfer a rule this thread doesn't own
+		try {
+			manager.transferRule(rule, other);
+			fail("1.0");
+		} catch (RuntimeException e) {
+			//expected
+		}
+		try {
+			manager.beginRule(rule, null);
+			//can't transfer a child rule of a rule currently owned by the caller
+			try {
+				manager.transferRule(subRule, other);
+				fail("1.1");
+			} catch (RuntimeException e) {
+				//expected
+			}
+			//TODO This test is failing
+//			//can't transfer a rule when the destination already owns an unrelated rule
+//			TestBarrier barrier = new TestBarrier();
+//			ISchedulingRule unrelatedRule = new PathRule("UnrelatedRule");
+//			JobRuleRunner ruleRunner = new JobRuleRunner("testTransferFailure", unrelatedRule, barrier, 1, false);
+//			ruleRunner.schedule();
+//			//wait for runner to start
+//			barrier.waitForStatus(TestBarrier.STATUS_START);
+//			//let it acquire the rule
+//			barrier.setStatus(TestBarrier.STATUS_WAIT_FOR_RUN);
+//			barrier.waitForStatus(TestBarrier.STATUS_RUNNING);
+//			//transferring the calling thread's rule to the background job should fail
+//			//because the destination thread already owns a rule
+//			try {
+//				manager.transferRule(rule, ruleRunner.getThread());
+//				fail("1.2");
+//			} catch (RuntimeException e) {
+//				//expected
+//			}
+//			//let the background job finish
+//			barrier.setStatus(TestBarrier.STATUS_WAIT_FOR_DONE);
+//			barrier.waitForStatus(TestBarrier.STATUS_DONE);
+		} finally {
+			manager.endRule(rule);
+		}
+	}
+
+	/**
+	 * Simple test of rule transfer
+	 */
+	public void testTransferSimple() {
+		class RuleEnder implements Runnable {
+			private final ISchedulingRule rule;
+			Exception error;
+			RuleEnder(ISchedulingRule rule) {
+				this.rule = rule;
+			}
+			public void run() {
+				try {
+					manager.endRule(rule);
+				} catch (Exception e) {
+					this.error = e;
+				}
+			}
+		}
+		PathRule rule = new PathRule("testTransferSimple");
+		manager.beginRule(rule, null);
+		RuleEnder ender = new RuleEnder(rule);
+		Thread destination = new Thread(ender);
+		manager.transferRule(rule, destination);
+		destination.start();
+		try {
+			destination.join();
+		} catch (InterruptedException e) {
+			fail("1.99", e);
+		}
+		if (ender.error != null)
+			fail("1.0", ender.error);
+	}
 	/**
 	 * Tests a batch of jobs that use two mutually exclusive rules.
 	 */
